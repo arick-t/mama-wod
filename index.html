@@ -447,7 +447,7 @@
 
         async function loadData() {
             try {
-                const response = await fetch('../data/workouts.json');
+                const response = await fetch("./data/workouts.json");
                 allData = await response.json();
             } catch (error) {
                 console.error('Error loading data:', error);
