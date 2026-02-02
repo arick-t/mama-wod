@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦆 DUCK-WOD</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid #16213e;
+        }
+
+        .logo {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #4a9eff;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        /* Day Navigation */
+        .day-nav {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            overflow-x: auto;
+            background: #0a0a0a;
+            border-bottom: 1px solid #222;
+        }
+
+        .day-btn {
+            min-width: 80px;
+            padding: 12px 16px;
+            background: #1a1a2e;
+            border: 2px solid #16213e;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .day-btn:hover {
+            border-color: #4a9eff;
+            transform: translateY(-2px);
+        }
+
+        .day-btn.active {
+            background: #4a9eff;
+            border-color: #4a9eff;
+            color: #000;
+        }
+
+        .day-name {
+            font-weight: 700;
+            font-size: 0.9em;
+        }
+
+        .day-date {
+            font-size: 0.75em;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            padding: 15px 20px;
+            background: #0a0a0a;
+            border-bottom: 1px solid #222;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: #1a1a2e;
+            border: 1px solid #16213e;
+            border-radius: 6px;
+            color: #e0e0e0;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            border-color: #4a9eff;
+        }
+
+        .tab-btn.active {
+            background: #4a9eff;
+            color: #000;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Workout Cards */
+        .workouts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .workout-card {
+            background: #1a1a2e;
+            border: 1px solid #16213e;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.2s;
+        }
+
+        .workout-card:hover {
+            border-color: #4a9eff;
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            border-bottom: 2px solid #4a9eff;
+            padding-bottom: 12px;
+            margin-bottom: 15px;
+        }
+
+        .source-name {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #4a9eff;
+        }
+
+        .source-note {
+            font-size: 0.85em;
+            color: #ff9800;
+            margin-top: 5px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            text-decoration: underline;
+            color: #4a9eff;
+            margin-bottom: 10px;
+        }
+
+        .section-lines {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .section-lines li {
+            padding: 4px 0 4px 20px;
+            position: relative;
+        }
+
+        .section-lines li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #4a9eff;
+            font-weight: bold;
+        }
+
+        .card-footer {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #222;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #4a9eff;
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background: #3a8eef;
+        }
+
+        .btn-secondary {
+            background: #25d366;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: #20c05a;
+        }
+
+        /* Find Workout */
+        .find-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #1a1a2e;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #16213e;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #4a9eff;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            background: #0a0a0a;
+            border: 1px solid #16213e;
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 1em;
+        }
+
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .equipment-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: #0a0a0a;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .equipment-item:hover {
+            background: #16213e;
+        }
+
+        .equipment-item input {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .match-score {
+            display: inline-block;
+            background: #4a9eff;
+            color: #000;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            margin-left: 10px;
+        }
+
+        /* Source Toggle */
+        .sources-list {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .source-item {
+            background: #1a1a2e;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #16213e;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #444;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #4a9eff;
+        }
+
+        .toggle-switch .slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active .slider {
+            transform: translateX(30px);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .workouts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">🦆</div>
+        <h1>DUCK-WOD</h1>
+        <p>Your Daily CrossFit Workouts</p>
+    </div>
+
+    <div class="day-nav" id="dayNav"></div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('browse')">Browse</button>
+        <button class="tab-btn" onclick="switchTab('find')">Find Workout</button>
+        <button class="tab-btn" onclick="switchTab('sources')">Sources</button>
+    </div>
+
+    <!-- BROWSE TAB -->
+    <div id="browse-tab" class="tab-content active">
+        <div class="workouts-grid" id="workoutsGrid">
+            <div class="loading">Loading workouts...</div>
+        </div>
+    </div>
+
+    <!-- FIND WORKOUT TAB -->
+    <div id="find-tab" class="tab-content">
+        <div class="find-form">
+            <h2 style="color: #4a9eff; margin-bottom: 20px;">Find Your Workout</h2>
+            
+            <div class="form-group">
+                <label>Available Time (minutes)</label>
+                <input type="number" id="findTime" min="1" max="180" value="20">
+            </div>
+
+            <div class="form-group">
+                <label>Available Equipment</label>
+                <div class="equipment-grid">
+                    <label class="equipment-item">
+                        <input type="checkbox" value="RUN"> RUN
+                    </label>
+                    <label class="equipment-item">
+                        <input type="checkbox" value="BARBELL"> BARBELL
+                    </label>
+                    <label class="equipment-item">
+                        <input type="checkbox" value="PULL-UP"> PULL-UP
+                    </label>
+                    <label class="equipment-item">
+                        <input type="checkbox" value="ROW"> ROW
+                    </label>
+                    <label class="equipment-item">
+                        <input type="checkbox" value="BIKE"> BIKE
+                    </label>
+                    <label class="equipment-item">
+                        <input type="checkbox" value="DUMBBELL"> DUMBBELL
+                    </label>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" style="width: 100%;" onclick="findWorkout()">
+                Find Best Match
+            </button>
+        </div>
+
+        <div class="workouts-grid" id="findResults" style="margin-top: 30px;"></div>
+    </div>
+
+    <!-- SOURCES TAB -->
+    <div id="sources-tab" class="tab-content">
+        <div class="sources-list" id="sourcesList">
+            <div class="loading">Loading sources...</div>
+        </div>
+    </div>
+
+    <script>
+        let allData = null;
+        let currentDate = new Date();
+        
+        // Fixed 5 sources
+        const SOURCES = {
+            'myleo': { name: 'myleo CrossFit', enabled: true, has_archive: true },
+            'greenbeach': { name: 'CrossFit Green Beach', enabled: true, has_archive: false },
+            'linchpin': { name: 'CrossFit Linchpin', enabled: true, has_archive: false },
+            'postal': { name: 'CrossFit Postal', enabled: true, has_archive: false },
+            'crossfit_com': { name: 'CrossFit.com', enabled: true, has_archive: true }
+        };
+
+        // Load saved toggles
+        const savedToggles = localStorage.getItem('duck-wod-toggles');
+        if (savedToggles) {
+            const toggles = JSON.parse(savedToggles);
+            Object.keys(toggles).forEach(id => {
+                if (SOURCES[id]) SOURCES[id].enabled = toggles[id];
+            });
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadData();
+            initDayNav();
+            displayWorkouts();
+            displaySources();
+        });
+
+        async function loadData() {
+            try {
+                const response = await fetch('../data/workouts.json');
+                allData = await response.json();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                allData = { workouts: {} };
+            }
+        }
+
+        function initDayNav() {
+            const nav = document.getElementById('dayNav');
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            
+            let html = '';
+            for (let i = 0; i < 14; i++) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                
+                const dayName = i === 0 ? 'TODAY' : days[date.getDay()];
+                const dateStr = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}`;
+                
+                html += `
+                    <button class="day-btn ${i === 0 ? 'active' : ''}" onclick="selectDay(${i})">
+                        <div class="day-name">${dayName}</div>
+                        <div class="day-date">${dateStr}</div>
+                    </button>
+                `;
+            }
+            
+            nav.innerHTML = html;
+        }
+
+        function selectDay(daysAgo) {
+            const date = new Date();
+            date.setDate(date.getDate() - daysAgo);
+            currentDate = date;
+            
+            document.querySelectorAll('.day-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === daysAgo);
+            });
+            
+            displayWorkouts();
+        }
+
+        function displayWorkouts() {
+            const grid = document.getElementById('workoutsGrid');
+            const dateStr = currentDate.toISOString().split('T')[0];
+            
+            const workouts = allData.workouts[dateStr] || [];
+            const enabled = workouts.filter(w => SOURCES[w.source]?.enabled);
+            
+            if (enabled.length === 0) {
+                grid.innerHTML = '<div class="loading">No workouts for this day</div>';
+                return;
+            }
+            
+            grid.innerHTML = enabled.map(w => renderCard(w)).join('');
+        }
+
+        function renderCard(workout, matchScore = null) {
+            return `
+                <div class="workout-card">
+                    <div class="card-header">
+                        <div class="source-name">
+                            ${workout.source_name}
+                            ${matchScore ? `<span class="match-score">${matchScore}%</span>` : ''}
+                        </div>
+                        ${workout.note ? `<div class="source-note">${workout.note}</div>` : ''}
+                    </div>
+                    ${workout.sections.map(s => `
+                        <div class="section">
+                            <div class="section-title">${s.title}</div>
+                            <ul class="section-lines">
+                                ${s.lines.map(l => `<li>${l}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `).join('')}
+                    <div class="card-footer">
+                        <button class="btn btn-secondary" onclick="shareWhatsApp(\`${workout.source_name}\`, \`${JSON.stringify(workout.sections).replace(/"/g, '&quot;')}\`)">
+                            Share WhatsApp
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function shareWhatsApp(sourceName, sectionsStr) {
+            const sections = JSON.parse(sectionsStr.replace(/&quot;/g, '"'));
+            let text = `🦆 DUCK-WOD\\n${sourceName}\\n\\n`;
+            
+            sections.forEach(s => {
+                text += `${s.title}\\n`;
+                s.lines.forEach(l => text += `• ${l}\\n`);
+                text += '\\n';
+            });
+            
+            const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
+
+        function findWorkout() {
+            const time = parseInt(document.getElementById('findTime').value);
+            const equipment = Array.from(document.querySelectorAll('.equipment-item input:checked'))
+                .map(cb => cb.value);
+            
+            if (!time || equipment.length === 0) {
+                alert('Please enter time and select equipment');
+                return;
+            }
+            
+            const results = [];
+            Object.values(allData.workouts).forEach(dayWorkouts => {
+                dayWorkouts.forEach(w => {
+                    if (!SOURCES[w.source]?.enabled) return;
+                    
+                    const text = w.sections.map(s => s.lines.join(' ')).join(' ').toLowerCase();
+                    let score = 0;
+                    
+                    // Equipment match
+                    equipment.forEach(eq => {
+                        if (text.includes(eq.toLowerCase())) score += 60 / equipment.length;
+                    });
+                    
+                    // Time match (simple)
+                    const timeMatch = text.match(/(\d+)\s*min/);
+                    if (timeMatch) {
+                        const wodTime = parseInt(timeMatch[1]);
+                        const diff = Math.abs(wodTime - time);
+                        score += Math.max(0, 40 - diff * 2);
+                    } else {
+                        score += 20;
+                    }
+                    
+                    if (score > 0) {
+                        results.push({ workout: w, score: Math.round(score) });
+                    }
+                });
+            });
+            
+            results.sort((a, b) => b.score - a.score);
+            
+            const container = document.getElementById('findResults');
+            if (results.length === 0) {
+                container.innerHTML = '<div class="loading">No matches found</div>';
+                return;
+            }
+            
+            const best = results[0];
+            container.innerHTML = renderCard(best.workout, best.score);
+        }
+
+        function displaySources() {
+            const list = document.getElementById('sourcesList');
+            
+            list.innerHTML = Object.entries(SOURCES).map(([id, info]) => `
+                <div class="source-item">
+                    <div>
+                        <strong>${info.name}</strong>
+                        ${!info.has_archive ? '<div style="font-size:0.85em;color:#ff9800;">Daily only</div>' : ''}
+                    </div>
+                    <div class="toggle-switch ${info.enabled ? 'active' : ''}" 
+                         onclick="toggleSource('${id}')">
+                        <div class="slider"></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleSource(id) {
+            SOURCES[id].enabled = !SOURCES[id].enabled;
+            
+            const toggles = {};
+            Object.keys(SOURCES).forEach(k => toggles[k] = SOURCES[k].enabled);
+            localStorage.setItem('duck-wod-toggles', JSON.stringify(toggles));
+            
+            displaySources();
+            displayWorkouts();
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(`${tab}-tab`).classList.add('active');
+        }
+    </script>
+</body>
+</html>
