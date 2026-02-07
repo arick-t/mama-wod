@@ -205,9 +205,31 @@
         ]
       }
     ],
-    "2026-01-25": [],
+    "2026-01-25": [
+      {
+        "date": "2026-01-25",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260125",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Rest Day",
+              "Mastering CrossFit Gymnastics: How to Build Strength, Stability, and Confidence",
+              "The first workout of the 2026 CrossFit Open, presented by Air National Guard, is just about five weeks away. And while thereâs no such thing as cramming for the Open, you can brush up on some skills to feel more prepared. In this article, we share an action plan for leveling up your gymnastics skills."
+            ]
+          },
+          {
+            "title": "FIND A GYM NEAR YOU",
+            "lines": [
+              "View the CrossFit map"
+            ]
+          }
+        ]
+      }
+    ],
     "2026-01-24": [],
-    "2026-01-23": [],
     "2026-02-04": [
       {
         "date": "2026-02-04",
@@ -275,7 +297,27 @@
           }
         ]
       }
+    ],
+    "2026-02-07": [
+      {
+        "date": "2026-02-07",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260207",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Split jerk 3-3-3-1-1-1-1 reps",
+              "Compare to",
+              "221013",
+              ".",
+              "Post loads to the comments."
+            ]
+          }
+        ]
+      }
     ]
   },
-  "last_updated": "2026-02-06T06:36:22.068857"
+  "last_updated": "2026-02-07T06:00:35.435721"
 }
