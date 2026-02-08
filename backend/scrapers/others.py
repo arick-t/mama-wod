@@ -1,12 +1,7 @@
 """
-<<<<<<< HEAD
-Remaining 3 scrapers - Phase 1
-linchpin, postal, crossfit.com
-=======
 Remaining 3 scrapers - FIXED
 Green Beach, Linchpin, Postal
 Only workout content, no fluff
->>>>>>> 1d69df1 (Initial commit from new folder)
 """
 
 import requests
@@ -14,8 +9,6 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 
 
-<<<<<<< HEAD
-=======
 # ========== GREEN BEACH ==========
 
 def fetch_greenbeach(date):
@@ -61,26 +54,17 @@ def fetch_greenbeach(date):
         return None
 
 
->>>>>>> 1d69df1 (Initial commit from new folder)
 # ========== LINCHPIN ==========
 
 def fetch_linchpin(date):
     """CrossFit Linchpin - today only"""
     if date.date() != datetime.now().date():
-<<<<<<< HEAD
-        return None  # No archive
-=======
         return None
->>>>>>> 1d69df1 (Initial commit from new folder)
     
     url = 'https://crossfitlinchpin.com/blogs/wod'
     
     try:
         response = requests.get(url, timeout=10)
-<<<<<<< HEAD
-        soup = BeautifulSoup(response.text, 'html.parser')
-        
-=======
         if response.status_code != 200:
             return None
         
@@ -91,15 +75,10 @@ def fetch_linchpin(date):
             tag.decompose()
         
         # Find blog post
->>>>>>> 1d69df1 (Initial commit from new folder)
         article = soup.find('article') or soup.find('div', class_='blog-post')
         if not article:
             return None
         
-<<<<<<< HEAD
-        content = article.get_text(separator='\n', strip=True)
-        lines = [l for l in content.split('\n') if l.strip()][:30]
-=======
         text = article.get_text(separator='\n', strip=True)
         lines = [l.strip() for l in text.split('\n') if l.strip() and len(l.strip()) > 2]
         
@@ -113,7 +92,6 @@ def fetch_linchpin(date):
         
         if not filtered:
             return None
->>>>>>> 1d69df1 (Initial commit from new folder)
         
         return {
             'date': date.strftime('%Y-%m-%d'),
@@ -121,14 +99,9 @@ def fetch_linchpin(date):
             'source_name': 'CrossFit Linchpin',
             'url': url,
             'note': '⚠️ This source provides daily workouts only',
-<<<<<<< HEAD
-            'sections': [{'title': 'WORKOUT', 'lines': lines}]
-        }
-=======
             'sections': [{'title': 'WORKOUT', 'lines': filtered[:40]}]
         }
         
->>>>>>> 1d69df1 (Initial commit from new folder)
     except Exception as e:
         print(f"Linchpin error: {e}")
         return None
@@ -142,16 +115,6 @@ def fetch_postal(date):
     
     try:
         response = requests.get(url, timeout=10)
-<<<<<<< HEAD
-        soup = BeautifulSoup(response.text, 'html.parser')
-        
-        wod = soup.find('div', class_='wod-content')
-        if not wod:
-            return None
-        
-        content = wod.get_text(separator='\n', strip=True)
-        lines = [l for l in content.split('\n') if l.strip()]
-=======
         if response.status_code != 200:
             return None
         
@@ -174,73 +137,15 @@ def fetch_postal(date):
         
         if not lines:
             return None
->>>>>>> 1d69df1 (Initial commit from new folder)
         
         return {
             'date': date.strftime('%Y-%m-%d'),
             'source': 'postal',
             'source_name': 'CrossFit Postal',
             'url': url,
-<<<<<<< HEAD
-            'sections': [{'title': 'WORKOUT', 'lines': lines}]
-        }
-    except Exception as e:
-        print(f"Postal error: {e}")
-        return None
-
-
-# ========== CROSSFIT.COM ==========
-
-def fetch_crossfit_com(date):
-    """CrossFit.com - official"""
-    date_code = date.strftime('%y%m%d')
-    url = f'https://www.crossfit.com/{date_code}'
-    
-    try:
-        response = requests.get(url, timeout=10)
-        soup = BeautifulSoup(response.text, 'html.parser')
-        
-        article = soup.find('article')
-        if not article:
-            return None
-        
-        # Get text, stop at "Stimulus"
-        lines = []
-        for line in article.get_text(separator='\n').split('\n'):
-            if 'stimulus' in line.lower() or 'scaling' in line.lower():
-                break
-            if line.strip():
-                lines.append(line.strip())
-        
-        sections = []
-        current = {'title': 'WORKOUT', 'lines': []}
-        
-        for line in lines[:40]:
-            if ':' in line and len(line) < 30:
-                if current['lines']:
-                    sections.append(current)
-                current = {'title': line.strip(':').upper(), 'lines': []}
-            else:
-                current['lines'].append(line)
-        
-        if current['lines']:
-            sections.append(current)
-        
-        return {
-            'date': date.strftime('%Y-%m-%d'),
-            'source': 'crossfit_com',
-            'source_name': 'CrossFit.com',
-            'url': url,
-            'sections': sections
-        }
-    except Exception as e:
-        print(f"CrossFit.com error: {e}")
-        return None
-=======
             'sections': [{'title': 'WORKOUT', 'lines': lines[:30]}]
         }
         
     except Exception as e:
         print(f"Postal error: {e}")
         return None
->>>>>>> 1d69df1 (Initial commit from new folder)

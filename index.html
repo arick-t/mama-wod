@@ -397,8 +397,6 @@
                     <label class="equipment-item">
                         <input type="checkbox" value="DUMBBELL"> DUMBBELL
                     </label>
-<<<<<<< HEAD
-=======
                     <label class="equipment-item">
                         <input type="checkbox" value="KETTLEBELL"> KETTLEBELL
                     </label>
@@ -408,7 +406,6 @@
                     <label class="equipment-item">
                         <input type="checkbox" value="DOUBLE UNDERS"> DOUBLE UNDERS
                     </label>
->>>>>>> 1d69df1 (Initial commit from new folder)
                 </div>
             </div>
 
@@ -431,11 +428,7 @@
         let allData = null;
         let currentDate = new Date();
         
-<<<<<<< HEAD
-        // Fixed 5 sources
-=======
         // Fixed 5 sources (hardcoded, not editable)
->>>>>>> 1d69df1 (Initial commit from new folder)
         const SOURCES = {
             'myleo': { name: 'myleo CrossFit', enabled: true, has_archive: true },
             'greenbeach': { name: 'CrossFit Green Beach', enabled: true, has_archive: false },
@@ -444,17 +437,6 @@
             'crossfit_com': { name: 'CrossFit.com', enabled: true, has_archive: true }
         };
 
-<<<<<<< HEAD
-        // Load saved toggles
-        const savedToggles = localStorage.getItem('duck-wod-toggles');
-        if (savedToggles) {
-            const toggles = JSON.parse(savedToggles);
-            Object.keys(toggles).forEach(id => {
-                if (SOURCES[id]) SOURCES[id].enabled = toggles[id];
-            });
-        }
-
-=======
         // Load saved toggles from localStorage
         const savedToggles = localStorage.getItem('duck-wod-toggles');
         if (savedToggles) {
@@ -481,7 +463,6 @@
             'DOUBLE UNDERS': ['double under', 'double unders', 'du']
         };
 
->>>>>>> 1d69df1 (Initial commit from new folder)
         // Init
         document.addEventListener('DOMContentLoaded', async () => {
             await loadData();
@@ -492,15 +473,10 @@
 
         async function loadData() {
             try {
-<<<<<<< HEAD
-                const response = await fetch("./data/workouts.json");
-                allData = await response.json();
-=======
                 // FIXED: Correct path for GitHub Pages root
                 const response = await fetch("./data/workouts.json");
                 allData = await response.json();
                 console.log('Data loaded:', allData);
->>>>>>> 1d69df1 (Initial commit from new folder)
             } catch (error) {
                 console.error('Error loading data:', error);
                 allData = { workouts: {} };
@@ -546,15 +522,11 @@
             const grid = document.getElementById('workoutsGrid');
             const dateStr = currentDate.toISOString().split('T')[0];
             
-<<<<<<< HEAD
-            const workouts = allData.workouts[dateStr] || [];
-=======
             console.log('Displaying workouts for:', dateStr);
             const workouts = allData.workouts[dateStr] || [];
             console.log('Found workouts:', workouts);
             
             // Filter by enabled sources
->>>>>>> 1d69df1 (Initial commit from new folder)
             const enabled = workouts.filter(w => SOURCES[w.source]?.enabled);
             
             if (enabled.length === 0) {
@@ -570,27 +542,11 @@
                 <div class="workout-card">
                     <div class="card-header">
                         <div class="source-name">
-<<<<<<< HEAD
-                            ${workout.source_name}
-=======
                             ${workout.source_name || workout.source}
->>>>>>> 1d69df1 (Initial commit from new folder)
                             ${matchScore ? `<span class="match-score">${matchScore}%</span>` : ''}
                         </div>
                         ${workout.note ? `<div class="source-note">${workout.note}</div>` : ''}
                     </div>
-<<<<<<< HEAD
-                    ${workout.sections.map(s => `
-                        <div class="section">
-                            <div class="section-title">${s.title}</div>
-                            <ul class="section-lines">
-                                ${s.lines.map(l => `<li>${l}</li>`).join('')}
-                            </ul>
-                        </div>
-                    `).join('')}
-                    <div class="card-footer">
-                        <button class="btn btn-secondary" onclick="shareWhatsApp(\`${workout.source_name}\`, \`${JSON.stringify(workout.sections).replace(/"/g, '&quot;')}\`)">
-=======
                     ${workout.sections ? workout.sections.map(s => `
                         <div class="section">
                             <div class="section-title">${s.title}</div>
@@ -601,7 +557,6 @@
                     `).join('') : '<div class="loading">No workout data</div>'}
                     <div class="card-footer">
                         <button class="btn btn-secondary" onclick="shareWhatsApp(${JSON.stringify(workout.source_name || workout.source).replace(/"/g, '&quot;')}, ${JSON.stringify(workout.sections || []).replace(/"/g, '&quot;')})">
->>>>>>> 1d69df1 (Initial commit from new folder)
                             Share WhatsApp
                         </button>
                     </div>
@@ -609,17 +564,6 @@
             `;
         }
 
-<<<<<<< HEAD
-        function shareWhatsApp(sourceName, sectionsStr) {
-            const sections = JSON.parse(sectionsStr.replace(/&quot;/g, '"'));
-            let text = `🦆 DUCK-WOD\\n${sourceName}\\n\\n`;
-            
-            sections.forEach(s => {
-                text += `${s.title}\\n`;
-                s.lines.forEach(l => text += `• ${l}\\n`);
-                text += '\\n';
-            });
-=======
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
@@ -639,7 +583,6 @@
                     text += '\n';
                 });
             }
->>>>>>> 1d69df1 (Initial commit from new folder)
             
             const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
             window.open(url, '_blank');
@@ -651,39 +594,11 @@
                 .map(cb => cb.value);
             
             if (!time || equipment.length === 0) {
-<<<<<<< HEAD
-                alert('Please enter time and select equipment');
-=======
                 alert('Please enter time and select at least one equipment');
->>>>>>> 1d69df1 (Initial commit from new folder)
                 return;
             }
             
             const results = [];
-<<<<<<< HEAD
-            Object.values(allData.workouts).forEach(dayWorkouts => {
-                dayWorkouts.forEach(w => {
-                    if (!SOURCES[w.source]?.enabled) return;
-                    
-                    const text = w.sections.map(s => s.lines.join(' ')).join(' ').toLowerCase();
-                    let score = 0;
-                    
-                    // Equipment match
-                    equipment.forEach(eq => {
-                        if (text.includes(eq.toLowerCase())) score += 60 / equipment.length;
-                    });
-                    
-                    // Time match (simple)
-                    const timeMatch = text.match(/(\d+)\s*min/);
-                    if (timeMatch) {
-                        const wodTime = parseInt(timeMatch[1]);
-                        const diff = Math.abs(wodTime - time);
-                        score += Math.max(0, 40 - diff * 2);
-                    } else {
-                        score += 20;
-                    }
-                    
-=======
             
             // Search all days
             Object.entries(allData.workouts).forEach(([date, dayWorkouts]) => {
@@ -692,7 +607,6 @@
                     if (!SOURCES[w.source]?.enabled) return;
                     
                     const score = calculateMatchScore(w, time, equipment);
->>>>>>> 1d69df1 (Initial commit from new folder)
                     if (score > 0) {
                         results.push({ workout: w, score: Math.round(score) });
                     }
@@ -703,11 +617,7 @@
             
             const container = document.getElementById('findResults');
             if (results.length === 0) {
-<<<<<<< HEAD
-                container.innerHTML = '<div class="loading">No matches found</div>';
-=======
                 container.innerHTML = '<div class="loading">No matching workouts found</div>';
->>>>>>> 1d69df1 (Initial commit from new folder)
                 return;
             }
             
@@ -715,8 +625,6 @@
             container.innerHTML = renderCard(best.workout, best.score);
         }
 
-<<<<<<< HEAD
-=======
         function calculateMatchScore(workout, targetTime, equipment) {
             if (!workout.sections) return 0;
             
@@ -755,7 +663,6 @@
             return score;
         }
 
->>>>>>> 1d69df1 (Initial commit from new folder)
         function displaySources() {
             const list = document.getElementById('sourcesList');
             
@@ -776,10 +683,7 @@
         function toggleSource(id) {
             SOURCES[id].enabled = !SOURCES[id].enabled;
             
-<<<<<<< HEAD
-=======
             // Save to localStorage
->>>>>>> 1d69df1 (Initial commit from new folder)
             const toggles = {};
             Object.keys(SOURCES).forEach(k => toggles[k] = SOURCES[k].enabled);
             localStorage.setItem('duck-wod-toggles', JSON.stringify(toggles));
