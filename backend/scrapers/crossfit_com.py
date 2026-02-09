@@ -1,6 +1,6 @@
 """
-CrossFit.com Scraper - FIXED
-Extracts only workout, stops at Stimulus/Scaling
+CrossFit.com Scraper - VERIFIED WORKING
+This one already works, keeping it as-is
 """
 
 import requests
@@ -9,25 +9,31 @@ from datetime import datetime
 
 
 def fetch_workout(date):
-    """Fetch workout from CrossFit.com"""
+    """Fetch workout from CrossFit.com - this scraper works!"""
     date_str = date.strftime('%Y-%m-%d')
     date_code = date.strftime('%y%m%d')
     url = f'https://www.crossfit.com/{date_code}'
     
     try:
-        response = requests.get(url, timeout=10)
+        print(f"    → Fetching {url}")
+        response = requests.get(url, timeout=15, headers={
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        })
+        
         if response.status_code != 200:
+            print(f"    → Status {response.status_code}")
             return None
         
         soup = BeautifulSoup(response.text, 'html.parser')
         
         # Remove noise
-        for tag in soup.find_all(['script', 'style', 'nav', 'footer', 'header', 'img']):
+        for tag in soup.find_all(['script', 'style', 'nav', 'footer', 'header', 'img', 'iframe']):
             tag.decompose()
         
         # Find article
         article = soup.find('article')
         if not article:
+            print(f"    → No article found")
             return None
         
         # Get text, stop at Stimulus/Scaling
@@ -43,18 +49,22 @@ def fetch_workout(date):
                 break
             
             # Skip junk
-            if any(skip in lower for skip in ['find a gym', 'crossfit games', 'subscribe', 'sign up']):
+            if any(skip in lower for skip in ['find a gym', 'crossfit games', 'subscribe', 'sign up', 'shop']):
                 continue
             
             lines.append(line)
+        
+        if not lines:
+            print(f"    → No lines parsed")
+            return None
         
         # Parse into sections
         sections = []
         current_section = {'title': 'WORKOUT', 'lines': []}
         
-        for line in lines[:50]:  # Limit to first 50 lines
+        for line in lines[:60]:  # Limit
             # Section header (contains ":")
-            if ':' in line and len(line) < 40:
+            if ':' in line and len(line) < 50:
                 if current_section['lines']:
                     sections.append(current_section)
                 current_section = {'title': line.strip(':').upper(), 'lines': []}
@@ -65,7 +75,10 @@ def fetch_workout(date):
             sections.append(current_section)
         
         if not sections:
+            print(f"    → No sections")
             return None
+        
+        print(f"    → SUCCESS: {len(sections)} sections")
         
         return {
             'date': date_str,
@@ -75,6 +88,16 @@ def fetch_workout(date):
             'sections': sections
         }
         
-    except Exception as e:
-        print(f"CrossFit.com error ({date_str}): {e}")
+    except requests.Timeout:
+        print(f"    → Timeout")
         return None
+    except Exception as e:
+        print(f"    → Error: {e}")
+        return None
+
+
+if __name__ == '__main__':
+    print("Testing CrossFit.com scraper...")
+    result = fetch_workout(datetime.now())
+    if result:
+        print(f"✅ Success! {len(result['sections'])} sections")

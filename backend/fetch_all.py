@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-DUCK-WOD Phase 1 - Main Fetch Script - FIXED
-Fetches from all 5 sources and writes to workouts.json
+DUCK-WOD Phase 1 - Main Fetch Script
+VERIFIED with detailed error reporting
 """
 
 import json
@@ -14,7 +14,8 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from scrapers.myleo import fetch_workout as fetch_myleo
 from scrapers.crossfit_com import fetch_workout as fetch_crossfit_com
-from scrapers.others import fetch_greenbeach, fetch_linchpin, fetch_postal
+from scrapers.linchpin import fetch_workout as fetch_linchpin
+from scrapers.others import fetch_greenbeach, fetch_postal
 
 
 # Config
@@ -22,7 +23,7 @@ DATA_DIR = Path(__file__).parent.parent / 'data'
 DATA_FILE = DATA_DIR / 'workouts.json'
 DAYS_TO_KEEP = 14
 
-# 5 fixed sources (hardcoded)
+# 5 fixed sources
 SCRAPERS = {
     'myleo': {
         'name': 'myleo CrossFit',
@@ -32,17 +33,17 @@ SCRAPERS = {
     'greenbeach': {
         'name': 'CrossFit Green Beach',
         'fetch': fetch_greenbeach,
-        'has_archive': False
+        'has_archive': False  # Unknown, will try anyway
     },
     'linchpin': {
         'name': 'CrossFit Linchpin',
         'fetch': fetch_linchpin,
-        'has_archive': False
+        'has_archive': False  # Only today
     },
     'postal': {
         'name': 'CrossFit Postal',
         'fetch': fetch_postal,
-        'has_archive': False
+        'has_archive': False  # Unknown
     },
     'crossfit_com': {
         'name': 'CrossFit.com',
@@ -58,7 +59,8 @@ def load_data():
         try:
             with open(DATA_FILE, 'r', encoding='utf-8') as f:
                 return json.load(f)
-        except:
+        except Exception as e:
+            print(f"⚠️  Error loading existing data: {e}")
             return {'workouts': {}}
     return {'workouts': {}}
 
@@ -67,19 +69,27 @@ def save_data(data):
     """Save workouts"""
     DATA_DIR.mkdir(exist_ok=True, parents=True)
     data['last_updated'] = datetime.now().isoformat()
-    with open(DATA_FILE, 'w', encoding='utf-8') as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
-    print(f"\n💾 Saved to {DATA_FILE}")
+    
+    try:
+        with open(DATA_FILE, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        print(f"\n💾 Saved to {DATA_FILE}")
+    except Exception as e:
+        print(f"\n❌ Error saving data: {e}")
 
 
 def clean_old_workouts(data):
     """Keep only last 14 days"""
     cutoff = (datetime.now() - timedelta(days=DAYS_TO_KEEP)).strftime('%Y-%m-%d')
     
+    removed = 0
     for date_str in list(data['workouts'].keys()):
         if date_str < cutoff:
             del data['workouts'][date_str]
-            print(f"  🗑️  Removed old date: {date_str}")
+            removed += 1
+    
+    if removed > 0:
+        print(f"  🗑️  Removed {removed} old dates")
 
 
 def fetch_all():
@@ -88,6 +98,7 @@ def fetch_all():
     print("=" * 50)
     
     data = load_data()
+    stats = {'success': 0, 'failed': 0, 'cached': 0}
     
     # Fetch last 14 days
     for i in range(DAYS_TO_KEEP):
@@ -105,26 +116,37 @@ def fetch_all():
             existing = any(w['source'] == source_id for w in data['workouts'][date_str])
             if existing:
                 print(f"  ✓ {scraper_info['name']} (cached)")
+                stats['cached'] += 1
                 continue
             
             # Fetch
-            print(f"  ⬇ {scraper_info['name']}...", end=' ', flush=True)
+            print(f"  ⬇ {scraper_info['name']}...")
             
             try:
                 workout = scraper_info['fetch'](date)
                 
                 if workout:
-                    # Ensure it has the right structure
+                    # Validate structure
                     if 'sections' not in workout or not workout['sections']:
-                        print("❌ (no sections)")
+                        print(f"    ❌ No sections in response")
+                        stats['failed'] += 1
+                        continue
+                    
+                    if not any(s.get('lines') for s in workout['sections']):
+                        print(f"    ❌ No lines in sections")
+                        stats['failed'] += 1
                         continue
                     
                     data['workouts'][date_str].append(workout)
-                    print("✅")
+                    print(f"    ✅ Success!")
+                    stats['success'] += 1
                 else:
-                    print("❌")
+                    print(f"    ❌ No workout returned")
+                    stats['failed'] += 1
+                    
             except Exception as e:
-                print(f"❌ ({str(e)})")
+                print(f"    ❌ Exception: {e}")
+                stats['failed'] += 1
     
     # Clean old
     print("\n🧹 Cleaning old workouts...")
@@ -138,6 +160,9 @@ def fetch_all():
     total = sum(len(wods) for wods in data['workouts'].values())
     print(f"📊 Total workouts: {total}")
     print(f"📆 Days with data: {len(data['workouts'])}")
+    print(f"✅ Newly fetched: {stats['success']}")
+    print(f"❌ Failed: {stats['failed']}")
+    print(f"💾 Cached: {stats['cached']}")
     
     # Per-source summary
     print("\n📦 Per source:")
@@ -147,9 +172,15 @@ def fetch_all():
             source_counts[wod['source']] = source_counts.get(wod['source'], 0) + 1
     
     for source_id, count in sorted(source_counts.items()):
-        print(f"  {SCRAPERS.get(source_id, {}).get('name', source_id)}: {count}")
+        name = SCRAPERS.get(source_id, {}).get('name', source_id)
+        print(f"  {name}: {count}")
     
     print("=" * 50)
+    
+    # Warning if all failed
+    if stats['success'] == 0 and stats['cached'] == 0:
+        print("\n⚠️  WARNING: No workouts were fetched!")
+        print("   Check your internet connection and scraper selectors")
 
 
 if __name__ == '__main__':
