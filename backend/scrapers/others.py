@@ -78,8 +78,8 @@ def is_workout_line(line):
 def fetch_postal(date):
     """
     CrossFit Postal
-    WOD is at the TOP of the page.
-    Stop parsing when we hit contact info / footer content.
+    WOD is at the TOP of the page, before all the footer/booking links.
+    Strategy: grab the first content-rich text block, stop at booking keywords.
     """
     date_str = date.strftime('%Y-%m-%d')
     url = 'https://crossfitpostal.com/dailywod'
@@ -94,58 +94,69 @@ def fetch_postal(date):
 
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        # Remove definite noise
-        for tag in soup.find_all(['script', 'style', 'img', 'iframe', 'noscript']):
+        # Remove definite noise first
+        for tag in soup.find_all(['script', 'style', 'img', 'iframe', 'noscript', 'form']):
+            tag.decompose()
+        for tag in soup.find_all(class_=re.compile(r'footer|popup|modal|cookie|nav|menu|header', re.I)):
+            tag.decompose()
+        for tag in soup.find_all(id=re.compile(r'footer|popup|modal|cookie|nav|menu|header', re.I)):
             tag.decompose()
 
-        # Remove footer, popups, modals
-        for tag in soup.find_all(class_=re.compile(r'footer|popup|modal|cookie|overlay', re.I)):
-            tag.decompose()
-        for tag in soup.find_all(id=re.compile(r'footer|popup|modal|cookie|overlay', re.I)):
-            tag.decompose()
-
-        # Get ALL text from body, line by line
-        body = soup.find('body') or soup
-        all_lines = [l.strip() for l in body.get_text(separator='\n').split('\n') if l.strip()]
-
-        # Extract workout: take lines from top, stop at contact/footer
-        workout_lines = []
-        found_any_workout = False
-
-        for line in all_lines:
-            lower = line.lower()
-
-            # STOP if we hit contact/footer content
-            if any(stop in lower for stop in POSTAL_STOP_KEYWORDS):
-                print(f"    → Stopping at: '{line[:60]}'")
+        # Find the main content area (try multiple approaches)
+        content = None
+        for selector in [
+            ('class', 'entry-content'),
+            ('class', 'post-content'),
+            ('class', 'content'),
+            ('class', 'wod'),
+            ('class', 'main-content'),
+            ('tag', 'article'),
+            ('tag', 'main'),
+        ]:
+            if selector[0] == 'class':
+                content = soup.find('div', class_=selector[1])
+            else:
+                content = soup.find(selector[1])
+            if content:
+                print(f"    → Found via {selector[1]}")
                 break
 
-            # Skip single-word nav items
-            if len(line.split()) == 1 and not line[0].isdigit():
-                continue
+        # Fallback: use body
+        if not content:
+            content = soup.find('body') or soup
 
-            # Check if this is workout content
-            if is_workout_line(line):
-                workout_lines.append(line)
-                found_any_workout = True
-            elif found_any_workout:
-                # Once we found workout, keep reasonable lines
-                if 5 < len(line) < 100:
-                    workout_lines.append(line)
+        raw_lines = [l.strip() for l in content.get_text(separator='\n').split('\n') if l.strip()]
 
-        # Filter: remove lines that are clearly not workout
-        final_lines = []
-        for line in workout_lines:
+        # Hard stop keywords - booking/footer content
+        HARD_STOP = [
+            'book a drop', 'click here to pay', 'sign your waiver',
+            'drop-in', 'pay now', 'book now', 'join now',
+            'follow us', 'copyright', 'all rights reserved',
+            'facebook', 'instagram', '@crossfit',
+        ]
+
+        # Take lines until we hit footer content
+        workout_lines = []
+        for line in raw_lines:
             lower = line.lower()
-            if any(skip in lower for skip in ['daily wod', 'click here', 'sign your', 'book a']):
+            if any(stop in lower for stop in HARD_STOP):
+                print(f"    → Stopped before: '{line[:50]}'")
+                break
+            # Skip single navigation words
+            if len(line.split()) == 1 and line.lower() in ['home','about','contact','menu','search','login','shop']:
                 continue
-            final_lines.append(line)
+            workout_lines.append(line)
+
+        # Remove generic labels at the top
+        SKIP_LINES = ['daily wod', 'wod', 'workout of the day']
+        final_lines = [l for l in workout_lines if l.lower() not in SKIP_LINES]
 
         if not final_lines:
             print(f"    → No workout lines found")
             return None
 
-        # Parse into sections
+        # Limit to first 40 lines (the actual workout)
+        final_lines = final_lines[:40]
         sections = parse_into_sections(final_lines)
 
         print(f"    → SUCCESS: {len(sections)} sections, {sum(len(s['lines']) for s in sections)} lines")
