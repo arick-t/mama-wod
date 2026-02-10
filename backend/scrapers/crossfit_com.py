@@ -1,85 +1,142 @@
 """
-CrossFit.com Scraper - VERIFIED WORKING
-This one already works, keeping it as-is
+CrossFit.com Scraper - FIXED for current site structure (2026)
+The site now uses React/Next.js - content may be in different selectors
 """
-
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
+import re
+
+HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+}
+
+# Lines to stop at
+STOP_WORDS = ['stimulus', 'scaling', 'intermediate option', 'beginner option',
+              'resources', 'comments', 'find a gym', 'subscribe']
+
+# Lines to skip (navigation etc)
+SKIP_WORDS = ['crossfit games', 'sign up', 'shop', 'register', 'login',
+              'follow us', 'copyright', 'privacy']
+
+
+def parse_sections(lines):
+    """Parse flat lines into sections."""
+    SECTION_HINTS = ['warm', 'strength', 'skill', 'wod', 'metcon',
+                     'conditioning', 'amrap', 'emom', 'for time', 'tabata',
+                     'power', 'accessory', 'cool']
+    sections = []
+    current = {'title': 'WORKOUT', 'lines': []}
+    for line in lines:
+        lo = line.lower()
+        is_header = (line.isupper() and 3 <= len(line) <= 50) or \
+                    (any(kw in lo for kw in SECTION_HINTS) and len(line) < 50 and ':' in line)
+        if is_header:
+            if current['lines']:
+                sections.append(current)
+            current = {'title': line.upper().strip(':'), 'lines': []}
+        else:
+            current['lines'].append(line)
+    if current['lines']:
+        sections.append(current)
+    return sections or [{'title': 'WORKOUT', 'lines': lines}]
 
 
 def fetch_workout(date):
-    """Fetch workout from CrossFit.com - this scraper works!"""
+    """Fetch from CrossFit.com - tries multiple URL formats."""
     date_str = date.strftime('%Y-%m-%d')
+
+    # CrossFit.com uses YYMMDD format
     date_code = date.strftime('%y%m%d')
     url = f'https://www.crossfit.com/{date_code}'
-    
+
     try:
         print(f"    → Fetching {url}")
-        response = requests.get(url, timeout=15, headers={
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        })
-        
-        if response.status_code != 200:
-            print(f"    → Status {response.status_code}")
+        r = requests.get(url, timeout=15, headers=HEADERS)
+
+        if r.status_code != 200:
+            print(f"    → Status {r.status_code}")
             return None
-        
-        soup = BeautifulSoup(response.text, 'html.parser')
-        
+
+        soup = BeautifulSoup(r.text, 'html.parser')
+
         # Remove noise
-        for tag in soup.find_all(['script', 'style', 'nav', 'footer', 'header', 'img', 'iframe']):
+        for tag in soup.find_all(['script', 'style', 'img', 'nav',
+                                   'footer', 'header', 'iframe', 'noscript']):
             tag.decompose()
-        
-        # Find article
-        article = soup.find('article')
-        if not article:
-            print(f"    → No article found")
+
+        # Try multiple content selectors (site has changed structure)
+        content = None
+        tried = []
+
+        # 1. article tag
+        art = soup.find('article')
+        if art:
+            content = art
+            tried.append('article')
+
+        # 2. main tag
+        if not content:
+            main = soup.find('main')
+            if main:
+                content = main
+                tried.append('main')
+
+        # 3. div with class containing 'post' or 'content'
+        if not content:
+            for cls in ['post-content', 'entry-content', 'wod-content',
+                        'article-content', 'content']:
+                div = soup.find('div', class_=lambda c: c and cls in ' '.join(c).lower())
+                if div:
+                    content = div
+                    tried.append(cls)
+                    break
+
+        # 4. Any large text block
+        if not content:
+            divs = soup.find_all('div')
+            best = None
+            best_len = 0
+            for div in divs:
+                t = div.get_text(strip=True)
+                if len(t) > best_len and len(t) < 5000:
+                    best_len = len(t)
+                    best = div
+            if best:
+                content = best
+                tried.append('largest-div')
+
+        if not content:
+            print(f"    → No content found")
             return None
-        
-        # Get text, stop at Stimulus/Scaling
+
+        print(f"    → Found via {tried[-1]}")
+
+        # Extract lines
+        raw = content.get_text(separator='\n', strip=True)
         lines = []
-        for line in article.get_text(separator='\n').split('\n'):
+        for line in raw.split('\n'):
             line = line.strip()
-            if not line:
+            if not line or len(line) < 2:
                 continue
-            
-            # STOP at these keywords
-            lower = line.lower()
-            if any(stop in lower for stop in ['stimulus', 'scaling', 'intermediate option', 'beginner option', 'resources']):
+            lo = line.lower()
+            if any(stop in lo for stop in STOP_WORDS):
                 break
-            
-            # Skip junk
-            if any(skip in lower for skip in ['find a gym', 'crossfit games', 'subscribe', 'sign up', 'shop']):
+            if any(skip in lo for skip in SKIP_WORDS):
                 continue
-            
             lines.append(line)
-        
+
+        # Limit to first 60 lines
+        lines = lines[:60]
+
         if not lines:
-            print(f"    → No lines parsed")
+            print(f"    → No lines after filtering")
             return None
-        
-        # Parse into sections
-        sections = []
-        current_section = {'title': 'WORKOUT', 'lines': []}
-        
-        for line in lines[:60]:  # Limit
-            # Section header (contains ":")
-            if ':' in line and len(line) < 50:
-                if current_section['lines']:
-                    sections.append(current_section)
-                current_section = {'title': line.strip(':').upper(), 'lines': []}
-            else:
-                current_section['lines'].append(line)
-        
-        if current_section['lines']:
-            sections.append(current_section)
-        
-        if not sections:
-            print(f"    → No sections")
-            return None
-        
+
+        sections = parse_sections(lines)
         print(f"    → SUCCESS: {len(sections)} sections")
-        
+
         return {
             'date': date_str,
             'source': 'crossfit_com',
@@ -87,7 +144,7 @@ def fetch_workout(date):
             'url': url,
             'sections': sections
         }
-        
+
     except requests.Timeout:
         print(f"    → Timeout")
         return None
@@ -97,7 +154,10 @@ def fetch_workout(date):
 
 
 if __name__ == '__main__':
-    print("Testing CrossFit.com scraper...")
     result = fetch_workout(datetime.now())
     if result:
-        print(f"✅ Success! {len(result['sections'])} sections")
+        print(f"\n✅ Sections: {len(result['sections'])}")
+        for s in result['sections'][:3]:
+            print(f"  [{s['title']}]: {s['lines'][:2]}")
+    else:
+        print("❌ Failed")
