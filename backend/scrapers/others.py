@@ -1,18 +1,7 @@
 """
-CrossFit Postal & CrossFit Green Beach Scrapers
+CrossFit Postal & CrossFit Green Beach
 
-POSTAL (crossfitpostal.com/dailywod) – TODAY ONLY.
-  Returns None for any date that is not today.
-
-Page structure:
-  [header image]
-  "CrossFit - Tue, Feb 10"   <- date line (skip it, start after)
-  [workout]
-  "Intermediate"             <- STOP
-
-JUNK_RE fix: removed 'cat', 'tag', 'author' which killed WordPress content.
-
-GREEN BEACH: Wix JS – cannot scrape.
+POSTAL: Minimal cleanup - don't kill content divs!
 """
 import re
 import requests
@@ -44,12 +33,6 @@ NAV_WORDS = {
     'search', 'wod', 'daily wod', 'blog', 'skip to content',
 }
 
-# SAFE junk regex – no 'cat', 'tag', 'author'
-JUNK_RE = re.compile(
-    r'sidebar|comment|widget|share|social|related|'
-    r'breadcrumb|menu|footer|cookie|popup|modal|advertisement', re.I
-)
-
 
 def parse_sections(lines):
     sections = []
@@ -75,13 +58,10 @@ def parse_sections(lines):
 
 
 def fetch_postal(date):
-    """
-    Today-only source.  Returns None for any date != today.
-    """
+    """Today-only source."""
     today_str = datetime.now().strftime('%Y-%m-%d')
     date_str  = date.strftime('%Y-%m-%d')
 
-    # Only fetch for today
     if date_str != today_str:
         return None
 
@@ -97,17 +77,28 @@ def fetch_postal(date):
 
         soup = BeautifulSoup(r.text, 'html.parser')
 
-        # Remove ONLY safe noise elements
-        for tag in soup.find_all(['script', 'style', 'iframe', 'noscript',
-                                   'form', 'video']):
+        # MINIMAL cleanup
+        for tag in soup.find_all(['script', 'style', 'iframe', 'noscript', 'form']):
             tag.decompose()
         for img in soup.find_all(['img', 'picture', 'figure']):
             img.decompose()
-        for tag in soup.find_all(['nav', 'footer', 'header']):
+        
+        # Remove ONLY page-level header/footer (not content headers!)
+        NAV_FOOTER_RE = re.compile(
+            r'site-header|page-header|main-header|site-navigation|'
+            r'primary-navigation|site-footer|page-footer|main-footer', re.I
+        )
+        for tag in soup.find_all(class_=NAV_FOOTER_RE):
             tag.decompose()
-        for tag in soup.find_all(class_=JUNK_RE):
+        for tag in soup.find_all(id=NAV_FOOTER_RE):
             tag.decompose()
-        for tag in soup.find_all(id=JUNK_RE):
+        
+        # Remove only obvious junk
+        SAFE_JUNK_RE = re.compile(
+            r'^(sidebar|comment-|widget-|share-buttons|social-share|'
+            r'breadcrumb|cookie-notice|popup-|modal-)', re.I
+        )
+        for tag in soup.find_all(class_=SAFE_JUNK_RE):
             tag.decompose()
 
         body = soup.find('body') or soup
@@ -119,7 +110,7 @@ def fetch_postal(date):
 
         print(f"    → {len(raw_lines)} raw lines after cleanup")
 
-        # Find date-line START marker (skip the date line itself)
+        # Find date marker
         start_idx = 0
         for i, line in enumerate(raw_lines):
             if DATE_HDR.search(line):

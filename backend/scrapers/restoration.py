@@ -2,13 +2,8 @@
 CrossFit Restoration Scraper
 URL: crossfitrestoration.com/wod-{month}-{day}-{year}/
 
-Page structure:
-  [header image]
-  "CrossFit – Tue, Feb 10"   <- START after this
-  [workout sections]
-  "Intermediate"             <- STOP here
-
-JUNK_RE fix: removed 'cat|tag|author' which was killing WordPress category divs.
+CRITICAL FIX: Don't remove ALL <header> tags - only site-header/page-header.
+Content is often inside <header class="entry-header"> in WordPress!
 """
 import re
 import requests
@@ -45,12 +40,6 @@ NAV_WORDS = {
     'coaches', 'crossfit', 'restoration', 'blog', 'gallery',
     'register', 'login', 'shop', 'search', 'skip to content',
 }
-
-# SAFE junk regex - NO 'cat', 'tag', 'author' (they match WordPress content classes)
-JUNK_RE = re.compile(
-    r'sidebar|comment|widget|share|social|related|'
-    r'breadcrumb|menu|footer|cookie|popup|modal|advertisement', re.I
-)
 
 
 def make_url(date):
@@ -100,18 +89,32 @@ def fetch_workout(date):
 
         soup = BeautifulSoup(r.text, 'html.parser')
 
-        # ── Remove ONLY known noise elements ─────────────────────────────────
-        for tag in soup.find_all(['script', 'style', 'iframe', 'noscript',
-                                   'form', 'video']):
+        # ── MINIMAL cleanup - remove ONLY obvious noise ───────────────────────
+        # Remove scripts, styles, iframes
+        for tag in soup.find_all(['script', 'style', 'iframe', 'noscript', 'form']):
             tag.decompose()
+        
+        # Remove ALL images
         for img in soup.find_all(['img', 'picture', 'figure']):
             img.decompose()
-        for tag in soup.find_all(['nav', 'footer', 'header']):
+        
+        # Remove ONLY page-level nav/footer (with specific classes)
+        # NOT all <nav>/<header> tags (content might be inside them!)
+        NAV_FOOTER_RE = re.compile(
+            r'site-header|page-header|main-header|site-navigation|'
+            r'primary-navigation|site-footer|page-footer|main-footer', re.I
+        )
+        for tag in soup.find_all(class_=NAV_FOOTER_RE):
             tag.decompose()
-        # Only remove safe junk classes (no 'cat', 'tag', 'author')
-        for tag in soup.find_all(class_=JUNK_RE):
+        for tag in soup.find_all(id=NAV_FOOTER_RE):
             tag.decompose()
-        for tag in soup.find_all(id=JUNK_RE):
+        
+        # Remove only OBVIOUS junk divs
+        SAFE_JUNK_RE = re.compile(
+            r'^(sidebar|comment-|widget-|share-buttons|social-share|'
+            r'breadcrumb|cookie-notice|popup-|modal-)', re.I
+        )
+        for tag in soup.find_all(class_=SAFE_JUNK_RE):
             tag.decompose()
 
         body = soup.find('body') or soup
@@ -123,7 +126,7 @@ def fetch_workout(date):
 
         print(f"    → {len(raw_lines)} raw lines after cleanup")
 
-        # ── Find date-header START marker ─────────────────────────────────────
+        # Find date marker
         start_idx = 0
         for i, line in enumerate(raw_lines):
             if DATE_HDR.search(line):
@@ -131,9 +134,9 @@ def fetch_workout(date):
                 print(f"    → Date marker at line {i}: '{line}'")
                 break
         else:
-            print(f"    → No date marker found – using full body")
+            print(f"    → No date marker – using full body")
 
-        # ── Collect workout; STOP at "Intermediate" ───────────────────────────
+        # Collect; STOP at "Intermediate"
         workout_lines = []
         for line in raw_lines[start_idx:]:
             lo = line.lower().strip()

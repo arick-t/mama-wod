@@ -1,12 +1,5 @@
 """
-CrossFit 1013 Scraper
-URL: https://www.crossfit1013.com/wod
-
-Page structure: long page with multiple WODs listed.
-Each WOD has a date header like "Saturday 2/7/2026"
-followed by workout content, then next date header.
-
-DEBUG: Prints first 10 date-looking lines found on page to aid diagnosis.
+CrossFit 1013 Scraper - Minimal cleanup approach
 """
 import re
 import requests
@@ -20,7 +13,6 @@ HEADERS = {
         'Chrome/120.0.0.0 Safari/537.36'
     ),
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Language': 'en-US,en;q=0.5',
 }
 
 SECTION_HINTS = [
@@ -29,8 +21,6 @@ SECTION_HINTS = [
     'accessory', 'cool down', 'power', 'endurance', 'barbell',
 ]
 
-# Date header formats the site might use:
-# "Saturday 2/7/2026", "Mon 2/9/2026", "Monday, February 9", etc.
 DATE_RE = re.compile(
     r'^(monday|tuesday|wednesday|thursday|friday|saturday|sunday|'
     r'mon|tue|wed|thu|fri|sat|sun)'
@@ -38,15 +28,8 @@ DATE_RE = re.compile(
     re.IGNORECASE
 )
 
-# Safe junk removal
-JUNK_RE = re.compile(
-    r'sidebar|comment|widget|share|social|related|'
-    r'breadcrumb|menu|footer|cookie|popup|modal|advertisement', re.I
-)
-
 
 def parse_date_line(line):
-    """Try to parse M/D/YYYY from a date header line."""
     m = DATE_RE.match(line.strip())
     if not m:
         return None
@@ -62,7 +45,6 @@ def parse_date_line(line):
 
 
 def date_matches_line(line, target):
-    """Return True if line is a date header for target date."""
     parsed = parse_date_line(line)
     if not parsed:
         return False
@@ -106,16 +88,20 @@ def fetch_workout(date):
 
         soup = BeautifulSoup(r.text, 'html.parser')
 
-        for tag in soup.find_all(['script', 'style', 'iframe', 'noscript',
-                                   'form', 'video']):
+        # MINIMAL cleanup
+        for tag in soup.find_all(['script', 'style', 'iframe', 'noscript', 'form', 'video']):
             tag.decompose()
         for img in soup.find_all(['img', 'picture', 'figure']):
-            img.decompose()
-        for tag in soup.find_all(['nav', 'footer', 'header']):
             tag.decompose()
-        for tag in soup.find_all(class_=JUNK_RE):
+        
+        # Remove ONLY page-level nav/footer
+        NAV_FOOTER_RE = re.compile(
+            r'site-header|page-header|main-header|site-navigation|'
+            r'primary-navigation|site-footer|page-footer|main-footer', re.I
+        )
+        for tag in soup.find_all(class_=NAV_FOOTER_RE):
             tag.decompose()
-        for tag in soup.find_all(id=JUNK_RE):
+        for tag in soup.find_all(id=NAV_FOOTER_RE):
             tag.decompose()
 
         body = soup.find('body') or soup
@@ -125,7 +111,7 @@ def fetch_workout(date):
             if l.strip() and len(l.strip()) > 1
         ]
 
-        # DEBUG: print first few date-matching lines to see what format the page uses
+        # DEBUG: find date lines
         date_lines_found = []
         for line in raw_lines:
             if DATE_RE.match(line.strip()):
@@ -134,25 +120,24 @@ def fetch_workout(date):
                 break
 
         if date_lines_found:
-            print(f"    → Date lines found on page: {date_lines_found[:3]}")
+            print(f"    → Date lines found: {date_lines_found[:3]}")
         else:
-            # Try to find ANY line with a year to understand the format
-            year_lines = [l for l in raw_lines if '2026' in l or '2025' in l][:3]
+            year_lines = [l for l in raw_lines if '2026' in l or '2025' in l][:5]
             if year_lines:
-                print(f"    → Year lines (no date header match): {year_lines}")
+                print(f"    → Year-containing lines: {year_lines}")
             else:
-                print(f"    → No date lines found. Page has {len(raw_lines)} lines total.")
-                print(f"    → First 5 lines: {raw_lines[:5]}")
+                print(f"    → No dates found. Page has {len(raw_lines)} lines.")
+                print(f"    → Sample lines: {raw_lines[:10]}")
             return None
 
-        # Find our target date
+        # Find target date
         target_start = None
         next_date_idx = None
 
         for i, line in enumerate(raw_lines):
             if date_matches_line(line, date):
                 target_start = i + 1
-                print(f"    → Matched target date: '{line}'")
+                print(f"    → Matched: '{line}'")
                 for j in range(i + 1, len(raw_lines)):
                     if DATE_RE.match(raw_lines[j].strip()):
                         next_date_idx = j
@@ -160,7 +145,7 @@ def fetch_workout(date):
                 break
 
         if target_start is None:
-            print(f"    → Date {date_str} not found. Available: {[l for l in date_lines_found[:3]]}")
+            print(f"    → Date {date_str} not found. Available: {date_lines_found[:3]}")
             return None
 
         end_idx = next_date_idx if next_date_idx else target_start + 60
