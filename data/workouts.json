@@ -8,19 +8,49 @@
         "url": "https://myleo.de/en/wods/2026-02-11/",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "STRENGTH",
+=======
+            "title": "MOBILITY 3MIN",
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             "lines": [
-              "Back Squat 5x5",
-              "Rest 2 min between sets"
+              "1:00 each",
+              "sumo squat stretch",
+              "scorpions",
+              "samson stretch"
             ]
           },
           {
-            "title": "METCON",
+            "title": "WARM UP 5MIN",
             "lines": [
-              "AMRAP 12 min",
-              "15 Thrusters (43kg)",
-              "12 Pull-ups",
-              "9 Box Jumps"
+              "on every 2:30 x 2 rounds",
+              "10 reverse lunges",
+              "10 prone snow angels",
+              "30sec plank hold",
+              "*remaining time bike/ski"
+            ]
+          },
+          {
+            "title": "SQUATS 12MIN",
+            "lines": [
+              "on the 2:00 x 6 sets:",
+              "2 front squats + 4 back squats",
+              "@70% of 1rm back squat",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "4 x 3:00 amrap:",
+              "30 double unders",
+              "15 push press 40/30kg",
+              "25/20 cal ski/bike",
+              "rest 1:00 between amraps",
+              "* pick up where you left off",
+              "score: rounds + reps",
+              "aerobic power [vo2 max]",
+              "push press + front squat"
             ]
           }
         ]
@@ -34,9 +64,11 @@
           {
             "title": "WORKOUT",
             "lines": [
-              "21-15-9",
-              "Thrusters 95 lb",
-              "Pull-ups"
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "5 hang power cleans",
+              "20-second L-sit hold",
+              "â 125-lb barbell",
+              "â 185-lb barbell"
             ]
           }
         ]
@@ -48,19 +80,85 @@
         "url": "https://crossfitrestoration.com/wod-february-11-2026/",
         "sections": [
           {
-            "title": "STRENGTH",
+            "title": "WORKOUT",
             "lines": [
-              "Deadlift",
-              "5-3-1+ @ 75/85/95%"
+              "Skip to content"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-11",
+        "source": "panda",
+        "source_name": "CrossFit Panda",
+        "url": "https://crossfitpanda-ghost.fly.dev/wednesday-110226/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "CrossFit W.O.D"
             ]
           },
           {
-            "title": "WOD",
+            "title": "STRENGTH:",
             "lines": [
-              "For Time:",
-              "21-15-9",
-              "Hang Power Clean (60kg)",
-              "Burpees over bar"
+              "E02:00MOMx7 Sets:",
+              "Build Up To 2 heavy STOH (From Rack)"
+            ]
+          },
+          {
+            "title": "FOR TIME:",
+            "lines": [
+              "30 2DB Box Step Overs #2x22.5/15",
+              "60 Pull-Ups",
+              "30 2DB Box Step Overs"
+            ]
+          },
+          {
+            "title": "CROSSFIT STRENGTH",
+            "lines": [
+              "Part A:",
+              "Push Press 5x5 *Build Up to A @2RIR",
+              "Part B:",
+              "4 Supersets:",
+              "8 2DB B-Stance Deadlifts(Each Leg)",
+              "6\\6 Single Arm DB Bent-Over-Rows @1131 TEMPO",
+              "Part C:",
+              "08:00 Min EMOM, Alt:",
+              "1.)\t00:45 Assualt Bike @9Hard!",
+              "2.)\t 8 Sandbag Squats #70/45"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-11",
+        "source": "linchpin",
+        "source_name": "CrossFit Linchpin",
+        "url": "https://crossfitlinchpin.com/blogs/wod",
+        "note": "⚠️ This source provides daily workouts only",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "For time, or not:",
+              "800m Run",
+              "15 Ring Muscle-ups",
+              "800m Run",
+              "15 Bar Muscle-ups",
+              "800m Run",
+              "15 Pullups, strict",
+              "800m Run",
+              "Or as a 2-person team...",
+              "For time, or not:",
+              "800m Run",
+              "30 Ring Muscle-ups",
+              "800m Run",
+              "30 Bar Muscle-ups",
+              "800m Run",
+              "30 Pullups, strict",
+              "800m Run",
+              "*Only one person working on the RMU's.BMU's or pull-ups at a time. Both people must run together."
             ]
           }
         ]
@@ -72,29 +170,9 @@
         "url": "https://crossfitpostal.com/dailywod",
         "sections": [
           {
-            "title": "WOD",
+            "title": "WORKOUT",
             "lines": [
-              "5 Rounds for time:",
-              "400m Run",
-              "15 Overhead Squats",
-              "10 Toes-to-bar"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-02-11",
-        "source": "linchpin",
-        "source_name": "CrossFit Linchpin",
-        "url": "https://crossfitlinchpin.com/blogs/wod",
-        "note": "⚠️ Today only",
-        "sections": [
-          {
-            "title": "CONDITIONING",
-            "lines": [
-              "EMOM 10",
-              "Odd: 5 Burpees",
-              "Even: 10 KB Swings"
+              "Daily WOD — Crossfit Postal"
             ]
           }
         ]
@@ -108,6 +186,7 @@
         "url": "https://myleo.de/en/wods/2026-02-10/",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "STRENGTH",
             "lines": [
               "Back Squat 5x5",
@@ -121,6 +200,55 @@
               "15 Thrusters (43kg)",
               "12 Pull-ups",
               "9 Box Jumps"
+=======
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "lat stretch",
+              "hand walk",
+              "instep rotations",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "amrap 4min",
+              "10 clean grip deadlifts",
+              "10 hang high pulls",
+              "10 straight leg sit ups"
+            ]
+          },
+          {
+            "title": "POWER CLEAN 15MIN",
+            "lines": [
+              "5 sets:",
+              "3 power cleans",
+              "(build to a heavy set)",
+              "score: heaviest load",
+              "explosive power"
+            ]
+          },
+          {
+            "title": "CONDITIONING 12MIN",
+            "lines": [
+              "12:00 amrap",
+              "21 toes to bar",
+              "21 power cleans 40/30kg",
+              "rest 1:00",
+              "18 toes to bar",
+              "18 power cleans 50/35kg",
+              "rest 1:00",
+              "15 toes to bar",
+              "15 power cleans 60/40kg",
+              "rest 1:00",
+              "12 toes to bar",
+              "12 power cleans 70/50kg",
+              "rest 1:00",
+              "9 toes to bar",
+              "max power cleans in remaining time 80/60kg",
+              "score: total power clean reps",
+              "muscular endurance & vo2 max"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -134,9 +262,27 @@
           {
             "title": "WORKOUT",
             "lines": [
+<<<<<<< HEAD
               "21-15-9",
               "Thrusters 95 lb",
               "Pull-ups"
+=======
+              "Fast and Heavy"
+            ]
+          },
+          {
+            "title": "FOR TIME",
+            "lines": [
+              "21 dumbbell thrusters*",
+              "400-meter run",
+              "18 dumbbell thrusters",
+              "400-meter run",
+              "15 dumbbell thrusters",
+              "400-meter run",
+              "*Use two dumbbells.",
+              "Compare to",
+              "010210"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -148,6 +294,7 @@
         "url": "https://crossfitrestoration.com/wod-february-10-2026/",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "STRENGTH",
             "lines": [
               "Deadlift",
@@ -161,6 +308,55 @@
               "21-15-9",
               "Hang Power Clean (60kg)",
               "Burpees over bar"
+=======
+            "title": "WORKOUT",
+            "lines": [
+              "Skip to content"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-10",
+        "source": "panda",
+        "source_name": "CrossFit Panda",
+        "url": "https://crossfitpanda-ghost.fly.dev/wednesday-110226/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "CrossFit W.O.D"
+            ]
+          },
+          {
+            "title": "STRENGTH:",
+            "lines": [
+              "E02:00MOMx7 Sets:",
+              "Build Up To 2 heavy STOH (From Rack)"
+            ]
+          },
+          {
+            "title": "FOR TIME:",
+            "lines": [
+              "30 2DB Box Step Overs #2x22.5/15",
+              "60 Pull-Ups",
+              "30 2DB Box Step Overs"
+            ]
+          },
+          {
+            "title": "CROSSFIT STRENGTH",
+            "lines": [
+              "Part A:",
+              "Push Press 5x5 *Build Up to A @2RIR",
+              "Part B:",
+              "4 Supersets:",
+              "8 2DB B-Stance Deadlifts(Each Leg)",
+              "6\\6 Single Arm DB Bent-Over-Rows @1131 TEMPO",
+              "Part C:",
+              "08:00 Min EMOM, Alt:",
+              "1.)\t00:45 Assualt Bike @9Hard!",
+              "2.)\t 8 Sandbag Squats #70/45"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -172,12 +368,16 @@
         "url": "https://crossfitpostal.com/dailywod",
         "sections": [
           {
-            "title": "WOD",
+            "title": "WORKOUT",
             "lines": [
+<<<<<<< HEAD
               "5 Rounds for time:",
               "400m Run",
               "15 Overhead Squats",
               "10 Toes-to-bar"
+=======
+              "Daily WOD — Crossfit Postal"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -191,6 +391,7 @@
         "url": "https://myleo.de/en/wods/2026-02-09/",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "STRENGTH",
             "lines": [
               "Back Squat 5x5",
@@ -204,6 +405,44 @@
               "15 Thrusters (43kg)",
               "12 Pull-ups",
               "9 Box Jumps"
+=======
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "90/90 hip rotation",
+              "lat stretch",
+              "instep rotation"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "amrap 4min",
+              "10 cossack squats",
+              "10 burpees",
+              "10/8cal row"
+            ]
+          },
+          {
+            "title": "DEADLIFTS 12MIN",
+            "lines": [
+              "on the 2:00 x 6 sets:",
+              "2 sumo deadlifts + 4 conventional deadlifts",
+              "@70% of 1rm deadlift",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 18MIN",
+            "lines": [
+              "on the minute x 18min",
+              "minute 1: row cal",
+              "minute 2: burpees over the rower",
+              "score: lowest row round + lowest burpee round",
+              "aerobic power [lactate threshold]",
+              "deadlift"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -217,9 +456,9 @@
           {
             "title": "WORKOUT",
             "lines": [
-              "21-15-9",
-              "Thrusters 95 lb",
-              "Pull-ups"
+              "Monday",
+              "260209",
+              "Learn the Movement â"
             ]
           }
         ]
@@ -231,19 +470,70 @@
         "url": "https://crossfitrestoration.com/wod-february-9-2026/",
         "sections": [
           {
-            "title": "STRENGTH",
+            "title": "WORKOUT",
             "lines": [
-              "Deadlift",
-              "5-3-1+ @ 75/85/95%"
+              "Skip to content"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-09",
+        "source": "panda",
+        "source_name": "CrossFit Panda",
+        "url": "https://crossfitpanda-ghost.fly.dev/160226/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "CrossFit W.O.D"
             ]
           },
           {
-            "title": "WOD",
+            "title": "STRENGTH:",
             "lines": [
+<<<<<<< HEAD
               "For Time:",
               "21-15-9",
               "Hang Power Clean (60kg)",
               "Burpees over bar"
+=======
+              "Back Rack Lunges",
+              "6-6-4-4-4",
+              "10\\10 Leg Raises Over KB After Each set."
+            ]
+          },
+          {
+            "title": "METCON:",
+            "lines": [
+              "4 Rounds For Time:",
+              "20 WallBalls #10/6kg",
+              "15 V-Ups",
+              "10 Burpees To Target"
+            ]
+          },
+          {
+            "title": "CROSSFIT ENDURANCE",
+            "lines": [
+              "Part A:",
+              "3K Row Test",
+              "05:00 Min Rest",
+              "Part B:",
+              "25:00 Min AMRAP:",
+              "10 Plate GTOH #15/10",
+              "20 Plate OverHead Lunges",
+              "30 Tuck-Ups"
+            ]
+          },
+          {
+            "title": "SKILL:",
+            "lines": [
+              "Kipping Bar Muscle Up",
+              "-Hollow & Arch",
+              "-Kipping Technique",
+              "-Transition",
+              "-Kipping Dip"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -255,12 +545,18 @@
         "url": "https://crossfitpostal.com/dailywod",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "WOD",
             "lines": [
               "5 Rounds for time:",
               "400m Run",
               "15 Overhead Squats",
               "10 Toes-to-bar"
+=======
+            "title": "WORKOUT",
+            "lines": [
+              "Daily WOD — Crossfit Postal"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -274,6 +570,7 @@
         "url": "https://myleo.de/en/wods/2026-02-08/",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "STRENGTH",
             "lines": [
               "Back Squat 5x5",
@@ -287,6 +584,40 @@
               "15 Thrusters (43kg)",
               "12 Pull-ups",
               "9 Box Jumps"
+=======
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "instep rotation",
+              "lat stretch",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "30sec on / 15sec off x2 rounds",
+              "1. scap. push ups",
+              "2. bike/ski",
+              "3. plank hold",
+              "4. box step ups"
+            ]
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "emom 35min (7 rounds)",
+              "1. 3-5 wall walks",
+              "2. 10-15cal bike/ski",
+              "3. 20-30 russian twists",
+              "4. 16-20 box jumps",
+              "5. rest",
+              "Sunday Endurance for Open Gym",
+              "on the 8:00 x 5-10 rounds:",
+              "800m ski",
+              "bike in remaining time [rpe 2-3]",
+              "aerobic endurance"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -300,33 +631,61 @@
           {
             "title": "WORKOUT",
             "lines": [
+<<<<<<< HEAD
               "21-15-9",
               "Thrusters 95 lb",
               "Pull-ups"
+=======
+              "Sunday",
+              "260208",
+              "Read More â"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
       },
       {
         "date": "2026-02-08",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-february-8-2026/",
+        "source": "panda",
+        "source_name": "CrossFit Panda",
+        "url": "https://crossfitpanda-ghost.fly.dev/tuesday-170226/",
         "sections": [
           {
-            "title": "STRENGTH",
+            "title": "WORKOUT",
             "lines": [
-              "Deadlift",
-              "5-3-1+ @ 75/85/95%"
+              "CrossFit W.O.D"
             ]
           },
           {
-            "title": "WOD",
+            "title": "STRENGTH:",
             "lines": [
+<<<<<<< HEAD
               "For Time:",
               "21-15-9",
               "Hang Power Clean (60kg)",
               "Burpees over bar"
+=======
+              "Weighted Pull-Ups 3-3-3-2-2-2",
+              "20-30 Sec Weighted Hollow Hold B\\W Sets."
+            ]
+          },
+          {
+            "title": "METCON:",
+            "lines": [
+              "16:00 Min EMOM: (For Max Reps)",
+              "1.)Box Jumps #60/50cm",
+              "2.)Alt. Lunges",
+              "3.) HSPU",
+              "4.) Sit-Ups"
+            ]
+          },
+          {
+            "title": "CROSSFIT ENDURANCE",
+            "lines": [
+              "E06:00MOMx6 Alt Rounds:",
+              "24/18 Cals Row",
+              "15 Dual DB Hang Cleans #2x17.5/12.5"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -338,12 +697,18 @@
         "url": "https://crossfitpostal.com/dailywod",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "WOD",
             "lines": [
               "5 Rounds for time:",
               "400m Run",
               "15 Overhead Squats",
               "10 Toes-to-bar"
+=======
+            "title": "WORKOUT",
+            "lines": [
+              "Daily WOD — Crossfit Postal"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -357,6 +722,7 @@
         "url": "https://myleo.de/en/wods/2026-02-07/",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "STRENGTH",
             "lines": [
               "Back Squat 5x5",
@@ -370,6 +736,38 @@
               "15 Thrusters (43kg)",
               "12 Pull-ups",
               "9 Box Jumps"
+=======
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "scorpions",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "amrap 5min",
+              "10 push ups",
+              "10 air squats",
+              "10 ring rows",
+              "*partner is holding plank position"
+            ]
+          },
+          {
+            "title": "CONDITIONING 30MIN",
+            "lines": [
+              "in teams of 2",
+              "for max reps/cals",
+              "2:00 on/ 00:30 off x 12 rounds",
+              "1. cal ski",
+              "2. pull ups",
+              "3. wall balls",
+              "4. sit ups",
+              "score: lowest reps per station",
+              "lactate threshold & muscular endurance"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -383,9 +781,15 @@
           {
             "title": "WORKOUT",
             "lines": [
+<<<<<<< HEAD
               "21-15-9",
               "Thrusters 95 lb",
               "Pull-ups"
+=======
+              "Saturday",
+              "260207",
+              "Learn the Movement â"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -397,19 +801,60 @@
         "url": "https://crossfitrestoration.com/wod-february-7-2026/",
         "sections": [
           {
-            "title": "STRENGTH",
+            "title": "WORKOUT",
             "lines": [
-              "Deadlift",
-              "5-3-1+ @ 75/85/95%"
+              "Skip to content"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-07",
+        "source": "panda",
+        "source_name": "CrossFit Panda",
+        "url": "https://crossfitpanda-ghost.fly.dev/wednesday-110226/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "CrossFit W.O.D"
             ]
           },
           {
-            "title": "WOD",
+            "title": "STRENGTH:",
             "lines": [
+<<<<<<< HEAD
               "For Time:",
               "21-15-9",
               "Hang Power Clean (60kg)",
               "Burpees over bar"
+=======
+              "E02:00MOMx7 Sets:",
+              "Build Up To 2 heavy STOH (From Rack)"
+            ]
+          },
+          {
+            "title": "FOR TIME:",
+            "lines": [
+              "30 2DB Box Step Overs #2x22.5/15",
+              "60 Pull-Ups",
+              "30 2DB Box Step Overs"
+            ]
+          },
+          {
+            "title": "CROSSFIT STRENGTH",
+            "lines": [
+              "Part A:",
+              "Push Press 5x5 *Build Up to A @2RIR",
+              "Part B:",
+              "4 Supersets:",
+              "8 2DB B-Stance Deadlifts(Each Leg)",
+              "6\\6 Single Arm DB Bent-Over-Rows @1131 TEMPO",
+              "Part C:",
+              "08:00 Min EMOM, Alt:",
+              "1.)\t00:45 Assualt Bike @9Hard!",
+              "2.)\t 8 Sandbag Squats #70/45"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -421,12 +866,18 @@
         "url": "https://crossfitpostal.com/dailywod",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "WOD",
             "lines": [
               "5 Rounds for time:",
               "400m Run",
               "15 Overhead Squats",
               "10 Toes-to-bar"
+=======
+            "title": "WORKOUT",
+            "lines": [
+              "Daily WOD — Crossfit Postal"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -440,6 +891,7 @@
         "url": "https://myleo.de/en/wods/2026-02-06/",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "STRENGTH",
             "lines": [
               "Back Squat 5x5",
@@ -469,17 +921,81 @@
               "21-15-9",
               "Thrusters 95 lb",
               "Pull-ups"
+=======
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "lat stretch",
+              "hand walk",
+              "instep rotations",
+              "calf stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "amrap 4min",
+              "20 single under",
+              "10 box step ups",
+              "10 db deadlifts"
+            ]
+          },
+          {
+            "title": "BULGARIAN SPLIT SQUATS 15MIN",
+            "lines": [
+              "3-4 sets",
+              "5 db bulgarian split squats (heavy)",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "for time",
+              "3 rounds:",
+              "32 double unders",
+              "16 single db box step-ups 60/50cm",
+              "16 alt. db hang snatches",
+              "rest 2:00",
+              "3 rounds:",
+              "32 double unders",
+              "16 single db box step-ups 60/50cm",
+              "16 alt. db hang snatches",
+              "dumbbell: 22,5/15kg",
+              "score: total time (including rest)",
+              "aerobic power [vo2 max]"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
       },
       {
         "date": "2026-02-06",
+<<<<<<< HEAD
+=======
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260206",
+        "sections": [
+          {
+            "title": "10 ROUNDS FOR TIME OF",
+            "lines": [
+              "5 back squats",
+              "3 muscle-ups",
+              "â 155-lb barbell",
+              "â 225-lb barbell"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-06",
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-february-6-2026/",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "STRENGTH",
             "lines": [
               "Deadlift",
@@ -493,6 +1009,55 @@
               "21-15-9",
               "Hang Power Clean (60kg)",
               "Burpees over bar"
+=======
+            "title": "WORKOUT",
+            "lines": [
+              "Skip to content"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-06",
+        "source": "panda",
+        "source_name": "CrossFit Panda",
+        "url": "https://crossfitpanda-ghost.fly.dev/wednesday-110226/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "CrossFit W.O.D"
+            ]
+          },
+          {
+            "title": "STRENGTH:",
+            "lines": [
+              "E02:00MOMx7 Sets:",
+              "Build Up To 2 heavy STOH (From Rack)"
+            ]
+          },
+          {
+            "title": "FOR TIME:",
+            "lines": [
+              "30 2DB Box Step Overs #2x22.5/15",
+              "60 Pull-Ups",
+              "30 2DB Box Step Overs"
+            ]
+          },
+          {
+            "title": "CROSSFIT STRENGTH",
+            "lines": [
+              "Part A:",
+              "Push Press 5x5 *Build Up to A @2RIR",
+              "Part B:",
+              "4 Supersets:",
+              "8 2DB B-Stance Deadlifts(Each Leg)",
+              "6\\6 Single Arm DB Bent-Over-Rows @1131 TEMPO",
+              "Part C:",
+              "08:00 Min EMOM, Alt:",
+              "1.)\t00:45 Assualt Bike @9Hard!",
+              "2.)\t 8 Sandbag Squats #70/45"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -504,12 +1069,18 @@
         "url": "https://crossfitpostal.com/dailywod",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "WOD",
             "lines": [
               "5 Rounds for time:",
               "400m Run",
               "15 Overhead Squats",
               "10 Toes-to-bar"
+=======
+            "title": "WORKOUT",
+            "lines": [
+              "Daily WOD — Crossfit Postal"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -523,6 +1094,7 @@
         "url": "https://myleo.de/en/wods/2026-02-05/",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "STRENGTH",
             "lines": [
               "Back Squat 5x5",
@@ -552,17 +1124,85 @@
               "21-15-9",
               "Thrusters 95 lb",
               "Pull-ups"
+=======
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "lat stretch",
+              "hand walk",
+              "lying hip crocs over",
+              "90/90 hip rotation"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "amrap 4min",
+              "10/8cal row",
+              "10 good mornings",
+              "10 straight leg sit ups"
+            ]
+          },
+          {
+            "title": "CONDITIONING 22MIN",
+            "lines": [
+              "[6:00 amrap]",
+              "18-15-12:",
+              "deadlifts, 80/60kg",
+              "v-ups",
+              "cal row in remaining time",
+              "rest 2:00 -",
+              "[6:00 amrap]",
+              "15-12-9:",
+              "deadlifts, 90/65kg",
+              "v-ups",
+              "cal row in remaining time",
+              "rest 2:00 -",
+              "[6:00 amrap]",
+              "12-9-6:",
+              "deadlifts, 100/70kg",
+              "v-ups",
+              "cal row in remaining time",
+              "score: total row cal",
+              "aerobic power [lactate threshold]"
+            ]
+          },
+          {
+            "title": "POSTERIOR CHAIN 6MIN",
+            "lines": [
+              "3-4 sets",
+              "8-10 hamstring curls on rower"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
       },
       {
         "date": "2026-02-05",
+<<<<<<< HEAD
+=======
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260205",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Rest Day",
+              "Coaching the Mental Side of CrossFit",
+              "The greatest adaptation to CrossFit happens between the ears. In this article, CrossFit pioneer Greg Amundson reveals how elite athletes use positive self-talk and strategic goal-setting to unlock their full potential, and how coaches can harness these mental skills to transform their athletes' performance in the gym and beyond. With the Open just days away, this is a great reminder to get your self-talk in order."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-05",
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-february-5-2026/",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "STRENGTH",
             "lines": [
               "Deadlift",
@@ -576,6 +1216,55 @@
               "21-15-9",
               "Hang Power Clean (60kg)",
               "Burpees over bar"
+=======
+            "title": "WORKOUT",
+            "lines": [
+              "Skip to content"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-05",
+        "source": "panda",
+        "source_name": "CrossFit Panda",
+        "url": "https://crossfitpanda-ghost.fly.dev/wednesday-110226/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "CrossFit W.O.D"
+            ]
+          },
+          {
+            "title": "STRENGTH:",
+            "lines": [
+              "E02:00MOMx7 Sets:",
+              "Build Up To 2 heavy STOH (From Rack)"
+            ]
+          },
+          {
+            "title": "FOR TIME:",
+            "lines": [
+              "30 2DB Box Step Overs #2x22.5/15",
+              "60 Pull-Ups",
+              "30 2DB Box Step Overs"
+            ]
+          },
+          {
+            "title": "CROSSFIT STRENGTH",
+            "lines": [
+              "Part A:",
+              "Push Press 5x5 *Build Up to A @2RIR",
+              "Part B:",
+              "4 Supersets:",
+              "8 2DB B-Stance Deadlifts(Each Leg)",
+              "6\\6 Single Arm DB Bent-Over-Rows @1131 TEMPO",
+              "Part C:",
+              "08:00 Min EMOM, Alt:",
+              "1.)\t00:45 Assualt Bike @9Hard!",
+              "2.)\t 8 Sandbag Squats #70/45"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -587,12 +1276,18 @@
         "url": "https://crossfitpostal.com/dailywod",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "WOD",
             "lines": [
               "5 Rounds for time:",
               "400m Run",
               "15 Overhead Squats",
               "10 Toes-to-bar"
+=======
+            "title": "WORKOUT",
+            "lines": [
+              "Daily WOD — Crossfit Postal"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -606,6 +1301,7 @@
         "url": "https://myleo.de/en/wods/2026-02-04/",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "STRENGTH",
             "lines": [
               "Back Squat 5x5",
@@ -635,17 +1331,83 @@
               "21-15-9",
               "Thrusters 95 lb",
               "Pull-ups"
+=======
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "thoracic rotations",
+              "scorpions",
+              "samson stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "on every 2:30 x 2 rounds",
+              "10 prone snow angels",
+              "10 push ups",
+              "10 air squats",
+              "*remaining time bike/ski"
+            ]
+          },
+          {
+            "title": "PUSH PRESS 15MIN",
+            "lines": [
+              "find a heavy set of",
+              "5 push press",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "for time",
+              "36/30cal ski/bike",
+              "into…",
+              "6 rounds",
+              "12 lateral burpees over bar",
+              "12 push press 40/30kg",
+              "into…",
+              "36/30cal bike/ski",
+              "aerobic power [lactate threshold]",
+              "push press"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
       },
       {
         "date": "2026-02-04",
+<<<<<<< HEAD
+=======
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260204",
+        "sections": [
+          {
+            "title": "FOR TIME",
+            "lines": [
+              "30-24-18 reps",
+              "GHD hip extensions",
+              "30-24-18 reps",
+              "GHD sit-ups",
+              "15-12-9 reps",
+              "Power snatches",
+              "â 105-lb barbell",
+              "â 155-lb barbell"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-04",
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-february-4-2026/",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "STRENGTH",
             "lines": [
               "Deadlift",
@@ -659,6 +1421,55 @@
               "21-15-9",
               "Hang Power Clean (60kg)",
               "Burpees over bar"
+=======
+            "title": "WORKOUT",
+            "lines": [
+              "Skip to content"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-04",
+        "source": "panda",
+        "source_name": "CrossFit Panda",
+        "url": "https://crossfitpanda-ghost.fly.dev/wednesday-110226/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "CrossFit W.O.D"
+            ]
+          },
+          {
+            "title": "STRENGTH:",
+            "lines": [
+              "E02:00MOMx7 Sets:",
+              "Build Up To 2 heavy STOH (From Rack)"
+            ]
+          },
+          {
+            "title": "FOR TIME:",
+            "lines": [
+              "30 2DB Box Step Overs #2x22.5/15",
+              "60 Pull-Ups",
+              "30 2DB Box Step Overs"
+            ]
+          },
+          {
+            "title": "CROSSFIT STRENGTH",
+            "lines": [
+              "Part A:",
+              "Push Press 5x5 *Build Up to A @2RIR",
+              "Part B:",
+              "4 Supersets:",
+              "8 2DB B-Stance Deadlifts(Each Leg)",
+              "6\\6 Single Arm DB Bent-Over-Rows @1131 TEMPO",
+              "Part C:",
+              "08:00 Min EMOM, Alt:",
+              "1.)\t00:45 Assualt Bike @9Hard!",
+              "2.)\t 8 Sandbag Squats #70/45"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -670,12 +1481,18 @@
         "url": "https://crossfitpostal.com/dailywod",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "WOD",
             "lines": [
               "5 Rounds for time:",
               "400m Run",
               "15 Overhead Squats",
               "10 Toes-to-bar"
+=======
+            "title": "WORKOUT",
+            "lines": [
+              "Daily WOD — Crossfit Postal"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -689,6 +1506,7 @@
         "url": "https://myleo.de/en/wods/2026-02-03/",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "STRENGTH",
             "lines": [
               "Back Squat 5x5",
@@ -718,17 +1536,67 @@
               "21-15-9",
               "Thrusters 95 lb",
               "Pull-ups"
+=======
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "lat stretch on box",
+              "calf stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "on every 2:30 x 2 rounds",
+              "10 squat jumps",
+              "10 ring rows",
+              "30sec. hollow hold",
+              "*remaining time row"
+            ]
+          },
+          {
+            "title": "CONDITIONING 32MIN",
+            "lines": [
+              "2:00 on /3:00 off x 7 rounds",
+              "6 strict pull-ups",
+              "18 box jumps 60/50cm",
+              "cal row in remaining time",
+              "score: total row cal",
+              "anaerobic capacity"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
       },
       {
         "date": "2026-02-03",
+<<<<<<< HEAD
+=======
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260203",
+        "sections": [
+          {
+            "title": "5 ROUNDS FOR TIME OF",
+            "lines": [
+              "5 rope climbs to 15 feet",
+              "200-foot Zercher carry",
+              "â 105-lb barbell",
+              "â 155-lb barbell"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-03",
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-february-3-2026/",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "STRENGTH",
             "lines": [
               "Deadlift",
@@ -742,6 +1610,55 @@
               "21-15-9",
               "Hang Power Clean (60kg)",
               "Burpees over bar"
+=======
+            "title": "WORKOUT",
+            "lines": [
+              "Skip to content"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-03",
+        "source": "panda",
+        "source_name": "CrossFit Panda",
+        "url": "https://crossfitpanda-ghost.fly.dev/wednesday-110226/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "CrossFit W.O.D"
+            ]
+          },
+          {
+            "title": "STRENGTH:",
+            "lines": [
+              "E02:00MOMx7 Sets:",
+              "Build Up To 2 heavy STOH (From Rack)"
+            ]
+          },
+          {
+            "title": "FOR TIME:",
+            "lines": [
+              "30 2DB Box Step Overs #2x22.5/15",
+              "60 Pull-Ups",
+              "30 2DB Box Step Overs"
+            ]
+          },
+          {
+            "title": "CROSSFIT STRENGTH",
+            "lines": [
+              "Part A:",
+              "Push Press 5x5 *Build Up to A @2RIR",
+              "Part B:",
+              "4 Supersets:",
+              "8 2DB B-Stance Deadlifts(Each Leg)",
+              "6\\6 Single Arm DB Bent-Over-Rows @1131 TEMPO",
+              "Part C:",
+              "08:00 Min EMOM, Alt:",
+              "1.)\t00:45 Assualt Bike @9Hard!",
+              "2.)\t 8 Sandbag Squats #70/45"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -753,12 +1670,18 @@
         "url": "https://crossfitpostal.com/dailywod",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "WOD",
             "lines": [
               "5 Rounds for time:",
               "400m Run",
               "15 Overhead Squats",
               "10 Toes-to-bar"
+=======
+            "title": "WORKOUT",
+            "lines": [
+              "Daily WOD — Crossfit Postal"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -772,6 +1695,7 @@
         "url": "https://myleo.de/en/wods/2026-02-02/",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "STRENGTH",
             "lines": [
               "Back Squat 5x5",
@@ -801,17 +1725,84 @@
               "21-15-9",
               "Thrusters 95 lb",
               "Pull-ups"
+=======
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "lat stretch",
+              "hand walk",
+              "instep rotations",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "amrap 4min",
+              "10 clean grip deadlifts",
+              "10 hang high pulls",
+              "10 elbow rotations"
+            ]
+          },
+          {
+            "title": "SKILL 5MIN",
+            "lines": [
+              "(hang) power clean"
+            ]
+          },
+          {
+            "title": "CLEAN 12MIN",
+            "lines": [
+              "find a heavy complex",
+              "3 deadlifts",
+              "2 power cleans",
+              "1 hang clean",
+              "explosive power"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "HiLife Challenge Benchmark WOD",
+              "amrap 15min",
+              "5 burpees",
+              "10 sit ups",
+              "15 air squats",
+              "aerobic capacity (lactate threshold)",
+              "power clean"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
       },
       {
         "date": "2026-02-02",
+<<<<<<< HEAD
+=======
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260202",
+        "sections": [
+          {
+            "title": "FOR TIME",
+            "lines": [
+              "30 box jump-overs",
+              "150 air squats",
+              "1,600-meter run",
+              "â 24-inch box",
+              "â 30-inch box"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-02",
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-february-2-2026/",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "STRENGTH",
             "lines": [
               "Deadlift",
@@ -825,6 +1816,55 @@
               "21-15-9",
               "Hang Power Clean (60kg)",
               "Burpees over bar"
+=======
+            "title": "WORKOUT",
+            "lines": [
+              "Skip to content"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-02",
+        "source": "panda",
+        "source_name": "CrossFit Panda",
+        "url": "https://crossfitpanda-ghost.fly.dev/wednesday-110226/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "CrossFit W.O.D"
+            ]
+          },
+          {
+            "title": "STRENGTH:",
+            "lines": [
+              "E02:00MOMx7 Sets:",
+              "Build Up To 2 heavy STOH (From Rack)"
+            ]
+          },
+          {
+            "title": "FOR TIME:",
+            "lines": [
+              "30 2DB Box Step Overs #2x22.5/15",
+              "60 Pull-Ups",
+              "30 2DB Box Step Overs"
+            ]
+          },
+          {
+            "title": "CROSSFIT STRENGTH",
+            "lines": [
+              "Part A:",
+              "Push Press 5x5 *Build Up to A @2RIR",
+              "Part B:",
+              "4 Supersets:",
+              "8 2DB B-Stance Deadlifts(Each Leg)",
+              "6\\6 Single Arm DB Bent-Over-Rows @1131 TEMPO",
+              "Part C:",
+              "08:00 Min EMOM, Alt:",
+              "1.)\t00:45 Assualt Bike @9Hard!",
+              "2.)\t 8 Sandbag Squats #70/45"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -836,12 +1876,18 @@
         "url": "https://crossfitpostal.com/dailywod",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "WOD",
             "lines": [
               "5 Rounds for time:",
               "400m Run",
               "15 Overhead Squats",
               "10 Toes-to-bar"
+=======
+            "title": "WORKOUT",
+            "lines": [
+              "Daily WOD — Crossfit Postal"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -855,6 +1901,7 @@
         "url": "https://myleo.de/en/wods/2026-02-01/",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "STRENGTH",
             "lines": [
               "Back Squat 5x5",
@@ -884,12 +1931,54 @@
               "21-15-9",
               "Thrusters 95 lb",
               "Pull-ups"
+=======
+            "title": "WORKOUT",
+            "lines": [
+              "Heute ist der letzte Tag der HiLife Challenge 2026. HERZLICHEN GLÜCKWUNSCH an alle Teilnehmenden! Seid stolz auf Euch!"
+            ]
+          },
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "instep rotation",
+              "lat stretch",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "30sec on / 15sec off x2 rounds",
+              "1. scap. push ups",
+              "2. row",
+              "3. ring rows",
+              "4. box step ups"
+            ]
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "emom 35min (7 rounds)",
+              "1. 10-15 bench dips",
+              "2. 10-15cal row",
+              "3. 8-10 strict pull ups",
+              "4. 12-16 db box step ups",
+              "5. rest",
+              "Sunday Endurance for Open Gym",
+              "“norwegian 4x4 intervals”",
+              "• choose: run, bike, row, or ski",
+              "4 sets:",
+              "4:00 hard [rpe 8-9]",
+              "3:00 easy or rest [rpe 1-2]"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
       },
       {
         "date": "2026-02-01",
+<<<<<<< HEAD
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-february-1-2026/",
@@ -908,6 +1997,62 @@
               "21-15-9",
               "Hang Power Clean (60kg)",
               "Burpees over bar"
+=======
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260201",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Rest Day",
+              "The Illusion of Fitness and Earning Intensity: How CrossFit Breaks the Comfort Trap",
+              "Intensity is the key to CrossFit's life-changing results, but most people avoid it because discomfort hurts. The truth? If you're staying comfortable in your workouts, you're not chasing fitness â you're clinging to mediocrity. Here's why embracing the struggle is the only path to real results."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-01",
+        "source": "panda",
+        "source_name": "CrossFit Panda",
+        "url": "https://crossfitpanda-ghost.fly.dev/wednesday-110226/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "CrossFit W.O.D"
+            ]
+          },
+          {
+            "title": "STRENGTH:",
+            "lines": [
+              "E02:00MOMx7 Sets:",
+              "Build Up To 2 heavy STOH (From Rack)"
+            ]
+          },
+          {
+            "title": "FOR TIME:",
+            "lines": [
+              "30 2DB Box Step Overs #2x22.5/15",
+              "60 Pull-Ups",
+              "30 2DB Box Step Overs"
+            ]
+          },
+          {
+            "title": "CROSSFIT STRENGTH",
+            "lines": [
+              "Part A:",
+              "Push Press 5x5 *Build Up to A @2RIR",
+              "Part B:",
+              "4 Supersets:",
+              "8 2DB B-Stance Deadlifts(Each Leg)",
+              "6\\6 Single Arm DB Bent-Over-Rows @1131 TEMPO",
+              "Part C:",
+              "08:00 Min EMOM, Alt:",
+              "1.)\t00:45 Assualt Bike @9Hard!",
+              "2.)\t 8 Sandbag Squats #70/45"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -919,12 +2064,18 @@
         "url": "https://crossfitpostal.com/dailywod",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "WOD",
             "lines": [
               "5 Rounds for time:",
               "400m Run",
               "15 Overhead Squats",
               "10 Toes-to-bar"
+=======
+            "title": "WORKOUT",
+            "lines": [
+              "Daily WOD — Crossfit Postal"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -938,6 +2089,7 @@
         "url": "https://myleo.de/en/wods/2026-01-31/",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "STRENGTH",
             "lines": [
               "Back Squat 5x5",
@@ -967,12 +2119,48 @@
               "21-15-9",
               "Thrusters 95 lb",
               "Pull-ups"
+=======
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "scorpions",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "amrap 5min",
+              "10 push ups",
+              "10 straight leg sit ups",
+              "*partner is rowing"
+            ]
+          },
+          {
+            "title": "CONDITIONING 30MIN",
+            "lines": [
+              "in teams of 2",
+              "2 rounds",
+              "5:00 amrap:",
+              "60 toes to bar",
+              "max cal row",
+              "5:00 amrap:",
+              "60 front squats",
+              "max cal row",
+              "5:00 amrap:",
+              "60 push press",
+              "max cal row",
+              "barbell: 40/30kg",
+              "score: total cal"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
       },
       {
         "date": "2026-01-31",
+<<<<<<< HEAD
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-february-31-2026/",
@@ -991,6 +2179,67 @@
               "21-15-9",
               "Hang Power Clean (60kg)",
               "Burpees over bar"
+=======
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260131",
+        "sections": [
+          {
+            "title": "FOR TIME",
+            "lines": [
+              "10-8-6-4-2 reps",
+              "Front squats",
+              "20-16-12-8-4 reps",
+              "Lateral burpees over the bar",
+              "10-8-6-4-2 reps",
+              "Power cleans",
+              "â 125-lb barbell",
+              "â 185-lb barbell"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-01-31",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-january-31-2026/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Skip to content"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-01-31",
+        "source": "panda",
+        "source_name": "CrossFit Panda",
+        "url": "https://crossfitpanda-ghost.fly.dev/saturday-310126/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "CrossFit W.O.D"
+            ]
+          },
+          {
+            "title": "SKILL:",
+            "lines": [
+              "14:00 Min Double Unders Practice"
+            ]
+          },
+          {
+            "title": "STRENGTH:",
+            "lines": [
+              "Open Workout No' 2: 24.2",
+              "20:00 Min AMRAP:",
+              "300m row",
+              "10 Deadlifts #83/56kg",
+              "50 Double Unders"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -1002,12 +2251,18 @@
         "url": "https://crossfitpostal.com/dailywod",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "WOD",
             "lines": [
               "5 Rounds for time:",
               "400m Run",
               "15 Overhead Squats",
               "10 Toes-to-bar"
+=======
+            "title": "WORKOUT",
+            "lines": [
+              "Daily WOD — Crossfit Postal"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -1021,6 +2276,7 @@
         "url": "https://myleo.de/en/wods/2026-01-30/",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "STRENGTH",
             "lines": [
               "Back Squat 5x5",
@@ -1050,12 +2306,38 @@
               "21-15-9",
               "Thrusters 95 lb",
               "Pull-ups"
+=======
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "line drills"
+            ]
+          },
+          {
+            "title": "DEADLIFTS 12MIN",
+            "lines": [
+              "on the 3:00 x 4 sets",
+              "4 sumo deadlifts + 8 conventional deadlifts",
+              "@ 50% of 1rm deadlift",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "8 x 1:00 amrap:",
+              "10 x 10m shuttle runs",
+              "db snatches in remaining time 22,5/15kg",
+              "• rest 1:00 between amraps",
+              "score: total db snatches",
+              "aerobic power [vo2 max]"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
       },
       {
         "date": "2026-01-30",
+<<<<<<< HEAD
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-february-30-2026/",
@@ -1074,6 +2356,71 @@
               "21-15-9",
               "Hang Power Clean (60kg)",
               "Burpees over bar"
+=======
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260130",
+        "sections": [
+          {
+            "title": "PRE- AND POST-WORKOUT ACCESSORY:*",
+            "lines": [
+              "Max set of strict pull-ups",
+              "*Complete 1 set before and 1 set after the workout."
+            ]
+          },
+          {
+            "title": "3 ROUNDS FOR TIME OF",
+            "lines": [
+              "400/500-meter row",
+              "40 AbMat sit-ups",
+              "30 alternating dumbbell snatches",
+              "â 35-lb dumbbell",
+              "â 50-lb dumbbell"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-01-30",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-january-30-2026/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Skip to content"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-01-30",
+        "source": "panda",
+        "source_name": "CrossFit Panda",
+        "url": "https://crossfitpanda-ghost.fly.dev/saturday-310126/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "CrossFit W.O.D"
+            ]
+          },
+          {
+            "title": "SKILL:",
+            "lines": [
+              "14:00 Min Double Unders Practice"
+            ]
+          },
+          {
+            "title": "STRENGTH:",
+            "lines": [
+              "Open Workout No' 2: 24.2",
+              "20:00 Min AMRAP:",
+              "300m row",
+              "10 Deadlifts #83/56kg",
+              "50 Double Unders"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -1085,12 +2432,18 @@
         "url": "https://crossfitpostal.com/dailywod",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "WOD",
             "lines": [
               "5 Rounds for time:",
               "400m Run",
               "15 Overhead Squats",
               "10 Toes-to-bar"
+=======
+            "title": "WORKOUT",
+            "lines": [
+              "Daily WOD — Crossfit Postal"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -1104,6 +2457,7 @@
         "url": "https://myleo.de/en/wods/2026-01-29/",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "STRENGTH",
             "lines": [
               "Back Squat 5x5",
@@ -1117,6 +2471,42 @@
               "15 Thrusters (43kg)",
               "12 Pull-ups",
               "9 Box Jumps"
+=======
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "lat stretch",
+              "hand walk",
+              "instep rotations",
+              "calf stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "amrap 4min",
+              "20 single under",
+              "10/8cal row",
+              "10 ring rows"
+            ]
+          },
+          {
+            "title": "CONDITIONING 28MIN",
+            "lines": [
+              "10 rounds for time",
+              "30 double unders",
+              "200/180m row",
+              "10-9-8-7-6-5-4-3-2-1 burpee pull-ups",
+              "• rest 30 seconds between rounds",
+              "score: total time (including rest)",
+              "aerobic power [lactate threshold]"
+            ]
+          },
+          {
+            "title": "STABILITY 4MIN",
+            "lines": [
+              "tabata (20sec on/10sec off) x 8 rounds",
+              "prone press"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -1130,9 +2520,15 @@
           {
             "title": "WORKOUT",
             "lines": [
+<<<<<<< HEAD
               "21-15-9",
               "Thrusters 95 lb",
               "Pull-ups"
+=======
+              "Rest Day",
+              "Your CrossFit Open Game Plan: Four Movements and the Mindset To Master Them",
+              "The 2026 CrossFit Open, presented by Air National Guard, is coming, along with the nervous excitement, uncertainty, and that critical voice in your head when you can't do a programmed movement or see better scores on the leaderboard. Here's how to overcome common movement faults, develop smarter strategies, and give yourself the tools for a better Open experience this year and for many years to come."
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
@@ -1141,6 +2537,7 @@
         "date": "2026-01-29",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
+<<<<<<< HEAD
         "url": "https://crossfitrestoration.com/wod-february-29-2026/",
         "sections": [
           {
@@ -1157,28 +2554,88 @@
               "21-15-9",
               "Hang Power Clean (60kg)",
               "Burpees over bar"
+=======
+        "url": "https://crossfitrestoration.com/wod-january-29-2026/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Skip to content"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
       },
       {
         "date": "2026-01-29",
+<<<<<<< HEAD
+=======
+        "source": "panda",
+        "source_name": "CrossFit Panda",
+        "url": "https://crossfitpanda-ghost.fly.dev/thursday-290112/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Crossfit W.O.D"
+            ]
+          },
+          {
+            "title": "STRENGTH:",
+            "lines": [
+              "Strict Press",
+              "10-8-8-6-6"
+            ]
+          },
+          {
+            "title": "METCON:",
+            "lines": [
+              "20:00 Min AMRAP:",
+              "400m Run",
+              "20 Plate GTOH #20/15kg",
+              "10 Alt. Plate Over-Head Lunges"
+            ]
+          },
+          {
+            "title": "CROSSFIT ENDURANCE",
+            "lines": [
+              "E05:00MOMx6 Rounds:",
+              "30/24 Cals Row",
+              "12 Dual DB Hang Clean And Jerk #2x15/10",
+              "24 Dual DB Front Rack Squats"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-01-29",
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
         "source": "postal",
         "source_name": "CrossFit Postal",
         "url": "https://crossfitpostal.com/dailywod",
         "sections": [
           {
+<<<<<<< HEAD
             "title": "WOD",
             "lines": [
               "5 Rounds for time:",
               "400m Run",
               "15 Overhead Squats",
               "10 Toes-to-bar"
+=======
+            "title": "WORKOUT",
+            "lines": [
+              "Daily WOD — Crossfit Postal"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
             ]
           }
         ]
       }
     ]
   },
+<<<<<<< HEAD
   "last_updated": "2026-02-11T04:56:31.746713"
+=======
+  "last_updated": "2026-02-11T07:38:45.085903"
+>>>>>>> c9415d937a72f916f1741782a6d4b465dc429bba
 }
