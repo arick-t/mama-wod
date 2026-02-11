@@ -1,14 +1,14 @@
 """
 CrossFit Restoration Scraper
 URL: crossfitrestoration.com/wod-{month}-{day}-{year}/
-     e.g. wod-february-10-2026, wod-february-9-2026
 
-Page structure every day:
-  [large header image]          <- ignored (img tags removed)
-  "CrossFit – Tue, Feb 10"      <- date line (we START after this)
-  [workout sections]            <- CAPTURE these
-  "Intermediate"                <- STOP here, don't include anything after
-  [scaling/booking/nav]         <- ignored
+Page structure:
+  [header image]
+  "CrossFit – Tue, Feb 10"   <- START after this
+  [workout sections]
+  "Intermediate"             <- STOP here
+
+JUNK_RE fix: removed 'cat|tag|author' which was killing WordPress category divs.
 """
 import re
 import requests
@@ -24,12 +24,11 @@ HEADERS = {
 }
 
 MONTHS = {
-    1: 'january',  2: 'february', 3: 'march',    4: 'april',
-    5: 'may',      6: 'june',     7: 'july',      8: 'august',
-    9: 'september',10: 'october', 11: 'november', 12: 'december',
+    1:'january',  2:'february', 3:'march',    4:'april',
+    5:'may',      6:'june',     7:'july',      8:'august',
+    9:'september',10:'october', 11:'november', 12:'december',
 }
 
-# Matches: "CrossFit – Tue, Feb 10"  or  "CrossFit - Mon, Feb 9"
 DATE_HDR = re.compile(
     r'crossfit\s*[–\-—]\s*(mon|tue|wed|thu|fri|sat|sun)',
     re.IGNORECASE,
@@ -41,12 +40,17 @@ SECTION_HINTS = [
     'accessory', 'cool down', 'power', 'endurance', 'barbell',
 ]
 
-# Single-word nav items to skip
 NAV_WORDS = {
     'home', 'about', 'contact', 'wod', 'schedule', 'membership',
     'coaches', 'crossfit', 'restoration', 'blog', 'gallery',
-    'register', 'login', 'shop', 'search',
+    'register', 'login', 'shop', 'search', 'skip to content',
 }
+
+# SAFE junk regex - NO 'cat', 'tag', 'author' (they match WordPress content classes)
+JUNK_RE = re.compile(
+    r'sidebar|comment|widget|share|social|related|'
+    r'breadcrumb|menu|footer|cookie|popup|modal|advertisement', re.I
+)
 
 
 def make_url(date):
@@ -57,33 +61,25 @@ def make_url(date):
 
 
 def parse_sections(lines):
-    """Group flat lines into named sections."""
     sections = []
     cur = {'title': 'WORKOUT', 'lines': []}
-
     for line in lines:
         lo = line.lower()
         is_hdr = False
-
-        # ALL-CAPS, no digits, short = section header
         if line.isupper() and 3 <= len(line) <= 60 and not re.search(r'\d', line):
             is_hdr = True
-        # Contains a section keyword, is short, no rep/round/min numbers
         elif (any(kw in lo for kw in SECTION_HINTS)
               and len(line) < 60
               and not re.search(r'\d+\s*(min|rep|round|x\b)', lo)):
             is_hdr = True
-
         if is_hdr:
             if cur['lines']:
                 sections.append(cur)
             cur = {'title': line.upper(), 'lines': []}
         else:
             cur['lines'].append(line)
-
     if cur['lines']:
         sections.append(cur)
-
     return sections or [{'title': 'WORKOUT', 'lines': lines}]
 
 
@@ -104,28 +100,20 @@ def fetch_workout(date):
 
         soup = BeautifulSoup(r.text, 'html.parser')
 
-        # ── 1. Strip all noise elements ──────────────────────────────────────
-        for tag in soup.find_all(['script', 'style', 'iframe',
-                                   'noscript', 'form', 'video']):
+        # ── Remove ONLY known noise elements ─────────────────────────────────
+        for tag in soup.find_all(['script', 'style', 'iframe', 'noscript',
+                                   'form', 'video']):
             tag.decompose()
-        # Remove every image (the large header image and any others)
         for img in soup.find_all(['img', 'picture', 'figure']):
             img.decompose()
-        # Remove navigation / footer elements
         for tag in soup.find_all(['nav', 'footer', 'header']):
             tag.decompose()
-        # Remove elements whose class/id looks like sidebar, comment, social…
-        JUNK_RE = re.compile(
-            r'sidebar|comment|widget|share|social|related|'
-            r'breadcrumb|nav|menu|footer|cookie|popup|modal|'
-            r'author|tag|cat|advertisement', re.I
-        )
+        # Only remove safe junk classes (no 'cat', 'tag', 'author')
         for tag in soup.find_all(class_=JUNK_RE):
             tag.decompose()
         for tag in soup.find_all(id=JUNK_RE):
             tag.decompose()
 
-        # ── 2. Grab ALL remaining text from body ─────────────────────────────
         body = soup.find('body') or soup
         raw_lines = [
             l.strip()
@@ -135,27 +123,25 @@ def fetch_workout(date):
 
         print(f"    → {len(raw_lines)} raw lines after cleanup")
 
-        # ── 3. Find the date-header START marker ──────────────────────────────
+        # ── Find date-header START marker ─────────────────────────────────────
         start_idx = 0
         for i, line in enumerate(raw_lines):
             if DATE_HDR.search(line):
-                start_idx = i + 1   # start AFTER the date line itself
+                start_idx = i + 1
                 print(f"    → Date marker at line {i}: '{line}'")
                 break
         else:
             print(f"    → No date marker found – using full body")
 
-        # ── 4. Collect workout lines; STOP at "Intermediate" ─────────────────
+        # ── Collect workout; STOP at "Intermediate" ───────────────────────────
         workout_lines = []
         for line in raw_lines[start_idx:]:
             lo = line.lower().strip()
 
-            # Primary STOP: "Intermediate" or anything after it is scaling/nav
             if lo == 'intermediate' or lo.startswith('intermediate '):
                 print(f"    → Stopped at 'Intermediate'")
                 break
 
-            # Secondary STOPs: comment form, footer content
             if any(lo.startswith(s) for s in [
                 'leave a reply', 'leave a comment', 'post comment',
                 'logged in', 'your email', 'required fields',
@@ -165,13 +151,10 @@ def fetch_workout(date):
                 print(f"    → Stopped at: '{line[:60]}'")
                 break
 
-            # Skip single-word nav items
             if lo in NAV_WORDS:
                 continue
-            # Skip URL slug re-prints (e.g. "wod-february-10-2026")
             if re.match(r'^wod[-–]', lo):
                 continue
-            # Skip very long prose (not workout content)
             if len(line) > 200:
                 continue
 
@@ -202,20 +185,3 @@ def fetch_workout(date):
         print(f"    → Error: {e}")
         import traceback; traceback.print_exc()
         return None
-
-
-if __name__ == '__main__':
-    from datetime import timedelta
-    print("URL pattern test:")
-    for i in [0, 1, 3]:
-        d = datetime.now() - timedelta(days=i)
-        print(f"  {d.strftime('%Y-%m-%d')} → {make_url(d)}")
-
-    print("\nFetching today...")
-    r = fetch_workout(datetime.now())
-    if r:
-        print(f"✅ {len(r['sections'])} sections")
-        for s in r['sections']:
-            print(f"  [{s['title']}]: {s['lines'][:3]}")
-    else:
-        print("❌ Failed")

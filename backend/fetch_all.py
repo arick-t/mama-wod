@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """
-DUCK-WOD - Main Fetch Script (8 sources)
+DUCK-WOD – Main Fetch Script (8 sources)
+
+Sources with archive=True  → fetch all 14 days
+Sources with archive=False → fetch TODAY only, skip all other days
 """
 import json, sys
 from datetime import datetime, timedelta
@@ -21,7 +24,7 @@ DATA_FILE = DATA_DIR / 'workouts.json'
 DAYS      = 14
 
 SCRAPERS = [
-    # (source_id, display_name, fetch_fn, has_archive)
+    # (id, display_name, fetch_fn, has_archive)
     ('myleo',        'myleo CrossFit',        fetch_myleo,         True),
     ('crossfit_com', 'CrossFit.com',           fetch_crossfit_com,  True),
     ('restoration',  'CrossFit Restoration',  fetch_restoration,   True),
@@ -56,8 +59,9 @@ def save(data):
 def main():
     print("🦆 DUCK-WOD Phase 1 Fetcher")
     print("=" * 50)
-    data = load()
-    stats = {'ok': 0, 'fail': 0, 'cached': 0}
+    data  = load()
+    today = datetime.now().strftime('%Y-%m-%d')
+    stats = {'ok': 0, 'fail': 0, 'cached': 0, 'skipped': 0}
 
     for i in range(DAYS):
         date     = datetime.now() - timedelta(days=i)
@@ -67,11 +71,17 @@ def main():
             data['workouts'][date_str] = []
 
         for src_id, src_name, fetch_fn, has_archive in SCRAPERS:
+            # Non-archive sources only run for today
+            if not has_archive and date_str != today:
+                stats['skipped'] += 1
+                continue
+
             already = any(w['source'] == src_id for w in data['workouts'][date_str])
             if already:
                 print(f"  ✓ {src_name} (cached)")
                 stats['cached'] += 1
                 continue
+
             print(f"  ⬇ {src_name}...")
             try:
                 wod = fetch_fn(date)
@@ -96,9 +106,9 @@ def main():
 
     save(data)
 
-    total = sum(len(v) for v in data['workouts'].values())
-    days_with = sum(1 for v in data['workouts'].values() if v)
-    counts = {}
+    total      = sum(len(v) for v in data['workouts'].values())
+    days_with  = sum(1 for v in data['workouts'].values() if v)
+    counts     = {}
     for wods in data['workouts'].values():
         for w in wods:
             counts[w['source']] = counts.get(w['source'], 0) + 1
@@ -110,6 +120,7 @@ def main():
     print(f"✅ Newly fetched: {stats['ok']}")
     print(f"❌ Failed: {stats['fail']}")
     print(f"💾 Cached: {stats['cached']}")
+    print(f"⏭  Skipped (not today): {stats['skipped']}")
     print("\n📦 Per source:")
     for sid, cnt in sorted(counts.items()):
         print(f"  {labels.get(sid, sid)}: {cnt}")
