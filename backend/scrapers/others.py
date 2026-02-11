@@ -1,126 +1,180 @@
 """
-CrossFit Green Beach & CrossFit Postal Scrapers
+CrossFit Postal & CrossFit Green Beach Scrapers
+
+POSTAL (crossfitpostal.com/dailywod) – today only.
+Page structure every day:
+  [large header image]            <- removed (img tags)
+  "CrossFit - Tue, Feb 10"        <- date line (skip this one line)
+  [workout sections]              <- CAPTURE these
+  "Intermediate"                  <- STOP here, don't include anything after
+  [scaling options / booking]     <- ignored
+
+GREEN BEACH: Wix JS site – cannot scrape static HTML.
 """
+import re
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
-import re
 
 HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'User-Agent': (
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+        'AppleWebKit/537.36 (KHTML, like Gecko) '
+        'Chrome/120.0.0.0 Safari/537.36'
+    ),
 }
 
-SECTION_HINTS = ['warm', 'strength', 'skill', 'wod', 'metcon', 'conditioning',
-                 'amrap', 'emom', 'for time', 'tabata', 'power', 'accessory']
+# Matches: "CrossFit - Tue, Feb 10"  or  "CrossFit – Mon, Feb 9"
+DATE_HDR = re.compile(
+    r'crossfit\s*[–\-—]\s*(mon|tue|wed|thu|fri|sat|sun)',
+    re.IGNORECASE,
+)
+
+SECTION_HINTS = [
+    'warm', 'strength', 'skill', 'wod', 'metcon', 'conditioning',
+    'amrap', 'emom', 'for time', 'tabata', 'gymnastics', 'olympic',
+    'accessory', 'cool down', 'power', 'endurance', 'barbell',
+]
+
+# Single navigation words to skip
+NAV_WORDS = {
+    'home', 'about', 'contact', 'schedule', 'membership',
+    'coaches', 'crossfit', 'postal', 'shop', 'login', 'register',
+    'search', 'wod', 'daily wod', 'blog',
+}
+
+# Remove elements with these class/id patterns
+JUNK_RE = re.compile(
+    r'sidebar|comment|widget|share|social|related|'
+    r'breadcrumb|nav|menu|footer|cookie|popup|modal|'
+    r'author|tag|cat|advertisement', re.I
+)
 
 
 def parse_sections(lines):
+    """Group flat lines into named sections."""
     sections = []
-    current = {'title': 'WORKOUT', 'lines': []}
+    cur = {'title': 'WORKOUT', 'lines': []}
+
     for line in lines:
         lo = line.lower()
-        is_hdr = (line.isupper() and 3 <= len(line) <= 50) or \
-                 (any(kw in lo for kw in SECTION_HINTS) and len(line) < 50)
+        is_hdr = False
+
+        if line.isupper() and 3 <= len(line) <= 60 and not re.search(r'\d', line):
+            is_hdr = True
+        elif (any(kw in lo for kw in SECTION_HINTS)
+              and len(line) < 60
+              and not re.search(r'\d+\s*(min|rep|round|x\b)', lo)):
+            is_hdr = True
+
         if is_hdr:
-            if current['lines']:
-                sections.append(current)
-            current = {'title': line.upper(), 'lines': []}
+            if cur['lines']:
+                sections.append(cur)
+            cur = {'title': line.upper(), 'lines': []}
         else:
-            current['lines'].append(line)
-    if current['lines']:
-        sections.append(current)
+            cur['lines'].append(line)
+
+    if cur['lines']:
+        sections.append(cur)
+
     return sections or [{'title': 'WORKOUT', 'lines': lines}]
 
 
-# ==================== POSTAL ====================
+# ══════════════════════════════════════════════════════════════════════════
+#  POSTAL
+# ══════════════════════════════════════════════════════════════════════════
 
 def fetch_postal(date):
-    """
-    CrossFit Postal - crossfitpostal.com/dailywod
-    WOD is at the TOP of the page before all booking/contact links.
-    Strategy: find main content container, stop at first booking keyword.
-    """
     date_str = date.strftime('%Y-%m-%d')
     url = 'https://crossfitpostal.com/dailywod'
 
     try:
         print(f"    → Fetching {url}")
         r = requests.get(url, timeout=15, headers=HEADERS)
+
         if r.status_code != 200:
-            print(f"    → Status {r.status_code}")
+            print(f"    → HTTP {r.status_code}")
             return None
 
         soup = BeautifulSoup(r.text, 'html.parser')
 
-        # Remove definite noise
-        for tag in soup.find_all(['script', 'style', 'img', 'iframe', 'noscript', 'form']):
+        # ── Strip noise ─────────────────────────────────────────────────────
+        for tag in soup.find_all(['script', 'style', 'iframe', 'noscript',
+                                   'form', 'video']):
             tag.decompose()
-        for tag in soup.find_all(class_=re.compile(r'footer|popup|modal|cookie|nav|sidebar', re.I)):
+        for img in soup.find_all(['img', 'picture', 'figure']):
+            img.decompose()
+        for tag in soup.find_all(['nav', 'footer', 'header']):
             tag.decompose()
-        for tag in soup.find_all(id=re.compile(r'footer|popup|modal|cookie|nav|sidebar', re.I)):
+        for tag in soup.find_all(class_=JUNK_RE):
+            tag.decompose()
+        for tag in soup.find_all(id=JUNK_RE):
             tag.decompose()
 
-        # Find main content - try multiple selectors
-        content = None
-        for sel in [('class', 'entry-content'), ('class', 'post-content'),
-                    ('class', 'content-area'), ('tag', 'article'), ('tag', 'main')]:
-            if sel[0] == 'class':
-                content = soup.find(class_=sel[1])
-            else:
-                content = soup.find(sel[1])
-            if content:
-                print(f"    → Found via {sel[1]}")
+        body = soup.find('body') or soup
+        raw_lines = [
+            l.strip()
+            for l in body.get_text(separator='\n').split('\n')
+            if l.strip() and len(l.strip()) > 1
+        ]
+
+        print(f"    → {len(raw_lines)} raw lines after cleanup")
+
+        # ── Find date-line START marker (skip the date line itself) ──────────
+        start_idx = 0
+        for i, line in enumerate(raw_lines):
+            if DATE_HDR.search(line):
+                start_idx = i + 1
+                print(f"    → Date marker at line {i}: '{line}'")
                 break
+        else:
+            print(f"    → No date marker – starting from top")
 
-        if not content:
-            content = soup.find('body') or soup
-
-        # STOP keywords - these appear AFTER the workout
-        STOP = ['book a drop', 'click here to pay', 'sign your waiver',
-                'drop-in', 'pay now', 'book now', 'join now',
-                'follow us', 'copyright', 'all rights reserved',
-                'facebook.com', 'instagram.com', 'twitter.com',
-                'address:', 'phone:', 'email:', '@crossfit']
-
-        # Skip-only (don't stop, just skip these lines)
-        SKIP = ['daily wod', 'workout of the day', 'crossfit postal']
-
-        all_lines = [l.strip() for l in content.get_text(separator='\n').split('\n')
-                     if l.strip() and len(l.strip()) > 2]
-
+        # ── Collect workout; STOP at "Intermediate" ──────────────────────────
         workout_lines = []
-        for line in all_lines:
-            lo = line.lower()
-            # Hard stop - we've hit footer/booking
-            if any(s in lo for s in STOP):
-                print(f"    → Stopped at: '{line[:50]}'")
+        for line in raw_lines[start_idx:]:
+            lo = line.lower().strip()
+
+            # Primary STOP
+            if lo == 'intermediate' or lo.startswith('intermediate '):
+                print(f"    → Stopped at 'Intermediate'")
                 break
+
+            # Secondary STOPs (booking / footer content)
+            if any(lo.startswith(s) for s in [
+                'book a drop', 'click here to pay', 'sign your waiver',
+                'leave a reply', 'leave a comment', 'post comment',
+                'subscribe', 'newsletter', 'copyright', 'privacy',
+                'follow us',
+            ]):
+                print(f"    → Stopped at: '{line[:60]}'")
+                break
+
             # Skip nav words
-            if len(line.split()) <= 1 and lo in ['home','about','contact','menu','search','login','shop','wod']:
+            if lo in NAV_WORDS:
                 continue
-            # Skip generic labels
-            if lo in SKIP:
+            # Skip very long prose
+            if len(line) > 200:
                 continue
+
             workout_lines.append(line)
 
-        # Keep first 40 lines only (the actual workout is short)
-        workout_lines = workout_lines[:40]
+        workout_lines = workout_lines[:50]
 
         if not workout_lines:
             print(f"    → No workout lines found")
             return None
 
         sections = parse_sections(workout_lines)
-        total_lines = sum(len(s['lines']) for s in sections)
-        print(f"    → SUCCESS: {len(sections)} sections, {total_lines} lines")
+        total = sum(len(s['lines']) for s in sections)
+        print(f"    → SUCCESS: {len(sections)} sections, {total} lines")
 
         return {
-            'date': date_str,
-            'source': 'postal',
+            'date':        date_str,
+            'source':      'postal',
             'source_name': 'CrossFit Postal',
-            'url': url,
-            'sections': sections
+            'url':         url,
+            'sections':    sections,
         }
 
     except requests.Timeout:
@@ -131,15 +185,12 @@ def fetch_postal(date):
         return None
 
 
-# ==================== GREEN BEACH ====================
+# ══════════════════════════════════════════════════════════════════════════
+#  GREEN BEACH  (Wix JS – cannot scrape)
+# ══════════════════════════════════════════════════════════════════════════
 
 def fetch_greenbeach(date):
-    """
-    CrossFit Green Beach - Wix site, WOD loads via JavaScript.
-    Cannot scrape static HTML - returns None.
-    This is a known limitation until Selenium/Playwright is added.
-    """
-    print(f"    → Green Beach: Wix JS site - cannot scrape static HTML")
+    print(f"    → Green Beach: Wix JS site – cannot scrape static HTML")
     return None
 
 
@@ -149,6 +200,6 @@ if __name__ == '__main__':
     if r:
         print(f"✅ {len(r['sections'])} sections")
         for s in r['sections']:
-            print(f"  [{s['title']}]: {s['lines'][:2]}")
+            print(f"  [{s['title']}]: {s['lines'][:3]}")
     else:
         print("❌ Failed")
