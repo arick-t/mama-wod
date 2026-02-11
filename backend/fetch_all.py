@@ -50,6 +50,19 @@ def load():
 
 def save(data):
     DATA_DIR.mkdir(exist_ok=True, parents=True)
+    
+    # Clean up: remove today-only sources from non-today dates
+    today = datetime.now().strftime('%Y-%m-%d')
+    today_only_sources = {'postal', 'linchpin', 'greenbeach'}
+    
+    for date_str in list(data['workouts'].keys()):
+        if date_str != today:
+            # Remove today-only workouts from historical dates
+            data['workouts'][date_str] = [
+                w for w in data['workouts'][date_str]
+                if w['source'] not in today_only_sources
+            ]
+    
     data['last_updated'] = datetime.now().isoformat()
     with open(DATA_FILE, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)

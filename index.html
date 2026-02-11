@@ -88,6 +88,10 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
     <div class="form-group">
       <label>Available Time (minutes)</label>
       <input type="number" id="findTime" min="1" max="180" value="20">
+      <label class="eq-item" style="margin-top:8px">
+        <input type="checkbox" id="unlimitedTime">
+        <span>UNLIMITED TIME</span>
+      </label>
     </div>
     <div class="form-group">
       <label>Available Equipment</label>
@@ -262,7 +266,8 @@ function wa(idx) {
 }
 
 function findWorkout() {
-  var time = parseInt(document.getElementById("findTime").value) || 20;
+  var unlimited = document.getElementById("unlimitedTime").checked;
+  var time = unlimited ? 999 : (parseInt(document.getElementById("findTime").value) || 20);
   var eq = [];
   var cbs = document.querySelectorAll(".eq-item input:checked");
   for (var i = 0; i < cbs.length; i++) eq.push(cbs[i].value);
