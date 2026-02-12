@@ -108,6 +108,13 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
         <label class="eq-item"><input type="checkbox" value="DOUBLE UNDERS"> DOUBLE UNDERS</label>
         <label class="eq-item"><input type="checkbox" value="WALL BALL"> WALL BALL</label>
         <label class="eq-item"><input type="checkbox" value="HANDSTAND"> HANDSTAND</label>
+        <label class="eq-item"><input type="checkbox" value="WALL WALK"> WALL WALK</label>
+        <label class="eq-item"><input type="checkbox" value="LUNGE"> LUNGE</label>
+        <label class="eq-item"><input type="checkbox" value="RINGS"> RINGS</label>
+        <label class="eq-item"><input type="checkbox" value="SKI"> SKI</label>
+        <label class="eq-item"><input type="checkbox" value="SLED"> SLED</label>
+        <label class="eq-item"><input type="checkbox" value="TOES TO BAR"> TOES TO BAR</label>
+        <label class="eq-item"><input type="checkbox" value="BOX"> BOX</label>
       </div>
     </div>
     <button class="btn btn-find" onclick="findWorkout()">Find Best Match</button>
@@ -131,7 +138,7 @@ var SOURCES = {
   panda:        {name:"CrossFit Panda",         archive:true,  en:true},
   linchpin:     {name:"CrossFit Linchpin",      archive:false, en:true},
   postal:       {name:"CrossFit Postal",        archive:false, en:true},
-  greenbeach:   {name:"CrossFit Green Beach",   archive:false, en:true}
+  tonbridge:    {name:"CrossFit Ton Bridge",     archive:true,  en:true}
 };
 
 try {
@@ -142,7 +149,7 @@ try {
 var EQ = {
   "RUN":         ["run","running","meter","mile","km"],
   "BARBELL":     ["barbell","clean","snatch","deadlift","squat","press","jerk"],
-  "PULL-UP":     ["pull-up","pullup","pull up","chest-to-bar"],
+  "PULL-UP":     ["pull-up","pullup","pull up","chest-to-bar","chest to bar","c2b","muscle-up","muscle up","mu"],
   "PUSH-UP":     ["push-up","pushup","push up"],
   "ROW":         ["row","rowing","rower","cal row"],
   "BIKE":        ["bike","assault bike","echo bike","cal bike"],
@@ -151,7 +158,14 @@ var EQ = {
   "ROPE CLIMB":  ["rope climb"],
   "DOUBLE UNDERS":["double under"," du "],
   "WALL BALL":   ["wall ball","wallball"],
-  "HANDSTAND":   ["handstand","hspu"]
+  "HANDSTAND":   ["handstand","hspu"],
+  "WALL WALK":   ["wall walk","wallwalk"],
+  "LUNGE":       ["lunge","lunges"],
+  "RINGS":       ["ring","rings","muscle-up","muscle up"],
+  "SKI":         ["ski","ski erg","skierg"],
+  "SLED":        ["sled","sled push","sled pull"],
+  "TOES TO BAR": ["toes to bar","toes-to-bar","ttb","t2b"],
+  "BOX":         ["box","box jump","box step","bjo","box jump over"]
 };
 
 function localDate(d) {
@@ -291,7 +305,8 @@ function findWorkout() {
     return;
   }
   cardStore = [];
-  el.innerHTML = buildCard(results[0].w, results[0].sc);
+  var top3 = results.slice(0, 3);
+  el.innerHTML = top3.map(function(r) { return buildCard(r.w, r.sc); }).join("");
 }
 
 function scoreWod(w, t, eq) {

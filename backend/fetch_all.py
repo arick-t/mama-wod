@@ -14,10 +14,11 @@ sys.path.insert(0, str(Path(__file__).parent))
 from scrapers.myleo        import fetch_workout as fetch_myleo
 from scrapers.crossfit_com  import fetch_workout as fetch_crossfit_com
 from scrapers.linchpin      import fetch_workout as fetch_linchpin
-from scrapers.others        import fetch_postal, fetch_greenbeach
+from scrapers.others        import fetch_postal
 from scrapers.restoration   import fetch_workout as fetch_restoration
 from scrapers.cf1013        import fetch_workout as fetch_cf1013
 from scrapers.panda         import fetch_workout as fetch_panda
+from scrapers.tonbridge     import fetch_workout as fetch_tonbridge
 
 DATA_DIR  = Path(__file__).parent.parent / 'data'
 DATA_FILE = DATA_DIR / 'workouts.json'
@@ -25,14 +26,14 @@ DAYS      = 14
 
 SCRAPERS = [
     # (id, display_name, fetch_fn, has_archive)
-    ('myleo',        'myleo CrossFit',        fetch_myleo,         True),
-    ('crossfit_com', 'CrossFit.com',           fetch_crossfit_com,  True),
-    ('restoration',  'CrossFit Restoration',  fetch_restoration,   True),
-    ('cf1013',       'CrossFit 1013',          fetch_cf1013,        True),
-    ('panda',        'CrossFit Panda',         fetch_panda,         True),
-    ('linchpin',     'CrossFit Linchpin',      fetch_linchpin,      False),
-    ('postal',       'CrossFit Postal',        fetch_postal,        False),
-    ('greenbeach',   'CrossFit Green Beach',   fetch_greenbeach,    False),
+    ('myleo',        'myleo CrossFit',         fetch_myleo,      True),
+    ('crossfit_com', 'CrossFit.com',            fetch_crossfit_com, True),
+    ('restoration',  'CrossFit Restoration',   fetch_restoration, True),
+    ('cf1013',       'CrossFit 1013',           fetch_cf1013,      True),
+    ('panda',        'CrossFit Panda',          fetch_panda,       True),
+    ('tonbridge',    'CrossFit Ton Bridge',     fetch_tonbridge,   True),
+    ('linchpin',     'CrossFit Linchpin',       fetch_linchpin,    False),
+    ('postal',       'CrossFit Postal',         fetch_postal,      False),
 ]
 
 
@@ -53,7 +54,7 @@ def save(data):
     
     # Clean up: remove today-only sources from non-today dates
     today = datetime.now().strftime('%Y-%m-%d')
-    today_only_sources = {'postal', 'linchpin', 'greenbeach'}
+    today_only_sources = {'postal', 'linchpin'}
     
     for date_str in list(data['workouts'].keys()):
         if date_str != today:

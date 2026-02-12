@@ -120,6 +120,16 @@ def fetch_workout(date):
             line = line.strip()
             if not line or len(line) < 2:
                 continue
+            
+            # Fix common encoding issues
+            line = line.replace('â\x80\x93', '–')  # en-dash
+            line = line.replace('â\x80\x94', '—')  # em-dash
+            line = line.replace('â\x80\x99', "'")  # right single quote
+            line = line.replace('â\x80\x9c', '"')  # left double quote
+            line = line.replace('â\x80\x9d', '"')  # right double quote
+            line = line.replace('â\x80¢', '•')     # bullet
+            line = line.replace('â ', '• ')        # bullet as seen in user's example
+            
             lo = line.lower()
             if any(stop in lo for stop in STOP_WORDS):
                 break

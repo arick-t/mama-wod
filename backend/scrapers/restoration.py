@@ -50,25 +50,47 @@ def make_url(date):
 
 
 def parse_sections(lines):
+    """
+    Restoration uses bold text for section headers.
+    Pattern: short lines (usually < 80 chars) containing keywords
+    like "Warm-up", "Power Clean", "For time", "Skill", etc.
+    """
     sections = []
     cur = {'title': 'WORKOUT', 'lines': []}
+    
     for line in lines:
         lo = line.lower()
         is_hdr = False
+        
+        # Check if this looks like a section header:
+        # 1. ALL-CAPS short text (e.g., "STRENGTH")
         if line.isupper() and 3 <= len(line) <= 60 and not re.search(r'\d', line):
             is_hdr = True
-        elif (any(kw in lo for kw in SECTION_HINTS)
-              and len(line) < 60
-              and not re.search(r'\d+\s*(min|rep|round|x\b)', lo)):
-            is_hdr = True
+        
+        # 2. Contains section keywords AND is reasonably short (< 80 chars)
+        #    AND doesn't look like a workout line (no "x 10 reps" pattern)
+        elif len(line) < 80 and any(kw in lo for kw in SECTION_HINTS):
+            # Exclude lines that are clearly workout instructions
+            # (e.g., "10 min AMRAP" vs "Power Clean")
+            if not re.search(r'\d+\s*(min|rep|round|x\b|second|meter|cal)', lo):
+                is_hdr = True
+            # BUT: "For time (Time)" or "Power Clean (In 15-20 minutes...)" ARE headers
+            # Pattern: starts with keyword, may have parentheses
+            elif any(lo.startswith(kw) for kw in ['warm', 'strength', 'skill', 'for time',
+                                                     'power clean', 'back squat', 'deadlift',
+                                                     'snatch', 'clean and jerk']):
+                is_hdr = True
+        
         if is_hdr:
             if cur['lines']:
                 sections.append(cur)
-            cur = {'title': line.upper(), 'lines': []}
+            cur = {'title': line.strip(), 'lines': []}  # Keep original case
         else:
             cur['lines'].append(line)
+    
     if cur['lines']:
         sections.append(cur)
+    
     return sections or [{'title': 'WORKOUT', 'lines': lines}]
 
 
