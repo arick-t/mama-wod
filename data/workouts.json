@@ -259,48 +259,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-02-12",
-        "source": "linchpin",
-        "source_name": "CrossFit Linchpin",
-        "url": "https://crossfitlinchpin.com/blogs/wod",
-        "note": "⚠️ This source provides daily workouts only",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "REST DAY!",
-              "Get out of the gym."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-02-12",
-        "source": "postal",
-        "source_name": "CrossFit Postal",
-        "url": "https://crossfitpostal.com/dailywod",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Drop-in",
-              "Memberships",
-              "Foundations",
-              "Gear Store"
-            ]
-          },
-          {
-            "title": "CONTACT US",
-            "lines": [
-              "Drop-in",
-              "Memberships",
-              "Foundations",
-              "Gear Store"
-            ]
-          }
-        ]
       }
     ],
     "2026-02-11": [
@@ -3315,7 +3273,259 @@
           }
         ]
       }
+    ],
+    "2026-02-13": [
+      {
+        "date": "2026-02-13",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-02-13/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "lat stretch",
+              "hand walk",
+              "90/90 hip rotation",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "amrap 4min",
+              "10 push ups",
+              "10 scap. pull ups",
+              "10 sumo deadlifts"
+            ]
+          },
+          {
+            "title": "BENCH PRESS 12MIN",
+            "lines": [
+              "on the 2:00 x 6 sets:",
+              "2 close-grip bench press + 4 bench press",
+              "@70% of 1rm bench press",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 12MIN",
+            "lines": [
+              "12:00 amrap",
+              "5 strict pull-ups",
+              "10 sumo deadlift high pulls 40/30kg",
+              "15 push-ups",
+              "score: rounds + reps",
+              "lactate threshold & muscular endurance"
+            ]
+          },
+          {
+            "title": "STABILITY 4MIN",
+            "lines": [
+              "tabata (20sec on/10sec off) x 8 rounds",
+              "prone press"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-13",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260213",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Open Workout 24.1"
+            ]
+          },
+          {
+            "title": "FOR TIME",
+            "lines": [
+              "21 dumbbell snatches, arm 1",
+              "21 lateral burpees over the dumbbell",
+              "21 dumbbell snatches, arm 2",
+              "21 lateral burpees over the dumbbell",
+              "15 dumbbell snatches, arm 1",
+              "15 lateral burpees over the dumbbell",
+              "15 dumbbell snatches, arm 2",
+              "15 lateral burpees over the dumbbell",
+              "9 dumbbell snatches, arm 1",
+              "9 lateral burpees over the dumbbell",
+              "9 dumbbell snatches, arm 2",
+              "9 lateral burpees over the dumbbell",
+              "â 35-lb dumbbell",
+              "â 50-lb dumbbell",
+              "Compare to",
+              "240301"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-13",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "February 12, 2026",
+              "Norberto Olalde"
+            ]
+          },
+          {
+            "title": "STRENGTH",
+            "lines": [
+              "Deadlift 4x3",
+              "Every 2:00 × 4 sets",
+              "3 Deadlifts @65%"
+            ]
+          },
+          {
+            "title": "\"CROSSFIT OPEN WOD OPEN 23.3\"",
+            "lines": [
+              "In a 6:00 window, complete",
+              "5 Wall Walks",
+              "50 Double Unders",
+              "15 Snatches 95#/65#",
+              "5 Wall Walks",
+              "50 Double Unders",
+              "12 Snatches 135#/95#",
+              "*If completed before the 6:00 time cap, add 3:00 to the time cap and complete:",
+              "20 Strict Handstand Push Ups",
+              "50 Double Unders",
+              "9 Snatches 185#/125#",
+              "*If completed before the 9:00 time cap, add 3:00 to the time cap and complete:",
+              "20 Strict Handstand Push Ups",
+              "50 Double Unders",
+              "6 Snatches 225#/155#",
+              "(Scored by Reps)",
+              "February 12, 2026",
+              "Norberto Olalde",
+              "Comment"
+            ]
+          },
+          {
+            "title": "CROSSFIT OPEN WOD OPEN 23.3",
+            "lines": [
+              "2/13/2026",
+              "Wall Walks",
+              "Double Unders",
+              "Snatches",
+              "Norberto Olalde",
+              "February 11, 2026"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-13",
+        "source": "panda",
+        "source_name": "CrossFit Panda",
+        "url": "https://crossfitpanda-ghost.fly.dev/friday-130226/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "CrossFit W.O.D",
+              "Valentines Day W.O.D!",
+              "30 Min AMRAP, IGUG, 20 Reps Of Each:",
+              "V – Ups",
+              "A ir Squats",
+              "L eg Raises",
+              "E explosive Push-Ups",
+              "N o Jump Burpees",
+              "T uck-Ups",
+              "I nverted Row\\Ring Row",
+              "N o Jump burpees",
+              "E xplosive Lunges",
+              "S it-Ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-13",
+        "source": "tonbridge",
+        "source_name": "CrossFit Ton Bridge",
+        "url": "https://crossfittonbridge.co.uk/2026/02/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Friday 13th February 2026",
+              "By",
+              "Liv Phillips",
+              "2026-02-07T22:53:46+00:00",
+              "February 12th, 2026",
+              "Workout Of the Day"
+            ]
+          },
+          {
+            "title": "STRENGTH:",
+            "lines": [
+              "Back Squat 2×2 @70-75%",
+              "Back Squat  2×2 @ 80-85%",
+              "Build to a 1RM",
+              "Met Con:",
+              "15 Min AMRAP",
+              "15 Box Jumps 24/20″",
+              "12 Push Presses (52.5/35 kg)",
+              "9 Toes-to-Bars",
+              "Read More",
+              "Comments Off",
+              "on Friday 13th February 2026"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-13",
+        "source": "linchpin",
+        "source_name": "CrossFit Linchpin",
+        "url": "https://crossfitlinchpin.com/blogs/wod",
+        "note": "⚠️ This source provides daily workouts only",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "EMOM 30 min of:",
+              "1 Hang Power Clean",
+              "*Compare to 06.18.2025"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-13",
+        "source": "postal",
+        "source_name": "CrossFit Postal",
+        "url": "https://crossfitpostal.com/dailywod",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Drop-in",
+              "Memberships",
+              "Foundations",
+              "Gear Store"
+            ]
+          },
+          {
+            "title": "CONTACT US",
+            "lines": [
+              "Drop-in",
+              "Memberships",
+              "Foundations",
+              "Gear Store"
+            ]
+          }
+        ]
+      }
     ]
   },
-  "last_updated": "2026-02-12T07:35:52.315752"
+  "last_updated": "2026-02-13T07:33:55.752698"
 }
