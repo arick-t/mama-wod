@@ -128,7 +128,20 @@ def fetch_workout(date):
             line = line.replace('â\x80\x9c', '"')  # left double quote
             line = line.replace('â\x80\x9d', '"')  # right double quote
             line = line.replace('â\x80¢', '•')     # bullet
-            line = line.replace('â ', '• ')        # bullet as seen in user's example
+            line = line.replace('â ', '• ')        # bullet variant
+            # Gender symbols (often appear before weight specs)
+            line = line.replace('â™€', '♀')        # female symbol
+            line = line.replace('â™‚', '♂')        # male symbol
+            line = line.replace('â\x99\x80', '♀')  # female (alternative encoding)
+            line = line.replace('â\x99\x82', '♂')  # male (alternative encoding)
+            # If still showing â, replace with gender words
+            if 'â ' in line and ('lb' in line or 'kg' in line):
+                # First occurrence = female, second = male (CrossFit.com convention)
+                parts = line.split('â ')
+                if len(parts) == 2:
+                    line = '♀ ' + parts[1]
+                elif len(parts) > 2:
+                    line = parts[0] + '♀ ' + parts[1] + '♂ ' + ''.join(parts[2:])
             
             lo = line.lower()
             if any(stop in lo for stop in STOP_WORDS):

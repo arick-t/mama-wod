@@ -28,9 +28,10 @@ SECTION_HINTS = [
 ]
 
 NAV_WORDS = {
-    'home', 'about', 'contact', 'schedule', 'membership',
+    'home', 'about', 'contact', 'schedule', 'membership', 'memberships',
     'coaches', 'crossfit', 'postal', 'shop', 'login', 'register',
     'search', 'wod', 'daily wod', 'blog', 'skip to content',
+    'drop-in', 'foundations', 'gear store', 'contact us',
 }
 
 

@@ -166,12 +166,18 @@ def fetch_workout(date):
             if lo == 'intermediate' or lo.startswith('intermediate '):
                 print(f"    → Stopped at 'Intermediate'")
                 break
+            
+            # STOP at "Prev" (navigation footer starts here)
+            if lo == 'prev' or lo == 'previous':
+                print(f"    → Stopped at navigation footer")
+                break
 
             if any(lo.startswith(s) for s in [
                 'leave a reply', 'leave a comment', 'post comment',
                 'logged in', 'your email', 'required fields',
                 'subscribe', 'newsletter', 'copyright', 'privacy',
                 'share this', 'filed under', 'tagged',
+                'related posts', 'quick links', 'get in touch',
             ]):
                 print(f"    → Stopped at: '{line[:60]}'")
                 break

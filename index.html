@@ -62,6 +62,33 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .empty{text-align:center;padding:50px 20px;color:#444}
 .empty-icon{font-size:2.5em;margin-bottom:10px}
 @media(max-width:768px){.workouts-grid{grid-template-columns:1fr}h1{font-size:1.7em}}
+
+/* UP button */
+.up-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 48px;
+  height: 48px;
+  background: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  display: none;
+  z-index: 1000;
+  transition: all 0.3s;
+}
+.up-btn:hover {
+  background: #1976D2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.up-btn.show {
+  display: block;
+}
 </style>
 </head>
 <body>
@@ -357,6 +384,21 @@ function showTab(name) {
     if (pane) pane.className = "tab-content" + (tabs[i] === name ? " active" : "");
   }
 }
+
+// UP button show/hide on scroll
+window.onscroll = function() {
+  var upBtn = document.getElementById("upBtn");
+  if (upBtn && (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300)) {
+    upBtn.classList.add("show");
+  } else if (upBtn) {
+    upBtn.classList.remove("show");
+  }
+};
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 </script>
+<button class="up-btn" id="upBtn" onclick="scrollToTop()">↑</button>
 </body>
 </html>

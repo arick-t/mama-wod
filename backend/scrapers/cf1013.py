@@ -156,9 +156,17 @@ def fetch_workout(date):
             'coaches', 'crossfit 1013', 'crossfit1013', 'wod',
             'login', 'register', 'shop', 'skip to content',
         }
+        STOP = {'comment', 'norberto olalde', 'comments off', 'read more'}
+        
         workout_lines = []
         for line in block:
             lo = line.lower().strip()
+            
+            # Stop at footer/comment markers
+            if lo in STOP or 'comment' in lo:
+                print(f"    → Stopped at: '{line[:40]}'")
+                break
+            
             if lo in SKIP:
                 continue
             if len(line) > 200:

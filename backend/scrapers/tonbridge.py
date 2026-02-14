@@ -113,7 +113,8 @@ def fetch_workout(date):
         # Filter lines
         STOP = ['leave a reply', 'leave a comment', 'post comment',
                 'subscribe', 'newsletter', 'copyright', 'privacy',
-                'related posts', 'you may also like']
+                'related posts', 'you may also like',
+                'read more', 'comments off']
         SKIP = {'home', 'about', 'contact', 'schedule', 'membership',
                 'coaches', 'crossfit', 'ton bridge', 'tonbridge',
                 'blog', 'shop', 'login', 'skip to content'}
