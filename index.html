@@ -230,7 +230,7 @@ function esc(s) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-  buildNav();
+  buildDaysBar();
   loadData();
   buildSources();
 });
@@ -250,20 +250,6 @@ function loadData() {
       document.getElementById("grid").innerHTML =
         "<div class=\"empty\"><div class=\"empty-icon\">⚠️</div>Cannot load workouts.json<br><small>" + e.message + "</small></div>";
     });
-}
-
-function buildNav() {
-  var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-  var html = "";
-  for (var i = 0; i < 14; i++) {
-    var d = new Date();
-    d.setDate(d.getDate() - i);
-    var label = i === 0 ? "TODAY" : days[d.getDay()];
-    var dd = String(d.getDate()).padStart(2,"0");
-    var mm = String(d.getMonth()+1).padStart(2,"0");
-    html += "<button class=\"day-btn" + (i===0?" active":"") + "\" onclick=\"pickDay(" + i + ")\"><div class=\"day-name\">" + label + "</div><div class=\"day-date\">" + dd + "/" + mm + "</div></button>";
-  }
-  document.getElementById("dayNav").innerHTML = html;
 }
 
 function pickDay(ago) {
