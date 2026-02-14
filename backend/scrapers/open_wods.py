@@ -105,47 +105,9 @@ def fetch_all_open():
 def fetch_open(date):
     """
     Get an Open workout for a specific date.
-    Uses deterministic hashing to ensure same workout for same date.
-    Avoids repeating within 14 days.
+    TEMPORARILY DISABLED - WodWell structure needs research
     """
     date_str = date.strftime('%Y-%m-%d')
     print(f"  ⬇ CrossFit Open Workouts...")
-    
-    opens = fetch_all_open()
-    if not opens:
-        print(f"    → No Open workouts available")
-        return None
-    
-    # Use date hash to pick workout deterministically
-    date_hash = int(hashlib.md5(date_str.encode()).hexdigest(), 16)
-    
-    # Create exclusion window (past 14 days)
-    excluded_indices = set()
-    for days_ago in range(1, 15):
-        from datetime import timedelta
-        past_date = date - timedelta(days=days_ago)
-        past_str = past_date.strftime('%Y-%m-%d')
-        past_hash = int(hashlib.md5(past_str.encode()).hexdigest(), 16)
-        excluded_idx = past_hash % len(opens)
-        excluded_indices.add(excluded_idx)
-    
-    # Find first non-excluded index
-    base_idx = date_hash % len(opens)
-    chosen_idx = base_idx
-    attempts = 0
-    while chosen_idx in excluded_indices and attempts < len(opens):
-        chosen_idx = (chosen_idx + 1) % len(opens)
-        attempts += 1
-    
-    openwod = opens[chosen_idx]
-    print(f"    → Selected: {openwod['name']} (#{chosen_idx + 1}/{len(opens)})")
-    
-    return {
-        'date': date_str,
-        'source': 'open',
-        'source_name': 'CrossFit Open Workouts',
-        'sections': [{
-            'title': openwod['name'],
-            'lines': openwod['lines']
-        }]
-    }
+    print(f"    → Temporarily disabled (scraper under development)")
+    return None

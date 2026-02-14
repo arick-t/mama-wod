@@ -131,10 +131,6 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
         <input type="checkbox" id="includeHero">
         <span>🦸 CrossFit Hero Workouts</span>
       </label>
-      <label class="eq-item" style="margin-top:4px">
-        <input type="checkbox" id="includeOpen">
-        <span>🏋️ CrossFit Open Workouts</span>
-      </label>
     </div>
     
     <div class="form-group">
@@ -190,7 +186,6 @@ var SOURCES = {
   panda:        {name:"CrossFit Panda",           archive:true,  en:true},
   tonbridge:    {name:"CrossFit Ton Bridge",      archive:true,  en:true},
   hero:         {name:"🦸 Hero Workout",          archive:true,  en:true, special:"hero"},
-  open:         {name:"🏋️ Open Workout",          archive:true,  en:true, special:"open"},
   linchpin:     {name:"CrossFit Linchpin",        archive:false, en:true},
   postal:       {name:"CrossFit Postal",          archive:false, en:true}
 };
@@ -353,7 +348,6 @@ function buildCard(w, score) {
   var sc = score !== null ? "<span class=\"match-score\">" + score + "%</span>" : "";
   var cardClass = "workout-card";
   if (w.source === "hero") cardClass += " hero";
-  if (w.source === "open") cardClass += " open";
   return "<div class=\"" + cardClass + "\"><div class=\"card-header\"><div class=\"source-name\">" + esc(w.source_name||w.source) + sc + "</div>" +
     (w.date ? "<div class=\"wod-date\">" + w.date + "</div>" : "") +
     (w.note ? "<div class=\"source-note\">" + esc(w.note) + "</div>" : "") +
@@ -403,21 +397,14 @@ function findWorkout() {
   cardStore = [];
   
   // Get top 3 regular workouts
-  var regular = results.filter(function(r) { return r.w.source !== "hero" && r.w.source !== "open"; });
+  var regular = results.filter(function(r) { return r.w.source !== "hero"; });
   var top3 = regular.slice(0, 3);
   
   // Add Hero if checkbox checked
-  var includeHero = document.getElementById("includeHero").checked;
-  if (includeHero) {
+  var includeHero = document.getElementById("includeHero");
+  if (includeHero && includeHero.checked) {
     var hero = results.find(function(r) { return r.w.source === "hero"; });
     if (hero) top3.push(hero);
-  }
-  
-  // Add Open if checkbox checked
-  var includeOpen = document.getElementById("includeOpen").checked;
-  if (includeOpen) {
-    var open = results.find(function(r) { return r.w.source === "open"; });
-    if (open) top3.push(open);
   }
   
   el.innerHTML = top3.map(function(r) { return buildCard(r.w, r.sc); }).join("");
