@@ -128,6 +128,9 @@ def fetch_workout(date):
             line = line.replace('â\x80\x9c', '"')  # left double quote
             line = line.replace('â\x80\x9d', '"')  # right double quote
             line = line.replace('â\x80¢', '•')     # bullet
+            line = line.replace('â\x99\x80', '♀')  # female
+            line = line.replace('â\x99\x82', '♂')  # male
+            line = line.replace('â', '')           # leftover junk
             line = line.replace('â ', '• ')        # bullet variant
             # Gender symbols (often appear before weight specs)
             line = line.replace('â™€', '♀')        # female symbol

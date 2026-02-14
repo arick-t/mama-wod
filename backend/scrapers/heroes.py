@@ -36,7 +36,22 @@ def fetch_all_heroes():
             tag.decompose()
         
         text = soup.get_text(separator='\n')
-        lines = [l.strip() for l in text.split('\n') if l.strip()]
+        lines = []
+        for l in text.split('\n'):
+            l = l.strip()
+            if not l:
+                continue
+            # Fix encoding issues
+            l = l.replace('â\x80\x93', '–')
+            l = l.replace('â\x80\x94', '—')
+            l = l.replace('â\x80\x99', "'")
+            l = l.replace('â\x80\x9c', '"')
+            l = l.replace('â\x80\x9d', '"')
+            l = l.replace('â\x80¢', '•')
+            l = l.replace('â\x99\x80', '♀')
+            l = l.replace('â\x99\x82', '♂')
+            l = l.replace('â', '')
+            lines.append(l)
         
         # Parse: Each workout = short title + workout description
         heroes = []
@@ -62,21 +77,27 @@ def fetch_all_heroes():
                 while i < len(lines):
                     next_line = lines[i]
                     
+                    # Stop at memorial/biographical text (VERY STRICT)
+                    memorial_keywords = [
+                        'killed', 'died', 'fallen', 'survived by', 'is survived',
+                        'afghanistan', 'iraq', 'combat', 'enemy forces', 'improvised explosive',
+                        'was a member of', 'graduate of', 'air force', 'navy', 'marine',
+                        'u.s. army', 'special forces', 'year-old', 'years old'
+                    ]
+                    if any(keyword in next_line.lower() for keyword in memorial_keywords):
+                        break
+                    
                     # Stop at next workout name or footer
                     if len(next_line) < 25 and ':' not in next_line and not next_line.islower():
                         break
                     if any(stop in next_line.lower() for stop in ['share this', 'posted by', 'learn more about']):
                         break
                     
-                    # Stop at image captions or memorial text
-                    if 'fallen' in next_line.lower() or 'killed in action' in next_line.lower():
-                        break
-                    
                     workout_lines.append(next_line)
                     i += 1
                     
-                    # Limit to 15 lines per workout
-                    if len(workout_lines) >= 15:
+                    # Limit to 12 lines per workout (shorter)
+                    if len(workout_lines) >= 12:
                         break
                 
                 if len(workout_lines) >= 2:  # Valid workout has at least 2 lines
