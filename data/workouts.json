@@ -1,10 +1,375 @@
 {
-<<<<<<< HEAD
-  "workouts": {},
-  "last_updated": "2026-02-11T00:00:00"
-}
-=======
   "workouts": {
+    "2026-02-14": [
+      {
+        "date": "2026-02-14",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-02-14/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "scorpions",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "amrap 5min",
+              "10 prone snow angel",
+              "10 push ups",
+              "10 squat jumps",
+              "*partner is rowing"
+            ]
+          },
+          {
+            "title": "CONDITIONING 26MIN",
+            "lines": [
+              "in teams of 2",
+              "8:00 amrap",
+              "60 box jumps",
+              "60 double db thruster",
+              "max cal row",
+              "2:00 rest",
+              "6:00 amrap",
+              "40 box jumps",
+              "40 double db thruster",
+              "max cal row",
+              "2:00 rest",
+              "4:00 amrap",
+              "20 box jumps",
+              "20 double db thruster",
+              "max cal row",
+              "2:00 rest",
+              "2:00 amrap",
+              "10 box jumps",
+              "10 double db thruster",
+              "max cal row",
+              "dumbbells: 2x15/10kg",
+              "lactate threshold & muscular endurance"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-14",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260214",
+        "sections": [
+          {
+            "title": "5 ROUNDS, EACH FOR TIME, OF",
+            "lines": [
+              "800/1,000-meter standing bike",
+              "Rest 2 minutes between rounds.",
+              "Compare to",
+              "240313"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-14",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "February 13, 2026"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-14",
+        "source": "panda",
+        "source_name": "CrossFit Panda",
+        "url": "https://crossfitpanda-ghost.fly.dev/saturday-140226/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "CrossFit W.O.D"
+            ]
+          },
+          {
+            "title": "STRENGTH:",
+            "lines": [
+              "14:00 Min Practice Toes To Bars"
+            ]
+          },
+          {
+            "title": "METCON:",
+            "lines": [
+              "18.1 Open Workout:",
+              "20:00 Min AMRAP:",
+              "8 Toes To Bars",
+              "10 1DB Hang C&J #22.5/15",
+              "14 Cals Row"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-14",
+        "source": "tonbridge",
+        "source_name": "CrossFit Ton Bridge",
+        "url": "https://crossfittonbridge.co.uk/2026/02/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Saturday 14th February",
+              "By",
+              "Liv Phillips",
+              "2026-02-07T22:54:42+00:00",
+              "February 13th, 2026",
+              "Workout Of the Day"
+            ]
+          },
+          {
+            "title": "STRENGTH:",
+            "lines": [
+              "24 Min EMOM (8 Rounds)",
+              "Min 1- 5 Overhead Squat @ 60-85%",
+              "Min 2 – 6 – 10 Chest to Bar",
+              "Min 3 – 10/8 Cals Air Bike",
+              "Met Con:",
+              "5 Rounds",
+              "20 DB Snatch 22.5/15 kg",
+              "12 HSPUs"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-14",
+        "source": "linchpin",
+        "source_name": "CrossFit Linchpin",
+        "url": "https://crossfitlinchpin.com/blogs/wod",
+        "note": "⚠️ This source provides daily workouts only",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "2 Rounds for time of:",
+              "20 Box Step-ups, 24\"/20\"",
+              "3 Rope Climbs, 15 ft.",
+              "500m Row",
+              "2 Rounds for time of:",
+              "20 Push Press, 115/75",
+              "30 Medball Cleans, 20/14",
+              "500m Row",
+              "*Rest 5 min between each",
+              "*Box step-up loading is...",
+              "Men: Two 50-lb. Dumbbells",
+              "Women: Two 35-lb. Dumbbells"
+            ]
+          }
+        ]
+      }
+    ],
+    "2026-02-13": [
+      {
+        "date": "2026-02-13",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-02-13/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "lat stretch",
+              "hand walk",
+              "90/90 hip rotation",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "amrap 4min",
+              "10 push ups",
+              "10 scap. pull ups",
+              "10 sumo deadlifts"
+            ]
+          },
+          {
+            "title": "BENCH PRESS 12MIN",
+            "lines": [
+              "on the 2:00 x 6 sets:",
+              "2 close-grip bench press + 4 bench press",
+              "@70% of 1rm bench press",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 12MIN",
+            "lines": [
+              "12:00 amrap",
+              "5 strict pull-ups",
+              "10 sumo deadlift high pulls 40/30kg",
+              "15 push-ups",
+              "score: rounds + reps",
+              "lactate threshold & muscular endurance"
+            ]
+          },
+          {
+            "title": "STABILITY 4MIN",
+            "lines": [
+              "tabata (20sec on/10sec off) x 8 rounds",
+              "prone press"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-13",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260213",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Open Workout 24.1"
+            ]
+          },
+          {
+            "title": "FOR TIME",
+            "lines": [
+              "21 dumbbell snatches, arm 1",
+              "21 lateral burpees over the dumbbell",
+              "21 dumbbell snatches, arm 2",
+              "21 lateral burpees over the dumbbell",
+              "15 dumbbell snatches, arm 1",
+              "15 lateral burpees over the dumbbell",
+              "15 dumbbell snatches, arm 2",
+              "15 lateral burpees over the dumbbell",
+              "9 dumbbell snatches, arm 1",
+              "9 lateral burpees over the dumbbell",
+              "9 dumbbell snatches, arm 2",
+              "9 lateral burpees over the dumbbell",
+              "♀ 35-lb dumbbell",
+              "♂ 50-lb dumbbell",
+              "Compare to",
+              "240301"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-13",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-february-13-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "2 Rounds",
+              "30/25 Calorie C2 Machine or 400m run",
+              "5 Inchworm + push up complexes",
+              "10 Plate Ground to Overhead",
+              "AMRAP 22 Minutes (AMRAP – Rounds and Reps)",
+              "12 Toes to Bar",
+              "10 Ring Dips",
+              "8 Snatches 145/100lbs",
+              "Rest 1:00 between rounds",
+              "Feel: Muscle Overload/Gas",
+              "Pace: Sustain",
+              "Target Score: 6+ rounds",
+              "Firebreather Score: 8+ rounds"
+            ]
+          },
+          {
+            "title": "Strength (Checkmark)",
+            "lines": [
+              "Accumulate 5:00 of Dead Hang from a Pull Up Bar*",
+              "10:00 Cap"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-13",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "February 12, 2026"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-13",
+        "source": "panda",
+        "source_name": "CrossFit Panda",
+        "url": "https://crossfitpanda-ghost.fly.dev/friday-130226/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "CrossFit W.O.D",
+              "Valentines Day W.O.D!",
+              "30 Min AMRAP, IGUG, 20 Reps Of Each:",
+              "V – Ups",
+              "A ir Squats",
+              "L eg Raises",
+              "E explosive Push-Ups",
+              "N o Jump Burpees",
+              "T uck-Ups",
+              "I nverted Row\\Ring Row",
+              "N o Jump burpees",
+              "E xplosive Lunges",
+              "S it-Ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-13",
+        "source": "tonbridge",
+        "source_name": "CrossFit Ton Bridge",
+        "url": "https://crossfittonbridge.co.uk/2026/02/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Saturday 14th February",
+              "By",
+              "Liv Phillips",
+              "2026-02-07T22:54:42+00:00",
+              "February 13th, 2026",
+              "Workout Of the Day"
+            ]
+          },
+          {
+            "title": "STRENGTH:",
+            "lines": [
+              "24 Min EMOM (8 Rounds)",
+              "Min 1- 5 Overhead Squat @ 60-85%",
+              "Min 2 – 6 – 10 Chest to Bar",
+              "Min 3 – 10/8 Cals Air Bike",
+              "Met Con:",
+              "5 Rounds",
+              "20 DB Snatch 22.5/15 kg",
+              "12 HSPUs"
+            ]
+          }
+        ]
+      }
+    ],
     "2026-02-12": [
       {
         "date": "2026-02-12",
@@ -97,53 +462,7 @@
               "15 box jump-overs",
               "F: 35-lb. dumbbell, 20-in. box",
               "M: 50-lb. dumbbell, 24-in. box",
-              "https://games.crossfit.com/workouts/open/2022?division=2&workout_tiers=rx",
-              "Prev",
-              "Previous",
-              "Related Posts"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 12, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 11, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 10, 2026"
-            ]
-          },
-          {
-            "title": "WOD — February 10, 2026",
-            "lines": [
-              "Quick Links",
-              "About Us",
-              "Class Schedule",
-              "About Us",
-              "Class Schedule",
-              "Get In Touch",
-              "340 E 12th St, Dubuque, IA 52001",
-              "volvfitness@gmail.com",
-              "(563) 556-6496",
-              "Hours",
-              "Monday – Thursday",
-              "5:00 am-10:00 pm",
-              "Friday",
-              "5:00 am – 9:00 pm",
-              "Saturday",
-              "6:00 am – 5:00 pm",
-              "Sunday",
-              "7:00 am – 5:00 pm",
-              "© Volv Fitness, 2025. All Rights Reserved.",
-              "Site built with ♥ by nbd."
+              "https://games.crossfit.com/workouts/open/2022?division=2&workout_tiers=rx"
             ]
           }
         ]
@@ -157,29 +476,7 @@
           {
             "title": "WORKOUT",
             "lines": [
-              "February 11, 2026",
-              "Norberto Olalde"
-            ]
-          },
-          {
-            "title": "STRENGTH",
-            "lines": [
-              "Shoulder Press 4x3",
-              "Every 2:00 × 4 sets",
-              "3 Shoulder Press @60%",
-              "\"Red Roses\"",
-              "Every 1:00 (14:00)",
-              "Odd Minute: 8x50ft Shuttle Run",
-              "Even Minute: 10 Bench Press 155#/95#",
-              "*Score is total reps",
-              "**Rx only if all reps are completed at Rx weight and all shuttle runs are done within the alotted time each round.",
-              "February 11, 2026",
-              "Norberto Olalde",
-              "Comment",
-              "Red Roses",
-              "2/12/2026",
-              "Norberto Olalde",
-              "February 10, 2026"
+              "February 11, 2026"
             ]
           }
         ]
@@ -233,34 +530,25 @@
           {
             "title": "WORKOUT",
             "lines": [
-              "Thursday 12th February 2026",
+              "Saturday 14th February",
               "By",
               "Liv Phillips",
-              "2026-02-07T22:51:17+00:00",
-              "February 11th, 2026",
+              "2026-02-07T22:54:42+00:00",
+              "February 13th, 2026",
               "Workout Of the Day"
             ]
           },
           {
             "title": "STRENGTH:",
             "lines": [
-              "5 x 3 – 8 Bar Muscle ups",
-              "or",
-              "5 x 8-10 Toes to Bar",
+              "24 Min EMOM (8 Rounds)",
+              "Min 1- 5 Overhead Squat @ 60-85%",
+              "Min 2 – 6 – 10 Chest to Bar",
+              "Min 3 – 10/8 Cals Air Bike",
               "Met Con:",
-              "50 Wall Balls 9/6kg",
-              "40 Medball Sit ups",
-              "30 Cal Row"
-            ]
-          },
-          {
-            "title": "20 POWER SNATCH 50/30KG",
-            "lines": [
-              "10 Devil’s Press 2×22.5/15kg",
-              "If doing bike – 25 cals",
-              "Read More",
-              "Comments Off",
-              "on Thursday 12th February 2026"
+              "5 Rounds",
+              "20 DB Snatch 22.5/15 kg",
+              "12 HSPUs"
             ]
           }
         ]
@@ -329,8 +617,8 @@
               "Complete as many rounds and reps as possible in 10 minutes of:",
               "5 hang power cleans",
               "20-second L-sit hold",
-              "â 125-lb barbell",
-              "â 185-lb barbell"
+              "♀ 125-lb barbell",
+              "♂ 185-lb barbell"
             ]
           }
         ]
@@ -365,55 +653,7 @@
               "Strict Pull Up “Drop Sets”",
               "6 Rounds",
               "1 Hard Set of Strict Pull Ups",
-              "Rest 2:00",
-              "Prev",
-              "Previous",
-              "Next",
-              "Next",
-              "Related Posts"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 12, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 11, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 10, 2026"
-            ]
-          },
-          {
-            "title": "WOD — February 10, 2026",
-            "lines": [
-              "Quick Links",
-              "About Us",
-              "Class Schedule",
-              "About Us",
-              "Class Schedule",
-              "Get In Touch",
-              "340 E 12th St, Dubuque, IA 52001",
-              "volvfitness@gmail.com",
-              "(563) 556-6496",
-              "Hours",
-              "Monday – Thursday",
-              "5:00 am-10:00 pm",
-              "Friday",
-              "5:00 am – 9:00 pm",
-              "Saturday",
-              "6:00 am – 5:00 pm",
-              "Sunday",
-              "7:00 am – 5:00 pm",
-              "© Volv Fitness, 2025. All Rights Reserved.",
-              "Site built with ♥ by nbd."
+              "Rest 2:00"
             ]
           }
         ]
@@ -427,35 +667,7 @@
           {
             "title": "WORKOUT",
             "lines": [
-              "February 10, 2026",
-              "Norberto Olalde"
-            ]
-          },
-          {
-            "title": "STRENGTH",
-            "lines": [
-              "Back Squat 4x3",
-              "Every 2:00 × 4 sets",
-              "3 Back Squats @65%",
-              "\"Ball Out\""
-            ]
-          },
-          {
-            "title": "FOR TIME:",
-            "lines": [
-              "27-21-15-9",
-              "Wall Balls 20#/14#",
-              "Calorie Row",
-              "*Women's Calories: 22-16-12-8",
-              "February 10, 2026",
-              "Norberto Olalde",
-              "Comment",
-              "Ball Out",
-              "2/11/2026",
-              "Wall Balls",
-              "Row",
-              "Norberto Olalde",
-              "February 09, 2026"
+              "February 10, 2026"
             ]
           }
         ]
@@ -537,10 +749,7 @@
             "title": "20 POWER SNATCH 50/30KG",
             "lines": [
               "10 Devil’s Press 2×22.5/15kg",
-              "If doing bike – 25 cals",
-              "Read More",
-              "Comments Off",
-              "on Thursday 12th February 2026"
+              "If doing bike – 25 cals"
             ]
           }
         ]
@@ -667,124 +876,7 @@
               "Rest 2:00",
               "1 Smooth Set of Kipping HSPU",
               "Rest 4:00",
-              "If done properly, you will be able to increase reps on round 2 for all three movement patterns. Flush (very slow) between sets on an air bike or 1 damper ski erg.",
-              "Prev",
-              "Previous",
-              "Next",
-              "Next",
-              "Related Posts"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 12, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 11, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 10, 2026"
-            ]
-          },
-          {
-            "title": "WOD — February 10, 2026",
-            "lines": [
-              "Quick Links",
-              "About Us",
-              "Class Schedule",
-              "About Us",
-              "Class Schedule",
-              "Get In Touch",
-              "340 E 12th St, Dubuque, IA 52001",
-              "volvfitness@gmail.com",
-              "(563) 556-6496",
-              "Hours",
-              "Monday – Thursday",
-              "5:00 am-10:00 pm",
-              "Friday",
-              "5:00 am – 9:00 pm",
-              "Saturday",
-              "6:00 am – 5:00 pm",
-              "Sunday",
-              "7:00 am – 5:00 pm",
-              "© Volv Fitness, 2025. All Rights Reserved.",
-              "Site built with ♥ by nbd."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-02-10",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "February 09, 2026",
-              "Norberto Olalde"
-            ]
-          },
-          {
-            "title": "GYMNASTICS OPEN PREP (CHEST TO BAR / BAR MUSCLE UPS)",
-            "lines": [
-              "Level 1:"
-            ]
-          },
-          {
-            "title": "EMOM X10:",
-            "lines": [
-              "Odd: 6-8 Scap Pull-ups",
-              "Even: 6-8 Kip Swings",
-              "Level 2:"
-            ]
-          },
-          {
-            "title": "EMOM X10:",
-            "lines": [
-              "Odd: 4-6 Single Leg Box Butterfly drill",
-              "Even: 8-10 Butterfly Pull Ups (or 4-6 Chest to Bar Pull Ups)",
-              "Level 3:"
-            ]
-          },
-          {
-            "title": "EMOM X10:",
-            "lines": [
-              "Odd: 30 Sec Row @ 5k pace",
-              "Even: 30-40% of your max unbroken set of Bar Muscle Ups (no more than 5)"
-            ]
-          },
-          {
-            "title": "\"PB&J\"",
-            "lines": [
-              "2 sets Foe Time:",
-              "3 Rounds",
-              "15 GHDs",
-              "12 Chest to Bar",
-              "9 Burpee to Bar",
-              "-rest 3:00 between sets-",
-              "February 09, 2026",
-              "Norberto Olalde",
-              "Comment"
-            ]
-          },
-          {
-            "title": "PB&J",
-            "lines": [
-              "2/10/2026",
-              "GHD's",
-              "Chest to bar Pull Ups",
-              "burpees to bar",
-              "Norberto Olalde",
-              "February 08, 2026"
+              "If done properly, you will be able to increase reps on round 2 for all three movement patterns. Flush (very slow) between sets on an air bike or 1 damper ski erg."
             ]
           }
         ]
@@ -793,7 +885,7 @@
         "date": "2026-02-10",
         "source": "panda",
         "source_name": "CrossFit Panda",
-        "url": "https://crossfitpanda-ghost.fly.dev/thursday-190205/",
+        "url": "https://crossfitpanda-ghost.fly.dev/saturday-140226/",
         "sections": [
           {
             "title": "WORKOUT",
@@ -804,27 +896,17 @@
           {
             "title": "STRENGTH:",
             "lines": [
-              "Deadlift",
-              "E03:00MOMx6 Sets:",
-              "5-5-3-3-2-2"
+              "14:00 Min Practice Toes To Bars"
             ]
           },
           {
             "title": "METCON:",
             "lines": [
-              "12:00 Min AMRAP:",
-              "30 Double Unders",
-              "10 Ring Dips",
-              "5 Deadlifts #100/70kg"
-            ]
-          },
-          {
-            "title": "CROSSFIT ENDURANCE",
-            "lines": [
-              "2 Rounds For Time:",
-              "1600m Run",
-              "70 KB Swings #16/12kg",
-              "35 Box Jump Overs #60/50cm"
+              "18.1 Open Workout:",
+              "20:00 Min AMRAP:",
+              "8 Toes To Bars",
+              "10 1DB Hang C&J #22.5/15",
+              "14 Cals Row"
             ]
           }
         ]
@@ -838,34 +920,25 @@
           {
             "title": "WORKOUT",
             "lines": [
-              "Thursday 12th February 2026",
+              "Saturday 14th February",
               "By",
               "Liv Phillips",
-              "2026-02-07T22:51:17+00:00",
-              "February 11th, 2026",
+              "2026-02-07T22:54:42+00:00",
+              "February 13th, 2026",
               "Workout Of the Day"
             ]
           },
           {
             "title": "STRENGTH:",
             "lines": [
-              "5 x 3 – 8 Bar Muscle ups",
-              "or",
-              "5 x 8-10 Toes to Bar",
+              "24 Min EMOM (8 Rounds)",
+              "Min 1- 5 Overhead Squat @ 60-85%",
+              "Min 2 – 6 – 10 Chest to Bar",
+              "Min 3 – 10/8 Cals Air Bike",
               "Met Con:",
-              "50 Wall Balls 9/6kg",
-              "40 Medball Sit ups",
-              "30 Cal Row"
-            ]
-          },
-          {
-            "title": "20 POWER SNATCH 50/30KG",
-            "lines": [
-              "10 Devil’s Press 2×22.5/15kg",
-              "If doing bike – 25 cals",
-              "Read More",
-              "Comments Off",
-              "on Thursday 12th February 2026"
+              "5 Rounds",
+              "20 DB Snatch 22.5/15 kg",
+              "12 HSPUs"
             ]
           }
         ]
@@ -926,11 +999,11 @@
         "url": "https://www.crossfit.com/260209",
         "sections": [
           {
-            "title": "3 ROUNDS FOR TIME OF",
+            "title": "WORKOUT",
             "lines": [
-              "5 wall walks",
-              "25 chest-to-bar pull-ups",
-              "100 double-unders"
+              "Monday",
+              "260209",
+              "Learn the Movement â"
             ]
           }
         ]
@@ -967,96 +1040,7 @@
           {
             "title": "10 Front Rack Barbell Walking Lunge Steps",
             "lines": [
-              "Rest 2:00",
-              "Prev",
-              "Previous",
-              "Next",
-              "Next",
-              "Related Posts"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 12, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 11, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 10, 2026"
-            ]
-          },
-          {
-            "title": "WOD — February 10, 2026",
-            "lines": [
-              "Quick Links",
-              "About Us",
-              "Class Schedule",
-              "About Us",
-              "Class Schedule",
-              "Get In Touch",
-              "340 E 12th St, Dubuque, IA 52001",
-              "volvfitness@gmail.com",
-              "(563) 556-6496",
-              "Hours",
-              "Monday – Thursday",
-              "5:00 am-10:00 pm",
-              "Friday",
-              "5:00 am – 9:00 pm",
-              "Saturday",
-              "6:00 am – 5:00 pm",
-              "Sunday",
-              "7:00 am – 5:00 pm",
-              "© Volv Fitness, 2025. All Rights Reserved.",
-              "Site built with ♥ by nbd."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-02-09",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "February 08, 2026",
-              "Norberto Olalde"
-            ]
-          },
-          {
-            "title": "STRENGTH",
-            "lines": [
-              "Squat Clean + Push Jerk 10x1",
-              "Squat Clean and Jerk",
-              "Every 1:00 (10:00)",
-              "1 Squat Clean + Push Jerk @ RPE 6",
-              "\"Sprinkles on my Cupcake\""
-            ]
-          },
-          {
-            "title": "7:00 AMRAP",
-            "lines": [
-              "50/40 Calorie Air Bike",
-              "Max Clean and Jerks 135#/95#",
-              "February 08, 2026",
-              "Norberto Olalde",
-              "Comment",
-              "Sprinkles on my Cupcake",
-              "2/9/2026",
-              "bike",
-              "Clean and Jerks",
-              "Norberto Olalde",
-              "Next"
+              "Rest 2:00"
             ]
           }
         ]
@@ -1124,34 +1108,25 @@
           {
             "title": "WORKOUT",
             "lines": [
-              "Thursday 12th February 2026",
+              "Friday 13th February 2026",
               "By",
               "Liv Phillips",
-              "2026-02-07T22:51:17+00:00",
-              "February 11th, 2026",
+              "2026-02-07T22:53:46+00:00",
+              "February 12th, 2026",
               "Workout Of the Day"
             ]
           },
           {
             "title": "STRENGTH:",
             "lines": [
-              "5 x 3 – 8 Bar Muscle ups",
-              "or",
-              "5 x 8-10 Toes to Bar",
+              "Back Squat 2×2 @70-75%",
+              "Back Squat  2×2 @ 80-85%",
+              "Build to a 1RM",
               "Met Con:",
-              "50 Wall Balls 9/6kg",
-              "40 Medball Sit ups",
-              "30 Cal Row"
-            ]
-          },
-          {
-            "title": "20 POWER SNATCH 50/30KG",
-            "lines": [
-              "10 Devil’s Press 2×22.5/15kg",
-              "If doing bike – 25 cals",
-              "Read More",
-              "Comments Off",
-              "on Thursday 12th February 2026"
+              "15 Min AMRAP",
+              "15 Box Jumps 24/20″",
+              "12 Push Presses (52.5/35 kg)",
+              "9 Toes-to-Bars"
             ]
           }
         ]
@@ -1210,9 +1185,9 @@
           {
             "title": "WORKOUT",
             "lines": [
-              "Sunday",
-              "260208",
-              "Read More â"
+              "Rest Day",
+              "The CrossFit Open: On Preferring Not To Prefer",
+              "Your favorite movements won't save you in the Open. CrossFit promised to prepare you for the unknown and unknowable, but if you've been quietly avoiding what you don't like, your preferences are about to become your greatest weakness. Here's how to prefer not to prefer."
             ]
           }
         ]
@@ -1221,7 +1196,7 @@
         "date": "2026-02-08",
         "source": "panda",
         "source_name": "CrossFit Panda",
-        "url": "https://crossfitpanda-ghost.fly.dev/tuesday-170226/",
+        "url": "https://crossfitpanda-ghost.fly.dev/saturday-140226/",
         "sections": [
           {
             "title": "WORKOUT",
@@ -1232,26 +1207,17 @@
           {
             "title": "STRENGTH:",
             "lines": [
-              "Weighted Pull-Ups 3-3-3-2-2-2",
-              "20-30 Sec Weighted Hollow Hold B\\W Sets."
+              "14:00 Min Practice Toes To Bars"
             ]
           },
           {
             "title": "METCON:",
             "lines": [
-              "16:00 Min EMOM: (For Max Reps)",
-              "1.)Box Jumps #60/50cm",
-              "2.)Alt. Lunges",
-              "3.) HSPU",
-              "4.) Sit-Ups"
-            ]
-          },
-          {
-            "title": "CROSSFIT ENDURANCE",
-            "lines": [
-              "E06:00MOMx6 Alt Rounds:",
-              "24/18 Cals Row",
-              "15 Dual DB Hang Cleans #2x17.5/12.5"
+              "18.1 Open Workout:",
+              "20:00 Min AMRAP:",
+              "8 Toes To Bars",
+              "10 1DB Hang C&J #22.5/15",
+              "14 Cals Row"
             ]
           }
         ]
@@ -1265,34 +1231,25 @@
           {
             "title": "WORKOUT",
             "lines": [
-              "Thursday 12th February 2026",
+              "Saturday 14th February",
               "By",
               "Liv Phillips",
-              "2026-02-07T22:51:17+00:00",
-              "February 11th, 2026",
+              "2026-02-07T22:54:42+00:00",
+              "February 13th, 2026",
               "Workout Of the Day"
             ]
           },
           {
             "title": "STRENGTH:",
             "lines": [
-              "5 x 3 – 8 Bar Muscle ups",
-              "or",
-              "5 x 8-10 Toes to Bar",
+              "24 Min EMOM (8 Rounds)",
+              "Min 1- 5 Overhead Squat @ 60-85%",
+              "Min 2 – 6 – 10 Chest to Bar",
+              "Min 3 – 10/8 Cals Air Bike",
               "Met Con:",
-              "50 Wall Balls 9/6kg",
-              "40 Medball Sit ups",
-              "30 Cal Row"
-            ]
-          },
-          {
-            "title": "20 POWER SNATCH 50/30KG",
-            "lines": [
-              "10 Devil’s Press 2×22.5/15kg",
-              "If doing bike – 25 cals",
-              "Read More",
-              "Comments Off",
-              "on Thursday 12th February 2026"
+              "5 Rounds",
+              "20 DB Snatch 22.5/15 kg",
+              "12 HSPUs"
             ]
           }
         ]
@@ -1349,9 +1306,9 @@
           {
             "title": "WORKOUT",
             "lines": [
-              "Saturday",
-              "260207",
-              "Learn the Movement â"
+              "Split jerk 3-3-3-1-1-1-1 reps",
+              "Compare to",
+              "221013"
             ]
           }
         ]
@@ -1387,55 +1344,7 @@
               "12-10-8-6",
               "Start your set of 12 between 55 and 65%, then add weight each round.",
               "Bike 1,000m Between Sets to Flush",
-              "Volume work percentages vary quite a bit athlete to athlete. If technique is wavering during your sets, it’s too heavy. If it feels light, just stand up faster.",
-              "Prev",
-              "Previous",
-              "Next",
-              "Next",
-              "Related Posts"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 12, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 11, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 10, 2026"
-            ]
-          },
-          {
-            "title": "WOD — February 10, 2026",
-            "lines": [
-              "Quick Links",
-              "About Us",
-              "Class Schedule",
-              "About Us",
-              "Class Schedule",
-              "Get In Touch",
-              "340 E 12th St, Dubuque, IA 52001",
-              "volvfitness@gmail.com",
-              "(563) 556-6496",
-              "Hours",
-              "Monday – Thursday",
-              "5:00 am-10:00 pm",
-              "Friday",
-              "5:00 am – 9:00 pm",
-              "Saturday",
-              "6:00 am – 5:00 pm",
-              "Sunday",
-              "7:00 am – 5:00 pm",
-              "© Volv Fitness, 2025. All Rights Reserved.",
-              "Site built with ♥ by nbd."
+              "Volume work percentages vary quite a bit athlete to athlete. If technique is wavering during your sets, it’s too heavy. If it feels light, just stand up faster."
             ]
           }
         ]
@@ -1489,34 +1398,25 @@
           {
             "title": "WORKOUT",
             "lines": [
-              "Thursday 12th February 2026",
+              "Saturday 14th February",
               "By",
               "Liv Phillips",
-              "2026-02-07T22:51:17+00:00",
-              "February 11th, 2026",
+              "2026-02-07T22:54:42+00:00",
+              "February 13th, 2026",
               "Workout Of the Day"
             ]
           },
           {
             "title": "STRENGTH:",
             "lines": [
-              "5 x 3 – 8 Bar Muscle ups",
-              "or",
-              "5 x 8-10 Toes to Bar",
+              "24 Min EMOM (8 Rounds)",
+              "Min 1- 5 Overhead Squat @ 60-85%",
+              "Min 2 – 6 – 10 Chest to Bar",
+              "Min 3 – 10/8 Cals Air Bike",
               "Met Con:",
-              "50 Wall Balls 9/6kg",
-              "40 Medball Sit ups",
-              "30 Cal Row"
-            ]
-          },
-          {
-            "title": "20 POWER SNATCH 50/30KG",
-            "lines": [
-              "10 Devil’s Press 2×22.5/15kg",
-              "If doing bike – 25 cals",
-              "Read More",
-              "Comments Off",
-              "on Thursday 12th February 2026"
+              "5 Rounds",
+              "20 DB Snatch 22.5/15 kg",
+              "12 HSPUs"
             ]
           }
         ]
@@ -1582,11 +1482,12 @@
         "url": "https://www.crossfit.com/260206",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "10 ROUNDS FOR TIME OF",
             "lines": [
-              "Friday",
-              "260206",
-              "Learn the Movement â"
+              "5 back squats",
+              "3 muscle-ups",
+              "♀ 155-lb barbell",
+              "♂ 225-lb barbell"
             ]
           }
         ]
@@ -1627,55 +1528,7 @@
             "lines": [
               "6 Sets",
               "10 Neutral Grip DB Bench Press",
-              "Rest 2:00",
-              "Prev",
-              "Previous",
-              "Next",
-              "Next",
-              "Related Posts"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 12, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 11, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 10, 2026"
-            ]
-          },
-          {
-            "title": "WOD — February 10, 2026",
-            "lines": [
-              "Quick Links",
-              "About Us",
-              "Class Schedule",
-              "About Us",
-              "Class Schedule",
-              "Get In Touch",
-              "340 E 12th St, Dubuque, IA 52001",
-              "volvfitness@gmail.com",
-              "(563) 556-6496",
-              "Hours",
-              "Monday – Thursday",
-              "5:00 am-10:00 pm",
-              "Friday",
-              "5:00 am – 9:00 pm",
-              "Saturday",
-              "6:00 am – 5:00 pm",
-              "Sunday",
-              "7:00 am – 5:00 pm",
-              "© Volv Fitness, 2025. All Rights Reserved.",
-              "Site built with ♥ by nbd."
+              "Rest 2:00"
             ]
           }
         ]
@@ -1684,7 +1537,7 @@
         "date": "2026-02-06",
         "source": "panda",
         "source_name": "CrossFit Panda",
-        "url": "https://crossfitpanda-ghost.fly.dev/thursday-190205/",
+        "url": "https://crossfitpanda-ghost.fly.dev/saturday-140226/",
         "sections": [
           {
             "title": "WORKOUT",
@@ -1695,27 +1548,17 @@
           {
             "title": "STRENGTH:",
             "lines": [
-              "Deadlift",
-              "E03:00MOMx6 Sets:",
-              "5-5-3-3-2-2"
+              "14:00 Min Practice Toes To Bars"
             ]
           },
           {
             "title": "METCON:",
             "lines": [
-              "12:00 Min AMRAP:",
-              "30 Double Unders",
-              "10 Ring Dips",
-              "5 Deadlifts #100/70kg"
-            ]
-          },
-          {
-            "title": "CROSSFIT ENDURANCE",
-            "lines": [
-              "2 Rounds For Time:",
-              "1600m Run",
-              "70 KB Swings #16/12kg",
-              "35 Box Jump Overs #60/50cm"
+              "18.1 Open Workout:",
+              "20:00 Min AMRAP:",
+              "8 Toes To Bars",
+              "10 1DB Hang C&J #22.5/15",
+              "14 Cals Row"
             ]
           }
         ]
@@ -1729,34 +1572,25 @@
           {
             "title": "WORKOUT",
             "lines": [
-              "Thursday 12th February 2026",
+              "Saturday 14th February",
               "By",
               "Liv Phillips",
-              "2026-02-07T22:51:17+00:00",
-              "February 11th, 2026",
+              "2026-02-07T22:54:42+00:00",
+              "February 13th, 2026",
               "Workout Of the Day"
             ]
           },
           {
             "title": "STRENGTH:",
             "lines": [
-              "5 x 3 – 8 Bar Muscle ups",
-              "or",
-              "5 x 8-10 Toes to Bar",
+              "24 Min EMOM (8 Rounds)",
+              "Min 1- 5 Overhead Squat @ 60-85%",
+              "Min 2 – 6 – 10 Chest to Bar",
+              "Min 3 – 10/8 Cals Air Bike",
               "Met Con:",
-              "50 Wall Balls 9/6kg",
-              "40 Medball Sit ups",
-              "30 Cal Row"
-            ]
-          },
-          {
-            "title": "20 POWER SNATCH 50/30KG",
-            "lines": [
-              "10 Devil’s Press 2×22.5/15kg",
-              "If doing bike – 25 cals",
-              "Read More",
-              "Comments Off",
-              "on Thursday 12th February 2026"
+              "5 Rounds",
+              "20 DB Snatch 22.5/15 kg",
+              "12 HSPUs"
             ]
           }
         ]
@@ -1829,9 +1663,9 @@
           {
             "title": "WORKOUT",
             "lines": [
-              "Thursday",
-              "260205",
-              "Read More â"
+              "Rest Day",
+              "Coaching the Mental Side of CrossFit",
+              "The greatest adaptation to CrossFit happens between the ears. In this article, CrossFit pioneer Greg Amundson reveals how elite athletes use positive self-talk and strategic goal-setting to unlock their full potential, and how coaches can harness these mental skills to transform their athletes' performance in the gym and beyond. With the Open just days away, this is a great reminder to get your self-talk in order."
             ]
           }
         ]
@@ -1863,59 +1697,6 @@
               "12 Wallballs 20/14lbs to 10/9ft",
               "30ft HS Walk (15ft x 2)"
             ]
-          },
-          {
-            "title": "9 Power Snatch 75/55lbs",
-            "lines": [
-              "Prev",
-              "Previous",
-              "Next",
-              "Next",
-              "Related Posts"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 12, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 11, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 10, 2026"
-            ]
-          },
-          {
-            "title": "WOD — February 10, 2026",
-            "lines": [
-              "Quick Links",
-              "About Us",
-              "Class Schedule",
-              "About Us",
-              "Class Schedule",
-              "Get In Touch",
-              "340 E 12th St, Dubuque, IA 52001",
-              "volvfitness@gmail.com",
-              "(563) 556-6496",
-              "Hours",
-              "Monday – Thursday",
-              "5:00 am-10:00 pm",
-              "Friday",
-              "5:00 am – 9:00 pm",
-              "Saturday",
-              "6:00 am – 5:00 pm",
-              "Sunday",
-              "7:00 am – 5:00 pm",
-              "© Volv Fitness, 2025. All Rights Reserved.",
-              "Site built with ♥ by nbd."
-            ]
           }
         ]
       },
@@ -1923,7 +1704,7 @@
         "date": "2026-02-05",
         "source": "panda",
         "source_name": "CrossFit Panda",
-        "url": "https://crossfitpanda-ghost.fly.dev/thursday-190205/",
+        "url": "https://crossfitpanda-ghost.fly.dev/saturday-140226/",
         "sections": [
           {
             "title": "WORKOUT",
@@ -1934,27 +1715,17 @@
           {
             "title": "STRENGTH:",
             "lines": [
-              "Deadlift",
-              "E03:00MOMx6 Sets:",
-              "5-5-3-3-2-2"
+              "14:00 Min Practice Toes To Bars"
             ]
           },
           {
             "title": "METCON:",
             "lines": [
-              "12:00 Min AMRAP:",
-              "30 Double Unders",
-              "10 Ring Dips",
-              "5 Deadlifts #100/70kg"
-            ]
-          },
-          {
-            "title": "CROSSFIT ENDURANCE",
-            "lines": [
-              "2 Rounds For Time:",
-              "1600m Run",
-              "70 KB Swings #16/12kg",
-              "35 Box Jump Overs #60/50cm"
+              "18.1 Open Workout:",
+              "20:00 Min AMRAP:",
+              "8 Toes To Bars",
+              "10 1DB Hang C&J #22.5/15",
+              "14 Cals Row"
             ]
           }
         ]
@@ -1968,34 +1739,25 @@
           {
             "title": "WORKOUT",
             "lines": [
-              "Thursday 12th February 2026",
+              "Saturday 14th February",
               "By",
               "Liv Phillips",
-              "2026-02-07T22:51:17+00:00",
-              "February 11th, 2026",
+              "2026-02-07T22:54:42+00:00",
+              "February 13th, 2026",
               "Workout Of the Day"
             ]
           },
           {
             "title": "STRENGTH:",
             "lines": [
-              "5 x 3 – 8 Bar Muscle ups",
-              "or",
-              "5 x 8-10 Toes to Bar",
+              "24 Min EMOM (8 Rounds)",
+              "Min 1- 5 Overhead Squat @ 60-85%",
+              "Min 2 – 6 – 10 Chest to Bar",
+              "Min 3 – 10/8 Cals Air Bike",
               "Met Con:",
-              "50 Wall Balls 9/6kg",
-              "40 Medball Sit ups",
-              "30 Cal Row"
-            ]
-          },
-          {
-            "title": "20 POWER SNATCH 50/30KG",
-            "lines": [
-              "10 Devil’s Press 2×22.5/15kg",
-              "If doing bike – 25 cals",
-              "Read More",
-              "Comments Off",
-              "on Thursday 12th February 2026"
+              "5 Rounds",
+              "20 DB Snatch 22.5/15 kg",
+              "12 HSPUs"
             ]
           }
         ]
@@ -2059,11 +1821,16 @@
         "url": "https://www.crossfit.com/260204",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "FOR TIME",
             "lines": [
-              "Wednesday",
-              "260204",
-              "Learn the Movement â"
+              "30-24-18 reps",
+              "GHD hip extensions",
+              "30-24-18 reps",
+              "GHD sit-ups",
+              "15-12-9 reps",
+              "Power snatches",
+              "♀ 105-lb barbell",
+              "♂ 155-lb barbell"
             ]
           }
         ]
@@ -2092,55 +1859,7 @@
               "Deadlift (“7-6-5-4-3",
               "1-3” Deficit Tempo Deadlift",
               "Bike 1,000m Between Sets to Flush",
-              "Aim for 3-4 second lift with a 3-4 second negative. Start near 60% and work up. Prioritize technique. Get rid of the deficit if you cannot keep your hips below your shoulders with a flat back.",
-              "Prev",
-              "Previous",
-              "Next",
-              "Next",
-              "Related Posts"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 12, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 11, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 10, 2026"
-            ]
-          },
-          {
-            "title": "WOD — February 10, 2026",
-            "lines": [
-              "Quick Links",
-              "About Us",
-              "Class Schedule",
-              "About Us",
-              "Class Schedule",
-              "Get In Touch",
-              "340 E 12th St, Dubuque, IA 52001",
-              "volvfitness@gmail.com",
-              "(563) 556-6496",
-              "Hours",
-              "Monday – Thursday",
-              "5:00 am-10:00 pm",
-              "Friday",
-              "5:00 am – 9:00 pm",
-              "Saturday",
-              "6:00 am – 5:00 pm",
-              "Sunday",
-              "7:00 am – 5:00 pm",
-              "© Volv Fitness, 2025. All Rights Reserved.",
-              "Site built with ♥ by nbd."
+              "Aim for 3-4 second lift with a 3-4 second negative. Start near 60% and work up. Prioritize technique. Get rid of the deficit if you cannot keep your hips below your shoulders with a flat back."
             ]
           }
         ]
@@ -2149,7 +1868,7 @@
         "date": "2026-02-04",
         "source": "panda",
         "source_name": "CrossFit Panda",
-        "url": "https://crossfitpanda-ghost.fly.dev/wednesday-110226/",
+        "url": "https://crossfitpanda-ghost.fly.dev/saturday-140226/",
         "sections": [
           {
             "title": "WORKOUT",
@@ -2160,31 +1879,17 @@
           {
             "title": "STRENGTH:",
             "lines": [
-              "E02:00MOMx7 Sets:",
-              "Build Up To 2 heavy STOH (From Rack)"
+              "14:00 Min Practice Toes To Bars"
             ]
           },
           {
-            "title": "FOR TIME:",
+            "title": "METCON:",
             "lines": [
-              "30 2DB Box Step Overs #2x22.5/15",
-              "60 Pull-Ups",
-              "30 2DB Box Step Overs"
-            ]
-          },
-          {
-            "title": "CROSSFIT STRENGTH",
-            "lines": [
-              "Part A:",
-              "Push Press 5x5 *Build Up to A @2RIR",
-              "Part B:",
-              "4 Supersets:",
-              "8 2DB B-Stance Deadlifts(Each Leg)",
-              "6\\6 Single Arm DB Bent-Over-Rows @1131 TEMPO",
-              "Part C:",
-              "08:00 Min EMOM, Alt:",
-              "1.)\t00:45 Assualt Bike @9Hard!",
-              "2.)\t 8 Sandbag Squats #70/45"
+              "18.1 Open Workout:",
+              "20:00 Min AMRAP:",
+              "8 Toes To Bars",
+              "10 1DB Hang C&J #22.5/15",
+              "14 Cals Row"
             ]
           }
         ]
@@ -2198,34 +1903,25 @@
           {
             "title": "WORKOUT",
             "lines": [
-              "Thursday 12th February 2026",
+              "Saturday 14th February",
               "By",
               "Liv Phillips",
-              "2026-02-07T22:51:17+00:00",
-              "February 11th, 2026",
+              "2026-02-07T22:54:42+00:00",
+              "February 13th, 2026",
               "Workout Of the Day"
             ]
           },
           {
             "title": "STRENGTH:",
             "lines": [
-              "5 x 3 – 8 Bar Muscle ups",
-              "or",
-              "5 x 8-10 Toes to Bar",
+              "24 Min EMOM (8 Rounds)",
+              "Min 1- 5 Overhead Squat @ 60-85%",
+              "Min 2 – 6 – 10 Chest to Bar",
+              "Min 3 – 10/8 Cals Air Bike",
               "Met Con:",
-              "50 Wall Balls 9/6kg",
-              "40 Medball Sit ups",
-              "30 Cal Row"
-            ]
-          },
-          {
-            "title": "20 POWER SNATCH 50/30KG",
-            "lines": [
-              "10 Devil’s Press 2×22.5/15kg",
-              "If doing bike – 25 cals",
-              "Read More",
-              "Comments Off",
-              "on Thursday 12th February 2026"
+              "5 Rounds",
+              "20 DB Snatch 22.5/15 kg",
+              "12 HSPUs"
             ]
           }
         ]
@@ -2277,11 +1973,12 @@
         "url": "https://www.crossfit.com/260203",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "5 ROUNDS FOR TIME OF",
             "lines": [
-              "Tuesday",
-              "260203",
-              "Learn the Movement â"
+              "5 rope climbs to 15 feet",
+              "200-foot Zercher carry",
+              "♀ 105-lb barbell",
+              "♂ 155-lb barbell"
             ]
           }
         ]
@@ -2337,52 +2034,7 @@
             "title": "*Above Knee Power Clean + Below Knee Power Clean",
             "lines": [
               "We’re searching for the sweet spot where speed and technique meets heavy.)",
-              "Not challenging = too light. Not fast = too heavy",
-              "Prev",
-              "Previous",
-              "Next",
-              "Next",
-              "Related Posts"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 12, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 11, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 10, 2026"
-            ]
-          },
-          {
-            "title": "WOD — February 10, 2026",
-            "lines": [
-              "Quick Links",
-              "About Us",
-              "Class Schedule",
-              "About Us",
-              "Class Schedule",
-              "Get In Touch",
-              "340 E 12th St, Dubuque, IA 52001",
-              "volvfitness@gmail.com",
-              "(563) 556-6496",
-              "Hours",
-              "Monday – Thursday",
-              "5:00 am-10:00 pm",
-              "Friday",
-              "5:00 am – 9:00 pm",
-              "Saturday",
-              "6:00 am – 5:00 pm",
-              "Sunday"
+              "Not challenging = too light. Not fast = too heavy"
             ]
           }
         ]
@@ -2391,38 +2043,24 @@
         "date": "2026-02-03",
         "source": "panda",
         "source_name": "CrossFit Panda",
-        "url": "https://crossfitpanda-ghost.fly.dev/thursday-190205/",
+        "url": "https://crossfitpanda-ghost.fly.dev/friday-130226/",
         "sections": [
           {
             "title": "WORKOUT",
             "lines": [
-              "CrossFit W.O.D"
-            ]
-          },
-          {
-            "title": "STRENGTH:",
-            "lines": [
-              "Deadlift",
-              "E03:00MOMx6 Sets:",
-              "5-5-3-3-2-2"
-            ]
-          },
-          {
-            "title": "METCON:",
-            "lines": [
-              "12:00 Min AMRAP:",
-              "30 Double Unders",
-              "10 Ring Dips",
-              "5 Deadlifts #100/70kg"
-            ]
-          },
-          {
-            "title": "CROSSFIT ENDURANCE",
-            "lines": [
-              "2 Rounds For Time:",
-              "1600m Run",
-              "70 KB Swings #16/12kg",
-              "35 Box Jump Overs #60/50cm"
+              "CrossFit W.O.D",
+              "Valentines Day W.O.D!",
+              "30 Min AMRAP, IGUG, 20 Reps Of Each:",
+              "V – Ups",
+              "A ir Squats",
+              "L eg Raises",
+              "E explosive Push-Ups",
+              "N o Jump Burpees",
+              "T uck-Ups",
+              "I nverted Row\\Ring Row",
+              "N o Jump burpees",
+              "E xplosive Lunges",
+              "S it-Ups"
             ]
           }
         ]
@@ -2436,34 +2074,25 @@
           {
             "title": "WORKOUT",
             "lines": [
-              "Thursday 12th February 2026",
+              "Saturday 14th February",
               "By",
               "Liv Phillips",
-              "2026-02-07T22:51:17+00:00",
-              "February 11th, 2026",
+              "2026-02-07T22:54:42+00:00",
+              "February 13th, 2026",
               "Workout Of the Day"
             ]
           },
           {
             "title": "STRENGTH:",
             "lines": [
-              "5 x 3 – 8 Bar Muscle ups",
-              "or",
-              "5 x 8-10 Toes to Bar",
+              "24 Min EMOM (8 Rounds)",
+              "Min 1- 5 Overhead Squat @ 60-85%",
+              "Min 2 – 6 – 10 Chest to Bar",
+              "Min 3 – 10/8 Cals Air Bike",
               "Met Con:",
-              "50 Wall Balls 9/6kg",
-              "40 Medball Sit ups",
-              "30 Cal Row"
-            ]
-          },
-          {
-            "title": "20 POWER SNATCH 50/30KG",
-            "lines": [
-              "10 Devil’s Press 2×22.5/15kg",
-              "If doing bike – 25 cals",
-              "Read More",
-              "Comments Off",
-              "on Thursday 12th February 2026"
+              "5 Rounds",
+              "20 DB Snatch 22.5/15 kg",
+              "12 HSPUs"
             ]
           }
         ]
@@ -2531,11 +2160,13 @@
         "url": "https://www.crossfit.com/260202",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "FOR TIME",
             "lines": [
-              "Monday",
-              "260202",
-              "Learn the Movement â"
+              "30 box jump-overs",
+              "150 air squats",
+              "1,600-meter run",
+              "♀ 24-inch box",
+              "♂ 30-inch box"
             ]
           }
         ]
@@ -2592,44 +2223,7 @@
               "Then",
               "1 Max Set of CTB Pull Ups",
               "Air Bike at a flush pace (very slow) for majority of rest periods",
-              "If you choose the right number for your smooth sets, you’ll get more than that in your max set but won’t be able to double that number.",
-              "Prev",
-              "Previous",
-              "Next",
-              "Next",
-              "Related Posts"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 12, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 11, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 10, 2026"
-            ]
-          },
-          {
-            "title": "WOD — February 10, 2026",
-            "lines": [
-              "Quick Links",
-              "About Us",
-              "Class Schedule",
-              "About Us",
-              "Class Schedule",
-              "Get In Touch",
-              "340 E 12th St, Dubuque, IA 52001",
-              "volvfitness@gmail.com",
-              "(563) 556-6496"
+              "If you choose the right number for your smooth sets, you’ll get more than that in your max set but won’t be able to double that number."
             ]
           }
         ]
@@ -2638,7 +2232,7 @@
         "date": "2026-02-02",
         "source": "panda",
         "source_name": "CrossFit Panda",
-        "url": "https://crossfitpanda-ghost.fly.dev/thursday-190205/",
+        "url": "https://crossfitpanda-ghost.fly.dev/saturday-140226/",
         "sections": [
           {
             "title": "WORKOUT",
@@ -2649,27 +2243,17 @@
           {
             "title": "STRENGTH:",
             "lines": [
-              "Deadlift",
-              "E03:00MOMx6 Sets:",
-              "5-5-3-3-2-2"
+              "14:00 Min Practice Toes To Bars"
             ]
           },
           {
             "title": "METCON:",
             "lines": [
-              "12:00 Min AMRAP:",
-              "30 Double Unders",
-              "10 Ring Dips",
-              "5 Deadlifts #100/70kg"
-            ]
-          },
-          {
-            "title": "CROSSFIT ENDURANCE",
-            "lines": [
-              "2 Rounds For Time:",
-              "1600m Run",
-              "70 KB Swings #16/12kg",
-              "35 Box Jump Overs #60/50cm"
+              "18.1 Open Workout:",
+              "20:00 Min AMRAP:",
+              "8 Toes To Bars",
+              "10 1DB Hang C&J #22.5/15",
+              "14 Cals Row"
             ]
           }
         ]
@@ -2683,34 +2267,25 @@
           {
             "title": "WORKOUT",
             "lines": [
-              "Thursday 12th February 2026",
+              "Saturday 14th February",
               "By",
               "Liv Phillips",
-              "2026-02-07T22:51:17+00:00",
-              "February 11th, 2026",
+              "2026-02-07T22:54:42+00:00",
+              "February 13th, 2026",
               "Workout Of the Day"
             ]
           },
           {
             "title": "STRENGTH:",
             "lines": [
-              "5 x 3 – 8 Bar Muscle ups",
-              "or",
-              "5 x 8-10 Toes to Bar",
+              "24 Min EMOM (8 Rounds)",
+              "Min 1- 5 Overhead Squat @ 60-85%",
+              "Min 2 – 6 – 10 Chest to Bar",
+              "Min 3 – 10/8 Cals Air Bike",
               "Met Con:",
-              "50 Wall Balls 9/6kg",
-              "40 Medball Sit ups",
-              "30 Cal Row"
-            ]
-          },
-          {
-            "title": "20 POWER SNATCH 50/30KG",
-            "lines": [
-              "10 Devil’s Press 2×22.5/15kg",
-              "If doing bike – 25 cals",
-              "Read More",
-              "Comments Off",
-              "on Thursday 12th February 2026"
+              "5 Rounds",
+              "20 DB Snatch 22.5/15 kg",
+              "12 HSPUs"
             ]
           }
         ]
@@ -2787,697 +2362,6 @@
         "date": "2026-02-01",
         "source": "panda",
         "source_name": "CrossFit Panda",
-        "url": "https://crossfitpanda-ghost.fly.dev/thursday-190205/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "CrossFit W.O.D"
-            ]
-          },
-          {
-            "title": "STRENGTH:",
-            "lines": [
-              "Deadlift",
-              "E03:00MOMx6 Sets:",
-              "5-5-3-3-2-2"
-            ]
-          },
-          {
-            "title": "METCON:",
-            "lines": [
-              "12:00 Min AMRAP:",
-              "30 Double Unders",
-              "10 Ring Dips",
-              "5 Deadlifts #100/70kg"
-            ]
-          },
-          {
-            "title": "CROSSFIT ENDURANCE",
-            "lines": [
-              "2 Rounds For Time:",
-              "1600m Run",
-              "70 KB Swings #16/12kg",
-              "35 Box Jump Overs #60/50cm"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-02-01",
-        "source": "tonbridge",
-        "source_name": "CrossFit Ton Bridge",
-        "url": "https://crossfittonbridge.co.uk/2026/02/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Thursday 12th February 2026",
-              "By",
-              "Liv Phillips",
-              "2026-02-07T22:51:17+00:00",
-              "February 11th, 2026",
-              "Workout Of the Day"
-            ]
-          },
-          {
-            "title": "STRENGTH:",
-            "lines": [
-              "5 x 3 – 8 Bar Muscle ups",
-              "or",
-              "5 x 8-10 Toes to Bar",
-              "Met Con:",
-              "50 Wall Balls 9/6kg",
-              "40 Medball Sit ups",
-              "30 Cal Row"
-            ]
-          },
-          {
-            "title": "20 POWER SNATCH 50/30KG",
-            "lines": [
-              "10 Devil’s Press 2×22.5/15kg",
-              "If doing bike – 25 cals",
-              "Read More",
-              "Comments Off",
-              "on Thursday 12th February 2026"
-            ]
-          }
-        ]
-      }
-    ],
-    "2026-01-31": [
-      {
-        "date": "2026-01-31",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-01-31/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "sumo squat stretch",
-              "scorpions",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "amrap 5min",
-              "10 push ups",
-              "10 straight leg sit ups",
-              "*partner is rowing"
-            ]
-          },
-          {
-            "title": "CONDITIONING 30MIN",
-            "lines": [
-              "in teams of 2",
-              "2 rounds",
-              "5:00 amrap:",
-              "60 toes to bar",
-              "max cal row",
-              "5:00 amrap:",
-              "60 front squats",
-              "max cal row",
-              "5:00 amrap:",
-              "60 push press",
-              "max cal row",
-              "barbell: 40/30kg",
-              "score: total cal"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-01-31",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260131",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Saturday",
-              "260131",
-              "Learn the Movement â"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-01-31",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-january-31-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "Alternating Movement Tabata 4 rounds each",
-              "Jump Rope Variations*",
-              "Double Dumbbell Deadlifts",
-              "Burpees",
-              "Step Ups",
-              "*Singles, Single Leg Singles, Crossovers, Double Unders, Triple Unders??",
-              "AMRAP 17 Minutes with a partner (AMRAP – Rounds and Reps)",
-              "6 Double DB Burpee Step Ups 50s/35s to 20″",
-              "35 Double Unders",
-              "Partners start on opposite movements and switch only when both are done.",
-              "Feel: Cardio/Gas",
-              "Pace: Sustain",
-              "Target Score: 15+ rounds (as a pair, 7.5+ each)",
-              "Firebreather Score: 20+ rounds as a pair (10+ each)",
-              "Back Squat (Tempo Pause Back Squat*",
-              "1×1 @ Heavier Than Working Sets",
-              "Then",
-              "5×3",
-              "*Tempo Down, 2 Second Pause, Stand = 1 Rep",
-              "All sets are tempo)",
-              "Warm up to a moderate single to get a feel for a good place to start on your sets of 3. All sets should be technique focused before adding weight.",
-              "Prev",
-              "Previous",
-              "Next",
-              "Next",
-              "Related Posts"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 12, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 11, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 10, 2026"
-            ]
-          },
-          {
-            "title": "WOD — February 10, 2026",
-            "lines": [
-              "Quick Links",
-              "About Us",
-              "Class Schedule",
-              "About Us",
-              "Class Schedule",
-              "Get In Touch",
-              "340 E 12th St, Dubuque, IA 52001",
-              "volvfitness@gmail.com",
-              "(563) 556-6496",
-              "Hours",
-              "Monday – Thursday",
-              "5:00 am-10:00 pm",
-              "Friday",
-              "5:00 am – 9:00 pm",
-              "Saturday",
-              "6:00 am – 5:00 pm",
-              "Sunday",
-              "7:00 am – 5:00 pm",
-              "© Volv Fitness, 2025. All Rights Reserved.",
-              "Site built with ♥ by nbd."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-01-31",
-        "source": "panda",
-        "source_name": "CrossFit Panda",
-        "url": "https://crossfitpanda-ghost.fly.dev/saturday-310126/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "CrossFit W.O.D"
-            ]
-          },
-          {
-            "title": "SKILL:",
-            "lines": [
-              "14:00 Min Double Unders Practice"
-            ]
-          },
-          {
-            "title": "STRENGTH:",
-            "lines": [
-              "Open Workout No' 2: 24.2",
-              "20:00 Min AMRAP:",
-              "300m row",
-              "10 Deadlifts #83/56kg",
-              "50 Double Unders"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-01-31",
-        "source": "tonbridge",
-        "source_name": "CrossFit Ton Bridge",
-        "url": "https://crossfittonbridge.co.uk/2026/01/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Saturday 31st January 2026",
-              "By",
-              "Liv Phillips",
-              "2026-01-25T20:10:34+00:00",
-              "January 30th, 2026",
-              "Workout Of the Day",
-              "Met Con:",
-              "Killer",
-              "3 rounds",
-              "30/21 cal bike or 500/400m Row"
-            ]
-          },
-          {
-            "title": "10 POWER CLEAN",
-            "lines": [
-              "25 KB swing 32/24kg",
-              "10 Front squat",
-              "20 Burpee box overs",
-              "10 Push jerk",
-              "RX:- 60/40kg",
-              "Read More",
-              "Comments Off",
-              "on Saturday 31st January 2026"
-            ]
-          }
-        ]
-      }
-    ],
-    "2026-02-13": [
-      {
-        "date": "2026-02-13",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-02-13/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "lat stretch",
-              "hand walk",
-              "90/90 hip rotation",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "amrap 4min",
-              "10 push ups",
-              "10 scap. pull ups",
-              "10 sumo deadlifts"
-            ]
-          },
-          {
-            "title": "BENCH PRESS 12MIN",
-            "lines": [
-              "on the 2:00 x 6 sets:",
-              "2 close-grip bench press + 4 bench press",
-              "@70% of 1rm bench press",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 12MIN",
-            "lines": [
-              "12:00 amrap",
-              "5 strict pull-ups",
-              "10 sumo deadlift high pulls 40/30kg",
-              "15 push-ups",
-              "score: rounds + reps",
-              "lactate threshold & muscular endurance"
-            ]
-          },
-          {
-            "title": "STABILITY 4MIN",
-            "lines": [
-              "tabata (20sec on/10sec off) x 8 rounds",
-              "prone press"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-02-13",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260213",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Open Workout 24.1"
-            ]
-          },
-          {
-            "title": "FOR TIME",
-            "lines": [
-              "21 dumbbell snatches, arm 1",
-              "21 lateral burpees over the dumbbell",
-              "21 dumbbell snatches, arm 2",
-              "21 lateral burpees over the dumbbell",
-              "15 dumbbell snatches, arm 1",
-              "15 lateral burpees over the dumbbell",
-              "15 dumbbell snatches, arm 2",
-              "15 lateral burpees over the dumbbell",
-              "9 dumbbell snatches, arm 1",
-              "9 lateral burpees over the dumbbell",
-              "9 dumbbell snatches, arm 2",
-              "9 lateral burpees over the dumbbell",
-              "â 35-lb dumbbell",
-              "â 50-lb dumbbell",
-              "Compare to",
-              "240301"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-02-13",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "February 12, 2026",
-              "Norberto Olalde"
-            ]
-          },
-          {
-            "title": "STRENGTH",
-            "lines": [
-              "Deadlift 4x3",
-              "Every 2:00 × 4 sets",
-              "3 Deadlifts @65%"
-            ]
-          },
-          {
-            "title": "\"CROSSFIT OPEN WOD OPEN 23.3\"",
-            "lines": [
-              "In a 6:00 window, complete",
-              "5 Wall Walks",
-              "50 Double Unders",
-              "15 Snatches 95#/65#",
-              "5 Wall Walks",
-              "50 Double Unders",
-              "12 Snatches 135#/95#",
-              "*If completed before the 6:00 time cap, add 3:00 to the time cap and complete:",
-              "20 Strict Handstand Push Ups",
-              "50 Double Unders",
-              "9 Snatches 185#/125#",
-              "*If completed before the 9:00 time cap, add 3:00 to the time cap and complete:",
-              "20 Strict Handstand Push Ups",
-              "50 Double Unders",
-              "6 Snatches 225#/155#",
-              "(Scored by Reps)",
-              "February 12, 2026",
-              "Norberto Olalde",
-              "Comment"
-            ]
-          },
-          {
-            "title": "CROSSFIT OPEN WOD OPEN 23.3",
-            "lines": [
-              "2/13/2026",
-              "Wall Walks",
-              "Double Unders",
-              "Snatches",
-              "Norberto Olalde",
-              "February 11, 2026"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-02-13",
-        "source": "panda",
-        "source_name": "CrossFit Panda",
-        "url": "https://crossfitpanda-ghost.fly.dev/friday-130226/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "CrossFit W.O.D",
-              "Valentines Day W.O.D!",
-              "30 Min AMRAP, IGUG, 20 Reps Of Each:",
-              "V – Ups",
-              "A ir Squats",
-              "L eg Raises",
-              "E explosive Push-Ups",
-              "N o Jump Burpees",
-              "T uck-Ups",
-              "I nverted Row\\Ring Row",
-              "N o Jump burpees",
-              "E xplosive Lunges",
-              "S it-Ups"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-02-13",
-        "source": "tonbridge",
-        "source_name": "CrossFit Ton Bridge",
-        "url": "https://crossfittonbridge.co.uk/2026/02/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Friday 13th February 2026",
-              "By",
-              "Liv Phillips",
-              "2026-02-07T22:53:46+00:00",
-              "February 12th, 2026",
-              "Workout Of the Day"
-            ]
-          },
-          {
-            "title": "STRENGTH:",
-            "lines": [
-              "Back Squat 2×2 @70-75%",
-              "Back Squat  2×2 @ 80-85%",
-              "Build to a 1RM",
-              "Met Con:",
-              "15 Min AMRAP",
-              "15 Box Jumps 24/20″",
-              "12 Push Presses (52.5/35 kg)",
-              "9 Toes-to-Bars",
-              "Read More",
-              "Comments Off",
-              "on Friday 13th February 2026"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-02-13",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-february-13-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "2 Rounds",
-              "30/25 Calorie C2 Machine or 400m run",
-              "5 Inchworm + push up complexes",
-              "10 Plate Ground to Overhead",
-              "AMRAP 22 Minutes (AMRAP – Rounds and Reps)",
-              "12 Toes to Bar",
-              "10 Ring Dips",
-              "8 Snatches 145/100lbs",
-              "Rest 1:00 between rounds",
-              "Feel: Muscle Overload/Gas",
-              "Pace: Sustain",
-              "Target Score: 6+ rounds",
-              "Firebreather Score: 8+ rounds"
-            ]
-          },
-          {
-            "title": "Strength (Checkmark)",
-            "lines": [
-              "Accumulate 5:00 of Dead Hang from a Pull Up Bar*",
-              "10:00 Cap",
-              "Prev",
-              "Previous",
-              "Related Posts"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 13, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 12, 2026"
-            ]
-          },
-          {
-            "title": "WORKOUT OF THE DAY",
-            "lines": [
-              "February 11, 2026"
-            ]
-          },
-          {
-            "title": "WOD — February 11, 2026",
-            "lines": [
-              "Quick Links",
-              "About Us",
-              "Class Schedule",
-              "About Us",
-              "Class Schedule",
-              "Get In Touch",
-              "340 E 12th St, Dubuque, IA 52001",
-              "volvfitness@gmail.com",
-              "(563) 556-6496",
-              "Hours",
-              "Monday – Thursday",
-              "5:00 am-10:00 pm",
-              "Friday",
-              "5:00 am – 9:00 pm",
-              "Saturday",
-              "6:00 am – 5:00 pm",
-              "Sunday",
-              "7:00 am – 5:00 pm",
-              "© Volv Fitness, 2025. All Rights Reserved.",
-              "Site built with ♥ by nbd."
-            ]
-          }
-        ]
-      }
-    ],
-    "2026-02-14": [
-      {
-        "date": "2026-02-14",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-02-14/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "sumo squat stretch",
-              "scorpions",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "amrap 5min",
-              "10 prone snow angel",
-              "10 push ups",
-              "10 squat jumps",
-              "*partner is rowing"
-            ]
-          },
-          {
-            "title": "CONDITIONING 26MIN",
-            "lines": [
-              "in teams of 2",
-              "8:00 amrap",
-              "60 box jumps",
-              "60 double db thruster",
-              "max cal row",
-              "2:00 rest",
-              "6:00 amrap",
-              "40 box jumps",
-              "40 double db thruster",
-              "max cal row",
-              "2:00 rest",
-              "4:00 amrap",
-              "20 box jumps",
-              "20 double db thruster",
-              "max cal row",
-              "2:00 rest",
-              "2:00 amrap",
-              "10 box jumps",
-              "10 double db thruster",
-              "max cal row",
-              "dumbbells: 2x15/10kg",
-              "lactate threshold & muscular endurance"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-02-14",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260214",
-        "sections": [
-          {
-            "title": "5 ROUNDS, EACH FOR TIME, OF",
-            "lines": [
-              "800/1,000-meter standing bike",
-              "Rest 2 minutes between rounds.",
-              "Compare to",
-              "240313"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-02-14",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "February 13, 2026",
-              "Norberto Olalde",
-              "\"The Cherry on my Sundae\""
-            ]
-          },
-          {
-            "title": "TEAMS OF 2 FOR TIME:",
-            "lines": [
-              "Partner 1: 500/450m Row",
-              "Partner 2: 30/24 Calorie Air Bike",
-              "15 Rope Climbs (Split) (Scale 30 Strict Pull Ups, Split)",
-              "Partner 1: 30/24 Calorie Air Bike",
-              "Partner 2: 500/450m Row",
-              "100 Push Up (Split)",
-              "Partner 1: 500/450m Row",
-              "Partner 2: 30/24 Calorie Air Bike",
-              "150 Synchro Air Squat",
-              "Partner 1: 30/24 Calorie Air Bike",
-              "Partner 2: 500/450m Row",
-              "February 13, 2026",
-              "Norberto Olalde",
-              "Comment",
-              "The Cherry on my Sundae",
-              "2/14/2026",
-              "Norberto Olalde",
-              "February 12, 2026"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-02-14",
-        "source": "panda",
-        "source_name": "CrossFit Panda",
         "url": "https://crossfitpanda-ghost.fly.dev/saturday-140226/",
         "sections": [
           {
@@ -3505,7 +2389,7 @@
         ]
       },
       {
-        "date": "2026-02-14",
+        "date": "2026-02-01",
         "source": "tonbridge",
         "source_name": "CrossFit Ton Bridge",
         "url": "https://crossfittonbridge.co.uk/2026/02/",
@@ -3531,68 +2415,12 @@
               "Met Con:",
               "5 Rounds",
               "20 DB Snatch 22.5/15 kg",
-              "12 HSPUs",
-              "Read More",
-              "Comments Off",
-              "on Saturday 14th February"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-02-14",
-        "source": "linchpin",
-        "source_name": "CrossFit Linchpin",
-        "url": "https://crossfitlinchpin.com/blogs/wod",
-        "note": "⚠️ This source provides daily workouts only",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "2 Rounds for time of:",
-              "20 Box Step-ups, 24\"/20\"",
-              "3 Rope Climbs, 15 ft.",
-              "500m Row",
-              "2 Rounds for time of:",
-              "20 Push Press, 115/75",
-              "30 Medball Cleans, 20/14",
-              "500m Row",
-              "*Rest 5 min between each",
-              "*Box step-up loading is...",
-              "Men: Two 50-lb. Dumbbells",
-              "Women: Two 35-lb. Dumbbells"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-02-14",
-        "source": "postal",
-        "source_name": "CrossFit Postal",
-        "url": "https://crossfitpostal.com/dailywod",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Drop-in",
-              "Memberships",
-              "Foundations",
-              "Gear Store"
-            ]
-          },
-          {
-            "title": "CONTACT US",
-            "lines": [
-              "Drop-in",
-              "Memberships",
-              "Foundations",
-              "Gear Store"
+              "12 HSPUs"
             ]
           }
         ]
       }
     ]
   },
-  "last_updated": "2026-02-14T06:03:18.410173"
+  "last_updated": "2026-02-14T11:38:55.837839"
 }
->>>>>>> a4e01d0663eb2b19d75bb030d4c86efac7ab60ba
