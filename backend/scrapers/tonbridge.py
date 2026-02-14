@@ -118,10 +118,30 @@ def fetch_workout(date):
         SKIP = {'home', 'about', 'contact', 'schedule', 'membership',
                 'coaches', 'crossfit', 'ton bridge', 'tonbridge',
                 'blog', 'shop', 'login', 'skip to content'}
+        
+        # STOP conditions specific to Ton Bridge (author/meta)
+        AUTHOR_STOP = ['by liv phillips', 'workout of the day']
+
+        # Find START: skip until we see date header (e.g., "Saturday 14th February")
+        start_idx = 0
+        for i, line in enumerate(raw_lines):
+            lo = line.lower().strip()
+            # Look for day name + ordinal number (e.g., "saturday 14th")
+            if any(day in lo for day in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']):
+                if any(ord in lo for ord in ['st', 'nd', 'rd', 'th']):
+                    start_idx = i + 1  # Start AFTER date header
+                    print(f"    → Starting after date header: '{line}'")
+                    break
 
         workout_lines = []
-        for line in raw_lines:
+        for line in raw_lines[start_idx:]:
             lo = line.lower().strip()
+            
+            # STOP at author/meta line (e.g., "By Liv Phillips|February 13th")
+            if any(stop in lo for stop in AUTHOR_STOP):
+                print(f"    → Stopped at author/meta: '{line[:60]}'")
+                break
+            
             if any(s in lo for s in STOP):
                 print(f"    → Stopped at: '{line[:60]}'")
                 break

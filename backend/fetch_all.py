@@ -14,7 +14,6 @@ sys.path.insert(0, str(Path(__file__).parent))
 from scrapers.myleo        import fetch_workout as fetch_myleo
 from scrapers.crossfit_com  import fetch_workout as fetch_crossfit_com
 from scrapers.linchpin      import fetch_workout as fetch_linchpin
-from scrapers.others        import fetch_postal
 from scrapers.restoration   import fetch_workout as fetch_restoration
 from scrapers.cf1013        import fetch_workout as fetch_cf1013
 from scrapers.panda         import fetch_workout as fetch_panda
@@ -37,7 +36,6 @@ SCRAPERS = [
     ('hero',         'CrossFit Hero Workouts',  fetch_hero,         True),
     ('open',         'CrossFit Open Workouts',  fetch_open,         True),
     ('linchpin',     'CrossFit Linchpin',       fetch_linchpin,     False),
-    ('postal',       'CrossFit Postal',         fetch_postal,       False),
 ]
 
 

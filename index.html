@@ -38,7 +38,7 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .section-lines li{padding:2px 0 2px 16px;position:relative;color:#e8e4d8;font-size:.92em}
 .section-lines li:before{content:"•";position:absolute;left:0;color:#E8451A;font-weight:bold}
 .section-lines li.note:before{content:"";display:none}
-.section-lines li.note{padding-left:8px;background:#e8f5e9;border-radius:4px;color:#2e7d32;font-style:italic;padding:4px 8px;margin:2px 0}
+.section-lines li.note{padding-left:8px;color:#1A9B8A;font-style:italic}
 .card-footer{margin-top:12px;padding-top:10px;border-top:1px solid #2a2a2a}
 .btn{padding:7px 14px;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-size:.88em;transition:all .15s}
 .btn-wa{background:#25d366;color:#fff}
@@ -172,6 +172,10 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 </div>
 
 <div class="tab-content" id="sources-tab">
+  <div style="padding:0 0 12px 0;display:flex;gap:8px;justify-content:center">
+    <button class="btn btn-find" onclick="toggleAllSources()" style="width:auto;padding:8px 16px;font-size:0.85em">ALL SOURCES</button>
+    <button class="btn btn-find" onclick="resetSourceOrder()" style="width:auto;padding:8px 16px;font-size:0.85em">RESET DEFAULT</button>
+  </div>
   <div class="sources-list" id="sourcesList"></div>
 </div>
 <script>
@@ -187,8 +191,7 @@ var SOURCES = {
   panda:        {name:"CrossFit Panda",           archive:true,  en:true},
   tonbridge:    {name:"CrossFit Ton Bridge",      archive:true,  en:true},
   hero:         {name:"🦸 Hero Workout",          archive:true,  en:true, special:"hero"},
-  linchpin:     {name:"CrossFit Linchpin",        archive:false, en:true, note:"⚠️ This source provides daily workouts only"},
-  postal:       {name:"CrossFit Postal",          archive:false, en:true, note:"⚠️ This source provides daily workouts only"}
+  linchpin:     {name:"CrossFit Linchpin",        archive:false, en:true, note:"⚠️ This source provides daily workouts only"}
 };
 
 try {
@@ -231,6 +234,21 @@ function esc(s) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
+  // Load saved source order
+  try {
+    var savedOrder = localStorage.getItem("duck-wod-order");
+    if (savedOrder) {
+      var keys = JSON.parse(savedOrder);
+      var newSources = {};
+      for (var i = 0; i < keys.length; i++) {
+        if (SOURCES[keys[i]]) {
+          newSources[keys[i]] = SOURCES[keys[i]];
+        }
+      }
+      SOURCES = newSources;
+    }
+  } catch(e) {}
+  
   buildDaysBar();
   loadData();
   buildSources();
@@ -303,6 +321,17 @@ function displayWorkouts() {
   for (var i = 0; i < all.length; i++) {
     if (SOURCES[all[i].source] && SOURCES[all[i].source].en) filtered.push(all[i]);
   }
+  
+  // Sort by SOURCES order
+  var sourceKeys = Object.keys(SOURCES);
+  filtered.sort(function(a, b) {
+    var aIdx = sourceKeys.indexOf(a.source);
+    var bIdx = sourceKeys.indexOf(b.source);
+    if (aIdx === -1) aIdx = 999;
+    if (bIdx === -1) bIdx = 999;
+    return aIdx - bIdx;
+  });
+  
   if (filtered.length === 0) {
     grid.innerHTML = "<div class=\"empty\"><div class=\"empty-icon\">🦆</div>No workouts for " + ds + "<br><small style=\"color:#444\">Run the fetch workflow to get data</small></div>";
     return;
@@ -416,14 +445,21 @@ function scoreWod(w, t, eq) {
 
 function buildSources() {
   var html = "";
-  for (var id in SOURCES) {
+  var keys = Object.keys(SOURCES);
+  for (var i = 0; i < keys.length; i++) {
+    var id = keys[i];
     var info = SOURCES[id];
     var itemClass = "source-item";
     if (info.special === "hero") itemClass += " hero";
     html += "<div class=\"" + itemClass + "\">" +
+      "<div style=\"display:flex;align-items:center;gap:8px\">" +
+      "<div style=\"display:flex;flex-direction:column;gap:2px\">" +
+      (i > 0 ? "<button onclick=\"moveSource('" + id + "',-1)\" style=\"background:none;border:none;color:#F5C518;cursor:pointer;font-size:1.2em;line-height:1;padding:0\">▲</button>" : "<div style=\"height:18px\"></div>") +
+      (i < keys.length - 1 ? "<button onclick=\"moveSource('" + id + "',1)\" style=\"background:none;border:none;color:#F5C518;cursor:pointer;font-size:1.2em;line-height:1;padding:0\">▼</button>" : "<div style=\"height:18px\"></div>") +
+      "</div>" +
       "<div><strong>" + info.name + "</strong><small>" + (info.archive ? "✅ 14-day archive" : "⚠️ Today only") + "</small>" +
       (info.note ? "<div style=\"color:#ff9800;font-size:0.75em;margin-top:2px\">" + info.note + "</div>" : "") +
-      "</div>" +
+      "</div></div>" +
       "<div class=\"toggle " + (info.en ? "on" : "") + "\" id=\"tog-" + id + "\" onclick=\"tog('" + id + "')\"><div class=\"knob\"></div></div>" +
       "</div>";
   }
@@ -434,6 +470,70 @@ function tog(id) {
   SOURCES[id].en = !SOURCES[id].en;
   var el = document.getElementById("tog-" + id);
   if (el) el.className = "toggle" + (SOURCES[id].en ? " on" : "");
+  var saved = {};
+  for (var k in SOURCES) saved[k] = SOURCES[k].en;
+  localStorage.setItem("duck-wod-tog", JSON.stringify(saved));
+  displayWorkouts();
+}
+
+function toggleAllSources() {
+  var allOn = true;
+  for (var k in SOURCES) {
+    if (!SOURCES[k].en) {
+      allOn = false;
+      break;
+    }
+  }
+  // If all are ON, turn all OFF. Otherwise, turn all ON.
+  for (var k in SOURCES) {
+    SOURCES[k].en = !allOn;
+  }
+  buildSources();
+  var saved = {};
+  for (var k in SOURCES) saved[k] = SOURCES[k].en;
+  localStorage.setItem("duck-wod-tog", JSON.stringify(saved));
+  displayWorkouts();
+}
+
+function moveSource(id, dir) {
+  var keys = Object.keys(SOURCES);
+  var idx = keys.indexOf(id);
+  if (idx === -1) return;
+  var newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= keys.length) return;
+  
+  // Swap
+  var temp = keys[idx];
+  keys[idx] = keys[newIdx];
+  keys[newIdx] = temp;
+  
+  // Rebuild SOURCES in new order
+  var newSources = {};
+  for (var i = 0; i < keys.length; i++) {
+    newSources[keys[i]] = SOURCES[keys[i]];
+  }
+  SOURCES = newSources;
+  
+  // Save order to localStorage
+  localStorage.setItem("duck-wod-order", JSON.stringify(keys));
+  
+  buildSources();
+  displayWorkouts();
+}
+
+function resetSourceOrder() {
+  // Reset to default order and enable all
+  var defaultOrder = ["hero","open","myleo","crossfit_com","restoration","cf1013","panda","tonbridge","linchpin"];
+  var newSources = {};
+  for (var i = 0; i < defaultOrder.length; i++) {
+    var id = defaultOrder[i];
+    if (SOURCES[id]) {
+      newSources[id] = SOURCES[id];
+      newSources[id].en = true;
+    }
+  }
+  SOURCES = newSources;
+  buildSources();
   var saved = {};
   for (var k in SOURCES) saved[k] = SOURCES[k].en;
   localStorage.setItem("duck-wod-tog", JSON.stringify(saved));
