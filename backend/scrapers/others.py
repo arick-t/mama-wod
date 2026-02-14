@@ -121,24 +121,17 @@ def fetch_postal(date):
         else:
             print(f"    → No date marker – starting from top")
 
-        # Collect; STOP at "Intermediate"
+        # Collect workout lines - STOP at "Intermediate"
         workout_lines = []
         for line in raw_lines[start_idx:]:
             lo = line.lower().strip()
 
+            # PRIMARY STOP: Intermediate section (marks end of main workout)
             if lo == 'intermediate' or lo.startswith('intermediate '):
                 print(f"    → Stopped at 'Intermediate'")
                 break
 
-            if any(lo.startswith(s) for s in [
-                'book a drop', 'click here to pay', 'sign your waiver',
-                'leave a reply', 'leave a comment', 'post comment',
-                'subscribe', 'newsletter', 'copyright', 'privacy',
-                'follow us',
-            ]):
-                print(f"    → Stopped at: '{line[:60]}'")
-                break
-
+            # Skip navigation links
             if lo in NAV_WORDS:
                 continue
             if len(line) > 200:

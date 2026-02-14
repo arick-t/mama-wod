@@ -63,6 +63,13 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .empty-icon{font-size:2.5em;margin-bottom:10px}
 @media(max-width:768px){.workouts-grid{grid-template-columns:1fr}h1{font-size:1.7em}}
 
+.wod-line.note {
+  background: #e8f5e9;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: #2e7d32;
+}
+
 /* UP button */
 .up-btn {
   position: fixed;
@@ -280,7 +287,12 @@ function buildCard(w, score) {
     var s = secs[i];
     var li = "";
     var ln = s.lines || [];
-    for (var j = 0; j < ln.length; j++) li += "<li>" + esc(ln[j]) + "</li>";
+    for (var j = 0; j < ln.length; j++) {
+      var line = ln[j];
+      var isNote = line.startsWith("*") || line.endsWith("*");
+      var style = isNote ? ' style="background:#e8f5e9;padding:4px 8px;border-radius:4px;color:#2e7d32"' : '';
+      li += "<li" + style + ">" + esc(line) + "</li>";
+    }
     body += "<div class=\"section\"><div class=\"section-title\">" + esc(s.title) + "</div><ul class=\"section-lines\">" + li + "</ul></div>";
   }
   if (!body) body = "<div style=\"color:#555;padding:8px\">No content</div>";

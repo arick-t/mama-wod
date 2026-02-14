@@ -155,15 +155,15 @@ def fetch_workout(date):
             'home', 'about', 'contact', 'schedule', 'membership',
             'coaches', 'crossfit 1013', 'crossfit1013', 'wod',
             'login', 'register', 'shop', 'skip to content',
+            'norberto olalde',  # author - appears BEFORE workout
         }
-        STOP = {'comment', 'norberto olalde', 'comments off', 'read more'}
         
         workout_lines = []
         for line in block:
             lo = line.lower().strip()
             
-            # Stop at footer/comment markers
-            if lo in STOP or 'comment' in lo:
+            # Stop only at Comment section (appears AFTER workout)
+            if 'comment' in lo:
                 print(f"    → Stopped at: '{line[:40]}'")
                 break
             
