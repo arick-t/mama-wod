@@ -25,6 +25,8 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .tab-content.active{display:block}
 .workouts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:18px;max-width:1400px;margin:0 auto}
 .workout-card{background:#1e1e1e;border:1px solid #2a2a2a;border-radius:12px;padding:18px;transition:all .15s}
+.workout-card.hero{border:3px solid #2196F3;background:#1a2332;box-shadow:0 0 16px rgba(33,150,243,0.3)}
+.workout-card.open{border:3px solid #FFC107;background:#2a2418;box-shadow:0 0 16px rgba(255,193,7,0.3)}
 .workout-card:hover{border-color:#E8451A;transform:translateY(-2px);box-shadow:0 4px 18px rgba(232,69,26,.15)}
 .card-header{border-bottom:2px solid #E8451A;padding-bottom:10px;margin-bottom:14px}
 .source-name{font-size:1.25em;font-weight:700;color:#F5C518}
@@ -35,6 +37,8 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .section-lines{list-style:none}
 .section-lines li{padding:2px 0 2px 16px;position:relative;color:#e8e4d8;font-size:.92em}
 .section-lines li:before{content:"•";position:absolute;left:0;color:#E8451A;font-weight:bold}
+.section-lines li.note:before{content:"";display:none}
+.section-lines li.note{padding-left:8px}
 .card-footer{margin-top:12px;padding-top:10px;border-top:1px solid #2a2a2a}
 .btn{padding:7px 14px;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-size:.88em;transition:all .15s}
 .btn-wa{background:#25d366;color:#fff}
@@ -104,13 +108,14 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 <h1>DUCK-WOD</h1>
 <div class="header-sub">DAILY CROSSFIT WORKOUTS</div>
 </div>
-<div class="day-nav" id="dayNav"></div>
-
 <div class="tabs">
 <button class="tab-btn active" id="tab-browse" onclick="showTab('browse')">Browse</button>
 <button class="tab-btn" id="tab-find" onclick="showTab('find')">Find Workout</button>
 <button class="tab-btn" id="tab-sources" onclick="showTab('sources')">Sources</button>
 </div>
+
+<!-- Days selector - sticky below tabs -->
+<div id="days-bar" style="position:sticky;top:0;z-index:100;background:#1a1a1a;border-bottom:2px solid #E8451A;padding:8px 0;overflow-x:auto;white-space:nowrap"></div>
 
 <div class="tab-content active" id="browse-tab">
   <div class="workouts-grid" id="grid"><div class="empty"><div class="empty-icon">🦆</div>Loading...</div></div>
@@ -119,6 +124,19 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 <div class="tab-content" id="find-tab">
   <div class="find-form">
     <h2>🎯 Find Your Workout</h2>
+    
+    <div class="form-group" style="border-bottom:1px solid #333;padding-bottom:12px;margin-bottom:12px">
+      <label>Special Workouts</label>
+      <label class="eq-item" style="margin-top:8px">
+        <input type="checkbox" id="includeHero">
+        <span>🦸 CrossFit Hero Workouts</span>
+      </label>
+      <label class="eq-item" style="margin-top:4px">
+        <input type="checkbox" id="includeOpen">
+        <span>🏋️ CrossFit Open Workouts</span>
+      </label>
+    </div>
+    
     <div class="form-group">
       <label>Available Time (minutes)</label>
       <input type="number" id="findTime" min="1" max="180" value="20">
@@ -165,14 +183,16 @@ var currentDate = new Date();
 var cardStore = [];
 
 var SOURCES = {
-  myleo:        {name:"myleo CrossFit",        archive:true,  en:true},
-  crossfit_com: {name:"CrossFit.com",           archive:true,  en:true},
-  restoration:  {name:"CrossFit Restoration",  archive:true,  en:true},
-  cf1013:       {name:"CrossFit 1013",          archive:true,  en:true},
-  panda:        {name:"CrossFit Panda",         archive:true,  en:true},
-  linchpin:     {name:"CrossFit Linchpin",      archive:false, en:true},
-  postal:       {name:"CrossFit Postal",        archive:false, en:true},
-  tonbridge:    {name:"CrossFit Ton Bridge",     archive:true,  en:true}
+  myleo:        {name:"myleo CrossFit",           archive:true,  en:true},
+  crossfit_com: {name:"CrossFit.com",             archive:true,  en:true},
+  restoration:  {name:"CrossFit Restoration",     archive:true,  en:true},
+  cf1013:       {name:"CrossFit 1013",            archive:true,  en:true},
+  panda:        {name:"CrossFit Panda",           archive:true,  en:true},
+  tonbridge:    {name:"CrossFit Ton Bridge",      archive:true,  en:true},
+  hero:         {name:"🦸 Hero Workout",          archive:true,  en:true, special:"hero"},
+  open:         {name:"🏋️ Open Workout",          archive:true,  en:true, special:"open"},
+  linchpin:     {name:"CrossFit Linchpin",        archive:false, en:true},
+  postal:       {name:"CrossFit Postal",          archive:false, en:true}
 };
 
 try {
@@ -260,7 +280,40 @@ function pickDay(ago) {
   displayWorkouts();
 }
 
+function buildDaysBar() {
+  var bar = document.getElementById("days-bar");
+  if (!bar) return;
+  
+  var dates = Object.keys(allData.workouts || {}).sort().reverse();
+  if (dates.length === 0) {
+    bar.innerHTML = "";
+    return;
+  }
+  
+  var html = '<div style="padding:0 20px">';
+  var ds = localDate(currentDate);
+  
+  for (var i = 0; i < dates.length; i++) {
+    var d = new Date(dates[i] + 'T00:00:00');
+    var day = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];
+    var active = dates[i] === ds ? ' active' : '';
+    html += '<button class="day-btn' + active + '" onclick="goDate(\'' + dates[i] + '\')" style="margin:0 4px;padding:8px 12px;background:' + 
+            (dates[i] === ds ? '#E8451A' : '#2a2a2a') + ';color:' + (dates[i] === ds ? '#fff' : '#888') + 
+            ';border:1px solid ' + (dates[i] === ds ? '#E8451A' : '#444') + ';border-radius:6px;cursor:pointer;font-size:0.9em;font-weight:500">' + 
+            day + '<br><small>' + dates[i].slice(5) + '</small></button>';
+  }
+  
+  html += '</div>';
+  bar.innerHTML = html;
+}
+
+function goDate(ds) {
+  currentDate = new Date(ds + 'T00:00:00');
+  displayWorkouts();
+}
+
 function displayWorkouts() {
+  buildDaysBar(); // Build sticky days selector
   var grid = document.getElementById("grid");
   var ds = localDate(currentDate);
   var all = (allData.workouts && allData.workouts[ds]) ? allData.workouts[ds] : [];
@@ -290,14 +343,18 @@ function buildCard(w, score) {
     for (var j = 0; j < ln.length; j++) {
       var line = ln[j];
       var isNote = line.startsWith("*") || line.endsWith("*");
-      var style = isNote ? ' style="background:#e8f5e9;padding:4px 8px;border-radius:4px;color:#2e7d32"' : '';
-      li += "<li" + style + ">" + esc(line) + "</li>";
+      var cls = isNote ? ' class="note"' : '';
+      var style = isNote ? ' style="background:#e8f5e9;padding:4px 8px;border-radius:4px;color:#2e7d32;margin:2px 0"' : '';
+      li += "<li" + cls + style + ">" + esc(line) + "</li>";
     }
     body += "<div class=\"section\"><div class=\"section-title\">" + esc(s.title) + "</div><ul class=\"section-lines\">" + li + "</ul></div>";
   }
   if (!body) body = "<div style=\"color:#555;padding:8px\">No content</div>";
   var sc = score !== null ? "<span class=\"match-score\">" + score + "%</span>" : "";
-  return "<div class=\"workout-card\"><div class=\"card-header\"><div class=\"source-name\">" + esc(w.source_name||w.source) + sc + "</div>" +
+  var cardClass = "workout-card";
+  if (w.source === "hero") cardClass += " hero";
+  if (w.source === "open") cardClass += " open";
+  return "<div class=\"" + cardClass + "\"><div class=\"card-header\"><div class=\"source-name\">" + esc(w.source_name||w.source) + sc + "</div>" +
     (w.date ? "<div class=\"wod-date\">" + w.date + "</div>" : "") +
     (w.note ? "<div class=\"source-note\">" + esc(w.note) + "</div>" : "") +
     "</div>" + body +
@@ -344,7 +401,25 @@ function findWorkout() {
     return;
   }
   cardStore = [];
-  var top3 = results.slice(0, 3);
+  
+  // Get top 3 regular workouts
+  var regular = results.filter(function(r) { return r.w.source !== "hero" && r.w.source !== "open"; });
+  var top3 = regular.slice(0, 3);
+  
+  // Add Hero if checkbox checked
+  var includeHero = document.getElementById("includeHero").checked;
+  if (includeHero) {
+    var hero = results.find(function(r) { return r.w.source === "hero"; });
+    if (hero) top3.push(hero);
+  }
+  
+  // Add Open if checkbox checked
+  var includeOpen = document.getElementById("includeOpen").checked;
+  if (includeOpen) {
+    var open = results.find(function(r) { return r.w.source === "open"; });
+    if (open) top3.push(open);
+  }
+  
   el.innerHTML = top3.map(function(r) { return buildCard(r.w, r.sc); }).join("");
 }
 

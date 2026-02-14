@@ -19,6 +19,8 @@ from scrapers.restoration   import fetch_workout as fetch_restoration
 from scrapers.cf1013        import fetch_workout as fetch_cf1013
 from scrapers.panda         import fetch_workout as fetch_panda
 from scrapers.tonbridge     import fetch_workout as fetch_tonbridge
+from scrapers.heroes        import fetch_hero
+from scrapers.open_wods     import fetch_open
 
 DATA_DIR  = Path(__file__).parent.parent / 'data'
 DATA_FILE = DATA_DIR / 'workouts.json'
@@ -26,14 +28,16 @@ DAYS      = 14
 
 SCRAPERS = [
     # (id, display_name, fetch_fn, has_archive)
-    ('myleo',        'myleo CrossFit',         fetch_myleo,      True),
+    ('myleo',        'myleo CrossFit',          fetch_myleo,        True),
     ('crossfit_com', 'CrossFit.com',            fetch_crossfit_com, True),
-    ('restoration',  'CrossFit Restoration',   fetch_restoration, True),
-    ('cf1013',       'CrossFit 1013',           fetch_cf1013,      True),
-    ('panda',        'CrossFit Panda',          fetch_panda,       True),
-    ('tonbridge',    'CrossFit Ton Bridge',     fetch_tonbridge,   True),
-    ('linchpin',     'CrossFit Linchpin',       fetch_linchpin,    False),
-    ('postal',       'CrossFit Postal',         fetch_postal,      False),
+    ('restoration',  'CrossFit Restoration',    fetch_restoration,  True),
+    ('cf1013',       'CrossFit 1013',           fetch_cf1013,       True),
+    ('panda',        'CrossFit Panda',          fetch_panda,        True),
+    ('tonbridge',    'CrossFit Ton Bridge',     fetch_tonbridge,    True),
+    ('hero',         'CrossFit Hero Workouts',  fetch_hero,         True),
+    ('open',         'CrossFit Open Workouts',  fetch_open,         True),
+    ('linchpin',     'CrossFit Linchpin',       fetch_linchpin,     False),
+    ('postal',       'CrossFit Postal',         fetch_postal,       False),
 ]
 
 
