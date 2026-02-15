@@ -26,6 +26,7 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .workouts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:18px;max-width:1400px;margin:0 auto}
 .workout-card{background:#1e1e1e;border:1px solid #2a2a2a;border-radius:12px;padding:18px;transition:all .15s}
 .workout-card.hero{border:3px solid #2196F3;background:#1a2332;box-shadow:0 0 16px rgba(33,150,243,0.3)}
+.workout-card.benchmark{border:3px solid #9C27B0;background:#2a1a32;box-shadow:0 0 16px rgba(156,39,176,0.3)}
 .workout-card.open{border:3px solid #FFC107;background:#2a2418;box-shadow:0 0 16px rgba(255,193,7,0.3)}
 .workout-card:hover{border-color:#E8451A;transform:translateY(-2px);box-shadow:0 4px 18px rgba(232,69,26,.15)}
 .card-header{border-bottom:2px solid #E8451A;padding-bottom:10px;margin-bottom:14px}
@@ -58,6 +59,7 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .sources-list{max-width:540px;margin:0 auto}
 .source-item{background:#1e1e1e;padding:13px 15px;border-radius:8px;border:1px solid #2a2a2a;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center}
 .source-item.hero{border:3px solid #2196F3;background:#1a2332;box-shadow:0 0 12px rgba(33,150,243,0.25)}
+.source-item.benchmark{border:3px solid #9C27B0;background:#2a1a32;box-shadow:0 0 12px rgba(156,39,176,0.25)}
 .source-item strong{color:#F5C518}
 .source-item small{color:#666;display:block;font-size:.78em;margin-top:1px}
 .toggle{position:relative;width:52px;height:26px;background:#444;border-radius:13px;cursor:pointer;transition:background .3s;flex-shrink:0}
@@ -132,6 +134,10 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
         <input type="checkbox" id="includeHero">
         <span>🦸 CrossFit Hero Workouts</span>
       </label>
+      <label class="eq-item" style="margin-top:8px">
+        <input type="checkbox" id="includeBenchmark">
+        <span>🏋️ CrossFit Benchmark Workouts</span>
+      </label>
     </div>
     
     <div class="form-group">
@@ -191,6 +197,7 @@ var SOURCES = {
   panda:        {name:"CrossFit Panda",           archive:true,  en:true},
   tonbridge:    {name:"CrossFit Ton Bridge",      archive:true,  en:true},
   hero:         {name:"🦸 Hero Workout",          archive:true,  en:true, special:"hero"},
+  benchmark:    {name:"🏋️ Benchmark Workout",     archive:true,  en:true, special:"benchmark"},
   linchpin:     {name:"CrossFit Linchpin",        archive:false, en:true, note:"⚠️ This source provides daily workouts only"}
 };
 
@@ -284,23 +291,23 @@ function buildDaysBar() {
   var bar = document.getElementById("days-bar");
   if (!bar) return;
   
-  var dates = Object.keys(allData.workouts || {}).sort().reverse();
-  if (dates.length === 0) {
-    bar.innerHTML = "";
-    return;
-  }
-  
+  // Always show 14 days (today + 13 back)
   var html = '<div style="padding:0 20px">';
   var ds = localDate(currentDate);
   
-  for (var i = 0; i < dates.length; i++) {
-    var d = new Date(dates[i] + 'T00:00:00');
+  for (var i = 0; i < 14; i++) {
+    var d = new Date();
+    d.setDate(d.getDate() - i);
+    var dateStr = localDate(d);
     var day = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];
-    var active = dates[i] === ds ? ' active' : '';
-    html += '<button class="day-btn' + active + '" onclick="goDate(\'' + dates[i] + '\')" style="margin:0 4px;padding:8px 12px;background:' + 
-            (dates[i] === ds ? '#E8451A' : '#2a2a2a') + ';color:' + (dates[i] === ds ? '#fff' : '#888') + 
-            ';border:1px solid ' + (dates[i] === ds ? '#E8451A' : '#444') + ';border-radius:6px;cursor:pointer;font-size:0.9em;font-weight:500">' + 
-            day + '<br><small>' + dates[i].slice(5) + '</small></button>';
+    var hasData = allData.workouts && allData.workouts[dateStr];
+    var active = dateStr === ds ? ' active' : '';
+    
+    html += '<button class="day-btn' + active + '" onclick="goDate(\'' + dateStr + '\')" style="margin:0 4px;padding:8px 12px;background:' + 
+            (dateStr === ds ? '#E8451A' : '#2a2a2a') + ';color:' + (dateStr === ds ? '#fff' : (hasData ? '#f0ece0' : '#555')) + 
+            ';border:1px solid ' + (dateStr === ds ? '#E8451A' : '#444') + ';border-radius:6px;cursor:pointer;font-size:0.9em;font-weight:500' +
+            (hasData ? '' : ';opacity:0.5') + '">' + 
+            (i === 0 ? 'TODAY' : day) + '<br><small>' + dateStr.slice(5) + '</small></button>';
   }
   
   html += '</div>';
@@ -355,8 +362,7 @@ function buildCard(w, score) {
       var line = ln[j];
       var isNote = line.startsWith("*") || line.endsWith("*");
       var cls = isNote ? ' class="note"' : '';
-      var style = isNote ? ' style="background:#e8f5e9;padding:4px 8px;border-radius:4px;color:#2e7d32;margin:2px 0"' : '';
-      li += "<li" + cls + style + ">" + esc(line) + "</li>";
+      li += "<li" + cls + ">" + esc(line) + "</li>";
     }
     body += "<div class=\"section\"><div class=\"section-title\">" + esc(s.title) + "</div><ul class=\"section-lines\">" + li + "</ul></div>";
   }
@@ -364,6 +370,7 @@ function buildCard(w, score) {
   var sc = score !== null ? "<span class=\"match-score\">" + score + "%</span>" : "";
   var cardClass = "workout-card";
   if (w.source === "hero") cardClass += " hero";
+  if (w.source === "benchmark") cardClass += " benchmark";
   return "<div class=\"" + cardClass + "\"><div class=\"card-header\"><div class=\"source-name\">" + esc(w.source_name||w.source) + sc + "</div>" +
     (w.date ? "<div class=\"wod-date\">" + w.date + "</div>" : "") +
     (w.note ? "<div class=\"source-note\">" + esc(w.note) + "</div>" : "") +
@@ -412,8 +419,10 @@ function findWorkout() {
   }
   cardStore = [];
   
-  // Get top 3 regular workouts
-  var regular = results.filter(function(r) { return r.w.source !== "hero"; });
+  // Get top 3 regular workouts (not hero, not benchmark)
+  var regular = results.filter(function(r) { 
+    return r.w.source !== "hero" && r.w.source !== "benchmark"; 
+  });
   var top3 = regular.slice(0, 3);
   
   // Add Hero if checkbox checked
@@ -421,6 +430,13 @@ function findWorkout() {
   if (includeHero && includeHero.checked) {
     var hero = results.find(function(r) { return r.w.source === "hero"; });
     if (hero) top3.push(hero);
+  }
+  
+  // Add Benchmark if checkbox checked
+  var includeBenchmark = document.getElementById("includeBenchmark");
+  if (includeBenchmark && includeBenchmark.checked) {
+    var benchmark = results.find(function(r) { return r.w.source === "benchmark"; });
+    if (benchmark) top3.push(benchmark);
   }
   
   el.innerHTML = top3.map(function(r) { return buildCard(r.w, r.sc); }).join("");
@@ -451,6 +467,7 @@ function buildSources() {
     var info = SOURCES[id];
     var itemClass = "source-item";
     if (info.special === "hero") itemClass += " hero";
+    if (info.special === "benchmark") itemClass += " benchmark";
     html += "<div class=\"" + itemClass + "\">" +
       "<div style=\"display:flex;align-items:center;gap:8px\">" +
       "<div style=\"display:flex;flex-direction:column;gap:2px\">" +
@@ -523,7 +540,7 @@ function moveSource(id, dir) {
 
 function resetSourceOrder() {
   // Reset to default order and enable all
-  var defaultOrder = ["hero","open","myleo","crossfit_com","restoration","cf1013","panda","tonbridge","linchpin"];
+  var defaultOrder = ["hero","benchmark","open","myleo","crossfit_com","restoration","cf1013","panda","tonbridge","linchpin"];
   var newSources = {};
   for (var i = 0; i < defaultOrder.length; i++) {
     var id = defaultOrder[i];
