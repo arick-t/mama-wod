@@ -88,19 +88,28 @@ def fetch_workout(date):
         else:
             print(f"    → Found {len(articles)} articles on page")
             # Find the article matching our date
-            # Date patterns: "11 February 2026", "February 11", "11/02/2026", etc.
-            target_day = str(date.day)
+            # Date patterns: "Saturday 14th February", "15th February 2026", etc.
+            target_day = date.day
             target_month_name = date.strftime('%B').lower()  # "february"
             target_month_short = date.strftime('%b').lower() # "feb"
+            
+            # Build ordinal suffix (1st, 2nd, 3rd, 4th, etc.)
+            if 10 <= target_day % 100 <= 20:
+                suffix = 'th'
+            else:
+                suffix = {1: 'st', 2: 'nd', 3: 'rd'}.get(target_day % 10, 'th')
+            
+            # Patterns to search: "15th February", "15th Feb"
+            pattern1 = f"{target_day}{suffix} {target_month_name}"
+            pattern2 = f"{target_day}{suffix} {target_month_short}"
 
             matched_article = None
             for article in articles:
                 article_text = article.get_text(separator=' ', strip=True).lower()
-                # Check if this article is for our target date
-                if (target_day in article_text
-                    and (target_month_name in article_text or target_month_short in article_text)):
+                # Check if this article contains our exact date pattern
+                if pattern1 in article_text or pattern2 in article_text:
                     matched_article = article
-                    print(f"    → Matched article containing date")
+                    print(f"    → Matched article for {date_str}")
                     break
 
             if not matched_article:

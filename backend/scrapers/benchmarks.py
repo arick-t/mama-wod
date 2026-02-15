@@ -68,7 +68,7 @@ def fetch_all_benchmarks():
                 l = l.replace('â', '')
                 lines.append(l)
             
-            # Parse: Each workout = name (short, uppercase) + workout description
+            # Parse: Each workout = name (in ## header) + workout description
             i = 0
             while i < len(lines):
                 line = lines[i]
@@ -78,23 +78,41 @@ def fetch_all_benchmarks():
                     'wodconnect', 'sign up', 'log in', 'privacy', 'terms',
                     'download', 'blog', 'athletes', 'coaches', 'gyms',
                     'programs', 'kisko labs', 'crossfit ®', 'resources',
-                    'prev', 'next', 'fill in your details'
+                    'prev', 'next', 'fill in your details', 'first name',
+                    'last name', 'email', 'password'
                 ]):
                     i += 1
                     continue
                 
-                # Detect workout name: quoted uppercase names or specific patterns
-                # Examples: "ANNIE", "FRAN", "Grace", "Helen", "Isabel"
-                if (len(line) < 30 and 
-                    (line.isupper() or line[0].isupper()) and
-                    'workout' in line.lower() and
-                    len(line.split()) <= 4):
-                    
-                    # Extract clean name (remove "BENCHMARK", "- Benchmark", etc)
-                    name = re.sub(r'\s*[-–]\s*benchmark.*', '', line, flags=re.I)
-                    name = re.sub(r'\s*workout.*', '', name, flags=re.I)
-                    name = name.strip(' "')
-                    
+                # Detect workout name: Look for patterns like:
+                # - "ANNIE" - Benchmark
+                # - "FRAN" Workout
+                # - Chelsea
+                # Key: Quoted uppercase names OR capitalized names with "Workout"
+                is_name = False
+                name = ""
+                
+                # Pattern 1: Quoted names with BENCHMARK or Workout
+                if ('"' in line and len(line) < 50 and 
+                    ('benchmark' in line.lower() or 'workout' in line.lower())):
+                    # Extract name from quotes
+                    match = re.search(r'"([^"]+)"', line)
+                    if match:
+                        name = match.group(1).strip()
+                        is_name = True
+                
+                # Pattern 2: Single capitalized word with "Workout"
+                elif (line[0].isupper() and 
+                      'workout' in line.lower() and 
+                      len(line.split()) <= 5 and
+                      len(line) < 50):
+                    # Extract first word before "Workout"
+                    parts = line.split()
+                    if len(parts) >= 2:
+                        name = parts[0].strip()
+                        is_name = True
+                
+                if is_name and name and len(name) >= 3:
                     workout_lines = []
                     i += 1
                     
@@ -102,20 +120,20 @@ def fetch_all_benchmarks():
                     while i < len(lines):
                         next_line = lines[i]
                         
-                        # Stop at next workout name
-                        if (len(next_line) < 30 and 
-                            next_line[0].isupper() and 
-                            'workout' in next_line.lower()):
+                        # Stop at "Resources" section
+                        if 'resources' in next_line.lower():
                             break
                         
-                        # Stop at Resources section or other metadata
-                        if any(stop in next_line.lower() for stop in [
-                            'resources', 'scaling options', 'intermediate:',
-                            'beginner:', 'time cap', 'please run the same'
-                        ]):
+                        # Stop at next workout name (quoted or capitalized with Workout)
+                        if (('"' in next_line and 'workout' in next_line.lower()) or
+                            (next_line[0].isupper() and 'workout' in next_line.lower() and len(next_line) < 50)):
                             break
                         
-                        # Skip very short lines (likely navigation)
+                        # Stop at pagination
+                        if any(pag in next_line.lower() for pag in ['prev', 'next', '›', '‹']):
+                            break
+                        
+                        # Skip very short lines
                         if len(next_line) < 3:
                             i += 1
                             continue
@@ -127,7 +145,7 @@ def fetch_all_benchmarks():
                         if len(workout_lines) >= 25:
                             break
                     
-                    if len(workout_lines) >= 2 and len(name) >= 3:
+                    if len(workout_lines) >= 2:
                         benchmarks.append({
                             'name': name,
                             'lines': workout_lines[:25]
