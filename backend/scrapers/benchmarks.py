@@ -1,8 +1,9 @@
 """
-CrossFit Benchmark Workouts scraper
-
+CrossFit Benchmark Workouts scraper - FIXED
 Fetches from: https://www.wodconnect.com/workout_lists/benchmarks
-Strategy: Same as Heroes - deterministic daily selection, no repeats within 14 days
+FIXES:
+- Title is now the workout name (not "BENCHMARK")
+- Plain text only (no underlines/links)
 """
 import re
 import requests
@@ -54,15 +55,14 @@ def fetch_all_benchmarks():
             h2_headers = soup.find_all('h2')
             
             for h2 in h2_headers:
-                # Extract workout name from H2
-                # Format: ["ANNIE" - Benchmark](/workouts/annie) Workout
+                # Extract workout name from H2 - GET PLAIN TEXT ONLY
                 h2_text = h2.get_text(strip=True)
                 
                 # Skip non-workout headers
                 if 'workout' not in h2_text.lower() and 'benchmark' not in h2_text.lower():
                     continue
                 
-                # Extract clean name: remove quotes, "Benchmark", "Workout", links
+                # Extract clean name: remove quotes, "Benchmark", "Workout", links, markdown
                 name = h2_text
                 name = re.sub(r'\[([^\]]+)\]', r'\1', name)  # Remove markdown links [text]
                 name = re.sub(r'\([^)]+\)', '', name)        # Remove (parentheses)
@@ -74,7 +74,7 @@ def fetch_all_benchmarks():
                     continue
                 
                 # Collect all content AFTER this H2 until next H2 or H3 (Resources)
-                workout_lines = [name]  # Start with workout name
+                workout_lines = []
                 current = h2.find_next_sibling()
                 
                 while current:
@@ -82,7 +82,8 @@ def fetch_all_benchmarks():
                     if current.name in ['h2', 'h3']:
                         break
                     
-                    # Get text from this element
+                    # Get PLAIN TEXT - no formatting
+                    # Use get_text() with separator to handle line breaks
                     text = current.get_text(separator='\n', strip=True)
                     
                     if text:
@@ -109,7 +110,7 @@ def fetch_all_benchmarks():
                             if any(skip in line.lower() for skip in [
                                 'resources', 'speal does', 'annie does', 'crossfit tampere',
                                 'mikko salo', 'froning does', 'josh everet', 'classic helen',
-                                'power elizabeth', 'opt crushes'
+                                'power elizabeth', 'opt crushes', 'watch', 'video'
                             ]):
                                 break
                             
@@ -124,19 +125,22 @@ def fetch_all_benchmarks():
                     if len(workout_lines) >= 30:
                         break
                 
-                # Only add if we have actual workout content (not just name)
+                # Only add if we have actual workout content (at least 3 lines)
                 if len(workout_lines) >= 3:
                     benchmarks.append({
                         'name': name,
                         'lines': workout_lines[:30]
                     })
+                    print(f"    → Parsed '{name}': {len(workout_lines)} lines")
             
-        print(f"    → Parsed {len(benchmarks)} benchmark workouts")
+        print(f"    → Total parsed: {len(benchmarks)} benchmark workouts")
         _BENCHMARK_CACHE = benchmarks
         return benchmarks
         
     except Exception as e:
         print(f"    → Error: {e}")
+        import traceback
+        traceback.print_exc()
         return []
 
 
@@ -178,9 +182,9 @@ def fetch_benchmark(date):
     
     print(f"    → Selected: {selected['name']} (#{idx+1}/{len(benchmarks)})")
     
-    # Build sections
+    # Build sections - TITLE IS THE WORKOUT NAME
     sections = [{
-        'title': 'BENCHMARK',
+        'title': selected['name'],  # ← FIX: Use workout name as title
         'lines': selected['lines']
     }]
     
@@ -192,3 +196,16 @@ def fetch_benchmark(date):
         'sections':    sections,
         'note':        f"Benchmark: {selected['name']}"
     }
+
+
+if __name__ == '__main__':
+    # Test
+    result = fetch_benchmark(datetime.now())
+    if result:
+        print(f"\n✅ Success!")
+        print(f"Title: {result['sections'][0]['title']}")
+        print(f"Lines: {len(result['sections'][0]['lines'])}")
+        for line in result['sections'][0]['lines'][:5]:
+            print(f"  {line}")
+    else:
+        print("❌ Failed")

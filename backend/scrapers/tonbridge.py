@@ -1,15 +1,18 @@
 """
-CrossFit Ton Bridge Scraper
-Archive URL: https://crossfittonbridge.co.uk/YYYY/MM/
-Example: https://crossfittonbridge.co.uk/2026/02/
+CrossFit Ton Bridge Scraper - FIXED
+NEW: Uses centralized WOD page: https://crossfittonbridge.co.uk/wod/
+All workouts in one long list, easier to scrape.
 
-Page shows all workouts for the month.
-Each workout has a date heading and content below.
+Logic:
+- Workout title = Date in bold (e.g., "Saturday 14th February")
+- Workout content = Text below title
+- Separator = "By Liv Phillips|February 13th, 2026" (or any name + next date)
+  → STOP at this line, it marks the start of next workout
 """
 import re
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime
+from datetime import datetime, timedelta
 
 HEADERS = {
     'User-Agent': (
@@ -27,6 +30,7 @@ SECTION_HINTS = [
 
 
 def parse_sections(lines):
+    """Parse flat lines into sections."""
     sections = []
     cur = {'title': 'WORKOUT', 'lines': []}
     for line in lines:
@@ -51,13 +55,11 @@ def parse_sections(lines):
 
 def fetch_workout(date):
     """
-    Fetch workout from archive page for the given month.
-    Archive URL format: /YYYY/MM/
+    Fetch workout from centralized WOD page.
+    NEW URL: https://crossfittonbridge.co.uk/wod/
     """
     date_str = date.strftime('%Y-%m-%d')
-    year = date.year
-    month = str(date.month).zfill(2)
-    url = f"https://crossfittonbridge.co.uk/{year}/{month}/"
+    url = "https://crossfittonbridge.co.uk/wod/"
 
     try:
         print(f"    → Fetching {url}")
@@ -73,108 +75,108 @@ def fetch_workout(date):
         for tag in soup.find_all(['script', 'style', 'iframe', 'noscript', 'form']):
             tag.decompose()
         for img in soup.find_all(['img', 'picture', 'figure']):
-            tag.decompose()
+            img.decompose()
 
-        # The page is an archive - find all post articles
-        # Each post likely has a date/title and content
-        articles = soup.find_all('article') or soup.find_all(class_=re.compile(r'post|entry', re.I))
+        # Get all text
+        body = soup.find('body') or soup
+        raw_lines = [l.strip() for l in body.get_text(separator='\n').split('\n')
+                     if l.strip() and len(l.strip()) > 1]
 
-        if not articles:
-            # Fallback: get all text and try to find date markers
-            print(f"    → No articles found, using full page text")
-            body = soup.find('body') or soup
-            raw_lines = [l.strip() for l in body.get_text(separator='\n').split('\n')
-                         if l.strip() and len(l.strip()) > 1]
-        else:
-            print(f"    → Found {len(articles)} articles on page")
-            # Find the article matching our date
-            # Date patterns: "Saturday 14th February", "15th February 2026", etc.
-            target_day = date.day
-            target_month_name = date.strftime('%B').lower()  # "february"
-            target_month_short = date.strftime('%b').lower() # "feb"
-            
-            # Build ordinal suffix (1st, 2nd, 3rd, 4th, etc.)
-            if 10 <= target_day % 100 <= 20:
-                suffix = 'th'
-            else:
-                suffix = {1: 'st', 2: 'nd', 3: 'rd'}.get(target_day % 10, 'th')
-            
-            # Patterns to search: "15th February", "Saturday 15th February"
-            pattern1 = f"{target_day}{suffix} {target_month_name}"
-            pattern2 = f"{target_day}{suffix} {target_month_short}"
-            
-            # Also check with day name (e.g., "saturday 15th february")
-            day_name = date.strftime('%A').lower()  # "sunday" for 15th
-            pattern3 = f"{day_name} {target_day}{suffix} {target_month_name}"
-            pattern4 = f"{day_name} {target_day}{suffix} {target_month_short}"
-            
-            # IMPORTANT: Articles sometimes published day before (Sat article for Sun workout)
-            from datetime import timedelta
-            prev_date = date - timedelta(days=1)
-            prev_day_name = prev_date.strftime('%A').lower()  # "saturday" for 14th
-            pattern5 = f"{prev_day_name} {target_day}{suffix} {target_month_name}"
-            pattern6 = f"{prev_day_name} {target_day}{suffix} {target_month_short}"
+        print(f"    → {len(raw_lines)} raw lines")
 
-            matched_article = None
-            for article in articles:
-                article_text = article.get_text(separator=' ', strip=True).lower()
-                # Check if this article contains our exact date pattern
-                if (pattern1 in article_text or pattern2 in article_text or 
-                    pattern3 in article_text or pattern4 in article_text or
-                    pattern5 in article_text or pattern6 in article_text):
-                    matched_article = article
-                    print(f"    → Matched article for {date_str}")
-                    break
-
-            if not matched_article:
-                print(f"    → Date {date_str} not found in articles")
-                return None
-
-            raw_lines = [l.strip() for l in matched_article.get_text(separator='\n').split('\n')
-                         if l.strip() and len(l.strip()) > 1]
-
-        # Filter lines
-        STOP = ['leave a reply', 'leave a comment', 'post comment',
-                'subscribe', 'newsletter', 'copyright', 'privacy',
-                'related posts', 'you may also like',
-                'read more', 'comments off']
-        SKIP = {'home', 'about', 'contact', 'schedule', 'membership',
-                'coaches', 'crossfit', 'ton bridge', 'tonbridge',
-                'blog', 'shop', 'login', 'skip to content'}
+        # Build date patterns for matching
+        # Target patterns: "Saturday 15th February", "Sunday 16th February", etc.
+        target_day = date.day
+        target_month_name = date.strftime('%B')  # "February"
         
-        # STOP conditions specific to Ton Bridge (author/meta)
-        AUTHOR_STOP = ['by liv phillips', 'workout of the day']
+        # Ordinal suffix (1st, 2nd, 3rd, 4th, etc.)
+        if 10 <= target_day % 100 <= 20:
+            suffix = 'th'
+        else:
+            suffix = {1: 'st', 2: 'nd', 3: 'rd'}.get(target_day % 10, 'th')
+        
+        # Pattern: "Saturday 15th February" (any day name is OK)
+        target_pattern = f"{target_day}{suffix} {target_month_name}"
+        
+        # Also check day name
+        day_name = date.strftime('%A')  # "Sunday"
+        full_pattern = f"{day_name} {target_day}{suffix} {target_month_name}"
+        
+        print(f"    → Looking for: '{target_pattern}' or '{full_pattern}'")
 
-        # Find START: skip until we see date header (e.g., "Saturday 14th February")
-        start_idx = 0
+        # Find the workout title (date header)
+        start_idx = None
         for i, line in enumerate(raw_lines):
-            lo = line.lower().strip()
-            # Look for day name + ordinal number (e.g., "saturday 14th")
-            if any(day in lo for day in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']):
-                if any(ord in lo for ord in ['st', 'nd', 'rd', 'th']):
-                    start_idx = i + 1  # Start AFTER date header
-                    print(f"    → Starting after date header: '{line}'")
-                    break
+            line_lower = line.lower()
+            # Match date pattern (case-insensitive)
+            if target_pattern.lower() in line_lower or full_pattern.lower() in line_lower:
+                start_idx = i + 1  # Start AFTER the title line
+                print(f"    → Found title at line {i}: '{line}'")
+                break
 
+        if start_idx is None:
+            print(f"    → Date {date_str} not found")
+            return None
+
+        # Collect workout lines until separator
+        # Separator format: "By NAME|NEXT_DATE" or just contains next day's date
         workout_lines = []
+        
+        # Calculate next day's date (to detect separator)
+        next_date = date + timedelta(days=1)
+        next_day = next_date.day
+        next_month = next_date.strftime('%B')
+        if 10 <= next_day % 100 <= 20:
+            next_suffix = 'th'
+        else:
+            next_suffix = {1: 'st', 2: 'nd', 3: 'rd'}.get(next_day % 10, 'th')
+        next_pattern = f"{next_month} {next_day}{next_suffix}"  # "February 13th"
+        
+        # Also check for previous day (workouts sometimes posted day before)
+        prev_date = date - timedelta(days=1)
+        prev_day = prev_date.day
+        prev_month = prev_date.strftime('%B')
+        if 10 <= prev_day % 100 <= 20:
+            prev_suffix = 'th'
+        else:
+            prev_suffix = {1: 'st', 2: 'nd', 3: 'rd'}.get(prev_day % 10, 'th')
+        prev_pattern = f"{prev_month} {prev_day}{prev_suffix}"
+        
+        print(f"    → Separator pattern: '{next_pattern}' or 'By ... | {next_pattern}'")
+
         for line in raw_lines[start_idx:]:
             lo = line.lower().strip()
             
-            # STOP at author/meta line (e.g., "By Liv Phillips|February 13th")
-            if any(stop in lo for stop in AUTHOR_STOP):
-                print(f"    → Stopped at author/meta: '{line[:60]}'")
+            # STOP at separator line (contains next day's date)
+            # Format: "By Liv Phillips|February 13th, 2026" or similar
+            if next_pattern.lower() in lo or ('by ' in lo and '|' in lo):
+                print(f"    → Stopped at separator: '{line[:60]}'")
                 break
             
-            if any(s in lo for s in STOP):
-                print(f"    → Stopped at: '{line[:60]}'")
+            # STOP at another date header (next workout title)
+            # Check if line matches date pattern format
+            date_header_pattern = r'(monday|tuesday|wednesday|thursday|friday|saturday|sunday)\s+\d{1,2}(st|nd|rd|th)\s+(january|february|march|april|may|june|july|august|september|october|november|december)'
+            if re.search(date_header_pattern, lo):
+                print(f"    → Stopped at next workout: '{line[:60]}'")
                 break
-            if lo in SKIP:
+            
+            # Skip navigation/footer
+            if any(skip in lo for skip in [
+                'home', 'about', 'contact', 'schedule', 'membership',
+                'coaches', 'crossfit', 'ton bridge', 'tonbridge',
+                'blog', 'shop', 'login', 'skip to content', 'register'
+            ]):
                 continue
+            
+            # Skip very long lines (probably prose)
             if len(line) > 200:
                 continue
+            
             workout_lines.append(line)
-
-        workout_lines = workout_lines[:60]
+            
+            # Safety limit
+            if len(workout_lines) >= 60:
+                break
 
         if not workout_lines:
             print(f"    → No workout content")
@@ -197,4 +199,20 @@ def fetch_workout(date):
         return None
     except Exception as e:
         print(f"    → Error: {e}")
+        import traceback
+        traceback.print_exc()
         return None
+
+
+if __name__ == '__main__':
+    # Test with today
+    print("Testing Ton Bridge scraper...")
+    result = fetch_workout(datetime.now())
+    if result:
+        print(f"\n✅ Success!")
+        for s in result['sections']:
+            print(f"[{s['title']}]: {len(s['lines'])} lines")
+            for line in s['lines'][:3]:
+                print(f"  {line}")
+    else:
+        print("❌ Failed")

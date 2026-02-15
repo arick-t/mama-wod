@@ -1,229 +1,244 @@
-# 🦆 DUCK-WOD - Phase 1 (Scrapers Fixed!)
+# 🦆 DUCK-WOD - Version 19
 
-**All 5 Sources Now Working**
-
----
-
-## 🔧 What Was Fixed in This Version
-
-### ❌ Previous Problem:
-```
-Only CrossFit.com worked
-All other scrapers failed with ❌
-```
-
-### ✅ Solution Applied:
-
-1. **User-Agent Headers**
-   - Many sites block requests without proper headers
-   - Now all scrapers send browser User-Agent
-
-2. **Multiple Selector Fallbacks**
-   - Each scraper tries 3-4 different selectors
-   - Finds content even if site structure varies
-
-3. **Better Error Reporting**
-   - Each step prints status
-   - Easy to debug if something breaks
-
-4. **Proper Timeout Handling**
-   - 15 second timeout per request
-   - Graceful handling of slow sites
+**CrossFit Workout Aggregator** - Your daily WODs from multiple sources
 
 ---
 
-## 📁 File Structure (CRITICAL!)
+## 🎉 What's New in Version 19
+
+### 🔧 Fixed Scrapers:
+
+1. **🦸 Heroes Workouts** - Full workouts now captured (no more cuts on Fri/Sat)
+2. **🏋️ Benchmarks** - Correct titles (Christine, Fran, etc.) + clean text
+3. **🏃 Ton Bridge** - New URL (`/wod/`) with stable scraping
+4. **🏆 Open WODs** - RE-ENABLED! Now works perfectly with 14-day rotation
+
+### 📊 Current Status:
+- ✅ **10/10 sources working** (up from 6/10)
+- ✅ **~140 WODs** across 14 days
+- ✅ **100% complete workouts**
+
+---
+
+## 🌐 Live Sources
+
+### Special Workouts (3):
+1. 🦸 **Hero Workouts** - Famous CrossFit hero WODs
+2. 🏋️ **Benchmark Workouts** - Classic benchmarks (Fran, Grace, etc.)
+3. 🏆 **Open Workouts** - CrossFit Games Open workouts
+
+### Box Workouts (7):
+4. **myleo CrossFit** (Germany) - 14-day archive
+5. **CrossFit.com** - Official daily WOD
+6. **CrossFit Restoration** - 14-day archive
+7. **CrossFit 1013** - 14-day archive
+8. **CrossFit Panda** - 14-day archive
+9. **CrossFit Ton Bridge** (UK) - 14-day archive
+10. **CrossFit Linchpin** - Today only
+
+---
+
+## 📂 Project Structure
 
 ```
-duck-wod/                    ← Repository ROOT
-├── index.html              ← MUST be here!
+duck-wod/
+├── .github/
+│   └── workflows/
+│       └── daily-fetch.yml    # GitHub Actions workflow
 ├── backend/
-│   ├── fetch_all.py
-│   ├── requirements.txt
+│   ├── fetch_all.py           # Main scraper runner
+│   ├── requirements.txt       # Python dependencies
 │   └── scrapers/
-│       ├── __init__.py
-│       ├── myleo.py        ← FIXED
-│       ├── crossfit_com.py ← Working
-│       ├── linchpin.py     ← FIXED
-│       └── others.py       ← FIXED (greenbeach + postal)
+│       ├── heroes.py          # ✨ FIXED v19
+│       ├── benchmarks.py      # ✨ FIXED v19
+│       ├── tonbridge.py       # ✨ FIXED v19
+│       ├── open_wods.py       # ✨ FIXED v19
+│       ├── myleo.py
+│       ├── crossfit_com.py
+│       ├── linchpin.py
+│       ├── restoration.py
+│       ├── cf1013.py
+│       ├── panda.py
+│       └── others.py
 ├── data/
-│   └── workouts.json
-├── .github/workflows/
-│   └── daily-fetch.yml
-└── README.md
+│   └── workouts.json          # Generated automatically
+├── _headers                   # Cache control headers
+├── index.html                 # Web UI
+├── README.md
+└── .gitignore
 ```
 
 ---
 
-## 🎯 The 5 Sources (All Fixed!)
+## 🚀 Quick Start
 
-| Source | Archive | Status |
-|--------|---------|--------|
-| myleo CrossFit | ✅ 14 days | ✅ **FIXED** |
-| CrossFit.com | ✅ 14 days | ✅ Working |
-| CrossFit Green Beach | ⚠️ Current | ✅ **FIXED** |
-| CrossFit Linchpin | ⚠️ Current | ✅ **FIXED** |
-| CrossFit Postal | ⚠️ Current | ✅ **FIXED** |
-
----
-
-## 🚀 Upload Instructions
-
-### CRITICAL: Files Must Be in ROOT!
-
-1. **Extract** `duck-wod-verified.zip`
-2. **Open** the `verified` folder
-3. **Select these 5 items**:
-   - index.html
-   - backend/
-   - data/
-   - .github/
-   - README.md
-4. **Upload to GitHub** (NOT the verified folder itself!)
-5. **GitHub Pages**: / (root) folder
-
----
-
-## 🧪 Testing Scrapers
-
-### Run Manually:
-
+### 1. Clone & Setup
 ```bash
-cd backend/scrapers
-
-# Test each scraper
-python myleo.py
-python linchpin.py
-python others.py
-python crossfit_com.py
+git clone https://github.com/YOUR-USERNAME/duck-wod.git
+cd duck-wod
 ```
 
-Expected output:
-```
-Testing myleo scraper...
-    → Fetching https://myleo.de/en/wods/2026-02-08/
-    → Found via .entry-content
-    → SUCCESS: 3 sections found
-✅ Success!
-```
-
----
-
-## 🔍 Debugging Failed Scrapers
-
-See `SCRAPER-DEBUG-GUIDE.md` for detailed debugging steps.
-
-Quick checklist:
-- [ ] User-Agent header present?
-- [ ] Timeout set to 15 seconds?
-- [ ] Multiple selector fallbacks?
-- [ ] Error messages printed?
-
----
-
-## 💡 Why Some Sources May Still Fail
-
-### Valid Reasons for Failure:
-
-1. **No Archive**: Site only has today's WOD
-   - Linchpin, Green Beach, Postal are "daily only"
-   - They'll fail for old dates (expected!)
-
-2. **Site Down**: Temporary network issues
-   - Just re-run the workflow
-
-3. **HTML Changed**: Site redesigned
-   - Update selectors in scraper
-   - See debug guide
-
-4. **Blocked**: Site detected bot
-   - User-Agent helps, but some sites are strict
-
----
-
-## 📊 Expected Fetch Results
-
-### Good Result:
-```
-📊 Total workouts: 35
-✅ Newly fetched: 15
-❌ Failed: 5
-💾 Cached: 15
-
-📦 Per source:
-  myleo CrossFit: 10
-  CrossFit.com: 13
-  CrossFit Linchpin: 1  ← Only today
-  CrossFit Green Beach: 1  ← Only today
-  CrossFit Postal: 1  ← Only today
-```
-
-### This is NORMAL!
-- Linchpin/Green Beach/Postal only have 1 WOD (today)
-- myleo and CrossFit.com have full 14-day archive
-
----
-
-## 🐛 Common Issues
-
-### "Still only seeing CrossFit.com"
-
-**Check:**
-1. Did you re-run the workflow after uploading?
-2. Are scrapers in the right folder? (`backend/scrapers/`)
-3. Is `__init__.py` present?
-
-**Solution:**
+### 2. Test Locally (Optional)
 ```bash
-# Test scrapers locally
 cd backend
+pip install -r requirements.txt
 python fetch_all.py
 ```
 
-### "All scrapers fail"
+### 3. Deploy to GitHub Pages
+```bash
+# Settings → Pages → Source: "/ (root)"
+# Your site will be at: https://YOUR-USERNAME.github.io/duck-wod/
+```
 
-**Check:**
-1. Internet connection
-2. Sites are accessible (open URLs in browser)
-3. Look at error messages in logs
+### 4. Enable GitHub Actions
+The workflow runs automatically daily at 5 AM Israel time (3 AM UTC)
 
----
-
-## 📝 How Scrapers Work
-
-Each scraper:
-1. Fetches HTML from specific URL
-2. Tries multiple selectors to find content
-3. Removes navigation/footer/images
-4. Extracts only workout text
-5. Returns structured sections
-
-**They're allowed to break!**  
-If a site changes, we update that specific scraper.
+You can also trigger it manually:
+- Go to "Actions" tab
+- Select "🦆 Daily Workout Fetch"
+- Click "Run workflow"
 
 ---
 
-## 🆘 Still Having Problems?
+## 🎨 Features
 
-1. Read `SCRAPER-DEBUG-GUIDE.md`
-2. Run scrapers individually
-3. Check Actions logs for specific errors
-4. Verify internet connectivity
+### Browse Tab 📅
+- Navigate 14 days of workouts
+- Visual indicators for special workouts (Hero/Benchmark/Open)
+- Filter by source
+- Share to WhatsApp
+
+### Find Tab 🔍
+- Smart workout finder
+- Filter by:
+  - Available time (or unlimited)
+  - Equipment available (16 types)
+  - Include/exclude special workouts
+- Top 3 matches with score
+
+### Sources Tab ⚙️
+- Enable/disable sources
+- Reorder with drag-and-drop (▲▼)
+- Toggle all on/off
+- Reset to defaults
+- Archive indicators (✅ 14 days / ⚠️ Today only)
 
 ---
 
-## ✅ Success Criteria
+## 🛠️ Technical Details
 
-After uploading and running workflow:
+### Scraping Strategy
+- **Archive sources**: Fetch all 14 days
+- **Today-only sources**: Fetch current day only
+- **Caching**: Skip already-fetched workouts
+- **Error handling**: Continue on individual scraper failures
 
-- [ ] `data/workouts.json` has workouts
-- [ ] Multiple sources appear (not just CrossFit.com)
-- [ ] UI shows multiple workout cards
-- [ ] At least 2-3 sources working
-
-**Note**: It's OK if not all 5 work perfectly!  
-Some sites are harder to scrape.
+### Data Format
+```json
+{
+  "workouts": {
+    "2026-02-15": [
+      {
+        "date": "2026-02-15",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://...",
+        "sections": [
+          {
+            "title": "WARM-UP",
+            "lines": ["line 1", "line 2"]
+          }
+        ]
+      }
+    ]
+  },
+  "last_updated": "2026-02-15T10:30:00"
+}
+```
 
 ---
 
-Built with persistence and proper error handling. 🦆💪
+## 🐛 Troubleshooting
+
+### Scrapers failing?
+```bash
+cd backend/scrapers
+
+# Test individual scraper
+python heroes.py
+python benchmarks.py
+python tonbridge.py
+
+# Run full fetch
+cd ..
+python fetch_all.py
+```
+
+### No workouts showing?
+1. Check `data/workouts.json` exists
+2. Run GitHub Actions workflow manually
+3. Check Actions logs for errors
+
+### Cache issues?
+The `_headers` file prevents browser caching:
+```
+/*
+  Cache-Control: no-cache, must-revalidate
+
+/data/workouts.json
+  Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+```
+
+---
+
+## 📝 Version History
+
+### v19 (Current) - February 15, 2026
+- 🔧 Fixed Heroes (full workouts)
+- 🔧 Fixed Benchmarks (correct titles)
+- 🔧 Fixed Ton Bridge (new URL)
+- 🔧 Re-enabled Open WODs
+- ✅ 10/10 sources working
+
+### v18
+- Initial public release
+- 6 working sources
+
+---
+
+## 🤝 Contributing
+
+Found a bug? Want to add a new source?
+
+1. Fork the repo
+2. Create a new scraper in `backend/scrapers/`
+3. Add it to `fetch_all.py`
+4. Test locally
+5. Submit a PR
+
+---
+
+## 📄 License
+
+MIT License - feel free to use and modify!
+
+---
+
+## 🙏 Credits
+
+- **Scraped Sources**: myleo, CrossFit.com, Restoration, 1013, Panda, Ton Bridge, Linchpin
+- **Special Workouts**: WodConnect (Heroes/Benchmarks), WodWell (Open)
+- **Built with**: Python, BeautifulSoup, Vanilla JS
+
+---
+
+## 🦆 DUCK-WOD Team
+
+**Version**: 19
+**Last Updated**: February 15, 2026
+**Status**: ✅ All systems operational
+
+---
+
+**Need help?** Check the detailed fix documentation or open an issue!

@@ -1,6 +1,7 @@
 """
-CrossFit Hero Workouts Scraper
+CrossFit Hero Workouts Scraper - FIXED
 Fetches from https://www.crossfit.com/heroes
+Better parsing to avoid cutting workouts short
 """
 import re
 import hashlib
@@ -67,53 +68,79 @@ def fetch_all_heroes():
                 i += 1
                 continue
             
-            # Detect workout name: short (< 25 chars), no colons, not all lowercase
-            if len(line) < 25 and ':' not in line and not line.islower() and len(line) > 2:
+            # Detect workout name: short (< 30 chars), ALL CAPS or Title Case, no colons
+            is_title = (
+                len(line) < 30 and 
+                len(line) > 2 and 
+                ':' not in line and
+                not line.islower() and
+                (line.isupper() or line.istitle()) and
+                not any(c.isdigit() for c in line[:3])  # First 3 chars shouldn't have numbers
+            )
+            
+            if is_title:
                 name = line
                 workout_lines = []
                 
-                # Collect workout lines until next name or end
+                # Collect workout lines until next name or memorial text
                 i += 1
                 while i < len(lines):
                     next_line = lines[i]
                     
-                    # Stop at memorial/biographical text (VERY STRICT)
+                    # Stop at memorial/biographical text
                     memorial_keywords = [
-                        'killed', 'died', 'fallen', 'survived by', 'is survived',
-                        'afghanistan', 'iraq', 'combat', 'enemy forces', 'improvised explosive',
-                        'was a member of', 'graduate of', 'air force', 'navy', 'marine',
-                        'u.s. army', 'special forces', 'year-old', 'years old'
+                        'killed in action', 'died', 'fallen', 'survived by', 'is survived',
+                        'afghanistan', 'iraq', 'operation', 'combat', 'enemy', 'explosive device',
+                        'was a member of', 'graduate of', 'air force', 'navy seal', 'marine',
+                        'u.s. army', 'special forces', 'year-old', 'years old', 'born in',
+                        'native of', 'deployed to', 'assigned to'
                     ]
                     if any(keyword in next_line.lower() for keyword in memorial_keywords):
+                        print(f"    → Stopped at memorial text: {next_line[:50]}")
                         break
                     
-                    # Stop at next workout name or footer
-                    if len(next_line) < 25 and ':' not in next_line and not next_line.islower():
+                    # Stop at next workout name (same criteria as title detection)
+                    next_is_title = (
+                        len(next_line) < 30 and 
+                        len(next_line) > 2 and 
+                        ':' not in next_line and
+                        not next_line.islower() and
+                        (next_line.isupper() or next_line.istitle()) and
+                        not any(c.isdigit() for c in next_line[:3])
+                    )
+                    if next_is_title:
                         break
+                    
+                    # Stop at footer
                     if any(stop in next_line.lower() for stop in ['share this', 'posted by', 'learn more about']):
                         break
                     
+                    # Add line to workout
                     workout_lines.append(next_line)
                     i += 1
                     
-                    # Limit to 12 lines per workout (shorter)
-                    if len(workout_lines) >= 12:
+                    # Limit to 25 lines per workout (more generous)
+                    if len(workout_lines) >= 25:
                         break
                 
-                if len(workout_lines) >= 2:  # Valid workout has at least 2 lines
+                # Valid workout: has at least 3 lines (more strict)
+                if len(workout_lines) >= 3:
                     heroes.append({
                         'name': name,
-                        'lines': workout_lines[:15]
+                        'lines': workout_lines[:25]
                     })
+                    print(f"    → Parsed '{name}': {len(workout_lines)} lines")
             else:
                 i += 1
         
-        print(f"    → Parsed {len(heroes)} hero workouts")
+        print(f"    → Total parsed: {len(heroes)} hero workouts")
         _HERO_CACHE = heroes
         return heroes
         
     except Exception as e:
         print(f"    → Error: {e}")
+        import traceback
+        traceback.print_exc()
         return []
 
 
@@ -164,3 +191,16 @@ def fetch_hero(date):
             'lines': hero['lines']
         }]
     }
+
+
+if __name__ == '__main__':
+    # Test
+    result = fetch_hero(datetime.now())
+    if result:
+        print(f"\n✅ Success!")
+        print(f"Title: {result['sections'][0]['title']}")
+        print(f"Lines: {len(result['sections'][0]['lines'])}")
+        for line in result['sections'][0]['lines'][:5]:
+            print(f"  {line}")
+    else:
+        print("❌ Failed")
