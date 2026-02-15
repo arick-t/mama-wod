@@ -99,15 +99,29 @@ def fetch_workout(date):
             else:
                 suffix = {1: 'st', 2: 'nd', 3: 'rd'}.get(target_day % 10, 'th')
             
-            # Patterns to search: "15th February", "15th Feb"
+            # Patterns to search: "15th February", "Saturday 15th February"
             pattern1 = f"{target_day}{suffix} {target_month_name}"
             pattern2 = f"{target_day}{suffix} {target_month_short}"
+            
+            # Also check with day name (e.g., "saturday 15th february")
+            day_name = date.strftime('%A').lower()  # "sunday" for 15th
+            pattern3 = f"{day_name} {target_day}{suffix} {target_month_name}"
+            pattern4 = f"{day_name} {target_day}{suffix} {target_month_short}"
+            
+            # IMPORTANT: Articles sometimes published day before (Sat article for Sun workout)
+            from datetime import timedelta
+            prev_date = date - timedelta(days=1)
+            prev_day_name = prev_date.strftime('%A').lower()  # "saturday" for 14th
+            pattern5 = f"{prev_day_name} {target_day}{suffix} {target_month_name}"
+            pattern6 = f"{prev_day_name} {target_day}{suffix} {target_month_short}"
 
             matched_article = None
             for article in articles:
                 article_text = article.get_text(separator=' ', strip=True).lower()
                 # Check if this article contains our exact date pattern
-                if pattern1 in article_text or pattern2 in article_text:
+                if (pattern1 in article_text or pattern2 in article_text or 
+                    pattern3 in article_text or pattern4 in article_text or
+                    pattern5 in article_text or pattern6 in article_text):
                     matched_article = article
                     print(f"    → Matched article for {date_str}")
                     break

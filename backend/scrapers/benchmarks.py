@@ -50,109 +50,87 @@ def fetch_all_benchmarks():
             for tag in soup.find_all(['script', 'style', 'img', 'picture', 'video', 'iframe']):
                 tag.decompose()
             
-            text = soup.get_text(separator='\n')
-            lines = []
-            for l in text.split('\n'):
-                l = l.strip()
-                if not l:
-                    continue
-                # Fix encoding issues
-                l = l.replace('â\x80\x93', '–')
-                l = l.replace('â\x80\x94', '—')
-                l = l.replace('â\x80\x99', "'")
-                l = l.replace('â\x80\x9c', '"')
-                l = l.replace('â\x80\x9d', '"')
-                l = l.replace('â\x80¢', '•')
-                l = l.replace('â\x99\x80', '♀')
-                l = l.replace('â\x99\x82', '♂')
-                l = l.replace('â', '')
-                lines.append(l)
+            # Find all H2 headers (each workout is under an H2)
+            h2_headers = soup.find_all('h2')
             
-            # Parse: Each workout = name (in ## header) + workout description
-            i = 0
-            while i < len(lines):
-                line = lines[i]
+            for h2 in h2_headers:
+                # Extract workout name from H2
+                # Format: ["ANNIE" - Benchmark](/workouts/annie) Workout
+                h2_text = h2.get_text(strip=True)
                 
-                # Skip navigation/footer junk
-                if any(skip in line.lower() for skip in [
-                    'wodconnect', 'sign up', 'log in', 'privacy', 'terms',
-                    'download', 'blog', 'athletes', 'coaches', 'gyms',
-                    'programs', 'kisko labs', 'crossfit ®', 'resources',
-                    'prev', 'next', 'fill in your details', 'first name',
-                    'last name', 'email', 'password'
-                ]):
-                    i += 1
+                # Skip non-workout headers
+                if 'workout' not in h2_text.lower() and 'benchmark' not in h2_text.lower():
                     continue
                 
-                # Detect workout name: Look for patterns like:
-                # - "ANNIE" - Benchmark
-                # - "FRAN" Workout
-                # - Chelsea
-                # Key: Quoted uppercase names OR capitalized names with "Workout"
-                is_name = False
-                name = ""
+                # Extract clean name: remove quotes, "Benchmark", "Workout", links
+                name = h2_text
+                name = re.sub(r'\[([^\]]+)\]', r'\1', name)  # Remove markdown links [text]
+                name = re.sub(r'\([^)]+\)', '', name)        # Remove (parentheses)
+                name = re.sub(r'\s*-\s*benchmark.*', '', name, flags=re.I)  # Remove "- Benchmark"
+                name = re.sub(r'\s*workout.*', '', name, flags=re.I)        # Remove "Workout"
+                name = name.strip(' "')
                 
-                # Pattern 1: Quoted names with BENCHMARK or Workout
-                if ('"' in line and len(line) < 50 and 
-                    ('benchmark' in line.lower() or 'workout' in line.lower())):
-                    # Extract name from quotes
-                    match = re.search(r'"([^"]+)"', line)
-                    if match:
-                        name = match.group(1).strip()
-                        is_name = True
+                if len(name) < 2:
+                    continue
                 
-                # Pattern 2: Single capitalized word with "Workout"
-                elif (line[0].isupper() and 
-                      'workout' in line.lower() and 
-                      len(line.split()) <= 5 and
-                      len(line) < 50):
-                    # Extract first word before "Workout"
-                    parts = line.split()
-                    if len(parts) >= 2:
-                        name = parts[0].strip()
-                        is_name = True
+                # Collect all content AFTER this H2 until next H2 or H3 (Resources)
+                workout_lines = [name]  # Start with workout name
+                current = h2.find_next_sibling()
                 
-                if is_name and name and len(name) >= 3:
-                    workout_lines = []
-                    i += 1
+                while current:
+                    # Stop at next H2 (next workout) or H3 (Resources)
+                    if current.name in ['h2', 'h3']:
+                        break
                     
-                    # Collect workout lines until next workout or footer
-                    while i < len(lines):
-                        next_line = lines[i]
-                        
-                        # Stop at "Resources" section
-                        if 'resources' in next_line.lower():
-                            break
-                        
-                        # Stop at next workout name (quoted or capitalized with Workout)
-                        if (('"' in next_line and 'workout' in next_line.lower()) or
-                            (next_line[0].isupper() and 'workout' in next_line.lower() and len(next_line) < 50)):
-                            break
-                        
-                        # Stop at pagination
-                        if any(pag in next_line.lower() for pag in ['prev', 'next', '›', '‹']):
-                            break
-                        
-                        # Skip very short lines
-                        if len(next_line) < 3:
-                            i += 1
-                            continue
-                        
-                        workout_lines.append(next_line)
-                        i += 1
-                        
-                        # Limit to 25 lines per workout
-                        if len(workout_lines) >= 25:
-                            break
+                    # Get text from this element
+                    text = current.get_text(separator='\n', strip=True)
                     
-                    if len(workout_lines) >= 2:
-                        benchmarks.append({
-                            'name': name,
-                            'lines': workout_lines[:25]
-                        })
-                else:
-                    i += 1
-        
+                    if text:
+                        # Split into lines
+                        for line in text.split('\n'):
+                            line = line.strip()
+                            
+                            # Fix encoding issues
+                            line = line.replace('â\x80\x93', '–')
+                            line = line.replace('â\x80\x94', '—')
+                            line = line.replace('â\x80\x99', "'")
+                            line = line.replace('â\x80\x9c', '"')
+                            line = line.replace('â\x80\x9d', '"')
+                            line = line.replace('â\x80¢', '•')
+                            line = line.replace('â\x99\x80', '♀')
+                            line = line.replace('â\x99\x82', '♂')
+                            line = line.replace('â', '')
+                            
+                            # Skip empty or very short lines
+                            if len(line) < 3:
+                                continue
+                            
+                            # Skip navigation/footer
+                            if any(skip in line.lower() for skip in [
+                                'resources', 'speal does', 'annie does', 'crossfit tampere',
+                                'mikko salo', 'froning does', 'josh everet', 'classic helen',
+                                'power elizabeth', 'opt crushes'
+                            ]):
+                                break
+                            
+                            workout_lines.append(line)
+                            
+                            # Limit to 30 lines
+                            if len(workout_lines) >= 30:
+                                break
+                    
+                    current = current.find_next_sibling()
+                    
+                    if len(workout_lines) >= 30:
+                        break
+                
+                # Only add if we have actual workout content (not just name)
+                if len(workout_lines) >= 3:
+                    benchmarks.append({
+                        'name': name,
+                        'lines': workout_lines[:30]
+                    })
+            
         print(f"    → Parsed {len(benchmarks)} benchmark workouts")
         _BENCHMARK_CACHE = benchmarks
         return benchmarks

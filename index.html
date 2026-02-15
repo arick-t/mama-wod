@@ -27,6 +27,7 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .workout-card{background:#1e1e1e;border:1px solid #2a2a2a;border-radius:12px;padding:18px;transition:all .15s}
 .workout-card.hero{border:3px solid #2196F3;background:#1a2332;box-shadow:0 0 16px rgba(33,150,243,0.3)}
 .workout-card.benchmark{border:3px solid #9C27B0;background:#2a1a32;box-shadow:0 0 16px rgba(156,39,176,0.3)}
+.workout-card.open{border:3px solid #4CAF50;background:#1a2e1a;box-shadow:0 0 16px rgba(76,175,80,0.3)}
 .workout-card.open{border:3px solid #FFC107;background:#2a2418;box-shadow:0 0 16px rgba(255,193,7,0.3)}
 .workout-card:hover{border-color:#E8451A;transform:translateY(-2px);box-shadow:0 4px 18px rgba(232,69,26,.15)}
 .card-header{border-bottom:2px solid #E8451A;padding-bottom:10px;margin-bottom:14px}
@@ -60,6 +61,7 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .source-item{background:#1e1e1e;padding:13px 15px;border-radius:8px;border:1px solid #2a2a2a;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center}
 .source-item.hero{border:3px solid #2196F3;background:#1a2332;box-shadow:0 0 12px rgba(33,150,243,0.25)}
 .source-item.benchmark{border:3px solid #9C27B0;background:#2a1a32;box-shadow:0 0 12px rgba(156,39,176,0.25)}
+.source-item.open{border:3px solid #4CAF50;background:#1a2e1a;box-shadow:0 0 12px rgba(76,175,80,0.25)}
 .source-item strong{color:#F5C518}
 .source-item small{color:#666;display:block;font-size:.78em;margin-top:1px}
 .toggle{position:relative;width:52px;height:26px;background:#444;border-radius:13px;cursor:pointer;transition:background .3s;flex-shrink:0}
@@ -138,6 +140,10 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
         <input type="checkbox" id="includeBenchmark">
         <span>🏋️ CrossFit Benchmark Workouts</span>
       </label>
+      <label class="eq-item" style="margin-top:8px">
+        <input type="checkbox" id="includeOpen">
+        <span>🏆 CrossFit Open Workouts</span>
+      </label>
     </div>
     
     <div class="form-group">
@@ -198,6 +204,7 @@ var SOURCES = {
   tonbridge:    {name:"CrossFit Ton Bridge",      archive:true,  en:true},
   hero:         {name:"🦸 Hero Workout",          archive:true,  en:true, special:"hero"},
   benchmark:    {name:"🏋️ Benchmark Workout",     archive:true,  en:true, special:"benchmark"},
+  open:         {name:"🏆 Open Workout",          archive:true,  en:false, special:"open"},
   linchpin:     {name:"CrossFit Linchpin",        archive:false, en:true, note:"⚠️ This source provides daily workouts only"}
 };
 
@@ -371,6 +378,7 @@ function buildCard(w, score) {
   var cardClass = "workout-card";
   if (w.source === "hero") cardClass += " hero";
   if (w.source === "benchmark") cardClass += " benchmark";
+  if (w.source === "open") cardClass += " open";
   return "<div class=\"" + cardClass + "\"><div class=\"card-header\"><div class=\"source-name\">" + esc(w.source_name||w.source) + sc + "</div>" +
     (w.date ? "<div class=\"wod-date\">" + w.date + "</div>" : "") +
     (w.note ? "<div class=\"source-note\">" + esc(w.note) + "</div>" : "") +
@@ -419,9 +427,9 @@ function findWorkout() {
   }
   cardStore = [];
   
-  // Get top 3 regular workouts (not hero, not benchmark)
+  // Get top 3 regular workouts (not hero, not benchmark, not open)
   var regular = results.filter(function(r) { 
-    return r.w.source !== "hero" && r.w.source !== "benchmark"; 
+    return r.w.source !== "hero" && r.w.source !== "benchmark" && r.w.source !== "open"; 
   });
   var top3 = regular.slice(0, 3);
   
@@ -437,6 +445,13 @@ function findWorkout() {
   if (includeBenchmark && includeBenchmark.checked) {
     var benchmark = results.find(function(r) { return r.w.source === "benchmark"; });
     if (benchmark) top3.push(benchmark);
+  }
+  
+  // Add Open if checkbox checked
+  var includeOpen = document.getElementById("includeOpen");
+  if (includeOpen && includeOpen.checked) {
+    var open = results.find(function(r) { return r.w.source === "open"; });
+    if (open) top3.push(open);
   }
   
   el.innerHTML = top3.map(function(r) { return buildCard(r.w, r.sc); }).join("");
@@ -468,6 +483,7 @@ function buildSources() {
     var itemClass = "source-item";
     if (info.special === "hero") itemClass += " hero";
     if (info.special === "benchmark") itemClass += " benchmark";
+    if (info.special === "open") itemClass += " open";
     html += "<div class=\"" + itemClass + "\">" +
       "<div style=\"display:flex;align-items:center;gap:8px\">" +
       "<div style=\"display:flex;flex-direction:column;gap:2px\">" +
