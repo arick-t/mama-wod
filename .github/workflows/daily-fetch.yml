@@ -1,5 +1,6 @@
 name: 🦆 Daily Workout Fetch
 
+
 on:
   schedule:
     - cron: '0 3 * * *'  # 5 AM Israel time (UTC+2)
