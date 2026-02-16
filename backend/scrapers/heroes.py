@@ -182,13 +182,22 @@ def fetch_hero(date):
     hero = heroes[chosen_idx]
     print(f"    → Selected: {hero['name']} (#{chosen_idx + 1}/{len(heroes)})")
     
+    # Convert gender weights to notes
+    processed_lines = []
+    for line in hero['lines']:
+        # Check for gender weight pattern
+        if re.search(r'[♀♂].*\d+\s*(lb|kg)', line):
+            processed_lines.append(f"*{line}*")
+        else:
+            processed_lines.append(line)
+    
     return {
         'date': date_str,
         'source': 'hero',
         'source_name': 'CrossFit Hero Workouts',
         'sections': [{
             'title': hero['name'],
-            'lines': hero['lines']
+            'lines': processed_lines
         }]
     }
 

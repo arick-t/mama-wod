@@ -51,87 +51,62 @@ def fetch_all_benchmarks():
             for tag in soup.find_all(['script', 'style', 'img', 'picture', 'video', 'iframe']):
                 tag.decompose()
             
-            # Find all H2 headers (each workout is under an H2)
-            h2_headers = soup.find_all('h2')
+            # Find all workout boxes (each is <li class="box">)
+            boxes = soup.find_all('li', class_='box')
+            print(f"    -> Found {len(boxes)} boxes on page {page}")
             
-            for h2 in h2_headers:
-                # Extract workout name from H2 - GET PLAIN TEXT ONLY
-                h2_text = h2.get_text(strip=True)
-                
-                # Skip non-workout headers
-                if 'workout' not in h2_text.lower() and 'benchmark' not in h2_text.lower():
+            for box in boxes:
+                # Get name from <h2 class="name"> → <a>
+                h2 = box.find('h2', class_='name')
+                if not h2:
                     continue
                 
-                # Extract clean name: remove quotes, "Benchmark", "Workout", links, markdown
-                name = h2_text
-                name = re.sub(r'\[([^\]]+)\]', r'\1', name)  # Remove markdown links [text]
-                name = re.sub(r'\([^)]+\)', '', name)        # Remove (parentheses)
-                name = re.sub(r'\s*-\s*benchmark.*', '', name, flags=re.I)  # Remove "- Benchmark"
-                name = re.sub(r'\s*workout.*', '', name, flags=re.I)        # Remove "Workout"
-                name = name.strip(' "')
+                a_tag = h2.find('a')
+                if not a_tag:
+                    continue
+                
+                name = a_tag.get_text(strip=True).strip(' "')
                 
                 if len(name) < 2:
                     continue
                 
-                # Collect all content AFTER this H2 until next H2 or H3 (Resources)
+                # Find workout_description → markdown_content
+                workout_desc = box.find('div', class_='workout_description')
+                if not workout_desc:
+                    continue
+                
+                markdown_div = workout_desc.find('div', class_='markdown_content')
+                if not markdown_div:
+                    continue
+                
                 workout_lines = []
-                current = h2.find_next_sibling()
                 
-                while current:
-                    # Stop at next H2 (next workout) or H3 (Resources)
-                    if current.name in ['h2', 'h3']:
-                        break
+                # Process all paragraphs
+                for p in markdown_div.find_all('p'):
+                    # Replace <br> with newlines
+                    for br in p.find_all('br'):
+                        br.replace_with('\n')
                     
-                    # Get PLAIN TEXT - no formatting
-                    # Use get_text() with separator to handle line breaks
-                    text = current.get_text(separator='\n', strip=True)
+                    # Get text - links inline!
+                    text = p.get_text()
                     
-                    if text:
-                        # Split into lines
-                        for line in text.split('\n'):
-                            line = line.strip()
-                            
-                            # Fix encoding issues
-                            line = line.replace('â\x80\x93', '–')
-                            line = line.replace('â\x80\x94', '—')
-                            line = line.replace('â\x80\x99', "'")
-                            line = line.replace('â\x80\x9c', '"')
-                            line = line.replace('â\x80\x9d', '"')
-                            line = line.replace('â\x80¢', '•')
-                            line = line.replace('â\x99\x80', '♀')
-                            line = line.replace('â\x99\x82', '♂')
-                            line = line.replace('â', '')
-                            
-                            # Skip empty or very short lines
-                            if len(line) < 3:
-                                continue
-                            
-                            # Skip navigation/footer
-                            if any(skip in line.lower() for skip in [
-                                'resources', 'speal does', 'annie does', 'crossfit tampere',
-                                'mikko salo', 'froning does', 'josh everet', 'classic helen',
-                                'power elizabeth', 'opt crushes', 'watch', 'video'
-                            ]):
-                                break
-                            
-                            workout_lines.append(line)
-                            
-                            # Limit to 30 lines
-                            if len(workout_lines) >= 30:
-                                break
-                    
-                    current = current.find_next_sibling()
-                    
-                    if len(workout_lines) >= 30:
-                        break
+                    # Split by newlines
+                    for line in text.split('\n'):
+                        line = line.strip()
+                        
+                        # Skip empty
+                        if len(line) < 2:
+                            continue
+                        
+                        workout_lines.append(line)
                 
-                # Only add if we have actual workout content (at least 3 lines)
+                # Only add if we have content
                 if len(workout_lines) >= 3:
                     benchmarks.append({
                         'name': name,
                         'lines': workout_lines[:30]
                     })
-                    print(f"    → Parsed '{name}': {len(workout_lines)} lines")
+                    print(f"    -> Parsed '{name}': {len(workout_lines)} lines")
             
         print(f"    → Total parsed: {len(benchmarks)} benchmark workouts")
         _BENCHMARK_CACHE = benchmarks
@@ -182,13 +157,11 @@ def fetch_benchmark(date):
     
     print(f"    → Selected: {selected['name']} (#{idx+1}/{len(benchmarks)})")
     
-    # Process lines: convert gender weights to notes
+    # Convert gender weights to notes
     processed_lines = []
     for line in selected['lines']:
-        # Check if line contains gender weight specification
-        # Patterns: "♀ 55 lb", "♂ 75 lb", or both
+        # Check for gender weight pattern: ♀ 55 lb or ♂ 75 lb
         if re.search(r'[♀♂].*\d+\s*(lb|kg)', line):
-            # Format as note (green text)
             processed_lines.append(f"*{line}*")
         else:
             processed_lines.append(line)
@@ -196,7 +169,7 @@ def fetch_benchmark(date):
     # Build sections - TITLE IS THE WORKOUT NAME
     sections = [{
         'title': selected['name'],
-        'lines': processed_lines  # ← Use processed lines
+        'lines': processed_lines
     }]
     
     return {
