@@ -37,72 +37,91 @@ def fetch_all_open():
             tag.decompose()
         
         workouts = []
-        seen_titles = set()
         
-        # Find all headers (h1-h4) that might contain Open workout titles
-        for header in soup.find_all(['h1', 'h2', 'h3', 'h4']):
-            text = header.get_text(strip=True)
+        # WodWell uses article/div cards for workouts
+        # Try multiple selectors
+        cards = []
+        
+        # Method 1: Find articles
+        articles = soup.find_all('article')
+        if articles:
+            cards.extend(articles)
+            print(f"    → Found {len(articles)} article tags")
+        
+        # Method 2: Find divs with workout-related classes
+        if not cards:
+            divs = soup.find_all('div', class_=re.compile(r'wod|workout|card|item', re.I))
+            if divs:
+                cards.extend(divs)
+                print(f"    → Found {len(divs)} workout divs")
+        
+        for card in cards[:100]:  # Limit to first 100
+            # Get text from card
+            text = card.get_text(separator='\n', strip=True)
+            lines = [l.strip() for l in text.split('\n') if l.strip()]
             
-            # Check if title matches Open pattern: "24.3", "Open 23.2", etc.
-            if not re.search(r'(open\s+)?\d{2}[.\s]\d', text, re.I):
+            if len(lines) < 3:
                 continue
             
-            title = text.strip()
-            title_key = title.lower().replace(' ', '')
-            
-            if title_key in seen_titles or len(title) < 3:
-                continue
-            seen_titles.add(title_key)
-            
-            # Find parent container (article, div, section)
-            container = header.find_parent(['article', 'div', 'section'])
-            if not container:
-                container = header
-            
-            # Collect workout lines from container text
-            full_text = container.get_text(separator='\n', strip=True)
-            lines = [l.strip() for l in full_text.split('\n') if l.strip()]
-            
-            # Find title position and get lines after it
+            # Detect Open workout by title pattern
+            # Patterns: "Open 24.3", "23.2", "23.2 A", "Open 24.3 Rx"
+            title = None
             workout_lines = []
-            found_title = False
-            for line in lines:
-                if title.lower() in line.lower():
-                    found_title = True
-                    continue
-                
-                if not found_title:
-                    continue
-                
-                # Stop at explanations
+            
+            for i, line in enumerate(lines):
+                # Title pattern: starts with "Open" or just "XX.X"
+                if re.search(r'\b(open\s+)?\d{2}[.\s]\d\b', line, re.I):
+                    title = line
+                    # Collect next 20 lines as workout
+                    workout_lines = lines[i+1:i+21]
+                    break
+            
+            if not title or len(workout_lines) < 2:
+                continue
+            
+            # Clean workout lines
+            clean_lines = []
+            for line in workout_lines:
+                # Stop at explanations/standards
                 if any(stop in line.lower() for stop in [
-                    'movement standards', 'time cap', 'how do you', 'score by',
-                    'leaderboard', 'video', 'athlete performs', 'learn more'
+                    'movement standards', 'time cap', 'explanation', 'learn more',
+                    'video demonstration', 'watch', 'athlete performs',
+                    'score by', 'leaderboard', 'submit score'
                 ]):
                     break
                 
-                # Skip very long lines or prose
-                if len(line) > 150 or (len(line) > 50 and line[0].islower()):
+                # Skip very long lines (descriptions)
+                if len(line) > 120:
                     continue
                 
-                # Convert gender weights to notes
-                if re.search(r'[♀♂].*\d+\s*(lb|kg)', line):
-                    line = f"*{line}*"
+                # Skip lines with lots of lowercase prose
+                if len(line) > 50 and line[0].islower():
+                    continue
                 
-                workout_lines.append(line)
+                clean_lines.append(line)
                 
-                if len(workout_lines) >= 20:
+                # Limit to 20 lines
+                if len(clean_lines) >= 20:
                     break
             
-            if len(workout_lines) >= 2:
+            if len(clean_lines) >= 2:
                 workouts.append({
-                    'name': title,
-                    'lines': workout_lines
+                    'name': title.strip(),
+                    'lines': clean_lines
                 })
         
-        print(f"    → Parsed {len(workouts)} unique Open workouts")
-        _OPEN_CACHE = workouts
-        return workouts
+        # Remove duplicates (same name)
+        seen = set()
+        unique = []
+        for w in workouts:
+            name_key = w['name'].lower().replace(' ', '')
+            if name_key not in seen:
+                seen.add(name_key)
+                unique.append(w)
+        
+        print(f"    → Parsed {len(unique)} unique Open workouts")
+        _OPEN_CACHE = unique
+        return unique
         
     except Exception as e:
         print(f"    → Error: {e}")
@@ -147,6 +166,14 @@ def fetch_open(date):
     workout = workouts[chosen_idx]
     print(f"    → Selected: {workout['name']} (#{chosen_idx + 1}/{len(workouts)})")
     
+    # Convert gender weights to notes
+    processed_lines = []
+    for line in workout['lines']:
+        if re.search(r'[♀♂].*\d+\s*(lb|kg)', line):
+            processed_lines.append(f"*{line}*")
+        else:
+            processed_lines.append(line)
+    
     return {
         'date': date_str,
         'source': 'open',
@@ -154,7 +181,7 @@ def fetch_open(date):
         'url': 'https://wodwell.com/wods/tag/crossfit-games-open-workouts/',
         'sections': [{
             'title': workout['name'],
-            'lines': workout['lines']
+            'lines': processed_lines
         }],
         'note': f"Open: {workout['name']}"
     }

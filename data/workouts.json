@@ -158,22 +158,6 @@
           }
         ],
         "note": "Benchmark: Chelsea"
-      },
-      {
-        "date": "2026-02-15",
-        "source": "linchpin",
-        "source_name": "CrossFit Linchpin",
-        "url": "https://crossfitlinchpin.com/blogs/wod",
-        "note": "⚠️ This source provides daily workouts only",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "REST DAY!",
-              "Get out of the gym."
-            ]
-          }
-        ]
       }
     ],
     "2026-02-14": [
@@ -2189,6 +2173,32 @@
           }
         ],
         "note": "Benchmark: GRACE"
+      },
+      {
+        "date": "2026-02-06",
+        "source": "tonbridge",
+        "source_name": "Tonbridge CrossFit",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "STRENGTH",
+            "lines": [
+              "5×5 Front Squats @ 75%"
+            ]
+          },
+          {
+            "title": "METCON",
+            "lines": [
+              "15 min AMRAP",
+              "10 push press 52.5/35kg",
+              "10 KB swings 24/16kg",
+              "10 Box Jumps",
+              "By",
+              "Liv Phillips",
+              "February 15th, 2026"
+            ]
+          }
+        ]
       }
     ],
     "2026-02-05": [
@@ -3068,8 +3078,263 @@
         ],
         "note": "Benchmark: Christine"
       }
+    ],
+    "2026-02-16": [
+      {
+        "date": "2026-02-16",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-02-16/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "lat stretch",
+              "hand walk",
+              "thoracic rotation",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "amrap",
+              "10 prone snow angels",
+              "10 push ups",
+              "10 kb deadlifts"
+            ]
+          },
+          {
+            "title": "BENCH PRESS 12MIN",
+            "lines": [
+              "on the 2:30 x 5 sets",
+              "3 close-grip bench press + 6 bench press",
+              "@ 65% of 1rm bench press",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 12MIN",
+            "lines": [
+              "12:00 amrap",
+              "12 push ups *",
+              "24 kettlebell swings 32/24kg",
+              "36 sit-ups",
+              "*rx+ option: 8 handstand push ups",
+              "score: rounds + reps",
+              "muscular endurance & lactate threshold"
+            ]
+          },
+          {
+            "title": "STABILITY 4MIN",
+            "lines": [
+              "30sec on/ 30sec off",
+              "wall facing handstand hold",
+              "head stand / hand stand / hand stand push ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-16",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260216",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Interval Nancy",
+              "Every 5 minutes for 25 minutes, complete:",
+              "400-meter run",
+              "15 overhead squats",
+              "Rest with the remaining time.",
+              "♀ 65-lb barbell",
+              "♂ 95-lb barbell",
+              "Compare to Nancy on",
+              "241026"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-16",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "February 15, 2026"
+            ]
+          },
+          {
+            "title": "STRENGTH",
+            "lines": [
+              "Back Squat 4x3",
+              "Every 2:00 x 4 sets",
+              "3 Back Squats @70%",
+              "\"Alpine Skiing\""
+            ]
+          },
+          {
+            "title": "12:00 AMRAP",
+            "lines": [
+              "10-20-30-40-50...",
+              "Air Squats",
+              "5-10-15-20-25...",
+              "Single Arm Devil Press 50#/35#",
+              "February 15, 2026"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-16",
+        "source": "panda",
+        "source_name": "CrossFit Panda",
+        "url": "https://crossfitpanda-ghost.fly.dev/monday-160226/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "CrossFit W.O.D"
+            ]
+          },
+          {
+            "title": "STRENGTH:",
+            "lines": [
+              "Push Press 5x5"
+            ]
+          },
+          {
+            "title": "METCON:",
+            "lines": [
+              "02:00 min On/01:00 Min Off x 5 Rounds"
+            ]
+          },
+          {
+            "title": "AMRAP:",
+            "lines": [
+              "8 Deadlifts #60/43kg",
+              "6 Front Squats",
+              "4 STOH"
+            ]
+          },
+          {
+            "title": "FOR TIME:",
+            "lines": [
+              "200 Double Unders",
+              "100 Air Squats",
+              "50 2DB STOH #2x15/10kg",
+              "Rest 03:00 Min Into:",
+              "E01:30MOMx10 Sets:",
+              "20 Double Unders",
+              "10 Air Squats",
+              "5 2DB STOH #1x15/10"
+            ]
+          },
+          {
+            "title": "SKILL:",
+            "lines": [
+              "Kipping Bar Muscle Up",
+              "-Hollow&Arch",
+              "-Kipping Technique",
+              "-Transition",
+              "-Kipping Dip"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-16",
+        "source": "tonbridge",
+        "source_name": "Tonbridge CrossFit",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "STRENGTH",
+            "lines": [
+              "5×5 Front Squats @ 75%"
+            ]
+          },
+          {
+            "title": "METCON",
+            "lines": [
+              "15 min AMRAP",
+              "10 push press 52.5/35kg",
+              "10 KB swings 24/16kg",
+              "10 Box Jumps",
+              "By",
+              "Liv Phillips",
+              "February 15th, 2026"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-16",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "sections": [
+          {
+            "title": "Bruck",
+            "lines": [
+              "4 rounds for time of:",
+              "400-meter run",
+              "24 back squats",
+              "24 jerks",
+              "♀ 125-lb back squat, 95-lb jerk",
+              "♂ 185-lb back squat, 135-lb jerk"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-16",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "”ANGIE” BENCHMARK",
+            "lines": [
+              "100 pull-ups",
+              "100",
+              "push",
+              "-ups",
+              "100 sit-ups",
+              "100 squats",
+              "Timecap 28 min"
+            ]
+          }
+        ],
+        "note": "Benchmark: ”ANGIE” BENCHMARK"
+      },
+      {
+        "date": "2026-02-16",
+        "source": "linchpin",
+        "source_name": "CrossFit Linchpin",
+        "url": "https://crossfitlinchpin.com/blogs/wod",
+        "note": "⚠️ This source provides daily workouts only",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "\"Death by\"",
+              "Calories, Air Bike",
+              "Rest 5 min, then...",
+              "Not for time:",
+              "50 Ring Rows",
+              "50 Toes-to-bar, strict",
+              "*Compare to 09.05.2025"
+            ]
+          }
+        ]
+      }
     ]
   },
-  "last_updated": "2026-02-15T18:20:25.601669",
+  "last_updated": "2026-02-16T19:17:56.836814",
   "_note": "This file will be auto-generated by the GitHub Actions workflow"
 }

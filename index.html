@@ -178,7 +178,10 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
         <label class="eq-item"><input type="checkbox" value="BOX"> BOX</label>
       </div>
     </div>
-    <button class="btn btn-find" onclick="findWorkout()">Find Best Match</button>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-find" onclick="findWorkout()" style="flex:1">Find Best Match</button>
+      <button class="btn btn-find" onclick="resetFindForm()" style="flex:0.4;background:#555">Reset</button>
+    </div>
   </div>
   <div class="workouts-grid" id="findResults" style="margin-top:22px"></div>
 </div>
@@ -323,6 +326,8 @@ function buildDaysBar() {
 
 function goDate(ds) {
   currentDate = new Date(ds + 'T00:00:00');
+  // Switch to Browse tab when clicking a day
+  showTab('browse');
   displayWorkouts();
 }
 
@@ -455,6 +460,26 @@ function findWorkout() {
   }
   
   el.innerHTML = top3.map(function(r) { return buildCard(r.w, r.sc); }).join("");
+}
+
+function resetFindForm() {
+  // Uncheck all special workouts
+  document.getElementById("includeHero").checked = false;
+  document.getElementById("includeBenchmark").checked = false;
+  document.getElementById("includeOpen").checked = false;
+  
+  // Reset time to default
+  document.getElementById("findTime").value = 20;
+  document.getElementById("unlimitedTime").checked = false;
+  
+  // Uncheck all equipment
+  var cbs = document.querySelectorAll(".eq-item input[type='checkbox']");
+  for (var i = 0; i < cbs.length; i++) {
+    cbs[i].checked = false;
+  }
+  
+  // Clear results
+  document.getElementById("findResults").innerHTML = "";
 }
 
 function scoreWod(w, t, eq) {
