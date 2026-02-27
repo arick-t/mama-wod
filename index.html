@@ -57,7 +57,7 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .form-group input[type=number]{width:100%;padding:9px;background:#111;border:1px solid #333;border-radius:6px;color:#f0ece0;font-size:1em;font-family:'Oswald','Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
 .form-group input[type=number]::-webkit-inner-spin-button,
 .form-group input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
-.form-group input[type=number]{-moz-appearance:textfield}
+.form-group input[type=number]{appearance:textfield;-moz-appearance:textfield}
 .time-row{display:flex;align-items:center;gap:10px;justify-content:center}
 .time-row #findTime{width:6ch;min-width:6ch;max-width:6ch;text-align:center;font-size:1.15em;padding:10px 10px}
 .time-row .time-btn{width:auto;border-radius:999px;background:#E8451A;padding:10px 14px;font-size:1.05em}
@@ -217,7 +217,6 @@ var SOURCES = {
   crossfit_com: {name:"CrossFit.com",             archive:true,  en:true},
   restoration:  {name:"CrossFit Restoration",     archive:true,  en:true},
   cf1013:       {name:"CrossFit 1013",            archive:true,  en:true},
-  panda:        {name:"CrossFit Panda",           archive:true,  en:true},
   tonbridge:    {name:"CrossFit Ton Bridge",      archive:true,  en:true},
   hero:         {name:"🦸 Hero Workout",          archive:true,  en:true, special:"hero"},
   benchmark:    {name:"🏋️ Benchmark Workout",     archive:true,  en:true, special:"benchmark"},
@@ -675,7 +674,7 @@ function moveSource(id, dir) {
 
 function resetSourceOrder() {
   // Reset to default order and enable all
-  var defaultOrder = ["hero","benchmark","open","myleo","crossfit_com","restoration","cf1013","panda","tonbridge","linchpin"];
+  var defaultOrder = ["hero","benchmark","open","myleo","crossfit_com","restoration","cf1013","tonbridge","linchpin"];
   var newSources = {};
   for (var i = 0; i < defaultOrder.length; i++) {
     var id = defaultOrder[i];
