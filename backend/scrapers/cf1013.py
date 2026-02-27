@@ -169,6 +169,9 @@ def fetch_workout(date):
             
             if lo in SKIP:
                 continue
+            # Sometimes the site repeats today's date at the bottom – drop it.
+            if DATE_RE.match(line.strip()):
+                continue
             if len(line) > 200:
                 continue
             if line.startswith('http') and ('youtube' in line or 'vimeo' in line):

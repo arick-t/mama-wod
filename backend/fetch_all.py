@@ -11,6 +11,14 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 
+# Windows terminals may default to cp1255/cp1252 and crash on emoji output.
+# Force UTF-8 so the fetcher never fails due to console encoding.
+try:
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+except Exception:
+    pass
+
 from scrapers.myleo        import fetch_workout as fetch_myleo
 from scrapers.crossfit_com  import fetch_workout as fetch_crossfit_com
 from scrapers.linchpin      import fetch_workout as fetch_linchpin
@@ -21,6 +29,9 @@ from scrapers.tonbridge     import fetch_workout as fetch_tonbridge
 from scrapers.heroes        import fetch_hero
 from scrapers.benchmarks    import fetch_benchmark
 from scrapers.open_wods     import fetch_open
+from scrapers.heroes        import fetch_all_heroes
+from scrapers.benchmarks    import fetch_all_benchmarks
+from scrapers.open_wods     import fetch_all_open
 
 DATA_DIR  = Path(__file__).parent.parent / 'data'
 DATA_FILE = DATA_DIR / 'workouts.json'
@@ -80,6 +91,17 @@ def main():
     data  = load()
     today = datetime.now().strftime('%Y-%m-%d')
     stats = {'ok': 0, 'fail': 0, 'cached': 0, 'skipped': 0}
+
+    # Warm up / refresh special warehouses (monthly)
+    # This ensures data/special_cache.json exists and is committed by the workflow.
+    try:
+        print("\n📦 Refreshing special warehouses (monthly logic)...")
+        fetch_all_heroes()
+        fetch_all_benchmarks()
+        fetch_all_open()
+        print("    ✅ Special warehouses ready")
+    except Exception as e:
+        print(f"    ⚠️  Special warehouse refresh failed: {e}")
 
     for i in range(DAYS):
         date     = datetime.now() - timedelta(days=i)

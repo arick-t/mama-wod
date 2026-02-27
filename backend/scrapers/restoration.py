@@ -52,19 +52,28 @@ def make_url(date):
 def parse_sections(lines):
     """
     Restoration uses bold text for section headers.
-    Pattern: short lines (usually < 80 chars) containing keywords
-    like "Warm-up", "Power Clean", "For time", "Skill", etc.
+    We preserve bold lines by injecting a marker "__BOLD__" before their text.
     """
     sections = []
     cur = {'title': 'WORKOUT', 'lines': []}
     
     for line in lines:
+        # Bold markers coming from HTML (<strong>/<b>)
+        is_bold = False
+        if line.startswith("__BOLD__"):
+            is_bold = True
+            line = line.replace("__BOLD__", "", 1).strip()
+
         lo = line.lower()
         is_hdr = False
         
         # Check if this looks like a section header:
         # 1. ALL-CAPS short text (e.g., "STRENGTH")
         if line.isupper() and 3 <= len(line) <= 60 and not re.search(r'\d', line):
+            is_hdr = True
+
+        # 1.5 Bold lines: treat as headers when not too long
+        elif is_bold and 2 <= len(line) <= 80:
             is_hdr = True
         
         # 2. Contains section keywords AND is reasonably short (< 80 chars)
@@ -140,6 +149,14 @@ def fetch_workout(date):
             tag.decompose()
 
         body = soup.find('body') or soup
+
+        # Preserve bold headings: inject marker so parse_sections can treat them as subheaders.
+        for tag in body.find_all(['strong', 'b']):
+            txt = tag.get_text(" ", strip=True)
+            if not txt:
+                continue
+            tag.replace_with("\n__BOLD__" + txt + "\n")
+
         raw_lines = [
             l.strip()
             for l in body.get_text(separator='\n').split('\n')
