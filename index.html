@@ -218,6 +218,7 @@ var SOURCES = {
   restoration:  {name:"CrossFit Restoration",     archive:true,  en:true},
   cf1013:       {name:"CrossFit 1013",            archive:true,  en:true},
   tonbridge:    {name:"CrossFit Ton Bridge",      archive:true,  en:true},
+  arch:         {name:"CrossFit Arch",            archive:false, en:false},
   hero:         {name:"🦸 Hero Workout",          archive:true,  en:true, special:"hero"},
   benchmark:    {name:"🏋️ Benchmark Workout",     archive:true,  en:true, special:"benchmark"},
   open:         {name:"🏆 Open Workout",          archive:true,  en:false, special:"open"},
@@ -674,7 +675,7 @@ function moveSource(id, dir) {
 
 function resetSourceOrder() {
   // Reset to default order and enable all
-  var defaultOrder = ["hero","benchmark","open","myleo","crossfit_com","restoration","cf1013","tonbridge","linchpin"];
+  var defaultOrder = ["hero","benchmark","open","myleo","crossfit_com","restoration","cf1013","tonbridge","arch","linchpin"];
   var newSources = {};
   for (var i = 0; i < defaultOrder.length; i++) {
     var id = defaultOrder[i];
