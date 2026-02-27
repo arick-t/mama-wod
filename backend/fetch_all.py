@@ -24,7 +24,6 @@ from scrapers.crossfit_com  import fetch_workout as fetch_crossfit_com
 from scrapers.linchpin      import fetch_workout as fetch_linchpin
 from scrapers.restoration   import fetch_workout as fetch_restoration
 from scrapers.cf1013        import fetch_workout as fetch_cf1013
-from scrapers.panda         import fetch_workout as fetch_panda
 from scrapers.tonbridge     import fetch_workout as fetch_tonbridge
 from scrapers.heroes        import fetch_hero
 from scrapers.benchmarks    import fetch_benchmark
@@ -43,7 +42,6 @@ SCRAPERS = [
     ('crossfit_com', 'CrossFit.com',                  fetch_crossfit_com, True),
     ('restoration',  'CrossFit Restoration',          fetch_restoration,  True),
     ('cf1013',       'CrossFit 1013',                 fetch_cf1013,       True),
-    ('panda',        'CrossFit Panda',                fetch_panda,        True),
     ('tonbridge',    'CrossFit Ton Bridge',           fetch_tonbridge,    True),
     ('hero',         'CrossFit Hero Workouts',        fetch_hero,         True),
     ('benchmark',    'CrossFit Benchmark Workouts',   fetch_benchmark,    True),
@@ -70,8 +68,15 @@ def save(data):
     # Clean up: remove today-only sources from non-today dates
     today = datetime.now().strftime('%Y-%m-%d')
     today_only_sources = {'postal', 'linchpin'}
+    disabled_sources = {'panda'}
     
     for date_str in list(data['workouts'].keys()):
+        # Remove disabled sources from all dates
+        data['workouts'][date_str] = [
+            w for w in data['workouts'][date_str]
+            if w['source'] not in disabled_sources
+        ]
+
         if date_str != today:
             # Remove today-only workouts from historical dates
             data['workouts'][date_str] = [
