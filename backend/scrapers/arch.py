@@ -59,6 +59,18 @@ def _clean_lines(lines):
             ]
         ):
             continue
+
+        # במקור זה בלבד: סימן גרש אחרי מספר מייצג דקות → נחליף ב-"Min"
+        # דוגמאות: 12′ EMOM, 7' amrap, 40’’ on
+        t = t.replace("′", " Min").replace("’", "'")
+        t = re.sub(r"(\d+)\s*'\s*", r"\1 Min ", t)
+        t = re.sub(r"\s{2,}", " ", t).strip()
+
+        # ננקה גם את הטקסט "A-Tier" אם נשאר בשורה (הכותרת עצמה כבר נזרקת)
+        t = t.replace("„A-Tier“", "").replace("A-Tier", "").strip()
+        if not t:
+            continue
+
         cleaned.append(t)
     return cleaned
 
