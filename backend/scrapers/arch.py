@@ -65,57 +65,73 @@ def _clean_lines(lines):
 
 def _split_sections(lines):
     """
-    Create sections based on strong keywords like:
-    WOD, strength, skill, metcon, ENDURANCE, HYROX ENGINE, HYROX COMPETE, etc.
+    Create sections only for the sub-headers that interest us:
+    strength, strength A/B, metcon (S-Tier only), ENDURANCE, GYMNASTICS,
+    HYROX COMPETE, HYROX POWER, POWERLIFTING, skill.
     """
-    section_titles = [
-        "WOD",
-        "strength",
-        "strength A",
-        "strength B",
-        "skill",
-        "metcon",
-        "ENDURANCE",
-        "GYMNASTICS",
-        "HYROX ENGINE",
-        "HYROX COMPETE",
-        "HYROX POWER",
-        "HYROX",
-        "POWERLIFTING",
-        "TEAM WOD",
-        "Saturday Madness",
-    ]
+    allowed = {
+        "STRENGTH": "strength",
+        "STRENGTH A": "strength A",
+        "STRENGTH B": "strength B",
+        "METCON": "metcon",
+        "ENDURANCE": "ENDURANCE",
+        "GYMNASTICS": "GYMNASTICS",
+        "HYROX COMPETE": "HYROX COMPETE",
+        "HYROX POWER": "HYROX POWER",
+        "POWERLIFTING": "POWERLIFTING",
+        "SKILL": "skill",
+    }
 
     sections = []
     cur = None
 
     for line in lines:
         plain = line.strip()
-        low = plain.lower()
+        if not plain:
+            continue
+        up = plain.upper()
+
+        # Ignore explicit "A-Tier" headers – נציג רק את ה-S-Tier
+        if "A-TIER" in up:
+            continue
 
         is_hdr = False
-        for title in section_titles:
-            if plain == title or low == title.lower():
-                hdr = title.upper()
+        hdr_key = None
+
+        # Exact matches for allowed headers
+        for key in allowed.keys():
+            if up == key:
+                hdr_key = key
                 is_hdr = True
                 break
-        if not is_hdr:
-            # Patterns like "WODstrength" or "WOD strength" → treat as WOD
-            if low.startswith("wod"):
-                hdr = "WOD"
-                is_hdr = True
 
         if is_hdr:
             if cur and cur["lines"]:
                 sections.append(cur)
-            cur = {"title": hdr, "lines": []}
-        else:
-            if not cur:
-                cur = {"title": "WORKOUT", "lines": []}
-            cur["lines"].append(plain)
+            cur = {"title": allowed[hdr_key], "lines": []}
+            continue
+
+        # All other lines go into current section (if any)
+        if not cur:
+            # If there is content before any known header, we skip it –
+            # המשתמש ביקש רק את התוכן שמתחת לכותרות המשנה הספציפיות.
+            continue
+        cur["lines"].append(plain)
 
     if cur and cur["lines"]:
         sections.append(cur)
+
+    # Post-process METCON sections: השאר רק את מה שמתחת ל-S-Tier
+    for s in sections:
+        if s["title"].lower() == "metcon":
+            ln = s["lines"]
+            idx = None
+            for i, l in enumerate(ln):
+                if "S-TIER" in l.upper():
+                    idx = i
+                    break
+            if idx is not None:
+                s["lines"] = ln[idx + 1 :]  # רק מה שמתחת ל-S-Tier
 
     return sections or [{"title": "WORKOUT", "lines": lines}]
 
