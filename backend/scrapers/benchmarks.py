@@ -4,11 +4,15 @@ Fetches from: https://www.wodconnect.com/workout_lists/benchmarks
 FIXES:
 - Title is now the workout name (not "BENCHMARK")
 - Plain text only (no underlines/links)
+Now also uses a local warehouse in data/special_cache.json
 """
+import json
 import re
+import hashlib
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
+from pathlib import Path
 
 HEADERS = {
     'User-Agent': (
@@ -20,98 +24,96 @@ HEADERS = {
 
 _BENCHMARK_CACHE = None
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR.parent / 'data'
+SPECIAL_CACHE = DATA_DIR / 'special_cache.json'
 
-def fetch_all_benchmarks():
-    """
-    Fetch all benchmark workouts from wodconnect.
-    Returns: list of {name, lines}
-    """
-    global _BENCHMARK_CACHE
-    if _BENCHMARK_CACHE is not None:
-        return _BENCHMARK_CACHE
-    
+
+def _load_cache():
+    if SPECIAL_CACHE.exists():
+        try:
+            with open(SPECIAL_CACHE, encoding='utf-8') as f:
+                data = json.load(f)
+                data.setdefault('heroes', [])
+                data.setdefault('benchmarks', [])
+                data.setdefault('open', [])
+                return data
+        except Exception:
+            pass
+    return {'heroes': [], 'benchmarks': [], 'open': []}
+
+
+def _save_cache(data):
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    with open(SPECIAL_CACHE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+
+def _scrape_all_benchmarks():
+    """שואב את כל אימוני ה-Benchmark מאתר wodconnect (מחסן מלא)."""
+    benchmarks = []
     try:
-        benchmarks = []
-        
-        # Fetch all pages (1-4 based on site structure)
         for page in range(1, 5):
-            url = f'https://www.wodconnect.com/workout_lists/benchmarks'
+            url = 'https://www.wodconnect.com/workout_lists/benchmarks'
             if page > 1:
                 url += f'?page={page}'
-            
+
             print(f"    → Fetching page {page}: {url}")
             r = requests.get(url, timeout=15, headers=HEADERS)
             if r.status_code != 200:
                 print(f"    → Page {page} HTTP {r.status_code}")
                 continue
-            
+
             soup = BeautifulSoup(r.text, 'html.parser')
-            
-            # Remove noise
+
             for tag in soup.find_all(['script', 'style', 'img', 'picture', 'video', 'iframe']):
                 tag.decompose()
-            
-            # Find all workout boxes (each is <li class="box">)
+
             boxes = soup.find_all('li', class_='box')
             print(f"    -> Found {len(boxes)} boxes on page {page}")
-            
+
             for box in boxes:
-                # Get name from <h2 class="name"> → <a>
                 h2 = box.find('h2', class_='name')
                 if not h2:
                     continue
-                
+
                 a_tag = h2.find('a')
                 if not a_tag:
                     continue
-                
+
                 name = a_tag.get_text(strip=True).strip(' "')
-                
                 if len(name) < 2:
                     continue
-                
-                # Find workout_description → markdown_content
+
                 workout_desc = box.find('div', class_='workout_description')
                 if not workout_desc:
                     continue
-                
+
                 markdown_div = workout_desc.find('div', class_='markdown_content')
                 if not markdown_div:
                     continue
-                
+
                 workout_lines = []
-                
-                # Process all paragraphs
+
                 for p in markdown_div.find_all('p'):
-                    # Replace <br> with newlines
                     for br in p.find_all('br'):
                         br.replace_with('\n')
-                    
-                    # Get text - links inline!
+
                     text = p.get_text()
-                    
-                    # Split by newlines
                     for line in text.split('\n'):
                         line = line.strip()
-                        
-                        # Skip empty
                         if len(line) < 2:
                             continue
-                        
                         workout_lines.append(line)
-                
-                # Only add if we have content
+
                 if len(workout_lines) >= 3:
                     benchmarks.append({
                         'name': name,
                         'lines': workout_lines[:30]
                     })
-                    print(f"    -> Parsed '{name}': {len(workout_lines)} lines")
-            
         print(f"    → Total parsed: {len(benchmarks)} benchmark workouts")
-        _BENCHMARK_CACHE = benchmarks
         return benchmarks
-        
+
     except Exception as e:
         print(f"    → Error: {e}")
         import traceback
@@ -119,59 +121,93 @@ def fetch_all_benchmarks():
         return []
 
 
+def fetch_all_benchmarks():
+    """
+    מחזיר את כל אימוני ה-Benchmark מהמחסן.
+    אם המחסן ריק – שואב מהאתר, שומר ב-special_cache.json.
+    חידוש מחסן: פעם בחודש (בריצה הראשונה של אותו חודש).
+    """
+    global _BENCHMARK_CACHE
+    if _BENCHMARK_CACHE is not None:
+        return _BENCHMARK_CACHE
+
+    data = _load_cache()
+    benchmarks = data.get('benchmarks') or []
+
+    # בדיקה אם צריך לרענן (תחילת חודש חדש לעומת last_benchmarks_update)
+    today = datetime.now().date()
+    last_str = data.get('last_benchmarks_update')
+    needs_refresh = False
+    if not benchmarks:
+        needs_refresh = True
+    elif last_str:
+        try:
+            last_dt = datetime.strptime(last_str, '%Y-%m-%d').date()
+            if last_dt.year != today.year or last_dt.month != today.month:
+                needs_refresh = True
+        except Exception:
+            needs_refresh = True
+
+    if not needs_refresh:
+        _BENCHMARK_CACHE = benchmarks
+        return _BENCHMARK_CACHE
+
+    benchmarks = _scrape_all_benchmarks()
+    if benchmarks:
+        data['benchmarks'] = benchmarks
+        data['last_benchmarks_update'] = datetime.now().strftime('%Y-%m-%d')
+        _save_cache(data)
+        _BENCHMARK_CACHE = benchmarks
+    else:
+        _BENCHMARK_CACHE = []
+    return _BENCHMARK_CACHE
+
+
 def fetch_benchmark(date):
     """
-    Get a benchmark workout for a specific date.
-    Uses deterministic hashing to ensure same workout for same date.
-    Avoids repeating within 14 days.
+    בוחר אימון Benchmark יומי מהמחסן, עם רנדומציה דטרמיניסטית וחלון אי-חזרה של 14 יום.
     """
-    date_str = date.strftime('%Y-%m-%d')
-    print(f"  ⬇ CrossFit Benchmark Workouts...")
-    
     benchmarks = fetch_all_benchmarks()
     if not benchmarks:
-        print(f"    → No benchmarks available")
+        print("    → No benchmarks available")
         return None
-    
-    # Deterministic selection based on date hash
-    date_hash = hash(date_str)
-    
-    # Get dates for the past 14 days to avoid repeats
-    past_dates = [(date - timedelta(days=i)).strftime('%Y-%m-%d') 
-                  for i in range(1, 14)]
-    past_hashes = [hash(d) for d in past_dates]
-    
-    # Find benchmark that wasn't used in past 14 days
-    candidates = []
-    for idx, benchmark in enumerate(benchmarks):
-        if all(hash(d) % len(benchmarks) != idx for d in past_dates):
-            candidates.append((idx, benchmark))
-    
-    # If all were used recently, just use any
-    if not candidates:
-        candidates = [(i, b) for i, b in enumerate(benchmarks)]
-    
-    # Select deterministically
-    selected_idx = abs(date_hash) % len(candidates)
-    idx, selected = candidates[selected_idx]
-    
-    print(f"    → Selected: {selected['name']} (#{idx+1}/{len(benchmarks)})")
-    
-    # Convert gender weights to notes
+
+    date_str = date.strftime('%Y-%m-%d')
+    print(f"  ⬇ CrossFit Benchmark Workouts...")
+
+    date_hash = int(hashlib.md5(date_str.encode()).hexdigest(), 16)
+
+    excluded_indices = set()
+    for days_ago in range(1, 15):
+        past_date = date - timedelta(days=days_ago)
+        past_str = past_date.strftime('%Y-%m-%d')
+        past_hash = int(hashlib.md5(past_str.encode()).hexdigest(), 16)
+        excluded_idx = past_hash % len(benchmarks)
+        excluded_indices.add(excluded_idx)
+
+    base_idx = date_hash % len(benchmarks)
+    chosen_idx = base_idx
+    attempts = 0
+    while chosen_idx in excluded_indices and attempts < len(benchmarks):
+        chosen_idx = (chosen_idx + 1) % len(benchmarks)
+        attempts += 1
+
+    selected = benchmarks[chosen_idx]
+    print(f"    → Selected: {selected['name']} (#{chosen_idx + 1}/{len(benchmarks)})")
+
     processed_lines = []
     for line in selected['lines']:
-        # Check for gender weight pattern: ♀ 55 lb or ♂ 75 lb
-        if re.search(r'[♀♂].*\d+\s*(lb|kg)', line):
+        low = line.lower()
+        if re.search(r'[♀♂].*\d+\s*(lb|kg)', line) or any(x in low for x in ['male', 'female', 'men', 'women']):
             processed_lines.append(f"*{line}*")
         else:
             processed_lines.append(line)
-    
-    # Build sections - TITLE IS THE WORKOUT NAME
+
     sections = [{
         'title': selected['name'],
         'lines': processed_lines
     }]
-    
+
     return {
         'date':        date_str,
         'source':      'benchmark',

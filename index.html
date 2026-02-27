@@ -4,9 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DUCK-WOD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#111;color:#f0ece0;line-height:1.6}
+body{font-family:'Oswald','Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#111;color:#f0ece0;line-height:1.6;padding-bottom:74px}
 .header{background:#1a1a1a;padding:20px;text-align:center;border-bottom:3px solid #E8451A}
 .header-logo{width:110px;height:110px;object-fit:contain;display:block;margin:0 auto 8px}
 h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient(90deg,#E8451A,#F5C518 50%,#1A9B8A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2px}
@@ -17,7 +20,7 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .day-btn.active{background:#E8451A;border-color:#E8451A;color:#fff;font-weight:700}
 .day-name{font-weight:700;font-size:.82em}
 .day-date{font-size:.7em;opacity:.8;margin-top:2px}
-.tabs{display:flex;gap:8px;padding:10px 16px;background:#181818;border-bottom:1px solid #2a2a2a}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:999;display:flex;justify-content:center;gap:10px;padding:10px 16px;background:#181818;border-top:1px solid #2a2a2a}
 .tab-btn{padding:8px 16px;background:#1e1e1e;border:1px solid #2a2a2a;border-radius:6px;color:#f0ece0;cursor:pointer;font-weight:600;font-size:.88em;transition:all .15s}
 .tab-btn:hover{border-color:#E8451A}
 .tab-btn.active{background:#E8451A;border-color:#E8451A;color:#fff}
@@ -52,6 +55,9 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .form-group{margin-bottom:16px}
 .form-group label{display:block;color:#1A9B8A;font-weight:600;margin-bottom:6px;font-size:.9em}
 .form-group input[type=number]{width:100%;padding:9px;background:#111;border:1px solid #333;border-radius:6px;color:#f0ece0;font-size:1em}
+.time-row{display:flex;align-items:center;gap:10px;justify-content:center}
+.time-row #findTime{width:7.5ch;min-width:7.5ch;max-width:7.5ch;text-align:center;font-size:1.15em;padding:10px 32px 10px 12px}
+.time-row .time-btn{width:auto;border-radius:999px;background:#E8451A;padding:10px 14px;font-size:1.05em}
 .eq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:7px}
 .eq-item{display:flex;align-items:center;gap:7px;padding:7px 9px;background:#111;border-radius:5px;cursor:pointer;color:#e8e4d8;font-size:.85em}
 .eq-item:hover{background:#252525}
@@ -82,7 +88,7 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 /* UP button */
 .up-btn {
   position: fixed;
-  bottom: 20px;
+  bottom: 88px;
   right: 20px;
   width: 48px;
   height: 48px;
@@ -114,7 +120,7 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 <div class="header-sub">DAILY CROSSFIT WORKOUTS</div>
 </div>
 <div class="tabs">
-<button class="tab-btn active" id="tab-browse" onclick="showTab('browse')">Browse</button>
+<button class="tab-btn active" id="tab-browse" onclick="showTab('browse')">Workout's</button>
 <button class="tab-btn" id="tab-find" onclick="showTab('find')">Find Workout</button>
 <button class="tab-btn" id="tab-sources" onclick="showTab('sources')">Sources</button>
 </div>
@@ -148,7 +154,11 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
     
     <div class="form-group">
       <label>Available Time (minutes)</label>
-      <input type="number" id="findTime" min="1" max="180" value="20">
+      <div class="time-row">
+        <button class="btn btn-find time-btn" type="button" onclick="adjustFindTime(-5)">-5</button>
+        <input type="number" id="findTime" min="1" max="180" value="20" inputmode="numeric">
+        <button class="btn btn-find time-btn" type="button" onclick="adjustFindTime(5)">+5</button>
+      </div>
       <label class="eq-item" style="margin-top:8px">
         <input type="checkbox" id="unlimitedTime">
         <span>UNLIMITED TIME</span>
@@ -195,6 +205,7 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 </div>
 <script>
 var allData = {workouts:{}};
+var specialData = {heroes:[], benchmarks:[], open:[]};
 var currentDate = new Date();
 var cardStore = [];
 
@@ -250,6 +261,38 @@ function esc(s) {
   return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 }
 
+function isAsteriskNoteLine(line) {
+  var t = (line || "").trim();
+  // Note רק אם הכוכבית בתחילת השורה, ואין כוכביות נוספות בהמשך
+  return t.startsWith("*") && t.indexOf("*", 1) === -1;
+}
+
+function isGenderNoteLine(line) {
+  var t = (line || "").trim();
+  if (!t) return false;
+  if (/[♀♂]/.test(t)) return true;
+  // שורות כמו: "Men use ...", "Women lunge ...", "includes Masters Women ..."
+  return /\b(male|female|men|women)\b/i.test(t) && /\b(use|lunge|includes|lb|kg|#)\b/i.test(t);
+}
+
+function isRxNoteLine(line) {
+  var t = (line || "").trim();
+  if (!t) return false;
+  // "RX ..." / "Rx+ ..." / "Rx’d ..." וכו'
+  if (!/^rx/i.test(t)) return false;
+  // אם יש רק "RX" בלי כלום אחר – עדיין נציג כ-note (לא מפריע)
+  return true;
+}
+
+function stripNoteMarkers(line) {
+  var t = (line || "").trim();
+  // מסיר כוכבית בתחילה (אם קיימת) + רווח אופציונלי
+  t = t.replace(/^\*\s*/, "");
+  // מסיר כוכבית בסוף (אם קיימת) — רק לצורכי תצוגה של הערות
+  t = t.replace(/\s*\*$/, "");
+  return t;
+}
+
 document.addEventListener("DOMContentLoaded", function() {
   // Load saved source order
   try {
@@ -272,13 +315,16 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 function loadData() {
-  fetch("./data/workouts.json?t=" + Date.now())
-    .then(function(r) {
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      return r.json();
-    })
-    .then(function(d) {
-      allData = d;
+  Promise.all([
+    fetch("./data/workouts.json?t=" + Date.now())
+      .then(function(r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }),
+    fetch("./data/special_cache.json?t=" + Date.now())
+      .then(function(r) { return r.ok ? r.json() : {heroes:[], benchmarks:[], open:[]}; })
+      .catch(function() { return {heroes:[], benchmarks:[], open:[]}; })
+  ])
+    .then(function(arr) {
+      allData = arr[0];
+      specialData = arr[1] || {heroes:[], benchmarks:[], open:[]};
       displayWorkouts();
     })
     .catch(function(e) {
@@ -372,9 +418,10 @@ function buildCard(w, score) {
     var ln = s.lines || [];
     for (var j = 0; j < ln.length; j++) {
       var line = ln[j];
-      var isNote = line.startsWith("*") || line.endsWith("*");
+      var isNote = isAsteriskNoteLine(line) || isGenderNoteLine(line) || isRxNoteLine(line);
       var cls = isNote ? ' class="note"' : '';
-      li += "<li" + cls + ">" + esc(line) + "</li>";
+      var disp = isNote ? stripNoteMarkers(line) : line;
+      li += "<li" + cls + ">" + esc(disp) + "</li>";
     }
     body += "<div class=\"section\"><div class=\"section-title\">" + esc(s.title) + "</div><ul class=\"section-lines\">" + li + "</ul></div>";
   }
@@ -403,6 +450,18 @@ function wa(idx) {
     t += "\n";
   }
   window.open("https://wa.me/?text=" + encodeURIComponent(t), "_blank");
+}
+
+function adjustFindTime(delta) {
+  var unlimited = document.getElementById("unlimitedTime");
+  if (unlimited && unlimited.checked) return;
+  var el = document.getElementById("findTime");
+  if (!el) return;
+  var cur = parseInt(el.value) || 20;
+  var next = cur + delta;
+  if (next < 1) next = 1;
+  if (next > 180) next = 180;
+  el.value = next;
 }
 
 function findWorkout() {
@@ -438,25 +497,57 @@ function findWorkout() {
   });
   var top3 = regular.slice(0, 3);
   
+  function bestFromWarehouse(key, sourceId, sourceName) {
+    var arr = (specialData && specialData[key]) ? specialData[key] : [];
+    var best = null;
+    for (var i = 0; i < arr.length; i++) {
+      var it = arr[i];
+      if (!it || !it.lines || !it.lines.length) continue;
+      var ww = {
+        source: sourceId,
+        source_name: sourceName,
+        date: "",
+        sections: [{ title: it.name || "WORKOUT", lines: it.lines }]
+      };
+      var sc = scoreWod(ww, time, eq);
+      if (sc <= 0) continue;
+      var r = { w: ww, sc: Math.round(sc) };
+      if (!best || r.sc > best.sc) best = r;
+    }
+    return best;
+  }
+
   // Add Hero if checkbox checked
   var includeHero = document.getElementById("includeHero");
   if (includeHero && includeHero.checked) {
-    var hero = results.find(function(r) { return r.w.source === "hero"; });
-    if (hero) top3.push(hero);
+    var heroBest = bestFromWarehouse("heroes", "hero", "CrossFit Hero Workouts");
+    if (heroBest) top3.push(heroBest);
+    else {
+      var hero = results.find(function(r) { return r.w.source === "hero"; });
+      if (hero) top3.push(hero);
+    }
   }
   
   // Add Benchmark if checkbox checked
   var includeBenchmark = document.getElementById("includeBenchmark");
   if (includeBenchmark && includeBenchmark.checked) {
-    var benchmark = results.find(function(r) { return r.w.source === "benchmark"; });
-    if (benchmark) top3.push(benchmark);
+    var benchBest = bestFromWarehouse("benchmarks", "benchmark", "CrossFit Benchmark Workouts");
+    if (benchBest) top3.push(benchBest);
+    else {
+      var benchmark = results.find(function(r) { return r.w.source === "benchmark"; });
+      if (benchmark) top3.push(benchmark);
+    }
   }
   
   // Add Open if checkbox checked
   var includeOpen = document.getElementById("includeOpen");
   if (includeOpen && includeOpen.checked) {
-    var open = results.find(function(r) { return r.w.source === "open"; });
-    if (open) top3.push(open);
+    var openBest = bestFromWarehouse("open", "open", "CrossFit Open Workouts");
+    if (openBest) top3.push(openBest);
+    else {
+      var open = results.find(function(r) { return r.w.source === "open"; });
+      if (open) top3.push(open);
+    }
   }
   
   el.innerHTML = top3.map(function(r) { return buildCard(r.w, r.sc); }).join("");
