@@ -7,7 +7,7 @@ Content is often inside <header class="entry-header"> in WordPress!
 """
 import re
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, NavigableString
 from datetime import datetime
 
 HEADERS = {
@@ -56,8 +56,12 @@ def parse_sections(lines):
     """
     sections = []
     cur = {'title': 'WORKOUT', 'lines': []}
-    
+
     for line in lines:
+        # Subheader from Wodify (div.soswodify_component_name) – always a section title
+        is_subheader = line.startswith("__SUBHEADER__")
+        if is_subheader:
+            line = line.replace("__SUBHEADER__", "", 1).strip()
         # Bold markers coming from HTML (<strong>/<b>)
         is_bold = False
         if line.startswith("__BOLD__"):
@@ -66,17 +70,17 @@ def parse_sections(lines):
 
         lo = line.lower()
         is_hdr = False
-        
-        # Check if this looks like a section header:
-        # 1. ALL-CAPS short text (e.g., "STRENGTH")
-        if line.isupper() and 3 <= len(line) <= 60 and not re.search(r'\d', line):
-            is_hdr = True
 
-        # 1.5 Bold lines: treat as headers when not too long
-        elif is_bold and 2 <= len(line) <= 80:
+        if is_subheader and line:
+            is_hdr = True
+        # Any bold line = subheader (so we don't miss any)
+        elif is_bold and line:
+            is_hdr = True
+        # ALL-CAPS short text (e.g., "STRENGTH")
+        elif line.isupper() and 3 <= len(line) <= 60 and not re.search(r'\d', line):
             is_hdr = True
         
-        # 2. Contains section keywords AND is reasonably short (< 80 chars)
+        # Contains section keywords AND is reasonably short (< 80 chars)
         #    AND doesn't look like a workout line (no "x 10 reps" pattern)
         elif len(line) < 80 and any(kw in lo for kw in SECTION_HINTS):
             # Exclude lines that are clearly workout instructions
@@ -149,6 +153,36 @@ def fetch_workout(date):
             tag.decompose()
 
         body = soup.find('body') or soup
+
+        # Subheaders from Wodify plugin: div.soswodify_component_name (first line = title, rest = content)
+        for tag in body.find_all(class_=lambda c: c and 'soswodify_component_name' in c):
+            for br in tag.find_all('br'):
+                br.replace_with('\n')
+            # Preserve bold inside this div so "8 rounds for time (Time)" etc. become section headers
+            for bold_tag in tag.find_all(['strong', 'b']):
+                txt = bold_tag.get_text(" ", strip=True)
+                if txt:
+                    bold_tag.replace_with(NavigableString("\n__BOLD__" + txt + "\n"))
+            raw = tag.get_text(separator='\n', strip=False)
+            lines = [l.strip() for l in raw.split('\n') if l.strip()]
+            if not lines:
+                tag.decompose()
+                continue
+            first = lines[0]
+            # Prefer subtitle in parentheses e.g. "Bench Press ("Tempo Pause Bench Press" -> "Tempo Pause Bench Press"
+            if ' ("' in first:
+                parts = first.split(' ("', 1)
+                if len(parts) > 1:
+                    after = parts[1].split('"')[0].strip()
+                    if after:
+                        first = after
+            if first and ' (' in first:
+                first = (first.split(' (')[0].strip() or first)
+            if first and first.endswith(' ('):
+                first = first[:-2].strip()
+            subheader = "\n__SUBHEADER__" + first + "\n"
+            rest = "\n".join(lines[1:]) + "\n" if len(lines) > 1 else ""
+            tag.replace_with(NavigableString(subheader + rest))
 
         # Preserve bold headings: inject marker so parse_sections can treat them as subheaders.
         for tag in body.find_all(['strong', 'b']):
