@@ -62,12 +62,18 @@ def _clean_lines(lines):
 
         # במקור זה בלבד: סימן גרש אחרי מספר מייצג דקות → נחליף ב-"Min"
         # דוגמאות: 12′ EMOM, 7' amrap, 40’’ on
-        t = t.replace("′", " Min").replace("’", "'")
-        t = re.sub(r"(\d+)\s*'\s*", r"\1 Min ", t)
+        # Prime (′) and number+apostrophe = Min (so "7' amrap" -> "7 Min amrap"); don't replace apostrophe in words
+        t = t.replace("\u2032", " Min ")
+        t = re.sub(r"(\d+)\s*[\u2019']\s*", r"\1 Min ", t)
+        t = re.sub(r"(\d+)\s*Min\s*", r"\1 Min ", t)
+        t = re.sub(r"(\d+)\s*Sec\s*", r"\1 Sec ", t)
+        # Double-quote chars = Sec
+        for dq in ["\u201c", "\u201d", "\u201e", '"']:
+            t = t.replace(dq, " Sec ")
         t = re.sub(r"\s{2,}", " ", t).strip()
 
         # ננקה גם את הטקסט "A-Tier" אם נשאר בשורה (הכותרת עצמה כבר נזרקת)
-        t = t.replace("„A-Tier“", "").replace("A-Tier", "").strip()
+        t = t.replace("„A-Tier“", "").replace("A-Tier", "").replace("„S-Tier“", "").replace("S-Tier", "").strip()
         if not t:
             continue
 
@@ -96,6 +102,7 @@ def _split_sections(lines):
 
     sections = []
     cur = None
+    skip_until_s_tier = False  # בתוך METCON: דילוג על כל התוכן מ-A-Tier עד S-Tier (כולל הכותרות)
 
     for line in lines:
         plain = line.strip()
@@ -103,9 +110,16 @@ def _split_sections(lines):
             continue
         up = plain.upper()
 
-        # Ignore explicit "A-Tier" headers – נציג רק את ה-S-Tier
-        if "A-TIER" in up:
-            continue
+        # בתוך METCON: התעלם מכל הבלוק A-Tier (כותרת + תוכן) עד S-Tier; את שורת S-Tier עצמה לא מציגים
+        if cur and cur["title"].lower() == "metcon":
+            if "A-TIER" in up:
+                skip_until_s_tier = True
+                continue
+            if "S-TIER" in up:
+                skip_until_s_tier = False
+                continue  # לא מוסיפים את שורת „S-Tier“ – התוכן יבוא ישירות מתחת ל-METCON
+            if skip_until_s_tier:
+                continue
 
         is_hdr = False
         hdr_key = None
@@ -121,29 +135,16 @@ def _split_sections(lines):
             if cur and cur["lines"]:
                 sections.append(cur)
             cur = {"title": allowed[hdr_key], "lines": []}
+            skip_until_s_tier = False
             continue
 
         # All other lines go into current section (if any)
         if not cur:
-            # If there is content before any known header, we skip it –
-            # המשתמש ביקש רק את התוכן שמתחת לכותרות המשנה הספציפיות.
             continue
         cur["lines"].append(plain)
 
     if cur and cur["lines"]:
         sections.append(cur)
-
-    # Post-process METCON sections: השאר רק את מה שמתחת ל-S-Tier
-    for s in sections:
-        if s["title"].lower() == "metcon":
-            ln = s["lines"]
-            idx = None
-            for i, l in enumerate(ln):
-                if "S-TIER" in l.upper():
-                    idx = i
-                    break
-            if idx is not None:
-                s["lines"] = ln[idx + 1 :]  # רק מה שמתחת ל-S-Tier
 
     return sections or [{"title": "WORKOUT", "lines": lines}]
 

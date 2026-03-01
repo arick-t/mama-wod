@@ -27,6 +27,14 @@ DATE_RE = re.compile(
     r'[\s,]+(\d{1,2})[/\-\.](\d{1,2})[/\-\.](\d{2,4})',
     re.IGNORECASE
 )
+# Standalone date line (e.g. "February 27, 2026" or "02/25/2026") to strip
+DATE_LINE_RE = re.compile(
+    r'^(january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{1,2},?\s+\d{2,4}$',
+    re.IGNORECASE
+)
+DATE_MMDD_RE = re.compile(r'^\d{1,2}/\d{1,2}/\d{2,4}$')
+# Link with date is redundant – never show (Saturday 02/28/2026 etc.)
+WOD_LINK_RE = re.compile(r'^/wod/')
 
 
 def parse_date_line(line):
@@ -52,27 +60,86 @@ def date_matches_line(line, target):
     return y == target.year and mo == target.month and d == target.day
 
 
-def parse_sections(lines):
-    sections = []
-    cur = {'title': 'WORKOUT', 'lines': []}
-    for line in lines:
-        lo = line.lower()
-        is_hdr = False
-        if line.isupper() and 3 <= len(line) <= 60 and not re.search(r'\d', line):
-            is_hdr = True
-        elif (any(kw in lo for kw in SECTION_HINTS)
-              and len(line) < 60
-              and not re.search(r'\d+\s*(min|rep|round|x\b)', lo)):
-            is_hdr = True
-        if is_hdr:
-            if cur['lines']:
-                sections.append(cur)
-            cur = {'title': line.upper(), 'lines': []}
-        else:
-            cur['lines'].append(line)
-    if cur['lines']:
-        sections.append(cur)
-    return sections or [{'title': 'WORKOUT', 'lines': lines}]
+def _is_date_line(line):
+    """True if line is a redundant date (e.g. Saturday 02/28/2026, February 27, 2026, 02/25/2026)."""
+    t = (line or '').strip()
+    return bool(DATE_RE.match(t) or DATE_LINE_RE.match(t) or DATE_MMDD_RE.match(t))
+
+
+def _extract_sections_from_p(p_tag):
+    """
+    From a <p> with content (e.g. white-space:pre-wrap): first line = section title, rest = lines.
+    Strip surrounding quotes from title (e.g. "Mulligatawny" -> Mulligatawny).
+    """
+    for br in p_tag.find_all('br'):
+        br.replace_with('\n')
+    text = p_tag.get_text(separator='\n', strip=False)
+    lines = [l.strip() for l in text.split('\n') if l.strip()]
+    if not lines:
+        return None
+    # First line = section title; if it's "WOD" or author name, use second line as title (e.g. "Clam Chowder")
+    skip_first = ('norberto olalde', 'crossfit 1013', 'wod', 'home', 'about')
+    first = lines[0].strip().strip('"').strip('"')
+    for q in ['\u201c', '\u201d', '\u201e', '"']:
+        first = first.strip(q)
+    rest_candidates = [l for l in lines[1:] if not _is_date_line(l)]
+    # <strong>WOD</strong> then next line = workout name (e.g. "Clam Chowder")
+    if first.lower() == 'wod' and rest_candidates:
+        first = rest_candidates[0].strip().strip('"').strip('"')
+        for q in ['\u201c', '\u201d', '\u201e', '"']:
+            first = first.strip(q)
+        rest_candidates = rest_candidates[1:]
+    elif first.lower() in skip_first:
+        if not rest_candidates:
+            return None
+        first = rest_candidates[0].strip().strip('"').strip('"')
+        for q in ['\u201c', '\u201d', '\u201e', '"']:
+            first = first.strip(q)
+        rest_candidates = rest_candidates[1:]
+    # Stop rest before next author line or next quoted workout title
+    rest = []
+    for l in rest_candidates:
+        if l.strip().lower() in skip_first:
+            break
+        if len(rest) > 0 and l.strip().startswith('"') and len(l.strip()) > 4:
+            break  # next workout block
+        rest.append(l)
+    if not first:
+        return None
+    return {'title': 'WORKOUT – ' + first, 'lines': rest}
+
+
+def _extract_sections_from_p_fallback(lines):
+    """When no <p> structure: first line = title (or second if first is WOD/author), rest = lines."""
+    if not lines:
+        return None
+    skip_first = ('norberto olalde', 'crossfit 1013', 'wod', 'home', 'about')
+    first = lines[0].strip().strip('"').strip('"')
+    for q in ['\u201c', '\u201d', '\u201e', '"']:
+        first = first.strip(q)
+    rest_candidates = [l for l in lines[1:] if not _is_date_line(l)]
+    if first.lower() == 'wod' and rest_candidates:
+        first = rest_candidates[0].strip().strip('"').strip('"')
+        for q in ['\u201c', '\u201d', '\u201e', '"']:
+            first = first.strip(q)
+        rest_candidates = rest_candidates[1:]
+    elif first.lower() in skip_first:
+        if not rest_candidates:
+            return None
+        first = rest_candidates[0].strip().strip('"').strip('"')
+        for q in ['\u201c', '\u201d', '\u201e', '"']:
+            first = first.strip(q)
+        rest_candidates = rest_candidates[1:]
+    rest = []
+    for l in rest_candidates:
+        if l.strip().lower() in skip_first:
+            break
+        if len(rest) > 0 and l.strip().startswith('"') and len(l.strip()) > 4:
+            break
+        rest.append(l)
+    if not first:
+        return None
+    return {'title': 'WORKOUT – ' + first, 'lines': rest}
 
 
 def fetch_workout(date):
@@ -92,7 +159,7 @@ def fetch_workout(date):
         for tag in soup.find_all(['script', 'style', 'iframe', 'noscript', 'form', 'video']):
             tag.decompose()
         for img in soup.find_all(['img', 'picture', 'figure']):
-            tag.decompose()
+            img.decompose()
         
         # Remove ONLY page-level nav/footer
         NAV_FOOTER_RE = re.compile(
@@ -105,86 +172,57 @@ def fetch_workout(date):
             tag.decompose()
 
         body = soup.find('body') or soup
-        raw_lines = [
-            l.strip()
-            for l in body.get_text(separator='\n').split('\n')
-            if l.strip() and len(l.strip()) > 1
-        ]
 
-        # DEBUG: find date lines
-        date_lines_found = []
-        for line in raw_lines:
-            if DATE_RE.match(line.strip()):
-                date_lines_found.append(line)
-            if len(date_lines_found) >= 6:
-                break
-
-        if date_lines_found:
-            print(f"    → Date lines found: {date_lines_found[:3]}")
-        else:
-            year_lines = [l for l in raw_lines if '2026' in l or '2025' in l][:5]
-            if year_lines:
-                print(f"    → Year-containing lines: {year_lines}")
-            else:
-                print(f"    → No dates found. Page has {len(raw_lines)} lines.")
-                print(f"    → Sample lines: {raw_lines[:10]}")
-            return None
-
-        # Find target date
-        target_start = None
-        next_date_idx = None
-
-        for i, line in enumerate(raw_lines):
-            if date_matches_line(line, date):
-                target_start = i + 1
-                print(f"    → Matched: '{line}'")
-                for j in range(i + 1, len(raw_lines)):
-                    if DATE_RE.match(raw_lines[j].strip()):
-                        next_date_idx = j
-                        break
-                break
-
-        if target_start is None:
-            print(f"    → Date {date_str} not found. Available: {date_lines_found[:3]}")
-            return None
-
-        end_idx = next_date_idx if next_date_idx else target_start + 60
-        block = raw_lines[target_start:end_idx]
-
-        SKIP = {
-            'home', 'about', 'contact', 'schedule', 'membership',
-            'coaches', 'crossfit 1013', 'crossfit1013', 'wod',
-            'login', 'register', 'shop', 'skip to content',
-            'norberto olalde',  # author - appears BEFORE workout
-        }
-        
-        workout_lines = []
-        for line in block:
-            lo = line.lower().strip()
-            
-            # Stop only at Comment section (appears AFTER workout)
-            if 'comment' in lo:
-                print(f"    → Stopped at: '{line[:40]}'")
-                break
-            
-            if lo in SKIP:
+        # Structural parse: <a href="/wod/...">Saturday 02/28/2026</a> = date link (never show).
+        # Right after it, <p> blocks: first line = section title, rest = content.
+        sections = []
+        for a in body.find_all('a', href=WOD_LINK_RE):
+            link_text = a.get_text(strip=True)
+            if not date_matches_line(link_text, date):
                 continue
-            # Sometimes the site repeats today's date at the bottom – drop it.
-            if DATE_RE.match(line.strip()):
-                continue
-            if len(line) > 200:
-                continue
-            if line.startswith('http') and ('youtube' in line or 'vimeo' in line):
-                continue
-            workout_lines.append(line)
+            print(f"    → Matched date link: '{link_text}'")
+            # Next WOD link (so we stop before the next day's content)
+            next_wod_links = [x for x in a.find_all_next('a', href=WOD_LINK_RE) if x != a]
+            next_a = next_wod_links[0] if next_wod_links else None
+            for p in a.find_all_next('p'):
+                if next_a and next_a in p.find_all_previous():
+                    break  # past the next date link
+                sec = _extract_sections_from_p(p)
+                if sec and sec.get('lines'):
+                    sections.append(sec)
+            break  # only first matching date
 
-        workout_lines = workout_lines[:60]
+        if not sections:
+            # Fallback: text-based extraction, strip date lines
+            raw_lines = [
+                l.strip() for l in body.get_text(separator='\n').split('\n')
+                if l.strip() and len(l.strip()) > 1
+            ]
+            for i, line in enumerate(raw_lines):
+                if date_matches_line(line, date):
+                    block = raw_lines[i + 1:i + 60]
+                    block = [l for l in block if not _is_date_line(l) and 'comment' not in l.lower()]
+                    if block:
+                        sec = _extract_sections_from_p_fallback(block)
+                        if sec:
+                            sections = [sec]
+                    break
 
-        if not workout_lines:
+        if not sections:
             print(f"    → No content for {date_str}")
             return None
 
-        sections = parse_sections(workout_lines)
+        # Remove redundant sections: "WORKOUT" (+ optional date line only) or "WORKOUT – WOD" with no content
+        def _is_redundant(s):
+            t = (s.get('title') or '').strip()
+            ln = s.get('lines') or []
+            if t == 'WORKOUT' and (len(ln) == 0 or (len(ln) == 1 and _is_date_line((ln[0] or '').strip()))):
+                return True
+            if t == 'WORKOUT – WOD' and len(ln) == 0:
+                return True
+            return False
+        sections = [s for s in sections if not _is_redundant(s)]
+
         total = sum(len(s['lines']) for s in sections)
         print(f"    → SUCCESS: {len(sections)} sections, {total} lines")
 
