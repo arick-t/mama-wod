@@ -1,5 +1,14 @@
 # Changelog
 
+## [19.3] - 2026-02-27
+
+### Timer (Workout Timers tab)
+- Set & round display: interval shows "Set X/Y · Round R/Z" and "Rest Between Sets — Set 2→3"; toggles for "Merge adjacent rests" and "3 beeps" (ON/OFF); note about sounds over device audio.
+### Dev
+- Mobile testing: Live Server useLocalIp, DEV.md, serve-mobile.ps1.
+
+---
+
 ## [19.2] - 2026-02-15 (Evening, Second Fix)
 
 ### 🔧 Fixed
