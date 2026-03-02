@@ -25,12 +25,9 @@ from scrapers.linchpin      import fetch_workout as fetch_linchpin
 from scrapers.restoration   import fetch_workout as fetch_restoration
 from scrapers.cf1013        import fetch_workout as fetch_cf1013
 from scrapers.tonbridge     import fetch_workout as fetch_tonbridge
-from scrapers.heroes        import fetch_hero
-from scrapers.benchmarks    import fetch_benchmark
-from scrapers.open_wods     import fetch_open
-from scrapers.heroes        import fetch_all_heroes
-from scrapers.benchmarks    import fetch_all_benchmarks
-from scrapers.open_wods     import fetch_all_open
+from scrapers.heroes        import fetch_hero, fetch_all_heroes
+from scrapers.benchmarks    import fetch_benchmark, fetch_all_benchmarks
+from scrapers.open_wods     import fetch_open, fetch_all_open
 
 DATA_DIR  = Path(__file__).parent.parent / 'data'
 DATA_FILE = DATA_DIR / 'workouts.json'
@@ -68,7 +65,7 @@ def save(data):
     # Clean up: remove today-only sources from non-today dates
     today = datetime.now().strftime('%Y-%m-%d')
     today_only_sources = {'postal', 'linchpin'}
-    disabled_sources = {'panda'}
+    disabled_sources = {'panda', 'arch'}
     
     for date_str in list(data['workouts'].keys()):
         # Remove disabled sources from all dates

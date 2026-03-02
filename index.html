@@ -4,9 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DUCK-WOD</title>
+<meta name="theme-color" content="#111">
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Oswald','Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#111;color:#f0ece0;line-height:1.6;padding-bottom:74px}
@@ -167,6 +169,96 @@ input[type=number].timer-inp{width:5ch}
 .up-btn.show {
   display: block;
 }
+
+/* Workout Timers */
+.timers-section { background:#1e1e1e; padding:18px; border-radius:12px; border:1px solid #2a2a2a; max-width:420px; margin:0 auto }
+.timer-row { margin-bottom:10px }
+.timer-row label { display:block; color:#1A9B8A; font-weight:600; margin-bottom:4px; font-size:.9em }
+.timer-inp { width:5ch; padding:8px; background:#111; border:1px solid #333; border-radius:6px; color:#f0ece0; font-size:1em; text-align:center }
+.timer-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px 16px }
+.timer-display { font-size:3em; font-weight:700; text-align:center; color:#E8451A; margin:14px 0; letter-spacing:2px; font-variant-numeric:tabular-nums }
+.timer-phase { text-align:center; color:#1A9B8A; font-size:1em; margin-bottom:8px }
+.timer-btns { display:flex; gap:10px; justify-content:center; margin-top:12px }
+.timer-toggle { color:#e8e4d8; font-weight:normal }
+.timer-row-centered { display:flex; flex-direction:column; align-items:center; text-align:center }
+.timer-inp-center { margin:0 auto }
+.timer-direction-btn {
+  width:48px; height:48px; border:none; border-radius:50%; background:#2a2a2a; color:#F5C518;
+  font-size:1.5em; cursor:pointer; line-height:1; transition:background .2s, color .2s;
+}
+.timer-direction-btn:hover { background:#333; color:#fff }
+.timer-settings-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 16px; margin-top:8px }
+.timer-settings-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap }
+.timer-settings-row label { margin:0; flex:0 0 auto; font-size:.85em; min-width:110px }
+.timer-color-bucket {
+  display:inline-flex; align-items:center; justify-content:center; gap:4px;
+  width:36px; height:36px; padding:0; border:1px solid #444; border-radius:8px;
+  background:#252525; cursor:pointer; transition:border-color .2s, transform .1s;
+}
+.timer-color-bucket:hover { border-color:#F5C518; transform: scale(1.05) }
+.timer-bucket-color { width:18px; height:18px; border-radius:4px; border:1px solid rgba(255,255,255,.3) }
+.timer-bucket-icon { font-size:14px; line-height:1 }
+.timer-palette-popover {
+  display:none; position:fixed; z-index:10000; padding:12px; border-radius:12px;
+  background:#252525; border:1px solid #444; box-shadow:0 8px 24px rgba(0,0,0,.5);
+  max-width:min(320px, 90vw); max-height:70vh; overflow:auto;
+}
+.timer-palette-popover.open { display:block }
+.timer-palette-grid { display:grid; grid-template-columns:repeat(8, 1fr); gap:6px; }
+.timer-palette-swatch { width:28px; height:28px; border-radius:6px; cursor:pointer; border:2px solid transparent; transition:transform .1s }
+.timer-palette-swatch:hover { transform: scale(1.15) }
+.timer-palette-swatch.selected { border-color:#fff; box-shadow:0 0 0 1px #333 }
+.timer-direction-wrap { display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap }
+.timer-direction-label { font-size:1em; font-weight:700; color:#F5C518; letter-spacing:.05em; min-width:100px }
+.timer-fs-total { margin-top:4px; font-size:0.9em; color:rgba(255,255,255,0.85); text-align:center; z-index:1 }
+
+/* Full-screen professional timer (PWA-style) */
+.timer-fullscreen {
+  position: fixed; inset: 0; z-index: 99999;
+  overflow: hidden; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  transition: background 0.4s ease;
+}
+.timer-fs-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none }
+.timer-fs-exit {
+  position: absolute; top: 12px; right: 12px; z-index: 10;
+  width: 44px; height: 44px; border: none; border-radius: 50%;
+  background: rgba(0,0,0,0.4); color: #fff; font-size: 1.4em;
+  cursor: pointer; line-height: 1;
+}
+.timer-fs-ring-wrap {
+  position: relative; width: min(85vw, 320px); height: min(85vw, 320px);
+  flex-shrink: 0;
+}
+.timer-fs-ring { width: 100%; height: 100% }
+.timer-fs-ring-progress {
+  transition: stroke-dashoffset 0.15s linear;
+  stroke-dasharray: 283;
+  stroke-dashoffset: 283;
+}
+.timer-fs-digits {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: clamp(3rem, 18vw, 6rem);
+  color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  font-variant-numeric: tabular-nums;
+}
+.timer-fs-phase {
+  margin-top: 8px; font-size: 1.2em; font-weight: 700; color: rgba(255,255,255,0.95);
+  text-align: center; z-index: 1;
+}
+.timer-fs-next {
+  margin-top: 4px; font-size: 0.95em; color: rgba(255,255,255,0.8);
+  text-align: center; z-index: 1;
+}
+.timer-fs-btn {
+  margin-top: 24px; width: 90%; max-width: 320px;
+  min-height: 30vh; min-height: 30dvh;
+  border: none; border-radius: 16px; background: rgba(255,255,255,0.25);
+  color: #fff; font-size: 1.8em; font-weight: 700; cursor: pointer;
+  z-index: 1; transition: background 0.2s, transform 0.1s;
+  font-family: inherit;
+}
+.timer-fs-btn:active { transform: scale(0.98) }
 </style>
 </head>
 <body>
@@ -365,7 +457,7 @@ try {
 var EQ = {
   "RUN":         ["run","running","meter","mile","km"],
   "BARBELL":     ["barbell","clean","snatch","deadlift","squat","press","jerk"],
-  "PULL-UP":     ["pull-up","pullup","pull up","chest-to-bar","chest to bar","c2b","muscle-up","muscle up","mu"],
+  "PULL-UP":     ["pull-up","pullup","pull up","chest-to-bar","chest to bar","c2b","muscle-up","muscle up","mu","bar muscle up","bmu","toes to bar","toes-to-bar","ttb","t2b"],
   "PUSH-UP":     ["push-up","pushup","push up"],
   "ROW":         ["row","rowing","rower","cal row"],
   "BIKE":        ["bike","assault bike","echo bike","cal bike"],
@@ -381,7 +473,7 @@ var EQ = {
   "SKI":         ["ski","ski erg","skierg"],
   "SLED":        ["sled","sled push","sled pull"],
   "TOES TO BAR": ["toes to bar","toes-to-bar","ttb","t2b"],
-  "BOX":         ["box","box jump","box step","bjo","box jump over"]
+  "BOX":         ["box","box jump","box step","bjo","box jump over","burpee box jump over"]
 };
 
 function localDate(d) {
@@ -433,6 +525,34 @@ function stripNoteMarkers(line) {
   // מסיר כוכבית בסוף (אם קיימת) — רק לצורכי תצוגה של הערות
   t = t.replace(/\s*\*$/, "");
   return t;
+}
+
+function convertUnits(text) {
+  if (!text) return text;
+  var s = String(text);
+  // lbs -> kg (e.g. 155/105lbs, 95-lb, 105 lbs)
+  s = s.replace(/\b(\d+(?:\.\d+)?)(?:\s*\/\s*(\d+(?:\.\d+)?))?\s*lbs?\b/gi, function(_, n1, n2) {
+    var kg1 = Math.round(parseFloat(n1) / 2.205);
+    if (n2 !== undefined) return kg1 + "/" + Math.round(parseFloat(n2) / 2.205) + " kg";
+    return kg1 + " kg";
+  });
+  s = s.replace(/\b(\d+(?:\.\d+)?)\s*-\s*lb\b/gi, function(_, n) { return Math.round(parseFloat(n) / 2.205) + " kg"; });
+  // ft / feet / foot / X-ft (e.g. 10-ft target) -> m
+  s = s.replace(/\b(\d+(?:\.\d+)?)\s*ft\b/gi, function(_, n) { return Math.round(parseFloat(n) * 0.3048 * 10) / 10 + " m"; });
+  s = s.replace(/\b(\d+(?:\.\d+)?)\s*-\s*ft\b/gi, function(_, n) { return Math.round(parseFloat(n) * 0.3048 * 10) / 10 + " m"; });
+  s = s.replace(/\b(\d+(?:\.\d+)?)\s*feet\b/gi, function(_, n) { return Math.round(parseFloat(n) * 0.3048 * 10) / 10 + " m"; });
+  s = s.replace(/\b(\d+(?:\.\d+)?)\s*-\s*foot\b/gi, function(_, n) { return Math.round(parseFloat(n) * 0.3048 * 10) / 10 + " m"; });
+  s = s.replace(/\b(\d+(?:\.\d+)?)\s*foot\b/gi, function(_, n) { return Math.round(parseFloat(n) * 0.3048 * 10) / 10 + " m"; });
+  // inch(es) / in / X/Y″ (e.g. 24/20″) -> m
+  s = s.replace(/\b(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\s*["\u2033\u2032″]\s*/gi, function(_, n1, n2) {
+    var m1 = Math.round(parseFloat(n1) * 0.0254 * 100) / 100;
+    var m2 = Math.round(parseFloat(n2) * 0.0254 * 100) / 100;
+    return m1 + "/" + m2 + " m ";
+  });
+  s = s.replace(/\b(\d+(?:\.\d+)?)\s*-\s*inch(?:es)?\b/gi, function(_, n) { return (Math.round(parseFloat(n) * 0.0254 * 100) / 100) + " m"; });
+  s = s.replace(/\b(\d+(?:\.\d+)?)\s*inch(?:es)?\b/gi, function(_, n) { return (Math.round(parseFloat(n) * 0.0254 * 100) / 100) + " m"; });
+  s = s.replace(/\b(\d+(?:\.\d+)?)\s*-\s*in\b/gi, function(_, n) { return (Math.round(parseFloat(n) * 0.0254 * 100) / 100) + " m"; });
+  return s;
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -583,7 +703,7 @@ function buildCard(w, score) {
       disp = formatLbToKg(disp);
       li += "<li" + cls + ">" + esc(disp) + "</li>";
     }
-    body += "<div class=\"section\"><div class=\"section-title\">" + esc(s.title) + "</div><ul class=\"section-lines\">" + li + "</ul></div>";
+    body += "<div class=\"section\"><div class=\"section-title\">" + esc(convertUnits(s.title)) + "</div><ul class=\"section-lines\">" + li + "</ul></div>";
   }
   if (!body) body = "<div style=\"color:#555;padding:8px\">No content</div>";
   var sc = score !== null ? "<span class=\"match-score\">" + score + "%</span>" : "";
@@ -1354,6 +1474,382 @@ window.onscroll = function() {
 function scrollToTop() {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
+
+// ——— Workout Timers ———
+function parseMMSS(v) {
+  var s = String(v || "").trim();
+  if (/^\d+$/.test(s)) return parseInt(s, 10);
+  var m = s.match(/^(\d+):(\d+)$/);
+  if (m) return parseInt(m[1], 10) * 60 + parseInt(m[2], 10);
+  return 0;
+}
+function formatMMSS(sec) {
+  if (sec < 0) sec = 0;
+  var m = Math.floor(sec / 60), s = Math.floor(sec % 60);
+  return m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+function applyPreset(name) {
+  if (name === "tabata") {
+    document.getElementById("intCountDown").value = "0";
+    document.getElementById("intWork").value = "0:20";
+    document.getElementById("intRest").value = "0:10";
+    document.getElementById("intRounds").value = "8";
+    document.getElementById("intSets").value = "1";
+    document.getElementById("intRestSets").value = "0:00";
+  } else if (name === "emom") {
+    document.getElementById("intCountDown").value = "10";
+    document.getElementById("intWork").value = "1:00";
+    document.getElementById("intRest").value = "0:00";
+    document.getElementById("intRounds").value = "10";
+    document.getElementById("intSets").value = "1";
+    document.getElementById("intRestSets").value = "0:00";
+  }
+}
+
+var PHASE_COLORS = { "CountDown": "#FFD700", "Count Down": "#FFD700", "For Time": "#28a745", "Prepare": "#FFD700", "Work": "#28a745", "Rest": "#dc3545", "Rest Between Sets": "#dc3545", "Done": "#007bff" };
+var RING_CIRCUMFERENCE = 2 * Math.PI * 45;
+var stopwatchCountDown = true;
+
+var TIMER_PALETTE_COLORS = [
+  "#b71c1c","#c62828","#d32f2f","#e53935","#f44336","#ef5350","#e57373","#ff8a80",
+  "#e65100","#ef6c00","#ff9800","#ffa726","#ffb74d","#ffcc80","#ffe0b2",
+  "#f9a825","#fbc02d","#ffeb3b","#ffee58","#fff176","#fff59d","#ffd54f","#ffd700",
+  "#7cb342","#8bc34a","#9ccc65","#aed581","#c0ca33","#cddc39","#dce775",
+  "#2e7d32","#43a047","#66bb6a","#81c784","#4caf50","#28a745","#1b5e20",
+  "#00695c","#00897b","#26a69a","#4db6ac","#80cbc4","#b2dfdb",
+  "#006064","#00838f","#0097a7","#00acc1","#00bcd4","#4dd0e1","#80deea",
+  "#1565c0","#1976d2","#1e88e5","#2196f3","#42a5f5","#64b5f6","#90caf9",
+  "#283593","#303f9f","#3949ab","#3f51b5","#5c6bc0","#7986cb","#9fa8da",
+  "#4a148c","#6a1b9a","#7b1fa2","#8e24aa","#9c27b0","#ab47bc","#ba68c8",
+  "#880e4f","#ad1457","#c2185b","#d81b60","#e91e63","#ec407a","#f06292",
+  "#37474f","#455a64","#546e7a","#607d8b","#78909c","#90a4ae","#b0bec5","#cfd8dc"
+];
+
+var timerColorEditing = null;
+
+function openTimerPalette(button) {
+  var setting = button.getAttribute("data-setting");
+  var current = (button.getAttribute("data-current-color") || button.getAttribute("data-default") || "#333").toUpperCase();
+  timerColorEditing = setting;
+  var pop = document.getElementById("timer-palette-popover");
+  if (!pop) return;
+  pop.innerHTML = "";
+  pop.classList.add("open");
+  pop.setAttribute("aria-hidden", "false");
+  var rect = button.getBoundingClientRect();
+  pop.style.left = (rect.left + rect.width / 2) + "px";
+  pop.style.top = (rect.bottom + 8) + "px";
+  pop.style.transform = "translateX(-50%)";
+  var colors = TIMER_PALETTE_COLORS.slice();
+  if (colors.indexOf(current) === -1 && colors.indexOf(current.toLowerCase()) === -1) {
+    colors.unshift(current);
+  }
+  for (var i = 0; i < colors.length; i++) {
+    var hex = colors[i];
+    var span = document.createElement("span");
+    span.className = "timer-palette-swatch" + ((hex.toUpperCase ? hex.toUpperCase() : hex) === current ? " selected" : "");
+    span.setAttribute("data-color", hex);
+    span.style.background = hex;
+    span.title = hex;
+    span.addEventListener("click", function() {
+      var hex2 = this.getAttribute("data-color");
+      var btn = document.querySelector(".timer-color-bucket[data-setting=\"" + timerColorEditing + "\"]");
+      if (btn) {
+        btn.setAttribute("data-current-color", hex2);
+        var patch = btn.querySelector(".timer-bucket-color");
+        if (patch) patch.style.background = hex2;
+      }
+      closeTimerPalette();
+      saveTimerSettings();
+    });
+    pop.appendChild(span);
+  }
+}
+
+function closeTimerPalette() {
+  var pop = document.getElementById("timer-palette-popover");
+  if (pop) { pop.classList.remove("open"); pop.setAttribute("aria-hidden", "true"); }
+  timerColorEditing = null;
+}
+
+function getTimerSettings() {
+  var beep3sec = true;
+  var setBeep = document.getElementById("setBeep3Sec");
+  if (setBeep) beep3sec = setBeep.checked;
+  var colors = {};
+  var map = { countDown: ["CountDown", "Count Down", "Prepare"], work: ["Work"], rest: ["Rest"], restSets: ["Rest Between Sets"] };
+  var keys = ["countDown", "work", "rest", "restSets"];
+  for (var i = 0; i < keys.length; i++) {
+    var btn = document.querySelector(".timer-color-bucket[data-setting=\"" + keys[i] + "\"]");
+    var hex = btn ? (btn.getAttribute("data-current-color") || btn.getAttribute("data-default") || "#333") : "#333";
+    var names = map[keys[i]];
+    for (var n = 0; n < names.length; n++) colors[names[n]] = hex;
+  }
+  return { beep3sec: beep3sec, colors: colors };
+}
+
+function saveTimerSettings() {
+  var raw = { beep3sec: getTimerSettings().beep3sec };
+  var keys = ["countDown", "work", "rest", "restSets"];
+  for (var i = 0; i < keys.length; i++) {
+    var btn = document.querySelector(".timer-color-bucket[data-setting=\"" + keys[i] + "\"]");
+    raw[keys[i]] = btn ? (btn.getAttribute("data-current-color") || btn.getAttribute("data-default")) : null;
+  }
+  try { localStorage.setItem("duck-wod-timer-settings", JSON.stringify(raw)); } catch (e) {}
+}
+
+function loadTimerSettings() {
+  var keys = ["countDown", "work", "rest", "restSets"];
+  try {
+    var raw = JSON.parse(localStorage.getItem("duck-wod-timer-settings") || "{}");
+    if (typeof raw.beep3sec !== "undefined") document.getElementById("setBeep3Sec").checked = !!raw.beep3sec;
+    for (var i = 0; i < keys.length; i++) {
+      var btn = document.querySelector(".timer-color-bucket[data-setting=\"" + keys[i] + "\"]");
+      if (!btn) continue;
+      var want = raw[keys[i]] || btn.getAttribute("data-default") || "#333";
+      btn.setAttribute("data-current-color", want);
+      var patch = btn.querySelector(".timer-bucket-color");
+      if (patch) patch.style.background = want;
+    }
+  } catch (e) {}
+}
+
+function initTimerColorBuckets() {
+  var buckets = document.querySelectorAll(".timer-color-bucket");
+  for (var i = 0; i < buckets.length; i++) {
+    buckets[i].addEventListener("click", function(e) {
+      e.stopPropagation();
+      openTimerPalette(this);
+    });
+  }
+  document.addEventListener("click", function() { closeTimerPalette(); });
+  document.getElementById("timer-palette-popover").addEventListener("click", function(e) { e.stopPropagation(); });
+}
+
+function setStopwatchDirection(countDown) {
+  stopwatchCountDown = !!countDown;
+  var btn = document.getElementById("stopwatchDirectionBtn");
+  var lbl = document.getElementById("stopwatchDirectionLabel");
+  if (btn) { btn.textContent = countDown ? "▲" : "▼"; btn.title = countDown ? "Count down (click for count up)" : "Count up (click for count down)"; }
+  if (lbl) lbl.textContent = countDown ? "COUNT DOWN" : "COUNT UP";
+}
+
+function stopwatchToggleDirection() {
+  stopwatchCountDown = !stopwatchCountDown;
+  setStopwatchDirection(stopwatchCountDown);
+}
+
+var timerFsWakeLock = null;
+var timerFsRaf = null;
+var timerFsPhases = [];
+var timerFsPhaseIndex = 0;
+var timerFsPhaseEndTime = 0;
+var timerFsPaused = false;
+var timerFsPausedRemaining = 0;
+var timerFsLastSecond = -1;
+var timerFsStartTime = 0;
+
+function timerBeep(tick) {
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var osc = ctx.createOscillator();
+    var g = ctx.createGain();
+    osc.connect(g); g.connect(ctx.destination);
+    osc.frequency.value = tick ? 800 : 400;
+    osc.type = "sine";
+    g.gain.setValueAtTime(0.15, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + (tick ? 0.05 : 0.3));
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + (tick ? 0.05 : 0.3));
+  } catch (e) {}
+}
+
+function timerWhistle() {
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var osc = ctx.createOscillator();
+    var g = ctx.createGain();
+    osc.connect(g); g.connect(ctx.destination);
+    osc.frequency.value = 2200;
+    osc.type = "sine";
+    g.gain.setValueAtTime(0.2, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.45);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.45);
+  } catch (e) {}
+}
+
+function timerFullscreenUpdate() {
+  var el = document.getElementById("timer-fullscreen");
+  var digits = document.getElementById("timerFsDigits");
+  var phaseEl = document.getElementById("timerFsPhase");
+  var nextEl = document.getElementById("timerFsNext");
+  var totalEl = document.getElementById("timerFsTotal");
+  var ring = document.getElementById("timerFsRing");
+  var bg = document.getElementById("timerFsBg");
+  var btn = document.getElementById("timerFsBtn");
+  if (!el || el.style.display !== "flex") return;
+  var now = Date.now();
+  var settings = getTimerSettings();
+  var phaseColors = {};
+  for (var k in PHASE_COLORS) phaseColors[k] = PHASE_COLORS[k];
+  for (var k in settings.colors) phaseColors[k] = settings.colors[k];
+  if (timerFsPaused) {
+    digits.textContent = formatMMSS(Math.ceil(timerFsPausedRemaining));
+    btn.textContent = "Resume";
+    if (totalEl && timerFsPhases.length > 1) totalEl.textContent = "Total: " + formatMMSS((now - timerFsStartTime) / 1000);
+    return;
+  }
+  if (timerFsPhaseIndex >= timerFsPhases.length) {
+    bg.style.background = phaseColors["Done"] || "#007bff";
+    digits.textContent = "0:00";
+    phaseEl.textContent = "Done!";
+    nextEl.textContent = "";
+    if (totalEl) totalEl.textContent = timerFsPhases.length > 1 ? "Total: " + formatMMSS((now - timerFsStartTime) / 1000) : "";
+    ring.style.strokeDashoffset = 0;
+    btn.textContent = "Close";
+    if (timerFsWakeLock) { try { timerFsWakeLock.release(); } catch(e) {} timerFsWakeLock = null; }
+    return;
+  }
+  var p = timerFsPhases[timerFsPhaseIndex];
+  var total = p.sec;
+  var remaining = Math.max(0, (timerFsPhaseEndTime - now) / 1000);
+  var sec = Math.ceil(remaining);
+  if (sec !== timerFsLastSecond && timerFsLastSecond >= 0) {
+    if (settings.beep3sec && sec > 0 && sec <= 3) timerBeep(true);
+    if (sec === 0) timerWhistle();
+  }
+  timerFsLastSecond = sec;
+  digits.textContent = formatMMSS(remaining);
+  phaseEl.textContent = p.name + " (" + (timerFsPhaseIndex + 1) + "/" + timerFsPhases.length + ")";
+  var nextName = timerFsPhaseIndex + 1 < timerFsPhases.length ? timerFsPhases[timerFsPhaseIndex + 1].name : "";
+  nextEl.textContent = nextName ? "Next: " + nextName : "";
+  bg.style.background = phaseColors[p.name] || "#333";
+  if (totalEl) totalEl.textContent = timerFsPhases.length > 1 ? "Total: " + formatMMSS((now - timerFsStartTime) / 1000) : "";
+  var ratio = total > 0 ? remaining / total : 0;
+  ring.style.strokeDashoffset = RING_CIRCUMFERENCE * (1 - ratio);
+  if (remaining <= 0) {
+    timerFsPhaseIndex++;
+    if (timerFsPhaseIndex < timerFsPhases.length) timerFsPhaseEndTime = Date.now() + timerFsPhases[timerFsPhaseIndex].sec * 1000;
+    timerFsLastSecond = -1;
+  }
+  timerFsRaf = requestAnimationFrame(timerFullscreenUpdate);
+}
+
+function timerFullscreenStart(phases) {
+  timerFsPhases = phases;
+  timerFsPhaseIndex = 0;
+  timerFsPaused = false;
+  timerFsLastSecond = -1;
+  timerFsStartTime = Date.now();
+  if (phases.length === 0) return;
+  timerFsPhaseEndTime = Date.now() + phases[0].sec * 1000;
+  document.getElementById("timer-fullscreen").style.display = "flex";
+  document.body.style.overflow = "hidden";
+  document.getElementById("timerFsBtn").textContent = "Pause";
+  if (navigator.wakeLock) {
+    navigator.wakeLock.request("screen").then(function(wl) { timerFsWakeLock = wl; }).catch(function() {});
+  }
+  timerFullscreenUpdate();
+}
+
+function timerFullscreenClose() {
+  if (timerFsRaf) cancelAnimationFrame(timerFsRaf);
+  timerFsRaf = null;
+  if (timerFsWakeLock) { timerFsWakeLock.release(); timerFsWakeLock = null; }
+  document.getElementById("timer-fullscreen").style.display = "none";
+  document.body.style.overflow = "";
+  stopwatchIntervalId = null;
+  stopwatchRunning = false;
+  intervalIntervalId = null;
+  intervalRunning = false;
+  document.getElementById("stopwatchStart").textContent = "Start Full Screen";
+  document.getElementById("intervalStart").textContent = "Start Full Screen";
+}
+
+function timerFullscreenToggle() {
+  if (timerFsPhaseIndex >= timerFsPhases.length) {
+    timerFullscreenClose();
+    return;
+  }
+  if (timerFsPaused) {
+    timerFsPaused = false;
+    timerFsPhaseEndTime = Date.now() + timerFsPausedRemaining * 1000;
+    document.getElementById("timerFsBtn").textContent = "Pause";
+    timerFsRaf = requestAnimationFrame(timerFullscreenUpdate);
+  } else {
+    timerFsPaused = true;
+    timerFsPausedRemaining = Math.max(0, (timerFsPhaseEndTime - Date.now()) / 1000);
+    document.getElementById("timerFsBtn").textContent = "Resume";
+    if (timerFsRaf) cancelAnimationFrame(timerFsRaf);
+    timerFsRaf = requestAnimationFrame(timerFullscreenUpdate);
+  }
+}
+
+var stopwatchIntervalId = null;
+var stopwatchStartSec = 0;
+var stopwatchElapsed = 0;
+var stopwatchRunning = false;
+
+function stopwatchStartStop() {
+  var inp = document.getElementById("stopwatchInput");
+  var totalSec = parseMMSS(inp.value) || 300;
+  var countDownSec = parseInt(document.getElementById("stopwatchCountDownSec").value, 10) || 0;
+  var phases = [];
+  if (countDownSec > 0) phases.push({ name: "Prepare", sec: countDownSec });
+  phases.push({ name: stopwatchCountDown ? "Count Down" : "For Time", sec: totalSec });
+  timerFullscreenStart(phases);
+  stopwatchRunning = true;
+  document.getElementById("stopwatchStart").textContent = "Stop Full Screen";
+}
+
+function stopwatchReset() {
+  stopwatchRunning = false;
+  document.getElementById("stopwatchStart").textContent = "Start Full Screen";
+  var total = parseMMSS(document.getElementById("stopwatchInput").value) || 300;
+  document.getElementById("stopwatchDisplay").textContent = stopwatchCountDown ? formatMMSS(total) : "0:00";
+  stopwatchElapsed = 0;
+}
+
+var intervalIntervalId = null;
+var intervalRunning = false;
+
+function intervalStartStop() {
+  var countDown = parseMMSS(document.getElementById("intCountDown").value) || 0;
+  var work = parseMMSS(document.getElementById("intWork").value) || 60;
+  var rest = parseMMSS(document.getElementById("intRest").value) || 0;
+  var rounds = parseInt(document.getElementById("intRounds").value, 10) || 5;
+  var sets = parseInt(document.getElementById("intSets").value, 10) || 1;
+  var restSets = parseMMSS(document.getElementById("intRestSets").value) || 0;
+  var phases = [];
+  if (countDown > 0) phases.push({ name: "Prepare", sec: countDown });
+  for (var s = 0; s < sets; s++) {
+    for (var r = 0; r < rounds; r++) {
+      phases.push({ name: "Work", sec: work });
+      if (rest > 0) phases.push({ name: "Rest", sec: rest });
+    }
+    if (s < sets - 1 && restSets > 0) phases.push({ name: "Rest Between Sets", sec: restSets });
+  }
+  if (phases.length === 0) return;
+  timerFullscreenStart(phases);
+  intervalRunning = true;
+  document.getElementById("intervalStart").textContent = "Stop Full Screen";
+}
+
+function intervalReset() {
+  intervalRunning = false;
+  document.getElementById("intervalStart").textContent = "Start Full Screen";
+  document.getElementById("intervalDisplay").textContent = "0:00";
+  document.getElementById("intervalPhase").textContent = "—";
+}
+
+(function initTimerSettings() {
+  var beepEl = document.getElementById("setBeep3Sec");
+  if (beepEl) beepEl.addEventListener("change", function() { try { saveTimerSettings(); } catch (e) {} });
+  loadTimerSettings();
+  initTimerColorBuckets();
+})();
 </script>
 <button class="up-btn" id="upBtn" onclick="scrollToTop()">↑</button>
 </body>

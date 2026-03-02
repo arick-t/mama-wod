@@ -2,7 +2,7 @@
 CrossFit Open Workouts Scraper - warehouse version
 Source: https://games.crossfit.com/workouts/open/YEAR
 2011–2016: כל האימונים כתובים באותו URL של השנה.
-2017–2025: לכל אימון URL נפרד /YEAR/N.
+2017–2026: לכל אימון URL נפרד /YEAR/N.
 אנחנו שואבים את כל אימוני האופן למחסן `data/special_cache.json` → מגרילים כל יום אימון חדש
 עם חלון אי־חזרה של 14 יום, וב־Find Workout נחפש במחסן כולו.
 """
@@ -190,7 +190,7 @@ def _scrape_year_2017_plus(year, count):
 
 def _scrape_all_open():
     """
-    שואב את כל אימוני האופן מכל השנים 2011–2025 למחסן.
+    שואב את כל אימוני האופן מכל השנים 2011–2026 למחסן.
     """
     all_workouts = []
     try:
@@ -208,6 +208,10 @@ def _scrape_all_open():
         # 2022–2025: 3 אימונים
         for year in range(2022, 2026):
             all_workouts.extend(_scrape_year_2017_plus(year, count=3))
+
+        # 2026: מתחיל Open 26.x – כרגע ידוע על 26.1,
+        # אבל ייתכן ועד 3 אימונים. נסרוק עד 3, URL שלא קיים פשוט ידווח 404.
+        all_workouts.extend(_scrape_year_2017_plus(2026, count=3))
 
         print(f"    → Total parsed Open workouts: {len(all_workouts)}")
         return all_workouts
