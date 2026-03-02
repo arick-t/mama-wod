@@ -1,5 +1,20 @@
 # Changelog
 
+## [19.4] - 2026-02-27
+
+### Timer fullscreen (intervals + stopwatch)
+- **Sounds**: Single AudioContext created on Start (user gesture); beep/whistle/bell at every work↔rest and rest-between-sets transition (reliable on mobile).
+- **UI**: "Remaining" → "Overall Time" (top); phase name larger; Round left, Set right; Pause between LAST/NEXT; ▶/⏸/Close.
+- **Stopwatch (For Time)**: Count-up with filling ring; bell at work start, whistle at rest; config tightened; removed Next/5:00 preview.
+### Weights
+- **lb → kg**: All "X lb" shown as "X lb (Y kg)" in cards and Open (formatLbToKg).
+### CrossFit.com
+- Scraper returns no WOD on Sundays; day bar shows 14 non-Sunday days only.
+### Dev
+- DEV.md, serve-mobile.ps1, serve-mobile.cmd for local phone testing.
+
+---
+
 ## [19.3] - 2026-02-27
 
 ### Timer (Workout Timers tab)

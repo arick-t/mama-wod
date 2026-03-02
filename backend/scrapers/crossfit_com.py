@@ -44,7 +44,9 @@ def parse_sections(lines):
 
 
 def fetch_workout(date):
-    """Fetch from CrossFit.com - tries multiple URL formats."""
+    """Fetch from CrossFit.com - tries multiple URL formats. Rest day on Sundays: skip."""
+    if date.weekday() == 6:  # Sunday = rest day on CrossFit.com
+        return None
     date_str = date.strftime('%Y-%m-%d')
 
     # CrossFit.com uses YYMMDD format

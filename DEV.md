@@ -1,42 +1,38 @@
 # בדיקה בנייד (Mobile testing)
 
-כדי לראות את האפליקציה כמו משתמש קצה – על המכשיר הנייד – יש שתי דרכים.
-
-## 1. Live Server ב־VS Code / Cursor
-
-בפרויקט מוגדר ש־Live Server משתמש ב־**Local IP** (ראה `.vscode/settings.json`).
-
-1. חבר את המחשב והנייד **לאותו רשת WiFi**.
-2. ב־VS/Cursor: **Right‑click על `index.html` → Open with Live Server** (או כפתור "Go Live").
-3. בדרך כלל ייפתח דפדפן עם כתובת כמו `http://127.0.0.1:5500`.  
-   עם `useLocalIp: true` ייתכן שהכתובת תהיה כבר בסגנון `http://192.168.x.x:5500` – **זו הכתובת לפתוח בנייד**.
-4. אם לא: בדוק את ה־IP של המחשב:
-   - **Windows:** `ipconfig` בטרמינל, חפש **IPv4 Address** תחת ה־WiFi (למשל `192.168.1.105`).
-   - **Mac/Linux:** `ifconfig` או `ip addr`, חפש את ה־IP של `en0` / WiFi.
-5. בנייד פתח בדפדפן: **`http://<ה-IP-שלך>:5500`**  
-   לדוגמה: `http://192.168.1.105:5500`.
-
-שינויים בקוד יתעדכנו אוטומטית גם בנייד (Live Reload).
+כדי לראות את האפליקציה כמו משתמש קצה – על המכשיר הנייד – **בלי לדחוף ל-Git**.  
+מחשב ונייד חייבים להיות **באותו WiFi**.
 
 ---
 
-## 2. שרת Python (אם Live Server לא נותן גישה מהרשת)
+## מומלץ: שרת Python (עובד תמיד מהנייד)
 
-ב־PowerShell או CMD מתיקיית הפרויקט:
+Live Server ב-VS לרוב מאזין רק על `127.0.0.1`, אז מהנייד לא תגיע לאתר.  
+**הדרך האמינה:** להריץ שרת שמאזין על `0.0.0.0` (כל הממשקים).
 
-```powershell
-python -m http.server 8080 --bind 0.0.0.0
-```
+1. **פתח טרמינל (PowerShell)** בתיקיית הפרויקט:
+   ```powershell
+   cd "c:\Users\User\Documents\GitHubRepos\mama-wod"
+   .\serve-mobile.ps1
+   ```
+2. הסקריפט ידפיס כתובת כמו `http://192.168.1.105:8080` – **זו הכתובת לפתוח בדפדפן בנייד**.
+3. אם בנייד מתקבל "לא ניתן להתחבר" / connection refused:
+   - **Windows:** אפשר ל-Python גישה ב-Firewall (Private network):  
+     Settings → Privacy & Security → Windows Security → Firewall → Allow an app → Python.
+   - או הרץ את PowerShell **כמנהל** פעם אחת והרץ שוב את `.\serve-mobile.ps1`.
+4. אחרי שינוי בקוד – רענן את הדף בנייד (אין Live Reload אוטומטי בשרת הזה).
 
-אז:
-- לבדוק את ה־IP של המחשב (`ipconfig`).
-- בנייד לפתוח: **`http://<ה-IP>:8080`**.
+כך אתה עובד על קוד **לוקאלי** ורואה את התוצאה בפלאפון בלי לעלות גרסה ל-Git.
 
-או הרץ את הסקריפט (מדפיס את ה־IP ומפעיל שרת):
+---
 
-```powershell
-.\serve-mobile.ps1
-```
+## אופציה: Live Server (אם מוגדר Local IP)
+
+בפרויקט מוגדר `liveServer.settings.useLocalIp: true` (ב־`.vscode/settings.json`).
+
+1. Right‑click על `index.html` → **Open with Live Server** (או "Go Live").
+2. אם נפתחת כתובת בסגנון `http://192.168.x.x:5500` – פתח **אותה כתובת** בדפדפן בנייד.
+3. אם נפתחת רק `http://127.0.0.1:5500` – Live Server לא מאזין על הרשת; השתמש בשרת Python למעלה.
 
 ---
 
