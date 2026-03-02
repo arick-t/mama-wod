@@ -57,12 +57,13 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .set-workout-timers-heading{color:#F5C518;font-size:1.1em;margin-bottom:12px;text-align:center}
 .set-workout-timers-wrap{max-width:420px;margin:0 auto;padding:0 16px}
 .timers-section{background:#1e1e1e;padding:14px;border-radius:12px;border:1px solid #2a2a2a;margin-bottom:12px}
+.timers-section-stopwatch .timer-display{margin:0;min-height:0;overflow:hidden}
 .timer-row{margin-bottom:8px}.timer-row label{display:block;color:#1A9B8A;font-weight:600;margin-bottom:4px;font-size:.9em}
 .timer-inp{width:5ch;padding:6px;background:#111;border:1px solid #333;border-radius:6px;color:#f0ece0;font-size:1em;text-align:center}
 .timer-inp-num::-webkit-inner-spin-button,.timer-inp-num::-webkit-outer-spin-button{opacity:1}
 input[type=number].timer-inp{width:5ch}
 .timer-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 12px}
-.timer-display{font-size:2.2em;font-weight:700;text-align:center;color:#E8451A;margin:10px 0;font-variant-numeric:tabular-nums}
+.timer-display{display:none;font-size:2.2em;font-weight:700;text-align:center;color:#E8451A;margin:10px 0;font-variant-numeric:tabular-nums}
 .timer-btns{display:flex;gap:8px;justify-content:center;margin-top:10px}
 .timer-row-centered{display:flex;flex-direction:column;align-items:center;text-align:center}
 .timer-direction-btn{width:44px;height:44px;border:none;border-radius:50%;background:#2a2a2a;color:#F5C518;font-size:1.4em;cursor:pointer;line-height:1}
@@ -84,18 +85,24 @@ input[type=number].timer-inp{width:5ch}
 .timer-fullscreen{position:fixed;inset:0;z-index:99999;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:background .4s ease}
 .timer-fs-bg{position:absolute;inset:0;z-index:0;pointer-events:none}
 .timer-fs-exit{position:absolute;top:12px;right:12px;z-index:10;width:44px;height:44px;border:none;border-radius:50%;background:rgba(0,0,0,.4);color:#fff;font-size:1.4em;cursor:pointer;line-height:1}
+.timer-fs-clock-block{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:0 0 auto}
 .timer-fs-ring-wrap{position:relative;width:min(85vw,280px);height:min(85vw,280px);flex-shrink:0}
 .timer-fs-ring{width:100%;height:100%}
 .timer-fs-ring-progress{transition:stroke-dashoffset .15s linear;stroke-dasharray:283;stroke-dashoffset:283}
-.timer-fs-digits{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:clamp(2.8rem,16vw,5.5rem);min-width:5ch;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.4);font-variant-numeric:tabular-nums;letter-spacing:.05em}
-.timer-fs-total-above{position:absolute;top:12%;left:50%;transform:translateX(-50%);z-index:2;font-size:clamp(1.1rem,4vw,1.5rem);font-weight:700;color:rgba(255,255,255,.95);text-align:center;font-variant-numeric:tabular-nums}
+.timer-fs-digits{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:clamp(3.2rem,18vw,6rem);min-width:5ch;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.5);font-variant-numeric:tabular-nums;letter-spacing:.06em}
+.timer-fs-total-above{position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:2;text-align:center;line-height:1.2;display:flex;flex-direction:column;align-items:center;gap:2px}
+.timer-fs-total-label{font-size:clamp(0.95rem,3.2vw,1.15rem);font-weight:600;color:rgba(255,255,255,.9)}
+.timer-fs-total-digits{font-size:clamp(2rem,9vw,3.4rem);font-weight:700;color:rgba(255,255,255,.98);font-variant-numeric:tabular-nums;letter-spacing:.04em}
 .timer-section-title{color:#F5C518;font-size:1.15em;margin-bottom:10px;text-align:center;font-weight:700}
-.timer-fs-nav{display:flex;justify-content:center;gap:24px;margin-top:12px;z-index:2}
-.timer-fs-nav button{border:none;background:rgba(255,255,255,.25);color:#fff;padding:10px 20px;border-radius:10px;font-size:1em;font-weight:700;cursor:pointer;min-width:80px}
+.timer-fs-bottom-panel{position:absolute;bottom:0;left:0;right:0;z-index:2;display:flex;justify-content:center;align-items:center;padding:16px 12px 24px}
+.timer-fs-nav{display:flex;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap}
+.timer-fs-nav button{border:none;background:rgba(255,255,255,.25);color:#fff;padding:12px 22px;border-radius:10px;font-size:1.05em;font-weight:700;cursor:pointer;min-width:88px}
 .timer-fs-nav button:active{background:rgba(255,255,255,.4)}
-.timer-fs-phase{margin-top:8px;font-size:1.1em;font-weight:700;color:rgba(255,255,255,.95);text-align:center;z-index:1}
-.timer-fs-next{margin-top:4px;font-size:.9em;color:rgba(255,255,255,.8);text-align:center;z-index:1}
-.timer-fs-btn{margin-top:20px;width:90%;max-width:300px;min-height:80px;border:none;border-radius:14px;background:rgba(255,255,255,.25);color:#fff;font-size:1.5em;font-weight:700;cursor:pointer;z-index:1}
+.timer-fs-btn{min-height:60px;padding:14px 28px;border:none;border-radius:14px;background:rgba(255,255,255,.25);color:#fff;font-size:1.5em;font-weight:700;cursor:pointer;z-index:1}
+.timer-fs-btn-small{min-width:56px;min-height:56px;width:56px;height:56px;padding:0;border-radius:12px;font-size:1.6em;display:flex;align-items:center;justify-content:center;line-height:1}
+.timer-fs-phase{margin-top:12px;font-size:clamp(1.55rem,5.5vw,2.15rem);font-weight:700;color:rgba(255,255,255,.95);text-align:center;z-index:1;display:block;width:100%}
+.timer-fs-set-round{margin-top:6px;font-size:clamp(1.05rem,3.8vw,1.3rem);color:rgba(255,255,255,.9);text-align:center;z-index:1;display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
+.timer-fs-next{margin-top:4px;font-size:clamp(0.95rem,3vw,1.15rem);color:rgba(255,255,255,.85);text-align:center;z-index:1}
 .btn-find{background:#E8451A;color:#fff;width:100%;padding:11px;font-size:.95em;margin-top:8px}
 .btn-find:hover{background:#c73a15}
 .find-form{max-width:560px;margin:0 auto;background:#1e1e1e;padding:24px;border-radius:12px;border:1px solid #2a2a2a}
@@ -347,12 +354,12 @@ input[type=number].timer-inp{width:5ch}
   <div class="set-workout-divider" aria-hidden="true"></div>
   <div id="set-workout-timers-wrap" class="set-workout-timers-wrap">
     <div class="set-workout-timers-heading">⏱ Configure your timer</div>
-    <div class="timers-section">
+    <div class="timers-section timers-section-stopwatch">
       <h3 class="timer-section-title">Stopwatch</h3>
       <div class="timer-row timer-row-centered"><label>Time (MM:SS or 4 digits)</label><input type="text" id="stopwatchInput" placeholder="0500" value="5:00" maxlength="5" class="timer-inp" inputmode="numeric" pattern="[0-9:]*" autocomplete="off" title="e.g. 0500 = 5:00, 1230 = 12:30"></div>
       <div class="timer-row timer-row-centered"><label>Direction</label><div class="timer-direction-wrap"><button type="button" id="stopwatchDirectionBtn" class="timer-direction-btn" onclick="stopwatchToggleDirection()">▲</button><span class="timer-direction-label" id="stopwatchDirectionLabel">COUNT DOWN</span></div></div>
       <div class="timer-row timer-row-centered"><label>CountDown (sec)</label><input type="text" id="stopwatchCountDownSec" placeholder="0" value="0" maxlength="3" class="timer-inp timer-inp-num" style="width:4ch" inputmode="numeric" pattern="[0-9]*"></div>
-      <div class="timer-display" id="stopwatchDisplay">5:00</div>
+      <div class="timer-display" id="stopwatchDisplay" aria-hidden="true">5:00</div>
       <div class="timer-btns"><button class="btn btn-find" id="stopwatchStart" onclick="stopwatchStartStop()">Start Full Screen</button> <button class="btn btn-find" style="background:#555" onclick="stopwatchReset()">Reset</button></div>
     </div>
     <div class="timers-section" style="margin-top:20px">
@@ -397,18 +404,24 @@ input[type=number].timer-inp{width:5ch}
   <div class="timer-fs-bg" id="timerFsBg"></div>
   <button type="button" class="timer-fs-exit" id="timerFsExit" onclick="timerFullscreenClose()" aria-label="Close">✕</button>
   <div class="timer-fs-total-above" id="timerFsTotalAbove"></div>
-  <div class="timer-fs-ring-wrap">
-    <svg class="timer-fs-ring" viewBox="0 0 100 100"><circle class="timer-fs-ring-bg" cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="8"/><circle class="timer-fs-ring-progress" id="timerFsRing" cx="50" cy="50" r="45" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" transform="rotate(-90 50 50)"/></svg>
-    <div class="timer-fs-digits" id="timerFsDigits">0:00</div>
+  <div class="timer-fs-clock-block">
+    <div class="timer-fs-ring-wrap">
+      <svg class="timer-fs-ring" viewBox="0 0 100 100"><circle class="timer-fs-ring-bg" cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="8"/><circle class="timer-fs-ring-progress" id="timerFsRing" cx="50" cy="50" r="45" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" transform="rotate(-90 50 50)"/></svg>
+      <div class="timer-fs-digits" id="timerFsDigits">0:00</div>
+    </div>
+    <div class="timer-fs-phase" id="timerFsPhase">—</div>
+    <div class="timer-fs-set-round" id="timerFsSetRound"></div>
+    <div class="timer-fs-next" id="timerFsNext"></div>
   </div>
-  <div class="timer-fs-phase" id="timerFsPhase">—</div>
-  <div class="timer-fs-next" id="timerFsNext"></div>
-  <div class="timer-fs-nav" id="timerFsNav" style="display:none">
-    <button type="button" onclick="timerFsGoPrev()">← LAST</button>
-    <button type="button" onclick="timerFsGoNext()">NEXT →</button>
+  <div class="timer-fs-bottom-panel">
+    <div class="timer-fs-nav" id="timerFsNav" style="display:none">
+      <button type="button" onclick="timerFsGoPrev()">← LAST</button>
+      <button type="button" class="timer-fs-btn timer-fs-btn-small" id="timerFsBtn" onclick="timerFullscreenToggle()">Pause</button>
+      <button type="button" onclick="timerFsGoNext()">NEXT →</button>
+    </div>
+    <button type="button" class="timer-fs-btn" id="timerFsBtnStandalone" onclick="timerFullscreenToggle()" style="display:none">Start</button>
   </div>
   <div class="timer-fs-total" id="timerFsTotal"></div>
-  <button type="button" class="timer-fs-btn" id="timerFsBtn" onclick="timerFullscreenToggle()">Start</button>
 </div>
 
 <div class="tab-content" id="sources-tab">
@@ -473,6 +486,13 @@ function localDate(d) {
 function esc(s) {
   if (!s) return "";
   return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function formatLbToKg(str) {
+  if (!str || typeof str !== "string") return str;
+  return str.replace(/\b(\d+(?:\.\d+)?)\s*(-?\s*lb)\b/gi, function(_, num, lbPart) {
+    var kg = Math.round(parseFloat(num) * 0.453592);
+    return num + lbPart + " (" + kg + " kg)";
+  });
 }
 
 function isAsteriskNoteLine(line) {
@@ -604,26 +624,27 @@ function pickDay(ago) {
 function buildDaysBar() {
   var bar = document.getElementById("days-bar");
   if (!bar) return;
-  
-  // Always show 14 days (today + 13 back)
-  var html = '<div style="padding:0 20px">';
+  var todayStr = localDate(new Date());
   var ds = localDate(currentDate);
-  
-  for (var i = 0; i < 14; i++) {
+  var dates = [];
+  for (var i = 0; dates.length < 14; i++) {
     var d = new Date();
     d.setDate(d.getDate() - i);
+    if (d.getDay() !== 0) dates.push(d);
+  }
+  var html = '<div style="padding:0 20px">';
+  for (var i = 0; i < dates.length; i++) {
+    var d = dates[i];
     var dateStr = localDate(d);
     var day = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];
     var hasData = allData.workouts && allData.workouts[dateStr];
     var active = dateStr === ds ? ' active' : '';
-    
-    html += '<button class="day-btn' + active + '" onclick="goDate(\'' + dateStr + '\')" style="margin:0 4px;padding:8px 12px;background:' + 
-            (dateStr === ds ? '#E8451A' : '#2a2a2a') + ';color:' + (dateStr === ds ? '#fff' : (hasData ? '#f0ece0' : '#555')) + 
+    html += '<button class="day-btn' + active + '" onclick="goDate(\'' + dateStr + '\')" style="margin:0 4px;padding:8px 12px;background:' +
+            (dateStr === ds ? '#E8451A' : '#2a2a2a') + ';color:' + (dateStr === ds ? '#fff' : (hasData ? '#f0ece0' : '#555')) +
             ';border:1px solid ' + (dateStr === ds ? '#E8451A' : '#444') + ';border-radius:6px;cursor:pointer;font-size:0.9em;font-weight:500' +
-            (hasData ? '' : ';opacity:0.5') + '">' + 
-            (i === 0 ? 'TODAY' : day) + '<br><small>' + dateStr.slice(5) + '</small></button>';
+            (hasData ? '' : ';opacity:0.5') + '">' +
+            (dateStr === todayStr ? 'TODAY' : day) + '<br><small>' + dateStr.slice(5) + '</small></button>';
   }
-  
   html += '</div>';
   bar.innerHTML = html;
 }
@@ -679,7 +700,7 @@ function buildCard(w, score) {
       var isNote = isAsteriskNoteLine(line) || isGenderNoteLine(line) || isRxNoteLine(line);
       var cls = isNote ? ' class="note"' : '';
       var disp = isNote ? stripNoteMarkers(line) : line;
-      disp = convertUnits(disp);
+      disp = formatLbToKg(disp);
       li += "<li" + cls + ">" + esc(disp) + "</li>";
     }
     body += "<div class=\"section\"><div class=\"section-title\">" + esc(convertUnits(s.title)) + "</div><ul class=\"section-lines\">" + li + "</ul></div>";
@@ -705,7 +726,7 @@ function wa(idx) {
   for (var i = 0; i < secs.length; i++) {
     t += secs[i].title + "\n";
     var ln = secs[i].lines || [];
-    for (var j = 0; j < ln.length; j++) t += "• " + ln[j] + "\n";
+    for (var j = 0; j < ln.length; j++) t += "• " + formatLbToKg(ln[j]) + "\n";
     t += "\n";
   }
   window.open("https://wa.me/?text=" + encodeURIComponent(t), "_blank");
@@ -1098,14 +1119,23 @@ function setStopwatchDirection(countDown) {
   stopwatchCountDown = !!countDown;
   var btn = document.getElementById("stopwatchDirectionBtn");
   var lbl = document.getElementById("stopwatchDirectionLabel");
-  if (btn) { btn.textContent = countDown ? "▼" : "▲"; btn.title = countDown ? "Count down (click for count up)" : "Count up (click for count down)"; }
+  if (btn) { btn.textContent = countDown ? "\u25BC" : "\u25B2"; btn.title = countDown ? "Count down (click for count up)" : "Count up (click for count down)"; btn.setAttribute("aria-label", countDown ? "Count down" : "Count up"); }
   if (lbl) lbl.textContent = countDown ? "COUNT DOWN" : "COUNT UP";
 }
 function stopwatchToggleDirection() { stopwatchCountDown = !stopwatchCountDown; setStopwatchDirection(stopwatchCountDown); }
 
+var timerAudioContext = null;
+function timerAudioUnlock() {
+  try {
+    if (!timerAudioContext) timerAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+    if (timerAudioContext.state === "suspended") timerAudioContext.resume();
+    return timerAudioContext;
+  } catch (e) { return null; }
+}
 function timerBeep(tick) {
   try {
-    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var ctx = timerAudioContext || timerAudioUnlock() || new (window.AudioContext || window.webkitAudioContext)();
+    if (!ctx) return;
     if (ctx.state === "suspended") ctx.resume();
     var osc = ctx.createOscillator();
     var g = ctx.createGain();
@@ -1120,7 +1150,8 @@ function timerBeep(tick) {
 }
 function timerWhistleKickoff() {
   try {
-    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var ctx = timerAudioContext || timerAudioUnlock() || new (window.AudioContext || window.webkitAudioContext)();
+    if (!ctx) return;
     if (ctx.state === "suspended") ctx.resume();
     var t0 = ctx.currentTime;
     var playBurst = function(start, freq, dur) {
@@ -1141,7 +1172,8 @@ function timerWhistleKickoff() {
 }
 function timerBell() {
   try {
-    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var ctx = timerAudioContext || timerAudioUnlock() || new (window.AudioContext || window.webkitAudioContext)();
+    if (!ctx) return;
     if (ctx.state === "suspended") ctx.resume();
     var osc = ctx.createOscillator();
     var g = ctx.createGain();
@@ -1173,14 +1205,25 @@ function timerFullscreenUpdate() {
   for (var k in PHASE_COLORS) phaseColors[k] = PHASE_COLORS[k];
   for (var k in settings.colors) phaseColors[k] = settings.colors[k];
   if (timerFsPhases.length > 1 && totalAbove) {
-    totalAbove.textContent = "Remaining: " + formatMMSS(totalRemaining);
-    totalAbove.style.display = "";
+    totalAbove.innerHTML = "<span class=\"timer-fs-total-label\">Overall Time</span><span class=\"timer-fs-total-digits\">" + formatMMSS(totalRemaining) + "</span>";
+    totalAbove.style.display = "flex";
   } else if (totalAbove) totalAbove.style.display = "none";
   var navEl = document.getElementById("timerFsNav");
-  if (navEl) navEl.style.display = (timerFsIsInterval && timerFsPhases.length > 1 && timerFsPhaseIndex < timerFsPhases.length) ? "flex" : "none";
+  var btnStandalone = document.getElementById("timerFsBtnStandalone");
+  var showNav = timerFsIsInterval && timerFsPhases.length > 1 && timerFsPhaseIndex < timerFsPhases.length;
+  if (navEl) navEl.style.display = showNav ? "flex" : "none";
+  if (btnStandalone) btnStandalone.style.display = showNav ? "none" : "block";
+  function setBtnTxt(t) {
+    var icon = t === "Resume" || t === "Start" ? "\u25B6" : t === "Pause" ? "\u23F8" : t;
+    var label = t === "Resume" ? "Resume" : t === "Pause" ? "Pause" : t === "Start" ? "Start" : t;
+    if (btn) { btn.textContent = icon; btn.setAttribute("aria-label", label); }
+    if (btnStandalone) { btnStandalone.textContent = icon; btnStandalone.setAttribute("aria-label", label); }
+  }
   if (timerFsPaused) {
-    digits.textContent = formatMMSS(Math.ceil(timerFsPausedRemaining));
-    btn.textContent = "Resume";
+    var pp = timerFsPhases[timerFsPhaseIndex];
+    var pausedDisplay = pp && pp.name === "For Time" ? Math.max(0, (pp.sec || 0) - timerFsPausedRemaining) : timerFsPausedRemaining;
+    digits.textContent = formatMMSS(Math.ceil(pausedDisplay));
+    setBtnTxt("Resume");
     return;
   }
   if (timerFsPhaseIndex >= timerFsPhases.length) {
@@ -1188,40 +1231,55 @@ function timerFullscreenUpdate() {
     digits.textContent = "0:00";
     phaseEl.textContent = "Done!";
     nextEl.textContent = "";
-    if (totalAbove) totalAbove.textContent = "Remaining: 0:00";
+    var setRoundDone = document.getElementById("timerFsSetRound");
+    if (setRoundDone) { setRoundDone.textContent = ""; setRoundDone.style.display = "none"; }
+    if (totalAbove) totalAbove.innerHTML = "<span class=\"timer-fs-total-label\">Overall Time</span><span class=\"timer-fs-total-digits\">0:00</span>";
     ring.style.strokeDashoffset = 0;
-    btn.textContent = "Close";
+    if (btn) { btn.textContent = "Close"; btn.setAttribute("aria-label", "Close"); }
+    if (btnStandalone) { btnStandalone.textContent = "Close"; btnStandalone.setAttribute("aria-label", "Close"); }
     if (navEl) navEl.style.display = "none";
+    if (btnStandalone) btnStandalone.style.display = "block";
     if (timerFsWakeLock) { try { timerFsWakeLock.release(); } catch(e) {} timerFsWakeLock = null; }
     return;
   }
   var p = timerFsPhases[timerFsPhaseIndex];
   var total = p.sec;
   var remaining = Math.max(0, (timerFsPhaseEndTime - now) / 1000);
+  var isCountUp = (p.name === "For Time");
+  var displaySec = isCountUp ? Math.min(total, Math.max(0, total - remaining)) : remaining;
   var sec = Math.ceil(remaining);
   if (sec !== timerFsLastSecond && timerFsLastSecond >= 0) {
     if (settings.beep3sec && sec > 0 && sec <= 3) timerBeep(true);
     if (sec === 0) {
       var nextPhase = timerFsPhaseIndex + 1 < timerFsPhases.length ? timerFsPhases[timerFsPhaseIndex + 1] : null;
       if (nextPhase && nextPhase.name === "Rest") timerWhistleKickoff();
-      else if (nextPhase && nextPhase.name === "Work") timerBell();
+      else if (nextPhase && (nextPhase.name === "Work" || nextPhase.name === "Count Down" || nextPhase.name === "For Time")) timerBell();
       else if (nextPhase) timerWhistleKickoff();
     }
   }
   timerFsLastSecond = sec;
-  digits.textContent = formatMMSS(remaining);
-  var phaseLabel = p.name;
-  if (p.set != null && p.totalSets != null) {
-    if (p.round != null) phaseLabel += " — Set " + p.set + "/" + p.totalSets + " · Round " + p.round + "/" + (p.roundsPerSet != null ? p.roundsPerSet : "?");
-    else phaseLabel += " — Set " + p.set + "→" + (p.set + 1);
-  } else {
-    phaseLabel += " (" + (timerFsPhaseIndex + 1) + "/" + timerFsPhases.length + ")";
+  digits.textContent = formatMMSS(displaySec);
+  phaseEl.textContent = p.name;
+  var setRoundEl = document.getElementById("timerFsSetRound");
+  if (setRoundEl) {
+    if (p.set != null && p.totalSets != null) {
+      var setTxt = "Set " + p.set + "/" + p.totalSets;
+      var roundTxt = p.round != null ? "Round " + p.round + "/" + (p.roundsPerSet != null ? p.roundsPerSet : "?") : "→ Set " + (p.set + 1);
+      setRoundEl.innerHTML = "<span>" + roundTxt + "</span><span>" + setTxt + "</span>";
+      setRoundEl.style.display = "flex";
+    } else {
+      setRoundEl.textContent = "";
+      setRoundEl.style.display = "none";
+    }
   }
-  phaseEl.textContent = phaseLabel;
-  var nextName = timerFsPhaseIndex + 1 < timerFsPhases.length ? timerFsPhases[timerFsPhaseIndex + 1].name : "";
-  nextEl.textContent = nextName ? "Next: " + nextName : "";
+  if (timerFsIsInterval) {
+    var nextName = timerFsPhaseIndex + 1 < timerFsPhases.length ? timerFsPhases[timerFsPhaseIndex + 1].name : "";
+    nextEl.textContent = nextName ? "Next: " + nextName : "";
+  } else {
+    nextEl.textContent = "";
+  }
   bg.style.background = phaseColors[p.name] || "#333";
-  var ratio = total > 0 ? remaining / total : 0;
+  var ratio = total > 0 ? (isCountUp ? displaySec / total : remaining / total) : 0;
   ring.style.strokeDashoffset = RING_CIRCUMFERENCE * (1 - ratio);
   if (remaining <= 0) {
     timerFsPhaseIndex++;
@@ -1231,6 +1289,7 @@ function timerFullscreenUpdate() {
   timerFsRaf = requestAnimationFrame(timerFullscreenUpdate);
 }
 function timerFullscreenStart(phases, isInterval) {
+  timerAudioUnlock();
   timerFsPhases = phases;
   timerFsPhaseIndex = 0;
   timerFsPaused = false;
@@ -1243,7 +1302,10 @@ function timerFullscreenStart(phases, isInterval) {
   timerFsPhaseEndTime = Date.now() + phases[0].sec * 1000;
   document.getElementById("timer-fullscreen").style.display = "flex";
   document.body.style.overflow = "hidden";
-  document.getElementById("timerFsBtn").textContent = "Pause";
+  var b = document.getElementById("timerFsBtn");
+  var s = document.getElementById("timerFsBtnStandalone");
+  if (b) b.textContent = "\u23F8";
+  if (s) s.textContent = "\u23F8";
   if (navigator.wakeLock) navigator.wakeLock.request("screen").then(function(wl) { timerFsWakeLock = wl; }).catch(function() {});
   timerFullscreenUpdate();
 }
@@ -1270,15 +1332,23 @@ function timerFullscreenClose() {
 }
 function timerFullscreenToggle() {
   if (timerFsPhaseIndex >= timerFsPhases.length) { timerFullscreenClose(); return; }
+  var b = document.getElementById("timerFsBtn");
+  var s = document.getElementById("timerFsBtnStandalone");
+  function setBtnIcon(t) {
+    var icon = t === "Resume" || t === "Start" ? "\u25B6" : t === "Pause" ? "\u23F8" : t;
+    var label = t === "Resume" ? "Resume" : t === "Pause" ? "Pause" : t;
+    if (b) { b.textContent = icon; b.setAttribute("aria-label", label); }
+    if (s) { s.textContent = icon; s.setAttribute("aria-label", label); }
+  }
   if (timerFsPaused) {
     timerFsPaused = false;
     timerFsPhaseEndTime = Date.now() + timerFsPausedRemaining * 1000;
-    document.getElementById("timerFsBtn").textContent = "Pause";
+    setBtnIcon("Pause");
     timerFsRaf = requestAnimationFrame(timerFullscreenUpdate);
   } else {
     timerFsPaused = true;
     timerFsPausedRemaining = Math.max(0, (timerFsPhaseEndTime - Date.now()) / 1000);
-    document.getElementById("timerFsBtn").textContent = "Resume";
+    setBtnIcon("Resume");
     if (timerFsRaf) cancelAnimationFrame(timerFsRaf);
     timerFsRaf = requestAnimationFrame(timerFullscreenUpdate);
   }
@@ -1347,6 +1417,7 @@ function buildCardHtmlOnly(w) {
       var isNote = isAsteriskNoteLine(line) || isGenderNoteLine(line) || isRxNoteLine(line);
       var cls = isNote ? ' class="note"' : '';
       var disp = isNote ? stripNoteMarkers(line) : line;
+      disp = formatLbToKg(disp);
       li += "<li" + cls + ">" + esc(disp) + "</li>";
     }
     body += "<div class=\"section\"><div class=\"section-title\">" + esc(s.title) + "</div><ul class=\"section-lines\">" + li + "</ul></div>";
