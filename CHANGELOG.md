@@ -1,5 +1,19 @@
 # Changelog
 
+## [19.5] - 2026-02-27
+
+### Find Workout
+- Always show top 3 from box sources (14-day workouts); up to 3 from Hero/Benchmark/Open when checkboxes selected. Display order: boxes first, then warehouses.
+- Scoring: WOD-only text for equipment/time; two-phase by equipment "extra" (prefer extra ≤1); labels: התאמה מלאה, זמן שונה, התאמה חלקית.
+- Unlimited time: no longer zeros score; full time points when "Unlimited time" is checked.
+- Guards: getWodOnlyText/scoreWod handle missing sections or bad data; try/catch in find loop; message when no workout data loaded yet.
+
+### Benchmarks
+- No duplicate benchmark names in 14-day view (e.g. Grace, Barbara once). `fetch_benchmarks_for_days(dates)` returns one unique benchmark per day.
+- Scraper: dedupe by normalized name; parse `<ul>`/`<ol>`/`<li>` and `<h1>`–`<h4>` so full workout content is captured (e.g. Nicole). `fetch_all` uses batch benchmark assignment.
+
+---
+
 ## [19.4] - 2026-02-27
 
 ### Timer fullscreen (intervals + stopwatch)

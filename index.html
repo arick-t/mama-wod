@@ -119,6 +119,7 @@ input[type=number].timer-inp{width:5ch}
 .eq-item:hover{background:#252525}
 .eq-item input{cursor:pointer;accent-color:#E8451A;flex-shrink:0}
 .match-score{display:inline-block;background:#E8451A;color:#fff;padding:2px 10px;border-radius:20px;font-weight:700;font-size:.82em;margin-left:8px}
+.match-label{font-size:.75em;color:#aaa;margin-top:4px;margin-left:0}
 .sources-list{max-width:540px;margin:0 auto}
 .source-item{background:#1e1e1e;padding:13px 15px;border-radius:8px;border:1px solid #2a2a2a;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center}
 .source-item.hero{border:3px solid #2196F3;background:#1a2332;box-shadow:0 0 12px rgba(33,150,243,0.25)}
@@ -384,6 +385,29 @@ var EQ = {
   "BOX":         ["box","box jump","box step","bjo","box jump over"]
 };
 
+var WOD_SECTION_RE = /wod|metcon|conditioning|amrap|emom|for\s*time|workout/;
+function getWodOnlyText(w) {
+  if (!w) return "";
+  var secs = Array.isArray(w.sections) ? w.sections : (w.sections ? [].concat(w.sections) : []);
+  var parts = [];
+  for (var i = 0; i < secs.length; i++) {
+    var s = secs[i];
+    var title = (s && s.title ? s.title : "").toString().toLowerCase();
+    if (WOD_SECTION_RE.test(title)) {
+      var lines = Array.isArray(s.lines) ? s.lines : [];
+      parts.push(title + " " + lines.join(" "));
+    }
+  }
+  if (parts.length) return parts.join(" ").toLowerCase();
+  var full = "";
+  for (var j = 0; j < secs.length; j++) {
+    var s = secs[j];
+    if (!s) continue;
+    full += (s.title || "") + " " + (Array.isArray(s.lines) ? s.lines.join(" ") : "") + " ";
+  }
+  return (full || "").toLowerCase();
+}
+
 function localDate(d) {
   var y = d.getFullYear();
   var m = String(d.getMonth()+1).padStart(2,"0");
@@ -586,12 +610,14 @@ function buildCard(w, score) {
     body += "<div class=\"section\"><div class=\"section-title\">" + esc(s.title) + "</div><ul class=\"section-lines\">" + li + "</ul></div>";
   }
   if (!body) body = "<div style=\"color:#555;padding:8px\">No content</div>";
+  var label = (arguments.length >= 3 && arguments[2]) ? arguments[2] : "";
   var sc = score !== null ? "<span class=\"match-score\">" + score + "%</span>" : "";
+  var labelHtml = label ? "<div class=\"match-label\">" + esc(label) + "</div>" : "";
   var cardClass = "workout-card";
   if (w.source === "hero") cardClass += " hero";
   if (w.source === "benchmark") cardClass += " benchmark";
   if (w.source === "open") cardClass += " open";
-  return "<div class=\"" + cardClass + "\"><div class=\"card-header\"><div class=\"source-name\">" + esc(w.source_name||w.source) + sc + "</div>" +
+  return "<div class=\"" + cardClass + "\"><div class=\"card-header\"><div class=\"source-name\">" + esc(w.source_name||w.source) + sc + labelHtml + "</div>" +
     (w.date ? "<div class=\"wod-date\">" + w.date + "</div>" : "") +
     (w.note ? "<div class=\"source-note\">" + esc(w.note) + "</div>" : "") +
     "</div>" + body +
@@ -634,29 +660,25 @@ function findWorkout() {
 
   var results = [];
   var days = allData.workouts || {};
-  for (var ds in days) {
-    var wods = days[ds];
-    for (var i = 0; i < wods.length; i++) {
-      var w = wods[i];
-      if (!SOURCES[w.source] || !SOURCES[w.source].en) continue;
-      var sc = scoreWod(w, time, eq);
-      if (sc > 0) results.push({w:w, sc:Math.round(sc)});
-    }
-  }
-  results.sort(function(a,b) { return b.sc - a.sc; });
-  var el = document.getElementById("findResults");
-  if (!results.length) {
-    el.innerHTML = "<div class=\"empty\"><div class=\"empty-icon\">🔍</div>No matches found</div>";
+  if (Object.keys(days).length === 0) {
+    document.getElementById("findResults").innerHTML = "<div class=\"empty\"><div class=\"empty-icon\">📂</div>No workout data yet. Open the Browse tab and wait for workouts to load, then try again.</div>";
     return;
   }
-  cardStore = [];
-  
-  // Get top 3 regular workouts (not hero, not benchmark, not open)
-  var regular = results.filter(function(r) { 
-    return r.w.source !== "hero" && r.w.source !== "benchmark" && r.w.source !== "open"; 
+  for (var ds in days) {
+    var wods = days[ds];
+    if (!Array.isArray(wods)) continue;
+    for (var i = 0; i < wods.length; i++) {
+      var w = wods[i];
+      if (!w || !SOURCES[w.source] || !SOURCES[w.source].en) continue;
+      try {
+        var res = scoreWod(w, time, eq);
+        if (res && typeof res.sc === "number" && res.sc > 0) results.push({ w: w, sc: res.sc, extra: res.extra, label: res.label });
+      } catch (err) { /* skip bad workout */ }
+    }
+  }
+  var regular = results.filter(function(r) {
+    return r.w.source !== "hero" && r.w.source !== "benchmark" && r.w.source !== "open";
   });
-  var top3 = regular.slice(0, 3);
-  
   function bestFromWarehouse(key, sourceId, sourceName) {
     var arr = (specialData && specialData[key]) ? specialData[key] : [];
     var best = null;
@@ -669,48 +691,54 @@ function findWorkout() {
         date: "",
         sections: [{ title: it.name || "WORKOUT", lines: it.lines }]
       };
-      var sc = scoreWod(ww, time, eq);
-      if (sc <= 0) continue;
-      var r = { w: ww, sc: Math.round(sc) };
+      var res = scoreWod(ww, time, eq);
+      if (res.sc <= 0) continue;
+      var r = { w: ww, sc: res.sc, extra: res.extra, label: res.label };
       if (!best || r.sc > best.sc) best = r;
     }
     return best;
   }
+  regular.sort(function(a, b) { return b.sc - a.sc; });
+  var topRegular = regular.slice(0, 3).map(function(r) {
+    if (r.extra > 1) return { w: r.w, sc: Math.max(0, r.sc - 15 * r.extra), extra: r.extra, label: r.label };
+    return r;
+  });
 
-  // Add Hero if checkbox checked
+  var warehouseResults = [];
   var includeHero = document.getElementById("includeHero");
   if (includeHero && includeHero.checked) {
     var heroBest = bestFromWarehouse("heroes", "hero", "CrossFit Hero Workouts");
-    if (heroBest) top3.push(heroBest);
-    else {
-      var hero = results.find(function(r) { return r.w.source === "hero"; });
-      if (hero) top3.push(hero);
-    }
+    if (heroBest) warehouseResults.push(heroBest);
   }
-  
-  // Add Benchmark if checkbox checked
   var includeBenchmark = document.getElementById("includeBenchmark");
   if (includeBenchmark && includeBenchmark.checked) {
     var benchBest = bestFromWarehouse("benchmarks", "benchmark", "CrossFit Benchmark Workouts");
-    if (benchBest) top3.push(benchBest);
-    else {
-      var benchmark = results.find(function(r) { return r.w.source === "benchmark"; });
-      if (benchmark) top3.push(benchmark);
-    }
+    if (benchBest) warehouseResults.push(benchBest);
   }
-  
-  // Add Open if checkbox checked
   var includeOpen = document.getElementById("includeOpen");
   if (includeOpen && includeOpen.checked) {
     var openBest = bestFromWarehouse("open", "open", "CrossFit Open Workouts");
-    if (openBest) top3.push(openBest);
-    else {
-      var open = results.find(function(r) { return r.w.source === "open"; });
-      if (open) top3.push(open);
+    if (openBest) warehouseResults.push(openBest);
+  }
+  var whPhase1 = warehouseResults.filter(function(r) { return r.extra <= 1; });
+  var whPhase2 = warehouseResults.filter(function(r) { return r.extra > 1; });
+  var topWarehouse = whPhase1.slice();
+  var whNeed = 3 - topWarehouse.length;
+  if (whNeed > 0 && whPhase2.length) {
+    for (var k = 0; k < whPhase2.length && whNeed > 0; k++) {
+      var rw = whPhase2[k];
+      topWarehouse.push({ w: rw.w, sc: Math.max(0, rw.sc - 15 * rw.extra), extra: rw.extra, label: rw.label });
+      whNeed--;
     }
   }
-  
-  el.innerHTML = top3.map(function(r) { return buildCard(r.w, r.sc); }).join("");
+  var display = topRegular.concat(topWarehouse);
+  var el = document.getElementById("findResults");
+  if (!display.length) {
+    el.innerHTML = "<div class=\"empty\"><div class=\"empty-icon\">🔍</div>No matches found</div>";
+    return;
+  }
+  cardStore = [];
+  el.innerHTML = display.map(function(r) { return buildCard(r.w, r.sc, r.label); }).join("");
 }
 
 function resetFindForm() {
@@ -734,20 +762,47 @@ function resetFindForm() {
 }
 
 function scoreWod(w, t, eq) {
-  var txt = "";
-  var secs = w.sections || [];
-  for (var i = 0; i < secs.length; i++) txt += (secs[i].title||"") + " " + (secs[i].lines||[]).join(" ") + " ";
-  txt = txt.toLowerCase();
-  var sc = 0, m = 0;
-  for (var i = 0; i < eq.length; i++) {
-    var kws = EQ[eq[i]] || [];
-    for (var j = 0; j < kws.length; j++) { if (txt.indexOf(kws[j]) !== -1) { m++; break; } }
+  if (!w || !eq || !eq.length) return { sc: 0, extra: 0, matched: 0, label: "" };
+  var txt = getWodOnlyText(w);
+  var matched = 0, extra = 0;
+  var eqSet = {};
+  for (var i = 0; i < eq.length; i++) eqSet[eq[i]] = true;
+  for (var key in EQ) {
+    var kws = EQ[key] || [];
+    var found = false;
+    for (var j = 0; j < kws.length; j++) { if (txt.indexOf(kws[j]) !== -1) { found = true; break; } }
+    if (!found) continue;
+    if (eqSet[key]) matched++; else extra++;
   }
-  sc += (m / eq.length) * 60;
+  if (matched === 0) return { sc: 0, extra: extra, matched: 0, label: "" };
+  var sc = (matched / eq.length) * 50;
+  if (extra === 1) sc -= 5;
+  var unlimitedTime = t >= 999;
   var tm = txt.match(/(\d+)\s*(min|minute)/i);
-  if (tm) sc += Math.max(0, 40 - Math.abs(parseInt(tm[1]) - t) * 2);
-  else sc += /amrap|emom/i.test(txt) ? 20 : 10;
-  return sc;
+  var timeScore = 0, timeOk = false;
+  if (tm) {
+    var x = parseInt(tm[1]);
+    if (unlimitedTime) {
+      timeScore = 40;
+      timeOk = true;
+    } else {
+      timeScore = Math.max(0, 40 - Math.abs(x - t) * 2);
+      timeOk = Math.abs(x - t) <= 5;
+    }
+  } else {
+    timeScore = /amrap|emom/i.test(txt) ? 20 : 10;
+    timeOk = unlimitedTime;
+  }
+  sc += timeScore;
+  if (matched === eq.length && extra === 0 && timeOk) sc += 10;
+  var label = "";
+  if (extra > 1) label = "התאמה חלקית – ייתכן שיידרשו החלפות";
+  else if (matched === eq.length && extra === 0 && timeOk) label = "התאמה מלאה";
+  else if (matched === eq.length && extra === 1) label = "רוב הציוד, יש תרגילים נוספים";
+  else if (timeScore >= 30) label = "התאמת זמן טובה";
+  else if (matched >= eq.length * 0.5) label = "התאמת ציוד, זמן שונה";
+  else label = "התאמה חלקית";
+  return { sc: Math.round(sc), extra: extra, matched: matched, label: label };
 }
 
 function buildSources() {
