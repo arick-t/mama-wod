@@ -1,5 +1,12 @@
 # Changelog
 
+## [19.6] - 2026-02-27
+
+### Timer
+- Wider input fields for minutes/seconds (Work, Rest, Rest Between Sets, Time) so 4 digits display clearly (7ch).
+
+---
+
 ## [19.5] - 2026-02-27
 
 ### Find Workout
