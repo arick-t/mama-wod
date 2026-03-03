@@ -98,20 +98,37 @@ def _scrape_all_benchmarks():
                 for p in markdown_div.find_all('p'):
                     for br in p.find_all('br'):
                         br.replace_with('\n')
-
                     text = p.get_text()
                     for line in text.split('\n'):
                         line = line.strip()
-                        if len(line) < 2:
-                            continue
+                        if len(line) >= 2:
+                            workout_lines.append(line)
+
+                for lst in markdown_div.find_all(['ul', 'ol']):
+                    for li in lst.find_all('li', recursive=False):
+                        line = li.get_text(separator=' ').strip()
+                        if len(line) >= 2:
+                            workout_lines.append(line)
+
+                for h in markdown_div.find_all(['h1', 'h2', 'h3', 'h4']):
+                    line = h.get_text(strip=True)
+                    if len(line) >= 2 and line not in [wl for wl in workout_lines]:
                         workout_lines.append(line)
 
-                if len(workout_lines) >= 3:
-                    benchmarks.append({
-                        'name': name,
-                        'lines': workout_lines[:30]
-                    })
-        print(f"    → Total parsed: {len(benchmarks)} benchmark workouts")
+                if not workout_lines:
+                    continue
+
+                name_key = re.sub(r'[\s\-"\']', '', name.lower())
+                name_key = re.sub(r'benchmark|workout', '', name_key)
+                if not name_key:
+                    name_key = name.lower()
+                if any(b.get('_name_key') == name_key for b in benchmarks):
+                    continue
+                entry = {'name': name, 'lines': workout_lines[:35], '_name_key': name_key}
+                benchmarks.append(entry)
+        for b in benchmarks:
+            b.pop('_name_key', None)
+        print(f"    → Total parsed: {len(benchmarks)} benchmark workouts (deduped by name)")
         return benchmarks
 
     except Exception as e:
@@ -163,9 +180,58 @@ def fetch_all_benchmarks():
     return _BENCHMARK_CACHE
 
 
+def _make_benchmark_wod(selected, date_str):
+    """Build one benchmark workout dict for a given selected entry and date."""
+    processed_lines = []
+    for line in selected['lines']:
+        low = line.lower()
+        if re.search(r'[♀♂].*\d+\s*(lb|kg)', line) or any(x in low for x in ['male', 'female', 'men', 'women']):
+            processed_lines.append(f"*{line}*")
+        else:
+            processed_lines.append(line)
+    return {
+        'date':        date_str,
+        'source':      'benchmark',
+        'source_name': 'CrossFit Benchmark Workouts',
+        'url':         'https://www.wodconnect.com/workout_lists/benchmarks',
+        'sections':    [{'title': selected['name'], 'lines': processed_lines}],
+        'note':        f"Benchmark: {selected['name']}"
+    }
+
+
+def fetch_benchmarks_for_days(dates):
+    """
+    Returns one benchmark workout per date, with no duplicate workout names
+    across the 14 days. dates = list of datetime (or date) for the 14 days.
+    """
+    benchmarks = fetch_all_benchmarks()
+    if not benchmarks:
+        return []
+    n = len(benchmarks)
+    used_names = set()
+    result = []
+    for date in dates:
+        date_str = date.strftime('%Y-%m-%d') if hasattr(date, 'strftime') else str(date)[:10]
+        date_hash = int(hashlib.md5(date_str.encode()).hexdigest(), 16)
+        base_idx = date_hash % n
+        chosen_idx = base_idx
+        attempts = 0
+        while attempts < n:
+            name = benchmarks[chosen_idx]['name']
+            if name not in used_names:
+                break
+            chosen_idx = (chosen_idx + 1) % n
+            attempts += 1
+        selected = benchmarks[chosen_idx]
+        used_names.add(selected['name'])
+        result.append(_make_benchmark_wod(selected, date_str))
+    return result
+
+
 def fetch_benchmark(date):
     """
     בוחר אימון Benchmark יומי מהמחסן, עם רנדומציה דטרמיניסטית וחלון אי-חזרה של 14 יום.
+    (לשימוש בודד; ל־14 ימים עדיף fetch_benchmarks_for_days כדי למנוע כפילויות.)
     """
     benchmarks = fetch_all_benchmarks()
     if not benchmarks:
@@ -176,46 +242,11 @@ def fetch_benchmark(date):
     print(f"  ⬇ CrossFit Benchmark Workouts...")
 
     date_hash = int(hashlib.md5(date_str.encode()).hexdigest(), 16)
-
-    excluded_indices = set()
-    for days_ago in range(1, 15):
-        past_date = date - timedelta(days=days_ago)
-        past_str = past_date.strftime('%Y-%m-%d')
-        past_hash = int(hashlib.md5(past_str.encode()).hexdigest(), 16)
-        excluded_idx = past_hash % len(benchmarks)
-        excluded_indices.add(excluded_idx)
-
-    base_idx = date_hash % len(benchmarks)
-    chosen_idx = base_idx
-    attempts = 0
-    while chosen_idx in excluded_indices and attempts < len(benchmarks):
-        chosen_idx = (chosen_idx + 1) % len(benchmarks)
-        attempts += 1
-
+    chosen_idx = date_hash % len(benchmarks)
     selected = benchmarks[chosen_idx]
     print(f"    → Selected: {selected['name']} (#{chosen_idx + 1}/{len(benchmarks)})")
 
-    processed_lines = []
-    for line in selected['lines']:
-        low = line.lower()
-        if re.search(r'[♀♂].*\d+\s*(lb|kg)', line) or any(x in low for x in ['male', 'female', 'men', 'women']):
-            processed_lines.append(f"*{line}*")
-        else:
-            processed_lines.append(line)
-
-    sections = [{
-        'title': selected['name'],
-        'lines': processed_lines
-    }]
-
-    return {
-        'date':        date_str,
-        'source':      'benchmark',
-        'source_name': 'CrossFit Benchmark Workouts',
-        'url':         'https://www.wodconnect.com/workout_lists/benchmarks',
-        'sections':    sections,
-        'note':        f"Benchmark: {selected['name']}"
-    }
+    return _make_benchmark_wod(selected, date_str)
 
 
 if __name__ == '__main__':

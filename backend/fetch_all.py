@@ -25,9 +25,12 @@ from scrapers.linchpin      import fetch_workout as fetch_linchpin
 from scrapers.restoration   import fetch_workout as fetch_restoration
 from scrapers.cf1013        import fetch_workout as fetch_cf1013
 from scrapers.tonbridge     import fetch_workout as fetch_tonbridge
-from scrapers.heroes        import fetch_hero, fetch_all_heroes
-from scrapers.benchmarks    import fetch_benchmark, fetch_all_benchmarks
-from scrapers.open_wods     import fetch_open, fetch_all_open
+from scrapers.heroes        import fetch_hero
+from scrapers.benchmarks    import fetch_benchmark
+from scrapers.open_wods     import fetch_open
+from scrapers.heroes        import fetch_all_heroes
+from scrapers.benchmarks    import fetch_all_benchmarks, fetch_benchmarks_for_days
+from scrapers.open_wods     import fetch_all_open
 
 DATA_DIR  = Path(__file__).parent.parent / 'data'
 DATA_FILE = DATA_DIR / 'workouts.json'
@@ -105,15 +108,17 @@ def main():
     except Exception as e:
         print(f"    ⚠️  Special warehouse refresh failed: {e}")
 
+    dates_14 = [datetime.now() - timedelta(days=i) for i in range(DAYS)]
+    benchmark_wods = None
+
     for i in range(DAYS):
-        date     = datetime.now() - timedelta(days=i)
+        date     = dates_14[i]
         date_str = date.strftime('%Y-%m-%d')
         print(f"\n📅 {date_str}")
         if date_str not in data['workouts']:
             data['workouts'][date_str] = []
 
         for src_id, src_name, fetch_fn, has_archive in SCRAPERS:
-            # Non-archive sources only run for today
             if not has_archive and date_str != today:
                 stats['skipped'] += 1
                 continue
@@ -126,10 +131,15 @@ def main():
 
             print(f"  ⬇ {src_name}...")
             try:
-                wod = fetch_fn(date)
+                if src_id == 'benchmark':
+                    if benchmark_wods is None:
+                        benchmark_wods = fetch_benchmarks_for_days(dates_14)
+                    wod = benchmark_wods[i] if benchmark_wods and i < len(benchmark_wods) else None
+                else:
+                    wod = fetch_fn(date)
                 if wod and wod.get('sections') and any(s.get('lines') for s in wod['sections']):
                     data['workouts'][date_str].append(wod)
-                    print(f"    ✅ Success!")
+                    print(f"    ✅ Success!" + (" " + wod['sections'][0]['title'] if src_id == 'benchmark' else ""))
                     stats['ok'] += 1
                 else:
                     print(f"    ❌ No workout returned")
