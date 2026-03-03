@@ -1,21 +1,20 @@
-# 🦆 DUCK-WOD - Version 19.5
+# 🦆 DUCK-WOD - Version 19.6
 
 **CrossFit Workout Aggregator** - Daily WODs from 10 sources
 
-## ✅ v19.5 - Find Workout & Benchmarks (Feb 27, 2026)
+## ✅ v19.6 - Timer inputs (Feb 27, 2026)
 
-- ✅ **Find Workout**: Always show top 3 from box sources (14 days); up to 3 from Hero/Benchmark/Open when checked. WOD-only scoring, equipment extra ≤1 preferred, labels (התאמה מלאה / זמן שונה). Unlimited time no longer zeros score; guards for empty data and bad workouts.
-- ✅ **Benchmarks**: No duplicate names in 14-day view (Grace/Barbara once). Scraper: dedupe by name; parse `<ul>`/`<ol>`/`<li>` and headings so full content (e.g. Nicole) is captured. `fetch_benchmarks_for_days()` for unique benchmark per day.
+- ✅ **Timer**: Wider input fields for Work / Rest / Rest Between Sets (and time) so 4 digits are visible (7ch).
 
 **Status**: 10/10 sources working • ~140 WODs • 100% clean
 
 ## 🚀 Quick Upgrade
 
 ```bash
-unzip duck-wod-v19.5.zip
+unzip duck-wod-v19.6.zip
 cd your-repo && rm -rf * 
-cp -r ../duck-wod-v19.5/* . && cp ../duck-wod-v19.5/.gitignore . && cp -r ../duck-wod-v19.5/.github .
-git add . && git commit -m "🔧 v19.5" && git push
+cp -r ../duck-wod-v19.6/* . && cp ../duck-wod-v19.6/.gitignore . && cp -r ../duck-wod-v19.6/.github .
+git add . && git commit -m "🔧 v19.6" && git push
 ```
 
 Workflow runs automatically after push!
@@ -27,4 +26,4 @@ Workflow runs automatically after push!
 
 ---
 
-**Version 19.5** • Feb 27, 2026 • All systems operational ✅
+**Version 19.6** • Feb 27, 2026 • All systems operational ✅
