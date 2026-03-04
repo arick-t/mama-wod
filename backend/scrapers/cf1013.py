@@ -1,10 +1,16 @@
 """
-CrossFit 1013 Scraper - Minimal cleanup approach
+CrossFit 1013 Scraper – article-based parsing + pagination (2 weeks history).
+
+Structure on site:
+- Each day = one <article> with <h1 class="entry-title"> (e.g. "Wednesday 03/04/2026")
+- Weekdays: <p> with <strong>Strength</strong> then <br/> and lines; <p> with <strong>WOD</strong>, then first line = sub-subheading (e.g. "Keepy Uppy"), rest = body
+- Saturday: single <p> with no strong – first line = title, rest = body
+- Pagination: next page = /wod?offset=... or /wod?offset=...&reversePaginate=true
 """
 import re
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime
+from datetime import datetime, timedelta
 
 HEADERS = {
     'User-Agent': (
@@ -15,190 +21,203 @@ HEADERS = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 }
 
-SECTION_HINTS = [
-    'warm', 'strength', 'skill', 'wod', 'metcon', 'conditioning',
-    'amrap', 'emom', 'for time', 'tabata', 'gymnastics', 'olympic',
-    'accessory', 'cool down', 'power', 'endurance', 'barbell',
-]
+BASE_URL = 'https://www.crossfit1013.com'
+WOD_URL = BASE_URL + '/wod'
 
-DATE_RE = re.compile(
-    r'^(monday|tuesday|wednesday|thursday|friday|saturday|sunday|'
-    r'mon|tue|wed|thu|fri|sat|sun)'
-    r'[\s,]+(\d{1,2})[/\-\.](\d{1,2})[/\-\.](\d{2,4})',
-    re.IGNORECASE
-)
+# h1 format: "Wednesday 03/04/2026" -> MM/DD/YYYY
+H1_DATE_RE = re.compile(r'\d{1,2}/\d{1,2}/\d{2,4}')
+
+SKIP_LINES = {
+    'norberto olalde', 'comment', 'leave a comment', 'crossfit 1013', 'crossfit1013',
+}
 
 
-def parse_date_line(line):
-    m = DATE_RE.match(line.strip())
+def _h1_to_date_str(h1_text):
+    """Parse 'Wednesday 03/04/2026' -> '2026-03-04'."""
+    m = H1_DATE_RE.search(h1_text or '')
     if not m:
         return None
+    part = m.group(0)
+    parts = part.replace('-', '/').split('/')
+    if len(parts) != 3:
+        return None
     try:
-        month = int(m.group(2))
-        day   = int(m.group(3))
-        year  = int(m.group(4))
+        mo, day, year = int(parts[0]), int(parts[1]), int(parts[2])
         if year < 100:
             year += 2000
-        return (year, month, day)
-    except Exception:
+        return f'{year}-{mo:02d}-{day:02d}'
+    except (ValueError, IndexError):
         return None
 
 
-def date_matches_line(line, target):
-    parsed = parse_date_line(line)
-    if not parsed:
-        return False
-    y, mo, d = parsed
-    return y == target.year and mo == target.month and d == target.day
+def _parens_as_note(line):
+    """Content entirely in parentheses → note (* line)."""
+    s = (line or '').strip()
+    if len(s) >= 2 and s.startswith('(') and s.endswith(')'):
+        return '* ' + s
+    return line
 
 
-def parse_sections(lines):
+def _lines_from_paragraph(p):
+    """Get text lines from a <p> (separator \\n from <br/>)."""
+    text = (p.get_text(separator='\n') or '').strip()
+    return [ln.strip() for ln in text.split('\n') if ln.strip()]
+
+
+def _parse_paragraph_with_strong(p, strong_text):
+    """If <p> contains <strong>strong_text</strong>, return lines after that heading. Else None."""
+    strong = p.find('strong')
+    if not strong or (strong.get_text(strip=True) or '').lower() != strong_text.lower():
+        return None
+    lines = _lines_from_paragraph(p)
+    if lines and lines[0].lower() == strong_text.lower():
+        return lines[1:]
+    return lines
+
+
+def parse_article(article):
+    """
+    Parse one <article>: date from h1.entry-title, sections from <p>.
+    Returns (date_str, sections) or (None, None) if no date.
+    """
+    h1 = article.find('h1', class_='entry-title')
+    if not h1:
+        return None, None
+    date_str = _h1_to_date_str(h1.get_text())
+    if not date_str:
+        return None, None
+
+    # Detect weekday (has Strength/WOD) vs Saturday (single block)
+    all_ps = article.find_all('p')
+    has_strength_or_wod = False
+    for p in all_ps:
+        strong = p.find('strong')
+        if strong:
+            t = (strong.get_text(strip=True) or '').lower()
+            if t in ('strength', 'wod'):
+                has_strength_or_wod = True
+                break
+
     sections = []
-    cur = {'title': 'WORKOUT', 'lines': []}
-    for line in lines:
-        lo = line.lower()
-        is_hdr = False
-        if line.isupper() and 3 <= len(line) <= 60 and not re.search(r'\d', line):
-            is_hdr = True
-        elif (any(kw in lo for kw in SECTION_HINTS)
-              and len(line) < 60
-              and not re.search(r'\d+\s*(min|rep|round|x\b)', lo)):
-            is_hdr = True
-        if is_hdr:
-            if cur['lines']:
-                sections.append(cur)
-            cur = {'title': line.upper(), 'lines': []}
-        else:
-            cur['lines'].append(line)
-    if cur['lines']:
-        sections.append(cur)
-    return sections or [{'title': 'WORKOUT', 'lines': lines}]
+    if has_strength_or_wod:
+        for p in all_ps:
+            lines_raw = _lines_from_paragraph(p)
+            if not lines_raw:
+                continue
+            first_lower = lines_raw[0].lower()
+            if any(skip in first_lower for skip in SKIP_LINES):
+                continue
+            strength_lines = _parse_paragraph_with_strong(p, 'Strength')
+            if strength_lines is not None:
+                sections.append({'title': 'Strength', 'lines': [_parens_as_note(ln) for ln in strength_lines]})
+                continue
+            wod_strong = p.find('strong')
+            if wod_strong and (wod_strong.get_text(strip=True) or '').lower() == 'wod':
+                after_wod = _lines_from_paragraph(p)
+                if after_wod and after_wod[0].lower() == 'wod':
+                    after_wod = after_wod[1:]
+                sub_title = (after_wod[0].strip().strip('"') if after_wod else '') or None
+                body_lines = after_wod[1:] if len(after_wod) > 1 else []
+                sections.append({'title': 'WOD', 'sub_title': sub_title, 'lines': [_parens_as_note(ln) for ln in body_lines]})
+                continue
+    else:
+        # Saturday: one section – first line = title, rest = body (from all p's)
+        all_lines = []
+        for p in all_ps:
+            lines_raw = _lines_from_paragraph(p)
+            for ln in lines_raw:
+                if any(skip in ln.lower() for skip in SKIP_LINES):
+                    continue
+                all_lines.append(ln)
+        if all_lines:
+            title = all_lines[0].strip().strip('"')
+            sections.append({'title': title, 'lines': [_parens_as_note(ln) for ln in all_lines[1:]]})
+
+    if not sections:
+        return date_str, [{'title': 'WOD', 'lines': []}]
+    return date_str, sections
+
+
+def _get_next_page_url(soup):
+    """Find <a href="/wod?offset=..."> in soup. Returns full URL or None."""
+    for a in soup.find_all('a', href=True):
+        href = (a.get('href') or '').strip()
+        if 'offset=' not in href:
+            continue
+        if href.startswith('http'):
+            return href
+        if href.startswith('/'):
+            return BASE_URL + href
+        if href.startswith('?'):
+            return WOD_URL + href
+        return WOD_URL + '?' + href.split('?', 1)[-1] if '?' in href else WOD_URL
+    return None
+
+
+def _fetch_page(url):
+    """Fetch one WOD page; return (soup, next_page_url or None)."""
+    r = requests.get(url, timeout=15, headers=HEADERS)
+    if r.status_code != 200:
+        return None, None
+    soup = BeautifulSoup(r.text, 'html.parser')
+    for tag in soup.find_all(['script', 'style', 'iframe', 'noscript', 'form', 'video']):
+        tag.decompose()
+    for tag in soup.find_all(['img', 'picture', 'figure']):
+        tag.decompose()
+    # Do not remove by class – it can remove the main content container (e.g. navigation wraps content)
+    next_url = _get_next_page_url(soup)
+    return soup, next_url
+
+
+# Cache: date_str -> workout dict. Filled by ensure_cache().
+_cf1013_cache = {}
+_cf1013_pages_fetched = 0
+MAX_PAGES = 5  # enough for 2 weeks (4 workouts per page)
+
+
+def ensure_cache_for_date(target_date):
+    """Fetch WOD pages until we have target_date in cache or we've done MAX_PAGES."""
+    global _cf1013_cache, _cf1013_pages_fetched
+    date_str = target_date.strftime('%Y-%m-%d')
+    if date_str in _cf1013_cache:
+        return
+    url = WOD_URL
+    pages_done = 0
+    while pages_done < MAX_PAGES:
+        print(f"    -> Fetching {url}")
+        soup, next_url = _fetch_page(url)
+        if not soup:
+            break
+        pages_done += 1
+        _cf1013_pages_fetched += 1
+        for article in soup.find_all('article'):
+            d, sections = parse_article(article)
+            if not d:
+                continue
+            if d not in _cf1013_cache:
+                _cf1013_cache[d] = {
+                    'date': d,
+                    'source': 'cf1013',
+                    'source_name': 'CrossFit 1013',
+                    'url': WOD_URL,
+                    'sections': sections,
+                }
+        if date_str in _cf1013_cache:
+            return
+        if not next_url or next_url == url:
+            break
+        url = next_url
+    return
 
 
 def fetch_workout(date):
+    """Return one workout for the given date. Uses article parsing + pagination (2 weeks)."""
+    ensure_cache_for_date(date)
     date_str = date.strftime('%Y-%m-%d')
-    url = 'https://www.crossfit1013.com/wod'
-
-    try:
-        print(f"    → Fetching {url}")
-        r = requests.get(url, timeout=15, headers=HEADERS)
-        if r.status_code != 200:
-            print(f"    → HTTP {r.status_code}")
-            return None
-
-        soup = BeautifulSoup(r.text, 'html.parser')
-
-        # MINIMAL cleanup
-        for tag in soup.find_all(['script', 'style', 'iframe', 'noscript', 'form', 'video']):
-            tag.decompose()
-        for img in soup.find_all(['img', 'picture', 'figure']):
-            tag.decompose()
-        
-        # Remove ONLY page-level nav/footer
-        NAV_FOOTER_RE = re.compile(
-            r'site-header|page-header|main-header|site-navigation|'
-            r'primary-navigation|site-footer|page-footer|main-footer', re.I
-        )
-        for tag in soup.find_all(class_=NAV_FOOTER_RE):
-            tag.decompose()
-        for tag in soup.find_all(id=NAV_FOOTER_RE):
-            tag.decompose()
-
-        body = soup.find('body') or soup
-        raw_lines = [
-            l.strip()
-            for l in body.get_text(separator='\n').split('\n')
-            if l.strip() and len(l.strip()) > 1
-        ]
-
-        # DEBUG: find date lines
-        date_lines_found = []
-        for line in raw_lines:
-            if DATE_RE.match(line.strip()):
-                date_lines_found.append(line)
-            if len(date_lines_found) >= 6:
-                break
-
-        if date_lines_found:
-            print(f"    → Date lines found: {date_lines_found[:3]}")
-        else:
-            year_lines = [l for l in raw_lines if '2026' in l or '2025' in l][:5]
-            if year_lines:
-                print(f"    → Year-containing lines: {year_lines}")
-            else:
-                print(f"    → No dates found. Page has {len(raw_lines)} lines.")
-                print(f"    → Sample lines: {raw_lines[:10]}")
-            return None
-
-        # Find target date
-        target_start = None
-        next_date_idx = None
-
-        for i, line in enumerate(raw_lines):
-            if date_matches_line(line, date):
-                target_start = i + 1
-                print(f"    → Matched: '{line}'")
-                for j in range(i + 1, len(raw_lines)):
-                    if DATE_RE.match(raw_lines[j].strip()):
-                        next_date_idx = j
-                        break
-                break
-
-        if target_start is None:
-            print(f"    → Date {date_str} not found. Available: {date_lines_found[:3]}")
-            return None
-
-        end_idx = next_date_idx if next_date_idx else target_start + 60
-        block = raw_lines[target_start:end_idx]
-
-        SKIP = {
-            'home', 'about', 'contact', 'schedule', 'membership',
-            'coaches', 'crossfit 1013', 'crossfit1013', 'wod',
-            'login', 'register', 'shop', 'skip to content',
-            'norberto olalde',  # author - appears BEFORE workout
-        }
-        
-        workout_lines = []
-        for line in block:
-            lo = line.lower().strip()
-            
-            # Stop only at Comment section (appears AFTER workout)
-            if 'comment' in lo:
-                print(f"    → Stopped at: '{line[:40]}'")
-                break
-            
-            if lo in SKIP:
-                continue
-            # Sometimes the site repeats today's date at the bottom – drop it.
-            if DATE_RE.match(line.strip()):
-                continue
-            if len(line) > 200:
-                continue
-            if line.startswith('http') and ('youtube' in line or 'vimeo' in line):
-                continue
-            workout_lines.append(line)
-
-        workout_lines = workout_lines[:60]
-
-        if not workout_lines:
-            print(f"    → No content for {date_str}")
-            return None
-
-        sections = parse_sections(workout_lines)
-        total = sum(len(s['lines']) for s in sections)
-        print(f"    → SUCCESS: {len(sections)} sections, {total} lines")
-
-        return {
-            'date':        date_str,
-            'source':      'cf1013',
-            'source_name': 'CrossFit 1013',
-            'url':         url,
-            'sections':    sections,
-        }
-
-    except requests.Timeout:
-        print(f"    → Timeout")
-        return None
-    except Exception as e:
-        print(f"    → Error: {e}")
-        return None
+    w = _cf1013_cache.get(date_str)
+    if w:
+        total = sum(len(s.get('lines', [])) for s in w.get('sections', []))
+        print(f"    -> SUCCESS: {len(w['sections'])} sections, {total} lines")
+    else:
+        print(f"    -> Date {date_str} not found (checked {_cf1013_pages_fetched} pages)")
+    return w

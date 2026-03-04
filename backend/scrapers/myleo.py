@@ -71,36 +71,66 @@ def fetch_workout(date):
             print(f"    → Content too short ({len(raw_text)} chars)")
             return None
         
-        # Parse into sections
+        # Block header: after such a line we inject a blank for spacing (site often has no \n\n)
+        def is_block_header(txt):
+            if not txt or len(txt) < 2:
+                return False
+            t = txt.strip().lower()
+            if t.endswith(':'):
+                return True
+            if t in ('for time', 'amrap', 'emom', 'buy-in', 'cash-out'):
+                return True
+            if re.match(r'^\d+\s*(rounds?|min(?:ute)?s?)', t):
+                return True
+            return False
+
+        # From "score:" onwards, all lines are scoring/description → show as notes (whole source)
+        score_zone = False
+
+        # Parse into sections; preserve blank lines so layout matches the site (spacing between blocks)
         sections = []
         current_section = None
-        
+        skip_keywords = ['weekly overview', 'post your score', 'compare to', 'skill class',
+                         'cookie', 'privacy', 'login', 'register', 'subscribe']
+
         for line in raw_text.split('\n'):
-            line = line.strip()
-            if not line or len(line) < 2:
+            stripped = line.strip()
+            # Blank line: keep as empty string for visual spacing
+            if not stripped or len(stripped) < 2:
+                if current_section is not None:
+                    current_section['lines'].append('')
                 continue
-            
+
             # Skip junk
-            lower = line.lower()
-            skip_keywords = ['weekly overview', 'post your score', 'compare to', 'skill class', 
-                           'cookie', 'privacy', 'login', 'register', 'subscribe']
+            lower = stripped.lower()
             if any(skip in lower for skip in skip_keywords):
                 continue
-            
-            # Section header pattern: a), b), c)...
-            match = re.match(r'^([a-z])\)\s*(.+)', line, re.IGNORECASE)
+
+            # From "score:" onward → notes (scoring method + stimulus type)
+            if 'score:' in lower:
+                score_zone = True
+            # Also always show stimulus labels as notes: aerobic power [vo2 max], muscular endurance
+            is_note = score_zone or any(
+                x in lower for x in ('aerobic power', 'vo2 max', 'muscular endurance')
+            )
+            line_to_append = ('* ' + stripped) if is_note else stripped
+
+            # Section header pattern: a), b), c), d)...
+            match = re.match(r'^([a-z])\)\s*(.+)', stripped, re.IGNORECASE)
             if match:
                 if current_section and current_section['lines']:
                     sections.append(current_section)
                 title = match.group(2).strip()
                 current_section = {'title': title.upper(), 'lines': []}
-            elif current_section:
-                current_section['lines'].append(line)
+            elif current_section is not None:
+                # Inject spacer after block headers when the page has no blank lines
+                lines_list = current_section['lines']
+                if lines_list and is_block_header(lines_list[-1]):
+                    lines_list.append('')
+                current_section['lines'].append(line_to_append)
             else:
-                # No section yet, start default
-                if not sections:
-                    current_section = {'title': 'WORKOUT', 'lines': [line]}
-        
+                current_section = {'title': 'WORKOUT', 'lines': [line_to_append]}
+
         if current_section and current_section['lines']:
             sections.append(current_section)
         

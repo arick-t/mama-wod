@@ -182,10 +182,15 @@ def fetch_all_benchmarks():
 
 def _make_benchmark_wod(selected, date_str):
     """Build one benchmark workout dict for a given selected entry and date."""
+    name_upper = (selected['name'] or '').strip().upper()
+    lines_in = list(selected['lines']) if selected.get('lines') else []
+    # If first line duplicates the workout name (e.g. "JACKIE" under title "Jackie"), omit it
+    if lines_in and (lines_in[0] or '').strip().upper() == name_upper:
+        lines_in = lines_in[1:]
     processed_lines = []
-    for line in selected['lines']:
-        low = line.lower()
-        if re.search(r'[♀♂].*\d+\s*(lb|kg)', line) or any(x in low for x in ['male', 'female', 'men', 'women']):
+    for line in lines_in:
+        low = (line or '').lower()
+        if re.search(r'[♀♂].*\d+\s*(lb|kg)', line or '') or any(x in low for x in ['male', 'female', 'men', 'women']):
             processed_lines.append(f"*{line}*")
         else:
             processed_lines.append(line)
@@ -202,7 +207,7 @@ def _make_benchmark_wod(selected, date_str):
 def fetch_benchmarks_for_days(dates):
     """
     Returns one benchmark workout per date, with no duplicate workout names
-    across the 14 days. dates = list of datetime (or date) for the 14 days.
+    across the given days (e.g. 15 days for 15-day window; use first 14 for display).
     """
     benchmarks = fetch_all_benchmarks()
     if not benchmarks:

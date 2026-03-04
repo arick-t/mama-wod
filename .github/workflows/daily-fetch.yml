@@ -3,7 +3,7 @@ name: 🦆 Daily Workout Fetch
 
 on:
   schedule:
-    - cron: '0 1 * * *'  # ~3 AM Israel time (UTC+2/UTC+3, GitHub uses UTC)
+    - cron: '0 0 * * *'  # 03:00 Israel (UTC+3 summer); 02:00 Israel (UTC+2 winter). GitHub uses UTC.
   workflow_dispatch:
   push:
     branches: [ main, master ]
