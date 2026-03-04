@@ -70,7 +70,7 @@ def save(data):
     # Clean up: remove today-only sources from non-today dates
     today = datetime.now().strftime('%Y-%m-%d')
     today_only_sources = {'postal', 'linchpin'}
-    disabled_sources = {'panda'}
+    disabled_sources = {'panda', 'arch'}
     
     for date_str in list(data['workouts'].keys()):
         # Remove disabled sources from all dates
