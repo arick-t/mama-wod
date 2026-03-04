@@ -35,6 +35,8 @@ from scrapers.open_wods     import fetch_all_open
 DATA_DIR  = Path(__file__).parent.parent / 'data'
 DATA_FILE = DATA_DIR / 'workouts.json'
 DAYS      = 14
+# Re-fetch these sources every run so scraper fixes (MYLEO spacing, CF1013 sections, Benchmarks) apply
+FORCE_REFRESH_SOURCES = {'myleo', 'cf1013', 'benchmark'}
 
 SCRAPERS = [
     # (id, display_name, fetch_fn, has_archive)
@@ -87,13 +89,21 @@ def save(data):
     data['last_updated'] = datetime.now().isoformat()
     with open(DATA_FILE, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
+    abspath = str(DATA_FILE.resolve())
     print(f"\n💾 Saved to {DATA_FILE}")
+    print(f"   (absolute: {abspath})")
 
 
 def main():
     print("🦆 DUCK-WOD Phase 1 Fetcher")
     print("=" * 50)
     data  = load()
+    # Remove MYLEO / CF1013 / Benchmark so they are re-fetched with current scraper logic
+    for date_str in list(data['workouts'].keys()):
+        data['workouts'][date_str] = [
+            w for w in data['workouts'][date_str]
+            if w.get('source') not in FORCE_REFRESH_SOURCES
+        ]
     today = datetime.now().strftime('%Y-%m-%d')
     stats = {'ok': 0, 'fail': 0, 'cached': 0, 'skipped': 0}
 
@@ -109,6 +119,8 @@ def main():
         print(f"    ⚠️  Special warehouse refresh failed: {e}")
 
     dates_14 = [datetime.now() - timedelta(days=i) for i in range(DAYS)]
+    # Request 15 unique benchmarks so none repeats in a 15-day window; use first 14 for display
+    dates_benchmark = [datetime.now() - timedelta(days=i) for i in range(15)]
     benchmark_wods = None
 
     for i in range(DAYS):
@@ -133,7 +145,7 @@ def main():
             try:
                 if src_id == 'benchmark':
                     if benchmark_wods is None:
-                        benchmark_wods = fetch_benchmarks_for_days(dates_14)
+                        benchmark_wods = fetch_benchmarks_for_days(dates_benchmark)
                     wod = benchmark_wods[i] if benchmark_wods and i < len(benchmark_wods) else None
                 else:
                     wod = fetch_fn(date)
