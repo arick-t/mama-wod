@@ -1,0 +1,56 @@
+# דוח ניתור שבועי – נשלח לאימייל כל יום שישי 08:00.
+# להפעלה: הוסף Secrets (SMTP) ב־Settings → Secrets and variables → Actions (ראו ANALYTICS_GIT.md).
+
+name: 📊 Weekly Analytics Report
+
+on:
+  schedule:
+    # כל יום שישי 08:00 ישראל (05:00 UTC)
+    - cron: '0 5 * * 5'
+  workflow_dispatch:
+    inputs:
+      use_sample_data:
+        description: 'שליחת דוח דוגמה (מודל) מהשבוע האחרון – פעם אחת לבדיקה'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use sample data (for one-time model run)
+        if: ${{ github.event.inputs.use_sample_data == 'true' }}
+        run: cp data/analytics_sample_last_week.jsonl data/analytics.jsonl
+
+      - name: Generate report
+        id: gen
+        run: |
+          if [ ! -f data/analytics.jsonl ] || [ ! -s data/analytics.jsonl ]; then
+            echo "דוח ניתור משתמשים – השבוע האחרון" > report.txt
+            echo "" >> report.txt
+            echo "עדיין אין נתונים בקובץ data/analytics.jsonl." >> report.txt
+            echo "הפעל את הניתור (ANALYTICS_ENDPOINT) וצבור כניסות ואירועי Find Workout – בשבוע הבא תקבל כאן סיכום אמיתי." >> report.txt
+          else
+            node scripts/analytics-summary.js > report.txt 2>&1
+          fi
+          echo "text<<EOF" >> $GITHUB_OUTPUT
+          cat report.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Send email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_HOST }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: duck_wood1@protonmail.com
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "ניתור משתמשים שבועי"
+          to: arieltahan@hotmail.com
+          from: duck_wood1@protonmail.com
+          body: ${{ steps.gen.outputs.text }}
