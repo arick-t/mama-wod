@@ -1,5 +1,5 @@
 # דוח ניתור שבועי – נשלח לאימייל כל יום שישי 08:00.
-# להפעלה: הוסף Secrets (SMTP) ב־Settings → Secrets and variables → Actions (ראו ANALYTICS_GIT.md).
+# Secrets: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD. כדי למנוע Connection timeout – השתמש ב-Gmail (ראו SMTP_SECRETS.md).
 
 name: 📊 Weekly Analytics Report
 
@@ -57,9 +57,9 @@ jobs:
         with:
           server_address: ${{ secrets.SMTP_HOST }}
           server_port: ${{ secrets.SMTP_PORT }}
-          username: duck_wood1@protonmail.com
+          username: ${{ secrets.SMTP_USER }}
           password: ${{ secrets.SMTP_PASSWORD }}
           subject: "ניתור משתמשים שבועי"
           to: arieltahan@hotmail.com
-          from: duck_wood1@protonmail.com
+          from: ${{ secrets.SMTP_USER }}
           body: ${{ steps.gen.outputs.text }}
