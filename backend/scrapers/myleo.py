@@ -84,6 +84,31 @@ def fetch_workout(date):
                 return True
             return False
 
+        def is_sub_title_line(txt):
+            """תת כותרת: שורה שמתחילה ב־amrap/AMRAP, או מכילה rounds, או מתחילה ב־for time."""
+            if not txt or len(txt) < 2:
+                return False
+            t = txt.strip()
+            lo = t.lower()
+            if lo.startswith('amrap') or lo.startswith('for time'):
+                return True
+            if 'rounds' in lo:
+                return True
+            return False
+
+        def is_note_line(txt):
+            """הערה: barbell, rx+, remaining time, pick up where, rest between, score, aerobic/muscular."""
+            if not txt or len(txt) > 200:
+                return False
+            lo = txt.strip().lower()
+            if 'score:' in lo or 'aerobic power' in lo or 'vo2 max' in lo or 'muscular endurance' in lo:
+                return True
+            if re.search(r'barbell\s*:', lo) or 'rx+' in lo or 'rx:' in lo:
+                return True
+            if 'remaining time' in lo or 'pick up where' in lo or re.search(r'rest\s+\d+.*between', lo):
+                return True
+            return False
+
         # From "score:" onwards, all lines are scoring/description → show as notes (whole source)
         score_zone = False
 
@@ -109,27 +134,32 @@ def fetch_workout(date):
             # From "score:" onward → notes (scoring method + stimulus type)
             if 'score:' in lower:
                 score_zone = True
-            # Also always show stimulus labels as notes: aerobic power [vo2 max], muscular endurance
-            is_note = score_zone or any(
-                x in lower for x in ('aerobic power', 'vo2 max', 'muscular endurance')
-            )
+            is_note = score_zone or is_note_line(stripped)
             line_to_append = ('* ' + stripped) if is_note else stripped
 
             # Section header pattern: a), b), c), d)...
             match = re.match(r'^([a-z])\)\s*(.+)', stripped, re.IGNORECASE)
             if match:
-                if current_section and current_section['lines']:
+                if current_section and (current_section['lines'] or current_section.get('sub_title')):
                     sections.append(current_section)
                 title = match.group(2).strip()
                 current_section = {'title': title.upper(), 'lines': []}
             elif current_section is not None:
-                # Inject spacer after block headers when the page has no blank lines
+                # תת כותרת: שורה ראשונה שמתאימה → sub_title, לא מוסיפים ל־lines
+                if is_sub_title_line(stripped) and current_section.get('sub_title') is None:
+                    current_section['sub_title'] = stripped
+                    continue
                 lines_list = current_section['lines']
+                # Inject spacer after block headers when the page has no blank lines
                 if lines_list and is_block_header(lines_list[-1]):
                     lines_list.append('')
                 current_section['lines'].append(line_to_append)
             else:
-                current_section = {'title': 'WORKOUT', 'lines': [line_to_append]}
+                current_section = {'title': 'WORKOUT', 'lines': []}
+                if is_sub_title_line(stripped):
+                    current_section['sub_title'] = stripped
+                else:
+                    current_section['lines'].append(line_to_append)
 
         if current_section and current_section['lines']:
             sections.append(current_section)

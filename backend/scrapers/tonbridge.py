@@ -53,10 +53,10 @@ def _is_first_level_header(line):
 
 
 def _normalize_section_title(raw):
-    """Display title: Strength, Met Con (like 1013)."""
+    """Display: Strength, METCON (חובר), WOD. Met Con → METCON."""
     lo = (raw or '').strip().lower()
     if 'met con' in lo or 'metcon' in lo:
-        return 'Met Con'
+        return 'METCON'
     if 'strength' in lo:
         return 'Strength'
     if 'wod' in lo:
@@ -65,11 +65,27 @@ def _normalize_section_title(raw):
 
 
 def _is_sub_title_line(line):
-    """True if this line should be the sub_title (תת כותרת) of the Met Con section."""
+    """תת כותרת: שורה המכילה rounds / for time / EMOM (הדפוס החזק – בדרך כלל השורה הראשונה אחרי Met Con)."""
     s = (line or '').strip()
     if not s:
         return False
+    lo = s.lower()
+    if 'rounds' in lo or 'for time' in lo or 'emom' in lo:
+        return True
     return bool(SUB_TITLE_PATTERN.match(s) or SUB_TITLE_ALSO.match(s))
+
+
+def _is_note_line(line):
+    """הערה: משקל/אופציה/הנחיה – למשל 16/24kg KB, so do 4 STOH..., rx+ option."""
+    s = (line or '').strip()
+    if not s or len(s) > 120:
+        return False
+    lo = s.lower()
+    if re.search(r'\d+/\d+\s*kg', lo) or re.search(r'\d+\s*kg\b', lo):
+        return True
+    if ' so do ' in lo or ' so do' in lo or 'option:' in lo or 'rx+' in lo or 'rx:' in lo:
+        return True
+    return False
 
 
 def parse_sections(lines):
@@ -103,10 +119,12 @@ def parse_sections(lines):
         while i < len(lines) and not _is_first_level_header(lines[i]):
             section_lines.append(lines[i])
             i += 1
-        # For Met Con / WOD: if first line is "X Rounds For Time:" etc. → sub_title
-        if title in ('Met Con', 'WOD') and section_lines and _is_sub_title_line(section_lines[0]):
+        # METCON/WOD: השורה הראשונה אחרי הכותרת תמיד תת כותרת (תת כותרת משנה)
+        if title in ('METCON', 'WOD') and section_lines:
             sub_title = section_lines[0].strip()
             section_lines = section_lines[1:]
+        # הערות: שורות משקל/אופציה/הנחיה → מקדימים *
+        section_lines = [("* " + ln.strip()) if _is_note_line(ln) else ln for ln in section_lines]
         if sub_title is not None:
             sections.append({'title': title, 'sub_title': sub_title, 'lines': section_lines})
         else:
