@@ -91,13 +91,14 @@ input[type=number].timer-inp{width:7ch;min-width:7ch}
 .timer-fs-ring{width:100%;height:100%}
 .timer-fs-ring-progress{transition:stroke-dashoffset .15s linear;stroke-dasharray:283;stroke-dashoffset:283}
 .timer-fs-digits{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:clamp(3.2rem,18vw,6rem);min-width:5ch;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.5);font-variant-numeric:tabular-nums;letter-spacing:.06em}
-.timer-fs-total-above{position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:2;text-align:center;line-height:1.2;display:flex;flex-direction:column;align-items:center;gap:2px}
+.timer-fs-total-above{position:absolute;top:16px;left:50%;transform:translateX(-50%);z-index:2;text-align:center;line-height:1.2;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:52px;justify-content:center}
 .timer-fs-total-label{font-size:clamp(0.95rem,3.2vw,1.15rem);font-weight:600;color:rgba(255,255,255,.9)}
 .timer-fs-total-digits{font-size:clamp(2rem,9vw,3.4rem);font-weight:700;color:rgba(255,255,255,.98);font-variant-numeric:tabular-nums;letter-spacing:.04em}
 .timer-section-title{color:#F5C518;font-size:1.15em;margin-bottom:10px;text-align:center;font-weight:700}
-.timer-fs-bottom-panel{position:absolute;bottom:0;left:0;right:0;z-index:2;display:flex;justify-content:center;align-items:center;padding:16px 12px 24px}
-.timer-fs-nav{display:flex;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap}
-.timer-fs-nav button{border:none;background:rgba(255,255,255,.25);color:#fff;padding:12px 22px;border-radius:10px;font-size:1.05em;font-weight:700;cursor:pointer;min-width:88px}
+.timer-fs-bottom-panel{position:absolute;bottom:0;left:0;right:0;z-index:2;display:flex;justify-content:center;align-items:center;padding:16px 12px 24px;min-height:60px}
+.timer-fs-nav{display:flex;justify-content:center;align-items:center;gap:20px;flex-wrap:wrap;min-height:52px}
+.timer-fs-nav .timer-fs-nav-prev,.timer-fs-nav .timer-fs-nav-next{border:2px solid rgba(255,255,255,.5);background:rgba(255,255,255,.22);color:#fff;padding:12px 22px;border-radius:6px;font-size:1.05em;font-weight:700;cursor:pointer;min-width:100px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.timer-fs-nav .timer-fs-nav-play{width:52px;height:52px;min-width:52px;min-height:52px;padding:0;border-radius:6px;font-size:1.75em;display:flex;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,.5);background:rgba(255,255,255,.22);color:#fff;cursor:pointer;line-height:1}
 .timer-fs-nav button:active{background:rgba(255,255,255,.4)}
 .timer-fs-btn{min-height:60px;padding:14px 28px;border:none;border-radius:14px;background:rgba(255,255,255,.25);color:#fff;font-size:1.5em;font-weight:700;cursor:pointer;z-index:1}
 .timer-fs-btn-small{min-width:56px;min-height:56px;width:56px;height:56px;padding:0;border-radius:12px;font-size:1.6em;display:flex;align-items:center;justify-content:center;line-height:1}
@@ -359,7 +360,7 @@ input[type=number].timer-inp{width:7ch;min-width:7ch}
     <div class="timers-section timers-section-stopwatch">
       <h3 class="timer-section-title">Stopwatch</h3>
       <div class="timer-row timer-row-centered"><label>Time (MM:SS or 4 digits)</label><input type="text" id="stopwatchInput" placeholder="0500" value="5:00" maxlength="5" class="timer-inp" inputmode="numeric" pattern="[0-9:]*" autocomplete="off" title="e.g. 0500 = 5:00, 1230 = 12:30"></div>
-      <div class="timer-row timer-row-centered"><label>Direction</label><div class="timer-direction-wrap"><button type="button" id="stopwatchDirectionBtn" class="timer-direction-btn" onclick="stopwatchToggleDirection()">▲</button><span class="timer-direction-label" id="stopwatchDirectionLabel">COUNT DOWN</span></div></div>
+      <div class="timer-row timer-row-centered"><label>Direction</label><div class="timer-direction-wrap"><button type="button" id="stopwatchDirectionDown" class="timer-direction-btn" onclick="setStopwatchDirection(true)" title="Count down" aria-label="Count down">▼</button><button type="button" id="stopwatchDirectionUp" class="timer-direction-btn" onclick="setStopwatchDirection(false)" title="Count up" aria-label="Count up">▲</button></div></div>
       <div class="timer-row timer-row-centered"><label>CountDown (sec)</label><input type="text" id="stopwatchCountDownSec" placeholder="0" value="0" maxlength="3" class="timer-inp timer-inp-num" style="width:4ch" inputmode="numeric" pattern="[0-9]*"></div>
       <div class="timer-display" id="stopwatchDisplay" aria-hidden="true">5:00</div>
       <div class="timer-btns"><button class="btn btn-find" id="stopwatchStart" onclick="stopwatchStartStop()">Start Full Screen</button> <button class="btn btn-find" style="background:#555" onclick="stopwatchReset()">Reset</button></div>
@@ -383,10 +384,10 @@ input[type=number].timer-inp{width:7ch;min-width:7ch}
     <div class="timers-section" style="margin-top:20px">
       <h3 class="timer-section-title">Timer Settings</h3>
       <div class="timer-settings-grid">
-        <div class="timer-settings-row"><label>CountDown</label><button type="button" class="timer-color-bucket" data-setting="countDown" data-default="#FFD700"><span class="timer-bucket-color" style="background:#FFD700"></span><span class="timer-bucket-icon">🪣</span></button></div>
-        <div class="timer-settings-row"><label>Work</label><button type="button" class="timer-color-bucket" data-setting="work" data-default="#28a745"><span class="timer-bucket-color" style="background:#28a745"></span><span class="timer-bucket-icon">🪣</span></button></div>
-        <div class="timer-settings-row"><label>Rest</label><button type="button" class="timer-color-bucket" data-setting="rest" data-default="#dc3545"><span class="timer-bucket-color" style="background:#dc3545"></span><span class="timer-bucket-icon">🪣</span></button></div>
-        <div class="timer-settings-row"><label>Rest Between Sets</label><button type="button" class="timer-color-bucket" data-setting="restSets" data-default="#dc3545"><span class="timer-bucket-color" style="background:#dc3545"></span><span class="timer-bucket-icon">🪣</span></button></div>
+        <div class="timer-settings-row"><label>CountDown</label><button type="button" class="timer-color-bucket" data-setting="countDown" data-default="#FFD700"><span class="timer-bucket-color" style="background:#FFD700"></span></button></div>
+        <div class="timer-settings-row"><label>Work</label><button type="button" class="timer-color-bucket" data-setting="work" data-default="#28a745"><span class="timer-bucket-color" style="background:#28a745"></span></button></div>
+        <div class="timer-settings-row"><label>Rest</label><button type="button" class="timer-color-bucket" data-setting="rest" data-default="#dc3545"><span class="timer-bucket-color" style="background:#dc3545"></span></button></div>
+        <div class="timer-settings-row"><label>Rest Between Sets</label><button type="button" class="timer-color-bucket" data-setting="restSets" data-default="#dc3545"><span class="timer-bucket-color" style="background:#dc3545"></span></button></div>
       </div>
       <div class="timer-settings-row" style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
         <label class="timer-toggle" style="margin:0">Merge adjacent rests</label>
@@ -405,7 +406,7 @@ input[type=number].timer-inp{width:7ch;min-width:7ch}
 <div id="timer-fullscreen" class="timer-fullscreen" style="display:none">
   <div class="timer-fs-bg" id="timerFsBg"></div>
   <button type="button" class="timer-fs-exit" id="timerFsExit" onclick="timerFullscreenClose()" aria-label="Close">✕</button>
-  <div class="timer-fs-total-above" id="timerFsTotalAbove"></div>
+  <div class="timer-fs-total-above" id="timerFsTotalAbove" aria-label="Overall time countdown"></div>
   <div class="timer-fs-clock-block">
     <div class="timer-fs-ring-wrap">
       <svg class="timer-fs-ring" viewBox="0 0 100 100"><circle class="timer-fs-ring-bg" cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="8"/><circle class="timer-fs-ring-progress" id="timerFsRing" cx="50" cy="50" r="45" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" transform="rotate(-90 50 50)"/></svg>
@@ -417,9 +418,9 @@ input[type=number].timer-inp{width:7ch;min-width:7ch}
   </div>
   <div class="timer-fs-bottom-panel">
     <div class="timer-fs-nav" id="timerFsNav" style="display:none">
-      <button type="button" onclick="timerFsGoPrev()">← LAST</button>
-      <button type="button" class="timer-fs-btn timer-fs-btn-small" id="timerFsBtn" onclick="timerFullscreenToggle()">Pause</button>
-      <button type="button" onclick="timerFsGoNext()">NEXT →</button>
+      <button type="button" class="timer-fs-nav-prev" onclick="timerFsGoPrev()" aria-label="Last">← LAST</button>
+      <button type="button" class="timer-fs-nav-play" id="timerFsBtn" onclick="timerFullscreenToggle()" aria-label="Play / Pause"></button>
+      <button type="button" class="timer-fs-nav-next" onclick="timerFsGoNext()" aria-label="Next">NEXT →</button>
     </div>
     <button type="button" class="timer-fs-btn" id="timerFsBtnStandalone" onclick="timerFullscreenToggle()" style="display:none">Start</button>
   </div>
@@ -438,6 +439,13 @@ var allData = {workouts:{}};
 var specialData = {heroes:[], benchmarks:[], open:[]};
 var currentDate = new Date();
 var cardStore = [];
+/** ניתור מבוסס Git – ריק = כבוי. להפעלה: '/api/event' (אם האתר על Vercel) או כתובת מלאה (אם GitHub Pages). ראה ANALYTICS_GIT.md */
+var ANALYTICS_ENDPOINT = "";
+function sendAnalytics(eventName) {
+  if (!ANALYTICS_ENDPOINT) return;
+  var url = ANALYTICS_ENDPOINT.indexOf("/") === 0 ? (location.origin + ANALYTICS_ENDPOINT) : ANALYTICS_ENDPOINT;
+  try { navigator.sendBeacon(url, JSON.stringify({ event: eventName, t: Date.now() })); } catch (e) {}
+}
 
 var SOURCES = {
   myleo:        {name:"myleo CrossFit",           archive:true,  en:true},
@@ -738,7 +746,8 @@ function buildCard(w, score) {
   }
   if (!body) body = "<div style=\"color:#555;padding:8px\">No content</div>";
   var label = (arguments.length >= 3 && arguments[2]) ? arguments[2] : "";
-  var sc = score !== null ? "<span class=\"match-score\">" + score + "%</span>" : "";
+  /* UNLIMITED TIME does not cancel % – always show percentage; 0 shows as "—" */
+  var sc = (score !== null && score !== undefined) ? "<span class=\"match-score\">" + (score === 0 ? "—" : score + "%") + "</span>" : "";
   var labelHtml = label ? "<div class=\"match-label\">" + esc(label) + "</div>" : "";
   var cardClass = "workout-card";
   if (w.source === "hero") cardClass += " hero";
@@ -778,6 +787,11 @@ function adjustFindTime(delta) {
   el.value = next;
 }
 
+/**
+ * איתור אימון (Find Workout). נקודות שרגילות לרדת במיזוגים – לא למחוק:
+ * - time = unlimited ? 999 (מסמנים UNLIMITED TIME)
+ * - תצוגה: תמיד מעבירים r.sc ל-buildCard – UNLIMITED TIME לא מבטל את האחוז; 0% מוצג כ-"—".
+ */
 function findWorkout() {
   var unlimited = document.getElementById("unlimitedTime").checked;
   var time = unlimited ? 999 : (parseInt(document.getElementById("findTime").value) || 20);
@@ -860,12 +874,14 @@ function findWorkout() {
     }
   }
   var display = topRegular.concat(topWarehouse);
+  sendAnalytics("find_workout");
   var el = document.getElementById("findResults");
   if (!display.length) {
     el.innerHTML = "<div class=\"empty\"><div class=\"empty-icon\">🔍</div>No matches found</div>";
     return;
   }
   cardStore = [];
+  /* KEEP איתור אימון: always pass r.sc so percentage is shown; buildCard shows "—" when score is 0 */
   el.innerHTML = display.map(function(r) { return buildCard(r.w, r.sc, r.label); }).join("");
 }
 
@@ -1178,14 +1194,14 @@ function initTimerColorBuckets() {
   var pop = document.getElementById("timer-palette-popover"); if (pop) pop.addEventListener("click", function(e) { e.stopPropagation(); });
 }
 
+/* KEEP סטופווטש: שני כפתורים ▼ (Count down) ו־▲ (Count up) – opacity פעיל 1, לא פעיל 0.5 (FIND_WORKOUT_DESIGN) */
 function setStopwatchDirection(countDown) {
   stopwatchCountDown = !!countDown;
-  var btn = document.getElementById("stopwatchDirectionBtn");
-  var lbl = document.getElementById("stopwatchDirectionLabel");
-  if (btn) { btn.textContent = countDown ? "\u25BC" : "\u25B2"; btn.title = countDown ? "Count down (click for count up)" : "Count up (click for count down)"; btn.setAttribute("aria-label", countDown ? "Count down" : "Count up"); }
-  if (lbl) lbl.textContent = countDown ? "COUNT DOWN" : "COUNT UP";
+  var downBtn = document.getElementById("stopwatchDirectionDown");
+  var upBtn = document.getElementById("stopwatchDirectionUp");
+  if (downBtn) downBtn.style.opacity = countDown ? "1" : "0.5";
+  if (upBtn) upBtn.style.opacity = countDown ? "0.5" : "1";
 }
-function stopwatchToggleDirection() { stopwatchCountDown = !stopwatchCountDown; setStopwatchDirection(stopwatchCountDown); }
 
 var timerAudioContext = null;
 function timerAudioUnlock() {
@@ -1197,56 +1213,65 @@ function timerAudioUnlock() {
 }
 function timerBeep(tick) {
   try {
-    var ctx = timerAudioContext || timerAudioUnlock() || new (window.AudioContext || window.webkitAudioContext)();
+    var ctx = timerAudioContext || timerAudioUnlock();
     if (!ctx) return;
-    if (ctx.state === "suspended") ctx.resume();
-    var osc = ctx.createOscillator();
-    var g = ctx.createGain();
-    osc.connect(g); g.connect(ctx.destination);
-    osc.frequency.value = tick ? 800 : 400;
-    osc.type = "sine";
-    g.gain.setValueAtTime(0.15, ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + (tick ? 0.05 : 0.3));
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + (tick ? 0.05 : 0.3));
+    function play() {
+      var osc = ctx.createOscillator();
+      var g = ctx.createGain();
+      osc.connect(g); g.connect(ctx.destination);
+      osc.frequency.value = tick ? 800 : 400;
+      osc.type = "sine";
+      g.gain.setValueAtTime(0.2, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + (tick ? 0.08 : 0.35));
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + (tick ? 0.08 : 0.35));
+    }
+    if (ctx.state === "suspended") ctx.resume().then(play).catch(function() {});
+    else play();
   } catch (e) {}
 }
 function timerWhistleKickoff() {
   try {
-    var ctx = timerAudioContext || timerAudioUnlock() || new (window.AudioContext || window.webkitAudioContext)();
+    var ctx = timerAudioContext || timerAudioUnlock();
     if (!ctx) return;
-    if (ctx.state === "suspended") ctx.resume();
-    var t0 = ctx.currentTime;
-    var playBurst = function(start, freq, dur) {
-      var osc = ctx.createOscillator();
-      var g = ctx.createGain();
-      osc.connect(g); g.connect(ctx.destination);
-      osc.frequency.value = freq;
-      osc.type = "sine";
-      g.gain.setValueAtTime(0, start);
-      g.gain.linearRampToValueAtTime(0.4, start + 0.02);
-      g.gain.exponentialRampToValueAtTime(0.01, start + dur);
-      osc.start(start);
-      osc.stop(start + dur);
-    };
-    playBurst(t0, 2400, 0.22);
-    playBurst(t0 + 0.2, 2800, 0.25);
+    function play() {
+      var t0 = ctx.currentTime;
+      function burst(start, freq, dur) {
+        var osc = ctx.createOscillator();
+        var g = ctx.createGain();
+        osc.connect(g); g.connect(ctx.destination);
+        osc.frequency.value = freq;
+        osc.type = "sine";
+        g.gain.setValueAtTime(0, start);
+        g.gain.linearRampToValueAtTime(0.4, start + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.01, start + dur);
+        osc.start(start);
+        osc.stop(start + dur);
+      }
+      burst(t0, 2400, 0.22);
+      burst(t0 + 0.2, 2800, 0.25);
+    }
+    if (ctx.state === "suspended") ctx.resume().then(play).catch(function() {});
+    else play();
   } catch (e) {}
 }
 function timerBell() {
   try {
-    var ctx = timerAudioContext || timerAudioUnlock() || new (window.AudioContext || window.webkitAudioContext)();
+    var ctx = timerAudioContext || timerAudioUnlock();
     if (!ctx) return;
-    if (ctx.state === "suspended") ctx.resume();
-    var osc = ctx.createOscillator();
-    var g = ctx.createGain();
-    osc.connect(g); g.connect(ctx.destination);
-    osc.frequency.value = 880;
-    osc.type = "sine";
-    g.gain.setValueAtTime(0.2, ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.4);
+    function play() {
+      var osc = ctx.createOscillator();
+      var g = ctx.createGain();
+      osc.connect(g); g.connect(ctx.destination);
+      osc.frequency.value = 880;
+      osc.type = "sine";
+      g.gain.setValueAtTime(0.25, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.45);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.45);
+    }
+    if (ctx.state === "suspended") ctx.resume().then(play).catch(function() {});
+    else play();
   } catch (e) {}
 }
 
@@ -1267,8 +1292,8 @@ function timerFullscreenUpdate() {
   var phaseColors = {};
   for (var k in PHASE_COLORS) phaseColors[k] = PHASE_COLORS[k];
   for (var k in settings.colors) phaseColors[k] = settings.colors[k];
-  if (timerFsPhases.length > 1 && totalAbove) {
-    totalAbove.innerHTML = "<span class=\"timer-fs-total-label\">Overall Time</span><span class=\"timer-fs-total-digits\">" + formatMMSS(totalRemaining) + "</span>";
+  if (timerFsIsInterval && timerFsPhases.length >= 1 && totalAbove) {
+    totalAbove.innerHTML = "<span class=\"timer-fs-total-label\">OVERALL TIME</span><span class=\"timer-fs-total-digits\">" + formatMMSS(totalRemaining) + "</span>";
     totalAbove.style.display = "flex";
   } else if (totalAbove) totalAbove.style.display = "none";
   var navEl = document.getElementById("timerFsNav");
@@ -1285,7 +1310,7 @@ function timerFullscreenUpdate() {
   if (timerFsPaused) {
     var pp = timerFsPhases[timerFsPhaseIndex];
     var pausedDisplay = pp && pp.name === "For Time" ? Math.max(0, (pp.sec || 0) - timerFsPausedRemaining) : timerFsPausedRemaining;
-    digits.textContent = formatMMSS(Math.ceil(pausedDisplay));
+    digits.textContent = formatMMSS(pp && pp.name === "For Time" ? Math.floor(pausedDisplay) : Math.ceil(pausedDisplay));
     setBtnTxt("Resume");
     return;
   }
@@ -1296,7 +1321,7 @@ function timerFullscreenUpdate() {
     nextEl.textContent = "";
     var setRoundDone = document.getElementById("timerFsSetRound");
     if (setRoundDone) { setRoundDone.textContent = ""; setRoundDone.style.display = "none"; }
-    if (totalAbove) totalAbove.innerHTML = "<span class=\"timer-fs-total-label\">Overall Time</span><span class=\"timer-fs-total-digits\">0:00</span>";
+    if (totalAbove && timerFsIsInterval) totalAbove.innerHTML = "<span class=\"timer-fs-total-label\">OVERALL TIME</span><span class=\"timer-fs-total-digits\">0:00</span>";
     ring.style.strokeDashoffset = 0;
     if (btn) { btn.textContent = "Close"; btn.setAttribute("aria-label", "Close"); }
     if (btnStandalone) { btnStandalone.textContent = "Close"; btnStandalone.setAttribute("aria-label", "Close"); }
@@ -1311,6 +1336,7 @@ function timerFullscreenUpdate() {
   var isCountUp = (p.name === "For Time");
   var displaySec = isCountUp ? Math.min(total, Math.max(0, total - remaining)) : remaining;
   var sec = Math.ceil(remaining);
+  var displaySecFloor = isCountUp ? Math.floor(displaySec) : Math.ceil(remaining);
   if (sec !== timerFsLastSecond && timerFsLastSecond >= 0) {
     if (settings.beep3sec && sec > 0 && sec <= 3) timerBeep(true);
     if (sec === 0) {
@@ -1321,14 +1347,14 @@ function timerFullscreenUpdate() {
     }
   }
   timerFsLastSecond = sec;
-  digits.textContent = formatMMSS(displaySec);
+  digits.textContent = formatMMSS(isCountUp ? displaySecFloor : remaining);
   phaseEl.textContent = p.name;
   var setRoundEl = document.getElementById("timerFsSetRound");
   if (setRoundEl) {
     if (p.set != null && p.totalSets != null) {
-      var setTxt = "Set " + p.set + "/" + p.totalSets;
-      var roundTxt = p.round != null ? "Round " + p.round + "/" + (p.roundsPerSet != null ? p.roundsPerSet : "?") : "→ Set " + (p.set + 1);
-      setRoundEl.innerHTML = "<span>" + roundTxt + "</span><span>" + setTxt + "</span>";
+      var setTxt = "▼ Set " + p.set + "/" + p.totalSets;
+      var roundTxt = p.round != null ? "▶ Round " + p.round + "/" + (p.roundsPerSet != null ? p.roundsPerSet : "?") : "→ Next: Set " + (p.set + 1);
+      setRoundEl.innerHTML = "<span>" + roundTxt + "</span> <span>" + setTxt + "</span>";
       setRoundEl.style.display = "flex";
     } else {
       setRoundEl.textContent = "";
@@ -1578,7 +1604,7 @@ function applyPreset(name) {
 
 var PHASE_COLORS = { "CountDown": "#FFD700", "Count Down": "#FFD700", "For Time": "#28a745", "Prepare": "#FFD700", "Work": "#28a745", "Rest": "#dc3545", "Rest Between Sets": "#dc3545", "Done": "#007bff" };
 var RING_CIRCUMFERENCE = 2 * Math.PI * 45;
-var stopwatchCountDown = true;
+/* stopwatchCountDown – use global from first timer block (do not redeclare) */
 
 var TIMER_PALETTE_COLORS = [
   "#b71c1c","#c62828","#d32f2f","#e53935","#f44336","#ef5350","#e57373","#ff8a80",
@@ -1644,8 +1670,11 @@ function closeTimerPalette() {
 
 function getTimerSettings() {
   var beep3sec = true;
-  var setBeep = document.getElementById("setBeep3Sec");
-  if (setBeep) beep3sec = setBeep.checked;
+  var mergeAdjacentRests = true;
+  var beepEl = document.getElementById("timerToggleBeep3Sec");
+  var mergeEl = document.getElementById("timerToggleMergeRests");
+  if (beepEl) beep3sec = beepEl.classList.contains("on");
+  if (mergeEl) mergeAdjacentRests = mergeEl.classList.contains("on");
   var colors = {};
   var map = { countDown: ["CountDown", "Count Down", "Prepare"], work: ["Work"], rest: ["Rest"], restSets: ["Rest Between Sets"] };
   var keys = ["countDown", "work", "rest", "restSets"];
@@ -1655,11 +1684,12 @@ function getTimerSettings() {
     var names = map[keys[i]];
     for (var n = 0; n < names.length; n++) colors[names[n]] = hex;
   }
-  return { beep3sec: beep3sec, colors: colors };
+  return { beep3sec: beep3sec, mergeAdjacentRests: mergeAdjacentRests, colors: colors };
 }
 
 function saveTimerSettings() {
-  var raw = { beep3sec: getTimerSettings().beep3sec };
+  var s = getTimerSettings();
+  var raw = { beep3sec: s.beep3sec, mergeAdjacentRests: s.mergeAdjacentRests };
   var keys = ["countDown", "work", "rest", "restSets"];
   for (var i = 0; i < keys.length; i++) {
     var btn = document.querySelector(".timer-color-bucket[data-setting=\"" + keys[i] + "\"]");
@@ -1672,7 +1702,10 @@ function loadTimerSettings() {
   var keys = ["countDown", "work", "rest", "restSets"];
   try {
     var raw = JSON.parse(localStorage.getItem("duck-wod-timer-settings") || "{}");
-    if (typeof raw.beep3sec !== "undefined") document.getElementById("setBeep3Sec").checked = !!raw.beep3sec;
+    var beepEl = document.getElementById("timerToggleBeep3Sec");
+    var mergeEl = document.getElementById("timerToggleMergeRests");
+    if (beepEl) { beepEl.classList.toggle("on", typeof raw.beep3sec === "undefined" || !!raw.beep3sec); beepEl.setAttribute("aria-checked", beepEl.classList.contains("on") ? "true" : "false"); }
+    if (mergeEl) { mergeEl.classList.toggle("on", typeof raw.mergeAdjacentRests === "undefined" || !!raw.mergeAdjacentRests); mergeEl.setAttribute("aria-checked", mergeEl.classList.contains("on") ? "true" : "false"); }
     for (var i = 0; i < keys.length; i++) {
       var btn = document.querySelector(".timer-color-bucket[data-setting=\"" + keys[i] + "\"]");
       if (!btn) continue;
@@ -1695,231 +1728,25 @@ function initTimerColorBuckets() {
   document.addEventListener("click", function() { closeTimerPalette(); });
   document.getElementById("timer-palette-popover").addEventListener("click", function(e) { e.stopPropagation(); });
 }
-
-function setStopwatchDirection(countDown) {
-  stopwatchCountDown = !!countDown;
-  var btn = document.getElementById("stopwatchDirectionBtn");
-  var lbl = document.getElementById("stopwatchDirectionLabel");
-  if (btn) { btn.textContent = countDown ? "▲" : "▼"; btn.title = countDown ? "Count down (click for count up)" : "Count up (click for count down)"; }
-  if (lbl) lbl.textContent = countDown ? "COUNT DOWN" : "COUNT UP";
-}
-
-function stopwatchToggleDirection() {
-  stopwatchCountDown = !stopwatchCountDown;
-  setStopwatchDirection(stopwatchCountDown);
-}
-
-var timerFsWakeLock = null;
-var timerFsRaf = null;
-var timerFsPhases = [];
-var timerFsPhaseIndex = 0;
-var timerFsPhaseEndTime = 0;
-var timerFsPaused = false;
-var timerFsPausedRemaining = 0;
-var timerFsLastSecond = -1;
-var timerFsStartTime = 0;
-
-function timerBeep(tick) {
-  try {
-    var ctx = new (window.AudioContext || window.webkitAudioContext)();
-    var osc = ctx.createOscillator();
-    var g = ctx.createGain();
-    osc.connect(g); g.connect(ctx.destination);
-    osc.frequency.value = tick ? 800 : 400;
-    osc.type = "sine";
-    g.gain.setValueAtTime(0.15, ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + (tick ? 0.05 : 0.3));
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + (tick ? 0.05 : 0.3));
-  } catch (e) {}
-}
-
-function timerWhistle() {
-  try {
-    var ctx = new (window.AudioContext || window.webkitAudioContext)();
-    var osc = ctx.createOscillator();
-    var g = ctx.createGain();
-    osc.connect(g); g.connect(ctx.destination);
-    osc.frequency.value = 2200;
-    osc.type = "sine";
-    g.gain.setValueAtTime(0.2, ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.45);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.45);
-  } catch (e) {}
-}
-
-function timerFullscreenUpdate() {
-  var el = document.getElementById("timer-fullscreen");
-  var digits = document.getElementById("timerFsDigits");
-  var phaseEl = document.getElementById("timerFsPhase");
-  var nextEl = document.getElementById("timerFsNext");
-  var totalEl = document.getElementById("timerFsTotal");
-  var ring = document.getElementById("timerFsRing");
-  var bg = document.getElementById("timerFsBg");
-  var btn = document.getElementById("timerFsBtn");
-  if (!el || el.style.display !== "flex") return;
-  var now = Date.now();
-  var settings = getTimerSettings();
-  var phaseColors = {};
-  for (var k in PHASE_COLORS) phaseColors[k] = PHASE_COLORS[k];
-  for (var k in settings.colors) phaseColors[k] = settings.colors[k];
-  if (timerFsPaused) {
-    digits.textContent = formatMMSS(Math.ceil(timerFsPausedRemaining));
-    btn.textContent = "Resume";
-    if (totalEl && timerFsPhases.length > 1) totalEl.textContent = "Total: " + formatMMSS((now - timerFsStartTime) / 1000);
-    return;
-  }
-  if (timerFsPhaseIndex >= timerFsPhases.length) {
-    bg.style.background = phaseColors["Done"] || "#007bff";
-    digits.textContent = "0:00";
-    phaseEl.textContent = "Done!";
-    nextEl.textContent = "";
-    if (totalEl) totalEl.textContent = timerFsPhases.length > 1 ? "Total: " + formatMMSS((now - timerFsStartTime) / 1000) : "";
-    ring.style.strokeDashoffset = 0;
-    btn.textContent = "Close";
-    if (timerFsWakeLock) { try { timerFsWakeLock.release(); } catch(e) {} timerFsWakeLock = null; }
-    return;
-  }
-  var p = timerFsPhases[timerFsPhaseIndex];
-  var total = p.sec;
-  var remaining = Math.max(0, (timerFsPhaseEndTime - now) / 1000);
-  var sec = Math.ceil(remaining);
-  if (sec !== timerFsLastSecond && timerFsLastSecond >= 0) {
-    if (settings.beep3sec && sec > 0 && sec <= 3) timerBeep(true);
-    if (sec === 0) timerWhistle();
-  }
-  timerFsLastSecond = sec;
-  digits.textContent = formatMMSS(remaining);
-  phaseEl.textContent = p.name + " (" + (timerFsPhaseIndex + 1) + "/" + timerFsPhases.length + ")";
-  var nextName = timerFsPhaseIndex + 1 < timerFsPhases.length ? timerFsPhases[timerFsPhaseIndex + 1].name : "";
-  nextEl.textContent = nextName ? "Next: " + nextName : "";
-  bg.style.background = phaseColors[p.name] || "#333";
-  if (totalEl) totalEl.textContent = timerFsPhases.length > 1 ? "Total: " + formatMMSS((now - timerFsStartTime) / 1000) : "";
-  var ratio = total > 0 ? remaining / total : 0;
-  ring.style.strokeDashoffset = RING_CIRCUMFERENCE * (1 - ratio);
-  if (remaining <= 0) {
-    timerFsPhaseIndex++;
-    if (timerFsPhaseIndex < timerFsPhases.length) timerFsPhaseEndTime = Date.now() + timerFsPhases[timerFsPhaseIndex].sec * 1000;
-    timerFsLastSecond = -1;
-  }
-  timerFsRaf = requestAnimationFrame(timerFullscreenUpdate);
-}
-
-function timerFullscreenStart(phases) {
-  timerFsPhases = phases;
-  timerFsPhaseIndex = 0;
-  timerFsPaused = false;
-  timerFsLastSecond = -1;
-  timerFsStartTime = Date.now();
-  if (phases.length === 0) return;
-  timerFsPhaseEndTime = Date.now() + phases[0].sec * 1000;
-  document.getElementById("timer-fullscreen").style.display = "flex";
-  document.body.style.overflow = "hidden";
-  document.getElementById("timerFsBtn").textContent = "Pause";
-  if (navigator.wakeLock) {
-    navigator.wakeLock.request("screen").then(function(wl) { timerFsWakeLock = wl; }).catch(function() {});
-  }
-  timerFullscreenUpdate();
-}
-
-function timerFullscreenClose() {
-  if (timerFsRaf) cancelAnimationFrame(timerFsRaf);
-  timerFsRaf = null;
-  if (timerFsWakeLock) { timerFsWakeLock.release(); timerFsWakeLock = null; }
-  document.getElementById("timer-fullscreen").style.display = "none";
-  document.body.style.overflow = "";
-  stopwatchIntervalId = null;
-  stopwatchRunning = false;
-  intervalIntervalId = null;
-  intervalRunning = false;
-  document.getElementById("stopwatchStart").textContent = "Start Full Screen";
-  document.getElementById("intervalStart").textContent = "Start Full Screen";
-}
-
-function timerFullscreenToggle() {
-  if (timerFsPhaseIndex >= timerFsPhases.length) {
-    timerFullscreenClose();
-    return;
-  }
-  if (timerFsPaused) {
-    timerFsPaused = false;
-    timerFsPhaseEndTime = Date.now() + timerFsPausedRemaining * 1000;
-    document.getElementById("timerFsBtn").textContent = "Pause";
-    timerFsRaf = requestAnimationFrame(timerFullscreenUpdate);
-  } else {
-    timerFsPaused = true;
-    timerFsPausedRemaining = Math.max(0, (timerFsPhaseEndTime - Date.now()) / 1000);
-    document.getElementById("timerFsBtn").textContent = "Resume";
-    if (timerFsRaf) cancelAnimationFrame(timerFsRaf);
-    timerFsRaf = requestAnimationFrame(timerFullscreenUpdate);
-  }
-}
-
-var stopwatchIntervalId = null;
-var stopwatchStartSec = 0;
-var stopwatchElapsed = 0;
-var stopwatchRunning = false;
-
-function stopwatchStartStop() {
-  var inp = document.getElementById("stopwatchInput");
-  var totalSec = parseMMSS(inp.value) || 300;
-  var countDownSec = parseInt(document.getElementById("stopwatchCountDownSec").value, 10) || 0;
-  var phases = [];
-  if (countDownSec > 0) phases.push({ name: "Prepare", sec: countDownSec });
-  phases.push({ name: stopwatchCountDown ? "Count Down" : "For Time", sec: totalSec });
-  timerFullscreenStart(phases);
-  stopwatchRunning = true;
-  document.getElementById("stopwatchStart").textContent = "Stop Full Screen";
-}
-
-function stopwatchReset() {
-  stopwatchRunning = false;
-  document.getElementById("stopwatchStart").textContent = "Start Full Screen";
-  var total = parseMMSS(document.getElementById("stopwatchInput").value) || 300;
-  document.getElementById("stopwatchDisplay").textContent = stopwatchCountDown ? formatMMSS(total) : "0:00";
-  stopwatchElapsed = 0;
-}
-
-var intervalIntervalId = null;
-var intervalRunning = false;
-
-function intervalStartStop() {
-  var countDown = parseMMSS(document.getElementById("intCountDown").value) || 0;
-  var work = parseMMSS(document.getElementById("intWork").value) || 60;
-  var rest = parseMMSS(document.getElementById("intRest").value) || 0;
-  var rounds = parseInt(document.getElementById("intRounds").value, 10) || 5;
-  var sets = parseInt(document.getElementById("intSets").value, 10) || 1;
-  var restSets = parseMMSS(document.getElementById("intRestSets").value) || 0;
-  var phases = [];
-  if (countDown > 0) phases.push({ name: "Prepare", sec: countDown });
-  for (var s = 0; s < sets; s++) {
-    for (var r = 0; r < rounds; r++) {
-      phases.push({ name: "Work", sec: work });
-      if (rest > 0) phases.push({ name: "Rest", sec: rest });
-    }
-    if (s < sets - 1 && restSets > 0) phases.push({ name: "Rest Between Sets", sec: restSets });
-  }
-  if (phases.length === 0) return;
-  timerFullscreenStart(phases);
-  intervalRunning = true;
-  document.getElementById("intervalStart").textContent = "Stop Full Screen";
-}
-
-function intervalReset() {
-  intervalRunning = false;
-  document.getElementById("intervalStart").textContent = "Start Full Screen";
-  document.getElementById("intervalDisplay").textContent = "0:00";
-  document.getElementById("intervalPhase").textContent = "—";
-}
+/* setStopwatchDirection – defined in first timer block (two buttons ▼/▲); do not redefine here */
 
 (function initTimerSettings() {
-  var beepEl = document.getElementById("setBeep3Sec");
-  if (beepEl) beepEl.addEventListener("change", function() { try { saveTimerSettings(); } catch (e) {} });
   loadTimerSettings();
   initTimerColorBuckets();
 })();
 </script>
 <button class="up-btn" id="upBtn" onclick="scrollToTop()">↑</button>
+<!-- ניתור מבוסס Git (נסתר): להפעלה הגדר ANALYTICS_ENDPOINT ב-script למעלה; פרוס api/ ל-Vercel. ראה ANALYTICS_GIT.md -->
+<script>
+(function(){
+  if (!window.ANALYTICS_ENDPOINT) return;
+  try {
+    if (!sessionStorage.getItem("dw_av")) {
+      sendAnalytics("page_view");
+      sessionStorage.setItem("dw_av", "1");
+    }
+  } catch (e) {}
+})();
+</script>
 </body>
 </html>
