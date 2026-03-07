@@ -52,15 +52,16 @@ jobs:
           cat report.txt >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Send email via Resend SMTP
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.resend.com
-          server_port: 465
-          secure: true
-          username: resend
-          password: ${{ secrets.RESEND_API_KEY }}
-          subject: "ניתור משתמשים שבועי"
-          to: ariel.tahan@gmail.com
-          from: onboarding@resend.dev
-          body: ${{ steps.gen.outputs.text }}
+      - name: Send email via Resend API
+        run: |
+          BODY=$(jq -Rs . report.txt)
+          jq -n \
+            --arg from "DUCK-WOD <onboarding@resend.dev>" \
+            --arg to "ariel.tahan@gmail.com" \
+            --arg sub "ניתור משתמשים שבועי" \
+            --argjson text "$BODY" \
+            '{from:$from, to:[$to], subject:$sub, text:$text}' > payload.json
+          curl -sS -f -X POST https://api.resend.com/emails \
+            -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d @payload.json
