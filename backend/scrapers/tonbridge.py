@@ -22,45 +22,98 @@ HEADERS = {
     ),
 }
 
-SECTION_HINTS = [
-    'warm', 'strength', 'skill', 'wod', 'metcon', 'met con', 'conditioning',
-    'amrap', 'emom', 'for time', 'tabata', 'gymnastics', 'olympic',
-    'accessory', 'cool down', 'power', 'endurance', 'barbell',
+# Only these start a new top-level section (כותרת משנה). Do NOT use generic hints
+# like 'power' or 'barbell' so lines like "6 Power Snatch @ 60/42.5kg" stay content.
+FIRST_LEVEL_HEADERS = [
+    'strength', 'met con', 'metcon', 'wod', 'warm', 'warm up', 'conditioning',
+    'skill', 'gymnastics', 'cool down', 'accessory', 'olympic', 'endurance',
 ]
+# First line under Met Con that matches this → sub_title (תת כותרת משנה), like 1013.
+SUB_TITLE_PATTERN = re.compile(
+    r'^\d+\s*Rounds?\s+(?:For\s+Time|for\s+time)',
+    re.IGNORECASE
+)
+# Also treat as sub_title: "X Min EMOM", "X Min AMRAP", "For Time:", etc.
+SUB_TITLE_ALSO = re.compile(
+    r'^(\d+\s*Min\s+(?:EMOM|AMRAP|Amrap|Emom)|For\s+Time\s*:|AMRAP|EMOM\b)',
+    re.IGNORECASE
+)
+
+
+def _is_first_level_header(line):
+    """True only if line is exactly or starts with a known section title (e.g. Strength:, Met Con:)."""
+    s = (line or '').strip()
+    if not s or len(s) > 70:
+        return False
+    lo = s.lower()
+    for h in FIRST_LEVEL_HEADERS:
+        if lo == h or lo.startswith(h + ':') or lo.startswith(h + ' '):
+            return True
+    return False
+
+
+def _normalize_section_title(raw):
+    """Display title: Strength, Met Con (like 1013)."""
+    lo = (raw or '').strip().lower()
+    if 'met con' in lo or 'metcon' in lo:
+        return 'Met Con'
+    if 'strength' in lo:
+        return 'Strength'
+    if 'wod' in lo:
+        return 'WOD'
+    return (raw or '').strip()
+
+
+def _is_sub_title_line(line):
+    """True if this line should be the sub_title (תת כותרת) of the Met Con section."""
+    s = (line or '').strip()
+    if not s:
+        return False
+    return bool(SUB_TITLE_PATTERN.match(s) or SUB_TITLE_ALSO.match(s))
 
 
 def parse_sections(lines):
-    """Parse flat lines into sections."""
+    """
+    Parse flat lines into sections like 1013:
+    - First line that looks like "Strength" or "Strength:" = section 1 title; content until next header.
+    - "Met Con" or "Met Con:" = section 2 title. If the first content line is "X Rounds For Time:" etc.
+      → that line is sub_title (תת כותרת משנה), rest are lines.
+    - Never treat exercise lines (e.g. "6 Power Snatch @ 60/42.5kg") as section headers.
+    """
     sections = []
-    cur = {'title': 'WORKOUT', 'lines': []}
-    for line in lines:
-        lo = line.lower().strip()
-        is_hdr = False
-        
-        # Check if it's a header
-        if line.isupper() and 3 <= len(line) <= 60 and not re.search(r'\d', line):
-            is_hdr = True
-        elif (any(kw in lo for kw in SECTION_HINTS)
-              and len(line) < 60
-              and not re.search(r'\d+\s*(min|rep|round|x\b)', lo)):
-            is_hdr = True
-        
-        if is_hdr:
-            if cur['lines']:
-                sections.append(cur)
-            # Normalize title
-            title = line.upper().strip()
-            if 'MET CON' in title or 'METCON' in title:
-                title = 'METCON'
-            elif 'STRENGTH' in title:
-                title = 'STRENGTH'
-            cur = {'title': title, 'lines': []}
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        if not _is_first_level_header(line):
+            if not sections:
+                # First block with no header (e.g. Open workout day) → one section
+                section_lines = []
+                while i < len(lines) and not _is_first_level_header(lines[i]):
+                    section_lines.append(lines[i])
+                    i += 1
+                if section_lines:
+                    sections.append({'title': 'WORKOUT', 'lines': section_lines})
+                continue
+            i += 1
+            continue
+        title = _normalize_section_title(line)
+        i += 1
+        section_lines = []
+        sub_title = None
+        while i < len(lines) and not _is_first_level_header(lines[i]):
+            section_lines.append(lines[i])
+            i += 1
+        # For Met Con / WOD: if first line is "X Rounds For Time:" etc. → sub_title
+        if title in ('Met Con', 'WOD') and section_lines and _is_sub_title_line(section_lines[0]):
+            sub_title = section_lines[0].strip()
+            section_lines = section_lines[1:]
+        if sub_title is not None:
+            sections.append({'title': title, 'sub_title': sub_title, 'lines': section_lines})
         else:
-            cur['lines'].append(line)
-    
-    if cur['lines']:
-        sections.append(cur)
-    return sections or [{'title': 'WORKOUT', 'lines': lines}]
+            sections.append({'title': title, 'lines': section_lines})
+    if not sections:
+        return [{'title': 'WORKOUT', 'lines': lines}]
+    return sections
 
 
 def fetch_workout(date):
@@ -159,27 +212,13 @@ def fetch_workout(date):
 
 
 if __name__ == '__main__':
-    # Test with today
     print("Testing Tonbridge scraper...")
     result = fetch_workout(datetime.now())
     if result:
         print(f"\n✅ Success!")
         for s in result['sections']:
-            print(f"[{s['title']}]: {len(s['lines'])} lines")
-            for line in s['lines'][:3]:
-                print(f"  {line}")
-    else:
-        print("❌ Failed")
-
-
-if __name__ == '__main__':
-    # Test with today
-    print("Testing Tonbridge scraper...")
-    result = fetch_workout(datetime.now())
-    if result:
-        print(f"\n✅ Success!")
-        for s in result['sections']:
-            print(f"[{s['title']}]: {len(s['lines'])} lines")
+            sub = f" (sub_title: {s.get('sub_title')})" if s.get('sub_title') else ""
+            print(f"[{s['title']}]{sub}: {len(s['lines'])} lines")
             for line in s['lines'][:3]:
                 print(f"  {line}")
     else:
