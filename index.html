@@ -615,6 +615,25 @@ document.addEventListener("DOMContentLoaded", function() {
   loadTimerSettings();
   initTimerColorBuckets();
   setStopwatchDirection(true);
+  (function initSwipeDays() {
+    var browseTab = document.getElementById("browse-tab");
+    if (!browseTab) return;
+    var startX = 0;
+    browseTab.addEventListener("touchstart", function(e) {
+      if (e.touches.length === 1) startX = e.touches[0].clientX;
+    }, { passive: true });
+    browseTab.addEventListener("touchend", function(e) {
+      if (e.changedTouches.length !== 1 || !document.getElementById("tab-browse").classList.contains("active")) return;
+      var endX = e.changedTouches[0].clientX;
+      var delta = endX - startX;
+      var dates = getDaysList();
+      var ds = localDate(currentDate);
+      var idx = dates.indexOf(ds);
+      if (idx === -1) return;
+      if (delta > 55 && idx > 0) { goDate(dates[idx - 1]); e.preventDefault(); }
+      else if (delta < -55 && idx < dates.length - 1) { goDate(dates[idx + 1]); e.preventDefault(); }
+    }, { passive: false });
+  })();
   document.querySelectorAll(".timer-inp, .timer-inp-num, #stopwatchInput, #stopwatchCountDownSec, #intCountDown, #intWork, #intRest, #intRounds, #intSets, #intRestSets").forEach(function(inp) {
     if (!inp || !inp.addEventListener) return;
     inp.addEventListener("focus", function() { this.select(); });
@@ -657,6 +676,17 @@ function pickDay(ago) {
   var btns = document.querySelectorAll(".day-btn");
   for (var i = 0; i < btns.length; i++) btns[i].classList.toggle("active", i === ago);
   displayWorkouts();
+}
+
+/** Same ordered list of weekday date strings as in the days bar (newest first). */
+function getDaysList() {
+  var dates = [];
+  for (var i = 0; dates.length < 14; i++) {
+    var d = new Date();
+    d.setDate(d.getDate() - i);
+    if (d.getDay() !== 0) dates.push(localDate(d));
+  }
+  return dates;
 }
 
 function buildDaysBar() {
