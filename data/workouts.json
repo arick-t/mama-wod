@@ -884,32 +884,6 @@
       },
       {
         "date": "2026-02-25",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Deadlift 3x5",
-              "Every 2:00 × 3 sets",
-              "5 Deadlifts @60%"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Clam Chowder",
-            "lines": [
-              "3 Rounds For Time:",
-              "30 Wall Balls 20#/14#",
-              "20 Pull Ups",
-              "10 Power Snatch 135#/95#"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-02-25",
         "source": "benchmark",
         "source_name": "CrossFit Benchmark Workouts",
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
@@ -2976,52 +2950,6 @@
     "2026-03-07": [
       {
         "date": "2026-03-07",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-07/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Heute",
-              "Team-WODs im Loft"
-            ]
-          },
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "samson stretch",
-              "hand walk",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "amrap 5min",
-              "10 prone snow angels",
-              "6 burpee deadlifts",
-              "*partner is holding plank position"
-            ]
-          },
-          {
-            "title": "CONDITIONING 28MIN",
-            "lines": [
-              "in teams of 2",
-              "amrap 28min",
-              "(you go, I go)",
-              "6 burpees over db",
-              "12 single db ground to overhead",
-              "3 burpee to target",
-              "6 single db devil press",
-              "dumbbell: 22,5/15kg"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-07",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-march-7-2026/",
@@ -3098,27 +3026,6 @@
       },
       {
         "date": "2026-03-07",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "The Gauntlet",
-            "lines": [
-              "30 minute AMRAP of:",
-              "Jackie",
-              "Then",
-              "Karabell",
-              "Then",
-              "AMRAP of Cindy in the remaining 30 minutes:",
-              "Your result is rounds of Cindy completed."
-            ]
-          }
-        ],
-        "note": "Benchmark: The Gauntlet"
-      },
-      {
-        "date": "2026-03-07",
         "source": "open",
         "source_name": "CrossFit Open Workouts",
         "url": "https://games.crossfit.com/workouts/open",
@@ -3159,8 +3066,127 @@
             ]
           }
         ]
+      },
+      {
+        "date": "2026-03-07",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-03-07/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Heute",
+              "Team-WODs im Loft"
+            ]
+          },
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "samson stretch",
+              "hand walk",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "amrap 5min",
+              "10 prone snow angels",
+              "6 burpee deadlifts",
+              "*partner is holding plank position"
+            ]
+          },
+          {
+            "title": "CONDITIONING 28MIN",
+            "lines": [
+              "in teams of 2",
+              "amrap 28min",
+              "(you go, I go)",
+              "6 burpees over db",
+              "12 single db ground to overhead",
+              "3 burpee to target",
+              "6 single db devil press",
+              "dumbbell: 22,5/15kg"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-07",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260307",
+        "sections": [
+          {
+            "title": "FOR TIME",
+            "lines": [
+              "21 hang power cleans, first weight",
+              "15/21-calorie row",
+              "15 hang power cleans, second weight",
+              "10/15-calorie row",
+              "9 hang power cleans, third weight",
+              "7/9-calorie row",
+              "Rest 5 minutes",
+              "21 box jumps",
+              "15/21-calorie row",
+              "15 box jumps",
+              "10/15-calorie row",
+              "9 box jumps",
+              "7/9-calorie row",
+              "♀ 95/105/120-lb barbell and a 20-inch box",
+              "♂ 135/155/175-lb barbell and a 24-inch box"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-07",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Magic Xylophone",
+            "lines": [
+              "Teams of 2 For Time:",
+              "800/725m Row",
+              "40 Squat Cleans 95#/65#",
+              "800/725m Row",
+              "30 Squat Cleans 115#/85#",
+              "800/725m Row",
+              "20 Squat Cleans135#/95#",
+              "800/725m Row",
+              "10 Squat Cleans 155#/105#",
+              "800/725m Row"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-07",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "The Gauntlet",
+            "lines": [
+              "30 minute AMRAP of:",
+              "Jackie",
+              "Then",
+              "Karabell",
+              "Then",
+              "AMRAP of Cindy in the remaining 30 minutes:",
+              "Your result is rounds of Cindy completed."
+            ]
+          }
+        ],
+        "note": "Benchmark: The Gauntlet"
       }
     ]
   },
-  "last_updated": "2026-03-07T00:53:17.778001"
+  "last_updated": "2026-03-07T18:03:57.092641"
 }
