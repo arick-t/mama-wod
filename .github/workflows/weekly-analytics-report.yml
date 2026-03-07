@@ -41,8 +41,12 @@ jobs:
             echo "" >> report.txt
             echo "עדיין אין נתונים בקובץ data/analytics.jsonl." >> report.txt
             echo "הפעל את הניתור (ANALYTICS_ENDPOINT) וצבור כניסות ואירועי Find Workout – בשבוע הבא תקבל כאן סיכום אמיתי." >> report.txt
-          else
+          elif [ -f scripts/analytics-summary.js ]; then
             node scripts/analytics-summary.js > report.txt 2>&1
+          else
+            echo "דוח ניתור – השבוע האחרון" > report.txt
+            echo "" >> report.txt
+            echo "יש נתונים אבל סקריפט הסיכום (scripts/analytics-summary.js) חסר ב-repo. הוסף אותו ל-main." >> report.txt
           fi
           echo "text<<EOF" >> $GITHUB_OUTPUT
           cat report.txt >> $GITHUB_OUTPUT
