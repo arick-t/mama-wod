@@ -1,5 +1,5 @@
 # דוח ניתור שבועי – נשלח לאימייל כל יום שישי 08:00.
-# שליחה דרך Resend (API) – Secrets: RESEND_API_KEY, RESEND_FROM. ראו RESEND_SECRETS.md.
+# שליחה דרך Resend SMTP – Secret: RESEND_API_KEY. ראו RESEND_SECRETS.md.
 
 name: 📊 Weekly Analytics Report
 
@@ -52,19 +52,15 @@ jobs:
           cat report.txt >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Send email via Resend
-        env:
-          RESEND_FROM: ${{ secrets.RESEND_FROM }}
-        run: |
-          FROM="${RESEND_FROM:-onboarding@resend.dev}"
-          BODY=$(jq -Rs . report.txt)
-          jq -n \
-            --arg from "$FROM" \
-            --arg to "arieltahan@hotmail.com" \
-            --arg sub "ניתור משתמשים שבועי" \
-            --argjson text "$BODY" \
-            '{from:$from, to:[$to], subject:$sub, text:$text}' > payload.json
-          curl -sS -f -X POST https://api.resend.com/emails \
-            -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d @payload.json
+      - name: Send email via Resend SMTP
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.resend.com
+          server_port: 465
+          secure: true
+          username: resend
+          password: ${{ secrets.RESEND_API_KEY }}
+          subject: "ניתור משתמשים שבועי"
+          to: ariel.tahan@gmail.com
+          from: onboarding@resend.dev
+          body: ${{ steps.gen.outputs.text }}
