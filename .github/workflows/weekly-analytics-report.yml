@@ -1,5 +1,5 @@
 # דוח ניתור שבועי – נשלח לאימייל כל יום שישי 08:00.
-# Secrets: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD. כדי למנוע Connection timeout – השתמש ב-Gmail (ראו SMTP_SECRETS.md).
+# שליחה דרך Resend (API) – Secrets: RESEND_API_KEY, RESEND_FROM. ראו RESEND_SECRETS.md.
 
 name: 📊 Weekly Analytics Report
 
@@ -52,14 +52,19 @@ jobs:
           cat report.txt >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Send email
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: ${{ secrets.SMTP_HOST }}
-          server_port: ${{ secrets.SMTP_PORT }}
-          username: ${{ secrets.SMTP_USER }}
-          password: ${{ secrets.SMTP_PASSWORD }}
-          subject: "ניתור משתמשים שבועי"
-          to: arieltahan@hotmail.com
-          from: ${{ secrets.SMTP_USER }}
-          body: ${{ steps.gen.outputs.text }}
+      - name: Send email via Resend
+        env:
+          RESEND_FROM: ${{ secrets.RESEND_FROM }}
+        run: |
+          FROM="${RESEND_FROM:-onboarding@resend.dev}"
+          BODY=$(jq -Rs . report.txt)
+          jq -n \
+            --arg from "$FROM" \
+            --arg to "arieltahan@hotmail.com" \
+            --arg sub "ניתור משתמשים שבועי" \
+            --argjson text "$BODY" \
+            '{from:$from, to:[$to], subject:$sub, text:$text}' > payload.json
+          curl -sS -f -X POST https://api.resend.com/emails \
+            -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d @payload.json
