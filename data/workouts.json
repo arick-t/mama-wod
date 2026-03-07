@@ -207,17 +207,16 @@
           {
             "title": "WARM UP 6MIN",
             "lines": [
-              "30sec on / 15sec off x2 rounds",
               "1. ring rows",
               "2. bike/ski",
               "3. straight leg sit ups",
               "4. squat jumps"
-            ]
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
           },
           {
             "title": "CONDITIONING 35MIN",
             "lines": [
-              "emom 35min (7 rounds)",
               "1. 10-16 gorilla rows",
               "2. 10-15cal bike/ski",
               "3. 6-10 strict toes to bar",
@@ -237,7 +236,8 @@
               "1:00 at rpe 8, 1:00 easy",
               "0:30 at rpe 9",
               "* aerobic power [lactate threshold]"
-            ]
+            ],
+            "sub_title": "emom 35min (7 rounds)"
           }
         ]
       },
@@ -399,11 +399,11 @@
           {
             "title": "WARM UP 4MIN",
             "lines": [
-              "amrap 4min",
               "10 reverse lunges",
               "30sec plank hold",
               "10 push ups"
-            ]
+            ],
+            "sub_title": "amrap 4min"
           },
           {
             "title": "SQUATS 12MIN",
@@ -418,8 +418,6 @@
           {
             "title": "CONDITIONING 15MIN",
             "lines": [
-              "for time",
-              "",
               "5 rounds",
               "",
               "12 double db push press",
@@ -427,7 +425,8 @@
               "dumbbells: 22,5/15kg",
               "* muscular endurance",
               "front squat"
-            ]
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -578,11 +577,11 @@
           {
             "title": "WARM UP 4MIN",
             "lines": [
-              "amrap 4min",
               "10 cossack squats",
               "10 burpees",
               "10/8cal row"
-            ]
+            ],
+            "sub_title": "amrap 4min"
           },
           {
             "title": "DEADLIFT 12MIN",
@@ -602,12 +601,12 @@
               "12/10 cal row",
               "12 deadlifts 80/60kg *",
               "12 burpees over bar",
-              "rest 2:00 between amraps",
-              "pick up where you left off",
-              "*rx+ option: 100/70kg",
-              "* score: rounds + reps",
+              "* rest 2:00 between amraps",
+              "* pick up where you left off",
+              "* *rx+ option: 100/70kg",
               "* aerobic power [vo2 max]"
-            ]
+            ],
+            "sub_title": "score: rounds + reps"
           }
         ]
       },
@@ -742,12 +741,12 @@
           {
             "title": "WARM UP 5MIN",
             "lines": [
-              "on every 2:30 x 2 rounds",
               "10 prone snow angels",
               "10 plank push ups",
               "10 ring rows",
-              "*remaining time bike/ski"
-            ]
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
           },
           {
             "title": "BENCH PRESS 12MIN",
@@ -762,8 +761,6 @@
           {
             "title": "CONDITIONING 16MIN",
             "lines": [
-              "for time",
-              "",
               "20 ring dips",
               "25/20cal bike/ski",
               "25 pull-ups*",
@@ -771,9 +768,10 @@
               "25 pull-ups*",
               "25/20cal ski/bike",
               "20 hand release push ups",
-              "*rx+ option: chest to bar pull ups",
+              "* *rx+ option: chest to bar pull ups",
               "* vo2 max & muscular endurance"
-            ]
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -796,9 +794,9 @@
             ]
           },
           {
-            "title": "Met Con",
+            "title": "METCON",
+            "sub_title": "50/45 Cals",
             "lines": [
-              "50/45 Cals",
               "4 Rounds Mini DT",
               "40/35 Cals",
               "3 Rounds Mini DT",
@@ -806,7 +804,7 @@
               "2 Rounds Mini DT",
               "20/15 Cals",
               "1 Round Mini DT",
-              "70/47.5KG",
+              "* 70/47.5KG",
               "1 Round Mini DT =",
               "6 Deadlifts",
               "4 HPC",
@@ -959,17 +957,15 @@
           {
             "title": "WARM UP 4MIN",
             "lines": [
-              "amrap 4min",
               "10 squat jumps",
               "10 scap. push ups",
               "10 burpees"
-            ]
+            ],
+            "sub_title": "amrap 4min"
           },
           {
             "title": "CONDITIONING 25MIN",
             "lines": [
-              "for time",
-              "",
               "50 wallballs 20/14lbs",
               "15 burpee box jumps 60/50cm",
               "rest 1:00",
@@ -986,14 +982,15 @@
               "15 burpee box jumps",
               "* score: total time (including rest)",
               "* aerobic power [lactate threshold]"
-            ]
+            ],
+            "sub_title": "for time"
           },
           {
             "title": "STABILITY 4MIN",
             "lines": [
-              "* tabata (20sec on/10sec off) x 8 rounds",
               "* prone press"
-            ]
+            ],
+            "sub_title": "tabata (20sec on/10sec off) x 8 rounds"
           }
         ]
       },
@@ -1033,12 +1030,12 @@
             ]
           },
           {
-            "title": "Met Con",
+            "title": "METCON",
+            "sub_title": "4 rounds",
             "lines": [
-              "4 rounds",
               "Each round: 2 mins on, 30 secs off",
               "2, 4, 6, 8 etc",
-              "DB Snatch (22.5/15kg)",
+              "* DB Snatch (22.5/15kg)",
               "Burpees over DB",
               "Pick up where you finished the previous round."
             ]
@@ -1197,12 +1194,12 @@
           {
             "title": "WARM UP 5MIN",
             "lines": [
-              "on every 2:30 x 2 rounds",
               "10 hang high pulls",
               "10 elbow rotation",
               "10 straight leg sit ups",
-              "*remaining time row"
-            ]
+              "* *remaining time row"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
           },
           {
             "title": "POWER CLEAN 12MIN",
@@ -1220,8 +1217,8 @@
               "",
               "21 toes to bar",
               "15 hang power cleans 60/40kg",
-              "row cal in remaining time",
-              "• rest 3:00 between amraps",
+              "* row cal in remaining time",
+              "* • rest 3:00 between amraps",
               "* score: total row cal",
               "* aerobic power [vo2 max]"
             ]
@@ -1271,9 +1268,9 @@
             ]
           },
           {
-            "title": "Met Con",
+            "title": "METCON",
+            "sub_title": "Open Workout 26.1",
             "lines": [
-              "Open Workout 26.1",
               "For time:",
               "20 wall-ball shots",
               "18 box jump-overs",
@@ -1444,25 +1441,24 @@
           {
             "title": "WARM UP 5MIN",
             "lines": [
-              "amrap 5min",
               "10 prone snow angels",
               "10 air squats",
               "10 push press",
               "*partner is biking"
-            ]
+            ],
+            "sub_title": "amrap 5min"
           },
           {
             "title": "CONDITIONING 32MIN",
             "lines": [
               "in teams of 2",
-              "for time",
-              "",
               "12 rounds",
               "",
               "20/18/16 cal bike",
               "10 thrusters 40/30kg",
               "6 wall walks"
-            ]
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -1499,14 +1495,14 @@
             ]
           },
           {
-            "title": "Met Con",
+            "title": "METCON",
+            "sub_title": "3 Rounds with a partner:",
             "lines": [
-              "3 Rounds with a partner:",
               "30 Pull Ups",
               "Non working partner holds HS against wall",
-              "45 Wall Balls 9/6kg",
+              "* 45 Wall Balls 9/6kg",
               "Non working partner hangs from PU bar",
-              "60 OH plate lunge 10/15kg",
+              "* 60 OH plate lunge 10/15kg",
               "Non working partner holds Side Plank",
               "Switch as needed but must be holding before any reps can be accumulated."
             ]
@@ -1615,17 +1611,16 @@
           {
             "title": "WARM UP 6MIN",
             "lines": [
-              "30sec on / 15sec off x2 rounds",
               "1. ring rows",
               "2. bike/ski",
               "3. straight leg sit ups",
               "4. squat jumps"
-            ]
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
           },
           {
             "title": "CONDITIONING 35MIN",
             "lines": [
-              "emom 35min (7 rounds)",
               "1. 20-30 russian twists",
               "2. 10-15cal bike/ski",
               "3. 6-10 strict pull ups",
@@ -1640,7 +1635,8 @@
               "1-2-3-4-3-2-1 min easy",
               "[rpe 1-2]",
               "* aerobic power [lactate threshold]"
-            ]
+            ],
+            "sub_title": "emom 35min (7 rounds)"
           }
         ]
       },
@@ -1801,8 +1797,6 @@
             "title": "CONDITIONING 29MIN",
             "lines": [
               "(heat  1 // 5min break // heat 2)",
-              "for time",
-              "",
               "20 wall ball 20/14lbs",
               "18 box jump overs 60/50cm",
               "30 wall ball",
@@ -1818,7 +1812,8 @@
               "20 wall ball",
               "time cap 12min",
               "squat + wall ball"
-            ]
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -1866,11 +1861,11 @@
             ]
           },
           {
-            "title": "Met Con",
+            "title": "METCON",
+            "sub_title": "21, 15, 9, 6, 3",
             "lines": [
-              "21, 15, 9, 6, 3",
               "Row Cals",
-              "Wall Balls 9/6kg",
+              "* Wall Balls 9/6kg",
               "*If you did 26.1, option to sub WBs for DB Snatch – unless you’re a sadist, in which case, crack on with the WBs! ;)"
             ]
           }
@@ -2035,18 +2030,18 @@
           {
             "title": "WARM UP 5MIN",
             "lines": [
-              "on every 2:30 x 2 rounds",
               "10 hang high pulls",
               "10 elbow rotation",
               "10 good mornings",
-              "*remaining time row"
-            ]
+              "* *remaining time row"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
           },
           {
             "title": "DEADLIFT 15MIN",
             "lines": [
               "build to a heavy 10-rep max",
-              "rest 3-5 minutes between attempts",
+              "* rest 3-5 minutes between attempts",
               "absolute strength"
             ]
           },
@@ -2059,14 +2054,13 @@
           {
             "title": "CONDITIONING 10MIN",
             "lines": [
-              "for time",
-              "",
               "6 rounds",
               "",
               "6 power cleans 70/50kg",
               "15/12cal row",
               "* aerobic power [vo2 max]"
-            ]
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -2115,12 +2109,12 @@
             ]
           },
           {
-            "title": "Met Con",
+            "title": "METCON",
+            "sub_title": "Every 5:00 mins for 25:00 mins:",
             "lines": [
-              "Every 5:00 mins for 25:00 mins:",
               "400m run",
               "15 Overhead Squats",
-              "42.5/30kg",
+              "* 42.5/30kg",
               "Rest for the remainder of the 5:00 mins."
             ]
           }
@@ -2281,25 +2275,23 @@
           {
             "title": "WARM UP 4MIN",
             "lines": [
-              "amrap 4min",
               "10 straight leg sit ups",
               "10 push ups",
               "10 ring rows"
-            ]
+            ],
+            "sub_title": "amrap 4min"
           },
           {
             "title": "BENCH PRESS 15MIN",
             "lines": [
               "build to a heavy 10-rep max",
-              "rest 3-5 minutes between attempts",
+              "* rest 3-5 minutes between attempts",
               "absolute strength"
             ]
           },
           {
             "title": "CONDITIONING 15MIN",
             "lines": [
-              "for time",
-              "",
               "buy-in: 10 wall walks",
               "3 rounds:",
               "",
@@ -2315,11 +2307,12 @@
               "",
               "5 push press",
               "5 pull-ups",
-              "barbell: 40/30kg",
-              "*rx+ option: chest to bar pull ups",
+              "* barbell: 40/30kg",
+              "* *rx+ option: chest to bar pull ups",
               "* muscular endurance",
               "pull up"
-            ]
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -2366,14 +2359,14 @@
             ]
           },
           {
-            "title": "Met Con",
+            "title": "METCON",
+            "sub_title": "8 Rounds",
             "lines": [
-              "8 Rounds",
               "8 Shoulder to Overhead",
               "16 Goblet Squats",
               "24 Double Unders",
-              "16/24kg KB",
-              "1 KB, so do 4 STOH on one side and then swap."
+              "* 16/24kg KB",
+              "* 1 KB, so do 4 STOH on one side and then swap."
             ]
           }
         ]
@@ -2542,12 +2535,12 @@
           {
             "title": "WARM UP 5MIN",
             "lines": [
-              "on every 2:30 x 2 rounds",
               "10 prone snow angels",
               "10 db deadlifts",
               "20 single under",
-              "*remaining time bike/ski"
-            ]
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
           },
           {
             "title": "CONDITIONING 26MIN",
@@ -2557,11 +2550,11 @@
               "25/20 cal ski/bike",
               "24 db hang snatches 22,5/15kg",
               "50 double under",
-              "rest 2:00 between amraps",
-              "*pick up where you left off",
-              "* score: total rounds + reps",
+              "* rest 2:00 between amraps",
+              "* *pick up where you left off",
               "* aerobic power [lactate threshold]"
-            ]
+            ],
+            "sub_title": "score: total rounds + reps"
           },
           {
             "title": "TRICEPS 4MIN",
@@ -2612,11 +2605,11 @@
             ]
           },
           {
-            "title": "Met Con",
+            "title": "METCON",
             "sub_title": "4 Rounds For Time:",
             "lines": [
               "15/12 Cal Air Bike",
-              "6 Power Snatch @ 60/42.5kg",
+              "* 6 Power Snatch @ 60/42.5kg",
               "3 BMU"
             ]
           }
@@ -2774,25 +2767,23 @@
           {
             "title": "WARM UP 4MIN",
             "lines": [
-              "amrap 4min",
               "20sec hollow hold",
               "10 reverse lunges",
               "150/125m row"
-            ]
+            ],
+            "sub_title": "amrap 4min"
           },
           {
             "title": "BACK SQUAT 15MIN",
             "lines": [
               "build to a heavy 10-rep max",
-              "rest 3-5 minutes between attempts",
+              "* rest 3-5 minutes between attempts",
               "absolute strength"
             ]
           },
           {
             "title": "CONDITIONING 15MIN",
             "lines": [
-              "for time",
-              "",
               "400/360m row",
               "30 toes to bar",
               "20 front squats",
@@ -2800,9 +2791,10 @@
               "20 front squats",
               "30 toes to bar",
               "400/360m row",
-              "barbell: 70/50kg",
+              "* barbell: 70/50kg",
               "* aerobic power [lactate threshold]"
-            ]
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -2819,9 +2811,9 @@
             ]
           },
           {
-            "title": "Met Con",
+            "title": "METCON",
+            "sub_title": "Crossfit Open 26.2",
             "lines": [
-              "Crossfit Open 26.2",
               "For time:",
               "80-foot dumbbell overhead walking lunge",
               "20 alternating dumbbell snatches",
@@ -3025,24 +3017,24 @@
           {
             "title": "WARM UP 5MIN",
             "lines": [
-              "amrap 5min",
               "10 prone snow angels",
               "6 burpee deadlifts",
               "*partner is holding plank position"
-            ]
+            ],
+            "sub_title": "amrap 5min"
           },
           {
             "title": "CONDITIONING 28MIN",
             "lines": [
               "in teams of 2",
-              "amrap 28min",
               "(you go, I go)",
               "6 burpees over db",
               "12 single db ground to overhead",
               "3 burpee to target",
               "6 single db devil press",
               "dumbbell: 22,5/15kg"
-            ]
+            ],
+            "sub_title": "amrap 28min"
           }
         ]
       },
@@ -3111,5 +3103,5 @@
       }
     ]
   },
-  "last_updated": "2026-03-07T20:57:59.115709"
+  "last_updated": "2026-03-07T19:21:44.945826"
 }
