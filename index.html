@@ -445,8 +445,11 @@ var cardStore = [];
 var ANALYTICS_ENDPOINT = "";
 function sendAnalytics(eventName) {
   if (!ANALYTICS_ENDPOINT) return;
-  var url = ANALYTICS_ENDPOINT.indexOf("/") === 0 ? (location.origin + ANALYTICS_ENDPOINT) : ANALYTICS_ENDPOINT;
-  try { navigator.sendBeacon(url, JSON.stringify({ event: eventName, t: Date.now() })); } catch (e) {}
+  try {
+    if (!sessionStorage.dw_sid) sessionStorage.dw_sid = Math.random().toString(36).slice(2, 14);
+    var url = ANALYTICS_ENDPOINT.indexOf("/") === 0 ? (location.origin + ANALYTICS_ENDPOINT) : ANALYTICS_ENDPOINT;
+    navigator.sendBeacon(url, JSON.stringify({ event: eventName, t: Date.now(), sid: sessionStorage.dw_sid }));
+  } catch (e) {}
 }
 
 var SOURCES = {
@@ -1452,6 +1455,7 @@ function stopwatchStartStop() {
   if (countDownSec > 0) phases.push({ name: "Prepare", sec: countDownSec });
   phases.push({ name: stopwatchCountDown ? "Count Down" : "For Time", sec: totalSec });
   timerFullscreenStart(phases, false);
+  sendAnalytics("timer_use");
   document.getElementById("stopwatchStart").textContent = "Stop Full Screen";
 }
 function stopwatchReset() {
@@ -1481,6 +1485,7 @@ function intervalStartStop() {
   }
   if (phases.length === 0) return;
   timerFullscreenStart(phases, true);
+  sendAnalytics("timer_use");
   document.getElementById("intervalStart").textContent = "Stop Full Screen";
 }
 function intervalReset() {
