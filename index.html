@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DUCK-WOD · v19.7</title>
+<meta name="theme-color" content="#111">
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
@@ -740,7 +742,7 @@ function buildCard(w, score) {
       disp = formatLbToKg(disp);
       li += "<li" + cls + ">" + esc(disp) + "</li>";
     }
-    body += "<div class=\"section\"><div class=\"section-title\">" + esc(s.title) + "</div>";
+    body += "<div class=\"section\"><div class=\"section-title\">" + esc(convertUnits(s.title)) + "</div>";
     if (s.sub_title) body += "<div class=\"section-subtitle\">" + esc(s.sub_title) + "</div>";
     body += "<ul class=\"section-lines\">" + li + "</ul></div>";
   }
@@ -1513,7 +1515,7 @@ function buildCardHtmlOnly(w) {
       disp = formatLbToKg(disp);
       li += "<li" + cls + ">" + esc(disp) + "</li>";
     }
-    body += "<div class=\"section\"><div class=\"section-title\">" + esc(s.title) + "</div>";
+    body += "<div class=\"section\"><div class=\"section-title\">" + esc(convertUnits(s.title)) + "</div>";
     if (s.sub_title) body += "<div class=\"section-subtitle\">" + esc(s.sub_title) + "</div>";
     body += "<ul class=\"section-lines\">" + li + "</ul></div>";
   }
