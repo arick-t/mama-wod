@@ -2899,6 +2899,59 @@
     "2026-03-08": [
       {
         "date": "2026-03-08",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "sections": [
+          {
+            "title": "ODA 7313",
+            "lines": [
+              "7 rounds for time of:",
+              "300-meter jog",
+              "10 left-arm dumbbell thrusters",
+              "10 right-arm dumbbell thrusters",
+              "7 strict pull-ups",
+              "*Rest 3 minutes between rounds.",
+              "*Wear a 10/14-lb weight vest.",
+              "*♀ 20 lb*",
+              "*♂ 30 lb*"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-08",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 12.1",
+            "lines": [
+              "Complete as many reps as possible in 7 minutes of:",
+              "Burpees"
+            ]
+          }
+        ],
+        "note": "Open: Open 12.1"
+      },
+      {
+        "date": "2026-03-08",
+        "source": "linchpin",
+        "source_name": "CrossFit Linchpin",
+        "url": "https://crossfitlinchpin.com/blogs/wod",
+        "note": "⚠️ This source provides daily workouts only",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "REST DAY!",
+              "Get out of the gym."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-08",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-03-08/",
@@ -2906,7 +2959,7 @@
           {
             "title": "WORKOUT",
             "lines": [
-              "Heute feiern wir die Frauen, die unsere Welt stärker machen.",
+              "Heute feiern wir alle Frauen, weil sie unsere Welt stärker machen.",
               "Happy International Women's Day!"
             ]
           },
@@ -2944,27 +2997,6 @@
       },
       {
         "date": "2026-03-08",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "sections": [
-          {
-            "title": "ODA 7313",
-            "lines": [
-              "7 rounds for time of:",
-              "300-meter jog",
-              "10 left-arm dumbbell thrusters",
-              "10 right-arm dumbbell thrusters",
-              "7 strict pull-ups",
-              "*Rest 3 minutes between rounds.",
-              "*Wear a 10/14-lb weight vest.",
-              "*♀ 20 lb*",
-              "*♂ 30 lb*"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-08",
         "source": "benchmark",
         "source_name": "CrossFit Benchmark Workouts",
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
@@ -2985,40 +3017,8 @@
           }
         ],
         "note": "Benchmark: DIANE"
-      },
-      {
-        "date": "2026-03-08",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 12.1",
-            "lines": [
-              "Complete as many reps as possible in 7 minutes of:",
-              "Burpees"
-            ]
-          }
-        ],
-        "note": "Open: Open 12.1"
-      },
-      {
-        "date": "2026-03-08",
-        "source": "linchpin",
-        "source_name": "CrossFit Linchpin",
-        "url": "https://crossfitlinchpin.com/blogs/wod",
-        "note": "⚠️ This source provides daily workouts only",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "REST DAY!",
-              "Get out of the gym."
-            ]
-          }
-        ]
       }
     ]
   },
-  "last_updated": "2026-03-08T00:57:14.772847"
+  "last_updated": "2026-03-08T14:56:27.115183"
 }
