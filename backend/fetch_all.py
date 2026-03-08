@@ -4,10 +4,20 @@ DUCK-WOD – Main Fetch Script (8 sources)
 
 Sources with archive=True  → fetch all 14 days
 Sources with archive=False → fetch TODAY only, skip all other days
+
+"Today" = Israel date (Asia/Jerusalem) so the app and fetch use the same calendar day.
 """
 import json, sys
 from datetime import datetime, timedelta
 from pathlib import Path
+
+def today_israel():
+    """Date string for today in Israel (YYYY-MM-DD). Matches frontend localDate when user is in Israel."""
+    try:
+        from zoneinfo import ZoneInfo
+        return datetime.now(ZoneInfo('Asia/Jerusalem')).strftime('%Y-%m-%d')
+    except Exception:
+        return datetime.now().strftime('%Y-%m-%d')
 
 sys.path.insert(0, str(Path(__file__).parent))
 
@@ -67,8 +77,8 @@ def load():
 def save(data):
     DATA_DIR.mkdir(exist_ok=True, parents=True)
     
-    # Clean up: remove today-only sources from non-today dates
-    today = datetime.now().strftime('%Y-%m-%d')
+    # Clean up: remove today-only sources from non-today dates (today = Israel date)
+    today = today_israel()
     today_only_sources = {'postal', 'linchpin'}
     disabled_sources = {'panda', 'arch'}
     
@@ -104,7 +114,7 @@ def main():
             w for w in data['workouts'][date_str]
             if w.get('source') not in FORCE_REFRESH_SOURCES
         ]
-    today = datetime.now().strftime('%Y-%m-%d')
+    today = today_israel()
     stats = {'ok': 0, 'fail': 0, 'cached': 0, 'skipped': 0}
 
     # Warm up / refresh special warehouses (monthly)
@@ -118,9 +128,15 @@ def main():
     except Exception as e:
         print(f"    ⚠️  Special warehouse refresh failed: {e}")
 
-    dates_14 = [datetime.now() - timedelta(days=i) for i in range(DAYS)]
+    # Use Israel timezone so "today" and date keys match the app (user in Israel)
+    try:
+        from zoneinfo import ZoneInfo
+        now_i = datetime.now(ZoneInfo('Asia/Jerusalem'))
+    except Exception:
+        now_i = datetime.now()
+    dates_14 = [now_i - timedelta(days=i) for i in range(DAYS)]
     # Request 15 unique benchmarks so none repeats in a 15-day window; use first 14 for display
-    dates_benchmark = [datetime.now() - timedelta(days=i) for i in range(15)]
+    dates_benchmark = [now_i - timedelta(days=i) for i in range(15)]
     benchmark_wods = None
 
     for i in range(DAYS):
@@ -160,8 +176,8 @@ def main():
                 print(f"    ❌ Exception: {e}")
                 stats['fail'] += 1
 
-    # Prune old days
-    cutoff = (datetime.now() - timedelta(days=DAYS)).strftime('%Y-%m-%d')
+    # Prune old days (cutoff based on Israel today)
+    cutoff = (now_i - timedelta(days=DAYS)).strftime('%Y-%m-%d')
     removed = [k for k in list(data['workouts']) if k < cutoff]
     for k in removed:
         del data['workouts'][k]
