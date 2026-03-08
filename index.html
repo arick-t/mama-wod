@@ -288,10 +288,10 @@ input[type=number].timer-inp{width:7ch;min-width:7ch}
 
 <div class="tab-content" id="find-tab">
   <div class="find-form">
-    <h2>🎯 Find Your Workout</h2>
+    <h2>🎯 Find Workout</h2>
     
     <div class="form-group" style="border-bottom:1px solid #333;padding-bottom:12px;margin-bottom:12px">
-      <label>Special Workouts</label>
+      <label>Include Special Workouts</label>
       <label class="eq-item" style="margin-top:8px">
         <input type="checkbox" id="includeHero">
         <span>🦸 CrossFit Hero Workouts</span>
@@ -439,7 +439,8 @@ input[type=number].timer-inp{width:7ch;min-width:7ch}
 <script>
 var allData = {workouts:{}};
 var specialData = {heroes:[], benchmarks:[], open:[]};
-var currentDate = new Date();
+var selectedDateStr = todayIsraelStr();
+var currentDate = new Date(selectedDateStr + "T12:00:00.000Z");
 var cardStore = [];
 /** ניתור מבוסס Git – ריק = כבוי. להפעלה: '/api/event' (אם האתר על Vercel) או כתובת מלאה (אם GitHub Pages). ראה ANALYTICS_GIT.md */
 var ANALYTICS_ENDPOINT = "";
@@ -519,6 +520,15 @@ function localDate(d) {
   var m = String(d.getMonth()+1).padStart(2,"0");
   var day = String(d.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+day;
+}
+
+/** תאריך "היום" בשעון ישראל – כדי שהאפליקציה תתאים ל-Fetch (שגם הוא בישראל). */
+function todayIsraelStr() {
+  try {
+    return new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Jerusalem" });
+  } catch (e) {
+    return localDate(new Date());
+  }
 }
 
 function esc(s) {
@@ -627,8 +637,7 @@ document.addEventListener("DOMContentLoaded", function() {
       var endX = e.changedTouches[0].clientX;
       var delta = endX - startX;
       var dates = getDaysList();
-      var ds = localDate(currentDate);
-      var idx = dates.indexOf(ds);
+      var idx = dates.indexOf(selectedDateStr);
       if (idx === -1) return;
       if (delta > 55 && idx > 0) { goDate(dates[idx - 1]); e.preventDefault(); }
       else if (delta < -55 && idx < dates.length - 1) { goDate(dates[idx + 1]); e.preventDefault(); }
@@ -670,21 +679,19 @@ function loadData() {
 }
 
 function pickDay(ago) {
-  var d = new Date();
-  d.setDate(d.getDate() - ago);
-  currentDate = d;
-  var btns = document.querySelectorAll(".day-btn");
-  for (var i = 0; i < btns.length; i++) btns[i].classList.toggle("active", i === ago);
-  displayWorkouts();
+  var dates = getDaysList();
+  if (ago >= 0 && ago < dates.length) goDate(dates[ago]);
 }
 
-/** Same ordered list of weekday date strings as in the days bar (newest first). */
+/** Same ordered list of date strings as in the days bar (newest first), based on Israel today. */
 function getDaysList() {
   var dates = [];
-  for (var i = 0; dates.length < 14; i++) {
-    var d = new Date();
-    d.setDate(d.getDate() - i);
-    if (d.getDay() !== 0) dates.push(localDate(d));
+  var today = todayIsraelStr();
+  for (var i = 0; i < 14; i++) {
+    var d = new Date(today + "T12:00:00.000Z");
+    d.setUTCDate(d.getUTCDate() - i);
+    var y = d.getUTCFullYear(), m = String(d.getUTCMonth() + 1).padStart(2, "0"), day = String(d.getUTCDate()).padStart(2, "0");
+    dates.push(y + "-" + m + "-" + day);
   }
   return dates;
 }
@@ -692,42 +699,37 @@ function getDaysList() {
 function buildDaysBar() {
   var bar = document.getElementById("days-bar");
   if (!bar) return;
-  var todayStr = localDate(new Date());
-  var ds = localDate(currentDate);
-  var dates = [];
-  for (var i = 0; dates.length < 14; i++) {
-    var d = new Date();
-    d.setDate(d.getDate() - i);
-    if (d.getDay() !== 0) dates.push(d);
-  }
+  var todayStr = todayIsraelStr();
+  var ds = selectedDateStr;
+  var dates = getDaysList();
   var html = '<div style="padding:0 20px">';
   for (var i = 0; i < dates.length; i++) {
-    var d = dates[i];
-    var dateStr = localDate(d);
-    var day = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];
+    var dateStr = dates[i];
+    var d = new Date(dateStr + "T12:00:00.000Z");
+    var day = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][d.getUTCDay()];
     var hasData = allData.workouts && allData.workouts[dateStr];
-    var active = dateStr === ds ? ' active' : '';
-    html += '<button class="day-btn' + active + '" onclick="goDate(\'' + dateStr + '\')" style="margin:0 4px;padding:8px 12px;background:' +
-            (dateStr === ds ? '#E8451A' : '#2a2a2a') + ';color:' + (dateStr === ds ? '#fff' : (hasData ? '#f0ece0' : '#555')) +
-            ';border:1px solid ' + (dateStr === ds ? '#E8451A' : '#444') + ';border-radius:6px;cursor:pointer;font-size:0.9em;font-weight:500' +
-            (hasData ? '' : ';opacity:0.5') + '">' +
-            (dateStr === todayStr ? 'TODAY' : day) + '<br><small>' + dateStr.slice(5) + '</small></button>';
+    var active = dateStr === ds ? " active" : "";
+    html += "<button class=\"day-btn" + active + "\" onclick=\"goDate('" + dateStr + "')\" style=\"margin:0 4px;padding:8px 12px;background:" +
+            (dateStr === ds ? "#E8451A" : "#2a2a2a") + ";color:" + (dateStr === ds ? "#fff" : (hasData ? "#f0ece0" : "#555")) +
+            ";border:1px solid " + (dateStr === ds ? "#E8451A" : "#444") + ";border-radius:6px;cursor:pointer;font-size:0.9em;font-weight:500" +
+            (hasData ? "" : ";opacity:0.5") + "\">" +
+            (dateStr === todayStr ? "TODAY" : day) + "<br><small>" + dateStr.slice(5) + "</small></button>";
   }
-  html += '</div>';
+  html += "</div>";
   bar.innerHTML = html;
 }
 
 function goDate(ds) {
-  currentDate = new Date(ds + 'T00:00:00');
-  // Switch to Browse tab when clicking a day
+  selectedDateStr = ds;
+  currentDate = new Date(ds + "T12:00:00.000Z");
   showTab('browse');
   displayWorkouts();
 }
 
 function displayWorkouts() {
-  buildDaysBar(); // Build sticky days selector
+  buildDaysBar();
   var grid = document.getElementById("grid");
-  var ds = localDate(currentDate);
+  var ds = selectedDateStr;
   var all = (allData.workouts && allData.workouts[ds]) ? allData.workouts[ds] : [];
   var filtered = [];
   for (var i = 0; i < all.length; i++) {
