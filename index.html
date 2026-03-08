@@ -112,6 +112,7 @@ input[type=number].timer-inp{width:7ch;min-width:7ch}
 .find-form{max-width:560px;margin:0 auto;background:#1e1e1e;padding:24px;border-radius:12px;border:1px solid #2a2a2a}
 .find-form h2{color:#F5C518;margin-bottom:18px;font-size:1.2em}
 .form-group{margin-bottom:16px}
+.form-group{position:relative}
 .form-group label{display:block;color:#1A9B8A;font-weight:600;margin-bottom:6px;font-size:.9em;font-family:'Oswald','Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
 .form-group input[type=number]{width:100%;padding:9px;background:#111;border:1px solid #333;border-radius:6px;color:#f0ece0;font-size:1em;font-family:'Oswald','Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
 .form-group input[type=number]::-webkit-inner-spin-button,
@@ -121,6 +122,15 @@ input[type=number].timer-inp{width:7ch;min-width:7ch}
 .time-row #findTime{width:6ch;min-width:6ch;max-width:6ch;text-align:center;font-size:1.15em;padding:10px 10px}
 .time-row .time-btn{width:auto;border-radius:999px;background:#E8451A;padding:10px 14px;font-size:1.05em}
 .eq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:7px}
+.eq-info-btn{margin-left:6px;padding:2px 6px;font-size:.75em;background:transparent;border:1px solid #1A9B8A;border-radius:50%;color:#1A9B8A;cursor:pointer;vertical-align:middle;line-height:1.2}
+.eq-info-btn:hover{background:#1A9B8A;color:#111}
+.eq-info-popover{position:absolute;z-index:100;max-width:320px;padding:10px 12px;margin-top:4px;background:#1e1e1e;border:1px solid #1A9B8A;border-radius:8px;font-size:.85em;color:#e8e4d8;line-height:1.4;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.eq-info-popover[aria-hidden="false"]{display:block}
+.eq-label-row{display:inline-flex;align-items:center;flex-wrap:wrap;gap:8px}
+.eq-full-gym-btn{margin-left:16px;padding:4px 10px;font-size:.8em;background:#2a2a2a;border:1px solid #444;border-radius:6px;color:#e8e4d8;cursor:pointer;font-family:inherit;font-weight:600}
+.eq-full-gym-btn:hover{background:#333;border-color:#1A9B8A;color:#1A9B8A}
+.eq-full-gym-btn.active{background:#1A9B8A;border-color:#1A9B8A;color:#111}
+.eq-full-gym-btn.active:hover{background:#159;border-color:#159;color:#fff}
 .eq-item{display:flex;align-items:center;gap:7px;padding:7px 9px;background:#111;border-radius:5px;cursor:pointer;color:#e8e4d8;font-size:.85em}
 .eq-item:hover{background:#252525}
 .eq-item input{cursor:pointer;accent-color:#E8451A;flex-shrink:0}
@@ -319,27 +329,26 @@ input[type=number].timer-inp{width:7ch;min-width:7ch}
       </label>
     </div>
     <div class="form-group">
-      <label>Available Equipment</label>
+      <label class="eq-label-row">Available Equipment <button type="button" class="eq-info-btn" id="eqInfoBtn" onclick="toggleEqInfo(event)" title="About body-only exercises" aria-label="Information">ℹ️</button> <button type="button" class="eq-full-gym-btn" id="eqFullGymBtn" onclick="toggleFullGym()">FULL GYM</button></label>
+      <div id="eqInfoPopover" class="eq-info-popover" role="dialog" aria-hidden="true" style="display:none">We assume some exercises can be done anywhere with just your body (e.g. push-ups, burpees, sit-ups, lunges, handstand walk) and are not listed here. Select only equipment you have access to.</div>
       <div class="eq-grid">
         <label class="eq-item"><input type="checkbox" value="RUN"> RUN</label>
-        <label class="eq-item"><input type="checkbox" value="BARBELL"> BARBELL</label>
-        <label class="eq-item"><input type="checkbox" value="PULL-UP"> PULL-UP</label>
-        <label class="eq-item"><input type="checkbox" value="PUSH-UP"> PUSH-UP</label>
-        <label class="eq-item"><input type="checkbox" value="ROW"> ROW</label>
+        <label class="eq-item"><input type="checkbox" value="SKI"> SKI</label>
         <label class="eq-item"><input type="checkbox" value="BIKE"> BIKE</label>
+        <label class="eq-item"><input type="checkbox" value="BARBELL"> BARBELL</label>
+        <label class="eq-item"><input type="checkbox" value="RIG RACK"> RIG / RACK</label>
+        <label class="eq-item"><input type="checkbox" value="PULLUP BAR"> PULLUP BAR</label>
+        <label class="eq-item"><input type="checkbox" value="ROW"> ROW</label>
         <label class="eq-item"><input type="checkbox" value="DUMBBELL"> DUMBBELL</label>
         <label class="eq-item"><input type="checkbox" value="KETTLEBELL"> KETTLEBELL</label>
         <label class="eq-item"><input type="checkbox" value="ROPE CLIMB"> ROPE CLIMB</label>
-        <label class="eq-item"><input type="checkbox" value="DOUBLE UNDERS"> DOUBLE UNDERS</label>
+        <label class="eq-item"><input type="checkbox" value="SKIPPING ROPE"> SKIPPING ROPE</label>
         <label class="eq-item"><input type="checkbox" value="WALL BALL"> WALL BALL</label>
-        <label class="eq-item"><input type="checkbox" value="HANDSTAND"> HANDSTAND</label>
-        <label class="eq-item"><input type="checkbox" value="WALL WALK"> WALL WALK</label>
-        <label class="eq-item"><input type="checkbox" value="LUNGE"> LUNGE</label>
+        <label class="eq-item"><input type="checkbox" value="WALL DRILLS"> WALL DRILLS</label>
         <label class="eq-item"><input type="checkbox" value="RINGS"> RINGS</label>
-        <label class="eq-item"><input type="checkbox" value="SKI"> SKI</label>
         <label class="eq-item"><input type="checkbox" value="SLED"> SLED</label>
-        <label class="eq-item"><input type="checkbox" value="TOES TO BAR"> TOES TO BAR</label>
         <label class="eq-item"><input type="checkbox" value="BOX"> BOX</label>
+        <label class="eq-item"><input type="checkbox" value="D-BALL"> D-BALL</label>
       </div>
     </div>
     <div style="display:flex;gap:8px">
@@ -471,26 +480,27 @@ try {
 } catch(e) {}
 
 var EQ = {
-  "RUN":         ["run","running","meter","mile","km"],
-  "BARBELL":     ["barbell","clean","snatch","deadlift","squat","press","jerk"],
-  "PULL-UP":     ["pull-up","pullup","pull up","chest-to-bar","chest to bar","c2b","muscle-up","muscle up","mu","bar muscle up","bmu","toes to bar","toes-to-bar","ttb","t2b"],
-  "PUSH-UP":     ["push-up","pushup","push up"],
-  "ROW":         ["row","rowing","rower","cal row"],
-  "BIKE":        ["bike","assault bike","echo bike","cal bike"],
-  "DUMBBELL":    ["dumbbell","db "],
-  "KETTLEBELL":  ["kettlebell","kb "],
-  "ROPE CLIMB":  ["rope climb"],
-  "DOUBLE UNDERS":["double under"," du "],
-  "WALL BALL":   ["wall ball","wallball"],
-  "HANDSTAND":   ["handstand","hspu"],
-  "WALL WALK":   ["wall walk","wallwalk"],
-  "LUNGE":       ["lunge","lunges"],
-  "RINGS":       ["ring","rings","muscle-up","muscle up"],
-  "SKI":         ["ski","ski erg","skierg"],
-  "SLED":        ["sled","sled push","sled pull"],
-  "TOES TO BAR": ["toes to bar","toes-to-bar","ttb","t2b"],
-  "BOX":         ["box","box jump","box step","bjo","box jump over","burpee box jump over"]
+  "RUN": ["run", "running", "meter", "mile", "km", "400m", "800m", "200m", "400 m"],
+  "BARBELL": ["barbell", "overhead squat", "ohs", "deadlift", "sumo deadlift", "romanian deadlift", "rdl", "clean", "squat clean", "power clean", "snatch", "squat snatch", "power snatch", "clean & jerk", "clean and jerk", "push press", "split jerk", "push jerk", "shoulder to overhead", "s2oh", "strict press", "overhead press", "floor press", "bent over row", "barbell thruster", "barbell lunge", "front rack", "back rack", "good morning", "hang clean", "hang snatch", "muscle snatch", "muscle clean"],
+  "RIG RACK": ["back squat", "front squat", "overhead press", "strict press", "push press", "push jerk", "split jerk", "bench press", "rig", "rack", "squat rack"],
+  "PULLUP BAR": ["strict pull-up", "strict pull up", "pull-up", "pullup", "pull up", "kipping pull-up", "butterfly pull-up", "chest-to-bar", "chest to bar", "c2b", "chin-up", "chin up", "weighted pull-up", "mixed grip pull-up", "bar hang", "toes to bar", "toes-to-bar", "ttb", "t2b", "knees to elbows", "k2e", "l-sit hang", "around the world", "windshield wiper", "strict leg raise", "bar muscle-up", "bmu", "strict bar muscle-up", "one-arm pull-up", "pullover", "archer pull-up", "typewriter pull-up", "dead hang", "scapular pull-up", "negative pull-up", "commando pull-up", "burpee pull up", "burpee pull-up"],
+  "ROW": ["row", "rowing", "rower", "cal row", "erg", "concept2"],
+  "BIKE": ["bike", "assault bike", "echo bike", "bikeerg", "bike erg", "cal bike", "concept2 bike"],
+  "DUMBBELL": ["dumbbell", "dumbbells", " db ", "db.", "2x dumbbell", "2x db", "double dumbbell", "dumbbell snatch", "dumbbell clean", "dumbbell clean & jerk", "dumbbell thruster", "dumbbell jerk", "devil press", "man-maker", "renegade row", "dumbbell bench press", "dumbbell floor press", "goblet lunge", "dumbbell overhead squat", "goblet squat", "dumbbell box step-up", "farmer walk", "dumbbell strict press", "dumbbell push press", "dumbbell deadlift", "dumbbell shoulder to overhead", "dumbbell burpee", "overhead lunge"],
+  "KETTLEBELL": ["kettlebell", "kettlebells", " kb ", "ktb", "2x kettlebell", "2x kb", "double kettlebell", "russian swing", "american swing", "kettlebell swing", "goblet squat", "kettlebell snatch", "kettlebell clean", "kettlebell clean & jerk", "turkish get-up", "tgu", "kettlebell jerk", "kettlebell thruster", "sdhp", "sumo deadlift high pull", "suitcase carry", "farmer carry", "kettlebell lunge", "kettlebell front squat", "kettlebell deadlift", "kettlebell shoulder to overhead", "kettlebell push press", "kettlebell press"],
+  "ROPE CLIMB": ["rope climb", "rope climbs"],
+  "SKIPPING ROPE": ["double under", "double unders", " du ", "triple under", "triple unders", "rope crossover", "rope crossovers", "skip", "jump rope"],
+  "WALL BALL": ["wall ball", "wallball", " wb ", "w.b", "wall ball shot", "wall ball clean", "wall ball thruster", "wall ball sit-up", "wall ball lunge", "wall ball chest pass", "wall ball lateral toss", "wall ball slam", "over-the-shoulder toss", "weighted wall ball"],
+  "WALL DRILLS": ["handstand push-up", "handstand push up", "hspu", "kipping hspu", "deficit handstand", "wall climb", "wall walk", "wallwalk", "strict handstand push-up", "wall facing handstand"],
+  "RINGS": ["ring row", "ring rows", "ring push-up", "ring push up", "ring support", "ring pull-up", "ring pull up", "ring dip", "ring dips", "l-sit on rings", "ring toes to bar", "ring rollout", "skin the cat", "ring muscle-up", "ring muscle up", "strict ring muscle-up", "ring chest-to-bar", "forward roll", "backward roll"],
+  "SKI": ["ski", "ski erg", "skierg", "ski erg"],
+  "SLED": ["sled push", "sled pull", "sled drag", "hand-over-hand", "sled sprint", "lateral sled", "sled row", "sled chest press", "sled bear crawl"],
+  "BOX": ["box jump", "box jumps", "box jump-over", "box step-up", "box step up", "box step-over", "weighted box step-up", "burpee box jump", "burpee box jump-over", "box dip", "box pike push-up", "seated box jump", "bjo"],
+  "D-BALL": ["d-ball", "dball", "slam ball", "atlas stone", "sandbag", " d-ball slam", "d-ball over", "d-ball clean", "bear hug squat", "bear hug carry", "d-ball front rack", "d-ball chest pass", "ground to overhead", "atlas stone clean", "atlas stone to shoulder", "atlas stone over bar", "platform load", "atlas stone extension"]
 };
+
+/** תרגילים שמניחים שכולם יכולים – לא מוצגים למשתמש; אימון שמכיל רק אותם נחשב בר־ביצוע. */
+var EQ_BODY_ONLY = ["sit-up", "sit up", "sit-ups", "v-up", "v-ups", "burpee", "burpees", "push-up", "push up", "push-up", "handstand", "walking lunge", "reverse lunge", "forward lunge", "air squat", "air squats", "lunges", "jumping lunge", "hollow rock", "hollow hold", "plank", "side plank", "mountain climber", "jumping jack", "bear crawl", "broad jump", "superman", "arch hold", "weighted sit-up", "burpees over the bar"];
 
 var WOD_SECTION_RE = /wod|metcon|conditioning|amrap|emom|for\s*time|workout/;
 function getWodOnlyText(w) {
@@ -643,6 +653,8 @@ document.addEventListener("DOMContentLoaded", function() {
       else if (delta < -55 && idx < dates.length - 1) { goDate(dates[idx + 1]); e.preventDefault(); }
     }, { passive: false });
   })();
+  var eqGrid = document.querySelector(".eq-grid");
+  if (eqGrid) eqGrid.addEventListener("change", updateFullGymButtonState);
   document.querySelectorAll(".timer-inp, .timer-inp-num, #stopwatchInput, #stopwatchCountDownSec, #intCountDown, #intWork, #intRest, #intRounds, #intSets, #intRestSets").forEach(function(inp) {
     if (!inp || !inp.addEventListener) return;
     inp.addEventListener("focus", function() { this.select(); });
@@ -922,6 +934,42 @@ function findWorkout() {
   el.innerHTML = display.map(function(r) { return buildCard(r.w, r.sc, r.label); }).join("");
 }
 
+function toggleFullGym() {
+  var cbs = document.querySelectorAll(".eq-grid .eq-item input[type='checkbox']");
+  if (!cbs.length) return;
+  var allChecked = true;
+  for (var i = 0; i < cbs.length; i++) { if (!cbs[i].checked) { allChecked = false; break; } }
+  for (var j = 0; j < cbs.length; j++) cbs[j].checked = !allChecked;
+  var btn = document.getElementById("eqFullGymBtn");
+  if (btn) btn.classList.toggle("active", !allChecked);
+}
+
+function updateFullGymButtonState() {
+  var cbs = document.querySelectorAll(".eq-grid .eq-item input[type='checkbox']");
+  var btn = document.getElementById("eqFullGymBtn");
+  if (!btn || !cbs.length) return;
+  var allChecked = true;
+  for (var i = 0; i < cbs.length; i++) { if (!cbs[i].checked) { allChecked = false; break; } }
+  btn.classList.toggle("active", allChecked);
+}
+
+function toggleEqInfo(e) {
+  if (e) e.stopPropagation();
+  var pop = document.getElementById("eqInfoPopover");
+  var btn = document.getElementById("eqInfoBtn");
+  if (!pop) return;
+  var isOpen = pop.getAttribute("aria-hidden") !== "true";
+  pop.setAttribute("aria-hidden", isOpen ? "true" : "false");
+  pop.style.display = isOpen ? "none" : "block";
+  if (!isOpen) {
+    var close = function(ev) {
+      if (ev && (pop.contains(ev.target) || (btn && btn.contains(ev.target)))) return;
+      pop.setAttribute("aria-hidden", "true"); pop.style.display = "none"; document.removeEventListener("click", close);
+    };
+    setTimeout(function() { document.addEventListener("click", close); }, 0);
+  }
+}
+
 function resetFindForm() {
   // Uncheck all special workouts
   document.getElementById("includeHero").checked = false;
@@ -940,6 +988,7 @@ function resetFindForm() {
   
   // Clear results
   document.getElementById("findResults").innerHTML = "";
+  updateFullGymButtonState();
 }
 
 function scoreWod(w, t, eq) {
