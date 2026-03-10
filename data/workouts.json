@@ -2775,56 +2775,6 @@
     "2026-03-10": [
       {
         "date": "2026-03-10",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-10/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "thoracic rotation",
-              "scorpions",
-              "lat stretch on box"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 hang high pulls",
-              "10 plank push ups",
-              "10 squat jumps"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "BENCH PRESS 15MIN",
-            "lines": [
-              "3 sets",
-              "5 bench press at 78%",
-              "1 drop set",
-              "max reps at 50%",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "9-12-15-12-9",
-              "power cleans",
-              "push press *",
-              "box jumps 60/50cm",
-              "* barbell: 40/30kg",
-              "* *rx+ option: handstand push ups",
-              "* aerobic power [vo2 max]"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-10",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260310",
@@ -2906,6 +2856,126 @@
       },
       {
         "date": "2026-03-10",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "sections": [
+          {
+            "title": "Feeks",
+            "lines": [
+              "For time:",
+              "2 100-meter shuttle sprints",
+              "2 dumbbell squat clean thrusters",
+              "4 100-meter shuttle sprints",
+              "4 dumbbell squat clean thrusters",
+              "6 100-meter shuttle sprints",
+              "6 dumbbell squat clean thrusters",
+              "8 100-meter shuttle sprints",
+              "8 dumbbell squat clean thrusters",
+              "10 100-meter shuttle sprints",
+              "10 dumbbell squat clean thrusters",
+              "12 100-meter shuttle sprints",
+              "12 dumbbell squat clean thrusters",
+              "14 100-meter shuttle sprints",
+              "14 dumbbell squat clean thrusters",
+              "16 100-meter shuttle sprints",
+              "16 dumbbell squat clean thrusters",
+              "♀ 45-lb dumbbells",
+              "♂ 65-lb dumbbells"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-10",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 22.2",
+            "lines": [
+              "1-2-3-4-5-6-7-8-9-10-9-8-7-6-5-4-3-2-1 reps for time of:",
+              "Deadlifts",
+              "Bar-facing burpees",
+              "155-lb barbell",
+              "Time cap: 10 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 22.2"
+      },
+      {
+        "date": "2026-03-10",
+        "source": "linchpin",
+        "source_name": "CrossFit Linchpin",
+        "url": "https://crossfitlinchpin.com/blogs/wod",
+        "note": "⚠️ This source provides daily workouts only",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "\"Cindy\"",
+              "AMRAP 20 minutes of:",
+              "5 Pull-ups",
+              "10 Push-ups",
+              "15 Air Squats",
+              "*Compare to 04.02.2024"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-10",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-03-10/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "thoracic rotation",
+              "scorpions",
+              "lat stretch on box"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 hang high pulls",
+              "10 plank push ups",
+              "10 squat jumps"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "BENCH PRESS 15MIN",
+            "lines": [
+              "3 sets",
+              "5 bench press at 78%",
+              "1 drop set",
+              "max reps at 50%",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "9-12-15-12-9",
+              "power cleans",
+              "push press *",
+              "box jumps 60/50cm",
+              "* barbell: 40/30kg",
+              "* *rx+ option: handstand push ups",
+              "* aerobic power [vo2 max]"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-03-10",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -2958,37 +3028,6 @@
       },
       {
         "date": "2026-03-10",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "sections": [
-          {
-            "title": "Feeks",
-            "lines": [
-              "For time:",
-              "2 100-meter shuttle sprints",
-              "2 dumbbell squat clean thrusters",
-              "4 100-meter shuttle sprints",
-              "4 dumbbell squat clean thrusters",
-              "6 100-meter shuttle sprints",
-              "6 dumbbell squat clean thrusters",
-              "8 100-meter shuttle sprints",
-              "8 dumbbell squat clean thrusters",
-              "10 100-meter shuttle sprints",
-              "10 dumbbell squat clean thrusters",
-              "12 100-meter shuttle sprints",
-              "12 dumbbell squat clean thrusters",
-              "14 100-meter shuttle sprints",
-              "14 dumbbell squat clean thrusters",
-              "16 100-meter shuttle sprints",
-              "16 dumbbell squat clean thrusters",
-              "♀ 45-lb dumbbells",
-              "♂ 65-lb dumbbells"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-10",
         "source": "benchmark",
         "source_name": "CrossFit Benchmark Workouts",
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
@@ -3005,47 +3044,8 @@
           }
         ],
         "note": "Benchmark: Isabel"
-      },
-      {
-        "date": "2026-03-10",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 22.2",
-            "lines": [
-              "1-2-3-4-5-6-7-8-9-10-9-8-7-6-5-4-3-2-1 reps for time of:",
-              "Deadlifts",
-              "Bar-facing burpees",
-              "155-lb barbell",
-              "Time cap: 10 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 22.2"
-      },
-      {
-        "date": "2026-03-10",
-        "source": "linchpin",
-        "source_name": "CrossFit Linchpin",
-        "url": "https://crossfitlinchpin.com/blogs/wod",
-        "note": "⚠️ This source provides daily workouts only",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "\"Cindy\"",
-              "AMRAP 20 minutes of:",
-              "5 Pull-ups",
-              "10 Push-ups",
-              "15 Air Squats",
-              "*Compare to 04.02.2024"
-            ]
-          }
-        ]
       }
     ]
   },
-  "last_updated": "2026-03-10T06:54:17.993021"
+  "last_updated": "2026-03-10T08:50:04.288325"
 }
