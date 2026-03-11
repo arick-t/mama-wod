@@ -54,27 +54,6 @@
       },
       {
         "date": "2026-02-25",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "sections": [
-          {
-            "title": "Hildy",
-            "lines": [
-              "For time:",
-              "100-calorie row",
-              "75 thrusters",
-              "50 pull-ups",
-              "75 wall-ball shots",
-              "100-calorie row",
-              "If you've got a weight vest or body armor, wear it.",
-              "♀ 35-lb barbell, 14-lb medicine ball to a 9-foot target, 14-lb weight vest",
-              "♂ 45-lb barbell, 20-lb medicine ball to a 10-foot target, 20-lb weight vest"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-02-25",
         "source": "open",
         "source_name": "CrossFit Open Workouts",
         "url": "https://games.crossfit.com/workouts/open",
@@ -143,24 +122,6 @@
               "5:00 Machine Flush",
               "3:00 Mobility",
               "Rotate through as many modalities as you can, excluding running but not walking. Pace should feel very very easy, but elicit a nice sweat to aid in your mobility routine."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-02-26",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "sections": [
-          {
-            "title": "Taylor",
-            "lines": [
-              "4 rounds for time of:",
-              "400-meter run",
-              "5 burpee muscle-ups",
-              "If you've got a weighted vest or body armor, wear it.",
-              "♀ 14-lb vest",
-              "♂ 20-lb vest"
             ]
           }
         ]
@@ -246,6 +207,25 @@
               "* prone press"
             ],
             "sub_title": "tabata (20sec on/10sec off) x 8 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-02-26",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "U.S. Army Specialist David Wayne Taylor, 20, of Dixon, Kentucky, assigned to the 2nd Battalion, 508th Parachute Infantry Regiment, 4th Brigade Combat Team, 82nd Airborne Division, based in Fort Bragg, North Carolina, died in Kandahar province, Afghanistan on March 29, 2012, from wounds sustained in an accident at an ammunition supply point.\nHe is survived by his sisters Tamara Taylor and Christina Abell, and mother Sarah Whitledge Taylor.\nFirst posted",
+        "sections": [
+          {
+            "title": "Taylor",
+            "sub_title": "4 rounds for time of:",
+            "lines": [
+              "400-meter run",
+              "5 burpee muscle-ups",
+              "If you've got a weighted vest or body armor, wear it.",
+              "♀ 14-lb vest",
+              "♂ 20-lb vest"
+            ]
           }
         ]
       },
@@ -348,25 +328,6 @@
       },
       {
         "date": "2026-02-27",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "sections": [
-          {
-            "title": "Brehm",
-            "lines": [
-              "For time:",
-              "10 rope climbs to 15 feet",
-              "20 back squats",
-              "30 handstand push-ups",
-              "40-calorie row",
-              "*♀ 155 lb*",
-              "*♂ 225 lb*"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-02-27",
         "source": "open",
         "source_name": "CrossFit Open Workouts",
         "url": "https://games.crossfit.com/workouts/open",
@@ -427,6 +388,26 @@
               "* • rest 3:00 between amraps",
               "* score: total row cal",
               "* aerobic power [vo2 max]"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-27",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "U.S. Army Sgt. Dale G. Brehm, 23, of Turlock, California, assigned to the 2nd Battalion, 75th Ranger Regiment, based in Fort Lewis, Washington, died on March 18, 2006, when he came under small-arms fire from enemy forces during combat operations in Ar Ramadi, Iraq.\nHe is survived by his wife, Raini; father, William; stepmother, Linda; and mother, Laura Williams.\nFirst posted",
+        "sections": [
+          {
+            "title": "Brehm",
+            "sub_title": "For time:",
+            "lines": [
+              "10 rope climbs to 15 feet",
+              "20 back squats",
+              "30 handstand push-ups",
+              "40-calorie row",
+              "*♀ 155 lb*",
+              "*♂ 225 lb*"
             ]
           }
         ]
@@ -499,25 +480,6 @@
               "2 @ 85-90%",
               "It’s ok if you don’t know your perecentages – your heavy single to start will give you guidance. The goal is for the second wave to be heavier than the first.",
               "Spend at least 2:00 on a machine or walking nice and slow during your rest periods"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-02-28",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "sections": [
-          {
-            "title": "Bradshaw",
-            "lines": [
-              "10 rounds for time of:",
-              "3 handstand push-ups",
-              "6 deadlifts",
-              "12 pull-ups",
-              "24 double-unders",
-              "*♀ 155 lb*",
-              "*♂ 225 lb*"
             ]
           }
         ]
@@ -629,6 +591,26 @@
       },
       {
         "date": "2026-02-28",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "U.S. Army 1st Lt. Brian Bradshaw, 24, of Steilacoom, Washington, assigned to the 1st Battalion, 501st Parachute Infantry Regiment, 4th Airborne Brigade Combat Team, 25th Infantry Division, based in Fort Richardson, Alaska, died in Kheyl, Afghanistan, on June 25, 2009, from wounds suffered when insurgents detonated a roadside bomb near his vehicle.\nHe is survived by his parents, Paul and Mary; and brother, Robert.\nFirst posted",
+        "sections": [
+          {
+            "title": "Bradshaw",
+            "sub_title": "10 rounds for time of:",
+            "lines": [
+              "3 handstand push-ups",
+              "6 deadlifts",
+              "12 pull-ups",
+              "24 double-unders",
+              "*♀ 155 lb*",
+              "*♂ 225 lb*"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-02-28",
         "source": "benchmark",
         "source_name": "CrossFit Benchmark Workouts",
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
@@ -660,22 +642,6 @@
               "Rest Day",
               "Back Squats Are Not the Enemy",
               "When experts recommend replacing back squats with single-leg movements to avoid pain, they're treating the symptom, not the cause. Back squats are an essential functional movement that builds capacity across all aspects of fitness. When they cause pain, the solution isn't to abandon them but to scale the load, fix your technique, and address gaps in your overall program. For lifelong health and fitness, the answer is simple: squat more, more often."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-01",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "sections": [
-          {
-            "title": "Hortman",
-            "lines": [
-              "Complete as many rounds as possible in 45 minutes of:",
-              "Run 800 meters",
-              "80 squats",
-              "8 muscle-ups"
             ]
           }
         ]
@@ -753,6 +719,23 @@
               "* aerobic power [lactate threshold]"
             ],
             "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-03-01",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "U.S. Army Capt. John D. Hortman, 30, of Inman, South Carolina, assigned to the 1st Battalion, 160th Special Operations Aviation Regiment, based in Fort Campbell, Kentucky, died on Aug. 8, 2011, in Fort Benning, Georgia, in a helicopter accident during a military training exercise.\nHe is survived by his mother, Brenda Jones; sister, Jill; and brother, Andy Pierce.\nFirst posted",
+        "sections": [
+          {
+            "title": "Hortman",
+            "sub_title": "Complete as many rounds as possible in 45 minutes of:",
+            "lines": [
+              "Run 800 meters",
+              "80 squats",
+              "8 muscle-ups"
+            ]
           }
         ]
       },
@@ -837,29 +820,6 @@
               "6 Sets",
               "10 Neutral Grip DB Strict Press",
               "Rest 2:00"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-02",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "sections": [
-          {
-            "title": "Fournier",
-            "lines": [
-              "For time:",
-              "50 shoulder-to-overheads",
-              "50-foot",
-              "arm-over-arm sled pull",
-              "40 burpees",
-              "50-foot arm-over-arm sled pull",
-              "30 sumo deadlift high pulls",
-              "50-foot arm-over-arm sled pull",
-              "♀ 75-lb STO, 55-lb SDHP",
-              "♂ 115-lb STO, 85-lb SDHP",
-              "For the sled pull, use a load that is challenging but doesn't require extended rest periods."
             ]
           }
         ]
@@ -993,6 +953,30 @@
       },
       {
         "date": "2026-03-02",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "On Wednesday, Aug. 19, 2020, Mike Fournier, 52, died tragically in a helicopter crash while fighting the Hills Fire near Coalinga, California. Fournier was the only person aboard the Bell UH-1H aircraft, which crashed during a water-dropping mission. The cause of the crash is unknown at this time.\nA former pilot for a news station in San Diego, Fournier later flew for SoCal Edison and more recently began contracting with Cal Fire to fight the wildfires in California.\nFournier was a CrossFit Level 2 Trainer. He began coaching at Cyn Gym CrossFit in 2011.\nFournier is survived by his wife, LeAnne, and two daughters, Riley, 16, and Mikena, 20. His family enjoyed cheering for him from the sidelines at the CrossFit Games and\ncan be seen celebrating with him\nfollowing his win in the Pullgatory event in 2013.\nFirst posted",
+        "sections": [
+          {
+            "title": "Fournier",
+            "sub_title": "For time:",
+            "lines": [
+              "50 shoulder-to-overheads",
+              "50-foot",
+              "arm-over-arm sled pull",
+              "40 burpees",
+              "50-foot arm-over-arm sled pull",
+              "30 sumo deadlift high pulls",
+              "50-foot arm-over-arm sled pull",
+              "♀ 75-lb STO, 55-lb SDHP",
+              "♂ 115-lb STO, 85-lb SDHP",
+              "For the sled pull, use a load that is challenging but doesn't require extended rest periods."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-02",
         "source": "benchmark",
         "source_name": "CrossFit Benchmark Workouts",
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
@@ -1074,24 +1058,6 @@
               "During your rest, easy flushing on the Echo Bike or C2 Bike works best.",
               "*1 Shuttle Run = 25ft + 25ft",
               "Any style snatch is acceptable."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-03",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "sections": [
-          {
-            "title": "Johnson",
-            "lines": [
-              "Complete as many rounds and reps as possible in 20 minutes of:",
-              "9 deadlifts",
-              "8 muscle-ups",
-              "9 squat cleans",
-              "♀ 165-lb deadlifts, 105-lb squat cleans",
-              "♂ 245-lb deadlifts, 155-lb squat cleans"
             ]
           }
         ]
@@ -1242,6 +1208,25 @@
       },
       {
         "date": "2026-03-03",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "U.S. Marine 1st Lt. Michael E. Johnson, 25, of the 7th Communications Battalion, 3rd Marine Headquarters Group, III Marine Expeditionary Force, headquartered in Okinawa, Japan, died Sept. 8, 2009, while supporting combat operations in Kunar Province, Afghanistan.\nHe is survived by his wife, Durinda.\nFirst posted",
+        "sections": [
+          {
+            "title": "Johnson",
+            "sub_title": "Complete as many rounds and reps as possible in 20 minutes of:",
+            "lines": [
+              "9 deadlifts",
+              "8 muscle-ups",
+              "9 squat cleans",
+              "♀ 165-lb deadlifts, 105-lb squat cleans",
+              "♂ 245-lb deadlifts, 155-lb squat cleans"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-03",
         "source": "benchmark",
         "source_name": "CrossFit Benchmark Workouts",
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
@@ -1300,25 +1285,6 @@
               "Mid Shin Hang Squat Clean w/Pause in catch",
               "3×1 @ 80-90%",
               "Bike Between Sets as needed to Flush"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-04",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "sections": [
-          {
-            "title": "Bull",
-            "lines": [
-              "2 rounds for time of:",
-              "200 double-unders",
-              "50 overhead squats",
-              "50 pull-ups",
-              "1-mile run",
-              "♀ 95-lb barbell",
-              "♂ 135-lb barbell"
             ]
           }
         ]
@@ -1493,6 +1459,26 @@
       },
       {
         "date": "2026-03-04",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "U.S. Marine Corps Capt. Brandon \"Bull\" Barrett, 27, of Marion, Indiana, assigned to the 1st Battalion, 6th Marine Regiment, 2nd Marine Division, II Marine Expeditionary Force, based out of Camp Lejeune, North Carolina, was killed on May 5, 2010, while supporting combat operations in Helmand Province, Afghanistan.\nHe is survived by his parents, Cindy and Brett; sisters, Ashley and Taylor; brother, Brock; and his grandmother, Carmen Johnson.\nFirst posted",
+        "sections": [
+          {
+            "title": "Bull",
+            "sub_title": "2 rounds for time of:",
+            "lines": [
+              "200 double-unders",
+              "50 overhead squats",
+              "50 pull-ups",
+              "1-mile run",
+              "♀ 95-lb barbell",
+              "♂ 135-lb barbell"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-04",
         "source": "benchmark",
         "source_name": "CrossFit Benchmark Workouts",
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
@@ -1566,29 +1552,6 @@
               "5:00 Machine Flush",
               "3:00 Mobility",
               "Rotate through as many modalities as you can, excluding running but not walking. Pace should feel very very easy, but elicit a nice sweat to aid in your mobility routine."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-05",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "sections": [
-          {
-            "title": "Arnie",
-            "lines": [
-              "With a single kettlebell for time:",
-              "21 Turkish get-ups, right arm",
-              "50 kettlebell swings",
-              "21 overhead squats, left arm",
-              "50 kettlebell swings",
-              "21 overhead squats, right arm",
-              "50 kettlebell swings",
-              "21 Turkish get-ups, left arm",
-              "*♀ 53 lb*",
-              "*♂ 70 lb*",
-              "Los Angeles County Firefighter Specialist Arnaldo \"Arnie\" Quinones, 34, was killed in the line of duty on Sunday, Aug. 30, 2009, during the Station Fire. His emergency-response vehicle went over the side of the road and fell 800 feet into a steep canyon during fire suppression activities protecting Camp 16 outside the City of Palmdale, California."
             ]
           }
         ]
@@ -1737,6 +1700,30 @@
       },
       {
         "date": "2026-03-05",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "He is survived by his wife, Lori; and daughter, Sophia Grace, born three weeks after his death.\nA\nfund for Arnie's family\nhas been established by the Los Angeles County Fire Department.\nFirst posted",
+        "sections": [
+          {
+            "title": "Arnie",
+            "sub_title": "With a single kettlebell for time:",
+            "lines": [
+              "21 Turkish get-ups, right arm",
+              "50 kettlebell swings",
+              "21 overhead squats, left arm",
+              "50 kettlebell swings",
+              "21 overhead squats, right arm",
+              "50 kettlebell swings",
+              "21 Turkish get-ups, left arm",
+              "*♀ 53 lb*",
+              "*♂ 70 lb*",
+              "Los Angeles County Firefighter Specialist Arnaldo \"Arnie\" Quinones, 34, was killed in the line of duty on Sunday, Aug. 30, 2009, during the Station Fire. His emergency-response vehicle went over the side of the road and fell 800 feet into a steep canyon during fire suppression activities protecting Camp 16 outside the City of Palmdale, California."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-05",
         "source": "benchmark",
         "source_name": "CrossFit Benchmark Workouts",
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
@@ -1810,25 +1797,6 @@
               "workout review will occur within the first 15 min of session.",
               "please show up within the last 30 minutes of a session to ensure enough time for you to complete the workout.",
               "We cannot ensure a judge will be present for the 12:15 class. please plan accordingly if you need a judge to submit your score!"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-06",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "sections": [
-          {
-            "title": "Rankel",
-            "lines": [
-              "Complete as many rounds as possible in 20 minutes of:",
-              "6 deadlifts",
-              "7 burpee pull-ups",
-              "10 kettlebell swings",
-              "200-meter run",
-              "♀ 155-lb barbell, 53-lb kettlebell",
-              "♂ 225-lb barbell, 70-lb kettlebell"
             ]
           }
         ]
@@ -1954,6 +1922,26 @@
       },
       {
         "date": "2026-03-06",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "U.S. Marine Corps Sgt. John Rankel, 23, of Speedway, Indiana, assigned to 3rd Battalion, 1st Marine Regiment, 1st Marine Division, 1 Marine Expeditionary Force, based out of Camp Pendleton, California, was killed on June 7, 2010, while supporting combat operations in Helmand Province, Afghanistan.\nHe is survived by mother and stepfather, Don and Trisha Stockhoff; father and stepmother, Kevin and Kim; and brothers, Nathan Stockhoff and Tyler.\nFirst posted",
+        "sections": [
+          {
+            "title": "Rankel",
+            "sub_title": "Complete as many rounds as possible in 20 minutes of:",
+            "lines": [
+              "6 deadlifts",
+              "7 burpee pull-ups",
+              "10 kettlebell swings",
+              "200-meter run",
+              "♀ 155-lb barbell, 53-lb kettlebell",
+              "♂ 225-lb barbell, 70-lb kettlebell"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-06",
         "source": "benchmark",
         "source_name": "CrossFit Benchmark Workouts",
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
@@ -2021,22 +2009,6 @@
               "Sets 7-8: 57.5%",
               "Ski Between Sets as needed to Flush",
               "Control the bar down, the press up as fast as you can. If you press as hard as you can 24 times, gains)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-07",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "sections": [
-          {
-            "title": "Clovis",
-            "lines": [
-              "For time:",
-              "Run 10 miles",
-              "150 burpee pull-ups",
-              "Partition the run and burpee pull-ups as needed."
             ]
           }
         ]
@@ -2180,6 +2152,23 @@
       },
       {
         "date": "2026-03-07",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "U.S. Army 2nd Lt. Clovis T. Ray, 34, of San Antonio, Texas, assigned to the 2nd Battalion, 35th Infantry Regiment, 3rd Brigade Combat Team, 25th Infantry Division, based in Schofield Barracks, Hawaii, was killed on March 15, 2012, in Kunar Province, Afghanistan, when insurgents attacked his unit with an improvised explosive device.\nHe is survived by his wife, Shannon; son, Dean; parents, Bob Ben Sr. and Cecilia; brothers, Eddie and Bob Ben Jr.; and sister, Jennifer.\nFirst posted",
+        "sections": [
+          {
+            "title": "Clovis",
+            "sub_title": "For time:",
+            "lines": [
+              "Run 10 miles",
+              "150 burpee pull-ups",
+              "Partition the run and burpee pull-ups as needed."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-07",
         "source": "benchmark",
         "source_name": "CrossFit Benchmark Workouts",
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
@@ -2197,27 +2186,6 @@
       }
     ],
     "2026-03-08": [
-      {
-        "date": "2026-03-08",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "sections": [
-          {
-            "title": "ODA 7313",
-            "lines": [
-              "7 rounds for time of:",
-              "300-meter jog",
-              "10 left-arm dumbbell thrusters",
-              "10 right-arm dumbbell thrusters",
-              "7 strict pull-ups",
-              "*Rest 3 minutes between rounds.",
-              "*Wear a 10/14-lb weight vest.",
-              "*♀ 20 lb*",
-              "*♂ 30 lb*"
-            ]
-          }
-        ]
-      },
       {
         "date": "2026-03-08",
         "source": "open",
@@ -2276,6 +2244,28 @@
               "50 air squats"
             ],
             "sub_title": "5 rounds for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-03-08",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "Sgt. 1st Class Javier Jaguar Gutierrez died Feb. 8, 2020, from wounds sustained during combat operations in Nangarhar Province, Afghanistan.\nBorn in Jacksonville, North Carolina, Gutierrez, 28, enlisted in the Army in 2009. After being selected to attend the Special Qualification Course, he graduated in 2015 as a Special Forces communications sergeant and was assigned to the 3rd Battalion, 7th Special Forces Group (Airborne), at Eglin Air Force Base, Florida.\nGutierrez is survived by his wife, Gabriela; children Gabriel, Eden, Helen, and Emee; parents Javier and Silvia; sisters Jenea and Jordan Garza; brother-in-law, Joshua Garza; and his nephew, Noah Rocha.",
+        "sections": [
+          {
+            "title": "ODA 7313",
+            "sub_title": "7 rounds for time of:",
+            "lines": [
+              "300-meter jog",
+              "10 left-arm dumbbell thrusters",
+              "10 right-arm dumbbell thrusters",
+              "7 strict pull-ups",
+              "*Rest 3 minutes between rounds.",
+              "*Wear a 10/14-lb weight vest.",
+              "*♀ 20 lb*",
+              "*♂ 30 lb*"
+            ]
           }
         ]
       },
@@ -2352,26 +2342,6 @@
             "title": "AMRAP 4:30 x 4",
             "lines": [
               "Calorie Row"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-09",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "sections": [
-          {
-            "title": "Kelly Brown",
-            "lines": [
-              "5 rounds for time of:",
-              "Row 440 meter",
-              "10 box jumps",
-              "10 deadlifts",
-              "10 wall-ball shots",
-              "♀ 20-lb ball to 9 feet, 185-lb DL, 24-inch box",
-              "♂ 30-lb ball to 10 feet, 275-lb DL, 30-inch box",
-              "On Sept. 15, 2020, CrossFit Kids Seminar Staff Flowmaster Kelly Brown passed away after a courageous five-year battle with ovarian cancer. She was 44."
             ]
           }
         ]
@@ -2504,6 +2474,27 @@
       },
       {
         "date": "2026-03-09",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "Brown is survived by her husband, John, and their two children, a 14-year-old son and 11-year-old daughter.\nKelly and John started their CrossFit journey in 2006 and opened CrossFit Agoge in 2007. In 2010, she became a member of the CrossFit Kids Seminar Staff.\nAn incredible wife, mother, teacher, coach, affiliate owner, and friend, Kelly contributed much to all whose lives she touched. She will be deeply missed by all who had the privilege of knowing her.\nFirst posted",
+        "sections": [
+          {
+            "title": "Kelly Brown",
+            "sub_title": "5 rounds for time of:",
+            "lines": [
+              "Row 440 meter",
+              "10 box jumps",
+              "10 deadlifts",
+              "10 wall-ball shots",
+              "♀ 20-lb ball to 9 feet, 185-lb DL, 24-inch box",
+              "♂ 30-lb ball to 10 feet, 275-lb DL, 30-inch box",
+              "On Sept. 15, 2020, CrossFit Kids Seminar Staff Flowmaster Kelly Brown passed away after a courageous five-year battle with ovarian cancer. She was 44."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-09",
         "source": "benchmark",
         "source_name": "CrossFit Benchmark Workouts",
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
@@ -2598,37 +2589,6 @@
               "1 Smooth Set of Kipping HSPU",
               "Rest 4:00",
               "If done properly, you will be able to increase reps on round 2 for all three movement patterns. Flush (very slow) between sets on an air bike or 1 damper ski erg."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-10",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "sections": [
-          {
-            "title": "Feeks",
-            "lines": [
-              "For time:",
-              "2 100-meter shuttle sprints",
-              "2 dumbbell squat clean thrusters",
-              "4 100-meter shuttle sprints",
-              "4 dumbbell squat clean thrusters",
-              "6 100-meter shuttle sprints",
-              "6 dumbbell squat clean thrusters",
-              "8 100-meter shuttle sprints",
-              "8 dumbbell squat clean thrusters",
-              "10 100-meter shuttle sprints",
-              "10 dumbbell squat clean thrusters",
-              "12 100-meter shuttle sprints",
-              "12 dumbbell squat clean thrusters",
-              "14 100-meter shuttle sprints",
-              "14 dumbbell squat clean thrusters",
-              "16 100-meter shuttle sprints",
-              "16 dumbbell squat clean thrusters",
-              "♀ 45-lb dumbbells",
-              "♂ 65-lb dumbbells"
             ]
           }
         ]
@@ -2756,6 +2716,38 @@
       },
       {
         "date": "2026-03-10",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "Special Warfare Operator Petty Officer 1st Class Patrick D. Feeks, 28, of Edgewater, Maryland, assigned to a Naval Special Warfare unit based on the West Coast, died Aug. 16, 2012, in a helicopter crash northeast of Kandahar, Afghanistan, while supporting Operation Enduring Freedom.\nFeeks is survived by his mother and father, Thomas and Ginny; sister, Regina; and wife, Emily.\nFirst posted",
+        "sections": [
+          {
+            "title": "Feeks",
+            "sub_title": "For time:",
+            "lines": [
+              "2 100-meter shuttle sprints",
+              "2 dumbbell squat clean thrusters",
+              "4 100-meter shuttle sprints",
+              "4 dumbbell squat clean thrusters",
+              "6 100-meter shuttle sprints",
+              "6 dumbbell squat clean thrusters",
+              "8 100-meter shuttle sprints",
+              "8 dumbbell squat clean thrusters",
+              "10 100-meter shuttle sprints",
+              "10 dumbbell squat clean thrusters",
+              "12 100-meter shuttle sprints",
+              "12 dumbbell squat clean thrusters",
+              "14 100-meter shuttle sprints",
+              "14 dumbbell squat clean thrusters",
+              "16 100-meter shuttle sprints",
+              "16 dumbbell squat clean thrusters",
+              "♀ 45-lb dumbbells",
+              "♂ 65-lb dumbbells"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-10",
         "source": "benchmark",
         "source_name": "CrossFit Benchmark Workouts",
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
@@ -2775,43 +2767,6 @@
       }
     ],
     "2026-03-11": [
-      {
-        "date": "2026-03-11",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-11/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "seated pike stretch",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 straight leg sit ups",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "CONDITIONING 30MIN",
-            "lines": [
-              "25/20cal bike/ski",
-              "20 toes to bar",
-              "25/20cal ski/bike",
-              "100m farmers carry 2x32/24kg",
-              "deadlift"
-            ],
-            "sub_title": "amrap 30min"
-          }
-        ]
-      },
       {
         "date": "2026-03-11",
         "source": "crossfit_com",
@@ -2874,6 +2829,94 @@
       },
       {
         "date": "2026-03-11",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 25.3",
+            "lines": [
+              "For time:",
+              "5 wall walks",
+              "50-calorie row",
+              "5 wall walks",
+              "25 deadlifts",
+              "5 wall walks",
+              "25 cleans",
+              "5 wall walks",
+              "25 snatches",
+              "5 wall walks",
+              "50-calorie row",
+              "Time cap: 20 minutes",
+              "♀ 155-lb (70-kg) deadlift, 85-lb (38-kg) clean, 65-lb (29-kg) snatch",
+              "♂ 225-lb (102-kg) deadlift, 135-lb (61-kg) clean, 95-lb (43-kg) snatch"
+            ]
+          }
+        ],
+        "note": "Open: Open 25.3"
+      },
+      {
+        "date": "2026-03-11",
+        "source": "linchpin",
+        "source_name": "CrossFit Linchpin",
+        "url": "https://crossfitlinchpin.com/blogs/wod",
+        "note": "⚠️ This source provides daily workouts only",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "15-12-9 reps for time of:",
+              "Deadlift, 275/185",
+              "Box Jump, 24\"/20\"",
+              "*Compare to 01.10.2025",
+              "Or as a 2-person team...",
+              "15-12-9 reps for time of:",
+              "Deadlift, 275/185",
+              "Box Jump, 24\"/20\"",
+              "Two people working at the same time. All movements are synchronized at the top of the repetition."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-11",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-03-11/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "seated pike stretch",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 prone snow angels",
+              "10 straight leg sit ups",
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "CONDITIONING 30MIN",
+            "lines": [
+              "25/20cal bike/ski",
+              "20 toes to bar",
+              "25/20cal ski/bike",
+              "100m farmers carry 2x32/24kg",
+              "deadlift"
+            ],
+            "sub_title": "amrap 30min"
+          }
+        ]
+      },
+      {
+        "date": "2026-03-11",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -2929,11 +2972,12 @@
         "date": "2026-03-11",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
+        "hero_story": "Canadian 1st Class Constable Jennifer Kovach of Guelph, Canada, died March 14, 2013, when her squad car was involved in a motor-vehicle accident while she was responding to a call for service. The 26-year-old fulfilled her dream of becoming a police officer serving her community and the Guelph Police Service for four years before her death.\nKovach is survived by her mother, Gloria; father, Bill; brother, Brian; grandparents, Chester and Elvira Janicki; boyfriend, Kyle Schlosser; and many other friends and family members.\nFirst posted",
         "sections": [
           {
             "title": "Jennifer",
+            "sub_title": "Complete as many rounds and reps as possible in 26 minutes of:",
             "lines": [
-              "Complete as many rounds and reps as possible in 26 minutes of:",
               "10 pull-ups",
               "15 kettlebell swings",
               "20 box jumps",
@@ -2963,59 +3007,8 @@
           }
         ],
         "note": "Benchmark: The Gauntlet"
-      },
-      {
-        "date": "2026-03-11",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 25.3",
-            "lines": [
-              "For time:",
-              "5 wall walks",
-              "50-calorie row",
-              "5 wall walks",
-              "25 deadlifts",
-              "5 wall walks",
-              "25 cleans",
-              "5 wall walks",
-              "25 snatches",
-              "5 wall walks",
-              "50-calorie row",
-              "Time cap: 20 minutes",
-              "♀ 155-lb (70-kg) deadlift, 85-lb (38-kg) clean, 65-lb (29-kg) snatch",
-              "♂ 225-lb (102-kg) deadlift, 135-lb (61-kg) clean, 95-lb (43-kg) snatch"
-            ]
-          }
-        ],
-        "note": "Open: Open 25.3"
-      },
-      {
-        "date": "2026-03-11",
-        "source": "linchpin",
-        "source_name": "CrossFit Linchpin",
-        "url": "https://crossfitlinchpin.com/blogs/wod",
-        "note": "⚠️ This source provides daily workouts only",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "15-12-9 reps for time of:",
-              "Deadlift, 275/185",
-              "Box Jump, 24\"/20\"",
-              "*Compare to 01.10.2025",
-              "Or as a 2-person team...",
-              "15-12-9 reps for time of:",
-              "Deadlift, 275/185",
-              "Box Jump, 24\"/20\"",
-              "Two people working at the same time. All movements are synchronized at the top of the repetition."
-            ]
-          }
-        ]
       }
     ]
   },
-  "last_updated": "2026-03-11T06:56:19.642012"
+  "last_updated": "2026-03-11T07:42:47.600142"
 }

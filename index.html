@@ -29,11 +29,11 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .tab-content{display:none;padding:20px}
 .tab-content.active{display:block}
 .workouts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:18px;max-width:1400px;margin:0 auto}
-.workout-card{background:#1e1e1e;border:1px solid #2a2a2a;border-radius:12px;padding:18px;transition:all .15s}
+.workout-card{position:relative;background:#1e1e1e;border:1px solid #2a2a2a;border-radius:12px;padding:18px;transition:all .15s}
 .workout-card.hero{border:3px solid #2196F3;background:#1a2332;box-shadow:0 0 16px rgba(33,150,243,0.3)}
 .workout-card.benchmark{border:3px solid #9C27B0;background:#2a1a32;box-shadow:0 0 16px rgba(156,39,176,0.3)}
 .workout-card.open{border:3px solid #4CAF50;background:#1a2e1a;box-shadow:0 0 16px rgba(76,175,80,0.3)}
-.workout-card.open{border:3px solid #FFC107;background:#2a2418;box-shadow:0 0 16px rgba(255,193,7,0.3)}
+.workout-card.open{border:3px         solid #FFC107;background:#2a2418;box-shadow:0 0 16px rgba(255,193,7,0.3)}
 .workout-card:hover{border-color:#E8451A;transform:translateY(-2px);box-shadow:0 4px 18px rgba(232,69,26,.15)}
 .card-header{border-bottom:2px solid #E8451A;padding-bottom:10px;margin-bottom:14px}
 .source-name{font-size:1.25em;font-weight:700;color:#F5C518}
@@ -126,6 +126,7 @@ input[type=number].timer-inp{width:7ch;min-width:7ch}
 .eq-info-btn:hover{background:#1A9B8A;color:#111}
 .eq-info-popover{position:absolute;z-index:100;max-width:320px;padding:10px 12px;margin-top:4px;background:#1e1e1e;border:1px solid #1A9B8A;border-radius:8px;font-size:.85em;color:#e8e4d8;line-height:1.4;box-shadow:0 4px 12px rgba(0,0,0,.4)}
 .eq-info-popover[aria-hidden="false"]{display:block}
+.hero-info-popover{white-space:pre-wrap}
 .eq-label-row{display:inline-flex;align-items:center;flex-wrap:wrap;gap:8px}
 .eq-full-gym-btn{margin-left:16px;padding:4px 10px;font-size:.8em;background:#2a2a2a;border:1px solid #444;border-radius:6px;color:#e8e4d8;cursor:pointer;font-family:inherit;font-weight:600}
 .eq-full-gym-btn:hover{background:#333;border-color:#1A9B8A;color:#1A9B8A}
@@ -452,7 +453,7 @@ var selectedDateStr = todayIsraelStr();
 var currentDate = new Date(selectedDateStr + "T12:00:00.000Z");
 var cardStore = [];
 /** ניתור מבוסס Git – ריק = כבוי. להפעלה: '/api/event' (אם האתר על Vercel) או כתובת מלאה (אם GitHub Pages). ראה ANALYTICS_GIT.md */
-var ANALYTICS_ENDPOINT = "";
+var ANALYTICS_ENDPOINT = "/api/event";
 function sendAnalytics(eventName) {
   if (!ANALYTICS_ENDPOINT) return;
   try {
@@ -511,8 +512,9 @@ function getWodOnlyText(w) {
     var s = secs[i];
     var title = (s && s.title ? s.title : "").toString().toLowerCase();
     if (WOD_SECTION_RE.test(title)) {
+      var sub = (s.sub_title || "").toString();
       var lines = Array.isArray(s.lines) ? s.lines : [];
-      parts.push(title + " " + lines.join(" "));
+      parts.push(title + " " + sub + " " + lines.join(" "));
     }
   }
   if (parts.length) return parts.join(" ").toLowerCase();
@@ -520,7 +522,7 @@ function getWodOnlyText(w) {
   for (var j = 0; j < secs.length; j++) {
     var s = secs[j];
     if (!s) continue;
-    full += (s.title || "") + " " + (Array.isArray(s.lines) ? s.lines.join(" ") : "") + " ";
+    full += (s.title || "") + " " + (s.sub_title || "") + " " + (Array.isArray(s.lines) ? s.lines.join(" ") : "") + " ";
   }
   return (full || "").toLowerCase();
 }
@@ -773,6 +775,8 @@ function buildCard(w, score) {
   cardStore.push(w);
   var secs = w.sections || [];
   var body = "";
+  var heroInfoText = (w.source === "hero" && w.hero_story) ? w.hero_story : (w.source === "hero" ? "סיפור הגיבור לא זמין. רענן את מחסן הגיבורים (סקריפט heroes) כדי לטעון סיפורים." : "");
+  var heroInfoBtn = (w.source === "hero") ? " <button type=\"button\" class=\"eq-info-btn hero-info-btn\" onclick=\"toggleHeroInfo(event)\" title=\"Hero story\" aria-label=\"Information\">ℹ️</button> <div class=\"eq-info-popover hero-info-popover\" role=\"dialog\" aria-hidden=\"true\" style=\"display:none\">" + esc(heroInfoText) + "</div>" : "";
   for (var i = 0; i < secs.length; i++) {
     var s = secs[i];
     var li = "";
@@ -789,7 +793,8 @@ function buildCard(w, score) {
       disp = formatLbToKg(disp);
       li += "<li" + cls + ">" + esc(disp) + "</li>";
     }
-    body += "<div class=\"section\"><div class=\"section-title\">" + esc(convertUnits(s.title)) + "</div>";
+    var titleExtra = (i === 0 && w.source === "hero") ? heroInfoBtn : "";
+    body += "<div class=\"section\"><div class=\"section-title\">" + esc(convertUnits(s.title)) + titleExtra + "</div>";
     if (s.sub_title) body += "<div class=\"section-subtitle\">" + esc(s.sub_title) + "</div>";
     body += "<ul class=\"section-lines\">" + li + "</ul></div>";
   }
@@ -876,12 +881,16 @@ function findWorkout() {
     for (var i = 0; i < arr.length; i++) {
       var it = arr[i];
       if (!it || !it.lines || !it.lines.length) continue;
+      var lines = it.lines || [];
+      var subTitle = (sourceId === "hero" && lines.length > 0) ? lines[0] : "";
+      var sectionLines = (sourceId === "hero" && lines.length > 1) ? lines.slice(1) : lines;
       var ww = {
         source: sourceId,
         source_name: sourceName,
         date: "",
-        sections: [{ title: it.name || "WORKOUT", lines: it.lines }]
+        sections: [{ title: it.name || "WORKOUT", sub_title: subTitle, lines: sectionLines }]
       };
+      if (sourceId === "hero") ww.hero_story = it.hero_story || "";
       var res = scoreWod(ww, time, eq);
       if (res.sc <= 0) continue;
       var r = { w: ww, sc: res.sc, extra: res.extra, label: res.label };
@@ -968,6 +977,27 @@ function toggleEqInfo(e) {
     };
     setTimeout(function() { document.addEventListener("click", close); }, 0);
   }
+}
+
+function toggleHeroInfo(e) {
+  if (e) e.stopPropagation();
+  var btn = e && e.target && e.target.closest ? e.target.closest(".hero-info-btn") : null;
+  if (!btn) return;
+  var pop = btn.nextElementSibling;
+  if (!pop || !pop.classList.contains("hero-info-popover")) return;
+  var isOpen = pop.getAttribute("aria-hidden") !== "true";
+  document.querySelectorAll(".hero-info-popover").forEach(function(p) {
+    p.setAttribute("aria-hidden", "true");
+    p.style.display = "none";
+  });
+  if (isOpen) return;
+  pop.setAttribute("aria-hidden", "false");
+  pop.style.display = "block";
+  var close = function(ev) {
+    if (ev && (pop.contains(ev.target) || btn.contains(ev.target))) return;
+    pop.setAttribute("aria-hidden", "true"); pop.style.display = "none"; document.removeEventListener("click", close);
+  };
+  setTimeout(function() { document.addEventListener("click", close); }, 0);
 }
 
 function resetFindForm() {
@@ -1585,6 +1615,8 @@ function setWorkout(idx) {
 function buildCardHtmlOnly(w) {
   var secs = w.sections || [];
   var body = "";
+  var heroInfoText = (w.source === "hero" && w.hero_story) ? w.hero_story : (w.source === "hero" ? "סיפור הגיבור לא זמין. רענן את מחסן הגיבורים (סקריפט heroes) כדי לטעון סיפורים." : "");
+  var heroInfoBtn = (w.source === "hero") ? " <button type=\"button\" class=\"eq-info-btn hero-info-btn\" onclick=\"toggleHeroInfo(event)\" title=\"Hero story\" aria-label=\"Information\">ℹ️</button> <div class=\"eq-info-popover hero-info-popover\" role=\"dialog\" aria-hidden=\"true\" style=\"display:none\">" + esc(heroInfoText) + "</div>" : "";
   for (var i = 0; i < secs.length; i++) {
     var s = secs[i];
     var li = "";
@@ -1601,7 +1633,8 @@ function buildCardHtmlOnly(w) {
       disp = formatLbToKg(disp);
       li += "<li" + cls + ">" + esc(disp) + "</li>";
     }
-    body += "<div class=\"section\"><div class=\"section-title\">" + esc(convertUnits(s.title)) + "</div>";
+    var titleExtra = (i === 0 && w.source === "hero") ? heroInfoBtn : "";
+    body += "<div class=\"section\"><div class=\"section-title\">" + esc(convertUnits(s.title)) + titleExtra + "</div>";
     if (s.sub_title) body += "<div class=\"section-subtitle\">" + esc(s.sub_title) + "</div>";
     body += "<ul class=\"section-lines\">" + li + "</ul></div>";
   }

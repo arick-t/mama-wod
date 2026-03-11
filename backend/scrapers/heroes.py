@@ -104,21 +104,41 @@ def _scrape_all_heroes():
             if is_title:
                 name = line
                 workout_lines = []
+                hero_story = None
 
                 # Collect workout lines until next name or memorial text
                 i += 1
                 while i < len(lines):
                     next_line = lines[i]
 
-                    # Stop at memorial/biographical text
+                    # Stop at memorial/biographical text – collect as hero_story
                     memorial_keywords = [
-                        'killed in action', 'died', 'fallen', 'survived by', 'is survived',
+                        'in honor', 'killed in action', 'died', 'fallen', 'survived by', 'is survived',
                         'afghanistan', 'iraq', 'operation', 'combat', 'enemy', 'explosive device',
                         'was a member of', 'graduate of', 'air force', 'navy seal', 'marine',
                         'u.s. army', 'special forces', 'year-old', 'years old', 'born in',
                         'native of', 'deployed to', 'assigned to'
                     ]
                     if any(keyword in next_line.lower() for keyword in memorial_keywords):
+                        hero_story_lines = [next_line]
+                        i += 1
+                        while i < len(lines):
+                            stop_line = lines[i]
+                            if any(stop in stop_line.lower() for stop in ['share this', 'posted by', 'learn more about']):
+                                i += 1
+                                break
+                            next_is_title = (
+                                len(stop_line) < 30 and len(stop_line) > 2 and ':' not in stop_line
+                                and not stop_line.islower() and (stop_line.isupper() or stop_line.istitle())
+                                and not any(c.isdigit() for c in stop_line[:3])
+                            )
+                            if next_is_title:
+                                break
+                            hero_story_lines.append(stop_line)
+                            i += 1
+                            if len(hero_story_lines) >= 30:
+                                break
+                        hero_story = '\n'.join(hero_story_lines).strip()
                         break
 
                     # Stop at next workout name (same criteria as title detection)
@@ -144,10 +164,10 @@ def _scrape_all_heroes():
                         break
 
                 if len(workout_lines) >= 3:
-                    heroes.append({
-                        'name': name,
-                        'lines': workout_lines[:25]
-                    })
+                    entry = {'name': name, 'lines': workout_lines[:25]}
+                    if hero_story:
+                        entry['hero_story'] = hero_story
+                    heroes.append(entry)
             else:
                 i += 1
 
@@ -242,13 +262,19 @@ def fetch_hero(date):
         else:
             processed_lines.append(line)
 
+    # First line = workout format (sub_title), rest = exercise lines
+    sub_title = processed_lines[0] if processed_lines else ''
+    section_lines = processed_lines[1:] if len(processed_lines) > 1 else []
+
     return {
         'date': date_str,
         'source': 'hero',
         'source_name': 'CrossFit Hero Workouts',
+        'hero_story': hero.get('hero_story') or '',
         'sections': [{
             'title': hero['name'],
-            'lines': processed_lines
+            'sub_title': sub_title,
+            'lines': section_lines
         }]
     }
 

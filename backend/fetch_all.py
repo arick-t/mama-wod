@@ -45,8 +45,8 @@ from scrapers.open_wods     import fetch_all_open
 DATA_DIR  = Path(__file__).parent.parent / 'data'
 DATA_FILE = DATA_DIR / 'workouts.json'
 DAYS      = 14
-# Re-fetch these sources every run so scraper fixes (MYLEO spacing, CF1013 sections, TonBridge sections, Benchmarks) apply
-FORCE_REFRESH_SOURCES = {'myleo', 'cf1013', 'tonbridge', 'benchmark'}
+# Re-fetch these sources every run so scraper fixes (hero_story, sub_title, MYLEO, etc.) apply
+FORCE_REFRESH_SOURCES = {'myleo', 'cf1013', 'tonbridge', 'benchmark', 'hero'}
 
 SCRAPERS = [
     # (id, display_name, fetch_fn, has_archive)

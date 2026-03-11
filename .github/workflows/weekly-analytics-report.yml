@@ -1,16 +1,31 @@
-# דוח ניתור שבועי – נשלח לאימייל כל יום שישי 08:00.
-# שליחה דרך Resend SMTP – Secret: RESEND_API_KEY. ראו RESEND_SECRETS.md.
+# דוח ניתור משתמשים – נשלח באימייל.
+# 1. אוטומטית כל יום שישי 07:00 ישראל.
+# 2. בדחיפה: "שלח עכשיו דוח" עם בחירת תקופה – היום האחרון / השבוע האחרון / מתאריך.
+# שליחה דרך Resend. Secret: RESEND_API_KEY. ראו RESEND_SECRETS.md.
 
 name: 📊 Weekly Analytics Report
 
 on:
   schedule:
-    # כל יום שישי 08:00 ישראל (05:00 UTC)
-    - cron: '0 5 * * 5'
+    # כל יום שישי 07:00 ישראל (04:00 UTC)
+    - cron: '0 4 * * 5'
   workflow_dispatch:
     inputs:
+      report_period:
+        description: 'תקופת הדוח'
+        required: true
+        default: 'last_week'
+        type: choice
+        options:
+          - last_day
+          - last_week
+          - from_date
+      from_date:
+        description: 'מתאריך (רק אם בחרת from_date) – פורמט YYYY-MM-DD'
+        required: false
+        type: string
       use_sample_data:
-        description: 'שליחת דוח דוגמה (מודל) מהשבוע האחרון – פעם אחת לבדיקה'
+        description: 'שליחת דוח דוגמה (מודל) מהקובץ הקיים – לבדיקה'
         required: false
         default: false
         type: boolean
@@ -30,23 +45,26 @@ jobs:
           if [ -f data/analytics_sample_last_week.jsonl ]; then
             cp data/analytics_sample_last_week.jsonl data/analytics.jsonl
           else
-            echo "Sample file data/analytics_sample_last_week.jsonl not in repo – add and push it for model runs. Proceeding without sample."
+            echo "Sample file data/analytics_sample_last_week.jsonl not in repo. Proceeding without sample."
           fi
 
       - name: Generate report
         id: gen
+        env:
+          REPORT_PERIOD: ${{ github.event.inputs.report_period || 'last_week' }}
+          REPORT_FROM_DATE: ${{ github.event.inputs.from_date || '' }}
         run: |
           if [ ! -f data/analytics.jsonl ] || [ ! -s data/analytics.jsonl ]; then
-            echo "דוח ניתור משתמשים – השבוע האחרון" > report.txt
+            echo "דוח ניתור משתמשים" > report.txt
             echo "" >> report.txt
             echo "עדיין אין נתונים בקובץ data/analytics.jsonl." >> report.txt
-            echo "הפעל את הניתור (ANALYTICS_ENDPOINT) וצבור כניסות ואירועי Find Workout – בשבוע הבא תקבל כאן סיכום אמיתי." >> report.txt
+            echo "הפעל את הניתור (ANALYTICS_ENDPOINT) וצבור כניסות ואירועי Find Workout – אחר כך תקבל כאן סיכום אמיתי." >> report.txt
           elif [ -f scripts/analytics-summary.js ]; then
             node scripts/analytics-summary.js > report.txt 2>&1
           else
             echo "דוח ניתור – השבוע האחרון" > report.txt
             echo "" >> report.txt
-            echo "יש נתונים אבל סקריפט הסיכום (scripts/analytics-summary.js) חסר ב-repo. הוסף אותו ל-main." >> report.txt
+            echo "סקריפט scripts/analytics-summary.js חסר ב-repo." >> report.txt
           fi
           echo "text<<EOF" >> $GITHUB_OUTPUT
           cat report.txt >> $GITHUB_OUTPUT
@@ -58,7 +76,7 @@ jobs:
           jq -n \
             --arg from "DUCK-WOD <onboarding@resend.dev>" \
             --arg to "ariel.tahan@gmail.com" \
-            --arg sub "ניתור משתמשים שבועי" \
+            --arg sub "ניתור משתמשים – דוח" \
             --argjson text "$BODY" \
             '{from:$from, to:[$to], subject:$sub, text:$text}' > payload.json
           curl -sS -f -X POST https://api.resend.com/emails \
