@@ -453,7 +453,8 @@ var selectedDateStr = todayIsraelStr();
 var currentDate = new Date(selectedDateStr + "T12:00:00.000Z");
 var cardStore = [];
 /** ניתור מבוסס Git – ריק = כבוי. להפעלה: '/api/event' (אם האתר על Vercel) או כתובת מלאה (אם GitHub Pages). ראה ANALYTICS_GIT.md */
-var ANALYTICS_ENDPOINT = "/api/event";
+// כשהאתר על GitHub Pages: אירועים נשלחים ל-API ב-Vercel. כשהאתר על Vercel אפשר "/api/event"
+var ANALYTICS_ENDPOINT = "https://mama-wod.vercel.app/api/event";
 function sendAnalytics(eventName) {
   if (!ANALYTICS_ENDPOINT) return;
   try {
