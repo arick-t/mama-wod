@@ -2770,60 +2770,6 @@
     "2026-03-12": [
       {
         "date": "2026-03-12",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-12/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "thoracic rotation",
-              "sumo squat stretch",
-              "instep rotation"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 reverse lunges",
-              "10 elbow rotation",
-              "10 burpees"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "BACK SQUATS 15MIN",
-            "lines": [
-              "3 sets",
-              "5 back squats at 78%",
-              "1 drop set",
-              "max reps at 50%",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 13MIN",
-            "lines": [
-              "7:00 amrap:",
-              "",
-              "14 front squats",
-              "14 lateral burpees over barbell",
-              "rest 2:00 -",
-              "4:00 amrap:",
-              "",
-              "8 front squats",
-              "8 lateral burpees over barbell",
-              "* barbell: 60/40kg",
-              "* aerobic power [vo2 max]"
-            ],
-            "sub_title": "score: sum total of rounds + reps"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-12",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260312",
@@ -2884,6 +2830,105 @@
               "3:00 Mobility",
               "Rotate through as many modalities as you can, excluding running but not walking. Pace should feel very very easy, but elicit a nice sweat to aid in your mobility routine."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-12",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 21.3",
+            "lines": [
+              "For total time:",
+              "15 front squats",
+              "30 toes-to-bars",
+              "15 thrusters",
+              "Then, rest 1 minute before continuing with:",
+              "15 front squats",
+              "30 chest-to-bar pull-ups",
+              "15 thrusters",
+              "Then, rest 1 minute before continuing with:",
+              "15 front squats",
+              "30 bar muscle-ups",
+              "15 thrusters",
+              "Workout 21.4 begins immediately upon completing or reaching the time cap for 21.3.",
+              "95 lb. for the front squats and thrusters",
+              "Time cap: 15 min."
+            ]
+          }
+        ],
+        "note": "Open: Open 21.3"
+      },
+      {
+        "date": "2026-03-12",
+        "source": "linchpin",
+        "source_name": "CrossFit Linchpin",
+        "url": "https://crossfitlinchpin.com/blogs/wod",
+        "note": "⚠️ This source provides daily workouts only",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "REST DAY!",
+              "Get out of the gym."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-12",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-03-12/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "thoracic rotation",
+              "sumo squat stretch",
+              "instep rotation"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 reverse lunges",
+              "10 elbow rotation",
+              "10 burpees"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "BACK SQUATS 15MIN",
+            "lines": [
+              "3 sets",
+              "5 back squats at 78%",
+              "1 drop set",
+              "max reps at 50%",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 13MIN",
+            "lines": [
+              "7:00 amrap:",
+              "",
+              "14 front squats",
+              "14 lateral burpees over barbell",
+              "rest 2:00 -",
+              "4:00 amrap:",
+              "",
+              "8 front squats",
+              "8 lateral burpees over barbell",
+              "* barbell: 60/40kg",
+              "* aerobic power [vo2 max]"
+            ],
+            "sub_title": "score: sum total of rounds + reps"
           }
         ]
       },
@@ -2979,53 +3024,8 @@
           }
         ],
         "note": "Benchmark: FRAN"
-      },
-      {
-        "date": "2026-03-12",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 21.3",
-            "lines": [
-              "For total time:",
-              "15 front squats",
-              "30 toes-to-bars",
-              "15 thrusters",
-              "Then, rest 1 minute before continuing with:",
-              "15 front squats",
-              "30 chest-to-bar pull-ups",
-              "15 thrusters",
-              "Then, rest 1 minute before continuing with:",
-              "15 front squats",
-              "30 bar muscle-ups",
-              "15 thrusters",
-              "Workout 21.4 begins immediately upon completing or reaching the time cap for 21.3.",
-              "95 lb. for the front squats and thrusters",
-              "Time cap: 15 min."
-            ]
-          }
-        ],
-        "note": "Open: Open 21.3"
-      },
-      {
-        "date": "2026-03-12",
-        "source": "linchpin",
-        "source_name": "CrossFit Linchpin",
-        "url": "https://crossfitlinchpin.com/blogs/wod",
-        "note": "⚠️ This source provides daily workouts only",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "REST DAY!",
-              "Get out of the gym."
-            ]
-          }
-        ]
       }
     ]
   },
-  "last_updated": "2026-03-12T07:00:19.947590"
+  "last_updated": "2026-03-12T08:55:23.529688"
 }
