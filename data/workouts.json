@@ -2815,55 +2815,6 @@
     "2026-03-13": [
       {
         "date": "2026-03-13",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-13/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "instep rotation",
-              "hand walk",
-              "lying hip crossover"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 good mornings",
-              "10 ring rows",
-              "30sec plank hold",
-              "* *remaining time row"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "DEADLIFTS 15MIN",
-            "lines": [
-              "3 sets",
-              "5 deadlifts at 78%",
-              "1 drop set",
-              "max reps at 50%",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "3 rounds",
-              "",
-              "400/360m row",
-              "15 deadlifts 100/70kg",
-              "12 strict pull-ups",
-              "* lactate threshold & muscular endurance"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-13",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260313",
@@ -2958,6 +2909,103 @@
               "*If capped, record rep count in the comment box",
               "https://games-assets.crossfit.com/s3fs-public/2026-03/CFG26%20Open%2026.3%20Scorecard_V7_aiwne.pdf?foyN.ImZoQzX5tEHqA.3S1lveTGD14T5"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-13",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 15.4",
+            "lines": [
+              "Complete as many reps as possible in 8 minutes of:",
+              "3 handstand push-ups",
+              "3 cleans",
+              "6 handstand push-ups",
+              "3 cleans",
+              "9 handstand push-ups",
+              "3 cleans",
+              "12 handstand push-ups",
+              "6 cleans",
+              "15 handstand push-ups",
+              "6 cleans",
+              "18 handstand push-ups",
+              "6 cleans",
+              "21 handstand push-ups",
+              "9 cleans",
+              "Etc., adding 3 reps to the handstand push-up each round, and 3 reps to the clean every 3 rounds.",
+              "*Men clean 185 lb.*",
+              "*Women clean 125 lb.*"
+            ]
+          }
+        ],
+        "note": "Open: Open 15.4"
+      },
+      {
+        "date": "2026-03-13",
+        "source": "linchpin",
+        "source_name": "CrossFit Linchpin",
+        "url": "https://crossfitlinchpin.com/blogs/wod",
+        "note": "⚠️ This source provides daily workouts only",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Thruster",
+              "8-8-6-6-4-4-2-2"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-13",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-03-13/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "instep rotation",
+              "hand walk",
+              "lying hip crossover"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 good mornings",
+              "10 ring rows",
+              "30sec plank hold",
+              "* *remaining time row"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "DEADLIFTS 15MIN",
+            "lines": [
+              "3 sets",
+              "5 deadlifts at 78%",
+              "1 drop set",
+              "max reps at 50%",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "3 rounds",
+              "",
+              "400/360m row",
+              "15 deadlifts 100/70kg",
+              "12 strict pull-ups",
+              "* lactate threshold & muscular endurance"
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -3062,56 +3110,8 @@
           }
         ],
         "note": "Benchmark: ANNIE\" - Benchmark"
-      },
-      {
-        "date": "2026-03-13",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 15.4",
-            "lines": [
-              "Complete as many reps as possible in 8 minutes of:",
-              "3 handstand push-ups",
-              "3 cleans",
-              "6 handstand push-ups",
-              "3 cleans",
-              "9 handstand push-ups",
-              "3 cleans",
-              "12 handstand push-ups",
-              "6 cleans",
-              "15 handstand push-ups",
-              "6 cleans",
-              "18 handstand push-ups",
-              "6 cleans",
-              "21 handstand push-ups",
-              "9 cleans",
-              "Etc., adding 3 reps to the handstand push-up each round, and 3 reps to the clean every 3 rounds.",
-              "*Men clean 185 lb.*",
-              "*Women clean 125 lb.*"
-            ]
-          }
-        ],
-        "note": "Open: Open 15.4"
-      },
-      {
-        "date": "2026-03-13",
-        "source": "linchpin",
-        "source_name": "CrossFit Linchpin",
-        "url": "https://crossfitlinchpin.com/blogs/wod",
-        "note": "⚠️ This source provides daily workouts only",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Thruster",
-              "8-8-6-6-4-4-2-2"
-            ]
-          }
-        ]
       }
     ]
   },
-  "last_updated": "2026-03-13T06:58:02.592570"
+  "last_updated": "2026-03-13T08:53:14.189057"
 }
