@@ -2939,6 +2939,61 @@
     "2026-03-15": [
       {
         "date": "2026-03-15",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 11.2",
+            "lines": [
+              "Complete as many rounds and reps as possible in 15 minutes of:",
+              "9 Deadlifts (155lbs / 70kg)",
+              "12 Push-ups",
+              "15 Box jumps (24\")",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 15 minutes of:",
+              "9 Deadlifts (100lbs / 45kg)",
+              "12 Push-ups",
+              "15 Box jumps (20\")",
+              "*MASTERS MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 15 minutes of:",
+              "9 Deadlifts (145lbs / 65kg)",
+              "12 Push-ups",
+              "15 Box jumps (20\")",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 15 minutes of:",
+              "9 Deadlifts (90lbs / 40kg)",
+              "12 Push-ups",
+              "15 Box jumps (20\")"
+            ]
+          }
+        ],
+        "note": "Open: Open 11.2"
+      },
+      {
+        "date": "2026-03-15",
+        "source": "linchpin",
+        "source_name": "CrossFit Linchpin",
+        "url": "https://crossfitlinchpin.com/blogs/wod",
+        "note": "⚠️ This source provides daily workouts only",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "REST DAY!",
+              "Get out of the gym."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-15",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-03-15/",
@@ -3029,63 +3084,8 @@
           }
         ],
         "note": "Benchmark: ”ANGIE” BENCHMARK"
-      },
-      {
-        "date": "2026-03-15",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 11.2",
-            "lines": [
-              "Complete as many rounds and reps as possible in 15 minutes of:",
-              "9 Deadlifts (155lbs / 70kg)",
-              "12 Push-ups",
-              "15 Box jumps (24\")",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 15 minutes of:",
-              "9 Deadlifts (100lbs / 45kg)",
-              "12 Push-ups",
-              "15 Box jumps (20\")",
-              "*MASTERS MEN*",
-              "-",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 15 minutes of:",
-              "9 Deadlifts (145lbs / 65kg)",
-              "12 Push-ups",
-              "15 Box jumps (20\")",
-              "*MASTERS WOMEN*",
-              "-",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 15 minutes of:",
-              "9 Deadlifts (90lbs / 40kg)",
-              "12 Push-ups",
-              "15 Box jumps (20\")"
-            ]
-          }
-        ],
-        "note": "Open: Open 11.2"
-      },
-      {
-        "date": "2026-03-15",
-        "source": "linchpin",
-        "source_name": "CrossFit Linchpin",
-        "url": "https://crossfitlinchpin.com/blogs/wod",
-        "note": "⚠️ This source provides daily workouts only",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "REST DAY!",
-              "Get out of the gym."
-            ]
-          }
-        ]
       }
     ]
   },
-  "last_updated": "2026-03-15T07:16:49.408436"
+  "last_updated": "2026-03-15T08:56:31.553903"
 }
