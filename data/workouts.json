@@ -2874,66 +2874,6 @@
     "2026-03-16": [
       {
         "date": "2026-03-16",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-16/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "CF OPEN 26.3"
-            ]
-          },
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "thoracic rotation",
-              "sumo squat stretch",
-              "samson stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 deadlifts",
-              "10 front squats",
-              "10 push ups to down dog"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "(heat  1 // 3min break // heat 2)",
-              "2 rounds of:",
-              "",
-              "12 burpees over the bar",
-              "12 cleans (43/29kg)",
-              "12 burpees over the bar",
-              "12 thrusters",
-              "2 rounds of:",
-              "",
-              "12 burpees over the bar",
-              "12 cleans (52/34kg)",
-              "12 burpees over the bar",
-              "12 thrusters",
-              "2 rounds of:",
-              "",
-              "12 burpees over the bar",
-              "12 cleans (61/38kg)",
-              "12 burpees over the bar",
-              "12 thrusters",
-              "time cap 16:00",
-              "power clean"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-16",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260316",
@@ -2993,6 +2933,127 @@
               "Rest 1:30",
               "You should be SO sure that your round 1 pace is sustainable for three rounds. Adjust as you go round to round. Reminder: we love negative splits, we hate crash and burn aerobic work."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-16",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 14.2",
+            "lines": [
+              "Complete as many reps as possible in 8 minutes of:",
+              "135-lb. deadlifts, 10 reps",
+              "15 box jumps, 24-inch",
+              "185-lb. deadlifts, 15 reps",
+              "15 box jumps, 24-inch",
+              "225-lb. deadlifts, 20 reps",
+              "15 box jumps, 24-inch",
+              "275-lb. deadlifts, 25 reps",
+              "15 box jumps, 24-inch",
+              "315-lb. deadlifts, 30 reps",
+              "15 box jumps, 24-inch",
+              "365-lb. deadlifts, 35 reps",
+              "15 box jumps, 24-inch",
+              "*WOMEN*",
+              "*- includes Masters Women up to 54 years old*",
+              "Complete as many reps as possible in 8 minutes of:",
+              "95-lb. deadlifts, 10 reps",
+              "15 box jumps, 20-inch",
+              "135-lb. deadlifts, 15 reps",
+              "15 box jumps, 20-inch",
+              "155-lb. deadlifts, 20 reps",
+              "15 box jumps, 20-inch",
+              "185-lb. deadlifts, 25 reps",
+              "15 box jumps, 20-inch",
+              "205-lb. deadlifts, 30 reps"
+            ]
+          }
+        ],
+        "note": "Open: Open 14.2"
+      },
+      {
+        "date": "2026-03-16",
+        "source": "linchpin",
+        "source_name": "CrossFit Linchpin",
+        "url": "https://crossfitlinchpin.com/blogs/wod",
+        "note": "⚠️ This source provides daily workouts only",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "5 Rounds for time, or not:",
+              "7 Chest-to-bar Pull-ups",
+              "5 Full Clean & Jerks, 155/105",
+              "Or as a 2-person team...",
+              "For time, or not:",
+              "70 Chest-to-bar Pull-ups",
+              "70 Full Clean & Jerks, 155/105",
+              "*Only 1 person working at a time"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-16",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-03-16/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "CF OPEN 26.3"
+            ]
+          },
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "thoracic rotation",
+              "sumo squat stretch",
+              "samson stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 deadlifts",
+              "10 front squats",
+              "10 push ups to down dog"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "(heat  1 // 3min break // heat 2)",
+              "2 rounds of:",
+              "",
+              "12 burpees over the bar",
+              "12 cleans (43/29kg)",
+              "12 burpees over the bar",
+              "12 thrusters",
+              "2 rounds of:",
+              "",
+              "12 burpees over the bar",
+              "12 cleans (52/34kg)",
+              "12 burpees over the bar",
+              "12 thrusters",
+              "2 rounds of:",
+              "",
+              "12 burpees over the bar",
+              "12 cleans (61/38kg)",
+              "12 burpees over the bar",
+              "12 thrusters",
+              "time cap 16:00",
+              "power clean"
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -3083,69 +3144,8 @@
           }
         ],
         "note": "Benchmark: Nicole"
-      },
-      {
-        "date": "2026-03-16",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 14.2",
-            "lines": [
-              "Complete as many reps as possible in 8 minutes of:",
-              "135-lb. deadlifts, 10 reps",
-              "15 box jumps, 24-inch",
-              "185-lb. deadlifts, 15 reps",
-              "15 box jumps, 24-inch",
-              "225-lb. deadlifts, 20 reps",
-              "15 box jumps, 24-inch",
-              "275-lb. deadlifts, 25 reps",
-              "15 box jumps, 24-inch",
-              "315-lb. deadlifts, 30 reps",
-              "15 box jumps, 24-inch",
-              "365-lb. deadlifts, 35 reps",
-              "15 box jumps, 24-inch",
-              "*WOMEN*",
-              "*- includes Masters Women up to 54 years old*",
-              "Complete as many reps as possible in 8 minutes of:",
-              "95-lb. deadlifts, 10 reps",
-              "15 box jumps, 20-inch",
-              "135-lb. deadlifts, 15 reps",
-              "15 box jumps, 20-inch",
-              "155-lb. deadlifts, 20 reps",
-              "15 box jumps, 20-inch",
-              "185-lb. deadlifts, 25 reps",
-              "15 box jumps, 20-inch",
-              "205-lb. deadlifts, 30 reps"
-            ]
-          }
-        ],
-        "note": "Open: Open 14.2"
-      },
-      {
-        "date": "2026-03-16",
-        "source": "linchpin",
-        "source_name": "CrossFit Linchpin",
-        "url": "https://crossfitlinchpin.com/blogs/wod",
-        "note": "⚠️ This source provides daily workouts only",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "5 Rounds for time, or not:",
-              "7 Chest-to-bar Pull-ups",
-              "5 Full Clean & Jerks, 155/105",
-              "Or as a 2-person team...",
-              "For time, or not:",
-              "70 Chest-to-bar Pull-ups",
-              "70 Full Clean & Jerks, 155/105",
-              "*Only 1 person working at a time"
-            ]
-          }
-        ]
       }
     ]
   },
-  "last_updated": "2026-03-16T07:40:23.260020"
+  "last_updated": "2026-03-16T09:16:26.824177"
 }
