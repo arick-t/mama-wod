@@ -58,6 +58,68 @@ def _parens_as_note(line):
     return line
 
 
+def _dash_wrapped_as_note(line):
+    """Line wrapped in two dashes -xxx- → note. Applies to whole source."""
+    s = (line or '').strip()
+    if len(s) >= 2 and s.startswith('-') and s.endswith('-'):
+        return '* ' + s
+    return line
+
+
+def _time_cap_as_note(line):
+    """Line starting with 'Time cap:' → note."""
+    s = (line or '').strip()
+    if s.lower().startswith('time cap:'):
+        return '* ' + s
+    return line
+
+
+def _convert_lbs_hash(line):
+    """In this source, # means pounds: 55#/35# → 25kg/16kg."""
+    if not line or '#' not in line:
+        return line
+
+    def repl(m):
+        lbs = float(m.group(1))
+        kg = round(lbs * 0.453592)
+        return str(kg) + 'kg'
+
+    return re.sub(r'(\d+(?:\.\d+)?)\s*#', repl, line)
+
+
+def _is_format_line(line):
+    """First line after theme that describes format (For Time:, AMRAP, EMOM, etc.)."""
+    s = (line or '').strip().lower()
+    if not s:
+        return False
+    if 'for time' in s or 'for time:' in s:
+        return True
+    if s.startswith('amrap') or ' amrap' in s:
+        return True
+    if s.startswith('emom') or ' emom' in s:
+        return True
+    if 'sets' in s and 'for time' in s:
+        return True
+    if s.startswith('rounds') or ' rounds ' in s:
+        return True
+    return False
+
+
+def _normalize_wod_line(line):
+    """Apply note rules and lbs#→kg to a single WOD line. Note detection uses original line."""
+    raw = (line or '').strip()
+    if not raw:
+        return raw
+    converted = _convert_lbs_hash(raw)
+    if len(raw) >= 2 and raw.startswith('(') and raw.endswith(')'):
+        return '* ' + converted
+    if len(raw) >= 2 and raw.startswith('-') and raw.endswith('-'):
+        return '* ' + converted
+    if raw.lower().startswith('time cap:'):
+        return '* ' + converted
+    return converted
+
+
 def _lines_from_paragraph(p):
     """Get text lines from a <p> (separator \\n from <br/>)."""
     text = (p.get_text(separator='\n') or '').strip()
@@ -109,7 +171,8 @@ def parse_article(article):
                 continue
             strength_lines = _parse_paragraph_with_strong(p, 'Strength')
             if strength_lines is not None:
-                sections.append({'title': 'Strength', 'lines': [_parens_as_note(ln) for ln in strength_lines]})
+                lines = [_time_cap_as_note(_dash_wrapped_as_note(_parens_as_note(ln))) for ln in strength_lines]
+                sections.append({'title': 'Strength', 'lines': lines})
                 continue
             wod_strong = p.find('strong')
             if wod_strong and (wod_strong.get_text(strip=True) or '').lower() == 'wod':
@@ -118,7 +181,15 @@ def parse_article(article):
                     after_wod = after_wod[1:]
                 sub_title = (after_wod[0].strip().strip('"') if after_wod else '') or None
                 body_lines = after_wod[1:] if len(after_wod) > 1 else []
-                sections.append({'title': 'WOD', 'sub_title': sub_title, 'lines': [_parens_as_note(ln) for ln in body_lines]})
+                sub_title2 = None
+                if len(body_lines) >= 1 and _is_format_line(body_lines[0]):
+                    sub_title2 = body_lines[0].strip()
+                    body_lines = body_lines[1:]
+                lines = [_normalize_wod_line(ln) for ln in body_lines]
+                section = {'title': 'WOD', 'sub_title': sub_title, 'lines': lines}
+                if sub_title2 is not None:
+                    section['sub_title2'] = sub_title2
+                sections.append(section)
                 continue
     else:
         # Saturday: one section – first line = title, rest = body (from all p's)
@@ -131,7 +202,8 @@ def parse_article(article):
                 all_lines.append(ln)
         if all_lines:
             title = all_lines[0].strip().strip('"')
-            sections.append({'title': title, 'lines': [_parens_as_note(ln) for ln in all_lines[1:]]})
+            rest = [_time_cap_as_note(_dash_wrapped_as_note(_parens_as_note(ln))) for ln in all_lines[1:]]
+            sections.append({'title': title, 'lines': rest})
 
     if not sections:
         return date_str, [{'title': 'WOD', 'lines': []}]

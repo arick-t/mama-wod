@@ -89,10 +89,8 @@ input[type=number].timer-inp{width:7ch;min-width:7ch}
 .timer-fs-bg{position:absolute;inset:0;z-index:0;pointer-events:none}
 .timer-fs-exit{position:absolute;top:12px;right:12px;z-index:10;width:44px;height:44px;border:none;border-radius:50%;background:rgba(0,0,0,.4);color:#fff;font-size:1.4em;cursor:pointer;line-height:1}
 .timer-fs-clock-block{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:0 0 auto}
-.timer-fs-ring-wrap{position:relative;width:min(85vw,280px);height:min(85vw,280px);flex-shrink:0}
-.timer-fs-ring{width:100%;height:100%}
-.timer-fs-ring-progress{transition:stroke-dashoffset .15s linear;stroke-dasharray:283;stroke-dashoffset:283}
-.timer-fs-digits{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:clamp(3.2rem,18vw,6rem);min-width:5ch;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.5);font-variant-numeric:tabular-nums;letter-spacing:.06em}
+.timer-fs-digits-wrap{display:flex;align-items:center;justify-content:center;min-height:min(50vh,320px);width:100%}
+.timer-fs-digits{font-weight:700;font-size:clamp(4rem,22vw,11rem);min-width:6ch;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.5);font-variant-numeric:tabular-nums;letter-spacing:.08em;line-height:1}
 .timer-fs-total-above{position:absolute;top:16px;left:50%;transform:translateX(-50%);z-index:2;text-align:center;line-height:1.2;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:52px;justify-content:center}
 .timer-fs-total-label{font-size:clamp(0.95rem,3.2vw,1.15rem);font-weight:600;color:rgba(255,255,255,.9)}
 .timer-fs-total-digits{font-size:clamp(2rem,9vw,3.4rem);font-weight:700;color:rgba(255,255,255,.98);font-variant-numeric:tabular-nums;letter-spacing:.04em}
@@ -107,6 +105,7 @@ input[type=number].timer-inp{width:7ch;min-width:7ch}
 .timer-fs-phase{margin-top:12px;font-size:clamp(1.55rem,5.5vw,2.15rem);font-weight:700;color:rgba(255,255,255,.95);text-align:center;z-index:1;display:block;width:100%}
 .timer-fs-set-round{margin-top:6px;font-size:clamp(1.05rem,3.8vw,1.3rem);color:rgba(255,255,255,.9);text-align:center;z-index:1;display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
 .timer-fs-next{margin-top:4px;font-size:clamp(0.95rem,3vw,1.15rem);color:rgba(255,255,255,.85);text-align:center;z-index:1}
+.timer-overall-time{text-align:center;margin-top:12px;font-size:0.88em;font-weight:700;color:#2196F3;letter-spacing:.04em}
 .btn-find{background:#E8451A;color:#fff;width:100%;padding:11px;font-size:.95em;margin-top:8px}
 .btn-find:hover{background:#c73a15}
 .find-form{max-width:560px;margin:0 auto;background:#1e1e1e;padding:24px;border-radius:12px;border:1px solid #2a2a2a}
@@ -391,6 +390,7 @@ input[type=number].timer-inp{width:7ch;min-width:7ch}
         <div class="timer-row"><label>Sets</label><input type="text" id="intSets" placeholder="1" value="1" maxlength="2" class="timer-inp timer-inp-num" inputmode="numeric" pattern="[0-9]*"></div>
         <div class="timer-row"><label>Rest Between Sets (MM:SS or 4 digits)</label><input type="text" id="intRestSets" placeholder="0000" value="0:00" maxlength="5" class="timer-inp" inputmode="numeric" pattern="[0-9:]*"></div>
       </div>
+      <div class="timer-overall-time" id="intervalOverallTime">OVERALL TIME – 0:00</div>
       <div class="timer-btns" style="margin-top:12px"><button class="btn btn-find" id="intervalStart" onclick="intervalStartStop()">Start Full Screen</button> <button class="btn btn-find" style="background:#555" onclick="intervalReset()">Reset</button></div>
     </div>
     <div class="timers-section" style="margin-top:20px">
@@ -420,8 +420,7 @@ input[type=number].timer-inp{width:7ch;min-width:7ch}
   <button type="button" class="timer-fs-exit" id="timerFsExit" onclick="timerFullscreenClose()" aria-label="Close">✕</button>
   <div class="timer-fs-total-above" id="timerFsTotalAbove" aria-label="Overall time countdown"></div>
   <div class="timer-fs-clock-block">
-    <div class="timer-fs-ring-wrap">
-      <svg class="timer-fs-ring" viewBox="0 0 100 100"><circle class="timer-fs-ring-bg" cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="8"/><circle class="timer-fs-ring-progress" id="timerFsRing" cx="50" cy="50" r="45" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" transform="rotate(-90 50 50)"/></svg>
+    <div class="timer-fs-digits-wrap">
       <div class="timer-fs-digits" id="timerFsDigits">0:00</div>
     </div>
     <div class="timer-fs-phase" id="timerFsPhase">—</div>
@@ -460,7 +459,7 @@ function sendAnalytics(eventName) {
   try {
     if (!sessionStorage.dw_sid) sessionStorage.dw_sid = Math.random().toString(36).slice(2, 14);
     var url = ANALYTICS_ENDPOINT.indexOf("/") === 0 ? (location.origin + ANALYTICS_ENDPOINT) : ANALYTICS_ENDPOINT;
-    navigator.sendBeacon(url, JSON.stringify({ event: eventName, t: Date.now(), sid: sessionStorage.dw_sid }));
+    navigator.sendBeacon(url, JSON.stringify({ event: eventName, t: Date.now(), sid: sessionStorage.dw_sid, ua: (typeof navigator !== "undefined" && navigator.userAgent) ? navigator.userAgent : "" }));
   } catch (e) {}
 }
 
@@ -502,7 +501,7 @@ var EQ = {
 };
 
 /** תרגילים שמניחים שכולם יכולים – לא מוצגים למשתמש; אימון שמכיל רק אותם נחשב בר־ביצוע. */
-var EQ_BODY_ONLY = ["sit-up", "sit up", "sit-ups", "v-up", "v-ups", "burpee", "burpees", "push-up", "push up", "push-up", "handstand", "walking lunge", "reverse lunge", "forward lunge", "air squat", "air squats", "lunges", "jumping lunge", "hollow rock", "hollow hold", "plank", "side plank", "mountain climber", "jumping jack", "bear crawl", "broad jump", "superman", "arch hold", "weighted sit-up", "burpees over the bar"];
+var EQ_BODY_ONLY = ["sit-up", "sit up", "sit-ups", "v-up", "v-ups", "burpee", "burpees", "push-up", "push up", "push-up", "handstand", "walking lunge", "reverse lunge", "forward lunge", "air squat", "air squats", "lunges", "jumping lunge", "hollow rock", "hollow hold", "plank", "side plank", "mountain climber", "jumping jack", "bear crawl", "broad jump", "superman", "arch hold", "weighted sit-up", "burpees over the bar", "pistol", "pistols", "one leg squat", "one-leg squat", "one leg squats", "single leg squat"];
 
 var WOD_SECTION_RE = /wod|metcon|conditioning|amrap|emom|for\s*time|workout/;
 function getWodOnlyText(w) {
@@ -523,7 +522,7 @@ function getWodOnlyText(w) {
   for (var j = 0; j < secs.length; j++) {
     var s = secs[j];
     if (!s) continue;
-    full += (s.title || "") + " " + (s.sub_title || "") + " " + (Array.isArray(s.lines) ? s.lines.join(" ") : "") + " ";
+    full += (s.title || "") + " " + (s.sub_title || "") + " " + (s.sub_title2 || "") + " " + (Array.isArray(s.lines) ? s.lines.join(" ") : "") + " ";
   }
   return (full || "").toLowerCase();
 }
@@ -670,7 +669,12 @@ document.addEventListener("DOMContentLoaded", function() {
         }
       });
     }
+    if (inp.id && ["intCountDown","intWork","intRest","intRounds","intSets","intRestSets"].indexOf(inp.id) !== -1) {
+      inp.addEventListener("input", updateIntervalOverallTime);
+      inp.addEventListener("change", updateIntervalOverallTime);
+    }
   });
+  updateIntervalOverallTime();
 });
 
 function loadData() {
@@ -797,6 +801,7 @@ function buildCard(w, score) {
     var titleExtra = (i === 0 && w.source === "hero") ? heroInfoBtn : "";
     body += "<div class=\"section\"><div class=\"section-title\">" + esc(convertUnits(s.title)) + titleExtra + "</div>";
     if (s.sub_title) body += "<div class=\"section-subtitle\">" + esc(s.sub_title) + "</div>";
+    if (s.sub_title2) body += "<div class=\"section-subtitle section-subtitle2\">" + esc(s.sub_title2) + "</div>";
     body += "<ul class=\"section-lines\">" + li + "</ul></div>";
   }
   if (!body) body = "<div style=\"color:#555;padding:8px\">No content</div>";
@@ -823,6 +828,7 @@ function wa(idx) {
   for (var i = 0; i < secs.length; i++) {
     t += secs[i].title + "\n";
     if (secs[i].sub_title) t += secs[i].sub_title + "\n";
+    if (secs[i].sub_title2) t += secs[i].sub_title2 + "\n";
     var ln = secs[i].lines || [];
     for (var j = 0; j < ln.length; j++) t += "• " + formatLbToKg(ln[j]) + "\n";
     t += "\n";
@@ -1199,10 +1205,10 @@ function applyPreset(name) {
     document.getElementById("intSets").value = "1";
     document.getElementById("intRestSets").value = "0:00";
   }
+  updateIntervalOverallTime();
 }
 
 var PHASE_COLORS = { "CountDown": "#FFD700", "Count Down": "#FFD700", "For Time": "#28a745", "Prepare": "#FFD700", "Work": "#28a745", "Rest": "#dc3545", "Rest Between Sets": "#dc3545", "Done": "#007bff" };
-var RING_CIRCUMFERENCE = 2 * Math.PI * 45;
 var stopwatchCountDown = true;
 var timerFsWakeLock = null;
 var timerFsRaf = null;
@@ -1398,7 +1404,6 @@ function timerFullscreenUpdate() {
   var phaseEl = document.getElementById("timerFsPhase");
   var nextEl = document.getElementById("timerFsNext");
   var totalAbove = document.getElementById("timerFsTotalAbove");
-  var ring = document.getElementById("timerFsRing");
   var bg = document.getElementById("timerFsBg");
   var btn = document.getElementById("timerFsBtn");
   if (!el || el.style.display !== "flex") return;
@@ -1433,13 +1438,12 @@ function timerFullscreenUpdate() {
   }
   if (timerFsPhaseIndex >= timerFsPhases.length) {
     bg.style.background = phaseColors["Done"] || "#007bff";
-    digits.textContent = "0:00";
-    phaseEl.textContent = "Done!";
+    digits.textContent = "FINISH";
+    phaseEl.textContent = "FINISH";
     nextEl.textContent = "";
     var setRoundDone = document.getElementById("timerFsSetRound");
     if (setRoundDone) { setRoundDone.textContent = ""; setRoundDone.style.display = "none"; }
     if (totalAbove && timerFsIsInterval) totalAbove.innerHTML = "<span class=\"timer-fs-total-label\">OVERALL TIME</span><span class=\"timer-fs-total-digits\">0:00</span>";
-    ring.style.strokeDashoffset = 0;
     if (btn) { btn.textContent = "Close"; btn.setAttribute("aria-label", "Close"); }
     if (btnStandalone) { btnStandalone.textContent = "Close"; btnStandalone.setAttribute("aria-label", "Close"); }
     if (navEl) navEl.style.display = "none";
@@ -1485,8 +1489,6 @@ function timerFullscreenUpdate() {
     nextEl.textContent = "";
   }
   bg.style.background = phaseColors[p.name] || "#333";
-  var ratio = total > 0 ? (isCountUp ? displaySec / total : remaining / total) : 0;
-  ring.style.strokeDashoffset = RING_CIRCUMFERENCE * (1 - ratio);
   if (remaining <= 0) {
     timerFsPhaseIndex++;
     if (timerFsPhaseIndex < timerFsPhases.length) timerFsPhaseEndTime = Date.now() + timerFsPhases[timerFsPhaseIndex].sec * 1000;
@@ -1603,6 +1605,29 @@ function intervalStartStop() {
 function intervalReset() {
   document.getElementById("intervalStart").textContent = "Start Full Screen";
 }
+function updateIntervalOverallTime() {
+  var countDown = parseMMSS(document.getElementById("intCountDown").value) || 0;
+  var work = parseMMSS(document.getElementById("intWork").value) || 60;
+  var rest = parseMMSS(document.getElementById("intRest").value) || 0;
+  var rounds = Math.max(1, parseInt(document.getElementById("intRounds").value, 10) || 5);
+  var sets = parseInt(document.getElementById("intSets").value, 10) || 1;
+  var restSets = parseMMSS(document.getElementById("intRestSets").value) || 0;
+  var settings = getTimerSettings();
+  var mergeAdjacentRests = !!settings.mergeAdjacentRests;
+  var phases = [];
+  if (countDown > 0) phases.push({ name: "Prepare", sec: countDown });
+  for (var s = 0; s < sets; s++) {
+    for (var r = 0; r < rounds; r++) {
+      phases.push({ name: "Work", sec: work });
+      var skipRest = mergeAdjacentRests && (r === rounds - 1) && (s < sets - 1) && restSets > 0;
+      if (rest > 0 && !skipRest) phases.push({ name: "Rest", sec: rest });
+    }
+    if (s < sets - 1 && restSets > 0) phases.push({ name: "Rest Between Sets", sec: restSets });
+  }
+  var totalSec = phases.reduce(function(sum, p) { return sum + p.sec; }, 0);
+  var el = document.getElementById("intervalOverallTime");
+  if (el) el.textContent = "OVERALL TIME – " + formatMMSS(totalSec);
+}
 
 var selectedWorkoutIndex = null;
 
@@ -1637,6 +1662,7 @@ function buildCardHtmlOnly(w) {
     var titleExtra = (i === 0 && w.source === "hero") ? heroInfoBtn : "";
     body += "<div class=\"section\"><div class=\"section-title\">" + esc(convertUnits(s.title)) + titleExtra + "</div>";
     if (s.sub_title) body += "<div class=\"section-subtitle\">" + esc(s.sub_title) + "</div>";
+    if (s.sub_title2) body += "<div class=\"section-subtitle section-subtitle2\">" + esc(s.sub_title2) + "</div>";
     body += "<ul class=\"section-lines\">" + li + "</ul></div>";
   }
   if (!body) body = "<div style=\"color:#555;padding:8px\">No content</div>";
@@ -1722,11 +1748,10 @@ function applyPreset(name) {
     document.getElementById("intSets").value = "1";
     document.getElementById("intRestSets").value = "0:00";
   }
+  updateIntervalOverallTime();
 }
 
-var PHASE_COLORS = { "CountDown": "#FFD700", "Count Down": "#FFD700", "For Time": "#28a745", "Prepare": "#FFD700", "Work": "#28a745", "Rest": "#dc3545", "Rest Between Sets": "#dc3545", "Done": "#007bff" };
-var RING_CIRCUMFERENCE = 2 * Math.PI * 45;
-/* stopwatchCountDown – use global from first timer block (do not redeclare) */
+/* PHASE_COLORS and stopwatchCountDown – use globals from first timer block */
 
 var TIMER_PALETTE_COLORS = [
   "#b71c1c","#c62828","#d32f2f","#e53935","#f44336","#ef5350","#e57373","#ff8a80",

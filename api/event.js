@@ -30,15 +30,17 @@ module.exports = async function handler(req, res) {
   let event = "page_view";
   let t = Date.now();
   let sid = null;
+  let ua = "";
   try {
     const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
     if (body.event === "find_workout" || body.event === "page_view" || body.event === "timer_use") event = body.event;
     if (typeof body.t === "number") t = body.t;
     if (typeof body.sid === "string" && body.sid.length <= 64) sid = body.sid;
+    if (typeof body.ua === "string" && body.ua.length <= 512) ua = body.ua;
   } catch (e) {}
 
   const filePath = "data/analytics.jsonl";
-  const payload = sid ? { event, t, sid } : { event, t };
+  const payload = sid ? { event, t, sid, ua } : { event, t, ua };
   const newLine = JSON.stringify(payload) + "\n";
   const headers = {
     Authorization: `token ${token}`,

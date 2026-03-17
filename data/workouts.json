@@ -1417,10 +1417,10 @@
             "title": "WOD",
             "sub_title": "Flamingo Park",
             "lines": [
-              "8 Rounds For Time:",
               "12 GHDs",
-              "4 Deadlifts 225#/155#"
-            ]
+              "4 Deadlifts 102kg/70kg"
+            ],
+            "sub_title2": "8 Rounds For Time:"
           }
         ]
       },
@@ -1647,14 +1647,14 @@
             "title": "WOD",
             "sub_title": "Muscle Beach",
             "lines": [
-              "2:00 AMRAP",
-              "10 Overhead Squat 95#/65#",
+              "10 Overhead Squat 43kg/29kg",
               "50 Double Unders",
               "Max Wall Walks )",
-              "-rest 1:00 between sets-",
+              "* -rest 1:00 between sets-",
               "*Continue until you have accumulated 25 Wall Walks",
               "**Score is total time it takes you accumulate 25 walks"
-            ]
+            ],
+            "sub_title2": "2:00 AMRAP"
           }
         ]
       },
@@ -1890,13 +1890,13 @@
             "title": "WOD",
             "sub_title": "Versace Mansion",
             "lines": [
-              "For Time:",
               "25-50-75",
               "Calorie Row",
               "5-15-25",
               "50ft Shuttle Runs",
               "* (Women's Calories: 20-40-60)"
-            ]
+            ],
+            "sub_title2": "For Time:"
           }
         ]
       },
@@ -2172,7 +2172,7 @@
               "12 cleans, weight 3",
               "12 burpees over the bar",
               "12 thrusters, weight 3",
-              "Time cap: 16 minutes",
+              "* Time cap: 16 minutes",
               "♀ 65, 75, 85 lb (29, 34, 38 kg)",
               "♂ 95, 115, 135 lb (43, 52, 61 kg)"
             ]
@@ -2439,7 +2439,7 @@
               "4 sets (each/1:1)",
               "3:00 AMRAP",
               "25/20 Calorie Air Bike",
-              "15 Power Cleans 95#/65#",
+              "15 Power Cleans 43kg/29kg",
               "Max Burpee over Bar",
               "*Scored by Total Burpees"
             ]
@@ -2840,13 +2840,13 @@
             "title": "WOD",
             "sub_title": "Emerald",
             "lines": [
-              "2 sets For Time:",
               "9-6-3",
-              "Squat Cleans 135#/95#",
+              "Squat Cleans 61kg/43kg",
               "15-12-9",
               "Handstand Push Ups",
-              "-rest 3:00 between sets-"
-            ]
+              "* -rest 3:00 between sets-"
+            ],
+            "sub_title2": "2 sets For Time:"
           }
         ]
       },
@@ -3063,20 +3063,20 @@
             "title": "WOD",
             "sub_title": "Forest Green",
             "lines": [
-              "For Time:",
               "21-15-9",
               "Calorie Air Bike",
-              "Kettlebell Swings 55#/35#",
-              "-rest till 7:00-",
+              "Kettlebell Swings 25kg/16kg",
+              "* -rest till 7:00-",
               "21-15-9",
               "Calorie Air Bike",
               "Toes to Bar",
-              "-rest till 14:00-",
+              "* -rest till 14:00-",
               "21-15-9",
               "Toes to Bar",
-              "Kettlebell Swings 55#/35#",
+              "Kettlebell Swings 25kg/16kg",
               "* (Women's Calories: 16-12-8)"
-            ]
+            ],
+            "sub_title2": "For Time:"
           }
         ]
       },
@@ -3149,5 +3149,5 @@
       }
     ]
   },
-  "last_updated": "2026-03-17T14:48:37.616575"
+  "last_updated": "2026-03-17T15:19:30.671329"
 }
