@@ -40,8 +40,11 @@ jobs:
         cd backend
         python fetch_all.py
 
-    - name: Pull latest main (avoids push rejection when analytics/etc. pushed meanwhile)
-      run: git pull --rebase origin main
+    - name: Stash fetch results, pull latest main, unstash
+      run: |
+        git stash push -m "fetch" data/workouts.json data/special_cache.json
+        git pull --rebase origin main
+        git stash pop
 
     - name: Commit and push
       run: |
