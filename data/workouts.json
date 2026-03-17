@@ -2914,40 +2914,6 @@
     "2026-03-17": [
       {
         "date": "2026-03-17",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-17/",
-        "sections": [
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "line drills"
-            ]
-          },
-          {
-            "title": "BENCH PRESS 15MIN",
-            "lines": [
-              "3 sets",
-              "5 bench press at 80%",
-              "1 drop set",
-              "max reps at 50%",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "15-12-9-6-3 ring dips",
-              "50-40-30-20-10 double unders",
-              "*200m run after each round",
-              "* aerobic power [vo2 max]"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-17",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260317",
@@ -3010,6 +2976,80 @@
               "Flush at Forever Pace on the Echo Bike during rest.",
               "Sprintervals need two things: high intensity, and slight strategic changes round to round for athlete IQ."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-17",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 12.1",
+            "lines": [
+              "Complete as many reps as possible in 7 minutes of:",
+              "Burpees"
+            ]
+          }
+        ],
+        "note": "Open: Open 12.1"
+      },
+      {
+        "date": "2026-03-17",
+        "source": "linchpin",
+        "source_name": "CrossFit Linchpin",
+        "url": "https://crossfitlinchpin.com/blogs/wod",
+        "note": "⚠️ This source provides daily workouts only",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "CHECKPOINT CHARLIE",
+              "\"The Devil\"",
+              "For time:",
+              "1.5 mile run",
+              "1:00 Rest, then...",
+              "For time:",
+              "1 Mile Kettlebell Suitcase Carry",
+              "Men: 53 lb",
+              "Women: 35 lb",
+              "*Compare to 09.08.2025"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-17",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-03-17/",
+        "sections": [
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "line drills"
+            ]
+          },
+          {
+            "title": "BENCH PRESS 15MIN",
+            "lines": [
+              "3 sets",
+              "5 bench press at 80%",
+              "1 drop set",
+              "max reps at 50%",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "15-12-9-6-3 ring dips",
+              "50-40-30-20-10 double unders",
+              "*200m run after each round",
+              "* aerobic power [vo2 max]"
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -3106,48 +3146,8 @@
           }
         ],
         "note": "Benchmark: DIANE"
-      },
-      {
-        "date": "2026-03-17",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 12.1",
-            "lines": [
-              "Complete as many reps as possible in 7 minutes of:",
-              "Burpees"
-            ]
-          }
-        ],
-        "note": "Open: Open 12.1"
-      },
-      {
-        "date": "2026-03-17",
-        "source": "linchpin",
-        "source_name": "CrossFit Linchpin",
-        "url": "https://crossfitlinchpin.com/blogs/wod",
-        "note": "⚠️ This source provides daily workouts only",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "CHECKPOINT CHARLIE",
-              "\"The Devil\"",
-              "For time:",
-              "1.5 mile run",
-              "1:00 Rest, then...",
-              "For time:",
-              "1 Mile Kettlebell Suitcase Carry",
-              "Men: 53 lb",
-              "Women: 35 lb",
-              "*Compare to 09.08.2025"
-            ]
-          }
-        ]
       }
     ]
   },
-  "last_updated": "2026-03-17T07:07:59.500966"
+  "last_updated": "2026-03-17T09:04:16.931851"
 }
