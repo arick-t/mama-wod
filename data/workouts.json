@@ -1,88 +1,5 @@
 {
   "workouts": {
-    "2026-03-02": [
-      {
-        "date": "2026-03-02",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260302",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Quarter Gone Bad",
-              "5 rounds for max reps of:",
-              "15 seconds of thrusters",
-              "45-second rest",
-              "15 seconds of weighted pull-ups",
-              "45-second rest",
-              "15 seconds of burpees",
-              "45-second rest",
-              "♀ 95-lb barbell and a 35-lb dumbbell",
-              "♂ 135-lb barbell and a 50-lb dumbbell",
-              "Compare to",
-              "080413"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-02",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-march-2-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "Alternating movement Tabata (:20 on :10 off) 3 rounds each",
-              "Jump Rope",
-              "Kettlebell Swings",
-              "Ring Rows"
-            ]
-          },
-          {
-            "title": "3 Rounds for time",
-            "lines": [
-              "90 Double Unders",
-              "35 Deadlifts 135/95lbs",
-              "9/7 Muscle Ups",
-              "Feel: Gas",
-              "Pace: Sustain",
-              "Target Score: Sub 18 minutes",
-              "Firebreather Score: Sub 15 minutes"
-            ]
-          },
-          {
-            "title": "Strength",
-            "lines": [
-              "6 Sets",
-              "10 Neutral Grip DB Strict Press",
-              "Rest 2:00"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-02",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 17.4",
-            "lines": [
-              "Complete as many rounds and reps as possible in 13 minutes of:",
-              "55 deadlifts, 225 lb.",
-              "55 wall-ball shots, 20-lb. ball to 10-ft. target",
-              "55-calorie row",
-              "55 handstand push-ups"
-            ]
-          }
-        ],
-        "note": "Open: Open 17.4"
-      }
-    ],
     "2026-03-03": [
       {
         "date": "2026-03-03",
@@ -186,95 +103,6 @@
           }
         ],
         "note": "Open: Open 13.1"
-      },
-      {
-        "date": "2026-03-03",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-03/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "lat stretch",
-              "hand walk",
-              "lying hip cross over",
-              "instep rotation"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 hang high pulls",
-              "10 elbow rotation",
-              "10 good mornings",
-              "* *remaining time row"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "DEADLIFT 15MIN",
-            "lines": [
-              "build to a heavy 10-rep max",
-              "* rest 3-5 minutes between attempts",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "SKILL 5MIN",
-            "lines": [
-              "power clean"
-            ]
-          },
-          {
-            "title": "CONDITIONING 10MIN",
-            "lines": [
-              "6 rounds",
-              "",
-              "6 power cleans 70/50kg",
-              "15/12cal row",
-              "* aerobic power [vo2 max]"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-03",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "U.S. Marine 1st Lt. Michael E. Johnson, 25, of the 7th Communications Battalion, 3rd Marine Headquarters Group, III Marine Expeditionary Force, headquartered in Okinawa, Japan, died Sept. 8, 2009, while supporting combat operations in Kunar Province, Afghanistan.\nHe is survived by his wife, Durinda.\nFirst posted",
-        "sections": [
-          {
-            "title": "Johnson",
-            "sub_title": "Complete as many rounds and reps as possible in 20 minutes of:",
-            "lines": [
-              "9 deadlifts",
-              "8 muscle-ups",
-              "9 squat cleans",
-              "♀ 165-lb deadlifts, 105-lb squat cleans",
-              "♂ 245-lb deadlifts, 155-lb squat cleans"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-03",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Karen",
-            "lines": [
-              "\"Karen\"",
-              "For time",
-              "150 wall balls 20/14 lbs",
-              "time cap 12min"
-            ]
-          }
-        ],
-        "note": "Benchmark: Karen"
       }
     ],
     "2026-03-04": [
@@ -620,29 +448,6 @@
             "lines": [
               "* 30sec on/ 1min off x 3 sets",
               "* db overhead triceps extension"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-05",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Deadlift 5×5 @ 80%"
-            ]
-          },
-          {
-            "title": "METCON",
-            "sub_title": "4 Rounds For Time:",
-            "lines": [
-              "15/12 Cal Air Bike",
-              "* 6 Power Snatch @ 60/42.5kg",
-              "3 BMU"
             ]
           }
         ]
@@ -1059,30 +864,6 @@
       },
       {
         "date": "2026-03-07",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Magic Xylophone",
-            "lines": [
-              "Teams of 2 For Time:",
-              "800/725m Row",
-              "40 Squat Cleans 95#/65#",
-              "800/725m Row",
-              "30 Squat Cleans 115#/85#",
-              "800/725m Row",
-              "20 Squat Cleans135#/95#",
-              "800/725m Row",
-              "10 Squat Cleans 155#/105#",
-              "800/725m Row"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-07",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -1225,21 +1006,27 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "DIANE",
+            "title": "Elizabeth",
             "lines": [
-              "For time",
-              "21–15–9",
-              "Deadlift @100/70 kg",
-              "Handstand push up",
-              "Scaled",
-              "21-15-9 Reps For Time",
-              "Deadlifts (70/50kg)",
-              "Push-Ups",
-              "TC 10 min"
+              "21–15–9:",
+              "60/42,5kg Squat Cleans",
+              "Ring Dips",
+              "*TC12min",
+              "*COMP:",
+              "Squat Cleans 70/50kg",
+              "Strict Ring Dips",
+              "*SK1:",
+              "Squat Cleans 45/30kg",
+              "Banded Ring/Matador Dip OR Ring Push-Ups",
+              "*SK2:",
+              "Hang Power Cleans",
+              "Front Squats",
+              "Elevated Ring Push-Ups",
+              "Load: 20/15kg"
             ]
           }
         ],
-        "note": "Benchmark: DIANE"
+        "note": "Benchmark: Elizabeth"
       }
     ],
     "2026-03-09": [
@@ -2977,28 +2764,6 @@
       },
       {
         "date": "2026-03-16",
-        "source": "linchpin",
-        "source_name": "CrossFit Linchpin",
-        "url": "https://crossfitlinchpin.com/blogs/wod",
-        "note": "⚠️ This source provides daily workouts only",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "5 Rounds for time, or not:",
-              "7 Chest-to-bar Pull-ups",
-              "5 Full Clean & Jerks, 155/105",
-              "Or as a 2-person team...",
-              "For time, or not:",
-              "70 Chest-to-bar Pull-ups",
-              "70 Full Clean & Jerks, 155/105",
-              "*Only 1 person working at a time"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-16",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-03-16/",
@@ -3145,7 +2910,244 @@
         ],
         "note": "Benchmark: Nicole"
       }
+    ],
+    "2026-03-17": [
+      {
+        "date": "2026-03-17",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-03-17/",
+        "sections": [
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "line drills"
+            ]
+          },
+          {
+            "title": "BENCH PRESS 15MIN",
+            "lines": [
+              "3 sets",
+              "5 bench press at 80%",
+              "1 drop set",
+              "max reps at 50%",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "15-12-9-6-3 ring dips",
+              "50-40-30-20-10 double unders",
+              "*200m run after each round",
+              "* aerobic power [vo2 max]"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-03-17",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260317",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Annie"
+            ]
+          },
+          {
+            "title": "50-40-30-20-10 REPS FOR TIME OF",
+            "lines": [
+              "Double-unders",
+              "AbMat sit-ups",
+              "Then, complete the following post-workout skill work.",
+              "Every minute on the minute for 6 minutes:",
+              "25-foot handstand walk",
+              "Compare to",
+              "230104"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-17",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-march-17-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "20 Dead Bugs",
+              "10 Kickstand Kettlebell Deadlifts per leg, then:",
+              "3 rounds",
+              ":45 Machine or 150m Run",
+              "8 Russian KBS",
+              "8 Reverse Lunges"
+            ]
+          },
+          {
+            "title": "Deadlift",
+            "lines": [
+              "11 reps @ 50% 1RM",
+              "9 reps @ 60% 1RM",
+              "7 reps @ 70% 1RM",
+              "5 reps @ 80% 1RM",
+              "1 max rep set at 85% 1RM",
+              "Score: weight for reps in final set (e.g. 200lbs for 6)",
+              "Bike for 3:00 between sets as rest”)"
+            ]
+          },
+          {
+            "title": "Every 10:00 for 3 Rounds",
+            "lines": [
+              "15 line Facing Burpees",
+              "3 Rope Climbs",
+              "50ft Dbl DB OHWL 50s/35s",
+              "Flush at Forever Pace on the Echo Bike during rest.",
+              "Sprintervals need two things: high intensity, and slight strategic changes round to round for athlete IQ."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-17",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Forest Green",
+            "lines": [
+              "For Time:",
+              "21-15-9",
+              "Calorie Air Bike",
+              "Kettlebell Swings 55#/35#",
+              "-rest till 7:00-",
+              "21-15-9",
+              "Calorie Air Bike",
+              "Toes to Bar",
+              "-rest till 14:00-",
+              "21-15-9",
+              "Toes to Bar",
+              "Kettlebell Swings 55#/35#",
+              "* (Women's Calories: 16-12-8)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-17",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "5 x 5 @ 80-85% of Deadlift"
+            ]
+          },
+          {
+            "title": "METCON",
+            "sub_title": "2 mins on, 1 min off for 5 rounds",
+            "lines": [
+              "3 Bar MU",
+              "6 HSPU",
+              "9 Hang KB Snatch",
+              "Max Bike Cals in remaining time",
+              "Score is Cals",
+              "Start on BMU each round"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-17",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "U.S. Army Sgt. Keith Adam Coe, 30, of Auburndale, Florida, assigned to the 1st Battalion, 37th Field Artillery Regiment, 3rd Stryker Brigade Combat Team, 2nd Infantry Division, Joint Base Lewis-McChord, Washington, died April 27, 2010, in Khalis, Iraq, of wounds sustained when enemy forces attacked his unit with an explosive device.\nHe is survived by his wife, Katrina; two sons, Killian and Keith Jr.; and daughter, Klover.\nFirst posted",
+        "sections": [
+          {
+            "title": "Coe",
+            "sub_title": "10 rounds for time of:",
+            "lines": [
+              "10 thrusters",
+              "10 ring push-ups",
+              "*♀ 65 lb*",
+              "*♂ 95 lb*"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-17",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "DIANE",
+            "lines": [
+              "For time",
+              "21–15–9",
+              "Deadlift @100/70 kg",
+              "Handstand push up",
+              "Scaled",
+              "21-15-9 Reps For Time",
+              "Deadlifts (70/50kg)",
+              "Push-Ups",
+              "TC 10 min"
+            ]
+          }
+        ],
+        "note": "Benchmark: DIANE"
+      },
+      {
+        "date": "2026-03-17",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 12.1",
+            "lines": [
+              "Complete as many reps as possible in 7 minutes of:",
+              "Burpees"
+            ]
+          }
+        ],
+        "note": "Open: Open 12.1"
+      },
+      {
+        "date": "2026-03-17",
+        "source": "linchpin",
+        "source_name": "CrossFit Linchpin",
+        "url": "https://crossfitlinchpin.com/blogs/wod",
+        "note": "⚠️ This source provides daily workouts only",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "CHECKPOINT CHARLIE",
+              "\"The Devil\"",
+              "For time:",
+              "1.5 mile run",
+              "1:00 Rest, then...",
+              "For time:",
+              "1 Mile Kettlebell Suitcase Carry",
+              "Men: 53 lb",
+              "Women: 35 lb",
+              "*Compare to 09.08.2025"
+            ]
+          }
+        ]
+      }
     ]
   },
-  "last_updated": "2026-03-16T09:16:26.824177"
+  "last_updated": "2026-03-17T07:07:59.500966"
 }
