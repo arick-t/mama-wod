@@ -2846,54 +2846,6 @@
     "2026-03-18": [
       {
         "date": "2026-03-18",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-18/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "samson stretch",
-              "hand walk",
-              "instep rotations",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 hang high pulls",
-              "10 behind the neck push press",
-              "10/8cal row"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "SKILL 5MIN",
-            "lines": [
-              "hang power snatches"
-            ]
-          },
-          {
-            "title": "CONDITIONING 28MIN",
-            "lines": [
-              "5 x 4:00 amrap:",
-              "",
-              "20 sit ups",
-              "30/24 cal row",
-              "10 hang power snatches 50/35kg",
-              "* rest 2:00 between amraps",
-              "* pick up where you left off",
-              "* aerobic power [vo2 max]",
-              "* hang power snatch"
-            ],
-            "sub_title": "score: total rounds + reps"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-18",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260318",
@@ -2962,6 +2914,93 @@
               "Drop and reset all reps to jerk blocks. Take your time in between reps as needed. Focus on what needs to change to make pausing in the bottom more comfortable.",
               "Ski 500m Between Sets to Flush)"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-18",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 23.2",
+            "lines": [
+              "Complete as many reps as possible in 15 minutes of:",
+              "5 burpee pull-ups",
+              "10 shuttle runs (1 rep = 25 ft out/25 ft back)",
+              "*Add 5 burpee pull-ups after each round.",
+              "23.2B:",
+              "Immediately following 23.2A, athletes will have 5 minutes to establish:",
+              "1-rep-max thruster (from the floor)"
+            ]
+          }
+        ],
+        "note": "Open: Open 23.2"
+      },
+      {
+        "date": "2026-03-18",
+        "source": "linchpin",
+        "source_name": "CrossFit Linchpin",
+        "url": "https://crossfitlinchpin.com/blogs/wod",
+        "note": "⚠️ This source provides daily workouts only",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Amrap 30 minutes of:",
+              "2000m Air Bike",
+              "40 Double-unders",
+              "20 Hollow Rocks"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-18",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-03-18/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "samson stretch",
+              "hand walk",
+              "instep rotations",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 hang high pulls",
+              "10 behind the neck push press",
+              "10/8cal row"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "SKILL 5MIN",
+            "lines": [
+              "hang power snatches"
+            ]
+          },
+          {
+            "title": "CONDITIONING 28MIN",
+            "lines": [
+              "5 x 4:00 amrap:",
+              "",
+              "20 sit ups",
+              "30/24 cal row",
+              "10 hang power snatches 50/35kg",
+              "* rest 2:00 between amraps",
+              "* pick up where you left off",
+              "* aerobic power [vo2 max]",
+              "* hang power snatch"
+            ],
+            "sub_title": "score: total rounds + reps"
           }
         ]
       },
@@ -3051,47 +3090,8 @@
           }
         ],
         "note": "Benchmark: Kelly"
-      },
-      {
-        "date": "2026-03-18",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 23.2",
-            "lines": [
-              "Complete as many reps as possible in 15 minutes of:",
-              "5 burpee pull-ups",
-              "10 shuttle runs (1 rep = 25 ft out/25 ft back)",
-              "*Add 5 burpee pull-ups after each round.",
-              "23.2B:",
-              "Immediately following 23.2A, athletes will have 5 minutes to establish:",
-              "1-rep-max thruster (from the floor)"
-            ]
-          }
-        ],
-        "note": "Open: Open 23.2"
-      },
-      {
-        "date": "2026-03-18",
-        "source": "linchpin",
-        "source_name": "CrossFit Linchpin",
-        "url": "https://crossfitlinchpin.com/blogs/wod",
-        "note": "⚠️ This source provides daily workouts only",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Amrap 30 minutes of:",
-              "2000m Air Bike",
-              "40 Double-unders",
-              "20 Hollow Rocks"
-            ]
-          }
-        ]
       }
     ]
   },
-  "last_updated": "2026-03-18T07:12:00.143076"
+  "last_updated": "2026-03-18T09:01:31.262620"
 }
