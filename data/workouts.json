@@ -2858,54 +2858,6 @@
     "2026-03-19": [
       {
         "date": "2026-03-19",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-19/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "hamstring stretch on box",
-              "calf stretch",
-              "instep rotations",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 good mornings",
-              "10 jumping lunges",
-              "10 ring rows"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "DEADLIFTS 14MIN",
-            "lines": [
-              "3 sets",
-              "5 deadlifts at 80%",
-              "1 drop set",
-              "max reps at 50%",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "16:00 amrap",
-              "4 strict pull-ups",
-              "8 sumo deadlifts 100/70kg",
-              "4 strict pull-ups",
-              "16 box jumps",
-              "* muscular endurance"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-19",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260319",
@@ -2964,6 +2916,94 @@
               "45-90 Minutes on a single machine or jogging keeping your heartrate between 160 BPM minus your age and 180 BPM minus your age",
               "Then",
               "Spend 12:00 working slowly from your working heartrate, down to 140 BPM minus your age on any machine or combination of machines"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-19",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 19.4",
+            "lines": [
+              "For total time:",
+              "3 rounds of:",
+              "10 snatches",
+              "12 bar-facing burpees",
+              "Then, rest 3 minutes before continuing with:",
+              "3 rounds of:",
+              "10 bar muscle-ups",
+              "12 bar-facing burpees",
+              "*Men snatch 95 lb.*",
+              "Time cap: 12 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 19.4"
+      },
+      {
+        "date": "2026-03-19",
+        "source": "linchpin",
+        "source_name": "CrossFit Linchpin",
+        "url": "https://crossfitlinchpin.com/blogs/wod",
+        "note": "⚠️ This source provides daily workouts only",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "REST DAY!",
+              "Get out of the gym."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-19",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-03-19/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "hamstring stretch on box",
+              "calf stretch",
+              "instep rotations",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 good mornings",
+              "10 jumping lunges",
+              "10 ring rows"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "DEADLIFTS 14MIN",
+            "lines": [
+              "3 sets",
+              "5 deadlifts at 80%",
+              "1 drop set",
+              "max reps at 50%",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "16:00 amrap",
+              "4 strict pull-ups",
+              "8 sumo deadlifts 100/70kg",
+              "4 strict pull-ups",
+              "16 box jumps",
+              "* muscular endurance"
             ]
           }
         ]
@@ -3061,48 +3101,8 @@
           }
         ],
         "note": "Benchmark: 121023 ADVANCED BOOTCAMP (JW)"
-      },
-      {
-        "date": "2026-03-19",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 19.4",
-            "lines": [
-              "For total time:",
-              "3 rounds of:",
-              "10 snatches",
-              "12 bar-facing burpees",
-              "Then, rest 3 minutes before continuing with:",
-              "3 rounds of:",
-              "10 bar muscle-ups",
-              "12 bar-facing burpees",
-              "*Men snatch 95 lb.*",
-              "Time cap: 12 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 19.4"
-      },
-      {
-        "date": "2026-03-19",
-        "source": "linchpin",
-        "source_name": "CrossFit Linchpin",
-        "url": "https://crossfitlinchpin.com/blogs/wod",
-        "note": "⚠️ This source provides daily workouts only",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "REST DAY!",
-              "Get out of the gym."
-            ]
-          }
-        ]
       }
     ]
   },
-  "last_updated": "2026-03-19T07:08:55.755860"
+  "last_updated": "2026-03-19T08:58:04.031199"
 }
