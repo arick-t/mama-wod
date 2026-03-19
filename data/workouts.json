@@ -1,102 +1,5 @@
 {
   "workouts": {
-    "2026-03-04": [
-      {
-        "date": "2026-03-04",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-march-4-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "10 Legs and Body only row strokes+ :30 full stroke rowing",
-              "6 Burpees + 12 Step Ups",
-              "10 Body and Arms only row strokes + :30 full strokes rowing",
-              "6 Burpees + 6 Box Jumps",
-              "10 Pause (at the finish) row strokes + :30 full strokes rowing",
-              "6 Burpees + 6 Box Jump Overs"
-            ]
-          },
-          {
-            "title": "AMRAP 20 minutes",
-            "lines": [
-              "Row for max distance",
-              "*At 0:00, 4:00, 8:00, 12:00 and 16:00 perform 12 Burpee Box Jump Overs 24/20″",
-              "Feel: Gas",
-              "Pace: Sustain",
-              "Target Score: At least 2:30 of rowing each interval",
-              "Firebreather Score: At least 3:00 of rowing each interval"
-            ]
-          },
-          {
-            "title": "Squat Clean",
-            "lines": [
-              "Mid Thigh Hang Squat Clean w/ Pause in catch",
-              "3×3 @ 60-70%",
-              "At Knee Hang Squat Clean w/ Pause in catch",
-              "3×2 @ 70-80%",
-              "Mid Shin Hang Squat Clean w/Pause in catch",
-              "3×1 @ 80-90%",
-              "Bike Between Sets as needed to Flush"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-04",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 11.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "30 Double-unders",
-              "15 Power snatches (75lbs / 35kg)",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "30 Double-unders",
-              "15 Power snatches (55lbs / 25kg)",
-              "*MASTERS MEN*",
-              "-",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "30 Double-unders",
-              "15 Power snatches (65lbs / 30kg)",
-              "*MASTERS WOMEN*",
-              "-",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "30 Double-unders",
-              "15 Power snatches (45lbs / 20kg)"
-            ]
-          }
-        ],
-        "note": "Open: Open 11.1"
-      },
-      {
-        "date": "2026-03-04",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260304",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Back squat 8-8-8-8-8 reps",
-              "Compare to similar",
-              "250211",
-              "and",
-              "251020"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-03-05": [
       {
         "date": "2026-03-05",
@@ -185,100 +88,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-03-05",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-05/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "calf stretch",
-              "samson stretch",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 db deadlifts",
-              "20 single under",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "CONDITIONING 26MIN",
-            "lines": [
-              "4 x 5:00 amrap:",
-              "",
-              "25/20 cal ski/bike",
-              "24 db hang snatches 22,5/15kg",
-              "50 double under",
-              "* rest 2:00 between amraps",
-              "* *pick up where you left off",
-              "* aerobic power [lactate threshold]"
-            ],
-            "sub_title": "score: total rounds + reps"
-          },
-          {
-            "title": "TRICEPS 4MIN",
-            "lines": [
-              "* 30sec on/ 1min off x 3 sets",
-              "* db overhead triceps extension"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-05",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "He is survived by his wife, Lori; and daughter, Sophia Grace, born three weeks after his death.\nA\nfund for Arnie's family\nhas been established by the Los Angeles County Fire Department.\nFirst posted",
-        "sections": [
-          {
-            "title": "Arnie",
-            "sub_title": "With a single kettlebell for time:",
-            "lines": [
-              "21 Turkish get-ups, right arm",
-              "50 kettlebell swings",
-              "21 overhead squats, left arm",
-              "50 kettlebell swings",
-              "21 overhead squats, right arm",
-              "50 kettlebell swings",
-              "21 Turkish get-ups, left arm",
-              "*♀ 53 lb*",
-              "*♂ 70 lb*",
-              "Los Angeles County Firefighter Specialist Arnaldo \"Arnie\" Quinones, 34, was killed in the line of duty on Sunday, Aug. 30, 2009, during the Station Fire. His emergency-response vehicle went over the side of the road and fell 800 feet into a steep canyon during fire suppression activities protecting Camp 16 outside the City of Palmdale, California."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-05",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "BARBARA",
-            "lines": [
-              "5 rounds for time:",
-              "15 Pull up",
-              "20 Push up",
-              "30 Sit up",
-              "50 Air Squat",
-              "2min Rest",
-              "(Time Cap 35min)",
-              "Do not include final 2min rest in your overall time."
-            ]
-          }
-        ],
-        "note": "Benchmark: BARBARA"
       }
     ],
     "2026-03-06": [
@@ -612,24 +421,6 @@
       },
       {
         "date": "2026-03-07",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Killer No. 2",
-              "10 Rounds",
-              "3 Clean & Jerk 80/60kg",
-              "200m run",
-              "1 round of Cindy (5 pull ups+10 push ups+15 air squats)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-07",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "U.S. Army 2nd Lt. Clovis T. Ray, 34, of San Antonio, Texas, assigned to the 2nd Battalion, 35th Infantry Regiment, 3rd Brigade Combat Team, 25th Infantry Division, based in Schofield Barracks, Hawaii, was killed on March 15, 2012, in Kunar Province, Afghanistan, when insurgents attacked his unit with an improvised explosive device.\nHe is survived by his wife, Shannon; son, Dean; parents, Bob Ben Sr. and Cecilia; brothers, Eddie and Bob Ben Jr.; and sister, Jennifer.\nFirst posted",
@@ -652,15 +443,31 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "121023 ADVANCED BOOTCAMP (JW)",
+            "title": "The Ghost",
             "lines": [
-              "4 x 6 heavy dual db floorpress",
-              "2/2 turkish getup",
-              "For time:"
+              "6 rounds of:",
+              "– Athletes work for 3:00 and then rest 1:00 in a Fight Gone Bad AMRAP style workout.",
+              "*– Score is total reps completed at the end of the 6 rounds. Keep a running count from movement to movement, or add up all three during rest period.*",
+              "S1:",
+              "6 rounds for reps:",
+              "1:00 calorie row",
+              "1:00 burpees",
+              "1:00 double-under attempts",
+              "– Rest 1:00 between rounds.",
+              "S2:",
+              "5 rounds for reps:",
+              "1:00 calorie row",
+              "1:00 burpees",
+              "1:00 single-unders",
+              "– Rest 1:00 between rounds.",
+              "INTENDED STIMULUS",
+              "80-100 calories; 60-90 burpees; 300+ double-unders.",
+              "Fight Gone Bad style workout originally programmed for professional boxer Robert “The Ghost” Guerrero's training on 140617.",
+              "*Athletes should track individual movements each round and then try to beat the previous round's score.*"
             ]
           }
         ],
-        "note": "Benchmark: 121023 ADVANCED BOOTCAMP (JW)"
+        "note": "Benchmark: The Ghost"
       }
     ],
     "2026-03-08": [
@@ -1114,32 +921,6 @@
               "* aerobic power [vo2 max]"
             ],
             "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-10",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Clean & Jerk 10x1",
-              "Every 1:00 (10:00)",
-              "1 Clean and Jerk @ RPE 7",
-              "* This is meant to be a Squat Clean + Push Jerk. You can change to Power Clean or Split Jerk if needed/wanted."
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Flamingo Park",
-            "lines": [
-              "12 GHDs",
-              "4 Deadlifts 102kg/70kg"
-            ],
-            "sub_title2": "8 Rounds For Time:"
           }
         ]
       },
@@ -2940,24 +2721,6 @@
       },
       {
         "date": "2026-03-18",
-        "source": "linchpin",
-        "source_name": "CrossFit Linchpin",
-        "url": "https://crossfitlinchpin.com/blogs/wod",
-        "note": "⚠️ This source provides daily workouts only",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Amrap 30 minutes of:",
-              "2000m Air Bike",
-              "40 Double-unders",
-              "20 Hollow Rocks"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-18",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-03-18/",
@@ -3091,7 +2854,255 @@
         ],
         "note": "Benchmark: Kelly"
       }
+    ],
+    "2026-03-19": [
+      {
+        "date": "2026-03-19",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-03-19/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "hamstring stretch on box",
+              "calf stretch",
+              "instep rotations",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 good mornings",
+              "10 jumping lunges",
+              "10 ring rows"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "DEADLIFTS 14MIN",
+            "lines": [
+              "3 sets",
+              "5 deadlifts at 80%",
+              "1 drop set",
+              "max reps at 50%",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "16:00 amrap",
+              "4 strict pull-ups",
+              "8 sumo deadlifts 100/70kg",
+              "4 strict pull-ups",
+              "16 box jumps",
+              "* muscular endurance"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-19",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260319",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Rest Day",
+              "Your First Month of CrossFit: Why Going Slow Gets You There Faster",
+              "The athletes who rush to heavy weights and high intensity in their first weeks of CrossFit inevitably plateau, while their peers who focus on mechanics continue progressing for years. Your first 30 days aren't about proving yourself; they're about building the foundation that determines how far you'll ultimately go. Here's why mastering the basics is the smartest investment you can make in your fitness."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-19",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-march-19-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "500m Air Bike",
+              "20 Step Ups",
+              "500m Bike",
+              "15 S-DB Step Ups",
+              "500m Bike",
+              "10 Double DB Step Ups",
+              "500m Air Bike"
+            ]
+          },
+          {
+            "title": "4 rounds, each for time",
+            "lines": [
+              "1/0.9k Air Bike",
+              "20 DB Farmer’s Hold Step Ups",
+              "1/0.9k Air Bike",
+              "Rest 1:1, or alternate rounds with a partner until both athletes complete 4 rounds each",
+              "Rx: 50s/35s, both to 20”",
+              "Feel: Gas/Muscle overload",
+              "Pace: Reach",
+              "Target Score: 4-5:00/round",
+              "Firebreather Score: sub-4 minutes per round"
+            ]
+          },
+          {
+            "title": "Extra Credit",
+            "lines": [
+              "Make up Day",
+              "If you have already taken your rest day, make up the Competitor extra from that day.",
+              "OR",
+              "If today is your active rest day:",
+              "Spend 12:00 working slowly from resting heartrate to 170 BPM minus your ago on any machine or combination of machines",
+              "Then",
+              "45-90 Minutes on a single machine or jogging keeping your heartrate between 160 BPM minus your age and 180 BPM minus your age",
+              "Then",
+              "Spend 12:00 working slowly from your working heartrate, down to 140 BPM minus your age on any machine or combination of machines"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-19",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "DEADLIFT",
+              "Every 3:00 × 3 sets",
+              "2 Deadlifts @78-82%"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Turquoise",
+            "lines": [
+              "3 sets",
+              "3:00 AMRAP",
+              "100ft Single Dumbbell Walking Lunge 23kg/16kg",
+              "Max Burpee Over Dumbbell",
+              "* -rest 2:00 between sets-",
+              "* (Scored by Total Reps)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-19",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "5x",
+              "3-6 Ring Muscle Ups",
+              "or",
+              "14 min EMOM:",
+              "Min 1: 3-5 Strict Chest to Bar Chin Ups",
+              "Min 2: 5-7 Strict Ring Dips",
+              "Core",
+              "2-3x",
+              "10 KB Plank Pull Throughs",
+              "10 KB Dead Bugs",
+              "10 KB Kneeling Wood Chopers",
+              "10 KB Hollow Flutter Kicks"
+            ]
+          },
+          {
+            "title": "METCON",
+            "sub_title": "5 Rounds200m Run10 Push Ups5 Reverse Burpees",
+            "lines": []
+          }
+        ]
+      },
+      {
+        "date": "2026-03-19",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "The CrossFit community mourns the loss of Chad Robert Peyton, a beloved husband, father, son, brother, and friend. Chad, a U.S. Army veteran with 10 years of military service, struggled with depression and anxiety. He took his own life on May 17, 2021.\nChad received a Congressional nomination to attend West Point, where he graduated with a B.S. in May 2003 before being commissioned as an aviation officer in the U.S. Army.\nChad became a UH-60 Black Hawk helicopter pilot and served in Germany during Operation Iraqi Freedom II. He was subsequently promoted to Captain and stationed at Fort Riley, Kansas, from 2006 until 2009, when he was transferred to Fort Bragg, North Carolina. During his military service, he was awarded the Bronze Star and many other awards and commendations.\nIn 2012, Chad was honorably discharged from the Army and relocated to Santa Cruz, California, where he became a beloved member of the local CrossFit community. He and his wife, Nicole, were married in September 2014.\nWhen he wasn't flying helicopters as a first responder, Chad enjoyed spending time with his family, doing CrossFit, hiking in the forest, surfing, traveling, and helping his friends and fellow veterans.\nChad is survived by Nicole, who works on the publishing team at the CrossFit Home Office; his two children, Isla, 5, and Ellis, 3; and many other friends and family members.\nIf you or someone you know is struggling with PTSD, anxiety, or depression, call the National Center for PTSD hotline right away: 1-800-273-8255. All calls are completely confidential.\nFirst posted",
+        "sections": [
+          {
+            "title": "Peyton",
+            "sub_title": "Complete as many rounds as possible in 20 minutes of:",
+            "lines": [
+              "10 chest-to-bar pull-ups",
+              "10 dumbbell thrusters, 35/50 lb",
+              "*Stop and perform 40 double-unders every 2 minutes, including at 0:00.",
+              "Then, at the 20:00 mark, begin a 2-mile run.",
+              "Post rounds of the AMRAP and run time to comments."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-19",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "121023 ADVANCED BOOTCAMP (JW)",
+            "lines": [
+              "4 x 6 heavy dual db floorpress",
+              "2/2 turkish getup",
+              "For time:"
+            ]
+          }
+        ],
+        "note": "Benchmark: 121023 ADVANCED BOOTCAMP (JW)"
+      },
+      {
+        "date": "2026-03-19",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 19.4",
+            "lines": [
+              "For total time:",
+              "3 rounds of:",
+              "10 snatches",
+              "12 bar-facing burpees",
+              "Then, rest 3 minutes before continuing with:",
+              "3 rounds of:",
+              "10 bar muscle-ups",
+              "12 bar-facing burpees",
+              "*Men snatch 95 lb.*",
+              "Time cap: 12 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 19.4"
+      },
+      {
+        "date": "2026-03-19",
+        "source": "linchpin",
+        "source_name": "CrossFit Linchpin",
+        "url": "https://crossfitlinchpin.com/blogs/wod",
+        "note": "⚠️ This source provides daily workouts only",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "REST DAY!",
+              "Get out of the gym."
+            ]
+          }
+        ]
+      }
     ]
   },
-  "last_updated": "2026-03-18T09:01:31.262620"
+  "last_updated": "2026-03-19T07:08:55.755860"
 }
