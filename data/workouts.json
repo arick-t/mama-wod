@@ -2834,57 +2834,6 @@
     "2026-03-20": [
       {
         "date": "2026-03-20",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-20/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "seated pike stretch",
-              "sumo squat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 air squats",
-              "10 prone snow angels",
-              "10 straight leg sit ups",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "BACK SQUAT 15MIN",
-            "lines": [
-              "3 sets",
-              "5 back squat at 80%",
-              "1 drop set",
-              "max reps at 50%",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "5 x 2:00 amrap:",
-              "",
-              "15 wallballs 20/15lbs",
-              "10/8 cal ski/bike",
-              "10 toes to bar",
-              "* pick up where you left off",
-              "* score: total rounds + reps",
-              "* aerobic power [vo2 max]"
-            ],
-            "sub_title": "rest 2:00 between rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-20",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260320",
@@ -2936,6 +2885,115 @@
               "Use your heavy single to decide where to start. The larger than usual percentage range accounts for differences in mobility and technique.",
               "Tempo = full control throughout)"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-20",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 13.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "115 pound Shoulder to overhead, 5 reps",
+              "115 pound Deadlift, 10 reps",
+              "15 Box jumps, 24\" box",
+              "*WOMEN -*",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "75 pound Shoulder to overhead, 5 reps",
+              "75 pound Deadlift, 10 reps",
+              "15 Box jumps, 20\" box",
+              "*MASTERS MEN -*",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "95 pound Shoulder to overhead, 5 reps",
+              "95 pound Deadlift, 10 reps",
+              "15 Box jumps, 20\" box",
+              "*MASTERS WOMEN -*",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "55 pound Shoulder to overhead, 5 reps",
+              "55 pound Deadlift, 10 reps",
+              "15 Box jumps, 20\" box"
+            ]
+          }
+        ],
+        "note": "Open: Open 13.1"
+      },
+      {
+        "date": "2026-03-20",
+        "source": "linchpin",
+        "source_name": "CrossFit Linchpin",
+        "url": "https://crossfitlinchpin.com/blogs/wod",
+        "note": "⚠️ This source provides daily workouts only",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Not for time:",
+              "30 Strict, Weighted Pull-ups",
+              "Rest as needed, then...",
+              "2 Rounds for time of:",
+              "30 Kettlebell Snatch, 53/35",
+              "50 Wallball Shots, 20/14",
+              "*You choose pull-up load.",
+              "*15 KB Snatch per arm, split up any way you choose."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-20",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-03-20/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "seated pike stretch",
+              "sumo squat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 air squats",
+              "10 prone snow angels",
+              "10 straight leg sit ups",
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "BACK SQUAT 15MIN",
+            "lines": [
+              "3 sets",
+              "5 back squat at 80%",
+              "1 drop set",
+              "max reps at 50%",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "5 x 2:00 amrap:",
+              "",
+              "15 wallballs 20/15lbs",
+              "10/8 cal ski/bike",
+              "10 toes to bar",
+              "* pick up where you left off",
+              "* score: total rounds + reps",
+              "* aerobic power [vo2 max]"
+            ],
+            "sub_title": "rest 2:00 between rounds"
           }
         ]
       },
@@ -3028,66 +3086,8 @@
           }
         ],
         "note": "Benchmark: Isabel"
-      },
-      {
-        "date": "2026-03-20",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 13.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "115 pound Shoulder to overhead, 5 reps",
-              "115 pound Deadlift, 10 reps",
-              "15 Box jumps, 24\" box",
-              "*WOMEN -*",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "75 pound Shoulder to overhead, 5 reps",
-              "75 pound Deadlift, 10 reps",
-              "15 Box jumps, 20\" box",
-              "*MASTERS MEN -*",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "95 pound Shoulder to overhead, 5 reps",
-              "95 pound Deadlift, 10 reps",
-              "15 Box jumps, 20\" box",
-              "*MASTERS WOMEN -*",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "55 pound Shoulder to overhead, 5 reps",
-              "55 pound Deadlift, 10 reps",
-              "15 Box jumps, 20\" box"
-            ]
-          }
-        ],
-        "note": "Open: Open 13.1"
-      },
-      {
-        "date": "2026-03-20",
-        "source": "linchpin",
-        "source_name": "CrossFit Linchpin",
-        "url": "https://crossfitlinchpin.com/blogs/wod",
-        "note": "⚠️ This source provides daily workouts only",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Not for time:",
-              "30 Strict, Weighted Pull-ups",
-              "Rest as needed, then...",
-              "2 Rounds for time of:",
-              "30 Kettlebell Snatch, 53/35",
-              "50 Wallball Shots, 20/14",
-              "*You choose pull-up load.",
-              "*15 KB Snatch per arm, split up any way you choose."
-            ]
-          }
-        ]
       }
     ]
   },
-  "last_updated": "2026-03-20T07:00:10.852569"
+  "last_updated": "2026-03-20T08:55:01.058656"
 }
