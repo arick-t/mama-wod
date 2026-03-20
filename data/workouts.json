@@ -1,95 +1,5 @@
 {
   "workouts": {
-    "2026-03-05": [
-      {
-        "date": "2026-03-05",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-march-5-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "3 Rounds",
-              "1:00 Machine or 200m Jog",
-              "10 Lunge and Passthrough with PVC",
-              ":10-:20 Handstand Hold"
-            ]
-          },
-          {
-            "title": "Split Jerk",
-            "lines": [
-              "1 Split Jerk @70-80% 1RM”)"
-            ]
-          },
-          {
-            "title": "4 Rounds for time",
-            "lines": [
-              "16 Push Press 75/55lbs",
-              "16 Bodyweight Walking Lunges",
-              "Feel: Cardio",
-              "Pace: Sustain",
-              "Target Score: Sub 6 minutes",
-              "Firebreather Score: Sub 4 minutes"
-            ]
-          },
-          {
-            "title": "Extra Credit",
-            "lines": [
-              "40-60 Minute Machine Flush / MOB",
-              "5+ Rounds",
-              "5:00 Machine Flush",
-              "3:00 Mobility",
-              "Rotate through as many modalities as you can, excluding running but not walking. Pace should feel very very easy, but elicit a nice sweat to aid in your mobility routine."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-05",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 20.4",
-            "lines": [
-              "For time:",
-              "30 box jumps, 24 in.",
-              "15 clean and jerks, 95 lb.",
-              "30 box jumps, 24 in.",
-              "15 clean and jerks, 135 lb.",
-              "30 box jumps, 24 in.",
-              "10 clean and jerks, 185 lb.",
-              "30 single-leg squats",
-              "10 clean and jerks, 225 lb.",
-              "30 single-leg squats",
-              "5 clean and jerks, 275 lb.",
-              "30 single-leg squats",
-              "5 clean and jerks, 315 lb.",
-              "Time cap: 20 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 20.4"
-      },
-      {
-        "date": "2026-03-05",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260305",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Rest Day",
-              "You Bombed 26.1. Good. Here's Why.",
-              "You crashed and burned on the first Open workout. Now what? Before you pack up your grips and walk away, consider this: that disaster might be exactly what you needed. Here's how to reframe your worst performance into the fuel that powers your best one."
-            ]
-          }
-        ]
-      }
-    ],
     "2026-03-06": [
       {
         "date": "2026-03-06",
@@ -180,105 +90,6 @@
           }
         ],
         "note": "Open: Open 16.2"
-      },
-      {
-        "date": "2026-03-06",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-06/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "hand walk",
-              "instep rotation",
-              "sumo squat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "20sec hollow hold",
-              "10 reverse lunges",
-              "150/125m row"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "BACK SQUAT 15MIN",
-            "lines": [
-              "build to a heavy 10-rep max",
-              "* rest 3-5 minutes between attempts",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "400/360m row",
-              "30 toes to bar",
-              "20 front squats",
-              "200/180m row",
-              "20 front squats",
-              "30 toes to bar",
-              "400/360m row",
-              "* barbell: 70/50kg",
-              "* aerobic power [lactate threshold]"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-06",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "U.S. Marine Corps Sgt. John Rankel, 23, of Speedway, Indiana, assigned to 3rd Battalion, 1st Marine Regiment, 1st Marine Division, 1 Marine Expeditionary Force, based out of Camp Pendleton, California, was killed on June 7, 2010, while supporting combat operations in Helmand Province, Afghanistan.\nHe is survived by mother and stepfather, Don and Trisha Stockhoff; father and stepmother, Kevin and Kim; and brothers, Nathan Stockhoff and Tyler.\nFirst posted",
-        "sections": [
-          {
-            "title": "Rankel",
-            "sub_title": "Complete as many rounds as possible in 20 minutes of:",
-            "lines": [
-              "6 deadlifts",
-              "7 burpee pull-ups",
-              "10 kettlebell swings",
-              "200-meter run",
-              "♀ 155-lb barbell, 53-lb kettlebell",
-              "♂ 225-lb barbell, 70-lb kettlebell"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-06",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Chelsea",
-            "lines": [
-              "On the minute every minute for 30 minutes:",
-              "5 pull-ups",
-              "10 push-ups",
-              "15 air squats",
-              "Scaling options for both workouts:",
-              "pull-ups to ring row or jumping pull ups",
-              "push-ups to against box or rubber band",
-              "Intermediate:",
-              "4 pull-ups",
-              "8 push-ups",
-              "12 air squats",
-              "Beginner:",
-              "3 pull-ups",
-              "6 push-ups",
-              "9 air squats"
-            ]
-          }
-        ],
-        "note": "Benchmark: Chelsea"
       }
     ],
     "2026-03-07": [
@@ -699,43 +510,6 @@
       },
       {
         "date": "2026-03-09",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "HSPU",
-              "10 reps – 45 sec rest",
-              "8 reps – 30 secs rest",
-              "6 reps – 20 secs rest",
-              "4 reps – 10 secs rest",
-              "2 reps",
-              "Rest 2 mins and repeat",
-              "If too easy make them strict or deficit."
-            ]
-          },
-          {
-            "title": "METCON",
-            "sub_title": "For time:",
-            "lines": [
-              "5000/4250m Bike",
-              "30 KB STOH",
-              "200m KB farmers carry",
-              "3000/2550m Bike",
-              "20 KB STOH",
-              "100m KB farmers carry",
-              "1000/850m Bike",
-              "10 KB STOH",
-              "50m KB farmers carry",
-              "* 2x 16/24 kg KB"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-09",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "Brown is survived by her husband, John, and their two children, a 14-year-old son and 11-year-old daughter.\nKelly and John started their CrossFit journey in 2006 and opened CrossFit Agoge in 2007. In 2010, she became a member of the CrossFit Kids Seminar Staff.\nAn incredible wife, mother, teacher, coach, affiliate owner, and friend, Kelly contributed much to all whose lives she touched. She will be deeply missed by all who had the privilege of knowing her.\nFirst posted",
@@ -989,18 +763,16 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "Jackie",
+            "title": "Karen",
             "lines": [
+              "\"Karen\"",
               "For time",
-              "1000 m Row",
-              "50 Thruster 20/15kg",
-              "30 Pull up",
-              "*TC: 12 Mins",
-              "Tehdään lähtö porrastetusti!"
+              "150 wall balls 20/14 lbs",
+              "time cap 12min"
             ]
           }
         ],
-        "note": "Benchmark: Jackie"
+        "note": "Benchmark: Karen"
       }
     ],
     "2026-03-11": [
@@ -1126,35 +898,6 @@
               "deadlift"
             ],
             "sub_title": "amrap 30min"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-11",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "SHOULDER PRESS",
-              "Every 2:30 × 4 sets",
-              "3 Shoulder Press @72-75%"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Muscle Beach",
-            "lines": [
-              "10 Overhead Squat 43kg/29kg",
-              "50 Double Unders",
-              "Max Wall Walks )",
-              "* -rest 1:00 between sets-",
-              "*Continue until you have accumulated 25 Wall Walks",
-              "**Score is total time it takes you accumulate 25 walks"
-            ],
-            "sub_title2": "2:00 AMRAP"
           }
         ]
       },
@@ -2011,17 +1754,18 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "Isabel",
+            "title": "Jackie",
             "lines": [
               "For time",
-              "30 Snatch 60/42,5 kg",
-              "Scaled",
-              "30 Hang snatch",
-              "TC 6 min"
+              "1000 m Row",
+              "50 Thruster 20/15kg",
+              "30 Pull up",
+              "*TC: 12 Mins",
+              "Tehdään lähtö porrastetusti!"
             ]
           }
         ],
-        "note": "Benchmark: Isabel"
+        "note": "Benchmark: Jackie"
       }
     ],
     "2026-03-15": [
@@ -2946,22 +2690,6 @@
       },
       {
         "date": "2026-03-19",
-        "source": "linchpin",
-        "source_name": "CrossFit Linchpin",
-        "url": "https://crossfitlinchpin.com/blogs/wod",
-        "note": "⚠️ This source provides daily workouts only",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "REST DAY!",
-              "Get out of the gym."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-19",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-03-19/",
@@ -3102,7 +2830,264 @@
         ],
         "note": "Benchmark: 121023 ADVANCED BOOTCAMP (JW)"
       }
+    ],
+    "2026-03-20": [
+      {
+        "date": "2026-03-20",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-03-20/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "seated pike stretch",
+              "sumo squat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 air squats",
+              "10 prone snow angels",
+              "10 straight leg sit ups",
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "BACK SQUAT 15MIN",
+            "lines": [
+              "3 sets",
+              "5 back squat at 80%",
+              "1 drop set",
+              "max reps at 50%",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "5 x 2:00 amrap:",
+              "",
+              "15 wallballs 20/15lbs",
+              "10/8 cal ski/bike",
+              "10 toes to bar",
+              "* pick up where you left off",
+              "* score: total rounds + reps",
+              "* aerobic power [vo2 max]"
+            ],
+            "sub_title": "rest 2:00 between rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-03-20",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260320",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Hang power snatch 2-2-2-2-2-2-2-2-2-2 reps",
+              "Compare to similar",
+              "230122"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-20",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-march-20-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "Once through",
+              "3:00 Machine, faster for :10 of each minute",
+              "10 Controlled Ring Rows",
+              "16 Walking Lunge + PVC Pass throughs",
+              "10 Lateral Burpees over PVC"
+            ]
+          },
+          {
+            "title": "AMRAP 18 Minutes",
+            "lines": [
+              "2 Squat Snatches 185/125lbs",
+              "2 Rope Climbs",
+              "16 Lateral Bar Burpees",
+              "Feel: Gas",
+              "Pace: Sustain",
+              "Target Score: 6-8 rounds",
+              "Firebreather Score: 8+ rounds"
+            ]
+          },
+          {
+            "title": "Front Squat",
+            "lines": [
+              "1×1 @ 80-90%",
+              "5×3 @ 60-80%",
+              "Row 500m Between Sets to Flush",
+              "Use your heavy single to decide where to start. The larger than usual percentage range accounts for differences in mobility and technique.",
+              "Tempo = full control throughout)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-20",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Power Snatch + Snatch Balance",
+              "CYCLING (SNATCH)",
+              "Every 2:00 (10:00)",
+              "2 Touch-and-Go Power Snatch + 1 Snatch Balance @ RPE 7"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Lime Green",
+            "lines": [
+              "3 Wall Walks",
+              "9 Overhead Squats 43kg/29kg",
+              "12 Pull Ups"
+            ],
+            "sub_title2": "6 Rounds For Time:"
+          }
+        ]
+      },
+      {
+        "date": "2026-03-20",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "5x",
+              "Clean Pull, Hang Squat Clean, Squat Clean, Jerk @ 80%",
+              "3×6 Turkish Get Ups"
+            ]
+          },
+          {
+            "title": "METCON",
+            "sub_title": "Dork’s little brother",
+            "lines": [
+              "3 Rounds",
+              "60 Dus",
+              "* 30 KB Swings 24/16kg",
+              "15 Burpees"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-20",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "U.S. Army Capt. Derek A. Dobogai, 26, of Fond Du Lac, Wisconsin, assigned to the 2nd Battalion, 35th Infantry Regiment, 3rd Infantry Brigade Combat Team, 25th Infantry Division, based in Schofield Barracks, Hawaii, died on Aug. 22, 2007, in Multaka, Iraq, of injuries suffered when his unit's helicopter crashed.\nHe is survived by his parents, David and Lisa; and brothers, Daniel and David Jr.\nFirst posted",
+        "sections": [
+          {
+            "title": "Dobogai",
+            "sub_title": "7 rounds for time of:",
+            "lines": [
+              "8 muscle-ups",
+              "22-yard farmers carry",
+              "♀ 35-lb dumbbells",
+              "♂ 50-lb dumbbells"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-20",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Isabel",
+            "lines": [
+              "For time",
+              "30 Snatch 60/42,5 kg",
+              "Scaled",
+              "30 Hang snatch",
+              "TC 6 min"
+            ]
+          }
+        ],
+        "note": "Benchmark: Isabel"
+      },
+      {
+        "date": "2026-03-20",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 13.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "115 pound Shoulder to overhead, 5 reps",
+              "115 pound Deadlift, 10 reps",
+              "15 Box jumps, 24\" box",
+              "*WOMEN -*",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "75 pound Shoulder to overhead, 5 reps",
+              "75 pound Deadlift, 10 reps",
+              "15 Box jumps, 20\" box",
+              "*MASTERS MEN -*",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "95 pound Shoulder to overhead, 5 reps",
+              "95 pound Deadlift, 10 reps",
+              "15 Box jumps, 20\" box",
+              "*MASTERS WOMEN -*",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "55 pound Shoulder to overhead, 5 reps",
+              "55 pound Deadlift, 10 reps",
+              "15 Box jumps, 20\" box"
+            ]
+          }
+        ],
+        "note": "Open: Open 13.1"
+      },
+      {
+        "date": "2026-03-20",
+        "source": "linchpin",
+        "source_name": "CrossFit Linchpin",
+        "url": "https://crossfitlinchpin.com/blogs/wod",
+        "note": "⚠️ This source provides daily workouts only",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Not for time:",
+              "30 Strict, Weighted Pull-ups",
+              "Rest as needed, then...",
+              "2 Rounds for time of:",
+              "30 Kettlebell Snatch, 53/35",
+              "50 Wallball Shots, 20/14",
+              "*You choose pull-up load.",
+              "*15 KB Snatch per arm, split up any way you choose."
+            ]
+          }
+        ]
+      }
     ]
   },
-  "last_updated": "2026-03-19T08:58:04.031199"
+  "last_updated": "2026-03-20T07:00:10.852569"
 }
