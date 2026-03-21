@@ -2831,57 +2831,6 @@
     "2026-03-21": [
       {
         "date": "2026-03-21",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-21/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "instep rotation",
-              "lat stretch",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 hang muscle clean",
-              "10 push press",
-              "*partner is rowing"
-            ],
-            "sub_title": "amrap 5min"
-          },
-          {
-            "title": "CONDITIONING 30MIN",
-            "lines": [
-              "in teams of 2",
-              "3 rounds:",
-              "",
-              "20 deadlifts",
-              "6 wall walks",
-              "40/36/32cal row",
-              "3 rounds:",
-              "",
-              "15 hang power cleans",
-              "6 wall walks",
-              "40/36/32cal row",
-              "3 rounds:",
-              "",
-              "10 shoulder to overhead",
-              "6 wall walks",
-              "40/36/32cal row",
-              "* barbell: 60/40kg",
-              "* aerobic power [lactate threshold]"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-21",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260321",
@@ -2952,6 +2901,101 @@
               "Air Bike at a flush pace (very slow) for majority of rest periods",
               "If you choose the right number for your smooth sets, you’ll get more than that in your max set but won’t be able to double that number."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-21",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 17.1",
+            "lines": [
+              "For time:",
+              "10 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "20 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "30 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "40 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "50 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "*Men use 50-lb. dumbbell and 24-in. box*",
+              "Time cap: 20 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 17.1"
+      },
+      {
+        "date": "2026-03-21",
+        "source": "linchpin",
+        "source_name": "CrossFit Linchpin",
+        "url": "https://crossfitlinchpin.com/blogs/wod",
+        "note": "⚠️ This source provides daily workouts only",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Deadlift",
+              "2-2-2-2-2-2-2",
+              "*Compare to 06.21.2024"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-21",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-03-21/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "instep rotation",
+              "lat stretch",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 prone snow angels",
+              "10 hang muscle clean",
+              "10 push press",
+              "*partner is rowing"
+            ],
+            "sub_title": "amrap 5min"
+          },
+          {
+            "title": "CONDITIONING 30MIN",
+            "lines": [
+              "in teams of 2",
+              "3 rounds:",
+              "",
+              "20 deadlifts",
+              "6 wall walks",
+              "40/36/32cal row",
+              "3 rounds:",
+              "",
+              "15 hang power cleans",
+              "6 wall walks",
+              "40/36/32cal row",
+              "3 rounds:",
+              "",
+              "10 shoulder to overhead",
+              "6 wall walks",
+              "40/36/32cal row",
+              "* barbell: 60/40kg",
+              "* aerobic power [lactate threshold]"
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -3056,52 +3100,8 @@
           }
         ],
         "note": "Benchmark: GRACE"
-      },
-      {
-        "date": "2026-03-21",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 17.1",
-            "lines": [
-              "For time:",
-              "10 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "20 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "30 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "40 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "50 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "*Men use 50-lb. dumbbell and 24-in. box*",
-              "Time cap: 20 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 17.1"
-      },
-      {
-        "date": "2026-03-21",
-        "source": "linchpin",
-        "source_name": "CrossFit Linchpin",
-        "url": "https://crossfitlinchpin.com/blogs/wod",
-        "note": "⚠️ This source provides daily workouts only",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Deadlift",
-              "2-2-2-2-2-2-2",
-              "*Compare to 06.21.2024"
-            ]
-          }
-        ]
       }
     ]
   },
-  "last_updated": "2026-03-21T06:50:33.083046"
+  "last_updated": "2026-03-21T08:41:52.408047"
 }
