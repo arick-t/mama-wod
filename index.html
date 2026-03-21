@@ -85,7 +85,8 @@ input[type=number].timer-inp{width:7ch;min-width:7ch}
 .timer-palette-swatch:hover{transform:scale(1.1)}.timer-palette-swatch.selected{border-color:#fff;box-shadow:0 0 0 1px #333}
 .timer-toggle{color:#e8e4d8;font-weight:normal;font-size:.9em}
 .timer-fs-total{margin-top:4px;font-size:0.9em;color:rgba(255,255,255,0.85);text-align:center;z-index:1;display:none}
-.timer-fullscreen{position:fixed;inset:0;z-index:99999;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:background .4s ease}
+html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-behavior:none}
+.timer-fullscreen{position:fixed;inset:0;width:100vw;height:100vh;width:100dvw;height:100dvh;z-index:99999;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:background .4s ease;overscroll-behavior:contain}
 .timer-fullscreen.timer-fs-portrait{transform:none}
 .timer-fullscreen.force-landscape.timer-fs-portrait{inset:auto;top:50%;left:50%;width:100vh;height:100vw;transform:translate(-50%,-50%) rotate(90deg)}
 .timer-fs-bg{position:absolute;inset:0;z-index:0;pointer-events:none}
@@ -133,22 +134,26 @@ input[type=number].timer-inp{width:7ch;min-width:7ch}
 .timer-fullscreen.force-landscape .timer-fs-nav .timer-fs-nav-prev,.timer-fullscreen.force-landscape .timer-fs-nav .timer-fs-nav-next{min-width:92px;min-height:44px;padding:8px 10px;font-size:0.95rem}
 .timer-fullscreen.force-landscape .timer-fs-nav .timer-fs-nav-play{width:48px;height:48px;min-width:48px;min-height:48px;font-size:1.45rem}
 .timer-fullscreen.force-landscape .timer-fs-bottom-panel{padding-bottom:max(12px, env(safe-area-inset-bottom))}
-.timer-fullscreen.timer-fs-landscape .timer-fs-digits{font-size:clamp(7rem,23vh,15rem)!important}
-.timer-fullscreen.timer-fs-landscape.timer-fs-d3 .timer-fs-digits{font-size:clamp(7.7rem,25vh,16.2rem)!important}
-.timer-fullscreen.timer-fs-landscape.timer-fs-d4 .timer-fs-digits{font-size:clamp(6.6rem,21vh,14rem)!important}
+.timer-fullscreen.timer-fs-landscape .timer-fs-digits{font-size:clamp(8.3rem,27vh,18.2rem)!important}
+.timer-fullscreen.timer-fs-landscape.timer-fs-d3 .timer-fs-digits{font-size:clamp(9.6rem,30vh,20.2rem)!important}
+.timer-fullscreen.timer-fs-landscape.timer-fs-d4 .timer-fs-digits{font-size:clamp(7.8rem,25vh,17.4rem)!important}
 .timer-fullscreen.timer-fs-landscape .timer-fs-clock-block{width:100%;max-width:none;padding:40px 8px 104px;display:grid;grid-template-columns:2fr 1fr;grid-template-rows:1fr;align-items:center;column-gap:10px}
 .timer-fullscreen.timer-fs-landscape .timer-fs-digits-wrap{grid-column:1;justify-content:flex-start;padding-left:2px}
-.timer-fullscreen.timer-fs-landscape .timer-fs-meta{grid-column:2;align-items:center;justify-content:center;text-align:center}
-.timer-fullscreen.timer-fs-landscape .timer-fs-phase{margin-top:0;font-size:clamp(1.8rem,4.8vh,2.5rem);text-align:center}
-.timer-fullscreen.timer-fs-landscape .timer-fs-next{margin-top:8px;font-size:clamp(1.28rem,3.5vh,1.75rem);text-align:center}
-.timer-fullscreen.timer-fs-landscape .timer-fs-set-round{margin-top:10px;font-size:clamp(1.32rem,3.6vh,1.9rem);gap:8px;justify-content:center;text-align:center}
+.timer-fullscreen.timer-fs-landscape .timer-fs-meta{grid-column:2;align-items:center;justify-content:flex-start;text-align:center;padding-top:clamp(4.4rem,11.2vh,6.8rem)}
+.timer-fullscreen.timer-fs-landscape .timer-fs-phase{margin-top:0;font-size:clamp(2.7rem,7.6vh,4.4rem);text-align:center}
+.timer-fullscreen.timer-fs-landscape .timer-fs-next{margin-top:clamp(1.6rem,4.6vh,2.6rem);font-size:clamp(1.8rem,5.2vh,2.9rem);text-align:center}
+.timer-fullscreen.timer-fs-landscape .timer-fs-set-round{margin-top:12px;font-size:clamp(1.9rem,5.3vh,3rem);gap:10px;justify-content:center;text-align:center}
 .timer-fullscreen.timer-fs-landscape .timer-fs-bottom-panel{left:0;right:0;bottom:10px;justify-content:center;padding:0 8px 0 8px;min-height:52px}
 .timer-fullscreen.timer-fs-landscape .timer-fs-nav{gap:8px;flex-wrap:nowrap}
 .timer-fullscreen.timer-fs-landscape .timer-fs-nav .timer-fs-nav-prev,.timer-fullscreen.timer-fs-landscape .timer-fs-nav .timer-fs-nav-next{min-width:118px;min-height:56px;padding:10px 14px;font-size:1.08rem}
 .timer-fullscreen.timer-fs-landscape .timer-fs-nav .timer-fs-nav-play{width:60px;height:60px;min-width:60px;min-height:60px;font-size:1.72rem}
-.timer-fullscreen.timer-fs-landscape .timer-fs-total-above{top:8px;left:50%;width:auto;transform:translateX(-50%);justify-content:center;text-align:center;font-size:clamp(.9rem,2.2vh,1rem)}
+.timer-fullscreen.timer-fs-landscape .timer-fs-total-above{top:8px;left:50%;width:auto;transform:translateX(-50%);justify-content:center;text-align:center;font-size:clamp(2rem,5.4vh,3.7rem);font-weight:800;letter-spacing:.02em}
 .timer-fullscreen.timer-fs-landscape .timer-fs-total-label{display:none}
 .timer-fullscreen.timer-fs-landscape .timer-fs-total-digits{font-size:clamp(2.5rem,6.8vh,3.8rem);letter-spacing:.02em}
+.timer-fullscreen.timer-fs-landscape.timer-fs-stopwatch .timer-fs-clock-block{display:flex;grid-template-columns:none;padding:24px 8px 104px}
+.timer-fullscreen.timer-fs-landscape.timer-fs-stopwatch .timer-fs-digits-wrap{grid-column:auto;justify-content:center;padding-left:0}
+.timer-fullscreen.timer-fs-landscape.timer-fs-stopwatch .timer-fs-meta{display:none}
+.timer-fullscreen.timer-fs-landscape.timer-fs-stopwatch .timer-fs-digits{font-size:clamp(8.7rem,31vh,20rem)!important}
 .btn-find{background:#E8451A;color:#fff;width:100%;padding:11px;font-size:.95em;margin-top:8px}
 .btn-find:hover{background:#c73a15}
 .find-form{max-width:560px;margin:0 auto;background:#1e1e1e;padding:24px;border-radius:12px;border:1px solid #2a2a2a}
@@ -383,7 +388,7 @@ input[type=number].timer-inp{width:7ch;min-width:7ch}
         <div class="timer-row"><label>Rest (MM:SS)</label><input type="text" id="intRest" placeholder="0000" value="0:00" maxlength="5" class="timer-inp" inputmode="numeric" pattern="[0-9:]*"></div>
         <div class="timer-row"><label>Rounds (min 1)</label><input type="number" id="intRounds" placeholder="5" value="5" min="1" max="99" class="timer-inp" inputmode="numeric"></div>
         <div class="timer-row"><label>Sets</label><input type="text" id="intSets" placeholder="1" value="1" maxlength="2" class="timer-inp timer-inp-num" inputmode="numeric" pattern="[0-9]*"></div>
-        <div class="timer-row"><label>Rest Between Sets (MM:SS or 4 digits)</label><input type="text" id="intRestSets" placeholder="0000" value="0:00" maxlength="5" class="timer-inp" inputmode="numeric" pattern="[0-9:]*"></div>
+        <div class="timer-row"><label>Rest Between Sets (MM:SS)</label><input type="text" id="intRestSets" placeholder="0000" value="0:00" maxlength="5" class="timer-inp" inputmode="numeric" pattern="[0-9:]*"></div>
       </div>
       <div class="timer-overall-time" id="intervalOverallTime">OVERALL TIME – 0:00</div>
       <div class="timer-btns" style="margin-top:12px"><button class="btn btn-find" id="intervalStart" onclick="intervalStartStop()">Start Full Screen</button> <button class="btn btn-find" style="background:#555" onclick="intervalReset()">Reset</button></div>
@@ -615,6 +620,9 @@ function convertUnits(text) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
+  ["touchstart","pointerdown","click","keydown"].forEach(function(evt) {
+    document.addEventListener(evt, timerAudioUnlock, { passive: true });
+  });
   // Load saved source order
   try {
     var savedOrder = localStorage.getItem("duck-wod-order");
@@ -1361,15 +1369,79 @@ function setStopwatchDirection(countDown) {
 }
 
 var timerAudioContext = null;
+var timerAudioPriorityActive = false;
+var timerAudioPriorityReleaseTimer = null;
+function timerSetAudioPriority(active) {
+  try {
+    var cap = window.Capacitor;
+    if (!cap || !cap.isNativePlatform || !cap.isNativePlatform()) return;
+    var plugins = cap.Plugins || {};
+    var p = plugins.AudioPriority || plugins.AudioPriorityPlugin;
+    if (!p || typeof p.setActive !== "function") return;
+    p.setActive({ active: !!active }).then(function() {
+      timerAudioPriorityActive = !!active;
+    }).catch(function() {});
+  } catch (e) {}
+}
+function timerPulseAudioPriority() {
+  try {
+    var cap = window.Capacitor;
+    if (!cap || !cap.isNativePlatform || !cap.isNativePlatform()) return;
+    timerSetAudioPriority(true);
+    if (timerAudioPriorityReleaseTimer) clearTimeout(timerAudioPriorityReleaseTimer);
+    timerAudioPriorityReleaseTimer = setTimeout(function() {
+      timerSetAudioPriority(false);
+      timerAudioPriorityReleaseTimer = null;
+    }, 1200);
+  } catch (e) {}
+}
+function timerNativePlayCue(type) {
+  try {
+    var cap = window.Capacitor;
+    if (!cap || !cap.isNativePlatform || !cap.isNativePlatform()) return false;
+    var plugins = cap.Plugins || {};
+    var p = plugins.AudioPriority || plugins.AudioPriorityPlugin;
+    if (!p || typeof p.playCue !== "function") return false;
+    p.playCue({ type: String(type || "beep") }).catch(function() {});
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
 function timerAudioUnlock() {
   try {
     if (!timerAudioContext) timerAudioContext = new (window.AudioContext || window.webkitAudioContext)();
-    if (timerAudioContext.state === "suspended") timerAudioContext.resume();
+    if (timerAudioContext.state !== "running" && timerAudioContext.resume) timerAudioContext.resume().catch(function() {});
+    // Prime iOS Safari audio pipeline with a near-silent pulse.
+    try {
+      var o = timerAudioContext.createOscillator();
+      var g = timerAudioContext.createGain();
+      o.connect(g); g.connect(timerAudioContext.destination);
+      g.gain.setValueAtTime(0.00001, timerAudioContext.currentTime);
+      o.frequency.value = 440;
+      o.start(timerAudioContext.currentTime);
+      o.stop(timerAudioContext.currentTime + 0.01);
+    } catch (_) {}
     return timerAudioContext;
   } catch (e) { return null; }
 }
+function timerAudioRun(ctx, playFn) {
+  if (!ctx || typeof playFn !== "function") return;
+  if (ctx.state === "running") { try { playFn(); } catch(_) {} return; }
+  if (ctx.resume) {
+    ctx.resume().then(function() {
+      try { playFn(); } catch(_) {}
+    }).catch(function() {
+      setTimeout(function() {
+        if (ctx.state === "running") { try { playFn(); } catch(_) {} }
+      }, 80);
+    });
+  }
+}
 function timerBeep(tick) {
   try {
+    if (timerNativePlayCue(tick ? "tick" : "beep")) return;
+    timerPulseAudioPriority();
     var ctx = timerAudioContext || timerAudioUnlock();
     if (!ctx) return;
     function play() {
@@ -1378,17 +1450,18 @@ function timerBeep(tick) {
       osc.connect(g); g.connect(ctx.destination);
       osc.frequency.value = tick ? 800 : 400;
       osc.type = "sine";
-      g.gain.setValueAtTime(0.2, ctx.currentTime);
+      g.gain.setValueAtTime(0.35, ctx.currentTime);
       g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + (tick ? 0.08 : 0.35));
       osc.start(ctx.currentTime);
       osc.stop(ctx.currentTime + (tick ? 0.08 : 0.35));
     }
-    if (ctx.state === "suspended") ctx.resume().then(play).catch(function() {});
-    else play();
+    timerAudioRun(ctx, play);
   } catch (e) {}
 }
 function timerWhistleKickoff() {
   try {
+    if (timerNativePlayCue("whistle")) return;
+    timerPulseAudioPriority();
     var ctx = timerAudioContext || timerAudioUnlock();
     if (!ctx) return;
     function play() {
@@ -1400,7 +1473,7 @@ function timerWhistleKickoff() {
         osc.frequency.value = freq;
         osc.type = "sine";
         g.gain.setValueAtTime(0, start);
-        g.gain.linearRampToValueAtTime(0.4, start + 0.02);
+        g.gain.linearRampToValueAtTime(0.55, start + 0.02);
         g.gain.exponentialRampToValueAtTime(0.01, start + dur);
         osc.start(start);
         osc.stop(start + dur);
@@ -1408,12 +1481,13 @@ function timerWhistleKickoff() {
       burst(t0, 2400, 0.22);
       burst(t0 + 0.2, 2800, 0.25);
     }
-    if (ctx.state === "suspended") ctx.resume().then(play).catch(function() {});
-    else play();
+    timerAudioRun(ctx, play);
   } catch (e) {}
 }
 function timerBell() {
   try {
+    if (timerNativePlayCue("bell")) return;
+    timerPulseAudioPriority();
     var ctx = timerAudioContext || timerAudioUnlock();
     if (!ctx) return;
     function play() {
@@ -1422,13 +1496,12 @@ function timerBell() {
       osc.connect(g); g.connect(ctx.destination);
       osc.frequency.value = 880;
       osc.type = "sine";
-      g.gain.setValueAtTime(0.25, ctx.currentTime);
+      g.gain.setValueAtTime(0.42, ctx.currentTime);
       g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.45);
       osc.start(ctx.currentTime);
       osc.stop(ctx.currentTime + 0.45);
     }
-    if (ctx.state === "suspended") ctx.resume().then(play).catch(function() {});
-    else play();
+    timerAudioRun(ctx, play);
   } catch (e) {}
 }
 function timerFsUpdateDigitClass(displayText) {
@@ -1447,6 +1520,28 @@ function timerFsSyncLayoutClass() {
   fs.classList.toggle("timer-fs-portrait", !isLandscape);
 }
 window.addEventListener("resize", timerFsSyncLayoutClass);
+if (window.visualViewport && window.visualViewport.addEventListener) {
+  window.visualViewport.addEventListener("resize", function() {
+    if (!timerFsIsOpen()) return;
+    timerFsSyncLayoutClass();
+  });
+}
+window.addEventListener("orientationchange", function() {
+  setTimeout(timerFsReassertViewport, 120);
+});
+window.addEventListener("focus", timerFsReassertViewport);
+document.addEventListener("visibilitychange", function() {
+  if (!document.hidden) timerFsReassertViewport();
+});
+function timerFsIsOpen() {
+  var fs = document.getElementById("timer-fullscreen");
+  return !!(fs && fs.style.display === "flex");
+}
+function timerFsReassertViewport() {
+  if (!timerFsIsOpen()) return;
+  timerFsSyncLayoutClass();
+  timerRequestFullscreen();
+}
 
 function timerFullscreenUpdate() {
   var el = document.getElementById("timer-fullscreen");
@@ -1596,7 +1691,13 @@ function timerFullscreenStart(phases, isInterval) {
   for (var i = 0; i < phases.length; i++) timerFsTotalDuration += phases[i].sec;
   if (phases.length === 0) return;
   timerFsPhaseEndTime = Date.now() + phases[0].sec * 1000;
-  document.getElementById("timer-fullscreen").style.display = "flex";
+  var fsEl = document.getElementById("timer-fullscreen");
+  if (fsEl) {
+    fsEl.style.display = "flex";
+    fsEl.classList.toggle("timer-fs-stopwatch", !timerFsIsInterval);
+  }
+  document.documentElement.classList.add("timer-fs-open");
+  document.body.classList.add("timer-fs-open");
   document.body.style.overflow = "hidden";
   timerFsSyncLayoutClass();
   timerRequestFullscreen();
@@ -1655,6 +1756,8 @@ function timerFullscreenClose() {
   if (timerFsRaf) cancelAnimationFrame(timerFsRaf);
   timerFsRaf = null;
   if (timerFsWakeLock) { try { timerFsWakeLock.release(); } catch(e) {} timerFsWakeLock = null; }
+  if (timerAudioPriorityReleaseTimer) { clearTimeout(timerAudioPriorityReleaseTimer); timerAudioPriorityReleaseTimer = null; }
+  if (timerAudioPriorityActive) timerSetAudioPriority(false);
   try { if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch (e) {}
   timerFsForcedLandscape = false;
   timerFsManualLayoutMode = null;
@@ -1662,8 +1765,11 @@ function timerFullscreenClose() {
   var rb = document.getElementById("timerFsRotate");
   if (fs) fs.classList.remove("force-landscape");
   if (fs) fs.classList.remove("timer-fs-landscape");
+  if (fs) fs.classList.remove("timer-fs-stopwatch");
   if (rb) rb.classList.remove("active");
   document.getElementById("timer-fullscreen").style.display = "none";
+  document.documentElement.classList.remove("timer-fs-open");
+  document.body.classList.remove("timer-fs-open");
   document.body.style.overflow = "";
   document.getElementById("stopwatchStart").textContent = "Start Full Screen";
   document.getElementById("intervalStart").textContent = "Start Full Screen";
@@ -1693,6 +1799,7 @@ function timerFullscreenToggle() {
 }
 
 function stopwatchStartStop() {
+  timerAudioUnlock();
   var totalSec = parseMMSS(document.getElementById("stopwatchInput").value) || 300;
   var countDownSec = parseInt(document.getElementById("stopwatchCountDownSec").value, 10) || 0;
   var phases = [];
@@ -1708,6 +1815,7 @@ function stopwatchReset() {
   document.getElementById("stopwatchDisplay").textContent = stopwatchCountDown ? formatMMSS(total) : "0:00";
 }
 function intervalStartStop() {
+  timerAudioUnlock();
   var countDown = parseMMSS(document.getElementById("intCountDown").value) || 0;
   var work = parseMMSS(document.getElementById("intWork").value) || 60;
   var rest = parseMMSS(document.getElementById("intRest").value) || 0;
