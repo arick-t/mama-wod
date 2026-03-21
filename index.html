@@ -86,26 +86,69 @@ input[type=number].timer-inp{width:7ch;min-width:7ch}
 .timer-toggle{color:#e8e4d8;font-weight:normal;font-size:.9em}
 .timer-fs-total{margin-top:4px;font-size:0.9em;color:rgba(255,255,255,0.85);text-align:center;z-index:1;display:none}
 .timer-fullscreen{position:fixed;inset:0;z-index:99999;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:background .4s ease}
+.timer-fullscreen.timer-fs-portrait{transform:none}
+.timer-fullscreen.force-landscape.timer-fs-portrait{inset:auto;top:50%;left:50%;width:100vh;height:100vw;transform:translate(-50%,-50%) rotate(90deg)}
 .timer-fs-bg{position:absolute;inset:0;z-index:0;pointer-events:none}
 .timer-fs-exit{position:absolute;top:12px;right:12px;z-index:10;width:44px;height:44px;border:none;border-radius:50%;background:rgba(0,0,0,.4);color:#fff;font-size:1.4em;cursor:pointer;line-height:1}
-.timer-fs-clock-block{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:0 0 auto}
-.timer-fs-digits-wrap{display:flex;align-items:center;justify-content:center;min-height:min(50vh,320px);width:100%}
-.timer-fs-digits{font-weight:700;font-size:clamp(4rem,22vw,11rem);min-width:6ch;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.5);font-variant-numeric:tabular-nums;letter-spacing:.08em;line-height:1}
-.timer-fs-total-above{position:absolute;top:16px;left:50%;transform:translateX(-50%);z-index:2;text-align:center;line-height:1.2;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:52px;justify-content:center}
-.timer-fs-total-label{font-size:clamp(0.95rem,3.2vw,1.15rem);font-weight:600;color:rgba(255,255,255,.9)}
-.timer-fs-total-digits{font-size:clamp(2rem,9vw,3.4rem);font-weight:700;color:rgba(255,255,255,.98);font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.timer-fs-rotate{position:absolute;top:12px;right:64px;z-index:10;width:44px;height:44px;border:none;border-radius:50%;background:rgba(0,0,0,.4);color:#fff;font-size:1.15em;cursor:pointer;line-height:1}
+.timer-fs-rotate.active{background:rgba(255,255,255,.28);outline:2px solid rgba(255,255,255,.55)}
+.timer-fs-clock-block{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1 1 auto;min-height:0;width:100%;padding:56px 10px 96px}
+.timer-fs-digits-wrap{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;flex:1 1 auto;min-height:0;width:100%;padding-top:0}
+.timer-fs-digits{position:relative;z-index:1;font-weight:700;font-size:clamp(7rem,32vw,15rem)!important;min-width:4.3ch;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.5);font-variant-numeric:tabular-nums;letter-spacing:.04em;line-height:.95;text-align:center}
+.timer-fullscreen.timer-fs-d3 .timer-fs-digits{font-size:clamp(9.6rem,43vw,20.5rem)!important}
+.timer-fullscreen.timer-fs-d4 .timer-fs-digits{font-size:clamp(6.9rem,31vw,14.2rem)!important}
+.timer-fs-total-above{position:absolute;top:16px;left:50%;transform:translateX(-50%);z-index:2;text-align:center;line-height:1.2;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:52px;justify-content:center;white-space:nowrap}
+.timer-fs-total-label{font-size:clamp(1.2rem,4.9vw,1.65rem);font-weight:700;color:rgba(255,255,255,.92)}
+.timer-fs-total-digits{font-size:clamp(3.2rem,15vw,6.6rem);font-weight:700;color:rgba(255,255,255,.98);font-variant-numeric:tabular-nums;letter-spacing:.04em}
 .timer-section-title{color:#F5C518;font-size:1.15em;margin-bottom:10px;text-align:center;font-weight:700}
 .timer-fs-bottom-panel{position:absolute;bottom:0;left:0;right:0;z-index:2;display:flex;justify-content:center;align-items:center;padding:16px 12px 24px;min-height:60px}
 .timer-fs-nav{display:flex;justify-content:center;align-items:center;gap:20px;flex-wrap:wrap;min-height:52px}
-.timer-fs-nav .timer-fs-nav-prev,.timer-fs-nav .timer-fs-nav-next{border:2px solid rgba(255,255,255,.5);background:rgba(255,255,255,.22);color:#fff;padding:12px 22px;border-radius:6px;font-size:1.05em;font-weight:700;cursor:pointer;min-width:100px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
-.timer-fs-nav .timer-fs-nav-play{width:52px;height:52px;min-width:52px;min-height:52px;padding:0;border-radius:6px;font-size:1.75em;display:flex;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,.5);background:rgba(255,255,255,.22);color:#fff;cursor:pointer;line-height:1}
+.timer-fs-nav .timer-fs-nav-prev,.timer-fs-nav .timer-fs-nav-next{border:2px solid rgba(255,255,255,.5);background:rgba(255,255,255,.22);color:#fff;padding:14px 24px;border-radius:8px;font-size:1.15em;font-weight:700;cursor:pointer;min-width:120px;min-height:56px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.timer-fs-nav .timer-fs-nav-play{width:64px;height:64px;min-width:64px;min-height:64px;padding:0;border-radius:8px;font-size:2em;display:flex;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,.5);background:rgba(255,255,255,.22);color:#fff;cursor:pointer;line-height:1}
 .timer-fs-nav button:active{background:rgba(255,255,255,.4)}
 .timer-fs-btn{min-height:60px;padding:14px 28px;border:none;border-radius:14px;background:rgba(255,255,255,.25);color:#fff;font-size:1.5em;font-weight:700;cursor:pointer;z-index:1}
 .timer-fs-btn-small{min-width:56px;min-height:56px;width:56px;height:56px;padding:0;border-radius:12px;font-size:1.6em;display:flex;align-items:center;justify-content:center;line-height:1}
-.timer-fs-phase{margin-top:12px;font-size:clamp(1.55rem,5.5vw,2.15rem);font-weight:700;color:rgba(255,255,255,.95);text-align:center;z-index:1;display:block;width:100%}
-.timer-fs-set-round{margin-top:6px;font-size:clamp(1.05rem,3.8vw,1.3rem);color:rgba(255,255,255,.9);text-align:center;z-index:1;display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
-.timer-fs-next{margin-top:4px;font-size:clamp(0.95rem,3vw,1.15rem);color:rgba(255,255,255,.85);text-align:center;z-index:1}
+.timer-fs-meta{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;z-index:1;width:100%;margin-top:-58px}
+.timer-fs-phase{margin-top:0;font-size:clamp(2.7rem,9.4vw,4rem);font-weight:700;color:rgba(255,255,255,.95);text-align:center;z-index:1;display:block;width:100%}
+.timer-fs-next{margin-top:2px;font-size:clamp(1.62rem,5.8vw,2.2rem);color:rgba(255,255,255,.94);text-align:center;z-index:1}
+.timer-fs-set-round{margin-top:4px;font-size:clamp(1.9rem,6.8vw,2.7rem);color:rgba(255,255,255,.94);text-align:center;z-index:1;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
 .timer-overall-time{text-align:center;margin-top:12px;font-size:0.88em;font-weight:700;color:#2196F3;letter-spacing:.04em}
+@media (orientation:landscape){
+  .timer-fs-clock-block{padding:48px 8px 86px}
+  .timer-fs-digits{font-size:clamp(5rem,16vh,10rem)!important}
+  .timer-fs-phase{margin-top:6px;font-size:clamp(1.05rem,2.8vh,1.6rem)}
+  .timer-fs-set-round{margin-top:2px;font-size:clamp(0.9rem,2.4vh,1.2rem);gap:10px}
+  .timer-fs-next{margin-top:2px;font-size:clamp(0.85rem,2.1vh,1.05rem)}
+  .timer-fs-bottom-panel{padding:10px 8px 10px}
+  .timer-fs-nav{gap:8px}
+  .timer-fs-nav .timer-fs-nav-prev,.timer-fs-nav .timer-fs-nav-next{min-width:92px;min-height:44px;padding:8px 10px;font-size:0.95rem}
+  .timer-fs-nav .timer-fs-nav-play{width:48px;height:48px;min-width:48px;min-height:48px;font-size:1.45rem}
+}
+.timer-fullscreen.force-landscape .timer-fs-digits{font-size:clamp(5.3rem,16vh,10.5rem)!important}
+.timer-fullscreen.force-landscape .timer-fs-clock-block{width:100%;max-width:none;padding:48px 8px 86px}
+.timer-fullscreen.force-landscape .timer-fs-phase{margin-top:6px;font-size:clamp(1.05rem,2.8vh,1.6rem)}
+.timer-fullscreen.force-landscape .timer-fs-set-round{margin-top:2px;font-size:clamp(0.9rem,2.4vh,1.2rem);gap:10px}
+.timer-fullscreen.force-landscape .timer-fs-next{margin-top:2px;font-size:clamp(0.85rem,2.1vh,1.05rem)}
+.timer-fullscreen.force-landscape .timer-fs-nav{gap:8px}
+.timer-fullscreen.force-landscape .timer-fs-nav .timer-fs-nav-prev,.timer-fullscreen.force-landscape .timer-fs-nav .timer-fs-nav-next{min-width:92px;min-height:44px;padding:8px 10px;font-size:0.95rem}
+.timer-fullscreen.force-landscape .timer-fs-nav .timer-fs-nav-play{width:48px;height:48px;min-width:48px;min-height:48px;font-size:1.45rem}
+.timer-fullscreen.force-landscape .timer-fs-bottom-panel{padding-bottom:max(12px, env(safe-area-inset-bottom))}
+.timer-fullscreen.timer-fs-landscape .timer-fs-digits{font-size:clamp(7rem,23vh,15rem)!important}
+.timer-fullscreen.timer-fs-landscape.timer-fs-d3 .timer-fs-digits{font-size:clamp(7.7rem,25vh,16.2rem)!important}
+.timer-fullscreen.timer-fs-landscape.timer-fs-d4 .timer-fs-digits{font-size:clamp(6.6rem,21vh,14rem)!important}
+.timer-fullscreen.timer-fs-landscape .timer-fs-clock-block{width:100%;max-width:none;padding:40px 8px 104px;display:grid;grid-template-columns:2fr 1fr;grid-template-rows:1fr;align-items:center;column-gap:10px}
+.timer-fullscreen.timer-fs-landscape .timer-fs-digits-wrap{grid-column:1;justify-content:flex-start;padding-left:2px}
+.timer-fullscreen.timer-fs-landscape .timer-fs-meta{grid-column:2;align-items:center;justify-content:center;text-align:center}
+.timer-fullscreen.timer-fs-landscape .timer-fs-phase{margin-top:0;font-size:clamp(1.8rem,4.8vh,2.5rem);text-align:center}
+.timer-fullscreen.timer-fs-landscape .timer-fs-next{margin-top:8px;font-size:clamp(1.28rem,3.5vh,1.75rem);text-align:center}
+.timer-fullscreen.timer-fs-landscape .timer-fs-set-round{margin-top:10px;font-size:clamp(1.32rem,3.6vh,1.9rem);gap:8px;justify-content:center;text-align:center}
+.timer-fullscreen.timer-fs-landscape .timer-fs-bottom-panel{left:0;right:0;bottom:10px;justify-content:center;padding:0 8px 0 8px;min-height:52px}
+.timer-fullscreen.timer-fs-landscape .timer-fs-nav{gap:8px;flex-wrap:nowrap}
+.timer-fullscreen.timer-fs-landscape .timer-fs-nav .timer-fs-nav-prev,.timer-fullscreen.timer-fs-landscape .timer-fs-nav .timer-fs-nav-next{min-width:118px;min-height:56px;padding:10px 14px;font-size:1.08rem}
+.timer-fullscreen.timer-fs-landscape .timer-fs-nav .timer-fs-nav-play{width:60px;height:60px;min-width:60px;min-height:60px;font-size:1.72rem}
+.timer-fullscreen.timer-fs-landscape .timer-fs-total-above{top:8px;left:50%;width:auto;transform:translateX(-50%);justify-content:center;text-align:center;font-size:clamp(.9rem,2.2vh,1rem)}
+.timer-fullscreen.timer-fs-landscape .timer-fs-total-label{display:none}
+.timer-fullscreen.timer-fs-landscape .timer-fs-total-digits{font-size:clamp(2.5rem,6.8vh,3.8rem);letter-spacing:.02em}
 .btn-find{background:#E8451A;color:#fff;width:100%;padding:11px;font-size:.95em;margin-top:8px}
 .btn-find:hover{background:#c73a15}
 .find-form{max-width:560px;margin:0 auto;background:#1e1e1e;padding:24px;border-radius:12px;border:1px solid #2a2a2a}
@@ -226,54 +269,6 @@ input[type=number].timer-inp{width:7ch;min-width:7ch}
 .timer-direction-wrap { display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap }
 .timer-direction-label { font-size:1em; font-weight:700; color:#F5C518; letter-spacing:.05em; min-width:100px }
 .timer-fs-total { margin-top:4px; font-size:0.9em; color:rgba(255,255,255,0.85); text-align:center; z-index:1 }
-
-/* Full-screen professional timer (PWA-style) */
-.timer-fullscreen {
-  position: fixed; inset: 0; z-index: 99999;
-  overflow: hidden; display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  transition: background 0.4s ease;
-}
-.timer-fs-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none }
-.timer-fs-exit {
-  position: absolute; top: 12px; right: 12px; z-index: 10;
-  width: 44px; height: 44px; border: none; border-radius: 50%;
-  background: rgba(0,0,0,0.4); color: #fff; font-size: 1.4em;
-  cursor: pointer; line-height: 1;
-}
-.timer-fs-ring-wrap {
-  position: relative; width: min(85vw, 320px); height: min(85vw, 320px);
-  flex-shrink: 0;
-}
-.timer-fs-ring { width: 100%; height: 100% }
-.timer-fs-ring-progress {
-  transition: stroke-dashoffset 0.15s linear;
-  stroke-dasharray: 283;
-  stroke-dashoffset: 283;
-}
-.timer-fs-digits {
-  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-  font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: clamp(3rem, 18vw, 6rem);
-  color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.4);
-  font-variant-numeric: tabular-nums;
-}
-.timer-fs-phase {
-  margin-top: 8px; font-size: 1.2em; font-weight: 700; color: rgba(255,255,255,0.95);
-  text-align: center; z-index: 1;
-}
-.timer-fs-next {
-  margin-top: 4px; font-size: 0.95em; color: rgba(255,255,255,0.8);
-  text-align: center; z-index: 1;
-}
-.timer-fs-btn {
-  margin-top: 24px; width: 90%; max-width: 320px;
-  min-height: 30vh; min-height: 30dvh;
-  border: none; border-radius: 16px; background: rgba(255,255,255,0.25);
-  color: #fff; font-size: 1.8em; font-weight: 700; cursor: pointer;
-  z-index: 1; transition: background 0.2s, transform 0.1s;
-  font-family: inherit;
-}
-.timer-fs-btn:active { transform: scale(0.98) }
 </style>
 </head>
 <body>
@@ -372,7 +367,7 @@ input[type=number].timer-inp{width:7ch;min-width:7ch}
       <h3 class="timer-section-title">Stopwatch</h3>
       <div class="timer-row timer-row-centered"><label>Time (MM:SS or 4 digits)</label><input type="text" id="stopwatchInput" placeholder="0500" value="5:00" maxlength="5" class="timer-inp" inputmode="numeric" pattern="[0-9:]*" autocomplete="off" title="e.g. 0500 = 5:00, 1230 = 12:30"></div>
       <div class="timer-row timer-row-centered"><label>Direction</label><div class="timer-direction-wrap"><button type="button" id="stopwatchDirectionDown" class="timer-direction-btn" onclick="setStopwatchDirection(true)" title="Count down" aria-label="Count down">▼</button><button type="button" id="stopwatchDirectionUp" class="timer-direction-btn" onclick="setStopwatchDirection(false)" title="Count up" aria-label="Count up">▲</button></div></div>
-      <div class="timer-row timer-row-centered"><label>CountDown (sec)</label><input type="text" id="stopwatchCountDownSec" placeholder="0" value="0" maxlength="3" class="timer-inp timer-inp-num" style="width:4ch" inputmode="numeric" pattern="[0-9]*"></div>
+      <div class="timer-row timer-row-centered"><label>CountDown (sec)</label><input type="text" id="stopwatchCountDownSec" placeholder="10" value="10" maxlength="3" class="timer-inp timer-inp-num" style="width:4ch" inputmode="numeric" pattern="[0-9]*"></div>
       <div class="timer-display" id="stopwatchDisplay" aria-hidden="true">5:00</div>
       <div class="timer-btns"><button class="btn btn-find" id="stopwatchStart" onclick="stopwatchStartStop()">Start Full Screen</button> <button class="btn btn-find" style="background:#555" onclick="stopwatchReset()">Reset</button></div>
     </div>
@@ -383,9 +378,9 @@ input[type=number].timer-inp{width:7ch;min-width:7ch}
         <button type="button" class="btn btn-find" style="background:#2a2a2a;font-size:.85em;width:auto;padding:8px 12px" onclick="applyPreset('emom')">EMOM</button>
       </div>
       <div class="timer-grid">
-        <div class="timer-row"><label>CountDown (sec)</label><input type="text" id="intCountDown" placeholder="0" value="0" maxlength="3" class="timer-inp timer-inp-num" inputmode="numeric" pattern="[0-9]*"></div>
-        <div class="timer-row"><label>Work (MM:SS or 4 digits)</label><input type="text" id="intWork" placeholder="100" value="1:00" maxlength="5" class="timer-inp" inputmode="numeric" pattern="[0-9:]*"></div>
-        <div class="timer-row"><label>Rest (MM:SS or 4 digits)</label><input type="text" id="intRest" placeholder="0000" value="0:00" maxlength="5" class="timer-inp" inputmode="numeric" pattern="[0-9:]*"></div>
+        <div class="timer-row"><label>CountDown (sec)</label><input type="text" id="intCountDown" placeholder="10" value="10" maxlength="3" class="timer-inp timer-inp-num" inputmode="numeric" pattern="[0-9]*"></div>
+        <div class="timer-row"><label>Work (MM:SS)</label><input type="text" id="intWork" placeholder="100" value="1:00" maxlength="5" class="timer-inp" inputmode="numeric" pattern="[0-9:]*"></div>
+        <div class="timer-row"><label>Rest (MM:SS)</label><input type="text" id="intRest" placeholder="0000" value="0:00" maxlength="5" class="timer-inp" inputmode="numeric" pattern="[0-9:]*"></div>
         <div class="timer-row"><label>Rounds (min 1)</label><input type="number" id="intRounds" placeholder="5" value="5" min="1" max="99" class="timer-inp" inputmode="numeric"></div>
         <div class="timer-row"><label>Sets</label><input type="text" id="intSets" placeholder="1" value="1" maxlength="2" class="timer-inp timer-inp-num" inputmode="numeric" pattern="[0-9]*"></div>
         <div class="timer-row"><label>Rest Between Sets (MM:SS or 4 digits)</label><input type="text" id="intRestSets" placeholder="0000" value="0:00" maxlength="5" class="timer-inp" inputmode="numeric" pattern="[0-9:]*"></div>
@@ -418,14 +413,17 @@ input[type=number].timer-inp{width:7ch;min-width:7ch}
 <div id="timer-fullscreen" class="timer-fullscreen" style="display:none">
   <div class="timer-fs-bg" id="timerFsBg"></div>
   <button type="button" class="timer-fs-exit" id="timerFsExit" onclick="timerFullscreenClose()" aria-label="Close">✕</button>
+  <button type="button" class="timer-fs-rotate" id="timerFsRotate" onclick="timerFullscreenRotate()" aria-label="Rotate">⤾</button>
   <div class="timer-fs-total-above" id="timerFsTotalAbove" aria-label="Overall time countdown"></div>
   <div class="timer-fs-clock-block">
     <div class="timer-fs-digits-wrap">
       <div class="timer-fs-digits" id="timerFsDigits">0:00</div>
     </div>
-    <div class="timer-fs-phase" id="timerFsPhase">—</div>
-    <div class="timer-fs-set-round" id="timerFsSetRound"></div>
-    <div class="timer-fs-next" id="timerFsNext"></div>
+    <div class="timer-fs-meta">
+      <div class="timer-fs-phase" id="timerFsPhase">—</div>
+      <div class="timer-fs-next" id="timerFsNext"></div>
+      <div class="timer-fs-set-round" id="timerFsSetRound"></div>
+    </div>
   </div>
   <div class="timer-fs-bottom-panel">
     <div class="timer-fs-nav" id="timerFsNav" style="display:none">
@@ -458,8 +456,9 @@ function sendAnalytics(eventName) {
   if (!ANALYTICS_ENDPOINT) return;
   try {
     if (!sessionStorage.dw_sid) sessionStorage.dw_sid = Math.random().toString(36).slice(2, 14);
+    if (!localStorage.dw_uid) localStorage.dw_uid = "u_" + Math.random().toString(36).slice(2, 14);
     var url = ANALYTICS_ENDPOINT.indexOf("/") === 0 ? (location.origin + ANALYTICS_ENDPOINT) : ANALYTICS_ENDPOINT;
-    navigator.sendBeacon(url, JSON.stringify({ event: eventName, t: Date.now(), sid: sessionStorage.dw_sid, ua: (typeof navigator !== "undefined" && navigator.userAgent) ? navigator.userAgent : "" }));
+    navigator.sendBeacon(url, JSON.stringify({ event: eventName, t: Date.now(), sid: sessionStorage.dw_sid, uid: localStorage.dw_uid, ua: (typeof navigator !== "undefined" && navigator.userAgent) ? navigator.userAgent : "" }));
   } catch (e) {}
 }
 
@@ -662,17 +661,23 @@ document.addEventListener("DOMContentLoaded", function() {
     inp.addEventListener("focus", function() { this.select(); });
     if (inp.id && ["stopwatchInput","intWork","intRest","intRestSets"].indexOf(inp.id) !== -1) {
       inp.addEventListener("blur", function() {
-        var v = this.value.trim().replace(/\s/g, '');
-        if (/^\d{4}$/.test(v)) {
-          var mm = v.slice(0,2), ss = v.slice(2,4);
-          this.value = mm + ":" + ss;
-        }
+        this.value = normalizeClockInput(this.value);
       });
     }
     if (inp.id && ["intCountDown","intWork","intRest","intRounds","intSets","intRestSets"].indexOf(inp.id) !== -1) {
       inp.addEventListener("input", updateIntervalOverallTime);
       inp.addEventListener("change", updateIntervalOverallTime);
     }
+    inp.addEventListener("keydown", function(e) {
+      if (e.key !== "Enter") return;
+      var order = ["stopwatchInput","stopwatchCountDownSec","intCountDown","intWork","intRest","intRounds","intSets","intRestSets"];
+      var idx = order.indexOf(this.id);
+      if (idx === -1) return;
+      e.preventDefault();
+      var next = document.getElementById(order[Math.min(idx + 1, order.length - 1)]);
+      if (next && next !== this) { next.focus(); if (next.select) next.select(); }
+      else this.blur();
+    });
   });
   updateIntervalOverallTime();
 });
@@ -1174,6 +1179,8 @@ function resetSourceOrder() {
 function parseMMSS(s) {
   if (!s) return 0;
   s = String(s).trim().replace(/\s/g, '');
+  if (/^\d{1}$/.test(s)) return parseInt(s, 10);
+  if (/^\d{2}$/.test(s)) return parseInt(s, 10);
   var m = s.match(/^(\d+):(\d+)$/);
   if (m) return parseInt(m[1], 10) * 60 + parseInt(m[2], 10);
   if (/^\d{4}$/.test(s)) {
@@ -1181,8 +1188,33 @@ function parseMMSS(s) {
     var ss = parseInt(s.slice(2, 4), 10);
     return mm * 60 + ss;
   }
+  if (/^\d{3}$/.test(s)) {
+    var m3 = parseInt(s.slice(0, 1), 10);
+    var s3 = parseInt(s.slice(1, 3), 10);
+    return m3 * 60 + s3;
+  }
   if (/^\d+$/.test(s)) return parseInt(s, 10);
   return 0;
+}
+function normalizeClockInput(v) {
+  var s = String(v || "").trim().replace(/\s/g, "");
+  if (!s) return "00:00";
+  if (/^\d{1,4}$/.test(s)) {
+    if (s.length === 1) return "00:0" + s;
+    if (s.length === 2) return "00:" + s;
+    if (s.length === 3) return "0" + s.slice(0, 1) + ":" + s.slice(1, 3);
+    return s.slice(0, 2) + ":" + s.slice(2, 4);
+  }
+  var m = s.match(/^(\d+):(\d+)$/);
+  if (m) {
+    var mm = parseInt(m[1], 10);
+    var ss = parseInt(m[2], 10);
+    if (isNaN(mm) || isNaN(ss)) return s;
+    if (ss < 0) ss = 0;
+    if (ss > 59) ss = 59;
+    return String(mm).padStart(2, "0") + ":" + String(ss).padStart(2, "0");
+  }
+  return s;
 }
 function formatMMSS(sec) {
   if (sec < 0) sec = 0;
@@ -1191,7 +1223,7 @@ function formatMMSS(sec) {
 }
 function applyPreset(name) {
   if (name === "tabata") {
-    document.getElementById("intCountDown").value = "0";
+    document.getElementById("intCountDown").value = "10";
     document.getElementById("intWork").value = "0:20";
     document.getElementById("intRest").value = "0:10";
     document.getElementById("intRounds").value = "8";
@@ -1221,6 +1253,8 @@ var timerFsLastSecond = -1;
 var timerFsStartTime = 0;
 var timerFsTotalDuration = 0;
 var timerFsIsInterval = false;
+var timerFsForcedLandscape = false;
+var timerFsManualLayoutMode = null; // null=auto, "landscape"=force layout mode 2
 
 var TIMER_PALETTE_COLORS = ["#b71c1c","#c62828","#e53935","#f44336","#e65100","#ff9800","#ffeb3b","#ffd700","#7cb342","#43a047","#28a745","#26a69a","#00bcd4","#2196f3","#3f51b5","#9c27b0","#e91e63","#546e7a","#78909c"];
 
@@ -1397,6 +1431,22 @@ function timerBell() {
     else play();
   } catch (e) {}
 }
+function timerFsUpdateDigitClass(displayText) {
+  var fs = document.getElementById("timer-fullscreen");
+  if (!fs) return;
+  var count = (String(displayText || "").match(/\d/g) || []).length;
+  fs.classList.toggle("timer-fs-d3", count <= 3);
+  fs.classList.toggle("timer-fs-d4", count >= 4);
+}
+function timerFsSyncLayoutClass() {
+  var fs = document.getElementById("timer-fullscreen");
+  if (!fs) return;
+  var isLandscape = (window.innerWidth || 0) > (window.innerHeight || 0);
+  var useLandscape = timerFsManualLayoutMode === "landscape" ? true : isLandscape;
+  fs.classList.toggle("timer-fs-landscape", useLandscape);
+  fs.classList.toggle("timer-fs-portrait", !isLandscape);
+}
+window.addEventListener("resize", timerFsSyncLayoutClass);
 
 function timerFullscreenUpdate() {
   var el = document.getElementById("timer-fullscreen");
@@ -1407,6 +1457,7 @@ function timerFullscreenUpdate() {
   var bg = document.getElementById("timerFsBg");
   var btn = document.getElementById("timerFsBtn");
   if (!el || el.style.display !== "flex") return;
+  timerFsSyncLayoutClass();
   var now = Date.now();
   var elapsed = (now - timerFsStartTime) / 1000;
   var totalRemaining = Math.max(0, timerFsTotalDuration - elapsed);
@@ -1415,7 +1466,11 @@ function timerFullscreenUpdate() {
   for (var k in PHASE_COLORS) phaseColors[k] = PHASE_COLORS[k];
   for (var k in settings.colors) phaseColors[k] = settings.colors[k];
   if (timerFsIsInterval && timerFsPhases.length >= 1 && totalAbove) {
-    totalAbove.innerHTML = "<span class=\"timer-fs-total-label\">OVERALL TIME</span><span class=\"timer-fs-total-digits\">" + formatMMSS(totalRemaining) + "</span>";
+    if (el.classList.contains("timer-fs-landscape")) {
+      totalAbove.textContent = "OVERALL TIME : " + formatMMSS(totalRemaining);
+    } else {
+      totalAbove.innerHTML = "<span class=\"timer-fs-total-label\">OVERALL TIME</span><span class=\"timer-fs-total-digits\">" + formatMMSS(totalRemaining) + "</span>";
+    }
     totalAbove.style.display = "flex";
   } else if (totalAbove) totalAbove.style.display = "none";
   var navEl = document.getElementById("timerFsNav");
@@ -1424,7 +1479,7 @@ function timerFullscreenUpdate() {
   if (navEl) navEl.style.display = showNav ? "flex" : "none";
   if (btnStandalone) btnStandalone.style.display = showNav ? "none" : "block";
   function setBtnTxt(t) {
-    var icon = t === "Resume" || t === "Start" ? "\u25B6" : t === "Pause" ? "\u23F8" : t;
+    var icon = t === "Resume" || t === "Start" ? "\u25B6" : t === "Pause" ? "II" : t;
     var label = t === "Resume" ? "Resume" : t === "Pause" ? "Pause" : t === "Start" ? "Start" : t;
     if (btn) { btn.textContent = icon; btn.setAttribute("aria-label", label); }
     if (btnStandalone) { btnStandalone.textContent = icon; btnStandalone.setAttribute("aria-label", label); }
@@ -1432,18 +1487,48 @@ function timerFullscreenUpdate() {
   if (timerFsPaused) {
     var pp = timerFsPhases[timerFsPhaseIndex];
     var pausedDisplay = pp && pp.name === "For Time" ? Math.max(0, (pp.sec || 0) - timerFsPausedRemaining) : timerFsPausedRemaining;
-    digits.textContent = formatMMSS(pp && pp.name === "For Time" ? Math.floor(pausedDisplay) : Math.ceil(pausedDisplay));
+    var pausedText = formatMMSS(pp && pp.name === "For Time" ? Math.floor(pausedDisplay) : Math.ceil(pausedDisplay));
+    digits.textContent = pausedText;
+    timerFsUpdateDigitClass(pausedText);
+    if (pp) {
+      phaseEl.textContent = pp.name;
+      bg.style.background = phaseColors[pp.name] || "#333";
+      el.style.background = phaseColors[pp.name] || "#333";
+      var setRoundPaused = document.getElementById("timerFsSetRound");
+      if (setRoundPaused) {
+        if (pp.set != null && pp.totalSets != null) {
+          var setTxtP = "Set " + pp.set + "/" + pp.totalSets;
+          var roundTxtP = pp.round != null ? "Round " + pp.round + "/" + (pp.roundsPerSet != null ? pp.roundsPerSet : "?") : "Next Set " + (pp.set + 1);
+          setRoundPaused.innerHTML = "<span>" + roundTxtP + "</span> <span>" + setTxtP + "</span>";
+          setRoundPaused.style.display = "flex";
+        } else {
+          setRoundPaused.textContent = "";
+          setRoundPaused.style.display = "none";
+        }
+      }
+      if (timerFsIsInterval) {
+        var nextNameP = timerFsPhaseIndex + 1 < timerFsPhases.length ? timerFsPhases[timerFsPhaseIndex + 1].name : "";
+        nextEl.textContent = nextNameP ? "Next: " + nextNameP : "";
+      } else {
+        nextEl.textContent = "";
+      }
+    }
     setBtnTxt("Resume");
     return;
   }
   if (timerFsPhaseIndex >= timerFsPhases.length) {
     bg.style.background = phaseColors["Done"] || "#007bff";
+    el.style.background = phaseColors["Done"] || "#007bff";
     digits.textContent = "FINISH";
+    timerFsUpdateDigitClass("");
     phaseEl.textContent = "FINISH";
     nextEl.textContent = "";
     var setRoundDone = document.getElementById("timerFsSetRound");
     if (setRoundDone) { setRoundDone.textContent = ""; setRoundDone.style.display = "none"; }
-    if (totalAbove && timerFsIsInterval) totalAbove.innerHTML = "<span class=\"timer-fs-total-label\">OVERALL TIME</span><span class=\"timer-fs-total-digits\">0:00</span>";
+    if (totalAbove && timerFsIsInterval) {
+      if (el.classList.contains("timer-fs-landscape")) totalAbove.textContent = "OVERALL TIME : 0:00";
+      else totalAbove.innerHTML = "<span class=\"timer-fs-total-label\">OVERALL TIME</span><span class=\"timer-fs-total-digits\">0:00</span>";
+    }
     if (btn) { btn.textContent = "Close"; btn.setAttribute("aria-label", "Close"); }
     if (btnStandalone) { btnStandalone.textContent = "Close"; btnStandalone.setAttribute("aria-label", "Close"); }
     if (navEl) navEl.style.display = "none";
@@ -1468,13 +1553,15 @@ function timerFullscreenUpdate() {
     }
   }
   timerFsLastSecond = sec;
-  digits.textContent = formatMMSS(isCountUp ? displaySecFloor : remaining);
+  var currentText = formatMMSS(isCountUp ? displaySecFloor : remaining);
+  digits.textContent = currentText;
+  timerFsUpdateDigitClass(currentText);
   phaseEl.textContent = p.name;
   var setRoundEl = document.getElementById("timerFsSetRound");
   if (setRoundEl) {
     if (p.set != null && p.totalSets != null) {
-      var setTxt = "▼ Set " + p.set + "/" + p.totalSets;
-      var roundTxt = p.round != null ? "▶ Round " + p.round + "/" + (p.roundsPerSet != null ? p.roundsPerSet : "?") : "→ Next: Set " + (p.set + 1);
+      var setTxt = "Set " + p.set + "/" + p.totalSets;
+      var roundTxt = p.round != null ? "Round " + p.round + "/" + (p.roundsPerSet != null ? p.roundsPerSet : "?") : "Next Set " + (p.set + 1);
       setRoundEl.innerHTML = "<span>" + roundTxt + "</span> <span>" + setTxt + "</span>";
       setRoundEl.style.display = "flex";
     } else {
@@ -1489,6 +1576,7 @@ function timerFullscreenUpdate() {
     nextEl.textContent = "";
   }
   bg.style.background = phaseColors[p.name] || "#333";
+  el.style.background = phaseColors[p.name] || "#333";
   if (remaining <= 0) {
     timerFsPhaseIndex++;
     if (timerFsPhaseIndex < timerFsPhases.length) timerFsPhaseEndTime = Date.now() + timerFsPhases[timerFsPhaseIndex].sec * 1000;
@@ -1510,29 +1598,71 @@ function timerFullscreenStart(phases, isInterval) {
   timerFsPhaseEndTime = Date.now() + phases[0].sec * 1000;
   document.getElementById("timer-fullscreen").style.display = "flex";
   document.body.style.overflow = "hidden";
+  timerFsSyncLayoutClass();
+  timerRequestFullscreen();
   var b = document.getElementById("timerFsBtn");
   var s = document.getElementById("timerFsBtnStandalone");
-  if (b) b.textContent = "\u23F8";
-  if (s) s.textContent = "\u23F8";
+  if (s) s.textContent = "II";
+  if (b) b.textContent = "II";
   if (navigator.wakeLock) navigator.wakeLock.request("screen").then(function(wl) { timerFsWakeLock = wl; }).catch(function() {});
   timerFullscreenUpdate();
+}
+function timerRequestFullscreen() {
+  try {
+    var root = document.documentElement;
+    if (root && !document.fullscreenElement && root.requestFullscreen) {
+      root.requestFullscreen().catch(function() {});
+    }
+  } catch (e) {}
+  // Mobile fallback to hide browser URL bar where possible
+  setTimeout(function() { try { window.scrollTo(0, 1); } catch (e) {} }, 120);
+}
+function timerFullscreenRotate() {
+  var fs = document.getElementById("timer-fullscreen");
+  var rb = document.getElementById("timerFsRotate");
+  timerFsForcedLandscape = !timerFsForcedLandscape;
+  timerFsManualLayoutMode = timerFsForcedLandscape ? "landscape" : null;
+  if (fs) fs.classList.toggle("force-landscape", timerFsForcedLandscape);
+  if (rb) rb.classList.toggle("active", timerFsForcedLandscape);
+  timerFsSyncLayoutClass();
+  timerRequestFullscreen();
+  try {
+    if (screen.orientation && screen.orientation.lock) {
+      if (timerFsForcedLandscape) screen.orientation.lock("landscape").catch(function() {});
+      else screen.orientation.unlock();
+    }
+  } catch (e) {}
 }
 function timerFsGoPrev() {
   if (timerFsPhaseIndex <= 0) return;
   timerFsPhaseIndex--;
-  timerFsPhaseEndTime = Date.now() + timerFsPhases[timerFsPhaseIndex].sec * 1000;
+  var secPrev = timerFsPhases[timerFsPhaseIndex].sec || 0;
+  timerFsPhaseEndTime = Date.now() + secPrev * 1000;
+  if (timerFsPaused) timerFsPausedRemaining = secPrev;
   timerFsLastSecond = -1;
+  if (timerFsPaused) timerFullscreenUpdate();
 }
 function timerFsGoNext() {
   if (timerFsPhaseIndex >= timerFsPhases.length - 1) return;
   timerFsPhaseIndex++;
-  timerFsPhaseEndTime = Date.now() + timerFsPhases[timerFsPhaseIndex].sec * 1000;
+  var secNext = timerFsPhases[timerFsPhaseIndex].sec || 0;
+  timerFsPhaseEndTime = Date.now() + secNext * 1000;
+  if (timerFsPaused) timerFsPausedRemaining = secNext;
   timerFsLastSecond = -1;
+  if (timerFsPaused) timerFullscreenUpdate();
 }
 function timerFullscreenClose() {
   if (timerFsRaf) cancelAnimationFrame(timerFsRaf);
   timerFsRaf = null;
   if (timerFsWakeLock) { try { timerFsWakeLock.release(); } catch(e) {} timerFsWakeLock = null; }
+  try { if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch (e) {}
+  timerFsForcedLandscape = false;
+  timerFsManualLayoutMode = null;
+  var fs = document.getElementById("timer-fullscreen");
+  var rb = document.getElementById("timerFsRotate");
+  if (fs) fs.classList.remove("force-landscape");
+  if (fs) fs.classList.remove("timer-fs-landscape");
+  if (rb) rb.classList.remove("active");
   document.getElementById("timer-fullscreen").style.display = "none";
   document.body.style.overflow = "";
   document.getElementById("stopwatchStart").textContent = "Start Full Screen";
@@ -1543,7 +1673,7 @@ function timerFullscreenToggle() {
   var b = document.getElementById("timerFsBtn");
   var s = document.getElementById("timerFsBtnStandalone");
   function setBtnIcon(t) {
-    var icon = t === "Resume" || t === "Start" ? "\u25B6" : t === "Pause" ? "\u23F8" : t;
+    var icon = t === "Resume" || t === "Start" ? "\u25B6" : t === "Pause" ? "II" : t;
     var label = t === "Resume" ? "Resume" : t === "Pause" ? "Pause" : t;
     if (b) { b.textContent = icon; b.setAttribute("aria-label", label); }
     if (s) { s.textContent = icon; s.setAttribute("aria-label", label); }
@@ -1721,6 +1851,13 @@ function scrollToTop() {
 // ——— Workout Timers ———
 function parseMMSS(v) {
   var s = String(v || "").trim();
+  if (/^\d{1}$/.test(s)) return parseInt(s, 10);
+  if (/^\d{2}$/.test(s)) return parseInt(s, 10);
+  if (/^\d{3}$/.test(s)) {
+    var m3 = parseInt(s.slice(0, 1), 10);
+    var s3 = parseInt(s.slice(1, 3), 10);
+    return m3 * 60 + s3;
+  }
   if (/^\d+$/.test(s)) return parseInt(s, 10);
   var m = s.match(/^(\d+):(\d+)$/);
   if (m) return parseInt(m[1], 10) * 60 + parseInt(m[2], 10);
@@ -1734,7 +1871,7 @@ function formatMMSS(sec) {
 
 function applyPreset(name) {
   if (name === "tabata") {
-    document.getElementById("intCountDown").value = "0";
+    document.getElementById("intCountDown").value = "10";
     document.getElementById("intWork").value = "0:20";
     document.getElementById("intRest").value = "0:10";
     document.getElementById("intRounds").value = "8";
