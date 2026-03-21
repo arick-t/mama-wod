@@ -1,5 +1,16 @@
 # Changelog
 
+## [19.8] - 2026-03-21
+
+### Product version sync
+- **מספר גרסה אחיד**: `v19.8` ב־UI (`index.html`), `19.8.0` ב־`package.json`, קובץ `VERSION` בשורש הפרויקט.
+- **CI**: `run-name` ל־workflows, סינון `paths` (בניית Capacitor לא רצה על קומיטי analytics בלבד).
+
+### Timer & mobile (ממשיכים מ־19.7)
+- שעון: מסך מלא, מצב 1/2, סטופוואץ׳/אינטרוולים, שדרוגי WebAudio + פלאגין AudioPriority (iOS/Android) לצלילים.
+
+---
+
 ## [19.6] - 2026-02-27
 
 ### Timer
