@@ -1,14 +1,6 @@
 /**
- * Reads data/analytics.jsonl and prints a user report for the last 7 days (from run time).
- * - Filters out bot/automated traffic (User-Agent).
- * - Counts total users, returning vs new (first-seen in window = new).
- * - Counts timer_use and find_workout only (no per-day breakdown).
- *
- * When run manually: last 7 days from now.
- * When run on schedule (e.g. every Friday): same – last 7 days from run time (e.g. Sat–Fri).
- *
- * Usage: node scripts/analytics-summary.js
- * Env: REPORT_PERIOD=last_week (default), REPORT_FROM_DATE=YYYY-MM-DD not used for this format.
+ * Analytics summary (7-day rolling window).
+ * Exports pure functions to allow deterministic tests with fixture data.
  */
 
 const fs = require("fs");
@@ -20,11 +12,25 @@ const BOT_UA_PATTERNS = [
   "googlebot", "bingbot", "yandexbot", "baiduspider", "facebookexternalhit",
   "bytespider", "petalbot", "ahrefsbot", "semrushbot", "dotbot"
 ];
+const MOBILE_UA_PATTERNS = ["iphone", "ipad", "ipod", "android", "mobile"];
 
 function isLikelyBot(ua) {
   if (!ua || typeof ua !== "string") return false;
   const lower = ua.toLowerCase();
   return BOT_UA_PATTERNS.some((p) => lower.includes(p));
+}
+
+function isMobileUa(ua) {
+  if (!ua || typeof ua !== "string") return false;
+  const lower = ua.toLowerCase();
+  return MOBILE_UA_PATTERNS.some((p) => lower.includes(p));
+}
+
+function getUserKey(e) {
+  if (e && typeof e.uid === "string" && e.uid) return e.uid;
+  if (e && typeof e.sid === "string" && e.sid) return e.sid;
+  if (e && typeof e.ua === "string" && e.ua) return "ua::" + e.ua.toLowerCase();
+  return null;
 }
 
 function formatDDMMYY(ts) {
@@ -35,56 +41,94 @@ function formatDDMMYY(ts) {
   return dd + "/" + mm + "/" + yy;
 }
 
-const now = Date.now();
-const windowStart = now - 7 * 24 * 60 * 60 * 1000;
-
-const file = path.join(__dirname, "..", "data", "analytics.jsonl");
-if (!fs.existsSync(file)) {
-  console.log("דו\"ח ניתור משתמשים בין התאריכים " + formatDDMMYY(windowStart) + " ועד ל " + formatDDMMYY(now));
-  console.log("");
-  console.log("עדיין אין נתונים בקובץ data/analytics.jsonl.");
-  process.exit(0);
-}
-
-const lines = fs.readFileSync(file, "utf8").trim().split("\n").filter(Boolean);
-const events = [];
-for (const line of lines) {
-  try {
-    events.push(JSON.parse(line));
-  } catch (e) {}
-}
-
-const humanEvents = events.filter((e) => !isLikelyBot(e.ua));
-const windowEvents = humanEvents.filter((e) => e.t >= windowStart && e.t <= now);
-
-// First-seen per sid (over full history)
-const firstSeen = {};
-humanEvents.forEach((e) => {
-  if (e.sid) {
-    if (firstSeen[e.sid] === undefined || e.t < firstSeen[e.sid]) firstSeen[e.sid] = e.t;
+function readJsonlEvents(filePath) {
+  if (!fs.existsSync(filePath)) return [];
+  const lines = fs.readFileSync(filePath, "utf8").trim().split("\n").filter(Boolean);
+  const events = [];
+  for (const line of lines) {
+    try {
+      events.push(JSON.parse(line));
+    } catch (e) {}
   }
-});
+  return events;
+}
 
-const uniqueSids = new Set();
-windowEvents.forEach((e) => { if (e.sid) uniqueSids.add(e.sid); });
-const totalUsers = uniqueSids.size;
+function computeSummary(events, nowTs) {
+  const now = typeof nowTs === "number" ? nowTs : Date.now();
+  const windowStart = now - 7 * 24 * 60 * 60 * 1000;
+  const validEvents = (events || []).filter((e) => e && typeof e.t === "number");
+  const humanMobileEvents = validEvents.filter((e) => !isLikelyBot(e.ua) && isMobileUa(e.ua));
+  const windowEvents = humanMobileEvents.filter((e) => e.t >= windowStart && e.t <= now);
 
-let returning = 0;
-let newUsers = 0;
-uniqueSids.forEach((sid) => {
-  const first = firstSeen[sid];
-  if (first === undefined) return;
-  if (first < windowStart) returning++;
-  else newUsers++;
-});
+  // First-seen per user key (uid > sid > ua fallback) over full history
+  const firstSeen = {};
+  humanMobileEvents.forEach((e) => {
+    const key = getUserKey(e);
+    if (!key) return;
+    if (firstSeen[key] === undefined || e.t < firstSeen[key]) firstSeen[key] = e.t;
+  });
 
-const timerUse = windowEvents.filter((e) => e.event === "timer_use").length;
-const findWorkout = windowEvents.filter((e) => e.event === "find_workout").length;
+  const uniqueUsers = new Set();
+  windowEvents.forEach((e) => {
+    const key = getUserKey(e);
+    if (key) uniqueUsers.add(key);
+  });
 
-console.log("דו\"ח ניתור משתמשים בין התאריכים " + formatDDMMYY(windowStart) + " ועד ל " + formatDDMMYY(now));
-console.log("");
-console.log("סה\"כ משתמשים - " + totalUsers);
-console.log("מתוכם ותיקים - " + returning);
-console.log("מתוכם חדשים מהשבוע האחרון - " + newUsers);
-console.log("סה\"כ שימושים בלשונית שעון - " + timerUse);
-console.log("סה\"כ שימושים בלשונית איתור אימון - " + findWorkout);
+  let returning = 0;
+  let newUsers = 0;
+  uniqueUsers.forEach((key) => {
+    const first = firstSeen[key];
+    if (first === undefined) return;
+    if (first < windowStart) returning++;
+    else newUsers++;
+  });
+
+  const timerUse = windowEvents.filter((e) => e.event === "timer_use").length;
+  const findWorkout = windowEvents.filter((e) => e.event === "find_workout").length;
+
+  return {
+    now,
+    windowStart,
+    totalUsers: uniqueUsers.size,
+    returning,
+    newUsers,
+    timerUse,
+    findWorkout
+  };
+}
+
+function buildReportLines(summary) {
+  return [
+    "דו\"ח ניתור משתמשים בין התאריכים " + formatDDMMYY(summary.windowStart) + " ועד ל " + formatDDMMYY(summary.now),
+    "",
+    "סה\"כ משתמשים - " + summary.totalUsers,
+    "מתוכם ותיקים - " + summary.returning,
+    "מתוכם חדשים מהשבוע האחרון - " + summary.newUsers,
+    "סה\"כ שימושים בלשונית שעון - " + summary.timerUse,
+    "סה\"כ שימושים בלשונית איתור אימון - " + summary.findWorkout
+  ];
+}
+
+function runCli() {
+  const now = process.env.ANALYTICS_NOW_TS ? parseInt(process.env.ANALYTICS_NOW_TS, 10) : Date.now();
+  const file = process.env.ANALYTICS_FILE || path.join(__dirname, "..", "data", "analytics.jsonl");
+  const events = readJsonlEvents(file);
+  const summary = computeSummary(events, now);
+  const lines = buildReportLines(summary);
+  if (!events.length) {
+    console.log(lines[0]);
+    console.log("");
+    console.log("עדיין אין נתונים בקובץ " + file + ".");
+    return;
+  }
+  console.log(lines.join("\n"));
+}
+
+if (require.main === module) runCli();
+
+module.exports = {
+  readJsonlEvents,
+  computeSummary,
+  buildReportLines,
+  formatDDMMYY
+};
