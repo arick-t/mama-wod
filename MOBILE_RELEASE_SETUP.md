@@ -26,6 +26,7 @@ Run:
 
 Notes:
 
+- **Node.js ≥ 22** is required for `npx cap` / Capacitor CLI (local machine and CI).
 - iOS signed build/upload runs on GitHub macOS runner.
 - If any secret is missing, the workflow fails early with a clear message.
 

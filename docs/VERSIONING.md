@@ -21,6 +21,10 @@ npx cap sync
 
 או עדכן ידנית גם את `web/index.html`, `ios/App/App/public/index.html`, `android/app/src/main/assets/public/index.html` כדי שיהיו זהים לשורש (או לסמוך על `build:cap:web` שמעתיק ל־`web/`).
 
+## סביבת פיתוח (Capacitor)
+
+- **Node.js 22+** (דרישת Capacitor CLI 8). אם `cap sync` נכשל — בדוק `node -v`.
+
 ## לא לבלבל עם
 
 - `v1.1.0` היה מספר npm ישן שלא תאם ל־`v19.x` — עכשיו **הכול מסונכרן ל־19.x.y**.
