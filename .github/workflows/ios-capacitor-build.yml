@@ -1,10 +1,30 @@
+# רץ רק כשמשתנה קוד שקשור ל־iOS/Capacitor — לא על קומיטים מסוג analytics בלבד.
 name: iOS Capacitor Build Check
 
+run-name: "iOS Capacitor · ${{ github.ref_name }} · ${{ github.sha }}"
+
 on:
+  workflow_dispatch:
   push:
-    branches:
-      - "**"
+    paths:
+      - "ios/**"
+      - "package.json"
+      - "package-lock.json"
+      - "capacitor.config.json"
+      - "web/**"
+      - "scripts/build-capacitor-web.js"
+      - "index.html"
+      - ".github/workflows/ios-capacitor-build.yml"
   pull_request:
+    paths:
+      - "ios/**"
+      - "package.json"
+      - "package-lock.json"
+      - "capacitor.config.json"
+      - "web/**"
+      - "scripts/build-capacitor-web.js"
+      - "index.html"
+      - ".github/workflows/ios-capacitor-build.yml"
 
 jobs:
   ios-build-check:

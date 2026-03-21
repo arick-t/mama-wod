@@ -1,10 +1,30 @@
+# רץ רק כשמשתנה קוד שקשור לאנדרואיד/Capacitor — לא על קומיטים מסוג analytics בלבד.
 name: Android Capacitor Build Check
 
+run-name: "Android Capacitor · ${{ github.ref_name }} · ${{ github.sha }}"
+
 on:
+  workflow_dispatch:
   push:
-    branches:
-      - "**"
+    paths:
+      - "android/**"
+      - "package.json"
+      - "package-lock.json"
+      - "capacitor.config.json"
+      - "web/**"
+      - "scripts/build-capacitor-web.js"
+      - "index.html"
+      - ".github/workflows/android-capacitor-build.yml"
   pull_request:
+    paths:
+      - "android/**"
+      - "package.json"
+      - "package-lock.json"
+      - "capacitor.config.json"
+      - "web/**"
+      - "scripts/build-capacitor-web.js"
+      - "index.html"
+      - ".github/workflows/android-capacitor-build.yml"
 
 jobs:
   android-build-check:

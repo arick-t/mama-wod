@@ -1,10 +1,24 @@
+# רץ כשמשתנה לוגיקת האנליטיקס או נתוני ה-fixture — לא מציג כותרת זהה לבניית מובייל.
 name: Analytics Logic Tests
 
+run-name: "Analytics tests · ${{ github.ref_name }} · ${{ github.sha }}"
+
 on:
+  workflow_dispatch:
   push:
-    branches:
-      - "**"
+    paths:
+      - "scripts/analytics-summary.test.js"
+      - "scripts/analytics-summary.js"
+      - "scripts/fixtures/**"
+      - "data/analytics.jsonl"
+      - ".github/workflows/analytics-tests.yml"
   pull_request:
+    paths:
+      - "scripts/analytics-summary.test.js"
+      - "scripts/analytics-summary.js"
+      - "scripts/fixtures/**"
+      - "data/analytics.jsonl"
+      - ".github/workflows/analytics-tests.yml"
 
 jobs:
   analytics-summary-test:
