@@ -44,6 +44,10 @@
 ## 5. אם הבדיקה נכשלת (403 / שגיאה)
 
 - ודאו ב־[Resend → API Keys](https://resend.com/api-keys) שהמפתח ב־GitHub תואם למפתח פעיל (החליפו Secret אם צריך).
-- בחשבון חינמי / לפני אימות דומיין: ייתכן שצריך **לאמת את כתובת היעד** ב־Resend (**Audience** או שליחה רק לכתובת שמופיעה בחשבון).
-- אם מגדירים **RESEND_FROM** עם דומיין משלכם – הדומיין חייב להיות מאומת ב־Resend.
+- **מצב testing ב־Resend:** אפשר לשלוח **רק לכתובת המייל של בעל החשבון ב־Resend** (למשל `ariel.tahan@gmail.com`). שליחה ל־`contact.duckwod@gmail.com` תיכשל ב־403 עד שמאמתים דומיין.
+- **בדיקה מהירה שהצינור עובד:** הרץ **Resend email test** עם שדה יעד **אותה כתובת שמופיעה כבעל חשבון ב־Resend** – אמור להצליח במצב testing.
+- **כדי לשלוח ל־contact.duckwod@gmail.com:**  
+  1. [הוסף דומיין](https://resend.com/domains) ב־Resend והשלם אימות DNS.  
+  2. הגדר Secret **`RESEND_FROM`** ל־`DUCK-WOD <notifications@yourdomain.com>` (כתובת על הדומיין המאומת).  
+  3. הרץ שוב את **Resend email test** (יעד ריק או `contact.duckwod@gmail.com`).
 - בלוג של ה־run ב־Actions תופיע תשובת JSON מ־Resend (קוד שגיאה והודעה).
