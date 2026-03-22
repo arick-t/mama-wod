@@ -534,6 +534,27 @@ function escapeHtmlAi(s) {
   return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
+/** מניעת שגיאה כשהשרת מחזיר גוף ריק או HTML במקום JSON */
+function parseAiApiResponse(res) {
+  return res.text().then(function (text) {
+    var j = null;
+    var trimmed = (text || "").trim();
+    if (!trimmed) {
+      j = { error: "Empty response from server", httpStatus: res.status };
+    } else {
+      try {
+        j = JSON.parse(trimmed);
+      } catch (e) {
+        j = {
+          error: "Server did not return JSON (HTTP " + res.status + ")",
+          detail: trimmed.slice(0, 800),
+        };
+      }
+    }
+    return { ok: res.ok, status: res.status, j: j };
+  });
+}
+
 function generateWorkoutAi() {
   var unlimited = document.getElementById("unlimitedTime").checked;
   var time = unlimited ? 999 : (parseInt(document.getElementById("findTime").value, 10) || 20);
@@ -564,11 +585,13 @@ function generateWorkoutAi() {
       userNotes: userNotes
     })
   })
-    .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, status: r.status, j: j }; }); })
+    .then(parseAiApiResponse)
     .then(function (x) {
       if (!x.ok) {
-        var msg = x.j && (x.j.error || x.j.detail) ? (x.j.error + (x.j.detail ? ": " + String(x.j.detail).slice(0, 500) : "")) : JSON.stringify(x.j);
-        el.innerHTML = "<div class=\"empty\" style=\"color:#e88\"><strong>Could not generate</strong><pre style=\"white-space:pre-wrap;text-align:left;font-size:0.85rem;margin-top:8px\">" + escapeHtmlAi(msg) + "</pre><p style=\"font-size:0.9rem;margin-top:8px\">Add <code>GEMINI_API_KEY</code> in Vercel → Environment Variables and redeploy.</p></div>";
+        var msg = x.j && (x.j.error || x.j.detail)
+          ? (String(x.j.error || "") + (x.j.detail ? ": " + String(x.j.detail).slice(0, 500) : ""))
+          : (x.j ? JSON.stringify(x.j) : "HTTP " + x.status);
+        el.innerHTML = "<div class=\"empty\" style=\"color:#e88\"><strong>Could not generate</strong><pre style=\"white-space:pre-wrap;text-align:left;font-size:0.85rem;margin-top:8px\">" + escapeHtmlAi(msg) + "</pre><p style=\"font-size:0.9rem;margin-top:8px\">If empty response: check URL reaches <code>/api/generate-workout</code> (local: <code>npm run dev:local</code>). Vercel: add <code>GEMINI_API_KEY</code> and redeploy.</p></div>";
         return;
       }
       lastAiWorkoutText = (x.j && x.j.text) ? x.j.text : "";
@@ -592,12 +615,12 @@ function explainAiWorkout() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ action: "explain", workoutText: lastAiWorkoutText })
   })
-    .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+    .then(parseAiApiResponse)
     .then(function (x) {
       if (!x.ok) {
         var err = document.createElement("div");
         err.style.cssText = "margin-top:12px;color:#e88;font-size:0.9rem";
-        err.textContent = x.j && x.j.error ? x.j.error : JSON.stringify(x.j);
+        err.textContent = x.j && x.j.error ? x.j.error : (x.j ? JSON.stringify(x.j) : "HTTP " + x.status);
         if (box) box.appendChild(err);
         return;
       }
@@ -605,6 +628,12 @@ function explainAiWorkout() {
       add.style.cssText = "margin-top:16px;padding-top:12px;border-top:1px solid #444";
       add.innerHTML = "<strong style=\"display:block;margin-bottom:8px\">Movement help</strong><pre style=\"white-space:pre-wrap;font-family:inherit;margin:0;font-size:0.9rem;line-height:1.4\">" + escapeHtmlAi((x.j && x.j.text) ? x.j.text : "") + "</pre>";
       if (box) box.appendChild(add);
+    })
+    .catch(function (e) {
+      var err = document.createElement("div");
+      err.style.cssText = "margin-top:12px;color:#e88;font-size:0.9rem";
+      err.textContent = e.message || String(e);
+      if (box) box.appendChild(err);
     });
 }
 
