@@ -1,5 +1,16 @@
 # Changelog
 
+## [19.8.2] - 2026-03-23
+
+### About & attribution
+- לשונית **About** עם משפט מוצר, רשימת קרדיטים וקישורים למקורות.
+- בלוק **Sources & attribution** בלשונית Sources + **פוטר** עם קישור ל־About.
+
+### Sources
+- **הוסר** CrossFit Linchpin מהאפליקציה ומ־fetch; רשומות ישנות מוסרות ב־`save()` (מקור מושבת).
+
+---
+
 ## [19.8.1] - 2026-03-22
 
 ### Browse / UX

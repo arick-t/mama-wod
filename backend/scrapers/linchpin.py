@@ -1,6 +1,5 @@
 """
-CrossFit Linchpin Scraper - VERIFIED
-Handles Shopify blog structure
+CrossFit Linchpin — לא בשימוש ב-fetch (הוסר מהאפליקציה). נשמר לעיון.
 """
 
 import requests
