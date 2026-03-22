@@ -1,6 +1,6 @@
 /**
  * בדיקת לינק קונטקט – וידוא ש־mailto לכתובת יצירת הקשר קיים.
- * אין כאן שליחת מייל. מייל בדיקה = workflow "Resend email test" ב-GitHub – ראו docs/CONTACT_EMAIL.md.
+ * אין כאן שליחת מייל. דוח ניתור (Resend) – ראו RESEND_SECRETS.md.
  *
  * - **מקומי (ברירת מחדל):** קורא את `index.html` מה-repo – מתאים ל־`npm test` בלי רשת.
  * - **Vercel / אתר חי:** אם מוגדר `CONTACT_LINK_TEST_URL` (למשל `https://mama-wod.vercel.app`),

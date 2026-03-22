@@ -1,5 +1,16 @@
 # Changelog
 
+## [19.8.3] - 2026-03-23
+
+### Ops / email
+- דוח ניתור משתמשים (Resend): ברירת מחדל חזרה ל־**ariel.tahan@gmail.com** (תואם חשבון Resend / Vercel; בלי דומיין מאומת אין משלוח אמין לתיבת ניהול נפרדת).
+- הוסר workflow **Resend email test** – אין מייל בדיקה אוטומטי נפרד; בדיקה = הרצה ידנית של **Weekly Analytics Report**.
+
+### Product (ללא שינוי מהותי מ־19.8.2)
+- About + קרדיטים + דיסקלימר; קרדיטים ב־Sources ובפוטר; מייל קונטקט ציבורי **`contact.duckwod@gmail.com`** ב־`mailto` בלבד.
+
+---
+
 ## [19.8.2] - 2026-03-23
 
 ### About & attribution

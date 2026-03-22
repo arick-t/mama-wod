@@ -1,8 +1,13 @@
-# 🦆 DUCK-WOD — גרסה **19.8.2** (`package.json`: `19.8.2`)
+# 🦆 DUCK-WOD — גרסה **19.8.3** (`package.json`: `19.8.3`)
 
 **CrossFit Workout Aggregator** - Daily WODs from multiple sources
 
-> הגרסה המוצגת באתר היא **v19.8.2** (בכותרת ובפס המשני). מקור אמת: `VERSION` + `package.json` — ראו `docs/VERSIONING.md`.
+> הגרסה המוצגת באתר היא **v19.8.3** (בכותרת ובפס המשני). מקור אמת: `VERSION` + `package.json` — ראו `docs/VERSIONING.md`.
+
+## ✅ v19.8.3 (Mar 2026)
+
+- **Ops:** דוח ניתור → `ariel.tahan@gmail.com`; הסרת workflow מייל בדיקה.
+- **מוצר (כמו 19.8.2):** About, קרדיטים, דיסקלימר, מייל קונטקט `contact.duckwod@gmail.com` ב־UI בלבד.
 
 ## ✅ v19.8.2 (Mar 2026)
 
@@ -31,10 +36,10 @@
 ## 🚀 Quick Upgrade
 
 ```bash
-unzip duck-wod-v19.8.2.zip
+unzip duck-wod-v19.8.3.zip
 cd your-repo && rm -rf * 
-cp -r ../duck-wod-v19.8.2/* . && cp ../duck-wod-v19.8.2/.gitignore . && cp -r ../duck-wod-v19.8.2/.github .
-git add . && git commit -m "🔧 v19.8.2" && git push
+cp -r ../duck-wod-v19.8.3/* . && cp ../duck-wod-v19.8.3/.gitignore . && cp -r ../duck-wod-v19.8.3/.github .
+git add . && git commit -m "🔧 v19.8.3" && git push
 ```
 
 Workflow runs automatically after push!
@@ -46,4 +51,4 @@ Workflow runs automatically after push!
 
 ---
 
-**Version 19.8.2** • Mar 2026 • All systems operational ✅
+**Version 19.8.3** • Mar 2026 • All systems operational ✅

@@ -31,7 +31,7 @@ on:
         default: false
         type: boolean
       email_to:
-        description: 'כתובת יעד לדוח (ריק = contact.duckwod או Secret ANALYTICS_REPORT_TO) – לבדיקה ב-Resend testing'
+        description: 'כתובת יעד לדוח (ריק = ariel.tahan@gmail.com או Secret ANALYTICS_REPORT_TO)'
         required: false
         default: ''
         type: string
@@ -91,7 +91,7 @@ jobs:
           if [ -n "$OVERRIDE" ]; then
             TO="$OVERRIDE"
           elif [ -z "$ANALYTICS_TO_SECRET" ]; then
-            TO="contact.duckwod@gmail.com"
+            TO="ariel.tahan@gmail.com"
           else
             TO="$ANALYTICS_TO_SECRET"
           fi

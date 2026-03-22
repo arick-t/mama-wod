@@ -137,7 +137,7 @@
 ## דוח שבועי באימייל (אוטומטי)
 
 **שליחה לוואטסאפ:** לוואטסאפ אין API חינמי לשליחת הודעות למספר אישי, ולכן אי אפשר לשלוח את הדוח ישירות לוואטסאפ.  
-**פתרון:** דוח **באימייל** דרך **Resend** + GitHub Actions – ברירת המחדל לנמען היא **contact.duckwod@gmail.com** (תיבת ניהול האפליקציה). ראו **`RESEND_SECRETS.md`** ו־**`.github/workflows/weekly-analytics-report.yml`**.
+**פתרון:** דוח **באימייל** דרך **Resend** + GitHub Actions – ברירת המחדל לנמען היא **ariel.tahan@gmail.com** (תואם חשבון Resend / Vercel). ראו **`RESEND_SECRETS.md`** ו־**`.github/workflows/weekly-analytics-report.yml`**.
 
 ### מתי נשלח (אוטומטי)
 
@@ -146,13 +146,13 @@
 ### איך מפעילים (פעם אחת)
 
 1. הגדר ב־GitHub Actions את **`RESEND_API_KEY`** (ואופציונלית **`RESEND_FROM`**, **`ANALYTICS_REPORT_TO`**). פירוט: **`RESEND_SECRETS.md`**.
-2. **נמען ברירת מחדל:** **contact.duckwod@gmail.com** (אלא אם הוגדר `ANALYTICS_REPORT_TO` או שדה `email_to` בהרצה ידנית).
+2. **נמען ברירת מחדל:** **ariel.tahan@gmail.com** (אלא אם הוגדר `ANALYTICS_REPORT_TO` או שדה `email_to` בהרצה ידנית).
 
 ### בדיקה – הרצה ידנית (לפי תקופה)
 
 1. ב־GitHub: **Actions** → **📊 Weekly Analytics Report** → **Run workflow**.
 2. בחר תקופה (`last_week`, `last_day`, `yesterday_today` וכו'), אופציונלית **דוח דוגמה** (`use_sample_data`).
-3. אחרי שהריצה מסתיימת, המייל אמור להגיע ל־**contact.duckwod@gmail.com** (או לכתובת שבחרת ב־`email_to` / Secret).
+3. אחרי שהריצה מסתיימת, המייל אמור להגיע ל־**ariel.tahan@gmail.com** (או לכתובת שבחרת ב־`email_to` / Secret).
 
 **דוגמת פלט של הדוח (כך ייראה באימייל):**
 ```
