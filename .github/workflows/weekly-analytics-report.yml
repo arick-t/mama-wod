@@ -1,7 +1,7 @@
 # דוח ניתור משתמשים – נשלח באימייל.
 # 1. אוטומטית כל יום שישי 07:00 ישראל.
 # 2. בדחיפה: "שלח עכשיו דוח" עם בחירת תקופה – היום האחרון / השבוע האחרון / מתאריך.
-# שליחה דרך Resend. Secret: RESEND_API_KEY. ראו RESEND_SECRETS.md.
+# שליחה דרך Resend. Secret: RESEND_API_KEY (או RESEND_API_KEY_conmail). ראו RESEND_SECRETS.md.
 
 name: 📊 Weekly Analytics Report
 
@@ -109,6 +109,6 @@ jobs:
             --argjson text "$BODY" \
             '{from:$from, to:[$to], subject:$sub, text:$text}' > payload.json
           curl -sS -f -X POST https://api.resend.com/emails \
-            -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY || secrets.RESEND_API_KEY_conmail }}" \
             -H "Content-Type: application/json" \
             -d @payload.json

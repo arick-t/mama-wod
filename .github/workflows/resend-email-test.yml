@@ -1,5 +1,5 @@
 # בדיקת חיבור Resend – שליחת מייל קצר לכתובת הפרויקט.
-# Actions → resend-email-test → Run workflow (אחרי ש-RESEND_API_KEY מוגדר).
+# Actions → resend-email-test → Run workflow (אחרי ש-RESEND_API_KEY / RESEND_API_KEY_conmail מוגדר).
 # התוכן: "בדיקת תקינה לעדכון גרסה X.Y.Z" לפי package.json (אותו מספר גרסה כמו ב-release).
 
 name: ✉️ Resend email test
@@ -17,7 +17,8 @@ jobs:
   send-test:
     runs-on: ubuntu-latest
     env:
-      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+      # ברירת מחדל RESEND_API_KEY; אם קראת ל-Secret אחר (למשל conmail) – נתמך גם כן
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY || secrets.RESEND_API_KEY_conmail }}
       RESEND_FROM_SECRET: ${{ secrets.RESEND_FROM }}
     steps:
       - uses: actions/checkout@v4
@@ -25,7 +26,7 @@ jobs:
       - name: Send test email
         run: |
           if [ -z "$RESEND_API_KEY" ]; then
-            echo "::error::חסר Secret RESEND_API_KEY ב-Repository secrets."
+            echo "::error::חסר Secret: הגדר RESEND_API_KEY או RESEND_API_KEY_conmail ב-Repository secrets."
             exit 1
           fi
           TO="${{ github.event.inputs.to_address }}"

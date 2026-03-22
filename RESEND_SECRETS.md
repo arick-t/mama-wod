@@ -11,7 +11,7 @@
 | איפה | מה לעשות |
 |------|-----------|
 | **Resend** → [API Keys](https://resend.com/api-keys) | צור מפתח (מתחיל ב־`re_`) או השתמש במפתח קיים של **אותו פרויקט** שאתה רוצה לראות ב־[Emails](https://resend.com/emails). |
-| **GitHub** → Repo → **Settings** → **Secrets and variables** → **Actions** | הדבק את המפתח ב־**`RESEND_API_KEY`**. אם יש מפתח ישן/שגוי – עדכן או מחק וצור מחדש. |
+| **GitHub** → Repo → **Settings** → **Secrets and variables** → **Actions** | הדבק את המפתח ב־**`RESEND_API_KEY`** (או **`RESEND_API_KEY_conmail`** – גם נתמך). |
 | **מעקב אחרי שליחות** | כל מייל שנשלח דרך ה־API עם המפתח הזה יופיע ב־Resend תחת **Emails** – שם רואים סטטוס (נשלח / נכשל) ונמען. |
 
 כך **אותו חשבון Resend** = אותו דשבורד **Emails** + אותן הרצות **Actions** ב־GitHub (בתנאי שה־Secret תואם).
@@ -39,7 +39,7 @@
 
 | שם ה-Secret (Name) | מה להזין ב-Value |
 |---------------------|-------------------|
-| **RESEND_API_KEY** | המפתח שהעתקת מ-Resend (מתחיל ב־`re_`) |
+| **RESEND_API_KEY** | המפתח שהעתקת מ-Resend (מתחיל ב־`re_`). אם קראת ל־Secret בשם אחר (למשל **`RESEND_API_KEY_conmail`**) – ה־workflow יקבל אותו כ־fallback. מומלץ בשם הסטנדרטי **`RESEND_API_KEY`** לקריאות עתידיות. |
 | **RESEND_FROM** | (אופציונלי) כתובת השולח. אם ריק – משתמשים ב־`onboarding@resend.dev`. לפרודקשן: הוסף דומיין ב-Resend והגדר למשל `DUCK-WOD <notifications@yourdomain.com>` |
 | **ANALYTICS_REPORT_TO** | (אופציונלי) כתובת לדוח ניתור השבועי. אם ריק – נשלח ל־**contact.duckwod@gmail.com** |
 
