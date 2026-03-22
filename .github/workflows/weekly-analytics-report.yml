@@ -18,6 +18,7 @@ on:
         type: choice
         options:
           - last_day
+          - yesterday_today
           - last_week
           - from_date
       from_date:
@@ -29,6 +30,11 @@ on:
         required: false
         default: false
         type: boolean
+      email_to:
+        description: 'כתובת יעד לדוח (ריק = contact.duckwod או Secret ANALYTICS_REPORT_TO) – לבדיקה ב-Resend testing'
+        required: false
+        default: ''
+        type: string
 
 permissions:
   contents: read
@@ -74,22 +80,32 @@ jobs:
         env:
           RESEND_FROM_SECRET: ${{ secrets.RESEND_FROM }}
           ANALYTICS_TO_SECRET: ${{ secrets.ANALYTICS_REPORT_TO }}
+          REPORT_PERIOD: ${{ github.event.inputs.report_period || 'last_week' }}
         run: |
           if [ -z "$RESEND_FROM_SECRET" ]; then
             FROM="DUCK-WOD <onboarding@resend.dev>"
           else
             FROM="$RESEND_FROM_SECRET"
           fi
-          if [ -z "$ANALYTICS_TO_SECRET" ]; then
+          OVERRIDE="${{ github.event.inputs.email_to }}"
+          if [ -n "$OVERRIDE" ]; then
+            TO="$OVERRIDE"
+          elif [ -z "$ANALYTICS_TO_SECRET" ]; then
             TO="contact.duckwod@gmail.com"
           else
             TO="$ANALYTICS_TO_SECRET"
           fi
+          case "$REPORT_PERIOD" in
+            last_day) SUB="ניתור משתמשים – 24 שעות אחרונות" ;;
+            yesterday_today) SUB="ניתור משתמשים – אתמול והיום" ;;
+            last_week) SUB="ניתור משתמשים – שבוע אחרון" ;;
+            *) SUB="ניתור משתמשים – דוח" ;;
+          esac
           BODY=$(jq -Rs . report.txt)
           jq -n \
             --arg from "$FROM" \
             --arg to "$TO" \
-            --arg sub "ניתור משתמשים – דוח" \
+            --arg sub "$SUB" \
             --argjson text "$BODY" \
             '{from:$from, to:[$to], subject:$sub, text:$text}' > payload.json
           curl -sS -f -X POST https://api.resend.com/emails \

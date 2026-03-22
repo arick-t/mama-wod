@@ -26,8 +26,10 @@
 ## 3. בדיקת שליחה לפני דוח שבועי
 
 1. ב־GitHub: **Actions** → **Resend email test** (**`resend-email-test.yml`**) → **Run workflow**.
-2. השאר את שדה היעד ריק (ברירת מחדל: `contact.duckwod@gmail.com`) או הזן כתובת אחרת.
-3. אם המייל הגיע – Resend מוגדר; דוח **Weekly Analytics Report** יישלח לאותה כתובת ברירת מחדל (או ל־`ANALYTICS_REPORT_TO` אם הגדרת).
+2. השאר את שדה היעד ריק (ברירת מחדל: `contact.duckwod@gmail.com`) או הזן כתובת אחרת (במצב testing של Resend – לרוב כתובת בעל החשבון).
+3. תוכן המייל נבנה אוטומטית: **«בדיקת תקינה לעדכון גרסה X.Y.Z»** לפי `package.json` (אותו מספר גרסה כמו ב־release).
+4. **דוח ניתור ידני:** **Weekly Analytics Report** → אפשר לבחור תקופה (`last_day`, `yesterday_today`, `last_week`…) ושדה אופציונלי **email_to** כדי לשלוח לכתובת בדיקה (עוקף ברירת מחדל / Secret).
+5. אם המייל הגיע – Resend מוגדר; דוח שבועי אוטומטי יישלח ל־**contact.duckwod@gmail.com** (או ל־`ANALYTICS_REPORT_TO`).
 
 ---
 

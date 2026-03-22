@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "node scripts/analytics-summary.test.js",
+    "test": "node scripts/analytics-summary.test.js && node scripts/contact-link.test.js",
     "build:cap:web": "node scripts/build-capacitor-web.js",
     "cap:sync": "npm run build:cap:web && npx cap sync",
     "cap:open:android": "npx cap open android",

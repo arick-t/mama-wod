@@ -1,5 +1,6 @@
 # בדיקת חיבור Resend – שליחת מייל קצר לכתובת הפרויקט.
 # Actions → resend-email-test → Run workflow (אחרי ש-RESEND_API_KEY מוגדר).
+# התוכן: "בדיקת תקינה לעדכון גרסה X.Y.Z" לפי package.json (אותו מספר גרסה כמו ב-release).
 
 name: ✉️ Resend email test
 
@@ -19,6 +20,8 @@ jobs:
       RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
       RESEND_FROM_SECRET: ${{ secrets.RESEND_FROM }}
     steps:
+      - uses: actions/checkout@v4
+
       - name: Send test email
         run: |
           if [ -z "$RESEND_API_KEY" ]; then
@@ -32,9 +35,10 @@ jobs:
           else
             FROM="$RESEND_FROM_SECRET"
           fi
-          SUBJECT="DUCK-WOD – בדיקת שליחה"
-          BODY="זוהי הודעת בדיקה מ-GitHub Actions (resend-email-test).
-          אם קיבלת את זה, Resend מוגדר נכון ואפשר להסתמך על דוח ניתור השבועי."
+          VERSION=$(node -p "require('./package.json').version")
+          TEXT="בדיקת תקינה לעדכון גרסה ${VERSION}"
+          SUBJECT="DUCK-WOD – ${TEXT}"
+          BODY="${TEXT}"
           jq -n \
             --arg from "$FROM" \
             --arg to "$TO" \
@@ -52,4 +56,4 @@ jobs:
           fi
           cat resp.json
           echo ""
-          echo "נשלח ל: $TO"
+          echo "נשלח ל: $TO (גרסה ${VERSION})"

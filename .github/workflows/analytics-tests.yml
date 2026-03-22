@@ -6,18 +6,18 @@ run-name: "Analytics tests · ${{ github.ref_name }} · ${{ github.sha }}"
 on:
   workflow_dispatch:
   push:
-    paths:
-      - "scripts/analytics-summary.test.js"
-      - "scripts/analytics-summary.js"
-      - "scripts/fixtures/**"
-      - "data/analytics.jsonl"
-      - ".github/workflows/analytics-tests.yml"
+    branches:
+      - main
+  # כל דחיפה ל־main מריצה את בדיקות האנליטיקס + בדיקת לינק קונטקט
   pull_request:
     paths:
       - "scripts/analytics-summary.test.js"
       - "scripts/analytics-summary.js"
+      - "scripts/contact-link.test.js"
       - "scripts/fixtures/**"
       - "data/analytics.jsonl"
+      - "index.html"
+      - "package.json"
       - ".github/workflows/analytics-tests.yml"
 
 jobs:
@@ -34,3 +34,6 @@ jobs:
 
       - name: Run analytics summary fixture test
         run: node scripts/analytics-summary.test.js
+
+      - name: בדיקת לינק קונטקט (mailto)
+        run: node scripts/contact-link.test.js

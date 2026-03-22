@@ -53,12 +53,48 @@ function readJsonlEvents(filePath) {
   return events;
 }
 
-function computeSummary(events, nowTs) {
+const MS_DAY = 24 * 60 * 60 * 1000;
+const MS_WEEK = 7 * MS_DAY;
+
+/** @typedef {'last_week'|'last_day'|'yesterday_today'} ReportPeriod */
+
+/**
+ * @param {number} nowTs
+ * @param {ReportPeriod} period
+ */
+function getWindowBounds(nowTs, period) {
   const now = typeof nowTs === "number" ? nowTs : Date.now();
-  const windowStart = now - 7 * 24 * 60 * 60 * 1000;
+  if (period === "last_day") {
+    return { now, windowStart: now - MS_DAY, period };
+  }
+  if (period === "yesterday_today") {
+    const d = new Date(now);
+    const startOfTodayUTC = Date.UTC(
+      d.getUTCFullYear(),
+      d.getUTCMonth(),
+      d.getUTCDate()
+    );
+    const windowStart = startOfTodayUTC - MS_DAY;
+    return { now, windowStart, period };
+  }
+  return { now, windowStart: now - MS_WEEK, period: "last_week" };
+}
+
+function computeSummary(events, nowTs, options) {
+  const rawPeriod =
+    (options && options.period) ||
+    process.env.REPORT_PERIOD ||
+    "last_week";
+  const period =
+    rawPeriod === "last_day" || rawPeriod === "yesterday_today"
+      ? rawPeriod
+      : "last_week";
+  const { now, windowStart } = getWindowBounds(nowTs, period);
   const validEvents = (events || []).filter((e) => e && typeof e.t === "number");
   const humanMobileEvents = validEvents.filter((e) => !isLikelyBot(e.ua) && isMobileUa(e.ua));
-  const windowEvents = humanMobileEvents.filter((e) => e.t >= windowStart && e.t <= now);
+  const windowEvents = humanMobileEvents.filter(
+    (e) => e.t >= windowStart && e.t <= now
+  );
 
   // First-seen per user key (uid > sid > ua fallback) over full history
   const firstSeen = {};
@@ -89,6 +125,7 @@ function computeSummary(events, nowTs) {
   return {
     now,
     windowStart,
+    period,
     totalUsers: uniqueUsers.size,
     returning,
     newUsers,
@@ -98,12 +135,16 @@ function computeSummary(events, nowTs) {
 }
 
 function buildReportLines(summary) {
+  const newUsersLabel =
+    summary.period === "last_week"
+      ? "מתוכם חדשים מהשבוע האחרון"
+      : "מתוכם חדשים בתקופה";
   return [
     "דו\"ח ניתור משתמשים בין התאריכים " + formatDDMMYY(summary.windowStart) + " ועד ל " + formatDDMMYY(summary.now),
     "",
     "סה\"כ משתמשים - " + summary.totalUsers,
     "מתוכם ותיקים - " + summary.returning,
-    "מתוכם חדשים מהשבוע האחרון - " + summary.newUsers,
+    newUsersLabel + " - " + summary.newUsers,
     "סה\"כ שימושים בלשונית שעון - " + summary.timerUse,
     "סה\"כ שימושים בלשונית איתור אימון - " + summary.findWorkout
   ];
@@ -113,7 +154,8 @@ function runCli() {
   const now = process.env.ANALYTICS_NOW_TS ? parseInt(process.env.ANALYTICS_NOW_TS, 10) : Date.now();
   const file = process.env.ANALYTICS_FILE || path.join(__dirname, "..", "data", "analytics.jsonl");
   const events = readJsonlEvents(file);
-  const summary = computeSummary(events, now);
+  const period = process.env.REPORT_PERIOD || "last_week";
+  const summary = computeSummary(events, now, { period });
   const lines = buildReportLines(summary);
   if (!events.length) {
     console.log(lines[0]);
@@ -130,5 +172,6 @@ module.exports = {
   readJsonlEvents,
   computeSummary,
   buildReportLines,
-  formatDDMMYY
+  formatDDMMYY,
+  getWindowBounds
 };
