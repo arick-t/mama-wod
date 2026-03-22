@@ -1,4 +1,4 @@
-# רץ כשמשתנה לוגיקת האנליטיקס או נתוני ה-fixture — לא מציג כותרת זהה לבניית מובייל.
+# רץ בכל דחיפה ל־main: בדיקות אנליטיקס + בדיקת לינק קונטקט (mailto).
 name: Analytics Logic Tests
 
 run-name: "Analytics tests · ${{ github.ref_name }} · ${{ github.sha }}"
