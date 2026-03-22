@@ -41,9 +41,15 @@ jobs:
             --arg sub "$SUBJECT" \
             --arg text "$BODY" \
             '{from:$from, to:[$to], subject:$sub, text:$text}' > payload.json
-          curl -sS -f -X POST https://api.resend.com/emails \
+          HTTP=$(curl -sS -w "%{http_code}" -o resp.json -X POST https://api.resend.com/emails \
             -H "Authorization: Bearer $RESEND_API_KEY" \
             -H "Content-Type: application/json" \
-            -d @payload.json
+            -d @payload.json)
+          if [ "$HTTP" != "200" ]; then
+            echo "::error::Resend החזיר HTTP $HTTP"
+            cat resp.json
+            exit 1
+          fi
+          cat resp.json
           echo ""
           echo "נשלח ל: $TO"

@@ -38,3 +38,12 @@
 - **ANALYTICS_REPORT_TO** – אופציונלי (ברירת מחדל: `contact.duckwod@gmail.com`).
 
 אחרי הגדרת המפתח הרץ **Resend email test** – ואז אפשר להריץ **Weekly Analytics Report** (או לחכות ל־cron ביום שישי).
+
+---
+
+## 5. אם הבדיקה נכשלת (403 / שגיאה)
+
+- ודאו ב־[Resend → API Keys](https://resend.com/api-keys) שהמפתח ב־GitHub תואם למפתח פעיל (החליפו Secret אם צריך).
+- בחשבון חינמי / לפני אימות דומיין: ייתכן שצריך **לאמת את כתובת היעד** ב־Resend (**Audience** או שליחה רק לכתובת שמופיעה בחשבון).
+- אם מגדירים **RESEND_FROM** עם דומיין משלכם – הדומיין חייב להיות מאומת ב־Resend.
+- בלוג של ה־run ב־Actions תופיע תשובת JSON מ־Resend (קוד שגיאה והודעה).
