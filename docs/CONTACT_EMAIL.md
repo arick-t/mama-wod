@@ -46,6 +46,8 @@
 
 עד שאחד מהדברים האלה מתקיים, הרצה עם יעד `contact.duckwod@gmail.com` עלולה להחזיר **403** בלוג של ה־Action – זה צפוי.
 
+**קישור חשבון Resend (דשבורד [Emails](https://resend.com/emails)) ל־GitHub:** ראו סעיף **«0. קישור בין חשבון Resend…»** ב־`RESEND_SECRETS.md` – אותו **API Key** ב־Secrets וב־Resend.
+
 ---
 
 ## בדיקת לינק (CI) – ללא מייל
