@@ -1,98 +1,5 @@
 {
   "workouts": {
-    "2026-03-07": [
-      {
-        "date": "2026-03-07",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-march-7-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "AMRAP 6 minutes",
-              "Jog 100m",
-              "8 Air Squats",
-              ":15 Dead Hang from bar"
-            ]
-          },
-          {
-            "title": "12 Rounds for time with a partner",
-            "lines": [
-              "Partner 1: Run 200m",
-              "Partner 2: 10 Wallballs 20/14bs to 11/10′ + 6 Strict Pull Ups",
-              "Both partners work at the same time, and switch stations once both are finished. One round is when both partners finish both stations (each athlete does 12 rounds).",
-              "Feel: Cardio",
-              "Pacing: Sustain",
-              "Target Score: 12+ rounds",
-              "Firebreather: 16+ rounds"
-            ]
-          },
-          {
-            "title": "Bench Press",
-            "lines": [
-              "Every 1:30 for 8 Sets",
-              "3 Bench Press",
-              "*Sets 1-2: 65%",
-              "Sets 3-4: 62.5%",
-              "Sets 5-6: 60%",
-              "Sets 7-8: 57.5%",
-              "Ski Between Sets as needed to Flush",
-              "Control the bar down, the press up as fast as you can. If you press as hard as you can 24 times, gains)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-07",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 15.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 9 minutes of:",
-              "15 toes-to-bars",
-              "10 deadlifts (115 / 75 lb.)",
-              "5 snatches (115 / 75 lb.)",
-              "WORKOUT 15.1a",
-              "1-rep-max clean and jerk",
-              "6-minute time cap"
-            ]
-          }
-        ],
-        "note": "Open: Open 15.1"
-      },
-      {
-        "date": "2026-03-07",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260307",
-        "sections": [
-          {
-            "title": "FOR TIME",
-            "lines": [
-              "21 hang power cleans, first weight",
-              "15/21-calorie row",
-              "15 hang power cleans, second weight",
-              "10/15-calorie row",
-              "9 hang power cleans, third weight",
-              "7/9-calorie row",
-              "Rest 5 minutes",
-              "21 box jumps",
-              "15/21-calorie row",
-              "15 box jumps",
-              "10/15-calorie row",
-              "9 box jumps",
-              "7/9-calorie row",
-              "♀ 95/105/120-lb barbell and a 20-inch box",
-              "♂ 135/155/175-lb barbell and a 24-inch box"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-03-08": [
       {
         "date": "2026-03-08",
@@ -109,102 +16,6 @@
           }
         ],
         "note": "Open: Open 12.1"
-      },
-      {
-        "date": "2026-03-08",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-08/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Heute feiern wir alle Frauen, weil sie unsere Welt stärker machen.",
-              "Happy International Women's Day!"
-            ]
-          },
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "sumo squat stretch",
-              "thoracic rotation",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "20 shoulder taps (push up position)",
-              "10 ring rows",
-              "*partner is holding a deep squat"
-            ],
-            "sub_title": "amrap 5min"
-          },
-          {
-            "title": "CONDITIONING 32MIN",
-            "lines": [
-              "\"Team Barbara\"",
-              "in teams of 2",
-              "20 pull ups",
-              "30 push ups",
-              "40 sit ups",
-              "50 air squats"
-            ],
-            "sub_title": "5 rounds for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-08",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "Sgt. 1st Class Javier Jaguar Gutierrez died Feb. 8, 2020, from wounds sustained during combat operations in Nangarhar Province, Afghanistan.\nBorn in Jacksonville, North Carolina, Gutierrez, 28, enlisted in the Army in 2009. After being selected to attend the Special Qualification Course, he graduated in 2015 as a Special Forces communications sergeant and was assigned to the 3rd Battalion, 7th Special Forces Group (Airborne), at Eglin Air Force Base, Florida.\nGutierrez is survived by his wife, Gabriela; children Gabriel, Eden, Helen, and Emee; parents Javier and Silvia; sisters Jenea and Jordan Garza; brother-in-law, Joshua Garza; and his nephew, Noah Rocha.",
-        "sections": [
-          {
-            "title": "ODA 7313",
-            "sub_title": "7 rounds for time of:",
-            "lines": [
-              "300-meter jog",
-              "10 left-arm dumbbell thrusters",
-              "10 right-arm dumbbell thrusters",
-              "7 strict pull-ups",
-              "*Rest 3 minutes between rounds.",
-              "*Wear a 10/14-lb weight vest.",
-              "*♀ 20 lb*",
-              "*♂ 30 lb*"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-08",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Elizabeth",
-            "lines": [
-              "21–15–9:",
-              "60/42,5kg Squat Cleans",
-              "Ring Dips",
-              "*TC12min",
-              "*COMP:",
-              "Squat Cleans 70/50kg",
-              "Strict Ring Dips",
-              "*SK1:",
-              "Squat Cleans 45/30kg",
-              "Banded Ring/Matador Dip OR Ring Push-Ups",
-              "*SK2:",
-              "Hang Power Cleans",
-              "Front Squats",
-              "Elevated Ring Push-Ups",
-              "Load: 20/15kg"
-            ]
-          }
-        ],
-        "note": "Benchmark: Elizabeth"
       }
     ],
     "2026-03-09": [
@@ -2582,15 +2393,31 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "121023 ADVANCED BOOTCAMP (JW)",
+            "title": "The Ghost",
             "lines": [
-              "4 x 6 heavy dual db floorpress",
-              "2/2 turkish getup",
-              "For time:"
+              "6 rounds of:",
+              "– Athletes work for 3:00 and then rest 1:00 in a Fight Gone Bad AMRAP style workout.",
+              "*– Score is total reps completed at the end of the 6 rounds. Keep a running count from movement to movement, or add up all three during rest period.*",
+              "S1:",
+              "6 rounds for reps:",
+              "1:00 calorie row",
+              "1:00 burpees",
+              "1:00 double-under attempts",
+              "– Rest 1:00 between rounds.",
+              "S2:",
+              "5 rounds for reps:",
+              "1:00 calorie row",
+              "1:00 burpees",
+              "1:00 single-unders",
+              "– Rest 1:00 between rounds.",
+              "INTENDED STIMULUS",
+              "80-100 calories; 60-90 burpees; 300+ double-unders.",
+              "Fight Gone Bad style workout originally programmed for professional boxer Robert “The Ghost” Guerrero's training on 140617.",
+              "*Athletes should track individual movements each round and then try to beat the previous round's score.*"
             ]
           }
         ],
-        "note": "Benchmark: 121023 ADVANCED BOOTCAMP (JW)"
+        "note": "Benchmark: The Ghost"
       }
     ],
     "2026-03-20": [
@@ -2933,23 +2760,6 @@
       },
       {
         "date": "2026-03-21",
-        "source": "linchpin",
-        "source_name": "CrossFit Linchpin",
-        "url": "https://crossfitlinchpin.com/blogs/wod",
-        "note": "⚠️ This source provides daily workouts only",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Deadlift",
-              "2-2-2-2-2-2-2",
-              "*Compare to 06.21.2024"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-21",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-03-21/",
@@ -3101,7 +2911,134 @@
         ],
         "note": "Benchmark: GRACE"
       }
+    ],
+    "2026-03-22": [
+      {
+        "date": "2026-03-22",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-03-22/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "lat stretch",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. scap. push ups",
+              "2. bike/ski",
+              "3. barbell row",
+              "4. reverse lunges"
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "1. 20-40sec handstand hold",
+              "2. 10-15cal bike/ski",
+              "3. 6-8 strict chin ups",
+              "4. 14-18 double db box step ups (50cm)",
+              "5. rest",
+              "Sunday Endurance for Open Gym",
+              "on the 3:00 x 6 rounds:",
+              "",
+              "15/12 cal row [rpe 7-8]",
+              "15/12 cal bike or ski [rpe 4-5]",
+              "* score: slowest row time",
+              "* aerobic power [lactate threshold]"
+            ],
+            "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-03-22",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "Marine Staff Sgt. Leon H. Lucas Jr. died Aug. 1, 2011, in Helmand Province, Afghanistan, of injuries sustained from an enemy grenade attack in the upper Gereshk Valley. The 32-year-old, of Wilson, North Carolina, was assigned to the 3rd Battalion, 4th Marine Regiment, Twentynine Palms, California, and served during Operation Enduring Freedom.\nLucas is survived by his wife, Mary; and children, Tyson, Zachary and Quentin.\nFirst posted",
+        "sections": [
+          {
+            "title": "Luke",
+            "sub_title": "For time:",
+            "lines": [
+              "Run 400 meters",
+              "15 clean and jerks",
+              "Run 400 meters",
+              "30 toes-to-bars",
+              "Run 400 meters",
+              "45 wall-ball shots",
+              "Run 400 meters",
+              "45 kettlebell swings",
+              "Run 400 meters",
+              "30 ring dips",
+              "Run 400 meters",
+              "15 front-rack weighted lunges",
+              "Run 400 meters",
+              "♀ 105-lb barbell, 14-lb medicine ball to a 9-foot target, 35-lb kettlebell",
+              "♂ 155-lb barbell, 20-lb medicine ball to a 10-foot target, 53-lb kettlebell"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-22",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "121023 ADVANCED BOOTCAMP (JW)",
+            "lines": [
+              "4 x 6 heavy dual db floorpress",
+              "2/2 turkish getup",
+              "For time:"
+            ]
+          }
+        ],
+        "note": "Benchmark: 121023 ADVANCED BOOTCAMP (JW)"
+      },
+      {
+        "date": "2026-03-22",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 19.5",
+            "lines": [
+              "33-27-21-15-9 reps for time of:",
+              "95-lb. thrusters",
+              "Chest-to-bar pull-ups",
+              "Time cap: 20 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 19.5"
+      },
+      {
+        "date": "2026-03-22",
+        "source": "linchpin",
+        "source_name": "CrossFit Linchpin",
+        "url": "https://crossfitlinchpin.com/blogs/wod",
+        "note": "⚠️ This source provides daily workouts only",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "REST DAY!",
+              "Get out of the gym."
+            ]
+          }
+        ]
+      }
     ]
   },
-  "last_updated": "2026-03-21T08:41:52.408047"
+  "last_updated": "2026-03-22T06:18:04.857613"
 }
