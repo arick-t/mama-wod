@@ -1,10 +1,11 @@
 name: 🦆 Daily Workout Fetch
 
-# תזמון: ריצה 1 = 05:30 ישראל (אירופה/UK). ריצה 2 = 08:00–09:00 ישראל (מקורות US). ראה docs/FETCH_SCHEDULE.md
+# תזמון: ריצה 0 = ~05:00 ישראל (חורף). ריצה 1 = 05:30 ישראל. ריצה 2 = 08:00 ישראל (US). ראה docs/FETCH_SCHEDULE.md
 on:
   schedule:
+    - cron: '0 3 * * *'    # 05:00 Israel (UTC+2 winter) — extra early; ~06:00 in summer
     - cron: '30 3 * * *'   # 05:30 Israel – Europe/UK (MYLEO, Ton Bridge) after 00:01
-    - cron: '0 6 * * *'    # 08:00–09:00 Israel – US sources (1013, Linchpin, CrossFit.com, Restoration) after their evening publish
+    - cron: '0 6 * * *'    # 08:00 Israel – US sources (1013, Linchpin, CrossFit.com, Restoration)
   workflow_dispatch:
   push:
     branches: [ main, master ]

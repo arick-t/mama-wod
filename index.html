@@ -648,18 +648,27 @@ document.addEventListener("DOMContentLoaded", function() {
     var browseTab = document.getElementById("browse-tab");
     if (!browseTab) return;
     var startX = 0;
+    var startY = 0;
     browseTab.addEventListener("touchstart", function(e) {
-      if (e.touches.length === 1) startX = e.touches[0].clientX;
+      if (e.touches.length === 1) {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+      }
     }, { passive: true });
     browseTab.addEventListener("touchend", function(e) {
       if (e.changedTouches.length !== 1 || !document.getElementById("tab-browse").classList.contains("active")) return;
       var endX = e.changedTouches[0].clientX;
-      var delta = endX - startX;
+      var endY = e.changedTouches[0].clientY;
+      var deltaX = endX - startX;
+      var deltaY = endY - startY;
+      // Only treat as day swipe if horizontal movement clearly dominates vertical (avoids changing day while scrolling workouts).
+      if (Math.abs(deltaX) < 56) return;
+      if (Math.abs(deltaX) <= Math.abs(deltaY) * 1.15) return;
       var dates = getDaysList();
       var idx = dates.indexOf(selectedDateStr);
       if (idx === -1) return;
-      if (delta > 55 && idx > 0) { goDate(dates[idx - 1]); e.preventDefault(); }
-      else if (delta < -55 && idx < dates.length - 1) { goDate(dates[idx + 1]); e.preventDefault(); }
+      if (deltaX > 55 && idx > 0) { goDate(dates[idx - 1]); e.preventDefault(); }
+      else if (deltaX < -55 && idx < dates.length - 1) { goDate(dates[idx + 1]); e.preventDefault(); }
     }, { passive: false });
   })();
   var eqGrid = document.querySelector(".eq-grid");
