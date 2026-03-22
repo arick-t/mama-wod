@@ -20,3 +20,26 @@
 1. פתח את האתר אחרי deploy.  
 2. לשונית **Generate Workout** → בחר ציוד + זמן → **Generate Workout**.  
 3. אם מופיעה שגיאה על `GEMINI_API_KEY` — חזור לסעיף 1.
+
+---
+
+## בדיקה במחשב (מקומי)
+
+1. העתק **`.env.example`** ל־**`.env.local`** והדבק את המפתח:
+   ```bash
+   GEMINI_API_KEY=המפתח_מGoogle_AI_Studio
+   ```
+2. מהשורש של הפרויקט:
+   ```bash
+   npm run dev:local
+   ```
+3. פתח בדפדפן: **http://localhost:3000/**  
+   - ה־`index.html` מזהה `localhost` ומפנה את `ANALYTICS_ENDPOINT` ו־`Generate Workout` ל־**אותו מחשב** (`/api/...`).
+4. לשונית **Generate Workout** → ציוד + זמן → **Generate Workout**.
+
+אם יש שגיאת פורט, תפוס פורט אחר:
+```bash
+set PORT=3456
+npm run dev:local
+```
+(ב־PowerShell: `$env:PORT=3456; npm run dev:local`)
