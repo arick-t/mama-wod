@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-DUCK-WOD – Main Fetch Script (8 sources)
+DUCK-WOD – Main Fetch Script (7 sources)
 
 Sources with archive=True  → fetch all 14 days
 Sources with archive=False → fetch TODAY only, skip all other days
@@ -31,7 +31,6 @@ except Exception:
 
 from scrapers.myleo        import fetch_workout as fetch_myleo
 from scrapers.crossfit_com  import fetch_workout as fetch_crossfit_com
-from scrapers.linchpin      import fetch_workout as fetch_linchpin
 from scrapers.restoration   import fetch_workout as fetch_restoration
 from scrapers.cf1013        import fetch_workout as fetch_cf1013
 from scrapers.tonbridge     import fetch_workout as fetch_tonbridge
@@ -58,7 +57,6 @@ SCRAPERS = [
     ('hero',         'CrossFit Hero Workouts',        fetch_hero,         True),
     ('benchmark',    'CrossFit Benchmark Workouts',   fetch_benchmark,    True),
     ('open',         'CrossFit Open Workouts',        fetch_open,         True),
-    ('linchpin',     'CrossFit Linchpin',             fetch_linchpin,     False),
 ]
 
 
@@ -79,8 +77,8 @@ def save(data):
     
     # Clean up: remove today-only sources from non-today dates (today = Israel date)
     today = today_israel()
-    today_only_sources = {'postal', 'linchpin'}
-    disabled_sources = {'panda', 'arch'}
+    today_only_sources = {'postal'}
+    disabled_sources = {'panda', 'arch', 'linchpin'}
     
     for date_str in list(data['workouts'].keys()):
         # Remove disabled sources from all dates
