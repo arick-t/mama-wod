@@ -34,7 +34,14 @@ module.exports = async function handler(req, res) {
   let ua = "";
   try {
     const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
-    if (body.event === "find_workout" || body.event === "page_view" || body.event === "timer_use") event = body.event;
+    if (
+      body.event === "find_workout" ||
+      body.event === "page_view" ||
+      body.event === "timer_use" ||
+      body.event === "ai_generate_workout" ||
+      body.event === "ai_workout_explain"
+    )
+      event = body.event;
     if (typeof body.t === "number") t = body.t;
     if (typeof body.sid === "string" && body.sid.length <= 64) sid = body.sid;
     if (typeof body.uid === "string" && body.uid.length <= 64) uid = body.uid;
