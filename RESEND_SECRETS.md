@@ -19,14 +19,22 @@
 |---------------------|-------------------|
 | **RESEND_API_KEY** | המפתח שהעתקת מ-Resend (מתחיל ב־`re_`) |
 | **RESEND_FROM** | (אופציונלי) כתובת השולח. אם ריק – משתמשים ב־`onboarding@resend.dev`. לפרודקשן: הוסף דומיין ב-Resend והגדר למשל `DUCK-WOD <notifications@yourdomain.com>` |
-
-**לאן המייל מגיע:** `arieltahan@hotmail.com` (קבוע ב-workflow, לא צריך Secret).
+| **ANALYTICS_REPORT_TO** | (אופציונלי) כתובת לדוח ניתור השבועי. אם ריק – נשלח ל־**contact.duckwod@gmail.com** |
 
 ---
 
-## 3. סיכום
+## 3. בדיקת שליחה לפני דוח שבועי
+
+1. ב־GitHub: **Actions** → **Resend email test** (**`resend-email-test.yml`**) → **Run workflow**.
+2. השאר את שדה היעד ריק (ברירת מחדל: `contact.duckwod@gmail.com`) או הזן כתובת אחרת.
+3. אם המייל הגיע – Resend מוגדר; דוח **Weekly Analytics Report** יישלח לאותה כתובת ברירת מחדל (או ל־`ANALYTICS_REPORT_TO` אם הגדרת).
+
+---
+
+## 4. סיכום
 
 - **RESEND_API_KEY** – חובה (מפתח מ-Resend).
 - **RESEND_FROM** – אופציונלי (ברירת מחדל: `onboarding@resend.dev`).
+- **ANALYTICS_REPORT_TO** – אופציונלי (ברירת מחדל: `contact.duckwod@gmail.com`).
 
-אחרי ההזנה הרץ את ה-workflow (Run workflow) – המייל אמור להישלח בלי בעיות SMTP.
+אחרי הגדרת המפתח הרץ **Resend email test** – ואז אפשר להריץ **Weekly Analytics Report** (או לחכות ל־cron ביום שישי).

@@ -71,11 +71,24 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Send email via Resend API
+        env:
+          RESEND_FROM_SECRET: ${{ secrets.RESEND_FROM }}
+          ANALYTICS_TO_SECRET: ${{ secrets.ANALYTICS_REPORT_TO }}
         run: |
+          if [ -z "$RESEND_FROM_SECRET" ]; then
+            FROM="DUCK-WOD <onboarding@resend.dev>"
+          else
+            FROM="$RESEND_FROM_SECRET"
+          fi
+          if [ -z "$ANALYTICS_TO_SECRET" ]; then
+            TO="contact.duckwod@gmail.com"
+          else
+            TO="$ANALYTICS_TO_SECRET"
+          fi
           BODY=$(jq -Rs . report.txt)
           jq -n \
-            --arg from "DUCK-WOD <onboarding@resend.dev>" \
-            --arg to "ariel.tahan@gmail.com" \
+            --arg from "$FROM" \
+            --arg to "$TO" \
             --arg sub "ניתור משתמשים – דוח" \
             --argjson text "$BODY" \
             '{from:$from, to:[$to], subject:$sub, text:$text}' > payload.json
