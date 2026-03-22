@@ -46,7 +46,7 @@
 ## 5. אם הבדיקה נכשלת (403 / שגיאה)
 
 - ודאו ב־[Resend → API Keys](https://resend.com/api-keys) שהמפתח ב־GitHub תואם למפתח פעיל (החליפו Secret אם צריך).
-- **מצב testing ב־Resend:** אפשר לשלוח **רק לכתובת המייל של בעל החשבון ב־Resend** (למשל `ariel.tahan@gmail.com`). שליחה ל־`contact.duckwod@gmail.com` תיכשל ב־403 עד שמאמתים דומיין.
+- **מצב testing ב־Resend:** אפשר לשלוח **רק לכתובת המייל של בעל החשבון ב־Resend** (כפי שמופיעה בדשבורד). שליחה ל־`contact.duckwod@gmail.com` תיכשל ב־403 עד שמאמתים דומיין.
 - **בדיקה מהירה שהצינור עובד:** הרץ **Resend email test** עם שדה יעד **אותה כתובת שמופיעה כבעל חשבון ב־Resend** – אמור להצליח במצב testing.
 - **כדי לשלוח ל־contact.duckwod@gmail.com:**  
   1. [הוסף דומיין](https://resend.com/domains) ב־Resend והשלם אימות DNS.  

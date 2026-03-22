@@ -137,59 +137,22 @@
 ## דוח שבועי באימייל (אוטומטי)
 
 **שליחה לוואטסאפ:** לוואטסאפ אין API חינמי לשליחת הודעות למספר אישי, ולכן אי אפשר לשלוח את הדוח ישירות לוואטסאפ.  
-**פתרון:** דוח **שבועי באימייל** – תקבל פעם בשבוע אימייל עם אותו סיכום (כותרת: **"ניתור משתמשים שבועי"**) לכתובת **arieltahan@hotmail.com**.
+**פתרון:** דוח **באימייל** דרך **Resend** + GitHub Actions – ברירת המחדל לנמען היא **contact.duckwod@gmail.com** (תיבת ניהול האפליקציה). ראו **`RESEND_SECRETS.md`** ו־**`.github/workflows/weekly-analytics-report.yml`**.
 
-### מתי נשלח
+### מתי נשלח (אוטומטי)
 
-- **כל יום שישי בשעה 08:00** (שעון ישראל).
+- **כל יום שישי** בשעה מוקדמת (שעון ישראל) – ראו cron ב־workflow.
 
-### איך מפעילים (פעם אחת) – סקריפט אוטומטי
+### איך מפעילים (פעם אחת)
 
-הדוח נשלח **מ־duck_wood1@protonmail.com** אל **arieltahan@hotmail.com**.  
-כל צד ה־GitHub (Secrets) אפשר להגדיר **בפקודה אחת** מהמחשב שלך:
+1. הגדר ב־GitHub Actions את **`RESEND_API_KEY`** (ואופציונלית **`RESEND_FROM`**, **`ANALYTICS_REPORT_TO`**). פירוט: **`RESEND_SECRETS.md`**.
+2. **נמען ברירת מחדל:** **contact.duckwod@gmail.com** (אלא אם הוגדר `ANALYTICS_REPORT_TO` או שדה `email_to` בהרצה ידנית).
 
-1. **התקן GitHub CLI** (פעם אחת במחשב): [https://cli.github.com/](https://cli.github.com/) – הורד והתקן.
-2. **התחבר ל־GitHub** (פעם אחת): פתח טרמינל והרץ:
-   ```bash
-   gh auth login
-   ```
-   עקוב אחרי ההנחיות (בחר GitHub.com, HTTPS, והתחבר דרך דפדפן או token).
-3. **הרץ את הסקריפט**:
-   - **Windows (PowerShell):** פתח PowerShell **בתיקיית הפרויקט** (mama-wod), לא בתוך scripts:
-     ```powershell
-     cd C:\Users\User\Documents\GitHubRepos\mama-wod
-     .\scripts\setup-github-secrets.ps1
-     ```
-     אם אתה כבר בתיקייה `scripts`, הרץ:
-     ```powershell
-     .\setup-github-secrets.ps1
-     ```
-   - **Mac/Linux:**
-     ```bash
-     bash scripts/setup-github-secrets.sh
-     ```
-   הסקריפט יגדיר אוטומטית את `SMTP_HOST` ו־`SMTP_PORT`, ואז יבקש ממך **פעם אחת** להדביק את סיסמת duck_wood1@protonmail.com (התווים לא יוצגו). אחרי Enter – כל ה-Secrets שמורים ב־GitHub.
-
-**אם אתה מעדיף להגדיר ידנית** – ב־GitHub: **Settings** → **Secrets and variables** → **Actions**, והוסף:
-   - `SMTP_HOST` = `smtp.protonmail.ch`
-   - `SMTP_PORT` = `587`
-   - `SMTP_PASSWORD` = הסיסמה של duck_wood1@protonmail.com
-
-2. **Proton Mail ו־SMTP:**  
-   ב־Proton ([mail.proton.me](https://mail.proton.me)) לא תמיד אפשר לשלוח מייל עם סיסמת החשבון דרך SMTP. אם השליחה נכשלת:
-   - בחשבונות בתשלום עם דומיין מותאם: יוצרים **SMTP token** ב־Settings → All settings → IMAP/SMTP → SMTP tokens ומשתמשים בו כ־`SMTP_PASSWORD` ([פרטים](https://proton.me/support/smtp-submission)).
-   - אם אין SMTP token: אפשר לשלוח הדוח מחשבון אחר (למשל Gmail עם App Password) ולהותיר את הנמען **arieltahan@hotmail.com** כמו שהוא.
-
-3. **נמען** – קבוע ב־workflow: **arieltahan@hotmail.com**.
-
-### בדיקה שזה עובד – שליחת דוח מודל פעם אחת
-
-כדי לראות שהפיצ'ר עובד **בלי לחכות ליום שישי**:
+### בדיקה – הרצה ידנית (לפי תקופה)
 
 1. ב־GitHub: **Actions** → **📊 Weekly Analytics Report** → **Run workflow**.
-2. סמן **"שליחת דוח דוגמה (מודל) מהשבוע האחרון – פעם אחת לבדיקה"** (use_sample_data = true).
-3. לחץ **Run workflow**.
-4. אחרי שהריצה מסתיימת (כ־30 שניות), תקבל למייל **arieltahan@hotmail.com** אימייל עם כותרת **"ניתור משתמשים שבועי"** וגוף הדוח – דוגמה עם נתונים מהשבוע האחרון (כניסות + Find Workout לפי יום).
+2. בחר תקופה (`last_week`, `last_day`, `yesterday_today` וכו'), אופציונלית **דוח דוגמה** (`use_sample_data`).
+3. אחרי שהריצה מסתיימת, המייל אמור להגיע ל־**contact.duckwod@gmail.com** (או לכתובת שבחרת ב־`email_to` / Secret).
 
 **דוגמת פלט של הדוח (כך ייראה באימייל):**
 ```
