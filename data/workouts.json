@@ -2871,59 +2871,6 @@
     "2026-03-23": [
       {
         "date": "2026-03-23",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-23/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "thoracic rotation",
-              "scorpions",
-              "hand walk"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 plank push ups",
-              "10 straight leg sit ups"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "BENCH PRESS 15MIN",
-            "lines": [
-              "3 sets",
-              "5 bench press at 83%",
-              "1 drop set:",
-              "",
-              "max reps at 50%",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "buy-in: 30 v-ups",
-              "5 rounds",
-              "",
-              "8 push press 50/35kg*",
-              "10 toes to bar",
-              "buy-out: 30 v-ups",
-              "* muscular endurance",
-              "* *rx+ option: handstand push ups",
-              "toes to bar"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-23",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260323",
@@ -2989,6 +2936,77 @@
               "Spend at least 2:00 on a machine or walking nice and slow during your rest periods",
               "It’s ok if you don’t know your perecentages – your heavy single to start w)"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-23",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 19.5",
+            "lines": [
+              "33-27-21-15-9 reps for time of:",
+              "95-lb. thrusters",
+              "Chest-to-bar pull-ups",
+              "Time cap: 20 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 19.5"
+      },
+      {
+        "date": "2026-03-23",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-03-23/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "thoracic rotation",
+              "scorpions",
+              "hand walk"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 prone snow angels",
+              "10 plank push ups",
+              "10 straight leg sit ups"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "BENCH PRESS 15MIN",
+            "lines": [
+              "3 sets",
+              "5 bench press at 83%",
+              "1 drop set:",
+              "",
+              "max reps at 50%",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "buy-in: 30 v-ups",
+              "5 rounds",
+              "",
+              "8 push press 50/35kg*",
+              "10 toes to bar",
+              "buy-out: 30 v-ups",
+              "* muscular endurance",
+              "* *rx+ option: handstand push ups",
+              "toes to bar"
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -3081,26 +3099,8 @@
           }
         ],
         "note": "Benchmark: 121023 ADVANCED BOOTCAMP (JW)"
-      },
-      {
-        "date": "2026-03-23",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 19.5",
-            "lines": [
-              "33-27-21-15-9 reps for time of:",
-              "95-lb. thrusters",
-              "Chest-to-bar pull-ups",
-              "Time cap: 20 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 19.5"
       }
     ]
   },
-  "last_updated": "2026-03-23T06:58:38.266993"
+  "last_updated": "2026-03-23T07:18:11.477050"
 }
