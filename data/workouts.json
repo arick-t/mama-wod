@@ -2886,58 +2886,6 @@
     "2026-03-24": [
       {
         "date": "2026-03-24",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-24/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "samson Stretch",
-              "sumo squat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 hang high pulls",
-              "10 elbow rotations",
-              "10 front squats",
-              "* *remaining time row"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "CONDITIONING 24MIN",
-            "lines": [
-              "3 x 6:00 amrap",
-              "60/48cal row",
-              "into…",
-              "10 lateral burpees over bar",
-              "10 power cleans 40/30kg",
-              "30 air squats",
-              "* rest 3:00 between amraps",
-              "* pick up where you left off",
-              "* score: total rounds + reps",
-              "* aerobic power [vo2 max]"
-            ],
-            "sub_title": "max rounds:"
-          },
-          {
-            "title": "BICEPS 4MIN",
-            "lines": [
-              "* as many sets as possible",
-              "* biceps curls @ empty bar",
-              "* 10 reps pronated",
-              "* 10 reps supinated"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-24",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260324",
@@ -2993,6 +2941,86 @@
               "45-90 Minutes on a single machine or jogging keeping your heartrate between 160 BPM minus your age and 180 BPM minus your age",
               "Then",
               "Spend 12:00 working slowly from your working heartrate, down to 140 BPM minus your age on any machine or combination of machines"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-24",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 20.4",
+            "lines": [
+              "For time:",
+              "30 box jumps, 24 in.",
+              "15 clean and jerks, 95 lb.",
+              "30 box jumps, 24 in.",
+              "15 clean and jerks, 135 lb.",
+              "30 box jumps, 24 in.",
+              "10 clean and jerks, 185 lb.",
+              "30 single-leg squats",
+              "10 clean and jerks, 225 lb.",
+              "30 single-leg squats",
+              "5 clean and jerks, 275 lb.",
+              "30 single-leg squats",
+              "5 clean and jerks, 315 lb.",
+              "Time cap: 20 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 20.4"
+      },
+      {
+        "date": "2026-03-24",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-03-24/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "samson Stretch",
+              "sumo squat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 hang high pulls",
+              "10 elbow rotations",
+              "10 front squats",
+              "* *remaining time row"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "CONDITIONING 24MIN",
+            "lines": [
+              "3 x 6:00 amrap",
+              "60/48cal row",
+              "into…",
+              "10 lateral burpees over bar",
+              "10 power cleans 40/30kg",
+              "30 air squats",
+              "* rest 3:00 between amraps",
+              "* pick up where you left off",
+              "* score: total rounds + reps",
+              "* aerobic power [vo2 max]"
+            ],
+            "sub_title": "max rounds:"
+          },
+          {
+            "title": "BICEPS 4MIN",
+            "lines": [
+              "* as many sets as possible",
+              "* biceps curls @ empty bar",
+              "* 10 reps pronated",
+              "* 10 reps supinated"
             ]
           }
         ]
@@ -3101,36 +3129,8 @@
           }
         ],
         "note": "Benchmark: BARBARA"
-      },
-      {
-        "date": "2026-03-24",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 20.4",
-            "lines": [
-              "For time:",
-              "30 box jumps, 24 in.",
-              "15 clean and jerks, 95 lb.",
-              "30 box jumps, 24 in.",
-              "15 clean and jerks, 135 lb.",
-              "30 box jumps, 24 in.",
-              "10 clean and jerks, 185 lb.",
-              "30 single-leg squats",
-              "10 clean and jerks, 225 lb.",
-              "30 single-leg squats",
-              "5 clean and jerks, 275 lb.",
-              "30 single-leg squats",
-              "5 clean and jerks, 315 lb.",
-              "Time cap: 20 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 20.4"
       }
     ]
   },
-  "last_updated": "2026-03-24T06:49:37.042754"
+  "last_updated": "2026-03-24T07:09:32.882141"
 }
