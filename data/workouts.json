@@ -1,107 +1,5 @@
 {
   "workouts": {
-    "2026-03-10": [
-      {
-        "date": "2026-03-10",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260310",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "4 rounds for reps of:",
-              "40 seconds of dumbbell push presses",
-              "20 seconds of rest",
-              "40 seconds of dumbbell deadlifts",
-              "20 seconds of rest",
-              "40 seconds of double-unders",
-              "20 seconds of rest",
-              "♀ 35-lb dumbbells",
-              "♂ 50-lb dumbbells"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-10",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-march-10-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "400m Jog",
-              "20 PVC OH Walking Lunge + Pass Through",
-              "20 Mountain Climbers",
-              "10 PVC Pipe Overhead Squats"
-            ]
-          },
-          {
-            "title": "5x 2:30min AMRAP",
-            "lines": [
-              "(1) AMRAP 2:30 Minutes",
-              "24 Overhead Squats 95/65lbs",
-              "Max Duration L-Sit Hold in remaining time",
-              "Rest 2:30",
-              "(2) AMRAP 2:30 Minutes",
-              "20 Overhead Squats 115/75lbs",
-              "Max Duration L-Sit Hold in remaining time",
-              "Rest 2:30",
-              "(3) AMRAP 2:30 Minutes",
-              "16 Overhead Squats 135/95lbs",
-              "Max Duration L-Sit Hold in remaining time",
-              "Rest 2:30",
-              "(4) AMRAP 2:30 Minutes",
-              "12 Overhead Squats 165/115lbs",
-              "Max Duration L-Sit Hold in remaining time",
-              "Rest 2:30",
-              "(5) AMRAP 2:30 Minutes",
-              "8 Overhead Squats 185/125lbs",
-              "Max Duration L-Sit Hold in remaining time",
-              "Score is total time spent in an L-Sit",
-              "Feel: Muscle Overload",
-              "Pace: Sustain",
-              "Target Score: :30+ per round in an L-Sit of any variety",
-              "Firebreather Score: :30+ per round in a straight leg L-Sit"
-            ]
-          },
-          {
-            "title": "Strength/skill",
-            "lines": [
-              "2 Rounds",
-              "1 Smooth Set of Wall Facing HSPU",
-              "Rest 2:00",
-              "1 Smooth Set of Strict HSPU",
-              "Rest 2:00",
-              "1 Smooth Set of Kipping HSPU",
-              "Rest 4:00",
-              "If done properly, you will be able to increase reps on round 2 for all three movement patterns. Flush (very slow) between sets on an air bike or 1 damper ski erg."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-10",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 22.2",
-            "lines": [
-              "1-2-3-4-5-6-7-8-9-10-9-8-7-6-5-4-3-2-1 reps for time of:",
-              "Deadlifts",
-              "Bar-facing burpees",
-              "155-lb barbell",
-              "Time cap: 10 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 22.2"
-      }
-    ],
     "2026-03-11": [
       {
         "date": "2026-03-11",
@@ -190,83 +88,6 @@
           }
         ],
         "note": "Open: Open 25.3"
-      },
-      {
-        "date": "2026-03-11",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-11/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "seated pike stretch",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 straight leg sit ups",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "CONDITIONING 30MIN",
-            "lines": [
-              "25/20cal bike/ski",
-              "20 toes to bar",
-              "25/20cal ski/bike",
-              "100m farmers carry 2x32/24kg",
-              "deadlift"
-            ],
-            "sub_title": "amrap 30min"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-11",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "Canadian 1st Class Constable Jennifer Kovach of Guelph, Canada, died March 14, 2013, when her squad car was involved in a motor-vehicle accident while she was responding to a call for service. The 26-year-old fulfilled her dream of becoming a police officer serving her community and the Guelph Police Service for four years before her death.\nKovach is survived by her mother, Gloria; father, Bill; brother, Brian; grandparents, Chester and Elvira Janicki; boyfriend, Kyle Schlosser; and many other friends and family members.\nFirst posted",
-        "sections": [
-          {
-            "title": "Jennifer",
-            "sub_title": "Complete as many rounds and reps as possible in 26 minutes of:",
-            "lines": [
-              "10 pull-ups",
-              "15 kettlebell swings",
-              "20 box jumps",
-              "♀ 35-lb kettlebell, 20-inch box",
-              "♂ 53-lb kettlebell, 24-inch box"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-11",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "The Gauntlet",
-            "lines": [
-              "30 minute AMRAP of:",
-              "Jackie",
-              "Then",
-              "Karabell",
-              "Then",
-              "AMRAP of Cindy in the remaining 30 minutes:",
-              "Your result is rounds of Cindy completed."
-            ]
-          }
-        ],
-        "note": "Benchmark: The Gauntlet"
       }
     ],
     "2026-03-12": [
@@ -638,56 +459,6 @@
               "* lactate threshold & muscular endurance"
             ],
             "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-13",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": []
-          },
-          {
-            "title": "Warm up for Open",
-            "lines": [
-              "or",
-              "5x 3-6 Ring Muscle Ups",
-              "or",
-              "14 min EMOM:",
-              "Min 1: 3-5 Strict Chest to bar Chin Ups",
-              "Min 2: 5-7 Strict Ring Dips",
-              "Partner Abs"
-            ]
-          },
-          {
-            "title": "METCON",
-            "sub_title": "Crossfit Open 26.3",
-            "lines": [
-              "For Time:",
-              "2 rounds of:",
-              "12 burpees over the bar",
-              "12 cleans, weight 1",
-              "12 burpees over the bar",
-              "12 thrusters, weight 1",
-              "2 rounds of:",
-              "12 burpees over the bar",
-              "12 cleans, weight 2",
-              "12 burpees over the bar",
-              "12 thrusters, weight 2",
-              "2 rounds of:",
-              "12 burpees over the bar",
-              "12 cleans, weight 3",
-              "12 burpees over the bar",
-              "12 thrusters, weight 3",
-              "Time cap: 16 minutes",
-              "* ?65, 75, 85 lb (29, 34, 38 kg)",
-              "* ?95, 115, 135 lb (43, 52, 61 kg)",
-              "View Workout Description & Scorecard"
-            ]
           }
         ]
       },
@@ -1261,34 +1032,6 @@
               "power clean"
             ],
             "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-16",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "BACK SQUAT",
-              "Every 3:00 × 3 sets",
-              "2 Back Squats @78-82%"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Emerald",
-            "lines": [
-              "9-6-3",
-              "Squat Cleans 61kg/43kg",
-              "15-12-9",
-              "Handstand Push Ups",
-              "* -rest 3:00 between sets-"
-            ],
-            "sub_title2": "2 sets For Time:"
           }
         ]
       },
@@ -3053,6 +2796,42 @@
       },
       {
         "date": "2026-03-24",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "15 mins to find a heavy single Front Squat"
+            ]
+          },
+          {
+            "title": "METCON",
+            "sub_title": "Partner WOD",
+            "lines": [
+              "In 20 mins:",
+              "* 40 Thrusters 20/15kg",
+              "10 Box Jumps",
+              "10 Burpees",
+              "* 30 Thrusters 35/20kg",
+              "20 Box Jumps",
+              "20 Burpees",
+              "* 20 Thrusters 45/30kg",
+              "30 Box Jumps",
+              "30 Burpees",
+              "* 10 Thrusters 52.5/35kg",
+              "40 Box Jumps",
+              "40 Burpees",
+              "Max bike calories in remaining time.",
+              "Score is cals.",
+              "Box height 20/16 inch"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-24",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "Orozco is survived by her husband, Hector; two stepchildren, Natalie and Santiago; and baby Olivia.\nShe began CrossFit at CrossFit FitFarm and also worked out with fellow officers outside the affiliate.\nShe exhibited a passion for community service that went beyond her police duties. She volunteered with the Special Olympics and was president of the Police Officers Ball to benefit Special Olympics Nebraska. She also coached baseball for the North Omaha Boys and Girls Club.\nFirst posted",
@@ -3094,7 +2873,248 @@
         ],
         "note": "Benchmark: BARBARA"
       }
+    ],
+    "2026-03-25": [
+      {
+        "date": "2026-03-25",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-03-25/",
+        "sections": [
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "line drills"
+            ]
+          },
+          {
+            "title": "DEADLIFT 15MIN",
+            "lines": [
+              "3 sets",
+              "5 deadlifts at 83%",
+              "1 drop set",
+              "max reps at 50%",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 17MIN",
+            "lines": [
+              "16 kb swings 32/24kg",
+              "24 jumping lunges",
+              "32 shuttle runs",
+              "* aerobic power [lactate threshold]",
+              "hang power snatch"
+            ],
+            "sub_title": "4 rounds for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-03-25",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260325",
+        "sections": [
+          {
+            "title": "5 ROUNDS FOR TIME OF",
+            "lines": [
+              "2 rope climbs to 15 feet",
+              "15 GHD sit-ups",
+              "20 box jumps*",
+              "*Step down from the box.",
+              "♀ 20-inch box",
+              "♂ 24-inch box"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-25",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-march-25-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "AMRAP 5 minutes",
+              "150/125m Row",
+              "6 Burpee Step Overs",
+              "6 Single Dumbbell Deadlifts (DB Between legs)"
+            ]
+          },
+          {
+            "title": "AMRAP 14 minutes",
+            "lines": [
+              "7/5 Muscle Ups",
+              "14 Box Jump Overs 24/20″",
+              "21 Dumbbell Snatches 50/35lbs",
+              "Feel: Muscle Overload/Gas",
+              "Pacing: Sustain",
+              "Target Score: 3+ Rounds",
+              "Firebreather: 4+ Rounds"
+            ]
+          },
+          {
+            "title": "Extra Credit",
+            "lines": [
+              "40-60 Minute Machine Flush / MOB",
+              "5+ Rounds",
+              "5:00 Machine Flush",
+              "3:00 Mobility",
+              "Rotate through as many modalities as you can, excluding running but not walking. Pace should feel very very easy, but elicit a nice sweat to aid in your mobility routine."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-25",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Build up to a 1RM Deadlift"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Dodgers",
+            "lines": [
+              "50/40 Calorie Air Bike",
+              "25 GHDs",
+              "50 Dumbbell Box Step Ups (16kg/11kg) (20\")",
+              "25 GHDs",
+              "50/40 Calorie Air Bike"
+            ],
+            "sub_title2": "For Time:"
+          }
+        ]
+      },
+      {
+        "date": "2026-03-25",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "5x",
+              "3-6 Ring Muscle Ups",
+              "or",
+              "14 min EMOM:",
+              "Min 1: 3-5 Strict Chest to Bar Chin Ups",
+              "Min 2: 5-7 Strict Ring Dips",
+              "Core:",
+              "Partner Abs"
+            ]
+          },
+          {
+            "title": "METCON",
+            "sub_title": "20/16 cal Bike",
+            "lines": [
+              "3 lengths of Box HS Walk OR 5 Wall Walks",
+              "* 30 Russian KB Swings 32/24kg",
+              "20/16 cal Bike",
+              "20 HSPU",
+              "30 Russian KB Swings",
+              "20/16 Cal Bike",
+              "20 Hand Release Push Ups",
+              "30 Russian KB Swings"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-25",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "In honor of Randy Simmons, 51, a 27-year LAPD veteran and SWAT team member who was killed Feb. 7, 2008, in the line of duty.\nHe is survived by his wife, Lisa; son, Matthew; and daughter, Gabrielle.\nFirst posted",
+        "sections": [
+          {
+            "title": "Randy",
+            "sub_title": "For time:",
+            "lines": [
+              "75 power snatches",
+              "*♀ 55 lb*",
+              "*♂ 75 lb*"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-25",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Chelsea",
+            "lines": [
+              "On the minute every minute for 30 minutes:",
+              "5 pull-ups",
+              "10 push-ups",
+              "15 air squats",
+              "Scaling options for both workouts:",
+              "pull-ups to ring row or jumping pull ups",
+              "push-ups to against box or rubber band",
+              "Intermediate:",
+              "4 pull-ups",
+              "8 push-ups",
+              "12 air squats",
+              "Beginner:",
+              "3 pull-ups",
+              "6 push-ups",
+              "9 air squats"
+            ]
+          }
+        ],
+        "note": "Benchmark: Chelsea"
+      },
+      {
+        "date": "2026-03-25",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 11.4",
+            "lines": [
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "60 Bar-facing burpees",
+              "30 Overhead squats (120lbs / 55kg)",
+              "10 Muscle-ups",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "60 Bar-facing burpees",
+              "30 Overhead squats (90lbs / 40kg)",
+              "10 Muscle-ups",
+              "*MASTERS MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "60 Bar-facing burpees",
+              "30 Overhead squats (110lbs / 50kg)",
+              "10 Muscle-ups",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "60 Bar-facing burpees",
+              "30 Overhead squats (75lbs / 35kg)",
+              "10 Muscle-ups"
+            ]
+          }
+        ],
+        "note": "Open: Open 11.4"
+      }
     ]
   },
-  "last_updated": "2026-03-24T09:04:14.019185"
+  "last_updated": "2026-03-25T06:49:33.393372"
 }
