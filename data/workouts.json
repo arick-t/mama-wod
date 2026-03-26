@@ -2867,47 +2867,6 @@
     "2026-03-26": [
       {
         "date": "2026-03-26",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-26/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "scorpions",
-              "hand walk"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 scap. push ups",
-              "10 ring rows",
-              "30sec plank hold",
-              "* *remaining time row"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "CONDITIONING 30MIN",
-            "lines": [
-              "30:00 amrap",
-              "max cal row",
-              "every 3:00 [starting at 0:00]:",
-              "",
-              "5 strict pull-ups",
-              "10 push-ups",
-              "15 sit-ups",
-              "* score: total cal",
-              "* aerobic power [lactate threshold]"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-26",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260326",
@@ -2952,6 +2911,86 @@
               "QF",
               "Whether you’re qualified and/or competiting, all aspiring competitors should be executing some of the QF workouts. If you need help scaling, head to the Misfit telegram group for help:",
               "Misfit Athletics"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-26",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 25.1",
+            "lines": [
+              "*2025 Open Workout 25.1 Women Rx*",
+              "Games Season",
+              "Open",
+              "Feb 26 – March 16",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Quarterfinals",
+              "March 26-30",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Semifinals",
+              "April – June",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Games",
+              "July",
+              "The CrossFit Games",
+              "Masters CrossFit Games",
+              "Teenage CrossFit Games"
+            ]
+          }
+        ],
+        "note": "Open: Open 25.1"
+      },
+      {
+        "date": "2026-03-26",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-03-26/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "scorpions",
+              "hand walk"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 scap. push ups",
+              "10 ring rows",
+              "30sec plank hold",
+              "* *remaining time row"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "CONDITIONING 30MIN",
+            "lines": [
+              "30:00 amrap",
+              "max cal row",
+              "every 3:00 [starting at 0:00]:",
+              "",
+              "5 strict pull-ups",
+              "10 push-ups",
+              "15 sit-ups",
+              "* score: total cal",
+              "* aerobic power [lactate threshold]"
             ]
           }
         ]
@@ -3047,47 +3086,8 @@
           }
         ],
         "note": "Benchmark: CINDY” BENCHMARK"
-      },
-      {
-        "date": "2026-03-26",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 25.1",
-            "lines": [
-              "*2025 Open Workout 25.1 Women Rx*",
-              "Games Season",
-              "Open",
-              "Feb 26 – March 16",
-              "Overview",
-              "Schedule",
-              "Leaderboard",
-              "Workouts",
-              "Quarterfinals",
-              "March 26-30",
-              "Overview",
-              "Schedule",
-              "Leaderboard",
-              "Workouts",
-              "Semifinals",
-              "April – June",
-              "Overview",
-              "Schedule",
-              "Leaderboard",
-              "Workouts",
-              "Games",
-              "July",
-              "The CrossFit Games",
-              "Masters CrossFit Games",
-              "Teenage CrossFit Games"
-            ]
-          }
-        ],
-        "note": "Open: Open 25.1"
       }
     ]
   },
-  "last_updated": "2026-03-26T07:01:23.990743"
+  "last_updated": "2026-03-26T07:19:07.156328"
 }
