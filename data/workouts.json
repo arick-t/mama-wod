@@ -1,95 +1,5 @@
 {
   "workouts": {
-    "2026-03-11": [
-      {
-        "date": "2026-03-11",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260311",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Wednesday",
-              "260311",
-              "Drill the Movement "
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-11",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-march-11-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "AMRAP 5 minutes",
-              "500m Bike",
-              "20 Line Hops",
-              "10 Ring Rows"
-            ]
-          },
-          {
-            "title": "AMRAP 20 Minutes",
-            "lines": [
-              "1,500/1,300m C2 Bike or 1.8/1.5k Air Bike",
-              "50 Crossover Single Unders",
-              "10 Pull Ups",
-              "Feel: Cardio",
-              "Pace: Sustain",
-              "Target Score: 4-5 rounds",
-              "Firebreather Score: 5+ rounds"
-            ]
-          },
-          {
-            "title": "Power Snatch",
-            "lines": [
-              "EMOM 24 Minutes – Alternate Movements"
-            ]
-          },
-          {
-            "title": "1 – 2 Power Snatch @ 70-80%",
-            "lines": [
-              "2 – 2 Vertical Leaps for Max Height",
-              "Drop and Reset",
-              "You will complete each movement 12 times. )",
-              "Focus on speed from the knee through hip extension, into turnover. All reps should feel snappy, adjust percentages to keep it that way for all sets."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-11",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 25.3",
-            "lines": [
-              "For time:",
-              "5 wall walks",
-              "50-calorie row",
-              "5 wall walks",
-              "25 deadlifts",
-              "5 wall walks",
-              "25 cleans",
-              "5 wall walks",
-              "25 snatches",
-              "5 wall walks",
-              "50-calorie row",
-              "Time cap: 20 minutes",
-              "♀ 155-lb (70-kg) deadlift, 85-lb (38-kg) clean, 65-lb (29-kg) snatch",
-              "♂ 225-lb (102-kg) deadlift, 135-lb (61-kg) clean, 95-lb (43-kg) snatch"
-            ]
-          }
-        ],
-        "note": "Open: Open 25.3"
-      }
-    ],
     "2026-03-12": [
       {
         "date": "2026-03-12",
@@ -184,101 +94,6 @@
           }
         ],
         "note": "Open: Open 21.3"
-      },
-      {
-        "date": "2026-03-12",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-12/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "thoracic rotation",
-              "sumo squat stretch",
-              "instep rotation"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 reverse lunges",
-              "10 elbow rotation",
-              "10 burpees"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "BACK SQUATS 15MIN",
-            "lines": [
-              "3 sets",
-              "5 back squats at 78%",
-              "1 drop set",
-              "max reps at 50%",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 13MIN",
-            "lines": [
-              "7:00 amrap:",
-              "",
-              "14 front squats",
-              "14 lateral burpees over barbell",
-              "rest 2:00 -",
-              "4:00 amrap:",
-              "",
-              "8 front squats",
-              "8 lateral burpees over barbell",
-              "* barbell: 60/40kg",
-              "* aerobic power [vo2 max]"
-            ],
-            "sub_title": "score: sum total of rounds + reps"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-12",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "U.S. Army Staff Sgt. Marc Small, 29, of Collegeville, Pennsylvania, assigned to 1st Battalion, 3rd Special Forces Group (Airborne), based in Fort Bragg, North Carolina, died on Feb. 12, 2009, from wounds sustained when insurgents attacked his unit with a rocket-propelled grenade launcher and small-arms fire in Faramuz, Afghanistan.\nHe is survived by his father and stepmother, Murray and Karen; mother and stepfather, Mary and Peter MacFarland; and fiancee, Amanda Charney.\nFirst posted",
-        "sections": [
-          {
-            "title": "Small",
-            "sub_title": "3 rounds for time of:",
-            "lines": [
-              "Row 1,000 meters",
-              "50 burpees",
-              "50 box jumps",
-              "Run 800 meters",
-              "♀ 20-inch box",
-              "♂ 24-inch box"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-12",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "FRAN",
-            "lines": [
-              "For Time:",
-              "21-15-9",
-              "Thruster",
-              "Pull-up",
-              "RPE 5, maximum effort! Target: sub 6min. Time Cap 10min.",
-              "Rxd 42,5/30kg",
-              "SC 30/20kg + Jumping Pull-ups"
-            ]
-          }
-        ],
-        "note": "Benchmark: FRAN"
       }
     ],
     "2026-03-13": [
@@ -654,45 +469,6 @@
               "* rest 1:00 between amraps",
               "* score: total cal",
               "* aerobic power [vo2 max]"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-14",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "6×2 Clean and Jerk @80%",
-              "Yes, they have to be squat!",
-              "3×3 (each side)",
-              "Turkish Get Ups"
-            ]
-          },
-          {
-            "title": "METCON",
-            "sub_title": "Partner WOD",
-            "lines": [
-              "* 21 hang power cleans 60/42.5kg",
-              "21/15 cal Row",
-              "* 15 hang power cleans 70/47.5kg",
-              "15/10 cal Row",
-              "* 9 hang power cleans 80/55kg",
-              "9/7 cal Row",
-              "Into",
-              "21 box jumps",
-              "21/15 cal Row",
-              "15 box jumps",
-              "15/10 cal Row",
-              "9 box jumps",
-              "9/7 cal Row",
-              "Box – 20/24 inch",
-              "– Partner 1 completes all 21 HPC, then partner 2, Partner 1 completes 21 cal Row, the partner 2 etc",
-              "– Non-working partner can adjust weights while their partner is rowing."
             ]
           }
         ]
@@ -1211,33 +987,6 @@
               "* aerobic power [vo2 max]"
             ],
             "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-17",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Forest Green",
-            "lines": [
-              "21-15-9",
-              "Calorie Air Bike",
-              "Kettlebell Swings 25kg/16kg",
-              "* -rest till 7:00-",
-              "21-15-9",
-              "Calorie Air Bike",
-              "Toes to Bar",
-              "* -rest till 14:00-",
-              "21-15-9",
-              "Toes to Bar",
-              "Kettlebell Swings 25kg/16kg",
-              "* (Women's Calories: 16-12-8)"
-            ],
-            "sub_title2": "For Time:"
           }
         ]
       },
@@ -3114,7 +2863,231 @@
         ],
         "note": "Benchmark: Chelsea"
       }
+    ],
+    "2026-03-26": [
+      {
+        "date": "2026-03-26",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-03-26/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "scorpions",
+              "hand walk"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 scap. push ups",
+              "10 ring rows",
+              "30sec plank hold",
+              "* *remaining time row"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "CONDITIONING 30MIN",
+            "lines": [
+              "30:00 amrap",
+              "max cal row",
+              "every 3:00 [starting at 0:00]:",
+              "",
+              "5 strict pull-ups",
+              "10 push-ups",
+              "15 sit-ups",
+              "* score: total cal",
+              "* aerobic power [lactate threshold]"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-26",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260326",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Rest Day",
+              "Why CrossFit's Range of Motion Standards Will Keep You Moving for Life",
+              "You may think CrossFit's range-of-motion requirements are about rep standards and competition. They're not. Full range of motion is about training your body to handle whatever life throws at you today, tomorrow, and 30 years from now."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-26",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-march-26-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "4:00 Machine of Choice",
+              "*Every Minute perform 3 Kettlebell Hang Clean and Push Press per side"
+            ]
+          },
+          {
+            "title": "Grettel",
+            "lines": [
+              "10 Rounds For Time:",
+              "3 Clean and Jerks (135/95 lb)",
+              "3 Burpees Over the Bar",
+              "https://www.crossfit.com/210103",
+              "Feel: Gas",
+              "Pace: Reach",
+              "Target Score: Sub 8 minutes",
+              "Firebreather Score: Sub 4 minutes",
+              "QF",
+              "Whether you’re qualified and/or competiting, all aspiring competitors should be executing some of the QF workouts. If you need help scaling, head to the Misfit telegram group for help:",
+              "Misfit Athletics",
+              "QF",
+              "Whether you’re qualified and/or competiting, all aspiring competitors should be executing some of the QF workouts. If you need help scaling, head to the Misfit telegram group for help:",
+              "Misfit Athletics"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-26",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Power Clean & Jerk 8x2",
+              "FLUSH CYCLING (C&J)",
+              "Every 1:00 (8:00)",
+              "2 Power Clean and Push Jerks (singles) @ RPE 5–6"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Tigers",
+            "lines": [
+              "2 Rounds",
+              "800m Run",
+              "50 Kettlebell Swings 25kg/16kg"
+            ],
+            "sub_title2": "For Time:"
+          }
+        ]
+      },
+      {
+        "date": "2026-03-26",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "5x",
+              "1 Power Clean, 1 Squat Clean, 2 Jerks @80%",
+              "3×6 Turkish Get Ups"
+            ]
+          },
+          {
+            "title": "METCON",
+            "sub_title": "3 rft",
+            "lines": [
+              "* 10 Back Squats 60/42.5kg",
+              "200m Run",
+              "3 min rest",
+              "3rft",
+              "200m Run",
+              "* 10 Back Squats 75/52.5kg"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-26",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Manion",
+            "sub_title": "7 rounds for time of:",
+            "lines": [
+              "Run 400 meters",
+              "29 back squat",
+              "*♀ 95 lb*",
+              "*♂ 135 lb*"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-26",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "CINDY” BENCHMARK",
+            "lines": [
+              "AMRAP20",
+              "5 Pull-ups",
+              "10 Push-ups",
+              "15 Air squats",
+              "*As this is an AMRAP ensure you use the same movements throughout the workout. This is the only way to determine progress by keeping the standard the same.*"
+            ]
+          }
+        ],
+        "note": "Benchmark: CINDY” BENCHMARK"
+      },
+      {
+        "date": "2026-03-26",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 25.1",
+            "lines": [
+              "*2025 Open Workout 25.1 Women Rx*",
+              "Games Season",
+              "Open",
+              "Feb 26 – March 16",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Quarterfinals",
+              "March 26-30",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Semifinals",
+              "April – June",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Games",
+              "July",
+              "The CrossFit Games",
+              "Masters CrossFit Games",
+              "Teenage CrossFit Games"
+            ]
+          }
+        ],
+        "note": "Open: Open 25.1"
+      }
     ]
   },
-  "last_updated": "2026-03-25T09:02:01.820934"
+  "last_updated": "2026-03-26T07:01:23.990743"
 }
