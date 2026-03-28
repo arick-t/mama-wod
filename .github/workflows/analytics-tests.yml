@@ -1,5 +1,4 @@
-# רץ בכל דחיפה ל־main: בדיקות אנליטיקס + בדיקת לינק קונטקט (mailto).
-# לא רץ על קומיטים שמשנים רק data/analytics.jsonl (מנוע api/event) — חוסך ריצות ורעש.
+# לא רץ אוטומטית על push ל־main (פחות רעש ב־CI). הרצה ידנית: Actions → Run workflow. PR: עדיין רץ כשמשנים קבצים רלוונטיים.
 name: Analytics Logic Tests
 
 run-name: "Analytics tests · ${{ github.ref_name }} · ${{ github.sha }}"
@@ -10,12 +9,6 @@ concurrency:
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - "data/analytics.jsonl"
-  # כל דחיפה ל־main מריצה את בדיקות האנליטיקס + בדיקת לינק קונטקט
   pull_request:
     paths:
       - "scripts/analytics-summary.test.js"
