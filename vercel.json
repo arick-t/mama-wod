@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/generate-workout.js": { "maxDuration": 60 },
+    "api/event.js": { "maxDuration": 60 }
+  }
+}
