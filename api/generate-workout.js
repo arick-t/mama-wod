@@ -243,9 +243,13 @@ module.exports = async function handler(req, res) {
     if (req.method === "OPTIONS") return res.status(204).end();
     if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-    const key = process.env.GEMINI_API_KEY;
+    const key = String(process.env.GEMINI_API_KEY || "").trim();
     if (!key) {
-      return res.status(503).json({ error: "Server missing GEMINI_API_KEY. Add it in Vercel project settings." });
+      return res.status(503).json({
+        error: "Server missing GEMINI_API_KEY at runtime.",
+        hint:
+          "Vercel → Environment Variables: name exactly GEMINI_API_KEY, enabled for Production, value pasted with no extra spaces. Save, then Deployments → Redeploy (variables apply to new deploys). If you use Preview URL, ensure Preview is checked too.",
+      });
     }
 
     const model = (process.env.GEMINI_MODEL || "gemini-2.0-flash").trim();
