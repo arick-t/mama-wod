@@ -4,9 +4,9 @@
 
 | מה | איפה | דוגמה |
 |----|------|--------|
-| **גרסת מוצג** (באתר / כותרת) | `index.html` — `<title>` + `.header-sub` | `v20.0.0-beta.1` |
-| **גרסת npm / Capacitor** | `package.json` → `version` | `20.0.0-beta.1` (כולל תגי בטא לפי semver) |
-| **עותק מהיר** | קובץ `VERSION` בשורש | `20.0.0-beta.1` |
+| **גרסת מוצג** (באתר / כותרת) | `index.html` — `<title>` + `.header-sub` | `v20.1 BETA` |
+| **גרסת npm / Capacitor** | `package.json` → `version` | `20.1.0-beta.1` (כולל תגי בטא לפי semver) |
+| **עותק מהיר** | קובץ `VERSION` בשורש | `20.1.0-beta.1` |
 
 **כל שחרור משמעותי:** העלה את `minor` או `patch` ביחד בכל המקומות האלה + עדכון `CHANGELOG.md`.
 

@@ -1,7 +1,6 @@
+# Fetch יומי — 3 קרונים (~05:00 / 05:30 / 08:00 ישראל חורף). Push ל-main כש-backend משתנה. פירוט: docs/FETCH_SCHEDULE.md
 name: 🦆 Daily Workout Fetch
 
-# תזמון: ריצה 0 = ~05:00 ישראל (חורף). ריצה 1 = 05:30 ישראל. ריצה 2 = 08:00 ישראל (US).
-# אחרי push מוצלח ל-main (כשהנתונים השתנו) — Pages נבנה מחדש אוטומטית. פירוט + שלושת זרמי האוטומציה: docs/FETCH_SCHEDULE.md
 on:
   schedule:
     - cron: '0 3 * * *'    # 05:00 Israel (UTC+2 winter) — extra early; ~06:00 in summer
@@ -36,26 +35,14 @@ jobs:
         python-version: '3.11'
     
     - name: Install dependencies
-      run: |
-        pip install requests beautifulsoup4 lxml
-    
+      run: pip install requests beautifulsoup4 lxml
     - name: Fetch workouts
-      env:
-        TZ: Asia/Jerusalem
-      run: |
-        cd backend
-        python fetch_all.py
-
-    - name: Stash fetch results, pull latest main, unstash
+      env: { TZ: Asia/Jerusalem }
+      run: cd backend && python fetch_all.py
+    - name: Stash, pull main, pop, commit push
       run: |
         git stash push -m "fetch" data/workouts.json data/special_cache.json
-        git pull --rebase origin main
-        git stash pop
-
-    - name: Commit and push
-      run: |
-        git config user.name "DUCK-WOD Bot"
-        git config user.email "bot@duck-wod.app"
+        git pull --rebase origin main && git stash pop
+        git config user.name "DUCK-WOD Bot" && git config user.email "bot@duck-wod.app"
         git add data/workouts.json data/special_cache.json
-        git diff --quiet && git diff --staged --quiet || \
-          (git commit -m "🦆 Daily fetch $(date +'%Y-%m-%d')" && git push origin main)
+        git diff --quiet && git diff --staged --quiet || (git commit -m "🦆 Daily fetch $(date +'%Y-%m-%d')" && git push origin main)

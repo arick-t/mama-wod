@@ -1,13 +1,8 @@
-# דוח ניתור משתמשים – נשלח באימייל.
-# 1. אוטומטית פעם בשבוע: שישי 04:00 UTC (~07:00 ישראל בקיץ, ~06:00 בחורף).
-# 2. בדחיפה: "שלח עכשיו דוח" עם בחירת תקופה – היום האחרון / השבוע האחרון / מתאריך.
-# שליחה דרך Resend. Secret: RESEND_API_KEY (או RESEND_API_KEY_conmail). ראו RESEND_SECRETS.md.
-
+# דוח ניתור — Resend. Secrets: RESEND_API_KEY (או RESEND_API_KEY_conmail). פירוט: RESEND_SECRETS.md. לוגיקה: scripts/ci-weekly-analytics-report.sh
 name: 📊 Weekly Analytics Report
 
 on:
   schedule:
-    # כל יום שישי 07:00 ישראל (04:00 UTC)
     - cron: '0 4 * * 5'
   workflow_dispatch:
     inputs:
@@ -16,22 +11,18 @@ on:
         required: true
         default: 'last_week'
         type: choice
-        options:
-          - last_day
-          - yesterday_today
-          - last_week
-          - from_date
+        options: [last_day, yesterday_today, last_week, from_date]
       from_date:
-        description: 'מתאריך (רק אם בחרת from_date) – פורמט YYYY-MM-DD'
+        description: 'מתאריך YYYY-MM-DD (רק מ-from_date)'
         required: false
         type: string
       use_sample_data:
-        description: 'שליחת דוח דוגמה (מודל) מהקובץ הקיים – לבדיקה'
+        description: 'דוח דוגמה מקובץ sample'
         required: false
         default: false
         type: boolean
       email_to:
-        description: 'כתובת יעד לדוח (ריק = ariel.tahan@gmail.com או Secret ANALYTICS_REPORT_TO)'
+        description: 'יעד (ריק = ברירת מחדל / Secret)'
         required: false
         default: ''
         type: string
@@ -44,71 +35,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Use sample data (for one-time model run)
-        if: ${{ github.event.inputs.use_sample_data == 'true' }}
-        run: |
-          if [ -f data/analytics_sample_last_week.jsonl ]; then
-            cp data/analytics_sample_last_week.jsonl data/analytics.jsonl
-          else
-            echo "Sample file data/analytics_sample_last_week.jsonl not in repo. Proceeding without sample."
-          fi
-
-      - name: Generate report
-        id: gen
+      - name: Generate report & send via Resend
         env:
-          REPORT_PERIOD: ${{ github.event.inputs.report_period || 'last_week' }}
-          REPORT_FROM_DATE: ${{ github.event.inputs.from_date || '' }}
-        run: |
-          if [ ! -f data/analytics.jsonl ] || [ ! -s data/analytics.jsonl ]; then
-            echo "דוח ניתור משתמשים" > report.txt
-            echo "" >> report.txt
-            echo "עדיין אין נתונים בקובץ data/analytics.jsonl." >> report.txt
-            echo "הפעל את הניתור (ANALYTICS_ENDPOINT) וצבור כניסות ואירועי Find Workout – אחר כך תקבל כאן סיכום אמיתי." >> report.txt
-          elif [ -f scripts/analytics-summary.js ]; then
-            node scripts/analytics-summary.js > report.txt 2>&1
-          else
-            echo "דוח ניתור – השבוע האחרון" > report.txt
-            echo "" >> report.txt
-            echo "סקריפט scripts/analytics-summary.js חסר ב-repo." >> report.txt
-          fi
-          echo "text<<EOF" >> $GITHUB_OUTPUT
-          cat report.txt >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-      - name: Send email via Resend API
-        env:
+          REPORT_PERIOD: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.report_period || 'last_week' }}
+          REPORT_FROM_DATE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.from_date || '' }}
+          USE_SAMPLE_DATA: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.use_sample_data || 'false' }}
+          EMAIL_TO_OVERRIDE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.email_to || '' }}
           RESEND_FROM_SECRET: ${{ secrets.RESEND_FROM }}
           ANALYTICS_TO_SECRET: ${{ secrets.ANALYTICS_REPORT_TO }}
-          REPORT_PERIOD: ${{ github.event.inputs.report_period || 'last_week' }}
-        run: |
-          if [ -z "$RESEND_FROM_SECRET" ]; then
-            FROM="DUCK-WOD <onboarding@resend.dev>"
-          else
-            FROM="$RESEND_FROM_SECRET"
-          fi
-          OVERRIDE="${{ github.event.inputs.email_to }}"
-          if [ -n "$OVERRIDE" ]; then
-            TO="$OVERRIDE"
-          elif [ -z "$ANALYTICS_TO_SECRET" ]; then
-            TO="ariel.tahan@gmail.com"
-          else
-            TO="$ANALYTICS_TO_SECRET"
-          fi
-          case "$REPORT_PERIOD" in
-            last_day) SUB="ניתור משתמשים – 24 שעות אחרונות" ;;
-            yesterday_today) SUB="ניתור משתמשים – אתמול והיום" ;;
-            last_week) SUB="ניתור משתמשים – שבוע אחרון" ;;
-            *) SUB="ניתור משתמשים – דוח" ;;
-          esac
-          BODY=$(jq -Rs . report.txt)
-          jq -n \
-            --arg from "$FROM" \
-            --arg to "$TO" \
-            --arg sub "$SUB" \
-            --argjson text "$BODY" \
-            '{from:$from, to:[$to], subject:$sub, text:$text}' > payload.json
-          curl -sS -f -X POST https://api.resend.com/emails \
-            -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY || secrets.RESEND_API_KEY_conmail }}" \
-            -H "Content-Type: application/json" \
-            -d @payload.json
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY || secrets.RESEND_API_KEY_conmail }}
+        run: bash scripts/ci-weekly-analytics-report.sh
