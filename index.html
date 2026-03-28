@@ -222,7 +222,8 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 .eq-item{display:flex;align-items:center;gap:7px;padding:7px 9px;background:#111;border-radius:5px;cursor:pointer;color:#e8e4d8;font-size:.85em}
 .eq-item:hover{background:#252525}
 .eq-item input{cursor:pointer;accent-color:#E8451A;flex-shrink:0}
-.ai-info-wrap{position:relative;display:inline-flex;align-items:center;margin-left:8px}
+.find-form h2.ai-builder-title-row{color:#1A9B8A;font-size:.9em;margin:0 0 6px;padding:0;font-weight:600;line-height:1.35;font-family:'Oswald','Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.ai-builder-title-row .ai-builder-tagline{color:#aaa;font-weight:400;font-size:0.95em}
 .ai-default-tags{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 10px}
 .ai-default-tag{display:inline-flex;align-items:center;gap:8px;background:#2a2a2a;border:1px solid #3a3a3a;border-radius:999px;padding:6px 10px;color:#e8e4d8;font-size:.82em}
 .ai-default-tag .tag-close{border:0;background:transparent;color:#bbb;cursor:pointer;font-size:1.05em;line-height:1;padding:0 2px}
@@ -403,8 +404,10 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="tab-content" id="aibeta-tab">
   <div class="find-form">
     <div class="ai-beta-banner"><strong>BETA</strong> — Experimental AI workout builder. Output is generated; verify before training.</div>
-    <h2>AI workout builder <span class="ai-info-wrap"><button type="button" class="eq-info-btn" id="aiInfoBtn" onclick="toggleAiInfo(event)" title="About this builder" aria-label="Information">ℹ️</button><div id="aiInfoPopover" class="eq-info-popover" role="dialog" aria-hidden="true" style="display:none">The engine writes programming only (no lifestyle coaching). Default mode uses common gym-class structure and terminology. Remove <strong>Default coach mode</strong> for a more open prompt. Tags: warm-up / strength / weightlifting blocks (optional), exercise demos, extended athlete profile.</div></span></h2>
-    <p style="color:#aaa;font-size:0.95em;margin:0 0 12px 0">Builds an original session from your equipment and time — not from scraped WODs.</p>
+    <div class="form-group" style="margin-bottom:12px">
+      <h2 class="eq-label-row ai-builder-title-row">AI workout builder <span class="ai-builder-tagline">Builds an original session from your equipment and time.</span> <button type="button" class="eq-info-btn" id="aiInfoBtn" onclick="toggleAiInfo(event)" title="About this builder" aria-label="Information">ℹ️</button></h2>
+      <div id="aiInfoPopover" class="eq-info-popover" role="dialog" aria-hidden="true" style="display:none">Programming only — not lifestyle advice. Default coach mode follows common gym-class structure; remove that tag for a freer prompt. Optional tags add warm-up, strength, or weightlifting blocks, movement demos, or an extended athlete profile.</div>
+    </div>
     <div class="form-group">
       <label>Available Time (minutes)</label>
       <div class="time-row">
@@ -451,7 +454,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
       <label for="aiUserNotes">Before we generate — goals, skills to improve, partner notes, or leave blank</label>
       <div class="ai-notes-shell">
         <div class="ai-tag-dock" id="aiTagDock"></div>
-        <textarea id="aiUserNotes" rows="4" placeholder="e.g. pull-ups, partner of 2, easy on shoulders…"></textarea>
+        <textarea id="aiUserNotes" rows="4" placeholder="Anything else you'd like to note…"></textarea>
       </div>
     </div>
     <div class="ai-extended-panel" id="aiExtendedFields" style="display:none">
@@ -607,11 +610,16 @@ var specialData = {heroes:[], benchmarks:[], open:[]};
 var selectedDateStr = todayIsraelStr();
 var currentDate = new Date(selectedDateStr + "T12:00:00.000Z");
 var cardStore = [];
-/** ניתור מבוסס Git – ריק = כבוי. להפעלה: '/api/event' (אם האתר על Vercel) או כתובת מלאה (אם GitHub Pages). ראה ANALYTICS_GIT.md */
-// כשהאתר על GitHub Pages: אירועים נשלחים ל-API ב-Vercel. כשהאתר על Vercel אפשר "/api/event"
-var ANALYTICS_ENDPOINT = (typeof location !== "undefined" && (location.hostname === "localhost" || location.hostname === "127.0.0.1"))
-  ? (location.origin + "/api/event")
-  : "https://mama-wod.vercel.app/api/event";
+/** ניתור מבוסס Git — ראה ANALYTICS_GIT.md. Pages אין בו /api → כתובת מלאה ל-Vercel. כשה-HTML מוגש מ-Vercel (כולל preview / דומיין מותאם) → אותו origin. */
+var ANALYTICS_ENDPOINT = (function () {
+  if (typeof location === "undefined") return "https://mama-wod.vercel.app/api/event";
+  var h = location.hostname;
+  var proto = location.protocol;
+  if (h === "localhost" || h === "127.0.0.1") return location.origin + "/api/event";
+  if (proto === "file:") return "https://mama-wod.vercel.app/api/event";
+  if (h === "github.io" || (h.length > 10 && h.slice(-10) === ".github.io")) return "https://mama-wod.vercel.app/api/event";
+  return location.origin.replace(/\/$/, "") + "/api/event";
+})();
 function sendAnalytics(eventName) {
   if (!ANALYTICS_ENDPOINT) return;
   try {
@@ -953,7 +961,12 @@ function generateWorkoutAi() {
       }
     })
     .catch(function (e) {
-      var m = e && e.name === "AbortError" ? "Request timed out. Try again." : ("Network error: " + escapeHtmlAi(e.message));
+      var m;
+      if (e && e.name === "AbortError") m = "Request timed out. Try again.";
+      else {
+        m = "<strong>Network error:</strong> " + escapeHtmlAi(e && e.message ? e.message : String(e));
+        m += "<p style=\"font-size:0.88rem;margin-top:10px;line-height:1.4;opacity:.95\">Often this means the browser blocked the request after a failed CORS preflight — e.g. <code>/api/generate-workout</code> is <strong>404 on Vercel</strong> (not deployed yet). Fix: Vercel dashboard → redeploy latest <code>main</code> (must include <code>api/generate-workout.js</code>). Quick check: open <a href=\"https://mama-wod.vercel.app/api/generate-workout\" target=\"_blank\" rel=\"noopener\">mama-wod.vercel.app/api/generate-workout</a> in the browser — you should see JSON (even an error), not a 404 page.</p>";
+      }
       el.innerHTML = "<div class=\"empty\" style=\"color:#e88\">" + m + "</div>";
     })
     .finally(function () {
