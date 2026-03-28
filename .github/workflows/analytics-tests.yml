@@ -1,13 +1,20 @@
 # רץ בכל דחיפה ל־main: בדיקות אנליטיקס + בדיקת לינק קונטקט (mailto).
+# לא רץ על קומיטים שמשנים רק data/analytics.jsonl (מנוע api/event) — חוסך ריצות ורעש.
 name: Analytics Logic Tests
 
 run-name: "Analytics tests · ${{ github.ref_name }} · ${{ github.sha }}"
+
+concurrency:
+  group: analytics-tests-${{ github.ref }}
+  cancel-in-progress: true
 
 on:
   workflow_dispatch:
   push:
     branches:
       - main
+    paths-ignore:
+      - "data/analytics.jsonl"
   # כל דחיפה ל־main מריצה את בדיקות האנליטיקס + בדיקת לינק קונטקט
   pull_request:
     paths:
