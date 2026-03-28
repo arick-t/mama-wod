@@ -1,5 +1,21 @@
 # Changelog
 
+## [20.1.0-beta.1] - 2026-03-28
+
+### AI Builder (BETA) — קוסמטיקה ו־UX
+- תצוגת אימון שנוצר: כרטיס כמו Browse עם מסגרת זהב (`ai-generated`), שמירת מבנה כותרות/תתי־כותרות, כפתור **Share** ל־WhatsApp כמו בשאר האימונים.
+- תגיות: **Show exercise demos**, **Add Warm-up**; הוסרה שליטת משתמש ב־Default coach (תמיד פעיל בשרת); ניקוי תגיות יתומות מ־DOM (בנייה ישנה).
+- **Reset all** בלבד: מסיר כל התגיות מעל תיבת ההערות + מאפס ציוד וטופס; הוסר כפתור "Reset options to defaults" המיותר.
+- מספר גרסה מוצג באתר: **v20.1 BETA**; semver / חנויות: `20.1.0-beta.1` (`versionCode` / `CURRENT_PROJECT_VERSION` → 21).
+
+### Versioning
+- סנכרון `index.html`, `package.json`, `VERSION`, `package-lock.json`, `web/`, Android, iOS.
+
+### CI / GitHub Actions
+- צמצום שורות ב־workflows: דוח שבועי — לוגיקה ב־`scripts/ci-weekly-analytics-report.sh`; איחוד צעדי `analytics-tests`; דחיסת `daily-fetch`; איחוד **Android Device Build** לתוך **Android Capacitor Build Check** (אופציית `upload_apk`); ייעול `ios-capacitor-build`.
+
+---
+
 ## [20.0.0-beta.1] - 2026-03-28
 
 ### AI Builder (BETA)

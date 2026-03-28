@@ -32,12 +32,12 @@ Notes:
 
 ## Android (device testing build)
 
-Use workflow: `.github/workflows/android-device-build.yml`
+Use workflow: `.github/workflows/android-capacitor-build.yml` (same job; enable **upload_apk** to get an artifact).
 
 Run:
 
-1. GitHub -> Actions -> `Android Device Build`
-2. `Run workflow`
+1. GitHub → Actions → **Android Capacitor Build Check**
+2. **Run workflow** → check **Upload debug APK artifact**
 3. Download artifact: `android-debug-apk`
 4. Install `app-debug.apk` on Android device for sound tests.
 

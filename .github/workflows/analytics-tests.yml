@@ -32,11 +32,7 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Run analytics summary fixture test
-        run: node scripts/analytics-summary.test.js
-
-      - name: בדיקת לינק קונטקט (mailto + Vercel חי)
+      - name: Analytics tests + contact mailto (live Vercel)
         env:
-          # אותו דומיין כמו ב־ANALYTICS ב־index.html – בודקים שהפריסה בפועל מכילה mailto
           CONTACT_LINK_TEST_URL: https://mama-wod.vercel.app
-        run: node scripts/contact-link.test.js
+        run: node scripts/analytics-summary.test.js && node scripts/contact-link.test.js

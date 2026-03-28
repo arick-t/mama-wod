@@ -1,4 +1,4 @@
-# כבוי אוטומטית — רק הרצה ידנית (Actions → Run workflow). יופעל מחדש כשנחזור לטפל בצלילי השעון / מובייל.
+# ידני בלבד — בדיקת build iOS (סימולטור, ללא חתימה).
 name: iOS Capacitor Build Check
 
 run-name: "iOS Capacitor · ${{ github.ref_name }} · ${{ github.sha }}"
@@ -10,19 +10,10 @@ jobs:
   ios-build-check:
     runs-on: macos-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: "22"
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Sync Capacitor projects
-        run: npm run cap:sync
-
-      - name: Build iOS app (no signing)
-        run: xcodebuild -workspace ios/App/App.xcworkspace -scheme App -sdk iphonesimulator -configuration Debug CODE_SIGNING_ALLOWED=NO build
+      - run: npm install
+      - run: npm run cap:sync
+      - run: xcodebuild -workspace ios/App/App.xcworkspace -scheme App -sdk iphonesimulator -configuration Debug CODE_SIGNING_ALLOWED=NO build
