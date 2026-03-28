@@ -1,6 +1,7 @@
 name: 🦆 Daily Workout Fetch
 
-# תזמון: ריצה 0 = ~05:00 ישראל (חורף). ריצה 1 = 05:30 ישראל. ריצה 2 = 08:00 ישראל (US). ראה docs/FETCH_SCHEDULE.md
+# תזמון: ריצה 0 = ~05:00 ישראל (חורף). ריצה 1 = 05:30 ישראל. ריצה 2 = 08:00 ישראל (US).
+# אחרי push מוצלח ל-main (כשהנתונים השתנו) — Pages נבנה מחדש אוטומטית. פירוט + שלושת זרמי האוטומציה: docs/FETCH_SCHEDULE.md
 on:
   schedule:
     - cron: '0 3 * * *'    # 05:00 Israel (UTC+2 winter) — extra early; ~06:00 in summer
