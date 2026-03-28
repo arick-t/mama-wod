@@ -870,7 +870,11 @@ function buildAiErrorMessage(x) {
     return "API route not found (404). Deploy branch that includes /api/generate-workout.";
   }
   if (x.status === 503) {
-    return "Service unavailable (503). Check GEMINI_API_KEY in Vercel/local env and redeploy/restart.";
+    var h503 = x.j && x.j.hint ? String(x.j.hint) : "";
+    return (
+      "Service unavailable (503): the API does not see GEMINI_API_KEY when it runs. " +
+      (h503 || "In Vercel open this project → Environment Variables → confirm GEMINI_API_KEY (exact spelling), Production checked → Save → Redeploy the latest production deployment. Local: use .env.local and npm run dev:local.")
+    );
   }
   if (x.status === 504) {
     return String(x.j && x.j.error ? x.j.error : "") || "Gateway timeout (504). Retry or use a faster model.";
