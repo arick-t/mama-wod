@@ -259,11 +259,15 @@ async function fetchGeminiGenerateContent(url, geminiBody) {
 module.exports = async function handler(req, res) {
   try {
     allowCors(res);
-    if (req.method === "OPTIONS") return res.status(204).end();
+    const method = String(req.method || "")
+      .trim()
+      .toUpperCase();
 
-    if (req.method === "GET") {
+    if (method === "OPTIONS") return res.status(204).end();
+
+    if (method === "GET" || method === "HEAD") {
       const configured = !!resolveGeminiApiKey();
-      return res.status(200).json({
+      const payload = {
         ok: true,
         service: "generate-workout",
         geminiKeyConfigured: configured,
@@ -273,10 +277,21 @@ module.exports = async function handler(req, res) {
         hint: configured
           ? "POST JSON with action generate or explain."
           : `No API key visible to this function. In Vercel add one of: ${GEMINI_KEY_ENV_NAMES.join(", ")} (Production + Redeploy). Open Vercel → this project → Settings → General → confirm Root Directory is the repo root (folder must contain /api).`,
-      });
+      };
+      if (method === "HEAD") {
+        res.setHeader("Content-Type", "application/json; charset=utf-8");
+        return res.status(200).end();
+      }
+      return res.status(200).json(payload);
     }
 
-    if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+    if (method !== "POST") {
+      return res.status(405).json({
+        error: "Method not allowed",
+        allow: "GET, HEAD, POST, OPTIONS",
+        seenMethod: method || "(empty)",
+      });
+    }
 
     const key = resolveGeminiApiKey();
     if (!key) {
