@@ -1,13 +1,14 @@
 {
   "name": "mama-wod",
-  "version": "19.8.3",
-  "description": "**CrossFit Workout Aggregator** - Daily WODs from multiple box & special sources",
+  "version": "20.0.0-beta.1",
+  "description": "Workout aggregator — daily WODs from multiple box & special sources",
   "main": "index.js",
   "directories": {
     "doc": "docs"
   },
   "scripts": {
     "test": "node scripts/analytics-summary.test.js && node scripts/contact-link.test.js",
+    "dev:local": "node scripts/local-dev-server.js",
     "build:cap:web": "node scripts/build-capacitor-web.js",
     "cap:sync": "npm run build:cap:web && npx cap sync",
     "cap:open:android": "npx cap open android",

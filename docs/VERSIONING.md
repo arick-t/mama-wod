@@ -4,9 +4,9 @@
 
 | מה | איפה | דוגמה |
 |----|------|--------|
-| **גרסת מוצג** (באתר / כותרת) | `index.html` — `<title>` + `.header-sub` | `v19.8.3` |
-| **גרסת npm / Capacitor** | `package.json` → `version` | `19.8.3` (= major.minor.patch) |
-| **עותק מהיר** | קובץ `VERSION` בשורש | `19.8.3` |
+| **גרסת מוצג** (באתר / כותרת) | `index.html` — `<title>` + `.header-sub` | `v20.0.0-beta.1` |
+| **גרסת npm / Capacitor** | `package.json` → `version` | `20.0.0-beta.1` (כולל תגי בטא לפי semver) |
+| **עותק מהיר** | קובץ `VERSION` בשורש | `20.0.0-beta.1` |
 
 **כל שחרור משמעותי:** העלה את `minor` או `patch` ביחד בכל המקומות האלה + עדכון `CHANGELOG.md`.
 
@@ -27,4 +27,4 @@ npx cap sync
 
 ## לא לבלבל עם
 
-- `v1.1.0` היה מספר npm ישן שלא תאם ל־`v19.x` — עכשיו **הכול מסונכרן ל־19.x.y**.
+- `v1.1.0` היה מספר npm ישן שלא תאם ל־UI — עכשיו **הכול מסונכרן** (`index.html`, `package.json`, `VERSION`, `package-lock.json`).

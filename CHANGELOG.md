@@ -1,5 +1,16 @@
 # Changelog
 
+## [20.0.0-beta.1] - 2026-03-28
+
+### AI Builder (BETA)
+- לשונית **AI Builder BETA** נפרדת מ־Find Workout: בנק תגיות (Default coach, Demos, Extended athlete profile, Warm-up, Strength, Weightlifting), פרופיל מורחב (רמה, שנים, משקל גוף, מין, גיל, בריאות, מספר ספורטאים), מבנה סשן (חימום / כוח / הרמת משקולות) ושליחה ל־`/api/generate-workout` עם ניסיונות חוזרים וטיימאאוט.
+- שרת: פרומפט מאמן ברירת מחדל (מושגי L1, קישור PDF רשמי בלבד, כללי Open/Hero, הטיית תחרות ל־competitor), תמצית מחסן (שמות Open/Hero מ־`specialData` / `special_cache.json`) כשזמין.
+
+### Versioning
+- שחרור בטא **v20.0.0-beta.1** — סנכרון `index.html`, `package.json`, `VERSION`, `package-lock.json`, תיקיית `web/` (Capacitor), `android/app/build.gradle` (`versionCode` / `versionName`), `ios` (`MARKETING_VERSION` / `CURRENT_PROJECT_VERSION`).
+
+---
+
 ## [19.8.3] - 2026-03-23
 
 ### Ops / email
@@ -18,7 +29,7 @@
 - בלוק **Sources & attribution** בלשונית Sources + **פוטר** עם קישור ל־About.
 
 ### Sources
-- **הוסר** CrossFit Linchpin מהאפליקציה ומ־fetch; רשומות ישנות מוסרות ב־`save()` (מקור מושבת).
+- **הוסר** מקור Linchpin מהאפליקציה ומ־fetch; רשומות ישנות מוסרות ב־`save()` (מקור מושבת).
 
 ---
 
@@ -72,7 +83,7 @@
 - **Stopwatch (For Time)**: Count-up with filling ring; bell at work start, whistle at rest; config tightened; removed Next/5:00 preview.
 ### Weights
 - **lb → kg**: All "X lb" shown as "X lb (Y kg)" in cards and Open (formatLbToKg).
-### CrossFit.com
+### Official site scraper
 - Scraper returns no WOD on Sundays; day bar shows 14 non-Sunday days only.
 ### Dev
 - DEV.md, serve-mobile.ps1, serve-mobile.cmd for local phone testing.

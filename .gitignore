@@ -29,5 +29,6 @@ htmlcov/
 # Project specific
 *.log
 .env
+.env.local
 node_modules/
 web/

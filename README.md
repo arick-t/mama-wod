@@ -1,8 +1,13 @@
-# 🦆 DUCK-WOD — גרסה **19.8.3** (`package.json`: `19.8.3`)
+# 🦆 DUCK-WOD — גרסה **20.0.0-beta.1** (`package.json`: `20.0.0-beta.1`)
 
-**CrossFit Workout Aggregator** - Daily WODs from multiple sources
+**Workout aggregator** — daily WODs from multiple sources
 
-> הגרסה המוצגת באתר היא **v19.8.3** (בכותרת ובפס המשני). מקור אמת: `VERSION` + `package.json` — ראו `docs/VERSIONING.md`.
+> הגרסה המוצגת באתר היא **v20.0.0-beta.1** (בטא; בכותרת ובפס המשני). מקור אמת: `VERSION` + `package.json` — ראו `docs/VERSIONING.md`.
+
+## ✅ v20.0.0-beta.1 (Mar 2026) — BETA
+
+- **AI Builder BETA:** לשונית נפרדת, תגיות מאמן/דמו/פרופיל/מבנה סשן, API Gemini דרך `/api/generate-workout` (דורש `GEMINI_API_KEY` ב־Vercel).
+- **גרסה:** שחרור בטא ראשון ב־v20.
 
 ## ✅ v19.8.3 (Mar 2026)
 
@@ -12,7 +17,7 @@
 ## ✅ v19.8.2 (Mar 2026)
 
 - **About & credits**: לשונית About, קרדיטים ב־Sources, פוטר גלובלי.
-- **מקורות**: CrossFit Linchpin הוסר מהאפליקציה ומ־fetch.
+- **מקורות**: מקור Linchpin הוסר מהאפליקציה ומ־fetch.
 
 ## ✅ v19.8.1 (Mar 2026)
 
@@ -36,10 +41,10 @@
 ## 🚀 Quick Upgrade
 
 ```bash
-unzip duck-wod-v19.8.3.zip
+unzip duck-wod-v20.0.0-beta.1.zip
 cd your-repo && rm -rf * 
-cp -r ../duck-wod-v19.8.3/* . && cp ../duck-wod-v19.8.3/.gitignore . && cp -r ../duck-wod-v19.8.3/.github .
-git add . && git commit -m "🔧 v19.8.3" && git push
+cp -r ../duck-wod-v20.0.0-beta.1/* . && cp ../duck-wod-v20.0.0-beta.1/.gitignore . && cp -r ../duck-wod-v20.0.0-beta.1/.github .
+git add . && git commit -m "🔧 v20.0.0-beta.1" && git push
 ```
 
 Workflow runs automatically after push!
@@ -47,8 +52,8 @@ Workflow runs automatically after push!
 ## 📋 Sources
 
 **Special**: Hero • Benchmark • Open  
-**Boxes**: myleo • CrossFit.com • Restoration • 1013 • Panda • Ton Bridge
+**Boxes**: myleo • Official site • Restoration • 1013 • Panda • Ton Bridge
 
 ---
 
-**Version 19.8.3** • Mar 2026 • All systems operational ✅
+**Version 20.0.0-beta.1** • Mar 2026 • AI Builder BETA — בדיקות מומלצות ✅
