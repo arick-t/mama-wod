@@ -28,6 +28,24 @@ function geminiKeySourceEnvName() {
   return null;
 }
 
+/** No secret values — only whether known env names are non-empty (for Vercel troubleshooting). */
+function buildGeminiEnvDebug() {
+  const found = [];
+  for (let i = 0; i < GEMINI_KEY_ENV_NAMES.length; i++) {
+    const n = GEMINI_KEY_ENV_NAMES[i];
+    if (String(process.env[n] || "").trim()) found.push(n);
+  }
+  return {
+    onVercel: !!process.env.VERCEL,
+    vercelEnv: process.env.VERCEL_ENV || null,
+    nodeEnv: process.env.NODE_ENV || null,
+    geminiKeyEnvNamesFound: found,
+    /** Booleans only — see if other project env vars reach this function at all. */
+    githubTokenConfigured: !!String(process.env.GITHUB_TOKEN || "").trim(),
+    githubRepoConfigured: !!String(process.env.GITHUB_REPO || "").trim(),
+  };
+}
+
 const SYSTEM_INSTRUCTION_CORE = `You are the default "head coach" for this app: an expert group-class programmer grounded in GPP, variance across broad time and modal domains, and measurable workouts.
 
 Output contract:
@@ -274,6 +292,7 @@ module.exports = async function handler(req, res) {
         geminiKeySourceEnv: configured ? geminiKeySourceEnvName() : null,
         modelEnv: (process.env.GEMINI_MODEL || "").trim() || null,
         runningOnVercel: !!process.env.VERCEL,
+        debug: buildGeminiEnvDebug(),
         hint: configured
           ? "POST JSON with action generate or explain."
           : `No API key visible to this function. In Vercel add one of: ${GEMINI_KEY_ENV_NAMES.join(", ")} (Production + Redeploy). Open Vercel → this project → Settings → General → confirm Root Directory is the repo root (folder must contain /api).`,
@@ -297,7 +316,8 @@ module.exports = async function handler(req, res) {
     if (!key) {
       return res.status(503).json({
         error: "Server missing Gemini API key at runtime.",
-        hint: `Add one of: ${GEMINI_KEY_ENV_NAMES.join(", ")} for Production, Save, Redeploy. Self-check: GET this same URL in a browser — geminiKeyConfigured should be true.`,
+        hint: `Add one of: ${GEMINI_KEY_ENV_NAMES.join(", ")} for Production, Save, Redeploy. If debug.geminiKeyEnvNamesFound is [] but variables exist in the dashboard: same Vercel project, recreate the variable, ensure Production is checked, then Redeploy (turn off build cache if offered).`,
+        debug: buildGeminiEnvDebug(),
       });
     }
 
