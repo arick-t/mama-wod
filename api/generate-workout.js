@@ -1,12 +1,31 @@
 /**
  * Vercel serverless: AI workout generation (Gemini). API key only on server.
- * Env: GEMINI_API_KEY (Google AI Studio). Optional: GEMINI_MODEL (default gemini-2.0-flash).
+ * Env: GEMINI_API_KEY (preferred). Also accepts GOOGLE_GENERATIVE_AI_API_KEY / GOOGLE_AI_API_KEY.
+ * Optional: GEMINI_MODEL (default gemini-2.0-flash). Optional: GEMINI_FETCH_BUDGET_MS.
  */
 
 function allowCors(res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+}
+
+const GEMINI_KEY_ENV_NAMES = ["GEMINI_API_KEY", "GOOGLE_GENERATIVE_AI_API_KEY", "GOOGLE_AI_API_KEY"];
+
+function resolveGeminiApiKey() {
+  for (let i = 0; i < GEMINI_KEY_ENV_NAMES.length; i++) {
+    const v = String(process.env[GEMINI_KEY_ENV_NAMES[i]] || "").trim();
+    if (v) return v;
+  }
+  return "";
+}
+
+function geminiKeySourceEnvName() {
+  for (let i = 0; i < GEMINI_KEY_ENV_NAMES.length; i++) {
+    const name = GEMINI_KEY_ENV_NAMES[i];
+    if (String(process.env[name] || "").trim()) return name;
+  }
+  return null;
 }
 
 const SYSTEM_INSTRUCTION_CORE = `You are the default "head coach" for this app: an expert group-class programmer grounded in GPP, variance across broad time and modal domains, and measurable workouts.
@@ -241,14 +260,29 @@ module.exports = async function handler(req, res) {
   try {
     allowCors(res);
     if (req.method === "OPTIONS") return res.status(204).end();
+
+    if (req.method === "GET") {
+      const configured = !!resolveGeminiApiKey();
+      return res.status(200).json({
+        ok: true,
+        service: "generate-workout",
+        geminiKeyConfigured: configured,
+        geminiKeySourceEnv: configured ? geminiKeySourceEnvName() : null,
+        modelEnv: (process.env.GEMINI_MODEL || "").trim() || null,
+        runningOnVercel: !!process.env.VERCEL,
+        hint: configured
+          ? "POST JSON with action generate or explain."
+          : `No API key visible to this function. In Vercel add one of: ${GEMINI_KEY_ENV_NAMES.join(", ")} (Production + Redeploy). Open Vercel → this project → Settings → General → confirm Root Directory is the repo root (folder must contain /api).`,
+      });
+    }
+
     if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-    const key = String(process.env.GEMINI_API_KEY || "").trim();
+    const key = resolveGeminiApiKey();
     if (!key) {
       return res.status(503).json({
-        error: "Server missing GEMINI_API_KEY at runtime.",
-        hint:
-          "Vercel → Environment Variables: name exactly GEMINI_API_KEY, enabled for Production, value pasted with no extra spaces. Save, then Deployments → Redeploy (variables apply to new deploys). If you use Preview URL, ensure Preview is checked too.",
+        error: "Server missing Gemini API key at runtime.",
+        hint: `Add one of: ${GEMINI_KEY_ENV_NAMES.join(", ")} for Production, Save, Redeploy. Self-check: GET this same URL in a browser — geminiKeyConfigured should be true.`,
       });
     }
 

@@ -872,8 +872,10 @@ function buildAiErrorMessage(x) {
   if (x.status === 503) {
     var h503 = x.j && x.j.hint ? String(x.j.hint) : "";
     return (
-      "Service unavailable (503): the API does not see GEMINI_API_KEY when it runs. " +
-      (h503 || "In Vercel open this project → Environment Variables → confirm GEMINI_API_KEY (exact spelling), Production checked → Save → Redeploy the latest production deployment. Local: use .env.local and npm run dev:local.")
+      "Service unavailable (503): no Gemini API key visible to the server when it runs. " +
+      (h503 ||
+        "Vercel → Environment Variables: add GEMINI_API_KEY (or GOOGLE_GENERATIVE_AI_API_KEY) for Production → Save → Redeploy. In the same project, open GET …/api/generate-workout in a tab — if geminiKeyConfigured is false, wrong project or Root Directory is not the repo root.") +
+      " Still stuck? Check Vercel → Settings → General → Root Directory = repository root (must include the api/ folder)."
     );
   }
   if (x.status === 504) {
