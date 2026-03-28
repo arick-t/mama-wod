@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "ignoreCommand": "node scripts/vercel-analytics-only-skip.js",
   "functions": {
     "api/generate-workout.js": { "maxDuration": 60 },
     "api/event.js": { "maxDuration": 60 }
