@@ -2809,44 +2809,6 @@
     "2026-03-28": [
       {
         "date": "2026-03-28",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-28/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "instep rotation",
-              "lat stretch",
-              "samson Stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 db deadlifts",
-              "10 burpees",
-              "*partner is rowing"
-            ],
-            "sub_title": "amrap 5min"
-          },
-          {
-            "title": "CONDITIONING 30MIN",
-            "lines": [
-              "in teams of 2",
-              "30min amrap",
-              "",
-              "60/54/48 cal row",
-              "30 synchro db snatches 22,5/15kg",
-              "18 burpee pull-ups",
-              "* aerobic power [lactate threshold]"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-28",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260328",
@@ -2900,6 +2862,63 @@
               "– 5 Front Squats 205/135lbs",
               "Every 4th minute the entire team rests the full minute",
               "Working in a team of 3, one partner starts at a different station and follows the rotation. Every 4th minute the entire team rests the full minute"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-28",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 18.1",
+            "lines": [
+              "Complete as many rounds as possible in 20 minutes of:",
+              "8 toes-to-bars",
+              "10 dumbbell hang clean and jerks",
+              "14-cal. row",
+              "*Men use 50-lb. dumbbell*"
+            ]
+          }
+        ],
+        "note": "Open: Open 18.1"
+      },
+      {
+        "date": "2026-03-28",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-03-28/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "instep rotation",
+              "lat stretch",
+              "samson Stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 db deadlifts",
+              "10 burpees",
+              "*partner is rowing"
+            ],
+            "sub_title": "amrap 5min"
+          },
+          {
+            "title": "CONDITIONING 30MIN",
+            "lines": [
+              "in teams of 2",
+              "30min amrap",
+              "",
+              "60/54/48 cal row",
+              "30 synchro db snatches 22,5/15kg",
+              "18 burpee pull-ups",
+              "* aerobic power [lactate threshold]"
             ]
           }
         ]
@@ -2988,27 +3007,8 @@
           }
         ],
         "note": "Benchmark: Kelly"
-      },
-      {
-        "date": "2026-03-28",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.1",
-            "lines": [
-              "Complete as many rounds as possible in 20 minutes of:",
-              "8 toes-to-bars",
-              "10 dumbbell hang clean and jerks",
-              "14-cal. row",
-              "*Men use 50-lb. dumbbell*"
-            ]
-          }
-        ],
-        "note": "Open: Open 18.1"
       }
     ]
   },
-  "last_updated": "2026-03-28T07:48:41.582665"
+  "last_updated": "2026-03-28T08:08:22.126968"
 }
