@@ -229,10 +229,11 @@ async function parseGeminiJsonResponse(r) {
 
 function resolveGeminiFetchBudget() {
   const capParsed = parseInt(process.env.GEMINI_FETCH_BUDGET_CAP || "", 10);
-  const defaultCap = 9400;
+  /** Hobby ~10s wall: tight cap leaves ms for cold start + JSON; first request may still need client retries. */
+  const defaultCap = 9850;
   const cap = Number.isFinite(capParsed) && capParsed >= 2500 ? Math.min(120000, capParsed) : defaultCap;
   const rawParsed = parseInt(process.env.GEMINI_FETCH_BUDGET_MS || "", 10);
-  const defaultMs = 9200;
+  const defaultMs = 9650;
   const want = Number.isFinite(rawParsed) && rawParsed >= 2500 ? rawParsed : defaultMs;
   return { ms: Math.min(cap, want), cap };
 }
@@ -356,8 +357,8 @@ module.exports = async function handler(req, res) {
         systemInstruction: { parts: [{ text: systemText }] },
         contents: [{ role: "user", parts: [{ text: userText }] }],
         generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 768,
+          temperature: 0.65,
+          maxOutputTokens: 512,
         },
       };
 
@@ -417,7 +418,7 @@ module.exports = async function handler(req, res) {
       contents: [{ role: "user", parts: [{ text: `Workout:\n${workoutText}` }] }],
       generationConfig: {
         temperature: 0.4,
-        maxOutputTokens: 768,
+        maxOutputTokens: 512,
       },
     };
 
