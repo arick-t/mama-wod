@@ -1,0 +1,1738 @@
+# תרגילים ממאגר האימונים – מיפוי לקטגוריות איתור אימון
+
+דוח אוטומטי: חילוץ תרגילים מכל האימונים שמופיעים באפליקציה (workouts.json + special_cache.json) ומיפוי לקטגוריות הציוד בסעיף **איתור אימון (Find Workout)**.
+
+**תוכן הדוח:**
+1. **תרגילים לפי קטגוריה** – כל השורות שחולצו מהאימונים, מחולקות לפי 20 קטגוריות הציוד של איתור אימון (RUN, BARBELL, PULL-UP, וכו').
+2. **תרגילים שלא שויכו לקטגוריה** – שורות שנראות כמו תרגיל (מספרים, reps, rounds) אך לא התאימו לאף מילת מפתח ב־EQ; כל שורה מסומנת במקור שלה `[מקור]`.
+3. **מקורות והפרדת WOD** – לכל מקור: האם אנחנו מצליחים להפריד בין **WOD** (לב האימון) ל**חימום**, **כוח/סקיל** ו**שאר חלקים**. מקורות עם "ניתן להפריד? כן" מאפשרים חישוב ניקוד התאמה רק מטקסט ה־WOD.
+
+*נוצר על ידי: `python scripts/extract_exercises_report.py`*
+
+---
+
+## 1. תרגילים לפי קטגוריה (סעיף איתור אימון)
+
+### BARBELL
+
+- * prone press
+- *If you did 26.1, option to sub WBs for DB Snatch – unless you’re a sadist, in which case, crack on with the WBs! ;)
+- *Men perform 115-lb. OHS, 50-lb. DB snatches*
+- -Switch. Both partners complete Burpees and Air Squats in the round.
+- 1 Front Squat
+- 1 Hang Clean*
+- 1 Split Jerk @70-80% 1RM”)
+- 1 Squat Snatch @ 80% +
+- 1 back squat, 1 shoulder press, 1 deadlift
+- 1 deadlift
+- 1 minute of deadlifts
+- 1 minute of jerks
+- 1 minute of squat cleans
+- 1 power clean
+- 1 round of Cindy (5 pull ups+10 push ups+15 air squats)
+- 1 squat clean
+- 1-rep-max clean
+- 1-rep-max clean and jerk
+- 1-rep-max thruster (from the floor)
+- 1.5x body weight deadlift
+- 10 Light Dumbbell Push Press
+- 10 Neutral Grip DB Strict Press
+- 10 Squat Cleans 155#/105#
+- 10 Thrusters 60/42.5kg
+- 10 air squats
+- 10 back squats
+- 10 bench presses
+- 10 clean and jerks, 185 lb.
+- 10 clean and jerks, 225 lb.
+- 10 cossack squats
+- 10 db deadlifts
+- 10 deadlifts
+- 10 deadlifts (115 / 75 lb.)
+- 10 dumbbell hang clean and jerks
+- 10 dumbbell hang split snatches, left arm
+- 10 dumbbell hang split snatches, right arm
+- 10 dumbbell hang squat cleans
+- 10 dumbbell snatches
+- 10 dumbbell squat clean thrusters
+- 10 dumbbell thrusters, 35/50 lb
+- 10 front squats
+- 10 jerks
+- 10 kettlebell goblet squats
+- 10 kettlebell hang cleans
+- 10 left-arm dumbbell thrusters
+- 10 power cleans
+- 10 power snatches
+- 10 push press
+- 10 push presses
+- 10 right-arm dumbbell thrusters
+- 10 snatches
+- 10 squat clean thrusters
+- 10 squat cleans
+- 10 squat cleans (225/155)
+- 10 squat jumps
+- 10 sumo deadlift high pulls
+- 10 thrusters
+- 10 thrusters 40/30kg
+- 10 thrusters, weight 1
+- 10-meter barbell farmers carry
+- 100 bodyweight deadlifts
+- 100 pound Thruster, 12 reps
+- 100 pound Thruster, 15 reps
+- 100 pound Thruster, 18 reps
+- 100 pound Thruster, 21 reps
+- 100 pound Thruster, 3 reps
+- 100 pound Thruster, 6 reps
+- 100 pound Thruster, 9 reps
+- 100 squats
+- 100 thrusters
+- 106 deadlifts
+- 11 back squats
+- 11 bench presses
+- 11 bodyweight back squats
+- 11 bodyweight deadlifts
+- 11 clean and jerks, 105/155 lb
+- 11 dumbbell burpee deadlifts
+- 11 kettlebell thrusters
+- 11 power snatches
+- 11 push presses
+- *... ועוד 621*
+
+### BIKE
+
+- **If a bike is not available, use any machine that measures calories.
+- *partner is biking
+- *remaining time bike/ski
+- 0.5/0.4k Air Bike
+- 1,000-meter air bike
+- 10,000/9000m C2 Bike or 12/10k Echo/Assault Bike*
+- 10-calorie bike
+- 12/10 Calorie Air Bike
+- 15/12 Cal Air Bike
+- 17-calorie bike
+- 2. 10-15cal bike/ski
+- 2. bike/ski
+- 20/18/16 cal bike
+- 200m Row or 400m Bike
+- 25/20 cal ski/bike
+- 25/20cal bike/ski
+- 25/20cal ski/bike
+- 3,000-meter air bike
+- 5,000-meter air bike
+- 500-meter air bike
+- Bike 1,000m Between Sets to Flush)
+- Bike Between Sets as needed to Flush
+- Bike for 3:00 between sets for rest
+- During your rest, easy flushing on the Echo Bike or C2 Bike works best.
+- Ideally use Bike – if Rowing, add 2 cals to each section.
+- Partner 1: 250m row/500m bike
+- choose: run, bike, row, or ski
+
+### BOX
+
+- *At 0:00, 4:00, 8:00, 12:00 and 16:00 perform 12 Burpee Box Jump Overs 24/20″
+- *Sit on a box with thighs parallel to floor and jump up explosively as high as possible, or onto another box.
+- . Affiliate owners Justin and Michelle Brown said Schwartzenberger was the "epitome of what every box wants in an athlet
+- 1,000 weighted box step-ups
+- 10 Box Jumps
+- 10 box jumps
+- 10 burpee box jumps
+- 12 Step Ups
+- 12 box jumps
+- 13 box jumps
+- 14 box jumps
+- 15 Box jumps (20")
+- 15 Box jumps (24")
+- 15 Box jumps or step-ups, 20" box
+- 15 Box jumps, 20" box
+- 15 Box jumps, 24" box
+- 15 Burpee Box Jump Overs, 20³
+- 15 box jump-overs
+- 15 box jumps
+- 15 box jumps, 20-inch
+- 15 box jumps, 24-inch
+- 15 burpee box jump-overs
+- 15 burpee box jumps
+- 15 burpee box jumps 60/50cm
+- 18 box jump overs
+- 18 box jump overs 60/50cm
+- 18 box jump-overs
+- 18 medball box step overs
+- 18 medicine-ball box step-overs
+- 18 medicine-ball box step-overs 40 wall-ball shots
+- 18 medicine-ball box step-overs 66 wall-ball shots
+- 1:00 Box Jump
+- 20 box jumps
+- 20 box step-ups with a weighted backpack
+- 20 burpee box jumps
+- 21 Box jumps (60/50 cm)
+- 21 box jumps
+- 21 box step-ups (20/24 inches)
+- 22 box jumps
+- 24 box jumps
+- 25 box jumps
+- 26 barbell back-rack step-ups
+- 26 box step-ups
+- 27 box jumps
+- 30 Box Jumps 30/24 inch
+- 30 Burpee Box Jump Overs, 20³
+- 30 box jumps
+- 30 box jumps 24/20"
+- 30 box jumps, 24 in.
+- 34 box jumps
+- 35-lb dumbbell, 20-in box
+- 4 burpee box jumps
+- 4 burpee box jumps, 24-inch box
+- 4. 12-16 double db box step ups (50cm)
+- 4. 15-20 box jumps
+- 50 Burpee Box Jump Over 24/20″
+- 50 barbell step-ups
+- 50 box jumps
+- 50 dumbbell box step-ups
+- 50-lb. dumbbell, 24-in. box
+- 6 Burpees + 12 Step Ups
+- 6 Burpees + 6 Box Jump Overs
+- 6 Burpees + 6 Box Jumps
+- 6 box jumps (20/24 inches)
+- 6 burpee box jump-overs
+- 60 Burpee Box Jump Overs, 20³
+- 66 box jump
+- 70 S-DB Step Ups 50/35lbs to 24/20″
+- 8 Box Jump Overs
+- 8 box jumps
+- 8 burpee box jumps
+- 80 box step-overs
+- 9 box jumps
+- ? 14-lb (6-kg) medicine ball, 9-foot target, 20-inch box
+- ? 20-lb (9-kg) medicine ball, 10-ft target, 24-inch box
+- Box jumps
+- Burpee Box Jump Overs 24"/20"
+- Fight Gone Bad style workout originally programmed for professional boxer Robert “The Ghost” Guerrero's training on 1406
+- Max-reps box step-ups
+- Men use 50-lb. dumbbell and 24-in. box
+- *... ועוד 98*
+
+### DOUBLE UNDERS
+
+- *Stop and perform 40 double-unders every 2 minutes, including at 0:00.
+- 10 double-unders
+- 100 double-unders
+- 150 double-unders
+- 1:00 double-under attempts
+- 20 double-unders
+- 200 double-unders
+- 210 double-unders
+- 24 Double Unders
+- 24 double-unders
+- 24 double-unders (each)
+- 30 Double-unders
+- 30 double-unders
+- 35 double-unders
+- 36 double-unders
+- 40 double-unders
+- 42 double-unders
+- 50 Double Unders
+- 50 double under
+- 50 double-unders
+- 60 double-unders
+- 66 double-unders
+- 77 double-unders
+- 80-100 calories; 60-90 burpees; 300+ double-unders.
+- 90 Double Unders
+- 90 Double-unders
+- 90 double-unders
+- Double-Under (Sc. SU x2)
+- Double-unders
+
+### DUMBBELL
+
+- * db overhead triceps extension
+- *If you did 26.1, option to sub WBs for DB Snatch – unless you’re a sadist, in which case, crack on with the WBs! ;)
+- *Men perform 115-lb. OHS, 50-lb. DB snatches*
+- 1,000 weighted box step-ups
+- 1. 10-16 gorilla rows
+- 10 Light Dumbbell Push Press
+- 10 Neutral Grip DB Strict Press
+- 10 db deadlifts
+- 10 dumbbell hang clean and jerks
+- 10 dumbbell hang split snatches, left arm
+- 10 dumbbell hang split snatches, right arm
+- 10 dumbbell hang squat cleans
+- 10 dumbbell snatches
+- 10 dumbbell squat clean thrusters
+- 10 dumbbell thrusters, 35/50 lb
+- 10 left-arm dumbbell thrusters
+- 10 right-arm dumbbell thrusters
+- 11 dumbbell burpee deadlifts
+- 12 Dumbbell Front Squats (50s/35s)
+- 12 Step Ups
+- 12 double db push press
+- 12 dumbbell snatches
+- 12 dumbbell squat clean thrusters
+- 12 dumbbell walking lunges
+- 12 single db ground to overhead
+- 14 dumbbell squat clean thrusters
+- 15 Box jumps or step-ups, 20" box
+- 15 dumbbell snatches, arm 1
+- 15 dumbbell snatches, arm 2
+- 15 dumbbell split cleans
+- 15 lateral burpees over dumbbell
+- 16 dumbbell squat clean thrusters
+- 18 dumbbell hang squat cleans
+- 2 dumbbell squat clean thrusters
+- 20 alternating db hang snatches
+- 20 alternating dumbbell snatches
+- 20 box step-ups with a weighted backpack
+- 20 dumbbell alternating power snatches
+- 20 dumbbell snatches
+- 20 dumbbell squat cleans
+- 200-ft. dumbbell overhead lunge
+- 21 Turkish get-ups, left arm
+- 21 Turkish get-ups, right arm
+- 21 box step-ups (20/24 inches)
+- 21 dumbbell snatches, arm 1
+- 21 dumbbell snatches, arm 2
+- 21 dumbbell snatches, left arm
+- 21 dumbbell snatches, right arm
+- 21 lateral burpees over dumbbell
+- 23 dumbbell squat cleans
+- 24 db hang snatches 22,5/15kg
+- 25 weighted pull-ups with a dumbbell
+- 26 barbell back-rack step-ups
+- 26 box step-ups
+- 30 dumbbell snatches
+- 30 dumbbell squat cleans
+- 35-lb dumbbell, 20-in box
+- 4 dumbbell squat clean thrusters
+- 4 dumbbell thrusters
+- 4 x 6 heavy dual db floorpress
+- 4. 12-16 double db box step ups (50cm)
+- 40 dumbbell snatches
+- 44 dumbbell bent-over rows
+- 44 dumbbell deadlifts
+- 44 dumbbell floor presses
+- 44 dumbbell front squats
+- 44 dumbbell hang clean and jerks
+- 44 dumbbell lunges
+- 5 dumbbell deadlifts
+- 50 barbell step-ups
+- 50 dumbbell box step-ups
+- 50 dumbbell snatches
+- 50-lb. dumbbell, 24-in. box
+- 50-lb. dumbbells
+- 50-meter dumbbell waiters walk, left arm
+- 50-meter dumbbell waiters walk, right arm
+- 6 Burpees + 12 Step Ups
+- 6 Double Dumbbell Ground to Overhead (50s/35s)
+- 6 alternating dumbbell snatches
+- 6 burpees over db
+- *... ועוד 62*
+
+### HANDSTAND
+
+- *Every second of the handstand hold is a rep.
+- 1 parallette handstand push-up
+- 1 wall walk
+- 10 handstand push-ups
+- 10 parallette handstand push-ups
+- 10 strict handstand push-ups
+- 11 deficit handstand push-ups
+- 12 handstand push-ups
+- 15 handstand push-ups
+- 15 wall walks
+- 18 handstand push-ups
+- 2 parallette handstand push-ups
+- 20 strict handstand push-ups
+- 200-ft. handstand walk
+- 21 handstand push-ups
+- 21 wall walks
+- 25 handstand push-ups
+- 25 ring handstand push-ups
+- 25-50-25ft Handstand Walk (Scale 2-4-2 Wall Walks)
+- 3 handstand push-ups
+- 3 parallette handstand push-ups
+- 3 wall walks
+- 30 handstand push-ups
+- 30 ring handstand push-ups
+- 4 handstand push-ups
+- 4 parallette handstand push-ups
+- 5 Strict HSPU
+- 5 parallette handstand push-ups
+- 5 wall walks
+- 50 strict handstand push-ups
+- 50-ft. handstand walk
+- 55 handstand push-ups
+- 6 handstand push-ups
+- 6 handstand push-ups on dumbbells
+- 6 parallette handstand push-ups
+- 6 strict handstand push-ups
+- 6 wall walks
+- 7 handstand push-ups
+- 7 parallette handstand push-ups
+- 8 freestanding handstand push-ups
+- 8 handstand push-ups
+- 8 parallette handstand push-ups
+- 9 handstand push-ups
+- 9 parallette handstand push-ups
+- 9 wall walks
+- :10-:20 Handstand Hold
+- Etc., adding 3 reps to the handstand push-up each round, and 3 reps to the clean every 3 rounds.
+- Freestanding handstand hold*
+- Handstand push up
+- Handstand push-ups
+- Max-rep handstand push-ups
+- buy-in: 10 wall walks
+
+### KETTLEBELL
+
+- 10 kettlebell goblet squats
+- 10 kettlebell hang cleans
+- 10 kettlebell swings
+- 100-meter kettlebell farmers carry
+- 11 kettlebell thrusters
+- 11 walking lunges with two kettlebells
+- 12 KB Squat
+- 12 kettlebell swings
+- 14 single-arm kettlebell thrusters, 7 each arm
+- 15 kettlebell swings
+- 16/24kg KB
+- 19 kettlebell swings
+- 20 kettlebell hang cleans
+- 20 kettlebell snatches, 10 each arm
+- 20 kettlebell swings
+- 20 kettlebell swings, 1/1.5 pood
+- 200-meter kettlebell farmers carry
+- 21 American Kettlebell Swings
+- 22 kettlebell swings
+- 26 kettlebell swings
+- 28 kettlebell clean and jerks
+- 28 kettlebell swings
+- 30 kettlebell hang cleans
+- 30 kettlebell swings
+- 35 kettlebell swings
+- 4 KB Push Press
+- 4 single-arm kettlebell snatches (athlete's choice of arm)
+- 45 kettlebell swings
+- 50 kettlebell swings
+- 50-meter kettlebell farmers carry
+- 66 kettlebell swings
+- 7 kettlebell swings
+- 8 1.5/2-pood kettlebell swings
+- 8 KB Russian Swing
+- Kettlebell Swings
+- Kettlebell swings
+- Men: 1.5-pood kettlebell
+- With a single kettlebell for time:
+- Women: 1-pood kettlebell
+- ♀ 75-lb barbell, 1-pood kettlebell, 20-inch box
+- ♀ 105-lb barbell, 14-lb medicine ball to a 9-foot target, 35-lb kettlebell
+- ♀ 14-lb medicine ball to a 9-foot target, 20-inch box, 35-lb kettlebell
+- ♀ 155-lb barbell, 35-lb kettlebell
+- ♀ 155-lb barbell, 53-lb kettlebell
+- ♀ 185-lb barbell, 35-lb kettlebell, 20-inch box
+- ♀ 185-lb deadlifts, 53-lb kettlebell, 75-lb overhead squats, 20-inch box, 30-lb dumbbells
+- ♀ 30-inch box, 53-lb kettlebell
+- ♀ 35-lb kettlebell
+- ♀ 35-lb kettlebell, 14-lb ball to 9-foot target
+- ♀ 35-lb kettlebell, 20-inch box
+- ♀ 35-lb kettlebell, 24-inch box
+- ♀ 35-lb kettlebell, 65-lb barbell, 20-inch box
+- ♀ 35-lb kettlebells
+- ♀ 53-lb kettlebell, 20-inch box
+- ♀ 53-lbkettlebell, 20-inch box, 14-lb medicine ball to a 9-foot target
+- ♀ 70-lb deadlift, 20-inch box, 35-lb kettlebell, 35-lb thruster, 14-lb medicine ball to a 9-foot target
+- ♀ 95-lb barbell, 15-foot rope, 53-lb kettlebell, 25-lb plate
+- ♀ 95-lb thrusters, 165-lb deadlifts, 53-lb kettlebell
+- ♂ 110-lb deadlift, 24-inch box, 53-lb kettlebell, 55-lb thruster, 20-lb medicine ball to a 10-foot target
+- ♂ 115-lb barbell, 1.5-pood kettlebell, 24-inch box
+- ♂ 135-lb barbell, 15-foot rope, 70-lb kettlebell, 45-lb plate
+- ♂ 135-lb thrusters, 245-lb deadlifts, 70-lb kettlebell
+- ♂ 155-lb barbell, 20-lb medicine ball to a 10-foot target, 53-lb kettlebell
+- ♂ 20-lb medicine ball to a 10-foot target, 24-inch box, 53-lb kettlebell
+- ♂ 225-lb barbell, 53-lb kettlebell
+- ♂ 225-lb barbell, 70-lb kettlebell
+- ♂ 275-lb barbell, 53-lb kettlebell, 24-inch box
+- ♂ 275-lb deadlifts, 70-lb kettlebell, 115-lb overhead squats, 24-inch box, 45-lb dumbbells
+- ♂ 36-inch box, 70-lb kettlebell
+- ♂ 44-lb kettlebell, 20-lb ball to 10-foot target
+- ♂ 53-lb kettlebell
+- ♂ 53-lb kettlebell, 24-inch box
+- ♂ 53-lb kettlebell, 30-inch box
+- ♂ 53-lb kettlebell, 95-lb barbell, 24-inch box
+- ♂ 53-lb kettlebells
+- ♂ 70-lb kettlebell, 24-inch box
+- ♂ 72-lb kettlebell, 24-inch box, 20-lb medicine ball to a 10-foot target
+
+### LUNGE
+
+- 10 Lunge and Passthrough with PVC
+- 10 reverse lunges
+- 100-foot overhead walking lunge
+- 11 walking lunges with two kettlebells
+- 12 dumbbell walking lunges
+- 15 front-rack weighted lunges
+- 150 walking lunges
+- 16 Bodyweight Walking Lunges
+- 1:00 Max Step Back Lunges
+- 1:00 Spiderman Lunges
+- 20 overhead walking lunges
+- 200-ft. dumbbell overhead lunge
+- 21 overhead walking lunges
+- 21 walking lunges
+- 21-yard walking lunge with a 45-lb plate overhead
+- 24 walking lunge steps
+- 25-ft. overhead walking lunge
+- 44 dumbbell lunges
+- 50 walking lunge steps
+- 50-ft. weighted walking lunge
+- 60 OH plate lunge 10/15kg
+- 7-meter overhead walking lunge
+- 8 Goblet Reverse Lunges (Squats in R3 and R4)
+- 80-foot dumbbell overhead walking lunge
+- Men lunge 95 lb.
+- Women lunge 65 lb.
+
+### PULL-UP
+
+- * If you have a 14-/20-lb weight vest, wear it for as much of the workout as possible.
+- * muscular endurance
+- * vo2 max & muscular endurance
+- *Add 5 burpee pull-ups after each round.
+- *rx+ option: chest to bar pull ups
+- 1 muscle-up
+- 1 round of Cindy (5 pull ups+10 push ups+15 air squats)
+- 1. ring rows
+- 10 L pull-ups
+- 10 Muscle-ups
+- 10 Toes to bar
+- 10 bar muscle-ups
+- 10 burpee pull-ups
+- 10 chest-to-bar pull-ups
+- 10 muscle-ups
+- 10 pull-ups
+- 10 ring muscle-ups
+- 10 ring rows
+- 10 strict pull-ups
+- 10 toes-to-bars
+- 10 weighted pull-ups
+- 100 chest-to-bar pull-ups
+- 100 pull-ups
+- 100 toes-to-bars
+- 11 chest-to-bar pull-ups
+- 11 pull-ups
+- 11 weighted pull-ups
+- 12 Bar Muscle-Ups
+- 12 Chest to bar Pull-ups
+- 12 Pull-Ups
+- 12 Toes to Bar
+- 12 Toes-to-bar
+- 12 bar muscle-ups
+- 12 burpee bar muscle-ups
+- 12 chest-to-bar pull-ups
+- 12 pull-ups
+- 12 ring muscle-ups
+- 12 strict pull-ups
+- 13 burpee pull-ups
+- 13 pull-ups
+- 14 toes-to-bars
+- 15 Chest to bar Pull-ups
+- 15 Chin over bar Pull-ups
+- 15 Pull up
+- 15 Toes-to-bar
+- 15 bar muscle-ups
+- 15 burpee pull-ups
+- 15 chest-to-bar pull-ups
+- 15 muscle-ups
+- 15 pull-ups
+- 15 seconds of weighted pull-ups
+- 15 toes-to-bars
+- 150 burpee pull-ups
+- 16 bar muscle-ups
+- 16 toes-to-bars
+- 17 pull-ups
+- 18 Chest to bar Pull-ups
+- 18 Toes-to-bar...
+- 18 chest-to-bar pull-ups
+- 18 pull-ups
+- 18 toes-to-bars
+- 19 pull-ups
+- 19 toes-to-bars (total)
+- 2 bar muscle-ups
+- 2 muscle-ups
+- 2 strict pull-ups
+- 20 L pull-ups
+- 20 chest-to-bar pull-ups
+- 20 muscle-ups
+- 20 pull-ups
+- 20 strict pull-ups
+- 21 Chest to bar Pull-ups...
+- 21 L pull-ups
+- 21 pull-ups
+- 21 toes to bar
+- 22 burpee pull-ups
+- 22 muscle-ups
+- 25 Chest 2 Bar Pull-Ups
+- 25 L pull-ups
+- 25 chest-to-bar pull-ups
+- *... ועוד 116*
+
+### PUSH-UP
+
+- 1 parallette handstand push-up
+- 1 round of Cindy (5 pull ups+10 push ups+15 air squats)
+- 10 Light Dumbbell Push Press
+- 10 Neutral Grip DB Strict Press
+- 10 Push-ups
+- 10 hand-release push-ups
+- 10 handstand push-ups
+- 10 parallette handstand push-ups
+- 10 plank push ups
+- 10 push press
+- 10 push presses
+- 10 push ups
+- 10 push-ups
+- 10 ring push-ups
+- 10 scap. push ups
+- 10 strict handstand push-ups
+- 100 hand-release push-ups
+- 100 push-ups
+- 11 deficit handstand push-ups
+- 11 push presses
+- 115 pound Push press, 12 reps
+- 12 Push-ups
+- 12 double db push press
+- 12 handstand push-ups
+- 12 push presses
+- 13 push-ups
+- 15 handstand push-ups
+- 15 push-ups
+- 16 Push Press 75/55lbs
+- 16 push presses
+- 18 hand-release push-ups
+- 18 handstand push-ups
+- 18 push-ups
+- 19 push-ups
+- 1:00 Push Press 35/25 kg
+- 2 minutes of push-ups
+- 2 parallette handstand push-ups
+- 20 Push up
+- 20 diamond push ups
+- 20 hand release push ups
+- 20 push presses
+- 20 push-ups
+- 20 strict handstand push-ups
+- 200 push-ups
+- 21 handstand push-ups
+- 22 push-ups
+- 24 push-ups
+- 25 handstand push-ups
+- 25 push-ups
+- 25 ring handstand push-ups
+- 26 ring push-ups
+- 3 handstand push-ups
+- 3 parallette handstand push-ups
+- 30 handstand push-ups
+- 30 push presses
+- 30 push-ups
+- 30 ring handstand push-ups
+- 31 push-ups
+- 34 push-ups
+- 4 KB Push Press
+- 4 handstand push-ups
+- 4 parallette handstand push-ups
+- 40 hand-release push-ups
+- 40 ring push-ups
+- 49 push-ups
+- 5 Strict HSPU
+- 5 parallette handstand push-ups
+- 5 push press
+- 50 push-ups
+- 50 strict handstand push-ups
+- 53 push-ups
+- 55 handstand push-ups
+- 55 pound Push press, 12 reps
+- 6 handstand push-ups
+- 6 handstand push-ups on dumbbells
+- 6 parallette handstand push-ups
+- 6 push-ups
+- 6 strict handstand push-ups
+- 7 handstand push-ups
+- 7 parallette handstand push-ups
+- *... ועוד 32*
+
+### RINGS
+
+- *– Score is total reps completed at the end of the 6 rounds. Keep a running count from movement to movement, or add up a
+- 1. ring rows
+- 10 ring muscle-ups
+- 10 ring push-ups
+- 10 ring rows
+- 10 strict ring dips
+- 10 toes-to-rings
+- 12 ring muscle-ups
+- 15-foot L-sit rope climb, 1 ascent
+- 20 Med Ball Sit Up (throw) with Russian Twist
+- 20 ring dips
+- 25 ring dips
+- 25 ring handstand push-ups
+- 26 ring push-ups
+- 3 ring muscle-ups
+- 3-6 Ring Muscle Ups
+- 30 ring dips
+- 30 ring handstand push-ups
+- 35 ring rows
+- 40 ring push-ups
+- 8 ring muscle-ups
+- Banded Ring/Matador Dip OR Ring Push-Ups
+- Banded pull-ups or heavy ring rows
+- During each burpee pull-up perform a strict push-up, jump to a bar that is ideally 12 inches above your max standing rea
+- During your rest, easy flushing on the Echo Bike or C2 Bike works best.
+- Elevated Ring Push-Ups
+- For time, wearing a 20-lb vest or body armor:
+- For time, wearing a 20-lb vest:
+- Kerrie Orozco, 29, was killed in the line of duty on May 20, 2015. A seven-year veteran of the Omaha Police Department, 
+- Los Angeles County Firefighter Specialist Arnaldo "Arnie" Quinones, 34, was killed in the line of duty on Sunday, Aug. 3
+- Mark Thomas Urban, 40, was killed on Sept. 27, 2013, during a parachute jump while conducting an equipment evaluation at
+- Min 2: 5-7 Strict Ring Dips
+- Officer David Vanbuskirk, 36, of Henderson, Nevada, was killed on July 23, 2013, when he fell during a nighttime aerial 
+- Ring Dips
+- Ring Rows
+- Ring dips
+- Spend at least 2:00 on a machine or walking nice and slow during your rest periods
+- Strict Ring Dips
+- Switch when machine partner is finished. No strict pull ups? Use a band or 8 ring rows.
+- Wearing a weight vest, 10 rounds for time of:
+- Wearing a weight vest, 3 rounds for time of:
+- on the rings, slowly, with straight body and arms
+- pull-ups to ring row or jumping pull ups
+- – Score is total reps completed at the end of the 6 rounds. Keep a running count from movement to movement, or add up al
+
+### ROPE CLIMB
+
+- 1 legless rope climb to 15 feet, beginning from seated
+- 1 rope climb
+- 1 rope climb to 15 feet
+- 10 rope climbs to 15 feet
+- 12 rope climbs
+- 15-foot L-sit rope climb, 1 ascent
+- 2 legless rope climbs to 15 feet
+- 3 minutes of rope climbs
+- 3 rope climbs
+- 3 rope climbs to 15 feet
+- 5 rope climbs to 15 feet
+- 6 rope climbs
+- 9 rope climbs
+- Begin the rope climbs seated on the floor.
+- Every 4:00 perform 6 rope climbs (3 climbs each)
+- Partition the toes-to-bars, front squats, and rope climbs as needed. Start and finish with the run.
+- ♀ 105-lb barbell, 15-foot rope climb
+- ♀ 15-foot rope climb, 95-lb thrusters
+- ♂ 15-foot rope climb, 135-lb thrusters
+- ♂ 155-lb barbell, 15-foot rope climb
+
+### ROW
+
+- "She never complained no matter how difficult the workout," the Browns wrote in an email. "She simply showed up, got the
+- * score: total row cal
+- *remaining time row
+- . Affiliate owners Justin and Michelle Brown said Schwartzenberger was the "epitome of what every box wants in an athlet
+- 1,000-meter row
+- 1,065-foot versa climb or 1,065-m row or ski
+- 1,500-meter row
+- 1,979-meter row
+- 1,996-meter row
+- 1. 10-16 gorilla rows
+- 1. ring rows
+- 10 Body and Arms only row strokes + :30 full strokes rowing
+- 10 Legs and Body only row strokes+ :30 full stroke rowing
+- 10 Pause (at the finish) row strokes + :30 full strokes rowing
+- 10 ring rows
+- 10/15-calorie row
+- 10/8cal row
+- 100-calorie row
+- 1000 m Row
+- 12/10 cal row
+- 13-calorie row
+- 14-cal. row
+- 15/12 Calorie Row
+- 15/12cal row
+- 15/21-calorie row
+- 150/125m row
+- 17-calorie row
+- 19-cal. row
+- 1:00 Cal Row /Machine
+- 1:00 calorie row
+- 2,000-meter row
+- 20 Med Ball Sit Up (throw) with Russian Twist
+- 20 burpees over the rower
+- 20-calorie row
+- 200/180m row
+- 200m Row or 400m Bike
+- 30-calorie row
+- 35 ring rows
+- 40-calorie row
+- 400/360m row
+- 44 dumbbell bent-over rows
+- 50-calorie row
+- 500-meter row
+- 500m Row
+- 55-calorie row
+- 565-meter row or run
+- 60-calorie row
+- 60/75-calorie row
+- 7/9-calorie row
+- 80-cal. row
+- 80/70 Calorie Row
+- 800/725m Row
+- 9-12-15  Calorie Row
+- Banded pull-ups or heavy ring rows
+- Finish with a 1,742-meter row.
+- Firebreather Score: At least 3:00 of rowing each interval
+- Ideally use Bike – if Rowing, add 2 cals to each section.
+- Men deadlift 225 lb. and throw 20-lb. ball to 10-ft. target
+- Men throw 20-lb. ball to 10-ft. target
+- Min 3:10/12 cal Row
+- On Sept. 15, 2020, youth seminar staff member Kelly Brown passed away after a courageous five-year battle wi
+- Partner 1: 250m row/500m bike
+- Perform 1 minute of work at each of the 5 stations. Move immediately to the next station after 1 minute. The clock does 
+- Ring Rows
+- Row (calories)
+- Row 1,000 meters
+- Row 250m Between Sets to Flush
+- Row 440 meter
+- Row Cals
+- Row for Meters
+- Row for max distance
+- Switch when machine partner is finished. No strict pull ups? Use a band or 8 ring rows.
+- Target Score: At least 2:30 of rowing each interval
+- Then, 2,024-meter row
+- Then, 31-calorie row
+- Women deadlift 155 lb. and throw 14-lb. ball to 9-ft. target
+- choose: run, bike, row, or ski
+- or 1,065-m row or ski
+- pull-ups to ring row or jumping pull ups
+- row cal in remaining time
+- *... ועוד 1*
+
+### RUN
+
+- "She never complained no matter how difficult the workout," the Browns wrote in an email. "She simply showed up, got the
+- *1 Shuttle Run = 25ft + 25ft
+- *200-meter sandbag carry after each round
+- *Run performed as 25 meters out, 25 meters back, 3 times. If weather is a limiting factor, perform 7 shuttle runs (25ft 
+- *– Score is total reps completed at the end of the 6 rounds. Keep a running count from movement to movement, or add up a
+- 1,000-meter air bike
+- 1,000-meter row
+- 1,000-meter run
+- 1,200-meter run
+- 1,500-meter row
+- 1,600-meter run
+- 1,979-meter row
+- 1,996-meter row
+- 1-mile farmers carry
+- 1-mile run
+- 1-mile run with a medicine ball
+- 1.5-mile run
+- 10 100-meter shuttle sprints
+- 10 shuttle runs (1 rep = 25 ft out/25 ft back)
+- 10-meter barbell farmers carry
+- 100-meter bear crawl
+- 100-meter farmers carry
+- 100-meter kettlebell farmers carry
+- 100-meter run
+- 100-meter sprint
+- 10x50ft Shuttle Run, together
+- 12 100-meter shuttle sprints
+- 14 100-meter shuttle sprints
+- 150-meter run
+- 16 100-meter shuttle sprints
+- 1K run
+- 2 100-meter shuttle sprints
+- 2,000-meter row
+- 2-mile run
+- 200-m run
+- 200-meter farmers carry
+- 200-meter kettlebell farmers carry
+- 200-meter run
+- 200-meter run with a plate overhead
+- 200-meter single-arm barbell farmers carry, 135/95 lb
+- 200-meter sprint
+- 200m Run
+- 200m run
+- 3 Shuttle Runs*
+- 3 minutes to run 400 meters
+- 3,000-meter air bike
+- 300-meter jog
+- 300-meter shuttle run (50-meters out and back x 6, 100-meters out and back x 3)
+- 300-meter sprint
+- 4 100-meter shuttle sprints
+- 400-m run
+- 400-m run (together)
+- 400-meter Run
+- 400-meter run
+- 400-meter run with a medicine ball
+- 400-meter run with a plate
+- 400-meter sandbag carry
+- 400-meter single-arm barbell farmers carry, 95/65 lb
+- 400-meter sprint
+- 400m Run
+- 400m run
+- 5 Shuttle Runs (25ft out/back)
+- 5 Shuttle Runs*
+- 5,000-meter air bike
+- 50-meter bear crawl
+- 50-meter dumbbell waiters walk, left arm
+- 50-meter dumbbell waiters walk, right arm
+- 50-meter kettlebell farmers carry
+- 50-meter sled push
+- 500-meter air bike
+- 500-meter row
+- 565-meter row or run
+- 6 100-meter shuttle sprints
+- 600-meter run
+- 600m Run
+- 7 Shuttle Runs*
+- 7-meter overhead walking lunge
+- 710-meter plate carry
+- 8 100-meter shuttle sprints
+- 800-meter run
+- *... ועוד 60*
+
+### SKI
+
+- *remaining time bike/ski
+- 1,065-foot versa climb or 1,065-m row or ski
+- 2. 10-15cal bike/ski
+- 2. bike/ski
+- 25/20 cal ski/bike
+- 25/20cal bike/ski
+- 25/20cal ski/bike
+- Officer David Vanbuskirk, 36, of Henderson, Nevada, was killed on July 23, 2013, when he fell during a nighttime aerial 
+- Ski Between Sets as needed to Flush
+- choose: run, bike, row, or ski
+- or 1,065-m row or ski
+
+### SLED
+
+- 50-foot arm-over-arm sled pull
+- 50-meter sled push
+- For the sled pull, use a load that is challenging but doesn't require extended rest periods.
+- arm-over-arm sled pull
+- ♀ 95-lb shoulder press, 35-lb farmers carry, 45-lb sled push
+- ♂ 135-lb shoulder press, 70-lb farmers carry, 90-lb sled push
+
+### TOES TO BAR
+
+- 10 Toes to bar
+- 10 toes-to-bars
+- 100 toes-to-bars
+- 12 Toes to Bar
+- 12 Toes-to-bar
+- 14 toes-to-bars
+- 15 Toes-to-bar
+- 15 toes-to-bars
+- 16 toes-to-bars
+- 18 Toes-to-bar...
+- 18 toes-to-bars
+- 19 toes-to-bars (total)
+- 21 toes to bar
+- 25 toes-to-bars
+- 3 Toes-to-bar
+- 3. 6-10 strict toes to bar
+- 30 toes to bar
+- 30 toes-to-bars
+- 31 toes-to-bars
+- 50 toes-to-bars
+- 6 Toes-to-bar
+- 6 toes-to-bars
+- 60 Toes to Bar
+- 7 toes-to-bars
+- 8 Toes to Bar
+- 8 toes-to-bars
+- 9 Toes-to-bar
+- Etc., alternating between toes-to-bars and bar muscle-ups every 2 rounds.
+- Min 2: 8-12 TTB
+- Partition the toes-to-bars, front squats, and rope climbs as needed. Start and finish with the run.
+
+### WALL BALL
+
+- 1-mile run with a medicine ball
+- 10 Wallballs 20/14lbs
+- 10 wall-ball shots
+- 10 wallballs
+- 100 wall-ball shots
+- 100 wall-ball shots (14/20 lb)
+- 120 wall-ball shots, 20-lb. ball to 10 ft.
+- 15 Unbroken Wallballs (any weight)
+- 15 Wall balls (10lbs to 9' target)
+- 15 Wall balls (14lbs to 9' target)
+- 15 Wall balls (20lbs to 10' target)
+- 15 Wall balls (20lbs to 9' target)
+- 150 Wall balls (10 lbs to 9' target)
+- 150 Wall balls (14 lbs to 9' target)
+- 150 Wall balls (20 lbs to 10' target)
+- 150 Wall balls (20 lbs to 9' target)
+- 150 Wall balls (20lbs to 9' target)
+- 150 wall balls 20/14 lbs
+- 18 medicine-ball box step-overs 40 wall-ball shots
+- 18 medicine-ball box step-overs 66 wall-ball shots
+- 18 wall-ball shots
+- 19 wall-ball shots
+- 20 Leg Rises over Med ball (or object)
+- 20 Med Ball Sit Up (throw) with Russian Twist
+- 20 Wall Balls 9/6kg
+- 20 wall ball
+- 20 wall ball 20/14lbs
+- 20 wall-ball shots
+- 20 wallballs
+- 21 wall-ball shots
+- 22 wall-ball shots
+- 24 wall-ball shots
+- 25 wall-ball shot "two-for-ones"
+- 30 ball slams with medicine ball
+- 30 wall ball
+- 30 wall balls 20/14p
+- 30 wall-ball shots
+- 30 wallballs
+- 34 wall-ball shots
+- 40 wall ball
+- 40 wall-ball shots
+- 40 wall-ball shots, 14 lb. to 9-foot target
+- 40 wall-ball shots, 20 lb. to 10-foot target
+- 40 wall-ball shots, 20 lb. to 9-foot target
+- 40 wallballs
+- 400-meter run with a medicine ball
+- 45 Wall Balls 9/6kg
+- 45 wall-ball shots
+- 49 wall-ball shots
+- 5 wall-ball shots
+- 50 wall-ball shots
+- 50 wallballs 20/14lbs
+- 55 wall-ball shots
+- 55 wall-ball shots, 20-lb. ball to 10-ft. target
+- 66 wall ball
+- 66 wall-ball shots
+- 75 wall-ball shots
+- 800-meter run with a medicine ball
+- 800-meter run with medicine ball
+- 83 wall-ball shots
+- ? 14-lb (6-kg) medicine ball, 9-foot target, 20-inch box
+- ? 20-lb (9-kg) medicine ball, 10-ft target, 24-inch box
+- Partner 2: 10 Wallballs 20/14bs to 11/10′ + 6 Strict Pull Ups
+- Run 1 mile with a medicine ball
+- Run 400 meters with a medicine ball
+- Run 800 meters with a medicine ball
+- Wall Balls 9/6kg
+- Wall-ball shots
+- squat + wall ball
+- ♀ 105-lb barbell, 14-lb medicine ball to a 9-foot target, 35-lb kettlebell
+- ♀ 14-lb (6-kg) medicine ball, 9-foot target, 20-inch box
+- ♀ 14-lb (6-kg) medicine ball, 9-foot target, 20-inch box ♂ 20-lb (9-kg) medicine ball, 10-ft target, 24-inch box
+- ♀ 14-lb medicine ball
+- ♀ 14-lb medicine ball to 9 feet, 105-lb deadlift
+- ♀ 14-lb medicine ball to 9 feet, 125-lb barbell
+- ♀ 14-lb medicine ball to 9 feet, 155-lb cleans
+- ♀ 14-lb medicine ball to a 9-foot target and a 20-inch box
+- ♀ 14-lb medicine ball to a 9-foot target, 20-inch box, 35-lb kettlebell
+- ♀ 14-lb medicine ball to a 9-foot target, 55-lb barbell, 20-inch box, bodyweight back squat
+- ♀ 14-lb medicine ball, 15-lb dumbbell
+- *... ועוד 32*
+
+### WALL WALK
+
+- 1 wall walk
+- 15 wall walks
+- 21 wall walks
+- 25-50-25ft Handstand Walk (Scale 2-4-2 Wall Walks)
+- 3 wall walks
+- 5 wall walks
+- 6 wall walks
+- 9 wall walks
+- buy-in: 10 wall walks
+
+---
+
+## 2. תרגילים שלא שויכו לקטגוריה
+
+שורות שנראות כמו תרגיל (מכילות מספרים/reps/rounds וכו') אך לא התאמו למילות המפתח של הקטגוריות הקיימות.
+
+- `[restoration]` 3 rounds each
+- `[restoration]` Time Cap: 28 minutes
+- `[restoration]` Target Score: Sub 28 minutes
+- `[restoration]` Firebreather: Sub 24 minutes
+- `[restoration]` 1×1 @ Heavier Than Working Sets
+- `[restoration]` 5×3
+- `[restoration]` *Tempo Down, 2 Second Pause, Stand = 1 Rep
+- `[restoration]` Warm up to a moderate single to get a feel for a good place to start on your sets of 3. All sets should be technique foc
+- `[hero]` 6 rounds for time of:
+- `[hero]` On June 30, 2013, 19 members of the Granite Mountain Hotshots firefighting team tragically lost their lives while fighti
+- `[hero]` Hotshots 19 honors the memory of these 19 heroes
+- `[open]` Complete as many rounds and reps as possible in 10 minutes of:
+- `[open]` *includes Masters Women up to 54 years old*
+- `[open]` *includes Masters Men 55+*
+- `[open]` *includes Masters Women 55+*
+- `[hero]` 50-40-30-20-10 reps for time of:
+- `[open]` Beginning on an 8-minute clock, complete as many reps as possible of:
+- `[open]` If completed before 8 minutes, add 4 minutes to the clock and proceed to:
+- `[open]` If completed before 12 minutes, add 4 minutes to the clock and proceed to:
+- `[open]` If completed before 16 minutes, add 4 minutes to the clock and proceed to:
+- `[open]` Stop at 20 minutes.
+- `[myleo]` 1:00 each
+- `[myleo]` 30sec on / 15sec off x2 rounds
+- `[myleo]` 3. straight leg sit ups
+- `[myleo]` emom 35min (7 rounds)
+- `[myleo]` 5. rest
+- `[myleo]` [wave 1]
+- `[myleo]` 2:00 at rpe 5, 1:00 easy
+- `[myleo]` 1:30 at rpe 6, 1:00 easy
+- `[myleo]` 1:00 at rpe 7, 1:00 easy
+- `[myleo]` 0:30 at rpe 8
+- `[myleo]` 5:00 easy between waves
+- `[myleo]` [wave 2]
+- `[myleo]` 2:00 at rpe 6, 1:00 easy
+- `[myleo]` 1:30 at rpe 7, 1:00 easy
+- `[myleo]` 1:00 at rpe 8, 1:00 easy
+- `[myleo]` 0:30 at rpe 9
+- `[benchmark]` 5 rounds for time:
+- `[benchmark]` 18min TC
+- `[crossfit_com]` 2 rounds for total rounds and reps:
+- `[crossfit_com]` Complete as many rounds as possible in 3 minutes of:
+- `[crossfit_com]` Followed immediately by as many reps as possible in 3 minutes of:
+- `[crossfit_com]` Rest 2 minutes before starting the second round.
+- `[restoration]` 12 Burpees
+- `[restoration]` 12 Kip Swings
+- `[restoration]` 10 Burpees
+- `[restoration]` 10 Knee Raises
+- `[restoration]` 8 Burpees
+- `[restoration]` 20 minute cap
+- `[restoration]` Firebreather Score: sub 18 minutes
+- `[restoration]` 12-10-8-6
+- `[restoration]` Start your set of 12 between 60 and 70%, then add weight each round.
+- `[tonbridge]` 5x
+- `[tonbridge]` 14 min EMOM:
+- `[tonbridge]` 3x
+- `[tonbridge]` 20 Through the Leg Seated Leg Raises
+- `[hero]` Then, 5 minutes of:
+- `[hero]` Complete as many reps as possible at each 5-minute station. Rest 1 minute between stations.
+- `[hero]` On July 7, 2016, a sniper coordinated an ambush on a group of police officers in Dallas, Texas. Dallas 5 commemorates th
+- `[open]` Time cap: 20 minutes
+- `[myleo]` amrap 4min
+- `[myleo]` 30sec plank hold
+- `[myleo]` on the 3:00 x 4 sets:
+- `[myleo]` 5 rounds
+- `[benchmark]` 50–40–30–20–10
+- `[benchmark]` *time cap 12:00
+- `[restoration]` 2 Rounds
+- `[restoration]` 6 Broad Jumps
+- `[restoration]` Every 2:30 for 10 sets (10 Rounds for reps)
+- `[restoration]` AMRAP 8:00 x 3 (3 Rounds for reps)
+- `[restoration]` Rest 1:30
+- `[restoration]` You should be SO sure that your round 1 pace is sustainable for three rounds. Adjust as you go round to round. Reminder:
+- `[tonbridge]` 6x
+- `[tonbridge]` 3×3 (3 each side)
+- `[tonbridge]` 8 Min AMRAP
+- `[tonbridge]` 20m Farmers Carry
+- `[tonbridge]` 2x 24/16kg
+- `[hero]` 5 rounds for time of:
+- `[hero]` Rest 2 minutes
+- `[hero]` Men: 115 lb and 2 pood
+- `[hero]` Women: 75 lb and 1.5 pood
+- `[open]` 2 rounds for time of:
+- `[open]` Time cap: 14 minutes
+- `[myleo]` 90/90 hip rotation
+- `[myleo]` 10 burpees
+- `[myleo]` 3 x 4:00 amrap:
+- `[myleo]` 12 burpees over bar
+- `[myleo]` rest 2:00 between amraps
+- `[myleo]` *rx+ option: 100/70kg
+- `[myleo]` * score: rounds + reps
+- `[myleo]` * aerobic power [vo2 max]
+- `[benchmark]` Five rounds:
+- `[benchmark]` Score is total reps
+- `[crossfit_com]` 25 burpees to a target
+- `[crossfit_com]` 15 knees-to-elbows
+- `[restoration]` 1:00 Calf Raises
+- `[restoration]` 1:00 Tib Raises
+- `[restoration]` 3 Rounds
+- `[restoration]` 1:00 Machine
+- `[restoration]` 30 Jump Rope Reps (mix up jump rope style as desired)
+- `[restoration]` 8 rounds for time (Time)
+- `[restoration]` 35 Crossover Single Unders
+- `[restoration]` Target Score: 13-17 Minutes
+- `[restoration]` Firebreather Score: sub-13
+- `[restoration]` 1×1 @ 80%
+- `[restoration]` 8×2 @ 75-85%
+- `[tonbridge]` 10 reps – 45 sec rest
+- `[tonbridge]` 8 reps – 30 secs rest
+- `[tonbridge]` 6 reps – 20 secs rest
+- `[tonbridge]` 4 reps – 10 secs rest 2 reps
+- `[tonbridge]` Rest 2 mins and repeat
+- `[tonbridge]` 50/45 Cals
+- `[tonbridge]` 4 Rounds Mini DT
+- `[tonbridge]` 40/35 Cals
+- `[tonbridge]` 3 Rounds Mini DT
+- `[tonbridge]` 30/25 Cals
+- `[tonbridge]` 2 Rounds Mini DT
+- `[tonbridge]` 20/15 Cals
+- `[tonbridge]` 1 Round Mini DT
+- `[tonbridge]` 70/47.5KG
+- `[tonbridge]` 1 Round Mini DT =
+- `[tonbridge]` 4 HPC
+- `[tonbridge]` 2 STOH
+- `[open]` Complete as many rounds as possible in 20 minutes of:
+- `[myleo]` on every 2:30 x 2 rounds
+- `[myleo]` 10 prone snow angels
+- `[benchmark]` 21–15–9
+- `[benchmark]` 21-15-9 Reps For Time
+- `[benchmark]` TC 10 min
+- `[restoration]` On a 7:30 clock, Machine of choice
+- `[restoration]` Every 1:30 perform:
+- `[restoration]` 4 Burpees
+- `[restoration]` Start at 80% and build as heavy as desired.”)
+- `[restoration]` AMRAP 4 Minutes (AMRAP – Rounds and Reps)
+- `[restoration]` Target Score: 4+ rounds
+- `[restoration]` Firebreather Score: 6+ rounds
+- `[restoration]` 40-60 Minute Machine Flush / MOB
+- `[restoration]` 5+ Rounds
+- `[restoration]` 5:00 Machine Flush
+- `[restoration]` 3:00 Mobility
+- `[tonbridge]` 24 min EMOMs
+- `[tonbridge]` 4 rounds
+- `[tonbridge]` Each round: 2 mins on, 30 secs off
+- `[tonbridge]` 2, 4, 6, 8 etc
+- `[tonbridge]` Pick up where you finished the previous round.
+- `[hero]` 4 rounds for time of:
+- `[hero]` ♀ 14-lb vest
+- `[hero]` ♂ 20-lb vest
+- `[open]` Time cap: 15 min.
+- `[myleo]` rest 1:00
+- `[myleo]` * tabata (20sec on/10sec off) x 8 rounds
+- `[cf1013]` 4 sets:
+- `[cf1013]` 1:00 Max Calorie Machine
+- `[cf1013]` 1:00 Max Sit Ups
+- `[cf1013]` 1:00 Rest
+- `[cf1013]` * (Score by Total Reps each set)
+- `[benchmark]` TC 6 min
+- `[crossfit_com]` Open Workout 26.1
+- `[crossfit_com]` Time cap: 12 minutes
+- `[restoration]` CF OPEN 26.1
+- `[restoration]` 5AM-7:30AM Morning Madness
+- `[restoration]` 12:15 class
+- `[restoration]` 4PM-6:30 PM Friday Night lights
+- `[restoration]` workout review will occur within the first 15 min of session.
+- `[restoration]` please show up within the last 30 minutes of a session to ensure enough time for you to complete the workout.
+- `[restoration]` We cannot ensure a judge will be present for the 12:15 class. please plan accordingly if you need a judge to submit your
+- `[restoration]` Time cap: 12 minutes
+- `[tonbridge]` Open Workout 26.1
+- `[tonbridge]` Time cap: 12 minutes
+- `[tonbridge]` For full details: [open workouts portal](https://games.crossfit.com/workouts/open/2026)
+- `[hero]` *♀ 155 lb*
+- `[hero]` *♂ 225 lb*
+- `[open]` 10 rounds for time of:
+- `[myleo]` 10 hang high pulls
+- `[myleo]` 10 elbow rotation
+- `[myleo]` 10 straight leg sit ups
+- `[myleo]` 5 sets
+- `[myleo]` 3 x 3:00 amrap:
+- `[myleo]` • rest 3:00 between amraps
+- `[cf1013]` Time cap: 12 minutes
+- `[benchmark]` 3 rounds for time of:
+- `[benchmark]` TC 15 min
+- `[crossfit_com]` Every 4 minutes for 5 rounds, complete:
+- `[restoration]` Alternate full rounds with a partner until both have completed 4 rounds each:
+- `[restoration]` 10 Plate Ground to OH
+- `[restoration]` AMRAP 18 minutes, alternating full rounds with a partner: (AMRAP – Rounds and Reps)
+- `[restoration]` 5 Shoulder to OH 155/105lbs
+- `[restoration]` Target Score: 18+ rounds total (one per minute)
+- `[restoration]` Firebreather Score: 24+ rounds total (one every :45)
+- `[restoration]` 1 @ 80-90%
+- `[restoration]` 4 @ 70-75%
+- `[restoration]` 3 @ 75-80%
+- `[restoration]` 2 @ 80-85%
+- `[restoration]` 4 @ 75-80%
+- `[restoration]` 3 @ 80-85%
+- `[restoration]` 2 @ 85-90%
+- `[tonbridge]` 3 Rounds with a partner:
+- `[hero]` 10 rounds for time of:
+- `[open]` Complete as many rounds and reps as possible in 4 minutes of:
+- `[open]` If 90 reps (3 rounds) are completed in under 4 minutes, time extends to 8 minutes.
+- `[open]` If 180 reps (6 rounds) are completed in under 8 minutes, time extends to 12 minutes.
+- `[open]` If 270 reps (9 rounds) are completed in under 12 minutes, time extends to 16 minutes.
+- `[myleo]` amrap 5min
+- `[myleo]` in teams of 2
+- `[myleo]` 12 rounds
+- `[cf1013]` Teams of 2
+- `[cf1013]` 20:00 AMRAP
+- `[cf1013]` Partner 1: 15 Burpee to Bar (6in)
+- `[cf1013]` * (Score by Rounds + Reps)
+- `[benchmark]` 3 Rounds
+- `[benchmark]` Timecap: 15:00
+- `[hero]` Complete as many rounds as possible in 45 minutes of:
+- `[open]` Complete as many reps as possible in 7 minutes of:
+- `[open]` This is a timed workout. If you complete the round of 18, go on to 21. If you complete 21, go on to 24, etc.
+- `[open]` *Men use 100 lb.*
+- `[myleo]` 1. 20-30 russian twists
+- `[myleo]` 1-2-3-4-3-2-1 min work
+- `[myleo]` [rpe 7-8]
+- `[myleo]` 1-2-3-4-3-2-1 min easy
+- `[myleo]` [rpe 1-2]
+- `[benchmark]` Rx 60/42,5
+- `[crossfit_com]` 5 rounds for max reps of:
+- `[crossfit_com]` 45-second rest
+- `[crossfit_com]` 15 seconds of burpees
+- `[crossfit_com]` 080413
+- `[restoration]` Alternating movement Tabata (:20 on :10 off) 3 rounds each
+- `[restoration]` Target Score: Sub 18 minutes
+- `[restoration]` Firebreather Score: Sub 15 minutes
+- `[restoration]` 6 Sets
+- `[restoration]` Rest 2:00
+- `[tonbridge]` 3×3
+- `[tonbridge]` 21, 15, 9, 6, 3
+- `[hero]` 50 shoulder-to-overheads
+- `[hero]` 50-foot
+- `[hero]` 40 burpees
+- `[hero]` ♀ 75-lb STO, 55-lb SDHP
+- `[hero]` ♂ 115-lb STO, 85-lb SDHP
+- `[open]` Complete as many rounds and reps as possible in 13 minutes of:
+- `[myleo]` OPEN WORKOUT 26.1
+- `[myleo]` 40sec on / 20sec off  x6
+- `[myleo]` 1. prone snow angels
+- `[myleo]` 3. mountain climbers
+- `[myleo]` (heat  1 // 5min break // heat 2)
+- `[myleo]` time cap 12min
+- `[cf1013]` Every 2:00 × 3 sets
+- `[cf1013]` Every 4:00 (5 sets)
+- `[benchmark]` time cap 12min
+- `[restoration]` 4 Rounds
+- `[restoration]` 3 Seated Explosive Jumps*
+- `[restoration]` 2-2-2-2-2
+- `[restoration]` Start no lighter than 80% and build AHAP.
+- `[restoration]` If you’re concerned about soreness leading into the Open workout, stay between 75-80% and move fast. )
+- `[restoration]` Rest 5:00
+- `[tonbridge]` Every 5:00 mins for 25:00 mins:
+- `[tonbridge]` 42.5/30kg
+- `[tonbridge]` Rest for the remainder of the 5:00 mins.
+- `[hero]` Complete as many rounds and reps as possible in 20 minutes of:
+- `[myleo]` 10 good mornings
+- `[myleo]` build to a heavy 10-rep max
+- `[myleo]` rest 3-5 minutes between attempts
+- `[myleo]` 6 rounds
+- `[cf1013]` 15-12-9-6-3
+- `[benchmark]` *TC: 12 Mins
+- `[restoration]` 3×3 @ 60-70%
+- `[restoration]` 3×2 @ 70-80%
+- `[restoration]` 3×1 @ 80-90%
+- `[tonbridge]` 8 Rounds
+- `[tonbridge]` 1 KB, so do 4 STOH on one side and then swap.
+- `[hero]` 2 rounds for time of:
+- `[crossfit_com]` 250211
+- `[crossfit_com]` 251020
+- `[myleo]` 3 rounds:
+- `[myleo]` 35 v-ups
+- `[cf1013]` 3 Sets For Time:
+- `[cf1013]` -rest 3:00 between sets-
+- `[cf1013]` * (Women Calories: 8-10-12)
+- `[benchmark]` 6 rounds of:
+- `[benchmark]` – Athletes work for 3:00 and then rest 1:00 in a Fight Gone Bad AMRAP style workout.
+- `[benchmark]` S1:
+- `[benchmark]` 6 rounds for reps:
+- `[benchmark]` 1:00 burpees
+- `[benchmark]` – Rest 1:00 between rounds.
+- `[benchmark]` S2:
+- `[benchmark]` 5 rounds for reps:
+- `[benchmark]` 1:00 single-unders
+- `[benchmark]` *Athletes should track individual movements each round and then try to beat the previous round's score.*
+- `[crossfit_com]` Open Workout 26.2
+- `[crossfit_com]` Time cap: 15 minutes
+- `[restoration]` CF OPEN 26.2
+- `[tonbridge]` Crossfit Open 26.2
+- `[tonbridge]` Time cap: 15 minutes
+- `[hero]` Complete as many rounds as possible in 20 minutes of:
+- `[open]` Beginning on a 4-minute clock, complete as many reps as possible of:
+- `[open]` If completed before 4 minutes, add 4 minutes to the clock and proceed to:
+- `[myleo]` 20sec hollow hold
+- `[benchmark]` On the minute every minute for 30 minutes:
+- `[crossfit_com]` You Bombed 26.1. Good. Here's Why.
+- `[restoration]` 1:00 Machine or 200m Jog
+- `[restoration]` Target Score: Sub 6 minutes
+- `[restoration]` Firebreather Score: Sub 4 minutes
+- `[tonbridge]` 4 Rounds For Time:
+- `[hero]` *♀ 53 lb*
+- `[hero]` *♂ 70 lb*
+- `[myleo]` 20 single under
+- `[myleo]` 4 x 5:00 amrap:
+- `[myleo]` * score: total rounds + reps
+- `[myleo]` * 30sec on/ 1min off x 3 sets
+- `[cf1013]` Every 1:00 (8:00)
+- `[cf1013]` 10:00 AMRAP
+- `[benchmark]` 30 Sit up
+- `[benchmark]` 2min Rest
+- `[benchmark]` (Time Cap 35min)
+- `[benchmark]` Do not include final 2min rest in your overall time.
+- `[myleo]` amrap 28min
+- `[myleo]` 3 burpee to target
+- `[crossfit_com]` Rest 5 minutes
+- `[restoration]` AMRAP 6 minutes
+- `[restoration]` Jog 100m
+- `[restoration]` :15 Dead Hang from bar
+- `[restoration]` Both partners work at the same time, and switch stations once both are finished. One round is when both partners finish 
+- `[restoration]` Target Score: 12+ rounds
+- `[restoration]` Firebreather: 16+ rounds
+- `[restoration]` Every 1:30 for 8 Sets
+- `[restoration]` *Sets 1-2: 65%
+- `[restoration]` Sets 3-4: 62.5%
+- `[restoration]` Sets 5-6: 60%
+- `[restoration]` Sets 7-8: 57.5%
+- `[cf1013]` Teams of 2 For Time:
+- `[tonbridge]` Killer No. 2
+- `[tonbridge]` 10 Rounds
+- `[benchmark]` 30 minute AMRAP of:
+- `[benchmark]` AMRAP of Cindy in the remaining 30 minutes:
+- `[benchmark]` Your result is rounds of Cindy completed.
+- `[open]` Complete as many rounds and reps as possible in 9 minutes of:
+- `[open]` WORKOUT 15.1a
+- `[open]` 6-minute time cap
+- `[linchpin]` 10-9-8-7-6-5 reps for time of:
+- `[linchpin]` Or as a 2-person team...
+- `[hero]` Since 2005, hero workouts have honored service members who made the ultimate sacrifice
+- `[hero]` 21-15-9 reps for time of:
+- `[hero]` of Petty Officer 1st Class Jeff Taylor, 30, of Midway, West Virginia,
+- `[hero]` 3 rounds for time of:
+- `[hero]` 50 back extensions
+- `[hero]` 50 sit-ups
+- `[hero]` ♀ 65 lb
+- `[hero]` ♂ 95 lb
+- `[hero]` ♀ 25 lb
+- `[hero]` ♂ 40 lb
+- `[hero]` ♀ 53 lb
+- `[hero]` ♂ 70 lb
+- `[hero]` ♀ 55 lb
+- `[hero]` ♂ 75 lb
+- `[hero]` In honor of Randy Simmons, 51, a 27-year LAPD veteran and SWAT team member who was killed Feb. 7, 2008, in the line of d
+- `[hero]` ♀ 75 lb, 15-foot rope
+- `[hero]` ♂ 115 lb, 15-foot rope
+- `[hero]` 21 burpees
+- `[hero]` Maplewood, Missouri, firefighter, Ryan Hummert, 22, was killed by sniper fire, July 21, 2008, when he stepped off his fi
+- `[hero]` ♀ 30 lb
+- `[hero]` 30 GHD sit-ups
+- `[hero]` ♀ 175 lb
+- `[hero]` ♂ 250 lb
+- `[hero]` ♀ 105 lb
+- `[hero]` ♂ 155 lb
+- `[hero]` Complete as many rounds in 20 minutes as you can of:
+- `[hero]` Oakland SWAT Sgt. Daniel Sakai, 35, was killed in the line of duty on March 21, 2009, along with fellow officers Sgt. Er
+- `[hero]` 30 burpees
+- `[hero]` 20 burpees
+- `[hero]` At 1:34 p.m., on Nov. 5, 2009, a terrorist named Major Nidal Hasan attacked fellow soldiers and civilians at Fort Hood, 
+- `[hero]` 30-25-20-15-10-5 reps of:
+- `[hero]` 35 GHD sit-ups
+- `[hero]` As many rounds as possible in 30 minutes of:
+- `[hero]` 35 knees-to-elbows
+- `[hero]` 20-yard overhead walk
+- `[hero]` ♀ 125 lb
+- `[hero]` ♂ 185 lb
+- `[hero]` Pittsburgh Police Officer Paul John Rizzo Domenic Sciullo II, 36, was shot and killed in the line of duty while
+- `[hero]` call on April 4, 2009.
+- `[hero]` 7 rounds for time of:
+- `[hero]` 7 knees-to-elbows
+- `[hero]` 7 burpees
+- `[hero]` If you've got a 20-lb vest or body armor, wear it.
+- `[hero]` ♀ 95 lb
+- `[hero]` ♂ 135 lb
+- `[hero]` 100-foot bear crawl
+- `[hero]` 100-foot standing broad jump
+- `[hero]` Do 3 burpees after every 5 broad jumps. If you've got a 20-lb vest or body armor, wear it.
+- `[hero]` Field Training Officer Timothy Quinn Brenton, 39, of the Seattle Police Department, was
+- `[hero]` while on duty on Oct. 31, 2009.
+- `[hero]` 22 burpees
+- `[hero]` 10 rounds, each for time, of:
+- `[hero]` Rest 1 minute between rounds.
+- `[hero]` ♀ 75 lb
+- `[hero]` ♂ 115 lb
+- `[hero]` 3 rounds of:
+- `[hero]` 5 rounds, each for time, of:
+- `[hero]` Rest 90 seconds between rounds.
+- `[hero]` 50 burpees
+- `[hero]` 8 rounds for time of:
+- `[hero]` 10 burpees
+- `[hero]` Rest 30 seconds
+- `[hero]` 25
+- `[hero]` 21-18-15-12-9-6-3 reps for time of:
+- `[hero]` ♀ 155 lb
+- `[hero]` ♂ 225 lb
+- `[hero]` ♀ 25-lb plate
+- `[hero]` ♂ 45-lb plate
+- `[hero]` 3 rounds for reps of:
+- `[hero]` 1 minute of 20-foot shuttle sprints (20 feet forward + 20 feet backward = 1 rep)
+- `[hero]` 1 minute of burpees
+- `[hero]` Rest 1 minute between rounds. On the shuttle sprints, 20 feet forward and 20 feet backward is 1 rep.
+- `[hero]` Rest 1 minute
+- `[hero]` 20 knees-to-elbows
+- `[hero]` Complete as many rounds as possible in 12 minutes of:
+- `[hero]` 6 bar-facing burpees
+- `[hero]` Complete as many rounds and reps as possible in 25 minutes of:
+- `[hero]` ♀ 205 lb
+- `[hero]` ♂ 315 lb
+- `[hero]` 25 burpees
+- `[hero]` 12 rounds for time of:
+- `[hero]` ♂ 45 lb
+- `[hero]` ♀ 35 lb
+- `[hero]` ♂ 53 lb
+- `[hero]` 9 rounds for time of:
+- `[hero]` 30 rounds for time of:
+- `[hero]` 3 forward rolls
+- `[hero]` 5 wall climbs
+- `[hero]` 100 burpees
+- `[hero]` Complete as many rounds as possible in 25 minutes of:
+- `[hero]` 16 burpees
+- `[hero]` Complete as many rounds and reps as possible in 18 minutes of:
+- `[hero]` ♀185 lb
+- `[hero]` ♂ 275 lb
+- `[hero]` 25 triple-unders
+- `[hero]` 50 knees-to-elbows
+- `[hero]` 24 GHD sit-ups
+- `[hero]` 18 GHD sit-ups
+- `[hero]` 12 GHD sit-ups
+- `[hero]` 6 GHD sit-ups
+- `[hero]` 2 rounds of:
+- `[hero]` 15 bar-facing burpees
+- `[hero]` 25 bar-facing burpees
+- `[hero]` 35 bar-facing burpees
+- `[hero]` 22-yard farmers carry
+- `[hero]` "We Rally' From the Hotshots 19' Memorial Event."
+- `[hero]` Police Service of Northern Ireland Constable Ronan Kerr, 25, of Omagh, Northern Ireland, was killed on April 2, 2011, by
+- `[hero]` 66 knees-to-elbows
+- `[hero]` 66 sit-ups
+- `[hero]` 66 burpees
+- `[hero]` Complete as many rounds and reps as possible in 10 minutes of:
+- `[hero]` 30-20-10 reps for time of:
+- `[hero]` 8 minutes to complete:
+- `[hero]` Then, 10 minutes to complete:
+- `[hero]` Then, 12 minutes to complete:
+- `[hero]` Do not rest between rounds.
+- `[hero]` Complete as many rounds and reps as possible in 28 minutes of:
+- `[hero]` 32 hanging hip touches, alternating arms
+- `[hero]` Navy Special Warfare Operator 1st Class
+- `[hero]` Complete as many rounds as possible in 30 minutes of:
+- `[hero]` 50-yard swim
+- `[hero]` 150 burpees
+- `[hero]` Then, complete as many rounds and reps as possible in 20 minutes of:
+- `[hero]` 28 sit-ups
+- `[hero]` ♀ 110 lb
+- `[hero]` ♂ 170 lb
+- `[hero]` 50-yard sprint
+- `[hero]` 34 burpees
+- `[hero]` Rest 2 minutes between rounds.
+- `[hero]` Then, 8 rounds of:
+- `[hero]` 19 burpees
+- `[hero]` 9 burpees
+- `[hero]` ♀ 14-lb weight vest
+- `[hero]` ♂ 20-lb weight vest
+- `[hero]` Complete as many rounds and reps as possible in 26 minutes of:
+- `[hero]` 9 rounds for time, with a partner, of:
+- `[hero]` 50-yard buddy carry
+- `[hero]` Share the work with your partner however you choose. One person works at a time. If you can't find a partner, perform 5 
+- `[hero]` On a 35-minute clock with a partner, complete as many rounds and reps as possible in 30 minutes of:
+- `[hero]` 15-12-9-6-3 reps for time of:
+- `[hero]` Complete as many rounds as possible in 23 minutes of:
+- `[hero]` 5 burpees
+- `[hero]` 6 burpees
+- `[hero]` 3 rounds, each for time, of:
+- `[hero]` 60 sit-ups
+- `[hero]` Rest 3 minutes between rounds.
+- `[hero]` 49 sit-ups
+- `[hero]` Then, 4 rounds of:
+- `[hero]` Then 2 rounds of:
+- `[hero]` ♀ 275 lb
+- `[hero]` ♂ 405 lb
+- `[hero]` Police Officer Arthur "Artie" Lopez, 29, of Babylon Village, New York, was killed in the line of duty on Oct. 23, 2012. 
+- `[hero]` 5 rounds of:
+- `[hero]` On a 25-minute clock:
+- `[hero]` Then, in the remaining time, complete as many rounds and reps as possible of:
+- `[hero]` 7 rounds, each for time, of:
+- `[hero]` Then, 14 rounds of:
+- `[hero]` Complete as many rounds and reps as possible in 11 minutes of:
+- `[hero]` 17 burpees over the bar
+- `[hero]` Scott "Scotty" Deem, 31, of San Antonio, Texas, was killed while responding to a four-alarm structure fire on May 18, 20
+- `[hero]` Then, 10 rounds of:
+- `[hero]` Complete as many rounds as possible in 19 minutes of:
+- `[hero]` 1 shuttle sprint (5 yards, 10 yards, 15 yards)
+- `[hero]` With a partner, complete as many rounds and reps as possible in 26 minutes of:
+- `[hero]` 9 synchronized bar-facing burpees
+- `[hero]` 7 shoulder-to-overheads
+- `[hero]` Men: 185 lb
+- `[hero]` Women: 125 lb
+- `[hero]` Complete as many reps as possible in 15 minutes of:
+- `[hero]` Then, 3 rounds of:
+- `[hero]` Men: 155 lb
+- `[hero]` Women: 105 lb
+- `[hero]` 15 burpees
+- `[hero]` 9 strict dips
+- `[hero]` 20 sit-ups
+- `[hero]` 100 sit-ups
+- `[hero]` With a partner, complete as many rounds as possible in 21 minutes of:
+- `[hero]` ♀ 105 lb ♂ 155 lb
+- `[hero]` Special Agent Laura Schwartzenberger, 43, was killed while executing a search warrant related to a violent crime against
+- `[hero]` Schwartzenberger regularly attended Vice's 5 a.m. classes, where she continuously inspired those around her.
+- `[hero]` With a weight vest, 13 rounds for time of:
+- `[hero]` With a partner, 5 rounds for time of:
+- `[hero]` ♀ 135 lb ♂ 205 lb
+- `[hero]` Then, 9 rounds of:
+- `[hero]` 8 burpees
+- `[hero]` If you have a 14-/20-lb weight vest, wear it.
+- `[hero]` On a 21-minute clock:
+- `[hero]` Then, as many rounds and reps as possible of:
+- `[hero]` On a 35-minute clock:
+- `[hero]` 40 burpees to target
+- `[hero]` As many rounds and reps as possible in 20 minutes of:
+- `[hero]` 10 burpees over the bar
+- `[hero]` ♀ 135 lb
+- `[hero]` *Rest 3 minutes between rounds.
+- `[hero]` *Wear a 10/14-lb weight vest.
+- `[hero]` ♀ 20 lb
+- `[hero]` ♂ 30 lb
+- `[hero]` Then, 7 rounds of:
+- `[hero]` As many rounds and reps as possible in 30 minutes of:
+- `[hero]` 23 burpees-over-backpack
+- `[hero]` 19 sit-ups
+- `[hero]` Detective Constable Jeffrey Northrup, 55, of the Toronto Police Service in Canada, was killed in the line of duty on Jul
+- `[hero]` With a 60-minute time cap:
+- `[hero]` Then 9 rounds of:
+- `[hero]` Then 3 rounds for time of
+- `[hero]` ♀ Wear a 14-lb weight vest
+- `[hero]` ♂ Wear a 20-lb weight vest
+- `[hero]` On an 18-minute clock for reps:
+- `[hero]` 27 burpees
+- `[hero]` 3 rounds for time:
+- `[hero]` 4 rounds of:
+- `[hero]` 14 burpees
+- `[hero]` From 0:00-12:23:
+- `[hero]` From 12:23-15:00:
+- `[hero]` From 15:00-48:00:
+- `[hero]` As many reps as possible of:
+- `[hero]` For time as a 3-person team:
+- `[hero]` 1,065-foot
+- `[hero]` 10 rounds of:
+- `[hero]` 13 burpees
+- `[hero]` *On a 10-minute clock:
+- `[hero]` *Clock begins immediately upon completion of the 10 rounds.
+- `[hero]` 7 rounds
+- `[hero]` *Add 6 reps to each movement after every round.
+- `[hero]` ♂ 185
+- `[hero]` Rest 2 minutes between sets.
+- `[benchmark]` 100 sit-ups
+- `[benchmark]` Timecap 25 min
+- `[benchmark]` 21–15–9:
+- `[benchmark]` *TC12min
+- `[benchmark]` *SK1:
+- `[benchmark]` *SK2:
+- `[benchmark]` Load: 20/15kg
+- `[benchmark]` 21-15-9
+- `[benchmark]` Rxd 42,5/30kg
+- `[benchmark]` 5 Rounds For Time:
+- `[benchmark]` TC: 35min
+- `[benchmark]` 10 – 9 – 8 – 7 – 6 – 5 – 4 – 3 – 2 – 1:
+- `[benchmark]` 20 min AMRAP:
+- `[benchmark]` AMRAP20
+- `[benchmark]` 3 Rounds for Max Reps:
+- `[benchmark]` 1:00 WBS 9/6
+- `[benchmark]` 1:00 SDHP 35/25 kg
+- `[benchmark]` 1:00 Rest
+- `[benchmark]` – Beginner: 150-250 reps
+- `[benchmark]` – Intermediate: 250-350 reps
+- `[benchmark]` – Advanced: 350-450 reps
+- `[benchmark]` – Elite: 500+ reps
+- `[benchmark]` 2/2 turkish getup
+- `[benchmark]` Athletes should track individual movements each round and then try to beat the previous round's score.
+- `[open]` includes Masters Women up to 54 years old
+- `[open]` includes Masters Men 55+
+- `[open]` includes Masters Women 55+
+- `[open]` Complete as many rounds and reps as possible in 15 minutes of:
+- `[open]` Complete as many rounds and reps as possible in 5 minutes of:
+- `[open]` 60 Bar-facing burpees
+- `[open]` Complete as many rounds and reps as possible in 20 minutes of:
+- `[open]` Complete as many rounds and reps as possible in 18 minutes of:
+- `[open]` Complete as many rounds and reps as possible in 12 minutes of:
+- `[open]` Complete as many reps as possible in 7 minutes following the rep scheme below:
+- `[open]` This is a timed workout. If you complete the round of 21, go on to 24. If you complete 24, go on to 27, etc.
+- `[open]` - includes Masters Men 55+
+- `[open]` - includes Masters Women 55+
+- `[open]` - includes Masters Women up to 54 years old
+- `[open]` Complete as many reps as possible in 8 minutes of:
+- `[open]` Complete as many rounds and repetitions as possible in 14 minutes of:
+- `[open]` 21-18-15-12-9-6-3 reps for time of:
+- `[open]` Complete as many rounds and reps as possible in 14 minutes of:
+- `[open]` Men use 20-lb. ball to 10 feet, Women use 14-lb. ball to 9 feet
+- `[open]` 27-21-15-9 reps for time of:
+- `[open]` Men use 95 lb.
+- `[open]` Women use 65 lb.
+- `[open]` 8 burpees
+- `[open]` Complete as many rounds and reps as possible in 7 minutes of:
+- `[open]` Men use 75 lb.
+- `[open]` Women use 55 lb.
+- `[open]` 2 rounds of:
+- `[open]` Then, 2 rounds of:
+- `[open]` 2017 Open Workout 17.3 Men Rx
+- `[open]` Feb 26 – March 16
+- `[open]` March 26-30
+- `[open]` 1-2-3-4-5-6-7-8-9-10 reps for time of:
+- `[open]` Workout 18.2a
+- `[open]` 12 minutes to complete 18.2
+- `[open]` 18.2a
+- `[open]` Time cap: 9 min.
+- `[open]` Men use 100 lb.
+- `[open]` Complete as many rounds as possible in 15 minutes of:
+- `[open]` Time cap: 10 minutes
+- `[open]` 3 rounds of:
+- `[open]` 12 bar-facing burpees
+- `[open]` Then, rest 3 minutes before continuing with:
+- `[open]` Time cap: 12 minutes
+- `[open]` 33-27-21-15-9 reps for time of:
+- `[open]` 8 ground-to-overheads, 95 lb.
+- `[open]` 10 bar-facing burpees
+- `[open]` Time cap: 15 minutes
+- `[open]` Time cap: 20 min.
+- `[open]` Then, rest 1 minute before continuing with:
+- `[open]` Workout 21.4 begins immediately upon completing or reaching the time cap for 21.3.
+- `[open]` 2021 Open Workout 21.4 Men Rx
+- `[open]` 1-2-3-4-5-6-7-8-9-10-9-8-7-6-5-4-3-2-1 reps for time of:
+- `[open]` 65 lb, then 75 lb, then 85 lb
+- `[open]` Complete as many reps as possible in 14 minutes of:
+- `[open]` Complete as many reps as possible in 15 minutes of:
+- `[open]` 23.2B:
+- `[open]` Immediately following 23.2A, athletes will have 5 minutes to establish:
+- `[open]` Starting with a 6-minute time cap, complete as many reps as possible of:
+- `[open]` *If completed before the 6-minute time cap, add 3 minutes to the time cap and complete:
+- `[open]` *If completed before the 9-minute time cap, add 3 minutes to the time cap and complete:
+- `[open]` ♀ 65 lb, 95 lb, 125 lb, 155 lb
+- `[open]` ♂ 95 lb, 135 lb, 185 lb, 225 lb
+- `[open]` *Time cap: 15 minutes
+- `[open]` 2024 Open Workout 24.2 Women Rx
+- `[open]` 5 rounds of:
+- `[open]` Rest 1 minute, then:
+- `[open]` ♀ 65, 95 lb (29, 43 kg)
+- `[open]` ♂ 95, 135 lb (43, 61 kg)
+- `[open]` 2025 Open Workout 25.1 Women Rx
+- `[open]` ♀ 65, 75, 85 lb (29, 34, 38 kg)
+- `[open]` ♂ 95, 115, 135 lb (43, 52, 61 kg)
+- `[open]` 2026 Open Workout  Women Rx
+
+---
+
+## 3. מקורות – האם ניתן להפריד WOD מחימום/כוח
+
+| מקור | יש סקשן WOD | יש חימום | יש כוח/סקיל | ניתן להפריד? |
+|------|-------------|----------|-------------|-------------|
+| benchmark | כן | לא | לא | לא |
+| cf1013 | כן | לא | כן | כן |
+| crossfit_com | כן | לא | לא | לא |
+| hero | כן | לא | לא | לא |
+| linchpin | כן | לא | לא | לא |
+| myleo | כן | כן | כן | כן |
+| open | כן | לא | לא | לא |
+| restoration | כן | כן | כן | כן |
+| tonbridge | כן | לא | כן | כן |
+
+הערות:
+- **WOD** = לב האימון (METCON, AMRAP, For Time, וכו').
+- **הפרדה** = יש במבנה המקור כותרות שמבחינות בין חימום/כוח ל־WOD (למשל Warm-up, Strength, Conditioning).
+- באפליקציה משתמשים ב־`WOD_SECTION_RE` ו־`getWodOnlyText()` כדי לחשב ניקוד התאמה רק מטקסט ה־WOD.

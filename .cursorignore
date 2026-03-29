@@ -1,0 +1,13 @@
+﻿# Reduce Cursor memory (OOM) – don't index large/generated files
+data/workouts.json
+data/special_cache.json
+node_modules/
+__pycache__/
+.venv/
+venv/
+env/
+.git/
+*.log
+.pytest_cache/
+htmlcov/
+.coverage

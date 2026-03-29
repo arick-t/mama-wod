@@ -735,13 +735,41 @@ function isAiListLine(s) {
   return /^[\-\•\*](\s|$)/.test(t) || /^\d+[.)]\s/.test(t);
 }
 
+function isAiMetaLeadLine(s) {
+  var t = String(s || "").trim();
+  if (!t) return false;
+  return /^alternatively,\s*to fit the time and ensure a consistent, high-intensity effort:?$/i.test(t);
+}
+
+function isLikelyWorkoutContentLine(s) {
+  var t = String(s || "").trim();
+  if (!t) return false;
+  if (isAiListLine(t)) return true;
+  if (/^\d+\s*(m|km|mi|cal|kcal|reps?|rounds?|mins?|minutes?|sec|seconds?)\b/i.test(t)) return true;
+  if (/^\d+\s*x\b/i.test(t)) return true;
+  if (/^(every|amrap|emom|tabata|for\s*time|cap\s*\d+)/i.test(t)) return true;
+  if (/^\d+\s+[A-Za-z]/.test(t)) return true;
+  return false;
+}
+
+function isAiSubtitleCandidate(s) {
+  var t = String(s || "").trim();
+  if (!t) return false;
+  if (isAiMetaLeadLine(t)) return false;
+  if (isLikelyWorkoutContentLine(t)) return false;
+  if (t.length >= 200) return false;
+  return /[A-Za-z\u0590-\u05FF]/.test(t);
+}
+
 function aiBlockToSection(blines) {
   if (!blines || !blines.length) return null;
   var title = stripAiSectionTitle(blines[0]);
-  var rest = blines.slice(1);
+  var rest = blines.slice(1).filter(function (line) {
+    return !isAiMetaLeadLine(line);
+  });
   var sub1 = "";
   var sub2 = "";
-  while (rest.length && !isAiListLine(rest[0]) && rest[0].length < 200) {
+  while (rest.length && isAiSubtitleCandidate(rest[0])) {
     if (!sub1) sub1 = rest.shift();
     else if (!sub2) sub2 = rest.shift();
     else break;
@@ -765,6 +793,7 @@ function parseAiWorkoutLinesFallback(text) {
   for (var i = 0; i < lines.length; i++) {
     var t = lines[i].trim();
     if (t === "") continue;
+    if (isAiMetaLeadLine(t)) continue;
 
     if (/^#{1,3}\s+/.test(t)) {
       flush();
@@ -790,10 +819,10 @@ function parseAiWorkoutLinesFallback(text) {
         cur.title = stripAiSectionTitle(t);
         continue;
       }
-    } else if (!cur.lines.length && !cur.sub_title && !isAiListLine(t) && t.length < 200) {
+    } else if (!cur.lines.length && !cur.sub_title && isAiSubtitleCandidate(t)) {
       cur.sub_title = t;
       continue;
-    } else if (!cur.lines.length && cur.sub_title && !cur.sub_title2 && !isAiListLine(t) && t.length < 200) {
+    } else if (!cur.lines.length && cur.sub_title && !cur.sub_title2 && isAiSubtitleCandidate(t)) {
       cur.sub_title2 = t;
       continue;
     }

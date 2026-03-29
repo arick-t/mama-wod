@@ -32,3 +32,6 @@ htmlcov/
 .env.local
 node_modules/
 web/
+
+# Local media (screen recordings etc.) — not part of app bundle
+assets/video/
