@@ -29,5 +29,6 @@ fs.mkdirSync(outDir, { recursive: true });
 
 copyFile("index.html");
 copyDir("data");
+copyDir("assets");
 
 console.log("Built Capacitor web assets in /web");

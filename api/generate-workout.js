@@ -85,9 +85,15 @@ function buildGeminiEnvDebug() {
   };
 }
 
-const SYSTEM_INSTRUCTION_CORE = `Head coach for group-class GPP. Output ONLY the workout—concise, technical, headers OK (Warm-up / Strength / Metcon etc.). Use ONLY listed equipment; respect time; UNLIMITED = full session. Multi-athlete: use partner/team formats when appropriate; see PARTNER/TEAM rule when ATHLETES > 1. Original work: no verbatim Hero/Open/benchmarks or long copied text; AMRAP/chipper-style structures OK. Honor user notes. If a WAREHOUSE NAMES block appears, use for modality/time hints only—write a fresh workout. No greetings or filler. Summarize public fitness knowledge in your own words—no long excerpts.
+const SYSTEM_INSTRUCTION_CORE = `Head coach for group-class GPP. Output ONLY the workout—concise, technical, headers OK (Warm-up / Strength / Metcon etc.). Only use modalities from the athlete's listed equipment pool—never invent unavailable gear. Follow session time rules in the user message and system instructions (including UNLIMITED-time timing). Multi-athlete: use partner/team formats when appropriate; see PARTNER/TEAM rule when ATHLETES > 1. Original work: no verbatim Hero/Open/benchmarks or long copied text; AMRAP/chipper-style structures OK. Honor user notes. If a WAREHOUSE NAMES block appears, use for modality/time hints only—write a fresh workout. No greetings or filler. Summarize public fitness knowledge in your own words—no long excerpts.
 
 Completeness: every main piece (especially METCON) must list ALL movements with reps, distance, or load—not a time cap plus a single line (e.g. AMRAP needs a full round written out). Prefer short exercise names and tight formatting over leaving work implied.`;
+
+const COACH_IDENTITY = `Programming identity: you are the app's primary engine ("The Coach"). When an EQUIPMENT MEANING block appears in the user message, treat it as mandatory: rack+rigs = barbell supported in rack/bench patterns, not rig-only gymnastics unless other gear justifies it; barbell without rack = floor-based barbell work only (account for fatigue from floor starts).`;
+
+const EQUIPMENT_AVAILABILITY_SYSTEM = `EQUIPMENT SEMANTICS: The list = what the athlete **has access to** (a menu of options), not an order to use every item in one session. Many selections or a "full gym" profile means **more choices**, not a requirement to touch each modality. BARBELL + RIG/RACK together count as **one** modality when judging how rich the pool is (the rack supports bar work). If **4 or more** modalities are available after that merge, you **may** omit several listed items for a focused session—unless USER NOTES explicitly demand using all / every listed piece (then honor that). Never program gear that is not on the list.`;
+
+const TIME_UNLIMITED_COACH_RULE = `TIME UNLIMITED: When the user chose no fixed minute cap, **you** still assign concrete timing in the written workout—approximate minutes per section, AMRAP/EMOM or other caps per piece, or explicit work/rest. Do **not** output a session with vague, blank, or wholly unspecified duration structure.`;
 
 /** Appended to system prompt when body.athletes > 1 (and flexible mode). */
 const PARTNER_TEAM_OUTPUT_RULE = `PARTNER/TEAM OUTPUT (mandatory for 2+ athletes): Right under the main work header (e.g. Metcon), add 1–2 short lines that state HOW work is shared—pick what fits: partition reps any way; I-go-you-go; alternate full rounds; one works / one rests; split run/row/ski distance evenly; relay by station; etc. Say whether listed reps/distances are per team or per athlete if it could be ambiguous. Do not output only a solo-style list with no split rules when the session is for partners or a team.`;
@@ -105,7 +111,13 @@ function isCompetitionLevel(p) {
 }
 
 function buildDefaultCoachSystemInstruction(extendedProfile, includeWarehouseDigest) {
-  const parts = [SYSTEM_INSTRUCTION_CORE, L1_TRAINING_GUIDE_ALIGNMENT];
+  const parts = [
+    SYSTEM_INSTRUCTION_CORE,
+    COACH_IDENTITY,
+    EQUIPMENT_AVAILABILITY_SYSTEM,
+    TIME_UNLIMITED_COACH_RULE,
+    L1_TRAINING_GUIDE_ALIGNMENT,
+  ];
   if (includeWarehouseDigest) parts.push(OPEN_HERO_PATTERN_RULES);
   if (isCompetitionLevel(extendedProfile)) parts.push(COMPETITION_ATHLETE_BIAS);
   return parts.join("\n");
@@ -133,7 +145,12 @@ function buildSessionStructureBlock(parts, timeMinutes, unlimited) {
     lines.push(
       "STRUCTURE: Metcon/conditioning ONLY unless user notes explicitly ask for warm-up/strength/accessory."
     );
-    return lines.join("\n");
+    if (unlimited) {
+      lines.push(
+        "TIME UNLIMITED: still write explicit minutes and/or time caps for the metcon (no vague duration-only header)."
+      );
+    }
+    return lines.join(" ");
   }
   const seq = [];
   if (parts.includeWarmup) seq.push("WARM-UP");
@@ -143,7 +160,7 @@ function buildSessionStructureBlock(parts, timeMinutes, unlimited) {
   lines.push(
     `STRUCTURE: Sections in order ${seq.join(" → ")}.`,
     unlimited
-      ? "TIME UNLIMITED: meaningful work per section; metcon = main stimulus."
+      ? "TIME UNLIMITED (no user cap): still write explicit per-section minutes and/or caps in the workout; metcon = main stimulus—do not leave durations vague."
       : `~${timeMinutes} min total: split time; protect metcon quality.`
   );
   if (parts.includeWarmup) {
@@ -153,7 +170,9 @@ function buildSessionStructureBlock(parts, timeMinutes, unlimited) {
     lines.push("STRENGTH: basic heavy work before metcon; complement metcon stress, moderate vol.");
   }
   if (parts.includeWeightlifting) {
-    lines.push("WEIGHTLIFTING: Oly/primer before metcon if gear allows; moderate vol.");
+    lines.push(
+      "WEIGHTLIFTING: Olympic lifts and derivatives; barbell must be available (session requests this block)."
+    );
   }
   if (parts.includeStrength && parts.includeWeightlifting) {
     lines.push("Order: Strength → Weightlifting → Metcon (separate headers).");
@@ -161,7 +180,79 @@ function buildSessionStructureBlock(parts, timeMinutes, unlimited) {
   return lines.join(" ");
 }
 
-const GENERIC_SYSTEM_INSTRUCTION = `Workout programmer—output program text only, concise. WAREHOUSE INDEX = inspiration only; original work.`;
+const EQ_BAR = "BARBELL";
+const EQ_RIG = "RIG RACK";
+const EQ_DBALL = "D-BALL";
+
+/** User-reported ball load — heavy D-ball vs light med-ball changes stimulus; must reach the model. */
+function buildDballCoachBlock(equipment, dballWeight) {
+  const set = new Set(Array.isArray(equipment) ? equipment : []);
+  if (!set.has(EQ_DBALL)) return "";
+  const w = String(dballWeight || "").trim().slice(0, 64);
+  if (w) {
+    return `D-BALL WEIGHT (mandatory): The athlete's ball is **${w}**. Program to this exact load—light wall-ball / small med-ball work is not interchangeable with heavy slam-ball / D-ball stimulus. Adjust movements, reps, throws, carries, and scaling to match this weight.`;
+  }
+  return `D-BALL WEIGHT: Not provided. Use conservative scaling and movement patterns that tolerate unknown load; do not assume a generic "medicine ball" load.`;
+}
+
+const DBALL_SYSTEM_RULE = `D-BALL / medicine ball / slam ball: If the user message includes a D-BALL WEIGHT line, that weight is binding for exercise selection, volume, and intensity. Treat heavy D-balls and light balls as different tools—not the same stimulus.`;
+
+/** Mirror UI rules: weightlifting block and RIG/RACK imply Olympic bar in the list sent to the model. */
+function normalizeEquipmentForCoach(body, equipment) {
+  const sp = normalizeSessionParts(body);
+  const set = new Set(
+    Array.isArray(equipment) ? equipment.map((x) => String(x).trim()).filter(Boolean) : []
+  );
+  if (sp.includeWeightlifting) set.add(EQ_BAR);
+  if (set.has(EQ_RIG)) set.add(EQ_BAR);
+  return Array.from(set);
+}
+
+/**
+ * For "4+ modalities may omit some" rule: BARBELL + RIG RACK = one modality (rack supports the bar).
+ */
+function countCoachEquipmentModalities(equipment) {
+  const set = new Set(Array.isArray(equipment) ? equipment.map((x) => String(x).trim()).filter(Boolean) : []);
+  let n = 0;
+  const hasBar = set.has(EQ_BAR);
+  const hasRig = set.has(EQ_RIG);
+  if (hasBar && hasRig) {
+    n += 1;
+    set.delete(EQ_BAR);
+    set.delete(EQ_RIG);
+  } else if (hasBar) {
+    n += 1;
+    set.delete(EQ_BAR);
+  } else if (hasRig) {
+    n += 1;
+    set.delete(EQ_RIG);
+  }
+  n += set.size;
+  return n;
+}
+
+function buildEquipmentModalityCountLine(modalityCount) {
+  return `MODALITY COUNT (for equipment-pool rule): ${modalityCount}. BARBELL + RIG/RACK together count as 1. With 4+ you may omit some listed gear unless user notes say otherwise—see system instructions.`;
+}
+
+function buildEquipmentMeaningBlock(equipment) {
+  const set = new Set(Array.isArray(equipment) ? equipment : []);
+  const hasBar = set.has(EQ_BAR);
+  const hasRig = set.has(EQ_RIG);
+  const out = [];
+  if (hasRig && hasBar) {
+    out.push(
+      `EQUIPMENT MEANING (mandatory): RIG/RACK + BARBELL = squat rack or similar to rack/unrack an Olympic bar for classic barbell work (back squat, front squat, strict/push/overhead press, bench press when appropriate). Not "rig gymnastics" (ring muscle-ups, rig-only skills) unless another selected modality clearly requires it—prefer rack/bench-supported barbell patterns.`
+    );
+  } else if (hasBar && !hasRig) {
+    out.push(
+      `EQUIPMENT MEANING (mandatory): BARBELL without RIG/RACK = no rack; barbell work starts from the floor—cleans, snatches, jerks, deadlifts, pulls; front squat/OHS after clean/snatch are OK. Do not assume barbell back squat out of a high rack. Program knowing floor starts add fatigue.`
+    );
+  }
+  return out.length ? out.join("\n\n") : "";
+}
+
+const GENERIC_SYSTEM_INSTRUCTION = `Workout programmer—output program text only, concise. WAREHOUSE INDEX = inspiration only; original work.\n\n${COACH_IDENTITY}\n\n${EQUIPMENT_AVAILABILITY_SYSTEM}\n\n${TIME_UNLIMITED_COACH_RULE}`;
 
 const ATHLETE_PROFILE_RULES = `Use ATHLETE PROFILE in user message; blank fields = no invention. Strict health limits. Programming only.`;
 
@@ -191,7 +282,7 @@ function buildAthleteProfilePrompt(p) {
 function buildUserPrompt(equipment, timeMinutes, unlimited, athletes, userNotes) {
   const eqList = Array.isArray(equipment) && equipment.length ? equipment.join(", ") : "BODYWEIGHT ONLY (assume floor space only)";
   const timeLine = unlimited
-    ? "TIME: UNLIMITED — full session, stay concise."
+    ? "TIME: UNLIMITED (no user minute ceiling)—you decide sensible structure; write explicit section lengths and/or time caps in the workout (never leave timing wholly vague)."
     : `TIME: ~${timeMinutes} min main work.`;
   const athLine =
     athletes > 1
@@ -200,7 +291,7 @@ function buildUserPrompt(equipment, timeMinutes, unlimited, athletes, userNotes)
   const notesLine = (userNotes && String(userNotes).trim())
     ? `USER NOTES / GOALS (honor these):\n${String(userNotes).trim()}`
     : "USER NOTES: (none) — choose an optimal session for the equipment and time.";
-  return `AVAILABLE EQUIPMENT (strict — use only this):\n${eqList}\n\n${timeLine}\n${athLine}\n\n${notesLine}\n\nProduce the full workout now (complete exercise list per section; do not omit movements).`;
+  return `AVAILABLE EQUIPMENT (pool — only modalities from this list; not every item must appear in one session—see system rules):\n${eqList}\n\n${timeLine}\n${athLine}\n\n${notesLine}\n\nProduce the full workout now (complete exercise list per section; do not omit movements).`;
 }
 
 function buildFlexibleUserPrompt(equipment, timeMinutes, unlimited, athletes, userNotes) {
@@ -211,7 +302,11 @@ function buildFlexibleUserPrompt(equipment, timeMinutes, unlimited, athletes, us
     athletes > 1
       ? `${athletes} — include explicit partner/team split instructions in the workout (partition, IGYG, alternate rounds, etc.)`
       : `${athletes}`;
-  return `USER REQUEST:\n${notes || fallback}\n\nCONTEXT:\n- Equipment: ${eqList}\n- Time: ${unlimited ? "UNLIMITED" : `${timeMinutes} minutes`}\n- Athletes: ${athCtx}\n\nIf user request conflicts with context, prioritize user request.`;
+  return `USER REQUEST:\n${notes || fallback}\n\nCONTEXT:\n- Equipment: ${eqList}\n- Time: ${
+    unlimited
+      ? "UNLIMITED — still assign explicit timing/caps in the written workout"
+      : `${timeMinutes} minutes`
+  }\n- Athletes: ${athCtx}\n\nIf user request conflicts with context, prioritize user request.`;
 }
 
 const EXPLAIN_SYSTEM = `Movement coach: list main movements, one cue per line, then per movement: YouTube: https://www.youtube.com/results?search_query=NAME+TECHNIQUE (+ for spaces). No extra prose.`;
@@ -479,7 +574,8 @@ function resolveAthletesForPrompt(body) {
 }
 
 function buildWorkoutGeminiBody(body) {
-  const equipment = Array.isArray(body.equipment) ? body.equipment.map((x) => String(x).slice(0, 64)) : [];
+  const rawEquipment = Array.isArray(body.equipment) ? body.equipment.map((x) => String(x).slice(0, 64)) : [];
+  const equipment = normalizeEquipmentForCoach(body, rawEquipment);
   const unlimited = !!body.unlimited;
   const timeMinutes = unlimited ? 999 : Math.min(300, Math.max(1, parseInt(body.timeMinutes, 10) || 20));
   const athletes = resolveAthletesForPrompt(body);
@@ -503,6 +599,20 @@ function buildWorkoutGeminiBody(body) {
     userText = `${userText}\n\nWAREHOUSE NAMES (patterns only; original work):\n${warehouseDigest}`;
   }
 
+  const equipSemantics = buildEquipmentMeaningBlock(equipment);
+  if (equipSemantics) {
+    userText = `${userText}\n\n${equipSemantics}`;
+  }
+
+  const modalityCount = countCoachEquipmentModalities(equipment);
+  userText = `${userText}\n\n${buildEquipmentModalityCountLine(modalityCount)}`;
+
+  const dballWeightRaw = String(body.dballWeight || "").trim().slice(0, 64);
+  const dballBlock = buildDballCoachBlock(equipment, dballWeightRaw);
+  if (dballBlock) {
+    userText = `${userText}\n\n${dballBlock}`;
+  }
+
   const sessionParts = normalizeSessionParts(body);
   userText = `${userText}\n\n${buildSessionStructureBlock(sessionParts, timeMinutes, unlimited)}`;
 
@@ -514,6 +624,9 @@ function buildWorkoutGeminiBody(body) {
   }
   if (profileBlock) {
     systemText = `${systemText}\n\n${ATHLETE_PROFILE_RULES}`;
+  }
+  if (equipment.includes(EQ_DBALL)) {
+    systemText = `${systemText}\n\n${DBALL_SYSTEM_RULE}`;
   }
 
   const geminiBody = {

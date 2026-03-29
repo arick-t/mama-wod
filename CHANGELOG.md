@@ -1,5 +1,18 @@
 # Changelog
 
+## [20.1.0-beta.2] - 2026-03-29
+
+### AI Builder (BETA)
+- **D-BALL:** משקל בק״ג בלבד בשדה קומפקטי ליד הסימון; שמירה בפריסט וטעינה מחדש; שרת מקבל `dballWeight` + הנחיות מאמן.
+- **זמן:** שורת זמן קומפקטית (±5, דקות, **Unlimited Time**) ממורכזת; חסימת שדה הדקות כש-Unlimited; פרומפט מאמן: ב-Unlimited חובה לקבוע זמנים/כובעים מפורשים באימון.
+- **ציוד:** הרשימה = בריכת אפשרויות (לא חובה להשתמש בהכול); מ־4 מודאליטים (אחרי מיזוג BARBELL+RIG כאחד) אפשר להשמיט ציוד אלא אם צוין במלל חופשי; עדכון ℹ️ Equipment.
+- **וידאו טעינה:** `assets/coach-loading.mp4` (מותג) + גיבוי; הוסר כפתור Preview לפרודקשן; `build-capacitor-web` מעתיק `assets/`.
+
+### Versioning
+- `20.1.0-beta.2` — `VERSION`, `package.json`, `package-lock.json`, Android `versionCode` 22 / `versionName`, iOS `CURRENT_PROJECT_VERSION` 22 / `MARKETING_VERSION`. תצוגת אתר: **v20.1 BETA** (ללא שינוי כותרת משנה).
+
+---
+
 ## [20.1.0-beta.1] - 2026-03-28
 
 ### AI Builder (BETA) — קוסמטיקה ו־UX
