@@ -405,7 +405,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
   <div class="find-form">
     <div class="ai-beta-banner"><strong>BETA</strong> — Experimental AI workout builder. Output is generated; verify before training.</div>
     <div class="form-group" style="margin-bottom:12px">
-      <h2 class="eq-label-row ai-builder-title-row">AI workout builder <span class="ai-builder-tagline">Builds an original session from your equipment and time.</span> <button type="button" class="eq-info-btn" id="aiInfoBtn" onclick="toggleAiInfo(event)" title="About this builder" aria-label="Information">ℹ️</button></h2>
+      <h2 class="eq-label-row ai-builder-title-row">AI workout builder <span class="ai-builder-tagline">The Coach — original session from your equipment and time.</span> <button type="button" class="eq-info-btn" id="aiInfoBtn" onclick="toggleAiInfo(event)" title="About this builder" aria-label="Information">ℹ️</button></h2>
       <div id="aiInfoPopover" class="eq-info-popover" role="dialog" aria-hidden="true" style="display:none">Programming only — not lifestyle advice. Standard session rules always apply in the background (not a user toggle). Optional tags add warm-up, strength, or weightlifting blocks, movement demos, or an extended athlete profile. When the app has Open/Hero names cached, a short sample is sent automatically for style context (original programming only). Generation streams live when the server supports it.</div>
     </div>
     <div class="form-group">
@@ -709,10 +709,40 @@ function renderAiTags() {
   if (ext) ext.style.display = aiTagLocation.extended === "dock" ? "block" : "none";
 }
 
+function setEqGridAiCheckbox(value, on) {
+  var grid = document.getElementById("eqGridAi");
+  if (!grid) return;
+  var inputs = grid.querySelectorAll("input[type='checkbox']");
+  for (var i = 0; i < inputs.length; i++) {
+    if (inputs[i].value === value) {
+      inputs[i].checked = !!on;
+      break;
+    }
+  }
+  updateFullGymButtonStateAi();
+}
+
+/** Weightlifting block → barbell; RIG/RACK → barbell (rack is for bar work, not rig gymnastics). */
+function syncAiEquipmentDependencies() {
+  if (aiTagLocation.weightliftingBlock === "dock") {
+    setEqGridAiCheckbox("BARBELL", true);
+  }
+  var grid = document.getElementById("eqGridAi");
+  if (!grid) return;
+  var inputs = grid.querySelectorAll("input[type='checkbox']");
+  for (var j = 0; j < inputs.length; j++) {
+    if (inputs[j].value === "RIG RACK" && inputs[j].checked) {
+      setEqGridAiCheckbox("BARBELL", true);
+      break;
+    }
+  }
+}
+
 function moveAiTagToDock(key) {
   if (!AI_TAG_LABELS[key]) return;
   aiTagLocation[key] = "dock";
   renderAiTags();
+  syncAiEquipmentDependencies();
 }
 
 function moveAiTagToBank(key) {
@@ -1119,6 +1149,7 @@ function requestAiGenerateStream(url, payload, onDelta, onDone, onFail) {
 function finishAiGenerateSuccess(el, base, fullText, truncated) {
   lastAiWorkoutText = fullText || "";
   var wAi = buildAiWorkoutObjectFromText(lastAiWorkoutText);
+  cardStore = [];
   var explainBtn =
     aiTagLocation.demos === "dock"
       ? "<div style=\"margin-top:14px;text-align:center\"><button type=\"button\" class=\"btn btn-find\" onclick=\"explainAiWorkout()\">Explain movements (YouTube)</button></div>"
@@ -1218,6 +1249,7 @@ function generateWorkoutAi() {
   var uEl = document.getElementById("aiUnlimitedTime");
   var unlimited = uEl && uEl.checked;
   var time = unlimited ? 999 : (parseInt(document.getElementById("aiFindTime").value, 10) || 20);
+  syncAiEquipmentDependencies();
   var eq = [];
   var cbs = document.querySelectorAll("#eqGridAi .eq-item input:checked");
   for (var i = 0; i < cbs.length; i++) eq.push(cbs[i].value);
@@ -1361,7 +1393,7 @@ var SOURCES = {
   hero:         {name:"🦸 Hero Workout",          archive:true,  en:true, special:"hero"},
   benchmark:    {name:"🏋️ Benchmark Workout",     archive:true,  en:true, special:"benchmark"},
   open:         {name:"🏆 Open Workout",          archive:true,  en:false, special:"open"},
-  ai_generated: {name:"✨ AI Builder",            archive:true,  en:true},
+  ai_generated: {name:"My Workout for today",    archive:true,  en:true},
 };
 
 try {
@@ -1584,6 +1616,16 @@ document.addEventListener("DOMContentLoaded", function() {
   var ega = document.getElementById("eqGridAi");
   if (ega) ega.addEventListener("change", updateFullGymButtonStateAi);
   initAiTagChips();
+  var eqGridAi = document.getElementById("eqGridAi");
+  if (eqGridAi) {
+    eqGridAi.addEventListener("change", function (e) {
+      if (!e.target || e.target.type !== "checkbox") return;
+      if (e.target.value === "RIG RACK" && e.target.checked) {
+        setEqGridAiCheckbox("BARBELL", true);
+      }
+      syncAiEquipmentDependencies();
+    });
+  }
   updateFullGymButtonStateFind();
   updateFullGymButtonStateAi();
   document.querySelectorAll(".timer-inp, .timer-inp-num, #stopwatchInput, #stopwatchCountDownSec, #intCountDown, #intWork, #intRest, #intRounds, #intSets, #intRestSets").forEach(function(inp) {

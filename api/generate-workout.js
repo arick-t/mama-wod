@@ -89,6 +89,8 @@ const SYSTEM_INSTRUCTION_CORE = `Head coach for group-class GPP. Output ONLY the
 
 Completeness: every main piece (especially METCON) must list ALL movements with reps, distance, or load—not a time cap plus a single line (e.g. AMRAP needs a full round written out). Prefer short exercise names and tight formatting over leaving work implied.`;
 
+const COACH_IDENTITY = `Programming identity: you are the app's primary engine ("The Coach"). When an EQUIPMENT MEANING block appears in the user message, treat it as mandatory: rack+rigs = barbell supported in rack/bench patterns, not rig-only gymnastics unless other gear justifies it; barbell without rack = floor-based barbell work only (account for fatigue from floor starts).`;
+
 /** Appended to system prompt when body.athletes > 1 (and flexible mode). */
 const PARTNER_TEAM_OUTPUT_RULE = `PARTNER/TEAM OUTPUT (mandatory for 2+ athletes): Right under the main work header (e.g. Metcon), add 1–2 short lines that state HOW work is shared—pick what fits: partition reps any way; I-go-you-go; alternate full rounds; one works / one rests; split run/row/ski distance evenly; relay by station; etc. Say whether listed reps/distances are per team or per athlete if it could be ambiguous. Do not output only a solo-style list with no split rules when the session is for partners or a team.`;
 
@@ -105,7 +107,7 @@ function isCompetitionLevel(p) {
 }
 
 function buildDefaultCoachSystemInstruction(extendedProfile, includeWarehouseDigest) {
-  const parts = [SYSTEM_INSTRUCTION_CORE, L1_TRAINING_GUIDE_ALIGNMENT];
+  const parts = [SYSTEM_INSTRUCTION_CORE, COACH_IDENTITY, L1_TRAINING_GUIDE_ALIGNMENT];
   if (includeWarehouseDigest) parts.push(OPEN_HERO_PATTERN_RULES);
   if (isCompetitionLevel(extendedProfile)) parts.push(COMPETITION_ATHLETE_BIAS);
   return parts.join("\n");
@@ -153,7 +155,9 @@ function buildSessionStructureBlock(parts, timeMinutes, unlimited) {
     lines.push("STRENGTH: basic heavy work before metcon; complement metcon stress, moderate vol.");
   }
   if (parts.includeWeightlifting) {
-    lines.push("WEIGHTLIFTING: Oly/primer before metcon if gear allows; moderate vol.");
+    lines.push(
+      "WEIGHTLIFTING: Olympic lifts and derivatives; barbell must be available (session requests this block)."
+    );
   }
   if (parts.includeStrength && parts.includeWeightlifting) {
     lines.push("Order: Strength → Weightlifting → Metcon (separate headers).");
@@ -161,7 +165,38 @@ function buildSessionStructureBlock(parts, timeMinutes, unlimited) {
   return lines.join(" ");
 }
 
-const GENERIC_SYSTEM_INSTRUCTION = `Workout programmer—output program text only, concise. WAREHOUSE INDEX = inspiration only; original work.`;
+const EQ_BAR = "BARBELL";
+const EQ_RIG = "RIG RACK";
+
+/** Mirror UI rules: weightlifting block and RIG/RACK imply Olympic bar in the list sent to the model. */
+function normalizeEquipmentForCoach(body, equipment) {
+  const sp = normalizeSessionParts(body);
+  const set = new Set(
+    Array.isArray(equipment) ? equipment.map((x) => String(x).trim()).filter(Boolean) : []
+  );
+  if (sp.includeWeightlifting) set.add(EQ_BAR);
+  if (set.has(EQ_RIG)) set.add(EQ_BAR);
+  return Array.from(set);
+}
+
+function buildEquipmentMeaningBlock(equipment) {
+  const set = new Set(Array.isArray(equipment) ? equipment : []);
+  const hasBar = set.has(EQ_BAR);
+  const hasRig = set.has(EQ_RIG);
+  const out = [];
+  if (hasRig && hasBar) {
+    out.push(
+      `EQUIPMENT MEANING (mandatory): RIG/RACK + BARBELL = squat rack or similar to rack/unrack an Olympic bar for classic barbell work (back squat, front squat, strict/push/overhead press, bench press when appropriate). Not "rig gymnastics" (ring muscle-ups, rig-only skills) unless another selected modality clearly requires it—prefer rack/bench-supported barbell patterns.`
+    );
+  } else if (hasBar && !hasRig) {
+    out.push(
+      `EQUIPMENT MEANING (mandatory): BARBELL without RIG/RACK = no rack; barbell work starts from the floor—cleans, snatches, jerks, deadlifts, pulls; front squat/OHS after clean/snatch are OK. Do not assume barbell back squat out of a high rack. Program knowing floor starts add fatigue.`
+    );
+  }
+  return out.length ? out.join("\n\n") : "";
+}
+
+const GENERIC_SYSTEM_INSTRUCTION = `Workout programmer—output program text only, concise. WAREHOUSE INDEX = inspiration only; original work.\n\n${COACH_IDENTITY}`;
 
 const ATHLETE_PROFILE_RULES = `Use ATHLETE PROFILE in user message; blank fields = no invention. Strict health limits. Programming only.`;
 
@@ -479,7 +514,8 @@ function resolveAthletesForPrompt(body) {
 }
 
 function buildWorkoutGeminiBody(body) {
-  const equipment = Array.isArray(body.equipment) ? body.equipment.map((x) => String(x).slice(0, 64)) : [];
+  const rawEquipment = Array.isArray(body.equipment) ? body.equipment.map((x) => String(x).slice(0, 64)) : [];
+  const equipment = normalizeEquipmentForCoach(body, rawEquipment);
   const unlimited = !!body.unlimited;
   const timeMinutes = unlimited ? 999 : Math.min(300, Math.max(1, parseInt(body.timeMinutes, 10) || 20));
   const athletes = resolveAthletesForPrompt(body);
@@ -501,6 +537,11 @@ function buildWorkoutGeminiBody(body) {
   }
   if (hasWarehouseDigest) {
     userText = `${userText}\n\nWAREHOUSE NAMES (patterns only; original work):\n${warehouseDigest}`;
+  }
+
+  const equipSemantics = buildEquipmentMeaningBlock(equipment);
+  if (equipSemantics) {
+    userText = `${userText}\n\n${equipSemantics}`;
   }
 
   const sessionParts = normalizeSessionParts(body);
