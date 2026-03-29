@@ -2790,6 +2790,23 @@
     "2026-03-29": [
       {
         "date": "2026-03-29",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 17.5",
+            "lines": [
+              "10 rounds for time of:",
+              "9 thrusters, 95 lb.",
+              "35 double-unders"
+            ]
+          }
+        ],
+        "note": "Open: Open 17.5"
+      },
+      {
+        "date": "2026-03-29",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-03-29/",
@@ -2881,25 +2898,8 @@
           }
         ],
         "note": "Benchmark: Karen"
-      },
-      {
-        "date": "2026-03-29",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 17.5",
-            "lines": [
-              "10 rounds for time of:",
-              "9 thrusters, 95 lb.",
-              "35 double-unders"
-            ]
-          }
-        ],
-        "note": "Open: Open 17.5"
       }
     ]
   },
-  "last_updated": "2026-03-29T07:10:05.963256"
+  "last_updated": "2026-03-29T08:05:46.679599"
 }
