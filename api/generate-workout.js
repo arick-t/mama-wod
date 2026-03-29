@@ -1,7 +1,7 @@
 /**
  * Vercel serverless: AI workout generation (Gemini). API key only on server.
  * Env: GEMINI_API_KEY (preferred). Also accepts GOOGLE_GENERATIVE_AI_API_KEY / GOOGLE_AI_API_KEY.
- * Optional: GEMINI_MODEL (default gemini-2.0-flash). Optional: GEMINI_FETCH_BUDGET_MS.
+ * Optional: GEMINI_MODEL (default gemini-2.0-flash). Bare names like gemini-1.5-flash are remapped to API-current IDs. Optional: GEMINI_FETCH_BUDGET_MS.
  */
 
 function allowCors(res) {
@@ -26,6 +26,20 @@ function geminiKeySourceEnvName() {
     if (String(process.env[name] || "").trim()) return name;
   }
   return null;
+}
+
+/**
+ * v1beta rejects legacy bare IDs (e.g. gemini-1.5-flash). Remap to names that ListModels returns for generateContent.
+ * @see https://ai.google.dev/api/rest/v1beta/models
+ */
+function resolveGeminiModelId() {
+  const raw = (process.env.GEMINI_MODEL || "gemini-2.0-flash").trim();
+  const key = raw.toLowerCase();
+  const aliases = {
+    "gemini-1.5-flash": "gemini-flash-latest",
+    "gemini-1.5-flash-latest": "gemini-flash-latest",
+  };
+  return aliases[key] || raw;
 }
 
 /** No secret values — only whether known env names are non-empty (for Vercel troubleshooting). */
@@ -291,6 +305,7 @@ module.exports = async function handler(req, res) {
         geminiKeyConfigured: configured,
         geminiKeySourceEnv: configured ? geminiKeySourceEnvName() : null,
         modelEnv: (process.env.GEMINI_MODEL || "").trim() || null,
+        modelResolved: resolveGeminiModelId(),
         runningOnVercel: !!process.env.VERCEL,
         debug: buildGeminiEnvDebug(),
         hint: configured
@@ -321,7 +336,7 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    const model = (process.env.GEMINI_MODEL || "gemini-2.0-flash").trim();
+    const model = resolveGeminiModelId();
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`;
 
     let body;
