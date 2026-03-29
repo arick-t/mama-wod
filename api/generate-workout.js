@@ -85,9 +85,12 @@ function buildGeminiEnvDebug() {
   };
 }
 
-const SYSTEM_INSTRUCTION_CORE = `Head coach for group-class GPP. Output ONLY the workout—concise, technical, headers OK (Warm-up / Strength / Metcon etc.). Use ONLY listed equipment; respect time; UNLIMITED = full session. Multi-athlete: partner/team formats when fit. Original work: no verbatim Hero/Open/benchmarks or long copied text; AMRAP/chipper-style structures OK. Honor user notes. If a WAREHOUSE NAMES block appears, use for modality/time hints only—write a fresh workout. No greetings or filler. Summarize public fitness knowledge in your own words—no long excerpts.
+const SYSTEM_INSTRUCTION_CORE = `Head coach for group-class GPP. Output ONLY the workout—concise, technical, headers OK (Warm-up / Strength / Metcon etc.). Use ONLY listed equipment; respect time; UNLIMITED = full session. Multi-athlete: use partner/team formats when appropriate; see PARTNER/TEAM rule when ATHLETES > 1. Original work: no verbatim Hero/Open/benchmarks or long copied text; AMRAP/chipper-style structures OK. Honor user notes. If a WAREHOUSE NAMES block appears, use for modality/time hints only—write a fresh workout. No greetings or filler. Summarize public fitness knowledge in your own words—no long excerpts.
 
 Completeness: every main piece (especially METCON) must list ALL movements with reps, distance, or load—not a time cap plus a single line (e.g. AMRAP needs a full round written out). Prefer short exercise names and tight formatting over leaving work implied.`;
+
+/** Appended to system prompt when body.athletes > 1 (and flexible mode). */
+const PARTNER_TEAM_OUTPUT_RULE = `PARTNER/TEAM OUTPUT (mandatory for 2+ athletes): Right under the main work header (e.g. Metcon), add 1–2 short lines that state HOW work is shared—pick what fits: partition reps any way; I-go-you-go; alternate full rounds; one works / one rests; split run/row/ski distance evenly; relay by station; etc. Say whether listed reps/distances are per team or per athlete if it could be ambiguous. Do not output only a solo-style list with no split rules when the session is for partners or a team.`;
 
 const L1_TRAINING_GUIDE_ALIGNMENT = `L1-style judgment: mechanics/scaling first, safety under fatigue, broad GPP unless notes say otherwise; quality → consistency → intensity.`;
 
@@ -176,7 +179,7 @@ function buildAthleteProfilePrompt(p) {
   return (
     `ATHLETE PROFILE (tailor the session; do not echo as Q&A):\n` +
     `- Level: ${level || "—"}\n` +
-    `- Athletes / class size: ${athletesN} (use partner or team formats when > 1)\n` +
+    `- Athletes / class size: ${athletesN} (when > 1: partner/team format + explicit split instructions in the written workout)\n` +
     `- Years in domain: ${years || "—"}\n` +
     `- Bodyweight: ${bw || "—"}\n` +
     `- Sex / gender: ${sex || "—"}\n` +
@@ -190,7 +193,10 @@ function buildUserPrompt(equipment, timeMinutes, unlimited, athletes, userNotes)
   const timeLine = unlimited
     ? "TIME: UNLIMITED — full session, stay concise."
     : `TIME: ~${timeMinutes} min main work.`;
-  const athLine = athletes > 1 ? `ATHLETES: ${athletes} — use partner/team formats when appropriate.` : "ATHLETES: 1 (solo).";
+  const athLine =
+    athletes > 1
+      ? `ATHLETES: ${athletes} (partner/team). REQUIRED: Under Metcon (or the main work block), add 1–2 lines stating how partners split or share work (partition / I-go-you-go / alternate rounds / one works-one rests / split distance / relay, etc.), then list movements. Say if reps or distance are team total vs per athlete when unclear.`
+      : "ATHLETES: 1 (solo).";
   const notesLine = (userNotes && String(userNotes).trim())
     ? `USER NOTES / GOALS (honor these):\n${String(userNotes).trim()}`
     : "USER NOTES: (none) — choose an optimal session for the equipment and time.";
@@ -201,7 +207,11 @@ function buildFlexibleUserPrompt(equipment, timeMinutes, unlimited, athletes, us
   const eqList = Array.isArray(equipment) && equipment.length ? equipment.join(", ") : "none specified";
   const notes = String(userNotes || "").trim();
   const fallback = "Create one effective workout session.";
-  return `USER REQUEST:\n${notes || fallback}\n\nCONTEXT:\n- Equipment: ${eqList}\n- Time: ${unlimited ? "UNLIMITED" : `${timeMinutes} minutes`}\n- Athletes: ${athletes}\n\nIf user request conflicts with context, prioritize user request.`;
+  const athCtx =
+    athletes > 1
+      ? `${athletes} — include explicit partner/team split instructions in the workout (partition, IGYG, alternate rounds, etc.)`
+      : `${athletes}`;
+  return `USER REQUEST:\n${notes || fallback}\n\nCONTEXT:\n- Equipment: ${eqList}\n- Time: ${unlimited ? "UNLIMITED" : `${timeMinutes} minutes`}\n- Athletes: ${athCtx}\n\nIf user request conflicts with context, prioritize user request.`;
 }
 
 const EXPLAIN_SYSTEM = `Movement coach: list main movements, one cue per line, then per movement: YouTube: https://www.youtube.com/results?search_query=NAME+TECHNIQUE (+ for spaces). No extra prose.`;
@@ -456,11 +466,23 @@ function extractGeminiTextFromData(data) {
   return s;
 }
 
+function impliesPairOrTeamInNotes(notes) {
+  return /\b(pair|pairs|partner|partners|duo|couple|זוג|בזוגות)\b/i.test(String(notes || ""));
+}
+
+/** Prefer UI counter; if user asks for a pair in notes but athletes is still 1, treat as 2 for prompting. */
+function resolveAthletesForPrompt(body) {
+  let athletes = Math.min(20, Math.max(1, parseInt(body && body.athletes, 10) || 1));
+  const notes = body && body.userNotes != null ? body.userNotes : "";
+  if (athletes === 1 && impliesPairOrTeamInNotes(notes)) athletes = 2;
+  return athletes;
+}
+
 function buildWorkoutGeminiBody(body) {
   const equipment = Array.isArray(body.equipment) ? body.equipment.map((x) => String(x).slice(0, 64)) : [];
   const unlimited = !!body.unlimited;
   const timeMinutes = unlimited ? 999 : Math.min(300, Math.max(1, parseInt(body.timeMinutes, 10) || 20));
-  const athletes = Math.min(20, Math.max(1, parseInt(body.athletes, 10) || 1));
+  const athletes = resolveAthletesForPrompt(body);
   const userNotes = String(body.userNotes || "").slice(0, 1600);
   const useDefaultSettings = body.useDefaultSettings !== false;
   let extendedProfile = body.extendedProfile;
@@ -487,6 +509,9 @@ function buildWorkoutGeminiBody(body) {
   let systemText = useDefaultSettings
     ? buildDefaultCoachSystemInstruction(extendedProfile, hasWarehouseDigest)
     : GENERIC_SYSTEM_INSTRUCTION;
+  if (athletes > 1) {
+    systemText = `${systemText}\n\n${PARTNER_TEAM_OUTPUT_RULE}`;
+  }
   if (profileBlock) {
     systemText = `${systemText}\n\n${ATHLETE_PROFILE_RULES}`;
   }
