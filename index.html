@@ -259,6 +259,15 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
   box-shadow:0 8px 30px rgba(0,0,0,.45);background:#000;object-fit:cover
 }
 .ai-loading-status{color:#ddd;font-size:.95em;text-align:center}
+.ai-loading-demo-modal{cursor:pointer}
+.ai-loading-demo-modal .ai-loading-center{cursor:default}
+.ai-loading-demo-close{
+  position:fixed;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:10003;
+  width:48px;height:48px;border-radius:50%;border:1px solid #555;background:rgba(0,0,0,.55);color:#fff;
+  font-size:1.75rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0
+}
+.ai-loading-demo-close:hover{background:rgba(232,69,26,.35);border-color:#E8451A}
+.ai-loading-demo-hint{color:#aaa;font-size:.84em;text-align:center;max-width:min(90vw,320px);line-height:1.35;margin:0}
 .ai-presets-group label{color:#1A9B8A}
 .ai-presets-hint{color:#777;font-weight:400;font-size:.82em}
 .ai-presets-toolbar{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap}
@@ -508,9 +517,10 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
       <div class="form-row"><label for="aiAge">Age (optional)</label><input type="text" id="aiAge" placeholder="e.g. 34" maxlength="16" autocomplete="off"></div>
       <div class="form-row"><label for="aiHealthLimits">Health limitations / clearance</label><textarea id="aiHealthLimits" rows="2" placeholder="Injuries, restrictions, doctor guidance…" maxlength="1200"></textarea></div>
     </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-      <button type="button" class="btn btn-find" id="btnGenerate" onclick="generateWorkoutAi()" style="flex:1">Generate Workout</button>
-      <button type="button" class="btn btn-find" onclick="resetAiBetaForm()" style="flex:0.45;background:#555">Reset all</button>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:stretch">
+      <button type="button" class="btn btn-find" id="btnGenerate" onclick="generateWorkoutAi()" style="flex:1;min-width:140px">Generate Workout</button>
+      <button type="button" class="btn btn-find" onclick="openAiLoadingDemoModal()" style="flex:0 1 auto;min-width:120px;background:#3d4f3d;border:1px solid #5a7a5a;color:#dcedc8;font-size:.82em" title="See the centered loading video — no API call">Preview loading</button>
+      <button type="button" class="btn btn-find" onclick="resetAiBetaForm()" style="flex:0.45;min-width:100px;background:#555">Reset all</button>
     </div>
   </div>
   <div class="workouts-grid" id="aiGenResults" style="margin-top:22px"></div>
@@ -1536,6 +1546,66 @@ function buildWarehouseDigestForAi() {
     return "";
   }
 }
+
+var aiDemoVideoWired = false;
+
+function wireAiDemoModalVideoOnce() {
+  if (aiDemoVideoWired) return;
+  aiDemoVideoWired = true;
+  var v = document.getElementById("aiDemoLoadingVideo");
+  var fb = document.getElementById("aiDemoVideoFallback");
+  if (!v) return;
+  var s = v.querySelector("source");
+  if (s) s.src = AI_LOADING_VIDEO_SRC;
+  try {
+    v.load();
+  } catch (e2) {}
+  v.addEventListener("error", function () {
+    v.style.display = "none";
+    if (fb) fb.style.display = "block";
+  });
+}
+
+function openAiLoadingDemoModal() {
+  var m = document.getElementById("aiLoadingDemoModal");
+  if (!m) return;
+  wireAiDemoModalVideoOnce();
+  m.style.display = "flex";
+  m.setAttribute("aria-hidden", "false");
+  try {
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+  } catch (e) {}
+  var v = document.getElementById("aiDemoLoadingVideo");
+  if (v && v.style.display !== "none") {
+    try {
+      v.play();
+    } catch (e3) {}
+  }
+}
+
+function closeAiLoadingDemoModal() {
+  var m = document.getElementById("aiLoadingDemoModal");
+  if (!m || m.style.display === "none") return;
+  m.style.display = "none";
+  m.setAttribute("aria-hidden", "true");
+  try {
+    document.documentElement.style.overflow = "";
+    document.body.style.overflow = "";
+  } catch (e) {}
+  var v = document.getElementById("aiDemoLoadingVideo");
+  if (v) {
+    try {
+      v.pause();
+    } catch (e2) {}
+  }
+}
+
+document.addEventListener("keydown", function (e) {
+  if (e.key !== "Escape") return;
+  var m = document.getElementById("aiLoadingDemoModal");
+  if (m && m.style.display === "flex") closeAiLoadingDemoModal();
+});
 
 function generateWorkoutAi() {
   var btn = document.getElementById("btnGenerate");
@@ -3517,5 +3587,16 @@ function initTimerColorBuckets() {
   } catch (e) {}
 })();
 </script>
+<div id="aiLoadingDemoModal" class="ai-loading-overlay ai-loading-demo-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="aiLoadingDemoTitle" aria-hidden="true" onclick="closeAiLoadingDemoModal()">
+  <button type="button" class="ai-loading-demo-close" onclick="event.stopPropagation();closeAiLoadingDemoModal()" aria-label="Close preview">×</button>
+  <div class="ai-loading-center" onclick="event.stopPropagation()">
+    <p id="aiLoadingDemoTitle" class="ai-loading-demo-hint">Preview only — this does not generate a workout or call the server.</p>
+    <video id="aiDemoLoadingVideo" class="ai-loading-video" muted loop playsinline preload="metadata">
+      <source src="" type="video/mp4">
+    </video>
+    <div class="ai-loading-status">Generating… <span style="opacity:.85">(demo)</span></div>
+    <div id="aiDemoVideoFallback" class="empty-icon" style="display:none;margin:0;color:#888">⏳</div>
+  </div>
+</div>
 </body>
 </html>
