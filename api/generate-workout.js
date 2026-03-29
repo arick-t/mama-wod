@@ -1,7 +1,8 @@
 /**
  * Vercel serverless: AI workout generation (Gemini). API key only on server.
  * Env: GEMINI_API_KEY (preferred). Also accepts GOOGLE_GENERATIVE_AI_API_KEY / GOOGLE_AI_API_KEY.
- * Optional: GEMINI_MODEL, GEMINI_FETCH_BUDGET_MS (default ~8000ms; cap 9000—leave headroom under Vercel wall). Prompts kept small for Hobby timeouts.
+ * Optional: GEMINI_MODEL, GEMINI_FETCH_BUDGET_MS (ms to wait on Gemini), GEMINI_FETCH_BUDGET_CAP (max ceiling; default ~9400 for Hobby).
+ * On Vercel Pro + long maxDuration, set e.g. CAP=58000 MS=55000. Prompts stay small to reduce latency.
  */
 
 function allowCors(res) {
@@ -74,8 +75,9 @@ function isCompetitionLevel(p) {
   return l === "competitor" || l === "amateur_competitor";
 }
 
-function buildDefaultCoachSystemInstruction(extendedProfile) {
-  const parts = [SYSTEM_INSTRUCTION_CORE, L1_TRAINING_GUIDE_ALIGNMENT, OPEN_HERO_PATTERN_RULES];
+function buildDefaultCoachSystemInstruction(extendedProfile, includeWarehouseDigest) {
+  const parts = [SYSTEM_INSTRUCTION_CORE, L1_TRAINING_GUIDE_ALIGNMENT];
+  if (includeWarehouseDigest) parts.push(OPEN_HERO_PATTERN_RULES);
   if (isCompetitionLevel(extendedProfile)) parts.push(COMPETITION_ATHLETE_BIAS);
   return parts.join("\n");
 }
@@ -141,7 +143,7 @@ function buildAthleteProfilePrompt(p) {
   const bw = String(p.bodyweight || "").slice(0, 64);
   const sex = String(p.sex || "").slice(0, 64);
   const age = String(p.age || "").slice(0, 32);
-  const health = String(p.healthLimits || "").slice(0, 2000);
+  const health = String(p.healthLimits || "").slice(0, 1200);
   const athletesN = Math.min(20, Math.max(1, parseInt(p.athletes, 10) || 1));
   const has = level || years || bw || sex || age || health || athletesN >= 1;
   if (!has) return "";
@@ -160,8 +162,8 @@ function buildAthleteProfilePrompt(p) {
 function buildUserPrompt(equipment, timeMinutes, unlimited, athletes, userNotes) {
   const eqList = Array.isArray(equipment) && equipment.length ? equipment.join(", ") : "BODYWEIGHT ONLY (assume floor space only)";
   const timeLine = unlimited
-    ? "TIME: UNLIMITED — structure a full session with sensible volume; still be concise."
-    : `TIME BUDGET: approximately ${timeMinutes} minutes total for the main session (warm-up may be short).`;
+    ? "TIME: UNLIMITED — full session, stay concise."
+    : `TIME: ~${timeMinutes} min main work.`;
   const athLine = athletes > 1 ? `ATHLETES: ${athletes} — use partner/team formats when appropriate.` : "ATHLETES: 1 (solo).";
   const notesLine = (userNotes && String(userNotes).trim())
     ? `USER NOTES / GOALS (honor these):\n${String(userNotes).trim()}`
@@ -225,14 +227,19 @@ async function parseGeminiJsonResponse(r) {
   }
 }
 
-/**
- * Vercel Hobby ~10s function wall — leave room for cold start + JSON work.
- * Optional env GEMINI_FETCH_BUDGET_MS (ms), capped at 9000.
- */
+function resolveGeminiFetchBudget() {
+  const capParsed = parseInt(process.env.GEMINI_FETCH_BUDGET_CAP || "", 10);
+  const defaultCap = 9400;
+  const cap = Number.isFinite(capParsed) && capParsed >= 2500 ? Math.min(120000, capParsed) : defaultCap;
+  const rawParsed = parseInt(process.env.GEMINI_FETCH_BUDGET_MS || "", 10);
+  const defaultMs = 9200;
+  const want = Number.isFinite(rawParsed) && rawParsed >= 2500 ? rawParsed : defaultMs;
+  return { ms: Math.min(cap, want), cap };
+}
+
+/** Honours GEMINI_FETCH_BUDGET_MS / GEMINI_FETCH_BUDGET_CAP (see file header). */
 async function fetchGeminiGenerateContent(url, geminiBody) {
-  const cap = 9000;
-  const raw = parseInt(process.env.GEMINI_FETCH_BUDGET_MS || "8000", 10);
-  const ms = Math.min(cap, Number.isFinite(raw) && raw > 2000 ? raw : 8000);
+  const { ms } = resolveGeminiFetchBudget();
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), ms);
   try {
@@ -265,6 +272,8 @@ module.exports = async function handler(req, res) {
         geminiKeySourceEnv: configured ? geminiKeySourceEnvName() : null,
         modelEnv: (process.env.GEMINI_MODEL || "").trim() || null,
         modelResolved: resolveGeminiModelId(),
+        geminiFetchBudgetMs: resolveGeminiFetchBudget().ms,
+        geminiFetchBudgetCap: resolveGeminiFetchBudget().cap,
         runningOnVercel: !!process.env.VERCEL,
         debug: buildGeminiEnvDebug(),
         hint: configured ? "POST JSON action generate|explain." : `Set ${GEMINI_KEY_ENV_NAMES[0]} (Production), Redeploy, root has /api.`,
@@ -310,14 +319,17 @@ module.exports = async function handler(req, res) {
       const unlimited = !!body.unlimited;
       const timeMinutes = unlimited ? 999 : Math.min(300, Math.max(1, parseInt(body.timeMinutes, 10) || 20));
       const athletes = Math.min(20, Math.max(1, parseInt(body.athletes, 10) || 1));
-      const userNotes = String(body.userNotes || "").slice(0, 2800);
+      const userNotes = String(body.userNotes || "").slice(0, 1600);
       const useDefaultSettings = body.useDefaultSettings !== false;
       let extendedProfile = body.extendedProfile;
       if (!extendedProfile || typeof extendedProfile !== "object" || Array.isArray(extendedProfile)) {
         extendedProfile = null;
       }
       const profileBlock = extendedProfile ? buildAthleteProfilePrompt(extendedProfile) : "";
-      const warehouseDigest = String(body.warehouseDigest || "").trim().slice(0, 7000);
+      const includeWarehouseDigest = body.includeWarehouseDigest === true;
+      const warehouseDigest = includeWarehouseDigest
+        ? String(body.warehouseDigest || "").trim().slice(0, 4000)
+        : "";
       const hasWarehouseDigest = warehouseDigest.length > 0;
 
       let userText = useDefaultSettings
@@ -334,7 +346,7 @@ module.exports = async function handler(req, res) {
       userText = `${userText}\n\n${buildSessionStructureBlock(sessionParts, timeMinutes, unlimited)}`;
 
       let systemText = useDefaultSettings
-        ? buildDefaultCoachSystemInstruction(extendedProfile)
+        ? buildDefaultCoachSystemInstruction(extendedProfile, hasWarehouseDigest)
         : GENERIC_SYSTEM_INSTRUCTION;
       if (profileBlock) {
         systemText = `${systemText}\n\n${ATHLETE_PROFILE_RULES}`;
@@ -344,8 +356,8 @@ module.exports = async function handler(req, res) {
         systemInstruction: { parts: [{ text: systemText }] },
         contents: [{ role: "user", parts: [{ text: userText }] }],
         generationConfig: {
-          temperature: 0.75,
-          maxOutputTokens: 1024,
+          temperature: 0.7,
+          maxOutputTokens: 768,
         },
       };
 
@@ -354,9 +366,11 @@ module.exports = async function handler(req, res) {
         r = await fetchGeminiGenerateContent(url, geminiBody);
       } catch (e) {
         if (e && e.name === "AbortError") {
+          const b = resolveGeminiFetchBudget();
           return res.status(504).json({
             error:
-              "Time budget exceeded (Vercel ~10s on Free). Retry, shorter notes/options, or GEMINI_FETCH_BUDGET_MS / longer plan.",
+              "Gemini is still working, but the server stopped waiting (time budget)—newer Flash models often need more seconds.",
+            hint: `This route aborts the fetch after ${b.ms}ms (cap ${b.cap}ms). On Vercel Free the whole function still has ~10s. Retry; leave warehouse hints off; shorten notes/tags; or use Pro + longer maxDuration/budget. See GET this URL for budget fields.`,
           });
         }
         throw e;
@@ -393,7 +407,7 @@ module.exports = async function handler(req, res) {
     }
 
     /* explain */
-    const workoutText = String(body.workoutText || "").slice(0, 10000);
+    const workoutText = String(body.workoutText || "").slice(0, 6000);
     if (!workoutText.trim()) {
       return res.status(400).json({ error: "workoutText required" });
     }
@@ -403,7 +417,7 @@ module.exports = async function handler(req, res) {
       contents: [{ role: "user", parts: [{ text: `Workout:\n${workoutText}` }] }],
       generationConfig: {
         temperature: 0.4,
-        maxOutputTokens: 1024,
+        maxOutputTokens: 768,
       },
     };
 
@@ -412,8 +426,10 @@ module.exports = async function handler(req, res) {
       r = await fetchGeminiGenerateContent(url, geminiBody);
     } catch (e) {
       if (e && e.name === "AbortError") {
+        const b = resolveGeminiFetchBudget();
         return res.status(504).json({
-          error: "Explain time budget exceeded; retry or shorten workout text.",
+          error: "Explain: server time budget reached before Gemini finished.",
+          hint: `Fetch budget ${b.ms}ms / cap ${b.cap}ms. Retry with shorter workout text or raise budgets on Pro.`,
         });
       }
       throw e;
