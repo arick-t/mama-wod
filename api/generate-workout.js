@@ -1,13 +1,11 @@
 /**
- * Vercel serverless: AI workout generation (Gemini). API key only on server.
- * Env: GEMINI_API_KEY (preferred). Also accepts GOOGLE_GENERATIVE_AI_API_KEY / GOOGLE_AI_API_KEY.
- * Optional: GEMINI_MODEL, GEMINI_FETCH_BUDGET_MS / GEMINI_FETCH_BUDGET_CAP.
+ * Vercel serverless: AI workout generation. API keys only on server.
  *
- * POST action generate:
- * - Default: JSON { ok, text } (bounded by fetch budget — Hobby ~10s total).
- * - stream: true → Server-Sent Events (Gemini streamGenerateContent + alt=sse). Better UX + partial text if the
- *   platform cuts the invocation; does not remove the Hobby wall clock.
- * True async (job + external worker / KV) is not bundled — needs another store + processor if Gemini often exceeds 10s.
+ * Provider (priority): GROQ_API_KEY → Groq Chat Completions (Llama, fast). Else Gemini keys → Google Generative Language.
+ * Groq: GROQ_API_KEY; optional GROQ_MODEL (default llama-3.3-70b-versatile).
+ * Gemini: GEMINI_API_KEY | GOOGLE_GENERATIVE_AI_API_KEY | GOOGLE_AI_API_KEY; optional GEMINI_MODEL, GEMINI_FETCH_*.
+ *
+ * POST action generate: JSON { ok, text } or stream: true → SSE (OpenAI-style for Groq, Gemini SSE if on Gemini).
  */
 
 function allowCors(res) {
@@ -32,6 +30,26 @@ function geminiKeySourceEnvName() {
     if (String(process.env[name] || "").trim()) return name;
   }
   return null;
+}
+
+const GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions";
+
+function resolveGroqApiKey() {
+  return String(process.env.GROQ_API_KEY || "").trim();
+}
+
+function resolveGroqModelId() {
+  const raw = (process.env.GROQ_MODEL || "llama-3.3-70b-versatile").trim();
+  return raw || "llama-3.3-70b-versatile";
+}
+
+/** Prefer Groq when configured; otherwise Gemini. */
+function resolveProvider() {
+  const groq = resolveGroqApiKey();
+  if (groq) return { id: "groq", key: groq };
+  const gemini = resolveGeminiApiKey();
+  if (gemini) return { id: "gemini", key: gemini };
+  return { id: "none", key: "" };
 }
 
 /**
@@ -60,6 +78,7 @@ function buildGeminiEnvDebug() {
     vercelEnv: process.env.VERCEL_ENV || null,
     nodeEnv: process.env.NODE_ENV || null,
     geminiKeyEnvNamesFound: found,
+    groqKeyConfigured: !!resolveGroqApiKey(),
     /** Booleans only — see if other project env vars reach this function at all. */
     githubTokenConfigured: !!String(process.env.GITHUB_TOKEN || "").trim(),
     githubRepoConfigured: !!String(process.env.GITHUB_REPO || "").trim(),
@@ -262,6 +281,170 @@ async function fetchGeminiGenerateContent(url, geminiBody) {
   }
 }
 
+function groqChatPayloadFromGeminiShape(geminiBody, stream) {
+  let systemText = "";
+  if (geminiBody.systemInstruction && Array.isArray(geminiBody.systemInstruction.parts)) {
+    systemText = geminiBody.systemInstruction.parts
+      .map((p) => (p && p.text ? String(p.text) : ""))
+      .join("\n")
+      .trim();
+  }
+  let userText = "";
+  if (geminiBody.contents && geminiBody.contents[0] && Array.isArray(geminiBody.contents[0].parts)) {
+    userText = geminiBody.contents[0].parts
+      .map((p) => (p && p.text ? String(p.text) : ""))
+      .join("");
+  }
+  const gc = geminiBody.generationConfig || {};
+  const payload = {
+    model: resolveGroqModelId(),
+    messages: [
+      { role: "system", content: systemText || "You are a concise fitness programming assistant." },
+      { role: "user", content: userText },
+    ],
+    temperature: typeof gc.temperature === "number" ? gc.temperature : 0.65,
+    max_tokens: typeof gc.maxOutputTokens === "number" ? gc.maxOutputTokens : 1536,
+  };
+  if (stream) payload.stream = true;
+  return payload;
+}
+
+async function fetchGroqChatCompletions(apiKey, groqBody) {
+  const { ms } = resolveGeminiFetchBudget();
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  try {
+    return await fetch(GROQ_CHAT_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(groqBody),
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function extractGroqAssistantText(data) {
+  const ch = data && data.choices && data.choices[0];
+  if (!ch) return "";
+  const msg = ch.message;
+  if (msg && msg.content != null) return String(msg.content);
+  return "";
+}
+
+function groqFinishTruncated(data) {
+  const ch = data && data.choices && data.choices[0];
+  const fr = ch && ch.finish_reason ? String(ch.finish_reason) : "";
+  return fr === "length";
+}
+
+function extractOpenAiStreamDelta(obj) {
+  const ch = obj && obj.choices && obj.choices[0];
+  if (!ch || !ch.delta) return "";
+  const c = ch.delta.content;
+  return c != null ? String(c) : "";
+}
+
+function openAiStreamFinishReason(obj) {
+  const ch = obj && obj.choices && obj.choices[0];
+  return ch && ch.finish_reason ? String(ch.finish_reason) : "";
+}
+
+async function pipeOpenAiSseToClient(res, upstream) {
+  if (!upstream.body) {
+    res.write(`data: ${JSON.stringify({ error: "No stream body from provider" })}\n\n`);
+    res.end();
+    return;
+  }
+  const reader = upstream.body.getReader();
+  const dec = new TextDecoder();
+  let lineBuf = "";
+  let full = "";
+  let lastFinish = "";
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    lineBuf += dec.decode(value, { stream: true });
+    for (;;) {
+      const nl = lineBuf.indexOf("\n");
+      if (nl === -1) break;
+      let line = lineBuf.slice(0, nl).replace(/\r$/, "");
+      lineBuf = lineBuf.slice(nl + 1);
+      if (!line.startsWith("data: ")) continue;
+      const raw = line.slice(6).trim();
+      if (!raw || raw === "[DONE]") continue;
+      let obj;
+      try {
+        obj = JSON.parse(raw);
+      } catch {
+        continue;
+      }
+      if (obj.error) {
+        const msg = obj.error.message ? String(obj.error.message) : JSON.stringify(obj.error);
+        res.write(`data: ${JSON.stringify({ error: msg })}\n\n`);
+        continue;
+      }
+      const piece = extractOpenAiStreamDelta(obj);
+      if (piece) {
+        full += piece;
+        res.write(`data: ${JSON.stringify({ delta: piece })}\n\n`);
+      }
+      const fr = openAiStreamFinishReason(obj);
+      if (fr) lastFinish = fr;
+    }
+  }
+  const truncated = lastFinish === "length";
+  res.write(`data: ${JSON.stringify({ done: true, text: full, truncated })}\n\n`);
+  res.end();
+}
+
+async function handleGenerateStreamGroq(res, apiKey, geminiBody) {
+  const groqPayload = groqChatPayloadFromGeminiShape(geminiBody, true);
+  let r;
+  try {
+    r = await fetch(GROQ_CHAT_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(groqPayload),
+    });
+  } catch (e) {
+    return res.status(502).json({ error: "Groq stream fetch failed", detail: e.message });
+  }
+  if (!r.ok) {
+    const t = await r.text();
+    return res.status(502).json({
+      error: "Groq stream HTTP error",
+      detail: (t || "").slice(0, 900),
+    });
+  }
+  res.status(200);
+  res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
+  res.setHeader("Cache-Control", "no-cache, no-transform");
+  res.setHeader("Connection", "keep-alive");
+  res.setHeader("X-Accel-Buffering", "no");
+
+  try {
+    await pipeOpenAiSseToClient(res, r);
+  } catch (e) {
+    if (!res.headersSent) {
+      return res.status(500).json({ error: "Stream failed", detail: e.message });
+    }
+    try {
+      res.write(`data: ${JSON.stringify({ error: e.message || "stream error" })}\n\n`);
+    } catch (_) {}
+    try {
+      res.end();
+    } catch (_) {}
+  }
+}
+
 function extractGeminiTextFromData(data) {
   const c = data && data.candidates && data.candidates[0];
   if (!c || !c.content || !c.content.parts) return "";
@@ -420,22 +603,28 @@ module.exports = async function handler(req, res) {
     if (method === "OPTIONS") return res.status(204).end();
 
     if (method === "GET" || method === "HEAD") {
-      const configured = !!resolveGeminiApiKey();
+      const prov = resolveProvider();
+      const configured = prov.id !== "none";
       const payload = {
         ok: true,
         service: "generate-workout",
-        geminiKeyConfigured: configured,
-        geminiKeySourceEnv: configured ? geminiKeySourceEnvName() : null,
+        provider: prov.id,
+        groqKeyConfigured: !!resolveGroqApiKey(),
+        groqModelEnv: (process.env.GROQ_MODEL || "").trim() || null,
+        groqModelResolved: prov.id === "groq" ? resolveGroqModelId() : null,
+        geminiKeyConfigured: !!resolveGeminiApiKey(),
+        geminiKeySourceEnv: resolveGeminiApiKey() ? geminiKeySourceEnvName() : null,
         modelEnv: (process.env.GEMINI_MODEL || "").trim() || null,
         modelResolved: resolveGeminiModelId(),
         geminiFetchBudgetMs: resolveGeminiFetchBudget().ms,
         geminiFetchBudgetCap: resolveGeminiFetchBudget().cap,
         runningOnVercel: !!process.env.VERCEL,
         debug: buildGeminiEnvDebug(),
-        hint: configured ? "POST JSON action generate|explain." : `Set ${GEMINI_KEY_ENV_NAMES[0]} (Production), Redeploy, root has /api.`,
+        hint: configured
+          ? `Active provider: ${prov.id}. POST JSON action generate|explain.`
+          : "Set GROQ_API_KEY (preferred) or GEMINI_API_KEY for Production, Redeploy; repo root must contain /api.",
         features: {
           streamGenerate: true,
-          /** True job queue needs external store + worker; not enabled in-repo. */
           asyncJobQueue: false,
         },
       };
@@ -454,17 +643,22 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    const key = resolveGeminiApiKey();
-    if (!key) {
+    const prov = resolveProvider();
+    if (prov.id === "none") {
       return res.status(503).json({
-        error: "Server missing Gemini API key at runtime.",
-        hint: `Set ${GEMINI_KEY_ENV_NAMES.join("/")} for Production; Redeploy. Empty debug.geminiKeyEnvNamesFound → wrong project or var scope.`,
+        error: "Server missing AI API key at runtime.",
+        hint: "Set GROQ_API_KEY (Groq / Llama, recommended) or GEMINI_API_KEY for Production, then Redeploy.",
         debug: buildGeminiEnvDebug(),
       });
     }
 
     const model = resolveGeminiModelId();
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`;
+    const geminiKeyOnly = resolveGeminiApiKey();
+    const geminiUrl =
+      geminiKeyOnly &&
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(
+        geminiKeyOnly
+      )}`;
 
     let body;
     try {
@@ -479,19 +673,64 @@ module.exports = async function handler(req, res) {
       const { geminiBody } = buildWorkoutGeminiBody(body);
 
       if (body.stream === true) {
-        return handleGenerateStream(res, key, model, geminiBody);
+        if (prov.id === "groq") return handleGenerateStreamGroq(res, prov.key, geminiBody);
+        if (!geminiKeyOnly) {
+          return res.status(503).json({ error: "Gemini streaming unavailable (no Gemini API key)." });
+        }
+        return handleGenerateStream(res, geminiKeyOnly, model, geminiBody);
       }
 
+      if (prov.id === "groq") {
+        const groqPayload = groqChatPayloadFromGeminiShape(geminiBody, false);
+        let r;
+        try {
+          r = await fetchGroqChatCompletions(prov.key, groqPayload);
+        } catch (e) {
+          if (e && e.name === "AbortError") {
+            const b = resolveGeminiFetchBudget();
+            return res.status(504).json({
+              error: "Groq request hit the server time budget.",
+              hint: `Abort after ${b.ms}ms. Retry or raise GEMINI_FETCH_BUDGET_* (shared fetch budget name) / Vercel limits.`,
+            });
+          }
+          throw e;
+        }
+        const parsed = await parseGeminiJsonResponse(r);
+        if (parsed.parseError) {
+          return res.status(502).json({
+            error: "Groq response not JSON",
+            detail: parsed.parseError,
+            snippet: (parsed.raw || "").slice(0, 800),
+          });
+        }
+        const data = parsed.data;
+        if (!r.ok) {
+          const msg = data && data.error && data.error.message ? data.error.message : JSON.stringify(data || {});
+          return res.status(502).json({ error: "Groq request failed", detail: msg });
+        }
+        const text = extractGroqAssistantText(data);
+        if (!text) {
+          return res.status(502).json({ error: "Empty Groq response", detail: data });
+        }
+        const truncated = groqFinishTruncated(data);
+        const out = { ok: true, text };
+        if (truncated) out.truncated = true;
+        return res.status(200).json(out);
+      }
+
+      if (!geminiUrl) {
+        return res.status(503).json({ error: "Gemini URL unavailable (no Gemini API key)." });
+      }
       let r;
       try {
-        r = await fetchGeminiGenerateContent(url, geminiBody);
+        r = await fetchGeminiGenerateContent(geminiUrl, geminiBody);
       } catch (e) {
         if (e && e.name === "AbortError") {
           const b = resolveGeminiFetchBudget();
           return res.status(504).json({
             error:
               "Gemini is still working, but the server stopped waiting (time budget)—newer Flash models often need more seconds.",
-            hint: `This route aborts the fetch after ${b.ms}ms (cap ${b.cap}ms). On Vercel Free the whole function still has ~10s. Retry; leave warehouse hints off; shorten notes/tags; or use Pro + longer maxDuration/budget. See GET this URL for budget fields.`,
+            hint: `This route aborts the fetch after ${b.ms}ms (cap ${b.cap}ms). On Vercel Free the whole function still has ~10s. Retry; shorten notes/tags; or use Pro + longer maxDuration/budget. See GET this URL for budget fields.`,
           });
         }
         throw e;
@@ -542,12 +781,19 @@ module.exports = async function handler(req, res) {
 
     let r;
     try {
-      r = await fetchGeminiGenerateContent(url, geminiBody);
+      if (prov.id === "groq") {
+        r = await fetchGroqChatCompletions(prov.key, groqChatPayloadFromGeminiShape(geminiBody, false));
+      } else {
+        if (!geminiUrl) {
+          return res.status(503).json({ error: "No Gemini API key for explain." });
+        }
+        r = await fetchGeminiGenerateContent(geminiUrl, geminiBody);
+      }
     } catch (e) {
       if (e && e.name === "AbortError") {
         const b = resolveGeminiFetchBudget();
         return res.status(504).json({
-          error: "Explain: server time budget reached before Gemini finished.",
+          error: `Explain: server time budget reached before ${prov.id} finished.`,
           hint: `Fetch budget ${b.ms}ms / cap ${b.cap}ms. Retry with shorter workout text or raise budgets on Pro.`,
         });
       }
@@ -557,7 +803,7 @@ module.exports = async function handler(req, res) {
     const parsed = await parseGeminiJsonResponse(r);
     if (parsed.parseError) {
       return res.status(502).json({
-        error: "Gemini response not JSON",
+        error: `${prov.id} response not JSON`,
         detail: parsed.parseError,
         snippet: (parsed.raw || "").slice(0, 800),
       });
@@ -565,10 +811,10 @@ module.exports = async function handler(req, res) {
     const data = parsed.data;
     if (!r.ok) {
       const msg = data && data.error && data.error.message ? data.error.message : JSON.stringify(data || {});
-      return res.status(502).json({ error: "Gemini explain failed", detail: msg });
+      return res.status(502).json({ error: `${prov.id} explain failed`, detail: msg });
     }
 
-    const text = extractGeminiTextFromData(data);
+    const text = prov.id === "groq" ? extractGroqAssistantText(data) : extractGeminiTextFromData(data);
 
     return res.status(200).json({ ok: true, text: text || "(no text)" });
   } catch (e) {
