@@ -26,7 +26,7 @@ function loadEnv() {
   }
 }
 
-/** תאימות ל־handler של Vercel (res.status().json()) */
+/** תאימות ל־handler של Vercel (res.status().json() + כתיבה לזרם SSE) */
 function wrapRes(res) {
   const out = {
     _code: 200,
@@ -35,12 +35,22 @@ function wrapRes(res) {
       return out;
     },
     json(obj) {
-      res.statusCode = out._code;
-      res.setHeader("Content-Type", "application/json; charset=utf-8");
+      if (!res.headersSent) {
+        res.statusCode = out._code;
+        res.setHeader("Content-Type", "application/json; charset=utf-8");
+      }
       res.end(JSON.stringify(obj));
     },
+    write(chunk) {
+      if (!res.headersSent) {
+        res.statusCode = out._code;
+      }
+      return res.write(chunk);
+    },
     end(chunk) {
-      res.statusCode = out._code;
+      if (!res.headersSent) {
+        res.statusCode = out._code;
+      }
       res.end(chunk !== undefined ? chunk : "");
     },
     setHeader: res.setHeader.bind(res),
@@ -82,6 +92,22 @@ const server = http.createServer((req, res) => {
       res.setHeader("Access-Control-Allow-Headers", "Content-Type");
       res.statusCode = 204;
       return res.end();
+    }
+    if (pathname === "/api/event" && req.method !== "POST") {
+      res.statusCode = 405;
+      return res.end("Method not allowed");
+    }
+    if (pathname === "/api/generate-workout" && (req.method === "GET" || req.method === "HEAD")) {
+      const fakeReq = { method: req.method, body: {} };
+      const fakeRes = wrapRes(res);
+      generateHandler(fakeReq, fakeRes).catch((e) => {
+        if (!res.headersSent) {
+          res.statusCode = 500;
+          res.setHeader("Content-Type", "application/json");
+          res.end(JSON.stringify({ error: String(e.message || e) }));
+        }
+      });
+      return;
     }
     if (req.method !== "POST") {
       res.statusCode = 405;

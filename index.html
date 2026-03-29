@@ -406,7 +406,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
     <div class="ai-beta-banner"><strong>BETA</strong> — Experimental AI workout builder. Output is generated; verify before training.</div>
     <div class="form-group" style="margin-bottom:12px">
       <h2 class="eq-label-row ai-builder-title-row">AI workout builder <span class="ai-builder-tagline">Builds an original session from your equipment and time.</span> <button type="button" class="eq-info-btn" id="aiInfoBtn" onclick="toggleAiInfo(event)" title="About this builder" aria-label="Information">ℹ️</button></h2>
-      <div id="aiInfoPopover" class="eq-info-popover" role="dialog" aria-hidden="true" style="display:none">Programming only — not lifestyle advice. Standard session rules always apply in the background (not a user toggle). Optional tags add warm-up, strength, or weightlifting blocks, movement demos, or an extended athlete profile. Open/Hero name hints are opt-in (larger, slower request).</div>
+      <div id="aiInfoPopover" class="eq-info-popover" role="dialog" aria-hidden="true" style="display:none">Programming only — not lifestyle advice. Standard session rules always apply in the background (not a user toggle). Optional tags add warm-up, strength, or weightlifting blocks, movement demos, or an extended athlete profile. Open/Hero name hints are opt-in (larger, slower request). Generation uses a live stream first, then falls back to a standard request if needed.</div>
     </div>
     <div class="form-group">
       <label>Available Time (minutes)</label>
@@ -990,6 +990,110 @@ function requestAi(url, payload) {
   });
 }
 
+/** Gemini stream (SSE): POST with stream:true; falls back to requestAi on failure. */
+function requestAiGenerateStream(url, payload, onDelta, onDone, onFail) {
+  var body = JSON.stringify(Object.assign({}, payload || {}, { stream: true }));
+  var ctrl = new AbortController();
+  var timer = setTimeout(function () {
+    ctrl.abort();
+  }, 120000);
+  return fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: body,
+    signal: ctrl.signal,
+  })
+    .then(function (r) {
+      if (!r.ok) {
+        clearTimeout(timer);
+        return r.text().then(function (t) {
+          var j = null;
+          try {
+            j = JSON.parse(t);
+          } catch (e) {}
+          var detail =
+            j && j.detail
+              ? String(j.detail)
+              : j && j.error
+              ? String(j.error)
+              : (t || "").slice(0, 600);
+          onFail(detail || "HTTP " + r.status);
+        });
+      }
+      if (!r.body || typeof r.body.getReader !== "function") {
+        clearTimeout(timer);
+        onFail("Streaming not supported in this browser.");
+        return;
+      }
+      var reader = r.body.getReader();
+      var dec = new TextDecoder();
+      var buf = "";
+      var live = "";
+      function pump() {
+        return reader.read().then(function (result) {
+          if (result.done) {
+            clearTimeout(timer);
+            if (live) onDone(live, {});
+            else onFail("Stream ended with no content.");
+            return;
+          }
+          buf += dec.decode(result.value, { stream: true });
+          for (;;) {
+            var nl = buf.indexOf("\n");
+            if (nl === -1) break;
+            var line = buf.slice(0, nl).replace(/\r$/, "");
+            buf = buf.slice(nl + 1);
+            if (line.indexOf("data: ") !== 0) continue;
+            var raw = line.slice(6).trim();
+            if (!raw) continue;
+            var ev;
+            try {
+              ev = JSON.parse(raw);
+            } catch (e) {
+              continue;
+            }
+            if (ev.error) {
+              clearTimeout(timer);
+              onFail(String(ev.error));
+              return;
+            }
+            if (ev.delta) {
+              live += ev.delta;
+              onDelta(live, ev.delta);
+            }
+            if (ev.done) {
+              clearTimeout(timer);
+              onDone(ev.text != null && ev.text !== "" ? ev.text : live, ev);
+              return;
+            }
+          }
+          return pump();
+        });
+      }
+      return pump();
+    })
+    .catch(function (e) {
+      clearTimeout(timer);
+      if (e && e.name === "AbortError") onFail("Request timed out.");
+      else onFail(e && e.message ? e.message : String(e));
+    });
+}
+
+function finishAiGenerateSuccess(el, base, fullText, truncated) {
+  lastAiWorkoutText = fullText || "";
+  var wAi = buildAiWorkoutObjectFromText(lastAiWorkoutText);
+  var explainBtn = "<div style=\"margin-top:14px;text-align:center\"><button type=\"button\" class=\"btn btn-find\" onclick=\"explainAiWorkout()\">Explain movements (YouTube)</button></div>";
+  var truncBanner = truncated
+    ? "<div style=\"color:#fa0;font-size:0.88rem;margin-bottom:10px\">Output may have hit the model token limit—try <strong>Generate</strong> again or use fewer session blocks.</div>"
+    : "";
+  el.innerHTML = "<div class=\"ai-workout-out\">" + truncBanner + buildCard(wAi, null) + explainBtn + "</div>";
+  if (aiTagLocation.demos === "dock") {
+    return requestAi(base + "/api/generate-workout", { action: "explain", workoutText: lastAiWorkoutText }).then(function (ex) {
+      if (ex.ok && ex.j && ex.j.text) appendAiExplainToResult(ex.j.text);
+    });
+  }
+}
+
 function buildAiErrorMessage(x) {
   var errStr = x && x.j && x.j.error ? String(x.j.error) : "";
   var detail = x && x.j && x.j.detail ? String(x.j.detail) : "";
@@ -1096,7 +1200,8 @@ function generateWorkoutAi() {
     el.innerHTML = "<div class=\"empty\"><div class=\"empty-icon\">⚠️</div>Set <code>ANALYTICS_ENDPOINT</code> to your Vercel API URL (e.g. <code>https://your-app.vercel.app/api/event</code>) so this tab can reach <code>/api/generate-workout</code>.</div>";
     return;
   }
-  el.innerHTML = "<div class=\"empty\"><div class=\"empty-icon\">⏳</div>Generating…</div>";
+  el.innerHTML =
+    "<div class=\"empty\"><div class=\"empty-icon\">⏳</div>Generating…</div><pre id=\"aiStreamLive\" style=\"white-space:pre-wrap;text-align:left;font-size:0.88rem;margin-top:12px;max-height:42vh;overflow:auto;background:rgba(0,0,0,0.18);padding:10px;border-radius:6px\"></pre>";
   if (btn) btn.disabled = true;
   sendAnalytics("ai_generate_workout");
   var genPayload = {
@@ -1124,42 +1229,65 @@ function generateWorkoutAi() {
       genPayload.warehouseDigest = whDig;
     }
   }
-  requestAi(base + "/api/generate-workout", genPayload)
-    .then(function (x) {
-      if (!x.ok) {
-        var msg = buildAiErrorMessage(x);
-        var msgL = msg.toLowerCase();
-        var foot =
-          msgL.indexOf("quota") >= 0 || msgL.indexOf("google gemini") >= 0
-            ? "This comes from <strong>Google</strong> (Gemini limits), not from Vercel. Fix billing/usage in Google AI Studio or Cloud Console, or change <code>GEMINI_MODEL</code>."
-            : x.status === 504 || msgL.indexOf("time budget") >= 0
-            ? "<strong>Free hosting limit (~10s).</strong> The app already retries up to 3× on timeouts—try <strong>Generate</strong> again once. Leave <em>Open/Hero name hints</em> off, metcon-only (no extra blocks), short notes. Still stuck? Confirm deploy + <code>GEMINI_API_KEY</code>."
-            : "Still stuck? Confirm <code>/api/generate-workout</code> is deployed, <code>GEMINI_API_KEY</code> is set, and redeploy.";
-        el.innerHTML = "<div class=\"empty\" style=\"color:#e88\"><strong>Could not generate</strong><pre style=\"white-space:pre-wrap;text-align:left;font-size:0.85rem;margin-top:8px\">" + escapeHtmlAi(msg) + "</pre><p style=\"font-size:0.9rem;margin-top:8px;line-height:1.4\">" + foot + "</p></div>";
-        return;
-      }
-      lastAiWorkoutText = (x.j && x.j.text) ? x.j.text : "";
-      var wAi = buildAiWorkoutObjectFromText(lastAiWorkoutText);
-      var explainBtn = "<div style=\"margin-top:14px;text-align:center\"><button type=\"button\" class=\"btn btn-find\" onclick=\"explainAiWorkout()\">Explain movements (YouTube)</button></div>";
-      el.innerHTML = "<div class=\"ai-workout-out\">" + buildCard(wAi, null) + explainBtn + "</div>";
-      if (aiTagLocation.demos === "dock") {
-        return requestAi(base + "/api/generate-workout", { action: "explain", workoutText: lastAiWorkoutText }).then(function (ex) {
-          if (ex.ok && ex.j && ex.j.text) appendAiExplainToResult(ex.j.text);
+  function showAiGenerateHttpError(x) {
+    var msg = buildAiErrorMessage(x);
+    var msgL = msg.toLowerCase();
+    var foot =
+      msgL.indexOf("quota") >= 0 || msgL.indexOf("google gemini") >= 0
+        ? "This comes from <strong>Google</strong> (Gemini limits), not from Vercel. Fix billing/usage in Google AI Studio or Cloud Console, or change <code>GEMINI_MODEL</code>."
+        : x.status === 504 || msgL.indexOf("time budget") >= 0
+        ? "<strong>Free hosting limit (~10s).</strong> Retries run automatically—try <strong>Generate</strong> again. Leave <em>Open/Hero name hints</em> off when possible. Still stuck? Confirm deploy + <code>GEMINI_API_KEY</code>."
+        : "Still stuck? Confirm <code>/api/generate-workout</code> is deployed, <code>GEMINI_API_KEY</code> is set, and redeploy.";
+    el.innerHTML = "<div class=\"empty\" style=\"color:#e88\"><strong>Could not generate</strong><pre style=\"white-space:pre-wrap;text-align:left;font-size:0.85rem;margin-top:8px\">" + escapeHtmlAi(msg) + "</pre><p style=\"font-size:0.9rem;margin-top:8px;line-height:1.4\">" + foot + "</p></div>";
+  }
+  requestAiGenerateStream(
+    base + "/api/generate-workout",
+    genPayload,
+    function (liveFull) {
+      var pre = document.getElementById("aiStreamLive");
+      if (pre) pre.textContent = liveFull;
+    },
+    function (text, ev) {
+      var p = finishAiGenerateSuccess(el, base, text, !!(ev && ev.truncated));
+      if (p && typeof p.finally === "function") {
+        p.finally(function () {
+          if (btn) btn.disabled = false;
         });
-      }
-    })
-    .catch(function (e) {
-      var m;
-      if (e && e.name === "AbortError") m = "Request timed out. Try again.";
-      else {
-        m = "<strong>Network error:</strong> " + escapeHtmlAi(e && e.message ? e.message : String(e));
-        m += "<p style=\"font-size:0.88rem;margin-top:10px;line-height:1.4;opacity:.95\">Often this means the browser blocked the request after a failed CORS preflight — e.g. <code>/api/generate-workout</code> is <strong>404 on Vercel</strong> (not deployed yet). Fix: Vercel dashboard → redeploy latest <code>main</code> (must include <code>api/generate-workout.js</code>). Quick check: open <a href=\"https://mama-wod.vercel.app/api/generate-workout\" target=\"_blank\" rel=\"noopener\">mama-wod.vercel.app/api/generate-workout</a> in the browser — you should see JSON (even an error), not a 404 page.</p>";
-      }
-      el.innerHTML = "<div class=\"empty\" style=\"color:#e88\">" + m + "</div>";
-    })
-    .finally(function () {
-      if (btn) btn.disabled = false;
-    });
+      } else if (btn) btn.disabled = false;
+    },
+    function (errStr) {
+      el.innerHTML =
+        "<div class=\"empty\"><div class=\"empty-icon\">⏳</div>Stream: " +
+        escapeHtmlAi(errStr) +
+        " — trying standard request…</div>";
+      requestAi(base + "/api/generate-workout", genPayload)
+        .then(function (x) {
+          if (!x.ok) {
+            showAiGenerateHttpError(x);
+            return;
+          }
+          return finishAiGenerateSuccess(el, base, (x.j && x.j.text) ? x.j.text : "", !!(x.j && x.j.truncated));
+        })
+        .catch(function (e) {
+          var m;
+          if (e && e.name === "AbortError") m = "Request timed out. Try again.";
+          else {
+            m = "<strong>Network error:</strong> " + escapeHtmlAi(e && e.message ? e.message : String(e));
+            m += "<p style=\"font-size:0.88rem;margin-top:10px;line-height:1.4;opacity:.95\">Often this means the browser blocked the request after a failed CORS preflight — e.g. <code>/api/generate-workout</code> is <strong>404 on Vercel</strong> (not deployed yet). Fix: Vercel dashboard → redeploy latest <code>main</code> (must include <code>api/generate-workout.js</code>). Quick check: open <a href=\"https://mama-wod.vercel.app/api/generate-workout\" target=\"_blank\" rel=\"noopener\">mama-wod.vercel.app/api/generate-workout</a> in the browser — you should see JSON (even an error), not a 404 page.</p>";
+          }
+          el.innerHTML = "<div class=\"empty\" style=\"color:#e88\">" + m + "</div>";
+        })
+        .finally(function () {
+          if (btn) btn.disabled = false;
+        });
+    }
+  ).catch(function (e) {
+    var m;
+    if (e && e.name === "AbortError") m = "Request timed out. Try again.";
+    else m = "<strong>Network error:</strong> " + escapeHtmlAi(e && e.message ? e.message : String(e));
+    el.innerHTML = "<div class=\"empty\" style=\"color:#e88\">" + m + "</div>";
+    if (btn) btn.disabled = false;
+  });
 }
 
 function explainAiWorkout() {

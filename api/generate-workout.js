@@ -1,8 +1,13 @@
 /**
  * Vercel serverless: AI workout generation (Gemini). API key only on server.
  * Env: GEMINI_API_KEY (preferred). Also accepts GOOGLE_GENERATIVE_AI_API_KEY / GOOGLE_AI_API_KEY.
- * Optional: GEMINI_MODEL, GEMINI_FETCH_BUDGET_MS (ms to wait on Gemini), GEMINI_FETCH_BUDGET_CAP (max ceiling; default ~9400 for Hobby).
- * On Vercel Pro + long maxDuration, set e.g. CAP=58000 MS=55000. Prompts stay small to reduce latency.
+ * Optional: GEMINI_MODEL, GEMINI_FETCH_BUDGET_MS / GEMINI_FETCH_BUDGET_CAP.
+ *
+ * POST action generate:
+ * - Default: JSON { ok, text } (bounded by fetch budget — Hobby ~10s total).
+ * - stream: true → Server-Sent Events (Gemini streamGenerateContent + alt=sse). Better UX + partial text if the
+ *   platform cuts the invocation; does not remove the Hobby wall clock.
+ * True async (job + external worker / KV) is not bundled — needs another store + processor if Gemini often exceeds 10s.
  */
 
 function allowCors(res) {
@@ -61,7 +66,9 @@ function buildGeminiEnvDebug() {
   };
 }
 
-const SYSTEM_INSTRUCTION_CORE = `Head coach for group-class GPP. Output ONLY the workout—concise, technical, headers OK (Warm-up / Strength / Metcon etc.). Use ONLY listed equipment; respect time; UNLIMITED = full session. Multi-athlete: partner/team formats when fit. Original work: no verbatim Hero/Open/benchmarks or long copied text; AMRAP/chipper-style structures OK. Honor user notes. If a WAREHOUSE NAMES block appears, use for modality/time hints only—write a fresh workout. No greetings or filler. Summarize public fitness knowledge in your own words—no long excerpts.`;
+const SYSTEM_INSTRUCTION_CORE = `Head coach for group-class GPP. Output ONLY the workout—concise, technical, headers OK (Warm-up / Strength / Metcon etc.). Use ONLY listed equipment; respect time; UNLIMITED = full session. Multi-athlete: partner/team formats when fit. Original work: no verbatim Hero/Open/benchmarks or long copied text; AMRAP/chipper-style structures OK. Honor user notes. If a WAREHOUSE NAMES block appears, use for modality/time hints only—write a fresh workout. No greetings or filler. Summarize public fitness knowledge in your own words—no long excerpts.
+
+Completeness: every main piece (especially METCON) must list ALL movements with reps, distance, or load—not a time cap plus a single line (e.g. AMRAP needs a full round written out). Prefer short exercise names and tight formatting over leaving work implied.`;
 
 const L1_TRAINING_GUIDE_ALIGNMENT = `L1-style judgment: mechanics/scaling first, safety under fatigue, broad GPP unless notes say otherwise; quality → consistency → intensity.`;
 
@@ -168,7 +175,7 @@ function buildUserPrompt(equipment, timeMinutes, unlimited, athletes, userNotes)
   const notesLine = (userNotes && String(userNotes).trim())
     ? `USER NOTES / GOALS (honor these):\n${String(userNotes).trim()}`
     : "USER NOTES: (none) — choose an optimal session for the equipment and time.";
-  return `AVAILABLE EQUIPMENT (strict — use only this):\n${eqList}\n\n${timeLine}\n${athLine}\n\n${notesLine}\n\nProduce the workout now.`;
+  return `AVAILABLE EQUIPMENT (strict — use only this):\n${eqList}\n\n${timeLine}\n${athLine}\n\n${notesLine}\n\nProduce the full workout now (complete exercise list per section; do not omit movements).`;
 }
 
 function buildFlexibleUserPrompt(equipment, timeMinutes, unlimited, athletes, userNotes) {
@@ -255,6 +262,157 @@ async function fetchGeminiGenerateContent(url, geminiBody) {
   }
 }
 
+function extractGeminiTextFromData(data) {
+  const c = data && data.candidates && data.candidates[0];
+  if (!c || !c.content || !c.content.parts) return "";
+  let s = "";
+  for (let i = 0; i < c.content.parts.length; i++) {
+    const p = c.content.parts[i];
+    if (p && p.text) s += String(p.text);
+  }
+  return s;
+}
+
+function buildWorkoutGeminiBody(body) {
+  const equipment = Array.isArray(body.equipment) ? body.equipment.map((x) => String(x).slice(0, 64)) : [];
+  const unlimited = !!body.unlimited;
+  const timeMinutes = unlimited ? 999 : Math.min(300, Math.max(1, parseInt(body.timeMinutes, 10) || 20));
+  const athletes = Math.min(20, Math.max(1, parseInt(body.athletes, 10) || 1));
+  const userNotes = String(body.userNotes || "").slice(0, 1600);
+  const useDefaultSettings = body.useDefaultSettings !== false;
+  let extendedProfile = body.extendedProfile;
+  if (!extendedProfile || typeof extendedProfile !== "object" || Array.isArray(extendedProfile)) {
+    extendedProfile = null;
+  }
+  const profileBlock = extendedProfile ? buildAthleteProfilePrompt(extendedProfile) : "";
+  const includeWarehouseDigest = body.includeWarehouseDigest === true;
+  const warehouseDigest = includeWarehouseDigest
+    ? String(body.warehouseDigest || "").trim().slice(0, 4000)
+    : "";
+  const hasWarehouseDigest = warehouseDigest.length > 0;
+
+  let userText = useDefaultSettings
+    ? buildUserPrompt(equipment, timeMinutes, unlimited, athletes, userNotes)
+    : buildFlexibleUserPrompt(equipment, timeMinutes, unlimited, athletes, userNotes);
+  if (profileBlock) {
+    userText = `${userText}\n\n${profileBlock}`;
+  }
+  if (hasWarehouseDigest) {
+    userText = `${userText}\n\nWAREHOUSE NAMES (patterns only; original work):\n${warehouseDigest}`;
+  }
+
+  const sessionParts = normalizeSessionParts(body);
+  userText = `${userText}\n\n${buildSessionStructureBlock(sessionParts, timeMinutes, unlimited)}`;
+
+  let systemText = useDefaultSettings
+    ? buildDefaultCoachSystemInstruction(extendedProfile, hasWarehouseDigest)
+    : GENERIC_SYSTEM_INSTRUCTION;
+  if (profileBlock) {
+    systemText = `${systemText}\n\n${ATHLETE_PROFILE_RULES}`;
+  }
+
+  const geminiBody = {
+    systemInstruction: { parts: [{ text: systemText }] },
+    contents: [{ role: "user", parts: [{ text: userText }] }],
+    generationConfig: {
+      temperature: 0.65,
+      maxOutputTokens: 1024,
+    },
+  };
+  return { geminiBody };
+}
+
+async function pipeGeminiSseToClient(res, upstream) {
+  if (!upstream.body) {
+    res.write(`data: ${JSON.stringify({ error: "No stream body from Gemini" })}\n\n`);
+    res.end();
+    return;
+  }
+  const reader = upstream.body.getReader();
+  const dec = new TextDecoder();
+  let lineBuf = "";
+  let prevFull = "";
+  let lastFinishReason = "";
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    lineBuf += dec.decode(value, { stream: true });
+    for (;;) {
+      const nl = lineBuf.indexOf("\n");
+      if (nl === -1) break;
+      let line = lineBuf.slice(0, nl).replace(/\r$/, "");
+      lineBuf = lineBuf.slice(nl + 1);
+      if (!line.startsWith("data: ")) continue;
+      const raw = line.slice(6).trim();
+      if (!raw || raw === "[DONE]") continue;
+      let obj;
+      try {
+        obj = JSON.parse(raw);
+      } catch {
+        continue;
+      }
+      if (obj.error) {
+        const msg = obj.error.message ? String(obj.error.message) : JSON.stringify(obj.error);
+        res.write(`data: ${JSON.stringify({ error: msg })}\n\n`);
+        continue;
+      }
+      const c0 = obj.candidates && obj.candidates[0];
+      if (c0 && c0.finishReason) lastFinishReason = String(c0.finishReason);
+      const full = extractGeminiTextFromData(obj);
+      if (full.length > prevFull.length) {
+        const delta = full.slice(prevFull.length);
+        prevFull = full;
+        if (delta) res.write(`data: ${JSON.stringify({ delta })}\n\n`);
+      }
+    }
+  }
+  const truncated = lastFinishReason === "MAX_TOKENS";
+  res.write(`data: ${JSON.stringify({ done: true, text: prevFull, truncated })}\n\n`);
+  res.end();
+}
+
+async function handleGenerateStream(res, key, model, geminiBody) {
+  const streamUrl = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(
+    model
+  )}:streamGenerateContent?alt=sse&key=${encodeURIComponent(key)}`;
+  let r;
+  try {
+    r = await fetch(streamUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(geminiBody),
+    });
+  } catch (e) {
+    return res.status(502).json({ error: "Gemini stream fetch failed", detail: e.message });
+  }
+  if (!r.ok) {
+    const t = await r.text();
+    return res.status(502).json({
+      error: "Gemini stream HTTP error",
+      detail: (t || "").slice(0, 900),
+    });
+  }
+  res.status(200);
+  res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
+  res.setHeader("Cache-Control", "no-cache, no-transform");
+  res.setHeader("Connection", "keep-alive");
+  res.setHeader("X-Accel-Buffering", "no");
+
+  try {
+    await pipeGeminiSseToClient(res, r);
+  } catch (e) {
+    if (!res.headersSent) {
+      return res.status(500).json({ error: "Stream failed", detail: e.message });
+    }
+    try {
+      res.write(`data: ${JSON.stringify({ error: e.message || "stream error" })}\n\n`);
+    } catch (_) {}
+    try {
+      res.end();
+    } catch (_) {}
+  }
+}
+
 module.exports = async function handler(req, res) {
   try {
     allowCors(res);
@@ -278,6 +436,11 @@ module.exports = async function handler(req, res) {
         runningOnVercel: !!process.env.VERCEL,
         debug: buildGeminiEnvDebug(),
         hint: configured ? "POST JSON action generate|explain." : `Set ${GEMINI_KEY_ENV_NAMES[0]} (Production), Redeploy, root has /api.`,
+        features: {
+          streamGenerate: true,
+          /** True job queue needs external store + worker; not enabled in-repo. */
+          asyncJobQueue: false,
+        },
       };
       if (method === "HEAD") {
         res.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -316,51 +479,11 @@ module.exports = async function handler(req, res) {
     const action = body.action === "explain" ? "explain" : "generate";
 
     if (action === "generate") {
-      const equipment = Array.isArray(body.equipment) ? body.equipment.map((x) => String(x).slice(0, 64)) : [];
-      const unlimited = !!body.unlimited;
-      const timeMinutes = unlimited ? 999 : Math.min(300, Math.max(1, parseInt(body.timeMinutes, 10) || 20));
-      const athletes = Math.min(20, Math.max(1, parseInt(body.athletes, 10) || 1));
-      const userNotes = String(body.userNotes || "").slice(0, 1600);
-      const useDefaultSettings = body.useDefaultSettings !== false;
-      let extendedProfile = body.extendedProfile;
-      if (!extendedProfile || typeof extendedProfile !== "object" || Array.isArray(extendedProfile)) {
-        extendedProfile = null;
-      }
-      const profileBlock = extendedProfile ? buildAthleteProfilePrompt(extendedProfile) : "";
-      const includeWarehouseDigest = body.includeWarehouseDigest === true;
-      const warehouseDigest = includeWarehouseDigest
-        ? String(body.warehouseDigest || "").trim().slice(0, 4000)
-        : "";
-      const hasWarehouseDigest = warehouseDigest.length > 0;
+      const { geminiBody } = buildWorkoutGeminiBody(body);
 
-      let userText = useDefaultSettings
-        ? buildUserPrompt(equipment, timeMinutes, unlimited, athletes, userNotes)
-        : buildFlexibleUserPrompt(equipment, timeMinutes, unlimited, athletes, userNotes);
-      if (profileBlock) {
-        userText = `${userText}\n\n${profileBlock}`;
+      if (body.stream === true) {
+        return handleGenerateStream(res, key, model, geminiBody);
       }
-      if (hasWarehouseDigest) {
-        userText = `${userText}\n\nWAREHOUSE NAMES (patterns only; original work):\n${warehouseDigest}`;
-      }
-
-      const sessionParts = normalizeSessionParts(body);
-      userText = `${userText}\n\n${buildSessionStructureBlock(sessionParts, timeMinutes, unlimited)}`;
-
-      let systemText = useDefaultSettings
-        ? buildDefaultCoachSystemInstruction(extendedProfile, hasWarehouseDigest)
-        : GENERIC_SYSTEM_INSTRUCTION;
-      if (profileBlock) {
-        systemText = `${systemText}\n\n${ATHLETE_PROFILE_RULES}`;
-      }
-
-      const geminiBody = {
-        systemInstruction: { parts: [{ text: systemText }] },
-        contents: [{ role: "user", parts: [{ text: userText }] }],
-        generationConfig: {
-          temperature: 0.65,
-          maxOutputTokens: 512,
-        },
-      };
 
       let r;
       try {
@@ -391,20 +514,18 @@ module.exports = async function handler(req, res) {
         return res.status(502).json({ error: "Gemini request failed", detail: msg });
       }
 
-      const text =
-        data.candidates &&
-        data.candidates[0] &&
-        data.candidates[0].content &&
-        data.candidates[0].content.parts &&
-        data.candidates[0].content.parts[0]
-          ? data.candidates[0].content.parts[0].text
-          : "";
+      const cand0 = data.candidates && data.candidates[0] ? data.candidates[0] : null;
+      const text = extractGeminiTextFromData(data);
 
       if (!text) {
         return res.status(502).json({ error: "Empty model response", detail: data });
       }
 
-      return res.status(200).json({ ok: true, text });
+      const finishReason = cand0 && cand0.finishReason ? String(cand0.finishReason) : "";
+      const truncated = finishReason === "MAX_TOKENS";
+      const out = { ok: true, text };
+      if (truncated) out.truncated = true;
+      return res.status(200).json(out);
     }
 
     /* explain */
@@ -418,7 +539,7 @@ module.exports = async function handler(req, res) {
       contents: [{ role: "user", parts: [{ text: `Workout:\n${workoutText}` }] }],
       generationConfig: {
         temperature: 0.4,
-        maxOutputTokens: 512,
+        maxOutputTokens: 640,
       },
     };
 
@@ -450,14 +571,7 @@ module.exports = async function handler(req, res) {
       return res.status(502).json({ error: "Gemini explain failed", detail: msg });
     }
 
-    const text =
-      data.candidates &&
-      data.candidates[0] &&
-      data.candidates[0].content &&
-      data.candidates[0].content.parts &&
-      data.candidates[0].content.parts[0]
-        ? data.candidates[0].content.parts[0].text
-        : "";
+    const text = extractGeminiTextFromData(data);
 
     return res.status(200).json({ ok: true, text: text || "(no text)" });
   } catch (e) {
