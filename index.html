@@ -247,6 +247,36 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 .toggle.on .knob{transform:translateX(26px)}
 .empty{text-align:center;padding:50px 20px;color:#444}
 .empty-icon{font-size:2.5em;margin-bottom:10px}
+.ai-loading-overlay{
+  position:fixed;inset:0;z-index:10001;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(17,17,17,.84);backdrop-filter:blur(2px)
+}
+.ai-loading-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px}
+.ai-loading-video{
+  width:min(70vw,360px);max-height:min(52vh,360px);
+  border-radius:12px;border:1px solid #2a2a2a;
+  box-shadow:0 8px 30px rgba(0,0,0,.45);background:#000;object-fit:cover
+}
+.ai-loading-status{color:#ddd;font-size:.95em;text-align:center}
+.ai-presets-group label{color:#1A9B8A}
+.ai-presets-hint{color:#777;font-weight:400;font-size:.82em}
+.ai-presets-toolbar{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.ai-presets-chips{display:flex;flex:1;flex-wrap:wrap;gap:8px;align-items:center;min-height:44px}
+.ai-preset-chip{display:inline-flex;align-items:center;gap:4px;padding:0;border-radius:10px;border:2px solid transparent;font-weight:600;font-size:.86em;user-select:none;touch-action:manipulation;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.ai-preset-chip.active{border-color:#F5C518;box-shadow:0 0 0 1px rgba(245,197,24,.5),0 2px 8px rgba(0,0,0,.3)}
+.ai-preset-chip.editing{outline:2px dashed rgba(255,255,255,.75);outline-offset:2px}
+.ai-preset-chip-label{padding:8px 6px 8px 12px;cursor:pointer;border-radius:10px 0 0 10px;flex:1;min-width:0}
+.ai-preset-chip-pen{margin:4px 6px 4px 0;padding:4px 7px;border:none;border-radius:8px;background:rgba(0,0,0,.22);cursor:pointer;font-size:1em;line-height:1;color:inherit;opacity:.92}
+.ai-preset-chip-pen:hover{background:rgba(0,0,0,.35);opacity:1}
+.ai-preset-add-btn{flex-shrink:0;width:44px;height:44px;border-radius:10px;border:1px solid #444;background:#2a2a2a;color:#fff;font-size:1.35em;font-weight:700;cursor:pointer;line-height:1}
+.ai-preset-add-btn:hover{border-color:#1A9B8A;color:#1A9B8A}
+.ai-preset-edit-bar{display:none;flex-wrap:wrap;align-items:center;gap:10px;margin-top:12px;padding:12px;background:#181818;border:1px solid #333;border-radius:8px}
+.ai-preset-edit-title{font-size:.82em;color:#9ccc65;font-weight:700;width:100%}
+.ai-preset-edit-name{flex:1;min-width:140px;max-width:220px;padding:8px 10px;background:#222;border:1px solid #444;border-radius:6px;color:#eee;font-size:.95em}
+.ai-preset-color-wrap{display:inline-flex;align-items:center;gap:8px;font-size:.82em;color:#aaa}
+.ai-preset-color-wrap input[type=color]{width:44px;height:36px;padding:0;border:1px solid #555;border-radius:6px;cursor:pointer;background:transparent}
+.ai-preset-action-btn{padding:7px 12px;font-size:.82em;margin:0}
 @media(max-width:768px){.workouts-grid{grid-template-columns:1fr}h1{font-size:1.7em}}
 
 .wod-line.note {
@@ -407,6 +437,21 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
     <div class="form-group" style="margin-bottom:12px">
       <h2 class="eq-label-row ai-builder-title-row">AI workout builder <span class="ai-builder-tagline">The Coach — original session from your equipment and time.</span> <button type="button" class="eq-info-btn" id="aiInfoBtn" onclick="toggleAiInfo(event)" title="About this builder" aria-label="Information">ℹ️</button></h2>
       <div id="aiInfoPopover" class="eq-info-popover" role="dialog" aria-hidden="true" style="display:none">Programming only — not lifestyle advice. Standard session rules always apply in the background (not a user toggle). Optional tags add warm-up, strength, or weightlifting blocks, movement demos, or an extended athlete profile. When the app has Open/Hero names cached, a short sample is sent automatically for style context (original programming only). Generation streams live when the server supports it.</div>
+    </div>
+    <div class="form-group ai-presets-group">
+      <label>Gym presets <span class="ai-presets-hint">(saved on this device — equipment + time)</span></label>
+      <div class="ai-presets-toolbar">
+        <div class="ai-presets-chips" id="aiPresetChips"></div>
+        <button type="button" class="ai-preset-add-btn" id="aiPresetAddBtn" onclick="addAiPresetDraft()" title="New preset from current equipment &amp; time" aria-label="Add preset">+</button>
+      </div>
+      <div id="aiPresetEditBar" class="ai-preset-edit-bar" style="display:none" aria-hidden="true">
+        <span class="ai-preset-edit-title">Edit preset — adjust gear &amp; time below, then Save</span>
+        <input type="text" id="aiPresetEditName" class="ai-preset-edit-name" maxlength="40" placeholder="Name" aria-label="Preset name" autocomplete="off">
+        <label class="ai-preset-color-wrap">Color <input type="color" id="aiPresetEditColor" value="#1a4d2e" aria-label="Preset background color"></label>
+        <button type="button" class="btn btn-set-workout ai-preset-action-btn" onclick="saveAiPresetEdit()">Save</button>
+        <button type="button" class="btn ai-preset-action-btn" style="background:#444;color:#eee" onclick="cancelAiPresetEdit()">Cancel</button>
+        <button type="button" class="btn ai-preset-action-btn" style="background:#6a2a2a;color:#fff" onclick="deleteAiPresetEditing()">Delete</button>
+      </div>
     </div>
     <div class="form-group">
       <label>Available Time (minutes)</label>
@@ -668,6 +713,7 @@ var AI_TAG_LABELS = {
   strengthBlock: "Strength block",
   weightliftingBlock: "Weightlifting block"
 };
+var AI_LOADING_VIDEO_SRC = "../1ST_VID.mp4";
 var aiTagLocation = {
   demos: "bank",
   extended: "bank",
@@ -675,6 +721,10 @@ var aiTagLocation = {
   strengthBlock: "bank",
   weightliftingBlock: "bank"
 };
+var AI_PRESETS_STORAGE_KEY = "duck-wod-ai-presets-v1";
+var aiPresets = [];
+var aiPresetActiveId = null;
+var aiPresetEditingId = null;
 
 /** Remove tag chips no longer in AI_TAG_LABELS (e.g. legacy “Default coach mode”) so cached DOM cannot show them. */
 function removeOrphanAiTagChips() {
@@ -749,6 +799,250 @@ function moveAiTagToBank(key) {
   if (!AI_TAG_LABELS[key]) return;
   aiTagLocation[key] = "bank";
   renderAiTags();
+}
+
+function loadAiPresets() {
+  try {
+    var raw = localStorage.getItem(AI_PRESETS_STORAGE_KEY);
+    if (!raw) {
+      aiPresets = [];
+      return;
+    }
+    var j = JSON.parse(raw);
+    aiPresets = Array.isArray(j) ? j : [];
+  } catch (e) {
+    aiPresets = [];
+  }
+}
+
+function saveAiPresetsToStorage() {
+  try {
+    localStorage.setItem(AI_PRESETS_STORAGE_KEY, JSON.stringify(aiPresets));
+  } catch (e) {}
+}
+
+function randomPresetId() {
+  return "p_" + Math.random().toString(36).slice(2, 14) + "_" + Date.now().toString(36);
+}
+
+function normalizeHexColor(c) {
+  var s = String(c || "#2a2a2a").trim();
+  if (!s) s = "#2a2a2a";
+  if (s[0] !== "#") s = "#" + s;
+  if (s.length === 4 && /^#[0-9a-fA-F]{3}$/.test(s)) {
+    s = "#" + s[1] + s[1] + s[2] + s[2] + s[3] + s[3];
+  }
+  if (/^#[0-9a-fA-F]{6}$/.test(s)) return s;
+  return "#2a2a2a";
+}
+
+function sanitizePresetColor(c) {
+  var s = normalizeHexColor(c);
+  return /^#[0-9A-Fa-f]{6}$/.test(s) ? s : "#2a2a2a";
+}
+
+function presetLabelTextColor(bg) {
+  var hex = sanitizePresetColor(bg).replace(/^#/, "");
+  var n = parseInt(hex, 16);
+  var r = (n >> 16) & 255;
+  var g = (n >> 8) & 255;
+  var b = n & 255;
+  var L = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return L > 0.55 ? "#111" : "#fff";
+}
+
+function findAiPreset(id) {
+  if (!id) return null;
+  for (var i = 0; i < aiPresets.length; i++) {
+    if (aiPresets[i].id === id) return aiPresets[i];
+  }
+  return null;
+}
+
+function captureCurrentAiPresetPayload() {
+  var eq = [];
+  var cbs = document.querySelectorAll("#eqGridAi .eq-item input:checked");
+  for (var i = 0; i < cbs.length; i++) eq.push(cbs[i].value);
+  var uEl = document.getElementById("aiUnlimitedTime");
+  var unlimited = !!(uEl && uEl.checked);
+  var minutes = Math.min(180, Math.max(1, parseInt(document.getElementById("aiFindTime") && document.getElementById("aiFindTime").value, 10) || 20));
+  return { equipment: eq, unlimited: unlimited, minutes: minutes };
+}
+
+function applyAiPresetData(p) {
+  if (!p) return;
+  var setMap = {};
+  var eq = p.equipment || [];
+  for (var i = 0; i < eq.length; i++) setMap[eq[i]] = true;
+  var inputs = document.querySelectorAll("#eqGridAi .eq-item input[type='checkbox']");
+  for (var j = 0; j < inputs.length; j++) {
+    inputs[j].checked = !!setMap[inputs[j].value];
+  }
+  syncAiEquipmentDependencies();
+  updateFullGymButtonStateAi();
+  var u = document.getElementById("aiUnlimitedTime");
+  if (u) u.checked = !!p.unlimited;
+  var te = document.getElementById("aiFindTime");
+  if (te) {
+    var m = Math.min(180, Math.max(1, parseInt(p.minutes, 10) || 20));
+    te.value = m;
+  }
+}
+
+function renderAiPresets() {
+  var host = document.getElementById("aiPresetChips");
+  if (!host) return;
+  var html = "";
+  if (!aiPresets.length) {
+    html =
+      "<span style=\"color:#666;font-size:.86em\">No presets yet — choose equipment &amp; time, then tap <strong>+</strong></span>";
+  } else {
+    for (var i = 0; i < aiPresets.length; i++) {
+      var p = aiPresets[i];
+      var bg = sanitizePresetColor(p.color);
+      var tc = presetLabelTextColor(bg);
+      var active = p.id === aiPresetActiveId ? " active" : "";
+      var editing = p.id === aiPresetEditingId ? " editing" : "";
+      var nm = escapeHtmlAi(p.name || "Preset");
+      html +=
+        "<div class=\"ai-preset-chip" +
+        active +
+        editing +
+        "\" data-preset-id=\"" +
+        escapeHtmlAi(p.id) +
+        "\" style=\"background:" +
+        bg +
+        ";color:" +
+        tc +
+        "\">" +
+        "<span class=\"ai-preset-chip-label\">" +
+        nm +
+        "</span>" +
+        "<button type=\"button\" class=\"ai-preset-chip-pen\" data-preset-pen=\"1\" aria-label=\"Edit preset\" title=\"Edit\">✏️</button></div>";
+    }
+  }
+  host.innerHTML = html;
+  var bar = document.getElementById("aiPresetEditBar");
+  if (bar) {
+    var show = !!aiPresetEditingId;
+    bar.style.display = show ? "flex" : "none";
+    bar.setAttribute("aria-hidden", show ? "false" : "true");
+  }
+}
+
+function applyAiPresetById(id) {
+  var p = findAiPreset(id);
+  if (!p) return;
+  aiPresetEditingId = null;
+  var bar = document.getElementById("aiPresetEditBar");
+  if (bar) bar.style.display = "none";
+  applyAiPresetData(p);
+  aiPresetActiveId = id;
+  renderAiPresets();
+}
+
+function startAiPresetEdit(id) {
+  var p = findAiPreset(id);
+  if (!p) return;
+  aiPresetEditingId = id;
+  aiPresetActiveId = id;
+  applyAiPresetData(p);
+  var nameEl = document.getElementById("aiPresetEditName");
+  var colEl = document.getElementById("aiPresetEditColor");
+  if (nameEl) nameEl.value = p.name || "";
+  if (colEl) colEl.value = sanitizePresetColor(p.color);
+  var bar = document.getElementById("aiPresetEditBar");
+  if (bar) bar.style.display = "flex";
+  renderAiPresets();
+}
+
+function saveAiPresetEdit() {
+  if (!aiPresetEditingId) return;
+  var p = findAiPreset(aiPresetEditingId);
+  if (!p) return;
+  var cap = captureCurrentAiPresetPayload();
+  if (!cap.equipment.length) {
+    alert("Preset needs at least one equipment item — check the grid below, then Save.");
+    return;
+  }
+  p.equipment = cap.equipment.slice();
+  p.unlimited = cap.unlimited;
+  p.minutes = cap.minutes;
+  var nameEl = document.getElementById("aiPresetEditName");
+  p.name = (nameEl && nameEl.value.trim()) || p.name || "Preset";
+  var colEl = document.getElementById("aiPresetEditColor");
+  p.color = sanitizePresetColor(colEl && colEl.value);
+  saveAiPresetsToStorage();
+  aiPresetEditingId = null;
+  var bar = document.getElementById("aiPresetEditBar");
+  if (bar) bar.style.display = "none";
+  renderAiPresets();
+}
+
+function cancelAiPresetEdit() {
+  aiPresetEditingId = null;
+  var bar = document.getElementById("aiPresetEditBar");
+  if (bar) {
+    bar.style.display = "none";
+    bar.setAttribute("aria-hidden", "true");
+  }
+  renderAiPresets();
+}
+
+function deleteAiPresetEditing() {
+  if (!aiPresetEditingId) return;
+  var delId = aiPresetEditingId;
+  aiPresets = aiPresets.filter(function (x) {
+    return x.id !== delId;
+  });
+  if (aiPresetActiveId === delId) aiPresetActiveId = null;
+  aiPresetEditingId = null;
+  saveAiPresetsToStorage();
+  var bar = document.getElementById("aiPresetEditBar");
+  if (bar) {
+    bar.style.display = "none";
+    bar.setAttribute("aria-hidden", "true");
+  }
+  renderAiPresets();
+}
+
+function addAiPresetDraft() {
+  var cap = captureCurrentAiPresetPayload();
+  if (!cap.equipment.length) {
+    alert("Select at least one equipment item first — then tap + to save a preset.");
+    return;
+  }
+  var p = {
+    id: randomPresetId(),
+    name: "New preset",
+    color: "#1a4d2e",
+    equipment: cap.equipment.slice(),
+    unlimited: cap.unlimited,
+    minutes: cap.minutes,
+  };
+  aiPresets.push(p);
+  saveAiPresetsToStorage();
+  startAiPresetEdit(p.id);
+}
+
+function initAiPresetsUi() {
+  loadAiPresets();
+  var host = document.getElementById("aiPresetChips");
+  if (host && !host.dataset.bound) {
+    host.dataset.bound = "1";
+    host.addEventListener("click", function (e) {
+      if (e.target.closest(".ai-preset-chip-pen")) {
+        e.preventDefault();
+        e.stopPropagation();
+        var chip = e.target.closest(".ai-preset-chip");
+        if (chip) startAiPresetEdit(chip.getAttribute("data-preset-id"));
+        return;
+      }
+      var chip2 = e.target.closest(".ai-preset-chip");
+      if (chip2) applyAiPresetById(chip2.getAttribute("data-preset-id"));
+    });
+  }
+  renderAiPresets();
 }
 
 /** Turn model plain text into section objects like browse workouts (title / sub_title / lines). */
@@ -1268,7 +1562,16 @@ function generateWorkoutAi() {
     return;
   }
   el.innerHTML =
-    "<div class=\"empty\"><div class=\"empty-icon\">⏳</div>Generating <span id=\"aiStreamStatus\" style=\"opacity:.85\">(live stream when available)…</span></div><pre id=\"aiStreamLive\" style=\"white-space:pre-wrap;text-align:left;font-size:0.88rem;margin-top:12px;max-height:42vh;overflow:auto;background:rgba(0,0,0,0.18);padding:10px;border-radius:6px\"></pre>";
+    "<div class=\"ai-loading-overlay\"><div class=\"ai-loading-center\"><video id=\"aiLoadingVideo\" class=\"ai-loading-video\" autoplay muted loop playsinline><source src=\"" + AI_LOADING_VIDEO_SRC + "\" type=\"video/mp4\"></video><div class=\"ai-loading-status\">Generating <span id=\"aiStreamStatus\" style=\"opacity:.85\">(live stream when available)…</span></div><div id=\"aiVideoFallback\" class=\"empty-icon\" style=\"display:none;margin:0\">⏳</div></div></div><pre id=\"aiStreamLive\" style=\"display:none;white-space:pre-wrap;text-align:left;font-size:0.88rem;margin-top:12px;max-height:42vh;overflow:auto;background:rgba(0,0,0,0.18);padding:10px;border-radius:6px\"></pre>";
+  setTimeout(function () {
+    var v = document.getElementById("aiLoadingVideo");
+    var fb = document.getElementById("aiVideoFallback");
+    if (!v || !fb) return;
+    v.addEventListener("error", function () {
+      v.style.display = "none";
+      fb.style.display = "block";
+    });
+  }, 0);
   if (btn) btn.disabled = true;
   sendAnalytics("ai_generate_workout");
   var genPayload = {
@@ -1616,6 +1919,7 @@ document.addEventListener("DOMContentLoaded", function() {
   var ega = document.getElementById("eqGridAi");
   if (ega) ega.addEventListener("change", updateFullGymButtonStateAi);
   initAiTagChips();
+  initAiPresetsUi();
   var eqGridAi = document.getElementById("eqGridAi");
   if (eqGridAi) {
     eqGridAi.addEventListener("change", function (e) {
@@ -2098,6 +2402,14 @@ function resetAiBetaForm() {
   renderAiTags();
   document.getElementById("aiGenResults").innerHTML = "";
   updateFullGymButtonStateAi();
+  aiPresetActiveId = null;
+  aiPresetEditingId = null;
+  var pbar = document.getElementById("aiPresetEditBar");
+  if (pbar) {
+    pbar.style.display = "none";
+    pbar.setAttribute("aria-hidden", "true");
+  }
+  renderAiPresets();
 }
 
 function scoreWod(w, t, eq) {
