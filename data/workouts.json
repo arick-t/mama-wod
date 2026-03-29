@@ -1,109 +1,5 @@
 {
   "workouts": {
-    "2026-03-14": [
-      {
-        "date": "2026-03-14",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260314",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Complete as many rounds and reps as possible in 8 minutes of:",
-              "8 box jumps",
-              "1 rope climb to 15 feet",
-              "♀ 20-inch box",
-              "♂ 24-inch box"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-14",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-march-14-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "Partner “Rowling”",
-              "Set a 7 minute clock",
-              "One partner rows 150m at a time",
-              "For every meter +/- 150m = 1 Burpee for both athletes (10 rep cap per Rowl)"
-            ]
-          },
-          {
-            "title": "For time with a partner:",
-            "lines": [
-              "60 Calorie Row",
-              "120 KB Swings 70/53lbs",
-              "60 Calorie Row",
-              "90 Toes to Bar",
-              "60 Calorie Row",
-              "60 Pistols",
-              "60 Calorie Row",
-              "One athlete works while one rests. Switch anytime.",
-              "Feel: Gas/Muscle Overload",
-              "Pace: Sustain/Reach",
-              "Target Score: 19-25 minutes",
-              "Firebreather Score: sub 19 minutes"
-            ]
-          },
-          {
-            "title": "Back Squat",
-            "lines": [
-              "1×1 @ Heavier Than Working Sets",
-              "Then",
-              "5×3",
-              "*Tempo Down, 2 Second Pause, Stand = 1 Rep",
-              "All sets are tempo",
-              "Warm up to a moderate single to get a feel for a good place to start on your sets of 3. All sets should be technique focused before adding weight."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-14",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 12.5",
-            "lines": [
-              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
-              "100 pound Thruster, 3 reps",
-              "3 Chest to bar Pull-ups",
-              "100 pound Thruster, 6 reps",
-              "6 Chest to bar Pull-ups",
-              "100 pound Thruster, 9 reps",
-              "9 Chest to bar Pull-ups",
-              "100 pound Thruster, 12 reps",
-              "12 Chest to bar Pull-ups",
-              "100 pound Thruster, 15 reps",
-              "15 Chest to bar Pull-ups",
-              "100 pound Thruster, 18 reps",
-              "18 Chest to bar Pull-ups",
-              "100 pound Thruster, 21 reps",
-              "21 Chest to bar Pull-ups...",
-              "This is a timed workout. If you complete the round of 21, go on to 24. If you complete 24, go on to 27, etc.",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
-              "65 pound Thruster, 3 reps",
-              "3 Chest to bar Pull-ups",
-              "65 pound Thruster, 6 reps",
-              "6 Chest to bar Pull-ups",
-              "65 pound Thruster, 9 reps"
-            ]
-          }
-        ],
-        "note": "Open: Open 12.5"
-      }
-    ],
     "2026-03-15": [
       {
         "date": "2026-03-15",
@@ -143,99 +39,6 @@
           }
         ],
         "note": "Open: Open 11.2"
-      },
-      {
-        "date": "2026-03-15",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-15/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "lat stretch",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. scap. push ups",
-              "2. row",
-              "3. kb deadlifts",
-              "4. box step ups"
-            ],
-            "sub_title": "30sec on / 15sec off x2 rounds"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "1. 15-20 wall balls",
-              "2. 10-15cal row",
-              "3. 15-20 kb swings",
-              "4. 15-20 box jumps",
-              "5. rest",
-              "Sunday Endurance for Open Gym",
-              "bike,ski or row",
-              "2:00 work, 1:00 rest",
-              "4:00 work, 1:00 rest",
-              "6:00 work, 1:00 rest",
-              "4:00 work, 1:00 rest",
-              "2:00 work",
-              "rpe: 6-7",
-              "* aerobic power [lactate threshold]"
-            ],
-            "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-15",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "U.S. Marine Cpl. Donald M. Marler, 22, of St. Louis, Missouri, assigned to the 3rd Battalion, 1st Marine Regiment, 1st Marine Division, I Marine Expeditionary Force, based in Camp Pendleton, California, died on June 6, 2010, while supporting combat operations in Helmand Province, Afghanistan.\nHe is survived by his mother, Susan; his father, David Sr.; his sister, Jennifer Pupillo; and his brothers, David Jr. and Jacob.\nFirst posted",
-        "sections": [
-          {
-            "title": "The Don",
-            "sub_title": "For time:",
-            "lines": [
-              "66 deadlifts",
-              "66 box jump",
-              "66 kettlebell swings",
-              "66 knees-to-elbows",
-              "66 sit-ups",
-              "66 pull-ups",
-              "66 thrusters",
-              "66 wall-ball shots",
-              "66 burpees",
-              "66 double-unders",
-              "♀ 70-lb deadlift, 20-inch box, 35-lb kettlebell, 35-lb thruster, 14-lb medicine ball to a 9-foot target",
-              "♂ 110-lb deadlift, 24-inch box, 53-lb kettlebell, 55-lb thruster, 20-lb medicine ball to a 10-foot target"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-15",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "”ANGIE” BENCHMARK",
-            "lines": [
-              "100 pull-ups",
-              "100 push-ups",
-              "100 sit-ups",
-              "100 squats",
-              "Timecap 25 min",
-              "Skaalata voi monella tapaa!"
-            ]
-          }
-        ],
-        "note": "Benchmark: ”ANGIE” BENCHMARK"
       }
     ],
     "2026-03-16": [
@@ -737,31 +540,6 @@
               "* hang power snatch"
             ],
             "sub_title": "score: total rounds + reps"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-18",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "3 x 2 @ 90% of Front Squat"
-            ]
-          },
-          {
-            "title": "METCON",
-            "sub_title": "15 min AMRAP",
-            "lines": [
-              "9 Devil Press",
-              "20 Alternating Front Rack DB Lunges",
-              "9 DB Push Press",
-              "20 Sit-Ups",
-              "* 2×17.5/12.5kg DB"
-            ]
           }
         ]
       },
@@ -3008,7 +2786,120 @@
         ],
         "note": "Benchmark: Kelly"
       }
+    ],
+    "2026-03-29": [
+      {
+        "date": "2026-03-29",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-03-29/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "lat stretch",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. air squats",
+              "2. bike/ski",
+              "3. scap. push ups",
+              "4. ring rows"
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "1. 30-40sec (weighted) wall sit",
+              "2. 10-15cal bike/ski",
+              "3. 10-15 db push ups",
+              "4. 12-18 kb gorilla rows",
+              "5. rest",
+              "Sunday Endurance for Open Gym",
+              "5 sets",
+              "3:00 bike [rpe 6-7]",
+              "* rest 1:30 between sets",
+              "* aerobic power [lactate threshold]"
+            ],
+            "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-03-29",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Hero wod:- 13 Heroes of Kabul"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-29",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Pat",
+            "sub_title": "For time:",
+            "lines": [
+              "Run 800 meters with a plate",
+              "Then, 14 rounds of:",
+              "5 strict pull-ups",
+              "4 burpee box jumps",
+              "3 cleans"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-29",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Karen",
+            "lines": [
+              "\"Karen\"",
+              "For time",
+              "150 wall balls 20/14 lbs",
+              "time cap 12min"
+            ]
+          }
+        ],
+        "note": "Benchmark: Karen"
+      },
+      {
+        "date": "2026-03-29",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 17.5",
+            "lines": [
+              "10 rounds for time of:",
+              "9 thrusters, 95 lb.",
+              "35 double-unders"
+            ]
+          }
+        ],
+        "note": "Open: Open 17.5"
+      }
     ]
   },
-  "last_updated": "2026-03-28T21:29:04.852408"
+  "last_updated": "2026-03-29T07:10:05.963256"
 }
