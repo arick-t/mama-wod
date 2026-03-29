@@ -285,10 +285,7 @@ function buildWorkoutGeminiBody(body) {
     extendedProfile = null;
   }
   const profileBlock = extendedProfile ? buildAthleteProfilePrompt(extendedProfile) : "";
-  const includeWarehouseDigest = body.includeWarehouseDigest === true;
-  const warehouseDigest = includeWarehouseDigest
-    ? String(body.warehouseDigest || "").trim().slice(0, 4000)
-    : "";
+  const warehouseDigest = String(body.warehouseDigest || "").trim().slice(0, 4000);
   const hasWarehouseDigest = warehouseDigest.length > 0;
 
   let userText = useDefaultSettings
@@ -316,7 +313,7 @@ function buildWorkoutGeminiBody(body) {
     contents: [{ role: "user", parts: [{ text: userText }] }],
     generationConfig: {
       temperature: 0.65,
-      maxOutputTokens: 1024,
+      maxOutputTokens: 1536,
     },
   };
   return { geminiBody };
