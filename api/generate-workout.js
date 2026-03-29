@@ -1,7 +1,7 @@
 /**
  * Vercel serverless: AI workout generation (Gemini). API key only on server.
  * Env: GEMINI_API_KEY (preferred). Also accepts GOOGLE_GENERATIVE_AI_API_KEY / GOOGLE_AI_API_KEY.
- * Optional: GEMINI_MODEL (default gemini-2.0-flash). Bare names like gemini-1.5-flash are remapped to API-current IDs. Optional: GEMINI_FETCH_BUDGET_MS.
+ * Optional: GEMINI_MODEL, GEMINI_FETCH_BUDGET_MS (default ~8000ms; cap 9000—leave headroom under Vercel wall). Prompts kept small for Hobby timeouts.
  */
 
 function allowCors(res) {
@@ -60,37 +60,13 @@ function buildGeminiEnvDebug() {
   };
 }
 
-const SYSTEM_INSTRUCTION_CORE = `You are the default "head coach" for this app: an expert group-class programmer grounded in GPP, variance across broad time and modal domains, and measurable workouts.
+const SYSTEM_INSTRUCTION_CORE = `Head coach for group-class GPP. Output ONLY the workout—concise, technical, headers OK (Warm-up / Strength / Metcon etc.). Use ONLY listed equipment; respect time; UNLIMITED = full session. Multi-athlete: partner/team formats when fit. Original work: no verbatim Hero/Open/benchmarks or long copied text; AMRAP/chipper-style structures OK. Honor user notes. If a WAREHOUSE NAMES block appears, use for modality/time hints only—write a fresh workout. No greetings or filler. Summarize public fitness knowledge in your own words—no long excerpts.`;
 
-Output contract:
-- Output ONLY workout programming. No greetings, compliments, filler tips, or "Here is your workout".
-- Be concise and technical. Clear section headers where helpful (e.g. Warm-up, Skill, Main piece, Cool-down).
-- Use ONLY equipment the user listed—never prescribe gear they do not have.
-- Respect the time cap; if UNLIMITED, structure a full session with sensible volume.
-- If athletes > 1, use partner/team formats (shared reps, you-go-I-go, split work) when appropriate.
-- Original work only: do not reproduce named benchmarks, Open tests, or Hero workouts verbatim or paste long copyrighted text. You may use public-domain *structures* (e.g. "15-minute AMRAP couplet", chipper for time) that match the user context.
-- Honor user notes when present; otherwise choose a balanced session for equipment and time.
+const L1_TRAINING_GUIDE_ALIGNMENT = `L1-style judgment: mechanics/scaling first, safety under fatigue, broad GPP unless notes say otherwise; quality → consistency → intensity.`;
 
-Knowledge:
-- You may use general knowledge from reputable fitness and coaching sources online, summarized in your own words—never long unattributed excerpts of paywalled or publisher-owned workout text.
-- When an "APP WAREHOUSE INDEX" appears in the user message, it lists Open and Hero *names* cached in this app. Use it to align era-, modality-, and time-domain expectations—still write a fresh workout.`;
+const OPEN_HERO_PATTERN_RULES = `Open/Hero *patterns* only (scoreable time/reps, density, chippers)—never full replicas of named events.`;
 
-const L1_TRAINING_GUIDE_ALIGNMENT = `Level 1 fundamentals (concepts only—do not quote or paste from any PDF):
-- Align coaching judgment with widely taught fundamentals: mechanics and scaling first, appropriate relative intensity, safety under fatigue, and broad GPP unless user notes demand specificity.
-- Typical teaching progression: movement quality → consistency under load → intensity.
-- Public training guide many coaches align with (reference for operators; do not reproduce): https://library.crossfit.com/free/pdf/CFJ_English_Level1_TrainingGuide.pdf`;
-
-const OPEN_HERO_PATTERN_RULES = `Open & Hero pattern literacy (no copying):
-- Open-style tests often: short–medium time domains, clear rep schemes, repeatable cyclical work, barbell cycling or gymnastics density when equipment allows, scoreable formats (AMRAP, for-time, ladder).
-- Hero-style sessions often: longer chippers or tough couplets with pacing demand; do not invent personal tribute narratives.
-- Whether or not a warehouse index is present, draw on these *patterns* for programming—never output full replicas of named events.`;
-
-const WAREHOUSE_INDEX_HINT = `A warehouse name index is included in the user message—use it for structural inspiration only; the written workout must be original.`;
-
-const COMPETITION_ATHLETE_BIAS = `Athlete level is competitor or amateur competitor:
-- Bias toward test-like clarity: explicit time cap or AMRAP, simple score rules, one optional skill primer for the limiting movement when equipment and time allow.
-- Modestly higher skill exposure only if equipment supports it and health limits allow; keep volume finishable in the window.
-- Stay terse—no pep talk; programming only.`;
+const COMPETITION_ATHLETE_BIAS = `Competitor level: clear time cap or AMRAP, simple scoring, optional short skill primer if time/equipment allow; terse programming only.`;
 
 function isCompetitionLevel(p) {
   if (!p || typeof p !== "object") return false;
@@ -98,11 +74,10 @@ function isCompetitionLevel(p) {
   return l === "competitor" || l === "amateur_competitor";
 }
 
-function buildDefaultCoachSystemInstruction(extendedProfile, hasWarehouseDigest) {
+function buildDefaultCoachSystemInstruction(extendedProfile) {
   const parts = [SYSTEM_INSTRUCTION_CORE, L1_TRAINING_GUIDE_ALIGNMENT, OPEN_HERO_PATTERN_RULES];
-  if (hasWarehouseDigest) parts.push(WAREHOUSE_INDEX_HINT);
   if (isCompetitionLevel(extendedProfile)) parts.push(COMPETITION_ATHLETE_BIAS);
-  return parts.join("\n\n");
+  return parts.join("\n");
 }
 
 function normalizeSessionParts(body) {
@@ -125,8 +100,7 @@ function buildSessionStructureBlock(parts, timeMinutes, unlimited) {
   const lines = [];
   if (none) {
     lines.push(
-      "SESSION STRUCTURE (from user tags): Output ONLY the main METCON / conditioning block — one primary workout.",
-      "Do not add Warm-up, Strength, or Weightlifting sections unless the user's free-text notes explicitly ask for prep or accessory work."
+      "STRUCTURE: Metcon/conditioning ONLY unless user notes explicitly ask for warm-up/strength/accessory."
     );
     return lines.join("\n");
   }
@@ -136,42 +110,29 @@ function buildSessionStructureBlock(parts, timeMinutes, unlimited) {
   if (parts.includeWeightlifting) seq.push("WEIGHTLIFTING");
   seq.push("METCON");
   lines.push(
-    `SESSION STRUCTURE (from user tags): Use clear section headers in this order: ${seq.join(" → ")}.`,
+    `STRUCTURE: Sections in order ${seq.join(" → ")}.`,
     unlimited
-      ? "TIME: UNLIMITED — give each tagged section enough work to matter; metcon remains the main stimulus."
-      : `TIME: Total session budget ~${timeMinutes} minutes — split time sensibly across sections; protect quality on the metcon.`
+      ? "TIME UNLIMITED: meaningful work per section; metcon = main stimulus."
+      : `~${timeMinutes} min total: split time; protect metcon quality.`
   );
   if (parts.includeWarmup) {
-    lines.push(
-      "WARM-UP: Easy general prep, patterning, mobility, light cardio — do not pre-fatigue the athlete for the metcon."
-    );
+    lines.push("WARM-UP: light prep—no pre-fatigue for metcon.");
   }
   if (parts.includeStrength) {
-    lines.push(
-      "STRENGTH: Heavier basic strength (squat, hinge, press, pull as equipment allows) BEFORE the metcon. Moderate volume and intensity so the athlete is not overly tired for conditioning; choose patterns that complement (not duplicate) the metcon's dominant stress."
-    );
+    lines.push("STRENGTH: basic heavy work before metcon; complement metcon stress, moderate vol.");
   }
   if (parts.includeWeightlifting) {
-    lines.push(
-      "WEIGHTLIFTING: Snatch / clean & jerk technique, pulls, complexes, or controlled barbell cycling BEFORE the metcon, only if equipment supports it. Keep volume moderate; avoid redundancy and excessive fatigue so the metcon stays effective."
-    );
+    lines.push("WEIGHTLIFTING: Oly/primer before metcon if gear allows; moderate vol.");
   }
   if (parts.includeStrength && parts.includeWeightlifting) {
-    lines.push(
-      "Both STRENGTH and WEIGHTLIFTING are on: order them Strength → Weightlifting → Metcon unless equipment or time makes a short combined barbell primer clearer; still use separate headers."
-    );
+    lines.push("Order: Strength → Weightlifting → Metcon (separate headers).");
   }
-  return lines.join("\n");
+  return lines.join(" ");
 }
 
-const GENERIC_SYSTEM_INSTRUCTION = `You are a workout programming assistant.
-Return only the requested workout/program text. Be concise and avoid chit-chat.
-If the user message includes an APP WAREHOUSE INDEX, use it only for light structural inspiration—write original programming, no verbatim copies of named events.`;
+const GENERIC_SYSTEM_INSTRUCTION = `Workout programmer—output program text only, concise. WAREHOUSE INDEX = inspiration only; original work.`;
 
-const ATHLETE_PROFILE_RULES = `Extended athlete profile is ON:
-- Individualize volume, complexity, and movement choices using the ATHLETE PROFILE block in the user message. If a field is blank or "—", do not invent details for it.
-- Apply health limitations strictly; scale, substitute, or simplify when in doubt.
-- Output remains programming only (no interview, no lifestyle advice, no chit-chat).`;
+const ATHLETE_PROFILE_RULES = `Use ATHLETE PROFILE in user message; blank fields = no invention. Strict health limits. Programming only.`;
 
 function buildAthleteProfilePrompt(p) {
   if (!p || typeof p !== "object") return "";
@@ -215,9 +176,7 @@ function buildFlexibleUserPrompt(equipment, timeMinutes, unlimited, athletes, us
   return `USER REQUEST:\n${notes || fallback}\n\nCONTEXT:\n- Equipment: ${eqList}\n- Time: ${unlimited ? "UNLIMITED" : `${timeMinutes} minutes`}\n- Athletes: ${athletes}\n\nIf user request conflicts with context, prioritize user request.`;
 }
 
-const EXPLAIN_SYSTEM = `You are a movement coach. Given a workout text, list each main movement pattern with one short coaching cue (one line each).
-Then for each movement, add a line: YouTube: https://www.youtube.com/results?search_query=MOVEMENT+NAME+TECHNIQUE
-Replace MOVEMENT NAME with the exercise (URL-encode spaces as +). No extra commentary before or after the list.`;
+const EXPLAIN_SYSTEM = `Movement coach: list main movements, one cue per line, then per movement: YouTube: https://www.youtube.com/results?search_query=NAME+TECHNIQUE (+ for spaces). No extra prose.`;
 
 /**
  * Vercel may expose POST JSON as object, string, Buffer, or leave body unset (stream).
@@ -272,8 +231,8 @@ async function parseGeminiJsonResponse(r) {
  */
 async function fetchGeminiGenerateContent(url, geminiBody) {
   const cap = 9000;
-  const raw = parseInt(process.env.GEMINI_FETCH_BUDGET_MS || "8200", 10);
-  const ms = Math.min(cap, Number.isFinite(raw) && raw > 2000 ? raw : 8200);
+  const raw = parseInt(process.env.GEMINI_FETCH_BUDGET_MS || "8000", 10);
+  const ms = Math.min(cap, Number.isFinite(raw) && raw > 2000 ? raw : 8000);
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), ms);
   try {
@@ -308,9 +267,7 @@ module.exports = async function handler(req, res) {
         modelResolved: resolveGeminiModelId(),
         runningOnVercel: !!process.env.VERCEL,
         debug: buildGeminiEnvDebug(),
-        hint: configured
-          ? "POST JSON with action generate or explain."
-          : `No API key visible to this function. In Vercel add one of: ${GEMINI_KEY_ENV_NAMES.join(", ")} (Production + Redeploy). Open Vercel → this project → Settings → General → confirm Root Directory is the repo root (folder must contain /api).`,
+        hint: configured ? "POST JSON action generate|explain." : `Set ${GEMINI_KEY_ENV_NAMES[0]} (Production), Redeploy, root has /api.`,
       };
       if (method === "HEAD") {
         res.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -331,7 +288,7 @@ module.exports = async function handler(req, res) {
     if (!key) {
       return res.status(503).json({
         error: "Server missing Gemini API key at runtime.",
-        hint: `Add one of: ${GEMINI_KEY_ENV_NAMES.join(", ")} for Production, Save, Redeploy. If debug.geminiKeyEnvNamesFound is [] but variables exist in the dashboard: same Vercel project, recreate the variable, ensure Production is checked, then Redeploy (turn off build cache if offered).`,
+        hint: `Set ${GEMINI_KEY_ENV_NAMES.join("/")} for Production; Redeploy. Empty debug.geminiKeyEnvNamesFound → wrong project or var scope.`,
         debug: buildGeminiEnvDebug(),
       });
     }
@@ -353,14 +310,14 @@ module.exports = async function handler(req, res) {
       const unlimited = !!body.unlimited;
       const timeMinutes = unlimited ? 999 : Math.min(300, Math.max(1, parseInt(body.timeMinutes, 10) || 20));
       const athletes = Math.min(20, Math.max(1, parseInt(body.athletes, 10) || 1));
-      const userNotes = String(body.userNotes || "").slice(0, 4000);
+      const userNotes = String(body.userNotes || "").slice(0, 2800);
       const useDefaultSettings = body.useDefaultSettings !== false;
       let extendedProfile = body.extendedProfile;
       if (!extendedProfile || typeof extendedProfile !== "object" || Array.isArray(extendedProfile)) {
         extendedProfile = null;
       }
       const profileBlock = extendedProfile ? buildAthleteProfilePrompt(extendedProfile) : "";
-      const warehouseDigest = String(body.warehouseDigest || "").trim().slice(0, 14000);
+      const warehouseDigest = String(body.warehouseDigest || "").trim().slice(0, 7000);
       const hasWarehouseDigest = warehouseDigest.length > 0;
 
       let userText = useDefaultSettings
@@ -370,14 +327,14 @@ module.exports = async function handler(req, res) {
         userText = `${userText}\n\n${profileBlock}`;
       }
       if (hasWarehouseDigest) {
-        userText = `${userText}\n\nAPP WAREHOUSE INDEX (Open/Hero names from this app—use for patterns only; original programming required):\n${warehouseDigest}`;
+        userText = `${userText}\n\nWAREHOUSE NAMES (patterns only; original work):\n${warehouseDigest}`;
       }
 
       const sessionParts = normalizeSessionParts(body);
       userText = `${userText}\n\n${buildSessionStructureBlock(sessionParts, timeMinutes, unlimited)}`;
 
       let systemText = useDefaultSettings
-        ? buildDefaultCoachSystemInstruction(extendedProfile, hasWarehouseDigest)
+        ? buildDefaultCoachSystemInstruction(extendedProfile)
         : GENERIC_SYSTEM_INSTRUCTION;
       if (profileBlock) {
         systemText = `${systemText}\n\n${ATHLETE_PROFILE_RULES}`;
@@ -388,7 +345,7 @@ module.exports = async function handler(req, res) {
         contents: [{ role: "user", parts: [{ text: userText }] }],
         generationConfig: {
           temperature: 0.75,
-          maxOutputTokens: 2048,
+          maxOutputTokens: 1024,
         },
       };
 
@@ -399,7 +356,7 @@ module.exports = async function handler(req, res) {
         if (e && e.name === "AbortError") {
           return res.status(504).json({
             error:
-              "Gemini request hit the server time budget (Vercel Free ~10s). Try again, shorten notes, turn off extended profile / extra blocks, or upgrade Vercel for longer runs.",
+              "Time budget exceeded (Vercel ~10s on Free). Retry, shorter notes/options, or GEMINI_FETCH_BUDGET_MS / longer plan.",
           });
         }
         throw e;
@@ -436,7 +393,7 @@ module.exports = async function handler(req, res) {
     }
 
     /* explain */
-    const workoutText = String(body.workoutText || "").slice(0, 16000);
+    const workoutText = String(body.workoutText || "").slice(0, 10000);
     if (!workoutText.trim()) {
       return res.status(400).json({ error: "workoutText required" });
     }
@@ -446,7 +403,7 @@ module.exports = async function handler(req, res) {
       contents: [{ role: "user", parts: [{ text: `Workout:\n${workoutText}` }] }],
       generationConfig: {
         temperature: 0.4,
-        maxOutputTokens: 2048,
+        maxOutputTokens: 1024,
       },
     };
 
@@ -456,8 +413,7 @@ module.exports = async function handler(req, res) {
     } catch (e) {
       if (e && e.name === "AbortError") {
         return res.status(504).json({
-          error:
-            "Gemini explain hit the server time budget (Vercel Free ~10s). Try again or upgrade Vercel for longer runs.",
+          error: "Explain time budget exceeded; retry or shorten workout text.",
         });
       }
       throw e;
