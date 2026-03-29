@@ -208,7 +208,15 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 .time-row{display:flex;align-items:center;gap:10px;justify-content:center}
 .time-row #findTime,.time-row #aiFindTime{width:6ch;min-width:6ch;max-width:6ch;text-align:center;font-size:1.15em;padding:10px 10px}
 .time-row .time-btn{width:auto;border-radius:999px;background:#E8451A;padding:10px 14px;font-size:1.05em}
+.ai-time-row-wrap{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;justify-content:center;width:100%}
+.ai-time-row-compact{flex:0 1 auto;margin:0;justify-content:center}
+.ai-time-row-compact .time-btn{padding:8px 12px;font-size:.95em}
+.ai-time-row-compact #aiFindTime{padding:8px 6px;font-size:1.05em}
+.ai-unlimited-inline{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:#111;border:1px solid #2a2a2a;border-radius:5px;cursor:pointer;color:#c9c5b8;font-size:.76em;font-weight:600;white-space:nowrap;user-select:none}
+.ai-unlimited-inline input{accent-color:#E8451A;flex-shrink:0;width:14px;height:14px}
+.ai-time-row-wrap.unlimited-on .ai-time-row-compact{opacity:0.5}
 .eq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:7px}
+#eqGridAi{overflow:visible}
 .eq-info-btn{margin-left:6px;padding:2px 6px;font-size:.75em;background:transparent;border:1px solid #1A9B8A;border-radius:50%;color:#1A9B8A;cursor:pointer;vertical-align:middle;line-height:1.2}
 .eq-info-btn:hover{background:#1A9B8A;color:#111}
 .eq-info-popover{position:absolute;z-index:100;max-width:320px;padding:10px 12px;margin-top:4px;background:#1e1e1e;border:1px solid #1A9B8A;border-radius:8px;font-size:.85em;color:#e8e4d8;line-height:1.4;box-shadow:0 4px 12px rgba(0,0,0,.4)}
@@ -259,15 +267,20 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
   box-shadow:0 8px 30px rgba(0,0,0,.45);background:#000;object-fit:cover
 }
 .ai-loading-status{color:#ddd;font-size:.95em;text-align:center}
-.ai-loading-demo-modal{cursor:pointer}
-.ai-loading-demo-modal .ai-loading-center{cursor:default}
-.ai-loading-demo-close{
-  position:fixed;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:10003;
-  width:48px;height:48px;border-radius:50%;border:1px solid #555;background:rgba(0,0,0,.55);color:#fff;
-  font-size:1.75rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0
+#eqGridAi .ai-dball-item{flex-wrap:wrap;align-items:center;gap:6px 8px;overflow:visible;position:relative}
+#eqGridAi .ai-dball-inline{display:inline-flex;align-items:center;flex-wrap:wrap;gap:6px 8px;min-width:0}
+#eqGridAi .ai-dball-popover{
+  display:none;align-items:center;gap:4px;padding:3px 8px 3px 6px;
+  background:#181818;border:1px solid #3d3d3d;border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.35);
+  vertical-align:middle
 }
-.ai-loading-demo-close:hover{background:rgba(232,69,26,.35);border-color:#E8451A}
-.ai-loading-demo-hint{color:#aaa;font-size:.84em;text-align:center;max-width:min(90vw,320px);line-height:1.35;margin:0}
+#eqGridAi .ai-dball-popover.ai-dball-popover-visible{display:inline-flex}
+#eqGridAi .ai-dball-kg-input{
+  width:3.4rem;min-width:0;padding:4px 6px;background:#222;border:1px solid #444;border-radius:4px;
+  color:#eee;font-size:.9em;box-sizing:border-box;-moz-appearance:textfield
+}
+#eqGridAi .ai-dball-kg-input::-webkit-outer-spin-button,#eqGridAi .ai-dball-kg-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+#eqGridAi .ai-dball-kg-unit{color:#888;font-size:.78em;font-weight:600;user-select:none}
 .ai-presets-group label{color:#1A9B8A}
 .ai-presets-hint{color:#777;font-weight:400;font-size:.82em}
 .ai-presets-toolbar{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap}
@@ -448,7 +461,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
       <div id="aiInfoPopover" class="eq-info-popover" role="dialog" aria-hidden="true" style="display:none">Programming only — not lifestyle advice. Standard session rules always apply in the background (not a user toggle). Optional tags add warm-up, strength, or weightlifting blocks, movement demos, or an extended athlete profile. When the app has Open/Hero names cached, a short sample is sent automatically for style context (original programming only). Generation streams live when the server supports it.</div>
     </div>
     <div class="form-group ai-presets-group">
-      <label>Gym presets <span class="ai-presets-hint">(saved on this device — equipment + time)</span></label>
+      <label>Gym presets <span class="ai-presets-hint">(saved on this device — equipment, time, and D-BALL kg when selected)</span></label>
       <div class="ai-presets-toolbar">
         <div class="ai-presets-chips" id="aiPresetChips"></div>
         <button type="button" class="ai-preset-add-btn" id="aiPresetAddBtn" onclick="addAiPresetDraft()" title="New preset from current equipment &amp; time" aria-label="Add preset">+</button>
@@ -464,19 +477,21 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
     </div>
     <div class="form-group">
       <label>Available Time (minutes)</label>
-      <div class="time-row">
-        <button class="btn btn-find time-btn" type="button" onclick="adjustAiFindTime(-5)">-5</button>
-        <input type="number" id="aiFindTime" min="1" max="180" value="20" inputmode="numeric">
-        <button class="btn btn-find time-btn" type="button" onclick="adjustAiFindTime(5)">+5</button>
+      <div class="ai-time-row-wrap">
+        <div class="time-row ai-time-row-compact">
+          <button class="btn btn-find time-btn" type="button" onclick="adjustAiFindTime(-5)">-5</button>
+          <input type="number" id="aiFindTime" min="1" max="180" value="20" inputmode="numeric" aria-label="Minutes">
+          <button class="btn btn-find time-btn" type="button" onclick="adjustAiFindTime(5)">+5</button>
+        </div>
+        <label class="ai-unlimited-inline">
+          <input type="checkbox" id="aiUnlimitedTime" aria-label="Unlimited time">
+          <span>Unlimited Time</span>
+        </label>
       </div>
-      <label class="eq-item" style="margin-top:8px">
-        <input type="checkbox" id="aiUnlimitedTime">
-        <span>UNLIMITED TIME</span>
-      </label>
     </div>
     <div class="form-group">
       <label class="eq-label-row">Equipment I have <button type="button" class="eq-info-btn" id="eqInfoBtnAi" onclick="toggleEqInfoAi(event)" title="About body-only exercises" aria-label="Information">ℹ️</button> <button type="button" class="eq-full-gym-btn" id="eqFullGymBtnAi" onclick="toggleFullGymAi()">FULL GYM</button></label>
-      <div id="eqInfoPopoverAi" class="eq-info-popover" role="dialog" aria-hidden="true" style="display:none">We assume some exercises can be done anywhere with just your body (e.g. push-ups, burpees, sit-ups, lunges, handstand walk) and are not listed here. Select only equipment you have access to.</div>
+      <div id="eqInfoPopoverAi" class="eq-info-popover" role="dialog" aria-hidden="true" style="display:none">We assume some exercises can be done anywhere with just your body (e.g. push-ups, burpees, sit-ups, lunges, handstand walk) and are not listed here. Select only equipment you have access to. Checking many items or FULL GYM means you <strong>can</strong> use those tools—the Coach picks a coherent session and does not have to use every checkbox in one workout.</div>
       <div class="eq-grid" id="eqGridAi">
         <label class="eq-item"><input type="checkbox" value="RUN"> RUN</label>
         <label class="eq-item"><input type="checkbox" value="SKI"> SKI</label>
@@ -494,7 +509,16 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
         <label class="eq-item"><input type="checkbox" value="RINGS"> RINGS</label>
         <label class="eq-item"><input type="checkbox" value="SLED"> SLED</label>
         <label class="eq-item"><input type="checkbox" value="BOX"> BOX</label>
-        <label class="eq-item"><input type="checkbox" value="D-BALL"> D-BALL</label>
+        <label class="eq-item ai-dball-item">
+          <input type="checkbox" value="D-BALL" id="aiEqDball">
+          <span class="ai-dball-inline">
+            <span>D-BALL</span>
+            <span class="ai-dball-popover" id="aiDballWeightWrap" role="group" aria-hidden="true">
+              <input type="number" id="aiDballWeight" class="ai-dball-kg-input" min="0.5" max="200" step="0.5" inputmode="decimal" placeholder="" autocomplete="off" title="kg" aria-label="D-BALL weight in kilograms">
+              <span class="ai-dball-kg-unit">kg</span>
+            </span>
+          </span>
+        </label>
       </div>
     </div>
     <div class="ai-tag-bank-wrap">
@@ -519,7 +543,6 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:stretch">
       <button type="button" class="btn btn-find" id="btnGenerate" onclick="generateWorkoutAi()" style="flex:1;min-width:140px">Generate Workout</button>
-      <button type="button" class="btn btn-find" onclick="openAiLoadingDemoModal()" style="flex:0 1 auto;min-width:120px;background:#3d4f3d;border:1px solid #5a7a5a;color:#dcedc8;font-size:.82em" title="See the centered loading video — no API call">Preview loading</button>
       <button type="button" class="btn btn-find" onclick="resetAiBetaForm()" style="flex:0.45;min-width:100px;background:#555">Reset all</button>
     </div>
   </div>
@@ -723,7 +746,49 @@ var AI_TAG_LABELS = {
   strengthBlock: "Strength block",
   weightliftingBlock: "Weightlifting block"
 };
-var AI_LOADING_VIDEO_SRC = "../1ST_VID.mp4";
+/** Put your branded loading loop here (H.264 .mp4, short, muted-friendly). Shipped builds: commit this file or it falls back below. */
+var AI_LOADING_VIDEO_BRANDED = "assets/coach-loading.mp4";
+/** Placeholder loop (MDN sample) used only if the branded file is missing or fails to load. */
+var AI_LOADING_VIDEO_FALLBACK = "assets/ai-generating-loop.mp4";
+
+function resolveAiLoadingVideoPrimary() {
+  var o = typeof window.DUCKWOD_AI_LOADING_VIDEO === "string" ? window.DUCKWOD_AI_LOADING_VIDEO.trim() : "";
+  if (o) return o;
+  return AI_LOADING_VIDEO_BRANDED;
+}
+
+/**
+ * Try primary URL on <source>, then optional stock fallback; finally hide <video> and show emoji row.
+ */
+function attachAiLoadingVideoErrorChain(videoEl, emojiFallbackEl) {
+  if (!videoEl) return;
+  var s = videoEl.querySelector("source");
+  if (!s) return;
+  var primary = resolveAiLoadingVideoPrimary();
+  var fallback = AI_LOADING_VIDEO_FALLBACK;
+  var stage = 0;
+  s.src = primary;
+  videoEl.addEventListener(
+    "error",
+    function onVErr() {
+      if (stage === 0 && fallback && primary !== fallback) {
+        stage = 1;
+        s.src = fallback;
+        try {
+          videoEl.load();
+        } catch (e1) {}
+        try {
+          videoEl.play();
+        } catch (e2) {}
+        return;
+      }
+      videoEl.removeEventListener("error", onVErr);
+      videoEl.style.display = "none";
+      if (emojiFallbackEl) emojiFallbackEl.style.display = "block";
+    },
+    false
+  );
+}
 var aiTagLocation = {
   demos: "bank",
   extended: "bank",
@@ -811,6 +876,71 @@ function moveAiTagToBank(key) {
   renderAiTags();
 }
 
+/** Preset/API: "12" / "12.5 kg" / "12,5 kg" → value for number input (kg only). */
+function parseDballKgForInput(st) {
+  var s = String(st || "").trim();
+  if (!s) return "";
+  var m = s.match(/^([\d.,]+)\s*kg\s*$/i);
+  if (m) return m[1].replace(",", ".");
+  m = s.match(/^([\d.,]+)\s*$/);
+  return m ? m[1].replace(",", ".") : "";
+}
+
+/** Valid kg from #aiDballWeight → "N kg" for API/presets, or "" if missing/invalid. */
+function getAiDballWeightKgPayload() {
+  var inp = document.getElementById("aiDballWeight");
+  if (!inp) return "";
+  var raw = String(inp.value || "").trim().replace(",", ".");
+  if (raw === "") return "";
+  var n = parseFloat(raw);
+  if (isNaN(n) || n < 0.5 || n > 200) return "";
+  var out = Math.round(n * 10) / 10;
+  var s = out % 1 === 0 ? String(Math.round(out)) : String(out);
+  return s + " kg";
+}
+
+function updateAiDballWeightVisibility() {
+  var cb = document.getElementById("aiEqDball");
+  var wrap = document.getElementById("aiDballWeightWrap");
+  var inp = document.getElementById("aiDballWeight");
+  if (!cb || !wrap) return;
+  if (cb.checked) {
+    wrap.classList.add("ai-dball-popover-visible");
+    wrap.setAttribute("aria-hidden", "false");
+  } else {
+    wrap.classList.remove("ai-dball-popover-visible");
+    wrap.setAttribute("aria-hidden", "true");
+    if (inp) inp.value = "";
+  }
+}
+
+function aiPresetHasDball(cap) {
+  if (!cap || !cap.equipment) return false;
+  for (var i = 0; i < cap.equipment.length; i++) {
+    if (cap.equipment[i] === "D-BALL") return true;
+  }
+  return false;
+}
+
+function ensureDballWeightForPresetSave(cap) {
+  if (!aiPresetHasDball(cap)) return true;
+  var w = cap.dballWeight != null ? String(cap.dballWeight).trim() : "";
+  if (w) return true;
+  alert("Enter D-BALL weight in kg (small field next to D-BALL) — it is saved with the preset.");
+  updateAiDballWeightVisibility();
+  var inp = document.getElementById("aiDballWeight");
+  if (inp) inp.focus();
+  return false;
+}
+
+function normalizeAiPresetObject(p) {
+  if (!p || typeof p !== "object") return p;
+  if (!Array.isArray(p.equipment)) p.equipment = [];
+  p.dballWeight =
+    p.dballWeight != null && p.dballWeight !== undefined ? String(p.dballWeight).trim() : "";
+  return p;
+}
+
 function loadAiPresets() {
   try {
     var raw = localStorage.getItem(AI_PRESETS_STORAGE_KEY);
@@ -820,6 +950,9 @@ function loadAiPresets() {
     }
     var j = JSON.parse(raw);
     aiPresets = Array.isArray(j) ? j : [];
+    for (var i = 0; i < aiPresets.length; i++) {
+      normalizeAiPresetObject(aiPresets[i]);
+    }
   } catch (e) {
     aiPresets = [];
   }
@@ -876,11 +1009,15 @@ function captureCurrentAiPresetPayload() {
   var uEl = document.getElementById("aiUnlimitedTime");
   var unlimited = !!(uEl && uEl.checked);
   var minutes = Math.min(180, Math.max(1, parseInt(document.getElementById("aiFindTime") && document.getElementById("aiFindTime").value, 10) || 20));
-  return { equipment: eq, unlimited: unlimited, minutes: minutes };
+  var dballW = "";
+  var dballCb = document.getElementById("aiEqDball");
+  if (dballCb && dballCb.checked) dballW = getAiDballWeightKgPayload();
+  return { equipment: eq, unlimited: unlimited, minutes: minutes, dballWeight: dballW };
 }
 
 function applyAiPresetData(p) {
   if (!p) return;
+  var dballStored = p.dballWeight != null && p.dballWeight !== undefined ? p.dballWeight : "";
   var setMap = {};
   var eq = p.equipment || [];
   for (var i = 0; i < eq.length; i++) setMap[eq[i]] = true;
@@ -892,11 +1029,27 @@ function applyAiPresetData(p) {
   updateFullGymButtonStateAi();
   var u = document.getElementById("aiUnlimitedTime");
   if (u) u.checked = !!p.unlimited;
+  syncAiUnlimitedTimeUi();
   var te = document.getElementById("aiFindTime");
   if (te) {
     var m = Math.min(180, Math.max(1, parseInt(p.minutes, 10) || 20));
     te.value = m;
   }
+  var dw = document.getElementById("aiDballWeight");
+  if (dw) dw.value = parseDballKgForInput(dballStored);
+  updateAiDballWeightVisibility();
+  /* Re-apply D-BALL kg after preset apply: some browsers fire checkbox `change` during the loop above,
+     which can run updateAiDballWeightVisibility before this weight is written. */
+  var snap = dballStored;
+  function reapplyDballFromPreset() {
+    var cb = document.getElementById("aiEqDball");
+    var inp = document.getElementById("aiDballWeight");
+    if (!cb || !inp || !cb.checked) return;
+    inp.value = parseDballKgForInput(snap);
+    updateAiDballWeightVisibility();
+  }
+  if (typeof queueMicrotask === "function") queueMicrotask(reapplyDballFromPreset);
+  else setTimeout(reapplyDballFromPreset, 0);
 }
 
 function renderAiPresets() {
@@ -975,9 +1128,11 @@ function saveAiPresetEdit() {
     alert("Preset needs at least one equipment item — check the grid below, then Save.");
     return;
   }
+  if (!ensureDballWeightForPresetSave(cap)) return;
   p.equipment = cap.equipment.slice();
   p.unlimited = cap.unlimited;
   p.minutes = cap.minutes;
+  p.dballWeight = cap.dballWeight != null ? String(cap.dballWeight).trim() : "";
   var nameEl = document.getElementById("aiPresetEditName");
   p.name = (nameEl && nameEl.value.trim()) || p.name || "Preset";
   var colEl = document.getElementById("aiPresetEditColor");
@@ -990,11 +1145,16 @@ function saveAiPresetEdit() {
 }
 
 function cancelAiPresetEdit() {
+  var restoreId = aiPresetActiveId;
   aiPresetEditingId = null;
   var bar = document.getElementById("aiPresetEditBar");
   if (bar) {
     bar.style.display = "none";
     bar.setAttribute("aria-hidden", "true");
+  }
+  if (restoreId) {
+    var pr = findAiPreset(restoreId);
+    if (pr) applyAiPresetData(pr);
   }
   renderAiPresets();
 }
@@ -1022,6 +1182,7 @@ function addAiPresetDraft() {
     alert("Select at least one equipment item first — then tap + to save a preset.");
     return;
   }
+  if (!ensureDballWeightForPresetSave(cap)) return;
   var p = {
     id: randomPresetId(),
     name: "New preset",
@@ -1029,6 +1190,7 @@ function addAiPresetDraft() {
     equipment: cap.equipment.slice(),
     unlimited: cap.unlimited,
     minutes: cap.minutes,
+    dballWeight: cap.dballWeight != null ? String(cap.dballWeight).trim() : "",
   };
   aiPresets.push(p);
   saveAiPresetsToStorage();
@@ -1053,6 +1215,7 @@ function initAiPresetsUi() {
     });
   }
   renderAiPresets();
+  updateAiDballWeightVisibility();
 }
 
 /** Turn model plain text into section objects like browse workouts (title / sub_title / lines). */
@@ -1547,66 +1710,6 @@ function buildWarehouseDigestForAi() {
   }
 }
 
-var aiDemoVideoWired = false;
-
-function wireAiDemoModalVideoOnce() {
-  if (aiDemoVideoWired) return;
-  aiDemoVideoWired = true;
-  var v = document.getElementById("aiDemoLoadingVideo");
-  var fb = document.getElementById("aiDemoVideoFallback");
-  if (!v) return;
-  var s = v.querySelector("source");
-  if (s) s.src = AI_LOADING_VIDEO_SRC;
-  try {
-    v.load();
-  } catch (e2) {}
-  v.addEventListener("error", function () {
-    v.style.display = "none";
-    if (fb) fb.style.display = "block";
-  });
-}
-
-function openAiLoadingDemoModal() {
-  var m = document.getElementById("aiLoadingDemoModal");
-  if (!m) return;
-  wireAiDemoModalVideoOnce();
-  m.style.display = "flex";
-  m.setAttribute("aria-hidden", "false");
-  try {
-    document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-  } catch (e) {}
-  var v = document.getElementById("aiDemoLoadingVideo");
-  if (v && v.style.display !== "none") {
-    try {
-      v.play();
-    } catch (e3) {}
-  }
-}
-
-function closeAiLoadingDemoModal() {
-  var m = document.getElementById("aiLoadingDemoModal");
-  if (!m || m.style.display === "none") return;
-  m.style.display = "none";
-  m.setAttribute("aria-hidden", "true");
-  try {
-    document.documentElement.style.overflow = "";
-    document.body.style.overflow = "";
-  } catch (e) {}
-  var v = document.getElementById("aiDemoLoadingVideo");
-  if (v) {
-    try {
-      v.pause();
-    } catch (e2) {}
-  }
-}
-
-document.addEventListener("keydown", function (e) {
-  if (e.key !== "Escape") return;
-  var m = document.getElementById("aiLoadingDemoModal");
-  if (m && m.style.display === "flex") closeAiLoadingDemoModal();
-});
-
 function generateWorkoutAi() {
   var btn = document.getElementById("btnGenerate");
   if (btn && btn.disabled) return;
@@ -1618,6 +1721,18 @@ function generateWorkoutAi() {
   var cbs = document.querySelectorAll("#eqGridAi .eq-item input:checked");
   for (var i = 0; i < cbs.length; i++) eq.push(cbs[i].value);
   if (!eq.length) { alert("Select at least one equipment type"); return; }
+  var dballW = "";
+  var dballCb = document.getElementById("aiEqDball");
+  if (dballCb && dballCb.checked) {
+    dballW = getAiDballWeightKgPayload();
+    if (!dballW) {
+      alert("Enter D-BALL weight in kg in the field next to D-BALL (0.5–200). The Coach uses this for loads and movement choice.");
+      var dwF = document.getElementById("aiDballWeight");
+      if (dwF) dwF.focus();
+      updateAiDballWeightVisibility();
+      return;
+    }
+  }
   var athletes = 1;
   if (aiTagLocation.extended === "dock") {
     var ae = document.getElementById("aiAthletes");
@@ -1632,15 +1747,30 @@ function generateWorkoutAi() {
     return;
   }
   el.innerHTML =
-    "<div class=\"ai-loading-overlay\"><div class=\"ai-loading-center\"><video id=\"aiLoadingVideo\" class=\"ai-loading-video\" autoplay muted loop playsinline><source src=\"" + AI_LOADING_VIDEO_SRC + "\" type=\"video/mp4\"></video><div class=\"ai-loading-status\">Generating <span id=\"aiStreamStatus\" style=\"opacity:.85\">(live stream when available)…</span></div><div id=\"aiVideoFallback\" class=\"empty-icon\" style=\"display:none;margin:0\">⏳</div></div></div><pre id=\"aiStreamLive\" style=\"display:none;white-space:pre-wrap;text-align:left;font-size:0.88rem;margin-top:12px;max-height:42vh;overflow:auto;background:rgba(0,0,0,0.18);padding:10px;border-radius:6px\"></pre>";
+    "<div class=\"ai-loading-overlay\"><div class=\"ai-loading-center\"><video id=\"aiLoadingVideo\" class=\"ai-loading-video\" autoplay muted loop playsinline><source src=\"\" type=\"video/mp4\"></video><div class=\"ai-loading-status\">Generating <span id=\"aiStreamStatus\" style=\"opacity:.85\">(live stream when available)…</span></div><div id=\"aiVideoFallback\" class=\"empty-icon\" style=\"display:none;margin:0\">⏳</div></div></div><pre id=\"aiStreamLive\" style=\"display:none;white-space:pre-wrap;text-align:left;font-size:0.88rem;margin-top:12px;max-height:42vh;overflow:auto;background:rgba(0,0,0,0.18);padding:10px;border-radius:6px\"></pre>";
   setTimeout(function () {
     var v = document.getElementById("aiLoadingVideo");
     var fb = document.getElementById("aiVideoFallback");
     if (!v || !fb) return;
-    v.addEventListener("error", function () {
-      v.style.display = "none";
-      fb.style.display = "block";
-    });
+    attachAiLoadingVideoErrorChain(v, fb);
+    try {
+      v.load();
+    } catch (eL) {}
+    function tryPlayGen() {
+      try {
+        v.play();
+      } catch (eP) {}
+    }
+    if (v.readyState >= 2) tryPlayGen();
+    else
+      v.addEventListener(
+        "loadeddata",
+        function onceG() {
+          v.removeEventListener("loadeddata", onceG);
+          tryPlayGen();
+        },
+        false
+      );
   }, 0);
   if (btn) btn.disabled = true;
   sendAnalytics("ai_generate_workout");
@@ -1658,6 +1788,7 @@ function generateWorkoutAi() {
       includeWeightlifting: aiTagLocation.weightliftingBlock === "dock"
     }
   };
+  if (dballW) genPayload.dballWeight = dballW;
   if (aiTagLocation.extended === "dock") {
     genPayload.extendedProfile = collectExtendedProfile();
   }
@@ -1986,20 +2117,27 @@ document.addEventListener("DOMContentLoaded", function() {
   })();
   var egf = document.getElementById("eqGridFind");
   if (egf) egf.addEventListener("change", updateFullGymButtonStateFind);
-  var ega = document.getElementById("eqGridAi");
-  if (ega) ega.addEventListener("change", updateFullGymButtonStateAi);
   initAiTagChips();
   initAiPresetsUi();
+  var aiUnlCb = document.getElementById("aiUnlimitedTime");
+  if (aiUnlCb && !aiUnlCb.dataset.syncBound) {
+    aiUnlCb.dataset.syncBound = "1";
+    aiUnlCb.addEventListener("change", syncAiUnlimitedTimeUi);
+  }
+  syncAiUnlimitedTimeUi();
   var eqGridAi = document.getElementById("eqGridAi");
   if (eqGridAi) {
     eqGridAi.addEventListener("change", function (e) {
+      updateFullGymButtonStateAi();
       if (!e.target || e.target.type !== "checkbox") return;
       if (e.target.value === "RIG RACK" && e.target.checked) {
         setEqGridAiCheckbox("BARBELL", true);
       }
       syncAiEquipmentDependencies();
+      updateAiDballWeightVisibility();
     });
   }
+  updateAiDballWeightVisibility();
   updateFullGymButtonStateFind();
   updateFullGymButtonStateAi();
   document.querySelectorAll(".timer-inp, .timer-inp-num, #stopwatchInput, #stopwatchCountDownSec, #intCountDown, #intWork, #intRest, #intRounds, #intSets, #intRestSets").forEach(function(inp) {
@@ -2212,6 +2350,19 @@ function adjustAiFindTime(delta) {
   el.value = next;
 }
 
+function syncAiUnlimitedTimeUi() {
+  var cb = document.getElementById("aiUnlimitedTime");
+  var wrap = document.querySelector(".ai-time-row-wrap");
+  if (!cb || !wrap) return;
+  var on = cb.checked;
+  wrap.classList.toggle("unlimited-on", on);
+  var ti = document.getElementById("aiFindTime");
+  var row = wrap.querySelector(".ai-time-row-compact");
+  var btns = row ? row.querySelectorAll(".time-btn") : [];
+  if (ti) ti.disabled = on;
+  for (var i = 0; i < btns.length; i++) btns[i].disabled = on;
+}
+
 /**
  * איתור אימון (Find Workout). נקודות שרגילות לרדת במיזוגים – לא למחוק:
  * - time = unlimited ? 999 (מסמנים UNLIMITED TIME)
@@ -2341,6 +2492,9 @@ function toggleFullGymAi() {
   for (var j = 0; j < cbs.length; j++) cbs[j].checked = !allChecked;
   var btn = document.getElementById("eqFullGymBtnAi");
   if (btn) btn.classList.toggle("active", !allChecked);
+  syncAiEquipmentDependencies();
+  updateAiDballWeightVisibility();
+  updateFullGymButtonStateAi();
 }
 
 function updateFullGymButtonStateAi() {
@@ -2448,8 +2602,12 @@ function resetAiBetaForm() {
   if (t) t.value = 20;
   var u = document.getElementById("aiUnlimitedTime");
   if (u) u.checked = false;
+  syncAiUnlimitedTimeUi();
   var cbs = document.querySelectorAll("#eqGridAi .eq-item input[type='checkbox']");
   for (var i = 0; i < cbs.length; i++) cbs[i].checked = false;
+  var dballInp = document.getElementById("aiDballWeight");
+  if (dballInp) dballInp.value = "";
+  updateAiDballWeightVisibility();
   var ath = document.getElementById("aiAthletes");
   if (ath) ath.value = 1;
   var notes = document.getElementById("aiUserNotes");
@@ -3587,16 +3745,5 @@ function initTimerColorBuckets() {
   } catch (e) {}
 })();
 </script>
-<div id="aiLoadingDemoModal" class="ai-loading-overlay ai-loading-demo-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="aiLoadingDemoTitle" aria-hidden="true" onclick="closeAiLoadingDemoModal()">
-  <button type="button" class="ai-loading-demo-close" onclick="event.stopPropagation();closeAiLoadingDemoModal()" aria-label="Close preview">×</button>
-  <div class="ai-loading-center" onclick="event.stopPropagation()">
-    <p id="aiLoadingDemoTitle" class="ai-loading-demo-hint">Preview only — this does not generate a workout or call the server.</p>
-    <video id="aiDemoLoadingVideo" class="ai-loading-video" muted loop playsinline preload="metadata">
-      <source src="" type="video/mp4">
-    </video>
-    <div class="ai-loading-status">Generating… <span style="opacity:.85">(demo)</span></div>
-    <div id="aiDemoVideoFallback" class="empty-icon" style="display:none;margin:0;color:#888">⏳</div>
-  </div>
-</div>
 </body>
 </html>

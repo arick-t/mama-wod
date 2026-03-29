@@ -1,13 +1,13 @@
-# 🦆 DUCK-WOD — גרסה **20.1.0-beta.1** (`package.json`: `20.1.0-beta.1`)
+# 🦆 DUCK-WOD — גרסה **20.1.0-beta.2** (`package.json`: `20.1.0-beta.2`)
 
 **Workout aggregator** — daily WODs from multiple sources
 
 > הגרסה המוצגת באתר היא **v20.1 BETA** (בטא; בכותרת ובפס המשני). מקור אמת: `VERSION` + `package.json` — ראו `docs/VERSIONING.md`.
 
-## ✅ v20.1 BETA / 20.1.0-beta.1 (Mar 2026)
+## ✅ v20.1 BETA / 20.1.0-beta.2 (Mar 2026)
 
-- **AI Builder BETA:** שיפורי תצוגה (כרטיס זהב, שיתוף WA), תגיות ואיפוס טופס; מאמן ברירת מחדל תמיד בשרת.
-- **API:** `/api/generate-workout` (דורש `GEMINI_API_KEY` ב־Vercel).
+- **AI Builder BETA:** D-BALL ק״ג + פריסטים; זמן קומפקטי + Unlimited + פרומפט זמנים; בריכת ציוד / כלל 4+ מודאליטים; וידאו טעינה מותג; ללא Preview.
+- **API:** `/api/generate-workout` (דורש `GEMINI_API_KEY` / Groq ב־Vercel).
 
 ## ✅ v20.0.0-beta.1 (Mar 2026) — BETA
 
@@ -46,10 +46,10 @@
 ## 🚀 Quick Upgrade
 
 ```bash
-unzip duck-wod-v20.1.0-beta.1.zip
+unzip duck-wod-v20.1.0-beta.2.zip
 cd your-repo && rm -rf * 
-cp -r ../duck-wod-v20.1.0-beta.1/* . && cp ../duck-wod-v20.1.0-beta.1/.gitignore . && cp -r ../duck-wod-v20.1.0-beta.1/.github .
-git add . && git commit -m "🔧 v20.1.0-beta.1" && git push
+cp -r ../duck-wod-v20.1.0-beta.2/* . && cp ../duck-wod-v20.1.0-beta.2/.gitignore . && cp -r ../duck-wod-v20.1.0-beta.2/.github .
+git add . && git commit -m "🔧 v20.1.0-beta.2" && git push
 ```
 
 Workflow runs automatically after push!
@@ -61,4 +61,4 @@ Workflow runs automatically after push!
 
 ---
 
-**Version 20.1.0-beta.1 (v20.1 BETA)** • Mar 2026 • AI Builder BETA — בדיקות מומלצות ✅
+**Version 20.1.0-beta.2 (v20.1 BETA)** • Mar 2026 • AI Builder BETA — בדיקות מומלצות ✅
