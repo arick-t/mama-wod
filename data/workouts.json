@@ -2741,6 +2741,78 @@
     "2026-03-30": [
       {
         "date": "2026-03-30",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260330",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "For reps:",
+              "Tabata air squats",
+              "Tabata push-ups",
+              "Tabata AbMat sit-ups",
+              "Tabata walking lunges",
+              "Each Tabata interval is 20 seconds of work followed by 10 seconds of rest for 8 rounds."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-30",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-march-30-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "3 Rounds",
+              "1:00 Machine or 200m Jog",
+              "10 Plate Ground to Overhead",
+              "3 Vertical Leaps"
+            ]
+          },
+          {
+            "title": "Squat Snatch",
+            "lines": [
+              "3-3-3-3-3-3",
+              "Rest 2-4 minutes between sets",
+              "Drop and reset between all reps.",
+              "Start around 70-75%1RM and build AHAP across sets”)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-30",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 25.2",
+            "lines": [
+              "For time:",
+              "21 pull-ups",
+              "42 double-unders",
+              "21 thrusters (weight 1)",
+              "18 chest-to-bar pull-ups",
+              "36 double-unders",
+              "18 thrusters (weight 2)",
+              "15 bar muscle-ups",
+              "30 double-unders",
+              "15 thrusters (weight 3)",
+              "Time cap: 12 minutes",
+              "*♀ 65, 75, 85 lb (29, 34, 38 kg)*",
+              "*♂ 95, 115, 135 lb (43, 52, 61 kg)*"
+            ]
+          }
+        ],
+        "note": "Open: Open 25.2"
+      },
+      {
+        "date": "2026-03-30",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-03-30/",
@@ -2784,51 +2856,6 @@
               "toes to bar"
             ],
             "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-30",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260330",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "For reps:",
-              "Tabata air squats",
-              "Tabata push-ups",
-              "Tabata AbMat sit-ups",
-              "Tabata walking lunges",
-              "Each Tabata interval is 20 seconds of work followed by 10 seconds of rest for 8 rounds."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-30",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-march-30-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "3 Rounds",
-              "1:00 Machine or 200m Jog",
-              "10 Plate Ground to Overhead",
-              "3 Vertical Leaps"
-            ]
-          },
-          {
-            "title": "Squat Snatch",
-            "lines": [
-              "3-3-3-3-3-3",
-              "Rest 2-4 minutes between sets",
-              "Drop and reset between all reps.",
-              "Start around 70-75%1RM and build AHAP across sets”)"
-            ]
           }
         ]
       },
@@ -2901,35 +2928,8 @@
           }
         ],
         "note": "Benchmark: FIGHT GONE BAD"
-      },
-      {
-        "date": "2026-03-30",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 25.2",
-            "lines": [
-              "For time:",
-              "21 pull-ups",
-              "42 double-unders",
-              "21 thrusters (weight 1)",
-              "18 chest-to-bar pull-ups",
-              "36 double-unders",
-              "18 thrusters (weight 2)",
-              "15 bar muscle-ups",
-              "30 double-unders",
-              "15 thrusters (weight 3)",
-              "Time cap: 12 minutes",
-              "*♀ 65, 75, 85 lb (29, 34, 38 kg)*",
-              "*♂ 95, 115, 135 lb (43, 52, 61 kg)*"
-            ]
-          }
-        ],
-        "note": "Open: Open 25.2"
       }
     ]
   },
-  "last_updated": "2026-03-30T08:08:10.834981"
+  "last_updated": "2026-03-30T08:11:37.523600"
 }
