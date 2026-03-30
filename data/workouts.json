@@ -1,46 +1,5 @@
 {
   "workouts": {
-    "2026-03-15": [
-      {
-        "date": "2026-03-15",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 11.2",
-            "lines": [
-              "Complete as many rounds and reps as possible in 15 minutes of:",
-              "9 Deadlifts (155lbs / 70kg)",
-              "12 Push-ups",
-              "15 Box jumps (24\")",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 15 minutes of:",
-              "9 Deadlifts (100lbs / 45kg)",
-              "12 Push-ups",
-              "15 Box jumps (20\")",
-              "*MASTERS MEN*",
-              "-",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 15 minutes of:",
-              "9 Deadlifts (145lbs / 65kg)",
-              "12 Push-ups",
-              "15 Box jumps (20\")",
-              "*MASTERS WOMEN*",
-              "-",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 15 minutes of:",
-              "9 Deadlifts (90lbs / 40kg)",
-              "12 Push-ups",
-              "15 Box jumps (20\")"
-            ]
-          }
-        ],
-        "note": "Open: Open 11.2"
-      }
-    ],
     "2026-03-16": [
       {
         "date": "2026-03-16",
@@ -144,100 +103,6 @@
           }
         ],
         "note": "Open: Open 14.2"
-      },
-      {
-        "date": "2026-03-16",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-16/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "CF OPEN 26.3"
-            ]
-          },
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "thoracic rotation",
-              "sumo squat stretch",
-              "samson stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 deadlifts",
-              "10 front squats",
-              "10 push ups to down dog"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "(heat  1 // 3min break // heat 2)",
-              "2 rounds of:",
-              "",
-              "12 burpees over the bar",
-              "12 cleans (43/29kg)",
-              "12 burpees over the bar",
-              "12 thrusters",
-              "2 rounds of:",
-              "",
-              "12 burpees over the bar",
-              "12 cleans (52/34kg)",
-              "12 burpees over the bar",
-              "12 thrusters",
-              "2 rounds of:",
-              "",
-              "12 burpees over the bar",
-              "12 cleans (61/38kg)",
-              "12 burpees over the bar",
-              "12 thrusters",
-              "time cap 16:00",
-              "power clean"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-16",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "He is survived by his parents, Andrew and Jackie.\nFirst posted",
-        "sections": [
-          {
-            "title": "Ryan",
-            "sub_title": "5 rounds for time of:",
-            "lines": [
-              "7 muscle-ups",
-              "21 burpees",
-              "Maplewood, Missouri, firefighter, Ryan Hummert, 22, was killed by sniper fire, July 21, 2008, when he stepped off his fire truck responding to a call."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-16",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Nicole",
-            "lines": [
-              "20 min AMRAP:",
-              "Your final score is total pull-up reps after 20minutes.",
-              "Every Time you break on the pull ups go for a run! Choose a scaling option that always allows more than 10 Pull Up repetitions each time."
-            ]
-          }
-        ],
-        "note": "Benchmark: Nicole"
       }
     ],
     "2026-03-17": [
@@ -926,33 +791,6 @@
               "* aerobic power [vo2 max]"
             ],
             "sub_title": "rest 2:00 between rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-20",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Power Snatch + Snatch Balance",
-              "CYCLING (SNATCH)",
-              "Every 2:00 (10:00)",
-              "2 Touch-and-Go Power Snatch + 1 Snatch Balance @ RPE 7"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Lime Green",
-            "lines": [
-              "3 Wall Walks",
-              "9 Overhead Squats 43kg/29kg",
-              "12 Pull Ups"
-            ],
-            "sub_title2": "6 Rounds For Time:"
           }
         ]
       },
@@ -2899,7 +2737,199 @@
         ],
         "note": "Benchmark: Karen"
       }
+    ],
+    "2026-03-30": [
+      {
+        "date": "2026-03-30",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-03-30/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "thoracic rotation",
+              "handwalk",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 straight leg sit ups",
+              "10 ring rows",
+              "10 push ups to down dog"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "PUSH PRESS 14MIN",
+            "lines": [
+              "3 sets",
+              "5 push press at 77-82%",
+              "explosive power"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "20 strict pull ups",
+              "30 toes to bar",
+              "15 wall walks",
+              "30 toes to bar",
+              "20 strict pull ups",
+              "* muscular endurance",
+              "toes to bar"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-03-30",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260330",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "For reps:",
+              "Tabata air squats",
+              "Tabata push-ups",
+              "Tabata AbMat sit-ups",
+              "Tabata walking lunges",
+              "Each Tabata interval is 20 seconds of work followed by 10 seconds of rest for 8 rounds."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-30",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-march-30-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "3 Rounds",
+              "1:00 Machine or 200m Jog",
+              "10 Plate Ground to Overhead",
+              "3 Vertical Leaps"
+            ]
+          },
+          {
+            "title": "Squat Snatch",
+            "lines": [
+              "3-3-3-3-3-3",
+              "Rest 2-4 minutes between sets",
+              "Drop and reset between all reps.",
+              "Start around 70-75%1RM and build AHAP across sets”)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-30",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Conquer",
+            "lines": [
+              "400m Run",
+              "5 Rounds of \"Strict Cindy\"",
+              "5 Strict Pull Ups",
+              "10 Push Ups",
+              "15 Air Squats",
+              "* (Scored by Rounds + Reps. For the run, each 100m = 1 rep)"
+            ],
+            "sub_title2": "25:00 AMRAP"
+          }
+        ]
+      },
+      {
+        "date": "2026-03-30",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "Narcotics Detective and Special Assignment Unit Operator Carlos Ledesma, 34, of the Chandler Police Department, Chandler, Arizona, was shot and killed by drug dealers on July 28, 2010, during an undercover operation in Phoenix, Arizona.\nHe is survived by his wife, Sherry; and sons, Luciano and Elijo.\nFirst posted",
+        "sections": [
+          {
+            "title": "Ledesma",
+            "sub_title": "Complete as many rounds and reps as possible in 20 minutes of:",
+            "lines": [
+              "5 parallette handstand push-ups",
+              "10 toes-to-rings",
+              "15 medicine-ball cleans",
+              "♀ 14-lb medicine ball",
+              "♂ 20-lb medicine ball"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-30",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "FIGHT GONE BAD",
+            "lines": [
+              "3 Rounds for Max Reps:",
+              "1:00 WBS 9/6",
+              "1:00 SDHP 35/25 kg",
+              "1:00 Box Jump",
+              "1:00 Push Press 35/25 kg",
+              "1:00 Cal Row /Machine",
+              "1:00 Rest",
+              "How do you perform the “Fight Gone Bad” workout?",
+              "Perform 1 minute of work at each of the 5 stations. Move immediately to the next station after 1 minute. The clock does not reset or stop between exercises. One-minute break is allowed before repeating each round. One point is given for each rep, except on the rower where each calorie is one point.",
+              "How do you score the “Fight Gone Bad” workout?",
+              "*Score is the total cumulative number of repetitions completed of all movements in all 3 rounds.*",
+              "What is a good score for the “Fight Gone Bad” workout?",
+              "– Beginner: 150-250 reps",
+              "– Intermediate: 250-350 reps",
+              "– Advanced: 350-450 reps",
+              "– Elite: 500+ reps"
+            ]
+          }
+        ],
+        "note": "Benchmark: FIGHT GONE BAD"
+      },
+      {
+        "date": "2026-03-30",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 25.2",
+            "lines": [
+              "For time:",
+              "21 pull-ups",
+              "42 double-unders",
+              "21 thrusters (weight 1)",
+              "18 chest-to-bar pull-ups",
+              "36 double-unders",
+              "18 thrusters (weight 2)",
+              "15 bar muscle-ups",
+              "30 double-unders",
+              "15 thrusters (weight 3)",
+              "Time cap: 12 minutes",
+              "*♀ 65, 75, 85 lb (29, 34, 38 kg)*",
+              "*♂ 95, 115, 135 lb (43, 52, 61 kg)*"
+            ]
+          }
+        ],
+        "note": "Open: Open 25.2"
+      }
     ]
   },
-  "last_updated": "2026-03-29T10:02:55.577984"
+  "last_updated": "2026-03-30T08:08:10.834981"
 }
