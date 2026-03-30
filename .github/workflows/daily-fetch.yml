@@ -1,9 +1,12 @@
-# Fetch יומי — 3 קרונים (~05:00 / 05:30 / 08:00 ישראל חורף). Push ל-main כש-backend משתנה. פירוט: docs/FETCH_SCHEDULE.md
+# Fetch יומי — 5 קרונים (כולל מיד אחרי חצות ישראל) + ~05:00 / 05:30 / 08:00 חורף. פירוט: docs/FETCH_SCHEDULE.md
 name: 🦆 Daily Workout Fetch
 
 on:
   schedule:
-    - cron: '0 3 * * *'    # 05:00 Israel (UTC+2 winter) — extra early; ~06:00 in summer
+    # מפחית חלון "אין אימונים להיום": זמן קצר אחרי שהתאריך בישראל מתחלף (~01:00 חורף / ~02:00 קיץ)
+    - cron: '0 23 * * *'   # ≈01:00 Israel (UTC+2 winter) — first fill for new calendar day
+    - cron: '0 1 * * *'    # ≈03:00 Israel winter — EU/UK sources; shrinks midnight→first-data gap vs old 05:00-only start
+    - cron: '0 3 * * *'    # 05:00 Israel (UTC+2 winter) — ~06:00 in summer
     - cron: '30 3 * * *'   # 05:30 Israel – Europe/UK (MYLEO, Ton Bridge) after 00:01
     - cron: '0 6 * * *'    # 08:00 Israel – US sources (1013, official site, Restoration)
   workflow_dispatch:
