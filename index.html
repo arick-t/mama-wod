@@ -2166,6 +2166,22 @@ document.addEventListener("DOMContentLoaded", function() {
   updateIntervalOverallTime();
 });
 
+/** One automatic re-fetch ~75s later if Israel-today has no rows yet (covers deploy/fetch delay after midnight). */
+function scheduleWorkoutsAutoRetryOnceIfTodayStillEmpty() {
+  try {
+    if (window.__duckWodAutoDataRetryDone) return;
+    var t = todayIsraelStr();
+    if (selectedDateStr !== t) return;
+    var raw = allData.workouts && allData.workouts[t];
+    var n = raw ? raw.length : 0;
+    if (n > 0) return;
+    window.__duckWodAutoDataRetryDone = true;
+    setTimeout(function () {
+      loadData();
+    }, 75000);
+  } catch (e) {}
+}
+
 function loadData() {
   Promise.all([
     fetch("./data/workouts.json?t=" + Date.now())
@@ -2178,6 +2194,7 @@ function loadData() {
       allData = arr[0];
       specialData = arr[1] || {heroes:[], benchmarks:[], open:[]};
       displayWorkouts();
+      scheduleWorkoutsAutoRetryOnceIfTodayStillEmpty();
     })
     .catch(function(e) {
       console.error("Load failed:", e);
@@ -2215,7 +2232,8 @@ function buildDaysBar() {
     var dateStr = dates[i];
     var d = new Date(dateStr + "T12:00:00.000Z");
     var day = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][d.getUTCDay()];
-    var hasData = allData.workouts && allData.workouts[dateStr];
+    var wodsForDay = allData.workouts && allData.workouts[dateStr];
+    var hasData = wodsForDay && wodsForDay.length > 0;
     var active = dateStr === ds ? " active" : "";
     html += "<button class=\"day-btn" + active + "\" onclick=\"goDate('" + dateStr + "')\" style=\"margin:0 4px;padding:8px 12px;background:" +
             (dateStr === ds ? "#E8451A" : "#2a2a2a") + ";color:" + (dateStr === ds ? "#fff" : (hasData ? "#f0ece0" : "#555")) +
@@ -2255,7 +2273,17 @@ function displayWorkouts() {
   });
   
   if (filtered.length === 0) {
-    grid.innerHTML = "<div class=\"empty\"><div class=\"empty-icon\">🦆</div>No workouts for " + ds + "<br><small style=\"color:#444\">Run the fetch workflow to get data</small></div>";
+    var isToday = ds === todayIsraelStr();
+    var hint =
+      isToday
+        ? "Daily data is filled automatically from our sources after midnight (Israel) — usually within an hour or two. US boxes often appear closer to morning Israel time. If it persists, try <strong>Refresh</strong> or check your connection."
+        : "No programs for this date in the current dataset. Try another day or Refresh.";
+    grid.innerHTML =
+      "<div class=\"empty\"><div class=\"empty-icon\">🦆</div>No workouts for " +
+      escapeHtmlAi(ds) +
+      "<p style=\"color:#888;max-width:26rem;margin:12px auto 14px;line-height:1.45;font-size:0.88em\">" +
+      hint +
+      "</p><button type=\"button\" class=\"btn btn-find\" onclick=\"loadData()\" style=\"margin-top:6px\">Refresh data</button></div>";
     return;
   }
   cardStore = [];

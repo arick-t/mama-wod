@@ -12,6 +12,8 @@
 
 **שרשרת נכונה:** ה־cron של ה־Fetch רץ → אם יש שינוי בנתונים → commit + push ל־`main` → **Pages** (ו־Vercel אם מחובר ל־Git) נבנים מחדש. בלי push אין עדכון קבצים באתר הציבורי.
 
+**מניעת מטמון ל־JSON:** ב־**GitHub Pages** משתמשים ב־`_headers` (`/data/workouts.json` → `no-store`). ב־**Vercel** — `vercel.json` → `headers` לאותם נתיבים, כדי שלא יישאר קובץ אתמול אצל CDN/דפדפן.
+
 Workflows אחרים (Capacitor, בדיקות אנליטיקס ב־CI) מוגדרים כרגע **ידניים** או PR בלבד — לא אמורים להציף את הרשימה על כל push.
 
 ---

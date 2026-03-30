@@ -1,6 +1,26 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "ignoreCommand": "node scripts/vercel-analytics-only-skip.js",
+  "headers": [
+    {
+      "source": "/data/workouts.json",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate, max-age=0"
+        }
+      ]
+    },
+    {
+      "source": "/data/special_cache.json",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate, max-age=0"
+        }
+      ]
+    }
+  ],
   "functions": {
     "api/generate-workout.js": { "maxDuration": 60 },
     "api/event.js": { "maxDuration": 60 }
