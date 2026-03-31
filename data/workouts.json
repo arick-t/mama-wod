@@ -2727,6 +2727,51 @@
       },
       {
         "date": "2026-03-31",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-march-31-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "200m Jog",
+              "5 Burpees",
+              "20 Box Step Overs",
+              "200m Jog",
+              "5 Burpees",
+              "15 Box Jumps (shorter box)",
+              "200m Jog",
+              "10 Burpee Box Jump Overs",
+              "200m Run"
+            ]
+          },
+          {
+            "title": "3 Rounds for time",
+            "lines": [
+              "12 Burpee Box Jump Overs 24/20″",
+              "400m Run",
+              "9 Burpee Box Jump Overs 24/20″",
+              "400m Run",
+              "6 Burpee Box Jump Overs 24/20″",
+              "Rest 2:00",
+              "Target Score: Sub 25 minutes (7:00 working time per round or faster)",
+              "Firebreather: Sub 22 minutes (6:00 working time per round or faster)"
+            ]
+          },
+          {
+            "title": "Extra Credit",
+            "lines": [
+              "Spend 12:00 working slowly from resting heartrate to 170 BPM minus your ago on any machine or combination of machines",
+              "Then",
+              "45-90 Minutes on a single machine or jogging keeping your heartrate between 160 BPM minus your age and 180 BPM minus your age",
+              "Then",
+              "Spend 12:00 working slowly from your working heartrate, down to 140 BPM minus your age on any machine or combination of machines"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-31",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-03-31/",
@@ -2776,51 +2821,6 @@
               "as many sets as possible",
               "10 single db overhead triceps extension",
               "10 diamond push ups"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-31",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-march-31-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "200m Jog",
-              "5 Burpees",
-              "20 Box Step Overs",
-              "200m Jog",
-              "5 Burpees",
-              "15 Box Jumps (shorter box)",
-              "200m Jog",
-              "10 Burpee Box Jump Overs",
-              "200m Run"
-            ]
-          },
-          {
-            "title": "3 Rounds for time",
-            "lines": [
-              "12 Burpee Box Jump Overs 24/20″",
-              "400m Run",
-              "9 Burpee Box Jump Overs 24/20″",
-              "400m Run",
-              "6 Burpee Box Jump Overs 24/20″",
-              "Rest 2:00",
-              "Target Score: Sub 25 minutes (7:00 working time per round or faster)",
-              "Firebreather: Sub 22 minutes (6:00 working time per round or faster)"
-            ]
-          },
-          {
-            "title": "Extra Credit",
-            "lines": [
-              "Spend 12:00 working slowly from resting heartrate to 170 BPM minus your ago on any machine or combination of machines",
-              "Then",
-              "45-90 Minutes on a single machine or jogging keeping your heartrate between 160 BPM minus your age and 180 BPM minus your age",
-              "Then",
-              "Spend 12:00 working slowly from your working heartrate, down to 140 BPM minus your age on any machine or combination of machines"
             ]
           }
         ]
@@ -2904,5 +2904,5 @@
       }
     ]
   },
-  "last_updated": "2026-03-31T06:50:06.395062"
+  "last_updated": "2026-03-31T08:04:16.689657"
 }
