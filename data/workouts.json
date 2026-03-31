@@ -1,90 +1,5 @@
 {
   "workouts": {
-    "2026-03-17": [
-      {
-        "date": "2026-03-17",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260317",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Annie"
-            ]
-          },
-          {
-            "title": "50-40-30-20-10 REPS FOR TIME OF",
-            "lines": [
-              "Double-unders",
-              "AbMat sit-ups",
-              "Then, complete the following post-workout skill work.",
-              "Every minute on the minute for 6 minutes:",
-              "25-foot handstand walk",
-              "Compare to",
-              "230104"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-17",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-march-17-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "20 Dead Bugs",
-              "10 Kickstand Kettlebell Deadlifts per leg, then:",
-              "3 rounds",
-              ":45 Machine or 150m Run",
-              "8 Russian KBS",
-              "8 Reverse Lunges"
-            ]
-          },
-          {
-            "title": "Deadlift",
-            "lines": [
-              "11 reps @ 50% 1RM",
-              "9 reps @ 60% 1RM",
-              "7 reps @ 70% 1RM",
-              "5 reps @ 80% 1RM",
-              "1 max rep set at 85% 1RM",
-              "Score: weight for reps in final set (e.g. 200lbs for 6)",
-              "Bike for 3:00 between sets as rest”)"
-            ]
-          },
-          {
-            "title": "Every 10:00 for 3 Rounds",
-            "lines": [
-              "15 line Facing Burpees",
-              "3 Rope Climbs",
-              "50ft Dbl DB OHWL 50s/35s",
-              "Flush at Forever Pace on the Echo Bike during rest.",
-              "Sprintervals need two things: high intensity, and slight strategic changes round to round for athlete IQ."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-17",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 12.1",
-            "lines": [
-              "Complete as many reps as possible in 7 minutes of:",
-              "Burpees"
-            ]
-          }
-        ],
-        "note": "Open: Open 12.1"
-      }
-    ],
     "2026-03-18": [
       {
         "date": "2026-03-18",
@@ -179,89 +94,6 @@
           }
         ],
         "note": "Open: Open 23.2"
-      },
-      {
-        "date": "2026-03-18",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-18/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "samson stretch",
-              "hand walk",
-              "instep rotations",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 hang high pulls",
-              "10 behind the neck push press",
-              "10/8cal row"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "SKILL 5MIN",
-            "lines": [
-              "hang power snatches"
-            ]
-          },
-          {
-            "title": "CONDITIONING 28MIN",
-            "lines": [
-              "5 x 4:00 amrap:",
-              "",
-              "20 sit ups",
-              "30/24 cal row",
-              "10 hang power snatches 50/35kg",
-              "* rest 2:00 between amraps",
-              "* pick up where you left off",
-              "* aerobic power [vo2 max]",
-              "* hang power snatch"
-            ],
-            "sub_title": "score: total rounds + reps"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-18",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Ryan Comas",
-            "sub_title": "For time as a 3-person team:",
-            "lines": [
-              "1,065-foot",
-              "versa climb",
-              "or 1,065-m row or ski"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-18",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Linda",
-            "lines": [
-              "10 – 9 – 8 – 7 – 6 – 5 – 4 – 3 – 2 – 1:",
-              "1.5x body weight deadlift",
-              "body weight bench press",
-              "3/4x body weight squat cleans"
-            ]
-          }
-        ],
-        "note": "Benchmark: Linda"
       }
     ],
     "2026-03-19": [
@@ -427,17 +259,18 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "Christine",
+            "title": "Jackie",
             "lines": [
-              "3 rounds for time of:",
-              "500m Row",
-              "12 Deadlifts (Bodyweight)",
-              "21 Box jumps (60/50 cm)",
-              "TC 15 min"
+              "For time",
+              "1000 m Row",
+              "50 Thruster 20/15kg",
+              "30 Pull up",
+              "*TC: 12 Mins",
+              "Tehdään lähtö porrastetusti!"
             ]
           }
         ],
-        "note": "Benchmark: Christine"
+        "note": "Benchmark: Jackie"
       }
     ],
     "2026-03-20": [
@@ -609,17 +442,18 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "Isabel",
+            "title": "Baseline",
             "lines": [
-              "For time",
-              "30 Snatch 60/42,5 kg",
-              "Scaled",
-              "30 Hang snatch",
-              "TC 6 min"
+              "For time:",
+              "row  500 m",
+              "40 squats",
+              "30 sit-ups",
+              "20  push -ups",
+              "10 pull-ups"
             ]
           }
         ],
-        "note": "Benchmark: Isabel"
+        "note": "Benchmark: Baseline"
       }
     ],
     "2026-03-21": [
@@ -778,42 +612,6 @@
       },
       {
         "date": "2026-03-21",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "HSPU",
-              "10 reps – 45 sec rest",
-              "8 reps – 30 secs rest",
-              "6 reps – 20 secs rest",
-              "4 reps – 10 secs rest",
-              "2 reps",
-              "Rest 2 mins and repeat",
-              "If too easy make them strict or deficit."
-            ]
-          },
-          {
-            "title": "METCON",
-            "sub_title": "For Time:",
-            "lines": [
-              "50/40 cal Row,",
-              "50 Box Jump Overs 24/20 inch",
-              "* 40 Deadlifts 65/80kg",
-              "* 40 Wall-balls 9/6kg",
-              "30 C2B",
-              "40 Wall-balls",
-              "40 Deadlifts",
-              "50 Box Jump Overs",
-              "50/40 cal Row"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-21",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "U.S. Coast Guard Lt. Junior Grade Thomas Cameron, 24, of Portland, Oregon, in training at the Aviation Training Center in Mobile, Alabama, died on Feb. 28, 2012, when his unit's helicopter crashed into Mobile Bay in the Gulf of Mexico during a training mission.\nHe is survived by his parents, Bette and John; and brother, Alex.\nFirst posted",
@@ -845,15 +643,17 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "GRACE",
+            "title": "CrossFit Total II",
             "lines": [
-              "For Time:",
-              "30 Clean & Jerk",
-              "Rx 60/42,5"
+              "In 45 mins find your 1RM for each item following",
+              "Post the total amount.",
+              "Clean",
+              "Bench press",
+              "Overhead squat"
             ]
           }
         ],
-        "note": "Benchmark: GRACE"
+        "note": "Benchmark: CrossFit Total II"
       }
     ],
     "2026-03-22": [
@@ -956,31 +756,16 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "The Ghost",
+            "title": "Fat Helen",
             "lines": [
-              "6 rounds of:",
-              "– Athletes work for 3:00 and then rest 1:00 in a Fight Gone Bad AMRAP style workout.",
-              "*– Score is total reps completed at the end of the 6 rounds. Keep a running count from movement to movement, or add up all three during rest period.*",
-              "S1:",
-              "6 rounds for reps:",
-              "1:00 calorie row",
-              "1:00 burpees",
-              "1:00 double-under attempts",
-              "– Rest 1:00 between rounds.",
-              "S2:",
-              "5 rounds for reps:",
-              "1:00 calorie row",
-              "1:00 burpees",
-              "1:00 single-unders",
-              "– Rest 1:00 between rounds.",
-              "INTENDED STIMULUS",
-              "80-100 calories; 60-90 burpees; 300+ double-unders.",
-              "Fight Gone Bad style workout originally programmed for professional boxer Robert “The Ghost” Guerrero's training on 140617.",
-              "*Athletes should track individual movements each round and then try to beat the previous round's score.*"
+              "3 rounds for time of:",
+              "400 m  Run",
+              "21  Kettlebell Swing s (32/24kg)",
+              "12 Chest-To-Bar Pull-Ups"
             ]
           }
         ],
-        "note": "Benchmark: The Ghost"
+        "note": "Benchmark: Fat Helen"
       }
     ],
     "2026-03-23": [
@@ -1205,15 +990,28 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "121023 ADVANCED BOOTCAMP (JW)",
+            "title": "FIGHT GONE BAD",
             "lines": [
-              "4 x 6 heavy dual db floorpress",
-              "2/2 turkish getup",
-              "For time:"
+              "3 Rounds for Max Reps:",
+              "1:00 WBS 9/6",
+              "1:00 SDHP 35/25 kg",
+              "1:00 Box Jump",
+              "1:00 Push Press 35/25 kg",
+              "1:00 Cal Row /Machine",
+              "1:00 Rest",
+              "How do you perform the “Fight Gone Bad” workout?",
+              "Perform 1 minute of work at each of the 5 stations. Move immediately to the next station after 1 minute. The clock does not reset or stop between exercises. One-minute break is allowed before repeating each round. One point is given for each rep, except on the rower where each calorie is one point.",
+              "How do you score the “Fight Gone Bad” workout?",
+              "*Score is the total cumulative number of repetitions completed of all movements in all 3 rounds.*",
+              "What is a good score for the “Fight Gone Bad” workout?",
+              "– Beginner: 150-250 reps",
+              "– Intermediate: 250-350 reps",
+              "– Advanced: 350-450 reps",
+              "– Elite: 500+ reps"
             ]
           }
         ],
-        "note": "Benchmark: 121023 ADVANCED BOOTCAMP (JW)"
+        "note": "Benchmark: FIGHT GONE BAD"
       }
     ],
     "2026-03-24": [
@@ -1448,20 +1246,19 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "BARBARA",
+            "title": "FRAN",
             "lines": [
-              "5 rounds for time:",
-              "15 Pull up",
-              "20 Push up",
-              "30 Sit up",
-              "50 Air Squat",
-              "2min Rest",
-              "(Time Cap 35min)",
-              "Do not include final 2min rest in your overall time."
+              "For Time:",
+              "21-15-9",
+              "Thruster",
+              "Pull-up",
+              "RPE 5, maximum effort! Target: sub 6min. Time Cap 10min.",
+              "Rxd 42,5/30kg",
+              "SC 30/20kg + Jumping Pull-ups"
             ]
           }
         ],
-        "note": "Benchmark: BARBARA"
+        "note": "Benchmark: FRAN"
       }
     ],
     "2026-03-25": [
@@ -1682,27 +1479,21 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "Chelsea",
+            "title": "DIANE",
             "lines": [
-              "On the minute every minute for 30 minutes:",
-              "5 pull-ups",
-              "10 push-ups",
-              "15 air squats",
-              "Scaling options for both workouts:",
-              "pull-ups to ring row or jumping pull ups",
-              "push-ups to against box or rubber band",
-              "Intermediate:",
-              "4 pull-ups",
-              "8 push-ups",
-              "12 air squats",
-              "Beginner:",
-              "3 pull-ups",
-              "6 push-ups",
-              "9 air squats"
+              "For time",
+              "21–15–9",
+              "Deadlift @100/70 kg",
+              "Handstand push up",
+              "Scaled",
+              "21-15-9 Reps For Time",
+              "Deadlifts (70/50kg)",
+              "Push-Ups",
+              "TC 10 min"
             ]
           }
         ],
-        "note": "Benchmark: Chelsea"
+        "note": "Benchmark: DIANE"
       }
     ],
     "2026-03-26": [
@@ -1916,17 +1707,19 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "CINDY” BENCHMARK",
+            "title": "Kelly",
             "lines": [
-              "AMRAP20",
-              "5 Pull-ups",
-              "10 Push-ups",
-              "15 Air squats",
-              "*As this is an AMRAP ensure you use the same movements throughout the workout. This is the only way to determine progress by keeping the standard the same.*"
+              "5 Rounds For Time:",
+              "400m Run",
+              "30 box jumps 60/50",
+              "30 wall balls 9/6kg",
+              "Running substitutions: 800/1,000-m C2 bike, 900/1,250-m Assault or Echo bike, 400/500-m row",
+              "OHJEET: Juoksut tahi erg aina alle 2:15 / Kierros aina alle 6:00 - Skaalaa tarvittaessa",
+              "TC: 35min"
             ]
           }
         ],
-        "note": "Benchmark: CINDY” BENCHMARK"
+        "note": "Benchmark: Kelly"
       }
     ],
     "2026-03-27": [
@@ -2140,27 +1933,27 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "Elizabeth",
+            "title": "Chelsea",
             "lines": [
-              "21–15–9:",
-              "60/42,5kg Squat Cleans",
-              "Ring Dips",
-              "*TC12min",
-              "*COMP:",
-              "Squat Cleans 70/50kg",
-              "Strict Ring Dips",
-              "*SK1:",
-              "Squat Cleans 45/30kg",
-              "Banded Ring/Matador Dip OR Ring Push-Ups",
-              "*SK2:",
-              "Hang Power Cleans",
-              "Front Squats",
-              "Elevated Ring Push-Ups",
-              "Load: 20/15kg"
+              "On the minute every minute for 30 minutes:",
+              "5 pull-ups",
+              "10 push-ups",
+              "15 air squats",
+              "Scaling options for both workouts:",
+              "pull-ups to ring row or jumping pull ups",
+              "push-ups to against box or rubber band",
+              "Intermediate:",
+              "4 pull-ups",
+              "8 push-ups",
+              "12 air squats",
+              "Beginner:",
+              "3 pull-ups",
+              "6 push-ups",
+              "9 air squats"
             ]
           }
         ],
-        "note": "Benchmark: Elizabeth"
+        "note": "Benchmark: Chelsea"
       }
     ],
     "2026-03-28": [
@@ -2353,17 +2146,17 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "Kelly",
+            "title": "Heavy DT",
             "lines": [
-              "5 Rounds For Time:",
-              "400m Run",
-              "30 box jumps 24/20\"",
-              "30 wall balls 20/14p",
-              "TC: 35min"
+              "5 rounds for time of",
+              "*♀ 145 lb.  ♂ 205 lb.*",
+              "12  deadlift s",
+              "9  hang power clean s",
+              "6  push jerk s"
             ]
           }
         ],
-        "note": "Benchmark: Kelly"
+        "note": "Benchmark: Heavy DT"
       }
     ],
     "2026-03-29": [
@@ -2467,16 +2260,15 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "Karen",
+            "title": "GRACE",
             "lines": [
-              "\"Karen\"",
-              "For time",
-              "150 wall balls 20/14 lbs",
-              "time cap 12min"
+              "For Time:",
+              "30 Clean & Jerk",
+              "Rx 60/42,5"
             ]
           }
         ],
-        "note": "Benchmark: Karen"
+        "note": "Benchmark: GRACE"
       }
     ],
     "2026-03-30": [
@@ -2661,28 +2453,18 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "FIGHT GONE BAD",
+            "title": "”ANGIE” BENCHMARK",
             "lines": [
-              "3 Rounds for Max Reps:",
-              "1:00 WBS 9/6",
-              "1:00 SDHP 35/25 kg",
-              "1:00 Box Jump",
-              "1:00 Push Press 35/25 kg",
-              "1:00 Cal Row /Machine",
-              "1:00 Rest",
-              "How do you perform the “Fight Gone Bad” workout?",
-              "Perform 1 minute of work at each of the 5 stations. Move immediately to the next station after 1 minute. The clock does not reset or stop between exercises. One-minute break is allowed before repeating each round. One point is given for each rep, except on the rower where each calorie is one point.",
-              "How do you score the “Fight Gone Bad” workout?",
-              "*Score is the total cumulative number of repetitions completed of all movements in all 3 rounds.*",
-              "What is a good score for the “Fight Gone Bad” workout?",
-              "– Beginner: 150-250 reps",
-              "– Intermediate: 250-350 reps",
-              "– Advanced: 350-450 reps",
-              "– Elite: 500+ reps"
+              "100 pull-ups",
+              "100 push-ups",
+              "100 sit-ups",
+              "100 squats",
+              "Timecap 25 min",
+              "Skaalata voi monella tapaa!"
             ]
           }
         ],
-        "note": "Benchmark: FIGHT GONE BAD"
+        "note": "Benchmark: ”ANGIE” BENCHMARK"
       }
     ],
     "2026-03-31": [
@@ -2889,20 +2671,173 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "Lynne",
+            "title": "Heavy Fran",
             "lines": [
-              "Five rounds:",
-              "Score is total reps",
-              "SCALED:",
-              "scaled bench press or floor press",
-              "Banded pull-ups or heavy ring rows",
-              "rest as needed"
+              "15-12-9 reps of:",
+              "Thruster s (60/42,5kg or 135/95 lbs)",
+              "Weighted pull-ups (20/15kg or 45/30 lbs)"
             ]
           }
         ],
-        "note": "Benchmark: Lynne"
+        "note": "Benchmark: Heavy Fran"
+      }
+    ],
+    "2026-04-01": [
+      {
+        "date": "2026-04-01",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-01/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "lying hip cross over",
+              "thoracic rotation",
+              "scorpions",
+              "lat stretch on box"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 clean grip deadlifts",
+              "10 hang high pulls",
+              "10 squat jumps"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "POWER CLEAN 15MIN",
+            "lines": [
+              "3 sets",
+              "5 power cleans at 77-82%",
+              "explosive power"
+            ]
+          },
+          {
+            "title": "CONDITIONING 12MIN",
+            "lines": [
+              "18-15-12-9",
+              "hang power cleans 50/35kg",
+              "box jumps 75/60cm",
+              "burpees over the bar",
+              "* aerobic power [vo2 max]",
+              "power clean"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-04-01",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260401",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-01",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Strength:-Strict Pull ups 3 x 5 add weight if necessary (every 2 mins) then90 secs max effort kipping pull ups, rest 90 seconds60 seconds max effort kipping pull ups, rest 60 seconds30 seconds max effort kipping pull ups, rest 30 seconds",
+              "Metcon:-6 Rounds, intervals10 Power Cleans 50/35kg*12/10 Cal RowRest 1 minute*TnG – unbroken, c.1.45-2 min rounds"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-01",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "In honor of Randy Simmons, 51, a 27-year LAPD veteran and SWAT team member who was killed Feb. 7, 2008, in the line of duty.\nHe is survived by his wife, Lisa; son, Matthew; and daughter, Gabrielle.\nFirst posted",
+        "sections": [
+          {
+            "title": "Randy",
+            "sub_title": "For time:",
+            "lines": [
+              "75 power snatches",
+              "*♀ 55 lb*",
+              "*♂ 75 lb*"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-01",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "The Ghost",
+            "lines": [
+              "6 rounds of:",
+              "– Athletes work for 3:00 and then rest 1:00 in a Fight Gone Bad AMRAP style workout.",
+              "*– Score is total reps completed at the end of the 6 rounds. Keep a running count from movement to movement, or add up all three during rest period.*",
+              "S1:",
+              "6 rounds for reps:",
+              "1:00 calorie row",
+              "1:00 burpees",
+              "1:00 double-under attempts",
+              "– Rest 1:00 between rounds.",
+              "S2:",
+              "5 rounds for reps:",
+              "1:00 calorie row",
+              "1:00 burpees",
+              "1:00 single-unders",
+              "– Rest 1:00 between rounds.",
+              "INTENDED STIMULUS",
+              "80-100 calories; 60-90 burpees; 300+ double-unders.",
+              "Fight Gone Bad style workout originally programmed for professional boxer Robert “The Ghost” Guerrero's training on 140617.",
+              "*Athletes should track individual movements each round and then try to beat the previous round's score.*",
+              "1 minute of  row ing",
+              "1 minute of  burpees",
+              "1 minute of double-unders",
+              "1 minute rest"
+            ]
+          }
+        ],
+        "note": "Benchmark: The Ghost"
+      },
+      {
+        "date": "2026-04-01",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 18.2",
+            "lines": [
+              "1-2-3-4-5-6-7-8-9-10 reps for time of:",
+              "Dumbbell squats",
+              "Bar-facing burpees",
+              "*Men use 50-lb. dumbbells*",
+              "Workout 18.2a",
+              "1-rep-max clean",
+              "Time cap:",
+              "12 minutes to complete 18.2",
+              "AND",
+              "18.2a"
+            ]
+          }
+        ],
+        "note": "Open: Open 18.2"
       }
     ]
   },
-  "last_updated": "2026-03-31T10:13:40.752653"
+  "last_updated": "2026-04-01T02:38:43.815709"
 }
