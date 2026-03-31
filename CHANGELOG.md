@@ -1,5 +1,17 @@
 # Changelog
 
+## [20.3.0] - 2026-03-31
+
+### Workout Tools & CONVERTOR
+- **Workout Tools tab:** dashed gold styling (parallel to Generate Workout green tab).
+- **CONVERTOR:** distance & weight tables (any-cell sync); inches; aerobic calculator with **ROW / RUN / BIKE / A.BIKE / SKI**; RUN = meters only, A.BIKE = calories only; conversions aligned to reference meter + calorie equivalence tables (shared row-cal baseline).
+- **UX:** numeric-friendly inputs, default 1 m / 1 kg, disclaimer **i** next to Aerobic calculator; brand colors; layout fixes for mobile.
+
+### Versioning
+- Site **v20.3**; semver `20.3.0`; Android `versionCode` 24 / `versionName`; iOS `CURRENT_PROJECT_VERSION` 24 / `MARKETING_VERSION`.
+
+---
+
 ## [20.2.0] - 2026-03-29
 
 ### Release (stable)

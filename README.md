@@ -1,8 +1,13 @@
-# 🦆 DUCK-WOD — גרסה **20.2.0** (`package.json`: `20.2.0`)
+# 🦆 DUCK-WOD — גרסה **20.3.0** (`package.json`: `20.3.0`)
 
 **Workout aggregator** — daily WODs from multiple sources
 
-> הגרסה המוצגת באתר היא **v20.2** (כותרת + פס משני). מקור אמת: `VERSION` + `package.json` — ראו `docs/VERSIONING.md`.
+> הגרסה המוצגת באתר היא **v20.3** (כותרת + פס משני). מקור אמת: `VERSION` + `package.json` — ראו `docs/VERSIONING.md`.
+
+## ✅ v20.3.0 (Mar 2026)
+
+- **Workout Tools:** לשונית בעיצוב זהב מקווקו; **CONVERTOR** — מרחק/משקל/אירובי, יחסי מטרים וקלוריות לפי טבלאות ייחוס; RUN רק מ׳, A.BIKE רק CAL.
+- **v20.2:** Generate Workout + פריסטים + מאמן API (WODwell) — עדיין חלק מהמוצר.
 
 ## ✅ v20.2.0 (Mar 2026)
 
@@ -52,10 +57,10 @@
 ## 🚀 Quick Upgrade
 
 ```bash
-unzip duck-wod-v20.2.0.zip
+unzip duck-wod-v20.3.0.zip
 cd your-repo && rm -rf * 
-cp -r ../duck-wod-v20.2.0/* . && cp ../duck-wod-v20.2.0/.gitignore . && cp -r ../duck-wod-v20.2.0/.github .
-git add . && git commit -m "🔧 v20.2.0" && git push
+cp -r ../duck-wod-v20.3.0/* . && cp ../duck-wod-v20.3.0/.gitignore . && cp -r ../duck-wod-v20.3.0/.github .
+git add . && git commit -m "🔧 v20.3.0" && git push
 ```
 
 Workflow runs automatically after push!
@@ -67,4 +72,4 @@ Workflow runs automatically after push!
 
 ---
 
-**Version 20.2.0 (v20.2)** • Mar 2026 • Generate Workout + presets — stable ✅
+**Version 20.3.0 (v20.3)** • Mar 2026 • Workout Tools + CONVERTOR — stable ✅
