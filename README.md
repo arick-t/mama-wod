@@ -1,12 +1,18 @@
-# 🦆 DUCK-WOD — גרסה **20.1.0-beta.2** (`package.json`: `20.1.0-beta.2`)
+# 🦆 DUCK-WOD — גרסה **20.2.0** (`package.json`: `20.2.0`)
 
 **Workout aggregator** — daily WODs from multiple sources
 
-> הגרסה המוצגת באתר היא **v20.1 BETA** (בטא; בכותרת ובפס המשני). מקור אמת: `VERSION` + `package.json` — ראו `docs/VERSIONING.md`.
+> הגרסה המוצגת באתר היא **v20.2** (כותרת + פס משני). מקור אמת: `VERSION` + `package.json` — ראו `docs/VERSIONING.md`.
 
-## ✅ v20.1 BETA / 20.1.0-beta.2 (Mar 2026)
+## ✅ v20.2.0 (Mar 2026)
 
-- **AI Builder BETA:** D-BALL ק״ג + פריסטים; זמן קומפקטי + Unlimited + פרומפט זמנים; בריכת ציוד / כלל 4+ מודאליטים; וידאו טעינה מותג; ללא Preview.
+- **Generate Workout:** פריסטי מכון — תיבת פרומפט ייעודית, דוק בשורת המאמן, עריכה/מחיקה מהסרגל העליון, תצוגת פרומפט ב־**i** על הלשונית במחסן/דוק.
+- **מאמן (API):** כללי חלופות קרדיו + הפניה ל־WODwell; קרדיט ב־About / Sources.
+- **ללא תג BETA** על לשונית Generate.
+
+## ✅ v20.1.0-beta.2 (Mar 2026)
+
+- **AI Builder (בטא):** D-BALL ק״ג + פריסטים; זמן קומפקטי + Unlimited; בריכת ציוד / כלל 4+ מודאליטים; וידאו טעינה מותג.
 - **API:** `/api/generate-workout` (דורש `GEMINI_API_KEY` / Groq ב־Vercel).
 
 ## ✅ v20.0.0-beta.1 (Mar 2026) — BETA
@@ -46,10 +52,10 @@
 ## 🚀 Quick Upgrade
 
 ```bash
-unzip duck-wod-v20.1.0-beta.2.zip
+unzip duck-wod-v20.2.0.zip
 cd your-repo && rm -rf * 
-cp -r ../duck-wod-v20.1.0-beta.2/* . && cp ../duck-wod-v20.1.0-beta.2/.gitignore . && cp -r ../duck-wod-v20.1.0-beta.2/.github .
-git add . && git commit -m "🔧 v20.1.0-beta.2" && git push
+cp -r ../duck-wod-v20.2.0/* . && cp ../duck-wod-v20.2.0/.gitignore . && cp -r ../duck-wod-v20.2.0/.github .
+git add . && git commit -m "🔧 v20.2.0" && git push
 ```
 
 Workflow runs automatically after push!
@@ -61,4 +67,4 @@ Workflow runs automatically after push!
 
 ---
 
-**Version 20.1.0-beta.2 (v20.1 BETA)** • Mar 2026 • AI Builder BETA — בדיקות מומלצות ✅
+**Version 20.2.0 (v20.2)** • Mar 2026 • Generate Workout + presets — stable ✅

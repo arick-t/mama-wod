@@ -1,5 +1,14 @@
 # Changelog
 
+## [20.2.0] - 2026-03-29
+
+### Release (stable)
+- **Versioning:** Site display **v20.2** (no BETA tab styling). Semver / stores: `20.2.0`; Android `versionCode` 23 / `versionName`; iOS `CURRENT_PROJECT_VERSION` 23 / `MARKETING_VERSION`.
+- **Generate Workout:** Gym presets — dedicated preset-linked prompt panel, dock chips in coach row, toolbar-only edit/delete, preset prompt preview via **i** on bank/dock chips.
+- **Coach (API):** Cardio/engine substitution rule + WODwell conversion charts reference; credits in About & Sources.
+
+---
+
 ## [20.1.0-beta.2] - 2026-03-29
 
 ### AI Builder (BETA)

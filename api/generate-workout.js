@@ -93,6 +93,13 @@ const COACH_IDENTITY = `Programming identity: you are the app's primary engine (
 
 const EQUIPMENT_AVAILABILITY_SYSTEM = `EQUIPMENT SEMANTICS: The list = what the athlete **has access to** (a menu of options), not an order to use every item in one session. Many selections or a "full gym" profile means **more choices**, not a requirement to touch each modality. BARBELL + RIG/RACK together count as **one** modality when judging how rich the pool is (the rack supports bar work). If **4 or more** modalities are available after that merge, you **may** omit several listed items for a focused session—unless USER NOTES explicitly demand using all / every listed piece (then honor that). Never program gear that is not on the list.`;
 
+/**
+ * WODwell publishes scaling/conversion charts (often as graphics) for run/row/ski/bike/cals/time.
+ * The model cannot read those images; we point it to the page for intent and use its own equivalency knowledge.
+ * @see https://wodwell.com/convert/
+ */
+const CARDIO_ENGINE_CONVERSION_RULE = `CARDIO / ENGINE EQUIVALENTS: When conditioning calls for running, rowing, skiing, biking, stairs, or calorie targets, treat the athlete's checked list as **available engine options**. You may (a) prescribe one listed modality, or (b) offer **clear alternatives** the athlete can choose—**only** from modalities they actually selected—keeping stimulus similar by aligning **time, distance, or calories** using standard coaching approximations (e.g. row vs ski vs run vs bike conversions). If they marked **multiple** interchangeable pieces (e.g. ROW + SKI), prefer explicit options like "Row or Ski, same distance/cals" or equivalent distances/cals per modality so work stays comparable. Methodology aligns with the public **Workout Scaling & Conversion Charts** published by WODwell (https://wodwell.com/convert/)—the app credits them in About/Sources; you still summarize equivalencies in your own words in the workout and do not paste long excerpts. If a natural choice is RUN but they have no RUN, substitute only from their pool. Never assign a machine or modality not on the equipment list.`;
+
 const TIME_UNLIMITED_COACH_RULE = `TIME UNLIMITED: When the user chose no fixed minute cap, **you** still assign concrete timing in the written workout—approximate minutes per section, AMRAP/EMOM or other caps per piece, or explicit work/rest. Do **not** output a session with vague, blank, or wholly unspecified duration structure.`;
 
 /** Appended to system prompt when body.athletes > 1 (and flexible mode). */
@@ -115,6 +122,7 @@ function buildDefaultCoachSystemInstruction(extendedProfile, includeWarehouseDig
     SYSTEM_INSTRUCTION_CORE,
     COACH_IDENTITY,
     EQUIPMENT_AVAILABILITY_SYSTEM,
+    CARDIO_ENGINE_CONVERSION_RULE,
     TIME_UNLIMITED_COACH_RULE,
     L1_TRAINING_GUIDE_ALIGNMENT,
   ];
@@ -188,14 +196,23 @@ const EQ_DBALL = "D-BALL";
 function buildDballCoachBlock(equipment, dballWeight) {
   const set = new Set(Array.isArray(equipment) ? equipment : []);
   if (!set.has(EQ_DBALL)) return "";
-  const w = String(dballWeight || "").trim().slice(0, 64);
-  if (w) {
-    return `D-BALL WEIGHT (mandatory): The athlete's ball is **${w}**. Program to this exact load—light wall-ball / small med-ball work is not interchangeable with heavy slam-ball / D-ball stimulus. Adjust movements, reps, throws, carries, and scaling to match this weight.`;
+  const raw = String(dballWeight || "")
+    .trim()
+    .replace(/\s+/g, " ")
+    .slice(0, 80);
+  if (!raw) {
+    return `D-BALL WEIGHT: Not specified. Assume typical CrossFit box D-ball / heavy slam-ball loads often sit in a **roughly 20–70 kg** band for strong athletes; pick sensible loads and movement patterns, state assumed load briefly when helpful, and do not treat as a light wall ball unless user notes say otherwise.`;
   }
-  return `D-BALL WEIGHT: Not provided. Use conservative scaling and movement patterns that tolerate unknown load; do not assume a generic "medicine ball" load.`;
+  if (raw.includes(",")) {
+    return `D-BALL WEIGHTS (discrete balls): The athlete listed these D-ball loads (kg, as entered): **${raw}**. Use only these loads for D-ball work; say which load per movement when it matters.`;
+  }
+  if (/-/.test(raw)) {
+    return `D-BALL WEIGHTS (range): The athlete gave an available range (kg, as entered): **${raw}**. Program within or appropriate to that range; loads may differ by movement.`;
+  }
+  return `D-BALL WEIGHT (mandatory): The athlete's ball is **${raw}**. Program to this exact load—light wall-ball / small med-ball work is not interchangeable with heavy slam-ball / D-ball stimulus. Adjust movements, reps, throws, carries, and scaling to match this weight.`;
 }
 
-const DBALL_SYSTEM_RULE = `D-BALL / medicine ball / slam ball: If the user message includes a D-BALL WEIGHT line, that weight is binding for exercise selection, volume, and intensity. Treat heavy D-balls and light balls as different tools—not the same stimulus.`;
+const DBALL_SYSTEM_RULE = `D-BALL / medicine ball / slam ball: Honor the D-BALL WEIGHT line in the user message—single load, comma-separated discrete loads, a hyphen range, or unspecified (typical 20–70 kg band). Treat heavy D-balls and light balls as different tools—not the same stimulus.`;
 
 /** Mirror UI rules: weightlifting block and RIG/RACK imply Olympic bar in the list sent to the model. */
 function normalizeEquipmentForCoach(body, equipment) {
@@ -607,7 +624,7 @@ function buildWorkoutGeminiBody(body) {
   const modalityCount = countCoachEquipmentModalities(equipment);
   userText = `${userText}\n\n${buildEquipmentModalityCountLine(modalityCount)}`;
 
-  const dballWeightRaw = String(body.dballWeight || "").trim().slice(0, 64);
+  const dballWeightRaw = String(body.dballWeight || "").trim().slice(0, 80);
   const dballBlock = buildDballCoachBlock(equipment, dballWeightRaw);
   if (dballBlock) {
     userText = `${userText}\n\n${dballBlock}`;
