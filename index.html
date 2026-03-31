@@ -922,7 +922,7 @@ var AI_TAG_LABELS = {
   extended: "Extended athlete profile",
   warmup: "Add Warm-up",
   strengthBlock: "Strength block (slow strength)",
-  weightliftingBlock: "Weightlifting — הנפות (snatch / clean & jerk)"
+  weightliftingBlock: "Weightlifting block"
 };
 /** Put your branded loading loop here (H.264 .mp4, short, muted-friendly). Shipped builds: commit this file or it falls back below. */
 var AI_LOADING_VIDEO_BRANDED = "assets/coach-loading.mp4";
@@ -2030,15 +2030,66 @@ function buildAiErrorMessage(x) {
   return base;
 }
 
-/** Names from loaded special_cache (Open/Hero) so the API can bias patterns—not full workout text. */
+/** Short plain snippet from one workout card (titles + a few lines)—structure hints only, not for copying. */
+function workoutPlainTextSnippetForDigest(w, maxChars) {
+  try {
+    if (!w || !w.sections) return "";
+    var mc = maxChars || 240;
+    var parts = [];
+    var secs = w.sections;
+    for (var i = 0; i < secs.length; i++) {
+      var s = secs[i];
+      if (s.title) parts.push(String(s.title).slice(0, 96));
+      var ln = s.lines || [];
+      for (var j = 0; j < ln.length; j++) {
+        var line = String(ln[j] || "").replace(/\s+/g, " ").trim();
+        if (!line) continue;
+        parts.push("• " + line.slice(0, 108));
+        if (parts.length > 10) break;
+      }
+      if (parts.join("\n").length >= mc || parts.length > 10) break;
+    }
+    return parts.join("\n").slice(0, mc);
+  } catch (e) {
+    return "";
+  }
+}
+
+/** Random workouts from loaded calendar JSON—different draw each Generate for format diversity. */
+function collectRandomWorkoutsForDigest(targetCount, maxAttempts) {
+  var wmap = typeof allData !== "undefined" && allData.workouts ? allData.workouts : {};
+  var dates = Object.keys(wmap);
+  if (!dates.length) return [];
+  targetCount = Math.min(Math.max(1, targetCount), 12);
+  maxAttempts = maxAttempts || 100;
+  var out = [];
+  var seen = {};
+  var n = 0;
+  while (out.length < targetCount && n < maxAttempts) {
+    n++;
+    var ds = dates[Math.floor(Math.random() * dates.length)];
+    var arr = wmap[ds] || [];
+    if (!arr.length) continue;
+    var w = arr[Math.floor(Math.random() * arr.length)];
+    var t0 = (w.sections && w.sections[0] && w.sections[0].title) || "";
+    var key = (w.date || ds) + "|" + (w.source || "") + "|" + t0;
+    if (seen[key]) continue;
+    seen[key] = 1;
+    out.push(w);
+  }
+  return out;
+}
+
+/** Names + vignettes from app data so the model sees varied real-world formats—never mandatory bar/DB. */
 function buildWarehouseDigestForAi() {
   try {
     var sd = typeof specialData !== "undefined" ? specialData : null;
-    if (!sd) return "";
-    var maxNames = 48;
-    var maxLen = 4000;
+    var maxNames = 40;
+    var maxLen = 3800;
+    var vignetteCount = 6;
+    var vignetteCap = 200;
     var chunks = [];
-    if (Array.isArray(sd.heroes) && sd.heroes.length) {
+    if (sd && Array.isArray(sd.heroes) && sd.heroes.length) {
       var hn = [];
       for (var i = 0; i < sd.heroes.length && hn.length < maxNames; i++) {
         var h = sd.heroes[i];
@@ -2046,13 +2097,38 @@ function buildWarehouseDigestForAi() {
       }
       if (hn.length) chunks.push("HERO_NAMES sample: " + hn.join(" | "));
     }
-    if (Array.isArray(sd.open) && sd.open.length) {
+    if (sd && Array.isArray(sd.benchmarks) && sd.benchmarks.length) {
+      var bn = [];
+      for (var bi = 0; bi < sd.benchmarks.length && bn.length < maxNames; bi++) {
+        var b = sd.benchmarks[bi];
+        if (b && b.name) bn.push(String(b.name).slice(0, 80));
+      }
+      if (bn.length) chunks.push("BENCHMARK_NAMES sample: " + bn.join(" | "));
+    }
+    if (sd && Array.isArray(sd.open) && sd.open.length) {
       var on = [];
       for (var j = 0; j < sd.open.length && on.length < maxNames; j++) {
         var o = sd.open[j];
         if (o && o.name) on.push(String(o.name).slice(0, 80));
       }
       if (on.length) chunks.push("OPEN_NAMES sample: " + on.join(" | "));
+    }
+    var sampleWs = collectRandomWorkoutsForDigest(vignetteCount, 120);
+    if (sampleWs.length === 0 && typeof cardStore !== "undefined" && cardStore.length) {
+      var need = vignetteCount;
+      var cs = cardStore.slice();
+      while (cs.length && sampleWs.length < need) {
+        var ri = Math.floor(Math.random() * cs.length);
+        sampleWs.push(cs.splice(ri, 1)[0]);
+      }
+    }
+    for (var v = 0; v < sampleWs.length; v++) {
+      var ww = sampleWs[v];
+      var snip = workoutPlainTextSnippetForDigest(ww, vignetteCap);
+      if (snip) {
+        var lab = (ww.source || "wod") + (ww.date ? " " + ww.date : "");
+        chunks.push("ARCHIVE_VIGNETTE (" + lab + "): " + snip);
+      }
     }
     var out = chunks.join("\n");
     if (out.length > maxLen) out = out.slice(0, maxLen) + "\n…(truncated)";
@@ -2150,6 +2226,7 @@ function generateWorkoutAi() {
   }
   var whDig = buildWarehouseDigestForAi();
   if (whDig) genPayload.warehouseDigest = whDig;
+  genPayload.varietyRoll = String(Date.now()) + "-" + Math.random().toString(36).slice(2, 11);
   function showAiGenerateHttpError(x) {
     var msg = buildAiErrorMessage(x);
     var msgL = msg.toLowerCase();

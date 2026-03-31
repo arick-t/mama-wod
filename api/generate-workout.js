@@ -109,6 +109,9 @@ const L1_TRAINING_GUIDE_ALIGNMENT = `L1-style judgment: mechanics/scaling first,
 
 const OPEN_HERO_PATTERN_RULES = `Open/Hero *patterns* only (scoreable time/reps, density, chippers)—never full replicas of named events.`;
 
+/** When digest includes ARCHIVE_VIGNETTE / name lists from the app’s data. */
+const WAREHOUSE_ARCHIVE_FORMAT_RULE = `ARCHIVE + WAREHOUSE HINTS: Lines tagged ARCHIVE_VIGNETTE and name lists (HERO / BENCHMARK / OPEN) come from workouts the app already loaded. Use them only for **familiar format and combination patterns** (AMRAP vs for-time vs rounds, chipper flow, couplet/triplet density, header style)—**not** to copy text. Write **original** work. **No implement is required every session:** BARBELL and DUMBBELL may appear **zero** times in a given workout if you program other checked equipment instead—checking them only means they are **allowed**, not mandatory. **Vary** structure and implement emphasis across generations; avoid converging on one repeated recipe. If **D-BALL** is in the pool with many other tools, do not make ball work the **dominant** theme of every station unless USER NOTES ask for it.`;
+
 const COMPETITION_ATHLETE_BIAS = `Competitor level: clear time cap or AMRAP, simple scoring, optional short skill primer if time/equipment allow; terse programming only.`;
 
 function isCompetitionLevel(p) {
@@ -126,7 +129,10 @@ function buildDefaultCoachSystemInstruction(extendedProfile, includeWarehouseDig
     TIME_UNLIMITED_COACH_RULE,
     L1_TRAINING_GUIDE_ALIGNMENT,
   ];
-  if (includeWarehouseDigest) parts.push(OPEN_HERO_PATTERN_RULES);
+  if (includeWarehouseDigest) {
+    parts.push(OPEN_HERO_PATTERN_RULES);
+    parts.push(WAREHOUSE_ARCHIVE_FORMAT_RULE);
+  }
   if (isCompetitionLevel(extendedProfile)) parts.push(COMPETITION_ATHLETE_BIAS);
   return parts.join("\n");
 }
@@ -253,7 +259,23 @@ function countCoachEquipmentModalities(equipment) {
 }
 
 function buildEquipmentModalityCountLine(modalityCount) {
-  return `MODALITY COUNT (for equipment-pool rule): ${modalityCount}. BARBELL + RIG/RACK together count as 1. With 4+ you may omit some listed gear unless user notes say otherwise—see system instructions.`;
+  return `MODALITY COUNT (for equipment-pool rule): ${modalityCount}. BARBELL + RIG/RACK together count as 1. With 4+ you may omit some listed gear for a focused session unless user notes say otherwise. **Reminder:** omitting barbell or dumbbell from a session is allowed—they are optional tools from the pool, not quotas.`;
+}
+
+/** Variety + optional D-ball soft cap; explicitly no mandatory bar/DB. */
+function buildProgrammingVarietyUserBlock(equipment) {
+  const set = new Set(Array.isArray(equipment) ? equipment.map((x) => String(x).trim()) : []);
+  const lines = [
+    "PROGRAMMING VARIETY: Each generation should feel **fresh**—rotate metcon **formats** (e.g. AMRAP, for time, EMOM, fixed rounds, chipper-style) and **which** checked implements take the lead. Do **not** default to the same skeleton every time.",
+    "EQUIPMENT = OPTIONS, NOT DUTIES: **BARBELL** and **DUMBBELL** may be used **zero** times in this workout if other checked modalities carry the session. Checking a box only means it is **available**, never an obligation to include it.",
+    "ARCHIVE hints (vignettes / Open / Hero / Benchmark names): mirror **real-world structure and combinations** you see in that ecosystem—still **original** wording and loads.",
+  ];
+  if (set.has(EQ_DBALL) && set.size > 2) {
+    lines.push(
+      "D-BALL: One option among several—avoid making **most** metcon stations ball-dominant when row, bar, DB, KB, etc. are also checked, unless USER NOTES want ball-heavy work."
+    );
+  }
+  return lines.join("\n");
 }
 
 function buildEquipmentMeaningBlock(equipment) {
@@ -646,8 +668,17 @@ function buildWorkoutGeminiBody(body) {
     userText = `${userText}\n\n${profileBlock}`;
   }
   if (hasWarehouseDigest) {
-    userText = `${userText}\n\nWAREHOUSE NAMES (patterns only; original work):\n${warehouseDigest}`;
+    userText = `${userText}\n\nWAREHOUSE + ARCHIVE FORMAT HINTS (loaded app data—mirror **structure** only; original workout; honor AVAILABLE EQUIPMENT):\n${warehouseDigest}`;
   }
+
+  const varietyRoll = String(body.varietyRoll || "")
+    .trim()
+    .slice(0, 80);
+  if (varietyRoll) {
+    userText = `${userText}\n\nSESSION_VARIETY_ROLL: ${varietyRoll} — treat as an independent draw; vary metcon **format** and **which** checked implements headline the work this time (unless USER NOTES lock a style).`;
+  }
+
+  userText = `${userText}\n\n${buildProgrammingVarietyUserBlock(equipment)}`;
 
   const equipSemantics = buildEquipmentMeaningBlock(equipment);
   if (equipSemantics) {
@@ -687,7 +718,7 @@ function buildWorkoutGeminiBody(body) {
     systemInstruction: { parts: [{ text: systemText }] },
     contents: [{ role: "user", parts: [{ text: userText }] }],
     generationConfig: {
-      temperature: 0.65,
+      temperature: 0.72,
       maxOutputTokens: 1536,
     },
   };
