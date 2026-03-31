@@ -89,6 +89,9 @@ const SYSTEM_INSTRUCTION_CORE = `Head coach for group-class GPP. Output ONLY the
 
 Completeness: every main piece (especially METCON) must list ALL movements with reps, distance, or load—not a time cap plus a single line (e.g. AMRAP needs a full round written out). Prefer short exercise names and tight formatting over leaving work implied.`;
 
+/** App output locale: Israel / metric-first users—Coach text must not mix imperial. */
+const COACH_OUTPUT_UNITS_RULE = `UNITS (mandatory for this app): Write loads and barbells **only in kilograms (kg)**. Write distances, runs, rows, ski, heights, and box specs **only in meters (m) or centimeters (cm)** as appropriate (e.g. 400 m run, 500 m row, 60 cm box). Do **not** use pounds, stone, feet, inches, yards, or miles. Do **not** give **dual** numbers (no "X lb / Y kg", no parenthetical second unit, no slash-pair across unit systems). Machine **calories** and **time** (min/s) are fine where standard. For bikes, prefer **cal**, **watts**, or **km**—not mph/miles. If USER NOTES mention imperial, still convert to **single** metric values in the workout unless they explicitly demand imperial-only (rare).`;
+
 const COACH_IDENTITY = `Programming identity: you are the app's primary engine ("The Coach"). When an EQUIPMENT MEANING block appears in the user message, treat it as mandatory: rack+rigs = barbell supported in rack/bench patterns, not rig-only gymnastics unless other gear justifies it; barbell without rack = floor-based barbell work only (account for fatigue from floor starts).`;
 
 const EQUIPMENT_AVAILABILITY_SYSTEM = `EQUIPMENT SEMANTICS: The list = what the athlete **has access to** (a menu of options), not an order to use every item in one session. Many selections or a "full gym" profile means **more choices**, not a requirement to touch each modality. BARBELL + RIG/RACK together count as **one** modality when judging how rich the pool is (the rack supports bar work). If **4 or more** modalities are available after that merge, you **may** omit several listed items for a focused session—unless USER NOTES explicitly demand using all / every listed piece (then honor that). Never program gear that is not on the list.`;
@@ -98,7 +101,7 @@ const EQUIPMENT_AVAILABILITY_SYSTEM = `EQUIPMENT SEMANTICS: The list = what the 
  * The model cannot read those images; we point it to the page for intent and use its own equivalency knowledge.
  * @see https://wodwell.com/convert/
  */
-const CARDIO_ENGINE_CONVERSION_RULE = `CARDIO / ENGINE EQUIVALENTS: When conditioning calls for running, rowing, skiing, biking, stairs, or calorie targets, treat the athlete's checked list as **available engine options**. You may (a) prescribe one listed modality, or (b) offer **clear alternatives** the athlete can choose—**only** from modalities they actually selected—keeping stimulus similar by aligning **time, distance, or calories** using standard coaching approximations (e.g. row vs ski vs run vs bike conversions). If they marked **multiple** interchangeable pieces (e.g. ROW + SKI), prefer explicit options like "Row or Ski, same distance/cals" or equivalent distances/cals per modality so work stays comparable. Methodology aligns with the public **Workout Scaling & Conversion Charts** published by WODwell (https://wodwell.com/convert/)—the app credits them in About/Sources; you still summarize equivalencies in your own words in the workout and do not paste long excerpts. If a natural choice is RUN but they have no RUN, substitute only from their pool. Never assign a machine or modality not on the equipment list.`;
+const CARDIO_ENGINE_CONVERSION_RULE = `CARDIO / ENGINE EQUIVALENTS: When conditioning calls for running, rowing, skiing, biking, stairs, or calorie targets, treat the athlete's checked list as **available engine options**. You may (a) prescribe one listed modality, or (b) offer **clear alternatives** the athlete can choose—**only** from modalities they actually selected—keeping stimulus similar by aligning **time, distance (in meters), or calories** using standard coaching approximations (e.g. row vs ski vs run vs bike conversions). **Always state the written prescription in metric** (m/cm, cal, min)—never imperial distances or dual-unit lines. If they marked **multiple** interchangeable pieces (e.g. ROW + SKI), prefer explicit options like "Row or Ski—same distance/cals" with **one** metric distance or cal target per line. Methodology can align with public scaling charts (e.g. WODwell https://wodwell.com/convert/) mentally, but **your output stays metric-only**; do not paste long excerpts. If a natural choice is RUN but they have no RUN, substitute only from their pool. Never assign a machine or modality not on the equipment list.`;
 
 const TIME_UNLIMITED_COACH_RULE = `TIME UNLIMITED: When the user chose no fixed minute cap, **you** still assign concrete timing in the written workout—approximate minutes per section, AMRAP/EMOM or other caps per piece, or explicit work/rest. Do **not** output a session with vague, blank, or wholly unspecified duration structure.`;
 
@@ -110,7 +113,7 @@ const L1_TRAINING_GUIDE_ALIGNMENT = `L1-style judgment: mechanics/scaling first,
 const OPEN_HERO_PATTERN_RULES = `Open/Hero *patterns* only (scoreable time/reps, density, chippers)—never full replicas of named events.`;
 
 /** When digest includes ARCHIVE_VIGNETTE / name lists from the app’s data. */
-const WAREHOUSE_ARCHIVE_FORMAT_RULE = `ARCHIVE + WAREHOUSE HINTS: Lines tagged ARCHIVE_VIGNETTE and name lists (HERO / BENCHMARK / OPEN) come from workouts the app already loaded. Use them only for **familiar format and combination patterns** (AMRAP vs for-time vs rounds, chipper flow, couplet/triplet density, header style)—**not** to copy text. Write **original** work. **No implement is required every session:** BARBELL and DUMBBELL may appear **zero** times in a given workout if you program other checked equipment instead—checking them only means they are **allowed**, not mandatory. **Vary** structure and implement emphasis across generations; avoid converging on one repeated recipe. If **D-BALL** is in the pool with many other tools, do not make ball work the **dominant** theme of every station unless USER NOTES ask for it.`;
+const WAREHOUSE_ARCHIVE_FORMAT_RULE = `ARCHIVE + WAREHOUSE HINTS: Lines tagged ARCHIVE_VIGNETTE and name lists (HERO / BENCHMARK / OPEN) come from workouts the app already loaded. Use them only for **familiar format and combination patterns** (AMRAP vs for-time vs rounds, chipper flow, couplet/triplet density, header style)—**not** to copy text. Vignettes may show legacy imperial units—**your written workout must use kg and m/cm only** (no lb, no dual values). Write **original** work. **No implement is required every session:** BARBELL and DUMBBELL may appear **zero** times in a given workout if you program other checked equipment instead—checking them only means they are **allowed**, not mandatory. **Vary** structure and implement emphasis across generations; avoid converging on one repeated recipe. If **D-BALL** is in the pool with many other tools, do not make ball work the **dominant** theme of every station unless USER NOTES ask for it.`;
 
 const COMPETITION_ATHLETE_BIAS = `Competitor level: clear time cap or AMRAP, simple scoring, optional short skill primer if time/equipment allow; terse programming only.`;
 
@@ -123,6 +126,7 @@ function isCompetitionLevel(p) {
 function buildDefaultCoachSystemInstruction(extendedProfile, includeWarehouseDigest) {
   const parts = [
     SYSTEM_INSTRUCTION_CORE,
+    COACH_OUTPUT_UNITS_RULE,
     COACH_IDENTITY,
     EQUIPMENT_AVAILABILITY_SYSTEM,
     CARDIO_ENGINE_CONVERSION_RULE,
@@ -295,7 +299,7 @@ function buildEquipmentMeaningBlock(equipment) {
   return out.length ? out.join("\n\n") : "";
 }
 
-const GENERIC_SYSTEM_INSTRUCTION = `Workout programmer—output program text only, concise. WAREHOUSE INDEX = inspiration only; original work.\n\n${COACH_IDENTITY}\n\n${EQUIPMENT_AVAILABILITY_SYSTEM}\n\n${TIME_UNLIMITED_COACH_RULE}`;
+const GENERIC_SYSTEM_INSTRUCTION = `Workout programmer—output program text only, concise. WAREHOUSE INDEX = inspiration only; original work.\n\n${COACH_OUTPUT_UNITS_RULE}\n\n${COACH_IDENTITY}\n\n${EQUIPMENT_AVAILABILITY_SYSTEM}\n\n${TIME_UNLIMITED_COACH_RULE}`;
 
 const ATHLETE_PROFILE_RULES = `Use ATHLETE PROFILE in user message; blank fields = no invention. Strict health limits. Programming only.`;
 
@@ -334,7 +338,7 @@ function buildUserPrompt(equipment, timeMinutes, unlimited, athletes, userNotes)
   const notesLine = (userNotes && String(userNotes).trim())
     ? `USER NOTES / GOALS (honor these):\n${String(userNotes).trim()}`
     : "USER NOTES: (none) — choose an optimal session for the equipment and time.";
-  return `AVAILABLE EQUIPMENT (pool — only modalities from this list; not every item must appear in one session—see system rules):\n${eqList}\n\n${timeLine}\n${athLine}\n\n${notesLine}\n\nProduce the full workout now (complete exercise list per section; do not omit movements).`;
+  return `AVAILABLE EQUIPMENT (pool — only modalities from this list; not every item must appear in one session—see system rules):\n${eqList}\n\n${timeLine}\n${athLine}\n\n${notesLine}\n\nProduce the full workout now (complete exercise list per section; do not omit movements). Use **kg** for loads and **m/cm** for distances/heights only—no lb, ft/in, or dual-unit lines.`;
 }
 
 function buildFlexibleUserPrompt(equipment, timeMinutes, unlimited, athletes, userNotes) {
@@ -349,10 +353,10 @@ function buildFlexibleUserPrompt(equipment, timeMinutes, unlimited, athletes, us
     unlimited
       ? "UNLIMITED — still assign explicit timing/caps in the written workout"
       : `${timeMinutes} minutes`
-  }\n- Athletes: ${athCtx}\n\nIf user request conflicts with context, prioritize user request.`;
+  }\n- Athletes: ${athCtx}\n\nIf user request conflicts with context, prioritize user request.\n\nOutput units: **kg** + **m/cm** only; no lb, no inches/feet, no dual values.`;
 }
 
-const EXPLAIN_SYSTEM = `Movement coach: list main movements, one cue per line, then per movement: YouTube: https://www.youtube.com/results?search_query=NAME+TECHNIQUE (+ for spaces). No extra prose.`;
+const EXPLAIN_SYSTEM = `Movement coach: list main movements, one cue per line, then per movement: YouTube: https://www.youtube.com/results?search_query=NAME+TECHNIQUE (+ for spaces). No extra prose. If you mention loads, heights, or distances, use **kg** and **m/cm** only—no lb, ft/in, or dual values.`;
 
 /**
  * Vercel may expose POST JSON as object, string, Buffer, or leave body unset (stream).
