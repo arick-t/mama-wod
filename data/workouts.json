@@ -778,29 +778,6 @@
       },
       {
         "date": "2026-03-21",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Spearmint",
-            "lines": [
-              "Teams of 3",
-              "25:00 AMRAP",
-              "Partner 1: 400m Run (or 20 Cal Bike)",
-              "Partner 2: AMRAP",
-              "50ft Dumbbell Farmer Carry (70s/50s)",
-              "8 Burpee Box Get Overs @ 30\"/24\"",
-              "Partner 3: Rest",
-              "-Rotate when partner finishes the 400m run. Partner picks up where the AMRAP was left off.",
-              "* (Scored by Total Rounds + Reps)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-21",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2711,6 +2688,45 @@
     "2026-03-31": [
       {
         "date": "2026-03-31",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260331",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-31",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 18.3",
+            "lines": [
+              "2 rounds for time of:",
+              "100 double-unders",
+              "20 overhead squats",
+              "100 double-unders",
+              "12 ring muscle-ups",
+              "100 double-unders",
+              "20 dumbbell snatches",
+              "100 double-unders",
+              "12 bar muscle-ups",
+              "*Men perform 115-lb. OHS, 50-lb. DB snatches*",
+              "Time cap: 14 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 18.3"
+      },
+      {
+        "date": "2026-03-31",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-03-31/",
@@ -2766,15 +2782,66 @@
       },
       {
         "date": "2026-03-31",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260331",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-march-31-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "200m Jog",
+              "5 Burpees",
+              "20 Box Step Overs",
+              "200m Jog",
+              "5 Burpees",
+              "15 Box Jumps (shorter box)",
+              "200m Jog",
+              "10 Burpee Box Jump Overs",
+              "200m Run"
             ]
+          },
+          {
+            "title": "3 Rounds for time",
+            "lines": [
+              "12 Burpee Box Jump Overs 24/20″",
+              "400m Run",
+              "9 Burpee Box Jump Overs 24/20″",
+              "400m Run",
+              "6 Burpee Box Jump Overs 24/20″",
+              "Rest 2:00",
+              "Target Score: Sub 25 minutes (7:00 working time per round or faster)",
+              "Firebreather: Sub 22 minutes (6:00 working time per round or faster)"
+            ]
+          },
+          {
+            "title": "Extra Credit",
+            "lines": [
+              "Spend 12:00 working slowly from resting heartrate to 170 BPM minus your ago on any machine or combination of machines",
+              "Then",
+              "45-90 Minutes on a single machine or jogging keeping your heartrate between 160 BPM minus your age and 180 BPM minus your age",
+              "Then",
+              "Spend 12:00 working slowly from your working heartrate, down to 140 BPM minus your age on any machine or combination of machines"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-03-31",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Rod of Iron",
+            "lines": [
+              "5 Wall Walks",
+              "20 Toes to Bar",
+              "Max Box Jump Overs 24\"/20\"",
+              "* -rest 1:00 between sets-",
+              "* (Scored by Total Reps)"
+            ],
+            "sub_title2": "3-3-3-4:00 AMRAP"
           }
         ]
       },
@@ -2834,33 +2901,8 @@
           }
         ],
         "note": "Benchmark: Lynne"
-      },
-      {
-        "date": "2026-03-31",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.3",
-            "lines": [
-              "2 rounds for time of:",
-              "100 double-unders",
-              "20 overhead squats",
-              "100 double-unders",
-              "12 ring muscle-ups",
-              "100 double-unders",
-              "20 dumbbell snatches",
-              "100 double-unders",
-              "12 bar muscle-ups",
-              "*Men perform 115-lb. OHS, 50-lb. DB snatches*",
-              "Time cap: 14 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 18.3"
       }
     ]
   },
-  "last_updated": "2026-03-31T02:39:04.232356"
+  "last_updated": "2026-03-31T06:50:06.395062"
 }
