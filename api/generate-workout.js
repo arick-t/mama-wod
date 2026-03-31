@@ -175,15 +175,19 @@ function buildSessionStructureBlock(parts, timeMinutes, unlimited) {
     lines.push("WARM-UP: light prep—no pre-fatigue for metcon.");
   }
   if (parts.includeStrength) {
-    lines.push("STRENGTH: basic heavy work before metcon; complement metcon stress, moderate vol.");
+    lines.push(
+      "STRENGTH: basic heavy work (squat, press, deadlift, pulls, accessories) before metcon; complement metcon stress, moderate volume—not a substitute for a dedicated Olympic (snatch / clean & jerk) block when that block is also on."
+    );
   }
   if (parts.includeWeightlifting) {
     lines.push(
-      "WEIGHTLIFTING: Olympic lifts and derivatives; barbell must be available (session requests this block)."
+      "WEIGHTLIFTING (Olympic / 'הנפות'): Primary work = **snatch** family and/or **clean & jerk** family (power/squat/hang, muscle variations, jerks, complexes). Do not treat this as generic slow strength: avoid labeling this section only 'Strength' filled with back squat + bench as the main work. Use header **Weightlifting** or **Olympic weightlifting**. Barbell required."
     );
   }
   if (parts.includeStrength && parts.includeWeightlifting) {
-    lines.push("Order: Strength → Weightlifting → Metcon (separate headers).");
+    lines.push(
+      "Order: Strength → Weightlifting → Metcon (separate headers). Keep Olympic lifts in Weightlifting; keep slower strength in Strength."
+    );
   }
   return lines.join(" ");
 }
@@ -201,18 +205,18 @@ function buildDballCoachBlock(equipment, dballWeight) {
     .replace(/\s+/g, " ")
     .slice(0, 80);
   if (!raw) {
-    return `D-BALL WEIGHT: Not specified. Assume typical CrossFit box D-ball / heavy slam-ball loads often sit in a **roughly 20–70 kg** band for strong athletes; pick sensible loads and movement patterns, state assumed load briefly when helpful, and do not treat as a light wall ball unless user notes say otherwise.`;
+    return `D-BALL WEIGHT: Not specified. Typical box loads are often **~20–70 kg**; pick sensible loads when you use D-ball. **Frequency:** D-BALL is one option in the pool—do **not** build the whole session or every metcon round around D-ball unless USER NOTES ask for ball-heavy work; rotate with other listed equipment for balance.`;
   }
   if (raw.includes(",")) {
-    return `D-BALL WEIGHTS (discrete balls): The athlete listed these D-ball loads (kg, as entered): **${raw}**. Use only these loads for D-ball work; say which load per movement when it matters.`;
+    return `D-BALL WEIGHTS (discrete balls, kg): **${raw}**. When programming D-ball movements, use only these loads and name them where it matters. **Frequency:** do not spam D-ball across every station; mix with other modalities unless USER NOTES emphasize slam-ball / D-ball work.`;
   }
   if (/-/.test(raw)) {
-    return `D-BALL WEIGHTS (range): The athlete gave an available range (kg, as entered): **${raw}**. Program within or appropriate to that range; loads may differ by movement.`;
+    return `D-BALL WEIGHTS (range, kg): **${raw}**. Stay within that range for D-ball work. **Frequency:** one modality among many—avoid making every piece D-ball-dominant unless USER NOTES request it.`;
   }
-  return `D-BALL WEIGHT (mandatory): The athlete's ball is **${raw}**. Program to this exact load—light wall-ball / small med-ball work is not interchangeable with heavy slam-ball / D-ball stimulus. Adjust movements, reps, throws, carries, and scaling to match this weight.`;
+  return `D-BALL WEIGHT (when used): Athlete's ball **${raw} kg**—use this load for D-ball / slam-ball movements you prescribe; not interchangeable with light wall balls. **Frequency:** still vary modalities across the session; no need to feature D-ball in every round.`;
 }
 
-const DBALL_SYSTEM_RULE = `D-BALL / medicine ball / slam ball: Honor the D-BALL WEIGHT line in the user message—single load, comma-separated discrete loads, a hyphen range, or unspecified (typical 20–70 kg band). Treat heavy D-balls and light balls as different tools—not the same stimulus.`;
+const DBALL_SYSTEM_RULE = `D-BALL / slam ball: Honor the D-BALL WEIGHT lines in the user message. Heavy vs light balls = different stimulus. **Important:** Checking D-BALL does **not** mean the workout must center on D-ball—treat it like any other listed tool; use it where it fits, together with barbell, row, etc., unless USER NOTES ask for a ball-focused session.`;
 
 /** Mirror UI rules: weightlifting block and RIG/RACK imply Olympic bar in the list sent to the model. */
 function normalizeEquipmentForCoach(body, equipment) {
@@ -582,6 +586,35 @@ function impliesPairOrTeamInNotes(notes) {
   return /\b(pair|pairs|partner|partners|duo|couple|זוג|בזוגות)\b/i.test(String(notes || ""));
 }
 
+/** User free text references Olympic lifts (Hebrew / English) — steer away from mislabeling as generic strength only. */
+function impliesOlympicLiftingInUserNotes(notes) {
+  const s = String(notes || "");
+  if (!s.trim()) return false;
+  if (/\b(snatch|muscle\s+snatch|power\s+snatch|squat\s+snatch|hang\s+snatch)\b/i.test(s)) return true;
+  if (/\b(clean\s*&\s*jerks?|clean\s+and\s+jerk|power\s+clean|squat\s+clean|hang\s+clean|muscle\s+clean)\b/i.test(s)) return true;
+  if (/\b(split\s+jerk|push\s+jerk|push\s+press)\b/i.test(s) && /\b(clean|snatch|הנפות|קלין)\b/i.test(s)) return true;
+  if (/הנפות|הנפה|קלין|סנאץ|סנאטש|ג'רק|גרק|אולימפי|אולימפית|לבנת\s+הנפות|בלוק\s+הנפות/i.test(s)) return true;
+  if (/\bolympic\s+(lift|lifting|weightlifting)\b/i.test(s)) return true;
+  return false;
+}
+
+function buildOlympicIntentUserBlock(sessionParts, notes) {
+  if (!impliesOlympicLiftingInUserNotes(notes)) return "";
+  const hasWl = sessionParts && sessionParts.includeWeightlifting;
+  const hasSt = sessionParts && sessionParts.includeStrength;
+  let extra = "";
+  if (!hasWl && hasSt) {
+    extra =
+      " User toggled **Strength** only (no Weightlifting block)—still put **snatch and/or clean & jerk** work in that Strength section as the main barbell focus; do not answer with only slow squat/bench/deadlift unless they clearly asked for non-Olympic strength.";
+  } else if (!hasWl && !hasSt) {
+    extra =
+      " No separate Strength/Weightlifting toggles—still weave in snatch and/or clean & jerk skill work where time and barbell allow, or state briefly if impossible with selected structure.";
+  }
+  return (
+    `OLYMPIC LIFT INTENT (from USER NOTES / Hebrew הנפות etc.): Program **snatch** and/or **clean & jerk** as the primary barbell emphasis the user is asking for.${extra} Use section title **Weightlifting** or **Olympic weightlifting** for that block when a dedicated Olympic section exists—do not call it only **Strength** if the content is mainly Olympic lifts.`
+  );
+}
+
 /** Prefer UI counter; if user asks for a pair in notes but athletes is still 1, treat as 2 for prompting. */
 function resolveAthletesForPrompt(body) {
   let athletes = Math.min(20, Math.max(1, parseInt(body && body.athletes, 10) || 1));
@@ -632,6 +665,10 @@ function buildWorkoutGeminiBody(body) {
 
   const sessionParts = normalizeSessionParts(body);
   userText = `${userText}\n\n${buildSessionStructureBlock(sessionParts, timeMinutes, unlimited)}`;
+  const olympicBlock = buildOlympicIntentUserBlock(sessionParts, userNotes);
+  if (olympicBlock) {
+    userText = `${userText}\n\n${olympicBlock}`;
+  }
 
   let systemText = useDefaultSettings
     ? buildDefaultCoachSystemInstruction(extendedProfile, hasWarehouseDigest)
