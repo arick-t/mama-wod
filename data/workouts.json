@@ -2699,53 +2699,6 @@
       },
       {
         "date": "2026-04-01",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-04-01/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "lying hip cross over",
-              "thoracic rotation",
-              "scorpions",
-              "lat stretch on box"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 clean grip deadlifts",
-              "10 hang high pulls",
-              "10 squat jumps"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "POWER CLEAN 15MIN",
-            "lines": [
-              "3 sets",
-              "5 power cleans at 77-82%",
-              "explosive power"
-            ]
-          },
-          {
-            "title": "CONDITIONING 12MIN",
-            "lines": [
-              "18-15-12-9",
-              "hang power cleans 50/35kg",
-              "box jumps 75/60cm",
-              "burpees over the bar",
-              "* aerobic power [vo2 max]",
-              "power clean"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-01",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-april-1-2026/",
@@ -2798,6 +2751,53 @@
               "The goal is for the second wave to be heavier than the first.",
               "Spend at least 2:00 on a machine or walking nice and slow during your rest periods"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-01",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-01/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "lying hip cross over",
+              "thoracic rotation",
+              "scorpions",
+              "lat stretch on box"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 clean grip deadlifts",
+              "10 hang high pulls",
+              "10 squat jumps"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "POWER CLEAN 15MIN",
+            "lines": [
+              "3 sets",
+              "5 power cleans at 77-82%",
+              "explosive power"
+            ]
+          },
+          {
+            "title": "CONDITIONING 12MIN",
+            "lines": [
+              "18-15-12-9",
+              "hang power cleans 50/35kg",
+              "box jumps 75/60cm",
+              "burpees over the bar",
+              "* aerobic power [vo2 max]",
+              "power clean"
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -2891,5 +2891,5 @@
       }
     ]
   },
-  "last_updated": "2026-04-01T07:12:04.991868"
+  "last_updated": "2026-04-01T08:17:44.957377"
 }
