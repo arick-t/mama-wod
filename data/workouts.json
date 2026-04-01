@@ -912,30 +912,6 @@
       },
       {
         "date": "2026-03-23",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Build up to a 1RM Back Squat"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Jackie",
-            "lines": [
-              "1000m Row",
-              "50 Thrusters 20kg/16kg",
-              "30 Pull Ups"
-            ],
-            "sub_title2": "For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-23",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2685,6 +2661,44 @@
     "2026-04-01": [
       {
         "date": "2026-04-01",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260401",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-01",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 18.2",
+            "lines": [
+              "1-2-3-4-5-6-7-8-9-10 reps for time of:",
+              "Dumbbell squats",
+              "Bar-facing burpees",
+              "*Men use 50-lb. dumbbells*",
+              "Workout 18.2a",
+              "1-rep-max clean",
+              "Time cap:",
+              "12 minutes to complete 18.2",
+              "AND",
+              "18.2a"
+            ]
+          }
+        ],
+        "note": "Open: Open 18.2"
+      },
+      {
+        "date": "2026-04-01",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-01/",
@@ -2732,14 +2746,76 @@
       },
       {
         "date": "2026-04-01",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260401",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-1-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "Rotating Stations Every :30 on a 5 minute clock",
+              "Station 1: Row, Ski, or Echo/Assault Bike",
+              "Station 2: Ring Row with tempo negative",
+              "Station 3: Hollow Hold or Bent knee L-Sit"
+            ]
+          },
+          {
+            "title": "Skill/Strength",
+            "lines": [
+              "Choose 1 of the following:",
+              "Every 2 minutes for 8 minutes",
+              "10 Unbroken Strict Chest to Bar Pull Ups",
+              "Use band assistance as needed to perform 10 unbroken reps.",
+              "OR",
+              "EMOM 8 minutes",
+              "1 Set Chest to Bar Pull ups* (kipping/butterfly)",
+              "*Athletes must be able to perform 3+ unassisted strict pull ups to be eligible for option 2."
+            ]
+          },
+          {
+            "title": "For time",
+            "lines": [
+              "10-20-30",
+              "Toes to bar",
+              "Calorie Row",
+              "Feel: Muscle Overload",
+              "Pacing: Sustain",
+              "Target Score: <9:00",
+              "Firebreather: <6:00"
+            ]
+          },
+          {
+            "title": "Power Clean",
+            "lines": [
+              "1 @ 80-90%",
+              "3 @ 75-80%",
+              "2 @ 80-85%",
+              "1 @ 85-90%",
+              "3 @ 80-85%",
+              "2 @ 85-90%",
+              "1 @ 90-95%",
+              "Drop and reset reps on triples and doubles. It’s ok if you don’t know your perecentages – your heavy single to start will give you guidance. )",
+              "The goal is for the second wave to be heavier than the first.",
+              "Spend at least 2:00 on a machine or walking nice and slow during your rest periods"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-01",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Watch & Wait",
+            "lines": [
+              "Every 10:00 (2 sets)",
+              "15-12-9 Calorie Air Bike",
+              "5-4-3 Power Cleans 84kg/57kg",
+              "Womens calories: 12-10-8",
+              "*Score is slowest set"
             ]
           }
         ]
@@ -2812,32 +2888,8 @@
           }
         ],
         "note": "Benchmark: The Ghost"
-      },
-      {
-        "date": "2026-04-01",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.2",
-            "lines": [
-              "1-2-3-4-5-6-7-8-9-10 reps for time of:",
-              "Dumbbell squats",
-              "Bar-facing burpees",
-              "*Men use 50-lb. dumbbells*",
-              "Workout 18.2a",
-              "1-rep-max clean",
-              "Time cap:",
-              "12 minutes to complete 18.2",
-              "AND",
-              "18.2a"
-            ]
-          }
-        ],
-        "note": "Open: Open 18.2"
       }
     ]
   },
-  "last_updated": "2026-04-01T02:38:43.815709"
+  "last_updated": "2026-04-01T07:12:04.991868"
 }
