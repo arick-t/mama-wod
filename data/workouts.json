@@ -1,95 +1,5 @@
 {
   "workouts": {
-    "2026-03-19": [
-      {
-        "date": "2026-03-19",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260319",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Rest Day",
-              "Your First Month of CrossFit: Why Going Slow Gets You There Faster",
-              "The athletes who rush to heavy weights and high intensity in their first weeks of CrossFit inevitably plateau, while their peers who focus on mechanics continue progressing for years. Your first 30 days aren't about proving yourself; they're about building the foundation that determines how far you'll ultimately go. Here's why mastering the basics is the smartest investment you can make in your fitness."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-19",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-march-19-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "500m Air Bike",
-              "20 Step Ups",
-              "500m Bike",
-              "15 S-DB Step Ups",
-              "500m Bike",
-              "10 Double DB Step Ups",
-              "500m Air Bike"
-            ]
-          },
-          {
-            "title": "4 rounds, each for time",
-            "lines": [
-              "1/0.9k Air Bike",
-              "20 DB Farmer’s Hold Step Ups",
-              "1/0.9k Air Bike",
-              "Rest 1:1, or alternate rounds with a partner until both athletes complete 4 rounds each",
-              "Rx: 50s/35s, both to 20”",
-              "Feel: Gas/Muscle overload",
-              "Pace: Reach",
-              "Target Score: 4-5:00/round",
-              "Firebreather Score: sub-4 minutes per round"
-            ]
-          },
-          {
-            "title": "Extra Credit",
-            "lines": [
-              "Make up Day",
-              "If you have already taken your rest day, make up the Competitor extra from that day.",
-              "OR",
-              "If today is your active rest day:",
-              "Spend 12:00 working slowly from resting heartrate to 170 BPM minus your ago on any machine or combination of machines",
-              "Then",
-              "45-90 Minutes on a single machine or jogging keeping your heartrate between 160 BPM minus your age and 180 BPM minus your age",
-              "Then",
-              "Spend 12:00 working slowly from your working heartrate, down to 140 BPM minus your age on any machine or combination of machines"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-19",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 19.4",
-            "lines": [
-              "For total time:",
-              "3 rounds of:",
-              "10 snatches",
-              "12 bar-facing burpees",
-              "Then, rest 3 minutes before continuing with:",
-              "3 rounds of:",
-              "10 bar muscle-ups",
-              "12 bar-facing burpees",
-              "*Men snatch 95 lb.*",
-              "Time cap: 12 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 19.4"
-      }
-    ],
     "2026-03-20": [
       {
         "date": "2026-03-20",
@@ -182,95 +92,6 @@
           }
         ],
         "note": "Open: Open 13.1"
-      },
-      {
-        "date": "2026-03-20",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-20/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "seated pike stretch",
-              "sumo squat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 air squats",
-              "10 prone snow angels",
-              "10 straight leg sit ups",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "BACK SQUAT 15MIN",
-            "lines": [
-              "3 sets",
-              "5 back squat at 80%",
-              "1 drop set",
-              "max reps at 50%",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "5 x 2:00 amrap:",
-              "",
-              "15 wallballs 20/15lbs",
-              "10/8 cal ski/bike",
-              "10 toes to bar",
-              "* pick up where you left off",
-              "* score: total rounds + reps",
-              "* aerobic power [vo2 max]"
-            ],
-            "sub_title": "rest 2:00 between rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-20",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "U.S. Army Capt. Derek A. Dobogai, 26, of Fond Du Lac, Wisconsin, assigned to the 2nd Battalion, 35th Infantry Regiment, 3rd Infantry Brigade Combat Team, 25th Infantry Division, based in Schofield Barracks, Hawaii, died on Aug. 22, 2007, in Multaka, Iraq, of injuries suffered when his unit's helicopter crashed.\nHe is survived by his parents, David and Lisa; and brothers, Daniel and David Jr.\nFirst posted",
-        "sections": [
-          {
-            "title": "Dobogai",
-            "sub_title": "7 rounds for time of:",
-            "lines": [
-              "8 muscle-ups",
-              "22-yard farmers carry",
-              "♀ 35-lb dumbbells",
-              "♂ 50-lb dumbbells"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-20",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Baseline",
-            "lines": [
-              "For time:",
-              "row  500 m",
-              "40 squats",
-              "30 sit-ups",
-              "20  push -ups",
-              "10 pull-ups"
-            ]
-          }
-        ],
-        "note": "Benchmark: Baseline"
       }
     ],
     "2026-03-21": [
@@ -914,42 +735,6 @@
               "* biceps curls @ empty bar",
               "* 10 reps pronated",
               "* 10 reps supinated"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-24",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "15 mins to find a heavy single Front Squat"
-            ]
-          },
-          {
-            "title": "METCON",
-            "sub_title": "Partner WOD",
-            "lines": [
-              "In 20 mins:",
-              "* 40 Thrusters 20/15kg",
-              "10 Box Jumps",
-              "10 Burpees",
-              "* 30 Thrusters 35/20kg",
-              "20 Box Jumps",
-              "20 Burpees",
-              "* 20 Thrusters 45/30kg",
-              "30 Box Jumps",
-              "30 Burpees",
-              "* 10 Thrusters 52.5/35kg",
-              "40 Box Jumps",
-              "40 Burpees",
-              "Max bike calories in remaining time.",
-              "Score is cals.",
-              "Box height 20/16 inch"
             ]
           }
         ]
@@ -2853,7 +2638,106 @@
         ],
         "note": "Benchmark: Christine"
       }
+    ],
+    "2026-04-03": [
+      {
+        "date": "2026-04-03",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260403",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-03",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Strength:-E2MOM X 45 x 8-12 DB Z Pressalternate with Box Piked push ups (add deficit)",
+              "Good Friday Pairs:-Shared reps unless statedRun 800m (run together)40 Pull ups20 Syncro hand release push upsRun 400m (run together)40 KB Swings 32/24kg20 Partner Medball Situps 9/6kgRun 200m (run together)40 Syncro Burpees20 Bear Complex 45/30kgCAP 25 mins",
+              "intoMax Power Clean & Jerk",
+              "Cap 35 mins work"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-03",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "Officer James Lowell Capoot, of the Vallejo Police Department, died Nov. 17, 2011, in the line of duty while chasing after an armed man suspected of robbing a bank. The 45-year-old, who lived in Vacaville, California, joined the Vallejo Police Department in 1993 and served as a motorcycle officer, motorcycle instructor, driving instructor and SWAT officer. He received two medals of courage, including one life-saving medal, as well as many other department commendations.\nCapoot is survived by his wife, Jennifer; three daughters, Jillian, Jamie and Justine; mother, Beverly Sue; brother and sister-in-law, Louie and Susie DeCarlo; and several other family members. He is preceded in death by his father, Lowell Jesse Capoot.\nFirst posted",
+        "sections": [
+          {
+            "title": "Capoot",
+            "sub_title": "For time:",
+            "lines": [
+              "100 push-ups",
+              "Run 800 meters",
+              "75 push-ups",
+              "Run 1,200 meters",
+              "50 push-ups",
+              "Run 1,600 meters",
+              "25 push-ups",
+              "Run 2,000 meters"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-03",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Gwen",
+            "lines": [
+              "Clean & Jerk 15-12- and 9 reps",
+              "Touch and go at floor only. Even a re-grip off the floor is a foul. No dumping. Use same load for each set. Rest as needed between sets."
+            ]
+          }
+        ],
+        "note": "Benchmark: Gwen"
+      },
+      {
+        "date": "2026-04-03",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 21.1",
+            "lines": [
+              "For time:",
+              "1 wall walk",
+              "10 double-unders",
+              "3 wall walks",
+              "30 double-unders",
+              "6 wall walks",
+              "60 double-unders",
+              "9 wall walks",
+              "90 double-unders",
+              "15 wall walks",
+              "150 double-unders",
+              "21 wall walks",
+              "210 double-unders",
+              "Time cap: 15 min."
+            ]
+          }
+        ],
+        "note": "Open: Open 21.1"
+      }
     ]
   },
-  "last_updated": "2026-04-02T10:11:59.516408"
+  "last_updated": "2026-04-03T02:39:02.582600"
 }
