@@ -920,32 +920,6 @@
       },
       {
         "date": "2026-03-24",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Shoulder Press",
-              "Build up to a 1RM Shoulder Press"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Red Sox",
-            "lines": [
-              "Every 5:00 (3 sets)",
-              "75 Double Unders",
-              "25 Push Ups",
-              "50 Double Unders",
-              "15 Dumbbell Bench Press (50s/35s)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-24",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2679,6 +2653,39 @@
     "2026-04-02": [
       {
         "date": "2026-04-02",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260402",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-02",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 15.3",
+            "lines": [
+              "Complete as many rounds and reps as possible in 14 minutes of:",
+              "7 muscle-ups",
+              "50 wall-ball shots",
+              "100 double-unders",
+              "*Men use 20-lb. ball to 10 feet, Women use 14-lb. ball to 9 feet*"
+            ]
+          }
+        ],
+        "note": "Open: Open 15.3"
+      },
+      {
+        "date": "2026-04-02",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-02/",
@@ -2725,14 +2732,63 @@
       },
       {
         "date": "2026-04-02",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260402",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-2-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "AMRAP 7 minutes",
+              "1k Bike or 500m Row"
+            ]
+          },
+          {
+            "title": "Then in time remaining, AMRAP of:",
+            "lines": [
+              "20 Jump Rope Reps*",
+              "10 Russian KB Swings",
+              ":30 Elbows Plank"
+            ]
+          },
+          {
+            "title": "AMRAP 13 minutes",
+            "lines": [
+              "120 Double Unders",
+              "18 Push Ups",
+              "10 Deadlifts 275/185lbs",
+              "Feel: Gas",
+              "Pacing: Sustain",
+              "Target Score: 3+ rounds (4:00/rd)",
+              "Firebreather: 4+ rounds (3:00/rd)"
+            ]
+          },
+          {
+            "title": "Shoulder Press",
+            "lines": [
+              "12-10-8-6",
+              "Start your set of 12 between 55 and 65%, then add weight each round.",
+              "Air Bike 1,000m Between Sets to Flush)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-02",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Clean House",
+            "lines": [
+              "8 sets:",
+              "300m Run",
+              "10 Strict Handstand Push Ups",
+              "* -rest 1:00 between sets-",
+              "* (2:00 Time Cap)",
+              "*Score is slowest set"
             ]
           }
         ]
@@ -2796,27 +2852,8 @@
           }
         ],
         "note": "Benchmark: Christine"
-      },
-      {
-        "date": "2026-04-02",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 15.3",
-            "lines": [
-              "Complete as many rounds and reps as possible in 14 minutes of:",
-              "7 muscle-ups",
-              "50 wall-ball shots",
-              "100 double-unders",
-              "*Men use 20-lb. ball to 10 feet, Women use 14-lb. ball to 9 feet*"
-            ]
-          }
-        ],
-        "note": "Open: Open 15.3"
       }
     ]
   },
-  "last_updated": "2026-04-02T02:39:39.983469"
+  "last_updated": "2026-04-02T06:43:30.357453"
 }
