@@ -917,32 +917,6 @@
       },
       {
         "date": "2026-03-25",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Build up to a 1RM Deadlift"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Dodgers",
-            "lines": [
-              "50/40 Calorie Air Bike",
-              "25 GHDs",
-              "50 Dumbbell Box Step Ups (16kg/11kg) (20\")",
-              "25 GHDs",
-              "50/40 Calorie Air Bike"
-            ],
-            "sub_title2": "For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-25",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2656,6 +2630,108 @@
       },
       {
         "date": "2026-04-03",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 21.1",
+            "lines": [
+              "For time:",
+              "1 wall walk",
+              "10 double-unders",
+              "3 wall walks",
+              "30 double-unders",
+              "6 wall walks",
+              "60 double-unders",
+              "9 wall walks",
+              "90 double-unders",
+              "15 wall walks",
+              "150 double-unders",
+              "21 wall walks",
+              "210 double-unders",
+              "Time cap: 15 min."
+            ]
+          }
+        ],
+        "note": "Open: Open 21.1"
+      },
+      {
+        "date": "2026-04-03",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-3-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "3:00 Machine",
+              "2:00 Banded Monster walks (Glute Activation)",
+              "1:00 Squat Hold",
+              "20 Air Squats"
+            ]
+          },
+          {
+            "title": "For Time:",
+            "lines": [
+              "150 Wall-Ball Shots, 20# / 14#",
+              "Feel: Muscle Overload",
+              "Pacing: Sustain",
+              "Target Score: Sub 10 minutes (15 reps/min)",
+              "Firebreather: Sub 5 minutes (30 reps/min)"
+            ]
+          },
+          {
+            "title": "Strength",
+            "lines": [
+              "With a partner, Accumulate:",
+              "4:00 Bar Hang",
+              "4:00 Hollow Body Hold",
+              "4:00 Farmer’s Hold AHAP",
+              "One works while the other rests. Performed AFTER Karen."
+            ]
+          },
+          {
+            "title": "Extra Credit",
+            "lines": [
+              "6 Sets",
+              "1 Smooth/Even Set of GHD Sit Ups",
+              "Rest 2:00",
+              "Consider this maintenence work. Do the math on total volume to avoid soreness"
+            ]
+          },
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "3:00 Machine",
+              "2:00 Banded Monster walks (Glute Activation)",
+              "1:00 Squat Hold",
+              "20 Air Squats"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-03",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Good Friday",
+            "lines": [
+              "100-80-60-40-20",
+              "Double Unders",
+              "50-40-30-20-10",
+              "Single Dumbbell Squat 16kg/11kg"
+            ],
+            "sub_title2": "For Time:"
+          }
+        ]
+      },
+      {
+        "date": "2026-04-03",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2708,36 +2784,8 @@
           }
         ],
         "note": "Benchmark: Gwen"
-      },
-      {
-        "date": "2026-04-03",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 21.1",
-            "lines": [
-              "For time:",
-              "1 wall walk",
-              "10 double-unders",
-              "3 wall walks",
-              "30 double-unders",
-              "6 wall walks",
-              "60 double-unders",
-              "9 wall walks",
-              "90 double-unders",
-              "15 wall walks",
-              "150 double-unders",
-              "21 wall walks",
-              "210 double-unders",
-              "Time cap: 15 min."
-            ]
-          }
-        ],
-        "note": "Open: Open 21.1"
       }
     ]
   },
-  "last_updated": "2026-04-03T02:39:02.582600"
+  "last_updated": "2026-04-03T06:44:55.644466"
 }
