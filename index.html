@@ -4134,9 +4134,26 @@ var convertorAeroLock = false;
 var convertorWtSync = false;
 var convertorDistLock = false;
 
+/** While typing "12." or "12," we must not sync—parseFloat drops the separator and overwrites the active cell. */
+function convertorInputIncompleteNumber(val) {
+  var t = String(val || "").trim();
+  if (t === "" || t === "-" || t === "+") return true;
+  if (t === "." || t === "," || t === "-." || t === "-," || t === "+." || t === "+,") return true;
+  if (/^\d*[.,]$/.test(t)) return true;
+  if (/^[-+]\d*[.,]$/.test(t)) return true;
+  return false;
+}
+
+function convertorFmtUpTo1dp(x) {
+  if (!isFinite(x)) return "";
+  var r = Math.round(x * 10) / 10;
+  return String(r);
+}
+
 function convertorAeroParse(val) {
   var s = String(val || "")
     .trim()
+    .replace(/,/g, ".")
     .toUpperCase()
     .replace(/\s+/g, "");
   s = s.replace(/CALS?$/i, "").replace(/M$/i, "");
@@ -4168,20 +4185,20 @@ function convertorAeroApplyR(R) {
   var ci, mi;
   ci = document.querySelector('.conv-aero-inp[data-aero-c="0"][data-aero-f="cal"]');
   mi = document.querySelector('.conv-aero-inp[data-aero-c="0"][data-aero-f="m"]');
-  if (ci) ci.value = String(Math.round(R));
-  if (mi) mi.value = String(Math.round(R * CONV_AERO_ROW_M_PER_CAL));
+  if (ci) ci.value = convertorFmtUpTo1dp(R);
+  if (mi) mi.value = convertorFmtUpTo1dp(R * CONV_AERO_ROW_M_PER_CAL);
   mi = document.querySelector('.conv-aero-inp[data-aero-c="1"][data-aero-f="m"]');
-  if (mi) mi.value = String(Math.round(R * CONV_AERO_RUN_M_PER_CAL));
+  if (mi) mi.value = convertorFmtUpTo1dp(R * CONV_AERO_RUN_M_PER_CAL);
   ci = document.querySelector('.conv-aero-inp[data-aero-c="2"][data-aero-f="cal"]');
   mi = document.querySelector('.conv-aero-inp[data-aero-c="2"][data-aero-f="m"]');
-  if (ci) ci.value = String(Math.round(R));
-  if (mi) mi.value = String(Math.round(R * CONV_AERO_BIKE_M_PER_CAL));
+  if (ci) ci.value = convertorFmtUpTo1dp(R);
+  if (mi) mi.value = convertorFmtUpTo1dp(R * CONV_AERO_BIKE_M_PER_CAL);
   ci = document.querySelector('.conv-aero-inp[data-aero-c="3"][data-aero-f="cal"]');
-  if (ci) ci.value = String(Math.round(R * 0.75));
+  if (ci) ci.value = convertorFmtUpTo1dp(R * 0.75);
   ci = document.querySelector('.conv-aero-inp[data-aero-c="4"][data-aero-f="cal"]');
   mi = document.querySelector('.conv-aero-inp[data-aero-c="4"][data-aero-f="m"]');
-  if (ci) ci.value = String(Math.round(R));
-  if (mi) mi.value = String(Math.round(R * CONV_AERO_ROW_M_PER_CAL));
+  if (ci) ci.value = convertorFmtUpTo1dp(R);
+  if (mi) mi.value = convertorFmtUpTo1dp(R * CONV_AERO_ROW_M_PER_CAL);
   convertorAeroLock = false;
 }
 
@@ -4189,6 +4206,7 @@ function convertorAeroOnInput(ev) {
   if (convertorAeroLock) return;
   var el = ev.target;
   if (!el.classList || !el.classList.contains("conv-aero-inp")) return;
+  if (convertorInputIncompleteNumber(el.value)) return;
   var col = parseInt(el.getAttribute("data-aero-c"), 10);
   var field = el.getAttribute("data-aero-f");
   if (isNaN(col) || col < 0 || col > 4) return;
@@ -4230,6 +4248,7 @@ function convertorDistOnInput(ev) {
   if (convertorDistLock) return;
   var el = ev.target;
   if (!el.classList || !el.classList.contains("conv-dist-inp")) return;
+  if (convertorInputIncompleteNumber(el.value)) return;
   var unit = el.getAttribute("data-dist");
   var n = convertorDistParse(el.value);
   if (!isFinite(n)) return;
@@ -4279,6 +4298,7 @@ function initConvertorUi() {
   if (kg) {
     kg.addEventListener("input", function () {
       if (convertorWtSync) return;
+      if (convertorInputIncompleteNumber(kg.value)) return;
       var v = convertorDistParse(kg.value);
       if (!isFinite(v) || !lb) return;
       convertorWtSync = true;
@@ -4289,6 +4309,7 @@ function initConvertorUi() {
   if (lb) {
     lb.addEventListener("input", function () {
       if (convertorWtSync) return;
+      if (convertorInputIncompleteNumber(lb.value)) return;
       var v = convertorDistParse(lb.value);
       if (!isFinite(v) || !kg) return;
       convertorWtSync = true;
