@@ -2569,45 +2569,6 @@
       },
       {
         "date": "2026-04-04",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-04-04/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "instep rotation",
-              "scorpions",
-              "90/90 hip rotation"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 sumo deadlifts",
-              "10 scap. push ups",
-              "*partner is biking"
-            ],
-            "sub_title": "amrap 5min"
-          },
-          {
-            "title": "CONDITIONING 32MIN",
-            "lines": [
-              "in teams of 2",
-              "5 rounds",
-              "",
-              "40/38/36cal bike",
-              "40 sumo deadlift high pulls 35/25kg",
-              "40 push ups",
-              "* aerobic power [lactate threshold]"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-04",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-april-4-2026/",
@@ -2649,6 +2610,45 @@
               "Row 500m Between Sets to Flush",
               "Start between 60 and 70% for your set of 10 with the goal of going heavier each set.”)"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-04",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-04/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "instep rotation",
+              "scorpions",
+              "90/90 hip rotation"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 sumo deadlifts",
+              "10 scap. push ups",
+              "*partner is biking"
+            ],
+            "sub_title": "amrap 5min"
+          },
+          {
+            "title": "CONDITIONING 32MIN",
+            "lines": [
+              "in teams of 2",
+              "5 rounds",
+              "",
+              "40/38/36cal bike",
+              "40 sumo deadlift high pulls 35/25kg",
+              "40 push ups",
+              "* aerobic power [lactate threshold]"
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -2730,5 +2730,5 @@
       }
     ]
   },
-  "last_updated": "2026-04-04T06:33:41.614183"
+  "last_updated": "2026-04-04T07:45:56.302952"
 }
