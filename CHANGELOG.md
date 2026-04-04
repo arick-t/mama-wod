@@ -1,5 +1,13 @@
 # Changelog
 
+## [20.3.1] - 2026-04-04
+
+### CONVERTOR & patch
+- **CONVERTOR:** תיקון הזנת **מספר עשרוני** — אין סנכרון בזמן הקלדה כשמסתיים ב־`.` או `,` (למשל אינץ׳); תאורה שומרת עד ספרה עשרונית באירובי; פסיק כעשרוני בפרסור אירובי.
+- **גרסה:** תצוגת אתר **v20.3.1**; semver `20.3.1`; Android `versionCode` 25 / `versionName`; iOS `CURRENT_PROJECT_VERSION` 25 / `MARKETING_VERSION`.
+
+---
+
 ## [20.3.0] - 2026-03-31
 
 ### Workout Tools & CONVERTOR

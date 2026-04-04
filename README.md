@@ -1,8 +1,13 @@
-# 🦆 DUCK-WOD — גרסה **20.3.0** (`package.json`: `20.3.0`)
+# 🦆 DUCK-WOD — גרסה **20.3.1** (`package.json`: `20.3.1`)
 
 **Workout aggregator** — daily WODs from multiple sources
 
-> הגרסה המוצגת באתר היא **v20.3** (כותרת + פס משני). מקור אמת: `VERSION` + `package.json` — ראו `docs/VERSIONING.md`.
+> הגרסה המוצגת באתר היא **v20.3.1** (כותרת + פס משני). מקור אמת: `VERSION` + `package.json` — ראו `docs/VERSIONING.md`.
+
+## ✅ v20.3.1 (Apr 2026)
+
+- **CONVERTOR:** הזנת עשרוניות (אינץ׳ וכו׳) בלי שיידרס השדה באמצע הקלדה; אירובי עם ספרה עשרונית אחת בתצוגה.
+- **v20.3.0:** Workout Tools + CONVERTOR — כמו קודם.
 
 ## ✅ v20.3.0 (Mar 2026)
 
@@ -57,10 +62,10 @@
 ## 🚀 Quick Upgrade
 
 ```bash
-unzip duck-wod-v20.3.0.zip
+unzip duck-wod-v20.3.1.zip
 cd your-repo && rm -rf * 
-cp -r ../duck-wod-v20.3.0/* . && cp ../duck-wod-v20.3.0/.gitignore . && cp -r ../duck-wod-v20.3.0/.github .
-git add . && git commit -m "🔧 v20.3.0" && git push
+cp -r ../duck-wod-v20.3.1/* . && cp ../duck-wod-v20.3.1/.gitignore . && cp -r ../duck-wod-v20.3.1/.github .
+git add . && git commit -m "🔧 v20.3.1" && git push
 ```
 
 Workflow runs automatically after push!
@@ -72,4 +77,4 @@ Workflow runs automatically after push!
 
 ---
 
-**Version 20.3.0 (v20.3)** • Mar 2026 • Workout Tools + CONVERTOR — stable ✅
+**Version 20.3.1 (v20.3.1)** • Apr 2026 • CONVERTOR decimal fix + stores bump — stable ✅
