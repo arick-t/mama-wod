@@ -899,33 +899,6 @@
       },
       {
         "date": "2026-03-26",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Power Clean & Jerk 8x2",
-              "FLUSH CYCLING (C&J)",
-              "Every 1:00 (8:00)",
-              "2 Power Clean and Push Jerks (singles) @ RPE 5–6"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Tigers",
-            "lines": [
-              "2 Rounds",
-              "800m Run",
-              "50 Kettlebell Swings 25kg/16kg"
-            ],
-            "sub_title2": "For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-26",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2563,6 +2536,39 @@
     "2026-04-04": [
       {
         "date": "2026-04-04",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260404",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-04",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 15.2",
+            "lines": [
+              "Complete as many rounds and reps as possible in 14 minutes of:",
+              "7 muscle-ups",
+              "50 wall-ball shots",
+              "100 double-unders",
+              "*Men use 20-lb. ball to 10 feet, Women use 14-lb. ball to 9 feet*"
+            ]
+          }
+        ],
+        "note": "Open: Open 15.2"
+      },
+      {
+        "date": "2026-04-04",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-04/",
@@ -2602,15 +2608,69 @@
       },
       {
         "date": "2026-04-04",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260404",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-4-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "3 Rounds each with a partner",
+              "10/7 Calorie Bike",
+              "4 Burpee Broad Jumps",
+              "8 Light Alternating Hang Dumbbell Snatches",
+              "One partner works at a time, partner 2 starts their round when partner 1 pick up the dumbbell."
             ]
+          },
+          {
+            "title": "AMRAP 24 minutes",
+            "lines": [
+              "Alternating MOVEMENTS with a partner",
+              "3 Wall Walks",
+              "10/7 Calorie C2 Bike or 8/5 Calorie Airbike",
+              "6 Devil’s Press 50s/35s",
+              "P1: Wall Walk",
+              "P2: Bike",
+              "P1: Devil’s Press",
+              "P2: Wall Walk",
+              "P1: Bike",
+              "P2: Devil’s press",
+              "Etc.",
+              "Feel: Cardio",
+              "Pacing: Sustain",
+              "Target Score: 12+ rounds",
+              "Firebreather: 16+ rounds"
+            ]
+          },
+          {
+            "title": "Power Snatch",
+            "lines": [
+              "10-8-6-4-2",
+              "Row 500m Between Sets to Flush",
+              "Start between 60 and 70% for your set of 10 with the goal of going heavier each set.”)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-04",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Sealed Stone",
+            "lines": [
+              "400m Run (together)",
+              "120 Deadlifts 61kg/43kg",
+              "400m Run (together)",
+              "90 Hang Power Cleans 61kg/43kg",
+              "400m Run (together)",
+              "60 Shoulder to Overhead 61kg/43kg",
+              "400m Run (together)"
+            ],
+            "sub_title2": "Teams of 2 For Time:"
           }
         ]
       },
@@ -2667,27 +2727,8 @@
           }
         ],
         "note": "Benchmark: ANNIE\" - Benchmark"
-      },
-      {
-        "date": "2026-04-04",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 15.2",
-            "lines": [
-              "Complete as many rounds and reps as possible in 14 minutes of:",
-              "7 muscle-ups",
-              "50 wall-ball shots",
-              "100 double-unders",
-              "*Men use 20-lb. ball to 10 feet, Women use 14-lb. ball to 9 feet*"
-            ]
-          }
-        ],
-        "note": "Open: Open 15.2"
       }
     ]
   },
-  "last_updated": "2026-04-04T02:38:06.437795"
+  "last_updated": "2026-04-04T06:33:41.614183"
 }
