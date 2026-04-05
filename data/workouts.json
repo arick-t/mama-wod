@@ -1,25 +1,5 @@
 {
   "workouts": {
-    "2026-03-22": [
-      {
-        "date": "2026-03-22",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 19.5",
-            "lines": [
-              "33-27-21-15-9 reps for time of:",
-              "95-lb. thrusters",
-              "Chest-to-bar pull-ups",
-              "Time cap: 20 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 19.5"
-      }
-    ],
     "2026-03-23": [
       {
         "date": "2026-03-23",
@@ -108,107 +88,6 @@
           }
         ],
         "note": "Open: Open 19.5"
-      },
-      {
-        "date": "2026-03-23",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-23/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "thoracic rotation",
-              "scorpions",
-              "hand walk"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 plank push ups",
-              "10 straight leg sit ups"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "BENCH PRESS 15MIN",
-            "lines": [
-              "3 sets",
-              "5 bench press at 83%",
-              "1 drop set:",
-              "",
-              "max reps at 50%",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "buy-in: 30 v-ups",
-              "5 rounds",
-              "",
-              "8 push press 50/35kg*",
-              "10 toes to bar",
-              "buy-out: 30 v-ups",
-              "* muscular endurance",
-              "* *rx+ option: handstand push ups",
-              "toes to bar"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-23",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "Canadian Army Master Cpl. Erin Doyle, 32, was killed in a firefight on Aug. 11, 2008, in the Panjwaii District, Kandahar Province, Afghanistan.\nHe is survived by his wife, Nicole; and his daughter, Zarine.\nFirst posted",
-        "sections": [
-          {
-            "title": "Erin",
-            "sub_title": "5 rounds for time of:",
-            "lines": [
-              "15 dumbbell split cleans",
-              "21 pull-ups",
-              "*♀ 30 lb*",
-              "*♂ 40 lb*"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-23",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "FIGHT GONE BAD",
-            "lines": [
-              "3 Rounds for Max Reps:",
-              "1:00 WBS 9/6",
-              "1:00 SDHP 35/25 kg",
-              "1:00 Box Jump",
-              "1:00 Push Press 35/25 kg",
-              "1:00 Cal Row /Machine",
-              "1:00 Rest",
-              "How do you perform the “Fight Gone Bad” workout?",
-              "Perform 1 minute of work at each of the 5 stations. Move immediately to the next station after 1 minute. The clock does not reset or stop between exercises. One-minute break is allowed before repeating each round. One point is given for each rep, except on the rower where each calorie is one point.",
-              "How do you score the “Fight Gone Bad” workout?",
-              "*Score is the total cumulative number of repetitions completed of all movements in all 3 rounds.*",
-              "What is a good score for the “Fight Gone Bad” workout?",
-              "– Beginner: 150-250 reps",
-              "– Intermediate: 250-350 reps",
-              "– Advanced: 350-450 reps",
-              "– Elite: 500+ reps"
-            ]
-          }
-        ],
-        "note": "Benchmark: FIGHT GONE BAD"
       }
     ],
     "2026-03-24": [
@@ -893,37 +772,6 @@
       },
       {
         "date": "2026-03-27",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "HSPU",
-              "10 reps – 45 sec rest",
-              "8 reps – 30 secs rest",
-              "6 reps – 20 secs rest",
-              "4 reps – 10 secs rest",
-              "2 reps",
-              "Rest 2 mins and repeat",
-              "If too easy make them strict or deficit."
-            ]
-          },
-          {
-            "title": "METCON",
-            "sub_title": "5 Rounds",
-            "lines": [
-              "2 Lengths of KB Regional Lunges (swap arm after each length)",
-              "* 20 Plate GTOH 10/15kg",
-              "200m KB Farmers Carry",
-              "* 2x 16/24kg KB"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-27",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "U.S. Navy Chief Special Warfare Operator (SEAL) Adam Lee Brown, 36, of Hot Springs, Arkansas, was killed on March 17, 2010, in Komar Province, Afghanistan, in a battle against heavily armed militants.\nHe is survived by his wife, Kelley; two children, Nathan and Savannah; and his parents.\nFirst posted",
@@ -1472,18 +1320,20 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "”ANGIE” BENCHMARK",
+            "title": "BARBARA",
             "lines": [
-              "100 pull-ups",
-              "100 push-ups",
-              "100 sit-ups",
-              "100 squats",
-              "Timecap 25 min",
-              "Skaalata voi monella tapaa!"
+              "5 rounds for time:",
+              "15 Pull up",
+              "20 Push up",
+              "30 Sit up",
+              "50 Air Squat",
+              "2min Rest",
+              "(Time Cap 35min)",
+              "Do not include final 2min rest in your overall time."
             ]
           }
         ],
-        "note": "Benchmark: ”ANGIE” BENCHMARK"
+        "note": "Benchmark: BARBARA"
       }
     ],
     "2026-03-31": [
@@ -2631,7 +2481,126 @@
         ],
         "note": "Benchmark: The Gauntlet"
       }
+    ],
+    "2026-04-06": [
+      {
+        "date": "2026-04-06",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-06/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "weakness work for open gym",
+              "emom 20min",
+              "this is a chance for you to pick two of your weaker movements you’d like to work on in an emom format.",
+              "example:",
+              "",
+              "minute 1: 30 double unders",
+              "minute 2: 8 toes to bar",
+              "if you would like to simply complete a conditioning piece, replace one of the movements with an erg."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-06",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260406",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-06",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Easter Monday – My Pet Rock (shared reps)60 Cal Row50 T2B40 Wall balls 9/6kg30 Cleans 60/42.5kg20 C2B Pull upsinto60 Cal Air Bike50 KB Swings 32/24kg40 Front Rack lunges 2×22.5/15kg30 Snatch 60/42.5kg20 HSPU*Putting the KB (24kg/16kg) down results in 5 Burpee penalty"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-06",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "Sgt. Scott Lunger, of Brentwood, California, died July 22, 2015, after being gunned down during a traffic stop. A second officer returned fire, hitting the suspect who was later caught and taken into police custody. Lunger, 48, had served the Hayward Police Department since 2001 as a beat cop, on the special duty unit, gang task force, SWAT, was a Field Training Officer and acting lieutenant at the time of his death.\nLunger is survived by his daughters, Ashton and Saralyn; brother and sister-in-law, Mike and Shey; brother Todd; sister and brother-in-law, Michelle and Lance Schroeder; father and stepmother, Paul and Donna; half sister, Ciara; and many other family members and friends. He is preceded in death by his mother, Alice.\nFirst posted",
+        "sections": [
+          {
+            "title": "Scooter",
+            "sub_title": "On a 35-minute clock with a partner, complete as many rounds and reps as possible in 30 minutes of:",
+            "lines": [
+              "30 double-unders",
+              "15 pull-ups",
+              "15 push-ups",
+              "100-meter sprint",
+              "Then, 5 minutes to find a 1-rep-max partner deadlift",
+              "For the AMRAP, have one partner work while the other rests, switching after a full round is completed. If you're performing without a partner, rest 60 seconds between each round, and find a regular 1-rep-max deadlift."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-06",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "”ANGIE” BENCHMARK",
+            "lines": [
+              "100 pull-ups",
+              "100 push-ups",
+              "100 sit-ups",
+              "100 squats",
+              "Timecap 25 min",
+              "Skaalata voi monella tapaa!"
+            ]
+          }
+        ],
+        "note": "Benchmark: ”ANGIE” BENCHMARK"
+      },
+      {
+        "date": "2026-04-06",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 25.3",
+            "lines": [
+              "For time:",
+              "5 wall walks",
+              "50-calorie row",
+              "5 wall walks",
+              "25 deadlifts",
+              "5 wall walks",
+              "25 cleans",
+              "5 wall walks",
+              "25 snatches",
+              "5 wall walks",
+              "50-calorie row",
+              "Time cap: 20 minutes",
+              "♀ 155-lb (70-kg) deadlift, 85-lb (38-kg) clean, 65-lb (29-kg) snatch",
+              "♂ 225-lb (102-kg) deadlift, 135-lb (61-kg) clean, 95-lb (43-kg) snatch"
+            ]
+          }
+        ],
+        "note": "Open: Open 25.3"
+      }
     ]
   },
-  "last_updated": "2026-04-05T10:05:10.201314"
+  "last_updated": "2026-04-06T02:38:01.050331"
 }
