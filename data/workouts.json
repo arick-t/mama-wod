@@ -1,95 +1,5 @@
 {
   "workouts": {
-    "2026-03-23": [
-      {
-        "date": "2026-03-23",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260323",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Every 5 minutes for 7 sets, for load:",
-              "3 push presses",
-              "2 push jerks",
-              "1 split jerk",
-              "Add weight each set.",
-              "Compare to similar",
-              "251124"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-23",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-march-23-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "EMOM 9 minutes, rotating movements (3 each)",
-              "Machine",
-              "Inchworm + Push Up",
-              "Bear Hug Sandbag Hold/Walk",
-              "Perform :45 on, then :15 to rest/transition"
-            ]
-          },
-          {
-            "title": "6 rounds for time",
-            "lines": [
-              "Machine*",
-              "3 Wall Walks",
-              "150ft Sandbag Carry** 150/100lbs (3x50ft Shuttle Lengths)",
-              "*Machine Menu:",
-              "– 400/360m Row or Ski",
-              "– 800/720m C2 Bike",
-              "– 900/800m Air Bike",
-              "– 300m Outdoor Run",
-              "**Carry Sandbag anyhow",
-              "Feel: Cardio",
-              "Pacing: Reach",
-              "Target Score: 18-24 minutes",
-              "Firebreather: 18 minutes"
-            ]
-          },
-          {
-            "title": "Squat Snatch",
-            "lines": [
-              "1 @ 80-90%",
-              "4 @ 65-75%",
-              "3 @ 70-80%",
-              "2 @ 75-85%",
-              "4 @ 70-80%",
-              "3 @ 75-85%",
-              "2 @ 80-90%",
-              "Spend at least 2:00 on a machine or walking nice and slow during your rest periods",
-              "It’s ok if you don’t know your perecentages – your heavy single to start w)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-23",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 19.5",
-            "lines": [
-              "33-27-21-15-9 reps for time of:",
-              "95-lb. thrusters",
-              "Chest-to-bar pull-ups",
-              "Time cap: 20 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 19.5"
-      }
-    ],
     "2026-03-24": [
       {
         "date": "2026-03-24",
@@ -179,100 +89,6 @@
           }
         ],
         "note": "Open: Open 20.4"
-      },
-      {
-        "date": "2026-03-24",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-24/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "samson Stretch",
-              "sumo squat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 hang high pulls",
-              "10 elbow rotations",
-              "10 front squats",
-              "* *remaining time row"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "CONDITIONING 24MIN",
-            "lines": [
-              "3 x 6:00 amrap",
-              "60/48cal row",
-              "into…",
-              "10 lateral burpees over bar",
-              "10 power cleans 40/30kg",
-              "30 air squats",
-              "* rest 3:00 between amraps",
-              "* pick up where you left off",
-              "* score: total rounds + reps",
-              "* aerobic power [vo2 max]"
-            ],
-            "sub_title": "max rounds:"
-          },
-          {
-            "title": "BICEPS 4MIN",
-            "lines": [
-              "* as many sets as possible",
-              "* biceps curls @ empty bar",
-              "* 10 reps pronated",
-              "* 10 reps supinated"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-24",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "Orozco is survived by her husband, Hector; two stepchildren, Natalie and Santiago; and baby Olivia.\nShe began CrossFit at CrossFit FitFarm and also worked out with fellow officers outside the affiliate.\nShe exhibited a passion for community service that went beyond her police duties. She volunteered with the Special Olympics and was president of the Police Officers Ball to benefit Special Olympics Nebraska. She also coached baseball for the North Omaha Boys and Girls Club.\nFirst posted",
-        "sections": [
-          {
-            "title": "Kerrie",
-            "sub_title": "Wearing a weight vest, 10 rounds for time of:",
-            "lines": [
-              "100-meter sprint",
-              "5 burpees",
-              "20 sit-ups",
-              "15 push-ups",
-              "100-meter sprint",
-              "Rest 2 minutes",
-              "Kerrie Orozco, 29, was killed in the line of duty on May 20, 2015. A seven-year veteran of the Omaha Police Department, Orozco was killed just hours before she was set to start maternity leave. Her daughter Olivia Ruth was born prematurely on Feb. 17, 2015, and Orozco had put off maternity leave until she could bring her daughter home from the hospital."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-24",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "FRAN",
-            "lines": [
-              "For Time:",
-              "21-15-9",
-              "Thruster",
-              "Pull-up",
-              "RPE 5, maximum effort! Target: sub 6min. Time Cap 10min.",
-              "Rxd 42,5/30kg",
-              "SC 30/20kg + Jumping Pull-ups"
-            ]
-          }
-        ],
-        "note": "Benchmark: FRAN"
       }
     ],
     "2026-03-25": [
@@ -936,32 +752,6 @@
               "One partner must always be doing a Dumbbell Farmer Hold (50s/35s). Switch on the bike as desired."
             ],
             "sub_title2": "Teams of 2 For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-28",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "24 min EMOMs",
-              "Min 1: 3 Squat Snatch @ 60-70%",
-              "Min 2: 8-12 TTB",
-              "Min 3:10/12 cal Row"
-            ]
-          },
-          {
-            "title": "METCON",
-            "sub_title": "8 min AMRAP",
-            "lines": [
-              "3,6,9,12 etc",
-              "* DB Push Jerk 2x 22.5/15kg",
-              "* Medball Sit ups 6/9kg"
-            ]
           }
         ]
       },
@@ -2657,7 +2447,152 @@
         ],
         "note": "Benchmark: ”ANGIE” BENCHMARK"
       }
+    ],
+    "2026-04-07": [
+      {
+        "date": "2026-04-07",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-07/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "thoracic rotation",
+              "sumo squat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 air squats",
+              "10 clean grip deadlifts",
+              "10 hang muscle cleans"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "BACK SQUATS 14MIN",
+            "lines": [
+              "3 sets",
+              "5 back squats at 80%",
+              "1 drop set",
+              "max reps at 50%",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 18MIN",
+            "lines": [
+              "1 round for max reps:",
+              "",
+              "3:00 of power cleans 40/30kg",
+              "3:00 of push-ups*",
+              "6:00 of air squats",
+              "3:00 of push-ups*",
+              "3:00 of power cleans",
+              "* score: total reps",
+              "* *rx+ option: handstand push ups",
+              "* muscular endurance"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-07",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260407",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-07",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Gymnastics Strength:-E2MOM 3 x 5 Strict Pull ups (add weight if necessary)then90 secs max effort bmu’s, rest 90 seconds60 seconds max effort bmu’s, rest 60 seconds30 seconds max effort bmu’s, rest 30 seconds*if no muscle ups, stay with pull ups/C2B pull ups/butterfly practice or scale bmu effort for you",
+              "Metcon:-2 x rounds8/6 Row Cals + 3 Push Press to spike heart raterest 3 minsthen every 2 minutes for 6 rounds15/12 Cal RowPush Press 6 ? 8 ? 10 ? 12 ? 14 ? 16Rest 1 minRX 50/35kg"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-07",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "With heavy hearts we dedicate this workout to Army Sgt 1st Class Daniel Crabtree who was killed in Al Kut, Iraq on Thursday, June 8. To Daniel's family and friends, we express our sorrow; to his wife, Kathy, and daughter, Mallory, we tearfully acknowledge your loss as the true cost of freedom. Fair winds, Daniel.\nFirst posted",
+        "sections": [
+          {
+            "title": "Daniel",
+            "sub_title": "For time:",
+            "lines": [
+              "50 pull-ups",
+              "400-meter run",
+              "21 thrusters",
+              "800-meter run",
+              "21 thrusters",
+              "400-meter run",
+              "50 pull-ups",
+              "*♀ 65 lb*",
+              "*♂ 95 lb*"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-07",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Eva",
+            "lines": [
+              "5 rounds for time:",
+              "Target: sub 45min",
+              "Run  800m",
+              "30  KB Swings  32kg/24kg",
+              "30 pull-ups"
+            ]
+          }
+        ],
+        "note": "Benchmark: Eva"
+      },
+      {
+        "date": "2026-04-07",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 16.4",
+            "lines": [
+              "Complete as many rounds and reps as possible in 13 minutes of:",
+              "55 deadlifts",
+              "55 wall-ball shots",
+              "55-calorie row",
+              "55 handstand push-ups",
+              "*Men deadlift 225 lb. and throw 20-lb. ball to 10-ft. target*",
+              "*Women deadlift 155 lb. and throw 14-lb. ball to 9-ft. target*"
+            ]
+          }
+        ],
+        "note": "Open: Open 16.4"
+      }
     ]
   },
-  "last_updated": "2026-04-06T10:42:26.745831"
+  "last_updated": "2026-04-07T02:39:59.461525"
 }
