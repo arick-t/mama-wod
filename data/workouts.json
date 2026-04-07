@@ -1,96 +1,5 @@
 {
   "workouts": {
-    "2026-03-24": [
-      {
-        "date": "2026-03-24",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260324",
-        "sections": [
-          {
-            "title": "4 ROUNDS FOR TIME OF",
-            "lines": [
-              "Run 800 meters",
-              "Rest 3 minutes between rounds.",
-              "Compare to",
-              "241102"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-24",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-march-24-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "1:00 Row",
-              "10 Spiderman Lunges",
-              "10 Air Squats",
-              ":45 Row",
-              "10 Kettlebell Swings",
-              "10 Goblet Squats",
-              ":30 Row",
-              "10 Empty Bar Back Squats"
-            ]
-          },
-          {
-            "title": "AMRAP 2:00 x 5",
-            "lines": [
-              "3 Back Squats* @75-85% 1RM",
-              "Max Calorie Row in time remaining",
-              "Rest 2:00",
-              "2 Scores: Heaviest Back Squat & total calories",
-              "Feel: Gas",
-              "Pacing: Reach",
-              "Target Score: 20+ Calories/interval",
-              "Firebreather: 30+ Calories/interval"
-            ]
-          },
-          {
-            "title": "Extra Credit",
-            "lines": [
-              "Spend 12:00 working slowly from resting heartrate to 170 BPM minus your ago on any machine or combination of machines",
-              "Then",
-              "45-90 Minutes on a single machine or jogging keeping your heartrate between 160 BPM minus your age and 180 BPM minus your age",
-              "Then",
-              "Spend 12:00 working slowly from your working heartrate, down to 140 BPM minus your age on any machine or combination of machines"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-24",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 20.4",
-            "lines": [
-              "For time:",
-              "30 box jumps, 24 in.",
-              "15 clean and jerks, 95 lb.",
-              "30 box jumps, 24 in.",
-              "15 clean and jerks, 135 lb.",
-              "30 box jumps, 24 in.",
-              "10 clean and jerks, 185 lb.",
-              "30 single-leg squats",
-              "10 clean and jerks, 225 lb.",
-              "30 single-leg squats",
-              "5 clean and jerks, 275 lb.",
-              "30 single-leg squats",
-              "5 clean and jerks, 315 lb.",
-              "Time cap: 20 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 20.4"
-      }
-    ],
     "2026-03-25": [
       {
         "date": "2026-03-25",
@@ -188,81 +97,6 @@
           }
         ],
         "note": "Open: Open 11.4"
-      },
-      {
-        "date": "2026-03-25",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-25/",
-        "sections": [
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "line drills"
-            ]
-          },
-          {
-            "title": "DEADLIFT 15MIN",
-            "lines": [
-              "3 sets",
-              "5 deadlifts at 83%",
-              "1 drop set",
-              "max reps at 50%",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 17MIN",
-            "lines": [
-              "16 kb swings 32/24kg",
-              "24 jumping lunges",
-              "32 shuttle runs",
-              "* aerobic power [lactate threshold]",
-              "hang power snatch"
-            ],
-            "sub_title": "4 rounds for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-25",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "In honor of Randy Simmons, 51, a 27-year LAPD veteran and SWAT team member who was killed Feb. 7, 2008, in the line of duty.\nHe is survived by his wife, Lisa; son, Matthew; and daughter, Gabrielle.\nFirst posted",
-        "sections": [
-          {
-            "title": "Randy",
-            "sub_title": "For time:",
-            "lines": [
-              "75 power snatches",
-              "*♀ 55 lb*",
-              "*♂ 75 lb*"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-25",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "DIANE",
-            "lines": [
-              "For time",
-              "21–15–9",
-              "Deadlift @100/70 kg",
-              "Handstand push up",
-              "Scaled",
-              "21-15-9 Reps For Time",
-              "Deadlifts (70/50kg)",
-              "Push-Ups",
-              "TC 10 min"
-            ]
-          }
-        ],
-        "note": "Benchmark: DIANE"
       }
     ],
     "2026-03-26": [
@@ -839,20 +673,6 @@
               "* aerobic power [lactate threshold]"
             ],
             "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-29",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Hero wod:- 13 Heroes of Kabul"
-            ]
           }
         ]
       },
@@ -2650,7 +2470,140 @@
         ],
         "note": "Benchmark: Eva"
       }
+    ],
+    "2026-04-08": [
+      {
+        "date": "2026-04-08",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-08/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "handwalk",
+              "instep rotations",
+              "calf stretch",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10/8cal row",
+              "100m run",
+              "20 single unders"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "CONDITIONING 32MIN",
+            "lines": [
+              "32:00 amrap",
+              "20 pull ups",
+              "400m run",
+              "60 double under",
+              "80/64cal row",
+              "pull up"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-08",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260408",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-08",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "8 x 1Snatch pull + Hang snatch + Snatch"
+            ]
+          },
+          {
+            "title": "METCON",
+            "lines": []
+          }
+        ]
+      },
+      {
+        "date": "2026-04-08",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "U.S. Army 1st Lt. Daren M. Hidalgo, 24, of Waukesha, Wisconsin, assigned to 3rd Squadron, 2nd Stryker Cavalry Regiment, based in Vilseck, Germany, died on Feb. 20, 2011, in Kandahar Province, Afghanistan, from wounds suffered when insurgents attacked his unit with an improvised explosive device. Two weeks prior to his death, he was hit by an earlier improvised explosive device. Despite his injuries, he stayed in the country and on patrols rather than return home.\nHe is survived by his father, Jorge; mother, Andrea; brothers, Miles and Jared; and sister, Carmen.\nFirst posted",
+        "sections": [
+          {
+            "title": "Hidalgo",
+            "sub_title": "For time:",
+            "lines": [
+              "Run 2 miles",
+              "Rest 2 minutes",
+              "20 squat cleans",
+              "20 box jumps",
+              "20 overhead walking lunges",
+              "20 box jumps",
+              "20 squat cleans",
+              "Rest 2 minutes",
+              "Run 2 miles",
+              "♀ 95-lb barbell, 20-inch box, 25-lb plate",
+              "♂ 135-lb barbell, 24-inch box, 45-lb plate",
+              "If you've got a 20-lb vest or body armor, wear it."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-08",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Nicole",
+            "lines": [
+              "20 min AMRAP:",
+              "Your final score is total pull-up reps after 20minutes.",
+              "Every Time you break on the pull ups go for a run! Choose a scaling option that always allows more than 10 Pull Up repetitions each time.",
+              "400 m  run  or erg cals 25/20",
+              "max rep unbroken pull-ups"
+            ]
+          }
+        ],
+        "note": "Benchmark: Nicole"
+      },
+      {
+        "date": "2026-04-08",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 12.1",
+            "lines": [
+              "Complete as many reps as possible in 7 minutes of:",
+              "Burpees"
+            ]
+          }
+        ],
+        "note": "Open: Open 12.1"
+      }
     ]
   },
-  "last_updated": "2026-04-07T10:15:40.434672"
+  "last_updated": "2026-04-08T02:40:19.418284"
 }
