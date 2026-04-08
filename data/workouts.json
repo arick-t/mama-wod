@@ -2483,44 +2483,6 @@
       },
       {
         "date": "2026-04-08",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-04-08/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "handwalk",
-              "instep rotations",
-              "calf stretch",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10/8cal row",
-              "100m run",
-              "20 single unders"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "CONDITIONING 32MIN",
-            "lines": [
-              "32:00 amrap",
-              "20 pull ups",
-              "400m run",
-              "60 double under",
-              "80/64cal row",
-              "pull up"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-08",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-april-8-2026/",
@@ -2562,6 +2524,44 @@
               "Accumulate 5:00 of Dead Hang from pull up bar",
               "10:00 Cap",
               "If you have a strong grip but not endurance, try to do your sets as evenly as possible. If you have solid endurance, go for broke right from the start."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-08",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-08/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "handwalk",
+              "instep rotations",
+              "calf stretch",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10/8cal row",
+              "100m run",
+              "20 single unders"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "CONDITIONING 32MIN",
+            "lines": [
+              "32:00 amrap",
+              "20 pull ups",
+              "400m run",
+              "60 double under",
+              "80/64cal row",
+              "pull up"
             ]
           }
         ]
@@ -2655,5 +2655,5 @@
       }
     ]
   },
-  "last_updated": "2026-04-08T06:51:21.409748"
+  "last_updated": "2026-04-08T08:06:10.228795"
 }
