@@ -1,104 +1,5 @@
 {
   "workouts": {
-    "2026-03-25": [
-      {
-        "date": "2026-03-25",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260325",
-        "sections": [
-          {
-            "title": "5 ROUNDS FOR TIME OF",
-            "lines": [
-              "2 rope climbs to 15 feet",
-              "15 GHD sit-ups",
-              "20 box jumps*",
-              "*Step down from the box.",
-              "♀ 20-inch box",
-              "♂ 24-inch box"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-25",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-march-25-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "AMRAP 5 minutes",
-              "150/125m Row",
-              "6 Burpee Step Overs",
-              "6 Single Dumbbell Deadlifts (DB Between legs)"
-            ]
-          },
-          {
-            "title": "AMRAP 14 minutes",
-            "lines": [
-              "7/5 Muscle Ups",
-              "14 Box Jump Overs 24/20″",
-              "21 Dumbbell Snatches 50/35lbs",
-              "Feel: Muscle Overload/Gas",
-              "Pacing: Sustain",
-              "Target Score: 3+ Rounds",
-              "Firebreather: 4+ Rounds"
-            ]
-          },
-          {
-            "title": "Extra Credit",
-            "lines": [
-              "40-60 Minute Machine Flush / MOB",
-              "5+ Rounds",
-              "5:00 Machine Flush",
-              "3:00 Mobility",
-              "Rotate through as many modalities as you can, excluding running but not walking. Pace should feel very very easy, but elicit a nice sweat to aid in your mobility routine."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-25",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 11.4",
-            "lines": [
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "60 Bar-facing burpees",
-              "30 Overhead squats (120lbs / 55kg)",
-              "10 Muscle-ups",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "60 Bar-facing burpees",
-              "30 Overhead squats (90lbs / 40kg)",
-              "10 Muscle-ups",
-              "*MASTERS MEN*",
-              "-",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "60 Bar-facing burpees",
-              "30 Overhead squats (110lbs / 50kg)",
-              "10 Muscle-ups",
-              "*MASTERS WOMEN*",
-              "-",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "60 Bar-facing burpees",
-              "30 Overhead squats (75lbs / 35kg)",
-              "10 Muscle-ups"
-            ]
-          }
-        ],
-        "note": "Open: Open 11.4"
-      }
-    ],
     "2026-03-26": [
       {
         "date": "2026-03-26",
@@ -188,86 +89,6 @@
           }
         ],
         "note": "Open: Open 25.1"
-      },
-      {
-        "date": "2026-03-26",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-26/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "scorpions",
-              "hand walk"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 scap. push ups",
-              "10 ring rows",
-              "30sec plank hold",
-              "* *remaining time row"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "CONDITIONING 30MIN",
-            "lines": [
-              "30:00 amrap",
-              "max cal row",
-              "every 3:00 [starting at 0:00]:",
-              "",
-              "5 strict pull-ups",
-              "10 push-ups",
-              "15 sit-ups",
-              "* score: total cal",
-              "* aerobic power [lactate threshold]"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-26",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Manion",
-            "sub_title": "7 rounds for time of:",
-            "lines": [
-              "Run 400 meters",
-              "29 back squat",
-              "*♀ 95 lb*",
-              "*♂ 135 lb*"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-26",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Kelly",
-            "lines": [
-              "5 Rounds For Time:",
-              "400m Run",
-              "30 box jumps 60/50",
-              "30 wall balls 9/6kg",
-              "Running substitutions: 800/1,000-m C2 bike, 900/1,250-m Assault or Echo bike, 400/500-m row",
-              "OHJEET: Juoksut tahi erg aina alle 2:15 / Kierros aina alle 6:00 - Skaalaa tarvittaessa",
-              "TC: 35min"
-            ]
-          }
-        ],
-        "note": "Benchmark: Kelly"
       }
     ],
     "2026-03-27": [
@@ -1047,25 +868,6 @@
               "* (Scored by Total Reps)"
             ],
             "sub_title2": "3-3-3-4:00 AMRAP"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-31",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Strength:-Every 90 seconds4 X 2 Push Press + 2 Split Jerkbuilding in weight",
-              "ThenE2MOMSplit Jerk 3,3,2,2,2"
-            ]
-          },
-          {
-            "title": "METCON",
-            "lines": []
           }
         ]
       },
@@ -2547,7 +2349,7 @@
           {
             "title": "WARM UP 4MIN",
             "lines": [
-              "10/8cal row",
+              "150/125m row",
               "100m run",
               "20 single unders"
             ],
@@ -2560,7 +2362,7 @@
               "20 pull ups",
               "400m run",
               "60 double under",
-              "80/64cal row",
+              "800/ 640m row",
               "pull up"
             ]
           }
@@ -2653,7 +2455,155 @@
         ],
         "note": "Benchmark: Nicole"
       }
+    ],
+    "2026-04-09": [
+      {
+        "date": "2026-04-09",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-09/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "instep rotation",
+              "lat stretch",
+              "handwalk"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 straight leg sit ups",
+              "10 double db deadlifts",
+              "10 push ups",
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "BENCH PRESS 15MIN",
+            "lines": [
+              "3 sets",
+              "5 bench press at 80%",
+              "1 drop set",
+              "max reps at 50%",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "14-12-10-8",
+              "v-ups",
+              "cal ski*",
+              "directly into…",
+              "14-12-10-8",
+              "double db hang power snatch 2x15/10kg",
+              "cal bike*",
+              "*womens calories: 11-9-7-5",
+              "* aerobic power [vo2 max]"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-09",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260409",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-09",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Strength:-E2MOM X 4 rounds (8 mins)6-10 Box Piked push ups (add deficit)",
+              "Metcon:-15 Min AMRAP15/12 Cal Bike20 Alternating DB Snatch 22.5/15kg15 T2B",
+              "Then 7 mins (including rest to find 1 RM Thruster)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-09",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "Italian Army C.le Magg. Sc. Roberto Marchini, 28, of Viterbo, Italy, died during a reconnaissance mission in Afghanistan's Bakwa district on July 12, 2011. Marchini served in the 8th Airborne Combat Engineer Regiment, Folgore Brigade.\nWhile on base, Marchini used whatever he could find to do CrossFit, often incorporating farmers carries, sandbag runs and tire flips in his workouts. His favorite exercises were double-unders, push-ups and power cleans.\nMarchini is survived by numerous friends and family members.\nFirst posted",
+        "sections": [
+          {
+            "title": "Havana",
+            "sub_title": "Complete as many rounds as possible in 25 minutes of:",
+            "lines": [
+              "150 double-unders",
+              "50 push-ups",
+              "15 power cleans",
+              "Men: 185 lb",
+              "Women: 125 lb"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-09",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Lynne",
+            "lines": [
+              "Five rounds:",
+              "Score is total reps",
+              "SCALED:",
+              "scaled bench press or floor press",
+              "Banded pull-ups or heavy ring rows",
+              "rest as needed",
+              "Bodyweight  bench press  max reps",
+              "Pull-ups max reps",
+              "SCALED:",
+              "scaled  bench press  or  floor press",
+              "Banded pull-ups or heavy  ring row s"
+            ]
+          }
+        ],
+        "note": "Benchmark: Lynne"
+      },
+      {
+        "date": "2026-04-09",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 15.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 9 minutes of:",
+              "15 toes-to-bars",
+              "10 deadlifts (115 / 75 lb.)",
+              "5 snatches (115 / 75 lb.)",
+              "WORKOUT 15.1a",
+              "1-rep-max clean and jerk",
+              "6-minute time cap"
+            ]
+          }
+        ],
+        "note": "Open: Open 15.1"
+      }
     ]
   },
-  "last_updated": "2026-04-08T10:18:57.342973"
+  "last_updated": "2026-04-09T02:41:27.175085"
 }
