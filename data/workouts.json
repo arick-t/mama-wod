@@ -836,27 +836,6 @@
       },
       {
         "date": "2026-03-30",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Conquer",
-            "lines": [
-              "400m Run",
-              "5 Rounds of \"Strict Cindy\"",
-              "5 Strict Pull Ups",
-              "10 Push Ups",
-              "15 Air Squats",
-              "* (Scored by Rounds + Reps. For the run, each 100m = 1 rep)"
-            ],
-            "sub_title2": "25:00 AMRAP"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-30",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2474,6 +2453,36 @@
     "2026-04-08": [
       {
         "date": "2026-04-08",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260408",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-08",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 12.1",
+            "lines": [
+              "Complete as many reps as possible in 7 minutes of:",
+              "Burpees"
+            ]
+          }
+        ],
+        "note": "Open: Open 12.1"
+      },
+      {
+        "date": "2026-04-08",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-08/",
@@ -2512,15 +2521,72 @@
       },
       {
         "date": "2026-04-08",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260408",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-8-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "On a 6 minute clock:",
+              "Jog 500m,"
             ]
+          },
+          {
+            "title": "Then, AMRAP with remaining time:",
+            "lines": [
+              "8 Plate Ground to Overhead",
+              "8 Squats",
+              ":10 HS Hold",
+              "Then…",
+              "BB review for all movements"
+            ]
+          },
+          {
+            "title": "100 hang power snatches",
+            "lines": [
+              "100 push presses",
+              "100 sumo deadlift high pulls",
+              "100 front squats",
+              "65lb/45lb",
+              "https://www.crossfit.com/210114",
+              "Feel: Muscle Overload/Gas",
+              "Pace: Sustain",
+              "Target Score: sub 25 minutes (~6:00 per movement)",
+              "Firebreather Score: sub 18 minutes (4:30 per movement)"
+            ]
+          },
+          {
+            "title": "Extra Credit",
+            "lines": [
+              "Accumulate 5:00 of Dead Hang from pull up bar",
+              "10:00 Cap",
+              "If you have a strong grip but not endurance, try to do your sets as evenly as possible. If you have solid endurance, go for broke right from the start."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-08",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Peony",
+            "lines": [
+              "200m Run",
+              "5 Wall Walks",
+              "400m Run",
+              "10 Wall Walks",
+              "600m Run",
+              "15 Wall Walks",
+              "800m Run",
+              "Max Wall Walks in remaining time (20 Wall Walk Cap)",
+              "* (Scored by Reps in max set of Wall Walks)"
+            ],
+            "sub_title2": "20:00 AMRAP"
           }
         ]
       },
@@ -2586,24 +2652,8 @@
           }
         ],
         "note": "Benchmark: Nicole"
-      },
-      {
-        "date": "2026-04-08",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 12.1",
-            "lines": [
-              "Complete as many reps as possible in 7 minutes of:",
-              "Burpees"
-            ]
-          }
-        ],
-        "note": "Open: Open 12.1"
       }
     ]
   },
-  "last_updated": "2026-04-08T02:40:19.418284"
+  "last_updated": "2026-04-08T06:51:21.409748"
 }
