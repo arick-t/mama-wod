@@ -853,26 +853,6 @@
       },
       {
         "date": "2026-03-31",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Rod of Iron",
-            "lines": [
-              "5 Wall Walks",
-              "20 Toes to Bar",
-              "Max Box Jump Overs 24\"/20\"",
-              "* -rest 1:00 between sets-",
-              "* (Scored by Total Reps)"
-            ],
-            "sub_title2": "3-3-3-4:00 AMRAP"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-31",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "U.S. Army 1st Lt. Tyler E. Parten, 24, of Arkansas, died Sept. 10, 2009, in Konar Province, Afghanistan, of wounds sustained when insurgents attacked his unit using rocket-propelled grenades and small-arms fire. He was assigned to the 3rd Squadron, 61st Cavalry Regiment, 4th Brigade Combat Team, 4th Infantry Division, Fort Carson, Colorado.\nParten is survived by his mother, Lona; and brother, Daniel.\nFirst posted",
@@ -2459,6 +2439,41 @@
     "2026-04-09": [
       {
         "date": "2026-04-09",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260409",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-09",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 15.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 9 minutes of:",
+              "15 toes-to-bars",
+              "10 deadlifts (115 / 75 lb.)",
+              "5 snatches (115 / 75 lb.)",
+              "WORKOUT 15.1a",
+              "1-rep-max clean and jerk",
+              "6-minute time cap"
+            ]
+          }
+        ],
+        "note": "Open: Open 15.1"
+      },
+      {
+        "date": "2026-04-09",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-09/",
@@ -2510,14 +2525,67 @@
       },
       {
         "date": "2026-04-09",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260409",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-9-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "Alternating movement Tabata :20 on :10 off)",
             "lines": [
-              "BUY TICKETS NOW"
+              "3 rounds each",
+              "Air Bike",
+              "Burpees",
+              "Ring Rows"
+            ]
+          },
+          {
+            "title": "5 rounds for time",
+            "lines": [
+              "5 rounds for time",
+              "21/15 Calorie Air Bike",
+              "9 Burpee Pull Ups",
+              "Rest 1:30 between rounds",
+              "Feel: Gas",
+              "Pace: Reach/Sustain",
+              "Target Score: 17-21 minutes (3:00/rd working time MAX)",
+              "Firebreather Score: sub 17 minutes (<2:00/rd working time)"
+            ]
+          },
+          {
+            "title": "Extra Credit: April Monthly Challenge!",
+            "lines": [
+              "500m Bicep Curls",
+              "Prayers to your biceps!"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-09",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Power Clean + Push Jerk 8x3",
+              "Every 1:30 x 8 sets",
+              "2 Power Cleans + 1 Push Jerks @ 65% OR RPE 6"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Freesia",
+            "lines": [
+              "3 sets",
+              "4:00 AMRAP",
+              "75 Double Unders",
+              "15 Front Squats 61kg/43kg",
+              "75 Double Unders",
+              "Max Power Cleans 61kg/43kg in the remaining time.",
+              "* -rest 2:00 between sets-",
+              "* (Scored by Total Power Cleans Reps)"
             ]
           }
         ]
@@ -2581,29 +2649,8 @@
           }
         ],
         "note": "Benchmark: Lynne"
-      },
-      {
-        "date": "2026-04-09",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 15.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 9 minutes of:",
-              "15 toes-to-bars",
-              "10 deadlifts (115 / 75 lb.)",
-              "5 snatches (115 / 75 lb.)",
-              "WORKOUT 15.1a",
-              "1-rep-max clean and jerk",
-              "6-minute time cap"
-            ]
-          }
-        ],
-        "note": "Open: Open 15.1"
       }
     ]
   },
-  "last_updated": "2026-04-09T02:41:27.175085"
+  "last_updated": "2026-04-09T06:47:45.580407"
 }
