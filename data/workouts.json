@@ -2464,52 +2464,6 @@
       },
       {
         "date": "2026-04-10",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-04-10/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "lying hip cross over",
-              "instep rotation",
-              "calf stretch",
-              "hamstring stretch on box"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 good morning",
-              "10 burpees",
-              "10 squat jumps"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "DEADLIFTS 15MIN",
-            "lines": [
-              "3 sets",
-              "5 deadlifts at 80%",
-              "1 drop set",
-              "max reps at 50%",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "5 burpee box jumps 60/50cm",
-              "5 deadlifts 100/70kg",
-              "* aerobic power [vo2 max]"
-            ],
-            "sub_title": "10 rounds for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-10",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-april-10-2026/",
@@ -2552,6 +2506,52 @@
               "Rest 4:00",
               "If done properly, you will be able to increase reps on round 2 for all three movement patterns. Flush (very slow) between sets on an air bike or 1 damper ski erg."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-10",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-10/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "lying hip cross over",
+              "instep rotation",
+              "calf stretch",
+              "hamstring stretch on box"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 good morning",
+              "10 burpees",
+              "10 squat jumps"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "DEADLIFTS 15MIN",
+            "lines": [
+              "3 sets",
+              "5 deadlifts at 80%",
+              "1 drop set",
+              "max reps at 50%",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "5 burpee box jumps 60/50cm",
+              "5 deadlifts 100/70kg",
+              "* aerobic power [vo2 max]"
+            ],
+            "sub_title": "10 rounds for time"
           }
         ]
       },
@@ -2629,5 +2629,5 @@
       }
     ]
   },
-  "last_updated": "2026-04-10T07:07:59.901376"
+  "last_updated": "2026-04-10T08:18:39.953571"
 }
