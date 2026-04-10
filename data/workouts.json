@@ -828,25 +828,6 @@
       },
       {
         "date": "2026-04-01",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Watch & Wait",
-            "lines": [
-              "Every 10:00 (2 sets)",
-              "15-12-9 Calorie Air Bike",
-              "5-4-3 Power Cleans 84kg/57kg",
-              "Womens calories: 12-10-8",
-              "*Score is slowest set"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-01",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2450,6 +2431,39 @@
     "2026-04-10": [
       {
         "date": "2026-04-10",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260410",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-10",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 15.5",
+            "lines": [
+              "27-21-15-9 reps for time of:",
+              "Row (calories)",
+              "Thrusters",
+              "*Men use 95 lb.*",
+              "*Women use 65 lb.*"
+            ]
+          }
+        ],
+        "note": "Open: Open 15.5"
+      },
+      {
+        "date": "2026-04-10",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-10/",
@@ -2496,15 +2510,65 @@
       },
       {
         "date": "2026-04-10",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260410",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-10-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "AMRAP 6 minutes",
+              "200m Jog",
+              "7 Kettlebell Swings",
+              "7 Goblet Squats",
+              "4 Get Overs"
             ]
+          },
+          {
+            "title": "3 rounds for time",
+            "lines": [
+              "Run 500m",
+              "2 Squat Cleans 225/155lbs",
+              "16 Get Overs 30-40″",
+              "2 Squat Clean 225/155lbs",
+              "Do not exceed 80% of your 1RM Clean.",
+              "You MUST remove your hands from the box/blocks between reps. (Do NOT rebound your get-overs.)",
+              "*if space is limited, regular BJO and/or sharing equipment will be necessary",
+              "Feel: Gas",
+              "Pace: Sustain",
+              "Target Score: 13-16 minutes",
+              "Firebreather Score: sub 13"
+            ]
+          },
+          {
+            "title": "Extra Credit",
+            "lines": [
+              "2 Rounds",
+              "1 Smooth Set of Wall Facing HSPU",
+              "Rest 2:00",
+              "1 Smooth Set of Strict HSPU",
+              "Rest 2:00",
+              "1 Smooth Set of Kipping HSPU",
+              "Rest 4:00",
+              "If done properly, you will be able to increase reps on round 2 for all three movement patterns. Flush (very slow) between sets on an air bike or 1 damper ski erg."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-10",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Hyacinth",
+            "lines": [
+              "500/450m Row",
+              "25 Push Ups"
+            ],
+            "sub_title2": "15:00 AMRAP"
           }
         ]
       },
@@ -2562,27 +2626,8 @@
           }
         ],
         "note": "Benchmark: Mary"
-      },
-      {
-        "date": "2026-04-10",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 15.5",
-            "lines": [
-              "27-21-15-9 reps for time of:",
-              "Row (calories)",
-              "Thrusters",
-              "*Men use 95 lb.*",
-              "*Women use 65 lb.*"
-            ]
-          }
-        ],
-        "note": "Open: Open 15.5"
       }
     ]
   },
-  "last_updated": "2026-04-10T02:40:18.262714"
+  "last_updated": "2026-04-10T07:07:59.901376"
 }
