@@ -1,85 +1,5 @@
 {
   "workouts": {
-    "2026-03-28": [
-      {
-        "date": "2026-03-28",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260328",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Quarterfinals Workout 3"
-            ]
-          },
-          {
-            "title": "FOR TIME",
-            "lines": [
-              "3 rounds of:",
-              "50 double-unders",
-              "10 deadlifts, first weight",
-              "2 rounds of:",
-              "50 double-unders",
-              "10 deadlifts, second weight",
-              "1 round of:",
-              "50 double-unders",
-              "10 deadlifts, third weight",
-              "Time cap: 12 minutes",
-              "♀ 155/185/225-lb barbell",
-              "♂ 225/275/315-lb barbell"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-28",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-march-28-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "Waterfall style in your team of 3 on a 5 minute clock",
-              "12/10 Calorie Row or Ski",
-              "9 Push Ups + Plank hold (Knees if needed)",
-              "9 Air Squats + Squat hold",
-              "Rotate when row/ski is done"
-            ]
-          },
-          {
-            "title": "EMOM 3:00 Alternating Movements until 4000m are completed",
-            "lines": [
-              "– Ski or Row meters",
-              "– 12 Strict Ring Dips",
-              "– 5 Front Squats 205/135lbs",
-              "Every 4th minute the entire team rests the full minute",
-              "Working in a team of 3, one partner starts at a different station and follows the rotation. Every 4th minute the entire team rests the full minute"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-28",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.1",
-            "lines": [
-              "Complete as many rounds as possible in 20 minutes of:",
-              "8 toes-to-bars",
-              "10 dumbbell hang clean and jerks",
-              "14-cal. row",
-              "*Men use 50-lb. dumbbell*"
-            ]
-          }
-        ],
-        "note": "Open: Open 18.1"
-      }
-    ],
     "2026-03-29": [
       {
         "date": "2026-03-29",
@@ -97,85 +17,6 @@
           }
         ],
         "note": "Open: Open 17.5"
-      },
-      {
-        "date": "2026-03-29",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-29/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "lat stretch",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. air squats",
-              "2. bike/ski",
-              "3. scap. push ups",
-              "4. ring rows"
-            ],
-            "sub_title": "30sec on / 15sec off x2 rounds"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "1. 30-40sec (weighted) wall sit",
-              "2. 10-15cal bike/ski",
-              "3. 10-15 db push ups",
-              "4. 12-18 kb gorilla rows",
-              "5. rest",
-              "Sunday Endurance for Open Gym",
-              "5 sets",
-              "3:00 bike [rpe 6-7]",
-              "* rest 1:30 between sets",
-              "* aerobic power [lactate threshold]"
-            ],
-            "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-29",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Pat",
-            "sub_title": "For time:",
-            "lines": [
-              "Run 800 meters with a plate",
-              "Then, 14 rounds of:",
-              "5 strict pull-ups",
-              "4 burpee box jumps",
-              "3 cleans"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-29",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "GRACE",
-            "lines": [
-              "For Time:",
-              "30 Clean & Jerk",
-              "Rx 60/42,5"
-            ]
-          }
-        ],
-        "note": "Benchmark: GRACE"
       }
     ],
     "2026-03-30": [
@@ -835,24 +676,6 @@
               "* 15sec on / 15sec off x 4 sets",
               "* rower pike ups"
             ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-02",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "8 x 1Snatch pull + Hang snatchEvery 90 secs at max for the day"
-            ]
-          },
-          {
-            "title": "METCON",
-            "lines": []
           }
         ]
       },
@@ -2627,7 +2450,140 @@
         ],
         "note": "Benchmark: DIANE"
       }
+    ],
+    "2026-04-12": [
+      {
+        "date": "2026-04-12",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-12/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "lat stretch",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. prone snow angels",
+              "2. bike/ski",
+              "3. ring rows",
+              "4. box step ups"
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "1. 3-5 wall walks",
+              "2. 10-15cal bike/ski",
+              "3. 6-10 strict chin ups",
+              "4. 12-20 db box step ups (50cm)",
+              "5. rest",
+              "Sunday Endurance for Open Gym",
+              "3-4 rounds:",
+              "",
+              "8:00 moderate-hard [rpe 6-7]",
+              "2:00 easy [rpe 2-3]",
+              "choose: run, bike, row, or ski",
+              "* aerobic power [lactate threshold]"
+            ],
+            "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-04-12",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Hero Wod:-",
+              "Andy",
+              "For Time",
+              "25 Thrusters 52.5/37.5kg",
+              "50 Box Jumps 24/20 in",
+              "75 Deadlifts",
+              "1.5 mile Run",
+              "75 Deadlifts",
+              "50 Box Jumps",
+              "25 Thrusters",
+              "Wear a Weight Vest (20/14 lb)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-12",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "U.S. Army Spc. Adam Hamilton, 22, of Kent, Ohio, assigned to the 4th Squadron, 4th Cavalry Regiment, 1st Brigade Combat Team, 1st Infantry Division, based in Fort Riley, Kansas, died on May, 28, 2011 in Haji Ruf, Afghanistan, of wounds suffered when enemy forces attacked his unit with an improvised explosive device.\nHe is survived by his father, Scott; stepmother, Connie; mother, Nancy Krestan; brothers, Brandon and Nick Krestan; and sisters, Shawney and Taya.\nFirst posted",
+        "sections": [
+          {
+            "title": "Hamilton",
+            "sub_title": "3 rounds for time of:",
+            "lines": [
+              "Row 1,000 meters",
+              "50 push-ups",
+              "Run 1,000 meters",
+              "50 pull-ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-12",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Baseline",
+            "lines": [
+              "For time:",
+              "row  500 m",
+              "40 squats",
+              "30 sit-ups",
+              "20  push -ups",
+              "10 pull-ups"
+            ]
+          }
+        ],
+        "note": "Benchmark: Baseline"
+      },
+      {
+        "date": "2026-04-12",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 23.1",
+            "lines": [
+              "Complete as many reps as possible in 14 minutes of:",
+              "60-calorie row",
+              "50 toes-to-bars",
+              "40 wall-ball shots",
+              "30 cleans",
+              "20 muscle-ups",
+              "♀",
+              "14-lb ball to 9-ft target, 95-lb cleans",
+              "♂",
+              "20-lb ball to 10-ft target, 135-lb cleans"
+            ]
+          }
+        ],
+        "note": "Open: Open 23.1"
+      }
     ]
   },
-  "last_updated": "2026-04-11T10:00:44.545285"
+  "last_updated": "2026-04-12T02:38:49.849190"
 }
