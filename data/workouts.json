@@ -840,26 +840,6 @@
       },
       {
         "date": "2026-04-02",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Clean House",
-            "lines": [
-              "8 sets:",
-              "300m Run",
-              "10 Strict Handstand Push Ups",
-              "* -rest 1:00 between sets-",
-              "* (2:00 Time Cap)",
-              "*Score is slowest set"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-02",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2450,6 +2430,48 @@
     "2026-04-11": [
       {
         "date": "2026-04-11",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260411",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-11",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 18.4",
+            "lines": [
+              "For time:",
+              "21 deadlifts, 225 lb.",
+              "21 handstand push-ups",
+              "15 deadlifts, 225 lb.",
+              "15 handstand push-ups",
+              "9 deadlifts, 225 lb.",
+              "9 handstand push-ups",
+              "21 deadlifts, 315 lb.",
+              "50-ft. handstand walk",
+              "15 deadlifts, 315 lb.",
+              "50-ft. handstand walk",
+              "9 deadlifts, 315 lb.",
+              "50-ft. handstand walk",
+              "Time cap: 9 min."
+            ]
+          }
+        ],
+        "note": "Open: Open 18.4"
+      },
+      {
+        "date": "2026-04-11",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-11/",
@@ -2488,15 +2510,62 @@
       },
       {
         "date": "2026-04-11",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260411",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-11-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "3 Rounds each",
+              "Partner 1: 250/225m Row",
+              "Partner 2: 8 Pause PVC OHS + Squat hold in time remaining",
+              "*Partners switch when rowing is complete. Both athletes perform 6 Synchro burpees when switching stations."
             ]
+          },
+          {
+            "title": "AMRAP 22 Minutes with a partner",
+            "lines": [
+              "100 Bar Facing Burpees",
+              "80 Overhead Squats 75/55lbs",
+              "Partners alternate every 30 seconds, picking up where the other left off.",
+              "E.g. Partner 1 starts and completes 12 burpees in 30 seconds. Partner 2 then picks up with rep 13 and accumulates reps for 30 seconds.",
+              "Feel: Cardio",
+              "Pace: Reach/Sustain",
+              "Target Score: 2+ rounds",
+              "Firebreather Score: 2+100"
+            ]
+          },
+          {
+            "title": "Tempo Pull to Power Position into Squat Snatch",
+            "lines": [
+              "1×5 @ 60%",
+              "Tempo Pull to Mid Thigh into Squat Snatch",
+              "1×5 @ 60-65%",
+              "Tempo Pull to Knee into Squat Snatch",
+              "1×5 @ 60-70%",
+              "Row 500m at flush pace between sets",
+              "Drop and reset between each )"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-11",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Magnolia",
+            "lines": [
+              "100-80-60-40-20",
+              "Calorie Air Bike",
+              "* -100ft Single Dumbbell Lunge 23kg/16kg after each set (together)-",
+              "* (Women Calories: 80-64-48-32-16)"
+            ],
+            "sub_title2": "Teams of 2 For Time:"
           }
         ]
       },
@@ -2557,36 +2626,8 @@
           }
         ],
         "note": "Benchmark: DIANE"
-      },
-      {
-        "date": "2026-04-11",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.4",
-            "lines": [
-              "For time:",
-              "21 deadlifts, 225 lb.",
-              "21 handstand push-ups",
-              "15 deadlifts, 225 lb.",
-              "15 handstand push-ups",
-              "9 deadlifts, 225 lb.",
-              "9 handstand push-ups",
-              "21 deadlifts, 315 lb.",
-              "50-ft. handstand walk",
-              "15 deadlifts, 315 lb.",
-              "50-ft. handstand walk",
-              "9 deadlifts, 315 lb.",
-              "50-ft. handstand walk",
-              "Time cap: 9 min."
-            ]
-          }
-        ],
-        "note": "Open: Open 18.4"
       }
     ]
   },
-  "last_updated": "2026-04-11T02:39:23.247839"
+  "last_updated": "2026-04-11T06:36:54.347813"
 }
