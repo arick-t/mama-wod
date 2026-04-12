@@ -1,24 +1,5 @@
 {
   "workouts": {
-    "2026-03-29": [
-      {
-        "date": "2026-03-29",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 17.5",
-            "lines": [
-              "10 rounds for time of:",
-              "9 thrusters, 95 lb.",
-              "35 double-unders"
-            ]
-          }
-        ],
-        "note": "Open: Open 17.5"
-      }
-    ],
     "2026-03-30": [
       {
         "date": "2026-03-30",
@@ -91,95 +72,6 @@
           }
         ],
         "note": "Open: Open 25.2"
-      },
-      {
-        "date": "2026-03-30",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-30/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "thoracic rotation",
-              "handwalk",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 straight leg sit ups",
-              "10 ring rows",
-              "10 push ups to down dog"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "PUSH PRESS 14MIN",
-            "lines": [
-              "3 sets",
-              "5 push press at 77-82%",
-              "explosive power"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "20 strict pull ups",
-              "30 toes to bar",
-              "15 wall walks",
-              "30 toes to bar",
-              "20 strict pull ups",
-              "* muscular endurance",
-              "toes to bar"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-03-30",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "Narcotics Detective and Special Assignment Unit Operator Carlos Ledesma, 34, of the Chandler Police Department, Chandler, Arizona, was shot and killed by drug dealers on July 28, 2010, during an undercover operation in Phoenix, Arizona.\nHe is survived by his wife, Sherry; and sons, Luciano and Elijo.\nFirst posted",
-        "sections": [
-          {
-            "title": "Ledesma",
-            "sub_title": "Complete as many rounds and reps as possible in 20 minutes of:",
-            "lines": [
-              "5 parallette handstand push-ups",
-              "10 toes-to-rings",
-              "15 medicine-ball cleans",
-              "♀ 14-lb medicine ball",
-              "♂ 20-lb medicine ball"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-30",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "BARBARA",
-            "lines": [
-              "5 rounds for time:",
-              "15 Pull up",
-              "20 Push up",
-              "30 Sit up",
-              "50 Air Squat",
-              "2min Rest",
-              "(Time Cap 35min)",
-              "Do not include final 2min rest in your overall time."
-            ]
-          }
-        ],
-        "note": "Benchmark: BARBARA"
       }
     ],
     "2026-03-31": [
@@ -836,22 +728,6 @@
               "Single Dumbbell Squat 16kg/11kg"
             ],
             "sub_title2": "For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-03",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Good Friday Pairs:-Shared reps unless statedRun 800m (run together)40 Pull ups20 Syncro hand release push upsRun 400m (run together)40 KB Swings 32/24kg20 Partner Medball Situps 9/6kgRun 200m (run together)40 Syncro Burpees20 Bear Complex 45/30kgCAP 25 mins",
-              "intoMax Power Clean & Jerk",
-              "Cap 35 mins work"
-            ]
           }
         ]
       },
@@ -2583,7 +2459,156 @@
         ],
         "note": "Benchmark: Baseline"
       }
+    ],
+    "2026-04-13": [
+      {
+        "date": "2026-04-13",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-13/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "scorpions",
+              "lat stretch",
+              "thoracic rotation"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 prone snow angels",
+              "10 push ups",
+              "30sec plank hold"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "BENCH PRESS 14MIN",
+            "lines": [
+              "3 sets",
+              "5 bench press at 83%",
+              "1 drop set",
+              "max reps at 50%",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 17MIN",
+            "lines": [
+              "buy-in: 65 sit-ups",
+              "3 rounds",
+              "",
+              "10 double db push press 2x22,5/15kg *",
+              "100m suitcase carry (r)",
+              "10 double db push press 2x22,5/15kg *",
+              "100m suitcase carry (l)",
+              "cash-out: 65 sit-ups",
+              "* muscular endurance",
+              "* *rx+ option: 8 handstand push ups",
+              "handstand push ups"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-04-13",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260413",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-13",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Strength:-Alternates weeklyStrict Ring Pull ups 3 x 5 add weight if necessary (every 2 mins) then90 secs max effort kipping pull ups, rest 90 seconds60 seconds max effort kipping pull ups, rest 60 seconds30 seconds max effort kipping pull ups, rest 30 seconds",
+              "for those that want to sub the above for RMU /  kipping practice then do.",
+              "Interval Metcon:-8 Rounds15/12 Cal Bike12 Deadlifts 80/55kgRest 45 sec"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-13",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "U.S. Navy Special Warfare Operator Petty Officer 1st Class (SEAL/Enlisted Surface Warfare Specialist) Jon \"JT\" Thomas Tumilson, 35, of Rockford, Iowa, assigned to an East Coast-based Naval Special Warfare unit, died on Aug. 6, 2011, in Wardak Province, Afghanistan, of wounds suffered when his helicopter crashed.\nHe is survived by his parents, George and Kathy, and Joy and Scott McMeekan; sisters, Kristie and Joy; and his dog",
+        "sections": [
+          {
+            "title": "Tumilson",
+            "sub_title": "8 rounds for time of:",
+            "lines": [
+              "Run 200 meters",
+              "11 dumbbell burpee deadlifts",
+              "♀ 45-lb dumbbells",
+              "♂ 60-lb dumbbells"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-13",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Nasty Girls V2",
+            "lines": [
+              "3 rounds for time of:",
+              "50 one-legged squats, alternating",
+              "7  muscle-up s",
+              "175/115lb.  hang power clean s, 10 reps"
+            ]
+          }
+        ],
+        "note": "Benchmark: Nasty Girls V2"
+      },
+      {
+        "date": "2026-04-13",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 18.4",
+            "lines": [
+              "For time:",
+              "21 deadlifts, 225 lb.",
+              "21 handstand push-ups",
+              "15 deadlifts, 225 lb.",
+              "15 handstand push-ups",
+              "9 deadlifts, 225 lb.",
+              "9 handstand push-ups",
+              "21 deadlifts, 315 lb.",
+              "50-ft. handstand walk",
+              "15 deadlifts, 315 lb.",
+              "50-ft. handstand walk",
+              "9 deadlifts, 315 lb.",
+              "50-ft. handstand walk",
+              "Time cap: 9 min."
+            ]
+          }
+        ],
+        "note": "Open: Open 18.4"
+      }
     ]
   },
-  "last_updated": "2026-04-12T10:13:15.430329"
+  "last_updated": "2026-04-13T02:39:23.679697"
 }
