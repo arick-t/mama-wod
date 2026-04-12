@@ -2454,6 +2454,30 @@
     "2026-04-12": [
       {
         "date": "2026-04-12",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 23.1",
+            "lines": [
+              "Complete as many reps as possible in 14 minutes of:",
+              "60-calorie row",
+              "50 toes-to-bars",
+              "40 wall-ball shots",
+              "30 cleans",
+              "20 muscle-ups",
+              "♀",
+              "14-lb ball to 9-ft target, 95-lb cleans",
+              "♂",
+              "20-lb ball to 10-ft target, 135-lb cleans"
+            ]
+          }
+        ],
+        "note": "Open: Open 23.1"
+      },
+      {
+        "date": "2026-04-12",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-12/",
@@ -2558,32 +2582,8 @@
           }
         ],
         "note": "Benchmark: Baseline"
-      },
-      {
-        "date": "2026-04-12",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 23.1",
-            "lines": [
-              "Complete as many reps as possible in 14 minutes of:",
-              "60-calorie row",
-              "50 toes-to-bars",
-              "40 wall-ball shots",
-              "30 cleans",
-              "20 muscle-ups",
-              "♀",
-              "14-lb ball to 9-ft target, 95-lb cleans",
-              "♂",
-              "20-lb ball to 10-ft target, 135-lb cleans"
-            ]
-          }
-        ],
-        "note": "Open: Open 23.1"
       }
     ]
   },
-  "last_updated": "2026-04-12T02:38:49.849190"
+  "last_updated": "2026-04-12T07:11:42.393576"
 }
