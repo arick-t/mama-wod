@@ -1,79 +1,5 @@
 {
   "workouts": {
-    "2026-03-30": [
-      {
-        "date": "2026-03-30",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260330",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "For reps:",
-              "Tabata air squats",
-              "Tabata push-ups",
-              "Tabata AbMat sit-ups",
-              "Tabata walking lunges",
-              "Each Tabata interval is 20 seconds of work followed by 10 seconds of rest for 8 rounds."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-30",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-march-30-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "3 Rounds",
-              "1:00 Machine or 200m Jog",
-              "10 Plate Ground to Overhead",
-              "3 Vertical Leaps"
-            ]
-          },
-          {
-            "title": "Squat Snatch",
-            "lines": [
-              "3-3-3-3-3-3",
-              "Rest 2-4 minutes between sets",
-              "Drop and reset between all reps.",
-              "Start around 70-75%1RM and build AHAP across sets”)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-30",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 25.2",
-            "lines": [
-              "For time:",
-              "21 pull-ups",
-              "42 double-unders",
-              "21 thrusters (weight 1)",
-              "18 chest-to-bar pull-ups",
-              "36 double-unders",
-              "18 thrusters (weight 2)",
-              "15 bar muscle-ups",
-              "30 double-unders",
-              "15 thrusters (weight 3)",
-              "Time cap: 12 minutes",
-              "*♀ 65, 75, 85 lb (29, 34, 38 kg)*",
-              "*♂ 95, 115, 135 lb (43, 52, 61 kg)*"
-            ]
-          }
-        ],
-        "note": "Open: Open 25.2"
-      }
-    ],
     "2026-03-31": [
       {
         "date": "2026-03-31",
@@ -158,96 +84,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-03-31",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-03-31/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "instep rotation",
-              "lat stretch",
-              "sumo squat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 reverse lunges",
-              "10 elbow rotations",
-              "30sec plank hold",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "FRONT SQUAT 14MIN",
-            "lines": [
-              "3 sets",
-              "3 front squats at 77-82%",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 10MIN",
-            "lines": [
-              "10:00 amrap",
-              "8 db reverse lunges",
-              "10/8 cal ski/bike",
-              "8 db reverse lunges",
-              "10/8cal bike/ski",
-              "dumbbells: 2x 15/10kg",
-              "* aerobic power [vo2 max]"
-            ]
-          },
-          {
-            "title": "TRICEPS 5MIN",
-            "lines": [
-              "as many sets as possible",
-              "10 single db overhead triceps extension",
-              "10 diamond push ups"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-31",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "U.S. Army 1st Lt. Tyler E. Parten, 24, of Arkansas, died Sept. 10, 2009, in Konar Province, Afghanistan, of wounds sustained when insurgents attacked his unit using rocket-propelled grenades and small-arms fire. He was assigned to the 3rd Squadron, 61st Cavalry Regiment, 4th Brigade Combat Team, 4th Infantry Division, Fort Carson, Colorado.\nParten is survived by his mother, Lona; and brother, Daniel.\nFirst posted",
-        "sections": [
-          {
-            "title": "Tyler",
-            "sub_title": "5 rounds for time of:",
-            "lines": [
-              "7 muscle-ups",
-              "21 sumo deadlift high pulls",
-              "*♀ 65 lb*",
-              "*♂ 95 lb*"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-31",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Heavy Fran",
-            "lines": [
-              "15-12-9 reps of:",
-              "Thruster s (60/42,5kg or 135/95 lbs)",
-              "Weighted pull-ups (20/15kg or 45/30 lbs)"
-            ]
-          }
-        ],
-        "note": "Benchmark: Heavy Fran"
       }
     ],
     "2026-04-01": [
@@ -889,21 +725,6 @@
               "400m Run (together)"
             ],
             "sub_title2": "Teams of 2 For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-04",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Strength:-EMOM for 20 minutes ( 5 rounds)1 – 30-40 DU’s2 – 20 sec handstand hold / walk3 – 10 – 20 sec L-Sit hold4 – 10 Wide grip Ring Rows / 10 Box elevated ring rows",
-              "Metcon:-21 T2B21 Wall Balls 9/6kg15 T2B15 Burpee Box Jumps 24/20″9 T2B9 Thrusters 60/40kg6 T2B6 Squat Cleans 80/60kg"
-            ]
           }
         ]
       },
@@ -2650,7 +2471,168 @@
         ],
         "note": "Benchmark: Nasty Girls V2"
       }
+    ],
+    "2026-04-14": [
+      {
+        "date": "2026-04-14",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-14/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "instep rotation",
+              "lat stretch",
+              "lying hip cross over",
+              "samson stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 burpees",
+              "10 hang high pulls",
+              "10 behind the neck push press",
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "HANG POWER SNATCH 10MIN",
+            "lines": [
+              "find a heavy set of",
+              "3 hang power snatches",
+              "explosive power"
+            ]
+          },
+          {
+            "title": "CONDITIONING 17MIN",
+            "lines": [
+              "15 hang power snatches 35/25kg",
+              "12 burpees over the bar",
+              "max cal ski/bike",
+              "1:30 rest between rounds",
+              "* score: total cal",
+              "* rx+ option: 40/30kg",
+              "* aerobic power & vo2 max"
+            ],
+            "sub_title": "on the 3:00 x 4 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-04-14",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260414",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-14",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "8 x 1Snatch pull + Hang snatchEvery 90 secs at max for the day",
+              "10 min AMRAP7 Power Cleans7 Front Squats7 Push PressLoad: 70% of clean 1RM"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-14",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "Orozco is survived by her husband, Hector; two stepchildren, Natalie and Santiago; and baby Olivia.\nShe began CrossFit at CrossFit FitFarm and also worked out with fellow officers outside the affiliate.\nShe exhibited a passion for community service that went beyond her police duties. She volunteered with the Special Olympics and was president of the Police Officers Ball to benefit Special Olympics Nebraska. She also coached baseball for the North Omaha Boys and Girls Club.\nFirst posted",
+        "sections": [
+          {
+            "title": "Kerrie",
+            "sub_title": "Wearing a weight vest, 10 rounds for time of:",
+            "lines": [
+              "100-meter sprint",
+              "5 burpees",
+              "20 sit-ups",
+              "15 push-ups",
+              "100-meter sprint",
+              "Rest 2 minutes",
+              "Kerrie Orozco, 29, was killed in the line of duty on May 20, 2015. A seven-year veteran of the Omaha Police Department, Orozco was killed just hours before she was set to start maternity leave. Her daughter Olivia Ruth was born prematurely on Feb. 17, 2015, and Orozco had put off maternity leave until she could bring her daughter home from the hospital."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-14",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Kelly",
+            "lines": [
+              "5 Rounds For Time:",
+              "400m Run",
+              "30 box jumps 60/50",
+              "30 wall balls 9/6kg",
+              "Running substitutions: 800/1,000-m C2 bike, 900/1,250-m Assault or Echo bike, 400/500-m row",
+              "OHJEET: Juoksut tahi erg aina alle 2:15 / Kierros aina alle 6:00 - Skaalaa tarvittaessa",
+              "TC: 35min"
+            ]
+          }
+        ],
+        "note": "Benchmark: Kelly"
+      },
+      {
+        "date": "2026-04-14",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 12.5",
+            "lines": [
+              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
+              "100 pound Thruster, 3 reps",
+              "3 Chest to bar Pull-ups",
+              "100 pound Thruster, 6 reps",
+              "6 Chest to bar Pull-ups",
+              "100 pound Thruster, 9 reps",
+              "9 Chest to bar Pull-ups",
+              "100 pound Thruster, 12 reps",
+              "12 Chest to bar Pull-ups",
+              "100 pound Thruster, 15 reps",
+              "15 Chest to bar Pull-ups",
+              "100 pound Thruster, 18 reps",
+              "18 Chest to bar Pull-ups",
+              "100 pound Thruster, 21 reps",
+              "21 Chest to bar Pull-ups...",
+              "This is a timed workout. If you complete the round of 21, go on to 24. If you complete 24, go on to 27, etc.",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
+              "65 pound Thruster, 3 reps",
+              "3 Chest to bar Pull-ups",
+              "65 pound Thruster, 6 reps",
+              "6 Chest to bar Pull-ups",
+              "65 pound Thruster, 9 reps"
+            ]
+          }
+        ],
+        "note": "Open: Open 12.5"
+      }
     ]
   },
-  "last_updated": "2026-04-13T11:02:13.251299"
+  "last_updated": "2026-04-14T02:47:30.501337"
 }
