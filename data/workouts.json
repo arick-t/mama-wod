@@ -714,25 +714,6 @@
       },
       {
         "date": "2026-04-03",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Good Friday",
-            "lines": [
-              "100-80-60-40-20",
-              "Double Unders",
-              "50-40-30-20-10",
-              "Single Dumbbell Squat 16kg/11kg"
-            ],
-            "sub_title2": "For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-03",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "Officer James Lowell Capoot, of the Vallejo Police Department, died Nov. 17, 2011, in the line of duty while chasing after an armed man suspected of robbing a bank. The 45-year-old, who lived in Vacaville, California, joined the Vallejo Police Department in 1993 and served as a motorcycle officer, motorcycle instructor, driving instructor and SWAT officer. He received two medals of courage, including one life-saving medal, as well as many other department commendations.\nCapoot is survived by his wife, Jennifer; three daughters, Jillian, Jamie and Justine; mother, Beverly Sue; brother and sister-in-law, Louie and Susie DeCarlo; and several other family members. He is preceded in death by his father, Lowell Jesse Capoot.\nFirst posted",
@@ -2463,6 +2444,48 @@
     "2026-04-13": [
       {
         "date": "2026-04-13",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260413",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-13",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 18.4",
+            "lines": [
+              "For time:",
+              "21 deadlifts, 225 lb.",
+              "21 handstand push-ups",
+              "15 deadlifts, 225 lb.",
+              "15 handstand push-ups",
+              "9 deadlifts, 225 lb.",
+              "9 handstand push-ups",
+              "21 deadlifts, 315 lb.",
+              "50-ft. handstand walk",
+              "15 deadlifts, 315 lb.",
+              "50-ft. handstand walk",
+              "9 deadlifts, 315 lb.",
+              "50-ft. handstand walk",
+              "Time cap: 9 min."
+            ]
+          }
+        ],
+        "note": "Open: Open 18.4"
+      },
+      {
+        "date": "2026-04-13",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-13/",
@@ -2516,15 +2539,62 @@
       },
       {
         "date": "2026-04-13",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260413",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-13-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "Murph Prep Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "3 min Cardio",
+              "then… 8 min CAP:",
+              "10 Banded pull-aparts>scap push-ups>push-up",
+              "10 scap pull-ups>RIng Row> kips/pull-ups",
+              "10 90/90s>BW lunges>air squats"
             ]
+          },
+          {
+            "title": "Half Murph",
+            "lines": [
+              "(RX’d) (RX+ with 20/14# vest)",
+              "800m Run",
+              "50 Pull-Ups",
+              "100 Push-Ups",
+              "150 Air Squats",
+              "800m Run",
+              "The pull-ups, push-ups, and air squats can be partitioned in any way. The runs must be done unbroken. Advanced athletes can choose to add a weighted vest.",
+              "Scaled:",
+              "400m Run",
+              "25 Jumping Pull-Ups",
+              "50 Bar Push-Ups",
+              "75 Air Squats",
+              "400m Run",
+              "Target time: 20-25 minutes",
+              "Time cap: 32 minutes"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-13",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Half Murph",
+            "lines": [
+              "800m Run",
+              "* -into-",
+              "10 rounds",
+              "5 Strict Pull Ups (or 1 Rope Climb)",
+              "10 Push Ups",
+              "15 Air Squats",
+              "* -into-",
+              "800m Run"
+            ],
+            "sub_title2": "For Time:"
           }
         ]
       },
@@ -2579,36 +2649,8 @@
           }
         ],
         "note": "Benchmark: Nasty Girls V2"
-      },
-      {
-        "date": "2026-04-13",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.4",
-            "lines": [
-              "For time:",
-              "21 deadlifts, 225 lb.",
-              "21 handstand push-ups",
-              "15 deadlifts, 225 lb.",
-              "15 handstand push-ups",
-              "9 deadlifts, 225 lb.",
-              "9 handstand push-ups",
-              "21 deadlifts, 315 lb.",
-              "50-ft. handstand walk",
-              "15 deadlifts, 315 lb.",
-              "50-ft. handstand walk",
-              "9 deadlifts, 315 lb.",
-              "50-ft. handstand walk",
-              "Time cap: 9 min."
-            ]
-          }
-        ],
-        "note": "Open: Open 18.4"
       }
     ]
   },
-  "last_updated": "2026-04-13T02:39:23.679697"
+  "last_updated": "2026-04-13T07:20:14.150342"
 }
