@@ -1,91 +1,5 @@
 {
   "workouts": {
-    "2026-03-31": [
-      {
-        "date": "2026-03-31",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260331",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "BUY TICKETS NOW"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-03-31",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.3",
-            "lines": [
-              "2 rounds for time of:",
-              "100 double-unders",
-              "20 overhead squats",
-              "100 double-unders",
-              "12 ring muscle-ups",
-              "100 double-unders",
-              "20 dumbbell snatches",
-              "100 double-unders",
-              "12 bar muscle-ups",
-              "*Men perform 115-lb. OHS, 50-lb. DB snatches*",
-              "Time cap: 14 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 18.3"
-      },
-      {
-        "date": "2026-03-31",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-march-31-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "200m Jog",
-              "5 Burpees",
-              "20 Box Step Overs",
-              "200m Jog",
-              "5 Burpees",
-              "15 Box Jumps (shorter box)",
-              "200m Jog",
-              "10 Burpee Box Jump Overs",
-              "200m Run"
-            ]
-          },
-          {
-            "title": "3 Rounds for time",
-            "lines": [
-              "12 Burpee Box Jump Overs 24/20″",
-              "400m Run",
-              "9 Burpee Box Jump Overs 24/20″",
-              "400m Run",
-              "6 Burpee Box Jump Overs 24/20″",
-              "Rest 2:00",
-              "Target Score: Sub 25 minutes (7:00 working time per round or faster)",
-              "Firebreather: Sub 22 minutes (6:00 working time per round or faster)"
-            ]
-          },
-          {
-            "title": "Extra Credit",
-            "lines": [
-              "Spend 12:00 working slowly from resting heartrate to 170 BPM minus your ago on any machine or combination of machines",
-              "Then",
-              "45-90 Minutes on a single machine or jogging keeping your heartrate between 160 BPM minus your age and 180 BPM minus your age",
-              "Then",
-              "Spend 12:00 working slowly from your working heartrate, down to 140 BPM minus your age on any machine or combination of machines"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-04-01": [
       {
         "date": "2026-04-01",
@@ -181,107 +95,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-04-01",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-04-01/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "lying hip cross over",
-              "thoracic rotation",
-              "scorpions",
-              "lat stretch on box"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 clean grip deadlifts",
-              "10 hang high pulls",
-              "10 squat jumps"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "POWER CLEAN 15MIN",
-            "lines": [
-              "3 sets",
-              "5 power cleans at 77-82%",
-              "explosive power"
-            ]
-          },
-          {
-            "title": "CONDITIONING 12MIN",
-            "lines": [
-              "18-15-12-9",
-              "hang power cleans 50/35kg",
-              "box jumps 75/60cm",
-              "burpees over the bar",
-              "* aerobic power [vo2 max]",
-              "power clean"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-01",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "In honor of Randy Simmons, 51, a 27-year LAPD veteran and SWAT team member who was killed Feb. 7, 2008, in the line of duty.\nHe is survived by his wife, Lisa; son, Matthew; and daughter, Gabrielle.\nFirst posted",
-        "sections": [
-          {
-            "title": "Randy",
-            "sub_title": "For time:",
-            "lines": [
-              "75 power snatches",
-              "*♀ 55 lb*",
-              "*♂ 75 lb*"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-01",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "The Ghost",
-            "lines": [
-              "6 rounds of:",
-              "– Athletes work for 3:00 and then rest 1:00 in a Fight Gone Bad AMRAP style workout.",
-              "*– Score is total reps completed at the end of the 6 rounds. Keep a running count from movement to movement, or add up all three during rest period.*",
-              "S1:",
-              "6 rounds for reps:",
-              "1:00 calorie row",
-              "1:00 burpees",
-              "1:00 double-under attempts",
-              "– Rest 1:00 between rounds.",
-              "S2:",
-              "5 rounds for reps:",
-              "1:00 calorie row",
-              "1:00 burpees",
-              "1:00 single-unders",
-              "– Rest 1:00 between rounds.",
-              "INTENDED STIMULUS",
-              "80-100 calories; 60-90 burpees; 300+ double-unders.",
-              "Fight Gone Bad style workout originally programmed for professional boxer Robert “The Ghost” Guerrero's training on 140617.",
-              "*Athletes should track individual movements each round and then try to beat the previous round's score.*",
-              "1 minute of  row ing",
-              "1 minute of  burpees",
-              "1 minute of double-unders",
-              "1 minute rest"
-            ]
-          }
-        ],
-        "note": "Benchmark: The Ghost"
       }
     ],
     "2026-04-02": [
@@ -800,24 +613,6 @@
               "rpe: 6-7",
               "* score: total m",
               "* aerobic power [lactate threshold]"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-05",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Hero WOD",
-              "Complete three rounds for time of:",
-              "30 Squat clean 42.5/30kg",
-              "30 Pull-ups",
-              "800m Run"
             ]
           }
         ]
@@ -2679,7 +2474,141 @@
         ],
         "note": "Benchmark: Kelly"
       }
+    ],
+    "2026-04-15": [
+      {
+        "date": "2026-04-15",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-15/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "instep rotations",
+              "calf stretch",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 air squats",
+              "100m run",
+              "10 ring rows"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "BACK SQUATS 14MIN",
+            "lines": [
+              "3 sets",
+              "5 back squats at 83%",
+              "1 drop set",
+              "max reps at 50%",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "5 front squats 70/50kg",
+              "10 strict pull ups",
+              "200m run",
+              "* aerobic power",
+              "squat + pull up"
+            ],
+            "sub_title": "amrap 16min"
+          }
+        ]
+      },
+      {
+        "date": "2026-04-15",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260415",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-15",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "* Metcon:-7 min AMRAP18 Cal Row15 Pull ups12 SitupsRest 1 mininto7 min AMRAP18 KB Swings 32/24kg15 Push ups12 V-ups",
+              "Then 10 mins to find 1 RM Power Snatch"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-15",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "Veteran LAPD officer and U.S. Marine Corps Reservist Sgt. Maj. Robert J. Cottle, 45, was killed by an improvised explosive device while on patrol in southern Afghanistan on Wednesday, March 24, 2010. Cottle joined the Marines at age 18, and the LAPD in 1990. His various LAPD assignments included Hollywood Vice, Southeast Area, LAPD Dive Team and most recently, SWAT.\nHe is survived by his wife, Emily; and 9-month-old daughter, Kaila. The LAPD established a\ntrust fund\nfor them.\nFirst posted",
+        "sections": [
+          {
+            "title": "May 30, 2010.",
+            "sub_title": "RJ",
+            "lines": [
+              "5 rounds for time of:",
+              "Run 800 meters",
+              "5 rope climbs to 15 feet",
+              "50 push-ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-15",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "CrossFit Total",
+            "lines": [
+              "Tulos: Kilojen yhteismäärä.",
+              "1RM  Back Squat",
+              "1RM  Shoulder Press",
+              "1RM  Deadlift"
+            ]
+          }
+        ],
+        "note": "Benchmark: CrossFit Total"
+      },
+      {
+        "date": "2026-04-15",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 18.1",
+            "lines": [
+              "Complete as many rounds as possible in 20 minutes of:",
+              "8 toes-to-bars",
+              "10 dumbbell hang clean and jerks",
+              "14-cal. row",
+              "*Men use 50-lb. dumbbell*"
+            ]
+          }
+        ],
+        "note": "Open: Open 18.1"
+      }
     ]
   },
-  "last_updated": "2026-04-14T10:44:54.930194"
+  "last_updated": "2026-04-15T02:45:34.320913"
 }
