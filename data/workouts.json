@@ -708,28 +708,6 @@
       },
       {
         "date": "2026-04-04",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Sealed Stone",
-            "lines": [
-              "400m Run (together)",
-              "120 Deadlifts 61kg/43kg",
-              "400m Run (together)",
-              "90 Hang Power Cleans 61kg/43kg",
-              "400m Run (together)",
-              "60 Shoulder to Overhead 61kg/43kg",
-              "400m Run (together)"
-            ],
-            "sub_title2": "Teams of 2 For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-04",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "U.S. Army Sgt. 1st Class Adrian Elizalde, 30, of North Bend, Oregon, assigned to the 2nd Battalion, 1st Special Forces Group (Airborne), based in Fort Lewis, Washington, died on Aug. 23, 2007, in Baghdad, Iraq, of wounds sustained from an improvised explosive device.\nHe is survived by his parents, Jorge and Teresa; sister, Rachel; and daughter, Sydney Grace.\nFirst posted",
@@ -2475,6 +2453,59 @@
     "2026-04-14": [
       {
         "date": "2026-04-14",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260414",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-14",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 12.5",
+            "lines": [
+              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
+              "100 pound Thruster, 3 reps",
+              "3 Chest to bar Pull-ups",
+              "100 pound Thruster, 6 reps",
+              "6 Chest to bar Pull-ups",
+              "100 pound Thruster, 9 reps",
+              "9 Chest to bar Pull-ups",
+              "100 pound Thruster, 12 reps",
+              "12 Chest to bar Pull-ups",
+              "100 pound Thruster, 15 reps",
+              "15 Chest to bar Pull-ups",
+              "100 pound Thruster, 18 reps",
+              "18 Chest to bar Pull-ups",
+              "100 pound Thruster, 21 reps",
+              "21 Chest to bar Pull-ups...",
+              "This is a timed workout. If you complete the round of 21, go on to 24. If you complete 24, go on to 27, etc.",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
+              "65 pound Thruster, 3 reps",
+              "3 Chest to bar Pull-ups",
+              "65 pound Thruster, 6 reps",
+              "6 Chest to bar Pull-ups",
+              "65 pound Thruster, 9 reps"
+            ]
+          }
+        ],
+        "note": "Open: Open 12.5"
+      },
+      {
+        "date": "2026-04-14",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-14/",
@@ -2524,14 +2555,69 @@
       },
       {
         "date": "2026-04-14",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260414",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-14-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "10 PVC Pass through",
+              "10 worlds greatest stretch",
+              "10 bootstrappers",
+              "then…",
+              "3 Rounds",
+              "200m Run",
+              "8 Medball Squat Clean Thrusters"
+            ]
+          },
+          {
+            "title": "AMRAP 20 Minutes",
+            "lines": [
+              "Run 400m",
+              "5 Thrusters 95/65lbs",
+              "Run 300m",
+              "10 Thrusters 95/65lbs",
+              "Run 200m",
+              "15 Thrusters 95/65lbs",
+              "*bike, ski or row if body is feeling cashed from Murph!"
+            ]
+          },
+          {
+            "title": "Extra Credit",
+            "lines": [
+              "6 Sets",
+              "10 Neutral Grip DB Bench Press",
+              "Rest 2:00"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-14",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Clean Pull + Hang Clean + Front Squat 6x3",
+              "Every 2:00 × 6 sets",
+              "1 Clean Pull + 1 Hang Squat Clean + 1 Front Squat @ 65–70% OR RPE 6-7"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "VW Beetle",
+            "lines": [
+              "4 sets",
+              "3:00 AMRAP",
+              "20 Box Step Overs 20\"",
+              "10 Deadlifts 70kg/48kg",
+              "* -rest 1:00 between sets-",
+              "* Start where you left off each time",
+              "* (Scored by Rounds + Reps)"
             ]
           }
         ]
@@ -2592,47 +2678,8 @@
           }
         ],
         "note": "Benchmark: Kelly"
-      },
-      {
-        "date": "2026-04-14",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 12.5",
-            "lines": [
-              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
-              "100 pound Thruster, 3 reps",
-              "3 Chest to bar Pull-ups",
-              "100 pound Thruster, 6 reps",
-              "6 Chest to bar Pull-ups",
-              "100 pound Thruster, 9 reps",
-              "9 Chest to bar Pull-ups",
-              "100 pound Thruster, 12 reps",
-              "12 Chest to bar Pull-ups",
-              "100 pound Thruster, 15 reps",
-              "15 Chest to bar Pull-ups",
-              "100 pound Thruster, 18 reps",
-              "18 Chest to bar Pull-ups",
-              "100 pound Thruster, 21 reps",
-              "21 Chest to bar Pull-ups...",
-              "This is a timed workout. If you complete the round of 21, go on to 24. If you complete 24, go on to 27, etc.",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
-              "65 pound Thruster, 3 reps",
-              "3 Chest to bar Pull-ups",
-              "65 pound Thruster, 6 reps",
-              "6 Chest to bar Pull-ups",
-              "65 pound Thruster, 9 reps"
-            ]
-          }
-        ],
-        "note": "Open: Open 12.5"
       }
     ]
   },
-  "last_updated": "2026-04-14T02:47:30.501337"
+  "last_updated": "2026-04-14T07:09:32.702846"
 }
