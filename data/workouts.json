@@ -1,102 +1,5 @@
 {
   "workouts": {
-    "2026-04-01": [
-      {
-        "date": "2026-04-01",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260401",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "BUY TICKETS NOW"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-01",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.2",
-            "lines": [
-              "1-2-3-4-5-6-7-8-9-10 reps for time of:",
-              "Dumbbell squats",
-              "Bar-facing burpees",
-              "*Men use 50-lb. dumbbells*",
-              "Workout 18.2a",
-              "1-rep-max clean",
-              "Time cap:",
-              "12 minutes to complete 18.2",
-              "AND",
-              "18.2a"
-            ]
-          }
-        ],
-        "note": "Open: Open 18.2"
-      },
-      {
-        "date": "2026-04-01",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-april-1-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "Rotating Stations Every :30 on a 5 minute clock",
-              "Station 1: Row, Ski, or Echo/Assault Bike",
-              "Station 2: Ring Row with tempo negative",
-              "Station 3: Hollow Hold or Bent knee L-Sit"
-            ]
-          },
-          {
-            "title": "Skill/Strength",
-            "lines": [
-              "Choose 1 of the following:",
-              "Every 2 minutes for 8 minutes",
-              "10 Unbroken Strict Chest to Bar Pull Ups",
-              "Use band assistance as needed to perform 10 unbroken reps.",
-              "OR",
-              "EMOM 8 minutes",
-              "1 Set Chest to Bar Pull ups* (kipping/butterfly)",
-              "*Athletes must be able to perform 3+ unassisted strict pull ups to be eligible for option 2."
-            ]
-          },
-          {
-            "title": "For time",
-            "lines": [
-              "10-20-30",
-              "Toes to bar",
-              "Calorie Row",
-              "Feel: Muscle Overload",
-              "Pacing: Sustain",
-              "Target Score: <9:00",
-              "Firebreather: <6:00"
-            ]
-          },
-          {
-            "title": "Power Clean",
-            "lines": [
-              "1 @ 80-90%",
-              "3 @ 75-80%",
-              "2 @ 80-85%",
-              "1 @ 85-90%",
-              "3 @ 80-85%",
-              "2 @ 85-90%",
-              "1 @ 90-95%",
-              "Drop and reset reps on triples and doubles. It’s ok if you don’t know your perecentages – your heavy single to start will give you guidance. )",
-              "The goal is for the second wave to be heavier than the first.",
-              "Spend at least 2:00 on a machine or walking nice and slow during your rest periods"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-04-02": [
       {
         "date": "2026-04-02",
@@ -173,94 +76,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-04-02",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-04-02/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "instep rotation",
-              "handwalk",
-              "sumo squat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 medball squats",
-              "10 medball presses",
-              "* *remaining time row"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "CONDITIONING 23MIN",
-            "lines": [
-              "8 x 2:00 amrap:",
-              "",
-              "18 wallballs 20/14lbs",
-              "* cal row in remaining time",
-              "* • rest 1:00 between amraps",
-              "* score: total row cal",
-              "* aerobic power [lactate threshold]"
-            ]
-          },
-          {
-            "title": "CORE 4MIN",
-            "lines": [
-              "* 15sec on / 15sec off x 4 sets",
-              "* rower pike ups"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-02",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "U.S. Army Spc. David E. Hickman, 23, of Greensboro, North Carolina, assigned to the 2nd Battalion, 325th Airborne Infantry Regiment, 2nd Brigade Combat Team, 82nd Airborne Division, based in Fort Bragg, North Carolina, died on Nov. 14, 2011, in Baghdad, Iraq, from wounds suffered when insurgents detonated an improvised explosive device near his vehicle.\nHe is survived by his wife, Calli; parents, David and Veronica; and brother, Devon.\nFirst posted",
-        "sections": [
-          {
-            "title": "Zeus",
-            "sub_title": "3 rounds for time of:",
-            "lines": [
-              "30 wall-ball shots",
-              "30 sumo deadlift high pulls",
-              "30 box jumps",
-              "30 push presses",
-              "30-calorie row",
-              "30 push-ups",
-              "10 back squats",
-              "♀ 14-lb medicine ball to a 9-foot target, 55-lb barbell, 20-inch box, bodyweight back squat",
-              "♂ 20-lb medicine ball to a 10-foot target, 75-lb barbell, 24-inch box, bodyweight back squat"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-02",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Christine",
-            "lines": [
-              "3 rounds for time of:",
-              "500m Row",
-              "12 Deadlifts (Bodyweight)",
-              "21 Box jumps (60/50 cm)",
-              "TC 15 min"
-            ]
-          }
-        ],
-        "note": "Benchmark: Christine"
       }
     ],
     "2026-04-03": [
@@ -774,20 +589,6 @@
               "minute 1: 30 double unders",
               "minute 2: 8 toes to bar",
               "if you would like to simply complete a conditioning piece, replace one of the movements with an erg."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-06",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Easter Monday – My Pet Rock (shared reps)60 Cal Row50 T2B40 Wall balls 9/6kg30 Cleans 60/42.5kg20 C2B Pull upsinto60 Cal Air Bike50 KB Swings 32/24kg40 Front Rack lunges 2×22.5/15kg30 Snatch 60/42.5kg20 HSPU*Putting the KB (24kg/16kg) down results in 5 Burpee penalty"
             ]
           }
         ]
@@ -2633,7 +2434,142 @@
         ],
         "note": "Benchmark: CrossFit Total"
       }
+    ],
+    "2026-04-16": [
+      {
+        "date": "2026-04-16",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-16/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "calf stretch",
+              "lat stretch",
+              "handwalk"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 straight leg sit ups",
+              "10 scap. push ups",
+              "10 squat jumps",
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "CONDITIONING 32MIN",
+            "lines": [
+              "20 single db hang clean and jerk 22,5/15kg",
+              "30 box jumps",
+              "20 toes to bar",
+              "30/24cal bike/ski",
+              "2min rest",
+              "",
+              "amrap 10min",
+              "10 single db hang clean and jerk 22,5/15kg",
+              "20 box jumps",
+              "10 toes to bar",
+              "20/16cal bike/ski"
+            ],
+            "sub_title": "amrap 20min"
+          }
+        ]
+      },
+      {
+        "date": "2026-04-16",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260416",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-16",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "EMOM for 20 minutes ( 5 rounds)1 – 30-40 DU’s2 – 20 sec handstand hold / walk3 – 10 – 20 sec L-Sit hold4 – 10 Ring Dips*Add reps to make any of this harder",
+              "8 min AMRAP20 KB Snatch 24/16kg20 Goblet Squats 32/20kg"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-16",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "Sgt. Gary \"Foo\" Morales, of the Port St. Lucie County Sheriff's Office in Florida, died Feb. 28, 2013. Morales, 35, was fatally shot during a traffic stop. The Air Force veteran was employed by the St. Lucie County Sherriff's Office for 12 years and had just been promoted to Sergeant Deputy.\nHe is survived by his wife, Holly; daughters, Brooklyn and Jordan; parents, William and Candy; brothers, Brian, Ken and Brad; grandmother, Romanita Rodriguez; and eight nieces and nephews.\nFirst posted",
+        "sections": [
+          {
+            "title": "Foo",
+            "sub_title": "For time:",
+            "lines": [
+              "13 bench presses",
+              "Then, complete as many rounds and reps as possible in 20 minutes of:",
+              "7 chest-to-bar pull-ups",
+              "77 double-unders",
+              "2 squat clean thrusters",
+              "28 sit-ups",
+              "*♀ 110 lb*",
+              "*♂ 170 lb*"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-16",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Christine",
+            "lines": [
+              "3 rounds for time of:",
+              "500m Row",
+              "12 Deadlifts (Bodyweight)",
+              "21 Box jumps (60/50 cm)",
+              "TC 15 min"
+            ]
+          }
+        ],
+        "note": "Benchmark: Christine"
+      },
+      {
+        "date": "2026-04-16",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 20.5",
+            "lines": [
+              "For time, partitioned any way:",
+              "40 muscle-ups",
+              "80-cal. row",
+              "120 wall-ball shots, 20-lb. ball to 10 ft.",
+              "Time cap: 20 min."
+            ]
+          }
+        ],
+        "note": "Open: Open 20.5"
+      }
     ]
   },
-  "last_updated": "2026-04-15T10:44:38.313839"
+  "last_updated": "2026-04-16T02:45:28.435672"
 }
