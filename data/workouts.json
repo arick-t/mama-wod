@@ -780,35 +780,6 @@
       },
       {
         "date": "2026-04-06",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Tempo Back Squat 5x3",
-              "Every 2:00 x 5 sets",
-              "3 Tempo Back Squats @ 65%",
-              "* (Tempo: 3 seconds down, 3 in the hole)"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Daffodil",
-            "lines": [
-              "50 Wall Balls 9kg/6kg",
-              "35 Toes to Bar",
-              "50 Box Jumps 9kg/6kg",
-              "35 Toes to Bar",
-              "50 Wall Balls 9kg/6kg"
-            ],
-            "sub_title2": "For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-06",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2478,6 +2449,39 @@
     "2026-04-15": [
       {
         "date": "2026-04-15",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260415",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-15",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 18.1",
+            "lines": [
+              "Complete as many rounds as possible in 20 minutes of:",
+              "8 toes-to-bars",
+              "10 dumbbell hang clean and jerks",
+              "14-cal. row",
+              "*Men use 50-lb. dumbbell*"
+            ]
+          }
+        ],
+        "note": "Open: Open 18.1"
+      },
+      {
+        "date": "2026-04-15",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-15/",
@@ -2526,15 +2530,55 @@
       },
       {
         "date": "2026-04-15",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260415",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-15-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "AMRAP 5 minutes",
+              "500m Bike",
+              "5 Burpees / 5 Box Jumps (alternate)",
+              "10 Alternating Hang DB Snatches"
             ]
+          },
+          {
+            "title": "AMRAP 2:30 x 6",
+            "lines": [
+              "8 Burpee Box Jumps 30/24″",
+              "20 Alternating DB Hang Snatches 50/35lbs",
+              "Max Rep BBJ in remaining time",
+              "Rest 1:30 between rounds",
+              "Score is total BBJ from the “max rep” portion."
+            ]
+          },
+          {
+            "title": "Pause Power Position Squat Clean",
+            "lines": [
+              "8×3*",
+              "*Split Jerk after final rep of each set. Do a full clean deadlift, then lower the bar into power position.",
+              "Spend 1-2 minutes flushing slowly on a machine between sets.)",
+              "We are looking for all leg drive and pull under, avoid moving the shoulders back and forth or bouncing bar to create momentum. This will be on the lighter side and feel very much like technique work."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-15",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Aston Martin DB5",
+            "lines": [
+              "7 Rounds",
+              "21 Shoulder Press 34kg/25kg",
+              "21 Sit Ups"
+            ],
+            "sub_title2": "For Time:"
           }
         ]
       },
@@ -2588,27 +2632,8 @@
           }
         ],
         "note": "Benchmark: CrossFit Total"
-      },
-      {
-        "date": "2026-04-15",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.1",
-            "lines": [
-              "Complete as many rounds as possible in 20 minutes of:",
-              "8 toes-to-bars",
-              "10 dumbbell hang clean and jerks",
-              "14-cal. row",
-              "*Men use 50-lb. dumbbell*"
-            ]
-          }
-        ],
-        "note": "Open: Open 18.1"
       }
     ]
   },
-  "last_updated": "2026-04-15T02:45:34.320913"
+  "last_updated": "2026-04-15T07:08:31.120084"
 }
