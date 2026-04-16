@@ -771,33 +771,6 @@
       },
       {
         "date": "2026-04-07",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Snatch Pull + Hang Snatch + Overhead Squat 7x3",
-              "Every 2:00 x 7 sets",
-              "1 Snatch Pull + 1 Hang Squat Snatch + 1 Overhead Squat @ 60–65% OR RPE 6",
-              "* The complex should be completed unbroken"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Cherry Blossom",
-            "lines": [
-              "3, 6, 9, 12...",
-              "Power Snatch 43kg/29kg",
-              "Burpee Over Bar"
-            ],
-            "sub_title2": "9:00 AMRAP"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-07",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2438,6 +2411,39 @@
     "2026-04-16": [
       {
         "date": "2026-04-16",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260416",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-16",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 20.5",
+            "lines": [
+              "For time, partitioned any way:",
+              "40 muscle-ups",
+              "80-cal. row",
+              "120 wall-ball shots, 20-lb. ball to 10 ft.",
+              "Time cap: 20 min."
+            ]
+          }
+        ],
+        "note": "Open: Open 20.5"
+      },
+      {
+        "date": "2026-04-16",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-16/",
@@ -2482,15 +2488,68 @@
       },
       {
         "date": "2026-04-16",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260416",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-16-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "1:30 Machine",
+              "1:30 Glute Activation Steps and Squats with Mini-band around knees",
+              "1:30 Machine",
+              "1:00 Bar Hang",
+              "1:30 Machine",
+              "20 Kick Stand DLs per leg"
             ]
+          },
+          {
+            "title": "The CrossFit Total",
+            "lines": [
+              "compare to 8/26/2024"
+            ]
+          },
+          {
+            "title": "For time",
+            "lines": [
+              "1:00 L-Sit Hold",
+              "200m Farmer’s Carry 70s/50s",
+              "1:00 HS Hold"
+            ]
+          },
+          {
+            "title": "Feel: Muscle Overload/Accessory",
+            "lines": [
+              "Pace: Quality",
+              "Target Score: <7 minutes"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-16",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Power Snatch 10x2",
+              "Every 1:00 x 10 sets",
+              "2 Power Snatch (singles) @ 65%  OR RPE 6"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Porsche 911",
+            "lines": [
+              "75/60 Calorie Row",
+              "50 Burpee Over Bar",
+              "25 Power Snatch 61kg/43kg",
+              "* (Scored by Time)"
+            ],
+            "sub_title2": "For Time:"
           }
         ]
       },
@@ -2549,27 +2608,8 @@
           }
         ],
         "note": "Benchmark: Christine"
-      },
-      {
-        "date": "2026-04-16",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 20.5",
-            "lines": [
-              "For time, partitioned any way:",
-              "40 muscle-ups",
-              "80-cal. row",
-              "120 wall-ball shots, 20-lb. ball to 10 ft.",
-              "Time cap: 20 min."
-            ]
-          }
-        ],
-        "note": "Open: Open 20.5"
       }
     ]
   },
-  "last_updated": "2026-04-16T02:45:28.435672"
+  "last_updated": "2026-04-16T07:14:48.674638"
 }
