@@ -1,83 +1,5 @@
 {
   "workouts": {
-    "2026-04-02": [
-      {
-        "date": "2026-04-02",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260402",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "BUY TICKETS NOW"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-02",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 15.3",
-            "lines": [
-              "Complete as many rounds and reps as possible in 14 minutes of:",
-              "7 muscle-ups",
-              "50 wall-ball shots",
-              "100 double-unders",
-              "*Men use 20-lb. ball to 10 feet, Women use 14-lb. ball to 9 feet*"
-            ]
-          }
-        ],
-        "note": "Open: Open 15.3"
-      },
-      {
-        "date": "2026-04-02",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-april-2-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "AMRAP 7 minutes",
-              "1k Bike or 500m Row"
-            ]
-          },
-          {
-            "title": "Then in time remaining, AMRAP of:",
-            "lines": [
-              "20 Jump Rope Reps*",
-              "10 Russian KB Swings",
-              ":30 Elbows Plank"
-            ]
-          },
-          {
-            "title": "AMRAP 13 minutes",
-            "lines": [
-              "120 Double Unders",
-              "18 Push Ups",
-              "10 Deadlifts 275/185lbs",
-              "Feel: Gas",
-              "Pacing: Sustain",
-              "Target Score: 3+ rounds (4:00/rd)",
-              "Firebreather: 4+ rounds (3:00/rd)"
-            ]
-          },
-          {
-            "title": "Shoulder Press",
-            "lines": [
-              "12-10-8-6",
-              "Start your set of 12 between 55 and 65%, then add weight each round.",
-              "Air Bike 1,000m Between Sets to Flush)"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-04-03": [
       {
         "date": "2026-04-03",
@@ -175,44 +97,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-04-03",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "Officer James Lowell Capoot, of the Vallejo Police Department, died Nov. 17, 2011, in the line of duty while chasing after an armed man suspected of robbing a bank. The 45-year-old, who lived in Vacaville, California, joined the Vallejo Police Department in 1993 and served as a motorcycle officer, motorcycle instructor, driving instructor and SWAT officer. He received two medals of courage, including one life-saving medal, as well as many other department commendations.\nCapoot is survived by his wife, Jennifer; three daughters, Jillian, Jamie and Justine; mother, Beverly Sue; brother and sister-in-law, Louie and Susie DeCarlo; and several other family members. He is preceded in death by his father, Lowell Jesse Capoot.\nFirst posted",
-        "sections": [
-          {
-            "title": "Capoot",
-            "sub_title": "For time:",
-            "lines": [
-              "100 push-ups",
-              "Run 800 meters",
-              "75 push-ups",
-              "Run 1,200 meters",
-              "50 push-ups",
-              "Run 1,600 meters",
-              "25 push-ups",
-              "Run 2,000 meters"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-03",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Gwen",
-            "lines": [
-              "Clean & Jerk 15-12- and 9 reps",
-              "Touch and go at floor only. Even a re-grip off the floor is a foul. No dumping. Use same load for each set. Rest as needed between sets."
-            ]
-          }
-        ],
-        "note": "Benchmark: Gwen"
       }
     ],
     "2026-04-04": [
@@ -765,21 +649,6 @@
               "* score: total reps",
               "* *rx+ option: handstand push ups",
               "* muscular endurance"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-07",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Gymnastics Strength:-E2MOM 3 x 5 Strict Pull ups (add weight if necessary)then90 secs max effort bmu’s, rest 90 seconds60 seconds max effort bmu’s, rest 60 seconds30 seconds max effort bmu’s, rest 30 seconds*if no muscle ups, stay with pull ups/C2B pull ups/butterfly practice or scale bmu effort for you",
-              "Metcon:-2 x rounds8/6 Row Cals + 3 Push Press to spike heart raterest 3 minsthen every 2 minutes for 6 rounds15/12 Cal RowPush Press 6 ? 8 ? 10 ? 12 ? 14 ? 16Rest 1 minRX 50/35kg"
             ]
           }
         ]
@@ -2396,16 +2265,17 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "CrossFit Total",
+            "title": "CrossFit Total II",
             "lines": [
-              "Tulos: Kilojen yhteismäärä.",
-              "1RM  Back Squat",
-              "1RM  Shoulder Press",
-              "1RM  Deadlift"
+              "In 45 mins find your 1RM for each item following",
+              "Post the total amount.",
+              "Clean",
+              "Bench press",
+              "Overhead squat"
             ]
           }
         ],
-        "note": "Benchmark: CrossFit Total"
+        "note": "Benchmark: CrossFit Total II"
       }
     ],
     "2026-04-16": [
@@ -2609,7 +2479,159 @@
         ],
         "note": "Benchmark: Christine"
       }
+    ],
+    "2026-04-17": [
+      {
+        "date": "2026-04-17",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-17/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "lying hip cross over",
+              "instep rotations",
+              "hand walk"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 good mornings",
+              "10/8cal row",
+              "10 reverse lunges"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "DEADLIFTS 15MIN",
+            "lines": [
+              "3 sets",
+              "5 deadlifts at 83%",
+              "1 drop set",
+              "max reps at 50%",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "40/32cal row",
+              "into",
+              "80 db push ups *",
+              "80 double db reverse lunges 2x22,5/15kg *",
+              "into",
+              "40/32cal row",
+              "* partition any way"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-04-17",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260417",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-17",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "* Metcon:-3 rounds400m run2 lengths front rack lunges 2×24/16kg2 Rope climbs or 4 Muscle ups (any) or6 C2B pull ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-17",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "Matthew S. Locke died on Sept. 25, 2021, while trying to save someone's life. Locke served in the Army National Guard, deploying to Afghanistan from May 2013 to February 2014. After returning home, he dedicated himself to law enforcement, working with multiple agencies, including the McNairy County Sheriff's Department, Adamsville Police Department, and Hardin County Sheriff's Department.\nLocke was the ultimate soldier and officer. He is survived by his daughter Riley; his parents, Lisa and Galen Benson and Lee and Kevin Locke; his siblings, Bobby, Autumn, Jake, Nathan Mizell, and Jessica Mizell; his grandparents, aunts and uncles, and friends.",
+        "sections": [
+          {
+            "title": "Then,",
+            "sub_title": "565-meter row or run",
+            "lines": [
+              "*♀ 125 lb*",
+              "*♂ 185 lb*"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-17",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "CrossFit Total",
+            "lines": [
+              "Tulos: Kilojen yhteismäärä.",
+              "1RM  Back Squat",
+              "1RM  Shoulder Press",
+              "1RM  Deadlift"
+            ]
+          }
+        ],
+        "note": "Benchmark: CrossFit Total"
+      },
+      {
+        "date": "2026-04-17",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 14.3",
+            "lines": [
+              "Complete as many reps as possible in 8 minutes of:",
+              "135-lb. deadlifts, 10 reps",
+              "15 box jumps, 24-inch",
+              "185-lb. deadlifts, 15 reps",
+              "15 box jumps, 24-inch",
+              "225-lb. deadlifts, 20 reps",
+              "15 box jumps, 24-inch",
+              "275-lb. deadlifts, 25 reps",
+              "15 box jumps, 24-inch",
+              "315-lb. deadlifts, 30 reps",
+              "15 box jumps, 24-inch",
+              "365-lb. deadlifts, 35 reps",
+              "15 box jumps, 24-inch",
+              "*WOMEN*",
+              "*- includes Masters Women up to 54 years old*",
+              "Complete as many reps as possible in 8 minutes of:",
+              "95-lb. deadlifts, 10 reps",
+              "15 box jumps, 20-inch",
+              "135-lb. deadlifts, 15 reps",
+              "15 box jumps, 20-inch",
+              "155-lb. deadlifts, 20 reps",
+              "15 box jumps, 20-inch",
+              "185-lb. deadlifts, 25 reps",
+              "15 box jumps, 20-inch",
+              "205-lb. deadlifts, 30 reps"
+            ]
+          }
+        ],
+        "note": "Open: Open 14.3"
+      }
     ]
   },
-  "last_updated": "2026-04-16T10:45:22.500198"
+  "last_updated": "2026-04-17T02:43:28.760404"
 }
