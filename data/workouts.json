@@ -814,30 +814,6 @@
       },
       {
         "date": "2026-04-08",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Peony",
-            "lines": [
-              "200m Run",
-              "5 Wall Walks",
-              "400m Run",
-              "10 Wall Walks",
-              "600m Run",
-              "15 Wall Walks",
-              "800m Run",
-              "Max Wall Walks in remaining time (20 Wall Walk Cap)",
-              "* (Scored by Reps in max set of Wall Walks)"
-            ],
-            "sub_title2": "20:00 AMRAP"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-08",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2483,6 +2459,59 @@
     "2026-04-17": [
       {
         "date": "2026-04-17",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260417",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-17",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 14.3",
+            "lines": [
+              "Complete as many reps as possible in 8 minutes of:",
+              "135-lb. deadlifts, 10 reps",
+              "15 box jumps, 24-inch",
+              "185-lb. deadlifts, 15 reps",
+              "15 box jumps, 24-inch",
+              "225-lb. deadlifts, 20 reps",
+              "15 box jumps, 24-inch",
+              "275-lb. deadlifts, 25 reps",
+              "15 box jumps, 24-inch",
+              "315-lb. deadlifts, 30 reps",
+              "15 box jumps, 24-inch",
+              "365-lb. deadlifts, 35 reps",
+              "15 box jumps, 24-inch",
+              "*WOMEN*",
+              "*- includes Masters Women up to 54 years old*",
+              "Complete as many reps as possible in 8 minutes of:",
+              "95-lb. deadlifts, 10 reps",
+              "15 box jumps, 20-inch",
+              "135-lb. deadlifts, 15 reps",
+              "15 box jumps, 20-inch",
+              "155-lb. deadlifts, 20 reps",
+              "15 box jumps, 20-inch",
+              "185-lb. deadlifts, 25 reps",
+              "15 box jumps, 20-inch",
+              "205-lb. deadlifts, 30 reps"
+            ]
+          }
+        ],
+        "note": "Open: Open 14.3"
+      },
+      {
+        "date": "2026-04-17",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-17/",
@@ -2532,14 +2561,77 @@
       },
       {
         "date": "2026-04-17",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260417",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-17-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "6 min AMRAP:",
+              "200/175m Row",
+              ":30 Hollow Body Hold",
+              "10 Medball Squats (wallballs in R3)",
+              "then,",
+              "Snatch review."
+            ]
+          },
+          {
+            "title": "Power Snatch",
+            "lines": [
+              "1 @ 80-90%",
+              "4 @ 70-75%",
+              "3 @ 75-80%",
+              "2 @ 80-85%",
+              "4 @ 75-80%",
+              "3 @ 80-85%",
+              "2 @ 85-90%",
+              "Drop and reset reps.",
+              "20 Min Max.)",
+              "It’s ok if you don’t know your perecentages – your heavy single to start will give you guidance. The goal is for the second wave to be heavier than the first.",
+              "Spend at least 2:00 on a machine or walking nice and slow during your rest periods"
+            ]
+          },
+          {
+            "title": "For time",
+            "lines": [
+              "Row 2,000m",
+              "55 Toes to Bar",
+              "95 Wallballs 20/14lbs to 10/9’",
+              "Feel: Gas",
+              "Pace: Sustain",
+              "Target Score: 17-25 minutes",
+              "Firebreather Score: sub 17 minutes"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-17",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Chevy Bel Air",
+            "lines": [
+              "9-7-5",
+              "Front Squats 70kg/48kg",
+              "Ring Muscle Up",
+              "* -@10:00-",
+              "5-7-9",
+              "Front Squats 70kg/48kg",
+              "Ring Muscle Up"
+            ],
+            "sub_title2": "For Time:"
+          },
+          {
+            "title": "Strength",
+            "lines": [
+              "Bench Press 5x5",
+              "Every 2:00 x 5 sets",
+              "5 Bench Press @ 70% OR RPE 7"
             ]
           }
         ]
@@ -2591,47 +2683,8 @@
           }
         ],
         "note": "Benchmark: CrossFit Total"
-      },
-      {
-        "date": "2026-04-17",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 14.3",
-            "lines": [
-              "Complete as many reps as possible in 8 minutes of:",
-              "135-lb. deadlifts, 10 reps",
-              "15 box jumps, 24-inch",
-              "185-lb. deadlifts, 15 reps",
-              "15 box jumps, 24-inch",
-              "225-lb. deadlifts, 20 reps",
-              "15 box jumps, 24-inch",
-              "275-lb. deadlifts, 25 reps",
-              "15 box jumps, 24-inch",
-              "315-lb. deadlifts, 30 reps",
-              "15 box jumps, 24-inch",
-              "365-lb. deadlifts, 35 reps",
-              "15 box jumps, 24-inch",
-              "*WOMEN*",
-              "*- includes Masters Women up to 54 years old*",
-              "Complete as many reps as possible in 8 minutes of:",
-              "95-lb. deadlifts, 10 reps",
-              "15 box jumps, 20-inch",
-              "135-lb. deadlifts, 15 reps",
-              "15 box jumps, 20-inch",
-              "155-lb. deadlifts, 20 reps",
-              "15 box jumps, 20-inch",
-              "185-lb. deadlifts, 25 reps",
-              "15 box jumps, 20-inch",
-              "205-lb. deadlifts, 30 reps"
-            ]
-          }
-        ],
-        "note": "Open: Open 14.3"
       }
     ]
   },
-  "last_updated": "2026-04-17T02:43:28.760404"
+  "last_updated": "2026-04-17T07:12:18.610797"
 }
