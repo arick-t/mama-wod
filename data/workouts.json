@@ -807,36 +807,6 @@
       },
       {
         "date": "2026-04-09",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Power Clean + Push Jerk 8x3",
-              "Every 1:30 x 8 sets",
-              "2 Power Cleans + 1 Push Jerks @ 65% OR RPE 6"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Freesia",
-            "lines": [
-              "3 sets",
-              "4:00 AMRAP",
-              "75 Double Unders",
-              "15 Front Squats 61kg/43kg",
-              "75 Double Unders",
-              "Max Power Cleans 61kg/43kg in the remaining time.",
-              "* -rest 2:00 between sets-",
-              "* (Scored by Total Power Cleans Reps)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-09",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2507,6 +2477,99 @@
       },
       {
         "date": "2026-04-18",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 16.3",
+            "lines": [
+              "Complete as many rounds and reps as possible in 7 minutes of:",
+              "10 power snatches",
+              "3 bar muscle-ups",
+              "*Men use 75 lb.*",
+              "*Women use 55 lb.*"
+            ]
+          }
+        ],
+        "note": "Open: Open 16.3"
+      },
+      {
+        "date": "2026-04-18",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-18-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "AMRAP 6 minutes",
+              "Partner 1: Air Bike",
+              "Partner 2: 6 Ring Rows + 6 DBL DB Deadlifts + 6 Bodyweight box Step Overs",
+              "Switch when partner 2 is complete, alternate for 3 rounds each or 6 minutes"
+            ]
+          },
+          {
+            "title": "AMRAP 24 Minutes, alternating movements with a partner:",
+            "lines": [
+              "4 Strict Pull Ups",
+              "6 Double DB Box Step Overs 50s/35s to 24/20″",
+              "8/6 Calorie Echo/Assault Bike or 100m Run",
+              "Athlete 1: 4 Strict Pull Up",
+              "Athlete 2: 6 Step Overs",
+              "Athlete 1: 8 Cal Bike/Run",
+              "Athlete 2: Pull Up",
+              "Athlete 1: Step overs",
+              "Etc.",
+              "Feel: Cardio",
+              "Pace: Sustain",
+              "Target Score: 18+ rounds total (1:20/rd or faster)",
+              "Firebreather Score: 22+ rounds total (1:05/rd or faster)"
+            ]
+          },
+          {
+            "title": "Shoulder Press",
+            "lines": [
+              "10-8-6-4",
+              "Start your set of 12 between 60 and 70%, then add weight each round.",
+              "Air Bike 1,000m Between Sets to Flush”)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-18",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "lines": [
+              "Teams of 3",
+              "AMRAP in 7:",
+              "50 Back Squats 135#/95#",
+              "50 Back Squats 185#/125#",
+              "Max Rep Back Squats 225#/155# (Rx+ = 275#/185#)",
+              "Rest 3:00",
+              "AMRAP 7:",
+              "50 Bench Press 95##/65#",
+              "50 Bench Press 135#/95#",
+              "Max Rep Bench Press 185#/115# (Rx+ 225#/125#)",
+              "Rest 3:00",
+              "AMRAP 7:",
+              "50 Deadlifts 135#/95#",
+              "50 Deadlift 225#/155#",
+              "Max Rep Deadlifts 315#/225# (Rx+ = 365#/255#)",
+              "Rest 3:00",
+              "For Time",
+              "89 Burpees - only one athlete works at a time."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-18",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2567,27 +2630,8 @@
           }
         ],
         "note": "Benchmark: The Gauntlet"
-      },
-      {
-        "date": "2026-04-18",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 16.3",
-            "lines": [
-              "Complete as many rounds and reps as possible in 7 minutes of:",
-              "10 power snatches",
-              "3 bar muscle-ups",
-              "*Men use 75 lb.*",
-              "*Women use 55 lb.*"
-            ]
-          }
-        ],
-        "note": "Open: Open 16.3"
       }
     ]
   },
-  "last_updated": "2026-04-18T02:42:23.945982"
+  "last_updated": "2026-04-18T06:47:44.662440"
 }
