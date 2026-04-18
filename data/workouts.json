@@ -1,86 +1,5 @@
 {
   "workouts": {
-    "2026-04-04": [
-      {
-        "date": "2026-04-04",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260404",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "BUY TICKETS NOW"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-04",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 15.2",
-            "lines": [
-              "Complete as many rounds and reps as possible in 14 minutes of:",
-              "7 muscle-ups",
-              "50 wall-ball shots",
-              "100 double-unders",
-              "*Men use 20-lb. ball to 10 feet, Women use 14-lb. ball to 9 feet*"
-            ]
-          }
-        ],
-        "note": "Open: Open 15.2"
-      },
-      {
-        "date": "2026-04-04",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-april-4-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "3 Rounds each with a partner",
-              "10/7 Calorie Bike",
-              "4 Burpee Broad Jumps",
-              "8 Light Alternating Hang Dumbbell Snatches",
-              "One partner works at a time, partner 2 starts their round when partner 1 pick up the dumbbell."
-            ]
-          },
-          {
-            "title": "AMRAP 24 minutes",
-            "lines": [
-              "Alternating MOVEMENTS with a partner",
-              "3 Wall Walks",
-              "10/7 Calorie C2 Bike or 8/5 Calorie Airbike",
-              "6 Devil’s Press 50s/35s",
-              "P1: Wall Walk",
-              "P2: Bike",
-              "P1: Devil’s Press",
-              "P2: Wall Walk",
-              "P1: Bike",
-              "P2: Devil’s press",
-              "Etc.",
-              "Feel: Cardio",
-              "Pacing: Sustain",
-              "Target Score: 12+ rounds",
-              "Firebreather: 16+ rounds"
-            ]
-          },
-          {
-            "title": "Power Snatch",
-            "lines": [
-              "10-8-6-4-2",
-              "Row 500m Between Sets to Flush",
-              "Start between 60 and 70% for your set of 10 with the goal of going heavier each set.”)"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-04-05": [
       {
         "date": "2026-04-05",
@@ -116,78 +35,6 @@
           }
         ],
         "note": "Open: Open 16.2"
-      },
-      {
-        "date": "2026-04-05",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-04-05/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Sunday Endurance for Open Gym",
-              "2:00 row, 1:00 rest",
-              "4:00 row, 1:00 rest",
-              "6:00 row, 1:00 rest",
-              "4:00 row, 1:00 rest",
-              "2:00 row",
-              "rpe: 6-7",
-              "* score: total m",
-              "* aerobic power [lactate threshold]"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-05",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "U.S. Army 1st Lt. Ashley White, 24, of Alliance, Ohio, assigned to the 230th Brigade Support Battalion, 30th Heavy Brigade Combat Team, North Carolina National Guard, based in Goldsboro, North Carolina, died on Oct. 22, 2011, in Kandahar Province, Afghanistan, from wounds suffered when insurgents attacked her unit with an improvised explosive device.\nShe is survived by her husband, Capt. Jason Stumpf; parents, Robert and Deborah; brother, Josh; and sister, Brittney.\nFirst posted",
-        "sections": [
-          {
-            "title": "White",
-            "sub_title": "5 rounds for time of:",
-            "lines": [
-              "3 rope climbs to 15 feet",
-              "10 toes-to-bars",
-              "21 overhead walking lunges",
-              "400-meter run",
-              "♀ 25-lb plate",
-              "♂ 45-lb plate"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-05",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Cindy XXX",
-            "lines": [
-              "Complete as much as possible in 20 minutes of:",
-              "10 Pull-ups",
-              "20  Push -ups",
-              "30 Squats",
-              "15 Pull-ups",
-              "30  Push -ups",
-              "45 Squats",
-              "20 Pull-ups",
-              "40  Push -ups",
-              "60 Squats",
-              "25 Pull-ups",
-              "50  Push -ups",
-              "75 Squats",
-              "30 Pull-ups",
-              "60  Push -ups",
-              "90 Squats"
-            ]
-          }
-        ],
-        "note": "Benchmark: Cindy XXX"
       }
     ],
     "2026-04-06": [
@@ -801,22 +648,6 @@
               "cal bike*",
               "*womens calories: 11-9-7-5",
               "* aerobic power [vo2 max]"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-09",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Strength:-E2MOM X 4 rounds (8 mins)6-10 Box Piked push ups (add deficit)",
-              "Metcon:-15 Min AMRAP15/12 Cal Bike20 Alternating DB Snatch 22.5/15kg15 T2B",
-              "Then 7 mins (including rest to find 1 RM Thruster)"
             ]
           }
         ]
@@ -2631,7 +2462,145 @@
         ],
         "note": "Benchmark: The Gauntlet"
       }
+    ],
+    "2026-04-19": [
+      {
+        "date": "2026-04-19",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-19/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "lat stretch",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. air squats",
+              "2. bike/ski",
+              "3. hollow hold",
+              "4. ring rows"
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "1. 16-20 wall balls",
+              "2. 10-15cal bike/ski",
+              "3. 6-10 strict toes to bar",
+              "4. 10-15 double db bent over row",
+              "5. rest",
+              "Sunday Endurance for Open Gym",
+              "on the 3:00 x 6 rounds:",
+              "",
+              "15/12 cal row [rpe 7-8]",
+              "15/12 cal bike or ski [rpe 4-5]",
+              "* aerobic power [lactate threshold]"
+            ],
+            "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-04-19",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "The Triple 3:",
+              "Complete the following for time:",
+              "3km Row",
+              "300 Double Unders",
+              "3 Mile Run"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-19",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "U.S. Army Spc. Christopher J. Coffland, 43, of Baltimore, Maryland, died Nov. 13, 2009, in Wardak province, Afghanistan, of wounds suffered when enemy forces attacked his unit with an improvised explosive device. Coffland, who joined the Army a month before reaching the enlistment age limit of 42, was assigned to the 323rd Military Intelligence Battalion at Fort Meade, Maryland. He was deployed to Afghanistan two weeks prior to his death.\nCoffland was a CrossFit athlete who was known to have demolished the U.S. Army Physical Fitness Test, which features push-ups, sit-ups and a 2-mile run. He was particularly fond of long workouts, heavy lifts, distance sprints, push-ups and sit-ups.\nCoffland is survived by his parents, David and Toni; his sisters, Lynn, Karen and Laurie; his brother, David; and many other friends and family members.\nFirst posted",
+        "sections": [
+          {
+            "title": "Coffland",
+            "sub_title": "Hang from a pull-up bar for 6 minutes",
+            "lines": [
+              "Each time you drop from the bar, complete:",
+              "800-meter run",
+              "30 push-ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-19",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Karen",
+            "lines": [
+              "\"Karen\"",
+              "For time",
+              "150 wall balls 20/14 lbs",
+              "time cap 12min"
+            ]
+          }
+        ],
+        "note": "Benchmark: Karen"
+      },
+      {
+        "date": "2026-04-19",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 21.4",
+            "lines": [
+              "*2021 Open Workout 21.4 Men Rx*",
+              "Games Season",
+              "Open",
+              "Feb 26 – March 16",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Quarterfinals",
+              "March 26-30",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Semifinals",
+              "April – June",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Games",
+              "July",
+              "The CrossFit Games",
+              "Masters CrossFit Games",
+              "Teenage CrossFit Games"
+            ]
+          }
+        ],
+        "note": "Open: Open 21.4"
+      }
     ]
   },
-  "last_updated": "2026-04-18T10:06:40.921052"
+  "last_updated": "2026-04-19T02:39:10.794427"
 }
