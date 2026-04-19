@@ -2466,6 +2466,45 @@
     "2026-04-19": [
       {
         "date": "2026-04-19",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 21.4",
+            "lines": [
+              "*2021 Open Workout 21.4 Men Rx*",
+              "Games Season",
+              "Open",
+              "Feb 26 – March 16",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Quarterfinals",
+              "March 26-30",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Semifinals",
+              "April – June",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Games",
+              "July",
+              "The CrossFit Games",
+              "Masters CrossFit Games",
+              "Teenage CrossFit Games"
+            ]
+          }
+        ],
+        "note": "Open: Open 21.4"
+      },
+      {
+        "date": "2026-04-19",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-19/",
@@ -2505,6 +2544,35 @@
               "* aerobic power [lactate threshold]"
             ],
             "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-04-19",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-19-2026/",
+        "sections": [
+          {
+            "title": "Extra Credit Skill",
+            "lines": [
+              "EMOM 10 Minutes",
+              "Rope Climb",
+              "Choose one of the following:",
+              "– Rx+: 1 Seated Legless Climb (seated up and down)",
+              "– Rx: 1 Legless Rope Climb",
+              "– Intermediate: 2 Rope Climbs",
+              "– Beginner: 1-2 Rope Climbs or Lay-to-stand"
+            ]
+          },
+          {
+            "title": "Extra Credit Endurance",
+            "lines": [
+              "AMRAP 8:00 x 3",
+              "Row for Meters",
+              "Rest 1:30",
+              "You should be SO sure that your round 1 pace is sustainable for three rounds. Adjust as you go round to round. Reminder: we love negative splits, we hate crash and burn aerobic work."
+            ]
           }
         ]
       },
@@ -2560,47 +2628,8 @@
           }
         ],
         "note": "Benchmark: Karen"
-      },
-      {
-        "date": "2026-04-19",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 21.4",
-            "lines": [
-              "*2021 Open Workout 21.4 Men Rx*",
-              "Games Season",
-              "Open",
-              "Feb 26 – March 16",
-              "Overview",
-              "Schedule",
-              "Leaderboard",
-              "Workouts",
-              "Quarterfinals",
-              "March 26-30",
-              "Overview",
-              "Schedule",
-              "Leaderboard",
-              "Workouts",
-              "Semifinals",
-              "April – June",
-              "Overview",
-              "Schedule",
-              "Leaderboard",
-              "Workouts",
-              "Games",
-              "July",
-              "The CrossFit Games",
-              "Masters CrossFit Games",
-              "Teenage CrossFit Games"
-            ]
-          }
-        ],
-        "note": "Open: Open 21.4"
       }
     ]
   },
-  "last_updated": "2026-04-19T02:39:10.794427"
+  "last_updated": "2026-04-19T07:14:26.798073"
 }
