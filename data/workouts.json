@@ -728,23 +728,6 @@
       },
       {
         "date": "2026-04-10",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Hyacinth",
-            "lines": [
-              "500/450m Row",
-              "25 Push Ups"
-            ],
-            "sub_title2": "15:00 AMRAP"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-10",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "U.S. Army Sgt. Jason A. Santora, of Farmingville, New York, assigned to the 3rd Battalion, 75th Ranger Regiment, based out of Fort Benning, Georgia, died in Logar Province, Afghanistan, on April 23, 2010, from wounds sustained during a firefight with insurgents.\nHe is survived by his parents, Gary and Theresa; and sister, Gina.\nFirst posted",
@@ -2517,6 +2500,56 @@
     "2026-04-20": [
       {
         "date": "2026-04-20",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260420",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-20",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 13.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "115 pound Shoulder to overhead, 5 reps",
+              "115 pound Deadlift, 10 reps",
+              "15 Box jumps, 24\" box",
+              "*WOMEN -*",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "75 pound Shoulder to overhead, 5 reps",
+              "75 pound Deadlift, 10 reps",
+              "15 Box jumps, 20\" box",
+              "*MASTERS MEN -*",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "95 pound Shoulder to overhead, 5 reps",
+              "95 pound Deadlift, 10 reps",
+              "15 Box jumps, 20\" box",
+              "*MASTERS WOMEN -*",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "55 pound Shoulder to overhead, 5 reps",
+              "55 pound Deadlift, 10 reps",
+              "15 Box jumps, 20\" box"
+            ]
+          }
+        ],
+        "note": "Open: Open 13.1"
+      },
+      {
+        "date": "2026-04-20",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-20/",
@@ -2566,14 +2599,75 @@
       },
       {
         "date": "2026-04-20",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260420",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-20-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "Murph Prep Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "3 min Cardio",
+              "then… 8 min CAP:",
+              "10 Banded pull-aparts>scap push-ups>push-up",
+              "10 scap pull-ups>RIng Row> kips/pull-ups",
+              "10 90/90s>BW lunges>air squats"
+            ]
+          },
+          {
+            "title": "Murph Prep Week 2",
+            "lines": [
+              "(RX’d)"
+            ]
+          },
+          {
+            "title": "For Time:",
+            "lines": [
+              "200m Run",
+              "5 Rounds of Cindy",
+              "200m Run",
+              "4 Rounds of Cindy",
+              "200m Run",
+              "3 Rounds of Cindy",
+              "200m Run",
+              "2 Rounds of Cindy",
+              "200m Run",
+              "1 Round of Cindy",
+              "** 1 Round of Cindy is: **",
+              "5 Pullups",
+              "10 Pushups",
+              "15 Air Squats",
+              "Scaled:",
+              "500m Run",
+              "into",
+              "5 Rounds",
+              "5 Ring Rows",
+              "10 Bar Push Ups",
+              "10 Alternating Box Step Ups",
+              "into",
+              "500m Run"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-20",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Super Mario",
+            "lines": [
+              "4 sets",
+              "4:00 AMRAP",
+              "400m Run",
+              "Max Rounds",
+              "10 Pull Ups",
+              "20 Push Up",
+              "30 Air Squats",
+              "* -rest 2:00 between sets-",
+              "* (Scored by total reps minus runs)"
             ]
           }
         ]
@@ -2635,44 +2729,8 @@
           }
         ],
         "note": "Benchmark: Kelly"
-      },
-      {
-        "date": "2026-04-20",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 13.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "115 pound Shoulder to overhead, 5 reps",
-              "115 pound Deadlift, 10 reps",
-              "15 Box jumps, 24\" box",
-              "*WOMEN -*",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "75 pound Shoulder to overhead, 5 reps",
-              "75 pound Deadlift, 10 reps",
-              "15 Box jumps, 20\" box",
-              "*MASTERS MEN -*",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "95 pound Shoulder to overhead, 5 reps",
-              "95 pound Deadlift, 10 reps",
-              "15 Box jumps, 20\" box",
-              "*MASTERS WOMEN -*",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "55 pound Shoulder to overhead, 5 reps",
-              "55 pound Deadlift, 10 reps",
-              "15 Box jumps, 20\" box"
-            ]
-          }
-        ],
-        "note": "Open: Open 13.1"
       }
     ]
   },
-  "last_updated": "2026-04-20T02:40:51.019717"
+  "last_updated": "2026-04-20T07:19:55.251836"
 }
