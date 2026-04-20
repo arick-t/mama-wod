@@ -2550,55 +2550,6 @@
       },
       {
         "date": "2026-04-20",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-04-20/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "calf stretch",
-              "lat stretch on box",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 push ups",
-              "10 squat jumps",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "BENCH PRESS 15MIN",
-            "lines": [
-              "3 sets",
-              "5 bench press at 85%",
-              "1 drop set",
-              "max reps at 50%",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 14MIN",
-            "lines": [
-              "8 handstand push-ups",
-              "16/12cal bike/ski",
-              "24 box jumps 60/50cm",
-              "* score: rounds + reps",
-              "* aerobic power [vo2 max]",
-              "* handstand push up"
-            ],
-            "sub_title": "amrap 14min"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-20",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-april-20-2026/",
@@ -2646,6 +2597,55 @@
               "into",
               "500m Run"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-20",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-20/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "calf stretch",
+              "lat stretch on box",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 prone snow angels",
+              "10 push ups",
+              "10 squat jumps",
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "BENCH PRESS 15MIN",
+            "lines": [
+              "3 sets",
+              "5 bench press at 85%",
+              "1 drop set",
+              "max reps at 50%",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 14MIN",
+            "lines": [
+              "8 handstand push-ups",
+              "16/12cal bike/ski",
+              "24 box jumps 60/50cm",
+              "* score: rounds + reps",
+              "* aerobic power [vo2 max]",
+              "* handstand push up"
+            ],
+            "sub_title": "amrap 14min"
           }
         ]
       },
@@ -2732,5 +2732,5 @@
       }
     ]
   },
-  "last_updated": "2026-04-20T07:19:55.251836"
+  "last_updated": "2026-04-20T08:33:46.045363"
 }
