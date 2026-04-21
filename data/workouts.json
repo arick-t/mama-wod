@@ -2561,44 +2561,6 @@
       },
       {
         "date": "2026-04-21",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-04-21/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "samson stretch",
-              "sumo squat stretch",
-              "calf stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "100m run",
-              "10 medball thrusters",
-              "10 rope rows"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "CONDITIONING 32MIN",
-            "lines": [
-              "5 L-sit rope pull ups",
-              "20 wall balls 20/14lbs",
-              "200m run",
-              "* score: slowest round",
-              "* aerobic power [vo2 max]"
-            ],
-            "sub_title": "on every 4:00 x 8 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-21",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-april-21-2026/",
@@ -2647,6 +2609,44 @@
               "Target Score: 3+ Rounds",
               "Firebreather: 5+ Rounds"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-21",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-21/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "samson stretch",
+              "sumo squat stretch",
+              "calf stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "100m run",
+              "10 medball thrusters",
+              "10 rope rows"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "CONDITIONING 32MIN",
+            "lines": [
+              "5 L-sit rope pull ups",
+              "20 wall balls 20/14lbs",
+              "200m run",
+              "* score: slowest round",
+              "* aerobic power [vo2 max]"
+            ],
+            "sub_title": "on every 4:00 x 8 rounds"
           }
         ]
       },
@@ -2727,5 +2727,5 @@
       }
     ]
   },
-  "last_updated": "2026-04-21T07:11:55.698760"
+  "last_updated": "2026-04-21T08:21:02.733330"
 }
