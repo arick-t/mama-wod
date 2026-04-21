@@ -709,25 +709,6 @@
       },
       {
         "date": "2026-04-11",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Magnolia",
-            "lines": [
-              "100-80-60-40-20",
-              "Calorie Air Bike",
-              "* -100ft Single Dumbbell Lunge 23kg/16kg after each set (together)-",
-              "* (Women Calories: 80-64-48-32-16)"
-            ],
-            "sub_title2": "Teams of 2 For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-11",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "Australian Army Sgt. Brett Wood MG, 32, of Ferntree Gully, Victoria, assigned to the 2nd Commando Regiment, based in Sydney, New South Wales, died on May 23, 2011, in Helmand Province, Afghanistan, after insurgents attacked him with an improvised explosive device.\nHe is survived by his wife, Elvi; mother, Allison; and father, David. Donations can be made in his name to the",
@@ -2537,6 +2518,49 @@
     "2026-04-21": [
       {
         "date": "2026-04-21",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260421",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-21",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 21.3",
+            "lines": [
+              "For total time:",
+              "15 front squats",
+              "30 toes-to-bars",
+              "15 thrusters",
+              "Then, rest 1 minute before continuing with:",
+              "15 front squats",
+              "30 chest-to-bar pull-ups",
+              "15 thrusters",
+              "Then, rest 1 minute before continuing with:",
+              "15 front squats",
+              "30 bar muscle-ups",
+              "15 thrusters",
+              "Workout 21.4 begins immediately upon completing or reaching the time cap for 21.3.",
+              "95 lb. for the front squats and thrusters",
+              "Time cap: 15 min."
+            ]
+          }
+        ],
+        "note": "Open: Open 21.3"
+      },
+      {
+        "date": "2026-04-21",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-21/",
@@ -2575,15 +2599,79 @@
       },
       {
         "date": "2026-04-21",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260421",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-21-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "20 Dead Bugs",
+              "20 Band Pull Aparts",
+              "Then,",
+              "3 rounds of:",
+              ":45 Machine or 150m Run",
+              "8 Russian KBS",
+              "8 Plank Shoulder Taps",
+              "then,"
             ]
+          },
+          {
+            "title": "Power Clean",
+            "lines": [
+              "1 @ 80-90%",
+              "4 @ 70-75%",
+              "3 @ 75-80%",
+              "2 @ 80-85%",
+              "4 @ 75-80%",
+              "3 @ 80-85%",
+              "2 @ 85-90%",
+              "Drop and reset reps.",
+              "20 min Max)"
+            ]
+          },
+          {
+            "title": "AMRAP 16 Minutes",
+            "lines": [
+              "28 Russian Kettlebell Swings 70/53lbs",
+              "C2 Machine*",
+              "8 Shoulder to overhead 185/125lbs",
+              "Rest 1:00",
+              "*C2 Machine options:",
+              "– 800/720m C2 Bike (0.9/0.8k Airbike)",
+              "– 400/360m Row",
+              "– 300/270m Ski",
+              "– 300m Outdoor Run",
+              "Feel: Gas/Muscle Overload",
+              "Pacing: Sustain",
+              "Target Score: 3+ Rounds",
+              "Firebreather: 5+ Rounds"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-21",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Deadstop Deadlift 5x3",
+              "Every 2:00 x 5 sets",
+              "3 Deadstop Deadlifts @ 70% OR RPE 7"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Yoshi",
+            "lines": [
+              "90/70 Calorie Air Bike",
+              "45 Deadlifts 102kg/70kg"
+            ],
+            "sub_title2": "For Time:"
           }
         ]
       },
@@ -2636,37 +2724,8 @@
           }
         ],
         "note": "Benchmark: Fat Helen"
-      },
-      {
-        "date": "2026-04-21",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 21.3",
-            "lines": [
-              "For total time:",
-              "15 front squats",
-              "30 toes-to-bars",
-              "15 thrusters",
-              "Then, rest 1 minute before continuing with:",
-              "15 front squats",
-              "30 chest-to-bar pull-ups",
-              "15 thrusters",
-              "Then, rest 1 minute before continuing with:",
-              "15 front squats",
-              "30 bar muscle-ups",
-              "15 thrusters",
-              "Workout 21.4 begins immediately upon completing or reaching the time cap for 21.3.",
-              "95 lb. for the front squats and thrusters",
-              "Time cap: 15 min."
-            ]
-          }
-        ],
-        "note": "Open: Open 21.3"
       }
     ]
   },
-  "last_updated": "2026-04-21T02:46:59.395188"
+  "last_updated": "2026-04-21T07:11:55.698760"
 }
