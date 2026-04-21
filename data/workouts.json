@@ -1,90 +1,5 @@
 {
   "workouts": {
-    "2026-04-07": [
-      {
-        "date": "2026-04-07",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260407",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "BUY TICKETS NOW"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-07",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 16.4",
-            "lines": [
-              "Complete as many rounds and reps as possible in 13 minutes of:",
-              "55 deadlifts",
-              "55 wall-ball shots",
-              "55-calorie row",
-              "55 handstand push-ups",
-              "*Men deadlift 225 lb. and throw 20-lb. ball to 10-ft. target*",
-              "*Women deadlift 155 lb. and throw 14-lb. ball to 9-ft. target*"
-            ]
-          }
-        ],
-        "note": "Open: Open 16.4"
-      },
-      {
-        "date": "2026-04-07",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-april-7-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "3 Rounds",
-              "Row 250/225m",
-              "50 Single Under > Double Unders",
-              "6 Strict Burpees (strict push up instead of a sprawl)"
-            ]
-          },
-          {
-            "title": "Bench Press",
-            "lines": [
-              "Max Rep Bench Press",
-              "Rest 3:00 between sets",
-              "Set 1: 70% 1RM (8+ reps)",
-              "Set 2: 60% 1RM (10+ reps)",
-              "Set 3: 50% 1RM (12+ reps))",
-              "Athletes should get less than 15 reps in set 1 and slightly more in subsequent sets."
-            ]
-          },
-          {
-            "title": "AMRAP 5 minutes",
-            "lines": [
-              "200 Double Unders",
-              "Max Distance Row in remaining time",
-              "Score is total meters rowed",
-              "Feel: Cardio/Gas",
-              "Pace: Reach",
-              "Target Score: 500/450m+",
-              "Firebreather Score: 700/650m+"
-            ]
-          },
-          {
-            "title": "5 Sets: Skill/Volume",
-            "lines": [
-              "5-10 Wall Walks",
-              "Echo Bike @ Flush Pace for 1:00",
-              "We’re not working on speed today, we’re chasing volume. So slow them down a bit and if you have to pause during a round, it’s too many."
-            ]
-          }
-        ]
-      }
-    ],
     "2026-04-08": [
       {
         "date": "2026-04-08",
@@ -162,89 +77,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-04-08",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-04-08/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "handwalk",
-              "instep rotations",
-              "calf stretch",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "150/125m row",
-              "100m run",
-              "20 single unders"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "CONDITIONING 32MIN",
-            "lines": [
-              "32:00 amrap",
-              "20 pull ups",
-              "400m run",
-              "60 double under",
-              "800/ 640m row",
-              "pull up"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-08",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "U.S. Army 1st Lt. Daren M. Hidalgo, 24, of Waukesha, Wisconsin, assigned to 3rd Squadron, 2nd Stryker Cavalry Regiment, based in Vilseck, Germany, died on Feb. 20, 2011, in Kandahar Province, Afghanistan, from wounds suffered when insurgents attacked his unit with an improvised explosive device. Two weeks prior to his death, he was hit by an earlier improvised explosive device. Despite his injuries, he stayed in the country and on patrols rather than return home.\nHe is survived by his father, Jorge; mother, Andrea; brothers, Miles and Jared; and sister, Carmen.\nFirst posted",
-        "sections": [
-          {
-            "title": "Hidalgo",
-            "sub_title": "For time:",
-            "lines": [
-              "Run 2 miles",
-              "Rest 2 minutes",
-              "20 squat cleans",
-              "20 box jumps",
-              "20 overhead walking lunges",
-              "20 box jumps",
-              "20 squat cleans",
-              "Rest 2 minutes",
-              "Run 2 miles",
-              "♀ 95-lb barbell, 20-inch box, 25-lb plate",
-              "♂ 135-lb barbell, 24-inch box, 45-lb plate",
-              "If you've got a 20-lb vest or body armor, wear it."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-08",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Nicole",
-            "lines": [
-              "20 min AMRAP:",
-              "Your final score is total pull-up reps after 20minutes.",
-              "Every Time you break on the pull ups go for a run! Choose a scaling option that always allows more than 10 Pull Up repetitions each time.",
-              "400 m  run  or erg cals 25/20",
-              "max rep unbroken pull-ups"
-            ]
-          }
-        ],
-        "note": "Benchmark: Nicole"
       }
     ],
     "2026-04-09": [
@@ -819,30 +651,6 @@
               "* aerobic power [lactate threshold]"
             ],
             "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-12",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Hero Wod:-",
-              "Andy",
-              "For Time",
-              "25 Thrusters 52.5/37.5kg",
-              "50 Box Jumps 24/20 in",
-              "75 Deadlifts",
-              "1.5 mile Run",
-              "75 Deadlifts",
-              "50 Box Jumps",
-              "25 Thrusters",
-              "Wear a Weight Vest (20/14 lb)"
-            ]
           }
         ]
       },
@@ -2725,7 +2533,182 @@
         ],
         "note": "Benchmark: Fat Helen"
       }
+    ],
+    "2026-04-22": [
+      {
+        "date": "2026-04-22",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-22/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "thoracic rotation",
+              "handwalk",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 straight leg sit ups",
+              "10 good mornings",
+              "10 push ups to down dog"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "DEADLIFTS 15MIN",
+            "lines": [
+              "3 sets",
+              "5 deadlifts at 85%",
+              "1 drop set",
+              "max reps at 50%",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "30 toes to bar",
+              "30 db hang power cleans",
+              "30 burpee to target",
+              "20 toes to bar",
+              "20 db hang power cleans",
+              "20 burpee to target",
+              "10 toes to bar",
+              "10 db hang power cleans",
+              "10 burpee to target",
+              "dumbbells: 2x22,5/15kg",
+              "* aerobic power [lactate threshold]",
+              "toes to bar"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-04-22",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260422",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-22",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "EMOM for 20 minutes ( 5 rounds)1 – 30-40 DU’s2 – 20 sec handstand hold / walk3 – 20 sec Dish hold4 – 10 Wide grip Ring Rows / 10 Box elevated ring rows*Add reps to make any of this harder",
+              "8 min AMRAP10 Overhead squats 42.5/30kg5 C2B"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-22",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "U.S. Marine Staff Sgt. Daniel Hansen died Feb. 14, 2009, in Farah Province, Afghanistan, when an improvised explosive device he was working on detonated.\nHansen is survived by his mother, Sheryll; father, Delbert; younger sister, Katie; and twin brother, Matthew (also a Marine).\nFirst posted",
+        "sections": [
+          {
+            "title": "Hansen",
+            "sub_title": "5 rounds for time of:",
+            "lines": [
+              "30 kettlebell swings",
+              "30 burpees",
+              "30 GHD sit-ups",
+              "*♀ 53 lb*",
+              "*♂ 70 lb*"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-22",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "J.J.",
+            "lines": [
+              "For time:",
+              "1 Squat  clean  185 lbs/125 lbs",
+              "10 parallette  handstand push-up s",
+              "2 Squat  clean  185 lbs/125 lbs",
+              "9 parallette  handstand push-up s",
+              "3 Squat  clean  185 lbs/125 lbs",
+              "8 parallette  handstand push-up s",
+              "4 Squat  clean  185 lbs/125 lbs",
+              "7 parallette  handstand push-up s",
+              "5 Squat  clean  185 lbs/125 lbs",
+              "6 parallette  handstand push-up s",
+              "6 Squat  clean  185 lbs/125 lbs",
+              "5 parallette  handstand push-up s",
+              "7 Squat  clean  185 lbs/125 lbs",
+              "4 parallette  handstand push-up s",
+              "8 Squat  clean  185 lbs/125 lbs",
+              "3 parallette  handstand push-up s",
+              "9 Squat  clean  185 lbs/125 lbs",
+              "2 parallette  handstand push-up s",
+              "10 Squat  clean  185 lbs/125 lbs",
+              "1 parallette  handstand push-up"
+            ]
+          }
+        ],
+        "note": "Benchmark: J.J."
+      },
+      {
+        "date": "2026-04-22",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 11.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 Double-unders",
+              "15 Power snatches (75lbs / 35kg)",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 Double-unders",
+              "15 Power snatches (55lbs / 25kg)",
+              "*MASTERS MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 Double-unders",
+              "15 Power snatches (65lbs / 30kg)",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 Double-unders",
+              "15 Power snatches (45lbs / 20kg)"
+            ]
+          }
+        ],
+        "note": "Open: Open 11.1"
+      }
     ]
   },
-  "last_updated": "2026-04-21T10:48:57.113695"
+  "last_updated": "2026-04-22T02:38:30.413319"
 }
