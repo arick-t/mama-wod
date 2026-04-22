@@ -829,29 +829,6 @@
       },
       {
         "date": "2026-04-13",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Half Murph",
-            "lines": [
-              "800m Run",
-              "* -into-",
-              "10 rounds",
-              "5 Strict Pull Ups (or 1 Rope Climb)",
-              "10 Push Ups",
-              "15 Air Squats",
-              "* -into-",
-              "800m Run"
-            ],
-            "sub_title2": "For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-13",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2537,6 +2514,55 @@
     "2026-04-22": [
       {
         "date": "2026-04-22",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260422",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-22",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 11.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 Double-unders",
+              "15 Power snatches (75lbs / 35kg)",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 Double-unders",
+              "15 Power snatches (55lbs / 25kg)",
+              "*MASTERS MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 Double-unders",
+              "15 Power snatches (65lbs / 30kg)",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 Double-unders",
+              "15 Power snatches (45lbs / 20kg)"
+            ]
+          }
+        ],
+        "note": "Open: Open 11.1"
+      },
+      {
+        "date": "2026-04-22",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-22/",
@@ -2592,15 +2618,73 @@
       },
       {
         "date": "2026-04-22",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260422",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-22-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "3 rounds",
+              "200m Run",
+              "8 Pause PVC OHS",
+              "10 scap pull-ups>Kip swings> ring row/pull-up",
+              ":15 Handstand Hold"
             ]
+          },
+          {
+            "title": "Strict Pull Up “Drop sets”",
+            "lines": [
+              "Strict Pull Up “Drop Sets”",
+              "E2MOM (12 min):",
+              "6 Rounds",
+              "1 Hard Set of Strict Pull Ups"
+            ]
+          },
+          {
+            "title": "Nancy",
+            "lines": [
+              "5 Rounds for time of:",
+              "400m Run",
+              "15 Overhead Squats, 95# / 65#",
+              "Feel: Cardio/Gas",
+              "Pace: Sustain/Reach",
+              "Target Score: 12-18 minutes",
+              "Firebreather Score: sub 12"
+            ]
+          },
+          {
+            "title": "Post Metcon",
+            "lines": [
+              "4-6 Sets",
+              "5-15 GHD Sit Ups",
+              "Rest 2:00 between sets"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-22",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Snatch + Overhead Squat 6x3",
+              "Every 2:00 × 6 sets",
+              "1 Squat Snatch + 2 Overhead Squats @ 70–72% OR RPE 7"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Luigi",
+            "lines": [
+              "30 Double Unders",
+              "15 Overhead Squats 34kg/25kg"
+            ],
+            "sub_title2": "10:00 AMRAP"
           }
         ]
       },
@@ -2672,43 +2756,8 @@
           }
         ],
         "note": "Benchmark: J.J."
-      },
-      {
-        "date": "2026-04-22",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 11.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "30 Double-unders",
-              "15 Power snatches (75lbs / 35kg)",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "30 Double-unders",
-              "15 Power snatches (55lbs / 25kg)",
-              "*MASTERS MEN*",
-              "-",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "30 Double-unders",
-              "15 Power snatches (65lbs / 30kg)",
-              "*MASTERS WOMEN*",
-              "-",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "30 Double-unders",
-              "15 Power snatches (45lbs / 20kg)"
-            ]
-          }
-        ],
-        "note": "Open: Open 11.1"
       }
     ]
   },
-  "last_updated": "2026-04-22T02:38:30.413319"
+  "last_updated": "2026-04-22T07:08:23.119842"
 }
