@@ -835,35 +835,6 @@
       },
       {
         "date": "2026-04-14",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Clean Pull + Hang Clean + Front Squat 6x3",
-              "Every 2:00 × 6 sets",
-              "1 Clean Pull + 1 Hang Squat Clean + 1 Front Squat @ 65–70% OR RPE 6-7"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "VW Beetle",
-            "lines": [
-              "4 sets",
-              "3:00 AMRAP",
-              "20 Box Step Overs 20\"",
-              "10 Deadlifts 70kg/48kg",
-              "* -rest 1:00 between sets-",
-              "* Start where you left off each time",
-              "* (Scored by Rounds + Reps)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-14",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2578,6 +2549,39 @@
     "2026-04-23": [
       {
         "date": "2026-04-23",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260423",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-23",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 15.3",
+            "lines": [
+              "Complete as many rounds and reps as possible in 14 minutes of:",
+              "7 muscle-ups",
+              "50 wall-ball shots",
+              "100 double-unders",
+              "*Men use 20-lb. ball to 10 feet, Women use 14-lb. ball to 9 feet*"
+            ]
+          }
+        ],
+        "note": "Open: Open 15.3"
+      },
+      {
+        "date": "2026-04-23",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-23/",
@@ -2612,14 +2616,83 @@
       },
       {
         "date": "2026-04-23",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260423",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-23-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "3:00 Machine, increase pace each minute",
+              "Then,",
+              "3 Rounds",
+              "20 Air Squats > 15 S-Leg Box Squats > 10 Pistols",
+              "15 Plank Transitions",
+              "100m Light Sled or Sandbag Carry"
+            ]
+          },
+          {
+            "title": "AMRAP 17 minutes",
+            "lines": [
+              "10 Alternating Leg Pistols",
+              "18 Push Ups",
+              "200m Sled Push or Sandbag Carry*",
+              "200m is perform as 50 meters out, 50 meters back, twice.",
+              "*Sled and Sandbag should be empty or lightly loaded so that stopping is not needed for any 50 meter length. Carry the sandbag anyhow.",
+              "Feel: Muscle Overload/Gas",
+              "Pacing: Sustain",
+              "Target Score: 4+ rounds",
+              "Firebreather: 5+ rounds"
+            ]
+          },
+          {
+            "title": "Extra Credit",
+            "lines": [
+              "Zone 2 Row"
+            ]
+          },
+          {
+            "title": "12:00 Zone 2 Warm Up",
+            "lines": [
+              "45:00-90:00 Row @ Zone 2"
+            ]
+          },
+          {
+            "title": "12:00 Zone 2 Cool Down",
+            "lines": [
+              "Your Zone 2 today should stay between 160bpm minus your age and 180bpm minus your age."
+            ]
+          },
+          {
+            "title": "Warm up:",
+            "lines": [
+              "Build from resting heartrate to 180bpm minus your age slowly over 12:00. This will feel incredibly slow, but will help your session a lot. Feel free to mix up machines, but end on rower."
+            ]
+          },
+          {
+            "title": "Cool down:",
+            "lines": [
+              "Spend 4:00 on the rower, keeping your heartrate above 150bpm minus your age, then slowly work down to resting for the next 8:00 on any machine or walking."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-23",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Wario",
+            "lines": [
+              "10 sets",
+              "2:00 AMRAP",
+              "10 Box Jumps (30/24)",
+              "Max Calorie Row",
+              "* -rest 2:00 between sets-",
+              "* (Scored by total Calories per)"
             ]
           }
         ]
@@ -2658,27 +2731,8 @@
           }
         ],
         "note": "Benchmark: Linda"
-      },
-      {
-        "date": "2026-04-23",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 15.3",
-            "lines": [
-              "Complete as many rounds and reps as possible in 14 minutes of:",
-              "7 muscle-ups",
-              "50 wall-ball shots",
-              "100 double-unders",
-              "*Men use 20-lb. ball to 10 feet, Women use 14-lb. ball to 9 feet*"
-            ]
-          }
-        ],
-        "note": "Open: Open 15.3"
       }
     ]
   },
-  "last_updated": "2026-04-23T02:50:01.853773"
+  "last_updated": "2026-04-23T07:12:53.803812"
 }
