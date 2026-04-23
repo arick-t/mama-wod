@@ -1,79 +1,5 @@
 {
   "workouts": {
-    "2026-04-09": [
-      {
-        "date": "2026-04-09",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260409",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "BUY TICKETS NOW"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-09",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 15.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 9 minutes of:",
-              "15 toes-to-bars",
-              "10 deadlifts (115 / 75 lb.)",
-              "5 snatches (115 / 75 lb.)",
-              "WORKOUT 15.1a",
-              "1-rep-max clean and jerk",
-              "6-minute time cap"
-            ]
-          }
-        ],
-        "note": "Open: Open 15.1"
-      },
-      {
-        "date": "2026-04-09",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-april-9-2026/",
-        "sections": [
-          {
-            "title": "Alternating movement Tabata :20 on :10 off)",
-            "lines": [
-              "3 rounds each",
-              "Air Bike",
-              "Burpees",
-              "Ring Rows"
-            ]
-          },
-          {
-            "title": "5 rounds for time",
-            "lines": [
-              "5 rounds for time",
-              "21/15 Calorie Air Bike",
-              "9 Burpee Pull Ups",
-              "Rest 1:30 between rounds",
-              "Feel: Gas",
-              "Pace: Reach/Sustain",
-              "Target Score: 17-21 minutes (3:00/rd working time MAX)",
-              "Firebreather Score: sub 17 minutes (<2:00/rd working time)"
-            ]
-          },
-          {
-            "title": "Extra Credit: April Monthly Challenge!",
-            "lines": [
-              "500m Bicep Curls",
-              "Prayers to your biceps!"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-04-10": [
       {
         "date": "2026-04-10",
@@ -154,92 +80,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-04-10",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-04-10/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "lying hip cross over",
-              "instep rotation",
-              "calf stretch",
-              "hamstring stretch on box"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 good morning",
-              "10 burpees",
-              "10 squat jumps"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "DEADLIFTS 15MIN",
-            "lines": [
-              "3 sets",
-              "5 deadlifts at 80%",
-              "1 drop set",
-              "max reps at 50%",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "5 burpee box jumps 60/50cm",
-              "5 deadlifts 100/70kg",
-              "* aerobic power [vo2 max]"
-            ],
-            "sub_title": "10 rounds for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-10",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "U.S. Army Sgt. Jason A. Santora, of Farmingville, New York, assigned to the 3rd Battalion, 75th Ranger Regiment, based out of Fort Benning, Georgia, died in Logar Province, Afghanistan, on April 23, 2010, from wounds sustained during a firefight with insurgents.\nHe is survived by his parents, Gary and Theresa; and sister, Gina.\nFirst posted",
-        "sections": [
-          {
-            "title": "Santora",
-            "sub_title": "3 rounds for reps of:",
-            "lines": [
-              "1 minute of squat cleans",
-              "1 minute of 20-foot shuttle sprints (20 feet forward + 20 feet backward = 1 rep)",
-              "1 minute of deadlifts",
-              "1 minute of burpees",
-              "1 minute of jerks",
-              "Rest 1 minute between rounds. On the shuttle sprints, 20 feet forward and 20 feet backward is 1 rep.",
-              "♀ 105-lb squat cleans, 165-lb deadlifts, 105-lb jerks",
-              "♂ 155-lb squat cleans, 245-lb deadlifts, 155-lb jerk"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-10",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Mary",
-            "lines": [
-              "20 minutes AMRAP",
-              "5  handstand push-up s",
-              "10 pistol squat, alternating",
-              "15 pull-ups"
-            ]
-          }
-        ],
-        "note": "Benchmark: Mary"
       }
     ],
     "2026-04-11": [
@@ -830,21 +670,6 @@
               "* aerobic power & vo2 max"
             ],
             "sub_title": "on the 3:00 x 4 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-14",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "8 x 1Snatch pull + Hang snatchEvery 90 secs at max for the day",
-              "10 min AMRAP7 Power Cleans7 Front Squats7 Push PressLoad: 70% of clean 1RM"
-            ]
           }
         ]
       },
@@ -1663,28 +1488,28 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "The Gauntlet",
+            "title": "Cindy XXX",
             "lines": [
-              "30 minute AMRAP of:",
-              "Jackie",
-              "Then",
-              "Karabell",
-              "Then",
-              "AMRAP of Cindy in the remaining 30 minutes:",
-              "Your result is rounds of Cindy completed.",
-              "1000m  Row",
-              "50  Thruster s (45/35 pound)",
+              "Complete as much as possible in 20 minutes of:",
+              "10 Pull-ups",
+              "20  Push -ups",
+              "30 Squats",
+              "15 Pull-ups",
+              "30  Push -ups",
+              "45 Squats",
+              "20 Pull-ups",
+              "40  Push -ups",
+              "60 Squats",
+              "25 Pull-ups",
+              "50  Push -ups",
+              "75 Squats",
               "30 Pull-ups",
-              "10 rounds",
-              "3  Snatch es (135/90 pounds)",
-              "15 Wall Ball (20/14lbs @ 10″/8″ target)",
-              "5 pull-up",
-              "10  push -up",
-              "15 squat"
+              "60  Push -ups",
+              "90 Squats"
             ]
           }
         ],
-        "note": "Benchmark: The Gauntlet"
+        "note": "Benchmark: Cindy XXX"
       }
     ],
     "2026-04-19": [
@@ -2732,7 +2557,186 @@
         ],
         "note": "Benchmark: Linda"
       }
+    ],
+    "2026-04-24": [
+      {
+        "date": "2026-04-24",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-24/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "thoracic rotation",
+              "handwalk",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 air squats",
+              "10/8cal row",
+              "10 push press"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "BACK SQUATS 14MIN",
+            "lines": [
+              "3 sets",
+              "5 back squats at 85%",
+              "1 drop set",
+              "max reps at 50%",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 12MIN",
+            "lines": [
+              "15 thrusters",
+              "25/20 cal row",
+              "12 thrusters",
+              "25/20 cal row",
+              "9 thrusters",
+              "25/20 cal row",
+              "* barbell: 50/35kg",
+              "* aerobic power [vo2 max]"
+            ],
+            "sub_title": "for time"
+          },
+          {
+            "title": "CORE & BACK 5MIN",
+            "lines": [
+              "2-4-6-8…",
+              "barbell roll outs",
+              "4-8-12-16…",
+              "barbell bent over row"
+            ],
+            "sub_title": "amrap 5min"
+          }
+        ]
+      },
+      {
+        "date": "2026-04-24",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260424",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-24",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Strength:-Every 90 seconds4 X 2 Push Press + 2 Split Jerkbuilding in weight",
+              "ThenE2MOMSplit Jerk 3,3,2,2,2",
+              "4 rounds15 Burpee Box jump overs 24/20″10 Power Snatch 50/35kg10 HSPU"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-24",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "In honor of Navy Lieutenant Michael McGreevy, 30, of Portville, NY, who was killed in Afghanistan June 28.\nWith heavy hearts we offer our prayers and condolences to his wife, Laura, and 14-month-old daughter, Molly.\nThe price of freedom, and its worth, is found in Michael's passing. The debt owed to Michael and his family can never be repaid but only honored by remembering Michael and remaining free.\nFirst posted",
+        "sections": [
+          {
+            "title": "Michael",
+            "sub_title": "3 rounds for time of:",
+            "lines": [
+              "Run 800 meters",
+              "50 back extensions",
+              "50 sit-ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-24",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "The Gauntlet",
+            "lines": [
+              "30 minute AMRAP of:",
+              "Jackie",
+              "Then",
+              "Karabell",
+              "Then",
+              "AMRAP of Cindy in the remaining 30 minutes:",
+              "Your result is rounds of Cindy completed.",
+              "1000m  Row",
+              "50  Thruster s (45/35 pound)",
+              "30 Pull-ups",
+              "10 rounds",
+              "3  Snatch es (135/90 pounds)",
+              "15 Wall Ball (20/14lbs @ 10″/8″ target)",
+              "5 pull-up",
+              "10  push -up",
+              "15 squat"
+            ]
+          }
+        ],
+        "note": "Benchmark: The Gauntlet"
+      },
+      {
+        "date": "2026-04-24",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 12.4",
+            "lines": [
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (20 lbs to 10' target)",
+              "90 Double-unders",
+              "30 Muscle-ups",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (14 lbs to 9' target)",
+              "90 Double-unders",
+              "30 Muscle-ups",
+              "MASTERS",
+              "*MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (20lbs to 9' target)",
+              "90 Double-unders",
+              "30 Muscle-ups",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (10 lbs to 9' target)",
+              "90 Double-unders"
+            ]
+          }
+        ],
+        "note": "Open: Open 12.4"
+      }
     ]
   },
-  "last_updated": "2026-04-23T10:51:12.735014"
+  "last_updated": "2026-04-24T02:51:11.381227"
 }
