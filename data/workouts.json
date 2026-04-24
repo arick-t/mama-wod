@@ -840,24 +840,6 @@
       },
       {
         "date": "2026-04-15",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Aston Martin DB5",
-            "lines": [
-              "7 Rounds",
-              "21 Shoulder Press 34kg/25kg",
-              "21 Sit Ups"
-            ],
-            "sub_title2": "For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-15",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2561,6 +2543,59 @@
     "2026-04-24": [
       {
         "date": "2026-04-24",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260424",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-24",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 12.4",
+            "lines": [
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (20 lbs to 10' target)",
+              "90 Double-unders",
+              "30 Muscle-ups",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (14 lbs to 9' target)",
+              "90 Double-unders",
+              "30 Muscle-ups",
+              "MASTERS",
+              "*MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (20lbs to 9' target)",
+              "90 Double-unders",
+              "30 Muscle-ups",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (10 lbs to 9' target)",
+              "90 Double-unders"
+            ]
+          }
+        ],
+        "note": "Open: Open 12.4"
+      },
+      {
+        "date": "2026-04-24",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-24/",
@@ -2622,15 +2657,76 @@
       },
       {
         "date": "2026-04-24",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260424",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-24-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "15 Russian KB Swings",
+              "500/450m Row",
+              "15 Russian KB Swings",
+              "15 Burpees"
             ]
+          },
+          {
+            "title": "Deadlift",
+            "lines": [
+              "3 Deficit Deadlifts 1-4″*",
+              "Perform a 3-second tempo to lower the bar on each repetition.",
+              "*Athletes may only use a deficit if they can get into a safe setup position AND lower the bar under control with a neutral spine. Otherwise, omit the deficit."
+            ]
+          },
+          {
+            "title": "10 Rounds for time",
+            "lines": [
+              "5 Deadlifts 155/105lbs",
+              "5 Burpees",
+              "Feel: Cardio",
+              "Pacing: Sustain",
+              "Target Score: Sub 8:00",
+              "Firebreather: Sub 6:00"
+            ]
+          },
+          {
+            "title": "Extra Credit",
+            "lines": [
+              "2 Rounds",
+              "1 Smooth Set of Wall Facing HSPU",
+              "Rest 2:00",
+              "1 Smooth Set of Strict HSPU",
+              "Rest 2:00",
+              "1 Smooth Set of Kipping HSPU",
+              "Rest 4:00",
+              "If done properly, you will be able to increase reps on round 2 for all three movement patterns. Flush (very slow) between sets on an air bike or 1 damper ski erg."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-24",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Power Clean + Hang Power Clean + Push Jerk 6x3",
+              "Every 2:00 × 6 sets",
+              "1 Power Clean + 1 Hang Power Clean + 1 Push Jerk @ 70–72% OR RPE 7"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Classic GWEN",
+            "lines": [
+              "15-12-9",
+              "Clean and Jerk 70kg/48kg",
+              "Sets must be completed unbroken (touch and go)"
+            ],
+            "sub_title2": "For Time:"
           }
         ]
       },
@@ -2696,47 +2792,8 @@
           }
         ],
         "note": "Benchmark: The Gauntlet"
-      },
-      {
-        "date": "2026-04-24",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 12.4",
-            "lines": [
-              "Complete as many rounds and reps as possible in 12 minutes of:",
-              "150 Wall balls (20 lbs to 10' target)",
-              "90 Double-unders",
-              "30 Muscle-ups",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 12 minutes of:",
-              "150 Wall balls (14 lbs to 9' target)",
-              "90 Double-unders",
-              "30 Muscle-ups",
-              "MASTERS",
-              "*MEN*",
-              "-",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 12 minutes of:",
-              "150 Wall balls (20lbs to 9' target)",
-              "90 Double-unders",
-              "30 Muscle-ups",
-              "*MASTERS WOMEN*",
-              "-",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 12 minutes of:",
-              "150 Wall balls (10 lbs to 9' target)",
-              "90 Double-unders"
-            ]
-          }
-        ],
-        "note": "Open: Open 12.4"
       }
     ]
   },
-  "last_updated": "2026-04-24T02:51:11.381227"
+  "last_updated": "2026-04-24T07:17:30.975724"
 }
