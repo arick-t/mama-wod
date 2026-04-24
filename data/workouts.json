@@ -1,87 +1,5 @@
 {
   "workouts": {
-    "2026-04-10": [
-      {
-        "date": "2026-04-10",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260410",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "BUY TICKETS NOW"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-10",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 15.5",
-            "lines": [
-              "27-21-15-9 reps for time of:",
-              "Row (calories)",
-              "Thrusters",
-              "*Men use 95 lb.*",
-              "*Women use 65 lb.*"
-            ]
-          }
-        ],
-        "note": "Open: Open 15.5"
-      },
-      {
-        "date": "2026-04-10",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-april-10-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "AMRAP 6 minutes",
-              "200m Jog",
-              "7 Kettlebell Swings",
-              "7 Goblet Squats",
-              "4 Get Overs"
-            ]
-          },
-          {
-            "title": "3 rounds for time",
-            "lines": [
-              "Run 500m",
-              "2 Squat Cleans 225/155lbs",
-              "16 Get Overs 30-40″",
-              "2 Squat Clean 225/155lbs",
-              "Do not exceed 80% of your 1RM Clean.",
-              "You MUST remove your hands from the box/blocks between reps. (Do NOT rebound your get-overs.)",
-              "*if space is limited, regular BJO and/or sharing equipment will be necessary",
-              "Feel: Gas",
-              "Pace: Sustain",
-              "Target Score: 13-16 minutes",
-              "Firebreather Score: sub 13"
-            ]
-          },
-          {
-            "title": "Extra Credit",
-            "lines": [
-              "2 Rounds",
-              "1 Smooth Set of Wall Facing HSPU",
-              "Rest 2:00",
-              "1 Smooth Set of Strict HSPU",
-              "Rest 2:00",
-              "1 Smooth Set of Kipping HSPU",
-              "Rest 4:00",
-              "If done properly, you will be able to increase reps on round 2 for all three movement patterns. Flush (very slow) between sets on an air bike or 1 damper ski erg."
-            ]
-          }
-        ]
-      }
-    ],
     "2026-04-11": [
       {
         "date": "2026-04-11",
@@ -166,88 +84,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-04-11",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-04-11/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "instep rotation",
-              "lat stretch",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "1. scap. push ups",
-              "2. straight leg sit ups",
-              "3. air squats"
-            ],
-            "sub_title": "30sec on / 15sec off x2 rounds"
-          },
-          {
-            "title": "CONDITIONING 30MIN",
-            "lines": [
-              "in teams of 2",
-              "for max reps/cals",
-              "1. db bench press 2x22,5/15kg",
-              "2. toes to bar",
-              "3. cal bike",
-              "* muscular endurance"
-            ],
-            "sub_title": "2:00 on / 00:30 off x 12 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-11",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "Australian Army Sgt. Brett Wood MG, 32, of Ferntree Gully, Victoria, assigned to the 2nd Commando Regiment, based in Sydney, New South Wales, died on May 23, 2011, in Helmand Province, Afghanistan, after insurgents attacked him with an improvised explosive device.\nHe is survived by his wife, Elvi; mother, Allison; and father, David. Donations can be made in his name to the",
-        "sections": [
-          {
-            "title": "Wood",
-            "sub_title": "5 rounds for time of:",
-            "lines": [
-              "400-meter run",
-              "10 burpee box jumps",
-              "10 sumo deadlift high pulls",
-              "10 thrusters",
-              "Rest 1 minute",
-              "♀ 20-inch box, 65-lb barbell",
-              "♂ 24-inch box, 95-lb barbell"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-11",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "DIANE",
-            "lines": [
-              "For time",
-              "21–15–9",
-              "Deadlift @100/70 kg",
-              "Handstand push up",
-              "Scaled",
-              "21-15-9 Reps For Time",
-              "Deadlifts (70/50kg)",
-              "Push-Ups",
-              "TC 10 min"
-            ]
-          }
-        ],
-        "note": "Benchmark: DIANE"
       }
     ],
     "2026-04-12": [
@@ -835,21 +671,6 @@
               "squat + pull up"
             ],
             "sub_title": "amrap 16min"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-15",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "* Metcon:-7 min AMRAP18 Cal Row15 Pull ups12 SitupsRest 1 mininto7 min AMRAP18 KB Swings 32/24kg15 Push ups12 V-ups",
-              "Then 10 mins to find 1 RM Power Snatch"
-            ]
           }
         ]
       },
@@ -2793,7 +2614,151 @@
         ],
         "note": "Benchmark: The Gauntlet"
       }
+    ],
+    "2026-04-25": [
+      {
+        "date": "2026-04-25",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-25/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "samson stretch",
+              "lying hip cross over",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 db deadlifts",
+              "10 ring rows",
+              "*partner is biking"
+            ],
+            "sub_title": "amrap 5min"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "in teams of 2",
+              "5 rounds",
+              "",
+              "48/42/36cal bike",
+              "36 db snatches 25/17,5kg",
+              "24 strict pull-ups"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-04-25",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260425",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-25",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Strength:-Alternates weeklyStrict Pull ups 3 x 5 add weight if necessary (every 2 mins) then90 secs max effort kipping pull ups, rest 90 seconds60 seconds max effort kipping pull ups, rest 60 seconds30 seconds max effort kipping pull ups, rest 30 seconds",
+              "16 Rounds, YGIG with a partner (8 each)9/7 Cal Bike5 Power Clean & Jerks 60/42.5kg7 T2B*Target 1 min rounds, so scale where needed"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-25",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "U.S. Air Force Master Sgt. Thomas \"Ozzy\" Crowell, 36, of Neosho, Missouri, died Nov. 1, 2007, near Balad Air Base in Iraq. The special agent for the Air Force Office of Special Investigations, Detachment 301 at Scott Air Force Base, Illinois, sustained wounds from an improvised explosive device that struck his vehicle.\nCrowell is survived by his wife, Carol; two sons, Eric and Ian; and his mother, Peggy Whipp.\nFirst posted",
+        "sections": [
+          {
+            "title": "Ozzy",
+            "sub_title": "7 rounds for time of:",
+            "lines": [
+              "11 deficit handstand push-ups",
+              "1,000-meter run"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-25",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Jackie",
+            "lines": [
+              "For time",
+              "1000 m Row",
+              "50 Thruster 20/15kg",
+              "30 Pull up",
+              "*TC: 12 Mins",
+              "Tehdään lähtö porrastetusti!"
+            ]
+          }
+        ],
+        "note": "Benchmark: Jackie"
+      },
+      {
+        "date": "2026-04-25",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 24.2",
+            "lines": [
+              "*2024 Open Workout 24.2 Women Rx*",
+              "Games Season",
+              "Open",
+              "Feb 26 – March 16",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Quarterfinals",
+              "March 26-30",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Semifinals",
+              "April – June",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Games",
+              "July",
+              "The CrossFit Games",
+              "Masters CrossFit Games",
+              "Teenage CrossFit Games"
+            ]
+          }
+        ],
+        "note": "Open: Open 24.2"
+      }
     ]
   },
-  "last_updated": "2026-04-24T11:02:18.298986"
+  "last_updated": "2026-04-25T02:42:22.241757"
 }
