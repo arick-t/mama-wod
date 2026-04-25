@@ -832,33 +832,6 @@
       },
       {
         "date": "2026-04-16",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Power Snatch 10x2",
-              "Every 1:00 x 10 sets",
-              "2 Power Snatch (singles) @ 65%  OR RPE 6"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Porsche 911",
-            "lines": [
-              "75/60 Calorie Row",
-              "50 Burpee Over Bar",
-              "25 Power Snatch 61kg/43kg",
-              "* (Scored by Time)"
-            ],
-            "sub_title2": "For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-16",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2618,6 +2591,59 @@
     "2026-04-25": [
       {
         "date": "2026-04-25",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260425",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-25",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 24.2",
+            "lines": [
+              "*2024 Open Workout 24.2 Women Rx*",
+              "Games Season",
+              "Open",
+              "Feb 26 – March 16",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Quarterfinals",
+              "March 26-30",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Semifinals",
+              "April – June",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Games",
+              "July",
+              "The CrossFit Games",
+              "Masters CrossFit Games",
+              "Teenage CrossFit Games"
+            ]
+          }
+        ],
+        "note": "Open: Open 24.2"
+      },
+      {
+        "date": "2026-04-25",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-25/",
@@ -2656,15 +2682,74 @@
       },
       {
         "date": "2026-04-25",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260425",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-25-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "4 rounds each",
+              ":20 Row",
+              ":10 Rest",
+              ":20 Wallballs",
+              ":10 Rest",
+              ":20 Handstand Hold",
+              ":10 Rest"
             ]
+          },
+          {
+            "title": "For time with a partner",
+            "lines": [
+              "21-15-9-15-21",
+              "Thrusters 100/70lbs",
+              "Calorie Row",
+              "Execution:",
+              "P1: 21 Thrusters",
+              "P2: 21 Thrusters",
+              "P1: 21 Calorie Row",
+              "P2: 21 Calorie Row",
+              "Continue alternating partners, completing all sets of each movement.",
+              "Feel: Gas",
+              "Pacing: Reach",
+              "Target Score: Sub 18 (Sub 9 per athlete)",
+              "Firebreather: Sub 14 (sub 7 per athlete)"
+            ]
+          },
+          {
+            "title": "Tempo Pull to Power Position into Squat Snatch",
+            "lines": [
+              "2×4 @ 65%",
+              "Tempo Pull to Mid Thigh into Squat Snatch",
+              "1×4 @ 65-70%",
+              "Tempo Pull to Knee into Squat Snatch",
+              "1×4 @ 65-75%",
+              "Row 500m at flush pace between sets",
+              "Drop and reset between each )",
+              "Use the percentage range as a rough guide.Your pull from the floor to each position should be very slow and technical. The more you need work on technique, the slower and lighter."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-25",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Mayhem Classic Chipper",
+            "lines": [
+              "25 Burpee Box Step Overs 20\"",
+              "50/40 Calorie Air Bike",
+              "50 GHDs",
+              "25 Bar Muscle Up",
+              "50 GHDs",
+              "50/40 Calorie Air Bike",
+              "25 Burpee Box Step Overs 20\""
+            ],
+            "sub_title2": "Teams of 2 For Time:"
           }
         ]
       },
@@ -2718,47 +2803,8 @@
           }
         ],
         "note": "Benchmark: Jackie"
-      },
-      {
-        "date": "2026-04-25",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 24.2",
-            "lines": [
-              "*2024 Open Workout 24.2 Women Rx*",
-              "Games Season",
-              "Open",
-              "Feb 26 – March 16",
-              "Overview",
-              "Schedule",
-              "Leaderboard",
-              "Workouts",
-              "Quarterfinals",
-              "March 26-30",
-              "Overview",
-              "Schedule",
-              "Leaderboard",
-              "Workouts",
-              "Semifinals",
-              "April – June",
-              "Overview",
-              "Schedule",
-              "Leaderboard",
-              "Workouts",
-              "Games",
-              "July",
-              "The CrossFit Games",
-              "Masters CrossFit Games",
-              "Teenage CrossFit Games"
-            ]
-          }
-        ],
-        "note": "Open: Open 24.2"
       }
     ]
   },
-  "last_updated": "2026-04-25T02:42:22.241757"
+  "last_updated": "2026-04-25T06:52:17.103508"
 }
