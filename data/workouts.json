@@ -1,91 +1,5 @@
 {
   "workouts": {
-    "2026-04-11": [
-      {
-        "date": "2026-04-11",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260411",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "BUY TICKETS NOW"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-11",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.4",
-            "lines": [
-              "For time:",
-              "21 deadlifts, 225 lb.",
-              "21 handstand push-ups",
-              "15 deadlifts, 225 lb.",
-              "15 handstand push-ups",
-              "9 deadlifts, 225 lb.",
-              "9 handstand push-ups",
-              "21 deadlifts, 315 lb.",
-              "50-ft. handstand walk",
-              "15 deadlifts, 315 lb.",
-              "50-ft. handstand walk",
-              "9 deadlifts, 315 lb.",
-              "50-ft. handstand walk",
-              "Time cap: 9 min."
-            ]
-          }
-        ],
-        "note": "Open: Open 18.4"
-      },
-      {
-        "date": "2026-04-11",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-april-11-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "3 Rounds each",
-              "Partner 1: 250/225m Row",
-              "Partner 2: 8 Pause PVC OHS + Squat hold in time remaining",
-              "*Partners switch when rowing is complete. Both athletes perform 6 Synchro burpees when switching stations."
-            ]
-          },
-          {
-            "title": "AMRAP 22 Minutes with a partner",
-            "lines": [
-              "100 Bar Facing Burpees",
-              "80 Overhead Squats 75/55lbs",
-              "Partners alternate every 30 seconds, picking up where the other left off.",
-              "E.g. Partner 1 starts and completes 12 burpees in 30 seconds. Partner 2 then picks up with rep 13 and accumulates reps for 30 seconds.",
-              "Feel: Cardio",
-              "Pace: Reach/Sustain",
-              "Target Score: 2+ rounds",
-              "Firebreather Score: 2+100"
-            ]
-          },
-          {
-            "title": "Tempo Pull to Power Position into Squat Snatch",
-            "lines": [
-              "1×5 @ 60%",
-              "Tempo Pull to Mid Thigh into Squat Snatch",
-              "1×5 @ 60-65%",
-              "Tempo Pull to Knee into Squat Snatch",
-              "1×5 @ 60-70%",
-              "Row 500m at flush pace between sets",
-              "Drop and reset between each )"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-04-12": [
       {
         "date": "2026-04-12",
@@ -110,89 +24,6 @@
           }
         ],
         "note": "Open: Open 23.1"
-      },
-      {
-        "date": "2026-04-12",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-04-12/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "lat stretch",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. prone snow angels",
-              "2. bike/ski",
-              "3. ring rows",
-              "4. box step ups"
-            ],
-            "sub_title": "30sec on / 15sec off x2 rounds"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "1. 3-5 wall walks",
-              "2. 10-15cal bike/ski",
-              "3. 6-10 strict chin ups",
-              "4. 12-20 db box step ups (50cm)",
-              "5. rest",
-              "Sunday Endurance for Open Gym",
-              "3-4 rounds:",
-              "",
-              "8:00 moderate-hard [rpe 6-7]",
-              "2:00 easy [rpe 2-3]",
-              "choose: run, bike, row, or ski",
-              "* aerobic power [lactate threshold]"
-            ],
-            "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-12",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "U.S. Army Spc. Adam Hamilton, 22, of Kent, Ohio, assigned to the 4th Squadron, 4th Cavalry Regiment, 1st Brigade Combat Team, 1st Infantry Division, based in Fort Riley, Kansas, died on May, 28, 2011 in Haji Ruf, Afghanistan, of wounds suffered when enemy forces attacked his unit with an improvised explosive device.\nHe is survived by his father, Scott; stepmother, Connie; mother, Nancy Krestan; brothers, Brandon and Nick Krestan; and sisters, Shawney and Taya.\nFirst posted",
-        "sections": [
-          {
-            "title": "Hamilton",
-            "sub_title": "3 rounds for time of:",
-            "lines": [
-              "Row 1,000 meters",
-              "50 push-ups",
-              "Run 1,000 meters",
-              "50 pull-ups"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-12",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Baseline",
-            "lines": [
-              "For time:",
-              "row  500 m",
-              "40 squats",
-              "30 sit-ups",
-              "20  push -ups",
-              "10 pull-ups"
-            ]
-          }
-        ],
-        "note": "Benchmark: Baseline"
       }
     ],
     "2026-04-13": [
@@ -827,21 +658,6 @@
               "20/16cal bike/ski"
             ],
             "sub_title": "amrap 20min"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-16",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "EMOM for 20 minutes ( 5 rounds)1 – 30-40 DU’s2 – 20 sec handstand hold / walk3 – 10 – 20 sec L-Sit hold4 – 10 Ring Dips*Add reps to make any of this harder",
-              "8 min AMRAP20 KB Snatch 24/16kg20 Goblet Squats 32/20kg"
-            ]
           }
         ]
       },
@@ -2804,7 +2620,143 @@
         ],
         "note": "Benchmark: Jackie"
       }
+    ],
+    "2026-04-26": [
+      {
+        "date": "2026-04-26",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-26/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "instep rotations",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. air squats",
+              "2. bike/ski",
+              "3. hollow hold",
+              "4. burpees"
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "1. 30-40sec wall sit",
+              "2. 10-15cal bike/ski",
+              "3. 6-10 feet elevated ring rows",
+              "4. 8-12 double db burpee deadlifts",
+              "5. rest",
+              "Sunday Endurance for Open Gym",
+              "5 rounds",
+              "",
+              "3:00 row",
+              "3:00 bike",
+              "round 1: rpe 2",
+              "round 2: rpe 3",
+              "round 3: rpe 4",
+              "round 4: rpe 5",
+              "round 5: rpe 6",
+              "* aerobic power [lactate threshold]"
+            ],
+            "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-04-26",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Lupo",
+              "For Time (with a Partner):",
+              "Cash-In: 1,943 meter Row",
+              "100 Wall Ball Shots 9/6kg",
+              "90 Deadlifts 61/43kg",
+              "80 Hand Release Push-Ups",
+              "70 Box Jumps 24/20 in",
+              "60 Toes-to-Bars",
+              "50 Burpees",
+              "40 Power Cleans 61/43kg",
+              "30 Push Presses 61/43kg",
+              "20 Weighted Lunges 9/6kg",
+              "10 Thrusters 61/43kg",
+              "Cash-Out: 1,967 Row",
+              "For ease, option to make the Barbell 60/42.5kg"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-26",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "U.S. Army Captain Shawn G. Hogan, of Salem, New Hampshire, died Oct. 17, 2012. The 28-year-old was fatally injured in a training exercise at Land Between the Lakes National Recreation Area in Golden Pond, Kentucky. He was assigned to Company B, 4th Battalion, 5th Special Forces Group (Airborne) in Fort Campbell.\nHogan is survived by his parents, Richard and Jean; and sister, Nicole.\nFirst posted",
+        "sections": [
+          {
+            "title": "Shawn",
+            "sub_title": "For time:",
+            "lines": [
+              "Run 5 miles",
+              "Run in 5-minute intervals, stopping after each to perform 50 squats and 50 push-ups before beginning the next 5-minute run interval."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-26",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Isabel",
+            "lines": [
+              "For time",
+              "30 Snatch 60/42,5 kg",
+              "Scaled",
+              "30 Hang snatch",
+              "TC 6 min",
+              "the load should feel moderate, not maximal",
+              "sprint  -style workout",
+              "load suggestion ~50% of 1rm",
+              "*power snatch es recommended*"
+            ]
+          }
+        ],
+        "note": "Benchmark: Isabel"
+      },
+      {
+        "date": "2026-04-26",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 20.1",
+            "lines": [
+              "10 rounds for time of:",
+              "8 ground-to-overheads, 95 lb.",
+              "10 bar-facing burpees",
+              "Time cap: 15 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 20.1"
+      }
     ]
   },
-  "last_updated": "2026-04-25T10:15:00.589808"
+  "last_updated": "2026-04-26T02:41:34.033304"
 }
