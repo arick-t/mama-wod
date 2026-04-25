@@ -2644,44 +2644,6 @@
       },
       {
         "date": "2026-04-25",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-04-25/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "samson stretch",
-              "lying hip cross over",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 db deadlifts",
-              "10 ring rows",
-              "*partner is biking"
-            ],
-            "sub_title": "amrap 5min"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "in teams of 2",
-              "5 rounds",
-              "",
-              "48/42/36cal bike",
-              "36 db snatches 25/17,5kg",
-              "24 strict pull-ups"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-25",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-april-25-2026/",
@@ -2728,6 +2690,44 @@
               "Drop and reset between each )",
               "Use the percentage range as a rough guide.Your pull from the floor to each position should be very slow and technical. The more you need work on technique, the slower and lighter."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-25",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-25/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "samson stretch",
+              "lying hip cross over",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 db deadlifts",
+              "10 ring rows",
+              "*partner is biking"
+            ],
+            "sub_title": "amrap 5min"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "in teams of 2",
+              "5 rounds",
+              "",
+              "48/42/36cal bike",
+              "36 db snatches 25/17,5kg",
+              "24 strict pull-ups"
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -2806,5 +2806,5 @@
       }
     ]
   },
-  "last_updated": "2026-04-25T06:52:17.103508"
+  "last_updated": "2026-04-25T08:06:28.388607"
 }
