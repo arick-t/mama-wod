@@ -1,31 +1,5 @@
 {
   "workouts": {
-    "2026-04-12": [
-      {
-        "date": "2026-04-12",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 23.1",
-            "lines": [
-              "Complete as many reps as possible in 14 minutes of:",
-              "60-calorie row",
-              "50 toes-to-bars",
-              "40 wall-ball shots",
-              "30 cleans",
-              "20 muscle-ups",
-              "♀",
-              "14-lb ball to 9-ft target, 95-lb cleans",
-              "♂",
-              "20-lb ball to 10-ft target, 135-lb cleans"
-            ]
-          }
-        ],
-        "note": "Open: Open 23.1"
-      }
-    ],
     "2026-04-13": [
       {
         "date": "2026-04-13",
@@ -106,95 +80,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-04-13",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-04-13/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "scorpions",
-              "lat stretch",
-              "thoracic rotation"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 push ups",
-              "30sec plank hold"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "BENCH PRESS 14MIN",
-            "lines": [
-              "3 sets",
-              "5 bench press at 83%",
-              "1 drop set",
-              "max reps at 50%",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 17MIN",
-            "lines": [
-              "buy-in: 65 sit-ups",
-              "3 rounds",
-              "",
-              "10 double db push press 2x22,5/15kg *",
-              "100m suitcase carry (r)",
-              "10 double db push press 2x22,5/15kg *",
-              "100m suitcase carry (l)",
-              "cash-out: 65 sit-ups",
-              "* muscular endurance",
-              "* *rx+ option: 8 handstand push ups",
-              "handstand push ups"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-13",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "U.S. Navy Special Warfare Operator Petty Officer 1st Class (SEAL/Enlisted Surface Warfare Specialist) Jon \"JT\" Thomas Tumilson, 35, of Rockford, Iowa, assigned to an East Coast-based Naval Special Warfare unit, died on Aug. 6, 2011, in Wardak Province, Afghanistan, of wounds suffered when his helicopter crashed.\nHe is survived by his parents, George and Kathy, and Joy and Scott McMeekan; sisters, Kristie and Joy; and his dog",
-        "sections": [
-          {
-            "title": "Tumilson",
-            "sub_title": "8 rounds for time of:",
-            "lines": [
-              "Run 200 meters",
-              "11 dumbbell burpee deadlifts",
-              "♀ 45-lb dumbbells",
-              "♂ 60-lb dumbbells"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-13",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Nasty Girls V2",
-            "lines": [
-              "3 rounds for time of:",
-              "50 one-legged squats, alternating",
-              "7  muscle-up s",
-              "175/115lb.  hang power clean s, 10 reps"
-            ]
-          }
-        ],
-        "note": "Benchmark: Nasty Girls V2"
       }
     ],
     "2026-04-14": [
@@ -879,20 +764,6 @@
               "Bench Press 5x5",
               "Every 2:00 x 5 sets",
               "5 Bench Press @ 70% OR RPE 7"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-17",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "* Metcon:-3 rounds400m run2 lengths front rack lunges 2×24/16kg2 Rope climbs or 4 Muscle ups (any) or6 C2B pull ups"
             ]
           }
         ]
@@ -2756,7 +2627,155 @@
         ],
         "note": "Benchmark: Isabel"
       }
+    ],
+    "2026-04-27": [
+      {
+        "date": "2026-04-27",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-27/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "seated pike stretch",
+              "instep rotation",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "20sec hollow hold",
+              "10 reverse lunges",
+              "10 push ups to down dog"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "BENCH PRESS 14MIN",
+            "lines": [
+              "build to a heavy 5-rep bench press",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "on the 1:00 x 16",
+              "min 1: db reverse lunges",
+              "min 2: db push press",
+              "min 3: pull ups",
+              "min 4: v-ups",
+              "dumbbells: 2x15/10kg",
+              "* score: total reps",
+              "* muscular endurance",
+              "* pull up"
+            ],
+            "sub_title": "amrap"
+          }
+        ]
+      },
+      {
+        "date": "2026-04-27",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260427",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-27",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Metcon:-24/18 Bike Cals30 DB Thursters10 RMU’s500/450m Row20 DB Front rack lunges20 C2B400m Run10 Manmakers30 Pull upsRX:22.5/15kg",
+              "10 mins to find 1 RM Power Clean"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-27",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "In honor of U.S. Air Force Staff Sgt. Travis L. Griffin, 28, who was killed on April 3, 2008, in the Rasheed District of Baghdad, by an improvised explosive device strike to his vehicle.\nGriffin is survived by his son, Elijah.\nFirst posted",
+        "sections": [
+          {
+            "title": "Griff",
+            "sub_title": "For time:",
+            "lines": [
+              "Run 800 meters",
+              "Run 400 meters backwards",
+              "Run 800 meters",
+              "Run 400 meters backwards"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-27",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "CINDY” BENCHMARK",
+            "lines": [
+              "AMRAP20",
+              "5 Pull-ups",
+              "10 Push-ups",
+              "15 Air squats",
+              "*As this is an AMRAP ensure you use the same movements throughout the workout. This is the only way to determine progress by keeping the standard the same.*"
+            ]
+          }
+        ],
+        "note": "Benchmark: CINDY” BENCHMARK"
+      },
+      {
+        "date": "2026-04-27",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 14.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 double-unders",
+              "75-lb. power snatches, 15 reps",
+              "*WOMEN*",
+              "*- includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 double-unders",
+              "55-lb. power snatches, 15 reps",
+              "*MASTERS MEN*",
+              "*- includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 double-unders",
+              "65-lb. power snatches, 15 reps",
+              "*MASTERS WOMEN*",
+              "*- includes Masters Women 55+*",
+              "30 double-unders",
+              "45-lb. power snatches, 15 reps"
+            ]
+          }
+        ],
+        "note": "Open: Open 14.1"
+      }
     ]
   },
-  "last_updated": "2026-04-26T10:28:14.682357"
+  "last_updated": "2026-04-27T02:42:29.959879"
 }
