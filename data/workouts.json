@@ -2624,6 +2624,24 @@
     "2026-04-26": [
       {
         "date": "2026-04-26",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 20.1",
+            "lines": [
+              "10 rounds for time of:",
+              "8 ground-to-overheads, 95 lb.",
+              "10 bar-facing burpees",
+              "Time cap: 15 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 20.1"
+      },
+      {
+        "date": "2026-04-26",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-26/",
@@ -2737,26 +2755,8 @@
           }
         ],
         "note": "Benchmark: Isabel"
-      },
-      {
-        "date": "2026-04-26",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 20.1",
-            "lines": [
-              "10 rounds for time of:",
-              "8 ground-to-overheads, 95 lb.",
-              "10 bar-facing burpees",
-              "Time cap: 15 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 20.1"
       }
     ]
   },
-  "last_updated": "2026-04-26T02:41:34.033304"
+  "last_updated": "2026-04-26T07:22:57.944911"
 }
