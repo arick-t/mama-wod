@@ -740,36 +740,6 @@
       },
       {
         "date": "2026-04-17",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Chevy Bel Air",
-            "lines": [
-              "9-7-5",
-              "Front Squats 70kg/48kg",
-              "Ring Muscle Up",
-              "* -@10:00-",
-              "5-7-9",
-              "Front Squats 70kg/48kg",
-              "Ring Muscle Up"
-            ],
-            "sub_title2": "For Time:"
-          },
-          {
-            "title": "Strength",
-            "lines": [
-              "Bench Press 5x5",
-              "Every 2:00 x 5 sets",
-              "5 Bench Press @ 70% OR RPE 7"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-17",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "Matthew S. Locke died on Sept. 25, 2021, while trying to save someone's life. Locke served in the Army National Guard, deploying to Afghanistan from May 2013 to February 2014. After returning home, he dedicated himself to law enforcement, working with multiple agencies, including the McNairy County Sheriff's Department, Adamsville Police Department, and Hardin County Sheriff's Department.\nLocke was the ultimate soldier and officer. He is survived by his daughter Riley; his parents, Lisa and Galen Benson and Lee and Kevin Locke; his siblings, Bobby, Autumn, Jake, Nathan Mizell, and Jessica Mizell; his grandparents, aunts and uncles, and friends.",
@@ -2631,6 +2601,51 @@
     "2026-04-27": [
       {
         "date": "2026-04-27",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260427",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-27",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 14.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 double-unders",
+              "75-lb. power snatches, 15 reps",
+              "*WOMEN*",
+              "*- includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 double-unders",
+              "55-lb. power snatches, 15 reps",
+              "*MASTERS MEN*",
+              "*- includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 double-unders",
+              "65-lb. power snatches, 15 reps",
+              "*MASTERS WOMEN*",
+              "*- includes Masters Women 55+*",
+              "30 double-unders",
+              "45-lb. power snatches, 15 reps"
+            ]
+          }
+        ],
+        "note": "Open: Open 14.1"
+      },
+      {
+        "date": "2026-04-27",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-27/",
@@ -2680,15 +2695,83 @@
       },
       {
         "date": "2026-04-27",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260427",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-27-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "Murph Prep Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "3 min Cardio",
+              "then… 8 min CAP:",
+              "10 Banded pull-aparts>scap push-ups>push-up",
+              "10 scap pull-ups>RIng Row> kips/pull-ups",
+              "10 90/90s>BW lunges>air squats"
             ]
+          },
+          {
+            "title": "Murph prep week 3",
+            "lines": [
+              "Week 3 Workout",
+              "(RX’d)",
+              "12 min AMRAP",
+              "200m Run",
+              "10 Strict Pull-Up",
+              "-Rest 2 Min-",
+              "12 min AMRAP",
+              "200m Run",
+              "20 Push-Up",
+              "-Rest 2 Min-",
+              "12 min AMRAP",
+              "200m Run",
+              "30 Air Squat",
+              "*Scoring: the 200m run is worth 4 reps. Every 50m run is a rep.",
+              "– 2 options –",
+              "#1 at bodyweight",
+              "#2 with 20lb/14lb Vest (advanced)",
+              "Scaled:",
+              "12 min AMRAP",
+              "200m Run",
+              "7 Strict Pull-Up / 10 ring rows",
+              "-Rest 2 Min-",
+              "12 min AMRAP",
+              "200m Run",
+              "15 Push-Up / Bar or modified push ups",
+              "-Rest 2 Min-",
+              "12 min AMRAP",
+              "200m Run",
+              "25 Air Squat / squats to box or ball",
+              "Target number of Round each set: 5-7 rounds",
+              "Minimum number Rounds before scaling: 3 rounds"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-27",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Back Squat 5x3",
+              "Every 2:00 x 5 sets",
+              "3 Back Squats @ 72–75% OR RPE 7-8"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "LA Lakers",
+            "lines": [
+              "200m run",
+              "2 rounds of \"Cindy\"",
+              "5 Pull Ups",
+              "10 Push Ups",
+              "15 Air Squats"
+            ],
+            "sub_title2": "10 Rounds For Time:"
           }
         ]
       },
@@ -2743,39 +2826,8 @@
           }
         ],
         "note": "Benchmark: CINDY” BENCHMARK"
-      },
-      {
-        "date": "2026-04-27",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 14.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "30 double-unders",
-              "75-lb. power snatches, 15 reps",
-              "*WOMEN*",
-              "*- includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "30 double-unders",
-              "55-lb. power snatches, 15 reps",
-              "*MASTERS MEN*",
-              "*- includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "30 double-unders",
-              "65-lb. power snatches, 15 reps",
-              "*MASTERS WOMEN*",
-              "*- includes Masters Women 55+*",
-              "30 double-unders",
-              "45-lb. power snatches, 15 reps"
-            ]
-          }
-        ],
-        "note": "Open: Open 14.1"
       }
     ]
   },
-  "last_updated": "2026-04-27T02:42:29.959879"
+  "last_updated": "2026-04-27T07:31:09.669747"
 }
