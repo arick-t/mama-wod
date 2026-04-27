@@ -2646,55 +2646,6 @@
       },
       {
         "date": "2026-04-27",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-04-27/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "seated pike stretch",
-              "instep rotation",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "20sec hollow hold",
-              "10 reverse lunges",
-              "10 push ups to down dog"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "BENCH PRESS 14MIN",
-            "lines": [
-              "build to a heavy 5-rep bench press",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "on the 1:00 x 16",
-              "min 1: db reverse lunges",
-              "min 2: db push press",
-              "min 3: pull ups",
-              "min 4: v-ups",
-              "dumbbells: 2x15/10kg",
-              "* score: total reps",
-              "* muscular endurance",
-              "* pull up"
-            ],
-            "sub_title": "amrap"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-27",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-april-27-2026/",
@@ -2744,6 +2695,55 @@
               "Target number of Round each set: 5-7 rounds",
               "Minimum number Rounds before scaling: 3 rounds"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-27",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-27/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "seated pike stretch",
+              "instep rotation",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "20sec hollow hold",
+              "10 reverse lunges",
+              "10 push ups to down dog"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "BENCH PRESS 14MIN",
+            "lines": [
+              "build to a heavy 5-rep bench press",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "on the 1:00 x 16",
+              "min 1: db reverse lunges",
+              "min 2: db push press",
+              "min 3: pull ups",
+              "min 4: v-ups",
+              "dumbbells: 2x15/10kg",
+              "* score: total reps",
+              "* muscular endurance",
+              "* pull up"
+            ],
+            "sub_title": "amrap"
           }
         ]
       },
@@ -2829,5 +2829,5 @@
       }
     ]
   },
-  "last_updated": "2026-04-27T07:31:09.669747"
+  "last_updated": "2026-04-27T08:46:20.993825"
 }
