@@ -1,100 +1,5 @@
 {
   "workouts": {
-    "2026-04-14": [
-      {
-        "date": "2026-04-14",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260414",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "BUY TICKETS NOW"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-14",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 12.5",
-            "lines": [
-              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
-              "100 pound Thruster, 3 reps",
-              "3 Chest to bar Pull-ups",
-              "100 pound Thruster, 6 reps",
-              "6 Chest to bar Pull-ups",
-              "100 pound Thruster, 9 reps",
-              "9 Chest to bar Pull-ups",
-              "100 pound Thruster, 12 reps",
-              "12 Chest to bar Pull-ups",
-              "100 pound Thruster, 15 reps",
-              "15 Chest to bar Pull-ups",
-              "100 pound Thruster, 18 reps",
-              "18 Chest to bar Pull-ups",
-              "100 pound Thruster, 21 reps",
-              "21 Chest to bar Pull-ups...",
-              "This is a timed workout. If you complete the round of 21, go on to 24. If you complete 24, go on to 27, etc.",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
-              "65 pound Thruster, 3 reps",
-              "3 Chest to bar Pull-ups",
-              "65 pound Thruster, 6 reps",
-              "6 Chest to bar Pull-ups",
-              "65 pound Thruster, 9 reps"
-            ]
-          }
-        ],
-        "note": "Open: Open 12.5"
-      },
-      {
-        "date": "2026-04-14",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-april-14-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "10 PVC Pass through",
-              "10 worlds greatest stretch",
-              "10 bootstrappers",
-              "then…",
-              "3 Rounds",
-              "200m Run",
-              "8 Medball Squat Clean Thrusters"
-            ]
-          },
-          {
-            "title": "AMRAP 20 Minutes",
-            "lines": [
-              "Run 400m",
-              "5 Thrusters 95/65lbs",
-              "Run 300m",
-              "10 Thrusters 95/65lbs",
-              "Run 200m",
-              "15 Thrusters 95/65lbs",
-              "*bike, ski or row if body is feeling cashed from Murph!"
-            ]
-          },
-          {
-            "title": "Extra Credit",
-            "lines": [
-              "6 Sets",
-              "10 Neutral Grip DB Bench Press",
-              "Rest 2:00"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-04-15": [
       {
         "date": "2026-04-15",
@@ -164,91 +69,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-04-15",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-04-15/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "sumo squat stretch",
-              "instep rotations",
-              "calf stretch",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 air squats",
-              "100m run",
-              "10 ring rows"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "BACK SQUATS 14MIN",
-            "lines": [
-              "3 sets",
-              "5 back squats at 83%",
-              "1 drop set",
-              "max reps at 50%",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "5 front squats 70/50kg",
-              "10 strict pull ups",
-              "200m run",
-              "* aerobic power",
-              "squat + pull up"
-            ],
-            "sub_title": "amrap 16min"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-15",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "Veteran LAPD officer and U.S. Marine Corps Reservist Sgt. Maj. Robert J. Cottle, 45, was killed by an improvised explosive device while on patrol in southern Afghanistan on Wednesday, March 24, 2010. Cottle joined the Marines at age 18, and the LAPD in 1990. His various LAPD assignments included Hollywood Vice, Southeast Area, LAPD Dive Team and most recently, SWAT.\nHe is survived by his wife, Emily; and 9-month-old daughter, Kaila. The LAPD established a\ntrust fund\nfor them.\nFirst posted",
-        "sections": [
-          {
-            "title": "May 30, 2010.",
-            "sub_title": "RJ",
-            "lines": [
-              "5 rounds for time of:",
-              "Run 800 meters",
-              "5 rope climbs to 15 feet",
-              "50 push-ups"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-15",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "CrossFit Total II",
-            "lines": [
-              "In 45 mins find your 1RM for each item following",
-              "Post the total amount.",
-              "Clean",
-              "Bench press",
-              "Overhead squat"
-            ]
-          }
-        ],
-        "note": "Benchmark: CrossFit Total II"
       }
     ],
     "2026-04-16": [
@@ -699,14 +519,30 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "Marguerita",
+            "title": "121023 ADVANCED BOOTCAMP (JW)",
             "lines": [
-              "50 reps for time of:",
-              "Burpee/Push-up/Jumping-Jack/Sit-up/Handstand \n Video link"
+              "4 x 6 heavy dual db floorpress",
+              "2/2 turkish getup",
+              "For time:",
+              "5  handstand push-up s",
+              "10  box jump  overs",
+              "15 pull-ups",
+              "10  handstand push-up s",
+              "20  box jump  overs",
+              "30 pull-ups",
+              "15  handstand push-up s",
+              "30  box jump  overs",
+              "45 pull-ups",
+              "10  handstand push-up s",
+              "20  box jump  overs",
+              "30 pull-ups",
+              "5  handstand push-up s",
+              "10  box jump  overs",
+              "15 pull-ups"
             ]
           }
         ],
-        "note": "Benchmark: Marguerita"
+        "note": "Benchmark: 121023 ADVANCED BOOTCAMP (JW)"
       }
     ],
     "2026-04-19": [
@@ -819,24 +655,6 @@
               "* aerobic power [lactate threshold]"
             ],
             "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-19",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "The Triple 3:",
-              "Complete the following for time:",
-              "3km Row",
-              "300 Double Unders",
-              "3 Mile Run"
-            ]
           }
         ]
       },
@@ -1309,28 +1127,14 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "Cindy XXX",
+            "title": "Marguerita",
             "lines": [
-              "Complete as much as possible in 20 minutes of:",
-              "10 Pull-ups",
-              "20  Push -ups",
-              "30 Squats",
-              "15 Pull-ups",
-              "30  Push -ups",
-              "45 Squats",
-              "20 Pull-ups",
-              "40  Push -ups",
-              "60 Squats",
-              "25 Pull-ups",
-              "50  Push -ups",
-              "75 Squats",
-              "30 Pull-ups",
-              "60  Push -ups",
-              "90 Squats"
+              "50 reps for time of:",
+              "Burpee/Push-up/Jumping-Jack/Sit-up/Handstand \n Video link"
             ]
           }
         ],
-        "note": "Benchmark: Cindy XXX"
+        "note": "Benchmark: Marguerita"
       }
     ],
     "2026-04-22": [
@@ -1997,28 +1801,28 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "The Gauntlet",
+            "title": "Cindy XXX",
             "lines": [
-              "30 minute AMRAP of:",
-              "Jackie",
-              "Then",
-              "Karabell",
-              "Then",
-              "AMRAP of Cindy in the remaining 30 minutes:",
-              "Your result is rounds of Cindy completed.",
-              "1000m  Row",
-              "50  Thruster s (45/35 pound)",
+              "Complete as much as possible in 20 minutes of:",
+              "10 Pull-ups",
+              "20  Push -ups",
+              "30 Squats",
+              "15 Pull-ups",
+              "30  Push -ups",
+              "45 Squats",
+              "20 Pull-ups",
+              "40  Push -ups",
+              "60 Squats",
+              "25 Pull-ups",
+              "50  Push -ups",
+              "75 Squats",
               "30 Pull-ups",
-              "10 rounds",
-              "3  Snatch es (135/90 pounds)",
-              "15 Wall Ball (20/14lbs @ 10″/8″ target)",
-              "5 pull-up",
-              "10  push -up",
-              "15 squat"
+              "60  Push -ups",
+              "90 Squats"
             ]
           }
         ],
-        "note": "Benchmark: The Gauntlet"
+        "note": "Benchmark: Cindy XXX"
       }
     ],
     "2026-04-25": [
@@ -2811,6 +2615,133 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
+            "title": "The Gauntlet",
+            "lines": [
+              "30 minute AMRAP of:",
+              "Jackie",
+              "Then",
+              "Karabell",
+              "Then",
+              "AMRAP of Cindy in the remaining 30 minutes:",
+              "Your result is rounds of Cindy completed.",
+              "1000m  Row",
+              "50  Thruster s (45/35 pound)",
+              "30 Pull-ups",
+              "10 rounds",
+              "3  Snatch es (135/90 pounds)",
+              "15 Wall Ball (20/14lbs @ 10″/8″ target)",
+              "5 pull-up",
+              "10  push -up",
+              "15 squat"
+            ]
+          }
+        ],
+        "note": "Benchmark: The Gauntlet"
+      }
+    ],
+    "2026-04-29": [
+      {
+        "date": "2026-04-29",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-29/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "thoracic rotation",
+              "samson stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 air squats",
+              "10 elbow rotations",
+              "15sec deep squat hold",
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "BACK SQUAT 15MIN",
+            "lines": [
+              "build to a heavy 5-rep back squat",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "4 rounds",
+              "",
+              "30/24cal ski/bike",
+              "15 front squats",
+              "* -rest 1:00 between rounds-",
+              "* barbell: 50/35kg",
+              "* score: total time (including rest)",
+              "* aerobic power [vo2 max]"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-04-29",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260429",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-29",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "* For time:-4 rounds400m run8 Overhead Squats 55/35kg16 T2B"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-29",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "Narcotics Detective and Special Assignment Unit Operator Carlos Ledesma, 34, of the Chandler Police Department, Chandler, Arizona, was shot and killed by drug dealers on July 28, 2010, during an undercover operation in Phoenix, Arizona.\nHe is survived by his wife, Sherry; and sons, Luciano and Elijo.\nFirst posted",
+        "sections": [
+          {
+            "title": "Ledesma",
+            "sub_title": "Complete as many rounds and reps as possible in 20 minutes of:",
+            "lines": [
+              "5 parallette handstand push-ups",
+              "10 toes-to-rings",
+              "15 medicine-ball cleans",
+              "♀ 14-lb medicine ball",
+              "♂ 20-lb medicine ball"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-29",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
             "title": "Fat Helen",
             "lines": [
               "3 rounds for time of:",
@@ -2821,8 +2752,29 @@
           }
         ],
         "note": "Benchmark: Fat Helen"
+      },
+      {
+        "date": "2026-04-29",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 16.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 20 minutes of:",
+              "25-ft. overhead walking lunge",
+              "8 burpees",
+              "25-ft. overhead walking lunge",
+              "8 chest-to-bar pull-ups",
+              "*Men lunge 95 lb.*",
+              "*Women lunge 65 lb.*"
+            ]
+          }
+        ],
+        "note": "Open: Open 16.1"
       }
     ]
   },
-  "last_updated": "2026-04-28T11:24:02.109074"
+  "last_updated": "2026-04-29T02:57:39.662282"
 }
