@@ -675,37 +675,6 @@
       },
       {
         "date": "2026-04-18",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "lines": [
-              "Teams of 3",
-              "AMRAP in 7:",
-              "50 Back Squats 135#/95#",
-              "50 Back Squats 185#/125#",
-              "Max Rep Back Squats 225#/155# (Rx+ = 275#/185#)",
-              "Rest 3:00",
-              "AMRAP 7:",
-              "50 Bench Press 95##/65#",
-              "50 Bench Press 135#/95#",
-              "Max Rep Bench Press 185#/115# (Rx+ 225#/125#)",
-              "Rest 3:00",
-              "AMRAP 7:",
-              "50 Deadlifts 135#/95#",
-              "50 Deadlift 225#/155#",
-              "Max Rep Deadlifts 315#/225# (Rx+ = 365#/255#)",
-              "Rest 3:00",
-              "For Time",
-              "89 Burpees - only one athlete works at a time."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-18",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "Air Force Senior Airman Bryan R. Bell, 23, of Erie, Pennsylvania, assigned to 2nd Civil Engineer Squadron at Barksdale Air Force Base, Louisiana, died Jan. 5, 2012, at Camp Bastion in Afghanistan, of injuries suffered when his vehicle struck an improvised explosive device.\nHe is survived by his wife, Alaina; parents, Richard Bell and Brenda Hart; sister, Candice; stepfather, David Aldrich; stepmother, Kim; stepsister, Stephanie Battista; stepbrother, Matthew Aldrich; maternal grandparents, Ross and Gertrude Peters; paternal grandmother, Carmen; mother- and father-in-law, Mike and Brenda Hart; sister- and brother-in-law, Mariel and Patrick Wilcox; and several aunts, uncles and cousins.\nFirst posted",
@@ -2638,6 +2607,39 @@
     "2026-04-28": [
       {
         "date": "2026-04-28",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260428",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-28",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 22.2",
+            "lines": [
+              "1-2-3-4-5-6-7-8-9-10-9-8-7-6-5-4-3-2-1 reps for time of:",
+              "Deadlifts",
+              "Bar-facing burpees",
+              "155-lb barbell",
+              "Time cap: 10 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 22.2"
+      },
+      {
+        "date": "2026-04-28",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-28/",
@@ -2685,15 +2687,81 @@
       },
       {
         "date": "2026-04-28",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260428",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-28-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "On a 6:00 clock"
             ]
+          },
+          {
+            "title": "Run 400m, then AMRAP of:",
+            "lines": [
+              "5 Burpees",
+              "10 Box Step Ups",
+              "5 S-arm KB Swings per side"
+            ]
+          },
+          {
+            "title": "Skill/Strength",
+            "lines": [
+              "Wall Facing Strict HSPU",
+              "5 Sets",
+              "1 Set Strict WFHSPU",
+              "Rest 2:00 between sets"
+            ]
+          },
+          {
+            "title": "Strength Development:",
+            "lines": [
+              "5 Sets",
+              "3 Wall Walk + Max WF HS Hold*",
+              "Rest 2:00",
+              "*Perform hold at the top of the 3rd wall walk"
+            ]
+          },
+          {
+            "title": "AMRAP 6 MInutes",
+            "lines": [
+              "18 Kettlebell Snatches 53/35lbs",
+              "18 Box Jumps 24/20″",
+              "Feel: Gas",
+              "Pacing: Sustain",
+              "Target Score: 2+ Rounds",
+              "Firebreather: 3+ Rounds"
+            ]
+          },
+          {
+            "title": "Deadlift",
+            "lines": [
+              "1×6 @ 60%",
+              "1×5 @ 70%",
+              "1×4 @ 80%",
+              "1×1 @ 90%",
+              "Control the negative for all reps, including final rep of set and heavy single.",
+              "Rest 2-3 Minutes between sets with at least 2:00 slowly flushing on a rower or bike.)",
+              "Notes: Final set should not exceed 90% but can be lighter. Looking for heavier than the set of 4 based on feel."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-28",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Golden State Warriors",
+            "lines": [
+              "15 Push Press 34kg/25kg",
+              "15 Box Jump 24\"/20\""
+            ],
+            "sub_title2": "10:00 AMRAP"
           }
         ]
       },
@@ -2753,27 +2821,8 @@
           }
         ],
         "note": "Benchmark: Fat Helen"
-      },
-      {
-        "date": "2026-04-28",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 22.2",
-            "lines": [
-              "1-2-3-4-5-6-7-8-9-10-9-8-7-6-5-4-3-2-1 reps for time of:",
-              "Deadlifts",
-              "Bar-facing burpees",
-              "155-lb barbell",
-              "Time cap: 10 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 22.2"
       }
     ]
   },
-  "last_updated": "2026-04-28T02:56:45.603257"
+  "last_updated": "2026-04-28T07:33:55.928386"
 }
