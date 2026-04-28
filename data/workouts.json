@@ -2640,53 +2640,6 @@
       },
       {
         "date": "2026-04-28",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-04-28/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "instep rotation",
-              "lat stretch",
-              "lying hip cross over",
-              "samson stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 burpees",
-              "10 clean grip deadlifts",
-              "10 elbow rotations"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "POWER CLEANS 10MIN",
-            "lines": [
-              "on every 1:00 x 10 sets",
-              "2 power cleans",
-              "(build in weight)",
-              "explosive power"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "3 power cleans 60/40kg",
-              "3 burpees over the bar",
-              "30sec rest between",
-              "* *pick up where you left off",
-              "* aerobic power & vo2 max"
-            ],
-            "sub_title": "amrap 1:00 x 10 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-28",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-april-28-2026/",
@@ -2745,6 +2698,53 @@
               "Rest 2-3 Minutes between sets with at least 2:00 slowly flushing on a rower or bike.)",
               "Notes: Final set should not exceed 90% but can be lighter. Looking for heavier than the set of 4 based on feel."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-28",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-28/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "instep rotation",
+              "lat stretch",
+              "lying hip cross over",
+              "samson stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 burpees",
+              "10 clean grip deadlifts",
+              "10 elbow rotations"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "POWER CLEANS 10MIN",
+            "lines": [
+              "on every 1:00 x 10 sets",
+              "2 power cleans",
+              "(build in weight)",
+              "explosive power"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "3 power cleans 60/40kg",
+              "3 burpees over the bar",
+              "30sec rest between",
+              "* *pick up where you left off",
+              "* aerobic power & vo2 max"
+            ],
+            "sub_title": "amrap 1:00 x 10 rounds"
           }
         ]
       },
@@ -2824,5 +2824,5 @@
       }
     ]
   },
-  "last_updated": "2026-04-28T07:33:55.928386"
+  "last_updated": "2026-04-28T08:51:41.677222"
 }
