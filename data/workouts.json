@@ -2654,54 +2654,6 @@
       },
       {
         "date": "2026-04-29",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-04-29/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "sumo squat stretch",
-              "thoracic rotation",
-              "samson stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 air squats",
-              "10 elbow rotations",
-              "15sec deep squat hold",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "BACK SQUAT 15MIN",
-            "lines": [
-              "build to a heavy 5-rep back squat",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "4 rounds",
-              "",
-              "30/24cal ski/bike",
-              "15 front squats",
-              "* -rest 1:00 between rounds-",
-              "* barbell: 50/35kg",
-              "* score: total time (including rest)",
-              "* aerobic power [vo2 max]"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-29",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-april-29-2026/",
@@ -2753,6 +2705,54 @@
               "Rest 2:00",
               "These are meant to be heavy and challenging each round, but don’t forget to look at tomorrow’s programming :))"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-29",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-29/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "thoracic rotation",
+              "samson stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 air squats",
+              "10 elbow rotations",
+              "15sec deep squat hold",
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "BACK SQUAT 15MIN",
+            "lines": [
+              "build to a heavy 5-rep back squat",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "4 rounds",
+              "",
+              "30/24cal ski/bike",
+              "15 front squats",
+              "* -rest 1:00 between rounds-",
+              "* barbell: 50/35kg",
+              "* score: total time (including rest)",
+              "* aerobic power [vo2 max]"
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -2838,5 +2838,5 @@
       }
     ]
   },
-  "last_updated": "2026-04-29T07:29:51.642733"
+  "last_updated": "2026-04-29T08:46:54.572295"
 }
