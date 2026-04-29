@@ -848,29 +848,6 @@
       },
       {
         "date": "2026-04-20",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Super Mario",
-            "lines": [
-              "4 sets",
-              "4:00 AMRAP",
-              "400m Run",
-              "Max Rounds",
-              "10 Pull Ups",
-              "20 Push Up",
-              "30 Air Squats",
-              "* -rest 2:00 between sets-",
-              "* (Scored by total reps minus runs)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-20",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2642,6 +2619,41 @@
     "2026-04-29": [
       {
         "date": "2026-04-29",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260429",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-29",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 16.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 20 minutes of:",
+              "25-ft. overhead walking lunge",
+              "8 burpees",
+              "25-ft. overhead walking lunge",
+              "8 chest-to-bar pull-ups",
+              "*Men lunge 95 lb.*",
+              "*Women lunge 65 lb.*"
+            ]
+          }
+        ],
+        "note": "Open: Open 16.1"
+      },
+      {
+        "date": "2026-04-29",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-29/",
@@ -2690,15 +2702,86 @@
       },
       {
         "date": "2026-04-29",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260429",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-29-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "3 Rounds",
+              ":45 Machine",
+              "15 Plate Ground to Overhead",
+              "12 Air Squats",
+              "9 Hanging Knee Raises"
             ]
+          },
+          {
+            "title": "AMRAP 1:30",
+            "lines": [
+              "5 Squat Snatch 155/105lbs",
+              "Max Toes to bar in remaining time",
+              "Rest 1:30"
+            ]
+          },
+          {
+            "title": "AMRAP 1:30",
+            "lines": [
+              "12 Toes to bar",
+              "Max Squat Snatch 155/105lbs in remaining time",
+              "Rest 1:30",
+              "Feel: Gas/Muscle Overload",
+              "Pacing: Sustain"
+            ]
+          },
+          {
+            "title": "Target Score:",
+            "lines": [
+              "10+ “Max Toes to bar” per round and 5+ “Max squat snatches” per round (30+ toes to bar, 15+ snatches, 45+ total reps from max rep portions)"
+            ]
+          },
+          {
+            "title": "Firebreather:",
+            "lines": [
+              "15+ “Max Toes to bar” per round and 7+ “Max squat snatches” per round (45+ toes to bar, 21+ snatches, 66+ total reps from max rep portions)"
+            ]
+          },
+          {
+            "title": "Back Rack Lunge",
+            "lines": [
+              "10 Back Rack Lunge Steps",
+              "Rest 2:00",
+              "These are meant to be heavy and challenging each round, but don’t forget to look at tomorrow’s programming :))"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-29",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "April 100 Toes to Bar Challenge",
+              "For Time:",
+              "100 Toes to Bar",
+              "* (Cap: 10:00)"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "San Antonio Spurs",
+            "lines": [
+              "18/15 Calorie Air Bike",
+              "15 Burpee to Bar",
+              "Max Distance Bodyweight Lunge (25ft sections)",
+              "* -rest 1:00 between AMRAPs-",
+              "* (Scored by Distance each set)"
+            ],
+            "sub_title2": "3-3-3-4:00 AMRAP"
           }
         ]
       },
@@ -2752,29 +2835,8 @@
           }
         ],
         "note": "Benchmark: Fat Helen"
-      },
-      {
-        "date": "2026-04-29",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 16.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 20 minutes of:",
-              "25-ft. overhead walking lunge",
-              "8 burpees",
-              "25-ft. overhead walking lunge",
-              "8 chest-to-bar pull-ups",
-              "*Men lunge 95 lb.*",
-              "*Women lunge 65 lb.*"
-            ]
-          }
-        ],
-        "note": "Open: Open 16.1"
       }
     ]
   },
-  "last_updated": "2026-04-29T02:57:39.662282"
+  "last_updated": "2026-04-29T07:29:51.642733"
 }
