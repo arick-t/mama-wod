@@ -1,76 +1,5 @@
 {
   "workouts": {
-    "2026-04-15": [
-      {
-        "date": "2026-04-15",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260415",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "BUY TICKETS NOW"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-15",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.1",
-            "lines": [
-              "Complete as many rounds as possible in 20 minutes of:",
-              "8 toes-to-bars",
-              "10 dumbbell hang clean and jerks",
-              "14-cal. row",
-              "*Men use 50-lb. dumbbell*"
-            ]
-          }
-        ],
-        "note": "Open: Open 18.1"
-      },
-      {
-        "date": "2026-04-15",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-april-15-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "AMRAP 5 minutes",
-              "500m Bike",
-              "5 Burpees / 5 Box Jumps (alternate)",
-              "10 Alternating Hang DB Snatches"
-            ]
-          },
-          {
-            "title": "AMRAP 2:30 x 6",
-            "lines": [
-              "8 Burpee Box Jumps 30/24″",
-              "20 Alternating DB Hang Snatches 50/35lbs",
-              "Max Rep BBJ in remaining time",
-              "Rest 1:30 between rounds",
-              "Score is total BBJ from the “max rep” portion."
-            ]
-          },
-          {
-            "title": "Pause Power Position Squat Clean",
-            "lines": [
-              "8×3*",
-              "*Split Jerk after final rep of each set. Do a full clean deadlift, then lower the bar into power position.",
-              "Spend 1-2 minutes flushing slowly on a machine between sets.)",
-              "We are looking for all leg drive and pull under, avoid moving the shoulders back and forth or bouncing bar to create momentum. This will be on the lighter side and feel very much like technique work."
-            ]
-          }
-        ]
-      }
-    ],
     "2026-04-16": [
       {
         "date": "2026-04-16",
@@ -144,91 +73,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-04-16",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-04-16/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "calf stretch",
-              "lat stretch",
-              "handwalk"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 straight leg sit ups",
-              "10 scap. push ups",
-              "10 squat jumps",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "CONDITIONING 32MIN",
-            "lines": [
-              "20 single db hang clean and jerk 22,5/15kg",
-              "30 box jumps",
-              "20 toes to bar",
-              "30/24cal bike/ski",
-              "2min rest",
-              "",
-              "amrap 10min",
-              "10 single db hang clean and jerk 22,5/15kg",
-              "20 box jumps",
-              "10 toes to bar",
-              "20/16cal bike/ski"
-            ],
-            "sub_title": "amrap 20min"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-16",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "Sgt. Gary \"Foo\" Morales, of the Port St. Lucie County Sheriff's Office in Florida, died Feb. 28, 2013. Morales, 35, was fatally shot during a traffic stop. The Air Force veteran was employed by the St. Lucie County Sherriff's Office for 12 years and had just been promoted to Sergeant Deputy.\nHe is survived by his wife, Holly; daughters, Brooklyn and Jordan; parents, William and Candy; brothers, Brian, Ken and Brad; grandmother, Romanita Rodriguez; and eight nieces and nephews.\nFirst posted",
-        "sections": [
-          {
-            "title": "Foo",
-            "sub_title": "For time:",
-            "lines": [
-              "13 bench presses",
-              "Then, complete as many rounds and reps as possible in 20 minutes of:",
-              "7 chest-to-bar pull-ups",
-              "77 double-unders",
-              "2 squat clean thrusters",
-              "28 sit-ups",
-              "*♀ 110 lb*",
-              "*♂ 170 lb*"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-16",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Christine",
-            "lines": [
-              "3 rounds for time of:",
-              "500m Row",
-              "12 Deadlifts (Bodyweight)",
-              "21 Box jumps (60/50 cm)",
-              "TC 15 min"
-            ]
-          }
-        ],
-        "note": "Benchmark: Christine"
       }
     ],
     "2026-04-17": [
@@ -843,21 +687,6 @@
               "* handstand push up"
             ],
             "sub_title": "amrap 14min"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-20",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "8 x 1Snatch pull + Hang snatch",
-              "* 10min AMRAP6 Deadlifts6 Hang Power Cleans6 Front rack lunges6 STOHRX:- 70/50kg"
-            ]
           }
         ]
       },
@@ -2836,7 +2665,162 @@
         ],
         "note": "Benchmark: Fat Helen"
       }
+    ],
+    "2026-04-30": [
+      {
+        "date": "2026-04-30",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-30/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "90/90 hip rotation",
+              "hamstring stretch  on box",
+              "lying hip cross over",
+              "calf stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "150/125m row",
+              "10 good mornings",
+              "10 squat jumps"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "DEADLIFT 15MIN",
+            "lines": [
+              "build to a heavy 5-rep deadlift",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "10-20-30-20-10",
+              "box jumps 60/50cm*",
+              "alternating db snatches 22,5/15kg",
+              "250/200m row after each round",
+              "* *rx+ option: 75/60cm",
+              "* aerobic power [vo2 max]"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-04-30",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260430",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-30",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Strength:-Every 90 seconds4 X 2 Push Press + 2 Split Jerkbuilding in weight",
+              "ThenE2MOMSplit Jerk 3,3,2,2,2",
+              "Pairs Metcon E2MOM for 6 rounds, alternate between station A and Station BStation A8 Worm Clean & Jerks12 HSPU (6/6)Station B16 Syncro Box jump overs 24/20″12 Syncro medball situups 9/6kg"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-30",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "Eva Mireles, 44, died on Tuesday, May 24, 2022, while shielding her fourth-grade students from a gunman at Robb Elementary School in Uvalde, Texas. Mireles' co-teacher, Irma Garcia, and 19 students were also killed in the shooting.\nMireles was in her 17th year of teaching in the Uvalde Consolidated Independent School District and held certifications in special education and bilingual education.\nIn addition to regularly running before school, she also enjoyed hiking, and friends and relatives recall she could be found in her\nCrossFit gym\nalmost every day after school. Earlier this year, she participated in the CrossFit Open for the ninth time.\nFirst posted",
+        "sections": [
+          {
+            "title": "Eva Strong",
+            "sub_title": "With a partner, 5 rounds for time of:",
+            "lines": [
+              "24 double-unders (each)",
+              "19 toes-to-bars (total)",
+              "2 clean and jerks (total)",
+              "400-m run (together)",
+              "*♀ 135 lb ♂ 205 lb*"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-30",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "CrossFit Total II",
+            "lines": [
+              "In 45 mins find your 1RM for each item following",
+              "Post the total amount.",
+              "Clean",
+              "Bench press",
+              "Overhead squat"
+            ]
+          }
+        ],
+        "note": "Benchmark: CrossFit Total II"
+      },
+      {
+        "date": "2026-04-30",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 11.4",
+            "lines": [
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "60 Bar-facing burpees",
+              "30 Overhead squats (120lbs / 55kg)",
+              "10 Muscle-ups",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "60 Bar-facing burpees",
+              "30 Overhead squats (90lbs / 40kg)",
+              "10 Muscle-ups",
+              "*MASTERS MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "60 Bar-facing burpees",
+              "30 Overhead squats (110lbs / 50kg)",
+              "10 Muscle-ups",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "60 Bar-facing burpees",
+              "30 Overhead squats (75lbs / 35kg)",
+              "10 Muscle-ups"
+            ]
+          }
+        ],
+        "note": "Open: Open 11.4"
+      }
     ]
   },
-  "last_updated": "2026-04-29T11:16:38.916131"
+  "last_updated": "2026-04-30T02:57:40.949212"
 }
