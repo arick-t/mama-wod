@@ -871,31 +871,6 @@
       },
       {
         "date": "2026-04-21",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Deadstop Deadlift 5x3",
-              "Every 2:00 x 5 sets",
-              "3 Deadstop Deadlifts @ 70% OR RPE 7"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Yoshi",
-            "lines": [
-              "90/70 Calorie Air Bike",
-              "45 Deadlifts 102kg/70kg"
-            ],
-            "sub_title2": "For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-21",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2669,6 +2644,59 @@
     "2026-04-30": [
       {
         "date": "2026-04-30",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260430",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-30",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 11.4",
+            "lines": [
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "60 Bar-facing burpees",
+              "30 Overhead squats (120lbs / 55kg)",
+              "10 Muscle-ups",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "60 Bar-facing burpees",
+              "30 Overhead squats (90lbs / 40kg)",
+              "10 Muscle-ups",
+              "*MASTERS MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "60 Bar-facing burpees",
+              "30 Overhead squats (110lbs / 50kg)",
+              "10 Muscle-ups",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "60 Bar-facing burpees",
+              "30 Overhead squats (75lbs / 35kg)",
+              "10 Muscle-ups"
+            ]
+          }
+        ],
+        "note": "Open: Open 11.4"
+      },
+      {
+        "date": "2026-04-30",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-04-30/",
@@ -2715,15 +2743,83 @@
       },
       {
         "date": "2026-04-30",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260430",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-april-30-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "EMOM 9 minutes, rotating movements (3 each)",
+              ":50 Machine",
+              "15-20 Air Squats",
+              "15 Ring Rows"
             ]
+          },
+          {
+            "title": "Bench Press",
+            "lines": [
+              "3-3-3-3-3",
+              "Start @ 80% and build AHAP",
+              "After each set of Bench Presses, perform a 100m Carry AHAP*",
+              "*Carry Options",
+              "– DBs or KBs: farmer’s, front rack, overhead (all w/ 2 KBs or DBs)",
+              "– Sandbags: bearhug or shoulder)",
+              "20 Min CAP"
+            ]
+          },
+          {
+            "title": "10 Rounds alternating full rounds with a partner",
+            "lines": [
+              "8 Chest to Bar Pull Ups",
+              "14 Goblet Squats 50-100lbs",
+              "28/25 Calorie C2 Machine or 23/20 Calorie Air Bike",
+              "Each athlete performs their next round in reverse order",
+              "E.g.",
+              "R1: CTB > Squat > Bike",
+              "R2: Bike > Squat > CTB",
+              "R3: CTB > Squat > Bike",
+              "Etc.",
+              "Feel: Cardio",
+              "Pacing: Sustain to Reach",
+              "Target Score: Sub 27:00",
+              "Firebreather: Sub 22:00"
+            ]
+          },
+          {
+            "title": "Extra Credit",
+            "lines": [
+              "AMRAP 8:00 x 3",
+              "Echo Bike for Distance",
+              "Rest 1:30",
+              "You should be SO sure that your round 1 pace is sustainable for three rounds. Adjust as you go round to round. Reminder: we love negative splits, we hate crash and burn aerobic work."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-30",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Squat Clean + Hang Squat Clean 6x2",
+              "Every 2:00 × 6 sets",
+              "1 Squat Clean + 1 Hang Squat Clean @ 72–75% OR RPE 7-8"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "New York Knicks",
+            "lines": [
+              "75 Wall Balls 9kg/6kg",
+              "25 Power Cleans 75kg/50kg",
+              "75 Wall Balls 9kg/6kg"
+            ],
+            "sub_title2": "For Time:"
           }
         ]
       },
@@ -2780,47 +2876,8 @@
           }
         ],
         "note": "Benchmark: CrossFit Total II"
-      },
-      {
-        "date": "2026-04-30",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 11.4",
-            "lines": [
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "60 Bar-facing burpees",
-              "30 Overhead squats (120lbs / 55kg)",
-              "10 Muscle-ups",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "60 Bar-facing burpees",
-              "30 Overhead squats (90lbs / 40kg)",
-              "10 Muscle-ups",
-              "*MASTERS MEN*",
-              "-",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "60 Bar-facing burpees",
-              "30 Overhead squats (110lbs / 50kg)",
-              "10 Muscle-ups",
-              "*MASTERS WOMEN*",
-              "-",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "60 Bar-facing burpees",
-              "30 Overhead squats (75lbs / 35kg)",
-              "10 Muscle-ups"
-            ]
-          }
-        ],
-        "note": "Open: Open 11.4"
       }
     ]
   },
-  "last_updated": "2026-04-30T02:57:40.949212"
+  "last_updated": "2026-04-30T07:32:11.396186"
 }
