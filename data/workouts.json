@@ -2697,52 +2697,6 @@
       },
       {
         "date": "2026-04-30",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-04-30/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "90/90 hip rotation",
-              "hamstring stretch  on box",
-              "lying hip cross over",
-              "calf stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "150/125m row",
-              "10 good mornings",
-              "10 squat jumps"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "DEADLIFT 15MIN",
-            "lines": [
-              "build to a heavy 5-rep deadlift",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "10-20-30-20-10",
-              "box jumps 60/50cm*",
-              "alternating db snatches 22,5/15kg",
-              "250/200m row after each round",
-              "* *rx+ option: 75/60cm",
-              "* aerobic power [vo2 max]"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-30",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-april-30-2026/",
@@ -2794,6 +2748,52 @@
               "Rest 1:30",
               "You should be SO sure that your round 1 pace is sustainable for three rounds. Adjust as you go round to round. Reminder: we love negative splits, we hate crash and burn aerobic work."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-04-30",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-04-30/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "90/90 hip rotation",
+              "hamstring stretch  on box",
+              "lying hip cross over",
+              "calf stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "150/125m row",
+              "10 good mornings",
+              "10 squat jumps"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "DEADLIFT 15MIN",
+            "lines": [
+              "build to a heavy 5-rep deadlift",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "10-20-30-20-10",
+              "box jumps 60/50cm*",
+              "alternating db snatches 22,5/15kg",
+              "250/200m row after each round",
+              "* *rx+ option: 75/60cm",
+              "* aerobic power [vo2 max]"
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -2879,5 +2879,5 @@
       }
     ]
   },
-  "last_updated": "2026-04-30T07:32:11.396186"
+  "last_updated": "2026-04-30T08:51:34.754057"
 }
