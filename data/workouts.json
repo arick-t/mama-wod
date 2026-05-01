@@ -892,31 +892,6 @@
       },
       {
         "date": "2026-04-22",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Snatch + Overhead Squat 6x3",
-              "Every 2:00 × 6 sets",
-              "1 Squat Snatch + 2 Overhead Squats @ 70–72% OR RPE 7"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Luigi",
-            "lines": [
-              "30 Double Unders",
-              "15 Overhead Squats 34kg/25kg"
-            ],
-            "sub_title2": "10:00 AMRAP"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-22",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2730,6 +2705,94 @@
       },
       {
         "date": "2026-05-01",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 23.2",
+            "lines": [
+              "Complete as many reps as possible in 15 minutes of:",
+              "5 burpee pull-ups",
+              "10 shuttle runs (1 rep = 25 ft out/25 ft back)",
+              "*Add 5 burpee pull-ups after each round.",
+              "23.2B:",
+              "Immediately following 23.2A, athletes will have 5 minutes to establish:",
+              "1-rep-max thruster (from the floor)"
+            ]
+          }
+        ],
+        "note": "Open: Open 23.2"
+      },
+      {
+        "date": "2026-05-01",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-1-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "AMRAP 7 minutes",
+              "200m Run",
+              "8 Kettlebell Swings",
+              "8 Ring Rows",
+              "5 Burpees"
+            ]
+          },
+          {
+            "title": "For time:",
+            "lines": [
+              "30 clean and jerks",
+              "Run 1 mile",
+              "10 rope climbs to 15 feet",
+              "Run 1 mile",
+              "100 burpees",
+              "F: 95-lb clean and jerks",
+              "M: 135-lb clean and jerks",
+              "In honor of Former U.S. Navy SEAL Glen Doherty, 42, of Winchester, MA, died in an attack on a U.S. consulate on September 11, 2012",
+              "https://www.crossfit.com/workout/2012/10/12#/comments",
+              "Feel: Gas",
+              "Pace: Sustain",
+              "Target Score: 30-40 minutes",
+              "Firebreather Score: sub 30 minutes",
+              "Extra Credit",
+              "Coach Led Mobility",
+              "5 min"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-01",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Power Snatch 8x2",
+              "Every 1:00 x 8 sets",
+              "2 Power Snatch (singles) @ 72–75% OR RPE 7-8"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Miami Heat",
+            "lines": [
+              "50-40-30-20-10",
+              "Calorie Row",
+              "100-80-60-40-20",
+              "Double Under",
+              "* (Women's Calories: 40-32-24-16-8)"
+            ],
+            "sub_title2": "For Time:"
+          }
+        ]
+      },
+      {
+        "date": "2026-05-01",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2779,29 +2842,8 @@
           }
         ],
         "note": "Benchmark: ”ANGIE” BENCHMARK"
-      },
-      {
-        "date": "2026-05-01",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 23.2",
-            "lines": [
-              "Complete as many reps as possible in 15 minutes of:",
-              "5 burpee pull-ups",
-              "10 shuttle runs (1 rep = 25 ft out/25 ft back)",
-              "*Add 5 burpee pull-ups after each round.",
-              "23.2B:",
-              "Immediately following 23.2A, athletes will have 5 minutes to establish:",
-              "1-rep-max thruster (from the floor)"
-            ]
-          }
-        ],
-        "note": "Open: Open 23.2"
       }
     ]
   },
-  "last_updated": "2026-05-01T02:55:49.215209"
+  "last_updated": "2026-05-01T07:50:11.752236"
 }
