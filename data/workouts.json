@@ -2700,42 +2700,6 @@
       },
       {
         "date": "2026-05-02",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-02/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "seated pike stretch",
-              "lat stretch",
-              "samson stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 straight leg sit ups",
-              "10 prone snow angels",
-              "*partner is running 100m"
-            ],
-            "sub_title": "amrap 5min"
-          },
-          {
-            "title": "CONDITIONING 30MIN",
-            "lines": [
-              "60 shoulder to overhead 50/35kg",
-              "60 toes to bar",
-              "600m run",
-              "* score: rounds + reps"
-            ],
-            "sub_title": "amrap 30min"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-02",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-may-2-2026/",
@@ -2774,6 +2738,42 @@
               "Rest 2:00",
               "Choose a number you’re 100% sure you can hit for all 6 sets."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-02",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-02/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "seated pike stretch",
+              "lat stretch",
+              "samson stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 straight leg sit ups",
+              "10 prone snow angels",
+              "*partner is running 100m"
+            ],
+            "sub_title": "amrap 5min"
+          },
+          {
+            "title": "CONDITIONING 30MIN",
+            "lines": [
+              "60 shoulder to overhead 50/35kg",
+              "60 toes to bar",
+              "600m run",
+              "* score: rounds + reps"
+            ],
+            "sub_title": "amrap 30min"
           }
         ]
       },
@@ -2852,5 +2852,5 @@
       }
     ]
   },
-  "last_updated": "2026-05-02T07:18:16.301544"
+  "last_updated": "2026-05-02T08:29:33.766913"
 }
