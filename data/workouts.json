@@ -925,26 +925,6 @@
       },
       {
         "date": "2026-04-23",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Wario",
-            "lines": [
-              "10 sets",
-              "2:00 AMRAP",
-              "10 Box Jumps (30/24)",
-              "Max Calorie Row",
-              "* -rest 2:00 between sets-",
-              "* (Scored by total Calories per)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-23",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2681,6 +2661,45 @@
     "2026-05-02": [
       {
         "date": "2026-05-02",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260502",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-02",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 17.2",
+            "lines": [
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "2 rounds of:",
+              "50-ft. weighted walking lunge",
+              "16 toes-to-bars",
+              "8 power cleans",
+              "Then, 2 rounds of:",
+              "50-ft. weighted walking lunge",
+              "16 bar muscle-ups",
+              "8 power cleans",
+              "Etc., alternating between toes-to-bars and bar muscle-ups every 2 rounds.",
+              "*Men use 50-lb. dumbbells*"
+            ]
+          }
+        ],
+        "note": "Open: Open 17.2"
+      },
+      {
+        "date": "2026-05-02",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-05-02/",
@@ -2717,15 +2736,66 @@
       },
       {
         "date": "2026-05-02",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260502",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-2-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "3 Rounds each with a partner",
+              "Partner 1: Machine",
+              "Partner 2: Perform 5 Inchworms + 15 Air Squats"
             ]
+          },
+          {
+            "title": "6 Rounds for time with a partner",
+            "lines": [
+              "6 Synchro Wall Walks",
+              "24 Synchro Air Squats",
+              "Machine together*",
+              "*Each athlete machines at the same time on any machine",
+              "Machine Menu",
+              "250/225m Row/Ski",
+              "600/500m Air Bike",
+              "500/450m C2 bike",
+              "200m Outdoor Run",
+              "Feel: Muscle Overload",
+              "Pacing: Sustain",
+              "Target Score: Sub 23:00",
+              "Firebreather: Sub 18:00"
+            ]
+          },
+          {
+            "title": "Extra Credit",
+            "lines": [
+              "6 Rounds",
+              "1 Smooth Even Set of Ring Muscle Ups",
+              "Rest 2:00",
+              "Choose a number you’re 100% sure you can hit for all 6 sets."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-02",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Detroit Pistons",
+            "lines": [
+              "800m Run (Together)",
+              "30 Muscle Ups",
+              "800m Run (Together)",
+              "30 Snatches 61kg/43kg",
+              "800m Run (Together)",
+              "30 Clean and Jerk 61kg/43kg",
+              "800m Run (Together)"
+            ],
+            "sub_title2": "Teams of 2 For Time:"
           }
         ]
       },
@@ -2779,33 +2849,8 @@
           }
         ],
         "note": "Benchmark: Eva"
-      },
-      {
-        "date": "2026-05-02",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 17.2",
-            "lines": [
-              "Complete as many rounds and reps as possible in 12 minutes of:",
-              "2 rounds of:",
-              "50-ft. weighted walking lunge",
-              "16 toes-to-bars",
-              "8 power cleans",
-              "Then, 2 rounds of:",
-              "50-ft. weighted walking lunge",
-              "16 bar muscle-ups",
-              "8 power cleans",
-              "Etc., alternating between toes-to-bars and bar muscle-ups every 2 rounds.",
-              "*Men use 50-lb. dumbbells*"
-            ]
-          }
-        ],
-        "note": "Open: Open 17.2"
       }
     ]
   },
-  "last_updated": "2026-05-02T02:55:02.004598"
+  "last_updated": "2026-05-02T07:18:16.301544"
 }
