@@ -2682,53 +2682,6 @@
       },
       {
         "date": "2026-05-04",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-04/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "instep rotation",
-              "lat stretch",
-              "sumo squat stretch",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 prone snow angels",
-              "15sec deep squat hold",
-              "10 ring rows"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "STRICT PULL UP 12MIN",
-            "lines": [
-              "build to a heavy set of 3",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 20MIN",
-            "lines": [
-              "buy in: 800m run",
-              "into",
-              "5 pull ups",
-              "10 push ups",
-              "15 air squats",
-              "\"Murph\" -prep",
-              "pull up"
-            ],
-            "sub_title": "amrap"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-04",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-may-4-2026/",
@@ -2786,6 +2739,53 @@
               "Target time: 18-20 minutes",
               "Time cap: 30 minutes"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-04",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-04/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "instep rotation",
+              "lat stretch",
+              "sumo squat stretch",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 prone snow angels",
+              "15sec deep squat hold",
+              "10 ring rows"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "STRICT PULL UP 12MIN",
+            "lines": [
+              "build to a heavy set of 3",
+              "absolute strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 20MIN",
+            "lines": [
+              "buy in: 800m run",
+              "into",
+              "5 pull ups",
+              "10 push ups",
+              "15 air squats",
+              "\"Murph\" -prep",
+              "pull up"
+            ],
+            "sub_title": "amrap"
           }
         ]
       },
@@ -2869,5 +2869,5 @@
       }
     ]
   },
-  "last_updated": "2026-05-04T07:40:33.739517"
+  "last_updated": "2026-05-04T08:56:27.824686"
 }
