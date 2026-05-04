@@ -826,32 +826,6 @@
       },
       {
         "date": "2026-04-24",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Power Clean + Hang Power Clean + Push Jerk 6x3",
-              "Every 2:00 × 6 sets",
-              "1 Power Clean + 1 Hang Power Clean + 1 Push Jerk @ 70–72% OR RPE 7"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Classic GWEN",
-            "lines": [
-              "15-12-9",
-              "Clean and Jerk 70kg/48kg",
-              "Sets must be completed unbroken (touch and go)"
-            ],
-            "sub_title2": "For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-24",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2655,6 +2629,59 @@
     "2026-05-04": [
       {
         "date": "2026-05-04",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260504",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-04",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 21.4",
+            "lines": [
+              "*2021 Open Workout 21.4 Men Rx*",
+              "Games Season",
+              "Open",
+              "Feb 26 – March 16",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Quarterfinals",
+              "March 26-30",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Semifinals",
+              "April – June",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Games",
+              "July",
+              "The CrossFit Games",
+              "Masters CrossFit Games",
+              "Teenage CrossFit Games"
+            ]
+          }
+        ],
+        "note": "Open: Open 21.4"
+      },
+      {
+        "date": "2026-05-04",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-05-04/",
@@ -2702,15 +2729,85 @@
       },
       {
         "date": "2026-05-04",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260504",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-4-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "Murph Prep Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "3 min Cardio",
+              "then… 8 min CAP:",
+              "10 Banded pull-aparts>scap push-ups>push-up",
+              "10 scap pull-ups>RIng Row> kips/pull-ups",
+              "10 90/90s>BW lunges>air squats"
             ]
+          },
+          {
+            "title": "Murph Prep Week 4",
+            "lines": [
+              "Week 4 Workout",
+              "(RX’d)"
+            ]
+          },
+          {
+            "title": "For Time:",
+            "lines": [
+              "800m Run",
+              "30 Pull-Ups",
+              "60 Push-Ups",
+              "90 Air Squats",
+              "400m Run",
+              "20 Pull-Ups",
+              "40 Push-Ups",
+              "60 Air Squats",
+              "200m Run",
+              "10 Pull-Ups",
+              "20 Push-Ups",
+              "30 Air Squats",
+              "Scaled:"
+            ]
+          },
+          {
+            "title": "For Time:",
+            "lines": [
+              "800m Run",
+              "25 Pull-Ups / Jumping pull ups",
+              "50 Push-Ups",
+              "75 Air Squats",
+              "400m Run",
+              "15 Pull-Ups",
+              "30 Push-Ups",
+              "50 Air Squats",
+              "200m Run",
+              "5 Pull-Ups",
+              "10 Push-Ups",
+              "25 Air Squats",
+              "Target time: 18-20 minutes",
+              "Time cap: 30 minutes"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-04",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Alderaan",
+            "lines": [
+              "400m Run",
+              "50 Pull Ups",
+              "400m Run",
+              "100 Push Ups",
+              "400m Run",
+              "150 Air Squats",
+              "400m Run"
+            ],
+            "sub_title2": "For Time:"
           }
         ]
       },
@@ -2769,47 +2866,8 @@
           }
         ],
         "note": "Benchmark: BARBARA"
-      },
-      {
-        "date": "2026-05-04",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 21.4",
-            "lines": [
-              "*2021 Open Workout 21.4 Men Rx*",
-              "Games Season",
-              "Open",
-              "Feb 26 – March 16",
-              "Overview",
-              "Schedule",
-              "Leaderboard",
-              "Workouts",
-              "Quarterfinals",
-              "March 26-30",
-              "Overview",
-              "Schedule",
-              "Leaderboard",
-              "Workouts",
-              "Semifinals",
-              "April – June",
-              "Overview",
-              "Schedule",
-              "Leaderboard",
-              "Workouts",
-              "Games",
-              "July",
-              "The CrossFit Games",
-              "Masters CrossFit Games",
-              "Teenage CrossFit Games"
-            ]
-          }
-        ],
-        "note": "Open: Open 21.4"
       }
     ]
   },
-  "last_updated": "2026-05-04T02:52:04.903211"
+  "last_updated": "2026-05-04T07:40:33.739517"
 }
