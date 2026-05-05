@@ -845,28 +845,6 @@
       },
       {
         "date": "2026-04-25",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Mayhem Classic Chipper",
-            "lines": [
-              "25 Burpee Box Step Overs 20\"",
-              "50/40 Calorie Air Bike",
-              "50 GHDs",
-              "25 Bar Muscle Up",
-              "50 GHDs",
-              "50/40 Calorie Air Bike",
-              "25 Burpee Box Step Overs 20\""
-            ],
-            "sub_title2": "Teams of 2 For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-25",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2682,6 +2660,59 @@
     "2026-05-05": [
       {
         "date": "2026-05-05",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260505",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-05",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 17.3",
+            "lines": [
+              "*2017 Open Workout 17.3 Men Rx*",
+              "Games Season",
+              "Open",
+              "Feb 26 – March 16",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Quarterfinals",
+              "March 26-30",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Semifinals",
+              "April – June",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Games",
+              "July",
+              "The CrossFit Games",
+              "Masters CrossFit Games",
+              "Teenage CrossFit Games"
+            ]
+          }
+        ],
+        "note": "Open: Open 17.3"
+      },
+      {
+        "date": "2026-05-05",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-05-05/",
@@ -2728,14 +2759,71 @@
       },
       {
         "date": "2026-05-05",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260505",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-5-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "3 Rounds",
+              "25ft Crab Walk",
+              "25ft Bear Crawl",
+              "8 Plate Ground to Overhead",
+              "8 Push Ups"
+            ]
+          },
+          {
+            "title": "Bench Press",
+            "lines": [
+              "3-3-3-3-3",
+              "Aim for sets to be 75% or heavier of 1RM.",
+              "Rest or bike slowly 3-4 minutes between sets.”)"
+            ]
+          },
+          {
+            "title": "2 rounds for time",
+            "lines": [
+              "20/16 Calorie Air Bike",
+              "20 Alt. DB Hang Snatches 50/35lbs",
+              "Feel: Cardio",
+              "Pace: Reach/Controlled Send",
+              "Target Score:  <3.5-5 minutes",
+              "Firebreather Score: <3.5 minutes"
+            ]
+          },
+          {
+            "title": "6 Sets",
+            "lines": [
+              "1 Smooth/Even Set of GHD Sit Ups",
+              "Rest 2:00",
+              "Consider this maintenence work. Do the math on total volume to avoid soreness"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-05",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Snatch 6x2",
+              "Every 2:00 × 6 sets",
+              "2 Squat Snatch (singles) @ 75–78% OR RPE 7-8"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Naboo (Mayhem FTP Test)",
+            "lines": [
+              "20:00 Calorie Air Bike Test",
+              "or",
+              "20:00 Calorie Row Test",
+              "* (Scored by Average Watts or Total Calories)"
             ]
           }
         ]
@@ -2784,47 +2872,8 @@
           }
         ],
         "note": "Benchmark: Elizabeth"
-      },
-      {
-        "date": "2026-05-05",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 17.3",
-            "lines": [
-              "*2017 Open Workout 17.3 Men Rx*",
-              "Games Season",
-              "Open",
-              "Feb 26 – March 16",
-              "Overview",
-              "Schedule",
-              "Leaderboard",
-              "Workouts",
-              "Quarterfinals",
-              "March 26-30",
-              "Overview",
-              "Schedule",
-              "Leaderboard",
-              "Workouts",
-              "Semifinals",
-              "April – June",
-              "Overview",
-              "Schedule",
-              "Leaderboard",
-              "Workouts",
-              "Games",
-              "July",
-              "The CrossFit Games",
-              "Masters CrossFit Games",
-              "Teenage CrossFit Games"
-            ]
-          }
-        ],
-        "note": "Open: Open 17.3"
       }
     ]
   },
-  "last_updated": "2026-05-05T02:56:54.447601"
+  "last_updated": "2026-05-05T07:16:27.978870"
 }
