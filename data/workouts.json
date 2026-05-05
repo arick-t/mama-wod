@@ -1,103 +1,5 @@
 {
   "workouts": {
-    "2026-04-21": [
-      {
-        "date": "2026-04-21",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260421",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "BUY TICKETS NOW"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-21",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 21.3",
-            "lines": [
-              "For total time:",
-              "15 front squats",
-              "30 toes-to-bars",
-              "15 thrusters",
-              "Then, rest 1 minute before continuing with:",
-              "15 front squats",
-              "30 chest-to-bar pull-ups",
-              "15 thrusters",
-              "Then, rest 1 minute before continuing with:",
-              "15 front squats",
-              "30 bar muscle-ups",
-              "15 thrusters",
-              "Workout 21.4 begins immediately upon completing or reaching the time cap for 21.3.",
-              "95 lb. for the front squats and thrusters",
-              "Time cap: 15 min."
-            ]
-          }
-        ],
-        "note": "Open: Open 21.3"
-      },
-      {
-        "date": "2026-04-21",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-april-21-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "20 Dead Bugs",
-              "20 Band Pull Aparts",
-              "Then,",
-              "3 rounds of:",
-              ":45 Machine or 150m Run",
-              "8 Russian KBS",
-              "8 Plank Shoulder Taps",
-              "then,"
-            ]
-          },
-          {
-            "title": "Power Clean",
-            "lines": [
-              "1 @ 80-90%",
-              "4 @ 70-75%",
-              "3 @ 75-80%",
-              "2 @ 80-85%",
-              "4 @ 75-80%",
-              "3 @ 80-85%",
-              "2 @ 85-90%",
-              "Drop and reset reps.",
-              "20 min Max)"
-            ]
-          },
-          {
-            "title": "AMRAP 16 Minutes",
-            "lines": [
-              "28 Russian Kettlebell Swings 70/53lbs",
-              "C2 Machine*",
-              "8 Shoulder to overhead 185/125lbs",
-              "Rest 1:00",
-              "*C2 Machine options:",
-              "– 800/720m C2 Bike (0.9/0.8k Airbike)",
-              "– 400/360m Row",
-              "– 300/270m Ski",
-              "– 300m Outdoor Run",
-              "Feel: Gas/Muscle Overload",
-              "Pacing: Sustain",
-              "Target Score: 3+ Rounds",
-              "Firebreather: 5+ Rounds"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-04-22": [
       {
         "date": "2026-04-22",
@@ -194,113 +96,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-04-22",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-04-22/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "thoracic rotation",
-              "handwalk",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 straight leg sit ups",
-              "10 good mornings",
-              "10 push ups to down dog"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "DEADLIFTS 15MIN",
-            "lines": [
-              "3 sets",
-              "5 deadlifts at 85%",
-              "1 drop set",
-              "max reps at 50%",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "30 toes to bar",
-              "30 db hang power cleans",
-              "30 burpee to target",
-              "20 toes to bar",
-              "20 db hang power cleans",
-              "20 burpee to target",
-              "10 toes to bar",
-              "10 db hang power cleans",
-              "10 burpee to target",
-              "dumbbells: 2x22,5/15kg",
-              "* aerobic power [lactate threshold]",
-              "toes to bar"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-22",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Garrett",
-            "sub_title": "3 rounds for time of:",
-            "lines": [
-              "75 squats",
-              "25 ring handstand push-ups",
-              "25 L pull-ups"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-22",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "J.J.",
-            "lines": [
-              "For time:",
-              "1 Squat  clean  185 lbs/125 lbs",
-              "10 parallette  handstand push-up s",
-              "2 Squat  clean  185 lbs/125 lbs",
-              "9 parallette  handstand push-up s",
-              "3 Squat  clean  185 lbs/125 lbs",
-              "8 parallette  handstand push-up s",
-              "4 Squat  clean  185 lbs/125 lbs",
-              "7 parallette  handstand push-up s",
-              "5 Squat  clean  185 lbs/125 lbs",
-              "6 parallette  handstand push-up s",
-              "6 Squat  clean  185 lbs/125 lbs",
-              "5 parallette  handstand push-up s",
-              "7 Squat  clean  185 lbs/125 lbs",
-              "4 parallette  handstand push-up s",
-              "8 Squat  clean  185 lbs/125 lbs",
-              "3 parallette  handstand push-up s",
-              "9 Squat  clean  185 lbs/125 lbs",
-              "2 parallette  handstand push-up s",
-              "10 Squat  clean  185 lbs/125 lbs",
-              "1 parallette  handstand push-up"
-            ]
-          }
-        ],
-        "note": "Benchmark: J.J."
       }
     ],
     "2026-04-23": [
@@ -952,34 +747,6 @@
               "* aerobic power [lactate threshold]"
             ],
             "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-26",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Lupo",
-              "For Time (with a Partner):",
-              "Cash-In: 1,943 meter Row",
-              "100 Wall Ball Shots 9/6kg",
-              "90 Deadlifts 61/43kg",
-              "80 Hand Release Push-Ups",
-              "70 Box Jumps 24/20 in",
-              "60 Toes-to-Bars",
-              "50 Burpees",
-              "40 Power Cleans 61/43kg",
-              "30 Push Presses 61/43kg",
-              "20 Weighted Lunges 9/6kg",
-              "10 Thrusters 61/43kg",
-              "Cash-Out: 1,967 Row",
-              "For ease, option to make the Barbell 60/42.5kg"
-            ]
           }
         ]
       },
@@ -2083,18 +1850,27 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "”ANGIE” BENCHMARK",
+            "title": "Chelsea",
             "lines": [
-              "100 pull-ups",
-              "100 push-ups",
-              "100 sit-ups",
-              "100 squats",
-              "Timecap 25 min",
-              "Skaalata voi monella tapaa!"
+              "On the minute every minute for 30 minutes:",
+              "5 pull-ups",
+              "10 push-ups",
+              "15 air squats",
+              "Scaling options for both workouts:",
+              "pull-ups to ring row or jumping pull ups",
+              "push-ups to against box or rubber band",
+              "Intermediate:",
+              "4 pull-ups",
+              "8 push-ups",
+              "12 air squats",
+              "Beginner:",
+              "3 pull-ups",
+              "6 push-ups",
+              "9 air squats"
             ]
           }
         ],
-        "note": "Benchmark: ”ANGIE” BENCHMARK"
+        "note": "Benchmark: Chelsea"
       }
     ],
     "2026-05-02": [
@@ -2873,7 +2649,138 @@
         ],
         "note": "Benchmark: Elizabeth"
       }
+    ],
+    "2026-05-06": [
+      {
+        "date": "2026-05-06",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-06/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "calf stretch",
+              "instep rotation"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "* 1. 7 burpees +  remaining time row",
+              "* 2. 7 squat jumps + remaining time bike"
+            ],
+            "sub_title": "1:00 on/ 00:30 off x 4 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "30 dball box step ups 20/15kg",
+              "40/32cal bike/row",
+              "40 box jumps 60/50cm",
+              "40/32cal row/bike",
+              "30 burpees to target",
+              "aerobic capacity"
+            ],
+            "sub_title": "amrap 35min"
+          }
+        ]
+      },
+      {
+        "date": "2026-05-06",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260506",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-06",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Strength:-Every 90 seconds4 X 2 Push Press + 2 Split Jerkbuilding in weight",
+              "ThenE2MOMSplit Jerk 3,3,2,2,2",
+              "Metcon:-3 rounds for time of:-100 DU’s15 Deadlifts 100/70kg15 OTB Burpees"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-06",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Details",
+            "sub_title": "DT",
+            "lines": [
+              "5 rounds for time of:",
+              "12 deadlifts",
+              "9 hang power cleans",
+              "6 push jerks"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-06",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "”ANGIE” BENCHMARK",
+            "lines": [
+              "100 pull-ups",
+              "100 push-ups",
+              "100 sit-ups",
+              "100 squats",
+              "Timecap 25 min",
+              "Skaalata voi monella tapaa!"
+            ]
+          }
+        ],
+        "note": "Benchmark: ”ANGIE” BENCHMARK"
+      },
+      {
+        "date": "2026-05-06",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 19.4",
+            "lines": [
+              "For total time:",
+              "3 rounds of:",
+              "10 snatches",
+              "12 bar-facing burpees",
+              "Then, rest 3 minutes before continuing with:",
+              "3 rounds of:",
+              "10 bar muscle-ups",
+              "12 bar-facing burpees",
+              "*Men snatch 95 lb.*",
+              "Time cap: 12 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 19.4"
+      }
     ]
   },
-  "last_updated": "2026-05-05T11:08:01.104547"
+  "last_updated": "2026-05-06T02:51:25.847382"
 }
