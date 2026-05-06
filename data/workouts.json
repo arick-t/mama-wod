@@ -2663,43 +2663,6 @@
       },
       {
         "date": "2026-05-06",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-06/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "calf stretch",
-              "instep rotation"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "* 1. 7 burpees +  remaining time row",
-              "* 2. 7 squat jumps + remaining time bike"
-            ],
-            "sub_title": "1:00 on/ 00:30 off x 4 rounds"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "30 dball box step ups 20/15kg",
-              "40/32cal bike/row",
-              "40 box jumps 60/50cm",
-              "40/32cal row/bike",
-              "30 burpees to target",
-              "aerobic capacity"
-            ],
-            "sub_title": "amrap 35min"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-06",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-may-6-2026/",
@@ -2741,6 +2704,43 @@
               "Target Score: 3+ rounds",
               "Firebreather Score: 4+ rounds"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-06",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-06/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "calf stretch",
+              "instep rotation"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "* 1. 7 burpees +  remaining time row",
+              "* 2. 7 squat jumps + remaining time bike"
+            ],
+            "sub_title": "1:00 on/ 00:30 off x 4 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "30 dball box step ups 20/15kg",
+              "40/32cal bike/row",
+              "40 box jumps 60/50cm",
+              "40/32cal row/bike",
+              "30 burpees to target",
+              "aerobic capacity"
+            ],
+            "sub_title": "amrap 35min"
           }
         ]
       },
@@ -2833,5 +2833,5 @@
       }
     ]
   },
-  "last_updated": "2026-05-06T07:33:36.371687"
+  "last_updated": "2026-05-06T08:50:07.702515"
 }
