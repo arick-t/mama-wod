@@ -942,34 +942,6 @@
       },
       {
         "date": "2026-04-27",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Back Squat 5x3",
-              "Every 2:00 x 5 sets",
-              "3 Back Squats @ 72–75% OR RPE 7-8"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "LA Lakers",
-            "lines": [
-              "200m run",
-              "2 rounds of \"Cindy\"",
-              "5 Pull Ups",
-              "10 Push Ups",
-              "15 Air Squats"
-            ],
-            "sub_title2": "10 Rounds For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-27",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2653,6 +2625,44 @@
     "2026-05-06": [
       {
         "date": "2026-05-06",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260506",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-06",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 19.4",
+            "lines": [
+              "For total time:",
+              "3 rounds of:",
+              "10 snatches",
+              "12 bar-facing burpees",
+              "Then, rest 3 minutes before continuing with:",
+              "3 rounds of:",
+              "10 bar muscle-ups",
+              "12 bar-facing burpees",
+              "*Men snatch 95 lb.*",
+              "Time cap: 12 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 19.4"
+      },
+      {
+        "date": "2026-05-06",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-05-06/",
@@ -2690,15 +2700,80 @@
       },
       {
         "date": "2026-05-06",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260506",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-6-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "3 Rounds",
+              ":20 Machine",
+              ":10 Rest",
+              ":20 Air Squats",
+              ":10 Rest",
+              ":20 Handstand Hold",
+              ":10 Rest",
+              "BB Warm-up (get into cleans w/in 15min from class start)"
             ]
+          },
+          {
+            "title": "Hang Power Clean",
+            "lines": [
+              "Every 1:30 for 7 Sets"
+            ]
+          },
+          {
+            "title": "*Above Knee Power Clean + Below Knee Power Clean)",
+            "lines": [
+              "We’re searching for the sweet spot where speed and technique meets heavy. Not challenging = too light."
+            ]
+          },
+          {
+            "title": "AMRAP 22 Minutes",
+            "lines": [
+              "21 Box Jumps 24/20″",
+              "7 Wall Walks",
+              "21 Thrusters 95/65lbs",
+              "Rest 2:00 between rounds",
+              "Feel: Gas",
+              "Pace: Sustain",
+              "Target Score: 3+ rounds",
+              "Firebreather Score: 4+ rounds"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-06",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Clean & Jerk 3-1",
+              "Every 1:00 x 5 sets (5:00)",
+              "3 Clean and Jerks (singles) @ 70% OR RPE 6-7",
+              "* -into-",
+              "Every :30 x 10 sets (5:00)",
+              "1 Clean and Jerk @ 75–80% OR RPE 8"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Coruscant",
+            "lines": [
+              "21-15-9",
+              "Hang Power Clean 43kg/29kg",
+              "Shoulder to Overhead 43kg/29kg",
+              "* -rest 4:00-",
+              "9-15-21",
+              "Shoulder to Overhead 43kg/29kg",
+              "Hang Power Clean 43kg/29kg"
+            ],
+            "sub_title2": "For Time:"
           }
         ]
       },
@@ -2755,32 +2830,8 @@
           }
         ],
         "note": "Benchmark: ”ANGIE” BENCHMARK"
-      },
-      {
-        "date": "2026-05-06",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 19.4",
-            "lines": [
-              "For total time:",
-              "3 rounds of:",
-              "10 snatches",
-              "12 bar-facing burpees",
-              "Then, rest 3 minutes before continuing with:",
-              "3 rounds of:",
-              "10 bar muscle-ups",
-              "12 bar-facing burpees",
-              "*Men snatch 95 lb.*",
-              "Time cap: 12 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 19.4"
       }
     ]
   },
-  "last_updated": "2026-05-06T02:51:25.847382"
+  "last_updated": "2026-05-06T07:33:36.371687"
 }
