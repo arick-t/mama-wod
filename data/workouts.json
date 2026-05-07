@@ -940,23 +940,6 @@
       },
       {
         "date": "2026-04-28",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Golden State Warriors",
-            "lines": [
-              "15 Push Press 34kg/25kg",
-              "15 Box Jump 24\"/20\""
-            ],
-            "sub_title2": "10:00 AMRAP"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-28",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2638,6 +2621,48 @@
     "2026-05-07": [
       {
         "date": "2026-05-07",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260507",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-07",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 21.1",
+            "lines": [
+              "For time:",
+              "1 wall walk",
+              "10 double-unders",
+              "3 wall walks",
+              "30 double-unders",
+              "6 wall walks",
+              "60 double-unders",
+              "9 wall walks",
+              "90 double-unders",
+              "15 wall walks",
+              "150 double-unders",
+              "21 wall walks",
+              "210 double-unders",
+              "Time cap: 15 min."
+            ]
+          }
+        ],
+        "note": "Open: Open 21.1"
+      },
+      {
+        "date": "2026-05-07",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-05-07/",
@@ -2693,14 +2718,68 @@
       },
       {
         "date": "2026-05-07",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260507",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-7-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "3 rounds",
+              "Run 200m",
+              "8 Ring Rows",
+              "8 Kettlebell Swings"
+            ]
+          },
+          {
+            "title": "Shoulder Press",
+            "lines": [
+              "10-8-6-4",
+              "Start your set of 10 between 60 and 70%, then add weight each round.",
+              "Air Bike 1,000m Between Sets to Flush)"
+            ]
+          },
+          {
+            "title": "All for time:",
+            "lines": [
+              "4 rounds of",
+              "Run 200m",
+              "6 Bar Muscle Ups",
+              "Directly into:",
+              "4 rounds of",
+              "Run 200m",
+              "12 Deadlifts 225/155lbs",
+              "Feel: Gas",
+              "Pace: Sustain",
+              "Target Score: 12-16 minutes",
+              "Firebreather Score: sub 12"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-07",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Bench Press 5x3",
+              "Every 2:00 x 5 sets",
+              "3 Bench Press @ 78% OR RPE 7-8"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Kashyyyk",
+            "lines": [
+              "6 sets For Total Time:",
+              "48 Double Unders",
+              "12 Burpee Over Bar",
+              "6 Deadlifts 125kg/84kg",
+              "* -rest 1:00 between sets-"
             ]
           }
         ]
@@ -2760,36 +2839,8 @@
           }
         ],
         "note": "Benchmark: BARBARA"
-      },
-      {
-        "date": "2026-05-07",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 21.1",
-            "lines": [
-              "For time:",
-              "1 wall walk",
-              "10 double-unders",
-              "3 wall walks",
-              "30 double-unders",
-              "6 wall walks",
-              "60 double-unders",
-              "9 wall walks",
-              "90 double-unders",
-              "15 wall walks",
-              "150 double-unders",
-              "21 wall walks",
-              "210 double-unders",
-              "Time cap: 15 min."
-            ]
-          }
-        ],
-        "note": "Open: Open 21.1"
       }
     ]
   },
-  "last_updated": "2026-05-07T02:54:23.640627"
+  "last_updated": "2026-05-07T07:34:17.315510"
 }
