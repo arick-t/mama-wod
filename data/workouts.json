@@ -918,35 +918,6 @@
       },
       {
         "date": "2026-04-29",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "April 100 Toes to Bar Challenge",
-              "For Time:",
-              "100 Toes to Bar",
-              "* (Cap: 10:00)"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "San Antonio Spurs",
-            "lines": [
-              "18/15 Calorie Air Bike",
-              "15 Burpee to Bar",
-              "Max Distance Bodyweight Lunge (25ft sections)",
-              "* -rest 1:00 between AMRAPs-",
-              "* (Scored by Distance each set)"
-            ],
-            "sub_title2": "3-3-3-4:00 AMRAP"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-29",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2619,6 +2590,47 @@
     "2026-05-08": [
       {
         "date": "2026-05-08",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260508",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-08",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 26.2",
+            "lines": [
+              "For time:",
+              "80-foot dumbbell overhead walking lunge",
+              "20 alternating dumbbell snatches",
+              "20 pull-ups",
+              "80-foot dumbbell overhead walking lunge",
+              "20 alternating dumbbell snatches",
+              "20 chest-to-bar pull-ups",
+              "80-foot dumbbell overhead walking lunge",
+              "20 alternating dumbbell snatches",
+              "20 muscle-ups",
+              "Time cap: 15 minutes",
+              "♀ 35-lb (15-kg) dumbbell",
+              "♂ 50-lb (22.5-kg) dumbbell"
+            ]
+          }
+        ],
+        "note": "Open: Open 26.2"
+      },
+      {
+        "date": "2026-05-08",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-05-08/",
@@ -2666,15 +2678,56 @@
       },
       {
         "date": "2026-05-08",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260508",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-8-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "2 rounds",
+              "2:00 C2 Bike",
+              "2:00 Row",
+              "15 Burpees"
             ]
+          },
+          {
+            "title": "5 rounds for time",
+            "lines": [
+              "500/450m C2 Bike*",
+              "200/175m Row",
+              "15 Burpees",
+              "Rest 1:00 between rounds",
+              "*600/500m Echo/Assault",
+              "Feel: Cardio",
+              "Pace: Sustain",
+              "Target Score: sub 3:00/round, sub 19 minutes total",
+              "Firebreather Score: sub 2:15/round, sub 16 minutes total"
+            ]
+          },
+          {
+            "title": "Back Rack Lunge",
+            "lines": [
+              "10 Back Rack Lunge Steps",
+              "Rest 2:00)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-08",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Jakku",
+            "lines": [
+              "200m Run",
+              "2 Rope Climbs"
+            ],
+            "sub_title2": "20:00 AMRAP"
           }
         ]
       },
@@ -2734,35 +2787,8 @@
           }
         ],
         "note": "Benchmark: Jackie"
-      },
-      {
-        "date": "2026-05-08",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 26.2",
-            "lines": [
-              "For time:",
-              "80-foot dumbbell overhead walking lunge",
-              "20 alternating dumbbell snatches",
-              "20 pull-ups",
-              "80-foot dumbbell overhead walking lunge",
-              "20 alternating dumbbell snatches",
-              "20 chest-to-bar pull-ups",
-              "80-foot dumbbell overhead walking lunge",
-              "20 alternating dumbbell snatches",
-              "20 muscle-ups",
-              "Time cap: 15 minutes",
-              "♀ 35-lb (15-kg) dumbbell",
-              "♂ 50-lb (22.5-kg) dumbbell"
-            ]
-          }
-        ],
-        "note": "Open: Open 26.2"
       }
     ]
   },
-  "last_updated": "2026-05-08T02:55:46.008200"
+  "last_updated": "2026-05-08T07:16:09.779467"
 }
