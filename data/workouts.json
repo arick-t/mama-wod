@@ -2631,6 +2631,44 @@
       },
       {
         "date": "2026-05-08",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-8-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "2 rounds",
+              "2:00 C2 Bike",
+              "2:00 Row",
+              "15 Burpees"
+            ]
+          },
+          {
+            "title": "5 rounds for time",
+            "lines": [
+              "500/450m C2 Bike*",
+              "200/175m Row",
+              "15 Burpees",
+              "Rest 1:00 between rounds",
+              "*600/500m Echo/Assault",
+              "Feel: Cardio",
+              "Pace: Sustain",
+              "Target Score: sub 3:00/round, sub 19 minutes total",
+              "Firebreather Score: sub 2:15/round, sub 16 minutes total"
+            ]
+          },
+          {
+            "title": "Back Rack Lunge",
+            "lines": [
+              "10 Back Rack Lunge Steps",
+              "Rest 2:00)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-08",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-05-08/",
@@ -2672,44 +2710,6 @@
               "* 1. 12-16 kb gorilla rows",
               "* 2. 12-16 kb pull through",
               "* (core-) strength"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-08",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-may-8-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "2 rounds",
-              "2:00 C2 Bike",
-              "2:00 Row",
-              "15 Burpees"
-            ]
-          },
-          {
-            "title": "5 rounds for time",
-            "lines": [
-              "500/450m C2 Bike*",
-              "200/175m Row",
-              "15 Burpees",
-              "Rest 1:00 between rounds",
-              "*600/500m Echo/Assault",
-              "Feel: Cardio",
-              "Pace: Sustain",
-              "Target Score: sub 3:00/round, sub 19 minutes total",
-              "Firebreather Score: sub 2:15/round, sub 16 minutes total"
-            ]
-          },
-          {
-            "title": "Back Rack Lunge",
-            "lines": [
-              "10 Back Rack Lunge Steps",
-              "Rest 2:00)"
             ]
           }
         ]
@@ -2790,5 +2790,5 @@
       }
     ]
   },
-  "last_updated": "2026-05-08T07:16:09.779467"
+  "last_updated": "2026-05-08T08:24:01.930353"
 }
