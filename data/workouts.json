@@ -2629,45 +2629,6 @@
       },
       {
         "date": "2026-05-09",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-09/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "sumo squat stretch",
-              "lat stretch",
-              "thoracic rotation"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 sumo deadlifts",
-              "10 push press",
-              "*partner is skiing"
-            ],
-            "sub_title": "amrap 5min"
-          },
-          {
-            "title": "CONDITIONING 30MIN",
-            "lines": [
-              "in teams of 2",
-              "4 rounds",
-              "",
-              "40 thrusters 40/30kg",
-              "20/18/16cal ski",
-              "40 sumo deadlift high pulls",
-              "20/18/16cal ski"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-09",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-may-9-2026/",
@@ -2712,6 +2673,45 @@
               "Rest 4:00",
               "If done properly, you will be able to increase reps on round 2 for all three movement patterns. Flush (very slow) between sets on an air bike or 1 damper ski erg."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-09",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-09/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "lat stretch",
+              "thoracic rotation"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 sumo deadlifts",
+              "10 push press",
+              "*partner is skiing"
+            ],
+            "sub_title": "amrap 5min"
+          },
+          {
+            "title": "CONDITIONING 30MIN",
+            "lines": [
+              "in teams of 2",
+              "4 rounds",
+              "",
+              "40 thrusters 40/30kg",
+              "20/18/16cal ski",
+              "40 sumo deadlift high pulls",
+              "20/18/16cal ski"
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -2788,5 +2788,5 @@
       }
     ]
   },
-  "last_updated": "2026-05-09T07:22:47.664555"
+  "last_updated": "2026-05-09T08:41:05.041763"
 }
