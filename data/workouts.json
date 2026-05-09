@@ -930,32 +930,6 @@
       },
       {
         "date": "2026-04-30",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Squat Clean + Hang Squat Clean 6x2",
-              "Every 2:00 × 6 sets",
-              "1 Squat Clean + 1 Hang Squat Clean @ 72–75% OR RPE 7-8"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "New York Knicks",
-            "lines": [
-              "75 Wall Balls 9kg/6kg",
-              "25 Power Cleans 75kg/50kg",
-              "75 Wall Balls 9kg/6kg"
-            ],
-            "sub_title2": "For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-30",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2602,6 +2576,59 @@
     "2026-05-09": [
       {
         "date": "2026-05-09",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260509",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-09",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 11.2",
+            "lines": [
+              "Complete as many rounds and reps as possible in 15 minutes of:",
+              "9 Deadlifts (155lbs / 70kg)",
+              "12 Push-ups",
+              "15 Box jumps (24\")",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 15 minutes of:",
+              "9 Deadlifts (100lbs / 45kg)",
+              "12 Push-ups",
+              "15 Box jumps (20\")",
+              "*MASTERS MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 15 minutes of:",
+              "9 Deadlifts (145lbs / 65kg)",
+              "12 Push-ups",
+              "15 Box jumps (20\")",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 15 minutes of:",
+              "9 Deadlifts (90lbs / 40kg)",
+              "12 Push-ups",
+              "15 Box jumps (20\")"
+            ]
+          }
+        ],
+        "note": "Open: Open 11.2"
+      },
+      {
+        "date": "2026-05-09",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-05-09/",
@@ -2641,15 +2668,68 @@
       },
       {
         "date": "2026-05-09",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260509",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-9-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "All with a partner synchro",
+              "AMRAP 5 minutes",
+              "20 Jump rope reps",
+              ":15 Bar Hang",
+              "10 Plate Ground to Overhead"
             ]
+          },
+          {
+            "title": "21 Minute AMRAP:",
+            "lines": [
+              "With a partner",
+              "Every 7 minutes for 3 rounds:",
+              "10 Rope Climbs, split",
+              "200 Double Unders, split",
+              "Max Snatches in remaining time*",
+              "One athlete works, one rests. There is no rest between rounds – a new round begins every 7 minutes.",
+              "Score is total snatches.",
+              "Snatch Weights",
+              "Round 1: 115/75lbs",
+              "Round 2: 135/95lbs",
+              "Round 3: 155/105lbs",
+              "Feel: Muscle Overload",
+              "Pace: Sustain",
+              "Target Score: 2:00 or more to accumulate snatches"
+            ]
+          },
+          {
+            "title": "2 Rounds",
+            "lines": [
+              "1 Smooth Set of Wall Facing HSPU",
+              "Rest 2:00",
+              "1 Smooth Set of Strict HSPU",
+              "Rest 2:00",
+              "1 Smooth Set of Kipping HSPU",
+              "Rest 4:00",
+              "If done properly, you will be able to increase reps on round 2 for all three movement patterns. Flush (very slow) between sets on an air bike or 1 damper ski erg."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-09",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Mustafar",
+            "lines": [
+              "60 Synchro Toes to Bar",
+              "40 Calorie Air Bike and Row (total on each)",
+              "60 Power Snatches 61kg43kg"
+            ],
+            "sub_title2": "Teams of 2 for Time:"
           }
         ]
       },
@@ -2705,47 +2785,8 @@
           }
         ],
         "note": "Benchmark: Linda"
-      },
-      {
-        "date": "2026-05-09",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 11.2",
-            "lines": [
-              "Complete as many rounds and reps as possible in 15 minutes of:",
-              "9 Deadlifts (155lbs / 70kg)",
-              "12 Push-ups",
-              "15 Box jumps (24\")",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 15 minutes of:",
-              "9 Deadlifts (100lbs / 45kg)",
-              "12 Push-ups",
-              "15 Box jumps (20\")",
-              "*MASTERS MEN*",
-              "-",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 15 minutes of:",
-              "9 Deadlifts (145lbs / 65kg)",
-              "12 Push-ups",
-              "15 Box jumps (20\")",
-              "*MASTERS WOMEN*",
-              "-",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 15 minutes of:",
-              "9 Deadlifts (90lbs / 40kg)",
-              "12 Push-ups",
-              "15 Box jumps (20\")"
-            ]
-          }
-        ],
-        "note": "Open: Open 11.2"
       }
     ]
   },
-  "last_updated": "2026-05-09T02:58:13.222439"
+  "last_updated": "2026-05-09T07:22:47.664555"
 }
