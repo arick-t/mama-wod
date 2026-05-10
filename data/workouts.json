@@ -2610,52 +2610,6 @@
       },
       {
         "date": "2026-05-10",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-10/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "instep rotations",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. box step ups",
-              "2. bike/ski",
-              "3. hollow hold",
-              "4. kb deadlifts"
-            ],
-            "sub_title": "30sec on / 15sec off x2 rounds"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "1. 14-20 db box step ups",
-              "2. 50 double under / 75 single under",
-              "3. 6-10 strict toes to bar",
-              "4. 14-20 kb swings",
-              "5. rest",
-              "Sunday Endurance for Open Gym",
-              "5-10 rounds:",
-              "",
-              "2:00 row",
-              "2:00 bike",
-              "2:00 run or ski",
-              "rpe 3-5 for all",
-              "aerobic endurance"
-            ],
-            "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-10",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-may-10-2026/",
@@ -2708,6 +2662,52 @@
             "lines": [
               "Spend 4:00 on the rower, keeping your heartrate above 150bpm minus your age, then slowly work down to resting for the next 8:00 on any machine or walking."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-10",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-10/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "instep rotations",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. box step ups",
+              "2. bike/ski",
+              "3. hollow hold",
+              "4. kb deadlifts"
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "1. 14-20 db box step ups",
+              "2. 50 double under / 75 single under",
+              "3. 6-10 strict toes to bar",
+              "4. 14-20 kb swings",
+              "5. rest",
+              "Sunday Endurance for Open Gym",
+              "5-10 rounds:",
+              "",
+              "2:00 row",
+              "2:00 bike",
+              "2:00 run or ski",
+              "rpe 3-5 for all",
+              "aerobic endurance"
+            ],
+            "sub_title": "emom 35min (7 rounds)"
           }
         ]
       },
@@ -2777,5 +2777,5 @@
       }
     ]
   },
-  "last_updated": "2026-05-10T07:43:39.073688"
+  "last_updated": "2026-05-10T08:56:38.864942"
 }
