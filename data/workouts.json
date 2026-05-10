@@ -2571,6 +2571,45 @@
     "2026-05-10": [
       {
         "date": "2026-05-10",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 12.5",
+            "lines": [
+              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
+              "100 pound Thruster, 3 reps",
+              "3 Chest to bar Pull-ups",
+              "100 pound Thruster, 6 reps",
+              "6 Chest to bar Pull-ups",
+              "100 pound Thruster, 9 reps",
+              "9 Chest to bar Pull-ups",
+              "100 pound Thruster, 12 reps",
+              "12 Chest to bar Pull-ups",
+              "100 pound Thruster, 15 reps",
+              "15 Chest to bar Pull-ups",
+              "100 pound Thruster, 18 reps",
+              "18 Chest to bar Pull-ups",
+              "100 pound Thruster, 21 reps",
+              "21 Chest to bar Pull-ups...",
+              "This is a timed workout. If you complete the round of 21, go on to 24. If you complete 24, go on to 27, etc.",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
+              "65 pound Thruster, 3 reps",
+              "3 Chest to bar Pull-ups",
+              "65 pound Thruster, 6 reps",
+              "6 Chest to bar Pull-ups",
+              "65 pound Thruster, 9 reps"
+            ]
+          }
+        ],
+        "note": "Open: Open 12.5"
+      },
+      {
+        "date": "2026-05-10",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-05-10/",
@@ -2612,6 +2651,63 @@
               "aerobic endurance"
             ],
             "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-05-10",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-10-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "2:00 Row or Ski",
+              "1:00 Accumulated Dead hang",
+              "20 Ring Rows",
+              "1:00 Accumulated Hollow Hold"
+            ]
+          },
+          {
+            "title": "10 sets for quality:",
+            "lines": [
+              "5 Unbroken Strict Chest to Bar Pull Ups",
+              "Rest as little as needed to stay unbroken, but no more than 1:00",
+              "Start with as little (or no) band assistance as needed, progressively adding assistance as fatigue builds."
+            ]
+          },
+          {
+            "title": "EMOM 7 Minutes",
+            "lines": [
+              "10 Air Squats",
+              "Max duration L-sit hold in remainder of minute",
+              "Score is total time in an L-Sit."
+            ]
+          },
+          {
+            "title": "12:00 Zone 2 Warm Up",
+            "lines": [
+              "45:00-90:00 Row @ Zone 2"
+            ]
+          },
+          {
+            "title": "12:00 Zone 2 Cool Down",
+            "lines": [
+              "Your Zone 2 today should stay between 160bpm minus your age and 180bpm minus your age."
+            ]
+          },
+          {
+            "title": "Warm up:",
+            "lines": [
+              "Build from resting heartrate to 180bpm minus your age slowly over 12:00. This will feel incredibly slow, but will help your session a lot. Feel free to mix up machines, but end on rower."
+            ]
+          },
+          {
+            "title": "Cool down:",
+            "lines": [
+              "Spend 4:00 on the rower, keeping your heartrate above 150bpm minus your age, then slowly work down to resting for the next 8:00 on any machine or walking."
+            ]
           }
         ]
       },
@@ -2678,47 +2774,8 @@
           }
         ],
         "note": "Benchmark: Chelsea"
-      },
-      {
-        "date": "2026-05-10",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 12.5",
-            "lines": [
-              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
-              "100 pound Thruster, 3 reps",
-              "3 Chest to bar Pull-ups",
-              "100 pound Thruster, 6 reps",
-              "6 Chest to bar Pull-ups",
-              "100 pound Thruster, 9 reps",
-              "9 Chest to bar Pull-ups",
-              "100 pound Thruster, 12 reps",
-              "12 Chest to bar Pull-ups",
-              "100 pound Thruster, 15 reps",
-              "15 Chest to bar Pull-ups",
-              "100 pound Thruster, 18 reps",
-              "18 Chest to bar Pull-ups",
-              "100 pound Thruster, 21 reps",
-              "21 Chest to bar Pull-ups...",
-              "This is a timed workout. If you complete the round of 21, go on to 24. If you complete 24, go on to 27, etc.",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
-              "65 pound Thruster, 3 reps",
-              "3 Chest to bar Pull-ups",
-              "65 pound Thruster, 6 reps",
-              "6 Chest to bar Pull-ups",
-              "65 pound Thruster, 9 reps"
-            ]
-          }
-        ],
-        "note": "Open: Open 12.5"
       }
     ]
   },
-  "last_updated": "2026-05-10T02:53:30.331432"
+  "last_updated": "2026-05-10T07:43:39.073688"
 }
