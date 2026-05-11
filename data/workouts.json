@@ -2687,54 +2687,6 @@
       },
       {
         "date": "2026-05-11",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-11/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "instep rotation",
-              "lat stretch",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 air squats",
-              "10/8cal row",
-              "10 ring rows"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "PULL UPS 15MIN",
-            "lines": [
-              "4 super sets:",
-              "",
-              "8 pull ups @rpe 6-7",
-              "12-15 banded lat pull downs",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "12 double db hang squat cleans 2x22,5/15kg",
-              "15/12cal row",
-              "* score: slowest round",
-              "* aerobic power & vo2max",
-              "* hang squat clean"
-            ],
-            "sub_title": "on every 3:00 x 5 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-11",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-may-11-2026/",
@@ -2779,6 +2731,54 @@
               "Target time each set: 14-16 minutes",
               "Time cap each set: 18 minutes"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-11",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-11/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "instep rotation",
+              "lat stretch",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 air squats",
+              "10/8cal row",
+              "10 ring rows"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "PULL UPS 15MIN",
+            "lines": [
+              "4 super sets:",
+              "",
+              "8 pull ups @rpe 6-7",
+              "12-15 banded lat pull downs",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "12 double db hang squat cleans 2x22,5/15kg",
+              "15/12cal row",
+              "* score: slowest round",
+              "* aerobic power & vo2max",
+              "* hang squat clean"
+            ],
+            "sub_title": "on every 3:00 x 5 rounds"
           }
         ]
       },
@@ -2841,5 +2841,5 @@
       }
     ]
   },
-  "last_updated": "2026-05-11T07:58:29.805294"
+  "last_updated": "2026-05-11T09:30:21.459379"
 }
