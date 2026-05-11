@@ -749,34 +749,6 @@
       },
       {
         "date": "2026-05-01",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Power Snatch 8x2",
-              "Every 1:00 x 8 sets",
-              "2 Power Snatch (singles) @ 72–75% OR RPE 7-8"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Miami Heat",
-            "lines": [
-              "50-40-30-20-10",
-              "Calorie Row",
-              "100-80-60-40-20",
-              "Double Under",
-              "* (Women's Calories: 40-32-24-16-8)"
-            ],
-            "sub_title2": "For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-01",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2674,6 +2646,47 @@
     "2026-05-11": [
       {
         "date": "2026-05-11",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260511",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-11",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 21.2",
+            "lines": [
+              "For time:",
+              "10 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "20 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "30 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "40 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "50 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "50-lb. dumbbell, 24-in. box",
+              "Time cap: 20 min."
+            ]
+          }
+        ],
+        "note": "Open: Open 21.2"
+      },
+      {
+        "date": "2026-05-11",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-05-11/",
@@ -2722,15 +2735,71 @@
       },
       {
         "date": "2026-05-11",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260511",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-11-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "Murph Prep Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "3 min Cardio",
+              "then… 8 min CAP:",
+              "10 Banded pull-aparts>scap push-ups>push-up",
+              "10 scap pull-ups>RIng Row> kips/pull-ups",
+              "10 90/90s>BW lunges>air squats"
             ]
+          },
+          {
+            "title": "Focus warm up, then:",
+            "lines": [
+              "(RX’d)",
+              "4 rounds:",
+              "200m Run",
+              "10 Pull-ups",
+              "20 Push-ups",
+              "30 Air Squats",
+              "-Rest 4:00-",
+              "8 rounds:",
+              "100m Run",
+              "5 Pull-ups",
+              "10 Push-ups",
+              "15 Air Squats",
+              "Scaled:",
+              "4 rounds:",
+              "200m Run",
+              "8 Pull-ups / 10 ring rows",
+              "16 Push-ups",
+              "24 Air Squats",
+              "-Rest 4:00-",
+              "8 rounds:",
+              "100m Run",
+              "4 Pull-ups / 4 jumping pull-ups",
+              "8 Push-ups",
+              "12 Air Squats",
+              "Target time each set: 14-16 minutes",
+              "Time cap each set: 18 minutes"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-11",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Profiterole",
+            "lines": [
+              "1 Mile Run",
+              "Max Rounds of \"Cindy\"",
+              "5 Pull Ups",
+              "10 Push Ups",
+              "15 Air Squats",
+              "* (Scored by Rounds + Reps)"
+            ],
+            "sub_title2": "25:00 AMRAP"
           }
         ]
       },
@@ -2769,35 +2838,8 @@
           }
         ],
         "note": "Benchmark: Heavy DT"
-      },
-      {
-        "date": "2026-05-11",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 21.2",
-            "lines": [
-              "For time:",
-              "10 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "20 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "30 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "40 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "50 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "50-lb. dumbbell, 24-in. box",
-              "Time cap: 20 min."
-            ]
-          }
-        ],
-        "note": "Open: Open 21.2"
       }
     ]
   },
-  "last_updated": "2026-05-11T02:55:46.989383"
+  "last_updated": "2026-05-11T07:58:29.805294"
 }
