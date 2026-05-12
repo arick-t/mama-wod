@@ -2662,6 +2662,39 @@
       },
       {
         "date": "2026-05-12",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-12-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "2 Rounds",
+              "1:00 Machine",
+              "10 Romanian Deadlifts",
+              "3 Standing Broad Jumps"
+            ]
+          },
+          {
+            "title": "Deadlift",
+            "lines": [
+              "5-5-5-5-5",
+              "After each set, perform 3 Standing Broad Jumps for max distance",
+              "Begin around 70-75% of your 1RM and build AHAP.",
+              "Rest 3-4 minutes after jumps.)"
+            ]
+          },
+          {
+            "title": "AMRAP 5:00 x 3",
+            "lines": [
+              "Row for Meters",
+              "Rest 1:00"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-12",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-05-12/",
@@ -2707,39 +2740,6 @@
               "* aerobic power [lactate threshold]"
             ],
             "sub_title": "amrap 16min"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-12",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-may-12-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "2 Rounds",
-              "1:00 Machine",
-              "10 Romanian Deadlifts",
-              "3 Standing Broad Jumps"
-            ]
-          },
-          {
-            "title": "Deadlift",
-            "lines": [
-              "5-5-5-5-5",
-              "After each set, perform 3 Standing Broad Jumps for max distance",
-              "Begin around 70-75% of your 1RM and build AHAP.",
-              "Rest 3-4 minutes after jumps.)"
-            ]
-          },
-          {
-            "title": "AMRAP 5:00 x 3",
-            "lines": [
-              "Row for Meters",
-              "Rest 1:00"
-            ]
           }
         ]
       },
@@ -2830,5 +2830,5 @@
       }
     ]
   },
-  "last_updated": "2026-05-12T07:35:49.425766"
+  "last_updated": "2026-05-12T08:59:34.786343"
 }
