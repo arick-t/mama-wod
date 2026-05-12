@@ -713,28 +713,6 @@
       },
       {
         "date": "2026-05-02",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Detroit Pistons",
-            "lines": [
-              "800m Run (Together)",
-              "30 Muscle Ups",
-              "800m Run (Together)",
-              "30 Snatches 61kg/43kg",
-              "800m Run (Together)",
-              "30 Clean and Jerk 61kg/43kg",
-              "800m Run (Together)"
-            ],
-            "sub_title2": "Teams of 2 For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-02",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2633,6 +2611,57 @@
     "2026-05-12": [
       {
         "date": "2026-05-12",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260512",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Back squat 5-5-3-3-1-1-1 reps",
+              "Compare to similar",
+              "251020",
+              "and",
+              "250211"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-12",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 26.3",
+            "lines": [
+              "For time:",
+              "2 rounds of:",
+              "12 burpees over the bar",
+              "12 cleans, weight 1",
+              "12 burpees over the bar",
+              "12 thrusters, weight 1",
+              "2 rounds of:",
+              "12 burpees over the bar",
+              "12 cleans, weight 2",
+              "12 burpees over the bar",
+              "12 thrusters, weight 2",
+              "2 rounds of:",
+              "12 burpees over the bar",
+              "12 cleans, weight 3",
+              "12 burpees over the bar",
+              "12 thrusters, weight 3",
+              "Time cap: 16 minutes",
+              "*♀ 65, 75, 85 lb (29, 34, 38 kg)*",
+              "*♂ 95, 115, 135 lb (43, 52, 61 kg)*"
+            ]
+          }
+        ],
+        "note": "Open: Open 26.3"
+      },
+      {
+        "date": "2026-05-12",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-05-12/",
@@ -2683,18 +2712,55 @@
       },
       {
         "date": "2026-05-12",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260512",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-12-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "Back squat 5-5-3-3-1-1-1 reps",
-              "Compare to similar",
-              "251020",
-              "and",
-              "250211"
+              "2 Rounds",
+              "1:00 Machine",
+              "10 Romanian Deadlifts",
+              "3 Standing Broad Jumps"
+            ]
+          },
+          {
+            "title": "Deadlift",
+            "lines": [
+              "5-5-5-5-5",
+              "After each set, perform 3 Standing Broad Jumps for max distance",
+              "Begin around 70-75% of your 1RM and build AHAP.",
+              "Rest 3-4 minutes after jumps.)"
+            ]
+          },
+          {
+            "title": "AMRAP 5:00 x 3",
+            "lines": [
+              "Row for Meters",
+              "Rest 1:00"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-12",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Clean Deadlift 5x3",
+              "Every 2:00 x 5 sets",
+              "3 Clean Deadlifts @ 90–95% (1RM Clean OR RPE 9)",
+              "WOD",
+              "\"Mille-Feuille\"",
+              "Every 5:00 (5 sets)",
+              "25/20 Calorie Row",
+              "25/20 Calorie Air Bike",
+              "*Sore is slowest set"
             ]
           }
         ]
@@ -2761,41 +2827,8 @@
           }
         ],
         "note": "Benchmark: 121023 ADVANCED BOOTCAMP (JW)"
-      },
-      {
-        "date": "2026-05-12",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 26.3",
-            "lines": [
-              "For time:",
-              "2 rounds of:",
-              "12 burpees over the bar",
-              "12 cleans, weight 1",
-              "12 burpees over the bar",
-              "12 thrusters, weight 1",
-              "2 rounds of:",
-              "12 burpees over the bar",
-              "12 cleans, weight 2",
-              "12 burpees over the bar",
-              "12 thrusters, weight 2",
-              "2 rounds of:",
-              "12 burpees over the bar",
-              "12 cleans, weight 3",
-              "12 burpees over the bar",
-              "12 thrusters, weight 3",
-              "Time cap: 16 minutes",
-              "*♀ 65, 75, 85 lb (29, 34, 38 kg)*",
-              "*♂ 95, 115, 135 lb (43, 52, 61 kg)*"
-            ]
-          }
-        ],
-        "note": "Open: Open 26.3"
       }
     ]
   },
-  "last_updated": "2026-05-12T03:00:55.789603"
+  "last_updated": "2026-05-12T07:35:49.425766"
 }
