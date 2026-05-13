@@ -831,28 +831,6 @@
       },
       {
         "date": "2026-05-04",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Alderaan",
-            "lines": [
-              "400m Run",
-              "50 Pull Ups",
-              "400m Run",
-              "100 Push Ups",
-              "400m Run",
-              "150 Air Squats",
-              "400m Run"
-            ],
-            "sub_title2": "For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-04",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2626,6 +2604,64 @@
     "2026-05-13": [
       {
         "date": "2026-05-13",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260513",
+        "sections": [
+          {
+            "title": "3 ROUNDS FOR TIME OF",
+            "lines": [
+              "25 ring dips",
+              "10 kettlebell Turkish get-ups",
+              "25 pull-ups",
+              "Switch arms as desired on the Turkish get-ups.",
+              "♀ 53-lb kettlebell",
+              "♂ 70-lb kettlebell"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-13",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 13.4",
+            "lines": [
+              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
+              "135 pound Clean and jerk, 3 reps",
+              "3 Toes-to-bar",
+              "135 pound Clean and jerk, 6 reps",
+              "6 Toes-to-bar",
+              "135 pound Clean and jerk, 9 reps",
+              "9 Toes-to-bar",
+              "135 pound Clean and jerk, 12 reps",
+              "12 Toes-to-bar",
+              "135 pound Clean and jerk, 15 reps",
+              "15 Toes-to-bar",
+              "135 pound Clean and jerk, 18 reps",
+              "18 Toes-to-bar...",
+              "This is a timed workout. If you complete the round of 18, go on to 21. If you complete 21, go on to 24, etc.",
+              "*WOMEN -*",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
+              "95 pound Clean and jerk, 3 reps",
+              "3 Toes-to-bar",
+              "95 pound Clean and jerk, 6 reps",
+              "6 Toes-to-bar",
+              "95 pound Clean and jerk, 9 reps",
+              "9 Toes-to-bar",
+              "95 pound Clean and jerk, 12 reps",
+              "12 Toes-to-bar"
+            ]
+          }
+        ],
+        "note": "Open: Open 13.4"
+      },
+      {
+        "date": "2026-05-13",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-05-13/",
@@ -2675,20 +2711,59 @@
       },
       {
         "date": "2026-05-13",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260513",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-13-2026/",
         "sections": [
           {
-            "title": "3 ROUNDS FOR TIME OF",
+            "title": "General Warm-up",
             "lines": [
-              "25 ring dips",
-              "10 kettlebell Turkish get-ups",
-              "25 pull-ups",
-              "Switch arms as desired on the Turkish get-ups.",
-              "♀ 53-lb kettlebell",
-              "♂ 70-lb kettlebell"
+              "AMRAP 6 minutes",
+              "12/10 Calorie Row",
+              "8 Medball squat cleans",
+              ":15 HS hold"
             ]
+          },
+          {
+            "title": "AMRAP 17 minutes",
+            "lines": [
+              "11 Strict HSPU*",
+              "22 Squat Cleans 95/65lbs",
+              "33/23 Calorie Row",
+              "Feel: Muscle Overload",
+              "Pace: Sustain",
+              "Target Score: 3+ rounds",
+              "Firebreather: 4+ rounds"
+            ]
+          },
+          {
+            "title": "6 Sets",
+            "lines": [
+              "10 Neutral Grip DB Bench Press",
+              "Rest 2:00"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-13",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Tarte Tatin",
+            "lines": [
+              "30 Toes to Bar",
+              "30 Overhead Squats 34kg/25kg",
+              "30 Burpee Over Bar",
+              "* -Rest 1:00-",
+              "30 Burpee Over Bar",
+              "30 Overhead Squats 34kg/25kg",
+              "30 Toes to Bar"
+            ],
+            "sub_title2": "For Time:"
           }
         ]
       },
@@ -2740,47 +2815,8 @@
           }
         ],
         "note": "Benchmark: Linda"
-      },
-      {
-        "date": "2026-05-13",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 13.4",
-            "lines": [
-              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
-              "135 pound Clean and jerk, 3 reps",
-              "3 Toes-to-bar",
-              "135 pound Clean and jerk, 6 reps",
-              "6 Toes-to-bar",
-              "135 pound Clean and jerk, 9 reps",
-              "9 Toes-to-bar",
-              "135 pound Clean and jerk, 12 reps",
-              "12 Toes-to-bar",
-              "135 pound Clean and jerk, 15 reps",
-              "15 Toes-to-bar",
-              "135 pound Clean and jerk, 18 reps",
-              "18 Toes-to-bar...",
-              "This is a timed workout. If you complete the round of 18, go on to 21. If you complete 21, go on to 24, etc.",
-              "*WOMEN -*",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
-              "95 pound Clean and jerk, 3 reps",
-              "3 Toes-to-bar",
-              "95 pound Clean and jerk, 6 reps",
-              "6 Toes-to-bar",
-              "95 pound Clean and jerk, 9 reps",
-              "9 Toes-to-bar",
-              "95 pound Clean and jerk, 12 reps",
-              "12 Toes-to-bar"
-            ]
-          }
-        ],
-        "note": "Open: Open 13.4"
       }
     ]
   },
-  "last_updated": "2026-05-13T03:02:24.911582"
+  "last_updated": "2026-05-13T07:44:05.548270"
 }
