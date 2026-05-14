@@ -1,98 +1,5 @@
 {
   "workouts": {
-    "2026-04-29": [
-      {
-        "date": "2026-04-29",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260429",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "BUY TICKETS NOW"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-29",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 16.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 20 minutes of:",
-              "25-ft. overhead walking lunge",
-              "8 burpees",
-              "25-ft. overhead walking lunge",
-              "8 chest-to-bar pull-ups",
-              "*Men lunge 95 lb.*",
-              "*Women lunge 65 lb.*"
-            ]
-          }
-        ],
-        "note": "Open: Open 16.1"
-      },
-      {
-        "date": "2026-04-29",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-april-29-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "3 Rounds",
-              ":45 Machine",
-              "15 Plate Ground to Overhead",
-              "12 Air Squats",
-              "9 Hanging Knee Raises"
-            ]
-          },
-          {
-            "title": "AMRAP 1:30",
-            "lines": [
-              "5 Squat Snatch 155/105lbs",
-              "Max Toes to bar in remaining time",
-              "Rest 1:30"
-            ]
-          },
-          {
-            "title": "AMRAP 1:30",
-            "lines": [
-              "12 Toes to bar",
-              "Max Squat Snatch 155/105lbs in remaining time",
-              "Rest 1:30",
-              "Feel: Gas/Muscle Overload",
-              "Pacing: Sustain"
-            ]
-          },
-          {
-            "title": "Target Score:",
-            "lines": [
-              "10+ “Max Toes to bar” per round and 5+ “Max squat snatches” per round (30+ toes to bar, 15+ snatches, 45+ total reps from max rep portions)"
-            ]
-          },
-          {
-            "title": "Firebreather:",
-            "lines": [
-              "15+ “Max Toes to bar” per round and 7+ “Max squat snatches” per round (45+ toes to bar, 21+ snatches, 66+ total reps from max rep portions)"
-            ]
-          },
-          {
-            "title": "Back Rack Lunge",
-            "lines": [
-              "10 Back Rack Lunge Steps",
-              "Rest 2:00",
-              "These are meant to be heavy and challenging each round, but don’t forget to look at tomorrow’s programming :))"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-04-30": [
       {
         "date": "2026-04-30",
@@ -202,95 +109,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-04-30",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-04-30/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "90/90 hip rotation",
-              "hamstring stretch  on box",
-              "lying hip cross over",
-              "calf stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "150/125m row",
-              "10 good mornings",
-              "10 squat jumps"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "DEADLIFT 15MIN",
-            "lines": [
-              "build to a heavy 5-rep deadlift",
-              "absolute strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "10-20-30-20-10",
-              "box jumps 60/50cm*",
-              "alternating db snatches 22,5/15kg",
-              "250/200m row after each round",
-              "* *rx+ option: 75/60cm",
-              "* aerobic power [vo2 max]"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-04-30",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Jorge",
-            "sub_title": "For time:",
-            "lines": [
-              "30 GHD sit-ups",
-              "15 squat cleans",
-              "24 GHD sit-ups",
-              "12 squat cleans",
-              "18 GHD sit-ups",
-              "9 squat cleans",
-              "12 GHD sit-ups",
-              "6 squat cleans",
-              "6 GHD sit-ups",
-              "3 squat cleans"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-04-30",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "CrossFit Total II",
-            "lines": [
-              "In 45 mins find your 1RM for each item following",
-              "Post the total amount.",
-              "Clean",
-              "Bench press",
-              "Overhead squat"
-            ]
-          }
-        ],
-        "note": "Benchmark: CrossFit Total II"
       }
     ],
     "2026-05-01": [
@@ -826,23 +644,6 @@
               "pull up"
             ],
             "sub_title": "amrap"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-04",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "May Bank Holiday – Teams of 3",
-              "Teams of 3Part AGoal is the first team to complete a Row 2000m, but– One team member must hold front rack hold 60/40kg at all times– then EMOM 3 Syncro devils press (all members)– cannot row if bar is not in front rack position.*DB weightMen – 2×22.5/20kg/17.5kgWomen 2×17.5/15/112.5kg",
-              "straight into",
-              "Part B – Syncro is 2 moving, 1 can rest100 Partner Wallballs 9/6kg80 Syncro KB Swings 32/24kg60 Pull ups (shared)40 Syncro HRPU’sCash out800m run (together)"
-            ]
           }
         ]
       },
@@ -2816,7 +2617,128 @@
         ],
         "note": "Benchmark: Linda"
       }
+    ],
+    "2026-05-14": [
+      {
+        "date": "2026-05-14",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260514",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Rest Day",
+              "\"Wait, So Am I Actually Fit?\"",
+              "Most people who exercise regularly have never stopped to ask the one question that should drive everything: What does \"fit\" actually mean? If you've been putting in the work for years but have a nagging sense that something's missing, this conversation might finally name it. Turns out, real fitness has 10 components — and most training programs quietly ignore half of them."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-14",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Strength:-E2MOM for 16 mins (4 rounds)Alternate between3-5 rope climbsand10-20 alt. pistols (or pistol skill work), add weight if easy",
+              "Metcon:-5 rounds400m Run20 Box Jump Overs 24/20″12 Hang Power Cleans 50/35kg"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-14",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Getting Started",
+            "sub_title": "What is CrossFit?",
+            "lines": [
+              "The CrossFit Effect",
+              "CrossFit Is the Cure",
+              "Find a Gym"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-14",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "J.J.",
+            "lines": [
+              "For time:",
+              "1 Squat  clean  185 lbs/125 lbs",
+              "10 parallette  handstand push-up s",
+              "2 Squat  clean  185 lbs/125 lbs",
+              "9 parallette  handstand push-up s",
+              "3 Squat  clean  185 lbs/125 lbs",
+              "8 parallette  handstand push-up s",
+              "4 Squat  clean  185 lbs/125 lbs",
+              "7 parallette  handstand push-up s",
+              "5 Squat  clean  185 lbs/125 lbs",
+              "6 parallette  handstand push-up s",
+              "6 Squat  clean  185 lbs/125 lbs",
+              "5 parallette  handstand push-up s",
+              "7 Squat  clean  185 lbs/125 lbs",
+              "4 parallette  handstand push-up s",
+              "8 Squat  clean  185 lbs/125 lbs",
+              "3 parallette  handstand push-up s",
+              "9 Squat  clean  185 lbs/125 lbs",
+              "2 parallette  handstand push-up s",
+              "10 Squat  clean  185 lbs/125 lbs",
+              "1 parallette  handstand push-up"
+            ]
+          }
+        ],
+        "note": "Benchmark: J.J."
+      },
+      {
+        "date": "2026-05-14",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 13.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "115 pound Shoulder to overhead, 5 reps",
+              "115 pound Deadlift, 10 reps",
+              "15 Box jumps, 24\" box",
+              "*WOMEN -*",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "75 pound Shoulder to overhead, 5 reps",
+              "75 pound Deadlift, 10 reps",
+              "15 Box jumps, 20\" box",
+              "*MASTERS MEN -*",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "95 pound Shoulder to overhead, 5 reps",
+              "95 pound Deadlift, 10 reps",
+              "15 Box jumps, 20\" box",
+              "*MASTERS WOMEN -*",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "55 pound Shoulder to overhead, 5 reps",
+              "55 pound Deadlift, 10 reps",
+              "15 Box jumps, 20\" box"
+            ]
+          }
+        ],
+        "note": "Open: Open 13.1"
+      }
     ]
   },
-  "last_updated": "2026-05-13T11:43:17.635561"
+  "last_updated": "2026-05-14T03:03:26.909157"
 }
