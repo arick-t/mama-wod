@@ -854,39 +854,6 @@
       },
       {
         "date": "2026-05-06",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Clean & Jerk 3-1",
-              "Every 1:00 x 5 sets (5:00)",
-              "3 Clean and Jerks (singles) @ 70% OR RPE 6-7",
-              "* -into-",
-              "Every :30 x 10 sets (5:00)",
-              "1 Clean and Jerk @ 75–80% OR RPE 8"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Coruscant",
-            "lines": [
-              "21-15-9",
-              "Hang Power Clean 43kg/29kg",
-              "Shoulder to Overhead 43kg/29kg",
-              "* -rest 4:00-",
-              "9-15-21",
-              "Shoulder to Overhead 43kg/29kg",
-              "Hang Power Clean 43kg/29kg"
-            ],
-            "sub_title2": "For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-06",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2640,6 +2607,48 @@
     "2026-05-15": [
       {
         "date": "2026-05-15",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260515",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-15",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 20.4",
+            "lines": [
+              "For time:",
+              "30 box jumps, 24 in.",
+              "15 clean and jerks, 95 lb.",
+              "30 box jumps, 24 in.",
+              "15 clean and jerks, 135 lb.",
+              "30 box jumps, 24 in.",
+              "10 clean and jerks, 185 lb.",
+              "30 single-leg squats",
+              "10 clean and jerks, 225 lb.",
+              "30 single-leg squats",
+              "5 clean and jerks, 275 lb.",
+              "30 single-leg squats",
+              "5 clean and jerks, 315 lb.",
+              "Time cap: 20 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 20.4"
+      },
+      {
+        "date": "2026-05-15",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-05-15/",
@@ -2687,15 +2696,60 @@
       },
       {
         "date": "2026-05-15",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260515",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-15-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "3 Rounds",
+              ":20 Ring Rows",
+              ":10 Rest",
+              ":20 Ski",
+              ":10 Rest",
+              ":20 Air Squat > Medball Squats > Wallballs"
             ]
+          },
+          {
+            "title": "3 Rounds for total reps",
+            "lines": [
+              "1:00 Chest to Bar Pull Ups",
+              "1:00 Ski Calories",
+              "1:00 Wallballs 20/14lbs to 10/9′",
+              "Rest 1:00",
+              "Feel: Gas/Muscle Overload",
+              "Pace: Sustain",
+              "Target Score: 10+ pull ups per round, 15/12+ calories per round, 20+ wallballs per round (135 / 126 total reps)",
+              "Firebreather Score: 15+ pull ups, 18/15 calories, and 25+ wallballs per round (174/165 reps)"
+            ]
+          },
+          {
+            "title": "6 Sets",
+            "lines": [
+              "50′ Sled Push",
+              "Rest 2:00",
+              "Adjust weight round to round to keep it very heavy but always unbroken. You should be slightly unhappy after round 1 and very unhappy after round 6.",
+              "sub for walking lunges or a Sandbag carry depending on your goals"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-15",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Clafoutis",
+            "lines": [
+              "10 Rounds",
+              "15 Wall Balls 9kg/6kg",
+              "3 Wall Walks"
+            ],
+            "sub_title2": "For Time:"
           }
         ]
       },
@@ -2756,36 +2810,8 @@
           }
         ],
         "note": "Benchmark: FRAN"
-      },
-      {
-        "date": "2026-05-15",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 20.4",
-            "lines": [
-              "For time:",
-              "30 box jumps, 24 in.",
-              "15 clean and jerks, 95 lb.",
-              "30 box jumps, 24 in.",
-              "15 clean and jerks, 135 lb.",
-              "30 box jumps, 24 in.",
-              "10 clean and jerks, 185 lb.",
-              "30 single-leg squats",
-              "10 clean and jerks, 225 lb.",
-              "30 single-leg squats",
-              "5 clean and jerks, 275 lb.",
-              "30 single-leg squats",
-              "5 clean and jerks, 315 lb.",
-              "Time cap: 20 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 20.4"
       }
     ]
   },
-  "last_updated": "2026-05-15T02:59:41.629080"
+  "last_updated": "2026-05-15T07:50:22.746850"
 }
