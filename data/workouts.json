@@ -1,81 +1,5 @@
 {
   "workouts": {
-    "2026-05-01": [
-      {
-        "date": "2026-05-01",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260501",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "BUY TICKETS NOW"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-01",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 23.2",
-            "lines": [
-              "Complete as many reps as possible in 15 minutes of:",
-              "5 burpee pull-ups",
-              "10 shuttle runs (1 rep = 25 ft out/25 ft back)",
-              "*Add 5 burpee pull-ups after each round.",
-              "23.2B:",
-              "Immediately following 23.2A, athletes will have 5 minutes to establish:",
-              "1-rep-max thruster (from the floor)"
-            ]
-          }
-        ],
-        "note": "Open: Open 23.2"
-      },
-      {
-        "date": "2026-05-01",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-may-1-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "AMRAP 7 minutes",
-              "200m Run",
-              "8 Kettlebell Swings",
-              "8 Ring Rows",
-              "5 Burpees"
-            ]
-          },
-          {
-            "title": "For time:",
-            "lines": [
-              "30 clean and jerks",
-              "Run 1 mile",
-              "10 rope climbs to 15 feet",
-              "Run 1 mile",
-              "100 burpees",
-              "F: 95-lb clean and jerks",
-              "M: 135-lb clean and jerks",
-              "In honor of Former U.S. Navy SEAL Glen Doherty, 42, of Winchester, MA, died in an attack on a U.S. consulate on September 11, 2012",
-              "https://www.crossfit.com/workout/2012/10/12#/comments",
-              "Feel: Gas",
-              "Pace: Sustain",
-              "Target Score: 30-40 minutes",
-              "Firebreather Score: sub 30 minutes",
-              "Extra Credit",
-              "Coach Led Mobility",
-              "5 min"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-05-02": [
       {
         "date": "2026-05-02",
@@ -158,79 +82,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-05-02",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-02/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "seated pike stretch",
-              "lat stretch",
-              "samson stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 straight leg sit ups",
-              "10 prone snow angels",
-              "*partner is running 100m"
-            ],
-            "sub_title": "amrap 5min"
-          },
-          {
-            "title": "CONDITIONING 30MIN",
-            "lines": [
-              "in teams of 2",
-              "60 shoulder to overhead 50/35kg",
-              "60 toes to bar",
-              "600m run",
-              "* score: rounds + reps"
-            ],
-            "sub_title": "amrap 30min"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-02",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Coffland",
-            "sub_title": "Hang from a pull-up bar for 6 minutes",
-            "lines": [
-              "Each time you drop from the bar, complete:",
-              "800-meter run",
-              "30 push-ups"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-02",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Eva",
-            "lines": [
-              "5 rounds for time:",
-              "Target: sub 45min",
-              "Run  800m",
-              "30  KB Swings  32kg/24kg",
-              "30 pull-ups"
-            ]
-          }
-        ],
-        "note": "Benchmark: Eva"
       }
     ],
     "2026-05-03": [
@@ -849,22 +700,6 @@
               "aerobic capacity"
             ],
             "sub_title": "amrap 35min"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-06",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Strength:-Every 90 seconds4 X 2 Push Press + 2 Split Jerkbuilding in weight",
-              "ThenE2MOMSplit Jerk 3,3,2,2,2",
-              "Metcon:-3 rounds for time of:-100 DU’s15 Deadlifts 100/70kg15 OTB Burpees"
-            ]
           }
         ]
       },
@@ -2811,7 +2646,154 @@
         ],
         "note": "Benchmark: FRAN"
       }
+    ],
+    "2026-05-16": [
+      {
+        "date": "2026-05-16",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-16/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "lat stretch",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 prone snow angels",
+              "10 ring rows",
+              "*partner is running 100m"
+            ],
+            "sub_title": "amrap 5min"
+          },
+          {
+            "title": "CONDITIONING 36MIN",
+            "lines": [
+              "in teams of 2",
+              "amrap 4min",
+              "1 lap run into max pull ups",
+              "into",
+              "amrap 4min",
+              "1 lap run into max push ups",
+              "into",
+              "amrap 4min",
+              "1 lap run into max air squats"
+            ],
+            "sub_title": "3 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-05-16",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260516",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-16",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Killer #4 Metcon:-3 rounds21/17 Cal Bike18 Pull ups15 KB swings 32/24kg12 Push upsinto 2 rounds21/17 Cal Row18 DB snatch 22.5/15kg15 Goblet squat 32/24kg12 HSPUinto 1 round21 Deadlifts18 Power Cleans15 Front Squats12 STOHRX:60/42.5kg",
+              "in time remaining to the 35 min mark, in 2’s or 3’s max cals on row or bike, people can join the team as they finish the wod”"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-16",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Then,",
+            "sub_title": "5 rounds of:",
+            "lines": [
+              "10 deadlifts",
+              "14 box jumps",
+              "10 burpees"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-16",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Kelly",
+            "lines": [
+              "5 Rounds For Time:",
+              "400m Run",
+              "30 box jumps 60/50",
+              "30 wall balls 9/6kg",
+              "-with or without partner",
+              "Running substitutions: 800/1,000-m C2 bike, 900/1,250-m Assault or Echo bike, 400/500-m row",
+              "OHJEET: Juoksut tahi erg aina alle 2:15 / Kierros aina alle 6:00 - Skaalaa tarvittaessa",
+              "TC: 35min"
+            ]
+          }
+        ],
+        "note": "Benchmark: Kelly"
+      },
+      {
+        "date": "2026-05-16",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 13.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "115 pound Shoulder to overhead, 5 reps",
+              "115 pound Deadlift, 10 reps",
+              "15 Box jumps, 24\" box",
+              "*WOMEN -*",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "75 pound Shoulder to overhead, 5 reps",
+              "75 pound Deadlift, 10 reps",
+              "15 Box jumps, 20\" box",
+              "*MASTERS MEN -*",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "95 pound Shoulder to overhead, 5 reps",
+              "95 pound Deadlift, 10 reps",
+              "15 Box jumps, 20\" box",
+              "*MASTERS WOMEN -*",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "55 pound Shoulder to overhead, 5 reps",
+              "55 pound Deadlift, 10 reps",
+              "15 Box jumps, 20\" box"
+            ]
+          }
+        ],
+        "note": "Open: Open 13.1"
+      }
     ]
   },
-  "last_updated": "2026-05-15T11:47:28.572355"
+  "last_updated": "2026-05-16T02:56:29.103177"
 }
