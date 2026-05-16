@@ -2673,47 +2673,6 @@
       },
       {
         "date": "2026-05-16",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-16/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "sumo squat stretch",
-              "lat stretch",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 ring rows",
-              "*partner is running 100m"
-            ],
-            "sub_title": "amrap 5min"
-          },
-          {
-            "title": "CONDITIONING 36MIN",
-            "lines": [
-              "in teams of 2",
-              "amrap 4min",
-              "1 lap run into max pull ups",
-              "into",
-              "amrap 4min",
-              "1 lap run into max push ups",
-              "into",
-              "amrap 4min",
-              "1 lap run into max air squats"
-            ],
-            "sub_title": "3 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-16",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-may-16-2026/",
@@ -2751,6 +2710,47 @@
               "Start your set of 10 between 60 and 70%, then add weight each round.",
               "Air Bike 1,000m Between Sets to Flush”)"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-16",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-16/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "lat stretch",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 prone snow angels",
+              "10 ring rows",
+              "*partner is running 100m"
+            ],
+            "sub_title": "amrap 5min"
+          },
+          {
+            "title": "CONDITIONING 36MIN",
+            "lines": [
+              "in teams of 2",
+              "amrap 4min",
+              "1 lap run into max pull ups",
+              "into",
+              "amrap 4min",
+              "1 lap run into max push ups",
+              "into",
+              "amrap 4min",
+              "1 lap run into max air squats"
+            ],
+            "sub_title": "3 rounds"
           }
         ]
       },
@@ -2831,5 +2831,5 @@
       }
     ]
   },
-  "last_updated": "2026-05-16T07:28:38.931675"
+  "last_updated": "2026-05-16T08:46:51.888950"
 }
