@@ -883,33 +883,6 @@
       },
       {
         "date": "2026-05-07",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Bench Press 5x3",
-              "Every 2:00 x 5 sets",
-              "3 Bench Press @ 78% OR RPE 7-8"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Kashyyyk",
-            "lines": [
-              "6 sets For Total Time:",
-              "48 Double Unders",
-              "12 Burpee Over Bar",
-              "6 Deadlifts 125kg/84kg",
-              "* -rest 1:00 between sets-"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-07",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2650,6 +2623,56 @@
     "2026-05-16": [
       {
         "date": "2026-05-16",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260516",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-16",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 13.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "115 pound Shoulder to overhead, 5 reps",
+              "115 pound Deadlift, 10 reps",
+              "15 Box jumps, 24\" box",
+              "*WOMEN -*",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "75 pound Shoulder to overhead, 5 reps",
+              "75 pound Deadlift, 10 reps",
+              "15 Box jumps, 20\" box",
+              "*MASTERS MEN -*",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "95 pound Shoulder to overhead, 5 reps",
+              "95 pound Deadlift, 10 reps",
+              "15 Box jumps, 20\" box",
+              "*MASTERS WOMEN -*",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "55 pound Shoulder to overhead, 5 reps",
+              "55 pound Deadlift, 10 reps",
+              "15 Box jumps, 20\" box"
+            ]
+          }
+        ],
+        "note": "Open: Open 13.1"
+      },
+      {
+        "date": "2026-05-16",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-05-16/",
@@ -2691,14 +2714,63 @@
       },
       {
         "date": "2026-05-16",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260516",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-16-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "Partner “Rowling”",
+              "Set a 7 minute clock",
+              "One partner rows 150m at a time",
+              "For every meter +/- 150m = 1 Burpee for both athletes (10 rep cap per Rowl)"
+            ]
+          },
+          {
+            "title": "AMRAP 30 minutes alternating full rounds with a partner",
+            "lines": [
+              "Machine*",
+              "14 Double Dumbbell Box Step Overs 50s/35s to 24/20″",
+              "*Machine Menu",
+              "500/450m Row",
+              "450/400m Ski",
+              "1.2/1k Air Bike",
+              "1k/900m C2 Bike",
+              "400m Outdoor run",
+              "Feel: Gas",
+              "Pace: Sustain",
+              "Target Score: 5+ rounds per partner",
+              "Firebreather: 6+ rounds per partner"
+            ]
+          },
+          {
+            "title": "Back Squat",
+            "lines": [
+              "10-8-6-4",
+              "Start your set of 10 between 60 and 70%, then add weight each round.",
+              "Air Bike 1,000m Between Sets to Flush”)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-16",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Pain au Chocolat",
+            "lines": [
+              "Teams of 2",
+              "8 sets",
+              "2:00 AMRAP",
+              "15/12 Calorie Air Bike (each/same time)",
+              "Max Power Cleans 84kg/57kg (rotating between partners, if needed)",
+              "* -rest 1:00 between sets-",
+              "*Score is total Cleans"
             ]
           }
         ]
@@ -2756,44 +2828,8 @@
           }
         ],
         "note": "Benchmark: Kelly"
-      },
-      {
-        "date": "2026-05-16",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 13.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "115 pound Shoulder to overhead, 5 reps",
-              "115 pound Deadlift, 10 reps",
-              "15 Box jumps, 24\" box",
-              "*WOMEN -*",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "75 pound Shoulder to overhead, 5 reps",
-              "75 pound Deadlift, 10 reps",
-              "15 Box jumps, 20\" box",
-              "*MASTERS MEN -*",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "95 pound Shoulder to overhead, 5 reps",
-              "95 pound Deadlift, 10 reps",
-              "15 Box jumps, 20\" box",
-              "*MASTERS WOMEN -*",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "55 pound Shoulder to overhead, 5 reps",
-              "55 pound Deadlift, 10 reps",
-              "15 Box jumps, 20\" box"
-            ]
-          }
-        ],
-        "note": "Open: Open 13.1"
       }
     ]
   },
-  "last_updated": "2026-05-16T02:56:29.103177"
+  "last_updated": "2026-05-16T07:28:38.931675"
 }
