@@ -782,23 +782,6 @@
       },
       {
         "date": "2026-05-08",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Jakku",
-            "lines": [
-              "200m Run",
-              "2 Rope Climbs"
-            ],
-            "sub_title2": "20:00 AMRAP"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-08",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2685,6 +2668,41 @@
     "2026-05-18": [
       {
         "date": "2026-05-18",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260518",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Monday",
+              "260518",
+              "Learn the Movement "
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-18",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 18.1",
+            "lines": [
+              "Complete as many rounds as possible in 20 minutes of:",
+              "8 toes-to-bars",
+              "10 dumbbell hang clean and jerks",
+              "14-cal. row",
+              "*Men use 50-lb. dumbbell*"
+            ]
+          }
+        ],
+        "note": "Open: Open 18.1"
+      },
+      {
+        "date": "2026-05-18",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-05-18/",
@@ -2736,17 +2754,61 @@
       },
       {
         "date": "2026-05-18",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260518",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-18-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "Murph Prep Warm-up",
             "lines": [
-              "Monday",
-              "260518",
-              "Learn the Movement "
+              "3 min Cardio",
+              "then… 8 min CAP:",
+              "10 Banded pull-aparts>scap push-ups>push-up",
+              "10 scap pull-ups>RIng Row> kips/pull-ups",
+              "10 90/90s>BW lunges>air squats"
             ]
+          },
+          {
+            "title": "Murph Prep Week 6",
+            "lines": [
+              "(RX’d)",
+              "5 sets:",
+              "200m Run",
+              "15 Pull-ups",
+              "30 Push-ups",
+              "45 Squats",
+              "200m Run",
+              "-rest 3 minutes between sets-",
+              "*Optional: perform with weight vest (20/14)",
+              "Scaled:",
+              "5 sets:",
+              "200m Run",
+              "10 Pull-ups / 10 Jumping pull-ups",
+              "20 Push-ups",
+              "30 Squats",
+              "200m Run",
+              "-rest 3 minutes between sets-",
+              "Target time each set: 4-4:30",
+              "Time cap each set: 5 minutes"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-18",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Annie Oakley",
+            "lines": [
+              "40-30-20-10",
+              "Box Jumps 20\"",
+              "50ft Handstand Walk (Scale 4 Wall Walks) after each set"
+            ],
+            "sub_title2": "For Time:"
           }
         ]
       },
@@ -2814,27 +2876,8 @@
           }
         ],
         "note": "Benchmark: 121023 ADVANCED BOOTCAMP (JW)"
-      },
-      {
-        "date": "2026-05-18",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.1",
-            "lines": [
-              "Complete as many rounds as possible in 20 minutes of:",
-              "8 toes-to-bars",
-              "10 dumbbell hang clean and jerks",
-              "14-cal. row",
-              "*Men use 50-lb. dumbbell*"
-            ]
-          }
-        ],
-        "note": "Open: Open 18.1"
       }
     ]
   },
-  "last_updated": "2026-05-18T02:59:38.704765"
+  "last_updated": "2026-05-18T08:05:57.352899"
 }
