@@ -759,24 +759,6 @@
       },
       {
         "date": "2026-05-09",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Mustafar",
-            "lines": [
-              "60 Synchro Toes to Bar",
-              "40 Calorie Air Bike and Row (total on each)",
-              "60 Power Snatches 61kg43kg"
-            ],
-            "sub_title2": "Teams of 2 for Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-09",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2658,61 +2640,6 @@
     "2026-05-19": [
       {
         "date": "2026-05-19",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-19/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "instep rotations",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. burpees",
-              "2. bike",
-              "3. plank hold",
-              "4. reverse lunges"
-            ],
-            "sub_title": "30sec on / 15sec off x8 rounds"
-          },
-          {
-            "title": "LUNGES 15MIN",
-            "lines": [
-              "4 supersets",
-              "8 back rack reverse lunges @rpe 6-7",
-              "12-15 partial goblet squats",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 12MIN",
-            "lines": [
-              "for max reps/cals",
-              "1. front squats 40/30kg",
-              "2. cal bike",
-              "3. burpees over the bar",
-              "* score: total reps/cals",
-              "* aerobic power"
-            ],
-            "sub_title": "40sec on / 20sec off x 12 rounds"
-          },
-          {
-            "title": "POSTERIOR CHAIN 4MIN",
-            "lines": [
-              "* 30sec on / 10sec off x 5 sets",
-              "* chinese plank hold"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-19",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260519",
@@ -2788,6 +2715,112 @@
       },
       {
         "date": "2026-05-19",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 17.4",
+            "lines": [
+              "Complete as many rounds and reps as possible in 13 minutes of:",
+              "55 deadlifts, 225 lb.",
+              "55 wall-ball shots, 20-lb. ball to 10-ft. target",
+              "55-calorie row",
+              "55 handstand push-ups"
+            ]
+          }
+        ],
+        "note": "Open: Open 17.4"
+      },
+      {
+        "date": "2026-05-19",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-19/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "instep rotations",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. burpees",
+              "2. bike",
+              "3. plank hold",
+              "4. reverse lunges"
+            ],
+            "sub_title": "30sec on / 15sec off x8 rounds"
+          },
+          {
+            "title": "LUNGES 15MIN",
+            "lines": [
+              "4 supersets",
+              "8 back rack reverse lunges @rpe 6-7",
+              "12-15 partial goblet squats",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 12MIN",
+            "lines": [
+              "for max reps/cals",
+              "1. front squats 40/30kg",
+              "2. cal bike",
+              "3. burpees over the bar",
+              "* score: total reps/cals",
+              "* aerobic power"
+            ],
+            "sub_title": "40sec on / 20sec off x 12 rounds"
+          },
+          {
+            "title": "POSTERIOR CHAIN 4MIN",
+            "lines": [
+              "* 30sec on / 10sec off x 5 sets",
+              "* chinese plank hold"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-19",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Snatch 1x1",
+              "HEAVY SNATCH SINGLE",
+              "Work to 85% OR RPE 8-9",
+              "*If  form looks good and are feeling it, then build to a 1RM"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Will Rogers",
+            "lines": [
+              "27-21-15-9",
+              "Calorie Air Bike",
+              "Dumbbell Snatch 23kg/16kg",
+              "* -rest till 12:00-",
+              "21-15-9",
+              "Calorie Air Bike",
+              "Dumbbell Snatch 23kg/16kg",
+              "* (Women's Calories: 22-16-12-8, 16-12-8)"
+            ],
+            "sub_title2": "For Time:"
+          }
+        ]
+      },
+      {
+        "date": "2026-05-19",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2855,27 +2888,8 @@
           }
         ],
         "note": "Benchmark: The Ghost"
-      },
-      {
-        "date": "2026-05-19",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 17.4",
-            "lines": [
-              "Complete as many rounds and reps as possible in 13 minutes of:",
-              "55 deadlifts, 225 lb.",
-              "55 wall-ball shots, 20-lb. ball to 10-ft. target",
-              "55-calorie row",
-              "55 handstand push-ups"
-            ]
-          }
-        ],
-        "note": "Open: Open 17.4"
       }
     ]
   },
-  "last_updated": "2026-05-19T03:10:46.729069"
+  "last_updated": "2026-05-19T08:01:04.209283"
 }
