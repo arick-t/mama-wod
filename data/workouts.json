@@ -1,105 +1,5 @@
 {
   "workouts": {
-    "2026-05-05": [
-      {
-        "date": "2026-05-05",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260505",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "BUY TICKETS NOW"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-05",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 17.3",
-            "lines": [
-              "*2017 Open Workout 17.3 Men Rx*",
-              "Games Season",
-              "Open",
-              "Feb 26 – March 16",
-              "Overview",
-              "Schedule",
-              "Leaderboard",
-              "Workouts",
-              "Quarterfinals",
-              "March 26-30",
-              "Overview",
-              "Schedule",
-              "Leaderboard",
-              "Workouts",
-              "Semifinals",
-              "April – June",
-              "Overview",
-              "Schedule",
-              "Leaderboard",
-              "Workouts",
-              "Games",
-              "July",
-              "The CrossFit Games",
-              "Masters CrossFit Games",
-              "Teenage CrossFit Games"
-            ]
-          }
-        ],
-        "note": "Open: Open 17.3"
-      },
-      {
-        "date": "2026-05-05",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-may-5-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "3 Rounds",
-              "25ft Crab Walk",
-              "25ft Bear Crawl",
-              "8 Plate Ground to Overhead",
-              "8 Push Ups"
-            ]
-          },
-          {
-            "title": "Bench Press",
-            "lines": [
-              "3-3-3-3-3",
-              "Aim for sets to be 75% or heavier of 1RM.",
-              "Rest or bike slowly 3-4 minutes between sets.”)"
-            ]
-          },
-          {
-            "title": "2 rounds for time",
-            "lines": [
-              "20/16 Calorie Air Bike",
-              "20 Alt. DB Hang Snatches 50/35lbs",
-              "Feel: Cardio",
-              "Pace: Reach/Controlled Send",
-              "Target Score:  <3.5-5 minutes",
-              "Firebreather Score: <3.5 minutes"
-            ]
-          },
-          {
-            "title": "6 Sets",
-            "lines": [
-              "1 Smooth/Even Set of GHD Sit Ups",
-              "Rest 2:00",
-              "Consider this maintenence work. Do the math on total volume to avoid soreness"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-05-06": [
       {
         "date": "2026-05-06",
@@ -184,84 +84,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-05-06",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-06/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "calf stretch",
-              "instep rotation"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "* 1. 7 burpees +  remaining time row",
-              "* 2. 7 squat jumps + remaining time bike"
-            ],
-            "sub_title": "1:00 on/ 00:30 off x 4 rounds"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "30 dball box step ups 20/15kg",
-              "40/32cal bike/row",
-              "40 box jumps 60/50cm",
-              "40/32cal row/bike",
-              "30 burpees to target",
-              "aerobic capacity"
-            ],
-            "sub_title": "amrap 35min"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-06",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Details",
-            "sub_title": "DT",
-            "lines": [
-              "5 rounds for time of:",
-              "12 deadlifts",
-              "9 hang power cleans",
-              "6 push jerks"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-06",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "DIANE",
-            "lines": [
-              "For time",
-              "21–15–9",
-              "Deadlift @100/70 kg",
-              "Handstand push up",
-              "Scaled",
-              "21-15-9 Reps For Time",
-              "Deadlifts (70/50kg)",
-              "Push-Ups",
-              "TC 10 min"
-            ]
-          }
-        ],
-        "note": "Benchmark: DIANE"
       }
     ],
     "2026-05-07": [
@@ -943,24 +765,6 @@
               "aerobic endurance"
             ],
             "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-10",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Hero Wod",
-              "‘Daniel’For Time:50 Pull Ups400m Run21 Thrusters800m Run21 Thrusters400m Run50 Pull Ups42.5/30kg(25 min time cap)",
-              "5 min rest",
-              "Partner ‘Otis’YGIG AMRAP in 15 minutesBack Squat (1½ bodyweight)Shoulder Press (¾ bodyweight)Deadlift (1½ bodyweight)",
-              "Start with 1 rep each. Increase each by 1 rep per round."
-            ]
           }
         ]
       },
@@ -2889,7 +2693,149 @@
         ],
         "note": "Benchmark: The Ghost"
       }
+    ],
+    "2026-05-20": [
+      {
+        "date": "2026-05-20",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-20/",
+        "sections": [
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "line drills"
+            ]
+          },
+          {
+            "title": "CONDITIONING 30MIN",
+            "lines": [
+              "8 rounds",
+              "",
+              "10 pull ups",
+              "15 push ups",
+              "20 sit ups",
+              "-1:00 rest between rounds -",
+              "* muscular endurance"
+            ],
+            "sub_title": "for time"
+          },
+          {
+            "title": "SHOULDER 4MIN",
+            "lines": [
+              "tabata (20sec on/10sec off) x 8 sets",
+              "prone press"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-20",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260520",
+        "sections": [
+          {
+            "title": "6 ROUNDS FOR TIME OF",
+            "lines": [
+              "24 kettlebell swings",
+              "12 burpees to a target",
+              "♀ 35-lb kettlebell and a 6-inch target",
+              "♂ 53-lb kettlebell and a 6-inch target"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-20",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Strength:-E2MOM for 16 mins (4 rounds)Alternate between3-5 rope climbsand10-20 alt. pistols (or pistol skill work), add weight if easy",
+              "Metcon:-5 rounds500/450m Row20 Alt. DB Snatch 1×22.5/1512 DB Push Press 40/25kg"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-20",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Riley",
+            "sub_title": "For time:",
+            "lines": [
+              "Run 1.5 miles",
+              "150 burpees",
+              "Run 1.5 miles"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-20",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "The Gauntlet",
+            "lines": [
+              "30 minute AMRAP of:",
+              "Jackie",
+              "Then",
+              "Karabell",
+              "Then",
+              "AMRAP of Cindy in the remaining 30 minutes:",
+              "Your result is rounds of Cindy completed.",
+              "1000m  Row",
+              "50  Thruster s (45/35 pound)",
+              "30 Pull-ups",
+              "10 rounds",
+              "3  Snatch es (135/90 pounds)",
+              "15 Wall Ball (20/14lbs @ 10″/8″ target)",
+              "5 pull-up",
+              "10  push -up",
+              "15 squat"
+            ]
+          }
+        ],
+        "note": "Benchmark: The Gauntlet"
+      },
+      {
+        "date": "2026-05-20",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 21.2",
+            "lines": [
+              "For time:",
+              "10 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "20 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "30 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "40 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "50 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "50-lb. dumbbell, 24-in. box",
+              "Time cap: 20 min."
+            ]
+          }
+        ],
+        "note": "Open: Open 21.2"
+      }
     ]
   },
-  "last_updated": "2026-05-19T12:40:23.167823"
+  "last_updated": "2026-05-20T03:09:37.499623"
 }
