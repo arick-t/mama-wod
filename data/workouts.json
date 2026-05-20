@@ -2698,40 +2698,6 @@
       },
       {
         "date": "2026-05-20",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-20/",
-        "sections": [
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "line drills"
-            ]
-          },
-          {
-            "title": "CONDITIONING 30MIN",
-            "lines": [
-              "8 rounds",
-              "",
-              "10 pull ups",
-              "15 push ups",
-              "20 sit ups",
-              "-1:00 rest between rounds -",
-              "* muscular endurance"
-            ],
-            "sub_title": "for time"
-          },
-          {
-            "title": "SHOULDER 4MIN",
-            "lines": [
-              "tabata (20sec on/10sec off) x 8 sets",
-              "prone press"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-20",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-may-20-2026/",
@@ -2773,6 +2739,40 @@
               "1 Smooth Set of Kipping HSPU",
               "Rest 4:00",
               "If done properly, you will be able to increase reps on round 2 for all three movement patterns. Flush (very slow) between sets on an air bike or 1 damper ski erg."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-20",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-20/",
+        "sections": [
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "line drills"
+            ]
+          },
+          {
+            "title": "CONDITIONING 30MIN",
+            "lines": [
+              "8 rounds",
+              "",
+              "10 pull ups",
+              "15 push ups",
+              "20 sit ups",
+              "-1:00 rest between rounds -",
+              "* muscular endurance"
+            ],
+            "sub_title": "for time"
+          },
+          {
+            "title": "SHOULDER 4MIN",
+            "lines": [
+              "tabata (20sec on/10sec off) x 8 sets",
+              "prone press"
             ]
           }
         ]
@@ -2868,5 +2868,5 @@
       }
     ]
   },
-  "last_updated": "2026-05-20T08:05:31.254700"
+  "last_updated": "2026-05-20T09:42:06.445038"
 }
