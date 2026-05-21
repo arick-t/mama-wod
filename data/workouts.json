@@ -1,91 +1,5 @@
 {
   "workouts": {
-    "2026-05-06": [
-      {
-        "date": "2026-05-06",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260506",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "BUY TICKETS NOW"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-06",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 19.4",
-            "lines": [
-              "For total time:",
-              "3 rounds of:",
-              "10 snatches",
-              "12 bar-facing burpees",
-              "Then, rest 3 minutes before continuing with:",
-              "3 rounds of:",
-              "10 bar muscle-ups",
-              "12 bar-facing burpees",
-              "*Men snatch 95 lb.*",
-              "Time cap: 12 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 19.4"
-      },
-      {
-        "date": "2026-05-06",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-may-6-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "3 Rounds",
-              ":20 Machine",
-              ":10 Rest",
-              ":20 Air Squats",
-              ":10 Rest",
-              ":20 Handstand Hold",
-              ":10 Rest",
-              "BB Warm-up (get into cleans w/in 15min from class start)"
-            ]
-          },
-          {
-            "title": "Hang Power Clean",
-            "lines": [
-              "Every 1:30 for 7 Sets"
-            ]
-          },
-          {
-            "title": "*Above Knee Power Clean + Below Knee Power Clean)",
-            "lines": [
-              "We’re searching for the sweet spot where speed and technique meets heavy. Not challenging = too light."
-            ]
-          },
-          {
-            "title": "AMRAP 22 Minutes",
-            "lines": [
-              "21 Box Jumps 24/20″",
-              "7 Wall Walks",
-              "21 Thrusters 95/65lbs",
-              "Rest 2:00 between rounds",
-              "Feel: Gas",
-              "Pace: Sustain",
-              "Target Score: 3+ rounds",
-              "Firebreather Score: 4+ rounds"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-05-07": [
       {
         "date": "2026-05-07",
@@ -169,102 +83,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-05-07",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-07/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "thoracic rotation",
-              "samson stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 clean grip deadlifts",
-              "10 elbow rotations",
-              "20sec catch hold (power position)",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "POWER CLEANS 10MIN",
-            "lines": [
-              "on every 1:00 x 10 sets",
-              "1 power clean",
-              "(build in weight)",
-              "explosive power"
-            ]
-          },
-          {
-            "title": "CONDITIONING 12MIN",
-            "lines": [
-              "6 rounds",
-              "",
-              "12/9 cal ski/bike",
-              "6 power cleans 70/50kg",
-              "* aerobic power [vo2 max]"
-            ],
-            "sub_title": "for time"
-          },
-          {
-            "title": "SHOULDER + TRICEPS 6MIN",
-            "lines": [
-              "30sec on/ 30sec off",
-              "1. max strict press",
-              "2. max overhead triceps extension"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-07",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Details",
-            "sub_title": "RenÃ©",
-            "lines": [
-              "7 rounds for time of:",
-              "400-meter run",
-              "21 walking lunges",
-              "15 pull-ups",
-              "9 burpees"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-07",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "BARBARA",
-            "lines": [
-              "5 rounds for time:",
-              "15 Pull up",
-              "20 Push up",
-              "30 Sit up",
-              "50 Air Squat",
-              "2min Rest",
-              "(Time Cap 35min)",
-              "Do not include final 2min rest in your overall time."
-            ]
-          }
-        ],
-        "note": "Benchmark: BARBARA"
       }
     ],
     "2026-05-08": [
@@ -951,21 +769,6 @@
               "* hang squat clean"
             ],
             "sub_title": "on every 3:00 x 5 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-11",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Every 90 seconds for 6 rounds6 Power Cleans TnG",
-              "* Metcon:-4 rounds14/12 Cal Row10 T2B14 Alt. DB Hang Clean & Jerk 22.5/15kg"
-            ]
           }
         ]
       },
@@ -2866,7 +2669,205 @@
         ],
         "note": "Benchmark: The Gauntlet"
       }
+    ],
+    "2026-05-21": [
+      {
+        "date": "2026-05-21",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-21/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "90/90 hip rotation",
+              "calf stretch",
+              "lying hip cross over",
+              "hamstring stretch on box"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 cossack squats",
+              "10 good mornings",
+              "100m run"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "SUMO DEADLIFT 14MIN",
+            "lines": [
+              "find a heavy set of 3",
+              "sumo deadlifts"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "3 rounds",
+              "",
+              "15 deadlifts 80/60kg",
+              "30 box jumps 60/50cm",
+              "400m run",
+              "* aerobic power & muscular endurance"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-05-21",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260521",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Rest Day",
+              "\"But I Do Cardio Every Day — Isn't That Enough?\"",
+              "If you run five days a week and feel great, this final article in our \"Foundations Series\" will ask you some uncomfortable questions — and back them up with research. It breaks down why training only your aerobic system leaves two entire energy pathways underdeveloped, and why four minutes of the right kind of work can outperform an hour of steady-state cardio. Read it, then go find your favorite distance runner and have the conversation."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-21",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-21-2026/",
+        "sections": [
+          {
+            "title": "AMRAP 18 Minutes",
+            "lines": [
+              "10/8 Calorie Air Bike",
+              "8 Overhead Squats 105/70lbs",
+              "10/8 Calorie Air Bike",
+              "8 Toes to Bar",
+              "C2 Bike: 15/12 Calories",
+              "Feel: Cardio",
+              "Pace: Sustain",
+              "Target Score: 5-7 rounds",
+              "Firebreather Score: 7+ rounds"
+            ]
+          },
+          {
+            "title": "12:00 Zone 2 Warm Up",
+            "lines": [
+              "45:00-90:00 Row @ Zone 2"
+            ]
+          },
+          {
+            "title": "12:00 Zone 2 Cool Down",
+            "lines": [
+              "Your Zone 2 today should stay between 160bpm minus your age and 180bpm minus your age."
+            ]
+          },
+          {
+            "title": "Warm up:",
+            "lines": [
+              "Build from resting heartrate to 180bpm minus your age slowly over 12:00. This will feel incredibly slow, but will help your session a lot. Feel free to mix up machines, but end on rower."
+            ]
+          },
+          {
+            "title": "Cool down:",
+            "lines": [
+              "Spend 4:00 on the rower, keeping your heartrate above 150bpm minus your age, then slowly work down to resting for the next 8:00 on any machine or walking."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-21",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Pairs Interval Metcon:-Every 4 mins X 4 (16 mins)Run 400m Run together20 Power Clean 60/42.5kg (shared)30 Partner Sit-ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-21",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Luke",
+            "sub_title": "For time:",
+            "lines": [
+              "Run 400 meters",
+              "15 clean and jerks",
+              "Run 400 meters",
+              "30 toes-to-bars",
+              "Run 400 meters",
+              "45 wall-ball shots",
+              "Run 400 meters",
+              "45 kettlebell swings",
+              "Run 400 meters",
+              "30 ring dips",
+              "Run 400 meters",
+              "15 front-rack weighted lunges",
+              "Run 400 meters"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-21",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Isabel",
+            "lines": [
+              "For time",
+              "30 Snatch 60/42,5 kg",
+              "Scaled",
+              "30 Hang snatch",
+              "TC 6 min",
+              "the load should feel moderate, not maximal",
+              "sprint  -style workout",
+              "load suggestion ~50% of 1rm",
+              "*power snatch es recommended*"
+            ]
+          }
+        ],
+        "note": "Benchmark: Isabel"
+      },
+      {
+        "date": "2026-05-21",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 18.2",
+            "lines": [
+              "1-2-3-4-5-6-7-8-9-10 reps for time of:",
+              "Dumbbell squats",
+              "Bar-facing burpees",
+              "*Men use 50-lb. dumbbells*",
+              "Workout 18.2a",
+              "1-rep-max clean",
+              "Time cap:",
+              "12 minutes to complete 18.2",
+              "AND",
+              "18.2a"
+            ]
+          }
+        ],
+        "note": "Open: Open 18.2"
+      }
     ]
   },
-  "last_updated": "2026-05-20T12:31:01.481711"
+  "last_updated": "2026-05-21T03:09:55.275650"
 }
