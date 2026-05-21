@@ -1140,28 +1140,6 @@
       },
       {
         "date": "2026-05-13",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Tarte Tatin",
-            "lines": [
-              "30 Toes to Bar",
-              "30 Overhead Squats 34kg/25kg",
-              "30 Burpee Over Bar",
-              "* -Rest 1:00-",
-              "30 Burpee Over Bar",
-              "30 Overhead Squats 34kg/25kg",
-              "30 Toes to Bar"
-            ],
-            "sub_title2": "For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-13",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2673,52 +2651,6 @@
     "2026-05-21": [
       {
         "date": "2026-05-21",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-21/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "90/90 hip rotation",
-              "calf stretch",
-              "lying hip cross over",
-              "hamstring stretch on box"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 cossack squats",
-              "10 good mornings",
-              "100m run"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "SUMO DEADLIFT 14MIN",
-            "lines": [
-              "find a heavy set of 3",
-              "sumo deadlifts"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "3 rounds",
-              "",
-              "15 deadlifts 80/60kg",
-              "30 box jumps 60/50cm",
-              "400m run",
-              "* aerobic power & muscular endurance"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-21",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260521",
@@ -2776,6 +2708,108 @@
             "lines": [
               "Spend 4:00 on the rower, keeping your heartrate above 150bpm minus your age, then slowly work down to resting for the next 8:00 on any machine or walking."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-21",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 18.2",
+            "lines": [
+              "1-2-3-4-5-6-7-8-9-10 reps for time of:",
+              "Dumbbell squats",
+              "Bar-facing burpees",
+              "*Men use 50-lb. dumbbells*",
+              "Workout 18.2a",
+              "1-rep-max clean",
+              "Time cap:",
+              "12 minutes to complete 18.2",
+              "AND",
+              "18.2a"
+            ]
+          }
+        ],
+        "note": "Open: Open 18.2"
+      },
+      {
+        "date": "2026-05-21",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-21/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "90/90 hip rotation",
+              "calf stretch",
+              "lying hip cross over",
+              "hamstring stretch on box"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 cossack squats",
+              "10 good mornings",
+              "100m run"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "SUMO DEADLIFT 14MIN",
+            "lines": [
+              "find a heavy set of 3",
+              "sumo deadlifts"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "3 rounds",
+              "",
+              "15 deadlifts 80/60kg",
+              "30 box jumps 60/50cm",
+              "400m run",
+              "* aerobic power & muscular endurance"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-05-21",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Power Clean & Jerk 3x1",
+              "POWER CLEAN + JERK",
+              "Build to 80–85% OR RPE 8-9 and complete 3 Singles at that weight"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Bass Reeves",
+            "lines": [
+              "3 rounds",
+              "50 Double Unders",
+              "5 Clean and Jerks 52kg/34kg",
+              "3 rounds",
+              "50 Double Unders",
+              "5 Clean and Jerks 61kg/43kg",
+              "3 rounds",
+              "50 Double Unders",
+              "5 Clean and Jerks 70kg/48kg"
+            ],
+            "sub_title2": "For Time:"
           }
         ]
       },
@@ -2842,32 +2876,8 @@
           }
         ],
         "note": "Benchmark: Isabel"
-      },
-      {
-        "date": "2026-05-21",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.2",
-            "lines": [
-              "1-2-3-4-5-6-7-8-9-10 reps for time of:",
-              "Dumbbell squats",
-              "Bar-facing burpees",
-              "*Men use 50-lb. dumbbells*",
-              "Workout 18.2a",
-              "1-rep-max clean",
-              "Time cap:",
-              "12 minutes to complete 18.2",
-              "AND",
-              "18.2a"
-            ]
-          }
-        ],
-        "note": "Open: Open 18.2"
       }
     ]
   },
-  "last_updated": "2026-05-21T03:09:55.275650"
+  "last_updated": "2026-05-21T08:09:07.803458"
 }
