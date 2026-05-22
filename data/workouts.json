@@ -1,90 +1,5 @@
 {
   "workouts": {
-    "2026-05-07": [
-      {
-        "date": "2026-05-07",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260507",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "BUY TICKETS NOW"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-07",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 21.1",
-            "lines": [
-              "For time:",
-              "1 wall walk",
-              "10 double-unders",
-              "3 wall walks",
-              "30 double-unders",
-              "6 wall walks",
-              "60 double-unders",
-              "9 wall walks",
-              "90 double-unders",
-              "15 wall walks",
-              "150 double-unders",
-              "21 wall walks",
-              "210 double-unders",
-              "Time cap: 15 min."
-            ]
-          }
-        ],
-        "note": "Open: Open 21.1"
-      },
-      {
-        "date": "2026-05-07",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-may-7-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "3 rounds",
-              "Run 200m",
-              "8 Ring Rows",
-              "8 Kettlebell Swings"
-            ]
-          },
-          {
-            "title": "Shoulder Press",
-            "lines": [
-              "10-8-6-4",
-              "Start your set of 10 between 60 and 70%, then add weight each round.",
-              "Air Bike 1,000m Between Sets to Flush)"
-            ]
-          },
-          {
-            "title": "All for time:",
-            "lines": [
-              "4 rounds of",
-              "Run 200m",
-              "6 Bar Muscle Ups",
-              "Directly into:",
-              "4 rounds of",
-              "Run 200m",
-              "12 Deadlifts 225/155lbs",
-              "Feel: Gas",
-              "Pace: Sustain",
-              "Target Score: 12-16 minutes",
-              "Firebreather Score: sub 12"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-05-08": [
       {
         "date": "2026-05-08",
@@ -164,95 +79,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-05-08",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-08/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "seated pike stretch",
-              "instep rotation",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "40 on / 20 off  x6",
-              "1. row",
-              "2. scap. pull ups",
-              "3. straight leg sit ups"
-            ]
-          },
-          {
-            "title": "CONDITIONING 18MIN",
-            "lines": [
-              "on every 6:00",
-              "each for time",
-              "1. 1000/900m row",
-              "2. 60 toes to bar",
-              "3. 400m farmers carry 2x24/16kg",
-              "* score: sum of all times",
-              "* aerobic power & muscular endurance"
-            ]
-          },
-          {
-            "title": "UPPER BACK + CORE 12MIN",
-            "lines": [
-              "* on every 1:30 x 8 sets",
-              "* 1. 12-16 kb gorilla rows",
-              "* 2. 12-16 kb pull through",
-              "* (core-) strength"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-08",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Capoot",
-            "sub_title": "For time:",
-            "lines": [
-              "100 push-ups",
-              "Run 800 meters",
-              "75 push-ups",
-              "Run 1,200 meters",
-              "50 push-ups",
-              "Run 1,600 meters",
-              "25 push-ups",
-              "Run 2,000 meters"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-08",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Jackie",
-            "lines": [
-              "For time",
-              "1000 m Row",
-              "50 Thruster 20/15kg",
-              "30 Pull up",
-              "Target: sub 8' Time cap 12'",
-              "RPE 5, maximum effort"
-            ]
-          }
-        ],
-        "note": "Benchmark: Jackie"
       }
     ],
     "2026-05-09": [
@@ -2877,7 +2703,190 @@
         ],
         "note": "Benchmark: Isabel"
       }
+    ],
+    "2026-05-22": [
+      {
+        "date": "2026-05-22",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-22/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "samson stretch",
+              "hand walk",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 prone snow angels",
+              "10 push ups",
+              "10 ring rows",
+              "* *remaining time row"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "PULL UPS 15MIN",
+            "lines": [
+              "4 super sets",
+              "8 pull ups @rpe 6-7",
+              "12-15 banded lat pull downs",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "3-6-9-12… double db thruster 2x22,5/15kg",
+              "15/12cal row",
+              "* aerobic power [vo2 max]"
+            ],
+            "sub_title": "amrap 15min"
+          }
+        ]
+      },
+      {
+        "date": "2026-05-22",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260522",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "5 sets for load of:",
+              "5 shoulder presses + 5 push presses + 5 push jerks",
+              "No rest between movements.",
+              "Post-Workout Test",
+              "As many reps as possible in 1 minute of:",
+              "Max push presses at 60%"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-22",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-22-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "Once through",
+              "500m Run",
+              "15 Controlled Ring Rows",
+              "30 Russian Kettlebell Swings",
+              "15 Lateral Burpees over PVC"
+            ]
+          },
+          {
+            "title": "For Time",
+            "lines": [
+              "10 Deadlifts 315/215lbs",
+              "500m Run",
+              "10 Deadlifts 315/215lbs",
+              "50 Burpees over bar",
+              "10 Deadlifts 315/215lbs",
+              "20/16 Muscle Ups",
+              "Do not exceed 75% of your 1RM deadlift (420/285lb 1RM).",
+              "Burpees over bar: lateral or bar facing – anyhow.",
+              "Feel: Gas/Muscle Overload",
+              "Pace: Sustain",
+              "Target Score: 11-16 minutes",
+              "Firebreather Score: sub-11 minutes"
+            ]
+          },
+          {
+            "title": "Shoulder Press",
+            "lines": [
+              "10-8-6-4",
+              "Start your set of 12 between 60 and 70%, then add weight each round.",
+              "Air Bike 1,000m Between Sets to Flush)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-22",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Clovis",
+            "sub_title": "For time:",
+            "lines": [
+              "Run 10 miles",
+              "150 burpee pull-ups",
+              "Partition the run and burpee pull-ups as needed."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-22",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Helen",
+            "lines": [
+              "FOR TIME:",
+              "3 Rounds",
+              "400m Run",
+              "21 American Kettlebell Swings",
+              "12 Pull-Ups",
+              "Target: sub 10:00",
+              "Timecap: 15:00",
+              "Please run the same route!"
+            ]
+          }
+        ],
+        "note": "Benchmark: Helen"
+      },
+      {
+        "date": "2026-05-22",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 11.3",
+            "lines": [
+              "Complete as many rounds and reps as possible in 5 minutes of:",
+              "Squat clean (165lb / 75kg)",
+              "Jerk (165lb / 75kg)",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 5 minutes of:",
+              "Squat clean (110lb / 50kg)",
+              "Jerk (110lb / 50kg)",
+              "*MASTERS MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 5 minutes of:",
+              "Squat clean (135lb / 62kg)",
+              "Jerk (135lb / 62kg)",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 5 minutes of:",
+              "Squat clean (75lb / 35kg)",
+              "Jerk (75lb / 35kg)"
+            ]
+          }
+        ],
+        "note": "Open: Open 11.3"
+      }
     ]
   },
-  "last_updated": "2026-05-21T12:38:42.326871"
+  "last_updated": "2026-05-22T03:05:52.452499"
 }
