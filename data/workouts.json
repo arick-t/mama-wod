@@ -1124,24 +1124,6 @@
       },
       {
         "date": "2026-05-14",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Saint-Honoré",
-            "lines": [
-              "400m Run",
-              "20 Box Jumps 24\"/20'",
-              "100ft Bodyweight Walking Lunge"
-            ],
-            "sub_title2": "4 Rounds For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-14",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2707,51 +2689,6 @@
     "2026-05-22": [
       {
         "date": "2026-05-22",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-22/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "samson stretch",
-              "hand walk",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 push ups",
-              "10 ring rows",
-              "* *remaining time row"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "PULL UPS 15MIN",
-            "lines": [
-              "4 super sets",
-              "8 pull ups @rpe 6-7",
-              "12-15 banded lat pull downs",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "3-6-9-12… double db thruster 2x22,5/15kg",
-              "15/12cal row",
-              "* aerobic power [vo2 max]"
-            ],
-            "sub_title": "amrap 15min"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-22",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260522",
@@ -2814,6 +2751,109 @@
       },
       {
         "date": "2026-05-22",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 11.3",
+            "lines": [
+              "Complete as many rounds and reps as possible in 5 minutes of:",
+              "Squat clean (165lb / 75kg)",
+              "Jerk (165lb / 75kg)",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 5 minutes of:",
+              "Squat clean (110lb / 50kg)",
+              "Jerk (110lb / 50kg)",
+              "*MASTERS MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 5 minutes of:",
+              "Squat clean (135lb / 62kg)",
+              "Jerk (135lb / 62kg)",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 5 minutes of:",
+              "Squat clean (75lb / 35kg)",
+              "Jerk (75lb / 35kg)"
+            ]
+          }
+        ],
+        "note": "Open: Open 11.3"
+      },
+      {
+        "date": "2026-05-22",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-22/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "samson stretch",
+              "hand walk",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 prone snow angels",
+              "10 push ups",
+              "10 ring rows",
+              "* *remaining time row"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "PULL UPS 15MIN",
+            "lines": [
+              "4 super sets",
+              "8 pull ups @rpe 6-7",
+              "12-15 banded lat pull downs",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "3-6-9-12… double db thruster 2x22,5/15kg",
+              "15/12cal row",
+              "* aerobic power [vo2 max]"
+            ],
+            "sub_title": "amrap 15min"
+          }
+        ]
+      },
+      {
+        "date": "2026-05-22",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "2K Row for Time"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "12 min AMRAP",
+            "lines": [
+              "15 Wall Balls 9kg/6kg",
+              "15 Kettlebell Swings 25kg/16kg",
+              "15 GHD Sit Ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-22",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2850,43 +2890,8 @@
           }
         ],
         "note": "Benchmark: Helen"
-      },
-      {
-        "date": "2026-05-22",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 11.3",
-            "lines": [
-              "Complete as many rounds and reps as possible in 5 minutes of:",
-              "Squat clean (165lb / 75kg)",
-              "Jerk (165lb / 75kg)",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 5 minutes of:",
-              "Squat clean (110lb / 50kg)",
-              "Jerk (110lb / 50kg)",
-              "*MASTERS MEN*",
-              "-",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 5 minutes of:",
-              "Squat clean (135lb / 62kg)",
-              "Jerk (135lb / 62kg)",
-              "*MASTERS WOMEN*",
-              "-",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 5 minutes of:",
-              "Squat clean (75lb / 35kg)",
-              "Jerk (75lb / 35kg)"
-            ]
-          }
-        ],
-        "note": "Open: Open 11.3"
       }
     ]
   },
-  "last_updated": "2026-05-22T03:05:52.452499"
+  "last_updated": "2026-05-22T08:03:12.379603"
 }
