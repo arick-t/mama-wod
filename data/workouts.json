@@ -2750,44 +2750,6 @@
       },
       {
         "date": "2026-05-23",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-23/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "samson Stretch",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "1. synchro burpees",
-              "2. A: bike + B: air squats",
-              "3. synchro straight leg sit ups"
-            ],
-            "sub_title": "30sec on / 15sec off x2 rounds"
-          },
-          {
-            "title": "CONDITIONING 31MIN",
-            "lines": [
-              "in teams of 2",
-              "for max reps/cals",
-              "1. synchro db snatches 22,5/15kg",
-              "2. cal bike",
-              "3. toes to bar",
-              "* score: total reps/cals"
-            ],
-            "sub_title": "1:00 on / 00:30 off x 21 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-23",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-may-23-2026/",
@@ -2825,6 +2787,44 @@
               "Row 500m Between Sets to Flush",
               "Use your heavy single to decide where to start. The larger than usual percentage range accounts for differences in mobility and technique.)"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-23",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-23/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "samson Stretch",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "1. synchro burpees",
+              "2. A: bike + B: air squats",
+              "3. synchro straight leg sit ups"
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
+          },
+          {
+            "title": "CONDITIONING 31MIN",
+            "lines": [
+              "in teams of 2",
+              "for max reps/cals",
+              "1. synchro db snatches 22,5/15kg",
+              "2. cal bike",
+              "3. toes to bar",
+              "* score: total reps/cals"
+            ],
+            "sub_title": "1:00 on / 00:30 off x 21 rounds"
           }
         ]
       },
@@ -2890,5 +2890,5 @@
       }
     ]
   },
-  "last_updated": "2026-05-23T07:41:31.485434"
+  "last_updated": "2026-05-23T09:07:52.577352"
 }
