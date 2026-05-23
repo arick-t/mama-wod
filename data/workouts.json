@@ -1122,24 +1122,6 @@
       },
       {
         "date": "2026-05-15",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Clafoutis",
-            "lines": [
-              "10 Rounds",
-              "15 Wall Balls 9kg/6kg",
-              "3 Wall Walks"
-            ],
-            "sub_title2": "For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-15",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2709,6 +2691,65 @@
     "2026-05-23": [
       {
         "date": "2026-05-23",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260523",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Complete as many rounds and reps as possible in 15 minutes of:",
+              "100-meter dumbbell suitcase carry",
+              "10 shuttle runs*",
+              "30 alternating dumbbell hang snatches",
+              "*The shuttle run is 25 feet out and 25 feet back.",
+              "♀ 35-lb dumbbell",
+              "♂ 50-lb dumbbell"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-23",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 11.4",
+            "lines": [
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "60 Bar-facing burpees",
+              "30 Overhead squats (120lbs / 55kg)",
+              "10 Muscle-ups",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "60 Bar-facing burpees",
+              "30 Overhead squats (90lbs / 40kg)",
+              "10 Muscle-ups",
+              "*MASTERS MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "60 Bar-facing burpees",
+              "30 Overhead squats (110lbs / 50kg)",
+              "10 Muscle-ups",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "60 Bar-facing burpees",
+              "30 Overhead squats (75lbs / 35kg)",
+              "10 Muscle-ups"
+            ]
+          }
+        ],
+        "note": "Open: Open 11.4"
+      },
+      {
+        "date": "2026-05-23",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-05-23/",
@@ -2747,20 +2788,42 @@
       },
       {
         "date": "2026-05-23",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260523",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-23-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "Complete as many rounds and reps as possible in 15 minutes of:",
-              "100-meter dumbbell suitcase carry",
-              "10 shuttle runs*",
-              "30 alternating dumbbell hang snatches",
-              "*The shuttle run is 25 feet out and 25 feet back.",
-              "♀ 35-lb dumbbell",
-              "♂ 50-lb dumbbell"
+              "4 Rounds",
+              ":20 Plate ground to overhead",
+              ":10 Rest",
+              ":20 Air Squats",
+              ":10 Rest",
+              ":20 Row",
+              ":10 Rest"
+            ]
+          },
+          {
+            "title": "24 Hang Power Cleans*, spilt anyhow 135/95lbs",
+            "lines": [
+              "1:00 Wall Sit, synchro",
+              "Row 500m, split anyhow",
+              "*Bounce cleans are not allowed – lower the bar to mid thigh or further.",
+              "Both partners must be Wall Sitting at the same time – if one stops, time stops.",
+              "Feel: Muscle Overload",
+              "Pace: Sustain",
+              "Target Score: 16-23 minutes",
+              "Firebreather Score: sub 16"
+            ]
+          },
+          {
+            "title": "Front Squat",
+            "lines": [
+              "1×1 @ 80-90%",
+              "5×3 @ 60-80%",
+              "Row 500m Between Sets to Flush",
+              "Use your heavy single to decide where to start. The larger than usual percentage range accounts for differences in mobility and technique.)"
             ]
           }
         ]
@@ -2824,47 +2887,8 @@
           }
         ],
         "note": "Benchmark: Chelsea"
-      },
-      {
-        "date": "2026-05-23",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 11.4",
-            "lines": [
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "60 Bar-facing burpees",
-              "30 Overhead squats (120lbs / 55kg)",
-              "10 Muscle-ups",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "60 Bar-facing burpees",
-              "30 Overhead squats (90lbs / 40kg)",
-              "10 Muscle-ups",
-              "*MASTERS MEN*",
-              "-",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "60 Bar-facing burpees",
-              "30 Overhead squats (110lbs / 50kg)",
-              "10 Muscle-ups",
-              "*MASTERS WOMEN*",
-              "-",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "60 Bar-facing burpees",
-              "30 Overhead squats (75lbs / 35kg)",
-              "10 Muscle-ups"
-            ]
-          }
-        ],
-        "note": "Open: Open 11.4"
       }
     ]
   },
-  "last_updated": "2026-05-23T03:09:22.252974"
+  "last_updated": "2026-05-23T07:41:31.485434"
 }
