@@ -1,103 +1,5 @@
 {
   "workouts": {
-    "2026-05-10": [
-      {
-        "date": "2026-05-10",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 12.5",
-            "lines": [
-              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
-              "100 pound Thruster, 3 reps",
-              "3 Chest to bar Pull-ups",
-              "100 pound Thruster, 6 reps",
-              "6 Chest to bar Pull-ups",
-              "100 pound Thruster, 9 reps",
-              "9 Chest to bar Pull-ups",
-              "100 pound Thruster, 12 reps",
-              "12 Chest to bar Pull-ups",
-              "100 pound Thruster, 15 reps",
-              "15 Chest to bar Pull-ups",
-              "100 pound Thruster, 18 reps",
-              "18 Chest to bar Pull-ups",
-              "100 pound Thruster, 21 reps",
-              "21 Chest to bar Pull-ups...",
-              "This is a timed workout. If you complete the round of 21, go on to 24. If you complete 24, go on to 27, etc.",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
-              "65 pound Thruster, 3 reps",
-              "3 Chest to bar Pull-ups",
-              "65 pound Thruster, 6 reps",
-              "6 Chest to bar Pull-ups",
-              "65 pound Thruster, 9 reps"
-            ]
-          }
-        ],
-        "note": "Open: Open 12.5"
-      },
-      {
-        "date": "2026-05-10",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-may-10-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "2:00 Row or Ski",
-              "1:00 Accumulated Dead hang",
-              "20 Ring Rows",
-              "1:00 Accumulated Hollow Hold"
-            ]
-          },
-          {
-            "title": "10 sets for quality:",
-            "lines": [
-              "5 Unbroken Strict Chest to Bar Pull Ups",
-              "Rest as little as needed to stay unbroken, but no more than 1:00",
-              "Start with as little (or no) band assistance as needed, progressively adding assistance as fatigue builds."
-            ]
-          },
-          {
-            "title": "EMOM 7 Minutes",
-            "lines": [
-              "10 Air Squats",
-              "Max duration L-sit hold in remainder of minute",
-              "Score is total time in an L-Sit."
-            ]
-          },
-          {
-            "title": "12:00 Zone 2 Warm Up",
-            "lines": [
-              "45:00-90:00 Row @ Zone 2"
-            ]
-          },
-          {
-            "title": "12:00 Zone 2 Cool Down",
-            "lines": [
-              "Your Zone 2 today should stay between 160bpm minus your age and 180bpm minus your age."
-            ]
-          },
-          {
-            "title": "Warm up:",
-            "lines": [
-              "Build from resting heartrate to 180bpm minus your age slowly over 12:00. This will feel incredibly slow, but will help your session a lot. Feel free to mix up machines, but end on rower."
-            ]
-          },
-          {
-            "title": "Cool down:",
-            "lines": [
-              "Spend 4:00 on the rower, keeping your heartrate above 150bpm minus your age, then slowly work down to resting for the next 8:00 on any machine or walking."
-            ]
-          }
-        ]
-      }
-    ],
     "2026-05-11": [
       {
         "date": "2026-05-11",
@@ -188,90 +90,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-05-11",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-11/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "instep rotation",
-              "lat stretch",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 air squats",
-              "10/8cal row",
-              "10 ring rows"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "PULL UPS 15MIN",
-            "lines": [
-              "4 super sets:",
-              "",
-              "8 pull ups @rpe 6-7",
-              "12-15 banded lat pull downs",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "12 double db hang squat cleans 2x22,5/15kg",
-              "15/12cal row",
-              "* score: slowest round",
-              "* aerobic power & vo2max",
-              "* hang squat clean"
-            ],
-            "sub_title": "on every 3:00 x 5 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-11",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Dominic J. Hall",
-            "sub_title": "On a running clock:",
-            "lines": [
-              "From 0:00-12:23:",
-              "Max-reps box step-ups",
-              "From 12:23-15:00:"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-11",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Heavy DT",
-            "lines": [
-              "5 rounds for time of",
-              "*♀ 145 lb.  ♂ 205 lb.*",
-              "12  deadlift s",
-              "9  hang power clean s",
-              "6  push jerk s"
-            ]
-          }
-        ],
-        "note": "Benchmark: Heavy DT"
       }
     ],
     "2026-05-12": [
@@ -2832,7 +2650,125 @@
         ],
         "note": "Benchmark: Jackie"
       }
+    ],
+    "2026-05-25": [
+      {
+        "date": "2026-05-25",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-25/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Open Gym",
+              "10:00-13:00 Uhr",
+              "Sunday Endurance for Open Gym",
+              "at rpe 2-4 throughout:",
+              "",
+              "5:00 row",
+              "8:00 bike",
+              "12:00 run",
+              "8:00 bike",
+              "5:00 row",
+              "aerobic endurance"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-25",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260525",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Murph"
+            ]
+          },
+          {
+            "title": "FOR TIME",
+            "lines": [
+              "1-mile run",
+              "100 pull-ups",
+              "200 push-ups",
+              "300 air squats",
+              "1-mile run",
+              "Partition the pull-ups, push-ups, and air squats as desired. If you've got a 14/20-lb vest or body armor, wear it.",
+              "Compare to",
+              "250526"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-25",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Details",
+            "sub_title": "McCartney",
+            "lines": [
+              "For time in teams of 3:",
+              "2,000-meter row",
+              "14 dumbbell thrusters",
+              "34 kettlebell swings",
+              "484 double-unders",
+              "108 burpees",
+              "2,000-meter row",
+              "18 deadlifts"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-25",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Karen",
+            "lines": [
+              "\"Karen\"",
+              "For time",
+              "150 wall balls 20/14 lbs",
+              "time cap 12min"
+            ]
+          }
+        ],
+        "note": "Benchmark: Karen"
+      },
+      {
+        "date": "2026-05-25",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 18.3",
+            "lines": [
+              "2 rounds for time of:",
+              "100 double-unders",
+              "20 overhead squats",
+              "100 double-unders",
+              "12 ring muscle-ups",
+              "100 double-unders",
+              "20 dumbbell snatches",
+              "100 double-unders",
+              "12 bar muscle-ups",
+              "*Men perform 115-lb. OHS, 50-lb. DB snatches*",
+              "Time cap: 14 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 18.3"
+      }
     ]
   },
-  "last_updated": "2026-05-24T11:27:55.632120"
+  "last_updated": "2026-05-25T03:02:34.183672"
 }
