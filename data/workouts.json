@@ -2654,6 +2654,58 @@
     "2026-05-25": [
       {
         "date": "2026-05-25",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260525",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Murph"
+            ]
+          },
+          {
+            "title": "FOR TIME",
+            "lines": [
+              "1-mile run",
+              "100 pull-ups",
+              "200 push-ups",
+              "300 air squats",
+              "1-mile run",
+              "Partition the pull-ups, push-ups, and air squats as desired. If you've got a 14/20-lb vest or body armor, wear it.",
+              "Compare to",
+              "250526"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-25",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 18.3",
+            "lines": [
+              "2 rounds for time of:",
+              "100 double-unders",
+              "20 overhead squats",
+              "100 double-unders",
+              "12 ring muscle-ups",
+              "100 double-unders",
+              "20 dumbbell snatches",
+              "100 double-unders",
+              "12 bar muscle-ups",
+              "*Men perform 115-lb. OHS, 50-lb. DB snatches*",
+              "Time cap: 14 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 18.3"
+      },
+      {
+        "date": "2026-05-25",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-05-25/",
@@ -2678,27 +2730,83 @@
       },
       {
         "date": "2026-05-25",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260525",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-25-2026/",
         "sections": [
           {
             "title": "WORKOUT",
             "lines": [
-              "Murph"
+              "WELCOME TO MURPH 2026",
+              "We are so grateful to have you all here supporting a great cause, grinding out a memorial workout, and enjoying another"
             ]
           },
           {
-            "title": "FOR TIME",
+            "title": "8AM",
             "lines": [
-              "1-mile run",
-              "100 pull-ups",
-              "200 push-ups",
-              "300 air squats",
-              "1-mile run",
-              "Partition the pull-ups, push-ups, and air squats as desired. If you've got a 14/20-lb vest or body armor, wear it.",
-              "Compare to",
-              "250526"
+              "National Anthem and workout Review"
+            ]
+          },
+          {
+            "title": "8:10AM",
+            "lines": [
+              "Heat 1 (Unpartitioned group)"
+            ]
+          },
+          {
+            "title": "8:20AM",
+            "lines": [
+              "Heat 2 (Partitioned group)"
+            ]
+          },
+          {
+            "title": "10AM",
+            "lines": [
+              "Donations Presented to recipient"
+            ]
+          },
+          {
+            "title": "10:30AM",
+            "lines": [
+              "Cookout and Bags/Cornhole (BYOB)"
+            ]
+          },
+          {
+            "title": "11AM",
+            "lines": [
+              "First Responders Heat (Show up and support!)"
+            ]
+          },
+          {
+            "title": "Murph Prep Warm-up",
+            "lines": [
+              "3 min Cardio",
+              "then… 8 min CAP:",
+              "10 Banded pull-aparts>scap push-ups>push-up",
+              "10 scap pull-ups>RIng Row> kips/pull-ups",
+              "10 90/90s>BW lunges>air squats"
+            ]
+          },
+          {
+            "title": "For Time:",
+            "lines": [
+              "1-Mile Run",
+              "100 Pull-ups",
+              "200 Push-ups",
+              "300 Air Squats",
+              "1-Mile Run",
+              "(If you have a 20# vest or body armor, wear it.)",
+              "In honor of Navy Lieutenant Michael Murphy, 29, of Patchogue, NY, who was killed in Afghanistan June 28th, 2005.",
+              "https://themurphchallenge.com/"
+            ]
+          },
+          {
+            "title": "40-60 Minute Machine Flush / MOB",
+            "lines": [
+              "5+ Rounds",
+              "5:00 Machine Flush",
+              "3:00 Mobility",
+              "Rotate through as many modalities as you can, excluding running but not walking. Pace should feel very very easy, but elicit a nice sweat to aid in your mobility routine."
             ]
           }
         ]
@@ -2742,33 +2850,8 @@
           }
         ],
         "note": "Benchmark: Karen"
-      },
-      {
-        "date": "2026-05-25",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.3",
-            "lines": [
-              "2 rounds for time of:",
-              "100 double-unders",
-              "20 overhead squats",
-              "100 double-unders",
-              "12 ring muscle-ups",
-              "100 double-unders",
-              "20 dumbbell snatches",
-              "100 double-unders",
-              "12 bar muscle-ups",
-              "*Men perform 115-lb. OHS, 50-lb. DB snatches*",
-              "Time cap: 14 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 18.3"
       }
     ]
   },
-  "last_updated": "2026-05-25T03:02:34.183672"
+  "last_updated": "2026-05-25T08:20:30.162899"
 }
