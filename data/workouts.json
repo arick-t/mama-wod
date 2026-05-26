@@ -738,27 +738,6 @@
       },
       {
         "date": "2026-05-16",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Pain au Chocolat",
-            "lines": [
-              "Teams of 2",
-              "8 sets",
-              "2:00 AMRAP",
-              "15/12 Calorie Air Bike (each/same time)",
-              "Max Power Cleans 84kg/57kg (rotating between partners, if needed)",
-              "* -rest 1:00 between sets-",
-              "*Score is total Cleans"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-16",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2667,6 +2646,50 @@
     "2026-05-26": [
       {
         "date": "2026-05-26",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260526",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Tuesday",
+              "260526",
+              "Learn the Movement "
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-26",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 25.3",
+            "lines": [
+              "For time:",
+              "5 wall walks",
+              "50-calorie row",
+              "5 wall walks",
+              "25 deadlifts",
+              "5 wall walks",
+              "25 cleans",
+              "5 wall walks",
+              "25 snatches",
+              "5 wall walks",
+              "50-calorie row",
+              "Time cap: 20 minutes",
+              "♀ 155-lb (70-kg) deadlift, 85-lb (38-kg) clean, 65-lb (29-kg) snatch",
+              "♂ 225-lb (102-kg) deadlift, 135-lb (61-kg) clean, 95-lb (43-kg) snatch"
+            ]
+          }
+        ],
+        "note": "Open: Open 25.3"
+      },
+      {
+        "date": "2026-05-26",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-05-26/",
@@ -2694,16 +2717,73 @@
       },
       {
         "date": "2026-05-26",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260526",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-26-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "Tuesday",
-              "260526",
-              "Learn the Movement "
+              "2:00 Row",
+              "2:00 Bike",
+              "2:00 Ski",
+              "*Any order works, sub any machine in as needed."
+            ]
+          },
+          {
+            "title": "For Quality & Fun",
+            "lines": [
+              "AMRAP 15 minutes",
+              ":15 Freestanding Handstand or Headstand",
+              "10 Candlestick Pistols",
+              ":30 L-Sit Hold",
+              "*Freestanding HS hold must begin from a headstand",
+              "Feel: Muscle Overload",
+              "Pace: Sustain",
+              "Target Score: 4-5 rounds through"
+            ]
+          },
+          {
+            "title": "5 Rounds for time:",
+            "lines": [
+              "10 GHD sit-ups",
+              "100m KB Farmers Carry (53/35Ibs)",
+              "sub GHD for V-ups or abmat sit-ups"
+            ]
+          },
+          {
+            "title": "Extra Credit",
+            "lines": [
+              "60:00 C2 or Air Bike*",
+              "*Keep your heartrate between 140 bpm minus your age and 160bpm minus your age on a 1 damper.",
+              "Leveling up your competitive chops requires a commitment to balancing intensity, volume, and recovery in equal measure."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-26",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Deadlift 4x2",
+              "DEADLIFT",
+              "Every 2:00 x 4 sets",
+              "2 Deadlifts @ 80–85% OR RPE 8"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Swole Team Six",
+            "lines": [
+              "Every 1:00 (20:00)",
+              "Odd: 15/12 Calorie Row",
+              "Even: 15 Abmat Sit Ups",
+              "* (Score is completed rounds)"
             ]
           }
         ]
@@ -2766,36 +2846,8 @@
           }
         ],
         "note": "Benchmark: Lynne"
-      },
-      {
-        "date": "2026-05-26",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 25.3",
-            "lines": [
-              "For time:",
-              "5 wall walks",
-              "50-calorie row",
-              "5 wall walks",
-              "25 deadlifts",
-              "5 wall walks",
-              "25 cleans",
-              "5 wall walks",
-              "25 snatches",
-              "5 wall walks",
-              "50-calorie row",
-              "Time cap: 20 minutes",
-              "♀ 155-lb (70-kg) deadlift, 85-lb (38-kg) clean, 65-lb (29-kg) snatch",
-              "♂ 225-lb (102-kg) deadlift, 135-lb (61-kg) clean, 95-lb (43-kg) snatch"
-            ]
-          }
-        ],
-        "note": "Open: Open 25.3"
       }
     ]
   },
-  "last_updated": "2026-05-26T03:08:39.365615"
+  "last_updated": "2026-05-26T08:03:52.673932"
 }
