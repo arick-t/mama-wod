@@ -1,97 +1,5 @@
 {
   "workouts": {
-    "2026-05-11": [
-      {
-        "date": "2026-05-11",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260511",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "BUY TICKETS NOW"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-11",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 21.2",
-            "lines": [
-              "For time:",
-              "10 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "20 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "30 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "40 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "50 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "50-lb. dumbbell, 24-in. box",
-              "Time cap: 20 min."
-            ]
-          }
-        ],
-        "note": "Open: Open 21.2"
-      },
-      {
-        "date": "2026-05-11",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-may-11-2026/",
-        "sections": [
-          {
-            "title": "Murph Prep Warm-up",
-            "lines": [
-              "3 min Cardio",
-              "then… 8 min CAP:",
-              "10 Banded pull-aparts>scap push-ups>push-up",
-              "10 scap pull-ups>RIng Row> kips/pull-ups",
-              "10 90/90s>BW lunges>air squats"
-            ]
-          },
-          {
-            "title": "Focus warm up, then:",
-            "lines": [
-              "(RX’d)",
-              "4 rounds:",
-              "200m Run",
-              "10 Pull-ups",
-              "20 Push-ups",
-              "30 Air Squats",
-              "-Rest 4:00-",
-              "8 rounds:",
-              "100m Run",
-              "5 Pull-ups",
-              "10 Push-ups",
-              "15 Air Squats",
-              "Scaled:",
-              "4 rounds:",
-              "200m Run",
-              "8 Pull-ups / 10 ring rows",
-              "16 Push-ups",
-              "24 Air Squats",
-              "-Rest 4:00-",
-              "8 rounds:",
-              "100m Run",
-              "4 Pull-ups / 4 jumping pull-ups",
-              "8 Push-ups",
-              "12 Air Squats",
-              "Target time each set: 14-16 minutes",
-              "Time cap each set: 18 minutes"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-05-12": [
       {
         "date": "2026-05-12",
@@ -176,90 +84,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-05-12",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-12/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "samson stretch",
-              "seated pike stretch",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 push ups",
-              "20sec hollow hold",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "STRICT PRESS 15MIN",
-            "lines": [
-              "4 super sets:",
-              "",
-              "8 strict press @ rpe 6-7",
-              "12-15 db lateral raises",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "16 toes to bar",
-              "16 push press 50/35kg",
-              "every 2:00 [starting at 0:00]:",
-              "",
-              "12/10cal bike/ski",
-              "* score: rounds + reps",
-              "* aerobic power [lactate threshold]"
-            ],
-            "sub_title": "amrap 16min"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-12",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Sean",
-            "sub_title": "10 rounds for time of:",
-            "lines": [
-              "11 chest-to-bar pull-ups",
-              "22 front squats"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-12",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Nasty Girls V2",
-            "lines": [
-              "3 rounds for time of:",
-              "50 one-legged squats, alternating",
-              "7  muscle-up s",
-              "175/115lb.  hang power clean s, 10 reps"
-            ]
-          }
-        ],
-        "note": "Benchmark: Nasty Girls V2"
       }
     ],
     "2026-05-13": [
@@ -735,20 +559,6 @@
       },
       {
         "date": "2026-05-15",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Partner Metcon:-Every 4 min x 4 rounds20/16 Cal Assault bike24 DB Snatch (22.5/15)20 Lateral Burpee over the DBPartner 1 starts and completes 10/8 Cals on bike,Partner 2 takes over on the bike and Partner 1 starts DB snatch.Burpees split however you like.Start again at the top of the next 4 min interval"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-15",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -943,21 +753,6 @@
               "Max Power Cleans 84kg/57kg (rotating between partners, if needed)",
               "* -rest 1:00 between sets-",
               "*Score is total Cleans"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-16",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Killer #4 Metcon:-3 rounds21/17 Cal Bike18 Pull ups15 KB swings 32/24kg12 Push upsinto 2 rounds21/17 Cal Row18 DB snatch 22.5/15kg15 Goblet squat 32/24kg12 HSPUinto 1 round21 Deadlifts18 Power Cleans15 Front Squats12 STOHRX:60/42.5kg",
-              "in time remaining to the 35 min mark, in 2’s or 3’s max cals on row or bike, people can join the team as they finish the wod”"
             ]
           }
         ]
@@ -2813,6 +2608,23 @@
       },
       {
         "date": "2026-05-25",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Bank holiday benchmark pairs",
+              "Pairs DT YGIG 10 full rounds (5 each)12 Deadlifts9 Hang Power Cleans6 Push JerksRX:- 70/47.5kg**Cap 16 mins – stimulus is unbroken rounds",
+              "Pairs Helen3 rounds400m run (together)21 Syncro KB Swings 24/16kg12 Syncro pull upsCap 14 mins",
+              "Pairs Mini Filthy Fifty – shared reps50 Box Jump Overs 24/20”50 Knees-to-Elbows50 Wall Balls 9/6kg50 Push Press 50/35kg50 Double UndersCap 12 mins"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-25",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2851,7 +2663,139 @@
         ],
         "note": "Benchmark: Karen"
       }
+    ],
+    "2026-05-26": [
+      {
+        "date": "2026-05-26",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-26/",
+        "sections": [
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "line drills"
+            ]
+          },
+          {
+            "title": "BENCHMARK CONDITIONING",
+            "lines": [
+              "\"Murph\"",
+              "1 mile run",
+              "100 pull ups",
+              "200 push ups",
+              "300 squats",
+              "1 mile run",
+              "partition as needed. optional weight vest 9/6kg."
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-05-26",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260526",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Tuesday",
+              "260526",
+              "Learn the Movement "
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-26",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Strength:-E2MOM for 16 mins (4 rounds)Alternate between3-5 rope climbsand10-20 alt. pistols (or pistol skill work), add weight if easy"
+            ]
+          },
+          {
+            "title": "METCON",
+            "lines": []
+          }
+        ]
+      },
+      {
+        "date": "2026-05-26",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Dobogai",
+            "sub_title": "7 rounds for time of:",
+            "lines": [
+              "8 muscle-ups",
+              "22-yard farmers carry"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-26",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Lynne",
+            "lines": [
+              "Five rounds:",
+              "Score is total reps",
+              "SCALED:",
+              "scaled bench press or floor press",
+              "Banded pull-ups or heavy ring rows",
+              "rest as needed",
+              "Bodyweight  bench press  max reps",
+              "Pull-ups max reps",
+              "SCALED:",
+              "scaled  bench press  or  floor press",
+              "Banded pull-ups or heavy  ring row s"
+            ]
+          }
+        ],
+        "note": "Benchmark: Lynne"
+      },
+      {
+        "date": "2026-05-26",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 25.3",
+            "lines": [
+              "For time:",
+              "5 wall walks",
+              "50-calorie row",
+              "5 wall walks",
+              "25 deadlifts",
+              "5 wall walks",
+              "25 cleans",
+              "5 wall walks",
+              "25 snatches",
+              "5 wall walks",
+              "50-calorie row",
+              "Time cap: 20 minutes",
+              "♀ 155-lb (70-kg) deadlift, 85-lb (38-kg) clean, 65-lb (29-kg) snatch",
+              "♂ 225-lb (102-kg) deadlift, 135-lb (61-kg) clean, 95-lb (43-kg) snatch"
+            ]
+          }
+        ],
+        "note": "Open: Open 25.3"
+      }
     ]
   },
-  "last_updated": "2026-05-25T13:03:46.438023"
+  "last_updated": "2026-05-26T03:08:39.365615"
 }
