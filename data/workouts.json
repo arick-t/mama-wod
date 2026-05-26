@@ -2690,33 +2690,6 @@
       },
       {
         "date": "2026-05-26",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-26/",
-        "sections": [
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "line drills"
-            ]
-          },
-          {
-            "title": "BENCHMARK CONDITIONING",
-            "lines": [
-              "\"Murph\"",
-              "1 mile run",
-              "100 pull ups",
-              "200 push ups",
-              "300 squats",
-              "1 mile run",
-              "partition as needed. optional weight vest 9/6kg."
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-26",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-may-26-2026/",
@@ -2758,6 +2731,33 @@
               "*Keep your heartrate between 140 bpm minus your age and 160bpm minus your age on a 1 damper.",
               "Leveling up your competitive chops requires a commitment to balancing intensity, volume, and recovery in equal measure."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-26",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-26/",
+        "sections": [
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "line drills"
+            ]
+          },
+          {
+            "title": "BENCHMARK CONDITIONING",
+            "lines": [
+              "\"Murph\"",
+              "1 mile run",
+              "100 pull ups",
+              "200 push ups",
+              "300 squats",
+              "1 mile run",
+              "partition as needed. optional weight vest 9/6kg."
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -2849,5 +2849,5 @@
       }
     ]
   },
-  "last_updated": "2026-05-26T08:03:52.673932"
+  "last_updated": "2026-05-26T09:40:04.636501"
 }
