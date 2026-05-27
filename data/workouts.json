@@ -889,24 +889,6 @@
       },
       {
         "date": "2026-05-18",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Annie Oakley",
-            "lines": [
-              "40-30-20-10",
-              "Box Jumps 20\"",
-              "50ft Handstand Walk (Scale 4 Wall Walks) after each set"
-            ],
-            "sub_title2": "For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-18",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2667,6 +2649,48 @@
     "2026-05-27": [
       {
         "date": "2026-05-27",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260527",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Sham"
+            ]
+          },
+          {
+            "title": "7 ROUNDS FOR TIME OF",
+            "lines": [
+              "11 bodyweight deadlifts",
+              "100-meter sprint",
+              "Compare to",
+              "141031"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-27",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 20.5",
+            "lines": [
+              "For time, partitioned any way:",
+              "40 muscle-ups",
+              "80-cal. row",
+              "120 wall-ball shots, 20-lb. ball to 10 ft.",
+              "Time cap: 20 min."
+            ]
+          }
+        ],
+        "note": "Open: Open 20.5"
+      },
+      {
+        "date": "2026-05-27",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-05-27/",
@@ -2717,24 +2741,73 @@
       },
       {
         "date": "2026-05-27",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260527",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-27-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "Sham"
+              "AMRAP 8 minutes",
+              "Row/Ski :45",
+              "10 Walking Lunges",
+              "Air Bike :20 HARD",
+              "Walk 100m before starting next round"
             ]
           },
           {
-            "title": "7 ROUNDS FOR TIME OF",
+            "title": "6 Rounds each for time",
             "lines": [
-              "11 bodyweight deadlifts",
-              "100-meter sprint",
-              "Compare to",
-              "141031"
+              "300/270m Row or Ski",
+              "15/12 Calorie Air Bike",
+              "Rest 1:1 or alternate full rounds with a partner",
+              "Feel: Cardio",
+              "Pace: Sustain",
+              "Target Score: <2:30/rd",
+              "Firebreather: <2:00/rd"
             ]
+          },
+          {
+            "title": "Squat Clean",
+            "lines": [
+              "7×3*",
+              "*Split Jerk after final rep of each set",
+              "Spend 1-2 minutes flushing slowly on a machine between sets."
+            ]
+          },
+          {
+            "title": "Before completing, ask yourself, do you still feel Murph?? If  so, skip this or keep it very light!",
+            "lines": [
+              "Lower the bar down to mid thigh with the torso getting out over the bar slightly, so you have to mimic getting back to power position as you would from the floor."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-27",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Clean & Jerk 1x1",
+              "HEAVY CLEAN + JERK",
+              "Work to 85% OR RPE 8-9.",
+              "*If form looks good and you're feeling it, then build to a 1RM",
+              "The clean can be squat or power. Choose any shoulder-to-overhead that allows you to lift the most weight efficiently."
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "The Liberty Lift",
+            "lines": [
+              "5 Burpee Over Bar",
+              "5 Shoulder To Overhead 52kg/34kg",
+              "10 Front Rack Step Back Lunges 52kg/34kg"
+            ],
+            "sub_title2": "10:00 AMRAP"
           }
         ]
       },
@@ -2793,27 +2866,8 @@
           }
         ],
         "note": "Benchmark: Christine"
-      },
-      {
-        "date": "2026-05-27",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 20.5",
-            "lines": [
-              "For time, partitioned any way:",
-              "40 muscle-ups",
-              "80-cal. row",
-              "120 wall-ball shots, 20-lb. ball to 10 ft.",
-              "Time cap: 20 min."
-            ]
-          }
-        ],
-        "note": "Open: Open 20.5"
       }
     ]
   },
-  "last_updated": "2026-05-27T03:09:55.868365"
+  "last_updated": "2026-05-27T08:15:31.225244"
 }
