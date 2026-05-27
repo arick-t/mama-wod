@@ -1,91 +1,5 @@
 {
   "workouts": {
-    "2026-05-12": [
-      {
-        "date": "2026-05-12",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260512",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Back squat 5-5-3-3-1-1-1 reps",
-              "Compare to similar",
-              "251020",
-              "and",
-              "250211"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-12",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 26.3",
-            "lines": [
-              "For time:",
-              "2 rounds of:",
-              "12 burpees over the bar",
-              "12 cleans, weight 1",
-              "12 burpees over the bar",
-              "12 thrusters, weight 1",
-              "2 rounds of:",
-              "12 burpees over the bar",
-              "12 cleans, weight 2",
-              "12 burpees over the bar",
-              "12 thrusters, weight 2",
-              "2 rounds of:",
-              "12 burpees over the bar",
-              "12 cleans, weight 3",
-              "12 burpees over the bar",
-              "12 thrusters, weight 3",
-              "Time cap: 16 minutes",
-              "*♀ 65, 75, 85 lb (29, 34, 38 kg)*",
-              "*♂ 95, 115, 135 lb (43, 52, 61 kg)*"
-            ]
-          }
-        ],
-        "note": "Open: Open 26.3"
-      },
-      {
-        "date": "2026-05-12",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-may-12-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "2 Rounds",
-              "1:00 Machine",
-              "10 Romanian Deadlifts",
-              "3 Standing Broad Jumps"
-            ]
-          },
-          {
-            "title": "Deadlift",
-            "lines": [
-              "5-5-5-5-5",
-              "After each set, perform 3 Standing Broad Jumps for max distance",
-              "Begin around 70-75% of your 1RM and build AHAP.",
-              "Rest 3-4 minutes after jumps.)"
-            ]
-          },
-          {
-            "title": "AMRAP 5:00 x 3",
-            "lines": [
-              "Row for Meters",
-              "Rest 1:00"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-05-13": [
       {
         "date": "2026-05-13",
@@ -180,89 +94,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-05-13",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-13/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "samson stretch",
-              "hand walk",
-              "instep rotations",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "2-4-6-8....",
-              "clean grip deadlifts",
-              "elbow rotations",
-              "burpees"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "POWER CLEAN COMPLEX 14MIN",
-            "lines": [
-              "find a heavy set of",
-              "3 deadlifts",
-              "",
-              "2 power cleans",
-              "explosive power"
-            ]
-          },
-          {
-            "title": "CONDITIONING 14MIN",
-            "lines": [
-              "6 rounds",
-              "",
-              "6 power cleans",
-              "9 deadlifts 70/50kg",
-              "12 burpees over the bar",
-              "* aerobic power & muscular endurance"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-13",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Shawn",
-            "sub_title": "For time:",
-            "lines": [
-              "Run 5 miles",
-              "Run in 5-minute intervals, stopping after each to perform 50 squats and 50 push-ups before beginning the next 5-minute run interval."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-13",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Linda",
-            "lines": [
-              "10 – 9 – 8 – 7 – 6 – 5 – 4 – 3 – 2 – 1:",
-              "1.5x body weight deadlift",
-              "body weight bench press",
-              "3/4x body weight squat cleans"
-            ]
-          }
-        ],
-        "note": "Benchmark: Linda"
       }
     ],
     "2026-05-14": [
@@ -885,21 +716,6 @@
               "* aerobic power [lactate threshold]"
             ],
             "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-17",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Hero Wod:",
-              "‘Blake’4 rounds:30m OH Walking Lunge 20/15kg plate30 Box Jumps 60 cm/50 cm box20 Wallballs 9/6kg10 HSPUs"
-            ]
           }
         ]
       },
@@ -2847,7 +2663,157 @@
         ],
         "note": "Benchmark: Lynne"
       }
+    ],
+    "2026-05-27": [
+      {
+        "date": "2026-05-27",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-27/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "90/90 hip rotation",
+              "calf stretch",
+              "lat stretch",
+              "hamstring stretch on box"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 clean grip deadlifts",
+              "10 elbow rotation",
+              "10 squat jumps"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "POWER CLEAN 10MIN",
+            "lines": [
+              "on every 1:00 x 10 sets",
+              "1 power cleans +",
+              "1 hang power clean",
+              "(build in weight)",
+              "explosive power"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "5 rounds",
+              "",
+              "15 box jumps 60/50cm*",
+              "12 deadlifts",
+              "9 hang power cleans 60/40kg",
+              "* *rx+ option: 75/60cm",
+              "* muscular endurance"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-05-27",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260527",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Sham"
+            ]
+          },
+          {
+            "title": "7 ROUNDS FOR TIME OF",
+            "lines": [
+              "11 bodyweight deadlifts",
+              "100-meter sprint",
+              "Compare to",
+              "141031"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-27",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Tabata 4 rounds 20 secs on 10 secondsStation 1 & 2 – 8 minutesAlternate between Bike & Air squatse.g 20 secs bike, 10 secs rest, 20 air squats, 10 secs rest etc",
+              "Station 3 – 4 minutesRow 20 secs on 10 secs off",
+              "Station 4 – 4 minutesBurpees 20 secs on, 10 secs off"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-27",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Store",
+            "sub_title": "CrossFit Hero and Tribute Workouts",
+            "lines": [
+              "Since 2005, CrossFit has posted workouts meant to honor the memories of CrossFit service members who made the ultimate sacrifice and are no longer with us.",
+              "If you would like to nominate a CrossFit hero for recognition, please",
+              "complete this form",
+              ".",
+              "See below for the full list of CrossFit Hero Workouts, published in alphabetical order.",
+              "Showing 245 results",
+              "Sort by:"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-27",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Christine",
+            "lines": [
+              "3 rounds for time of:",
+              "500m Row",
+              "12 Deadlifts (Bodyweight)",
+              "21 Box jumps (60/50 cm)",
+              "TC 15 min"
+            ]
+          }
+        ],
+        "note": "Benchmark: Christine"
+      },
+      {
+        "date": "2026-05-27",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 20.5",
+            "lines": [
+              "For time, partitioned any way:",
+              "40 muscle-ups",
+              "80-cal. row",
+              "120 wall-ball shots, 20-lb. ball to 10 ft.",
+              "Time cap: 20 min."
+            ]
+          }
+        ],
+        "note": "Open: Open 20.5"
+      }
     ]
   },
-  "last_updated": "2026-05-26T12:54:46.113452"
+  "last_updated": "2026-05-27T03:09:55.868365"
 }
