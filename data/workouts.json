@@ -2729,52 +2729,6 @@
       },
       {
         "date": "2026-05-28",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-28/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "thoracic rotation",
-              "scorpions",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 push ups",
-              "30sec plank hold",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "STRICT PRESS 15MIN",
-            "lines": [
-              "4 super sets",
-              "6 strict press @ rpe 7-8",
-              "12-15 db lateral raises",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 17MIN",
-            "lines": [
-              "12 double db push press 2x22,5/15kg",
-              "max cal bike/ski",
-              "-1:00 rest between rounds-",
-              "* aerobic power & lactate threshold"
-            ],
-            "sub_title": "amrap 2:00 x 6 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-28",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-may-28-2026/",
@@ -2824,6 +2778,52 @@
             "lines": [
               "Spend 4:00 on the rower, keeping your heartrate above 150bpm minus your age, then slowly work down to resting for the next 8:00 on any machine or walking."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-28",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-28/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "thoracic rotation",
+              "scorpions",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 prone snow angels",
+              "10 push ups",
+              "30sec plank hold",
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "STRICT PRESS 15MIN",
+            "lines": [
+              "4 super sets",
+              "6 strict press @ rpe 7-8",
+              "12-15 db lateral raises",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 17MIN",
+            "lines": [
+              "12 double db push press 2x22,5/15kg",
+              "max cal bike/ski",
+              "-1:00 rest between rounds-",
+              "* aerobic power & lactate threshold"
+            ],
+            "sub_title": "amrap 2:00 x 6 rounds"
           }
         ]
       },
@@ -2902,5 +2902,5 @@
       }
     ]
   },
-  "last_updated": "2026-05-28T08:09:33.994461"
+  "last_updated": "2026-05-28T09:45:06.324330"
 }
