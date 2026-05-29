@@ -2689,52 +2689,6 @@
     "2026-05-29": [
       {
         "date": "2026-05-29",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-29/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "instep rotation",
-              "hand walk",
-              "lat stretch",
-              "sumo squat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 straight leg sit ups",
-              "10 reverse lunges",
-              "10/8cal row"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "LUNGES 15MIN",
-            "lines": [
-              "4 supersets",
-              "6 back rack reverse lunges @rpe 7-8",
-              "12-15 partial goblet squats",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "15/12cal row",
-              "15 front squats 35/25kg",
-              "15 toes to bar",
-              "* aerobic power & muscular endurance"
-            ],
-            "sub_title": "amrap 15min"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-29",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260529",
@@ -2800,6 +2754,118 @@
       },
       {
         "date": "2026-05-29",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 25.1",
+            "lines": [
+              "*2025 Open Workout 25.1 Women Rx*",
+              "Games Season",
+              "Open",
+              "Feb 26 – March 16",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Quarterfinals",
+              "March 26-30",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Semifinals",
+              "April – June",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Games",
+              "July",
+              "The CrossFit Games",
+              "Masters CrossFit Games",
+              "Teenage CrossFit Games"
+            ]
+          }
+        ],
+        "note": "Open: Open 25.1"
+      },
+      {
+        "date": "2026-05-29",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-29/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "instep rotation",
+              "hand walk",
+              "lat stretch",
+              "sumo squat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 straight leg sit ups",
+              "10 reverse lunges",
+              "10/8cal row"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "LUNGES 15MIN",
+            "lines": [
+              "4 supersets",
+              "6 back rack reverse lunges @rpe 7-8",
+              "12-15 partial goblet squats",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "15/12cal row",
+              "15 front squats 35/25kg",
+              "15 toes to bar",
+              "* aerobic power & muscular endurance"
+            ],
+            "sub_title": "amrap 15min"
+          }
+        ]
+      },
+      {
+        "date": "2026-05-29",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Power Snatch 3x1",
+              "POWER SNATCH",
+              "Build to 80–85% OR RPE 8-9 and complete 3 Singles at that weight.",
+              "Rest 60-90 seconds between singles."
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Naboo (Mayhem FTP Test)",
+            "lines": [
+              "20:00 Calorie Air Bike Test",
+              "or",
+              "20:00 Calorie Row Test",
+              "* (Scored by Average Total Calories)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-29",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2858,47 +2924,8 @@
           }
         ],
         "note": "Benchmark: Cindy XXX"
-      },
-      {
-        "date": "2026-05-29",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 25.1",
-            "lines": [
-              "*2025 Open Workout 25.1 Women Rx*",
-              "Games Season",
-              "Open",
-              "Feb 26 – March 16",
-              "Overview",
-              "Schedule",
-              "Leaderboard",
-              "Workouts",
-              "Quarterfinals",
-              "March 26-30",
-              "Overview",
-              "Schedule",
-              "Leaderboard",
-              "Workouts",
-              "Semifinals",
-              "April – June",
-              "Overview",
-              "Schedule",
-              "Leaderboard",
-              "Workouts",
-              "Games",
-              "July",
-              "The CrossFit Games",
-              "Masters CrossFit Games",
-              "Teenage CrossFit Games"
-            ]
-          }
-        ],
-        "note": "Open: Open 25.1"
       }
     ]
   },
-  "last_updated": "2026-05-29T03:13:24.698242"
+  "last_updated": "2026-05-29T08:13:09.163929"
 }
