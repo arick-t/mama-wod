@@ -1,114 +1,5 @@
 {
   "workouts": {
-    "2026-05-14": [
-      {
-        "date": "2026-05-14",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260514",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Rest Day",
-              "\"Wait, So Am I Actually Fit?\"",
-              "Most people who exercise regularly have never stopped to ask the one question that should drive everything: What does \"fit\" actually mean? If you've been putting in the work for years but have a nagging sense that something's missing, this conversation might finally name it. Turns out, real fitness has 10 components — and most training programs quietly ignore half of them."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-14",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 13.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "115 pound Shoulder to overhead, 5 reps",
-              "115 pound Deadlift, 10 reps",
-              "15 Box jumps, 24\" box",
-              "*WOMEN -*",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "75 pound Shoulder to overhead, 5 reps",
-              "75 pound Deadlift, 10 reps",
-              "15 Box jumps, 20\" box",
-              "*MASTERS MEN -*",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "95 pound Shoulder to overhead, 5 reps",
-              "95 pound Deadlift, 10 reps",
-              "15 Box jumps, 20\" box",
-              "*MASTERS WOMEN -*",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "55 pound Shoulder to overhead, 5 reps",
-              "55 pound Deadlift, 10 reps",
-              "15 Box jumps, 20\" box"
-            ]
-          }
-        ],
-        "note": "Open: Open 13.1"
-      },
-      {
-        "date": "2026-05-14",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-may-14-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "200m Run",
-              "10 Strict Press",
-              "200m Run",
-              "10 Push Press",
-              "200m Run",
-              "10 Push Jerks",
-              "*Use Empty bar or light DBs"
-            ]
-          },
-          {
-            "title": "5 Rounds for time",
-            "lines": [
-              "500m Run",
-              "10 Shoulder to Overhead 135/95lbs",
-              "Feel: Cardio",
-              "Pace: Sustain",
-              "Target Score: Sub 18 minutes",
-              "Firebreather: Sub 15 minutes"
-            ]
-          },
-          {
-            "title": "12:00 Zone 2 Warm Up",
-            "lines": [
-              "45:00-90:00 Run or Bike @ Zone 2"
-            ]
-          },
-          {
-            "title": "12:00 Zone 2 Cool Down",
-            "lines": [
-              "Your Zone 2 today should stay between 160bpm minus your age and 180bpm minus your age."
-            ]
-          },
-          {
-            "title": "Warm up:",
-            "lines": [
-              "Build from resting heartrate to 180bpm minus your age slowly over 12:00. This will feel incredibly slow, but will help your session a lot. Feel free to mix up machines, but end on rower."
-            ]
-          },
-          {
-            "title": "Cool down:",
-            "lines": [
-              "Spend 4:00 on the rower, keeping your heartrate above 150bpm minus your age, then slowly work down to resting for the next 8:00 on any machine or walking."
-            ]
-          }
-        ]
-      }
-    ],
     "2026-05-15": [
       {
         "date": "2026-05-15",
@@ -192,97 +83,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-05-15",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-15/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "sumo squat stretch",
-              "instep rotation",
-              "calf stretch",
-              "90/90 hip rotation"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 reverse lunges",
-              "10 kb deadlifts",
-              "20 single unders"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "LUNGES 15MIN",
-            "lines": [
-              "4 supersets",
-              "8 back rack reverse lunges @rpe 6-7",
-              "12-15 partial goblet squats",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 17MIN",
-            "lines": [
-              "15 kb swings 24/16kg",
-              "20 sit-ups",
-              "30 double under",
-              "-1:00 rest between rounds-",
-              "* aerobic power & vo2max"
-            ],
-            "sub_title": "amrap 3:30 x 4 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-15",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "FERN",
-            "sub_title": "With a 60-minute time cap:",
-            "lines": [
-              "For time:",
-              "2-mile run",
-              "Then 9 rounds of:",
-              "20-calorie row",
-              "20 burpees",
-              "Then 3 rounds for time of",
-              "30 push-ups",
-              "30 pull-ups",
-              "30 burpees"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-15",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "FRAN",
-            "lines": [
-              "For Time:",
-              "21-15-9",
-              "Thruster",
-              "Pull-up",
-              "RPE 5, maximum effort! Target: sub 6min. Time Cap 10min.",
-              "Rxd 42,5/30kg",
-              "SC 30/20kg + Jumping Pull-ups"
-            ]
-          }
-        ],
-        "note": "Benchmark: FRAN"
       }
     ],
     "2026-05-16": [
@@ -936,21 +736,6 @@
             "lines": [
               "* 30sec on / 10sec off x 5 sets",
               "* chinese plank hold"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-19",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Strength:-For 28 minutes complete (7 rounds)Min 1 – 3 Power SnatchMin 2 – 6-8 C2B or 2-5 BMU/RMU*Min 3 – Machine Cals 15/12Min 4 – Rest*Can change to HSPU if did Pull ups on Monday",
-              "For Time60 DU’s30 KB Swing 32/24kg20 Box Jump Over 24/20″10 Devils Press 2×22.5/15kg"
             ]
           }
         ]
@@ -2900,7 +2685,220 @@
         ],
         "note": "Benchmark: Eva"
       }
+    ],
+    "2026-05-29": [
+      {
+        "date": "2026-05-29",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-05-29/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "instep rotation",
+              "hand walk",
+              "lat stretch",
+              "sumo squat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 straight leg sit ups",
+              "10 reverse lunges",
+              "10/8cal row"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "LUNGES 15MIN",
+            "lines": [
+              "4 supersets",
+              "6 back rack reverse lunges @rpe 7-8",
+              "12-15 partial goblet squats",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "15/12cal row",
+              "15 front squats 35/25kg",
+              "15 toes to bar",
+              "* aerobic power & muscular endurance"
+            ],
+            "sub_title": "amrap 15min"
+          }
+        ]
+      },
+      {
+        "date": "2026-05-29",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260529",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Brian"
+            ]
+          },
+          {
+            "title": "3 ROUNDS FOR TIME OF",
+            "lines": [
+              "5 rope climbs to 15 feet",
+              "25 back squats",
+              "♀ 125-lb barbell",
+              "♂ 185-lb barbell",
+              "Compare to",
+              "120515"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-29",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-29-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "300m Jog",
+              "20 Lunge and Reach Steps",
+              ":30 Bar Hang",
+              "100m Single KB OH Waiter Walk (50m per arm)",
+              ":30 Hanging L-Sit Hold",
+              "20 Goblet Squats",
+              "300m Jog"
+            ]
+          },
+          {
+            "title": "AMRAP 15 minutes",
+            "lines": [
+              "5 Squat Snatches 135/95lbs",
+              "200m Run",
+              "2 Rope Climbs*",
+              "*Substitute 10 Chest to bar Pull Ups or 10 Toes to bar in case of soreness/overuse after Murph/RJ on Monday",
+              "Feel: Gas",
+              "Pace: Sustain",
+              "Target Score: 5+ rounds",
+              "Firebreather: 7+ rounds"
+            ]
+          },
+          {
+            "title": "6 Sets",
+            "lines": [
+              "10 Neutral Grip DB Strict Press",
+              "Rest 2:00"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-29",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Every 90 seconds for 6 rounds6 Power Cleans TnG",
+              "* EMOM 12Min 1: 12/10 Cal Row (RX+ 15/12)Min 2: 12 Box step ups 24/20″ with DB’s 2×22.5/15kgMin 3: 15 V-ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-29",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Tully",
+            "sub_title": "4 rounds for time of:",
+            "lines": [
+              "Swim 200 meters",
+              "23 dumbbell squat cleans"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-05-29",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Cindy XXX",
+            "lines": [
+              "Complete as much as possible in 20 minutes of:",
+              "10 Pull-ups",
+              "20  Push -ups",
+              "30 Squats",
+              "15 Pull-ups",
+              "30  Push -ups",
+              "45 Squats",
+              "20 Pull-ups",
+              "40  Push -ups",
+              "60 Squats",
+              "25 Pull-ups",
+              "50  Push -ups",
+              "75 Squats",
+              "30 Pull-ups",
+              "60  Push -ups",
+              "90 Squats"
+            ]
+          }
+        ],
+        "note": "Benchmark: Cindy XXX"
+      },
+      {
+        "date": "2026-05-29",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 25.1",
+            "lines": [
+              "*2025 Open Workout 25.1 Women Rx*",
+              "Games Season",
+              "Open",
+              "Feb 26 – March 16",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Quarterfinals",
+              "March 26-30",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Semifinals",
+              "April – June",
+              "Overview",
+              "Schedule",
+              "Leaderboard",
+              "Workouts",
+              "Games",
+              "July",
+              "The CrossFit Games",
+              "Masters CrossFit Games",
+              "Teenage CrossFit Games"
+            ]
+          }
+        ],
+        "note": "Open: Open 25.1"
+      }
     ]
   },
-  "last_updated": "2026-05-28T13:02:24.679084"
+  "last_updated": "2026-05-29T03:13:24.698242"
 }
