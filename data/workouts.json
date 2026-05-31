@@ -2736,6 +2736,42 @@
     "2026-05-31": [
       {
         "date": "2026-05-31",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 13.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "115 pound Shoulder to overhead, 5 reps",
+              "115 pound Deadlift, 10 reps",
+              "15 Box jumps, 24\" box",
+              "*WOMEN -*",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "75 pound Shoulder to overhead, 5 reps",
+              "75 pound Deadlift, 10 reps",
+              "15 Box jumps, 20\" box",
+              "*MASTERS MEN -*",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "95 pound Shoulder to overhead, 5 reps",
+              "95 pound Deadlift, 10 reps",
+              "15 Box jumps, 20\" box",
+              "*MASTERS WOMEN -*",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "55 pound Shoulder to overhead, 5 reps",
+              "55 pound Deadlift, 10 reps",
+              "15 Box jumps, 20\" box"
+            ]
+          }
+        ],
+        "note": "Open: Open 13.1"
+      },
+      {
+        "date": "2026-05-31",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-05-31/",
@@ -2778,6 +2814,43 @@
               "* aerobic power [lactate threshold]"
             ],
             "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-05-31",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-may-31-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "5:00 Row",
+              "At 1:30 and 3:00 in, stop and perform 8 air squats before continuing",
+              "Then:",
+              "20 Banded Good Mornings",
+              "50′ Tip Toe Walking",
+              "50′ Heel Walking",
+              "20 Banded Good Mornings",
+              "Then:",
+              "800m Run",
+              "First 400m at a jog, second 400m at workout pace or just faster"
+            ]
+          },
+          {
+            "title": "AMRAP 24 minutes",
+            "lines": [
+              "1k Row",
+              "200′ Sled Push*",
+              "800m Run",
+              "20 Plate Bear Hug Squats 45/35lbs",
+              "*Sled should be heavy enough that it is more of a march than a run",
+              "Feel: Cardio",
+              "Pace: Sustain",
+              "Target Score: 2 rounds",
+              "Firebreather Score: 2 rounds + 1k Row"
+            ]
           }
         ]
       },
@@ -2836,44 +2909,8 @@
           }
         ],
         "note": "Benchmark: Marguerita"
-      },
-      {
-        "date": "2026-05-31",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 13.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "115 pound Shoulder to overhead, 5 reps",
-              "115 pound Deadlift, 10 reps",
-              "15 Box jumps, 24\" box",
-              "*WOMEN -*",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "75 pound Shoulder to overhead, 5 reps",
-              "75 pound Deadlift, 10 reps",
-              "15 Box jumps, 20\" box",
-              "*MASTERS MEN -*",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "95 pound Shoulder to overhead, 5 reps",
-              "95 pound Deadlift, 10 reps",
-              "15 Box jumps, 20\" box",
-              "*MASTERS WOMEN -*",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "55 pound Shoulder to overhead, 5 reps",
-              "55 pound Deadlift, 10 reps",
-              "15 Box jumps, 20\" box"
-            ]
-          }
-        ],
-        "note": "Open: Open 13.1"
       }
     ]
   },
-  "last_updated": "2026-05-31T03:03:33.332804"
+  "last_updated": "2026-05-31T08:17:51.924568"
 }
