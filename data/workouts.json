@@ -2771,55 +2771,6 @@
       },
       {
         "date": "2026-06-01",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-01/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "scorpions",
-              "hand walk",
-              "lat stretch",
-              "calf stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 scap. pull ups",
-              "30 sec. plank hold",
-              "10 ring rows"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "PULL UPS 15MIN",
-            "lines": [
-              "4 super sets:",
-              "",
-              "6 pull ups @rpe 7-8",
-              "12-15 banded lat pull downs",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 17MIN",
-            "lines": [
-              "3-6-9…",
-              "burpee pull ups",
-              "100m run",
-              "20 sit ups",
-              "* aerobic power & muscular endurance",
-              "kipping pull up"
-            ],
-            "sub_title": "amrap 17min"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-01",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-june-1-2026/",
@@ -2872,6 +2823,55 @@
               "Rest 1:00",
               "AMRAP 2min x 4, 1 min rest to fit it into class time!"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-01",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-06-01/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "scorpions",
+              "hand walk",
+              "lat stretch",
+              "calf stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 scap. pull ups",
+              "30 sec. plank hold",
+              "10 ring rows"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "PULL UPS 15MIN",
+            "lines": [
+              "4 super sets:",
+              "",
+              "6 pull ups @rpe 7-8",
+              "12-15 banded lat pull downs",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 17MIN",
+            "lines": [
+              "3-6-9…",
+              "burpee pull ups",
+              "100m run",
+              "20 sit ups",
+              "* aerobic power & muscular endurance",
+              "kipping pull up"
+            ],
+            "sub_title": "amrap 17min"
           }
         ]
       },
@@ -2965,5 +2965,5 @@
       }
     ]
   },
-  "last_updated": "2026-06-01T09:02:28.782336"
+  "last_updated": "2026-06-01T11:27:31.678687"
 }
