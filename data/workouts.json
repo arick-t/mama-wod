@@ -593,38 +593,6 @@
       },
       {
         "date": "2026-05-21",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Power Clean & Jerk 3x1",
-              "POWER CLEAN + JERK",
-              "Build to 80–85% OR RPE 8-9 and complete 3 Singles at that weight"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Bass Reeves",
-            "lines": [
-              "3 rounds",
-              "50 Double Unders",
-              "5 Clean and Jerks 52kg/34kg",
-              "3 rounds",
-              "50 Double Unders",
-              "5 Clean and Jerks 61kg/43kg",
-              "3 rounds",
-              "50 Double Unders",
-              "5 Clean and Jerks 70kg/48kg"
-            ],
-            "sub_title2": "For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-21",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2751,6 +2719,58 @@
     "2026-06-01": [
       {
         "date": "2026-06-01",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260601",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "For 4 rounds, complete as many reps as possible in 3 minutes of:",
+              "21 AbMat sit-ups",
+              "15 box jump-overs",
+              "9 squat cleans",
+              "Max toes-to-bars in remaining time",
+              "Rest 3 minutes between rounds.",
+              "♀ 95-lb barbell and a 20-inch box",
+              "♂ 135-lb barbell and 24-inch box"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-01",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 23.3",
+            "lines": [
+              "Starting with a 6-minute time cap, complete as many reps as possible of:",
+              "5 wall walks",
+              "50 double-unders",
+              "15 snatches (weight 1)",
+              "5 wall walks",
+              "50 double-unders",
+              "12 snatches (weight 2)",
+              "*If completed before the 6-minute time cap, add 3 minutes to the time cap and complete:",
+              "20 strict handstand push-ups",
+              "50 double-unders",
+              "9 snatches (weight 3)",
+              "*If completed before the 9-minute time cap, add 3 minutes to the time cap and complete:",
+              "20 strict handstand push-ups",
+              "50 double-unders",
+              "6 snatches (weight 4)",
+              "*♀ 65 lb, 95 lb, 125 lb, 155 lb*",
+              "*♂ 95 lb, 135 lb, 185 lb, 225 lb*"
+            ]
+          }
+        ],
+        "note": "Open: Open 23.3"
+      },
+      {
+        "date": "2026-06-01",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-06-01/",
@@ -2800,21 +2820,76 @@
       },
       {
         "date": "2026-06-01",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260601",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-june-1-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "For 4 rounds, complete as many reps as possible in 3 minutes of:",
-              "21 AbMat sit-ups",
-              "15 box jump-overs",
-              "9 squat cleans",
-              "Max toes-to-bars in remaining time",
-              "Rest 3 minutes between rounds.",
-              "♀ 95-lb barbell and a 20-inch box",
-              "♂ 135-lb barbell and 24-inch box"
+              "On a 5 Minute clock:",
+              "400m Run",
+              "Then"
+            ]
+          },
+          {
+            "title": "AMRAP in remaining time of:",
+            "lines": [
+              "3 Burpees",
+              "6 Ring Rows",
+              "9 Air Squats"
+            ]
+          },
+          {
+            "title": "For time",
+            "lines": [
+              "9 Squat Clean and Jerks",
+              "9 Burpee Bar Muscle Ups",
+              "Rest 1:30",
+              "7 Squat Clean and Jerks",
+              "7 Burpee Bar Muscle Ups",
+              "Rest 1:00",
+              "5 Squat Clean and Jerks",
+              "5 Burpee Bar Muscle Ups",
+              "Rest :30",
+              "3 Squat Clean and Jerks",
+              "3 Burpee Bar Muscle Ups"
+            ]
+          },
+          {
+            "title": "Barbell: 185/125lbs",
+            "lines": [
+              "Feel: Gas",
+              "Pace: Sustain",
+              "Target Score: 10-14 minutes w/ rest",
+              "Firebreather Score: sub 10 minutes"
+            ]
+          },
+          {
+            "title": "AMRAP 6:30 x 4",
+            "lines": [
+              "Row for Meters",
+              "Rest 1:00",
+              "AMRAP 2min x 4, 1 min rest to fit it into class time!"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-01",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "The Final Toll + The Run",
+            "lines": [
+              "For Total Time:",
+              "30 Dumbbell Bench (50s/35s)",
+              "200 Double Unders",
+              "100ft Dumbbell Farmers Lunge (50s/35s)",
+              "* -Rest until 10:00-"
             ]
           }
         ]
@@ -2887,39 +2962,8 @@
           }
         ],
         "note": "Benchmark: 121023 ADVANCED BOOTCAMP (JW)"
-      },
-      {
-        "date": "2026-06-01",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 23.3",
-            "lines": [
-              "Starting with a 6-minute time cap, complete as many reps as possible of:",
-              "5 wall walks",
-              "50 double-unders",
-              "15 snatches (weight 1)",
-              "5 wall walks",
-              "50 double-unders",
-              "12 snatches (weight 2)",
-              "*If completed before the 6-minute time cap, add 3 minutes to the time cap and complete:",
-              "20 strict handstand push-ups",
-              "50 double-unders",
-              "9 snatches (weight 3)",
-              "*If completed before the 9-minute time cap, add 3 minutes to the time cap and complete:",
-              "20 strict handstand push-ups",
-              "50 double-unders",
-              "6 snatches (weight 4)",
-              "*♀ 65 lb, 95 lb, 125 lb, 155 lb*",
-              "*♂ 95 lb, 135 lb, 185 lb, 225 lb*"
-            ]
-          }
-        ],
-        "note": "Open: Open 23.3"
       }
     ]
   },
-  "last_updated": "2026-06-01T03:09:28.328427"
+  "last_updated": "2026-06-01T09:02:28.782336"
 }
