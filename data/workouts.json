@@ -589,29 +589,6 @@
       },
       {
         "date": "2026-05-22",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "2K Row for Time"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "12 min AMRAP",
-            "lines": [
-              "15 Wall Balls 9kg/6kg",
-              "15 Kettlebell Swings 25kg/16kg",
-              "15 GHD Sit Ups"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-22",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2758,40 +2735,6 @@
     "2026-06-02": [
       {
         "date": "2026-06-02",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-02/",
-        "sections": [
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "line drills"
-            ]
-          },
-          {
-            "title": "LUNGES 15MIN",
-            "lines": [
-              "4 supersets",
-              "6 back rack reverse lunges @rpe 7-8",
-              "12-15 partial goblet squats",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "3 rounds",
-              "",
-              "50 wall balls",
-              "100 double under",
-              "* aerobic power & lactate threshold"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-02",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260602",
@@ -2873,6 +2816,79 @@
       },
       {
         "date": "2026-06-02",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 22.1",
+            "lines": [
+              "Complete as many rounds as possible in 15 minutes of:",
+              "3 wall walks",
+              "12 dumbbell snatches",
+              "15 box jump-overs",
+              "35-lb dumbbell, 20-in box"
+            ]
+          }
+        ],
+        "note": "Open: Open 22.1"
+      },
+      {
+        "date": "2026-06-02",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-06-02/",
+        "sections": [
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "line drills"
+            ]
+          },
+          {
+            "title": "LUNGES 15MIN",
+            "lines": [
+              "4 supersets",
+              "6 back rack reverse lunges @rpe 7-8",
+              "12-15 partial goblet squats",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "3 rounds",
+              "",
+              "50 wall balls",
+              "100 double under",
+              "* aerobic power & lactate threshold"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-02",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "The Dirty 30s",
+            "lines": [
+              "30 Back Squats 61kg/43kg",
+              "45 Chest to Bar",
+              "30 Back Squats 61kg/43kg",
+              "15 Bar Muscle Ups",
+              "30 Back Squats 61kg/43kg"
+            ],
+            "sub_title2": "For Time:"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-02",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2930,27 +2946,8 @@
           }
         ],
         "note": "Benchmark: Chelsea"
-      },
-      {
-        "date": "2026-06-02",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 22.1",
-            "lines": [
-              "Complete as many rounds as possible in 15 minutes of:",
-              "3 wall walks",
-              "12 dumbbell snatches",
-              "15 box jump-overs",
-              "35-lb dumbbell, 20-in box"
-            ]
-          }
-        ],
-        "note": "Open: Open 22.1"
       }
     ]
   },
-  "last_updated": "2026-06-02T03:16:26.459853"
+  "last_updated": "2026-06-02T08:48:37.452833"
 }
