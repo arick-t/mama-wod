@@ -1,98 +1,5 @@
 {
   "workouts": {
-    "2026-05-20": [
-      {
-        "date": "2026-05-20",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260520",
-        "sections": [
-          {
-            "title": "6 ROUNDS FOR TIME OF",
-            "lines": [
-              "24 kettlebell swings",
-              "12 burpees to a target",
-              "♀ 35-lb kettlebell and a 6-inch target",
-              "♂ 53-lb kettlebell and a 6-inch target"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-20",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 21.2",
-            "lines": [
-              "For time:",
-              "10 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "20 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "30 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "40 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "50 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "50-lb. dumbbell, 24-in. box",
-              "Time cap: 20 min."
-            ]
-          }
-        ],
-        "note": "Open: Open 21.2"
-      },
-      {
-        "date": "2026-05-20",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-may-20-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "3 Rounds",
-              "1:00 Machine",
-              "5 Strict Burpees (an up-down with a push up)",
-              "10 Ring Rows"
-            ]
-          },
-          {
-            "title": "Bench Press",
-            "lines": [
-              "10-10-10 AHAP",
-              "Rest 3:00 minutes between sets)"
-            ]
-          },
-          {
-            "title": "3 rounds for time",
-            "lines": [
-              "100m Farmer’s Carry 50s/35s",
-              "9 Burpee Pull Ups",
-              "Feel: Cardio/Gas",
-              "Pace: Reach",
-              "Target Score: 4:30-6:00",
-              "Firebreather Score: sub 4:30"
-            ]
-          },
-          {
-            "title": "2 Rounds",
-            "lines": [
-              "1 Smooth Set of Wall Facing HSPU",
-              "Rest 2:00",
-              "1 Smooth Set of Strict HSPU",
-              "Rest 2:00",
-              "1 Smooth Set of Kipping HSPU",
-              "Rest 4:00",
-              "If done properly, you will be able to increase reps on round 2 for all three movement patterns. Flush (very slow) between sets on an air bike or 1 damper ski erg."
-            ]
-          }
-        ]
-      }
-    ],
     "2026-05-21": [
       {
         "date": "2026-05-21",
@@ -179,92 +86,6 @@
           }
         ],
         "note": "Open: Open 18.2"
-      },
-      {
-        "date": "2026-05-21",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-05-21/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "90/90 hip rotation",
-              "calf stretch",
-              "lying hip cross over",
-              "hamstring stretch on box"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 cossack squats",
-              "10 good mornings",
-              "100m run"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "SUMO DEADLIFT 14MIN",
-            "lines": [
-              "find a heavy set of 3",
-              "sumo deadlifts"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "3 rounds",
-              "",
-              "15 deadlifts 80/60kg",
-              "30 box jumps 60/50cm",
-              "400m run",
-              "* aerobic power & muscular endurance"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-21",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Klepto",
-            "sub_title": "4 rounds for time of:",
-            "lines": [
-              "27 box jumps",
-              "20 burpees",
-              "11 squat cleans"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-21",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Isabel",
-            "lines": [
-              "For time",
-              "30 Snatch 60/42,5 kg",
-              "Scaled",
-              "30 Hang snatch",
-              "Target: sub 5 min. Time cap 6 min.",
-              "the load should feel moderate, not maximal",
-              "sprint  -style workout",
-              "load suggestion ~50% of 1rm",
-              "*power snatch es recommended*"
-            ]
-          }
-        ],
-        "note": "Benchmark: Isabel"
       }
     ],
     "2026-05-22": [
@@ -436,29 +257,21 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "Helen\" (BENCHMARK)",
+            "title": "Isabel",
             "lines": [
-              "FOR TIME:",
-              "3 Rounds",
-              "400m Run",
-              "21 American Kettlebell Swings",
-              "12 Pull-Ups",
-              "Time Cap: 15:00",
-              "Score = Time",
-              "Goals: 7:00-11:00",
-              "RPE: 9.5/10",
-              "Level 2:",
-              "400m Run",
-              "21 American KB Swings 20/12kg",
-              "9 Pull-Ups",
-              "Level 1/BASE:",
-              "400m Run OR 800m Bike Erg",
-              "21 Russian KB Swings",
-              "12 Jumping Pull-Ups"
+              "For time",
+              "30 Snatch 60/42,5 kg",
+              "Scaled",
+              "30 Hang snatch",
+              "Target: sub 5 min. Time cap 6 min.",
+              "the load should feel moderate, not maximal",
+              "sprint  -style workout",
+              "load suggestion ~50% of 1rm",
+              "*power snatch es recommended*"
             ]
           }
         ],
-        "note": "Benchmark: Helen\" (BENCHMARK)"
+        "note": "Benchmark: Isabel"
       }
     ],
     "2026-05-23": [
@@ -945,23 +758,6 @@
       },
       {
         "date": "2026-05-25",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Bank holiday benchmark pairs",
-              "Pairs DT YGIG 10 full rounds (5 each)12 Deadlifts9 Hang Power Cleans6 Push JerksRX:- 70/47.5kg**Cap 16 mins – stimulus is unbroken rounds",
-              "Pairs Helen3 rounds400m run (together)21 Syncro KB Swings 24/16kg12 Syncro pull upsCap 14 mins",
-              "Pairs Mini Filthy Fifty – shared reps50 Box Jump Overs 24/20”50 Knees-to-Elbows50 Wall Balls 9/6kg50 Push Press 50/35kg50 Double UndersCap 12 mins"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-25",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -1115,33 +911,6 @@
               "partition as needed. optional weight vest 9/6kg."
             ],
             "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-26",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Deadlift 4x2",
-              "DEADLIFT",
-              "Every 2:00 x 4 sets",
-              "2 Deadlifts @ 80–85% OR RPE 8"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Swole Team Six",
-            "lines": [
-              "Every 1:00 (20:00)",
-              "Odd: 15/12 Calorie Row",
-              "Even: 15 Abmat Sit Ups",
-              "* (Score is completed rounds)"
-            ]
           }
         ]
       },
@@ -2990,7 +2759,229 @@
         ],
         "note": "Benchmark: Fat Helen"
       }
+    ],
+    "2026-06-04": [
+      {
+        "date": "2026-06-04",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-06-04/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "instep rotations",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "1. row",
+              "2. plank hold",
+              "3. ring rows"
+            ],
+            "sub_title": "30sec on / 15sec off x 6 rounds"
+          },
+          {
+            "title": "CONDITIONING 32MIN",
+            "lines": [
+              "for max reps",
+              "1. cal row",
+              "2. lanes kb front rack carry 2x 24/16kg",
+              "3. strict chin ups",
+              "4. rest",
+              "* aerobic capacity & muscular endurance"
+            ],
+            "sub_title": "on every 2:00 x 16 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-04",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-june-4-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "3 Rounds",
+              "200m Run",
+              "15 Kettlebell Swings",
+              "10 Air Squats (Medball Front squats in R3)",
+              "Use a light KB."
+            ]
+          },
+          {
+            "title": "5 rounds for time",
+            "lines": [
+              "6 Deadlifts 315/215lbs",
+              "Run 400m",
+              "16 Wallballs 20/14lbs",
+              "Rest 2:00 between rounds",
+              "Do not exceed 75% of your 1RM deadlift (425/285lbs)",
+              "Feel: Gas/Muscle overload",
+              "Pace: Sustain",
+              "Target Score: 21-25 minutes",
+              "Firebreather Score: sub 21 minutes"
+            ]
+          },
+          {
+            "title": "Extra Credit",
+            "lines": [
+              "Zone 2 Row"
+            ]
+          },
+          {
+            "title": "12:00 Zone 2 Warm Up",
+            "lines": [
+              "45:00-90:00 Row @ Zone 2"
+            ]
+          },
+          {
+            "title": "12:00 Zone 2 Cool Down",
+            "lines": [
+              "Your Zone 2 today should stay between 160bpm minus your age and 180bpm minus your age."
+            ]
+          },
+          {
+            "title": "Warm up:",
+            "lines": [
+              "Build from resting heartrate to 180bpm minus your age slowly over 12:00. This will feel incredibly slow, but will help your session a lot. Feel free to mix up machines, but end on rower."
+            ]
+          },
+          {
+            "title": "Cool down:",
+            "lines": [
+              "Spend 4:00 on the rower, keeping your heartrate above 150bpm minus your age, then slowly work down to resting for the next 8:00 on any machine or walking."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-04",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Midline Century",
+            "lines": [
+              "20/15 Calorie Row",
+              "20 GHDs (Scale V-Up)",
+              "Max Toes to Bar (until 100 repetitions are completed)",
+              "* -Rest 1:00 between AMRAPs-",
+              "* (Scored by Time)"
+            ],
+            "sub_title2": "3-3-3-4:00 AMRAP"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-04",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Every 90 seconds for 6 rounds6 Power Cleans TnG",
+              "* Metcon:-4 rounds18 Box Jump Overs 24/20″15 T2B9 HSPU RX+ add deficit 2x20kg/2x10kg"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-04",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Wes",
+            "sub_title": "For time:",
+            "lines": [
+              "Run 800 meters with a plate",
+              "Then, 14 rounds of:",
+              "5 strict pull-ups",
+              "4 burpee box jumps",
+              "3 cleans",
+              "Then, run 800 meters with a plate"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-04",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Helen\" (BENCHMARK)",
+            "lines": [
+              "FOR TIME:",
+              "3 Rounds",
+              "400m Run",
+              "21 American Kettlebell Swings",
+              "12 Pull-Ups",
+              "Time Cap: 15:00",
+              "Score = Time",
+              "Goals: 7:00-11:00",
+              "RPE: 9.5/10",
+              "Level 2:",
+              "400m Run",
+              "21 American KB Swings 20/12kg",
+              "9 Pull-Ups",
+              "Level 1/BASE:",
+              "400m Run OR 800m Bike Erg",
+              "21 Russian KB Swings",
+              "12 Jumping Pull-Ups"
+            ]
+          }
+        ],
+        "note": "Benchmark: Helen\" (BENCHMARK)"
+      },
+      {
+        "date": "2026-06-04",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 19.2",
+            "lines": [
+              "Beginning on an 8-minute clock, complete as many reps as possible of:",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "15 squat cleans, 135 lb.",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "13 squat cleans, 185 lb.",
+              "If completed before 8 minutes, add 4 minutes to the clock and proceed to:",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "11 squat cleans, 225 lb.",
+              "If completed before 12 minutes, add 4 minutes to the clock and proceed to:",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "9 squat cleans, 275 lb.",
+              "If completed before 16 minutes, add 4 minutes to the clock and proceed to:",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "7 squat cleans, 315 lb.",
+              "Stop at 20 minutes."
+            ]
+          }
+        ],
+        "note": "Open: Open 19.2"
+      }
     ]
   },
-  "last_updated": "2026-06-03T13:56:52.767538"
+  "last_updated": "2026-06-04T04:43:38.449916"
 }
