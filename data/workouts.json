@@ -924,34 +924,6 @@
       },
       {
         "date": "2026-05-27",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Clean & Jerk 1x1",
-              "HEAVY CLEAN + JERK",
-              "Work to 85% OR RPE 8-9.",
-              "*If form looks good and you're feeling it, then build to a 1RM",
-              "The clean can be squat or power. Choose any shoulder-to-overhead that allows you to lift the most weight efficiently."
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "The Liberty Lift",
-            "lines": [
-              "5 Burpee Over Bar",
-              "5 Shoulder To Overhead 52kg/34kg",
-              "10 Front Rack Step Back Lunges 52kg/34kg"
-            ],
-            "sub_title2": "10:00 AMRAP"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-27",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2800,6 +2772,94 @@
     "2026-06-05": [
       {
         "date": "2026-06-05",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-june-5-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "2:00 Machine",
+              "-Then-",
+              "1:00 Waiter’s Walk R-Arm",
+              "10 Easy Ring Rows",
+              "1:00 Waiter’s Walk L-Arm",
+              "10 Moderate Ring Rows",
+              "1:00 Bar Hang",
+              "10 Hard Ring Rows"
+            ]
+          },
+          {
+            "title": "16 min AMRAP",
+            "lines": [
+              "For total reps on a continuous 16-minute clock:",
+              "4-minutes Turkish Get Ups",
+              "2-minutes Strict Pull Ups",
+              "3-minutes Turkish Get Ups",
+              "2-minutes Strict Pull Ups",
+              "2-minutes Turkish Get Ups",
+              "2-minutes Strict Pull Ups",
+              "1-minute Turkish Get Ups",
+              "Rx: 53/35lb KB or DB",
+              "Score is total reps",
+              "Feel: Muscle Overload",
+              "Pace: Sustain",
+              "Target Score: 30 total TGU, 30 total strict pulling reps",
+              "Firebreather Score: 30+ TGU, 30+ strict pull ups"
+            ]
+          },
+          {
+            "title": "3 Rounds",
+            "lines": [
+              "16 Pull Ups",
+              "16 Alternating DB Snatch 50/35lbs",
+              "20/16 Calorie Row",
+              "Rest 2:00"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-05",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 11.5",
+            "lines": [
+              "Complete as many rounds and reps as possible in 20 minutes of:",
+              "5 Power cleans (145lbs / 65kg)",
+              "10 Toes to bar",
+              "15 Wall balls (20lbs to 10' target)",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 20 minutes of:",
+              "5 Power cleans (100lbs / 45kg)",
+              "10 Toes to bar",
+              "15 Wall balls (14lbs to 9' target)",
+              "*MASTERS MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 20 minutes of:",
+              "5 Power cleans (130lbs / 60kg)",
+              "10 Toes to bar",
+              "15 Wall balls (20lbs to 9' target)",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 20 minutes of:",
+              "5 Power cleans (75lbs / 35kg)",
+              "10 Toes to bar",
+              "15 Wall balls (10lbs to 9' target)"
+            ]
+          }
+        ],
+        "note": "Open: Open 11.5"
+      },
+      {
+        "date": "2026-06-05",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-06-05/",
@@ -2853,50 +2913,49 @@
       },
       {
         "date": "2026-06-05",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-june-5-2026/",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260605",
         "sections": [
           {
-            "title": "General Warm-up",
+            "title": "FOR TIME",
             "lines": [
-              "2:00 Machine",
-              "-Then-",
-              "1:00 Waiter’s Walk R-Arm",
-              "10 Easy Ring Rows",
-              "1:00 Waiter’s Walk L-Arm",
-              "10 Moderate Ring Rows",
-              "1:00 Bar Hang",
-              "10 Hard Ring Rows"
+              "6 rope climbs to 15 feet",
+              "6 dumbbell farmers carry shuttles",
+              "21 dumbbell deadlifts",
+              "21-calorie bike",
+              "4 rope climbs",
+              "4 dumbbell farmers carry shuttles",
+              "15 dumbbell deadlifts",
+              "15-calorie bike",
+              "2 rope climbs",
+              "2 dumbbell farmers carry shuttles",
+              "9 dumbbell deadlifts",
+              "9-calorie bike",
+              "One shuttle is 25 feet down and  25 feet back.",
+              "♀ 50-lb dumbbells",
+              "♂ 70-lb dumbbells"
             ]
-          },
+          }
+        ]
+      },
+      {
+        "date": "2026-06-05",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
           {
-            "title": "16 min AMRAP",
+            "title": "WOD",
+            "sub_title": "Froning’s Revenge",
             "lines": [
-              "For total reps on a continuous 16-minute clock:",
-              "4-minutes Turkish Get Ups",
-              "2-minutes Strict Pull Ups",
-              "3-minutes Turkish Get Ups",
-              "2-minutes Strict Pull Ups",
-              "2-minutes Turkish Get Ups",
-              "2-minutes Strict Pull Ups",
-              "1-minute Turkish Get Ups",
-              "Rx: 53/35lb KB or DB",
-              "Score is total reps",
-              "Feel: Muscle Overload",
-              "Pace: Sustain",
-              "Target Score: 30 total TGU, 30 total strict pulling reps",
-              "Firebreather Score: 30+ TGU, 30+ strict pull ups"
-            ]
-          },
-          {
-            "title": "3 Rounds",
-            "lines": [
-              "16 Pull Ups",
-              "16 Alternating DB Snatch 50/35lbs",
-              "20/16 Calorie Row",
-              "Rest 2:00"
-            ]
+              "2 Rope Climbs (Scale 6 Strict Pull Ups)",
+              "25ft Handstand Walk (Scale 2 Wall Walks)",
+              "4 Front Squats 84kg/57kg",
+              "25ft Handstand Walk (Scale 2 Wall Walks)",
+              "*Barbell is from the floor, not rack"
+            ],
+            "sub_title2": "6 Rounds For Time:"
           }
         ]
       },
@@ -2962,47 +3021,8 @@
           }
         ],
         "note": "Benchmark: Helen\" (BENCHMARK)"
-      },
-      {
-        "date": "2026-06-05",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 11.5",
-            "lines": [
-              "Complete as many rounds and reps as possible in 20 minutes of:",
-              "5 Power cleans (145lbs / 65kg)",
-              "10 Toes to bar",
-              "15 Wall balls (20lbs to 10' target)",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 20 minutes of:",
-              "5 Power cleans (100lbs / 45kg)",
-              "10 Toes to bar",
-              "15 Wall balls (14lbs to 9' target)",
-              "*MASTERS MEN*",
-              "-",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 20 minutes of:",
-              "5 Power cleans (130lbs / 60kg)",
-              "10 Toes to bar",
-              "15 Wall balls (20lbs to 9' target)",
-              "*MASTERS WOMEN*",
-              "-",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 20 minutes of:",
-              "5 Power cleans (75lbs / 35kg)",
-              "10 Toes to bar",
-              "15 Wall balls (10lbs to 9' target)"
-            ]
-          }
-        ],
-        "note": "Open: Open 11.5"
       }
     ]
   },
-  "last_updated": "2026-06-05T03:12:04.344774"
+  "last_updated": "2026-06-05T08:16:57.730392"
 }
