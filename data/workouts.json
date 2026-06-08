@@ -819,33 +819,6 @@
       },
       {
         "date": "2026-05-29",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Power Snatch 3x1",
-              "POWER SNATCH",
-              "Build to 80–85% OR RPE 8-9 and complete 3 Singles at that weight.",
-              "Rest 60-90 seconds between singles."
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Naboo (Mayhem FTP Test)",
-            "lines": [
-              "20:00 Calorie Air Bike Test",
-              "or",
-              "20:00 Calorie Row Test",
-              "* (Scored by Average Total Calories)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-05-29",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2903,58 +2876,6 @@
     "2026-06-08": [
       {
         "date": "2026-06-08",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-08/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "scorpions",
-              "lying hip cross over",
-              "lat stretch",
-              "hand walk"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 clean grip deadlifts",
-              "10 elbow rotation",
-              "10 prone snow angels"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "CLEAN & JERK 12MIN",
-            "lines": [
-              "find a heavy complex of",
-              "2 power cleans",
-              "1 push jerk",
-              "explosive power"
-            ]
-          },
-          {
-            "title": "CONDITIONING 13MIN",
-            "lines": [
-              "6 push jerk 60/40kg",
-              "12 push ups",
-              "1min rest",
-              "",
-              "amrap 6min",
-              "6 power cleans 60/40kg",
-              "12 air squats",
-              "* score: total rounds + reps",
-              "* glycolytic power & muscular endurance",
-              "* hang power clean & push jerk"
-            ],
-            "sub_title": "amrap 6min"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-08",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260608",
@@ -3014,6 +2935,126 @@
       },
       {
         "date": "2026-06-08",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 12.3",
+            "lines": [
+              "Complete as many rounds and reps as possible in 18 minutes of:",
+              "15 Box jumps, 24\" box",
+              "115 pound Push press, 12 reps",
+              "9 Toes-to-bar",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 18 minutes of:",
+              "15 Box jumps, 20\" box",
+              "75 pound Push press, 12 reps",
+              "9 Toes-to-bar",
+              "*MASTERS MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 18 minutes of:",
+              "15 Box jumps or step-ups, 20\" box",
+              "95 pound Push press, 12 reps",
+              "9 Toes-to-bar",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 18 minutes of:",
+              "15 Box jumps or step-ups, 20\" box",
+              "55 pound Push press, 12 reps",
+              "9 Toes-to-bar"
+            ]
+          }
+        ],
+        "note": "Open: Open 12.3"
+      },
+      {
+        "date": "2026-06-08",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-06-08/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "scorpions",
+              "lying hip cross over",
+              "lat stretch",
+              "hand walk"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 clean grip deadlifts",
+              "10 elbow rotation",
+              "10 prone snow angels"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "CLEAN & JERK 12MIN",
+            "lines": [
+              "find a heavy complex of",
+              "2 power cleans",
+              "1 push jerk",
+              "explosive power"
+            ]
+          },
+          {
+            "title": "CONDITIONING 13MIN",
+            "lines": [
+              "6 push jerk 60/40kg",
+              "12 push ups",
+              "1min rest",
+              "",
+              "amrap 6min",
+              "6 power cleans 60/40kg",
+              "12 air squats",
+              "* score: total rounds + reps",
+              "* glycolytic power & muscular endurance",
+              "* hang power clean & push jerk"
+            ],
+            "sub_title": "amrap 6min"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-08",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Back Squat 1x3",
+              "Build to a 3RM Back Squat"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Fat Guy in a Little Coat",
+            "lines": [
+              "21-15-9",
+              "Calorie Air Bike",
+              "Goblet Squats 23kg/16kg",
+              "Women's Calories (16-12-8)",
+              "* -rest until the 8:00 mark-",
+              "45/36 Calorie Air Bike",
+              "45 Goblet Squats 23kg/16kg"
+            ],
+            "sub_title2": "For Time:"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-08",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -3062,47 +3103,8 @@
           }
         ],
         "note": "Benchmark: CrossFit Total II"
-      },
-      {
-        "date": "2026-06-08",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 12.3",
-            "lines": [
-              "Complete as many rounds and reps as possible in 18 minutes of:",
-              "15 Box jumps, 24\" box",
-              "115 pound Push press, 12 reps",
-              "9 Toes-to-bar",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 18 minutes of:",
-              "15 Box jumps, 20\" box",
-              "75 pound Push press, 12 reps",
-              "9 Toes-to-bar",
-              "*MASTERS MEN*",
-              "-",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 18 minutes of:",
-              "15 Box jumps or step-ups, 20\" box",
-              "95 pound Push press, 12 reps",
-              "9 Toes-to-bar",
-              "*MASTERS WOMEN*",
-              "-",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 18 minutes of:",
-              "15 Box jumps or step-ups, 20\" box",
-              "55 pound Push press, 12 reps",
-              "9 Toes-to-bar"
-            ]
-          }
-        ],
-        "note": "Open: Open 12.3"
       }
     ]
   },
-  "last_updated": "2026-06-08T03:11:52.483844"
+  "last_updated": "2026-06-08T08:50:43.203780"
 }
