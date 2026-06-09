@@ -803,25 +803,6 @@
       },
       {
         "date": "2026-05-30",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Iron Infantry",
-            "lines": [
-              "150 Wall Balls 9kg/6kg",
-              "150 Pull Ups",
-              "150 Dumbbell Snatch 23kg/16kg",
-              "150 Box Jump Overs 24\"/20\""
-            ],
-            "sub_title2": "Teams of 2 For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-05-30",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -1906,21 +1887,6 @@
       },
       {
         "date": "2026-06-04",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Every 90 seconds for 6 rounds6 Power Cleans TnG",
-              "* Metcon:-4 rounds18 Box Jump Overs 24/20″15 T2B9 HSPU RX+ add deficit 2x20kg/2x10kg"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-04",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2884,6 +2850,57 @@
     "2026-06-09": [
       {
         "date": "2026-06-09",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260609",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "On an 18-minute clock:"
+            ]
+          },
+          {
+            "title": "9-15-21 REPS FOR TIME OF",
+            "lines": [
+              "Pull-ups",
+              "Thrusters",
+              "In the remaining time:",
+              "Build to a heavy single thruster",
+              "Take the bar from the floor.",
+              "♀ 65-lb barbell",
+              "♂ 95-lb barbell"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-09",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 24.3",
+            "lines": [
+              "All for time:",
+              "5 rounds of:",
+              "10 thrusters, weight 1",
+              "10 chest-to-bar pull-ups",
+              "Rest 1 minute, then:",
+              "5 rounds of:",
+              "7 thrusters, weight 2",
+              "7 bar muscle-ups",
+              "Time cap: 15 minutes",
+              "*♀ 65, 95 lb (29, 43 kg)*",
+              "*♂ 95, 135 lb (43, 61 kg)*"
+            ]
+          }
+        ],
+        "note": "Open: Open 24.3"
+      },
+      {
+        "date": "2026-06-09",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-06-09/",
@@ -2932,27 +2949,76 @@
       },
       {
         "date": "2026-06-09",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260609",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-june-9-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "On an 18-minute clock:"
+              "3 Rounds",
+              ":20 Burpees",
+              ":10 Rest",
+              ":20 Step Ups (Box jumps in R3)",
+              ":10 Rest",
+              ":20 Air Squast (Empty bar or Light DB Thrusters in R2 and 3)",
+              ":10 Rest"
             ]
           },
           {
-            "title": "9-15-21 REPS FOR TIME OF",
+            "title": "AMRAP 15 Minutes",
             "lines": [
-              "Pull-ups",
-              "Thrusters",
-              "In the remaining time:",
-              "Build to a heavy single thruster",
-              "Take the bar from the floor.",
-              "♀ 65-lb barbell",
-              "♂ 95-lb barbell"
+              "21 Burpee Box Jump Overs 24/20″",
+              "Rest :30",
+              "21 Thrusters 95/65lbs",
+              "Rest :30",
+              "15 Burpee Box Jump Overs 24/20″",
+              "Rest :30",
+              "15 Thrusters 95/65lbs",
+              "Rest :30",
+              "9 Burpee Box Jump Overs 24/20″",
+              "Rest :30",
+              "9 Thrusters 95/65lbs",
+              "Rest :30",
+              "Feel: Gas",
+              "Pace: Sustain",
+              "Target Score: Finish 1 Round + the 21s in round 2",
+              "Firebreather: 2 Rounds"
             ]
+          },
+          {
+            "title": "AMRAP 2:00",
+            "lines": [
+              "No Jump Rope Climbs*",
+              "Rest 3 Minutes",
+              "Then"
+            ]
+          },
+          {
+            "title": "Complete the number of Rope Climbs from the AMRAP for time with jumping allowed",
+            "lines": [
+              "*No jump = reach up nice and high to grab the rope then get right into your foot hold vs. jump grab hold",
+              "Int Scale: Strict alt grip pull-up",
+              "Beg Scale: Ring rows"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-09",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "That's Gonna Leave a Mark”",
+            "lines": [
+              "16/13 Calorie Row",
+              "8 Lateral Burpee Over Bar",
+              "2 Clean and Jerks 84kg/57kg"
+            ],
+            "sub_title2": "16:00 AMRAP"
           }
         ]
       },
@@ -3017,33 +3083,8 @@
           }
         ],
         "note": "Benchmark: FIGHT GONE BAD"
-      },
-      {
-        "date": "2026-06-09",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 24.3",
-            "lines": [
-              "All for time:",
-              "5 rounds of:",
-              "10 thrusters, weight 1",
-              "10 chest-to-bar pull-ups",
-              "Rest 1 minute, then:",
-              "5 rounds of:",
-              "7 thrusters, weight 2",
-              "7 bar muscle-ups",
-              "Time cap: 15 minutes",
-              "*♀ 65, 95 lb (29, 43 kg)*",
-              "*♂ 95, 135 lb (43, 61 kg)*"
-            ]
-          }
-        ],
-        "note": "Open: Open 24.3"
       }
     ]
   },
-  "last_updated": "2026-06-09T03:08:50.841853"
+  "last_updated": "2026-06-09T08:06:18.647161"
 }
