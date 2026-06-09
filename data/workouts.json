@@ -1887,6 +1887,21 @@
       },
       {
         "date": "2026-06-04",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Every 90 seconds for 6 rounds6 Power Cleans TnG",
+              "* Metcon:-4 rounds18 Box Jump Overs 24/20″15 T2B9 HSPU RX+ add deficit 2x20kg/2x10kg"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-04",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2901,54 +2916,6 @@
       },
       {
         "date": "2026-06-09",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-09/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "instep rotation",
-              "hand walk",
-              "lat stretch",
-              "calf stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10/8cal row",
-              "20 single under",
-              "10 ring rows"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "PULL UPS 15MIN",
-            "lines": [
-              "4 super sets",
-              "4 pull ups @rpe 8-9",
-              "12-15 banded lat pull downs",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "21-15-9-15-21",
-              "pull ups",
-              "cal row (women's cal: 18-12-6-12-18)",
-              "*60 double under after each round",
-              "* rx+ option: chest to bar pull ups",
-              "* aerobic power  & muscular endurance"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-09",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-june-9-2026/",
@@ -3001,6 +2968,54 @@
               "Int Scale: Strict alt grip pull-up",
               "Beg Scale: Ring rows"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-09",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-06-09/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "instep rotation",
+              "hand walk",
+              "lat stretch",
+              "calf stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10/8cal row",
+              "20 single under",
+              "10 ring rows"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "PULL UPS 15MIN",
+            "lines": [
+              "4 super sets",
+              "4 pull ups @rpe 8-9",
+              "12-15 banded lat pull downs",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "21-15-9-15-21",
+              "pull ups",
+              "cal row (women's cal: 18-12-6-12-18)",
+              "*60 double under after each round",
+              "* rx+ option: chest to bar pull ups",
+              "* aerobic power  & muscular endurance"
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -3086,5 +3101,5 @@
       }
     ]
   },
-  "last_updated": "2026-06-09T08:06:18.647161"
+  "last_updated": "2026-06-09T09:41:49.987192"
 }
