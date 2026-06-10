@@ -983,25 +983,6 @@
       },
       {
         "date": "2026-06-01",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "The Final Toll + The Run",
-            "lines": [
-              "For Total Time:",
-              "30 Dumbbell Bench (50s/35s)",
-              "200 Double Unders",
-              "100ft Dumbbell Farmers Lunge (50s/35s)",
-              "* -Rest until 10:00-"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-01",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2904,52 +2885,6 @@
     "2026-06-10": [
       {
         "date": "2026-06-10",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-10/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "instep rotations",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "1. reverse lunges",
-              "2. hollow  hold",
-              "3. plank push ups"
-            ],
-            "sub_title": "30sec on / 15sec off x 6 rounds"
-          },
-          {
-            "title": "LUNGES 14MIN",
-            "lines": [
-              "4 supersets",
-              "4 back rack reverse lunges @rpe 8-9",
-              "12-15 partial goblet squats",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 17MIN",
-            "lines": [
-              "1. ring dips",
-              "2. double db box step ups 2x22,5/15kg + 50cm",
-              "3. v- ups",
-              "-00:30 rest between stations-",
-              "* muscular endurance"
-            ],
-            "sub_title": "amrap 1:00 x 12 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-10",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260610",
@@ -3001,6 +2936,95 @@
               "10 Neutral Grip DB Bench Press",
               "Rest 2:00"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-10",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 15.5",
+            "lines": [
+              "27-21-15-9 reps for time of:",
+              "Row (calories)",
+              "Thrusters",
+              "*Men use 95 lb.*",
+              "*Women use 65 lb.*"
+            ]
+          }
+        ],
+        "note": "Open: Open 15.5"
+      },
+      {
+        "date": "2026-06-10",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-06-10/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "instep rotations",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "1. reverse lunges",
+              "2. hollow  hold",
+              "3. plank push ups"
+            ],
+            "sub_title": "30sec on / 15sec off x 6 rounds"
+          },
+          {
+            "title": "LUNGES 14MIN",
+            "lines": [
+              "4 supersets",
+              "4 back rack reverse lunges @rpe 8-9",
+              "12-15 partial goblet squats",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 17MIN",
+            "lines": [
+              "1. ring dips",
+              "2. double db box step ups 2x22,5/15kg + 50cm",
+              "3. v- ups",
+              "-00:30 rest between stations-",
+              "* muscular endurance"
+            ],
+            "sub_title": "amrap 1:00 x 12 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-10",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Deadlift 1x3",
+              "Build to a 3RM Deadlift"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Brothers Gotta Hug",
+            "lines": [
+              "12 GHDs (Scale V-Ups)",
+              "1 Rope Climb (Scale 3 Strict Pull Ups)"
+            ],
+            "sub_title2": "10 rounds For Time:"
           }
         ]
       },
@@ -3063,27 +3087,8 @@
           }
         ],
         "note": "Benchmark: FRAN"
-      },
-      {
-        "date": "2026-06-10",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 15.5",
-            "lines": [
-              "27-21-15-9 reps for time of:",
-              "Row (calories)",
-              "Thrusters",
-              "*Men use 95 lb.*",
-              "*Women use 65 lb.*"
-            ]
-          }
-        ],
-        "note": "Open: Open 15.5"
       }
     ]
   },
-  "last_updated": "2026-06-10T03:17:50.397596"
+  "last_updated": "2026-06-10T08:18:33.057043"
 }
