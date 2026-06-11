@@ -999,26 +999,6 @@
       },
       {
         "date": "2026-06-02",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "The Dirty 30s",
-            "lines": [
-              "30 Back Squats 61kg/43kg",
-              "45 Chest to Bar",
-              "30 Back Squats 61kg/43kg",
-              "15 Bar Muscle Ups",
-              "30 Back Squats 61kg/43kg"
-            ],
-            "sub_title2": "For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-02",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2903,6 +2883,48 @@
     "2026-06-11": [
       {
         "date": "2026-06-11",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260611",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Rest Day",
+              "How Two CrossFit Coaches Scale a Week of Workouts"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-11",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 17.1",
+            "lines": [
+              "For time:",
+              "10 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "20 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "30 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "40 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "50 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "*Men use 50-lb. dumbbell and 24-in. box*",
+              "Time cap: 20 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 17.1"
+      },
+      {
+        "date": "2026-06-11",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-06-11/",
@@ -2957,16 +2979,96 @@
       },
       {
         "date": "2026-06-11",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260611",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-june-11-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "Rest Day",
-              "How Two CrossFit Coaches Scale a Week of Workouts"
+              "EMOM 6 minutes:",
+              "300/200m Airbike or 150/125m Row",
+              "Max Handstand hold in time remaining"
             ]
+          },
+          {
+            "title": "For time*",
+            "lines": [
+              "50 Strict HSPU",
+              "or",
+              "30 Strict HSPU",
+              "or",
+              "50 DB Strict Press",
+              "*Complete in as fewest sets as possible. Time cap for all options: 8 minutes"
+            ]
+          },
+          {
+            "title": "9min AMRAP",
+            "lines": [
+              "AMRAP 3 minutes",
+              "500/400m Air Bike",
+              "Max Distance Row in time remaining",
+              "Rest 3:00",
+              "AMRAP 3 minutes",
+              "250/225m Row",
+              "Max Distance Air Bike in time remaining",
+              "Score 1- Cal Row",
+              "Score 2- Cal Bike",
+              "Feel: Gas",
+              "Pace: Reach",
+              "Target Score: 500m+ on the max row & 1000m+ on the max air bike"
+            ]
+          },
+          {
+            "title": "12:00 Zone 2 Warm Up",
+            "lines": [
+              "45:00-90:00 Run or Bike @ Zone 2"
+            ]
+          },
+          {
+            "title": "12:00 Zone 2 Cool Down",
+            "lines": [
+              "Your Zone 2 today should stay between 160bpm minus your age and 180bpm minus your age."
+            ]
+          },
+          {
+            "title": "Warm up:",
+            "lines": [
+              "Build from resting heartrate to 180bpm minus your age slowly over 12:00. This will feel incredibly slow, but will help your session a lot. Feel free to mix up machines, but end on rower."
+            ]
+          },
+          {
+            "title": "Cool down:",
+            "lines": [
+              "Spend 4:00 on the rower, keeping your heartrate above 150bpm minus your age, then slowly work down to resting for the next 8:00 on any machine or walking."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-11",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "It's Called Reading",
+            "lines": [
+              "400m Run",
+              "25 Bench Press 52kg/34kg",
+              "5 Wall Walks",
+              "400m Run",
+              "20 Bench Press 52kg/34kg",
+              "5 Wall Walks",
+              "400m Run",
+              "15 Bench Press 52kg/34kg",
+              "5 Wall Walks",
+              "400m Run",
+              "10 Bench Press 52kg/34kg",
+              "5 Wall Walks"
+            ],
+            "sub_title2": "For Time:"
           }
         ]
       },
@@ -3027,35 +3129,8 @@
           }
         ],
         "note": "Benchmark: ANNIE\" - Benchmark"
-      },
-      {
-        "date": "2026-06-11",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 17.1",
-            "lines": [
-              "For time:",
-              "10 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "20 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "30 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "40 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "50 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "*Men use 50-lb. dumbbell and 24-in. box*",
-              "Time cap: 20 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 17.1"
       }
     ]
   },
-  "last_updated": "2026-06-11T03:18:52.258991"
+  "last_updated": "2026-06-11T08:47:51.828209"
 }
