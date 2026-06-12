@@ -989,33 +989,6 @@
       },
       {
         "date": "2026-06-03",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "\"June Burpee Challenge\"",
-              "Every 1:00 (12:00)",
-              "45 seconds Max Burpees Over Bar",
-              "15 second Rest",
-              "* (Score is Total Reps)"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Rest 8:00 after Part 1 and begin this at 20:00...",
-            "lines": [
-              "\"RANDY\"",
-              "For Time:",
-              "75 Power Snatch 34kg/25kg"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-03",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2916,57 +2889,6 @@
     "2026-06-12": [
       {
         "date": "2026-06-12",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-12/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "scorpions",
-              "thoracic rotation",
-              "lat stretch",
-              "hand walk"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "150/125m row",
-              "10 push ups to down dog",
-              "10 prone snow angels"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "STRICT PRESS 15MIN",
-            "lines": [
-              "4 super sets",
-              "4 strict press @ rpe 8-9",
-              "12-15 db lateral raises",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 14MIN",
-            "lines": [
-              "8 wall walks",
-              "200/175m row",
-              "6 wall walks",
-              "400/350m row",
-              "4 wall walks",
-              "600/500m row",
-              "2 wall walks",
-              "800/675m row",
-              "* aerobic capacity& muscular endurance"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-12",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260612",
@@ -3030,6 +2952,112 @@
       },
       {
         "date": "2026-06-12",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 24.1",
+            "lines": [
+              "For time:",
+              "21 dumbbell snatches, arm 1",
+              "21 lateral burpees over dumbbell",
+              "21 dumbbell snatches, arm 2",
+              "21 lateral burpees over dumbbell",
+              "15 dumbbell snatches, arm 1",
+              "15 lateral burpees over dumbbell",
+              "15 dumbbell snatches, arm 2",
+              "15 lateral burpees over dumbbell",
+              "9 dumbbell snatches, arm 1",
+              "9 lateral burpees over dumbbell",
+              "9 dumbbell snatches, arm 2",
+              "9 lateral burpees over dumbbell",
+              "*Time cap: 15 minutes",
+              "♀ 35-lb (15-kg) dumbbell",
+              "♂ 50-lb (22.5-kg) dumbbell"
+            ]
+          }
+        ],
+        "note": "Open: Open 24.1"
+      },
+      {
+        "date": "2026-06-12",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-06-12/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "scorpions",
+              "thoracic rotation",
+              "lat stretch",
+              "hand walk"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "150/125m row",
+              "10 push ups to down dog",
+              "10 prone snow angels"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "STRICT PRESS 15MIN",
+            "lines": [
+              "4 super sets",
+              "4 strict press @ rpe 8-9",
+              "12-15 db lateral raises",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 14MIN",
+            "lines": [
+              "8 wall walks",
+              "200/175m row",
+              "6 wall walks",
+              "400/350m row",
+              "4 wall walks",
+              "600/500m row",
+              "2 wall walks",
+              "800/675m row",
+              "* aerobic capacity& muscular endurance"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-12",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Power Snatch 10x2",
+              "Every 1:00 x 10 sets",
+              "2 Power Snatch (singles) @ 60% OR RPE 6"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Bees Everywhere!",
+            "lines": [
+              "50 Wall Balls 9kg/6kg",
+              "25 Toes to Bar"
+            ],
+            "sub_title2": "3 Rounds For Time:"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-12",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -3081,38 +3109,8 @@
           }
         ],
         "note": "Benchmark: Kelly"
-      },
-      {
-        "date": "2026-06-12",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 24.1",
-            "lines": [
-              "For time:",
-              "21 dumbbell snatches, arm 1",
-              "21 lateral burpees over dumbbell",
-              "21 dumbbell snatches, arm 2",
-              "21 lateral burpees over dumbbell",
-              "15 dumbbell snatches, arm 1",
-              "15 lateral burpees over dumbbell",
-              "15 dumbbell snatches, arm 2",
-              "15 lateral burpees over dumbbell",
-              "9 dumbbell snatches, arm 1",
-              "9 lateral burpees over dumbbell",
-              "9 dumbbell snatches, arm 2",
-              "9 lateral burpees over dumbbell",
-              "*Time cap: 15 minutes",
-              "♀ 35-lb (15-kg) dumbbell",
-              "♂ 50-lb (22.5-kg) dumbbell"
-            ]
-          }
-        ],
-        "note": "Open: Open 24.1"
       }
     ]
   },
-  "last_updated": "2026-06-12T03:20:24.184942"
+  "last_updated": "2026-06-12T08:49:14.339605"
 }
