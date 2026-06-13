@@ -1012,26 +1012,6 @@
       },
       {
         "date": "2026-06-04",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Midline Century",
-            "lines": [
-              "20/15 Calorie Row",
-              "20 GHDs (Scale V-Up)",
-              "Max Toes to Bar (until 100 repetitions are completed)",
-              "* -Rest 1:00 between AMRAPs-",
-              "* (Scored by Time)"
-            ],
-            "sub_title2": "3-3-3-4:00 AMRAP"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-04",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2930,43 +2910,6 @@
     "2026-06-13": [
       {
         "date": "2026-06-13",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-13/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "calf stretch",
-              "lying hip cross over",
-              "hand walk"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 good mornings",
-              "10 straight leg sit ups",
-              "*partner is running 100m"
-            ],
-            "sub_title": "amrap 5min"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "in teams of 2",
-              "1 lap partner run",
-              "16 deadlifts 80/60kg",
-              "max toes to bar",
-              "* score: total toes to bar"
-            ],
-            "sub_title": "on every 3:30 x 10 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-13",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260613",
@@ -3032,6 +2975,102 @@
       },
       {
         "date": "2026-06-13",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 24.2",
+            "lines": [
+              "*2024 Open Workout 24.2 Women Rx*",
+              "Games Season",
+              "Open",
+              "Feb 26 – March 16",
+              "Leaderboard",
+              "Overview",
+              "Schedule",
+              "Workouts",
+              "Quarterfinals",
+              "March 26-30",
+              "Leaderboard",
+              "Overview",
+              "Schedule",
+              "Workouts",
+              "Semifinals",
+              "April – June",
+              "Leaderboard",
+              "Overview",
+              "Schedule",
+              "Workouts",
+              "Games",
+              "July",
+              "The CrossFit Games",
+              "Masters CrossFit Games",
+              "Teenage CrossFit Games"
+            ]
+          }
+        ],
+        "note": "Open: Open 24.2"
+      },
+      {
+        "date": "2026-06-13",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-06-13/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "calf stretch",
+              "lying hip cross over",
+              "hand walk"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 good mornings",
+              "10 straight leg sit ups",
+              "*partner is running 100m"
+            ],
+            "sub_title": "amrap 5min"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "in teams of 2",
+              "1 lap partner run",
+              "16 deadlifts 80/60kg",
+              "max toes to bar",
+              "* score: total toes to bar"
+            ],
+            "sub_title": "on every 3:30 x 10 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-13",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Holy Schnikes!",
+            "lines": [
+              "Teams of 2",
+              "5 sets (each/1:1)",
+              "3:00 AMRAP",
+              "500/450m Row",
+              "Max Double Unders in Remaining Time",
+              "* (Scored by total Reps)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-13",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -3083,47 +3122,8 @@
           }
         ],
         "note": "Benchmark: CrossFit Total II"
-      },
-      {
-        "date": "2026-06-13",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 24.2",
-            "lines": [
-              "*2024 Open Workout 24.2 Women Rx*",
-              "Games Season",
-              "Open",
-              "Feb 26 – March 16",
-              "Leaderboard",
-              "Overview",
-              "Schedule",
-              "Workouts",
-              "Quarterfinals",
-              "March 26-30",
-              "Leaderboard",
-              "Overview",
-              "Schedule",
-              "Workouts",
-              "Semifinals",
-              "April – June",
-              "Leaderboard",
-              "Overview",
-              "Schedule",
-              "Workouts",
-              "Games",
-              "July",
-              "The CrossFit Games",
-              "Masters CrossFit Games",
-              "Teenage CrossFit Games"
-            ]
-          }
-        ],
-        "note": "Open: Open 24.2"
       }
     ]
   },
-  "last_updated": "2026-06-13T03:21:34.826034"
+  "last_updated": "2026-06-13T08:20:54.363925"
 }
