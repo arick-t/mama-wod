@@ -2932,6 +2932,67 @@
     "2026-06-14": [
       {
         "date": "2026-06-14",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-june-14-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "2:00 Any Machine / 400m Jog",
+              "20 Kettlebell RDL",
+              "20 Russian Kettlebell Swings",
+              "12 Alternating Scorpions",
+              "20 Dead Bugs",
+              "AMRAP 6 minutes",
+              "250/225m Row",
+              "8 Burpees*",
+              "*After round 2 perform 4-8 Hand Release Push Ups instead of burpees"
+            ]
+          },
+          {
+            "title": "For time",
+            "lines": [
+              "1000/900m Row",
+              "20 Hand Release Push Ups",
+              "800/700m Row",
+              "20 Hand Release Push Ups",
+              "600/500m Row",
+              "20 Hand Release Push Ups",
+              "400/300m Row",
+              "20 Hand Release Push Ups",
+              "200m Row",
+              "Feel: Cardio / Muscle Overload",
+              "Pace: Sustain",
+              "Target Score: 20 minutes",
+              "Firebreather: 15 minutes"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-14",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 16.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 20 minutes of:",
+              "25-ft. overhead walking lunge",
+              "8 burpees",
+              "25-ft. overhead walking lunge",
+              "8 chest-to-bar pull-ups",
+              "*Men lunge 95 lb.*",
+              "*Women lunge 65 lb.*"
+            ]
+          }
+        ],
+        "note": "Open: Open 16.1"
+      },
+      {
+        "date": "2026-06-14",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-06-14/",
@@ -2971,46 +3032,6 @@
               "* aerobic power [lactate threshold]"
             ],
             "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-14",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-june-14-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "2:00 Any Machine / 400m Jog",
-              "20 Kettlebell RDL",
-              "20 Russian Kettlebell Swings",
-              "12 Alternating Scorpions",
-              "20 Dead Bugs",
-              "AMRAP 6 minutes",
-              "250/225m Row",
-              "8 Burpees*",
-              "*After round 2 perform 4-8 Hand Release Push Ups instead of burpees"
-            ]
-          },
-          {
-            "title": "For time",
-            "lines": [
-              "1000/900m Row",
-              "20 Hand Release Push Ups",
-              "800/700m Row",
-              "20 Hand Release Push Ups",
-              "600/500m Row",
-              "20 Hand Release Push Ups",
-              "400/300m Row",
-              "20 Hand Release Push Ups",
-              "200m Row",
-              "Feel: Cardio / Muscle Overload",
-              "Pace: Sustain",
-              "Target Score: 20 minutes",
-              "Firebreather: 15 minutes"
-            ]
           }
         ]
       },
@@ -3067,29 +3088,8 @@
           }
         ],
         "note": "Benchmark: Fat Helen"
-      },
-      {
-        "date": "2026-06-14",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 16.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 20 minutes of:",
-              "25-ft. overhead walking lunge",
-              "8 burpees",
-              "25-ft. overhead walking lunge",
-              "8 chest-to-bar pull-ups",
-              "*Men lunge 95 lb.*",
-              "*Women lunge 65 lb.*"
-            ]
-          }
-        ],
-        "note": "Open: Open 16.1"
       }
     ]
   },
-  "last_updated": "2026-06-14T03:10:23.158814"
+  "last_updated": "2026-06-14T08:49:48.746988"
 }
