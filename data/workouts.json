@@ -859,26 +859,6 @@
       },
       {
         "date": "2026-06-05",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Froning’s Revenge",
-            "lines": [
-              "2 Rope Climbs (Scale 6 Strict Pull Ups)",
-              "25ft Handstand Walk (Scale 2 Wall Walks)",
-              "4 Front Squats 84kg/57kg",
-              "25ft Handstand Walk (Scale 2 Wall Walks)",
-              "*Barbell is from the floor, not rack"
-            ],
-            "sub_title2": "6 Rounds For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-05",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2892,53 +2872,6 @@
     "2026-06-15": [
       {
         "date": "2026-06-15",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-15/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "sumo squat stretch",
-              "thoracic rotattion",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 burpees",
-              "10 ring rows",
-              "10 elbow rotations",
-              "* *remaining time deep squat hold"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "PULL UPS 15MIN",
-            "lines": [
-              "4 super sets",
-              "4 pull ups @rpe 8-9",
-              "12-15 banded lat pull downs",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "each round for time",
-              "8 burpee pull ups",
-              "10 front squats 40/30kg",
-              "* score: slowest round",
-              "* anaerobic capacity"
-            ],
-            "sub_title": "on every 2:30 x 6 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-15",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260615",
@@ -2992,6 +2925,98 @@
               "*Split Jerk after final rep of each set",
               "Spend 1-2 minutes slowly flushing on a machine between sets.",
               "Lower the bar down to just in front of your knee cap with the torso getting out over the bar, so you have to mimic getting back to power position as you would from the floor."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-15",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 16.5",
+            "lines": [
+              "21-18-15-12-9-6-3 reps for time of:",
+              "Thrusters",
+              "Burpees",
+              "*Men use 95 lb.*",
+              "*Women use 65 lb.*"
+            ]
+          }
+        ],
+        "note": "Open: Open 16.5"
+      },
+      {
+        "date": "2026-06-15",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-06-15/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "thoracic rotattion",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 burpees",
+              "10 ring rows",
+              "10 elbow rotations",
+              "* *remaining time deep squat hold"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "PULL UPS 15MIN",
+            "lines": [
+              "4 super sets",
+              "4 pull ups @rpe 8-9",
+              "12-15 banded lat pull downs",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "each round for time",
+              "8 burpee pull ups",
+              "10 front squats 40/30kg",
+              "* score: slowest round",
+              "* anaerobic capacity"
+            ],
+            "sub_title": "on every 2:30 x 6 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-15",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Power Clean & Push Jerk 6x3",
+              "Every 1:30 x 6 sets",
+              "2 Power Cleans + 1 Push Jerk @ 65% OR RPE 6"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Gillette Stadium",
+            "lines": [
+              "Every 2:00 (8 sets)",
+              "100m Run",
+              "5 Touch and Go Clean & Jerk 61kg/935",
+              "*Score is slowest set"
             ]
           }
         ]
@@ -3059,27 +3084,8 @@
           }
         ],
         "note": "Benchmark: FIGHT GONE BAD"
-      },
-      {
-        "date": "2026-06-15",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 16.5",
-            "lines": [
-              "21-18-15-12-9-6-3 reps for time of:",
-              "Thrusters",
-              "Burpees",
-              "*Men use 95 lb.*",
-              "*Women use 65 lb.*"
-            ]
-          }
-        ],
-        "note": "Open: Open 16.5"
       }
     ]
   },
-  "last_updated": "2026-06-15T03:14:24.854065"
+  "last_updated": "2026-06-15T09:23:38.037265"
 }
