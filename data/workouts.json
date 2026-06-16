@@ -1,116 +1,5 @@
 {
   "workouts": {
-    "2026-06-01": [
-      {
-        "date": "2026-06-01",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260601",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "For 4 rounds, complete as many reps as possible in 3 minutes of:",
-              "21 AbMat sit-ups",
-              "15 box jump-overs",
-              "9 squat cleans",
-              "Max toes-to-bars in remaining time",
-              "Rest 3 minutes between rounds.",
-              "♀ 95-lb barbell and a 20-inch box",
-              "♂ 135-lb barbell and 24-inch box"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-01",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 23.3",
-            "lines": [
-              "Starting with a 6-minute time cap, complete as many reps as possible of:",
-              "5 wall walks",
-              "50 double-unders",
-              "15 snatches (weight 1)",
-              "5 wall walks",
-              "50 double-unders",
-              "12 snatches (weight 2)",
-              "*If completed before the 6-minute time cap, add 3 minutes to the time cap and complete:",
-              "20 strict handstand push-ups",
-              "50 double-unders",
-              "9 snatches (weight 3)",
-              "*If completed before the 9-minute time cap, add 3 minutes to the time cap and complete:",
-              "20 strict handstand push-ups",
-              "50 double-unders",
-              "6 snatches (weight 4)",
-              "*♀ 65 lb, 95 lb, 125 lb, 155 lb*",
-              "*♂ 95 lb, 135 lb, 185 lb, 225 lb*"
-            ]
-          }
-        ],
-        "note": "Open: Open 23.3"
-      },
-      {
-        "date": "2026-06-01",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-june-1-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "On a 5 Minute clock:",
-              "400m Run",
-              "Then"
-            ]
-          },
-          {
-            "title": "AMRAP in remaining time of:",
-            "lines": [
-              "3 Burpees",
-              "6 Ring Rows",
-              "9 Air Squats"
-            ]
-          },
-          {
-            "title": "For time",
-            "lines": [
-              "9 Squat Clean and Jerks",
-              "9 Burpee Bar Muscle Ups",
-              "Rest 1:30",
-              "7 Squat Clean and Jerks",
-              "7 Burpee Bar Muscle Ups",
-              "Rest 1:00",
-              "5 Squat Clean and Jerks",
-              "5 Burpee Bar Muscle Ups",
-              "Rest :30",
-              "3 Squat Clean and Jerks",
-              "3 Burpee Bar Muscle Ups"
-            ]
-          },
-          {
-            "title": "Barbell: 185/125lbs",
-            "lines": [
-              "Feel: Gas",
-              "Pace: Sustain",
-              "Target Score: 10-14 minutes w/ rest",
-              "Firebreather Score: sub 10 minutes"
-            ]
-          },
-          {
-            "title": "AMRAP 6:30 x 4",
-            "lines": [
-              "Row for Meters",
-              "Rest 1:00",
-              "AMRAP 2min x 4, 1 min rest to fit it into class time!"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-06-02": [
       {
         "date": "2026-06-02",
@@ -211,80 +100,6 @@
           }
         ],
         "note": "Open: Open 22.1"
-      },
-      {
-        "date": "2026-06-02",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-02/",
-        "sections": [
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "line drills"
-            ]
-          },
-          {
-            "title": "LUNGES 15MIN",
-            "lines": [
-              "4 supersets",
-              "6 back rack reverse lunges @rpe 7-8",
-              "12-15 partial goblet squats",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "3 rounds",
-              "",
-              "50 wall balls",
-              "100 double under",
-              "* aerobic power & lactate threshold"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-02",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Jennifer",
-            "sub_title": "Complete as many rounds and reps as possible in 26 minutes of:",
-            "lines": [
-              "10 pull-ups",
-              "15 kettlebell swings",
-              "20 box jumps"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-02",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "DIANE",
-            "lines": [
-              "For time",
-              "21–15–9",
-              "Deadlift @100/70 kg",
-              "Handstand push up",
-              "Scaled",
-              "21-15-9 Reps For Time",
-              "Deadlifts (70/50kg)",
-              "Push-Ups",
-              "TC 10 min"
-            ]
-          }
-        ],
-        "note": "Benchmark: DIANE"
       }
     ],
     "2026-06-03": [
@@ -1053,43 +868,6 @@
               "* aerobic power & muscular endurance"
             ],
             "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-06",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "All in the Family",
-            "lines": [
-              "25:00 AMRAP",
-              "Partner 1: 400m Run",
-              "Partner 2: AMRAP",
-              "10/8 Calorie Air Bike",
-              "8 Burpee Box Get Overs @ 30\"/24\"",
-              "Partner 3: Rest",
-              "-Rotate when Partner 1 finishes the 400m Run. The partner finishing run will go into the AMRAP and start where the previous partner finished. (Order: Run - AMRAP - Rest - Repeat)"
-            ],
-            "sub_title2": "Teams of 3 For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-06",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Strength:-For 28 minutes complete (7 rounds)Min 1 – 3 Power SnatchMin 2 – 6-8 C2B or 2-5 BMU/RMUMin 3 – Machine Cals 15/12Min 4 – Rest",
-              "For TimePairs syncro chipper20 Syncro KB Swings 32/24kg30 Partner Wallballs 9/6kg20 Syncro KB Swings 32/24kg30 Partner Wallballs 9/6kg400m Run"
-            ]
           }
         ]
       },
@@ -3085,7 +2863,224 @@
         ],
         "note": "Benchmark: FIGHT GONE BAD"
       }
+    ],
+    "2026-06-16": [
+      {
+        "date": "2026-06-16",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-06-16/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "seated pike stretch",
+              "calf stretch",
+              "instep rotation"
+            ]
+          },
+          {
+            "title": "PRIMER TOES TO BAR 4MIN",
+            "lines": [
+              "1. hanging hollow hold",
+              "2. hanging arch hold"
+            ],
+            "sub_title": "20sec on/ 20sec off x 6 rounds"
+          },
+          {
+            "title": "PRIMER POWER CLEAN 4MIN",
+            "lines": [
+              "1. low hang high pulls",
+              "2. high hang muscle cleans"
+            ],
+            "sub_title": "20sec on/ 20sec off x 6 rounds"
+          },
+          {
+            "title": "CONDITIONING 24MIN",
+            "lines": [
+              "12 toes to bar",
+              "8 power cleans 70/50kg",
+              "400m run",
+              "* aerobic power"
+            ],
+            "sub_title": "amrap 24min"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-16",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260616",
+        "sections": [
+          {
+            "title": "5 ROUNDS FOR TIME OF",
+            "lines": [
+              "800-meter run",
+              "50 air squats",
+              "30 GHD sit-ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-16",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-june-16-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "2:00 Air Bike",
+              "Then",
+              "50ft “Shoo the Chickens”",
+              "50ft Heel to Toe Walk",
+              "50ft High Knees",
+              "50ft Butt Kickers",
+              "50ft Toy Soldiers/Frankensteins (hamstring kicks)",
+              "Then",
+              "400m Jog",
+              "-Rest/Hydrate-",
+              "*Specific Primer:",
+              "3-4 Rounds",
+              ":10 Air Bike Ramp Up + 50m Run",
+              "Increase % of run effort across rounds"
+            ]
+          },
+          {
+            "title": "Every 4:00 for 5 rounds, each for time",
+            "lines": [
+              "10/7 Calorie Air Bike",
+              "100m Sprint (25m x 4)",
+              "Rest remainder of interval",
+              "Record fastest/slowest for whiteboard.",
+              "Feel: Gas",
+              "Pace: Send",
+              "Target Score: <:50 per interval",
+              "Firebreather Score: < :40 per interval"
+            ]
+          },
+          {
+            "title": "Power Snatch",
+            "lines": [
+              "1 @ 80-90%",
+              "4 @ 70-75%",
+              "3 @ 75-80%",
+              "2 @ 80-85%",
+              "4 @ 75-80%",
+              "3 @ 80-85%",
+              "2 @ 85-90%",
+              "Drop and reset reps. It’s ok if you don’t know your perecentages – your heavy single to start will give you guidance. )"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-16",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Tempo Back Squat 5x3",
+              "Every 2:00 x 5 sets",
+              "3 Tempo Back Squats (3-second descent) @ 60–65%"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "BMO Field",
+            "lines": [
+              "5-10-15-20-25",
+              "Calorie Row",
+              "Kettlebell Goblet Squats 32kg/25kg",
+              "Women's Calories: 4-8-12-16-20"
+            ],
+            "sub_title2": "For Time:"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-16",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Every 90 seconds for 6 rounds6 Power Cleans TnG",
+              "* Metcon:-4 Rounds For Time15/12 cal Assault Bike*16 Hang DB Snatch 22.5/15kg10 T2B*bike preference or 18/15 Row"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-16",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Eva Strong",
+            "sub_title": "With a partner, 5 rounds for time of:",
+            "lines": [
+              "24 double-unders (each)",
+              "19 toes-to-bars (total)",
+              "2 clean and jerks (total)",
+              "400-meter run (together)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-16",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "BARBARA",
+            "lines": [
+              "5 rounds for time:",
+              "15 Pull up",
+              "20 Push up",
+              "30 Sit up",
+              "50 Air Squat",
+              "2min Rest",
+              "(Time Cap 35min)",
+              "Do not include final 2min rest in your overall time."
+            ]
+          }
+        ],
+        "note": "Benchmark: BARBARA"
+      },
+      {
+        "date": "2026-06-16",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 15.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 9 minutes of:",
+              "15 toes-to-bars",
+              "10 deadlifts (115 / 75 lb.)",
+              "5 snatches (115 / 75 lb.)",
+              "WORKOUT 15.1a",
+              "1-rep-max clean and jerk",
+              "6-minute time cap"
+            ]
+          }
+        ],
+        "note": "Open: Open 15.1"
+      }
     ]
   },
-  "last_updated": "2026-06-15T15:10:38.617705"
+  "last_updated": "2026-06-16T04:41:57.252392"
 }
