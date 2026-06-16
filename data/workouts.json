@@ -2867,49 +2867,6 @@
     "2026-06-16": [
       {
         "date": "2026-06-16",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-16/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "seated pike stretch",
-              "calf stretch",
-              "instep rotation"
-            ]
-          },
-          {
-            "title": "PRIMER TOES TO BAR 4MIN",
-            "lines": [
-              "1. hanging hollow hold",
-              "2. hanging arch hold"
-            ],
-            "sub_title": "20sec on/ 20sec off x 6 rounds"
-          },
-          {
-            "title": "PRIMER POWER CLEAN 4MIN",
-            "lines": [
-              "1. low hang high pulls",
-              "2. high hang muscle cleans"
-            ],
-            "sub_title": "20sec on/ 20sec off x 6 rounds"
-          },
-          {
-            "title": "CONDITIONING 24MIN",
-            "lines": [
-              "12 toes to bar",
-              "8 power cleans 70/50kg",
-              "400m run",
-              "* aerobic power"
-            ],
-            "sub_title": "amrap 24min"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-16",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260616",
@@ -2974,6 +2931,70 @@
               "2 @ 85-90%",
               "Drop and reset reps. It’s ok if you don’t know your perecentages – your heavy single to start will give you guidance. )"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-16",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 15.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 9 minutes of:",
+              "15 toes-to-bars",
+              "10 deadlifts (115 / 75 lb.)",
+              "5 snatches (115 / 75 lb.)",
+              "WORKOUT 15.1a",
+              "1-rep-max clean and jerk",
+              "6-minute time cap"
+            ]
+          }
+        ],
+        "note": "Open: Open 15.1"
+      },
+      {
+        "date": "2026-06-16",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-06-16/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "seated pike stretch",
+              "calf stretch",
+              "instep rotation"
+            ]
+          },
+          {
+            "title": "PRIMER TOES TO BAR 4MIN",
+            "lines": [
+              "1. hanging hollow hold",
+              "2. hanging arch hold"
+            ],
+            "sub_title": "20sec on/ 20sec off x 6 rounds"
+          },
+          {
+            "title": "PRIMER POWER CLEAN 4MIN",
+            "lines": [
+              "1. low hang high pulls",
+              "2. high hang muscle cleans"
+            ],
+            "sub_title": "20sec on/ 20sec off x 6 rounds"
+          },
+          {
+            "title": "CONDITIONING 24MIN",
+            "lines": [
+              "12 toes to bar",
+              "8 power cleans 70/50kg",
+              "400m run",
+              "* aerobic power"
+            ],
+            "sub_title": "amrap 24min"
           }
         ]
       },
@@ -3058,29 +3079,8 @@
           }
         ],
         "note": "Benchmark: BARBARA"
-      },
-      {
-        "date": "2026-06-16",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 15.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 9 minutes of:",
-              "15 toes-to-bars",
-              "10 deadlifts (115 / 75 lb.)",
-              "5 snatches (115 / 75 lb.)",
-              "WORKOUT 15.1a",
-              "1-rep-max clean and jerk",
-              "6-minute time cap"
-            ]
-          }
-        ],
-        "note": "Open: Open 15.1"
       }
     ]
   },
-  "last_updated": "2026-06-16T04:41:57.252392"
+  "last_updated": "2026-06-16T09:33:20.045024"
 }
