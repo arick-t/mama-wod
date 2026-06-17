@@ -1,107 +1,5 @@
 {
   "workouts": {
-    "2026-06-02": [
-      {
-        "date": "2026-06-02",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260602",
-        "sections": [
-          {
-            "title": "FOR TIME",
-            "lines": [
-              "1,000-meter run",
-              "200-meter row",
-              "800-meter run",
-              "400-meter row",
-              "600-meter run",
-              "600-meter row",
-              "400-meter run",
-              "800-meter row",
-              "200-meter run",
-              "1,000-meter row"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-02",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-june-2-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "5 Rounds",
-              "30 Jump Rope Reps",
-              "50m Sandbag Carry, increasing weight",
-              "Jump Rope Variants:",
-              "Rd 1 & 2: Single Under or XSU",
-              "Rd 3,4,5: Double Unders/practice"
-            ]
-          },
-          {
-            "title": "Bench Press",
-            "lines": [
-              "10-8-6 building AHAP",
-              "Rest 3:00 between sets",
-              "Aim to start around 60-70% building AHAP.)"
-            ]
-          },
-          {
-            "title": "AMRAP 5 Minutes",
-            "lines": [
-              "200m Sandbag Carry 150/100lbs",
-              "80 Double Unders",
-              "100m Sandbag Carry",
-              "Max Double Unders in time remaining",
-              "Perform carries in 50-meter lengths. Carry sandbag anyhow.",
-              "Score is total double unders",
-              "Feel: Gas",
-              "Pace: Reach",
-              "Target Score: at least 1:30 for double unders, 75+ reps",
-              "Firebreather Score: 2:00+ for double unders, 125+ reps"
-            ]
-          },
-          {
-            "title": "AMRAP 2:00",
-            "lines": [
-              "No Jump Rope Climbs*",
-              "Rest 3 Minutes",
-              "Then"
-            ]
-          },
-          {
-            "title": "Complete the number of Rope Climbs from the AMRAP for time with jumping allowed",
-            "lines": [
-              "*No jump = reach up nice and high to grab the rope then get right into your foot hold vs. jump grab hold",
-              "Int Scale: alt grip strict pull-ups (be sure to swap which hand is over/under)",
-              "Beg Scale: ring rows"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-02",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 22.1",
-            "lines": [
-              "Complete as many rounds as possible in 15 minutes of:",
-              "3 wall walks",
-              "12 dumbbell snatches",
-              "15 box jump-overs",
-              "35-lb dumbbell, 20-in box"
-            ]
-          }
-        ],
-        "note": "Open: Open 22.1"
-      }
-    ],
     "2026-06-03": [
       {
         "date": "2026-06-03",
@@ -207,104 +105,6 @@
           }
         ],
         "note": "Open: Open 26.3"
-      },
-      {
-        "date": "2026-06-03",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-03/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "samson stretch",
-              "thoracic rotattion",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 clean grip deadlifts",
-              "10 elbow rotations",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "HANG POWER CLEAN 10MIN",
-            "lines": [
-              "find a heavy set of 3",
-              "hang power cleans",
-              "explosive power"
-            ]
-          },
-          {
-            "title": "CONDITIONING 17MIN",
-            "lines": [
-              "6 power cleans 60/40kg",
-              "9 push ups",
-              "12/10cal bike/ski",
-              "- 1:30 rest between amraps -",
-              "* *pick up where you left off",
-              "repeatable power output"
-            ],
-            "sub_title": "amrap 1:30 x 6 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-03",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Arnie",
-            "sub_title": "With a single kettlebell for time:",
-            "lines": [
-              "21 Turkish get-ups, right arm",
-              "50 kettlebell swings",
-              "21 overhead squats, left arm",
-              "50 kettlebell swings",
-              "21 overhead squats, right arm",
-              "50 kettlebell swings",
-              "21 Turkish get-ups, left arm"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-03",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Cindy XXX",
-            "lines": [
-              "Complete as much as possible in 20 minutes of:",
-              "10 Pull-ups",
-              "20  Push -ups",
-              "30 Squats",
-              "15 Pull-ups",
-              "30  Push -ups",
-              "45 Squats",
-              "20 Pull-ups",
-              "40  Push -ups",
-              "60 Squats",
-              "25 Pull-ups",
-              "50  Push -ups",
-              "75 Squats",
-              "30 Pull-ups",
-              "60  Push -ups",
-              "90 Squats"
-            ]
-          }
-        ],
-        "note": "Benchmark: Cindy XXX"
       }
     ],
     "2026-06-04": [
@@ -1050,21 +850,6 @@
       },
       {
         "date": "2026-06-07",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Hero WOD",
-              "Scott Neumann2 Rounds for Time:400m Run20 KB Swings 24/16kg10 Goblet Squats 24/16kg20 Overhead Plate Walking Lunges 20/15kg400m Run10 OH Plate Walking Lunges 20/16kg20 Goblet Squats 24/16kg10 KB Swings 24/16kg"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-07",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -1335,28 +1120,28 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "The Gauntlet",
+            "title": "Cindy XXX",
             "lines": [
-              "30 minute AMRAP of:",
-              "Jackie",
-              "Then",
-              "Karabell",
-              "Then",
-              "AMRAP of Cindy in the remaining 30 minutes:",
-              "Your result is rounds of Cindy completed.",
-              "1000m  Row",
-              "50  Thruster s (45/35 pound)",
+              "Complete as much as possible in 20 minutes of:",
+              "10 Pull-ups",
+              "20  Push -ups",
+              "30 Squats",
+              "15 Pull-ups",
+              "30  Push -ups",
+              "45 Squats",
+              "20 Pull-ups",
+              "40  Push -ups",
+              "60 Squats",
+              "25 Pull-ups",
+              "50  Push -ups",
+              "75 Squats",
               "30 Pull-ups",
-              "10 rounds",
-              "3  Snatch es (135/90 pounds)",
-              "15 Wall Ball (20/14lbs @ 10″/8″ target)",
-              "5 pull-up",
-              "10  push -up",
-              "15 squat"
+              "60  Push -ups",
+              "90 Squats"
             ]
           }
         ],
-        "note": "Benchmark: The Gauntlet"
+        "note": "Benchmark: Cindy XXX"
       }
     ],
     "2026-06-09": [
@@ -2635,16 +2420,28 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "Fat Helen",
+            "title": "The Gauntlet",
             "lines": [
-              "3 rounds for time of:",
-              "400 m  Run",
-              "21  Kettlebell Swing s (32/24kg)",
-              "12 Chest-To-Bar Pull-Ups"
+              "30 minute AMRAP of:",
+              "Jackie",
+              "Then",
+              "Karabell",
+              "Then",
+              "AMRAP of Cindy in the remaining 30 minutes:",
+              "Your result is rounds of Cindy completed.",
+              "1000m  Row",
+              "50  Thruster s (45/35 pound)",
+              "30 Pull-ups",
+              "10 rounds",
+              "3  Snatch es (135/90 pounds)",
+              "15 Wall Ball (20/14lbs @ 10″/8″ target)",
+              "5 pull-up",
+              "10  push -up",
+              "15 squat"
             ]
           }
         ],
-        "note": "Benchmark: Fat Helen"
+        "note": "Benchmark: The Gauntlet"
       }
     ],
     "2026-06-15": [
@@ -3080,7 +2877,131 @@
         ],
         "note": "Benchmark: BARBARA"
       }
+    ],
+    "2026-06-17": [
+      {
+        "date": "2026-06-17",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-06-17/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "scorpions",
+              "thoracic rotation",
+              "lat stretch",
+              "hand walk"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10/8cal row",
+              "10 push ups to down dog",
+              "10 prone snow angels"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "STRICT PRESS 15MIN",
+            "lines": [
+              "4 super sets",
+              "4 strict press @ rpe 8-9",
+              "12-15 db lateral raises",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 10MIN",
+            "lines": [
+              "5 rounds",
+              "",
+              "15/12cal row",
+              "12 push presses 40/30kg",
+              "* rx+ option: 10 handstand push ups",
+              "* aerobic power & muscular endurance"
+            ],
+            "sub_title": "for time"
+          },
+          {
+            "title": "SHOULDER STABILITY 4MIN",
+            "lines": [
+              "prone press"
+            ],
+            "sub_title": "tabata (20sec on /10sec off x 8 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-17",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Strength:-Alternate between5 x 5 Bench Press / Floor Press5 x 3 Negative pull ups",
+              "Metcon:-12 min AMRAP8 Deadlift 100/70kg6 HSPU (RX+ 2×25/15kg)10 Box Jump Over 24/20″"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-17",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Kutschbach",
+            "sub_title": "7 rounds for time of:",
+            "lines": [
+              "11 back squats",
+              "10 jerks"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-17",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Fat Helen",
+            "lines": [
+              "3 rounds for time of:",
+              "400 m  Run",
+              "21  Kettlebell Swing s (32/24kg)",
+              "12 Chest-To-Bar Pull-Ups"
+            ]
+          }
+        ],
+        "note": "Benchmark: Fat Helen"
+      },
+      {
+        "date": "2026-06-17",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 19.1",
+            "lines": [
+              "Complete as many rounds as possible in 15 minutes of:",
+              "19 wall-ball shots",
+              "19-cal. row",
+              "*Men throw 20-lb. ball to 10-ft. target*"
+            ]
+          }
+        ],
+        "note": "Open: Open 19.1"
+      }
     ]
   },
-  "last_updated": "2026-06-16T14:08:33.423706"
+  "last_updated": "2026-06-17T03:19:52.264254"
 }
