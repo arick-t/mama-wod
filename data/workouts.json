@@ -1054,35 +1054,6 @@
       },
       {
         "date": "2026-06-08",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Back Squat 1x3",
-              "Build to a 3RM Back Squat"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Fat Guy in a Little Coat",
-            "lines": [
-              "21-15-9",
-              "Calorie Air Bike",
-              "Goblet Squats 23kg/16kg",
-              "Women's Calories (16-12-8)",
-              "* -rest until the 8:00 mark-",
-              "45/36 Calorie Air Bike",
-              "45 Goblet Squats 23kg/16kg"
-            ],
-            "sub_title2": "For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-08",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2881,6 +2852,24 @@
     "2026-06-17": [
       {
         "date": "2026-06-17",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 19.1",
+            "lines": [
+              "Complete as many rounds as possible in 15 minutes of:",
+              "19 wall-ball shots",
+              "19-cal. row",
+              "*Men throw 20-lb. ball to 10-ft. target*"
+            ]
+          }
+        ],
+        "note": "Open: Open 19.1"
+      },
+      {
+        "date": "2026-06-17",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-06-17/",
@@ -2936,6 +2925,84 @@
       },
       {
         "date": "2026-06-17",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-june-17-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "3 Rounds each with a Partner",
+              "Partner 1:",
+              "Machine of choice",
+              "Partner 2:",
+              "Complete once:",
+              "3 Burpee Get Overs",
+              "9 Kettlebell Swings",
+              "3 Burpee Get Overs",
+              "9 Goblet Squats"
+            ]
+          },
+          {
+            "title": "AMRAP 16 Minutes, alternating full rounds with a partner:",
+            "lines": [
+              "5 Burpee Get Overs 30-40″",
+              "5 OH Squats 145/100lbs",
+              "5 Burpee Get Overs 30-40″",
+              "10 Front Squats 145/100lbs",
+              "5 Burpee Get Overs 30-40″",
+              "Feel: Gas",
+              "Pace: Reach",
+              "Target Score: 3+ rounds per athlete (2:30/rd or faster)",
+              "Firebreather Score: 4 rounds per athlete (2:00/rd)"
+            ]
+          },
+          {
+            "title": "5 sets",
+            "lines": [
+              "5 DB Bench Press AHAP",
+              "Rest 3:00 between sets"
+            ]
+          },
+          {
+            "title": "Competitor Extra",
+            "lines": [
+              "2 Rounds",
+              "1 Set of Bar Muscle Ups",
+              "Row 500m @ Flush Pace",
+              "1 Set of Chest to Bar Pull Ups",
+              "Row 500m @ Flush Pace",
+              "1 Set of Pull Ups",
+              "Row 500m @ Flush Pace",
+              "Choose a set in round 1 that you can match or improve on in round 2 for all three movements. Flush pace = nice and easy. You should feel like the row is helping not hurting."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-17",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "SoFi Stadium",
+            "lines": [
+              "50 GHDs (Scales V-Ups)",
+              "* -into-",
+              "7 Rounds",
+              "7 Strict Handstand Push Ups",
+              "49 Double Unders",
+              "* -into-",
+              "50 GHDs (or V-Ups)"
+            ],
+            "sub_title2": "For Time:"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-17",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2982,26 +3049,8 @@
           }
         ],
         "note": "Benchmark: Fat Helen"
-      },
-      {
-        "date": "2026-06-17",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 19.1",
-            "lines": [
-              "Complete as many rounds as possible in 15 minutes of:",
-              "19 wall-ball shots",
-              "19-cal. row",
-              "*Men throw 20-lb. ball to 10-ft. target*"
-            ]
-          }
-        ],
-        "note": "Open: Open 19.1"
       }
     ]
   },
-  "last_updated": "2026-06-17T03:19:52.264254"
+  "last_updated": "2026-06-17T09:11:23.938638"
 }
