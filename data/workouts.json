@@ -2702,53 +2702,6 @@
     "2026-06-19": [
       {
         "date": "2026-06-19",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-19/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "scorpions",
-              "instep rotation",
-              "90/90 hip rotation",
-              "hand walk"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 reverse lunges",
-              "10 plank push ups",
-              "20sec deep squat hold"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "LUNGES 14MIN",
-            "lines": [
-              "4 supersets",
-              "4 back rack reverse lunges @rpe 8-9",
-              "12-15 partial goblet squats",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 17MIN",
-            "lines": [
-              "15 sit ups",
-              "12 air squats",
-              "9 push ups",
-              "-1:00 rest between rounds-",
-              "* aerobic power"
-            ],
-            "sub_title": "amrap 3:30 x 4 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-19",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260619",
@@ -2797,6 +2750,84 @@
               "10 Back Rack Lunge Steps",
               "Rest 2:00)"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-19",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 26.1",
+            "lines": [
+              "For time:",
+              "20 wall-ball shots",
+              "18 box jump-overs",
+              "30 wall-ball shots",
+              "18 box jump-overs",
+              "40 wall-ball shots",
+              "18 medicine-ball box step-overs",
+              "66 wall-ball shots",
+              "18 medicine-ball box step-overs",
+              "40 wall-ball shots",
+              "18 box jump-overs",
+              "30 wall-ball shots",
+              "18 box jump-overs",
+              "20 wall-ball shots",
+              "Time cap: 12 minutes",
+              "♀ 14-lb (6-kg) medicine ball, 9-foot target, 20-inch box",
+              "♂ 20-lb (9-kg) medicine ball, 10-ft target, 24-inch box"
+            ]
+          }
+        ],
+        "note": "Open: Open 26.1"
+      },
+      {
+        "date": "2026-06-19",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-06-19/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "scorpions",
+              "instep rotation",
+              "90/90 hip rotation",
+              "hand walk"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 reverse lunges",
+              "10 plank push ups",
+              "20sec deep squat hold"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "LUNGES 14MIN",
+            "lines": [
+              "4 supersets",
+              "4 back rack reverse lunges @rpe 8-9",
+              "12-15 partial goblet squats",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 17MIN",
+            "lines": [
+              "15 sit ups",
+              "12 air squats",
+              "9 push ups",
+              "-1:00 rest between rounds-",
+              "* aerobic power"
+            ],
+            "sub_title": "amrap 3:30 x 4 rounds"
           }
         ]
       },
@@ -2862,39 +2893,8 @@
           }
         ],
         "note": "Benchmark: CrossFit Total II"
-      },
-      {
-        "date": "2026-06-19",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 26.1",
-            "lines": [
-              "For time:",
-              "20 wall-ball shots",
-              "18 box jump-overs",
-              "30 wall-ball shots",
-              "18 box jump-overs",
-              "40 wall-ball shots",
-              "18 medicine-ball box step-overs",
-              "66 wall-ball shots",
-              "18 medicine-ball box step-overs",
-              "40 wall-ball shots",
-              "18 box jump-overs",
-              "30 wall-ball shots",
-              "18 box jump-overs",
-              "20 wall-ball shots",
-              "Time cap: 12 minutes",
-              "♀ 14-lb (6-kg) medicine ball, 9-foot target, 20-inch box",
-              "♂ 20-lb (9-kg) medicine ball, 10-ft target, 24-inch box"
-            ]
-          }
-        ],
-        "note": "Open: Open 26.1"
       }
     ]
   },
-  "last_updated": "2026-06-19T04:44:35.767071"
+  "last_updated": "2026-06-19T09:20:02.183304"
 }
