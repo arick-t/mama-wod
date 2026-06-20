@@ -1021,33 +1021,6 @@
       },
       {
         "date": "2026-06-11",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "It's Called Reading",
-            "lines": [
-              "400m Run",
-              "25 Bench Press 52kg/34kg",
-              "5 Wall Walks",
-              "400m Run",
-              "20 Bench Press 52kg/34kg",
-              "5 Wall Walks",
-              "400m Run",
-              "15 Bench Press 52kg/34kg",
-              "5 Wall Walks",
-              "400m Run",
-              "10 Bench Press 52kg/34kg",
-              "5 Wall Walks"
-            ],
-            "sub_title2": "For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-11",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2693,46 +2666,6 @@
     "2026-06-20": [
       {
         "date": "2026-06-20",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-20/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "calf stretch",
-              "lying hip cross over",
-              "hand walk"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 double db deadlifts",
-              "10 ring rows",
-              "*partner is biking"
-            ],
-            "sub_title": "amrap 5min"
-          },
-          {
-            "title": "CONDITIONING 32MIN",
-            "lines": [
-              "in teams of 2",
-              "50-40-30-20-10",
-              "double db hang cleans 2x22,5/15kg",
-              "pull ups",
-              "box jumps 60/50cm",
-              "cals bike",
-              "(m/f and f/f cals: 45/40-36/32-27/24-18/16-9/8)",
-              "* aerobic capacity & muscular endurance"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-20",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260620",
@@ -2790,6 +2723,92 @@
       },
       {
         "date": "2026-06-20",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 21.1",
+            "lines": [
+              "For time:",
+              "1 wall walk",
+              "10 double-unders",
+              "3 wall walks",
+              "30 double-unders",
+              "6 wall walks",
+              "60 double-unders",
+              "9 wall walks",
+              "90 double-unders",
+              "15 wall walks",
+              "150 double-unders",
+              "21 wall walks",
+              "210 double-unders",
+              "Time cap: 15 min."
+            ]
+          }
+        ],
+        "note": "Open: Open 21.1"
+      },
+      {
+        "date": "2026-06-20",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-06-20/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "calf stretch",
+              "lying hip cross over",
+              "hand walk"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 double db deadlifts",
+              "10 ring rows",
+              "*partner is biking"
+            ],
+            "sub_title": "amrap 5min"
+          },
+          {
+            "title": "CONDITIONING 32MIN",
+            "lines": [
+              "in teams of 2",
+              "50-40-30-20-10",
+              "double db hang cleans 2x22,5/15kg",
+              "pull ups",
+              "box jumps 60/50cm",
+              "cals bike",
+              "(m/f and f/f cals: 45/40-36/32-27/24-18/16-9/8)",
+              "* aerobic capacity & muscular endurance"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-20",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Estadio Azteca",
+            "lines": [
+              "300 Double Unders",
+              "30 Rope Climbs (Scale 120 Pull Ups)",
+              "300 Double Unders"
+            ],
+            "sub_title2": "Teams of 2 For Time:"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-20",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2823,36 +2842,8 @@
           }
         ],
         "note": "Benchmark: Nicole"
-      },
-      {
-        "date": "2026-06-20",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 21.1",
-            "lines": [
-              "For time:",
-              "1 wall walk",
-              "10 double-unders",
-              "3 wall walks",
-              "30 double-unders",
-              "6 wall walks",
-              "60 double-unders",
-              "9 wall walks",
-              "90 double-unders",
-              "15 wall walks",
-              "150 double-unders",
-              "21 wall walks",
-              "210 double-unders",
-              "Time cap: 15 min."
-            ]
-          }
-        ],
-        "note": "Open: Open 21.1"
       }
     ]
   },
-  "last_updated": "2026-06-20T03:11:47.766041"
+  "last_updated": "2026-06-20T08:14:11.326952"
 }
