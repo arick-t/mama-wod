@@ -1,123 +1,5 @@
 {
   "workouts": {
-    "2026-06-05": [
-      {
-        "date": "2026-06-05",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-june-5-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "2:00 Machine",
-              "-Then-",
-              "1:00 Waiter’s Walk R-Arm",
-              "10 Easy Ring Rows",
-              "1:00 Waiter’s Walk L-Arm",
-              "10 Moderate Ring Rows",
-              "1:00 Bar Hang",
-              "10 Hard Ring Rows"
-            ]
-          },
-          {
-            "title": "16 min AMRAP",
-            "lines": [
-              "For total reps on a continuous 16-minute clock:",
-              "4-minutes Turkish Get Ups",
-              "2-minutes Strict Pull Ups",
-              "3-minutes Turkish Get Ups",
-              "2-minutes Strict Pull Ups",
-              "2-minutes Turkish Get Ups",
-              "2-minutes Strict Pull Ups",
-              "1-minute Turkish Get Ups",
-              "Rx: 53/35lb KB or DB",
-              "Score is total reps",
-              "Feel: Muscle Overload",
-              "Pace: Sustain",
-              "Target Score: 30 total TGU, 30 total strict pulling reps",
-              "Firebreather Score: 30+ TGU, 30+ strict pull ups"
-            ]
-          },
-          {
-            "title": "3 Rounds",
-            "lines": [
-              "16 Pull Ups",
-              "16 Alternating DB Snatch 50/35lbs",
-              "20/16 Calorie Row",
-              "Rest 2:00"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-05",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 11.5",
-            "lines": [
-              "Complete as many rounds and reps as possible in 20 minutes of:",
-              "5 Power cleans (145lbs / 65kg)",
-              "10 Toes to bar",
-              "15 Wall balls (20lbs to 10' target)",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 20 minutes of:",
-              "5 Power cleans (100lbs / 45kg)",
-              "10 Toes to bar",
-              "15 Wall balls (14lbs to 9' target)",
-              "*MASTERS MEN*",
-              "-",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 20 minutes of:",
-              "5 Power cleans (130lbs / 60kg)",
-              "10 Toes to bar",
-              "15 Wall balls (20lbs to 9' target)",
-              "*MASTERS WOMEN*",
-              "-",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 20 minutes of:",
-              "5 Power cleans (75lbs / 35kg)",
-              "10 Toes to bar",
-              "15 Wall balls (10lbs to 9' target)"
-            ]
-          }
-        ],
-        "note": "Open: Open 11.5"
-      },
-      {
-        "date": "2026-06-05",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260605",
-        "sections": [
-          {
-            "title": "FOR TIME",
-            "lines": [
-              "6 rope climbs to 15 feet",
-              "6 dumbbell farmers carry shuttles",
-              "21 dumbbell deadlifts",
-              "21-calorie bike",
-              "4 rope climbs",
-              "4 dumbbell farmers carry shuttles",
-              "15 dumbbell deadlifts",
-              "15-calorie bike",
-              "2 rope climbs",
-              "2 dumbbell farmers carry shuttles",
-              "9 dumbbell deadlifts",
-              "9-calorie bike",
-              "One shuttle is 25 feet down and  25 feet back.",
-              "♀ 50-lb dumbbells",
-              "♂ 70-lb dumbbells"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-06-06": [
       {
         "date": "2026-06-06",
@@ -227,93 +109,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-06-06",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-06/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "calf stretch",
-              "instep rotation",
-              "hand walk"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 squat jumps",
-              "10 kb deadlifts",
-              "*partner is holding plank position"
-            ],
-            "sub_title": "amrap 5min"
-          },
-          {
-            "title": "CONDITIONING 30MIN",
-            "lines": [
-              "in teams of 2",
-              "2 rounds",
-              "",
-              "80 kb swing 24/16",
-              "40 burpee box jumps 60/50cm",
-              "60 kb box step ups",
-              "40 burpee box jumps",
-              "* aerobic power & muscular endurance"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-06",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Zembiec",
-            "sub_title": "5 rounds for time of:",
-            "lines": [
-              "11 back squats",
-              "7 strict burpee pull-ups",
-              "400-meter run",
-              "During each burpee pull-up perform a strict push-up, jump to a bar that is ideally 12 inches above your max standing reach, and perform a strict pull-up."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-06",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Chelsea",
-            "lines": [
-              "On the minute every minute for 30 minutes:",
-              "5 pull-ups",
-              "10 push-ups",
-              "15 air squats",
-              "Scaling options for both workouts:",
-              "pull-ups to ring row or jumping pull ups",
-              "push-ups to against box or rubber band",
-              "Intermediate:",
-              "4 pull-ups",
-              "8 push-ups",
-              "12 air squats",
-              "Beginner:",
-              "3 pull-ups",
-              "6 push-ups",
-              "9 air squats"
-            ]
-          }
-        ],
-        "note": "Benchmark: Chelsea"
       }
     ],
     "2026-06-07": [
@@ -2894,7 +2689,170 @@
         ],
         "note": "Benchmark: CrossFit Total II"
       }
+    ],
+    "2026-06-20": [
+      {
+        "date": "2026-06-20",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-06-20/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "calf stretch",
+              "lying hip cross over",
+              "hand walk"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 double db deadlifts",
+              "10 ring rows",
+              "*partner is biking"
+            ],
+            "sub_title": "amrap 5min"
+          },
+          {
+            "title": "CONDITIONING 32MIN",
+            "lines": [
+              "in teams of 2",
+              "50-40-30-20-10",
+              "double db hang cleans 2x22,5/15kg",
+              "pull ups",
+              "box jumps 60/50cm",
+              "cals bike",
+              "(m/f and f/f cals: 45/40-36/32-27/24-18/16-9/8)",
+              "* aerobic capacity & muscular endurance"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-20",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260620",
+        "sections": [
+          {
+            "title": "FOR TIME",
+            "lines": [
+              "1,600-meter sled drag with a barbell front-rack carry",
+              "Any time you stop, you must complete 15 bent-over rows with the barbell before starting again. The sled is attached around the waist and dragged behind the athlete.",
+              "♀ 95-lb barbell and 95-lb sled",
+              "♂ 135-lb barbell and 135-lb sled"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-20",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-june-20-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "In a team of 3, perform 3 full rotations:",
+              "Row 300/270m",
+              "Sandbag Bearhug Hold",
+              "Bar Hang",
+              "Switch when Rowing partner is finished"
+            ]
+          },
+          {
+            "title": "AMRAP 21 minutes in teams of 3 for total rowing distance:",
+            "lines": [
+              "P1: Row for distance",
+              "*P2: 2 Sandbag to Shoulder + Hold 50-150lbs",
+              "P3: Rest",
+              "*P2: perform 2 sandbag to shoulder, then pick it up once more and bearhug hold to failure.",
+              "When P2 can no longer hold the sandbag, the team rotates in the order written to the next station.",
+              "Feel: Muscle Overload/Gas",
+              "Pace: Sustain",
+              "Target Score: 4,500/4,000m+",
+              "Firebreather Score: 5,000/4,500m+"
+            ]
+          },
+          {
+            "title": "5 Sets",
+            "lines": [
+              "5-10 Wall Walks",
+              "Echo Bike @ Flush Pace for 3:00",
+              "We’re not working on speed today, we’re chasing volume. So slow them down a bit and if you have to pause during a round, it’s too many."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-20",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Hortman",
+            "sub_title": "Complete as many rounds as possible in 45 minutes of:",
+            "lines": [
+              "Run 800 meters",
+              "80 squats",
+              "8 muscle-ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-20",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Nicole",
+            "lines": [
+              "20 min AMRAP:",
+              "Your final score is total pull-up reps after 20minutes.",
+              "Every Time you break on the pull ups go for a run! Choose a scaling option that always allows more than 10 Pull Up repetitions each time.",
+              "400 m  run  or erg cals 25/20",
+              "max rep unbroken pull-ups"
+            ]
+          }
+        ],
+        "note": "Benchmark: Nicole"
+      },
+      {
+        "date": "2026-06-20",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 21.1",
+            "lines": [
+              "For time:",
+              "1 wall walk",
+              "10 double-unders",
+              "3 wall walks",
+              "30 double-unders",
+              "6 wall walks",
+              "60 double-unders",
+              "9 wall walks",
+              "90 double-unders",
+              "15 wall walks",
+              "150 double-unders",
+              "21 wall walks",
+              "210 double-unders",
+              "Time cap: 15 min."
+            ]
+          }
+        ],
+        "note": "Open: Open 21.1"
+      }
     ]
   },
-  "last_updated": "2026-06-19T13:24:41.330822"
+  "last_updated": "2026-06-20T03:11:47.766041"
 }
