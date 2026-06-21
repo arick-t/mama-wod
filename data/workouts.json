@@ -2632,6 +2632,71 @@
     "2026-06-21": [
       {
         "date": "2026-06-21",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-june-21-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "1:30 1st Machine",
+              "5 Ring Rows",
+              "5 Burpees",
+              "6 Reverse Lunges",
+              "1:30 2nd Machine",
+              "5 Ring Rows",
+              "5 Burpees",
+              "6 Reverse Lunges",
+              "1:30 3rd Machine"
+            ]
+          },
+          {
+            "title": "EMOM 25 minutes, rotating through each movement 5 times",
+            "lines": [
+              "– 20/16 Calorie Row",
+              "– 10 S-Arm Devil’s Press 50/35lbs",
+              "– 18/15 Assault or Echo Bike",
+              "– Max S-Arm DB Thruster 50/35lbs",
+              "– Rest",
+              "*If you do no complete your reps within the allotted minute, do not do any DB Thrusters that round (rest 2:00, not 1:00)",
+              "Feel: Gas",
+              "Pace: Sustain",
+              "Target Score: 70 thrusters",
+              "Firebreather Score: 100 thrusters"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-21",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 20.4",
+            "lines": [
+              "For time:",
+              "30 box jumps, 24 in.",
+              "15 clean and jerks, 95 lb.",
+              "30 box jumps, 24 in.",
+              "15 clean and jerks, 135 lb.",
+              "30 box jumps, 24 in.",
+              "10 clean and jerks, 185 lb.",
+              "30 single-leg squats",
+              "10 clean and jerks, 225 lb.",
+              "30 single-leg squats",
+              "5 clean and jerks, 275 lb.",
+              "30 single-leg squats",
+              "5 clean and jerks, 315 lb.",
+              "Time cap: 20 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 20.4"
+      },
+      {
+        "date": "2026-06-21",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-06-21/",
@@ -2679,43 +2744,6 @@
       },
       {
         "date": "2026-06-21",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-june-21-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "1:30 1st Machine",
-              "5 Ring Rows",
-              "5 Burpees",
-              "6 Reverse Lunges",
-              "1:30 2nd Machine",
-              "5 Ring Rows",
-              "5 Burpees",
-              "6 Reverse Lunges",
-              "1:30 3rd Machine"
-            ]
-          },
-          {
-            "title": "EMOM 25 minutes, rotating through each movement 5 times",
-            "lines": [
-              "– 20/16 Calorie Row",
-              "– 10 S-Arm Devil’s Press 50/35lbs",
-              "– 18/15 Assault or Echo Bike",
-              "– Max S-Arm DB Thruster 50/35lbs",
-              "– Rest",
-              "*If you do no complete your reps within the allotted minute, do not do any DB Thrusters that round (rest 2:00, not 1:00)",
-              "Feel: Gas",
-              "Pace: Sustain",
-              "Target Score: 70 thrusters",
-              "Firebreather Score: 100 thrusters"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-21",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2752,36 +2780,8 @@
           }
         ],
         "note": "Benchmark: FRAN"
-      },
-      {
-        "date": "2026-06-21",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 20.4",
-            "lines": [
-              "For time:",
-              "30 box jumps, 24 in.",
-              "15 clean and jerks, 95 lb.",
-              "30 box jumps, 24 in.",
-              "15 clean and jerks, 135 lb.",
-              "30 box jumps, 24 in.",
-              "10 clean and jerks, 185 lb.",
-              "30 single-leg squats",
-              "10 clean and jerks, 225 lb.",
-              "30 single-leg squats",
-              "5 clean and jerks, 275 lb.",
-              "30 single-leg squats",
-              "5 clean and jerks, 315 lb.",
-              "Time cap: 20 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 20.4"
       }
     ]
   },
-  "last_updated": "2026-06-21T03:10:53.796093"
+  "last_updated": "2026-06-21T09:01:24.246979"
 }
