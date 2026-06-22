@@ -822,31 +822,6 @@
       },
       {
         "date": "2026-06-12",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Power Snatch 10x2",
-              "Every 1:00 x 10 sets",
-              "2 Power Snatch (singles) @ 60% OR RPE 6"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Bees Everywhere!",
-            "lines": [
-              "50 Wall Balls 9kg/6kg",
-              "25 Toes to Bar"
-            ],
-            "sub_title2": "3 Rounds For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-12",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2611,55 +2586,6 @@
     "2026-06-22": [
       {
         "date": "2026-06-22",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-22/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hamstring stretch on box",
-              "lat stretch on box",
-              "calf stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 good mornings",
-              "10 squat jumps",
-              "10 ring rows",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "ROMANIAN DEADLIFTS  15MIN",
-            "lines": [
-              "3-4 sets",
-              "10 romanian deadlifts",
-              "@8-9",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "6 rounds",
-              "",
-              "8 strict pull ups",
-              "12/10cal bike/ski",
-              "16 box jumps 60/50cm",
-              "* rx+ option: strict chest to bar pull ups",
-              "* aerobic power & muscular endurance"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-22",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260622",
@@ -2732,6 +2658,102 @@
       },
       {
         "date": "2026-06-22",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 17.4",
+            "lines": [
+              "Complete as many rounds and reps as possible in 13 minutes of:",
+              "55 deadlifts, 225 lb.",
+              "55 wall-ball shots, 20-lb. ball to 10-ft. target",
+              "55-calorie row",
+              "55 handstand push-ups"
+            ]
+          }
+        ],
+        "note": "Open: Open 17.4"
+      },
+      {
+        "date": "2026-06-22",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-06-22/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hamstring stretch on box",
+              "lat stretch on box",
+              "calf stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 good mornings",
+              "10 squat jumps",
+              "10 ring rows",
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "ROMANIAN DEADLIFTS  15MIN",
+            "lines": [
+              "3-4 sets",
+              "10 romanian deadlifts",
+              "@8-9",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "6 rounds",
+              "",
+              "8 strict pull ups",
+              "12/10cal bike/ski",
+              "16 box jumps 60/50cm",
+              "* rx+ option: strict chest to bar pull ups",
+              "* aerobic power & muscular endurance"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-22",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Snatch Deadlift + Power Snatch + Overhead Squat 1x1",
+              "EVERY 1:00 (10:00)",
+              "1 Snatch Deadlift + 1 Power Snatch + 1 Overhead Squat*",
+              "*Start light and build each minute",
+              "* (Score is Heaviest Weight)"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Catching Fireflies",
+            "lines": [
+              "16 Air Squat",
+              "8 Toes to Bar",
+              "4 Power Snatch 61kg/43kg"
+            ],
+            "sub_title2": "10 Rounds For Time:"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-22",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2768,27 +2790,8 @@
           }
         ],
         "note": "Benchmark: FRAN"
-      },
-      {
-        "date": "2026-06-22",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 17.4",
-            "lines": [
-              "Complete as many rounds and reps as possible in 13 minutes of:",
-              "55 deadlifts, 225 lb.",
-              "55 wall-ball shots, 20-lb. ball to 10-ft. target",
-              "55-calorie row",
-              "55 handstand push-ups"
-            ]
-          }
-        ],
-        "note": "Open: Open 17.4"
       }
     ]
   },
-  "last_updated": "2026-06-22T03:14:49.157456"
+  "last_updated": "2026-06-22T09:29:19.700324"
 }
