@@ -812,26 +812,6 @@
       },
       {
         "date": "2026-06-13",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Holy Schnikes!",
-            "lines": [
-              "Teams of 2",
-              "5 sets (each/1:1)",
-              "3:00 AMRAP",
-              "500/450m Row",
-              "Max Double Unders in Remaining Time",
-              "* (Scored by total Reps)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-13",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2761,6 +2741,46 @@
     "2026-06-23": [
       {
         "date": "2026-06-23",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260623",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Deadlift 5-5-5-5-5 reps",
+              "Compare to",
+              "260128"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-23",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 19.4",
+            "lines": [
+              "For total time:",
+              "3 rounds of:",
+              "10 snatches",
+              "12 bar-facing burpees",
+              "Then, rest 3 minutes before continuing with:",
+              "3 rounds of:",
+              "10 bar muscle-ups",
+              "12 bar-facing burpees",
+              "*Men snatch 95 lb.*",
+              "Time cap: 12 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 19.4"
+      },
+      {
+        "date": "2026-06-23",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-06-23/",
@@ -2807,16 +2827,73 @@
       },
       {
         "date": "2026-06-23",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260623",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-june-23-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "Deadlift 5-5-5-5-5 reps",
-              "Compare to",
-              "260128"
+              "3 Rounds",
+              "1:00 Row",
+              "10 Ring Rows",
+              "50m Light object carry",
+              "10 russian baby makers"
+            ]
+          },
+          {
+            "title": "Back Squat",
+            "lines": [
+              "12-10-8-6",
+              "Start your set of 12 between 55 and 65%, then add weight each round.",
+              "Bike 1,000m Between Sets to Flush",
+              "Volume work percentages vary quite a bit athlete to athlete. If technique is wavering during your sets, it’s too heavy. )"
+            ]
+          },
+          {
+            "title": "AMRAP 16 minutes",
+            "lines": [
+              "8 Pull Ups",
+              "600/540m Row",
+              "8 Pull Ups",
+              "100m Object Carry*",
+              "*Object Carry Options:",
+              "– Empty Sled Push",
+              "– 100/70lbs Sandbag",
+              "– 53s/35s Kettlebells",
+              "– 50s/35s Dumbbells",
+              "Feel: Cardio",
+              "Pace: Sustain",
+              "Target Score: 4rds",
+              "Firebreather: 5+rds"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-23",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "JUNE BURPEE CHALLENGE",
+            "lines": [
+              "EVERY 1:00 (12:00)",
+              "45 seconds Max Burpees Over Bar",
+              "15 second Rest",
+              "* (Score is Total Reps)"
+            ]
+          },
+          {
+            "title": "Strength",
+            "lines": [
+              "Strict Press + Push Press 5x6",
+              "5 Sets (Build across sets)",
+              "Every 2:00",
+              "3 Strict Press + 3 Push Press",
+              "* (Score is Weight)"
             ]
           }
         ]
@@ -2869,32 +2946,8 @@
           }
         ],
         "note": "Benchmark: GRACE"
-      },
-      {
-        "date": "2026-06-23",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 19.4",
-            "lines": [
-              "For total time:",
-              "3 rounds of:",
-              "10 snatches",
-              "12 bar-facing burpees",
-              "Then, rest 3 minutes before continuing with:",
-              "3 rounds of:",
-              "10 bar muscle-ups",
-              "12 bar-facing burpees",
-              "*Men snatch 95 lb.*",
-              "Time cap: 12 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 19.4"
       }
     ]
   },
-  "last_updated": "2026-06-23T03:09:44.543645"
+  "last_updated": "2026-06-23T08:00:44.961601"
 }
