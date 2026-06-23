@@ -1,105 +1,5 @@
 {
   "workouts": {
-    "2026-06-08": [
-      {
-        "date": "2026-06-08",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260608",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "For max calories:",
-              "1-minute air bike",
-              "Rest 5 minutes",
-              "As many reps as possible in 10 minutes of:",
-              "Burpee box get-overs",
-              "A weight vest is optional.",
-              "♀ 48-inch box",
-              "♂ 48-inch box"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-08",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-june-8-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "4 Rounds, alternating with a partner (2 rounds per person)",
-              "200m Run",
-              "10 Romanian Deadlifts",
-              ":10 Air Bike HARD"
-            ]
-          },
-          {
-            "title": "Deadlift",
-            "lines": [
-              "3-3-3-3-3 AHAP",
-              "After each set, perform a :03-:05 Assault/Echo bike sprint for maximum wattage.",
-              "Rest 3-4 minutes after biking.",
-              "Begin around 80-85% of your 1RM and build AHAP.",
-              "Aim for sets to be slightly heavier than 4s from 5/29.)"
-            ]
-          },
-          {
-            "title": "AMRAP 3:00 x 6",
-            "lines": [
-              "Calorie Row",
-              "Rest 1:30",
-              "We’re slowly making our way out of aerobic row purgatory. This workout should be :01-:03 per 500m split faster than the 8:00 AMRAPs.",
-              "Extra Credit- shorter option:",
-              "AMRAP 3:00 x 3",
-              "Rest 1 min"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-08",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 12.3",
-            "lines": [
-              "Complete as many rounds and reps as possible in 18 minutes of:",
-              "15 Box jumps, 24\" box",
-              "115 pound Push press, 12 reps",
-              "9 Toes-to-bar",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 18 minutes of:",
-              "15 Box jumps, 20\" box",
-              "75 pound Push press, 12 reps",
-              "9 Toes-to-bar",
-              "*MASTERS MEN*",
-              "-",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 18 minutes of:",
-              "15 Box jumps or step-ups, 20\" box",
-              "95 pound Push press, 12 reps",
-              "9 Toes-to-bar",
-              "*MASTERS WOMEN*",
-              "-",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 18 minutes of:",
-              "15 Box jumps or step-ups, 20\" box",
-              "55 pound Push press, 12 reps",
-              "9 Toes-to-bar"
-            ]
-          }
-        ],
-        "note": "Open: Open 12.3"
-      }
-    ],
     "2026-06-09": [
       {
         "date": "2026-06-09",
@@ -208,90 +108,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-06-09",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-09/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "instep rotation",
-              "hand walk",
-              "lat stretch",
-              "calf stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10/8cal row",
-              "20 single under",
-              "10 ring rows"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "PULL UPS 15MIN",
-            "lines": [
-              "4 super sets",
-              "4 pull ups @rpe 8-9",
-              "12-15 banded lat pull downs",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "21-15-9-15-21",
-              "pull ups",
-              "cal row (women's cal: 18-12-6-12-18)",
-              "*60 double under after each round",
-              "* rx+ option: chest to bar pull ups",
-              "* aerobic power  & muscular endurance"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-09",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Then,",
-            "sub_title": "400-meter run",
-            "lines": [
-              "Run together and split all other work as needed.",
-              "Use two dumbbells."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-09",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Baseline",
-            "lines": [
-              "For time:",
-              "row  500 m",
-              "40 squats",
-              "30 sit-ups",
-              "20  push -ups",
-              "10 pull-ups"
-            ]
-          }
-        ],
-        "note": "Benchmark: Baseline"
       }
     ],
     "2026-06-10": [
@@ -444,29 +260,21 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "Helen\" (BENCHMARK)",
+            "title": "Isabel",
             "lines": [
-              "FOR TIME:",
-              "3 Rounds",
-              "400m Run",
-              "21 American Kettlebell Swings",
-              "12 Pull-Ups",
-              "Time Cap: 15:00",
-              "Score = Time",
-              "Goals: 7:00-11:00",
-              "RPE: 9.5/10",
-              "Level 2:",
-              "400m Run",
-              "21 American KB Swings 20/12kg",
-              "9 Pull-Ups",
-              "Level 1/BASE:",
-              "400m Run OR 800m Bike Erg",
-              "21 Russian KB Swings",
-              "12 Jumping Pull-Ups"
+              "For time",
+              "30 Snatch 60/42,5 kg",
+              "Scaled",
+              "30 Hang snatch",
+              "Target: sub 5 min. Time cap 6 min.",
+              "the load should feel moderate, not maximal",
+              "sprint  -style workout",
+              "load suggestion ~50% of 1rm",
+              "*power snatch es recommended*"
             ]
           }
         ],
-        "note": "Benchmark: Helen\" (BENCHMARK)"
+        "note": "Benchmark: Isabel"
       }
     ],
     "2026-06-11": [
@@ -1018,22 +826,6 @@
               "500/450m Row",
               "Max Double Unders in Remaining Time",
               "* (Scored by total Reps)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-13",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Killer #5For Time3 Rounds of:15/12 Cal Bike or 21/15 Cal Row15 Thrusters 42.5/30kg15 C2B",
-              "into3 Rounds of:15/12 Cal Bike or 21/15 Cal Row25 Alt DB Snatch 22.5/15kg15 T2B",
-              "1 Round of:30 Devil Presses 2×22.5/15kg"
             ]
           }
         ]
@@ -2714,15 +2506,29 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "GRACE",
+            "title": "Helen\" (BENCHMARK)",
             "lines": [
-              "For Time:",
-              "30 Clean & Jerk",
-              "Rx 60/42,5"
+              "FOR TIME:",
+              "3 Rounds",
+              "400m Run",
+              "21 American Kettlebell Swings",
+              "12 Pull-Ups",
+              "Time Cap: 15:00",
+              "Score = Time",
+              "Goals: 7:00-11:00",
+              "RPE: 9.5/10",
+              "Level 2:",
+              "400m Run",
+              "21 American KB Swings 20/12kg",
+              "9 Pull-Ups",
+              "Level 1/BASE:",
+              "400m Run OR 800m Bike Erg",
+              "21 Russian KB Swings",
+              "12 Jumping Pull-Ups"
             ]
           }
         ],
-        "note": "Benchmark: GRACE"
+        "note": "Benchmark: Helen\" (BENCHMARK)"
       }
     ],
     "2026-06-22": [
@@ -2951,7 +2757,144 @@
         ],
         "note": "Benchmark: FRAN"
       }
+    ],
+    "2026-06-23": [
+      {
+        "date": "2026-06-23",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-06-23/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "scorpions",
+              "instep rotation",
+              "90/90 hip rotation",
+              "crab stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 reverse lunges",
+              "10 scap. push ups",
+              "10 prone snow angels"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "BENCH PRESS 15MIN",
+            "lines": [
+              "3-4 sets",
+              "10 reps bench press",
+              "@rpe 8-9",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "3-6-9-12…",
+              "db push ups",
+              "16m db walking lunges 2x22,5/15kg",
+              "* muscular endurance"
+            ],
+            "sub_title": "amrap 16min"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-23",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260623",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Deadlift 5-5-5-5-5 reps",
+              "Compare to",
+              "260128"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-23",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Strength:-E2MOM x 5 – 1 Squat Clean + 1 Front Squat + 1 Split Jerk 65-80%",
+              "Metcon:-21/15 Cal Assault Bike15 Burpees over the bar9 Power Cleans 70/50kg",
+              "Partner Abs finisher*12x front / left / right / candle sticks*C2B"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-23",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Foundation",
+            "sub_title": "CrossFit Medical Society",
+            "lines": [
+              "The CrossFit Games",
+              "About the Games"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-23",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "GRACE",
+            "lines": [
+              "For Time:",
+              "30 Clean & Jerk",
+              "Rx 60/42,5"
+            ]
+          }
+        ],
+        "note": "Benchmark: GRACE"
+      },
+      {
+        "date": "2026-06-23",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 19.4",
+            "lines": [
+              "For total time:",
+              "3 rounds of:",
+              "10 snatches",
+              "12 bar-facing burpees",
+              "Then, rest 3 minutes before continuing with:",
+              "3 rounds of:",
+              "10 bar muscle-ups",
+              "12 bar-facing burpees",
+              "*Men snatch 95 lb.*",
+              "Time cap: 12 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 19.4"
+      }
     ]
   },
-  "last_updated": "2026-06-22T14:51:27.822376"
+  "last_updated": "2026-06-23T03:09:44.543645"
 }
