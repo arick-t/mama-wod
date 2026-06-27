@@ -963,27 +963,6 @@
       },
       {
         "date": "2026-06-18",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Ford Field",
-            "lines": [
-              "5 sets",
-              "3:00 AMRAP",
-              "25/20 Calorie Air Bike",
-              "50ft Dumbbell Farmer Carry Walking Lunge (50s/35s)",
-              "Max Burpees Over DBs in the remaining time",
-              "* -rest 1:00 between sets-",
-              "* (Scored by total reps)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-18",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2602,45 +2581,6 @@
     "2026-06-27": [
       {
         "date": "2026-06-27",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-27/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "lying hip cross over",
-              "hand walk"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 good mornings",
-              "10 elbow rotations",
-              "*partner is skiing"
-            ],
-            "sub_title": "amrap 5min"
-          },
-          {
-            "title": "CONDITIONING 32MIN",
-            "lines": [
-              "in teams of 2",
-              "18/17/16cal ski",
-              "16 deadlifts 60/40kg",
-              "14 power cleans 60/40kg",
-              "on every 4:00 (starting at 00:00)",
-              "10 synchro burpees",
-              "* aerobic power & muscular endurance"
-            ],
-            "sub_title": "amrap 32min"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-27",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260627",
@@ -2700,6 +2640,76 @@
       },
       {
         "date": "2026-06-27",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 14.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 double-unders",
+              "75-lb. power snatches, 15 reps",
+              "*WOMEN*",
+              "*- includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 double-unders",
+              "55-lb. power snatches, 15 reps",
+              "*MASTERS MEN*",
+              "*- includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 double-unders",
+              "65-lb. power snatches, 15 reps",
+              "*MASTERS WOMEN*",
+              "*- includes Masters Women 55+*",
+              "30 double-unders",
+              "45-lb. power snatches, 15 reps"
+            ]
+          }
+        ],
+        "note": "Open: Open 14.1"
+      },
+      {
+        "date": "2026-06-27",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-06-27/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "lying hip cross over",
+              "hand walk"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 good mornings",
+              "10 elbow rotations",
+              "*partner is skiing"
+            ],
+            "sub_title": "amrap 5min"
+          },
+          {
+            "title": "CONDITIONING 32MIN",
+            "lines": [
+              "in teams of 2",
+              "18/17/16cal ski",
+              "16 deadlifts 60/40kg",
+              "14 power cleans 60/40kg",
+              "on every 4:00 (starting at 00:00)",
+              "10 synchro burpees",
+              "* aerobic power & muscular endurance"
+            ],
+            "sub_title": "amrap 32min"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-27",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2734,39 +2744,8 @@
           }
         ],
         "note": "Benchmark: CINDY” BENCHMARK"
-      },
-      {
-        "date": "2026-06-27",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 14.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "30 double-unders",
-              "75-lb. power snatches, 15 reps",
-              "*WOMEN*",
-              "*- includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "30 double-unders",
-              "55-lb. power snatches, 15 reps",
-              "*MASTERS MEN*",
-              "*- includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "30 double-unders",
-              "65-lb. power snatches, 15 reps",
-              "*MASTERS WOMEN*",
-              "*- includes Masters Women 55+*",
-              "30 double-unders",
-              "45-lb. power snatches, 15 reps"
-            ]
-          }
-        ],
-        "note": "Open: Open 14.1"
       }
     ]
   },
-  "last_updated": "2026-06-27T03:11:05.713019"
+  "last_updated": "2026-06-27T07:53:01.568250"
 }
