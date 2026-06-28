@@ -2665,6 +2665,45 @@
     "2026-06-28": [
       {
         "date": "2026-06-28",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 25.1",
+            "lines": [
+              "*2025 Open Workout 25.1 Women Rx*",
+              "Games Season",
+              "Open",
+              "Feb 26 – March 16",
+              "Leaderboard",
+              "Overview",
+              "Schedule",
+              "Workouts",
+              "Quarterfinals",
+              "March 26-30",
+              "Leaderboard",
+              "Overview",
+              "Schedule",
+              "Workouts",
+              "Semifinals",
+              "April – June",
+              "Leaderboard",
+              "Overview",
+              "Schedule",
+              "Workouts",
+              "Games",
+              "July",
+              "The CrossFit Games",
+              "Masters CrossFit Games",
+              "Teenage CrossFit Games"
+            ]
+          }
+        ],
+        "note": "Open: Open 25.1"
+      },
+      {
+        "date": "2026-06-28",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-06-28/",
@@ -2705,6 +2744,51 @@
               "@ rpe 3-4"
             ],
             "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-28",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-june-28-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "400m Jog",
+              "20 Calf Raises",
+              "20 Tib Raises",
+              "10 Leg Swings / side",
+              "50m High Knees",
+              "50m Butt Kickers",
+              "100m Skipping",
+              "15 Med Ball Squats",
+              "1 50m Shuttle",
+              "15 Med Ball Thrusters",
+              "1 50m Shuttle",
+              "15 Wall Balls",
+              "1 50m Shuttle",
+              "15 Wall Balls"
+            ]
+          },
+          {
+            "title": "AMRAP 22 minutes",
+            "lines": [
+              "10 Wallballs 20/14lbs",
+              "3 Shuttle Runs*&",
+              "*1 Shuttle Run = 50m out and back",
+              "Every round, add 5 Wall Balls and 1 Shuttle Run, for example:",
+              "15 Wall Balls",
+              "4 Shuttle Runs",
+              "20 Wall Balls",
+              "5 Shuttle Runs",
+              "Etc.",
+              "Feel: Cardio",
+              "Pace: Sustain",
+              "Target Score: 5 Rounds",
+              "Firebreather: 6 Rounds"
+            ]
           }
         ]
       },
@@ -2769,47 +2853,8 @@
           }
         ],
         "note": "Benchmark: Heavy DT"
-      },
-      {
-        "date": "2026-06-28",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 25.1",
-            "lines": [
-              "*2025 Open Workout 25.1 Women Rx*",
-              "Games Season",
-              "Open",
-              "Feb 26 – March 16",
-              "Leaderboard",
-              "Overview",
-              "Schedule",
-              "Workouts",
-              "Quarterfinals",
-              "March 26-30",
-              "Leaderboard",
-              "Overview",
-              "Schedule",
-              "Workouts",
-              "Semifinals",
-              "April – June",
-              "Leaderboard",
-              "Overview",
-              "Schedule",
-              "Workouts",
-              "Games",
-              "July",
-              "The CrossFit Games",
-              "Masters CrossFit Games",
-              "Teenage CrossFit Games"
-            ]
-          }
-        ],
-        "note": "Open: Open 25.1"
       }
     ]
   },
-  "last_updated": "2026-06-28T03:05:21.564888"
+  "last_updated": "2026-06-28T08:16:47.477586"
 }
