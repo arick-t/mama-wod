@@ -2704,51 +2704,6 @@
       },
       {
         "date": "2026-06-28",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-28/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "instep rotations",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. plank hold",
-              "2. row",
-              "3. ring rows",
-              "4. box step ups"
-            ],
-            "sub_title": "30sec on / 15sec off x2 rounds"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "1. 20-30 russian twists",
-              "2. 10-15cal row",
-              "3. 6-8 strict chin ups",
-              "4. 10-14 double db box step ups (50cm)",
-              "5. rest",
-              "Sunday Endurance for Open Gym",
-              "zone 2 (heat) training",
-              "3:00 bike",
-              "3:00 ski",
-              "3:00 row",
-              "for 39-60min",
-              "@ rpe 3-4"
-            ],
-            "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-28",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-june-28-2026/",
@@ -2789,6 +2744,51 @@
               "Target Score: 5 Rounds",
               "Firebreather: 6 Rounds"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-06-28",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-06-28/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "instep rotations",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. plank hold",
+              "2. row",
+              "3. ring rows",
+              "4. box step ups"
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "1. 20-30 russian twists",
+              "2. 10-15cal row",
+              "3. 6-8 strict chin ups",
+              "4. 10-14 double db box step ups (50cm)",
+              "5. rest",
+              "Sunday Endurance for Open Gym",
+              "zone 2 (heat) training",
+              "3:00 bike",
+              "3:00 ski",
+              "3:00 row",
+              "for 39-60min",
+              "@ rpe 3-4"
+            ],
+            "sub_title": "emom 35min (7 rounds)"
           }
         ]
       },
@@ -2856,5 +2856,5 @@
       }
     ]
   },
-  "last_updated": "2026-06-28T08:16:47.477586"
+  "last_updated": "2026-06-28T09:56:34.626326"
 }
