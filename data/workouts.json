@@ -786,31 +786,6 @@
       },
       {
         "date": "2026-06-19",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Pause Deadlifts (mid-shin for 2-3 seconds) 5x3",
-              "Every 2:00 x 5 sets",
-              "3 Pause Deadlifts (mid-shin for 2-3 seconds) @ 60–65%"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Lumen Field",
-            "lines": [
-              "10 Deadlift 125kg/84kg",
-              "20 Push Ups"
-            ],
-            "sub_title2": "5 rounds For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-19",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2681,52 +2656,6 @@
     "2026-06-29": [
       {
         "date": "2026-06-29",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-29/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "sumo squat stretch",
-              "thoracic rotattion",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 straight leg sit ups",
-              "30sec deep front squat hold",
-              "* *remaining time row"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "FRONT SQUATS 15MIN",
-            "lines": [
-              "4-5 sets",
-              "5 front squats @70-75%",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 17MIN",
-            "lines": [
-              "for max reps",
-              "1. front squats 50/35kg",
-              "2. cal row",
-              "3. toes to bar",
-              "* score: total resp/cals",
-              "* anaerobic capacity & muscular endurance"
-            ],
-            "sub_title": "1:00 on / 1:00 off x 9 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-29",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260629",
@@ -2801,6 +2730,114 @@
       },
       {
         "date": "2026-06-29",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 23.3",
+            "lines": [
+              "Starting with a 6-minute time cap, complete as many reps as possible of:",
+              "5 wall walks",
+              "50 double-unders",
+              "15 snatches (weight 1)",
+              "5 wall walks",
+              "50 double-unders",
+              "12 snatches (weight 2)",
+              "*If completed before the 6-minute time cap, add 3 minutes to the time cap and complete:",
+              "20 strict handstand push-ups",
+              "50 double-unders",
+              "9 snatches (weight 3)",
+              "*If completed before the 9-minute time cap, add 3 minutes to the time cap and complete:",
+              "20 strict handstand push-ups",
+              "50 double-unders",
+              "6 snatches (weight 4)",
+              "*♀ 65 lb, 95 lb, 125 lb, 155 lb*",
+              "*♂ 95 lb, 135 lb, 185 lb, 225 lb*"
+            ]
+          }
+        ],
+        "note": "Open: Open 23.3"
+      },
+      {
+        "date": "2026-06-29",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-06-29/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "thoracic rotattion",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 straight leg sit ups",
+              "30sec deep front squat hold",
+              "* *remaining time row"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "FRONT SQUATS 15MIN",
+            "lines": [
+              "4-5 sets",
+              "5 front squats @70-75%",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 17MIN",
+            "lines": [
+              "for max reps",
+              "1. front squats 50/35kg",
+              "2. cal row",
+              "3. toes to bar",
+              "* score: total resp/cals",
+              "* anaerobic capacity & muscular endurance"
+            ],
+            "sub_title": "1:00 on / 1:00 off x 9 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-29",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Overhead Squat 1x3",
+              "ON A 10:00 RUNNING CLOCK",
+              "Build to a Heavy/Mod-Heavy 3-Rep Overhead Squat*",
+              "*Bar comes from the ground",
+              "* (Score is Weight)"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "We Stand for Freedom",
+            "lines": [
+              "25 Burpee Box Jump Over (24\"/20\"",
+              "50 Overhead Squats 43kg/29kg",
+              "25 Burpee Box Jump Over 24\"/20\"",
+              "50 Front Squats 43kg/29kg",
+              "25 Burpee Box Jump Over 24\"/20\"",
+              "50 Back Squats 43kg/29kg"
+            ],
+            "sub_title2": "FOR TIME"
+          }
+        ]
+      },
+      {
+        "date": "2026-06-29",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2858,39 +2895,8 @@
           }
         ],
         "note": "Benchmark: Lynne"
-      },
-      {
-        "date": "2026-06-29",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 23.3",
-            "lines": [
-              "Starting with a 6-minute time cap, complete as many reps as possible of:",
-              "5 wall walks",
-              "50 double-unders",
-              "15 snatches (weight 1)",
-              "5 wall walks",
-              "50 double-unders",
-              "12 snatches (weight 2)",
-              "*If completed before the 6-minute time cap, add 3 minutes to the time cap and complete:",
-              "20 strict handstand push-ups",
-              "50 double-unders",
-              "9 snatches (weight 3)",
-              "*If completed before the 9-minute time cap, add 3 minutes to the time cap and complete:",
-              "20 strict handstand push-ups",
-              "50 double-unders",
-              "6 snatches (weight 4)",
-              "*♀ 65 lb, 95 lb, 125 lb, 155 lb*",
-              "*♂ 95 lb, 135 lb, 185 lb, 225 lb*"
-            ]
-          }
-        ],
-        "note": "Open: Open 23.3"
       }
     ]
   },
-  "last_updated": "2026-06-29T03:12:05.494476"
+  "last_updated": "2026-06-29T08:51:11.147762"
 }
