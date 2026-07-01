@@ -1,97 +1,5 @@
 {
   "workouts": {
-    "2026-06-16": [
-      {
-        "date": "2026-06-16",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260616",
-        "sections": [
-          {
-            "title": "5 ROUNDS FOR TIME OF",
-            "lines": [
-              "800-meter run",
-              "50 air squats",
-              "30 GHD sit-ups"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-16",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-june-16-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "2:00 Air Bike",
-              "Then",
-              "50ft “Shoo the Chickens”",
-              "50ft Heel to Toe Walk",
-              "50ft High Knees",
-              "50ft Butt Kickers",
-              "50ft Toy Soldiers/Frankensteins (hamstring kicks)",
-              "Then",
-              "400m Jog",
-              "-Rest/Hydrate-",
-              "*Specific Primer:",
-              "3-4 Rounds",
-              ":10 Air Bike Ramp Up + 50m Run",
-              "Increase % of run effort across rounds"
-            ]
-          },
-          {
-            "title": "Every 4:00 for 5 rounds, each for time",
-            "lines": [
-              "10/7 Calorie Air Bike",
-              "100m Sprint (25m x 4)",
-              "Rest remainder of interval",
-              "Record fastest/slowest for whiteboard.",
-              "Feel: Gas",
-              "Pace: Send",
-              "Target Score: <:50 per interval",
-              "Firebreather Score: < :40 per interval"
-            ]
-          },
-          {
-            "title": "Power Snatch",
-            "lines": [
-              "1 @ 80-90%",
-              "4 @ 70-75%",
-              "3 @ 75-80%",
-              "2 @ 80-85%",
-              "4 @ 75-80%",
-              "3 @ 80-85%",
-              "2 @ 85-90%",
-              "Drop and reset reps. It’s ok if you don’t know your perecentages – your heavy single to start will give you guidance. )"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-16",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 15.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 9 minutes of:",
-              "15 toes-to-bars",
-              "10 deadlifts (115 / 75 lb.)",
-              "5 snatches (115 / 75 lb.)",
-              "WORKOUT 15.1a",
-              "1-rep-max clean and jerk",
-              "6-minute time cap"
-            ]
-          }
-        ],
-        "note": "Open: Open 15.1"
-      }
-    ],
     "2026-06-17": [
       {
         "date": "2026-06-17",
@@ -185,95 +93,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-06-17",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-17/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "scorpions",
-              "thoracic rotation",
-              "lat stretch",
-              "hand walk"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10/8cal row",
-              "10 push ups to down dog",
-              "10 prone snow angels"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "STRICT PRESS 15MIN",
-            "lines": [
-              "4 super sets",
-              "4 strict press @ rpe 8-9",
-              "12-15 db lateral raises",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 10MIN",
-            "lines": [
-              "5 rounds",
-              "",
-              "15/12cal row",
-              "12 push presses 40/30kg",
-              "* rx+ option: 10 handstand push ups",
-              "* aerobic power & muscular endurance"
-            ],
-            "sub_title": "for time"
-          },
-          {
-            "title": "SHOULDER STABILITY 4MIN",
-            "lines": [
-              "prone press"
-            ],
-            "sub_title": "tabata (20sec on /10sec off x 8 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-17",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Kutschbach",
-            "sub_title": "7 rounds for time of:",
-            "lines": [
-              "11 back squats",
-              "10 jerks"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-17",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Fat Helen",
-            "lines": [
-              "3 rounds for time of:",
-              "400 m  Run",
-              "21  Kettlebell Swing s (32/24kg)",
-              "12 Chest-To-Bar Pull-Ups"
-            ]
-          }
-        ],
-        "note": "Benchmark: Fat Helen"
       }
     ],
     "2026-06-18": [
@@ -448,12 +267,15 @@
         "hero_story": "",
         "sections": [
           {
-            "title": "Then,",
-            "sub_title": "7 rounds",
+            "title": "Foo",
+            "sub_title": "For time:",
             "lines": [
-              "9 deadlifts",
-              "25 push-ups",
-              "21 box step-ups"
+              "13 bench presses",
+              "Then, complete as many rounds and reps as possible in 20 minutes of:",
+              "7 chest-to-bar pull-ups",
+              "77 double-unders",
+              "2 squat clean thrusters",
+              "28 sit-ups"
             ]
           }
         ]
@@ -628,14 +450,12 @@
         "hero_story": "",
         "sections": [
           {
-            "title": "Emily",
-            "sub_title": "10 rounds for time of:",
+            "title": "Nate",
+            "sub_title": "Complete as many rounds as possible in 20 minutes of:",
             "lines": [
-              "30 double-unders",
-              "15 pull-ups",
-              "30 squats",
-              "100-meter sprint",
-              "Rest 2 minutes"
+              "2 muscle-ups",
+              "4 handstand push-ups",
+              "8 kettlebell swings"
             ]
           }
         ]
@@ -793,12 +613,13 @@
         "hero_story": "",
         "sections": [
           {
-            "title": "Hortman",
-            "sub_title": "Complete as many rounds as possible in 45 minutes of:",
+            "title": "Harper",
+            "sub_title": "Complete as many rounds as possible in 23 minutes of:",
             "lines": [
-              "Run 800 meters",
-              "80 squats",
-              "8 muscle-ups"
+              "9 chest-to-bar pull-ups",
+              "15 power cleans",
+              "21 squats",
+              "400-meter run with a plate"
             ]
           }
         ]
@@ -936,34 +757,17 @@
       },
       {
         "date": "2026-06-21",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Hero Wod:",
-              "RatanaBuy-In: 1,989 meter RowDirectly into:29 Burpees54 Dumbbell Snatches (22.5/15 kg)29 Pull-Ups54 Push Presses (40/30 kg)29 Deadlifts (100/60 kg)54 Walking Lunges (BW)29 Push-Ups54 Air Squats",
-              "Cash-Out: 1,991 meter Row"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-21",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
         "sections": [
           {
-            "title": "Viola",
-            "sub_title": "Complete as many rounds and reps as possible in 20 minutes of:",
+            "title": "Walsh",
+            "sub_title": "4 rounds for time of:",
             "lines": [
-              "400-meter run",
-              "11 power snatches",
-              "17 pull-ups",
-              "13 power cleans"
+              "22 burpee pull-ups",
+              "22 back squats",
+              "200-meter run with a plate overhead"
             ]
           }
         ]
@@ -980,11 +784,11 @@
               "FOR TIME:",
               "3 Rounds",
               "400m Run",
-              "21 American Kettlebell Swings",
+              "21 American Kettlebell Swings (16/24kg)",
               "12 Pull-Ups",
               "Time Cap: 15:00",
               "Score = Time",
-              "Goals: 7:00-11:00",
+              "Goal: 7:00-11:00",
               "RPE: 9.5/10",
               "Level 2:",
               "400m Run",
@@ -1194,13 +998,12 @@
         "hero_story": "",
         "sections": [
           {
-            "title": "Buriak",
-            "sub_title": "As many rounds and reps as possible in 20 minutes of:",
+            "title": "Falkel",
+            "sub_title": "Complete as many rounds and reps as possible in 25 minutes of:",
             "lines": [
-              "5 squat cleans",
-              "10 burpees over the bar",
-              "15 pull-ups",
-              "200-meter run"
+              "8 handstand push-ups",
+              "8 box jumps",
+              "1 rope climb to 15 feet"
             ]
           }
         ]
@@ -1410,11 +1213,12 @@
         "hero_story": "",
         "sections": [
           {
-            "title": "Foundation",
-            "sub_title": "CrossFit Medical Society",
+            "title": "Rocket",
+            "sub_title": "Complete as many rounds as possible in 30 minutes of:",
             "lines": [
-              "The CrossFit Games",
-              "About the Games"
+              "50-yard swim",
+              "10 push-ups",
+              "15 squats"
             ]
           }
         ]
@@ -1426,7 +1230,7 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "GRACE",
+            "title": "D. \"GRACE",
             "lines": [
               "For Time:",
               "30 Clean & Jerk",
@@ -1434,7 +1238,7 @@
             ]
           }
         ],
-        "note": "Benchmark: GRACE"
+        "note": "Benchmark: D. \"GRACE"
       }
     ],
     "2026-06-24": [
@@ -1619,13 +1423,13 @@
         "hero_story": "",
         "sections": [
           {
-            "title": "Strange",
-            "sub_title": "8 rounds for time of:",
+            "title": "Desforges",
+            "sub_title": "5 rounds for time of:",
             "lines": [
-              "600-meter run",
-              "11 weighted pull-ups",
-              "11 walking lunges with two kettlebells",
-              "11 kettlebell thrusters"
+              "12 deadlifts",
+              "20 pull-ups",
+              "12 clean and jerks",
+              "20 knees-to-elbows"
             ]
           }
         ]
@@ -1855,12 +1659,12 @@
         "hero_story": "",
         "sections": [
           {
-            "title": "Then,",
-            "sub_title": "3 rounds of:",
+            "title": "Otis",
+            "sub_title": "Complete as many reps as possible in 15 minutes of:",
             "lines": [
-              "13 box jumps",
-              "13 push-ups",
-              "50 double-unders"
+              "1 back squat, 1 shoulder press, 1 deadlift",
+              "2 back squats, 2 shoulder presses, 2 deadlifts",
+              "3 back squats, 3 shoulder presses, 3 deadlifts"
             ]
           }
         ]
@@ -2051,14 +1855,12 @@
         "hero_story": "",
         "sections": [
           {
-            "title": "Servais",
-            "sub_title": "For time:",
+            "title": "Jared",
+            "sub_title": "4 rounds for time of:",
             "lines": [
-              "Run 1.5 miles",
-              "Then, 8 rounds of:",
-              "19 pull-ups",
-              "19 push-ups",
-              "19 burpees"
+              "Run 800 meters",
+              "40 pull-ups",
+              "70 push-ups"
             ]
           }
         ]
@@ -2234,14 +2036,13 @@
         "hero_story": "",
         "sections": [
           {
-            "title": "Then,",
-            "sub_title": "2 rounds of:",
+            "title": "Kelly Brown",
+            "sub_title": "5 rounds for time of:",
             "lines": [
-              "50 burpees",
-              "40 pull-ups",
-              "30 single-leg squats",
-              "20 kettlebell swings, 1/1.5 pood",
-              "10 handstand push-ups"
+              "Row 440 meter",
+              "10 box jumps",
+              "10 deadlifts",
+              "10 wall-ball shots"
             ]
           }
         ]
@@ -2419,21 +2220,14 @@
         "hero_story": "",
         "sections": [
           {
-            "title": "DVB",
-            "sub_title": "For time:",
+            "title": "Wood",
+            "sub_title": "5 rounds for time of:",
             "lines": [
-              "Run 1 mile with a medicine ball",
-              "Then, 8 rounds of:",
-              "10 wall-ball shots",
-              "1 rope climb",
-              "Run 800 meters with a medicine ball",
-              "Then, 4 rounds of:",
-              "10 wall-ball shots",
-              "1 rope climb",
-              "Run 400 meters with a medicine ball",
-              "Then 2 rounds of:",
-              "10 wall-ball shots",
-              "1 rope climb"
+              "400-meter run",
+              "10 burpee box jumps",
+              "10 sumo deadlift high pulls",
+              "10 thrusters",
+              "Rest 1 minute"
             ]
           }
         ]
@@ -2445,17 +2239,17 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "Heavy DT",
+            "title": "ANNIE\" - Benchmark",
             "lines": [
-              "5 rounds for time of",
-              "*♀ 145 lb.  ♂ 205 lb.*",
-              "12  deadlift s",
-              "9  hang power clean s",
-              "6  push jerk s"
+              "For time:",
+              "50–40–30–20–10",
+              "Double-Under (Sc. SU x2)",
+              "Sit-up",
+              "*time cap 12:00"
             ]
           }
         ],
-        "note": "Benchmark: Heavy DT"
+        "note": "Benchmark: ANNIE\" - Benchmark"
       }
     ],
     "2026-06-29": [
@@ -2667,11 +2461,13 @@
         "hero_story": "",
         "sections": [
           {
-            "title": "Then,",
-            "sub_title": "400-meter run",
+            "title": "Forrest",
+            "sub_title": "3 rounds for time of:",
             "lines": [
-              "Run together and split all other work as needed.",
-              "Use two dumbbells."
+              "20 L pull-ups",
+              "30 toes-to-bars",
+              "40 burpees",
+              "Run 800 meters"
             ]
           }
         ]
@@ -2893,11 +2689,13 @@
         "hero_story": "",
         "sections": [
           {
-            "title": "Ned",
-            "sub_title": "7 rounds for time of:",
+            "title": "Details",
+            "sub_title": "RJ",
             "lines": [
-              "11 back squats",
-              "1,000m row"
+              "5 rounds for time of:",
+              "Run 800 meters",
+              "5 rope climbs to 15 feet",
+              "50 push-ups"
             ]
           }
         ]
@@ -2922,7 +2720,129 @@
         ],
         "note": "Benchmark: Baseline"
       }
+    ],
+    "2026-07-01": [
+      {
+        "date": "2026-07-01",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-07-01/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "scorpions",
+              "instep rotation",
+              "lat stretch on box",
+              "calf stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 burpees",
+              "10 squat jumps",
+              "10 ring rows"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "PRIMER PULL UPS 4MIN",
+            "lines": [
+              "1. hollow hold (floor)",
+              "2. scap. pull up hold"
+            ],
+            "sub_title": "20sec on/ 20sec off x 6 rounds"
+          },
+          {
+            "title": "CONDITIONING 22MIN",
+            "lines": [
+              "6 strict pull ups",
+              "10 burpee box jumps 60/50cm",
+              "-2 min rest -",
+              "amrap 6min",
+              "8 chest to bar pull ups",
+              "10 burpee box jumps",
+              "2min rest",
+              "",
+              "amrap 6min",
+              "10 pull ups",
+              "10 burpee box jumps",
+              "* score: total rounds + reps",
+              "* muscular endurance & aerobic power"
+            ],
+            "sub_title": "amrap 6min"
+          },
+          {
+            "title": "CORE 4MIN",
+            "lines": [
+              "* tabata (20sec / 10sec off x8)",
+              "* 1. flutter kicks",
+              "* 2. plank hold"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-01",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260701",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Jennifer",
+              "Complete as many rounds and reps as possible in 26 minutes of:",
+              "10 pull-ups",
+              "15 kettlebell swings",
+              "20 box jumps",
+              "♀ 35-lb kettlebell and a 20-inch box",
+              "♂ 53-lb kettlebell and a 24-inch box",
+              "Compare to",
+              "150925"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-01",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Ricky",
+            "sub_title": "Complete as many rounds as possible in 20 minutes of:",
+            "lines": [
+              "10 pull-ups",
+              "5 dumbbell deadlifts",
+              "8 push presses"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-01",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Heavy DT",
+            "lines": [
+              "5 rounds for time of",
+              "*♀ 145 lb.  ♂ 205 lb.*",
+              "12  deadlift s",
+              "9  hang power clean s",
+              "6  push jerk s"
+            ]
+          }
+        ],
+        "note": "Benchmark: Heavy DT"
+      }
     ]
   },
-  "last_updated": "2026-06-30T12:33:11.629348"
+  "last_updated": "2026-07-01T03:08:42.000781"
 }
