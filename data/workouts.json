@@ -2718,6 +2718,67 @@
       },
       {
         "date": "2026-07-01",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-july-1-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "3:00 Bike",
+              "Then, 3 rounds of:",
+              "15 Squat Reps",
+              "10 Push Reps",
+              "“Reps” Movements (Round 1 > 2 > 3)",
+              "Squats: Air Squat > Medball front squat > wallballs",
+              "“Push”: Easy push ups > bench dips >  5 ring dip negatives"
+            ]
+          },
+          {
+            "title": "4 rounds for time",
+            "lines": [
+              "15 Ring Dips",
+              "25 Wallballs 20/14lbs",
+              "30/22 Calorie Air Bike",
+              "C2 Bike: 40/32 Calories",
+              "Feel: Gas",
+              "Pace: Sustain",
+              "Target Score: 18-22 minutes",
+              "Firebreather Score: sub 18 minutes"
+            ]
+          },
+          {
+            "title": "Tempo Pull to Power Position into Squat Snatch",
+            "lines": [
+              "2×4 @ 65%",
+              "Tempo Pull to Mid Thigh into Squat Snatch",
+              "1×4 @ 65-70%",
+              "Tempo Pull to Knee into Squat Snatch",
+              "1×4 @ 65-75%",
+              "Row 500m at flush pace between sets",
+              "Drop and reset between each )"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-01",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 12.1",
+            "lines": [
+              "Complete as many reps as possible in 7 minutes of:",
+              "Burpees"
+            ]
+          }
+        ],
+        "note": "Open: Open 12.1"
+      },
+      {
+        "date": "2026-07-01",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-07-01/",
@@ -2774,51 +2835,6 @@
               "* tabata (20sec / 10sec off x8)",
               "* 1. flutter kicks",
               "* 2. plank hold"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-01",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-july-1-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "3:00 Bike",
-              "Then, 3 rounds of:",
-              "15 Squat Reps",
-              "10 Push Reps",
-              "“Reps” Movements (Round 1 > 2 > 3)",
-              "Squats: Air Squat > Medball front squat > wallballs",
-              "“Push”: Easy push ups > bench dips >  5 ring dip negatives"
-            ]
-          },
-          {
-            "title": "4 rounds for time",
-            "lines": [
-              "15 Ring Dips",
-              "25 Wallballs 20/14lbs",
-              "30/22 Calorie Air Bike",
-              "C2 Bike: 40/32 Calories",
-              "Feel: Gas",
-              "Pace: Sustain",
-              "Target Score: 18-22 minutes",
-              "Firebreather Score: sub 18 minutes"
-            ]
-          },
-          {
-            "title": "Tempo Pull to Power Position into Squat Snatch",
-            "lines": [
-              "2×4 @ 65%",
-              "Tempo Pull to Mid Thigh into Squat Snatch",
-              "1×4 @ 65-70%",
-              "Tempo Pull to Knee into Squat Snatch",
-              "1×4 @ 65-75%",
-              "Row 500m at flush pace between sets",
-              "Drop and reset between each )"
             ]
           }
         ]
@@ -2886,24 +2902,8 @@
           }
         ],
         "note": "Benchmark: Heavy DT"
-      },
-      {
-        "date": "2026-07-01",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 12.1",
-            "lines": [
-              "Complete as many reps as possible in 7 minutes of:",
-              "Burpees"
-            ]
-          }
-        ],
-        "note": "Open: Open 12.1"
       }
     ]
   },
-  "last_updated": "2026-07-01T08:21:56.796175"
+  "last_updated": "2026-07-01T10:05:09.600048"
 }
