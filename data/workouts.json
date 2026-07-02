@@ -918,34 +918,6 @@
       },
       {
         "date": "2026-06-23",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "JUNE BURPEE CHALLENGE",
-            "lines": [
-              "EVERY 1:00 (12:00)",
-              "45 seconds Max Burpees Over Bar",
-              "15 second Rest",
-              "* (Score is Total Reps)"
-            ]
-          },
-          {
-            "title": "Strength",
-            "lines": [
-              "Strict Press + Push Press 5x6",
-              "5 Sets (Build across sets)",
-              "Every 2:00",
-              "3 Strict Press + 3 Push Press",
-              "* (Score is Weight)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-23",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2689,6 +2661,74 @@
     "2026-07-02": [
       {
         "date": "2026-07-02",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260702",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Rest Day",
+              "Virtuosity, Earned: Inside the First Afternoon of a CrossFit Level 1 Seminar",
+              "The Saturday afternoon of a CrossFit Level 1 Seminar moves fast: presses, push jerks, a lecture on what virtuosity really means, and a workout that turns a room of strangers into something closer to a team. By the final round of thrusters and burpees, no one is thinking about the morning's nerves anymore."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-02",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-july-2-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "Alternating Movement EMOM 6 minutes (2 rotations)",
+              "10 Ring Rows + Bar Hang in time remaining",
+              "10 Sit Ups + Hollow Hold in time remaining",
+              "2 Wall Walks + Wall Facing Hold in time remaining"
+            ]
+          },
+          {
+            "title": "EMOM 20 Minutes",
+            "lines": [
+              "– :45 of Strict Pull Ups",
+              "– :45 of GHD Hip Extensions / Sit Ups",
+              "– Max duration HS Hold",
+              "– Rest",
+              "Movement Variations (new variant every round)",
+              "– Strict Pull Ups: pronated grip, supinated grip, narrow grip, mixed grip, athlete’s choice x1.",
+              "– HS Hold: Handstand Hold, Wall Facing HS Hold, Freestanding HS hold, athlete’s choice x2.",
+              "– GHD: alternate between Hip Extensions and GHD Sit Ups (3 sets of Hip extensions, 2 sets of sit ups)",
+              "Feel: Muscle Overload",
+              "Pace: Sustain",
+              "Target Score: Scores will vary"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-02",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 18.1",
+            "lines": [
+              "Complete as many rounds as possible in 20 minutes of:",
+              "8 toes-to-bars",
+              "10 dumbbell hang clean and jerks",
+              "14-cal. row",
+              "*Men use 50-lb. dumbbell*"
+            ]
+          }
+        ],
+        "note": "Open: Open 18.1"
+      },
+      {
+        "date": "2026-07-02",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-07-02/",
@@ -2734,50 +2774,18 @@
       },
       {
         "date": "2026-07-02",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260702",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "WOD",
+            "sub_title": "Purple Mountains' Majesty",
             "lines": [
-              "Rest Day",
-              "Virtuosity, Earned: Inside the First Afternoon of a CrossFit Level 1 Seminar",
-              "The Saturday afternoon of a CrossFit Level 1 Seminar moves fast: presses, push jerks, a lecture on what virtuosity really means, and a workout that turns a room of strangers into something closer to a team. By the final round of thrusters and burpees, no one is thinking about the morning's nerves anymore."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-02",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-july-2-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "Alternating Movement EMOM 6 minutes (2 rotations)",
-              "10 Ring Rows + Bar Hang in time remaining",
-              "10 Sit Ups + Hollow Hold in time remaining",
-              "2 Wall Walks + Wall Facing Hold in time remaining"
-            ]
-          },
-          {
-            "title": "EMOM 20 Minutes",
-            "lines": [
-              "– :45 of Strict Pull Ups",
-              "– :45 of GHD Hip Extensions / Sit Ups",
-              "– Max duration HS Hold",
-              "– Rest",
-              "Movement Variations (new variant every round)",
-              "– Strict Pull Ups: pronated grip, supinated grip, narrow grip, mixed grip, athlete’s choice x1.",
-              "– HS Hold: Handstand Hold, Wall Facing HS Hold, Freestanding HS hold, athlete’s choice x2.",
-              "– GHD: alternate between Hip Extensions and GHD Sit Ups (3 sets of Hip extensions, 2 sets of sit ups)",
-              "Feel: Muscle Overload",
-              "Pace: Sustain",
-              "Target Score: Scores will vary"
-            ]
+              "10 Kettlebell Swings 25kg/16kg",
+              "50ft Kettlebell Lunge 25kg/16kg"
+            ],
+            "sub_title2": "10 ROUNDS FOR TIME:"
           }
         ]
       },
@@ -2843,27 +2851,8 @@
           }
         ],
         "note": "Benchmark: The Gauntlet"
-      },
-      {
-        "date": "2026-07-02",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.1",
-            "lines": [
-              "Complete as many rounds as possible in 20 minutes of:",
-              "8 toes-to-bars",
-              "10 dumbbell hang clean and jerks",
-              "14-cal. row",
-              "*Men use 50-lb. dumbbell*"
-            ]
-          }
-        ],
-        "note": "Open: Open 18.1"
       }
     ]
   },
-  "last_updated": "2026-07-02T03:11:21.016525"
+  "last_updated": "2026-07-02T07:57:24.277428"
 }
