@@ -1,116 +1,5 @@
 {
   "workouts": {
-    "2026-06-18": [
-      {
-        "date": "2026-06-18",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-june-18-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "2:00 Row",
-              "20 Kettlebell Romanian Dead Lifts",
-              ":30 Handstand Hold",
-              "1:30 Row",
-              "20 Kettlebell Deadlifts",
-              ":30 Wall Facing Handstand Hold",
-              "1:00 Row",
-              "20 Kettlebell Swings",
-              ":30 Free Standing Handstand Hold"
-            ]
-          },
-          {
-            "title": "Crossfit Games Open 20.3 and 18.4",
-            "lines": [
-              "21 deadlifts 225/155 lb",
-              "21 handstand push-ups",
-              "15 deadlifts 225/155 lb",
-              "15 handstand push-ups",
-              "9 deadlifts 225/155 lb",
-              "9 handstand push-ups",
-              "21 deadlifts 315/205 lb",
-              "50-ft. handstand walk",
-              "15 deadlifts 315/205 lb",
-              "50-ft. handstand walk",
-              "9 deadlifts 315/205 lb",
-              "50-ft. handstand walk",
-              "Time cap: 9 minutes",
-              "Feel: Cardio/Gas/Muscle Overload",
-              "Pace: Sustain",
-              "Target Score: Sub 9 minutes",
-              "Firebreather Score: Sub 6 minutes"
-            ]
-          },
-          {
-            "title": "Extra Credit",
-            "lines": [
-              "Zone 2 Row"
-            ]
-          },
-          {
-            "title": "12:00 Zone 2 Warm Up",
-            "lines": [
-              "45:00-90:00 Row @ Zone 2"
-            ]
-          },
-          {
-            "title": "12:00 Zone 2 Cool Down",
-            "lines": [
-              "Your Zone 2 today should stay between 160bpm minus your age and 180bpm minus your age."
-            ]
-          },
-          {
-            "title": "Warm up:",
-            "lines": [
-              "Build from resting heartrate to 180bpm minus your age slowly over 12:00. This will feel incredibly slow, but will help your session a lot. Feel free to mix up machines, but end on rower."
-            ]
-          },
-          {
-            "title": "Cool down:",
-            "lines": [
-              "Spend 4:00 on the rower, keeping your heartrate above 150bpm minus your age, then slowly work down to resting for the next 8:00 on any machine or walking."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-18",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 15.2",
-            "lines": [
-              "Complete as many rounds and reps as possible in 14 minutes of:",
-              "7 muscle-ups",
-              "50 wall-ball shots",
-              "100 double-unders",
-              "*Men use 20-lb. ball to 10 feet, Women use 14-lb. ball to 9 feet*"
-            ]
-          }
-        ],
-        "note": "Open: Open 15.2"
-      },
-      {
-        "date": "2026-06-18",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260618",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Rest Day",
-              "CrossFit Builds People Who Are Harder To Break: Why Our Programming Is Anything but Random",
-              "Spencer Hendel has spent nearly 20 years programming workouts with a single goal: to build people who are harder to break. In this piece, he breaks down the philosophy behind purposeful programming and why movement selection, time domains, and standards all exist to get athletes to one defining moment, and what they do when they get there."
-            ]
-          }
-        ]
-      }
-    ],
     "2026-06-19": [
       {
         "date": "2026-06-19",
@@ -195,89 +84,6 @@
           }
         ],
         "note": "Open: Open 26.1"
-      },
-      {
-        "date": "2026-06-19",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-19/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "scorpions",
-              "instep rotation",
-              "90/90 hip rotation",
-              "hand walk"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 reverse lunges",
-              "10 plank push ups",
-              "20sec deep squat hold"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "LUNGES 14MIN",
-            "lines": [
-              "4 supersets",
-              "4 back rack reverse lunges @rpe 8-9",
-              "12-15 partial goblet squats",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 17MIN",
-            "lines": [
-              "15 sit ups",
-              "12 air squats",
-              "9 push ups",
-              "-1:00 rest between rounds-",
-              "* aerobic power"
-            ],
-            "sub_title": "amrap 3:30 x 4 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-19",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Nate",
-            "sub_title": "Complete as many rounds as possible in 20 minutes of:",
-            "lines": [
-              "2 muscle-ups",
-              "4 handstand push-ups",
-              "8 kettlebell swings"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-19",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "CrossFit Total II",
-            "lines": [
-              "In 45 mins find your 1RM for each item following",
-              "Post the total amount.",
-              "Clean",
-              "Bench press",
-              "Overhead squat"
-            ]
-          }
-        ],
-        "note": "Benchmark: CrossFit Total II"
       }
     ],
     "2026-06-20": [
@@ -913,22 +719,6 @@
               "* muscular endurance"
             ],
             "sub_title": "amrap 16min"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-23",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Strength:-E2MOM x 5 – 1 Squat Clean + 1 Front Squat + 1 Split Jerk 65-80%",
-              "Metcon:-21/15 Cal Assault Bike15 Burpees over the bar9 Power Cleans 70/50kg",
-              "Partner Abs finisher*12x front / left / right / candle sticks*C2B"
-            ]
           }
         ]
       },
@@ -2852,7 +2642,175 @@
         ],
         "note": "Benchmark: The Gauntlet"
       }
+    ],
+    "2026-07-03": [
+      {
+        "date": "2026-07-03",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-07-03/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "samson stretch",
+              "scorpions",
+              "thoracic rotations",
+              "calf stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "20 single under",
+              "10 prone snow angels",
+              "10 scap. push ups"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "PUSH PRESS 14MIN",
+            "lines": [
+              "4-5 sets",
+              "5 push press @70-75%",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 14MIN",
+            "lines": [
+              "10-8-6-4-2",
+              "wall walks",
+              "100-80-60-40-20",
+              "double unders",
+              "* muscular endurance & aerobic power"
+            ],
+            "sub_title": "for time"
+          },
+          {
+            "title": "ABS 5MIN",
+            "lines": [
+              "weighted sit ups 15/10kg"
+            ],
+            "sub_title": "amrap 5min"
+          }
+        ]
+      },
+      {
+        "date": "2026-07-03",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260703",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Ned"
+            ]
+          },
+          {
+            "title": "7 ROUNDS FOR TIME OF",
+            "lines": [
+              "11 back squats",
+              "1,000-meter row",
+              "♀ Bodyweight barbell",
+              "♂ Bodyweight barbell",
+              "Compare to",
+              "141030"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-03",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "* Partner Metcon:-5 rounds400m run together15 Syncro KB swings 24/16kg20 Box Jump Overs 24/20″ (shared)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-03",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Pike",
+            "sub_title": "5 rounds for time of:",
+            "lines": [
+              "20 thrusters",
+              "10 strict ring dips",
+              "20 push-ups",
+              "10 strict handstand push-ups",
+              "50-meter bear crawl"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-03",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "J.J.",
+            "lines": [
+              "For time:",
+              "1 Squat  clean  185 lbs/125 lbs",
+              "10 parallette  handstand push-up s",
+              "2 Squat  clean  185 lbs/125 lbs",
+              "9 parallette  handstand push-up s",
+              "3 Squat  clean  185 lbs/125 lbs",
+              "8 parallette  handstand push-up s",
+              "4 Squat  clean  185 lbs/125 lbs",
+              "7 parallette  handstand push-up s",
+              "5 Squat  clean  185 lbs/125 lbs",
+              "6 parallette  handstand push-up s",
+              "6 Squat  clean  185 lbs/125 lbs",
+              "5 parallette  handstand push-up s",
+              "7 Squat  clean  185 lbs/125 lbs",
+              "4 parallette  handstand push-up s",
+              "8 Squat  clean  185 lbs/125 lbs",
+              "3 parallette  handstand push-up s",
+              "9 Squat  clean  185 lbs/125 lbs",
+              "2 parallette  handstand push-up s",
+              "10 Squat  clean  185 lbs/125 lbs",
+              "1 parallette  handstand push-up"
+            ]
+          }
+        ],
+        "note": "Benchmark: J.J."
+      },
+      {
+        "date": "2026-07-03",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 16.4",
+            "lines": [
+              "Complete as many rounds and reps as possible in 13 minutes of:",
+              "55 deadlifts",
+              "55 wall-ball shots",
+              "55-calorie row",
+              "55 handstand push-ups",
+              "*Men deadlift 225 lb. and throw 20-lb. ball to 10-ft. target*",
+              "*Women deadlift 155 lb. and throw 14-lb. ball to 9-ft. target*"
+            ]
+          }
+        ],
+        "note": "Open: Open 16.4"
+      }
     ]
   },
-  "last_updated": "2026-07-02T11:54:18.675516"
+  "last_updated": "2026-07-03T03:09:15.534818"
 }
