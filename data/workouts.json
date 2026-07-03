@@ -897,25 +897,6 @@
       },
       {
         "date": "2026-06-24",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Summer Sunsets",
-            "lines": [
-              "5 SETS",
-              "400m Run",
-              "8 Deadlifts 143kg/93kg",
-              "* -Rest 1:00 between Sets-",
-              "* (Score is Time for Slowest Set)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-24",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2646,6 +2627,52 @@
     "2026-07-03": [
       {
         "date": "2026-07-03",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260703",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Ned"
+            ]
+          },
+          {
+            "title": "7 ROUNDS FOR TIME OF",
+            "lines": [
+              "11 back squats",
+              "1,000-meter row",
+              "♀ Bodyweight barbell",
+              "♂ Bodyweight barbell",
+              "Compare to",
+              "141030"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-03",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 16.4",
+            "lines": [
+              "Complete as many rounds and reps as possible in 13 minutes of:",
+              "55 deadlifts",
+              "55 wall-ball shots",
+              "55-calorie row",
+              "55 handstand push-ups",
+              "*Men deadlift 225 lb. and throw 20-lb. ball to 10-ft. target*",
+              "*Women deadlift 155 lb. and throw 14-lb. ball to 9-ft. target*"
+            ]
+          }
+        ],
+        "note": "Open: Open 16.4"
+      },
+      {
+        "date": "2026-07-03",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-07-03/",
@@ -2698,25 +2725,77 @@
       },
       {
         "date": "2026-07-03",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260703",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-july-3-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "Ned"
+              "3 Rounds",
+              ":20 Burpees",
+              ":10 Rest",
+              ":20 Walking Lunge Steps",
+              ":10 Rest",
+              ":20 Machine",
+              ":10 Rest"
             ]
           },
           {
-            "title": "7 ROUNDS FOR TIME OF",
+            "title": "5 rounds for time",
             "lines": [
-              "11 back squats",
-              "1,000-meter row",
-              "♀ Bodyweight barbell",
-              "♂ Bodyweight barbell",
-              "Compare to",
-              "141030"
+              "10 DB Facing Burpees",
+              "16 Walking Lunges* 50s/35s",
+              "10 DB Facing Burpees",
+              "Alternate full rounds with a partner until both athletes complete 5 rounds.",
+              "*Lunge Variants",
+              "Rd 1: Farmer’s hold",
+              "Rd 2: Front Rack hold",
+              "Rd 3: “Regional’s Style” (one DB in the front rack, the other overhead, switch at halfway)",
+              "Rd 4: Front Rack Hold",
+              "Rd 5: Farmer’s Hold",
+              "Feel: Gas",
+              "Pace: Reach/Controlled Send",
+              "Target Score: 1:30-1:45/rd (15-18 minute total clock)",
+              "Firebreather Score: sub 1:30/rd (15 minute total clock or less)"
+            ]
+          },
+          {
+            "title": "Deadlift",
+            "lines": [
+              "12-10-8-6",
+              "Start your set of 12 between 60 and 70%, then add weight each round.",
+              "Bike 1,000m Between Sets to Flush”)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-03",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Rockets' Red Glare",
+            "lines": [
+              "5 SETS FOR 3:00",
+              "20/16 Calorie Air Bike",
+              "50 Double Unders",
+              "Max Toes to Bar in Remaining Time",
+              "* -Rest 1:30 between Sets-",
+              "* (Score is Total Toes to Bar)"
+            ]
+          },
+          {
+            "title": "Strength",
+            "lines": [
+              "Shoulder Press 1x3",
+              "ON A 10:00 RUNNING CLOCK (POST-WORKOUT)",
+              "Build to a Heavy/Mod-Heavy 3-Rep Shoulder Press*",
+              "*Bar comes from the rack",
+              "* (Score is Weight)"
             ]
           }
         ]
@@ -2788,29 +2867,8 @@
           }
         ],
         "note": "Benchmark: J.J."
-      },
-      {
-        "date": "2026-07-03",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 16.4",
-            "lines": [
-              "Complete as many rounds and reps as possible in 13 minutes of:",
-              "55 deadlifts",
-              "55 wall-ball shots",
-              "55-calorie row",
-              "55 handstand push-ups",
-              "*Men deadlift 225 lb. and throw 20-lb. ball to 10-ft. target*",
-              "*Women deadlift 155 lb. and throw 14-lb. ball to 9-ft. target*"
-            ]
-          }
-        ],
-        "note": "Open: Open 16.4"
       }
     ]
   },
-  "last_updated": "2026-07-03T03:09:15.534818"
+  "last_updated": "2026-07-03T07:41:23.601999"
 }
