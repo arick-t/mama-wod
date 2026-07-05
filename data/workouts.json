@@ -1,92 +1,5 @@
 {
   "workouts": {
-    "2026-06-20": [
-      {
-        "date": "2026-06-20",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260620",
-        "sections": [
-          {
-            "title": "FOR TIME",
-            "lines": [
-              "1,600-meter sled drag with a barbell front-rack carry",
-              "Any time you stop, you must complete 15 bent-over rows with the barbell before starting again. The sled is attached around the waist and dragged behind the athlete.",
-              "♀ 95-lb barbell and 95-lb sled",
-              "♂ 135-lb barbell and 135-lb sled"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-20",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-june-20-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "In a team of 3, perform 3 full rotations:",
-              "Row 300/270m",
-              "Sandbag Bearhug Hold",
-              "Bar Hang",
-              "Switch when Rowing partner is finished"
-            ]
-          },
-          {
-            "title": "AMRAP 21 minutes in teams of 3 for total rowing distance:",
-            "lines": [
-              "P1: Row for distance",
-              "*P2: 2 Sandbag to Shoulder + Hold 50-150lbs",
-              "P3: Rest",
-              "*P2: perform 2 sandbag to shoulder, then pick it up once more and bearhug hold to failure.",
-              "When P2 can no longer hold the sandbag, the team rotates in the order written to the next station.",
-              "Feel: Muscle Overload/Gas",
-              "Pace: Sustain",
-              "Target Score: 4,500/4,000m+",
-              "Firebreather Score: 5,000/4,500m+"
-            ]
-          },
-          {
-            "title": "5 Sets",
-            "lines": [
-              "5-10 Wall Walks",
-              "Echo Bike @ Flush Pace for 3:00",
-              "We’re not working on speed today, we’re chasing volume. So slow them down a bit and if you have to pause during a round, it’s too many."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-20",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 21.1",
-            "lines": [
-              "For time:",
-              "1 wall walk",
-              "10 double-unders",
-              "3 wall walks",
-              "30 double-unders",
-              "6 wall walks",
-              "60 double-unders",
-              "9 wall walks",
-              "90 double-unders",
-              "15 wall walks",
-              "150 double-unders",
-              "21 wall walks",
-              "210 double-unders",
-              "Time cap: 15 min."
-            ]
-          }
-        ],
-        "note": "Open: Open 21.1"
-      }
-    ],
     "2026-06-21": [
       {
         "date": "2026-06-21",
@@ -152,101 +65,6 @@
           }
         ],
         "note": "Open: Open 20.4"
-      },
-      {
-        "date": "2026-06-21",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-21/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "sumo squat stretch",
-              "instep rotations",
-              "samson stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. push up to down dog",
-              "2. row",
-              "3. straight leg sit ups",
-              "4. air squats"
-            ],
-            "sub_title": "30sec on / 15sec off x2 rounds"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "1. 3-6 wall walks",
-              "2. 10-15cal row",
-              "3. 6-8 strict toes to bar",
-              "4. 10-16 goblet squats",
-              "5. rest",
-              "Sunday Endurance for Open Gym",
-              "5:00–10:00 row [rpe 2-3]",
-              "into",
-              "6 rounds",
-              "",
-              "3:00 bike [rpe 2-3]",
-              "1:00 row [rpe 5-6]",
-              "into",
-              "5:00–10:00 bike [rpe 2-3]"
-            ],
-            "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-21",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Walsh",
-            "sub_title": "4 rounds for time of:",
-            "lines": [
-              "22 burpee pull-ups",
-              "22 back squats",
-              "200-meter run with a plate overhead"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-21",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Helen\" (BENCHMARK)",
-            "lines": [
-              "FOR TIME:",
-              "3 Rounds",
-              "400m Run",
-              "21 American Kettlebell Swings (16/24kg)",
-              "12 Pull-Ups",
-              "Time Cap: 15:00",
-              "Score = Time",
-              "Goal: 7:00-11:00",
-              "RPE: 9.5/10",
-              "Level 2:",
-              "400m Run",
-              "21 American KB Swings 20/12kg",
-              "9 Pull-Ups",
-              "Level 1/BASE:",
-              "400m Run OR 800m Bike Erg",
-              "21 Russian KB Swings",
-              "12 Jumping Pull-Ups"
-            ]
-          }
-        ],
-        "note": "Benchmark: Helen\" (BENCHMARK)"
       }
     ],
     "2026-06-22": [
@@ -1162,17 +980,15 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "Nicole",
+            "title": "Heavy Fran",
             "lines": [
-              "20 min AMRAP:",
-              "Your final score is total pull-up reps after 20minutes.",
-              "Every Time you break on the pull ups go for a run! Choose a scaling option that always allows more than 10 Pull Up repetitions each time.",
-              "400 m  run  or erg cals 25/20",
-              "max rep unbroken pull-ups"
+              "15-12-9 reps of:",
+              "Thruster s (60/42,5kg or 135/95 lbs)",
+              "Weighted pull-ups (20/15kg or 45/30 lbs)"
             ]
           }
         ],
-        "note": "Benchmark: Nicole"
+        "note": "Benchmark: Heavy Fran"
       }
     ],
     "2026-06-27": [
@@ -2837,7 +2653,137 @@
         ],
         "note": "Benchmark: Cindy XXX"
       }
+    ],
+    "2026-07-05": [
+      {
+        "date": "2026-07-05",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-07-05/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "instep rotations",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. prone snow angels",
+              "2. row",
+              "3. hollow hold",
+              "4. reverse lunges"
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "1. 15-20 wall balls",
+              "2. 10-15cal row",
+              "3. 8-10 strict toes to bar",
+              "4. 12-16 reverse lunges",
+              "5. rest",
+              "Sunday Endurance for Open Gym",
+              "5:00 ski at rpe 5",
+              "4:00 ski at rpe 6",
+              "3:00 ski at rpe 7",
+              "2:00 ski at rpe 8",
+              "1:00 ski at rpe 9",
+              "* -rest 1:00 between each effort",
+              "* aerobic power [lactate threshold]"
+            ],
+            "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-07-05",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Hero Wod:",
+              "Baucer",
+              "2 rounds2 minute Elbow Plank (in silence)13 Burpees18 Kettlebell Swings (24/16kg)31 Push-Ups53 Goblet Squats (24/16kg)53 Burpees31 Kettlebell Swings (24/16kg)18 Push-Ups13 Goblet Squats (24/16kg)2 minute Wall Sit (in silence)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-05",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Meadows",
+            "sub_title": "For time:",
+            "lines": [
+              "20 muscle-ups",
+              "25 lowers from an inverted hang on the rings, slowly, with straight body and arms",
+              "30 ring handstand push-ups",
+              "35 ring rows",
+              "40 ring push-ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-05",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Nicole",
+            "lines": [
+              "20 min AMRAP:",
+              "Your final score is total pull-up reps after 20minutes.",
+              "Every Time you break on the pull ups go for a run! Choose a scaling option that always allows more than 10 Pull Up repetitions each time.",
+              "400 m  run  or erg cals 25/20",
+              "max rep unbroken pull-ups"
+            ]
+          }
+        ],
+        "note": "Benchmark: Nicole"
+      },
+      {
+        "date": "2026-07-05",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 25.3",
+            "lines": [
+              "For time:",
+              "5 wall walks",
+              "50-calorie row",
+              "5 wall walks",
+              "25 deadlifts",
+              "5 wall walks",
+              "25 cleans",
+              "5 wall walks",
+              "25 snatches",
+              "5 wall walks",
+              "50-calorie row",
+              "Time cap: 20 minutes",
+              "♀ 155-lb (70-kg) deadlift, 85-lb (38-kg) clean, 65-lb (29-kg) snatch",
+              "♂ 225-lb (102-kg) deadlift, 135-lb (61-kg) clean, 95-lb (43-kg) snatch"
+            ]
+          }
+        ],
+        "note": "Open: Open 25.3"
+      }
     ]
   },
-  "last_updated": "2026-07-04T11:34:59.465471"
+  "last_updated": "2026-07-05T03:03:49.845501"
 }
