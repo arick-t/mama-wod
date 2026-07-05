@@ -2657,6 +2657,34 @@
     "2026-07-05": [
       {
         "date": "2026-07-05",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 25.3",
+            "lines": [
+              "For time:",
+              "5 wall walks",
+              "50-calorie row",
+              "5 wall walks",
+              "25 deadlifts",
+              "5 wall walks",
+              "25 cleans",
+              "5 wall walks",
+              "25 snatches",
+              "5 wall walks",
+              "50-calorie row",
+              "Time cap: 20 minutes",
+              "♀ 155-lb (70-kg) deadlift, 85-lb (38-kg) clean, 65-lb (29-kg) snatch",
+              "♂ 225-lb (102-kg) deadlift, 135-lb (61-kg) clean, 95-lb (43-kg) snatch"
+            ]
+          }
+        ],
+        "note": "Open: Open 25.3"
+      },
+      {
+        "date": "2026-07-05",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-07-05/",
@@ -2698,6 +2726,47 @@
               "* aerobic power [lactate threshold]"
             ],
             "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-07-05",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-july-5-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "400m Jog",
+              "20 Kickstand Deadlifts (10/side)",
+              "20 Cossack Squats",
+              "20 Leg Swings (10/side)",
+              "20 Plank to Push Up",
+              "AMRAP 6 Minutes",
+              "200m Run",
+              "4 Burpees",
+              "4 Get Overs",
+              "4 Russian KB Swings",
+              "4 KB Goblet Squats"
+            ]
+          },
+          {
+            "title": "AMRAP 28 Minutes",
+            "lines": [
+              "200m Run",
+              "15 Russian KB Swings 70/53lbs",
+              "200m Run",
+              "15 KB Goblet Squats 70/53lbs",
+              "200m Run",
+              "8 Burpee Get Overs 40″",
+              "200m Run",
+              "*Note that after completing the 8 Burpee Get Overs, there is a 2x200m run",
+              "Feel: Cardio",
+              "Pace: Sustain",
+              "Target Score: 4+ Rounds",
+              "Firebreather Score: 5 Rounds"
+            ]
           }
         ]
       },
@@ -2754,36 +2823,8 @@
           }
         ],
         "note": "Benchmark: Nicole"
-      },
-      {
-        "date": "2026-07-05",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 25.3",
-            "lines": [
-              "For time:",
-              "5 wall walks",
-              "50-calorie row",
-              "5 wall walks",
-              "25 deadlifts",
-              "5 wall walks",
-              "25 cleans",
-              "5 wall walks",
-              "25 snatches",
-              "5 wall walks",
-              "50-calorie row",
-              "Time cap: 20 minutes",
-              "♀ 155-lb (70-kg) deadlift, 85-lb (38-kg) clean, 65-lb (29-kg) snatch",
-              "♂ 225-lb (102-kg) deadlift, 135-lb (61-kg) clean, 95-lb (43-kg) snatch"
-            ]
-          }
-        ],
-        "note": "Open: Open 25.3"
       }
     ]
   },
-  "last_updated": "2026-07-05T03:03:49.845501"
+  "last_updated": "2026-07-05T07:56:28.905717"
 }
