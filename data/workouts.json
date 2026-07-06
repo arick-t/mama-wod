@@ -784,26 +784,6 @@
       },
       {
         "date": "2026-06-26",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Cookout Season”",
-            "lines": [
-              "1000/850m Row",
-              "50 Thrusters 20kg/16kg",
-              "60 Pull-Ups",
-              "50 Thrusters 20kg/16kg",
-              "1000/850m Row"
-            ],
-            "sub_title2": "For Time:"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-26",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2688,55 +2668,6 @@
     "2026-07-06": [
       {
         "date": "2026-07-06",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-07-06/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "instep rotation",
-              "lying hip cross over",
-              "lat stretch",
-              "hand walk"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 clean grip deadlifts",
-              "10 elbow rotation",
-              "10/8cal row"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "POWER CLEAN 12MIN",
-            "lines": [
-              "on every 1:30 x 8 sets",
-              "1 deadlift",
-              "1 hang power clean",
-              "1 power clean",
-              "(build in weight)",
-              "explosive power"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "each round for time",
-              "15/12cal row",
-              "9 power cleans 60/40kg",
-              "* score: slowest round",
-              "* anaerobic capacity"
-            ],
-            "sub_title": "on every 2:30 x 6 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-06",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260706",
@@ -2813,6 +2744,99 @@
       },
       {
         "date": "2026-07-06",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 16.4",
+            "lines": [
+              "Complete as many rounds and reps as possible in 13 minutes of:",
+              "55 deadlifts",
+              "55 wall-ball shots",
+              "55-calorie row",
+              "55 handstand push-ups",
+              "*Men deadlift 225 lb. and throw 20-lb. ball to 10-ft. target*",
+              "*Women deadlift 155 lb. and throw 14-lb. ball to 9-ft. target*"
+            ]
+          }
+        ],
+        "note": "Open: Open 16.4"
+      },
+      {
+        "date": "2026-07-06",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-07-06/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "instep rotation",
+              "lying hip cross over",
+              "lat stretch",
+              "hand walk"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 clean grip deadlifts",
+              "10 elbow rotation",
+              "10/8cal row"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "POWER CLEAN 12MIN",
+            "lines": [
+              "on every 1:30 x 8 sets",
+              "1 deadlift",
+              "1 hang power clean",
+              "1 power clean",
+              "(build in weight)",
+              "explosive power"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "each round for time",
+              "15/12cal row",
+              "9 power cleans 60/40kg",
+              "* score: slowest round",
+              "* anaerobic capacity"
+            ],
+            "sub_title": "on every 2:30 x 6 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-07-06",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Federer vs Nadal",
+            "lines": [
+              "400m Run",
+              "15 Bar Muscle Ups",
+              "400m Run",
+              "12 Bar Muscle Ups",
+              "400m Run",
+              "9 Bar Muscle Ups",
+              "*Unbroken BMU, 200m Penalty Run each break",
+              "* (Score is Time)"
+            ],
+            "sub_title2": "FOR TIME"
+          }
+        ]
+      },
+      {
+        "date": "2026-07-06",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2865,29 +2889,8 @@
           }
         ],
         "note": "Benchmark: Heavy Fran"
-      },
-      {
-        "date": "2026-07-06",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 16.4",
-            "lines": [
-              "Complete as many rounds and reps as possible in 13 minutes of:",
-              "55 deadlifts",
-              "55 wall-ball shots",
-              "55-calorie row",
-              "55 handstand push-ups",
-              "*Men deadlift 225 lb. and throw 20-lb. ball to 10-ft. target*",
-              "*Women deadlift 155 lb. and throw 14-lb. ball to 9-ft. target*"
-            ]
-          }
-        ],
-        "note": "Open: Open 16.4"
       }
     ]
   },
-  "last_updated": "2026-07-06T03:09:31.994449"
+  "last_updated": "2026-07-06T08:11:57.022509"
 }
