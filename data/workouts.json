@@ -1,72 +1,5 @@
 {
   "workouts": {
-    "2026-06-21": [
-      {
-        "date": "2026-06-21",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-june-21-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "1:30 1st Machine",
-              "5 Ring Rows",
-              "5 Burpees",
-              "6 Reverse Lunges",
-              "1:30 2nd Machine",
-              "5 Ring Rows",
-              "5 Burpees",
-              "6 Reverse Lunges",
-              "1:30 3rd Machine"
-            ]
-          },
-          {
-            "title": "EMOM 25 minutes, rotating through each movement 5 times",
-            "lines": [
-              "– 20/16 Calorie Row",
-              "– 10 S-Arm Devil’s Press 50/35lbs",
-              "– 18/15 Assault or Echo Bike",
-              "– Max S-Arm DB Thruster 50/35lbs",
-              "– Rest",
-              "*If you do no complete your reps within the allotted minute, do not do any DB Thrusters that round (rest 2:00, not 1:00)",
-              "Feel: Gas",
-              "Pace: Sustain",
-              "Target Score: 70 thrusters",
-              "Firebreather Score: 100 thrusters"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-21",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 20.4",
-            "lines": [
-              "For time:",
-              "30 box jumps, 24 in.",
-              "15 clean and jerks, 95 lb.",
-              "30 box jumps, 24 in.",
-              "15 clean and jerks, 135 lb.",
-              "30 box jumps, 24 in.",
-              "10 clean and jerks, 185 lb.",
-              "30 single-leg squats",
-              "10 clean and jerks, 225 lb.",
-              "30 single-leg squats",
-              "5 clean and jerks, 275 lb.",
-              "30 single-leg squats",
-              "5 clean and jerks, 315 lb.",
-              "Time cap: 20 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 20.4"
-      }
-    ],
     "2026-06-22": [
       {
         "date": "2026-06-22",
@@ -158,93 +91,6 @@
           }
         ],
         "note": "Open: Open 17.4"
-      },
-      {
-        "date": "2026-06-22",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-22/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hamstring stretch on box",
-              "lat stretch on box",
-              "calf stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 good mornings",
-              "10 squat jumps",
-              "10 ring rows",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "ROMANIAN DEADLIFTS  15MIN",
-            "lines": [
-              "3-4 sets",
-              "10 romanian deadlifts",
-              "@8-9",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "6 rounds",
-              "",
-              "8 strict pull ups",
-              "12/10cal bike/ski",
-              "16 box jumps 60/50cm",
-              "* rx+ option: strict chest to bar pull ups",
-              "* aerobic power & muscular endurance"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-22",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Falkel",
-            "sub_title": "Complete as many rounds and reps as possible in 25 minutes of:",
-            "lines": [
-              "8 handstand push-ups",
-              "8 box jumps",
-              "1 rope climb to 15 feet"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-22",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "FRAN",
-            "lines": [
-              "For Time:",
-              "21-15-9",
-              "Thruster",
-              "Pull-up",
-              "RPE 5, maximum effort! Target: sub 6min. Time Cap 10min.",
-              "Rxd 42,5/30kg",
-              "SC 30/20kg + Jumping Pull-ups"
-            ]
-          }
-        ],
-        "note": "Benchmark: FRAN"
       }
     ],
     "2026-06-23": [
@@ -980,15 +826,29 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "Heavy Fran",
+            "title": "FIGHT GONE BAD",
             "lines": [
-              "15-12-9 reps of:",
-              "Thruster s (60/42,5kg or 135/95 lbs)",
-              "Weighted pull-ups (20/15kg or 45/30 lbs)"
+              "3 Rounds for Max Reps:",
+              "1:00 WB 9/6kg",
+              "1:00 SDHP 35/25kg",
+              "1:00 Box Jumps 50cm",
+              "1:00 Push Presses 35/25kg",
+              "1:00 Cal Row /Machine",
+              "1:00 Rest",
+              "How do you perform the “Fight Gone Bad” workout?",
+              "Perform 1 minute of work at each of the 5 stations. Move immediately to the next station after 1 minute. The clock does not reset or stop between exercises. One-minute break is allowed before repeating each round. One point is given for each rep, except on the rower where each calorie is one point.",
+              "How do you score the “Fight Gone Bad” workout?",
+              "*Score is the total cumulative number of repetitions completed of all movements in all 3 rounds.*",
+              "What is a good score for the “Fight Gone Bad” workout?",
+              "– Beginner: 150-250 reps",
+              "– Intermediate: 250-350 reps",
+              "– Advanced: 350-450 reps",
+              "– Elite: 500+ reps",
+              "https://www.youtube.com/live/_20NyesOuGA?is=JhPPI2a7_vPSJ0sA"
             ]
           }
         ],
-        "note": "Benchmark: Heavy Fran"
+        "note": "Benchmark: FIGHT GONE BAD"
       }
     ],
     "2026-06-27": [
@@ -2824,7 +2684,210 @@
         ],
         "note": "Benchmark: Nicole"
       }
+    ],
+    "2026-07-06": [
+      {
+        "date": "2026-07-06",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-07-06/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "instep rotation",
+              "lying hip cross over",
+              "lat stretch",
+              "hand walk"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 clean grip deadlifts",
+              "10 elbow rotation",
+              "10/8cal row"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "POWER CLEAN 12MIN",
+            "lines": [
+              "on every 1:30 x 8 sets",
+              "1 deadlift",
+              "1 hang power clean",
+              "1 power clean",
+              "(build in weight)",
+              "explosive power"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "each round for time",
+              "15/12cal row",
+              "9 power cleans 60/40kg",
+              "* score: slowest round",
+              "* anaerobic capacity"
+            ],
+            "sub_title": "on every 2:30 x 6 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-07-06",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260706",
+        "sections": [
+          {
+            "title": "FOR TIME",
+            "lines": [
+              "15 power snatches",
+              "5 rope climbs to 15 feet",
+              "12 power snatches",
+              "4 rope climbs",
+              "9 power snatches",
+              "3 rope climbs",
+              "6 power snatches",
+              "2 rope climbs",
+              "3 power snatches",
+              "1 rope climb",
+              "♀ 95-lb barbell",
+              "♂ 135-lb barbell"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-06",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-july-6-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "400m Run",
+              "Then 3 rounds of:",
+              "10 Plate Ground to Overhead",
+              "8 Ring Rows",
+              "4 Burpees"
+            ]
+          },
+          {
+            "title": "Strength",
+            "lines": [
+              "6 Rounds",
+              "8 Unbroken Strict Pull ups",
+              "Rest 2:00 between sets",
+              "*Add band assistance as needed to maintain unbroken",
+              "*Rounds 1 & 4: Double overhand grip",
+              "Rounds 2 & 5: Double underhand grip",
+              "Rounds 3 & 6: Mixed grip (one over, one under)"
+            ]
+          },
+          {
+            "title": "For Time",
+            "lines": [
+              "10-9-8-7-6-5-4-3-2-1",
+              "Clean and Jerks 95/65lbs",
+              "Each set must be unbroken and athletes must drop the bar between sets. If a set is failed, the athlete must restart the set.",
+              "Feel: Gas",
+              "Pace: Reach",
+              "Target Score: Sub 7 minutes",
+              "Firebreather Score: Sub 5 minutes"
+            ]
+          },
+          {
+            "title": "Squat Clean",
+            "lines": [
+              "Pause At the Knee Squat Clean + Split Jerk",
+              "7×1",
+              "Spend 1-2 minutes slowly flushing on a machine between sets.)",
+              "Lower the bar down to just in front of your knee cap with the torso getting out over the bar, so you have to mimic getting back to power position as you would from the floor."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-06",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Strength:-Muscle-Ups – E3MOM x 5 rounds (15 mins)L1: Jumping transitions to RMUL2: 3–5 Kipping RMU — singles with control, focus on hip drive and consistent turn-overL3: Work on linking reps — aim for 2+ unbroken each set"
+            ]
+          },
+          {
+            "title": "METCON",
+            "lines": []
+          }
+        ]
+      },
+      {
+        "date": "2026-07-06",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "TPT9000",
+            "sub_title": "For time:",
+            "lines": [
+              "100-meter run",
+              "Then, 9 rounds of:",
+              "8 burpees",
+              "26 kettlebell swings",
+              "21 wall-ball shots",
+              "100-meter run"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-06",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Heavy Fran",
+            "lines": [
+              "15-12-9 reps of:",
+              "Thruster s (60/42,5kg or 135/95 lbs)",
+              "Weighted pull-ups (20/15kg or 45/30 lbs)"
+            ]
+          }
+        ],
+        "note": "Benchmark: Heavy Fran"
+      },
+      {
+        "date": "2026-07-06",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 16.4",
+            "lines": [
+              "Complete as many rounds and reps as possible in 13 minutes of:",
+              "55 deadlifts",
+              "55 wall-ball shots",
+              "55-calorie row",
+              "55 handstand push-ups",
+              "*Men deadlift 225 lb. and throw 20-lb. ball to 10-ft. target*",
+              "*Women deadlift 155 lb. and throw 14-lb. ball to 9-ft. target*"
+            ]
+          }
+        ],
+        "note": "Open: Open 16.4"
+      }
     ]
   },
-  "last_updated": "2026-07-05T11:50:56.392073"
+  "last_updated": "2026-07-06T03:09:31.994449"
 }
