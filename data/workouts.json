@@ -1,98 +1,5 @@
 {
   "workouts": {
-    "2026-06-22": [
-      {
-        "date": "2026-06-22",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260622",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "On a 20-minute clock for total reps:",
-              "0:00-5:00:",
-              "200-meter run",
-              "Max freestanding shoulder taps",
-              "5:00-10:00:",
-              "200-meter run",
-              "Max skin-the-cats",
-              "10:00-15:00:",
-              "200-meter run",
-              "Max L pull-ups",
-              "15:00-20:00:",
-              "200-meter run",
-              "Max deficit push-ups",
-              "♀ 2-inch deficit",
-              "♂ 4-inch deficit"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-22",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-june-22-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "20 Hamstring Scoops",
-              "20 Deadbugs",
-              "20 S-leg Glute bridges",
-              "-Then-",
-              "15 Kettlebell Swings",
-              "300m Run",
-              "15 Kettlebell Swings"
-            ]
-          },
-          {
-            "title": "Deadlift",
-            "lines": [
-              "Every 4 minutes until a 1RM Deadlift is found",
-              "3 Box Jumps for max Explosiveness",
-              "1 Deadlift @75%*",
-              "*add 5% until a new 1RM is found)",
-              "25 min CAP"
-            ]
-          },
-          {
-            "title": "5 Rounds",
-            "lines": [
-              "14 Alternating DB Snatch 60/40lbs",
-              "12 Lateral Burpee Over DB",
-              "Rest 1:00",
-              "Feel: Grind",
-              "Pace: steady",
-              "Target score: 12-15 min",
-              "Firebreather score: sub 12 min",
-              "*target does not include rest",
-              "The DB is meant to be unbroken, so if they jump up to 60/40 sounds like too much to make that happen, drop it back down. Then, the burpees are meant to be very, very fast. Enjoy."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-22",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 17.4",
-            "lines": [
-              "Complete as many rounds and reps as possible in 13 minutes of:",
-              "55 deadlifts, 225 lb.",
-              "55 wall-ball shots, 20-lb. ball to 10-ft. target",
-              "55-calorie row",
-              "55 handstand push-ups"
-            ]
-          }
-        ],
-        "note": "Open: Open 17.4"
-      }
-    ],
     "2026-06-23": [
       {
         "date": "2026-06-23",
@@ -178,86 +85,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-06-23",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-23/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "scorpions",
-              "instep rotation",
-              "90/90 hip rotation",
-              "crab stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 reverse lunges",
-              "10 scap. push ups",
-              "10 prone snow angels"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "BENCH PRESS 15MIN",
-            "lines": [
-              "3-4 sets",
-              "10 reps bench press",
-              "@rpe 8-9",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "3-6-9-12…",
-              "db push ups",
-              "16m db walking lunges 2x22,5/15kg",
-              "* muscular endurance"
-            ],
-            "sub_title": "amrap 16min"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-23",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Rocket",
-            "sub_title": "Complete as many rounds as possible in 30 minutes of:",
-            "lines": [
-              "50-yard swim",
-              "10 push-ups",
-              "15 squats"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-23",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "D. \"GRACE",
-            "lines": [
-              "For Time:",
-              "30 Clean & Jerk",
-              "Rx 60/42,5"
-            ]
-          }
-        ],
-        "note": "Benchmark: D. \"GRACE"
       }
     ],
     "2026-06-24": [
@@ -958,20 +785,6 @@
               "* aerobic power & muscular endurance"
             ],
             "sub_title": "amrap 32min"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-27",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "* EMOM – 4 rounds for total reps1 – Box Jumps 24/20″2 – Double KB Cleans 2×24/16kg3 & 4 – 400m run or 500m row5 – Rest"
-            ]
           }
         ]
       },
@@ -2289,33 +2102,16 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "J.J.",
+            "title": "Nasty Girls V2",
             "lines": [
-              "For time:",
-              "1 Squat  clean  185 lbs/125 lbs",
-              "10 parallette  handstand push-up s",
-              "2 Squat  clean  185 lbs/125 lbs",
-              "9 parallette  handstand push-up s",
-              "3 Squat  clean  185 lbs/125 lbs",
-              "8 parallette  handstand push-up s",
-              "4 Squat  clean  185 lbs/125 lbs",
-              "7 parallette  handstand push-up s",
-              "5 Squat  clean  185 lbs/125 lbs",
-              "6 parallette  handstand push-up s",
-              "6 Squat  clean  185 lbs/125 lbs",
-              "5 parallette  handstand push-up s",
-              "7 Squat  clean  185 lbs/125 lbs",
-              "4 parallette  handstand push-up s",
-              "8 Squat  clean  185 lbs/125 lbs",
-              "3 parallette  handstand push-up s",
-              "9 Squat  clean  185 lbs/125 lbs",
-              "2 parallette  handstand push-up s",
-              "10 Squat  clean  185 lbs/125 lbs",
-              "1 parallette  handstand push-up"
+              "3 rounds for time of:",
+              "50 one-legged squats, alternating",
+              "7  muscle-up s",
+              "175/115lb.  hang power clean s, 10 reps"
             ]
           }
         ],
-        "note": "Benchmark: J.J."
+        "note": "Benchmark: Nasty Girls V2"
       }
     ],
     "2026-07-04": [
@@ -2890,7 +2686,198 @@
         ],
         "note": "Benchmark: Heavy Fran"
       }
+    ],
+    "2026-07-07": [
+      {
+        "date": "2026-07-07",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-07-07/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "thoracic rotation",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 prone snow angels",
+              "10 plank push ups",
+              "10 straight leg sit ups",
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "PUSH PRESS 15MIN",
+            "lines": [
+              "4-5 sets",
+              "5 push press @70-75%",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "9 push press 40/30kg *",
+              "12 toes to bar",
+              "15/12cal bike/ski",
+              "* rx+ option: 6 handstand push ups",
+              "aerobic capacity"
+            ],
+            "sub_title": "amrap 15min"
+          }
+        ]
+      },
+      {
+        "date": "2026-07-07",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260707",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Front squat 3-3-3-3-3 reps",
+              "Compare to",
+              "260120"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-07",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-july-7-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "AMRAP 5 minutes",
+              "Run 100m",
+              "5 Abmat situps",
+              "10 Wall Facing Hold Shoulder Taps or Plank Shoulder taps"
+            ]
+          },
+          {
+            "title": "AMRAP 16 minutes",
+            "lines": [
+              "30′ Handstand Walk",
+              "9 Toes to Bar",
+              "300m Run",
+              "Feel: Cardio",
+              "Pace: Sustain",
+              "Target Score: 5+ rounds",
+              "Firebreather Score: 7+ rounds"
+            ]
+          },
+          {
+            "title": "Deadlift",
+            "lines": [
+              "1-3″ Deficit Tempo Deadlift",
+              "Bike 1,000m Between Sets to Flush",
+              "Aim for 3-4 second lift with a 3-4 second negative. Start near 60% and work up. Prioritize technique. Get rid of the deficit if you cannot keep your hips below your shoulders )"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-07",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "* Metcon:-4 rounds:400m Run ·15 Goblet Squats 24/16kg12 Hand release push ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-07",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Moore",
+            "sub_title": "Complete as many rounds in 20 minutes as you can of:",
+            "lines": [
+              "1 rope climb to 15 feet",
+              "Run 400 meters",
+              "Max-rep handstand push-ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-07",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "J.J.",
+            "lines": [
+              "For time:",
+              "1 Squat  clean  185 lbs/125 lbs",
+              "10 parallette  handstand push-up s",
+              "2 Squat  clean  185 lbs/125 lbs",
+              "9 parallette  handstand push-up s",
+              "3 Squat  clean  185 lbs/125 lbs",
+              "8 parallette  handstand push-up s",
+              "4 Squat  clean  185 lbs/125 lbs",
+              "7 parallette  handstand push-up s",
+              "5 Squat  clean  185 lbs/125 lbs",
+              "6 parallette  handstand push-up s",
+              "6 Squat  clean  185 lbs/125 lbs",
+              "5 parallette  handstand push-up s",
+              "7 Squat  clean  185 lbs/125 lbs",
+              "4 parallette  handstand push-up s",
+              "8 Squat  clean  185 lbs/125 lbs",
+              "3 parallette  handstand push-up s",
+              "9 Squat  clean  185 lbs/125 lbs",
+              "2 parallette  handstand push-up s",
+              "10 Squat  clean  185 lbs/125 lbs",
+              "1 parallette  handstand push-up"
+            ]
+          }
+        ],
+        "note": "Benchmark: J.J."
+      },
+      {
+        "date": "2026-07-07",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 23.1",
+            "lines": [
+              "Complete as many reps as possible in 14 minutes of:",
+              "60-calorie row",
+              "50 toes-to-bars",
+              "40 wall-ball shots",
+              "30 cleans",
+              "20 muscle-ups",
+              "♀",
+              "14-lb ball to 9-ft target, 95-lb cleans",
+              "♂",
+              "20-lb ball to 10-ft target, 135-lb cleans"
+            ]
+          }
+        ],
+        "note": "Open: Open 23.1"
+      }
     ]
   },
-  "last_updated": "2026-07-06T13:18:10.613596"
+  "last_updated": "2026-07-07T03:10:33.462897"
 }
