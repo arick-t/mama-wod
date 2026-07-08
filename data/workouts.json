@@ -973,37 +973,6 @@
       },
       {
         "date": "2026-06-29",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Overhead Squat 1x3",
-              "ON A 10:00 RUNNING CLOCK",
-              "Build to a Heavy/Mod-Heavy 3-Rep Overhead Squat*",
-              "*Bar comes from the ground",
-              "* (Score is Weight)"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "We Stand for Freedom",
-            "lines": [
-              "25 Burpee Box Jump Over (24\"/20\"",
-              "50 Overhead Squats 43kg/29kg",
-              "25 Burpee Box Jump Over 24\"/20\"",
-              "50 Front Squats 43kg/29kg",
-              "25 Burpee Box Jump Over 24\"/20\"",
-              "50 Back Squats 43kg/29kg"
-            ],
-            "sub_title2": "FOR TIME"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-29",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2711,6 +2680,39 @@
     "2026-07-08": [
       {
         "date": "2026-07-08",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260708",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-08",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 22.2",
+            "lines": [
+              "1-2-3-4-5-6-7-8-9-10-9-8-7-6-5-4-3-2-1 reps for time of:",
+              "Deadlifts",
+              "Bar-facing burpees",
+              "155-lb barbell",
+              "Time cap: 10 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 22.2"
+      },
+      {
+        "date": "2026-07-08",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-07-08/",
@@ -2759,15 +2761,75 @@
       },
       {
         "date": "2026-07-08",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260708",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-july-8-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "3 Rounds",
+              "1:30 Machine",
+              "10 Russian Kettlebell Swings",
+              "10 Squats"
             ]
+          },
+          {
+            "title": "Back Squat",
+            "lines": [
+              "9 reps @ 50% 1RM",
+              "7 reps @ 60% 1RM",
+              "5 reps @ 70% 1RM",
+              "3 reps @ 80% 1RM",
+              "1 max rep set at 80% 1RM",
+              "Slowly bike 500-1,000m between sets for rest",
+              "Goal is 8-12 reps at 80%. Adjust weight accordingly. “)"
+            ]
+          },
+          {
+            "title": "AMRAP 11 Minutes",
+            "lines": [
+              "9 DB Front Squats 50s/35s",
+              "15 DB Farmers Lunge Steps 50s/35s",
+              "400/320m C2 Bike",
+              "Rest 1:30",
+              "No Target, Essentially back squat accessory work with a rude misfit twist on it. We want the legs fully pumped by the end. Encourage a flush afterwards."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-08",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Snatch 1x2",
+              "EVERY 1:30 (8 SETS)",
+              "2 Squat Snatch (singles) *",
+              "*Start Mod and Build to Mod-Heavy",
+              "* (Score is Heaviest Set)"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Serena & Venus",
+            "lines": [
+              "21-15-9",
+              "Overhead Squat 52kg/34kg",
+              "Toes to Bar",
+              "* (6:00 Time Cap)",
+              "* -Rest until 8:00-",
+              "21-15-9",
+              "Lateral Burpee Over Bar",
+              "Toes to Bar",
+              "* (6:00 Time Cap)",
+              "*Score is combined times"
+            ],
+            "sub_title2": "FOR TIME"
           }
         ]
       },
@@ -2820,27 +2882,8 @@
           }
         ],
         "note": "Benchmark: Fat Helen"
-      },
-      {
-        "date": "2026-07-08",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 22.2",
-            "lines": [
-              "1-2-3-4-5-6-7-8-9-10-9-8-7-6-5-4-3-2-1 reps for time of:",
-              "Deadlifts",
-              "Bar-facing burpees",
-              "155-lb barbell",
-              "Time cap: 10 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 22.2"
       }
     ]
   },
-  "last_updated": "2026-07-08T02:59:26.767590"
+  "last_updated": "2026-07-08T07:14:42.743841"
 }
