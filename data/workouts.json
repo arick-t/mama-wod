@@ -990,31 +990,6 @@
       },
       {
         "date": "2026-06-30",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Big Grace - Part 1",
-            "lines": [
-              "\"GRACE\"",
-              "FOR TIME",
-              "30 Clean & Jerks 61kg/43kg",
-              "* -Rest until the 10:00 mark, then Complete Part 2-"
-            ]
-          },
-          {
-            "title": "Strength",
-            "lines": [
-              "EVERY :30 FOR 10:00",
-              "1 Power Clean and Jerk 185#/125#"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-30",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2697,53 +2672,6 @@
     "2026-07-09": [
       {
         "date": "2026-07-09",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-07-09/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "scorpions",
-              "instep rotation",
-              "lat stretch on box",
-              "calf stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "100m run",
-              "10 squat jumps",
-              "10 ring rows"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "CHIN UPS 15MIN",
-            "lines": [
-              "4-5 sets",
-              "5 chin ups  @ rpe 7-8"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "10 rounds",
-              "",
-              "6 high box jumps 75/60cm",
-              "8 pull ups *",
-              "100m run",
-              "* rx+ option: chest to bar pull ups",
-              "* aerobic power & muscular endurance"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-09",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260709",
@@ -2821,6 +2749,98 @@
       },
       {
         "date": "2026-07-09",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 17.5",
+            "lines": [
+              "10 rounds for time of:",
+              "9 thrusters, 95 lb.",
+              "35 double-unders"
+            ]
+          }
+        ],
+        "note": "Open: Open 17.5"
+      },
+      {
+        "date": "2026-07-09",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-07-09/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "scorpions",
+              "instep rotation",
+              "lat stretch on box",
+              "calf stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "100m run",
+              "10 squat jumps",
+              "10 ring rows"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "CHIN UPS 15MIN",
+            "lines": [
+              "4-5 sets",
+              "5 chin ups  @ rpe 7-8"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "10 rounds",
+              "",
+              "6 high box jumps 75/60cm",
+              "8 pull ups *",
+              "100m run",
+              "* rx+ option: chest to bar pull ups",
+              "* aerobic power & muscular endurance"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-07-09",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Bench Press 1x5",
+              "EVERY 2:00 (5 SETS)",
+              "5 Bench Press",
+              "*Start Mod and Build Every Set",
+              "* (Score is Heaviest Set)"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "Championship Point",
+            "lines": [
+              "10-9-8-7-6-5-4-3-2-1",
+              "Hang Power Clean 70kg/48kg",
+              "10 Push Ups after every set"
+            ],
+            "sub_title2": "FOR TIME"
+          }
+        ]
+      },
+      {
+        "date": "2026-07-09",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2867,25 +2887,8 @@
           }
         ],
         "note": "Benchmark: D. \"GRACE"
-      },
-      {
-        "date": "2026-07-09",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 17.5",
-            "lines": [
-              "10 rounds for time of:",
-              "9 thrusters, 95 lb.",
-              "35 double-unders"
-            ]
-          }
-        ],
-        "note": "Open: Open 17.5"
       }
     ]
   },
-  "last_updated": "2026-07-09T03:13:31.267413"
+  "last_updated": "2026-07-09T08:02:31.932836"
 }
