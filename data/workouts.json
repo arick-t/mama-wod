@@ -1,94 +1,5 @@
 {
   "workouts": {
-    "2026-06-24": [
-      {
-        "date": "2026-06-24",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260624",
-        "sections": [
-          {
-            "title": "30-20-10 REPS FOR TIME OF",
-            "lines": [
-              "Front-rack reverse lunges",
-              "Knees-to-elbows",
-              "Bike calories"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-24",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 19.5",
-            "lines": [
-              "33-27-21-15-9 reps for time of:",
-              "95-lb. thrusters",
-              "Chest-to-bar pull-ups",
-              "Time cap: 20 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 19.5"
-      },
-      {
-        "date": "2026-06-24",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-june-24-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "AMRAP 5 minutes",
-              ":30 Machine",
-              "8 Alternating DB Hang Snatches",
-              "8 Walking Lunge Steps",
-              ":10 Handstand Hold"
-            ]
-          },
-          {
-            "title": "Power Snatch",
-            "lines": [
-              "1 @ 80-90%",
-              "3 @ 75-80%",
-              "2 @ 80-85%",
-              "1 @ 85-90%",
-              "3 @ 80-85%",
-              "2 @ 85-90%",
-              "1 @ 90-95%",
-              "Drop and reset reps on triples and doubles. It’s ok if you don’t know your perecentages – your heavy single to start will give you guidance. )"
-            ]
-          },
-          {
-            "title": "For time",
-            "lines": [
-              "5 Strict HSPU*",
-              "60ft S-arm OHWL 50/35lbs",
-              "10 Strict HSPU*",
-              "60ft S-arm OHWL 50/35lbs",
-              "15 Strict HSPU*",
-              "60ft S-arm OHWL 50/35lbs",
-              "15 Strict HSPU*",
-              "60ft S-arm OHWL 50/35lbs",
-              "10 Strict HSPU*",
-              "60ft S-arm OHWL 50/35lbs",
-              "5 Strict HSPU*",
-              "*Dumbbell Strict Press is the primary movement modification for SHSPU. No Kipping HSPU today",
-              "Use a 15ft lane for the lunges",
-              "Feel: Muscle Overload",
-              "Pace: Sustain",
-              "Target Score: Sub 11 minutes",
-              "Firebreather: Sub 8 minutes"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-06-25": [
       {
         "date": "2026-06-25",
@@ -211,88 +122,6 @@
           }
         ],
         "note": "Open: Open 13.4"
-      },
-      {
-        "date": "2026-06-25",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-06-25/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "samson stretch",
-              "hand walk",
-              "thoracic rotations",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "100m run",
-              "10 prone snow angels",
-              "10 burpees"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "HANG POWER SNATCH 10MIN",
-            "lines": [
-              "find a heavy set of 3",
-              "hang power snatches",
-              "explosive power"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "200m run",
-              "12 hang power snatches 40/30kg",
-              "max burpees over the bar",
-              "-1:30 rest between rounds -",
-              "* score: total burpees",
-              "* anaerobic capacity & barbell cycling"
-            ],
-            "sub_title": "amrap 2:30 x 4 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-25",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Otis",
-            "sub_title": "Complete as many reps as possible in 15 minutes of:",
-            "lines": [
-              "1 back squat, 1 shoulder press, 1 deadlift",
-              "2 back squats, 2 shoulder presses, 2 deadlifts",
-              "3 back squats, 3 shoulder presses, 3 deadlifts"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-06-25",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Eva",
-            "lines": [
-              "5 rounds for time:",
-              "Target: sub 50 min",
-              "Run  800m",
-              "30  KB Swings  32kg/24kg",
-              "30 pull-ups"
-            ]
-          }
-        ],
-        "note": "Benchmark: Eva"
       }
     ],
     "2026-06-26": [
@@ -968,25 +797,6 @@
               "* anaerobic capacity & muscular endurance"
             ],
             "sub_title": "1:00 on / 1:00 off x 9 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-06-29",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Strength:-Coach led warm up to 65% thenE2MOM x 8 – 1 Squat Clean + 1 Front Squat + 1 Split Jerk 65-80%"
-            ]
-          },
-          {
-            "title": "METCON",
-            "sub_title": "Partner Abs finisher*12x front / left / right / candle sticks*",
-            "lines": []
           }
         ]
       },
@@ -2883,7 +2693,199 @@
         ],
         "note": "Benchmark: Fat Helen"
       }
+    ],
+    "2026-07-09": [
+      {
+        "date": "2026-07-09",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-07-09/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "scorpions",
+              "instep rotation",
+              "lat stretch on box",
+              "calf stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "100m run",
+              "10 squat jumps",
+              "10 ring rows"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "CHIN UPS 15MIN",
+            "lines": [
+              "4-5 sets",
+              "5 chin ups  @ rpe 7-8"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "10 rounds",
+              "",
+              "6 high box jumps 75/60cm",
+              "8 pull ups *",
+              "100m run",
+              "* rx+ option: chest to bar pull ups",
+              "* aerobic power & muscular endurance"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-07-09",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260709",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Rest Day",
+              "The Last Lift: Inside the Second Afternoon of a CrossFit Level 1 Seminar",
+              "The last hours of the Level 1 Certificate Course carry a quality that is hard to name and easy to feel. The afternoon moves through the GHD most gyms ignore, the muscle-up that defeats most people at the transition, the snatch broken down until anyone can learn it, and the programming lecture that finally answers a question everyone has been circling for two days. The Level 1 does not give you mastery; it gives you a map, a standard, and two days in a room with people who care whether you get there."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-09",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-july-9-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "AMRAP 5 minutes in a team of 3 Waterfall Style",
+              "12/10 Calorie Row",
+              "6 Burpees",
+              "Plank hold until partner behind catches up"
+            ]
+          },
+          {
+            "title": "AMRAP 1:30 x 5",
+            "lines": [
+              "10 Bench Press 135/95lbs",
+              "Max Calorie Row",
+              "Rest 3:00",
+              "Score = Total Row Calories",
+              "*Work in a team of 3 athletes sharing a bench and rower. One works at a time while 2 rests.",
+              "Feel: Muscle Overload",
+              "Pace: Sustain",
+              "Target Score: 18/15+ Calories per round",
+              "Firebreather Score: 25/20+ Calories per round"
+            ]
+          },
+          {
+            "title": "Extra Credit",
+            "lines": [
+              "Zone 2 Row"
+            ]
+          },
+          {
+            "title": "12:00 Zone 2 Warm Up",
+            "lines": [
+              "45:00-90:00 Row @ Zone 2"
+            ]
+          },
+          {
+            "title": "12:00 Zone 2 Cool Down",
+            "lines": [
+              "Your Zone 2 today should stay between 160bpm minus your age and 180bpm minus your age."
+            ]
+          },
+          {
+            "title": "Warm up:",
+            "lines": [
+              "Build from resting heartrate to 180bpm minus your age slowly over 12:00. This will feel incredibly slow, but will help your session a lot. Feel free to mix up machines, but end on rower."
+            ]
+          },
+          {
+            "title": "Cool down:",
+            "lines": [
+              "Spend 4:00 on the rower, keeping your heartrate above 150bpm minus your age, then slowly work down to resting for the next 8:00 on any machine or walking."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-09",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "* Partner Metcon:-10 roundsP1 rows 450/400mP2 completes20 KB Swings 32/24kg40 Double Understhen switch"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-09",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Loredo",
+            "sub_title": "6 rounds for time of:",
+            "lines": [
+              "24 squats",
+              "24 push-ups",
+              "24 walking lunge steps",
+              "Run 400 meters"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-09",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "D. \"GRACE",
+            "lines": [
+              "For Time:",
+              "30 Clean & Jerk",
+              "Rx 60/42,5"
+            ]
+          }
+        ],
+        "note": "Benchmark: D. \"GRACE"
+      },
+      {
+        "date": "2026-07-09",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 17.5",
+            "lines": [
+              "10 rounds for time of:",
+              "9 thrusters, 95 lb.",
+              "35 double-unders"
+            ]
+          }
+        ],
+        "note": "Open: Open 17.5"
+      }
     ]
   },
-  "last_updated": "2026-07-08T11:25:47.948141"
+  "last_updated": "2026-07-09T03:13:31.267413"
 }
