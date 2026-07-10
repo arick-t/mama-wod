@@ -958,34 +958,6 @@
       },
       {
         "date": "2026-07-01",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "\"Broad Stripes and Bright Stars - Part 1\"",
-              "JULY MONTHLY CHALLENGE",
-              "FOR TIME",
-              "1 Mile Run",
-              "* -Rest Until 15:00 mark then complete Part 2-"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "15:00 AMRAP",
-            "lines": [
-              "5 Strict Pull Ups",
-              "10 Push Ups",
-              "15 Sit Ups",
-              "* (Score is Rounds + Reps)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-01",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2658,6 +2630,50 @@
     "2026-07-10": [
       {
         "date": "2026-07-10",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260710",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Complete as many reps as possible in 10 minutes of:",
+              "3 burpee box jump-overs",
+              "3 deadlifts",
+              "6 burpee box jump-overs",
+              "6 deadlifts",
+              "9 burpee box jump-overs",
+              "9 deadlifts",
+              "Etc.",
+              "♀ 155-lb barbell and a 20-inch box",
+              "♂ 225-lb barbell and a 24-inch box",
+              "Compare to",
+              "210820"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-10",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 16.5",
+            "lines": [
+              "21-18-15-12-9-6-3 reps for time of:",
+              "Thrusters",
+              "Burpees",
+              "*Men use 95 lb.*",
+              "*Women use 65 lb.*"
+            ]
+          }
+        ],
+        "note": "Open: Open 16.5"
+      },
+      {
+        "date": "2026-07-10",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-07-10/",
@@ -2702,25 +2718,71 @@
       },
       {
         "date": "2026-07-10",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260710",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-july-10-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "Complete as many reps as possible in 10 minutes of:",
-              "3 burpee box jump-overs",
-              "3 deadlifts",
-              "6 burpee box jump-overs",
-              "6 deadlifts",
-              "9 burpee box jump-overs",
-              "9 deadlifts",
-              "Etc.",
-              "♀ 155-lb barbell and a 20-inch box",
-              "♂ 225-lb barbell and a 24-inch box",
-              "Compare to",
-              "210820"
+              "Alternating EMOM 6 minutes",
+              "14/10 Calorie Air Bike",
+              "15 Kettlebell Swings",
+              "20 PVC pipe OHS"
+            ]
+          },
+          {
+            "title": "3 Rounds for time",
+            "lines": [
+              "7 Squat Snatches 115/75lbs",
+              "14/10 Calorie Air Bike*",
+              "7 Bar Muscle Ups",
+              "14/10 Calorie Air Bike*",
+              "*Athletes may run 200m for one or both of the Air Bike Calories",
+              "Feel: Gas",
+              "Pace: Sustain",
+              "Target Score: 10-13 minutes",
+              "Firebreather Score: Sub 10 minutes"
+            ]
+          },
+          {
+            "title": "Skill",
+            "lines": [
+              "2 Rounds",
+              "1 Smooth Set of Wall Facing HSPU",
+              "Rest 2:00",
+              "1 Smooth Set of Strict HSPU",
+              "Rest 2:00",
+              "1 Smooth Set of Kipping HSPU",
+              "Rest 4:00",
+              "If done properly, you will be able to increase reps on round 2 for all three movement patterns. Flush (very slow) between sets on an air bike or 1 damper ski erg."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-10",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Pimm's Cup",
+            "lines": [
+              "500m Row",
+              "100 Wall Balls 9kg/6kg",
+              "* -Rest until 12:00, then move on to Part 2-"
+            ],
+            "sub_title2": "FOR TIME"
+          },
+          {
+            "title": "Strength",
+            "lines": [
+              "Starting at the 12:00 mark:",
+              "Back Squat",
+              "ON A 15:00 CLOCK",
+              "1RM Back Squat"
             ]
           }
         ]
@@ -2791,27 +2853,8 @@
           }
         ],
         "note": "Benchmark: Fat Helen"
-      },
-      {
-        "date": "2026-07-10",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 16.5",
-            "lines": [
-              "21-18-15-12-9-6-3 reps for time of:",
-              "Thrusters",
-              "Burpees",
-              "*Men use 95 lb.*",
-              "*Women use 65 lb.*"
-            ]
-          }
-        ],
-        "note": "Open: Open 16.5"
       }
     ]
   },
-  "last_updated": "2026-07-10T03:07:35.458547"
+  "last_updated": "2026-07-10T07:51:53.334969"
 }
