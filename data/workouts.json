@@ -2392,20 +2392,6 @@
       },
       {
         "date": "2026-07-09",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "* Partner Metcon:-10 roundsP1 rows 450/400mP2 completes20 KB Swings 32/24kg40 Double Understhen switch"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-09",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2706,43 +2692,6 @@
       },
       {
         "date": "2026-07-11",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-07-11/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "sumo squat stretch",
-              "lying hip cross over",
-              "samson stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 burpees",
-              "10 db deadlifts",
-              "*partner is running 100m"
-            ],
-            "sub_title": "amrap 5min"
-          },
-          {
-            "title": "CONDITIONING 30MIN",
-            "lines": [
-              "in teams of 2",
-              "15 synchro air squats",
-              "200m partner run",
-              "max devil press 22,5/15kg",
-              "* score: total devil press"
-            ],
-            "sub_title": "amrap 3:00 x 10 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-11",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-july-11-2026/",
@@ -2786,6 +2735,43 @@
             "lines": [
               "*No jump = reach up nice and high to grab the rope then get right into your foot hold vs. jump grab hold"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-11",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-07-11/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "lying hip cross over",
+              "samson stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 burpees",
+              "10 db deadlifts",
+              "*partner is running 100m"
+            ],
+            "sub_title": "amrap 5min"
+          },
+          {
+            "title": "CONDITIONING 30MIN",
+            "lines": [
+              "in teams of 2",
+              "15 synchro air squats",
+              "200m partner run",
+              "max devil press 22,5/15kg",
+              "* score: total devil press"
+            ],
+            "sub_title": "amrap 3:00 x 10 rounds"
           }
         ]
       },
@@ -2871,5 +2857,5 @@
       }
     ]
   },
-  "last_updated": "2026-07-11T07:12:22.202749"
+  "last_updated": "2026-07-11T08:33:24.534723"
 }
