@@ -2392,6 +2392,20 @@
       },
       {
         "date": "2026-07-09",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "* Partner Metcon:-10 roundsP1 rows 450/400mP2 completes20 KB Swings 32/24kg40 Double Understhen switch"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-09",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2857,5 +2871,5 @@
       }
     ]
   },
-  "last_updated": "2026-07-11T08:33:24.534723"
+  "last_updated": "2026-07-11T08:56:09.561242"
 }
