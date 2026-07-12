@@ -1968,6 +1968,21 @@
       },
       {
         "date": "2026-07-08",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Strength:-3 x 2 Snatch deadlift + hang squat snatch5-4-3-2-1 Squat Snatch",
+              "Metcon:-5 rounds3 Wall walks5 Man Makers 22.5/15kg12 Front Rack Walking Lunges 2×22.5/15kg"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-08",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2396,6 +2411,21 @@
       },
       {
         "date": "2026-07-10",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Strength:-Primer: 2 x 3 Snatch Balance (building)5 x 4 OHS**1-2 sec pause at the bottom of each rep",
+              "Metcon:-12 min AMRAP6 Power Clean & Jerk 70/50kg8 T2B10 Box Jump Overs 24/20″"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-10",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2677,52 +2707,6 @@
       },
       {
         "date": "2026-07-12",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-07-12/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "instep rotations",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. scap. push ups",
-              "2. row",
-              "3. ring rows",
-              "4. box step ups"
-            ],
-            "sub_title": "30sec on / 15sec off x2 rounds"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "1. 4-6 wall walks",
-              "2. 10-15cal row",
-              "3. 8-10 strict pull ups",
-              "4. 12-16 db box step ups (50cm)",
-              "5. rest",
-              "Sunday Endurance for Open Gym",
-              "“norwegian 4x4 intervals”",
-              "4 sets:",
-              "",
-              "4:00 hard [rpe 8-9]",
-              "3:00 easy or rest [rpe 1-2]",
-              "choose: run, bike, row, or ski",
-              "* aerobic power [vo2 max]"
-            ],
-            "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-12",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-july-12-2026/",
@@ -2767,6 +2751,52 @@
               "5:00 Machine Flush",
               "3:00 Mobility"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-12",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-07-12/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "instep rotations",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. scap. push ups",
+              "2. row",
+              "3. ring rows",
+              "4. box step ups"
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "1. 4-6 wall walks",
+              "2. 10-15cal row",
+              "3. 8-10 strict pull ups",
+              "4. 12-16 db box step ups (50cm)",
+              "5. rest",
+              "Sunday Endurance for Open Gym",
+              "“norwegian 4x4 intervals”",
+              "4 sets:",
+              "",
+              "4:00 hard [rpe 8-9]",
+              "3:00 easy or rest [rpe 1-2]",
+              "choose: run, bike, row, or ski",
+              "* aerobic power [vo2 max]"
+            ],
+            "sub_title": "emom 35min (7 rounds)"
           }
         ]
       },
@@ -2832,5 +2862,5 @@
       }
     ]
   },
-  "last_updated": "2026-07-12T07:25:16.206598"
+  "last_updated": "2026-07-12T08:48:39.170745"
 }
