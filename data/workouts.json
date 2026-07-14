@@ -2608,6 +2608,20 @@
       },
       {
         "date": "2026-07-13",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "* Metcon:-800m Run by in3 rounds20 Wall balls 9/6kg10 Pull upsthen400m Run buy out"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-13",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2701,52 +2715,6 @@
       },
       {
         "date": "2026-07-14",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-07-14/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "inverted hamstring stretch",
-              "instep rotation",
-              "lat stretch",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "100m run",
-              "10 staright leg sit ups",
-              "10 good mornings"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "DEADLIFTS 15MIN",
-            "lines": [
-              "4-5 sets",
-              "5 deadlifts @75-77%",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 17MIN",
-            "lines": [
-              "10-20-30…",
-              "sumo deadlift high pulls 40/30kg",
-              "toes to bar",
-              "*400m run after each round",
-              "* lactate threshold & muscular endurance"
-            ],
-            "sub_title": "amrap 17min"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-14",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-july-14-2026/",
@@ -2800,6 +2768,52 @@
       },
       {
         "date": "2026-07-14",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-07-14/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "inverted hamstring stretch",
+              "instep rotation",
+              "lat stretch",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "100m run",
+              "10 staright leg sit ups",
+              "10 good mornings"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "DEADLIFTS 15MIN",
+            "lines": [
+              "4-5 sets",
+              "5 deadlifts @75-77%",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 17MIN",
+            "lines": [
+              "10-20-30…",
+              "sumo deadlift high pulls 40/30kg",
+              "toes to bar",
+              "*400m run after each round",
+              "* lactate threshold & muscular endurance"
+            ],
+            "sub_title": "amrap 17min"
+          }
+        ]
+      },
+      {
+        "date": "2026-07-14",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -2814,6 +2828,21 @@
               "* (Score is Rounds + Reps)"
             ],
             "sub_title2": "AMRAP 20:00"
+          }
+        ]
+      },
+      {
+        "date": "2026-07-14",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Strength:-3 x 2 Snatch deadlift + hang squat snatch5-4-3-2-1 Squat Snatch",
+              "Metcon:-6 rounds for time10 Double KB Front Rack Lunges 2×24/16kg12/10 cal Bike10 Ring Rows10 V-ups"
+            ]
           }
         ]
       },
@@ -2873,5 +2902,5 @@
       }
     ]
   },
-  "last_updated": "2026-07-14T06:57:21.999187"
+  "last_updated": "2026-07-14T08:22:06.806084"
 }
