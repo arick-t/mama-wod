@@ -746,25 +746,6 @@
       },
       {
         "date": "2026-07-04",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "FREEDOM 250",
-            "lines": [
-              "TEAMS OF 2",
-              "FOR TIME",
-              "2.5 Mile Run (together)",
-              "250 Wall Balls 9kg/6kg",
-              "250 Burpee to Bar (6in)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-04",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2627,20 +2608,6 @@
       },
       {
         "date": "2026-07-13",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "* Metcon:-800m Run by in3 rounds20 Wall balls 9/6kg10 Pull upsthen400m Run buy out"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-13",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2679,6 +2646,59 @@
       }
     ],
     "2026-07-14": [
+      {
+        "date": "2026-07-14",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260714",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-14",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 12.5",
+            "lines": [
+              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
+              "100 pound Thruster, 3 reps",
+              "3 Chest to bar Pull-ups",
+              "100 pound Thruster, 6 reps",
+              "6 Chest to bar Pull-ups",
+              "100 pound Thruster, 9 reps",
+              "9 Chest to bar Pull-ups",
+              "100 pound Thruster, 12 reps",
+              "12 Chest to bar Pull-ups",
+              "100 pound Thruster, 15 reps",
+              "15 Chest to bar Pull-ups",
+              "100 pound Thruster, 18 reps",
+              "18 Chest to bar Pull-ups",
+              "100 pound Thruster, 21 reps",
+              "21 Chest to bar Pull-ups...",
+              "This is a timed workout. If you complete the round of 21, go on to 24. If you complete 24, go on to 27, etc.",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
+              "65 pound Thruster, 3 reps",
+              "3 Chest to bar Pull-ups",
+              "65 pound Thruster, 6 reps",
+              "6 Chest to bar Pull-ups",
+              "65 pound Thruster, 9 reps"
+            ]
+          }
+        ],
+        "note": "Open: Open 12.5"
+      },
       {
         "date": "2026-07-14",
         "source": "myleo",
@@ -2727,30 +2747,73 @@
       },
       {
         "date": "2026-07-14",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260714",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-july-14-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "3 rounds (4:30 clock)",
+              ":20 Ring Rows",
+              ":10 Rest",
+              ":20 Jump rope",
+              ":10 Rest",
+              ":20 Medball squat cleans",
+              ":10 Rest"
+            ]
+          },
+          {
+            "title": "AMRAP 5-5-6 Minutes",
+            "lines": [
+              "8 Strict Pull Ups",
+              "100 Double Unders",
+              "8 Strict Pull Ups",
+              "Max Rep Squat Cleans in remaining time",
+              "Rest 3:00 between intervals",
+              "3 scores: squat cleans from each interval",
+              "Round 1: 135/95lbs",
+              "Round 2: 185/125lbs",
+              "Round 3: 225/155lbs (no heavier than 80% 1RM)",
+              "Clock Timing:",
+              "Interval 1: 0:00-5:00",
+              "Rest: 5:00-8:00",
+              "Interval 2: 8:00-13:00",
+              "Rest: 13:00-16:00",
+              "Interval 3: 16:00-22:00",
+              "Weight Alternatives",
+              "– 135/95, 165/115, 185/125lbs",
+              "– 115/75, 135/95, 155/105lbs",
+              "– 95/65, 115/75lbs, 135/95lbs",
+              "– 60%-70%-80% 1RM"
+            ]
+          },
+          {
+            "title": "Strength",
+            "lines": [
+              "6 Sets",
+              "10 Neutral Grip DB Bench Press",
+              "Rest 2:00"
             ]
           }
         ]
       },
       {
         "date": "2026-07-14",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "WOD",
+            "sub_title": "Hi, My Name is Steve",
             "lines": [
-              "Strength:-3 x 2 Snatch deadlift + hang squat snatch5-4-3-2-1 Squat Snatch",
-              "Metcon:-6 rounds for time10 Double KB Front Rack Lunges 2×24/16kg12/10 cal Bike10 Ring Rows10 V-ups"
-            ]
+              "21 Box Jump Over 24\"/20\"",
+              "15 Pull Ups",
+              "9 Strict Handstand Push Ups",
+              "* (Score is Rounds + Reps)"
+            ],
+            "sub_title2": "AMRAP 20:00"
           }
         ]
       },
@@ -2807,47 +2870,8 @@
           }
         ],
         "note": "Benchmark: J.J."
-      },
-      {
-        "date": "2026-07-14",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 12.5",
-            "lines": [
-              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
-              "100 pound Thruster, 3 reps",
-              "3 Chest to bar Pull-ups",
-              "100 pound Thruster, 6 reps",
-              "6 Chest to bar Pull-ups",
-              "100 pound Thruster, 9 reps",
-              "9 Chest to bar Pull-ups",
-              "100 pound Thruster, 12 reps",
-              "12 Chest to bar Pull-ups",
-              "100 pound Thruster, 15 reps",
-              "15 Chest to bar Pull-ups",
-              "100 pound Thruster, 18 reps",
-              "18 Chest to bar Pull-ups",
-              "100 pound Thruster, 21 reps",
-              "21 Chest to bar Pull-ups...",
-              "This is a timed workout. If you complete the round of 21, go on to 24. If you complete 24, go on to 27, etc.",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
-              "65 pound Thruster, 3 reps",
-              "3 Chest to bar Pull-ups",
-              "65 pound Thruster, 6 reps",
-              "6 Chest to bar Pull-ups",
-              "65 pound Thruster, 9 reps"
-            ]
-          }
-        ],
-        "note": "Open: Open 12.5"
       }
     ]
   },
-  "last_updated": "2026-07-14T02:55:43.859961"
+  "last_updated": "2026-07-14T06:57:21.999187"
 }
