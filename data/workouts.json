@@ -898,29 +898,6 @@
       },
       {
         "date": "2026-07-06",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Federer vs Nadal",
-            "lines": [
-              "400m Run",
-              "15 Bar Muscle Ups",
-              "400m Run",
-              "12 Bar Muscle Ups",
-              "400m Run",
-              "9 Bar Muscle Ups",
-              "*Unbroken BMU, 200m Penalty Run each break",
-              "* (Score is Time)"
-            ],
-            "sub_title2": "FOR TIME"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-06",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2396,6 +2373,20 @@
       },
       {
         "date": "2026-07-13",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "* Metcon:-800m Run by in3 rounds20 Wall balls 9/6kg10 Pull upsthen400m Run buy out"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-13",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2678,6 +2669,51 @@
     "2026-07-15": [
       {
         "date": "2026-07-15",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260715",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-15",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 23.3",
+            "lines": [
+              "Starting with a 6-minute time cap, complete as many reps as possible of:",
+              "5 wall walks",
+              "50 double-unders",
+              "15 snatches (weight 1)",
+              "5 wall walks",
+              "50 double-unders",
+              "12 snatches (weight 2)",
+              "*If completed before the 6-minute time cap, add 3 minutes to the time cap and complete:",
+              "20 strict handstand push-ups",
+              "50 double-unders",
+              "9 snatches (weight 3)",
+              "*If completed before the 9-minute time cap, add 3 minutes to the time cap and complete:",
+              "20 strict handstand push-ups",
+              "50 double-unders",
+              "6 snatches (weight 4)",
+              "*♀ 65 lb, 95 lb, 125 lb, 155 lb*",
+              "*♂ 95 lb, 135 lb, 185 lb, 225 lb*"
+            ]
+          }
+        ],
+        "note": "Open: Open 23.3"
+      },
+      {
+        "date": "2026-07-15",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-07-15/",
@@ -2715,14 +2751,85 @@
       },
       {
         "date": "2026-07-15",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260715",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-july-15-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "3 rounds",
+              "10/7 calorie air bike",
+              "6 Burpees",
+              "8 Step Overs (perform with a single DB in rounds 2-3)"
+            ]
+          },
+          {
+            "title": "4 rounds for time",
+            "lines": [
+              "14-12-10-8 DB Burpee Box Step Overs",
+              "20/15 Calorie Air Bike",
+              "RX: 50s/35s to 24/20″",
+              "Machine Alternatives",
+              "Ski: 20/16 Calories",
+              "Row: 25/20 Calories",
+              "Run: 300m",
+              "Feel: Cardio",
+              "Pace: Sustain",
+              "Target Score: Sub 18 minutes",
+              "Firebreather: Sub 15 minutes"
+            ]
+          },
+          {
+            "title": "Volume Skill",
+            "lines": [
+              "5 Sets",
+              "5-10 Wall Walks",
+              "Echo Bike @ Flush Pace for 3:00",
+              "We’re not working on speed today, we’re chasing volume. So slow them down a bit and if you have to pause during a round, it’s too many."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-15",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Squat Clean + Front Squat 5x2",
+              "10:00 EMOM",
+              "MIN 1 - 1 Squat Clean + 1 Front Squat (building)",
+              "MIN 2 - :30 Row (moderate)",
+              "* (Score is Weight)"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "I Believe You Have My Stapler!",
+            "lines": [
+              "10-8-6-4-2",
+              "Front Squats 84kg/57kg",
+              "500m/450m Row after every set",
+              "*Barbell comes from the floor"
+            ],
+            "sub_title2": "FOR TIME"
+          }
+        ]
+      },
+      {
+        "date": "2026-07-15",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "* Metcon:-5 rounds for time40 Double Unders16 Alt Hang DB Clean & Jerk 22.5/15kg14 T2B12 Box Jumps 24/20″"
             ]
           }
         ]
@@ -2761,39 +2868,8 @@
           }
         ],
         "note": "Benchmark: Karen"
-      },
-      {
-        "date": "2026-07-15",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 23.3",
-            "lines": [
-              "Starting with a 6-minute time cap, complete as many reps as possible of:",
-              "5 wall walks",
-              "50 double-unders",
-              "15 snatches (weight 1)",
-              "5 wall walks",
-              "50 double-unders",
-              "12 snatches (weight 2)",
-              "*If completed before the 6-minute time cap, add 3 minutes to the time cap and complete:",
-              "20 strict handstand push-ups",
-              "50 double-unders",
-              "9 snatches (weight 3)",
-              "*If completed before the 9-minute time cap, add 3 minutes to the time cap and complete:",
-              "20 strict handstand push-ups",
-              "50 double-unders",
-              "6 snatches (weight 4)",
-              "*♀ 65 lb, 95 lb, 125 lb, 155 lb*",
-              "*♂ 95 lb, 135 lb, 185 lb, 225 lb*"
-            ]
-          }
-        ],
-        "note": "Open: Open 23.3"
       }
     ]
   },
-  "last_updated": "2026-07-15T02:55:27.274150"
+  "last_updated": "2026-07-15T06:57:50.876273"
 }
