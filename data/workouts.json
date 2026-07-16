@@ -2712,55 +2712,6 @@
       },
       {
         "date": "2026-07-16",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-07-16/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "scorpions",
-              "instep rotation",
-              "lat stretch",
-              "hand walk"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10/8cal row",
-              "10 prone snow angels",
-              "10 snatch grip deadlifts"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "HANG POWER SNATCH 12MIN",
-            "lines": [
-              "on every 1:30 x 8 sets",
-              "1 muscle snatch",
-              "1 hang power snatch",
-              "(build in weight)"
-            ]
-          },
-          {
-            "title": "CONDITIONING 18MIN",
-            "lines": [
-              "6 rounds",
-              "",
-              "8 hang power snatches 40/30kg",
-              "10 burpees over the bar",
-              "12/10cal row",
-              "- 1:00 rest -",
-              "* aerobic power (vo2max)"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-16",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-july-16-2026/",
@@ -2829,6 +2780,55 @@
             "lines": [
               "Spend 4:00 on the rower, keeping your heartrate above 150bpm minus your age, then slowly work down to resting for the next 8:00 on any machine or walking."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-16",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-07-16/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "scorpions",
+              "instep rotation",
+              "lat stretch",
+              "hand walk"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10/8cal row",
+              "10 prone snow angels",
+              "10 snatch grip deadlifts"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "HANG POWER SNATCH 12MIN",
+            "lines": [
+              "on every 1:30 x 8 sets",
+              "1 muscle snatch",
+              "1 hang power snatch",
+              "(build in weight)"
+            ]
+          },
+          {
+            "title": "CONDITIONING 18MIN",
+            "lines": [
+              "6 rounds",
+              "",
+              "8 hang power snatches 40/30kg",
+              "10 burpees over the bar",
+              "12/10cal row",
+              "- 1:00 rest -",
+              "* aerobic power (vo2max)"
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -2907,5 +2907,5 @@
       }
     ]
   },
-  "last_updated": "2026-07-16T07:08:41.366789"
+  "last_updated": "2026-07-16T08:32:05.482542"
 }
