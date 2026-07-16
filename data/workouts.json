@@ -895,28 +895,6 @@
       },
       {
         "date": "2026-07-07",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Grass Court",
-            "lines": [
-              "50 Double Unders",
-              "50 Single Arm Dumbbell Push Press 23kg/16kg",
-              "50 Double Unders",
-              "50 Abmat Sit Ups",
-              "50 Double Unders",
-              "40/32 Calorie Air Bike",
-              "* (Score is Rounds + Reps)"
-            ],
-            "sub_title2": "20:00 AMRAP"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-07",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2690,6 +2668,50 @@
     "2026-07-16": [
       {
         "date": "2026-07-16",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260716",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Rest Day",
+              "The Story Behind Jack's Triangle Hero WOD",
+              "Brad Anderson was a Reconnaissance Marine in Iraq in 2003. He was also one of CrossFit's earliest practitioners, using it to train for combat before most people had ever heard of it. This is his story and the story of his friend, Kevin \"Jack\" Dempsey, whom we honored in Tuesday's Workout of the Day, Jack's Triangle."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-16",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 20.4",
+            "lines": [
+              "For time:",
+              "30 box jumps, 24 in.",
+              "15 clean and jerks, 95 lb.",
+              "30 box jumps, 24 in.",
+              "15 clean and jerks, 135 lb.",
+              "30 box jumps, 24 in.",
+              "10 clean and jerks, 185 lb.",
+              "30 single-leg squats",
+              "10 clean and jerks, 225 lb.",
+              "30 single-leg squats",
+              "5 clean and jerks, 275 lb.",
+              "30 single-leg squats",
+              "5 clean and jerks, 315 lb.",
+              "Time cap: 20 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 20.4"
+      },
+      {
+        "date": "2026-07-16",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-07-16/",
@@ -2739,17 +2761,96 @@
       },
       {
         "date": "2026-07-16",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260716",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-july-16-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "Rest Day",
-              "The Story Behind Jack's Triangle Hero WOD",
-              "Brad Anderson was a Reconnaissance Marine in Iraq in 2003. He was also one of CrossFit's earliest practitioners, using it to train for combat before most people had ever heard of it. This is his story and the story of his friend, Kevin \"Jack\" Dempsey, whom we honored in Tuesday's Workout of the Day, Jack's Triangle."
+              "200m Run",
+              "20 Ring Rows",
+              "100m Run",
+              "20 Kettlebell Swings",
+              "100m Run",
+              "12 Line facing burpees",
+              "200m Run"
             ]
+          },
+          {
+            "title": "For time",
+            "lines": [
+              "6 Rope Climbs",
+              "Run 400m",
+              "40 Snatches 95/65lbs",
+              "Run 400m",
+              "20 Bar Facing Burpees",
+              "Feel: Gas",
+              "Pace: Sustain",
+              "Target Score: 10-14 minutes",
+              "Firebreather Score: sub 10"
+            ]
+          },
+          {
+            "title": "Coach Led Mobility",
+            "lines": [
+              "Childs pose + Thread the needle x 1min each side",
+              "Seated wide legged hamstring stretch x 1 min",
+              "Figure 4 x 30sec each",
+              "Couch stretch x 1 min each side"
+            ]
+          },
+          {
+            "title": "Extra Credit",
+            "lines": [
+              "Zone 2 Run or Bike"
+            ]
+          },
+          {
+            "title": "12:00 Zone 2 Warm Up",
+            "lines": [
+              "45:00-90:00 Run or Bike @ Zone 2"
+            ]
+          },
+          {
+            "title": "12:00 Zone 2 Cool Down",
+            "lines": [
+              "Your Zone 2 today should stay between 160bpm minus your age and 180bpm minus your age."
+            ]
+          },
+          {
+            "title": "Warm up:",
+            "lines": [
+              "Build from resting heartrate to 180bpm minus your age slowly over 12:00. This will feel incredibly slow, but will help your session a lot. Feel free to mix up machines, but end on rower."
+            ]
+          },
+          {
+            "title": "Cool down:",
+            "lines": [
+              "Spend 4:00 on the rower, keeping your heartrate above 150bpm minus your age, then slowly work down to resting for the next 8:00 on any machine or walking."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-16",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "Did You See My Memo?",
+            "lines": [
+              "800m Run",
+              "150 Double Unders",
+              "600m Run",
+              "100 Double Unders",
+              "400m Run",
+              "50 Double Unders",
+              "200m Run"
+            ],
+            "sub_title2": "FOR TIME"
           }
         ]
       },
@@ -2803,36 +2904,8 @@
           }
         ],
         "note": "Benchmark: Baseline"
-      },
-      {
-        "date": "2026-07-16",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 20.4",
-            "lines": [
-              "For time:",
-              "30 box jumps, 24 in.",
-              "15 clean and jerks, 95 lb.",
-              "30 box jumps, 24 in.",
-              "15 clean and jerks, 135 lb.",
-              "30 box jumps, 24 in.",
-              "10 clean and jerks, 185 lb.",
-              "30 single-leg squats",
-              "10 clean and jerks, 225 lb.",
-              "30 single-leg squats",
-              "5 clean and jerks, 275 lb.",
-              "30 single-leg squats",
-              "5 clean and jerks, 315 lb.",
-              "Time cap: 20 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 20.4"
       }
     ]
   },
-  "last_updated": "2026-07-16T03:00:59.691830"
+  "last_updated": "2026-07-16T07:08:41.366789"
 }
