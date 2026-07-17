@@ -872,41 +872,6 @@
       },
       {
         "date": "2026-07-08",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Snatch 1x2",
-              "EVERY 1:30 (8 SETS)",
-              "2 Squat Snatch (singles) *",
-              "*Start Mod and Build to Mod-Heavy",
-              "* (Score is Heaviest Set)"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Serena & Venus",
-            "lines": [
-              "21-15-9",
-              "Overhead Squat 52kg/34kg",
-              "Toes to Bar",
-              "* (6:00 Time Cap)",
-              "* -Rest until 8:00-",
-              "21-15-9",
-              "Lateral Burpee Over Bar",
-              "Toes to Bar",
-              "* (6:00 Time Cap)",
-              "*Score is combined times"
-            ],
-            "sub_title2": "FOR TIME"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-08",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2717,6 +2682,39 @@
     "2026-07-17": [
       {
         "date": "2026-07-17",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260717",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-17",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 15.3",
+            "lines": [
+              "Complete as many rounds and reps as possible in 14 minutes of:",
+              "7 muscle-ups",
+              "50 wall-ball shots",
+              "100 double-unders",
+              "*Men use 20-lb. ball to 10 feet, Women use 14-lb. ball to 9 feet*"
+            ]
+          }
+        ],
+        "note": "Open: Open 15.3"
+      },
+      {
+        "date": "2026-07-17",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-07-17/",
@@ -2761,14 +2759,66 @@
       },
       {
         "date": "2026-07-17",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260717",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-july-17-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "2:00 Machine",
+              "2:00 Glute Band Activation Steps",
+              "10-8-6-4-2 Back Squats (start empty bar, add a little weight each round)",
+              "*1 Wall Walk between sets",
+              "Athletes are not expected to be at their workout weight in the round of 2 – just build in weight each round."
+            ]
+          },
+          {
+            "title": "EMOM 20 Minutes",
+            "lines": [
+              "– 5 Back Squats @ 75%+",
+              "– Rest",
+              "– Max Rep Strict Chest to Wall HSPU",
+              "– Rest"
+            ]
+          },
+          {
+            "title": "Stamina",
+            "lines": [
+              "AMRAP 2:00 x 8",
+              "Row for Meters",
+              "Rest 1:45",
+              "We’re slowly making our way out of aerobic row purgatory. This workout should be :01-:03 per 500m split faster than the 3:00 AMRAPs."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-17",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "3 Position Power Snatch (High Hang, Above the Knee, Floor) 5x3",
+              "EVERY 2:00 (5 SETS*)",
+              "3-Position Power Snatch",
+              "* (1 High Hang Power Snatch + 1 Hang Power Snatch + 1 Power Snatch)",
+              "*Complete each set unbroken. Start light-mod and build.",
+              "* (Score is Weight)"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "We Find It's Always Better to Fire People On a Friday",
+            "lines": [
+              "EVERY 3:00 (5 SETS)",
+              "3 Power Snatch 70kg/48kg",
+              "9 Bar Facing Burpees",
+              "15 Toes to Bar",
+              "* (Score is Slowest Time)"
             ]
           }
         ]
@@ -2822,27 +2872,8 @@
           }
         ],
         "note": "Benchmark: Nancy"
-      },
-      {
-        "date": "2026-07-17",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 15.3",
-            "lines": [
-              "Complete as many rounds and reps as possible in 14 minutes of:",
-              "7 muscle-ups",
-              "50 wall-ball shots",
-              "100 double-unders",
-              "*Men use 20-lb. ball to 10 feet, Women use 14-lb. ball to 9 feet*"
-            ]
-          }
-        ],
-        "note": "Open: Open 15.3"
       }
     ]
   },
-  "last_updated": "2026-07-17T03:01:11.838862"
+  "last_updated": "2026-07-17T07:06:01.584037"
 }
