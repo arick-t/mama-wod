@@ -1,75 +1,5 @@
 {
   "workouts": {
-    "2026-07-02": [
-      {
-        "date": "2026-07-02",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260702",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Rest Day",
-              "Virtuosity, Earned: Inside the First Afternoon of a CrossFit Level 1 Seminar",
-              "The Saturday afternoon of a CrossFit Level 1 Seminar moves fast: presses, push jerks, a lecture on what virtuosity really means, and a workout that turns a room of strangers into something closer to a team. By the final round of thrusters and burpees, no one is thinking about the morning's nerves anymore."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-02",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-july-2-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "Alternating Movement EMOM 6 minutes (2 rotations)",
-              "10 Ring Rows + Bar Hang in time remaining",
-              "10 Sit Ups + Hollow Hold in time remaining",
-              "2 Wall Walks + Wall Facing Hold in time remaining"
-            ]
-          },
-          {
-            "title": "EMOM 20 Minutes",
-            "lines": [
-              "– :45 of Strict Pull Ups",
-              "– :45 of GHD Hip Extensions / Sit Ups",
-              "– Max duration HS Hold",
-              "– Rest",
-              "Movement Variations (new variant every round)",
-              "– Strict Pull Ups: pronated grip, supinated grip, narrow grip, mixed grip, athlete’s choice x1.",
-              "– HS Hold: Handstand Hold, Wall Facing HS Hold, Freestanding HS hold, athlete’s choice x2.",
-              "– GHD: alternate between Hip Extensions and GHD Sit Ups (3 sets of Hip extensions, 2 sets of sit ups)",
-              "Feel: Muscle Overload",
-              "Pace: Sustain",
-              "Target Score: Scores will vary"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-02",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.1",
-            "lines": [
-              "Complete as many rounds as possible in 20 minutes of:",
-              "8 toes-to-bars",
-              "10 dumbbell hang clean and jerks",
-              "14-cal. row",
-              "*Men use 50-lb. dumbbell*"
-            ]
-          }
-        ],
-        "note": "Open: Open 18.1"
-      }
-    ],
     "2026-07-03": [
       {
         "date": "2026-07-03",
@@ -163,114 +93,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-07-03",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-07-03/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "samson stretch",
-              "scorpions",
-              "thoracic rotations",
-              "calf stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "20 single under",
-              "10 prone snow angels",
-              "10 scap. push ups"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "PUSH PRESS 14MIN",
-            "lines": [
-              "4-5 sets",
-              "5 push press @70-75%",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 14MIN",
-            "lines": [
-              "10-8-6-4-2",
-              "wall walks",
-              "100-80-60-40-20",
-              "double unders",
-              "* muscular endurance & aerobic power"
-            ],
-            "sub_title": "for time"
-          },
-          {
-            "title": "ABS 5MIN",
-            "lines": [
-              "weighted sit ups 15/10kg"
-            ],
-            "sub_title": "amrap 5min"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-03",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Pike",
-            "sub_title": "5 rounds for time of:",
-            "lines": [
-              "20 thrusters",
-              "10 strict ring dips",
-              "20 push-ups",
-              "10 strict handstand push-ups",
-              "50-meter bear crawl"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-03",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "The Ghost",
-            "lines": [
-              "6 rounds of:",
-              "– Athletes work for 3:00 and then rest 1:00 in a Fight Gone Bad AMRAP style workout.",
-              "*– Score is total reps completed at the end of the 6 rounds. Keep a running count from movement to movement, or add up all three during rest period.*",
-              "S1:",
-              "6 rounds for reps:",
-              "1:00 calorie row",
-              "1:00 burpees",
-              "1:00 double-under attempts",
-              "– Rest 1:00 between rounds.",
-              "S2:",
-              "5 rounds for reps:",
-              "1:00 calorie row",
-              "1:00 burpees",
-              "1:00 single-unders",
-              "– Rest 1:00 between rounds.",
-              "INTENDED STIMULUS",
-              "80-100 calories; 60-90 burpees; 300+ double-unders.",
-              "Fight Gone Bad style workout originally programmed for professional boxer Robert “The Ghost” Guerrero's training on 140617.",
-              "*Athletes should track individual movements each round and then try to beat the previous round's score.*",
-              "1 minute of  row ing",
-              "1 minute of  burpees",
-              "1 minute of double-unders",
-              "1 minute rest"
-            ]
-          }
-        ],
-        "note": "Benchmark: The Ghost"
       }
     ],
     "2026-07-04": [
@@ -890,20 +712,6 @@
               "aerobic capacity"
             ],
             "sub_title": "amrap 15min"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-07",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "* Metcon:-4 rounds:400m Run ·15 Goblet Squats 24/16kg12 Hand release push ups"
-            ]
           }
         ]
       },
@@ -2905,7 +2713,136 @@
         ],
         "note": "Benchmark: Baseline"
       }
+    ],
+    "2026-07-17": [
+      {
+        "date": "2026-07-17",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-07-17/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "sumo squat stretch",
+              "lat stretch",
+              "thoracic rotations",
+              "calf stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "20 single unders",
+              "20sec depp squat hold",
+              "10 ring rows"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "FRONT SQUATS 15MIN",
+            "lines": [
+              "4-5 sets",
+              "5 front squats @75-77%",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 17MIN",
+            "lines": [
+              "10 strict pull ups",
+              "40 air squats",
+              "60 double unders",
+              "* aerobic power & muscular endurance"
+            ],
+            "sub_title": "5 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-07-17",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260717",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-17",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Diane21-15-9DeadliftHSPU",
+              "Partner Abs finisher*12x front / left / right / candle sticks*"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-17",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Zimmerman",
+            "sub_title": "Complete as many rounds and reps as possible in 25 minutes of:",
+            "lines": [
+              "11 chest-to-bar pull-ups",
+              "2 deadlifts",
+              "10 handstand push-ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-17",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Nancy",
+            "lines": [
+              "5 rounds for time:",
+              "400m Run",
+              "15 Overhead Squat 42,5/30kg",
+              "Target: sub 15’ Time Cap 18’"
+            ]
+          }
+        ],
+        "note": "Benchmark: Nancy"
+      },
+      {
+        "date": "2026-07-17",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 15.3",
+            "lines": [
+              "Complete as many rounds and reps as possible in 14 minutes of:",
+              "7 muscle-ups",
+              "50 wall-ball shots",
+              "100 double-unders",
+              "*Men use 20-lb. ball to 10 feet, Women use 14-lb. ball to 9 feet*"
+            ]
+          }
+        ],
+        "note": "Open: Open 15.3"
+      }
     ]
   },
-  "last_updated": "2026-07-16T11:10:31.785901"
+  "last_updated": "2026-07-17T03:01:11.838862"
 }
