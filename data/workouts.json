@@ -934,34 +934,6 @@
       },
       {
         "date": "2026-07-09",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Bench Press 1x5",
-              "EVERY 2:00 (5 SETS)",
-              "5 Bench Press",
-              "*Start Mod and Build Every Set",
-              "* (Score is Heaviest Set)"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Championship Point",
-            "lines": [
-              "10-9-8-7-6-5-4-3-2-1",
-              "Hang Power Clean 70kg/48kg",
-              "10 Push Ups after every set"
-            ],
-            "sub_title2": "FOR TIME"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-09",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2733,6 +2705,59 @@
     "2026-07-18": [
       {
         "date": "2026-07-18",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260718",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-18",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 14.3",
+            "lines": [
+              "Complete as many reps as possible in 8 minutes of:",
+              "135-lb. deadlifts, 10 reps",
+              "15 box jumps, 24-inch",
+              "185-lb. deadlifts, 15 reps",
+              "15 box jumps, 24-inch",
+              "225-lb. deadlifts, 20 reps",
+              "15 box jumps, 24-inch",
+              "275-lb. deadlifts, 25 reps",
+              "15 box jumps, 24-inch",
+              "315-lb. deadlifts, 30 reps",
+              "15 box jumps, 24-inch",
+              "365-lb. deadlifts, 35 reps",
+              "15 box jumps, 24-inch",
+              "*WOMEN*",
+              "*- includes Masters Women up to 54 years old*",
+              "Complete as many reps as possible in 8 minutes of:",
+              "95-lb. deadlifts, 10 reps",
+              "15 box jumps, 20-inch",
+              "135-lb. deadlifts, 15 reps",
+              "15 box jumps, 20-inch",
+              "155-lb. deadlifts, 20 reps",
+              "15 box jumps, 20-inch",
+              "185-lb. deadlifts, 25 reps",
+              "15 box jumps, 20-inch",
+              "205-lb. deadlifts, 30 reps"
+            ]
+          }
+        ],
+        "note": "Open: Open 14.3"
+      },
+      {
+        "date": "2026-07-18",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-07-18/",
@@ -2784,14 +2809,57 @@
       },
       {
         "date": "2026-07-18",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260718",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-july-18-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "Partner “Rowling”",
+              "Set a 7 minute clock",
+              "One partner rows 150m at a time",
+              "For every meter +/- 150m = 1 Russian Kettlebell Swing for both athletes (5 rep minimum per Rowl)",
+              "Non-Rowling Partner Holds a plank during partner’s Rowl."
+            ]
+          },
+          {
+            "title": "With a partner, 20 rounds for time",
+            "lines": [
+              "10 Double Russian KB Swings 35s/26s",
+              "100m Single KB Suitcase Carry",
+              "8/6 Calorie Machine",
+              "Partners complete 2 rounds at a time before switching."
+            ]
+          },
+          {
+            "title": "Deadlift",
+            "lines": [
+              "10-8-6-4",
+              "Start your set of 10 between 65 and 75%, then add weight each round.",
+              "Bike 1,000m Between Sets to Flush”)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-18",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "I Love Kung Fu!",
+            "lines": [
+              "TEAMS OF 2",
+              "FOR TIME",
+              "1 Mile Run (switch every 200m)",
+              "150 Russian Kettlebell Swings 32kg/25kg",
+              "150 Push Ups",
+              "150 Kettlebell Goblet Lunges 32kg/25kg",
+              "2000m Row (switch every 200m)",
+              "*Swings, Push Ups, Lunges complete in order. Break up as needed between partners."
             ]
           }
         ]
@@ -2848,47 +2916,8 @@
           }
         ],
         "note": "Benchmark: Nicole"
-      },
-      {
-        "date": "2026-07-18",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 14.3",
-            "lines": [
-              "Complete as many reps as possible in 8 minutes of:",
-              "135-lb. deadlifts, 10 reps",
-              "15 box jumps, 24-inch",
-              "185-lb. deadlifts, 15 reps",
-              "15 box jumps, 24-inch",
-              "225-lb. deadlifts, 20 reps",
-              "15 box jumps, 24-inch",
-              "275-lb. deadlifts, 25 reps",
-              "15 box jumps, 24-inch",
-              "315-lb. deadlifts, 30 reps",
-              "15 box jumps, 24-inch",
-              "365-lb. deadlifts, 35 reps",
-              "15 box jumps, 24-inch",
-              "*WOMEN*",
-              "*- includes Masters Women up to 54 years old*",
-              "Complete as many reps as possible in 8 minutes of:",
-              "95-lb. deadlifts, 10 reps",
-              "15 box jumps, 20-inch",
-              "135-lb. deadlifts, 15 reps",
-              "15 box jumps, 20-inch",
-              "155-lb. deadlifts, 20 reps",
-              "15 box jumps, 20-inch",
-              "185-lb. deadlifts, 25 reps",
-              "15 box jumps, 20-inch",
-              "205-lb. deadlifts, 30 reps"
-            ]
-          }
-        ],
-        "note": "Open: Open 14.3"
       }
     ]
   },
-  "last_updated": "2026-07-18T02:54:37.793214"
+  "last_updated": "2026-07-18T06:54:39.089665"
 }
