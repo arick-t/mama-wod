@@ -2730,44 +2730,6 @@
       },
       {
         "date": "2026-07-19",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-07-19/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "instep rotations",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. scap. push ups",
-              "2. row",
-              "3. ring rows",
-              "4. 90/90 hip rotation"
-            ],
-            "sub_title": "30sec on / 15sec off x2 rounds"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "1. 12-15 bench dips",
-              "2. 10-15cal row",
-              "3. 8-10 feet elevated ring rows",
-              "4. 12-16 goblet cossack squats",
-              "5. rest"
-            ],
-            "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-19",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-july-19-2026/",
@@ -2812,6 +2774,44 @@
               "5:00 Machine Flush",
               "3:00 Mobility"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-19",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-07-19/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "instep rotations",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. scap. push ups",
+              "2. row",
+              "3. ring rows",
+              "4. 90/90 hip rotation"
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "1. 12-15 bench dips",
+              "2. 10-15cal row",
+              "3. 8-10 feet elevated ring rows",
+              "4. 12-16 goblet cossack squats",
+              "5. rest"
+            ],
+            "sub_title": "emom 35min (7 rounds)"
           }
         ]
       },
@@ -2887,5 +2887,5 @@
       }
     ]
   },
-  "last_updated": "2026-07-19T07:21:05.335263"
+  "last_updated": "2026-07-19T08:43:12.952432"
 }
