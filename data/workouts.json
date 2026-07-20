@@ -1,104 +1,5 @@
 {
   "workouts": {
-    "2026-07-06": [
-      {
-        "date": "2026-07-06",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260706",
-        "sections": [
-          {
-            "title": "FOR TIME",
-            "lines": [
-              "15 power snatches",
-              "5 rope climbs to 15 feet",
-              "12 power snatches",
-              "4 rope climbs",
-              "9 power snatches",
-              "3 rope climbs",
-              "6 power snatches",
-              "2 rope climbs",
-              "3 power snatches",
-              "1 rope climb",
-              "♀ 95-lb barbell",
-              "♂ 135-lb barbell"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-06",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-july-6-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "400m Run",
-              "Then 3 rounds of:",
-              "10 Plate Ground to Overhead",
-              "8 Ring Rows",
-              "4 Burpees"
-            ]
-          },
-          {
-            "title": "Strength",
-            "lines": [
-              "6 Rounds",
-              "8 Unbroken Strict Pull ups",
-              "Rest 2:00 between sets",
-              "*Add band assistance as needed to maintain unbroken",
-              "*Rounds 1 & 4: Double overhand grip",
-              "Rounds 2 & 5: Double underhand grip",
-              "Rounds 3 & 6: Mixed grip (one over, one under)"
-            ]
-          },
-          {
-            "title": "For Time",
-            "lines": [
-              "10-9-8-7-6-5-4-3-2-1",
-              "Clean and Jerks 95/65lbs",
-              "Each set must be unbroken and athletes must drop the bar between sets. If a set is failed, the athlete must restart the set.",
-              "Feel: Gas",
-              "Pace: Reach",
-              "Target Score: Sub 7 minutes",
-              "Firebreather Score: Sub 5 minutes"
-            ]
-          },
-          {
-            "title": "Squat Clean",
-            "lines": [
-              "Pause At the Knee Squat Clean + Split Jerk",
-              "7×1",
-              "Spend 1-2 minutes slowly flushing on a machine between sets.)",
-              "Lower the bar down to just in front of your knee cap with the torso getting out over the bar, so you have to mimic getting back to power position as you would from the floor."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-06",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 16.4",
-            "lines": [
-              "Complete as many rounds and reps as possible in 13 minutes of:",
-              "55 deadlifts",
-              "55 wall-ball shots",
-              "55-calorie row",
-              "55 handstand push-ups",
-              "*Men deadlift 225 lb. and throw 20-lb. ball to 10-ft. target*",
-              "*Women deadlift 155 lb. and throw 14-lb. ball to 9-ft. target*"
-            ]
-          }
-        ],
-        "note": "Open: Open 16.4"
-      }
-    ],
     "2026-07-07": [
       {
         "date": "2026-07-07",
@@ -176,106 +77,6 @@
           }
         ],
         "note": "Open: Open 23.1"
-      },
-      {
-        "date": "2026-07-07",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-07-07/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "thoracic rotation",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 plank push ups",
-              "10 straight leg sit ups",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "PUSH PRESS 15MIN",
-            "lines": [
-              "4-5 sets",
-              "5 push press @70-75%",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "9 push press 40/30kg *",
-              "12 toes to bar",
-              "15/12cal bike/ski",
-              "* rx+ option: 6 handstand push ups",
-              "aerobic capacity"
-            ],
-            "sub_title": "amrap 15min"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-07",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Moore",
-            "sub_title": "Complete as many rounds in 20 minutes as you can of:",
-            "lines": [
-              "1 rope climb to 15 feet",
-              "Run 400 meters",
-              "Max-rep handstand push-ups"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-07",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "The Ghost",
-            "lines": [
-              "6 rounds of:",
-              "– Athletes work for 3:00 and then rest 1:00 in a Fight Gone Bad AMRAP style workout.",
-              "*– Score is total reps completed at the end of the 6 rounds. Keep a running count from movement to movement, or add up all three during rest period.*",
-              "S1:",
-              "6 rounds for reps:",
-              "1:00 calorie row",
-              "1:00 burpees",
-              "1:00 double-under attempts",
-              "– Rest 1:00 between rounds.",
-              "S2:",
-              "5 rounds for reps:",
-              "1:00 calorie row",
-              "1:00 burpees",
-              "1:00 single-unders",
-              "– Rest 1:00 between rounds.",
-              "INTENDED STIMULUS",
-              "80-100 calories; 60-90 burpees; 300+ double-unders.",
-              "Fight Gone Bad style workout originally programmed for professional boxer Robert “The Ghost” Guerrero's training on 140617.",
-              "*Athletes should track individual movements each round and then try to beat the previous round's score.*",
-              "1 minute of  row ing",
-              "1 minute of  burpees",
-              "1 minute of double-unders",
-              "1 minute rest"
-            ]
-          }
-        ],
-        "note": "Benchmark: The Ghost"
       }
     ],
     "2026-07-08": [
@@ -955,25 +756,6 @@
       },
       {
         "date": "2026-07-11",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Strength:-Coach led warm up to 65% thenE2MOM x 8 – 2 Squat Cleans + 1 Split Jerk 65-80%"
-            ]
-          },
-          {
-            "title": "METCON",
-            "sub_title": "Partner Abs finisher*12x front / left / right / candle sticks*",
-            "lines": []
-          }
-        ]
-      },
-      {
-        "date": "2026-07-11",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -997,20 +779,21 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "BARBARA",
+            "title": "DIANE",
             "lines": [
-              "5 rounds for time:",
-              "15 Pull up",
-              "20 Push up",
-              "30 Sit up",
-              "50 Air Squat",
-              "2min Rest",
-              "(Time Cap 35min)",
-              "Do not include final 2min rest in your overall time."
+              "For time",
+              "21–15–9",
+              "Deadlift @100/70 kg",
+              "Handstand push up",
+              "Scaled",
+              "21-15-9 Reps For Time",
+              "Deadlifts (70/50kg)",
+              "Push-Ups",
+              "TC 10 min"
             ]
           }
         ],
-        "note": "Benchmark: BARBARA"
+        "note": "Benchmark: DIANE"
       }
     ],
     "2026-07-12": [
@@ -2467,6 +2250,20 @@
       },
       {
         "date": "2026-07-18",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Killer #63 rounds30/24 cal row20 KB Swings 32/24kg10 Push upsinto3 rounds30/20 cal bike20 T2Binto3 rounds of:10 Burpee DB Box step ups 2×22.5/15kg 24/20″5 Muscle-ups or 12 Chest to bar"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-18",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2620,6 +2417,30 @@
               "5. rest"
             ],
             "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-07-19",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Hero Wod:",
+              "Charleston 9′",
+              "9 rounds for time",
+              "9 Cleans @45/30kg",
+              "9 Burpees",
+              "9 Wallballs 9/6kg",
+              "9 Abmat Sit Ups",
+              "9 Shoulder to Overhead 45/30kg",
+              "9 Box Jumps",
+              "9 Push ups",
+              "9 Air Squats"
+            ]
           }
         ]
       },
@@ -2893,7 +2714,160 @@
         ],
         "note": "Benchmark: Gwen"
       }
+    ],
+    "2026-07-21": [
+      {
+        "date": "2026-07-21",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-07-21/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "instep rotation",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 reverse lunges",
+              "20sec deep squat hold",
+              "10 ring rows",
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "FRONT SQUATS 15MIN",
+            "lines": [
+              "4-5 sets",
+              "5 front squats @75-77%",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "12 pull ups",
+              "12 double db reverse lunges 2x22,5/15kg",
+              "12/10cal bike/ski",
+              "* aerobic power & muscular endurance"
+            ],
+            "sub_title": "amrap 15min"
+          }
+        ]
+      },
+      {
+        "date": "2026-07-21",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260721",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-21",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "* Metcon:-5 rounds10 Pull ups15 KB Swings 32/24kg20 Box Jumps 24/20″50 DU’s"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-21",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Morrison",
+            "sub_title": "50-40-30-20-10 reps for time of:",
+            "lines": [
+              "Wall-ball shots",
+              "Box jumps",
+              "Kettlebell swings"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-21",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "BARBARA",
+            "lines": [
+              "5 rounds for time:",
+              "15 Pull up",
+              "20 Push up",
+              "30 Sit up",
+              "50 Air Squat",
+              "2min Rest",
+              "(Time Cap 35min)",
+              "Do not include final 2min rest in your overall time."
+            ]
+          }
+        ],
+        "note": "Benchmark: BARBARA"
+      },
+      {
+        "date": "2026-07-21",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 12.4",
+            "lines": [
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (20 lbs to 10' target)",
+              "90 Double-unders",
+              "30 Muscle-ups",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (14 lbs to 9' target)",
+              "90 Double-unders",
+              "30 Muscle-ups",
+              "MASTERS",
+              "*MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (20lbs to 9' target)",
+              "90 Double-unders",
+              "30 Muscle-ups",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (10 lbs to 9' target)",
+              "90 Double-unders"
+            ]
+          }
+        ],
+        "note": "Open: Open 12.4"
+      }
     ]
   },
-  "last_updated": "2026-07-20T11:56:03.343364"
+  "last_updated": "2026-07-21T02:57:54.840784"
 }
