@@ -2711,53 +2711,6 @@
     "2026-07-20": [
       {
         "date": "2026-07-20",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-07-20/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "scorpions",
-              "instep rotation",
-              "lat stretch",
-              "hand walk"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "2-4-6…",
-              "hang high pulls",
-              "elbow rotations",
-              "push presses"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "CLEAN & JERK 10MIN",
-            "lines": [
-              "on every 1:00 x 10 sets",
-              "1 hang power clean + 1 push jerk",
-              "explosive power"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "9 hang power cleans",
-              "9 shoulder to overheads",
-              "9 v-ups",
-              "* barbell: 40/30kg",
-              "* muscular endurance"
-            ],
-            "sub_title": "9 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-20",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260720",
@@ -2811,6 +2764,92 @@
               "Target Score: 5+ rounds",
               "Firebreather Score: 8+ rounds"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-20",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 13.5",
+            "lines": [
+              "Complete as many rounds and reps as possible in 4 minutes of:",
+              "100 pound Thruster, 15 reps",
+              "15 Chest to bar Pull-ups",
+              "If 90 reps (3 rounds) are completed in under 4 minutes, time extends to 8 minutes.",
+              "If 180 reps (6 rounds) are completed in under 8 minutes, time extends to 12 minutes.",
+              "If 270 reps (9 rounds) are completed in under 12 minutes, time extends to 16 minutes.",
+              "Etc.",
+              "*WOMEN -*",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 4 minutes of:",
+              "65 pound Thruster, 15 reps",
+              "15 Chest to bar Pull-ups",
+              "If 90 reps (3 rounds) are completed in under 4 minutes, time extends to 8 minutes.",
+              "If 180 reps (6 rounds) are completed in under 8 minutes, time extends to 12 minutes.",
+              "If 270 reps (9 rounds) are completed in under 12 minutes, time extends to 16 minutes.",
+              "Etc.",
+              "*MASTERS MEN -*",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 4 minutes of:",
+              "65 pound Thruster, 15 reps",
+              "15 Chin over bar Pull-ups",
+              "If 90 reps (3 rounds) are completed in under 4 minutes, time extends to 8 minutes.",
+              "If 180 reps (6 rounds) are completed in under 8 minutes, time extends to 12 minutes.",
+              "If 270 reps (9 rounds) are completed in under 12 minutes, time extends to 16 minutes.",
+              "Etc."
+            ]
+          }
+        ],
+        "note": "Open: Open 13.5"
+      },
+      {
+        "date": "2026-07-20",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-07-20/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "scorpions",
+              "instep rotation",
+              "lat stretch",
+              "hand walk"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "2-4-6…",
+              "hang high pulls",
+              "elbow rotations",
+              "push presses"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "CLEAN & JERK 10MIN",
+            "lines": [
+              "on every 1:00 x 10 sets",
+              "1 hang power clean + 1 push jerk",
+              "explosive power"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "9 hang power cleans",
+              "9 shoulder to overheads",
+              "9 v-ups",
+              "* barbell: 40/30kg",
+              "* muscular endurance"
+            ],
+            "sub_title": "9 rounds"
           }
         ]
       },
@@ -2891,47 +2930,8 @@
           }
         ],
         "note": "Benchmark: Gwen"
-      },
-      {
-        "date": "2026-07-20",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 13.5",
-            "lines": [
-              "Complete as many rounds and reps as possible in 4 minutes of:",
-              "100 pound Thruster, 15 reps",
-              "15 Chest to bar Pull-ups",
-              "If 90 reps (3 rounds) are completed in under 4 minutes, time extends to 8 minutes.",
-              "If 180 reps (6 rounds) are completed in under 8 minutes, time extends to 12 minutes.",
-              "If 270 reps (9 rounds) are completed in under 12 minutes, time extends to 16 minutes.",
-              "Etc.",
-              "*WOMEN -*",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 4 minutes of:",
-              "65 pound Thruster, 15 reps",
-              "15 Chest to bar Pull-ups",
-              "If 90 reps (3 rounds) are completed in under 4 minutes, time extends to 8 minutes.",
-              "If 180 reps (6 rounds) are completed in under 8 minutes, time extends to 12 minutes.",
-              "If 270 reps (9 rounds) are completed in under 12 minutes, time extends to 16 minutes.",
-              "Etc.",
-              "*MASTERS MEN -*",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 4 minutes of:",
-              "65 pound Thruster, 15 reps",
-              "15 Chin over bar Pull-ups",
-              "If 90 reps (3 rounds) are completed in under 4 minutes, time extends to 8 minutes.",
-              "If 180 reps (6 rounds) are completed in under 8 minutes, time extends to 12 minutes.",
-              "If 270 reps (9 rounds) are completed in under 12 minutes, time extends to 16 minutes.",
-              "Etc."
-            ]
-          }
-        ],
-        "note": "Open: Open 13.5"
       }
     ]
   },
-  "last_updated": "2026-07-20T05:14:29.535180"
+  "last_updated": "2026-07-20T07:35:23.893614"
 }
