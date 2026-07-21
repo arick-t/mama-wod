@@ -735,27 +735,6 @@
       },
       {
         "date": "2026-07-11",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Team \"Roy",
-            "lines": [
-              "IN TEAMS OF 2",
-              "5 ROUNDS FOR TIME  (each/1:1)",
-              "15 Deadlifts 102kg/70kg",
-              "20 Box Jumps 24\"/20\"",
-              "25 Pull Ups",
-              "*P1 completes a full round while P2 rests then switch. Both partners complete 5 rounds. 3:30 time cap per round per person.",
-              "*U.S. Marine Corps Sgt. Michael C. Roy, 25, of North Fort Myers, Florida, assigned to the 3rd Marine Special Operations Battalion, Marine Special Operations Advisor Group, Marine Corps Forces Special Operations Command at Camp Lejeune, was killed in action on July 8, 2009, in Nimroz Province, Afghanistan, while supporting combat operations. He is survived by his wife, Amy; and three children, Michael, Landon and Olivia.*"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-11",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2718,6 +2697,59 @@
     "2026-07-21": [
       {
         "date": "2026-07-21",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260721",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-21",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 12.4",
+            "lines": [
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (20 lbs to 10' target)",
+              "90 Double-unders",
+              "30 Muscle-ups",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (14 lbs to 9' target)",
+              "90 Double-unders",
+              "30 Muscle-ups",
+              "MASTERS",
+              "*MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (20lbs to 9' target)",
+              "90 Double-unders",
+              "30 Muscle-ups",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (10 lbs to 9' target)",
+              "90 Double-unders"
+            ]
+          }
+        ],
+        "note": "Open: Open 12.4"
+      },
+      {
+        "date": "2026-07-21",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-07-21/",
@@ -2763,15 +2795,58 @@
       },
       {
         "date": "2026-07-21",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260721",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-july-21-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "3 Rounds",
+              "1:30 Machine",
+              "10 Russian Kettlebell Swings",
+              "10 Squats"
             ]
+          },
+          {
+            "title": "Back Squat",
+            "lines": [
+              "7 reps @ 70% 1RM",
+              "5 reps @ 75% 1RM",
+              "3 reps @ 80% 1RM",
+              "1 rep @ 85% 1RM",
+              "1 max rep set at 85-90%",
+              "Slowly bike 1,000m between sets for rest",
+              "Goal is 3-8 reps in your max rep set. Adjust weight accordingly.”)"
+            ]
+          },
+          {
+            "title": "EMOM 12:00 – Alternate",
+            "lines": [
+              "1 – Echo Bike Calories in :30",
+              "2 – Unbroken Wallballs in :30",
+              "WB: 20/14lbs to 10ft",
+              "Athlete Notes: We’re looking for the bike effort to be high enough that the wallballs are challenging to hold on to for the duration.",
+              "More slightly rude Misfit-esque back squat “accessory” work. Another nudge to make sure there’s a real cool down."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-21",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "MIDLINE MARCH",
+            "lines": [
+              "25 GHDs (Scale to V-Ups)",
+              "50ft Handstand Walk",
+              "50ft Overhead Walking Lunge  52kg/34kg (Scale to 16 Overhead Alt. Lunges)"
+            ],
+            "sub_title2": "3 ROUNDS FOR TIME"
           }
         ]
       },
@@ -2827,47 +2902,8 @@
           }
         ],
         "note": "Benchmark: BARBARA"
-      },
-      {
-        "date": "2026-07-21",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 12.4",
-            "lines": [
-              "Complete as many rounds and reps as possible in 12 minutes of:",
-              "150 Wall balls (20 lbs to 10' target)",
-              "90 Double-unders",
-              "30 Muscle-ups",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 12 minutes of:",
-              "150 Wall balls (14 lbs to 9' target)",
-              "90 Double-unders",
-              "30 Muscle-ups",
-              "MASTERS",
-              "*MEN*",
-              "-",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 12 minutes of:",
-              "150 Wall balls (20lbs to 9' target)",
-              "90 Double-unders",
-              "30 Muscle-ups",
-              "*MASTERS WOMEN*",
-              "-",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 12 minutes of:",
-              "150 Wall balls (10 lbs to 9' target)",
-              "90 Double-unders"
-            ]
-          }
-        ],
-        "note": "Open: Open 12.4"
       }
     ]
   },
-  "last_updated": "2026-07-21T02:57:54.840784"
+  "last_updated": "2026-07-21T07:15:11.962685"
 }
