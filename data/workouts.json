@@ -905,36 +905,6 @@
       },
       {
         "date": "2026-07-13",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Box Squat 3x10",
-              "EVERY 3:00 (3 SETS)",
-              "10 Box Squats (building)",
-              "*Start light and build to a moderate weight",
-              "* (Score is Weight)"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "Sounds Like Somebody's Got a Case of the Mondays!",
-            "lines": [
-              "20/16 Calorie Air Bike",
-              "20 Dumbbell Alt Snatch 23kg/16kg",
-              "Max Sit Ups",
-              "* -Rest 1:00 between Sets-",
-              "* (Score is Total Sit Ups)"
-            ],
-            "sub_title2": "3-3-3-4:00 AMRAP"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-13",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2709,6 +2679,59 @@
     "2026-07-22": [
       {
         "date": "2026-07-22",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260722",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-22",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 14.4",
+            "lines": [
+              "Complete as many rounds and repetitions as possible in 14 minutes of:",
+              "60-calorie row",
+              "50 toes-to-bars",
+              "40 wall-ball shots, 20 lb. to 10-foot target",
+              "30 cleans, 135 lb.",
+              "20 muscle-ups",
+              "*WOMEN*",
+              "*- includes Masters Women up to 54 years old*",
+              "Complete as many rounds and repetitions as possible in 14 minutes of:",
+              "60-calorie row",
+              "50 toes-to-bars",
+              "40 wall-ball shots, 14 lb. to 9-foot target",
+              "30 cleans, 95 lb.",
+              "20 muscle-ups",
+              "*MASTERS MEN*",
+              "*- includes Masters Men 55+*",
+              "Complete as many rounds and repetitions as possible in 14 minutes of:",
+              "60-calorie row",
+              "50 toes-to-bars",
+              "40 wall-ball shots, 20 lb. to 9-foot target",
+              "30 cleans, 115 lb.",
+              "20 muscle-ups",
+              "*MASTERS WOMEN*",
+              "*- includes Masters Women 55+*",
+              "Complete as many rounds and repetitions as possible in 14 minutes of:"
+            ]
+          }
+        ],
+        "note": "Open: Open 14.4"
+      },
+      {
+        "date": "2026-07-22",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-07-22/",
@@ -2749,15 +2772,76 @@
       },
       {
         "date": "2026-07-22",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260722",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-july-22-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "Row Prep:",
+              "2 rounds",
+              "10 RDLs/10 Russian Kettlebell Swings",
+              "250/225m Row",
+              "RDLs in R1, Swings in R2.",
+              "Run Prep:",
+              "2 rounds",
+              "50m Lateral Shuffle",
+              "50m Short Skips",
+              "50m Tall Skips",
+              "150m Run",
+              "Rest 30-60 seconds between warm up rounds"
             ]
+          },
+          {
+            "title": "6 Rounds each for time",
+            "lines": [
+              "500/450m Row",
+              "300m Run",
+              "Rest 1:00 between rounds",
+              "Feel: Cardio",
+              "Pace: Sustain",
+              "Target Score: <4:00/rd",
+              "Firebreather Score: <3:15/rd",
+              "Total time: sub 30"
+            ]
+          },
+          {
+            "title": "Bench Press",
+            "lines": [
+              "10 @ 50% + 5lbs",
+              "10 @ 50% +10lbs"
+            ]
+          },
+          {
+            "title": "AMRAP @ 50% +15lbs",
+            "lines": [
+              "Ski 500m Between Sets to Flush”)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-22",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "THE END",
+            "lines": [
+              "20/16 Calorie Row",
+              "30 Wall Balls 9kg/6kg",
+              "20 Toes to Bar",
+              "30 Box Jumps 24\"/20\"",
+              "20 Kettlebell Sumo Deadlift High Pull 32kg/25kg",
+              "30 Burpees",
+              "20 Shoulder to Overhead 61kg/43kg",
+              "* -Rest 1:00 after the 3:00, rest 2:00 after the 6:00-",
+              "* (Scored by Total Combined Reps)"
+            ],
+            "sub_title2": "3:00 / 6:00 / 12:00 AMRAP"
           }
         ]
       },
@@ -2817,47 +2901,8 @@
           }
         ],
         "note": "Benchmark: Kelly"
-      },
-      {
-        "date": "2026-07-22",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 14.4",
-            "lines": [
-              "Complete as many rounds and repetitions as possible in 14 minutes of:",
-              "60-calorie row",
-              "50 toes-to-bars",
-              "40 wall-ball shots, 20 lb. to 10-foot target",
-              "30 cleans, 135 lb.",
-              "20 muscle-ups",
-              "*WOMEN*",
-              "*- includes Masters Women up to 54 years old*",
-              "Complete as many rounds and repetitions as possible in 14 minutes of:",
-              "60-calorie row",
-              "50 toes-to-bars",
-              "40 wall-ball shots, 14 lb. to 9-foot target",
-              "30 cleans, 95 lb.",
-              "20 muscle-ups",
-              "*MASTERS MEN*",
-              "*- includes Masters Men 55+*",
-              "Complete as many rounds and repetitions as possible in 14 minutes of:",
-              "60-calorie row",
-              "50 toes-to-bars",
-              "40 wall-ball shots, 20 lb. to 9-foot target",
-              "30 cleans, 115 lb.",
-              "20 muscle-ups",
-              "*MASTERS WOMEN*",
-              "*- includes Masters Women 55+*",
-              "Complete as many rounds and repetitions as possible in 14 minutes of:"
-            ]
-          }
-        ],
-        "note": "Open: Open 14.4"
       }
     ]
   },
-  "last_updated": "2026-07-22T02:57:21.581362"
+  "last_updated": "2026-07-22T07:16:38.950761"
 }
