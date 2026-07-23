@@ -940,25 +940,6 @@
       },
       {
         "date": "2026-07-14",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Hi, My Name is Steve",
-            "lines": [
-              "21 Box Jump Over 24\"/20\"",
-              "15 Pull Ups",
-              "9 Strict Handstand Push Ups",
-              "* (Score is Rounds + Reps)"
-            ],
-            "sub_title2": "AMRAP 20:00"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-14",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2736,6 +2717,39 @@
     "2026-07-23": [
       {
         "date": "2026-07-23",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260723",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "BUY TICKETS NOW"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-23",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 16.5",
+            "lines": [
+              "21-18-15-12-9-6-3 reps for time of:",
+              "Thrusters",
+              "Burpees",
+              "*Men use 95 lb.*",
+              "*Women use 65 lb.*"
+            ]
+          }
+        ],
+        "note": "Open: Open 16.5"
+      },
+      {
+        "date": "2026-07-23",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-07-23/",
@@ -2784,15 +2798,90 @@
       },
       {
         "date": "2026-07-23",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260723",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-july-23-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "BUY TICKETS NOW"
+              "AMRAP 6 minutes",
+              "10/7 Calorie Air Bike or Ski",
+              "10 Kettlebell Romanian Dead Lifts",
+              ":10  Handstand Hold"
             ]
+          },
+          {
+            "title": "4 Rounds for time",
+            "lines": [
+              "16 Double Kettlebell Deadlifts 70s/53s",
+              "12 Deficit HSPU 2/1″",
+              "16/13 Calorie Air Bike or Skierg"
+            ]
+          },
+          {
+            "title": "Core Accessory:",
+            "lines": [
+              "10 min EMOM:",
+              "min 1: 10-15 v-ups",
+              "min 2: 20 sec copenhagen plank each side"
+            ]
+          },
+          {
+            "title": "Extra Credit",
+            "lines": [
+              "Zone 2 Row"
+            ]
+          },
+          {
+            "title": "12:00 Zone 2 Warm Up",
+            "lines": [
+              "45:00-90:00 Row @ Zone 2"
+            ]
+          },
+          {
+            "title": "12:00 Zone 2 Cool Down",
+            "lines": [
+              "Your Zone 2 today should stay between 160bpm minus your age and 180bpm minus your age."
+            ]
+          },
+          {
+            "title": "Warm up:",
+            "lines": [
+              "Build from resting heartrate to 180bpm minus your age slowly over 12:00. This will feel incredibly slow, but will help your session a lot. Feel free to mix up machines, but end on rower."
+            ]
+          },
+          {
+            "title": "Cool down:",
+            "lines": [
+              "Spend 4:00 on the rower, keeping your heartrate above 150bpm minus your age, then slowly work down to resting for the next 8:00 on any machine or walking."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-23",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Deadstop Deadlift",
+              "5x3",
+              "Deadstop Deadlift @70-80% or RPE 8",
+              "* (Score is Weight)"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "CFG 8.4 HEAVY",
+            "lines": [
+              "5 Deadlifts 143kg/102kg",
+              "10 Lateral Burpee Over Bar"
+            ],
+            "sub_title2": "5 ROUNDS FOR TIME"
           }
         ]
       },
@@ -2856,27 +2945,8 @@
           }
         ],
         "note": "Benchmark: Lynne"
-      },
-      {
-        "date": "2026-07-23",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 16.5",
-            "lines": [
-              "21-18-15-12-9-6-3 reps for time of:",
-              "Thrusters",
-              "Burpees",
-              "*Men use 95 lb.*",
-              "*Women use 65 lb.*"
-            ]
-          }
-        ],
-        "note": "Open: Open 16.5"
       }
     ]
   },
-  "last_updated": "2026-07-23T03:01:50.602587"
+  "last_updated": "2026-07-23T07:14:52.329186"
 }
