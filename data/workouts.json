@@ -2769,44 +2769,6 @@
       },
       {
         "date": "2026-07-25",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-07-25/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "calf stretch",
-              "lying hip cross over",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 good mornings",
-              "10 ring rows",
-              "*partner is skiing"
-            ],
-            "sub_title": "amrap 5min"
-          },
-          {
-            "title": "CONDITIONING 36MIN",
-            "lines": [
-              "in teams of 2",
-              "(I go, you go)",
-              "6 strict pull ups",
-              "9 deadlifts 80/60kg",
-              "12 box jumps 60/50cm",
-              "15/12cal ski"
-            ],
-            "sub_title": "amrap 36min"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-25",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-july-25-2026/",
@@ -2844,6 +2806,44 @@
               "Row 500m at flush pace between sets",
               "Drop and reset between each rep."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-25",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-07-25/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "calf stretch",
+              "lying hip cross over",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 good mornings",
+              "10 ring rows",
+              "*partner is skiing"
+            ],
+            "sub_title": "amrap 5min"
+          },
+          {
+            "title": "CONDITIONING 36MIN",
+            "lines": [
+              "in teams of 2",
+              "(I go, you go)",
+              "6 strict pull ups",
+              "9 deadlifts 80/60kg",
+              "12 box jumps 60/50cm",
+              "15/12cal ski"
+            ],
+            "sub_title": "amrap 36min"
           }
         ]
       },
@@ -2917,5 +2917,5 @@
       }
     ]
   },
-  "last_updated": "2026-07-25T07:10:17.930142"
+  "last_updated": "2026-07-25T08:36:17.384683"
 }
