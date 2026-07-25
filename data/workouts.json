@@ -1,95 +1,5 @@
 {
   "workouts": {
-    "2026-07-10": [
-      {
-        "date": "2026-07-10",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260710",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Complete as many reps as possible in 10 minutes of:",
-              "3 burpee box jump-overs",
-              "3 deadlifts",
-              "6 burpee box jump-overs",
-              "6 deadlifts",
-              "9 burpee box jump-overs",
-              "9 deadlifts",
-              "Etc.",
-              "♀ 155-lb barbell and a 20-inch box",
-              "♂ 225-lb barbell and a 24-inch box",
-              "Compare to",
-              "210820"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-10",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 16.5",
-            "lines": [
-              "21-18-15-12-9-6-3 reps for time of:",
-              "Thrusters",
-              "Burpees",
-              "*Men use 95 lb.*",
-              "*Women use 65 lb.*"
-            ]
-          }
-        ],
-        "note": "Open: Open 16.5"
-      },
-      {
-        "date": "2026-07-10",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-july-10-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "Alternating EMOM 6 minutes",
-              "14/10 Calorie Air Bike",
-              "15 Kettlebell Swings",
-              "20 PVC pipe OHS"
-            ]
-          },
-          {
-            "title": "3 Rounds for time",
-            "lines": [
-              "7 Squat Snatches 115/75lbs",
-              "14/10 Calorie Air Bike*",
-              "7 Bar Muscle Ups",
-              "14/10 Calorie Air Bike*",
-              "*Athletes may run 200m for one or both of the Air Bike Calories",
-              "Feel: Gas",
-              "Pace: Sustain",
-              "Target Score: 10-13 minutes",
-              "Firebreather Score: Sub 10 minutes"
-            ]
-          },
-          {
-            "title": "Skill",
-            "lines": [
-              "2 Rounds",
-              "1 Smooth Set of Wall Facing HSPU",
-              "Rest 2:00",
-              "1 Smooth Set of Strict HSPU",
-              "Rest 2:00",
-              "1 Smooth Set of Kipping HSPU",
-              "Rest 4:00",
-              "If done properly, you will be able to increase reps on round 2 for all three movement patterns. Flush (very slow) between sets on an air bike or 1 damper ski erg."
-            ]
-          }
-        ]
-      }
-    ],
     "2026-07-11": [
       {
         "date": "2026-07-11",
@@ -173,84 +83,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-07-11",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-07-11/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "sumo squat stretch",
-              "lying hip cross over",
-              "samson stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 burpees",
-              "10 db deadlifts",
-              "*partner is running 100m"
-            ],
-            "sub_title": "amrap 5min"
-          },
-          {
-            "title": "CONDITIONING 30MIN",
-            "lines": [
-              "in teams of 2",
-              "15 synchro air squats",
-              "200m partner run",
-              "max devil press 22,5/15kg",
-              "* score: total devil press"
-            ],
-            "sub_title": "amrap 3:00 x 10 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-11",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Forrest",
-            "sub_title": "3 rounds for time of:",
-            "lines": [
-              "20 L pull-ups",
-              "30 toes-to-bars",
-              "40 burpees",
-              "Run 800 meters"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-11",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "DIANE",
-            "lines": [
-              "For time",
-              "21–15–9",
-              "Deadlift @100/70 kg",
-              "Handstand push up",
-              "Scaled",
-              "21-15-9 Reps For Time",
-              "Deadlifts (70/50kg)",
-              "Push-Ups",
-              "TC 10 min"
-            ]
-          }
-        ],
-        "note": "Benchmark: DIANE"
       }
     ],
     "2026-07-12": [
@@ -923,20 +755,6 @@
               "* muscular endurance & aerobic power"
             ],
             "sub_title": "amrap 1:30 on / 00:30 off x 18 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-15",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "* Metcon:-5 rounds for time40 Double Unders16 Alt Hang DB Clean & Jerk 22.5/15kg14 T2B12 Box Jumps 24/20″"
-            ]
           }
         ]
       },
@@ -2000,7 +1818,7 @@
             "title": "WORKOUT",
             "lines": [
               "Strength:-3 x 1 High hang snatch8 x 1 Snatch pull + hang snatch + squat snatch",
-              "Metcon:-5 rounds for time:12 DB Devil’s Press 2×22.5/15kg15 Wall Balls 9/6kg12 V-ups"
+              "Metcon:-5 rounds for time:8 DB Devil’s Press 2×22.5/15kg16 Wall Balls 9/6kg12 V-ups"
             ]
           }
         ]
@@ -2921,7 +2739,144 @@
         ],
         "note": "Benchmark: Elizabeth"
       }
+    ],
+    "2026-07-25": [
+      {
+        "date": "2026-07-25",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-07-25/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "calf stretch",
+              "lying hip cross over",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 good mornings",
+              "10 ring rows",
+              "*partner is skiing"
+            ],
+            "sub_title": "amrap 5min"
+          },
+          {
+            "title": "CONDITIONING 36MIN",
+            "lines": [
+              "in teams of 2",
+              "(I go, you go)",
+              "6 strict pull ups",
+              "9 deadlifts 80/60kg",
+              "12 box jumps 60/50cm",
+              "15/12cal ski"
+            ],
+            "sub_title": "amrap 36min"
+          }
+        ]
+      },
+      {
+        "date": "2026-07-25",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260725",
+        "sections": [
+          {
+            "title": "5 ROUNDS FOR TIME OF",
+            "lines": [
+              "5 deadlifts",
+              "10 burpees",
+              "♀ 185 lb",
+              "♂ 275 lb",
+              "Compare to",
+              "220724"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-25",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Metcon:-Paul’s Birthday Pairs Wod44 cal row44 over the box jumps 24/2044 pull ups44 deadlifts 80/5544 wall balls44 push ups44 wall balls44 deadlifts44 pull ups44 over the box jumps44 cal row"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-25",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Topsy",
+            "sub_title": "Complete as many rounds and reps as possible in 25 minutes of:",
+            "lines": [
+              "3 ring muscle-ups",
+              "8 thrusters",
+              "17-calorie row"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-25",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Linda",
+            "lines": [
+              "10 – 9 – 8 – 7 – 6 – 5 – 4 – 3 – 2 – 1:",
+              "1.5x body weight deadlift",
+              "body weight bench press",
+              "3/4x body weight squat cleans"
+            ]
+          }
+        ],
+        "note": "Benchmark: Linda"
+      },
+      {
+        "date": "2026-07-25",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 21.3",
+            "lines": [
+              "For total time:",
+              "15 front squats",
+              "30 toes-to-bars",
+              "15 thrusters",
+              "Then, rest 1 minute before continuing with:",
+              "15 front squats",
+              "30 chest-to-bar pull-ups",
+              "15 thrusters",
+              "Then, rest 1 minute before continuing with:",
+              "15 front squats",
+              "30 bar muscle-ups",
+              "15 thrusters",
+              "Workout 21.4 begins immediately upon completing or reaching the time cap for 21.3.",
+              "95 lb. for the front squats and thrusters",
+              "Time cap: 15 min."
+            ]
+          }
+        ],
+        "note": "Open: Open 21.3"
+      }
     ]
   },
-  "last_updated": "2026-07-24T11:25:06.305427"
+  "last_updated": "2026-07-25T03:06:17.332942"
 }
