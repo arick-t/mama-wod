@@ -963,28 +963,6 @@
       },
       {
         "date": "2026-07-16",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "Did You See My Memo?",
-            "lines": [
-              "800m Run",
-              "150 Double Unders",
-              "600m Run",
-              "100 Double Unders",
-              "400m Run",
-              "50 Double Unders",
-              "200m Run"
-            ],
-            "sub_title2": "FOR TIME"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-16",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2743,6 +2721,54 @@
     "2026-07-25": [
       {
         "date": "2026-07-25",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260725",
+        "sections": [
+          {
+            "title": "5 ROUNDS FOR TIME OF",
+            "lines": [
+              "5 deadlifts",
+              "10 burpees",
+              "♀ 185 lb",
+              "♂ 275 lb",
+              "Compare to",
+              "220724"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-25",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 21.3",
+            "lines": [
+              "For total time:",
+              "15 front squats",
+              "30 toes-to-bars",
+              "15 thrusters",
+              "Then, rest 1 minute before continuing with:",
+              "15 front squats",
+              "30 chest-to-bar pull-ups",
+              "15 thrusters",
+              "Then, rest 1 minute before continuing with:",
+              "15 front squats",
+              "30 bar muscle-ups",
+              "15 thrusters",
+              "Workout 21.4 begins immediately upon completing or reaching the time cap for 21.3.",
+              "95 lb. for the front squats and thrusters",
+              "Time cap: 15 min."
+            ]
+          }
+        ],
+        "note": "Open: Open 21.3"
+      },
+      {
+        "date": "2026-07-25",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-07-25/",
@@ -2781,19 +2807,61 @@
       },
       {
         "date": "2026-07-25",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260725",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-july-25-2026/",
         "sections": [
           {
-            "title": "5 ROUNDS FOR TIME OF",
+            "title": "General Warm-up",
             "lines": [
-              "5 deadlifts",
-              "10 burpees",
-              "♀ 185 lb",
-              "♂ 275 lb",
-              "Compare to",
-              "220724"
+              "With a partner, 2 rounds of each per athlete:",
+              "Partner 1: 400m run",
+              "Partner 2: 20 Bodyweight Step overs + Plank hold in time remaining",
+              "Switch when Running partner is finished"
+            ]
+          },
+          {
+            "title": "5 Rounds for time",
+            "lines": [
+              "30 Toes to bar",
+              "40 Double DB Box Step Overs 50s/35s to 24/20″",
+              "Split work evenly with a partner YGIG style",
+              "You-Go-I-Go:",
+              "15 Toes to bar Partner 1",
+              "15 Toes to bar Partner 2",
+              "20 Double DB Box Step Overs 50s/35s to 24/20″ Partner 1",
+              "20 Double DB Box Step Overs 50s/35s to 24/20″ Partner 2"
+            ]
+          },
+          {
+            "title": "Squat Clean",
+            "lines": [
+              "1×5 @ 60%",
+              "Tempo Pull to Mid Thigh into Squat Clean",
+              "1×5 @ 60-65%",
+              "Tempo Pull to Knee into Squat Clean",
+              "1×5 @ 60-70%",
+              "Row 500m at flush pace between sets",
+              "Drop and reset between each rep."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-25",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "MUSCLE PIG",
+            "lines": [
+              "Teams of 2",
+              "4 ROUNDS FOR TIME",
+              "Partner 1: 10 Bar Muscle Ups",
+              "Partner 2: 10 Power Cleans 93kg/61kg",
+              "Switch when both are complete"
             ]
           }
         ]
@@ -2846,37 +2914,8 @@
           }
         ],
         "note": "Benchmark: Linda"
-      },
-      {
-        "date": "2026-07-25",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 21.3",
-            "lines": [
-              "For total time:",
-              "15 front squats",
-              "30 toes-to-bars",
-              "15 thrusters",
-              "Then, rest 1 minute before continuing with:",
-              "15 front squats",
-              "30 chest-to-bar pull-ups",
-              "15 thrusters",
-              "Then, rest 1 minute before continuing with:",
-              "15 front squats",
-              "30 bar muscle-ups",
-              "15 thrusters",
-              "Workout 21.4 begins immediately upon completing or reaching the time cap for 21.3.",
-              "95 lb. for the front squats and thrusters",
-              "Time cap: 15 min."
-            ]
-          }
-        ],
-        "note": "Open: Open 21.3"
       }
     ]
   },
-  "last_updated": "2026-07-25T03:06:17.332942"
+  "last_updated": "2026-07-25T07:10:17.930142"
 }
