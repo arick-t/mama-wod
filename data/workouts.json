@@ -788,36 +788,6 @@
       },
       {
         "date": "2026-07-17",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "3 Position Power Snatch (High Hang, Above the Knee, Floor) 5x3",
-              "EVERY 2:00 (5 SETS*)",
-              "3-Position Power Snatch",
-              "* (1 High Hang Power Snatch + 1 Hang Power Snatch + 1 Power Snatch)",
-              "*Complete each set unbroken. Start light-mod and build.",
-              "* (Score is Weight)"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "We Find It's Always Better to Fire People On a Friday",
-            "lines": [
-              "EVERY 3:00 (5 SETS)",
-              "3 Power Snatch 70kg/48kg",
-              "9 Bar Facing Burpees",
-              "15 Toes to Bar",
-              "* (Score is Slowest Time)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-17",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2753,6 +2723,39 @@
     "2026-07-27": [
       {
         "date": "2026-07-27",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260727",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Monday",
+              "260727",
+              "Rewatch the Action "
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-27",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 17.5",
+            "lines": [
+              "10 rounds for time of:",
+              "9 thrusters, 95 lb.",
+              "35 double-unders"
+            ]
+          }
+        ],
+        "note": "Open: Open 17.5"
+      },
+      {
+        "date": "2026-07-27",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-07-27/",
@@ -2795,16 +2798,69 @@
       },
       {
         "date": "2026-07-27",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260727",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-july-27-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "Monday",
-              "260727",
-              "Rewatch the Action "
+              "20 Hamstring Scoops",
+              "20 Deadbugs",
+              "20 S-leg Glute bridges",
+              "-Then-",
+              "3 Rounds",
+              "200m Run",
+              "3 Inchworms + Push Up after each",
+              "10 Wallballs"
+            ]
+          },
+          {
+            "title": "Each section for time:",
+            "lines": [
+              "Run 500 meters",
+              "Rest 3:00",
+              "20 Wall Walks",
+              "Rest 3:00",
+              "40 Thrusters 95/65lbs",
+              "Record times from each section seperatly",
+              "Feel: Gas",
+              "Pace: Reach/Controlled Send",
+              "Target Scores: <1:45-2:30 run (5:38 – 8:03/mile pace), 2:15-4:00 wall walk, 2-3 minutes thrusters. Firebreathers should aim for the low end or faster of these ranges."
+            ]
+          },
+          {
+            "title": "Strength",
+            "lines": [
+              "6 Sets",
+              "10 Neutral Grip DB Bench Press",
+              "Rest 2:00"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-27",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Back Squat 1x3",
+              "ON A 15:00 CLOCK...",
+              "Establish 3RM Back Squat*",
+              "* (Score is Weight)"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "FOR TIME",
+            "lines": [
+              "27-21-15-9-9",
+              "Front Squat 43kg/29kg",
+              "Box Jump 24\"/20\""
             ]
           }
         ]
@@ -2845,25 +2901,8 @@
           }
         ],
         "note": "Benchmark: D. \"GRACE"
-      },
-      {
-        "date": "2026-07-27",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 17.5",
-            "lines": [
-              "10 rounds for time of:",
-              "9 thrusters, 95 lb.",
-              "35 double-unders"
-            ]
-          }
-        ],
-        "note": "Open: Open 17.5"
       }
     ]
   },
-  "last_updated": "2026-07-27T03:01:58.202035"
+  "last_updated": "2026-07-27T07:36:22.255755"
 }
