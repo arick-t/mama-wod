@@ -1,81 +1,5 @@
 {
   "workouts": {
-    "2026-07-12": [
-      {
-        "date": "2026-07-12",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.3",
-            "lines": [
-              "2 rounds for time of:",
-              "100 double-unders",
-              "20 overhead squats",
-              "100 double-unders",
-              "12 ring muscle-ups",
-              "100 double-unders",
-              "20 dumbbell snatches",
-              "100 double-unders",
-              "12 bar muscle-ups",
-              "*Men perform 115-lb. OHS, 50-lb. DB snatches*",
-              "Time cap: 14 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 18.3"
-      },
-      {
-        "date": "2026-07-12",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-july-12-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "40/30 Calorie Machine (3:00 cap)",
-              "10 KB Kickstand Deadlift / side",
-              "10 KB Bent Over Row / side",
-              "-2 Rounds-",
-              "5 Single-Arm KB Swings / side",
-              "5 S-KB Front Squat / side",
-              "5 S-KB Push Press / side",
-              "10 Alt. Single Leg V-Up or Sit Up",
-              "15/12 Calorie Machine",
-              "2 Rounds",
-              "5 S-KB Clusters / side",
-              "5 V-Ups",
-              "9/7 Calorie Machine"
-            ]
-          },
-          {
-            "title": "AMRAP 24 Minutes",
-            "lines": [
-              "25/20 Calorie Machine",
-              "20 S-KB Clusters 53/35lbs",
-              "25/20 Calorie Machine",
-              "20 V-Ups",
-              "*Athletes must use the same machine the entire workout",
-              "**Cluster reps can be split anyhow, but must be evenly split between sides over 20 reps",
-              "Feel: Cardio / Muscle Overload",
-              "Pace: Sustain",
-              "Target Score: 3+ Rounds",
-              "Firebreather Score: 4 Rounds"
-            ]
-          },
-          {
-            "title": "Extra Credit",
-            "lines": [
-              "5+ Rounds",
-              "5:00 Machine Flush",
-              "3:00 Mobility"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-07-13": [
       {
         "date": "2026-07-13",
@@ -172,90 +96,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-07-13",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-07-13/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "thoracic rotation",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 plank push ups",
-              "10 air squats",
-              "* *remaining time row"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "PUSH PRESS 15MIN",
-            "lines": [
-              "4-5 sets",
-              "5 push press @75-77%",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 18MIN",
-            "lines": [
-              "3 rounds",
-              "",
-              "1000/900m row",
-              "20-15-10",
-              "thruster 40/30kg",
-              "aerobic capacity & lactate threshold"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-13",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Then,",
-            "sub_title": "2 rounds of:",
-            "lines": [
-              "50 burpees",
-              "40 pull-ups",
-              "30 single-leg squats",
-              "20 kettlebell swings, 1/1.5 pood",
-              "10 handstand push-ups"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-13",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "CINDY” BENCHMARK",
-            "lines": [
-              "AMRAP20:",
-              "5 Pull-ups",
-              "10 Push-ups",
-              "15 Air squats"
-            ]
-          }
-        ],
-        "note": "Benchmark: CINDY” BENCHMARK"
       }
     ],
     "2026-07-14": [
@@ -972,21 +812,6 @@
               "9 Bar Facing Burpees",
               "15 Toes to Bar",
               "* (Score is Slowest Time)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-17",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Diane21-15-9DeadliftHSPU",
-              "Partner Abs finisher*12x front / left / right / candle sticks*"
             ]
           }
         ]
@@ -2924,7 +2749,121 @@
         ],
         "note": "Benchmark: Fat Helen"
       }
+    ],
+    "2026-07-27": [
+      {
+        "date": "2026-07-27",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-07-27/",
+        "sections": [
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "line drills"
+            ]
+          },
+          {
+            "title": "PUSH PRESS 15MIN",
+            "lines": [
+              "4-5 sets",
+              "5 push presses @77-80%",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 12MIN",
+            "lines": [
+              "16-12-8-4",
+              "push presses",
+              "front rack reverse lunges",
+              "burpees over bar",
+              "* barbell: 60/40kg",
+              "* aerobic power & muscular endurance"
+            ],
+            "sub_title": "for time"
+          },
+          {
+            "title": "STABILITY 5MIN",
+            "lines": [
+              "overhead lunge hold @empty bar",
+              "(alternate legs)"
+            ],
+            "sub_title": "20sec on / 20sec off x 8 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-07-27",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260727",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Monday",
+              "260727",
+              "Rewatch the Action "
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-27",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Willy",
+            "sub_title": "3 rounds for time of:",
+            "lines": [
+              "800-meter run",
+              "5 front squats",
+              "200-meter run",
+              "11 chest-to-bar pull-ups",
+              "400-meter run",
+              "12 kettlebell swings"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-27",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "D. \"GRACE",
+            "lines": [
+              "For Time:",
+              "30 Clean & Jerk",
+              "Rx 60/42,5"
+            ]
+          }
+        ],
+        "note": "Benchmark: D. \"GRACE"
+      },
+      {
+        "date": "2026-07-27",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 17.5",
+            "lines": [
+              "10 rounds for time of:",
+              "9 thrusters, 95 lb.",
+              "35 double-unders"
+            ]
+          }
+        ],
+        "note": "Open: Open 17.5"
+      }
     ]
   },
-  "last_updated": "2026-07-26T11:24:19.162401"
+  "last_updated": "2026-07-27T03:01:58.202035"
 }
