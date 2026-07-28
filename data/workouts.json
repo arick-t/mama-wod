@@ -1,113 +1,5 @@
 {
   "workouts": {
-    "2026-07-14": [
-      {
-        "date": "2026-07-14",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260714",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "BUY TICKETS NOW"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-14",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 12.5",
-            "lines": [
-              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
-              "100 pound Thruster, 3 reps",
-              "3 Chest to bar Pull-ups",
-              "100 pound Thruster, 6 reps",
-              "6 Chest to bar Pull-ups",
-              "100 pound Thruster, 9 reps",
-              "9 Chest to bar Pull-ups",
-              "100 pound Thruster, 12 reps",
-              "12 Chest to bar Pull-ups",
-              "100 pound Thruster, 15 reps",
-              "15 Chest to bar Pull-ups",
-              "100 pound Thruster, 18 reps",
-              "18 Chest to bar Pull-ups",
-              "100 pound Thruster, 21 reps",
-              "21 Chest to bar Pull-ups...",
-              "This is a timed workout. If you complete the round of 21, go on to 24. If you complete 24, go on to 27, etc.",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
-              "65 pound Thruster, 3 reps",
-              "3 Chest to bar Pull-ups",
-              "65 pound Thruster, 6 reps",
-              "6 Chest to bar Pull-ups",
-              "65 pound Thruster, 9 reps"
-            ]
-          }
-        ],
-        "note": "Open: Open 12.5"
-      },
-      {
-        "date": "2026-07-14",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-july-14-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "3 rounds (4:30 clock)",
-              ":20 Ring Rows",
-              ":10 Rest",
-              ":20 Jump rope",
-              ":10 Rest",
-              ":20 Medball squat cleans",
-              ":10 Rest"
-            ]
-          },
-          {
-            "title": "AMRAP 5-5-6 Minutes",
-            "lines": [
-              "8 Strict Pull Ups",
-              "100 Double Unders",
-              "8 Strict Pull Ups",
-              "Max Rep Squat Cleans in remaining time",
-              "Rest 3:00 between intervals",
-              "3 scores: squat cleans from each interval",
-              "Round 1: 135/95lbs",
-              "Round 2: 185/125lbs",
-              "Round 3: 225/155lbs (no heavier than 80% 1RM)",
-              "Clock Timing:",
-              "Interval 1: 0:00-5:00",
-              "Rest: 5:00-8:00",
-              "Interval 2: 8:00-13:00",
-              "Rest: 13:00-16:00",
-              "Interval 3: 16:00-22:00",
-              "Weight Alternatives",
-              "– 135/95, 165/115, 185/125lbs",
-              "– 115/75, 135/95, 155/105lbs",
-              "– 95/65, 115/75lbs, 135/95lbs",
-              "– 60%-70%-80% 1RM"
-            ]
-          },
-          {
-            "title": "Strength",
-            "lines": [
-              "6 Sets",
-              "10 Neutral Grip DB Bench Press",
-              "Rest 2:00"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-07-15": [
       {
         "date": "2026-07-15",
@@ -195,78 +87,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-07-15",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-07-15/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "instep rotations",
-              "scorpions",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "1. scap. push ups / push ups",
-              "2. bike/ski",
-              "3. reverse lunges/ box step ups"
-            ],
-            "sub_title": "30sec on / 15sec off x 6 rounds"
-          },
-          {
-            "title": "CONDITIONING 36MIN",
-            "lines": [
-              "1. db bench press 2x22,5/15kg",
-              "2. cal bike/ski",
-              "3. kb box step ups 2x24/16kg (50cm)",
-              "* score: total reps/cals",
-              "* muscular endurance & aerobic power"
-            ],
-            "sub_title": "amrap 1:30 on / 00:30 off x 18 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-15",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Workouts",
-            "sub_title": "Find a gym today!",
-            "lines": [
-              "Start your fitness journey today and get healthy.",
-              "Find a gym near you",
-              "Subscribe to the Workout of the Day"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-15",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Mary",
-            "lines": [
-              "20 minutes AMRAP",
-              "5  handstand push-up s",
-              "10 pistol squat, alternating",
-              "15 pull-ups"
-            ]
-          }
-        ],
-        "note": "Benchmark: Mary"
       }
     ],
     "2026-07-16": [
@@ -1144,6 +964,21 @@
       },
       {
         "date": "2026-07-20",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Strength:-3 x 1 High hang snatch8 x 1 Snatch pull + hang snatch + squat snatch",
+              "Metcon:-5 rounds for time:8 DB Devil’s Press 2×22.5/15kg16 Wall Balls 9/6kg12 V-ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-20",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -1331,6 +1166,20 @@
               "50ft Overhead Walking Lunge  52kg/34kg (Scale to 16 Overhead Alt. Lunges)"
             ],
             "sub_title2": "3 ROUNDS FOR TIME"
+          }
+        ]
+      },
+      {
+        "date": "2026-07-21",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "* Metcon:-5 rounds10 Pull ups15 KB Swings 32/24kg20 Box Jumps 24/20″50 DU’s"
+            ]
           }
         ]
       },
@@ -1540,6 +1389,20 @@
               "* (Scored by Total Combined Reps)"
             ],
             "sub_title2": "3:00 / 6:00 / 12:00 AMRAP"
+          }
+        ]
+      },
+      {
+        "date": "2026-07-22",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "* Metcon:-12 min AMRAP5 Deadlifts 110/80kg8 HSPU*12/10 Cal Row*RX+ 25kg/15kg deficit"
+            ]
           }
         ]
       },
@@ -1760,6 +1623,25 @@
       },
       {
         "date": "2026-07-23",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Strength:-Coach led warm up to 65% thenE2MOM x 8 – 1 Squat Clean + 1 Split Jerk 65-80%"
+            ]
+          },
+          {
+            "title": "METCON",
+            "sub_title": "Partner Abs finisher*12x front / left / right / candle sticks*",
+            "lines": []
+          }
+        ]
+      },
+      {
+        "date": "2026-07-23",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -1947,6 +1829,20 @@
               "*Run = 1 rep"
             ],
             "sub_title2": "AMRAP 20:00"
+          }
+        ]
+      },
+      {
+        "date": "2026-07-24",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "* Metcon:-20min AMRAP, Partner YGIG*12/10 Cal Assault Bike12 Alt DB Snatches 22.5/15kg*Full round and switch"
+            ]
           }
         ]
       },
@@ -2148,6 +2044,20 @@
       },
       {
         "date": "2026-07-25",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Metcon:-Paul’s Birthday Pairs Wod44 cal row44 over the box jumps 24/2044 pull ups44 deadlifts 80/5544 wall balls44 push ups44 wall balls44 deadlifts44 pull ups44 over the box jumps44 cal row"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-25",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2317,6 +2227,22 @@
               "* aerobic power [lactate threshold]"
             ],
             "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-07-26",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Hero Wod:",
+              "Tommy Mac",
+              "2 Rounds For Time"
+            ]
           }
         ]
       },
@@ -2720,6 +2646,20 @@
       },
       {
         "date": "2026-07-28",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "* 12 min AMRAP:4 Clean & Jerks 80/60kg6 C2B8 Burpees over the bar"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-28",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2757,7 +2697,179 @@
         ],
         "note": "Benchmark: Karen"
       }
+    ],
+    "2026-07-29": [
+      {
+        "date": "2026-07-29",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-07-29/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "instep rotations",
+              "lat stretch",
+              "thoracic rotations"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10/8cal row",
+              "10 reverse lunges",
+              "20sec deep squat hold"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "FRONT SQUATS 15MIN",
+            "lines": [
+              "4-5 sets",
+              "5 front squats @77-80%",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "(each for time)",
+              "21-15-9",
+              "cal row (women: 18-12-6)",
+              "front squats 40/30kg",
+              "* score: total time (both rounds)",
+              "* lactate threshold"
+            ],
+            "sub_title": "on the 8:00 x 2 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-07-29",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260729",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "For 5 rounds, as many reps as possible in 3 minutes of:",
+              "15/20-calorie row",
+              "20 alternating dumbbell hang snatches",
+              "Max dumbbell-facing burpees",
+              "Rest 1 minute between rounds.",
+              "♀ 35-lb dumbbell",
+              "♂ 50-lb dumbbell"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-29",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Strength:-Coach led warm up to 65% thenE2MOM x 8 – 1 Squat Clean + 1 Split Jerk 65-80%",
+              "Metcon:-Amanda9-7-5 for timeRing Muscle-Ups*Squat Snatches 61/43kg*options, banded RMU,c2b,pull ups",
+              "Partner Abs finisher*12x front / left / right / candle sticks*"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-29",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Then,",
+            "sub_title": "2 rounds of:",
+            "lines": [
+              "50 burpees",
+              "40 pull-ups",
+              "30 single-leg squats",
+              "20 kettlebell swings, 1/1.5 pood",
+              "10 handstand push-ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-29",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "The Ghost",
+            "lines": [
+              "6 rounds of:",
+              "– Athletes work for 3:00 and then rest 1:00 in a Fight Gone Bad AMRAP style workout.",
+              "*– Score is total reps completed at the end of the 6 rounds. Keep a running count from movement to movement, or add up all three during rest period.*",
+              "S1:",
+              "6 rounds for reps:",
+              "1:00 calorie row",
+              "1:00 burpees",
+              "1:00 double-under attempts",
+              "– Rest 1:00 between rounds.",
+              "S2:",
+              "5 rounds for reps:",
+              "1:00 calorie row",
+              "1:00 burpees",
+              "1:00 single-unders",
+              "– Rest 1:00 between rounds.",
+              "INTENDED STIMULUS",
+              "80-100 calories; 60-90 burpees; 300+ double-unders.",
+              "Fight Gone Bad style workout originally programmed for professional boxer Robert “The Ghost” Guerrero's training on 140617.",
+              "*Athletes should track individual movements each round and then try to beat the previous round's score.*",
+              "1 minute of  row ing",
+              "1 minute of  burpees",
+              "1 minute of double-unders",
+              "1 minute rest"
+            ]
+          }
+        ],
+        "note": "Benchmark: The Ghost"
+      },
+      {
+        "date": "2026-07-29",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 26.1",
+            "lines": [
+              "For time:",
+              "20 wall-ball shots",
+              "18 box jump-overs",
+              "30 wall-ball shots",
+              "18 box jump-overs",
+              "40 wall-ball shots",
+              "18 medicine-ball box step-overs",
+              "66 wall-ball shots",
+              "18 medicine-ball box step-overs",
+              "40 wall-ball shots",
+              "18 box jump-overs",
+              "30 wall-ball shots",
+              "18 box jump-overs",
+              "20 wall-ball shots",
+              "Time cap: 12 minutes",
+              "♀ 14-lb (6-kg) medicine ball, 9-foot target, 20-inch box",
+              "♂ 20-lb (9-kg) medicine ball, 10-ft target, 24-inch box"
+            ]
+          }
+        ],
+        "note": "Open: Open 26.1"
+      }
     ]
   },
-  "last_updated": "2026-07-28T11:31:30.450724"
+  "last_updated": "2026-07-29T02:59:41.391589"
 }
