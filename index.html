@@ -4363,7 +4363,7 @@ function submitPprogDayPreTalk(dayKey) {
     .then(function (x) {
       var j = x.j || {};
       if (!x.ok || !j.ok) {
-        if (replyEl) replyEl.textContent = "Error: " + String((j && (j.detail || j.error)) || x.status || "?");
+        if (replyEl) replyEl.textContent = "Error: " + pprogFriendlyApiError(j, x.status);
         return;
       }
       var revised = j.day || null;
@@ -4587,7 +4587,7 @@ function submitPprogWeekPreTalk() {
     .then(function (x) {
       var j = x.j || {};
       if (!x.ok || !j.ok) {
-        if (replyEl) replyEl.textContent = "Error: " + String((j && (j.detail || j.error)) || x.status || "?");
+        if (replyEl) replyEl.textContent = "Error: " + pprogFriendlyApiError(j, x.status);
         return;
       }
       var revised = j.week || null;
