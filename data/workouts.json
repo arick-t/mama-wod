@@ -2724,53 +2724,6 @@
       },
       {
         "date": "2026-07-29",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-07-29/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "sumo squat stretch",
-              "instep rotations",
-              "lat stretch",
-              "thoracic rotations"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10/8cal row",
-              "10 reverse lunges",
-              "20sec deep squat hold"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "FRONT SQUATS 15MIN",
-            "lines": [
-              "4-5 sets",
-              "5 front squats @77-80%",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "(each for time)",
-              "21-15-9",
-              "cal row (women: 18-12-6)",
-              "front squats 40/30kg",
-              "* score: total time (both rounds)",
-              "* lactate threshold"
-            ],
-            "sub_title": "on the 8:00 x 2 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-29",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-july-29-2026/",
@@ -2820,6 +2773,53 @@
               "Row 500m at flush pace between sets",
               "Drop and reset between each )"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-29",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-07-29/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "instep rotations",
+              "lat stretch",
+              "thoracic rotations"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10/8cal row",
+              "10 reverse lunges",
+              "20sec deep squat hold"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "FRONT SQUATS 15MIN",
+            "lines": [
+              "4-5 sets",
+              "5 front squats @77-80%",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "(each for time)",
+              "21-15-9",
+              "cal row (women: 18-12-6)",
+              "front squats 40/30kg",
+              "* score: total time (both rounds)",
+              "* lactate threshold"
+            ],
+            "sub_title": "on the 8:00 x 2 rounds"
           }
         ]
       },
@@ -2928,5 +2928,5 @@
       }
     ]
   },
-  "last_updated": "2026-07-29T07:11:48.927506"
+  "last_updated": "2026-07-29T08:43:37.331199"
 }
