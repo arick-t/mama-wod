@@ -1,5 +1,14 @@
 # Changelog
 
+## [21.0.2-beta.1] - 2026-07-29
+
+### Hotfix — Groq token budget
+- Personal Coach Groq fallback was failing with **TPM Request too large** (full Hamamen + Policy ~16k tokens vs Groq 12k limit).
+- Use a **compact system prompt** on the Groq path; keep full Gemini prompts when Gemini works.
+- Clearer rate-limit error message; display **v21.0.2 BETA**.
+
+---
+
 ## [21.0.1-beta.1] - 2026-07-29
 
 ### Hotfix — Personal Coach API
