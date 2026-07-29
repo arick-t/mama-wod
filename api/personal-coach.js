@@ -4,7 +4,11 @@
  *   { messages, athleteProfile?, action?: "chat"|"start_intake"|"generate_block"|"generate_week"|"generate_week_detail"|"revise_day"|"revise_week"|"day_debrief"|"revise_part"|"preview_month" }
  * GET  /api/personal-coach — status
  *
- * Env: GEMINI_API_KEY, PERSONAL_COACH_MODEL, GEMINI_FILE_SEARCH_STORE
+ * Env: GEMINI_API_KEY (optional File Search / Interactions), GROQ_API_KEY (fallback chat),
+ *      PERSONAL_COACH_MODEL, GEMINI_FILE_SEARCH_STORE, GROQ_MODEL
+ *
+ * Provider order: Gemini Interactions (when store) → Gemini generateContent → Groq Chat Completions.
+ * Groq keeps the coach alive when the Gemini key is missing/invalid (common GitHub Pages + Vercel setup).
  */
 const HAMAMEN_SYSTEM = require("./hamamen-prompt.js");
 const COACH_POLICY = require("./coach-policy.js");
@@ -90,29 +94,88 @@ function athleteEarlyNextBlockDenied(profile, action, body) {
 }
 
 const KEY_ENV_NAMES = ["GEMINI_API_KEY", "GOOGLE_GENERATIVE_AI_API_KEY", "GOOGLE_AI_API_KEY"];
+const GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions";
+
+/** Strip accidental wrapping quotes from Vercel / .env values. */
+function sanitizeSecret(raw) {
+  let s = String(raw || "").trim();
+  if (
+    (s.charAt(0) === '"' && s.charAt(s.length - 1) === '"') ||
+    (s.charAt(0) === "'" && s.charAt(s.length - 1) === "'")
+  ) {
+    s = s.slice(1, -1).trim();
+  }
+  return s;
+}
 
 function resolveGeminiApiKey() {
   for (let i = 0; i < KEY_ENV_NAMES.length; i++) {
-    const v = String(process.env[KEY_ENV_NAMES[i]] || "").trim();
+    const v = sanitizeSecret(process.env[KEY_ENV_NAMES[i]]);
     if (v) return v;
   }
   return "";
 }
 
+function resolveGroqApiKey() {
+  return sanitizeSecret(process.env.GROQ_API_KEY);
+}
+
+function resolveGroqModelId() {
+  const raw = sanitizeSecret(process.env.GROQ_MODEL) || "llama-3.3-70b-versatile";
+  return raw || "llama-3.3-70b-versatile";
+}
+
+/**
+ * Coach Gemini model. Remap legacy / unavailable IDs (same idea as generate-workout).
+ * Default: gemini-2.0-flash — gemini-3.6-flash was shipping as a default but is not reliably
+ * available on all AI Studio keys and surfaced as API_KEY_INVALID in production.
+ */
 function resolveCoachModel() {
   const raw = (
-    process.env.PERSONAL_COACH_MODEL ||
-    process.env.GEMINI_MODEL ||
-    "gemini-3.6-flash"
+    sanitizeSecret(process.env.PERSONAL_COACH_MODEL) ||
+    sanitizeSecret(process.env.GEMINI_MODEL) ||
+    "gemini-2.0-flash"
   ).trim();
-  return raw || "gemini-3.6-flash";
+  const key = (raw || "gemini-2.0-flash").toLowerCase();
+  const aliases = {
+    "gemini-1.5-flash": "gemini-flash-latest",
+    "gemini-1.5-flash-latest": "gemini-flash-latest",
+    "gemini-3.6-flash": "gemini-2.0-flash",
+    "gemini-3.5-flash": "gemini-2.0-flash",
+  };
+  return aliases[key] || raw || "gemini-2.0-flash";
 }
 
 function resolveFileSearchStore() {
-  let s = String(process.env.GEMINI_FILE_SEARCH_STORE || "").trim();
+  let s = sanitizeSecret(process.env.GEMINI_FILE_SEARCH_STORE);
   if (!s) return "";
   if (s.indexOf("fileSearchStores/") !== 0) s = "fileSearchStores/" + s;
   return s;
+}
+
+function isApiKeyInvalidError(result) {
+  const blob = [
+    result && result.error,
+    result && result.detail,
+    result && result.fallbackError,
+  ]
+    .map(function (x) {
+      return typeof x === "string" ? x : x != null ? JSON.stringify(x) : "";
+    })
+    .join(" ");
+  return /API_KEY_INVALID|API key not valid/i.test(blob);
+}
+
+function friendlyProviderError(result) {
+  if (isApiKeyInvalidError(result)) {
+    return "Coach AI provider rejected the Gemini API key. Falling back was attempted; if you still see this, set a valid GEMINI_API_KEY or rely on GROQ_API_KEY in Vercel.";
+  }
+  if (!result) return "Coach request failed";
+  if (typeof result.detail === "string" && result.detail && result.detail.length < 280) {
+    return result.detail;
+  }
+  if (typeof result.error === "string") return result.error;
+  return "Coach request failed";
 }
 
 function setCors(res) {
@@ -878,6 +941,129 @@ async function callGenerateContent(apiKey, model, messages, storeName, systemTex
   return { ok: true, text, via: "generateContent", data };
 }
 
+async function callGroqChat(apiKey, model, messages, systemText, opts) {
+  const options = opts && typeof opts === "object" ? opts : {};
+  const groqMessages = [{ role: "system", content: systemText || HAMAMEN_SYSTEM }];
+  for (let i = 0; i < messages.length; i++) {
+    const role = messages[i].role === "model" ? "assistant" : "user";
+    groqMessages.push({
+      role: role,
+      content: String(messages[i].text || ""),
+    });
+  }
+  if (groqMessages.length === 1) {
+    groqMessages.push({
+      role: "user",
+      content:
+        "התחל קליטת מתאמן חדש: משפט פתיחה קצר על תהליך קליטה, ואז רק שאלת גיל.",
+    });
+  }
+  const body = {
+    model: model || resolveGroqModelId(),
+    messages: groqMessages,
+    temperature: typeof options.temperature === "number" ? options.temperature : 0.7,
+    max_tokens:
+      typeof options.maxOutputTokens === "number" && options.maxOutputTokens > 0
+        ? options.maxOutputTokens
+        : 4096,
+  };
+  let r;
+  try {
+    r = await fetch(GROQ_CHAT_URL, {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + apiKey,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+  } catch (e) {
+    return {
+      ok: false,
+      status: 502,
+      error: "Groq fetch failed",
+      detail: String((e && e.message) || e).slice(0, 400),
+    };
+  }
+  const raw = await r.text();
+  let data = null;
+  try {
+    data = raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return { ok: false, status: r.status, error: "Groq response not JSON", detail: raw.slice(0, 800) };
+  }
+  if (!r.ok) {
+    const msg =
+      data && data.error && data.error.message
+        ? data.error.message
+        : JSON.stringify(data || {}).slice(0, 800);
+    return { ok: false, status: r.status, error: "Groq request failed", detail: msg, data };
+  }
+  const ch = data && data.choices && data.choices[0];
+  const text = ch && ch.message && ch.message.content != null ? String(ch.message.content) : "";
+  if (!text) {
+    return { ok: false, status: 502, error: "Empty Groq response", detail: data };
+  }
+  return { ok: true, text, via: "groq", model: body.model, data };
+}
+
+/**
+ * Try Gemini (optional Interactions) then Groq. File Search only on Gemini paths.
+ */
+async function callCoachLlm(apiKey, groqKey, model, messages, storeName, systemText, opts) {
+  const options = opts && typeof opts === "object" ? opts : {};
+  const preferInteractions = options.preferInteractions === true;
+  const skipTools = options.skipTools === true;
+  let lastFail = null;
+  let interactionsError = null;
+
+  if (apiKey && preferInteractions && storeName && !skipTools) {
+    const inter = await callInteractions(apiKey, model, messages, storeName, systemText);
+    if (inter.ok) return inter;
+    interactionsError = inter.detail || inter.error;
+    lastFail = inter;
+  }
+
+  if (apiKey) {
+    const gc = await callGenerateContent(
+      apiKey,
+      model,
+      messages,
+      skipTools ? null : storeName,
+      systemText,
+      options
+    );
+    if (gc.ok) {
+      if (interactionsError) gc.interactionsError = interactionsError;
+      return gc;
+    }
+    lastFail = gc;
+    if (interactionsError && !gc.interactionsError) gc.interactionsError = interactionsError;
+  }
+
+  if (groqKey) {
+    const groq = await callGroqChat(groqKey, resolveGroqModelId(), messages, systemText, options);
+    if (groq.ok) {
+      if (interactionsError) groq.interactionsError = interactionsError;
+      if (lastFail) groq.geminiError = lastFail.detail || lastFail.error;
+      return groq;
+    }
+    if (lastFail) {
+      lastFail.fallbackError = groq.detail || groq.error;
+    } else {
+      lastFail = groq;
+    }
+  }
+
+  return (
+    lastFail || {
+      ok: false,
+      error: "No AI provider configured",
+      detail: "Set GROQ_API_KEY or a valid GEMINI_API_KEY in Vercel, then Redeploy.",
+    }
+  );
+}
+
 module.exports = async function handler(req, res) {
   setCors(res);
   if (req.method === "OPTIONS") {
@@ -885,6 +1071,7 @@ module.exports = async function handler(req, res) {
   }
 
   const apiKey = resolveGeminiApiKey();
+  const groqKey = resolveGroqApiKey();
   const model = resolveCoachModel();
   const store = resolveFileSearchStore();
 
@@ -894,13 +1081,17 @@ module.exports = async function handler(req, res) {
       service: "personal-coach",
       version: "beta-1.0",
       hasGeminiKey: !!apiKey,
+      hasGroqKey: !!groqKey,
       hasKnowledge: !!store,
       model: model,
-      hint: apiKey
-        ? store
+      groqModel: groqKey ? resolveGroqModelId() : null,
+      hint: apiKey || groqKey
+        ? store && apiKey
           ? "Ready — chat via POST with messages[]."
-          : "Key OK. Knowledge store not configured."
-        : "Set GEMINI_API_KEY in .env.local / Vercel, then restart / redeploy.",
+          : groqKey && !apiKey
+            ? "Groq ready (Gemini key missing). Knowledge/File Search disabled."
+            : "Key OK. Knowledge store not configured."
+        : "Set GROQ_API_KEY or GEMINI_API_KEY in .env.local / Vercel, then restart / redeploy.",
     });
   }
 
@@ -908,10 +1099,10 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  if (!apiKey) {
+  if (!apiKey && !groqKey) {
     return res.status(503).json({
-      error: "Missing GEMINI_API_KEY",
-      hint: "Add GEMINI_API_KEY to .env.local (local) or Vercel env, then restart / redeploy.",
+      error: "Missing AI API key",
+      hint: "Add GROQ_API_KEY (recommended fallback) or GEMINI_API_KEY to .env.local / Vercel, then restart / redeploy.",
     });
   }
 
@@ -1292,8 +1483,8 @@ module.exports = async function handler(req, res) {
         ok: true,
         text: result.text,
         via: result.via,
-        model: model,
-        fileSearch: !!store && !(gcOpts && gcOpts.skipTools),
+        model: result.model || model,
+        fileSearch: !!store && !(gcOpts && gcOpts.skipTools) && result.via !== "groq",
         programmingSystem: programming,
         intakeLike: looksLikeIntakeReply(result.text),
       },
@@ -1307,14 +1498,10 @@ module.exports = async function handler(req, res) {
   }
 
   async function callProgrammingGenerate(msgs, sys, extraOpts) {
-    return callGenerateContent(
-      apiKey,
-      model,
-      msgs,
-      null,
-      sys,
-      Object.assign({}, gcOpts, extraOpts || {})
-    );
+    return callCoachLlm(apiKey, groqKey, model, msgs, null, sys, Object.assign({}, gcOpts, extraOpts || {}, {
+      preferInteractions: false,
+      skipTools: true,
+    }));
   }
 
   /** If model slips into intake, retry once with JSON-ONLY system+user. */
@@ -1665,25 +1852,17 @@ module.exports = async function handler(req, res) {
 
   let result;
   if (preferInteractions) {
-    result = await callInteractions(apiKey, model, messages, store || undefined, systemText);
+    result = await callCoachLlm(apiKey, groqKey, model, messages, store || undefined, systemText, Object.assign({}, gcOpts, {
+      preferInteractions: true,
+    }));
     if (!result.ok) {
-      const fallback = await callGenerateContent(
-        apiKey,
-        model,
-        messages,
-        store || undefined,
-        systemText,
-        gcOpts
-      );
-      if (fallback.ok) {
-        return res.status(200).json(packOk(fallback, { interactionsError: result.detail || result.error }));
-      }
       return res.status(502).json({
-        error: result.error || "Coach request failed",
+        error: friendlyProviderError(result),
         detail: result.detail,
-        fallbackError: fallback.detail || fallback.error,
+        fallbackError: result.fallbackError || result.geminiError,
         model: model,
         fileSearchStore: store || null,
+        viaAttempted: result.via || null,
       });
     }
     return res.status(200).json(packOk(result));
@@ -1691,8 +1870,9 @@ module.exports = async function handler(req, res) {
 
   result = programming
     ? await callProgrammingGenerate(messages, systemText)
-    : await callGenerateContent(
+    : await callCoachLlm(
         apiKey,
+        groqKey,
         model,
         messages,
         store || undefined,
@@ -1701,7 +1881,7 @@ module.exports = async function handler(req, res) {
       );
   if (!result.ok) {
     return res.status(502).json({
-      error: result.error || "Coach request failed",
+      error: friendlyProviderError(result),
       detail: result.detail,
       model: model,
       fileSearchStore: store || null,

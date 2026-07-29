@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.0 BETA</title>
+<title>DUCK-WOD · v21.0.1 BETA</title>
 <meta name="theme-color" content="#111">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -653,7 +653,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.0 BETA</div>
+<div class="header-sub">DAILY WORKOUTS · v21.0.1 BETA</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap" id="tab-pprog" onclick="showTab('pprog')">Personal Coach</button>
@@ -1202,6 +1202,40 @@ function rememberAiClientError(summary) {
 var PPROG_STORE_KEY = "duck-wod-personal-coach-v1";
 var PPROG_LEGAL_VERSION = 2;
 var pprogLegalPendingCallback = null;
+
+/** Soften raw Google/Vercel blobs (e.g. API_KEY_INVALID JSON) for chat UI. */
+function pprogFriendlyApiError(j, status) {
+  var detail = (j && (j.detail || j.error || j.hint)) || "";
+  var fallback = (j && j.fallbackError) || "";
+  var blob = String(detail) + " " + String(fallback) + " " + String(status || "");
+  var low = blob.toLowerCase();
+  if (/api_key_invalid|api key not valid/.test(low)) {
+    return "Coach AI is reconnecting — please send again in a moment.";
+  }
+  if (status === 429 || low.indexOf("too many requests") >= 0) {
+    return "Too many requests — wait a minute and send again.";
+  }
+  if (
+    low.indexOf("<!doctype") >= 0 ||
+    low.indexOf("<html") >= 0 ||
+    low.indexOf("empty response") >= 0 ||
+    low.indexOf("server did not return json") >= 0
+  ) {
+    return "Connection blip — please send again.";
+  }
+  var clean = String(detail || fallback || ("HTTP " + (status || "?")));
+  if (clean.charAt(0) === "[" || clean.charAt(0) === "{") {
+    try {
+      var parsed = JSON.parse(clean);
+      var msg =
+        (parsed && parsed.error && parsed.error.message) ||
+        (parsed && parsed[0] && parsed[0].error && parsed[0].error.message);
+      if (msg) return String(msg).slice(0, 280);
+    } catch (e) {}
+    return "Coach request failed. Please try again.";
+  }
+  return clean.slice(0, 500);
+}
 
 var PPROG_SKILL_DEFS = [
   { id: "all_skills", label: "All skills", allToggle: true },
@@ -2128,7 +2162,7 @@ function startPprogIntake() {
       if (!x.ok || !j.ok || !j.text) {
         msgs.push({
           role: "error",
-          text: "Error: " + String((j && (j.detail || j.error)) || x.status || "?").slice(0, 500),
+          text: "Error: " + pprogFriendlyApiError(j, x.status),
         });
       } else {
         msgs.push({ role: "model", text: String(j.text) });
@@ -2475,21 +2509,24 @@ function sendPprogMessage(ev) {
       var j = x.j || {};
       if (!x.ok || !j.ok || !j.text) {
         var err = (j && (j.detail || j.error)) || "HTTP " + (x.status || "?");
-        var errBlob = String(err).toLowerCase();
-        var looksHtml =
-          errBlob.indexOf("<!doctype") >= 0 ||
-          errBlob.indexOf("<html") >= 0 ||
-          errBlob.indexOf("if ie ") >= 0;
-        var friendly =
-          x.status === 429 || errBlob.indexOf("too many requests") >= 0
-            ? "Too many requests — wait a minute and send again."
-            : String(err).indexOf("Empty response") >= 0 ||
-              String(err).indexOf("Server did not return JSON") >= 0 ||
-              String(err).indexOf("Localtunnel") >= 0 ||
-              String(err).indexOf("Tunnel") >= 0 ||
-              looksHtml
-            ? "Connection blip (phone tunnel / proxy returned a web page instead of the coach). Please send the same answer again."
-            : String(err).slice(0, 500);
+        var friendly = pprogFriendlyApiError(j, x.status);
+        if (friendly.indexOf("Coach AI is reconnecting") < 0 && friendly.indexOf("Too many") < 0 && friendly.indexOf("Connection blip") < 0) {
+          var errBlob = String(err).toLowerCase();
+          var looksHtml =
+            errBlob.indexOf("<!doctype") >= 0 ||
+            errBlob.indexOf("<html") >= 0 ||
+            errBlob.indexOf("if ie ") >= 0;
+          friendly =
+            x.status === 429 || errBlob.indexOf("too many requests") >= 0
+              ? "Too many requests — wait a minute and send again."
+              : String(err).indexOf("Empty response") >= 0 ||
+                String(err).indexOf("Server did not return JSON") >= 0 ||
+                String(err).indexOf("Localtunnel") >= 0 ||
+                String(err).indexOf("Tunnel") >= 0 ||
+                looksHtml
+              ? "Connection blip (phone tunnel / proxy returned a web page instead of the coach). Please send the same answer again."
+              : friendly;
+        }
         msgs.push({ role: "error", text: "Error: " + friendly });
         savePprogMessages(msgs);
         pprogBusy = false;
@@ -3833,7 +3870,7 @@ function requestPprogWeek(retryCount, opts) {
           store.autoNextTriggeredForBlockStart = null;
           savePprogStore(store);
         }
-        setPprogStatus("err", "<strong>Coach</strong> — block failed: " + esc(String((j && (j.detail || j.error)) || x.status)));
+        setPprogStatus("err", "<strong>Coach</strong> — block failed: " + esc(pprogFriendlyApiError(j, x.status)));
         return;
       }
       var block = j.block || null;
@@ -4033,15 +4070,9 @@ function requestPprogWeekDetail(weekIndex0, fromQueue) {
     .then(function (x) {
       var j = x.j || {};
       if (!x.ok || (j && j.ok === false)) {
-        var httpBit = "HTTP " + x.status;
-        var apiBit = (j && (j.detail || j.error || j.hint)) || "";
-        var textBit = j && j.text ? pprogWeekJsonErrorSnippet(j.text) : "";
         pprogFillErrors[wi] = String(
-          apiBit || textBit || "Fill failed (" + httpBit + ")"
+          pprogFriendlyApiError(j, x.status) || "Fill failed (HTTP " + x.status + ")"
         ).slice(0, 280);
-        if (j && j.fallbackError) {
-          pprogFillErrors[wi] += " · " + String(j.fallbackError).slice(0, 120);
-        }
         if (fromQueue && (pprogFillAttempts[wi] || 0) < PPROG_FILL_MAX_ATTEMPTS && pprogFillQueue.indexOf(wi) < 0) {
           pprogFillQueue.push(wi);
         }

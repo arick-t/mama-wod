@@ -1,5 +1,15 @@
 # Changelog
 
+## [21.0.1-beta.1] - 2026-07-29
+
+### Hotfix — Personal Coach API
+- **Personal Coach:** when Gemini returns `API_KEY_INVALID`, fall back to **Groq** (`GROQ_API_KEY`) so chat/intake keeps working on Vercel.
+- Remap unavailable coach model IDs (`gemini-3.6-flash` → `gemini-2.0-flash`); strip quoted secrets from env.
+- Friendlier coach error messages in the UI (no raw Google JSON dump).
+- Display version **v21.0.1 BETA**.
+
+---
+
 ## [20.3.1] - 2026-04-04
 
 ### CONVERTOR & patch
