@@ -1,0 +1,40 @@
+CrossFit coach fine-tune — how to start (side project, mama-wod)
+
+PRODUCTION TODAY (important)
+- api/generate-workout.js prefers GROQ_API_KEY → Groq Chat Completions (default model llama-3.3-70b-versatile), else Gemini.
+- This is NOT Llama 3.1 8B in production. Your 8B fine-tune is a separate inference path until you wire it in.
+
+GOAL
+- Train a small model (e.g. Llama 3.1 8B + LoRA) to behave like your coach: same output shape and rules as the long system prompts in generate-workout.js.
+- Later: optional env flag or separate endpoint to call HF / self-hosted 8B instead of Groq/Gemini, if quality holds.
+
+PHASE 0 — Lock the spec (1–2 sessions)
+- Read buildDefaultCoachSystemInstruction + buildUserPrompt / buildFlexibleUserPrompt in api/generate-workout.js.
+- Write a short “coach contract”: must-have sections, forbidden content, partner rules, equipment semantics, time-unlimited rule.
+- Freeze one “golden” user message template (normal vs flexible mode).
+
+PHASE 1 — Dataset (first real milestone)
+- Target 100–500 high-quality turns before expecting a visible jump; start with 30–50 for a smoke LoRA.
+- Each line: JSON object with "messages": [system, user, assistant] (see dataset/train.sample.jsonl).
+- Sources: hand-written gold pairs; good past outputs edited; synthetic diversity (equipment/time/athletes/notes).
+- Add hard negatives: requests that must be refused or scaled (injury, illegal gear) if you want safety baked in.
+
+PHASE 2 — Train on Hugging Face
+- Upload dataset as a HF Dataset or repo file.
+- Use LoRA (PEFT/TRL/Unsloth/AutoTrain) on meta-llama/Llama-3.1-8B-Instruct (check license acceptance on HF).
+- Track: loss, eval set (fixed ~20 prompts), manual read of 10 outputs per checkpoint.
+
+PHASE 3 — Inference prototype
+- HF Inference API, or a small GPU Space, or local llama.cpp/vLLM with the merged adapter.
+- Latency target: match or beat your Vercel budget (Groq is fast; 8B local/GPU can be close).
+
+PHASE 4 — Integration (only if Phase 3 wins)
+- Add something like COACH_BACKEND=hf|groq|gemini and HF_TOKEN + model id in Vercel env.
+- Reuse the same user prompt builder; swap only the completion client.
+- Keep Groq/Gemini as fallback.
+
+CONTINUOUS IMPROVEMENT
+- Log edited outputs (privacy-safe) → monthly JSONL append → new LoRA version. The model does not learn live from users without this loop.
+
+FILES HERE
+- dataset/train.sample.jsonl — format reference only; replace/expand for real training.

@@ -1,5 +1,5 @@
 /**
- * שרת פיתוח מקומי: מגיש את הפרויקט מהשורש + /api/generate-workout + /api/event
+ * שרת פיתוח מקומי: מגיש את הפרויקט מהשורש + generate-workout + personal-coach + event
  * הרצה: npm run dev:local
  * קובץ סודות: .env.local (או .env) בראש הפרויקט — ראו .env.example
  */
@@ -68,11 +68,27 @@ const MIME = {
   ".svg": "image/svg+xml",
   ".webp": "image/webp",
   ".woff2": "font/woff2",
+  ".mp4": "video/mp4",
+  ".webm": "video/webm",
 };
 
 const ROOT = path.join(__dirname, "..");
-const generateHandler = require("../api/generate-workout.js");
-const eventHandler = require("../api/event.js");
+
+/** Always load fresh API handlers in local dev (avoid stale require cache after edits). */
+function loadApiHandler(relPath) {
+  const abs = require.resolve(path.join(ROOT, relPath));
+  delete require.cache[abs];
+  /* Also bust sibling requires used by the handler (e.g. hamamen-prompt.js). */
+  try {
+    const dir = path.dirname(abs);
+    Object.keys(require.cache).forEach(function (k) {
+      if (k.indexOf(dir + path.sep) === 0 || k.indexOf(dir + "/") === 0) {
+        delete require.cache[k];
+      }
+    });
+  } catch (e) {}
+  return require(abs);
+}
 
 function safeJoin(root, reqPath) {
   const decoded = decodeURIComponent(reqPath.split("?")[0]);
@@ -85,7 +101,12 @@ const server = http.createServer((req, res) => {
   const parsed = url.parse(req.url || "/", true);
   const pathname = parsed.pathname || "/";
 
-  if (pathname === "/api/generate-workout" || pathname === "/api/event") {
+  if (
+    pathname === "/api/generate-workout" ||
+    pathname === "/api/personal-coach" ||
+    pathname === "/api/coach-feedback" ||
+    pathname === "/api/event"
+  ) {
     if (req.method === "OPTIONS") {
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
@@ -97,10 +118,26 @@ const server = http.createServer((req, res) => {
       res.statusCode = 405;
       return res.end("Method not allowed");
     }
-    if (pathname === "/api/generate-workout" && (req.method === "GET" || req.method === "HEAD")) {
-      const fakeReq = { method: req.method, body: {} };
+    if (
+      (pathname === "/api/generate-workout" ||
+        pathname === "/api/personal-coach" ||
+        pathname === "/api/coach-feedback") &&
+      (req.method === "GET" || req.method === "HEAD")
+    ) {
+      const fakeReq = {
+        method: req.method,
+        body: {},
+        query: parsed.query || {},
+        url: req.url || pathname,
+      };
       const fakeRes = wrapRes(res);
-      generateHandler(fakeReq, fakeRes).catch((e) => {
+      const rel =
+        pathname === "/api/personal-coach"
+          ? "api/personal-coach.js"
+          : pathname === "/api/coach-feedback"
+          ? "api/coach-feedback.js"
+          : "api/generate-workout.js";
+      loadApiHandler(rel)(fakeReq, fakeRes).catch((e) => {
         if (!res.headersSent) {
           res.statusCode = 500;
           res.setHeader("Content-Type", "application/json");
@@ -128,9 +165,13 @@ const server = http.createServer((req, res) => {
       const fakeRes = wrapRes(res);
       try {
         if (pathname === "/api/generate-workout") {
-          await generateHandler(fakeReq, fakeRes);
+          await loadApiHandler("api/generate-workout.js")(fakeReq, fakeRes);
+        } else if (pathname === "/api/personal-coach") {
+          await loadApiHandler("api/personal-coach.js")(fakeReq, fakeRes);
+        } else if (pathname === "/api/coach-feedback") {
+          await loadApiHandler("api/coach-feedback.js")(fakeReq, fakeRes);
         } else {
-          await eventHandler(fakeReq, fakeRes);
+          await loadApiHandler("api/event.js")(fakeReq, fakeRes);
         }
       } catch (e) {
         if (!res.headersSent) {
@@ -154,6 +195,7 @@ const server = http.createServer((req, res) => {
       const idx = path.join(ROOT, "index.html");
       if (fs.existsSync(idx)) {
         res.setHeader("Content-Type", "text/html; charset=utf-8");
+        res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
         return fs.createReadStream(idx).pipe(res);
       }
     }
@@ -161,20 +203,85 @@ const server = http.createServer((req, res) => {
     return res.end("Not found");
   }
   const ext = path.extname(filePath);
-  res.setHeader("Content-Type", MIME[ext] || "application/octet-stream");
+  const mime = MIME[ext] || "application/octet-stream";
+  const stat = fs.statSync(filePath);
+  const total = stat.size;
+  const isMedia = ext === ".mp4" || ext === ".webm" || ext === ".mov" || ext === ".m4v";
+
+  if (ext === ".html") {
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+  }
+  /* iOS Safari needs Range/206 for reliable MP4 playback (esp. over tunnels). */
+  if (isMedia) {
+    res.setHeader("Accept-Ranges", "bytes");
+    res.setHeader("Content-Type", mime);
+    const range = req.headers.range;
+    if (range) {
+      const m = String(range).match(/bytes=(\d*)-(\d*)/);
+      if (m) {
+        const start = m[1] ? parseInt(m[1], 10) : 0;
+        const end = m[2] ? parseInt(m[2], 10) : total - 1;
+        if (start >= total || end >= total || start > end) {
+          res.statusCode = 416;
+          res.setHeader("Content-Range", "bytes */" + total);
+          return res.end();
+        }
+        res.statusCode = 206;
+        res.setHeader("Content-Range", "bytes " + start + "-" + end + "/" + total);
+        res.setHeader("Content-Length", String(end - start + 1));
+        return fs.createReadStream(filePath, { start: start, end: end }).pipe(res);
+      }
+    }
+    res.setHeader("Content-Length", String(total));
+    return fs.createReadStream(filePath).pipe(res);
+  }
+
+  res.setHeader("Content-Type", mime);
+  res.setHeader("Content-Length", String(total));
   fs.createReadStream(filePath).pipe(res);
 });
 
 loadEnv();
 const PORT = parseInt(process.env.PORT || "3000", 10);
-server.listen(PORT, "127.0.0.1", () => {
+
+function lanIpv4Addresses() {
+  const os = require("os");
+  const out = [];
+  const ifs = os.networkInterfaces();
+  Object.keys(ifs).forEach(function (name) {
+    (ifs[name] || []).forEach(function (addr) {
+      if (addr && addr.family === "IPv4" && !addr.internal) out.push(addr.address);
+    });
+  });
+  return out;
+}
+
+server.listen(PORT, "0.0.0.0", () => {
   console.log("");
   console.log("  DUCK-WOD local dev");
   console.log("  Open: http://localhost:" + PORT + "/");
+  const ips = lanIpv4Addresses();
+  if (ips.length) {
+    ips.forEach(function (ip) {
+      console.log("  Phone (same Wi‑Fi): http://" + ip + ":" + PORT + "/");
+    });
+  } else {
+    console.log("  Phone (same Wi‑Fi): http://<this-PC-LAN-IP>:" + PORT + "/");
+  }
   console.log("  API:  http://localhost:" + PORT + "/api/generate-workout");
+  console.log("  API:  http://localhost:" + PORT + "/api/personal-coach");
+  console.log("  API:  http://localhost:" + PORT + "/api/coach-feedback");
   if (!process.env.GEMINI_API_KEY) {
     console.log("");
     console.log("  [!] GEMINI_API_KEY missing — copy .env.example to .env.local");
+  }
+  if (!process.env.GEMINI_FILE_SEARCH_STORE) {
+    console.log("  [i] GEMINI_FILE_SEARCH_STORE not set — coach runs without Drive File Search");
+  }
+  if (!(process.env.RESEND_API_KEY || process.env.RESEND_API_KEY_conmail)) {
+    console.log("  [!] RESEND_API_KEY missing — coach debrief/feedback emails will not send");
+    console.log("      reuse the SAME key as weekly analytics (GitHub/Vercel) in .env.local — see RESEND_SECRETS.md");
+    console.log("      vars: RESEND_API_KEY, optional RESEND_FROM, COACH_FEEDBACK_TO / ANALYTICS_REPORT_TO");
   }
   console.log("");
 });
