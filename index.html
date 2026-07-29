@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.0.3 BETA</title>
+<title>DUCK-WOD · v21.0 BETA</title>
 <meta name="theme-color" content="#111">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,10 +35,12 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .tab-wtools-wrap{border:1px dashed #c9a227!important;background:linear-gradient(180deg,#2a2312 0%,#1e1e1e 100%)!important}
 .tab-wtools-wrap:hover{border-color:#F5C518!important}
 .tab-btn.tab-wtools-wrap.active{background:#E8451A!important;border:1px dashed #f5e6a8!important;color:#fff!important}
-/* Personal Coach: dashed outline + purple-tint (המאמן) */
+/* Personal Coach: dashed outline + purple-tint (המאמן) — tab hidden in prod until API stable */
 .tab-pprog-wrap{border:1px dashed #8e44ad!important;background:linear-gradient(180deg,#221528 0%,#1e1e1e 100%)!important}
 .tab-pprog-wrap:hover{border-color:#b06dcf!important}
 .tab-btn.tab-pprog-wrap.active{background:#E8451A!important;border:1px dashed #d2a8e8!important;color:#fff!important}
+/* Temporarily hide Personal Coach from users (code retained; flip PPROG_TAB_ENABLED to re-enable) */
+#tab-pprog,#pprog-tab{display:none!important}
 .pprog-panel{max-width:720px;margin:0 auto;background:#1e1e1e;padding:20px 18px 24px;border-radius:12px;border:1px solid #2a2a2a}
 .pprog-head{display:flex;align-items:center;gap:14px;margin:0 0 14px}
 .pprog-coach-avatar{width:72px;height:72px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.45))}
@@ -653,10 +655,10 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.0.3 BETA</div>
+<div class="header-sub">DAILY WORKOUTS · v21.0 BETA</div>
 </div>
 <div class="tabs">
-<button class="tab-btn tab-pprog-wrap" id="tab-pprog" onclick="showTab('pprog')">Personal Coach</button>
+<button class="tab-btn tab-pprog-wrap" id="tab-pprog" type="button" hidden aria-hidden="true" tabindex="-1" onclick="showTab('pprog')">Personal Coach</button>
 <button class="tab-btn active" id="tab-browse" onclick="showTab('browse')">Workout's</button>
 <button class="tab-btn tab-generate-wrap" id="tab-aibeta" onclick="showTab('aibeta')">Generate Workout</button>
 <button class="tab-btn tab-wtools-wrap" id="tab-workout" onclick="showTab('workout')">Workout Tools</button>
@@ -1199,6 +1201,8 @@ function rememberAiClientError(summary) {
 }
 
 /* ——— Personal Coach / המאמן (Beta 1.0) ——— */
+/* false = hide tab from users (production pause). Set true tomorrow to restore. Code stays intact. */
+var PPROG_TAB_ENABLED = false;
 var PPROG_STORE_KEY = "duck-wod-personal-coach-v1";
 var PPROG_LEGAL_VERSION = 2;
 var pprogLegalPendingCallback = null;
@@ -8446,6 +8450,9 @@ function renderSetWorkoutCard() {
 }
 
 function showTab(name) {
+  if (name === "pprog" && !PPROG_TAB_ENABLED) {
+    name = "browse";
+  }
   var tabs = ["pprog", "browse", "aibeta", "workout", "sources", "about"];
   for (var i = 0; i < tabs.length; i++) {
     var id = tabs[i];
@@ -8455,14 +8462,24 @@ function showTab(name) {
     if (btn) {
       var tabExtra = id === "aibeta" ? " tab-generate-wrap" : id === "pprog" ? " tab-pprog-wrap" : id === "workout" ? " tab-wtools-wrap" : "";
       btn.className = "tab-btn" + tabExtra + (active ? " active" : "");
+      if (id === "pprog" && !PPROG_TAB_ENABLED) {
+        btn.hidden = true;
+        btn.setAttribute("aria-hidden", "true");
+        btn.tabIndex = -1;
+      }
     }
-    if (pane) pane.className = "tab-content" + (active ? " active" : "");
+    if (pane) {
+      pane.className = "tab-content" + (active ? " active" : "");
+      if (id === "pprog" && !PPROG_TAB_ENABLED) {
+        pane.hidden = true;
+      }
+    }
   }
   var daysBar = document.getElementById("days-bar");
   if (daysBar) {
     daysBar.style.display = name === "browse" ? "" : "none";
   }
-  if (name === "pprog") {
+  if (name === "pprog" && PPROG_TAB_ENABLED) {
     try {
       initPprogUi();
       if (!sessionStorage.dw_pprog_open_sent) {

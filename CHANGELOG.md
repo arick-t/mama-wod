@@ -1,5 +1,14 @@
 # Changelog
 
+## [21.0.0-beta.1] - 2026-07-29
+
+### Production pause — Personal Coach tab
+- **Hide Personal Coach tab** from the UI (`PPROG_TAB_ENABLED = false`) so users cannot open the unstable beta surface.
+- All Personal Coach code / API routes remain in the repo for tomorrow’s fix.
+- Display version back to **v21.0 BETA**.
+
+---
+
 ## [21.0.3-beta.1] - 2026-07-29
 
 ### Quality harden — Personal Coach on Groq fallback
