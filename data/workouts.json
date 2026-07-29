@@ -936,34 +936,6 @@
       },
       {
         "date": "2026-07-20",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "ELIZABETH",
-            "lines": [
-              "21-15-9",
-              "Power Clean 61kg/43kg",
-              "Ring Dip",
-              "* -Rest until the 10:00 mark-"
-            ],
-            "sub_title2": "FOR TIME"
-          },
-          {
-            "title": "Strength",
-            "lines": [
-              "Power Clean",
-              "FOR LOAD",
-              "Every :30 Seconds (12:00)",
-              "1 Power Clean (At Moderate-Heavy)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-20",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2701,6 +2673,57 @@
     "2026-07-29": [
       {
         "date": "2026-07-29",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260729",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "For 5 rounds, as many reps as possible in 3 minutes of:",
+              "15/20-calorie row",
+              "20 alternating dumbbell hang snatches",
+              "Max dumbbell-facing burpees",
+              "Rest 1 minute between rounds.",
+              "♀ 35-lb dumbbell",
+              "♂ 50-lb dumbbell"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-29",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 26.1",
+            "lines": [
+              "For time:",
+              "20 wall-ball shots",
+              "18 box jump-overs",
+              "30 wall-ball shots",
+              "18 box jump-overs",
+              "40 wall-ball shots",
+              "18 medicine-ball box step-overs",
+              "66 wall-ball shots",
+              "18 medicine-ball box step-overs",
+              "40 wall-ball shots",
+              "18 box jump-overs",
+              "30 wall-ball shots",
+              "18 box jump-overs",
+              "20 wall-ball shots",
+              "Time cap: 12 minutes",
+              "♀ 14-lb (6-kg) medicine ball, 9-foot target, 20-inch box",
+              "♂ 20-lb (9-kg) medicine ball, 10-ft target, 24-inch box"
+            ]
+          }
+        ],
+        "note": "Open: Open 26.1"
+      },
+      {
+        "date": "2026-07-29",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-07-29/",
@@ -2748,20 +2771,85 @@
       },
       {
         "date": "2026-07-29",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260729",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-july-29-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "Alternating Tabata :20 on :10 off for 4 rotations each (4:00 clock)",
             "lines": [
-              "For 5 rounds, as many reps as possible in 3 minutes of:",
-              "15/20-calorie row",
-              "20 alternating dumbbell hang snatches",
-              "Max dumbbell-facing burpees",
-              "Rest 1 minute between rounds.",
-              "♀ 35-lb dumbbell",
-              "♂ 50-lb dumbbell"
+              "Air Bike",
+              "Line Facing Burpees"
+            ]
+          },
+          {
+            "title": "AMRAP 2 minutes x 6",
+            "lines": [
+              "AMRAP 2 minutes x 3",
+              "20/15 Calorie Air Bike",
+              "Max Line Facing Burpees in remaining time"
+            ]
+          },
+          {
+            "title": "Rest 2:00 between AMRAPs",
+            "lines": [
+              "Immediately into",
+              "AMRAP 2 minutes x 3",
+              "15 Line Facing Burpees",
+              "Max Calorie Air Bike in remaining time"
+            ]
+          },
+          {
+            "title": "Rest 2:00 between AMRAPs",
+            "lines": [
+              "Two Scores: total line facing burpees and total bike calories from each max rep section.",
+              "Feel: Gas",
+              "Pace: Reach",
+              "Target Score: 10+ burpees/round and 10+ calories/round",
+              "Firebreather Score: 15+ burpees/round and 15+ calories/round"
+            ]
+          },
+          {
+            "title": "Tempo Pull to Power Position into Squat Snatch",
+            "lines": [
+              "2×4 @ 65%",
+              "Tempo Pull to Mid Thigh into Squat Snatch",
+              "1×4 @ 65-70%",
+              "Tempo Pull to Knee into Squat Snatch",
+              "1×4 @ 65-75%",
+              "Row 500m at flush pace between sets",
+              "Drop and reset between each )"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-29",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Deadlift 1x3",
+              "ON A 15:00 CLOCK...",
+              "Establish 3RM Deadlift*",
+              "* (Score is Weight)"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "2 SETS For Time:",
+            "lines": [
+              "100ft Dumbbell Farmers Carry (70s/50s",
+              "10 Bar Muscle Up",
+              "100ft Dumbbell Farmers Carry 70s/50s",
+              "10 Bar Muscle Up",
+              "100ft Dumbbell Farmers Carry 70s/50s",
+              "10 Bar Muscle Up",
+              "100ft Dumbbell Farmers Carry 70s/50s",
+              "* -Rest 2:00 b/t Sets-"
             ]
           }
         ]
@@ -2837,39 +2925,8 @@
           }
         ],
         "note": "Benchmark: The Ghost"
-      },
-      {
-        "date": "2026-07-29",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 26.1",
-            "lines": [
-              "For time:",
-              "20 wall-ball shots",
-              "18 box jump-overs",
-              "30 wall-ball shots",
-              "18 box jump-overs",
-              "40 wall-ball shots",
-              "18 medicine-ball box step-overs",
-              "66 wall-ball shots",
-              "18 medicine-ball box step-overs",
-              "40 wall-ball shots",
-              "18 box jump-overs",
-              "30 wall-ball shots",
-              "18 box jump-overs",
-              "20 wall-ball shots",
-              "Time cap: 12 minutes",
-              "♀ 14-lb (6-kg) medicine ball, 9-foot target, 20-inch box",
-              "♂ 20-lb (9-kg) medicine ball, 10-ft target, 24-inch box"
-            ]
-          }
-        ],
-        "note": "Open: Open 26.1"
       }
     ]
   },
-  "last_updated": "2026-07-29T02:59:41.391589"
+  "last_updated": "2026-07-29T07:11:48.927506"
 }
