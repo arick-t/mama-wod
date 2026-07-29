@@ -1,6 +1,6 @@
 {
   "name": "mama-wod",
-  "version": "20.3.1",
+  "version": "21.0.0-beta.1",
   "description": "Workout aggregator — daily WODs from multiple box & special sources",
   "main": "index.js",
   "directories": {
@@ -9,6 +9,9 @@
   "scripts": {
     "test": "node scripts/analytics-summary.test.js && node scripts/contact-link.test.js",
     "dev:local": "node scripts/local-dev-server.js",
+    "coach:sync-brain": "node scripts/coach-sync-brain.js",
+    "coach:sync-policy": "node scripts/sync-coach-policy.js",
+    "coach:sync-prompt": "node scripts/sync-hamamen-prompt.js",
     "build:cap:web": "node scripts/build-capacitor-web.js",
     "cap:sync": "npm run build:cap:web && npx cap sync",
     "cap:open:android": "npx cap open android",

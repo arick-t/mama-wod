@@ -14,6 +14,9 @@ function allowCors(res) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 
+const { checkRateLimit, sendRateLimit } = require("./rate-limit.js");
+const { scrubPiiText } = require("./sanitize-pii.js");
+
 const GEMINI_KEY_ENV_NAMES = ["GEMINI_API_KEY", "GOOGLE_GENERATIVE_AI_API_KEY", "GOOGLE_AI_API_KEY"];
 
 function resolveGeminiApiKey() {
@@ -893,6 +896,26 @@ module.exports = async function handler(req, res) {
     } catch (e) {
       return res.status(400).json({ error: "Invalid JSON body" });
     }
+
+    const uid = String((body && (body.uid || body.userId)) || "").slice(0, 80);
+    const rl = checkRateLimit(req, {
+      name: "generate-workout",
+      limit: 8,
+      windowMs: 10 * 60 * 1000,
+      uid: uid,
+    });
+    if (!rl.ok) return sendRateLimit(res, rl);
+    const rlGlobal = checkRateLimit(req, {
+      name: "ai-global",
+      limit: 30,
+      windowMs: 60 * 1000,
+      uid: uid,
+    });
+    if (!rlGlobal.ok) return sendRateLimit(res, rlGlobal);
+
+    if (body && body.notes != null) body.notes = scrubPiiText(body.notes);
+    if (body && body.userNotes != null) body.userNotes = scrubPiiText(body.userNotes);
+    if (body && body.text != null) body.text = scrubPiiText(body.text);
 
     const action = body.action === "explain" ? "explain" : "generate";
 

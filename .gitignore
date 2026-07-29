@@ -30,8 +30,20 @@ htmlcov/
 *.log
 .env
 .env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+!.env.example
 node_modules/
 web/
 
 # Local media (screen recordings etc.) — not part of app bundle
 assets/video/
+
+# Personal coach sync state
+experiments/personal-coach/.sync-manifest.json
+
+# Admin dashboard athlete snapshots (local / server files)
+data/admin-snapshots/
+
