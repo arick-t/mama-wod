@@ -1,5 +1,15 @@
 # Changelog
 
+## [21.0.3-beta.1] - 2026-07-29
+
+### Quality harden — Personal Coach on Groq fallback
+- Enriched Groq compact system with full intake order, LIFTS/SKILLS pickers, **POL-016 תחקור**, brick/revise HARD rules.
+- Explicit identity: Personal Coach engine only — never Generate Workout one-shot mode.
+- Status endpoint clarifies `engine: personal-coach` and that מאגר/File Search needs a valid Gemini key.
+- Display **v21.0.3 BETA**.
+
+---
+
 ## [21.0.2-beta.1] - 2026-07-29
 
 ### Hotfix — Groq token budget
