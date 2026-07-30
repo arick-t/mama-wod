@@ -1,0 +1,31 @@
+---
+description: HARD law — never compromise Personal Coach workout-building quality for speed, cost, or availability
+alwaysApply: true
+---
+
+# Workout quality is non-negotiable (HARD)
+
+Personal Coach workout programming quality is the product. **Never trade it away.**
+
+## Absolute rules
+
+- Prefer a **slower, correct brick** over a fast, weak, or generic one. Extra wait time for the athlete is acceptable.
+- Never ship **offline / local / stub / template workouts** as a substitute for real coach programming.
+- Never shrink, strip, or “compact away” programming prompts, policy, or capability profiling (POL-016 / POL-018) just to save tokens, latency, or quota.
+- Never route **generate_block / generate_week / generate_week_detail / revise_*** through a weaker backup model that lowers programming quality.
+- Intake UX may change (pickers, English-only, question order). **Programming brain / system / policy for building workouts must stay high-quality.**
+
+## When providers fail
+
+- Fail loudly and **retry / wait**, do not fill the calendar with fake sessions.
+- Rate limits and long timeouts are better than low-quality WODs.
+
+## What “good” means (do not regress)
+
+- Relevant strength / skill part + functional metcon (or clear intent) per training day
+- Athlete-specific loads, scales, and formats from intake
+- Real 5-week brick continuity — not empty stubs or copy-paste templates
+
+## Conflict resolution
+
+If any change would make workouts worse to fix UI, quota, or deploy pressure: **reject the change** or isolate it so programming quality stays intact.
