@@ -1266,19 +1266,36 @@ module.exports = async function handler(req, res) {
     action === "generate_week" ||
     action === "generate_week_detail" ||
     action === "preview_month";
-  /* Intake is multi-turn (profile + setup + schedule + lifts + skills + constraints…).
-   * 12/5min was too tight and aborted mid-intake with 429. Prefer wait on providers,
-   * not our own chat throttle (POL-020: quality completion > aggressive local limits). */
+  /* Split limits: open intake needs many turns; post-intake chat stays tighter. */
+  const profileIn = body.athleteProfile || body.memory || null;
+  const intakeDone =
+    body.intakeComplete === true ||
+    !!(profileIn && typeof profileIn === "object" && profileIn.intakeComplete === true);
+  const inIntake =
+    !isHeavy && (action === "start_intake" || action === "chat" || !action) && !intakeDone;
+
+  let rlName = "personal-coach";
+  let rlLimit = 24;
+  let rlWindow = 10 * 60 * 1000;
+  if (isHeavy) {
+    rlName = "personal-coach-heavy";
+    rlLimit = 8;
+    rlWindow = 15 * 60 * 1000;
+  } else if (inIntake) {
+    rlName = "personal-coach-intake";
+    rlLimit = 120;
+    rlWindow = 15 * 60 * 1000;
+  }
   const rl = checkRateLimit(req, {
-    name: isHeavy ? "personal-coach-heavy" : "personal-coach",
-    limit: isHeavy ? 8 : 60,
-    windowMs: isHeavy ? 15 * 60 * 1000 : 10 * 60 * 1000,
+    name: rlName,
+    limit: rlLimit,
+    windowMs: rlWindow,
     uid: uid,
   });
   if (!rl.ok) return sendRateLimit(res, rl);
   const rlGlobal = checkRateLimit(req, {
-    name: "ai-global",
-    limit: 90,
+    name: inIntake ? "ai-global-intake" : "ai-global",
+    limit: inIntake ? 120 : 45,
     windowMs: 60 * 1000,
     uid: uid,
   });
