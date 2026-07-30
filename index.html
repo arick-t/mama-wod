@@ -141,6 +141,12 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-skills-picker input{width:18px;height:18px;flex-shrink:0}
 .pprog-skills-submit{margin-top:10px;width:100%;padding:10px;font-weight:700;background:#1A9B8A!important;border:none;border-radius:8px;color:#111!important}
 .pprog-lifts-picker{margin-top:10px;padding:12px;background:#181818;border:1px solid #333;border-radius:10px;direction:ltr;text-align:left}
+.pprog-profile-picker{margin-top:10px;padding:12px;background:#181818;border:1px solid #333;border-radius:10px;direction:ltr;text-align:left}
+.pprog-profile-picker-note{margin:0 0 12px;font-size:.82em;line-height:1.4;color:#aaa}
+.pprog-profile-row{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+.pprog-profile-row label{flex:1;font-size:.9em;color:#e8e4d8;font-weight:600}
+.pprog-profile-row input,.pprog-profile-row select{width:150px;flex-shrink:0;padding:10px 12px;background:#222;color:#eee;border:1px solid #555;border-radius:8px;font-size:1rem;font-family:inherit}
+.pprog-profile-submit{margin-top:10px;width:100%;padding:10px;font-weight:700;background:#1A9B8A!important;border:none;border-radius:8px;color:#111!important}
 .pprog-lifts-picker-note{margin:0 0 12px;font-size:.82em;line-height:1.4;color:#aaa}
 .pprog-lifts-row{display:flex;align-items:center;gap:10px;margin:0 0 10px}
 .pprog-lifts-row label{flex:1;font-size:.9em;color:#e8e4d8;font-weight:600}
@@ -830,6 +836,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
     <div id="pprogIntakeBlock">
       <div class="pprog-chat" id="pprogChat">
         <div class="pprog-chat-log" id="pprogChatLog" aria-live="polite"></div>
+        <div id="pprogProfilePicker" class="pprog-profile-picker" style="display:none" aria-live="polite"></div>
         <div id="pprogLiftsPicker" class="pprog-lifts-picker" style="display:none" aria-live="polite"></div>
         <div id="pprogSkillsPicker" class="pprog-skills-picker" style="display:none" aria-live="polite"></div>
         <form class="pprog-chat-form" id="pprogChatForm" onsubmit="return sendPprogMessage(event)">
@@ -1321,6 +1328,14 @@ var PPROG_LIFT_DEFS = [
   { id: "run_2000", label: "2000 m run", unit: "min", kind: "run", placeholder: "e.g. 8.5" },
 ];
 
+var PPROG_PROFILE_DEFS = [
+  { id: "display_name", label: "Name / nickname", kind: "text", placeholder: "e.g. Alex" },
+  { id: "gender", label: "Gender", kind: "select", options: ["male", "female"] },
+  { id: "age", label: "Age", kind: "number", placeholder: "e.g. 30" },
+  { id: "bodyweight", label: "Bodyweight (kg)", kind: "number", placeholder: "e.g. 78" },
+  { id: "experience", label: "Training experience", kind: "text", placeholder: "e.g. 2 years CrossFit" },
+];
+
 function pprogLegalAccepted(store) {
   var s = store || loadPprogStore();
   return (
@@ -1806,6 +1821,7 @@ function renderPprogChat() {
     if (pprogBusy) setPprogTyping(true);
     syncPprogStartBtn();
     syncPprogResetBtn();
+    syncPprogProfilePickerUi();
     return;
   }
   var html = "";
@@ -1844,6 +1860,7 @@ function renderPprogChat() {
   else log.scrollTop = log.scrollHeight;
   syncPprogStartBtn();
   syncPprogResetBtn();
+  syncPprogProfilePickerUi();
   syncPprogLiftsPickerUi();
   syncPprogSkillsPickerUi();
 }
@@ -1888,6 +1905,7 @@ function stripPprogWeekJsonForDisplay(text) {
     .replace(/<<<WEEK_JSON[\s\S]*?WEEK_JSON>>>/g, "")
     .replace(/<<<DAY_JSON[\s\S]*?DAY_JSON>>>/g, "")
     .replace(/<<<PART_JSON[\s\S]*?PART_JSON>>>/g, "")
+    .replace(/<<<PROFILE_PICKER>>>/g, "")
     .replace(/<<<LIFTS_PICKER>>>/g, "")
     .replace(/<<<SKILLS_PICKER>>>/g, "")
     .trim();
@@ -1909,19 +1927,113 @@ function pprogCoachWantsLiftsPicker(coachText) {
   return String(coachText || "").indexOf("<<<LIFTS_PICKER>>>") >= 0;
 }
 
+function pprogCoachWantsProfilePicker(coachText) {
+  return String(coachText || "").indexOf("<<<PROFILE_PICKER>>>") >= 0;
+}
+
+function renderPprogProfilePickerHtml() {
+  var store = loadPprogStore();
+  var html = '<p class="pprog-profile-picker-note">Fill general profile details for faster intake.</p>';
+  for (var i = 0; i < PPROG_PROFILE_DEFS.length; i++) {
+    var def = PPROG_PROFILE_DEFS[i];
+    var val = "";
+    if (def.id === "display_name") val = store.displayName || "";
+    else if (def.id === "gender") val = store.gender || "";
+    else if (def.id === "age") val = store.age || "";
+    else if (def.id === "bodyweight") val = store.bodyweight || "";
+    else if (def.id === "experience") val = store.experience || "";
+    html += '<div class="pprog-profile-row"><label for="pprog-profile-' + esc(def.id) + '">' + esc(def.label) + "</label>";
+    if (def.kind === "select") {
+      html += '<select id="pprog-profile-' + esc(def.id) + '" data-profile-id="' + esc(def.id) + '">';
+      html += '<option value="">Select…</option>';
+      for (var oi = 0; oi < def.options.length; oi++) {
+        var ov = def.options[oi];
+        html += '<option value="' + esc(ov) + '"' + (String(val) === String(ov) ? " selected" : "") + ">" + esc(ov) + "</option>";
+      }
+      html += "</select>";
+    } else {
+      html +=
+        '<input id="pprog-profile-' +
+        esc(def.id) +
+        '" type="text" autocomplete="off" data-profile-id="' +
+        esc(def.id) +
+        '" placeholder="' +
+        esc(def.placeholder || "") +
+        '" value="' +
+        esc(String(val || "")) +
+        '">';
+    }
+    html += "</div>";
+  }
+  html += '<button type="button" class="btn pprog-profile-submit" onclick="submitPprogProfilePicker()">Send profile</button>';
+  return html;
+}
+
+function syncPprogProfilePickerUi() {
+  var el = document.getElementById("pprogProfilePicker");
+  if (!el) return;
+  var store = loadPprogStore();
+  if (store.intakeComplete || store.intakeProfileDone) {
+    el.style.display = "none";
+    return;
+  }
+  var last = pprogLastCoachModelText();
+  if (pprogCoachWantsProfilePicker(last)) {
+    el.style.display = "block";
+    el.innerHTML = renderPprogProfilePickerHtml();
+  } else {
+    el.style.display = "none";
+  }
+}
+
+function submitPprogProfilePicker() {
+  if (pprogBusy) return;
+  var box = document.getElementById("pprogProfilePicker");
+  if (!box) return;
+  var vals = {};
+  var fields = box.querySelectorAll("[data-profile-id]");
+  for (var i = 0; i < fields.length; i++) {
+    var id = fields[i].getAttribute("data-profile-id");
+    vals[id] = String(fields[i].value || "").trim();
+  }
+  if (!vals.display_name || !vals.gender || !vals.age || !vals.bodyweight || !vals.experience) return;
+  var store = loadPprogStore();
+  store.displayName = vals.display_name.slice(0, 80);
+  store.gender = vals.gender.slice(0, 16).toLowerCase();
+  store.preferredLanguage = "en";
+  store.age = vals.age.slice(0, 8);
+  store.bodyweight = vals.bodyweight.slice(0, 10);
+  store.experience = vals.experience.slice(0, 120);
+  store.intakeProfileDone = true;
+  savePprogStore(store);
+  var inp = document.getElementById("pprogChatInput");
+  if (inp) {
+    inp.value =
+      "Profile:\n" +
+      "Name: " +
+      store.displayName +
+      "\nGender: " +
+      store.gender +
+      "\nAge: " +
+      store.age +
+      "\nBodyweight: " +
+      store.bodyweight +
+      " kg\nExperience: " +
+      store.experience;
+  }
+  sendPprogMessage({ preventDefault: function () {} });
+  box.style.display = "none";
+}
+
 function renderPprogLiftsPickerHtml() {
   var store = loadPprogStore();
   var lifts = store.lifts || {};
-  var he = String(store.preferredLanguage || "").toLowerCase().indexOf("he") === 0;
-  var note = he
-    ? "מלא משקל (ק״ג) וזמן ריצה. שדה ריק = לא יודע / לדלג — המאמן יעריך."
-    : "Enter weight (kg) and run time. Leave blank = unknown / skip — the coach will estimate.";
+  var note = "Enter weight (kg) and run time. Leave blank = unknown / skip — the coach will estimate.";
   var html = '<p class="pprog-lifts-picker-note">' + note + "</p>";
   for (var i = 0; i < PPROG_LIFT_DEFS.length; i++) {
     var def = PPROG_LIFT_DEFS[i];
     var val = lifts[def.id] != null && lifts[def.id] !== "" ? String(lifts[def.id]) : "";
     var label = def.label;
-    if (he && def.id === "run_2000") label = "ריצת 2000 מ׳";
     var ph = def.placeholder || (def.kind === "kg" ? "kg" : "");
     html +=
       '<div class="pprog-lifts-row">' +
@@ -1948,7 +2060,7 @@ function renderPprogLiftsPickerHtml() {
   }
   html +=
     '<button type="button" class="btn pprog-lifts-submit" onclick="submitPprogLiftsPicker()">' +
-    (he ? "שלח משקלים" : "Send lifts") +
+    "Send lifts" +
     "</button>";
   return html;
 }
@@ -1966,7 +2078,7 @@ function syncPprogLiftsPickerUi() {
     return;
   }
   var last = pprogLastCoachModelText();
-  if (pprogCoachWantsLiftsPicker(last) && !pprogCoachWantsSkillsPicker(last)) {
+  if (pprogCoachWantsLiftsPicker(last) && !pprogCoachWantsSkillsPicker(last) && !pprogCoachWantsProfilePicker(last)) {
     el.style.display = "block";
     el.innerHTML = renderPprogLiftsPickerHtml();
   } else {
@@ -2053,10 +2165,7 @@ function pprogCoachSignalsBlockBuilding(text) {
 function renderPprogSkillsPickerHtml() {
   var store = loadPprogStore();
   var sk = store.skills || {};
-  var he = String(store.preferredLanguage || "").toLowerCase().indexOf("he") === 0;
-  var note = he
-    ? "סמן סקילים שאתה שולט בהם. אם יש סקיל שאינך שולט בו או שולט בו חלקית — פרט לי בכתב בצ׳אט."
-    : "Mark skills you control. If a skill is missing or only partially mastered — detail it in writing (chat).";
+  var note = "Mark skills you control. If a skill is missing or only partially mastered — detail it in writing (chat).";
   var html = '<p class="pprog-skills-picker-note">' + note + "</p>";
   for (var i = 0; i < PPROG_SKILL_DEFS.length; i++) {
     var def = PPROG_SKILL_DEFS[i];
@@ -2383,7 +2492,7 @@ function athleteProfilePayload(opts) {
   var payload = {
     userId: uid,
     athleteId: uid,
-    preferredLanguage: s.preferredLanguage ? String(s.preferredLanguage).slice(0, 8) : "",
+    preferredLanguage: "en",
     gender: s.gender ? String(s.gender).slice(0, 16) : "",
     skills: s.skills && typeof s.skills === "object" ? s.skills : {},
     lifts: s.lifts && typeof s.lifts === "object" ? s.lifts : {},
