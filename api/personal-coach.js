@@ -611,7 +611,8 @@ function buildSystemWithMemory(profile, action, opts) {
         "- Order: <<<PROFILE_PICKER>>> (name/gender/age/bodyweight/training experience) → location/equipment → weekly split (work/rest days + which days) → <<<LIFTS_PICKER>>> (BS/DL/CJ/Snatch kg + 2000m run; blank=unknown) → <<<SKILLS_PICKER>>> → other schedule limits → injuries → goals.\n" +
         "- After PROFILE_PICKER, ask training setup next, then weekly split next, then LIFTS_PICKER, then SKILLS_PICKER (never reverse skills before lifts).\n" +
         "- After SKILLS_PICKER answer: marked skills = athlete controls them (program as Rx-capable). Unmarked = scale. " +
-        "HARD: NEVER ask which skills are Rx vs scale, full RX weight, or any skills follow-up — go straight to other scheduling limits.\n" +
+        "HARD: NEVER ask which skills are Rx vs scale, full RX weight, or any skills follow-up — " +
+        "the client app continues intake locally after skills (do not ask topics 6–8 yourself).\n" +
         "- Do NOT ask each 1RM or the run as separate chat questions. Do NOT ask Front Squat / Press / Clean separately.\n" +
         "- Empty / unknown / skip = unknown → next topic.\n" +
         "- NUMERIC SANITY (POL-010): If age/bodyweight/kg looks absurd, do NOT accept — warn briefly and re-ask (or allow unknown). Guide: age 12–80; BW 35–200kg; lifts 20–400kg typical; never accept kg ≤0 or ≥1000.\n" +
@@ -1349,7 +1350,7 @@ module.exports = async function handler(req, res) {
           "[INTERNAL — do not quote] Start intake. Athlete already accepted legal terms in the app.\n" +
           "One question per turn. Practical tone only (POL-013) — no compliments, no hype.\n" +
           "Topic order:\n" +
-          "1) First send a short intro line for profile collection and append exactly <<<PROFILE_PICKER>>> on its own line.\n" +
+          "1) First: one short English line telling the athlete they may reply in any language (you still coach in English), then a short intro for profile collection, and append exactly <<<PROFILE_PICKER>>> on its own line.\n" +
           "2) Training setup: \"Where do you usually train — fully equipped gym or home/partial setup? What equipment is accessible?\"\n" +
           "3) Weekly schedule: \"How many work days and rest days, and which exact days?\"\n" +
           "4) Lifts + run ONLY via marker: one short English intro line, then append exactly <<<LIFTS_PICKER>>> alone on its own line. " +
@@ -1358,16 +1359,11 @@ module.exports = async function handler(req, res) {
           "5) Skills ONLY via marker AFTER lifts are answered: one short English intro line, then append exactly <<<SKILLS_PICKER>>> alone on its own line.\n" +
           "     Never open SKILLS_PICKER before LIFTS_PICKER is done.\n" +
           "     After the athlete submits the checklist: marked = controlled/Rx-capable; unmarked = scale. " +
-          "HARD — do NOT ask Rx vs scale / full RX weight follow-ups. Immediately continue to topic 6.\n" +
-          "6) Other scheduling limits (session time limit etc).\n" +
-          "7) Injuries / limitations.\n" +
-          "8) Goals.\n" +
-          "After goals: one short English line that the plan is being built (athlete may contact for adjustments — do NOT mention next brick), then emit <<<BLOCK_JSON>>> with exactly 5 weeks. Do not invent extra intake questions.\n" +
-          "If you cannot finish BLOCK_JSON in this turn, still say the plan is being built so the app can generate it.\n" +
+          "HARD — do NOT ask Rx vs scale / full RX weight follow-ups. The app continues intake locally after skills.\n" +
           "Do NOT ask last rest day / last deload week / Thu deload confirmation — " +
           "program is built from preferences and starts as a 5-week brick (week 5 macro deload by default).\n" +
           "Empty / unknown allowed anytime. POL-010 numeric sanity on age/bw/kg.\n" +
-          "Start now with question #1 only (PROFILE_PICKER).",
+          "Start now with the any-language note + PROFILE_PICKER only.",
       },
     ];
   }

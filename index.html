@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.0 BETA</title>
+<title>DUCK-WOD · v21.0.1 BETA</title>
 <meta name="theme-color" content="#111">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -673,7 +673,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.0 BETA</div>
+<div class="header-sub">DAILY WORKOUTS · v21.0.1 BETA</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
@@ -1863,6 +1863,7 @@ function renderPprogChat() {
   syncPprogProfilePickerUi();
   syncPprogLiftsPickerUi();
   syncPprogSkillsPickerUi();
+  pprogMaybeResumeLocalPostSkills();
 }
 
 function syncPprogStartBtn() {
@@ -2319,20 +2320,98 @@ function submitPprogSkillsPicker() {
   store.pendingIntakeLiftsLines = null;
   store.awaitingSkillsAfterLifts = false;
   savePprogStore(store);
-  var inp = document.getElementById("pprogChatInput");
   var summary = labels.length ? labels.join(", ") : "None selected";
-  if (inp) {
-    inp.value =
-      liftsText +
-      "Skills checklist submitted.\n" +
-      "Marked skills = I control them (Rx-capable).\n" +
-      "Unmarked skills = scale.\n" +
-      "Skills: " +
-      summary +
-      "\n\n[INTERNAL] Do NOT ask Rx vs scale follow-up. Continue intake with other scheduling limits (session time).";
-  }
-  sendPprogMessage({ preventDefault: function () {} });
+  var summaryLine =
+    liftsText +
+    "Skills checklist submitted.\n" +
+    "Marked skills = I control them (Rx-capable).\n" +
+    "Unmarked skills = scale.\n" +
+    "Skills: " +
+    summary;
   box.style.display = "none";
+  /* Local finish of intake — do NOT ask LLM (avoids Rx/scale trap + missing plan). */
+  pprogBeginLocalPostSkillsIntake(summaryLine);
+}
+
+var PPROG_POST_SKILLS_QS = [
+  "Any additional scheduling limits I should account for (session time limit)?",
+  "Any injuries, pain points, or movement limitations I must program around?",
+  "What are your main goals for this block?",
+];
+
+function pprogBeginLocalPostSkillsIntake(summaryLine) {
+  var store = loadPprogStore();
+  store.postSkillsLocal = true;
+  store.postSkillsStep = 0;
+  if (!Array.isArray(store.postSkillsAnswers)) store.postSkillsAnswers = [];
+  savePprogStore(store);
+  var msgs = loadPprogMessages();
+  if (summaryLine) msgs.push({ role: "user", text: String(summaryLine) });
+  msgs.push({
+    role: "model",
+    text:
+      "Got it — skills checklist locked (marked = Rx-capable, unmarked = scale).\n\n" +
+      PPROG_POST_SKILLS_QS[0],
+  });
+  savePprogMessages(msgs);
+  renderPprogChat();
+  syncPprogModeUi();
+  keepPprogChatKeyboardOpen();
+}
+
+/** Client-driven last 3 intake questions → always start plan build. */
+function pprogHandleLocalPostSkillsAnswer(rawText) {
+  var text = String(rawText || "").trim() || "[unknown / skip]";
+  var store = loadPprogStore();
+  var step = store.postSkillsStep | 0;
+  var answers = Array.isArray(store.postSkillsAnswers) ? store.postSkillsAnswers.slice() : [];
+  answers[step] = text;
+  var msgs = loadPprogMessages();
+  msgs.push({ role: "user", text: text });
+  step += 1;
+  store.postSkillsAnswers = answers;
+  store.postSkillsStep = step;
+  if (step < PPROG_POST_SKILLS_QS.length) {
+    savePprogStore(store);
+    msgs.push({ role: "model", text: PPROG_POST_SKILLS_QS[step] });
+    savePprogMessages(msgs);
+    renderPprogChat();
+    keepPprogChatKeyboardOpen();
+    return true;
+  }
+  store.profileNotes = [
+    String(store.profileNotes || ""),
+    "Scheduling limits: " + (answers[0] || ""),
+    "Injuries/limitations: " + (answers[1] || ""),
+    "Goals: " + (answers[2] || ""),
+  ]
+    .filter(Boolean)
+    .join("\n")
+    .slice(0, 2500);
+  store.postSkillsLocal = false;
+  savePprogStore(store);
+  savePprogMessages(msgs);
+  renderPprogChat();
+  pprogStartFirstBlockWithBridge(msgs);
+  return true;
+}
+
+function pprogMaybeResumeLocalPostSkills() {
+  var store = loadPprogStore();
+  if (store.intakeComplete || !store.intakeSkillsDone) return;
+  if (store.currentBlock && store.currentBlock.weeks && store.currentBlock.weeks.length) return;
+  if (store.postSkillsLocal) return;
+  if (pprogBusy) return;
+  var last = pprogLastCoachModelText();
+  /* Already mid local intake (flag lost) — restore flag, don't duplicate coach lines. */
+  if (/skills checklist locked/i.test(last) || /session time limit/i.test(last) || /main goals for this block/i.test(last)) {
+    store.postSkillsLocal = true;
+    if (store.postSkillsStep == null) store.postSkillsStep = 0;
+    savePprogStore(store);
+    return;
+  }
+  /* After skills, client owns the rest — never leave athlete stuck on LLM Rx traps. */
+  pprogBeginLocalPostSkillsIntake(null);
 }
 
 function pprogCoachAsksRedundantSkillsRx(text) {
@@ -2479,7 +2558,13 @@ function startPprogIntake() {
           text: "Error: " + pprogFriendlyApiError(j, x.status),
         });
       } else {
-        msgs.push({ role: "model", text: String(j.text) });
+        var openText = String(j.text);
+        if (!/any language|reply in any language/i.test(openText)) {
+          openText =
+            "You can reply in any language — keep it simple. I will still coach you in English.\n\n" +
+            openText;
+        }
+        msgs.push({ role: "model", text: openText });
       }
       savePprogMessages(msgs);
       pprogBusy = false;
@@ -2744,6 +2829,12 @@ function sendPprogMessage(ev) {
   var inp = document.getElementById("pprogChatInput");
   var raw = inp ? String(inp.value || "") : "";
   var text = raw.trim();
+  /* Client-owned final intake steps — guaranteed handoff to plan build. */
+  if (!store.intakeComplete && store.postSkillsLocal) {
+    if (inp) inp.value = "";
+    pprogHandleLocalPostSkillsAnswer(text);
+    return false;
+  }
   var allowEmpty = !store.intakeComplete;
   if (!text && !allowEmpty) {
     keepPprogChatKeyboardOpen();
@@ -2860,17 +2951,12 @@ function sendPprogMessage(ev) {
       if (
         !storeSkip.intakeComplete &&
         storeSkip.intakeSkillsDone &&
+        !storeSkip.postSkillsLocal &&
         pprogCoachAsksRedundantSkillsRx(j.text)
       ) {
-        var skipNote =
-          "Skills checklist is final. Marked = Rx-capable, unmarked = scale. " +
-          "Continue: any additional scheduling limits (session time limit)?";
-        renderPprogChat();
         pprogBusy = false;
         if (btn) btn.disabled = false;
-        var inpSkip = document.getElementById("pprogChatInput");
-        if (inpSkip) inpSkip.value = skipNote;
-        sendPprogMessage({ preventDefault: function () {} });
+        pprogBeginLocalPostSkillsIntake(null);
         return;
       }
       var blockFromChat = j.block || null;
