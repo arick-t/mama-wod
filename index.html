@@ -102,8 +102,10 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 @keyframes pprog-typing-bounce{0%,80%,100%{transform:translateY(0);opacity:.35}40%{transform:translateY(-3px);opacity:1}}
 .pprog-chat-form{display:flex;gap:8px;align-items:flex-end;direction:ltr}
 .pprog-chat-form textarea{flex:1;min-height:44px;max-height:120px;padding:10px;background:#222;color:#eee;border:1px solid #555;border-radius:8px;font-size:1rem;resize:vertical;font-family:inherit;direction:ltr;text-align:left}
-.pprog-reset-btn{width:auto;min-width:88px;margin-top:0;background:#3a3a3a!important;border-color:#555!important;color:#f0f0f0!important}
-.pprog-reset-btn:hover{background:#4a4a4a!important}
+#pprogSendBtn{background:#1f9d55!important;border-color:#1f9d55!important;color:#fff!important}
+#pprogSendBtn:hover{background:#188647!important;border-color:#188647!important}
+.pprog-reset-btn{width:auto;min-width:88px;margin-top:0;background:#c62828!important;border-color:#c62828!important;color:#fff!important}
+.pprog-reset-btn:hover{background:#b71c1c!important;border-color:#b71c1c!important}
 .pprog-chat-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;direction:ltr}
 .pprog-chat-actions .btn{width:auto;margin-top:0;padding:8px 14px;font-size:.85em}
 .pprog-start-btn{width:100%!important;margin-top:0;padding:16px 18px!important;font-size:1.15em!important;font-weight:800;letter-spacing:.08em;background:#E8451A!important;border:none;border-radius:10px;min-height:54px}
@@ -821,8 +823,8 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
         <div class="pprog-chat-log" id="pprogChatLog" aria-live="polite"></div>
         <form class="pprog-chat-form" id="pprogChatForm" onsubmit="return sendPprogMessage(event)">
           <textarea id="pprogChatInput" rows="2" placeholder="Message the coach…" maxlength="4000" dir="ltr" aria-label="Message the coach"></textarea>
-          <button type="submit" class="btn btn-find" id="pprogSendBtn" style="width:auto;min-width:88px;margin-top:0" onmousedown="event.preventDefault()" ontouchend="event.preventDefault(); sendPprogMessage(event);">Send</button>
-          <button type="button" class="btn pprog-reset-btn" id="pprogResetBtn" onclick="resetPprogUser()" title="Reset intake user">Reset</button>
+          <button type="submit" class="btn btn-find" id="pprogSendBtn" style="width:auto;min-width:88px;margin-top:0" onmousedown="event.preventDefault()" ontouchend="event.preventDefault(); sendPprogMessage(event);">&#10148; Send</button>
+          <button type="button" class="btn pprog-reset-btn" id="pprogResetBtn" onclick="resetPprogUser()" title="Reset intake user">&#10227; Reset</button>
         </form>
         <div class="pprog-chat-actions" id="pprogIntakeActions">
           <button type="button" class="btn btn-find pprog-start-btn" id="pprogStartBtn" onclick="pprogOnStartClick()">START</button>
@@ -1242,6 +1244,13 @@ function pprogFriendlyApiError(j, status) {
   var fallback = (j && j.fallbackError) || "";
   var blob = String(detail) + " " + String(fallback) + " " + String(status || "");
   var low = blob.toLowerCase();
+  if (
+    low.indexOf("tokens per minute") >= 0 ||
+    low.indexOf("request too large for model") >= 0 ||
+    low.indexOf("rate-limited right now") >= 0
+  ) {
+    return "Coach is busy right now — wait a minute and send again.";
+  }
   if (/api_key_invalid|api key not valid/.test(low)) {
     return "Coach AI is reconnecting — please send again in a moment.";
   }

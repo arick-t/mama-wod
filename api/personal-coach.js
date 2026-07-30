@@ -395,7 +395,8 @@ function coachPolicyBlock() {
 /** Shrink / rebuild system text so Groq stays under free-tier TPM. */
 function compactSystemForGroq(systemText) {
   const raw = String(systemText || "");
-  const maxChars = parseInt(process.env.GROQ_SYSTEM_MAX_CHARS || "32000", 10) || 32000;
+  /* Keep Groq under free-tier TPM budget (70b often rejects >~12k total tokens/request). */
+  const maxChars = parseInt(process.env.GROQ_SYSTEM_MAX_CHARS || "7000", 10) || 7000;
 
   /* Programming path already starts with PROGRAMMING_SYSTEM_CORE — strip fat policy only */
   if (raw.indexOf("You are a CrossFit programming engine") === 0) {
