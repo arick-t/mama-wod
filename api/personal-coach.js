@@ -357,8 +357,8 @@ const GROQ_CHAT_SYSTEM_COMPACT =
   "- Exactly ONE question per coach turn, EXCEPT LIFTS_PICKER / SKILLS_PICKER (one short explain line + marker alone).\n" +
   "- Order (do not skip ahead): gender → language → name → age → bodyweight kg → experience →\n" +
   "  <<<LIFTS_PICKER>>> (Back Squat / Deadlift / Clean&Jerk / Snatch kg + 2000m run; blank=unknown; do NOT ask FS/Press/Clean separately; do NOT ask each 1RM in chat) →\n" +
-  "  location/equipment → frequency/preferred days → other schedule limits → injuries → goals →\n" +
-  "  <<<SKILLS_PICKER>>> (mark skills they control; partial/unmastered → write details).\n" +
+  "  <<<SKILLS_PICKER>>> (mark skills they control; partial/unmastered → write details) →\n" +
+  "  location/equipment → frequency/preferred days → other schedule limits → injuries → goals.\n" +
   "- Empty / unknown / skip = next topic. Do NOT ask last rest day / last deload in intake.\n" +
   "- POL-010 numeric sanity: reject absurd age/kg; stay on same topic until sane value or skip.\n" +
   "  Guides: age 12–80; BW 35–200kg; BS 20–300; DL 20–400; Press 15–180; C&J 20–250; Snatch 15–200; never kg≤0 or ≥1000.\n" +
@@ -396,7 +396,7 @@ function coachPolicyBlock() {
 function compactSystemForGroq(systemText) {
   const raw = String(systemText || "");
   /* Keep Groq under free-tier TPM budget (70b often rejects >~12k total tokens/request). */
-  const maxChars = parseInt(process.env.GROQ_SYSTEM_MAX_CHARS || "7000", 10) || 7000;
+  const maxChars = parseInt(process.env.GROQ_SYSTEM_MAX_CHARS || "8500", 10) || 8500;
 
   /* Programming path already starts with PROGRAMMING_SYSTEM_CORE — strip fat policy only */
   if (raw.indexOf("You are a CrossFit programming engine") === 0) {
@@ -592,7 +592,7 @@ function buildSystemWithMemory(profile, action, opts) {
     !profile || !profile.intakeComplete
       ? "\n\n---\nINTAKE MODE (HARD):\n" +
         "- Exactly ONE question per reply, EXCEPT when opening LIFTS_PICKER or SKILLS_PICKER (one short explanation line + the marker).\n" +
-        "- Order: gender → language → name → age → bodyweight → experience → <<<LIFTS_PICKER>>> (BS/DL/CJ/Snatch kg + 2000m run; blank=unknown) → location/equipment → frequency/days → schedule → injuries → goals → <<<SKILLS_PICKER>>>.\n" +
+        "- Order: gender → language → name → age → bodyweight → experience → <<<LIFTS_PICKER>>> (BS/DL/CJ/Snatch kg + 2000m run; blank=unknown) → <<<SKILLS_PICKER>>> → location/equipment → frequency/days → schedule → injuries → goals.\n" +
         "- Do NOT ask each 1RM or the run as separate chat questions. Do NOT ask Front Squat / Press / Clean separately.\n" +
         "- Empty / unknown / skip = unknown → next topic.\n" +
         "- NUMERIC SANITY (POL-010): If age/bodyweight/kg looks absurd, do NOT accept — warn briefly and re-ask (or allow unknown). Guide: age 12–80; BW 35–200kg; lifts 20–400kg typical; never accept kg ≤0 or ≥1000.\n" +
@@ -1299,14 +1299,14 @@ module.exports = async function handler(req, res) {
           "7) Lifts + run: one short line — fill 1RM kg (Back Squat, Deadlift, Clean & Jerk, Snatch) and 2000 m run; " +
           "blank field = unknown (coach estimates); then append exactly <<<LIFTS_PICKER>>> on its own line.\n" +
           "     Do NOT ask Front Squat / Press / Clean separately. Do NOT ask each lift or run as separate chat questions.\n" +
-          "8) Training location / equipment.\n" +
-          "9) Weekly training frequency / preferred training days.\n" +
-          "10) Other scheduling limits.\n" +
-          "11) Injuries / limitations.\n" +
-          "12) Goals.\n" +
-          "13) Skills: one short line telling athlete to mark skills they control in the checklist, " +
+          "8) Skills: one short line telling athlete to mark skills they control in the checklist, " +
           "and that if a skill is missing or only partially mastered they should detail it in writing; " +
           "then append exactly <<<SKILLS_PICKER>>> on its own line.\n" +
+          "9) Training location / equipment.\n" +
+          "10) Weekly training frequency / preferred training days.\n" +
+          "11) Other scheduling limits.\n" +
+          "12) Injuries / limitations.\n" +
+          "13) Goals.\n" +
           "Do NOT ask last rest day / last deload week / Thu deload confirmation — " +
           "program is built from preferences and starts as a 5-week brick (week 5 macro deload by default).\n" +
           "Empty / unknown allowed anytime. POL-010 numeric sanity on age/bw/kg.\n" +
@@ -1334,7 +1334,7 @@ module.exports = async function handler(req, res) {
           "CRITICAL — Week 1 DENSITY: week 1 MUST include full days with real workouts for every training day " +
           "(1–3 parts/day, each part with title + lines array of concrete prescriptions, ≤5 lines/part). " +
           "Do NOT leave week 1 days as {}. Athletes open week 1 immediately. " +
-          "Weeks 2–5: require theme, phase, summaryLine, and overview for all 7 days; days may be {} empty (app will fill later). " +
+          "Weeks 2–5: same quality as week 1 — include real daily workouts (1–3 parts/day, concrete lines), not empty day objects. " +
           (forceJson
             ? "Reply with NOTHING except <<<BLOCK_JSON ... BLOCK_JSON>>> with exactly 5 weeks."
             : "One short English sentence for the user, then required <<<BLOCK_JSON ... BLOCK_JSON>>> with exactly 5 weeks. ") +
