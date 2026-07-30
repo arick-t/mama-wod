@@ -1257,6 +1257,8 @@ function pprogFriendlyApiError(j, status) {
   var low = blob.toLowerCase();
   if (
     low.indexOf("tokens per minute") >= 0 ||
+    low.indexOf("tokens per day") >= 0 ||
+    low.indexOf("rate limit reached") >= 0 ||
     low.indexOf("request too large for model") >= 0 ||
     low.indexOf("rate-limited right now") >= 0
   ) {
