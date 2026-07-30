@@ -44,6 +44,8 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-panel{max-width:720px;margin:0 auto;background:#1e1e1e;padding:20px 18px 24px;border-radius:12px;border:1px solid #2a2a2a}
 .pprog-head{display:flex;align-items:center;gap:14px;margin:0 0 14px}
 .pprog-coach-avatar{width:72px;height:72px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.45))}
+.pprog-head-reset{margin-left:auto;padding:5px 9px;min-height:30px;font-size:.75em;line-height:1;background:#c62828!important;border-color:#c62828!important;color:#fff!important}
+.pprog-head-reset:hover{background:#b71c1c!important;border-color:#b71c1c!important}
 .pprog-panel h2{color:#b06dcf;margin:0;font-size:1.25em;font-weight:700;letter-spacing:.04em}
 .pprog-subtabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px;justify-content:center}
 .pprog-subtab{padding:7px 10px;background:#252525;border:1px solid #3a3a3a;border-radius:6px;color:#ddd;font-size:.78em;font-weight:600;cursor:pointer;font-family:inherit}
@@ -100,11 +102,13 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-typing-dot:nth-child(2){animation-delay:.15s}
 .pprog-typing-dot:nth-child(3){animation-delay:.3s}
 @keyframes pprog-typing-bounce{0%,80%,100%{transform:translateY(0);opacity:.35}40%{transform:translateY(-3px);opacity:1}}
-.pprog-chat-form{display:flex;gap:8px;align-items:flex-end;direction:ltr}
-.pprog-chat-form textarea{flex:1;min-height:44px;max-height:120px;padding:10px;background:#222;color:#eee;border:1px solid #555;border-radius:8px;font-size:1rem;resize:vertical;font-family:inherit;direction:ltr;text-align:left}
+.pprog-chat-form{display:flex;gap:8px;align-items:stretch;direction:ltr}
+.pprog-chat-form textarea{flex:1;min-height:74px;max-height:180px;padding:10px;background:#222;color:#eee;border:1px solid #555;border-radius:8px;font-size:1rem;resize:vertical;font-family:inherit;direction:ltr;text-align:left}
+.pprog-send-stack{display:flex;flex-direction:column;justify-content:flex-end;gap:6px;min-width:82px}
 #pprogSendBtn{background:#1f9d55!important;border-color:#1f9d55!important;color:#fff!important}
 #pprogSendBtn:hover{background:#188647!important;border-color:#188647!important}
-.pprog-reset-btn{width:auto;min-width:88px;margin-top:0;background:#c62828!important;border-color:#c62828!important;color:#fff!important}
+.pprog-send-btn{width:100%;min-width:0;padding:8px 10px!important;font-size:.9em}
+.pprog-reset-btn{width:100%;min-width:0;margin-top:0;padding:5px 8px!important;font-size:.74em;background:#c62828!important;border-color:#c62828!important;color:#fff!important}
 .pprog-reset-btn:hover{background:#b71c1c!important;border-color:#b71c1c!important}
 .pprog-chat-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;direction:ltr}
 .pprog-chat-actions .btn{width:auto;margin-top:0;padding:8px 14px;font-size:.85em}
@@ -222,8 +226,12 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
   .pprog-panel{padding:14px 10px 20px}
   .pprog-head{gap:10px}
   .pprog-coach-avatar{width:60px;height:60px}
+  .pprog-head-reset{padding:4px 8px;font-size:.7em;min-height:28px}
   .pprog-chat-form textarea{font-size:16px}
-  .pprog-chat-actions .btn,.pprog-chat-form .btn{min-height:44px;padding:10px 14px;touch-action:manipulation}
+  .pprog-chat-actions .btn,.pprog-chat-form .btn{touch-action:manipulation}
+  .pprog-send-btn{min-height:40px;padding:8px 10px!important}
+  .pprog-reset-btn{min-height:30px;padding:4px 8px!important}
+  .pprog-send-stack{min-width:74px}
   .pprog-cal-dow,.pprog-cal-row{grid-template-columns:minmax(40px,0.78fr) repeat(7,minmax(0,1fr));gap:1px}
   .pprog-cal-cell{max-width:34px;font-size:.8em;min-height:34px}
   .pprog-cal-general,.pprog-cal-week-col{min-height:40px;font-size:.56em}
@@ -815,22 +823,25 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
     <div class="pprog-head">
       <img class="pprog-coach-avatar" src="assets/hamamen-coach-duck.png" alt="Personal Coach" width="72" height="72">
       <h2>Personal Coach</h2>
+      <button type="button" class="btn pprog-head-reset" id="pprogHeadResetBtn" onclick="resetPprogUser()" title="Temporary reset for testing">&#10227; Reset</button>
     </div>
 
     <!-- Intake chat — after intake, re-shown under calendar in month/brick view -->
     <div id="pprogIntakeBlock">
       <div class="pprog-chat" id="pprogChat">
         <div class="pprog-chat-log" id="pprogChatLog" aria-live="polite"></div>
+        <div id="pprogLiftsPicker" class="pprog-lifts-picker" style="display:none" aria-live="polite"></div>
+        <div id="pprogSkillsPicker" class="pprog-skills-picker" style="display:none" aria-live="polite"></div>
         <form class="pprog-chat-form" id="pprogChatForm" onsubmit="return sendPprogMessage(event)">
-          <textarea id="pprogChatInput" rows="2" placeholder="Message the coach…" maxlength="4000" dir="ltr" aria-label="Message the coach"></textarea>
-          <button type="submit" class="btn btn-find" id="pprogSendBtn" style="width:auto;min-width:88px;margin-top:0" onmousedown="event.preventDefault()" ontouchend="event.preventDefault(); sendPprogMessage(event);">&#10148; Send</button>
-          <button type="button" class="btn pprog-reset-btn" id="pprogResetBtn" onclick="resetPprogUser()" title="Reset intake user">&#10227; Reset</button>
+          <textarea id="pprogChatInput" rows="3" placeholder="Message the coach…" maxlength="4000" dir="ltr" aria-label="Message the coach"></textarea>
+          <div class="pprog-send-stack">
+            <button type="button" class="btn pprog-reset-btn" id="pprogResetBtn" onclick="resetPprogUser()" title="Reset intake user">&#10227; Reset</button>
+            <button type="submit" class="btn btn-find pprog-send-btn" id="pprogSendBtn" onmousedown="event.preventDefault()" ontouchend="event.preventDefault(); sendPprogMessage(event);">&#10148; Send</button>
+          </div>
         </form>
         <div class="pprog-chat-actions" id="pprogIntakeActions">
           <button type="button" class="btn btn-find pprog-start-btn" id="pprogStartBtn" onclick="pprogOnStartClick()">START</button>
         </div>
-        <div id="pprogLiftsPicker" class="pprog-lifts-picker" style="display:none" aria-live="polite"></div>
-        <div id="pprogSkillsPicker" class="pprog-skills-picker" style="display:none" aria-live="polite"></div>
         <p id="pprogNextBlockHint" class="pprog-block-transition-hint" style="display:none" aria-live="polite"></p>
       </div>
     </div>
@@ -2012,15 +2023,24 @@ function submitPprogLiftsPicker() {
   if (bad) return;
   var store = loadPprogStore();
   store.lifts = lifts;
+  store.pendingIntakeLiftsLines = lines;
+  store.awaitingSkillsAfterLifts = true;
   savePprogStore(store);
-  var inp = document.getElementById("pprogChatInput");
-  if (inp) inp.value = "Lifts / run:\n" + lines.join("\n");
-  sendPprogMessage({ preventDefault: function () {} });
   box.style.display = "none";
+  syncPprogSkillsPickerUi();
 }
 
 function pprogCoachWantsSkillsPicker(coachText) {
   return String(coachText || "").indexOf("<<<SKILLS_PICKER>>>") >= 0;
+}
+
+function pprogCoachSignalsBlockBuilding(text) {
+  var t = String(text || "");
+  if (!t) return false;
+  return (
+    /(building|prepare|preparing|generating).{0,40}(plan|program|block|week)/i.test(t) ||
+    /אבנה|נבנית|בונה|תוכנית אימון/.test(t)
+  );
 }
 
 function renderPprogSkillsPickerHtml() {
@@ -2062,7 +2082,7 @@ function syncPprogSkillsPickerUi() {
     return;
   }
   var last = pprogLastCoachModelText();
-  if (pprogCoachWantsSkillsPicker(last)) {
+  if (store.awaitingSkillsAfterLifts || pprogCoachWantsSkillsPicker(last)) {
     el.style.display = "block";
     el.innerHTML = renderPprogSkillsPickerHtml();
   } else {
@@ -2113,10 +2133,14 @@ function submitPprogSkillsPicker() {
   }
   var store = loadPprogStore();
   store.skills = skills;
+  var liftsLines = Array.isArray(store.pendingIntakeLiftsLines) ? store.pendingIntakeLiftsLines : [];
+  var liftsText = liftsLines.length ? "Lifts / run:\n" + liftsLines.join("\n") + "\n\n" : "";
+  store.pendingIntakeLiftsLines = null;
+  store.awaitingSkillsAfterLifts = false;
   savePprogStore(store);
   var inp = document.getElementById("pprogChatInput");
   var summary = labels.length ? labels.join(", ") : "None selected";
-  if (inp) inp.value = "Skills: " + summary;
+  if (inp) inp.value = liftsText + "Skills: " + summary;
   sendPprogMessage({ preventDefault: function () {} });
   box.style.display = "none";
 }
@@ -2625,6 +2649,20 @@ function sendPprogMessage(ev) {
       pprogBusy = false;
       if (blockFromChat) applyPprogBlock(blockFromChat, j.text);
       else if (weekFromChat) applyPprogWeek(weekFromChat, j.text);
+      else {
+        var storeNow = loadPprogStore();
+        if (!storeNow.intakeComplete && pprogCoachSignalsBlockBuilding(j.text)) {
+          var he = String(storeNow.preferredLanguage || "").toLowerCase().indexOf("he") === 0;
+          var bridgeMsg = he
+            ? "מעולה. עכשיו נבנית תוכנית האימונים שלך. אפשר לפנות אליי בהמשך לכל שינוי או התאמה."
+            : "Great. Your workout plan is being built now. You can reach out anytime for updates or adjustments.";
+          msgs.push({ role: "model", text: bridgeMsg });
+          savePprogMessages(msgs);
+          renderPprogChat();
+          requestPprogWeek(0, { isFirstBlock: true });
+          return;
+        }
+      }
       renderPprogChat();
       syncPprogModeUi();
       keepPprogChatKeyboardOpen();
@@ -4095,7 +4133,6 @@ function requestPprogWeekDetail(weekIndex0, fromQueue) {
   if ((pprogFillAttempts[wi] || 0) >= PPROG_FILL_MAX_ATTEMPTS) {
     pprogFillErrors[wi] =
       pprogFillErrors[wi] || "Week " + (wi + 1) + " workouts failed to load after retries.";
-    applyLocalWeekTemplateFallback(wi, pprogFillErrors[wi]);
     if (fromQueue) drainPprogFillQueue();
     else renderPprogWeek();
     return;
