@@ -935,24 +935,6 @@
       },
       {
         "date": "2026-07-21",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "MIDLINE MARCH",
-            "lines": [
-              "25 GHDs (Scale to V-Ups)",
-              "50ft Handstand Walk",
-              "50ft Overhead Walking Lunge  52kg/34kg (Scale to 16 Overhead Alt. Lunges)"
-            ],
-            "sub_title2": "3 ROUNDS FOR TIME"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-21",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2740,6 +2722,51 @@
     "2026-07-30": [
       {
         "date": "2026-07-30",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260730",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Rest Day",
+              "The Smart CrossFit Athlete's Guide To Training Through Soreness",
+              "Waking up sore after a hard workout is not a signal to skip the gym. It is a sign your body is adapting, and how you respond determines how fast you recover. Learn when to train through soreness, when to scale, and how to tell the difference between soreness and pain."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-30",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 18.5",
+            "lines": [
+              "Complete as many reps as possible in 7 minutes of:",
+              "3 thrusters",
+              "3 chest-to-bar pull-ups",
+              "6 thrusters",
+              "6 chest-to-bar pull-ups",
+              "9 thrusters",
+              "9 chest-to-bar pull-ups",
+              "12 thrusters",
+              "12 chest-to-bar pull-ups",
+              "15 thrusters",
+              "15 chest-to-bar pull-ups",
+              "18 thrusters",
+              "18 chest-to-bar pull-ups",
+              "This is a timed workout. If you complete the round of 18, go on to 21. If you complete 21, go on to 24, etc.",
+              "*Men use 100 lb.*"
+            ]
+          }
+        ],
+        "note": "Open: Open 18.5"
+      },
+      {
+        "date": "2026-07-30",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-07-30/",
@@ -2786,16 +2813,106 @@
       },
       {
         "date": "2026-07-30",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260730",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-july-30-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "Rest Day",
-              "The Smart CrossFit Athlete's Guide To Training Through Soreness",
-              "Waking up sore after a hard workout is not a signal to skip the gym. It is a sign your body is adapting, and how you respond determines how fast you recover. Learn when to train through soreness, when to scale, and how to tell the difference between soreness and pain."
+              "2:00 Machine",
+              "Accumulate 1:00 in a Handstand Hold",
+              "20 Ring Rows"
+            ]
+          },
+          {
+            "title": "Double KB Strict Press",
+            "lines": [
+              "3 sets",
+              "1 Max Rep set of Strict Presses",
+              "Rest 3:00 between sets",
+              "The rep begins and ends with knuckles below the chin in a true KB rack position. If mobility is a limiting factor, perform single arm presses.",
+              "Today we mix things up with a double KB strict press. Use weights that allow for 10-20 reps on all sets."
+            ]
+          },
+          {
+            "title": "Choose the appropriate volume to split for time with a partner:",
+            "lines": [
+              "– Rx: 40 rope climbs (20 ea)",
+              "– Intermediate: 30 Rope climbs (15 ea)",
+              "– Beginner: Max Climbs in 8 minutes",
+              "8 minute time cap",
+              "Feel: Muscle Overload",
+              "Pace: Sustain",
+              "Target Score: Sub 8 minutes (Under cap)"
+            ]
+          },
+          {
+            "title": "Accessory:",
+            "lines": [
+              "10 min EMOM:",
+              "min 1: 10-12 GHD sit-ups",
+              "min 2: 10-12 BB Goodmornings"
+            ]
+          },
+          {
+            "title": "Extra Credit",
+            "lines": [
+              "Zone 2 Row"
+            ]
+          },
+          {
+            "title": "12:00 Zone 2 Warm Up",
+            "lines": [
+              "45:00-90:00 Row @ Zone 2"
+            ]
+          },
+          {
+            "title": "12:00 Zone 2 Cool Down",
+            "lines": [
+              "Your Zone 2 today should stay between 160bpm minus your age and 180bpm minus your age."
+            ]
+          },
+          {
+            "title": "Warm up:",
+            "lines": [
+              "Build from resting heartrate to 180bpm minus your age slowly over 12:00. This will feel incredibly slow, but will help your session a lot. Feel free to mix up machines, but end on rower."
+            ]
+          },
+          {
+            "title": "Cool down:",
+            "lines": [
+              "Spend 4:00 on the rower, keeping your heartrate above 150bpm minus your age, then slowly work down to resting for the next 8:00 on any machine or walking."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-30",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "3 Position Power Snatch 1x3",
+              "5 SETS*",
+              "1 Power Snatch",
+              "1 Hang Power Snatch",
+              "1 High Hang Power Snatch",
+              "*Complete each set unbroken. Start light-mod and build.",
+              "* -Rest as Needed between Sets-",
+              "* (Score is the Heaviest Weight)"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "12:00 AMRAP",
+            "lines": [
+              "3 Squat Snatch 61kg/43kg",
+              "6 Overhead Squats 61kg/43kg",
+              "9 Bar Facing Burpees"
             ]
           }
         ]
@@ -2851,37 +2968,8 @@
           }
         ],
         "note": "Benchmark: CrossFit Total II"
-      },
-      {
-        "date": "2026-07-30",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.5",
-            "lines": [
-              "Complete as many reps as possible in 7 minutes of:",
-              "3 thrusters",
-              "3 chest-to-bar pull-ups",
-              "6 thrusters",
-              "6 chest-to-bar pull-ups",
-              "9 thrusters",
-              "9 chest-to-bar pull-ups",
-              "12 thrusters",
-              "12 chest-to-bar pull-ups",
-              "15 thrusters",
-              "15 chest-to-bar pull-ups",
-              "18 thrusters",
-              "18 chest-to-bar pull-ups",
-              "This is a timed workout. If you complete the round of 18, go on to 21. If you complete 21, go on to 24, etc.",
-              "*Men use 100 lb.*"
-            ]
-          }
-        ],
-        "note": "Open: Open 18.5"
       }
     ]
   },
-  "last_updated": "2026-07-30T03:02:12.755865"
+  "last_updated": "2026-07-30T06:56:18.989311"
 }
