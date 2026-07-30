@@ -358,6 +358,7 @@ const GROQ_CHAT_SYSTEM_COMPACT =
   "- Order (do not skip ahead): <<<PROFILE_PICKER>>> (name/gender/age/bodyweight/training experience) → location/equipment → weekly split (work/rest days + which days) →\n" +
   "  <<<LIFTS_PICKER>>> alone (never free-form lift questions) → <<<SKILLS_PICKER>>> only after lifts →\n" +
   "  other schedule limits → injuries → goals.\n" +
+  "- After skills checklist: accept marks as final (marked=Rx-capable, unmarked=scale). NEVER ask Rx/scale follow-up.\n" +
   "- Empty / unknown / skip = next topic. Do NOT ask last rest day / last deload in intake.\n" +
   "- POL-010 numeric sanity: reject absurd age/kg; stay on same topic until sane value or skip.\n" +
   "  Guides: age 12–80; BW 35–200kg; BS 20–300; DL 20–400; Press 15–180; C&J 20–250; Snatch 15–200; never kg≤0 or ≥1000.\n" +
@@ -609,6 +610,8 @@ function buildSystemWithMemory(profile, action, opts) {
         "- HARD markers: when opening LIFTS_PICKER or SKILLS_PICKER, put the marker alone on its own line. Do NOT ask lifts/skills as free-form chat questions.\n" +
         "- Order: <<<PROFILE_PICKER>>> (name/gender/age/bodyweight/training experience) → location/equipment → weekly split (work/rest days + which days) → <<<LIFTS_PICKER>>> (BS/DL/CJ/Snatch kg + 2000m run; blank=unknown) → <<<SKILLS_PICKER>>> → other schedule limits → injuries → goals.\n" +
         "- After PROFILE_PICKER, ask training setup next, then weekly split next, then LIFTS_PICKER, then SKILLS_PICKER (never reverse skills before lifts).\n" +
+        "- After SKILLS_PICKER answer: marked skills = athlete controls them (program as Rx-capable). Unmarked = scale. " +
+        "HARD: NEVER ask which skills are Rx vs scale, full RX weight, or any skills follow-up — go straight to other scheduling limits.\n" +
         "- Do NOT ask each 1RM or the run as separate chat questions. Do NOT ask Front Squat / Press / Clean separately.\n" +
         "- Empty / unknown / skip = unknown → next topic.\n" +
         "- NUMERIC SANITY (POL-010): If age/bodyweight/kg looks absurd, do NOT accept — warn briefly and re-ask (or allow unknown). Guide: age 12–80; BW 35–200kg; lifts 20–400kg typical; never accept kg ≤0 or ≥1000.\n" +
@@ -1354,9 +1357,12 @@ module.exports = async function handler(req, res) {
           "     Do NOT ask Front Squat / Press / Clean separately. Do NOT ask each lift or run as separate chat questions.\n" +
           "5) Skills ONLY via marker AFTER lifts are answered: one short English intro line, then append exactly <<<SKILLS_PICKER>>> alone on its own line.\n" +
           "     Never open SKILLS_PICKER before LIFTS_PICKER is done.\n" +
+          "     After the athlete submits the checklist: marked = controlled/Rx-capable; unmarked = scale. " +
+          "HARD — do NOT ask Rx vs scale / full RX weight follow-ups. Immediately continue to topic 6.\n" +
           "6) Other scheduling limits (session time limit etc).\n" +
           "7) Injuries / limitations.\n" +
           "8) Goals.\n" +
+          "After goals: one short English line that the plan is being built, then emit <<<BLOCK_JSON>>> (or the app will build). Do not invent extra intake questions.\n" +
           "Do NOT ask last rest day / last deload week / Thu deload confirmation — " +
           "program is built from preferences and starts as a 5-week brick (week 5 macro deload by default).\n" +
           "Empty / unknown allowed anytime. POL-010 numeric sanity on age/bw/kg.\n" +

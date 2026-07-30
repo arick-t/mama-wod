@@ -2271,9 +2271,30 @@ function submitPprogSkillsPicker() {
   savePprogStore(store);
   var inp = document.getElementById("pprogChatInput");
   var summary = labels.length ? labels.join(", ") : "None selected";
-  if (inp) inp.value = liftsText + "Skills: " + summary;
+  if (inp) {
+    inp.value =
+      liftsText +
+      "Skills checklist submitted.\n" +
+      "Marked skills = I control them (Rx-capable).\n" +
+      "Unmarked skills = scale.\n" +
+      "Skills: " +
+      summary +
+      "\n\n[INTERNAL] Do NOT ask Rx vs scale follow-up. Continue intake with other scheduling limits (session time).";
+  }
   sendPprogMessage({ preventDefault: function () {} });
   box.style.display = "none";
+}
+
+function pprogCoachAsksRedundantSkillsRx(text) {
+  var t = String(text || "");
+  return (
+    /listed all skills as\s*rx/i.test(t) ||
+    /full\s*rx\s*weight/i.test(t) ||
+    /which skills.*(rx|scale)/i.test(t) ||
+    /rx\s*vs\s*scale/i.test(t) ||
+    /perform at full rx/i.test(t) ||
+    /which ones will you scale/i.test(t)
+  );
 }
 
 function hasPprogIntakeListsReady(store) {
@@ -2785,6 +2806,23 @@ function sendPprogMessage(ev) {
       }
       msgs.push({ role: "model", text: String(j.text) });
       savePprogMessages(msgs);
+      var storeSkip = loadPprogStore();
+      if (
+        !storeSkip.intakeComplete &&
+        storeSkip.intakeSkillsDone &&
+        pprogCoachAsksRedundantSkillsRx(j.text)
+      ) {
+        var skipNote =
+          "Skills checklist is final. Marked = Rx-capable, unmarked = scale. " +
+          "Continue: any additional scheduling limits (session time limit)?";
+        renderPprogChat();
+        pprogBusy = false;
+        if (btn) btn.disabled = false;
+        var inpSkip = document.getElementById("pprogChatInput");
+        if (inpSkip) inpSkip.value = skipNote;
+        sendPprogMessage({ preventDefault: function () {} });
+        return;
+      }
       var blockFromChat = j.block || null;
       if (!blockFromChat && j.text) {
         try {
