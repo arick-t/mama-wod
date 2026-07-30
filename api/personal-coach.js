@@ -356,8 +356,7 @@ const GROQ_CHAT_SYSTEM_COMPACT =
   "\nINTAKE (new athlete — HARD):\n" +
   "- Exactly ONE question per coach turn, EXCEPT PROFILE_PICKER / LIFTS_PICKER / SKILLS_PICKER (one short explain line + marker alone).\n" +
   "- Order (do not skip ahead): <<<PROFILE_PICKER>>> (name/gender/age/bodyweight/training experience) → location/equipment → weekly split (work/rest days + which days) →\n" +
-  "  <<<LIFTS_PICKER>>> (Back Squat / Deadlift / Clean&Jerk / Snatch kg + 2000m run; blank=unknown; do NOT ask FS/Press/Clean separately; do NOT ask each 1RM in chat) →\n" +
-  "  <<<SKILLS_PICKER>>> (mark skills they control; partial/unmastered → write details) →\n" +
+  "  <<<LIFTS_PICKER>>> alone (never free-form lift questions) → <<<SKILLS_PICKER>>> only after lifts →\n" +
   "  other schedule limits → injuries → goals.\n" +
   "- Empty / unknown / skip = next topic. Do NOT ask last rest day / last deload in intake.\n" +
   "- POL-010 numeric sanity: reject absurd age/kg; stay on same topic until sane value or skip.\n" +
@@ -607,8 +606,9 @@ function buildSystemWithMemory(profile, action, opts) {
     !profile || !profile.intakeComplete
       ? "\n\n---\nINTAKE MODE (HARD):\n" +
         "- Exactly ONE question per reply, EXCEPT when opening PROFILE_PICKER / LIFTS_PICKER / SKILLS_PICKER (one short explanation line + the marker).\n" +
+        "- HARD markers: when opening LIFTS_PICKER or SKILLS_PICKER, put the marker alone on its own line. Do NOT ask lifts/skills as free-form chat questions.\n" +
         "- Order: <<<PROFILE_PICKER>>> (name/gender/age/bodyweight/training experience) → location/equipment → weekly split (work/rest days + which days) → <<<LIFTS_PICKER>>> (BS/DL/CJ/Snatch kg + 2000m run; blank=unknown) → <<<SKILLS_PICKER>>> → other schedule limits → injuries → goals.\n" +
-        "- After PROFILE_PICKER, ask training setup next, then weekly split next.\n" +
+        "- After PROFILE_PICKER, ask training setup next, then weekly split next, then LIFTS_PICKER, then SKILLS_PICKER (never reverse skills before lifts).\n" +
         "- Do NOT ask each 1RM or the run as separate chat questions. Do NOT ask Front Squat / Press / Clean separately.\n" +
         "- Empty / unknown / skip = unknown → next topic.\n" +
         "- NUMERIC SANITY (POL-010): If age/bodyweight/kg looks absurd, do NOT accept — warn briefly and re-ask (or allow unknown). Guide: age 12–80; BW 35–200kg; lifts 20–400kg typical; never accept kg ≤0 or ≥1000.\n" +
@@ -1266,16 +1266,19 @@ module.exports = async function handler(req, res) {
     action === "generate_week" ||
     action === "generate_week_detail" ||
     action === "preview_month";
+  /* Intake is multi-turn (profile + setup + schedule + lifts + skills + constraints…).
+   * 12/5min was too tight and aborted mid-intake with 429. Prefer wait on providers,
+   * not our own chat throttle (POL-020: quality completion > aggressive local limits). */
   const rl = checkRateLimit(req, {
     name: isHeavy ? "personal-coach-heavy" : "personal-coach",
-    limit: isHeavy ? 4 : 12,
-    windowMs: isHeavy ? 15 * 60 * 1000 : 5 * 60 * 1000,
+    limit: isHeavy ? 8 : 60,
+    windowMs: isHeavy ? 15 * 60 * 1000 : 10 * 60 * 1000,
     uid: uid,
   });
   if (!rl.ok) return sendRateLimit(res, rl);
   const rlGlobal = checkRateLimit(req, {
     name: "ai-global",
-    limit: 30,
+    limit: 90,
     windowMs: 60 * 1000,
     uid: uid,
   });
@@ -1329,12 +1332,11 @@ module.exports = async function handler(req, res) {
           "1) First send a short intro line for profile collection and append exactly <<<PROFILE_PICKER>>> on its own line.\n" +
           "2) Training setup: \"Where do you usually train — fully equipped gym or home/partial setup? What equipment is accessible?\"\n" +
           "3) Weekly schedule: \"How many work days and rest days, and which exact days?\"\n" +
-          "4) Lifts + run: one short line — fill 1RM kg (Back Squat, Deadlift, Clean & Jerk, Snatch) and 2000 m run; " +
-          "blank field = unknown (coach estimates); then append exactly <<<LIFTS_PICKER>>> on its own line.\n" +
+          "4) Lifts + run ONLY via marker: one short English intro line, then append exactly <<<LIFTS_PICKER>>> alone on its own line. " +
+          "Do NOT list lifts in the chat bubble. blank field = unknown (coach estimates).\n" +
           "     Do NOT ask Front Squat / Press / Clean separately. Do NOT ask each lift or run as separate chat questions.\n" +
-          "5) Skills: one short line telling athlete to mark skills they control in the checklist, " +
-          "and that if a skill is missing or only partially mastered they should detail it in writing; " +
-          "then append exactly <<<SKILLS_PICKER>>> on its own line.\n" +
+          "5) Skills ONLY via marker AFTER lifts are answered: one short English intro line, then append exactly <<<SKILLS_PICKER>>> alone on its own line.\n" +
+          "     Never open SKILLS_PICKER before LIFTS_PICKER is done.\n" +
           "6) Other scheduling limits (session time limit etc).\n" +
           "7) Injuries / limitations.\n" +
           "8) Goals.\n" +

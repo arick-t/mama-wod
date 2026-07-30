@@ -1924,7 +1924,19 @@ function pprogLastCoachModelText(msgs) {
 }
 
 function pprogCoachWantsLiftsPicker(coachText) {
-  return String(coachText || "").indexOf("<<<LIFTS_PICKER>>>") >= 0;
+  var t = String(coachText || "");
+  if (t.indexOf("<<<LIFTS_PICKER>>>") >= 0) return true;
+  /* Coach sometimes mixes lift asks into chat without the marker — still open the picker. */
+  if (t.indexOf("<<<SKILLS_PICKER>>>") >= 0 || t.indexOf("<<<PROFILE_PICKER>>>") >= 0) return false;
+  return (
+    /<<<\s*LIFTS_PICKER\s*>>>/i.test(t) ||
+    (/\b(back\s*squat|deadlift|clean\s*&?\s*jerk|snatch|1\s*rm|2000\s*m)\b/i.test(t) &&
+      /kg|lift|run|strength|fill|enter/i.test(t))
+  );
+}
+
+function pprogCoachWantsSkillsPicker(coachText) {
+  return String(coachText || "").indexOf("<<<SKILLS_PICKER>>>") >= 0;
 }
 
 function pprogCoachWantsProfilePicker(coachText) {
@@ -2078,7 +2090,8 @@ function syncPprogLiftsPickerUi() {
     return;
   }
   var last = pprogLastCoachModelText();
-  if (pprogCoachWantsLiftsPicker(last) && !pprogCoachWantsSkillsPicker(last) && !pprogCoachWantsProfilePicker(last)) {
+  /* Prefer lifts UI even if coach also mentioned skills — order is lifts then skills. */
+  if (pprogCoachWantsLiftsPicker(last) && !pprogCoachWantsProfilePicker(last)) {
     el.style.display = "block";
     el.innerHTML = renderPprogLiftsPickerHtml();
   } else {
@@ -2149,10 +2162,6 @@ function submitPprogLiftsPicker() {
   syncPprogSkillsPickerUi();
 }
 
-function pprogCoachWantsSkillsPicker(coachText) {
-  return String(coachText || "").indexOf("<<<SKILLS_PICKER>>>") >= 0;
-}
-
 function pprogCoachSignalsBlockBuilding(text) {
   var t = String(text || "");
   if (!t) return false;
@@ -2193,7 +2202,12 @@ function syncPprogSkillsPickerUi() {
   var el = document.getElementById("pprogSkillsPicker");
   if (!el) return;
   var store = loadPprogStore();
-  if (store.intakeComplete) {
+  if (store.intakeComplete || store.intakeSkillsDone) {
+    el.style.display = "none";
+    return;
+  }
+  /* HARD order: skills list only after lifts list is completed. */
+  if (!store.intakeLiftsDone) {
     el.style.display = "none";
     return;
   }
