@@ -32,6 +32,7 @@ function scrubProfile(profile) {
   if (!profile || typeof profile !== "object") return profile;
   const out = Object.assign({}, profile);
   if (out.profileNotes != null) out.profileNotes = scrubPiiText(out.profileNotes);
+  if (out.fixedIntakePacket != null) out.fixedIntakePacket = scrubPiiText(out.fixedIntakePacket);
   if (out.chatSummaryTail != null) out.chatSummaryTail = scrubPiiText(out.chatSummaryTail);
   if (Array.isArray(out.coachPrefs)) {
     out.coachPrefs = out.coachPrefs.map(function (p) {

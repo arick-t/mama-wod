@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.1.2 BETA</title>
+<title>DUCK-WOD · v21.1.3 BETA</title>
 <meta name="theme-color" content="#111">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -693,7 +693,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.1.2 BETA</div>
+<div class="header-sub">DAILY WORKOUTS · v21.1.3 BETA</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
@@ -3038,6 +3038,7 @@ function pprogBuildFixedIntakePrompt(store) {
 function pprogFinishFixedIntake(store) {
   var s = store || loadPprogStore();
   var prompt = pprogBuildFixedIntakePrompt(s);
+  s.fixedIntakePacket = String(prompt).slice(0, 6000);
   s.profileNotes = [
     "Training setup: " + (s.trainingSetup || "unknown"),
     "Training days: " +
@@ -3233,6 +3234,9 @@ function athleteProfilePayload(opts) {
     displayName: s.displayName ? String(s.displayName).slice(0, 80) : "",
     intakeComplete: forceComplete ? true : !!s.intakeComplete,
     profileNotes: s.profileNotes || "",
+    fixedIntakePacket: s.fixedIntakePacket
+      ? String(s.fixedIntakePacket).slice(0, 6000)
+      : "",
     coachPrefs: Array.isArray(s.coachPrefs) ? s.coachPrefs.slice(-30) : [],
     hasCurrentWeek: !!(s.currentWeek && s.currentWeek.days),
     hasCurrentBlock: !!(s.currentBlock && s.currentBlock.weeks && s.currentBlock.weeks.length),
