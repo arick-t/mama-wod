@@ -1362,7 +1362,8 @@ module.exports = async function handler(req, res) {
           "6) Other scheduling limits (session time limit etc).\n" +
           "7) Injuries / limitations.\n" +
           "8) Goals.\n" +
-          "After goals: one short English line that the plan is being built, then emit <<<BLOCK_JSON>>> (or the app will build). Do not invent extra intake questions.\n" +
+          "After goals: one short English line that the plan is being built (athlete may contact for adjustments — do NOT mention next brick), then emit <<<BLOCK_JSON>>> with exactly 5 weeks. Do not invent extra intake questions.\n" +
+          "If you cannot finish BLOCK_JSON in this turn, still say the plan is being built so the app can generate it.\n" +
           "Do NOT ask last rest day / last deload week / Thu deload confirmation — " +
           "program is built from preferences and starts as a 5-week brick (week 5 macro deload by default).\n" +
           "Empty / unknown allowed anytime. POL-010 numeric sanity on age/bw/kg.\n" +
