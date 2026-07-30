@@ -69,10 +69,11 @@ Copy a block below. Keep IDs unique (`POL-###`).
 ### POL-003 — Rest vs daily deload
 - **Type:** HARD
 - **Scope:** weekday
-- **Trigger:** Thursday in build weeks; Rest days anywhere
-- **Required behavior:** Build-week Thursday = daily deload (lighter) by default, **not** automatic full Rest unless athlete agreed rest. True Rest days: overview focus exactly `"Rest"`; parts `[]` or one `REST DAY` part.
-- **Examples:** Good: Thu technique + short easy engine. Bad: marking every Thu as full Rest without agreement.
+- **Trigger:** build weeks; Rest days anywhere; athlete active-recovery preference
+- **Required behavior:** Honor athlete intake preference. If the athlete opted **out** of active recovery / daily deload — do **not** force Thursday (or any training day) into a lighter active-recovery day; keep training days as full purposeful sessions. If the athlete opted **in**, place exactly one lighter active-recovery / daily-deload day on the requested weekday (default Thu only when they chose it). True Rest days: overview focus exactly `"Rest"`; parts `[]` or one `REST DAY` part.
+- **Examples:** Good: athlete said no recovery → Mon–Sat full sessions + Sun Rest. Good: athlete said yes on Thu → Thu technique + easy engine. Bad: always forcing Thu deload when athlete declined.
 - **Added:** 2026-07-27 — carry existing programming convention into policy file
+- **Updated:** 2026-07-30 — preference-driven; no automatic Thu deload when athlete declines
 
 ### POL-004 — English-only workout JSON
 - **Type:** HARD

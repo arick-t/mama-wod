@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.1 BETA</title>
+<title>DUCK-WOD · v21.1.1 BETA</title>
 <meta name="theme-color" content="#111">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -160,6 +160,13 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-fixed-back{background:#333!important;color:#eee!important}
 .pprog-fixed-next{background:#1A9B8A!important;color:#111!important}
 .pprog-fixed-err{margin:8px 0 0;font-size:.8em;color:#E8451A;min-height:1.2em}
+.pprog-fixed-chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.pprog-fixed-chip{appearance:none;background:#252525;border:1px solid #555;color:#e8e4d8;font-size:.85em;font-weight:700;padding:10px 14px;border-radius:8px;cursor:pointer;font-family:inherit}
+.pprog-fixed-chip:hover{border-color:#1A9B8A;color:#fff}
+.pprog-fixed-chip.active{background:#1A9B8A;border-color:#1A9B8A;color:#111}
+.pprog-fixed-radios{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}
+.pprog-fixed-radios label{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:#222;border:1px solid #444;border-radius:8px;font-size:.88em;color:#e8e4d8;cursor:pointer;line-height:1.35}
+.pprog-fixed-radios input{margin-top:2px;flex-shrink:0}
 .pprog-lifts-picker-note{margin:0 0 12px;font-size:.82em;line-height:1.4;color:#aaa}
 .pprog-lifts-row{display:flex;align-items:center;gap:10px;margin:0 0 10px}
 .pprog-lifts-row label{flex:1;font-size:.9em;color:#e8e4d8;font-weight:600}
@@ -686,7 +693,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.1 BETA</div>
+<div class="header-sub">DAILY WORKOUTS · v21.1.1 BETA</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
@@ -2302,7 +2309,11 @@ function syncPprogSkillsPickerUi() {
 function pprogSkillsCheckboxChange(inp) {
   if (!inp || !inp.getAttribute("data-skill-all")) return;
   var on = !!inp.checked;
-  var box = document.getElementById("pprogSkillsPicker");
+  var box =
+    (inp.closest &&
+      inp.closest("#pprogFixedIntake, #pprogSkillsPicker, .pprog-skills-picker")) ||
+    document.getElementById("pprogFixedIntake") ||
+    document.getElementById("pprogSkillsPicker");
   if (!box) return;
   var cbs = box.querySelectorAll('input[type="checkbox"][data-skill-id]');
   for (var i = 0; i < cbs.length; i++) {
@@ -2550,6 +2561,7 @@ var PPROG_FIXED_STEPS = [
   "profile",
   "setup",
   "schedule",
+  "recovery",
   "lifts",
   "skills",
   "limits",
@@ -2702,6 +2714,34 @@ function renderPprogFixedStepHtml(step) {
       "</div><textarea id=\"pprog-fx-schedule-notes\" maxlength=\"500\" placeholder=\"Optional: e.g. rest Thu+Sun, sessions ~60 min\">" +
       esc(store.scheduleNotes || "") +
       "</textarea>";
+  } else if (key === "recovery") {
+    var pref = store.activeRecoveryPref || "";
+    var prefDay = store.activeRecoveryDay || "thu";
+    html +=
+      '<p class="pprog-fixed-title">Active recovery day?</p>' +
+      '<p class="pprog-fixed-note">Optional lighter day inside the training week (technique + easy engine). Not a full rest day.</p>' +
+      '<div class="pprog-fixed-radios">' +
+      '<label><input type="radio" name="pprogFxRecovery" value="no"' +
+      (pref === "no" || !pref ? " checked" : "") +
+      '> <span><strong>No</strong> — do not include an active recovery day. All training days are full sessions.</span></label>' +
+      '<label><input type="radio" name="pprogFxRecovery" value="yes"' +
+      (pref === "yes" ? " checked" : "") +
+      '> <span><strong>Yes</strong> — include one active recovery / daily deload day.</span></label>' +
+      "</div>" +
+      '<p class="pprog-fixed-note" style="margin-top:4px">If yes, which day?</p>' +
+      '<div class="pprog-fixed-days" id="pprogFxRecoveryDays">';
+    for (var rdi = 0; rdi < PPROG_DAY_KEYS.length; rdi++) {
+      var rdk = PPROG_DAY_KEYS[rdi];
+      html +=
+        '<label><input type="radio" name="pprogFxRecoveryDay" value="' +
+        esc(rdk) +
+        '"' +
+        (prefDay === rdk ? " checked" : "") +
+        "> " +
+        esc(PPROG_DAY_LABELS[rdk] || rdk) +
+        "</label>";
+    }
+    html += "</div>";
   } else if (key === "lifts") {
     html +=
       '<p class="pprog-fixed-title">Lifts &amp; run</p>' +
@@ -2730,7 +2770,10 @@ function renderPprogFixedStepHtml(step) {
   } else if (key === "injuries") {
     html +=
       '<p class="pprog-fixed-title">Injuries &amp; limitations</p>' +
-      '<p class="pprog-fixed-note">Pain points or movements to avoid. Blank = none.</p>' +
+      '<p class="pprog-fixed-note">Pain points or movements to avoid. Or tap the quick button if none.</p>' +
+      '<div class="pprog-fixed-chips">' +
+      '<button type="button" class="pprog-fixed-chip" onclick="pprogFixedFillNoInjuries()">No injuries</button>' +
+      "</div>" +
       '<textarea id="pprog-fx-injuries" maxlength="800" placeholder="e.g. Left knee — avoid deep squats under fatigue">' +
       esc(store.injuries || "") +
       "</textarea>";
@@ -2749,6 +2792,12 @@ function renderPprogFixedStepHtml(step) {
 function pprogFixedSetErr(msg) {
   var err = document.getElementById("pprogFixedErr");
   if (err) err.textContent = msg || "";
+}
+
+function pprogFixedFillNoInjuries() {
+  var ta = document.getElementById("pprog-fx-injuries");
+  if (ta) ta.value = "No injuries";
+  pprogFixedSetErr("");
 }
 
 function pprogFixedBack() {
@@ -2875,6 +2924,15 @@ function pprogFixedNext() {
       pprogFixedSetErr("Mark at least one training day, or add a short schedule note.");
       return;
     }
+  } else if (key === "recovery") {
+    var prefEl = box.querySelector('input[name="pprogFxRecovery"]:checked');
+    var dayEl = box.querySelector('input[name="pprogFxRecoveryDay"]:checked');
+    var prefVal = prefEl ? String(prefEl.value || "") : "no";
+    store.activeRecoveryPref = prefVal === "yes" ? "yes" : "no";
+    store.activeRecoveryDay =
+      store.activeRecoveryPref === "yes" && dayEl
+        ? String(dayEl.value || "thu")
+        : "";
   } else if (key === "lifts") {
     var liftPack = pprogFixedCollectLiftsFrom(box);
     if (liftPack.bad) {
@@ -2953,6 +3011,13 @@ function pprogBuildFixedIntakePrompt(store) {
     "Training days: " + (dayLabels || "unknown"),
     "Notes: " + (s.scheduleNotes || "none"),
     "",
+    "ACTIVE RECOVERY:",
+    s.activeRecoveryPref === "yes"
+      ? "YES — include one active recovery / daily deload day on " +
+        (PPROG_DAY_LABELS[s.activeRecoveryDay] || s.activeRecoveryDay || "Thu") +
+        ". Other training days stay full sessions."
+      : "NO — do NOT program an active recovery / daily deload day. Do not force Thursday lighter unless the athlete marked it as rest.",
+    "",
     "LIFTS / RUN:",
     liftLines.length ? liftLines.join("\n") : "unknown",
     "",
@@ -2981,6 +3046,10 @@ function pprogFinishFixedIntake(store) {
         : "") ||
         "unknown"),
     "Schedule notes: " + (s.scheduleNotes || "none"),
+    "Active recovery: " +
+      (s.activeRecoveryPref === "yes"
+        ? "yes on " + (s.activeRecoveryDay || "thu")
+        : "no — no active recovery / daily deload day"),
     "Age: " + (s.age || "unknown"),
     "Bodyweight: " + (s.bodyweight || "unknown") + " kg",
     "Experience: " + (s.experience || "unknown"),
@@ -3152,6 +3221,11 @@ function athleteProfilePayload(opts) {
     age: s.age ? String(s.age).slice(0, 8) : "",
     bodyweight: s.bodyweight ? String(s.bodyweight).slice(0, 10) : "",
     experience: s.experience ? String(s.experience).slice(0, 120) : "",
+    activeRecoveryPref: s.activeRecoveryPref === "yes" ? "yes" : "no",
+    activeRecoveryDay:
+      s.activeRecoveryPref === "yes" && s.activeRecoveryDay
+        ? String(s.activeRecoveryDay).slice(0, 8)
+        : "",
     skills: s.skills && typeof s.skills === "object" ? s.skills : {},
     lifts: s.lifts && typeof s.lifts === "object" ? s.lifts : {},
     legalAcceptedAt: s.legalAcceptedAt || null,
@@ -4360,7 +4434,13 @@ function applyPprogBlock(block, rawText, opts) {
     if (store.pastBlocks.length > 8) store.pastBlocks = store.pastBlocks.slice(-8);
   }
   store.intakeComplete = true;
-  if (rawText && !opts.preserveIntake && !opts.autoNextBlock) {
+  /* Never wipe structured intake notes with coach prose */
+  if (
+    rawText &&
+    !opts.preserveIntake &&
+    !opts.autoNextBlock &&
+    !String(store.profileNotes || "").trim()
+  ) {
     store.profileNotes = String(rawText).slice(0, 8000);
   }
   if (!(opts.autoNextBlock && prevBlockStart)) {
@@ -4963,7 +5043,7 @@ function requestPprogWeekDetail(weekIndex0, fromQueue) {
       return { day: o.day, focus: o.focus };
     });
   } catch (eOv) {}
-  /* After any failure (or intake slip), force JSON-only path on the API */
+  /* After any failure (or intake slip), force JSON-only — keep FULL quality prompt (not compact stub). */
   var useForceJson = (pprogFillAttempts[wi] || 0) >= 2 || !!pprogFillErrors[wi];
   fetchAiWithTimeout(
     base + "/api/personal-coach",
@@ -4981,7 +5061,7 @@ function requestPprogWeekDetail(weekIndex0, fromQueue) {
         intakeComplete: true,
         athleteProfile: athleteProfilePayload({ forceIntakeComplete: true, omitChat: true }),
         messages: [],
-        compactWeekJson: useForceJson,
+        compactWeekJson: false,
         forceJson: useForceJson,
       }),
     },
@@ -4995,6 +5075,11 @@ function requestPprogWeekDetail(weekIndex0, fromQueue) {
         ).slice(0, 280);
         if (fromQueue && (pprogFillAttempts[wi] || 0) < PPROG_FILL_MAX_ATTEMPTS && pprogFillQueue.indexOf(wi) < 0) {
           pprogFillQueue.push(wi);
+        }
+        /* Rate-limit: wait before next fill so the red error does not thrash */
+        if (x.status === 429) {
+          pprogFillAttempts[wi] = Math.max(0, (pprogFillAttempts[wi] || 1) - 1);
+          window.__pprogFillBackoffMs = Math.max(window.__pprogFillBackoffMs || 0, 45000);
         }
         return;
       }
@@ -5079,10 +5164,14 @@ function requestPprogWeekDetail(weekIndex0, fromQueue) {
       /* Keep intake UI closed whenever a block exists / intakeComplete */
       syncPprogModeUi();
       renderPprogWeek();
-      /* Small gap before next fill to avoid hammering */
+      var wait = 600;
+      if (window.__pprogFillBackoffMs) {
+        wait = window.__pprogFillBackoffMs;
+        window.__pprogFillBackoffMs = 0;
+      }
       setTimeout(function () {
         drainPprogFillQueue();
-      }, 400);
+      }, wait);
     });
 }
 

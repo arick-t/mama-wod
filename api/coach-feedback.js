@@ -361,13 +361,25 @@ module.exports = async function handler(req, res) {
   }
 
   const uid = String(body.userId || body.athleteId || "").slice(0, 80);
-  const rl = checkRateLimit(req, {
-    name: "coach-feedback",
-    limit: 5,
-    windowMs: 60 * 60 * 1000,
-    uid: uid,
-  });
-  if (!rl.ok) return sendRateLimit(res, rl);
+  const isIntakeCompleteMail = String(body.type || "") === "intake_complete";
+  /* Intake-complete admin mail must not compete with debrief spam limits. */
+  if (!isIntakeCompleteMail) {
+    const rl = checkRateLimit(req, {
+      name: "coach-feedback",
+      limit: 5,
+      windowMs: 60 * 60 * 1000,
+      uid: uid,
+    });
+    if (!rl.ok) return sendRateLimit(res, rl);
+  } else {
+    const rlIntake = checkRateLimit(req, {
+      name: "coach-feedback-intake",
+      limit: 12,
+      windowMs: 60 * 60 * 1000,
+      uid: uid,
+    });
+    if (!rlIntake.ok) return sendRateLimit(res, rlIntake);
+  }
 
   /* Soft size guard — block oversized spam payloads */
   try {
