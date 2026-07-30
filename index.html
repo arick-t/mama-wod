@@ -1959,6 +1959,10 @@ function syncPprogLiftsPickerUi() {
     el.style.display = "none";
     return;
   }
+  if (store.intakeLiftsDone) {
+    el.style.display = "none";
+    return;
+  }
   var last = pprogLastCoachModelText();
   if (pprogCoachWantsLiftsPicker(last) && !pprogCoachWantsSkillsPicker(last)) {
     el.style.display = "block";
@@ -2023,6 +2027,7 @@ function submitPprogLiftsPicker() {
   if (bad) return;
   var store = loadPprogStore();
   store.lifts = lifts;
+  store.intakeLiftsDone = true;
   store.pendingIntakeLiftsLines = lines;
   store.awaitingSkillsAfterLifts = true;
   savePprogStore(store);
@@ -2133,6 +2138,7 @@ function submitPprogSkillsPicker() {
   }
   var store = loadPprogStore();
   store.skills = skills;
+  store.intakeSkillsDone = true;
   var liftsLines = Array.isArray(store.pendingIntakeLiftsLines) ? store.pendingIntakeLiftsLines : [];
   var liftsText = liftsLines.length ? "Lifts / run:\n" + liftsLines.join("\n") + "\n\n" : "";
   store.pendingIntakeLiftsLines = null;
@@ -2143,6 +2149,20 @@ function submitPprogSkillsPicker() {
   if (inp) inp.value = liftsText + "Skills: " + summary;
   sendPprogMessage({ preventDefault: function () {} });
   box.style.display = "none";
+}
+
+function hasPprogIntakeListsReady(store) {
+  var s = store || {};
+  var lifts = s && typeof s.lifts === "object" ? s.lifts : null;
+  var skills = s && typeof s.skills === "object" ? s.skills : null;
+  if (!lifts || !skills) return false;
+  var liftKeys = Object.keys(lifts).filter(function (k) {
+    return String(lifts[k] || "").trim() !== "";
+  });
+  var skillKeys = Object.keys(skills).filter(function (k) {
+    return k !== "all_skills" && !!skills[k];
+  });
+  return !!(liftKeys.length && (skillKeys.length || skills.all_skills));
 }
 
 function syncPprogModeUi() {
@@ -2631,6 +2651,11 @@ function sendPprogMessage(ev) {
         renderPprogChat();
         keepPprogChatKeyboardOpen();
         setPprogStatus("err", "<strong>Coach</strong> — reply error.");
+        var storeErr = loadPprogStore();
+        if (!storeErr.intakeComplete && hasPprogIntakeListsReady(storeErr)) {
+          requestPprogWeek(0, { isFirstBlock: true });
+          return;
+        }
         return;
       }
       msgs.push({ role: "model", text: String(j.text) });
