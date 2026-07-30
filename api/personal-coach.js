@@ -395,7 +395,7 @@ function coachPolicyBlock() {
 /** Shrink / rebuild system text so Groq stays under free-tier TPM. */
 function compactSystemForGroq(systemText) {
   const raw = String(systemText || "");
-  const maxChars = parseInt(process.env.GROQ_SYSTEM_MAX_CHARS || "20000", 10) || 20000;
+  const maxChars = parseInt(process.env.GROQ_SYSTEM_MAX_CHARS || "32000", 10) || 32000;
 
   /* Programming path already starts with PROGRAMMING_SYSTEM_CORE — strip fat policy only */
   if (raw.indexOf("You are a CrossFit programming engine") === 0) {
@@ -415,7 +415,11 @@ function compactSystemForGroq(systemText) {
     return out;
   }
 
-  /* Chat / intake: drop full hamamen + policy, keep compact rules + memory tail */
+  /* Chat / intake: prefer FULL ship system (HAMAMEN + policy + intake) when it fits TPM.
+   * Compact template is fallback only — still includes LIFTS_PICKER / SKILLS_PICKER order. */
+  if (raw.length <= maxChars) {
+    return raw;
+  }
   const athIdx = raw.search(/\n---\nATHLETE MEMORY/);
   const intakeIdx = raw.search(/INTAKE MODE \(HARD\)/);
   const prefsIdx = raw.search(/COACH PREFERENCES/);
