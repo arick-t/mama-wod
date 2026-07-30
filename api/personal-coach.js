@@ -396,7 +396,7 @@ function coachPolicyBlock() {
 function compactSystemForGroq(systemText) {
   const raw = String(systemText || "");
   /* Keep Groq under free-tier TPM budget (70b often rejects >~12k total tokens/request). */
-  const maxChars = parseInt(process.env.GROQ_SYSTEM_MAX_CHARS || "8500", 10) || 8500;
+  const maxChars = parseInt(process.env.GROQ_SYSTEM_MAX_CHARS || "7000", 10) || 7000;
 
   /* Programming path already starts with PROGRAMMING_SYSTEM_CORE — strip fat policy only */
   if (raw.indexOf("You are a CrossFit programming engine") === 0) {
@@ -1063,8 +1063,8 @@ async function callGroqChat(apiKey, model, messages, systemText, opts) {
     temperature: typeof options.temperature === "number" ? options.temperature : 0.7,
     max_tokens:
       typeof options.maxOutputTokens === "number" && options.maxOutputTokens > 0
-        ? Math.min(options.maxOutputTokens, 4096)
-        : 2048,
+        ? Math.min(options.maxOutputTokens, 1500)
+        : 900,
   };
   let r;
   try {
@@ -1573,7 +1573,10 @@ module.exports = async function handler(req, res) {
         maxOutputTokens: 8192,
         skipTools: true,
       }
-    : {};
+    : {
+        /* Keep intake/chat under Groq free-tier quota when Gemini key is invalid. */
+        maxOutputTokens: 900,
+      };
 
   /* Never use Interactions for programming fills — digress / truncate / intake */
   const preferInteractions =
