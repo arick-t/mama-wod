@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.0.1 BETA</title>
+<title>DUCK-WOD · v21.1 BETA</title>
 <meta name="theme-color" content="#111">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -147,6 +147,19 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-profile-row label{flex:1;font-size:.9em;color:#e8e4d8;font-weight:600}
 .pprog-profile-row input,.pprog-profile-row select{width:150px;flex-shrink:0;padding:10px 12px;background:#222;color:#eee;border:1px solid #555;border-radius:8px;font-size:1rem;font-family:inherit}
 .pprog-profile-submit{margin-top:10px;width:100%;padding:10px;font-weight:700;background:#1A9B8A!important;border:none;border-radius:8px;color:#111!important}
+.pprog-fixed-intake{margin-top:10px;padding:14px;background:#181818;border:1px solid #333;border-radius:10px;direction:ltr;text-align:left}
+.pprog-fixed-step{font-size:.72em;color:#1A9B8A;font-weight:700;letter-spacing:.04em;margin:0 0 6px;text-transform:uppercase}
+.pprog-fixed-title{margin:0 0 8px;font-size:1.05em;color:#e8e4d8;font-weight:700}
+.pprog-fixed-note{margin:0 0 12px;font-size:.82em;line-height:1.4;color:#aaa}
+.pprog-fixed-intake textarea{width:100%;min-height:88px;padding:10px 12px;background:#222;color:#eee;border:1px solid #555;border-radius:8px;font-size:1rem;font-family:inherit;resize:vertical;box-sizing:border-box}
+.pprog-fixed-days{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.pprog-fixed-days label{display:flex;align-items:center;gap:6px;padding:8px 10px;background:#222;border:1px solid #444;border-radius:8px;font-size:.85em;color:#e8e4d8;cursor:pointer}
+.pprog-fixed-days input{width:16px;height:16px}
+.pprog-fixed-nav{display:flex;gap:8px;margin-top:12px}
+.pprog-fixed-nav .btn{flex:1;padding:10px;font-weight:700;border:none;border-radius:8px}
+.pprog-fixed-back{background:#333!important;color:#eee!important}
+.pprog-fixed-next{background:#1A9B8A!important;color:#111!important}
+.pprog-fixed-err{margin:8px 0 0;font-size:.8em;color:#E8451A;min-height:1.2em}
 .pprog-lifts-picker-note{margin:0 0 12px;font-size:.82em;line-height:1.4;color:#aaa}
 .pprog-lifts-row{display:flex;align-items:center;gap:10px;margin:0 0 10px}
 .pprog-lifts-row label{flex:1;font-size:.9em;color:#e8e4d8;font-weight:600}
@@ -673,7 +686,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.0.1 BETA</div>
+<div class="header-sub">DAILY WORKOUTS · v21.1 BETA</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
@@ -836,6 +849,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
     <div id="pprogIntakeBlock">
       <div class="pprog-chat" id="pprogChat">
         <div class="pprog-chat-log" id="pprogChatLog" aria-live="polite"></div>
+        <div id="pprogFixedIntake" class="pprog-fixed-intake" style="display:none" aria-live="polite"></div>
         <div id="pprogProfilePicker" class="pprog-profile-picker" style="display:none" aria-live="polite"></div>
         <div id="pprogLiftsPicker" class="pprog-lifts-picker" style="display:none" aria-live="polite"></div>
         <div id="pprogSkillsPicker" class="pprog-skills-picker" style="display:none" aria-live="polite"></div>
@@ -1460,7 +1474,7 @@ function pprogEnsureLegalAccepted(thenFn) {
 
 function pprogOnStartClick() {
   pprogEnsureLegalAccepted(function () {
-    startPprogIntake();
+    startPprogFixedIntake();
   });
 }
 var PPROG_DAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
@@ -1860,6 +1874,7 @@ function renderPprogChat() {
   else log.scrollTop = log.scrollHeight;
   syncPprogStartBtn();
   syncPprogResetBtn();
+  syncPprogFixedIntakeUi();
   syncPprogProfilePickerUi();
   syncPprogLiftsPickerUi();
   syncPprogSkillsPickerUi();
@@ -1872,7 +1887,11 @@ function syncPprogStartBtn() {
   if (!btn || !actions) return;
   var store = loadPprogStore();
   var msgs = loadPprogMessages();
-  var show = !store.intakeComplete && !msgs.length && !pprogBusy;
+  var show =
+    !store.intakeComplete &&
+    !store.fixedIntakeActive &&
+    !msgs.length &&
+    !pprogBusy;
   actions.style.display = show ? "flex" : "none";
   btn.disabled = !show;
 }
@@ -1965,10 +1984,22 @@ function renderPprogProfilePickerHtml() {
       }
       html += "</select>";
     } else {
+      var inputType = "text";
+      var inputMode = "";
+      var pattern = "";
+      if (def.kind === "number" && def.id === "age") {
+        inputMode = ' inputmode="numeric" pattern="[0-9]*"';
+      } else if (def.kind === "number" && def.id === "bodyweight") {
+        inputMode = ' inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*"';
+      }
       html +=
         '<input id="pprog-profile-' +
         esc(def.id) +
-        '" type="text" autocomplete="off" data-profile-id="' +
+        '" type="' +
+        inputType +
+        '"' +
+        inputMode +
+        ' autocomplete="off" data-profile-id="' +
         esc(def.id) +
         '" placeholder="' +
         esc(def.placeholder || "") +
@@ -1986,7 +2017,8 @@ function syncPprogProfilePickerUi() {
   var el = document.getElementById("pprogProfilePicker");
   if (!el) return;
   var store = loadPprogStore();
-  if (store.intakeComplete || store.intakeProfileDone) {
+  /* Fixed questionnaire owns intake — hide legacy chat pickers. */
+  if (store.fixedIntakeActive || store.intakeComplete || store.intakeProfileDone) {
     el.style.display = "none";
     return;
   }
@@ -2082,11 +2114,7 @@ function syncPprogLiftsPickerUi() {
   var el = document.getElementById("pprogLiftsPicker");
   if (!el) return;
   var store = loadPprogStore();
-  if (store.intakeComplete) {
-    el.style.display = "none";
-    return;
-  }
-  if (store.intakeLiftsDone) {
+  if (store.fixedIntakeActive || store.intakeComplete || store.intakeLiftsDone) {
     el.style.display = "none";
     return;
   }
@@ -2225,7 +2253,7 @@ function pprogStartFirstBlockWithBridge(msgs) {
 function renderPprogSkillsPickerHtml() {
   var store = loadPprogStore();
   var sk = store.skills || {};
-  var note = "Mark skills you control. If a skill is missing or only partially mastered — detail it in writing (chat).";
+  var note = "Mark skills you control. Unmarked = scale. Missing/partial skills can be noted in Goals or Injuries.";
   var html = '<p class="pprog-skills-picker-note">' + note + "</p>";
   for (var i = 0; i < PPROG_SKILL_DEFS.length; i++) {
     var def = PPROG_SKILL_DEFS[i];
@@ -2253,7 +2281,7 @@ function syncPprogSkillsPickerUi() {
   var el = document.getElementById("pprogSkillsPicker");
   if (!el) return;
   var store = loadPprogStore();
-  if (store.intakeComplete || store.intakeSkillsDone) {
+  if (store.fixedIntakeActive || store.intakeComplete || store.intakeSkillsDone) {
     el.style.display = "none";
     return;
   }
@@ -2398,6 +2426,7 @@ function pprogHandleLocalPostSkillsAnswer(rawText) {
 
 function pprogMaybeResumeLocalPostSkills() {
   var store = loadPprogStore();
+  if (store.fixedIntakeActive) return;
   if (store.intakeComplete || !store.intakeSkillsDone) return;
   if (store.currentBlock && store.currentBlock.weeks && store.currentBlock.weeks.length) return;
   if (store.postSkillsLocal) return;
@@ -2514,6 +2543,462 @@ function clearPprogChat() {
   if (pprogBusy) return;
   savePprogMessages([]);
   renderPprogChat();
+}
+
+/** Fixed app questionnaire — no LLM back-and-forth for intake. */
+var PPROG_FIXED_STEPS = [
+  "profile",
+  "setup",
+  "schedule",
+  "lifts",
+  "skills",
+  "limits",
+  "injuries",
+  "goals",
+];
+
+function startPprogFixedIntake() {
+  if (pprogBusy) return;
+  var store = loadPprogStore();
+  if (store.intakeComplete) {
+    var inp = document.getElementById("pprogChatInput");
+    if (inp) inp.value = "Hi again. Based on what you remember — what should we update today?";
+    sendPprogMessage({ preventDefault: function () {} });
+    return;
+  }
+  store.fixedIntakeActive = true;
+  store.fixedIntakeStep = 0;
+  savePprogStore(store);
+  savePprogMessages([
+    {
+      role: "model",
+      text:
+        "You can reply in any language — keep it simple. I will still coach you in English.\n\n" +
+        "Fill the short questionnaire below. When you finish, I build your 5-week plan in one shot.",
+    },
+  ]);
+  renderPprogChat();
+  syncPprogFixedIntakeUi();
+}
+
+function syncPprogFixedIntakeUi() {
+  var el = document.getElementById("pprogFixedIntake");
+  var form = document.getElementById("pprogChatForm");
+  if (!el) return;
+  var store = loadPprogStore();
+  if (store.intakeComplete || !store.fixedIntakeActive) {
+    el.style.display = "none";
+    el.innerHTML = "";
+    if (form) form.style.display = "";
+    return;
+  }
+  if (form) form.style.display = "none";
+  el.style.display = "block";
+  el.innerHTML = renderPprogFixedStepHtml(store.fixedIntakeStep | 0);
+}
+
+function pprogFixedNavHtml(step, isLast) {
+  var html = '<div class="pprog-fixed-nav">';
+  if (step > 0) {
+    html +=
+      '<button type="button" class="btn pprog-fixed-back" onclick="pprogFixedBack()">Back</button>';
+  }
+  html +=
+    '<button type="button" class="btn pprog-fixed-next" onclick="pprogFixedNext()">' +
+    (isLast ? "Build my plan" : "Next") +
+    "</button></div><p class=\"pprog-fixed-err\" id=\"pprogFixedErr\"></p>";
+  return html;
+}
+
+function renderPprogFixedStepHtml(step) {
+  var store = loadPprogStore();
+  var total = PPROG_FIXED_STEPS.length;
+  var key = PPROG_FIXED_STEPS[step] || "profile";
+  var html =
+    '<p class="pprog-fixed-step">Step ' +
+    (step + 1) +
+    " / " +
+    total +
+    "</p>";
+  if (key === "profile") {
+    html +=
+      '<p class="pprog-fixed-title">Your profile</p>' +
+      '<p class="pprog-fixed-note">Age &amp; bodyweight open a number keypad. Experience stays a normal keyboard.</p>';
+    for (var i = 0; i < PPROG_PROFILE_DEFS.length; i++) {
+      var def = PPROG_PROFILE_DEFS[i];
+      var val = "";
+      if (def.id === "display_name") val = store.displayName || "";
+      else if (def.id === "gender") val = store.gender || "";
+      else if (def.id === "age") val = store.age || "";
+      else if (def.id === "bodyweight") val = store.bodyweight || "";
+      else if (def.id === "experience") val = store.experience || "";
+      html +=
+        '<div class="pprog-profile-row"><label for="pprog-fx-' +
+        esc(def.id) +
+        '">' +
+        esc(def.label) +
+        "</label>";
+      if (def.kind === "select") {
+        html += '<select id="pprog-fx-' + esc(def.id) + '" data-fx-id="' + esc(def.id) + '">';
+        html += '<option value="">Select…</option>';
+        for (var oi = 0; oi < def.options.length; oi++) {
+          var ov = def.options[oi];
+          html +=
+            '<option value="' +
+            esc(ov) +
+            '"' +
+            (String(val) === String(ov) ? " selected" : "") +
+            ">" +
+            esc(ov) +
+            "</option>";
+        }
+        html += "</select>";
+      } else {
+        var modeAttr = "";
+        if (def.id === "age") modeAttr = ' inputmode="numeric" pattern="[0-9]*"';
+        else if (def.id === "bodyweight")
+          modeAttr = ' inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*"';
+        html +=
+          '<input id="pprog-fx-' +
+          esc(def.id) +
+          '" type="text"' +
+          modeAttr +
+          ' autocomplete="off" data-fx-id="' +
+          esc(def.id) +
+          '" placeholder="' +
+          esc(def.placeholder || "") +
+          '" value="' +
+          esc(String(val || "")) +
+          '">';
+      }
+      html += "</div>";
+    }
+  } else if (key === "setup") {
+    html +=
+      '<p class="pprog-fixed-title">Training setup</p>' +
+      '<p class="pprog-fixed-note">Gym vs home/partial, and what equipment you can use. Blank = unknown.</p>' +
+      '<textarea id="pprog-fx-setup" maxlength="800" placeholder="e.g. Fully equipped gym — barbell, rower, pull-up bar…">' +
+      esc(store.trainingSetup || "") +
+      "</textarea>";
+  } else if (key === "schedule") {
+    var days = Array.isArray(store.trainingDays) ? store.trainingDays : [];
+    html +=
+      '<p class="pprog-fixed-title">Weekly schedule</p>' +
+      '<p class="pprog-fixed-note">Mark training days. Optional notes for rest / session length.</p>' +
+      '<div class="pprog-fixed-days">';
+    for (var di = 0; di < PPROG_DAY_KEYS.length; di++) {
+      var dk = PPROG_DAY_KEYS[di];
+      var on = days.indexOf(dk) >= 0;
+      html +=
+        '<label><input type="checkbox" data-fx-day="' +
+        esc(dk) +
+        '"' +
+        (on ? " checked" : "") +
+        "> " +
+        esc(PPROG_DAY_LABELS[dk] || dk) +
+        "</label>";
+    }
+    html +=
+      "</div><textarea id=\"pprog-fx-schedule-notes\" maxlength=\"500\" placeholder=\"Optional: e.g. rest Thu+Sun, sessions ~60 min\">" +
+      esc(store.scheduleNotes || "") +
+      "</textarea>";
+  } else if (key === "lifts") {
+    html +=
+      '<p class="pprog-fixed-title">Lifts &amp; run</p>' +
+      '<div class="pprog-lifts-picker" style="margin:0;padding:0;border:none;background:transparent">' +
+      renderPprogLiftsPickerHtml().replace(
+        /<button type="button" class="btn pprog-lifts-submit"[\s\S]*?<\/button>/,
+        ""
+      ) +
+      "</div>";
+  } else if (key === "skills") {
+    html +=
+      '<p class="pprog-fixed-title">Skills</p>' +
+      '<div class="pprog-skills-picker" style="margin:0;padding:0;border:none;background:transparent">' +
+      renderPprogSkillsPickerHtml().replace(
+        /<button type="button" class="btn pprog-skills-submit"[\s\S]*?<\/button>/,
+        ""
+      ) +
+      "</div>";
+  } else if (key === "limits") {
+    html +=
+      '<p class="pprog-fixed-title">Scheduling limits</p>' +
+      '<p class="pprog-fixed-note">Session time cap or other schedule constraints. Blank = none.</p>' +
+      '<textarea id="pprog-fx-limits" maxlength="600" placeholder="e.g. Max 50 minutes per session">' +
+      esc(store.sessionLimits || "") +
+      "</textarea>";
+  } else if (key === "injuries") {
+    html +=
+      '<p class="pprog-fixed-title">Injuries &amp; limitations</p>' +
+      '<p class="pprog-fixed-note">Pain points or movements to avoid. Blank = none.</p>' +
+      '<textarea id="pprog-fx-injuries" maxlength="800" placeholder="e.g. Left knee — avoid deep squats under fatigue">' +
+      esc(store.injuries || "") +
+      "</textarea>";
+  } else if (key === "goals") {
+    html +=
+      '<p class="pprog-fixed-title">Goals</p>' +
+      '<p class="pprog-fixed-note">What this block should prioritize.</p>' +
+      '<textarea id="pprog-fx-goals" maxlength="800" placeholder="e.g. Engine + Olympic lift consistency">' +
+      esc(store.goals || "") +
+      "</textarea>";
+  }
+  html += pprogFixedNavHtml(step, step >= total - 1);
+  return html;
+}
+
+function pprogFixedSetErr(msg) {
+  var err = document.getElementById("pprogFixedErr");
+  if (err) err.textContent = msg || "";
+}
+
+function pprogFixedBack() {
+  if (pprogBusy) return;
+  var store = loadPprogStore();
+  var step = store.fixedIntakeStep | 0;
+  if (step <= 0) return;
+  store.fixedIntakeStep = step - 1;
+  savePprogStore(store);
+  syncPprogFixedIntakeUi();
+}
+
+function pprogFixedCollectLiftsFrom(box) {
+  var lifts = {};
+  var lines = [];
+  var bad = false;
+  var inputs = box.querySelectorAll("input[data-lift-id]");
+  for (var i = 0; i < inputs.length; i++) {
+    var id = inputs[i].getAttribute("data-lift-id");
+    var kind = inputs[i].getAttribute("data-lift-kind") || "kg";
+    var raw = inputs[i].value;
+    var normalized = pprogNormalizeLiftInput(raw, kind);
+    if (String(raw || "").trim() && !normalized) {
+      bad = true;
+      inputs[i].style.borderColor = "#E8451A";
+      continue;
+    }
+    inputs[i].style.borderColor = "";
+    var defLabel = id;
+    for (var j = 0; j < PPROG_LIFT_DEFS.length; j++) {
+      if (PPROG_LIFT_DEFS[j].id === id) defLabel = PPROG_LIFT_DEFS[j].label;
+    }
+    if (normalized) {
+      lifts[id] = normalized;
+      if (kind === "run") lines.push(defLabel + ": " + normalized + " min");
+      else lines.push(defLabel + ": " + normalized + " kg");
+    } else {
+      lifts[id] = "";
+      lines.push(defLabel + ": unknown");
+    }
+  }
+  return { lifts: lifts, lines: lines, bad: bad };
+}
+
+function pprogFixedCollectSkillsFrom(box) {
+  var skills = {};
+  var labels = [];
+  var cbs = box.querySelectorAll('input[type="checkbox"][data-skill-id]');
+  var allOn = false;
+  for (var i = 0; i < cbs.length; i++) {
+    var id = cbs[i].getAttribute("data-skill-id");
+    if (!id) continue;
+    if (cbs[i].getAttribute("data-skill-all")) {
+      allOn = !!cbs[i].checked;
+      skills.all_skills = allOn;
+      if (allOn) labels.push("All skills");
+      continue;
+    }
+    if (allOn || cbs[i].checked) {
+      skills[id] = true;
+      for (var j = 0; j < PPROG_SKILL_DEFS.length; j++) {
+        if (PPROG_SKILL_DEFS[j].id === id && !PPROG_SKILL_DEFS[j].allToggle)
+          labels.push(PPROG_SKILL_DEFS[j].label);
+      }
+    }
+  }
+  if (allOn) {
+    for (var k = 0; k < PPROG_SKILL_DEFS.length; k++) {
+      if (!PPROG_SKILL_DEFS[k].allToggle) skills[PPROG_SKILL_DEFS[k].id] = true;
+    }
+  }
+  return { skills: skills, labels: labels };
+}
+
+function pprogFixedNext() {
+  if (pprogBusy) return;
+  var box = document.getElementById("pprogFixedIntake");
+  if (!box) return;
+  var store = loadPprogStore();
+  var step = store.fixedIntakeStep | 0;
+  var key = PPROG_FIXED_STEPS[step] || "profile";
+  pprogFixedSetErr("");
+
+  if (key === "profile") {
+    var vals = {};
+    var fields = box.querySelectorAll("[data-fx-id]");
+    for (var i = 0; i < fields.length; i++) {
+      vals[fields[i].getAttribute("data-fx-id")] = String(fields[i].value || "").trim();
+    }
+    if (!vals.display_name || !vals.gender || !vals.age || !vals.bodyweight || !vals.experience) {
+      pprogFixedSetErr("Please fill all profile fields.");
+      return;
+    }
+    var ageN = parseInt(vals.age, 10);
+    var bwN = parseFloat(String(vals.bodyweight).replace(",", "."));
+    if (!isFinite(ageN) || ageN < 12 || ageN > 80) {
+      pprogFixedSetErr("Age should be a number between 12 and 80.");
+      return;
+    }
+    if (!isFinite(bwN) || bwN < 35 || bwN > 200) {
+      pprogFixedSetErr("Bodyweight should be between 35 and 200 kg.");
+      return;
+    }
+    store.displayName = vals.display_name.slice(0, 80);
+    store.gender = vals.gender.slice(0, 16).toLowerCase();
+    store.preferredLanguage = "en";
+    store.age = String(ageN);
+    store.bodyweight = String(bwN);
+    store.experience = vals.experience.slice(0, 120);
+    store.intakeProfileDone = true;
+  } else if (key === "setup") {
+    var setupEl = document.getElementById("pprog-fx-setup");
+    store.trainingSetup = setupEl ? String(setupEl.value || "").trim().slice(0, 800) : "";
+  } else if (key === "schedule") {
+    var days = [];
+    var dayCbs = box.querySelectorAll("input[data-fx-day]");
+    for (var d = 0; d < dayCbs.length; d++) {
+      if (dayCbs[d].checked) days.push(dayCbs[d].getAttribute("data-fx-day"));
+    }
+    var schEl = document.getElementById("pprog-fx-schedule-notes");
+    store.trainingDays = days;
+    store.scheduleNotes = schEl ? String(schEl.value || "").trim().slice(0, 500) : "";
+    if (!days.length && !store.scheduleNotes) {
+      pprogFixedSetErr("Mark at least one training day, or add a short schedule note.");
+      return;
+    }
+  } else if (key === "lifts") {
+    var liftPack = pprogFixedCollectLiftsFrom(box);
+    if (liftPack.bad) {
+      pprogFixedSetErr("Fix highlighted lift/run values (or leave blank).");
+      return;
+    }
+    store.lifts = liftPack.lifts;
+    store.pendingIntakeLiftsLines = liftPack.lines;
+    store.intakeLiftsDone = true;
+  } else if (key === "skills") {
+    var skillPack = pprogFixedCollectSkillsFrom(box);
+    store.skills = skillPack.skills;
+    store.intakeSkillsDone = true;
+    store.awaitingSkillsAfterLifts = false;
+  } else if (key === "limits") {
+    var limEl = document.getElementById("pprog-fx-limits");
+    store.sessionLimits = limEl ? String(limEl.value || "").trim().slice(0, 600) : "";
+  } else if (key === "injuries") {
+    var injEl = document.getElementById("pprog-fx-injuries");
+    store.injuries = injEl ? String(injEl.value || "").trim().slice(0, 800) : "";
+  } else if (key === "goals") {
+    var goalEl = document.getElementById("pprog-fx-goals");
+    store.goals = goalEl ? String(goalEl.value || "").trim().slice(0, 800) : "";
+    if (!store.goals) {
+      pprogFixedSetErr("Add at least a short goal (or write unknown).");
+      return;
+    }
+  }
+
+  if (step < PPROG_FIXED_STEPS.length - 1) {
+    store.fixedIntakeStep = step + 1;
+    savePprogStore(store);
+    syncPprogFixedIntakeUi();
+    return;
+  }
+
+  pprogFinishFixedIntake(store);
+}
+
+function pprogBuildFixedIntakePrompt(store) {
+  var s = store || loadPprogStore();
+  var days = Array.isArray(s.trainingDays) ? s.trainingDays : [];
+  var dayLabels = days
+    .map(function (d) {
+      return PPROG_DAY_LABELS[d] || d;
+    })
+    .join(", ");
+  var liftLines = Array.isArray(s.pendingIntakeLiftsLines)
+    ? s.pendingIntakeLiftsLines
+    : [];
+  var skillLabels = [];
+  var sk = s.skills || {};
+  if (sk.all_skills) skillLabels.push("All skills (Rx-capable)");
+  else {
+    for (var i = 0; i < PPROG_SKILL_DEFS.length; i++) {
+      if (PPROG_SKILL_DEFS[i].allToggle) continue;
+      if (sk[PPROG_SKILL_DEFS[i].id]) skillLabels.push(PPROG_SKILL_DEFS[i].label);
+    }
+  }
+  return [
+    "FIXED INTAKE COMPLETE — build a full 5-week training brick now.",
+    "Athlete answers may be in any language; all workout/program text MUST be English.",
+    "Return <<<BLOCK_JSON>>> with exactly 5 weeks. Do not re-ask intake questions.",
+    "",
+    "PROFILE:",
+    "Name: " + (s.displayName || "unknown"),
+    "Gender: " + (s.gender || "unknown"),
+    "Age: " + (s.age || "unknown"),
+    "Bodyweight: " + (s.bodyweight || "unknown") + " kg",
+    "Experience: " + (s.experience || "unknown"),
+    "",
+    "TRAINING SETUP:",
+    s.trainingSetup || "unknown",
+    "",
+    "WEEKLY SCHEDULE:",
+    "Training days: " + (dayLabels || "unknown"),
+    "Notes: " + (s.scheduleNotes || "none"),
+    "",
+    "LIFTS / RUN:",
+    liftLines.length ? liftLines.join("\n") : "unknown",
+    "",
+    "SKILLS (marked = Rx-capable; unmarked = scale):",
+    skillLabels.length ? skillLabels.join(", ") : "None marked — scale gymnastics as needed",
+    "",
+    "SESSION / SCHEDULE LIMITS:",
+    s.sessionLimits || "none",
+    "",
+    "INJURIES / LIMITATIONS:",
+    s.injuries || "none",
+    "",
+    "GOALS:",
+    s.goals || "unknown",
+  ].join("\n");
+}
+
+function pprogFinishFixedIntake(store) {
+  var s = store || loadPprogStore();
+  var prompt = pprogBuildFixedIntakePrompt(s);
+  s.profileNotes = [
+    "Training setup: " + (s.trainingSetup || "unknown"),
+    "Training days: " +
+      ((Array.isArray(s.trainingDays) && s.trainingDays.length
+        ? s.trainingDays.join(",")
+        : "") ||
+        "unknown"),
+    "Schedule notes: " + (s.scheduleNotes || "none"),
+    "Age: " + (s.age || "unknown"),
+    "Bodyweight: " + (s.bodyweight || "unknown") + " kg",
+    "Experience: " + (s.experience || "unknown"),
+    "Session limits: " + (s.sessionLimits || "none"),
+    "Injuries/limitations: " + (s.injuries || "none"),
+    "Goals: " + (s.goals || "unknown"),
+  ].join("\n").slice(0, 2500);
+  s.fixedIntakeActive = false;
+  s.postSkillsLocal = false;
+  s.intakeProfileDone = true;
+  s.intakeLiftsDone = true;
+  s.intakeSkillsDone = true;
+  savePprogStore(s);
+  var msgs = loadPprogMessages();
+  msgs.push({ role: "user", text: prompt });
+  savePprogMessages(msgs);
+  syncPprogFixedIntakeUi();
+  pprogStartFirstBlockWithBridge(msgs);
 }
 
 function startPprogIntake() {
@@ -2664,6 +3149,9 @@ function athleteProfilePayload(opts) {
     athleteId: uid,
     preferredLanguage: "en",
     gender: s.gender ? String(s.gender).slice(0, 16) : "",
+    age: s.age ? String(s.age).slice(0, 8) : "",
+    bodyweight: s.bodyweight ? String(s.bodyweight).slice(0, 10) : "",
+    experience: s.experience ? String(s.experience).slice(0, 120) : "",
     skills: s.skills && typeof s.skills === "object" ? s.skills : {},
     lifts: s.lifts && typeof s.lifts === "object" ? s.lifts : {},
     legalAcceptedAt: s.legalAcceptedAt || null,

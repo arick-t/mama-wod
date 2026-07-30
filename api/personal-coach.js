@@ -502,6 +502,9 @@ function buildProgrammingMemoryBlock(profile) {
     intakeComplete: true,
     displayName: profile.displayName ? String(profile.displayName).slice(0, 80) : undefined,
     gender: profile.gender ? String(profile.gender).slice(0, 16) : undefined,
+    age: profile.age ? String(profile.age).slice(0, 8) : undefined,
+    bodyweight: profile.bodyweight ? String(profile.bodyweight).slice(0, 10) : undefined,
+    experience: profile.experience ? String(profile.experience).slice(0, 120) : undefined,
     preferredLanguage: profile.preferredLanguage
       ? String(profile.preferredLanguage).slice(0, 8)
       : undefined,
