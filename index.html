@@ -1207,6 +1207,32 @@ var PPROG_STORE_KEY = "duck-wod-personal-coach-v1";
 var PPROG_LEGAL_VERSION = 2;
 var pprogLegalPendingCallback = null;
 
+/** One-shot reset from URL: ?pprog_reset=1 clears stuck Personal Coach user state. */
+function maybeResetPprogFromQuery() {
+  try {
+    var q = new URLSearchParams(location.search || "");
+    if (q.get("pprog_reset") !== "1") return false;
+    try {
+      localStorage.removeItem(PPROG_STORE_KEY);
+    } catch (e) {}
+    try {
+      localStorage.removeItem("dw_uid");
+    } catch (e) {}
+    try {
+      localStorage.removeItem(AI_LAST_ERROR_KEY);
+    } catch (e) {}
+    try {
+      sessionStorage.removeItem("dw_pprog_open_sent");
+    } catch (e) {}
+    q.delete("pprog_reset");
+    var clean = location.pathname + (q.toString() ? "?" + q.toString() : "") + (location.hash || "");
+    location.replace(clean);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 /** Soften raw Google/Vercel blobs (e.g. API_KEY_INVALID JSON) for chat UI. */
 function pprogFriendlyApiError(j, status) {
   var detail = (j && (j.detail || j.error || j.hint)) || "";
@@ -5164,6 +5190,7 @@ function retryPprogFillFailures() {
 }
 
 function initPprogUi() {
+  if (maybeResetPprogFromQuery()) return;
   renderPprogChat();
   syncPprogModeUi();
   refreshPprogStatus();
