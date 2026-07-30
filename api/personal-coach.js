@@ -396,6 +396,8 @@ function compactSystemForGroq(systemText) {
   const raw = String(systemText || "");
   /* Keep Groq under free-tier TPM budget (70b often rejects >~12k total tokens/request). */
   const maxChars = parseInt(process.env.GROQ_SYSTEM_MAX_CHARS || "7000", 10) || 7000;
+  const maxCharsProgramming =
+    parseInt(process.env.GROQ_PROGRAMMING_SYSTEM_MAX_CHARS || "11000", 10) || 11000;
 
   /* Programming path already starts with PROGRAMMING_SYSTEM_CORE — strip fat policy only */
   if (raw.indexOf("You are a CrossFit programming engine") === 0) {
@@ -411,7 +413,7 @@ function compactSystemForGroq(systemText) {
       "\n---\n" +
       forceExtra +
       memory;
-    if (out.length > maxChars) out = out.slice(0, maxChars);
+    if (out.length > maxCharsProgramming) out = out.slice(0, maxCharsProgramming);
     return out;
   }
 
@@ -1161,7 +1163,7 @@ async function callCoachLlm(apiKey, groqKey, model, messages, storeName, systemT
       groq.systemCompacted = groqSys.length !== String(systemText || "").length;
       return groq;
     }
-    if (looksLikeGroqQuotaError(groq.detail || groq.error)) {
+    if (looksLikeGroqQuotaError(groq.detail || groq.error) && !options.disallowBackupModel) {
       const backupModel = resolveGroqBackupModelId();
       if (backupModel && backupModel !== resolveGroqModelId()) {
         const backup = await callGroqChat(
@@ -1361,7 +1363,7 @@ module.exports = async function handler(req, res) {
           "CRITICAL — Week 1 DENSITY: week 1 MUST include full days with real workouts for every training day " +
           "(1–3 parts/day, each part with title + lines array of concrete prescriptions, ≤5 lines/part). " +
           "Do NOT leave week 1 days as {}. Athletes open week 1 immediately. " +
-          "Weeks 2–5: same quality as week 1 — include real daily workouts (1–3 parts/day, concrete lines), not empty day objects. " +
+          "Weeks 2–5: require theme, phase, summaryLine, and overview for all 7 days; days may be {} empty (app will fill later). " +
           (forceJson
             ? "Reply with NOTHING except <<<BLOCK_JSON ... BLOCK_JSON>>> with exactly 5 weeks."
             : "One short English sentence for the user, then required <<<BLOCK_JSON ... BLOCK_JSON>>> with exactly 5 weeks. ") +
@@ -1599,6 +1601,7 @@ module.exports = async function handler(req, res) {
         temperature: forceJson ? 0.15 : isWeekDetail ? 0.3 : 0.35,
         maxOutputTokens: 8192,
         skipTools: true,
+        disallowBackupModel: true,
       }
     : {
         /* Keep intake/chat under Groq free-tier quota when Gemini key is invalid. */
