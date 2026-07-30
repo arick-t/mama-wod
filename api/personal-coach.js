@@ -1086,10 +1086,15 @@ async function callGroqChat(apiKey, model, messages, systemText, opts) {
     model: model || resolveGroqModelId(),
     messages: groqMessages,
     temperature: typeof options.temperature === "number" ? options.temperature : 0.7,
-    max_tokens:
-      typeof options.maxOutputTokens === "number" && options.maxOutputTokens > 0
-        ? Math.min(options.maxOutputTokens, 1500)
-        : 900,
+    /* Chat stays small; programming (block/week) needs a large JSON budget — 1500 truncates BLOCK_JSON. */
+    max_tokens: (function () {
+      const want =
+        typeof options.maxOutputTokens === "number" && options.maxOutputTokens > 0
+          ? options.maxOutputTokens
+          : 900;
+      const cap = want >= 2000 ? 8192 : 1500;
+      return Math.min(want, cap);
+    })(),
   };
   let r;
   try {

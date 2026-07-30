@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.1.3 BETA</title>
+<title>DUCK-WOD · v21.1.4 BETA</title>
 <meta name="theme-color" content="#111">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -693,7 +693,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.1.3 BETA</div>
+<div class="header-sub">DAILY WORKOUTS · v21.1.4 BETA</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
@@ -2257,6 +2257,43 @@ function pprogStartFirstBlockWithBridge(msgs) {
   requestPprogWeek(0, { isFirstBlock: true });
 }
 
+function pprogMarkFirstBlockBuildFailed(errText) {
+  var store = loadPprogStore();
+  store.blockBuildPending = false;
+  store.lastBlockBuildError = String(errText || "Plan build failed").slice(0, 400);
+  /* Keep questionnaire answers; allow Rebuild without redoing intake */
+  savePprogStore(store);
+  var msgs = loadPprogMessages();
+  var last = msgs.length ? msgs[msgs.length - 1] : null;
+  var note = "Plan build failed: " + store.lastBlockBuildError + "\nTap “Build plan again” below.";
+  if (!(last && last.role === "error" && /Plan build failed/i.test(String(last.text || "")))) {
+    msgs.push({ role: "error", text: note });
+    savePprogMessages(msgs);
+  }
+}
+
+function retryPprogFirstBlock() {
+  if (pprogBusy) return;
+  var store = loadPprogStore();
+  if (store.currentBlock && store.currentBlock.weeks && store.currentBlock.weeks.length) {
+    syncPprogModeUi();
+    return;
+  }
+  if (!store.fixedIntakePacket && !store.intakeSkillsDone) {
+    return;
+  }
+  store.lastBlockBuildError = "";
+  store.blockBuildPending = true;
+  savePprogStore(store);
+  requestPprogWeek(0, { isFirstBlock: true });
+}
+
+function pprogCanRetryFirstBlock(store) {
+  var s = store || loadPprogStore();
+  if (s.currentBlock && s.currentBlock.weeks && s.currentBlock.weeks.length) return false;
+  return !!(s.fixedIntakePacket || (s.intakeProfileDone && s.intakeLiftsDone && s.intakeSkillsDone));
+}
+
 function renderPprogSkillsPickerHtml() {
   var store = loadPprogStore();
   var sk = store.skills || {};
@@ -2488,8 +2525,10 @@ function syncPprogModeUi() {
     (store.currentBlock && store.currentBlock.weeks && store.currentBlock.weeks.length) ||
     (store.currentWeek && store.currentWeek.days)
   );
-  if (store.intakeComplete) {
+  var waitingBuild = !hasProg && (store.blockBuildPending || pprogCanRetryFirstBlock(store));
+  if (store.intakeComplete || waitingBuild) {
     if (week) week.style.display = "block";
+    if (intake && waitingBuild && !store.intakeComplete) intake.style.display = "block";
     renderPprogWeek();
   } else {
     if (intake) intake.style.display = "block";
@@ -4812,9 +4851,10 @@ function requestPprogWeek(retryCount, opts) {
     setPprogStatus("err", "<strong>Coach</strong> — next block is automatic at the unlock window.");
     return;
   }
-  store.intakeComplete = true;
+  /* Do NOT mark intakeComplete until a block exists — otherwise UI shows "No block yet" forever. */
+  store.blockBuildPending = true;
+  store.lastBlockBuildError = "";
   savePprogStore(store);
-  syncPprogModeUi();
   pprogBusy = true;
   var handoff = null;
   if (opts.autoNextBlock && store.currentBlock) {
@@ -4875,7 +4915,9 @@ function requestPprogWeek(retryCount, opts) {
           store.autoNextTriggeredForBlockStart = null;
           savePprogStore(store);
         }
-        setPprogStatus("err", "<strong>Coach</strong> — block failed: " + esc(pprogFriendlyApiError(j, x.status)));
+        var failMsg = pprogFriendlyApiError(j, x.status);
+        pprogMarkFirstBlockBuildFailed(failMsg);
+        setPprogStatus("err", "<strong>Coach</strong> — block failed: " + esc(failMsg));
         return;
       }
       var block = j.block || null;
@@ -4894,12 +4936,20 @@ function requestPprogWeek(retryCount, opts) {
         savePprogMessages(msgs);
       }
       if (block) {
+        var sOk = loadPprogStore();
+        sOk.blockBuildPending = false;
+        sOk.lastBlockBuildError = "";
+        savePprogStore(sOk);
         applyPprogBlock(block, j.text, {
           autoNextBlock: !!opts.autoNextBlock,
           preserveIntake: !!opts.autoNextBlock,
         });
         setPprogStatus("ok", "<strong>Coach</strong> — block ready");
       } else if (week) {
+        var sWk = loadPprogStore();
+        sWk.blockBuildPending = false;
+        sWk.lastBlockBuildError = "";
+        savePprogStore(sWk);
         applyPprogWeek(week, j.text);
         setPprogStatus("ok", "<strong>Coach</strong> — week 1 ready (filling remaining weeks…)");
       } else if (j.earlyBlockDenied) {
@@ -4907,6 +4957,7 @@ function requestPprogWeek(retryCount, opts) {
           store.autoNextTriggeredForBlockStart = null;
           savePprogStore(store);
         }
+        pprogMarkFirstBlockBuildFailed(String(j.text || "Next block not available yet."));
         setPprogStatus("err", "<strong>Coach</strong> — " + esc(String(j.text || "Next block not available yet.").slice(0, 280)));
       } else if (retries < 1) {
         keepOverlayForRetry = true;
@@ -4914,6 +4965,9 @@ function requestPprogWeek(retryCount, opts) {
         requestPprogWeek(retries + 1, opts);
         return;
       } else {
+        pprogMarkFirstBlockBuildFailed(
+          "Coach reply had no BLOCK_JSON. Tap Build plan again."
+        );
         setPprogStatus("pending", "<strong>Coach</strong> — no block JSON. Try Build block again.");
       }
       syncPprogModeUi();
@@ -4932,12 +4986,15 @@ function requestPprogWeek(retryCount, opts) {
           savePprogStore(sFail);
         }
       }
+      pprogMarkFirstBlockBuildFailed("Network error building block.");
       setPprogStatus("err", "<strong>Coach</strong> — network error building block.");
     })
     .then(function () {
       if (keepOverlayForRetry) return;
       pprogBusy = false;
       setPprogBuildingOverlay(false);
+      syncPprogModeUi();
+      renderPprogChat();
     });
 }
 
@@ -6030,7 +6087,21 @@ function renderPprogWeek() {
   var block = store.currentBlock;
   if (!block || !block.weeks || !block.weeks.length) {
     if (calEl) calEl.innerHTML = "";
-    panesEl.innerHTML = '<div class="pprog-empty">No block yet — finish intake.</div>';
+    if (pprogCanRetryFirstBlock(store)) {
+      var err = store.lastBlockBuildError
+        ? esc(String(store.lastBlockBuildError).slice(0, 220))
+        : "Intake is done, but the 5-week plan did not land.";
+      panesEl.innerHTML =
+        '<div class="pprog-empty" style="padding:20px 12px">' +
+        "<p style=\"margin:0 0 10px;color:#e8e4d8;font-weight:700\">Plan not ready yet</p>" +
+        '<p style="margin:0 0 14px;color:#aaa;font-size:.88em;line-height:1.4">' +
+        err +
+        "</p>" +
+        '<button type="button" class="btn btn-find" style="width:100%;padding:12px;font-weight:700" onclick="retryPprogFirstBlock()">Build plan again</button>' +
+        "</div>";
+    } else {
+      panesEl.innerHTML = '<div class="pprog-empty">No block yet — finish intake.</div>';
+    }
     syncPprogBrickChatUi();
     return;
   }
@@ -6175,6 +6246,10 @@ function initPprogUi() {
   try {
     enqueuePprogMissingWeekFills();
   } catch (e) {}
+  /* Stuck after intake with no brick — surface Rebuild (do not auto-fire). */
+  try {
+    syncPprogFixedIntakeUi();
+  } catch (e2) {}
 }
 
 try {
