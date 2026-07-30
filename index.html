@@ -2171,6 +2171,56 @@ function pprogCoachSignalsBlockBuilding(text) {
   );
 }
 
+/** Count user turns after skills checklist was submitted (remaining intake topics). */
+function pprogUserTurnsAfterSkills(msgs) {
+  var list = msgs || loadPprogMessages();
+  var seen = false;
+  var n = 0;
+  for (var i = 0; i < list.length; i++) {
+    if (!list[i] || list[i].role !== "user") continue;
+    var t = String(list[i].text || "");
+    if (/Skills checklist submitted|^\s*Skills:/i.test(t) || /Skills: /.test(t)) {
+      seen = true;
+      continue;
+    }
+    if (seen) n++;
+  }
+  return n;
+}
+
+/**
+ * HARD: after intake lists + post-skills topics, always open the building GIF / block.
+ * Do not leave the athlete stuck in chat with no plan (image-2 failure mode).
+ */
+function pprogShouldForceFirstBlock(store, coachText, msgs) {
+  var s = store || loadPprogStore();
+  if (s.intakeComplete) return false;
+  if (s.currentBlock && s.currentBlock.weeks && s.currentBlock.weeks.length) return false;
+  if (!s.intakeProfileDone || !s.intakeLiftsDone || !s.intakeSkillsDone) return false;
+  if (pprogCoachSignalsBlockBuilding(coachText)) return true;
+  if (/<<<\s*BLOCK_JSON/i.test(String(coachText || ""))) return true;
+  /* constraints + injuries + goals (and optional auto-skip) — then build even if coach forgets */
+  if (pprogUserTurnsAfterSkills(msgs) >= 3) return true;
+  /* Coach already moved to goals and we answered at least constraints+injuries+goals-ish */
+  if (
+    pprogUserTurnsAfterSkills(msgs) >= 2 &&
+    /\bgoals?\b|what are you (training|working)|main goal/i.test(String(coachText || ""))
+  ) {
+    return false; /* wait for goals answer turn */
+  }
+  return false;
+}
+
+function pprogStartFirstBlockWithBridge(msgs) {
+  msgs = msgs || loadPprogMessages();
+  var bridgeMsg =
+    "Great. Your workout plan is being built now. You can reach out anytime for updates or adjustments.";
+  msgs.push({ role: "model", text: bridgeMsg });
+  savePprogMessages(msgs);
+  renderPprogChat();
+  requestPprogWeek(0, { isFirstBlock: true });
+}
+
 function renderPprogSkillsPickerHtml() {
   var store = loadPprogStore();
   var sk = store.skills || {};
@@ -2798,7 +2848,7 @@ function sendPprogMessage(ev) {
         keepPprogChatKeyboardOpen();
         setPprogStatus("err", "<strong>Coach</strong> — reply error.");
         var storeErr = loadPprogStore();
-        if (!storeErr.intakeComplete && hasPprogIntakeListsReady(storeErr)) {
+        if (!storeErr.intakeComplete && pprogShouldForceFirstBlock(storeErr, "", msgs)) {
           requestPprogWeek(0, { isFirstBlock: true });
           return;
         }
@@ -2839,15 +2889,8 @@ function sendPprogMessage(ev) {
       else if (weekFromChat) applyPprogWeek(weekFromChat, j.text);
       else {
         var storeNow = loadPprogStore();
-        if (!storeNow.intakeComplete && pprogCoachSignalsBlockBuilding(j.text)) {
-          var he = String(storeNow.preferredLanguage || "").toLowerCase().indexOf("he") === 0;
-          var bridgeMsg = he
-            ? "מעולה. עכשיו נבנית תוכנית האימונים שלך. אפשר לפנות אליי בהמשך לכל שינוי או התאמה."
-            : "Great. Your workout plan is being built now. You can reach out anytime for updates or adjustments.";
-          msgs.push({ role: "model", text: bridgeMsg });
-          savePprogMessages(msgs);
-          renderPprogChat();
-          requestPprogWeek(0, { isFirstBlock: true });
+        if (!storeNow.intakeComplete && pprogShouldForceFirstBlock(storeNow, j.text, msgs)) {
+          pprogStartFirstBlockWithBridge(msgs);
           return;
         }
       }
@@ -2869,6 +2912,10 @@ function sendPprogMessage(ev) {
       renderPprogChat();
       keepPprogChatKeyboardOpen();
       setPprogStatus("err", "<strong>Coach</strong> — network error.");
+      var storeNet = loadPprogStore();
+      if (!storeNet.intakeComplete && pprogShouldForceFirstBlock(storeNet, "", msgs)) {
+        pprogStartFirstBlockWithBridge(msgs);
+      }
     })
     .then(function () {
       pprogBusy = false;
