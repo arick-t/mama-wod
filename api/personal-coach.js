@@ -338,11 +338,15 @@ function languageFollowRule(messages, action, forceJson, profile) {
       "- POL-013: practical tone — no compliments, praise, or filler.\n"
     );
   }
+  const postIntake = !!(profile && profile.intakeComplete);
   return (
     "\n\nLANGUAGE RULE (CHAT — HARD):\n" +
     "- Reply in English only for this chat turn (and all turns).\n" +
     "- Workout JSON fields stay English always.\n" +
-    "- POL-013: stay practical; no compliments or filler.\n"
+    "- POL-013: stay practical; no compliments or filler.\n" +
+    (postIntake
+      ? "- POL-022: for broad/standing plan changes (whole brick, every Tuesday, etc.) reply with ONE short sentence stating the change + Confirm? No paragraphs, no profile essays, no multi-question offers.\n"
+      : "")
   );
 }
 
@@ -1314,7 +1318,7 @@ module.exports = async function handler(req, res) {
       service: "personal-coach",
       engine: "personal-coach",
       notGenerateWorkout: true,
-      version: "21.0",
+      version: "21.1",
       hasGeminiKey: !!apiKey,
       hasGroqKey: !!groqKey,
       hasKnowledge: !!store,
@@ -1433,6 +1437,15 @@ module.exports = async function handler(req, res) {
   if (body.feedback) body.feedback = scrubPiiText(body.feedback);
   if (body.text) body.text = scrubPiiText(body.text);
   systemText += languageFollowRule(messages, action, forceJson, athleteProfile);
+  if (body.brickChat === true || body.wholeProgramChat === true) {
+    systemText +=
+      "\n\nBRICK / WHOLE-PROGRAM CHAT (POL-022 — HARD):\n" +
+      "Athlete is messaging about the FULL training brick / standing preferences — not a single session box.\n" +
+      "Broad change request → reply with ONE short sentence: what you will rewrite + Confirm?\n" +
+      "Good: \"I'll rewrite all Tuesday sessions to a longer 25–30 min metcon. Confirm?\"\n" +
+      "Do NOT write paragraphs. Do NOT mention profile updates, session-limit essays, or \"would you like me to rewrite this week…\".\n" +
+      "Do NOT apply the full rewrite until they clearly confirm. After confirm: apply + tiny \"Done.\" / \"Updated.\"\n";
+  }
 
   if (action === "start_intake") {
     messages = [
