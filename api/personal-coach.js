@@ -670,7 +670,7 @@ function buildSystemWithMemory(profile, action, opts) {
           .join("\n- ") +
         "\n"
       : "";
-  return HAMAMEN_SYSTEM + coachPolicyBlock() + intakeHardRule + blockTransitionRule + prefs + buildAthleteMemoryBlock(profile);
+  return HAMAMEN_SYSTEM + coachPolicyBlock() + "\n---\n" + (typeof COACH_PATTERN_BRIEF === "string" ? COACH_PATTERN_BRIEF : "") + "---\n" + intakeHardRule + blockTransitionRule + prefs + buildAthleteMemoryBlock(profile);
 }
 
 /** Brace-match a JSON object starting at `start` (index of `{`). Returns slice or null. */
