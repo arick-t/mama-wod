@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.1.8 BETA</title>
+<title>DUCK-WOD · v21.1.9 BETA</title>
 <meta name="theme-color" content="#111">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -62,6 +62,8 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-day-card .source-name{color:#b06dcf;font-weight:700;font-size:1.05em;letter-spacing:.03em}
 .pprog-day-card .section{margin-bottom:12px}
 .pprog-day-card .section-title{font-size:1em;font-weight:700;text-decoration:underline;color:#1A9B8A;margin-bottom:7px}
+.pprog-day-card .section-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:7px}
+.pprog-day-card .section-title-row .section-title{margin-bottom:0;flex:1;min-width:0}
 .pprog-modified-flag{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:#E8451A;color:#fff;font-size:.64em;font-weight:700;letter-spacing:.06em;vertical-align:middle}
 .pprog-part-note{margin:0 0 8px;padding:0 2px;color:#7eb8c9;font-size:.86em;font-style:italic;line-height:1.4}
 .pprog-part-format{margin:0 0 6px;padding:0 2px;color:#f0ebe0;font-size:.95em;font-weight:700;line-height:1.35}
@@ -698,7 +700,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.1.8 BETA</div>
+<div class="header-sub">DAILY WORKOUTS · v21.1.9 BETA</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
@@ -1797,6 +1799,22 @@ function savePprogMessages(msgs) {
   savePprogStore(s);
 }
 
+function loadPprogBrickMessages() {
+  return loadPprogStore().brickChat || [];
+}
+
+function savePprogBrickMessages(msgs) {
+  var s = loadPprogStore();
+  s.brickChat = (msgs || []).slice(-40);
+  savePprogStore(s);
+}
+
+/** Month calendar "notes on this brick" chat — separate from intake investigation history. */
+function pprogIsBrickChatMode() {
+  var store = loadPprogStore();
+  return !!(store.intakeComplete && pprogCalMode === "month");
+}
+
 function setPprogStatus(kind, html) {
   /* Status banner removed from UI — keep stub for callers. */
 }
@@ -1840,6 +1858,10 @@ function setPprogTyping(on) {
 function renderPprogChat() {
   var log = document.getElementById("pprogChatLog");
   if (!log) return;
+  if (pprogIsBrickChatMode()) {
+    renderPprogBrickChatLog();
+    return;
+  }
   var msgs = loadPprogMessages();
   if (!msgs.length) {
     log.innerHTML =
@@ -1896,6 +1918,53 @@ function renderPprogChat() {
   syncPprogLiftsPickerUi();
   syncPprogSkillsPickerUi();
   pprogMaybeResumeLocalPostSkills();
+}
+
+function renderPprogBrickChatLog() {
+  var log = document.getElementById("pprogChatLog");
+  if (!log) return;
+  var msgs = loadPprogBrickMessages();
+  var html = "";
+  var avatar = "assets/hamamen-coach-duck.png";
+  for (var i = 0; i < msgs.length; i++) {
+    var m = msgs[i];
+    var role = m.role === "user" ? "user" : m.role === "error" ? "error" : m.role === "system" ? "system" : "coach";
+    var text = pprogChatDisplayText(m.text || "");
+    if (!text) continue;
+    if (role === "coach") {
+      html +=
+        '<div class="pprog-msg coach">' +
+        '<img class="pprog-msg-avatar" src="' +
+        avatar +
+        '" alt="">' +
+        '<div class="pprog-bubble coach" dir="ltr">' +
+        esc(text) +
+        "</div></div>";
+    } else if (role === "user") {
+      html +=
+        '<div class="pprog-msg user"><div class="pprog-bubble user" dir="ltr">' +
+        esc(text) +
+        "</div></div>";
+    } else {
+      html +=
+        '<div class="pprog-msg ' +
+        role +
+        '"><div class="pprog-bubble ' +
+        role +
+        '" dir="ltr">' +
+        esc(text) +
+        "</div></div>";
+    }
+  }
+  if (!html) {
+    html =
+      '<div class="pprog-msg system"><div class="pprog-bubble system">Ask the coach anything about this brick.</div></div>';
+  }
+  log.innerHTML = html;
+  if (pprogBusy) setPprogTyping(true);
+  else log.scrollTop = log.scrollHeight;
+  syncPprogStartBtn();
+  syncPprogResetBtn();
 }
 
 function syncPprogStartBtn() {
@@ -2684,7 +2753,8 @@ function showPprogChatAgain() {
 
 function clearPprogChat() {
   if (pprogBusy) return;
-  savePprogMessages([]);
+  if (pprogIsBrickChatMode()) savePprogBrickMessages([]);
+  else savePprogMessages([]);
   renderPprogChat();
 }
 
@@ -3566,7 +3636,12 @@ function sendPprogMessage(ev) {
     keepPprogChatKeyboardOpen();
     return false;
   }
-  var msgs = loadPprogMessages();
+  var brickMode = pprogIsBrickChatMode();
+  var msgs = brickMode ? loadPprogBrickMessages() : loadPprogMessages();
+  function persistPprogChatMsgs() {
+    if (brickMode) savePprogBrickMessages(msgs);
+    else savePprogMessages(msgs);
+  }
   var lastCoach = "";
   for (var li = msgs.length - 1; li >= 0; li--) {
     if (msgs[li] && msgs[li].role === "model") {
@@ -3581,7 +3656,7 @@ function sendPprogMessage(ev) {
     if (sanity) {
       msgs.push({ role: "user", text: text });
       msgs.push({ role: "model", text: sanity.message });
-      savePprogMessages(msgs);
+      persistPprogChatMsgs();
       if (inp) inp.value = "";
       renderPprogChat();
       keepPprogChatKeyboardOpen();
@@ -3599,7 +3674,7 @@ function sendPprogMessage(ev) {
   }
   var displayText = text || "[unknown / skip]";
   msgs.push({ role: "user", text: displayText });
-  savePprogMessages(msgs);
+  persistPprogChatMsgs();
   if (inp) inp.value = "";
   pprogBusy = true;
   var btn = document.getElementById("pprogSendBtn");
@@ -3652,7 +3727,7 @@ function sendPprogMessage(ev) {
               : friendly;
         }
         msgs.push({ role: "error", text: "Error: " + friendly });
-        savePprogMessages(msgs);
+        persistPprogChatMsgs();
         pprogBusy = false;
         renderPprogChat();
         keepPprogChatKeyboardOpen();
@@ -3667,10 +3742,10 @@ function sendPprogMessage(ev) {
       var chatText = pprogChatDisplayText(String(j.text));
       if (chatText) {
         msgs.push({ role: "model", text: chatText.slice(0, 2000) });
-        savePprogMessages(msgs);
+        persistPprogChatMsgs();
       } else {
         /* Keep parseable raw text out of UI; still available via j.text for block extract below */
-        savePprogMessages(msgs);
+        persistPprogChatMsgs();
       }
       var storeSkip = loadPprogStore();
       if (
@@ -3718,7 +3793,7 @@ function sendPprogMessage(ev) {
         role: "error",
         text: "Network error: " + String((e && e.message) || e).slice(0, 300),
       });
-      savePprogMessages(msgs);
+      persistPprogChatMsgs();
       pprogBusy = false;
       renderPprogChat();
       keepPprogChatKeyboardOpen();
@@ -6022,7 +6097,7 @@ function sharePprogDayWhatsApp(dayKey) {
   window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank");
 }
 
-function renderPprogDayPartsHtml(parts, dayData) {
+function renderPprogDayPartsHtml(parts, dayData, dayKey) {
   var html = "";
   if (!parts || !parts.length) {
     return '<div class="pprog-empty" style="padding:12px">No parts for this day</div>';
@@ -6035,11 +6110,21 @@ function renderPprogDayPartsHtml(parts, dayData) {
     var modified = !!modifiedKinds[kind];
     var classified = classifyPprogPartLines(part && part.lines);
     html += '<div class="section">';
+    html += '<div class="section-title-row">';
     html +=
       '<div class="section-title">' +
       esc(part.title || defaultTitle) +
       (modified ? '<span class="pprog-modified-flag">MODIFIED</span>' : "") +
       "</div>";
+    if (pi === 0 && dayKey) {
+      html +=
+        '<button type="button" class="pprog-share-wa" onclick="sharePprogDayWhatsApp(\'' +
+        dayKey +
+        '\')" title="Share workout on WhatsApp" aria-label="Share workout on WhatsApp">' +
+        pprogShareDayWaIcon() +
+        "Share</button>";
+    }
+    html += "</div>";
     for (var ni = 0; ni < classified.notes.length; ni++) {
       html += '<div class="pprog-part-note">' + esc(classified.notes[ni]) + "</div>";
     }
@@ -6413,31 +6498,15 @@ function renderPprogWeek() {
       if ((!parts.length || !parts.some(function (p) { return p.lines && p.lines.length; })) && focus && focus !== "—") {
         parts = stubPartsFromOverview(week, day);
       }
-      if (focus && focus !== "—") {
-        html +=
-          '<div class="pprog-day-subrow">' +
-          '<div class="pprog-summary" style="font-size:.88em">' +
-          esc(focus) +
-          "</div>" +
-          '<button type="button" class="pprog-share-wa" onclick="sharePprogDayWhatsApp(\'' +
-          day +
-          '\')" title="Share workout on WhatsApp" aria-label="Share workout on WhatsApp">' +
-          pprogShareDayWaIcon() +
-          "Share</button></div>";
-      } else {
-        html +=
-          '<div class="pprog-day-subrow" style="justify-content:flex-end;margin-bottom:8px">' +
-          '<button type="button" class="pprog-share-wa" onclick="sharePprogDayWhatsApp(\'' +
-          day +
-          '\')" title="Share workout on WhatsApp" aria-label="Share workout on WhatsApp">' +
-          pprogShareDayWaIcon() +
-          "Share</button></div>";
+      var hasRealParts = !!(parts.length && parts.some(function (p) { return p && ((p.lines && p.lines.length) || p.title); }));
+      if (!hasRealParts && focus && focus !== "—") {
+        html += '<div class="pprog-summary" style="margin-bottom:10px;font-size:.88em">' + esc(focus) + "</div>";
       }
       if (!parts.length && !detailed) {
         html +=
           '<div class="pprog-day-stub"><strong>Session pending</strong>Overview is ready; full parts are still being generated for this week.</div>';
       } else {
-        html += renderPprogDayPartsHtml(parts, dayData);
+        html += renderPprogDayPartsHtml(parts, dayData, day);
       }
       html += renderPprogDayFooter(day, dayData);
     }
