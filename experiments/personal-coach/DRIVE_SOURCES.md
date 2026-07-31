@@ -63,6 +63,13 @@ Gemini API **לא** קורא ישירות מ־Drive URL בלי העלאה ל־Fi
 | synced (2026-07-27) | Knee Injuries — Practical Guide for Scaling (CF-L3), Injury Substitutions Chart 2016, Assessment & Treatment CF Shoulder, Scaling — CFJ 2015 |
 | synced (קודם) | 06_03_CF_Template, CF_Manual_v4, דוחות תכנות (beginner/intermediate/strategies), CFD L1 Handbook, NSCA Load Chart, Competitors Training Guide, CFJ Competitor Tincher, L2 Training Guide, crossfit-9, CFJ Seminars Training Guide |
 
-**סה"כ במאגר: 29 מקורות**
+**סה"כ במאגר: 29 מקורות** (+ staged learning-leap docs in `knowledge-inbox/` until approved sync)
 
-**דוקטרינה (POL-018):** בקיאות במאגר (שיטות / מניעת פציעות / סקיילים / מנוע־סיבולת). ברירת מחדל = L1 מגוון. בקשת שיפור בסקיל/1RM/מנוע = תרחיש רגיל — המאגר קיים כדי להכווין לזה במדויק.
+**דוקטרינה (POL-018 + POL-021):** בסיס פירמידה = **L1 + L2**. מעליהם: תחקור מתאמן + מאגר (שיטות / מניעת פציעות / סקיילים / מנוע־סיבולת / דיג׳סטים חיים). בקשת שיפור בסקיל/1RM/מנוע = תרחיש רגיל. דיג׳סטים = עקרונות, לא העתקת אימונים.
+
+**מסמכים חיים (קוד / inbox — סנכרון מוח רק אחרי אישור):**
+- `living-knowledge/coach-patterns-myleo-restoration.md` — רענון שבועי (יום ראשון)
+- `living-knowledge/coach-formats-warehouse.md` — מחסן Hero/Open/Benchmark
+- `knowledge-inbox/pro-coach-articles/` — מאמרי מקצוע נוספים (אותו משקל כמו שאר המאגר)
+
+פירוט בטיחות: `LEARNING_LEAP.md`.

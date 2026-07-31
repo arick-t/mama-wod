@@ -1,0 +1,60 @@
+# Weekly coach living-patterns digest (Sunday morning)
+# Updates living myleo+Restoration digest + emails confirmation.
+# Brain sync to File Search is GATED (COACH_BRAIN_SYNC_ENABLED secret) — off by default to protect production.
+name: 🧠 Weekly Coach Patterns Digest
+
+on:
+  schedule:
+    # Sunday 05:00 UTC ≈ 08:00 Asia/Jerusalem (summer)
+    - cron: "0 5 * * 0"
+  workflow_dispatch:
+    inputs:
+      enable_brain_sync:
+        description: "Also run coach:sync-brain (DANGEROUS to production File Search if enabled)"
+        required: false
+        default: false
+        type: boolean
+      email_to:
+        description: "Override confirmation email (empty = default)"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Run weekly patterns digest
+        env:
+          # Off unless repo secret COACH_BRAIN_SYNC_ENABLED=true, or manual dispatch with enable_brain_sync.
+          COACH_BRAIN_SYNC_ENABLED: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.enable_brain_sync == 'true' && 'true' || secrets.COACH_BRAIN_SYNC_ENABLED }}
+          COACH_DIGEST_EMAIL_TO: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.email_to || secrets.COACH_DIGEST_EMAIL_TO || secrets.ANALYTICS_REPORT_TO || '' }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY || secrets.RESEND_API_KEY_conmail }}
+          RESEND_FROM: ${{ secrets.RESEND_FROM }}
+          ANALYTICS_REPORT_TO: ${{ secrets.ANALYTICS_REPORT_TO }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_FILE_SEARCH_STORE: ${{ secrets.GEMINI_FILE_SEARCH_STORE }}
+          COACH_KNOWLEDGE_DIR: experiments/personal-coach/knowledge-inbox
+        run: node scripts/coach-weekly-patterns-digest.js
+
+      - name: Commit living digest if changed
+        run: |
+          if git diff --quiet -- experiments/personal-coach/living-knowledge experiments/personal-coach/knowledge-inbox/living-knowledge; then
+            echo "No digest file changes."
+            exit 0
+          fi
+          git config user.name "duck-wod-bot"
+          git config user.email "bot@duck-wod.local"
+          git add experiments/personal-coach/living-knowledge experiments/personal-coach/knowledge-inbox/living-knowledge
+          git commit -m "🧠 Weekly coach patterns digest"
+          git push
