@@ -133,24 +133,26 @@ function resolveGroqBackupModelId() {
 }
 
 /**
- * Coach Gemini model. Remap legacy / unavailable IDs (same idea as generate-workout).
- * Default: gemini-2.0-flash — gemini-3.6-flash was shipping as a default but is not reliably
- * available on all AI Studio keys and surfaced as API_KEY_INVALID in production.
+ * Coach Gemini model. Remap retired IDs (gemini-2.0-flash shut down June 2026).
+ * Default: gemini-2.5-flash — stable replacement; override with PERSONAL_COACH_MODEL.
  */
 function resolveCoachModel() {
   const raw = (
     sanitizeSecret(process.env.PERSONAL_COACH_MODEL) ||
     sanitizeSecret(process.env.GEMINI_MODEL) ||
-    "gemini-2.0-flash"
+    "gemini-2.5-flash"
   ).trim();
-  const key = (raw || "gemini-2.0-flash").toLowerCase();
+  const key = (raw || "gemini-2.5-flash").toLowerCase();
   const aliases = {
-    "gemini-1.5-flash": "gemini-flash-latest",
-    "gemini-1.5-flash-latest": "gemini-flash-latest",
-    "gemini-3.6-flash": "gemini-2.0-flash",
-    "gemini-3.5-flash": "gemini-2.0-flash",
+    "gemini-1.5-flash": "gemini-2.5-flash",
+    "gemini-1.5-flash-latest": "gemini-2.5-flash",
+    "gemini-flash-latest": "gemini-2.5-flash",
+    "gemini-2.0-flash": "gemini-2.5-flash",
+    "gemini-2.0-flash-001": "gemini-2.5-flash",
+    "gemini-2.0-flash-lite": "gemini-2.5-flash-lite",
+    "gemini-2.0-flash-lite-001": "gemini-2.5-flash-lite",
   };
-  return aliases[key] || raw || "gemini-2.0-flash";
+  return aliases[key] || raw || "gemini-2.5-flash";
 }
 
 function resolveFileSearchStore() {

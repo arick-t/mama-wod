@@ -60,13 +60,16 @@ function resolveProvider() {
  * @see https://ai.google.dev/api/rest/v1beta/models
  */
 function resolveGeminiModelId() {
-  const raw = (process.env.GEMINI_MODEL || "gemini-2.0-flash").trim();
+  const raw = (process.env.GEMINI_MODEL || "gemini-2.5-flash").trim();
   const key = raw.toLowerCase();
   const aliases = {
-    "gemini-1.5-flash": "gemini-flash-latest",
-    "gemini-1.5-flash-latest": "gemini-flash-latest",
+    "gemini-1.5-flash": "gemini-2.5-flash",
+    "gemini-1.5-flash-latest": "gemini-2.5-flash",
+    "gemini-flash-latest": "gemini-2.5-flash",
+    "gemini-2.0-flash": "gemini-2.5-flash",
+    "gemini-2.0-flash-001": "gemini-2.5-flash",
   };
-  return aliases[key] || raw;
+  return aliases[key] || raw || "gemini-2.5-flash";
 }
 
 /** No secret values — only whether known env names are non-empty (for Vercel troubleshooting). */
