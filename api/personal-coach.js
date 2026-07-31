@@ -1138,11 +1138,14 @@ async function callGroqChat(apiKey, model, messages, systemText, opts) {
 
 /**
  * Try Gemini (optional Interactions) then Groq. File Search only on Gemini paths.
+ * Programming should set skipCompact / preferGemini so workout quality is not thinned.
  */
 async function callCoachLlm(apiKey, groqKey, model, messages, storeName, systemText, opts) {
   const options = opts && typeof opts === "object" ? opts : {};
   const preferInteractions = options.preferInteractions === true;
   const skipTools = options.skipTools === true;
+  const skipCompact = options.skipCompact === true;
+  const geminiOnly = options.geminiOnly === true;
   let lastFail = null;
   let interactionsError = null;
 
@@ -1170,8 +1173,19 @@ async function callCoachLlm(apiKey, groqKey, model, messages, storeName, systemT
     if (interactionsError && !gc.interactionsError) gc.interactionsError = interactionsError;
   }
 
+  if (geminiOnly) {
+    return (
+      lastFail || {
+        ok: false,
+        error: "Gemini programming unavailable",
+        detail: "Programming requires Gemini for evening-quality workouts (POL-020). Retry shortly.",
+      }
+    );
+  }
+
   if (groqKey) {
-    const groqSys = compactSystemForGroq(systemText);
+    /* Programming: never thin the evening brain via GROQ_POLICY_SLIM. */
+    const groqSys = skipCompact ? String(systemText || "") : compactSystemForGroq(systemText);
     const groq = await callGroqChat(groqKey, resolveGroqModelId(), messages, groqSys, options);
     if (groq.ok) {
       if (interactionsError) groq.interactionsError = interactionsError;
@@ -1435,7 +1449,7 @@ module.exports = async function handler(req, res) {
           "(1–3 parts/day, each part with title + lines array of concrete prescriptions, ≤5 lines/part). " +
           "Do NOT leave week 1 days as {}. Athletes open week 1 immediately. " +
           "Weeks 2–5: require theme, phase, summaryLine, and overview for all 7 days; days may be {} empty (app will fill later). " +
-          "Use full programming depth (POL-016 capability profile from lifts/run/skills/age/BW/experience; POL-018 CF-L1 + מאגר focus). " +
+          "Program with full POL-016 depth from the FIXED INTAKE packet / athlete memory (not a generic intermediate template). " +
           (forceJson
             ? "Reply with NOTHING except <<<BLOCK_JSON ... BLOCK_JSON>>> with exactly 5 weeks."
             : "One short English sentence for the user, then required <<<BLOCK_JSON ... BLOCK_JSON>>> with exactly 5 weeks. ") +
@@ -1673,12 +1687,13 @@ module.exports = async function handler(req, res) {
     (weekDetailMeta && weekDetailMeta.weekIndex) ||
     Math.max(1, Math.min(5, parseInt(body.weekIndex, 10) || 1));
   const isWeekDetail = action === "generate_week_detail";
-  /* Programming actions: generateContent only, no File Search (avoids intake-like docs) */
+  /* Programming actions: Gemini-first evening brain. Never thin system for Groq. Never 8b backup. */
   const gcOpts = programming
     ? {
         temperature: forceJson ? 0.15 : isWeekDetail ? 0.3 : 0.35,
         maxOutputTokens: 8192,
         skipTools: true,
+        skipCompact: true,
         disallowBackupModel: true,
       }
     : {
@@ -1715,10 +1730,36 @@ module.exports = async function handler(req, res) {
   }
 
   async function callProgrammingGenerate(msgs, sys, extraOpts) {
-    return callCoachLlm(apiKey, groqKey, model, msgs, null, sys, Object.assign({}, gcOpts, extraOpts || {}, {
+    const opts = Object.assign({}, gcOpts, extraOpts || {}, {
       preferInteractions: false,
       skipTools: true,
-    }));
+      skipCompact: true,
+      disallowBackupModel: true,
+    });
+    /* 1) Gemini (evening path) — required for quality when available */
+    if (apiKey) {
+      const primary = await callCoachLlm(apiKey, null, model, msgs, null, sys, Object.assign({}, opts, { geminiOnly: true }));
+      if (primary.ok) return primary;
+      /* One quiet Gemini retry on transient empty/502 */
+      const retry = await callCoachLlm(apiKey, null, model, msgs, null, sys, Object.assign({}, opts, { geminiOnly: true, temperature: 0.2 }));
+      if (retry.ok) {
+        retry.via = (retry.via || "generateContent") + "+retry";
+        return retry;
+      }
+      /* 2) Groq emergency only — full uncompacted evening system (never slim policy) */
+      if (groqKey) {
+        const groq = await callCoachLlm(null, groqKey, model, msgs, null, sys, opts);
+        if (groq.ok) {
+          groq.via = (groq.via || "groq") + "+geminiFallback";
+          groq.geminiError = (primary && (primary.detail || primary.error)) || undefined;
+          return groq;
+        }
+        return primary.ok === false ? primary : groq;
+      }
+      return primary;
+    }
+    /* No Gemini key configured — Groq with full system only */
+    return callCoachLlm(null, groqKey, model, msgs, null, sys, opts);
   }
 
   /** If model slips into intake, retry once with JSON-ONLY system+user. */
