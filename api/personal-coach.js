@@ -175,14 +175,16 @@ function isApiKeyInvalidError(result) {
 
 function friendlyProviderError(result) {
   const fb = result && result.fallbackError != null ? String(result.fallbackError) : "";
-  if (/Request too large|tokens per minute|TPM|rate limit|429/i.test(fb)) {
+  const detail = result && result.detail != null ? String(result.detail) : "";
+  if (/Request too large|tokens per minute|TPM|rate limit|429/i.test(fb + " " + detail)) {
     return "Coach is rate-limited right now — wait about a minute and send again.";
   }
-  if (isApiKeyInvalidError(result) && !fb) {
-    return "Coach AI provider rejected the Gemini API key. Falling back was attempted; if you still see this, set a valid GEMINI_API_KEY or rely on GROQ_API_KEY in Vercel.";
-  }
-  if (isApiKeyInvalidError(result) && fb) {
-    return "Gemini key invalid; backup AI also failed (" + fb.slice(0, 180) + "). Try again shortly.";
+  if (isApiKeyInvalidError(result)) {
+    return (
+      "GEMINI_API_KEY on Vercel is invalid (this is why plan quality dropped vs Wed evening). " +
+      "Update the key in Vercel → Redeploy. " +
+      (fb ? "Backup also failed: " + fb.slice(0, 120) : "Backup was attempted.")
+    );
   }
   if (!result) return "Coach request failed";
   if (typeof result.detail === "string" && result.detail && result.detail.length < 280) {
@@ -396,20 +398,38 @@ function coachPolicyBlock() {
   return "\n\n---\n" + raw.slice(0, 12000) + "\n---\n";
 }
 
+/** Programming-only Groq pack: keep CORE + quality policy + athlete memory under TPM.
+ * Chat compact (GROQ_CHAT_SYSTEM_COMPACT) is NOT used here — that thinned workout quality. */
+function compactProgrammingSystemForGroq(systemText) {
+  const raw = String(systemText || "");
+  const maxChars =
+    parseInt(process.env.GROQ_PROGRAMMING_SYSTEM_MAX_CHARS || "12000", 10) || 12000;
+  const memIdx = raw.search(/\n\nATHLETE[:\s]/);
+  const memory = memIdx >= 0 ? raw.slice(memIdx).slice(0, 4500) : "";
+  const forceIdx = raw.indexOf("JSON-ONLY MODE");
+  const forceExtra = forceIdx >= 0 ? "\n" + raw.slice(forceIdx, forceIdx + 600) : "";
+  let out =
+    PROGRAMMING_SYSTEM_CORE +
+    "\n\n---\n" +
+    GROQ_POLICY_SLIM +
+    "\nSESSION QUALITY: clear stimulus per day; complementary strength+conditioner; " +
+    "loads from athlete lifts/skills; no generic junk metcons; honor FIXED INTAKE / active-recovery prefs.\n" +
+    "---\n" +
+    forceExtra +
+    memory;
+  if (out.length > maxChars) out = out.slice(0, maxChars);
+  return out;
+}
+
 /** Shrink / rebuild system text so Groq stays under free-tier TPM — chat only.
- * Programming path: keep evening-quality brain intact (POL-020 — never thin workouts). */
+ * Programming path: use compactProgrammingSystemForGroq (not chat slim). */
 function compactSystemForGroq(systemText) {
   const raw = String(systemText || "");
   /* Keep Groq under free-tier TPM budget for chat/intake only. */
   const maxChars = parseInt(process.env.GROQ_SYSTEM_MAX_CHARS || "7000", 10) || 7000;
-  const maxCharsProgramming =
-    parseInt(process.env.GROQ_PROGRAMMING_SYSTEM_MAX_CHARS || "28000", 10) || 28000;
 
-  /* Programming = evening brain: full PROGRAMMING_SYSTEM_CORE + policy + athlete memory.
-   * Do NOT replace with GROQ_POLICY_SLIM (that regression hurt workout quality). */
   if (raw.indexOf("You are a CrossFit programming engine") === 0) {
-    if (raw.length <= maxCharsProgramming) return raw;
-    return raw.slice(0, maxCharsProgramming);
+    return compactProgrammingSystemForGroq(raw);
   }
 
   /* Chat / intake: prefer FULL ship system (HAMAMEN + policy + intake) when it fits TPM.
@@ -1733,33 +1753,75 @@ module.exports = async function handler(req, res) {
     const opts = Object.assign({}, gcOpts, extraOpts || {}, {
       preferInteractions: false,
       skipTools: true,
-      skipCompact: true,
       disallowBackupModel: true,
     });
-    /* 1) Gemini (evening path) — required for quality when available */
+    let geminiFail = null;
+    /* 1) Gemini (evening path) — required for best quality when key is valid */
     if (apiKey) {
-      const primary = await callCoachLlm(apiKey, null, model, msgs, null, sys, Object.assign({}, opts, { geminiOnly: true }));
+      const primary = await callCoachLlm(
+        apiKey,
+        null,
+        model,
+        msgs,
+        null,
+        sys,
+        Object.assign({}, opts, { geminiOnly: true, skipCompact: true })
+      );
       if (primary.ok) return primary;
-      /* One quiet Gemini retry on transient empty/502 */
-      const retry = await callCoachLlm(apiKey, null, model, msgs, null, sys, Object.assign({}, opts, { geminiOnly: true, temperature: 0.2 }));
+      geminiFail = primary;
+      const retry = await callCoachLlm(
+        apiKey,
+        null,
+        model,
+        msgs,
+        null,
+        sys,
+        Object.assign({}, opts, { geminiOnly: true, skipCompact: true, temperature: 0.2 })
+      );
       if (retry.ok) {
         retry.via = (retry.via || "generateContent") + "+retry";
         return retry;
       }
-      /* 2) Groq emergency only — full uncompacted evening system (never slim policy) */
-      if (groqKey) {
-        const groq = await callCoachLlm(null, groqKey, model, msgs, null, sys, opts);
-        if (groq.ok) {
-          groq.via = (groq.via || "groq") + "+geminiFallback";
-          groq.geminiError = (primary && (primary.detail || primary.error)) || undefined;
-          return groq;
-        }
-        return primary.ok === false ? primary : groq;
-      }
-      return primary;
+      geminiFail = retry.ok === false ? retry : primary;
     }
-    /* No Gemini key configured — Groq with full system only */
-    return callCoachLlm(null, groqKey, model, msgs, null, sys, opts);
+    /* 2) Groq emergency — programming-quality compact (not chat slim), large max_tokens */
+    if (groqKey) {
+      const groqSys = compactProgrammingSystemForGroq(sys);
+      const groq = await callCoachLlm(
+        null,
+        groqKey,
+        model,
+        msgs,
+        null,
+        groqSys,
+        Object.assign({}, opts, { skipCompact: true, maxOutputTokens: 8192 })
+      );
+      if (groq.ok) {
+        groq.via = (groq.via || "groq") + "+geminiFallback";
+        groq.systemCompacted = true;
+        groq.geminiError =
+          (geminiFail && (geminiFail.detail || geminiFail.error)) || undefined;
+        return groq;
+      }
+      return {
+        ok: false,
+        error: "Programming providers failed",
+        detail:
+          "Gemini: " +
+          String((geminiFail && (geminiFail.detail || geminiFail.error)) || "n/a").slice(0, 220) +
+          " | Groq: " +
+          String(groq.detail || groq.error || "n/a").slice(0, 220),
+        geminiError: geminiFail && (geminiFail.detail || geminiFail.error),
+        fallbackError: groq.detail || groq.error,
+      };
+    }
+    return (
+      geminiFail || {
+        ok: false,
+        error: "No AI provider configured",
+        detail: "Set a valid GEMINI_API_KEY (preferred) or GROQ_API_KEY in Vercel.",
+      }
+    );
   }
 
   /** If model slips into intake, retry once with JSON-ONLY system+user. */
