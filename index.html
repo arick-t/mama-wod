@@ -1992,7 +1992,9 @@ function syncPprogResetBtn() {
 
 function resetPprogUser() {
   if (pprogBusy) return;
-  var ok = confirm("Reset this user and restart before legal agreement?");
+  var ok = confirm(
+    "Reset Personal Coach and start a new intake?\n\nThis clears your current plan and profile on this device."
+  );
   if (!ok) return;
   try {
     var q = new URLSearchParams(location.search || "");
@@ -3924,15 +3926,99 @@ function isPprogRestFocus(focus) {
   if (!focusL) return false;
   if (/מנוחה/.test(String(focus || ""))) return true;
   if (/\brest(\s*day)?\b/.test(focusL) || focusL === "off" || /\boff\s*day\b/.test(focusL)) return true;
+  if (/already\s*passed|past\s*day|no\s*session/.test(focusL)) return true;
   return false;
 }
 
-/** Rest day: overview focus / parts indicate rest / מנוחה — never treat empty/loading as rest */
+/** Athlete marked training days in fixed intake — any other weekday is scheduled rest. */
+function pprogIsAthleteScheduledRest(store, dayKey) {
+  var s = store || loadPprogStore();
+  var days = Array.isArray(s.trainingDays) ? s.trainingDays : [];
+  if (!days.length) return false;
+  var key = normalizePprogDayKey(dayKey) || dayKey;
+  var train = {};
+  for (var i = 0; i < days.length; i++) {
+    var dk = normalizePprogDayKey(days[i]);
+    if (dk) train[dk] = true;
+  }
+  return !train[key];
+}
+
+function pprogDayIsoInWeek(week, dayKey) {
+  var ws = (week && week.weekStart) || sundayOfThisWeekIsrael();
+  var idx = PPROG_DAY_KEYS.indexOf(normalizePprogDayKey(dayKey) || dayKey);
+  if (idx < 0) return ws;
+  return pprogAddDaysIso(ws, idx);
+}
+
+/** Calendar day already passed (Asia/Jerusalem) — do not show/program a workout. */
+function pprogIsPastCalendarDay(week, dayKey) {
+  var dayIso = pprogDayIsoInWeek(week, dayKey);
+  var today = pprogIsraelTodayIso();
+  return !!(dayIso && today && dayIso < today);
+}
+
+function pprogRestDayParts(dayKey) {
+  return [{ id: String(dayKey || "day") + "-rest", title: "REST DAY", lines: ["Rest"] }];
+}
+
+/**
+ * Force REST DAY on: overview Rest, athlete non-training weekdays, and days before today.
+ * Fixes week-1 fills that ignored rest days, and mid-week starts that programmed the past.
+ */
+function enforcePprogCalendarRestRules(week) {
+  if (!week || typeof week !== "object") return week;
+  var store = loadPprogStore();
+  if (!Array.isArray(week.overview)) week.overview = [];
+  if (!week.days || typeof week.days !== "object") week.days = {};
+  var overviewByDay = {};
+  for (var oi = 0; oi < week.overview.length; oi++) {
+    var row = week.overview[oi];
+    if (!row) continue;
+    var rd = normalizePprogDayKey(row.day) || String(row.day || "").toLowerCase();
+    if (rd) overviewByDay[rd] = row;
+  }
+  for (var i = 0; i < PPROG_DAY_KEYS.length; i++) {
+    var k = PPROG_DAY_KEYS[i];
+    var past = pprogIsPastCalendarDay(week, k);
+    var schedRest = pprogIsAthleteScheduledRest(store, k);
+    var focus = overviewByDay[k] ? String(overviewByDay[k].focus || "") : pprogOverviewFocus(week, k);
+    var focusRest = isPprogRestFocus(focus);
+    if (!(past || schedRest || focusRest)) continue;
+    var restFocus = past && !schedRest && !focusRest ? "Rest" : "Rest";
+    if (overviewByDay[k]) {
+      overviewByDay[k].focus = restFocus;
+      overviewByDay[k].day = k;
+      overviewByDay[k].label = overviewByDay[k].label || PPROG_DAY_LABELS[k];
+    } else {
+      var rowNew = { day: k, label: PPROG_DAY_LABELS[k], focus: restFocus };
+      week.overview.push(rowNew);
+      overviewByDay[k] = rowNew;
+    }
+    var prevDay = week.days[k] || {};
+    week.days[k] = {
+      parts: pprogRestDayParts(k),
+      preTalk: String(prevDay.preTalk || ""),
+      debrief: String(prevDay.debrief || ""),
+      lastPreReply: String(prevDay.lastPreReply || ""),
+      lastDebriefReply: String(prevDay.lastDebriefReply || ""),
+      modifiedPartKinds: prevDay.modifiedPartKinds || {},
+    };
+  }
+  return week;
+}
+
+/** Rest day: overview / schedule / past calendar day / parts indicate rest */
 function isPprogRestDay(dayKey, dayData, week) {
+  if (week && pprogIsPastCalendarDay(week, dayKey)) return true;
+  try {
+    if (pprogIsAthleteScheduledRest(loadPprogStore(), dayKey)) return true;
+  } catch (e) {}
   var focus = pprogOverviewFocus(week, dayKey);
   var focusL = focus.toLowerCase().trim();
   var parts = (dayData && dayData.parts) || [];
   if (isPprogRestFocus(focus)) return true;
+  if (parts.length === 1 && /rest\s*day/i.test(String(parts[0].title || ""))) return true;
   if (/^(recovery|active\s*recovery|recovery\s*day)$/i.test(focusL) && (!parts.length || parts.length <= 1)) {
     var onlyEmpty =
       !parts.length ||
@@ -4422,6 +4508,7 @@ function normalizePprogWeek(week, prevWeek, weekStartOverride, weekMeta) {
       return { day: k, label: PPROG_DAY_LABELS[k], focus: titles || "—" };
     });
   }
+  enforcePprogCalendarRestRules(out);
   return out;
 }
 
@@ -6468,6 +6555,11 @@ function renderPprogWeek() {
     syncPprogBrickChatUi();
     return;
   }
+  /* Repair rest days for mid-week starts + scheduled rest (incl. week 1 fills that ignored Rest). */
+  enforcePprogCalendarRestRules(week);
+  block.weeks[activeWi] = week;
+  store.currentWeek = week;
+  savePprogStore(store);
 
   if (pprogActiveDay !== "general" && PPROG_DAY_KEYS.indexOf(pprogActiveDay) < 0) {
     pprogActiveDay = "general";
