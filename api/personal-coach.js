@@ -189,6 +189,13 @@ function friendlyProviderError(result) {
       (fb ? "Backup also failed: " + fb.slice(0, 120) : "Backup was attempted.")
     );
   }
+  const err = result && result.error != null ? String(result.error) : "";
+  if (/Gemini programming unavailable|gemini-required/i.test(err + " " + detail + " " + fb)) {
+    return (
+      "Coach Gemini is not building plans on this deployment (Groq fallback disabled for quality). " +
+      "Fix GEMINI_API_KEY / PERSONAL_COACH_MODEL on Preview+Production, Redeploy, then retry."
+    );
+  }
   if (!result) return "Coach request failed";
   if (typeof result.detail === "string" && result.detail && result.detail.length < 280) {
     return result.detail;
