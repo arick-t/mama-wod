@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.2.2</title>
+<title>DUCK-WOD · v21.2.3</title>
 <meta name="theme-color" content="#111">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -265,17 +265,24 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-building-overlay{
   display:none;position:fixed;inset:0;z-index:10002;
   align-items:center;justify-content:center;
-  background:rgba(17,12,22,.88);backdrop-filter:blur(3px)
+  /* Solid fill only — backdrop-filter has caused black screens on iOS Safari. */
+  background:#1a1420;
 }
+.pprog-building-overlay[hidden]{display:none!important}
 .pprog-building-overlay.open{display:flex}
 .pprog-building-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:18px;max-width:min(92vw,420px)}
 .pprog-building-video{
   width:min(78vw,340px);max-height:min(48vh,340px);
-  border-radius:16px;border:1px solid #3a2a4a;background:#111;
+  border-radius:16px;border:1px solid #3a2a4a;background:#221528;
   box-shadow:0 10px 36px rgba(0,0,0,.5);object-fit:cover
 }
 .pprog-building-status{color:#e8e4d8;font-size:.95em;text-align:center;line-height:1.4}
 .pprog-building-status strong{color:#b06dcf;font-weight:700}
+.pprog-building-cancel{
+  margin-top:4px;padding:10px 16px;border-radius:8px;border:1px solid #6a4a7a;
+  background:#2a1e34;color:#f0ece0;font-weight:700;font-size:.88em;font-family:inherit;
+  cursor:pointer;-webkit-tap-highlight-color:transparent
+}
 .pprog-cal-week-label{color:#999;font-size:.7em;text-align:left;margin:8px 0 3px;padding:0 2px;line-height:1.3}
 .pprog-cal-block-hint{color:#666;font-size:.68em;text-align:center;margin:6px 0 0}
 .pprog-block-transition-hint{margin:0 0 12px;padding:10px 12px;background:#221528;border:1px dashed #8e44ad;border-radius:8px;color:#d8c8e8;font-size:.82em;line-height:1.45;text-align:left}
@@ -724,7 +731,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.2.2</div>
+<div class="header-sub">DAILY WORKOUTS · v21.2.3</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
@@ -954,6 +961,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
     </video>
     <img id="pprogBuildingFallback" class="pprog-building-video" src="assets/hamamen-coach-duck.png" alt="Coach" width="340" height="340">
     <div class="pprog-building-status"><strong>Coach</strong> is building your 5-week block…</div>
+    <button type="button" class="pprog-building-cancel" id="pprogBuildingCancelBtn" onclick="pprogCancelBuildingOverlay()">Hide &amp; check status</button>
   </div>
 </div>
 
@@ -5253,7 +5261,14 @@ function setPprogBuildingOverlay(on, statusHtml) {
       } catch (eVid) {}
       video.style.display = "none";
     }
-    if (fallback) fallback.style.display = "block";
+    if (fallback) {
+      fallback.style.display = "block";
+      try {
+        if (!fallback.getAttribute("src")) {
+          fallback.setAttribute("src", "assets/hamamen-coach-duck.png");
+        }
+      } catch (eSrc) {}
+    }
   } else {
     overlay.classList.remove("open");
     overlay.hidden = true;
@@ -5265,6 +5280,45 @@ function setPprogBuildingOverlay(on, statusHtml) {
     }
     if (fallback) fallback.style.display = "block";
   }
+}
+
+var pprogBuildAbort = null;
+var pprogBuildFailsafeTimer = null;
+var pprogBuildGeneration = 0;
+
+function pprogClearBuildFailsafe() {
+  if (pprogBuildFailsafeTimer) {
+    try {
+      clearTimeout(pprogBuildFailsafeTimer);
+    } catch (e) {}
+    pprogBuildFailsafeTimer = null;
+  }
+}
+
+/** User escape hatch when iOS leaves a full-screen build overlay with no UI. */
+function pprogCancelBuildingOverlay() {
+  pprogBuildGeneration++;
+  try {
+    if (pprogBuildAbort) pprogBuildAbort.abort();
+  } catch (eAb) {}
+  pprogBuildAbort = null;
+  pprogClearBuildFailsafe();
+  pprogBusy = false;
+  setPprogBuildingOverlay(false);
+  try {
+    var store = loadPprogStore();
+    if (!(store.currentBlock && store.currentBlock.weeks && store.currentBlock.weeks.length)) {
+      pprogMarkFirstBlockBuildFailed(
+        store.lastBlockBuildError ||
+          "Build overlay closed. If the plan is missing, tap Build plan again."
+      );
+    }
+  } catch (eMark) {}
+  try {
+    syncPprogModeUi();
+    renderPprogChat();
+    renderPprogWeek();
+  } catch (eUi) {}
 }
 
 function requestPprogWeek(retryCount, opts) {
@@ -5328,12 +5382,25 @@ function requestPprogWeek(retryCount, opts) {
     reqBody.autoNextBlock = true;
     if (handoff) reqBody.blockHandoff = handoff;
   }
+  pprogClearBuildFailsafe();
+  var buildGen = ++pprogBuildGeneration;
+  pprogBuildFailsafeTimer = setTimeout(function () {
+    if (buildGen !== pprogBuildGeneration) return;
+    pprogCancelBuildingOverlay();
+    try {
+      pprogMarkFirstBlockBuildFailed("Plan build took too long. Tap Build plan again.");
+      syncPprogModeUi();
+      renderPprogWeek();
+      renderPprogChat();
+    } catch (eFsUi) {}
+  }, buildTimeoutMs + 15000);
   buildingTick = setInterval(function () {
+    if (buildGen !== pprogBuildGeneration) return;
     var sec = Math.floor((Date.now() - buildingStartedAt) / 1000);
     if (sec < 12) return;
     var tip =
       sec >= 55
-        ? "Almost at the server time limit — hang tight or retry if this fails…"
+        ? "Almost at the server time limit — hang tight or use Hide below…"
         : "Still building your 5-week brick…";
     setPprogBuildingOverlay(
       true,
@@ -5350,6 +5417,7 @@ function requestPprogWeek(retryCount, opts) {
     buildTimeoutMs
   )
     .then(function (x) {
+      if (buildGen !== pprogBuildGeneration) return;
       var j = x.j || {};
       if (!x.ok || !j.ok) {
         var gatewayish =
@@ -5397,22 +5465,36 @@ function requestPprogWeek(retryCount, opts) {
         }
       }
       if (block) {
-        var sOk = loadPprogStore();
-        sOk.blockBuildPending = false;
-        sOk.lastBlockBuildError = "";
-        savePprogStore(sOk);
-        applyPprogBlock(block, j.text, {
-          autoNextBlock: !!opts.autoNextBlock,
-          preserveIntake: !!opts.autoNextBlock,
-        });
-        setPprogStatus("ok", "<strong>Coach</strong> — block ready");
+        try {
+          var sOk = loadPprogStore();
+          sOk.blockBuildPending = false;
+          sOk.lastBlockBuildError = "";
+          savePprogStore(sOk);
+          applyPprogBlock(block, j.text, {
+            autoNextBlock: !!opts.autoNextBlock,
+            preserveIntake: !!opts.autoNextBlock,
+          });
+          setPprogStatus("ok", "<strong>Coach</strong> — block ready");
+        } catch (eApply) {
+          pprogMarkFirstBlockBuildFailed(
+            "Plan arrived but UI failed to open: " +
+              String((eApply && eApply.message) || eApply).slice(0, 180)
+          );
+        }
       } else if (week) {
-        var sWk = loadPprogStore();
-        sWk.blockBuildPending = false;
-        sWk.lastBlockBuildError = "";
-        savePprogStore(sWk);
-        applyPprogWeek(week, j.text);
-        setPprogStatus("ok", "<strong>Coach</strong> — week 1 ready (filling remaining weeks…)");
+        try {
+          var sWk = loadPprogStore();
+          sWk.blockBuildPending = false;
+          sWk.lastBlockBuildError = "";
+          savePprogStore(sWk);
+          applyPprogWeek(week, j.text);
+          setPprogStatus("ok", "<strong>Coach</strong> — week 1 ready (filling remaining weeks…)");
+        } catch (eWeek) {
+          pprogMarkFirstBlockBuildFailed(
+            "Week arrived but UI failed to open: " +
+              String((eWeek && eWeek.message) || eWeek).slice(0, 180)
+          );
+        }
       } else if (j.earlyBlockDenied) {
         if (opts.autoNextBlock && store.currentBlock && store.currentBlock.blockStart) {
           store.autoNextTriggeredForBlockStart = null;
@@ -5440,6 +5522,7 @@ function requestPprogWeek(retryCount, opts) {
       } catch (e3) {}
     })
     .catch(function (e) {
+      if (buildGen !== pprogBuildGeneration) return;
       var em = "";
       try {
         em = String((e && e.message) || e || "");
@@ -5478,11 +5561,17 @@ function requestPprogWeek(retryCount, opts) {
         } catch (eClr) {}
         buildingTick = null;
       }
+      if (buildGen !== pprogBuildGeneration) return;
       if (keepOverlayForRetry) return;
+      pprogClearBuildFailsafe();
+      pprogBuildAbort = null;
       pprogBusy = false;
       setPprogBuildingOverlay(false);
       syncPprogModeUi();
       renderPprogChat();
+      try {
+        renderPprogWeek();
+      } catch (eRw) {}
     });
 }
 
