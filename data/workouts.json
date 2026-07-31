@@ -2798,53 +2798,6 @@
       },
       {
         "date": "2026-07-31",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-07-31/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "inverted hamstring stretch",
-              "calf stretch",
-              "90/90 hip rotation",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "100m run",
-              "20sec glute bridge hold",
-              "10 good mornings"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "DEADLIFTS 15MIN",
-            "lines": [
-              "4-5 sets",
-              "5 deadlifts @77-80%",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 17MIN",
-            "lines": [
-              "3 rounds",
-              "",
-              "600m run",
-              "15 deadlifts 100/70kg",
-              "100m farmers carry 2x32/24kg",
-              "* aerobic capacity & muscular endurance"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-31",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-july-31-2026/",
@@ -2891,6 +2844,53 @@
               "Pacing: Sustain",
               "Programmer Notes: A friendly check in on handstand walking than be be ramped up or down via the bike and cleans depending on proficiency upside down."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-31",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-07-31/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "inverted hamstring stretch",
+              "calf stretch",
+              "90/90 hip rotation",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "100m run",
+              "20sec glute bridge hold",
+              "10 good mornings"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "DEADLIFTS 15MIN",
+            "lines": [
+              "4-5 sets",
+              "5 deadlifts @77-80%",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 17MIN",
+            "lines": [
+              "3 rounds",
+              "",
+              "600m run",
+              "15 deadlifts 100/70kg",
+              "100m farmers carry 2x32/24kg",
+              "* aerobic capacity & muscular endurance"
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -2984,5 +2984,5 @@
       }
     ]
   },
-  "last_updated": "2026-07-31T07:21:18.747533"
+  "last_updated": "2026-07-31T08:57:22.248985"
 }
