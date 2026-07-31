@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.2.3</title>
+<title>DUCK-WOD · v21.1</title>
 <meta name="theme-color" content="#111">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,7 +12,7 @@
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;900&family=JetBrains+Mono:wght@700&display=swap"></noscript>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif,'Oswald','Heebo';background:#111;color:#f0ece0;line-height:1.6;padding-bottom:74px}
+body{font-family:'Oswald','Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#111;color:#f0ece0;line-height:1.6;padding-bottom:74px}
 .header{background:#1a1a1a;padding:14px 16px 12px;text-align:center;border-bottom:3px solid #E8451A}
 .header-logo{width:90px;height:90px;object-fit:cover;object-position:center;display:block;margin:0 auto 8px;background:#EDE4D0;padding:2px;border-radius:12px;box-sizing:border-box}
 h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient(90deg,#E8451A,#F5C518 50%,#1A9B8A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2px}
@@ -39,7 +39,7 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .tab-pprog-wrap{border:1px dashed #8e44ad!important;background:linear-gradient(180deg,#221528 0%,#1e1e1e 100%)!important}
 .tab-pprog-wrap:hover{border-color:#b06dcf!important}
 .tab-btn.tab-pprog-wrap.active{background:#E8451A!important;border:1px dashed #d2a8e8!important;color:#fff!important}
-/* Personal Coach tab visible (v21.2). Flip PPROG_TAB_ENABLED=false to hide again. */
+/* Personal Coach tab visible (v21.1). Flip PPROG_TAB_ENABLED=false to hide again. */
 /* #tab-pprog,#pprog-tab{display:none!important} */
 .pprog-panel{max-width:720px;margin:0 auto;background:#1e1e1e;padding:20px 18px 24px;border-radius:12px;border:1px solid #2a2a2a}
 .pprog-head{display:flex;align-items:center;gap:14px;margin:0 0 14px}
@@ -265,24 +265,17 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-building-overlay{
   display:none;position:fixed;inset:0;z-index:10002;
   align-items:center;justify-content:center;
-  /* Solid fill only — backdrop-filter has caused black screens on iOS Safari. */
-  background:#1a1420;
+  background:rgba(17,12,22,.88);backdrop-filter:blur(3px)
 }
-.pprog-building-overlay[hidden]{display:none!important}
 .pprog-building-overlay.open{display:flex}
 .pprog-building-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:18px;max-width:min(92vw,420px)}
 .pprog-building-video{
   width:min(78vw,340px);max-height:min(48vh,340px);
-  border-radius:16px;border:1px solid #3a2a4a;background:#221528;
+  border-radius:16px;border:1px solid #3a2a4a;background:#111;
   box-shadow:0 10px 36px rgba(0,0,0,.5);object-fit:cover
 }
 .pprog-building-status{color:#e8e4d8;font-size:.95em;text-align:center;line-height:1.4}
 .pprog-building-status strong{color:#b06dcf;font-weight:700}
-.pprog-building-cancel{
-  margin-top:4px;padding:10px 16px;border-radius:8px;border:1px solid #6a4a7a;
-  background:#2a1e34;color:#f0ece0;font-weight:700;font-size:.88em;font-family:inherit;
-  cursor:pointer;-webkit-tap-highlight-color:transparent
-}
 .pprog-cal-week-label{color:#999;font-size:.7em;text-align:left;margin:8px 0 3px;padding:0 2px;line-height:1.3}
 .pprog-cal-block-hint{color:#666;font-size:.68em;text-align:center;margin:6px 0 0}
 .pprog-block-transition-hint{margin:0 0 12px;padding:10px 12px;background:#221528;border:1px dashed #8e44ad;border-radius:8px;color:#d8c8e8;font-size:.82em;line-height:1.45;text-align:left}
@@ -731,7 +724,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.2.3</div>
+<div class="header-sub">DAILY WORKOUTS · v21.1</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
@@ -944,24 +937,23 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 </div>
 
 <div id="pprogBuildingOverlay" class="pprog-building-overlay" aria-live="polite" aria-busy="true" hidden>
-  <div class="pprog-building-center">
-    <!-- No autoplay: looping mp4 on iOS Safari caused tab crash loops after long builds. -->
-    <video
-      id="pprogBuildingVideo"
-      class="pprog-building-video"
-      muted
-      loop
-      playsinline
-      webkit-playsinline
-      preload="none"
-      poster="assets/hamamen-coach-duck.png"
-      style="display:none"
-    >
-      <source src="assets/coach-thinking.mp4" type="video/mp4">
-    </video>
-    <img id="pprogBuildingFallback" class="pprog-building-video" src="assets/hamamen-coach-duck.png" alt="Coach" width="340" height="340">
-    <div class="pprog-building-status"><strong>Coach</strong> is building your 5-week block…</div>
-    <button type="button" class="pprog-building-cancel" id="pprogBuildingCancelBtn" onclick="pprogCancelBuildingOverlay()">Hide &amp; check status</button>
+    <div class="pprog-building-center">
+      <video
+        id="pprogBuildingVideo"
+        class="pprog-building-video"
+        autoplay
+        muted
+        loop
+        playsinline
+        webkit-playsinline
+        preload="auto"
+        poster="assets/hamamen-coach-duck.png"
+      >
+        <source src="assets/coach-thinking.mp4" type="video/mp4">
+      </video>
+      <img id="pprogBuildingFallback" class="pprog-building-video" src="assets/hamamen-coach-duck.png" alt="Coach" style="display:none" width="340" height="340">
+      <div class="pprog-building-status"><strong>Coach</strong> is building your 5-week block…</div>
+    </div>
   </div>
 </div>
 
@@ -1783,13 +1775,6 @@ function loadPprogStore() {
   try {
     var raw = localStorage.getItem(PPROG_STORE_KEY);
     if (!raw) return emptyPprogStore();
-    /* Oversized coach blobs have OOM'd iOS Safari on boot — prefer empty store over white screen. */
-    if (raw.length > 1200000) {
-      try {
-        localStorage.removeItem(PPROG_STORE_KEY);
-      } catch (eClr) {}
-      return emptyPprogStore();
-    }
     var o = JSON.parse(raw);
     if (!o || typeof o !== "object") return emptyPprogStore();
     if (!Array.isArray(o.chat)) o.chat = [];
@@ -2047,9 +2032,7 @@ function syncPprogResetBtn() {
 
 function resetPprogUser() {
   if (pprogBusy) return;
-  var ok = confirm(
-    "Reset Personal Coach and start a new intake?\n\nThis clears your current plan and profile on this device."
-  );
+  var ok = confirm("Reset this user and restart before legal agreement?");
   if (!ok) return;
   try {
     var q = new URLSearchParams(location.search || "");
@@ -4082,99 +4065,15 @@ function isPprogRestFocus(focus) {
   if (!focusL) return false;
   if (/מנוחה/.test(String(focus || ""))) return true;
   if (/\brest(\s*day)?\b/.test(focusL) || focusL === "off" || /\boff\s*day\b/.test(focusL)) return true;
-  if (/already\s*passed|past\s*day|no\s*session/.test(focusL)) return true;
   return false;
 }
 
-/** Athlete marked training days in fixed intake — any other weekday is scheduled rest. */
-function pprogIsAthleteScheduledRest(store, dayKey) {
-  var s = store || loadPprogStore();
-  var days = Array.isArray(s.trainingDays) ? s.trainingDays : [];
-  if (!days.length) return false;
-  var key = normalizePprogDayKey(dayKey) || dayKey;
-  var train = {};
-  for (var i = 0; i < days.length; i++) {
-    var dk = normalizePprogDayKey(days[i]);
-    if (dk) train[dk] = true;
-  }
-  return !train[key];
-}
-
-function pprogDayIsoInWeek(week, dayKey) {
-  var ws = (week && week.weekStart) || sundayOfThisWeekIsrael();
-  var idx = PPROG_DAY_KEYS.indexOf(normalizePprogDayKey(dayKey) || dayKey);
-  if (idx < 0) return ws;
-  return pprogAddDaysIso(ws, idx);
-}
-
-/** Calendar day already passed (Asia/Jerusalem) — do not show/program a workout. */
-function pprogIsPastCalendarDay(week, dayKey) {
-  var dayIso = pprogDayIsoInWeek(week, dayKey);
-  var today = pprogIsraelTodayIso();
-  return !!(dayIso && today && dayIso < today);
-}
-
-function pprogRestDayParts(dayKey) {
-  return [{ id: String(dayKey || "day") + "-rest", title: "REST DAY", lines: ["Rest"] }];
-}
-
-/**
- * Force REST DAY on: overview Rest, athlete non-training weekdays, and days before today.
- * Fixes week-1 fills that ignored rest days, and mid-week starts that programmed the past.
- */
-function enforcePprogCalendarRestRules(week) {
-  if (!week || typeof week !== "object") return week;
-  var store = loadPprogStore();
-  if (!Array.isArray(week.overview)) week.overview = [];
-  if (!week.days || typeof week.days !== "object") week.days = {};
-  var overviewByDay = {};
-  for (var oi = 0; oi < week.overview.length; oi++) {
-    var row = week.overview[oi];
-    if (!row) continue;
-    var rd = normalizePprogDayKey(row.day) || String(row.day || "").toLowerCase();
-    if (rd) overviewByDay[rd] = row;
-  }
-  for (var i = 0; i < PPROG_DAY_KEYS.length; i++) {
-    var k = PPROG_DAY_KEYS[i];
-    var past = pprogIsPastCalendarDay(week, k);
-    var schedRest = pprogIsAthleteScheduledRest(store, k);
-    var focus = overviewByDay[k] ? String(overviewByDay[k].focus || "") : pprogOverviewFocus(week, k);
-    var focusRest = isPprogRestFocus(focus);
-    if (!(past || schedRest || focusRest)) continue;
-    var restFocus = past && !schedRest && !focusRest ? "Rest" : "Rest";
-    if (overviewByDay[k]) {
-      overviewByDay[k].focus = restFocus;
-      overviewByDay[k].day = k;
-      overviewByDay[k].label = overviewByDay[k].label || PPROG_DAY_LABELS[k];
-    } else {
-      var rowNew = { day: k, label: PPROG_DAY_LABELS[k], focus: restFocus };
-      week.overview.push(rowNew);
-      overviewByDay[k] = rowNew;
-    }
-    var prevDay = week.days[k] || {};
-    week.days[k] = {
-      parts: pprogRestDayParts(k),
-      preTalk: String(prevDay.preTalk || ""),
-      debrief: String(prevDay.debrief || ""),
-      lastPreReply: String(prevDay.lastPreReply || ""),
-      lastDebriefReply: String(prevDay.lastDebriefReply || ""),
-      modifiedPartKinds: prevDay.modifiedPartKinds || {},
-    };
-  }
-  return week;
-}
-
-/** Rest day: overview / schedule / past calendar day / parts indicate rest */
+/** Rest day: overview focus / parts indicate rest / מנוחה — never treat empty/loading as rest */
 function isPprogRestDay(dayKey, dayData, week) {
-  if (week && pprogIsPastCalendarDay(week, dayKey)) return true;
-  try {
-    if (pprogIsAthleteScheduledRest(loadPprogStore(), dayKey)) return true;
-  } catch (e) {}
   var focus = pprogOverviewFocus(week, dayKey);
   var focusL = focus.toLowerCase().trim();
   var parts = (dayData && dayData.parts) || [];
   if (isPprogRestFocus(focus)) return true;
-  if (parts.length === 1 && /rest\s*day/i.test(String(parts[0].title || ""))) return true;
   if (/^(recovery|active\s*recovery|recovery\s*day)$/i.test(focusL) && (!parts.length || parts.length <= 1)) {
     var onlyEmpty =
       !parts.length ||
@@ -4684,7 +4583,6 @@ function normalizePprogWeek(week, prevWeek, weekStartOverride, weekMeta) {
       return { day: k, label: PPROG_DAY_LABELS[k], focus: titles || "—" };
     });
   }
-  enforcePprogCalendarRestRules(out);
   return out;
 }
 
@@ -5254,20 +5152,57 @@ function setPprogBuildingOverlay(on, statusHtml) {
   if (on) {
     overlay.hidden = false;
     overlay.classList.add("open");
-    /* Static image only — do not autoplay looping mp4 (iOS WebKit crash loop). */
+    if (fallback) fallback.style.display = "none";
     if (video) {
       try {
-        video.pause();
-      } catch (eVid) {}
-      video.style.display = "none";
-    }
-    if (fallback) {
-      fallback.style.display = "block";
-      try {
-        if (!fallback.getAttribute("src")) {
-          fallback.setAttribute("src", "assets/hamamen-coach-duck.png");
+        video.setAttribute("playsinline", "");
+        video.setAttribute("webkit-playsinline", "");
+        video.muted = true;
+        video.defaultMuted = true;
+        video.playsInline = true;
+        video.loop = true;
+        video.style.display = "";
+        var srcEl = video.querySelector("source");
+        if (srcEl) {
+          var abs = new URL("assets/coach-thinking.mp4", location.href).href;
+          if (srcEl.getAttribute("src") !== abs && srcEl.src !== abs) {
+            srcEl.setAttribute("src", abs);
+            video.load();
+          }
         }
-      } catch (eSrc) {}
+        var tryPlay = function () {
+          var p = video.play();
+          if (p && typeof p.catch === "function") {
+            p.catch(function () {
+              if (fallback) {
+                video.style.display = "none";
+                fallback.style.display = "block";
+              }
+            });
+          }
+        };
+        video.onerror = function () {
+          if (fallback) {
+            video.style.display = "none";
+            fallback.style.display = "block";
+          }
+        };
+        try {
+          video.currentTime = 0;
+        } catch (e0) {}
+        /* iOS often needs a tick after the overlay becomes visible */
+        requestAnimationFrame(function () {
+          tryPlay();
+          setTimeout(tryPlay, 250);
+        });
+      } catch (e) {
+        if (fallback) {
+          if (video) video.style.display = "none";
+          fallback.style.display = "block";
+        }
+      }
+    } else if (fallback) {
+      fallback.style.display = "block";
     }
   } else {
     overlay.classList.remove("open");
@@ -5276,49 +5211,9 @@ function setPprogBuildingOverlay(on, statusHtml) {
       try {
         video.pause();
       } catch (e2) {}
-      video.style.display = "none";
     }
-    if (fallback) fallback.style.display = "block";
+    if (fallback) fallback.style.display = "none";
   }
-}
-
-var pprogBuildAbort = null;
-var pprogBuildFailsafeTimer = null;
-var pprogBuildGeneration = 0;
-
-function pprogClearBuildFailsafe() {
-  if (pprogBuildFailsafeTimer) {
-    try {
-      clearTimeout(pprogBuildFailsafeTimer);
-    } catch (e) {}
-    pprogBuildFailsafeTimer = null;
-  }
-}
-
-/** User escape hatch when iOS leaves a full-screen build overlay with no UI. */
-function pprogCancelBuildingOverlay() {
-  pprogBuildGeneration++;
-  try {
-    if (pprogBuildAbort) pprogBuildAbort.abort();
-  } catch (eAb) {}
-  pprogBuildAbort = null;
-  pprogClearBuildFailsafe();
-  pprogBusy = false;
-  setPprogBuildingOverlay(false);
-  try {
-    var store = loadPprogStore();
-    if (!(store.currentBlock && store.currentBlock.weeks && store.currentBlock.weeks.length)) {
-      pprogMarkFirstBlockBuildFailed(
-        store.lastBlockBuildError ||
-          "Build overlay closed. If the plan is missing, tap Build plan again."
-      );
-    }
-  } catch (eMark) {}
-  try {
-    syncPprogModeUi();
-    renderPprogChat();
-    renderPprogWeek();
-  } catch (eUi) {}
 }
 
 function requestPprogWeek(retryCount, opts) {
@@ -5364,49 +5259,32 @@ function requestPprogWeek(retryCount, opts) {
       : "<strong>Coach</strong> is building your 5-week block…"
   );
   var msgs = loadPprogMessages();
+  var payloadMsgs = [];
+  if (!opts.autoNextBlock && (opts.isFirstBlock || !hasBlock)) {
+    for (var i = 0; i < msgs.length; i++) {
+      if (msgs[i].role === "user" || msgs[i].role === "model") {
+        payloadMsgs.push({ role: msgs[i].role, text: msgs[i].text });
+      }
+    }
+  }
+  if (retries > 0) {
+    payloadMsgs.push({
+      role: "user",
+      text:
+        "Previous reply had no valid <<<BLOCK_JSON>>>. Return only a full BLOCK_JSON with exactly 5 weeks now — no long chat. All workout text in English.",
+    });
+  }
   var keepOverlayForRetry = false;
-  var buildingStartedAt = Date.now();
-  var buildingTick = null;
-  /* Hobby Vercel caps serverless ~60s — waiting 290s left the GIF looping with no calendar. */
-  var buildTimeoutMs = 70000;
   var reqBody = {
     action: "generate_block",
-    /* Server rebuilds from fixedIntakePacket; skip re-sending full intake chat. */
-    messages: [],
+    messages: payloadMsgs,
     intakeComplete: true,
-    /* First call JSON-only — avoids a second full Gemini pass that blows the gateway budget. */
-    forceJson: true,
-    athleteProfile: athleteProfilePayload({ forceIntakeComplete: true, omitChat: true }),
+    athleteProfile: athleteProfilePayload({ forceIntakeComplete: true, omitChat: !!opts.autoNextBlock }),
   };
   if (opts.autoNextBlock) {
     reqBody.autoNextBlock = true;
     if (handoff) reqBody.blockHandoff = handoff;
   }
-  pprogClearBuildFailsafe();
-  var buildGen = ++pprogBuildGeneration;
-  pprogBuildFailsafeTimer = setTimeout(function () {
-    if (buildGen !== pprogBuildGeneration) return;
-    pprogCancelBuildingOverlay();
-    try {
-      pprogMarkFirstBlockBuildFailed("Plan build took too long. Tap Build plan again.");
-      syncPprogModeUi();
-      renderPprogWeek();
-      renderPprogChat();
-    } catch (eFsUi) {}
-  }, buildTimeoutMs + 15000);
-  buildingTick = setInterval(function () {
-    if (buildGen !== pprogBuildGeneration) return;
-    var sec = Math.floor((Date.now() - buildingStartedAt) / 1000);
-    if (sec < 12) return;
-    var tip =
-      sec >= 55
-        ? "Almost at the server time limit — hang tight or use Hide below…"
-        : "Still building your 5-week brick…";
-    setPprogBuildingOverlay(
-      true,
-      "<strong>Coach</strong> — " + tip + " <span style=\"opacity:.7\">(" + sec + "s)</span>"
-    );
-  }, 3000);
   fetchAiWithTimeout(
     base + "/api/personal-coach",
     {
@@ -5414,29 +5292,11 @@ function requestPprogWeek(retryCount, opts) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(reqBody),
     },
-    buildTimeoutMs
+    180000
   )
     .then(function (x) {
-      if (buildGen !== pprogBuildGeneration) return;
       var j = x.j || {};
       if (!x.ok || !j.ok) {
-        var gatewayish =
-          x.status === 504 ||
-          x.status === 502 ||
-          x.status === 503 ||
-          /timeout|gateway|504|502/i.test(
-            String((j && (j.error || j.detail || j.hint)) || "") + " " + (x.status || "")
-          );
-        if (gatewayish && retries < 1) {
-          keepOverlayForRetry = true;
-          pprogBusy = false;
-          setPprogBuildingOverlay(
-            true,
-            "<strong>Coach</strong> — server timed out, retrying once…"
-          );
-          requestPprogWeek(retries + 1, opts);
-          return;
-        }
         if (opts.autoNextBlock && store.currentBlock && store.currentBlock.blockStart) {
           store.autoNextTriggeredForBlockStart = null;
           savePprogStore(store);
@@ -5465,36 +5325,22 @@ function requestPprogWeek(retryCount, opts) {
         }
       }
       if (block) {
-        try {
-          var sOk = loadPprogStore();
-          sOk.blockBuildPending = false;
-          sOk.lastBlockBuildError = "";
-          savePprogStore(sOk);
-          applyPprogBlock(block, j.text, {
-            autoNextBlock: !!opts.autoNextBlock,
-            preserveIntake: !!opts.autoNextBlock,
-          });
-          setPprogStatus("ok", "<strong>Coach</strong> — block ready");
-        } catch (eApply) {
-          pprogMarkFirstBlockBuildFailed(
-            "Plan arrived but UI failed to open: " +
-              String((eApply && eApply.message) || eApply).slice(0, 180)
-          );
-        }
+        var sOk = loadPprogStore();
+        sOk.blockBuildPending = false;
+        sOk.lastBlockBuildError = "";
+        savePprogStore(sOk);
+        applyPprogBlock(block, j.text, {
+          autoNextBlock: !!opts.autoNextBlock,
+          preserveIntake: !!opts.autoNextBlock,
+        });
+        setPprogStatus("ok", "<strong>Coach</strong> — block ready");
       } else if (week) {
-        try {
-          var sWk = loadPprogStore();
-          sWk.blockBuildPending = false;
-          sWk.lastBlockBuildError = "";
-          savePprogStore(sWk);
-          applyPprogWeek(week, j.text);
-          setPprogStatus("ok", "<strong>Coach</strong> — week 1 ready (filling remaining weeks…)");
-        } catch (eWeek) {
-          pprogMarkFirstBlockBuildFailed(
-            "Week arrived but UI failed to open: " +
-              String((eWeek && eWeek.message) || eWeek).slice(0, 180)
-          );
-        }
+        var sWk = loadPprogStore();
+        sWk.blockBuildPending = false;
+        sWk.lastBlockBuildError = "";
+        savePprogStore(sWk);
+        applyPprogWeek(week, j.text);
+        setPprogStatus("ok", "<strong>Coach</strong> — week 1 ready (filling remaining weeks…)");
       } else if (j.earlyBlockDenied) {
         if (opts.autoNextBlock && store.currentBlock && store.currentBlock.blockStart) {
           store.autoNextTriggeredForBlockStart = null;
@@ -5522,21 +5368,6 @@ function requestPprogWeek(retryCount, opts) {
       } catch (e3) {}
     })
     .catch(function (e) {
-      if (buildGen !== pprogBuildGeneration) return;
-      var em = "";
-      try {
-        em = String((e && e.message) || e || "");
-      } catch (eNet0) {}
-      if (/timeout|aborted|AbortError|504|Gateway/i.test(em) && retries < 1) {
-        keepOverlayForRetry = true;
-        pprogBusy = false;
-        setPprogBuildingOverlay(
-          true,
-          "<strong>Coach</strong> — timed out, retrying once…"
-        );
-        requestPprogWeek(retries + 1, opts);
-        return;
-      }
       if (opts.autoNextBlock) {
         var sFail = loadPprogStore();
         if (sFail.currentBlock && sFail.currentBlock.blockStart) {
@@ -5544,34 +5375,15 @@ function requestPprogWeek(retryCount, opts) {
           savePprogStore(sFail);
         }
       }
-      var netMsg = "Network error building block.";
-      if (/timeout|aborted|AbortError/i.test(em)) {
-        netMsg =
-          "Coach timed out building the plan. Tap Build plan again — do not leave the screen mid-build.";
-      } else if (/504|Gateway/i.test(em)) {
-        netMsg = "Gateway timeout (504) while building the plan. Tap Build plan again.";
-      }
-      pprogMarkFirstBlockBuildFailed(netMsg);
-      setPprogStatus("err", "<strong>Coach</strong> — " + esc(netMsg));
+      pprogMarkFirstBlockBuildFailed("Network error building block.");
+      setPprogStatus("err", "<strong>Coach</strong> — network error building block.");
     })
     .then(function () {
-      if (buildingTick) {
-        try {
-          clearInterval(buildingTick);
-        } catch (eClr) {}
-        buildingTick = null;
-      }
-      if (buildGen !== pprogBuildGeneration) return;
       if (keepOverlayForRetry) return;
-      pprogClearBuildFailsafe();
-      pprogBuildAbort = null;
       pprogBusy = false;
       setPprogBuildingOverlay(false);
       syncPprogModeUi();
       renderPprogChat();
-      try {
-        renderPprogWeek();
-      } catch (eRw) {}
     });
 }
 
@@ -6710,11 +6522,6 @@ function renderPprogWeek() {
     syncPprogBrickChatUi();
     return;
   }
-  /* Repair rest days for mid-week starts + scheduled rest (incl. week 1 fills that ignored Rest). */
-  enforcePprogCalendarRestRules(week);
-  block.weeks[activeWi] = week;
-  store.currentWeek = week;
-  savePprogStore(store);
 
   if (pprogActiveDay !== "general" && PPROG_DAY_KEYS.indexOf(pprogActiveDay) < 0) {
     pprogActiveDay = "general";
@@ -6805,24 +6612,9 @@ function initPprogUi() {
 
 try {
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", function () {
-      /* Defer Personal Coach boot so Browse workouts can paint first on weak iOS connections. */
-      setTimeout(function () {
-        try {
-          initPprogUi();
-        } catch (eInit) {
-          try {
-            console.warn("[duck-wod] Personal Coach init skipped:", eInit);
-          } catch (eLog) {}
-        }
-      }, 0);
-    });
+    document.addEventListener("DOMContentLoaded", initPprogUi);
   } else {
-    setTimeout(function () {
-      try {
-        initPprogUi();
-      } catch (eInit2) {}
-    }, 0);
+    initPprogUi();
   }
 } catch (e) {}
 
@@ -8052,11 +7844,7 @@ function buildAiErrorMessage(x) {
   if (x.status === 504) {
     var h504 = x.j && x.j.hint ? String(x.j.hint) : "";
     var e504 = String(x.j && x.j.error ? x.j.error : "");
-    return (
-      (e504 || "Gateway timeout (504) while the coach was building your plan.") +
-      " Tap Build plan again." +
-      (h504 ? "\n\n" + h504 : "")
-    );
+    return (e504 || "Gateway timeout (504).") + (h504 ? "\n\n" + h504 : "");
   }
   return base;
 }
@@ -8528,18 +8316,9 @@ function convertUnits(text) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-  try {
-    var gridBoot = document.getElementById("grid");
-    if (gridBoot && !gridBoot.innerHTML) {
-      gridBoot.innerHTML =
-        "<div class=\"empty\"><div class=\"empty-icon\">⏳</div>Loading workouts…</div>";
-    }
-  } catch (eBoot) {}
-  try {
-    ["touchstart","pointerdown","click","keydown"].forEach(function(evt) {
-      document.addEventListener(evt, timerAudioUnlock, { passive: true });
-    });
-  } catch (eAud) {}
+  ["touchstart","pointerdown","click","keydown"].forEach(function(evt) {
+    document.addEventListener(evt, timerAudioUnlock, { passive: true });
+  });
   // Load saved source order
   try {
     var savedOrder = localStorage.getItem("duck-wod-order");
@@ -8554,36 +8333,13 @@ document.addEventListener("DOMContentLoaded", function() {
       SOURCES = newSources;
     }
   } catch(e) {}
-
-  try {
-    buildDaysBar();
-  } catch (eDays) {}
-  try {
-    loadData();
-  } catch (eData) {
-    try {
-      var g = document.getElementById("grid");
-      if (g) {
-        g.innerHTML =
-          "<div class=\"empty\"><div class=\"empty-icon\">⚠️</div>Cannot start workout load<br><small>" +
-          String((eData && eData.message) || eData).slice(0, 160) +
-          "</small></div>";
-      }
-    } catch (eGrid) {}
-  }
-  try {
-    buildSources();
-  } catch (eSrc) {}
-  try {
-    loadTimerSettings();
-  } catch (eTs) {}
-  try {
-    initTimerColorBuckets();
-  } catch (eTc) {}
-  try {
-    setStopwatchDirection(true);
-  } catch (eSd) {}
-  try {
+  
+  buildDaysBar();
+  loadData();
+  buildSources();
+  loadTimerSettings();
+  initTimerColorBuckets();
+  setStopwatchDirection(true);
   (function initSwipeDays() {
     var browseTab = document.getElementById("browse-tab");
     if (!browseTab) return;
@@ -8611,14 +8367,8 @@ document.addEventListener("DOMContentLoaded", function() {
       else if (deltaX < -55 && idx < dates.length - 1) { goDate(dates[idx + 1]); e.preventDefault(); }
     }, { passive: false });
   })();
-  } catch (eSwipe) {}
-  try {
-    initAiTagChips();
-  } catch (eTags) {}
-  try {
-    initAiPresetsUi();
-  } catch (ePres) {}
-  try {
+  initAiTagChips();
+  initAiPresetsUi();
   var aiUnlCb = document.getElementById("aiUnlimitedTime");
   if (aiUnlCb && !aiUnlCb.dataset.syncBound) {
     aiUnlCb.dataset.syncBound = "1";
@@ -8689,7 +8439,6 @@ document.addEventListener("DOMContentLoaded", function() {
   });
   updateIntervalOverallTime();
   initConvertorUi();
-  } catch (eAiBoot) {}
 });
 
 /** One automatic re-fetch ~75s later if Israel-today has no rows yet (covers deploy/fetch delay after midnight). */
