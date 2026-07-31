@@ -5346,31 +5346,19 @@ function requestPprogWeek(retryCount, opts) {
       : "<strong>Coach</strong> is building your 5-week block…"
   );
   var msgs = loadPprogMessages();
-  var payloadMsgs = [];
-  if (!opts.autoNextBlock && (opts.isFirstBlock || !hasBlock)) {
-    for (var i = 0; i < msgs.length; i++) {
-      if (msgs[i].role === "user" || msgs[i].role === "model") {
-        payloadMsgs.push({ role: msgs[i].role, text: msgs[i].text });
-      }
-    }
-  }
-  if (retries > 0) {
-    payloadMsgs.push({
-      role: "user",
-      text:
-        "Previous reply had no valid <<<BLOCK_JSON>>>. Return only a full BLOCK_JSON with exactly 5 weeks now — no long chat. All workout text in English.",
-    });
-  }
   var keepOverlayForRetry = false;
   var buildingStartedAt = Date.now();
   var buildingTick = null;
+  /* Hobby Vercel caps serverless ~60s — waiting 290s left the GIF looping with no calendar. */
+  var buildTimeoutMs = 70000;
   var reqBody = {
     action: "generate_block",
-    messages: payloadMsgs,
+    /* Server rebuilds from fixedIntakePacket; skip re-sending full intake chat. */
+    messages: [],
     intakeComplete: true,
     /* First call JSON-only — avoids a second full Gemini pass that blows the gateway budget. */
     forceJson: true,
-    athleteProfile: athleteProfilePayload({ forceIntakeComplete: true, omitChat: !!opts.autoNextBlock }),
+    athleteProfile: athleteProfilePayload({ forceIntakeComplete: true, omitChat: true }),
   };
   if (opts.autoNextBlock) {
     reqBody.autoNextBlock = true;
@@ -5378,16 +5366,16 @@ function requestPprogWeek(retryCount, opts) {
   }
   buildingTick = setInterval(function () {
     var sec = Math.floor((Date.now() - buildingStartedAt) / 1000);
-    if (sec < 40) return;
+    if (sec < 12) return;
     var tip =
-      sec >= 90
-        ? "Still building — quality plan, almost there…"
+      sec >= 55
+        ? "Almost at the server time limit — hang tight or retry if this fails…"
         : "Still building your 5-week brick…";
     setPprogBuildingOverlay(
       true,
       "<strong>Coach</strong> — " + tip + " <span style=\"opacity:.7\">(" + sec + "s)</span>"
     );
-  }, 5000);
+  }, 3000);
   fetchAiWithTimeout(
     base + "/api/personal-coach",
     {
@@ -5395,11 +5383,28 @@ function requestPprogWeek(retryCount, opts) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(reqBody),
     },
-    290000
+    buildTimeoutMs
   )
     .then(function (x) {
       var j = x.j || {};
       if (!x.ok || !j.ok) {
+        var gatewayish =
+          x.status === 504 ||
+          x.status === 502 ||
+          x.status === 503 ||
+          /timeout|gateway|504|502/i.test(
+            String((j && (j.error || j.detail || j.hint)) || "") + " " + (x.status || "")
+          );
+        if (gatewayish && retries < 1) {
+          keepOverlayForRetry = true;
+          pprogBusy = false;
+          setPprogBuildingOverlay(
+            true,
+            "<strong>Coach</strong> — server timed out, retrying once…"
+          );
+          requestPprogWeek(retries + 1, opts);
+          return;
+        }
         if (opts.autoNextBlock && store.currentBlock && store.currentBlock.blockStart) {
           store.autoNextTriggeredForBlockStart = null;
           savePprogStore(store);
@@ -5471,6 +5476,20 @@ function requestPprogWeek(retryCount, opts) {
       } catch (e3) {}
     })
     .catch(function (e) {
+      var em = "";
+      try {
+        em = String((e && e.message) || e || "");
+      } catch (eNet0) {}
+      if (/timeout|aborted|AbortError|504|Gateway/i.test(em) && retries < 1) {
+        keepOverlayForRetry = true;
+        pprogBusy = false;
+        setPprogBuildingOverlay(
+          true,
+          "<strong>Coach</strong> — timed out, retrying once…"
+        );
+        requestPprogWeek(retries + 1, opts);
+        return;
+      }
       if (opts.autoNextBlock) {
         var sFail = loadPprogStore();
         if (sFail.currentBlock && sFail.currentBlock.blockStart) {
@@ -5479,15 +5498,12 @@ function requestPprogWeek(retryCount, opts) {
         }
       }
       var netMsg = "Network error building block.";
-      try {
-        var em = String((e && e.message) || e || "");
-        if (/timeout|aborted|AbortError/i.test(em)) {
-          netMsg =
-            "Coach timed out building the plan. Tap Build plan again — do not leave the screen mid-build.";
-        } else if (/504|Gateway/i.test(em)) {
-          netMsg = "Gateway timeout (504) while building the plan. Tap Build plan again.";
-        }
-      } catch (eNet) {}
+      if (/timeout|aborted|AbortError/i.test(em)) {
+        netMsg =
+          "Coach timed out building the plan. Tap Build plan again — do not leave the screen mid-build.";
+      } else if (/504|Gateway/i.test(em)) {
+        netMsg = "Gateway timeout (504) while building the plan. Tap Build plan again.";
+      }
       pprogMarkFirstBlockBuildFailed(netMsg);
       setPprogStatus("err", "<strong>Coach</strong> — " + esc(netMsg));
     })
