@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.1.9 BETA</title>
+<title>DUCK-WOD · v21.1.10 BETA</title>
 <meta name="theme-color" content="#111">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -44,8 +44,6 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-panel{max-width:720px;margin:0 auto;background:#1e1e1e;padding:20px 18px 24px;border-radius:12px;border:1px solid #2a2a2a}
 .pprog-head{display:flex;align-items:center;gap:14px;margin:0 0 14px}
 .pprog-coach-avatar{width:72px;height:72px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.45))}
-.pprog-head-reset{margin-left:auto;padding:5px 9px;min-height:30px;font-size:.75em;line-height:1;background:#c62828!important;border-color:#c62828!important;color:#fff!important}
-.pprog-head-reset:hover{background:#b71c1c!important;border-color:#b71c1c!important}
 .pprog-panel h2{color:#b06dcf;margin:0;font-size:1.25em;font-weight:700;letter-spacing:.04em}
 .pprog-subtabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px;justify-content:center}
 .pprog-subtab{padding:7px 10px;background:#252525;border:1px solid #3a3a3a;border-radius:6px;color:#ddd;font-size:.78em;font-weight:600;cursor:pointer;font-family:inherit}
@@ -192,9 +190,9 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-cal-month-btn{background:transparent;border:none;color:#e8e4d8;font-size:1.05em;font-weight:700;cursor:pointer;font-family:inherit;padding:4px 8px;letter-spacing:.02em}
 .pprog-cal-month-btn:hover{color:#b06dcf}
 .pprog-cal-today-row{display:flex;justify-content:center;margin:0 0 10px}
-.pprog-cal-today{appearance:none;background:#252525;border:1px solid #4a4a4a;color:#e8e4d8;font-size:.72em;font-weight:700;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:inherit;letter-spacing:.02em;line-height:1.2;min-height:34px;-webkit-tap-highlight-color:rgba(26,155,138,0.25)}
-.pprog-cal-today:hover{border-color:#1A9B8A;color:#fff}
-.pprog-cal-today:active{background:#1A9B8A;border-color:#1A9B8A;color:#fff}
+.pprog-cal-today{appearance:none;background:#F5C518;border:1px solid #F5C518;color:#111;font-size:.72em;font-weight:800;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:inherit;letter-spacing:.02em;line-height:1.2;min-height:34px;box-shadow:0 2px 10px rgba(245,197,24,.35);-webkit-tap-highlight-color:rgba(245,197,24,0.35)}
+.pprog-cal-today:hover{background:#ffd54f;border-color:#ffd54f;color:#111}
+.pprog-cal-today:active{background:#e6b800;border-color:#e6b800;color:#111}
 .pprog-cal-dow,.pprog-cal-row{display:grid;grid-template-columns:minmax(48px,0.85fr) repeat(7,1fr);gap:2px;text-align:center;align-items:center}
 .pprog-cal-dow{margin-bottom:4px}
 .pprog-cal-dow span{color:#888;font-size:.68em;font-weight:600;padding:2px 0}
@@ -259,7 +257,6 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
   .pprog-panel{padding:14px 10px 20px}
   .pprog-head{gap:10px}
   .pprog-coach-avatar{width:60px;height:60px}
-  .pprog-head-reset{padding:4px 8px;font-size:.7em;min-height:28px}
   .pprog-chat-form textarea{font-size:16px}
   .pprog-chat-actions .btn,.pprog-chat-form .btn{touch-action:manipulation}
   .pprog-send-btn{min-height:40px;padding:8px 10px!important}
@@ -700,7 +697,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.1.9 BETA</div>
+<div class="header-sub">DAILY WORKOUTS · v21.1.10 BETA</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
@@ -856,7 +853,6 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
     <div class="pprog-head">
       <img class="pprog-coach-avatar" src="assets/hamamen-coach-duck.png" alt="Personal Coach" width="72" height="72">
       <h2>Personal Coach</h2>
-      <button type="button" class="btn pprog-head-reset" id="pprogHeadResetBtn" onclick="resetPprogUser()" title="Temporary reset for testing">&#10227; Reset</button>
     </div>
 
     <!-- Intake chat — after intake, re-shown under calendar in month/brick view -->
@@ -5478,7 +5474,7 @@ function setPprogCalDay(weekIndex0, dayKey) {
   syncStoreActiveWeek(store);
   savePprogStore(store);
   pprogActiveDay = dayKey || "general";
-  pprogCalMode = "week";
+  /* Stay in month/brick view — only Today jumps to daily week mode */
   renderPprogWeek();
   if (dayKey !== "general" && !weekHasDetailedDays(store.currentWeek)) {
     requestPprogWeekDetail(wi, false);
@@ -6371,6 +6367,66 @@ function renderPprogCalHtml(block, activeWi, activeDay) {
   return html;
 }
 
+function renderPprogDayCardHtml(block, week, activeWi, day) {
+  var dayData = (week && week.days && week.days[day]) || { parts: [], preTalk: "", debrief: "" };
+  var dayIso = pprogAddDaysIso(block.blockStart, activeWi * 7 + PPROG_DAY_KEYS.indexOf(day));
+  var dateLabel =
+    PPROG_DAY_LABELS[day] +
+    " · " +
+    pprogParseIso(dayIso).getDate() +
+    " " +
+    PPROG_MONTH_NAMES[pprogParseIso(dayIso).getMonth()];
+  var detailed = weekHasDetailedDays(week);
+  var html = "";
+  if (!detailed) {
+    if (pprogFillErrors[activeWi] && (pprogFillAttempts[activeWi] || 0) >= PPROG_FILL_MAX_ATTEMPTS) {
+      var failDetail =
+        pprogFillErrors[activeWi] ||
+        "Could not load this week's workouts.";
+      html +=
+        '<div class="pprog-fill-status err" style="padding:8px">' +
+        esc(failDetail) +
+        ' <button type="button" class="btn btn-find" style="padding:4px 10px;font-size:.75em" onclick="retryPprogFillFailures()">Retry fill</button></div>';
+    } else {
+      html += '<div class="pprog-empty" style="padding:12px 8px">Loading this week\'s workouts…</div>';
+      requestPprogWeekDetail(activeWi, false);
+    }
+  }
+  html += '<div class="pprog-day-card" dir="ltr">';
+  html +=
+    '<div class="card-header"><div class="source-name">' +
+    esc(dateLabel) +
+    "</div></div>";
+  var focus = pprogOverviewFocus(week, day);
+  var restDay = isPprogRestDay(day, dayData, week);
+  if (restDay) {
+    html +=
+      '<div class="pprog-rest-day">' +
+      '<div class="pprog-rest-day-title">REST DAY</div>' +
+      '<img class="pprog-rest-day-img" src="assets/rest-day-duck.png" alt="Rest day" width="260" height="260" loading="lazy">' +
+      "</div>";
+    html += renderPprogDayFooter(day, dayData);
+  } else {
+    var parts = dayData.parts || [];
+    if ((!parts.length || !parts.some(function (p) { return p.lines && p.lines.length; })) && focus && focus !== "—") {
+      parts = stubPartsFromOverview(week, day);
+    }
+    var hasRealParts = !!(parts.length && parts.some(function (p) { return p && ((p.lines && p.lines.length) || p.title); }));
+    if (!hasRealParts && focus && focus !== "—") {
+      html += '<div class="pprog-summary" style="margin-bottom:10px;font-size:.88em">' + esc(focus) + "</div>";
+    }
+    if (!parts.length && !detailed) {
+      html +=
+        '<div class="pprog-day-stub"><strong>Session pending</strong>Overview is ready; full parts are still being generated for this week.</div>';
+    } else {
+      html += renderPprogDayPartsHtml(parts, dayData, day);
+    }
+    html += renderPprogDayFooter(day, dayData);
+  }
+  html += "</div>";
+  return html;
+}
+
 function renderPprogWeek() {
   var store = loadPprogStore();
   ensurePprogBlockFiveWeeks(store);
@@ -6447,70 +6503,18 @@ function renderPprogWeek() {
   }
 
   if (pprogCalMode === "month") {
-    html +=
-      '<div class="pprog-empty" style="padding:16px 8px">Full block · ' +
-      esc(pprogBlockSpanLabel(block)) +
-      " — tap a date for that day, or chat below about the whole brick.</div>";
+    if (pprogActiveDay !== "general" && PPROG_DAY_KEYS.indexOf(pprogActiveDay) >= 0) {
+      html += renderPprogDayCardHtml(block, week, activeWi, pprogActiveDay);
+    } else {
+      html +=
+        '<div class="pprog-empty" style="padding:16px 8px">Full block · ' +
+        esc(pprogBlockSpanLabel(block)) +
+        " — tap a date to preview that workout below, or chat about the whole brick. Tap <strong>Today</strong> for the current training day.</div>";
+    }
   } else if (pprogActiveDay === "general") {
     html += renderPprogGeneralPane(week, activeWi);
   } else {
-    var day = pprogActiveDay;
-    var dayData = week.days[day] || { parts: [], preTalk: "", debrief: "" };
-    var dayIso = pprogAddDaysIso(block.blockStart, activeWi * 7 + PPROG_DAY_KEYS.indexOf(day));
-    var dateLabel =
-      PPROG_DAY_LABELS[day] +
-      " · " +
-      pprogParseIso(dayIso).getDate() +
-      " " +
-      PPROG_MONTH_NAMES[pprogParseIso(dayIso).getMonth()];
-    var detailed = weekHasDetailedDays(week);
-    if (!detailed) {
-      if (pprogFillErrors[activeWi] && (pprogFillAttempts[activeWi] || 0) >= PPROG_FILL_MAX_ATTEMPTS) {
-        var failDetail =
-          pprogFillErrors[activeWi] ||
-          "Could not load this week's workouts.";
-        html +=
-          '<div class="pprog-fill-status err" style="padding:8px">' +
-          esc(failDetail) +
-          ' <button type="button" class="btn btn-find" style="padding:4px 10px;font-size:.75em" onclick="retryPprogFillFailures()">Retry fill</button></div>';
-      } else {
-        html += '<div class="pprog-empty" style="padding:12px 8px">Loading this week\'s workouts…</div>';
-        requestPprogWeekDetail(activeWi, false);
-      }
-    }
-    html += '<div class="pprog-day-card" dir="ltr">';
-    html +=
-      '<div class="card-header"><div class="source-name">' +
-      esc(dateLabel) +
-      "</div></div>";
-    var focus = pprogOverviewFocus(week, day);
-    var restDay = isPprogRestDay(day, dayData, week);
-    if (restDay) {
-      html +=
-        '<div class="pprog-rest-day">' +
-        '<div class="pprog-rest-day-title">REST DAY</div>' +
-        '<img class="pprog-rest-day-img" src="assets/rest-day-duck.png" alt="Rest day" width="260" height="260" loading="lazy">' +
-        "</div>";
-      /* Keep optional debrief only — rest visual is the main ask */
-      html += renderPprogDayFooter(day, dayData);
-    } else {
-      var parts = dayData.parts || [];
-      if ((!parts.length || !parts.some(function (p) { return p.lines && p.lines.length; })) && focus && focus !== "—") {
-        parts = stubPartsFromOverview(week, day);
-      }
-      var hasRealParts = !!(parts.length && parts.some(function (p) { return p && ((p.lines && p.lines.length) || p.title); }));
-      if (!hasRealParts && focus && focus !== "—") {
-        html += '<div class="pprog-summary" style="margin-bottom:10px;font-size:.88em">' + esc(focus) + "</div>";
-      }
-      if (!parts.length && !detailed) {
-        html +=
-          '<div class="pprog-day-stub"><strong>Session pending</strong>Overview is ready; full parts are still being generated for this week.</div>';
-      } else {
-        html += renderPprogDayPartsHtml(parts, dayData, day);
-      }
-      html += renderPprogDayFooter(day, dayData);
-    }
-    html += "</div>";
+    html += renderPprogDayCardHtml(block, week, activeWi, pprogActiveDay);
   }
 
   panesEl.innerHTML = html;
