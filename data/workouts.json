@@ -922,30 +922,6 @@
       },
       {
         "date": "2026-07-22",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "THE END",
-            "lines": [
-              "20/16 Calorie Row",
-              "30 Wall Balls 9kg/6kg",
-              "20 Toes to Bar",
-              "30 Box Jumps 24\"/20\"",
-              "20 Kettlebell Sumo Deadlift High Pull 32kg/25kg",
-              "30 Burpees",
-              "20 Shoulder to Overhead 61kg/43kg",
-              "* -Rest 1:00 after the 3:00, rest 2:00 after the 6:00-",
-              "* (Scored by Total Combined Reps)"
-            ],
-            "sub_title2": "3:00 / 6:00 / 12:00 AMRAP"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-22",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2754,6 +2730,74 @@
     "2026-07-31": [
       {
         "date": "2026-07-31",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260731",
+        "sections": [
+          {
+            "title": "FOR TIME",
+            "lines": [
+              "2 muscle-ups",
+              "2 back squats",
+              "4 muscle-ups",
+              "4 back squats",
+              "6 muscle-ups",
+              "6 back squats",
+              "8 muscle-ups",
+              "8 back squats",
+              "6 muscle-ups",
+              "6 back squats",
+              "4 muscle-ups",
+              "4 back squats",
+              "2 muscle-ups",
+              "2 back squats",
+              "♀ 155 lb",
+              "♂ 225 lb"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-31",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 21.4",
+            "lines": [
+              "*2021 Open Workout 21.4 Men Rx*",
+              "Games Season",
+              "Open",
+              "Feb 26 – March 16",
+              "Leaderboard",
+              "Overview",
+              "Schedule",
+              "Workouts",
+              "Quarterfinals",
+              "March 26-30",
+              "Leaderboard",
+              "Overview",
+              "Schedule",
+              "Workouts",
+              "Semifinals",
+              "April – June",
+              "Leaderboard",
+              "Overview",
+              "Schedule",
+              "Workouts",
+              "Games",
+              "July",
+              "The CrossFit Games",
+              "Masters CrossFit Games",
+              "Teenage CrossFit Games"
+            ]
+          }
+        ],
+        "note": "Open: Open 21.4"
+      },
+      {
+        "date": "2026-07-31",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-07-31/",
@@ -2801,29 +2845,80 @@
       },
       {
         "date": "2026-07-31",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260731",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-july-31-2026/",
         "sections": [
           {
-            "title": "FOR TIME",
+            "title": "General Warm-up",
             "lines": [
-              "2 muscle-ups",
-              "2 back squats",
-              "4 muscle-ups",
-              "4 back squats",
-              "6 muscle-ups",
-              "6 back squats",
-              "8 muscle-ups",
-              "8 back squats",
-              "6 muscle-ups",
-              "6 back squats",
-              "4 muscle-ups",
-              "4 back squats",
-              "2 muscle-ups",
-              "2 back squats",
-              "♀ 155 lb",
-              "♂ 225 lb"
+              "500m Jog or 3:00 Machine",
+              "-Then-",
+              "3 Rounds",
+              "10 Box Jumps (shorter than workout)",
+              "20 Plank Shoulder Taps",
+              "10 Goblet Squats"
+            ]
+          },
+          {
+            "title": "3 rounds for time",
+            "lines": [
+              "10 Back Squats 185/125lbs",
+              "20 Push Ups",
+              "30 Box Jumps 24/20″",
+              "Bar taken from the rack. Do not exceed 60% of your 1RM.",
+              "Feel: Gas",
+              "Pace: Sustain",
+              "Target Score: 11-15 minutes",
+              "Firebreather: sub 11"
+            ]
+          },
+          {
+            "title": "Competitor extra",
+            "lines": [
+              "4 Rounds",
+              "18/15 Calorie C2 Bike",
+              "30ft HS Walk (15/15)"
+            ]
+          },
+          {
+            "title": "5 Power Cleans 135/95lbs",
+            "lines": [
+              "30ft HS Walk (15/15)",
+              "18/15 Calorie C2 Bike",
+              "Rest 3:00",
+              "Feel: Cardio",
+              "Pacing: Sustain",
+              "Programmer Notes: A friendly check in on handstand walking than be be ramped up or down via the bike and cleans depending on proficiency upside down."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-07-31",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "\"JULY '26 MONTHLY CHALLENGE\"",
+              "FOR TIME",
+              "1 Mile Run",
+              "* (Score is Time)",
+              "*Repeat of Monthly Challenge -- 7/1",
+              "* -Rest Until 15:00 Mark then Complete-"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "FOR TIME",
+            "lines": [
+              "50 Bench Press 70kg/95",
+              "*Workout starts with 10 Russian KB Swings 32kg/25kg and complete 10 Russian KB Swings every",
+              "time you break.",
+              "Time Cap 10min"
             ]
           }
         ]
@@ -2886,47 +2981,8 @@
           }
         ],
         "note": "Benchmark: Lynne"
-      },
-      {
-        "date": "2026-07-31",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 21.4",
-            "lines": [
-              "*2021 Open Workout 21.4 Men Rx*",
-              "Games Season",
-              "Open",
-              "Feb 26 – March 16",
-              "Leaderboard",
-              "Overview",
-              "Schedule",
-              "Workouts",
-              "Quarterfinals",
-              "March 26-30",
-              "Leaderboard",
-              "Overview",
-              "Schedule",
-              "Workouts",
-              "Semifinals",
-              "April – June",
-              "Leaderboard",
-              "Overview",
-              "Schedule",
-              "Workouts",
-              "Games",
-              "July",
-              "The CrossFit Games",
-              "Masters CrossFit Games",
-              "Teenage CrossFit Games"
-            ]
-          }
-        ],
-        "note": "Open: Open 21.4"
       }
     ]
   },
-  "last_updated": "2026-07-31T03:04:34.355728"
+  "last_updated": "2026-07-31T07:21:18.747533"
 }
