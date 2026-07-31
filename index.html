@@ -43,7 +43,10 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 /* #tab-pprog,#pprog-tab{display:none!important} */
 .pprog-panel{max-width:720px;margin:0 auto;background:#1e1e1e;padding:20px 18px 24px;border-radius:12px;border:1px solid #2a2a2a}
 .pprog-head{display:flex;align-items:center;gap:14px;margin:0 0 14px}
-.pprog-coach-avatar{width:72px;height:72px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.45))}
+.pprog-coach-avatar{width:72px;height:72px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.45));cursor:pointer;-webkit-tap-highlight-color:transparent;border-radius:12px}
+.pprog-coach-avatar:hover{filter:drop-shadow(0 4px 12px rgba(176,109,207,.45)) brightness(1.05)}
+.pprog-coach-avatar:active{transform:scale(0.97)}
+.pprog-reset-btn{display:none!important}
 .pprog-panel h2{color:#b06dcf;margin:0;font-size:1.25em;font-weight:700;letter-spacing:.04em}
 .pprog-subtabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px;justify-content:center}
 .pprog-subtab{padding:7px 10px;background:#252525;border:1px solid #3a3a3a;border-radius:6px;color:#ddd;font-size:.78em;font-weight:600;cursor:pointer;font-family:inherit}
@@ -851,7 +854,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="tab-content" id="pprog-tab" hidden aria-hidden="true">
   <div class="pprog-panel">
     <div class="pprog-head">
-      <img class="pprog-coach-avatar" src="assets/hamamen-coach-duck.png" alt="Personal Coach" width="72" height="72">
+      <img class="pprog-coach-avatar" id="pprogCoachAvatar" src="assets/hamamen-coach-duck.png" alt="Personal Coach" width="72" height="72" role="button" tabindex="0" title="Personal Coach" aria-label="Personal Coach" onclick="resetPprogUser()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();resetPprogUser();}">
       <h2>Personal Coach</h2>
     </div>
 
