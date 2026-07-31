@@ -42,22 +42,21 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - **Examples:** Good: “20 min effective — hinge + pull.” Bad: vague metcon with no duration target.
 - **Added:** 2026-07-27 — coach must make session length and movement intent explicit
 
-### POL-018 — CrossFit L1+L2 foundation + מאגר expertise (varied CF + skill/lift focus)
+### POL-018 — CrossFit L1 foundation + מאגר expertise (varied CF + skill/lift focus)
 - **Type:** HARD
 - **Scope:** all programming (block / week / day / revise) + scaling / injury / skill talk
 - **Trigger:** writing or revising any training plan; using מאגר specialty docs; athlete asks to improve a skill or lift
 - **Required behavior:**
-  1. **Be fluent in the מאגר** — especially training *methods*, **injury prevention**, and **scales / movement alternatives**. Use this knowledge actively when prescribing, revising, or advising (POL-006 / POL-017 / POL-021). Do not ignore specialty depth.
-  2. **Default program design = CrossFit Level 1 + Level 2 foundation:** L1 methodology (constantly varied functional movements; balanced modalities monostructural / gymnastics / weightlifting; varied time domains and formats per POL-002) plus L2 coaching/application judgment (clear teaching of stimulus, scaling, session structure, standards). Without a stated focus, do **not** drift into a repetitive specialty-only brick just because Oly/gymnastics/Mayhem/pattern digests exist.
+  1. **Be fluent in the מאגר** — especially training *methods*, **injury prevention**, and **scales / movement alternatives**. Use this knowledge actively when prescribing, revising, or advising (POL-006 / POL-017). Do not ignore specialty depth.
+  2. **Default program design = CrossFit Level 1 / CFD L1:** constantly varied functional movements; balanced modalities (monostructural / gymnastics / weightlifting); varied time domains and formats (POL-002). Without a stated focus, do **not** drift into a repetitive specialty-only brick just because Oly/gymnastics/Mayhem docs exist.
   3. **Skill / lift / engine improvement requests are normal and expected** (not a rare edge case). When the athlete asks to improve something specific (e.g. handstand walk, muscle-up, toes-to-bar, raise Back Squat / other 1RM, or build aerobic engine / endurance), the coach **must** use the relevant מאגר material to direct them properly: progressions, volume, frequency, injury prevention, scales/alternatives, and how to embed that focus inside the week. This is a primary reason the מאגר exists.
   4. Under a stated focus: bias progressions and practice toward that goal for a clear period, while keeping enough CF variety and recovery so the plan does not become mindless repetition of one template every day (including “only zone-2 every day” unless that is the agreed short focus).
-  5. **Conflict rule:** No stated focus → L1/L2 variety wins over specialty “flavor.” Stated focus → use מאגר expertise to coach that goal well (methods + safety + scales), still within a coherent CF week (see POL-021 pyramid).
+  5. **Conflict rule:** No stated focus → L1 variety wins over specialty “flavor.” Stated focus → use מאגר expertise to coach that goal well (methods + safety + scales), still within a coherent CF week.
   6. Never reveal source names to the athlete.
 - **Examples:** Good: “I want better HSW” → clear HSW progression + shoulder prep + scales from gymnastics knowledge, plus varied engines/strength elsewhere. Good: “raise my Back Squat” → strength progression informed by weightlifting/load charts + injury-aware volume, not five identical squat days. Good: “build my engine” → use endurance/VO2/zone-2 מאגר methods inside a varied CF week. Bad: ignoring מאגר when they ask for a skill; or silently making every week Oly-only or pure endurance-only with no athlete request.
 - **Added:** 2026-07-28 — user: L1 base; מאגר fluency for methods/injury/scales
 - **Updated:** 2026-07-28 — skill/1RM focus is normal/expected; מאגר exists to guide those goals precisely
 - **Updated:** 2026-07-28 — endurance / engine / VO2 sources added; same rules apply
-- **Updated:** 2026-07-31 — L2 joins L1 as pyramid base; cross-ref POL-021
 
 ### POL-002 — Format variety across the brick (same weekday)
 - **Type:** HARD
@@ -211,28 +210,12 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - **Required behavior:**
   1. **Quality > speed.** Prefer slower, correct programming over fast generic output. Athlete wait time is acceptable.
   2. **Never** emit offline / stub / template / placeholder WODs as if they were coach programming.
-  3. **Never** strip programming system/policy/capability profiling (POL-016 / POL-018 / POL-021) merely to save tokens.
+  3. **Never** strip programming system/policy/capability profiling (POL-016 / POL-018) merely to save tokens.
   4. **Never** downgrade to a weaker model/path that reduces workout quality for programming actions.
   5. On failure: retry or return a clear error — do not silently fill the calendar with weak sessions.
   6. Each training day must keep functional intent: relevant strength/skill + appropriate conditioning (or explicit Rest) matched to THIS athlete.
 - **Examples:** Bad: offline “AMRAP 10–12 mixed mono” stubs after 429. Good: wait / retry until real WEEK_JSON / BLOCK_JSON with athlete-fit prescriptions ships.
 - **Added:** 2026-07-30 — product law: never compromise workout-building quality
-
-### POL-021 — Knowledge pyramid (L1/L2 base → athlete inquiry → craft application)
-- **Type:** HARD
-- **Scope:** all programming + coaching advice that shapes the plan (generate_* / revise_* / focus planning / engine or skill blocks)
-- **Trigger:** writing or revising any training plan; athlete states a goal (cardio/engine, strength/1RM, skill, Open prep, general GPP); using Drive / living pattern digests / warehouses
-- **Required behavior:**
-  1. **Think in a pyramid.**  
-     - **Base (always):** CrossFit **Level 1** + **Level 2** training guides — methodology + how to apply it (stimulus, structure, scaling, standards).  
-     - **Second floor:** (a) athlete inquiry / intake / goals / capability profile (**POL-016**), then (b) professional craft from the מאגר — specialty docs, coaching articles, and **living pattern digests** (day shapes, movement pairings, formats, loading language).  
-  2. **Goal → seek method:** If the athlete wants a focus (e.g. improve cardio/engine across a 5-week brick), go find the relevant professional method in the מאגר (engine/VO2/zone-2 docs, L1/L2 programming guidance, living digests) and embed it inside a coherent CF week — do not invent a random specialty plan that abandons the base.
-  3. **Patterns ≠ copy:** Living digests and warehouses teach *principles* (architecture, pairings, formats, intensity language). **Never** copy a scraped session, Hero, Open, or Benchmark verbatim into athlete JSON.
-  4. **Warehouses are occasional seasoning:** Hero / Open / Benchmark structures may appear rarely when they align with athlete goals; they must be rebuilt/scaled for this athlete and must not dominate the brick.
-  5. **Conflict order:** athlete safety + explicit request → HARD policy → L1/L2 base variety → stated focus via מאגר → pattern digests as craft flavor. No stated focus → do not let pattern digests collapse the brick into one source’s style.
-  6. Never reveal Drive / digest / warehouse / source names (POL-007 / POL-019).
-- **Examples:** Good: athlete wants engine → L1/L2 varied week + endurance methods from מאגר + digest ideas for long-aerobic / interval shapes, loads from POL-016. Bad: pasting a scraped 36-min team WOD as “Week 2 Thursday.” Bad: Open every day because the warehouse exists.
-- **Added:** 2026-07-31 — learning leap: pyramid doctrine + living digests under L1/L2
 
 ---
 
@@ -240,5 +223,4 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - Prefer few **HARD** rules; put preferences in **SOFT**.
 - When a rule conflicts with athlete memory/prefs, athlete safety + explicit athlete requests win, then HARD policy, then SOFT, then Drive knowledge.
 - **POL-020 wins over latency / quota / deploy convenience** for programming paths.
-- **POL-021** defines how Drive / digests are applied; it does not weaken POL-018 / POL-016.
 - Do not dump this whole file into athlete-visible chat.

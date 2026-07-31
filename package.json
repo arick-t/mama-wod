@@ -12,6 +12,7 @@
     "coach:sync-brain": "node scripts/coach-sync-brain.js",
     "coach:sync-policy": "node scripts/sync-coach-policy.js",
     "coach:sync-prompt": "node scripts/sync-hamamen-prompt.js",
+    "coach:weekly-patterns-digest": "node scripts/coach-weekly-patterns-digest.js",
     "build:cap:web": "node scripts/build-capacitor-web.js",
     "cap:sync": "npm run build:cap:web && npx cap sync",
     "cap:open:android": "npx cap open android",
