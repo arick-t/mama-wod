@@ -1,5 +1,13 @@
 # Changelog
 
+## [21.0.0] - 2026-07-31
+
+### First Personal Coach release
+- **Display version: v21.0** (no BETA) — first production release with Personal Coach.
+- Fixed intake questionnaire, brick calendar, WhatsApp share, Gemini programming path.
+
+---
+
 ## [21.0.0-beta.1] - 2026-07-29
 
 ### Production pause — Personal Coach tab
