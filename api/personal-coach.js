@@ -1,8 +1,12 @@
 /**
- * Personal Coach — המאמן (Beta 1.0)
+ * Personal Coach — המאמן
  * POST /api/personal-coach
  *   { messages, athleteProfile?, action?: "chat"|"start_intake"|"generate_block"|"generate_week"|"generate_week_detail"|"revise_day"|"revise_week"|"day_debrief"|"revise_part"|"preview_month" }
  * GET  /api/personal-coach — status
+ *
+ * Coach version vocabulary (product):
+ *   1.0 — programming brain before the learning-leap upgrade
+ *   1.1 — upgraded brain (Foundation Brief / POL-021 / living-knowledge)
  *
  * Env: GEMINI_API_KEY (optional File Search / Interactions), GROQ_API_KEY (fallback chat),
  *      PERSONAL_COACH_MODEL, GEMINI_FILE_SEARCH_STORE, GROQ_MODEL
@@ -10,6 +14,7 @@
  * Provider order: Gemini Interactions (when store) → Gemini generateContent → Groq Chat Completions.
  * Groq keeps the coach alive when the Gemini key is missing/invalid (common GitHub Pages + Vercel setup).
  */
+const COACH_VERSION = "1.1";
 const HAMAMEN_SYSTEM = require("./hamamen-prompt.js");
 const COACH_POLICY = require("./coach-policy.js");
 const COACH_FOUNDATION_BRIEF = require("./coach-foundation-brief.js");
@@ -1319,6 +1324,7 @@ module.exports = async function handler(req, res) {
       engine: "personal-coach",
       notGenerateWorkout: true,
       version: "21.1",
+      coachVersion: COACH_VERSION,
       hasGeminiKey: !!apiKey,
       hasGroqKey: !!groqKey,
       hasKnowledge: !!store,
@@ -1813,6 +1819,7 @@ module.exports = async function handler(req, res) {
         text: result.text,
         via: result.via,
         model: result.model || model,
+        coachVersion: COACH_VERSION,
         fileSearch: !!store && !(gcOpts && gcOpts.skipTools) && result.via !== "groq",
         programmingSystem: programming,
         intakeLike: looksLikeIntakeReply(result.text),
