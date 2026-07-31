@@ -7968,7 +7968,11 @@ function buildAiErrorMessage(x) {
   if (x.status === 504) {
     var h504 = x.j && x.j.hint ? String(x.j.hint) : "";
     var e504 = String(x.j && x.j.error ? x.j.error : "");
-    return (e504 || "Gateway timeout (504).") + (h504 ? "\n\n" + h504 : "");
+    return (
+      (e504 || "Gateway timeout (504) while the coach was building your plan.") +
+      " Tap Build plan again." +
+      (h504 ? "\n\n" + h504 : "")
+    );
   }
   return base;
 }

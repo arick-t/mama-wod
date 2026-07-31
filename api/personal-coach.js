@@ -1401,23 +1401,24 @@ module.exports = async function handler(req, res) {
   });
   if (!rlGlobal.ok) return sendRateLimit(res, rlGlobal);
 
-  const forceJson =
-    body.forceJson === true ||
-    body.forceJSON === true ||
-    body.jsonOnly === true ||
-    /* First brick after fixed intake: JSON-only by default to finish under gateway limits */
-    ((action === "generate_block" || action === "generate_week") &&
-      !!(
-        body.autoNextBlock === true ||
-        (athleteProfile && (athleteProfile.fixedIntakePacket || athleteProfile.intakeComplete))
-      ));
-
   let rawProfile = scrubProfile(body.athleteProfile || body.memory || null);
   /* Client may also send top-level intakeComplete on fill requests */
   if (body.intakeComplete === true) {
     rawProfile = Object.assign({}, rawProfile || {}, { intakeComplete: true });
   }
   const athleteProfile = profileForAction(rawProfile, action);
+  const forceJson =
+    body.forceJson === true ||
+    body.forceJSON === true ||
+    body.jsonOnly === true ||
+    /* First brick / auto-next: JSON-only by default to finish under gateway limits */
+    ((action === "generate_block" || action === "generate_week") &&
+      !!(
+        body.autoNextBlock === true ||
+        body.intakeComplete === true ||
+        (athleteProfile &&
+          (athleteProfile.fixedIntakePacket || athleteProfile.intakeComplete))
+      ));
   /* Admin dashboard coachDirectives — authoritative for this athlete when present */
   try {
     const aid =
