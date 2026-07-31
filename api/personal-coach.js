@@ -1792,44 +1792,20 @@ module.exports = async function handler(req, res) {
       }
       geminiFail = retry.ok === false ? retry : primary;
     }
-    /* 2) Groq emergency — programming-quality compact (not chat slim), large max_tokens */
-    if (groqKey) {
-      const groqSys = compactProgrammingSystemForGroq(sys);
-      const groq = await callCoachLlm(
-        null,
-        groqKey,
-        model,
-        msgs,
-        null,
-        groqSys,
-        Object.assign({}, opts, { skipCompact: true, maxOutputTokens: 8192 })
-      );
-      if (groq.ok) {
-        groq.via = (groq.via || "groq") + "+geminiFallback";
-        groq.systemCompacted = true;
-        groq.geminiError =
-          (geminiFail && (geminiFail.detail || geminiFail.error)) || undefined;
-        return groq;
-      }
-      return {
-        ok: false,
-        error: "Programming providers failed",
-        detail:
-          "Gemini: " +
-          String((geminiFail && (geminiFail.detail || geminiFail.error)) || "n/a").slice(0, 220) +
-          " | Groq: " +
-          String(groq.detail || groq.error || "n/a").slice(0, 220),
-        geminiError: geminiFail && (geminiFail.detail || geminiFail.error),
-        fallbackError: groq.detail || groq.error,
-      };
-    }
-    return (
-      geminiFail || {
-        ok: false,
-        error: "No AI provider configured",
-        detail: "Set a valid GEMINI_API_KEY (preferred) or GROQ_API_KEY in Vercel.",
-      }
-    );
+    /* 2) NO Groq for programming (POL-020). Silent Groq bricks feel like a different coach. */
+    return {
+      ok: false,
+      error: "Gemini programming unavailable",
+      detail:
+        "Personal Coach plan builds require working Gemini on this deployment. " +
+        "Groq fallback is disabled for programming (quality). Gemini: " +
+        String(
+          (geminiFail && (geminiFail.detail || geminiFail.error)) ||
+            (apiKey ? "request failed" : "missing GEMINI_API_KEY")
+        ).slice(0, 280),
+      geminiError: geminiFail && (geminiFail.detail || geminiFail.error),
+      via: "gemini-required",
+    };
   }
 
   /** If model slips into intake, retry once with JSON-ONLY system+user. */
