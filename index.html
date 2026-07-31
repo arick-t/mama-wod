@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.2.1</title>
+<title>DUCK-WOD · v21.2.2</title>
 <meta name="theme-color" content="#111">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,7 +12,7 @@
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;900&family=JetBrains+Mono:wght@700&display=swap"></noscript>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Oswald','Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#111;color:#f0ece0;line-height:1.6;padding-bottom:74px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif,'Oswald','Heebo';background:#111;color:#f0ece0;line-height:1.6;padding-bottom:74px}
 .header{background:#1a1a1a;padding:14px 16px 12px;text-align:center;border-bottom:3px solid #E8451A}
 .header-logo{width:90px;height:90px;object-fit:cover;object-position:center;display:block;margin:0 auto 8px;background:#EDE4D0;padding:2px;border-radius:12px;box-sizing:border-box}
 h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient(90deg,#E8451A,#F5C518 50%,#1A9B8A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2px}
@@ -724,7 +724,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.2.1</div>
+<div class="header-sub">DAILY WORKOUTS · v21.2.2</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
@@ -1775,6 +1775,13 @@ function loadPprogStore() {
   try {
     var raw = localStorage.getItem(PPROG_STORE_KEY);
     if (!raw) return emptyPprogStore();
+    /* Oversized coach blobs have OOM'd iOS Safari on boot — prefer empty store over white screen. */
+    if (raw.length > 1200000) {
+      try {
+        localStorage.removeItem(PPROG_STORE_KEY);
+      } catch (eClr) {}
+      return emptyPprogStore();
+    }
     var o = JSON.parse(raw);
     if (!o || typeof o !== "object") return emptyPprogStore();
     if (!Array.isArray(o.chat)) o.chat = [];
@@ -6709,9 +6716,24 @@ function initPprogUi() {
 
 try {
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initPprogUi);
+    document.addEventListener("DOMContentLoaded", function () {
+      /* Defer Personal Coach boot so Browse workouts can paint first on weak iOS connections. */
+      setTimeout(function () {
+        try {
+          initPprogUi();
+        } catch (eInit) {
+          try {
+            console.warn("[duck-wod] Personal Coach init skipped:", eInit);
+          } catch (eLog) {}
+        }
+      }, 0);
+    });
   } else {
-    initPprogUi();
+    setTimeout(function () {
+      try {
+        initPprogUi();
+      } catch (eInit2) {}
+    }, 0);
   }
 } catch (e) {}
 
@@ -8417,9 +8439,18 @@ function convertUnits(text) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-  ["touchstart","pointerdown","click","keydown"].forEach(function(evt) {
-    document.addEventListener(evt, timerAudioUnlock, { passive: true });
-  });
+  try {
+    var gridBoot = document.getElementById("grid");
+    if (gridBoot && !gridBoot.innerHTML) {
+      gridBoot.innerHTML =
+        "<div class=\"empty\"><div class=\"empty-icon\">⏳</div>Loading workouts…</div>";
+    }
+  } catch (eBoot) {}
+  try {
+    ["touchstart","pointerdown","click","keydown"].forEach(function(evt) {
+      document.addEventListener(evt, timerAudioUnlock, { passive: true });
+    });
+  } catch (eAud) {}
   // Load saved source order
   try {
     var savedOrder = localStorage.getItem("duck-wod-order");
@@ -8434,13 +8465,36 @@ document.addEventListener("DOMContentLoaded", function() {
       SOURCES = newSources;
     }
   } catch(e) {}
-  
-  buildDaysBar();
-  loadData();
-  buildSources();
-  loadTimerSettings();
-  initTimerColorBuckets();
-  setStopwatchDirection(true);
+
+  try {
+    buildDaysBar();
+  } catch (eDays) {}
+  try {
+    loadData();
+  } catch (eData) {
+    try {
+      var g = document.getElementById("grid");
+      if (g) {
+        g.innerHTML =
+          "<div class=\"empty\"><div class=\"empty-icon\">⚠️</div>Cannot start workout load<br><small>" +
+          String((eData && eData.message) || eData).slice(0, 160) +
+          "</small></div>";
+      }
+    } catch (eGrid) {}
+  }
+  try {
+    buildSources();
+  } catch (eSrc) {}
+  try {
+    loadTimerSettings();
+  } catch (eTs) {}
+  try {
+    initTimerColorBuckets();
+  } catch (eTc) {}
+  try {
+    setStopwatchDirection(true);
+  } catch (eSd) {}
+  try {
   (function initSwipeDays() {
     var browseTab = document.getElementById("browse-tab");
     if (!browseTab) return;
@@ -8468,8 +8522,14 @@ document.addEventListener("DOMContentLoaded", function() {
       else if (deltaX < -55 && idx < dates.length - 1) { goDate(dates[idx + 1]); e.preventDefault(); }
     }, { passive: false });
   })();
-  initAiTagChips();
-  initAiPresetsUi();
+  } catch (eSwipe) {}
+  try {
+    initAiTagChips();
+  } catch (eTags) {}
+  try {
+    initAiPresetsUi();
+  } catch (ePres) {}
+  try {
   var aiUnlCb = document.getElementById("aiUnlimitedTime");
   if (aiUnlCb && !aiUnlCb.dataset.syncBound) {
     aiUnlCb.dataset.syncBound = "1";
@@ -8540,6 +8600,7 @@ document.addEventListener("DOMContentLoaded", function() {
   });
   updateIntervalOverallTime();
   initConvertorUi();
+  } catch (eAiBoot) {}
 });
 
 /** One automatic re-fetch ~75s later if Israel-today has no rows yet (covers deploy/fetch delay after midnight). */
