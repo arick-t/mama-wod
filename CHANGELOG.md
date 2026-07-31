@@ -1,5 +1,15 @@
 # Changelog
 
+## [21.2.0] - 2026-07-31
+
+### Personal Coach foundation release
+- **Display version: v21.2**
+- Ships the learning-leap coach on production: L1+L2 Foundation Brief + מסמך דפוסי מקורות in every brick fill.
+- Keeps v21.1 UX/intake polish (locations, session chat, deload styling).
+- Programming remains Gemini-quality path (no silent Groq plan fills).
+
+---
+
 ## [21.1.0] - 2026-07-31
 
 ### Personal Coach UX + learning leap
