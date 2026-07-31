@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.2</title>
+<title>DUCK-WOD · v21.2.1</title>
 <meta name="theme-color" content="#111">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -724,7 +724,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.2</div>
+<div class="header-sub">DAILY WORKOUTS · v21.2.1</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
@@ -937,23 +937,23 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 </div>
 
 <div id="pprogBuildingOverlay" class="pprog-building-overlay" aria-live="polite" aria-busy="true" hidden>
-    <div class="pprog-building-center">
-      <video
-        id="pprogBuildingVideo"
-        class="pprog-building-video"
-        autoplay
-        muted
-        loop
-        playsinline
-        webkit-playsinline
-        preload="auto"
-        poster="assets/hamamen-coach-duck.png"
-      >
-        <source src="assets/coach-thinking.mp4" type="video/mp4">
-      </video>
-      <img id="pprogBuildingFallback" class="pprog-building-video" src="assets/hamamen-coach-duck.png" alt="Coach" style="display:none" width="340" height="340">
-      <div class="pprog-building-status"><strong>Coach</strong> is building your 5-week block…</div>
-    </div>
+  <div class="pprog-building-center">
+    <!-- No autoplay: looping mp4 on iOS Safari caused tab crash loops after long builds. -->
+    <video
+      id="pprogBuildingVideo"
+      class="pprog-building-video"
+      muted
+      loop
+      playsinline
+      webkit-playsinline
+      preload="none"
+      poster="assets/hamamen-coach-duck.png"
+      style="display:none"
+    >
+      <source src="assets/coach-thinking.mp4" type="video/mp4">
+    </video>
+    <img id="pprogBuildingFallback" class="pprog-building-video" src="assets/hamamen-coach-duck.png" alt="Coach" width="340" height="340">
+    <div class="pprog-building-status"><strong>Coach</strong> is building your 5-week block…</div>
   </div>
 </div>
 
@@ -5239,58 +5239,14 @@ function setPprogBuildingOverlay(on, statusHtml) {
   if (on) {
     overlay.hidden = false;
     overlay.classList.add("open");
-    if (fallback) fallback.style.display = "none";
+    /* Static image only — do not autoplay looping mp4 (iOS WebKit crash loop). */
     if (video) {
       try {
-        video.setAttribute("playsinline", "");
-        video.setAttribute("webkit-playsinline", "");
-        video.muted = true;
-        video.defaultMuted = true;
-        video.playsInline = true;
-        video.loop = true;
-        video.style.display = "";
-        var srcEl = video.querySelector("source");
-        if (srcEl) {
-          var abs = new URL("assets/coach-thinking.mp4", location.href).href;
-          if (srcEl.getAttribute("src") !== abs && srcEl.src !== abs) {
-            srcEl.setAttribute("src", abs);
-            video.load();
-          }
-        }
-        var tryPlay = function () {
-          var p = video.play();
-          if (p && typeof p.catch === "function") {
-            p.catch(function () {
-              if (fallback) {
-                video.style.display = "none";
-                fallback.style.display = "block";
-              }
-            });
-          }
-        };
-        video.onerror = function () {
-          if (fallback) {
-            video.style.display = "none";
-            fallback.style.display = "block";
-          }
-        };
-        try {
-          video.currentTime = 0;
-        } catch (e0) {}
-        /* iOS often needs a tick after the overlay becomes visible */
-        requestAnimationFrame(function () {
-          tryPlay();
-          setTimeout(tryPlay, 250);
-        });
-      } catch (e) {
-        if (fallback) {
-          if (video) video.style.display = "none";
-          fallback.style.display = "block";
-        }
-      }
-    } else if (fallback) {
-      fallback.style.display = "block";
+        video.pause();
+      } catch (eVid) {}
+      video.style.display = "none";
     }
+    if (fallback) fallback.style.display = "block";
   } else {
     overlay.classList.remove("open");
     overlay.hidden = true;
@@ -5298,8 +5254,9 @@ function setPprogBuildingOverlay(on, statusHtml) {
       try {
         video.pause();
       } catch (e2) {}
+      video.style.display = "none";
     }
-    if (fallback) fallback.style.display = "none";
+    if (fallback) fallback.style.display = "block";
   }
 }
 
