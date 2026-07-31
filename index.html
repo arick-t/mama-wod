@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DUCK-WOD · v21.1</title>
 <meta name="theme-color" content="#111">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -8470,23 +8473,52 @@ function scheduleWorkoutsAutoRetryOnceIfTodayStillEmpty() {
 }
 
 function loadData() {
+  var grid = document.getElementById("grid");
+  var done = false;
+  var finish = function (fn) {
+    if (done) return;
+    done = true;
+    try {
+      clearTimeout(watchdog);
+    } catch (eW) {}
+    if (typeof fn === "function") fn();
+  };
+  var watchdog = setTimeout(function () {
+    finish(function () {
+      if (!grid) return;
+      grid.innerHTML =
+        "<div class=\"empty\"><div class=\"empty-icon\">⚠️</div>Loading timed out<br><small>Check network, then retry</small><br><br>" +
+        "<button type=\"button\" class=\"btn btn-find\" onclick=\"loadData()\">Retry load</button></div>";
+    });
+  }, 12000);
+  if (grid) {
+    grid.innerHTML =
+      "<div class=\"empty\"><div class=\"empty-icon\">🦆</div>Loading...</div>";
+  }
   Promise.all([
-    fetch("./data/workouts.json?t=" + Date.now())
+    fetch("./data/workouts.json?t=" + Date.now(), { cache: "no-store" })
       .then(function(r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }),
-    fetch("./data/special_cache.json?t=" + Date.now())
+    fetch("./data/special_cache.json?t=" + Date.now(), { cache: "no-store" })
       .then(function(r) { return r.ok ? r.json() : {heroes:[], benchmarks:[], open:[]}; })
       .catch(function() { return {heroes:[], benchmarks:[], open:[]}; })
   ])
     .then(function(arr) {
-      allData = arr[0];
-      specialData = arr[1] || {heroes:[], benchmarks:[], open:[]};
-      displayWorkouts();
-      scheduleWorkoutsAutoRetryOnceIfTodayStillEmpty();
+      finish(function () {
+        allData = arr[0];
+        specialData = arr[1] || {heroes:[], benchmarks:[], open:[]};
+        displayWorkouts();
+        scheduleWorkoutsAutoRetryOnceIfTodayStillEmpty();
+      });
     })
     .catch(function(e) {
-      console.error("Load failed:", e);
-      document.getElementById("grid").innerHTML =
-        "<div class=\"empty\"><div class=\"empty-icon\">⚠️</div>Cannot load workouts.json<br><small>" + e.message + "</small></div>";
+      finish(function () {
+        console.error("Load failed:", e);
+        if (!grid) return;
+        grid.innerHTML =
+          "<div class=\"empty\"><div class=\"empty-icon\">⚠️</div>Cannot load workouts.json<br><small>" +
+          String((e && e.message) || e).slice(0, 160) +
+          "</small><br><br><button type=\"button\" class=\"btn btn-find\" onclick=\"loadData()\">Retry load</button></div>";
+      });
     });
 }
 
