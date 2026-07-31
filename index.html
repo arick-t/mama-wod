@@ -5362,16 +5362,32 @@ function requestPprogWeek(retryCount, opts) {
     });
   }
   var keepOverlayForRetry = false;
+  var buildingStartedAt = Date.now();
+  var buildingTick = null;
   var reqBody = {
     action: "generate_block",
     messages: payloadMsgs,
     intakeComplete: true,
+    /* First call JSON-only — avoids a second full Gemini pass that blows the gateway budget. */
+    forceJson: true,
     athleteProfile: athleteProfilePayload({ forceIntakeComplete: true, omitChat: !!opts.autoNextBlock }),
   };
   if (opts.autoNextBlock) {
     reqBody.autoNextBlock = true;
     if (handoff) reqBody.blockHandoff = handoff;
   }
+  buildingTick = setInterval(function () {
+    var sec = Math.floor((Date.now() - buildingStartedAt) / 1000);
+    if (sec < 40) return;
+    var tip =
+      sec >= 90
+        ? "Still building — quality plan, almost there…"
+        : "Still building your 5-week brick…";
+    setPprogBuildingOverlay(
+      true,
+      "<strong>Coach</strong> — " + tip + " <span style=\"opacity:.7\">(" + sec + "s)</span>"
+    );
+  }, 5000);
   fetchAiWithTimeout(
     base + "/api/personal-coach",
     {
@@ -5379,7 +5395,7 @@ function requestPprogWeek(retryCount, opts) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(reqBody),
     },
-    180000
+    290000
   )
     .then(function (x) {
       var j = x.j || {};
@@ -5462,10 +5478,26 @@ function requestPprogWeek(retryCount, opts) {
           savePprogStore(sFail);
         }
       }
-      pprogMarkFirstBlockBuildFailed("Network error building block.");
-      setPprogStatus("err", "<strong>Coach</strong> — network error building block.");
+      var netMsg = "Network error building block.";
+      try {
+        var em = String((e && e.message) || e || "");
+        if (/timeout|aborted|AbortError/i.test(em)) {
+          netMsg =
+            "Coach timed out building the plan. Tap Build plan again — do not leave the screen mid-build.";
+        } else if (/504|Gateway/i.test(em)) {
+          netMsg = "Gateway timeout (504) while building the plan. Tap Build plan again.";
+        }
+      } catch (eNet) {}
+      pprogMarkFirstBlockBuildFailed(netMsg);
+      setPprogStatus("err", "<strong>Coach</strong> — " + esc(netMsg));
     })
     .then(function () {
+      if (buildingTick) {
+        try {
+          clearInterval(buildingTick);
+        } catch (eClr) {}
+        buildingTick = null;
+      }
       if (keepOverlayForRetry) return;
       pprogBusy = false;
       setPprogBuildingOverlay(false);
