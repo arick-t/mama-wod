@@ -24,7 +24,7 @@ const LIVING = path.join(
   "experiments",
   "personal-coach",
   "living-knowledge",
-  "coach-patterns-myleo-restoration.md"
+  "source-patterns-digest.md"
 );
 const INBOX_MIRROR = path.join(
   ROOT,
@@ -32,7 +32,7 @@ const INBOX_MIRROR = path.join(
   "personal-coach",
   "knowledge-inbox",
   "living-knowledge",
-  "coach-patterns-myleo-restoration.md"
+  "source-patterns-digest.md"
 );
 const ANCHOR = "<!-- WEEKLY_DIGEST_ANCHOR -->";
 const SOURCES = ["myleo", "restoration"];

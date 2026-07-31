@@ -2,36 +2,29 @@
 
 ## Goal
 
-Teach the Personal Coach via a **knowledge pyramid** + **living pattern docs**, without dumping raw workout archives into the brain.
+Teach the Personal Coach via a **knowledge pyramid** + **runtime foundation** that actually affects brick building.
 
 ## Pyramid (HARD)
 
-1. **Base:** CrossFit L1 + L2 training guides (already in Drive מאגר).
-2. **Second floor:** Athlete intake / goals (POL-016) + professional craft in Drive (articles, specialty docs) + **living pattern digests** distilled from scraped programming.
-3. Never copy a scraped session verbatim. Patterns inspire; L1/L2 + athlete goals decide.
+1. **Base:** CrossFit L1 + L2 → runtime **Foundation Brief** on every `generate_*`
+2. **מסמך דפוסי מקורות:** living source-patterns digest (myleo + Restoration + warehouses)
+3. **Athlete floor:** intake / POL-016 goals
+4. Never copy scraped sessions verbatim
 
-## Living documents
+## Canonical living docs
 
-| File | Role | Update cadence |
-|------|------|----------------|
-| `living-knowledge/coach-patterns-myleo-restoration.md` | Deep patterns from myleo + Restoration | Weekly Sunday morning |
-| `living-knowledge/coach-formats-warehouse.md` | Format vocabulary from Hero / Benchmark / Open warehouses | Rare / on demand |
-| `knowledge-inbox/pro-coach-articles/*.md` | Extra craft articles (same weight as other Drive docs; not special vs L1/L2) | When you add + ask to sync |
+| File | Role |
+|------|------|
+| `living-knowledge/l1-l2-programming-foundation.md` | L1+L2 distill for programming |
+| `living-knowledge/source-patterns-digest.md` | **מסמך דפוסי מקורות** (canonical) |
+| `api/coach-foundation-brief.js` | Compact runtime pack injected into programming + chat |
 
-## Production safety (non-negotiable)
+## Production safety
 
-- All code/policy/prompt work lands on branch `cursor/coach-learning-leap-d279` first.
-- **Do not merge to `main` until workout quality is reviewed** (Vercel preview / local / sample brick).
-- **`npm run coach:sync-brain` must not run against production File Search** until you explicitly approve — shared brain would affect live coach even before code merge.
-- Weekly workflow emails a confirmation; brain sync stays **off** unless `COACH_BRAIN_SYNC_ENABLED=true` secret is set.
+- Work on branch `cursor/coach-learning-leap-d279` until approved
+- File Search / Drive sync gated until you say “סנכרן”
+- Groq disabled for programming fills (quality)
 
 ## Rollback
 
-See `checkpoints/2026-07-31-before-learning-leap/README.md`.
-
-## Weekly job
-
-- Workflow: `.github/workflows/weekly-coach-patterns-digest.yml`
-- Cron: Sunday 05:00 UTC (~08:00 Israel summer)
-- Script: `scripts/coach-weekly-patterns-digest.js`
-- Email via Resend (same pattern as analytics report) to confirm the digest ran.
+`checkpoints/2026-07-31-before-learning-leap/`

@@ -12,7 +12,9 @@
  */
 const HAMAMEN_SYSTEM = require("./hamamen-prompt.js");
 const COACH_POLICY = require("./coach-policy.js");
-const COACH_PATTERN_BRIEF = require("./coach-pattern-brief.js");
+const COACH_FOUNDATION_BRIEF = require("./coach-foundation-brief.js");
+/* Legacy alias — foundation brief supersedes pattern-only brief */
+const COACH_PATTERN_BRIEF = COACH_FOUNDATION_BRIEF;
 const { checkRateLimit, sendRateLimit } = require("./rate-limit.js");
 const { scrubMessages, scrubProfile, scrubPiiText } = require("./sanitize-pii.js");
 /* Admin dashboard is on a separate branch — optional until merged */
@@ -345,8 +347,8 @@ const PROGRAMMING_SYSTEM_CORE =
   "Part lines hierarchy (POL-012): (1) Duration/Movement intent note, (2) format header ending with :, (3) prescription lines.\n" +
   "POL-016 (כלל תחקור משתמש): From intake baselines, silently build a detailed aero + anaerobic capability profile using strength ratio tables and aerobic conversion tables (run/row/ski/bike/cal); program to that profile — do not dump it in chat.\n" +
   "POL-018 (HARD): Be fluent in מאגר methods, injury prevention, and scales/alternatives. Default design = CrossFit L1+L2 foundation (constantly varied + applied coaching judgment) — do not drift into a repetitive specialty-only brick with no athlete focus. Skill/1RM/engine improvement requests are NORMAL and expected: when the athlete asks to improve something specific, you MUST use the מאגר to direct them precisely (progressions, volume, injury prevention, scales) and embed that focus in the week.\n" +
-  "POL-021 (HARD — knowledge pyramid): Base always = L1+L2 guides. Second floor = athlete inquiry (POL-016) + מאגר craft (specialty docs, articles, living pattern digests). Goal → seek method in מאגר (e.g. engine across 5 weeks). Patterns inspire — never copy scraped/Hero/Open/Benchmark sessions verbatim. Warehouses are rare seasoning only when goals align.\n" +
-  "APPLY LIVING PATTERN BRIEF below when choosing day shapes, formats, pairings, and loading language.\n" +
+  "POL-021 (HARD — knowledge pyramid): Base always = L1+L2 guides. Second floor = athlete inquiry (POL-016) + מאגר craft. Goal → seek method. Patterns inspire — never copy scraped/Hero/Open/Benchmark sessions.\n" +
+  "APPLY FOUNDATION BRIEF below on EVERY brick/week/day fill: L1 methodology + L2 application + מסמך דפוסי מקורות (source patterns).\n" +
   "Keep day intent stable, but vary TRAINING FORMATS across the month/week: do not repeat the exact same metcon structure on the same weekday every week.\n" +
   "Format variety examples: AMRAP / EMOM / For Time / Intervals / E2MOM / Chipper / Quality rounds / Tempo pieces.\n" +
   "Strength lift sequencing may repeat by weekday, but the work format around it must rotate while preserving the intended duration/effect.\n" +
@@ -359,7 +361,7 @@ const PROGRAMMING_SYSTEM_CORE =
   "POL-020 (HARD): Never compromise workout-building quality for speed, tokens, or availability. Prefer slower correct programming over fast weak/generic WODs. No stub/template placeholders as real sessions.\n" +
   "Obey COACH POLICY RULES injected below (HARD rules are mandatory).\n" +
   "---\n" +
-  (typeof COACH_PATTERN_BRIEF === "string" ? COACH_PATTERN_BRIEF : "") +
+  (typeof COACH_FOUNDATION_BRIEF === "string" ? COACH_FOUNDATION_BRIEF : "") +
   "---\n";
 
 /**
@@ -677,7 +679,7 @@ function buildSystemWithMemory(profile, action, opts) {
           .join("\n- ") +
         "\n"
       : "";
-  return HAMAMEN_SYSTEM + coachPolicyBlock() + "\n---\n" + (typeof COACH_PATTERN_BRIEF === "string" ? COACH_PATTERN_BRIEF : "") + "---\n" + intakeHardRule + blockTransitionRule + prefs + buildAthleteMemoryBlock(profile);
+  return HAMAMEN_SYSTEM + coachPolicyBlock() + "\n---\n" + (typeof COACH_FOUNDATION_BRIEF === "string" ? COACH_FOUNDATION_BRIEF : "") + "---\n" + intakeHardRule + blockTransitionRule + prefs + buildAthleteMemoryBlock(profile);
 }
 
 /** Brace-match a JSON object starting at `start` (index of `{`). Returns slice or null. */
