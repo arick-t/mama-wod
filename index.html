@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.0</title>
+<title>DUCK-WOD · v21.1</title>
 <meta name="theme-color" content="#111">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,7 +39,7 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .tab-pprog-wrap{border:1px dashed #8e44ad!important;background:linear-gradient(180deg,#221528 0%,#1e1e1e 100%)!important}
 .tab-pprog-wrap:hover{border-color:#b06dcf!important}
 .tab-btn.tab-pprog-wrap.active{background:#E8451A!important;border:1px dashed #d2a8e8!important;color:#fff!important}
-/* Personal Coach tab visible (v21.0 — first Personal Coach release). Flip PPROG_TAB_ENABLED=false to hide again. */
+/* Personal Coach tab visible (v21.1). Flip PPROG_TAB_ENABLED=false to hide again. */
 /* #tab-pprog,#pprog-tab{display:none!important} */
 .pprog-panel{max-width:720px;margin:0 auto;background:#1e1e1e;padding:20px 18px 24px;border-radius:12px;border:1px solid #2a2a2a}
 .pprog-head{display:flex;align-items:center;gap:14px;margin:0 0 14px}
@@ -76,16 +76,13 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-share-wa:hover{background:#1da851}
 .pprog-share-wa svg{width:16px;height:16px;display:block;flex-shrink:0}
 .pprog-day-footer{margin-top:14px;padding-top:12px;border-top:1px solid #333}
-.pprog-pre-box{display:block}
-.pprog-pre-box label,.pprog-debrief-box label{display:block;color:#1A9B8A;font-weight:600;margin-bottom:6px;font-size:.88em}
-.pprog-pre-box textarea,.pprog-debrief-box textarea{width:100%;min-height:72px;padding:10px;background:#222;color:#eee;border:1px solid #444;border-radius:8px;font-family:inherit;font-size:.95em}
+.pprog-session-box{display:block;padding:12px;border-radius:10px;border:1px solid #1A9B8A;background:rgba(26,155,138,.1);box-shadow:inset 0 0 0 1px rgba(26,155,138,.15)}
+.pprog-session-box > label{display:block;color:#1A9B8A;font-weight:700;margin-bottom:2px;font-size:.9em}
+.pprog-session-scope{display:block;color:#7eb8ae;font-size:.72em;font-weight:500;margin:0 0 8px;line-height:1.35}
+.pprog-session-box textarea{width:100%;min-height:72px;padding:10px;background:#1a2220;color:#eee;border:1px solid #2a5a52;border-radius:8px;font-family:inherit;font-size:.95em}
 .pprog-day-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
 .pprog-talk-btn{width:auto;padding:6px 12px;font-size:.78em;font-weight:700;background:#1A9B8A!important;border-color:#1A9B8A!important;color:#111!important;margin-top:0}
 .pprog-talk-btn:hover{background:#159182!important;border-color:#159182!important}
-.pprog-debrief-toggle{background:#5b2c7a!important;border-color:#8e44ad!important;color:#fff!important}
-.pprog-debrief-toggle:hover{background:#6e3a91!important}
-.pprog-debrief-box{display:none;margin-top:12px}
-.pprog-debrief-box.open{display:block}
 .pprog-part-reply{margin-top:8px;padding:10px;background:#181818;border:1px solid #333;border-radius:8px;color:#e8e4d8;font-size:.88em;white-space:pre-wrap;text-align:left;direction:ltr}
 .pprog-admin-bar{margin-top:14px;padding-top:12px;border-top:1px dashed #444;display:flex;flex-wrap:wrap;gap:8px}
 .pprog-admin-bar .btn{width:auto;margin-top:0;padding:7px 12px;font-size:.78em;background:#444}
@@ -148,6 +145,12 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-skills-picker label.pprog-skills-all{font-weight:800;color:#f5c518;margin-bottom:10px}
 .pprog-skills-picker input{width:18px;height:18px;flex-shrink:0}
 .pprog-skills-submit{margin-top:10px;width:100%;padding:10px;font-weight:700;background:#1A9B8A!important;border:none;border-radius:8px;color:#111!important}
+.pprog-location-picker{margin:0 0 10px;padding:12px;background:#181818;border:1px solid #333;border-radius:10px;direction:ltr;text-align:left}
+.pprog-location-picker label{display:flex;align-items:flex-start;gap:8px;margin:0 0 10px;font-size:.9em;color:#e8e4d8;cursor:pointer;line-height:1.35}
+.pprog-location-picker input[type="checkbox"]{width:18px;height:18px;flex-shrink:0;margin-top:2px}
+.pprog-location-other-wrap{margin:4px 0 0 26px}
+.pprog-location-other-wrap[hidden]{display:none!important}
+.pprog-location-other-wrap textarea{width:100%;min-height:64px;padding:10px;background:#222;color:#eee;border:1px solid #444;border-radius:8px;font-family:inherit;font-size:.92em}
 .pprog-lifts-picker{margin-top:10px;padding:12px;background:#181818;border:1px solid #333;border-radius:10px;direction:ltr;text-align:left}
 .pprog-profile-picker{margin-top:10px;padding:12px;background:#181818;border:1px solid #333;border-radius:10px;direction:ltr;text-align:left}
 .pprog-profile-picker-note{margin:0 0 12px;font-size:.82em;line-height:1.4;color:#aaa}
@@ -202,11 +205,19 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-cal-general{appearance:none;background:#252525;border:1px solid #3a3a3a;color:#ddd;font-size:.62em;font-weight:700;padding:6px 2px;border-radius:8px;cursor:pointer;font-family:inherit;line-height:1.15;min-height:36px;width:100%;max-width:56px;margin:0 auto}
 .pprog-cal-general:hover{border-color:#8e44ad;color:#fff}
 .pprog-cal-general.active{background:#8e44ad;border-color:#b06dcf;color:#fff}
+.pprog-cal-general.deload-week{background:rgba(90,140,190,.22);border-color:#5a8cbe;color:#c5daf0}
+.pprog-cal-general.deload-week:hover{border-color:#7aa8d4;color:#fff}
+.pprog-cal-general.deload-week.active{background:#5a8cbe;border-color:#7aa8d4;color:#0c1520}
 .pprog-cal-cell{appearance:none;background:transparent;border:none;color:#ddd;font-size:.9em;font-weight:600;padding:6px 0;border-radius:50%;cursor:pointer;font-family:inherit;aspect-ratio:1;max-width:38px;margin:0 auto;display:flex;align-items:center;justify-content:center;width:100%}
 .pprog-cal-cell:hover{background:#2a2a2a}
 .pprog-cal-cell.muted{color:#555;cursor:default}
 .pprog-cal-cell.has-wod:not(.active){color:#1A9B8A}
-.pprog-cal-cell.deload-week{box-shadow:inset 0 0 0 1px #5b2c7a}
+.pprog-cal-cell.deload-week:not(.active){background:rgba(90,140,190,.2);color:#c5daf0;box-shadow:inset 0 0 0 1.5px #5a8cbe}
+.pprog-cal-cell.deload-week.has-wod:not(.active){color:#d4e6f7}
+.pprog-cal-cell.deload-week.muted:not(.active){color:#6a8499;background:rgba(90,140,190,.1);box-shadow:inset 0 0 0 1px #6a8499}
+.pprog-cal-cell.deload-week.active{background:#5a8cbe;color:#0c1520;box-shadow:none}
+.pprog-cal-cell.deload-week.active:hover{background:#7aa8d4;color:#0c1520}
+.pprog-cal-row.deload-week{background:rgba(90,140,190,.07);border-radius:10px;padding:2px 0}
 /* Active must beat muted/has-wod — rest days were unreadable on purple */
 .pprog-cal-cell.active,.pprog-cal-cell.active.muted,.pprog-cal-cell.active.has-wod{background:#8e44ad;color:#fff}
 .pprog-cal-cell.active:hover{background:#9b59b6;color:#fff}
@@ -214,6 +225,10 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-cal-week-col{appearance:none;background:#252525;border:1px solid #3a3a3a;color:#ddd;font-size:.58em;font-weight:700;padding:4px 2px;border-radius:8px;cursor:pointer;font-family:inherit;line-height:1.2;min-height:36px;width:100%;max-width:56px;margin:0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
 .pprog-cal-week-col:hover{border-color:#8e44ad;color:#fff}
 .pprog-cal-week-col.active{background:#8e44ad;border-color:#b06dcf;color:#fff}
+.pprog-cal-week-col.deload-week{background:rgba(90,140,190,.24);border-color:#5a8cbe;color:#c5daf0}
+.pprog-cal-week-col.deload-week:hover{border-color:#7aa8d4;color:#fff}
+.pprog-cal-week-col.deload-week.active{background:#5a8cbe;border-color:#7aa8d4;color:#0c1520}
+.pprog-cal-week-col.deload-week .pprog-cal-week-phase{color:#d4e6f7;opacity:1;font-weight:800}
 .pprog-cal-week-col .pprog-cal-week-num{font-size:1.05em;letter-spacing:.02em}
 .pprog-cal-week-col .pprog-cal-week-phase{font-size:.9em;font-weight:600;opacity:.85;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pprog-cal-week-col.loading .pprog-cal-week-num::after{content:"…";opacity:.7}
@@ -227,12 +242,21 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-week-talk{margin-top:14px;padding-top:12px;border-top:1px solid #333}
 .pprog-week-talk label{display:block;color:#1A9B8A;font-weight:600;margin-bottom:6px;font-size:.88em}
 .pprog-week-talk textarea{width:100%;min-height:72px;padding:10px;background:#222;color:#eee;border:1px solid #444;border-radius:8px;font-family:inherit;font-size:.95em}
-/* Month/brick view: calendar first, coach chat below for whole-brick notes */
+/* Month/brick view: calendar first; whole-program notes collapsed below day chat */
 .pprog-panel.pprog-brick-mode{display:flex;flex-direction:column}
 .pprog-panel.pprog-brick-mode #pprogWeekBlock{order:1}
-.pprog-panel.pprog-brick-mode #pprogIntakeBlock{order:2;margin-top:14px;padding-top:12px;border-top:1px solid #333}
-.pprog-panel.pprog-brick-mode .pprog-chat-log{min-height:140px;max-height:min(36vh,280px)}
-.pprog-brick-chat-hint{color:#1A9B8A;font-weight:600;font-size:.88em;margin:0 0 8px;direction:ltr}
+.pprog-panel.pprog-brick-mode #pprogIntakeBlock{order:2;margin-top:14px;padding:0;border-top:none}
+.pprog-panel.pprog-brick-mode .pprog-chat-log{min-height:120px;max-height:min(32vh,240px)}
+.pprog-brick-notes{border:1px solid #c4a35a;background:rgba(196,163,90,.09);border-radius:10px;overflow:hidden;direction:ltr}
+.pprog-brick-notes-toggle{width:100%;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:0;padding:12px 14px;background:transparent;border:none;color:#e8dcc0;font-family:inherit;text-align:left;cursor:pointer}
+.pprog-brick-notes-toggle:hover{background:rgba(196,163,90,.12)}
+.pprog-brick-notes-toggle-title{display:block;color:#d4b56a;font-weight:700;font-size:.9em}
+.pprog-brick-notes-toggle-scope{display:block;color:#a8946a;font-size:.72em;font-weight:500;margin-top:3px;line-height:1.35}
+.pprog-brick-notes-chevron{flex-shrink:0;color:#c4a35a;font-size:1.1em;line-height:1;margin-top:2px;transition:transform .15s ease}
+.pprog-brick-notes.open .pprog-brick-notes-chevron{transform:rotate(90deg)}
+.pprog-brick-notes-body{display:none;padding:0 12px 12px;border-top:1px solid rgba(196,163,90,.35)}
+.pprog-brick-notes.open .pprog-brick-notes-body{display:block;padding-top:10px}
+.pprog-brick-chat-hint{display:none!important}
 .pprog-fill-status{color:#888;font-size:.75em;text-align:center;margin:0 0 8px}
 .pprog-fill-status.err{color:#e57373}
 .pprog-rest-day{text-align:center;padding:20px 8px 12px}
@@ -270,7 +294,7 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
   .pprog-cal-general,.pprog-cal-week-col{min-height:40px;font-size:.56em}
   .pprog-building-overlay{padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
   .pprog-day-card{padding:12px 10px}
-  .pprog-pre-box textarea,.pprog-debrief-box textarea,.pprog-week-talk textarea{font-size:16px}
+  .pprog-session-box textarea,.pprog-week-talk textarea{font-size:16px}
 }
 .pprog-day-stub{background:#1a1a1a;border:1px dashed #444;border-radius:10px;padding:12px;margin:8px 0;color:#bbb;font-size:.88em;line-height:1.45;text-align:left}
 .pprog-day-stub strong{color:#b06dcf;display:block;margin-bottom:4px}
@@ -700,7 +724,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.0</div>
+<div class="header-sub">DAILY WORKOUTS · v21.1</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
@@ -1346,6 +1370,13 @@ var PPROG_SKILL_DEFS = [
   { id: "chest_to_bar", label: "Chest to bar pull-ups" },
 ];
 
+/** Where the athlete usually trains — multi-select (no trademarked gym brands). */
+var PPROG_TRAINING_LOCATION_DEFS = [
+  { id: "functional_gym", label: "Well-equipped functional training gym" },
+  { id: "conventional_gym", label: "Conventional gym" },
+  { id: "other_home", label: "Other — home or limited equipment", needsDetail: true },
+];
+
 /** Intake lifts + run — filled via <<<LIFTS_PICKER>>> UI (blank = unknown). */
 var PPROG_LIFT_DEFS = [
   { id: "back_squat", label: "Back Squat", unit: "kg", kind: "kg" },
@@ -1360,7 +1391,7 @@ var PPROG_PROFILE_DEFS = [
   { id: "gender", label: "Gender", kind: "select", options: ["male", "female"] },
   { id: "age", label: "Age", kind: "number", placeholder: "e.g. 30" },
   { id: "bodyweight", label: "Bodyweight (kg)", kind: "number", placeholder: "e.g. 78" },
-  { id: "experience", label: "Training experience", kind: "text", placeholder: "e.g. 2 years CrossFit" },
+  { id: "experience", label: "Training experience", kind: "text", placeholder: "e.g. 2 years functional fitness" },
 ];
 
 function pprogLegalAccepted(store) {
@@ -1509,6 +1540,7 @@ var pprogFillErrors = {};
 var PPROG_FILL_MAX_ATTEMPTS = 3;
 var PPROG_NEXT_BLOCK_UNLOCK_HOUR_IL = 10;
 var pprogNextBlockTimerId = null;
+var pprogBrickNotesOpen = false;
 
 /** Brace-match JSON object at start index of `{`. */
 function pprogSliceBalancedObject(text, start) {
@@ -1717,6 +1749,10 @@ function emptyPprogStore() {
     preferredLanguage: "",
     skills: {},
     lifts: {},
+    trainingLocations: {},
+    trainingLocationOther: "",
+    trainingSetupNotes: "",
+    trainingSetup: "",
     legalAcceptedAt: null,
     legalAcceptedVersion: 0,
     intakeComplete: false,
@@ -1757,6 +1793,10 @@ function loadPprogStore() {
     if (typeof o.preferredLanguage !== "string") o.preferredLanguage = o.preferredLanguage ? String(o.preferredLanguage) : "";
     if (!o.skills || typeof o.skills !== "object") o.skills = {};
     if (!o.lifts || typeof o.lifts !== "object") o.lifts = {};
+    if (!o.trainingLocations || typeof o.trainingLocations !== "object") o.trainingLocations = {};
+    if (typeof o.trainingLocationOther !== "string") o.trainingLocationOther = o.trainingLocationOther ? String(o.trainingLocationOther) : "";
+    if (typeof o.trainingSetupNotes !== "string") o.trainingSetupNotes = o.trainingSetupNotes ? String(o.trainingSetupNotes) : "";
+    if (typeof o.trainingSetup !== "string") o.trainingSetup = o.trainingSetup ? String(o.trainingSetup) : "";
     if (!o.legalAcceptedVersion) o.legalAcceptedVersion = 0;
     if (typeof o.intakeNotifySent !== "boolean") o.intakeNotifySent = !!o.intakeNotifySentAt;
     if (typeof o.activeWeekIndex !== "number") o.activeWeekIndex = 0;
@@ -2700,7 +2740,7 @@ function syncPprogModeUi() {
   syncPprogNextBlockUi();
 }
 
-/** After intake: keep coach chat visible in month/brick view (whole-brick notes). */
+/** After intake: whole-program notes sit collapsed under the day session chat (month view). */
 function syncPprogBrickChatUi() {
   var store = loadPprogStore();
   var intake = document.getElementById("pprogIntakeBlock");
@@ -2710,6 +2750,7 @@ function syncPprogBrickChatUi() {
   if (!store.intakeComplete) {
     if (panel) panel.classList.remove("pprog-brick-mode");
     if (hint) hint.style.display = "none";
+    pprogUnwrapBrickNotesShell(intake);
     if (inp && inp.getAttribute("data-default-ph")) {
       inp.placeholder = inp.getAttribute("data-default-ph");
     }
@@ -2720,28 +2761,59 @@ function syncPprogBrickChatUi() {
   if (panel) panel.classList.toggle("pprog-brick-mode", showChat);
   if (intake) intake.style.display = showChat ? "block" : "none";
   if (showChat) {
-    if (!hint && intake) {
-      hint = document.createElement("p");
-      hint.id = "pprogBrickChatHint";
-      hint.className = "pprog-brick-chat-hint";
-      hint.textContent = "Notes on this whole brick (לבנה) — coach chat";
-      intake.insertBefore(hint, intake.firstChild);
-    }
-    if (hint) hint.style.display = "block";
+    pprogEnsureBrickNotesShell(intake);
+    var shell = document.getElementById("pprogBrickNotes");
+    if (shell) shell.classList.toggle("open", !!pprogBrickNotesOpen);
+    if (hint) hint.style.display = "none";
     if (inp) {
       if (!inp.getAttribute("data-default-ph")) {
         inp.setAttribute("data-default-ph", inp.placeholder || "Message the coach…");
       }
-      inp.placeholder = "Message the coach about this brick…";
+      inp.placeholder = "Message the coach about the whole program…";
     }
-    /* Only refresh log when entering brick view — avoid wiping scroll on week chevrons */
     if (!wasShowing) renderPprogChat();
   } else {
+    pprogUnwrapBrickNotesShell(intake);
     if (hint) hint.style.display = "none";
     if (inp && inp.getAttribute("data-default-ph")) {
       inp.placeholder = inp.getAttribute("data-default-ph");
     }
   }
+}
+
+function pprogEnsureBrickNotesShell(intake) {
+  if (!intake || document.getElementById("pprogBrickNotes")) return;
+  var shell = document.createElement("div");
+  shell.id = "pprogBrickNotes";
+  shell.className = "pprog-brick-notes";
+  shell.innerHTML =
+    '<button type="button" class="pprog-brick-notes-toggle" id="pprogBrickNotesToggle" onclick="togglePprogBrickNotes()" aria-expanded="false">' +
+    '<span><span class="pprog-brick-notes-toggle-title">Whole program notes</span>' +
+    '<span class="pprog-brick-notes-toggle-scope">Affects the full 5-week brick — not only today’s workout. Tap to open.</span></span>' +
+    '<span class="pprog-brick-notes-chevron" aria-hidden="true">▸</span></button>' +
+    '<div class="pprog-brick-notes-body" id="pprogBrickNotesBody"></div>';
+  var body = shell.querySelector("#pprogBrickNotesBody");
+  while (intake.firstChild) body.appendChild(intake.firstChild);
+  intake.appendChild(shell);
+}
+
+function pprogUnwrapBrickNotesShell(intake) {
+  var shell = document.getElementById("pprogBrickNotes");
+  if (!intake || !shell) return;
+  var body = document.getElementById("pprogBrickNotesBody");
+  if (body) {
+    while (body.firstChild) intake.insertBefore(body.firstChild, shell);
+  }
+  shell.remove();
+}
+
+function togglePprogBrickNotes() {
+  pprogBrickNotesOpen = !pprogBrickNotesOpen;
+  var shell = document.getElementById("pprogBrickNotes");
+  var btn = document.getElementById("pprogBrickNotesToggle");
+  if (shell) shell.classList.toggle("open", !!pprogBrickNotesOpen);
+  if (btn) btn.setAttribute("aria-expanded", pprogBrickNotesOpen ? "true" : "false");
+  if (pprogBrickNotesOpen) renderPprogChat();
 }
 
 function showPprogChatAgain() {
@@ -2887,12 +2959,33 @@ function renderPprogFixedStepHtml(step) {
       html += "</div>";
     }
   } else if (key === "setup") {
+    var locs = store.trainingLocations && typeof store.trainingLocations === "object" ? store.trainingLocations : {};
+    var otherDetail = store.trainingLocationOther || "";
+    var otherOn = !!locs.other_home;
     html +=
-      '<p class="pprog-fixed-title">Training setup</p>' +
-      '<p class="pprog-fixed-note">Gym vs home/partial, and what equipment you can use. Blank = unknown.</p>' +
-      '<textarea id="pprog-fx-setup" maxlength="800" placeholder="e.g. Fully equipped gym — barbell, rower, pull-up bar…">' +
-      esc(store.trainingSetup || "") +
-      "</textarea>";
+      '<p class="pprog-fixed-title">Where do you usually train?</p>' +
+      '<p class="pprog-fixed-note">Select all that apply (some athletes train in more than one place).</p>' +
+      '<div class="pprog-location-picker">';
+    for (var li = 0; li < PPROG_TRAINING_LOCATION_DEFS.length; li++) {
+      var loc = PPROG_TRAINING_LOCATION_DEFS[li];
+      var locOn = !!locs[loc.id];
+      html +=
+        '<label><input type="checkbox" data-fx-location="' +
+        esc(loc.id) +
+        '"' +
+        (locOn ? " checked" : "") +
+        (loc.needsDetail ? ' onchange="pprogFixedLocationOtherToggle()"' : "") +
+        "> " +
+        esc(loc.label) +
+        "</label>";
+    }
+    html +=
+      '<div class="pprog-location-other-wrap" id="pprogFxLocationOtherWrap"' +
+      (otherOn ? "" : " hidden") +
+      ">" +
+      '<textarea id="pprog-fx-location-other" maxlength="500" placeholder="Please specify your setup (e.g. garage, dumbbells only, no rower…)">' +
+      esc(otherDetail) +
+      "</textarea></div></div>";
   } else if (key === "schedule") {
     var days = Array.isArray(store.trainingDays) ? store.trainingDays : [];
     html +=
@@ -3092,6 +3185,40 @@ function pprogFixedCollectSkillsFrom(box) {
   return { skills: skills, labels: labels };
 }
 
+function pprogFixedLocationOtherToggle() {
+  var box = document.getElementById("pprogFixedIntake");
+  var wrap = document.getElementById("pprogFxLocationOtherWrap");
+  if (!box || !wrap) return;
+  var otherCb = box.querySelector('input[data-fx-location="other_home"]');
+  if (otherCb && otherCb.checked) wrap.removeAttribute("hidden");
+  else wrap.setAttribute("hidden", "");
+}
+
+function pprogFixedCollectLocationsFrom(box) {
+  var locations = {};
+  var labels = [];
+  var cbs = box ? box.querySelectorAll("input[data-fx-location]") : [];
+  for (var i = 0; i < cbs.length; i++) {
+    if (!cbs[i].checked) continue;
+    var id = cbs[i].getAttribute("data-fx-location");
+    locations[id] = true;
+    for (var j = 0; j < PPROG_TRAINING_LOCATION_DEFS.length; j++) {
+      if (PPROG_TRAINING_LOCATION_DEFS[j].id === id) labels.push(PPROG_TRAINING_LOCATION_DEFS[j].label);
+    }
+  }
+  var otherEl = document.getElementById("pprog-fx-location-other");
+  var otherDetail = otherEl ? String(otherEl.value || "").trim().slice(0, 500) : "";
+  var parts = labels.slice();
+  if (locations.other_home && otherDetail) parts.push("Other detail: " + otherDetail);
+  return {
+    locations: locations,
+    otherDetail: otherDetail,
+    setupNotes: "",
+    trainingSetup: parts.join(" · ").slice(0, 800),
+    labels: labels,
+  };
+}
+
 function pprogFixedNext() {
   if (pprogBusy) return;
   var box = document.getElementById("pprogFixedIntake");
@@ -3129,8 +3256,19 @@ function pprogFixedNext() {
     store.experience = vals.experience.slice(0, 120);
     store.intakeProfileDone = true;
   } else if (key === "setup") {
-    var setupEl = document.getElementById("pprog-fx-setup");
-    store.trainingSetup = setupEl ? String(setupEl.value || "").trim().slice(0, 800) : "";
+    var locPack = pprogFixedCollectLocationsFrom(box);
+    if (!locPack.labels.length) {
+      pprogFixedSetErr("Select at least one training location.");
+      return;
+    }
+    if (locPack.locations.other_home && !locPack.otherDetail) {
+      pprogFixedSetErr("Please specify your Other / home setup.");
+      return;
+    }
+    store.trainingLocations = locPack.locations;
+    store.trainingLocationOther = locPack.otherDetail;
+    store.trainingSetupNotes = "";
+    store.trainingSetup = locPack.trainingSetup;
   } else if (key === "schedule") {
     var days = [];
     var dayCbs = box.querySelectorAll("input[data-fx-day]");
@@ -3695,9 +3833,12 @@ function sendPprogMessage(ev) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        action: "chat",
         messages: payloadMsgs,
         allowEmptyUnknown: allowEmpty,
         preferInteractions: !!store.intakeComplete,
+        brickChat: !!brickMode,
+        intakeComplete: !!store.intakeComplete,
         athleteProfile: athleteProfilePayload(),
       }),
     },
@@ -4289,11 +4430,31 @@ function coercePprogOverview(overview) {
   return out;
 }
 
-function pprogPhaseShort(week) {
-  if (!week) return "";
-  if (week.phase === "deload") return "Deload";
-  var theme = String(week.theme || "").trim();
-  if (!theme) return week.phase === "build" ? "Build" : "";
+function pprogIsDeloadWeek(week, weekIndex0) {
+  var w = week || {};
+  var phase = String(w.phase || "").toLowerCase().trim();
+  if (phase === "deload" || phase === "taper") return true;
+  var blob = String(w.theme || "") + " " + String(w.summaryLine || "");
+  if (/\bdeload\b|\btaper\b/i.test(blob)) return true;
+  var wi =
+    typeof weekIndex0 === "number" && isFinite(weekIndex0)
+      ? weekIndex0
+      : (parseInt(w.weekIndex, 10) || 0) - 1;
+  /* Default 5-week brick: week 5 is deload unless explicitly a non-deload build week. */
+  if (wi === 4 || Number(w.weekIndex) === 5) {
+    if ((phase === "build" || phase === "peak" || phase === "intensify") && !/\bdeload\b/i.test(blob)) {
+      return false;
+    }
+    return true;
+  }
+  return false;
+}
+
+function pprogPhaseShort(week, weekIndex0) {
+  if (!week && weekIndex0 !== 4) return "";
+  if (pprogIsDeloadWeek(week, weekIndex0)) return "Deload";
+  var theme = String((week && week.theme) || "").trim();
+  if (!theme) return week && week.phase === "build" ? "Build" : "";
   var words = theme.split(/\s+/).filter(Boolean);
   if (words.length <= 2) return words.join(" ").slice(0, 14);
   return words.slice(0, 2).join(" ").slice(0, 14);
@@ -4645,10 +4806,13 @@ function normalizePprogBlock(block, prevBlock) {
     var prev = prevWeeks[i] || null;
     var start = pprogAddDaysIso(blockStart, i * 7);
     if (src) {
+      var resolvedPhase = pprogIsDeloadWeek(src, i)
+        ? "deload"
+        : src.phase || (i === 4 ? "deload" : "build");
       weeks.push(
         normalizePprogWeek(src, prev, start, {
           weekIndex: i + 1,
-          phase: src.phase || (i === 4 ? "deload" : "build"),
+          phase: resolvedPhase,
           theme: src.theme || "",
         })
       );
@@ -5557,11 +5721,110 @@ function savePprogDayNote(dayKey, value) {
   savePprogStore(store);
 }
 
-function togglePprogDebrief(dayKey) {
-  var el = document.getElementById("pprog-debrief-" + dayKey);
-  if (!el) return;
-  el.classList.toggle("open");
+function togglePprogDebrief() {
+  /* Debrief UI removed — kept as no-op for any stale onclick. */
 }
+
+/** Session note for this workout: revise live when needed + remember in coach prefs (no admin email). */
+function submitPprogDayPreTalk(dayKey) {
+  if (pprogBusy) return;
+  var ta = document.getElementById("pprog-pre-ta-" + dayKey);
+  var text = ta ? String(ta.value || "").trim() : "";
+  if (!text) return;
+  var store = loadPprogStore();
+  var week = store.currentWeek;
+  if (!week || !week.days || !week.days[dayKey]) return;
+  savePprogDayField(dayKey, "preTalk", text);
+  addPprogCoachPref("session " + dayKey + ": " + text);
+  var dayData = week.days[dayKey];
+  var base = getApiBase();
+  if (!base) return;
+  pprogBusy = true;
+  var replyEl = document.getElementById("pprog-day-reply-" + dayKey);
+  if (replyEl) {
+    replyEl.style.display = "block";
+    replyEl.innerHTML = '<div class="pprog-typing-bubble" aria-label="Coach is typing">' + pprogTypingDotsHtml() + "</div>";
+  }
+  fetchAiWithTimeout(
+    base + "/api/personal-coach",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "revise_day",
+        day: dayKey,
+        feedback: text,
+        currentParts: dayData.parts || [],
+        athleteProfile: athleteProfilePayload({ forceIntakeComplete: true, omitChat: true }),
+        messages: [],
+      }),
+    },
+    90000
+  )
+    .then(function (x) {
+      var j = x.j || {};
+      if (!x.ok || !j.ok) {
+        if (replyEl) replyEl.textContent = "Error: " + pprogFriendlyApiError(j, x.status);
+        return;
+      }
+      var revised = j.day || null;
+      if (!revised && j.text) {
+        try {
+          var m = String(j.text).match(/<<<DAY_JSON\s*([\s\S]*?)\s*DAY_JSON>>>/);
+          if (m) revised = JSON.parse(m[1].trim());
+        } catch (e) {}
+      }
+      if (revised) {
+        applyPprogDayRevision(dayKey, revised);
+        try {
+          var revisedKinds = revised && revised.parts ? detectModifiedPartKinds(dayData.parts || [], revised.parts || []) : {};
+          sendAnalytics("personal_coach_workout_changed", {
+            coachArea: "day_session",
+            changeType: "day_revision",
+            dayKey: dayKey,
+            weekIndex: (loadPprogStore().activeWeekIndex | 0) + 1,
+            modifiedKindsCount: Object.keys(revisedKinds || {}).length,
+          });
+        } catch (e1) {}
+      }
+      var clean = stripPprogDayJsonForDisplay(String(j.text || ""));
+      if (revised) {
+        if (!clean) {
+          clean = "Updated. Another change?";
+        } else if (!/another change|anything else\?/i.test(clean)) {
+          clean = clean.replace(/\s+$/, "") + " Another change?";
+        }
+      } else if (!clean) {
+        clean = "Got it — I’ll keep that in mind for this session.";
+      }
+      var s2 = loadPprogStore();
+      if (s2.currentWeek && s2.currentWeek.days && s2.currentWeek.days[dayKey]) {
+        s2.currentWeek.days[dayKey].lastPreReply = clean;
+        s2.currentWeek.days[dayKey].preTalk = "";
+        savePprogStore(s2);
+      }
+      renderPprogWeek();
+      try {
+        sendAnalytics("personal_coach_day_session", { coachArea: "day_session", dayKey: dayKey });
+        sendAnalytics("personal_coach_workout_change_request", {
+          coachArea: "day_session",
+          changeType: "day_revision",
+          dayKey: dayKey,
+          weekIndex: (s2.activeWeekIndex | 0) + 1,
+        });
+      } catch (e) {}
+    })
+    .catch(function () {
+      if (replyEl) replyEl.textContent = "Network error";
+    })
+    .then(function () {
+      pprogBusy = false;
+    });
+}
+
+/** Debrief flow retired — no athlete debrief emails. */
+function submitPprogDayDebrief() {}
+function submitPprogDayDebriefAfterLegal() {}
 
 function silentAdminFeedback(payload) {
   var base = getApiBase();
@@ -5613,199 +5876,6 @@ function addPprogCoachPref(text) {
 
 function stripPprogDayJsonForDisplay(text) {
   return stripPprogWeekJsonForDisplay(text);
-}
-
-/** Pre-workout: revise today's plan live + store prefs when relevant */
-function submitPprogDayPreTalk(dayKey) {
-  if (pprogBusy) return;
-  var ta = document.getElementById("pprog-pre-ta-" + dayKey);
-  var text = ta ? String(ta.value || "").trim() : "";
-  if (!text) return;
-  var store = loadPprogStore();
-  var week = store.currentWeek;
-  if (!week || !week.days || !week.days[dayKey]) return;
-  savePprogDayField(dayKey, "preTalk", text);
-  var dayData = week.days[dayKey];
-  var base = getApiBase();
-  if (!base) return;
-  pprogBusy = true;
-  var replyEl = document.getElementById("pprog-day-reply-" + dayKey);
-  if (replyEl) {
-    replyEl.style.display = "block";
-    replyEl.innerHTML = '<div class="pprog-typing-bubble" aria-label="Coach is typing">' + pprogTypingDotsHtml() + "</div>";
-  }
-  fetchAiWithTimeout(
-    base + "/api/personal-coach",
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action: "revise_day",
-        day: dayKey,
-        feedback: text,
-        currentParts: dayData.parts || [],
-        athleteProfile: athleteProfilePayload({ forceIntakeComplete: true, omitChat: true }),
-        messages: [],
-      }),
-    },
-    90000
-  )
-    .then(function (x) {
-      var j = x.j || {};
-      if (!x.ok || !j.ok) {
-        if (replyEl) replyEl.textContent = "Error: " + pprogFriendlyApiError(j, x.status);
-        return;
-      }
-      var revised = j.day || null;
-      if (!revised && j.text) {
-        try {
-          var m = String(j.text).match(/<<<DAY_JSON\s*([\s\S]*?)\s*DAY_JSON>>>/);
-          if (m) revised = JSON.parse(m[1].trim());
-        } catch (e) {}
-      }
-      if (revised) {
-        applyPprogDayRevision(dayKey, revised);
-        addPprogCoachPref("pre " + dayKey + ": " + text);
-        try {
-          var revisedKinds = (revised && revised.parts) ? detectModifiedPartKinds((dayData.parts || []), revised.parts || []) : {};
-          sendAnalytics("personal_coach_workout_changed", {
-            coachArea: "day_pre",
-            changeType: "day_revision",
-            dayKey: dayKey,
-            weekIndex: (loadPprogStore().activeWeekIndex | 0) + 1,
-            modifiedKindsCount: Object.keys(revisedKinds || {}).length,
-          });
-        } catch (e1) {}
-      }
-      var clean = stripPprogDayJsonForDisplay(String(j.text || ""));
-      if (revised) {
-        if (!clean) {
-          clean = "Updated. Another change?";
-        } else if (!/another change|anything else\?/i.test(clean)) {
-          clean = clean.replace(/\s+$/, "") + " Another change?";
-        }
-      }
-      var s2 = loadPprogStore();
-      if (s2.currentWeek && s2.currentWeek.days && s2.currentWeek.days[dayKey]) {
-        s2.currentWeek.days[dayKey].lastPreReply = clean || (revised ? "Updated. Another change?" : "Got it.");
-        /* clear the request box after successful turn so follow-ups are easy */
-        s2.currentWeek.days[dayKey].preTalk = "";
-        savePprogStore(s2);
-      }
-      renderPprogWeek();
-      try {
-        sendAnalytics("personal_coach_day_pre", { coachArea: "day_pre", dayKey: dayKey });
-        sendAnalytics("personal_coach_workout_change_request", {
-          coachArea: "day_pre",
-          changeType: "day_revision",
-          dayKey: dayKey,
-          weekIndex: (s2.activeWeekIndex | 0) + 1,
-        });
-      } catch (e) {}
-    })
-    .catch(function () {
-      if (replyEl) replyEl.textContent = "Network error";
-    })
-    .then(function () {
-      pprogBusy = false;
-    });
-}
-
-/** Post-workout debrief: coach memory + silent admin email (not required to unlock next day) */
-function submitPprogDayDebrief(dayKey) {
-  if (pprogBusy) return;
-  var ta = document.getElementById("pprog-debrief-ta-" + dayKey);
-  var text = ta ? String(ta.value || "").trim() : "";
-  if (!text) return;
-  pprogEnsureLegalAccepted(function () {
-    submitPprogDayDebriefAfterLegal(dayKey, text);
-  });
-}
-
-function submitPprogDayDebriefAfterLegal(dayKey, text) {
-  if (pprogBusy) return;
-  text = String(text || "").trim();
-  if (!text) return;
-  var store = loadPprogStore();
-  var week = store.currentWeek;
-  if (!week || !week.days || !week.days[dayKey]) return;
-  savePprogDayField(dayKey, "debrief", text);
-  addPprogCoachPref("debrief " + dayKey + ": " + text);
-  var base = getApiBase();
-  if (!base) return;
-  pprogBusy = true;
-  var replyEl = document.getElementById("pprog-debrief-reply-" + dayKey);
-  if (replyEl) {
-    replyEl.style.display = "block";
-    replyEl.innerHTML = '<div class="pprog-typing-bubble" aria-label="Coach is typing">' + pprogTypingDotsHtml() + "</div>";
-  }
-  var dayLabel = PPROG_DAY_LABELS[dayKey] || dayKey;
-  var dayParts = (week.days[dayKey].parts || []).slice(0, 8).map(function (p, i) {
-    return {
-      id: String((p && p.id) || "part-" + i).slice(0, 40),
-      title: String((p && p.title) || "Part " + String.fromCharCode(65 + i)).slice(0, 120),
-      lines: Array.isArray(p && p.lines)
-        ? p.lines.map(function (l) {
-            return String(l || "").slice(0, 400);
-          }).filter(Boolean).slice(0, 12)
-        : [],
-    };
-  });
-  function buildDebriefAdminPayload(coachReply) {
-    return {
-      type: "day_debrief",
-      athleteId: store.athleteId,
-      day: dayKey,
-      dayLabel: dayLabel,
-      weekStart: week.weekStart,
-      athleteFeedback: text,
-      coachReply: coachReply || "",
-      parts: dayParts,
-      text: text,
-    };
-  }
-  fetchAiWithTimeout(
-    base + "/api/personal-coach",
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action: "day_debrief",
-        day: dayKey,
-        feedback: text,
-        currentParts: week.days[dayKey].parts || [],
-        athleteProfile: athleteProfilePayload(),
-        messages: [],
-      }),
-    },
-    90000
-  )
-    .then(function (x) {
-      var j = x.j || {};
-      var reply = stripPprogDayJsonForDisplay(String((j && j.text) || ""));
-      var s2 = loadPprogStore();
-      if (s2.currentWeek && s2.currentWeek.days && s2.currentWeek.days[dayKey]) {
-        s2.currentWeek.days[dayKey].lastDebriefReply = reply || (x.ok ? "Saved." : "Error");
-        savePprogStore(s2);
-      }
-      if (j && Array.isArray(j.prefs) && j.prefs.length) {
-        for (var pi = 0; pi < j.prefs.length; pi++) addPprogCoachPref(String(j.prefs[pi]));
-      }
-      silentAdminFeedback(buildDebriefAdminPayload(reply));
-      renderPprogWeek();
-      var debriefBox = document.getElementById("pprog-debrief-" + dayKey);
-      if (debriefBox) debriefBox.classList.add("open");
-      try {
-        sendAnalytics("personal_coach_day_debrief", { coachArea: "day_debrief", dayKey: dayKey });
-      } catch (e) {}
-    })
-    .catch(function () {
-      if (replyEl) replyEl.textContent = "Saved locally (coach network error)";
-      silentAdminFeedback(buildDebriefAdminPayload(""));
-    })
-    .then(function () {
-      pprogBusy = false;
-    });
 }
 
 function savePprogWeekTalk(value) {
@@ -6150,17 +6220,17 @@ function renderPprogDayPartsHtml(parts, dayData, dayKey) {
 
 function renderPprogDayFooter(dayKey, dayData) {
   var label = PPROG_DAY_LABELS[dayKey] || dayKey;
-  var preReply = dayData.lastPreReply || "";
-  var debReply = dayData.lastDebriefReply || "";
+  var preReply = dayData.lastPreReply || dayData.lastDebriefReply || "";
   return (
     '<div class="pprog-day-footer" dir="ltr">' +
-    '<div class="pprog-pre-box">' +
-    "<label>Before training — talk to the coach (" +
+    '<div class="pprog-session-box">' +
+    "<label>About this workout · " +
     esc(label) +
-    ")</label>" +
+    "</label>" +
+    '<span class="pprog-session-scope">Only this session — swaps, equipment, feel before/after. Does not rewrite the whole program.</span>' +
     '<textarea id="pprog-pre-ta-' +
     dayKey +
-    '" maxlength="2000" dir="ltr" placeholder="e.g. shorter metcon / pull-up alternative / sensitive knees…" onchange="savePprogDayField(\'' +
+    '" maxlength="2000" dir="ltr" placeholder="e.g. no dumbbells today · shorter metcon · knees felt rough after squats…" onchange="savePprogDayField(\'' +
     dayKey +
     "', 'preTalk', this.value)\">" +
     esc(dayData.preTalk || "") +
@@ -6169,9 +6239,6 @@ function renderPprogDayFooter(dayKey, dayData) {
     '<button type="button" class="btn btn-find pprog-talk-btn" onclick="submitPprogDayPreTalk(\'' +
     dayKey +
     "')\">Send</button>" +
-    '<button type="button" class="btn btn-find pprog-talk-btn pprog-debrief-toggle" onclick="togglePprogDebrief(\'' +
-    dayKey +
-    "')\">Debrief</button>" +
     "</div>" +
     '<div class="pprog-part-reply" id="pprog-day-reply-' +
     dayKey +
@@ -6179,30 +6246,6 @@ function renderPprogDayFooter(dayKey, dayData) {
     (preReply ? "" : ' style="display:none"') +
     ">" +
     esc(preReply) +
-    "</div>" +
-    "</div>" +
-    '<div class="pprog-debrief-box" id="pprog-debrief-' +
-    dayKey +
-    '">' +
-    "<label>Post-session debrief — what should the coach remember</label>" +
-    '<textarea id="pprog-debrief-ta-' +
-    dayKey +
-    '" maxlength="2000" dir="ltr" placeholder="How did it go? What to improve / remember next time…" onchange="savePprogDayField(\'' +
-    dayKey +
-    "', 'debrief', this.value)\">" +
-    esc(dayData.debrief || "") +
-    "</textarea>" +
-    '<div class="pprog-day-actions">' +
-    '<button type="button" class="btn btn-find pprog-talk-btn" onclick="submitPprogDayDebrief(\'' +
-    dayKey +
-    "')\">Send debrief</button>" +
-    "</div>" +
-    '<div class="pprog-part-reply" id="pprog-debrief-reply-' +
-    dayKey +
-    '"' +
-    (debReply ? "" : ' style="display:none"') +
-    ">" +
-    esc(debReply) +
     "</div>" +
     "</div>" +
     "</div>"
@@ -6278,11 +6321,12 @@ function renderPprogCalHtml(block, activeWi, activeDay) {
       ((dayData.parts && dayData.parts.length) ||
         (pprogOverviewFocus(week, dayKey) && pprogOverviewFocus(week, dayKey) !== "—"));
     var isActive = weekIndex0 === activeWi && dayKey === activeDay;
+    var isDeload = pprogIsDeloadWeek(week, weekIndex0);
     var cls = "pprog-cal-cell";
     if (isActive) cls += " active";
     if (has) cls += " has-wod";
     if (isRest) cls += " muted";
-    if (week.phase === "deload") cls += " deload-week";
+    if (isDeload) cls += " deload-week";
     var dateNum = String(pprogParseIso(iso).getDate());
     return (
       '<button type="button" class="' +
@@ -6298,24 +6342,33 @@ function renderPprogCalHtml(block, activeWi, activeDay) {
   }
 
   function generalBtn(weekIndex0) {
-    var cls = "pprog-cal-general" + (weekIndex0 === activeWi && activeDay === "general" ? " active" : "");
+    var week = block.weeks[weekIndex0] || {};
+    var isDeload = pprogIsDeloadWeek(week, weekIndex0);
+    var cls =
+      "pprog-cal-general" +
+      (weekIndex0 === activeWi && activeDay === "general" ? " active" : "") +
+      (isDeload ? " deload-week" : "");
     return (
       '<button type="button" class="' +
       cls +
       '" onclick="setPprogCalDay(' +
       weekIndex0 +
-      ", 'general')\">General</button>"
+      ", 'general')\">" +
+      (isDeload ? "Deload" : "General") +
+      "</button>"
     );
   }
 
   function weekColBtn(weekIndex0) {
     var w = block.weeks[weekIndex0] || {};
-    var phase = pprogPhaseShort(w);
+    var isDeload = pprogIsDeloadWeek(w, weekIndex0);
+    var phase = pprogPhaseShort(w, weekIndex0);
     var loading = !weekHasDetailedDays(w);
     var cls =
       "pprog-cal-week-col" +
       (weekIndex0 === activeWi && activeDay === "general" ? " active" : "") +
-      (loading ? " loading" : "");
+      (loading ? " loading" : "") +
+      (isDeload ? " deload-week" : "");
     return (
       '<button type="button" class="' +
       cls +
@@ -6340,7 +6393,8 @@ function renderPprogCalHtml(block, activeWi, activeDay) {
     html += '<div class="pprog-cal-month-grid">';
     var weekCount = Math.max(5, block.weeks.length);
     for (var wi = 0; wi < weekCount; wi++) {
-      html += '<div class="pprog-cal-row">' + weekColBtn(wi);
+      var rowDeload = pprogIsDeloadWeek(block.weeks[wi] || {}, wi);
+      html += '<div class="pprog-cal-row' + (rowDeload ? " deload-week" : "") + '">' + weekColBtn(wi);
       for (var di = 0; di < 7; di++) {
         html += cellHtml(wi, di, pprogAddDaysIso(start, wi * 7 + di));
       }
@@ -6483,7 +6537,7 @@ function renderPprogWeek() {
     (activeWi + 1) +
     " / 5 · " +
     esc(weekRange) +
-    (week.phase === "deload" ? " · Deload" : "") +
+    (pprogIsDeloadWeek(week, activeWi) ? " · Deload" : "") +
     (week.theme ? " · " + esc(String(week.theme).slice(0, 40)) : "") +
     "</div>";
   var fillErrKeys = Object.keys(pprogFillErrors);

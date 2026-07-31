@@ -235,6 +235,20 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - **Added:** 2026-07-31 — learning leap: pyramid doctrine + living digests under L1/L2
 - **Updated:** 2026-07-31 — Foundation Brief runtime ground layer; rename digest to מסמך דפוסי מקורות
 
+### POL-022 — Whole-program / brick chat: ultra-brief double-check
+- **Type:** HARD
+- **Scope:** coach chat after intake (especially “whole program notes” / brick chat); standing prefs that affect many days/weeks
+- **Trigger:** athlete asks to change a weekday pattern, whole brick, all Tuesdays, session length across weeks, equipment rules for the plan, or similar broad/standing change
+- **Required behavior:**
+  1. **Double-check stays** for broad changes — do **not** rewrite the whole brick in that same turn until the athlete clearly confirms.
+  2. **Ultra-brief (HARD):** reply with **one short sentence** that states the exact change + **Confirm?** (or the same idea in equally short form). Max ~2 short sentences total. No paragraphs.
+  3. **Forbidden padding:** no session-limit essays, no “I updated your profile preferences…”, no “Would you like me to rewrite this week’s X right away?”, no empathy, praise, or multi-option menus.
+  4. After a clear confirm (“yes” / “כן” / “do it”): apply (prefs + rewrite as needed) and reply with a tiny ack (e.g. “Done.” / “Updated.”). Still no speechifying.
+- **Examples:**  
+  Good: “I’ll rewrite all Tuesday sessions to a longer 25–30 min metcon. Confirm?”  
+  Bad: “Got it. Tuesdays will now feature a longer metcon… staying within your 45-minute… I have updated your profile… Would you like me to rewrite this week's Tuesday…?”
+- **Added:** 2026-07-31 — user: keep double-check, cut the chat
+
 ---
 
 ## Notes for maintainers

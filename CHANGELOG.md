@@ -1,5 +1,17 @@
 # Changelog
 
+## [21.1.0] - 2026-07-31
+
+### Personal Coach UX + learning leap
+- **Display version: v21.1**
+- Learning leap: knowledge pyramid (POL-021), living pattern brief, Gemini-only programming fills (no Groq fallback for plan quality).
+- Session chat: one box for this workout (before/after notes); debrief emails removed.
+- Whole-program notes collapsed (gold); deload week marked in steel-blue on the month calendar.
+- Intake: multi-select training locations (no trademarked gym brands); Other opens a detail box only.
+- POL-022: ultra-brief Confirm? on broad plan changes.
+
+---
+
 ## [21.0.0] - 2026-07-31
 
 ### First Personal Coach release
