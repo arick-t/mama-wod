@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.3.1</title>
+<title>DUCK-WOD · v21.2.1</title>
 <meta name="theme-color" content="#111">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -42,10 +42,10 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .tab-pprog-wrap{border:1px dashed #8e44ad!important;background:linear-gradient(180deg,#221528 0%,#1e1e1e 100%)!important}
 .tab-pprog-wrap:hover{border-color:#b06dcf!important}
 .tab-btn.tab-pprog-wrap.active{background:#E8451A!important;border:1px dashed #d2a8e8!important;color:#fff!important}
-/* Personal Coach tab visible (v21.3.1). Flip PPROG_TAB_ENABLED=false to hide again. */
+/* Personal Coach tab visible (v21.2.1). Flip PPROG_TAB_ENABLED=false to hide again. */
 /* #tab-pprog,#pprog-tab{display:none!important} */
-/* Generate Workout tab hidden (v21.3+): keep code; flip GENERATE_WORKOUT_TAB_ENABLED=true to restore. */
-/* #tab-aibeta,#aibeta-tab{display:none!important} */
+/* Generate Workout tab hidden (v21.2.1): keep code; set GENERATE_WORKOUT_TAB_ENABLED=true + remove rule below to restore. */
+#tab-aibeta,#aibeta-tab{display:none!important}
 .pprog-panel{max-width:720px;margin:0 auto;background:#1e1e1e;padding:20px 18px 24px;border-radius:12px;border:1px solid #2a2a2a}
 .pprog-head{display:flex;align-items:center;gap:14px;margin:0 0 14px}
 .pprog-coach-avatar{width:72px;height:72px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.45));cursor:pointer;-webkit-tap-highlight-color:transparent;border-radius:12px}
@@ -729,13 +729,13 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.3.1</div>
+<div class="header-sub">DAILY WORKOUTS · v21.2.1</div>
 <div class="header-sub" id="coachVersionSub">COACH · v1.1</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
 <button class="tab-btn active" id="tab-browse" onclick="showTab('browse')">Workout's</button>
-<button class="tab-btn tab-generate-wrap" id="tab-aibeta" onclick="showTab('aibeta')">Generate Workout</button>
+<button class="tab-btn tab-generate-wrap" id="tab-aibeta" onclick="showTab('aibeta')" hidden aria-hidden="true" tabindex="-1">Generate Workout</button>
 <button class="tab-btn tab-wtools-wrap" id="tab-workout" onclick="showTab('workout')">Workout Tools</button>
 <button class="tab-btn" id="tab-sources" onclick="showTab('sources')">Sources</button>
 <button class="tab-btn" id="tab-about" onclick="showTab('about')">About</button>
@@ -1296,6 +1296,36 @@ try {
 var PPROG_TAB_ENABLED = true;
 /* false = hide Generate Workout tab (legacy AI engine kept in code for possible restore). */
 var GENERATE_WORKOUT_TAB_ENABLED = false;
+
+/** Hide/show Generate Workout from first paint (not only after a click). */
+function syncGenerateWorkoutTabVisibility() {
+  var btn = document.getElementById("tab-aibeta");
+  var pane = document.getElementById("aibeta-tab");
+  var on = !!GENERATE_WORKOUT_TAB_ENABLED;
+  if (btn) {
+    btn.hidden = !on;
+    if (on) {
+      btn.removeAttribute("aria-hidden");
+      btn.tabIndex = 0;
+    } else {
+      btn.setAttribute("aria-hidden", "true");
+      btn.tabIndex = -1;
+      btn.classList.remove("active");
+    }
+  }
+  if (pane) {
+    pane.hidden = !on;
+    if (!on) pane.classList.remove("active");
+  }
+}
+try {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", syncGenerateWorkoutTabVisibility);
+  } else {
+    syncGenerateWorkoutTabVisibility();
+  }
+} catch (eGenTab) {}
+
 var PPROG_STORE_KEY = "duck-wod-personal-coach-v1";
 /** Bump when Terms text changes so returning users must re-accept. */
 var PPROG_LEGAL_VERSION = 3;
@@ -8825,6 +8855,9 @@ function convertUnits(text) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
+  try {
+    syncGenerateWorkoutTabVisibility();
+  } catch (eSyncGen) {}
   ["touchstart","pointerdown","click","keydown"].forEach(function(evt) {
     document.addEventListener(evt, timerAudioUnlock, { passive: true });
   });
