@@ -65,6 +65,7 @@ module.exports = async function handler(req, res) {
       "personal_coach_workout_change_request",
       "personal_coach_workout_changed",
       "personal_coach_intake_complete",
+      "personal_coach_legal_agree",
     ]);
     if (allowedEvents.has(body.event)) event = body.event;
     if (typeof body.t === "number") t = body.t;

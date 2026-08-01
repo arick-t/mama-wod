@@ -25,6 +25,7 @@
     "api/generate-workout.js": { "maxDuration": 60 },
     "api/personal-coach.js": { "maxDuration": 300 },
     "api/coach-feedback.js": { "maxDuration": 30 },
-    "api/event.js": { "maxDuration": 60 }
+    "api/event.js": { "maxDuration": 60 },
+    "api/legal-agree.js": { "maxDuration": 60 }
   }
 }

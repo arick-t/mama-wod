@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.2</title>
+<title>DUCK-WOD · v21.3</title>
 <meta name="theme-color" content="#111">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -42,7 +42,7 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .tab-pprog-wrap{border:1px dashed #8e44ad!important;background:linear-gradient(180deg,#221528 0%,#1e1e1e 100%)!important}
 .tab-pprog-wrap:hover{border-color:#b06dcf!important}
 .tab-btn.tab-pprog-wrap.active{background:#E8451A!important;border:1px dashed #d2a8e8!important;color:#fff!important}
-/* Personal Coach tab visible (v21.2). Flip PPROG_TAB_ENABLED=false to hide again. */
+/* Personal Coach tab visible (v21.3). Flip PPROG_TAB_ENABLED=false to hide again. */
 /* #tab-pprog,#pprog-tab{display:none!important} */
 .pprog-panel{max-width:720px;margin:0 auto;background:#1e1e1e;padding:20px 18px 24px;border-radius:12px;border:1px solid #2a2a2a}
 .pprog-head{display:flex;align-items:center;gap:14px;margin:0 0 14px}
@@ -727,7 +727,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.2</div>
+<div class="header-sub">DAILY WORKOUTS · v21.3</div>
 <div class="header-sub" id="coachVersionSub">COACH · v1.1</div>
 </div>
 <div class="tabs">
@@ -928,11 +928,11 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
         </label>
         <label class="pprog-legal-check" for="pprogLegalCbAi">
           <input type="checkbox" id="pprogLegalCbAi" onchange="syncPprogLegalContinueBtn()">
-          <span>I understand that this service is powered by an AI engine and does not provide medical or certified fitness advice. I assume full responsibility for my workouts and agree to consult a professional or stop if in doubt.</span>
+          <span>I understand that the AI Coach is NOT a certified trainer or medical professional. I agree to consult with a qualified human trainer and a physician BEFORE completing this intake or starting any workout, and I assume FULL RESPONSIBILITY for my use of the app.</span>
         </label>
         <label class="pprog-legal-check" for="pprogLegalCbTerms">
           <input type="checkbox" id="pprogLegalCbTerms" onchange="syncPprogLegalContinueBtn()">
-          <span>I have read, understood, and agree to the Terms of Service and Privacy Policy.</span>
+          <span>I have read, understood, and agree to the full Terms of Service and Privacy Policy.</span>
         </label>
       </div>
       <button type="button" class="btn pprog-legal-continue" id="pprogLegalContinueBtn" disabled onclick="pprogLegalContinue()">Agree &amp; continue</button>
@@ -1293,7 +1293,10 @@ try {
 /* true = Personal Coach tab visible to users. */
 var PPROG_TAB_ENABLED = true;
 var PPROG_STORE_KEY = "duck-wod-personal-coach-v1";
-var PPROG_LEGAL_VERSION = 2;
+/** Bump when Terms text changes so returning users must re-accept. */
+var PPROG_LEGAL_VERSION = 3;
+/** Stable legal document id for audit trail / server logs. */
+var PPROG_LEGAL_TERMS_ID = "v2.0-legal";
 var pprogLegalPendingCallback = null;
 
 /** One-shot reset from URL: ?pprog_reset=1 clears stuck Personal Coach user state. */
@@ -1418,62 +1421,57 @@ function pprogLegalAccepted(store) {
 }
 
 function pprogLegalBodyHtml() {
-  var he =
-    '<div class="pprog-legal-he">' +
-    '<h3 id="pprogLegalTitle">תנאי שימוש — Personal Coach</h3>' +
-    "<p><strong>1. אחריות השימוש והיעדר ייעוץ מוסמך</strong></p>" +
-    "<ul>" +
-    "<li><strong>אינטליגנציה מלאכותית בלבד:</strong> המאמן באפליקציה מבוסס על מודל שפה ו-AI ואינו מאמן כושר מוסמך, תזונאי או איש מקצוע רפואי.</li>" +
-    "<li><strong>אחריות המשתמש:</strong> השימוש, קבלת ההמלצות וביצוע האימונים — על אחריותך הבלעדית.</li>" +
-    "<li><strong>חובת בדיקה:</strong> עליך לבדוק ולוודא שהתוכנית והתרגילים מתאימים ליכולתך ולמצבך הבריאותי לפני ביצוע.</li>" +
-    "<li><strong>עיקרון הספק:</strong> בכל ספק לגבי תרגיל, משקל או תנועה — אל תבצע, גם אם המאמן הציע או אישר בשיחה.</li>" +
-    "</ul>" +
-    "<p><strong>2. פרטיות, שיפור המודל ושירותי צד שלישי</strong></p>" +
-    "<ul>" +
-    "<li>המידע והתחקיר (Intake) ותוכן השיחות עשויים לשמש לניתוח, טיוב ושיפור המאמן.</li>" +
-    "<li>האפליקציה נעזרת בשירותי ענן ו-AI חיצוניים (כגון Google Gemini). השימוש מהווה הסכמה להעברת נתונים נדרשים לפי מדיניות הפרטיות.</li>" +
-    "</ul>" +
-    "<p><strong>3. אופי השירות ואי-מסחור</strong></p>" +
-    "<ul>" +
-    "<li>המערכת לשימוש אישי בלבד — לשיפור חוויית האימון שלך.</li>" +
-    "<li>אסור שימוש מסחרי, מסחור, סוכנות, או ייעוץ בתשלום לצדדים שלישיים.</li>" +
-    "</ul>" +
-    "<p><strong>כשירות רפואית ומצבי חירום</strong></p>" +
-    "<p>האפליקציה אינה מחליפה ייעוץ רפואי, דיאטני או אורתופדי. וודא אישור רפואי לעיסוק בספורט. כאב חריג, סחרחורת או מצוקה — הפסק מיד ופנה לטיפול רפואי.</p>" +
-    "<p><strong>שינוי הנחיות בזמן אמת</strong></p>" +
-    "<p>תגובות ה-AI מבוססות על האלגוריתם והקלט שלך בלבד. האפליקציה אינה אחראית לנזק, פציעה או אובדן מביצוע ההמלצות.</p>" +
-    "<p><strong>מגבלת גיל</strong></p>" +
-    "<p>השימוש מיועד למשתמשים מגיל 18 ומעלה (או באישור אפוטרופוס חוקי).</p>" +
-    "</div>";
+  /* English = official binding text (shown first). Hebrew = translation. */
   var en =
-    '<details class="pprog-legal-en">' +
-    "<summary>English — Terms of Service &amp; Privacy (tap to expand)</summary>" +
-    '<div class="pprog-legal-en-body">' +
-    "<h4>1. Use responsibility &amp; no certified advice</h4>" +
+    '<div class="pprog-legal-en-body" style="direction:ltr;text-align:left;margin:0 0 14px;padding:0">' +
+    '<h3 id="pprogLegalTitle">BAR-VAZ / MAMA WOD — TERMS OF SERVICE &amp; COMPLETE LIABILITY WAIVER</h3>' +
+    "<p><em>English Version (Official Legal Binding Text) · " +
+    PPROG_LEGAL_TERMS_ID +
+    "</em></p>" +
+    "<h4>1. MANDATORY CONSULTATION BEFORE INTAKE &amp; TRAINING</h4>" +
+    "<p>Before completing any intake assessment, answering questionnaires, or executing any AI-generated workouts, you are strictly required to consult with a certified human fitness coach and a licensed physician to obtain medical clearance and physical authorization.</p>" +
+    "<h4>2. NO MEDICAL OR CERTIFIED FITNESS ADVICE</h4>" +
+    "<p>The Application, including its AI Personal Coach feature, provides automated training, workout programming, and fitness suggestions generated entirely by artificial intelligence (AI). The Application, its developer, and its operators are NOT certified personal trainers, physicians, nutritionists, or medical professionals. Nothing contained within the Application constitutes medical, health, nutritional, or professional fitness advice.</p>" +
+    "<h4>3. ASSUMPTION OF RISK &amp; USER RESPONSIBILITY</h4>" +
+    "<p>Physical training and high-intensity exercise carry inherent risks of severe bodily injury, strain, heart conditions, aggravate pre-existing medical issues, or death. By accessing and using this Application, you explicitly acknowledge and agree that:</p>" +
     "<ul>" +
-    "<li><strong>AI only:</strong> The in-app coach is a language model / AI system. It is not a certified trainer, dietitian, or medical professional.</li>" +
-    "<li><strong>Your responsibility:</strong> Using the app, following recommendations, and performing workouts is solely at your own risk.</li>" +
-    "<li><strong>Check carefully:</strong> Review every plan and exercise before performing it and confirm it fits your ability and health.</li>" +
-    "<li><strong>When in doubt:</strong> Do not perform a movement, load, or session if unsure — even if the coach suggested or confirmed it.</li>" +
+    "<li>You are solely and fully responsible for evaluating your physical condition, health status, and readiness before engaging in any workout.</li>" +
+    "<li>You MUST independently review, verify, and assess every exercise, movement, technique, and load before execution.</li>" +
+    "<li><strong>CRITICAL SAFETY RULE:</strong> IF YOU ARE IN DOUBT ABOUT ANY MOVEMENT, FORM, WEIGHT, OR EXERCISE, YOU MUST NOT EXECUTE IT—EVEN IF SUGGESTED OR APPROVED BY THE AI COACH.</li>" +
+    "<li>You are strongly advised to consult a certified physician before starting any training program.</li>" +
     "</ul>" +
-    "<h4>2. Privacy, model improvement &amp; third parties</h4>" +
+    "<h4>4. COMPLETE RELEASE OF LIABILITY &amp; INDEMNIFICATION</h4>" +
+    "<p>To the maximum extent permitted by applicable law, you hereby expressly, irrevocably, and unconditionally release, waive, and discharge the developer, owner, operators, and affiliates of this Application from any and all liabilities, claims, demands, actions, or damages (including direct, indirect, physical, personal injury, or consequential damages) arising out of or in any way connected to your use of the Application, reliance on AI output, or participation in suggested workouts. You agree not to institute any legal action or demand against the developer under any circumstances.</p>" +
+    "<h4>5. AI PROCESSING &amp; THIRD-PARTY SERVICES</h4>" +
+    "<p>You acknowledge that interactions with the AI Coach and training logs may be transmitted to and processed by secure third-party AI infrastructure providers (such as Google Gemini) to deliver and improve system algorithms. Personal identifying information (such as emails or full names) is stripped prior to AI prompt execution.</p>" +
+    "<h4>6. INTENDED PERSONAL USE &amp; AGE REQUIREMENT</h4>" +
+    "<p>You must be at least 18 years of age to use this Application. The Application is intended solely for individual, non-commercial personal fitness tracking and programming. Any commercial re-sale, agency usage, or monetization of the AI-generated outputs is strictly prohibited.</p>" +
+    "</div>";
+  var he =
+    '<details class="pprog-legal-en" open>' +
+    "<summary>תרגום לעברית — תנאי שימוש וויתור אחריות (הטקסט המחייב הוא באנגלית למעלה)</summary>" +
+    '<div class="pprog-legal-he" style="padding:12px 14px">' +
+    "<h3>בר-ווז / Mama WOD — תנאי שימוש וויתור אחריות מוחלט</h3>" +
+    "<p><strong>1. חובת התייעצות מוקדמת לפני תחקיר ואימון</strong></p>" +
+    "<p>לפני מילוי תחקיר כלשהו (Intake), מענה על שאלונים, או ביצוע אימונים שחוללו על ידי ה-AI, חלה עליך חובה מוחלטת להתייעץ עם מאמן כושר אנושי מוסמך ועם רופא מורשה על מנת לקבל אישור רפואי והסמכה פיזית.</p>" +
+    "<p><strong>2. היעדר ייעוץ רפואי או מקצועי מוסמך</strong></p>" +
+    "<p>האפליקציה, לרבות רכיב המאמן האישי (AI Coach), מספקת הצעות אימונים ותוכניות שנבנות באופן אוטומטי על ידי בינה מלאכותית (AI). האפליקציה והמפתח אינם מאמני כושר מוסמכים, תזונאים או אנשי מקצוע רפואיים. התוכן אינו מהווה ייעוץ רפואי, תזונתי או מקצועי.</p>" +
+    "<p><strong>3. נטילת אחריות וסיכוני אימון</strong></p>" +
+    "<p>אימון גופני כרוך בסיכון טבעי לפציעות גוף. בשימוש באפליקציה אתה מצהיר ומסכים כי:</p>" +
     "<ul>" +
-    "<li>Intake answers and coach chat content may be used to analyze, tune, and improve the coach.</li>" +
-    "<li>The app uses cloud / third-party AI services (e.g. Google Gemini). Use constitutes consent to share required data with those providers under their privacy policies.</li>" +
+    "<li>אתה נושא באחריות המלאה והבלעדית לבדוק את מצבך הבריאותי לפני ביצוע אימון.</li>" +
+    "<li>חובה עליך לבדוק, לוודא ולהעריך כל תרגיל, תנועה ומשקל לפני ביצועו.</li>" +
+    "<li><strong>כלל ברזל:</strong> בכל מקרה של ספק לגבי תרגיל, משקל או תנועה – אין לבצע את התרגיל, גם אם המאמן הציע או אישר זאת.</li>" +
+    "<li>מומלץ להתייעץ עם רופא לפני תחילת פעילות גופנית.</li>" +
     "</ul>" +
-    "<h4>3. Personal use only — no commercialization</h4>" +
-    "<ul>" +
-    "<li>The service is for personal training assistance only.</li>" +
-    "<li>Commercial use, resale, agency use, or paid advice to third parties using this app/coach is prohibited.</li>" +
-    "</ul>" +
-    "<h4>Medical fitness &amp; emergencies</h4>" +
-    "<p>This app does not replace medical, dietetic, or orthopedic advice. Ensure you have valid medical clearance for sport. Stop immediately and seek care if you feel unusual pain, dizziness, or distress.</p>" +
-    "<h4>AI guidance limits</h4>" +
-    "<p>AI replies are based on the model and your inputs only. The app is not liable for injury, loss, or damage from following recommendations.</p>" +
-    "<h4>Age</h4>" +
-    "<p>For users 18+ (or with a legal guardian’s approval).</p>" +
+    "<p><strong>4. פטור מלא ומוחלט מאחריות ושיפוי</strong></p>" +
+    "<p>במידה המרבית המותרת על פי חוק, אתה משחרר ופוטר באופן מלא, סופי ובלתי חוזר את המפתח והמפעיל של האפליקציה מכל אחריות, תביעה, דרישה או נזק (ישיר, עקיף, פציעה או נזק גופני) הנובעים מהשימוש באפליקציה או מהסתמכות על תכני המאמן. אתה מתחייב שלא לנקוט בהליכים משפטיים כנגד המפתח.</p>" +
+    "<p><strong>5. עיבוד AI ושירותי צד שלישי</strong></p>" +
+    "<p>אתה מאשר כי השיח עם המאמן והנתונים מעובדים באמצעות ספקי תשתיות AI חיצוניים (כדוגמת Google Gemini) לצורך תפעול ושיפור המערכת. פרטים מזהים אישיים מוסרים לפני העברת המידע.</p>" +
+    "<p><strong>6. שימוש אישי ומגבלת גיל</strong></p>" +
+    "<p>השירות מיועד למשתמשים מגיל 18 ומעלה, לשימוש אישי ולא-מסחרי בלבד.</p>" +
     "</div></details>";
-  return he + en;
+  return en + he;
 }
 
 function pprogLegalAllChecked() {
@@ -1507,17 +1505,67 @@ function pprogHideLegalModal() {
   pprogLegalPendingCallback = null;
 }
 
+/** Append Terms acceptance to server audit list (data/legal-agreements.jsonl). */
+function pprogLogLegalAgreement(store) {
+  try {
+    var base = getApiBase();
+    if (!base) return;
+    var url = String(base).replace(/\/$/, "") + "/api/legal-agree";
+    var s = store || loadPprogStore();
+    var payload = {
+      userId: s.userId || s.athleteId || pprogAthleteId(),
+      termsAccepted: true,
+      termsVersion: PPROG_LEGAL_TERMS_ID,
+      legalAcceptedVersion: PPROG_LEGAL_VERSION,
+      acceptedAt: s.legalAcceptedAt || new Date().toISOString(),
+      displayName: s.displayName ? String(s.displayName).slice(0, 40) : "",
+      flags: s.legalAcceptedFlags || {
+        age18: true,
+        aiResponsibility: true,
+        termsPrivacy: true,
+      },
+      ua:
+        typeof navigator !== "undefined" && navigator.userAgent
+          ? String(navigator.userAgent).slice(0, 512)
+          : "",
+    };
+    var body = JSON.stringify(payload);
+    if (typeof navigator !== "undefined" && navigator.sendBeacon) {
+      try {
+        navigator.sendBeacon(url, new Blob([body], { type: "application/json" }));
+        return;
+      } catch (eBeacon) {}
+    }
+    fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: body,
+      keepalive: true,
+    }).catch(function () {});
+  } catch (eLog) {}
+}
+
 function pprogLegalContinue() {
   if (!pprogLegalAllChecked()) return;
   var store = loadPprogStore();
   store.legalAcceptedAt = new Date().toISOString();
   store.legalAcceptedVersion = PPROG_LEGAL_VERSION;
+  store.legalTermsId = PPROG_LEGAL_TERMS_ID;
   store.legalAcceptedFlags = {
     age18: true,
     aiResponsibility: true,
     termsPrivacy: true,
+    termsId: PPROG_LEGAL_TERMS_ID,
   };
   savePprogStore(store);
+  pprogLogLegalAgreement(store);
+  try {
+    sendAnalytics("personal_coach_legal_agree", {
+      coachArea: "legal",
+      changeType: PPROG_LEGAL_TERMS_ID,
+      name: store.displayName ? String(store.displayName).slice(0, 40) : "",
+    });
+  } catch (eAn) {}
   var fn = pprogLegalPendingCallback;
   pprogHideLegalModal();
   if (fn) fn();
@@ -3608,6 +3656,11 @@ function athleteProfilePayload(opts) {
     lifts: s.lifts && typeof s.lifts === "object" ? s.lifts : {},
     legalAcceptedAt: s.legalAcceptedAt || null,
     legalAcceptedVersion: s.legalAcceptedVersion | 0,
+    legalTermsId: s.legalTermsId
+      ? String(s.legalTermsId).slice(0, 40)
+      : PPROG_LEGAL_TERMS_ID && (s.legalAcceptedVersion | 0) >= PPROG_LEGAL_VERSION
+        ? PPROG_LEGAL_TERMS_ID
+        : "",
     displayName: s.displayName ? String(s.displayName).slice(0, 80) : "",
     intakeComplete: forceComplete ? true : !!s.intakeComplete,
     profileNotes: s.profileNotes || "",
