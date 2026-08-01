@@ -249,7 +249,23 @@ Copy a block below. Keep IDs unique (`POL-###`).
   Bad: “Got it. Tuesdays will now feature a longer metcon… staying within your 45-minute… I have updated your profile… Would you like me to rewrite this week's Tuesday…?”
 - **Added:** 2026-07-31 — user: keep double-check, cut the chat
 
+### POL-023 — Mid-brick revise: remaining days only + preserve formats
+- **Type:** HARD
+- **Scope:** whole-program / brick chat after confirm; revise_week / any mid-brick BLOCK_JSON or WEEK_JSON rewrite
+- **Trigger:** athlete asks to adapt the current plan (equipment, loads, session length, weekday pattern) while a 5-week brick is already running
+- **Required behavior:**
+  1. **No rewriting the past.** Calendar days before Israel-today are frozen — copy them unchanged. Do not regenerate completed sessions.
+  2. **Scope = remaining brick only.** Adapt only from Israel-today through the end of the **current** 5-week brick. Do not invent a new brick or burn tokens on past weeks.
+  3. **Surgical edit (HARD).** Keep existing session formats, part titles, structure, and intent. Change only what the athlete note requires (e.g. two kettlebells → single-KB / unilateral / alternating options). Do **not** redesign every weekday format or rewrite the whole plan from scratch.
+  4. Prefer DAY_JSON / WEEK_JSON for touched remaining days, or BLOCK_JSON that leaves past days identical.
+- **Examples:**  
+  Good: athlete has one KB per weight → keep AMRAP/EMOM structures, swap double-KB movements for single-KB alternatives on remaining days.  
+  Bad: regenerating all five weeks with new formats because of one equipment note.  
+  Bad: rewriting last Monday when today is Saturday.
+- **Added:** 2026-08-01 — user: don't waste resources on past days; preserve invested formats
+
 ---
+
 
 ## Notes for maintainers
 - Prefer few **HARD** rules; put preferences in **SOFT**.

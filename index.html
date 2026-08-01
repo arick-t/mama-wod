@@ -3842,20 +3842,27 @@ function sendPprogMessage(ev) {
     }
   }
 
+  var chatBody = {
+    action: "chat",
+    messages: payloadMsgs,
+    allowEmptyUnknown: allowEmpty,
+    preferInteractions: !!store.intakeComplete,
+    brickChat: !!brickMode,
+    intakeComplete: !!store.intakeComplete,
+    athleteProfile: athleteProfilePayload(),
+  };
+  if (brickMode) {
+    chatBody.israelToday = pprogIsraelTodayIso();
+    chatBody.brickReviseScope = "remaining_only";
+    var remSnap = buildPprogRemainingBrickSnapshot(store);
+    if (remSnap) chatBody.remainingBrick = remSnap;
+  }
   fetchPprogCoachWithRetry(
     base + "/api/personal-coach",
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action: "chat",
-        messages: payloadMsgs,
-        allowEmptyUnknown: allowEmpty,
-        preferInteractions: !!store.intakeComplete,
-        brickChat: !!brickMode,
-        intakeComplete: !!store.intakeComplete,
-        athleteProfile: athleteProfilePayload(),
-      }),
+      body: JSON.stringify(chatBody),
     },
     90000
   )
@@ -3926,9 +3933,31 @@ function sendPprogMessage(ev) {
         weekFromChat = extractPprogWeekJsonFromText(j.text, 1);
       }
       pprogBusy = false;
-      if (blockFromChat) applyPprogBlock(blockFromChat, j.text);
-      else if (weekFromChat) applyPprogWeek(weekFromChat, j.text);
-      else {
+      if (blockFromChat) {
+        applyPprogBlock(blockFromChat, j.text, {
+          preservePastDays: !!brickMode,
+          preserveIntake: !!brickMode,
+        });
+      } else if (weekFromChat) {
+        if (brickMode) {
+          /* Merge week into current brick without wiping past days */
+          var sBrick = loadPprogStore();
+          var wiBrick = sBrick.activeWeekIndex | 0;
+          if (sBrick.currentBlock && sBrick.currentBlock.weeks) {
+            var merged = {
+              summaryLine: sBrick.currentBlock.summaryLine,
+              blockStart: sBrick.currentBlock.blockStart,
+              weeks: sBrick.currentBlock.weeks.slice(),
+            };
+            merged.weeks[wiBrick] = weekFromChat;
+            applyPprogBlock(merged, j.text, { preservePastDays: true, preserveIntake: true });
+          } else {
+            applyPprogWeek(weekFromChat, j.text);
+          }
+        } else {
+          applyPprogWeek(weekFromChat, j.text);
+        }
+      } else {
         var storeNow = loadPprogStore();
         if (!storeNow.intakeComplete && pprogShouldForceFirstBlock(storeNow, j.text, msgs)) {
           pprogStartFirstBlockWithBridge(msgs);
@@ -4856,6 +4885,91 @@ function syncStoreActiveWeek(store) {
   return store;
 }
 
+/** Freeze calendar days before Israel-today when merging a brick rewrite (POL-023). */
+function mergePprogPreservePastDays(nextBlock, prevBlock) {
+  if (!nextBlock || !prevBlock || !Array.isArray(prevBlock.weeks) || !Array.isArray(nextBlock.weeks)) {
+    return nextBlock;
+  }
+  var today = pprogIsraelTodayIso();
+  var bStart = nextBlock.blockStart || prevBlock.blockStart || sundayOfThisWeekIsrael();
+  for (var wi = 0; wi < nextBlock.weeks.length && wi < 5; wi++) {
+    var prevW = prevBlock.weeks[wi];
+    var nextW = nextBlock.weeks[wi];
+    if (!prevW || !nextW) continue;
+    if (!nextW.days || typeof nextW.days !== "object") nextW.days = {};
+    if (!prevW.days || typeof prevW.days !== "object") continue;
+    for (var di = 0; di < PPROG_DAY_KEYS.length; di++) {
+      var dk = PPROG_DAY_KEYS[di];
+      var iso = pprogAddDaysIso(bStart, wi * 7 + di);
+      if (iso >= today) continue;
+      if (prevW.days[dk]) {
+        try {
+          nextW.days[dk] = JSON.parse(JSON.stringify(prevW.days[dk]));
+        } catch (eCopy) {
+          nextW.days[dk] = prevW.days[dk];
+        }
+      }
+      if (Array.isArray(prevW.overview) && Array.isArray(nextW.overview)) {
+        for (var oi = 0; oi < prevW.overview.length; oi++) {
+          if (prevW.overview[oi] && prevW.overview[oi].day === dk) {
+            nextW.overview[oi] = JSON.parse(JSON.stringify(prevW.overview[oi]));
+          }
+        }
+      }
+    }
+  }
+  return nextBlock;
+}
+
+/** Remaining days in the current brick (today → end) for surgical brick-chat revises. */
+function buildPprogRemainingBrickSnapshot(store) {
+  var s = store || loadPprogStore();
+  var block = s.currentBlock;
+  if (!block || !Array.isArray(block.weeks) || !block.weeks.length) return null;
+  var today = pprogIsraelTodayIso();
+  var bStart = block.blockStart || sundayOfThisWeekIsrael();
+  var out = {
+    blockStart: bStart,
+    summaryLine: block.summaryLine || "",
+    israelToday: today,
+    weeks: [],
+  };
+  for (var wi = 0; wi < block.weeks.length && wi < 5; wi++) {
+    var w = block.weeks[wi] || {};
+    var weekOut = {
+      weekIndex: w.weekIndex || wi + 1,
+      theme: w.theme || "",
+      phase: w.phase || "",
+      summaryLine: w.summaryLine || "",
+      overview: [],
+      days: {},
+    };
+    var hasAny = false;
+    for (var di = 0; di < PPROG_DAY_KEYS.length; di++) {
+      var dk = PPROG_DAY_KEYS[di];
+      var iso = pprogAddDaysIso(bStart, wi * 7 + di);
+      if (iso < today) continue;
+      hasAny = true;
+      if (w.days && w.days[dk]) {
+        try {
+          weekOut.days[dk] = JSON.parse(JSON.stringify(w.days[dk]));
+        } catch (eD) {
+          weekOut.days[dk] = w.days[dk];
+        }
+      }
+      if (Array.isArray(w.overview)) {
+        for (var oi = 0; oi < w.overview.length; oi++) {
+          if (w.overview[oi] && w.overview[oi].day === dk) {
+            weekOut.overview.push(JSON.parse(JSON.stringify(w.overview[oi])));
+          }
+        }
+      }
+    }
+    if (hasAny) out.weeks.push(weekOut);
+  }
+  return out.weeks.length ? out : null;
+}
+
 function applyPprogBlock(block, rawText, opts) {
   opts = opts || {};
   var store = loadPprogStore();
@@ -4866,6 +4980,9 @@ function applyPprogBlock(block, rawText, opts) {
     if (!block.blockStart) block.blockStart = pprogNextBlockStartIso(prevBlockStart);
   }
   store.currentBlock = normalizePprogBlock(block, store.currentBlock);
+  if (opts.preservePastDays && oldBlock) {
+    store.currentBlock = mergePprogPreservePastDays(store.currentBlock, oldBlock);
+  }
   ensurePprogBlockFiveWeeks(store);
   if (opts.autoNextBlock && oldBlock && oldBlock.weeks) {
     if (!Array.isArray(store.pastBlocks)) store.pastBlocks = [];
@@ -4887,7 +5004,7 @@ function applyPprogBlock(block, rawText, opts) {
   ) {
     store.profileNotes = String(rawText).slice(0, 8000);
   }
-  if (!(opts.autoNextBlock && prevBlockStart)) {
+  if (!(opts.autoNextBlock && prevBlockStart) && !opts.preservePastDays) {
     store.activeWeekIndex = 0;
   }
   syncStoreActiveWeek(store);
@@ -4897,18 +5014,23 @@ function applyPprogBlock(block, rawText, opts) {
   pprogFillAttempts = {};
   pprogFillErrors = {};
   pprogFillingWeekIndex = -1;
-  /* Show full brick after build so all 5 weeks are visible */
-  pprogCalMode = "month";
-  pprogActiveDay = "general";
-  var today = pprogIsraelTodayIso();
-  var bStart = store.currentBlock.blockStart;
-  var dayOffset = Math.round((pprogParseIso(today) - pprogParseIso(bStart)) / 86400000);
-  if (dayOffset >= 0 && dayOffset < 35) {
-    store.activeWeekIndex = Math.floor(dayOffset / 7);
-    syncStoreActiveWeek(store);
-    savePprogStore(store);
+  if (opts.preservePastDays) {
+    /* Mid-brick surgical revise — stay on today's session */
+    jumpPprogToToday();
+  } else {
+    /* Show full brick after first build so all 5 weeks are visible */
+    pprogCalMode = "month";
+    pprogActiveDay = "general";
+    var today = pprogIsraelTodayIso();
+    var bStart = store.currentBlock.blockStart;
+    var dayOffset = Math.round((pprogParseIso(today) - pprogParseIso(bStart)) / 86400000);
+    if (dayOffset >= 0 && dayOffset < 35) {
+      store.activeWeekIndex = Math.floor(dayOffset / 7);
+      syncStoreActiveWeek(store);
+      savePprogStore(store);
+    }
+    renderPprogWeek();
   }
-  renderPprogWeek();
   syncPprogModeUi();
   enqueuePprogMissingWeekFills();
   maybeNotifyPprogIntakeComplete(store, opts);
@@ -5081,6 +5203,20 @@ function applyPprogWeekRevision(weekPayload) {
     phase: (weekPayload && weekPayload.phase) || prev.phase,
     theme: (weekPayload && weekPayload.theme) || prev.theme,
   });
+  /* POL-023: freeze days before Israel-today inside this week */
+  try {
+    var today = pprogIsraelTodayIso();
+    var bStart = store.currentBlock.blockStart || sundayOfThisWeekIsrael();
+    if (!next.days) next.days = {};
+    for (var di = 0; di < PPROG_DAY_KEYS.length; di++) {
+      var dk = PPROG_DAY_KEYS[di];
+      var iso = pprogAddDaysIso(bStart, wi * 7 + di);
+      if (iso >= today) continue;
+      if (prev.days && prev.days[dk]) {
+        next.days[dk] = JSON.parse(JSON.stringify(prev.days[dk]));
+      }
+    }
+  } catch (eFreeze) {}
   next.weekTalk = "";
   next.lastWeekReply = prev.lastWeekReply || "";
   store.currentBlock.weeks[wi] = next;
@@ -5945,6 +6081,7 @@ function submitPprogWeekPreTalk() {
         action: "revise_week",
         feedback: text,
         weekIndex: (store.activeWeekIndex | 0) + 1,
+        israelToday: pprogIsraelTodayIso(),
         currentWeek: {
           weekIndex: week.weekIndex,
           phase: week.phase,
@@ -6623,6 +6760,18 @@ function initPprogUi() {
   try {
     syncPprogFixedIntakeUi();
   } catch (e2) {}
+  /* Returning athlete with a brick → same landing as tapping Today */
+  try {
+    var sLand = loadPprogStore();
+    if (
+      sLand.intakeComplete &&
+      sLand.currentBlock &&
+      sLand.currentBlock.weeks &&
+      sLand.currentBlock.weeks.length
+    ) {
+      jumpPprogToToday();
+    }
+  } catch (eLand) {}
 }
 
 try {

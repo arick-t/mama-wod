@@ -350,7 +350,8 @@ function languageFollowRule(messages, action, forceJson, profile) {
     "- Workout JSON fields stay English always.\n" +
     "- POL-013: stay practical; no compliments or filler.\n" +
     (postIntake
-      ? "- POL-022: for broad/standing plan changes (whole brick, every Tuesday, etc.) reply with ONE short sentence stating the change + Confirm? No paragraphs, no profile essays, no multi-question offers.\n"
+      ? "- POL-022: for broad/standing plan changes (whole brick, every Tuesday, etc.) reply with ONE short sentence stating the change + Confirm? No paragraphs, no profile essays, no multi-question offers.\n" +
+        "- POL-023: after confirm, adapt ONLY remaining days (Israel-today → end of this 5-week brick). Never rewrite past days. Surgical edits — preserve formats/structure; change only what the note requires (e.g. single-KB constraint).\n"
       : "")
   );
 }
@@ -1454,13 +1455,41 @@ module.exports = async function handler(req, res) {
   if (body.text) body.text = scrubPiiText(body.text);
   systemText += languageFollowRule(messages, action, forceJson, athleteProfile);
   if (body.brickChat === true || body.wholeProgramChat === true) {
+    const todayIso =
+      String(body.israelToday || "").slice(0, 10) || israelTodayIso();
+    let remainingSnap = "";
+    try {
+      if (body.remainingBrick) {
+        remainingSnap = JSON.stringify(body.remainingBrick).slice(0, 14000);
+      }
+    } catch (eRem) {
+      remainingSnap = "";
+    }
     systemText +=
-      "\n\nBRICK / WHOLE-PROGRAM CHAT (POL-022 — HARD):\n" +
+      "\n\nBRICK / WHOLE-PROGRAM CHAT (POL-022 + POL-023 — HARD):\n" +
       "Athlete is messaging about the FULL training brick / standing preferences — not a single session box.\n" +
-      "Broad change request → reply with ONE short sentence: what you will rewrite + Confirm?\n" +
-      "Good: \"I'll rewrite all Tuesday sessions to a longer 25–30 min metcon. Confirm?\"\n" +
+      "Israel today (HARD freeze boundary): " +
+      todayIso +
+      ".\n" +
+      "Broad change request → reply with ONE short sentence: what you will change on REMAINING days + Confirm?\n" +
+      "Good: \"I'll adapt remaining sessions to single-KB options (same formats). Confirm?\"\n" +
       "Do NOT write paragraphs. Do NOT mention profile updates, session-limit essays, or \"would you like me to rewrite this week…\".\n" +
-      "Do NOT apply the full rewrite until they clearly confirm. After confirm: apply + tiny \"Done.\" / \"Updated.\"\n";
+      "Do NOT apply until they clearly confirm. After confirm: apply + tiny \"Done.\" / \"Updated.\"\n" +
+      "POL-023 (HARD) after confirm:\n" +
+      "1) NEVER rewrite or regenerate calendar days before " +
+      todayIso +
+      " (past days are done — leave them untouched).\n" +
+      "2) Only adapt remaining days from " +
+      todayIso +
+      " through the end of THIS 5-week brick. Do not invent a new brick.\n" +
+      "3) SURGICAL edit: keep existing formats, part titles, structure, and session intent. Change only what the note requires " +
+      "(e.g. 2 kettlebells → single-KB options / unilateral / alternating). Do NOT redesign every weekday format.\n" +
+      "4) Prefer DAY_JSON / WEEK_JSON for touched remaining days, or BLOCK_JSON that copies past days unchanged.\n" +
+      (remainingSnap
+        ? "REMAINING BRICK SNAPSHOT (edit these only — past days omitted on purpose):\n" +
+          remainingSnap +
+          "\n"
+        : "");
   }
 
   if (action === "start_intake") {
@@ -1724,6 +1753,7 @@ module.exports = async function handler(req, res) {
   if (action === "revise_week") {
     const feedback = String(body.feedback || body.text || "").trim().slice(0, 2000);
     const weekIndex = Math.max(1, Math.min(5, parseInt(body.weekIndex, 10) || 1));
+    const todayIsoRw = String(body.israelToday || "").slice(0, 10) || israelTodayIso();
     let weekSnap = "";
     try {
       weekSnap = JSON.stringify(body.currentWeek || body.week || {}).slice(0, 12000);
@@ -1736,12 +1766,19 @@ module.exports = async function handler(req, res) {
         text:
           "[revise_week] weekIndex=" +
           weekIndex +
-          " of the 5-week brick.\n" +
+          " of the 5-week brick. Israel today=" +
+          todayIsoRw +
+          ".\n" +
           "Current week snapshot:\n" +
           weekSnap +
           "\n\nAthlete note about the week in general (not only one day):\n" +
           (feedback || "(empty)") +
-          "\n\nAdjust the week plan as needed (equipment, beach/outdoor, schedule, rest days, etc.). " +
+          "\n\nPOL-023 (HARD): Do NOT change calendar days before " +
+          todayIsoRw +
+          " — copy those day objects unchanged from the snapshot. " +
+          "Only adapt remaining days (today → end of this week/brick). " +
+          "SURGICAL: preserve existing formats, part titles, and structure; change only what the note requires " +
+          "(equipment constraints, loads, unilateral options). Do NOT redesign every session format. " +
           "HARD RULE: all JSON text in English. Rest days: focus \"Rest\", parts [] or REST DAY. " +
           (forceJson
             ? "JSON ONLY — NOTHING except "
