@@ -1,5 +1,15 @@
 # Changelog
 
+## [21.3.1] - 2026-08-01
+
+### Hide Generate Workout + harden Terms audit logging
+- **Display version: v21.3.1**
+- Hide **Generate Workout** tab (`GENERATE_WORKOUT_TAB_ENABLED = false`); code/API kept for possible restore.
+- Fix Terms audit on iPhone: prefer `fetch`+JSON so Agree rows reliably land in `data/legal-agreements.jsonl`.
+- Personal Coach / Browse / Tools unchanged.
+
+---
+
 ## [21.3.0] - 2026-08-01
 
 ### Legal harden — Terms v2.0-legal + agreement audit trail
