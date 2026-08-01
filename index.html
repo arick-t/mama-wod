@@ -5228,11 +5228,15 @@ function applyPprogBlock(block, rawText, opts) {
     if (!block.blockStart) block.blockStart = pprogNextBlockStartIso(prevBlockStart);
   }
   store.currentBlock = normalizePprogBlock(block, store.currentBlock);
-  if (opts.preservePastDays && oldBlock) {
-    store.currentBlock = mergePprogPreservePastDays(store.currentBlock, oldBlock);
-  }
-  if (opts.preserveRestMap && oldBlock) {
-    store.currentBlock = mergePprogPreserveRestRoles(store.currentBlock, oldBlock);
+  try {
+    if (opts.preservePastDays && oldBlock) {
+      store.currentBlock = mergePprogPreservePastDays(store.currentBlock, oldBlock);
+    }
+    if (opts.preserveRestMap && oldBlock) {
+      store.currentBlock = mergePprogPreserveRestRoles(store.currentBlock, oldBlock);
+    }
+  } catch (eMergeGuard) {
+    /* Never let mid-brick merge guards break applying a valid block */
   }
   ensurePprogBlockFiveWeeks(store);
   if (opts.autoNextBlock && oldBlock && oldBlock.weeks) {
@@ -5267,7 +5271,13 @@ function applyPprogBlock(block, rawText, opts) {
   pprogFillingWeekIndex = -1;
   if (opts.preservePastDays) {
     /* Mid-brick surgical revise — stay on today's session */
-    jumpPprogToToday();
+    try {
+      jumpPprogToToday();
+    } catch (eJump) {
+      try {
+        renderPprogWeek();
+      } catch (eRend) {}
+    }
   } else {
     /* Show full brick after first build so all 5 weeks are visible */
     pprogCalMode = "month";
