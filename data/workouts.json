@@ -950,32 +950,6 @@
       },
       {
         "date": "2026-07-23",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Deadstop Deadlift",
-              "5x3",
-              "Deadstop Deadlift @70-80% or RPE 8",
-              "* (Score is Weight)"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "CFG 8.4 HEAVY",
-            "lines": [
-              "5 Deadlifts 143kg/102kg",
-              "10 Lateral Burpee Over Bar"
-            ],
-            "sub_title2": "5 ROUNDS FOR TIME"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-23",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2811,6 +2785,45 @@
     "2026-08-01": [
       {
         "date": "2026-08-01",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260801",
+        "sections": [
+          {
+            "title": "5 ROUNDS FOR TIME OF",
+            "lines": [
+              "10 dumbbell hang power cleans",
+              "10 dumbbell push presses",
+              "200-meter dumbbell farmers carry",
+              "♀ 35-lb dumbbells",
+              "♂ 50-lb dumbbells"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-01",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 16.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 20 minutes of:",
+              "25-ft. overhead walking lunge",
+              "8 burpees",
+              "25-ft. overhead walking lunge",
+              "8 chest-to-bar pull-ups",
+              "*Men lunge 95 lb.*",
+              "*Women lunge 65 lb.*"
+            ]
+          }
+        ],
+        "note": "Open: Open 16.1"
+      },
+      {
+        "date": "2026-08-01",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-08-01/",
@@ -2858,18 +2871,68 @@
       },
       {
         "date": "2026-08-01",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260801",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-august-1-2026/",
         "sections": [
           {
-            "title": "5 ROUNDS FOR TIME OF",
+            "title": "General Warm-up",
             "lines": [
-              "10 dumbbell hang power cleans",
-              "10 dumbbell push presses",
-              "200-meter dumbbell farmers carry",
-              "♀ 35-lb dumbbells",
-              "♂ 50-lb dumbbells"
+              "With a partner, 3 rounds per athlete:",
+              "P1: Row 250m + 10 Walking Lunges",
+              "P2: :45 plank hold + rest until P1 is done",
+              "Lunge with a single DB in rounds 2-3",
+              "*Start one partner on the row and one planking, each athlete does 3 rounds."
+            ]
+          },
+          {
+            "title": "For Time with a partner:",
+            "lines": [
+              "Row 2,500m",
+              "100 Double DB Front Rack Walking Lunges 50s/35s",
+              "Row 2,500m",
+              "Athletes row a maximum of 250m at a time, one working and one resting. Athletes may row less before switching, but not more. Lunges may be split anyhow, one working one resting.",
+              "Feel: Gas",
+              "Pace: Reach",
+              "Target Score: 24-28 minutes",
+              "Firebreather Score: sub 24 minutes"
+            ]
+          },
+          {
+            "title": "Power Snatch",
+            "lines": [
+              "1 @ 80-90%",
+              "4 @ 70-75%",
+              "3 @ 75-80%",
+              "2 @ 80-85%",
+              "4 @ 75-80%",
+              "3 @ 80-85%",
+              "2 @ 85-90%",
+              "Drop and reset reps. It’s ok if you don’t know your perecentages – your heavy single to start will give you guidance. )"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-01",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "TEAMS OF 2",
+            "lines": [
+              "3 SETS (EACH/1:1)",
+              "75 Double Unders",
+              "1 Rope Climb or 5 Strict Pull-ups",
+              "10 Shoulder to Overhead 61kg/43kg",
+              "1 Rope Climb or 5 Strict Pull-ups",
+              "10 Shoulder to Overhead 61kg/43kg",
+              "1 Rope Climb or 5 Strict Pull-ups",
+              "75 Double Unders",
+              "* -P2 Rests While P1 Works Then Switch-",
+              "* (Score is Combined Slowest Set)"
             ]
           }
         ]
@@ -2926,29 +2989,8 @@
           }
         ],
         "note": "Benchmark: Nancy"
-      },
-      {
-        "date": "2026-08-01",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 16.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 20 minutes of:",
-              "25-ft. overhead walking lunge",
-              "8 burpees",
-              "25-ft. overhead walking lunge",
-              "8 chest-to-bar pull-ups",
-              "*Men lunge 95 lb.*",
-              "*Women lunge 65 lb.*"
-            ]
-          }
-        ],
-        "note": "Open: Open 16.1"
       }
     ]
   },
-  "last_updated": "2026-08-01T03:03:47.528905"
+  "last_updated": "2026-08-01T07:20:43.166144"
 }
