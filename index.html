@@ -3602,6 +3602,8 @@ function athleteProfilePayload(opts) {
       s.activeRecoveryPref === "yes" && s.activeRecoveryDay
         ? String(s.activeRecoveryDay).slice(0, 8)
         : "",
+    trainingDays: Array.isArray(s.trainingDays) ? s.trainingDays.slice(0, 7) : [],
+    scheduleNotes: s.scheduleNotes ? String(s.scheduleNotes).slice(0, 500) : "",
     skills: s.skills && typeof s.skills === "object" ? s.skills : {},
     lifts: s.lifts && typeof s.lifts === "object" ? s.lifts : {},
     legalAcceptedAt: s.legalAcceptedAt || null,
@@ -3856,6 +3858,8 @@ function sendPprogMessage(ev) {
     chatBody.brickReviseScope = "remaining_only";
     var remSnap = buildPprogRemainingBrickSnapshot(store);
     if (remSnap) chatBody.remainingBrick = remSnap;
+    var intakeBase = buildPprogIntakeBaseline(store);
+    if (intakeBase) chatBody.intakeBaseline = intakeBase;
   }
   fetchPprogCoachWithRetry(
     base + "/api/personal-coach",
@@ -3937,6 +3941,7 @@ function sendPprogMessage(ev) {
         applyPprogBlock(blockFromChat, j.text, {
           preservePastDays: !!brickMode,
           preserveIntake: !!brickMode,
+          preserveRestMap: !!brickMode && !pprogRecentBrickNoteTouchesSchedule(msgs),
         });
       } else if (weekFromChat) {
         if (brickMode) {
@@ -3950,7 +3955,11 @@ function sendPprogMessage(ev) {
               weeks: sBrick.currentBlock.weeks.slice(),
             };
             merged.weeks[wiBrick] = weekFromChat;
-            applyPprogBlock(merged, j.text, { preservePastDays: true, preserveIntake: true });
+            applyPprogBlock(merged, j.text, {
+              preservePastDays: true,
+              preserveIntake: true,
+              preserveRestMap: !pprogRecentBrickNoteTouchesSchedule(msgs),
+            });
           } else {
             applyPprogWeek(weekFromChat, j.text);
           }
@@ -4902,23 +4911,126 @@ function mergePprogPreservePastDays(nextBlock, prevBlock) {
       var dk = PPROG_DAY_KEYS[di];
       var iso = pprogAddDaysIso(bStart, wi * 7 + di);
       if (iso >= today) continue;
-      if (prevW.days[dk]) {
-        try {
-          nextW.days[dk] = JSON.parse(JSON.stringify(prevW.days[dk]));
-        } catch (eCopy) {
-          nextW.days[dk] = prevW.days[dk];
-        }
+      pprogCopyWeekDaySlot(nextW, prevW, dk);
+    }
+  }
+  return nextBlock;
+}
+
+/** Copy one weekday's day object + overview row from prev week → next week. */
+function pprogCopyWeekDaySlot(nextW, prevW, dk) {
+  if (!nextW || !prevW || !dk) return;
+  if (!nextW.days || typeof nextW.days !== "object") nextW.days = {};
+  if (prevW.days && prevW.days[dk]) {
+    try {
+      nextW.days[dk] = JSON.parse(JSON.stringify(prevW.days[dk]));
+    } catch (eCopy) {
+      nextW.days[dk] = prevW.days[dk];
+    }
+  }
+  if (Array.isArray(prevW.overview)) {
+    if (!Array.isArray(nextW.overview)) nextW.overview = [];
+    var prevRow = null;
+    for (var oi = 0; oi < prevW.overview.length; oi++) {
+      if (prevW.overview[oi] && prevW.overview[oi].day === dk) {
+        prevRow = prevW.overview[oi];
+        break;
       }
-      if (Array.isArray(prevW.overview) && Array.isArray(nextW.overview)) {
-        for (var oi = 0; oi < prevW.overview.length; oi++) {
-          if (prevW.overview[oi] && prevW.overview[oi].day === dk) {
-            nextW.overview[oi] = JSON.parse(JSON.stringify(prevW.overview[oi]));
-          }
-        }
+    }
+    if (!prevRow) return;
+    var replaced = false;
+    for (var ni = 0; ni < nextW.overview.length; ni++) {
+      if (nextW.overview[ni] && nextW.overview[ni].day === dk) {
+        nextW.overview[ni] = JSON.parse(JSON.stringify(prevRow));
+        replaced = true;
+        break;
+      }
+    }
+    if (!replaced) nextW.overview.push(JSON.parse(JSON.stringify(prevRow)));
+  }
+}
+
+/**
+ * POL-024 client guard: when the note did not ask to change schedule,
+ * keep Rest ↔ training roles on remaining days from the previous brick.
+ */
+function mergePprogPreserveRestRoles(nextBlock, prevBlock) {
+  if (!nextBlock || !prevBlock || !Array.isArray(prevBlock.weeks) || !Array.isArray(nextBlock.weeks)) {
+    return nextBlock;
+  }
+  var today = pprogIsraelTodayIso();
+  var bStart = nextBlock.blockStart || prevBlock.blockStart || sundayOfThisWeekIsrael();
+  for (var wi = 0; wi < nextBlock.weeks.length && wi < 5; wi++) {
+    var prevW = prevBlock.weeks[wi];
+    var nextW = nextBlock.weeks[wi];
+    if (!prevW || !nextW) continue;
+    if (!nextW.days || typeof nextW.days !== "object") nextW.days = {};
+    for (var di = 0; di < PPROG_DAY_KEYS.length; di++) {
+      var dk = PPROG_DAY_KEYS[di];
+      var iso = pprogAddDaysIso(bStart, wi * 7 + di);
+      if (iso < today) continue;
+      var prevDay = prevW.days && prevW.days[dk];
+      var nextDay = nextW.days && nextW.days[dk];
+      if (!prevDay) continue;
+      var prevRest = isPprogRestDay(dk, prevDay, prevW);
+      var nextRest = isPprogRestDay(dk, nextDay, nextW);
+      if (prevRest !== nextRest) {
+        pprogCopyWeekDaySlot(nextW, prevW, dk);
       }
     }
   }
   return nextBlock;
+}
+
+/** Intake facts the coach must re-ground on for mid-brick revises (POL-024). */
+function buildPprogIntakeBaseline(store) {
+  var s = store || loadPprogStore();
+  var days = Array.isArray(s.trainingDays) ? s.trainingDays.slice(0, 7) : [];
+  var restDays = [];
+  for (var i = 0; i < PPROG_DAY_KEYS.length; i++) {
+    if (days.indexOf(PPROG_DAY_KEYS[i]) < 0) restDays.push(PPROG_DAY_KEYS[i]);
+  }
+  return {
+    trainingDays: days,
+    restDays: days.length ? restDays : [],
+    scheduleNotes: s.scheduleNotes ? String(s.scheduleNotes).slice(0, 500) : "",
+    activeRecoveryPref: s.activeRecoveryPref === "yes" ? "yes" : "no",
+    activeRecoveryDay:
+      s.activeRecoveryPref === "yes" && s.activeRecoveryDay
+        ? String(s.activeRecoveryDay).slice(0, 8)
+        : "",
+    trainingSetup: s.trainingSetup ? String(s.trainingSetup).slice(0, 800) : "",
+    sessionLimits: s.sessionLimits ? String(s.sessionLimits).slice(0, 500) : "",
+    injuries: s.injuries ? String(s.injuries).slice(0, 800) : "",
+    goals: s.goals ? String(s.goals).slice(0, 800) : "",
+    fixedIntakePacket: s.fixedIntakePacket
+      ? String(s.fixedIntakePacket).slice(0, 3500)
+      : "",
+  };
+}
+
+var PPROG_SCHEDULE_NOTE_RE =
+  /\b(rest\s*days?|training\s*days?|work\s*days?|off\s*days?|weekly\s*split|schedule|active\s*recovery)\b|ימי\s*מנוחה|יום\s*מנוחה|ימי\s*אימון|לוח\s*אימונים|מנוחה\s*ב|תוסיף\s*מנוחה|תוריד\s*מנוחה|שנה\s*את\s*(ה)?ימי/i;
+
+function pprogNoteTouchesSchedule(text) {
+  return PPROG_SCHEDULE_NOTE_RE.test(String(text || ""));
+}
+
+/** True if recent brick-chat user notes look like a schedule / rest-map change. */
+function pprogRecentBrickNoteTouchesSchedule(msgs) {
+  var list = Array.isArray(msgs) ? msgs : [];
+  var confirmRe = /^(yes|yep|yeah|ok|okay|sure|confirm|do it|go ahead|כן|בטח|אשר|תבצע|יאללה)[.!\s]*$/i;
+  var seen = 0;
+  for (var i = list.length - 1; i >= 0 && seen < 6; i--) {
+    var m = list[i];
+    if (!m || m.role !== "user") continue;
+    var t = String(m.text || "").trim();
+    if (!t || t.indexOf("FIXED INTAKE COMPLETE") === 0) continue;
+    seen++;
+    if (confirmRe.test(t)) continue;
+    if (pprogNoteTouchesSchedule(t)) return true;
+  }
+  return false;
 }
 
 /** Remaining days in the current brick (today → end) for surgical brick-chat revises. */
@@ -4982,6 +5094,9 @@ function applyPprogBlock(block, rawText, opts) {
   store.currentBlock = normalizePprogBlock(block, store.currentBlock);
   if (opts.preservePastDays && oldBlock) {
     store.currentBlock = mergePprogPreservePastDays(store.currentBlock, oldBlock);
+  }
+  if (opts.preserveRestMap && oldBlock) {
+    store.currentBlock = mergePprogPreserveRestRoles(store.currentBlock, oldBlock);
   }
   ensurePprogBlockFiveWeeks(store);
   if (opts.autoNextBlock && oldBlock && oldBlock.weeks) {
@@ -5192,7 +5307,8 @@ function ensurePprogBlockFiveWeeks(store) {
   return store;
 }
 
-function applyPprogWeekRevision(weekPayload) {
+function applyPprogWeekRevision(weekPayload, opts) {
+  opts = opts || {};
   var store = loadPprogStore();
   syncStoreActiveWeek(store);
   if (!store.currentWeek || !store.currentBlock || !store.currentBlock.weeks) return false;
@@ -5203,6 +5319,13 @@ function applyPprogWeekRevision(weekPayload) {
     phase: (weekPayload && weekPayload.phase) || prev.phase,
     theme: (weekPayload && weekPayload.theme) || prev.theme,
   });
+  var noteForSchedule =
+    opts.noteText != null
+      ? String(opts.noteText)
+      : String((prev && prev.weekTalk) || "");
+  var allowScheduleShift =
+    pprogNoteTouchesSchedule(noteForSchedule) ||
+    pprogRecentBrickNoteTouchesSchedule(loadPprogMessages());
   /* POL-023: freeze days before Israel-today inside this week */
   try {
     var today = pprogIsraelTodayIso();
@@ -5212,8 +5335,20 @@ function applyPprogWeekRevision(weekPayload) {
       var dk = PPROG_DAY_KEYS[di];
       var iso = pprogAddDaysIso(bStart, wi * 7 + di);
       if (iso >= today) continue;
-      if (prev.days && prev.days[dk]) {
-        next.days[dk] = JSON.parse(JSON.stringify(prev.days[dk]));
+      pprogCopyWeekDaySlot(next, prev, dk);
+    }
+    /* POL-024: keep Rest/training roles on remaining days unless schedule note */
+    if (!allowScheduleShift) {
+      for (var rdi = 0; rdi < PPROG_DAY_KEYS.length; rdi++) {
+        var rdk = PPROG_DAY_KEYS[rdi];
+        var riso = pprogAddDaysIso(bStart, wi * 7 + rdi);
+        if (riso < today) continue;
+        var prevDay = prev.days && prev.days[rdk];
+        var nextDay = next.days && next.days[rdk];
+        if (!prevDay) continue;
+        if (isPprogRestDay(rdk, prevDay, prev) !== isPprogRestDay(rdk, nextDay, next)) {
+          pprogCopyWeekDaySlot(next, prev, rdk);
+        }
       }
     }
   } catch (eFreeze) {}
@@ -6082,6 +6217,7 @@ function submitPprogWeekPreTalk() {
         feedback: text,
         weekIndex: (store.activeWeekIndex | 0) + 1,
         israelToday: pprogIsraelTodayIso(),
+        intakeBaseline: buildPprogIntakeBaseline(store),
         currentWeek: {
           weekIndex: week.weekIndex,
           phase: week.phase,
@@ -6107,7 +6243,7 @@ function submitPprogWeekPreTalk() {
         revised = extractPprogWeekJsonFromText(j.text, (store.activeWeekIndex | 0) + 1);
       }
       if (revised) {
-        applyPprogWeekRevision(revised);
+        applyPprogWeekRevision(revised, { noteText: text });
         addPprogCoachPref("week notes: " + text);
         try {
           sendAnalytics("personal_coach_workout_changed", {

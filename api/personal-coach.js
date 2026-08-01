@@ -351,7 +351,8 @@ function languageFollowRule(messages, action, forceJson, profile) {
     "- POL-013: stay practical; no compliments or filler.\n" +
     (postIntake
       ? "- POL-022: for broad/standing plan changes (whole brick, every Tuesday, etc.) reply with ONE short sentence stating the change + Confirm? No paragraphs, no profile essays, no multi-question offers.\n" +
-        "- POL-023: after confirm, adapt ONLY remaining days (Israel-today → end of this 5-week brick). Never rewrite past days. Surgical edits — preserve formats/structure; change only what the note requires (e.g. single-KB constraint).\n"
+        "- POL-023: after confirm, adapt ONLY remaining days (Israel-today → end of this 5-week brick). Never rewrite past days. Surgical edits — preserve formats/structure; change only what the note requires (e.g. single-KB constraint).\n" +
+        "- POL-024: before adapting, re-ground in intake (schedule/rest days, equipment, limits, injuries, goals). If the note does not change the work/rest map — freeze Rest/training weekdays. Do not invent extra Rest days.\n"
       : "")
   );
 }
@@ -583,6 +584,14 @@ function buildProgrammingMemoryBlock(profile) {
       : undefined,
     preferredLanguage: profile.preferredLanguage
       ? String(profile.preferredLanguage).slice(0, 8)
+      : undefined,
+    trainingDays: Array.isArray(profile.trainingDays)
+      ? profile.trainingDays.map(function (d) {
+          return String(d).slice(0, 8);
+        }).slice(0, 7)
+      : undefined,
+    scheduleNotes: profile.scheduleNotes
+      ? String(profile.scheduleNotes).slice(0, 500)
       : undefined,
     skills:
       profile.skills && typeof profile.skills === "object" ? profile.skills : undefined,
@@ -1458,6 +1467,7 @@ module.exports = async function handler(req, res) {
     const todayIso =
       String(body.israelToday || "").slice(0, 10) || israelTodayIso();
     let remainingSnap = "";
+    let intakeBaseSnap = "";
     try {
       if (body.remainingBrick) {
         remainingSnap = JSON.stringify(body.remainingBrick).slice(0, 14000);
@@ -1465,14 +1475,28 @@ module.exports = async function handler(req, res) {
     } catch (eRem) {
       remainingSnap = "";
     }
+    try {
+      if (body.intakeBaseline) {
+        intakeBaseSnap = JSON.stringify(body.intakeBaseline).slice(0, 4000);
+      }
+    } catch (eBase) {
+      intakeBaseSnap = "";
+    }
     systemText +=
-      "\n\nBRICK / WHOLE-PROGRAM CHAT (POL-022 + POL-023 — HARD):\n" +
+      "\n\nBRICK / WHOLE-PROGRAM CHAT (POL-022 + POL-023 + POL-024 — HARD):\n" +
       "Athlete is messaging about the FULL training brick / standing preferences — not a single session box.\n" +
       "Israel today (HARD freeze boundary): " +
       todayIso +
       ".\n" +
+      "POL-024 PROCESS (HARD) on every adaptation request:\n" +
+      "A) Silently re-read INTAKE BASELINE (schedule/rest days, active recovery, equipment, limits, injuries, goals).\n" +
+      "B) Classify the note vs intake: schedule change? contradiction? or other dimension only?\n" +
+      "C) If note does NOT change work/rest map → freeze Rest/training weekdays from intake + current brick. " +
+      "Do NOT invent extra Rest days. Do NOT fill Rest weekdays with sessions.\n" +
+      "D) If note contradicts intake schedule/active-recovery → Confirm? must state the conflict briefly (POL-022).\n" +
+      "E) After confirm: apply surgically on remaining days only (POL-023).\n" +
       "Broad change request → reply with ONE short sentence: what you will change on REMAINING days + Confirm?\n" +
-      "Good: \"I'll adapt remaining sessions to single-KB options (same formats). Confirm?\"\n" +
+      "Good: \"I'll adapt remaining sessions to single-KB options (same formats; Rest days unchanged). Confirm?\"\n" +
       "Do NOT write paragraphs. Do NOT mention profile updates, session-limit essays, or \"would you like me to rewrite this week…\".\n" +
       "Do NOT apply until they clearly confirm. After confirm: apply + tiny \"Done.\" / \"Updated.\"\n" +
       "POL-023 (HARD) after confirm:\n" +
@@ -1485,6 +1509,11 @@ module.exports = async function handler(req, res) {
       "3) SURGICAL edit: keep existing formats, part titles, structure, and session intent. Change only what the note requires " +
       "(e.g. 2 kettlebells → single-KB options / unilateral / alternating). Do NOT redesign every weekday format.\n" +
       "4) Prefer DAY_JSON / WEEK_JSON for touched remaining days, or BLOCK_JSON that copies past days unchanged.\n" +
+      (intakeBaseSnap
+        ? "INTAKE BASELINE (constitutional — re-ground here before any revise):\n" +
+          intakeBaseSnap +
+          "\n"
+        : "") +
       (remainingSnap
         ? "REMAINING BRICK SNAPSHOT (edit these only — past days omitted on purpose):\n" +
           remainingSnap +
@@ -1755,10 +1784,18 @@ module.exports = async function handler(req, res) {
     const weekIndex = Math.max(1, Math.min(5, parseInt(body.weekIndex, 10) || 1));
     const todayIsoRw = String(body.israelToday || "").slice(0, 10) || israelTodayIso();
     let weekSnap = "";
+    let intakeBaseRw = "";
     try {
       weekSnap = JSON.stringify(body.currentWeek || body.week || {}).slice(0, 12000);
     } catch (e) {
       weekSnap = "{}";
+    }
+    try {
+      if (body.intakeBaseline) {
+        intakeBaseRw = JSON.stringify(body.intakeBaseline).slice(0, 4000);
+      }
+    } catch (eIb) {
+      intakeBaseRw = "";
     }
     messages = [
       {
@@ -1769,6 +1806,11 @@ module.exports = async function handler(req, res) {
           " of the 5-week brick. Israel today=" +
           todayIsoRw +
           ".\n" +
+          (intakeBaseRw
+            ? "INTAKE BASELINE (POL-024 — re-ground; freeze work/rest unless note explicitly changes schedule):\n" +
+              intakeBaseRw +
+              "\n"
+            : "") +
           "Current week snapshot:\n" +
           weekSnap +
           "\n\nAthlete note about the week in general (not only one day):\n" +
@@ -1779,6 +1821,8 @@ module.exports = async function handler(req, res) {
           "Only adapt remaining days (today → end of this week/brick). " +
           "SURGICAL: preserve existing formats, part titles, and structure; change only what the note requires " +
           "(equipment constraints, loads, unilateral options). Do NOT redesign every session format. " +
+          "POL-024 (HARD): Re-ground in intake. If the note does not change the weekly work/rest map, " +
+          "keep the same Rest weekdays and training weekdays — do NOT invent extra Rest days. " +
           "HARD RULE: all JSON text in English. Rest days: focus \"Rest\", parts [] or REST DAY. " +
           (forceJson
             ? "JSON ONLY — NOTHING except "

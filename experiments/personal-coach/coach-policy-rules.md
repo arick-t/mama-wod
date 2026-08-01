@@ -264,6 +264,24 @@ Copy a block below. Keep IDs unique (`POL-###`).
   Bad: rewriting last Monday when today is Saturday.
 - **Added:** 2026-08-01 — user: don't waste resources on past days; preserve invested formats
 
+### POL-024 — Intake-anchored revise (re-ground + freeze rest map)
+- **Type:** HARD
+- **Scope:** whole-program / brick chat; revise_week / revise_day / mid-brick BLOCK_JSON or WEEK_JSON; any adaptation after intake
+- **Trigger:** athlete asks to adapt the current plan while intake is complete (equipment, loads, formats, session length, injuries, goals — with or without an explicit schedule change)
+- **Required behavior:**
+  1. **Re-ground in intake first.** Before applying any mid-brick change, silently re-read the athlete’s intake baseline (weekly training/rest days, active-recovery preference, equipment/setup, session limits, injuries, lifts/skills, goals). Intake remains the constitutional baseline even when adapting.
+  2. **Classify the note vs intake.**
+     - Note does **not** ask to change the weekly work/rest map → **freeze** that map exactly (same Rest weekdays and same training weekdays as intake + current brick). Do not invent extra Rest days or fill Rest weekdays with sessions.
+     - Note **contradicts** intake schedule (or active-recovery preference) → ultra-brief Confirm? that states the intake conflict (POL-022), then update only after clear confirm.
+     - Note updates another dimension (e.g. single KB, shorter metcons) → pull needed facts from intake and apply surgically (POL-023); leave schedule untouched.
+  3. **Never forget intake.** Equipment / load / format notes are not permission to redesign the week’s Rest/training split.
+  4. True Rest days stay `focus: "Rest"` with `parts []` or one `REST DAY` part (POL-003).
+- **Examples:**  
+  Good: “only one KB per weight” → keep Mon–Sat training + Sun Rest from intake; swap double-KB lines only.  
+  Bad: same note → coach inserts several new Rest days mid-week.  
+  Good: “add Rest on Wednesday” when intake had Wed as training → “I’ll move Wed to Rest (conflicts with intake Wed training). Confirm?”
+- **Added:** 2026-08-01 — user: adaptations must re-check intake; don’t reshuffle Rest days
+
 ---
 
 
@@ -272,4 +290,5 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - When a rule conflicts with athlete memory/prefs, athlete safety + explicit athlete requests win, then HARD policy, then SOFT, then Drive knowledge.
 - **POL-020 wins over latency / quota / deploy convenience** for programming paths.
 - **POL-021** defines how Drive / digests are applied; it does not weaken POL-018 / POL-016.
+- **POL-024** keeps intake as the baseline for mid-brick revises; it pairs with POL-003 / POL-022 / POL-023.
 - Do not dump this whole file into athlete-visible chat.
