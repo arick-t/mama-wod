@@ -1,5 +1,18 @@
 # Changelog
 
+## [21.3.0] - 2026-08-01
+
+### Legal harden — Terms v2.0-legal + agreement audit trail
+- **Display version: v21.3**
+- New BAR-VAZ / Mama WOD Terms of Service & Complete Liability Waiver (English binding + Hebrew translation).
+- Tightened Agree checkboxes (18+, consult human trainer + physician, full responsibility).
+- Server audit list: `POST /api/legal-agree` → `data/legal-agreements.jsonl` (userId, timestamp, terms version, IP).
+- Soft-gate Personal Coach API until current Terms accepted; view list via `node scripts/legal-agreements-summary.js`.
+- Mandatory AI legal/safety directive (intake reminder + pain/injury fixed reply).
+- Login/password identity deferred (not in product yet).
+
+---
+
 ## [21.2.0] - 2026-08-01
 
 ### Personal Coach foundation + morning comfort
