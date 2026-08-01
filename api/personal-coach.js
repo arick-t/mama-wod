@@ -499,6 +499,7 @@ function compactProgrammingSystemForGroq(systemText) {
   const forceExtra = forceIdx >= 0 ? "\n" + raw.slice(forceIdx, forceIdx + 600) : "";
   let out =
     PROGRAMMING_SYSTEM_CORE +
+    LEGAL_SAFETY_DIRECTIVE +
     "\n\n---\n" +
     GROQ_POLICY_SLIM +
     "\nSESSION QUALITY: clear stimulus per day; complementary strength+conditioner; " +
