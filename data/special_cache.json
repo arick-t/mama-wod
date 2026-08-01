@@ -90,15 +90,12 @@
       ]
     },
     {
-      "name": "FRAN",
+      "name": "Fran",
       "lines": [
         "For Time:",
         "21-15-9",
-        "Thruster",
-        "Pull-up",
-        "RPE 5, maximum effort! Target: sub 6min. Time Cap 10min.",
-        "Rxd 42,5/30kg",
-        "SC 30/20kg + Jumping Pull-ups"
+        "Thruster (42,5/30kg)",
+        "Pullup"
       ]
     },
     {
@@ -110,25 +107,19 @@
       ]
     },
     {
-      "name": "Helen\" (BENCHMARK)",
+      "name": "Helen",
       "lines": [
-        "FOR TIME:",
-        "3 Rounds",
-        "400m Run",
-        "21 American Kettlebell Swings (16/24kg)",
-        "12 Pull-Ups",
-        "Time Cap: 15:00",
-        "Score = Time",
-        "Goal: 7:00-11:00",
-        "RPE: 9.5/10",
-        "Level 2:",
-        "400m Run",
-        "21 American KB Swings 20/12kg",
-        "9 Pull-Ups",
-        "Level 1/BASE:",
-        "400m Run OR 800m Bike Erg",
-        "21 Russian KB Swings",
-        "12 Jumping Pull-Ups"
+        "RX",
+        "3 rounds for time",
+        "- 400 m run",
+        "- 21 KB swings @24/16kg",
+        "- 12 Pull Ups",
+        "SC",
+        "3 rounds for time",
+        "- 400 m run",
+        "- 21 KB swings @20/12kg",
+        "- 12 Jumping Pull Ups",
+        "TC: 15 min"
       ]
     },
     {
@@ -230,9 +221,10 @@
       ]
     },
     {
-      "name": "CINDY” BENCHMARK",
+      "name": "Metcon",
       "lines": [
-        "AMRAP20:",
+        "\"Cindy\"",
+        "AMRAP 20",
         "5 Pull-ups",
         "10 Push-ups",
         "15 Air squats"
@@ -437,13 +429,13 @@
         "6 rounds of:",
         "– Athletes work for 3:00 and then rest 1:00 in a Fight Gone Bad AMRAP style workout.",
         "– Score is total reps completed at the end of the 6 rounds. Keep a running count from movement to movement, or add up all three during rest period.",
-        "S1:",
+        "Level2:",
         "6 rounds for reps:",
         "1:00 calorie row",
         "1:00 burpees",
         "1:00 double-under attempts",
         "– Rest 1:00 between rounds.",
-        "S2:",
+        "Level1:",
         "5 rounds for reps:",
         "1:00 calorie row",
         "1:00 burpees",
@@ -485,9 +477,9 @@
       "name": "Getting Started",
       "lines": [
         "What is CrossFit?",
-        "Find a Gym",
-        "The CrossFit Effect",
-        "CrossFit Is the Cure"
+        "What to Expect",
+        "CrossFit Methodology",
+        "Find a Gym"
       ]
     },
     {
@@ -3217,20 +3209,21 @@
         "LOG YOUR BENCHMARKS IN THE APP",
         "Access Hero WODs, benchmark workouts, and daily programming — all in the CrossFit app.",
         "About CrossFit",
-        "What Is CrossFit?"
+        "CrossFit Methodology"
+      ]
+    },
+    {
+      "name": "Courses Near You",
+      "lines": [
+        "Resources for Coaches",
+        "ArmyIgnitED",
+        "Promotional Terms and Conditions"
       ]
     },
     {
       "name": "Foundation",
       "lines": [
         "CrossFit Medical Society",
-        "The CrossFit Games",
-        "About the Games"
-      ]
-    },
-    {
-      "name": "Workouts",
-      "lines": [
         "Find a gym today!",
         "Start your fitness journey today and get healthy.",
         "Find a gym near you",
@@ -4022,29 +4015,29 @@
       "lines": [
         "2017 Open Workout 17.3 Men Rx",
         "Games Season",
-        "Open",
-        "Feb 26 – March 16",
-        "Leaderboard",
+        "2027 Open",
+        "Feb 18 – March 8",
         "Overview",
+        "Leaderboard",
         "Schedule",
         "Workouts",
-        "Quarterfinals",
+        "2026 Quarterfinals",
         "March 26-30",
-        "Leaderboard",
         "Overview",
+        "Leaderboard",
         "Schedule",
         "Workouts",
-        "Semifinals",
+        "2026 Semifinals",
         "April – June",
-        "Leaderboard",
         "Overview",
+        "Leaderboard",
         "Schedule",
         "Workouts",
-        "Games",
+        "2026 CrossFit Games",
         "July",
-        "The CrossFit Games",
-        "Masters CrossFit Games",
-        "Teenage CrossFit Games"
+        "Leaderboard",
+        "Events",
+        "The CrossFit Games"
       ],
       "year": 2017,
       "code": "17.3"
@@ -4386,29 +4379,29 @@
       "lines": [
         "2021 Open Workout 21.4 Men Rx",
         "Games Season",
-        "Open",
-        "Feb 26 – March 16",
-        "Leaderboard",
+        "2027 Open",
+        "Feb 18 – March 8",
         "Overview",
+        "Leaderboard",
         "Schedule",
         "Workouts",
-        "Quarterfinals",
+        "2026 Quarterfinals",
         "March 26-30",
-        "Leaderboard",
         "Overview",
+        "Leaderboard",
         "Schedule",
         "Workouts",
-        "Semifinals",
+        "2026 Semifinals",
         "April – June",
-        "Leaderboard",
         "Overview",
+        "Leaderboard",
         "Schedule",
         "Workouts",
-        "Games",
+        "2026 CrossFit Games",
         "July",
-        "The CrossFit Games",
-        "Masters CrossFit Games",
-        "Teenage CrossFit Games"
+        "Leaderboard",
+        "Events",
+        "The CrossFit Games"
       ],
       "year": 2021,
       "code": "21.4"
@@ -4539,29 +4532,29 @@
       "lines": [
         "2024 Open Workout 24.2 Women Rx",
         "Games Season",
-        "Open",
-        "Feb 26 – March 16",
-        "Leaderboard",
+        "2027 Open",
+        "Feb 18 – March 8",
         "Overview",
+        "Leaderboard",
         "Schedule",
         "Workouts",
-        "Quarterfinals",
+        "2026 Quarterfinals",
         "March 26-30",
-        "Leaderboard",
         "Overview",
+        "Leaderboard",
         "Schedule",
         "Workouts",
-        "Semifinals",
+        "2026 Semifinals",
         "April – June",
-        "Leaderboard",
         "Overview",
+        "Leaderboard",
         "Schedule",
         "Workouts",
-        "Games",
+        "2026 CrossFit Games",
         "July",
-        "The CrossFit Games",
-        "Masters CrossFit Games",
-        "Teenage CrossFit Games"
+        "Leaderboard",
+        "Events",
+        "The CrossFit Games"
       ],
       "year": 2024,
       "code": "24.2"
@@ -4589,29 +4582,29 @@
       "lines": [
         "2025 Open Workout 25.1 Women Rx",
         "Games Season",
-        "Open",
-        "Feb 26 – March 16",
-        "Leaderboard",
+        "2027 Open",
+        "Feb 18 – March 8",
         "Overview",
+        "Leaderboard",
         "Schedule",
         "Workouts",
-        "Quarterfinals",
+        "2026 Quarterfinals",
         "March 26-30",
-        "Leaderboard",
         "Overview",
+        "Leaderboard",
         "Schedule",
         "Workouts",
-        "Semifinals",
+        "2026 Semifinals",
         "April – June",
-        "Leaderboard",
         "Overview",
+        "Leaderboard",
         "Schedule",
         "Workouts",
-        "Games",
+        "2026 CrossFit Games",
         "July",
-        "The CrossFit Games",
-        "Masters CrossFit Games",
-        "Teenage CrossFit Games"
+        "Leaderboard",
+        "Events",
+        "The CrossFit Games"
       ],
       "year": 2025,
       "code": "25.1"
@@ -4728,7 +4721,7 @@
       "code": "26.3"
     }
   ],
-  "last_open_update": "2026-07-01",
-  "last_heroes_update": "2026-07-01",
-  "last_benchmarks_update": "2026-07-01"
+  "last_open_update": "2026-08-01",
+  "last_heroes_update": "2026-08-01",
+  "last_benchmarks_update": "2026-08-01"
 }
