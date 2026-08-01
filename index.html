@@ -223,6 +223,12 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-cal-cell.deload-week.active{background:#5a8cbe;color:#0c1520;box-shadow:none}
 .pprog-cal-cell.deload-week.active:hover{background:#7aa8d4;color:#0c1520}
 .pprog-cal-row.deload-week{background:rgba(90,140,190,.07);border-radius:10px;padding:2px 0}
+/* Active recovery day — same ringed circle as deload, warm amber (not steel-blue) */
+.pprog-cal-cell.active-recovery:not(.active){background:rgba(196,154,74,.22);color:#f0e2b8;box-shadow:inset 0 0 0 1.5px #c49a4a}
+.pprog-cal-cell.active-recovery.has-wod:not(.active){color:#f5e6c0}
+.pprog-cal-cell.active-recovery.muted:not(.active){color:#8a7a55;background:rgba(196,154,74,.1);box-shadow:inset 0 0 0 1px #8a7a55}
+.pprog-cal-cell.active-recovery.active{background:#c49a4a;color:#1a1408;box-shadow:none}
+.pprog-cal-cell.active-recovery.active:hover{background:#d4ae5e;color:#1a1408}
 /* Active must beat muted/has-wod — rest days were unreadable on purple */
 .pprog-cal-cell.active,.pprog-cal-cell.active.muted,.pprog-cal-cell.active.has-wod{background:#8e44ad;color:#fff}
 .pprog-cal-cell.active:hover{background:#9b59b6;color:#fff}
@@ -4583,24 +4589,112 @@ function coercePprogOverview(overview) {
   return out;
 }
 
+/** True when theme/summary talks about an upcoming deload, not that this week is the deload. */
+function pprogMentionsUpcomingDeloadOnly(theme, summary) {
+  var blob = String(theme || "") + " " + String(summary || "");
+  if (!/\bdeload\b|\btaper\b/i.test(blob)) return false;
+  return /\b(before|into|toward|towards|prior to|pre[- ]|ahead of|leading (into|up to)|into the)\s+(the\s+)?(deload|taper)\b/i.test(
+    blob
+  );
+}
+
+/** Theme/summary names THIS week as deload/taper (not merely mentioning week 5). */
+function pprogThemeNamesDeloadWeek(theme, summary) {
+  var t = String(theme || "").trim();
+  var s = String(summary || "").trim();
+  if (/^\s*(deload|taper)\b/i.test(t) || /^\s*(deload|taper)\b/i.test(s)) return true;
+  if (/\b(deload|taper)\s+week\b/i.test(t) || /\b(deload|taper)\s+week\b/i.test(s)) {
+    return !pprogMentionsUpcomingDeloadOnly(theme, summary);
+  }
+  return false;
+}
+
+/** Heuristic: week has enough full training days that it is not a macro deload. */
+function pprogWeekHasFullTrainingLoad(week) {
+  var w = week || {};
+  var days = w.days || {};
+  var trainingDays = 0;
+  for (var i = 0; i < PPROG_DAY_KEYS.length; i++) {
+    var k = PPROG_DAY_KEYS[i];
+    var dayData = days[k] || {};
+    if (isPprogRestDay(k, dayData, w)) continue;
+    var focus = pprogOverviewFocus(w, k);
+    if (pprogIsActiveRecoveryFocus(focus)) continue;
+    var parts = dayData.parts || [];
+    var substantive = parts.some(function (p) {
+      return p && ((p.lines && p.lines.length >= 2) || (p.title && !/^(rest|recovery)/i.test(String(p.title))));
+    });
+    if (substantive || (focus && focus !== "—" && !isPprogRestFocus(focus))) trainingDays++;
+  }
+  return trainingDays >= 3;
+}
+
+function pprogIsActiveRecoveryFocus(focus) {
+  var f = String(focus || "").toLowerCase().trim();
+  if (!f || isPprogRestFocus(focus)) return false;
+  if (/\bactive\s*recovery\b/.test(f)) return true;
+  if (/\bdaily\s*deload\b/.test(f)) return true;
+  if (/\brecovery\s*(\/|and|&)\s*technique\b/.test(f)) return true;
+  if (/\b(light|easy)\b/.test(f) && /\b(recovery|deload|technique|mobility)\b/.test(f)) return true;
+  return false;
+}
+
+/** Calendar: active-recovery / daily-deload day (not Rest, not whole-week macro deload label). */
+function pprogIsActiveRecoveryDay(dayKey, dayData, week, store) {
+  if (isPprogRestDay(dayKey, dayData, week)) return false;
+  var focus = pprogOverviewFocus(week, dayKey);
+  if (pprogIsActiveRecoveryFocus(focus)) return true;
+  var parts = (dayData && dayData.parts) || [];
+  for (var i = 0; i < parts.length; i++) {
+    var blob = String((parts[i] && parts[i].title) || "") + " " + (((parts[i] && parts[i].lines) || []).join(" "));
+    if (/\bactive\s*recovery\b/i.test(blob) || /\bdaily\s*deload\b/i.test(blob)) return true;
+  }
+  var s = store;
+  if (!s) {
+    try {
+      s = loadPprogStore();
+    } catch (e) {
+      s = null;
+    }
+  }
+  if (s && s.activeRecoveryPref === "yes") {
+    var prefDay = normalizePprogDayKey(s.activeRecoveryDay) || String(s.activeRecoveryDay || "").toLowerCase();
+    if (prefDay && prefDay === dayKey) return true;
+  }
+  return false;
+}
+
 function pprogIsDeloadWeek(week, weekIndex0) {
   var w = week || {};
   var phase = String(w.phase || "").toLowerCase().trim();
-  if (phase === "deload" || phase === "taper") return true;
-  var blob = String(w.theme || "") + " " + String(w.summaryLine || "");
-  if (/\bdeload\b|\btaper\b/i.test(blob)) return true;
+  var theme = String(w.theme || "");
+  var summary = String(w.summaryLine || "");
   var wi =
     typeof weekIndex0 === "number" && isFinite(weekIndex0)
       ? weekIndex0
       : (parseInt(w.weekIndex, 10) || 0) - 1;
+
+  /* Explicit build/peak/intensify is never a macro deload week. */
+  if (phase === "build" || phase === "peak" || phase === "intensify") return false;
+
   /* Default 5-week brick: week 5 is deload unless explicitly a non-deload build week. */
   if (wi === 4 || Number(w.weekIndex) === 5) {
-    if ((phase === "build" || phase === "peak" || phase === "intensify") && !/\bdeload\b/i.test(blob)) {
-      return false;
-    }
     return true;
   }
-  return false;
+
+  /* Weeks 1–4: do not treat "peak before deload" / "into deload" as this week being deload. */
+  if (pprogMentionsUpcomingDeloadOnly(theme, summary)) return false;
+
+  var namedDeload = pprogThemeNamesDeloadWeek(theme, summary);
+  var phaseDeload = phase === "deload" || phase === "taper";
+  if (!namedDeload && !phaseDeload) return false;
+
+  /*
+   * Repair false positives: models often label week 4 as deload while still
+   * programming full training. Mid-brick deload only when content is actually light.
+   */
+  if (pprogWeekHasFullTrainingLoad(w)) return false;
+  return true;
 }
 
 function pprogPhaseShort(week, weekIndex0) {
@@ -4959,9 +5053,16 @@ function normalizePprogBlock(block, prevBlock) {
     var prev = prevWeeks[i] || null;
     var start = pprogAddDaysIso(blockStart, i * 7);
     if (src) {
-      var resolvedPhase = pprogIsDeloadWeek(src, i)
+      var isDeload = pprogIsDeloadWeek(src, i);
+      var srcPhase = String(src.phase || "").toLowerCase().trim();
+      /* Clear stale phase=deload on build weeks (e.g. W4 "before deload" false positive). */
+      var resolvedPhase = isDeload
         ? "deload"
-        : src.phase || (i === 4 ? "deload" : "build");
+        : srcPhase && srcPhase !== "deload" && srcPhase !== "taper"
+          ? src.phase
+          : i === 4
+            ? "deload"
+            : "build";
       weeks.push(
         normalizePprogWeek(src, prev, start, {
           weekIndex: i + 1,
@@ -6856,6 +6957,13 @@ function renderPprogCalHtml(block, activeWi, activeDay) {
     '<button type="button" class="pprog-cal-today" onclick="jumpPprogToToday()" title="Jump to today (Asia/Jerusalem)">Today</button>' +
     "</div>";
 
+  var calStore = null;
+  try {
+    calStore = loadPprogStore();
+  } catch (eCal) {
+    calStore = null;
+  }
+
   function cellHtml(weekIndex0, dayIndex, iso) {
     var dayKey = PPROG_DAY_KEYS[dayIndex];
     var week = block.weeks[weekIndex0] || {};
@@ -6867,11 +6975,14 @@ function renderPprogCalHtml(block, activeWi, activeDay) {
         (pprogOverviewFocus(week, dayKey) && pprogOverviewFocus(week, dayKey) !== "—"));
     var isActive = weekIndex0 === activeWi && dayKey === activeDay;
     var isDeload = pprogIsDeloadWeek(week, weekIndex0);
+    var isActiveRecovery = pprogIsActiveRecoveryDay(dayKey, dayData, week, calStore);
     var cls = "pprog-cal-cell";
     if (isActive) cls += " active";
     if (has) cls += " has-wod";
     if (isRest) cls += " muted";
-    if (isDeload) cls += " deload-week";
+    /* Active recovery wins over week-level deload tint for that day cell. */
+    if (isActiveRecovery) cls += " active-recovery";
+    else if (isDeload) cls += " deload-week";
     var dateNum = String(pprogParseIso(iso).getDate());
     return (
       '<button type="button" class="' +

@@ -1,5 +1,15 @@
 # Changelog
 
+## [21.3.1] - 2026-08-03
+
+### Personal Coach calendar + floating whole-brick chat
+- Active recovery / daily-deload days use the same ringed calendar-cell style as deload weeks, in warm amber (not steel-blue).
+- Detection: overview focus (`Active recovery`, `Daily deload`, …), session text, or intake preferred AR weekday.
+- Deload calendar label follows the week the coach programmed from intake (any week, including W4). Ignore “before/into deload” copy and stale `phase: deload` when content is still full training. Preset fallback: week 5, unless another week is already the programmed deload. No separate AR tint on deload weeks.
+- Whole-brick coach chat moves to a floating FAB (coach avatar, above scroll-up). Per-day notes stay under each workout. First-time tip + clear labels: FAB = whole brick, green day box = this workout only.
+
+---
+
 ## [21.3.0] - 2026-08-03
 
 ### Founder Admin dashboard 1.0 beta (safe add-on over live 21.2.2)
