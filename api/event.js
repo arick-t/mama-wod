@@ -2,6 +2,9 @@
  * Vercel serverless: receives analytics events and appends one line to data/analytics.jsonl in the repo via GitHub API.
  * Env: GITHUB_TOKEN (repo scope), GITHUB_REPO (e.g. owner/repo).
  * No monthly cost – Vercel free tier, storage = file in Git.
+ *
+ * Also: personal_coach_legal_agree mirrors into data/legal-agreements.jsonl
+ * (iOS often delivers analytics beacon reliably even when a separate legal-agree fetch drops).
  */
 
 const GITHUB_API = "https://api.github.com";
@@ -11,6 +14,67 @@ function allowCors(res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+}
+
+function clientIp(req) {
+  const xf = String(req.headers["x-forwarded-for"] || "").split(",")[0].trim();
+  if (xf) return xf.slice(0, 64);
+  const real = String(req.headers["x-real-ip"] || "").trim();
+  if (real) return real.slice(0, 64);
+  return String((req.socket && req.socket.remoteAddress) || "").slice(0, 64);
+}
+
+async function appendGithubJsonl(token, repo, filePath, newLine, commitMessage, opts) {
+  const headers = {
+    Authorization: "token " + token,
+    Accept: "application/vnd.github.v3+json",
+    "Content-Type": "application/json",
+  };
+  const getRes = await fetch(GITHUB_API + "/repos/" + repo + "/contents/" + filePath, {
+    headers: headers,
+  });
+  let content = "";
+  let sha = null;
+  if (getRes.ok) {
+    const data = await getRes.json();
+    content = Buffer.from(data.content, "base64").toString("utf8");
+    sha = data.sha;
+  } else if (getRes.status !== 404) {
+    const err = await getRes.text();
+    return { ok: false, status: 502, error: "GitHub GET failed", detail: err };
+  }
+
+  /* Skip if a recent row already recorded the same userId + termsVersion. */
+  const skipIf = opts && opts.skipIf;
+  if (skipIf && typeof skipIf === "function" && content) {
+    const lines = content.split("\n").filter(Boolean);
+    const recent = lines.slice(-40);
+    for (let i = recent.length - 1; i >= 0; i--) {
+      try {
+        const row = JSON.parse(recent[i]);
+        if (skipIf(row)) {
+          return { ok: true, skipped: true };
+        }
+      } catch (e) {}
+    }
+  }
+
+  content += newLine;
+  const putBody = {
+    message: commitMessage,
+    content: Buffer.from(content, "utf8").toString("base64"),
+  };
+  if (sha) putBody.sha = sha;
+  const putRes = await fetch(GITHUB_API + "/repos/" + repo + "/contents/" + filePath, {
+    method: "PUT",
+    headers: headers,
+    body: JSON.stringify(putBody),
+  });
+  if (!putRes.ok) {
+    const err = await putRes.text();
+    return { ok: false, status: 502, error: "GitHub PUT failed", detail: err };
+  }
+  return { ok: true };
 }
 
 module.exports = async function handler(req, res) {
@@ -85,8 +149,7 @@ module.exports = async function handler(req, res) {
     }
   } catch (e) {}
 
-  const filePath = "data/analytics.jsonl";
-  const payload = { event, t, ua };
+  const payload = { event: event, t: t, ua: ua };
   if (sid) payload.sid = sid;
   if (uid) payload.uid = uid;
   if (name) payload.name = name;
@@ -97,41 +160,64 @@ module.exports = async function handler(req, res) {
   if (weekIndex !== null) payload.weekIndex = weekIndex;
   if (modifiedKindsCount !== null) payload.modifiedKindsCount = modifiedKindsCount;
   const newLine = JSON.stringify(payload) + "\n";
-  const headers = {
-    Authorization: `token ${token}`,
-    Accept: "application/vnd.github.v3+json",
-    "Content-Type": "application/json",
-  };
 
   try {
-    const getRes = await fetch(`${GITHUB_API}/repos/${repo}/contents/${filePath}`, { headers });
-    let content = "";
-    let sha = null;
-    if (getRes.ok) {
-      const data = await getRes.json();
-      content = Buffer.from(data.content, "base64").toString("utf8");
-      sha = data.sha;
-    } else if (getRes.status !== 404) {
-      const err = await getRes.text();
-      return res.status(502).json({ error: "GitHub GET failed", detail: err });
+    const wrote = await appendGithubJsonl(
+      token,
+      repo,
+      "data/analytics.jsonl",
+      newLine,
+      "analytics: " + event
+    );
+    if (!wrote.ok) {
+      return res.status(wrote.status || 502).json({
+        error: wrote.error || "GitHub write failed",
+        detail: wrote.detail,
+      });
     }
 
-    content += newLine;
-    const body = {
-      message: "analytics: " + event,
-      content: Buffer.from(content, "utf8").toString("base64"),
-    };
-    if (sha) body.sha = sha;
-
-    const putRes = await fetch(`${GITHUB_API}/repos/${repo}/contents/${filePath}`, {
-      method: "PUT",
-      headers,
-      body: JSON.stringify(body),
-    });
-    if (!putRes.ok) {
-      const err = await putRes.text();
-      return res.status(502).json({ error: "GitHub PUT failed", detail: err });
+    /* Mirror Terms Agree into legal audit file (reliable path on iOS). */
+    if (event === "personal_coach_legal_agree" && uid) {
+      const acceptedAt = new Date(typeof t === "number" ? t : Date.now()).toISOString();
+      const termsVersion = changeType || "v2.0-legal";
+      const legalRow = {
+        event: "legal_agree",
+        userId: uid,
+        termsAccepted: true,
+        termsVersion: termsVersion,
+        legalAcceptedVersion: 3,
+        acceptedAt: acceptedAt,
+        acceptedAtClient: acceptedAt,
+        ip: clientIp(req),
+        flags: {
+          age18: true,
+          aiResponsibility: true,
+          termsPrivacy: true,
+        },
+        ua: ua,
+        source: "analytics_mirror",
+      };
+      if (name) legalRow.displayName = name;
+      await appendGithubJsonl(
+        token,
+        repo,
+        "data/legal-agreements.jsonl",
+        JSON.stringify(legalRow) + "\n",
+        "legal: agree " + termsVersion + " · " + String(uid).slice(0, 24),
+        {
+          skipIf: function (row) {
+            return (
+              row &&
+              row.event === "legal_agree" &&
+              String(row.userId || "") === String(uid) &&
+              String(row.termsVersion || "") === String(termsVersion)
+            );
+          },
+        }
+      );
+      /* Best-effort — analytics already saved even if legal mirror fails. */
     }
+
     return res.status(204).end();
   } catch (e) {
     return res.status(500).json({ error: "Server error", message: e.message });

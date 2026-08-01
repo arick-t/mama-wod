@@ -1,5 +1,14 @@
 # Changelog
 
+## [21.2.2] - 2026-08-01
+
+### Terms audit: mirror Agree via analytics (iOS)
+- When `personal_coach_legal_agree` lands in analytics, also append `data/legal-agreements.jsonl` (`source: analytics_mirror`).
+- Fixes iPhone cases where `/api/legal-agree` dropped even after fetch+JSON, while analytics beacon still arrived.
+- Skips duplicate legal rows for the same userId + termsVersion.
+
+---
+
 ## [21.2.1] - 2026-08-01
 
 ### Hide Generate Workout + Terms audit fix + display rename
