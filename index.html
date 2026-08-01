@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.1</title>
+<title>DUCK-WOD · v21.2</title>
 <meta name="theme-color" content="#111">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -42,7 +42,7 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .tab-pprog-wrap{border:1px dashed #8e44ad!important;background:linear-gradient(180deg,#221528 0%,#1e1e1e 100%)!important}
 .tab-pprog-wrap:hover{border-color:#b06dcf!important}
 .tab-btn.tab-pprog-wrap.active{background:#E8451A!important;border:1px dashed #d2a8e8!important;color:#fff!important}
-/* Personal Coach tab visible (v21.1). Flip PPROG_TAB_ENABLED=false to hide again. */
+/* Personal Coach tab visible (v21.2). Flip PPROG_TAB_ENABLED=false to hide again. */
 /* #tab-pprog,#pprog-tab{display:none!important} */
 .pprog-panel{max-width:720px;margin:0 auto;background:#1e1e1e;padding:20px 18px 24px;border-radius:12px;border:1px solid #2a2a2a}
 .pprog-head{display:flex;align-items:center;gap:14px;margin:0 0 14px}
@@ -727,7 +727,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.1</div>
+<div class="header-sub">DAILY WORKOUTS · v21.2</div>
 <div class="header-sub" id="coachVersionSub">COACH · v1.1</div>
 </div>
 <div class="tabs">
@@ -3602,6 +3602,8 @@ function athleteProfilePayload(opts) {
       s.activeRecoveryPref === "yes" && s.activeRecoveryDay
         ? String(s.activeRecoveryDay).slice(0, 8)
         : "",
+    trainingDays: Array.isArray(s.trainingDays) ? s.trainingDays.slice(0, 7) : [],
+    scheduleNotes: s.scheduleNotes ? String(s.scheduleNotes).slice(0, 500) : "",
     skills: s.skills && typeof s.skills === "object" ? s.skills : {},
     lifts: s.lifts && typeof s.lifts === "object" ? s.lifts : {},
     legalAcceptedAt: s.legalAcceptedAt || null,
@@ -3842,20 +3844,29 @@ function sendPprogMessage(ev) {
     }
   }
 
+  var chatBody = {
+    action: "chat",
+    messages: payloadMsgs,
+    allowEmptyUnknown: allowEmpty,
+    preferInteractions: !!store.intakeComplete,
+    brickChat: !!brickMode,
+    intakeComplete: !!store.intakeComplete,
+    athleteProfile: athleteProfilePayload(),
+  };
+  if (brickMode) {
+    chatBody.israelToday = pprogIsraelTodayIso();
+    chatBody.brickReviseScope = "remaining_only";
+    var remSnap = buildPprogRemainingBrickSnapshot(store);
+    if (remSnap) chatBody.remainingBrick = remSnap;
+    var intakeBase = buildPprogIntakeBaseline(store);
+    if (intakeBase) chatBody.intakeBaseline = intakeBase;
+  }
   fetchPprogCoachWithRetry(
     base + "/api/personal-coach",
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action: "chat",
-        messages: payloadMsgs,
-        allowEmptyUnknown: allowEmpty,
-        preferInteractions: !!store.intakeComplete,
-        brickChat: !!brickMode,
-        intakeComplete: !!store.intakeComplete,
-        athleteProfile: athleteProfilePayload(),
-      }),
+      body: JSON.stringify(chatBody),
     },
     90000
   )
@@ -3926,9 +3937,38 @@ function sendPprogMessage(ev) {
         weekFromChat = extractPprogWeekJsonFromText(j.text, 1);
       }
       pprogBusy = false;
-      if (blockFromChat) applyPprogBlock(blockFromChat, j.text);
-      else if (weekFromChat) applyPprogWeek(weekFromChat, j.text);
-      else {
+      if (blockFromChat) {
+        if (brickMode) pprogApplyStandingIntakeNote(pprogLatestStandingUserNote(msgs));
+        applyPprogBlock(blockFromChat, j.text, {
+          preservePastDays: !!brickMode,
+          preserveIntake: !!brickMode,
+          preserveRestMap: !!brickMode && !pprogRecentBrickNoteTouchesSchedule(msgs),
+        });
+      } else if (weekFromChat) {
+        if (brickMode) {
+          pprogApplyStandingIntakeNote(pprogLatestStandingUserNote(msgs));
+          /* Merge week into current brick without wiping past days */
+          var sBrick = loadPprogStore();
+          var wiBrick = sBrick.activeWeekIndex | 0;
+          if (sBrick.currentBlock && sBrick.currentBlock.weeks) {
+            var merged = {
+              summaryLine: sBrick.currentBlock.summaryLine,
+              blockStart: sBrick.currentBlock.blockStart,
+              weeks: sBrick.currentBlock.weeks.slice(),
+            };
+            merged.weeks[wiBrick] = weekFromChat;
+            applyPprogBlock(merged, j.text, {
+              preservePastDays: true,
+              preserveIntake: true,
+              preserveRestMap: !pprogRecentBrickNoteTouchesSchedule(msgs),
+            });
+          } else {
+            applyPprogWeek(weekFromChat, j.text);
+          }
+        } else {
+          applyPprogWeek(weekFromChat, j.text);
+        }
+      } else {
         var storeNow = loadPprogStore();
         if (!storeNow.intakeComplete && pprogShouldForceFirstBlock(storeNow, j.text, msgs)) {
           pprogStartFirstBlockWithBridge(msgs);
@@ -4856,6 +4896,328 @@ function syncStoreActiveWeek(store) {
   return store;
 }
 
+/** Freeze calendar days before Israel-today when merging a brick rewrite (POL-023). */
+function mergePprogPreservePastDays(nextBlock, prevBlock) {
+  if (!nextBlock || !prevBlock || !Array.isArray(prevBlock.weeks) || !Array.isArray(nextBlock.weeks)) {
+    return nextBlock;
+  }
+  var today = pprogIsraelTodayIso();
+  var bStart = nextBlock.blockStart || prevBlock.blockStart || sundayOfThisWeekIsrael();
+  for (var wi = 0; wi < nextBlock.weeks.length && wi < 5; wi++) {
+    var prevW = prevBlock.weeks[wi];
+    var nextW = nextBlock.weeks[wi];
+    if (!prevW || !nextW) continue;
+    if (!nextW.days || typeof nextW.days !== "object") nextW.days = {};
+    if (!prevW.days || typeof prevW.days !== "object") continue;
+    for (var di = 0; di < PPROG_DAY_KEYS.length; di++) {
+      var dk = PPROG_DAY_KEYS[di];
+      var iso = pprogAddDaysIso(bStart, wi * 7 + di);
+      if (iso >= today) continue;
+      pprogCopyWeekDaySlot(nextW, prevW, dk);
+    }
+  }
+  return nextBlock;
+}
+
+/** Copy one weekday's day object + overview row from prev week → next week. */
+function pprogCopyWeekDaySlot(nextW, prevW, dk) {
+  if (!nextW || !prevW || !dk) return;
+  if (!nextW.days || typeof nextW.days !== "object") nextW.days = {};
+  if (prevW.days && prevW.days[dk]) {
+    try {
+      nextW.days[dk] = JSON.parse(JSON.stringify(prevW.days[dk]));
+    } catch (eCopy) {
+      nextW.days[dk] = prevW.days[dk];
+    }
+  }
+  if (Array.isArray(prevW.overview)) {
+    if (!Array.isArray(nextW.overview)) nextW.overview = [];
+    var prevRow = null;
+    for (var oi = 0; oi < prevW.overview.length; oi++) {
+      if (prevW.overview[oi] && prevW.overview[oi].day === dk) {
+        prevRow = prevW.overview[oi];
+        break;
+      }
+    }
+    if (!prevRow) return;
+    var replaced = false;
+    for (var ni = 0; ni < nextW.overview.length; ni++) {
+      if (nextW.overview[ni] && nextW.overview[ni].day === dk) {
+        nextW.overview[ni] = JSON.parse(JSON.stringify(prevRow));
+        replaced = true;
+        break;
+      }
+    }
+    if (!replaced) nextW.overview.push(JSON.parse(JSON.stringify(prevRow)));
+  }
+}
+
+/**
+ * POL-024 client guard: when the note did not ask to change schedule,
+ * keep Rest ↔ training roles on remaining days from the previous brick.
+ */
+function mergePprogPreserveRestRoles(nextBlock, prevBlock) {
+  if (!nextBlock || !prevBlock || !Array.isArray(prevBlock.weeks) || !Array.isArray(nextBlock.weeks)) {
+    return nextBlock;
+  }
+  var today = pprogIsraelTodayIso();
+  var bStart = nextBlock.blockStart || prevBlock.blockStart || sundayOfThisWeekIsrael();
+  for (var wi = 0; wi < nextBlock.weeks.length && wi < 5; wi++) {
+    var prevW = prevBlock.weeks[wi];
+    var nextW = nextBlock.weeks[wi];
+    if (!prevW || !nextW) continue;
+    if (!nextW.days || typeof nextW.days !== "object") nextW.days = {};
+    for (var di = 0; di < PPROG_DAY_KEYS.length; di++) {
+      var dk = PPROG_DAY_KEYS[di];
+      var iso = pprogAddDaysIso(bStart, wi * 7 + di);
+      if (iso < today) continue;
+      var prevDay = prevW.days && prevW.days[dk];
+      var nextDay = nextW.days && nextW.days[dk];
+      if (!prevDay) continue;
+      var prevRest = isPprogRestDay(dk, prevDay, prevW);
+      var nextRest = isPprogRestDay(dk, nextDay, nextW);
+      if (prevRest !== nextRest) {
+        pprogCopyWeekDaySlot(nextW, prevW, dk);
+      }
+    }
+  }
+  return nextBlock;
+}
+
+/** Intake facts by questionnaire section — coach must map whole-brick notes here (POL-024). */
+function buildPprogIntakeBaseline(store) {
+  var s = store || loadPprogStore();
+  var days = Array.isArray(s.trainingDays) ? s.trainingDays.slice(0, 7) : [];
+  var restDays = [];
+  for (var i = 0; i < PPROG_DAY_KEYS.length; i++) {
+    if (days.indexOf(PPROG_DAY_KEYS[i]) < 0) restDays.push(PPROG_DAY_KEYS[i]);
+  }
+  var standing = Array.isArray(s.intakeStandingUpdates)
+    ? s.intakeStandingUpdates.slice(-12)
+    : [];
+  return {
+    instruction:
+      "Map the athlete's whole-brick note to exactly the intake section(s) it updates. " +
+      "Adapt only that section on remaining days; freeze all other sections.",
+    sections: {
+      profile: {
+        displayName: s.displayName ? String(s.displayName).slice(0, 80) : "",
+        gender: s.gender ? String(s.gender).slice(0, 16) : "",
+        age: s.age ? String(s.age).slice(0, 8) : "",
+        bodyweight: s.bodyweight ? String(s.bodyweight).slice(0, 10) : "",
+        experience: s.experience ? String(s.experience).slice(0, 120) : "",
+      },
+      trainingSetup: s.trainingSetup ? String(s.trainingSetup).slice(0, 800) : "",
+      weeklySchedule: {
+        trainingDays: days,
+        restDays: days.length ? restDays : [],
+        scheduleNotes: s.scheduleNotes ? String(s.scheduleNotes).slice(0, 500) : "",
+      },
+      activeRecovery: {
+        pref: s.activeRecoveryPref === "yes" ? "yes" : "no",
+        day:
+          s.activeRecoveryPref === "yes" && s.activeRecoveryDay
+            ? String(s.activeRecoveryDay).slice(0, 8)
+            : "",
+      },
+      liftsRun: s.lifts && typeof s.lifts === "object" ? s.lifts : {},
+      skills: s.skills && typeof s.skills === "object" ? s.skills : {},
+      sessionLimits: s.sessionLimits ? String(s.sessionLimits).slice(0, 500) : "",
+      injuries: s.injuries ? String(s.injuries).slice(0, 800) : "",
+      goals: s.goals ? String(s.goals).slice(0, 800) : "",
+    },
+    standingUpdates: standing,
+    fixedIntakePacket: s.fixedIntakePacket
+      ? String(s.fixedIntakePacket).slice(0, 3000)
+      : "",
+  };
+}
+
+/**
+ * Classify a whole-brick note into intake section keys (heuristic for local memory).
+ * Returns one or more of: trainingSetup, weeklySchedule, activeRecovery, sessionLimits, injuries, goals, liftsRun, skills, profile.
+ */
+function pprogClassifyIntakeSections(text) {
+  var t = String(text || "").trim();
+  if (!t) return [];
+  var hits = [];
+  function add(sec) {
+    if (hits.indexOf(sec) < 0) hits.push(sec);
+  }
+  if (
+    /\b(kettlebell|kb|dumbbell|db|barbell|rower|ski|bike|equipment|gym|garage|home\s*setup|bands?|pull-?up)\b|קטלבל|משקולת|ציוד|מכשיר|חדר\s*כושר|בית/i.test(
+      t
+    )
+  ) {
+    add("trainingSetup");
+  }
+  if (
+    /\b(rest\s*days?|training\s*days?|work\s*days?|off\s*days?|weekly\s*split|schedule)\b|ימי\s*מנוחה|יום\s*מנוחה|ימי\s*אימון|לוח\s*אימונים|מנוחה\s*ב/i.test(
+      t
+    )
+  ) {
+    add("weeklySchedule");
+  }
+  if (/\bactive\s*recovery|daily\s*deload|התאוששות\s*פעילה/i.test(t)) add("activeRecovery");
+  if (
+    /\b(injury|injuries|pain|sore|avoid|knee|shoulder|back|wrist|ankle|scale|substitute)\b|פציעה|כאב|ברך|כתף|גב|להימנע|סקל/i.test(
+      t
+    )
+  ) {
+    add("injuries");
+  }
+  if (
+    /\b(session\s*(cap|limit|length|time)|minutes?\s*(cap|max|limit)|shorter\s*sessions?)\b|מגבלת\s*זמן|סשן\s*קצר|דקות\s*מקסימום/i.test(
+      t
+    )
+  ) {
+    add("sessionLimits");
+  }
+  if (/\b(goal|focus|improve|open\s*prep|engine|strength\s*focus)\b|מטרה|פוקוס|לשפר/i.test(t)) {
+    add("goals");
+  }
+  if (/\b(1rm|back\s*squat|deadlift|snatch|clean\s*&?\s*jerk|2000m)\b|חזרה\s*מקסימלית|סקוואט/i.test(t) &&
+      !/avoid|להימנע|pain|כאב/i.test(t)) {
+    add("liftsRun");
+  }
+  if (/\b(muscle-?up|hspu|handstand|toes-?to-?bar|double\s*under|skills?)\b|מיומנות|בר|עמידת\s*ידיים/i.test(t)) {
+    add("skills");
+  }
+  if (!hits.length) add("goals");
+  return hits;
+}
+
+/** Persist a confirmed whole-brick note onto the matching intake section fields (local memory). */
+function pprogApplyStandingIntakeNote(noteText) {
+  var note = String(noteText || "").trim().slice(0, 500);
+  if (!note) return;
+  var confirmRe = /^(yes|yep|yeah|ok|okay|sure|confirm|do it|go ahead|כן|בטח|אשר|תבצע|יאללה)[.!\s]*$/i;
+  if (confirmRe.test(note)) return;
+  var sections = pprogClassifyIntakeSections(note);
+  if (!sections.length) return;
+  var store = loadPprogStore();
+  var line = note;
+  function appendField(key, maxLen) {
+    var prev = String(store[key] || "").trim();
+    if (prev && prev.indexOf(line) >= 0) return;
+    store[key] = (prev ? prev + "\n" : "") + "Standing update: " + line;
+    store[key] = String(store[key]).slice(0, maxLen || 800);
+  }
+  for (var i = 0; i < sections.length; i++) {
+    var sec = sections[i];
+    if (sec === "trainingSetup") appendField("trainingSetup", 800);
+    else if (sec === "weeklySchedule") appendField("scheduleNotes", 500);
+    else if (sec === "sessionLimits") appendField("sessionLimits", 500);
+    else if (sec === "injuries") appendField("injuries", 800);
+    else if (sec === "goals") appendField("goals", 800);
+  }
+  if (!Array.isArray(store.intakeStandingUpdates)) store.intakeStandingUpdates = [];
+  store.intakeStandingUpdates.push({
+    at: new Date().toISOString(),
+    sections: sections,
+    note: line,
+  });
+  if (store.intakeStandingUpdates.length > 20) {
+    store.intakeStandingUpdates = store.intakeStandingUpdates.slice(-20);
+  }
+  /* Keep profileNotes / fixed packet aligned for programming memory */
+  if (store.profileNotes) {
+    var pn = String(store.profileNotes);
+    if (pn.indexOf(line) < 0) {
+      store.profileNotes = (pn + "\nStanding (" + sections.join(",") + "): " + line).slice(0, 2500);
+    }
+  }
+  savePprogStore(store);
+}
+
+/** Latest non-confirm user note from brick/intake chat (for standing intake updates). */
+function pprogLatestStandingUserNote(msgs) {
+  var list = Array.isArray(msgs) ? msgs : [];
+  var confirmRe = /^(yes|yep|yeah|ok|okay|sure|confirm|do it|go ahead|כן|בטח|אשר|תבצע|יאללה)[.!\s]*$/i;
+  for (var i = list.length - 1; i >= 0; i--) {
+    var m = list[i];
+    if (!m || m.role !== "user") continue;
+    var t = String(m.text || "").trim();
+    if (!t || t.indexOf("FIXED INTAKE COMPLETE") === 0) continue;
+    if (confirmRe.test(t)) continue;
+    return t.slice(0, 500);
+  }
+  return "";
+}
+
+var PPROG_SCHEDULE_NOTE_RE =
+  /\b(rest\s*days?|training\s*days?|work\s*days?|off\s*days?|weekly\s*split|schedule|active\s*recovery)\b|ימי\s*מנוחה|יום\s*מנוחה|ימי\s*אימון|לוח\s*אימונים|מנוחה\s*ב|תוסיף\s*מנוחה|תוריד\s*מנוחה|שנה\s*את\s*(ה)?ימי/i;
+
+function pprogNoteTouchesSchedule(text) {
+  return PPROG_SCHEDULE_NOTE_RE.test(String(text || ""));
+}
+
+/** True if recent brick-chat user notes look like a schedule / rest-map change. */
+function pprogRecentBrickNoteTouchesSchedule(msgs) {
+  var list = Array.isArray(msgs) ? msgs : [];
+  var confirmRe = /^(yes|yep|yeah|ok|okay|sure|confirm|do it|go ahead|כן|בטח|אשר|תבצע|יאללה)[.!\s]*$/i;
+  var seen = 0;
+  for (var i = list.length - 1; i >= 0 && seen < 6; i--) {
+    var m = list[i];
+    if (!m || m.role !== "user") continue;
+    var t = String(m.text || "").trim();
+    if (!t || t.indexOf("FIXED INTAKE COMPLETE") === 0) continue;
+    seen++;
+    if (confirmRe.test(t)) continue;
+    if (pprogNoteTouchesSchedule(t)) return true;
+  }
+  return false;
+}
+
+/** Remaining days in the current brick (today → end) for surgical brick-chat revises. */
+function buildPprogRemainingBrickSnapshot(store) {
+  var s = store || loadPprogStore();
+  var block = s.currentBlock;
+  if (!block || !Array.isArray(block.weeks) || !block.weeks.length) return null;
+  var today = pprogIsraelTodayIso();
+  var bStart = block.blockStart || sundayOfThisWeekIsrael();
+  var out = {
+    blockStart: bStart,
+    summaryLine: block.summaryLine || "",
+    israelToday: today,
+    weeks: [],
+  };
+  for (var wi = 0; wi < block.weeks.length && wi < 5; wi++) {
+    var w = block.weeks[wi] || {};
+    var weekOut = {
+      weekIndex: w.weekIndex || wi + 1,
+      theme: w.theme || "",
+      phase: w.phase || "",
+      summaryLine: w.summaryLine || "",
+      overview: [],
+      days: {},
+    };
+    var hasAny = false;
+    for (var di = 0; di < PPROG_DAY_KEYS.length; di++) {
+      var dk = PPROG_DAY_KEYS[di];
+      var iso = pprogAddDaysIso(bStart, wi * 7 + di);
+      if (iso < today) continue;
+      hasAny = true;
+      if (w.days && w.days[dk]) {
+        try {
+          weekOut.days[dk] = JSON.parse(JSON.stringify(w.days[dk]));
+        } catch (eD) {
+          weekOut.days[dk] = w.days[dk];
+        }
+      }
+      if (Array.isArray(w.overview)) {
+        for (var oi = 0; oi < w.overview.length; oi++) {
+          if (w.overview[oi] && w.overview[oi].day === dk) {
+            weekOut.overview.push(JSON.parse(JSON.stringify(w.overview[oi])));
+          }
+        }
+      }
+    }
+    if (hasAny) out.weeks.push(weekOut);
+  }
+  return out.weeks.length ? out : null;
+}
+
 function applyPprogBlock(block, rawText, opts) {
   opts = opts || {};
   var store = loadPprogStore();
@@ -4866,6 +5228,16 @@ function applyPprogBlock(block, rawText, opts) {
     if (!block.blockStart) block.blockStart = pprogNextBlockStartIso(prevBlockStart);
   }
   store.currentBlock = normalizePprogBlock(block, store.currentBlock);
+  try {
+    if (opts.preservePastDays && oldBlock) {
+      store.currentBlock = mergePprogPreservePastDays(store.currentBlock, oldBlock);
+    }
+    if (opts.preserveRestMap && oldBlock) {
+      store.currentBlock = mergePprogPreserveRestRoles(store.currentBlock, oldBlock);
+    }
+  } catch (eMergeGuard) {
+    /* Never let mid-brick merge guards break applying a valid block */
+  }
   ensurePprogBlockFiveWeeks(store);
   if (opts.autoNextBlock && oldBlock && oldBlock.weeks) {
     if (!Array.isArray(store.pastBlocks)) store.pastBlocks = [];
@@ -4887,7 +5259,7 @@ function applyPprogBlock(block, rawText, opts) {
   ) {
     store.profileNotes = String(rawText).slice(0, 8000);
   }
-  if (!(opts.autoNextBlock && prevBlockStart)) {
+  if (!(opts.autoNextBlock && prevBlockStart) && !opts.preservePastDays) {
     store.activeWeekIndex = 0;
   }
   syncStoreActiveWeek(store);
@@ -4897,18 +5269,29 @@ function applyPprogBlock(block, rawText, opts) {
   pprogFillAttempts = {};
   pprogFillErrors = {};
   pprogFillingWeekIndex = -1;
-  /* Show full brick after build so all 5 weeks are visible */
-  pprogCalMode = "month";
-  pprogActiveDay = "general";
-  var today = pprogIsraelTodayIso();
-  var bStart = store.currentBlock.blockStart;
-  var dayOffset = Math.round((pprogParseIso(today) - pprogParseIso(bStart)) / 86400000);
-  if (dayOffset >= 0 && dayOffset < 35) {
-    store.activeWeekIndex = Math.floor(dayOffset / 7);
-    syncStoreActiveWeek(store);
-    savePprogStore(store);
+  if (opts.preservePastDays) {
+    /* Mid-brick surgical revise — stay on today's session */
+    try {
+      jumpPprogToToday();
+    } catch (eJump) {
+      try {
+        renderPprogWeek();
+      } catch (eRend) {}
+    }
+  } else {
+    /* Show full brick after first build so all 5 weeks are visible */
+    pprogCalMode = "month";
+    pprogActiveDay = "general";
+    var today = pprogIsraelTodayIso();
+    var bStart = store.currentBlock.blockStart;
+    var dayOffset = Math.round((pprogParseIso(today) - pprogParseIso(bStart)) / 86400000);
+    if (dayOffset >= 0 && dayOffset < 35) {
+      store.activeWeekIndex = Math.floor(dayOffset / 7);
+      syncStoreActiveWeek(store);
+      savePprogStore(store);
+    }
+    renderPprogWeek();
   }
-  renderPprogWeek();
   syncPprogModeUi();
   enqueuePprogMissingWeekFills();
   maybeNotifyPprogIntakeComplete(store, opts);
@@ -5070,7 +5453,8 @@ function ensurePprogBlockFiveWeeks(store) {
   return store;
 }
 
-function applyPprogWeekRevision(weekPayload) {
+function applyPprogWeekRevision(weekPayload, opts) {
+  opts = opts || {};
   var store = loadPprogStore();
   syncStoreActiveWeek(store);
   if (!store.currentWeek || !store.currentBlock || !store.currentBlock.weeks) return false;
@@ -5081,6 +5465,39 @@ function applyPprogWeekRevision(weekPayload) {
     phase: (weekPayload && weekPayload.phase) || prev.phase,
     theme: (weekPayload && weekPayload.theme) || prev.theme,
   });
+  var noteForSchedule =
+    opts.noteText != null
+      ? String(opts.noteText)
+      : String((prev && prev.weekTalk) || "");
+  var allowScheduleShift =
+    pprogNoteTouchesSchedule(noteForSchedule) ||
+    pprogRecentBrickNoteTouchesSchedule(loadPprogMessages());
+  /* POL-023: freeze days before Israel-today inside this week */
+  try {
+    var today = pprogIsraelTodayIso();
+    var bStart = store.currentBlock.blockStart || sundayOfThisWeekIsrael();
+    if (!next.days) next.days = {};
+    for (var di = 0; di < PPROG_DAY_KEYS.length; di++) {
+      var dk = PPROG_DAY_KEYS[di];
+      var iso = pprogAddDaysIso(bStart, wi * 7 + di);
+      if (iso >= today) continue;
+      pprogCopyWeekDaySlot(next, prev, dk);
+    }
+    /* POL-024: keep Rest/training roles on remaining days unless schedule note */
+    if (!allowScheduleShift) {
+      for (var rdi = 0; rdi < PPROG_DAY_KEYS.length; rdi++) {
+        var rdk = PPROG_DAY_KEYS[rdi];
+        var riso = pprogAddDaysIso(bStart, wi * 7 + rdi);
+        if (riso < today) continue;
+        var prevDay = prev.days && prev.days[rdk];
+        var nextDay = next.days && next.days[rdk];
+        if (!prevDay) continue;
+        if (isPprogRestDay(rdk, prevDay, prev) !== isPprogRestDay(rdk, nextDay, next)) {
+          pprogCopyWeekDaySlot(next, prev, rdk);
+        }
+      }
+    }
+  } catch (eFreeze) {}
   next.weekTalk = "";
   next.lastWeekReply = prev.lastWeekReply || "";
   store.currentBlock.weeks[wi] = next;
@@ -5945,6 +6362,8 @@ function submitPprogWeekPreTalk() {
         action: "revise_week",
         feedback: text,
         weekIndex: (store.activeWeekIndex | 0) + 1,
+        israelToday: pprogIsraelTodayIso(),
+        intakeBaseline: buildPprogIntakeBaseline(store),
         currentWeek: {
           weekIndex: week.weekIndex,
           phase: week.phase,
@@ -5970,7 +6389,8 @@ function submitPprogWeekPreTalk() {
         revised = extractPprogWeekJsonFromText(j.text, (store.activeWeekIndex | 0) + 1);
       }
       if (revised) {
-        applyPprogWeekRevision(revised);
+        pprogApplyStandingIntakeNote(text);
+        applyPprogWeekRevision(revised, { noteText: text });
         addPprogCoachPref("week notes: " + text);
         try {
           sendAnalytics("personal_coach_workout_changed", {
@@ -6623,6 +7043,18 @@ function initPprogUi() {
   try {
     syncPprogFixedIntakeUi();
   } catch (e2) {}
+  /* Returning athlete with a brick → same landing as tapping Today */
+  try {
+    var sLand = loadPprogStore();
+    if (
+      sLand.intakeComplete &&
+      sLand.currentBlock &&
+      sLand.currentBlock.weeks &&
+      sLand.currentBlock.weeks.length
+    ) {
+      jumpPprogToToday();
+    }
+  } catch (eLand) {}
 }
 
 try {

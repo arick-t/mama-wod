@@ -249,11 +249,52 @@ Copy a block below. Keep IDs unique (`POL-###`).
   Bad: “Got it. Tuesdays will now feature a longer metcon… staying within your 45-minute… I have updated your profile… Would you like me to rewrite this week's Tuesday…?”
 - **Added:** 2026-07-31 — user: keep double-check, cut the chat
 
+### POL-023 — Mid-brick revise: remaining days only + preserve formats
+- **Type:** HARD
+- **Scope:** whole-program / brick chat after confirm; revise_week / any mid-brick BLOCK_JSON or WEEK_JSON rewrite
+- **Trigger:** athlete asks to adapt the current plan (equipment, loads, session length, weekday pattern) while a 5-week brick is already running
+- **Required behavior:**
+  1. **No rewriting the past.** Calendar days before Israel-today are frozen — copy them unchanged. Do not regenerate completed sessions.
+  2. **Scope = remaining brick only.** Adapt only from Israel-today through the end of the **current** 5-week brick. Do not invent a new brick or burn tokens on past weeks.
+  3. **Surgical edit (HARD).** Keep existing session formats, part titles, structure, and intent. Change only what the athlete note requires (e.g. two kettlebells → single-KB / unilateral / alternating options). Do **not** redesign every weekday format or rewrite the whole plan from scratch.
+  4. Prefer DAY_JSON / WEEK_JSON for touched remaining days, or BLOCK_JSON that leaves past days identical.
+- **Examples:**  
+  Good: athlete has one KB per weight → keep AMRAP/EMOM structures, swap double-KB movements for single-KB alternatives on remaining days.  
+  Bad: regenerating all five weeks with new formats because of one equipment note.  
+  Bad: rewriting last Monday when today is Saturday.
+- **Added:** 2026-08-01 — user: don't waste resources on past days; preserve invested formats
+
+### POL-024 — Intake-anchored revise (map note → intake section → surgical apply)
+- **Type:** HARD
+- **Scope:** whole-program / brick chat (standing change for the brick — not a single-day pre-talk); revise_week / mid-brick BLOCK_JSON or WEEK_JSON after confirm
+- **Trigger:** athlete asks to adapt the **whole brick / standing plan** while intake is complete
+- **Required behavior:**
+  1. **Re-ground in full intake first.** Silently re-read **every** intake section: profile, training setup/equipment, weekly schedule (work/rest days), active recovery, lifts/run, skills, session limits, injuries/limitations, goals. Intake remains the constitutional baseline.
+  2. **Map the note to the matching intake section(s)** before changing any JSON. Examples of mapping:
+     - one KB / missing rower / home setup → **training setup / equipment**
+     - knee pain / avoid squats → **injuries / limitations**
+     - shorter sessions → **session limits**
+     - move Rest / change training days → **weekly schedule**
+     - want muscle-ups focus → **goals** (and skills if relevant)
+  3. **Adapt only that section’s implications** across remaining brick days (POL-023). Keep formats/structure unless the note requires a structural change in that section.
+  4. **Freeze all other intake sections.** Unchanged sections stay binding — e.g. equipment note must not reshuffle Rest days; injury note must not rewrite equipment or goals; schedule note must not invent new equipment rules.
+  5. **Conflict with an intake section** → ultra-brief Confirm? that names the section conflict (POL-022), then apply only after clear confirm. After confirm, treat the note as an update to that section for the rest of the brick.
+  6. Rest days still follow POL-003 when the touched section is schedule/recovery; otherwise Rest/training weekdays stay frozen.
+- **Examples:**  
+  Good: “only one KB per weight” → section=equipment → single-KB options on remaining days; schedule, injuries, goals unchanged.  
+  Bad: same note → new Rest days mid-week or full format rewrite.  
+  Good: “knee pain — avoid squats until end of brick” → section=injuries → squat substitutes on remaining days; equipment + Rest map unchanged.  
+  Good: “add Rest on Wednesday” (intake had Wed training) → “I’ll move Wed to Rest (schedule section; conflicts with intake). Confirm?”
+- **Added:** 2026-08-01 — user: adaptations must re-check intake; don’t reshuffle Rest days
+- **Updated:** 2026-08-01 — applies to all intake sections, not only schedule/rest
+
 ---
+
 
 ## Notes for maintainers
 - Prefer few **HARD** rules; put preferences in **SOFT**.
 - When a rule conflicts with athlete memory/prefs, athlete safety + explicit athlete requests win, then HARD policy, then SOFT, then Drive knowledge.
 - **POL-020 wins over latency / quota / deploy convenience** for programming paths.
 - **POL-021** defines how Drive / digests are applied; it does not weaken POL-018 / POL-016.
+- **POL-024** maps whole-brick notes onto intake sections, then adapts only that section while freezing the rest; pairs with POL-003 / POL-022 / POL-023.
 - Do not dump this whole file into athlete-visible chat.

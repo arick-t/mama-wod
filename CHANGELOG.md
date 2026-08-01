@@ -1,10 +1,13 @@
 # Changelog
 
-## [21.2.0] - 2026-07-31
+## [21.2.0] - 2026-08-01
 
-### Personal Coach foundation release
+### Personal Coach foundation + morning comfort
 - **Display version: v21.2**
-- Ships the learning-leap coach on production: L1+L2 Foundation Brief + מסמך דפוסי מקורות in every brick fill.
+- Ships the learning-leap coach on production: L1+L2 Foundation Brief + מסמך דפוסי מקורות in every brick fill (Coach 1.1).
+- Returning athletes with a brick land on **Today’s session** (same as the Today button).
+- **POL-023:** mid-brick whole-program notes adapt remaining days only; surgical edits preserve formats.
+- **POL-024:** whole-brick notes map to the matching intake section (equipment / injuries / schedule / …); other intake sections stay frozen.
 - Keeps v21.1 UX/intake polish (locations, session chat, deload styling).
 - Programming remains Gemini-quality path (no silent Groq plan fills).
 
