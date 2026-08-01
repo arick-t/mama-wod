@@ -1505,6 +1505,46 @@ function pprogHideLegalModal() {
   pprogLegalPendingCallback = null;
 }
 
+/** Append Terms acceptance to server audit list (data/legal-agreements.jsonl). */
+function pprogLogLegalAgreement(store) {
+  try {
+    var base = getApiBase();
+    if (!base) return;
+    var url = String(base).replace(/\/$/, "") + "/api/legal-agree";
+    var s = store || loadPprogStore();
+    var payload = {
+      userId: s.userId || s.athleteId || pprogAthleteId(),
+      termsAccepted: true,
+      termsVersion: PPROG_LEGAL_TERMS_ID,
+      legalAcceptedVersion: PPROG_LEGAL_VERSION,
+      acceptedAt: s.legalAcceptedAt || new Date().toISOString(),
+      displayName: s.displayName ? String(s.displayName).slice(0, 40) : "",
+      flags: s.legalAcceptedFlags || {
+        age18: true,
+        aiResponsibility: true,
+        termsPrivacy: true,
+      },
+      ua:
+        typeof navigator !== "undefined" && navigator.userAgent
+          ? String(navigator.userAgent).slice(0, 512)
+          : "",
+    };
+    var body = JSON.stringify(payload);
+    if (typeof navigator !== "undefined" && navigator.sendBeacon) {
+      try {
+        navigator.sendBeacon(url, new Blob([body], { type: "application/json" }));
+        return;
+      } catch (eBeacon) {}
+    }
+    fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: body,
+      keepalive: true,
+    }).catch(function () {});
+  } catch (eLog) {}
+}
+
 function pprogLegalContinue() {
   if (!pprogLegalAllChecked()) return;
   var store = loadPprogStore();
@@ -1518,6 +1558,14 @@ function pprogLegalContinue() {
     termsId: PPROG_LEGAL_TERMS_ID,
   };
   savePprogStore(store);
+  pprogLogLegalAgreement(store);
+  try {
+    sendAnalytics("personal_coach_legal_agree", {
+      coachArea: "legal",
+      changeType: PPROG_LEGAL_TERMS_ID,
+      name: store.displayName ? String(store.displayName).slice(0, 40) : "",
+    });
+  } catch (eAn) {}
   var fn = pprogLegalPendingCallback;
   pprogHideLegalModal();
   if (fn) fn();
@@ -3608,6 +3656,11 @@ function athleteProfilePayload(opts) {
     lifts: s.lifts && typeof s.lifts === "object" ? s.lifts : {},
     legalAcceptedAt: s.legalAcceptedAt || null,
     legalAcceptedVersion: s.legalAcceptedVersion | 0,
+    legalTermsId: s.legalTermsId
+      ? String(s.legalTermsId).slice(0, 40)
+      : PPROG_LEGAL_TERMS_ID && (s.legalAcceptedVersion | 0) >= PPROG_LEGAL_VERSION
+        ? PPROG_LEGAL_TERMS_ID
+        : "",
     displayName: s.displayName ? String(s.displayName).slice(0, 80) : "",
     intakeComplete: forceComplete ? true : !!s.intakeComplete,
     profileNotes: s.profileNotes || "",
