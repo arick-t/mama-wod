@@ -10462,6 +10462,9 @@ function showTab(name) {
   if (name === "pprog" && !PPROG_TAB_ENABLED) {
     name = "browse";
   }
+  if (name === "aibeta" && !GENERATE_WORKOUT_TAB_ENABLED) {
+    name = "browse";
+  }
   var tabs = ["pprog", "browse", "aibeta", "workout", "sources", "about"];
   for (var i = 0; i < tabs.length; i++) {
     var id = tabs[i];
@@ -10480,12 +10483,26 @@ function showTab(name) {
         btn.removeAttribute("aria-hidden");
         btn.tabIndex = 0;
       }
+      if (id === "aibeta" && !GENERATE_WORKOUT_TAB_ENABLED) {
+        btn.hidden = true;
+        btn.setAttribute("aria-hidden", "true");
+        btn.tabIndex = -1;
+      } else if (id === "aibeta" && GENERATE_WORKOUT_TAB_ENABLED) {
+        btn.hidden = false;
+        btn.removeAttribute("aria-hidden");
+        btn.tabIndex = 0;
+      }
     }
     if (pane) {
       pane.className = "tab-content" + (active ? " active" : "");
       if (id === "pprog" && !PPROG_TAB_ENABLED) {
         pane.hidden = true;
       } else if (id === "pprog" && PPROG_TAB_ENABLED) {
+        pane.hidden = false;
+      }
+      if (id === "aibeta" && !GENERATE_WORKOUT_TAB_ENABLED) {
+        pane.hidden = true;
+      } else if (id === "aibeta" && GENERATE_WORKOUT_TAB_ENABLED) {
         pane.hidden = false;
       }
     }
