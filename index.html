@@ -3938,6 +3938,7 @@ function sendPprogMessage(ev) {
       }
       pprogBusy = false;
       if (blockFromChat) {
+        if (brickMode) pprogApplyStandingIntakeNote(pprogLatestStandingUserNote(msgs));
         applyPprogBlock(blockFromChat, j.text, {
           preservePastDays: !!brickMode,
           preserveIntake: !!brickMode,
@@ -3945,6 +3946,7 @@ function sendPprogMessage(ev) {
         });
       } else if (weekFromChat) {
         if (brickMode) {
+          pprogApplyStandingIntakeNote(pprogLatestStandingUserNote(msgs));
           /* Merge week into current brick without wiping past days */
           var sBrick = loadPprogStore();
           var wiBrick = sBrick.activeWeekIndex | 0;
@@ -4982,7 +4984,7 @@ function mergePprogPreserveRestRoles(nextBlock, prevBlock) {
   return nextBlock;
 }
 
-/** Intake facts the coach must re-ground on for mid-brick revises (POL-024). */
+/** Intake facts by questionnaire section — coach must map whole-brick notes here (POL-024). */
 function buildPprogIntakeBaseline(store) {
   var s = store || loadPprogStore();
   var days = Array.isArray(s.trainingDays) ? s.trainingDays.slice(0, 7) : [];
@@ -4990,23 +4992,157 @@ function buildPprogIntakeBaseline(store) {
   for (var i = 0; i < PPROG_DAY_KEYS.length; i++) {
     if (days.indexOf(PPROG_DAY_KEYS[i]) < 0) restDays.push(PPROG_DAY_KEYS[i]);
   }
+  var standing = Array.isArray(s.intakeStandingUpdates)
+    ? s.intakeStandingUpdates.slice(-12)
+    : [];
   return {
-    trainingDays: days,
-    restDays: days.length ? restDays : [],
-    scheduleNotes: s.scheduleNotes ? String(s.scheduleNotes).slice(0, 500) : "",
-    activeRecoveryPref: s.activeRecoveryPref === "yes" ? "yes" : "no",
-    activeRecoveryDay:
-      s.activeRecoveryPref === "yes" && s.activeRecoveryDay
-        ? String(s.activeRecoveryDay).slice(0, 8)
-        : "",
-    trainingSetup: s.trainingSetup ? String(s.trainingSetup).slice(0, 800) : "",
-    sessionLimits: s.sessionLimits ? String(s.sessionLimits).slice(0, 500) : "",
-    injuries: s.injuries ? String(s.injuries).slice(0, 800) : "",
-    goals: s.goals ? String(s.goals).slice(0, 800) : "",
+    instruction:
+      "Map the athlete's whole-brick note to exactly the intake section(s) it updates. " +
+      "Adapt only that section on remaining days; freeze all other sections.",
+    sections: {
+      profile: {
+        displayName: s.displayName ? String(s.displayName).slice(0, 80) : "",
+        gender: s.gender ? String(s.gender).slice(0, 16) : "",
+        age: s.age ? String(s.age).slice(0, 8) : "",
+        bodyweight: s.bodyweight ? String(s.bodyweight).slice(0, 10) : "",
+        experience: s.experience ? String(s.experience).slice(0, 120) : "",
+      },
+      trainingSetup: s.trainingSetup ? String(s.trainingSetup).slice(0, 800) : "",
+      weeklySchedule: {
+        trainingDays: days,
+        restDays: days.length ? restDays : [],
+        scheduleNotes: s.scheduleNotes ? String(s.scheduleNotes).slice(0, 500) : "",
+      },
+      activeRecovery: {
+        pref: s.activeRecoveryPref === "yes" ? "yes" : "no",
+        day:
+          s.activeRecoveryPref === "yes" && s.activeRecoveryDay
+            ? String(s.activeRecoveryDay).slice(0, 8)
+            : "",
+      },
+      liftsRun: s.lifts && typeof s.lifts === "object" ? s.lifts : {},
+      skills: s.skills && typeof s.skills === "object" ? s.skills : {},
+      sessionLimits: s.sessionLimits ? String(s.sessionLimits).slice(0, 500) : "",
+      injuries: s.injuries ? String(s.injuries).slice(0, 800) : "",
+      goals: s.goals ? String(s.goals).slice(0, 800) : "",
+    },
+    standingUpdates: standing,
     fixedIntakePacket: s.fixedIntakePacket
-      ? String(s.fixedIntakePacket).slice(0, 3500)
+      ? String(s.fixedIntakePacket).slice(0, 3000)
       : "",
   };
+}
+
+/**
+ * Classify a whole-brick note into intake section keys (heuristic for local memory).
+ * Returns one or more of: trainingSetup, weeklySchedule, activeRecovery, sessionLimits, injuries, goals, liftsRun, skills, profile.
+ */
+function pprogClassifyIntakeSections(text) {
+  var t = String(text || "").trim();
+  if (!t) return [];
+  var hits = [];
+  function add(sec) {
+    if (hits.indexOf(sec) < 0) hits.push(sec);
+  }
+  if (
+    /\b(kettlebell|kb|dumbbell|db|barbell|rower|ski|bike|equipment|gym|garage|home\s*setup|bands?|pull-?up)\b|קטלבל|משקולת|ציוד|מכשיר|חדר\s*כושר|בית/i.test(
+      t
+    )
+  ) {
+    add("trainingSetup");
+  }
+  if (
+    /\b(rest\s*days?|training\s*days?|work\s*days?|off\s*days?|weekly\s*split|schedule)\b|ימי\s*מנוחה|יום\s*מנוחה|ימי\s*אימון|לוח\s*אימונים|מנוחה\s*ב/i.test(
+      t
+    )
+  ) {
+    add("weeklySchedule");
+  }
+  if (/\bactive\s*recovery|daily\s*deload|התאוששות\s*פעילה/i.test(t)) add("activeRecovery");
+  if (
+    /\b(injury|injuries|pain|sore|avoid|knee|shoulder|back|wrist|ankle|scale|substitute)\b|פציעה|כאב|ברך|כתף|גב|להימנע|סקל/i.test(
+      t
+    )
+  ) {
+    add("injuries");
+  }
+  if (
+    /\b(session\s*(cap|limit|length|time)|minutes?\s*(cap|max|limit)|shorter\s*sessions?)\b|מגבלת\s*זמן|סשן\s*קצר|דקות\s*מקסימום/i.test(
+      t
+    )
+  ) {
+    add("sessionLimits");
+  }
+  if (/\b(goal|focus|improve|open\s*prep|engine|strength\s*focus)\b|מטרה|פוקוס|לשפר/i.test(t)) {
+    add("goals");
+  }
+  if (/\b(1rm|back\s*squat|deadlift|snatch|clean\s*&?\s*jerk|2000m)\b|חזרה\s*מקסימלית|סקוואט/i.test(t) &&
+      !/avoid|להימנע|pain|כאב/i.test(t)) {
+    add("liftsRun");
+  }
+  if (/\b(muscle-?up|hspu|handstand|toes-?to-?bar|double\s*under|skills?)\b|מיומנות|בר|עמידת\s*ידיים/i.test(t)) {
+    add("skills");
+  }
+  if (!hits.length) add("goals");
+  return hits;
+}
+
+/** Persist a confirmed whole-brick note onto the matching intake section fields (local memory). */
+function pprogApplyStandingIntakeNote(noteText) {
+  var note = String(noteText || "").trim().slice(0, 500);
+  if (!note) return;
+  var confirmRe = /^(yes|yep|yeah|ok|okay|sure|confirm|do it|go ahead|כן|בטח|אשר|תבצע|יאללה)[.!\s]*$/i;
+  if (confirmRe.test(note)) return;
+  var sections = pprogClassifyIntakeSections(note);
+  if (!sections.length) return;
+  var store = loadPprogStore();
+  var line = note;
+  function appendField(key, maxLen) {
+    var prev = String(store[key] || "").trim();
+    if (prev && prev.indexOf(line) >= 0) return;
+    store[key] = (prev ? prev + "\n" : "") + "Standing update: " + line;
+    store[key] = String(store[key]).slice(0, maxLen || 800);
+  }
+  for (var i = 0; i < sections.length; i++) {
+    var sec = sections[i];
+    if (sec === "trainingSetup") appendField("trainingSetup", 800);
+    else if (sec === "weeklySchedule") appendField("scheduleNotes", 500);
+    else if (sec === "sessionLimits") appendField("sessionLimits", 500);
+    else if (sec === "injuries") appendField("injuries", 800);
+    else if (sec === "goals") appendField("goals", 800);
+  }
+  if (!Array.isArray(store.intakeStandingUpdates)) store.intakeStandingUpdates = [];
+  store.intakeStandingUpdates.push({
+    at: new Date().toISOString(),
+    sections: sections,
+    note: line,
+  });
+  if (store.intakeStandingUpdates.length > 20) {
+    store.intakeStandingUpdates = store.intakeStandingUpdates.slice(-20);
+  }
+  /* Keep profileNotes / fixed packet aligned for programming memory */
+  if (store.profileNotes) {
+    var pn = String(store.profileNotes);
+    if (pn.indexOf(line) < 0) {
+      store.profileNotes = (pn + "\nStanding (" + sections.join(",") + "): " + line).slice(0, 2500);
+    }
+  }
+  savePprogStore(store);
+}
+
+/** Latest non-confirm user note from brick/intake chat (for standing intake updates). */
+function pprogLatestStandingUserNote(msgs) {
+  var list = Array.isArray(msgs) ? msgs : [];
+  var confirmRe = /^(yes|yep|yeah|ok|okay|sure|confirm|do it|go ahead|כן|בטח|אשר|תבצע|יאללה)[.!\s]*$/i;
+  for (var i = list.length - 1; i >= 0; i--) {
+    var m = list[i];
+    if (!m || m.role !== "user") continue;
+    var t = String(m.text || "").trim();
+    if (!t || t.indexOf("FIXED INTAKE COMPLETE") === 0) continue;
+    if (confirmRe.test(t)) continue;
+    return t.slice(0, 500);
+  }
+  return "";
 }
 
 var PPROG_SCHEDULE_NOTE_RE =
@@ -6243,6 +6379,7 @@ function submitPprogWeekPreTalk() {
         revised = extractPprogWeekJsonFromText(j.text, (store.activeWeekIndex | 0) + 1);
       }
       if (revised) {
+        pprogApplyStandingIntakeNote(text);
         applyPprogWeekRevision(revised, { noteText: text });
         addPprogCoachPref("week notes: " + text);
         try {
