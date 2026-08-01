@@ -1,25 +1,12 @@
 # Changelog
 
-## [21.3.1] - 2026-08-01
+## [21.2.1] - 2026-08-01
 
-### Hide Generate Workout + harden Terms audit logging
-- **Display version: v21.3.1**
-- Hide **Generate Workout** tab (`GENERATE_WORKOUT_TAB_ENABLED = false`); code/API kept for possible restore.
-- Fix Terms audit on iPhone: prefer `fetch`+JSON so Agree rows reliably land in `data/legal-agreements.jsonl`.
-- Personal Coach / Browse / Tools unchanged.
-
----
-
-## [21.3.0] - 2026-08-01
-
-### Legal harden — Terms v2.0-legal + agreement audit trail
-- **Display version: v21.3**
-- New BAR-VAZ / Mama WOD Terms of Service & Complete Liability Waiver (English binding + Hebrew translation).
-- Tightened Agree checkboxes (18+, consult human trainer + physician, full responsibility).
-- Server audit list: `POST /api/legal-agree` → `data/legal-agreements.jsonl` (userId, timestamp, terms version, IP).
-- Soft-gate Personal Coach API until current Terms accepted; view list via `node scripts/legal-agreements-summary.js`.
-- Mandatory AI legal/safety directive (intake reminder + pain/injury fixed reply).
-- Login/password identity deferred (not in product yet).
+### Hide Generate Workout + Terms audit fix + display rename
+- **Display version: v21.2.1** (product name for this patch; interim tags 21.3 / 21.3.1 referred to the same line of work)
+- Hide **Generate Workout** tab from first paint (CSS + `hidden` + `syncGenerateWorkoutTabVisibility`); code/API kept for restore.
+- Fix Terms audit on iPhone: prefer `fetch`+JSON so Agree rows land in `data/legal-agreements.jsonl`.
+- Includes Terms v2.0-legal harden from the same release line (waiver text, checkboxes, server agreement list, API soft-gate, AI safety directive).
 
 ---
 
