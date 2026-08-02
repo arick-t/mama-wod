@@ -11007,5 +11007,27 @@ function initTimerColorBuckets() {
   } catch (e) {}
 })();
 </script>
+<!-- One-time handoff / intake-reset deep-link: open Personal Coach tab after claim.html -->
+<script>
+(function () {
+  try {
+    var q = new URLSearchParams(window.location.search || "");
+    var tab = q.get("tab");
+    if (tab === "pprog" && typeof showTab === "function") {
+      showTab("pprog");
+      if (q.get("intake_reset") === "1") {
+        try {
+          if (typeof syncPprogModeUi === "function") syncPprogModeUi();
+          if (typeof renderPprogChat === "function") renderPprogChat();
+          if (typeof syncPprogStartBtn === "function") syncPprogStartBtn();
+        } catch (e2) {}
+      } else if (typeof renderPprogWeek === "function") {
+        try { renderPprogWeek(); } catch (e1) {}
+      }
+    }
+  } catch (e) {}
+})();
+</script>
+
 </body>
 </html>

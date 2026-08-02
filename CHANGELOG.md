@@ -1,3 +1,7 @@
+## 21.3.0
+
+- Founder admin dashboard (`/admin.html`): athlete management, one-time handoff links, coach learning notes toggle, production-style intake for new athletes.
+
 # Changelog
 
 ## [21.2.2] - 2026-08-02

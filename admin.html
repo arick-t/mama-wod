@@ -1,0 +1,1976 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>DUCK-WOD Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0e0e10;--bg2:#151518;--panel:#1a1a1e;--border:#2a2a2e;
+  --orange:#E8451A;--teal:#1A9B8A;--purple:#b06dcf;--gold:#F5C518;
+  --text:#eee;--muted:#888;--soft:#bdbdbd;
+}
+body{font-family:"Assistant",sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+a{color:inherit;text-decoration:none}
+button,input,textarea,select{font-family:inherit}
+
+/* ── Login ── */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;
+  background:radial-gradient(ellipse at 30% 20%,rgba(232,69,26,.18),transparent 50%),
+    radial-gradient(ellipse at 80% 80%,rgba(26,155,138,.12),transparent 45%),var(--bg)}
+.login-box{background:linear-gradient(160deg,#1a1a1e 0%,#121214 100%);
+  border:1px solid var(--border);border-radius:18px;padding:44px 40px;width:min(360px,92vw);
+  text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.45)}
+.login-box .brand{font-size:28px;font-weight:800;color:var(--orange);letter-spacing:.04em;margin-bottom:4px}
+.login-box .sub{font-size:13px;color:var(--muted);margin-bottom:28px}
+.login-box input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid #3a3a40;
+  background:#101012;color:var(--text);font-size:15px;margin-bottom:14px}
+.login-box input:focus{outline:2px solid var(--orange);border-color:transparent}
+.login-box button{width:100%;padding:12px;border-radius:10px;background:var(--orange);
+  color:#fff;font-weight:700;font-size:15px;border:none;cursor:pointer;transition:background .15s}
+.login-box button:hover{background:#d03d18}
+#login-err{color:#f87171;font-size:13px;margin-top:10px;min-height:18px}
+
+/* ── App shell ── */
+html,body{height:100%}
+#app{display:none;flex-direction:column;height:100vh;max-height:100vh;overflow:hidden}
+#app.is-open{display:flex}
+header{background:linear-gradient(180deg,#1c1c20 0%,#151518 100%);
+  border-bottom:2px solid var(--orange);padding:12px 20px;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0}
+header .logo{color:var(--orange);font-weight:800;font-size:18px;letter-spacing:.04em}
+header .tagline{color:#666;font-size:13px;margin-left:2px}
+header .count{margin-right:auto;background:var(--bg2);padding:4px 12px;border-radius:999px;
+  font-size:12px;color:#aaa;border:1px solid var(--border)}
+.hdr-btn{background:var(--bg2);border:1px solid #333;border-radius:9px;padding:7px 14px;
+  color:#ccc;font-size:13px;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:7px}
+.hdr-btn:hover{background:#222}
+.hdr-btn.primary{background:var(--orange);border-color:var(--orange);color:#fff}
+.hdr-btn.primary:hover{background:#d03d18}
+.hdr-btn .hdr-ico{width:16px;height:16px;flex-shrink:0;display:block}
+.hdr-btn.drive-sync{border-color:rgba(26,155,138,.45);color:#9fe7db}
+.hdr-btn.drive-sync:hover{background:rgba(26,155,138,.12);border-color:var(--teal)}
+.hdr-toast{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:80;
+  background:#1a1a1e;border:1px solid rgba(26,155,138,.5);color:#9fe7db;padding:10px 16px;
+  border-radius:999px;font-size:13px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.4);
+  opacity:0;pointer-events:none;transition:opacity .2s}
+.hdr-toast.show{opacity:1}
+
+/* Learning toggle */
+.learn-toggle{display:inline-flex;align-items:center;gap:0;border:1px solid #3a3a40;
+  border-radius:999px;overflow:hidden;cursor:pointer;user-select:none;padding:0;background:#121214}
+.learn-toggle .lt-label{padding:7px 14px;font-size:12px;font-weight:700;transition:all .2s;white-space:nowrap}
+.learn-toggle.off .lt-label{background:rgba(26,155,138,.15);color:#7eb8c9}
+.learn-toggle.on{border-color:rgba(245,197,24,.55);box-shadow:0 0 14px rgba(232,69,26,.35)}
+.learn-toggle.on .lt-label{background:linear-gradient(90deg,rgba(232,69,26,.35),rgba(245,197,24,.25));
+  color:var(--gold)}
+
+.learn-banner{display:none;background:linear-gradient(90deg,rgba(232,69,26,.2),rgba(245,197,24,.12));
+  border-bottom:1px solid rgba(245,197,24,.35);padding:10px 20px;font-size:13px;color:#fcd34d;font-weight:600}
+.learn-banner.visible{display:block}
+
+/* Athlete tabs */
+.tabs-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 20px;
+  display:flex;gap:8px;overflow-x:auto;flex-shrink:0}
+.athlete-tab{padding:9px 16px;border-radius:999px;background:#1e1e22;color:var(--soft);
+  font-size:13px;cursor:pointer;white-space:nowrap;border:1px solid #343438;flex-shrink:0;
+  font-weight:600;transition:background .15s,border-color .15s}
+.athlete-tab:hover{background:#2a2a30;border-color:#444}
+.athlete-tab.active{background:var(--orange);color:#fff;border-color:var(--orange);
+  box-shadow:0 2px 10px rgba(232,69,26,.3)}
+.empty-tabs{color:#555;font-size:13px;padding:4px 2px}
+
+.main{display:flex;flex:1;overflow:hidden;min-height:0}
+.content{flex:1;overflow-y:auto;padding:20px 24px;background:var(--bg);min-height:0;-webkit-overflow-scrolling:touch}
+
+/* Detail panel */
+.panel-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:12px}
+.panel-name{font-size:22px;font-weight:800}
+.panel-meta{color:var(--muted);font-size:13px;margin-top:4px;line-height:1.55}
+.delete-btn{background:#3a1515;border:1px solid #7f2c2c;border-radius:8px;
+  padding:6px 14px;color:#f87171;font-size:13px;cursor:pointer;white-space:nowrap}
+.delete-btn:hover{background:#4a1c1c}
+.panel-actions{display:flex;flex-direction:column;gap:8px;align-items:stretch}
+
+.section{background:var(--panel);border:1px solid var(--border);border-radius:12px;
+  padding:18px 20px;margin-bottom:16px}
+.section-title{font-size:12px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--muted);margin-bottom:12px}
+.section-title.no-margin{margin-bottom:0}
+.intake-summary{font-size:14px;line-height:1.6;color:#ddd}
+.row-label{font-size:12px;color:#666;display:inline-block;min-width:90px}
+
+.block-header{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.block-title{font-size:15px;font-weight:700}
+.block-dates{font-size:12px;color:#666}
+.month-nav{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.month-weekday{background:#121214;border:1px solid var(--border);border-radius:7px;padding:6px;
+  text-align:center;font-size:11px;color:#777}
+.month-day{background:#121214;border:1px solid var(--border);border-radius:8px;padding:7px 6px;min-height:78px}
+.month-day.empty{opacity:.25}
+.month-day.today{border-color:var(--orange)}
+.month-day.clickable{cursor:pointer}
+.month-day.selected{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
+.month-day .day-num{font-size:12px;font-weight:700;color:#ccc;margin-bottom:6px}
+.month-day.today .day-num{color:var(--orange)}
+.month-day .wod-label{font-size:10px;color:#b8b8b8;line-height:1.35;white-space:pre-wrap;word-break:break-word}
+.month-day.rest .wod-label{color:#666}
+.month-day.no-plan .wod-label{color:#505050}
+
+/* Personal coach workout format */
+.pprog-summary{color:#e8e4d8;font-size:.95em;line-height:1.5;margin:0 0 12px;padding:12px;background:#181818;border-radius:8px;border:1px solid #333}
+.pprog-day-card{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:16px 16px 14px;margin-top:12px}
+.pprog-day-card .card-header{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #2a2a2a}
+.pprog-day-card .source-name{color:var(--purple);font-weight:700;font-size:1.05em;letter-spacing:.03em}
+.pprog-day-card .section{margin-bottom:12px;background:transparent;border:0;padding:0}
+.pprog-day-card .section-title{font-size:1em;font-weight:700;text-decoration:underline;color:var(--teal);margin-bottom:7px;letter-spacing:0;text-transform:none}
+.pprog-modified-flag{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:var(--orange);color:#fff;font-size:.64em;font-weight:700;letter-spacing:.06em;vertical-align:middle}
+.pprog-part-note{margin:0 0 8px;padding:0 2px;color:#7eb8c9;font-size:.86em;font-style:italic;line-height:1.4}
+.pprog-part-format{margin:0 0 6px;padding:0 2px;color:#f0ebe0;font-size:.95em;font-weight:700;line-height:1.35}
+.pprog-day-card .section-lines{margin:0;padding:0;list-style:none;color:#e8e4d8;font-size:.92em;line-height:1.45}
+.pprog-day-card .section-lines li{padding:2px 0 2px 16px;position:relative;margin-bottom:4px;color:#e8e4d8}
+.pprog-day-card .section-lines li:before{content:"•";position:absolute;left:0;color:var(--orange);font-weight:bold}
+.pprog-empty{color:#777;text-align:center;padding:12px;font-size:.9em}
+.pprog-rest-day-title{color:var(--purple);font-weight:700;font-size:1.05em;margin:8px 0}
+
+/* Notes */
+.notes-section{background:var(--panel);border:1px solid var(--border);border-radius:12px;
+  padding:16px 18px;margin-top:14px}
+.notes-section.sticky-notes{position:sticky;bottom:8px;z-index:5;
+  box-shadow:0 -8px 28px rgba(0,0,0,.35);border-color:#3a3a42;
+  background:linear-gradient(180deg,#1c1c22,#151518)}
+.notes-section.learning{border-color:rgba(245,197,24,.4)}
+.notes-ta{width:100%;min-height:88px;background:#101012;border:1px solid #333;border-radius:10px;
+  padding:10px 12px;color:var(--text);font-size:14px;line-height:1.5;resize:vertical}
+.notes-ta:focus{outline:2px solid var(--orange);border-color:transparent}
+.notes-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+.btn-primary{background:var(--orange);border:none;border-radius:8px;padding:9px 16px;color:#fff;font-weight:700;cursor:pointer}
+.btn-primary:hover{background:#d03d18}
+.btn-primary:disabled{background:#555;cursor:default}
+.btn-secondary{background:#2a2a2e;border:1px solid #333;border-radius:8px;padding:9px 16px;color:#ddd;cursor:pointer}
+.btn-secondary.good{border-color:var(--teal);color:#9fe7db}
+.btn-secondary.wait{border-color:var(--gold);color:#fcd34d}
+.notes-status{font-size:13px;color:#9ca3af;min-height:18px}
+.decide-box{display:none;margin-top:12px;padding:12px;border:1px dashed #555;border-radius:10px;background:#171717}
+.decide-box.open{display:block}
+
+.blocks-row{display:flex;flex-direction:column;gap:6px}
+.block-row-item{display:flex;align-items:center;gap:10px;padding:8px 12px;
+  background:#121214;border-radius:8px;border:1px solid var(--border);font-size:13px}
+.block-row-item .badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;
+  background:#2a2a2e;color:#888;white-space:nowrap}
+.block-row-item .summary{color:#bbb;flex:1}
+
+textarea#directives-input{width:100%;min-height:100px;background:#101012;
+  border:1px solid #333;border-radius:8px;padding:10px 12px;
+  color:var(--text);font-size:14px;line-height:1.5;resize:vertical}
+textarea#directives-input:focus{outline:2px solid var(--orange);border-color:transparent}
+.save-directives-btn{margin-top:8px;background:var(--orange);border:none;border-radius:8px;
+  padding:8px 20px;color:#fff;font-weight:700;font-size:14px;cursor:pointer}
+.save-directives-btn:hover{background:#d03d18}
+.save-directives-btn:disabled{background:#555;cursor:default}
+.directives-hint{font-size:12px;color:#666;margin-top:6px}
+.save-status{font-size:12px;color:#4ade80;min-height:18px;margin-top:4px}
+
+.handoff-link{display:block;width:100%;margin-top:8px;padding:10px;background:#121214;border:1px solid #333;
+  border-radius:8px;color:#9fe7db;font-size:12px;word-break:break-all;direction:ltr;text-align:left}
+.sandbox-status{font-size:13px;color:#9ca3af;min-height:18px;margin-top:8px}
+.sandbox-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+
+.empty-content{display:flex;flex-direction:column;align-items:center;
+  justify-content:center;min-height:60vh;color:#444;text-align:center}
+.empty-content .icon{font-size:48px;margin-bottom:12px;opacity:.4}
+.empty-content p{font-size:14px}
+
+/* Intake workspace modal */
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:60;
+  align-items:center;justify-content:center;padding:12px}
+.modal-backdrop.open{display:flex}
+.intake-workspace{background:linear-gradient(180deg,#1a1a1e,#121214);border:1px solid var(--border);
+  border-radius:16px;width:min(920px,100%);height:min(92vh,900px);display:flex;flex-direction:column;
+  overflow:hidden;box-shadow:0 28px 80px rgba(0,0,0,.55)}
+.intake-ws-header{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:14px 18px;border-bottom:1px solid var(--border);background:#16161a;flex-shrink:0}
+.intake-ws-header h2{font-size:17px;font-weight:800}
+.intake-ws-body{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.intake-start-bar{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.intake-start-bar label{display:block;font-size:11px;color:#777;margin-bottom:4px}
+.intake-start-bar input{width:min(280px,100%);padding:9px 11px;border-radius:8px;border:1px solid #333;
+  background:#101012;color:var(--text);font-size:14px}
+.intake-chat-log{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.intake-msg{max-width:88%;padding:10px 14px;border-radius:12px;font-size:14px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.intake-msg.model{align-self:flex-start;background:#1e1e24;border:1px solid #2e2e34;color:#e8e4d8}
+.intake-msg.user{align-self:flex-end;background:rgba(232,69,26,.18);border:1px solid rgba(232,69,26,.35);color:#fff}
+.intake-msg.error{align-self:stretch;background:#2a1515;border:1px solid #7f2c2c;color:#fca5a5}
+.intake-msg.system{align-self:center;background:transparent;color:#666;font-size:12px;padding:4px}
+.intake-picker{margin:0 18px 8px;padding:14px;background:#121214;border:1px solid var(--border);border-radius:12px;display:none}
+.intake-picker.open{display:block}
+.intake-picker h4{font-size:13px;color:var(--teal);margin-bottom:10px}
+.lifts-row{display:grid;grid-template-columns:1fr 100px 40px;gap:8px;align-items:center;margin-bottom:8px}
+.lifts-row label{font-size:13px;color:#ccc}
+.lifts-row input{padding:8px 10px;border-radius:8px;border:1px solid #333;background:#101012;color:var(--text)}
+.lifts-row .unit{font-size:12px;color:#666}
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:10px}
+.skills-grid label{display:flex;align-items:center;gap:8px;font-size:13px;color:#ccc;cursor:pointer;
+  padding:8px 10px;background:#1a1a1e;border:1px solid #2a2a2e;border-radius:8px}
+.skills-grid label.skills-all{border-color:var(--teal);color:#9fe7db}
+.skills-notes{width:100%;min-height:50px;margin-bottom:10px;padding:8px 10px;border-radius:8px;
+  border:1px solid #333;background:#101012;color:var(--text);font-size:13px;resize:vertical}
+.intake-compose{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;background:#16161a}
+.intake-compose input{flex:1;padding:11px 14px;border-radius:10px;border:1px solid #333;
+  background:#101012;color:var(--text);font-size:14px}
+.intake-compose input:focus{outline:2px solid var(--orange);border-color:transparent}
+.intake-footer{padding:10px 18px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;
+  align-items:center;justify-content:space-between;background:#121214;flex-shrink:0}
+.intake-status{font-size:12px;color:#9ca3af;flex:1;min-width:120px}
+.intake-building{display:none;padding:40px 24px;text-align:center}
+.intake-building.visible{display:block}
+.intake-building .spin{width:36px;height:36px;border:3px solid #333;border-top-color:var(--orange);
+  border-radius:50%;margin:0 auto 16px;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+
+@media(max-width:640px){
+  header{padding:10px 12px}
+  .content{padding:14px 12px}
+  .lifts-row{grid-template-columns:1fr 80px 32px}
+  .learn-toggle .lt-label{font-size:11px;padding:6px 10px}
+}
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="brand">DUCK-WOD</div>
+    <div class="sub">Founder Admin</div>
+    <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
+    <button type="button" onclick="doLogin()">כניסה</button>
+    <div id="login-err"></div>
+  </div>
+</div>
+
+<!-- App -->
+<div id="app">
+  <header>
+    <span class="logo">DUCK-WOD</span>
+    <span class="tagline">Admin</span>
+    <span class="count" id="athlete-count">0 מתאמנים</span>
+    <button type="button" class="learn-toggle off" id="learn-toggle" onclick="toggleLearningMode()" title="מגרש אימונים">
+      <span class="lt-label" id="learn-toggle-label">מגרש: כבוי</span>
+    </button>
+    <button type="button" class="hdr-btn drive-sync" id="btn-drive-sync" onclick="syncDrivePlaceholder()" title="סנכרן Drive (בקרוב)">
+      <svg class="hdr-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path fill="currentColor" d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95A5.47 5.47 0 0 1 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11A2.99 2.99 0 0 1 22 15c0 1.66-1.34 3-3 3z"/>
+      </svg>
+      <span>סנכרן Drive</span>
+    </button>
+    <button type="button" class="hdr-btn primary" id="btn-add-athlete" onclick="openIntakeWorkspace()">+ מתאמן</button>
+    <button type="button" class="hdr-btn" onclick="loadAthletes()">↻ רענון</button>
+  </header>
+  <div id="hdr-toast" class="hdr-toast" role="status" aria-live="polite"></div>
+  <div class="learn-banner" id="learn-banner">מצב לימוד פעיל — כל הערה שתשלח תיכנס ללמידת המאמן (לא למתאמן)</div>
+  <div class="tabs-bar" id="athlete-tabs">
+    <div class="empty-tabs">טוען...</div>
+  </div>
+  <div class="main">
+    <div class="content" id="content">
+      <div class="empty-content">
+        <div class="icon">·</div>
+        <p>בחר מתאמן מהרשימה</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Intake workspace -->
+<div class="modal-backdrop" id="intake-modal" onclick="if(event.target===this)closeIntakeWorkspace()">
+  <div class="intake-workspace" dir="rtl" onclick="event.stopPropagation()">
+    <div class="intake-ws-header">
+      <h2>תחקור מתאמן חדש</h2>
+      <button type="button" class="btn-secondary" onclick="closeIntakeWorkspace()">סגור</button>
+    </div>
+    <div class="intake-ws-body" id="intake-ws-body">
+      <div class="intake-start-bar" id="intake-start-bar">
+        <div>
+          <label>מייל (אופציונלי)</label>
+          <input type="email" id="intake-email" placeholder="name@example.com" autocomplete="email"/>
+        </div>
+        <button type="button" class="btn-primary" id="intake-start-btn" onclick="startIntakeChat()">התחל תחקור</button>
+      </div>
+      <div class="intake-chat-log" id="intake-chat-log">
+        <div class="intake-msg system">לחץ ״התחל תחקור״ כדי לפתוח שיחה עם המאמן (13 נושאים — כמו בפרודקשן)</div>
+      </div>
+      <div class="intake-picker" id="intake-lifts-picker"></div>
+      <div class="intake-picker" id="intake-skills-picker"></div>
+      <div class="intake-compose" id="intake-compose" style="display:none">
+        <input type="text" id="intake-chat-input" placeholder="תשובה למאמן…" autocomplete="off"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();sendIntakeMessage();}"/>
+        <button type="button" class="btn-primary" id="intake-send-btn" onclick="sendIntakeMessage()">שלח</button>
+      </div>
+      <div class="intake-building" id="intake-building">
+        <div class="spin"></div>
+        <div style="font-weight:700;margin-bottom:6px">בונה תוכנית…</div>
+        <div style="font-size:13px;color:#888">יוצר בלוק אימונים ושומר מתאמן חדש</div>
+      </div>
+    </div>
+    <div class="intake-footer" id="intake-footer">
+      <div class="intake-status" id="intake-status"></div>
+      <button type="button" class="btn-secondary" id="intake-build-btn" style="display:none" onclick="generateIntakeBlock()">בנה תוכנית</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+var adminPw = "";
+var athletes = [];
+var currentAthleteId = null;
+var blockMonthOffsetByAthlete = {};
+var selectedDayByAthlete = {};
+var learningMode = false;
+var pendingLearnNoteId = null;
+
+var INTAKE_LIFT_DEFS = [
+  { id: "back_squat", label: "Back Squat", unit: "kg", kind: "kg" },
+  { id: "deadlift", label: "Deadlift", unit: "kg", kind: "kg" },
+  { id: "clean_jerk", label: "Clean & Jerk", unit: "kg", kind: "kg" },
+  { id: "snatch", label: "Snatch", unit: "kg", kind: "kg" },
+  { id: "run_2000", label: "ריצת 2000 מ׳", unit: "min", kind: "run", placeholder: "למשל 8.5" }
+];
+var INTAKE_SKILL_DEFS = [
+  { id: "all_skills", label: "כל הסקילים", allToggle: true },
+  { id: "muscle_up", label: "Muscle up" },
+  { id: "handstand_walk", label: "Handstand walk" },
+  { id: "handstand_pushup", label: "Handstand pushup" },
+  { id: "pistol", label: "Pistol" },
+  { id: "ring_muscle_up", label: "Ring muscle up" },
+  { id: "double_unders", label: "Double unders" },
+  { id: "toes_to_bar", label: "Toes to bar" },
+  { id: "pullups", label: "Pull-ups" },
+  { id: "chest_to_bar", label: "Chest to bar" }
+];
+
+var intakeState = {
+  busy: false,
+  started: false,
+  messages: [],
+  email: "",
+  displayName: "",
+  gender: "",
+  preferredLanguage: "",
+  skills: {},
+  lifts: {},
+  intakeComplete: false
+};
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s || "")
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+function fmt(iso) {
+  if (!iso) return "";
+  try { return new Date(iso).toLocaleDateString("he-IL", { day: "2-digit", month: "2-digit", year: "numeric" }); }
+  catch (e) { return String(iso).slice(0, 10); }
+}
+function toNum(v) {
+  var n = Number(v);
+  if (!isFinite(n) || n < 0) return 0;
+  return Math.floor(n);
+}
+function formatTenure(joinedAtIso) {
+  if (!joinedAtIso) return "לא ידוע";
+  var start = new Date(joinedAtIso);
+  if (isNaN(start.getTime())) return "לא ידוע";
+  var now = new Date();
+  var months = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth());
+  if (now.getDate() < start.getDate()) months -= 1;
+  if (months < 0) months = 0;
+  if (months >= 12) {
+    var years = Math.floor(months / 12);
+    return years + " שנים";
+  }
+  if (months >= 1) return months + " חודשים";
+  var diffDays = Math.floor((now.getTime() - start.getTime()) / (24 * 60 * 60 * 1000));
+  var weeks = Math.floor(Math.max(0, diffDays) / 7);
+  return weeks + " שבועות";
+}
+
+function adminAuthHeaders(extra) {
+  var h = { "Content-Type": "application/json", "X-Admin-Password": adminPw || "" };
+  if (extra) {
+    for (var k in extra) {
+      if (Object.prototype.hasOwnProperty.call(extra, k)) h[k] = extra[k];
+    }
+  }
+  return h;
+}
+function withAdminPassword(payload) {
+  var body = payload && typeof payload === "object" ? payload : {};
+  body.adminPassword = adminPw || body.adminPassword || "";
+  return body;
+}
+
+// ── Learning mode ────────────────────────────────────────────────────────────
+function loadLearningMode() {
+  try { learningMode = sessionStorage.getItem("dw_admin_learning_mode") === "1"; }
+  catch (e) { learningMode = false; }
+  syncLearningUi();
+}
+function persistLearningMode() {
+  try { sessionStorage.setItem("dw_admin_learning_mode", learningMode ? "1" : "0"); }
+  catch (e) {}
+}
+function toggleLearningMode() {
+  learningMode = !learningMode;
+  persistLearningMode();
+  syncLearningUi();
+  if (currentAthleteId) {
+    var a = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
+    if (a) renderAthlete(a);
+  }
+}
+function syncLearningUi() {
+  var btn = document.getElementById("learn-toggle");
+  var label = document.getElementById("learn-toggle-label");
+  var banner = document.getElementById("learn-banner");
+  if (btn) {
+    btn.classList.toggle("on", learningMode);
+    btn.classList.toggle("off", !learningMode);
+  }
+  if (label) {
+    label.textContent = learningMode
+      ? "מגרש: דולק — הערות ללימוד המאמן"
+      : "מגרש: כבוי";
+  }
+  if (banner) banner.classList.toggle("visible", learningMode);
+}
+
+/** Placeholder — Drive sync will be wired later. Does not touch production coach. */
+function syncDrivePlaceholder() {
+  showHdrToast("סנכרון Drive — בקרוב");
+}
+
+var hdrToastTimer = null;
+function showHdrToast(msg) {
+  var el = document.getElementById("hdr-toast");
+  if (!el) return;
+  el.textContent = String(msg || "");
+  el.classList.add("show");
+  if (hdrToastTimer) clearTimeout(hdrToastTimer);
+  hdrToastTimer = setTimeout(function() {
+    el.classList.remove("show");
+  }, 2200);
+}
+
+// ── Login ────────────────────────────────────────────────────────────────────
+document.getElementById("pw-input").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") doLogin();
+});
+
+function doLogin() {
+  var pw = document.getElementById("pw-input").value.trim();
+  if (!pw) return;
+  adminPw = pw;
+  var errEl = document.getElementById("login-err");
+  if (errEl) errEl.textContent = "מתחבר…";
+  fetch("/api/admin-snapshot", {
+    method: "POST",
+    headers: adminAuthHeaders(),
+    body: JSON.stringify({ action: "admin_list", adminPassword: pw })
+  })
+    .then(function(r) {
+      if (r.status === 401) throw new Error("wrong_password");
+      if (!r.ok) throw new Error("http_" + r.status);
+      return r.json();
+    })
+    .then(function(data) {
+      if (!data || !data.ok) throw new Error("bad_response");
+      document.getElementById("login-screen").style.display = "none";
+      var app = document.getElementById("app");
+      app.style.display = "flex";
+      app.classList.add("is-open");
+      loadLearningMode();
+      renderAthleteList(data.snapshots || []);
+    })
+    .catch(function(e) {
+      var msg = "שגיאת חיבור";
+      if (e && e.message === "wrong_password") msg = "סיסמה שגויה";
+      else if (e && String(e.message || "").indexOf("http_") === 0) msg = "שגיאת שרת (" + e.message.slice(5) + ")";
+      if (errEl) errEl.textContent = msg;
+    });
+}
+
+function loadAthletes() {
+  fetch("/api/admin-snapshot", {
+    method: "POST",
+    headers: adminAuthHeaders(),
+    body: JSON.stringify(withAdminPassword({ action: "admin_list" }))
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(data) { renderAthleteList(data.snapshots || []); })
+    .catch(function() {});
+}
+
+function renderAthleteList(list) {
+  athletes = list;
+  document.getElementById("athlete-count").textContent = list.length + " מתאמנים";
+  var sb = document.getElementById("athlete-tabs");
+  if (!list.length) {
+    sb.innerHTML = '<div class="empty-tabs">אין מתאמנים עדיין</div>';
+    document.getElementById("content").innerHTML =
+      '<div class="empty-content"><div class="icon">·</div><p>אין מתאמנים — לחץ ״+ מתאמן״ להתחלת תחקור</p></div>';
+    return;
+  }
+  if (!currentAthleteId || !list.some(function(x) { return x.athleteId === currentAthleteId; })) {
+    currentAthleteId = list[0].athleteId;
+    renderAthlete(list[0]);
+  } else {
+    var cur = list.find(function(x) { return x.athleteId === currentAthleteId; });
+    if (cur) renderAthlete(cur);
+  }
+  sb.innerHTML = list.map(function(a) {
+    var active = a.athleteId === currentAthleteId ? " active" : "";
+    return '<button type="button" class="athlete-tab' + active +
+      '" data-id="' + esc(a.athleteId) +
+      '" onclick="selectAthlete(\'' + esc(a.athleteId) + '\')">' +
+      esc(a.displayName || a.athleteId) +
+      "</button>";
+  }).join("");
+}
+
+function selectAthlete(id) {
+  currentAthleteId = id;
+  pendingLearnNoteId = null;
+  var a = athletes.find(function(x) { return x.athleteId === id; });
+  if (!a) return;
+  renderAthlete(a);
+  var sb = document.getElementById("athlete-tabs");
+  if (!sb) return;
+  var tabs = sb.querySelectorAll(".athlete-tab");
+  for (var i = 0; i < tabs.length; i++) {
+    var btn = tabs[i];
+    var active = btn.getAttribute("data-id") === id;
+    btn.classList.toggle("active", !!active);
+  }
+}
+
+function renderAthlete(a) {
+  var content = document.getElementById("content");
+  var genderHe = a.gender === "male" ? "זכר" : a.gender === "female" ? "נקבה" : (a.gender || "—");
+  var joinedAt = a.joinedAt || a.createdAt || "";
+  var tenureLabel = "פעיל מאז " + fmt(joinedAt) + " (" + formatTenure(joinedAt) + ")";
+  var email = a.email || "—";
+
+  content.innerHTML =
+    '<div class="panel-header">' +
+      "<div>" +
+        '<div class="panel-name">' + esc(a.displayName || a.athleteId) + "</div>" +
+        '<div class="panel-meta">' +
+          '<span class="row-label">מזהה:</span>' + esc(a.athleteId) + "&nbsp;&nbsp;" +
+          '<span class="row-label">מגדר:</span>' + esc(genderHe) + "&nbsp;&nbsp;" +
+          '<span class="row-label">עדכון:</span>' + fmt(a.updatedAt) + "<br>" +
+          '<span class="row-label">וותק:</span>' + esc(tenureLabel) + "&nbsp;&nbsp;" +
+          '<span class="row-label">מייל:</span>' + esc(email) +
+        "</div>" +
+      "</div>" +
+      '<div class="panel-actions">' +
+        '<button type="button" class="btn-primary" style="white-space:nowrap" onclick="createHandoffLink(\'' + esc(a.athleteId) + '\')">צור לינק הורדה חד־פעמי</button>' +
+        '<button type="button" class="delete-btn" onclick="deleteAthlete(\'' + esc(a.athleteId) + '\')">מחק</button>' +
+      "</div>" +
+    "</div>" +
+    renderHandoffSection(a) +
+    renderIntakeSection(a) +
+    renderBlockCalendar(a) +
+    renderStickyNotesSection(a) +
+    renderUsageSection(a) +
+    renderBlocksRow(a) +
+    renderDirectives(a);
+
+  var ta = document.getElementById("directives-input");
+  if (ta) ta.value = a.coachDirectives || "";
+  syncNotesPlaceholders();
+}
+
+function renderUsageSection(a) {
+  var workoutAdjustments = toNum(a.workoutAdjustmentsCount);
+  var coachDebriefs = toNum(a.coachDebriefsCount);
+  return '<div class="section">' +
+    '<div class="section-title">שימוש במאמן</div>' +
+    '<div class="blocks-row">' +
+      '<div class="block-row-item">' +
+        '<span class="badge">התאמות אימון</span>' +
+        '<span class="summary">כמות התאמות אימון: ' + workoutAdjustments + "</span>" +
+      "</div>" +
+      '<div class="block-row-item">' +
+        '<span class="badge">דיווחים למאמן</span>' +
+        '<span class="summary">כמות דיווחים למאמן: ' + coachDebriefs + "</span>" +
+      "</div>" +
+    "</div>" +
+  "</div>";
+}
+
+function renderIntakeSection(a) {
+  var lines = [];
+  if (a.skillsSummary) lines.push('<span class="row-label">כישורים:</span>' + esc(a.skillsSummary));
+  if (a.intakeSummary) lines.push('<div class="intake-summary" style="margin-top:8px">' + esc(a.intakeSummary) + "</div>");
+  var resetMeta = "";
+  if (a.intakeResetPending) {
+    resetMeta = '<div style="font-size:12px;color:#fcd34d;margin-top:8px">ממתין שהמתאמן יפתח את לינק איפוס התחקור</div>';
+  } else if (a.intakeResetRedeemedAt) {
+    resetMeta = '<div style="font-size:12px;color:#888;margin-top:8px">תחקור אופס במכשיר: ' + esc(fmt(a.intakeResetRedeemedAt)) + "</div>";
+  } else if (a.intakeResetAt) {
+    resetMeta = '<div style="font-size:12px;color:#888;margin-top:8px">לינק איפוס נוצר: ' + esc(fmt(a.intakeResetAt)) + "</div>";
+  }
+  return '<div class="section">' +
+    "<details>" +
+    '<summary style="cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between">' +
+    '<div class="section-title no-margin">תחקור ראשוני (לחץ להרחבה)</div>' +
+    "</summary>" +
+    '<div style="margin-top:12px">' +
+    (lines.length ? lines.join("") : '<div style="color:#555;font-size:13px">אין סיכום אינטייק עדיין</div>') +
+    resetMeta +
+    '<div class="sandbox-actions" style="margin-top:12px">' +
+      '<button type="button" class="btn-secondary wait" onclick="createIntakeResetLink(\'' + esc(a.athleteId) + '\')">אפס תחקור — לינק חד־פעמי</button>' +
+    "</div>" +
+    '<div class="sandbox-status" id="intake-reset-status" style="margin-top:8px"></div>' +
+    '<div class="handoff-link" id="intake-reset-link" style="display:none"></div>' +
+    '<div class="sandbox-actions" id="intake-reset-copy-wrap" style="display:none;margin-top:8px">' +
+      '<button type="button" class="btn-secondary good" onclick="copyIntakeResetLink()">העתק לינק</button>' +
+      '<a class="btn-secondary" id="intake-reset-open" href="#" target="_blank" rel="noopener">פתח לבדיקה</a>' +
+    "</div>" +
+    '<div class="directives-hint">כשהמתאמן פותח את הלינק בטלפון — התחקור נפתח מחדש. התוכנית נשארת במכשיר.</div>' +
+    "</div>" +
+    "</details>" +
+    "</div>";
+}
+
+var lastIntakeResetUrl = "";
+
+function createIntakeResetLink(athleteId) {
+  if (!confirm("לאפס את תחקור המאמן למתאמן הזה?\n\nיווצר לינק חד־פעמי. כשהוא ייפתח בטלפון — התחקור יתחיל מחדש והתוכנית תישאר.")) {
+    return;
+  }
+  var status = document.getElementById("intake-reset-status");
+  var linkEl = document.getElementById("intake-reset-link");
+  var wrap = document.getElementById("intake-reset-copy-wrap");
+  if (status) status.textContent = "יוצר לינק איפוס...";
+  fetch("/api/admin-handoff", {
+    method: "POST",
+    headers: adminAuthHeaders(),
+    body: JSON.stringify(withAdminPassword({ action: "reset_intake", athleteId: athleteId }))
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (!d || !d.ok) {
+        if (status) status.textContent = "שגיאה: " + ((d && d.error) || "?");
+        return;
+      }
+      lastIntakeResetUrl = window.location.origin + d.path;
+      if (linkEl) {
+        linkEl.style.display = "block";
+        linkEl.textContent = lastIntakeResetUrl;
+      }
+      if (wrap) wrap.style.display = "flex";
+      var open = document.getElementById("intake-reset-open");
+      if (open) open.href = lastIntakeResetUrl;
+      if (status) status.textContent = d.message || "מוכן — שלח למתאמן. אחרי פתיחה הלינק נשרף.";
+      var a = athletes.find(function(x) { return x.athleteId === athleteId; });
+      if (a) {
+        a.intakeSummary = "";
+        a.skillsSummary = "";
+        a.intakeResetAt = new Date().toISOString();
+        a.intakeResetPending = true;
+        a.intakeResetRedeemedAt = null;
+      }
+    })
+    .catch(function() {
+      if (status) status.textContent = "שגיאת רשת";
+    });
+}
+
+function copyIntakeResetLink() {
+  if (!lastIntakeResetUrl) return;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(lastIntakeResetUrl).then(function() {
+      var status = document.getElementById("intake-reset-status");
+      if (status) status.textContent = "הועתק ✓";
+    });
+  }
+}
+
+// ── Block calendar ────────────────────────────────────────────────────────────
+var DAYS_HE = ["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳", "ש׳"];
+var MONTHS_HE = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
+
+function renderBlockCalendar(a) {
+  var b = a.currentBlock;
+  if (!b) {
+    return '<div class="section"><div class="section-title">בלוק נוכחי</div><div style="color:#555;font-size:13px">אין בלוק פעיל</div></div>' +
+      renderDayNotesBox(a, null, null, false);
+  }
+
+  var summaryLine = b.summaryLine || "";
+  var startStr = b.blockStart || b.start || "";
+  var map = buildBlockWorkoutMap(b, startStr);
+
+  var header = '<div class="block-header">' +
+    '<span class="block-title">' + esc(summaryLine) + "</span>" +
+    (startStr ? '<span class="block-dates">מ‑' + fmt(startStr) + "</span>" : "") +
+    "</div>";
+
+  var monthBase = startStr ? new Date(startStr) : new Date();
+  if (isNaN(monthBase.getTime())) monthBase = new Date();
+  var offset = blockMonthOffsetByAthlete[a.athleteId] || 0;
+  var shownMonthDate = new Date(monthBase.getFullYear(), monthBase.getMonth() + offset, 1);
+  var monthLabel = MONTHS_HE[shownMonthDate.getMonth()] + " " + shownMonthDate.getFullYear();
+  var monthNav = '<div class="month-nav">' +
+    '<button type="button" onclick="changeBlockMonth(-1)" style="background:#2a2a2e;border:1px solid #333;border-radius:6px;padding:3px 10px;color:#ccc;cursor:pointer;font-size:12px">◀</button>' +
+    '<span style="font-size:12px;color:#888">' + esc(monthLabel) + "</span>" +
+    '<button type="button" onclick="changeBlockMonth(1)" style="background:#2a2a2e;border:1px solid #333;border-radius:6px;padding:3px 10px;color:#ccc;cursor:pointer;font-size:12px">▶</button>' +
+    "</div>";
+  var calHtml = renderMonthGrid(a, map, shownMonthDate);
+  var selectedDetailsHtml = renderSelectedDayWorkout(a, map);
+  var dayNotes = renderDayNotesBox(a, map, selectedDayByAthlete[a.athleteId], true);
+
+  return '<div class="section" id="block-section">' +
+    '<div class="section-title">בלוק נוכחי</div>' +
+    header + monthNav +
+    '<div id="month-grid-wrap">' + calHtml + "</div>" +
+    selectedDetailsHtml +
+    dayNotes +
+    "</div>";
+}
+
+function changeBlockMonth(delta) {
+  var a = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
+  if (!a) return;
+  var curr = blockMonthOffsetByAthlete[a.athleteId] || 0;
+  blockMonthOffsetByAthlete[a.athleteId] = curr + delta;
+  renderAthlete(a);
+}
+
+function selectBlockDay(dateKey) {
+  var a = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
+  if (!a) return;
+  selectedDayByAthlete[a.athleteId] = dateKey;
+  pendingLearnNoteId = null;
+  renderAthlete(a);
+}
+
+function toIsoDateKey(d) {
+  var y = d.getFullYear();
+  var m = String(d.getMonth() + 1).padStart(2, "0");
+  var day = String(d.getDate()).padStart(2, "0");
+  return y + "-" + m + "-" + day;
+}
+
+var PPROG_DAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+var PPROG_DAY_LABELS = { sun: "Sun", mon: "Mon", tue: "Tue", wed: "Wed", thu: "Thu", fri: "Fri", sat: "Sat" };
+
+function isRestParts(parts) {
+  if (!parts || !parts.length) return false;
+  if (parts.length > 2) return false;
+  var blob = parts.map(function(p) {
+    return String((p && p.title) || "") + " " + ((p && p.lines) || []).join(" ");
+  }).join(" ").toLowerCase();
+  return /\brest\b|rest day|מנוחה/.test(blob) && !/\bamrap\b|\bemom\b|squat|deadlift|metcon|run|bike/.test(blob);
+}
+
+function overviewFocusForDay(week, dayKey) {
+  var ov = (week && week.overview) || [];
+  for (var i = 0; i < ov.length; i++) {
+    if (String((ov[i] && ov[i].day) || "").toLowerCase() === dayKey) {
+      return String(ov[i].focus || "").trim();
+    }
+  }
+  return "";
+}
+
+function getWeekDayObj(week, dayIndex) {
+  var dayKey = PPROG_DAY_KEYS[dayIndex];
+  var days = week && week.days;
+  if (!days) return { dayKey: dayKey, dayObj: {} };
+  if (Array.isArray(days)) {
+    return { dayKey: dayKey, dayObj: days[dayIndex] || {} };
+  }
+  if (typeof days === "object") {
+    return { dayKey: dayKey, dayObj: days[dayKey] || {} };
+  }
+  return { dayKey: dayKey, dayObj: {} };
+}
+
+function extractDayLabel(dayObj, week, dayKey) {
+  if (!dayObj) dayObj = {};
+  var parts = normalizeDayParts(dayObj);
+  var focus = overviewFocusForDay(week, dayKey);
+  var isRest =
+    dayObj.type === "rest" ||
+    isRestParts(parts) ||
+    /^rest(\s*day)?$/i.test(focus) ||
+    focus === "מנוחה";
+  var label = "";
+  if (focus && focus !== "—" && !isRest) label = focus;
+  if (!label && parts.length && !isRest) {
+    label = String(parts[0].title || "").replace(/^Part\s+[A-Z]\s*[·•\-:]?\s*/i, "").slice(0, 42);
+  }
+  if (!label) {
+    label = dayObj.wod || dayObj.workout || dayObj.label || "";
+  }
+  if (!label && isRest) label = "REST";
+  return {
+    label: label || (isRest ? "REST" : ""),
+    isRest: !!isRest,
+    parts: parts,
+    focus: focus,
+    dayKey: dayKey
+  };
+}
+
+function normalizeDayParts(dayObj) {
+  var parts = [];
+  if (Array.isArray(dayObj && dayObj.parts) && dayObj.parts.length) {
+    for (var i = 0; i < dayObj.parts.length; i++) {
+      var p = dayObj.parts[i] || {};
+      var lines = Array.isArray(p.lines) ? p.lines.filter(Boolean).slice(0, 20) : [];
+      parts.push({
+        id: String(p.id || ""),
+        title: String(p.title || ("Part " + String.fromCharCode(65 + i))).slice(0, 120),
+        lines: lines.map(function(x) { return String(x); })
+      });
+    }
+    return parts;
+  }
+  var d = dayObj && dayObj.workoutDetails;
+  if (d) {
+    parts.push({ title: "Part A · Warm-up", lines: [String(d.warmup || "—")] });
+    parts.push({ title: "Part B · Strength", lines: [String(d.strength || "—")] });
+    parts.push({ title: "Part C · Conditioning", lines: [String(d.wod || dayObj.label || "—")] });
+    if (d.cooldown) parts.push({ title: "Cool-down", lines: [String(d.cooldown)] });
+    if (d.notes) parts.push({ title: "Notes", lines: [String(d.notes)] });
+    return parts;
+  }
+  if (dayObj && dayObj.label) {
+    return [{ title: "Session", lines: [String(dayObj.label)] }];
+  }
+  return parts;
+}
+
+function buildBlockWorkoutMap(block, startStr) {
+  var map = {};
+  if (!block || !startStr || isNaN(new Date(startStr).getTime())) return map;
+  var weeks = block.weeks || [];
+  var startMs = new Date(startStr).getTime();
+  for (var w = 0; w < weeks.length; w++) {
+    var week = weeks[w] || {};
+    var weekStartStr = week.weekStart || null;
+    var weekStartMs = weekStartStr && !isNaN(new Date(weekStartStr).getTime())
+      ? new Date(weekStartStr).getTime()
+      : startMs + (w * 7 * 24 * 60 * 60 * 1000);
+    for (var i = 0; i < 7; i++) {
+      var got = getWeekDayObj(week, i);
+      var dayDate = new Date(weekStartMs + (i * 24 * 60 * 60 * 1000));
+      var key = toIsoDateKey(dayDate);
+      map[key] = extractDayLabel(got.dayObj, week, got.dayKey);
+    }
+  }
+  return map;
+}
+
+function renderMonthGrid(a, workoutMap, monthDate) {
+  var y = monthDate.getFullYear();
+  var m = monthDate.getMonth();
+  var firstDay = new Date(y, m, 1);
+  var firstDow = firstDay.getDay();
+  var daysInMonth = new Date(y, m + 1, 0).getDate();
+  var todayKey = toIsoDateKey(new Date());
+  var selectedKey = selectedDayByAthlete[a.athleteId] || "";
+  var html = '<div class="month-grid">';
+
+  for (var d = 0; d < 7; d++) {
+    html += '<div class="month-weekday">' + DAYS_HE[d] + "</div>";
+  }
+  for (var blank = 0; blank < firstDow; blank++) {
+    html += '<div class="month-day empty"></div>';
+  }
+  for (var day = 1; day <= daysInMonth; day++) {
+    var dt = new Date(y, m, day);
+    var key = toIsoDateKey(dt);
+    var plan = workoutMap[key];
+    var isToday = key === todayKey;
+    var isSelected = key === selectedKey;
+    var label = plan ? plan.label : "ללא תכנון";
+    var klass = "month-day";
+    if (isToday) klass += " today";
+    if (isSelected) klass += " selected";
+    if (!plan) klass += " no-plan";
+    if (plan && plan.isRest) klass += " rest";
+    if (plan) klass += " clickable";
+    html += '<div class="' + klass + '"' + (plan ? ' onclick="selectBlockDay(\'' + key + '\')"' : "") + ">" +
+      '<div class="day-num">' + day + "</div>" +
+      '<div class="wod-label">' + esc(label) + "</div>" +
+      "</div>";
+  }
+  html += "</div>";
+  return html;
+}
+
+function renderSelectedDayWorkout(a, workoutMap) {
+  var key = selectedDayByAthlete[a.athleteId];
+  if (!key || !workoutMap[key]) {
+    return '<div style="margin-top:12px;color:#777;font-size:12px">לחץ על קובייה בלוח כדי לראות אימון מלא</div>';
+  }
+  var plan = workoutMap[key];
+  var dt = new Date(key + "T12:00:00");
+  var dayKey = plan.dayKey || PPROG_DAY_KEYS[dt.getDay()] || "";
+  var dayNum = dt.getDate();
+  var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  var dayTitle = (PPROG_DAY_LABELS[dayKey] || "") + " · " + dayNum + " " + monthNames[dt.getMonth()];
+  if (plan.isRest) {
+    return '<div class="pprog-day-card" dir="ltr">' +
+      '<div class="card-header"><div class="source-name">' + esc(dayTitle) + "</div></div>" +
+      '<div class="pprog-rest-day-title">REST DAY</div>' +
+      "</div>";
+  }
+  var html = '<div class="pprog-day-card" dir="ltr">' +
+    '<div class="card-header"><div class="source-name">' + esc(dayTitle) + "</div></div>";
+  if (plan.focus && plan.focus !== "—") {
+    html += '<div class="pprog-summary" style="margin-bottom:10px;font-size:.88em">' + esc(plan.focus) + "</div>";
+  }
+  html += renderPprogDayPartsHtml(plan.parts || [], null);
+  html += "</div>";
+  return html;
+}
+
+function isPprogPartIntentNoteLine(line) {
+  var t = String(line || "").trim();
+  if (!t) return false;
+  if (/^(target\s+)?duration\s*:/i.test(t)) return true;
+  if (/^duration\s*&?\s*intent\s*:/i.test(t)) return true;
+  if (/^movement(\s+intent)?\s*:/i.test(t)) return true;
+  if (/duration\s*:/i.test(t) && /(movement|intent)/i.test(t)) return true;
+  return false;
+}
+
+function isPprogPartFormatLine(line) {
+  var t = String(line || "").trim();
+  if (!t || t.length > 100) return false;
+  if (/:\s*$/.test(t)) return true;
+  return /^(AMRAP|EMOM|E2MOM|For\s*Time|Chipper|Tabata|Intervals?\b|Every\s+\d|\d+\s*sets?\b|sets?\s+for\s+quality|quality\s+rounds|Build\s+to)/i.test(t);
+}
+
+function classifyPprogPartLines(rawLines) {
+  var lines = Array.isArray(rawLines)
+    ? rawLines.map(function(l) { return String(l || "").trim(); }).filter(Boolean)
+    : [];
+  var notes = [];
+  var format = "";
+  var work = [];
+  var i = 0;
+  while (i < lines.length && isPprogPartIntentNoteLine(lines[i])) {
+    notes.push(lines[i]);
+    i++;
+  }
+  if (i < lines.length && isPprogPartFormatLine(lines[i])) {
+    format = lines[i];
+    i++;
+  }
+  while (i < lines.length) {
+    work.push(lines[i]);
+    i++;
+  }
+  if (!notes.length && !format && !work.length && lines.length) work = lines.slice();
+  return { notes: notes, format: format, work: work };
+}
+
+function normalizePprogPartKind(rawTitle, rawLines) {
+  var title = String(rawTitle || "").toLowerCase();
+  var lines = Array.isArray(rawLines) ? rawLines.join(" ").toLowerCase() : String(rawLines || "").toLowerCase();
+  var t = title + " " + lines;
+  if (/(warm[\s-]?up|mobility|activation)/.test(t)) return "warmup";
+  if (/(strength|squat|deadlift|press|bench|strict|front squat|back squat)/.test(t)) return "strength";
+  if (/(metcon|amrap|emom|for time|chipper|interval|e2mom|tabata)/.test(t)) return "metcon";
+  if (/(skill|gymnastics|technique|oly|snatch|clean|jerk)/.test(t)) return "skill";
+  if (/(accessory|bodybuilding|hypertrophy|core|carry|prehab)/.test(t)) return "accessory";
+  if (/(rest day|rest\b|off day|recovery)/.test(t)) return "rest";
+  return "other";
+}
+
+function renderPprogDayPartsHtml(parts, dayData) {
+  var html = "";
+  if (!parts || !parts.length) {
+    return '<div class="pprog-empty" style="padding:12px">No parts for this day</div>';
+  }
+  var modifiedKinds = (dayData && dayData.modifiedPartKinds) || {};
+  for (var pi = 0; pi < parts.length; pi++) {
+    var part = parts[pi] || {};
+    var defaultTitle = "Part " + String.fromCharCode(65 + pi);
+    var kind = normalizePprogPartKind(part.title, part.lines);
+    var modified = !!modifiedKinds[kind];
+    var classified = classifyPprogPartLines(part.lines);
+    html += '<div class="section">';
+    html +=
+      '<div class="section-title">' +
+      esc(part.title || defaultTitle) +
+      (modified ? '<span class="pprog-modified-flag">MODIFIED</span>' : "") +
+      "</div>";
+    for (var ni = 0; ni < classified.notes.length; ni++) {
+      html += '<div class="pprog-part-note">' + esc(classified.notes[ni]) + "</div>";
+    }
+    if (classified.format) {
+      html += '<div class="pprog-part-format">' + esc(classified.format) + "</div>";
+    }
+    html += '<ul class="section-lines">';
+    var work = classified.work;
+    if (!work.length && !classified.notes.length && !classified.format) {
+      work = part.lines || [];
+    }
+    for (var li = 0; li < work.length; li++) {
+      html += "<li>" + esc(work[li]) + "</li>";
+    }
+    html += "</ul></div>";
+  }
+  return html;
+}
+
+// ── Notes (learning / athlete) ────────────────────────────────────────────────
+function notesPlaceholder() {
+  return learningMode
+    ? "הערה ללימוד המאמן… למשל: באימון הזה הייתי נותן עוד 2 דקות למטקון"
+    : "הערה על המתאמן… שינויים / התאמות / הנחיות";
+}
+
+function syncNotesPlaceholders() {
+  var els = document.querySelectorAll(".notes-ta");
+  for (var i = 0; i < els.length; i++) els[i].placeholder = notesPlaceholder();
+}
+
+function renderDayNotesBox(a, workoutMap, dayKey, underWorkout) {
+  var plan = dayKey && workoutMap && workoutMap[dayKey] ? workoutMap[dayKey] : null;
+  var title = underWorkout
+    ? (dayKey ? "הערה על האימון שנבחר (" + dayKey + ")" : "הערה")
+    : "הערה";
+  var idSuffix = underWorkout ? "day" : "sticky";
+  var learnClass = learningMode ? " learning" : "";
+  return '<div class="notes-section' + learnClass + '" data-notes="' + idSuffix + '">' +
+    '<div class="section-title">' + esc(title) + (learningMode ? " · לימוד מאמן" : "") + "</div>" +
+    '<textarea class="notes-ta" id="notes-ta-' + idSuffix + '" placeholder="' + esc(notesPlaceholder()) + '"></textarea>' +
+    '<div class="notes-actions">' +
+      '<button type="button" class="btn-primary" onclick="sendAthleteNote(\'' + idSuffix + '\')">שלח</button>' +
+      '<span class="notes-status" id="notes-status-' + idSuffix + '"></span>' +
+    "</div>" +
+    '<div class="decide-box' + (pendingLearnNoteId ? " open" : "") + '" id="notes-decide-' + idSuffix + '">' +
+      '<div style="margin-bottom:8px;color:#ddd" id="notes-decide-q-' + idSuffix + '">להטמיע עכשיו או להמתין?</div>' +
+      '<div class="notes-actions">' +
+        '<button type="button" class="btn-secondary good" onclick="decideLearnNote(\'implement\')">להטמיע עכשיו</button>' +
+        '<button type="button" class="btn-secondary wait" onclick="decideLearnNote(\'wait\')">להמתין ולצבור</button>' +
+      "</div>" +
+    "</div>" +
+  "</div>";
+}
+
+function renderStickyNotesSection(a) {
+  var learnClass = learningMode ? " learning" : "";
+  return '<div class="notes-section sticky-notes' + learnClass + '" data-notes="sticky">' +
+    '<div class="section-title">הערות' + (learningMode ? " · מגרש לימוד" : " · למתאמן") + "</div>" +
+    '<textarea class="notes-ta" id="notes-ta-sticky" placeholder="' + esc(notesPlaceholder()) + '"></textarea>' +
+    '<div class="notes-actions">' +
+      '<button type="button" class="btn-primary" onclick="sendAthleteNote(\'sticky\')">שלח</button>' +
+      '<span class="notes-status" id="notes-status-sticky"></span>' +
+    "</div>" +
+    '<div class="decide-box' + (pendingLearnNoteId ? " open" : "") + '" id="notes-decide-sticky">' +
+      '<div style="margin-bottom:8px;color:#ddd" id="notes-decide-q-sticky">להטמיע עכשיו או להמתין?</div>' +
+      '<div class="notes-actions">' +
+        '<button type="button" class="btn-secondary good" onclick="decideLearnNote(\'implement\')">להטמיע עכשיו</button>' +
+        '<button type="button" class="btn-secondary wait" onclick="decideLearnNote(\'wait\')">להמתין ולצבור</button>' +
+      "</div>" +
+    "</div>" +
+  "</div>";
+}
+
+function getSelectedWorkoutPayload(a) {
+  var dayKey = selectedDayByAthlete[a.athleteId] || "";
+  var b = a.currentBlock;
+  if (!b || !dayKey) return { dayKey: dayKey, workout: null };
+  var startStr = b.blockStart || b.start || "";
+  var map = buildBlockWorkoutMap(b, startStr);
+  var plan = map[dayKey];
+  if (!plan) return { dayKey: dayKey, workout: null };
+  return {
+    dayKey: dayKey,
+    workout: {
+      title: plan.label || dayKey,
+      summary: plan.focus || "",
+      parts: plan.parts || [],
+      isRest: !!plan.isRest
+    }
+  };
+}
+
+function sendAthleteNote(which) {
+  var a = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
+  if (!a) return;
+  var ta = document.getElementById("notes-ta-" + which);
+  var status = document.getElementById("notes-status-" + which);
+  var note = ta ? String(ta.value || "").trim() : "";
+  if (!note) {
+    if (status) status.textContent = "כתוב הערה קודם";
+    return;
+  }
+  if (status) status.textContent = "שולח…";
+
+  if (learningMode) {
+    var ctx = getSelectedWorkoutPayload(a);
+    fetch("/api/admin-coach-sandbox", {
+      method: "POST",
+      headers: adminAuthHeaders(),
+      body: JSON.stringify(withAdminPassword({
+        action: "coach_note",
+        note: note,
+        athleteId: a.athleteId,
+        dayKey: ctx.dayKey || "",
+        workout: ctx.workout
+      }))
+    })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (!d || !d.ok) {
+          if (status) status.textContent = "שגיאה: " + ((d && (d.detail || d.error)) || "?");
+          return;
+        }
+        pendingLearnNoteId = d.noteId;
+        if (ta) ta.value = "";
+        if (status) status.textContent = "ההערה התקבלה — בחר מה לעשות.";
+        ["day", "sticky"].forEach(function(id) {
+          var box = document.getElementById("notes-decide-" + id);
+          var q = document.getElementById("notes-decide-q-" + id);
+          if (box) box.classList.add("open");
+          if (q) q.textContent = d.question || "להטמיע עכשיו או להמתין?";
+        });
+      })
+      .catch(function() {
+        if (status) status.textContent = "שגיאת רשת";
+      });
+    return;
+  }
+
+  var existing = String(a.coachDirectives || "").trim();
+  var merged = existing ? existing + "\n" + note : note;
+  fetch("/api/admin-snapshot", {
+    method: "POST",
+    headers: adminAuthHeaders(),
+    body: JSON.stringify(withAdminPassword({
+      athleteId: a.athleteId,
+      coachDirectives: merged
+    }))
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (!d || !d.ok) {
+        if (status) status.textContent = "שגיאה: " + ((d && d.error) || "?");
+        return;
+      }
+      a.coachDirectives = merged;
+      if (ta) ta.value = "";
+      if (status) status.textContent = "✓ נשמר להנחיות המתאמן";
+      var dirTa = document.getElementById("directives-input");
+      if (dirTa) dirTa.value = merged;
+      loadAthletes();
+    })
+    .catch(function() {
+      if (status) status.textContent = "שגיאת רשת";
+    });
+}
+
+function decideLearnNote(decision) {
+  if (!pendingLearnNoteId) return;
+  var statuses = document.querySelectorAll(".notes-status");
+  for (var i = 0; i < statuses.length; i++) statuses[i].textContent = "שומר החלטה…";
+  fetch("/api/admin-coach-sandbox", {
+    method: "POST",
+    headers: adminAuthHeaders(),
+    body: JSON.stringify(withAdminPassword({
+      action: "decide",
+      noteId: pendingLearnNoteId,
+      decision: decision
+    }))
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (!d || !d.ok) {
+        for (var j = 0; j < statuses.length; j++) {
+          statuses[j].textContent = "שגיאה: " + ((d && d.error) || "?");
+        }
+        return;
+      }
+      pendingLearnNoteId = null;
+      for (var k = 0; k < statuses.length; k++) statuses[k].textContent = d.message || "נשמר";
+      ["day", "sticky"].forEach(function(id) {
+        var box = document.getElementById("notes-decide-" + id);
+        if (box) box.classList.remove("open");
+      });
+    })
+    .catch(function() {
+      for (var n = 0; n < statuses.length; n++) statuses[n].textContent = "שגיאת רשת";
+    });
+}
+
+function renderBlocksRow(a) {
+  var past = (a.pastBlocks || []).slice().reverse();
+  var rows = "";
+  if (past.length) {
+    rows += past.map(function(b) {
+      return '<div class="block-row-item">' +
+        '<span class="badge">עבר</span>' +
+        '<span class="summary">' + esc(b.summaryLine || "בלוק") + "</span>" +
+        '<span style="font-size:12px;color:#555">' + (b.blockStart ? fmt(b.blockStart) : "") + "</span>" +
+        "</div>";
+    }).join("");
+  }
+  if (!rows) rows = '<div style="color:#555;font-size:13px">אין בלוקים קודמים</div>';
+  return '<div class="section"><div class="section-title">היסטוריית בלוקים</div><div class="blocks-row">' + rows + "</div></div>";
+}
+
+function renderDirectives(a) {
+  return '<div class="section">' +
+    '<div class="section-title">הנחיות למאמן</div>' +
+    '<div class="directives-wrap">' +
+    '<textarea id="directives-input" placeholder="לדוגמה: המתאמן פצוע בברכיים — פחות לאנג׳ים. מתאים לאימוני בוקר מוקדם.">' +
+    esc(a.coachDirectives || "") + "</textarea>" +
+    '<button type="button" class="save-directives-btn" id="save-dir-btn" onclick="saveDirectives()">שמור הנחיות</button>' +
+    '<div class="save-status" id="dir-status"></div>' +
+    '<div class="directives-hint">ההנחיות יוזרקו לכל שיחת מאמן ובנייה של בלוק עבור המתאמן הזה</div>' +
+    "</div></div>";
+}
+
+function saveDirectives() {
+  var a = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
+  if (!a) return;
+  var ta = document.getElementById("directives-input");
+  var btn = document.getElementById("save-dir-btn");
+  var status = document.getElementById("dir-status");
+  if (!ta) return;
+  btn.disabled = true;
+  btn.textContent = "שומר...";
+  status.textContent = "";
+  status.style.color = "#4ade80";
+  fetch("/api/admin-snapshot", {
+    method: "POST",
+    headers: adminAuthHeaders(),
+    body: JSON.stringify(withAdminPassword({ athleteId: a.athleteId, coachDirectives: ta.value }))
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.ok) {
+        a.coachDirectives = ta.value;
+        status.textContent = "✓ נשמר";
+      } else {
+        status.style.color = "#f87171";
+        status.textContent = "שגיאה: " + (d.error || "?");
+      }
+    })
+    .catch(function() { status.style.color = "#f87171"; status.textContent = "שגיאת רשת"; })
+    .finally(function() { btn.disabled = false; btn.textContent = "שמור הנחיות"; });
+}
+
+function deleteAthlete(id) {
+  var a = athletes.find(function(x) { return x.athleteId === id; });
+  var name = (a && a.displayName) || id;
+  if (!confirm("למחוק את " + name + "?")) return;
+  fetch("/api/admin-snapshot?id=" + encodeURIComponent(id) + "&adminPassword=" + encodeURIComponent(adminPw || ""), {
+    method: "DELETE",
+    headers: adminAuthHeaders()
+  })
+    .then(function() {
+      athletes = athletes.filter(function(x) { return x.athleteId !== id; });
+      currentAthleteId = null;
+      renderAthleteList(athletes);
+      if (!athletes.length) {
+        document.getElementById("content").innerHTML =
+          '<div class="empty-content"><div class="icon">·</div><p>בחר מתאמן מהרשימה</p></div>';
+      }
+    });
+}
+
+function renderHandoffSection(a) {
+  var last = "";
+  if (a.lastHandoffCreatedAt) {
+    last = '<div style="font-size:12px;color:#888;margin-top:6px">לינק אחרון נוצר: ' +
+      esc(fmt(a.lastHandoffCreatedAt)) +
+      (a.lastHandoffExpiresAt ? " · בתוקף עד " + esc(fmt(a.lastHandoffExpiresAt)) : "") +
+      "</div>";
+  }
+  return '<div class="section">' +
+    '<div class="section-title">מסירה לטלפון (הורדה חד־פעמית)</div>' +
+    '<div style="font-size:13px;color:#aaa;line-height:1.5">יוצר לינק שמוריד את התוכנית למכשיר של המתאמן פעם אחת. אחר כך הניהול נשאר אצלו — לא אצלנו בשרת.</div>' +
+    '<div class="handoff-box" id="handoff-box">' +
+      '<div class="sandbox-status" id="handoff-status"></div>' +
+      '<div class="handoff-link" id="handoff-link" style="display:none"></div>' +
+      '<div class="sandbox-actions" id="handoff-copy-wrap" style="display:none">' +
+        '<button type="button" class="btn-secondary good" onclick="copyHandoffLink()">העתק לינק</button>' +
+        '<a class="btn-secondary" id="handoff-open" href="#" target="_blank" rel="noopener">פתח לבדיקה</a>' +
+      "</div>" +
+      last +
+    "</div>" +
+  "</div>";
+}
+
+var lastHandoffUrl = "";
+
+function createHandoffLink(athleteId) {
+  var status = document.getElementById("handoff-status");
+  var linkEl = document.getElementById("handoff-link");
+  var wrap = document.getElementById("handoff-copy-wrap");
+  if (status) status.textContent = "יוצר לינק...";
+  fetch("/api/admin-handoff", {
+    method: "POST",
+    headers: adminAuthHeaders(),
+    body: JSON.stringify(withAdminPassword({ action: "create_link", athleteId: athleteId }))
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (!d || !d.ok) {
+        if (status) status.textContent = "שגיאה: " + ((d && d.error) || "?");
+        return;
+      }
+      lastHandoffUrl = window.location.origin + d.path;
+      if (linkEl) {
+        linkEl.style.display = "block";
+        linkEl.textContent = lastHandoffUrl;
+      }
+      if (wrap) wrap.style.display = "flex";
+      var open = document.getElementById("handoff-open");
+      if (open) open.href = lastHandoffUrl;
+      if (status) status.textContent = "מוכן — חד־פעמי. אחרי הורדה הלינק נשרף.";
+      var a = athletes.find(function(x) { return x.athleteId === athleteId; });
+      if (a) {
+        a.lastHandoffCreatedAt = d.expiresAt ? new Date().toISOString() : a.lastHandoffCreatedAt;
+        a.lastHandoffExpiresAt = d.expiresAt;
+      }
+    })
+    .catch(function() {
+      if (status) status.textContent = "שגיאת רשת";
+    });
+}
+
+function copyHandoffLink() {
+  if (!lastHandoffUrl) return;
+  var status = document.getElementById("handoff-status");
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(lastHandoffUrl).then(function() {
+      if (status) status.textContent = "הלינק הועתק";
+    }).catch(function() {
+      if (status) status.textContent = lastHandoffUrl;
+    });
+  } else if (status) {
+    status.textContent = lastHandoffUrl;
+  }
+}
+
+// ── Intake workspace (production 1:1) ─────────────────────────────────────────
+function resetIntakeState() {
+  intakeState = {
+    busy: false,
+    started: false,
+    messages: [],
+    email: "",
+    displayName: "",
+    gender: "",
+    preferredLanguage: "",
+    skills: {},
+    lifts: {},
+    intakeComplete: false
+  };
+}
+
+function openIntakeWorkspace() {
+  resetIntakeState();
+  var m = document.getElementById("intake-modal");
+  if (m) m.classList.add("open");
+  document.getElementById("intake-email").value = "";
+  document.getElementById("intake-chat-log").innerHTML =
+    '<div class="intake-msg system">לחץ ״התחל תחקור״ כדי לפתוח שיחה עם המאמן (13 נושאים — כמו בפרודקשן)</div>';
+  document.getElementById("intake-compose").style.display = "none";
+  document.getElementById("intake-start-bar").style.display = "flex";
+  document.getElementById("intake-build-btn").style.display = "none";
+  document.getElementById("intake-building").classList.remove("visible");
+  document.getElementById("intake-chat-log").style.display = "flex";
+  document.getElementById("intake-status").textContent = "";
+  hideIntakePickers();
+}
+
+function closeIntakeWorkspace() {
+  if (intakeState.busy) {
+    if (!confirm("תחקור בתהליך — לסגור בכל זאת?")) return;
+  }
+  var m = document.getElementById("intake-modal");
+  if (m) m.classList.remove("open");
+  resetIntakeState();
+}
+
+function intakeAthleteProfile(opts) {
+  var forceComplete = opts && opts.forceIntakeComplete;
+  return {
+    preferredLanguage: intakeState.preferredLanguage || "",
+    gender: intakeState.gender || "",
+    skills: intakeState.skills || {},
+    lifts: intakeState.lifts || {},
+    displayName: intakeState.displayName || "",
+    intakeComplete: forceComplete ? true : !!intakeState.intakeComplete,
+    profileNotes: "",
+    coachPrefs: [],
+    hasCurrentWeek: false,
+    hasCurrentBlock: false,
+    chatSummaryTail: intakeState.messages.slice(-8).map(function(m) {
+      return (m.role === "user" ? "מתאמן: " : "מאמן: ") + String(m.text || "").slice(0, 400);
+    }).join("\n")
+  };
+}
+
+function friendlyCoachError(j, status) {
+  var detail = (j && (j.detail || j.error || j.hint)) || "";
+  var low = String(detail).toLowerCase() + " " + String(status || "");
+  if (/api[_ ]?key|gemini|no[_ ]?key|missing.*key|GEMINI/i.test(low) || status === 503) {
+    return "שירות המאמן לא זמין — חסר מפתח GEMINI או שה־AI לא מחובר. לא ניתן לבצע תחקור מדומה.";
+  }
+  if (status === 429 || /too many/i.test(low)) return "יותר מדי בקשות — חכה דקה ונסה שוב.";
+  if (/<!doctype|<html|empty response|not return json/i.test(low)) {
+    return "תקלת חיבור — נסה שוב.";
+  }
+  var clean = String(detail || ("HTTP " + (status || "?")));
+  return clean.slice(0, 400);
+}
+
+function stripPickerMarkers(text) {
+  return String(text || "")
+    .replace(/<<<BLOCK_JSON[\s\S]*?BLOCK_JSON>>>/gi, "")
+    .replace(/<<<WEEK_JSON[\s\S]*?WEEK_JSON>>>/gi, "")
+    .replace(/<<<DAY_JSON[\s\S]*?DAY_JSON>>>/gi, "")
+    .replace(/<<<PART_JSON[\s\S]*?PART_JSON>>>/gi, "")
+    .replace(/<<<LIFTS_PICKER>>>/g, "")
+    .replace(/<<<SKILLS_PICKER>>>/g, "")
+    .trim();
+}
+
+function parseBlockFromText(raw, j) {
+  if (j && j.block) return j.block;
+  var text = String(raw || (j && j.text) || "");
+  try {
+    var bm = text.match(/<<<\s*BLOCK_JSON\s*([\s\S]*?)\s*BLOCK_JSON\s*>>>/i);
+    if (bm) return JSON.parse(bm[1].trim());
+  } catch (e) {}
+  try {
+    var bare = text.match(/\{[\s\S]*"weeks"\s*:\s*\[[\s\S]*\}\s*$/);
+    if (bare) return JSON.parse(bare[0]);
+  } catch (e2) {}
+  return null;
+}
+
+function lastCoachText() {
+  for (var i = intakeState.messages.length - 1; i >= 0; i--) {
+    if (intakeState.messages[i].role === "model") return String(intakeState.messages[i].text || "");
+  }
+  return "";
+}
+
+function coachAskedGender(t) {
+  t = String(t || "").toLowerCase();
+  return /\b(male|female|gender|sex)\b/.test(t) || /זכר|נקבה|מין/.test(t);
+}
+function coachAskedLanguage(t) {
+  t = String(t || "").toLowerCase();
+  return /\b(language|english|hebrew)\b/.test(t) || /שפה|באיזו שפה|עברית|אנגלית/.test(t);
+}
+function coachAskedName(t) {
+  t = String(t || "").toLowerCase();
+  return /\b(name|call you|what.*called)\b/.test(t) || /שם|איך קוראים|כינוי/.test(t);
+}
+
+function maybeCaptureIntakeFields(userText, lastCoach, priorUserCount) {
+  var trimmed = String(userText || "").trim();
+  if (!trimmed) return;
+  if (coachAskedGender(lastCoach) && !intakeState.gender) {
+    var tl = trimmed.toLowerCase();
+    if (/female|woman|girl|f\b|נקבה|אישה/.test(tl)) intakeState.gender = "female";
+    else if (/male|man|boy|m\b|זכר|גבר/.test(tl)) intakeState.gender = "male";
+  }
+  if (coachAskedLanguage(lastCoach) && !intakeState.preferredLanguage) {
+    var t2 = trimmed.toLowerCase();
+    if (/עברית|hebrew|\bhe\b|בעברית/.test(t2)) intakeState.preferredLanguage = "he";
+    else if (/english|\ben\b|באנגלית|אנגלית/.test(t2)) intakeState.preferredLanguage = "en";
+    else if (/[\u0590-\u05FF]/.test(t2) && t2.length < 80) intakeState.preferredLanguage = "he";
+    else if (/[a-z]/.test(t2) && t2.length < 80) intakeState.preferredLanguage = "en";
+  }
+  if (!intakeState.displayName) {
+    var first = (priorUserCount | 0) === 0;
+    if ((first || coachAskedName(lastCoach)) && !coachAskedGender(lastCoach) && !coachAskedLanguage(lastCoach)) {
+      if (!/^(unknown|לא ידוע|skip|n\/a|-)$/i.test(trimmed)) {
+        intakeState.displayName = trimmed.slice(0, 40);
+      }
+    }
+  }
+}
+
+function buildIntakeSummary() {
+  var parts = [];
+  for (var i = 0; i < intakeState.messages.length; i++) {
+    var m = intakeState.messages[i];
+    if (m.role !== "user" && m.role !== "model") continue;
+    parts.push((m.role === "user" ? "U: " : "C: ") + stripPickerMarkers(m.text).slice(0, 120));
+  }
+  return parts.join(" · ").slice(0, 800);
+}
+
+function renderIntakeChat() {
+  var log = document.getElementById("intake-chat-log");
+  if (!log) return;
+  if (!intakeState.messages.length) {
+    log.innerHTML = '<div class="intake-msg system">מתחיל תחקור…</div>';
+    return;
+  }
+  var html = "";
+  for (var i = 0; i < intakeState.messages.length; i++) {
+    var m = intakeState.messages[i];
+    var role = m.role === "user" ? "user" : m.role === "error" ? "error" : m.role === "system" ? "system" : "model";
+    var text = role === "model" ? stripPickerMarkers(m.text) : String(m.text || "");
+    if (!text && role === "model") text = "(…)";
+    var dir = "";
+    if (role === "model" || role === "user") {
+      dir = /[\u0590-\u05FF]/.test(text) ? ' dir="rtl"' : ' dir="ltr"';
+    }
+    html += '<div class="intake-msg ' + role + '"' + dir + ">" + esc(text) + "</div>";
+  }
+  log.innerHTML = html;
+  log.scrollTop = log.scrollHeight;
+  syncIntakePickers();
+  var buildBtn = document.getElementById("intake-build-btn");
+  if (buildBtn && intakeState.started && !intakeState.intakeComplete) {
+    buildBtn.style.display = "inline-block";
+  }
+}
+
+function hideIntakePickers() {
+  var lp = document.getElementById("intake-lifts-picker");
+  var sp = document.getElementById("intake-skills-picker");
+  if (lp) { lp.classList.remove("open"); lp.innerHTML = ""; }
+  if (sp) { sp.classList.remove("open"); sp.innerHTML = ""; }
+}
+
+function syncIntakePickers() {
+  var last = lastCoachText();
+  var lp = document.getElementById("intake-lifts-picker");
+  var sp = document.getElementById("intake-skills-picker");
+  if (!lp || !sp) return;
+  if (String(last).indexOf("<<<SKILLS_PICKER>>>") >= 0) {
+    lp.classList.remove("open");
+    lp.innerHTML = "";
+    sp.classList.add("open");
+    sp.innerHTML = renderSkillsPickerHtml();
+  } else if (String(last).indexOf("<<<LIFTS_PICKER>>>") >= 0) {
+    sp.classList.remove("open");
+    sp.innerHTML = "";
+    lp.classList.add("open");
+    lp.innerHTML = renderLiftsPickerHtml();
+  } else {
+    hideIntakePickers();
+  }
+}
+
+function renderLiftsPickerHtml() {
+  var html = "<h4>משקלים / ריצה</h4>" +
+    '<p style="font-size:12px;color:#888;margin-bottom:10px">שדה ריק = לא יודע / לדלג</p>';
+  for (var i = 0; i < INTAKE_LIFT_DEFS.length; i++) {
+    var def = INTAKE_LIFT_DEFS[i];
+    var val = intakeState.lifts[def.id] != null ? String(intakeState.lifts[def.id]) : "";
+    html += '<div class="lifts-row">' +
+      "<label>" + esc(def.label) + "</label>" +
+      '<input type="text" inputmode="decimal" data-lift-id="' + esc(def.id) + '" data-lift-kind="' + esc(def.kind) +
+      '" placeholder="' + esc(def.placeholder || def.unit) + '" value="' + esc(val) + '"/>' +
+      '<span class="unit">' + esc(def.unit) + "</span></div>";
+  }
+  html += '<button type="button" class="btn-primary" onclick="submitLiftsPicker()">שלח משקלים</button>';
+  return html;
+}
+
+function renderSkillsPickerHtml() {
+  var html = "<h4>סקילים</h4>" +
+    '<p style="font-size:12px;color:#888;margin-bottom:10px">סמן סקילים ששולט בהם</p>' +
+    '<div class="skills-grid">';
+  for (var i = 0; i < INTAKE_SKILL_DEFS.length; i++) {
+    var def = INTAKE_SKILL_DEFS[i];
+    var checked = def.allToggle ? !!intakeState.skills.all_skills : !!intakeState.skills[def.id];
+    html += '<label class="' + (def.allToggle ? "skills-all" : "") + '">' +
+      '<input type="checkbox" data-skill-id="' + esc(def.id) + '" ' +
+      (def.allToggle ? 'data-skill-all="1" ' : "") +
+      (checked ? "checked " : "") +
+      'onchange="onSkillCheckboxChange(this)"/>' +
+      "<span>" + esc(def.label) + "</span></label>";
+  }
+  html += "</div>" +
+    '<textarea class="skills-notes" id="intake-skills-notes" placeholder="הערות אופציונליות על סקילים…"></textarea>' +
+    '<button type="button" class="btn-primary" onclick="submitSkillsPicker()">שלח סקילים</button>';
+  return html;
+}
+
+function onSkillCheckboxChange(inp) {
+  if (!inp || !inp.getAttribute("data-skill-all")) return;
+  var on = !!inp.checked;
+  var box = document.getElementById("intake-skills-picker");
+  if (!box) return;
+  var cbs = box.querySelectorAll('input[type="checkbox"][data-skill-id]');
+  for (var i = 0; i < cbs.length; i++) {
+    if (cbs[i].getAttribute("data-skill-all")) continue;
+    cbs[i].checked = on;
+  }
+}
+
+function normalizeLiftInput(raw, kind) {
+  var s = String(raw || "").trim().replace(/,/g, ".");
+  if (!s) return "";
+  if (kind === "run" && s.indexOf(":") >= 0) {
+    var parts = s.split(":");
+    var mm = parseFloat(parts[0]);
+    var ss = parseFloat(parts[1] || "0");
+    if (!isFinite(mm) || !isFinite(ss) || ss < 0 || ss >= 60) return "";
+    return String(Math.round((mm + ss / 60) * 100) / 100);
+  }
+  if (!/^\d+(\.\d+)?$/.test(s)) return "";
+  var n = parseFloat(s);
+  if (!isFinite(n) || n <= 0) return "";
+  return String(n);
+}
+
+function submitLiftsPicker() {
+  if (intakeState.busy) return;
+  var box = document.getElementById("intake-lifts-picker");
+  if (!box) return;
+  var lifts = {};
+  var lines = [];
+  var inputs = box.querySelectorAll("input[data-lift-id]");
+  for (var i = 0; i < inputs.length; i++) {
+    var id = inputs[i].getAttribute("data-lift-id");
+    var kind = inputs[i].getAttribute("data-lift-kind") || "kg";
+    var normalized = normalizeLiftInput(inputs[i].value, kind);
+    var defLabel = id;
+    for (var j = 0; j < INTAKE_LIFT_DEFS.length; j++) {
+      if (INTAKE_LIFT_DEFS[j].id === id) defLabel = INTAKE_LIFT_DEFS[j].label;
+    }
+    if (normalized) {
+      lifts[id] = normalized;
+      lines.push(defLabel + ": " + normalized + (kind === "run" ? " min" : " kg"));
+    } else {
+      lifts[id] = "";
+      lines.push(defLabel + ": unknown");
+    }
+  }
+  intakeState.lifts = lifts;
+  document.getElementById("intake-chat-input").value = "Lifts / run:\n" + lines.join("\n");
+  hideIntakePickers();
+  sendIntakeMessage();
+}
+
+function submitSkillsPicker() {
+  if (intakeState.busy) return;
+  var box = document.getElementById("intake-skills-picker");
+  if (!box) return;
+  var skills = {};
+  var labels = [];
+  var cbs = box.querySelectorAll('input[type="checkbox"][data-skill-id]');
+  var allOn = false;
+  for (var i = 0; i < cbs.length; i++) {
+    var id = cbs[i].getAttribute("data-skill-id");
+    if (cbs[i].getAttribute("data-skill-all")) {
+      allOn = !!cbs[i].checked;
+      skills.all_skills = allOn;
+      if (allOn) labels.push("All skills");
+      continue;
+    }
+    if (allOn || cbs[i].checked) {
+      skills[id] = true;
+      for (var j = 0; j < INTAKE_SKILL_DEFS.length; j++) {
+        if (INTAKE_SKILL_DEFS[j].id === id && !INTAKE_SKILL_DEFS[j].allToggle) {
+          labels.push(INTAKE_SKILL_DEFS[j].label);
+        }
+      }
+    }
+  }
+  if (allOn) {
+    for (var k = 0; k < INTAKE_SKILL_DEFS.length; k++) {
+      if (!INTAKE_SKILL_DEFS[k].allToggle) skills[INTAKE_SKILL_DEFS[k].id] = true;
+    }
+  }
+  intakeState.skills = skills;
+  var notesEl = document.getElementById("intake-skills-notes");
+  var notes = notesEl ? String(notesEl.value || "").trim() : "";
+  var summary = labels.length ? labels.join(", ") : "None selected";
+  var msg = "Skills: " + summary;
+  if (notes) msg += "\nNotes: " + notes;
+  document.getElementById("intake-chat-input").value = msg;
+  hideIntakePickers();
+  sendIntakeMessage();
+}
+
+function setIntakeBusy(on) {
+  intakeState.busy = !!on;
+  var btn = document.getElementById("intake-send-btn");
+  var startBtn = document.getElementById("intake-start-btn");
+  var buildBtn = document.getElementById("intake-build-btn");
+  if (btn) btn.disabled = !!on;
+  if (startBtn) startBtn.disabled = !!on;
+  if (buildBtn) buildBtn.disabled = !!on;
+}
+
+function startIntakeChat() {
+  if (intakeState.busy) return;
+  intakeState.email = (document.getElementById("intake-email").value || "").trim();
+  intakeState.messages = [];
+  intakeState.started = true;
+  setIntakeBusy(true);
+  document.getElementById("intake-status").textContent = "מתחיל תחקור…";
+  document.getElementById("intake-compose").style.display = "flex";
+  document.getElementById("intake-chat-log").innerHTML =
+    '<div class="intake-msg system">המאמן מתחיל…</div>';
+
+  fetch("/api/personal-coach", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      action: "start_intake",
+      messages: [],
+      athleteProfile: intakeAthleteProfile()
+    })
+  })
+    .then(function(r) {
+      return r.json().then(function(j) { return { ok: r.ok, status: r.status, j: j }; });
+    })
+    .then(function(x) {
+      var j = x.j || {};
+      if (!x.ok || !j.ok || !j.text) {
+        var err = friendlyCoachError(j, x.status);
+        intakeState.messages.push({ role: "error", text: err });
+        document.getElementById("intake-status").textContent = err;
+      } else {
+        intakeState.messages.push({ role: "model", text: String(j.text) });
+        document.getElementById("intake-status").textContent = "תחקור פעיל";
+        document.getElementById("intake-start-bar").style.display = "none";
+      }
+      renderIntakeChat();
+    })
+    .catch(function(e) {
+      var msg = "שגיאת רשת: " + String((e && e.message) || e).slice(0, 200);
+      intakeState.messages.push({ role: "error", text: msg });
+      document.getElementById("intake-status").textContent = msg;
+      renderIntakeChat();
+    })
+    .finally(function() { setIntakeBusy(false); });
+}
+
+function sendIntakeMessage() {
+  if (intakeState.busy || !intakeState.started) return;
+  var inp = document.getElementById("intake-chat-input");
+  var text = inp ? String(inp.value || "").trim() : "";
+  if (!text) return;
+
+  var lastCoach = lastCoachText();
+  var priorUserCount = 0;
+  for (var i = 0; i < intakeState.messages.length; i++) {
+    if (intakeState.messages[i].role === "user") priorUserCount++;
+  }
+  maybeCaptureIntakeFields(text, lastCoach, priorUserCount);
+
+  intakeState.messages.push({ role: "user", text: text });
+  if (inp) inp.value = "";
+  renderIntakeChat();
+  setIntakeBusy(true);
+  document.getElementById("intake-status").textContent = "המאמן חושב…";
+
+  var payloadMsgs = [];
+  for (var m = 0; m < intakeState.messages.length; m++) {
+    if (intakeState.messages[m].role === "user" || intakeState.messages[m].role === "model") {
+      payloadMsgs.push({ role: intakeState.messages[m].role, text: intakeState.messages[m].text });
+    }
+  }
+
+  fetch("/api/personal-coach", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      action: "chat",
+      messages: payloadMsgs,
+      allowEmptyUnknown: true,
+      preferInteractions: false,
+      intakeComplete: false,
+      athleteProfile: intakeAthleteProfile()
+    })
+  })
+    .then(function(r) {
+      return r.json().then(function(j) { return { ok: r.ok, status: r.status, j: j }; });
+    })
+    .then(function(x) {
+      var j = x.j || {};
+      if (!x.ok || !j.ok || !j.text) {
+        var err = friendlyCoachError(j, x.status);
+        intakeState.messages.push({ role: "error", text: err });
+        document.getElementById("intake-status").textContent = err;
+      } else {
+        intakeState.messages.push({ role: "model", text: String(j.text) });
+        document.getElementById("intake-status").textContent = "תחקור פעיל";
+        var block = parseBlockFromText(j.text, j);
+        if (block) {
+          finalizeNewAthlete(block);
+          return;
+        }
+      }
+      renderIntakeChat();
+    })
+    .catch(function(e) {
+      intakeState.messages.push({
+        role: "error",
+        text: "שגיאת רשת: " + String((e && e.message) || e).slice(0, 200)
+      });
+      document.getElementById("intake-status").textContent = "שגיאת רשת";
+      renderIntakeChat();
+    })
+    .finally(function() {
+      if (!intakeState.intakeComplete) setIntakeBusy(false);
+    });
+}
+
+function generateIntakeBlock() {
+  if (intakeState.busy) return;
+  setIntakeBusy(true);
+  showIntakeBuilding(true);
+  document.getElementById("intake-status").textContent = "בונה תוכנית…";
+
+  var payloadMsgs = [];
+  for (var i = 0; i < intakeState.messages.length; i++) {
+    if (intakeState.messages[i].role === "user" || intakeState.messages[i].role === "model") {
+      payloadMsgs.push({ role: intakeState.messages[i].role, text: intakeState.messages[i].text });
+    }
+  }
+
+  fetch("/api/personal-coach", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      action: "generate_block",
+      messages: payloadMsgs,
+      athleteProfile: intakeAthleteProfile({ forceIntakeComplete: true }),
+      intakeComplete: true,
+      forceJson: true
+    })
+  })
+    .then(function(r) {
+      return r.json().then(function(j) { return { ok: r.ok, status: r.status, j: j }; });
+    })
+    .then(function(x) {
+      var j = x.j || {};
+      if (!x.ok || !j.ok) {
+        var err = friendlyCoachError(j, x.status);
+        showIntakeBuilding(false);
+        document.getElementById("intake-status").textContent = err;
+        intakeState.messages.push({ role: "error", text: err });
+        renderIntakeChat();
+        setIntakeBusy(false);
+        return;
+      }
+      if (j.text) {
+        intakeState.messages.push({ role: "model", text: String(j.text).slice(0, 6000) });
+      }
+      var block = parseBlockFromText(j.text, j);
+      if (!block) {
+        showIntakeBuilding(false);
+        var msg = "המאמן לא החזיר BLOCK_JSON תקין — נסה שוב.";
+        document.getElementById("intake-status").textContent = msg;
+        intakeState.messages.push({ role: "error", text: msg });
+        renderIntakeChat();
+        setIntakeBusy(false);
+        return;
+      }
+      finalizeNewAthlete(block);
+    })
+    .catch(function(e) {
+      showIntakeBuilding(false);
+      var msg = "שגיאת רשת: " + String((e && e.message) || e).slice(0, 200);
+      document.getElementById("intake-status").textContent = msg;
+      setIntakeBusy(false);
+    });
+}
+
+function showIntakeBuilding(on) {
+  var el = document.getElementById("intake-building");
+  var log = document.getElementById("intake-chat-log");
+  var compose = document.getElementById("intake-compose");
+  if (el) el.classList.toggle("visible", !!on);
+  if (log) log.style.display = on ? "none" : "flex";
+  if (compose) compose.style.display = on ? "none" : "flex";
+  hideIntakePickers();
+}
+
+function finalizeNewAthlete(block) {
+  intakeState.intakeComplete = true;
+  showIntakeBuilding(true);
+  document.getElementById("intake-status").textContent = "שומר מתאמן…";
+
+  var name = intakeState.displayName || "מתאמן חדש";
+  var skillsLabels = [];
+  for (var i = 0; i < INTAKE_SKILL_DEFS.length; i++) {
+    var def = INTAKE_SKILL_DEFS[i];
+    if (def.allToggle) continue;
+    if (intakeState.skills && intakeState.skills[def.id]) skillsLabels.push(def.label);
+  }
+
+  fetch("/api/admin-handoff", {
+    method: "POST",
+    headers: adminAuthHeaders(),
+    body: JSON.stringify(withAdminPassword({
+      action: "create_athlete",
+      displayName: name,
+      email: intakeState.email || "",
+      gender: intakeState.gender || "",
+      preferredLanguage: intakeState.preferredLanguage || "he",
+      intakeSummary: buildIntakeSummary(),
+      skillsSummary: skillsLabels.join(", ").slice(0, 400),
+      coachDirectives: "",
+      currentBlock: block
+    }))
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (!d || !d.ok) {
+        showIntakeBuilding(false);
+        document.getElementById("intake-status").textContent =
+          "שגיאה ביצירת מתאמן: " + ((d && d.error) || "?");
+        setIntakeBusy(false);
+        return;
+      }
+      currentAthleteId = d.snapshot && d.snapshot.athleteId;
+      document.getElementById("intake-status").textContent = "נוצר בהצלחה ✓";
+      setTimeout(function() {
+        var m = document.getElementById("intake-modal");
+        if (m) m.classList.remove("open");
+        resetIntakeState();
+        loadAthletes();
+      }, 600);
+    })
+    .catch(function() {
+      showIntakeBuilding(false);
+      document.getElementById("intake-status").textContent = "שגיאת רשת בשמירת מתאמן";
+      setIntakeBusy(false);
+    });
+}
+
+loadLearningMode();
+</script>
+</body>
+</html>
