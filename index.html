@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.2.1</title>
+<title>DUCK-WOD · v21.2.2</title>
 <meta name="theme-color" content="#111">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -42,9 +42,9 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .tab-pprog-wrap{border:1px dashed #8e44ad!important;background:linear-gradient(180deg,#221528 0%,#1e1e1e 100%)!important}
 .tab-pprog-wrap:hover{border-color:#b06dcf!important}
 .tab-btn.tab-pprog-wrap.active{background:#E8451A!important;border:1px dashed #d2a8e8!important;color:#fff!important}
-/* Personal Coach tab visible (v21.2.1). Flip PPROG_TAB_ENABLED=false to hide again. */
+/* Personal Coach tab visible (v21.2.2). Flip PPROG_TAB_ENABLED=false to hide again. */
 /* #tab-pprog,#pprog-tab{display:none!important} */
-/* Generate Workout tab hidden (v21.2.1): keep code; set GENERATE_WORKOUT_TAB_ENABLED=true + remove rule below to restore. */
+/* Generate Workout tab hidden (v21.2.2): keep code; set GENERATE_WORKOUT_TAB_ENABLED=true + remove rule below to restore. */
 #tab-aibeta,#aibeta-tab{display:none!important}
 .pprog-panel{max-width:720px;margin:0 auto;background:#1e1e1e;padding:20px 18px 24px;border-radius:12px;border:1px solid #2a2a2a}
 .pprog-head{display:flex;align-items:center;gap:14px;margin:0 0 14px}
@@ -729,7 +729,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.2.1</div>
+<div class="header-sub">DAILY WORKOUTS · v21.2.2</div>
 <div class="header-sub" id="coachVersionSub">COACH · v1.1</div>
 </div>
 <div class="tabs">
@@ -3932,15 +3932,21 @@ function sendPprogMessage(ev) {
   var payloadMsgs = [];
   for (var i = 0; i < msgs.length; i++) {
     if (msgs[i].role === "user" || msgs[i].role === "model") {
-      payloadMsgs.push({ role: msgs[i].role, text: msgs[i].text });
+      payloadMsgs.push({
+        role: msgs[i].role,
+        text: String(msgs[i].text || "").slice(0, 4000),
+      });
     }
   }
+  /* Cost: last 12 turns only — full history is already in local store for UI */
+  if (payloadMsgs.length > 12) payloadMsgs = payloadMsgs.slice(-12);
 
   var chatBody = {
     action: "chat",
     messages: payloadMsgs,
     allowEmptyUnknown: allowEmpty,
-    preferInteractions: !!store.intakeComplete,
+    /* Cost: one Gemini path (generateContent). Interactions→GC doubles bill on failure. */
+    preferInteractions: false,
     brickChat: !!brickMode,
     intakeComplete: !!store.intakeComplete,
     athleteProfile: athleteProfilePayload(),
@@ -5268,6 +5274,7 @@ function buildPprogRemainingBrickSnapshot(store) {
   if (!block || !Array.isArray(block.weeks) || !block.weeks.length) return null;
   var today = pprogIsraelTodayIso();
   var bStart = block.blockStart || sundayOfThisWeekIsrael();
+  var activeWi = s.activeWeekIndex | 0;
   var out = {
     blockStart: bStart,
     summaryLine: block.summaryLine || "",
@@ -5285,12 +5292,14 @@ function buildPprogRemainingBrickSnapshot(store) {
       days: {},
     };
     var hasAny = false;
+    /* Cost: full day bodies only for active + next; farther weeks → overview only */
+    var includeDayBodies = wi <= activeWi + 1;
     for (var di = 0; di < PPROG_DAY_KEYS.length; di++) {
       var dk = PPROG_DAY_KEYS[di];
       var iso = pprogAddDaysIso(bStart, wi * 7 + di);
       if (iso < today) continue;
       hasAny = true;
-      if (w.days && w.days[dk]) {
+      if (includeDayBodies && w.days && w.days[dk]) {
         try {
           weekOut.days[dk] = JSON.parse(JSON.stringify(w.days[dk]));
         } catch (eD) {
@@ -5930,14 +5939,18 @@ function enqueuePprogMissingWeekFills() {
     savePprogStore(store);
   }
   var activeWi = store.activeWeekIndex | 0;
+  /* Cost guard: only pre-fill active + next week. Later weeks fill on navigate (pprogCalShift / Today). */
+  var lazyTargets = [activeWi];
+  if (activeWi + 1 < store.currentBlock.weeks.length) lazyTargets.push(activeWi + 1);
   var missing = [];
-  for (var i = 0; i < store.currentBlock.weeks.length; i++) {
+  for (var ti = 0; ti < lazyTargets.length; ti++) {
+    var i = lazyTargets[ti];
     if (!weekHasDetailedDays(store.currentBlock.weeks[i])) {
       if ((pprogFillAttempts[i] || 0) >= PPROG_FILL_MAX_ATTEMPTS) continue;
       missing.push(i);
     }
   }
-  /* Prioritize active week, then week 0, then others */
+  /* Active week first, then next */
   missing.sort(function (a, b) {
     if (a === activeWi) return -1;
     if (b === activeWi) return 1;
@@ -5945,6 +5958,11 @@ function enqueuePprogMissingWeekFills() {
   });
   for (var mi = 0; mi < missing.length; mi++) {
     if (pprogFillQueue.indexOf(missing[mi]) < 0) pprogFillQueue.push(missing[mi]);
+  }
+  /* Drop far-future weeks already queued from older eager-fill builds */
+  for (var qi = pprogFillQueue.length - 1; qi >= 0; qi--) {
+    var qwi = pprogFillQueue[qi];
+    if (qwi !== activeWi && qwi !== activeWi + 1) pprogFillQueue.splice(qi, 1);
   }
   drainPprogFillQueue();
 }
@@ -5973,6 +5991,8 @@ function drainPprogFillQueue() {
 
 function requestPprogWeekDetail(weekIndex0, fromQueue) {
   if (pprogDetailBusy) {
+    /* Already fetching this week — do not re-queue (avoids render/jump duplicate churn). */
+    if ((weekIndex0 | 0) === pprogFillingWeekIndex) return;
     var qi = pprogFillQueue.indexOf(weekIndex0);
     if (qi >= 0) pprogFillQueue.splice(qi, 1);
     pprogFillQueue.unshift(weekIndex0);
@@ -6167,9 +6187,8 @@ function setPprogCalDay(weekIndex0, dayKey) {
   pprogActiveDay = dayKey || "general";
   /* Stay in month/brick view — only Today jumps to daily week mode */
   renderPprogWeek();
-  if (dayKey !== "general" && !weekHasDetailedDays(store.currentWeek)) {
-    requestPprogWeekDetail(wi, false);
-  }
+  /* Lazy fill active+next for the week just selected */
+  enqueuePprogMissingWeekFills();
 }
 
 function togglePprogCalMode() {
@@ -6202,9 +6221,8 @@ function jumpPprogToToday() {
   pprogActiveDay = dayKey;
   pprogCalMode = "week";
   renderPprogWeek();
-  if (dayKey !== "general" && !weekHasDetailedDays(store.currentWeek)) {
-    requestPprogWeekDetail(wi, false);
-  }
+  /* Prefer lazy queue (active+next) — avoids double-hit with render/enqueue */
+  enqueuePprogMissingWeekFills();
 }
 
 function pprogCalShift(dir) {
@@ -6219,7 +6237,7 @@ function pprogCalShift(dir) {
   savePprogStore(store);
   if (pprogCalMode !== "month") pprogActiveDay = "general";
   renderPprogWeek();
-  if (!weekHasDetailedDays(store.currentWeek)) requestPprogWeekDetail(wi, false);
+  enqueuePprogMissingWeekFills();
 }
 
 function savePprogDayField(dayKey, field, value) {
@@ -6973,7 +6991,13 @@ function renderPprogDayCardHtml(block, week, activeWi, day) {
         ' <button type="button" class="btn btn-find" style="padding:4px 10px;font-size:.75em" onclick="retryPprogFillFailures()">Retry fill</button></div>';
     } else {
       html += '<div class="pprog-empty" style="padding:12px 8px">Loading this week\'s workouts…</div>';
-      requestPprogWeekDetail(activeWi, false);
+      /* Cost/stability: only kick a fill if not already in flight or queued */
+      if (
+        pprogFillingWeekIndex !== activeWi &&
+        pprogFillQueue.indexOf(activeWi) < 0
+      ) {
+        requestPprogWeekDetail(activeWi, false);
+      }
     }
   }
   html += '<div class="pprog-day-card" dir="ltr">';
@@ -7057,6 +7081,18 @@ function renderPprogWeek() {
   if (calEl) calEl.innerHTML = renderPprogCalHtml(block, activeWi, pprogActiveDay);
 
   var missing = countPprogMissingWeeks();
+  /* Lazy fill: only active+next are prefetched — don't claim far weeks are "loading". */
+  var lazyPending = 0;
+  if (!weekHasDetailedDays(week) && (pprogFillAttempts[activeWi] || 0) < PPROG_FILL_MAX_ATTEMPTS) {
+    lazyPending++;
+  }
+  if (
+    activeWi + 1 < (block.weeks || []).length &&
+    !weekHasDetailedDays(block.weeks[activeWi + 1]) &&
+    (pprogFillAttempts[activeWi + 1] || 0) < PPROG_FILL_MAX_ATTEMPTS
+  ) {
+    lazyPending++;
+  }
   var weekRange = pprogWeekRangeLabel(week.weekStart || pprogAddDaysIso(block.blockStart, activeWi * 7));
   var html = "";
   html +=
@@ -7068,22 +7104,24 @@ function renderPprogWeek() {
     (week.theme ? " · " + esc(String(week.theme).slice(0, 40)) : "") +
     "</div>";
   var fillErrKeys = Object.keys(pprogFillErrors);
-  if (fillErrKeys.length && !pprogDetailBusy && missing > 0) {
-    var errMsg = pprogFillErrors[activeWi] || pprogFillErrors[fillErrKeys[0]];
+  var activeFillErr = pprogFillErrors[activeWi] || pprogFillErrors[activeWi + 1];
+  if (activeFillErr && !pprogDetailBusy && lazyPending > 0) {
     html +=
       '<div class="pprog-fill-status err">' +
-      esc(errMsg) +
+      esc(activeFillErr) +
       ' <button type="button" class="btn btn-find" style="margin-left:6px;padding:4px 10px;font-size:.75em" onclick="retryPprogFillFailures()">Retry</button>' +
       "</div>";
-  } else if (missing > 0 || pprogDetailBusy) {
-    var fillN = pprogFillingWeekIndex >= 0 ? pprogFillingWeekIndex + 1 : 5 - missing + 1;
+  } else if (lazyPending > 0 || pprogDetailBusy) {
+    var fillN = pprogFillingWeekIndex >= 0 ? pprogFillingWeekIndex + 1 : activeWi + 1;
     if (fillN < 1) fillN = 1;
     if (fillN > 5) fillN = 5;
     html +=
       '<div class="pprog-fill-status">' +
-      (pprogDetailBusy ? "Filling week " + fillN + "/5… " : "") +
-      (missing ? missing + " of 5 weeks still loading" : "Almost done") +
+      (pprogDetailBusy ? "Filling week " + fillN + "…" : "Loading nearby weeks…") +
       "</div>";
+  } else if (missing > 0 && !weekHasDetailedDays(week)) {
+    html +=
+      '<div class="pprog-fill-status">This week is not loaded yet — open it to fill.</div>';
   }
 
   if (pprogCalMode === "month") {
@@ -7110,7 +7148,10 @@ function renderPprogWeek() {
 function retryPprogFillFailures() {
   var store = loadPprogStore();
   var weeks = (store.currentBlock && store.currentBlock.weeks) || [];
+  var activeWi = store.activeWeekIndex | 0;
   for (var j = 0; j < weeks.length; j++) {
+    /* Cost: only retry weeks we actually pre-fill (active + next) */
+    if (j !== activeWi && j !== activeWi + 1) continue;
     if (!weekHasDetailedDays(weeks[j])) {
       /* Start at 1 so next request sends forceJson/compact immediately */
       pprogFillAttempts[j] = 1;
@@ -7128,9 +7169,6 @@ function initPprogUi() {
   syncPprogResetBtn();
   refreshPprogStatus();
   startPprogNextBlockScheduler();
-  try {
-    enqueuePprogMissingWeekFills();
-  } catch (e) {}
   /* Stuck after intake with no brick — surface Rebuild (do not auto-fire). */
   try {
     syncPprogFixedIntakeUi();
@@ -7147,6 +7185,10 @@ function initPprogUi() {
       jumpPprogToToday();
     }
   } catch (eLand) {}
+  /* After landing on today's week — lazy-fill active+next only (not all 5). */
+  try {
+    enqueuePprogMissingWeekFills();
+  } catch (e) {}
 }
 
 try {
@@ -8144,7 +8186,8 @@ function isTransientAiError(x) {
 }
 
 function fetchPprogCoachWithRetry(url, options, timeoutMs, retriesLeft) {
-  var left = typeof retriesLeft === "number" ? retriesLeft : 2;
+  /* Cost: one retry max (was 2) — full chat payloads are expensive to re-send */
+  var left = typeof retriesLeft === "number" ? retriesLeft : 1;
   return fetchAiWithTimeout(url, options, timeoutMs).then(function (x) {
     var j = x.j || {};
     var missingText = x.ok && j && !j.text && !j.ok;

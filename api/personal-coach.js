@@ -8,11 +8,14 @@
  *   1.0 — programming brain before the learning-leap upgrade
  *   1.1 — upgraded brain (Foundation Brief / POL-021 / living-knowledge)
  *
- * Env: GEMINI_API_KEY (optional File Search / Interactions), GROQ_API_KEY (fallback chat),
- *      PERSONAL_COACH_MODEL, GEMINI_FILE_SEARCH_STORE, GROQ_MODEL
+ * Env: GEMINI_API_KEY (optional File Search), GROQ_API_KEY (fallback chat),
+ *      PERSONAL_COACH_MODEL (programming), PERSONAL_COACH_CHAT_MODEL (chat/intake),
+ *      GEMINI_FILE_SEARCH_STORE, GROQ_MODEL
  *
- * Provider order: Gemini Interactions (when store) → Gemini generateContent → Groq Chat Completions.
- * Groq keeps the coach alive when the Gemini key is missing/invalid (common GitHub Pages + Vercel setup).
+ * Provider order: Gemini generateContent (optional File Search) → Groq Chat Completions.
+ * Interactions is opt-in only (preferInteractions) — dual-path billing is disabled by default.
+ * Groq keeps chat alive when the Gemini key is missing/invalid (common GitHub Pages + Vercel setup).
+ * Programming stays Gemini-only (POL-020).
  */
 const COACH_VERSION = "1.1";
 const HAMAMEN_SYSTEM = require("./hamamen-prompt.js");
@@ -168,16 +171,11 @@ function resolveGroqBackupModelId() {
 }
 
 /**
- * Coach Gemini model. Remap retired IDs (gemini-2.0-flash shut down June 2026).
- * Default: gemini-2.5-flash — stable replacement; override with PERSONAL_COACH_MODEL.
+ * Remap retired Gemini IDs (gemini-2.0-flash shut down June 2026).
  */
-function resolveCoachModel() {
-  const raw = (
-    sanitizeSecret(process.env.PERSONAL_COACH_MODEL) ||
-    sanitizeSecret(process.env.GEMINI_MODEL) ||
-    "gemini-2.5-flash"
-  ).trim();
-  const key = (raw || "gemini-2.5-flash").toLowerCase();
+function aliasCoachModel(raw, fallback) {
+  const fb = fallback || "gemini-2.5-flash";
+  const key = String(raw || fb).trim().toLowerCase() || fb;
   const aliases = {
     "gemini-1.5-flash": "gemini-2.5-flash",
     "gemini-1.5-flash-latest": "gemini-2.5-flash",
@@ -187,7 +185,65 @@ function resolveCoachModel() {
     "gemini-2.0-flash-lite": "gemini-2.5-flash-lite",
     "gemini-2.0-flash-lite-001": "gemini-2.5-flash-lite",
   };
-  return aliases[key] || raw || "gemini-2.5-flash";
+  return aliases[key] || String(raw || fb).trim() || fb;
+}
+
+/**
+ * Programming Gemini model (generate_* / revise_*). Quality path — do not route to lite.
+ * Default: gemini-2.5-flash — override with PERSONAL_COACH_MODEL.
+ */
+function resolveCoachModel() {
+  const raw =
+    sanitizeSecret(process.env.PERSONAL_COACH_MODEL) ||
+    sanitizeSecret(process.env.GEMINI_MODEL) ||
+    "gemini-2.5-flash";
+  return aliasCoachModel(raw, "gemini-2.5-flash");
+}
+
+/**
+ * Chat / intake / debrief model — cheaper default; programming stays on resolveCoachModel().
+ * Override with PERSONAL_COACH_CHAT_MODEL.
+ */
+function resolveCoachChatModel() {
+  const raw =
+    sanitizeSecret(process.env.PERSONAL_COACH_CHAT_MODEL) || "gemini-2.5-flash-lite";
+  return aliasCoachModel(raw, "gemini-2.5-flash-lite");
+}
+
+function pickUsageMeta(data) {
+  const u =
+    (data && data.usageMetadata) ||
+    (data && data.usage_metadata) ||
+    (data && data.usage) ||
+    null;
+  if (!u || typeof u !== "object") return null;
+  const prompt = u.promptTokenCount != null ? u.promptTokenCount : u.prompt_tokens;
+  const out = u.candidatesTokenCount != null ? u.candidatesTokenCount : u.completion_tokens;
+  const total = u.totalTokenCount != null ? u.totalTokenCount : u.total_tokens;
+  const meta = {};
+  if (prompt != null) meta.promptTokens = Number(prompt) || 0;
+  if (out != null) meta.outputTokens = Number(out) || 0;
+  if (total != null) meta.totalTokens = Number(total) || 0;
+  return meta.promptTokens != null || meta.outputTokens != null || meta.totalTokens != null
+    ? meta
+    : null;
+}
+
+function logCoachUsage(label, model, usage, via) {
+  if (!usage) return;
+  try {
+    console.log(
+      "[personal-coach:usage]",
+      JSON.stringify({
+        label: label || "call",
+        model: model || null,
+        via: via || null,
+        promptTokens: usage.promptTokens,
+        outputTokens: usage.outputTokens,
+        totalTokens: usage.totalTokens,
+      })
+    );
+  } catch (e) {}
 }
 
 function resolveFileSearchStore() {
@@ -270,7 +326,11 @@ function normalizeMessages(body) {
   const out = [];
   const arr = Array.isArray(body.messages) ? body.messages : [];
   const allowEmptyUnknown = body.allowEmptyUnknown === true;
-  for (let i = 0; i < arr.length && out.length < 40; i++) {
+  /* Cost: cap history — 12 turns × 4k chars (was 40 × 12k). */
+  const maxMsgs = 12;
+  const maxChars = 4000;
+  const start = arr.length > maxMsgs ? arr.length - maxMsgs : 0;
+  for (let i = start; i < arr.length && out.length < maxMsgs; i++) {
     const m = arr[i];
     if (!m || typeof m !== "object") continue;
     let role = String(m.role || "").toLowerCase();
@@ -284,13 +344,14 @@ function normalizeMessages(body) {
         continue;
       }
     }
-    out.push({ role, text: text.slice(0, 12000) });
+    out.push({ role, text: text.slice(0, maxChars) });
   }
   const solo = String(body.message || body.text || "").trim();
-  if (solo) out.push({ role: "user", text: solo.slice(0, 12000) });
+  if (solo) out.push({ role: "user", text: solo.slice(0, maxChars) });
   else if (allowEmptyUnknown && body.message === "" && !out.length) {
     out.push({ role: "user", text: "[לא ידוע / דילוג — הודעה ריקה]" });
   }
+  if (out.length > maxMsgs) return out.slice(-maxMsgs);
   return out;
 }
 
@@ -601,6 +662,8 @@ function buildProgrammingMemoryBlock(profile) {
   if (!profile || typeof profile !== "object") {
     return "\n\nATHLETE: intakeComplete=true. Use sensible intermediate defaults if details missing.\n";
   }
+  /* Cost: prefer fixedIntakePacket; skip profileNotes when packet already carries the questionnaire. */
+  const hasPacket = !!(profile.fixedIntakePacket && String(profile.fixedIntakePacket).trim());
   const slim = {
     intakeComplete: true,
     displayName: profile.displayName ? String(profile.displayName).slice(0, 80) : undefined,
@@ -628,8 +691,10 @@ function buildProgrammingMemoryBlock(profile) {
     skills:
       profile.skills && typeof profile.skills === "object" ? profile.skills : undefined,
     lifts: profile.lifts && typeof profile.lifts === "object" ? profile.lifts : undefined,
-    profileNotes: profile.profileNotes ? String(profile.profileNotes).slice(0, 3500) : undefined,
-    fixedIntakePacket: profile.fixedIntakePacket
+    profileNotes: !hasPacket && profile.profileNotes
+      ? String(profile.profileNotes).slice(0, 3500)
+      : undefined,
+    fixedIntakePacket: hasPacket
       ? String(profile.fixedIntakePacket).slice(0, 4500)
       : undefined,
     coachDirectives: profile.coachDirectives
@@ -1129,7 +1194,9 @@ async function callInteractions(apiKey, model, messages, storeName, systemText) 
   if (!text) {
     return { ok: false, status: 502, error: "Empty Interactions response", detail: data };
   }
-  return { ok: true, text, via: "interactions", data };
+  const usage = pickUsageMeta(data);
+  if (usage) logCoachUsage("interactions", model, usage, "interactions");
+  return { ok: true, text, via: "interactions", data, usage };
 }
 
 async function callGenerateContent(apiKey, model, messages, storeName, systemText, opts) {
@@ -1192,7 +1259,9 @@ async function callGenerateContent(apiKey, model, messages, storeName, systemTex
   if (!text) {
     return { ok: false, status: 502, error: "Empty Gemini response", detail: data };
   }
-  return { ok: true, text, via: "generateContent", data };
+  const usage = pickUsageMeta(data);
+  if (usage) logCoachUsage("generateContent", model, usage, "generateContent");
+  return { ok: true, text, via: "generateContent", data, usage };
 }
 
 async function callGroqChat(apiKey, model, messages, systemText, opts) {
@@ -1269,6 +1338,8 @@ async function callGroqChat(apiKey, model, messages, systemText, opts) {
 /**
  * Try Gemini (optional Interactions) then Groq. File Search only on Gemini paths.
  * Programming should set skipCompact / preferGemini so workout quality is not thinned.
+ * Cost: when Interactions fails, do NOT also bill generateContent for the same turn
+ * (set allowInteractionsFallback:true to restore old dual-path behavior).
  */
 async function callCoachLlm(apiKey, groqKey, model, messages, storeName, systemText, opts) {
   const options = opts && typeof opts === "object" ? opts : {};
@@ -1276,6 +1347,7 @@ async function callCoachLlm(apiKey, groqKey, model, messages, storeName, systemT
   const skipTools = options.skipTools === true;
   const skipCompact = options.skipCompact === true;
   const geminiOnly = options.geminiOnly === true;
+  const allowInteractionsFallback = options.allowInteractionsFallback === true;
   let lastFail = null;
   let interactionsError = null;
 
@@ -1284,6 +1356,10 @@ async function callCoachLlm(apiKey, groqKey, model, messages, storeName, systemT
     if (inter.ok) return inter;
     interactionsError = inter.detail || inter.error;
     lastFail = inter;
+    /* Default: stop after Interactions failure — dual Gemini billing was the credit leak. */
+    if (!allowInteractionsFallback) {
+      return inter;
+    }
   }
 
   if (apiKey) {
@@ -1367,7 +1443,8 @@ module.exports = async function handler(req, res) {
 
   const apiKey = resolveGeminiApiKey();
   const groqKey = resolveGroqApiKey();
-  const model = resolveCoachModel();
+  const programmingModel = resolveCoachModel();
+  const chatModel = resolveCoachChatModel();
   const store = resolveFileSearchStore();
 
   if (req.method === "GET" || req.method === "HEAD") {
@@ -1377,12 +1454,13 @@ module.exports = async function handler(req, res) {
       service: "personal-coach",
       engine: "personal-coach",
       notGenerateWorkout: true,
-      version: "21.2.1",
+      version: "21.2.2",
       coachVersion: COACH_VERSION,
       hasGeminiKey: !!apiKey,
       hasGroqKey: !!groqKey,
       hasKnowledge: !!store,
-      model: model,
+      model: programmingModel,
+      chatModel: chatModel,
       groqModel: groqKey ? resolveGroqModelId() : null,
       /* While Gemini key is invalid, runtime uses Groq + compact system (File Search off). */
       knowledgeRequiresGemini: true,
@@ -1415,6 +1493,8 @@ module.exports = async function handler(req, res) {
   }
 
   const action = String(body.action || "chat").toLowerCase();
+  /* Cost: programming keeps full flash; chat/intake/debrief use lite by default. */
+  const model = isProgrammingAction(action) ? programmingModel : chatModel;
   const uid =
     (body.athleteProfile && (body.athleteProfile.userId || body.athleteProfile.athleteId)) ||
     body.userId ||
@@ -1443,8 +1523,13 @@ module.exports = async function handler(req, res) {
     rlWindow = 20 * 60 * 1000;
   } else if (inIntake) {
     rlName = "personal-coach-intake";
-    rlLimit = 120;
+    /* Cost: intake is many short turns — keep usable but stop thrash */
+    rlLimit = 80;
     rlWindow = 15 * 60 * 1000;
+  } else {
+    /* Post-intake chat — tighter than before (was 24/10m) */
+    rlLimit = 20;
+    rlWindow = 10 * 60 * 1000;
   }
   const rl = checkRateLimit(req, {
     name: rlName,
@@ -1525,7 +1610,7 @@ module.exports = async function handler(req, res) {
     let intakeBaseSnap = "";
     try {
       if (body.remainingBrick) {
-        remainingSnap = JSON.stringify(body.remainingBrick).slice(0, 14000);
+        remainingSnap = JSON.stringify(body.remainingBrick).slice(0, 8000);
       }
     } catch (eRem) {
       remainingSnap = "";
@@ -1665,15 +1750,14 @@ module.exports = async function handler(req, res) {
           "(1–3 parts/day, each part with title + lines array of concrete prescriptions, ≤5 lines/part). " +
           "Do NOT leave week 1 days as {}. Athletes open week 1 immediately. " +
           "Weeks 2–5: require theme, phase, summaryLine, and overview for all 7 days; days may be {} empty (app will fill later). " +
-          "Program with full POL-016 depth from the FIXED INTAKE packet / athlete memory (not a generic intermediate template). " +
+          "Program with full POL-016 depth from ATHLETE MEMORY / FIXED INTAKE (not a generic intermediate template). " +
           (forceJson
             ? "Reply with NOTHING except <<<BLOCK_JSON ... BLOCK_JSON>>> with exactly 5 weeks."
             : "One short English sentence for the user, then required <<<BLOCK_JSON ... BLOCK_JSON>>> with exactly 5 weeks. ") +
           " Do not dump the brick as long chat. Do not reveal sources. Do NOT start intake." +
+          /* Cost: packet already in system ATHLETE MEMORY — do not paste a second full copy here. */
           (fixedIntakePacket
-            ? "\n\n---\nATHLETE FIXED INTAKE PACKET (complete questionnaire — same facts as yesterday's Q&A, delivered in one shot; do NOT re-ask; program from this):\n" +
-              fixedIntakePacket +
-              "\n---\n"
+            ? "\n\nUse ATHLETE MEMORY.fixedIntakePacket in the system prompt (complete questionnaire). Do NOT re-ask.\n"
             : ""),
       },
     ];
@@ -1946,9 +2030,8 @@ module.exports = async function handler(req, res) {
         maxOutputTokens: 900,
       };
 
-  /* Never use Interactions for programming fills — digress / truncate / intake */
-  const preferInteractions =
-    !programming && (body.preferInteractions === true || !!store);
+  /* Cost: Interactions only when client explicitly asks — never auto because store exists. */
+  const preferInteractions = !programming && body.preferInteractions === true;
 
   function packOk(result, extra) {
     const block = extractBlockJson(result.text);
@@ -1968,6 +2051,7 @@ module.exports = async function handler(req, res) {
       },
       extra || {}
     );
+    if (result.usage) out.usage = result.usage;
     if (block) out.block = block;
     if (week) out.week = week;
     if (part) out.part = part;
@@ -1976,11 +2060,13 @@ module.exports = async function handler(req, res) {
   }
 
   async function callProgrammingGenerate(msgs, sys, extraOpts) {
-    const opts = Object.assign({}, gcOpts, extraOpts || {}, {
+    const extra = extraOpts && typeof extraOpts === "object" ? extraOpts : {};
+    const opts = Object.assign({}, gcOpts, extra, {
       preferInteractions: false,
       skipTools: true,
       disallowBackupModel: true,
     });
+    const noInternalRetry = extra.noInternalRetry === true;
     let geminiFail = null;
     /* 1) Gemini (evening path) — required for best quality when key is valid */
     if (apiKey) {
@@ -1995,20 +2081,22 @@ module.exports = async function handler(req, res) {
       );
       if (primary.ok) return primary;
       geminiFail = primary;
-      const retry = await callCoachLlm(
-        apiKey,
-        null,
-        model,
-        msgs,
-        null,
-        sys,
-        Object.assign({}, opts, { geminiOnly: true, skipCompact: true, temperature: 0.2 })
-      );
-      if (retry.ok) {
-        retry.via = (retry.via || "generateContent") + "+retry";
-        return retry;
+      if (!noInternalRetry) {
+        const retry = await callCoachLlm(
+          apiKey,
+          null,
+          model,
+          msgs,
+          null,
+          sys,
+          Object.assign({}, opts, { geminiOnly: true, skipCompact: true, temperature: 0.2 })
+        );
+        if (retry.ok) {
+          retry.via = (retry.via || "generateContent") + "+retry";
+          return retry;
+        }
+        geminiFail = retry.ok === false ? retry : primary;
       }
-      geminiFail = retry.ok === false ? retry : primary;
     }
     /* 2) NO Groq for programming (POL-020). Silent Groq bricks feel like a different coach. */
     return {
@@ -2058,6 +2146,7 @@ module.exports = async function handler(req, res) {
       temperature: 0.1,
       maxOutputTokens: 8192,
       skipTools: true,
+      noInternalRetry: true,
     });
     if (!retry.ok) {
       packed.intakeRetryError = retry.detail || retry.error;
@@ -2306,6 +2395,7 @@ module.exports = async function handler(req, res) {
         temperature: 0.1,
         maxOutputTokens: 8192,
         skipTools: true,
+        noInternalRetry: true,
       });
       if (retry.ok) {
         const retried = packOk(retry, {
@@ -2319,10 +2409,16 @@ module.exports = async function handler(req, res) {
       }
     }
 
-    /* Day-by-day Gemini — skip when model is stuck in intake (wastes ~7 calls) */
+    /*
+     * Cost + quality (POL-020): do NOT run day-by-day (up to 7× Gemini) or template stubs.
+     * Fail loudly so the client can wait/retry a full-week fill.
+     * Opt-in emergency only: PERSONAL_COACH_DAY_BY_DAY=1
+     */
+    const allowDayByDay =
+      String(process.env.PERSONAL_COACH_DAY_BY_DAY || "").trim() === "1";
     const intakeStuck =
       looksLikeIntakeReply(primary.text) || looksLikeIntakeReply(packed.text);
-    if (!intakeStuck) {
+    if (allowDayByDay && !intakeStuck) {
       try {
         const byDay = await fillWeekDayByDay(primary.via || packed.via);
         if (byDay && byDay.ok && weekHasPartContent(byDay.week)) {
@@ -2347,7 +2443,7 @@ module.exports = async function handler(req, res) {
         packed.dayByDayError = String((eDay && eDay.message) || eDay);
       }
     } else {
-      packed.skippedDayByDay = "intake_reply";
+      packed.skippedDayByDay = intakeStuck ? "intake_reply" : "cost_guard";
     }
 
     /* POL-020: never ship stub/template WODs as success — fail so client can wait/retry */
@@ -2388,6 +2484,18 @@ module.exports = async function handler(req, res) {
     return res.status(200).json(packOk(result));
   }
 
+  /* Cost: brick chat / Confirm? does not need File Search retrieval billing. */
+  const lastUserText =
+    messages.length && messages[messages.length - 1] && messages[messages.length - 1].role === "user"
+      ? String(messages[messages.length - 1].text || "").trim()
+      : "";
+  const skipChatFileSearch =
+    !programming &&
+    (body.brickChat === true ||
+      body.wholeProgramChat === true ||
+      /^confirm\??$/i.test(lastUserText));
+  const chatStore = skipChatFileSearch ? null : store || undefined;
+
   result = programming
     ? await callProgrammingGenerate(messages, systemText)
     : await callCoachLlm(
@@ -2395,9 +2503,9 @@ module.exports = async function handler(req, res) {
         groqKey,
         model,
         messages,
-        store || undefined,
+        chatStore,
         systemText,
-        gcOpts
+        Object.assign({}, gcOpts, skipChatFileSearch ? { skipTools: true } : {})
       );
   if (!result.ok) {
     return res.status(502).json({
