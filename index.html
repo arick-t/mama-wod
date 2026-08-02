@@ -3932,15 +3932,21 @@ function sendPprogMessage(ev) {
   var payloadMsgs = [];
   for (var i = 0; i < msgs.length; i++) {
     if (msgs[i].role === "user" || msgs[i].role === "model") {
-      payloadMsgs.push({ role: msgs[i].role, text: msgs[i].text });
+      payloadMsgs.push({
+        role: msgs[i].role,
+        text: String(msgs[i].text || "").slice(0, 4000),
+      });
     }
   }
+  /* Cost: last 12 turns only — full history is already in local store for UI */
+  if (payloadMsgs.length > 12) payloadMsgs = payloadMsgs.slice(-12);
 
   var chatBody = {
     action: "chat",
     messages: payloadMsgs,
     allowEmptyUnknown: allowEmpty,
-    preferInteractions: !!store.intakeComplete,
+    /* Cost: one Gemini path (generateContent). Interactions→GC doubles bill on failure. */
+    preferInteractions: false,
     brickChat: !!brickMode,
     intakeComplete: !!store.intakeComplete,
     athleteProfile: athleteProfilePayload(),
@@ -5268,6 +5274,7 @@ function buildPprogRemainingBrickSnapshot(store) {
   if (!block || !Array.isArray(block.weeks) || !block.weeks.length) return null;
   var today = pprogIsraelTodayIso();
   var bStart = block.blockStart || sundayOfThisWeekIsrael();
+  var activeWi = s.activeWeekIndex | 0;
   var out = {
     blockStart: bStart,
     summaryLine: block.summaryLine || "",
@@ -5285,12 +5292,14 @@ function buildPprogRemainingBrickSnapshot(store) {
       days: {},
     };
     var hasAny = false;
+    /* Cost: full day bodies only for active + next; farther weeks → overview only */
+    var includeDayBodies = wi <= activeWi + 1;
     for (var di = 0; di < PPROG_DAY_KEYS.length; di++) {
       var dk = PPROG_DAY_KEYS[di];
       var iso = pprogAddDaysIso(bStart, wi * 7 + di);
       if (iso < today) continue;
       hasAny = true;
-      if (w.days && w.days[dk]) {
+      if (includeDayBodies && w.days && w.days[dk]) {
         try {
           weekOut.days[dk] = JSON.parse(JSON.stringify(w.days[dk]));
         } catch (eD) {
@@ -5930,14 +5939,18 @@ function enqueuePprogMissingWeekFills() {
     savePprogStore(store);
   }
   var activeWi = store.activeWeekIndex | 0;
+  /* Cost guard: only pre-fill active + next week. Later weeks fill on navigate (pprogCalShift / Today). */
+  var lazyTargets = [activeWi];
+  if (activeWi + 1 < store.currentBlock.weeks.length) lazyTargets.push(activeWi + 1);
   var missing = [];
-  for (var i = 0; i < store.currentBlock.weeks.length; i++) {
+  for (var ti = 0; ti < lazyTargets.length; ti++) {
+    var i = lazyTargets[ti];
     if (!weekHasDetailedDays(store.currentBlock.weeks[i])) {
       if ((pprogFillAttempts[i] || 0) >= PPROG_FILL_MAX_ATTEMPTS) continue;
       missing.push(i);
     }
   }
-  /* Prioritize active week, then week 0, then others */
+  /* Active week first, then next */
   missing.sort(function (a, b) {
     if (a === activeWi) return -1;
     if (b === activeWi) return 1;
@@ -5945,6 +5958,11 @@ function enqueuePprogMissingWeekFills() {
   });
   for (var mi = 0; mi < missing.length; mi++) {
     if (pprogFillQueue.indexOf(missing[mi]) < 0) pprogFillQueue.push(missing[mi]);
+  }
+  /* Drop far-future weeks already queued from older eager-fill builds */
+  for (var qi = pprogFillQueue.length - 1; qi >= 0; qi--) {
+    var qwi = pprogFillQueue[qi];
+    if (qwi !== activeWi && qwi !== activeWi + 1) pprogFillQueue.splice(qi, 1);
   }
   drainPprogFillQueue();
 }
@@ -7110,7 +7128,10 @@ function renderPprogWeek() {
 function retryPprogFillFailures() {
   var store = loadPprogStore();
   var weeks = (store.currentBlock && store.currentBlock.weeks) || [];
+  var activeWi = store.activeWeekIndex | 0;
   for (var j = 0; j < weeks.length; j++) {
+    /* Cost: only retry weeks we actually pre-fill (active + next) */
+    if (j !== activeWi && j !== activeWi + 1) continue;
     if (!weekHasDetailedDays(weeks[j])) {
       /* Start at 1 so next request sends forceJson/compact immediately */
       pprogFillAttempts[j] = 1;
@@ -7128,9 +7149,6 @@ function initPprogUi() {
   syncPprogResetBtn();
   refreshPprogStatus();
   startPprogNextBlockScheduler();
-  try {
-    enqueuePprogMissingWeekFills();
-  } catch (e) {}
   /* Stuck after intake with no brick — surface Rebuild (do not auto-fire). */
   try {
     syncPprogFixedIntakeUi();
@@ -7147,6 +7165,10 @@ function initPprogUi() {
       jumpPprogToToday();
     }
   } catch (eLand) {}
+  /* After landing on today's week — lazy-fill active+next only (not all 5). */
+  try {
+    enqueuePprogMissingWeekFills();
+  } catch (e) {}
 }
 
 try {
@@ -8144,7 +8166,8 @@ function isTransientAiError(x) {
 }
 
 function fetchPprogCoachWithRetry(url, options, timeoutMs, retriesLeft) {
-  var left = typeof retriesLeft === "number" ? retriesLeft : 2;
+  /* Cost: one retry max (was 2) — full chat payloads are expensive to re-send */
+  var left = typeof retriesLeft === "number" ? retriesLeft : 1;
   return fetchAiWithTimeout(url, options, timeoutMs).then(function (x) {
     var j = x.j || {};
     var missingText = x.ok && j && !j.text && !j.ok;
