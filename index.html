@@ -4609,7 +4609,19 @@ function pprogThemeNamesDeloadWeek(theme, summary) {
   return false;
 }
 
-/** Heuristic: week has enough full training days that it is not a macro deload. */
+/** Focus looks like a normal build/intensity day (not light deload / recovery language). */
+function pprogFocusLooksFullTraining(focus) {
+  var f = String(focus || "").toLowerCase().trim();
+  if (!f || f === "—" || isPprogRestFocus(focus) || pprogIsActiveRecoveryFocus(focus)) return false;
+  if (
+    /\b(deload|taper|technique|mobility|easy|light|recovery|aerobic|zone\s*2|z2|active\s*recovery)\b/.test(f)
+  ) {
+    return false;
+  }
+  return true;
+}
+
+/** Heuristic: week still has a normal build load (contradicts a deload label). */
 function pprogWeekHasFullTrainingLoad(week) {
   var w = week || {};
   var days = w.days || {};
@@ -4619,12 +4631,18 @@ function pprogWeekHasFullTrainingLoad(week) {
     var dayData = days[k] || {};
     if (isPprogRestDay(k, dayData, w)) continue;
     var focus = pprogOverviewFocus(w, k);
-    if (pprogIsActiveRecoveryFocus(focus)) continue;
+    if (!pprogFocusLooksFullTraining(focus)) continue;
     var parts = dayData.parts || [];
-    var substantive = parts.some(function (p) {
-      return p && ((p.lines && p.lines.length >= 2) || (p.title && !/^(rest|recovery)/i.test(String(p.title))));
+    var heavyParts = parts.some(function (p) {
+      if (!p) return false;
+      var blob = (String(p.title || "") + " " + (p.lines || []).join(" ")).toLowerCase();
+      if (/^(rest|recovery)/i.test(String(p.title || ""))) return false;
+      if (/\b(deload|easy|technique|zone\s*2|z2|recovery)\b/.test(blob) && !/\b(amrap|for time|heavy|build|rm|%)\b/.test(blob)) {
+        return false;
+      }
+      return !!(p.lines && p.lines.length >= 2);
     });
-    if (substantive || (focus && focus !== "—" && !isPprogRestFocus(focus))) trainingDays++;
+    if (heavyParts || pprogFocusLooksFullTraining(focus)) trainingDays++;
   }
   return trainingDays >= 3;
 }
@@ -4664,7 +4682,33 @@ function pprogIsActiveRecoveryDay(dayKey, dayData, week, store) {
   return false;
 }
 
-function pprogIsDeloadWeek(week, weekIndex0) {
+/**
+ * True when THIS week was programmed as macro deload/taper (phase/theme).
+ * Any brick week can be deload (incl. W4) when intake/coach placed it there.
+ * Content is only used to repair stale phase=deload without a Deload theme name.
+ */
+function pprogWeekLooksProgrammedDeload(week) {
+  var w = week || {};
+  var phase = String(w.phase || "").toLowerCase().trim();
+  var theme = String(w.theme || "");
+  var summary = String(w.summaryLine || "");
+  if (phase === "build" || phase === "peak" || phase === "intensify") return false;
+  if (pprogMentionsUpcomingDeloadOnly(theme, summary)) return false;
+  var namedDeload = pprogThemeNamesDeloadWeek(theme, summary);
+  var phaseDeload = phase === "deload" || phase === "taper";
+  if (!namedDeload && !phaseDeload) return false;
+  if (namedDeload) return true;
+  /* phase=deload only — drop if the week still has a normal build load. */
+  if (pprogWeekHasFullTrainingLoad(w)) return false;
+  return true;
+}
+
+/**
+ * Calendar/label: which week is the macro deload.
+ * Prefer coach-programmed phase/theme from the brick (intake-driven).
+ * Preset fallback: week 5, only when no other week is already programmed as deload.
+ */
+function pprogIsDeloadWeek(week, weekIndex0, block) {
   var w = week || {};
   var phase = String(w.phase || "").toLowerCase().trim();
   var theme = String(w.theme || "");
@@ -4674,32 +4718,28 @@ function pprogIsDeloadWeek(week, weekIndex0) {
       ? weekIndex0
       : (parseInt(w.weekIndex, 10) || 0) - 1;
 
-  /* Explicit build/peak/intensify is never a macro deload week. */
   if (phase === "build" || phase === "peak" || phase === "intensify") return false;
-
-  /* Default 5-week brick: week 5 is deload unless explicitly a non-deload build week. */
-  if (wi === 4 || Number(w.weekIndex) === 5) {
-    return true;
-  }
-
-  /* Weeks 1–4: do not treat "peak before deload" / "into deload" as this week being deload. */
   if (pprogMentionsUpcomingDeloadOnly(theme, summary)) return false;
 
-  var namedDeload = pprogThemeNamesDeloadWeek(theme, summary);
-  var phaseDeload = phase === "deload" || phase === "taper";
-  if (!namedDeload && !phaseDeload) return false;
+  if (pprogWeekLooksProgrammedDeload(w)) return true;
 
-  /*
-   * Repair false positives: models often label week 4 as deload while still
-   * programming full training. Mid-brick deload only when content is actually light.
-   */
-  if (pprogWeekHasFullTrainingLoad(w)) return false;
-  return true;
+  /* Preset: week 5 deload — skipped if coach already placed deload on another week. */
+  if (wi === 4 || Number(w.weekIndex) === 5) {
+    var weeks = block && Array.isArray(block.weeks) ? block.weeks : null;
+    if (weeks) {
+      for (var j = 0; j < weeks.length; j++) {
+        if (j === wi) continue;
+        if (pprogWeekLooksProgrammedDeload(weeks[j])) return false;
+      }
+    }
+    return true;
+  }
+  return false;
 }
 
-function pprogPhaseShort(week, weekIndex0) {
+function pprogPhaseShort(week, weekIndex0, block) {
   if (!week && weekIndex0 !== 4) return "";
-  if (pprogIsDeloadWeek(week, weekIndex0)) return "Deload";
+  if (pprogIsDeloadWeek(week, weekIndex0, block)) return "Deload";
   var theme = String((week && week.theme) || "").trim();
   if (!theme) return week && week.phase === "build" ? "Build" : "";
   var words = theme.split(/\s+/).filter(Boolean);
@@ -5053,16 +5093,15 @@ function normalizePprogBlock(block, prevBlock) {
     var prev = prevWeeks[i] || null;
     var start = pprogAddDaysIso(blockStart, i * 7);
     if (src) {
-      var isDeload = pprogIsDeloadWeek(src, i);
+      var probeBlock = { weeks: srcWeeks };
+      var isDeload = pprogIsDeloadWeek(src, i, probeBlock);
       var srcPhase = String(src.phase || "").toLowerCase().trim();
-      /* Clear stale phase=deload on build weeks (e.g. W4 "before deload" false positive). */
+      /* Keep coach-programmed phase; clear stale deload when detection says this week is not. */
       var resolvedPhase = isDeload
         ? "deload"
         : srcPhase && srcPhase !== "deload" && srcPhase !== "taper"
           ? src.phase
-          : i === 4
-            ? "deload"
-            : "build";
+          : "build";
       weeks.push(
         normalizePprogWeek(src, prev, start, {
           weekIndex: i + 1,
@@ -6974,7 +7013,7 @@ function renderPprogCalHtml(block, activeWi, activeDay) {
       ((dayData.parts && dayData.parts.length) ||
         (pprogOverviewFocus(week, dayKey) && pprogOverviewFocus(week, dayKey) !== "—"));
     var isActive = weekIndex0 === activeWi && dayKey === activeDay;
-    var isDeload = pprogIsDeloadWeek(week, weekIndex0);
+    var isDeload = pprogIsDeloadWeek(week, weekIndex0, block);
     var isActiveRecovery = pprogIsActiveRecoveryDay(dayKey, dayData, week, calStore);
     var cls = "pprog-cal-cell";
     if (isActive) cls += " active";
@@ -6999,7 +7038,7 @@ function renderPprogCalHtml(block, activeWi, activeDay) {
 
   function generalBtn(weekIndex0) {
     var week = block.weeks[weekIndex0] || {};
-    var isDeload = pprogIsDeloadWeek(week, weekIndex0);
+    var isDeload = pprogIsDeloadWeek(week, weekIndex0, block);
     var cls =
       "pprog-cal-general" +
       (weekIndex0 === activeWi && activeDay === "general" ? " active" : "") +
@@ -7017,8 +7056,8 @@ function renderPprogCalHtml(block, activeWi, activeDay) {
 
   function weekColBtn(weekIndex0) {
     var w = block.weeks[weekIndex0] || {};
-    var isDeload = pprogIsDeloadWeek(w, weekIndex0);
-    var phase = pprogPhaseShort(w, weekIndex0);
+    var isDeload = pprogIsDeloadWeek(w, weekIndex0, block);
+    var phase = pprogPhaseShort(w, weekIndex0, block);
     var loading = !weekHasDetailedDays(w);
     var cls =
       "pprog-cal-week-col" +
@@ -7049,7 +7088,7 @@ function renderPprogCalHtml(block, activeWi, activeDay) {
     html += '<div class="pprog-cal-month-grid">';
     var weekCount = Math.max(5, block.weeks.length);
     for (var wi = 0; wi < weekCount; wi++) {
-      var rowDeload = pprogIsDeloadWeek(block.weeks[wi] || {}, wi);
+      var rowDeload = pprogIsDeloadWeek(block.weeks[wi] || {}, wi, block);
       html += '<div class="pprog-cal-row' + (rowDeload ? " deload-week" : "") + '">' + weekColBtn(wi);
       for (var di = 0; di < 7; di++) {
         html += cellHtml(wi, di, pprogAddDaysIso(start, wi * 7 + di));
@@ -7211,7 +7250,7 @@ function renderPprogWeek() {
     (activeWi + 1) +
     " / 5 · " +
     esc(weekRange) +
-    (pprogIsDeloadWeek(week, activeWi) ? " · Deload" : "") +
+    (pprogIsDeloadWeek(week, activeWi, block) ? " · Deload" : "") +
     (week.theme ? " · " + esc(String(week.theme).slice(0, 40)) : "") +
     "</div>";
   var fillErrKeys = Object.keys(pprogFillErrors);
