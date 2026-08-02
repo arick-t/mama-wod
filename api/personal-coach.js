@@ -1454,7 +1454,7 @@ module.exports = async function handler(req, res) {
       service: "personal-coach",
       engine: "personal-coach",
       notGenerateWorkout: true,
-      version: "21.2.3",
+      version: "21.2.2",
       coachVersion: COACH_VERSION,
       hasGeminiKey: !!apiKey,
       hasGroqKey: !!groqKey,
