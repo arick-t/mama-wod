@@ -1,5 +1,20 @@
 # Changelog
 
+## [21.2.3] - 2026-08-02
+
+### Personal Coach: cut Google credit burn (quality preserved)
+- **Display version: v21.2.3**
+- Lazy week fill: prefetch only active + next week (far weeks fill on navigate).
+- Disable day-by-day Gemini cascade after week-fill failure (POL-020 fail/retry; opt-in `PERSONAL_COACH_DAY_BY_DAY=1`).
+- Chat/intake uses `gemini-2.5-flash-lite`; programming (`generate_*` / `revise_*`) stays on `gemini-2.5-flash`.
+- No Interactions→generateContent double bill; brick chat skips File Search.
+- Trim chat history to last 12×4k (intake remains offline packet → no regression to stuck intake).
+- Dedupe fixed-intake in programming memory; slim brick chat snapshots.
+- Frontend: harden against duplicate week-fill requests; clearer lazy-fill status.
+- Log Gemini `usageMetadata` as `[personal-coach:usage]`.
+
+---
+
 ## [21.2.2] - 2026-08-01
 
 ### Terms audit: mirror Agree via analytics (iOS)

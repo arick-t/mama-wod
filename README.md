@@ -2,7 +2,7 @@
 
 **Workout aggregator** — daily WODs from multiple sources
 
-> הגרסה המוצגת באתר היא **v21.2.1** (כותרת + פס משני). מקור אמת: `VERSION` + `package.json` — ראו `docs/VERSIONING.md`.
+> הגרסה המוצגת באתר היא **v21.2.3** (כותרת + פס משני). מקור אמת: `VERSION` + `package.json` — ראו `docs/VERSIONING.md`.
 
 ## ✅ v20.3.1 (Apr 2026)
 
