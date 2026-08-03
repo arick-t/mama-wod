@@ -1,8 +1,9 @@
 # Changelog
 
-## [21.3.1] - 2026-08-03
+## [21.2.3] - 2026-08-03
 
 ### Personal Coach calendar + floating whole-brick chat
+- **Display version: v21.2.3** (Coach remains **v1.1**; package/`VERSION` stays on the 21.3.0 line from Admin release — no downgrade).
 - Active recovery / daily-deload days use the same ringed calendar-cell style as deload weeks, in warm amber (not steel-blue).
 - Detection: overview focus (`Active recovery`, `Daily deload`, …), session text, or intake preferred AR weekday.
 - Deload calendar label follows the week the coach programmed from intake (any week, including W4). Ignore “before/into deload” copy and stale `phase: deload` when content is still full training. Preset fallback: week 5, unless another week is already the programmed deload. No separate AR tint on deload weeks.
