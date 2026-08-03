@@ -1552,13 +1552,6 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  if (!apiKey && !groqKey) {
-    return res.status(503).json({
-      error: "Missing AI API key",
-      hint: "Add GROQ_API_KEY (recommended fallback) or GEMINI_API_KEY to .env.local / Vercel, then restart / redeploy.",
-    });
-  }
-
   let body;
   try {
     body = await parseRequestJson(req);
@@ -1636,11 +1629,20 @@ module.exports = async function handler(req, res) {
       hint: "Open Personal Coach, accept the Terms checkboxes, then retry.",
     });
   }
-  /* POL-COST hard gate — real stop after caps (not prompt-only). Chat/safety stays open. */
+  /* POL-COST hard gate — real stop after caps (not prompt-only). Before API-key check so capped
+     requests fail closed without needing a provider. Chat/safety stays open. */
   const costGate = evaluateCostCapGate(action, body, rawProfile);
   if (costGate) {
     return res.status(403).json(costCapHttpPayload(costGate));
   }
+
+  if (!apiKey && !groqKey) {
+    return res.status(503).json({
+      error: "Missing AI API key",
+      hint: "Add GROQ_API_KEY (recommended fallback) or GEMINI_API_KEY to .env.local / Vercel, then restart / redeploy.",
+    });
+  }
+
   const athleteProfile = profileForAction(rawProfile, action);
   const forceJson =
     body.forceJson === true ||
