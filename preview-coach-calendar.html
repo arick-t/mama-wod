@@ -62,7 +62,7 @@ body{
 <div class="wrap">
   <div class="brand">DUCK-WOD</div>
   <div class="sub">Personal Coach · calendar style preview</div>
-  <p class="note">Static mock: Wednesdays = Active Recovery (amber rings). Deload styling follows the week the coach programmed from intake — here that is <strong>W5</strong> (steel-blue). W4 can be Deload too when the brick places it there; this example keeps W4 as Peak with normal training.</p>
+  <p class="note">Static mock: Wednesdays = Active Recovery (amber) on build weeks only. A <strong>Deload</strong> week is all steel-blue — no separate AR day, because the whole week is already programmed lighter.</p>
 
   <div class="legend">
     <div class="legend-row"><span class="swatch wod">8</span><span>Training day (teal)</span></div>
@@ -112,7 +112,6 @@ body{
     if (isSelected) cls += " active";
     if (week.deload) {
       if (restCols[col]) cls += " deload-week muted";
-      else if (col === arCol) cls += " active-recovery has-wod";
       else cls += " deload-week has-wod";
       return cls;
     }

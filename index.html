@@ -4798,9 +4798,11 @@ function pprogIsActiveRecoveryFocus(focus) {
   return false;
 }
 
-/** Calendar: active-recovery / daily-deload day (not Rest, not whole-week macro deload label). */
+/** Calendar: active-recovery / daily-deload day (not Rest; not on a macro deload week). */
 function pprogIsActiveRecoveryDay(dayKey, dayData, week, store) {
   if (isPprogRestDay(dayKey, dayData, week)) return false;
+  /* Whole-week deload already programs light/recovery format — do not mark a single AR day. */
+  if (pprogIsDeloadWeek(week)) return false;
   var focus = pprogOverviewFocus(week, dayKey);
   if (pprogIsActiveRecoveryFocus(focus)) return true;
   var parts = (dayData && dayData.parts) || [];
@@ -7160,9 +7162,9 @@ function renderPprogCalHtml(block, activeWi, activeDay) {
     if (isActive) cls += " active";
     if (has) cls += " has-wod";
     if (isRest) cls += " muted";
-    /* Active recovery wins over week-level deload tint for that day cell. */
-    if (isActiveRecovery) cls += " active-recovery";
-    else if (isDeload) cls += " deload-week";
+    /* Macro deload week already means lighter recovery format — no separate AR tint. */
+    if (isDeload) cls += " deload-week";
+    else if (isActiveRecovery) cls += " active-recovery";
     var dateNum = String(pprogParseIso(iso).getDate());
     return (
       '<button type="button" class="' +
