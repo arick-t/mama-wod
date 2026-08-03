@@ -20,7 +20,7 @@ Teach the Personal Coach via a **knowledge pyramid** + **runtime foundation** th
 | `living-knowledge/layer2-programming-ops.md` | Layer 2 ops distill (programming only) |
 | `living-knowledge/source-patterns-digest.md` | **מסמך דפוסי מקורות** (canonical) |
 | `api/coach-foundation-brief.js` | Layer 1 + patterns compact pack |
-| `api/coach-layer2-ops-brief.js` | Layer 2 compact pack (`generate_*` / `revise_*` only) |
+| `lib/coach-layer2-ops-brief.js` | Layer 2 compact pack (`generate_*` / `revise_*` only) |
 
 ## Production safety
 

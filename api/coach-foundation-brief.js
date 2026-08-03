@@ -4,7 +4,7 @@
  *
  * Layers:
  *   1) L1 + L2 distilled doctrine (this file) — Coach 2.0 retune
- *   2) Layer-2 ops enrich — api/coach-layer2-ops-brief.js (programming path ONLY)
+ *   2) Layer-2 ops enrich — lib/coach-layer2-ops-brief.js (programming path ONLY)
  *   3) מסמך דפוסי מקורות (source patterns: myleo+Restoration + warehouses)
  *
  * Source markdown:

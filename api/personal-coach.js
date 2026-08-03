@@ -22,7 +22,7 @@ const COACH_VERSION = "2.0";
 const HAMAMEN_SYSTEM = require("./hamamen-prompt.js");
 const COACH_POLICY = require("./coach-policy.js");
 const COACH_FOUNDATION_BRIEF = require("./coach-foundation-brief.js");
-const COACH_LAYER2_OPS_BRIEF = require("./coach-layer2-ops-brief.js");
+const COACH_LAYER2_OPS_BRIEF = require("../lib/coach-layer2-ops-brief.js");
 /* Legacy alias — foundation brief supersedes pattern-only brief */
 const COACH_PATTERN_BRIEF = COACH_FOUNDATION_BRIEF;
 const { checkRateLimit, sendRateLimit } = require("./rate-limit.js");

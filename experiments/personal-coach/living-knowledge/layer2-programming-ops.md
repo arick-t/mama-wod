@@ -9,7 +9,7 @@
 - Brick = 5 weeks (build 1–4, deload 5), not a forced 6-week academic block.
 - Same-day strength + metcon allowed with interference management.
 
-This file feeds `api/coach-layer2-ops-brief.js` (programming system only).
+This file feeds `lib/coach-layer2-ops-brief.js` (programming system only).
 
 ---
 
