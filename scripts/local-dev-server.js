@@ -1,5 +1,5 @@
 /**
- * שרת פיתוח מקומי: מגיש את הפרויקט מהשורש + generate-workout + personal-coach + event
+ * שרת פיתוח מקומי: מגיש את הפרויקט מהשורש + generate-workout + personal-coach + event + admin-snapshot
  * הרצה: npm run dev:local
  * קובץ סודות: .env.local (או .env) בראש הפרויקט — ראו .env.example
  */
@@ -99,7 +99,126 @@ function safeJoin(root, reqPath) {
 
 const server = http.createServer((req, res) => {
   const parsed = url.parse(req.url || "/", true);
-  const pathname = parsed.pathname || "/";
+  const pathnameRaw = parsed.pathname || "/";
+  const pathname =
+    pathnameRaw.length > 1 && pathnameRaw.endsWith("/")
+      ? pathnameRaw.slice(0, -1)
+      : pathnameRaw;
+
+  /* Log every request first (debug Simple Browser / port-forward) */
+  try {
+    fs.mkdirSync(path.join(ROOT, "data"), { recursive: true });
+    fs.appendFileSync(
+      path.join(ROOT, "data", "local-dev-access.log"),
+      new Date().toISOString() + " " + req.method + " " + (req.url || pathnameRaw) + "\n"
+    );
+  } catch (e) {}
+
+  /* ?view=dash on any path → admin (works even if /admin.html is blocked/cached) */
+  if (String((parsed.query && parsed.query.view) || "") === "dash") {
+    const adminPath = path.join(ROOT, "admin.html");
+    if (fs.existsSync(adminPath)) {
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+      return fs.createReadStream(adminPath).pipe(res);
+    }
+  }
+
+  /* Friendly shortcuts for founder preview */
+  const adminAliases = {
+    "/admin": "admin.html",
+    "/admin.html": "admin.html",
+    "/dash": "admin.html",
+    "/dash.html": "admin.html",
+    "/founder": "admin.html",
+    "/founder.html": "admin.html",
+  };
+  if (adminAliases[pathname]) {
+    const adminPath = path.join(ROOT, adminAliases[pathname]);
+    if (fs.existsSync(adminPath)) {
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+      return fs.createReadStream(adminPath).pipe(res);
+    }
+  }
+  if (pathname === "/claim" || pathname === "/claim.html") {
+    const claimPath = path.join(ROOT, "claim.html");
+    if (fs.existsSync(claimPath)) {
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+      return fs.createReadStream(claimPath).pipe(res);
+    }
+  }
+
+  if (
+    pathname === "/api/admin-snapshot" ||
+    pathname === "/api/admin-coach-sandbox" ||
+    pathname === "/api/admin-handoff" ||
+    pathname === "/api/admin-meta" ||
+    pathname === "/api/admin-drive-sync"
+  ) {
+    if (req.method === "OPTIONS") {
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
+      res.setHeader(
+        "Access-Control-Allow-Headers",
+        "Content-Type, X-Admin-Password, X-Admin-Token, X-Athlete-Id"
+      );
+      res.statusCode = 204;
+      return res.end();
+    }
+    const apiRel =
+      pathname === "/api/admin-coach-sandbox"
+        ? "api/admin-coach-sandbox.js"
+        : pathname === "/api/admin-handoff"
+        ? "api/admin-handoff.js"
+        : pathname === "/api/admin-meta"
+        ? "api/admin-meta.js"
+        : pathname === "/api/admin-drive-sync"
+        ? "api/admin-drive-sync.js"
+        : "api/admin-snapshot.js";
+    const runAdmin = async (body) => {
+      const fakeReq = {
+        method: req.method,
+        body: body || {},
+        query: parsed.query || {},
+        url: req.url || pathname,
+        headers: req.headers || {},
+      };
+      const fakeRes = wrapRes(res);
+      try {
+        await loadApiHandler(apiRel)(fakeReq, fakeRes);
+      } catch (e) {
+        if (!res.headersSent) {
+          res.statusCode = 500;
+          res.setHeader("Content-Type", "application/json");
+          res.end(JSON.stringify({ error: String(e.message || e) }));
+        }
+      }
+    };
+    if (req.method === "GET" || req.method === "DELETE" || req.method === "HEAD") {
+      runAdmin({});
+      return;
+    }
+    if (req.method === "POST") {
+      let raw = "";
+      req.on("data", (c) => {
+        raw += c;
+      });
+      req.on("end", () => {
+        let parsedBody = {};
+        try {
+          parsedBody = raw ? JSON.parse(raw) : {};
+        } catch (e) {
+          parsedBody = {};
+        }
+        runAdmin(parsedBody);
+      });
+      return;
+    }
+    res.statusCode = 405;
+    return res.end("Method not allowed");
+  }
 
   if (
     pathname === "/api/generate-workout" ||
@@ -271,6 +390,12 @@ server.listen(PORT, "0.0.0.0", () => {
   console.log("  API:  http://localhost:" + PORT + "/api/generate-workout");
   console.log("  API:  http://localhost:" + PORT + "/api/personal-coach");
   console.log("  API:  http://localhost:" + PORT + "/api/coach-feedback");
+  console.log("  Admin: http://localhost:" + PORT + "/dash");
+  console.log("         http://localhost:" + PORT + "/admin.html");
+  console.log("  Claim: http://localhost:" + PORT + "/claim.html?t=<token>");
+  if (!process.env.ADMIN_PASSWORD) {
+    console.log("  [!] ADMIN_PASSWORD missing — admin login will fail until set in .env.local");
+  }
   if (!process.env.GEMINI_API_KEY) {
     console.log("");
     console.log("  [!] GEMINI_API_KEY missing — copy .env.example to .env.local");

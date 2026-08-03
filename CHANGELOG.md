@@ -1,5 +1,14 @@
 # Changelog
 
+## [21.3.0] - 2026-08-03
+
+### Founder Admin dashboard 1.0 beta (safe add-on over live 21.2.2)
+- Founder admin dashboard (`/admin.html`) **1.0 beta**: athlete management, one-time handoff links, coach learning notes toggle, production-style intake for new athletes.
+- Admin **management landing** (דף ניהול): credit balance field + **סנכרן** Drive→File Search sync (same as `npm run coach:sync-brain`).
+- Does not change Personal Coach core or live tab visibility (`index.html` only adds claim deep-link helper).
+
+---
+
 ## [21.2.2] - 2026-08-02
 
 ### Personal Coach: cut Google credit burn (quality preserved)

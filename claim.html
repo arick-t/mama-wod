@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>DUCK-WOD — הורדת תוכנית</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Assistant",sans-serif;background:#111;color:#eee;min-height:100vh;
+  display:flex;align-items:center;justify-content:center;padding:24px}
+.card{background:#1c1c1e;border:1px solid #333;border-radius:16px;padding:32px 28px;max-width:420px;width:100%;text-align:center}
+h1{color:#E8451A;font-size:22px;font-weight:800;margin-bottom:8px}
+p{color:#aaa;font-size:15px;line-height:1.55;margin-bottom:14px}
+.status{min-height:24px;font-size:14px;color:#9ca3af;margin-top:8px}
+.status.ok{color:#4ade80}
+.status.err{color:#f87171}
+.btn{display:inline-block;margin-top:12px;background:#E8451A;color:#fff;border:none;border-radius:10px;
+  padding:12px 22px;font-weight:700;font-size:15px;cursor:pointer;text-decoration:none}
+.btn:hover{background:#d03d18}
+.muted{font-size:12px;color:#666;margin-top:16px}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>DUCK-WOD</h1>
+  <p id="msg">מוריד את תוכנית האימונים למכשיר שלך…</p>
+  <div class="status" id="status"></div>
+  <a class="btn" id="open-app" href="/" style="display:none">פתח את האפליקציה</a>
+  <div class="muted" id="footer-note">הלינק חד־פעמי. אחרי ההורדה הניהול נשאר אצלך במכשיר.</div>
+</div>
+<script>
+(function () {
+  var PPROG_STORE_KEY = "duck-wod-personal-coach-v1";
+  var UID_KEY = "dw_uid";
+  var params = new URLSearchParams(window.location.search);
+  var token = params.get("t") || params.get("token") || "";
+  var msg = document.getElementById("msg");
+  var status = document.getElementById("status");
+  var openBtn = document.getElementById("open-app");
+  var footer = document.getElementById("footer-note");
+
+  function fail(text) {
+    msg.textContent = "לא הצלחנו להוריד את התוכנית";
+    status.className = "status err";
+    status.textContent = text || "שגיאה";
+  }
+
+  function readExistingStore() {
+    try {
+      var raw = localStorage.getItem(PPROG_STORE_KEY);
+      if (!raw) return null;
+      var o = JSON.parse(raw);
+      return o && typeof o === "object" ? o : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /** Keep current plan on device; only reopen intake. */
+  function applyResetIntake(pkg) {
+    var existing = readExistingStore();
+    var sameAthlete =
+      existing &&
+      pkg &&
+      String(existing.athleteId || existing.userId || "") ===
+        String(pkg.athleteId || pkg.userId || "");
+    var base = sameAthlete ? existing : pkg;
+    var out = {};
+    var k;
+    for (k in base) {
+      if (Object.prototype.hasOwnProperty.call(base, k)) out[k] = base[k];
+    }
+    out.userId = pkg.userId || pkg.athleteId || out.userId;
+    out.athleteId = pkg.athleteId || pkg.userId || out.athleteId;
+    if (pkg.displayName) out.displayName = pkg.displayName;
+    out.intakeComplete = false;
+    out.profileNotes = "";
+    out.skills = {};
+    out.lifts = {};
+    out.chat = [];
+    out.intakeNotifySent = false;
+    out.intakeNotifySentAt = null;
+    out.adminIntakeResetAt = pkg.adminIntakeResetAt || new Date().toISOString();
+    if (!out.currentBlock && pkg.currentBlock) {
+      out.currentBlock = pkg.currentBlock;
+      out.currentWeek = pkg.currentWeek || null;
+      out.activeWeekIndex = 0;
+    }
+    if (Array.isArray(pkg.coachPrefs) && pkg.coachPrefs.length && !sameAthlete) {
+      out.coachPrefs = pkg.coachPrefs;
+    }
+    return out;
+  }
+
+  if (!token) {
+    fail("חסר לינק תקף");
+    return;
+  }
+
+  fetch("/api/admin-handoff?token=" + encodeURIComponent(token))
+    .then(function (r) {
+      return r.json().then(function (j) {
+        return { okHttp: r.ok, status: r.status, j: j };
+      });
+    })
+    .then(function (x) {
+      var j = x.j || {};
+      if (!x.okHttp || !j.ok || !j.store) {
+        fail(j.message || j.error || ("שגיאה " + x.status));
+        return;
+      }
+      var isReset = j.purpose === "reset_intake" || (j.store && j.store.intakeComplete === false && j.store.adminIntakeResetAt);
+      var storeToSave = isReset ? applyResetIntake(j.store) : j.store;
+      try {
+        localStorage.setItem(UID_KEY, String(storeToSave.userId || storeToSave.athleteId || j.athleteId || ""));
+        localStorage.setItem(PPROG_STORE_KEY, JSON.stringify(storeToSave));
+      } catch (e) {
+        fail("המכשיר לא מאפשר שמירה מקומית");
+        return;
+      }
+      if (isReset) {
+        msg.textContent = "התחקור אופס" + (j.displayName ? (" — " + j.displayName) : "");
+        status.className = "status ok";
+        status.textContent = "אפשר לפתוח את המאמן האישי ולהתחיל תחקור מחדש. התוכנית נשארה.";
+        if (footer) footer.textContent = "הלינק חד־פעמי. התוכנית במכשיר נשמרה — רק התחקור נפתח מחדש.";
+        openBtn.style.display = "inline-block";
+        openBtn.href = "/?tab=pprog&intake_reset=1";
+        setTimeout(function () {
+          window.location.replace("/?tab=pprog&intake_reset=1");
+        }, 1600);
+      } else {
+        msg.textContent = "התוכנית הותקנה אצלך במכשיר" + (j.displayName ? (" — " + j.displayName) : "");
+        status.className = "status ok";
+        status.textContent = "הלינק נשרף. אפשר לפתוח את האפליקציה.";
+        openBtn.style.display = "inline-block";
+        openBtn.href = "/?tab=pprog&handoff=1";
+        setTimeout(function () {
+          window.location.replace("/?tab=pprog&handoff=1");
+        }, 1600);
+      }
+    })
+    .catch(function () {
+      fail("שגיאת רשת — נסה שוב");
+    });
+})();
+</script>
+</body>
+</html>

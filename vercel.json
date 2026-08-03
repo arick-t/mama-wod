@@ -22,10 +22,35 @@
     }
   ],
   "functions": {
-    "api/generate-workout.js": { "maxDuration": 60 },
-    "api/personal-coach.js": { "maxDuration": 300 },
-    "api/coach-feedback.js": { "maxDuration": 30 },
-    "api/event.js": { "maxDuration": 60 },
-    "api/legal-agree.js": { "maxDuration": 60 }
+    "api/generate-workout.js": {
+      "maxDuration": 60
+    },
+    "api/personal-coach.js": {
+      "maxDuration": 300
+    },
+    "api/coach-feedback.js": {
+      "maxDuration": 30
+    },
+    "api/event.js": {
+      "maxDuration": 60
+    },
+    "api/legal-agree.js": {
+      "maxDuration": 60
+    },
+    "api/admin-snapshot.js": {
+      "maxDuration": 10
+    },
+    "api/admin-coach-sandbox.js": {
+      "maxDuration": 60
+    },
+    "api/admin-handoff.js": {
+      "maxDuration": 15
+    },
+    "api/admin-meta.js": {
+      "maxDuration": 10
+    },
+    "api/admin-drive-sync.js": {
+      "maxDuration": 300
+    }
   }
 }
