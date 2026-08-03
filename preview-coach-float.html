@@ -47,15 +47,15 @@ body{
 <body>
 <div class="wrap">
   <div class="brand">DUCK-WOD</div>
-  <div class="sub">Floating whole-program coach chat · preview</div>
-  <p class="note">Tap the round coach avatar (bottom right, above ↑). That chat is for the <strong>whole program</strong>. The green box below is only for <strong>one workout day</strong>.</p>
+  <div class="sub">Floating whole-brick coach chat · preview</div>
+  <p class="note">Tap the round coach avatar (above ↑). That chat is for the <strong>whole brick</strong>. The green box below is <strong>this workout only</strong>.</p>
 
   <div class="fake-day">
     <h3>Wednesday · Active recovery</h3>
     <p style="color:#aaa;font-size:.88em;margin:0 0 12px">Easy zone 2 · 20 min</p>
     <div class="session-box">
-      <label>About this workout · Wed</label>
-      <span class="scope">Only this session — swaps, equipment, feel before/after. Does not rewrite the whole program.</span>
+      <label>This workout only · Wed</label>
+      <span class="scope">Edits this day only. For the full brick, schedule, or goals — tap the coach button.</span>
       <textarea placeholder="e.g. no dumbbells today · shorter metcon…"></textarea>
     </div>
   </div>
@@ -63,7 +63,7 @@ body{
 
 <div class="page-fabs">
   <button type="button" class="up-btn" title="Scroll to top">↑</button>
-  <button type="button" class="pprog-coach-fab" id="fab" aria-expanded="false" title="Coach · whole program">
+  <button type="button" class="pprog-coach-fab" id="fab" aria-expanded="false" title="Coach · whole brick">
     <img src="assets/hamamen-coach-duck.png" alt="" width="48" height="48" draggable="false">
   </button>
 </div>
@@ -71,15 +71,15 @@ body{
 <div id="float" class="pprog-coach-float" hidden>
   <div class="pprog-coach-float-head">
     <div>
-      <span class="pprog-coach-float-title">Coach · whole program</span>
-      <span class="pprog-coach-float-scope">General chat — full brick, schedule, equipment, goals. For one workout, use the box under that day.</span>
+      <span class="pprog-coach-float-title">Coach · whole brick</span>
+      <span class="pprog-coach-float-scope">Full 5-week plan, schedule, equipment, goals. For one workout only — use the green box under that day.</span>
     </div>
     <button type="button" class="pprog-coach-float-close" id="closeBtn" aria-label="Close">×</button>
   </div>
   <div class="pprog-coach-float-body">
-    <div class="pprog-chat-log">Whole-program chat — the full brick, schedule, equipment, goals, or other cross-cutting notes. For one specific workout, use the box under that day.</div>
+    <div class="pprog-chat-log">Whole brick chat — full plan, schedule, equipment, goals. For one day only, use the green box under that workout.</div>
     <form class="pprog-chat-form" onsubmit="return false">
-      <textarea placeholder="Whole program, schedule, equipment, goals…"></textarea>
+      <textarea placeholder="Whole brick: schedule, equipment, goals…"></textarea>
       <button type="button" class="btn">Send</button>
     </form>
   </div>
