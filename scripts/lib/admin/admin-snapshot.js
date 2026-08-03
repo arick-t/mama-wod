@@ -17,14 +17,19 @@ const {
   checkAdminAuth: sharedCheckAdminAuth,
   adminAuthDenied,
 } = require("./admin-auth");
+const { adminSnapshotsDir } = require("./admin-paths");
 
-const SNAPSHOTS_DIR = path.join(process.cwd(), "data", "admin-snapshots");
+const SNAPSHOTS_DIR = adminSnapshotsDir();
 const MAX_SNAPSHOT_BYTES = 64 * 1024; // 64 KB per athlete
 const ADMIN_PASSWORD = resolveAdminPassword();
 
 function ensureDir() {
-  if (!fs.existsSync(SNAPSHOTS_DIR)) {
-    fs.mkdirSync(SNAPSHOTS_DIR, { recursive: true });
+  try {
+    if (!fs.existsSync(SNAPSHOTS_DIR)) {
+      fs.mkdirSync(SNAPSHOTS_DIR, { recursive: true });
+    }
+  } catch (e) {
+    /* Vercel cold start / read-only edge — list returns empty */
   }
 }
 
@@ -59,18 +64,23 @@ function writeSnapshot(athleteId, data) {
 }
 
 function listSnapshots() {
-  ensureDir();
-  const files = fs.readdirSync(SNAPSHOTS_DIR).filter((f) => f.endsWith(".json"));
-  return files
-    .map((f) => {
-      try {
-        return JSON.parse(fs.readFileSync(path.join(SNAPSHOTS_DIR, f), "utf8"));
-      } catch {
-        return null;
-      }
-    })
-    .filter(Boolean)
-    .sort((a, b) => (b.updatedAt || "").localeCompare(a.updatedAt || ""));
+  try {
+    ensureDir();
+    if (!fs.existsSync(SNAPSHOTS_DIR)) return [];
+    const files = fs.readdirSync(SNAPSHOTS_DIR).filter((f) => f.endsWith(".json"));
+    return files
+      .map((f) => {
+        try {
+          return JSON.parse(fs.readFileSync(path.join(SNAPSHOTS_DIR, f), "utf8"));
+        } catch {
+          return null;
+        }
+      })
+      .filter(Boolean)
+      .sort((a, b) => (b.updatedAt || "").localeCompare(a.updatedAt || ""));
+  } catch (e) {
+    return [];
+  }
 }
 
 function checkAdminAuth(req) {

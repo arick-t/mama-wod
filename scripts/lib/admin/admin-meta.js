@@ -15,8 +15,9 @@ const {
   resolveAdminPassword,
   checkAdminAuth: sharedCheckAdminAuth,
 } = require("./admin-auth");
+const { adminMetaPath } = require("./admin-paths");
 
-const META_PATH = path.join(process.cwd(), "data", "admin-meta.json");
+const META_PATH = adminMetaPath();
 const ADMIN_PASSWORD = resolveAdminPassword();
 const DRIVE_FOLDER_URL =
   process.env.COACH_DRIVE_FOLDER_URL ||

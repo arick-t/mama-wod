@@ -17,17 +17,20 @@ const {
   resolveAdminPassword,
   checkAdminAuth: sharedCheckAdminAuth,
 } = require("./admin-auth");
+const { adminSnapshotsDir, adminClaimsDir } = require("./admin-paths");
 
-const SNAPSHOTS_DIR = path.join(process.cwd(), "data", "admin-snapshots");
-const CLAIMS_DIR = path.join(process.cwd(), "data", "admin-claims");
+const SNAPSHOTS_DIR = adminSnapshotsDir();
+const CLAIMS_DIR = adminClaimsDir();
 const ADMIN_PASSWORD = resolveAdminPassword();
 const MAX_PACKAGE_BYTES = 256 * 1024;
 const CLAIM_TTL_MS = 14 * 24 * 60 * 60 * 1000; // 14 days
 
 function ensureDirs() {
-  [SNAPSHOTS_DIR, CLAIMS_DIR].forEach(function (d) {
-    if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
-  });
+  try {
+    [SNAPSHOTS_DIR, CLAIMS_DIR].forEach(function (d) {
+      if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
+    });
+  } catch (e) {}
 }
 
 function checkAdminAuth(req) {

@@ -15,8 +15,9 @@ const {
   resolveAdminPassword,
   checkAdminAuth: sharedCheckAdminAuth,
 } = require("./admin-auth");
+const { adminCoachTrainingRoot } = require("./admin-paths");
 
-const ROOT = path.join(process.cwd(), "data", "coach-training");
+const ROOT = adminCoachTrainingRoot();
 const SESSIONS_DIR = path.join(ROOT, "sessions");
 const WAREHOUSE_DIR = path.join(ROOT, "warehouse");
 const PENDING_FILE = path.join(ROOT, "pending-notes.jsonl");
@@ -25,11 +26,13 @@ const ADMIN_PASSWORD = resolveAdminPassword();
 const MAX_IMAGE_CHARS = 6_000_000; // ~4.5MB base64
 
 function ensureDirs() {
-  [ROOT, SESSIONS_DIR, WAREHOUSE_DIR].forEach(function (d) {
-    if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
-  });
-  if (!fs.existsSync(PENDING_FILE)) fs.writeFileSync(PENDING_FILE, "", "utf8");
-  if (!fs.existsSync(IMPLEMENTED_FILE)) fs.writeFileSync(IMPLEMENTED_FILE, "", "utf8");
+  try {
+    [ROOT, SESSIONS_DIR, WAREHOUSE_DIR].forEach(function (d) {
+      if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
+    });
+    if (!fs.existsSync(PENDING_FILE)) fs.writeFileSync(PENDING_FILE, "", "utf8");
+    if (!fs.existsSync(IMPLEMENTED_FILE)) fs.writeFileSync(IMPLEMENTED_FILE, "", "utf8");
+  } catch (e) {}
 }
 
 function checkAdminAuth(req) {
