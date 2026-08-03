@@ -24,9 +24,10 @@ Teach the Personal Coach via a **knowledge pyramid** + **runtime foundation** th
 
 ## Production safety
 
-- Work on branch `cursor/coach-learning-leap-d279` until approved
+- Rollback brain to Coach 1.1: `checkpoints/2026-08-03-before-coach-2.0/`
 - File Search / Drive sync gated until you say “סנכרן”
 - Groq disabled for programming fills (quality)
+- Layer 2 ops = programming path only (credit control)
 
 ## Rollback
 
