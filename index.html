@@ -797,7 +797,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
 <div class="header-sub">DAILY WORKOUTS · v21.2.3</div>
-<div class="header-sub" id="coachVersionSub">COACH · v2.0</div>
+<div class="header-sub" id="coachVersionSub">COACH · v2.1</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
@@ -1353,9 +1353,11 @@ function rememberAiClientError(summary) {
  *   Coach 1.0 — programming brain before the learning-leap upgrade (pre-21.1 ship attempt).
  *   Coach 1.1 — upgraded brain (Foundation Brief / POL-021 / living-knowledge) agreed for ship.
  *   Coach 2.0 — Layer 1 retune + Layer 2 ops (programming path).
+ *   Coach 2.1 — Cost Guardrails v1 (POL-COST sessionDate hard-block + monthly ≈₪5).
  * Keep this badge in sync with the brain actually serving /api/personal-coach.
+ * Display: header “COACH · v{COACH_VERSION}” only — do NOT bump app DAILY WORKOUTS / <title> here.
  */
-var COACH_VERSION = "2.0";
+var COACH_VERSION = "2.1";
 try {
   var __coachVerEl = document.getElementById("coachVersionSub");
   if (__coachVerEl) __coachVerEl.textContent = "COACH · v" + COACH_VERSION;
