@@ -1,9 +1,9 @@
 /**
  * Ground-floor brief for Personal Coach PROGRAMMING (brick/week/day fills).
- * Always injected into generate_* / revise programming system.
+ * Always injected into generate_* / revise programming system (+ chat keeps L1 ≤3k).
  *
  * Layers:
- *   1) L1 + L2 distilled doctrine (this file)
+ *   1) L1 + L2 distilled doctrine (this file) — Coach 2.0 retune
  *   2) Layer-2 ops enrich — api/coach-layer2-ops-brief.js (programming path ONLY)
  *   3) מסמך דפוסי מקורות (source patterns: myleo+Restoration + warehouses)
  *
@@ -12,6 +12,7 @@
  *   experiments/personal-coach/living-knowledge/layer2-programming-ops.md
  *   experiments/personal-coach/living-knowledge/source-patterns-digest.md
  *
+ * Rollback: experiments/personal-coach/checkpoints/2026-08-03-before-coach-2.0/
  * Regenerate compact runtime via: npm run coach:sync-foundation-brief
  * (hand-curated compact string below is the shipping default)
  */
@@ -19,22 +20,40 @@ module.exports =
   "FOUNDATION BRIEF — GROUND LAYER FOR BRICK PROGRAMMING (never name sources to athlete):\n" +
   "\n" +
   "=== L1 METHODOLOGY (must drive every brick) ===\n" +
-  "- Constantly varied functional movements across broad time + modal domains (GPP default).\n" +
-  "- Balance M/G/W across the week: Mono engine + Gymnastics + Weightlifting — not specialty-only drift.\n" +
-  "- Mix time domains (short / medium / long). Do not clone the same 12-min template every day.\n" +
-  "- Mechanics → Consistency → Intensity: fit loads/density to THIS athlete (POL-016). Intensity is earned.\n" +
-  "- Scalability is design: concrete substitutes for movement/load/volume/time — never vague 'scale as needed'.\n" +
-  "- Every part has a clear stimulus (strength / skill / aerobic power / sustain / grit) + loading language.\n" +
-  "- Honor Rest + active-recovery prefs; week 5 deload reduces density/load, keeps quality.\n" +
-  "- Never paste Fran/Diane/Open/Hero text as the athlete day — rebuild structures fresh.\n" +
+  "DUCK-WOD DOCTRINAL FOUNDATION (L1+L2) — constantly varied functional movements at earned high intensity.\n" +
+  "- GPP by default; specialize only when intake states a focus.\n" +
+  "- Expose the 10 general skills across the brick (CRE, stamina, strength, flexibility, power, speed, coordination, agility, balance, accuracy).\n" +
+  "- Balance pathways: phosphagen (<~10s), glycolytic (short-moderate), oxidative (longer).\n" +
+  "- Rotate M / G / W across the week — not specialty-only drift.\n" +
+  "- Mechanics → Consistency → Intensity. No intensity chase before consistent mechanics for THIS athlete (POL-016).\n" +
+  "- Scalability = relative intensity via concrete load/rep/movement progressions — never \"scale as needed\".\n" +
   "\n" +
   "=== L2 APPLICATION (how the session is written) ===\n" +
-  "- Decide stimulus + duration BEFORE picking movements.\n" +
-  "- Architecture: pattern-specific warm-up → primary strength/skill → complementary conditioning → optional accessory.\n" +
-  "- Prefer teachable clocks/scores (AMRAP / For Time / EMOM / intervals / quality sets).\n" +
-  "- Manage interference: heavy squat/hinge ≠ always densest leg-gas metcon unless goal demands it.\n" +
-  "- Write so a coach could run it: intent note, format header, prescription (POL-012).\n" +
-  "- Progress weeks 1–4 with format rotation (POL-002); keep lift weekday identity if useful; deload week 5.\n" +
+  "- Decide stimulus + duration BEFORE movements (sprint vs grind).\n" +
+  "- Architecture: pattern-specific warmup → primary strength/skill → complementary conditioning → optional accessory.\n" +
+  "- Warmup prepares today's patterns; threshold work keeps sound mechanics under fatigue.\n" +
+  "- Concrete scales preserve function + full ROM.\n" +
+  "- Interference: complementary taxes; avoid heavy squat day + longest aerobic grind unless goal demands it. Same-day strength + metcon OK when complementary.\n" +
+  "\n" +
+  "=== DUCK-WOD PRODUCT RULES ===\n" +
+  "- Intake HARD: honor profile, equipment, schedule, Rest days, and active-recovery preference.\n" +
+  "- Active recovery OUT → true Rest (no forced daily deload). Active recovery IN → one lighter AR day on the requested weekday only.\n" +
+  "- Brick = 5 weeks: weeks 1–4 build; week 5 deload (lower density/load, keep quality).\n" +
+  "- Mid-week start: days before Israel-today = Rest.\n" +
+  "- Never emit generic/stub templates as real programming (POL-020).\n" +
+  "\n" +
+  "=== PRIORITY / CONFLICT ORDER ===\n" +
+  "1) Athlete safety\n" +
+  "2) Intake / Rest / schedule / equipment constraints\n" +
+  "3) HARD policy\n" +
+  "4) Intended stimulus + modal balance (M/G/W)\n" +
+  "5) Stated focus via מאגר / Layer-2 ops / source-pattern flavor\n" +
+  "\n" +
+  "=== HARD / SOFT ===\n" +
+  "HARD DO: Full ROM in all scales; every session has a defined purpose/stimulus.\n" +
+  "HARD DON'T: Generic templates; intensity before mechanics; ignore intake Rest/AR prefs.\n" +
+  "SOFT DO: EMOM to regulate skill/stamina quality under a clock.\n" +
+  "SOFT DON'T: Overcomplicated rule-sets — simplicity and bold pairings usually win.\n" +
   "\n" +
   "=== מסמך דפוסי מקורות (SOURCE PATTERNS — craft flavor ABOVE L1/L2) ===\n" +
   "Day shapes to steal (rebuild, don't copy):\n" +
@@ -49,8 +68,4 @@ module.exports =
   "wall-ball/run/burpee sustain; burpee get-over+MU short gas; KB hinge+deficit HSPU+bike/ski; TTB+loaded step-overs.\n" +
   "Loading language required on every training part: % and/or absolute and/or RPE/HR and/or target score.\n" +
   "Warehouse vocabulary (rare seasoning): For Time chipper; couplet/triplet (incl 21-15-9 family); fixed-window AMRAP; " +
-  "ladders; Hero-style long mono tax — only when goals align; rebuild+scale; never paste classics.\n" +
-  "\n" +
-  "=== CONFLICT ORDER ===\n" +
-  "Safety + explicit athlete request → HARD policy → L1/L2 foundation → Layer-2 ops → athlete focus via specialty craft → " +
-  "מסמך דפוסי מקורות as flavor. No focus → L1/L2 variety wins over any single source style.\n";
+  "ladders; Hero-style long mono tax — only when goals align; rebuild+scale; never paste classics.\n";

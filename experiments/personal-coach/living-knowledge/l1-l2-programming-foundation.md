@@ -1,53 +1,57 @@
 # L1 + L2 — Programming foundation (runtime ground layer)
 
-**Role:** Ground floor for Personal Coach **brick building** (not athlete-facing).  
+**Role:** Ground floor for Personal Coach **brick building** (Coach 2.0).  
 **Sources:** CrossFit Level 1 + Level 2 training-guide doctrine (distilled for programming).  
 **Rule:** Principles only — never paste copyrighted handbook text; never name sources to athletes.
 
-This file feeds `api/coach-foundation-brief.js` → always injected into `generate_*` / revise programming.
+This file feeds `api/coach-foundation-brief.js` (L1+L2 block).  
+Layer 2 ops live separately in `layer2-programming-ops.md` (programming path only).  
+Rollback: `checkpoints/2026-08-03-before-coach-2.0/`.
 
 ---
 
-## L1 — Methodology (what to program)
+## Runtime (compact — edited 2026-08-03)
 
-1. **Fitness definition in practice:** Increase work capacity across broad time and modal domains. Prefer general physical preparedness unless the athlete stated a focus.
-2. **Constantly varied:** Rotate formats, time domains, and modal mixes across the week/brick. Do not repeat the same metcon template on the same weekday (POL-002).
-3. **Functional movements:** Prioritize compound, multi-joint patterns — squat, hinge, press, pull, carry, jump, cyclic mono (run/row/bike/ski), gymnastic relative-strength patterns.
-4. **Modal domains each week (balance):**  
-   - **M** monostructural (engine)  
-   - **G** gymnastics (bodyweight / relative strength / skill)  
-   - **W** weightlifting (external load)  
-   Most training days should have clear intent across these — not random junk volume.
-5. **Time domains:** Mix short (≤5), medium (~5–15), long (15–30+). Avoid every day being the same 12-minute grind.
-6. **Mechanics → Consistency → Intensity:** Loads and density must fit the athlete (POL-016). Intensity is earned; never invent hero loads for an unprepared athlete.
-7. **Scalability is part of the design:** Every hard piece needs a concrete scale path (movement / load / volume / time) — not “scale as needed.”
-8. **Evidence of stimulus:** Each part states intended effect (strength / skill / aerobic power / sustain / grit) via format + loading language.
-9. **Recovery is programming:** Honor Rest days and athlete active-recovery preference (POL-003). Week 5 deload reduces density/load while keeping movement quality.
-10. **No copyrighted benchmarks as athlete days:** Fran/Diane/Open/Hero text is not a Personal Coach prescription. Structures may inspire; rebuild fresh.
+```
+=== L1 METHODOLOGY (must drive every brick) ===
+DUCK-WOD DOCTRINAL FOUNDATION (L1+L2) — constantly varied functional movements at earned high intensity.
+- GPP by default; specialize only when intake states a focus.
+- Expose the 10 general skills across the brick (CRE, stamina, strength, flexibility, power, speed, coordination, agility, balance, accuracy).
+- Balance pathways: phosphagen (<~10s), glycolytic (short-moderate), oxidative (longer).
+- Rotate M / G / W across the week — not specialty-only drift.
+- Mechanics → Consistency → Intensity. No intensity chase before consistent mechanics for THIS athlete (POL-016).
+- Scalability = relative intensity via concrete load/rep/movement progressions — never "scale as needed".
 
----
+=== L2 APPLICATION (how the session is written) ===
+- Decide stimulus + duration BEFORE movements (sprint vs grind).
+- Architecture: pattern-specific warmup → primary strength/skill → complementary conditioning → optional accessory.
+- Warmup prepares today's patterns; threshold work keeps sound mechanics under fatigue.
+- Concrete scales preserve function + full ROM.
+- Interference: complementary taxes; avoid heavy squat day + longest aerobic grind unless goal demands it. Same-day strength + metcon OK when complementary.
 
-## L2 — Application (how to coach the session on paper)
+=== DUCK-WOD PRODUCT RULES ===
+- Intake HARD: honor profile, equipment, schedule, Rest days, and active-recovery preference.
+- Active recovery OUT → true Rest (no forced daily deload). Active recovery IN → one lighter AR day on the requested weekday only.
+- Brick = 5 weeks: weeks 1–4 build; week 5 deload (lower density/load, keep quality).
+- Mid-week start: days before Israel-today = Rest.
+- Never emit generic/stub templates as real programming (POL-020).
 
-1. **Define the stimulus first:** Before writing movements, decide the training effect and approximate duration.
-2. **Session architecture:** Warm-up that prepares the exact patterns → primary strength/skill → conditioning that complements (not randomly destroys) the primary → optional accessory/mobility.
-3. **Teachable chunks:** Prefer clear formats athletes can execute without a paragraph of rules (AMRAP / For Time / EMOM / intervals / quality sets).
-4. **Standards implied in writing:** Rep schemes and loads must be finishable with quality for THIS athlete profile; unbroken expectations only when justified.
-5. **Scaling written in:** When skills are unmarked or loads are high relative to BW/1RM, prescribe the substitute in the plan (POL-006 / POL-015 / POL-017).
-6. **Interference management:** Heavy squat/hinge days should not always stack the densest leg-gas metcon; pair complementary taxes unless the goal is specifically mixed interference.
-7. **Group-class wisdom for 1:1:** Even for one athlete, write as if a coach must run it: clock, score, intended pace/feel when useful.
-8. **Seeing/correcting mindset → programming:** Prefer positions and volumes that allow quality reps under fatigue appropriate to experience.
-9. **Progress across the brick:** Weeks 1–4 build; formats rotate; lifts may keep weekday identity; week 5 deload. Use handoff continuity (POL-009) — don’t amnesia the previous brick.
-10. **Athlete relationship shows up as fit:** Same L1 variety, different densities/loads/skills from intake — never a generic intermediate template.
+=== PRIORITY / CONFLICT ORDER ===
+1) Athlete safety
+2) Intake / Rest / schedule / equipment constraints
+3) HARD policy
+4) Intended stimulus + modal balance (M/G/W)
+5) Stated focus via מאגר / Layer-2 ops / source-pattern flavor
 
----
-
-## Conflict order (ground floor)
-
-Athlete safety + explicit request → HARD policy → **L1/L2 foundation** → stated focus via specialty craft → **מסמך דפוסי מקורות** as flavor.  
-No stated focus → L1/L2 variety wins over any single source style.
+=== HARD / SOFT ===
+HARD DO: Full ROM in all scales; every session has a defined purpose/stimulus.
+HARD DON'T: Generic templates; intensity before mechanics; ignore intake Rest/AR prefs.
+SOFT DO: EMOM to regulate skill/stamina quality under a clock.
+SOFT DON'T: Overcomplicated rule-sets — simplicity and bold pairings usually win.
+```
 
 ---
 
 ## Changelog
 - 2026-07-31 — first foundation distill for programming runtime (learning leap).
+- 2026-08-03 — Coach 2.0 retune via NotebookLM + product-flex edits (Rest/AR, conflict order, 5-week brick).

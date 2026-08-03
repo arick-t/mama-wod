@@ -7,6 +7,7 @@
  * Coach version vocabulary (product):
  *   1.0 — programming brain before the learning-leap upgrade
  *   1.1 — upgraded brain (Foundation Brief / POL-021 / living-knowledge)
+ *   2.0 — Layer 1 retune + Layer 2 ops (programming path)
  *
  * Env: GEMINI_API_KEY (optional File Search), GROQ_API_KEY (fallback chat),
  *      PERSONAL_COACH_MODEL (programming), PERSONAL_COACH_CHAT_MODEL (chat/intake),
@@ -17,7 +18,7 @@
  * Groq keeps chat alive when the Gemini key is missing/invalid (common GitHub Pages + Vercel setup).
  * Programming stays Gemini-only (POL-020).
  */
-const COACH_VERSION = "1.1";
+const COACH_VERSION = "2.0";
 const HAMAMEN_SYSTEM = require("./hamamen-prompt.js");
 const COACH_POLICY = require("./coach-policy.js");
 const COACH_FOUNDATION_BRIEF = require("./coach-foundation-brief.js");
