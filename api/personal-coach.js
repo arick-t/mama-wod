@@ -26,14 +26,20 @@ const COACH_LAYER2_OPS_BRIEF = require("../lib/coach-layer2-ops-brief.js");
 /* Legacy alias — foundation brief supersedes pattern-only brief */
 const COACH_PATTERN_BRIEF = COACH_FOUNDATION_BRIEF;
 
-/** Compact cost guardrails — salient reminder (full text lives in POL-COST-* via coach-policy). */
+const {
+  evaluateCostCapGate,
+  costCapHttpPayload,
+} = require("../lib/coach-cost-caps.js");
+
+/** Compact cost guardrails — single chat/programming reminder (full text = POL-COST-* in coach-policy). */
 const COST_GUARDRAILS_COMPACT =
-  "COST GUARDRAILS (HARD — POL-COST-001..009):\n" +
+  "COST GUARDRAILS (HARD — POL-COST-001..010):\n" +
   "- Surgical by default. Never silent full regenerate from chat.\n" +
   "- Programmed edit = applied generate_*/revise_* or plan-changing BLOCK/WEEK/DAY/PART JSON only. Technique/safety/Confirm?/notes/Already-updated do NOT count.\n" +
-  "- Daily cap: max 2 programmed edits per Israel calendar day. After cap: notes/preferences only — NO new programming JSON.\n" +
+  "- Daily cap: max 2 programmed edits per Israel sessionDate of the training day. After cap: notes/preferences only — NO new programming JSON (server hard-blocks revise_*).\n" +
   "- Large rebuild (full week / 3+ days / mid-brick restart): offer A surgical (recommended) or B remaining-days rebuild. B only after explicit B. Max one B per rolling 7 Israel days. Past days locked (POL-023).\n" +
   "- Soft Upgrade (“new coach / review my plan”): scan remaining (active±next) → ≤3 patches → Confirm? → revise_day/part only. Max one Soft Upgrade per brick. Not a Large Rebuild unless user picks B.\n" +
+  "- Monthly envelope ≈ ₪5 (POL-COST-010): unit budget per Israel month; at 100% plan stays visible + safety chat only — no new generate/revise.\n" +
   "- Never auto-rebuild because COACH_VERSION changed.\n" +
   "- After caps: short English ack, save preference if useful, refuse programming JSON.\n" +
   "- Priority: Safety → Intake Rest/schedule/equipment → HARD policy/cost caps → Layer 1 → Layer 2 → flavor.\n" +
@@ -42,12 +48,19 @@ const COST_GUARDRAILS_COMPACT =
 function buildCostCapsRuntimeNote(profile) {
   const caps = profile && profile.costCaps && typeof profile.costCaps === "object" ? profile.costCaps : null;
   if (!caps) return "";
-  const lines = ["COST CAPS STATE (runtime — enforce):"];
+  const lines = ["COST CAPS STATE (runtime — enforce; server hard-blocks after caps):"];
   if (caps.israelToday) lines.push("- Israel today: " + String(caps.israelToday).slice(0, 10));
-  if (typeof caps.dailyEditsToday === "number") {
+  if (caps.sessionDate) lines.push("- Target sessionDate: " + String(caps.sessionDate).slice(0, 10));
+  const dailyShown =
+    typeof caps.dailyEditsForSession === "number"
+      ? caps.dailyEditsForSession
+      : typeof caps.dailyEditsToday === "number"
+        ? caps.dailyEditsToday
+        : null;
+  if (dailyShown != null) {
     lines.push(
-      "- Programmed edits today: " +
-        caps.dailyEditsToday +
+      "- Programmed edits for session: " +
+        dailyShown +
         " / 2" +
         (caps.dailyLocked ? " — LOCKED (notes only, no programming JSON)" : "")
     );
@@ -63,6 +76,15 @@ function buildCostCapsRuntimeNote(profile) {
   }
   if (caps.softUpgradeUsedForBrick) {
     lines.push("- Soft Upgrade already used for this brick — no second Soft Upgrade scan this brick");
+  }
+  if (typeof caps.monthlyUnitsUsed === "number") {
+    lines.push(
+      "- Monthly units: " +
+        caps.monthlyUnitsUsed +
+        " / " +
+        (caps.monthlyCap || 40) +
+        (caps.monthlyLocked ? " — MONTHLY LOCKED (plan + safety chat only)" : "")
+    );
   }
   return "\n" + lines.join("\n") + "\n";
 }
@@ -455,10 +477,9 @@ function languageFollowRule(messages, action, forceJson, profile) {
     "- Workout JSON fields stay English always.\n" +
     "- POL-013: stay practical; no compliments or filler.\n" +
     (postIntake
-      ? "- POL-022: for broad/standing plan changes (whole brick, every Tuesday, etc.) reply with ONE short sentence stating the change + Confirm? No paragraphs, no profile essays, no multi-question offers.\n" +
+      ? "- POL-022: for broad/standing plan changes (whole brick, every Tuesday, etc.) reply with ONE short sentence stating the change + Confirm? No paragraphs, no profile essays, no multi-question offers. When A/B (surgical vs large rebuild) is needed, include A/B in that same short Confirm? line.\n" +
         "- POL-023: after confirm, adapt ONLY remaining days (Israel-today → end of this 5-week brick). Never rewrite past days. Surgical edits — preserve formats/structure; change only what the note requires (e.g. single-KB constraint).\n" +
-        "- POL-024: whole-brick notes → map to the matching intake section (equipment / schedule / injuries / limits / goals / …), adapt only that section on remaining days, freeze every other intake section.\n" +
-        "- POL-COST: surgical default; daily programmed-edit cap 2/Israel-day; large rebuild = explicit B + max 1/7d remaining-days only; Soft Upgrade ≤3 patches once/brick; never auto-rebuild on coach version bump; after caps = notes only.\n"
+        "- POL-024: whole-brick notes → map to the matching intake section (equipment / schedule / injuries / limits / goals / …), adapt only that section on remaining days, freeze every other intake section.\n"
       : "")
   );
 }
@@ -1507,7 +1528,7 @@ module.exports = async function handler(req, res) {
       service: "personal-coach",
       engine: "personal-coach",
       notGenerateWorkout: true,
-      version: "21.3.2",
+      version: "21.3.4",
       coachVersion: COACH_VERSION,
       hasGeminiKey: !!apiKey,
       hasGroqKey: !!groqKey,
@@ -1614,6 +1635,11 @@ module.exports = async function handler(req, res) {
       legalMinVersion: LEGAL_MIN_VERSION,
       hint: "Open Personal Coach, accept the Terms checkboxes, then retry.",
     });
+  }
+  /* POL-COST hard gate — real stop after caps (not prompt-only). Chat/safety stays open. */
+  const costGate = evaluateCostCapGate(action, body, rawProfile);
+  if (costGate) {
+    return res.status(403).json(costCapHttpPayload(costGate));
   }
   const athleteProfile = profileForAction(rawProfile, action);
   const forceJson =

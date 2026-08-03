@@ -1,5 +1,15 @@
 # Changelog
 
+## [21.3.4] - 2026-08-03
+
+### Cost Guardrails v1 complete (path B — before merge)
+- **sessionDate accounting:** daily programmed-edit cap (2) keys off Israel calendar date of the **training day** in the brick.
+- **Server hard-block:** `lib/coach-cost-caps.js` returns 403 (`COST_CAP_DAILY` / `LARGE` / `SOFT` / `MONTHLY`) for `generate_*` / `revise_*` after caps — not prompt-only. Chat/safety stays open. Initial brick + lazy `generate_week_detail` still allowed under daily/large/soft.
+- **Single chat compact:** removed duplicate POL-COST one-liner from language rule; `COST_GUARDRAILS_COMPACT` is the only chat reminder (full POL-COST remains in policy).
+- **POL-COST-010:** monthly ≈ ₪5 unit envelope (ceiling 40); at 100% plan visible + safety chat only.
+
+---
+
 ## [21.3.3] - 2026-08-03
 
 ### Cost guardrails (POL-COST) for plan updates
