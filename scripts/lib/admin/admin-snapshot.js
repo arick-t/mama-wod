@@ -84,6 +84,18 @@ function checkAdminAuth(req) {
   return String(auth) === ADMIN_PASSWORD;
 }
 
+function adminAuthDenied(res) {
+  if (!ADMIN_PASSWORD) {
+    return res.status(503).json({
+      ok: false,
+      error: "admin_not_configured",
+      message:
+        "ADMIN_PASSWORD is not set on the server. Add it in Vercel → Settings → Environment Variables, then Redeploy.",
+    });
+  }
+  return res.status(401).json({ error: "Unauthorized" });
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
@@ -116,7 +128,7 @@ module.exports = async function handler(req, res) {
 
     // Admin-only: list athletes via POST (avoids proxies that strip custom GET headers)
     if (body.action === "admin_list" || body.list === true) {
-      if (!isAdmin) return res.status(401).json({ error: "Unauthorized" });
+      if (!isAdmin) return adminAuthDenied(res);
       const rl = checkRateLimit(req, { name: "admin-snap-get", limit: 60, windowMs: 60_000 });
       if (!rl.ok) return sendRateLimit(res, rl);
       return res.status(200).json({ ok: true, snapshots: listSnapshots() });
@@ -126,7 +138,7 @@ module.exports = async function handler(req, res) {
     if (body.coachDirectives !== undefined && Object.keys(body).filter(function (k) {
       return body[k] !== undefined && k !== "athleteId" && k !== "userId" && k !== "coachDirectives" && k !== "adminPassword" && k !== "password";
     }).length === 0) {
-      if (!isAdmin) return res.status(401).json({ error: "Unauthorized" });
+      if (!isAdmin) return adminAuthDenied(res);
       if (!existing.athleteId && !existing.createdAt) {
         return res.status(404).json({ error: "Athlete not found — wait for first snapshot" });
       }
@@ -176,7 +188,7 @@ module.exports = async function handler(req, res) {
   // ── GET: admin reads all snapshots ─────────────────────────────────────────
   if (req.method === "GET") {
     if (!checkAdminAuth(req)) {
-      return res.status(401).json({ error: "Unauthorized" });
+      return adminAuthDenied(res);
     }
     const rl = checkRateLimit(req, { name: "admin-snap-get", limit: 60, windowMs: 60_000 });
     if (!rl.ok) return sendRateLimit(res, rl);
@@ -188,7 +200,7 @@ module.exports = async function handler(req, res) {
   // ── DELETE: admin removes a snapshot ───────────────────────────────────────
   if (req.method === "DELETE") {
     if (!checkAdminAuth(req)) {
-      return res.status(401).json({ error: "Unauthorized" });
+      return adminAuthDenied(res);
     }
     const athleteId = safeAthleteId(req.query && req.query.id);
     if (!athleteId) return res.status(400).json({ error: "id required" });

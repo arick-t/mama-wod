@@ -678,25 +678,37 @@ function doLogin() {
     body: JSON.stringify({ action: "admin_list", adminPassword: pw })
   })
     .then(function(r) {
-      if (r.status === 401) throw new Error("wrong_password");
-      if (!r.ok) throw new Error("http_" + r.status);
-      return r.json();
+      return r.json().then(function(data) {
+        return { status: r.status, data: data };
+      }).catch(function() {
+        return { status: r.status, data: null };
+      });
     })
-    .then(function(data) {
-      if (!data || !data.ok) throw new Error("bad_response");
+    .then(function(res) {
+      if (res.status === 503 || (res.data && res.data.error === "admin_not_configured")) {
+        throw new Error("not_configured");
+      }
+      if (res.status === 401) throw new Error("wrong_password");
+      if (res.status < 200 || res.status >= 300) throw new Error("http_" + res.status);
+      if (!res.data || !res.data.ok) throw new Error("bad_response");
       document.getElementById("login-screen").style.display = "none";
       var app = document.getElementById("app");
       app.style.display = "flex";
       app.classList.add("is-open");
       loadLearningMode();
       currentView = "manage";
-      renderAthleteList(data.snapshots || []);
+      renderAthleteList(res.data.snapshots || []);
       loadAdminMeta();
     })
     .catch(function(e) {
       var msg = "שגיאת חיבור";
-      if (e && e.message === "wrong_password") msg = "סיסמה שגויה";
-      else if (e && String(e.message || "").indexOf("http_") === 0) msg = "שגיאת שרת (" + e.message.slice(5) + ")";
+      if (e && e.message === "not_configured") {
+        msg = "הסיסמה עדיין לא הוגדרה בשרת (Vercel). הגדר ADMIN_PASSWORD ואז Redeploy.";
+      } else if (e && e.message === "wrong_password") {
+        msg = "סיסמה שגויה";
+      } else if (e && String(e.message || "").indexOf("http_") === 0) {
+        msg = "שגיאת שרת (" + e.message.slice(5) + ")";
+      }
       if (errEl) errEl.textContent = msg;
     });
 }
