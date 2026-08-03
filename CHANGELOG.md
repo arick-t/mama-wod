@@ -1,5 +1,29 @@
 # Changelog
 
+## [21.3.4] - 2026-08-03
+
+### Coach 2.1 — Cost Guardrails v1 (live)
+- **Coach subtitle only:** `COACH · v2.1` (app stays `DAILY WORKOUTS · v21.2.3` — not bumped).
+- **sessionDate accounting:** daily programmed-edit cap (2) keys off Israel calendar date of the **training day** in the brick.
+- **Server hard-block:** `lib/coach-cost-caps.js` returns 403 (`COST_CAP_DAILY` / `LARGE` / `SOFT` / `MONTHLY`) for `generate_*` / `revise_*` after caps — not prompt-only. Chat/safety stays open. Initial brick + lazy `generate_week_detail` still allowed under daily/large/soft.
+- **Gate order:** Terms → cost hard-block → API key (capped requests fail closed without needing a provider).
+- **Single chat compact:** removed duplicate POL-COST one-liner from language rule; `COST_GUARDRAILS_COMPACT` is the only chat reminder (full POL-COST remains in policy).
+- **POL-COST-010:** monthly ≈ ₪5 unit envelope (ceiling 40); at 100% plan visible + safety chat only.
+- Complements (does not replace) POL-020/022/023/024/008/009 + v21.2.2 cost infra.
+- Pre-live tests: `scripts/coach-cost-caps.test.js` (wired into `npm test`).
+- No auto-rebuild on coach version bump (**POL-COST-006**).
+
+---
+
+## [21.3.3] - 2026-08-03
+
+### Cost guardrails (POL-COST) for plan updates
+- Add **POL-COST-001..009**: surgical default, programmed-edit definition, daily edit cap (2/Israel-day), large rebuild gate (A/B + 1/7d), Soft Upgrade (≤3 patches, once/brick), no auto-rebuild on coach version bump, after-caps behavior, cost priority, non-regressions.
+- Compact cost reminder in programming + chat systems; runtime `costCaps` state from client.
+- Client counters in Personal Coach store (`costCaps`) for daily edits / large rebuild / soft upgrade; sent with `athleteProfile`.
+
+---
+
 ## [21.3.2] - 2026-08-03
 
 ### Coach 2.0 brain — Layer 1 retune + Layer 2 ops

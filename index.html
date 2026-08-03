@@ -797,7 +797,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
 <div class="header-sub">DAILY WORKOUTS · v21.2.3</div>
-<div class="header-sub" id="coachVersionSub">COACH · v2.0</div>
+<div class="header-sub" id="coachVersionSub">COACH · v2.1</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
@@ -1353,9 +1353,11 @@ function rememberAiClientError(summary) {
  *   Coach 1.0 — programming brain before the learning-leap upgrade (pre-21.1 ship attempt).
  *   Coach 1.1 — upgraded brain (Foundation Brief / POL-021 / living-knowledge) agreed for ship.
  *   Coach 2.0 — Layer 1 retune + Layer 2 ops (programming path).
+ *   Coach 2.1 — Cost Guardrails v1 (POL-COST sessionDate hard-block + monthly ≈₪5).
  * Keep this badge in sync with the brain actually serving /api/personal-coach.
+ * Display: header “COACH · v{COACH_VERSION}” only — do NOT bump app DAILY WORKOUTS / <title> here.
  */
-var COACH_VERSION = "2.0";
+var COACH_VERSION = "2.1";
 try {
   var __coachVerEl = document.getElementById("coachVersionSub");
   if (__coachVerEl) __coachVerEl.textContent = "COACH · v" + COACH_VERSION;
@@ -1429,6 +1431,28 @@ function maybeResetPprogFromQuery() {
 
 /** Soften raw Google/Vercel blobs (e.g. API_KEY_INVALID JSON) for chat UI. */
 function pprogFriendlyApiError(j, status) {
+  var code = (j && j.code) || "";
+  if (code === "COST_CAP_DAILY") {
+    return (
+      (j && j.hint) ||
+      "This training day is locked after 2 programmed edits. I can save a preference for later. Safety/technique → coach chat."
+    );
+  }
+  if (code === "COST_CAP_LARGE") {
+    return (
+      (j && j.hint) ||
+      "Large rebuild is limited to once per 7 days. Prefer surgical day edits."
+    );
+  }
+  if (code === "COST_CAP_SOFT") {
+    return (j && j.hint) || "Soft Upgrade already used for this brick. Surgical day edits only.";
+  }
+  if (code === "COST_CAP_MONTHLY") {
+    return (
+      (j && j.hint) ||
+      "Monthly programming envelope reached. Plan stays visible — safety via chat only until next month."
+    );
+  }
   var detail = (j && (j.detail || j.error || j.hint)) || "";
   var fallback = (j && j.fallbackError) || "";
   var blob = String(detail) + " " + String(fallback) + " " + String(status || "");
@@ -1935,6 +1959,7 @@ function emptyPprogStore() {
     activeWeekIndex: 0,
     partModificationEvents: [],
     modificationRulesNotified: {},
+    costCaps: { dailyEdits: {}, monthlyUnits: {}, lastLargeRebuildAt: null, softUpgradeBrickStart: null },
     pastBlocks: [],
     autoNextTriggeredForBlockStart: null,
     intakeNotifySent: false,
@@ -1971,6 +1996,12 @@ function loadPprogStore() {
     if (!o.legalAcceptedVersion) o.legalAcceptedVersion = 0;
     if (typeof o.intakeNotifySent !== "boolean") o.intakeNotifySent = !!o.intakeNotifySentAt;
     if (typeof o.activeWeekIndex !== "number") o.activeWeekIndex = 0;
+    if (!o.costCaps || typeof o.costCaps !== "object") {
+      o.costCaps = { dailyEdits: {}, monthlyUnits: {}, lastLargeRebuildAt: null, softUpgradeBrickStart: null };
+    }
+    if (!o.costCaps.monthlyUnits || typeof o.costCaps.monthlyUnits !== "object") {
+      o.costCaps.monthlyUnits = {};
+    }
     /* Migrate legacy single-week store → 5-week block shell */
     if (!o.currentBlock && o.currentWeek && o.currentWeek.days) {
       o.currentBlock = {
@@ -3913,6 +3944,7 @@ function athleteProfilePayload(opts) {
     activeWeekIndex: s.activeWeekIndex || 0,
     weekStart: (s.currentWeek && s.currentWeek.weekStart) || null,
     partModificationSummary: pprogCountModifiedKindsLast30Days(s.partModificationEvents),
+    costCaps: pprogCostCapsPayload(s, { sessionDate: opts && opts.sessionDate }),
   };
   if (!omitChat) {
     payload.chatSummaryTail = (s.chat || [])
@@ -4122,6 +4154,10 @@ function sendPprogMessage(ev) {
   msgs.push({ role: "user", text: displayText });
   persistPprogChatMsgs();
   if (inp) inp.value = "";
+  /* POL-COST-010 — chat unit (does not hard-block chat) */
+  try {
+    pprogRecordMonthlyUnits(PPROG_COST_UNITS.chat);
+  } catch (eChatUnit) {}
   pprogBusy = true;
   var btn = document.getElementById("pprogSendBtn");
   if (btn) btn.disabled = true;
@@ -4242,6 +4278,14 @@ function sendPprogMessage(ev) {
           preserveIntake: !!brickMode,
           preserveRestMap: !!brickMode && !pprogRecentBrickNoteTouchesSchedule(msgs),
         });
+        if (brickMode) {
+          var noteUp = String(pprogLatestStandingUserNote(msgs) || "");
+          if (/soft upgrade|new coach|upgrade (my |the )?plan|review my plan|שדרג|מאמן החדש/i.test(noteUp)) {
+            pprogRecordProgrammedEdit("soft_upgrade");
+          } else {
+            pprogRecordProgrammedEdit("large_rebuild");
+          }
+        }
       } else if (weekFromChat) {
         if (brickMode) {
           pprogApplyStandingIntakeNote(pprogLatestStandingUserNote(msgs));
@@ -4262,6 +4306,12 @@ function sendPprogMessage(ev) {
             });
           } else {
             applyPprogWeek(weekFromChat, j.text);
+          }
+          var noteUp2 = String(pprogLatestStandingUserNote(msgs) || "");
+          if (/soft upgrade|new coach|upgrade (my |the )?plan|review my plan|שדרג|מאמן החדש/i.test(noteUp2)) {
+            pprogRecordProgrammedEdit("soft_upgrade");
+          } else {
+            pprogRecordProgrammedEdit("large_rebuild");
           }
         } else {
           applyPprogWeek(weekFromChat, j.text);
@@ -5087,6 +5137,208 @@ function pprogIsraelTodayIso() {
   } catch (e) {
     return pprogFormatIso(new Date());
   }
+}
+
+/** POL-COST client counters — programmed edits by Israel sessionDate + monthly units. */
+var PPROG_COST_DAILY_CAP = 2;
+var PPROG_COST_MONTHLY_CAP = 40;
+var PPROG_COST_UNITS = {
+  brick_fill: 8,
+  week_fill: 1,
+  large_rebuild: 5,
+  programmed_edit: 2,
+  soft_upgrade: 4,
+  chat: 1,
+};
+
+function pprogEnsureCostCaps(store) {
+  if (!store.costCaps || typeof store.costCaps !== "object") {
+    store.costCaps = {
+      dailyEdits: {},
+      monthlyUnits: {},
+      lastLargeRebuildAt: null,
+      softUpgradeBrickStart: null,
+    };
+  }
+  if (!store.costCaps.dailyEdits || typeof store.costCaps.dailyEdits !== "object") {
+    store.costCaps.dailyEdits = {};
+  }
+  if (!store.costCaps.monthlyUnits || typeof store.costCaps.monthlyUnits !== "object") {
+    store.costCaps.monthlyUnits = {};
+  }
+  return store.costCaps;
+}
+
+function pprogIsraelMonthKey(iso) {
+  return String(iso || pprogIsraelTodayIso()).slice(0, 7);
+}
+
+/** Calendar ISO (Israel brick) for a training day — POL-COST-003 sessionDate. */
+function pprogSessionDateForDay(dayKey, weekIndex0, store) {
+  store = store || loadPprogStore();
+  var day = normalizePprogDayKey(dayKey) || dayKey;
+  var di = PPROG_DAY_KEYS.indexOf(day);
+  var wi =
+    typeof weekIndex0 === "number" && isFinite(weekIndex0)
+      ? weekIndex0 | 0
+      : store.activeWeekIndex | 0;
+  var block = store.currentBlock;
+  if (block && block.blockStart && di >= 0) {
+    return pprogAddDaysIso(block.blockStart, wi * 7 + di);
+  }
+  var ws =
+    (store.currentWeek && store.currentWeek.weekStart) ||
+    sundayOfThisWeekIsrael();
+  if (di >= 0) return pprogAddDaysIso(ws, di);
+  return pprogIsraelTodayIso();
+}
+
+function pprogTrimDailyEditsMap(map) {
+  var out = {};
+  var keys = Object.keys(map || {});
+  keys.sort();
+  var start = Math.max(0, keys.length - 21);
+  for (var i = start; i < keys.length; i++) {
+    out[keys[i]] = map[keys[i]] | 0;
+  }
+  return out;
+}
+
+function pprogAddIsraelDays(iso, delta) {
+  try {
+    var p = String(iso || "").slice(0, 10).split("-");
+    var dt = new Date(Date.UTC(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10)));
+    dt.setUTCDate(dt.getUTCDate() + (delta | 0));
+    return dt.toISOString().slice(0, 10);
+  } catch (e) {
+    return String(iso || "").slice(0, 10);
+  }
+}
+
+function pprogIsraelDaysBetween(a, b) {
+  try {
+    var pa = String(a || "").slice(0, 10).split("-");
+    var pb = String(b || "").slice(0, 10).split("-");
+    var da = Date.UTC(parseInt(pa[0], 10), parseInt(pa[1], 10) - 1, parseInt(pa[2], 10));
+    var db = Date.UTC(parseInt(pb[0], 10), parseInt(pb[1], 10) - 1, parseInt(pb[2], 10));
+    return Math.round((db - da) / 86400000);
+  } catch (e) {
+    return 999;
+  }
+}
+
+function pprogCostCapsPayload(store, opts) {
+  var s = store || loadPprogStore();
+  var caps = pprogEnsureCostCaps(s);
+  var today = pprogIsraelTodayIso();
+  var sessionDate = String((opts && opts.sessionDate) || "").slice(0, 10) || today;
+  var dailyForSession = caps.dailyEdits[sessionDate] | 0;
+  var dailyToday = caps.dailyEdits[today] | 0;
+  var lastLarge = caps.lastLargeRebuildAt ? String(caps.lastLargeRebuildAt).slice(0, 10) : "";
+  var daysSinceLarge = lastLarge ? pprogIsraelDaysBetween(lastLarge, today) : 999;
+  var largeLocked = !!(lastLarge && daysSinceLarge >= 0 && daysSinceLarge < 7);
+  var blockStart =
+    (s.currentBlock && s.currentBlock.blockStart) ||
+    (s.currentWeek && s.currentWeek.weekStart) ||
+    "";
+  var softUsed = !!(caps.softUpgradeBrickStart && blockStart && caps.softUpgradeBrickStart === blockStart);
+  var monthKey = pprogIsraelMonthKey(today);
+  var monthlyUsed = caps.monthlyUnits[monthKey] | 0;
+  return {
+    israelToday: today,
+    sessionDate: sessionDate,
+    dailyEdits: pprogTrimDailyEditsMap(caps.dailyEdits),
+    dailyEditsToday: dailyToday,
+    dailyEditsForSession: dailyForSession,
+    dailyCap: PPROG_COST_DAILY_CAP,
+    dailyLocked: dailyForSession >= PPROG_COST_DAILY_CAP,
+    lastLargeRebuildAt: lastLarge || null,
+    largeRebuildLocked: largeLocked,
+    largeRebuildUnlockOn: largeLocked ? pprogAddIsraelDays(lastLarge, 7) : null,
+    softUpgradeUsedForBrick: softUsed,
+    softUpgradeCapPerBrick: 1,
+    brickStart: blockStart || null,
+    monthlyKey: monthKey,
+    monthlyUnitsUsed: monthlyUsed,
+    monthlyCap: PPROG_COST_MONTHLY_CAP,
+    monthlyLocked: monthlyUsed >= PPROG_COST_MONTHLY_CAP,
+  };
+}
+
+function pprogRecordMonthlyUnits(units, storeOpt) {
+  try {
+    var store = storeOpt || loadPprogStore();
+    var caps = pprogEnsureCostCaps(store);
+    var monthKey = pprogIsraelMonthKey(pprogIsraelTodayIso());
+    var add = Math.max(0, units | 0);
+    if (!add) return;
+    caps.monthlyUnits[monthKey] = (caps.monthlyUnits[monthKey] | 0) + add;
+    var mKeys = Object.keys(caps.monthlyUnits);
+    if (mKeys.length > 6) {
+      mKeys.sort();
+      for (var i = 0; i < mKeys.length - 4; i++) delete caps.monthlyUnits[mKeys[i]];
+    }
+    store.costCaps = caps;
+    if (!storeOpt) savePprogStore(store);
+  } catch (eMu) {}
+}
+
+/**
+ * Record an applied programmed edit / rebuild.
+ * opts.sessionDate — Israel ISO of the training day (required for day/part).
+ */
+function pprogRecordProgrammedEdit(kind, opts) {
+  try {
+    opts = opts || {};
+    var store = loadPprogStore();
+    var caps = pprogEnsureCostCaps(store);
+    var today = pprogIsraelTodayIso();
+    var sessionDate = String(opts.sessionDate || "").slice(0, 10) || today;
+
+    if (kind === "day" || kind === "part" || kind === "week") {
+      caps.dailyEdits[sessionDate] = (caps.dailyEdits[sessionDate] | 0) + 1;
+      pprogRecordMonthlyUnits(PPROG_COST_UNITS.programmed_edit, store);
+    } else if (kind === "large_rebuild") {
+      caps.dailyEdits[today] = (caps.dailyEdits[today] | 0) + 1;
+      caps.lastLargeRebuildAt = today;
+      pprogRecordMonthlyUnits(PPROG_COST_UNITS.large_rebuild, store);
+    } else if (kind === "soft_upgrade") {
+      /* Soft Upgrade round — not a Large Rebuild; scan alone does not use daily edit slots.
+         Applied patches should call kind "day"/"part" separately. */
+      caps.softUpgradeBrickStart =
+        (store.currentBlock && store.currentBlock.blockStart) ||
+        (store.currentWeek && store.currentWeek.weekStart) ||
+        today;
+      pprogRecordMonthlyUnits(PPROG_COST_UNITS.soft_upgrade, store);
+    } else if (kind === "brick_fill") {
+      pprogRecordMonthlyUnits(PPROG_COST_UNITS.brick_fill, store);
+    } else if (kind === "week_fill") {
+      pprogRecordMonthlyUnits(PPROG_COST_UNITS.week_fill, store);
+    }
+
+    var keys = Object.keys(caps.dailyEdits);
+    if (keys.length > 21) {
+      keys.sort();
+      for (var i = 0; i < keys.length - 14; i++) delete caps.dailyEdits[keys[i]];
+    }
+    store.costCaps = caps;
+    savePprogStore(store);
+  } catch (eCost) {}
+}
+
+function pprogCostCapClientBlockMessage(caps) {
+  if (!caps) return "";
+  if (caps.monthlyLocked) {
+    return "Monthly programming envelope reached. Plan stays visible — safety/technique via coach chat only until next month.";
+  }
+  if (caps.dailyLocked) {
+    return (
+      "This training day (" +
+      String(caps.sessionDate || "").slice(0, 10) +
+      ") is locked after 2 programmed edits. I can save a preference for later. Safety/technique → coach chat."
+    );
+  }
+  return "";
 }
 
 function pprogIsraelNowParts() {
@@ -6202,6 +6454,7 @@ function requestPprogWeek(retryCount, opts) {
           autoNextBlock: !!opts.autoNextBlock,
           preserveIntake: !!opts.autoNextBlock,
         });
+        pprogRecordProgrammedEdit("brick_fill");
         setPprogStatus("ok", "<strong>Coach</strong> — block ready");
       } else if (week) {
         var sWk = loadPprogStore();
@@ -6209,6 +6462,7 @@ function requestPprogWeek(retryCount, opts) {
         sWk.lastBlockBuildError = "";
         savePprogStore(sWk);
         applyPprogWeek(week, j.text);
+        pprogRecordProgrammedEdit("brick_fill");
         setPprogStatus("ok", "<strong>Coach</strong> — week 1 ready (filling remaining weeks…)");
       } else if (j.earlyBlockDenied) {
         if (opts.autoNextBlock && store.currentBlock && store.currentBlock.blockStart) {
@@ -6459,6 +6713,7 @@ function requestPprogWeekDetail(weekIndex0, fromQueue) {
           if (weekHasDetailedDays(nextW)) {
             delete pprogFillErrors[wi];
             delete pprogFillAttempts[wi];
+            pprogRecordProgrammedEdit("week_fill");
           } else {
             pprogFillErrors[wi] =
               "Week " +
@@ -6612,6 +6867,19 @@ function submitPprogDayPreTalk(dayKey) {
   var store = loadPprogStore();
   var week = store.currentWeek;
   if (!week || !week.days || !week.days[dayKey]) return;
+  var sessionDate = pprogSessionDateForDay(dayKey, store.activeWeekIndex | 0, store);
+  var capsCheck = pprogCostCapsPayload(store, { sessionDate: sessionDate });
+  var capMsg = pprogCostCapClientBlockMessage(capsCheck);
+  if (capMsg) {
+    var lockEl = document.getElementById("pprog-day-reply-" + dayKey);
+    if (lockEl) {
+      lockEl.style.display = "block";
+      lockEl.textContent = capMsg;
+    }
+    addPprogCoachPref("session " + dayKey + " (capped): " + text);
+    savePprogDayField(dayKey, "preTalk", "");
+    return;
+  }
   savePprogDayField(dayKey, "preTalk", text);
   addPprogCoachPref("session " + dayKey + ": " + text);
   var dayData = week.days[dayKey];
@@ -6631,9 +6899,15 @@ function submitPprogDayPreTalk(dayKey) {
       body: JSON.stringify({
         action: "revise_day",
         day: dayKey,
+        sessionDate: sessionDate,
+        israelToday: pprogIsraelTodayIso(),
         feedback: text,
         currentParts: dayData.parts || [],
-        athleteProfile: athleteProfilePayload({ forceIntakeComplete: true, omitChat: true }),
+        athleteProfile: athleteProfilePayload({
+          forceIntakeComplete: true,
+          omitChat: true,
+          sessionDate: sessionDate,
+        }),
         messages: [],
       }),
     },
@@ -6654,6 +6928,7 @@ function submitPprogDayPreTalk(dayKey) {
       }
       if (revised) {
         applyPprogDayRevision(dayKey, revised);
+        pprogRecordProgrammedEdit("day", { sessionDate: sessionDate });
         try {
           var revisedKinds = revised && revised.parts ? detectModifiedPartKinds(dayData.parts || [], revised.parts || []) : {};
           sendAnalytics("personal_coach_workout_changed", {
@@ -6776,6 +7051,19 @@ function submitPprogWeekPreTalk() {
   var store = loadPprogStore();
   var week = store.currentWeek;
   if (!week) return;
+  var todayIso = pprogIsraelTodayIso();
+  var capsCheck = pprogCostCapsPayload(store, { sessionDate: todayIso });
+  var capMsg = pprogCostCapClientBlockMessage(capsCheck);
+  if (capMsg) {
+    var lockWeekEl = document.getElementById("pprog-week-reply");
+    if (lockWeekEl) {
+      lockWeekEl.style.display = "block";
+      lockWeekEl.textContent = capMsg;
+    }
+    addPprogCoachPref("week notes (capped): " + text);
+    savePprogWeekTalk("");
+    return;
+  }
   savePprogWeekTalk(text);
   var base = getApiBase();
   if (!base) return;
@@ -6808,7 +7096,8 @@ function submitPprogWeekPreTalk() {
         action: "revise_week",
         feedback: text,
         weekIndex: (store.activeWeekIndex | 0) + 1,
-        israelToday: pprogIsraelTodayIso(),
+        israelToday: todayIso,
+        sessionDate: todayIso,
         intakeBaseline: buildPprogIntakeBaseline(store),
         currentWeek: {
           weekIndex: week.weekIndex,
@@ -6818,7 +7107,11 @@ function submitPprogWeekPreTalk() {
           overview: week.overview || [],
           days: daysSlim,
         },
-        athleteProfile: athleteProfilePayload({ forceIntakeComplete: true, omitChat: true }),
+        athleteProfile: athleteProfilePayload({
+          forceIntakeComplete: true,
+          omitChat: true,
+          sessionDate: todayIso,
+        }),
         messages: [],
       }),
     },
@@ -6837,6 +7130,7 @@ function submitPprogWeekPreTalk() {
       if (revised) {
         pprogApplyStandingIntakeNote(text);
         applyPprogWeekRevision(revised, { noteText: text });
+        pprogRecordProgrammedEdit("week", { sessionDate: todayIso });
         addPprogCoachPref("week notes: " + text);
         try {
           sendAnalytics("personal_coach_workout_changed", {

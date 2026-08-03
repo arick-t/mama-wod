@@ -290,6 +290,86 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - **Added:** 2026-08-01 — user: adaptations must re-check intake; don’t reshuffle Rest days
 - **Updated:** 2026-08-01 — applies to all intake sections, not only schedule/rest
 
+### POL-COST-001 — Surgical default
+- **Type:** HARD
+- **Scope:** chat + revise_* / mid-brick plan changes
+- **Trigger:** any request that could change the plan
+- **Required behavior:** Default to day/part **surgical** edits. **Never** silent full regenerate from chat.
+- **Added:** 2026-08-03 — cost guardrails with budget agent
+
+### POL-COST-002 — Programmed edit definition
+- **Type:** HARD
+- **Scope:** cost caps / edit counting
+- **Trigger:** deciding whether a turn counts toward Daily / Large / Soft caps
+- **Required behavior:** A **programmed edit** is only an applied `generate_*` / `revise_*` (or emitted BLOCK/WEEK/DAY/PART JSON that changes the plan). Technique Qs, safety/pain, Confirm-only turns, future notes, and “Already updated” **do not** count.
+- **Added:** 2026-08-03 — cost guardrails
+
+### POL-COST-003 — Daily edit cap
+- **Type:** HARD
+- **Scope:** revise_day / day-session programmed changes
+- **Trigger:** athlete requests another programmed change to a training day
+- **Required behavior:** Max **2** programmed edits per Israel `sessionDate` of the **training day** (calendar date of that workout in the brick — not merely “today when asked”). After the cap: notes/preferences only — **no** new programming JSON. **Server hard-blocks** `revise_day` / `revise_part` (and capped `revise_week`) after the cap — prompt tone alone is not enough. Soft lock reply (English, short): this session is locked after 2 edits; can save a preference for tomorrow/next week. Safety/technique questions may continue via **chat** without JSON.
+- **Added:** 2026-08-03 — cost guardrails
+- **Updated:** 2026-08-03 — sessionDate accounting + server hard-block (budget path B)
+
+### POL-COST-004 — Large rebuild gate
+- **Type:** HARD
+- **Scope:** brick chat / revise_week / mid-brick regenerate pressure
+- **Trigger:** request would rewrite a full week, 3+ training days at once, or a new brick mid-brick (“start over…”)
+- **Required behavior:**
+  1. Do **not** run rebuild immediately.
+  2. Offer **A)** surgical edits (recommended) or **B)** one large rebuild of **remaining days only**.
+  3. Run **B** only after explicit choice of B.
+  4. Max **one B per rolling 7 Israel calendar days**.
+  5. Past days stay locked (**POL-023**).
+  6. Confirm? for A/B = **one short sentence** that includes A/B in the same line (**POL-022** style).
+- **Forbidden:** silent full regenerate from chat; `generate_block` as a reply to a note; touching past days.
+- **Added:** 2026-08-03 — cost guardrails
+
+### POL-COST-005 — Soft Upgrade
+- **Type:** HARD
+- **Scope:** requests to “upgrade to the new coach / review my whole plan” after a brain bump
+- **Trigger:** athlete asks to refresh an existing brick because the coach improved
+- **Required behavior:** Soft Upgrade only: scan remaining days (active week ± next) → propose **≤3 patches** + Confirm? → `revise_day` / part surgical only. Max **one Soft Upgrade per brick**. Does **not** count as Large Rebuild unless the athlete explicitly chooses B / scope becomes week-wide. Soft Upgrade **scan** without applied patches does **not** count as a programmed edit.
+- **Forbidden:** auto-rebuild because `COACH_VERSION` changed (**POL-COST-006**).
+- **Added:** 2026-08-03 — cost guardrails
+
+### POL-COST-006 — No auto-rebuild on coach version bump
+- **Type:** HARD
+- **Scope:** global / brick lifecycle
+- **Trigger:** `COACH_VERSION` / brain update
+- **Required behavior:** A coach version update **never by itself** regenerates an existing brick.
+- **Added:** 2026-08-03 — cost guardrails
+
+### POL-COST-007 — After caps
+- **Type:** HARD
+- **Scope:** when Daily / Large / Soft / Monthly caps are hit
+- **Trigger:** further rewrite demand while capped
+- **Required behavior:** Acknowledge briefly, save preference if useful, **refuse programming JSON**, suggest the next-window surgical edit. English, short, no long apology. **Code hard-blocks** `generate_*` / `revise_*` after Daily/Large/Soft/Monthly caps (chat/safety remains).
+- **Added:** 2026-08-03 — cost guardrails
+- **Updated:** 2026-08-03 — server hard-block + monthly
+
+### POL-COST-008 — Cost priority
+- **Type:** HARD
+- **Scope:** conflict resolution with athlete rewrite spam
+- **Trigger:** cost caps vs repeated “rewrite everything” demand
+- **Required behavior:** Safety → Intake Rest/schedule/equipment → HARD policy/**cost caps** → Layer 1 → Layer 2 → source-pattern flavor. **Cost caps override** repeated rewrite demand.
+- **Added:** 2026-08-03 — cost guardrails
+
+### POL-COST-009 — Cost non-regressions
+- **Type:** HARD
+- **Scope:** infrastructure / routing / prompt injection scope
+- **Trigger:** any change sold as “saving money” or “faster”
+- **Required behavior:** No flash-lite/Groq for `generate_*` / `revise_*`. No eager 5-week fill. No default day-by-day cascade. No Layer 2 ops blob in daily chat / Confirm?
+- **Added:** 2026-08-03 — cost guardrails
+
+### POL-COST-010 — Monthly envelope (≈ ₪5)
+- **Type:** HARD
+- **Scope:** all Personal Coach programming spend in an Israel calendar month
+- **Trigger:** cumulative unit usage approaches / hits the monthly ceiling
+- **Required behavior:** Track a simple **unit budget** per Israel month (approx product envelope ≈ ₪5). Suggested units: brick/week fill **8**; large rebuild (B) **5**; programmed edit **2**; Soft Upgrade round **4**; chat message **1**. Example ceiling **40** units/month. At **100%**: plan stays visible + safety/technique via chat only — **no** new `generate_*` / `revise_*` (server hard-block). Does **not** authorize stripping POL-016 / POL-018 / Foundation / Layer 2 quality.
+- **Added:** 2026-08-03 — budget path B (same PR as sessionDate + hard-block)
+
 ---
 
 
@@ -297,6 +377,8 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - Prefer few **HARD** rules; put preferences in **SOFT**.
 - When a rule conflicts with athlete memory/prefs, athlete safety + explicit athlete requests win, then HARD policy, then SOFT, then Drive knowledge.
 - **POL-020 wins over latency / quota / deploy convenience** for programming paths.
+- **POL-COST-*** caps limit *repeat regenerations*; they do not authorize stripping POL-016 / POL-018 / Foundation / Layer 2 quality.
+- Chat gets **one** COST compact reminder only — do not duplicate POL-COST one-liners in language rules; full POL-COST text stays in this policy file.
 - **POL-021** defines how Drive / digests are applied; it does not weaken POL-018 / POL-016.
 - **POL-024** maps whole-brick notes onto intake sections, then adapts only that section while freezing the rest; pairs with POL-003 / POL-022 / POL-023.
 - Do not dump this whole file into athlete-visible chat.
