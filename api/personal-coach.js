@@ -1625,7 +1625,9 @@ module.exports = async function handler(req, res) {
     }
     systemText +=
       "\n\nBRICK / WHOLE-PROGRAM CHAT (POL-022 + POL-023 + POL-024 — HARD):\n" +
-      "Athlete is messaging about the FULL training brick / standing preferences — not a single session box.\n" +
+      "Athlete opened the floating whole-program coach chat. Treat this as GENERAL / CROSS-CUTTING: " +
+      "the FULL training brick, standing preferences, schedule, equipment, goals, injuries, or other brick-wide topics — " +
+      "NOT a single-session note. (Session-specific talk uses the dedicated box under that day's workout.)\n" +
       "Israel today (HARD freeze boundary): " +
       todayIso +
       ".\n" +
