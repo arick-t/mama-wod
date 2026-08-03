@@ -46,6 +46,8 @@ experiments/personal-coach/.sync-manifest.json
 
 # Admin dashboard athlete snapshots (local / server files)
 data/admin-snapshots/
+data/admin-meta.json
+data/admin-meta-sync.json
 
 coach-digest-report.txt
 data/admin-claims/

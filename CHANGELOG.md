@@ -1,6 +1,7 @@
 ## 21.3.0
 
 - Founder admin dashboard (`/admin.html`): athlete management, one-time handoff links, coach learning notes toggle, production-style intake for new athletes.
+- Admin **management landing** (דף ניהול): credit balance field + **סנכרן** Drive→File Search sync (same as `npm run coach:sync-brain`).
 
 # Changelog
 

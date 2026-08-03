@@ -45,6 +45,12 @@
     },
     "api/admin-handoff.js": {
       "maxDuration": 15
+    },
+    "api/admin-meta.js": {
+      "maxDuration": 10
+    },
+    "api/admin-drive-sync.js": {
+      "maxDuration": 300
     }
   }
 }
