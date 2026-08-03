@@ -12,10 +12,15 @@
 const fs = require("fs");
 const path = require("path");
 const { checkRateLimit, sendRateLimit } = require("../../../api/rate-limit");
+const {
+  resolveAdminPassword,
+  checkAdminAuth: sharedCheckAdminAuth,
+  adminAuthDenied,
+} = require("./admin-auth");
 
 const SNAPSHOTS_DIR = path.join(process.cwd(), "data", "admin-snapshots");
 const MAX_SNAPSHOT_BYTES = 64 * 1024; // 64 KB per athlete
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
+const ADMIN_PASSWORD = resolveAdminPassword();
 
 function ensureDir() {
   if (!fs.existsSync(SNAPSHOTS_DIR)) {
@@ -69,31 +74,7 @@ function listSnapshots() {
 }
 
 function checkAdminAuth(req) {
-  if (!ADMIN_PASSWORD) return false; // no password configured = deny all
-  const headers = req.headers || {};
-  const q = req.query || {};
-  const body = req.body || {};
-  const auth =
-    headers["x-admin-password"] ||
-    headers["x-admin-token"] ||
-    q.adminPassword ||
-    q.pw ||
-    body.adminPassword ||
-    body.password ||
-    "";
-  return String(auth) === ADMIN_PASSWORD;
-}
-
-function adminAuthDenied(res) {
-  if (!ADMIN_PASSWORD) {
-    return res.status(503).json({
-      ok: false,
-      error: "admin_not_configured",
-      message:
-        "ADMIN_PASSWORD is not set on the server. Add it in Vercel → Settings → Environment Variables, then Redeploy.",
-    });
-  }
-  return res.status(401).json({ error: "Unauthorized" });
+  return sharedCheckAdminAuth(req, ADMIN_PASSWORD);
 }
 
 module.exports = async function handler(req, res) {

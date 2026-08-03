@@ -11,28 +11,20 @@ const fs = require("fs");
 const path = require("path");
 const { checkRateLimit, sendRateLimit } = require("../../../api/rate-limit");
 const { readLastSync, knowledgeDir, resolveStoreName } = require("../coach-brain-sync");
+const {
+  resolveAdminPassword,
+  checkAdminAuth: sharedCheckAdminAuth,
+} = require("./admin-auth");
 
 const META_PATH = path.join(process.cwd(), "data", "admin-meta.json");
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
+const ADMIN_PASSWORD = resolveAdminPassword();
 const DRIVE_FOLDER_URL =
   process.env.COACH_DRIVE_FOLDER_URL ||
   "https://drive.google.com/drive/u/0/folders/1WLMbabNpXZ80qJPwgrxAY2I77CdTboAo";
 const BILLING_URL = "https://aistudio.google.com/billing";
 
 function checkAdminAuth(req) {
-  if (!ADMIN_PASSWORD) return false;
-  const headers = req.headers || {};
-  const q = req.query || {};
-  const body = req.body || {};
-  const auth =
-    headers["x-admin-password"] ||
-    headers["x-admin-token"] ||
-    q.adminPassword ||
-    q.pw ||
-    body.adminPassword ||
-    body.password ||
-    "";
-  return String(auth) === ADMIN_PASSWORD;
+  return sharedCheckAdminAuth(req, ADMIN_PASSWORD);
 }
 
 function readMeta() {

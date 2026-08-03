@@ -11,13 +11,17 @@
 const fs = require("fs");
 const path = require("path");
 const { checkRateLimit, sendRateLimit } = require("../../../api/rate-limit");
+const {
+  resolveAdminPassword,
+  checkAdminAuth: sharedCheckAdminAuth,
+} = require("./admin-auth");
 
 const ROOT = path.join(process.cwd(), "data", "coach-training");
 const SESSIONS_DIR = path.join(ROOT, "sessions");
 const WAREHOUSE_DIR = path.join(ROOT, "warehouse");
 const PENDING_FILE = path.join(ROOT, "pending-notes.jsonl");
 const IMPLEMENTED_FILE = path.join(ROOT, "implemented-notes.jsonl");
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
+const ADMIN_PASSWORD = resolveAdminPassword();
 const MAX_IMAGE_CHARS = 6_000_000; // ~4.5MB base64
 
 function ensureDirs() {
@@ -29,19 +33,7 @@ function ensureDirs() {
 }
 
 function checkAdminAuth(req) {
-  if (!ADMIN_PASSWORD) return false;
-  const headers = req.headers || {};
-  const q = req.query || {};
-  const body = req.body || {};
-  const auth =
-    headers["x-admin-password"] ||
-    headers["x-admin-token"] ||
-    q.adminPassword ||
-    q.pw ||
-    body.adminPassword ||
-    body.password ||
-    "";
-  return String(auth) === ADMIN_PASSWORD;
+  return sharedCheckAdminAuth(req, ADMIN_PASSWORD);
 }
 
 function uid(prefix) {

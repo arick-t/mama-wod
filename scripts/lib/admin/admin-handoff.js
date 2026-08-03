@@ -13,10 +13,14 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const { checkRateLimit, sendRateLimit } = require("../../../api/rate-limit");
+const {
+  resolveAdminPassword,
+  checkAdminAuth: sharedCheckAdminAuth,
+} = require("./admin-auth");
 
 const SNAPSHOTS_DIR = path.join(process.cwd(), "data", "admin-snapshots");
 const CLAIMS_DIR = path.join(process.cwd(), "data", "admin-claims");
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
+const ADMIN_PASSWORD = resolveAdminPassword();
 const MAX_PACKAGE_BYTES = 256 * 1024;
 const CLAIM_TTL_MS = 14 * 24 * 60 * 60 * 1000; // 14 days
 
@@ -26,26 +30,14 @@ function ensureDirs() {
   });
 }
 
+function checkAdminAuth(req) {
+  return sharedCheckAdminAuth(req, ADMIN_PASSWORD);
+}
+
 function safeId(raw) {
   return String(raw || "")
     .replace(/[^a-zA-Z0-9_\-]/g, "")
     .slice(0, 80);
-}
-
-function checkAdminAuth(req) {
-  if (!ADMIN_PASSWORD) return false;
-  const headers = req.headers || {};
-  const q = req.query || {};
-  const body = req.body || {};
-  const auth =
-    headers["x-admin-password"] ||
-    headers["x-admin-token"] ||
-    q.adminPassword ||
-    q.pw ||
-    body.adminPassword ||
-    body.password ||
-    "";
-  return String(auth) === ADMIN_PASSWORD;
 }
 
 function readSnap(athleteId) {

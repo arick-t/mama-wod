@@ -10,23 +10,15 @@
 
 const { checkRateLimit, sendRateLimit } = require("../../../api/rate-limit");
 const { runCoachBrainSync, readLastSync } = require("../coach-brain-sync");
+const {
+  resolveAdminPassword,
+  checkAdminAuth: sharedCheckAdminAuth,
+} = require("./admin-auth");
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
+const ADMIN_PASSWORD = resolveAdminPassword();
 
 function checkAdminAuth(req) {
-  if (!ADMIN_PASSWORD) return false;
-  const headers = req.headers || {};
-  const q = req.query || {};
-  const body = req.body || {};
-  const auth =
-    headers["x-admin-password"] ||
-    headers["x-admin-token"] ||
-    q.adminPassword ||
-    q.pw ||
-    body.adminPassword ||
-    body.password ||
-    "";
-  return String(auth) === ADMIN_PASSWORD;
+  return sharedCheckAdminAuth(req, ADMIN_PASSWORD);
 }
 
 module.exports = async function handler(req, res) {
