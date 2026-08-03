@@ -12,7 +12,7 @@
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
-const { checkRateLimit, sendRateLimit } = require("./rate-limit");
+const { checkRateLimit, sendRateLimit } = require("../../../api/rate-limit");
 
 const SNAPSHOTS_DIR = path.join(process.cwd(), "data", "admin-snapshots");
 const CLAIMS_DIR = path.join(process.cwd(), "data", "admin-claims");

@@ -25,12 +25,13 @@ const COACH_FOUNDATION_BRIEF = require("./coach-foundation-brief.js");
 const COACH_PATTERN_BRIEF = COACH_FOUNDATION_BRIEF;
 const { checkRateLimit, sendRateLimit } = require("./rate-limit.js");
 const { scrubMessages, scrubProfile, scrubPiiText } = require("./sanitize-pii.js");
-/* Admin dashboard is on a separate branch — optional until merged */
+/* Admin dashboard — optional coach directives from admin snapshots */
 let getCoachDirectives = function () {
   return "";
 };
 try {
-  getCoachDirectives = require("./admin-snapshot.js").getCoachDirectives || getCoachDirectives;
+  getCoachDirectives =
+    require("../scripts/lib/admin/admin-snapshot.js").getCoachDirectives || getCoachDirectives;
 } catch (e) {}
 
 /** Athlete-facing line when they ask for the next block/month too early (POL-008). */

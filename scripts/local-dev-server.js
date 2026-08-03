@@ -155,7 +155,8 @@ const server = http.createServer((req, res) => {
     pathname === "/api/admin-coach-sandbox" ||
     pathname === "/api/admin-handoff" ||
     pathname === "/api/admin-meta" ||
-    pathname === "/api/admin-drive-sync"
+    pathname === "/api/admin-drive-sync" ||
+    pathname === "/api/admin"
   ) {
     if (req.method === "OPTIONS") {
       res.setHeader("Access-Control-Allow-Origin", "*");
@@ -169,14 +170,16 @@ const server = http.createServer((req, res) => {
     }
     const apiRel =
       pathname === "/api/admin-coach-sandbox"
-        ? "api/admin-coach-sandbox.js"
+        ? "scripts/lib/admin/admin-coach-sandbox.js"
         : pathname === "/api/admin-handoff"
-        ? "api/admin-handoff.js"
+        ? "scripts/lib/admin/admin-handoff.js"
         : pathname === "/api/admin-meta"
-        ? "api/admin-meta.js"
+        ? "scripts/lib/admin/admin-meta.js"
         : pathname === "/api/admin-drive-sync"
-        ? "api/admin-drive-sync.js"
-        : "api/admin-snapshot.js";
+        ? "scripts/lib/admin/admin-drive-sync.js"
+        : pathname === "/api/admin"
+        ? "api/admin.js"
+        : "scripts/lib/admin/admin-snapshot.js";
     const runAdmin = async (body) => {
       const fakeReq = {
         method: req.method,

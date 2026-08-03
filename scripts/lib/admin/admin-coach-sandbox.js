@@ -10,7 +10,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const { checkRateLimit, sendRateLimit } = require("./rate-limit");
+const { checkRateLimit, sendRateLimit } = require("../../../api/rate-limit");
 
 const ROOT = path.join(process.cwd(), "data", "coach-training");
 const SESSIONS_DIR = path.join(ROOT, "sessions");

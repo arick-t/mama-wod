@@ -11,7 +11,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const { checkRateLimit, sendRateLimit } = require("./rate-limit");
+const { checkRateLimit, sendRateLimit } = require("../../../api/rate-limit");
 
 const SNAPSHOTS_DIR = path.join(process.cwd(), "data", "admin-snapshots");
 const MAX_SNAPSHOT_BYTES = 64 * 1024; // 64 KB per athlete

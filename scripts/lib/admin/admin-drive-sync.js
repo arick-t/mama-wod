@@ -8,8 +8,8 @@
  * (COACH_KNOWLEDGE_DIR or experiments/personal-coach/knowledge-inbox).
  */
 
-const { checkRateLimit, sendRateLimit } = require("./rate-limit");
-const { runCoachBrainSync, readLastSync } = require("../scripts/lib/coach-brain-sync");
+const { checkRateLimit, sendRateLimit } = require("../../../api/rate-limit");
+const { runCoachBrainSync, readLastSync } = require("../coach-brain-sync");
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
 
