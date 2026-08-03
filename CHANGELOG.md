@@ -3,6 +3,7 @@
 ## [21.3.2] - 2026-08-03
 
 ### Coach 2.0 brain — Layer 1 retune + Layer 2 ops
+- **Live fix:** move Layer 2 brief to `lib/` (string module under `/api` broke Vercel Production).
 - **Coach version: v2.0** (display app stays on current Pages line unless separately bumped).
 - Retuned **Layer 1** (L1+L2 Foundation) via NotebookLM distill + product-flex edits (intake/Rest/AR, 5-week brick, conflict order).
 - Ships **Layer 2 ops** on programming path only (`generate_*` / `revise_*`) — not daily chat.
