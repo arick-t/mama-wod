@@ -1,5 +1,14 @@
 # Changelog
 
+## [21.2.4] - 2026-08-03
+
+### Personal Coach: Finished workout check-in UI
+- **Display preview / WIP:** green **Done** (thumbs) button beside the day title on daily + monthly day cards.
+- Popup check-in: Just right / Too hard / Too easy / Other (Other requires a written note for the coach).
+- Saves local `finishFeedback` on the day for now; coach-learning link TBD.
+
+---
+
 ## [21.3.2] - 2026-08-03
 
 ### Coach 2.0 brain — Layer 1 retune + Layer 2 ops
