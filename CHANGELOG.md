@@ -1,12 +1,23 @@
 # Changelog
 
-## [21.3.1] - 2026-08-03
+## [21.3.2] - 2026-08-03
 
-### Coach brain: Layer 2 programming ops
-- Add **Layer 2 ops** distill (elite-stimulus protocol) from Theoretical Template / Balanced Programming / Scaling Part 2 / Set the Bar High.
-- Injected on **programming path only** (`generate_*` / `revise_*`) — not daily chat (credit control).
-- Product flex: intake calendar + Rest + 5-week brick beat rigid template day numbers; same-day strength+metcon allowed with interference management.
-- Files: `api/coach-layer2-ops-brief.js`, `living-knowledge/layer2-programming-ops.md`; POL-021 updated.
+### Coach 2.0 brain — Layer 1 retune + Layer 2 ops
+- **Coach version: v2.0** (display app stays on current Pages line unless separately bumped).
+- Retuned **Layer 1** (L1+L2 Foundation) via NotebookLM distill + product-flex edits (intake/Rest/AR, 5-week brick, conflict order).
+- Ships **Layer 2 ops** on programming path only (`generate_*` / `revise_*`) — not daily chat.
+- Rollback checkpoint: `experiments/personal-coach/checkpoints/2026-08-03-before-coach-2.0/`.
+
+---
+
+## [21.2.3] - 2026-08-03
+
+### Personal Coach calendar + floating whole-brick chat
+- **Display version: v21.2.3** (Coach was **v1.1** at ship; package/`VERSION` on the 21.3.0 Admin line — no downgrade).
+- Active recovery / daily-deload days use the same ringed calendar-cell style as deload weeks, in warm amber (not steel-blue).
+- Detection: overview focus (`Active recovery`, `Daily deload`, …), session text, or intake preferred AR weekday.
+- Deload calendar label follows the week the coach programmed from intake (any week, including W4). Ignore “before/into deload” copy and stale `phase: deload` when content is still full training. Preset fallback: week 5, unless another week is already the programmed deload. No separate AR tint on deload weeks.
+- Whole-brick coach chat moves to a floating FAB (coach avatar, above scroll-up). Per-day notes stay under each workout. First-time tip + clear labels: FAB = whole brick, green day box = this workout only.
 
 ---
 

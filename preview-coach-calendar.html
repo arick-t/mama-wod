@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DUCK-WOD · Calendar preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Oswald','Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:radial-gradient(1200px 600px at 20% -10%,#2a1a12 0%,#111 45%,#0d1110 100%);
+  color:#f0ece0;min-height:100vh;padding:20px 14px 40px;
+}
+.wrap{max-width:420px;margin:0 auto}
+.brand{font-size:1.6em;font-weight:900;letter-spacing:3px;
+  background:linear-gradient(90deg,#E8451A,#F5C518 50%,#1A9B8A);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sub{color:#aaa;font-size:.82em;margin:4px 0 16px}
+.note{color:#cfc7b6;font-size:.84em;line-height:1.45;margin:0 0 14px;padding:10px 12px;
+  border:1px dashed #5a4630;border-radius:10px;background:rgba(196,154,74,.08)}
+.legend{display:grid;gap:8px;margin:0 0 16px;font-size:.8em}
+.legend-row{display:flex;align-items:center;gap:10px}
+.swatch{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75em;font-weight:700}
+.swatch.wod{color:#1A9B8A}
+.swatch.ar{background:rgba(196,154,74,.22);color:#f5e6c0;box-shadow:inset 0 0 0 1.5px #c49a4a}
+.swatch.deload{background:rgba(90,140,190,.2);color:#d4e6f7;box-shadow:inset 0 0 0 1.5px #5a8cbe}
+.swatch.muted{color:#555}
+.swatch.active{background:#8e44ad;color:#fff}
+
+.pprog-cal{background:#181818;border:1px solid #333;border-radius:12px;padding:12px 10px 10px;margin:0 0 14px}
+.pprog-cal-head{display:flex;align-items:center;justify-content:center;gap:8px;margin:0 0 8px}
+.pprog-cal-nav{background:transparent;border:none;color:#aaa;font-size:1.35em;line-height:1;padding:4px 10px;font-family:inherit}
+.pprog-cal-month-btn{background:transparent;border:none;color:#e8e4d8;font-size:1.05em;font-weight:700;font-family:inherit;padding:4px 8px;letter-spacing:.02em}
+.pprog-cal-today-row{display:flex;justify-content:center;margin:0 0 10px}
+.pprog-cal-today{appearance:none;background:#F5C518;border:1px solid #F5C518;color:#111;font-size:.72em;font-weight:800;padding:6px 14px;border-radius:8px;font-family:inherit;line-height:1.2;min-height:34px;box-shadow:0 2px 10px rgba(245,197,24,.35)}
+.pprog-cal-dow,.pprog-cal-row{display:grid;grid-template-columns:minmax(48px,0.85fr) repeat(7,1fr);gap:2px;text-align:center;align-items:center}
+.pprog-cal-dow{margin-bottom:4px}
+.pprog-cal-dow span{color:#888;font-size:.68em;font-weight:600;padding:2px 0}
+.pprog-cal-cell{appearance:none;background:transparent;border:none;color:#ddd;font-size:.9em;font-weight:600;padding:6px 0;border-radius:50%;font-family:inherit;aspect-ratio:1;max-width:38px;margin:0 auto;display:flex;align-items:center;justify-content:center;width:100%}
+.pprog-cal-cell.muted{color:#555}
+.pprog-cal-cell.has-wod:not(.active){color:#1A9B8A}
+.pprog-cal-cell.deload-week:not(.active){background:rgba(90,140,190,.2);color:#c5daf0;box-shadow:inset 0 0 0 1.5px #5a8cbe}
+.pprog-cal-cell.deload-week.has-wod:not(.active){color:#d4e6f7}
+.pprog-cal-cell.deload-week.muted:not(.active){color:#6a8499;background:rgba(90,140,190,.1);box-shadow:inset 0 0 0 1px #6a8499}
+.pprog-cal-cell.active-recovery:not(.active){background:rgba(196,154,74,.22);color:#f0e2b8;box-shadow:inset 0 0 0 1.5px #c49a4a}
+.pprog-cal-cell.active-recovery.has-wod:not(.active){color:#f5e6c0}
+.pprog-cal-cell.active,.pprog-cal-cell.active.muted,.pprog-cal-cell.active.has-wod{background:#8e44ad;color:#fff}
+.pprog-cal-row.deload-week{background:rgba(90,140,190,.07);border-radius:10px;padding:2px 0}
+.pprog-cal-month-grid{display:flex;flex-direction:column;gap:2px}
+.pprog-cal-week-col{appearance:none;background:#252525;border:1px solid #3a3a3a;color:#ddd;font-size:.58em;font-weight:700;padding:4px 2px;border-radius:8px;font-family:inherit;line-height:1.2;min-height:36px;width:100%;max-width:56px;margin:0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.pprog-cal-week-col.deload-week{background:rgba(90,140,190,.24);border-color:#5a8cbe;color:#c5daf0}
+.pprog-cal-week-col.deload-week .pprog-cal-week-phase{color:#d4e6f7;opacity:1;font-weight:800}
+.pprog-cal-week-col .pprog-cal-week-num{font-size:1.05em;letter-spacing:.02em}
+.pprog-cal-week-col .pprog-cal-week-phase{font-size:.9em;font-weight:600;opacity:.85;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pprog-cal-block-hint{color:#666;font-size:.68em;text-align:center;margin-top:8px}
+.links{margin-top:18px;font-size:.82em;color:#aaa;line-height:1.5}
+.links a{color:#b06dcf}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">DUCK-WOD</div>
+  <div class="sub">Personal Coach · calendar style preview</div>
+  <p class="note">Static mock: Wednesdays = Active Recovery (amber) on build weeks only. A <strong>Deload</strong> week is all steel-blue — no separate AR day, because the whole week is already programmed lighter.</p>
+
+  <div class="legend">
+    <div class="legend-row"><span class="swatch wod">8</span><span>Training day (teal)</span></div>
+    <div class="legend-row"><span class="swatch ar">5</span><span>Active recovery (amber ring)</span></div>
+    <div class="legend-row"><span class="swatch deload">23</span><span>Deload week day (steel-blue)</span></div>
+    <div class="legend-row"><span class="swatch muted">2</span><span>Rest / outside program</span></div>
+    <div class="legend-row"><span class="swatch active">1</span><span>Selected day</span></div>
+  </div>
+
+  <div class="pprog-cal" aria-label="Training calendar preview">
+    <div class="pprog-cal-head">
+      <button type="button" class="pprog-cal-nav" aria-hidden="true">‹</button>
+      <button type="button" class="pprog-cal-month-btn">Jul – Aug 2026</button>
+      <button type="button" class="pprog-cal-nav" aria-hidden="true">›</button>
+    </div>
+    <div class="pprog-cal-today-row">
+      <button type="button" class="pprog-cal-today">Today</button>
+    </div>
+    <div class="pprog-cal-dow">
+      <span></span><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+    </div>
+    <div class="pprog-cal-month-grid" id="grid"></div>
+    <div class="pprog-cal-block-hint">Preview only · not your live brick</div>
+  </div>
+
+  <div class="links">
+    Local app: <a href="/">http://localhost:3000/</a><br>
+    This page: <a href="/preview-coach-calendar.html">/preview-coach-calendar.html</a>
+  </div>
+</div>
+<script>
+(function () {
+  var weeks = [
+    { label: "W1", phase: "Mid-Week", deload: false, start: 26, fromPrev: true },
+    { label: "W2", phase: "Full Box", deload: false, start: 2, fromPrev: false },
+    { label: "W3", phase: "Barbell", deload: false, start: 9, fromPrev: false },
+    { label: "W4", phase: "Peak", deload: false, start: 16, fromPrev: false },
+    { label: "W5", phase: "Deload", deload: true, start: 23, fromPrev: false },
+  ];
+  /* Day roles by column: 0 Sun … 3 Wed=AR … rest-ish Sat/Sun muted when no wod */
+  var trainCols = { 1: true, 2: true, 4: true, 5: true }; /* Mon Tue Thu Fri */
+  var arCol = 3; /* Wed */
+  var restCols = { 0: true, 6: true };
+
+  function cellClass(week, col, dayNum, isSelected) {
+    var cls = "pprog-cal-cell";
+    if (isSelected) cls += " active";
+    if (week.deload) {
+      if (restCols[col]) cls += " deload-week muted";
+      else cls += " deload-week has-wod";
+      return cls;
+    }
+    if (week.fromPrev && dayNum >= 26) {
+      cls += " muted";
+      return cls;
+    }
+    if (col === arCol) cls += " active-recovery has-wod";
+    else if (trainCols[col]) cls += " has-wod";
+    else cls += " muted";
+    return cls;
+  }
+
+  var html = "";
+  weeks.forEach(function (week, wi) {
+    html += '<div class="pprog-cal-row' + (week.deload ? " deload-week" : "") + '">';
+    html +=
+      '<button type="button" class="pprog-cal-week-col' +
+      (week.deload ? " deload-week" : "") +
+      '"><span class="pprog-cal-week-num">' +
+      week.label +
+      '</span><span class="pprog-cal-week-phase">' +
+      week.phase +
+      "</span></button>";
+    for (var col = 0; col < 7; col++) {
+      var dayNum = week.start + col;
+      if (!week.fromPrev && dayNum > 31) dayNum -= 31; /* not needed for this mock */
+      if (week.fromPrev) {
+        dayNum = week.start + col; /* 26..1 */
+        if (dayNum > 31) dayNum -= 31;
+      }
+      var isSelected = wi === 0 && col === 6; /* Aug 1 selected like screenshot */
+      if (week.fromPrev && col === 6) dayNum = 1;
+      if (week.fromPrev && col < 6) dayNum = 26 + col;
+      html +=
+        '<button type="button" class="' +
+        cellClass(week, col, dayNum, isSelected) +
+        '">' +
+        dayNum +
+        "</button>";
+    }
+    html += "</div>";
+  });
+  document.getElementById("grid").innerHTML = html;
+})();
+</script>
+</body>
+</html>
