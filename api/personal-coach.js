@@ -21,6 +21,7 @@ const COACH_VERSION = "1.1";
 const HAMAMEN_SYSTEM = require("./hamamen-prompt.js");
 const COACH_POLICY = require("./coach-policy.js");
 const COACH_FOUNDATION_BRIEF = require("./coach-foundation-brief.js");
+const COACH_LAYER2_OPS_BRIEF = require("./coach-layer2-ops-brief.js");
 /* Legacy alias — foundation brief supersedes pattern-only brief */
 const COACH_PATTERN_BRIEF = COACH_FOUNDATION_BRIEF;
 const { checkRateLimit, sendRateLimit } = require("./rate-limit.js");
@@ -476,8 +477,8 @@ const PROGRAMMING_SYSTEM_CORE =
   "Part lines hierarchy (POL-012): (1) Duration/Movement intent note, (2) format header ending with :, (3) prescription lines.\n" +
   "POL-016 (כלל תחקור משתמש): From intake baselines, silently build a detailed aero + anaerobic capability profile using strength ratio tables and aerobic conversion tables (run/row/ski/bike/cal); program to that profile — do not dump it in chat.\n" +
   "POL-018 (HARD): Be fluent in מאגר methods, injury prevention, and scales/alternatives. Default design = CrossFit L1+L2 foundation (constantly varied + applied coaching judgment) — do not drift into a repetitive specialty-only brick with no athlete focus. Skill/1RM/engine improvement requests are NORMAL and expected: when the athlete asks to improve something specific, you MUST use the מאגר to direct them precisely (progressions, volume, injury prevention, scales) and embed that focus in the week.\n" +
-  "POL-021 (HARD — knowledge pyramid): Base always = L1+L2 guides. Second floor = athlete inquiry (POL-016) + מאגר craft. Goal → seek method. Patterns inspire — never copy scraped/Hero/Open/Benchmark sessions.\n" +
-  "APPLY FOUNDATION BRIEF below on EVERY brick/week/day fill: L1 methodology + L2 application + מסמך דפוסי מקורות (source patterns).\n" +
+  "POL-021 (HARD — knowledge pyramid): Base always = L1+L2 guides. Layer-2 ops enrich programming (calendar/M-G-W/stimulus/scale). Second floor = athlete inquiry (POL-016) + מאגר craft. Goal → seek method. Patterns inspire — never copy scraped/Hero/Open/Benchmark sessions.\n" +
+  "APPLY FOUNDATION BRIEF + LAYER 2 OPS below on EVERY brick/week/day fill: L1 methodology + L2 application + Layer-2 ops + מסמך דפוסי מקורות (source patterns).\n" +
   "Keep day intent stable, but vary TRAINING FORMATS across the month/week: do not repeat the exact same metcon structure on the same weekday every week.\n" +
   "Format variety examples: AMRAP / EMOM / For Time / Intervals / E2MOM / Chipper / Quality rounds / Tempo pieces.\n" +
   "Strength lift sequencing may repeat by weekday, but the work format around it must rotate while preserving the intended duration/effect.\n" +
@@ -494,6 +495,8 @@ const PROGRAMMING_SYSTEM_CORE =
   "Obey COACH POLICY RULES injected below (HARD rules are mandatory).\n" +
   "---\n" +
   (typeof COACH_FOUNDATION_BRIEF === "string" ? COACH_FOUNDATION_BRIEF : "") +
+  "---\n" +
+  (typeof COACH_LAYER2_OPS_BRIEF === "string" ? COACH_LAYER2_OPS_BRIEF : "") +
   "---\n";
 
 /**

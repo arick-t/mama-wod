@@ -218,22 +218,24 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - **Examples:** Bad: offline “AMRAP 10–12 mixed mono” stubs after 429. Good: wait / retry until real WEEK_JSON / BLOCK_JSON with athlete-fit prescriptions ships.
 - **Added:** 2026-07-30 — product law: never compromise workout-building quality
 
-### POL-021 — Knowledge pyramid (L1/L2 base → athlete inquiry → craft application)
+### POL-021 — Knowledge pyramid (L1/L2 base → Layer-2 ops → athlete inquiry → craft application)
 - **Type:** HARD
 - **Scope:** all programming + coaching advice that shapes the plan (generate_* / revise_* / focus planning / engine or skill blocks)
 - **Trigger:** writing or revising any training plan; athlete states a goal (cardio/engine, strength/1RM, skill, Open prep, general GPP); using Drive / living pattern digests / warehouses
 - **Required behavior:**
   1. **Think in a pyramid.**  
-     - **Base (always):** CrossFit **Level 1** + **Level 2** — applied via the runtime **Foundation Brief** on every brick fill (methodology + session application).  
+     - **Base / Layer 1 (always):** CrossFit **Level 1** + **Level 2** — applied via the runtime **Foundation Brief** on every brick fill (methodology + session application).  
+     - **Layer 2 ops (programming path):** elite-stimulus protocol — intake calendar first, M/G/W × Single/Couplet/Triplet rotation, primers/accessory, preserve intended stimulus when scaling. Injected on `generate_*` / `revise_*` only (not daily chat).  
      - **Second floor:** (a) athlete inquiry / intake / goals / capability profile (**POL-016**), then (b) **מסמך דפוסי מקורות** (source-patterns digest: myleo+Restoration + warehouse formats) + specialty Drive craft when needed.  
   2. **Goal → seek method:** If the athlete wants a focus (e.g. improve cardio/engine across a 5-week brick), go find the relevant professional method and embed it inside a coherent CF week — do not invent a random specialty plan that abandons the base.
   3. **Patterns ≠ copy:** מסמך דפוסי מקורות teaches *principles* (architecture, pairings, formats, intensity language). **Never** copy a scraped session, Hero, Open, or Benchmark verbatim into athlete JSON.
   4. **Warehouses are occasional seasoning:** Hero / Open / Benchmark structures may appear rarely when they align with athlete goals; they must be rebuilt/scaled for this athlete and must not dominate the brick.
-  5. **Conflict order:** athlete safety + explicit request → HARD policy → L1/L2 foundation → stated focus via מאגר → מסמך דפוסי מקורות as craft flavor. No stated focus → do not let source patterns collapse the brick into one source’s style.
+  5. **Conflict order:** athlete safety + explicit request → HARD policy → L1/L2 foundation → Layer-2 ops → stated focus via מאגר → מסמך דפוסי מקורות as craft flavor. No stated focus → do not let source patterns collapse the brick into one source’s style. Intake schedule / Rest / mid-week start beat rigid template day numbers.
   6. Never reveal Drive / digest / warehouse / source names (POL-007 / POL-019).
-- **Examples:** Good: athlete wants engine → L1/L2 varied week + endurance methods + source-pattern ideas for long-aerobic / interval shapes, loads from POL-016. Bad: pasting a scraped 36-min team WOD as “Week 2 Thursday.” Bad: Open every day because the warehouse exists.
+- **Examples:** Good: athlete wants engine → L1/L2 varied week + Layer-2 stimulus/scale rules + endurance methods + source-pattern ideas for long-aerobic / interval shapes, loads from POL-016. Bad: pasting a scraped 36-min team WOD as “Week 2 Thursday.” Bad: Open every day because the warehouse exists. Bad: forcing Days 1/5/9 numbering over athlete Rest days.
 - **Added:** 2026-07-31 — learning leap: pyramid doctrine + living digests under L1/L2
 - **Updated:** 2026-07-31 — Foundation Brief runtime ground layer; rename digest to מסמך דפוסי מקורות
+- **Updated:** 2026-08-03 — Layer 2 programming ops brief (programming path only; product-flex calendar)
 
 ### POL-022 — Whole-program / brick chat: ultra-brief double-check
 - **Type:** HARD

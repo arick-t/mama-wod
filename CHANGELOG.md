@@ -1,5 +1,15 @@
 # Changelog
 
+## [21.3.1] - 2026-08-03
+
+### Coach brain: Layer 2 programming ops
+- Add **Layer 2 ops** distill (elite-stimulus protocol) from Theoretical Template / Balanced Programming / Scaling Part 2 / Set the Bar High.
+- Injected on **programming path only** (`generate_*` / `revise_*`) — not daily chat (credit control).
+- Product flex: intake calendar + Rest + 5-week brick beat rigid template day numbers; same-day strength+metcon allowed with interference management.
+- Files: `api/coach-layer2-ops-brief.js`, `living-knowledge/layer2-programming-ops.md`; POL-021 updated.
+
+---
+
 ## [21.3.0] - 2026-08-03
 
 ### Founder Admin dashboard 1.0 beta (safe add-on over live 21.2.2)

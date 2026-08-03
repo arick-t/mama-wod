@@ -3,11 +3,13 @@
  * Always injected into generate_* / revise programming system.
  *
  * Layers:
- *   1) L1 + L2 distilled doctrine
- *   2) מסמך דפוסי מקורות (source patterns: myleo+Restoration + warehouses)
+ *   1) L1 + L2 distilled doctrine (this file)
+ *   2) Layer-2 ops enrich — api/coach-layer2-ops-brief.js (programming path ONLY)
+ *   3) מסמך דפוסי מקורות (source patterns: myleo+Restoration + warehouses)
  *
  * Source markdown:
  *   experiments/personal-coach/living-knowledge/l1-l2-programming-foundation.md
+ *   experiments/personal-coach/living-knowledge/layer2-programming-ops.md
  *   experiments/personal-coach/living-knowledge/source-patterns-digest.md
  *
  * Regenerate compact runtime via: npm run coach:sync-foundation-brief
@@ -50,5 +52,5 @@ module.exports =
   "ladders; Hero-style long mono tax — only when goals align; rebuild+scale; never paste classics.\n" +
   "\n" +
   "=== CONFLICT ORDER ===\n" +
-  "Safety + explicit athlete request → HARD policy → L1/L2 foundation → athlete focus via specialty craft → " +
+  "Safety + explicit athlete request → HARD policy → L1/L2 foundation → Layer-2 ops → athlete focus via specialty craft → " +
   "מסמך דפוסי מקורות as flavor. No focus → L1/L2 variety wins over any single source style.\n";
