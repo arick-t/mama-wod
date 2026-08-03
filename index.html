@@ -1935,6 +1935,7 @@ function emptyPprogStore() {
     activeWeekIndex: 0,
     partModificationEvents: [],
     modificationRulesNotified: {},
+    costCaps: { dailyEdits: {}, lastLargeRebuildAt: null, softUpgradeBrickStart: null },
     pastBlocks: [],
     autoNextTriggeredForBlockStart: null,
     intakeNotifySent: false,
@@ -1971,6 +1972,9 @@ function loadPprogStore() {
     if (!o.legalAcceptedVersion) o.legalAcceptedVersion = 0;
     if (typeof o.intakeNotifySent !== "boolean") o.intakeNotifySent = !!o.intakeNotifySentAt;
     if (typeof o.activeWeekIndex !== "number") o.activeWeekIndex = 0;
+    if (!o.costCaps || typeof o.costCaps !== "object") {
+      o.costCaps = { dailyEdits: {}, lastLargeRebuildAt: null, softUpgradeBrickStart: null };
+    }
     /* Migrate legacy single-week store → 5-week block shell */
     if (!o.currentBlock && o.currentWeek && o.currentWeek.days) {
       o.currentBlock = {
@@ -3913,6 +3917,7 @@ function athleteProfilePayload(opts) {
     activeWeekIndex: s.activeWeekIndex || 0,
     weekStart: (s.currentWeek && s.currentWeek.weekStart) || null,
     partModificationSummary: pprogCountModifiedKindsLast30Days(s.partModificationEvents),
+    costCaps: pprogCostCapsPayload(s),
   };
   if (!omitChat) {
     payload.chatSummaryTail = (s.chat || [])
@@ -4242,6 +4247,14 @@ function sendPprogMessage(ev) {
           preserveIntake: !!brickMode,
           preserveRestMap: !!brickMode && !pprogRecentBrickNoteTouchesSchedule(msgs),
         });
+        if (brickMode) {
+          var noteUp = String(pprogLatestStandingUserNote(msgs) || "");
+          if (/soft upgrade|new coach|upgrade (my |the )?plan|review my plan|שדרג|מאמן החדש/i.test(noteUp)) {
+            pprogRecordProgrammedEdit("soft_upgrade");
+          } else {
+            pprogRecordProgrammedEdit("large_rebuild");
+          }
+        }
       } else if (weekFromChat) {
         if (brickMode) {
           pprogApplyStandingIntakeNote(pprogLatestStandingUserNote(msgs));
@@ -4262,6 +4275,12 @@ function sendPprogMessage(ev) {
             });
           } else {
             applyPprogWeek(weekFromChat, j.text);
+          }
+          var noteUp2 = String(pprogLatestStandingUserNote(msgs) || "");
+          if (/soft upgrade|new coach|upgrade (my |the )?plan|review my plan|שדרג|מאמן החדש/i.test(noteUp2)) {
+            pprogRecordProgrammedEdit("soft_upgrade");
+          } else {
+            pprogRecordProgrammedEdit("large_rebuild");
           }
         } else {
           applyPprogWeek(weekFromChat, j.text);
@@ -5087,6 +5106,93 @@ function pprogIsraelTodayIso() {
   } catch (e) {
     return pprogFormatIso(new Date());
   }
+}
+
+/** POL-COST client counters — programmed edits only (applied plan JSON). */
+function pprogEnsureCostCaps(store) {
+  if (!store.costCaps || typeof store.costCaps !== "object") {
+    store.costCaps = { dailyEdits: {}, lastLargeRebuildAt: null, softUpgradeBrickStart: null };
+  }
+  if (!store.costCaps.dailyEdits || typeof store.costCaps.dailyEdits !== "object") {
+    store.costCaps.dailyEdits = {};
+  }
+  return store.costCaps;
+}
+
+function pprogAddIsraelDays(iso, delta) {
+  try {
+    var p = String(iso || "").slice(0, 10).split("-");
+    var dt = new Date(Date.UTC(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10)));
+    dt.setUTCDate(dt.getUTCDate() + (delta | 0));
+    return dt.toISOString().slice(0, 10);
+  } catch (e) {
+    return String(iso || "").slice(0, 10);
+  }
+}
+
+function pprogIsraelDaysBetween(a, b) {
+  try {
+    var pa = String(a || "").slice(0, 10).split("-");
+    var pb = String(b || "").slice(0, 10).split("-");
+    var da = Date.UTC(parseInt(pa[0], 10), parseInt(pa[1], 10) - 1, parseInt(pa[2], 10));
+    var db = Date.UTC(parseInt(pb[0], 10), parseInt(pb[1], 10) - 1, parseInt(pb[2], 10));
+    return Math.round((db - da) / 86400000);
+  } catch (e) {
+    return 999;
+  }
+}
+
+function pprogCostCapsPayload(store) {
+  var s = store || loadPprogStore();
+  var caps = pprogEnsureCostCaps(s);
+  var today = pprogIsraelTodayIso();
+  var daily = caps.dailyEdits[today] | 0;
+  var lastLarge = caps.lastLargeRebuildAt ? String(caps.lastLargeRebuildAt).slice(0, 10) : "";
+  var daysSinceLarge = lastLarge ? pprogIsraelDaysBetween(lastLarge, today) : 999;
+  var largeLocked = !!(lastLarge && daysSinceLarge >= 0 && daysSinceLarge < 7);
+  var blockStart =
+    (s.currentBlock && s.currentBlock.blockStart) ||
+    (s.currentWeek && s.currentWeek.weekStart) ||
+    "";
+  var softUsed = !!(caps.softUpgradeBrickStart && blockStart && caps.softUpgradeBrickStart === blockStart);
+  return {
+    israelToday: today,
+    dailyEditsToday: daily,
+    dailyCap: 2,
+    dailyLocked: daily >= 2,
+    lastLargeRebuildAt: lastLarge || null,
+    largeRebuildLocked: largeLocked,
+    largeRebuildUnlockOn: largeLocked ? pprogAddIsraelDays(lastLarge, 7) : null,
+    softUpgradeUsedForBrick: softUsed,
+    softUpgradeCapPerBrick: 1,
+    brickStart: blockStart || null,
+  };
+}
+
+function pprogRecordProgrammedEdit(kind) {
+  try {
+    var store = loadPprogStore();
+    var caps = pprogEnsureCostCaps(store);
+    var today = pprogIsraelTodayIso();
+    /* Initial brick build must not burn daily edit / large-rebuild caps */
+    if (kind === "day" || kind === "week" || kind === "large_rebuild" || kind === "soft_upgrade") {
+      caps.dailyEdits[today] = (caps.dailyEdits[today] | 0) + 1;
+    }
+    var keys = Object.keys(caps.dailyEdits);
+    if (keys.length > 21) {
+      keys.sort();
+      for (var i = 0; i < keys.length - 14; i++) delete caps.dailyEdits[keys[i]];
+    }
+    if (kind === "large_rebuild") caps.lastLargeRebuildAt = today;
+    if (kind === "soft_upgrade") {
+      caps.softUpgradeBrickStart =
+        (store.currentBlock && store.currentBlock.blockStart) ||
+        (store.currentWeek && store.currentWeek.weekStart) ||
+        today;
+    }
+    store.costCaps = caps;
+    savePprogStore(store);
+  } catch (eCost) {}
 }
 
 function pprogIsraelNowParts() {
@@ -6654,6 +6760,7 @@ function submitPprogDayPreTalk(dayKey) {
       }
       if (revised) {
         applyPprogDayRevision(dayKey, revised);
+        pprogRecordProgrammedEdit("day");
         try {
           var revisedKinds = revised && revised.parts ? detectModifiedPartKinds(dayData.parts || [], revised.parts || []) : {};
           sendAnalytics("personal_coach_workout_changed", {
@@ -6837,6 +6944,7 @@ function submitPprogWeekPreTalk() {
       if (revised) {
         pprogApplyStandingIntakeNote(text);
         applyPprogWeekRevision(revised, { noteText: text });
+        pprogRecordProgrammedEdit("week");
         addPprogCoachPref("week notes: " + text);
         try {
           sendAnalytics("personal_coach_workout_changed", {
