@@ -1,86 +1,5 @@
 {
   "workouts": {
-    "2026-07-19": [
-      {
-        "date": "2026-07-19",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 24.1",
-            "lines": [
-              "For time:",
-              "21 dumbbell snatches, arm 1",
-              "21 lateral burpees over dumbbell",
-              "21 dumbbell snatches, arm 2",
-              "21 lateral burpees over dumbbell",
-              "15 dumbbell snatches, arm 1",
-              "15 lateral burpees over dumbbell",
-              "15 dumbbell snatches, arm 2",
-              "15 lateral burpees over dumbbell",
-              "9 dumbbell snatches, arm 1",
-              "9 lateral burpees over dumbbell",
-              "9 dumbbell snatches, arm 2",
-              "9 lateral burpees over dumbbell",
-              "*Time cap: 15 minutes",
-              "♀ 35-lb (15-kg) dumbbell",
-              "♂ 50-lb (22.5-kg) dumbbell"
-            ]
-          }
-        ],
-        "note": "Open: Open 24.1"
-      },
-      {
-        "date": "2026-07-19",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-july-19-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "400m Jog",
-              "1:00 Hip Shifts / side",
-              "10 Leg Swings / side",
-              "10 Plank-to Push Up",
-              "1:00 Tall Plank",
-              "AMRAP 3 minutes",
-              "100m Run",
-              "10 Med Ball Squats",
-              "5 Up Downs",
-              "Immediately Into:",
-              "AMRAP 3 minutes",
-              "100m Run",
-              "10 Wall Balls",
-              "5 Burpees to 6″ Target"
-            ]
-          },
-          {
-            "title": "5 Rounds for Time",
-            "lines": [
-              "20 Wall Balls 20/14lbs 10/9′",
-              "300m Run",
-              "15 Burpee to 6″ Target",
-              "Feel: Cardio",
-              "Pace: Sustain",
-              "Target Score: 25 minutes",
-              "Firebreather Score: 20 minutes",
-              "Scaling",
-              "– Burpee to target: A standard burpee can be subbed for the 6″ target. 15 reps should always take less than 2 minutes to complete. If there is any question, reduce the reps from the beginning."
-            ]
-          },
-          {
-            "title": "Mobility",
-            "lines": [
-              "5+ Rounds",
-              "5:00 Machine Flush",
-              "3:00 Mobility"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-07-20": [
       {
         "date": "2026-07-20",
@@ -178,88 +97,6 @@
           }
         ],
         "note": "Open: Open 13.5"
-      },
-      {
-        "date": "2026-07-20",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-07-20/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "scorpions",
-              "instep rotation",
-              "lat stretch",
-              "hand walk"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "2-4-6…",
-              "hang high pulls",
-              "elbow rotations",
-              "push presses"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "CLEAN & JERK 10MIN",
-            "lines": [
-              "on every 1:00 x 10 sets",
-              "1 hang power clean + 1 push jerk",
-              "explosive power"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "9 hang power cleans",
-              "9 shoulder to overheads",
-              "9 v-ups",
-              "* barbell: 40/30kg",
-              "* muscular endurance"
-            ],
-            "sub_title": "9 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-20",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Glen",
-            "sub_title": "For time:",
-            "lines": [
-              "30 clean and jerks",
-              "Run 1 mile",
-              "10 rope climbs to 15 feet",
-              "Run 1 mile",
-              "100 burpees"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-20",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Gwen",
-            "lines": [
-              "Clean & Jerk 15-12- and 9 reps",
-              "Touch and go at floor only. Even a re-grip off the floor is a foul. No dumping. Use same load for each set. Rest as needed between sets."
-            ]
-          }
-        ],
-        "note": "Benchmark: Gwen"
       }
     ],
     "2026-07-21": [
@@ -956,20 +793,6 @@
               "*Run = 1 rep"
             ],
             "sub_title2": "AMRAP 20:00"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-24",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "* Metcon:-20min AMRAP, Partner YGIG*12/10 Cal Assault Bike12 Alt DB Snatches 22.5/15kg*Full round and switch"
-            ]
           }
         ]
       },
@@ -2981,7 +2804,145 @@
         ],
         "note": "Benchmark: DIANE"
       }
+    ],
+    "2026-08-03": [
+      {
+        "date": "2026-08-03",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-08-03/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "calf stretch",
+              "sumo squat stretch",
+              "thoracic rotations"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 reverse lunges",
+              "20sec deep squat hold",
+              "10 push ups to down dog",
+              "* *remaining time double under"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "FRONT SQUATS 15MIN",
+            "lines": [
+              "4-5 sets",
+              "5 front squats @77-80%",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 17MIN",
+            "lines": [
+              "7 rounds",
+              "",
+              "10 double db front squats",
+              "10 db push ups",
+              "40 double unders",
+              "dumbbells: 2x22,5/15kg",
+              "* muscular endurance & aerobic capacity"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-08-03",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260803",
+        "sections": [
+          {
+            "title": "3 ROUNDS FOR TIME OF",
+            "lines": [
+              "800-meter run",
+              "15 overhead squats",
+              "♀ 105 lb",
+              "♂ 155 lb"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-03",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "* Kelly5 rounds for time:400m Run30 Box Jumps 24/20″30 Wall Balls 9/6kg"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-03",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Triple Deuce",
+            "sub_title": "As many rounds and reps as possible in 20 minutes of:",
+            "lines": [
+              "22 burpees",
+              "22 air squats",
+              "22 pull-ups",
+              "22 sandbag ground-to-over-the-shoulders",
+              "722-meter sprint"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-03",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "ANNIE\" - Benchmark",
+            "lines": [
+              "For time:",
+              "50–40–30–20–10",
+              "Double-Under (Sc. SU x2)",
+              "Sit-up",
+              "*time cap 12:00"
+            ]
+          }
+        ],
+        "note": "Benchmark: ANNIE\" - Benchmark"
+      },
+      {
+        "date": "2026-08-03",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 15.2",
+            "lines": [
+              "Complete as many rounds and reps as possible in 14 minutes of:",
+              "7 muscle-ups",
+              "50 wall-ball shots",
+              "100 double-unders",
+              "*Men use 20-lb. ball to 10 feet, Women use 14-lb. ball to 9 feet*"
+            ]
+          }
+        ],
+        "note": "Open: Open 15.2"
+      }
     ]
   },
-  "last_updated": "2026-08-02T11:22:01.158101"
+  "last_updated": "2026-08-03T03:00:14.099037"
 }
