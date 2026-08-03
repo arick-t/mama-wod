@@ -9,7 +9,7 @@
  */
 
 const { checkRateLimit, sendRateLimit } = require("./rate-limit");
-const { runCoachBrainSync, readLastSync } = require("./lib/coach-brain-sync");
+const { runCoachBrainSync, readLastSync } = require("../scripts/lib/coach-brain-sync");
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
 

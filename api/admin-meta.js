@@ -10,7 +10,7 @@
 const fs = require("fs");
 const path = require("path");
 const { checkRateLimit, sendRateLimit } = require("./rate-limit");
-const { readLastSync, knowledgeDir, resolveStoreName } = require("./lib/coach-brain-sync");
+const { readLastSync, knowledgeDir, resolveStoreName } = require("../scripts/lib/coach-brain-sync");
 
 const META_PATH = path.join(process.cwd(), "data", "admin-meta.json");
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";

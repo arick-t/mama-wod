@@ -15,7 +15,7 @@
  */
 const fs = require("fs");
 const path = require("path");
-const { runCoachBrainSync } = require("../api/lib/coach-brain-sync");
+const { runCoachBrainSync } = require("./lib/coach-brain-sync");
 
 const ROOT = path.join(__dirname, "..");
 
