@@ -704,6 +704,20 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 .pprog-coach-fab:active{transform:scale(.96)}
 .pprog-coach-fab.open{border-color:#F5C518;box-shadow:0 0 0 2px rgba(245,197,24,.35)}
 .pprog-coach-fab img{width:100%;height:100%;object-fit:cover;display:block}
+.pprog-coach-fab-tip{
+  display:none;position:fixed;right:76px;bottom:148px;z-index:1002;
+  width:min(72vw,240px);padding:10px 12px;border-radius:12px;
+  background:#2a1834;border:1px solid #b06dcf;color:#e8d8f4;
+  box-shadow:0 8px 24px rgba(0,0,0,.45);font-size:.78em;line-height:1.4;
+  direction:ltr;text-align:left;
+}
+.pprog-coach-fab-tip.show{display:block}
+.pprog-coach-fab-tip strong{display:block;color:#F5C518;font-size:.95em;margin:0 0 4px}
+.pprog-coach-fab-tip-close{
+  position:absolute;top:6px;right:8px;appearance:none;border:none;background:transparent;
+  color:#c4a8d4;font-size:1.1em;line-height:1;cursor:pointer;padding:2px 4px;
+}
+.pprog-coach-fab-tip-close:hover{color:#fff}
 .pprog-coach-float{
   display:none;position:fixed;right:16px;bottom:210px;z-index:1001;
   width:min(92vw,380px);max-height:min(70vh,540px);
@@ -732,6 +746,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 @media (max-width:520px){
   .page-fabs{bottom:82px;right:12px}
   .pprog-coach-float{right:10px;left:10px;width:auto;bottom:200px}
+  .pprog-coach-fab-tip{right:12px;left:12px;width:auto;bottom:210px}
 }
 
 /* Workout Tools (timers + convertor) */
@@ -2155,7 +2170,7 @@ function renderPprogBrickChatLog() {
   }
   if (!html) {
     html =
-      '<div class="pprog-msg system"><div class="pprog-bubble system">Whole-program chat — the full brick, schedule, equipment, goals, or other cross-cutting notes. For one specific workout, use the box under that day.</div></div>';
+      '<div class="pprog-msg system"><div class="pprog-bubble system">Whole brick chat — full plan, schedule, equipment, goals. For one day only, use the green box under that workout.</div></div>';
   }
   log.innerHTML = html;
   if (pprogBusy) setPprogTyping(true);
@@ -2924,7 +2939,7 @@ function syncPprogBrickChatUi() {
     if (!inp.getAttribute("data-default-ph")) {
       inp.setAttribute("data-default-ph", inp.placeholder || "Message the coach…");
     }
-    inp.placeholder = "Whole program, schedule, equipment, goals…";
+    inp.placeholder = "Whole brick: schedule, equipment, goals…";
   }
   syncPprogCoachFabVisibility();
   if (pprogCoachFloatOpen) renderPprogChat();
@@ -2960,7 +2975,43 @@ function syncPprogCoachFabVisibility() {
   fab.classList.toggle("open", !!(show && pprogCoachFloatOpen));
   fab.setAttribute("aria-expanded", pprogCoachFloatOpen ? "true" : "false");
   if (!show && pprogCoachFloatOpen) closePprogCoachFloat(true);
+  syncPprogCoachFabTip(show && !pprogCoachFloatOpen);
 }
+
+var PPROG_COACH_FAB_TIP_KEY = "duck-wod-coach-fab-tip-v1";
+
+function pprogCoachFabTipSeen() {
+  try {
+    return localStorage.getItem(PPROG_COACH_FAB_TIP_KEY) === "1";
+  } catch (e) {
+    return true;
+  }
+}
+
+function markPprogCoachFabTipSeen() {
+  try {
+    localStorage.setItem(PPROG_COACH_FAB_TIP_KEY, "1");
+  } catch (e) {}
+  var tip = document.getElementById("pprogCoachFabTip");
+  if (tip) {
+    tip.classList.remove("show");
+    tip.hidden = true;
+  }
+}
+
+function syncPprogCoachFabTip(showHint) {
+  var tip = document.getElementById("pprogCoachFabTip");
+  if (!tip) return;
+  var show = !!(showHint && !pprogCoachFabTipSeen());
+  tip.classList.toggle("show", show);
+  tip.hidden = !show;
+}
+
+function dismissPprogCoachFabTip(ev) {
+  if (ev && ev.stopPropagation) ev.stopPropagation();
+  markPprogCoachFabTipSeen();
+}
+window.dismissPprogCoachFabTip = dismissPprogCoachFabTip;
 
 var pprogCoachFloatIgnoreDocClick = false;
 
@@ -2976,6 +3027,7 @@ function openPprogCoachFloat() {
     panel.hidden = false;
     panel.classList.add("open");
   }
+  markPprogCoachFabTipSeen();
   syncPprogCoachFabVisibility();
   try {
     renderPprogChat();
@@ -7052,10 +7104,10 @@ function renderPprogDayFooter(dayKey, dayData) {
   return (
     '<div class="pprog-day-footer" dir="ltr">' +
     '<div class="pprog-session-box">' +
-    "<label>About this workout · " +
+    "<label>This workout only · " +
     esc(label) +
     "</label>" +
-    '<span class="pprog-session-scope">Only this session — swaps, equipment, feel before/after. Does not rewrite the whole program.</span>' +
+    '<span class="pprog-session-scope">Edits this day only. For the full brick, schedule, or goals — tap the coach button.</span>' +
     '<textarea id="pprog-pre-ta-' +
     dayKey +
     '" maxlength="2000" dir="ltr" placeholder="e.g. no dumbbells today · shorter metcon · knees felt rough after squats…" onchange="savePprogDayField(\'' +
@@ -11313,15 +11365,20 @@ function initTimerColorBuckets() {
 </script>
 <div class="page-fabs" id="pageFabs" aria-label="Quick actions">
   <button type="button" class="up-btn" id="upBtn" onclick="scrollToTop()" aria-label="Scroll to top" title="Scroll to top">↑</button>
-  <button type="button" class="pprog-coach-fab" id="pprogCoachFab" aria-label="Message the coach about the whole program" title="Coach · whole program" aria-expanded="false" aria-controls="pprogCoachFloat">
+  <button type="button" class="pprog-coach-fab" id="pprogCoachFab" aria-label="Whole brick chat with the coach" title="Coach · whole brick" aria-expanded="false" aria-controls="pprogCoachFloat">
     <img src="assets/hamamen-coach-duck.png" alt="" width="48" height="48" draggable="false">
   </button>
+</div>
+<div id="pprogCoachFabTip" class="pprog-coach-fab-tip" hidden role="status">
+  <button type="button" class="pprog-coach-fab-tip-close" onclick="dismissPprogCoachFabTip(event)" aria-label="Dismiss">×</button>
+  <strong>Whole brick</strong>
+  Here you talk about the full plan. For one day only — use the green box under that workout.
 </div>
 <div id="pprogCoachFloat" class="pprog-coach-float" role="dialog" aria-modal="false" aria-labelledby="pprogCoachFloatTitle" hidden>
   <div class="pprog-coach-float-head">
     <div class="pprog-coach-float-titles">
-      <span class="pprog-coach-float-title" id="pprogCoachFloatTitle">Coach · whole program</span>
-      <span class="pprog-coach-float-scope">General chat — full brick, schedule, equipment, goals. For one workout, use the box under that day.</span>
+      <span class="pprog-coach-float-title" id="pprogCoachFloatTitle">Coach · whole brick</span>
+      <span class="pprog-coach-float-scope">Full 5-week plan, schedule, equipment, goals. For one workout only — use the green box under that day.</span>
     </div>
     <button type="button" class="pprog-coach-float-close" onclick="closePprogCoachFloat()" aria-label="Close coach chat">×</button>
   </div>
