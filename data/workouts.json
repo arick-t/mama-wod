@@ -779,25 +779,6 @@
       },
       {
         "date": "2026-07-24",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "NAUGHTY NANCY",
-            "lines": [
-              "600m Run",
-              "25 Overhead Squats 61kg/43kg",
-              "* (Score is Rounds + Reps)",
-              "*Run = 1 rep"
-            ],
-            "sub_title2": "AMRAP 20:00"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-24",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2808,6 +2789,42 @@
     "2026-08-03": [
       {
         "date": "2026-08-03",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260803",
+        "sections": [
+          {
+            "title": "3 ROUNDS FOR TIME OF",
+            "lines": [
+              "800-meter run",
+              "15 overhead squats",
+              "♀ 105 lb",
+              "♂ 155 lb"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-03",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 15.2",
+            "lines": [
+              "Complete as many rounds and reps as possible in 14 minutes of:",
+              "7 muscle-ups",
+              "50 wall-ball shots",
+              "100 double-unders",
+              "*Men use 20-lb. ball to 10 feet, Women use 14-lb. ball to 9 feet*"
+            ]
+          }
+        ],
+        "note": "Open: Open 15.2"
+      },
+      {
+        "date": "2026-08-03",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-08-03/",
@@ -2856,17 +2873,69 @@
       },
       {
         "date": "2026-08-03",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260803",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-august-3-2026/",
         "sections": [
           {
-            "title": "3 ROUNDS FOR TIME OF",
+            "title": "General Warm-up",
             "lines": [
-              "800-meter run",
-              "15 overhead squats",
-              "♀ 105 lb",
-              "♂ 155 lb"
+              "3 Rounds",
+              "1:30 Machine",
+              "10 Russian Kettlebell Swings",
+              "10 Squats"
+            ]
+          },
+          {
+            "title": "Back Squat",
+            "lines": [
+              "7 reps @ 60% 1RM",
+              "5 reps @ 70% 1RM",
+              "3 reps @ 80% 1RM",
+              "3 reps @ 85% 1RM",
+              "1 max rep set at 90%",
+              "Slowly bike 1,000m between sets for rest",
+              "Goal is 3-6+ reps at 90%. Adjust weight accordingly.”)"
+            ]
+          },
+          {
+            "title": "AMRAP 1:45 x 8",
+            "lines": [
+              "Row for Meters",
+              "Rest 2:00",
+              "We’re slowly making our way out of aerobic row purgatory. This workout should be :01-:03 per 500m split faster than the 2:00 AMRAPs."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-03",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "\"AUGUST MONTHLY CHALLENGE\"",
+              "2:00 AMRAP",
+              "Max Bench Press",
+              "* (Score is Total Reps)",
+              "Loading Guidelines:",
+              "Freedom - 155#/95#",
+              "Independence - 135#/85#",
+              "Liberty - 115#/75#"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "5 SETS (2:00 AMRAP)",
+            "lines": [
+              "10 Lateral Burpee Over Bar",
+              "10 Hang Power Cleans 70kg/48kg",
+              "Max Push Ups in the remaining time",
+              "* -Rest 1:00 between Sets-",
+              "* (Scored by Total Reps)"
             ]
           }
         ]
@@ -2922,27 +2991,8 @@
           }
         ],
         "note": "Benchmark: ANNIE\" - Benchmark"
-      },
-      {
-        "date": "2026-08-03",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 15.2",
-            "lines": [
-              "Complete as many rounds and reps as possible in 14 minutes of:",
-              "7 muscle-ups",
-              "50 wall-ball shots",
-              "100 double-unders",
-              "*Men use 20-lb. ball to 10 feet, Women use 14-lb. ball to 9 feet*"
-            ]
-          }
-        ],
-        "note": "Open: Open 15.2"
       }
     ]
   },
-  "last_updated": "2026-08-03T03:00:14.099037"
+  "last_updated": "2026-08-03T07:29:25.462800"
 }
