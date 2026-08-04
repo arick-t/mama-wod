@@ -762,25 +762,6 @@
       },
       {
         "date": "2026-07-25",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "MUSCLE PIG",
-            "lines": [
-              "Teams of 2",
-              "4 ROUNDS FOR TIME",
-              "Partner 1: 10 Bar Muscle Ups",
-              "Partner 2: 10 Power Cleans 93kg/61kg",
-              "Switch when both are complete"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-25",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2794,54 +2775,6 @@
     "2026-08-04": [
       {
         "date": "2026-08-04",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-08-04/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "inverted hamstring stretch",
-              "lat stretch",
-              "90/90 hip rotation",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 ring rows",
-              "20sec plank hold",
-              "10 good mornings"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "DEADLIFTS 15MIN",
-            "lines": [
-              "4-5 sets",
-              "5 deadlifts @77-80%",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "10 deadlifts 90/65kg",
-              "15 pull ups",
-              "20 sit ups",
-              "1min rest between amraps",
-              "",
-              "* *pick up where you left off",
-              "* lactate threshold & muscular endurance"
-            ],
-            "sub_title": "amrap 4min x 3 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-08-04",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260804",
@@ -2911,6 +2844,101 @@
       },
       {
         "date": "2026-08-04",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 23.2",
+            "lines": [
+              "Complete as many reps as possible in 15 minutes of:",
+              "5 burpee pull-ups",
+              "10 shuttle runs (1 rep = 25 ft out/25 ft back)",
+              "*Add 5 burpee pull-ups after each round.",
+              "23.2B:",
+              "Immediately following 23.2A, athletes will have 5 minutes to establish:",
+              "1-rep-max thruster (from the floor)"
+            ]
+          }
+        ],
+        "note": "Open: Open 23.2"
+      },
+      {
+        "date": "2026-08-04",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-08-04/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "inverted hamstring stretch",
+              "lat stretch",
+              "90/90 hip rotation",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 ring rows",
+              "20sec plank hold",
+              "10 good mornings"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "DEADLIFTS 15MIN",
+            "lines": [
+              "4-5 sets",
+              "5 deadlifts @77-80%",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "10 deadlifts 90/65kg",
+              "15 pull ups",
+              "20 sit ups",
+              "1min rest between amraps",
+              "",
+              "* *pick up where you left off",
+              "* lactate threshold & muscular endurance"
+            ],
+            "sub_title": "amrap 4min x 3 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-08-04",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Front Squat 1x8",
+              "ON 12:00 CLOCK...",
+              "Build to a Heavy 8-Rep Front Squat",
+              "* (Score is Weight)"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "2 ROUNDS FOR TIME",
+            "lines": [
+              "800m Run",
+              "50 Toes to Bar",
+              "25 Thrusters 52kg/34kg"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-04",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2966,29 +2994,8 @@
           }
         ],
         "note": "Benchmark: DIANE"
-      },
-      {
-        "date": "2026-08-04",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 23.2",
-            "lines": [
-              "Complete as many reps as possible in 15 minutes of:",
-              "5 burpee pull-ups",
-              "10 shuttle runs (1 rep = 25 ft out/25 ft back)",
-              "*Add 5 burpee pull-ups after each round.",
-              "23.2B:",
-              "Immediately following 23.2A, athletes will have 5 minutes to establish:",
-              "1-rep-max thruster (from the floor)"
-            ]
-          }
-        ],
-        "note": "Open: Open 23.2"
       }
     ]
   },
-  "last_updated": "2026-08-04T03:11:09.123595"
+  "last_updated": "2026-08-04T07:13:55.299367"
 }
