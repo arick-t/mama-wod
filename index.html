@@ -749,6 +749,49 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
   .pprog-coach-fab-tip{right:12px;left:12px;width:auto;bottom:210px}
 }
 
+/* Floating day prev/next — stays on screen while scrolling */
+.pprog-day-nav{
+  position:fixed;top:42%;z-index:996;
+  width:44px;height:44px;margin:0;padding:0;
+  border-radius:50%;
+  border:1px solid rgba(220,214,198,.28);
+  background:rgba(16,18,17,.78);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  color:#e4dfd2;
+  box-shadow:0 6px 18px rgba(0,0,0,.35);
+  display:none;align-items:center;justify-content:center;
+  cursor:pointer;appearance:none;-webkit-tap-highlight-color:transparent;
+  transition:opacity .18s ease, transform .18s ease, background .18s ease, border-color .18s ease;
+}
+.pprog-day-nav.show{display:flex}
+.pprog-day-nav.prev{left:max(8px, env(safe-area-inset-left))}
+.pprog-day-nav.next{right:max(8px, env(safe-area-inset-right))}
+.pprog-day-nav svg{width:18px;height:18px;display:block;opacity:.92}
+.pprog-day-nav:hover{background:rgba(26,155,138,.22);border-color:rgba(26,155,138,.55);color:#f2f6f4}
+.pprog-day-nav:active{transform:scale(.94)}
+.pprog-day-nav:disabled,
+.pprog-day-nav.is-edge{
+  opacity:.28;cursor:default;pointer-events:none;box-shadow:none;
+}
+.pprog-day-nav:disabled:hover,
+.pprog-day-nav.is-edge:hover{
+  background:rgba(16,18,17,.78);border-color:rgba(220,214,198,.28);color:#e4dfd2;
+}
+#pprogWeekPanes.pprog-day-swipe-ready{
+  touch-action:pan-y;
+}
+.pprog-day-card.pprog-day-slide-in{
+  animation:pprog-day-slide .22s ease-out;
+}
+@keyframes pprog-day-slide{
+  from{opacity:.35;transform:translateX(var(--pprog-day-slide-x, 12px))}
+  to{opacity:1;transform:translateX(0)}
+}
+@media (max-width:520px){
+  .pprog-day-nav{width:40px;height:40px;top:40%}
+  .pprog-day-nav svg{width:16px;height:16px}
+}
+
 /* Workout Tools (timers + convertor) */
 .timers-section { background:#1e1e1e; padding:18px; border-radius:12px; border:1px solid #2a2a2a; max-width:420px; margin:0 auto }
 .timer-row { margin-bottom:10px }
@@ -6768,6 +6811,127 @@ function setPprogSubtab(dayKey) {
   }
 }
 
+function pprogDayNavIsActive() {
+  return PPROG_DAY_KEYS.indexOf(pprogActiveDay) >= 0;
+}
+
+function pprogDayNavResolve(dir) {
+  var store = loadPprogStore();
+  if (!store.currentBlock || !store.currentBlock.weeks || !store.currentBlock.weeks.length) return null;
+  if (!pprogDayNavIsActive()) return null;
+  var weeks = store.currentBlock.weeks;
+  var di = PPROG_DAY_KEYS.indexOf(pprogActiveDay);
+  var wi = store.activeWeekIndex | 0;
+  var flat = wi * 7 + di + (dir > 0 ? 1 : -1);
+  if (flat < 0 || flat >= weeks.length * 7) return null;
+  return {
+    wi: Math.floor(flat / 7),
+    day: PPROG_DAY_KEYS[flat % 7],
+  };
+}
+
+function syncPprogDayNavUi() {
+  var prev = document.getElementById("pprogDayNavPrev");
+  var next = document.getElementById("pprogDayNavNext");
+  var panes = document.getElementById("pprogWeekPanes");
+  var show = false;
+  try {
+    var store = loadPprogStore();
+    show = !!(
+      store &&
+      store.intakeComplete &&
+      store.currentBlock &&
+      store.currentBlock.weeks &&
+      store.currentBlock.weeks.length &&
+      pprogDayNavIsActive()
+    );
+  } catch (eShow) {
+    show = false;
+  }
+  if (prev) {
+    prev.classList.toggle("show", show);
+    prev.disabled = !show || !pprogDayNavResolve(-1);
+    prev.classList.toggle("is-edge", show && !pprogDayNavResolve(-1));
+  }
+  if (next) {
+    next.classList.toggle("show", show);
+    next.disabled = !show || !pprogDayNavResolve(1);
+    next.classList.toggle("is-edge", show && !pprogDayNavResolve(1));
+  }
+  if (panes) panes.classList.toggle("pprog-day-swipe-ready", show);
+}
+
+var pprogDayNavAnimDir = 0;
+
+function stepPprogDayNav(dir) {
+  var target = pprogDayNavResolve(dir);
+  if (!target) {
+    syncPprogDayNavUi();
+    return;
+  }
+  pprogDayNavAnimDir = dir > 0 ? 1 : -1;
+  setPprogCalDay(target.wi, target.day);
+  try {
+    var card = document.querySelector("#pprogWeekPanes .pprog-day-card");
+    if (card) {
+      card.style.setProperty(
+        "--pprog-day-slide-x",
+        pprogDayNavAnimDir > 0 ? "18px" : "-18px"
+      );
+      card.classList.remove("pprog-day-slide-in");
+      void card.offsetWidth;
+      card.classList.add("pprog-day-slide-in");
+    }
+  } catch (eAnim) {}
+  try {
+    var panes = document.getElementById("pprogWeekPanes");
+    if (panes && panes.getBoundingClientRect().top < 72) {
+      panes.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  } catch (eScroll) {}
+}
+
+function bindPprogDaySwipe() {
+  var el = document.getElementById("pprogWeekPanes");
+  if (!el || el.getAttribute("data-day-swipe") === "1") return;
+  el.setAttribute("data-day-swipe", "1");
+  var startX = 0;
+  var startY = 0;
+  var tracking = false;
+  el.addEventListener(
+    "touchstart",
+    function (ev) {
+      if (!pprogDayNavIsActive() || !ev.touches || ev.touches.length !== 1) {
+        tracking = false;
+        return;
+      }
+      startX = ev.touches[0].clientX;
+      startY = ev.touches[0].clientY;
+      tracking = true;
+    },
+    { passive: true }
+  );
+  el.addEventListener(
+    "touchend",
+    function (ev) {
+      if (!tracking) return;
+      tracking = false;
+      if (!pprogDayNavIsActive() || !ev.changedTouches || !ev.changedTouches.length) return;
+      var t = ev.changedTouches[0];
+      var dx = t.clientX - startX;
+      var dy = t.clientY - startY;
+      if (Math.abs(dx) < 56) return;
+      if (Math.abs(dx) < Math.abs(dy) * 1.35) return;
+      /* swipe left → next day; swipe right → previous day */
+      stepPprogDayNav(dx < 0 ? 1 : -1);
+    },
+    { passive: true }
+  );
+}
+
+window.stepPprogDayNav = stepPprogDayNav;
+window.syncPprogDayNavUi = syncPprogDayNavUi;
+
 function setPprogCalDay(weekIndex0, dayKey) {
   var store = loadPprogStore();
   if (!store.currentBlock || !store.currentBlock.weeks) return;
@@ -7703,6 +7867,7 @@ function renderPprogWeek() {
       panesEl.innerHTML = '<div class="pprog-empty">No block yet — finish intake.</div>';
     }
     syncPprogBrickChatUi();
+    syncPprogDayNavUi();
     return;
   }
 
@@ -7711,6 +7876,7 @@ function renderPprogWeek() {
   if (!week || !week.days) {
     panesEl.innerHTML = '<div class="pprog-empty">No week data.</div>';
     syncPprogBrickChatUi();
+    syncPprogDayNavUi();
     return;
   }
 
@@ -7783,6 +7949,8 @@ function renderPprogWeek() {
   var weekBlk = document.getElementById("pprogWeekBlock");
   if (weekBlk) weekBlk.style.display = "block";
   syncPprogBrickChatUi();
+  bindPprogDaySwipe();
+  syncPprogDayNavUi();
 }
 
 function retryPprogFillFailures() {
@@ -11664,6 +11832,12 @@ function initTimerColorBuckets() {
     <img src="assets/hamamen-coach-duck.png" alt="" width="48" height="48" draggable="false">
   </button>
 </div>
+<button type="button" class="pprog-day-nav prev" id="pprogDayNavPrev" onclick="stepPprogDayNav(-1)" aria-label="Previous training day" title="Previous day">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M15.4 4.6 13.99 3.2 5.2 12l8.79 8.8 1.41-1.41L8.03 12z"/></svg>
+</button>
+<button type="button" class="pprog-day-nav next" id="pprogDayNavNext" onclick="stepPprogDayNav(1)" aria-label="Next training day" title="Next day">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8.6 4.6 10.01 3.2 18.8 12l-8.79 8.8-1.41-1.41L15.97 12z"/></svg>
+</button>
 <div id="pprogCoachFabTip" class="pprog-coach-fab-tip" hidden role="status">
   <button type="button" class="pprog-coach-fab-tip-close" onclick="dismissPprogCoachFabTip(event)" aria-label="Dismiss">×</button>
   <strong>Whole brick</strong>
