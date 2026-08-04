@@ -77,17 +77,26 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-finish-btn:active{transform:scale(.97)}
 .pprog-finish-btn svg{width:15px;height:15px;display:block;flex-shrink:0}
 .pprog-finish-btn.done{background:#1a2a20;border-color:#3a5a45;color:#9ec9ad;box-shadow:none}
+html.pprog-finish-open,body.pprog-finish-open{overflow:hidden;overscroll-behavior:none}
 .pprog-finish-overlay{
-  display:none;position:fixed;inset:0;z-index:11050;
+  display:none;position:fixed;inset:0;
+  width:100vw;height:100vh;width:100dvw;height:100dvh;
+  z-index:12050;margin:0;
   align-items:center;justify-content:center;
   padding:max(16px,env(safe-area-inset-top)) 14px max(16px,env(safe-area-inset-bottom));
-  background:rgba(10,8,14,.78);backdrop-filter:blur(3px);box-sizing:border-box;
+  background:rgba(8,6,12,.82);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  box-sizing:border-box;overscroll-behavior:contain;
 }
 .pprog-finish-overlay.open{display:flex}
 .pprog-finish-sheet{
   width:min(92vw,400px);max-height:min(86vh,560px);overflow:auto;
   background:#1a1a1a;border:1px solid #3d7a52;border-radius:16px;
-  box-shadow:0 16px 48px rgba(0,0,0,.55);padding:16px 16px 14px;direction:ltr;text-align:left;
+  box-shadow:0 20px 56px rgba(0,0,0,.62);padding:16px 16px 14px;direction:ltr;text-align:left;
+  transform:translateY(0);animation:pprog-finish-pop .18s ease-out;
+}
+@keyframes pprog-finish-pop{
+  from{opacity:0;transform:translateY(10px) scale(.97)}
+  to{opacity:1;transform:translateY(0) scale(1)}
 }
 .pprog-finish-sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:0 0 12px}
 .pprog-finish-sheet-title{display:block;color:#d7f5e2;font-weight:800;font-size:1.05em}
@@ -1083,44 +1092,6 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
       </video>
       <img id="pprogBuildingFallback" class="pprog-building-video" src="assets/hamamen-coach-duck.png" alt="Coach" style="display:none" width="340" height="340">
       <div class="pprog-building-status"><strong>Coach</strong> is building your 5-week block…</div>
-    </div>
-  </div>
-</div>
-
-<div id="pprogFinishOverlay" class="pprog-finish-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="pprogFinishTitle">
-  <div class="pprog-finish-sheet" onclick="event.stopPropagation()">
-    <div class="pprog-finish-sheet-head">
-      <div>
-        <span class="pprog-finish-sheet-title" id="pprogFinishTitle">How was this workout?</span>
-        <span class="pprog-finish-sheet-sub">Quick check-in after you finished — helps your coach learn what fits you.</span>
-      </div>
-      <button type="button" class="pprog-finish-close" onclick="closePprogFinishFeedback()" aria-label="Close">×</button>
-    </div>
-    <div class="pprog-finish-options" id="pprogFinishOptions" role="listbox" aria-label="Workout feedback">
-      <button type="button" class="pprog-finish-opt" data-finish="just_right" onclick="selectPprogFinishOption('just_right')">
-        Just right
-        <span class="pprog-finish-opt-hint">Load and difficulty felt accurate</span>
-      </button>
-      <button type="button" class="pprog-finish-opt" data-finish="too_hard" onclick="selectPprogFinishOption('too_hard')">
-        Too hard
-        <span class="pprog-finish-opt-hint">Volume, intensity, or skills were too much</span>
-      </button>
-      <button type="button" class="pprog-finish-opt" data-finish="too_easy" onclick="selectPprogFinishOption('too_easy')">
-        Too easy
-        <span class="pprog-finish-opt-hint">Could have pushed more</span>
-      </button>
-      <button type="button" class="pprog-finish-opt" data-finish="other" onclick="selectPprogFinishOption('other')">
-        Other
-        <span class="pprog-finish-opt-hint">You’ll need to write what your coach should know</span>
-      </button>
-    </div>
-    <div class="pprog-finish-other-wrap" id="pprogFinishOtherWrap">
-      <label for="pprogFinishOtherNote">If you choose Other, describe what your coach should know about this session.</label>
-      <textarea id="pprogFinishOtherNote" maxlength="1200" placeholder="e.g. knees flared on squats · ran out of time on the metcon · loved the gymnastics volume…"></textarea>
-    </div>
-    <div class="pprog-finish-actions">
-      <button type="button" class="pprog-finish-cancel" onclick="closePprogFinishFeedback()">Cancel</button>
-      <button type="button" class="pprog-finish-send" id="pprogFinishSendBtn" disabled onclick="submitPprogFinishFeedback()">Send</button>
     </div>
   </div>
 </div>
@@ -7153,6 +7124,13 @@ function pprogFinishThumbsIcon() {
 var pprogFinishDayKey = "";
 var pprogFinishChoice = "";
 
+function pprogFinishSetBodyLock(on) {
+  try {
+    document.documentElement.classList.toggle("pprog-finish-open", !!on);
+    document.body.classList.toggle("pprog-finish-open", !!on);
+  } catch (eLock) {}
+}
+
 function openPprogFinishFeedback(dayKey) {
   pprogFinishDayKey = normalizePprogDayKey(dayKey) || dayKey;
   pprogFinishChoice = "";
@@ -7178,8 +7156,18 @@ function openPprogFinishFeedback(dayKey) {
     }
   } catch (ePrefill) {}
   if (overlay) {
+    /* Keep modal as a true viewport float — last child of body */
+    try {
+      if (overlay.parentNode !== document.body) document.body.appendChild(overlay);
+    } catch (eMove) {}
+    bindPprogFinishOverlayClick();
     overlay.hidden = false;
     overlay.classList.add("open");
+    pprogFinishSetBodyLock(true);
+    try {
+      var closeBtn = overlay.querySelector(".pprog-finish-close");
+      if (closeBtn) closeBtn.focus();
+    } catch (eFocus) {}
   }
 }
 
@@ -7189,6 +7177,7 @@ function closePprogFinishFeedback() {
     overlay.classList.remove("open");
     overlay.hidden = true;
   }
+  pprogFinishSetBodyLock(false);
   pprogFinishDayKey = "";
   pprogFinishChoice = "";
 }
@@ -7274,14 +7263,20 @@ document.addEventListener("keydown", function (ev) {
     if (overlay && overlay.classList.contains("open")) closePprogFinishFeedback();
   }
 });
-(function bindPprogFinishOverlayClick() {
+function bindPprogFinishOverlayClick() {
   var overlay = document.getElementById("pprogFinishOverlay");
   if (!overlay || overlay.getAttribute("data-bound") === "1") return;
   overlay.setAttribute("data-bound", "1");
   overlay.addEventListener("click", function (ev) {
+    /* Backdrop click = same as X: close without saving */
     if (ev.target === overlay) closePprogFinishFeedback();
   });
-})();
+}
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", bindPprogFinishOverlayClick);
+} else {
+  bindPprogFinishOverlayClick();
+}
 
 window.openPprogFinishFeedback = openPprogFinishFeedback;
 window.closePprogFinishFeedback = closePprogFinishFeedback;
@@ -11676,6 +11671,43 @@ function initTimerColorBuckets() {
   } catch (e) {}
 })();
 </script>
+
+<div id="pprogFinishOverlay" class="pprog-finish-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="pprogFinishTitle">
+  <div class="pprog-finish-sheet" onclick="event.stopPropagation()">
+    <div class="pprog-finish-sheet-head">
+      <div>
+        <span class="pprog-finish-sheet-title" id="pprogFinishTitle">How was this workout?</span>
+        <span class="pprog-finish-sheet-sub">Quick check-in after you finished — helps your coach learn what fits you.</span>
+      </div>
+      <button type="button" class="pprog-finish-close" onclick="closePprogFinishFeedback()" aria-label="Close without saving">×</button>
+    </div>
+    <div class="pprog-finish-options" id="pprogFinishOptions" role="listbox" aria-label="Workout feedback">
+      <button type="button" class="pprog-finish-opt" data-finish="just_right" onclick="selectPprogFinishOption('just_right')">
+        Just right
+        <span class="pprog-finish-opt-hint">Load and difficulty felt accurate</span>
+      </button>
+      <button type="button" class="pprog-finish-opt" data-finish="too_hard" onclick="selectPprogFinishOption('too_hard')">
+        Too hard
+        <span class="pprog-finish-opt-hint">Volume, intensity, or skills were too much</span>
+      </button>
+      <button type="button" class="pprog-finish-opt" data-finish="too_easy" onclick="selectPprogFinishOption('too_easy')">
+        Too easy
+        <span class="pprog-finish-opt-hint">Could have pushed more</span>
+      </button>
+      <button type="button" class="pprog-finish-opt" data-finish="other" onclick="selectPprogFinishOption('other')">
+        Other
+        <span class="pprog-finish-opt-hint">You’ll need to write what your coach should know</span>
+      </button>
+    </div>
+    <div class="pprog-finish-other-wrap" id="pprogFinishOtherWrap">
+      <label for="pprogFinishOtherNote">If you choose Other, describe what your coach should know about this session.</label>
+      <textarea id="pprogFinishOtherNote" maxlength="1200" placeholder="e.g. knees flared on squats · ran out of time on the metcon · loved the gymnastics volume…"></textarea>
+    </div>
+    <div class="pprog-finish-actions">
+      <button type="button" class="pprog-finish-send" id="pprogFinishSendBtn" disabled onclick="submitPprogFinishFeedback()">Send</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

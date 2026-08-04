@@ -4,7 +4,8 @@
 
 ### Personal Coach: Finished workout check-in UI
 - **Display preview / WIP:** green **Done** (thumbs) button beside the day title on daily + monthly day cards.
-- Popup check-in: Just right / Too hard / Too easy / Other (Other requires a written note for the coach).
+- Floating centered popup check-in (full-screen overlay): Just right / Too hard / Too easy / Other (Other requires a written note).
+- Closes after send, or via **×** / backdrop / Esc without saving.
 - Saves local `finishFeedback` on the day for now; coach-learning link TBD.
 
 ---
