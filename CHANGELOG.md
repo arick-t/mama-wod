@@ -1,5 +1,6 @@
 # Changelog
 
+<<<<<<< HEAD
 ## [21.3.5] - 2026-08-06
 
 ### Security (0 ₪ extra AI)
@@ -12,6 +13,14 @@
 ### Display
 
 - App header/title: **DAILY WORKOUTS · v21.3** (Coach brain remains **v2.1**).
+=======
+## [21.2.5] - 2026-08-04
+
+### Personal Coach: floating day navigation (WIP)
+- Floating circular prev/next arrows while viewing a training day (daily or monthly day card).
+- Swipe left/right on the workout pane to move to the next/previous day across the 5-week brick.
+- Preview: `preview-day-nav.html`.
+>>>>>>> 91c2cddb (feat(coach): floating day arrows + swipe between workouts)
 
 ---
 

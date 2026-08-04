@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DUCK-WOD · Day nav arrows preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Oswald','Heebo',sans-serif;min-height:100vh;color:#f0ece0;
+  background:
+    radial-gradient(900px 520px at 8% -10%,#1a2a22 0%,transparent 55%),
+    radial-gradient(700px 420px at 100% 20%,#1a2228 0%,transparent 50%),
+    #111;
+  padding:20px 14px 120px;
+}
+.wrap{max-width:440px;margin:0 auto}
+.brand{font-size:1.55em;font-weight:900;letter-spacing:3px;
+  background:linear-gradient(90deg,#E8451A,#F5C518 50%,#1A9B8A);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sub{color:#aaa;font-size:.82em;margin:4px 0 12px}
+.note{color:#cfc7b6;font-size:.84em;line-height:1.45;margin:0 0 16px;padding:10px 12px;
+  border:1px dashed rgba(26,155,138,.55);border-radius:10px;background:rgba(26,155,138,.08)}
+.mode-row{display:flex;gap:8px;margin:0 0 14px}
+.mode-btn{
+  appearance:none;border:1px solid #3a3a3a;background:#1c1c1c;color:#ddd;
+  border-radius:999px;padding:7px 12px;font:inherit;font-size:.78em;font-weight:700;cursor:pointer;
+}
+.mode-btn.active{border-color:#1A9B8A;color:#d7f5e2;background:rgba(26,155,138,.16)}
+.cal-fake{
+  background:#181818;border:1px solid #333;border-radius:12px;padding:12px 10px;margin:0 0 12px;
+  text-align:center;color:#9a9a9a;font-size:.78em;
+}
+.cal-fake strong{color:#e8e4d8}
+.week-meta{color:#888;font-size:.75em;margin:0 0 10px;text-align:center}
+.stage{
+  touch-action:pan-y;user-select:none;
+  min-height:420px;
+}
+.day-card{
+  background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:16px 14px 14px;
+  margin-bottom:10px;
+}
+.day-card.slide-in{animation:day-slide .22s ease-out}
+@keyframes day-slide{
+  from{opacity:.35;transform:translateX(var(--slide-x,12px))}
+  to{opacity:1;transform:translateX(0)}
+}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin:0 0 10px;padding:0 0 8px;border-bottom:1px solid #2a2a2a}
+.source{color:#b06dcf;font-weight:700;font-size:1.05em;letter-spacing:.03em}
+.hint-chip{font-size:.68em;color:#8a9a8e;border:1px solid #333;border-radius:999px;padding:4px 8px}
+.sec{font-size:1em;font-weight:700;text-decoration:underline;color:#1A9B8A;margin:0 0 7px}
+.lines{margin:0;padding:0 0 0 18px;color:#e8e4d8;font-size:.92em;line-height:1.45}
+.lines li{margin:0 0 4px}
+.spacer{height:280px;border:1px dashed #2a2a2a;border-radius:12px;margin-top:14px;
+  display:flex;align-items:center;justify-content:center;color:#666;font-size:.8em;text-align:center;padding:16px}
+.status{margin-top:12px;color:#8fb89a;font-size:.8em;min-height:1.2em}
+
+.pprog-day-nav{
+  position:fixed;top:42%;z-index:996;
+  width:44px;height:44px;margin:0;padding:0;
+  border-radius:50%;
+  border:1px solid rgba(220,214,198,.28);
+  background:rgba(16,18,17,.78);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  color:#e4dfd2;
+  box-shadow:0 6px 18px rgba(0,0,0,.35);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;appearance:none;-webkit-tap-highlight-color:transparent;
+  transition:opacity .18s ease, transform .18s ease, background .18s ease, border-color .18s ease;
+}
+.pprog-day-nav.prev{left:max(8px, env(safe-area-inset-left))}
+.pprog-day-nav.next{right:max(8px, env(safe-area-inset-right))}
+.pprog-day-nav svg{width:18px;height:18px;display:block;opacity:.92}
+.pprog-day-nav:hover{background:rgba(26,155,138,.22);border-color:rgba(26,155,138,.55);color:#f2f6f4}
+.pprog-day-nav:active{transform:scale(.94)}
+.pprog-day-nav.is-edge{opacity:.28;cursor:default;pointer-events:none;box-shadow:none}
+.links{margin-top:16px;font-size:.82em;color:#aaa}
+.links a{color:#1A9B8A}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">DUCK-WOD</div>
+  <div class="sub">Floating day arrows + swipe · UI preview</div>
+  <p class="note">
+    Circular floating arrows stay on screen while you scroll.
+    Tap ◂ ▸ or swipe the workout left/right to move days (works in daily + monthly day view).
+  </p>
+
+  <div class="mode-row">
+    <button type="button" class="mode-btn active" id="modeWeek" data-mode="week">Daily week view</button>
+    <button type="button" class="mode-btn" id="modeMonth" data-mode="month">Monthly day view</button>
+  </div>
+
+  <div class="cal-fake" id="calLabel">Week view · tap arrows or swipe the card</div>
+  <div class="week-meta" id="weekMeta">Week 1 / 5</div>
+
+  <div class="stage" id="stage">
+    <div class="day-card" id="card">
+      <div class="card-head">
+        <div class="source" id="title">Wed · 5 Aug</div>
+        <span class="hint-chip">swipe me</span>
+      </div>
+      <div class="sec" id="sec">Strength / Skill</div>
+      <ul class="lines" id="lines"></ul>
+    </div>
+    <div class="spacer">Scroll area — arrows stay floating mid-screen</div>
+  </div>
+  <div class="status" id="status"></div>
+  <div class="links">App: <a href="/">/</a> · Preview: <a href="/preview-day-nav.html">/preview-day-nav.html</a></div>
+</div>
+
+<button type="button" class="pprog-day-nav prev" id="prevBtn" aria-label="Previous day" title="Previous day">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.4 4.6 13.99 3.2 5.2 12l8.79 8.8 1.41-1.41L8.03 12z"/></svg>
+</button>
+<button type="button" class="pprog-day-nav next" id="nextBtn" aria-label="Next day" title="Next day">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8.6 4.6 10.01 3.2 18.8 12l-8.79 8.8-1.41-1.41L15.97 12z"/></svg>
+</button>
+
+<script>
+(function () {
+  var DAYS = [
+    { key: "sun", label: "Sun · 2 Aug", sec: "Rest", lines: ["Full rest day"] },
+    { key: "mon", label: "Mon · 3 Aug", sec: "Strength / Skill", lines: ["Front squat 5×3", "Rest 2:00"] },
+    { key: "tue", label: "Tue · 4 Aug", sec: "Conditioning", lines: ["AMRAP 12", "9 pull-ups · 12 push-ups · 15 air squats"] },
+    { key: "wed", label: "Wed · 5 Aug", sec: "Strength / Skill", lines: ["Back squat 5×3", "Rest 2:00"] },
+    { key: "thu", label: "Thu · 6 Aug", sec: "Conditioning", lines: ["For time", "21-15-9 thrusters + pull-ups"] },
+    { key: "fri", label: "Fri · 7 Aug", sec: "Active recovery", lines: ["Easy bike 20:00", "Mobility 10:00"] },
+    { key: "sat", label: "Sat · 8 Aug", sec: "Engine", lines: ["3 rounds", "400m run · 15 KB swings · 10 burpees"] },
+    { key: "sun2", label: "Sun · 9 Aug", sec: "Rest", lines: ["Full rest day"] },
+    { key: "mon2", label: "Mon · 10 Aug", sec: "Strength / Skill", lines: ["Deadlift 5×2", "Rest 2:30"] }
+  ];
+  var idx = 3;
+  var mode = "week";
+  var card = document.getElementById("card");
+  var title = document.getElementById("title");
+  var sec = document.getElementById("sec");
+  var lines = document.getElementById("lines");
+  var status = document.getElementById("status");
+  var weekMeta = document.getElementById("weekMeta");
+  var calLabel = document.getElementById("calLabel");
+  var prevBtn = document.getElementById("prevBtn");
+  var nextBtn = document.getElementById("nextBtn");
+  var stage = document.getElementById("stage");
+
+  function render(dir) {
+    var d = DAYS[idx];
+    title.textContent = d.label;
+    sec.textContent = d.sec;
+    lines.innerHTML = d.lines.map(function (x) { return "<li>" + x + "</li>"; }).join("");
+    weekMeta.textContent = "Week " + (idx < 7 ? "1" : "2") + " / 5 · " + d.label;
+    calLabel.textContent = (mode === "week" ? "Daily week view" : "Monthly day view") + " · " + d.label;
+    prevBtn.classList.toggle("is-edge", idx <= 0);
+    nextBtn.classList.toggle("is-edge", idx >= DAYS.length - 1);
+    if (dir) {
+      card.style.setProperty("--slide-x", dir > 0 ? "18px" : "-18px");
+      card.classList.remove("slide-in");
+      void card.offsetWidth;
+      card.classList.add("slide-in");
+    }
+  }
+  function step(dir) {
+    var next = idx + dir;
+    if (next < 0 || next >= DAYS.length) {
+      status.textContent = dir < 0 ? "Start of brick" : "End of sample range";
+      return;
+    }
+    idx = next;
+    status.textContent = dir < 0 ? "← previous day" : "next day →";
+    render(dir);
+  }
+
+  prevBtn.onclick = function () { step(-1); };
+  nextBtn.onclick = function () { step(1); };
+  document.getElementById("modeWeek").onclick = function () {
+    mode = "week";
+    this.classList.add("active");
+    document.getElementById("modeMonth").classList.remove("active");
+    render(0);
+    status.textContent = "Mode: daily week view";
+  };
+  document.getElementById("modeMonth").onclick = function () {
+    mode = "month";
+    this.classList.add("active");
+    document.getElementById("modeWeek").classList.remove("active");
+    render(0);
+    status.textContent = "Mode: monthly day view (same arrows + swipe)";
+  };
+
+  var sx = 0, sy = 0, tracking = false;
+  function onStart(x, y) { sx = x; sy = y; tracking = true; }
+  function onEnd(x, y) {
+    if (!tracking) return;
+    tracking = false;
+    var dx = x - sx, dy = y - sy;
+    if (Math.abs(dx) < 56) return;
+    if (Math.abs(dx) < Math.abs(dy) * 1.35) return;
+    step(dx < 0 ? 1 : -1);
+  }
+  stage.addEventListener("touchstart", function (e) {
+    if (e.touches.length === 1) onStart(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+  stage.addEventListener("touchend", function (e) {
+    if (e.changedTouches.length) onEnd(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+  }, { passive: true });
+  stage.addEventListener("mousedown", function (e) { onStart(e.clientX, e.clientY); });
+  window.addEventListener("mouseup", function (e) { onEnd(e.clientX, e.clientY); });
+
+  render(0);
+})();
+</script>
+</body>
+</html>
