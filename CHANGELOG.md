@@ -1,5 +1,14 @@
 # Changelog
 
+## [21.2.5] - 2026-08-04
+
+### Personal Coach: floating day navigation (WIP)
+- Floating circular prev/next arrows while viewing a training day (daily or monthly day card).
+- Swipe left/right on the workout pane to move to the next/previous day across the 5-week brick.
+- Preview: `preview-day-nav.html`.
+
+---
+
 ## [21.3.4] - 2026-08-03
 
 ### Coach 2.1 — Cost Guardrails v1 (live)
