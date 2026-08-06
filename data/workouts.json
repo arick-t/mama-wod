@@ -2786,56 +2786,6 @@
       },
       {
         "date": "2026-08-06",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-08-06/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "samson stretch",
-              "hand walk",
-              "instep rotations",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "2-4-6-8....",
-              "burpees",
-              "hang high pulls",
-              "elbow rotations"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "POWER CLEANS 12MIN",
-            "lines": [
-              "on every 2:00 x 6 sets",
-              "2 squat jumps",
-              "2 power cleans",
-              "(build in weight)",
-              "explosive power"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "25 burpees over the bar",
-              "25 power cleans",
-              "25 burpees over the bar",
-              "25 power cleans",
-              "25 burpees over the bar",
-              "* barbell: 60/40kg",
-              "* lactate threshold & aerobic power"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-08-06",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-august-6-2026/",
@@ -2891,6 +2841,56 @@
             "lines": [
               "Spend 4:00 on the rower, keeping your heartrate above 150bpm minus your age, then slowly work down to resting for the next 8:00 on any machine or walking."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-06",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-08-06/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "samson stretch",
+              "hand walk",
+              "instep rotations",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "2-4-6-8....",
+              "burpees",
+              "hang high pulls",
+              "elbow rotations"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "POWER CLEANS 12MIN",
+            "lines": [
+              "on every 2:00 x 6 sets",
+              "2 squat jumps",
+              "2 power cleans",
+              "(build in weight)",
+              "explosive power"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "25 burpees over the bar",
+              "25 power cleans",
+              "25 burpees over the bar",
+              "25 power cleans",
+              "25 burpees over the bar",
+              "* barbell: 60/40kg",
+              "* lactate threshold & aerobic power"
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -2993,5 +2993,5 @@
       }
     ]
   },
-  "last_updated": "2026-08-06T07:11:45.941043"
+  "last_updated": "2026-08-06T08:40:07.030632"
 }
