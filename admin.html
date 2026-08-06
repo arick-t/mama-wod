@@ -562,9 +562,9 @@ function doLogin() {
     })
     .then(function(res) {
       if (res.status === 503 || (res.data && res.data.error === "admin_not_configured")) {
-        throw new Error("not_configured");
+        throw new Error((res.data && res.data.message) || "not_configured");
       }
-      if (res.status === 401) throw new Error("wrong_password");
+      if (res.status === 401) throw new Error((res.data && res.data.message) || "wrong_password");
       if (res.status < 200 || res.status >= 300) throw new Error("http_" + res.status);
       if (!res.data || !res.data.ok) throw new Error("bad_response");
       document.getElementById("login-screen").style.display = "none";
@@ -576,12 +576,15 @@ function doLogin() {
     })
     .catch(function(e) {
       var msg = "שגיאת חיבור";
-      if (e && e.message === "not_configured") {
-        msg = "הסיסמה עדיין לא הוגדרה בשרת (Vercel). הגדר ADMIN_PASSWORD ואז Redeploy.";
-      } else if (e && e.message === "wrong_password") {
+      var em = e && e.message ? String(e.message) : "";
+      if (em === "not_configured" || em.indexOf("לא הוגדר") >= 0 || em.indexOf("ADMIN_PASSWORD") >= 0) {
+        msg = "לא הוגדר בשרת. הגדר ADMIN_PASSWORD ב־Vercel ואז Redeploy.";
+      } else if (em === "wrong_password" || em.indexOf("סיסמה שגויה") >= 0) {
         msg = "סיסמה שגויה";
-      } else if (e && String(e.message || "").indexOf("http_") === 0) {
-        msg = "שגיאת שרת (" + e.message.slice(5) + ")";
+      } else if (em.indexOf("http_") === 0) {
+        msg = "שגיאת שרת (" + em.slice(5) + ")";
+      } else if (em) {
+        msg = em;
       }
       if (errEl) errEl.textContent = msg;
     });
