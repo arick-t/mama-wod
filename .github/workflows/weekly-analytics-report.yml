@@ -1,4 +1,4 @@
-# דוח ניתור — Resend. Secrets: RESEND_API_KEY (או RESEND_API_KEY_conmail). פירוט: RESEND_SECRETS.md. לוגיקה: scripts/ci-weekly-analytics-report.sh
+# דוח ניתור — Brevo (מועדף) או Resend. Secrets: BREVO_API_KEY (+ BREVO_SENDER_*). פירוט: RESEND_SECRETS.md
 name: 📊 Weekly Analytics Report
 
 on:
@@ -35,12 +35,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Generate report & send via Resend
+      - name: Generate report & send email
         env:
           REPORT_PERIOD: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.report_period || 'last_week' }}
           REPORT_FROM_DATE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.from_date || '' }}
           USE_SAMPLE_DATA: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.use_sample_data || 'false' }}
           EMAIL_TO_OVERRIDE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.email_to || '' }}
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+          BREVO_SENDER_EMAIL: ${{ secrets.BREVO_SENDER_EMAIL }}
+          BREVO_SENDER_NAME: ${{ secrets.BREVO_SENDER_NAME }}
           RESEND_FROM_SECRET: ${{ secrets.RESEND_FROM }}
           ANALYTICS_TO_SECRET: ${{ secrets.ANALYTICS_REPORT_TO }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY || secrets.RESEND_API_KEY_conmail }}

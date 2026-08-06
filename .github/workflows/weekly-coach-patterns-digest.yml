@@ -39,9 +39,13 @@ jobs:
           # Off unless repo secret COACH_BRAIN_SYNC_ENABLED=true, or manual dispatch with enable_brain_sync.
           COACH_BRAIN_SYNC_ENABLED: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.enable_brain_sync == 'true' && 'true' || secrets.COACH_BRAIN_SYNC_ENABLED }}
           COACH_DIGEST_EMAIL_TO: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.email_to || secrets.COACH_DIGEST_EMAIL_TO || secrets.ANALYTICS_REPORT_TO || '' }}
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+          BREVO_SENDER_EMAIL: ${{ secrets.BREVO_SENDER_EMAIL }}
+          BREVO_SENDER_NAME: ${{ secrets.BREVO_SENDER_NAME }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY || secrets.RESEND_API_KEY_conmail }}
           RESEND_FROM: ${{ secrets.RESEND_FROM }}
           ANALYTICS_REPORT_TO: ${{ secrets.ANALYTICS_REPORT_TO }}
+          APP_MAIL_TO: ${{ secrets.APP_MAIL_TO }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_FILE_SEARCH_STORE: ${{ secrets.GEMINI_FILE_SEARCH_STORE }}
           COACH_KNOWLEDGE_DIR: experiments/personal-coach/knowledge-inbox
