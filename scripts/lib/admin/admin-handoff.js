@@ -12,12 +12,13 @@
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
-const { checkRateLimit, sendRateLimit } = require("../../../api/rate-limit");
+const { checkRateLimit, sendRateLimit } = require("../../../lib/rate-limit");
 const {
   resolveAdminPassword,
   checkAdminAuth: sharedCheckAdminAuth,
 } = require("./admin-auth");
 const { adminSnapshotsDir, adminClaimsDir } = require("./admin-paths");
+const { applyCors } = require("../../../lib/cors-allowlist");
 
 const SNAPSHOTS_DIR = adminSnapshotsDir();
 const CLAIMS_DIR = adminClaimsDir();
@@ -481,12 +482,10 @@ function listLinksForAthlete(athleteId) {
 }
 
 module.exports = async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Content-Type, X-Admin-Password, X-Admin-Token"
-  );
+  applyCors(req, res, {
+    methods: "GET,POST,OPTIONS",
+    headers: "Content-Type, X-Admin-Password, X-Admin-Token",
+  });
   if (req.method === "OPTIONS") return res.status(204).end();
 
   const query = req.query || {};

@@ -8,12 +8,13 @@
  * (COACH_KNOWLEDGE_DIR or experiments/personal-coach/knowledge-inbox).
  */
 
-const { checkRateLimit, sendRateLimit } = require("../../../api/rate-limit");
+const { checkRateLimit, sendRateLimit } = require("../../../lib/rate-limit");
 const { runCoachBrainSync, readLastSync } = require("../coach-brain-sync");
 const {
   resolveAdminPassword,
   checkAdminAuth: sharedCheckAdminAuth,
 } = require("./admin-auth");
+const { applyCors } = require("../../../lib/cors-allowlist");
 
 const ADMIN_PASSWORD = resolveAdminPassword();
 
@@ -22,12 +23,10 @@ function checkAdminAuth(req) {
 }
 
 module.exports = async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Content-Type, X-Admin-Password, X-Admin-Token"
-  );
+  applyCors(req, res, {
+    methods: "GET,POST,OPTIONS",
+    headers: "Content-Type, X-Admin-Password, X-Admin-Token",
+  });
   if (req.method === "OPTIONS") return res.status(204).end();
 
   if (req.method === "GET") {

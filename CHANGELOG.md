@@ -1,5 +1,20 @@
 # Changelog
 
+## [21.3.5] - 2026-08-06
+
+### Security (0 ₪ extra AI)
+
+- **Admin:** `ADMIN_PASSWORD` from Vercel env only — no hardcoded bootstrap; no password in URL.
+- **Personal Coach:** deterministic input/output guards (POL-007/019) — malicious chat blocked with `local-guard`, no extra model calls; programming path unchanged for quality.
+- **CORS:** allowlist for official origins; share links preserved.
+- **Public API:** trimmed debug fields on status endpoints.
+
+### Display
+
+- App header/title: **DAILY WORKOUTS · v21.3** (Coach brain remains **v2.1**).
+
+---
+
 ## [21.3.4] - 2026-08-03
 
 ### Coach 2.1 — Cost Guardrails v1 (live)

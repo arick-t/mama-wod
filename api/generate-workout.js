@@ -8,15 +8,16 @@
  * POST action generate: JSON { ok, text } or stream: true → SSE (OpenAI-style for Groq, Gemini SSE if on Gemini).
  */
 
-function allowCors(res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-}
-
-const { checkRateLimit, sendRateLimit } = require("./rate-limit.js");
+const { checkRateLimit, sendRateLimit } = require("../lib/rate-limit.js");
 const { scrubPiiText } = require("./sanitize-pii.js");
+const { applyCors } = require("../lib/cors-allowlist.js");
 
+function allowCors(req, res) {
+  applyCors(req, res, {
+    methods: "GET, POST, OPTIONS",
+    headers: "Content-Type",
+  });
+}
 const GEMINI_KEY_ENV_NAMES = ["GEMINI_API_KEY", "GOOGLE_GENERATIVE_AI_API_KEY", "GOOGLE_AI_API_KEY"];
 
 function resolveGeminiApiKey() {
@@ -828,7 +829,7 @@ async function handleGenerateStream(res, key, model, geminiBody) {
 
 module.exports = async function handler(req, res) {
   try {
-    allowCors(res);
+    allowCors(req, res);
     const method = String(req.method || "")
       .trim()
       .toUpperCase();
@@ -843,16 +844,9 @@ module.exports = async function handler(req, res) {
         service: "generate-workout",
         provider: prov.id,
         groqKeyConfigured: !!resolveGroqApiKey(),
-        groqModelEnv: (process.env.GROQ_MODEL || "").trim() || null,
-        groqModelResolved: prov.id === "groq" ? resolveGroqModelId() : null,
         geminiKeyConfigured: !!resolveGeminiApiKey(),
-        geminiKeySourceEnv: resolveGeminiApiKey() ? geminiKeySourceEnvName() : null,
-        modelEnv: (process.env.GEMINI_MODEL || "").trim() || null,
         modelResolved: resolveGeminiModelId(),
-        geminiFetchBudgetMs: resolveGeminiFetchBudget().ms,
-        geminiFetchBudgetCap: resolveGeminiFetchBudget().cap,
         runningOnVercel: !!process.env.VERCEL,
-        debug: buildGeminiEnvDebug(),
         hint: configured
           ? `Active provider: ${prov.id}. POST JSON action generate|explain.`
           : "Set GROQ_API_KEY (preferred) or GEMINI_API_KEY for Production, Redeploy; repo root must contain /api.",

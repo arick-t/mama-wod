@@ -8,12 +8,14 @@
  */
 
 const GITHUB_API = "https://api.github.com";
-const { checkRateLimit, sendRateLimit } = require("./rate-limit.js");
+const { checkRateLimit, sendRateLimit } = require("../lib/rate-limit.js");
+const { applyCors } = require("../lib/cors-allowlist.js");
 
-function allowCors(res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+function allowCors(req, res) {
+  applyCors(req, res, {
+    methods: "GET, POST, OPTIONS",
+    headers: "Content-Type",
+  });
 }
 
 function clientIp(req) {
@@ -78,7 +80,7 @@ async function appendGithubJsonl(token, repo, filePath, newLine, commitMessage, 
 }
 
 module.exports = async function handler(req, res) {
-  allowCors(res);
+  allowCors(req, res);
   if (req.method === "OPTIONS") {
     return res.status(204).end();
   }

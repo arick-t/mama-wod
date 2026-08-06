@@ -251,6 +251,7 @@ const server = http.createServer((req, res) => {
         body: {},
         query: parsed.query || {},
         url: req.url || pathname,
+        headers: req.headers || {},
       };
       const fakeRes = wrapRes(res);
       const rel =
@@ -283,7 +284,7 @@ const server = http.createServer((req, res) => {
       } catch (e) {
         parsedBody = {};
       }
-      const fakeReq = { method: "POST", body: parsedBody };
+      const fakeReq = { method: "POST", body: parsedBody, headers: req.headers || {}, query: parsed.query || {}, url: req.url || pathname };
       const fakeRes = wrapRes(res);
       try {
         if (pathname === "/api/generate-workout") {

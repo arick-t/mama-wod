@@ -9,13 +9,14 @@
 
 const fs = require("fs");
 const path = require("path");
-const { checkRateLimit, sendRateLimit } = require("../../../api/rate-limit");
+const { checkRateLimit, sendRateLimit } = require("../../../lib/rate-limit");
 const { readLastSync, knowledgeDir, resolveStoreName } = require("../coach-brain-sync");
 const {
   resolveAdminPassword,
   checkAdminAuth: sharedCheckAdminAuth,
 } = require("./admin-auth");
 const { adminMetaPath } = require("./admin-paths");
+const { applyCors } = require("../../../lib/cors-allowlist");
 
 const META_PATH = adminMetaPath();
 const ADMIN_PASSWORD = resolveAdminPassword();
@@ -70,12 +71,10 @@ function publicMeta() {
 }
 
 module.exports = async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Content-Type, X-Admin-Password, X-Admin-Token"
-  );
+  applyCors(req, res, {
+    methods: "GET,POST,OPTIONS",
+    headers: "Content-Type, X-Admin-Password, X-Admin-Token",
+  });
   if (req.method === "OPTIONS") return res.status(204).end();
 
   if (req.method !== "GET" && req.method !== "POST") {
