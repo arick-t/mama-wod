@@ -5,7 +5,7 @@
 1. היכנס ל־Vercel → הפרויקט → Settings → Environment Variables  
 2. הוסף משתנה:
    - שם: `ADMIN_PASSWORD`
-   - ערך: **אותה סיסמה שאתה משתמש בה היום**
+   - ערך: **הסיסמה שלך** (אותה שאתה משתמש בה היום — מוגדרת מקומית ב־`.env.local` לבדיקות, לא בקוד)
    - Environment: Production (וגם Preview אם צריך)
 3. לחץ Save  
 4. בצע **Redeploy** ל־Production  
