@@ -31,6 +31,14 @@ const {
   evaluateCostCapGate,
   costCapHttpPayload,
 } = require("../lib/coach-cost-caps.js");
+const { applyCors } = require("../lib/cors-allowlist.js");
+const {
+  classifyCoachUserInput,
+  shouldBlockWithoutModel,
+  applyCoachOutputGuard,
+  lastUserText: getLastUserMessageText,
+  SUSPICIOUS_SYSTEM_NOTE,
+} = require("../lib/coach-security-guards.js");
 
 /** Compact cost guardrails — single chat/programming reminder (full text = POL-COST-* in coach-policy). */
 const COST_GUARDRAILS_COMPACT =
@@ -361,10 +369,11 @@ function friendlyProviderError(result) {
   return "Coach request failed";
 }
 
-function setCors(res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+function setCors(req, res) {
+  applyCors(req, res, {
+    methods: "GET, POST, OPTIONS",
+    headers: "Content-Type",
+  });
 }
 
 async function parseRequestJson(req) {
@@ -1511,7 +1520,7 @@ async function callCoachLlm(apiKey, groqKey, model, messages, storeName, systemT
 }
 
 module.exports = async function handler(req, res) {
-  setCors(res);
+  setCors(req, res);
   if (req.method === "OPTIONS") {
     return res.status(204).json({});
   }
@@ -1529,7 +1538,7 @@ module.exports = async function handler(req, res) {
       service: "personal-coach",
       engine: "personal-coach",
       notGenerateWorkout: true,
-      version: "21.3.4",
+      version: "21.3.5",
       coachVersion: COACH_VERSION,
       hasGeminiKey: !!apiKey,
       hasGroqKey: !!groqKey,
@@ -1540,11 +1549,7 @@ module.exports = async function handler(req, res) {
       /* While Gemini key is invalid, runtime uses Groq + compact system (File Search off). */
       knowledgeRequiresGemini: true,
       hint: apiKey || groqKey
-        ? store && apiKey
-          ? "Ready — Personal Coach via POST (intake / brick / revise). Separate from /api/generate-workout."
-          : groqKey && !apiKey
-            ? "Groq Personal Coach ready (Gemini missing). File Search/מאגר offline until GEMINI_API_KEY is valid."
-            : "Key present. Knowledge store not configured."
+        ? "Ready — Personal Coach via POST (intake / brick / revise)."
         : "Set GROQ_API_KEY or GEMINI_API_KEY in .env.local / Vercel, then restart / redeploy.",
     });
   }
@@ -1637,6 +1642,21 @@ module.exports = async function handler(req, res) {
     return res.status(403).json(costCapHttpPayload(costGate));
   }
 
+  /* POL-007 / POL-019 — local input firewall before provider (0 AI cost). */
+  const earlyMessages = scrubMessages(normalizeMessages(body));
+  const earlySecurityVerdict = classifyCoachUserInput(getLastUserMessageText(earlyMessages));
+  if (shouldBlockWithoutModel(earlySecurityVerdict, action)) {
+    return res.status(200).json({
+      ok: true,
+      text: earlySecurityVerdict.refusal,
+      securityBlock: true,
+      securityReason: earlySecurityVerdict.reason,
+      model: "local-guard",
+      coachVersion: COACH_VERSION,
+      programmingSystem: isProgrammingAction(action),
+    });
+  }
+
   if (!apiKey && !groqKey) {
     return res.status(503).json({
       error: "Missing AI API key",
@@ -1681,10 +1701,15 @@ module.exports = async function handler(req, res) {
     });
   }
   let systemText = buildSystemWithMemory(athleteProfile, action, { forceJson: forceJson });
-  let messages = scrubMessages(normalizeMessages(body));
+  let messages = earlyMessages;
   if (body.feedback) body.feedback = scrubPiiText(body.feedback);
   if (body.text) body.text = scrubPiiText(body.text);
   systemText += languageFollowRule(messages, action, forceJson, athleteProfile);
+
+  if (earlySecurityVerdict.level === "suspicious") {
+    systemText += SUSPICIOUS_SYSTEM_NOTE;
+  }
+
   if (body.brickChat === true || body.wholeProgramChat === true) {
     const todayIso =
       String(body.israelToday || "").slice(0, 10) || israelTodayIso();
@@ -2126,23 +2151,31 @@ module.exports = async function handler(req, res) {
   const preferInteractions = !programming && body.preferInteractions === true;
 
   function packOk(result, extra) {
-    const block = extractBlockJson(result.text);
-    const week = extractWeekJson(result.text, weekIndexForExtract);
-    const part = extractPartJson(result.text);
-    const day = extractDayJson(result.text);
+    const guarded = applyCoachOutputGuard(String((result && result.text) || ""), {
+      programming: programming,
+    });
+    const safeText = guarded.text;
+    const block = extractBlockJson(safeText);
+    const week = extractWeekJson(safeText, weekIndexForExtract);
+    const part = extractPartJson(safeText);
+    const day = extractDayJson(safeText);
     const out = Object.assign(
       {
         ok: true,
-        text: result.text,
+        text: safeText,
         via: result.via,
         model: result.model || model,
         coachVersion: COACH_VERSION,
         fileSearch: !!store && !(gcOpts && gcOpts.skipTools) && result.via !== "groq",
         programmingSystem: programming,
-        intakeLike: looksLikeIntakeReply(result.text),
+        intakeLike: looksLikeIntakeReply(safeText),
       },
       extra || {}
     );
+    if (guarded.blocked) {
+      out.securityBlock = true;
+      out.securityReason = guarded.reason || "output_leak";
+    }
     if (result.usage) out.usage = result.usage;
     if (block) out.block = block;
     if (week) out.week = week;
@@ -2577,7 +2610,7 @@ module.exports = async function handler(req, res) {
   }
 
   /* Cost: brick chat / Confirm? does not need File Search retrieval billing. */
-  const lastUserText =
+  const lastUserLine =
     messages.length && messages[messages.length - 1] && messages[messages.length - 1].role === "user"
       ? String(messages[messages.length - 1].text || "").trim()
       : "";
@@ -2585,7 +2618,7 @@ module.exports = async function handler(req, res) {
     !programming &&
     (body.brickChat === true ||
       body.wholeProgramChat === true ||
-      /^confirm\??$/i.test(lastUserText));
+      /^confirm\??$/i.test(lastUserLine));
   const chatStore = skipChatFileSearch ? null : store || undefined;
 
   result = programming

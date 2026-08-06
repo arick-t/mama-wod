@@ -16,6 +16,7 @@ const {
   checkAdminAuth: sharedCheckAdminAuth,
 } = require("./admin-auth");
 const { adminCoachTrainingRoot } = require("./admin-paths");
+const { applyCors } = require("../../../lib/cors-allowlist");
 
 const ROOT = adminCoachTrainingRoot();
 const SESSIONS_DIR = path.join(ROOT, "sessions");
@@ -649,12 +650,10 @@ async function actionList() {
 }
 
 module.exports = async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Content-Type, X-Admin-Password, X-Admin-Token"
-  );
+  applyCors(req, res, {
+    methods: "GET,POST,OPTIONS",
+    headers: "Content-Type, X-Admin-Password, X-Admin-Token",
+  });
   if (req.method === "OPTIONS") return res.status(204).end();
 
   if (req.method === "GET") {

@@ -18,6 +18,7 @@ const {
   adminAuthDenied,
 } = require("./admin-auth");
 const { adminSnapshotsDir } = require("./admin-paths");
+const { applyCors } = require("../../../lib/cors-allowlist");
 
 const SNAPSHOTS_DIR = adminSnapshotsDir();
 const MAX_SNAPSHOT_BYTES = 64 * 1024; // 64 KB per athlete
@@ -88,12 +89,10 @@ function checkAdminAuth(req) {
 }
 
 module.exports = async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Content-Type, X-Admin-Password, X-Admin-Token, X-Athlete-Id"
-  );
+  applyCors(req, res, {
+    methods: "GET,POST,DELETE,OPTIONS",
+    headers: "Content-Type, X-Admin-Password, X-Admin-Token, X-Athlete-Id",
+  });
   if (req.method === "OPTIONS") return res.status(204).end();
 
   // ── POST: athlete pushes snapshot ──────────────────────────────────────────

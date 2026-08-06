@@ -7,11 +7,13 @@
  */
 const { checkRateLimit, sendRateLimit } = require("./rate-limit.js");
 const { scrubPiiText } = require("./sanitize-pii.js");
+const { applyCors } = require("../lib/cors-allowlist.js");
 
-function setCors(res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+function setCors(req, res) {
+  applyCors(req, res, {
+    methods: "GET, POST, OPTIONS",
+    headers: "Content-Type",
+  });
 }
 
 async function parseRequestJson(req) {
@@ -341,7 +343,7 @@ async function sendResend(to, subject, textBody, htmlBody) {
 }
 
 module.exports = async function handler(req, res) {
-  setCors(res);
+  setCors(req, res);
   if (req.method === "OPTIONS") return res.status(204).json({});
   if (req.method === "GET" || req.method === "HEAD") {
     return res.status(200).json({
