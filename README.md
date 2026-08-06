@@ -32,8 +32,8 @@
 
 ## ✅ v19.8.3 (Mar 2026)
 
-- **Ops:** דוח ניתור → `ariel.tahan@gmail.com`; הסרת workflow מייל בדיקה.
-- **מוצר (כמו 19.8.2):** About, קרדיטים, דיסקלימר, מייל קונטקט `contact.duckwod@gmail.com` ב־UI בלבד.
+- **Ops:** דוח ניתור / מיילי אפליקציה → `contact.duckwod@gmail.com` (ראו `RESEND_SECRETS.md`).
+- **מוצר:** About, קרדיטים, דיסקלימר, מייל קונטקט `contact.duckwod@gmail.com`.
 
 ## ✅ v19.8.2 (Mar 2026)
 

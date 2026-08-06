@@ -2,11 +2,13 @@
  * Personal Coach feedback → email owner (Beta 1.0)
  * POST { type, athleteId?, userId?, displayName?, day?, partId?, partTitle?, text, weekStart?,
  *        athleteFeedback?, coachReply?, parts?: [{title, lines:[]}] }
- * Tries Resend if RESEND_API_KEY set. Never opens mailto for the user — silent admin log only.
- * Same Resend setup as weekly analytics (RESEND_SECRETS.md).
+ * Sends via Brevo (BREVO_API_KEY) or Resend fallback. Never opens mailto — silent admin log only.
+ * See RESEND_SECRETS.md (mail ops; Brevo preferred).
  */
+const { sendAppMail, hasMailProvider } = require("../lib/send-app-mail");
 const { checkRateLimit, sendRateLimit } = require("../lib/rate-limit.js");
 const { scrubPiiText } = require("./sanitize-pii.js");
+const { resolveAppMailTo } = require("../lib/app-mail.js");
 const { applyCors } = require("../lib/cors-allowlist.js");
 
 function setCors(req, res) {
@@ -37,11 +39,11 @@ async function parseRequestJson(req) {
 }
 
 function feedbackTo() {
-  return String(
-    process.env.COACH_FEEDBACK_TO ||
-      process.env.ANALYTICS_REPORT_TO ||
-      "ariel.tahan@gmail.com"
-  ).trim();
+  return resolveAppMailTo({
+    COACH_FEEDBACK_TO: process.env.COACH_FEEDBACK_TO,
+    APP_MAIL_TO: process.env.APP_MAIL_TO,
+    ANALYTICS_REPORT_TO: process.env.ANALYTICS_REPORT_TO,
+  });
 }
 
 function escHtml(s) {
@@ -306,42 +308,6 @@ function buildMail(body) {
   return { subject: subject, body: textBody, html: htmlBody };
 }
 
-async function sendResend(to, subject, textBody, htmlBody) {
-  const key = String(process.env.RESEND_API_KEY || process.env.RESEND_API_KEY_conmail || "").trim();
-  if (!key) return { sent: false, reason: "no_resend_key" };
-  const from = String(process.env.RESEND_FROM || "DUCK-WOD <onboarding@resend.dev>").trim();
-  const payload = {
-    from: from,
-    to: [to],
-    subject: subject,
-    text: textBody,
-  };
-  if (htmlBody) payload.html = htmlBody;
-  const r = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: "Bearer " + key,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-  const raw = await r.text();
-  let data = null;
-  try {
-    data = raw ? JSON.parse(raw) : null;
-  } catch (e) {
-    data = { raw: raw.slice(0, 400) };
-  }
-  if (!r.ok) {
-    return {
-      sent: false,
-      reason: "resend_error",
-      detail: (data && data.message) || raw.slice(0, 400),
-    };
-  }
-  return { sent: true, id: data && data.id };
-}
-
 module.exports = async function handler(req, res) {
   setCors(req, res);
   if (req.method === "OPTIONS") return res.status(204).json({});
@@ -350,6 +316,8 @@ module.exports = async function handler(req, res) {
       ok: true,
       service: "coach-feedback",
       to: feedbackTo(),
+      hasMail: hasMailProvider(),
+      hasBrevo: !!String(process.env.BREVO_API_KEY || "").trim(),
       hasResend: !!(process.env.RESEND_API_KEY || process.env.RESEND_API_KEY_conmail),
     });
   }
@@ -407,9 +375,14 @@ module.exports = async function handler(req, res) {
 
   let resend;
   try {
-    resend = await sendResend(to, mail.subject, mail.body, mail.html);
+    resend = await sendAppMail({
+      to: to,
+      subject: mail.subject,
+      text: mail.body,
+      html: mail.html,
+    });
   } catch (e) {
-    resend = { sent: false, reason: "resend_throw", detail: String(e.message || e) };
+    resend = { sent: false, reason: "mail_throw", detail: String(e.message || e) };
   }
 
   if (!resend.sent) {

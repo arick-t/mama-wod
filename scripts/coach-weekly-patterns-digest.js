@@ -16,6 +16,7 @@
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
+const { resolveAppMailTo } = require("../lib/app-mail.js");
 
 const ROOT = path.join(__dirname, "..");
 const WORKOUTS = path.join(ROOT, "data", "workouts.json");
@@ -168,30 +169,22 @@ function maybeSyncBrain() {
 }
 
 async function sendEmail(reportText) {
-  const key = process.env.RESEND_API_KEY || process.env.RESEND_API_KEY_conmail;
-  if (!key) {
-    console.log("[email] skipped — no RESEND_API_KEY");
-    return { sent: false, reason: "no RESEND_API_KEY" };
+  const { sendAppMail, hasMailProvider } = require("../lib/send-app-mail");
+  if (!hasMailProvider()) {
+    console.log("[email] skipped — no BREVO_API_KEY / RESEND_API_KEY");
+    return { sent: false, reason: "no_mail_provider_key" };
   }
-  const from = process.env.RESEND_FROM || "DUCK-WOD <onboarding@resend.dev>";
-  const to =
-    process.env.COACH_DIGEST_EMAIL_TO ||
-    process.env.ANALYTICS_REPORT_TO ||
-    "ariel.tahan@gmail.com";
-  const subject = `DUCK-WOD — weekly coach patterns digest (${israelToday()})`;
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${key}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ from, to: [to], subject, text: reportText }),
+  const to = resolveAppMailTo({
+    COACH_DIGEST_EMAIL_TO: process.env.COACH_DIGEST_EMAIL_TO,
+    APP_MAIL_TO: process.env.APP_MAIL_TO,
+    ANALYTICS_REPORT_TO: process.env.ANALYTICS_REPORT_TO,
   });
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`Resend ${res.status}: ${body}`);
+  const subject = `DUCK-WOD — weekly coach patterns digest (${israelToday()})`;
+  const mail = await sendAppMail({ to, subject, text: reportText });
+  if (!mail.sent) {
+    throw new Error(`${mail.provider || "mail"} failed: ${mail.reason} ${mail.detail || ""}`);
   }
-  return { sent: true, to };
+  return { sent: true, to, provider: mail.provider };
 }
 
 async function main() {

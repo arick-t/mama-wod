@@ -407,10 +407,9 @@ server.listen(PORT, "0.0.0.0", () => {
   if (!process.env.GEMINI_FILE_SEARCH_STORE) {
     console.log("  [i] GEMINI_FILE_SEARCH_STORE not set — coach runs without Drive File Search");
   }
-  if (!(process.env.RESEND_API_KEY || process.env.RESEND_API_KEY_conmail)) {
-    console.log("  [!] RESEND_API_KEY missing — coach debrief/feedback emails will not send");
-    console.log("      reuse the SAME key as weekly analytics (GitHub/Vercel) in .env.local — see RESEND_SECRETS.md");
-    console.log("      vars: RESEND_API_KEY, optional RESEND_FROM, COACH_FEEDBACK_TO / ANALYTICS_REPORT_TO");
+  if (!(process.env.BREVO_API_KEY || process.env.RESEND_API_KEY || process.env.RESEND_API_KEY_conmail)) {
+    console.log("  [!] BREVO_API_KEY missing — coach debrief/feedback emails will not send");
+    console.log("      set BREVO_API_KEY (+ BREVO_SENDER_EMAIL=contact.duckwod@gmail.com) in .env.local — see RESEND_SECRETS.md");
   }
   console.log("");
 });
