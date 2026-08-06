@@ -23,9 +23,9 @@ Saved for follow-up discussion (founder review). Source: cloud-agent assessment,
    זה לא “פריצה” לבד, אבל מגדיל משמעותית משטח תקיפה.
 
 2. **Auth אדמין חלש מאוד + ברירת מחדל קשיחה בקוד**  
-   ב־`scripts/lib/admin/admin-auth.js` יש:
-   - סיסמת Bootstrap קבועה בקוד (`FOUNDER_BOOTSTRAP_PASSWORD = "0523701404"`).
-   - אפשר להעביר admin password גם ב‑query (`?pw=` / `?adminPassword=`), שזה מסוכן ללוגים/הדלפה.
+   ב־`scripts/lib/admin/admin-auth.js` היה:
+   - סיסמת Bootstrap קבועה בקוד (הוסרה בשחרור ההקשחה — סיסמה רק ב־`ADMIN_PASSWORD` בשרת).
+   - אפשרות להעביר admin password גם ב‑query (הוסרה; רק header/body).
    זה כיום הסיכון הכי קריטי מבחוץ.
 
 3. **Rate-limit הוא In-memory בלבד**  

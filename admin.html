@@ -1359,7 +1359,7 @@ function deleteAthlete(id) {
   var a = athletes.find(function(x) { return x.athleteId === id; });
   var name = (a && a.displayName) || id;
   if (!confirm("למחוק את " + name + "?")) return;
-  fetch("/api/admin-snapshot?id=" + encodeURIComponent(id) + "&adminPassword=" + encodeURIComponent(adminPw || ""), {
+  fetch("/api/admin-snapshot?id=" + encodeURIComponent(id), {
     method: "DELETE",
     headers: adminAuthHeaders()
   })

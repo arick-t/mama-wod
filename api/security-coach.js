@@ -13,14 +13,16 @@ const SECURITY_SYSTEM = require("./security-prompt.js");
 const SECURITY_POLICY = require("./security-policy.js");
 const { checkRateLimit, sendRateLimit } = require("./rate-limit.js");
 const { scrubPiiText } = require("./sanitize-pii.js");
+const { applyCors } = require("../lib/cors-allowlist.js");
 
 const GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GEMINI_KEY_ENV_NAMES = ["GEMINI_API_KEY", "GOOGLE_GENERATIVE_AI_API_KEY", "GOOGLE_AI_API_KEY"];
 
-function allowCors(res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+function allowCors(req, res) {
+  applyCors(req, res, {
+    methods: "GET, POST, OPTIONS",
+    headers: "Content-Type",
+  });
 }
 
 function sanitizeSecret(raw) {
@@ -211,7 +213,7 @@ async function askGroq(systemText, chatMessages, key, modelId) {
 }
 
 module.exports = async function handler(req, res) {
-  allowCors(res);
+  allowCors(req, res);
   if (req.method === "OPTIONS") return res.status(204).end();
 
   if (req.method === "GET" || req.method === "HEAD") {
