@@ -1,12 +1,12 @@
 /**
- * Sync experiments/security-coach/security-policy-rules.md → api/security-policy.js
+ * Sync experiments/security-coach/security-policy-rules.md → lib/security-policy.js
  */
 const fs = require("fs");
 const path = require("path");
 
 const root = path.join(__dirname, "..");
 const src = path.join(root, "experiments", "security-coach", "security-policy-rules.md");
-const dest = path.join(root, "api", "security-policy.js");
+const dest = path.join(root, "lib", "security-policy.js");
 
 if (!fs.existsSync(src)) {
   console.error("Missing", src);

@@ -9,9 +9,9 @@
  *  }
  * GET /api/security-coach -> status
  */
-const SECURITY_SYSTEM = require("./security-prompt.js");
-const SECURITY_POLICY = require("./security-policy.js");
-const { checkRateLimit, sendRateLimit } = require("./rate-limit.js");
+const SECURITY_SYSTEM = require("../lib/security-prompt.js");
+const SECURITY_POLICY = require("../lib/security-policy.js");
+const { checkRateLimit, sendRateLimit } = require("../lib/rate-limit.js");
 const { scrubPiiText } = require("./sanitize-pii.js");
 const { applyCors } = require("../lib/cors-allowlist.js");
 

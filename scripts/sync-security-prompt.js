@@ -3,7 +3,7 @@ const path = require("path");
 
 const root = path.join(__dirname, "..");
 const src = path.join(root, "experiments", "security-coach", "security-system-prompt.md");
-const dest = path.join(root, "api", "security-prompt.js");
+const dest = path.join(root, "lib", "security-prompt.js");
 
 if (!fs.existsSync(src)) {
   console.error("Missing", src);

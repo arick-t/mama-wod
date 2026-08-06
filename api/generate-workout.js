@@ -8,7 +8,7 @@
  * POST action generate: JSON { ok, text } or stream: true → SSE (OpenAI-style for Groq, Gemini SSE if on Gemini).
  */
 
-const { checkRateLimit, sendRateLimit } = require("./rate-limit.js");
+const { checkRateLimit, sendRateLimit } = require("../lib/rate-limit.js");
 const { scrubPiiText } = require("./sanitize-pii.js");
 const { applyCors } = require("../lib/cors-allowlist.js");
 

@@ -5,7 +5,7 @@
  * Tries Resend if RESEND_API_KEY set. Never opens mailto for the user — silent admin log only.
  * Same Resend setup as weekly analytics (RESEND_SECRETS.md).
  */
-const { checkRateLimit, sendRateLimit } = require("./rate-limit.js");
+const { checkRateLimit, sendRateLimit } = require("../lib/rate-limit.js");
 const { scrubPiiText } = require("./sanitize-pii.js");
 const { applyCors } = require("../lib/cors-allowlist.js");
 

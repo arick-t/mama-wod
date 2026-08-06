@@ -12,7 +12,7 @@
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
-const { checkRateLimit, sendRateLimit } = require("../../../api/rate-limit");
+const { checkRateLimit, sendRateLimit } = require("../../../lib/rate-limit");
 const {
   resolveAdminPassword,
   checkAdminAuth: sharedCheckAdminAuth,

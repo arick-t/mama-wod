@@ -97,7 +97,7 @@ function buildCostCapsRuntimeNote(profile) {
   }
   return "\n" + lines.join("\n") + "\n";
 }
-const { checkRateLimit, sendRateLimit } = require("./rate-limit.js");
+const { checkRateLimit, sendRateLimit } = require("../lib/rate-limit.js");
 const { scrubMessages, scrubProfile, scrubPiiText } = require("./sanitize-pii.js");
 /* Admin dashboard — optional coach directives from admin snapshots */
 let getCoachDirectives = function () {

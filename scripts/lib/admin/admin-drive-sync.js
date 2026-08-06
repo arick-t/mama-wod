@@ -8,7 +8,7 @@
  * (COACH_KNOWLEDGE_DIR or experiments/personal-coach/knowledge-inbox).
  */
 
-const { checkRateLimit, sendRateLimit } = require("../../../api/rate-limit");
+const { checkRateLimit, sendRateLimit } = require("../../../lib/rate-limit");
 const { runCoachBrainSync, readLastSync } = require("../coach-brain-sync");
 const {
   resolveAdminPassword,

@@ -8,7 +8,7 @@
  */
 
 const GITHUB_API = "https://api.github.com";
-const { checkRateLimit, sendRateLimit } = require("./rate-limit.js");
+const { checkRateLimit, sendRateLimit } = require("../lib/rate-limit.js");
 const { applyCors } = require("../lib/cors-allowlist.js");
 
 function allowCors(req, res) {
