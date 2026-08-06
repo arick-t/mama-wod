@@ -173,7 +173,14 @@ function testStaticRegressions() {
   const costLib = fs.readFileSync(path.join(root, "lib/coach-cost-caps.js"), "utf8");
 
   ok("gate module wired", pc.includes("evaluateCostCapGate") && pc.includes("costCapHttpPayload"));
-  ok("gate after TERMS before API key", /TERMS_REQUIRED[\s\S]{0,600}evaluateCostCapGate[\s\S]{0,400}Missing AI API key/.test(pc));
+  const termsIdx = pc.indexOf("TERMS_REQUIRED");
+  const costIdx = pc.indexOf("evaluateCostCapGate(action");
+  const secIdx = pc.indexOf("classifyCoachUserInput(getLastUserMessageText(earlyMessages))");
+  const keyIdx = pc.indexOf("Missing AI API key");
+  ok(
+    "gate after TERMS before API key",
+    termsIdx >= 0 && costIdx > termsIdx && secIdx > costIdx && keyIdx > secIdx
+  );
   ok("geminiOnly programming", pc.includes("geminiOnly: true"));
   ok("no Groq for programming comment present", pc.includes("NO Groq for programming (POL-020)"));
   ok("day-by-day opt-in only", pc.includes('PERSONAL_COACH_DAY_BY_DAY || "").trim() === "1"'));

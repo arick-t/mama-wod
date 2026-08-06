@@ -36,7 +36,7 @@ const {
   classifyCoachUserInput,
   shouldBlockWithoutModel,
   applyCoachOutputGuard,
-  lastUserText,
+  lastUserText: getLastUserMessageText,
   SUSPICIOUS_SYSTEM_NOTE,
 } = require("../lib/coach-security-guards.js");
 
@@ -1642,6 +1642,21 @@ module.exports = async function handler(req, res) {
     return res.status(403).json(costCapHttpPayload(costGate));
   }
 
+  /* POL-007 / POL-019 — local input firewall before provider (0 AI cost). */
+  const earlyMessages = scrubMessages(normalizeMessages(body));
+  const earlySecurityVerdict = classifyCoachUserInput(getLastUserMessageText(earlyMessages));
+  if (shouldBlockWithoutModel(earlySecurityVerdict, action)) {
+    return res.status(200).json({
+      ok: true,
+      text: earlySecurityVerdict.refusal,
+      securityBlock: true,
+      securityReason: earlySecurityVerdict.reason,
+      model: "local-guard",
+      coachVersion: COACH_VERSION,
+      programmingSystem: isProgrammingAction(action),
+    });
+  }
+
   if (!apiKey && !groqKey) {
     return res.status(503).json({
       error: "Missing AI API key",
@@ -1686,25 +1701,12 @@ module.exports = async function handler(req, res) {
     });
   }
   let systemText = buildSystemWithMemory(athleteProfile, action, { forceJson: forceJson });
-  let messages = scrubMessages(normalizeMessages(body));
+  let messages = earlyMessages;
   if (body.feedback) body.feedback = scrubPiiText(body.feedback);
   if (body.text) body.text = scrubPiiText(body.text);
   systemText += languageFollowRule(messages, action, forceJson, athleteProfile);
 
-  /* POL-007 / POL-019 — local input firewall (0 extra AI cost). */
-  const securityVerdict = classifyCoachUserInput(lastUserText(messages));
-  if (shouldBlockWithoutModel(securityVerdict, action)) {
-    return res.status(200).json({
-      ok: true,
-      text: securityVerdict.refusal,
-      securityBlock: true,
-      securityReason: securityVerdict.reason,
-      model: "local-guard",
-      coachVersion: COACH_VERSION,
-      programmingSystem: programming,
-    });
-  }
-  if (securityVerdict.level === "suspicious") {
+  if (earlySecurityVerdict.level === "suspicious") {
     systemText += SUSPICIOUS_SYSTEM_NOTE;
   }
 
@@ -2608,7 +2610,7 @@ module.exports = async function handler(req, res) {
   }
 
   /* Cost: brick chat / Confirm? does not need File Search retrieval billing. */
-  const lastUserText =
+  const lastUserLine =
     messages.length && messages[messages.length - 1] && messages[messages.length - 1].role === "user"
       ? String(messages[messages.length - 1].text || "").trim()
       : "";
@@ -2616,7 +2618,7 @@ module.exports = async function handler(req, res) {
     !programming &&
     (body.brickChat === true ||
       body.wholeProgramChat === true ||
-      /^confirm\??$/i.test(lastUserText));
+      /^confirm\??$/i.test(lastUserLine));
   const chatStore = skipChatFileSearch ? null : store || undefined;
 
   result = programming
