@@ -913,35 +913,6 @@
       },
       {
         "date": "2026-07-28",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "STRENGTH/SKILL",
-              "EVERY 1:00 (9:00)",
-              "MIN 1 - 3 Kick Ups + 2-3 second descent*",
-              "MIN 2 - 10 Alternating V-Ups or 10 Tuck-Ups",
-              "MIN 3 - :30 Air Bike (Moderate pace)",
-              "*In MIN 1, option for :30 Wall Supported Handstand Hold or :30 Box Pike Hold",
-              "* (No Measure)"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "20:00 AMRAP",
-            "lines": [
-              "25/20 Calorie Air Bike",
-              "20 Sit-Ups",
-              "15 Handstand Push-Ups"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-28",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2776,6 +2747,45 @@
     "2026-08-06": [
       {
         "date": "2026-08-06",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260806",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
+              "LEARN MORE"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-06",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 18.2",
+            "lines": [
+              "1-2-3-4-5-6-7-8-9-10 reps for time of:",
+              "Dumbbell squats",
+              "Bar-facing burpees",
+              "*Men use 50-lb. dumbbells*",
+              "Workout 18.2a",
+              "1-rep-max clean",
+              "Time cap:",
+              "12 minutes to complete 18.2",
+              "AND",
+              "18.2a"
+            ]
+          }
+        ],
+        "note": "Open: Open 18.2"
+      },
+      {
+        "date": "2026-08-06",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-08-06/",
@@ -2826,15 +2836,88 @@
       },
       {
         "date": "2026-08-06",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260806",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-august-6-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
-              "LEARN MORE"
+              "AMRAP 6 minutes",
+              "8/6 Calorie Air Bike",
+              "6 Kip Swings",
+              "6 Plate Ground to Overhead"
+            ]
+          },
+          {
+            "title": "AMRAP 18 minutes",
+            "lines": [
+              "18/15 Calorie Air Bike",
+              "12 Toes to Bar",
+              "6 Shoulder to Overhead 165/115lbs",
+              "Rest 1:00",
+              "Feel: Gas",
+              "Pace: Sustain",
+              "Target Score: 5+ Rounds",
+              "Firebreather Score: 6+ Rounds"
+            ]
+          },
+          {
+            "title": "Extra Credit",
+            "lines": [
+              "Zone 2 Row"
+            ]
+          },
+          {
+            "title": "12:00 Zone 2 Warm Up",
+            "lines": [
+              "45:00-90:00 Row @ Zone 2"
+            ]
+          },
+          {
+            "title": "12:00 Zone 2 Cool Down",
+            "lines": [
+              "Your Zone 2 today should stay between 160bpm minus your age and 180bpm minus your age."
+            ]
+          },
+          {
+            "title": "Warm up:",
+            "lines": [
+              "Build from resting heartrate to 180bpm minus your age slowly over 12:00. This will feel incredibly slow, but will help your session a lot. Feel free to mix up machines, but end on rower."
+            ]
+          },
+          {
+            "title": "Cool down:",
+            "lines": [
+              "Spend 4:00 on the rower, keeping your heartrate above 150bpm minus your age, then slowly work down to resting for the next 8:00 on any machine or walking."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-06",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Push Press 1x8",
+              "ON 10:00 CLOCK...",
+              "Build to a Heavy 8-Rep Push Press",
+              "* (Score is Weight)"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "10 SETS (EVERY 2:00)",
+            "lines": [
+              "5 Deadlifts",
+              "4 Power Cleans",
+              "3 Shoulder to Overhead",
+              "*Goal is complete each set between :25-:45. Athletes have the option to build or use the same weight for all sets.",
+              "* (Score by Lightest Set)"
             ]
           }
         ]
@@ -2907,32 +2990,8 @@
           }
         ],
         "note": "Benchmark: The Ghost"
-      },
-      {
-        "date": "2026-08-06",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.2",
-            "lines": [
-              "1-2-3-4-5-6-7-8-9-10 reps for time of:",
-              "Dumbbell squats",
-              "Bar-facing burpees",
-              "*Men use 50-lb. dumbbells*",
-              "Workout 18.2a",
-              "1-rep-max clean",
-              "Time cap:",
-              "12 minutes to complete 18.2",
-              "AND",
-              "18.2a"
-            ]
-          }
-        ],
-        "note": "Open: Open 18.2"
       }
     ]
   },
-  "last_updated": "2026-08-06T03:01:39.300209"
+  "last_updated": "2026-08-06T07:11:45.941043"
 }
