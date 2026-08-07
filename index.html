@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.3</title>
+<title>DUCK-WOD · v21.5</title>
 <meta name="theme-color" content="#111">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -64,8 +64,88 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-overview li{padding:8px 10px;border-bottom:1px solid #2a2a2a;color:#ccc;font-size:.9em}
 .pprog-overview li strong{color:#b06dcf;margin-left:6px}
 .pprog-day-card{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:16px 16px 14px;margin-bottom:4px}
-.pprog-day-card .card-header{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #2a2a2a}
-.pprog-day-card .source-name{color:#b06dcf;font-weight:700;font-size:1.05em;letter-spacing:.03em}
+.pprog-day-card .card-header{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pprog-day-card .source-name{color:#b06dcf;font-weight:700;font-size:1.05em;letter-spacing:.03em;flex:1;min-width:0}
+.pprog-day-card .card-header .pprog-day-actions{
+  display:inline-flex;align-items:center;gap:8px;flex-shrink:0;margin-top:0;flex-wrap:nowrap;
+}
+.pprog-finish-btn{
+  flex-shrink:0;display:inline-flex;align-items:center;gap:6px;margin:0;
+  padding:7px 12px;border:1px solid #3d7a52;border-radius:999px;
+  background:linear-gradient(180deg,#1f3d2a 0%,#173224 100%);color:#d7f5e2;
+  font-weight:700;font-size:.78em;font-family:inherit;cursor:pointer;line-height:1;
+  box-shadow:0 2px 8px rgba(46,125,82,.28);-webkit-tap-highlight-color:transparent;
+}
+.pprog-finish-btn:hover{background:linear-gradient(180deg,#255238 0%,#1b3a2a 100%);border-color:#4caf70;color:#fff}
+.pprog-finish-btn:active{transform:scale(.97)}
+.pprog-finish-btn svg{width:15px;height:15px;display:block;flex-shrink:0}
+.pprog-finish-btn.done{background:#1a2a20;border-color:#3a5a45;color:#9ec9ad;box-shadow:none}
+html.pprog-finish-open,body.pprog-finish-open{overflow:hidden;overscroll-behavior:none}
+.pprog-finish-overlay{
+  display:none;position:fixed;inset:0;
+  width:100vw;height:100vh;width:100dvw;height:100dvh;
+  z-index:12050;margin:0;
+  align-items:center;justify-content:center;
+  padding:max(16px,env(safe-area-inset-top)) 14px max(16px,env(safe-area-inset-bottom));
+  background:rgba(8,6,12,.82);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  box-sizing:border-box;overscroll-behavior:contain;
+}
+.pprog-finish-overlay.open{display:flex}
+.pprog-finish-sheet{
+  width:min(92vw,400px);max-height:min(86vh,560px);overflow:auto;
+  background:#1a1a1a;border:1px solid #3d7a52;border-radius:16px;
+  box-shadow:0 20px 56px rgba(0,0,0,.62);padding:16px 16px 14px;direction:ltr;text-align:left;
+  transform:translateY(0);animation:pprog-finish-pop .18s ease-out;
+}
+@keyframes pprog-finish-pop{
+  from{opacity:0;transform:translateY(10px) scale(.97)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.pprog-finish-sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:0 0 12px}
+.pprog-finish-sheet-title{display:block;color:#d7f5e2;font-weight:800;font-size:1.05em}
+.pprog-finish-sheet-sub{display:block;color:#8fb89a;font-size:.78em;margin-top:4px;line-height:1.4}
+.pprog-finish-close{
+  appearance:none;border:none;background:#2a2a2a;color:#ddd;width:32px;height:32px;
+  border-radius:50%;cursor:pointer;font-size:1.1em;line-height:1;flex-shrink:0;
+}
+.pprog-finish-close:hover{background:#3a3a3a;color:#fff}
+.pprog-finish-options{display:flex;flex-direction:column;gap:8px;margin:0 0 10px}
+.pprog-finish-opt{
+  appearance:none;width:100%;text-align:left;padding:12px 14px;border-radius:12px;
+  border:1px solid #333;background:#222;color:#e8e4d8;font-family:inherit;
+  font-size:.92em;font-weight:700;cursor:pointer;line-height:1.3;
+}
+.pprog-finish-opt:hover{border-color:#4caf70;background:#243328}
+.pprog-finish-opt.selected{border-color:#4caf70;background:rgba(76,175,112,.16);color:#d7f5e2;box-shadow:inset 0 0 0 1px rgba(76,175,112,.35)}
+.pprog-finish-opt .pprog-finish-opt-hint{display:block;margin-top:3px;font-size:.72em;font-weight:500;color:#8a9a8e}
+.pprog-finish-other-wrap{display:none;margin:0 0 10px}
+.pprog-finish-other-wrap.open{display:block}
+.pprog-finish-other-wrap label{display:block;color:#9ec9ad;font-size:.78em;font-weight:600;margin:0 0 6px;line-height:1.35}
+.pprog-finish-other-wrap textarea{
+  width:100%;min-height:88px;padding:10px;background:#151a16;color:#eee;
+  border:1px solid #3d7a52;border-radius:10px;font-family:inherit;font-size:.92em;resize:vertical;box-sizing:border-box;
+}
+.pprog-finish-part-wrap{display:none;margin:0 0 10px}
+.pprog-finish-part-wrap.open{display:block}
+.pprog-finish-part-wrap label{display:block;color:#9ec9ad;font-size:.78em;font-weight:600;margin:0 0 6px;line-height:1.35}
+.pprog-finish-part-opts{display:flex;flex-direction:column;gap:8px}
+.pprog-finish-part-opt{
+  text-align:left;width:100%;border-radius:10px;border:1px solid #3a4a3e;background:#1a221c;
+  color:#d7f5e2;padding:10px 12px;font-weight:700;cursor:pointer;font-family:inherit
+}
+.pprog-finish-part-opt:hover{border-color:#4caf70;background:#243328}
+.pprog-finish-part-opt .pprog-finish-opt-hint{display:block;margin-top:3px;font-size:.72em;font-weight:500;color:#8a9a8e}
+.pprog-finish-reply{
+  display:none;margin:0 0 10px;padding:10px 12px;border-radius:10px;border:1px solid #3a5a45;
+  background:rgba(76,175,112,.12);color:#d7f5e2;font-size:.88em;line-height:1.4;font-weight:600
+}
+.pprog-finish-reply.open{display:block}
+.pprog-finish-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
+.pprog-finish-send{
+  appearance:none;border:none;border-radius:10px;padding:10px 16px;font-weight:800;font-size:.85em;
+  font-family:inherit;cursor:pointer;background:#4caf70;color:#0c1a10;
+}
+.pprog-finish-send:disabled{opacity:.45;cursor:default}
 .pprog-day-card .section{margin-bottom:12px}
 .pprog-day-card .section-title{font-size:1em;font-weight:700;text-decoration:underline;color:#1A9B8A;margin-bottom:7px}
 .pprog-day-card .section-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:7px}
@@ -77,8 +157,13 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-day-card .section-lines li{margin-bottom:4px}
 .pprog-day-subrow{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
 .pprog-day-subrow .pprog-summary{flex:1;margin:0;min-width:0}
-.pprog-share-wa{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;margin:0;padding:8px 14px;border:none;border-radius:999px;background:#25d366;color:#fff;font-weight:700;font-size:.82em;font-family:inherit;cursor:pointer;line-height:1;box-shadow:0 2px 8px rgba(37,211,102,.35)}
-.pprog-share-wa:hover{background:#1da851}
+.pprog-share-wa{
+  flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;gap:0;margin:0;
+  width:34px;height:34px;padding:0;border:1px solid #3a4a3f;border-radius:50%;
+  background:#1a1f1c;color:#8fb89a;font-weight:700;font-size:.82em;font-family:inherit;cursor:pointer;line-height:1;
+  box-shadow:none;-webkit-tap-highlight-color:transparent;
+}
+.pprog-share-wa:hover{border-color:#4caf70;color:#d7f5e2;background:#222a24}
 .pprog-share-wa svg{width:16px;height:16px;display:block;flex-shrink:0}
 .pprog-day-footer{margin-top:14px;padding-top:12px;border-top:1px solid #333}
 .pprog-session-box{display:block;padding:12px;border-radius:10px;border:1px solid #1A9B8A;background:rgba(26,155,138,.1);box-shadow:inset 0 0 0 1px rgba(26,155,138,.15)}
@@ -123,6 +208,13 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-chat-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;direction:ltr}
 .pprog-chat-actions .btn{width:auto;margin-top:0;padding:8px 14px;font-size:.85em}
 .pprog-start-btn{width:100%!important;margin-top:0;padding:16px 18px!important;font-size:1.15em!important;font-weight:800;letter-spacing:.08em;background:#E8451A!important;border:none;border-radius:10px;min-height:54px}
+.pprog-prestart-welcome{
+  margin:8px 0 14px;padding:14px 14px 12px;border:1px dashed #3d7a52;border-radius:12px;
+  background:rgba(26,155,138,.08);color:#cfc7b6;font-size:.9em;line-height:1.45;text-align:center;direction:ltr;
+}
+.pprog-prestart-welcome strong{display:block;color:#d7f5e2;font-size:1.05em;font-weight:800;margin:0 0 6px}
+.pprog-chat.is-prestart .pprog-chat-log{min-height:0;max-height:none;border:none;background:transparent;padding:0}
+.pprog-chat.is-prestart .pprog-chat-actions{margin-top:0}
 .pprog-legal-overlay{position:fixed;inset:0;z-index:12000;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box}
 .pprog-legal-overlay[hidden]{display:none!important}
 .pprog-legal-card{max-width:520px;width:100%;max-height:min(92vh,720px);background:#1a1a1a;border:1px solid #444;border-radius:14px;display:flex;flex-direction:column;overflow:hidden}
@@ -693,19 +785,46 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
   align-items:center;justify-content:center;
 }
 .pprog-coach-fab{
-  display:none;width:48px;height:48px;padding:0;border:2px solid #b06dcf;
-  border-radius:50%;background:#221528;cursor:pointer;overflow:hidden;
-  box-shadow:0 2px 10px rgba(142,68,173,.45);flex-shrink:0;
-  transition:transform .2s, box-shadow .2s;
+  display:none;flex-direction:column;align-items:center;justify-content:flex-start;
+  gap:2px;width:auto;max-width:72px;height:auto;
+  padding:5px 5px 4px;margin:0;
+  border:2px solid #b06dcf;border-radius:26px;
+  background:linear-gradient(180deg,#2a1834 0%,#221528 55%,#1a1220 100%);
+  cursor:pointer;overflow:visible;flex-shrink:0;
+  box-shadow:0 3px 12px rgba(142,68,173,.42);
+  transition:transform .2s, box-shadow .2s, border-color .2s;
   -webkit-tap-highlight-color:transparent;
+  font-family:inherit;
 }
-.pprog-coach-fab.show{display:flex;align-items:center;justify-content:center}
-.pprog-coach-fab:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(142,68,173,.55)}
+.pprog-coach-fab.show{display:flex}
+.pprog-coach-fab:hover{
+  transform:translateY(-2px);
+  box-shadow:0 5px 16px rgba(142,68,173,.55);
+}
 .pprog-coach-fab:active{transform:scale(.96)}
-.pprog-coach-fab.open{border-color:#F5C518;box-shadow:0 0 0 2px rgba(245,197,24,.35)}
-.pprog-coach-fab img{width:100%;height:100%;object-fit:cover;display:block}
+.pprog-coach-fab.open{
+  border-color:#F5C518;
+  box-shadow:0 0 0 2px rgba(245,197,24,.35), 0 4px 14px rgba(142,68,173,.4);
+}
+.pprog-coach-fab-avatar{
+  width:44px;height:44px;border-radius:50%;padding:0;
+  border:none;background:#1a1220;overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(176,109,207,.25);
+  display:block;flex-shrink:0;
+}
+.pprog-coach-fab-avatar img,
+.pprog-coach-fab img{
+  width:100%;height:100%;object-fit:cover;display:block;
+}
+.pprog-coach-fab-caption{
+  display:block;width:100%;max-width:62px;
+  padding:1px 2px 0;margin:0;
+  font-size:8.5px;line-height:1.12;font-weight:700;
+  letter-spacing:.01em;text-align:center;color:#ecdff6;
+  pointer-events:none;user-select:none;
+}
 .pprog-coach-fab-tip{
-  display:none;position:fixed;right:76px;bottom:148px;z-index:1002;
+  display:none;position:fixed;right:76px;bottom:168px;z-index:1002;
   width:min(72vw,240px);padding:10px 12px;border-radius:12px;
   background:#2a1834;border:1px solid #b06dcf;color:#e8d8f4;
   box-shadow:0 8px 24px rgba(0,0,0,.45);font-size:.78em;line-height:1.4;
@@ -746,7 +865,53 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 @media (max-width:520px){
   .page-fabs{bottom:82px;right:12px}
   .pprog-coach-float{right:10px;left:10px;width:auto;bottom:200px}
-  .pprog-coach-fab-tip{right:12px;left:12px;width:auto;bottom:210px}
+  .pprog-coach-fab-tip{right:12px;left:12px;width:auto;bottom:230px}
+  .pprog-coach-fab{max-width:68px;padding:4px 4px 3px;border-radius:24px}
+  .pprog-coach-fab-avatar{width:42px;height:42px}
+  .pprog-coach-fab-caption{font-size:8px;max-width:58px}
+}
+
+/* Floating day prev/next — stays on screen while scrolling */
+.pprog-day-nav{
+  position:fixed;top:42%;z-index:996;
+  width:44px;height:44px;margin:0;padding:0;
+  border-radius:50%;
+  border:1px solid rgba(220,214,198,.28);
+  background:rgba(16,18,17,.78);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  color:#e4dfd2;
+  box-shadow:0 6px 18px rgba(0,0,0,.35);
+  display:none;align-items:center;justify-content:center;
+  cursor:pointer;appearance:none;-webkit-tap-highlight-color:transparent;
+  transition:opacity .18s ease, transform .18s ease, background .18s ease, border-color .18s ease;
+}
+.pprog-day-nav.show{display:flex}
+.pprog-day-nav.prev{left:max(8px, env(safe-area-inset-left))}
+.pprog-day-nav.next{right:max(8px, env(safe-area-inset-right))}
+.pprog-day-nav svg{width:18px;height:18px;display:block;opacity:.92}
+.pprog-day-nav:hover{background:rgba(26,155,138,.22);border-color:rgba(26,155,138,.55);color:#f2f6f4}
+.pprog-day-nav:active{transform:scale(.94)}
+.pprog-day-nav:disabled,
+.pprog-day-nav.is-edge{
+  opacity:.28;cursor:default;pointer-events:none;box-shadow:none;
+}
+.pprog-day-nav:disabled:hover,
+.pprog-day-nav.is-edge:hover{
+  background:rgba(16,18,17,.78);border-color:rgba(220,214,198,.28);color:#e4dfd2;
+}
+#pprogWeekPanes.pprog-day-swipe-ready{
+  touch-action:pan-y;
+}
+.pprog-day-card.pprog-day-slide-in{
+  animation:pprog-day-slide .22s ease-out;
+}
+@keyframes pprog-day-slide{
+  from{opacity:.35;transform:translateX(var(--pprog-day-slide-x, 12px))}
+  to{opacity:1;transform:translateX(0)}
+}
+@media (max-width:520px){
+  .pprog-day-nav{width:40px;height:40px;top:40%}
+  .pprog-day-nav svg{width:16px;height:16px}
 }
 
 /* Workout Tools (timers + convertor) */
@@ -796,22 +961,22 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.3</div>
+<div class="header-sub">DAILY WORKOUTS · v21.5</div>
 <div class="header-sub" id="coachVersionSub">COACH · v2.1</div>
 </div>
 <div class="tabs">
-<button class="tab-btn tab-pprog-wrap" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
-<button class="tab-btn active" id="tab-browse" onclick="showTab('browse')">Workout's</button>
+<button class="tab-btn tab-pprog-wrap active" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
+<button class="tab-btn" id="tab-browse" onclick="showTab('browse')">Workout's</button>
 <button class="tab-btn tab-generate-wrap" id="tab-aibeta" onclick="showTab('aibeta')" hidden aria-hidden="true" tabindex="-1">Generate Workout</button>
 <button class="tab-btn tab-wtools-wrap" id="tab-workout" onclick="showTab('workout')">Workout Tools</button>
 <button class="tab-btn" id="tab-sources" onclick="showTab('sources')">Sources</button>
 <button class="tab-btn" id="tab-about" onclick="showTab('about')">About</button>
 </div>
 
-<!-- Days selector - sticky below tabs -->
-<div id="days-bar" style="position:sticky;top:0;z-index:100;background:#1a1a1a;border-bottom:2px solid #E8451A;padding:8px 0;overflow-x:auto;white-space:nowrap"></div>
+<!-- Days selector - sticky below tabs (browse only; hidden on coach landing) -->
+<div id="days-bar" style="display:none;position:sticky;top:0;z-index:100;background:#1a1a1a;border-bottom:2px solid #E8451A;padding:8px 0;overflow-x:auto;white-space:nowrap"></div>
 
-<div class="tab-content active" id="browse-tab">
+<div class="tab-content" id="browse-tab">
   <div class="workouts-grid" id="grid"><div class="empty"><div class="empty-icon">🦆</div>Loading...</div></div>
 </div>
 
@@ -948,7 +1113,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
   <div class="workouts-grid" id="aiGenResults" style="margin-top:22px"></div>
 </div>
 
-<div class="tab-content" id="pprog-tab" hidden aria-hidden="true">
+<div class="tab-content active" id="pprog-tab" aria-hidden="false">
   <div class="pprog-panel">
     <div class="pprog-head">
       <img class="pprog-coach-avatar" id="pprogCoachAvatar" src="assets/hamamen-coach-duck.png" alt="Personal Coach" width="72" height="72" role="button" tabindex="0" title="Personal Coach" aria-label="Personal Coach" onclick="resetPprogUser()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();resetPprogUser();}">
@@ -963,7 +1128,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
         <div id="pprogProfilePicker" class="pprog-profile-picker" style="display:none" aria-live="polite"></div>
         <div id="pprogLiftsPicker" class="pprog-lifts-picker" style="display:none" aria-live="polite"></div>
         <div id="pprogSkillsPicker" class="pprog-skills-picker" style="display:none" aria-live="polite"></div>
-        <form class="pprog-chat-form" id="pprogChatForm" onsubmit="return sendPprogMessage(event)">
+        <form class="pprog-chat-form" id="pprogChatForm" style="display:none" onsubmit="return sendPprogMessage(event)">
           <textarea id="pprogChatInput" rows="3" placeholder="Message the coach…" maxlength="4000" dir="ltr" aria-label="Message the coach"></textarea>
           <div class="pprog-send-stack">
             <button type="button" class="btn pprog-reset-btn" id="pprogResetBtn" onclick="resetPprogUser()" title="Reset intake user">&#10227; Reset</button>
@@ -973,13 +1138,11 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
         <div class="pprog-chat-actions" id="pprogIntakeActions">
           <button type="button" class="btn btn-find pprog-start-btn" id="pprogStartBtn" onclick="pprogOnStartClick()">START</button>
         </div>
-        <p id="pprogNextBlockHint" class="pprog-block-transition-hint" style="display:none" aria-live="polite"></p>
       </div>
     </div>
 
     <!-- Week UI -->
     <div id="pprogWeekBlock" class="pprog-week-shell" style="display:none;margin-top:8px">
-      <p id="pprogNextBlockHintWeek" class="pprog-block-transition-hint" style="display:none" aria-live="polite"></p>
       <div id="pprogCal" class="pprog-cal" aria-label="Training calendar"></div>
       <div id="pprogWeekPanes"></div>
     </div>
@@ -2078,6 +2241,7 @@ function emptyPprogStore() {
     partModificationEvents: [],
     modificationRulesNotified: {},
     costCaps: { dailyEdits: {}, monthlyUnits: {}, lastLargeRebuildAt: null, softUpgradeBrickStart: null },
+    finishLearning: { events: [], paidAdaptationsByMonth: {}, safetyLog: [] },
     pastBlocks: [],
     autoNextTriggeredForBlockStart: null,
     intakeNotifySent: false,
@@ -2120,6 +2284,14 @@ function loadPprogStore() {
     if (!o.costCaps.monthlyUnits || typeof o.costCaps.monthlyUnits !== "object") {
       o.costCaps.monthlyUnits = {};
     }
+    if (!o.finishLearning || typeof o.finishLearning !== "object") {
+      o.finishLearning = { events: [], paidAdaptationsByMonth: {}, safetyLog: [] };
+    }
+    if (!Array.isArray(o.finishLearning.events)) o.finishLearning.events = [];
+    if (!o.finishLearning.paidAdaptationsByMonth || typeof o.finishLearning.paidAdaptationsByMonth !== "object") {
+      o.finishLearning.paidAdaptationsByMonth = {};
+    }
+    if (!Array.isArray(o.finishLearning.safetyLog)) o.finishLearning.safetyLog = [];
     /* Migrate legacy single-week store → 5-week block shell */
     if (!o.currentBlock && o.currentWeek && o.currentWeek.days) {
       o.currentBlock = {
@@ -2226,12 +2398,21 @@ function renderPprogChat() {
   }
   var msgs = loadPprogMessages();
   if (!msgs.length) {
-    log.innerHTML =
-      '<div class="pprog-msg system"><div class="pprog-bubble system">Tap START — the coach will open the conversation.</div></div>';
+    if (pprogIsPreStartGate()) {
+      log.innerHTML =
+        '<div class="pprog-prestart-welcome">' +
+        "<strong>Ready when you are</strong>" +
+        "Tap <strong>START</strong> to begin the short intake. The coach builds your 5-week plan from your answers — free chat opens after that." +
+        "</div>";
+    } else {
+      log.innerHTML =
+        '<div class="pprog-msg system"><div class="pprog-bubble system">Tap START — the coach will open the conversation.</div></div>';
+    }
     if (pprogBusy) setPprogTyping(true);
     syncPprogStartBtn();
     syncPprogResetBtn();
     syncPprogProfilePickerUi();
+    syncPprogChatComposerUi();
     return;
   }
   var html = "";
@@ -2279,6 +2460,7 @@ function renderPprogChat() {
   syncPprogProfilePickerUi();
   syncPprogLiftsPickerUi();
   syncPprogSkillsPickerUi();
+  syncPprogChatComposerUi();
   pprogMaybeResumeLocalPostSkills();
 }
 
@@ -2342,6 +2524,35 @@ function syncPprogStartBtn() {
     !pprogBusy;
   actions.style.display = show ? "flex" : "none";
   btn.disabled = !show;
+  syncPprogChatComposerUi();
+}
+
+/** First coach screen only (before START): hide free-text box. Do not alter intake after START. */
+function pprogIsPreStartGate(store, msgs) {
+  store = store || loadPprogStore();
+  msgs = msgs || loadPprogMessages();
+  return !store.intakeComplete && !store.fixedIntakeActive && !(msgs && msgs.length);
+}
+
+function syncPprogChatComposerUi() {
+  var form = document.getElementById("pprogChatForm");
+  var chat = document.getElementById("pprogChat");
+  var store = loadPprogStore();
+  var msgs = loadPprogMessages();
+  var preStart = pprogIsPreStartGate(store, msgs);
+  if (chat) chat.classList.toggle("is-prestart", !!preStart);
+  if (!form) return;
+  /* Hide Message/Send only on the first screen before START */
+  if (preStart) {
+    form.style.display = "none";
+    return;
+  }
+  /* Fixed intake already sets display:none while questionnaire is active */
+  if (!store.intakeComplete && store.fixedIntakeActive) {
+    form.style.display = "none";
+    return;
+  }
+  form.style.display = "";
 }
 
 function syncPprogResetBtn() {
@@ -3077,6 +3288,7 @@ function syncPprogBrickChatUi() {
     pprogRestoreChatToIntake();
     closePprogCoachFloat(true);
     syncPprogCoachFabVisibility();
+    syncPprogChatComposerUi();
     if (inp && inp.getAttribute("data-default-ph")) {
       inp.placeholder = inp.getAttribute("data-default-ph");
     }
@@ -3328,6 +3540,8 @@ function syncPprogFixedIntakeUi() {
     el.style.display = "none";
     el.innerHTML = "";
     if (form) form.style.display = "";
+    /* First-screen composer gate only — does not change questionnaire UI */
+    syncPprogChatComposerUi();
     return;
   }
   if (form) form.style.display = "none";
@@ -4065,6 +4279,8 @@ function athleteProfilePayload(opts) {
     weekStart: (s.currentWeek && s.currentWeek.weekStart) || null,
     partModificationSummary: pprogCountModifiedKindsLast30Days(s.partModificationEvents),
     costCaps: pprogCostCapsPayload(s, { sessionDate: opts && opts.sessionDate }),
+    finishSignalsInject: pprogFinishSignalsInject(s),
+    finishLearning: pprogFinishLearningPayload(s),
   };
   if (!omitChat) {
     payload.chatSummaryTail = (s.chat || [])
@@ -4213,6 +4429,12 @@ function sendPprogMessage(ev) {
     return false;
   }
   var store = loadPprogStore();
+  /* First screen only — do not block chat once intake has started */
+  if (pprogIsPreStartGate(store)) {
+    syncPprogChatComposerUi();
+    syncPprogStartBtn();
+    return false;
+  }
   var inp = document.getElementById("pprogChatInput");
   var raw = inp ? String(inp.value || "") : "";
   var text = raw.trim();
@@ -5347,6 +5569,345 @@ function pprogIsraelDaysBetween(a, b) {
   }
 }
 
+/* ── Done finish-learning (Budget v1 — 0 LLM on click; threshold 3; max 1 paid/mo) ── */
+var PPROG_FINISH_OTHER_MAX = 160;
+var PPROG_FINISH_THRESHOLD = 3;
+var PPROG_FINISH_WINDOW_DAYS = 14;
+var PPROG_FINISH_SAFETY_RE =
+  /\b(pain|injury|injured|chest|dizzy|dizziness|numb|numbness|faint|fainted|breath|breathing|emergency|hurt)\b|כאב|פציעה|נפצע|חזה|סחרחור|עילפון|נשימה|מפרק|שבר/i;
+
+var PPROG_FINISH_STATIC = {
+  just_right: { en: "Got it — locked in for next time.", he: "קיבלתי — נשמר להמשך." },
+  too_hard: {
+    en: "Noted — I’ll ease that part going forward when the pattern holds.",
+    he: "רשמתי — אקל על החלק הזה בהמשך כשהדפוס יתבהר.",
+  },
+  too_easy: {
+    en: "Noted — I’ll push that part a bit when the pattern holds.",
+    he: "רשמתי — אדחוף את החלק הזה קצת בהמשך כשהדפוס יתבהר.",
+  },
+  other: {
+    en: "Thanks — I saved that for later training decisions.",
+    he: "תודה — שמרתי את זה להחלטות אימון בהמשך.",
+  },
+  safety: {
+    en: "Thanks for flagging that. Ease off anything that hurts and seek appropriate care if needed — I’m not a medical provider.",
+    he: "תודה שציינת. הורד עומס מכל מה שכואב ופנה לטיפול מתאים אם צריך — אני לא גורם רפואי.",
+  },
+};
+
+function pprogEnsureFinishLearning(store) {
+  if (!store.finishLearning || typeof store.finishLearning !== "object") {
+    store.finishLearning = { events: [], paidAdaptationsByMonth: {}, safetyLog: [] };
+  }
+  if (!Array.isArray(store.finishLearning.events)) store.finishLearning.events = [];
+  if (!store.finishLearning.paidAdaptationsByMonth || typeof store.finishLearning.paidAdaptationsByMonth !== "object") {
+    store.finishLearning.paidAdaptationsByMonth = {};
+  }
+  if (!Array.isArray(store.finishLearning.safetyLog)) store.finishLearning.safetyLog = [];
+  return store.finishLearning;
+}
+
+function pprogFinishInferPartRole(title) {
+  var t = String(title || "").toLowerCase();
+  if (/(warm[\s-]?up|mobility|activation)/.test(t)) return "warmup";
+  if (/(strength|lift|squat|deadlift|press|snatch|clean|jerk|1rm|%1rm)/.test(t)) return "strength";
+  if (/(skill|gymnastics|handstand|muscle[\s-]?up|pull[\s-]?up practice)/.test(t)) return "skill";
+  if (/(accessory|extra|cooldown|cool[\s-]?down)/.test(t)) return "accessory";
+  if (/(amrap|emom|for time|metcon|conditioning|chipper|partner)/.test(t)) return "metcon";
+  return "unknown";
+}
+
+/** Training parts for Done part-pick (warmup excluded). */
+function pprogFinishCountableParts(parts) {
+  var list = Array.isArray(parts) ? parts : [];
+  var out = [];
+  for (var i = 0; i < list.length; i++) {
+    var p = list[i] || {};
+    var title = String(p.title || p.name || "").trim() || "Part " + (i + 1);
+    var role = String(p.part_role || p.role || p.kind || "").toLowerCase();
+    if (!role || role === "unknown") role = pprogFinishInferPartRole(title);
+    if (role === "warmup" || /warm|mobil/i.test(title) && role === "unknown") continue;
+    if (role === "warmup") continue;
+    if (role !== "strength" && role !== "metcon" && role !== "skill" && role !== "accessory") {
+      if (/warm|mobil/i.test(title)) continue;
+      role = "metcon";
+    }
+    out.push({ index: i, title: title.slice(0, 80), part_role: role });
+  }
+  return out;
+}
+
+function pprogFinishTruncateNote(note) {
+  var t = String(note || "").trim().replace(/\s+/g, " ");
+  return t.length <= PPROG_FINISH_OTHER_MAX ? t : t.slice(0, PPROG_FINISH_OTHER_MAX);
+}
+
+function pprogFinishCountSameDirection(events, rating, partRole, sessionDate) {
+  if (rating !== "too_hard" && rating !== "too_easy") return 0;
+  var n = 0;
+  for (var i = 0; i < (events || []).length; i++) {
+    var e = events[i];
+    if (!e || e.rating !== rating) continue;
+    if (String(e.part_role || "") !== String(partRole || "")) continue;
+    var days = pprogIsraelDaysBetween(e.session_date, sessionDate);
+    if (days < 0 || days > PPROG_FINISH_WINDOW_DAYS) continue;
+    n++;
+  }
+  return n;
+}
+
+function pprogFinishPaidAvailable(fl, monthKey) {
+  return (fl.paidAdaptationsByMonth[monthKey] | 0) < 1;
+}
+
+function pprogFinishMarkPaid(fl, monthKey) {
+  fl.paidAdaptationsByMonth[monthKey] = (fl.paidAdaptationsByMonth[monthKey] | 0) + 1;
+}
+
+function pprogFinishFormatCard(e) {
+  if (!e) return "";
+  if (e.rating === "other") {
+    return (
+      "[ATHLETE_OTHER_SIGNAL]\n" +
+      "safety_flag: " + (e.safety_flag ? "true" : "false") + "\n" +
+      "labels: [" + (Array.isArray(e.labels) ? e.labels.join(", ") : "") + "]\n" +
+      'note_short: "' + String(e.note_short || "").replace(/"/g, "") + '"\n' +
+      "session_date: " + (e.session_date || "") + "\n" +
+      "brick_week: " + ((e.brick_week | 0) || 0) + "\n" +
+      "action_allowed: " + (e.action_allowed || "accumulate_only") + "\n" +
+      "[/ATHLETE_OTHER_SIGNAL]"
+    );
+  }
+  return (
+    "[ATHLETE_FINISH_SIGNAL]\n" +
+    "rating: " + (e.rating || "just_right") + "\n" +
+    "scope: " + (e.scope || "session") + "\n" +
+    "part_role: " + (e.part_role || "unknown") + "\n" +
+    'part_title: "' + String(e.part_title || "").replace(/"/g, "") + '"\n' +
+    "session_date: " + (e.session_date || "") + "\n" +
+    "brick_week: " + ((e.brick_week | 0) || 0) + "\n" +
+    "weekday: " + (e.weekday || "") + "\n" +
+    "count_same_direction_14d: " + ((e.count_same_direction_14d | 0) || 0) + "\n" +
+    "action_allowed: " + (e.action_allowed || "accumulate_only") + "\n" +
+    "note: none\n" +
+    "[/ATHLETE_FINISH_SIGNAL]"
+  );
+}
+
+function pprogFinishSignalsInject(store) {
+  var s = store || loadPprogStore();
+  var fl = pprogEnsureFinishLearning(s);
+  if (!fl.events.length) return "";
+  var rule =
+    "[FINISH_SIGNAL_COACH_RULE] finish-signal≠chat. accumulate_only→remember only. " +
+    "micro_bias_next→bias upcoming NOT-Done SAME part_role only; never rewrite Done day; " +
+    "no brick rebuild/Soft Upgrade; if monthly paid cap exhausted→piggyback natural generate only. " +
+    "[/FINISH_SIGNAL_COACH_RULE]\n";
+  var picked = fl.events.slice(-3).reverse();
+  var out = rule;
+  for (var i = 0; i < picked.length; i++) {
+    var card = pprogFinishFormatCard(picked[i]);
+    if (out.length + card.length > 650) break;
+    out += card + "\n";
+  }
+  return out.slice(0, 700);
+}
+
+function pprogFinishLearningPayload(store) {
+  var fl = pprogEnsureFinishLearning(store || loadPprogStore());
+  return {
+    events: (fl.events || []).slice(-12),
+    paidAdaptationsByMonth: fl.paidAdaptationsByMonth || {},
+    safetyLog: (fl.safetyLog || []).slice(-5),
+  };
+}
+
+/**
+ * Record Done feedback into finishLearning. Call from cosmetic Done submit.
+ * @returns {{ ok, staticReply, action_allowed, shouldAttemptPaidMicroBias, event, safety_flag }}
+ */
+function pprogRecordFinishFeedback(input) {
+  var store = loadPprogStore();
+  var fl = pprogEnsureFinishLearning(store);
+  var rating = String((input && input.rating) || "").toLowerCase();
+  if (rating !== "just_right" && rating !== "too_hard" && rating !== "too_easy" && rating !== "other") {
+    return { ok: false, error: "invalid_rating" };
+  }
+  var sessionDate = String((input && input.session_date) || pprogIsraelTodayIso()).slice(0, 10);
+  var noteShort = rating === "other" ? pprogFinishTruncateNote(input && input.note) : "";
+  var safety_flag = rating === "other" && PPROG_FINISH_SAFETY_RE.test(noteShort);
+  var part_role = String((input && input.part_role) || "unknown").toLowerCase() || "unknown";
+  var part_title = String((input && input.part_title) || "").slice(0, 80);
+  var prior =
+    rating === "too_hard" || rating === "too_easy"
+      ? pprogFinishCountSameDirection(fl.events, rating, part_role, sessionDate)
+      : 0;
+  var count = rating === "too_hard" || rating === "too_easy" ? prior + 1 : 0;
+  var action_allowed = "accumulate_only";
+  if (safety_flag) action_allowed = "safety_review";
+  else if (
+    (rating === "too_hard" || rating === "too_easy") &&
+    count >= PPROG_FINISH_THRESHOLD &&
+    (part_role === "strength" || part_role === "metcon" || part_role === "skill" || part_role === "accessory")
+  ) {
+    action_allowed = "micro_bias_next";
+  }
+  var labels = [];
+  if (rating === "other") {
+    var low = noteShort.toLowerCase();
+    if (safety_flag) labels.push("safety");
+    if (/(sleep|tired|fatigue|עייף|שינה)/.test(low)) labels.push("recovery");
+    if (/(work|shift|travel|משמרת|עבודה|נסיעה)/.test(low)) labels.push("schedule");
+    if (/(equipment|gear|אין לי|ציוד)/.test(low)) labels.push("equipment");
+    if (/(time|short|ממהר|זמן)/.test(low)) labels.push("time");
+    if (!labels.length) labels.push("unspecified");
+  }
+  var event = {
+    id: sessionDate + "_" + rating + "_" + Date.now(),
+    rating: rating,
+    scope: (rating === "too_hard" || rating === "too_easy") && (part_title || part_role !== "unknown") ? "part" : "session",
+    part_role: part_role,
+    part_title: part_title,
+    session_date: sessionDate,
+    brick_week: (input && input.brick_week) | 0,
+    weekday: String((input && input.weekday) || "").slice(0, 12),
+    count_same_direction_14d: count,
+    action_allowed: action_allowed,
+    note_short: noteShort,
+    safety_flag: !!safety_flag,
+    labels: labels,
+    at: new Date().toISOString(),
+    source: "done_popup",
+  };
+  fl.events.push(event);
+  if (fl.events.length > 60) fl.events = fl.events.slice(-60);
+  if (safety_flag) {
+    fl.safetyLog.push({ at: event.at, session_date: sessionDate, note_short: noteShort, labels: labels });
+    if (fl.safetyLog.length > 30) fl.safetyLog = fl.safetyLog.slice(-30);
+  }
+  var monthKey = pprogIsraelMonthKey(sessionDate);
+  var shouldAttemptPaidMicroBias =
+    action_allowed === "micro_bias_next" && pprogFinishPaidAvailable(fl, monthKey) && !safety_flag;
+  store.finishLearning = fl;
+  savePprogStore(store);
+  var lang = (input && input.lang) === "he" ? "he" : "en";
+  var replyKey = safety_flag ? "safety" : rating;
+  var staticReply =
+    (PPROG_FINISH_STATIC[replyKey] && PPROG_FINISH_STATIC[replyKey][lang]) ||
+    PPROG_FINISH_STATIC.other.en;
+  return {
+    ok: true,
+    event: event,
+    action_allowed: action_allowed,
+    safety_flag: !!safety_flag,
+    staticReply: staticReply,
+    shouldAttemptPaidMicroBias: shouldAttemptPaidMicroBias,
+    monthKey: monthKey,
+  };
+}
+
+/** Upcoming day keys in active week that are not Done and not Rest (after sessionDate). */
+function pprogFinishNextNotDoneDayKeys(store, afterIso) {
+  var s = store || loadPprogStore();
+  var week = s.currentWeek;
+  if (!week || !week.days) return [];
+  var after = String(afterIso || pprogIsraelTodayIso()).slice(0, 10);
+  var out = [];
+  for (var i = 0; i < PPROG_DAY_KEYS.length; i++) {
+    var dk = PPROG_DAY_KEYS[i];
+    var day = week.days[dk];
+    if (!day) continue;
+    var focus = String((day.overview && day.overview.focus) || day.focus || "").toLowerCase();
+    if (focus === "rest" || /rest\s*day/i.test(String((day.parts && day.parts[0] && day.parts[0].title) || ""))) {
+      continue;
+    }
+    if (day.finishFeedback && day.finishFeedback.rating) continue;
+    var sd = pprogSessionDateForDay(dk, s.activeWeekIndex | 0, s);
+    if (sd <= after) continue;
+    out.push(sd);
+  }
+  return out.slice(0, 5);
+}
+
+/**
+ * Paid surgical adaptation (max 1 / Israel month). Cosmetic/Done flow should call when shouldAttemptPaidMicroBias.
+ */
+function pprogAttemptFinishMicroBias(signalEvent) {
+  var store = loadPprogStore();
+  var fl = pprogEnsureFinishLearning(store);
+  var ev = signalEvent || null;
+  if (!ev || ev.action_allowed !== "micro_bias_next") return Promise.resolve({ ok: false, skipped: true });
+  var monthKey = pprogIsraelMonthKey(ev.session_date || pprogIsraelTodayIso());
+  if (!pprogFinishPaidAvailable(fl, monthKey)) {
+    return Promise.resolve({ ok: false, skipped: true, reason: "monthly_paid_cap" });
+  }
+  var base = getApiBase();
+  if (!base) return Promise.resolve({ ok: false, error: "no_api_base" });
+  var nextKeys = pprogFinishNextNotDoneDayKeys(store, ev.session_date);
+  var dir = ev.rating === "too_hard" ? "easier" : "harder";
+  var feedback =
+    "[finish_micro_bias] Make upcoming NOT-Done " +
+    (ev.part_role || "metcon") +
+    " slightly " +
+    dir +
+    " (~3-5%). Do not rewrite Done day " +
+    (ev.session_date || "") +
+    ".";
+  return fetchAiWithTimeout(
+    base + "/api/personal-coach",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "finish_micro_bias",
+        israelToday: pprogIsraelTodayIso(),
+        nextDayKeys: nextKeys,
+        feedback: feedback,
+        currentWeek: store.currentWeek,
+        athleteProfile: athleteProfilePayload({ forceIntakeComplete: true, omitChat: true }),
+        messages: [],
+      }),
+    },
+    90000
+  ).then(function (x) {
+    var j = x.j || {};
+    if (!x.ok || !j.ok) {
+      return { ok: false, error: pprogFriendlyApiError(j, x.status), status: x.status };
+    }
+    var week = j.week || null;
+    if (!week && j.text) {
+      try {
+        var m = String(j.text).match(/<<<WEEK_JSON\s*([\s\S]*?)\s*WEEK_JSON>>>/);
+        if (m) week = JSON.parse(m[1].trim());
+      } catch (eParse) {}
+    }
+    if (week && week.days) {
+      store = loadPprogStore();
+      fl = pprogEnsureFinishLearning(store);
+      pprogFinishMarkPaid(fl, monthKey);
+      store.finishLearning = fl;
+      store.currentWeek = week;
+      if (store.currentBlock && store.currentBlock.weeks) {
+        store.currentBlock.weeks[store.activeWeekIndex | 0] = week;
+      }
+      savePprogStore(store);
+      try {
+        renderPprogWeek();
+      } catch (eR) {}
+      return { ok: true, week: week, paid: true };
+    }
+    return { ok: false, error: "no_week_json" };
+  });
+}
+
+window.pprogRecordFinishFeedback = pprogRecordFinishFeedback;
+window.pprogFinishCountableParts = pprogFinishCountableParts;
+window.pprogAttemptFinishMicroBias = pprogAttemptFinishMicroBias;
+window.pprogFinishTruncateNote = pprogFinishTruncateNote;
+window.PPROG_FINISH_OTHER_MAX = PPROG_FINISH_OTHER_MAX;
+window.PPROG_FINISH_STATIC = PPROG_FINISH_STATIC;
+
 function pprogCostCapsPayload(store, opts) {
   var s = store || loadPprogStore();
   var caps = pprogEnsureCostCaps(s);
@@ -5586,18 +6147,16 @@ function pprogNextBlockHintHtml(store) {
 }
 
 function syncPprogNextBlockUi() {
-  var store = loadPprogStore();
-  var html = pprogNextBlockHintHtml(store);
-  var show = !!html && !!(store.currentBlock && store.currentBlock.weeks && store.currentBlock.weeks.length);
+  /* Athlete-facing “Next block unlocks…” subtitle removed — auto-build still runs. */
   var hint1 = document.getElementById("pprogNextBlockHint");
   var hint2 = document.getElementById("pprogNextBlockHintWeek");
   if (hint1) {
-    hint1.style.display = show && !store.intakeComplete ? "block" : show ? "block" : "none";
-    if (show) hint1.innerHTML = html;
+    hint1.style.display = "none";
+    hint1.innerHTML = "";
   }
   if (hint2) {
-    hint2.style.display = show && store.intakeComplete ? "block" : "none";
-    if (show) hint2.innerHTML = html;
+    hint2.style.display = "none";
+    hint2.innerHTML = "";
   }
   syncPprogStartBtn();
 }
@@ -6898,6 +7457,127 @@ function setPprogSubtab(dayKey) {
   }
 }
 
+function pprogDayNavIsActive() {
+  return PPROG_DAY_KEYS.indexOf(pprogActiveDay) >= 0;
+}
+
+function pprogDayNavResolve(dir) {
+  var store = loadPprogStore();
+  if (!store.currentBlock || !store.currentBlock.weeks || !store.currentBlock.weeks.length) return null;
+  if (!pprogDayNavIsActive()) return null;
+  var weeks = store.currentBlock.weeks;
+  var di = PPROG_DAY_KEYS.indexOf(pprogActiveDay);
+  var wi = store.activeWeekIndex | 0;
+  var flat = wi * 7 + di + (dir > 0 ? 1 : -1);
+  if (flat < 0 || flat >= weeks.length * 7) return null;
+  return {
+    wi: Math.floor(flat / 7),
+    day: PPROG_DAY_KEYS[flat % 7],
+  };
+}
+
+function syncPprogDayNavUi() {
+  var prev = document.getElementById("pprogDayNavPrev");
+  var next = document.getElementById("pprogDayNavNext");
+  var panes = document.getElementById("pprogWeekPanes");
+  var show = false;
+  try {
+    var store = loadPprogStore();
+    show = !!(
+      store &&
+      store.intakeComplete &&
+      store.currentBlock &&
+      store.currentBlock.weeks &&
+      store.currentBlock.weeks.length &&
+      pprogDayNavIsActive()
+    );
+  } catch (eShow) {
+    show = false;
+  }
+  if (prev) {
+    prev.classList.toggle("show", show);
+    prev.disabled = !show || !pprogDayNavResolve(-1);
+    prev.classList.toggle("is-edge", show && !pprogDayNavResolve(-1));
+  }
+  if (next) {
+    next.classList.toggle("show", show);
+    next.disabled = !show || !pprogDayNavResolve(1);
+    next.classList.toggle("is-edge", show && !pprogDayNavResolve(1));
+  }
+  if (panes) panes.classList.toggle("pprog-day-swipe-ready", show);
+}
+
+var pprogDayNavAnimDir = 0;
+
+function stepPprogDayNav(dir) {
+  var target = pprogDayNavResolve(dir);
+  if (!target) {
+    syncPprogDayNavUi();
+    return;
+  }
+  pprogDayNavAnimDir = dir > 0 ? 1 : -1;
+  setPprogCalDay(target.wi, target.day);
+  try {
+    var card = document.querySelector("#pprogWeekPanes .pprog-day-card");
+    if (card) {
+      card.style.setProperty(
+        "--pprog-day-slide-x",
+        pprogDayNavAnimDir > 0 ? "18px" : "-18px"
+      );
+      card.classList.remove("pprog-day-slide-in");
+      void card.offsetWidth;
+      card.classList.add("pprog-day-slide-in");
+    }
+  } catch (eAnim) {}
+  try {
+    var panes = document.getElementById("pprogWeekPanes");
+    if (panes && panes.getBoundingClientRect().top < 72) {
+      panes.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  } catch (eScroll) {}
+}
+
+function bindPprogDaySwipe() {
+  var el = document.getElementById("pprogWeekPanes");
+  if (!el || el.getAttribute("data-day-swipe") === "1") return;
+  el.setAttribute("data-day-swipe", "1");
+  var startX = 0;
+  var startY = 0;
+  var tracking = false;
+  el.addEventListener(
+    "touchstart",
+    function (ev) {
+      if (!pprogDayNavIsActive() || !ev.touches || ev.touches.length !== 1) {
+        tracking = false;
+        return;
+      }
+      startX = ev.touches[0].clientX;
+      startY = ev.touches[0].clientY;
+      tracking = true;
+    },
+    { passive: true }
+  );
+  el.addEventListener(
+    "touchend",
+    function (ev) {
+      if (!tracking) return;
+      tracking = false;
+      if (!pprogDayNavIsActive() || !ev.changedTouches || !ev.changedTouches.length) return;
+      var t = ev.changedTouches[0];
+      var dx = t.clientX - startX;
+      var dy = t.clientY - startY;
+      if (Math.abs(dx) < 56) return;
+      if (Math.abs(dx) < Math.abs(dy) * 1.35) return;
+      /* swipe left → next day; swipe right → previous day */
+      stepPprogDayNav(dx < 0 ? 1 : -1);
+    },
+    { passive: true }
+  );
+}
+
+window.stepPprogDayNav = stepPprogDayNav;
+window.syncPprogDayNavUi = syncPprogDayNavUi;
+
 function setPprogCalDay(weekIndex0, dayKey) {
   var store = loadPprogStore();
   if (!store.currentBlock || !store.currentBlock.weeks) return;
@@ -7471,6 +8151,376 @@ function sharePprogDayWhatsApp(dayKey) {
   window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank");
 }
 
+function pprogFinishThumbsIcon() {
+  return (
+    '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+    '<path fill="currentColor" d="M9 21h9c.8 0 1.5-.5 1.8-1.2l2.1-6.3c.1-.3.1-.6.1-.9V11c0-1.1-.9-2-2-2h-6.3l1-4.7.1-.5c0-.4-.2-.8-.5-1.1L13.2 1 6.6 7.6C6.2 7.9 6 8.4 6 9v10c0 1.1.9 2 2 2zm0-2V9l4.3-4.3-1.3 5.3H19v1.1L17 19H9zM4 9H2v12h2c.6 0 1-.4 1-1V10c0-.6-.4-1-1-1z"/>' +
+    "</svg>"
+  );
+}
+
+var pprogFinishDayKey = "";
+var pprogFinishChoice = "";
+var pprogFinishPartRole = "";
+var pprogFinishPartTitle = "";
+var pprogFinishPartIndex = -1;
+var pprogFinishPendingParts = null;
+var pprogFinishCloseTimer = null;
+
+function pprogFinishSetBodyLock(on) {
+  try {
+    document.documentElement.classList.toggle("pprog-finish-open", !!on);
+    document.body.classList.toggle("pprog-finish-open", !!on);
+  } catch (eLock) {}
+}
+
+function pprogFinishResetPartState() {
+  pprogFinishPartRole = "";
+  pprogFinishPartTitle = "";
+  pprogFinishPartIndex = -1;
+  pprogFinishPendingParts = null;
+  var partWrap = document.getElementById("pprogFinishPartWrap");
+  var partOpts = document.getElementById("pprogFinishPartOpts");
+  if (partWrap) partWrap.classList.remove("open");
+  if (partOpts) partOpts.innerHTML = "";
+}
+
+function pprogFinishHideReply() {
+  var reply = document.getElementById("pprogFinishReply");
+  if (reply) {
+    reply.classList.remove("open");
+    reply.textContent = "";
+  }
+}
+
+function pprogFinishShowReply(text) {
+  var reply = document.getElementById("pprogFinishReply");
+  if (!reply) return;
+  reply.textContent = String(text || "");
+  reply.classList.add("open");
+}
+
+function pprogFinishDayPartsForKey(dayKey) {
+  try {
+    var store = loadPprogStore();
+    var week =
+      store.currentWeek ||
+      (store.currentBlock && store.currentBlock.weeks && store.currentBlock.weeks[store.activeWeekIndex | 0]);
+    var dayData = week && week.days && week.days[dayKey];
+    return (dayData && dayData.parts) || [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function pprogFinishRenderPartPicker(parts, rating) {
+  var partWrap = document.getElementById("pprogFinishPartWrap");
+  var partOpts = document.getElementById("pprogFinishPartOpts");
+  var label = document.getElementById("pprogFinishPartLabel");
+  if (!partWrap || !partOpts) return;
+  partOpts.innerHTML = "";
+  if (label) {
+    label.textContent =
+      rating === "too_easy" ? "Which part felt too easy?" : "Which part felt too hard?";
+  }
+  for (var i = 0; i < parts.length; i++) {
+    (function (p, n) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "pprog-finish-part-opt";
+      btn.setAttribute("data-part-index", String(p.index));
+      var letter = n === 0 ? "A" : n === 1 ? "B" : String(n + 1);
+      btn.innerHTML =
+        "Part " +
+        letter +
+        " — " +
+        String(p.title || "Part").replace(/</g, "&lt;") +
+        '<span class="pprog-finish-opt-hint">' +
+        String(p.part_role || "part") +
+        "</span>";
+      btn.onclick = function () {
+        selectPprogFinishPart(p);
+      };
+      partOpts.appendChild(btn);
+    })(parts[i], i);
+  }
+  partWrap.classList.add("open");
+}
+
+function selectPprogFinishPart(part) {
+  if (!part) return;
+  pprogFinishPartRole = String(part.part_role || "unknown");
+  pprogFinishPartTitle = String(part.title || "").slice(0, 80);
+  pprogFinishPartIndex = part.index | 0;
+  var partWrap = document.getElementById("pprogFinishPartWrap");
+  if (partWrap) partWrap.classList.remove("open");
+  submitPprogFinishFeedback();
+}
+
+function openPprogFinishFeedback(dayKey) {
+  if (pprogFinishCloseTimer) {
+    clearTimeout(pprogFinishCloseTimer);
+    pprogFinishCloseTimer = null;
+  }
+  pprogFinishDayKey = normalizePprogDayKey(dayKey) || dayKey;
+  pprogFinishChoice = "";
+  pprogFinishResetPartState();
+  pprogFinishHideReply();
+  var overlay = document.getElementById("pprogFinishOverlay");
+  var otherWrap = document.getElementById("pprogFinishOtherWrap");
+  var note = document.getElementById("pprogFinishOtherNote");
+  var sendBtn = document.getElementById("pprogFinishSendBtn");
+  var opts = document.querySelectorAll("#pprogFinishOptions .pprog-finish-opt");
+  for (var i = 0; i < opts.length; i++) opts[i].classList.remove("selected");
+  if (otherWrap) otherWrap.classList.remove("open");
+  if (note) {
+    note.value = "";
+    try {
+      note.setAttribute("maxlength", String(PPROG_FINISH_OTHER_MAX || 160));
+    } catch (eMax) {}
+  }
+  if (sendBtn) sendBtn.disabled = true;
+  try {
+    var store = loadPprogStore();
+    var week = store.currentWeek || (store.currentBlock && store.currentBlock.weeks[store.activeWeekIndex | 0]);
+    var dayData = week && week.days && week.days[pprogFinishDayKey];
+    var prev = dayData && dayData.finishFeedback;
+    if (prev && prev.rating) {
+      selectPprogFinishOption(prev.rating, true);
+      if (prev.rating === "other" && note) note.value = String(prev.note || "").slice(0, PPROG_FINISH_OTHER_MAX || 160);
+      if (prev.part_role) pprogFinishPartRole = String(prev.part_role);
+      if (prev.part_title) pprogFinishPartTitle = String(prev.part_title);
+      syncPprogFinishSendEnabled();
+    }
+  } catch (ePrefill) {}
+  if (overlay) {
+    try {
+      if (overlay.parentNode !== document.body) document.body.appendChild(overlay);
+    } catch (eMove) {}
+    bindPprogFinishOverlayClick();
+    overlay.hidden = false;
+    overlay.classList.add("open");
+    pprogFinishSetBodyLock(true);
+    try {
+      var closeBtn = overlay.querySelector(".pprog-finish-close");
+      if (closeBtn) closeBtn.focus();
+    } catch (eFocus) {}
+  }
+}
+
+function closePprogFinishFeedback() {
+  if (pprogFinishCloseTimer) {
+    clearTimeout(pprogFinishCloseTimer);
+    pprogFinishCloseTimer = null;
+  }
+  var overlay = document.getElementById("pprogFinishOverlay");
+  if (overlay) {
+    overlay.classList.remove("open");
+    overlay.hidden = true;
+  }
+  pprogFinishSetBodyLock(false);
+  pprogFinishDayKey = "";
+  pprogFinishChoice = "";
+  pprogFinishResetPartState();
+  pprogFinishHideReply();
+}
+
+function selectPprogFinishOption(choice, silent) {
+  pprogFinishChoice = String(choice || "");
+  pprogFinishResetPartState();
+  pprogFinishHideReply();
+  var opts = document.querySelectorAll("#pprogFinishOptions .pprog-finish-opt");
+  for (var i = 0; i < opts.length; i++) {
+    var v = opts[i].getAttribute("data-finish");
+    opts[i].classList.toggle("selected", v === pprogFinishChoice);
+  }
+  var otherWrap = document.getElementById("pprogFinishOtherWrap");
+  if (otherWrap) otherWrap.classList.toggle("open", pprogFinishChoice === "other");
+  syncPprogFinishSendEnabled();
+  if (silent) return;
+
+  if (pprogFinishChoice === "just_right") {
+    submitPprogFinishFeedback();
+    return;
+  }
+  if (pprogFinishChoice === "too_hard" || pprogFinishChoice === "too_easy") {
+    var parts = typeof pprogFinishCountableParts === "function"
+      ? pprogFinishCountableParts(pprogFinishDayPartsForKey(pprogFinishDayKey))
+      : [];
+    pprogFinishPendingParts = parts;
+    if (parts.length >= 2) {
+      pprogFinishRenderPartPicker(parts, pprogFinishChoice);
+      syncPprogFinishSendEnabled();
+      return;
+    }
+    if (parts.length === 1) {
+      pprogFinishPartRole = parts[0].part_role;
+      pprogFinishPartTitle = parts[0].title;
+      pprogFinishPartIndex = parts[0].index;
+    }
+    submitPprogFinishFeedback();
+    return;
+  }
+}
+
+function syncPprogFinishSendEnabled() {
+  var sendBtn = document.getElementById("pprogFinishSendBtn");
+  if (!sendBtn) return;
+  if (!pprogFinishChoice) {
+    sendBtn.disabled = true;
+    return;
+  }
+  if (pprogFinishChoice === "other") {
+    var note = document.getElementById("pprogFinishOtherNote");
+    sendBtn.disabled = !(note && String(note.value || "").trim());
+    return;
+  }
+  if (
+    (pprogFinishChoice === "too_hard" || pprogFinishChoice === "too_easy") &&
+    pprogFinishPendingParts &&
+    pprogFinishPendingParts.length >= 2 &&
+    !pprogFinishPartRole
+  ) {
+    sendBtn.disabled = true;
+    return;
+  }
+  sendBtn.disabled = false;
+}
+
+function submitPprogFinishFeedback() {
+  if (!pprogFinishDayKey || !pprogFinishChoice) return;
+  var noteEl = document.getElementById("pprogFinishOtherNote");
+  var note = noteEl ? String(noteEl.value || "").trim() : "";
+  if (typeof pprogFinishTruncateNote === "function") note = pprogFinishTruncateNote(note);
+  else note = note.slice(0, 160);
+  if (pprogFinishChoice === "other" && !note) {
+    syncPprogFinishSendEnabled();
+    if (noteEl) {
+      try {
+        noteEl.focus();
+      } catch (e) {}
+    }
+    return;
+  }
+  if (
+    (pprogFinishChoice === "too_hard" || pprogFinishChoice === "too_easy") &&
+    pprogFinishPendingParts &&
+    pprogFinishPendingParts.length >= 2 &&
+    !pprogFinishPartRole
+  ) {
+    syncPprogFinishSendEnabled();
+    return;
+  }
+
+  var store = loadPprogStore();
+  ensurePprogBlockFiveWeeks(store);
+  syncStoreActiveWeek(store);
+  var wi = store.activeWeekIndex | 0;
+  var week =
+    (store.currentBlock && store.currentBlock.weeks && store.currentBlock.weeks[wi]) ||
+    store.currentWeek;
+  if (!week) return;
+  if (!week.days) week.days = {};
+  if (!week.days[pprogFinishDayKey]) week.days[pprogFinishDayKey] = { parts: [] };
+
+  var sessionDate = pprogSessionDateForDay(pprogFinishDayKey, wi, store);
+  var weekday = String(pprogFinishDayKey || "").slice(0, 12);
+  var brickWeek = (wi | 0) + 1;
+
+  var learn = null;
+  try {
+    if (typeof pprogRecordFinishFeedback === "function") {
+      learn = pprogRecordFinishFeedback({
+        rating: pprogFinishChoice,
+        note: pprogFinishChoice === "other" ? note : "",
+        part_role: pprogFinishPartRole || "unknown",
+        part_title: pprogFinishPartTitle || "",
+        session_date: sessionDate,
+        brick_week: brickWeek,
+        weekday: weekday,
+        lang: "en",
+      });
+    }
+  } catch (eLearn) {
+    learn = null;
+  }
+
+  week.days[pprogFinishDayKey].finishFeedback = {
+    rating: pprogFinishChoice,
+    note: pprogFinishChoice === "other" ? note : "",
+    part_role: pprogFinishPartRole || "",
+    part_title: pprogFinishPartTitle || "",
+    part_index: pprogFinishPartIndex >= 0 ? pprogFinishPartIndex : null,
+    action_allowed: (learn && learn.action_allowed) || "accumulate_only",
+    safety_flag: !!(learn && learn.safety_flag),
+    at: new Date().toISOString(),
+  };
+  store.currentWeek = week;
+  if (store.currentBlock && store.currentBlock.weeks) store.currentBlock.weeks[wi] = week;
+  savePprogStore(store);
+
+  try {
+    sendAnalytics("personal_coach_message", {
+      coachArea: "finish_workout",
+      finishRating: pprogFinishChoice,
+      changeType: pprogFinishPartRole ? "finish_" + pprogFinishPartRole : "finish_session",
+      dayKey: pprogFinishDayKey,
+      weekIndex: wi,
+    });
+  } catch (eA) {}
+
+  var replyText =
+    (learn && learn.staticReply) ||
+    (PPROG_FINISH_STATIC &&
+      PPROG_FINISH_STATIC[pprogFinishChoice] &&
+      PPROG_FINISH_STATIC[pprogFinishChoice].en) ||
+    "Got it.";
+  pprogFinishShowReply(replyText);
+
+  if (learn && learn.shouldAttemptPaidMicroBias && learn.event) {
+    try {
+      pprogAttemptFinishMicroBias(learn.event).catch(function () {});
+    } catch (eBias) {}
+  }
+
+  pprogFinishCloseTimer = setTimeout(function () {
+    pprogFinishCloseTimer = null;
+    closePprogFinishFeedback();
+    try {
+      renderPprogWeek();
+    } catch (eR) {}
+  }, 900);
+}
+
+document.addEventListener("input", function (ev) {
+  if (ev.target && ev.target.id === "pprogFinishOtherNote") syncPprogFinishSendEnabled();
+});
+document.addEventListener("keydown", function (ev) {
+  if (ev.key === "Escape") {
+    var overlay = document.getElementById("pprogFinishOverlay");
+    if (overlay && overlay.classList.contains("open")) closePprogFinishFeedback();
+  }
+});
+function bindPprogFinishOverlayClick() {
+  var overlay = document.getElementById("pprogFinishOverlay");
+  if (!overlay || overlay.getAttribute("data-bound") === "1") return;
+  overlay.setAttribute("data-bound", "1");
+  overlay.addEventListener("click", function (ev) {
+    if (ev.target === overlay) closePprogFinishFeedback();
+  });
+}
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", bindPprogFinishOverlayClick);
+} else {
+  bindPprogFinishOverlayClick();
+}
+
+window.openPprogFinishFeedback = openPprogFinishFeedback;
+window.closePprogFinishFeedback = closePprogFinishFeedback;
+window.selectPprogFinishOption = selectPprogFinishOption;
+window.selectPprogFinishPart = selectPprogFinishPart;
+window.submitPprogFinishFeedback = submitPprogFinishFeedback;
+
 function renderPprogDayPartsHtml(parts, dayData, dayKey) {
   var html = "";
   if (!parts || !parts.length) {
@@ -7490,14 +8540,6 @@ function renderPprogDayPartsHtml(parts, dayData, dayKey) {
       esc(part.title || defaultTitle) +
       (modified ? '<span class="pprog-modified-flag">MODIFIED</span>' : "") +
       "</div>";
-    if (pi === 0 && dayKey) {
-      html +=
-        '<button type="button" class="pprog-share-wa" onclick="sharePprogDayWhatsApp(\'' +
-        dayKey +
-        '\')" title="Share workout on WhatsApp" aria-label="Share workout on WhatsApp">' +
-        pprogShareDayWaIcon() +
-        "Share</button>";
-    }
     html += "</div>";
     for (var ni = 0; ni < classified.notes.length; ni++) {
       html += '<div class="pprog-part-note">' + esc(classified.notes[ni]) + "</div>";
@@ -7771,12 +8813,39 @@ function renderPprogDayCardHtml(block, week, activeWi, day) {
     }
   }
   html += '<div class="pprog-day-card" dir="ltr">';
-  html +=
-    '<div class="card-header"><div class="source-name">' +
-    esc(dateLabel) +
-    "</div></div>";
   var focus = pprogOverviewFocus(week, day);
   var restDay = isPprogRestDay(day, dayData, week);
+  var finishDone = !!(dayData && dayData.finishFeedback && dayData.finishFeedback.rating);
+  var shareBtn =
+    '<button type="button" class="pprog-share-wa" onclick="sharePprogDayWhatsApp(\'' +
+    day +
+    '\')" title="Share workout on WhatsApp" aria-label="Share workout on WhatsApp">' +
+    pprogShareDayWaIcon() +
+    "</button>";
+  var finishBtn = restDay
+    ? ""
+    : '<button type="button" class="pprog-finish-btn' +
+      (finishDone ? " done" : "") +
+      '" onclick="openPprogFinishFeedback(\'' +
+      day +
+      "')\" title=\"" +
+      (finishDone ? "Workout check-in saved" : "Mark workout done") +
+      '" aria-label="' +
+      (finishDone ? "Done — edit check-in" : "Done") +
+      '">' +
+      pprogFinishThumbsIcon() +
+      (finishDone ? "Done ✓" : "Done") +
+      "</button>";
+  html +=
+    '<div class="card-header">' +
+    '<div class="source-name">' +
+    esc(dateLabel) +
+    "</div>" +
+    '<div class="pprog-day-actions">' +
+    finishBtn +
+    shareBtn +
+    "</div>" +
+    "</div>";
   if (restDay) {
     html +=
       '<div class="pprog-rest-day">' +
@@ -7833,6 +8902,7 @@ function renderPprogWeek() {
       panesEl.innerHTML = '<div class="pprog-empty">No block yet — finish intake.</div>';
     }
     syncPprogBrickChatUi();
+    syncPprogDayNavUi();
     return;
   }
 
@@ -7841,6 +8911,7 @@ function renderPprogWeek() {
   if (!week || !week.days) {
     panesEl.innerHTML = '<div class="pprog-empty">No week data.</div>';
     syncPprogBrickChatUi();
+    syncPprogDayNavUi();
     return;
   }
 
@@ -7913,6 +8984,8 @@ function renderPprogWeek() {
   var weekBlk = document.getElementById("pprogWeekBlock");
   if (weekBlk) weekBlk.style.display = "block";
   syncPprogBrickChatUi();
+  bindPprogDaySwipe();
+  syncPprogDayNavUi();
 }
 
 function retryPprogFillFailures() {
@@ -11806,10 +12879,19 @@ function initTimerColorBuckets() {
 </script>
 <div class="page-fabs" id="pageFabs" aria-label="Quick actions">
   <button type="button" class="up-btn" id="upBtn" onclick="scrollToTop()" aria-label="Scroll to top" title="Scroll to top">↑</button>
-  <button type="button" class="pprog-coach-fab" id="pprogCoachFab" aria-label="Whole brick chat with the coach" title="Coach · whole brick" aria-expanded="false" aria-controls="pprogCoachFloat">
-    <img src="assets/hamamen-coach-duck.png" alt="" width="48" height="48" draggable="false">
+  <button type="button" class="pprog-coach-fab" id="pprogCoachFab" aria-label="Talk to the coach" title="Talk to the coach · whole brick" aria-expanded="false" aria-controls="pprogCoachFloat">
+    <span class="pprog-coach-fab-caption">talk to<br>the coach</span>
+    <span class="pprog-coach-fab-avatar" aria-hidden="true">
+      <img src="assets/hamamen-coach-duck.png" alt="" width="48" height="48" draggable="false">
+    </span>
   </button>
 </div>
+<button type="button" class="pprog-day-nav prev" id="pprogDayNavPrev" onclick="stepPprogDayNav(-1)" aria-label="Previous training day" title="Previous day">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M15.4 4.6 13.99 3.2 5.2 12l8.79 8.8 1.41-1.41L8.03 12z"/></svg>
+</button>
+<button type="button" class="pprog-day-nav next" id="pprogDayNavNext" onclick="stepPprogDayNav(1)" aria-label="Next training day" title="Next day">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8.6 4.6 10.01 3.2 18.8 12l-8.79 8.8-1.41-1.41L15.97 12z"/></svg>
+</button>
 <div id="pprogCoachFabTip" class="pprog-coach-fab-tip" hidden role="status">
   <button type="button" class="pprog-coach-fab-tip-close" onclick="dismissPprogCoachFabTip(event)" aria-label="Dismiss">×</button>
   <strong>Whole brick</strong>
@@ -11837,27 +12919,77 @@ function initTimerColorBuckets() {
   } catch (e) {}
 })();
 </script>
-<!-- One-time handoff / intake-reset deep-link: open Personal Coach tab after claim.html -->
+<!-- Default landing: Personal Coach. Deep-link ?tab=browse|workout|… still honored. -->
 <script>
 (function () {
   try {
     var q = new URLSearchParams(window.location.search || "");
     var tab = q.get("tab");
-    if (tab === "pprog" && typeof showTab === "function") {
-      showTab("pprog");
-      if (q.get("intake_reset") === "1") {
-        try {
-          if (typeof syncPprogModeUi === "function") syncPprogModeUi();
-          if (typeof renderPprogChat === "function") renderPprogChat();
-          if (typeof syncPprogStartBtn === "function") syncPprogStartBtn();
-        } catch (e2) {}
-      } else if (typeof renderPprogWeek === "function") {
-        try { renderPprogWeek(); } catch (e1) {}
+    var allowed = { pprog: 1, browse: 1, aibeta: 1, workout: 1, sources: 1, about: 1 };
+    if (!tab || !allowed[tab]) {
+      tab = typeof PPROG_TAB_ENABLED !== "undefined" && PPROG_TAB_ENABLED ? "pprog" : "browse";
+    }
+    if (typeof showTab === "function") {
+      showTab(tab);
+      if (tab === "pprog") {
+        if (q.get("intake_reset") === "1") {
+          try {
+            if (typeof syncPprogModeUi === "function") syncPprogModeUi();
+            if (typeof renderPprogChat === "function") renderPprogChat();
+            if (typeof syncPprogStartBtn === "function") syncPprogStartBtn();
+          } catch (e2) {}
+        } else if (typeof renderPprogWeek === "function") {
+          try {
+            renderPprogWeek();
+          } catch (e1) {}
+        }
       }
     }
   } catch (e) {}
 })();
 </script>
+
+<div id="pprogFinishOverlay" class="pprog-finish-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="pprogFinishTitle">
+  <div class="pprog-finish-sheet" onclick="event.stopPropagation()">
+    <div class="pprog-finish-sheet-head">
+      <div>
+        <span class="pprog-finish-sheet-title" id="pprogFinishTitle">How was this workout?</span>
+        <span class="pprog-finish-sheet-sub">Quick check-in after you finished — helps your coach learn what fits you.</span>
+      </div>
+      <button type="button" class="pprog-finish-close" onclick="closePprogFinishFeedback()" aria-label="Close without saving">×</button>
+    </div>
+    <div class="pprog-finish-options" id="pprogFinishOptions" role="listbox" aria-label="Workout feedback">
+      <button type="button" class="pprog-finish-opt" data-finish="just_right" onclick="selectPprogFinishOption('just_right')">
+        Just right
+        <span class="pprog-finish-opt-hint">Load and difficulty felt accurate</span>
+      </button>
+      <button type="button" class="pprog-finish-opt" data-finish="too_hard" onclick="selectPprogFinishOption('too_hard')">
+        Too hard
+        <span class="pprog-finish-opt-hint">Volume, intensity, or skills were too much</span>
+      </button>
+      <button type="button" class="pprog-finish-opt" data-finish="too_easy" onclick="selectPprogFinishOption('too_easy')">
+        Too easy
+        <span class="pprog-finish-opt-hint">Could have pushed more</span>
+      </button>
+      <button type="button" class="pprog-finish-opt" data-finish="other" onclick="selectPprogFinishOption('other')">
+        Other
+        <span class="pprog-finish-opt-hint">You’ll need to write what your coach should know</span>
+      </button>
+    </div>
+    <div class="pprog-finish-part-wrap" id="pprogFinishPartWrap">
+      <label id="pprogFinishPartLabel">Which part felt off?</label>
+      <div class="pprog-finish-part-opts" id="pprogFinishPartOpts" role="listbox" aria-labelledby="pprogFinishPartLabel"></div>
+    </div>
+    <div class="pprog-finish-other-wrap" id="pprogFinishOtherWrap">
+      <label for="pprogFinishOtherNote">If you choose Other, describe what your coach should know about this session (max 160 characters).</label>
+      <textarea id="pprogFinishOtherNote" maxlength="160" placeholder="e.g. knees flared on squats · ran out of time on the metcon…"></textarea>
+    </div>
+    <div class="pprog-finish-reply" id="pprogFinishReply" role="status" aria-live="polite"></div>
+    <div class="pprog-finish-actions">
+      <button type="button" class="pprog-finish-send" id="pprogFinishSendBtn" disabled onclick="submitPprogFinishFeedback()">Send</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

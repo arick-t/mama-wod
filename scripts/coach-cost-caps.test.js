@@ -77,6 +77,15 @@ function testGate() {
     ) === null
   );
 
+  ok(
+    "finish_micro_bias allowed under daily lock (not a daily programmed edit)",
+    evaluateCostCapGate(
+      "finish_micro_bias",
+      { israelToday: "2026-08-07" },
+      { costCaps: { dailyEdits: { "2026-08-07": 2 }, dailyLocked: true } }
+    ) === null
+  );
+
   /* Monthly locks everything programming */
   const monthly = evaluateCostCapGate(
     "revise_day",
@@ -223,7 +232,11 @@ function testStaticRegressions() {
   const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
   ok("VERSION matches package", ver === pkg.version);
   ok("coachVersion 2.1 in API", pc.includes('const COACH_VERSION = "2.1"') || pc.includes("COACH_VERSION = \"2.1\""));
-  ok("app daily workouts subtitle unchanged", idx.includes("DAILY WORKOUTS · v21.3"));
+  ok(
+    "app daily workouts subtitle on 21.3+ display line",
+    /DAILY WORKOUTS · v21\.(3(\.\d+)?|4(\.\d+)?|5(\.\d+)?)\b/.test(idx) &&
+      !/DAILY WORKOUTS · v2\.1\b/.test(idx)
+  );
   ok("coach subtitle 2.1", idx.includes('COACH_VERSION = "2.1"') || idx.includes("COACH · v2.1"));
 }
 

@@ -1,12 +1,50 @@
 # Changelog
 
-## [21.3.9] - 2026-08-07
+## [21.5.1] - 2026-08-07
 
 ### Admin dashboard — durable storage (Stage 1)
 - Private Vercel Blob store `duck-wod-admin` for athlete snapshots + handoff claims (survives redeploy/cold start).
 - Filesystem fallback remains for local/dev without Blob credentials.
 - Seeds tier-2 veterans (אריק / עדי) into admin list when missing.
 - Coach directives lookup is async-safe for Personal Coach.
+
+---
+
+## [21.5] - 2026-08-07
+
+### Personal Coach — Done debrief learning (wired)
+- **Display version: v21.5** (Coach stays **v2.1**).
+- Done check-in now feeds finish-learning (Budget-approved v1):
+  - 0 LLM on click; static reply to athlete
+  - Too hard / Too easy → pick training part (warmup excluded) when 2+ parts
+  - Other ≤160 chars; keyword safety flag
+  - Threshold **3** same `part_role` / ~14d → surgical `finish_micro_bias` (max 1 paid / Israel month)
+  - Otherwise accumulate + piggyback compact signal cards on natural generate
+- Engine: `lib/coach-finish-signals.js` + POL-025; does not consume daily POL-COST edit slots.
+
+---
+
+## [21.4.1] - 2026-08-07
+
+### Personal Coach: small UI tweaks (display)
+- **Display version: v21.4.1** (Coach stays **v2.1**).
+- **Done** button beside the day title (`Fri · 7 August`) — opens floating check-in (Just right / Too hard / Too easy / Other). Saves locally on the day + analytics; coach-brain learning still deferred at that ship.
+- **Share** moved to the same date-actions row as Done: quiet circular icon (secondary); removed from Warm-up section title so it no longer competes with Done.
+- Removed athlete-facing **Next block unlocks…** dashed subtitle under Personal Coach / week shell (auto next-block build unchanged).
+- Preview: `preview-finished-workout.html`.
+
+---
+
+## [21.4] - 2026-08-07
+
+### Personal Coach: light UX pack (display)
+- **Display version: v21.4** (Coach stays **v2.1**; package/`VERSION` stay on the 21.3.x line — no downgrade).
+- Floating circular prev/next day arrows + swipe between workouts (daily or monthly day card).
+- Coach FAB: tiny **talk to / the coach** caption above the duck, inside one shared purple pill shell with the avatar.
+- App landing tab: open on **Personal Coach** (not Workout's) when the coach tab is enabled.
+- Pre-START gate (first screen only): hide the free-text Message/Send box; keep **START**. Intake questionnaire after START is unchanged.
+- Previews: `preview-day-nav.html`, `preview-coach-fab-caption.html`, `preview-coach-prestart.html`.
+- Done / debrief learning stayed on a separate track at that ship.
 
 ---
 
