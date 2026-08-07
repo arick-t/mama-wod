@@ -4,40 +4,32 @@
  * GET  /api/admin-snapshot — admin reads all snapshots (requires ADMIN_PASSWORD)
  * DELETE /api/admin-snapshot?id=athleteId — admin deletes a snapshot
  *
- * Storage: data/admin-snapshots/ (one JSON file per athlete, keyed by userId)
- * On Vercel: use this only for read (files not writable in prod without blob storage).
- * For prod persistence add ADMIN_BLOB_URL or migrate to Vercel KV / Blob later.
+ * Storage: private Vercel Blob (admin-snapshots/*.json) with FS fallback for local/dev.
  */
 
-const fs = require("fs");
 const path = require("path");
+const fs = require("fs");
 const { checkRateLimit, sendRateLimit } = require("../../../lib/rate-limit");
 const {
   resolveAdminPassword,
   checkAdminAuth: sharedCheckAdminAuth,
   adminAuthDenied,
 } = require("./admin-auth");
-const { adminSnapshotsDir } = require("./admin-paths");
+const { putJson, getJson, listJson, deleteJson, storageInfo } = require("./admin-json-store");
 const { applyCors } = require("../../../lib/cors-allowlist");
 
-const SNAPSHOTS_DIR = adminSnapshotsDir();
 const MAX_SNAPSHOT_BYTES = 64 * 1024; // 64 KB per athlete
 const ADMIN_PASSWORD = resolveAdminPassword();
-
-function ensureDir() {
-  try {
-    if (!fs.existsSync(SNAPSHOTS_DIR)) {
-      fs.mkdirSync(SNAPSHOTS_DIR, { recursive: true });
-    }
-  } catch (e) {
-    /* Vercel cold start / read-only edge — list returns empty */
-  }
-}
+const SNAP_PREFIX = "admin-snapshots/";
 
 function safeAthleteId(raw) {
   return String(raw || "")
     .replace(/[^a-zA-Z0-9_\-]/g, "")
     .slice(0, 80);
+}
+
+function snapKey(athleteId) {
+  return SNAP_PREFIX + athleteId + ".json";
 }
 
 function safeCount(raw, fallback) {
@@ -46,41 +38,73 @@ function safeCount(raw, fallback) {
   return Math.floor(n);
 }
 
-function readSnapshot(athleteId) {
-  const file = path.join(SNAPSHOTS_DIR, athleteId + ".json");
-  if (!fs.existsSync(file)) return null;
+async function readSnapshot(athleteId) {
+  const id = safeAthleteId(athleteId);
+  if (!id) return null;
+  return getJson(snapKey(id));
+}
+
+async function writeSnapshot(athleteId, data) {
+  const id = safeAthleteId(athleteId);
+  if (!id) throw new Error("athleteId required");
+  const str = JSON.stringify(data);
+  if (str.length > MAX_SNAPSHOT_BYTES) throw new Error("Snapshot too large");
+  await putJson(snapKey(id), data);
+}
+
+async function listSnapshots() {
   try {
-    return JSON.parse(fs.readFileSync(file, "utf8"));
-  } catch {
-    return null;
+    await ensureSeedAthletes();
+    const rows = await listJson(SNAP_PREFIX);
+    return rows
+      .map((r) => r.data)
+      .filter(Boolean)
+      .sort((a, b) => String(b.updatedAt || "").localeCompare(String(a.updatedAt || "")));
+  } catch (e) {
+    return [];
   }
 }
 
-function writeSnapshot(athleteId, data) {
-  ensureDir();
-  const file = path.join(SNAPSHOTS_DIR, athleteId + ".json");
-  const str = JSON.stringify(data);
-  if (str.length > MAX_SNAPSHOT_BYTES) throw new Error("Snapshot too large");
-  fs.writeFileSync(file, str, "utf8");
+function loadCoachMemberSeed() {
+  try {
+    const p = path.join(__dirname, "..", "..", "..", "data", "analytics-coach-members.json");
+    if (!fs.existsSync(p)) return {};
+    const raw = JSON.parse(fs.readFileSync(p, "utf8"));
+    return raw && typeof raw === "object" ? raw : {};
+  } catch (e) {
+    return {};
+  }
 }
 
-function listSnapshots() {
-  try {
-    ensureDir();
-    if (!fs.existsSync(SNAPSHOTS_DIR)) return [];
-    const files = fs.readdirSync(SNAPSHOTS_DIR).filter((f) => f.endsWith(".json"));
-    return files
-      .map((f) => {
-        try {
-          return JSON.parse(fs.readFileSync(path.join(SNAPSHOTS_DIR, f), "utf8"));
-        } catch {
-          return null;
-        }
-      })
-      .filter(Boolean)
-      .sort((a, b) => (b.updatedAt || "").localeCompare(a.updatedAt || ""));
-  } catch (e) {
-    return [];
+async function ensureSeedAthletes() {
+  const seed = loadCoachMemberSeed();
+  const ids = Object.keys(seed || {});
+  for (let i = 0; i < ids.length; i++) {
+    const uid = safeAthleteId(ids[i]);
+    if (!uid) continue;
+    const existing = await readSnapshot(uid);
+    if (existing && existing.athleteId) continue;
+    const row = seed[ids[i]] || {};
+    const now = new Date().toISOString();
+    await writeSnapshot(uid, {
+      athleteId: uid,
+      displayName: String(row.displayName || uid).slice(0, 80),
+      email: "",
+      gender: "",
+      preferredLanguage: "he",
+      skillsSummary: "",
+      intakeSummary: "Seeded coach member (tier 2)",
+      coachDirectives: "",
+      joinedAt: now,
+      workoutAdjustmentsCount: 0,
+      coachDebriefsCount: 0,
+      currentBlock: null,
+      pastBlocks: [],
+      coachTier: 2,
+      seeded: true,
+      updatedAt: now,
+      createdAt: now,
+    });
   }
 }
 
@@ -113,21 +137,32 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: "athleteId required" });
     }
 
-    const existing = athleteId ? readSnapshot(athleteId) || {} : {};
+    const existing = athleteId ? (await readSnapshot(athleteId)) || {} : {};
     const isAdmin = checkAdminAuth(req);
 
     // Admin-only: list athletes via POST (avoids proxies that strip custom GET headers)
     if (body.action === "admin_list" || body.list === true) {
       if (!isAdmin) return adminAuthDenied(res);
-      const rl = checkRateLimit(req, { name: "admin-snap-get", limit: 60, windowMs: 60_000 });
-      if (!rl.ok) return sendRateLimit(res, rl);
-      return res.status(200).json({ ok: true, snapshots: listSnapshots() });
+      const rlList = checkRateLimit(req, { name: "admin-snap-get", limit: 60, windowMs: 60_000 });
+      if (!rlList.ok) return sendRateLimit(res, rlList);
+      const snapshots = await listSnapshots();
+      return res.status(200).json({ ok: true, snapshots, storage: storageInfo() });
     }
 
     // Admin-only: update coach directives (and optionally leave other fields intact)
-    if (body.coachDirectives !== undefined && Object.keys(body).filter(function (k) {
-      return body[k] !== undefined && k !== "athleteId" && k !== "userId" && k !== "coachDirectives" && k !== "adminPassword" && k !== "password";
-    }).length === 0) {
+    if (
+      body.coachDirectives !== undefined &&
+      Object.keys(body).filter(function (k) {
+        return (
+          body[k] !== undefined &&
+          k !== "athleteId" &&
+          k !== "userId" &&
+          k !== "coachDirectives" &&
+          k !== "adminPassword" &&
+          k !== "password"
+        );
+      }).length === 0
+    ) {
       if (!isAdmin) return adminAuthDenied(res);
       if (!existing.athleteId && !existing.createdAt) {
         return res.status(404).json({ error: "Athlete not found — wait for first snapshot" });
@@ -135,11 +170,14 @@ module.exports = async function handler(req, res) {
       existing.coachDirectives = String(body.coachDirectives || "").slice(0, 1000);
       existing.updatedAt = new Date().toISOString();
       try {
-        writeSnapshot(athleteId, existing);
+        await writeSnapshot(athleteId, existing);
       } catch (e) {
-        return res.status(500).json({ error: "Could not save directives", detail: String(e.message) });
+        return res.status(500).json({
+          error: "לא הצלחנו לשמור את ההנחיות",
+          detail: String(e.message),
+        });
       }
-      return res.status(200).json({ ok: true });
+      return res.status(200).json({ ok: true, storage: storageInfo() });
     }
 
     // Athlete snapshot push — never accept coachDirectives from the client
@@ -148,11 +186,16 @@ module.exports = async function handler(req, res) {
       displayName: String(body.displayName || existing.displayName || "").slice(0, 80),
       email: String(body.email || existing.email || "").slice(0, 120),
       gender: String(body.gender || existing.gender || "").slice(0, 20),
-      preferredLanguage: String(body.preferredLanguage || existing.preferredLanguage || "").slice(0, 10),
+      preferredLanguage: String(body.preferredLanguage || existing.preferredLanguage || "").slice(
+        0,
+        10
+      ),
       skillsSummary: String(body.skillsSummary || existing.skillsSummary || "").slice(0, 400),
       intakeSummary: String(body.intakeSummary || existing.intakeSummary || "").slice(0, 800),
       coachDirectives: String(existing.coachDirectives || "").slice(0, 1000),
-      joinedAt: String(body.joinedAt || existing.joinedAt || existing.createdAt || new Date().toISOString()).slice(0, 40),
+      joinedAt: String(
+        body.joinedAt || existing.joinedAt || existing.createdAt || new Date().toISOString()
+      ).slice(0, 40),
       workoutAdjustmentsCount: safeCount(
         body.workoutAdjustmentsCount,
         safeCount(existing.workoutAdjustmentsCount, 0)
@@ -163,16 +206,20 @@ module.exports = async function handler(req, res) {
       ),
       currentBlock: body.currentBlock || existing.currentBlock || null,
       pastBlocks: body.pastBlocks || existing.pastBlocks || [],
+      coachTier: existing.coachTier || body.coachTier || 2,
       updatedAt: new Date().toISOString(),
       createdAt: existing.createdAt || new Date().toISOString(),
     };
 
     try {
-      writeSnapshot(athleteId, snapshot);
+      await writeSnapshot(athleteId, snapshot);
     } catch (e) {
-      return res.status(500).json({ error: "Could not save snapshot", detail: String(e.message) });
+      return res.status(500).json({
+        error: "לא הצלחנו לשמור את המתאמן",
+        detail: String(e.message),
+      });
     }
-    return res.status(200).json({ ok: true });
+    return res.status(200).json({ ok: true, storage: storageInfo() });
   }
 
   // ── GET: admin reads all snapshots ─────────────────────────────────────────
@@ -183,8 +230,8 @@ module.exports = async function handler(req, res) {
     const rl = checkRateLimit(req, { name: "admin-snap-get", limit: 60, windowMs: 60_000 });
     if (!rl.ok) return sendRateLimit(res, rl);
 
-    const snapshots = listSnapshots();
-    return res.status(200).json({ ok: true, snapshots });
+    const snapshots = await listSnapshots();
+    return res.status(200).json({ ok: true, snapshots, storage: storageInfo() });
   }
 
   // ── DELETE: admin removes a snapshot ───────────────────────────────────────
@@ -194,22 +241,23 @@ module.exports = async function handler(req, res) {
     }
     const athleteId = safeAthleteId(req.query && req.query.id);
     if (!athleteId) return res.status(400).json({ error: "id required" });
-    const file = path.join(SNAPSHOTS_DIR, athleteId + ".json");
-    if (fs.existsSync(file)) fs.unlinkSync(file);
-    return res.status(200).json({ ok: true });
+    await deleteJson(snapKey(athleteId));
+    return res.status(200).json({ ok: true, storage: storageInfo() });
   }
 
   return res.status(405).json({ error: "Method not allowed" });
 };
 
-function getCoachDirectives(athleteId) {
+async function getCoachDirectives(athleteId) {
   const id = safeAthleteId(athleteId);
   if (!id) return "";
-  const snap = readSnapshot(id);
+  const snap = await readSnapshot(id);
   if (!snap || !snap.coachDirectives) return "";
   return String(snap.coachDirectives).slice(0, 1000);
 }
 
 module.exports.getCoachDirectives = getCoachDirectives;
 module.exports.readSnapshot = readSnapshot;
+module.exports.writeSnapshot = writeSnapshot;
+module.exports.listSnapshots = listSnapshots;
 module.exports.safeAthleteId = safeAthleteId;

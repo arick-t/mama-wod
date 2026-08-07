@@ -9,30 +9,20 @@
  * After redeem, athlete lives on device localStorage — not on the server.
  */
 
-const fs = require("fs");
-const path = require("path");
 const crypto = require("crypto");
 const { checkRateLimit, sendRateLimit } = require("../../../lib/rate-limit");
 const {
   resolveAdminPassword,
   checkAdminAuth: sharedCheckAdminAuth,
 } = require("./admin-auth");
-const { adminSnapshotsDir, adminClaimsDir } = require("./admin-paths");
+const { putJson, getJson, listJson } = require("./admin-json-store");
 const { applyCors } = require("../../../lib/cors-allowlist");
 
-const SNAPSHOTS_DIR = adminSnapshotsDir();
-const CLAIMS_DIR = adminClaimsDir();
 const ADMIN_PASSWORD = resolveAdminPassword();
 const MAX_PACKAGE_BYTES = 256 * 1024;
 const CLAIM_TTL_MS = 14 * 24 * 60 * 60 * 1000; // 14 days
-
-function ensureDirs() {
-  try {
-    [SNAPSHOTS_DIR, CLAIMS_DIR].forEach(function (d) {
-      if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
-    });
-  } catch (e) {}
-}
+const SNAP_PREFIX = "admin-snapshots/";
+const CLAIM_PREFIX = "admin-claims/";
 
 function checkAdminAuth(req) {
   return sharedCheckAdminAuth(req, ADMIN_PASSWORD);
@@ -44,31 +34,31 @@ function safeId(raw) {
     .slice(0, 80);
 }
 
-function readSnap(athleteId) {
-  const file = path.join(SNAPSHOTS_DIR, athleteId + ".json");
-  if (!fs.existsSync(file)) return null;
-  try {
-    return JSON.parse(fs.readFileSync(file, "utf8"));
-  } catch (e) {
-    return null;
-  }
+function snapKey(athleteId) {
+  return SNAP_PREFIX + athleteId + ".json";
 }
 
-function writeSnap(athleteId, data) {
-  ensureDirs();
-  const file = path.join(SNAPSHOTS_DIR, athleteId + ".json");
+function claimKey(token) {
+  const safe = String(token || "").replace(/[^a-zA-Z0-9_\-]/g, "").slice(0, 64);
+  return CLAIM_PREFIX + safe + ".json";
+}
+
+async function readSnap(athleteId) {
+  const id = safeId(athleteId);
+  if (!id) return null;
+  return getJson(snapKey(id));
+}
+
+async function writeSnap(athleteId, data) {
+  const id = safeId(athleteId);
+  if (!id) throw new Error("athleteId required");
   const str = JSON.stringify(data);
   if (str.length > MAX_PACKAGE_BYTES) throw new Error("Snapshot too large");
-  fs.writeFileSync(file, str, "utf8");
+  await putJson(snapKey(id), data);
 }
 
 function makeToken() {
   return crypto.randomBytes(24).toString("base64url");
-}
-
-function claimPath(token) {
-  const safe = String(token || "").replace(/[^a-zA-Z0-9_\-]/g, "").slice(0, 64);
-  return path.join(CLAIMS_DIR, safe + ".json");
 }
 
 function starterBlock(_displayName) {
@@ -273,7 +263,7 @@ function buildResetIntakePackage(snap) {
   });
 }
 
-function createAthlete(body) {
+async function createAthlete(body) {
   const displayName = String(body.displayName || "").trim().slice(0, 80);
   if (!displayName) return { status: 400, json: { error: "displayName required" } };
   const email = String(body.email || "").trim().slice(0, 120);
@@ -287,7 +277,7 @@ function createAthlete(body) {
     athleteId = "a_" + crypto.randomBytes(6).toString("hex");
   }
 
-  if (readSnap(athleteId)) {
+  if (await readSnap(athleteId)) {
     return { status: 409, json: { error: "athlete already exists", athleteId: athleteId } };
   }
 
@@ -309,22 +299,29 @@ function createAthlete(body) {
     createdAt: now,
     updatedAt: now,
     createdByAdmin: true,
+    coachTier: 2,
   };
   try {
-    writeSnap(athleteId, snapshot);
+    await writeSnap(athleteId, snapshot);
   } catch (e) {
-    return { status: 500, json: { error: "Could not save athlete", detail: String(e.message) } };
+    return {
+      status: 500,
+      json: { error: "לא הצלחנו לשמור מתאמן", detail: String(e.message) },
+    };
   }
   return { status: 200, json: { ok: true, snapshot: snapshot } };
 }
 
-function createLink(body) {
+async function createLink(body) {
   const athleteId = safeId(body.athleteId);
   if (!athleteId) return { status: 400, json: { error: "athleteId required" } };
-  const snap = readSnap(athleteId);
+  const snap = await readSnap(athleteId);
   if (!snap) return { status: 404, json: { error: "Athlete not found" } };
   if (!snap.currentBlock) {
-    return { status: 400, json: { error: "No training block yet — add a block before creating a link" } };
+    return {
+      status: 400,
+      json: { error: "No training block yet — add a block before creating a link" },
+    };
   }
 
   const purpose = String(body.purpose || body.mode || "handoff").trim() || "handoff";
@@ -346,8 +343,7 @@ function createLink(body) {
   if (str.length > MAX_PACKAGE_BYTES) {
     return { status: 500, json: { error: "Package too large" } };
   }
-  ensureDirs();
-  fs.writeFileSync(claimPath(token), str, "utf8");
+  await putJson(claimKey(token), claim);
 
   // Remember last link meta on snapshot (not the secret package)
   snap.lastHandoffTokenPrefix = token.slice(0, 8);
@@ -361,7 +357,7 @@ function createLink(body) {
   }
   snap.updatedAt = claim.createdAt;
   try {
-    writeSnap(athleteId, snap);
+    await writeSnap(athleteId, snap);
   } catch (e) {}
 
   return {
@@ -386,18 +382,12 @@ function createResetIntakeLink(body) {
   return createLink(Object.assign({}, body, { purpose: "reset_intake" }));
 }
 
-function redeemToken(tokenRaw) {
+async function redeemToken(tokenRaw) {
   const token = String(tokenRaw || "").replace(/[^a-zA-Z0-9_\-]/g, "").slice(0, 64);
   if (!token) return { status: 400, json: { error: "token required" } };
-  const file = claimPath(token);
-  if (!fs.existsSync(file)) {
+  const claim = await getJson(claimKey(token));
+  if (!claim) {
     return { status: 404, json: { error: "link_invalid", message: "הלינק לא תקף או כבר לא קיים" } };
-  }
-  let claim;
-  try {
-    claim = JSON.parse(fs.readFileSync(file, "utf8"));
-  } catch (e) {
-    return { status: 500, json: { error: "corrupt_claim" } };
   }
   if (claim.usedAt) {
     return {
@@ -412,7 +402,6 @@ function redeemToken(tokenRaw) {
     };
   }
   claim.usedAt = new Date().toISOString();
-  // Burn: rewrite without the heavy package after first successful read
   const burned = {
     token: claim.token,
     athleteId: claim.athleteId,
@@ -424,17 +413,16 @@ function redeemToken(tokenRaw) {
     burned: true,
   };
   const pkg = claim.package;
-  fs.writeFileSync(file, JSON.stringify(burned, null, 2), "utf8");
+  await putJson(claimKey(token), burned);
 
-  // Clear pending flag on snapshot once redeemed
   if ((claim.purpose || "") === "reset_intake" && claim.athleteId) {
-    const snap = readSnap(claim.athleteId);
+    const snap = await readSnap(claim.athleteId);
     if (snap) {
       snap.intakeResetPending = false;
       snap.intakeResetRedeemedAt = claim.usedAt;
       snap.updatedAt = claim.usedAt;
       try {
-        writeSnap(claim.athleteId, snap);
+        await writeSnap(claim.athleteId, snap);
       } catch (e) {}
     }
   }
@@ -453,27 +441,22 @@ function redeemToken(tokenRaw) {
   };
 }
 
-function listLinksForAthlete(athleteId) {
-  ensureDirs();
+async function listLinksForAthlete(athleteId) {
   const id = safeId(athleteId);
-  const files = fs.readdirSync(CLAIMS_DIR).filter(function (f) {
-    return f.endsWith(".json");
-  });
+  const rows = await listJson(CLAIM_PREFIX);
   const out = [];
-  for (let i = 0; i < files.length; i++) {
-    try {
-      const c = JSON.parse(fs.readFileSync(path.join(CLAIMS_DIR, files[i]), "utf8"));
-      if (id && c.athleteId !== id) continue;
-      out.push({
-        tokenPrefix: String(c.token || "").slice(0, 8),
-        athleteId: c.athleteId,
-        displayName: c.displayName,
-        createdAt: c.createdAt,
-        expiresAt: c.expiresAt,
-        usedAt: c.usedAt || null,
-        burned: !!c.burned,
-      });
-    } catch (e) {}
+  for (let i = 0; i < rows.length; i++) {
+    const c = rows[i].data || {};
+    if (id && c.athleteId !== id) continue;
+    out.push({
+      tokenPrefix: String(c.token || "").slice(0, 8),
+      athleteId: c.athleteId,
+      displayName: c.displayName,
+      createdAt: c.createdAt,
+      expiresAt: c.expiresAt,
+      usedAt: c.usedAt || null,
+      burned: !!c.burned,
+    });
   }
   out.sort(function (a, b) {
     return String(b.createdAt || "").localeCompare(String(a.createdAt || ""));
@@ -495,7 +478,7 @@ module.exports = async function handler(req, res) {
   if (req.method === "GET" && tokenFromQuery) {
     const rl = checkRateLimit(req, { name: "admin-handoff-redeem", limit: 30, windowMs: 60_000 });
     if (!rl.ok) return sendRateLimit(res, rl);
-    const result = redeemToken(tokenFromQuery);
+    const result = await redeemToken(tokenFromQuery);
     return res.status(result.status).json(result.json);
   }
 
@@ -505,7 +488,7 @@ module.exports = async function handler(req, res) {
     if (!rl.ok) return sendRateLimit(res, rl);
     return res.status(200).json({
       ok: true,
-      links: listLinksForAthlete(query.athleteId || ""),
+      links: await listLinksForAthlete(query.athleteId || ""),
     });
   }
 
@@ -524,7 +507,7 @@ module.exports = async function handler(req, res) {
   if (action === "redeem" || body.token) {
     const rl = checkRateLimit(req, { name: "admin-handoff-redeem", limit: 30, windowMs: 60_000 });
     if (!rl.ok) return sendRateLimit(res, rl);
-    const result = redeemToken(body.token || tokenFromQuery);
+    const result = await redeemToken(body.token || tokenFromQuery);
     return res.status(result.status).json(result.json);
   }
 
@@ -533,11 +516,14 @@ module.exports = async function handler(req, res) {
   if (!rl.ok) return sendRateLimit(res, rl);
 
   let result;
-  if (action === "create_athlete") result = createAthlete(body);
-  else if (action === "create_link") result = createLink(body);
-  else if (action === "reset_intake") result = createResetIntakeLink(body);
+  if (action === "create_athlete") result = await createAthlete(body);
+  else if (action === "create_link") result = await createLink(body);
+  else if (action === "reset_intake") result = await createResetIntakeLink(body);
   else if (action === "list_links") {
-    result = { status: 200, json: { ok: true, links: listLinksForAthlete(body.athleteId || "") } };
+    result = {
+      status: 200,
+      json: { ok: true, links: await listLinksForAthlete(body.athleteId || "") },
+    };
   } else {
     return res.status(400).json({ error: "Unknown action" });
   }
