@@ -27,9 +27,9 @@ module.exports = async function handler(req, res) {
 };
 
 /* Re-export for personal-coach optional directives lookup */
-module.exports.getCoachDirectives = function (athleteId) {
+module.exports.getCoachDirectives = async function (athleteId) {
   try {
-    return require("../scripts/lib/admin/admin-snapshot.js").getCoachDirectives(athleteId);
+    return await require("../scripts/lib/admin/admin-snapshot.js").getCoachDirectives(athleteId);
   } catch (e) {
     return "";
   }

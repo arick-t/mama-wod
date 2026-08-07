@@ -1,5 +1,15 @@
 # Changelog
 
+## [21.5.1] - 2026-08-07
+
+### Admin dashboard — durable storage (Stage 1)
+- Private Vercel Blob store `duck-wod-admin` for athlete snapshots + handoff claims (survives redeploy/cold start).
+- Filesystem fallback remains for local/dev without Blob credentials.
+- Seeds tier-2 veterans (אריק / עדי) into admin list when missing.
+- Coach directives lookup is async-safe for Personal Coach.
+
+---
+
 ## [21.5] - 2026-08-07
 
 ### Personal Coach — Done debrief learning (wired)

@@ -1745,7 +1745,7 @@ module.exports = async function handler(req, res) {
       (athleteProfile && (athleteProfile.userId || athleteProfile.athleteId)) ||
       uid ||
       "";
-    const directives = getCoachDirectives(aid);
+    const directives = await Promise.resolve(getCoachDirectives(aid));
     if (directives) {
       athleteProfile.coachDirectives = directives;
     }
