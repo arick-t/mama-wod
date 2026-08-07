@@ -1,4 +1,4 @@
-# דוח ניתור — Brevo (מועדף) או Resend. Secrets: BREVO_API_KEY (+ BREVO_SENDER_*). פירוט: RESEND_SECRETS.md
+# דוח ניתור — Brevo. Secrets: BREVO_API_KEY (+ BREVO_SENDER_*). פירוט: BREVO_SECRETS.md
 name: 📊 Weekly Analytics Report
 
 on:
@@ -44,7 +44,5 @@ jobs:
           BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
           BREVO_SENDER_EMAIL: ${{ secrets.BREVO_SENDER_EMAIL }}
           BREVO_SENDER_NAME: ${{ secrets.BREVO_SENDER_NAME }}
-          RESEND_FROM_SECRET: ${{ secrets.RESEND_FROM }}
           ANALYTICS_TO_SECRET: ${{ secrets.ANALYTICS_REPORT_TO }}
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY || secrets.RESEND_API_KEY_conmail }}
         run: bash scripts/ci-weekly-analytics-report.sh

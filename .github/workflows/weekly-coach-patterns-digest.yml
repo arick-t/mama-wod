@@ -42,8 +42,6 @@ jobs:
           BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
           BREVO_SENDER_EMAIL: ${{ secrets.BREVO_SENDER_EMAIL }}
           BREVO_SENDER_NAME: ${{ secrets.BREVO_SENDER_NAME }}
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY || secrets.RESEND_API_KEY_conmail }}
-          RESEND_FROM: ${{ secrets.RESEND_FROM }}
           ANALYTICS_REPORT_TO: ${{ secrets.ANALYTICS_REPORT_TO }}
           APP_MAIL_TO: ${{ secrets.APP_MAIL_TO }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

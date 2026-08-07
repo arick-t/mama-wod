@@ -7,7 +7,7 @@
 | שימוש | איך |
 |-------|-----|
 | יצירת קשר למשתמשי UI / בעלי תוכן | `mailto` ב־`index.html` (דיסקליימר) |
-| דוחות ניתור, coach feedback, digests | Resend → אותה כתובת (`lib/app-mail.js`) |
+| דוחות ניתור, coach feedback, digests | Brevo → אותה כתובת (`lib/app-mail.js`) |
 
 ---
 
@@ -17,7 +17,7 @@
 
 ---
 
-## מיילים אוטומטיים (Resend)
+## מיילים אוטומטיים (Brevo)
 
 ברירת מחדל בקוד = **`contact.duckwod@gmail.com`**.  
-עדכון Secrets ב־GitHub / Vercel / Resend — ראו **`RESEND_SECRETS.md`**.
+עדכון Secrets ב־GitHub / Vercel / Brevo — ראו **`BREVO_SECRETS.md`**.

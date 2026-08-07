@@ -1,12 +1,12 @@
 /**
  * בדיקת לינק קונטקט – וידוא ש־mailto לכתובת יצירת הקשר קיים.
- * אין כאן שליחת מייל. דוח ניתור (Resend) – ראו RESEND_SECRETS.md.
+ * אין כאן שליחת מייל. דוח ניתור (Brevo) – ראו BREVO_SECRETS.md.
  *
  * - **מקומי (ברירת מחדל):** קורא את `index.html` מה-repo – מתאים ל־`npm test` בלי רשת.
  * - **Vercel / אתר חי:** אם מוגדר `CONTACT_LINK_TEST_URL` (למשל `https://mama-wod.vercel.app`),
  *   מושך את ה־HTML מהפריסה ב־[Vercel](https://vercel.com/) ומוודא את אותו mailto – כמו שמשתמשים בניתור (ANALYTICS).
  *
- * ב־GitHub Actions מגדירים את ה־URL ב־workflow (לא צריך Resend לזה).
+ * ב־GitHub Actions מגדירים את ה־URL ב־workflow (לא צריך ספק מייל לזה).
  */
 const fs = require("fs");
 const path = require("path");
