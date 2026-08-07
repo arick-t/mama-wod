@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DUCK-WOD · Finished workout preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html.pprog-finish-open,body.pprog-finish-open{overflow:hidden;overscroll-behavior:none}
+body{
+  font-family:'Oswald','Heebo',sans-serif;min-height:100vh;color:#f0ece0;
+  background:radial-gradient(900px 500px at 10% 0%,#1a2a20 0%,#111 50%);
+  padding:20px 14px 40px;
+}
+.wrap{max-width:440px;margin:0 auto}
+.brand{font-size:1.55em;font-weight:900;letter-spacing:3px;
+  background:linear-gradient(90deg,#E8451A,#F5C518 50%,#1A9B8A);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sub{color:#aaa;font-size:.82em;margin:4px 0 14px}
+.note{color:#cfc7b6;font-size:.84em;line-height:1.45;margin:0 0 18px;padding:10px 12px;
+  border:1px dashed #3d7a52;border-radius:10px;background:rgba(76,175,112,.08)}
+.panel-label{color:#9ec9ad;font-size:.75em;font-weight:700;letter-spacing:.04em;margin:0 0 8px;text-transform:uppercase}
+.demo{margin:0 0 28px}
+
+.pprog-day-card{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:16px 16px 14px}
+.card-header{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.source-name{color:#b06dcf;font-weight:700;font-size:1.05em;letter-spacing:.03em;flex:1;min-width:0}
+.pprog-finish-btn{
+  flex-shrink:0;display:inline-flex;align-items:center;gap:6px;margin:0;
+  padding:7px 12px;border:1px solid #3d7a52;border-radius:999px;
+  background:linear-gradient(180deg,#1f3d2a 0%,#173224 100%);color:#d7f5e2;
+  font-weight:700;font-size:.78em;font-family:inherit;cursor:pointer;line-height:1;
+  box-shadow:0 2px 8px rgba(46,125,82,.28);
+}
+.pprog-finish-btn svg{width:15px;height:15px;display:block}
+.pprog-finish-btn.done{background:#1a2a20;border-color:#3a5a45;color:#9ec9ad;box-shadow:none}
+.section-title{font-size:1em;font-weight:700;text-decoration:underline;color:#1A9B8A;margin:0 0 7px}
+.section-lines{margin:0;padding:0 0 0 18px;color:#e8e4d8;font-size:.92em;line-height:1.45}
+
+/* True viewport-centered floating modal */
+.pprog-finish-overlay{
+  display:none;position:fixed;inset:0;width:100%;height:100%;
+  width:100vw;height:100vh;width:100dvw;height:100dvh;
+  z-index:12050;margin:0;
+  align-items:center;justify-content:center;
+  padding:max(16px,env(safe-area-inset-top)) 14px max(16px,env(safe-area-inset-bottom));
+  background:rgba(8,6,12,.82);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  box-sizing:border-box;overscroll-behavior:contain;
+}
+.pprog-finish-overlay.open{display:flex}
+.pprog-finish-sheet{
+  width:min(92vw,400px);max-height:min(86vh,560px);overflow:auto;
+  background:#1a1a1a;border:1px solid #3d7a52;border-radius:16px;
+  box-shadow:0 20px 56px rgba(0,0,0,.62);padding:16px 16px 14px;direction:ltr;text-align:left;
+  animation:pprog-finish-pop .18s ease-out;
+}
+@keyframes pprog-finish-pop{
+  from{opacity:0;transform:translateY(10px) scale(.97)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.pprog-finish-sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:0 0 12px}
+.pprog-finish-sheet-title{display:block;color:#d7f5e2;font-weight:800;font-size:1.05em}
+.pprog-finish-sheet-sub{display:block;color:#8fb89a;font-size:.78em;margin-top:4px;line-height:1.4}
+.pprog-finish-close{appearance:none;border:none;background:#2a2a2a;color:#ddd;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.1em;line-height:1;flex-shrink:0}
+.pprog-finish-close:hover{background:#3a3a3a;color:#fff}
+.pprog-finish-options{display:flex;flex-direction:column;gap:8px;margin:0 0 10px}
+.pprog-finish-opt{
+  appearance:none;width:100%;text-align:left;padding:12px 14px;border-radius:12px;
+  border:1px solid #333;background:#222;color:#e8e4d8;font-family:inherit;font-size:.92em;font-weight:700;cursor:pointer;
+}
+.pprog-finish-opt.selected{border-color:#4caf70;background:rgba(76,175,112,.16);color:#d7f5e2}
+.pprog-finish-opt .hint{display:block;margin-top:3px;font-size:.72em;font-weight:500;color:#8a9a8e}
+.pprog-finish-other-wrap{display:none;margin:0 0 10px}
+.pprog-finish-other-wrap.open{display:block}
+.pprog-finish-other-wrap label{display:block;color:#9ec9ad;font-size:.78em;font-weight:600;margin:0 0 6px;line-height:1.35}
+.pprog-finish-other-wrap textarea{
+  width:100%;min-height:80px;padding:10px;background:#151a16;color:#eee;
+  border:1px solid #3d7a52;border-radius:10px;font-family:inherit;font-size:.92em;
+}
+.pprog-finish-actions{display:flex;gap:8px;justify-content:flex-end}
+.pprog-finish-send{appearance:none;border:none;border-radius:10px;padding:10px 16px;font-weight:800;font-size:.85em;font-family:inherit;background:#4caf70;color:#0c1a10;cursor:pointer}
+.pprog-finish-send:disabled{opacity:.45;cursor:default}
+.links{margin-top:8px;font-size:.82em;color:#aaa}
+.links a{color:#b06dcf}
+.status{margin-top:10px;color:#8fb89a;font-size:.8em;min-height:1.2em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">DUCK-WOD</div>
+  <div class="sub">Done workout button · floating popup preview</div>
+  <p class="note">Tap <strong>Done</strong> → centered floating popup over the full screen. Closes after you send, or via <strong>×</strong> without saving.</p>
+
+  <div class="demo">
+    <div class="panel-label">Day card · tap Done</div>
+    <div class="pprog-day-card">
+      <div class="card-header">
+        <div class="source-name">Wed · 5 Aug</div>
+        <button type="button" class="pprog-finish-btn" id="openBtn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 21h9c.8 0 1.5-.5 1.8-1.2l2.1-6.3c.1-.3.1-.6.1-.9V11c0-1.1-.9-2-2-2h-6.3l1-4.7.1-.5c0-.4-.2-.8-.5-1.1L13.2 1 6.6 7.6C6.2 7.9 6 8.4 6 9v10c0 1.1.9 2 2 2zm0-2V9l4.3-4.3-1.3 5.3H19v1.1L17 19H9zM4 9H2v12h2c.6 0 1-.4 1-1V10c0-.6-.4-1-1-1z"/></svg>
+          Done
+        </button>
+      </div>
+      <div class="section-title">Strength / Skill</div>
+      <ul class="section-lines"><li>Back squat 5×3</li><li>Rest 2:00</li></ul>
+    </div>
+    <div class="status" id="status"></div>
+  </div>
+
+  <div class="links">
+    App: <a href="/">/</a> · This page: <a href="/preview-finished-workout.html">/preview-finished-workout.html</a>
+  </div>
+</div>
+
+<div id="overlay" class="pprog-finish-overlay" hidden role="dialog" aria-modal="true">
+  <div class="pprog-finish-sheet" id="sheet">
+    <div class="pprog-finish-sheet-head">
+      <div>
+        <span class="pprog-finish-sheet-title">How was this workout?</span>
+        <span class="pprog-finish-sheet-sub">Quick check-in after you finished — helps your coach learn what fits you.</span>
+      </div>
+      <button type="button" class="pprog-finish-close" id="closeBtn" aria-label="Close without saving">×</button>
+    </div>
+    <div class="pprog-finish-options" id="opts">
+      <button type="button" class="pprog-finish-opt" data-v="just_right">Just right<span class="hint">Load and difficulty felt accurate</span></button>
+      <button type="button" class="pprog-finish-opt" data-v="too_hard">Too hard<span class="hint">Volume, intensity, or skills were too much</span></button>
+      <button type="button" class="pprog-finish-opt" data-v="too_easy">Too easy<span class="hint">Could have pushed more</span></button>
+      <button type="button" class="pprog-finish-opt" data-v="other">Other<span class="hint">You’ll need to write what your coach should know</span></button>
+    </div>
+    <div class="pprog-finish-other-wrap" id="otherWrap">
+      <label for="otherNote">If you choose Other, describe what your coach should know about this session.</label>
+      <textarea id="otherNote" placeholder="e.g. knees flared on squats · ran out of time on the metcon…"></textarea>
+    </div>
+    <div class="pprog-finish-actions">
+      <button type="button" class="pprog-finish-send" id="sendBtn" disabled>Send</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var overlay = document.getElementById("overlay");
+  var openBtn = document.getElementById("openBtn");
+  var closeBtn = document.getElementById("closeBtn");
+  var sendBtn = document.getElementById("sendBtn");
+  var otherWrap = document.getElementById("otherWrap");
+  var otherNote = document.getElementById("otherNote");
+  var status = document.getElementById("status");
+  var opts = document.querySelectorAll("#opts .pprog-finish-opt");
+  var choice = "";
+
+  function lock(on) {
+    document.documentElement.classList.toggle("pprog-finish-open", !!on);
+    document.body.classList.toggle("pprog-finish-open", !!on);
+  }
+  function show() {
+    choice = "";
+    for (var i = 0; i < opts.length; i++) opts[i].classList.remove("selected");
+    otherWrap.classList.remove("open");
+    otherNote.value = "";
+    sendBtn.disabled = true;
+    overlay.hidden = false;
+    overlay.classList.add("open");
+    lock(true);
+    status.textContent = "";
+  }
+  function hide(msg) {
+    overlay.classList.remove("open");
+    overlay.hidden = true;
+    lock(false);
+    if (msg) status.textContent = msg;
+  }
+  function syncSend() {
+    if (choice === "other") {
+      sendBtn.disabled = !String(otherNote.value || "").trim();
+    } else {
+      sendBtn.disabled = !choice;
+    }
+  }
+
+  openBtn.onclick = show;
+  closeBtn.onclick = function () { hide("Closed with × — nothing saved."); };
+  overlay.addEventListener("click", function (ev) {
+    if (ev.target === overlay) hide("Closed via backdrop — nothing saved.");
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape" && overlay.classList.contains("open")) hide("Closed with Esc — nothing saved.");
+  });
+  otherNote.addEventListener("input", syncSend);
+  sendBtn.onclick = function () {
+    if (choice === "other" && !String(otherNote.value || "").trim()) return;
+    openBtn.classList.add("done");
+    openBtn.innerHTML = openBtn.innerHTML.replace(/>Done</, ">Done ✓<").replace(/>Done ✓</, ">Done ✓<");
+    if (openBtn.textContent.indexOf("✓") < 0) {
+      openBtn.insertAdjacentText("beforeend", " ✓");
+    }
+    hide("Sent · popup closed.");
+  };
+  for (var i = 0; i < opts.length; i++) {
+    opts[i].onclick = function () {
+      for (var j = 0; j < opts.length; j++) opts[j].classList.remove("selected");
+      this.classList.add("selected");
+      choice = this.getAttribute("data-v");
+      otherWrap.classList.toggle("open", choice === "other");
+      syncSend();
+      if (choice && choice !== "other") {
+        openBtn.classList.add("done");
+        if (openBtn.textContent.indexOf("✓") < 0) openBtn.insertAdjacentText("beforeend", " ✓");
+        hide("Sent (“" + this.firstChild.textContent.trim() + "”) · popup closed.");
+      }
+    };
+  }
+})();
+</script>
+</body>
+</html>
