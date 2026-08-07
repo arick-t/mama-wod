@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.4.1</title>
+<title>DUCK-WOD · v21.5</title>
 <meta name="theme-color" content="#111">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -125,6 +125,21 @@ html.pprog-finish-open,body.pprog-finish-open{overflow:hidden;overscroll-behavio
   width:100%;min-height:88px;padding:10px;background:#151a16;color:#eee;
   border:1px solid #3d7a52;border-radius:10px;font-family:inherit;font-size:.92em;resize:vertical;box-sizing:border-box;
 }
+.pprog-finish-part-wrap{display:none;margin:0 0 10px}
+.pprog-finish-part-wrap.open{display:block}
+.pprog-finish-part-wrap label{display:block;color:#9ec9ad;font-size:.78em;font-weight:600;margin:0 0 6px;line-height:1.35}
+.pprog-finish-part-opts{display:flex;flex-direction:column;gap:8px}
+.pprog-finish-part-opt{
+  text-align:left;width:100%;border-radius:10px;border:1px solid #3a4a3e;background:#1a221c;
+  color:#d7f5e2;padding:10px 12px;font-weight:700;cursor:pointer;font-family:inherit
+}
+.pprog-finish-part-opt:hover{border-color:#4caf70;background:#243328}
+.pprog-finish-part-opt .pprog-finish-opt-hint{display:block;margin-top:3px;font-size:.72em;font-weight:500;color:#8a9a8e}
+.pprog-finish-reply{
+  display:none;margin:0 0 10px;padding:10px 12px;border-radius:10px;border:1px solid #3a5a45;
+  background:rgba(76,175,112,.12);color:#d7f5e2;font-size:.88em;line-height:1.4;font-weight:600
+}
+.pprog-finish-reply.open{display:block}
 .pprog-finish-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
 .pprog-finish-send{
   appearance:none;border:none;border-radius:10px;padding:10px 16px;font-weight:800;font-size:.85em;
@@ -946,7 +961,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.4.1</div>
+<div class="header-sub">DAILY WORKOUTS · v21.5</div>
 <div class="header-sub" id="coachVersionSub">COACH · v2.1</div>
 </div>
 <div class="tabs">
@@ -2226,6 +2241,7 @@ function emptyPprogStore() {
     partModificationEvents: [],
     modificationRulesNotified: {},
     costCaps: { dailyEdits: {}, monthlyUnits: {}, lastLargeRebuildAt: null, softUpgradeBrickStart: null },
+    finishLearning: { events: [], paidAdaptationsByMonth: {}, safetyLog: [] },
     pastBlocks: [],
     autoNextTriggeredForBlockStart: null,
     intakeNotifySent: false,
@@ -2268,6 +2284,14 @@ function loadPprogStore() {
     if (!o.costCaps.monthlyUnits || typeof o.costCaps.monthlyUnits !== "object") {
       o.costCaps.monthlyUnits = {};
     }
+    if (!o.finishLearning || typeof o.finishLearning !== "object") {
+      o.finishLearning = { events: [], paidAdaptationsByMonth: {}, safetyLog: [] };
+    }
+    if (!Array.isArray(o.finishLearning.events)) o.finishLearning.events = [];
+    if (!o.finishLearning.paidAdaptationsByMonth || typeof o.finishLearning.paidAdaptationsByMonth !== "object") {
+      o.finishLearning.paidAdaptationsByMonth = {};
+    }
+    if (!Array.isArray(o.finishLearning.safetyLog)) o.finishLearning.safetyLog = [];
     /* Migrate legacy single-week store → 5-week block shell */
     if (!o.currentBlock && o.currentWeek && o.currentWeek.days) {
       o.currentBlock = {
@@ -4255,6 +4279,8 @@ function athleteProfilePayload(opts) {
     weekStart: (s.currentWeek && s.currentWeek.weekStart) || null,
     partModificationSummary: pprogCountModifiedKindsLast30Days(s.partModificationEvents),
     costCaps: pprogCostCapsPayload(s, { sessionDate: opts && opts.sessionDate }),
+    finishSignalsInject: pprogFinishSignalsInject(s),
+    finishLearning: pprogFinishLearningPayload(s),
   };
   if (!omitChat) {
     payload.chatSummaryTail = (s.chat || [])
@@ -5542,6 +5568,345 @@ function pprogIsraelDaysBetween(a, b) {
     return 999;
   }
 }
+
+/* ── Done finish-learning (Budget v1 — 0 LLM on click; threshold 3; max 1 paid/mo) ── */
+var PPROG_FINISH_OTHER_MAX = 160;
+var PPROG_FINISH_THRESHOLD = 3;
+var PPROG_FINISH_WINDOW_DAYS = 14;
+var PPROG_FINISH_SAFETY_RE =
+  /\b(pain|injury|injured|chest|dizzy|dizziness|numb|numbness|faint|fainted|breath|breathing|emergency|hurt)\b|כאב|פציעה|נפצע|חזה|סחרחור|עילפון|נשימה|מפרק|שבר/i;
+
+var PPROG_FINISH_STATIC = {
+  just_right: { en: "Got it — locked in for next time.", he: "קיבלתי — נשמר להמשך." },
+  too_hard: {
+    en: "Noted — I’ll ease that part going forward when the pattern holds.",
+    he: "רשמתי — אקל על החלק הזה בהמשך כשהדפוס יתבהר.",
+  },
+  too_easy: {
+    en: "Noted — I’ll push that part a bit when the pattern holds.",
+    he: "רשמתי — אדחוף את החלק הזה קצת בהמשך כשהדפוס יתבהר.",
+  },
+  other: {
+    en: "Thanks — I saved that for later training decisions.",
+    he: "תודה — שמרתי את זה להחלטות אימון בהמשך.",
+  },
+  safety: {
+    en: "Thanks for flagging that. Ease off anything that hurts and seek appropriate care if needed — I’m not a medical provider.",
+    he: "תודה שציינת. הורד עומס מכל מה שכואב ופנה לטיפול מתאים אם צריך — אני לא גורם רפואי.",
+  },
+};
+
+function pprogEnsureFinishLearning(store) {
+  if (!store.finishLearning || typeof store.finishLearning !== "object") {
+    store.finishLearning = { events: [], paidAdaptationsByMonth: {}, safetyLog: [] };
+  }
+  if (!Array.isArray(store.finishLearning.events)) store.finishLearning.events = [];
+  if (!store.finishLearning.paidAdaptationsByMonth || typeof store.finishLearning.paidAdaptationsByMonth !== "object") {
+    store.finishLearning.paidAdaptationsByMonth = {};
+  }
+  if (!Array.isArray(store.finishLearning.safetyLog)) store.finishLearning.safetyLog = [];
+  return store.finishLearning;
+}
+
+function pprogFinishInferPartRole(title) {
+  var t = String(title || "").toLowerCase();
+  if (/(warm[\s-]?up|mobility|activation)/.test(t)) return "warmup";
+  if (/(strength|lift|squat|deadlift|press|snatch|clean|jerk|1rm|%1rm)/.test(t)) return "strength";
+  if (/(skill|gymnastics|handstand|muscle[\s-]?up|pull[\s-]?up practice)/.test(t)) return "skill";
+  if (/(accessory|extra|cooldown|cool[\s-]?down)/.test(t)) return "accessory";
+  if (/(amrap|emom|for time|metcon|conditioning|chipper|partner)/.test(t)) return "metcon";
+  return "unknown";
+}
+
+/** Training parts for Done part-pick (warmup excluded). */
+function pprogFinishCountableParts(parts) {
+  var list = Array.isArray(parts) ? parts : [];
+  var out = [];
+  for (var i = 0; i < list.length; i++) {
+    var p = list[i] || {};
+    var title = String(p.title || p.name || "").trim() || "Part " + (i + 1);
+    var role = String(p.part_role || p.role || p.kind || "").toLowerCase();
+    if (!role || role === "unknown") role = pprogFinishInferPartRole(title);
+    if (role === "warmup" || /warm|mobil/i.test(title) && role === "unknown") continue;
+    if (role === "warmup") continue;
+    if (role !== "strength" && role !== "metcon" && role !== "skill" && role !== "accessory") {
+      if (/warm|mobil/i.test(title)) continue;
+      role = "metcon";
+    }
+    out.push({ index: i, title: title.slice(0, 80), part_role: role });
+  }
+  return out;
+}
+
+function pprogFinishTruncateNote(note) {
+  var t = String(note || "").trim().replace(/\s+/g, " ");
+  return t.length <= PPROG_FINISH_OTHER_MAX ? t : t.slice(0, PPROG_FINISH_OTHER_MAX);
+}
+
+function pprogFinishCountSameDirection(events, rating, partRole, sessionDate) {
+  if (rating !== "too_hard" && rating !== "too_easy") return 0;
+  var n = 0;
+  for (var i = 0; i < (events || []).length; i++) {
+    var e = events[i];
+    if (!e || e.rating !== rating) continue;
+    if (String(e.part_role || "") !== String(partRole || "")) continue;
+    var days = pprogIsraelDaysBetween(e.session_date, sessionDate);
+    if (days < 0 || days > PPROG_FINISH_WINDOW_DAYS) continue;
+    n++;
+  }
+  return n;
+}
+
+function pprogFinishPaidAvailable(fl, monthKey) {
+  return (fl.paidAdaptationsByMonth[monthKey] | 0) < 1;
+}
+
+function pprogFinishMarkPaid(fl, monthKey) {
+  fl.paidAdaptationsByMonth[monthKey] = (fl.paidAdaptationsByMonth[monthKey] | 0) + 1;
+}
+
+function pprogFinishFormatCard(e) {
+  if (!e) return "";
+  if (e.rating === "other") {
+    return (
+      "[ATHLETE_OTHER_SIGNAL]\n" +
+      "safety_flag: " + (e.safety_flag ? "true" : "false") + "\n" +
+      "labels: [" + (Array.isArray(e.labels) ? e.labels.join(", ") : "") + "]\n" +
+      'note_short: "' + String(e.note_short || "").replace(/"/g, "") + '"\n' +
+      "session_date: " + (e.session_date || "") + "\n" +
+      "brick_week: " + ((e.brick_week | 0) || 0) + "\n" +
+      "action_allowed: " + (e.action_allowed || "accumulate_only") + "\n" +
+      "[/ATHLETE_OTHER_SIGNAL]"
+    );
+  }
+  return (
+    "[ATHLETE_FINISH_SIGNAL]\n" +
+    "rating: " + (e.rating || "just_right") + "\n" +
+    "scope: " + (e.scope || "session") + "\n" +
+    "part_role: " + (e.part_role || "unknown") + "\n" +
+    'part_title: "' + String(e.part_title || "").replace(/"/g, "") + '"\n' +
+    "session_date: " + (e.session_date || "") + "\n" +
+    "brick_week: " + ((e.brick_week | 0) || 0) + "\n" +
+    "weekday: " + (e.weekday || "") + "\n" +
+    "count_same_direction_14d: " + ((e.count_same_direction_14d | 0) || 0) + "\n" +
+    "action_allowed: " + (e.action_allowed || "accumulate_only") + "\n" +
+    "note: none\n" +
+    "[/ATHLETE_FINISH_SIGNAL]"
+  );
+}
+
+function pprogFinishSignalsInject(store) {
+  var s = store || loadPprogStore();
+  var fl = pprogEnsureFinishLearning(s);
+  if (!fl.events.length) return "";
+  var rule =
+    "[FINISH_SIGNAL_COACH_RULE] finish-signal≠chat. accumulate_only→remember only. " +
+    "micro_bias_next→bias upcoming NOT-Done SAME part_role only; never rewrite Done day; " +
+    "no brick rebuild/Soft Upgrade; if monthly paid cap exhausted→piggyback natural generate only. " +
+    "[/FINISH_SIGNAL_COACH_RULE]\n";
+  var picked = fl.events.slice(-3).reverse();
+  var out = rule;
+  for (var i = 0; i < picked.length; i++) {
+    var card = pprogFinishFormatCard(picked[i]);
+    if (out.length + card.length > 650) break;
+    out += card + "\n";
+  }
+  return out.slice(0, 700);
+}
+
+function pprogFinishLearningPayload(store) {
+  var fl = pprogEnsureFinishLearning(store || loadPprogStore());
+  return {
+    events: (fl.events || []).slice(-12),
+    paidAdaptationsByMonth: fl.paidAdaptationsByMonth || {},
+    safetyLog: (fl.safetyLog || []).slice(-5),
+  };
+}
+
+/**
+ * Record Done feedback into finishLearning. Call from cosmetic Done submit.
+ * @returns {{ ok, staticReply, action_allowed, shouldAttemptPaidMicroBias, event, safety_flag }}
+ */
+function pprogRecordFinishFeedback(input) {
+  var store = loadPprogStore();
+  var fl = pprogEnsureFinishLearning(store);
+  var rating = String((input && input.rating) || "").toLowerCase();
+  if (rating !== "just_right" && rating !== "too_hard" && rating !== "too_easy" && rating !== "other") {
+    return { ok: false, error: "invalid_rating" };
+  }
+  var sessionDate = String((input && input.session_date) || pprogIsraelTodayIso()).slice(0, 10);
+  var noteShort = rating === "other" ? pprogFinishTruncateNote(input && input.note) : "";
+  var safety_flag = rating === "other" && PPROG_FINISH_SAFETY_RE.test(noteShort);
+  var part_role = String((input && input.part_role) || "unknown").toLowerCase() || "unknown";
+  var part_title = String((input && input.part_title) || "").slice(0, 80);
+  var prior =
+    rating === "too_hard" || rating === "too_easy"
+      ? pprogFinishCountSameDirection(fl.events, rating, part_role, sessionDate)
+      : 0;
+  var count = rating === "too_hard" || rating === "too_easy" ? prior + 1 : 0;
+  var action_allowed = "accumulate_only";
+  if (safety_flag) action_allowed = "safety_review";
+  else if (
+    (rating === "too_hard" || rating === "too_easy") &&
+    count >= PPROG_FINISH_THRESHOLD &&
+    (part_role === "strength" || part_role === "metcon" || part_role === "skill" || part_role === "accessory")
+  ) {
+    action_allowed = "micro_bias_next";
+  }
+  var labels = [];
+  if (rating === "other") {
+    var low = noteShort.toLowerCase();
+    if (safety_flag) labels.push("safety");
+    if (/(sleep|tired|fatigue|עייף|שינה)/.test(low)) labels.push("recovery");
+    if (/(work|shift|travel|משמרת|עבודה|נסיעה)/.test(low)) labels.push("schedule");
+    if (/(equipment|gear|אין לי|ציוד)/.test(low)) labels.push("equipment");
+    if (/(time|short|ממהר|זמן)/.test(low)) labels.push("time");
+    if (!labels.length) labels.push("unspecified");
+  }
+  var event = {
+    id: sessionDate + "_" + rating + "_" + Date.now(),
+    rating: rating,
+    scope: (rating === "too_hard" || rating === "too_easy") && (part_title || part_role !== "unknown") ? "part" : "session",
+    part_role: part_role,
+    part_title: part_title,
+    session_date: sessionDate,
+    brick_week: (input && input.brick_week) | 0,
+    weekday: String((input && input.weekday) || "").slice(0, 12),
+    count_same_direction_14d: count,
+    action_allowed: action_allowed,
+    note_short: noteShort,
+    safety_flag: !!safety_flag,
+    labels: labels,
+    at: new Date().toISOString(),
+    source: "done_popup",
+  };
+  fl.events.push(event);
+  if (fl.events.length > 60) fl.events = fl.events.slice(-60);
+  if (safety_flag) {
+    fl.safetyLog.push({ at: event.at, session_date: sessionDate, note_short: noteShort, labels: labels });
+    if (fl.safetyLog.length > 30) fl.safetyLog = fl.safetyLog.slice(-30);
+  }
+  var monthKey = pprogIsraelMonthKey(sessionDate);
+  var shouldAttemptPaidMicroBias =
+    action_allowed === "micro_bias_next" && pprogFinishPaidAvailable(fl, monthKey) && !safety_flag;
+  store.finishLearning = fl;
+  savePprogStore(store);
+  var lang = (input && input.lang) === "he" ? "he" : "en";
+  var replyKey = safety_flag ? "safety" : rating;
+  var staticReply =
+    (PPROG_FINISH_STATIC[replyKey] && PPROG_FINISH_STATIC[replyKey][lang]) ||
+    PPROG_FINISH_STATIC.other.en;
+  return {
+    ok: true,
+    event: event,
+    action_allowed: action_allowed,
+    safety_flag: !!safety_flag,
+    staticReply: staticReply,
+    shouldAttemptPaidMicroBias: shouldAttemptPaidMicroBias,
+    monthKey: monthKey,
+  };
+}
+
+/** Upcoming day keys in active week that are not Done and not Rest (after sessionDate). */
+function pprogFinishNextNotDoneDayKeys(store, afterIso) {
+  var s = store || loadPprogStore();
+  var week = s.currentWeek;
+  if (!week || !week.days) return [];
+  var after = String(afterIso || pprogIsraelTodayIso()).slice(0, 10);
+  var out = [];
+  for (var i = 0; i < PPROG_DAY_KEYS.length; i++) {
+    var dk = PPROG_DAY_KEYS[i];
+    var day = week.days[dk];
+    if (!day) continue;
+    var focus = String((day.overview && day.overview.focus) || day.focus || "").toLowerCase();
+    if (focus === "rest" || /rest\s*day/i.test(String((day.parts && day.parts[0] && day.parts[0].title) || ""))) {
+      continue;
+    }
+    if (day.finishFeedback && day.finishFeedback.rating) continue;
+    var sd = pprogSessionDateForDay(dk, s.activeWeekIndex | 0, s);
+    if (sd <= after) continue;
+    out.push(sd);
+  }
+  return out.slice(0, 5);
+}
+
+/**
+ * Paid surgical adaptation (max 1 / Israel month). Cosmetic/Done flow should call when shouldAttemptPaidMicroBias.
+ */
+function pprogAttemptFinishMicroBias(signalEvent) {
+  var store = loadPprogStore();
+  var fl = pprogEnsureFinishLearning(store);
+  var ev = signalEvent || null;
+  if (!ev || ev.action_allowed !== "micro_bias_next") return Promise.resolve({ ok: false, skipped: true });
+  var monthKey = pprogIsraelMonthKey(ev.session_date || pprogIsraelTodayIso());
+  if (!pprogFinishPaidAvailable(fl, monthKey)) {
+    return Promise.resolve({ ok: false, skipped: true, reason: "monthly_paid_cap" });
+  }
+  var base = getApiBase();
+  if (!base) return Promise.resolve({ ok: false, error: "no_api_base" });
+  var nextKeys = pprogFinishNextNotDoneDayKeys(store, ev.session_date);
+  var dir = ev.rating === "too_hard" ? "easier" : "harder";
+  var feedback =
+    "[finish_micro_bias] Make upcoming NOT-Done " +
+    (ev.part_role || "metcon") +
+    " slightly " +
+    dir +
+    " (~3-5%). Do not rewrite Done day " +
+    (ev.session_date || "") +
+    ".";
+  return fetchAiWithTimeout(
+    base + "/api/personal-coach",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "finish_micro_bias",
+        israelToday: pprogIsraelTodayIso(),
+        nextDayKeys: nextKeys,
+        feedback: feedback,
+        currentWeek: store.currentWeek,
+        athleteProfile: athleteProfilePayload({ forceIntakeComplete: true, omitChat: true }),
+        messages: [],
+      }),
+    },
+    90000
+  ).then(function (x) {
+    var j = x.j || {};
+    if (!x.ok || !j.ok) {
+      return { ok: false, error: pprogFriendlyApiError(j, x.status), status: x.status };
+    }
+    var week = j.week || null;
+    if (!week && j.text) {
+      try {
+        var m = String(j.text).match(/<<<WEEK_JSON\s*([\s\S]*?)\s*WEEK_JSON>>>/);
+        if (m) week = JSON.parse(m[1].trim());
+      } catch (eParse) {}
+    }
+    if (week && week.days) {
+      store = loadPprogStore();
+      fl = pprogEnsureFinishLearning(store);
+      pprogFinishMarkPaid(fl, monthKey);
+      store.finishLearning = fl;
+      store.currentWeek = week;
+      if (store.currentBlock && store.currentBlock.weeks) {
+        store.currentBlock.weeks[store.activeWeekIndex | 0] = week;
+      }
+      savePprogStore(store);
+      try {
+        renderPprogWeek();
+      } catch (eR) {}
+      return { ok: true, week: week, paid: true };
+    }
+    return { ok: false, error: "no_week_json" };
+  });
+}
+
+window.pprogRecordFinishFeedback = pprogRecordFinishFeedback;
+window.pprogFinishCountableParts = pprogFinishCountableParts;
+window.pprogAttemptFinishMicroBias = pprogAttemptFinishMicroBias;
+window.pprogFinishTruncateNote = pprogFinishTruncateNote;
+window.PPROG_FINISH_OTHER_MAX = PPROG_FINISH_OTHER_MAX;
+window.PPROG_FINISH_STATIC = PPROG_FINISH_STATIC;
 
 function pprogCostCapsPayload(store, opts) {
   var s = store || loadPprogStore();
@@ -7796,6 +8161,11 @@ function pprogFinishThumbsIcon() {
 
 var pprogFinishDayKey = "";
 var pprogFinishChoice = "";
+var pprogFinishPartRole = "";
+var pprogFinishPartTitle = "";
+var pprogFinishPartIndex = -1;
+var pprogFinishPendingParts = null;
+var pprogFinishCloseTimer = null;
 
 function pprogFinishSetBodyLock(on) {
   try {
@@ -7804,9 +8174,98 @@ function pprogFinishSetBodyLock(on) {
   } catch (eLock) {}
 }
 
+function pprogFinishResetPartState() {
+  pprogFinishPartRole = "";
+  pprogFinishPartTitle = "";
+  pprogFinishPartIndex = -1;
+  pprogFinishPendingParts = null;
+  var partWrap = document.getElementById("pprogFinishPartWrap");
+  var partOpts = document.getElementById("pprogFinishPartOpts");
+  if (partWrap) partWrap.classList.remove("open");
+  if (partOpts) partOpts.innerHTML = "";
+}
+
+function pprogFinishHideReply() {
+  var reply = document.getElementById("pprogFinishReply");
+  if (reply) {
+    reply.classList.remove("open");
+    reply.textContent = "";
+  }
+}
+
+function pprogFinishShowReply(text) {
+  var reply = document.getElementById("pprogFinishReply");
+  if (!reply) return;
+  reply.textContent = String(text || "");
+  reply.classList.add("open");
+}
+
+function pprogFinishDayPartsForKey(dayKey) {
+  try {
+    var store = loadPprogStore();
+    var week =
+      store.currentWeek ||
+      (store.currentBlock && store.currentBlock.weeks && store.currentBlock.weeks[store.activeWeekIndex | 0]);
+    var dayData = week && week.days && week.days[dayKey];
+    return (dayData && dayData.parts) || [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function pprogFinishRenderPartPicker(parts, rating) {
+  var partWrap = document.getElementById("pprogFinishPartWrap");
+  var partOpts = document.getElementById("pprogFinishPartOpts");
+  var label = document.getElementById("pprogFinishPartLabel");
+  if (!partWrap || !partOpts) return;
+  partOpts.innerHTML = "";
+  if (label) {
+    label.textContent =
+      rating === "too_easy" ? "Which part felt too easy?" : "Which part felt too hard?";
+  }
+  for (var i = 0; i < parts.length; i++) {
+    (function (p, n) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "pprog-finish-part-opt";
+      btn.setAttribute("data-part-index", String(p.index));
+      var letter = n === 0 ? "A" : n === 1 ? "B" : String(n + 1);
+      btn.innerHTML =
+        "Part " +
+        letter +
+        " — " +
+        String(p.title || "Part").replace(/</g, "&lt;") +
+        '<span class="pprog-finish-opt-hint">' +
+        String(p.part_role || "part") +
+        "</span>";
+      btn.onclick = function () {
+        selectPprogFinishPart(p);
+      };
+      partOpts.appendChild(btn);
+    })(parts[i], i);
+  }
+  partWrap.classList.add("open");
+}
+
+function selectPprogFinishPart(part) {
+  if (!part) return;
+  pprogFinishPartRole = String(part.part_role || "unknown");
+  pprogFinishPartTitle = String(part.title || "").slice(0, 80);
+  pprogFinishPartIndex = part.index | 0;
+  var partWrap = document.getElementById("pprogFinishPartWrap");
+  if (partWrap) partWrap.classList.remove("open");
+  submitPprogFinishFeedback();
+}
+
 function openPprogFinishFeedback(dayKey) {
+  if (pprogFinishCloseTimer) {
+    clearTimeout(pprogFinishCloseTimer);
+    pprogFinishCloseTimer = null;
+  }
   pprogFinishDayKey = normalizePprogDayKey(dayKey) || dayKey;
   pprogFinishChoice = "";
+  pprogFinishResetPartState();
+  pprogFinishHideReply();
   var overlay = document.getElementById("pprogFinishOverlay");
   var otherWrap = document.getElementById("pprogFinishOtherWrap");
   var note = document.getElementById("pprogFinishOtherNote");
@@ -7814,7 +8273,12 @@ function openPprogFinishFeedback(dayKey) {
   var opts = document.querySelectorAll("#pprogFinishOptions .pprog-finish-opt");
   for (var i = 0; i < opts.length; i++) opts[i].classList.remove("selected");
   if (otherWrap) otherWrap.classList.remove("open");
-  if (note) note.value = "";
+  if (note) {
+    note.value = "";
+    try {
+      note.setAttribute("maxlength", String(PPROG_FINISH_OTHER_MAX || 160));
+    } catch (eMax) {}
+  }
   if (sendBtn) sendBtn.disabled = true;
   try {
     var store = loadPprogStore();
@@ -7823,7 +8287,9 @@ function openPprogFinishFeedback(dayKey) {
     var prev = dayData && dayData.finishFeedback;
     if (prev && prev.rating) {
       selectPprogFinishOption(prev.rating, true);
-      if (prev.rating === "other" && note) note.value = String(prev.note || "");
+      if (prev.rating === "other" && note) note.value = String(prev.note || "").slice(0, PPROG_FINISH_OTHER_MAX || 160);
+      if (prev.part_role) pprogFinishPartRole = String(prev.part_role);
+      if (prev.part_title) pprogFinishPartTitle = String(prev.part_title);
       syncPprogFinishSendEnabled();
     }
   } catch (ePrefill) {}
@@ -7843,6 +8309,10 @@ function openPprogFinishFeedback(dayKey) {
 }
 
 function closePprogFinishFeedback() {
+  if (pprogFinishCloseTimer) {
+    clearTimeout(pprogFinishCloseTimer);
+    pprogFinishCloseTimer = null;
+  }
   var overlay = document.getElementById("pprogFinishOverlay");
   if (overlay) {
     overlay.classList.remove("open");
@@ -7851,10 +8321,14 @@ function closePprogFinishFeedback() {
   pprogFinishSetBodyLock(false);
   pprogFinishDayKey = "";
   pprogFinishChoice = "";
+  pprogFinishResetPartState();
+  pprogFinishHideReply();
 }
 
 function selectPprogFinishOption(choice, silent) {
   pprogFinishChoice = String(choice || "");
+  pprogFinishResetPartState();
+  pprogFinishHideReply();
   var opts = document.querySelectorAll("#pprogFinishOptions .pprog-finish-opt");
   for (var i = 0; i < opts.length; i++) {
     var v = opts[i].getAttribute("data-finish");
@@ -7863,8 +8337,29 @@ function selectPprogFinishOption(choice, silent) {
   var otherWrap = document.getElementById("pprogFinishOtherWrap");
   if (otherWrap) otherWrap.classList.toggle("open", pprogFinishChoice === "other");
   syncPprogFinishSendEnabled();
-  if (!silent && pprogFinishChoice && pprogFinishChoice !== "other") {
+  if (silent) return;
+
+  if (pprogFinishChoice === "just_right") {
     submitPprogFinishFeedback();
+    return;
+  }
+  if (pprogFinishChoice === "too_hard" || pprogFinishChoice === "too_easy") {
+    var parts = typeof pprogFinishCountableParts === "function"
+      ? pprogFinishCountableParts(pprogFinishDayPartsForKey(pprogFinishDayKey))
+      : [];
+    pprogFinishPendingParts = parts;
+    if (parts.length >= 2) {
+      pprogFinishRenderPartPicker(parts, pprogFinishChoice);
+      syncPprogFinishSendEnabled();
+      return;
+    }
+    if (parts.length === 1) {
+      pprogFinishPartRole = parts[0].part_role;
+      pprogFinishPartTitle = parts[0].title;
+      pprogFinishPartIndex = parts[0].index;
+    }
+    submitPprogFinishFeedback();
+    return;
   }
 }
 
@@ -7880,6 +8375,15 @@ function syncPprogFinishSendEnabled() {
     sendBtn.disabled = !(note && String(note.value || "").trim());
     return;
   }
+  if (
+    (pprogFinishChoice === "too_hard" || pprogFinishChoice === "too_easy") &&
+    pprogFinishPendingParts &&
+    pprogFinishPendingParts.length >= 2 &&
+    !pprogFinishPartRole
+  ) {
+    sendBtn.disabled = true;
+    return;
+  }
   sendBtn.disabled = false;
 }
 
@@ -7887,6 +8391,8 @@ function submitPprogFinishFeedback() {
   if (!pprogFinishDayKey || !pprogFinishChoice) return;
   var noteEl = document.getElementById("pprogFinishOtherNote");
   var note = noteEl ? String(noteEl.value || "").trim() : "";
+  if (typeof pprogFinishTruncateNote === "function") note = pprogFinishTruncateNote(note);
+  else note = note.slice(0, 160);
   if (pprogFinishChoice === "other" && !note) {
     syncPprogFinishSendEnabled();
     if (noteEl) {
@@ -7896,6 +8402,16 @@ function submitPprogFinishFeedback() {
     }
     return;
   }
+  if (
+    (pprogFinishChoice === "too_hard" || pprogFinishChoice === "too_easy") &&
+    pprogFinishPendingParts &&
+    pprogFinishPendingParts.length >= 2 &&
+    !pprogFinishPartRole
+  ) {
+    syncPprogFinishSendEnabled();
+    return;
+  }
+
   var store = loadPprogStore();
   ensurePprogBlockFiveWeeks(store);
   syncStoreActiveWeek(store);
@@ -7906,22 +8422,74 @@ function submitPprogFinishFeedback() {
   if (!week) return;
   if (!week.days) week.days = {};
   if (!week.days[pprogFinishDayKey]) week.days[pprogFinishDayKey] = { parts: [] };
+
+  var sessionDate = pprogSessionDateForDay(pprogFinishDayKey, wi, store);
+  var weekday = String(pprogFinishDayKey || "").slice(0, 12);
+  var brickWeek = (wi | 0) + 1;
+
+  var learn = null;
+  try {
+    if (typeof pprogRecordFinishFeedback === "function") {
+      learn = pprogRecordFinishFeedback({
+        rating: pprogFinishChoice,
+        note: pprogFinishChoice === "other" ? note : "",
+        part_role: pprogFinishPartRole || "unknown",
+        part_title: pprogFinishPartTitle || "",
+        session_date: sessionDate,
+        brick_week: brickWeek,
+        weekday: weekday,
+        lang: "en",
+      });
+    }
+  } catch (eLearn) {
+    learn = null;
+  }
+
   week.days[pprogFinishDayKey].finishFeedback = {
     rating: pprogFinishChoice,
     note: pprogFinishChoice === "other" ? note : "",
+    part_role: pprogFinishPartRole || "",
+    part_title: pprogFinishPartTitle || "",
+    part_index: pprogFinishPartIndex >= 0 ? pprogFinishPartIndex : null,
+    action_allowed: (learn && learn.action_allowed) || "accumulate_only",
+    safety_flag: !!(learn && learn.safety_flag),
     at: new Date().toISOString(),
   };
   store.currentWeek = week;
   if (store.currentBlock && store.currentBlock.weeks) store.currentBlock.weeks[wi] = week;
   savePprogStore(store);
+
   try {
     sendAnalytics("personal_coach_message", {
       coachArea: "finish_workout",
       finishRating: pprogFinishChoice,
+      changeType: pprogFinishPartRole ? "finish_" + pprogFinishPartRole : "finish_session",
+      dayKey: pprogFinishDayKey,
+      weekIndex: wi,
     });
   } catch (eA) {}
-  closePprogFinishFeedback();
-  renderPprogWeek();
+
+  var replyText =
+    (learn && learn.staticReply) ||
+    (PPROG_FINISH_STATIC &&
+      PPROG_FINISH_STATIC[pprogFinishChoice] &&
+      PPROG_FINISH_STATIC[pprogFinishChoice].en) ||
+    "Got it.";
+  pprogFinishShowReply(replyText);
+
+  if (learn && learn.shouldAttemptPaidMicroBias && learn.event) {
+    try {
+      pprogAttemptFinishMicroBias(learn.event).catch(function () {});
+    } catch (eBias) {}
+  }
+
+  pprogFinishCloseTimer = setTimeout(function () {
+    pprogFinishCloseTimer = null;
+    closePprogFinishFeedback();
+    try {
+      renderPprogWeek();
+    } catch (eR) {}
+  }, 900);
 }
 
 document.addEventListener("input", function (ev) {
@@ -7950,6 +8518,7 @@ if (document.readyState === "loading") {
 window.openPprogFinishFeedback = openPprogFinishFeedback;
 window.closePprogFinishFeedback = closePprogFinishFeedback;
 window.selectPprogFinishOption = selectPprogFinishOption;
+window.selectPprogFinishPart = selectPprogFinishPart;
 window.submitPprogFinishFeedback = submitPprogFinishFeedback;
 
 function renderPprogDayPartsHtml(parts, dayData, dayKey) {
@@ -12407,10 +12976,15 @@ function initTimerColorBuckets() {
         <span class="pprog-finish-opt-hint">You’ll need to write what your coach should know</span>
       </button>
     </div>
-    <div class="pprog-finish-other-wrap" id="pprogFinishOtherWrap">
-      <label for="pprogFinishOtherNote">If you choose Other, describe what your coach should know about this session.</label>
-      <textarea id="pprogFinishOtherNote" maxlength="1200" placeholder="e.g. knees flared on squats · ran out of time on the metcon · loved the gymnastics volume…"></textarea>
+    <div class="pprog-finish-part-wrap" id="pprogFinishPartWrap">
+      <label id="pprogFinishPartLabel">Which part felt off?</label>
+      <div class="pprog-finish-part-opts" id="pprogFinishPartOpts" role="listbox" aria-labelledby="pprogFinishPartLabel"></div>
     </div>
+    <div class="pprog-finish-other-wrap" id="pprogFinishOtherWrap">
+      <label for="pprogFinishOtherNote">If you choose Other, describe what your coach should know about this session (max 160 characters).</label>
+      <textarea id="pprogFinishOtherNote" maxlength="160" placeholder="e.g. knees flared on squats · ran out of time on the metcon…"></textarea>
+    </div>
+    <div class="pprog-finish-reply" id="pprogFinishReply" role="status" aria-live="polite"></div>
     <div class="pprog-finish-actions">
       <button type="button" class="pprog-finish-send" id="pprogFinishSendBtn" disabled onclick="submitPprogFinishFeedback()">Send</button>
     </div>

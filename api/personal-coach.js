@@ -1,7 +1,7 @@
 /**
  * Personal Coach — המאמן
  * POST /api/personal-coach
- *   { messages, athleteProfile?, action?: "chat"|"start_intake"|"generate_block"|"generate_week"|"generate_week_detail"|"revise_day"|"revise_week"|"day_debrief"|"revise_part"|"preview_month" }
+ *   { messages, athleteProfile?, action?: "chat"|"start_intake"|"generate_block"|"generate_week"|"generate_week_detail"|"revise_day"|"revise_week"|"day_debrief"|"revise_part"|"finish_micro_bias"|"preview_month" }
  * GET  /api/personal-coach — status
  *
  * Coach version vocabulary (product):
@@ -31,6 +31,10 @@ const {
   evaluateCostCapGate,
   costCapHttpPayload,
 } = require("../lib/coach-cost-caps.js");
+const {
+  buildFinishSignalsInjectBlock,
+  FINISH_SIGNAL_COACH_RULE_COMPACT,
+} = require("../lib/coach-finish-signals.js");
 const { applyCors } = require("../lib/cors-allowlist.js");
 const {
   classifyCoachUserInput,
@@ -502,8 +506,49 @@ function isProgrammingAction(action) {
     a === "generate_week_detail" ||
     a === "revise_week" ||
     a === "revise_day" ||
-    a === "revise_part"
+    a === "revise_part" ||
+    a === "finish_micro_bias"
   );
+}
+
+/** Compact Done-learning cards from athleteProfile.finishSignals / finishLearning (≤~500 chars). */
+function buildFinishLearningBlock(profile, action) {
+  if (!profile || typeof profile !== "object") return "";
+  const a = String(action || "").toLowerCase();
+  const want =
+    a === "generate_week" ||
+    a === "generate_week_detail" ||
+    a === "revise_week" ||
+    a === "revise_day" ||
+    a === "revise_part" ||
+    a === "finish_micro_bias" ||
+    a === "generate_block";
+  if (!want) return "";
+  try {
+    if (typeof profile.finishSignalsInject === "string" && profile.finishSignalsInject.trim()) {
+      return (
+        "\n\n---\nDONE FINISH LEARNING (HARD — follow FINISH_SIGNAL rules; not a chat request):\n" +
+        String(profile.finishSignalsInject).slice(0, 700) +
+        "\n---\n"
+      );
+    }
+    const fl = profile.finishLearning;
+    if (!fl || typeof fl !== "object") return "";
+    const paid = a === "finish_micro_bias";
+    const block = buildFinishSignalsInjectBlock(fl, { paidMicroBias: paid });
+    if (!block || !String(block).trim()) return "";
+    return (
+      "\n\n---\nDONE FINISH LEARNING (HARD — follow FINISH_SIGNAL rules; not a chat request):\n" +
+      String(block).slice(0, 700) +
+      "\n---\n"
+    );
+  } catch (e) {
+    return (
+      "\n\n---\nDONE FINISH LEARNING:\n" +
+      FINISH_SIGNAL_COACH_RULE_COMPACT +
+      "\n---\n"
+    );
+  }
 }
 
 /**
@@ -843,7 +888,8 @@ function buildSystemWithMemory(profile, action, opts) {
   /* Programming fills: BYPASS full hamamen intake prompt entirely */
   if (programming) {
     let marker = "BLOCK_JSON / WEEK_JSON / DAY_JSON / PART_JSON";
-    if (action === "generate_week_detail" || action === "revise_week") marker = "WEEK_JSON";
+    if (action === "generate_week_detail" || action === "revise_week" || action === "finish_micro_bias")
+      marker = "WEEK_JSON";
     else if (action === "generate_block" || action === "generate_week") marker = "BLOCK_JSON";
     else if (action === "revise_day") marker = "DAY_JSON";
     else if (action === "revise_part") marker = "PART_JSON";
@@ -863,6 +909,7 @@ function buildSystemWithMemory(profile, action, opts) {
       LEGAL_SAFETY_DIRECTIVE +
       coachPolicyBlock() +
       buildCostCapsRuntimeNote(profile) +
+      buildFinishLearningBlock(profile, action) +
       "\nFor this request emit <<<" +
       marker +
       " ... " +
@@ -1577,6 +1624,7 @@ module.exports = async function handler(req, res) {
     action === "generate_block" ||
     action === "generate_week" ||
     action === "generate_week_detail" ||
+    action === "finish_micro_bias" ||
     action === "preview_month";
   /* Split limits: open intake needs many turns; post-intake chat stays tighter. */
   const profileIn = body.athleteProfile || body.memory || null;
@@ -2040,6 +2088,48 @@ module.exports = async function handler(req, res) {
     ];
   }
 
+  if (action === "finish_micro_bias") {
+    const todayIsoFm = String(body.israelToday || "").slice(0, 10) || israelTodayIso();
+    let weekSnapFm = "";
+    try {
+      weekSnapFm = JSON.stringify(body.currentWeek || body.week || {}).slice(0, 12000);
+    } catch (eFm) {
+      weekSnapFm = "{}";
+    }
+    const feedbackFm = String(body.feedback || body.text || "").trim().slice(0, 2500);
+    const nextDays = Array.isArray(body.nextDayKeys)
+      ? body.nextDayKeys.map(function (d) {
+          return String(d || "").slice(0, 10);
+        }).filter(Boolean).slice(0, 5)
+      : [];
+    messages = [
+      {
+        role: "user",
+        text:
+          "[finish_micro_bias / surgical Done-learning]\n" +
+          "Israel today=" +
+          todayIsoFm +
+          ".\n" +
+          "Apply IMMEDIATE forward micro-bias from DONE FINISH LEARNING cards in system.\n" +
+          "- Only upcoming NOT-Done days" +
+          (nextDays.length ? " (" + nextDays.join(", ") + ")" : "") +
+          ".\n" +
+          "- Same part_role only; small % bias; preserve other parts/formats.\n" +
+          "- Do NOT rewrite completed Done day. Do NOT rebuild brick / Soft Upgrade / large rebuild.\n" +
+          "- This does NOT count as a daily programmed-edit under POL-COST; still surgical.\n" +
+          "Current week snapshot:\n" +
+          weekSnapFm +
+          "\n\n" +
+          (feedbackFm || "(use system DONE FINISH LEARNING cards)") +
+          "\n\nHARD: all JSON English. Rest days unchanged unless signal says otherwise. " +
+          (forceJson
+            ? "JSON ONLY — NOTHING except "
+            : "Short English ack, then required ") +
+          "<<<WEEK_JSON ... WEEK_JSON>>> for remaining days (copy past/Done days unchanged).",
+      },
+    ];
+  }
+
   if (action === "revise_week") {
     const feedback = String(body.feedback || body.text || "").trim().slice(0, 2000);
     const weekIndex = Math.max(1, Math.min(5, parseInt(body.weekIndex, 10) || 1));
@@ -2248,6 +2338,7 @@ module.exports = async function handler(req, res) {
       (isWeekDetail && !packed.week) ||
       ((action === "generate_block" || action === "generate_week") && !packed.block && !packed.week) ||
       (action === "revise_week" && !packed.week) ||
+      (action === "finish_micro_bias" && !packed.week) ||
       /* revise_day may be consult-only (POL-011) with no DAY_JSON — do not force JSON */
       (action === "revise_part" && !packed.part);
     if (!needRetry || forceJson) return packed;
