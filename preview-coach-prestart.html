@@ -19,12 +19,6 @@ body{
 .sub{color:#aaa;font-size:.82em;margin:4px 0 12px}
 .note{color:#cfc7b6;font-size:.84em;line-height:1.45;margin:0 0 16px;padding:10px 12px;
   border:1px dashed rgba(26,155,138,.55);border-radius:10px;background:rgba(26,155,138,.08)}
-.mode-row{display:flex;gap:8px;margin:0 0 14px;flex-wrap:wrap}
-.mode-btn{
-  appearance:none;border:1px solid #3a3a3a;background:#1c1c1c;color:#ddd;
-  border-radius:999px;padding:7px 12px;font:inherit;font-size:.78em;font-weight:700;cursor:pointer;
-}
-.mode-btn.active{border-color:#1A9B8A;color:#d7f5e2;background:rgba(26,155,138,.16)}
 .panel{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:14px}
 .head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
 .head img{width:56px;height:56px;border-radius:12px;object-fit:cover;border:1px solid #3a3a3a}
@@ -38,100 +32,34 @@ body{
   width:100%;padding:16px 18px;font-size:1.15em;font-weight:800;letter-spacing:.08em;
   background:#E8451A;border:none;border-radius:10px;min-height:54px;color:#fff;cursor:pointer;font-family:inherit;
 }
-.ghost{
-  margin-top:16px;opacity:.45;filter:grayscale(.2);
-  border:1px dashed #555;border-radius:10px;padding:10px;position:relative;
-}
-.ghost::before{
-  content:"Hidden for new users (before START)";
-  position:absolute;top:-9px;left:10px;background:#1a1a1a;padding:0 6px;
-  color:#e57373;font-size:.68em;font-weight:700;letter-spacing:.03em;
-}
-.fake-form{display:flex;gap:8px;margin-top:6px}
-.fake-form textarea{
-  flex:1;min-height:74px;padding:10px;background:#222;color:#888;border:1px solid #555;
-  border-radius:8px;font:inherit;resize:none;
-}
-.fake-send{align-self:flex-end;padding:10px 12px;background:#1f9d55;border:none;border-radius:8px;color:#fff;font-weight:700;opacity:.7}
-.status{margin-top:12px;color:#8fb89a;font-size:.8em;min-height:1.2em}
+.status{margin-top:12px;color:#8fb89a;font-size:.8em}
 .links{margin-top:14px;font-size:.82em;color:#aaa}
 .links a{color:#1A9B8A}
-.after{display:none}
-.after .q{margin:0 0 10px;color:#e8e4d8;font-size:.92em;line-height:1.4}
-.after .field{margin:0 0 8px}
-.after label{display:block;color:#1A9B8A;font-size:.8em;margin:0 0 4px}
-.after input,.after select{
-  width:100%;padding:10px;background:#222;border:1px solid #444;border-radius:8px;color:#eee;font:inherit;
-}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="brand">DUCK-WOD</div>
-  <div class="sub">Pre-START gate · new athlete preview</div>
+  <div class="sub">Pre-START gate · first screen only</div>
   <p class="note">
-    New users (no plan yet) see only <strong>START</strong> — no free-text AI box.
-    That saves cost and keeps the path clear: intake first, then coach chat.
+    Only this first screen changes: remove the free-text box, keep <strong>START</strong>.
+    Intake after START is untouched.
   </p>
-
-  <div class="mode-row">
-    <button type="button" class="mode-btn active" id="modeBefore">Before START</button>
-    <button type="button" class="mode-btn" id="modeAfter">After START (intake)</button>
-  </div>
 
   <div class="panel">
     <div class="head">
       <img src="assets/hamamen-coach-duck.png" alt="">
       <h2>Personal Coach</h2>
     </div>
-
-    <div id="beforeView">
-      <div class="pprog-prestart-welcome">
-        <strong>Ready when you are</strong>
-        Tap <strong>START</strong> to begin the short intake. The coach builds your 5-week plan from your answers — free chat opens after that.
-      </div>
-      <button type="button" class="pprog-start-btn" id="startBtn">START</button>
-      <div class="ghost" aria-hidden="true">
-        <div class="fake-form">
-          <textarea disabled placeholder="Message the coach…"></textarea>
-          <button type="button" class="fake-send" disabled>Send</button>
-        </div>
-      </div>
+    <div class="pprog-prestart-welcome">
+      <strong>Ready when you are</strong>
+      Tap <strong>START</strong> to begin the short intake. The coach builds your 5-week plan from your answers — free chat opens after that.
     </div>
-
-    <div class="after" id="afterView">
-      <p class="q">You can reply in any language — keep it simple. I will still coach you in English.<br><br>Fill the short questionnaire below.</p>
-      <p style="color:#1A9B8A;font-size:.75em;font-weight:700;margin:0 0 8px">Step 1 / 7 · Your profile</p>
-      <div class="field"><label>Display name</label><input value="" placeholder="How should I call you?"></div>
-      <div class="field"><label>Age</label><input inputmode="numeric" placeholder="e.g. 34"></div>
-      <button type="button" class="pprog-start-btn" style="background:#1A9B8A;margin-top:8px">Next</button>
-    </div>
+    <button type="button" class="pprog-start-btn">START</button>
   </div>
 
-  <div class="status" id="status">State: before START — chat composer hidden</div>
+  <div class="status">First screen: START only — no Message / Send box</div>
   <div class="links">Preview: <a href="/preview-coach-prestart.html">/preview-coach-prestart.html</a></div>
 </div>
-<script>
-(function () {
-  var before = document.getElementById("beforeView");
-  var after = document.getElementById("afterView");
-  var status = document.getElementById("status");
-  var bBefore = document.getElementById("modeBefore");
-  var bAfter = document.getElementById("modeAfter");
-  function show(which) {
-    var isBefore = which === "before";
-    before.style.display = isBefore ? "" : "none";
-    after.style.display = isBefore ? "none" : "block";
-    bBefore.classList.toggle("active", isBefore);
-    bAfter.classList.toggle("active", !isBefore);
-    status.textContent = isBefore
-      ? "State: before START — chat composer hidden"
-      : "State: after START — questionnaire (no free chat yet)";
-  }
-  bBefore.onclick = function () { show("before"); };
-  bAfter.onclick = function () { show("after"); };
-  document.getElementById("startBtn").onclick = function () { show("after"); };
-})();
-</script>
 </body>
 </html>

@@ -7,7 +7,7 @@
 - Floating circular prev/next day arrows + swipe between workouts (daily or monthly day card).
 - Coach FAB: tiny **talk to / the coach** caption above the duck, inside one shared purple pill shell with the avatar.
 - App landing tab: open on **Personal Coach** (not Workout's) when the coach tab is enabled.
-- Pre-START gate: new athletes see **START only** (no free-text AI composer) until intake begins — saves cost and clarifies the path.
+- Pre-START gate (first screen only): hide the free-text Message/Send box; keep **START**. Intake after START is unchanged.
 - Previews: `preview-day-nav.html`, `preview-coach-fab-caption.html`, `preview-coach-prestart.html`.
 - Done / debrief learning stays on a separate track.
 

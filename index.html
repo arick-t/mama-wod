@@ -1044,7 +1044,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
         <div id="pprogProfilePicker" class="pprog-profile-picker" style="display:none" aria-live="polite"></div>
         <div id="pprogLiftsPicker" class="pprog-lifts-picker" style="display:none" aria-live="polite"></div>
         <div id="pprogSkillsPicker" class="pprog-skills-picker" style="display:none" aria-live="polite"></div>
-        <form class="pprog-chat-form" id="pprogChatForm" onsubmit="return sendPprogMessage(event)">
+        <form class="pprog-chat-form is-hidden" id="pprogChatForm" hidden onsubmit="return sendPprogMessage(event)">
           <textarea id="pprogChatInput" rows="3" placeholder="Message the coach…" maxlength="4000" dir="ltr" aria-label="Message the coach"></textarea>
           <div class="pprog-send-stack">
             <button type="button" class="btn pprog-reset-btn" id="pprogResetBtn" onclick="resetPprogUser()" title="Reset intake user">&#10227; Reset</button>
@@ -2318,7 +2318,7 @@ function syncPprogStartBtn() {
   syncPprogChatComposerUi();
 }
 
-/** Free-text AI chat only after intake is complete (FAB). Pre-START = START only. */
+/** First coach screen only (before START): hide free-text box. Do not alter intake after START. */
 function pprogIsPreStartGate(store, msgs) {
   store = store || loadPprogStore();
   msgs = msgs || loadPprogMessages();
@@ -2333,8 +2333,15 @@ function syncPprogChatComposerUi() {
   var preStart = pprogIsPreStartGate(store, msgs);
   if (chat) chat.classList.toggle("is-prestart", preStart);
   if (!form) return;
-  /* Questionnaire uses fixed-intake UI — never free chat until intakeComplete */
-  if (!store.intakeComplete) {
+  /* Only the pre-START landing screen hides the composer */
+  if (preStart) {
+    form.style.display = "none";
+    form.classList.add("is-hidden");
+    form.setAttribute("hidden", "");
+    return;
+  }
+  /* During fixed intake questionnaire the intake UI owns visibility */
+  if (!store.intakeComplete && store.fixedIntakeActive) {
     form.style.display = "none";
     form.classList.add("is-hidden");
     form.setAttribute("hidden", "");
@@ -3327,6 +3334,12 @@ function syncPprogFixedIntakeUi() {
   if (store.intakeComplete || !store.fixedIntakeActive) {
     el.style.display = "none";
     el.innerHTML = "";
+    if (form) {
+      form.style.display = "";
+      form.classList.remove("is-hidden");
+      form.removeAttribute("hidden");
+    }
+    /* Pre-START may still need the composer hidden — intake path untouched otherwise */
     syncPprogChatComposerUi();
     return;
   }
@@ -4217,8 +4230,8 @@ function sendPprogMessage(ev) {
     return false;
   }
   var store = loadPprogStore();
-  /* Block free chat before intake — prevents accidental AI spend */
-  if (!store.intakeComplete && !store.fixedIntakeActive && !store.postSkillsLocal) {
+  /* First screen only — do not block chat once intake has started */
+  if (pprogIsPreStartGate(store)) {
     syncPprogChatComposerUi();
     syncPprogStartBtn();
     return false;
