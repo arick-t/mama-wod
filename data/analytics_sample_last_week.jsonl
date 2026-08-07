@@ -1,17 +1,17 @@
-{"event":"page_view","t":1771891200000}
-{"event":"page_view","t":1771891500000}
-{"event":"find_workout","t":1771895000000}
-{"event":"page_view","t":1771977600000}
-{"event":"page_view","t":1771977900000}
-{"event":"page_view","t":1771978200000}
-{"event":"find_workout","t":1771981000000}
-{"event":"page_view","t":1772064000000}
-{"event":"find_workout","t":1772067000000}
-{"event":"page_view","t":1772150400000}
-{"event":"page_view","t":1772150700000}
-{"event":"page_view","t":1772236800000}
-{"event":"find_workout","t":1772240000000}
-{"event":"page_view","t":1772323200000}
-{"event":"page_view","t":1772323500000}
-{"event":"page_view","t":1772323800000}
-{"event":"find_workout","t":1772324400000}
+{"event":"page_view","t":1779990000000,"uid":"uDemoOldDaily","sid":"s1","ua":"Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15","name":"רן"}
+{"event":"find_workout","t":1785900000000,"uid":"uDemoOldDaily","sid":"s1b","ua":"Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15","name":"רן"}
+{"event":"page_view","t":1785910000000,"uid":"uDemoTraffic","sid":"s2","ua":"Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 Chrome/122 Mobile Safari/537.36"}
+{"event":"find_workout","t":1785911000000,"uid":"uDemoDailyNew","sid":"s3","ua":"Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 Chrome/122 Mobile Safari/537.36"}
+{"event":"personal_coach_intake_complete","t":1785920000000,"uid":"uDemoNewCoach","sid":"s4","ua":"Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15","name":"נועה","coachTier":2}
+{"event":"personal_coach_legal_agree","t":1785930000000,"uid":"uDemoAbort","sid":"s5","ua":"Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15","name":"יואב"}
+{"event":"personal_coach_legal_agree","t":1775000000000,"uid":"uDemoBoard","sid":"s6a","ua":"Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15","name":"מיכל","coachTier":2}
+{"event":"personal_coach_block","t":1775001000000,"uid":"uDemoBoard","sid":"s6a","ua":"Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15","name":"מיכל","coachArea":"block_build","coachTier":2}
+{"event":"personal_coach_opened","t":1785940000000,"uid":"uDemoBoard","sid":"s6","ua":"Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15","name":"מיכל","coachArea":"tab_open","coachTier":2}
+{"event":"personal_coach_legal_agree","t":1774000000000,"uid":"u_hg7zrwwvyf7","sid":"s7a","ua":"Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15","name":"אריק","coachTier":2}
+{"event":"personal_coach_block","t":1774001000000,"uid":"u_hg7zrwwvyf7","sid":"s7a","ua":"Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15","name":"אריק","coachArea":"block_build","coachTier":2}
+{"event":"personal_coach_workout_changed","t":1785950000000,"uid":"u_hg7zrwwvyf7","sid":"s7","ua":"Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15","name":"אריק","coachArea":"day_session","changeType":"day_revision","dayKey":"thu","coachTier":2}
+{"event":"personal_coach_legal_agree","t":1774500000000,"uid":"u_twhgewb1se","sid":"s8a","ua":"Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15","name":"עדי","coachTier":2}
+{"event":"personal_coach_block","t":1774501000000,"uid":"u_twhgewb1se","sid":"s8a","ua":"Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15","name":"עדי","coachArea":"block_build","coachTier":2}
+{"event":"personal_coach_message","t":1785960000000,"uid":"u_twhgewb1se","sid":"s8","ua":"Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15","name":"עדי","coachArea":"chat","coachTier":2}
+{"event":"timer_use","t":1785970000000,"uid":"uBot","sid":"sBot","ua":"Googlebot/2.1 (+http://www.google.com/bot.html)"}
+{"event":"find_workout","t":1785980000000,"uid":"uDesktop","sid":"sDesk","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/122 Safari/537.36"}
