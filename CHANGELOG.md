@@ -5,6 +5,7 @@
 ### Analytics weekly report clarity
 - RTL Hebrew layout by sections; **bold** section headings; plain whole-number metrics (no `1.א` / `2.1` labels that break in mail clients).
 - Duck icon in title/subject; HTML email body via Brevo (`htmlContent` + text fallback).
+- Sample weekly fixture updated for the new report shape; sample dispatches get subject prefix «דוגמה».
 
 ---
 

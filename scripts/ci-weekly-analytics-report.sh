@@ -51,6 +51,9 @@ case "$REPORT_PERIOD" in
   last_week) SUB="🦆 ניתור משתמשים – שבוע אחרון" ;;
   *) SUB="🦆 ניתור משתמשים – דוח" ;;
 esac
+if [[ "${USE_SAMPLE_DATA:-false}" == "true" ]]; then
+  SUB="🦆 דוגמה — ${SUB#🦆 }"
+fi
 
 TEXT_BODY=$(jq -Rs . report.txt)
 HTML_BODY=$(jq -Rs . report.html)
