@@ -1,15 +1,16 @@
 # Changelog
 
-## [21.3.1] - 2026-08-07
+## [21.4] - 2026-08-07
 
 ### Personal Coach: light UX pack (display)
-- **Display version: v21.3.1** (Coach stays **v2.1**; package/`VERSION` remain on the current 21.3.x line — no downgrade).
+- **Display version: v21.4** (Coach stays **v2.1**; package/`VERSION` stay on the 21.3.x line until release — no downgrade).
 - Floating circular prev/next day arrows + swipe between workouts (daily or monthly day card).
 - Coach FAB: tiny **talk to / the coach** caption above the duck, inside one shared purple pill shell with the avatar.
 - App landing tab: open on **Personal Coach** (not Workout's) when the coach tab is enabled.
 - Pre-START gate (first screen only): hide the free-text Message/Send box; keep **START**. Intake questionnaire after START is unchanged.
 - Previews: `preview-day-nav.html`, `preview-coach-fab-caption.html`, `preview-coach-prestart.html`.
 - Done / debrief learning stays on a separate track.
+- **Hold:** ship only after display **v21.3** is live elsewhere, then explicit approval after thorough checks.
 
 ---
 
