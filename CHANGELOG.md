@@ -1,5 +1,13 @@
 # Changelog
 
+## [21.3.8] - 2026-08-07
+
+### Analytics weekly report clarity
+- RTL Hebrew layout by sections; **bold** section headings; plain whole-number metrics (no `1.א` / `2.1` labels that break in mail clients).
+- Duck icon in title/subject; HTML email body via Brevo (`htmlContent` + text fallback).
+
+---
+
 ## [21.3.7] - 2026-08-07
 
 ### Analytics weekly report

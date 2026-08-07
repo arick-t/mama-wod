@@ -366,49 +366,121 @@ function formatNameList(rows) {
     .join(", ");
 }
 
-function buildReportLines(summary) {
+function wholeNumber(n) {
+  const v = Number(n);
+  return String(Number.isFinite(v) ? Math.trunc(v) : 0);
+}
+
+function escapeHtml(s) {
+  return String(s || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function reportSections(summary) {
+  const chatChangeCount = new Set([
+    ...summary.veteranDayChange.map((x) => x.uid),
+    ...summary.veteranGeneralChange.map((x) => x.uid),
+  ]).size;
   const veteranActive = new Set([
     ...summary.veteranBoardOnly.map((x) => x.uid),
     ...summary.veteranDayChange.map((x) => x.uid),
     ...summary.veteranGeneralChange.map((x) => x.uid),
   ]);
-  return [
-    'דו"ח ניתור משתמשים בין התאריכים ' +
+  return {
+    title: '🦆 דו"ח ניתור משתמשים',
+    dateLine:
+      "בין התאריכים " +
       formatDDMMYY(summary.windowStart) +
       " ועד ל " +
       formatDDMMYY(summary.now),
-    "",
-    "0) תנועה",
-    "כניסות לא-מוכרים לאפליקציה - " + summary.unknownEntrants.length,
-    "",
-    "1) מאמן אישי",
-    "1.א נרשמים חדשים (סיימו תחקור / תוכנית) - " +
-      summary.newCoachRegistrants.length,
-    "    שמות: " + formatNameList(summary.newCoachRegistrants),
-    "1.א־משני התחילו ולא סיימו - " + summary.startedIncomplete.length,
-    "1.ב ותיקים — רק צפייה בלוח - " + summary.veteranBoardOnly.length,
-    "    שמות: " + formatNameList(summary.veteranBoardOnly),
-    "1.ג ותיקים — שיח / שינוי - " +
-      new Set([
-        ...summary.veteranDayChange.map((x) => x.uid),
-        ...summary.veteranGeneralChange.map((x) => x.uid),
-      ]).size,
-    "    1.ג.1 שינוי יום - " + summary.veteranDayChange.length,
-    "        שמות: " + formatNameList(summary.veteranDayChange),
-    "    1.ג.2 שינוי כללי - " + summary.veteranGeneralChange.length,
-    "        שמות: " + formatNameList(summary.veteranGeneralChange),
-    "",
-    "2) אימונים יומיים (מי שלא נספר בעדיפות מאמן)",
-    "2.1 לא-מוכרים שראו / חיפשו אימון יומי - " + summary.dailyNew.length,
-    "2.2 ותיקים שראו / חיפשו אימון יומי - " + summary.dailyVeteran.length,
-    "",
-    "סיכום קצר: נרשמו למאמן " +
-      summary.newCoachRegistrants.length +
-      " · ותיקי מאמן פעילים " +
-      veteranActive.size +
-      " · כניסות לא-מוכרים " +
-      summary.unknownEntrants.length,
+    sections: [
+      {
+        heading: "תנועה",
+        rows: [
+          "כניסות לא-מוכרים לאפליקציה: " + wholeNumber(summary.unknownEntrants.length),
+        ],
+      },
+      {
+        heading: "מאמן אישי",
+        rows: [
+          "נרשמים חדשים (סיימו תחקור / תוכנית): " +
+            wholeNumber(summary.newCoachRegistrants.length),
+          "שמות: " + formatNameList(summary.newCoachRegistrants),
+          "התחילו ולא סיימו: " + wholeNumber(summary.startedIncomplete.length),
+          "ותיקים — רק צפייה בלוח: " + wholeNumber(summary.veteranBoardOnly.length),
+          "שמות: " + formatNameList(summary.veteranBoardOnly),
+          "ותיקים — שיח / שינוי: " + wholeNumber(chatChangeCount),
+          "שינוי יום: " +
+            wholeNumber(summary.veteranDayChange.length) +
+            " — " +
+            formatNameList(summary.veteranDayChange),
+          "שינוי כללי: " +
+            wholeNumber(summary.veteranGeneralChange.length) +
+            " — " +
+            formatNameList(summary.veteranGeneralChange),
+        ],
+      },
+      {
+        heading: "אימונים יומיים (מי שלא נספר בעדיפות מאמן)",
+        rows: [
+          "לא-מוכרים שראו / חיפשו אימון יומי: " + wholeNumber(summary.dailyNew.length),
+          "ותיקים שראו / חיפשו אימון יומי: " + wholeNumber(summary.dailyVeteran.length),
+        ],
+      },
+      {
+        heading: "סיכום קצר",
+        rows: [
+          "נרשמו למאמן: " + wholeNumber(summary.newCoachRegistrants.length),
+          "ותיקי מאמן פעילים: " + wholeNumber(veteranActive.size),
+          "כניסות לא-מוכרים: " + wholeNumber(summary.unknownEntrants.length),
+        ],
+      },
+    ],
+  };
+}
+
+function buildReportLines(summary) {
+  const doc = reportSections(summary);
+  const lines = [doc.title, doc.dateLine, ""];
+  doc.sections.forEach((sec, i) => {
+    lines.push(sec.heading);
+    sec.rows.forEach((row) => lines.push(row));
+    if (i < doc.sections.length - 1) lines.push("");
+  });
+  return lines;
+}
+
+function buildReportHtml(summary) {
+  const doc = reportSections(summary);
+  const parts = [
+    '<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"></head>',
+    '<body style="margin:0;padding:16px;background:#111;color:#f2f2f2;font-family:Arial,Helvetica,sans-serif;line-height:1.55;direction:rtl;text-align:right;">',
+    '<p style="margin:0 0 6px;font-size:20px;font-weight:700;">' +
+      escapeHtml(doc.title) +
+      "</p>",
+    '<p style="margin:0 0 18px;font-size:14px;font-weight:400;opacity:0.9;">' +
+      escapeHtml(doc.dateLine) +
+      "</p>",
   ];
+  doc.sections.forEach((sec) => {
+    parts.push(
+      '<p style="margin:16px 0 6px;font-size:16px;font-weight:700;">' +
+        escapeHtml(sec.heading) +
+        "</p>"
+    );
+    sec.rows.forEach((row) => {
+      parts.push(
+        '<p style="margin:2px 0;font-size:14px;font-weight:400;">' +
+          escapeHtml(row) +
+          "</p>"
+      );
+    });
+  });
+  parts.push("</body></html>");
+  return parts.join("");
 }
 
 function runCli() {
@@ -421,14 +493,27 @@ function runCli() {
   const events = readJsonlEvents(file);
   const period = process.env.REPORT_PERIOD || "last_week";
   const summary = computeSummary(events, now, { period });
-  const lines = buildReportLines(summary);
+  const asHtml =
+    process.env.REPORT_FORMAT === "html" ||
+    (process.argv || []).includes("--html");
   if (!events.length) {
-    console.log(lines[0]);
-    console.log("");
-    console.log("עדיין אין נתונים בקובץ " + file + ".");
+    if (asHtml) {
+      console.log(
+        '<!DOCTYPE html><html lang="he" dir="rtl"><body style="direction:rtl;text-align:right;font-family:Arial,sans-serif;">' +
+          "<p><strong>🦆 דו\"ח ניתור משתמשים</strong></p>" +
+          "<p>עדיין אין נתונים בקובץ " +
+          escapeHtml(file) +
+          ".</p></body></html>"
+      );
+    } else {
+      console.log('🦆 דו"ח ניתור משתמשים');
+      console.log("");
+      console.log("עדיין אין נתונים בקובץ " + file + ".");
+    }
     return;
   }
-  console.log(lines.join("\n"));
+  if (asHtml) console.log(buildReportHtml(summary));
+  else console.log(buildReportLines(summary).join("\n"));
 }
 
 if (require.main === module) runCli();
@@ -437,6 +522,7 @@ module.exports = {
   readJsonlEvents,
   computeSummary,
   buildReportLines,
+  buildReportHtml,
   formatDDMMYY,
   getWindowBounds,
   loadCoachMemberSeed,
