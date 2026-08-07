@@ -1,5 +1,16 @@
 # Changelog
 
+## [21.3.7] - 2026-08-07
+
+### Analytics weekly report
+- New report sections: traffic («כניסות לא-מוכרים»), Personal Coach (new / incomplete / board / day+general changes), daily workouts (non-coach priority).
+- Coach members counted by tier-2 registry (seed + intake_complete + legal+block + `coachTier` on events) — not by first-seen `dw_uid`.
+- Seeded veterans: **אריק** (`u_hg7zrwwvyf7`), **עדי** (`u_twhgewb1se`).
+- Client emits `coachTier: 2` when `dw_coach_tier` is set; `/api/event` persists it.
+- Mobile humans only; display stays **DAILY WORKOUTS · v21.3**.
+
+---
+
 ## [21.3.6] - 2026-08-07
 
 ### Ops email
