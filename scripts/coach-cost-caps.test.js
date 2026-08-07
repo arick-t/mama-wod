@@ -77,6 +77,15 @@ function testGate() {
     ) === null
   );
 
+  ok(
+    "finish_micro_bias allowed under daily lock (not a daily programmed edit)",
+    evaluateCostCapGate(
+      "finish_micro_bias",
+      { israelToday: "2026-08-07" },
+      { costCaps: { dailyEdits: { "2026-08-07": 2 }, dailyLocked: true } }
+    ) === null
+  );
+
   /* Monthly locks everything programming */
   const monthly = evaluateCostCapGate(
     "revise_day",
