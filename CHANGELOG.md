@@ -1,6 +1,17 @@
 # Changelog
 
-<<<<<<< HEAD
+## [21.3.1] - 2026-08-07
+
+### Personal Coach: light UX pack (display)
+- **Display version: v21.3.1** (Coach stays **v2.1**; package/`VERSION` remain on the 21.3.5 line — no downgrade).
+- Floating circular prev/next day arrows + swipe between workouts (daily or monthly day card).
+- Coach FAB caption: tiny **talk to / the coach** under the floating duck.
+- App landing tab: open on **Personal Coach** (not Workout's) when the coach tab is enabled.
+- Previews: `preview-day-nav.html`, `preview-coach-fab-caption.html`.
+- Done / debrief learning stays on a separate track.
+
+---
+
 ## [21.3.5] - 2026-08-06
 
 ### Security (0 ₪ extra AI)
@@ -13,14 +24,6 @@
 ### Display
 
 - App header/title: **DAILY WORKOUTS · v21.3** (Coach brain remains **v2.1**).
-=======
-## [21.2.5] - 2026-08-04
-
-### Personal Coach: floating day navigation (WIP)
-- Floating circular prev/next arrows while viewing a training day (daily or monthly day card).
-- Swipe left/right on the workout pane to move to the next/previous day across the 5-week brick.
-- Preview: `preview-day-nav.html`.
->>>>>>> 91c2cddb (feat(coach): floating day arrows + swipe between workouts)
 
 ---
 

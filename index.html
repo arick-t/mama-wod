@@ -693,19 +693,41 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
   align-items:center;justify-content:center;
 }
 .pprog-coach-fab{
-  display:none;width:48px;height:48px;padding:0;border:2px solid #b06dcf;
-  border-radius:50%;background:#221528;cursor:pointer;overflow:hidden;
-  box-shadow:0 2px 10px rgba(142,68,173,.45);flex-shrink:0;
-  transition:transform .2s, box-shadow .2s;
+  display:none;flex-direction:column;align-items:center;justify-content:flex-start;
+  gap:5px;width:auto;max-width:78px;height:auto;padding:0;margin:0;
+  border:none;border-radius:0;background:transparent;cursor:pointer;
+  box-shadow:none;overflow:visible;flex-shrink:0;
+  transition:transform .2s;
   -webkit-tap-highlight-color:transparent;
+  font-family:inherit;
 }
-.pprog-coach-fab.show{display:flex;align-items:center;justify-content:center}
-.pprog-coach-fab:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(142,68,173,.55)}
+.pprog-coach-fab.show{display:flex}
+.pprog-coach-fab:hover{transform:translateY(-2px)}
 .pprog-coach-fab:active{transform:scale(.96)}
-.pprog-coach-fab.open{border-color:#F5C518;box-shadow:0 0 0 2px rgba(245,197,24,.35)}
-.pprog-coach-fab img{width:100%;height:100%;object-fit:cover;display:block}
+.pprog-coach-fab-avatar{
+  width:48px;height:48px;border-radius:50%;padding:0;
+  border:2px solid #b06dcf;background:#221528;overflow:hidden;
+  box-shadow:0 2px 10px rgba(142,68,173,.45);
+  display:block;flex-shrink:0;
+  transition:border-color .2s, box-shadow .2s;
+}
+.pprog-coach-fab:hover .pprog-coach-fab-avatar{box-shadow:0 4px 14px rgba(142,68,173,.55)}
+.pprog-coach-fab.open .pprog-coach-fab-avatar{
+  border-color:#F5C518;box-shadow:0 0 0 2px rgba(245,197,24,.35);
+}
+.pprog-coach-fab-avatar img,
+.pprog-coach-fab img{
+  width:100%;height:100%;object-fit:cover;display:block;
+}
+.pprog-coach-fab-caption{
+  display:block;width:100%;max-width:74px;
+  font-size:9px;line-height:1.15;font-weight:700;
+  letter-spacing:.01em;text-align:center;color:#e6d8f2;
+  text-shadow:0 1px 3px rgba(0,0,0,.9), 0 0 6px rgba(0,0,0,.55);
+  pointer-events:none;user-select:none;
+}
 .pprog-coach-fab-tip{
-  display:none;position:fixed;right:76px;bottom:148px;z-index:1002;
+  display:none;position:fixed;right:76px;bottom:168px;z-index:1002;
   width:min(72vw,240px);padding:10px 12px;border-radius:12px;
   background:#2a1834;border:1px solid #b06dcf;color:#e8d8f4;
   box-shadow:0 8px 24px rgba(0,0,0,.45);font-size:.78em;line-height:1.4;
@@ -746,7 +768,8 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 @media (max-width:520px){
   .page-fabs{bottom:82px;right:12px}
   .pprog-coach-float{right:10px;left:10px;width:auto;bottom:200px}
-  .pprog-coach-fab-tip{right:12px;left:12px;width:auto;bottom:210px}
+  .pprog-coach-fab-tip{right:12px;left:12px;width:auto;bottom:230px}
+  .pprog-coach-fab-caption{font-size:8.5px;max-width:70px}
 }
 
 /* Floating day prev/next — stays on screen while scrolling */
@@ -11828,8 +11851,11 @@ function initTimerColorBuckets() {
 </script>
 <div class="page-fabs" id="pageFabs" aria-label="Quick actions">
   <button type="button" class="up-btn" id="upBtn" onclick="scrollToTop()" aria-label="Scroll to top" title="Scroll to top">↑</button>
-  <button type="button" class="pprog-coach-fab" id="pprogCoachFab" aria-label="Whole brick chat with the coach" title="Coach · whole brick" aria-expanded="false" aria-controls="pprogCoachFloat">
-    <img src="assets/hamamen-coach-duck.png" alt="" width="48" height="48" draggable="false">
+  <button type="button" class="pprog-coach-fab" id="pprogCoachFab" aria-label="Talk to the coach" title="Talk to the coach · whole brick" aria-expanded="false" aria-controls="pprogCoachFloat">
+    <span class="pprog-coach-fab-avatar" aria-hidden="true">
+      <img src="assets/hamamen-coach-duck.png" alt="" width="48" height="48" draggable="false">
+    </span>
+    <span class="pprog-coach-fab-caption">talk to<br>the coach</span>
   </button>
 </div>
 <button type="button" class="pprog-day-nav prev" id="pprogDayNavPrev" onclick="stepPprogDayNav(-1)" aria-label="Previous training day" title="Previous day">
