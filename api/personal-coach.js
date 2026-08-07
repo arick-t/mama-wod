@@ -20,6 +20,20 @@
  * Programming stays Gemini-only (POL-020).
  */
 const COACH_VERSION = "2.1";
+const fs = require("fs");
+const path = require("path");
+function resolveAppVersion() {
+  try {
+    const v = fs.readFileSync(path.join(__dirname, "..", "VERSION"), "utf8").trim();
+    if (v) return v;
+  } catch (e) {}
+  try {
+    return require("../package.json").version || "21.5.0";
+  } catch (e2) {
+    return "21.5.0";
+  }
+}
+const APP_VERSION = resolveAppVersion();
 const HAMAMEN_SYSTEM = require("./hamamen-prompt.js");
 const COACH_POLICY = require("./coach-policy.js");
 const COACH_FOUNDATION_BRIEF = require("./coach-foundation-brief.js");
@@ -1585,7 +1599,7 @@ module.exports = async function handler(req, res) {
       service: "personal-coach",
       engine: "personal-coach",
       notGenerateWorkout: true,
-      version: "21.3.5",
+      version: APP_VERSION,
       coachVersion: COACH_VERSION,
       hasGeminiKey: !!apiKey,
       hasGroqKey: !!groqKey,
