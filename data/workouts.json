@@ -2787,48 +2787,6 @@
     "2026-08-07": [
       {
         "date": "2026-08-07",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-08-07/",
-        "sections": [
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. row",
-              "2. sumo squat stretch  / scorpions",
-              "3. prone snow angels"
-            ],
-            "sub_title": "40 on / 20 off  x6 rounds"
-          },
-          {
-            "title": "PUSH PRESS 14MIN",
-            "lines": [
-              "4-5 sets",
-              "5 push press @77-80%",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 10MIN",
-            "lines": [
-              "benchmark workout \"\"Karen\"\"",
-              "150 wall balls 20/14lbs",
-              "* muscular endurance"
-            ],
-            "sub_title": "for time"
-          },
-          {
-            "title": "ROW CONDITIONING 9MIN",
-            "lines": [
-              "for max cals row",
-              "anaerobic capacity & lactate threshold"
-            ],
-            "sub_title": "30sec on/ 60sec off x 7 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-08-07",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260807",
@@ -2902,6 +2860,75 @@
               "Rest 2-3 Minutes between sets with at least 2:00 slowly flushing on a rower or bike.",
               "Notes: Final set should not exceed 90% but can be lighter. Looking for heavier than the set of 4 based on feel."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-07",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 25.2",
+            "lines": [
+              "For time:",
+              "21 pull-ups",
+              "42 double-unders",
+              "21 thrusters (weight 1)",
+              "18 chest-to-bar pull-ups",
+              "36 double-unders",
+              "18 thrusters (weight 2)",
+              "15 bar muscle-ups",
+              "30 double-unders",
+              "15 thrusters (weight 3)",
+              "Time cap: 12 minutes",
+              "*♀ 65, 75, 85 lb (29, 34, 38 kg)*",
+              "*♂ 95, 115, 135 lb (43, 52, 61 kg)*"
+            ]
+          }
+        ],
+        "note": "Open: Open 25.2"
+      },
+      {
+        "date": "2026-08-07",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-08-07/",
+        "sections": [
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. row",
+              "2. sumo squat stretch  / scorpions",
+              "3. prone snow angels"
+            ],
+            "sub_title": "40 on / 20 off  x6 rounds"
+          },
+          {
+            "title": "PUSH PRESS 14MIN",
+            "lines": [
+              "4-5 sets",
+              "5 push press @77-80%",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 10MIN",
+            "lines": [
+              "benchmark workout \"\"Karen\"\"",
+              "150 wall balls 20/14lbs",
+              "* muscular endurance"
+            ],
+            "sub_title": "for time"
+          },
+          {
+            "title": "ROW CONDITIONING 9MIN",
+            "lines": [
+              "for max cals row",
+              "anaerobic capacity & lactate threshold"
+            ],
+            "sub_title": "30sec on/ 60sec off x 7 rounds"
           }
         ]
       },
@@ -2988,35 +3015,8 @@
           }
         ],
         "note": "Benchmark: Eva"
-      },
-      {
-        "date": "2026-08-07",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 25.2",
-            "lines": [
-              "For time:",
-              "21 pull-ups",
-              "42 double-unders",
-              "21 thrusters (weight 1)",
-              "18 chest-to-bar pull-ups",
-              "36 double-unders",
-              "18 thrusters (weight 2)",
-              "15 bar muscle-ups",
-              "30 double-unders",
-              "15 thrusters (weight 3)",
-              "Time cap: 12 minutes",
-              "*♀ 65, 75, 85 lb (29, 34, 38 kg)*",
-              "*♂ 95, 115, 135 lb (43, 52, 61 kg)*"
-            ]
-          }
-        ],
-        "note": "Open: Open 25.2"
       }
     ]
   },
-  "last_updated": "2026-08-07T04:42:21.593279"
+  "last_updated": "2026-08-07T06:49:00.352509"
 }
