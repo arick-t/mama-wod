@@ -1,5 +1,17 @@
 # Changelog
 
+## [21.4.2] - 2026-08-07 (design branch)
+
+### Personal Coach / app: design clarity (display)
+- **Display version: v21.4.2** (Coach stays **v2.1**; package/`VERSION` stay on 21.3.x).
+- Typography: **Heebo** for UI/body; **Oswald** kept for brand hero (`DUCK-WOD`) + REST DAY display.
+- Color hierarchy via CSS variables — calmer part titles, readable body; Coach purple + semantic training colors preserved (not a flat 3-color wipe).
+- Bottom tabs: uniform bar, no dashed borders; active underline; Coach active uses purple accent; typo **Workouts** (was Workout's).
+- FABs: content `padding-bottom` clearance; **Scroll-up on left**, Coach FAB on right; softer Coach FAB border/shadow (caption kept).
+- Preview: `preview-design-clarity.html`.
+
+---
+
 ## [21.4.1] - 2026-08-07
 
 ### Personal Coach: small UI tweaks (display)

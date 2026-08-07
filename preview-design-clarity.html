@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DUCK-WOD · Design clarity preview (v21.4.2)</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#121212;--bg-elev:#181818;--bg-card:#1a1a1a;--bg-panel:#1e1e1e;
+  --text:#f5f2ea;--text-muted:#b0aaa0;--text-meta:#8a8580;
+  --brand:#E8451A;--coach:#9b6bb8;--part:#6fafa4;--line:#2c2c2c;
+  --tab-bar-h:64px;--fab-clearance:120px;
+  --font-ui:'Heebo',sans-serif;--font-display:'Oswald','Heebo',sans-serif;
+}
+body{
+  font-family:var(--font-ui);background:var(--bg);color:var(--text);
+  min-height:100vh;padding:16px 14px calc(var(--tab-bar-h) + var(--fab-clearance));
+}
+.wrap{max-width:420px;margin:0 auto}
+.brand{
+  font-family:var(--font-display);font-size:1.7em;font-weight:700;letter-spacing:3px;
+  background:linear-gradient(90deg,#E8451A,#F5C518 50%,#1A9B8A);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.sub{color:var(--text-meta);font-size:.8em;margin:4px 0 16px}
+.panel-label{color:var(--part);font-size:.72em;font-weight:700;letter-spacing:.04em;margin:0 0 8px;text-transform:uppercase}
+.card{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:0 0 18px}
+.coach-h{color:var(--coach);font-weight:800;font-size:1.15em}
+.meta{color:var(--coach);font-size:.78em;margin:0 0 8px;opacity:.9}
+.date-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:8px;border-bottom:1px solid var(--line);margin-bottom:10px}
+.date{color:var(--coach);font-weight:700;font-size:1.05em;flex:1}
+.actions{display:inline-flex;gap:8px;align-items:center}
+.done{
+  display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid #3d7a52;border-radius:999px;
+  background:linear-gradient(180deg,#1f3d2a,#173224);color:#d7f5e2;font-weight:700;font-size:.78em;font-family:inherit;
+}
+.share{
+  width:34px;height:34px;border-radius:50%;border:1px solid #3a4a3f;background:#1a1f1c;color:#8fb89a;
+  display:inline-flex;align-items:center;justify-content:center;
+}
+.part{color:var(--part);font-weight:700;font-size:.98em;margin:0 0 7px}
+ul{margin:0;padding:0 0 0 18px;font-size:.95em;line-height:1.5}
+li{margin-bottom:5px}
+.note{color:var(--text-muted);font-size:.84em;line-height:1.45;margin:0 0 16px;padding:10px 12px;border:1px dashed #3a3a3a;border-radius:10px}
+
+.tabs{
+  position:fixed;left:0;right:0;bottom:0;z-index:999;
+  display:flex;justify-content:space-around;gap:2px;
+  padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));
+  background:rgba(24,24,24,.96);border-top:1px solid var(--line);
+  backdrop-filter:blur(10px);
+}
+.tab{
+  flex:1;min-width:0;padding:8px 4px;background:transparent;border:none;border-radius:10px;
+  color:var(--text-muted);font-weight:600;font-size:.72em;font-family:inherit;text-align:center;
+}
+.tab.active{background:rgba(155,107,184,.18);color:#fff;box-shadow:inset 0 -2px 0 var(--coach)}
+
+.up{
+  position:fixed;left:14px;bottom:calc(var(--tab-bar-h) + 18px);z-index:1000;
+  width:44px;height:44px;border:none;border-radius:50%;background:rgba(33,150,243,.92);color:#fff;
+  font-size:18px;box-shadow:0 4px 14px rgba(0,0,0,.28);display:flex;align-items:center;justify-content:center;
+}
+.coach-fab{
+  position:fixed;right:16px;bottom:calc(var(--tab-bar-h) + 18px);z-index:1000;
+  display:flex;flex-direction:column;align-items:center;gap:3px;max-width:76px;
+  padding:5px;border:1px solid rgba(176,109,207,.4);border-radius:28px;
+  background:linear-gradient(180deg,#2a1a33,#1c1424);box-shadow:0 6px 18px rgba(0,0,0,.4);
+}
+.coach-fab .av{width:46px;height:46px;border-radius:50%;background:#2a1834;border:1px solid rgba(176,109,207,.25)}
+.coach-fab .cap{font-size:8px;font-weight:600;text-align:center;color:rgba(236,223,246,.88);line-height:1.15;max-width:66px}
+.spacer{height:220px;color:var(--text-muted);font-size:.85em;padding:20px 4px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">DUCK-WOD</div>
+  <div class="sub">v21.4.2 · design clarity preview</div>
+  <p class="note">Heebo body · Oswald brand only · calmer part titles · tabs without dashed borders · Scroll-up left · Coach FAB right · bottom clearance so last lines aren’t hidden.</p>
+
+  <div class="panel-label">Personal Coach head</div>
+  <div class="card" style="display:flex;align-items:center;gap:12px">
+    <div class="av" style="width:56px;height:56px;border-radius:50%;background:#2a1834;border:2px solid var(--coach);flex-shrink:0"></div>
+    <div class="coach-h">Personal Coach</div>
+  </div>
+
+  <div class="panel-label">Day card</div>
+  <div class="card">
+    <div class="meta">Week 1 / 5 · Aug 2–8 · Engine Base</div>
+    <div class="date-row">
+      <div class="date">Fri · 7 August</div>
+      <div class="actions">
+        <span class="done">Done</span>
+        <span class="share" aria-hidden="true">⌁</span>
+      </div>
+    </div>
+    <div class="part">Warm-up &amp; Core Activation</div>
+    <ul>
+      <li>200m Run</li>
+      <li>10 Russian KB Swings @ 24kg</li>
+      <li>10 Kipping Pull-ups</li>
+      <li>Toes-to-Bar × 8</li>
+    </ul>
+  </div>
+
+  <div class="spacer">
+    Scroll clearance demo — the last lines above stay clear of the FABs and tab bar.
+    <br><br>
+    Left = scroll up · Right = talk to the coach
+  </div>
+</div>
+
+<div class="tabs" role="navigation">
+  <button class="tab active" type="button">Personal Coach</button>
+  <button class="tab" type="button">Workouts</button>
+  <button class="tab" type="button">Workout Tools</button>
+  <button class="tab" type="button">Sources</button>
+  <button class="tab" type="button">About</button>
+</div>
+<button class="up" type="button" aria-label="Scroll to top">↑</button>
+<div class="coach-fab" aria-label="Talk to the coach">
+  <div class="av"></div>
+  <div class="cap">talk to<br>the coach</div>
+</div>
+</body>
+</html>
