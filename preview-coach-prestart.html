@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DUCK-WOD · Pre-START coach gate preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Oswald','Heebo',sans-serif;min-height:100vh;color:#f0ece0;
+  background:radial-gradient(900px 520px at 12% 0%,#1a2a22 0%,#111 55%);
+  padding:18px 14px 40px;
+}
+.wrap{max-width:440px;margin:0 auto}
+.brand{font-size:1.5em;font-weight:900;letter-spacing:3px;
+  background:linear-gradient(90deg,#E8451A,#F5C518 50%,#1A9B8A);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sub{color:#aaa;font-size:.82em;margin:4px 0 12px}
+.note{color:#cfc7b6;font-size:.84em;line-height:1.45;margin:0 0 16px;padding:10px 12px;
+  border:1px dashed rgba(26,155,138,.55);border-radius:10px;background:rgba(26,155,138,.08)}
+.panel{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:14px}
+.head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+.head img{width:56px;height:56px;border-radius:12px;object-fit:cover;border:1px solid #3a3a3a}
+.head h2{color:#b06dcf;font-size:1.15em;font-weight:800;margin:0}
+.pprog-prestart-welcome{
+  margin:0 0 14px;padding:14px 14px 12px;border:1px dashed #3d7a52;border-radius:12px;
+  background:rgba(26,155,138,.08);color:#cfc7b6;font-size:.9em;line-height:1.45;text-align:center;direction:ltr;
+}
+.pprog-prestart-welcome strong{display:block;color:#d7f5e2;font-size:1.05em;font-weight:800;margin:0 0 6px}
+.pprog-start-btn{
+  width:100%;padding:16px 18px;font-size:1.15em;font-weight:800;letter-spacing:.08em;
+  background:#E8451A;border:none;border-radius:10px;min-height:54px;color:#fff;cursor:pointer;font-family:inherit;
+}
+.status{margin-top:12px;color:#8fb89a;font-size:.8em}
+.links{margin-top:14px;font-size:.82em;color:#aaa}
+.links a{color:#1A9B8A}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">DUCK-WOD</div>
+  <div class="sub">Pre-START gate · first screen only</div>
+  <p class="note">
+    Only this first screen changes: remove the free-text box, keep <strong>START</strong>.
+    Intake after START is untouched.
+  </p>
+
+  <div class="panel">
+    <div class="head">
+      <img src="assets/hamamen-coach-duck.png" alt="">
+      <h2>Personal Coach</h2>
+    </div>
+    <div class="pprog-prestart-welcome">
+      <strong>Ready when you are</strong>
+      Tap <strong>START</strong> to begin the short intake. The coach builds your 5-week plan from your answers — free chat opens after that.
+    </div>
+    <button type="button" class="pprog-start-btn">START</button>
+  </div>
+
+  <div class="status">First screen: START only — no Message / Send box</div>
+  <div class="links">Preview: <a href="/preview-coach-prestart.html">/preview-coach-prestart.html</a></div>
+</div>
+</body>
+</html>
