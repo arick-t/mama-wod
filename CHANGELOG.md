@@ -1,5 +1,25 @@
 # Changelog
 
+## [21.3.6] - 2026-08-07
+
+### Ops email
+- **Brevo only** for operational mail (analytics, coach feedback, digests) → `contact.duckwod@gmail.com`.
+- Removed Resend sender/fallback from app code, workflows, and docs (`BREVO_SECRETS.md`).
+
+### Personal Coach — intake sitting (legal)
+- Terms + full fixed intake must be completed **in one sitting**.
+- Abandon / new browser session / sitting > 3h → unfinished draft wiped; **`dw_uid` kept**.
+- Admin `?pprog_reset=1` clears plan/draft but **keeps** `dw_uid` + coach tier (no double “new registrant”).
+- On successful intake: coach tier upgraded to **2** (`dw_coach_tier`).
+
+### Analytics hygiene
+- Local cleanup of duplicate test “אריק” identities; keep latest founder id only (data files).
+
+### Display
+- App header/title stays **DAILY WORKOUTS · v21.3** (Coach brain remains **v2.1**). Internal semver **21.3.6**.
+
+---
+
 ## [21.3.5] - 2026-08-06
 
 ### Security (0 ₪ extra AI)

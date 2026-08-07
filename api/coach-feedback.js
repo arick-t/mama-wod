@@ -2,8 +2,8 @@
  * Personal Coach feedback → email owner (Beta 1.0)
  * POST { type, athleteId?, userId?, displayName?, day?, partId?, partTitle?, text, weekStart?,
  *        athleteFeedback?, coachReply?, parts?: [{title, lines:[]}] }
- * Sends via Brevo (BREVO_API_KEY) or Resend fallback. Never opens mailto — silent admin log only.
- * See RESEND_SECRETS.md (mail ops; Brevo preferred).
+ * Sends via Brevo (BREVO_API_KEY). Never opens mailto — silent admin log only.
+ * See BREVO_SECRETS.md.
  */
 const { sendAppMail, hasMailProvider } = require("../lib/send-app-mail");
 const { checkRateLimit, sendRateLimit } = require("../lib/rate-limit.js");
@@ -318,7 +318,6 @@ module.exports = async function handler(req, res) {
       to: feedbackTo(),
       hasMail: hasMailProvider(),
       hasBrevo: !!String(process.env.BREVO_API_KEY || "").trim(),
-      hasResend: !!(process.env.RESEND_API_KEY || process.env.RESEND_API_KEY_conmail),
     });
   }
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
@@ -373,34 +372,34 @@ module.exports = async function handler(req, res) {
   const mail = buildMail(body);
   const to = feedbackTo();
 
-  let resend;
+  let mailResult;
   try {
-    resend = await sendAppMail({
+    mailResult = await sendAppMail({
       to: to,
       subject: mail.subject,
       text: mail.body,
       html: mail.html,
     });
   } catch (e) {
-    resend = { sent: false, reason: "mail_throw", detail: String(e.message || e) };
+    mailResult = { sent: false, reason: "mail_throw", detail: String(e.message || e) };
   }
 
-  if (!resend.sent) {
+  if (!mailResult.sent) {
     console.warn(
       "[coach-feedback] email not sent:",
-      resend.reason || "unknown",
-      resend.detail ? String(resend.detail).slice(0, 200) : "",
+      mailResult.reason || "unknown",
+      mailResult.detail ? String(mailResult.detail).slice(0, 200) : "",
       "| to=",
       to
     );
   } else {
-    console.log("[coach-feedback] emailed ok →", to, resend.id || "");
+    console.log("[coach-feedback] emailed ok →", to, mailResult.id || "");
   }
 
   return res.status(200).json({
     ok: true,
-    emailed: !!resend.sent,
-    resend: resend,
+    emailed: !!mailResult.sent,
+    mail: mailResult,
     to: to,
   });
 };

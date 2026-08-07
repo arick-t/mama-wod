@@ -137,7 +137,7 @@
 ## דוח שבועי באימייל (אוטומטי)
 
 **שליחה לוואטסאפ:** לוואטסאפ אין API חינמי לשליחת הודעות למספר אישי, ולכן אי אפשר לשלוח את הדוח ישירות לוואטסאפ.  
-**פתרון:** דוח **באימייל** דרך **Resend** + GitHub Actions – ברירת המחדל לנמען היא **contact.duckwod@gmail.com**. ראו **`RESEND_SECRETS.md`** ו־**`.github/workflows/weekly-analytics-report.yml`**.
+**פתרון:** דוח **באימייל** דרך **Brevo** + GitHub Actions – ברירת המחדל לנמען היא **contact.duckwod@gmail.com**. ראו **`BREVO_SECRETS.md`** ו־**`.github/workflows/weekly-analytics-report.yml`**.
 
 ### מתי נשלח (אוטומטי)
 
@@ -145,7 +145,7 @@
 
 ### איך מפעילים (פעם אחת)
 
-1. הגדר ב־GitHub Actions את **`RESEND_API_KEY`** (ואופציונלית **`RESEND_FROM`**, **`ANALYTICS_REPORT_TO`**). פירוט: **`RESEND_SECRETS.md`**.
+1. הגדר ב־GitHub Actions את **`BREVO_API_KEY`** (ואופציונלית **`BREVO_SENDER_EMAIL`**, **`ANALYTICS_REPORT_TO`**). פירוט: **`BREVO_SECRETS.md`**.
 2. **נמען ברירת מחדל:** **contact.duckwod@gmail.com** (אלא אם הוגדר `ANALYTICS_REPORT_TO` / `APP_MAIL_TO` או שדה `email_to` בהרצה ידנית).
 
 ### בדיקה – הרצה ידנית (לפי תקופה)

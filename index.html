@@ -1401,9 +1401,16 @@ var PPROG_STORE_KEY = "duck-wod-personal-coach-v1";
 var PPROG_LEGAL_VERSION = 3;
 /** Stable legal document id for audit trail / server logs. */
 var PPROG_LEGAL_TERMS_ID = "v2.0-legal";
+/** Session flag: intake/legal must finish in this browser sitting. */
+var PPROG_INTAKE_SITTING_KEY = "dw_pprog_intake_sitting";
+/** Max uninterrupted sitting for unfinished intake (ms). */
+var PPROG_INTAKE_SITTING_MAX_MS = 3 * 60 * 60 * 1000;
+/** Durable coach-member tier (survives plan reset; tied to dw_uid). */
+var PPROG_COACH_TIER_KEY = "dw_coach_tier";
 var pprogLegalPendingCallback = null;
 
-/** One-shot reset from URL: ?pprog_reset=1 clears stuck Personal Coach user state. */
+/** One-shot reset from URL: ?pprog_reset=1 clears Personal Coach plan/intake draft.
+ * Keeps dw_uid + coach tier so the same person is not counted as a new registrant. */
 function maybeResetPprogFromQuery() {
   try {
     var q = new URLSearchParams(location.search || "");
@@ -1411,14 +1418,14 @@ function maybeResetPprogFromQuery() {
     try {
       localStorage.removeItem(PPROG_STORE_KEY);
     } catch (e) {}
-    try {
-      localStorage.removeItem("dw_uid");
-    } catch (e) {}
+    /* Intentionally DO NOT remove dw_uid or dw_coach_tier. */
     try {
       localStorage.removeItem(AI_LAST_ERROR_KEY);
     } catch (e) {}
     try {
       sessionStorage.removeItem("dw_pprog_open_sent");
+      sessionStorage.removeItem(PPROG_INTAKE_SITTING_KEY);
+      sessionStorage.setItem("dw_pprog_intake_restart_notice", "admin_reset");
     } catch (e) {}
     q.delete("pprog_reset");
     var clean = location.pathname + (q.toString() ? "?" + q.toString() : "") + (location.hash || "");
@@ -1427,6 +1434,110 @@ function maybeResetPprogFromQuery() {
   } catch (e) {
     return false;
   }
+}
+
+function pprogGetCoachTier() {
+  try {
+    var t = parseInt(localStorage.getItem(PPROG_COACH_TIER_KEY) || "1", 10);
+    return t >= 2 ? 2 : 1;
+  } catch (e) {
+    return 1;
+  }
+}
+
+function pprogSetCoachTier(tier) {
+  try {
+    localStorage.setItem(PPROG_COACH_TIER_KEY, String(tier >= 2 ? 2 : 1));
+  } catch (e) {}
+}
+
+function pprogMarkIntakeSitting() {
+  try {
+    sessionStorage.setItem(PPROG_INTAKE_SITTING_KEY, "1");
+  } catch (e) {}
+  try {
+    var store = loadPprogStore();
+    if (!store.intakeSittingStartedAt) {
+      store.intakeSittingStartedAt = Date.now();
+      savePprogStore(store);
+    }
+  } catch (e2) {}
+}
+
+function pprogClearIntakeSitting() {
+  try {
+    sessionStorage.removeItem(PPROG_INTAKE_SITTING_KEY);
+  } catch (e) {}
+}
+
+function pprogHasIntakeSitting() {
+  try {
+    return sessionStorage.getItem(PPROG_INTAKE_SITTING_KEY) === "1";
+  } catch (e) {
+    return false;
+  }
+}
+
+/** Unfinished Terms + questionnaire sitting (not yet a completed athlete with a plan). */
+function pprogIsIntakeIncomplete(store) {
+  var s = store || loadPprogStore();
+  if (s.intakeComplete) return false;
+  if (s.fixedIntakeActive) return true;
+  if (s.fixedIntakePacket || s.blockBuildPending) return true;
+  if (s.legalAcceptedAt) return true;
+  if ((s.fixedIntakeStep | 0) > 0) return true;
+  return false;
+}
+
+/**
+ * Legal rule: Terms + full intake must be finished in one sitting.
+ * Abandon / new session → wipe draft, keep dw_uid (and coach tier if already registered).
+ */
+function pprogWipeIncompleteIntakeDraft(reason) {
+  if (!pprogIsIntakeIncomplete()) return false;
+  try {
+    var uid = pprogAthleteId();
+    var fresh = emptyPprogStore();
+    fresh.userId = uid;
+    fresh.athleteId = uid;
+    savePprogStore(fresh);
+    pprogClearIntakeSitting();
+    try {
+      sessionStorage.setItem("dw_pprog_intake_restart_notice", String(reason || "restart"));
+    } catch (eN) {}
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function pprogEnforceOneSittingIntake() {
+  try {
+    var store = loadPprogStore();
+    if (!pprogIsIntakeIncomplete(store)) return false;
+    var sitting = pprogHasIntakeSitting();
+    var started = Number(store.intakeSittingStartedAt) || 0;
+    var tooOld = started > 0 && Date.now() - started > PPROG_INTAKE_SITTING_MAX_MS;
+    if (!sitting || tooOld) {
+      return pprogWipeIncompleteIntakeDraft(!sitting ? "new_session" : "sitting_expired");
+    }
+  } catch (e) {}
+  return false;
+}
+
+function pprogMaybeShowIntakeRestartNotice() {
+  try {
+    var why = sessionStorage.getItem("dw_pprog_intake_restart_notice");
+    if (!why) return;
+    sessionStorage.removeItem("dw_pprog_intake_restart_notice");
+    var msg =
+      why === "admin_reset"
+        ? "Plan reset. Your identity stays the same. Complete Terms + intake in one sitting to rebuild."
+        : "Terms and the full intake must be finished in one sitting. Your previous unfinished intake was cleared — please start again.";
+    try {
+      alert(msg);
+    } catch (eA) {}
+  } catch (e) {}
 }
 
 /** Soften raw Google/Vercel blobs (e.g. API_KEY_INVALID JSON) for chat UI. */
@@ -1689,6 +1800,7 @@ function pprogLegalContinue() {
     termsId: PPROG_LEGAL_TERMS_ID,
   };
   savePprogStore(store);
+  pprogMarkIntakeSitting();
   pprogLogLegalAgreement(store);
   try {
     sendAnalytics("personal_coach_legal_agree", {
@@ -1711,6 +1823,7 @@ function pprogEnsureLegalAccepted(thenFn) {
 }
 
 function pprogOnStartClick() {
+  pprogMarkIntakeSitting();
   pprogEnsureLegalAccepted(function () {
     startPprogFixedIntake();
   });
@@ -3186,7 +3299,9 @@ function startPprogFixedIntake() {
   }
   store.fixedIntakeActive = true;
   store.fixedIntakeStep = 0;
+  if (!store.intakeSittingStartedAt) store.intakeSittingStartedAt = Date.now();
   savePprogStore(store);
+  pprogMarkIntakeSitting();
   savePprogMessages([
     {
       role: "model",
@@ -6083,6 +6198,16 @@ function maybeNotifyPprogIntakeComplete(store, opts) {
       blockStart: blockStart,
     });
   } catch (e) {}
+  try {
+    pprogSetCoachTier(2);
+    pprogClearIntakeSitting();
+    var sDone = loadPprogStore();
+    if (sDone) {
+      delete sDone.intakeSittingStartedAt;
+      sDone.analyticsTier = 2;
+      savePprogStore(sDone);
+    }
+  } catch (eTier) {}
   // Push snapshot to admin dashboard
   pushAdminSnapshot(store);
 }
@@ -7002,14 +7127,14 @@ function silentAdminFeedback(payload) {
       .then(function (j) {
         if (!j) return;
         if (j.emailed) return;
-        var reason = (j.resend && j.resend.reason) || "not_emailed";
-        var detail = (j.resend && j.resend.detail) || "";
+        var reason = (j.mail && j.mail.reason) || (j.resend && j.resend.reason) || "not_emailed";
+        var detail = (j.mail && j.mail.detail) || (j.resend && j.resend.detail) || "";
         try {
           console.warn(
             "[duck-wod] admin feedback email skipped:",
             reason,
             detail ? String(detail).slice(0, 160) : "",
-            "| need RESEND_API_KEY in .env.local / Vercel (see .env.example)"
+            "| need BREVO_API_KEY in .env.local / Vercel (see .env.example)"
           );
         } catch (e1) {}
       })
@@ -7804,6 +7929,12 @@ function retryPprogFillFailures() {
 
 function initPprogUi() {
   if (maybeResetPprogFromQuery()) return;
+  try {
+    pprogEnforceOneSittingIntake();
+  } catch (eSit) {}
+  try {
+    pprogMaybeShowIntakeRestartNotice();
+  } catch (eNote) {}
   bindPprogCoachFab();
   renderPprogChat();
   syncPprogModeUi();
@@ -7839,6 +7970,16 @@ try {
     initPprogUi();
   }
 } catch (e) {}
+
+/* End of intake sitting when the document is being unloaded / frozen.
+ * Brief app switches that keep the page alive can still continue the same sitting. */
+try {
+  window.addEventListener("pagehide", function () {
+    try {
+      if (pprogIsIntakeIncomplete()) pprogClearIntakeSitting();
+    } catch (ePh) {}
+  });
+} catch (ePhBind) {}
 
 var lastAiWorkoutText = "";
 
