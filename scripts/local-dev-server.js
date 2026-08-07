@@ -407,9 +407,9 @@ server.listen(PORT, "0.0.0.0", () => {
   if (!process.env.GEMINI_FILE_SEARCH_STORE) {
     console.log("  [i] GEMINI_FILE_SEARCH_STORE not set — coach runs without Drive File Search");
   }
-  if (!(process.env.BREVO_API_KEY || process.env.RESEND_API_KEY || process.env.RESEND_API_KEY_conmail)) {
+  if (!process.env.BREVO_API_KEY) {
     console.log("  [!] BREVO_API_KEY missing — coach debrief/feedback emails will not send");
-    console.log("      set BREVO_API_KEY (+ BREVO_SENDER_EMAIL=contact.duckwod@gmail.com) in .env.local — see RESEND_SECRETS.md");
+    console.log("      set BREVO_API_KEY (+ BREVO_SENDER_EMAIL=contact.duckwod@gmail.com) in .env.local — see BREVO_SECRETS.md");
   }
   console.log("");
 });

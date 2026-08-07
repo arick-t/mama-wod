@@ -171,8 +171,8 @@ function maybeSyncBrain() {
 async function sendEmail(reportText) {
   const { sendAppMail, hasMailProvider } = require("../lib/send-app-mail");
   if (!hasMailProvider()) {
-    console.log("[email] skipped — no BREVO_API_KEY / RESEND_API_KEY");
-    return { sent: false, reason: "no_mail_provider_key" };
+    console.log("[email] skipped — no BREVO_API_KEY");
+    return { sent: false, reason: "no_brevo_api_key" };
   }
   const to = resolveAppMailTo({
     COACH_DIGEST_EMAIL_TO: process.env.COACH_DIGEST_EMAIL_TO,
@@ -182,7 +182,7 @@ async function sendEmail(reportText) {
   const subject = `DUCK-WOD — weekly coach patterns digest (${israelToday()})`;
   const mail = await sendAppMail({ to, subject, text: reportText });
   if (!mail.sent) {
-    throw new Error(`${mail.provider || "mail"} failed: ${mail.reason} ${mail.detail || ""}`);
+    throw new Error(`brevo failed: ${mail.reason} ${mail.detail || ""}`);
   }
   return { sent: true, to, provider: mail.provider };
 }
