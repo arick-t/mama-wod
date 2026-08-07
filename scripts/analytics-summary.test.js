@@ -3,6 +3,7 @@ const {
   readJsonlEvents,
   computeSummary,
   buildReportLines,
+  buildReportHtml,
 } = require("./analytics-summary.js");
 
 function assertEqual(actual, expected, label) {
@@ -37,10 +38,16 @@ function run() {
   assertEqual(summary.dailyVeteran.length, 1, "dailyVeteran");
 
   const lines = buildReportLines(summary);
-  assertEqual(lines[0].indexOf('דו"ח ניתור') === 0, true, "title");
-  assertEqual(lines.some((l) => l.indexOf("כניסות לא-מוכרים לאפליקציה") === 0), true, "traffic line");
-  assertEqual(lines.some((l) => l.indexOf("1.א נרשמים חדשים") === 0), true, "coach new line");
-  assertEqual(lines.some((l) => l.indexOf("1.ב ותיקים") === 0), true, "coach board line");
+  assertEqual(lines[0].indexOf("🦆") === 0, true, "duck title");
+  assertEqual(lines.some((l) => l === "תנועה"), true, "section traffic");
+  assertEqual(lines.some((l) => l.indexOf("נרשמים חדשים") === 0), true, "coach new line");
+  assertEqual(lines.some((l) => l.indexOf("ותיקים — רק צפייה בלוח") === 0), true, "coach board line");
+  assertEqual(lines.some((l) => /\d\.\d/.test(l)), false, "no decimal-looking labels");
+
+  const html = buildReportHtml(summary);
+  assertEqual(html.indexOf('dir="rtl"') > -1, true, "html rtl");
+  assertEqual(html.indexOf("font-weight:700") > -1, true, "html bold sections");
+  assertEqual(html.indexOf("🦆") > -1, true, "html duck");
 
   console.log("analytics-summary test passed");
   console.log(lines.join("\n"));
