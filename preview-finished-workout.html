@@ -89,21 +89,33 @@ body{
 <body>
 <div class="wrap">
   <div class="brand">DUCK-WOD</div>
-  <div class="sub">Done workout button · floating popup preview</div>
-  <p class="note">Tap <strong>Done</strong> → centered floating popup over the full screen. Closes after you send, or via <strong>×</strong> without saving.</p>
+  <div class="sub">v21.4.1 · Done beside date · no next-block subtitle</div>
+
+  <div class="demo" style="margin-bottom:18px">
+    <div class="panel-label">Personal Coach head · unlock subtitle removed</div>
+    <div class="pprog-day-card" style="padding:14px 16px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:56px;height:56px;border-radius:50%;background:#2a2a2a;border:2px solid #8e44ad;flex-shrink:0"></div>
+        <div>
+          <div style="color:#c9b6e8;font-weight:800;font-size:1.2em">Personal Coach</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="demo">
-    <div class="panel-label">Day card · tap Done</div>
+    <div class="panel-label">Day card · Done next to date title</div>
     <div class="pprog-day-card">
+      <div style="color:#b06dcf;font-size:.78em;margin:0 0 8px;opacity:.9">Week 1 / 5 · Aug 2–8 · Engine Base &amp; Unilateral Strength</div>
       <div class="card-header">
-        <div class="source-name">Wed · 5 Aug</div>
+        <div class="source-name">Fri · 7 August</div>
         <button type="button" class="pprog-finish-btn" id="openBtn">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 21h9c.8 0 1.5-.5 1.8-1.2l2.1-6.3c.1-.3.1-.6.1-.9V11c0-1.1-.9-2-2-2h-6.3l1-4.7.1-.5c0-.4-.2-.8-.5-1.1L13.2 1 6.6 7.6C6.2 7.9 6 8.4 6 9v10c0 1.1.9 2 2 2zm0-2V9l4.3-4.3-1.3 5.3H19v1.1L17 19H9zM4 9H2v12h2c.6 0 1-.4 1-1V10c0-.6-.4-1-1-1z"/></svg>
           Done
         </button>
       </div>
-      <div class="section-title">Strength / Skill</div>
-      <ul class="section-lines"><li>Back squat 5×3</li><li>Rest 2:00</li></ul>
+      <div class="section-title">Warm-up &amp; Core Activation</div>
+      <ul class="section-lines"><li>200m Run</li><li>10 Russian KB Swings @ 24kg</li><li>10 Kipping Pull-ups</li></ul>
     </div>
     <div class="status" id="status"></div>
   </div>
