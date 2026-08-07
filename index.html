@@ -1395,6 +1395,11 @@ function sendAnalytics(eventName, props) {
       if (typeof props.modifiedKindsCount === "number" && isFinite(props.modifiedKindsCount)) payload.modifiedKindsCount = Math.floor(props.modifiedKindsCount);
       if (typeof props.name === "string" && props.name) payload.name = props.name.slice(0, 40);
     }
+    try {
+      var tierRaw = localStorage.getItem("dw_coach_tier");
+      var tierN = parseInt(tierRaw || "1", 10);
+      if (tierN >= 2) payload.coachTier = 2;
+    } catch (eTier) {}
     /* Optional short display name on coach events only (uid is always sent). */
     if (String(eventName || "").indexOf("personal_coach_") === 0 && !payload.name) {
       try {

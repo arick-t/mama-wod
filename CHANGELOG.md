@@ -3,14 +3,33 @@
 ## [21.4] - 2026-08-07
 
 ### Personal Coach: light UX pack (display)
-- **Display version: v21.4** (Coach stays **v2.1**; package/`VERSION` stay on the 21.3.x line until release — no downgrade).
+- **Display version: v21.4** (Coach stays **v2.1**; package/`VERSION` stay on the 21.3.x line — no downgrade).
 - Floating circular prev/next day arrows + swipe between workouts (daily or monthly day card).
 - Coach FAB: tiny **talk to / the coach** caption above the duck, inside one shared purple pill shell with the avatar.
 - App landing tab: open on **Personal Coach** (not Workout's) when the coach tab is enabled.
 - Pre-START gate (first screen only): hide the free-text Message/Send box; keep **START**. Intake questionnaire after START is unchanged.
 - Previews: `preview-day-nav.html`, `preview-coach-fab-caption.html`, `preview-coach-prestart.html`.
 - Done / debrief learning stays on a separate track.
-- **Hold:** ship only after display **v21.3** is live elsewhere, then explicit approval after thorough checks.
+
+---
+
+## [21.3.8] - 2026-08-07
+
+### Analytics weekly report clarity
+- RTL Hebrew layout by sections; **bold** section headings; plain whole-number metrics (no `1.א` / `2.1` labels that break in mail clients).
+- Duck icon in title/subject; HTML email body via Brevo (`htmlContent` + text fallback).
+- Sample weekly fixture updated for the new report shape; sample dispatches get subject prefix «דוגמה».
+
+---
+
+## [21.3.7] - 2026-08-07
+
+### Analytics weekly report
+- New report sections: traffic («כניסות לא-מוכרים»), Personal Coach (new / incomplete / board / day+general changes), daily workouts (non-coach priority).
+- Coach members counted by tier-2 registry (seed + intake_complete + legal+block + `coachTier` on events) — not by first-seen `dw_uid`.
+- Seeded veterans: **אריק** (`u_hg7zrwwvyf7`), **עדי** (`u_twhgewb1se`).
+- Client emits `coachTier: 2` when `dw_coach_tier` is set; `/api/event` persists it.
+- Mobile humans only; display stays **DAILY WORKOUTS · v21.3**.
 
 ---
 
