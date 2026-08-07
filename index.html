@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.4.1</title>
+<title>DUCK-WOD · v21.5</title>
 <meta name="theme-color" content="#111">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -125,6 +125,21 @@ html.pprog-finish-open,body.pprog-finish-open{overflow:hidden;overscroll-behavio
   width:100%;min-height:88px;padding:10px;background:#151a16;color:#eee;
   border:1px solid #3d7a52;border-radius:10px;font-family:inherit;font-size:.92em;resize:vertical;box-sizing:border-box;
 }
+.pprog-finish-part-wrap{display:none;margin:0 0 10px}
+.pprog-finish-part-wrap.open{display:block}
+.pprog-finish-part-wrap label{display:block;color:#9ec9ad;font-size:.78em;font-weight:600;margin:0 0 6px;line-height:1.35}
+.pprog-finish-part-opts{display:flex;flex-direction:column;gap:8px}
+.pprog-finish-part-opt{
+  text-align:left;width:100%;border-radius:10px;border:1px solid #3a4a3e;background:#1a221c;
+  color:#d7f5e2;padding:10px 12px;font-weight:700;cursor:pointer;font-family:inherit
+}
+.pprog-finish-part-opt:hover{border-color:#4caf70;background:#243328}
+.pprog-finish-part-opt .pprog-finish-opt-hint{display:block;margin-top:3px;font-size:.72em;font-weight:500;color:#8a9a8e}
+.pprog-finish-reply{
+  display:none;margin:0 0 10px;padding:10px 12px;border-radius:10px;border:1px solid #3a5a45;
+  background:rgba(76,175,112,.12);color:#d7f5e2;font-size:.88em;line-height:1.4;font-weight:600
+}
+.pprog-finish-reply.open{display:block}
 .pprog-finish-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
 .pprog-finish-send{
   appearance:none;border:none;border-radius:10px;padding:10px 16px;font-weight:800;font-size:.85em;
@@ -946,7 +961,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.4.1</div>
+<div class="header-sub">DAILY WORKOUTS · v21.5</div>
 <div class="header-sub" id="coachVersionSub">COACH · v2.1</div>
 </div>
 <div class="tabs">
@@ -8146,6 +8161,11 @@ function pprogFinishThumbsIcon() {
 
 var pprogFinishDayKey = "";
 var pprogFinishChoice = "";
+var pprogFinishPartRole = "";
+var pprogFinishPartTitle = "";
+var pprogFinishPartIndex = -1;
+var pprogFinishPendingParts = null;
+var pprogFinishCloseTimer = null;
 
 function pprogFinishSetBodyLock(on) {
   try {
@@ -8154,9 +8174,98 @@ function pprogFinishSetBodyLock(on) {
   } catch (eLock) {}
 }
 
+function pprogFinishResetPartState() {
+  pprogFinishPartRole = "";
+  pprogFinishPartTitle = "";
+  pprogFinishPartIndex = -1;
+  pprogFinishPendingParts = null;
+  var partWrap = document.getElementById("pprogFinishPartWrap");
+  var partOpts = document.getElementById("pprogFinishPartOpts");
+  if (partWrap) partWrap.classList.remove("open");
+  if (partOpts) partOpts.innerHTML = "";
+}
+
+function pprogFinishHideReply() {
+  var reply = document.getElementById("pprogFinishReply");
+  if (reply) {
+    reply.classList.remove("open");
+    reply.textContent = "";
+  }
+}
+
+function pprogFinishShowReply(text) {
+  var reply = document.getElementById("pprogFinishReply");
+  if (!reply) return;
+  reply.textContent = String(text || "");
+  reply.classList.add("open");
+}
+
+function pprogFinishDayPartsForKey(dayKey) {
+  try {
+    var store = loadPprogStore();
+    var week =
+      store.currentWeek ||
+      (store.currentBlock && store.currentBlock.weeks && store.currentBlock.weeks[store.activeWeekIndex | 0]);
+    var dayData = week && week.days && week.days[dayKey];
+    return (dayData && dayData.parts) || [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function pprogFinishRenderPartPicker(parts, rating) {
+  var partWrap = document.getElementById("pprogFinishPartWrap");
+  var partOpts = document.getElementById("pprogFinishPartOpts");
+  var label = document.getElementById("pprogFinishPartLabel");
+  if (!partWrap || !partOpts) return;
+  partOpts.innerHTML = "";
+  if (label) {
+    label.textContent =
+      rating === "too_easy" ? "Which part felt too easy?" : "Which part felt too hard?";
+  }
+  for (var i = 0; i < parts.length; i++) {
+    (function (p, n) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "pprog-finish-part-opt";
+      btn.setAttribute("data-part-index", String(p.index));
+      var letter = n === 0 ? "A" : n === 1 ? "B" : String(n + 1);
+      btn.innerHTML =
+        "Part " +
+        letter +
+        " — " +
+        String(p.title || "Part").replace(/</g, "&lt;") +
+        '<span class="pprog-finish-opt-hint">' +
+        String(p.part_role || "part") +
+        "</span>";
+      btn.onclick = function () {
+        selectPprogFinishPart(p);
+      };
+      partOpts.appendChild(btn);
+    })(parts[i], i);
+  }
+  partWrap.classList.add("open");
+}
+
+function selectPprogFinishPart(part) {
+  if (!part) return;
+  pprogFinishPartRole = String(part.part_role || "unknown");
+  pprogFinishPartTitle = String(part.title || "").slice(0, 80);
+  pprogFinishPartIndex = part.index | 0;
+  var partWrap = document.getElementById("pprogFinishPartWrap");
+  if (partWrap) partWrap.classList.remove("open");
+  submitPprogFinishFeedback();
+}
+
 function openPprogFinishFeedback(dayKey) {
+  if (pprogFinishCloseTimer) {
+    clearTimeout(pprogFinishCloseTimer);
+    pprogFinishCloseTimer = null;
+  }
   pprogFinishDayKey = normalizePprogDayKey(dayKey) || dayKey;
   pprogFinishChoice = "";
+  pprogFinishResetPartState();
+  pprogFinishHideReply();
   var overlay = document.getElementById("pprogFinishOverlay");
   var otherWrap = document.getElementById("pprogFinishOtherWrap");
   var note = document.getElementById("pprogFinishOtherNote");
@@ -8164,7 +8273,12 @@ function openPprogFinishFeedback(dayKey) {
   var opts = document.querySelectorAll("#pprogFinishOptions .pprog-finish-opt");
   for (var i = 0; i < opts.length; i++) opts[i].classList.remove("selected");
   if (otherWrap) otherWrap.classList.remove("open");
-  if (note) note.value = "";
+  if (note) {
+    note.value = "";
+    try {
+      note.setAttribute("maxlength", String(PPROG_FINISH_OTHER_MAX || 160));
+    } catch (eMax) {}
+  }
   if (sendBtn) sendBtn.disabled = true;
   try {
     var store = loadPprogStore();
@@ -8173,7 +8287,9 @@ function openPprogFinishFeedback(dayKey) {
     var prev = dayData && dayData.finishFeedback;
     if (prev && prev.rating) {
       selectPprogFinishOption(prev.rating, true);
-      if (prev.rating === "other" && note) note.value = String(prev.note || "");
+      if (prev.rating === "other" && note) note.value = String(prev.note || "").slice(0, PPROG_FINISH_OTHER_MAX || 160);
+      if (prev.part_role) pprogFinishPartRole = String(prev.part_role);
+      if (prev.part_title) pprogFinishPartTitle = String(prev.part_title);
       syncPprogFinishSendEnabled();
     }
   } catch (ePrefill) {}
@@ -8193,6 +8309,10 @@ function openPprogFinishFeedback(dayKey) {
 }
 
 function closePprogFinishFeedback() {
+  if (pprogFinishCloseTimer) {
+    clearTimeout(pprogFinishCloseTimer);
+    pprogFinishCloseTimer = null;
+  }
   var overlay = document.getElementById("pprogFinishOverlay");
   if (overlay) {
     overlay.classList.remove("open");
@@ -8201,10 +8321,14 @@ function closePprogFinishFeedback() {
   pprogFinishSetBodyLock(false);
   pprogFinishDayKey = "";
   pprogFinishChoice = "";
+  pprogFinishResetPartState();
+  pprogFinishHideReply();
 }
 
 function selectPprogFinishOption(choice, silent) {
   pprogFinishChoice = String(choice || "");
+  pprogFinishResetPartState();
+  pprogFinishHideReply();
   var opts = document.querySelectorAll("#pprogFinishOptions .pprog-finish-opt");
   for (var i = 0; i < opts.length; i++) {
     var v = opts[i].getAttribute("data-finish");
@@ -8213,8 +8337,29 @@ function selectPprogFinishOption(choice, silent) {
   var otherWrap = document.getElementById("pprogFinishOtherWrap");
   if (otherWrap) otherWrap.classList.toggle("open", pprogFinishChoice === "other");
   syncPprogFinishSendEnabled();
-  if (!silent && pprogFinishChoice && pprogFinishChoice !== "other") {
+  if (silent) return;
+
+  if (pprogFinishChoice === "just_right") {
     submitPprogFinishFeedback();
+    return;
+  }
+  if (pprogFinishChoice === "too_hard" || pprogFinishChoice === "too_easy") {
+    var parts = typeof pprogFinishCountableParts === "function"
+      ? pprogFinishCountableParts(pprogFinishDayPartsForKey(pprogFinishDayKey))
+      : [];
+    pprogFinishPendingParts = parts;
+    if (parts.length >= 2) {
+      pprogFinishRenderPartPicker(parts, pprogFinishChoice);
+      syncPprogFinishSendEnabled();
+      return;
+    }
+    if (parts.length === 1) {
+      pprogFinishPartRole = parts[0].part_role;
+      pprogFinishPartTitle = parts[0].title;
+      pprogFinishPartIndex = parts[0].index;
+    }
+    submitPprogFinishFeedback();
+    return;
   }
 }
 
@@ -8230,6 +8375,15 @@ function syncPprogFinishSendEnabled() {
     sendBtn.disabled = !(note && String(note.value || "").trim());
     return;
   }
+  if (
+    (pprogFinishChoice === "too_hard" || pprogFinishChoice === "too_easy") &&
+    pprogFinishPendingParts &&
+    pprogFinishPendingParts.length >= 2 &&
+    !pprogFinishPartRole
+  ) {
+    sendBtn.disabled = true;
+    return;
+  }
   sendBtn.disabled = false;
 }
 
@@ -8237,6 +8391,8 @@ function submitPprogFinishFeedback() {
   if (!pprogFinishDayKey || !pprogFinishChoice) return;
   var noteEl = document.getElementById("pprogFinishOtherNote");
   var note = noteEl ? String(noteEl.value || "").trim() : "";
+  if (typeof pprogFinishTruncateNote === "function") note = pprogFinishTruncateNote(note);
+  else note = note.slice(0, 160);
   if (pprogFinishChoice === "other" && !note) {
     syncPprogFinishSendEnabled();
     if (noteEl) {
@@ -8246,6 +8402,16 @@ function submitPprogFinishFeedback() {
     }
     return;
   }
+  if (
+    (pprogFinishChoice === "too_hard" || pprogFinishChoice === "too_easy") &&
+    pprogFinishPendingParts &&
+    pprogFinishPendingParts.length >= 2 &&
+    !pprogFinishPartRole
+  ) {
+    syncPprogFinishSendEnabled();
+    return;
+  }
+
   var store = loadPprogStore();
   ensurePprogBlockFiveWeeks(store);
   syncStoreActiveWeek(store);
@@ -8256,22 +8422,74 @@ function submitPprogFinishFeedback() {
   if (!week) return;
   if (!week.days) week.days = {};
   if (!week.days[pprogFinishDayKey]) week.days[pprogFinishDayKey] = { parts: [] };
+
+  var sessionDate = pprogSessionDateForDay(pprogFinishDayKey, wi, store);
+  var weekday = String(pprogFinishDayKey || "").slice(0, 12);
+  var brickWeek = (wi | 0) + 1;
+
+  var learn = null;
+  try {
+    if (typeof pprogRecordFinishFeedback === "function") {
+      learn = pprogRecordFinishFeedback({
+        rating: pprogFinishChoice,
+        note: pprogFinishChoice === "other" ? note : "",
+        part_role: pprogFinishPartRole || "unknown",
+        part_title: pprogFinishPartTitle || "",
+        session_date: sessionDate,
+        brick_week: brickWeek,
+        weekday: weekday,
+        lang: "en",
+      });
+    }
+  } catch (eLearn) {
+    learn = null;
+  }
+
   week.days[pprogFinishDayKey].finishFeedback = {
     rating: pprogFinishChoice,
     note: pprogFinishChoice === "other" ? note : "",
+    part_role: pprogFinishPartRole || "",
+    part_title: pprogFinishPartTitle || "",
+    part_index: pprogFinishPartIndex >= 0 ? pprogFinishPartIndex : null,
+    action_allowed: (learn && learn.action_allowed) || "accumulate_only",
+    safety_flag: !!(learn && learn.safety_flag),
     at: new Date().toISOString(),
   };
   store.currentWeek = week;
   if (store.currentBlock && store.currentBlock.weeks) store.currentBlock.weeks[wi] = week;
   savePprogStore(store);
+
   try {
     sendAnalytics("personal_coach_message", {
       coachArea: "finish_workout",
       finishRating: pprogFinishChoice,
+      changeType: pprogFinishPartRole ? "finish_" + pprogFinishPartRole : "finish_session",
+      dayKey: pprogFinishDayKey,
+      weekIndex: wi,
     });
   } catch (eA) {}
-  closePprogFinishFeedback();
-  renderPprogWeek();
+
+  var replyText =
+    (learn && learn.staticReply) ||
+    (PPROG_FINISH_STATIC &&
+      PPROG_FINISH_STATIC[pprogFinishChoice] &&
+      PPROG_FINISH_STATIC[pprogFinishChoice].en) ||
+    "Got it.";
+  pprogFinishShowReply(replyText);
+
+  if (learn && learn.shouldAttemptPaidMicroBias && learn.event) {
+    try {
+      pprogAttemptFinishMicroBias(learn.event).catch(function () {});
+    } catch (eBias) {}
+  }
+
+  pprogFinishCloseTimer = setTimeout(function () {
+    pprogFinishCloseTimer = null;
+    closePprogFinishFeedback();
+    try {
+      renderPprogWeek();
+    } catch (eR) {}
+  }, 900);
 }
 
 document.addEventListener("input", function (ev) {
@@ -8300,6 +8518,7 @@ if (document.readyState === "loading") {
 window.openPprogFinishFeedback = openPprogFinishFeedback;
 window.closePprogFinishFeedback = closePprogFinishFeedback;
 window.selectPprogFinishOption = selectPprogFinishOption;
+window.selectPprogFinishPart = selectPprogFinishPart;
 window.submitPprogFinishFeedback = submitPprogFinishFeedback;
 
 function renderPprogDayPartsHtml(parts, dayData, dayKey) {
@@ -12757,10 +12976,15 @@ function initTimerColorBuckets() {
         <span class="pprog-finish-opt-hint">You’ll need to write what your coach should know</span>
       </button>
     </div>
-    <div class="pprog-finish-other-wrap" id="pprogFinishOtherWrap">
-      <label for="pprogFinishOtherNote">If you choose Other, describe what your coach should know about this session.</label>
-      <textarea id="pprogFinishOtherNote" maxlength="1200" placeholder="e.g. knees flared on squats · ran out of time on the metcon · loved the gymnastics volume…"></textarea>
+    <div class="pprog-finish-part-wrap" id="pprogFinishPartWrap">
+      <label id="pprogFinishPartLabel">Which part felt off?</label>
+      <div class="pprog-finish-part-opts" id="pprogFinishPartOpts" role="listbox" aria-labelledby="pprogFinishPartLabel"></div>
     </div>
+    <div class="pprog-finish-other-wrap" id="pprogFinishOtherWrap">
+      <label for="pprogFinishOtherNote">If you choose Other, describe what your coach should know about this session (max 160 characters).</label>
+      <textarea id="pprogFinishOtherNote" maxlength="160" placeholder="e.g. knees flared on squats · ran out of time on the metcon…"></textarea>
+    </div>
+    <div class="pprog-finish-reply" id="pprogFinishReply" role="status" aria-live="polite"></div>
     <div class="pprog-finish-actions">
       <button type="button" class="pprog-finish-send" id="pprogFinishSendBtn" disabled onclick="submitPprogFinishFeedback()">Send</button>
     </div>
