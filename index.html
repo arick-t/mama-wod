@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.3</title>
+<title>DUCK-WOD · v21.3.1</title>
 <meta name="theme-color" content="#111">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -862,22 +862,22 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.3</div>
+<div class="header-sub">DAILY WORKOUTS · v21.3.1</div>
 <div class="header-sub" id="coachVersionSub">COACH · v2.1</div>
 </div>
 <div class="tabs">
-<button class="tab-btn tab-pprog-wrap" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
-<button class="tab-btn active" id="tab-browse" onclick="showTab('browse')">Workout's</button>
+<button class="tab-btn tab-pprog-wrap active" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
+<button class="tab-btn" id="tab-browse" onclick="showTab('browse')">Workout's</button>
 <button class="tab-btn tab-generate-wrap" id="tab-aibeta" onclick="showTab('aibeta')" hidden aria-hidden="true" tabindex="-1">Generate Workout</button>
 <button class="tab-btn tab-wtools-wrap" id="tab-workout" onclick="showTab('workout')">Workout Tools</button>
 <button class="tab-btn" id="tab-sources" onclick="showTab('sources')">Sources</button>
 <button class="tab-btn" id="tab-about" onclick="showTab('about')">About</button>
 </div>
 
-<!-- Days selector - sticky below tabs -->
-<div id="days-bar" style="position:sticky;top:0;z-index:100;background:#1a1a1a;border-bottom:2px solid #E8451A;padding:8px 0;overflow-x:auto;white-space:nowrap"></div>
+<!-- Days selector - sticky below tabs (browse only; hidden on coach landing) -->
+<div id="days-bar" style="display:none;position:sticky;top:0;z-index:100;background:#1a1a1a;border-bottom:2px solid #E8451A;padding:8px 0;overflow-x:auto;white-space:nowrap"></div>
 
-<div class="tab-content active" id="browse-tab">
+<div class="tab-content" id="browse-tab">
   <div class="workouts-grid" id="grid"><div class="empty"><div class="empty-icon">🦆</div>Loading...</div></div>
 </div>
 
@@ -1014,7 +1014,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
   <div class="workouts-grid" id="aiGenResults" style="margin-top:22px"></div>
 </div>
 
-<div class="tab-content" id="pprog-tab" hidden aria-hidden="true">
+<div class="tab-content active" id="pprog-tab" aria-hidden="false">
   <div class="pprog-panel">
     <div class="pprog-head">
       <img class="pprog-coach-avatar" id="pprogCoachAvatar" src="assets/hamamen-coach-duck.png" alt="Personal Coach" width="72" height="72" role="button" tabindex="0" title="Personal Coach" aria-label="Personal Coach" onclick="resetPprogUser()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();resetPprogUser();}">
@@ -11891,22 +11891,30 @@ function initTimerColorBuckets() {
   } catch (e) {}
 })();
 </script>
-<!-- One-time handoff / intake-reset deep-link: open Personal Coach tab after claim.html -->
+<!-- Default landing: Personal Coach. Deep-link ?tab=browse|workout|… still honored. -->
 <script>
 (function () {
   try {
     var q = new URLSearchParams(window.location.search || "");
     var tab = q.get("tab");
-    if (tab === "pprog" && typeof showTab === "function") {
-      showTab("pprog");
-      if (q.get("intake_reset") === "1") {
-        try {
-          if (typeof syncPprogModeUi === "function") syncPprogModeUi();
-          if (typeof renderPprogChat === "function") renderPprogChat();
-          if (typeof syncPprogStartBtn === "function") syncPprogStartBtn();
-        } catch (e2) {}
-      } else if (typeof renderPprogWeek === "function") {
-        try { renderPprogWeek(); } catch (e1) {}
+    var allowed = { pprog: 1, browse: 1, aibeta: 1, workout: 1, sources: 1, about: 1 };
+    if (!tab || !allowed[tab]) {
+      tab = typeof PPROG_TAB_ENABLED !== "undefined" && PPROG_TAB_ENABLED ? "pprog" : "browse";
+    }
+    if (typeof showTab === "function") {
+      showTab(tab);
+      if (tab === "pprog") {
+        if (q.get("intake_reset") === "1") {
+          try {
+            if (typeof syncPprogModeUi === "function") syncPprogModeUi();
+            if (typeof renderPprogChat === "function") renderPprogChat();
+            if (typeof syncPprogStartBtn === "function") syncPprogStartBtn();
+          } catch (e2) {}
+        } else if (typeof renderPprogWeek === "function") {
+          try {
+            renderPprogWeek();
+          } catch (e1) {}
+        }
       }
     }
   } catch (e) {}
