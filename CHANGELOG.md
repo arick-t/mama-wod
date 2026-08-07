@@ -5,7 +5,7 @@
 ### Personal Coach: light UX pack (display)
 - **Display version: v21.3.1** (Coach stays **v2.1**; package/`VERSION` remain on the 21.3.5 line — no downgrade).
 - Floating circular prev/next day arrows + swipe between workouts (daily or monthly day card).
-- Coach FAB caption: tiny **talk to / the coach** under the floating duck.
+- Coach FAB: tiny **talk to / the coach** caption above the duck, inside one shared purple pill shell with the avatar.
 - App landing tab: open on **Personal Coach** (not Workout's) when the coach tab is enabled.
 - Previews: `preview-day-nav.html`, `preview-coach-fab-caption.html`.
 - Done / debrief learning stays on a separate track.
