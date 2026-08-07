@@ -1,5 +1,20 @@
 # Changelog
 
+## [21.3.8] - 2026-08-07
+
+### Personal Coach — Done finish learning (v1 brain)
+- Deterministic finish-signal engine (`lib/coach-finish-signals.js`): accumulate → threshold **3** same `part_role` / 14d → `micro_bias_next`.
+- **0 LLM on Done click**; static replies; Other ≤160 chars + keyword safety flag.
+- New action `finish_micro_bias` (surgical WEEK_JSON forward bias) — max **1 paid call / Israel month**; then piggyback on natural `generate_week` / `week_detail` via compact signal cards (≤~500 chars).
+- Client store `finishLearning` + hooks for cosmetic Done UI (`pprogRecordFinishFeedback`, part pick helpers, `pprogAttemptFinishMicroBias`).
+- POL-025 added; does not consume daily POL-COST edit slots.
+- UI part-pick / Done popup wiring remains with cosmetic engine (PR #38 base).
+
+### Display
+- App header stays **DAILY WORKOUTS · v21.3** (Coach **v2.1**). Internal semver **21.3.8**.
+
+---
+
 ## [21.3.7] - 2026-08-07
 
 ### Analytics weekly report

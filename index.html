@@ -2078,6 +2078,7 @@ function emptyPprogStore() {
     partModificationEvents: [],
     modificationRulesNotified: {},
     costCaps: { dailyEdits: {}, monthlyUnits: {}, lastLargeRebuildAt: null, softUpgradeBrickStart: null },
+    finishLearning: { events: [], paidAdaptationsByMonth: {}, safetyLog: [] },
     pastBlocks: [],
     autoNextTriggeredForBlockStart: null,
     intakeNotifySent: false,
@@ -2120,6 +2121,14 @@ function loadPprogStore() {
     if (!o.costCaps.monthlyUnits || typeof o.costCaps.monthlyUnits !== "object") {
       o.costCaps.monthlyUnits = {};
     }
+    if (!o.finishLearning || typeof o.finishLearning !== "object") {
+      o.finishLearning = { events: [], paidAdaptationsByMonth: {}, safetyLog: [] };
+    }
+    if (!Array.isArray(o.finishLearning.events)) o.finishLearning.events = [];
+    if (!o.finishLearning.paidAdaptationsByMonth || typeof o.finishLearning.paidAdaptationsByMonth !== "object") {
+      o.finishLearning.paidAdaptationsByMonth = {};
+    }
+    if (!Array.isArray(o.finishLearning.safetyLog)) o.finishLearning.safetyLog = [];
     /* Migrate legacy single-week store → 5-week block shell */
     if (!o.currentBlock && o.currentWeek && o.currentWeek.days) {
       o.currentBlock = {
@@ -4065,6 +4074,8 @@ function athleteProfilePayload(opts) {
     weekStart: (s.currentWeek && s.currentWeek.weekStart) || null,
     partModificationSummary: pprogCountModifiedKindsLast30Days(s.partModificationEvents),
     costCaps: pprogCostCapsPayload(s, { sessionDate: opts && opts.sessionDate }),
+    finishSignalsInject: pprogFinishSignalsInject(s),
+    finishLearning: pprogFinishLearningPayload(s),
   };
   if (!omitChat) {
     payload.chatSummaryTail = (s.chat || [])
@@ -5346,6 +5357,345 @@ function pprogIsraelDaysBetween(a, b) {
     return 999;
   }
 }
+
+/* ── Done finish-learning (Budget v1 — 0 LLM on click; threshold 3; max 1 paid/mo) ── */
+var PPROG_FINISH_OTHER_MAX = 160;
+var PPROG_FINISH_THRESHOLD = 3;
+var PPROG_FINISH_WINDOW_DAYS = 14;
+var PPROG_FINISH_SAFETY_RE =
+  /\b(pain|injury|injured|chest|dizzy|dizziness|numb|numbness|faint|fainted|breath|breathing|emergency|hurt)\b|כאב|פציעה|נפצע|חזה|סחרחור|עילפון|נשימה|מפרק|שבר/i;
+
+var PPROG_FINISH_STATIC = {
+  just_right: { en: "Got it — locked in for next time.", he: "קיבלתי — נשמר להמשך." },
+  too_hard: {
+    en: "Noted — I’ll ease that part going forward when the pattern holds.",
+    he: "רשמתי — אקל על החלק הזה בהמשך כשהדפוס יתבהר.",
+  },
+  too_easy: {
+    en: "Noted — I’ll push that part a bit when the pattern holds.",
+    he: "רשמתי — אדחוף את החלק הזה קצת בהמשך כשהדפוס יתבהר.",
+  },
+  other: {
+    en: "Thanks — I saved that for later training decisions.",
+    he: "תודה — שמרתי את זה להחלטות אימון בהמשך.",
+  },
+  safety: {
+    en: "Thanks for flagging that. Ease off anything that hurts and seek appropriate care if needed — I’m not a medical provider.",
+    he: "תודה שציינת. הורד עומס מכל מה שכואב ופנה לטיפול מתאים אם צריך — אני לא גורם רפואי.",
+  },
+};
+
+function pprogEnsureFinishLearning(store) {
+  if (!store.finishLearning || typeof store.finishLearning !== "object") {
+    store.finishLearning = { events: [], paidAdaptationsByMonth: {}, safetyLog: [] };
+  }
+  if (!Array.isArray(store.finishLearning.events)) store.finishLearning.events = [];
+  if (!store.finishLearning.paidAdaptationsByMonth || typeof store.finishLearning.paidAdaptationsByMonth !== "object") {
+    store.finishLearning.paidAdaptationsByMonth = {};
+  }
+  if (!Array.isArray(store.finishLearning.safetyLog)) store.finishLearning.safetyLog = [];
+  return store.finishLearning;
+}
+
+function pprogFinishInferPartRole(title) {
+  var t = String(title || "").toLowerCase();
+  if (/(warm[\s-]?up|mobility|activation)/.test(t)) return "warmup";
+  if (/(strength|lift|squat|deadlift|press|snatch|clean|jerk|1rm|%1rm)/.test(t)) return "strength";
+  if (/(skill|gymnastics|handstand|muscle[\s-]?up|pull[\s-]?up practice)/.test(t)) return "skill";
+  if (/(accessory|extra|cooldown|cool[\s-]?down)/.test(t)) return "accessory";
+  if (/(amrap|emom|for time|metcon|conditioning|chipper|partner)/.test(t)) return "metcon";
+  return "unknown";
+}
+
+/** Training parts for Done part-pick (warmup excluded). */
+function pprogFinishCountableParts(parts) {
+  var list = Array.isArray(parts) ? parts : [];
+  var out = [];
+  for (var i = 0; i < list.length; i++) {
+    var p = list[i] || {};
+    var title = String(p.title || p.name || "").trim() || "Part " + (i + 1);
+    var role = String(p.part_role || p.role || p.kind || "").toLowerCase();
+    if (!role || role === "unknown") role = pprogFinishInferPartRole(title);
+    if (role === "warmup" || /warm|mobil/i.test(title) && role === "unknown") continue;
+    if (role === "warmup") continue;
+    if (role !== "strength" && role !== "metcon" && role !== "skill" && role !== "accessory") {
+      if (/warm|mobil/i.test(title)) continue;
+      role = "metcon";
+    }
+    out.push({ index: i, title: title.slice(0, 80), part_role: role });
+  }
+  return out;
+}
+
+function pprogFinishTruncateNote(note) {
+  var t = String(note || "").trim().replace(/\s+/g, " ");
+  return t.length <= PPROG_FINISH_OTHER_MAX ? t : t.slice(0, PPROG_FINISH_OTHER_MAX);
+}
+
+function pprogFinishCountSameDirection(events, rating, partRole, sessionDate) {
+  if (rating !== "too_hard" && rating !== "too_easy") return 0;
+  var n = 0;
+  for (var i = 0; i < (events || []).length; i++) {
+    var e = events[i];
+    if (!e || e.rating !== rating) continue;
+    if (String(e.part_role || "") !== String(partRole || "")) continue;
+    var days = pprogIsraelDaysBetween(e.session_date, sessionDate);
+    if (days < 0 || days > PPROG_FINISH_WINDOW_DAYS) continue;
+    n++;
+  }
+  return n;
+}
+
+function pprogFinishPaidAvailable(fl, monthKey) {
+  return (fl.paidAdaptationsByMonth[monthKey] | 0) < 1;
+}
+
+function pprogFinishMarkPaid(fl, monthKey) {
+  fl.paidAdaptationsByMonth[monthKey] = (fl.paidAdaptationsByMonth[monthKey] | 0) + 1;
+}
+
+function pprogFinishFormatCard(e) {
+  if (!e) return "";
+  if (e.rating === "other") {
+    return (
+      "[ATHLETE_OTHER_SIGNAL]\n" +
+      "safety_flag: " + (e.safety_flag ? "true" : "false") + "\n" +
+      "labels: [" + (Array.isArray(e.labels) ? e.labels.join(", ") : "") + "]\n" +
+      'note_short: "' + String(e.note_short || "").replace(/"/g, "") + '"\n' +
+      "session_date: " + (e.session_date || "") + "\n" +
+      "brick_week: " + ((e.brick_week | 0) || 0) + "\n" +
+      "action_allowed: " + (e.action_allowed || "accumulate_only") + "\n" +
+      "[/ATHLETE_OTHER_SIGNAL]"
+    );
+  }
+  return (
+    "[ATHLETE_FINISH_SIGNAL]\n" +
+    "rating: " + (e.rating || "just_right") + "\n" +
+    "scope: " + (e.scope || "session") + "\n" +
+    "part_role: " + (e.part_role || "unknown") + "\n" +
+    'part_title: "' + String(e.part_title || "").replace(/"/g, "") + '"\n' +
+    "session_date: " + (e.session_date || "") + "\n" +
+    "brick_week: " + ((e.brick_week | 0) || 0) + "\n" +
+    "weekday: " + (e.weekday || "") + "\n" +
+    "count_same_direction_14d: " + ((e.count_same_direction_14d | 0) || 0) + "\n" +
+    "action_allowed: " + (e.action_allowed || "accumulate_only") + "\n" +
+    "note: none\n" +
+    "[/ATHLETE_FINISH_SIGNAL]"
+  );
+}
+
+function pprogFinishSignalsInject(store) {
+  var s = store || loadPprogStore();
+  var fl = pprogEnsureFinishLearning(s);
+  if (!fl.events.length) return "";
+  var rule =
+    "[FINISH_SIGNAL_COACH_RULE] finish-signal≠chat. accumulate_only→remember only. " +
+    "micro_bias_next→bias upcoming NOT-Done SAME part_role only; never rewrite Done day; " +
+    "no brick rebuild/Soft Upgrade; if monthly paid cap exhausted→piggyback natural generate only. " +
+    "[/FINISH_SIGNAL_COACH_RULE]\n";
+  var picked = fl.events.slice(-3).reverse();
+  var out = rule;
+  for (var i = 0; i < picked.length; i++) {
+    var card = pprogFinishFormatCard(picked[i]);
+    if (out.length + card.length > 650) break;
+    out += card + "\n";
+  }
+  return out.slice(0, 700);
+}
+
+function pprogFinishLearningPayload(store) {
+  var fl = pprogEnsureFinishLearning(store || loadPprogStore());
+  return {
+    events: (fl.events || []).slice(-12),
+    paidAdaptationsByMonth: fl.paidAdaptationsByMonth || {},
+    safetyLog: (fl.safetyLog || []).slice(-5),
+  };
+}
+
+/**
+ * Record Done feedback into finishLearning. Call from cosmetic Done submit.
+ * @returns {{ ok, staticReply, action_allowed, shouldAttemptPaidMicroBias, event, safety_flag }}
+ */
+function pprogRecordFinishFeedback(input) {
+  var store = loadPprogStore();
+  var fl = pprogEnsureFinishLearning(store);
+  var rating = String((input && input.rating) || "").toLowerCase();
+  if (rating !== "just_right" && rating !== "too_hard" && rating !== "too_easy" && rating !== "other") {
+    return { ok: false, error: "invalid_rating" };
+  }
+  var sessionDate = String((input && input.session_date) || pprogIsraelTodayIso()).slice(0, 10);
+  var noteShort = rating === "other" ? pprogFinishTruncateNote(input && input.note) : "";
+  var safety_flag = rating === "other" && PPROG_FINISH_SAFETY_RE.test(noteShort);
+  var part_role = String((input && input.part_role) || "unknown").toLowerCase() || "unknown";
+  var part_title = String((input && input.part_title) || "").slice(0, 80);
+  var prior =
+    rating === "too_hard" || rating === "too_easy"
+      ? pprogFinishCountSameDirection(fl.events, rating, part_role, sessionDate)
+      : 0;
+  var count = rating === "too_hard" || rating === "too_easy" ? prior + 1 : 0;
+  var action_allowed = "accumulate_only";
+  if (safety_flag) action_allowed = "safety_review";
+  else if (
+    (rating === "too_hard" || rating === "too_easy") &&
+    count >= PPROG_FINISH_THRESHOLD &&
+    (part_role === "strength" || part_role === "metcon" || part_role === "skill" || part_role === "accessory")
+  ) {
+    action_allowed = "micro_bias_next";
+  }
+  var labels = [];
+  if (rating === "other") {
+    var low = noteShort.toLowerCase();
+    if (safety_flag) labels.push("safety");
+    if (/(sleep|tired|fatigue|עייף|שינה)/.test(low)) labels.push("recovery");
+    if (/(work|shift|travel|משמרת|עבודה|נסיעה)/.test(low)) labels.push("schedule");
+    if (/(equipment|gear|אין לי|ציוד)/.test(low)) labels.push("equipment");
+    if (/(time|short|ממהר|זמן)/.test(low)) labels.push("time");
+    if (!labels.length) labels.push("unspecified");
+  }
+  var event = {
+    id: sessionDate + "_" + rating + "_" + Date.now(),
+    rating: rating,
+    scope: (rating === "too_hard" || rating === "too_easy") && (part_title || part_role !== "unknown") ? "part" : "session",
+    part_role: part_role,
+    part_title: part_title,
+    session_date: sessionDate,
+    brick_week: (input && input.brick_week) | 0,
+    weekday: String((input && input.weekday) || "").slice(0, 12),
+    count_same_direction_14d: count,
+    action_allowed: action_allowed,
+    note_short: noteShort,
+    safety_flag: !!safety_flag,
+    labels: labels,
+    at: new Date().toISOString(),
+    source: "done_popup",
+  };
+  fl.events.push(event);
+  if (fl.events.length > 60) fl.events = fl.events.slice(-60);
+  if (safety_flag) {
+    fl.safetyLog.push({ at: event.at, session_date: sessionDate, note_short: noteShort, labels: labels });
+    if (fl.safetyLog.length > 30) fl.safetyLog = fl.safetyLog.slice(-30);
+  }
+  var monthKey = pprogIsraelMonthKey(sessionDate);
+  var shouldAttemptPaidMicroBias =
+    action_allowed === "micro_bias_next" && pprogFinishPaidAvailable(fl, monthKey) && !safety_flag;
+  store.finishLearning = fl;
+  savePprogStore(store);
+  var lang = (input && input.lang) === "he" ? "he" : "en";
+  var replyKey = safety_flag ? "safety" : rating;
+  var staticReply =
+    (PPROG_FINISH_STATIC[replyKey] && PPROG_FINISH_STATIC[replyKey][lang]) ||
+    PPROG_FINISH_STATIC.other.en;
+  return {
+    ok: true,
+    event: event,
+    action_allowed: action_allowed,
+    safety_flag: !!safety_flag,
+    staticReply: staticReply,
+    shouldAttemptPaidMicroBias: shouldAttemptPaidMicroBias,
+    monthKey: monthKey,
+  };
+}
+
+/** Upcoming day keys in active week that are not Done and not Rest (after sessionDate). */
+function pprogFinishNextNotDoneDayKeys(store, afterIso) {
+  var s = store || loadPprogStore();
+  var week = s.currentWeek;
+  if (!week || !week.days) return [];
+  var after = String(afterIso || pprogIsraelTodayIso()).slice(0, 10);
+  var out = [];
+  for (var i = 0; i < PPROG_DAY_KEYS.length; i++) {
+    var dk = PPROG_DAY_KEYS[i];
+    var day = week.days[dk];
+    if (!day) continue;
+    var focus = String((day.overview && day.overview.focus) || day.focus || "").toLowerCase();
+    if (focus === "rest" || /rest\s*day/i.test(String((day.parts && day.parts[0] && day.parts[0].title) || ""))) {
+      continue;
+    }
+    if (day.finishFeedback && day.finishFeedback.rating) continue;
+    var sd = pprogSessionDateForDay(dk, s.activeWeekIndex | 0, s);
+    if (sd <= after) continue;
+    out.push(sd);
+  }
+  return out.slice(0, 5);
+}
+
+/**
+ * Paid surgical adaptation (max 1 / Israel month). Cosmetic/Done flow should call when shouldAttemptPaidMicroBias.
+ */
+function pprogAttemptFinishMicroBias(signalEvent) {
+  var store = loadPprogStore();
+  var fl = pprogEnsureFinishLearning(store);
+  var ev = signalEvent || null;
+  if (!ev || ev.action_allowed !== "micro_bias_next") return Promise.resolve({ ok: false, skipped: true });
+  var monthKey = pprogIsraelMonthKey(ev.session_date || pprogIsraelTodayIso());
+  if (!pprogFinishPaidAvailable(fl, monthKey)) {
+    return Promise.resolve({ ok: false, skipped: true, reason: "monthly_paid_cap" });
+  }
+  var base = getApiBase();
+  if (!base) return Promise.resolve({ ok: false, error: "no_api_base" });
+  var nextKeys = pprogFinishNextNotDoneDayKeys(store, ev.session_date);
+  var dir = ev.rating === "too_hard" ? "easier" : "harder";
+  var feedback =
+    "[finish_micro_bias] Make upcoming NOT-Done " +
+    (ev.part_role || "metcon") +
+    " slightly " +
+    dir +
+    " (~3-5%). Do not rewrite Done day " +
+    (ev.session_date || "") +
+    ".";
+  return fetchAiWithTimeout(
+    base + "/api/personal-coach",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "finish_micro_bias",
+        israelToday: pprogIsraelTodayIso(),
+        nextDayKeys: nextKeys,
+        feedback: feedback,
+        currentWeek: store.currentWeek,
+        athleteProfile: athleteProfilePayload({ forceIntakeComplete: true, omitChat: true }),
+        messages: [],
+      }),
+    },
+    90000
+  ).then(function (x) {
+    var j = x.j || {};
+    if (!x.ok || !j.ok) {
+      return { ok: false, error: pprogFriendlyApiError(j, x.status), status: x.status };
+    }
+    var week = j.week || null;
+    if (!week && j.text) {
+      try {
+        var m = String(j.text).match(/<<<WEEK_JSON\s*([\s\S]*?)\s*WEEK_JSON>>>/);
+        if (m) week = JSON.parse(m[1].trim());
+      } catch (eParse) {}
+    }
+    if (week && week.days) {
+      store = loadPprogStore();
+      fl = pprogEnsureFinishLearning(store);
+      pprogFinishMarkPaid(fl, monthKey);
+      store.finishLearning = fl;
+      store.currentWeek = week;
+      if (store.currentBlock && store.currentBlock.weeks) {
+        store.currentBlock.weeks[store.activeWeekIndex | 0] = week;
+      }
+      savePprogStore(store);
+      try {
+        renderPprogWeek();
+      } catch (eR) {}
+      return { ok: true, week: week, paid: true };
+    }
+    return { ok: false, error: "no_week_json" };
+  });
+}
+
+window.pprogRecordFinishFeedback = pprogRecordFinishFeedback;
+window.pprogFinishCountableParts = pprogFinishCountableParts;
+window.pprogAttemptFinishMicroBias = pprogAttemptFinishMicroBias;
+window.pprogFinishTruncateNote = pprogFinishTruncateNote;
+window.PPROG_FINISH_OTHER_MAX = PPROG_FINISH_OTHER_MAX;
+window.PPROG_FINISH_STATIC = PPROG_FINISH_STATIC;
 
 function pprogCostCapsPayload(store, opts) {
   var s = store || loadPprogStore();

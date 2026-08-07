@@ -239,6 +239,20 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - **Updated:** 2026-07-31 — Foundation Brief runtime ground layer; rename digest to מסמך דפוסי מקורות
 - **Updated:** 2026-08-03 — Layer 2 programming ops brief (programming path only; product-flex calendar)
 
+### POL-025 — Done finish-feedback learning (threshold → surgical forward bias)
+- **Type:** HARD
+- **Scope:** Done popup finish signals; `finish_micro_bias`; piggyback on `generate_week` / `generate_week_detail`
+- **Trigger:** athlete submits Done check-in (just_right / too_hard / too_easy / other)
+- **Required behavior:**
+  1. **0 LLM on click.** Static user reply only. No live coach chat from Done/Other.
+  2. **Cards only:** inject compact `[ATHLETE_FINISH_SIGNAL]` / `[ATHLETE_OTHER_SIGNAL]` (≤~500 chars, 1–3 recent). Not free-form chat history.
+  3. **Threshold:** micro_bias only after **3** same-direction reports on the **same part_role** within ~14 Israel days. 1–2 → accumulate only.
+  4. **When biasing:** upcoming NOT-Done days only, same part_role, small % (±3–5; max ±8–10). Never rewrite the completed Done day. Never `generate_block` / Soft Upgrade / large rebuild from Done.
+  5. **Paid cap:** at most **one** surgical `finish_micro_bias` Gemini call per athlete per Israel month. After that, piggyback only on natural generate fills.
+  6. **Other:** ≤160 chars; rules/keywords only; safety_flag → caution path, no auto ease/harden %.
+  7. Does **not** consume daily POL-COST programmed-edit slots; still respects monthly programming envelope for provider health.
+- **Added:** 2026-08-07 — Budget-approved Done learning v1
+
 ### POL-022 — Whole-program / brick chat: ultra-brief double-check
 - **Type:** HARD
 - **Scope:** coach chat after intake (especially “whole program notes” / brick chat); standing prefs that affect many days/weeks
