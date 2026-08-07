@@ -123,6 +123,14 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-chat-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;direction:ltr}
 .pprog-chat-actions .btn{width:auto;margin-top:0;padding:8px 14px;font-size:.85em}
 .pprog-start-btn{width:100%!important;margin-top:0;padding:16px 18px!important;font-size:1.15em!important;font-weight:800;letter-spacing:.08em;background:#E8451A!important;border:none;border-radius:10px;min-height:54px}
+.pprog-prestart-welcome{
+  margin:8px 0 14px;padding:14px 14px 12px;border:1px dashed #3d7a52;border-radius:12px;
+  background:rgba(26,155,138,.08);color:#cfc7b6;font-size:.9em;line-height:1.45;text-align:center;direction:ltr;
+}
+.pprog-prestart-welcome strong{display:block;color:#d7f5e2;font-size:1.05em;font-weight:800;margin:0 0 6px}
+.pprog-chat.is-prestart .pprog-chat-log{min-height:0;max-height:none;border:none;background:transparent;padding:0}
+.pprog-chat.is-prestart .pprog-chat-actions{margin-top:0}
+.pprog-chat-form[hidden],.pprog-chat-form.is-hidden{display:none!important}
 .pprog-legal-overlay{position:fixed;inset:0;z-index:12000;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box}
 .pprog-legal-overlay[hidden]{display:none!important}
 .pprog-legal-card{max-width:520px;width:100%;max-height:min(92vh,720px);background:#1a1a1a;border:1px solid #444;border-radius:14px;display:flex;flex-direction:column;overflow:hidden}
@@ -2181,12 +2189,21 @@ function renderPprogChat() {
   }
   var msgs = loadPprogMessages();
   if (!msgs.length) {
-    log.innerHTML =
-      '<div class="pprog-msg system"><div class="pprog-bubble system">Tap START — the coach will open the conversation.</div></div>';
+    if (pprogIsPreStartGate()) {
+      log.innerHTML =
+        '<div class="pprog-prestart-welcome">' +
+        "<strong>Ready when you are</strong>" +
+        "Tap <strong>START</strong> to begin the short intake. The coach builds your 5-week plan from your answers — free chat opens after that." +
+        "</div>";
+    } else {
+      log.innerHTML =
+        '<div class="pprog-msg system"><div class="pprog-bubble system">Tap START — the coach will open the conversation.</div></div>';
+    }
     if (pprogBusy) setPprogTyping(true);
     syncPprogStartBtn();
     syncPprogResetBtn();
     syncPprogProfilePickerUi();
+    syncPprogChatComposerUi();
     return;
   }
   var html = "";
@@ -2234,6 +2251,7 @@ function renderPprogChat() {
   syncPprogProfilePickerUi();
   syncPprogLiftsPickerUi();
   syncPprogSkillsPickerUi();
+  syncPprogChatComposerUi();
   pprogMaybeResumeLocalPostSkills();
 }
 
@@ -2297,6 +2315,34 @@ function syncPprogStartBtn() {
     !pprogBusy;
   actions.style.display = show ? "flex" : "none";
   btn.disabled = !show;
+  syncPprogChatComposerUi();
+}
+
+/** Free-text AI chat only after intake is complete (FAB). Pre-START = START only. */
+function pprogIsPreStartGate(store, msgs) {
+  store = store || loadPprogStore();
+  msgs = msgs || loadPprogMessages();
+  return !store.intakeComplete && !store.fixedIntakeActive && !(msgs && msgs.length);
+}
+
+function syncPprogChatComposerUi() {
+  var form = document.getElementById("pprogChatForm");
+  var chat = document.getElementById("pprogChat");
+  var store = loadPprogStore();
+  var msgs = loadPprogMessages();
+  var preStart = pprogIsPreStartGate(store, msgs);
+  if (chat) chat.classList.toggle("is-prestart", preStart);
+  if (!form) return;
+  /* Questionnaire uses fixed-intake UI — never free chat until intakeComplete */
+  if (!store.intakeComplete) {
+    form.style.display = "none";
+    form.classList.add("is-hidden");
+    form.setAttribute("hidden", "");
+    return;
+  }
+  form.style.display = "";
+  form.classList.remove("is-hidden");
+  form.removeAttribute("hidden");
 }
 
 function syncPprogResetBtn() {
@@ -3032,6 +3078,7 @@ function syncPprogBrickChatUi() {
     pprogRestoreChatToIntake();
     closePprogCoachFloat(true);
     syncPprogCoachFabVisibility();
+    syncPprogChatComposerUi();
     if (inp && inp.getAttribute("data-default-ph")) {
       inp.placeholder = inp.getAttribute("data-default-ph");
     }
@@ -3280,10 +3327,14 @@ function syncPprogFixedIntakeUi() {
   if (store.intakeComplete || !store.fixedIntakeActive) {
     el.style.display = "none";
     el.innerHTML = "";
-    if (form) form.style.display = "";
+    syncPprogChatComposerUi();
     return;
   }
-  if (form) form.style.display = "none";
+  if (form) {
+    form.style.display = "none";
+    form.classList.add("is-hidden");
+    form.setAttribute("hidden", "");
+  }
   el.style.display = "block";
   el.innerHTML = renderPprogFixedStepHtml(store.fixedIntakeStep | 0);
 }
@@ -4166,6 +4217,12 @@ function sendPprogMessage(ev) {
     return false;
   }
   var store = loadPprogStore();
+  /* Block free chat before intake — prevents accidental AI spend */
+  if (!store.intakeComplete && !store.fixedIntakeActive && !store.postSkillsLocal) {
+    syncPprogChatComposerUi();
+    syncPprogStartBtn();
+    return false;
+  }
   var inp = document.getElementById("pprogChatInput");
   var raw = inp ? String(inp.value || "") : "";
   var text = raw.trim();
