@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.4</title>
+<title>DUCK-WOD · v21.4.1</title>
 <meta name="theme-color" content="#111">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -64,8 +64,71 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-overview li{padding:8px 10px;border-bottom:1px solid #2a2a2a;color:#ccc;font-size:.9em}
 .pprog-overview li strong{color:#b06dcf;margin-left:6px}
 .pprog-day-card{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:16px 16px 14px;margin-bottom:4px}
-.pprog-day-card .card-header{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #2a2a2a}
-.pprog-day-card .source-name{color:#b06dcf;font-weight:700;font-size:1.05em;letter-spacing:.03em}
+.pprog-day-card .card-header{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pprog-day-card .source-name{color:#b06dcf;font-weight:700;font-size:1.05em;letter-spacing:.03em;flex:1;min-width:0}
+.pprog-day-actions{display:inline-flex;align-items:center;gap:8px;flex-shrink:0}
+.pprog-finish-btn{
+  flex-shrink:0;display:inline-flex;align-items:center;gap:6px;margin:0;
+  padding:7px 12px;border:1px solid #3d7a52;border-radius:999px;
+  background:linear-gradient(180deg,#1f3d2a 0%,#173224 100%);color:#d7f5e2;
+  font-weight:700;font-size:.78em;font-family:inherit;cursor:pointer;line-height:1;
+  box-shadow:0 2px 8px rgba(46,125,82,.28);-webkit-tap-highlight-color:transparent;
+}
+.pprog-finish-btn:hover{background:linear-gradient(180deg,#255238 0%,#1b3a2a 100%);border-color:#4caf70;color:#fff}
+.pprog-finish-btn:active{transform:scale(.97)}
+.pprog-finish-btn svg{width:15px;height:15px;display:block;flex-shrink:0}
+.pprog-finish-btn.done{background:#1a2a20;border-color:#3a5a45;color:#9ec9ad;box-shadow:none}
+html.pprog-finish-open,body.pprog-finish-open{overflow:hidden;overscroll-behavior:none}
+.pprog-finish-overlay{
+  display:none;position:fixed;inset:0;
+  width:100vw;height:100vh;width:100dvw;height:100dvh;
+  z-index:12050;margin:0;
+  align-items:center;justify-content:center;
+  padding:max(16px,env(safe-area-inset-top)) 14px max(16px,env(safe-area-inset-bottom));
+  background:rgba(8,6,12,.82);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  box-sizing:border-box;overscroll-behavior:contain;
+}
+.pprog-finish-overlay.open{display:flex}
+.pprog-finish-sheet{
+  width:min(92vw,400px);max-height:min(86vh,560px);overflow:auto;
+  background:#1a1a1a;border:1px solid #3d7a52;border-radius:16px;
+  box-shadow:0 20px 56px rgba(0,0,0,.62);padding:16px 16px 14px;direction:ltr;text-align:left;
+  transform:translateY(0);animation:pprog-finish-pop .18s ease-out;
+}
+@keyframes pprog-finish-pop{
+  from{opacity:0;transform:translateY(10px) scale(.97)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.pprog-finish-sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:0 0 12px}
+.pprog-finish-sheet-title{display:block;color:#d7f5e2;font-weight:800;font-size:1.05em}
+.pprog-finish-sheet-sub{display:block;color:#8fb89a;font-size:.78em;margin-top:4px;line-height:1.4}
+.pprog-finish-close{
+  appearance:none;border:none;background:#2a2a2a;color:#ddd;width:32px;height:32px;
+  border-radius:50%;cursor:pointer;font-size:1.1em;line-height:1;flex-shrink:0;
+}
+.pprog-finish-close:hover{background:#3a3a3a;color:#fff}
+.pprog-finish-options{display:flex;flex-direction:column;gap:8px;margin:0 0 10px}
+.pprog-finish-opt{
+  appearance:none;width:100%;text-align:left;padding:12px 14px;border-radius:12px;
+  border:1px solid #333;background:#222;color:#e8e4d8;font-family:inherit;
+  font-size:.92em;font-weight:700;cursor:pointer;line-height:1.3;
+}
+.pprog-finish-opt:hover{border-color:#4caf70;background:#243328}
+.pprog-finish-opt.selected{border-color:#4caf70;background:rgba(76,175,112,.16);color:#d7f5e2;box-shadow:inset 0 0 0 1px rgba(76,175,112,.35)}
+.pprog-finish-opt .pprog-finish-opt-hint{display:block;margin-top:3px;font-size:.72em;font-weight:500;color:#8a9a8e}
+.pprog-finish-other-wrap{display:none;margin:0 0 10px}
+.pprog-finish-other-wrap.open{display:block}
+.pprog-finish-other-wrap label{display:block;color:#9ec9ad;font-size:.78em;font-weight:600;margin:0 0 6px;line-height:1.35}
+.pprog-finish-other-wrap textarea{
+  width:100%;min-height:88px;padding:10px;background:#151a16;color:#eee;
+  border:1px solid #3d7a52;border-radius:10px;font-family:inherit;font-size:.92em;resize:vertical;box-sizing:border-box;
+}
+.pprog-finish-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
+.pprog-finish-send{
+  appearance:none;border:none;border-radius:10px;padding:10px 16px;font-weight:800;font-size:.85em;
+  font-family:inherit;cursor:pointer;background:#4caf70;color:#0c1a10;
+}
+.pprog-finish-send:disabled{opacity:.45;cursor:default}
 .pprog-day-card .section{margin-bottom:12px}
 .pprog-day-card .section-title{font-size:1em;font-weight:700;text-decoration:underline;color:#1A9B8A;margin-bottom:7px}
 .pprog-day-card .section-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:7px}
@@ -77,8 +140,13 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-day-card .section-lines li{margin-bottom:4px}
 .pprog-day-subrow{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
 .pprog-day-subrow .pprog-summary{flex:1;margin:0;min-width:0}
-.pprog-share-wa{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;margin:0;padding:8px 14px;border:none;border-radius:999px;background:#25d366;color:#fff;font-weight:700;font-size:.82em;font-family:inherit;cursor:pointer;line-height:1;box-shadow:0 2px 8px rgba(37,211,102,.35)}
-.pprog-share-wa:hover{background:#1da851}
+.pprog-share-wa{
+  flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;gap:0;margin:0;
+  width:34px;height:34px;padding:0;border:1px solid #3a4a3f;border-radius:50%;
+  background:#1a1f1c;color:#8fb89a;font-weight:700;font-size:.82em;font-family:inherit;cursor:pointer;line-height:1;
+  box-shadow:none;-webkit-tap-highlight-color:transparent;
+}
+.pprog-share-wa:hover{border-color:#4caf70;color:#d7f5e2;background:#222a24}
 .pprog-share-wa svg{width:16px;height:16px;display:block;flex-shrink:0}
 .pprog-day-footer{margin-top:14px;padding-top:12px;border-top:1px solid #333}
 .pprog-session-box{display:block;padding:12px;border-radius:10px;border:1px solid #1A9B8A;background:rgba(26,155,138,.1);box-shadow:inset 0 0 0 1px rgba(26,155,138,.15)}
@@ -876,7 +944,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.4</div>
+<div class="header-sub">DAILY WORKOUTS · v21.4.1</div>
 <div class="header-sub" id="coachVersionSub">COACH · v2.1</div>
 </div>
 <div class="tabs">
@@ -1053,13 +1121,11 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
         <div class="pprog-chat-actions" id="pprogIntakeActions">
           <button type="button" class="btn btn-find pprog-start-btn" id="pprogStartBtn" onclick="pprogOnStartClick()">START</button>
         </div>
-        <p id="pprogNextBlockHint" class="pprog-block-transition-hint" style="display:none" aria-live="polite"></p>
       </div>
     </div>
 
     <!-- Week UI -->
     <div id="pprogWeekBlock" class="pprog-week-shell" style="display:none;margin-top:8px">
-      <p id="pprogNextBlockHintWeek" class="pprog-block-transition-hint" style="display:none" aria-live="polite"></p>
       <div id="pprogCal" class="pprog-cal" aria-label="Training calendar"></div>
       <div id="pprogWeekPanes"></div>
     </div>
@@ -5714,18 +5780,16 @@ function pprogNextBlockHintHtml(store) {
 }
 
 function syncPprogNextBlockUi() {
-  var store = loadPprogStore();
-  var html = pprogNextBlockHintHtml(store);
-  var show = !!html && !!(store.currentBlock && store.currentBlock.weeks && store.currentBlock.weeks.length);
+  /* Athlete-facing “Next block unlocks…” subtitle removed — auto-build still runs. */
   var hint1 = document.getElementById("pprogNextBlockHint");
   var hint2 = document.getElementById("pprogNextBlockHintWeek");
   if (hint1) {
-    hint1.style.display = show && !store.intakeComplete ? "block" : show ? "block" : "none";
-    if (show) hint1.innerHTML = html;
+    hint1.style.display = "none";
+    hint1.innerHTML = "";
   }
   if (hint2) {
-    hint2.style.display = show && store.intakeComplete ? "block" : "none";
-    if (show) hint2.innerHTML = html;
+    hint2.style.display = "none";
+    hint2.innerHTML = "";
   }
   syncPprogStartBtn();
 }
@@ -7720,6 +7784,172 @@ function sharePprogDayWhatsApp(dayKey) {
   window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank");
 }
 
+function pprogFinishThumbsIcon() {
+  return (
+    '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+    '<path fill="currentColor" d="M9 21h9c.8 0 1.5-.5 1.8-1.2l2.1-6.3c.1-.3.1-.6.1-.9V11c0-1.1-.9-2-2-2h-6.3l1-4.7.1-.5c0-.4-.2-.8-.5-1.1L13.2 1 6.6 7.6C6.2 7.9 6 8.4 6 9v10c0 1.1.9 2 2 2zm0-2V9l4.3-4.3-1.3 5.3H19v1.1L17 19H9zM4 9H2v12h2c.6 0 1-.4 1-1V10c0-.6-.4-1-1-1z"/>' +
+    "</svg>"
+  );
+}
+
+var pprogFinishDayKey = "";
+var pprogFinishChoice = "";
+
+function pprogFinishSetBodyLock(on) {
+  try {
+    document.documentElement.classList.toggle("pprog-finish-open", !!on);
+    document.body.classList.toggle("pprog-finish-open", !!on);
+  } catch (eLock) {}
+}
+
+function openPprogFinishFeedback(dayKey) {
+  pprogFinishDayKey = normalizePprogDayKey(dayKey) || dayKey;
+  pprogFinishChoice = "";
+  var overlay = document.getElementById("pprogFinishOverlay");
+  var otherWrap = document.getElementById("pprogFinishOtherWrap");
+  var note = document.getElementById("pprogFinishOtherNote");
+  var sendBtn = document.getElementById("pprogFinishSendBtn");
+  var opts = document.querySelectorAll("#pprogFinishOptions .pprog-finish-opt");
+  for (var i = 0; i < opts.length; i++) opts[i].classList.remove("selected");
+  if (otherWrap) otherWrap.classList.remove("open");
+  if (note) note.value = "";
+  if (sendBtn) sendBtn.disabled = true;
+  try {
+    var store = loadPprogStore();
+    var week = store.currentWeek || (store.currentBlock && store.currentBlock.weeks[store.activeWeekIndex | 0]);
+    var dayData = week && week.days && week.days[pprogFinishDayKey];
+    var prev = dayData && dayData.finishFeedback;
+    if (prev && prev.rating) {
+      selectPprogFinishOption(prev.rating, true);
+      if (prev.rating === "other" && note) note.value = String(prev.note || "");
+      syncPprogFinishSendEnabled();
+    }
+  } catch (ePrefill) {}
+  if (overlay) {
+    try {
+      if (overlay.parentNode !== document.body) document.body.appendChild(overlay);
+    } catch (eMove) {}
+    bindPprogFinishOverlayClick();
+    overlay.hidden = false;
+    overlay.classList.add("open");
+    pprogFinishSetBodyLock(true);
+    try {
+      var closeBtn = overlay.querySelector(".pprog-finish-close");
+      if (closeBtn) closeBtn.focus();
+    } catch (eFocus) {}
+  }
+}
+
+function closePprogFinishFeedback() {
+  var overlay = document.getElementById("pprogFinishOverlay");
+  if (overlay) {
+    overlay.classList.remove("open");
+    overlay.hidden = true;
+  }
+  pprogFinishSetBodyLock(false);
+  pprogFinishDayKey = "";
+  pprogFinishChoice = "";
+}
+
+function selectPprogFinishOption(choice, silent) {
+  pprogFinishChoice = String(choice || "");
+  var opts = document.querySelectorAll("#pprogFinishOptions .pprog-finish-opt");
+  for (var i = 0; i < opts.length; i++) {
+    var v = opts[i].getAttribute("data-finish");
+    opts[i].classList.toggle("selected", v === pprogFinishChoice);
+  }
+  var otherWrap = document.getElementById("pprogFinishOtherWrap");
+  if (otherWrap) otherWrap.classList.toggle("open", pprogFinishChoice === "other");
+  syncPprogFinishSendEnabled();
+  if (!silent && pprogFinishChoice && pprogFinishChoice !== "other") {
+    submitPprogFinishFeedback();
+  }
+}
+
+function syncPprogFinishSendEnabled() {
+  var sendBtn = document.getElementById("pprogFinishSendBtn");
+  if (!sendBtn) return;
+  if (!pprogFinishChoice) {
+    sendBtn.disabled = true;
+    return;
+  }
+  if (pprogFinishChoice === "other") {
+    var note = document.getElementById("pprogFinishOtherNote");
+    sendBtn.disabled = !(note && String(note.value || "").trim());
+    return;
+  }
+  sendBtn.disabled = false;
+}
+
+function submitPprogFinishFeedback() {
+  if (!pprogFinishDayKey || !pprogFinishChoice) return;
+  var noteEl = document.getElementById("pprogFinishOtherNote");
+  var note = noteEl ? String(noteEl.value || "").trim() : "";
+  if (pprogFinishChoice === "other" && !note) {
+    syncPprogFinishSendEnabled();
+    if (noteEl) {
+      try {
+        noteEl.focus();
+      } catch (e) {}
+    }
+    return;
+  }
+  var store = loadPprogStore();
+  ensurePprogBlockFiveWeeks(store);
+  syncStoreActiveWeek(store);
+  var wi = store.activeWeekIndex | 0;
+  var week =
+    (store.currentBlock && store.currentBlock.weeks && store.currentBlock.weeks[wi]) ||
+    store.currentWeek;
+  if (!week) return;
+  if (!week.days) week.days = {};
+  if (!week.days[pprogFinishDayKey]) week.days[pprogFinishDayKey] = { parts: [] };
+  week.days[pprogFinishDayKey].finishFeedback = {
+    rating: pprogFinishChoice,
+    note: pprogFinishChoice === "other" ? note : "",
+    at: new Date().toISOString(),
+  };
+  store.currentWeek = week;
+  if (store.currentBlock && store.currentBlock.weeks) store.currentBlock.weeks[wi] = week;
+  savePprogStore(store);
+  try {
+    sendAnalytics("personal_coach_message", {
+      coachArea: "finish_workout",
+      finishRating: pprogFinishChoice,
+    });
+  } catch (eA) {}
+  closePprogFinishFeedback();
+  renderPprogWeek();
+}
+
+document.addEventListener("input", function (ev) {
+  if (ev.target && ev.target.id === "pprogFinishOtherNote") syncPprogFinishSendEnabled();
+});
+document.addEventListener("keydown", function (ev) {
+  if (ev.key === "Escape") {
+    var overlay = document.getElementById("pprogFinishOverlay");
+    if (overlay && overlay.classList.contains("open")) closePprogFinishFeedback();
+  }
+});
+function bindPprogFinishOverlayClick() {
+  var overlay = document.getElementById("pprogFinishOverlay");
+  if (!overlay || overlay.getAttribute("data-bound") === "1") return;
+  overlay.setAttribute("data-bound", "1");
+  overlay.addEventListener("click", function (ev) {
+    if (ev.target === overlay) closePprogFinishFeedback();
+  });
+}
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", bindPprogFinishOverlayClick);
+} else {
+  bindPprogFinishOverlayClick();
+}
+
+window.openPprogFinishFeedback = openPprogFinishFeedback;
+window.closePprogFinishFeedback = closePprogFinishFeedback;
+window.selectPprogFinishOption = selectPprogFinishOption;
+window.submitPprogFinishFeedback = submitPprogFinishFeedback;
+
 function renderPprogDayPartsHtml(parts, dayData, dayKey) {
   var html = "";
   if (!parts || !parts.length) {
@@ -7739,14 +7969,6 @@ function renderPprogDayPartsHtml(parts, dayData, dayKey) {
       esc(part.title || defaultTitle) +
       (modified ? '<span class="pprog-modified-flag">MODIFIED</span>' : "") +
       "</div>";
-    if (pi === 0 && dayKey) {
-      html +=
-        '<button type="button" class="pprog-share-wa" onclick="sharePprogDayWhatsApp(\'' +
-        dayKey +
-        '\')" title="Share workout on WhatsApp" aria-label="Share workout on WhatsApp">' +
-        pprogShareDayWaIcon() +
-        "Share</button>";
-    }
     html += "</div>";
     for (var ni = 0; ni < classified.notes.length; ni++) {
       html += '<div class="pprog-part-note">' + esc(classified.notes[ni]) + "</div>";
@@ -8020,12 +8242,39 @@ function renderPprogDayCardHtml(block, week, activeWi, day) {
     }
   }
   html += '<div class="pprog-day-card" dir="ltr">';
-  html +=
-    '<div class="card-header"><div class="source-name">' +
-    esc(dateLabel) +
-    "</div></div>";
   var focus = pprogOverviewFocus(week, day);
   var restDay = isPprogRestDay(day, dayData, week);
+  var finishDone = !!(dayData && dayData.finishFeedback && dayData.finishFeedback.rating);
+  var shareBtn =
+    '<button type="button" class="pprog-share-wa" onclick="sharePprogDayWhatsApp(\'' +
+    day +
+    '\')" title="Share workout on WhatsApp" aria-label="Share workout on WhatsApp">' +
+    pprogShareDayWaIcon() +
+    "</button>";
+  var finishBtn = restDay
+    ? ""
+    : '<button type="button" class="pprog-finish-btn' +
+      (finishDone ? " done" : "") +
+      '" onclick="openPprogFinishFeedback(\'' +
+      day +
+      "')\" title=\"" +
+      (finishDone ? "Workout check-in saved" : "Mark workout done") +
+      '" aria-label="' +
+      (finishDone ? "Done — edit check-in" : "Done") +
+      '">' +
+      pprogFinishThumbsIcon() +
+      (finishDone ? "Done ✓" : "Done") +
+      "</button>";
+  html +=
+    '<div class="card-header">' +
+    '<div class="source-name">' +
+    esc(dateLabel) +
+    "</div>" +
+    '<div class="pprog-day-actions">' +
+    finishBtn +
+    shareBtn +
+    "</div>" +
+    "</div>";
   if (restDay) {
     html +=
       '<div class="pprog-rest-day">' +
@@ -12128,6 +12377,43 @@ function initTimerColorBuckets() {
   } catch (e) {}
 })();
 </script>
+
+<div id="pprogFinishOverlay" class="pprog-finish-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="pprogFinishTitle">
+  <div class="pprog-finish-sheet" onclick="event.stopPropagation()">
+    <div class="pprog-finish-sheet-head">
+      <div>
+        <span class="pprog-finish-sheet-title" id="pprogFinishTitle">How was this workout?</span>
+        <span class="pprog-finish-sheet-sub">Quick check-in after you finished — helps your coach learn what fits you.</span>
+      </div>
+      <button type="button" class="pprog-finish-close" onclick="closePprogFinishFeedback()" aria-label="Close without saving">×</button>
+    </div>
+    <div class="pprog-finish-options" id="pprogFinishOptions" role="listbox" aria-label="Workout feedback">
+      <button type="button" class="pprog-finish-opt" data-finish="just_right" onclick="selectPprogFinishOption('just_right')">
+        Just right
+        <span class="pprog-finish-opt-hint">Load and difficulty felt accurate</span>
+      </button>
+      <button type="button" class="pprog-finish-opt" data-finish="too_hard" onclick="selectPprogFinishOption('too_hard')">
+        Too hard
+        <span class="pprog-finish-opt-hint">Volume, intensity, or skills were too much</span>
+      </button>
+      <button type="button" class="pprog-finish-opt" data-finish="too_easy" onclick="selectPprogFinishOption('too_easy')">
+        Too easy
+        <span class="pprog-finish-opt-hint">Could have pushed more</span>
+      </button>
+      <button type="button" class="pprog-finish-opt" data-finish="other" onclick="selectPprogFinishOption('other')">
+        Other
+        <span class="pprog-finish-opt-hint">You’ll need to write what your coach should know</span>
+      </button>
+    </div>
+    <div class="pprog-finish-other-wrap" id="pprogFinishOtherWrap">
+      <label for="pprogFinishOtherNote">If you choose Other, describe what your coach should know about this session.</label>
+      <textarea id="pprogFinishOtherNote" maxlength="1200" placeholder="e.g. knees flared on squats · ran out of time on the metcon · loved the gymnastics volume…"></textarea>
+    </div>
+    <div class="pprog-finish-actions">
+      <button type="button" class="pprog-finish-send" id="pprogFinishSendBtn" disabled onclick="submitPprogFinishFeedback()">Send</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

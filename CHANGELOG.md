@@ -1,5 +1,16 @@
 # Changelog
 
+## [21.4.1] - 2026-08-07
+
+### Personal Coach: small UI tweaks (display)
+- **Display version: v21.4.1** (Coach stays **v2.1**).
+- **Done** button beside the day title (`Fri · 7 August`) — opens floating check-in (Just right / Too hard / Too easy / Other). Saves locally on the day + analytics; coach-brain learning still deferred.
+- **Share** moved to the same date-actions row as Done: quiet circular icon (secondary); removed from Warm-up section title so it no longer competes with Done.
+- Removed athlete-facing **Next block unlocks…** dashed subtitle under Personal Coach / week shell (auto next-block build unchanged).
+- Preview: `preview-finished-workout.html`.
+
+---
+
 ## [21.4] - 2026-08-07
 
 ### Personal Coach: light UX pack (display)
