@@ -114,6 +114,7 @@ module.exports = async function handler(req, res) {
   let blockStart = "";
   let weekIndex = null;
   let modifiedKindsCount = null;
+  let coachTier = null;
   try {
     const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
     const allowedEvents = new Set([
@@ -149,6 +150,9 @@ module.exports = async function handler(req, res) {
     if (typeof body.modifiedKindsCount === "number" && isFinite(body.modifiedKindsCount)) {
       modifiedKindsCount = Math.max(0, Math.min(50, Math.floor(body.modifiedKindsCount)));
     }
+    if (typeof body.coachTier === "number" && isFinite(body.coachTier)) {
+      coachTier = Math.max(1, Math.min(2, Math.floor(body.coachTier)));
+    }
   } catch (e) {}
 
   const payload = { event: event, t: t, ua: ua };
@@ -161,6 +165,7 @@ module.exports = async function handler(req, res) {
   if (blockStart) payload.blockStart = blockStart;
   if (weekIndex !== null) payload.weekIndex = weekIndex;
   if (modifiedKindsCount !== null) payload.modifiedKindsCount = modifiedKindsCount;
+  if (coachTier !== null) payload.coachTier = coachTier;
   const newLine = JSON.stringify(payload) + "\n";
 
   try {
