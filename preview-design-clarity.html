@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DUCK-WOD · Design clarity preview (v21.5.2)</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#121212;--bg-elev:#181818;--bg-card:#1a1a1a;--bg-panel:#1e1e1e;
+  --text:#f5f2ea;--text-muted:#b0aaa0;--text-meta:#8a8580;
+  --brand:#E8451A;--coach:#9b6bb8;--part:#6fafa4;--line:#2c2c2c;--wa:#25D366;
+  --tab-bar-h:64px;--fab-clearance:120px;
+  --font-ui:'Heebo',sans-serif;--font-display:'Oswald','Heebo',sans-serif;
+}
+body{
+  font-family:var(--font-ui);background:var(--bg);color:var(--text);
+  min-height:100vh;padding:0 0 calc(var(--tab-bar-h) + var(--fab-clearance));
+}
+.header{background:var(--bg-card);padding:14px 16px 12px;text-align:center;border-bottom:3px solid var(--brand)}
+.header-logo{width:90px;height:90px;object-fit:cover;display:block;margin:0 auto 8px;background:#EDE4D0;padding:2px;border-radius:12px}
+.brand{
+  font-family:var(--font-display);font-size:1.7em;font-weight:700;letter-spacing:3px;
+  background:linear-gradient(90deg,#E8451A,#F5C518 50%,#1A9B8A);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.sub{color:var(--text-meta);font-size:.78em;letter-spacing:1.5px;margin-top:2px;font-weight:500}
+.wrap{max-width:420px;margin:0 auto;padding:14px 14px 0}
+.panel{background:var(--bg-panel);border:1px solid var(--line);border-radius:12px;padding:16px 14px;margin:0 0 14px}
+.coach-row{display:flex;align-items:center;gap:12px;margin:0 0 14px}
+.coach-row img{width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--coach);background:#1a1220}
+.coach-h{color:var(--coach);font-weight:800;font-size:1.2em}
+
+/* Calendar — week mode (default) */
+.cal{background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:12px 10px 10px;margin:0 0 14px}
+.cal-head{display:flex;align-items:center;justify-content:center;gap:8px;margin:0 0 8px}
+.cal-nav{background:transparent;border:none;color:#aaa;font-size:1.35em;cursor:pointer;padding:4px 10px;font-family:inherit}
+.cal-month{background:transparent;border:none;color:#e8e4d8;font-size:1.05em;font-weight:700;cursor:pointer;font-family:inherit;padding:4px 8px}
+.cal-month:hover{color:var(--coach)}
+.cal-today-row{display:flex;justify-content:center;margin:0 0 10px}
+.cal-today{appearance:none;background:#F5C518;border:1px solid #F5C518;color:#111;font-size:.72em;font-weight:800;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:inherit}
+.week-label{text-align:center;color:var(--text-muted);font-size:.78em;font-weight:600;margin:0 0 6px}
+.cal-dow,.cal-row{display:grid;grid-template-columns:minmax(48px,.85fr) repeat(7,1fr);gap:2px;text-align:center;align-items:center}
+.cal-dow{margin-bottom:4px}
+.cal-dow span{color:#888;font-size:.68em;font-weight:600;padding:2px 0}
+.general{appearance:none;background:#252525;border:1px solid #3a3a3a;color:#ddd;font-size:.62em;font-weight:700;padding:6px 2px;border-radius:8px;min-height:36px;width:100%;max-width:56px;margin:0 auto;font-family:inherit}
+.cell{appearance:none;background:transparent;border:none;color:#ddd;font-size:.9em;font-weight:600;padding:6px 0;border-radius:50%;aspect-ratio:1;max-width:38px;margin:0 auto;display:flex;align-items:center;justify-content:center;width:100%;font-family:inherit}
+.cell.has{color:var(--part)}
+.cell.active{background:#8e44ad;color:#fff}
+.cal-hint{text-align:center;color:var(--text-meta);font-size:.72em;margin:8px 0 0}
+
+/* Month brick mode (toggle) */
+.cal.month-mode .week-only{display:none}
+.cal:not(.month-mode) .month-only{display:none}
+.month-grid{display:flex;flex-direction:column;gap:4px;margin-top:4px}
+.month-row{display:grid;grid-template-columns:minmax(48px,.85fr) repeat(7,1fr);gap:2px;align-items:center}
+.week-col{appearance:none;background:#252525;border:1px solid #3a3a3a;color:#ddd;font-size:.58em;font-weight:700;padding:4px 2px;border-radius:8px;min-height:36px;width:100%;max-width:56px;margin:0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:inherit;line-height:1.15}
+.week-col.active{background:#8e44ad;border-color:#b06dcf;color:#fff}
+
+.card{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:0}
+.meta{color:var(--coach);font-size:.78em;margin:0 0 8px;opacity:.9}
+.date-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:8px;border-bottom:1px solid var(--line);margin-bottom:10px}
+.date{color:var(--coach);font-weight:700;font-size:1.05em;flex:1;min-width:0}
+.actions{display:inline-flex;gap:8px;align-items:center;flex-shrink:0}
+.done{
+  display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid #3d7a52;border-radius:999px;
+  background:linear-gradient(180deg,#1f3d2a,#173224);color:#d7f5e2;font-weight:700;font-size:.78em;font-family:inherit;
+}
+.done svg{width:15px;height:15px;display:block}
+.reported{
+  display:inline-flex;align-items:center;gap:4px;padding:7px 12px;border:1px solid #2f4a38;border-radius:999px;
+  background:#152019;color:#8fb89a;font-weight:700;font-size:.78em;font-family:inherit;cursor:default;
+}
+.share{
+  width:34px;height:34px;border-radius:50%;border:1px solid rgba(37,211,102,.35);background:#152019;color:var(--wa);
+  display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.share svg{width:18px;height:18px;display:block}
+.part{color:var(--part);font-weight:700;font-size:.98em;margin:0 0 7px}
+ul{margin:0;padding:0 0 0 18px;font-size:.95em;line-height:1.5}
+li{margin-bottom:5px}
+.note{color:var(--text-muted);font-size:.82em;line-height:1.45;margin:0 0 14px;padding:10px 12px;border:1px dashed #3a3a3a;border-radius:10px}
+
+.tabs{
+  position:fixed;left:0;right:0;bottom:0;z-index:999;
+  display:flex;justify-content:space-around;gap:2px;
+  padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));
+  background:rgba(24,24,24,.96);border-top:1px solid var(--line);backdrop-filter:blur(10px);
+}
+.tab{flex:1;min-width:0;padding:8px 4px;background:transparent;border:none;border-radius:10px;color:var(--text-muted);font-weight:600;font-size:.72em;font-family:inherit;text-align:center}
+.tab.active{background:rgba(155,107,184,.18);color:#fff;box-shadow:inset 0 -2px 0 var(--coach)}
+.up{
+  position:fixed;left:14px;bottom:calc(var(--tab-bar-h) + 18px);z-index:1000;
+  width:44px;height:44px;border:none;border-radius:50%;background:rgba(33,150,243,.92);color:#fff;
+  font-size:18px;box-shadow:0 4px 14px rgba(0,0,0,.28);display:flex;align-items:center;justify-content:center;
+}
+.coach-fab{
+  position:fixed;right:16px;bottom:calc(var(--tab-bar-h) + 18px);z-index:1000;
+  display:flex;flex-direction:column;align-items:center;gap:3px;max-width:76px;
+  padding:5px;border:1px solid rgba(176,109,207,.4);border-radius:28px;
+  background:linear-gradient(180deg,#2a1a33,#1c1424);box-shadow:0 6px 18px rgba(0,0,0,.4);
+}
+.coach-fab img{width:46px;height:46px;border-radius:50%;object-fit:cover;display:block;background:#1a1220}
+.coach-fab .cap{font-size:8px;font-weight:600;text-align:center;color:rgba(236,223,246,.88);line-height:1.15;max-width:66px}
+</style>
+</head>
+<body>
+<div class="header">
+  <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
+  <div class="brand">DUCK-WOD</div>
+  <div class="sub">DAILY WORKOUTS · v21.5.2</div>
+  <div class="sub">COACH · v2.1</div>
+</div>
+
+<div class="wrap">
+  <p class="note">Design clarity + Done v1 · tap <strong>month title</strong> for week↔brick. Done: active → locked <strong>Reported ✓</strong>; future days hide Done.</p>
+
+  <div class="panel">
+    <div class="coach-row">
+      <img src="assets/hamamen-coach-duck.png" alt="Personal Coach">
+      <div class="coach-h">Personal Coach</div>
+    </div>
+
+    <div class="cal" id="cal">
+      <div class="cal-head">
+        <button type="button" class="cal-nav" aria-label="Prev">‹</button>
+        <button type="button" class="cal-month" id="monthBtn" title="Tap for full 5-week brick">August – September 2026</button>
+        <button type="button" class="cal-nav" aria-label="Next">›</button>
+      </div>
+      <div class="cal-today-row"><button type="button" class="cal-today">Today</button></div>
+
+      <div class="week-only">
+        <div class="week-label">Week 1 · Aug 2–8</div>
+        <div class="cal-dow"><span></span><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+        <div class="cal-row">
+          <button type="button" class="general">General</button>
+          <button type="button" class="cell has">2</button>
+          <button type="button" class="cell has">3</button>
+          <button type="button" class="cell has">4</button>
+          <button type="button" class="cell has">5</button>
+          <button type="button" class="cell has">6</button>
+          <button type="button" class="cell has active">7</button>
+          <button type="button" class="cell has">8</button>
+        </div>
+        <div class="cal-hint">Tap month title for full 5-week brick</div>
+      </div>
+
+      <div class="month-only">
+        <div class="cal-dow"><span></span><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+        <div class="month-grid">
+          <div class="month-row">
+            <button type="button" class="week-col active">W1<span>Aug 2–8</span></button>
+            <button type="button" class="cell has">2</button><button type="button" class="cell has">3</button><button type="button" class="cell has">4</button><button type="button" class="cell has">5</button><button type="button" class="cell has">6</button><button type="button" class="cell has active">7</button><button type="button" class="cell has">8</button>
+          </div>
+          <div class="month-row">
+            <button type="button" class="week-col">W2<span>Aug 9–15</span></button>
+            <button type="button" class="cell has">9</button><button type="button" class="cell has">10</button><button type="button" class="cell has">11</button><button type="button" class="cell has">12</button><button type="button" class="cell has">13</button><button type="button" class="cell has">14</button><button type="button" class="cell has">15</button>
+          </div>
+          <div class="month-row">
+            <button type="button" class="week-col">W3<span>Aug 16–22</span></button>
+            <button type="button" class="cell has">16</button><button type="button" class="cell has">17</button><button type="button" class="cell has">18</button><button type="button" class="cell has">19</button><button type="button" class="cell has">20</button><button type="button" class="cell has">21</button><button type="button" class="cell has">22</button>
+          </div>
+          <div class="month-row">
+            <button type="button" class="week-col">W4<span>Aug 23–29</span></button>
+            <button type="button" class="cell has">23</button><button type="button" class="cell has">24</button><button type="button" class="cell has">25</button><button type="button" class="cell has">26</button><button type="button" class="cell has">27</button><button type="button" class="cell has">28</button><button type="button" class="cell has">29</button>
+          </div>
+          <div class="month-row">
+            <button type="button" class="week-col">W5<span>Aug 30–Sep 5</span></button>
+            <button type="button" class="cell has">30</button><button type="button" class="cell has">31</button><button type="button" class="cell has">1</button><button type="button" class="cell has">2</button><button type="button" class="cell has">3</button><button type="button" class="cell has">4</button><button type="button" class="cell has">5</button>
+          </div>
+        </div>
+        <div class="cal-hint">Tap month title to return to week view</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <div class="meta">Before report · today/past</div>
+      <div class="date-row">
+        <div class="date">Fri · 7 August</div>
+        <div class="actions">
+          <button type="button" class="done" title="Mark workout done" aria-label="Done">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 21h9c.8 0 1.5-.5 1.8-1.2l2.1-6.3c.1-.3.1-.6.1-.9V11c0-1.1-.9-2-2-2h-6.3l1-4.7.1-.5c0-.4-.2-.8-.5-1.1L13.2 1 6.6 7.6C6.2 7.9 6 8.4 6 9v10c0 1.1.9 2 2 2zm0-2V9l4.3-4.3-1.3 5.3H19v1.1L17 19H9zM4 9H2v12h2c.6 0 1-.4 1-1V10c0-.6-.4-1-1-1z"/></svg>
+            Done
+          </button>
+          <button type="button" class="share" title="Share on WhatsApp" aria-label="Share on WhatsApp">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.5 14.2c-.3-.2-1.8-.9-2.1-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-.9 1.1-.2.2-.3.2-.6.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.4.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.7-1-2.3-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4 0-.1-.2-.2-.5-.3z"/><path fill="currentColor" d="M12.04 2C6.5 2 2 6.48 2 12c0 1.77.46 3.43 1.27 4.87L2 22l5.27-1.38A9.93 9.93 0 0 0 12.04 22C17.56 22 22 17.52 22 12S17.56 2 12.04 2zm0 18.1c-1.63 0-3.15-.48-4.43-1.3l-.32-.19-3.13.82.84-3.05-.21-.33A8.07 8.07 0 0 1 3.9 12c0-4.47 3.65-8.1 8.14-8.1 4.48 0 8.13 3.63 8.13 8.1 0 4.47-3.65 8.1-8.13 8.1z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="part">Warm-up &amp; Core Activation</div>
+      <ul><li>200m Run</li><li>10 Russian KB Swings @ 24kg</li></ul>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <div class="meta">After report · locked stamp (no reopen)</div>
+      <div class="date-row">
+        <div class="date">Thu · 6 August</div>
+        <div class="actions">
+          <span class="reported" role="status" title="Report saved for this day" aria-label="Reported — check-in saved">Reported ✓</span>
+          <button type="button" class="share" title="Share on WhatsApp" aria-label="Share on WhatsApp">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.5 14.2c-.3-.2-1.8-.9-2.1-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-.9 1.1-.2.2-.3.2-.6.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.4.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.7-1-2.3-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4 0-.1-.2-.2-.5-.3z"/><path fill="currentColor" d="M12.04 2C6.5 2 2 6.48 2 12c0 1.77.46 3.43 1.27 4.87L2 22l5.27-1.38A9.93 9.93 0 0 0 12.04 22C17.56 22 22 17.52 22 12S17.56 2 12.04 2zm0 18.1c-1.63 0-3.15-.48-4.43-1.3l-.32-.19-3.13.82.84-3.05-.21-.33A8.07 8.07 0 0 1 3.9 12c0-4.47 3.65-8.1 8.14-8.1 4.48 0 8.13 3.63 8.13 8.1 0 4.47-3.65 8.1-8.13 8.1z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="part">Heavy Swing &amp; Weighted Pull</div>
+      <ul><li>15 Heavy Russian KB Swings @ 32kg</li></ul>
+    </div>
+
+    <div class="card">
+      <div class="meta">Future day · Done hidden (Share stays)</div>
+      <div class="date-row">
+        <div class="date">Sat · 8 August</div>
+        <div class="actions">
+          <button type="button" class="share" title="Share on WhatsApp" aria-label="Share on WhatsApp">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.5 14.2c-.3-.2-1.8-.9-2.1-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-.9 1.1-.2.2-.3.2-.6.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.4.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.7-1-2.3-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4 0-.1-.2-.2-.5-.3z"/><path fill="currentColor" d="M12.04 2C6.5 2 2 6.48 2 12c0 1.77.46 3.43 1.27 4.87L2 22l5.27-1.38A9.93 9.93 0 0 0 12.04 22C17.56 22 22 17.52 22 12S17.56 2 12.04 2zm0 18.1c-1.63 0-3.15-.48-4.43-1.3l-.32-.19-3.13.82.84-3.05-.21-.33A8.07 8.07 0 0 1 3.9 12c0-4.47 3.65-8.1 8.14-8.1 4.48 0 8.13 3.63 8.13 8.1 0 4.47-3.65 8.1-8.13 8.1z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="part">Engine + Pull Volume</div>
+      <ul><li>Toes-to-Bar × 8</li></ul>
+    </div>
+  </div>
+</div>
+
+<div class="tabs" role="navigation">
+  <button class="tab active" type="button">Personal Coach</button>
+  <button class="tab" type="button">Workouts</button>
+  <button class="tab" type="button">Workout Tools</button>
+  <button class="tab" type="button">Sources</button>
+  <button class="tab" type="button">About</button>
+</div>
+<button class="up" type="button" aria-label="Scroll to top">↑</button>
+<div class="coach-fab" aria-label="Talk to the coach">
+  <img src="assets/hamamen-coach-duck.png" alt="">
+  <div class="cap">talk to<br>the coach</div>
+</div>
+
+<script>
+(function () {
+  var cal = document.getElementById("cal");
+  var btn = document.getElementById("monthBtn");
+  btn.addEventListener("click", function () {
+    cal.classList.toggle("month-mode");
+  });
+})();
+</script>
+</body>
+</html>
