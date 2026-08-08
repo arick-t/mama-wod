@@ -1,20 +1,21 @@
 # Changelog
 
-<<<<<<< HEAD
-## [21.5.2] - 2026-08-08
+## [21.5.4] - 2026-08-08
 
 ### Admin security Stage A (Budget-approved · 0 ₪)
-- Device `writeKey` ownership on snapshot writes (IDOR hard/easy overwrite blocked).
+- Device `writeKey` ownership on snapshot writes (IDOR overwrite blocked).
 - Production fail-closed without Blob (no silent `/tmp`).
 - Atomic handoff redeem lock (`.took.json`, no double-spend).
 - Allowlist client fields + light admin audit log on Blob.
 - Handoff / claim installs `dw_write_key` on the athlete device.
 - עלות AI: 0 · Blob: בתוך Hobby
-=======
+
+---
+
 ## [21.5.3] - 2026-08-08
 
 ### Personal Coach / app: Part A/B/C labels + note color (display)
-- **Display version: v21.5.3** (Coach stays **v2.1**; package/`VERSION` stay on **21.5.1**).
+- **Display version: v21.5.3** (Coach stays **v2.1**; package/`VERSION` on **21.5.4** after Stage A).
 - Day parts always show **Part A / B / C — {title}** (no double prefix if title already starts with Part X).
 - Target/Intent coach notes use soft cyan (`--note`) so they read as notes, not prescription lines.
 - Clearer visual separation between consecutive parts; `Target:` lines classified as intent notes.
@@ -24,7 +25,7 @@
 ## [21.5.2] - 2026-08-08
 
 ### Personal Coach / app: design clarity + Done locked UX (display)
-- **Display version: v21.5.2** (Coach stays **v2.1**; package/`VERSION` stay on **21.5.1**).
+- **Display version: v21.5.2** (Coach stays **v2.1**).
 - Typography: **Heebo** for UI/body; **Oswald** kept for brand hero (`DUCK-WOD`) + REST DAY display.
 - Color hierarchy via CSS variables — calmer part titles, readable body; Coach purple + semantic training colors preserved. Workout note / part title / format / work-line hierarchy preserved.
 - Bottom tabs: uniform bar, no dashed borders; active underline; Coach active uses purple accent; typo **Workouts**.
@@ -32,7 +33,6 @@
 - Share: quiet circle with recognizable WhatsApp green glyph.
 - **Done locked + hide future:** `Done` (today/past, not Rest) → after save static **Reported ✓** (no reopen/edit); future Israel days hide Done; Rest unchanged. Keeps existing finish-learning wiring from v21.5 (static reply / part pick / micro-bias) without changing POL-020 programming quality.
 - Preview: `preview-design-clarity.html`.
->>>>>>> origin/main
 
 ---
 
