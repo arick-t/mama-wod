@@ -30,7 +30,7 @@ assert.ok(/family=Heebo/.test(claim), "claim Heebo");
 assert.ok(claim.includes("/?tab=pprog&handoff=1"), "claim handoff redirect preserved");
 assert.ok(claim.includes("window.location.replace"), "claim auto-redirect preserved");
 
-assert.ok(/DAILY WORKOUTS · v21\.5\b/.test(index), "app display version intact");
+assert.ok(/DAILY WORKOUTS · v21\.5\.1\b/.test(index), "app display version intact");
 assert.ok(/\b1\.1\b/.test(admin) && admin.includes("DUCK-WOD Admin · 1.1"), "admin UI version 1.1");
 assert.ok(!/1\.0 beta/.test(admin), "admin no longer shows 1.0 beta");
 
