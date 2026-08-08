@@ -2833,44 +2833,6 @@
       },
       {
         "date": "2026-08-08",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-08-08/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "instep rotation",
-              "calf stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "6 straight leg sit ups",
-              "6 db deadlifts",
-              "*partner is running 100m"
-            ],
-            "sub_title": "amrap 5min"
-          },
-          {
-            "title": "CONDITIONING 30MIN",
-            "lines": [
-              "in teams of 2",
-              "30 toes to bar",
-              "10 synchro burpees",
-              "400m partner run",
-              "max synchro db hang snatches 22,5/15kg",
-              "* score: total synchro db snatches"
-            ],
-            "sub_title": "amrap 6min x 5 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-08-08",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-august-8-2026/",
@@ -2920,6 +2882,44 @@
               "Row 500m @ Flush Pace",
               "Choose a set in round 1 that you can match or improve on in round 2 for all three movements. Flush pace = nice and easy. You should feel like the row is helping not hurting."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-08",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-08-08/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "instep rotation",
+              "calf stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "6 straight leg sit ups",
+              "6 db deadlifts",
+              "*partner is running 100m"
+            ],
+            "sub_title": "amrap 5min"
+          },
+          {
+            "title": "CONDITIONING 30MIN",
+            "lines": [
+              "in teams of 2",
+              "30 toes to bar",
+              "10 synchro burpees",
+              "400m partner run",
+              "max synchro db hang snatches 22,5/15kg",
+              "* score: total synchro db snatches"
+            ],
+            "sub_title": "amrap 6min x 5 rounds"
           }
         ]
       },
@@ -3009,5 +3009,5 @@
       }
     ]
   },
-  "last_updated": "2026-08-08T05:54:16.822704"
+  "last_updated": "2026-08-08T07:06:46.935165"
 }
