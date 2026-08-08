@@ -51,6 +51,7 @@ assert.ok(indexHtml.includes("function formatPprogPartHeading"), "index.html mus
 assert.ok(indexHtml.includes("formatPprogPartHeading(pi,"), "render must use formatPprogPartHeading");
 assert.ok(/--note\s*:\s*#7eb8c9/.test(indexHtml), "note color token must be soft cyan");
 assert.ok(/\.pprog-part-note\{[^}]*color:var\(--note\)/.test(indexHtml), "notes use --note, not muted body text");
-assert.ok(indexHtml.includes("DAILY WORKOUTS · v21.5.3"), "display version bump");
+assert.ok(indexHtml.includes("DAILY WORKOUTS · v21.5"), "display version is v21.5");
+assert.ok(!/DAILY WORKOUTS · v21\.5\.\d/.test(indexHtml), "display must be v21.5 (not v21.5.x patch)");
 
 console.log("pprog-part-display.test.js: ok");

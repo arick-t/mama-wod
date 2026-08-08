@@ -1,12 +1,21 @@
 # Changelog
 
+## [Admin 1.1 + display v21.5] - 2026-08-08
+
+### Admin UI **1.1** (design clarity) + app display label fix
+- **Admin:** product label **1.0 beta → 1.1** (design clarity ship already on `admin.html` / `claim.html`).
+- **App display:** header/title show **DAILY WORKOUTS · v21.5** (not v21.5.3). Coach stays **v2.1**. Internal package/`VERSION` remain **21.5.4** (Stage A).
+- Preview badges updated; no programming / Blob / auth changes.
+
+---
+
 ## [Admin design clarity] - 2026-08-08
 
 ### Admin dashboard — design clarity alignment (cosmetic)
 - `admin.html` (+ light `claim.html`): Heebo UI / Oswald brand-only; CSS tokens aligned with app (`--bg` `#121212`, `--brand`, `--coach`, `--part`, `--note`, …).
 - Calmer header, athlete tabs (soft brand active, no orange glow), learning toggle without neon shadow.
 - Workout day cards (`.pprog-*`) match Personal Coach hierarchy — part titles `--part`, notes `--note`, disc lists.
-- No API / Blob / auth / Stage 2 changes. Admin label stays **1.0 beta**. Preview: `preview-admin-design-clarity.html`.
+- No API / Blob / auth / Stage 2 changes. Preview: `preview-admin-design-clarity.html`. (Label later bumped to **1.1**.)
 
 ---
 
