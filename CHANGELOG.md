@@ -1,6 +1,15 @@
 # Changelog
 
-<<<<<<< HEAD
+## [Admin design clarity] - 2026-08-08
+
+### Admin dashboard — design clarity alignment (cosmetic)
+- `admin.html` (+ light `claim.html`): Heebo UI / Oswald brand-only; CSS tokens aligned with app (`--bg` `#121212`, `--brand`, `--coach`, `--part`, `--note`, …).
+- Calmer header, athlete tabs (soft brand active, no orange glow), learning toggle without neon shadow.
+- Workout day cards (`.pprog-*`) match Personal Coach hierarchy — part titles `--part`, notes `--note`, disc lists.
+- No API / Blob / auth / Stage 2 changes. Admin label stays **1.0 beta**. Preview: `preview-admin-design-clarity.html`.
+
+---
+
 ## [21.5.4] - 2026-08-08
 
 ### Admin security Stage A (Budget-approved · 0 ₪)
@@ -10,15 +19,6 @@
 - Allowlist client fields + light admin audit log on Blob.
 - Handoff / claim installs `dw_write_key` on the athlete device.
 - עלות AI: 0 · Blob: בתוך Hobby
-=======
-## [Admin design clarity] - 2026-08-08
-
-### Admin dashboard — design clarity alignment (cosmetic)
-- `admin.html` (+ light `claim.html`): Heebo UI / Oswald brand-only; CSS tokens aligned with app (`--bg` `#121212`, `--brand`, `--coach`, `--part`, `--note`, …).
-- Calmer header, athlete tabs (soft brand active, no orange glow), learning toggle without neon shadow.
-- Workout day cards (`.pprog-*`) match Personal Coach hierarchy — part titles `--part`, notes `--note`, disc lists.
-- No API / Blob / auth / Stage 2 changes. Admin label stays **1.0 beta**. Preview: `preview-admin-design-clarity.html`.
->>>>>>> 134e29ed (style(admin): align Admin UI with app design clarity)
 
 ---
 
