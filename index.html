@@ -6682,16 +6682,35 @@ function pprogSkillsSummaryForMail(skills) {
 /**
  * Push a lightweight snapshot to /api/admin-snapshot (admin dashboard branch).
  * No-op if the endpoint is not deployed on this branch — never blocks UI.
+ * Requires device writeKey so strangers cannot overwrite another athleteId.
  */
+function getAdminWriteKey() {
+  try {
+    if (!localStorage.dw_write_key || String(localStorage.dw_write_key).length < 16) {
+      var bytes = new Uint8Array(24);
+      if (window.crypto && window.crypto.getRandomValues) window.crypto.getRandomValues(bytes);
+      else for (var i = 0; i < bytes.length; i++) bytes[i] = (Math.random() * 256) | 0;
+      var s = "";
+      for (var j = 0; j < bytes.length; j++) s += String.fromCharCode(bytes[j]);
+      localStorage.dw_write_key = btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+    }
+    return String(localStorage.dw_write_key);
+  } catch (e) {
+    return "";
+  }
+}
+
 function pushAdminSnapshot(store) {
   if (!store || !store.intakeComplete) return;
   var athleteId = store.userId || store.athleteId;
   if (!athleteId) return;
   try {
+    if (!localStorage.dw_uid) localStorage.dw_uid = athleteId;
     var skillsSummary = pprogSkillsSummaryForMail(store.skills);
     var intakeSummary = String(store.profileNotes || "").replace(/\n+/g, " ").trim().slice(0, 400);
     var payload = {
       athleteId: athleteId,
+      writeKey: getAdminWriteKey(),
       displayName: store.displayName || "",
       gender: store.gender || "",
       preferredLanguage: store.preferredLanguage || "",
@@ -6704,11 +6723,10 @@ function pushAdminSnapshot(store) {
     };
     fetch("/api/admin-snapshot", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "X-Write-Key": payload.writeKey },
       body: JSON.stringify(payload),
     })
       .then(function (r) {
-        /* 404 = admin API not on this branch — ignore */
         return r;
       })
       .catch(function () {});

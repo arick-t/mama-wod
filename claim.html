@@ -117,6 +117,8 @@ p{color:#aaa;font-size:15px;line-height:1.55;margin-bottom:14px}
       try {
         localStorage.setItem(UID_KEY, String(storeToSave.userId || storeToSave.athleteId || j.athleteId || ""));
         localStorage.setItem(PPROG_STORE_KEY, JSON.stringify(storeToSave));
+        var wk = (j.writeKey || (storeToSave && storeToSave.writeKey) || "").trim();
+        if (wk && wk.length >= 16) localStorage.setItem("dw_write_key", wk);
       } catch (e) {
         fail("המכשיר לא מאפשר שמירה מקומית");
         return;

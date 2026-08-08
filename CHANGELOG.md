@@ -1,5 +1,17 @@
 # Changelog
 
+## [21.5.2] - 2026-08-08
+
+### Admin security Stage A (Budget-approved · 0 ₪)
+- Device `writeKey` ownership on snapshot writes (IDOR hard/easy overwrite blocked).
+- Production fail-closed without Blob (no silent `/tmp`).
+- Atomic handoff redeem lock (`.took.json`, no double-spend).
+- Allowlist client fields + light admin audit log on Blob.
+- Handoff / claim installs `dw_write_key` on the athlete device.
+- עלות AI: 0 · Blob: בתוך Hobby
+
+---
+
 ## [21.5.1] - 2026-08-07
 
 ### Admin dashboard — durable storage (Stage 1)
