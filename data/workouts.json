@@ -975,36 +975,6 @@
       },
       {
         "date": "2026-07-30",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "3 Position Power Snatch 1x3",
-              "5 SETS*",
-              "1 Power Snatch",
-              "1 Hang Power Snatch",
-              "1 High Hang Power Snatch",
-              "*Complete each set unbroken. Start light-mod and build.",
-              "* -Rest as Needed between Sets-",
-              "* (Score is the Heaviest Weight)"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "12:00 AMRAP",
-            "lines": [
-              "3 Squat Snatch 61kg/43kg",
-              "6 Overhead Squats 61kg/43kg",
-              "9 Bar Facing Burpees"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-30",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2829,6 +2799,40 @@
     "2026-08-08": [
       {
         "date": "2026-08-08",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260808",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
+              "LEARN MORE"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-08",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 15.5",
+            "lines": [
+              "27-21-15-9 reps for time of:",
+              "Row (calories)",
+              "Thrusters",
+              "*Men use 95 lb.*",
+              "*Women use 65 lb.*"
+            ]
+          }
+        ],
+        "note": "Open: Open 15.5"
+      },
+      {
+        "date": "2026-08-08",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-08-08/",
@@ -2867,15 +2871,75 @@
       },
       {
         "date": "2026-08-08",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260808",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-august-8-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
-              "LEARN MORE"
+              "3 rounds per partner, alternating full rounds",
+              "10 Kettlebell Swings",
+              "5 Burpees",
+              "10 Kettlebell Swings"
+            ]
+          },
+          {
+            "title": "For total time, alternate full rounds with a partner:",
+            "lines": [
+              "12 Rounds (6 each)",
+              "5 Wall Walks"
+            ]
+          },
+          {
+            "title": "6 Power Cleans 185/125lbs",
+            "lines": [
+              "Then, after 12 rounds:",
+              "8 Rounds (4 each)",
+              "100′ Bear Crawl"
+            ]
+          },
+          {
+            "title": "9 Power Cleans 135/95lbs",
+            "lines": [
+              "*Pairs complete 12 total rounds of the wall walk/power clean couplet, then move onto 8 total rounds of the bear crawl/power clean couplet.",
+              "Feel: Gas",
+              "Pace: Sustain",
+              "Target Score: Sub 34 mins",
+              "Firebreather Score: Sub 20 mins"
+            ]
+          },
+          {
+            "title": "2 Rounds",
+            "lines": [
+              "1 Set of Bar Muscle Ups",
+              "Row 500m @ Flush Pace",
+              "1 Set of Chest to Bar Pull Ups",
+              "Row 500m @ Flush Pace",
+              "1 Set of Pull Ups",
+              "Row 500m @ Flush Pace",
+              "Choose a set in round 1 that you can match or improve on in round 2 for all three movements. Flush pace = nice and easy. You should feel like the row is helping not hurting."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-08",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "TEAMS OF 2",
+            "lines": [
+              "ON A 15:00 RUNNING CLOCK",
+              "50 Burpee Box Jump Overs 24”/20”",
+              "100 Pull Ups",
+              "50 Burpee Box Jump Overs 24”/20”",
+              "Max Reps of Dumbbell Snatch 32kg/23kg in the remaining time",
+              "* (Score by Total Reps of DB Snatch)",
+              "*Complete workout in order. Partner split work as needed."
             ]
           }
         ]
@@ -2942,27 +3006,8 @@
           }
         ],
         "note": "Benchmark: Cindy XXX"
-      },
-      {
-        "date": "2026-08-08",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 15.5",
-            "lines": [
-              "27-21-15-9 reps for time of:",
-              "Row (calories)",
-              "Thrusters",
-              "*Men use 95 lb.*",
-              "*Women use 65 lb.*"
-            ]
-          }
-        ],
-        "note": "Open: Open 15.5"
       }
     ]
   },
-  "last_updated": "2026-08-08T02:35:48.516828"
+  "last_updated": "2026-08-08T05:54:16.822704"
 }
