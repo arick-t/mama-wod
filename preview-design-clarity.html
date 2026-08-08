@@ -68,6 +68,10 @@ body{
   background:linear-gradient(180deg,#1f3d2a,#173224);color:#d7f5e2;font-weight:700;font-size:.78em;font-family:inherit;
 }
 .done svg{width:15px;height:15px;display:block}
+.reported{
+  display:inline-flex;align-items:center;gap:4px;padding:7px 12px;border:1px solid #2f4a38;border-radius:999px;
+  background:#152019;color:#8fb89a;font-weight:700;font-size:.78em;font-family:inherit;cursor:default;
+}
 .share{
   width:34px;height:34px;border-radius:50%;border:1px solid rgba(37,211,102,.35);background:#152019;color:var(--wa);
   display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
@@ -110,7 +114,7 @@ li{margin-bottom:5px}
 </div>
 
 <div class="wrap">
-  <p class="note">Design clarity preview · tap the <strong>month title</strong> to switch week ↔ full 5-week brick calendar. Logo + real WhatsApp icon included.</p>
+  <p class="note">Design clarity + Done v1 · tap <strong>month title</strong> for week↔brick. Done: active → locked <strong>Reported ✓</strong>; future days hide Done.</p>
 
   <div class="panel">
     <div class="coach-row">
@@ -170,12 +174,12 @@ li{margin-bottom:5px}
       </div>
     </div>
 
-    <div class="card">
-      <div class="meta">Week 1 / 5 · Aug 2–8 · Engine Base &amp; Unilateral Strength</div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="meta">Before report · today/past</div>
       <div class="date-row">
         <div class="date">Fri · 7 August</div>
         <div class="actions">
-          <button type="button" class="done" aria-label="Done">
+          <button type="button" class="done" title="Mark workout done" aria-label="Done">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 21h9c.8 0 1.5-.5 1.8-1.2l2.1-6.3c.1-.3.1-.6.1-.9V11c0-1.1-.9-2-2-2h-6.3l1-4.7.1-.5c0-.4-.2-.8-.5-1.1L13.2 1 6.6 7.6C6.2 7.9 6 8.4 6 9v10c0 1.1.9 2 2 2zm0-2V9l4.3-4.3-1.3 5.3H19v1.1L17 19H9zM4 9H2v12h2c.6 0 1-.4 1-1V10c0-.6-.4-1-1-1z"/></svg>
             Done
           </button>
@@ -185,12 +189,36 @@ li{margin-bottom:5px}
         </div>
       </div>
       <div class="part">Warm-up &amp; Core Activation</div>
-      <ul>
-        <li>200m Run</li>
-        <li>10 Russian KB Swings @ 24kg</li>
-        <li>10 Kipping Pull-ups</li>
-        <li>Toes-to-Bar × 8</li>
-      </ul>
+      <ul><li>200m Run</li><li>10 Russian KB Swings @ 24kg</li></ul>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <div class="meta">After report · locked stamp (no reopen)</div>
+      <div class="date-row">
+        <div class="date">Thu · 6 August</div>
+        <div class="actions">
+          <span class="reported" role="status" title="Report saved for this day" aria-label="Reported — check-in saved">Reported ✓</span>
+          <button type="button" class="share" title="Share on WhatsApp" aria-label="Share on WhatsApp">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.5 14.2c-.3-.2-1.8-.9-2.1-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-.9 1.1-.2.2-.3.2-.6.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.4.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.7-1-2.3-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4 0-.1-.2-.2-.5-.3z"/><path fill="currentColor" d="M12.04 2C6.5 2 2 6.48 2 12c0 1.77.46 3.43 1.27 4.87L2 22l5.27-1.38A9.93 9.93 0 0 0 12.04 22C17.56 22 22 17.52 22 12S17.56 2 12.04 2zm0 18.1c-1.63 0-3.15-.48-4.43-1.3l-.32-.19-3.13.82.84-3.05-.21-.33A8.07 8.07 0 0 1 3.9 12c0-4.47 3.65-8.1 8.14-8.1 4.48 0 8.13 3.63 8.13 8.1 0 4.47-3.65 8.1-8.13 8.1z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="part">Heavy Swing &amp; Weighted Pull</div>
+      <ul><li>15 Heavy Russian KB Swings @ 32kg</li></ul>
+    </div>
+
+    <div class="card">
+      <div class="meta">Future day · Done hidden (Share stays)</div>
+      <div class="date-row">
+        <div class="date">Sat · 8 August</div>
+        <div class="actions">
+          <button type="button" class="share" title="Share on WhatsApp" aria-label="Share on WhatsApp">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.5 14.2c-.3-.2-1.8-.9-2.1-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-.9 1.1-.2.2-.3.2-.6.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.4.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.7-1-2.3-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4 0-.1-.2-.2-.5-.3z"/><path fill="currentColor" d="M12.04 2C6.5 2 2 6.48 2 12c0 1.77.46 3.43 1.27 4.87L2 22l5.27-1.38A9.93 9.93 0 0 0 12.04 22C17.56 22 22 17.52 22 12S17.56 2 12.04 2zm0 18.1c-1.63 0-3.15-.48-4.43-1.3l-.32-.19-3.13.82.84-3.05-.21-.33A8.07 8.07 0 0 1 3.9 12c0-4.47 3.65-8.1 8.14-8.1 4.48 0 8.13 3.63 8.13 8.1 0 4.47-3.65 8.1-8.13 8.1z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="part">Engine + Pull Volume</div>
+      <ul><li>Toes-to-Bar × 8</li></ul>
     </div>
   </div>
 </div>

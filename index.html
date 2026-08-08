@@ -115,7 +115,22 @@ h1{
 .pprog-finish-btn:hover{background:linear-gradient(180deg,#255238 0%,#1b3a2a 100%);border-color:#4caf70;color:#fff}
 .pprog-finish-btn:active{transform:scale(.97)}
 .pprog-finish-btn svg{width:15px;height:15px;display:block;flex-shrink:0}
-.pprog-finish-btn.done{background:#1a2a20;border-color:#3a5a45;color:#9ec9ad;box-shadow:none}
+/* Locked report stamp — not a CTA */
+.pprog-finish-btn.reported,
+.pprog-finish-reported{
+  flex-shrink:0;display:inline-flex;align-items:center;gap:4px;margin:0;
+  padding:7px 12px;border:1px solid #2f4a38;border-radius:999px;
+  background:#152019;color:#8fb89a;font-weight:700;font-size:.78em;font-family:inherit;
+  line-height:1;box-shadow:none;cursor:default;pointer-events:none;
+  user-select:none;-webkit-user-select:none;
+}
+.pprog-finish-btn.reported:hover,
+.pprog-finish-reported:hover{background:#152019;border-color:#2f4a38;color:#8fb89a;transform:none}
+@keyframes pprog-finish-lock-pop{
+  from{opacity:.65;transform:scale(.96)}
+  to{opacity:1;transform:scale(1)}
+}
+.pprog-finish-reported.lock-pop{animation:pprog-finish-lock-pop .2s ease-out}
 html.pprog-finish-open,body.pprog-finish-open{overflow:hidden;overscroll-behavior:none}
 .pprog-finish-overlay{
   display:none;position:fixed;inset:0;
@@ -7836,8 +7851,19 @@ function pprogFinishThumbsIcon() {
   );
 }
 
+/** True when training-day ISO (Israel calendar) is after Israel-today — Done hidden. */
+function pprogIsFutureTrainingDay(dayIso) {
+  var today = pprogIsraelTodayIso();
+  return String(dayIso || "") > String(today || "");
+}
+
+function pprogDayHasFinishReport(dayData) {
+  return !!(dayData && dayData.finishFeedback && dayData.finishFeedback.rating);
+}
+
 var pprogFinishDayKey = "";
 var pprogFinishChoice = "";
+var pprogFinishJustLockedKey = "";
 
 function pprogFinishSetBodyLock(on) {
   try {
@@ -7846,8 +7872,37 @@ function pprogFinishSetBodyLock(on) {
   } catch (eLock) {}
 }
 
+function pprogFinishDayIsoForKey(dayKey) {
+  try {
+    var store = loadPprogStore();
+    ensurePprogBlockFiveWeeks(store);
+    syncStoreActiveWeek(store);
+    var block = store.currentBlock;
+    if (!block || !block.blockStart) return "";
+    var wi = store.activeWeekIndex | 0;
+    var di = PPROG_DAY_KEYS.indexOf(normalizePprogDayKey(dayKey) || dayKey);
+    if (di < 0) return "";
+    return pprogAddDaysIso(block.blockStart, wi * 7 + di);
+  } catch (eIso) {
+    return "";
+  }
+}
+
 function openPprogFinishFeedback(dayKey) {
-  pprogFinishDayKey = normalizePprogDayKey(dayKey) || dayKey;
+  var key = normalizePprogDayKey(dayKey) || dayKey;
+  var dayIso = pprogFinishDayIsoForKey(key);
+  if (dayIso && pprogIsFutureTrainingDay(dayIso)) return;
+  try {
+    var storeGate = loadPprogStore();
+    var weekGate =
+      storeGate.currentWeek ||
+      (storeGate.currentBlock && storeGate.currentBlock.weeks[storeGate.activeWeekIndex | 0]);
+    var dayGate = weekGate && weekGate.days && weekGate.days[key];
+    if (pprogDayHasFinishReport(dayGate)) return; /* v1: locked — no reopen/edit */
+    if (weekGate && isPprogRestDay(key, dayGate || {}, weekGate)) return;
+  } catch (eGate) {}
+
+  pprogFinishDayKey = key;
   pprogFinishChoice = "";
   var overlay = document.getElementById("pprogFinishOverlay");
   var otherWrap = document.getElementById("pprogFinishOtherWrap");
@@ -7858,17 +7913,6 @@ function openPprogFinishFeedback(dayKey) {
   if (otherWrap) otherWrap.classList.remove("open");
   if (note) note.value = "";
   if (sendBtn) sendBtn.disabled = true;
-  try {
-    var store = loadPprogStore();
-    var week = store.currentWeek || (store.currentBlock && store.currentBlock.weeks[store.activeWeekIndex | 0]);
-    var dayData = week && week.days && week.days[pprogFinishDayKey];
-    var prev = dayData && dayData.finishFeedback;
-    if (prev && prev.rating) {
-      selectPprogFinishOption(prev.rating, true);
-      if (prev.rating === "other" && note) note.value = String(prev.note || "");
-      syncPprogFinishSendEnabled();
-    }
-  } catch (ePrefill) {}
   if (overlay) {
     try {
       if (overlay.parentNode !== document.body) document.body.appendChild(overlay);
@@ -7927,6 +7971,11 @@ function syncPprogFinishSendEnabled() {
 
 function submitPprogFinishFeedback() {
   if (!pprogFinishDayKey || !pprogFinishChoice) return;
+  var dayIsoGate = pprogFinishDayIsoForKey(pprogFinishDayKey);
+  if (dayIsoGate && pprogIsFutureTrainingDay(dayIsoGate)) {
+    closePprogFinishFeedback();
+    return;
+  }
   var noteEl = document.getElementById("pprogFinishOtherNote");
   var note = noteEl ? String(noteEl.value || "").trim() : "";
   if (pprogFinishChoice === "other" && !note) {
@@ -7948,6 +7997,12 @@ function submitPprogFinishFeedback() {
   if (!week) return;
   if (!week.days) week.days = {};
   if (!week.days[pprogFinishDayKey]) week.days[pprogFinishDayKey] = { parts: [] };
+  /* v1: single report — do not overwrite / reopen if already saved */
+  if (pprogDayHasFinishReport(week.days[pprogFinishDayKey])) {
+    closePprogFinishFeedback();
+    renderPprogWeek();
+    return;
+  }
   week.days[pprogFinishDayKey].finishFeedback = {
     rating: pprogFinishChoice,
     note: pprogFinishChoice === "other" ? note : "",
@@ -7962,8 +8017,16 @@ function submitPprogFinishFeedback() {
       finishRating: pprogFinishChoice,
     });
   } catch (eA) {}
+  pprogFinishJustLockedKey = pprogFinishDayKey;
   closePprogFinishFeedback();
   renderPprogWeek();
+  try {
+    setTimeout(function () {
+      pprogFinishJustLockedKey = "";
+      var stamp = document.querySelector(".pprog-finish-reported.lock-pop");
+      if (stamp) stamp.classList.remove("lock-pop");
+    }, 280);
+  } catch (eAnim) {}
 }
 
 document.addEventListener("input", function (ev) {
@@ -8288,27 +8351,30 @@ function renderPprogDayCardHtml(block, week, activeWi, day) {
   html += '<div class="pprog-day-card" dir="ltr">';
   var focus = pprogOverviewFocus(week, day);
   var restDay = isPprogRestDay(day, dayData, week);
-  var finishDone = !!(dayData && dayData.finishFeedback && dayData.finishFeedback.rating);
+  var finishReported = pprogDayHasFinishReport(dayData);
+  var finishFuture = pprogIsFutureTrainingDay(dayIso);
   var shareBtn =
     '<button type="button" class="pprog-share-wa" onclick="sharePprogDayWhatsApp(\'' +
     day +
     '\')" title="Share workout on WhatsApp" aria-label="Share workout on WhatsApp">' +
     pprogShareDayWaIcon() +
     "</button>";
-  var finishBtn = restDay
-    ? ""
-    : '<button type="button" class="pprog-finish-btn' +
-      (finishDone ? " done" : "") +
-      '" onclick="openPprogFinishFeedback(\'' +
-      day +
-      "')\" title=\"" +
-      (finishDone ? "Workout check-in saved" : "Mark workout done") +
-      '" aria-label="' +
-      (finishDone ? "Done — edit check-in" : "Done") +
-      '">' +
-      pprogFinishThumbsIcon() +
-      (finishDone ? "Done ✓" : "Done") +
-      "</button>";
+  var finishBtn = "";
+  if (!restDay && !finishFuture) {
+    if (finishReported) {
+      finishBtn =
+        '<span class="pprog-finish-reported' +
+        (pprogFinishJustLockedKey === day ? " lock-pop" : "") +
+        '" role="status" title="Report saved for this day" aria-label="Reported — check-in saved">Reported ✓</span>';
+    } else {
+      finishBtn =
+        '<button type="button" class="pprog-finish-btn" onclick="openPprogFinishFeedback(\'' +
+        day +
+        '\')" title="Mark workout done" aria-label="Done">' +
+        pprogFinishThumbsIcon() +
+        "Done</button>";
+    }
+  }
   html +=
     '<div class="card-header">' +
     '<div class="source-name">' +

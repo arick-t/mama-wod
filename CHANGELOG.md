@@ -1,15 +1,16 @@
 # Changelog
 
-## [21.4.2] - 2026-08-07 (design branch)
+## [21.4.2] - 2026-08-08 (design branch)
 
-### Personal Coach / app: design clarity (display)
+### Personal Coach / app: design clarity + Done locked UX (display)
 - **Display version: v21.4.2** (Coach stays **v2.1**; package/`VERSION` stay on 21.3.x).
 - Typography: **Heebo** for UI/body; **Oswald** kept for brand hero (`DUCK-WOD`) + REST DAY display.
 - Color hierarchy via CSS variables — calmer part titles, readable body; Coach purple + semantic training colors preserved (not a flat 3-color wipe).
 - Bottom tabs: uniform bar, no dashed borders; active underline; Coach active uses purple accent; typo **Workouts** (was Workout's).
 - FABs: content `padding-bottom` clearance; **Scroll-up on left**, Coach FAB on right; softer Coach FAB border/shadow (caption kept).
 - Share icon: quiet circle with recognizable WhatsApp green glyph (not muted grey).
-- Preview: `preview-design-clarity.html` (logo header, week↔month calendar toggle, Done + WA icon).
+- **Done locked + hide future:** active `Done` (today/past, not Rest) → after save static stamp **Reported ✓** (no reopen/edit); future Israel training days hide Done entirely; Rest unchanged. Uses local `finishFeedback` only — no learning/API changes.
+- Preview: `preview-design-clarity.html` (logo, week↔month, Done / Reported / future states).
 
 ---
 
