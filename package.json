@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "node scripts/analytics-summary.test.js && node scripts/contact-link.test.js && node scripts/coach-cost-caps.test.js && node scripts/coach-security-guards.test.js && node scripts/security-hardening-smoke.test.js && node scripts/coach-finish-signals.test.js",
+    "test": "node scripts/analytics-summary.test.js && node scripts/contact-link.test.js && node scripts/coach-cost-caps.test.js && node scripts/coach-security-guards.test.js && node scripts/security-hardening-smoke.test.js && node scripts/coach-finish-signals.test.js && node scripts/pprog-part-display.test.js",
     "dev:local": "node scripts/local-dev-server.js",
     "coach:sync-brain": "node scripts/coach-sync-brain.js",
     "coach:sync-policy": "node scripts/sync-coach-policy.js",

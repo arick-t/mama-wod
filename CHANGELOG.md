@@ -1,5 +1,15 @@
 # Changelog
 
+## [21.5.3] - 2026-08-08
+
+### Personal Coach / app: Part A/B/C labels + note color (display)
+- **Display version: v21.5.3** (Coach stays **v2.1**; package/`VERSION` stay on **21.5.1**).
+- Day parts always show **Part A / B / C — {title}** (no double prefix if title already starts with Part X).
+- Target/Intent coach notes use soft cyan (`--note`) so they read as notes, not prescription lines.
+- Clearer visual separation between consecutive parts; `Target:` lines classified as intent notes.
+
+---
+
 ## [21.5.2] - 2026-08-08
 
 ### Personal Coach / app: design clarity + Done locked UX (display)

@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>DUCK-WOD · Design clarity preview (v21.5.2)</title>
+<title>DUCK-WOD · Design clarity preview (v21.5.3)</title>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#121212;--bg-elev:#181818;--bg-card:#1a1a1a;--bg-panel:#1e1e1e;
   --text:#f5f2ea;--text-muted:#b0aaa0;--text-meta:#8a8580;
-  --brand:#E8451A;--coach:#9b6bb8;--part:#6fafa4;--line:#2c2c2c;--wa:#25D366;
+  --brand:#E8451A;--coach:#9b6bb8;--part:#6fafa4;--note:#7eb8c9;--line:#2c2c2c;--wa:#25D366;
   --tab-bar-h:64px;--fab-clearance:120px;
   --font-ui:'Heebo',sans-serif;--font-display:'Oswald','Heebo',sans-serif;
 }
@@ -78,6 +78,8 @@ body{
 }
 .share svg{width:18px;height:18px;display:block}
 .part{color:var(--part);font-weight:700;font-size:.98em;margin:0 0 7px}
+.part-note{color:var(--note);font-size:.86em;font-style:italic;font-weight:500;line-height:1.4;margin:0 0 8px}
+.fmt{color:var(--text);font-size:.95em;font-weight:700;margin:0 0 6px}
 ul{margin:0;padding:0 0 0 18px;font-size:.95em;line-height:1.5}
 li{margin-bottom:5px}
 .note{color:var(--text-muted);font-size:.82em;line-height:1.45;margin:0 0 14px;padding:10px 12px;border:1px dashed #3a3a3a;border-radius:10px}
@@ -109,12 +111,12 @@ li{margin-bottom:5px}
 <div class="header">
   <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
   <div class="brand">DUCK-WOD</div>
-  <div class="sub">DAILY WORKOUTS · v21.5.2</div>
+  <div class="sub">DAILY WORKOUTS · v21.5.3</div>
   <div class="sub">COACH · v2.1</div>
 </div>
 
 <div class="wrap">
-  <p class="note">Design clarity + Done v1 · tap <strong>month title</strong> for week↔brick. Done: active → locked <strong>Reported ✓</strong>; future days hide Done.</p>
+  <p class="note">v21.5.3 · Part A/B/C labels + cyan Target/Intent notes · Done locked stamp; future days hide Done.</p>
 
   <div class="panel">
     <div class="coach-row">
@@ -188,7 +190,9 @@ li{margin-bottom:5px}
           </button>
         </div>
       </div>
-      <div class="part">Warm-up &amp; Core Activation</div>
+      <div class="part">Part A — Warm-up &amp; Core Activation</div>
+      <div class="part-note">Target: 10 min | Intent: Dynamic mobility and aerobic priming.</div>
+      <div class="fmt">3 Rounds for Quality:</div>
       <ul><li>200m Run</li><li>10 Russian KB Swings @ 24kg</li></ul>
     </div>
 

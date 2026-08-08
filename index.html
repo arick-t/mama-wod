@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.5.2</title>
+<title>DUCK-WOD · v21.5.3</title>
 <meta name="theme-color" content="#111">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -28,6 +28,7 @@
   --coach:#9b6bb8;
   --coach-deep:#6b3d86;
   --part:#6fafa4;
+  --note:#7eb8c9;
   --line:#2c2c2c;
   --fab-clearance:120px;
   --tab-bar-h:64px;
@@ -198,11 +199,13 @@ html.pprog-finish-open,body.pprog-finish-open{overflow:hidden;overscroll-behavio
 }
 .pprog-finish-send:disabled{opacity:.45;cursor:default}
 .pprog-day-card .section{margin-bottom:12px}
+.pprog-day-card .section + .section{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
 .pprog-day-card .section-title{font-size:.98em;font-weight:700;text-decoration:none;color:var(--part);margin-bottom:7px;letter-spacing:.01em}
 .pprog-day-card .section-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:7px}
 .pprog-day-card .section-title-row .section-title{margin-bottom:0;flex:1;min-width:0}
 .pprog-modified-flag{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:#E8451A;color:#fff;font-size:.64em;font-weight:700;letter-spacing:.06em;vertical-align:middle}
-.pprog-part-note{margin:0 0 8px;padding:0 2px;color:var(--text-muted);font-size:.86em;font-style:italic;line-height:1.4}
+/* Coach notes (Target/Intent) — soft cyan, clearly not workout prescription */
+.pprog-part-note{margin:0 0 8px;padding:0 2px;color:var(--note);font-size:.86em;font-style:italic;line-height:1.4;font-weight:500}
 .pprog-part-format{margin:0 0 6px;padding:0 2px;color:var(--text);font-size:.95em;font-weight:700;line-height:1.35}
 .pprog-day-card .section-lines{margin:0;padding:0 0 0 18px;color:var(--text);font-size:.95em;line-height:1.5;list-style:disc;font-family:var(--font-ui)}
 .pprog-day-card .section-lines li{margin-bottom:5px}
@@ -1018,7 +1021,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.5.2</div>
+<div class="header-sub">DAILY WORKOUTS · v21.5.3</div>
 <div class="header-sub" id="coachVersionSub">COACH · v2.1</div>
 </div>
 <div class="tabs">
@@ -4986,6 +4989,7 @@ function normalizePprogParts(rawParts, dayKey) {
 function isPprogPartIntentNoteLine(line) {
   var t = String(line || "").trim();
   if (!t) return false;
+  if (/^target\s*:/i.test(t)) return true;
   if (/^(target\s+)?duration\s*:/i.test(t)) return true;
   if (/^movement(\s+intent)?\s*:/i.test(t)) return true;
   if (/duration\s*:/i.test(t) && /movement/i.test(t)) return true;
@@ -4999,6 +5003,15 @@ function isPprogPartIntentNoteLine(line) {
   if (/^(intent|focus|cue|note|goal)\s*[:—-]/i.test(t)) return true;
   if (/^focus on\b/i.test(t)) return true;
   return false;
+}
+
+/** Always show Part A/B/C; keep coach title after an em dash (avoid double Part prefix). */
+function formatPprogPartHeading(partIndex, rawTitle) {
+  var letter = String.fromCharCode(65 + (partIndex | 0));
+  var t = String(rawTitle || "").trim();
+  if (!t) return "Part " + letter;
+  if (/^Part\s+[A-Z]\b/i.test(t)) return t;
+  return "Part " + letter + " — " + t;
 }
 
 /** Format / instruction header (AMRAP, sets for quality, etc.). */
@@ -8633,7 +8646,7 @@ function renderPprogDayPartsHtml(parts, dayData, dayKey) {
   var modifiedKinds = (dayData && dayData.modifiedPartKinds) || {};
   for (var pi = 0; pi < parts.length; pi++) {
     var part = parts[pi];
-    var defaultTitle = "Part " + String.fromCharCode(65 + pi);
+    var heading = formatPprogPartHeading(pi, part && part.title);
     var kind = normalizePprogPartKind(part && part.title, part && part.lines);
     var modified = !!modifiedKinds[kind];
     var classified = classifyPprogPartLines(part && part.lines);
@@ -8641,7 +8654,7 @@ function renderPprogDayPartsHtml(parts, dayData, dayKey) {
     html += '<div class="section-title-row">';
     html +=
       '<div class="section-title">' +
-      esc(part.title || defaultTitle) +
+      esc(heading) +
       (modified ? '<span class="pprog-modified-flag">MODIFIED</span>' : "") +
       "</div>";
     html += "</div>";
