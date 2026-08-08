@@ -7,7 +7,11 @@
     "doc": "docs"
   },
   "scripts": {
+<<<<<<< HEAD
     "test": "node scripts/analytics-summary.test.js && node scripts/contact-link.test.js && node scripts/coach-cost-caps.test.js && node scripts/coach-security-guards.test.js && node scripts/security-hardening-smoke.test.js && node scripts/coach-finish-signals.test.js && node scripts/pprog-part-display.test.js && node scripts/lib/admin/admin-ownership.test.js",
+=======
+    "test": "node scripts/analytics-summary.test.js && node scripts/contact-link.test.js && node scripts/coach-cost-caps.test.js && node scripts/coach-security-guards.test.js && node scripts/security-hardening-smoke.test.js && node scripts/coach-finish-signals.test.js && node scripts/pprog-part-display.test.js && node scripts/admin-design-clarity.test.js",
+>>>>>>> 134e29ed (style(admin): align Admin UI with app design clarity)
     "dev:local": "node scripts/local-dev-server.js",
     "coach:sync-brain": "node scripts/coach-sync-brain.js",
     "coach:sync-policy": "node scripts/sync-coach-policy.js",

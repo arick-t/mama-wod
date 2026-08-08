@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>DUCK-WOD Admin · design clarity preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800&display=swap">
+<style>
+:root{
+  --bg:#121212;--bg-elev:#181818;--bg-card:#1a1a1a;--bg-panel:#1e1e1e;
+  --text:#f5f2ea;--text-muted:#b0aaa0;--text-meta:#8a8580;
+  --brand:#E8451A;--brand-gold:#F5C518;--coach:#9b6bb8;--part:#6fafa4;--note:#7eb8c9;--line:#2c2c2c;
+  --font-ui:'Heebo',sans-serif;--font-display:'Oswald','Heebo',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-ui);background:var(--bg);color:var(--text);padding:20px;line-height:1.55}
+.wrap{max-width:720px;margin:0 auto}
+.note{color:var(--text-meta);font-size:.85em;margin:0 0 16px;padding:10px 12px;border:1px dashed var(--line);border-radius:10px}
+header{background:var(--bg-card);border-bottom:3px solid var(--brand);padding:12px 16px;border-radius:12px 12px 0 0;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.logo{font-family:var(--font-display);font-weight:700;letter-spacing:.1em;
+  background:linear-gradient(90deg,#E8451A,#F5C518 50%,#1A9B8A);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.tag{color:var(--text-meta);font-size:13px;font-weight:600}
+.ver{font-size:11px;font-weight:700;color:var(--note);border:1px solid rgba(126,184,201,.4);border-radius:8px;padding:3px 9px}
+.btn{background:var(--bg-panel);border:1px solid var(--line);border-radius:9px;padding:7px 14px;color:var(--text-muted);font-weight:600;font-size:13px}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.tabs{display:flex;gap:8px;padding:10px 0;margin:0 0 14px}
+.tab{padding:8px 14px;border-radius:10px;background:var(--bg-panel);color:var(--text-muted);border:1px solid var(--line);font-weight:600;font-size:13px}
+.tab.active{background:rgba(232,69,26,.16);color:#fff;border-color:var(--brand);box-shadow:inset 0 -2px 0 var(--brand)}
+.card{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
+.source{color:var(--coach);font-weight:700;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.part{color:var(--part);font-weight:700;font-size:.98em;margin:0 0 7px}
+.part-note{color:var(--note);font-size:.86em;font-style:italic;margin:0 0 8px}
+.fmt{font-weight:700;margin:0 0 6px}
+ul{margin:0;padding-inline-start:18px}
+li{margin-bottom:5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="note">Preview בלבד — יישור Admin ל־design clarity של האפליקציה (Heebo/Oswald, tokens, כרטיסי אימון). ללא שינוי API/Blob.</p>
+  <header>
+    <span class="logo">DUCK-WOD</span>
+    <span class="tag">Admin</span>
+    <span class="ver">1.0 beta</span>
+    <span style="margin-right:auto"></span>
+    <button type="button" class="btn primary">+ מתאמן</button>
+    <button type="button" class="btn">↻ רענון</button>
+  </header>
+  <div class="tabs">
+    <div class="tab active">אריק</div>
+    <div class="tab">עדי</div>
+  </div>
+  <div class="card" dir="ltr">
+    <div class="source">Sat · 8 August</div>
+    <div class="part">Part A — Extended Dynamic Warm-up</div>
+    <div class="part-note">Target: 10 min | Intent: Dynamic mobility and aerobic priming.</div>
+    <div class="fmt">3 Rounds for Quality:</div>
+    <ul><li>10 Spiderman lunges / side</li><li>20 Jumping jacks</li></ul>
+  </div>
+</div>
+</body>
+</html>
