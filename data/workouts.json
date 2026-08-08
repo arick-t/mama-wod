@@ -1,97 +1,5 @@
 {
   "workouts": {
-    "2026-07-25": [
-      {
-        "date": "2026-07-25",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260725",
-        "sections": [
-          {
-            "title": "5 ROUNDS FOR TIME OF",
-            "lines": [
-              "5 deadlifts",
-              "10 burpees",
-              "♀ 185 lb",
-              "♂ 275 lb",
-              "Compare to",
-              "220724"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-25",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 21.3",
-            "lines": [
-              "For total time:",
-              "15 front squats",
-              "30 toes-to-bars",
-              "15 thrusters",
-              "Then, rest 1 minute before continuing with:",
-              "15 front squats",
-              "30 chest-to-bar pull-ups",
-              "15 thrusters",
-              "Then, rest 1 minute before continuing with:",
-              "15 front squats",
-              "30 bar muscle-ups",
-              "15 thrusters",
-              "Workout 21.4 begins immediately upon completing or reaching the time cap for 21.3.",
-              "95 lb. for the front squats and thrusters",
-              "Time cap: 15 min."
-            ]
-          }
-        ],
-        "note": "Open: Open 21.3"
-      },
-      {
-        "date": "2026-07-25",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-july-25-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "With a partner, 2 rounds of each per athlete:",
-              "Partner 1: 400m run",
-              "Partner 2: 20 Bodyweight Step overs + Plank hold in time remaining",
-              "Switch when Running partner is finished"
-            ]
-          },
-          {
-            "title": "5 Rounds for time",
-            "lines": [
-              "30 Toes to bar",
-              "40 Double DB Box Step Overs 50s/35s to 24/20″",
-              "Split work evenly with a partner YGIG style",
-              "You-Go-I-Go:",
-              "15 Toes to bar Partner 1",
-              "15 Toes to bar Partner 2",
-              "20 Double DB Box Step Overs 50s/35s to 24/20″ Partner 1",
-              "20 Double DB Box Step Overs 50s/35s to 24/20″ Partner 2"
-            ]
-          },
-          {
-            "title": "Squat Clean",
-            "lines": [
-              "1×5 @ 60%",
-              "Tempo Pull to Mid Thigh into Squat Clean",
-              "1×5 @ 60-65%",
-              "Tempo Pull to Knee into Squat Clean",
-              "1×5 @ 60-70%",
-              "Row 500m at flush pace between sets",
-              "Drop and reset between each rep."
-            ]
-          }
-        ]
-      }
-    ],
     "2026-07-26": [
       {
         "date": "2026-07-26",
@@ -185,85 +93,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-07-26",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-07-26/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "instep rotations",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. air squats",
-              "2. row",
-              "3. straight leg sit ups",
-              "4. plank shoulder taps"
-            ],
-            "sub_title": "30sec on / 15sec off x2 rounds"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "1. 30-50sec wall sit",
-              "2. 10-15cal row",
-              "3. 8-10 strict toes to bar",
-              "4. 12-16 kb gorilla rows",
-              "5. rest",
-              "Sunday Endurance for Open Gym",
-              "on the 3:00 x 6 rounds:",
-              "",
-              "15/12 cal row [rpe 7-8]",
-              "15/12 cal bike or ski [rpe 4-5]",
-              "* aerobic power [lactate threshold]"
-            ],
-            "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-26",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Laura",
-            "sub_title": "With a partner, complete as many rounds as possible in 21 minutes of:",
-            "lines": [
-              "30-calorie row",
-              "20 burpees over the rower",
-              "10 power cleans"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-26",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Fat Helen",
-            "lines": [
-              "3 rounds for time of:",
-              "400 m  Run",
-              "21  Kettlebell Swing s (32/24kg)",
-              "12 Chest-To-Bar Pull-Ups"
-            ]
-          }
-        ],
-        "note": "Benchmark: Fat Helen"
       }
     ],
     "2026-07-27": [
@@ -970,21 +799,6 @@
               "* aerobic power & muscular endurance"
             ],
             "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-30",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "* Metcon:-Death by Thruster 42.5/30kgEMOM – add 1 rep each minute until failure",
-              "rest 3 mins, thenCash out:3 rounds:200m Run12 Box Jumps 24/20″"
-            ]
           }
         ]
       },
@@ -1875,17 +1689,18 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "ANNIE\" - Benchmark",
+            "title": "”ANGIE” BENCHMARK",
             "lines": [
-              "For time:",
-              "50–40–30–20–10",
-              "Double-Under (Sc. SU x2)",
-              "Sit-up",
-              "*time cap 12:00"
+              "100 pull-ups",
+              "100 push-ups",
+              "100 sit-ups",
+              "100 squats",
+              "Timecap 25 min",
+              "Skaalata voi monella tapaa!"
             ]
           }
         ],
-        "note": "Benchmark: ANNIE\" - Benchmark"
+        "note": "Benchmark: ”ANGIE” BENCHMARK"
       }
     ],
     "2026-08-04": [
@@ -3007,7 +2822,91 @@
         ],
         "note": "Benchmark: Cindy XXX"
       }
+    ],
+    "2026-08-09": [
+      {
+        "date": "2026-08-09",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Hero Wod:",
+              "Hades:For time with a partner:Buy In: 400m Run (together)50 Power Cleans – 52.5/35kg50 Box Jump Overs 24/20in75 Front Squats – 60/42.5kg100 Deadlifts – 75/52.5kg100 Russian Twists – 9/6kg – (L+R=1)Buy out: 400m Run (together)",
+              "Artie:AMRAP ( See how long is left after Hades – 10 mins?)5 Pull-Ups10 Push-Ups15 Squats5 Pull-Ups10 Thrusters 42.5/30kg"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-09",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Tully",
+            "sub_title": "4 rounds for time of:",
+            "lines": [
+              "Swim 200 meters",
+              "23 dumbbell squat cleans"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-09",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "ANNIE\" - Benchmark",
+            "lines": [
+              "For time:",
+              "50–40–30–20–10",
+              "Double-Under (Sc. SU x2)",
+              "Sit-up",
+              "*time cap 12:00"
+            ]
+          }
+        ],
+        "note": "Benchmark: ANNIE\" - Benchmark"
+      },
+      {
+        "date": "2026-08-09",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 14.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 double-unders",
+              "75-lb. power snatches, 15 reps",
+              "*WOMEN*",
+              "*- includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 double-unders",
+              "55-lb. power snatches, 15 reps",
+              "*MASTERS MEN*",
+              "*- includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 double-unders",
+              "65-lb. power snatches, 15 reps",
+              "*MASTERS WOMEN*",
+              "*- includes Masters Women 55+*",
+              "30 double-unders",
+              "45-lb. power snatches, 15 reps"
+            ]
+          }
+        ],
+        "note": "Open: Open 14.1"
+      }
     ]
   },
-  "last_updated": "2026-08-08T09:50:11.972628"
+  "last_updated": "2026-08-09T02:31:38.993889"
 }
