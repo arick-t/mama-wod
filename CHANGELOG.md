@@ -8,7 +8,8 @@
 - Color hierarchy via CSS variables — calmer part titles, readable body; Coach purple + semantic training colors preserved (not a flat 3-color wipe).
 - Bottom tabs: uniform bar, no dashed borders; active underline; Coach active uses purple accent; typo **Workouts** (was Workout's).
 - FABs: content `padding-bottom` clearance; **Scroll-up on left**, Coach FAB on right; softer Coach FAB border/shadow (caption kept).
-- Preview: `preview-design-clarity.html`.
+- Share icon: quiet circle with recognizable WhatsApp green glyph (not muted grey).
+- Preview: `preview-design-clarity.html` (logo header, week↔month calendar toggle, Done + WA icon).
 
 ---
 
