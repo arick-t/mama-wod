@@ -1,5 +1,15 @@
 # Changelog
 
+## [21.5.1] - 2026-08-08
+
+### Personal Coach — Done report stamp sticks (no double finish)
+- **Display / package / `VERSION`:** **v21.5.1** (Coach stays **v2.1**).
+- Root cause: `normalizePprogWeek` rebuilt days without `finishFeedback`, so every render wiped the Done report — no **Reported ✓**, button stayed clickable, analytics could fire twice.
+- Preserve `finishFeedback` through normalize + day revision; rehydrate stamps from `finishLearning` by Israel `session_date`; one learning event per day; in-flight double-submit guard.
+- Smoke: `scripts/finish-feedback-persist.test.js`.
+
+---
+
 ## [Admin 1.1 + display v21.5] - 2026-08-08
 
 ### Admin UI **1.1** (design clarity) + app display label fix
@@ -55,9 +65,10 @@
 
 ---
 
-## [21.5.1] - 2026-08-07
+## [21.5.1 Admin Blob] - 2026-08-07
 
 ### Admin dashboard — durable storage (Stage 1)
+<!-- Historical note: package later reused 21.5.1 for Done-stamp ship 2026-08-08 -->
 - Private Vercel Blob store `duck-wod-admin` for athlete snapshots + handoff claims (survives redeploy/cold start).
 - Filesystem fallback remains for local/dev without Blob credentials.
 - Seeds tier-2 veterans (אריק / עדי) into admin list when missing.

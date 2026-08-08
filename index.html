@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.5</title>
+<title>DUCK-WOD · v21.5.1</title>
 <meta name="theme-color" content="#111">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -1021,7 +1021,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.5</div>
+<div class="header-sub">DAILY WORKOUTS · v21.5.1</div>
 <div class="header-sub" id="coachVersionSub">COACH · v2.1</div>
 </div>
 <div class="tabs">
@@ -5477,6 +5477,30 @@ function applyLocalWeekTemplateFallback(weekIndex0, reason) {
   return true;
 }
 
+/** Normalize / clone a day-level Done report (finishFeedback). */
+function pprogNormalizeFinishFeedback(fb) {
+  if (!fb || typeof fb !== "object") return null;
+  var rating = String(fb.rating || "").toLowerCase();
+  if (
+    rating !== "just_right" &&
+    rating !== "too_hard" &&
+    rating !== "too_easy" &&
+    rating !== "other"
+  ) {
+    return null;
+  }
+  return {
+    rating: rating,
+    note: String(fb.note != null ? fb.note : fb.note_short || "").slice(0, 160),
+    part_role: String(fb.part_role || "").slice(0, 24),
+    part_title: String(fb.part_title || "").slice(0, 80),
+    part_index: fb.part_index != null && fb.part_index !== "" ? fb.part_index : null,
+    action_allowed: String(fb.action_allowed || "accumulate_only").slice(0, 40),
+    safety_flag: !!fb.safety_flag,
+    at: String(fb.at || ""),
+  };
+}
+
 function normalizePprogWeek(week, prevWeek, weekStartOverride, weekMeta) {
   var meta = weekMeta || {};
   var out = {
@@ -5502,7 +5526,7 @@ function normalizePprogWeek(week, prevWeek, weekStartOverride, weekMeta) {
     var day = srcDays[k] || {};
     var prev = prevDays[k] || {};
     var parts = normalizePprogParts(day.parts != null ? day.parts : day.workout || day.sections, k);
-    out.days[k] = {
+    var dayOut = {
       parts: parts,
       preTalk: String((day && day.preTalk) != null ? day.preTalk : prev.preTalk || ""),
       debrief: String((day && day.debrief) != null ? day.debrief : prev.debrief || ""),
@@ -5515,6 +5539,12 @@ function normalizePprogWeek(week, prevWeek, weekStartOverride, weekMeta) {
           ? prev.modifiedPartKinds
           : {},
     };
+    /* Keep Done report across re-normalize / week fill — do not strip finishFeedback */
+    var ff =
+      pprogNormalizeFinishFeedback(day && day.finishFeedback) ||
+      pprogNormalizeFinishFeedback(prev && prev.finishFeedback);
+    if (ff) dayOut.finishFeedback = ff;
+    out.days[k] = dayOut;
     if (out.notesByDay[k] == null) out.notesByDay[k] = "";
   }
   if (out.notesByDay.week == null) out.notesByDay.week = "";
@@ -5675,7 +5705,68 @@ function pprogEnsureFinishLearning(store) {
     store.finishLearning.paidAdaptationsByMonth = {};
   }
   if (!Array.isArray(store.finishLearning.safetyLog)) store.finishLearning.safetyLog = [];
+  /* One Done report per Israel session_date — keep earliest if duplicates slipped in */
+  var seenSd = {};
+  var deduped = [];
+  for (var di = 0; di < store.finishLearning.events.length; di++) {
+    var ev = store.finishLearning.events[di];
+    if (!ev) continue;
+    var sd = String(ev.session_date || "").slice(0, 10);
+    if (sd && seenSd[sd]) continue;
+    if (sd) seenSd[sd] = true;
+    deduped.push(ev);
+  }
+  if (deduped.length !== store.finishLearning.events.length) {
+    store.finishLearning.events = deduped;
+  }
   return store.finishLearning;
+}
+
+/**
+ * Recover day stamps from finishLearning when finishFeedback was stripped
+ * by an older normalizePprogWeek (pre-fix). Matches Israel session_date.
+ */
+function pprogRehydrateFinishStampsFromLearning(store) {
+  if (!store || !store.currentBlock || !Array.isArray(store.currentBlock.weeks)) return false;
+  var fl = pprogEnsureFinishLearning(store);
+  if (!fl.events.length) return false;
+  var byDate = {};
+  for (var ei = 0; ei < fl.events.length; ei++) {
+    var e = fl.events[ei];
+    if (!e || !e.rating) continue;
+    var key = String(e.session_date || "").slice(0, 10);
+    if (!key || byDate[key]) continue;
+    byDate[key] = e;
+  }
+  var changed = false;
+  for (var wi = 0; wi < store.currentBlock.weeks.length; wi++) {
+    var week = store.currentBlock.weeks[wi];
+    if (!week || !week.days) continue;
+    for (var di = 0; di < PPROG_DAY_KEYS.length; di++) {
+      var dk = PPROG_DAY_KEYS[di];
+      var day = week.days[dk];
+      if (!day) continue;
+      if (pprogNormalizeFinishFeedback(day.finishFeedback)) continue;
+      var sd = pprogSessionDateForDay(dk, wi, store);
+      var src = sd && byDate[sd];
+      if (!src) continue;
+      day.finishFeedback = pprogNormalizeFinishFeedback({
+        rating: src.rating,
+        note: src.note_short || src.note || "",
+        part_role: src.part_role || "",
+        part_title: src.part_title || "",
+        action_allowed: src.action_allowed || "accumulate_only",
+        safety_flag: !!src.safety_flag,
+        at: src.at || "",
+      });
+      if (day.finishFeedback) changed = true;
+    }
+  }
+  if (changed) {
+    syncStoreActiveWeek(store);
+    savePprogStore(store);
+  }
+  return changed;
 }
 
 function pprogFinishInferPartRole(title) {
@@ -5805,6 +5896,26 @@ function pprogRecordFinishFeedback(input) {
     return { ok: false, error: "invalid_rating" };
   }
   var sessionDate = String((input && input.session_date) || pprogIsraelTodayIso()).slice(0, 10);
+  /* Hard lock: never append a second learning event for the same training day */
+  for (var xi = 0; xi < fl.events.length; xi++) {
+    if (fl.events[xi] && String(fl.events[xi].session_date || "").slice(0, 10) === sessionDate) {
+      var langDup = (input && input.lang) === "he" ? "he" : "en";
+      var replyDup =
+        (PPROG_FINISH_STATIC[fl.events[xi].rating] &&
+          PPROG_FINISH_STATIC[fl.events[xi].rating][langDup]) ||
+        PPROG_FINISH_STATIC.other.en;
+      return {
+        ok: true,
+        duplicate: true,
+        event: fl.events[xi],
+        action_allowed: fl.events[xi].action_allowed || "accumulate_only",
+        safety_flag: !!fl.events[xi].safety_flag,
+        staticReply: replyDup,
+        shouldAttemptPaidMicroBias: false,
+        monthKey: pprogIsraelMonthKey(sessionDate),
+      };
+    }
+  }
   var noteShort = rating === "other" ? pprogFinishTruncateNote(input && input.note) : "";
   var safety_flag = rating === "other" && PPROG_FINISH_SAFETY_RE.test(noteShort);
   var part_role = String((input && input.part_role) || "unknown").toLowerCase() || "unknown";
@@ -6913,9 +7024,15 @@ function ensurePprogBlockFiveWeeks(store) {
         null
       );
     }
+    try {
+      pprogRehydrateFinishStampsFromLearning(store);
+    } catch (eRh0) {}
     return store;
   }
   store.currentBlock = normalizePprogBlock(store.currentBlock, store.currentBlock);
+  try {
+    pprogRehydrateFinishStampsFromLearning(store);
+  } catch (eRh1) {}
   return store;
 }
 
@@ -6988,7 +7105,7 @@ function applyPprogDayRevision(dayKey, dayPayload) {
     };
   });
   var modifiedKinds = detectModifiedPartKinds(prev.parts || [], normalizedParts);
-  store.currentWeek.days[dayKey] = {
+  var revisedDay = {
     parts: normalizedParts,
     preTalk: prev.preTalk || "",
     debrief: prev.debrief || "",
@@ -6996,6 +7113,9 @@ function applyPprogDayRevision(dayKey, dayPayload) {
     lastDebriefReply: prev.lastDebriefReply || "",
     modifiedPartKinds: modifiedKinds,
   };
+  var keepFf = pprogNormalizeFinishFeedback(prev.finishFeedback);
+  if (keepFf) revisedDay.finishFeedback = keepFf;
+  store.currentWeek.days[dayKey] = revisedDay;
   pprogApplyModificationLearning(store, dayKey, modifiedKinds);
   if (Array.isArray(store.currentWeek.overview)) {
     var focus = store.currentWeek.days[dayKey].parts
@@ -8265,6 +8385,7 @@ var pprogFinishPartIndex = -1;
 var pprogFinishPendingParts = null;
 var pprogFinishCloseTimer = null;
 var pprogFinishJustLockedKey = "";
+var pprogFinishSubmitting = false;
 
 function pprogFinishSetBodyLock(on) {
   try {
@@ -8373,6 +8494,7 @@ function pprogFinishDayIsoForKey(dayKey) {
 }
 
 function openPprogFinishFeedback(dayKey) {
+  if (pprogFinishSubmitting) return;
   if (pprogFinishCloseTimer) {
     clearTimeout(pprogFinishCloseTimer);
     pprogFinishCloseTimer = null;
@@ -8382,6 +8504,8 @@ function openPprogFinishFeedback(dayKey) {
   if (dayIso && pprogIsFutureTrainingDay(dayIso)) return;
   try {
     var storeGate = loadPprogStore();
+    ensurePprogBlockFiveWeeks(storeGate);
+    syncStoreActiveWeek(storeGate);
     var weekGate =
       storeGate.currentWeek ||
       (storeGate.currentBlock && storeGate.currentBlock.weeks[storeGate.activeWeekIndex | 0]);
@@ -8436,11 +8560,13 @@ function closePprogFinishFeedback() {
   pprogFinishSetBodyLock(false);
   pprogFinishDayKey = "";
   pprogFinishChoice = "";
+  pprogFinishSubmitting = false;
   pprogFinishResetPartState();
   pprogFinishHideReply();
 }
 
 function selectPprogFinishOption(choice, silent) {
+  if (pprogFinishSubmitting) return;
   pprogFinishChoice = String(choice || "");
   pprogFinishResetPartState();
   pprogFinishHideReply();
@@ -8503,6 +8629,7 @@ function syncPprogFinishSendEnabled() {
 }
 
 function submitPprogFinishFeedback() {
+  if (pprogFinishSubmitting) return;
   if (!pprogFinishDayKey || !pprogFinishChoice) return;
   var dayIsoGate = pprogFinishDayIsoForKey(pprogFinishDayKey);
   if (dayIsoGate && pprogIsFutureTrainingDay(dayIsoGate)) {
@@ -8550,6 +8677,19 @@ function submitPprogFinishFeedback() {
     return;
   }
 
+  pprogFinishSubmitting = true;
+  try {
+    var sendBtnLock = document.getElementById("pprogFinishSendBtn");
+    if (sendBtnLock) sendBtnLock.disabled = true;
+    var optsLock = document.querySelectorAll("#pprogFinishOptions .pprog-finish-opt");
+    for (var oi = 0; oi < optsLock.length; oi++) {
+      try {
+        optsLock[oi].setAttribute("disabled", "disabled");
+        optsLock[oi].style.pointerEvents = "none";
+      } catch (eDis) {}
+    }
+  } catch (eUiLock) {}
+
   var sessionDate = pprogSessionDateForDay(pprogFinishDayKey, wi, store);
   var weekday = String(pprogFinishDayKey || "").slice(0, 12);
   var brickWeek = (wi | 0) + 1;
@@ -8570,6 +8710,44 @@ function submitPprogFinishFeedback() {
     }
   } catch (eLearn) {
     learn = null;
+  }
+
+  /* Reload after learning write so we do not clobber finishLearning.
+     Do not re-run ensure/rehydrate here — that would stamp the day early
+     and skip analytics on the first successful Done. */
+  store = loadPprogStore();
+  syncStoreActiveWeek(store);
+  week =
+    (store.currentBlock && store.currentBlock.weeks && store.currentBlock.weeks[wi]) ||
+    store.currentWeek;
+  if (!week) {
+    pprogFinishSubmitting = false;
+    return;
+  }
+  if (!week.days) week.days = {};
+  if (!week.days[pprogFinishDayKey]) week.days[pprogFinishDayKey] = { parts: [] };
+
+  if (pprogDayHasFinishReport(week.days[pprogFinishDayKey]) || (learn && learn.duplicate)) {
+    /* Second tap / already saved — show prior reply, no second analytics */
+    var replyDup =
+      (learn && learn.staticReply) ||
+      (PPROG_FINISH_STATIC &&
+        PPROG_FINISH_STATIC[pprogFinishChoice] &&
+        PPROG_FINISH_STATIC[pprogFinishChoice].en) ||
+      "Got it.";
+    pprogFinishShowReply(replyDup);
+    pprogFinishJustLockedKey = pprogFinishDayKey;
+    try {
+      renderPprogWeek();
+    } catch (eDupR) {}
+    pprogFinishCloseTimer = setTimeout(function () {
+      pprogFinishCloseTimer = null;
+      closePprogFinishFeedback();
+      try {
+        renderPprogWeek();
+      } catch (eR0) {}
+    }, 700);
+    return;
   }
 
   week.days[pprogFinishDayKey].finishFeedback = {
@@ -8604,13 +8782,17 @@ function submitPprogFinishFeedback() {
     "Got it.";
   pprogFinishShowReply(replyText);
 
-  if (learn && learn.shouldAttemptPaidMicroBias && learn.event) {
+  if (learn && learn.shouldAttemptPaidMicroBias && learn.event && !learn.duplicate) {
     try {
       pprogAttemptFinishMicroBias(learn.event).catch(function () {});
     } catch (eBias) {}
   }
 
   pprogFinishJustLockedKey = pprogFinishDayKey;
+  /* Stamp UI immediately so Done cannot be reopened while reply is showing */
+  try {
+    renderPprogWeek();
+  } catch (eImm) {}
   pprogFinishCloseTimer = setTimeout(function () {
     pprogFinishCloseTimer = null;
     closePprogFinishFeedback();
