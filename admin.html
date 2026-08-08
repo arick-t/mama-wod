@@ -1030,11 +1030,21 @@ function renderSelectedDayWorkout(a, workoutMap) {
 function isPprogPartIntentNoteLine(line) {
   var t = String(line || "").trim();
   if (!t) return false;
+  if (/^target\s*:/i.test(t)) return true;
   if (/^(target\s+)?duration\s*:/i.test(t)) return true;
   if (/^duration\s*&?\s*intent\s*:/i.test(t)) return true;
   if (/^movement(\s+intent)?\s*:/i.test(t)) return true;
   if (/duration\s*:/i.test(t) && /(movement|intent)/i.test(t)) return true;
+  if (/^(intent|focus|cue|note|goal)\s*[:—-]/i.test(t)) return true;
   return false;
+}
+
+function formatPprogPartHeading(partIndex, rawTitle) {
+  var letter = String.fromCharCode(65 + (partIndex | 0));
+  var t = String(rawTitle || "").trim();
+  if (!t) return "Part " + letter;
+  if (/^Part\s+[A-Z]\b/i.test(t)) return t;
+  return "Part " + letter + " — " + t;
 }
 
 function isPprogPartFormatLine(line) {
@@ -1089,14 +1099,14 @@ function renderPprogDayPartsHtml(parts, dayData) {
   var modifiedKinds = (dayData && dayData.modifiedPartKinds) || {};
   for (var pi = 0; pi < parts.length; pi++) {
     var part = parts[pi] || {};
-    var defaultTitle = "Part " + String.fromCharCode(65 + pi);
+    var heading = formatPprogPartHeading(pi, part.title);
     var kind = normalizePprogPartKind(part.title, part.lines);
     var modified = !!modifiedKinds[kind];
     var classified = classifyPprogPartLines(part.lines);
     html += '<div class="section">';
     html +=
       '<div class="section-title">' +
-      esc(part.title || defaultTitle) +
+      esc(heading) +
       (modified ? '<span class="pprog-modified-flag">MODIFIED</span>' : "") +
       "</div>";
     for (var ni = 0; ni < classified.notes.length; ni++) {

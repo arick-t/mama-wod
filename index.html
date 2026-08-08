@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.5</title>
+<title>DUCK-WOD · v21.5.3</title>
 <meta name="theme-color" content="#111">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -15,44 +15,81 @@
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;900&family=JetBrains+Mono:wght@700&display=swap"></noscript>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Oswald','Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#111;color:#f0ece0;line-height:1.6;padding-bottom:74px}
-.header{background:#1a1a1a;padding:14px 16px 12px;text-align:center;border-bottom:3px solid #E8451A}
+:root{
+  --bg:#121212;
+  --bg-elev:#181818;
+  --bg-card:#1a1a1a;
+  --bg-panel:#1e1e1e;
+  --text:#f5f2ea;
+  --text-muted:#b0aaa0;
+  --text-meta:#8a8580;
+  --brand:#E8451A;
+  --brand-gold:#F5C518;
+  --coach:#9b6bb8;
+  --coach-deep:#6b3d86;
+  --part:#6fafa4;
+  --note:#7eb8c9;
+  --line:#2c2c2c;
+  --fab-clearance:120px;
+  --tab-bar-h:64px;
+  --font-ui:'Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-display:'Oswald','Heebo',sans-serif;
+}
+body{
+  font-family:var(--font-ui);
+  background:var(--bg);color:var(--text);line-height:1.55;
+  padding-bottom:calc(var(--tab-bar-h) + var(--fab-clearance) + env(safe-area-inset-bottom,0px));
+}
+.header{background:var(--bg-card);padding:14px 16px 12px;text-align:center;border-bottom:3px solid var(--brand)}
 .header-logo{width:90px;height:90px;object-fit:cover;object-position:center;display:block;margin:0 auto 8px;background:#EDE4D0;padding:2px;border-radius:12px;box-sizing:border-box}
-h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient(90deg,#E8451A,#F5C518 50%,#1A9B8A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2px}
-.header-sub{color:#777;font-size:.8em;letter-spacing:2px}
-.day-nav{display:flex;gap:8px;padding:12px 16px;overflow-x:auto;background:#181818;border-bottom:1px solid #2a2a2a;scrollbar-width:thin}
-.day-btn{min-width:70px;padding:9px 12px;background:#1e1e1e;border:2px solid #2a2a2a;border-radius:8px;cursor:pointer;text-align:center;color:#f0ece0;flex-shrink:0;transition:all .15s;font-family:'Oswald','Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-.day-btn:hover{border-color:#E8451A;transform:translateY(-2px)}
-.day-btn.active{background:#E8451A;border-color:#E8451A;color:#fff;font-weight:700}
+h1{
+  font-family:var(--font-display);font-size:2.2em;font-weight:700;letter-spacing:4px;
+  background:linear-gradient(90deg,#E8451A,#F5C518 50%,#1A9B8A);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2px;
+}
+.header-sub{color:var(--text-meta);font-size:.78em;letter-spacing:1.5px;font-weight:500}
+.day-nav{display:flex;gap:8px;padding:12px 16px;overflow-x:auto;background:var(--bg-elev);border-bottom:1px solid var(--line);scrollbar-width:thin}
+.day-btn{min-width:70px;padding:9px 12px;background:var(--bg-panel);border:2px solid var(--line);border-radius:8px;cursor:pointer;text-align:center;color:var(--text);flex-shrink:0;transition:all .15s;font-family:var(--font-ui)}
+.day-btn:hover{border-color:var(--brand);transform:translateY(-2px)}
+.day-btn.active{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:700}
 .day-name{font-weight:700;font-size:.82em}
 .day-date{font-size:.7em;opacity:.8;margin-top:2px}
-.tabs{position:fixed;left:0;right:0;bottom:0;z-index:999;display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:8px 12px;background:#181818;border-top:1px solid #2a2a2a}
-.tab-btn{padding:8px 16px;background:#1e1e1e;border:1px solid #2a2a2a;border-radius:6px;color:#f0ece0;cursor:pointer;font-weight:600;font-size:.88em;transition:all .15s;font-family:'Oswald','Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-.tab-btn:hover{border-color:#E8451A}
-.tab-btn.active{background:#E8451A;border-color:#E8451A;color:#fff}
-/* Generate Workout: dashed border (same visual as former beta tab; not a beta label) */
-.tab-generate-wrap{border:1px dashed #7cb342!important;background:linear-gradient(180deg,#1a2418 0%,#1e1e1e 100%)!important}
-.tab-generate-wrap:hover{border-color:#9ccc65!important}
-.tab-btn.tab-generate-wrap.active{background:#E8451A!important;border:1px dashed #c5e1a5!important;color:#fff!important}
-/* Workout Tools: dashed outline + gold-tint panel (same pattern as Generate, brand yellow) */
-.tab-wtools-wrap{border:1px dashed #c9a227!important;background:linear-gradient(180deg,#2a2312 0%,#1e1e1e 100%)!important}
-.tab-wtools-wrap:hover{border-color:#F5C518!important}
-.tab-btn.tab-wtools-wrap.active{background:#E8451A!important;border:1px dashed #f5e6a8!important;color:#fff!important}
-/* Personal Coach: dashed outline + purple-tint (המאמן) — tab hidden in prod until API stable */
-.tab-pprog-wrap{border:1px dashed #8e44ad!important;background:linear-gradient(180deg,#221528 0%,#1e1e1e 100%)!important}
-.tab-pprog-wrap:hover{border-color:#b06dcf!important}
-.tab-btn.tab-pprog-wrap.active{background:#E8451A!important;border:1px dashed #d2a8e8!important;color:#fff!important}
+.tabs{
+  position:fixed;left:0;right:0;bottom:0;z-index:999;
+  display:flex;justify-content:space-around;align-items:stretch;flex-wrap:nowrap;gap:2px;
+  padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));
+  background:rgba(24,24,24,.96);border-top:1px solid var(--line);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
+.tab-btn{
+  flex:1 1 0;min-width:0;padding:8px 4px;background:transparent;border:none;border-radius:10px;
+  color:var(--text-muted);cursor:pointer;font-weight:600;font-size:.72em;line-height:1.2;
+  transition:color .15s, background .15s;font-family:var(--font-ui);text-align:center;
+}
+.tab-btn:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.tab-btn.active{background:rgba(232,69,26,.16);color:#fff;box-shadow:inset 0 -2px 0 var(--brand)}
+/* Special tabs: same chrome; only active tint differs for Coach */
+.tab-generate-wrap,.tab-wtools-wrap,.tab-pprog-wrap{border:none!important;background:transparent!important}
+.tab-generate-wrap:hover,.tab-wtools-wrap:hover,.tab-pprog-wrap:hover{border:none!important}
+.tab-btn.tab-generate-wrap.active,.tab-btn.tab-wtools-wrap.active{
+  background:rgba(232,69,26,.16)!important;border:none!important;color:#fff!important;
+  box-shadow:inset 0 -2px 0 var(--brand);
+}
+.tab-btn.tab-pprog-wrap.active{
+  background:rgba(155,107,184,.18)!important;border:none!important;color:#fff!important;
+  box-shadow:inset 0 -2px 0 var(--coach);
+}
 /* Personal Coach tab visible (v21.2.3). Flip PPROG_TAB_ENABLED=false to hide again. */
 /* #tab-pprog,#pprog-tab{display:none!important} */
 /* Generate Workout tab hidden (v21.2.3): keep code; set GENERATE_WORKOUT_TAB_ENABLED=true + remove rule below to restore. */
 #tab-aibeta,#aibeta-tab{display:none!important}
-.pprog-panel{max-width:720px;margin:0 auto;background:#1e1e1e;padding:20px 18px 24px;border-radius:12px;border:1px solid #2a2a2a}
+.pprog-panel{max-width:720px;margin:0 auto;background:var(--bg-panel);padding:20px 18px 24px;border-radius:12px;border:1px solid var(--line)}
 .pprog-head{display:flex;align-items:center;gap:14px;margin:0 0 14px}
 .pprog-coach-avatar{width:72px;height:72px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.45));cursor:pointer;-webkit-tap-highlight-color:transparent;border-radius:12px}
 .pprog-coach-avatar:hover{filter:drop-shadow(0 4px 12px rgba(176,109,207,.45)) brightness(1.05)}
 .pprog-coach-avatar:active{transform:scale(0.97)}
 .pprog-reset-btn{display:none!important}
-.pprog-panel h2{color:#b06dcf;margin:0;font-size:1.25em;font-weight:700;letter-spacing:.04em}
+.pprog-panel h2{color:var(--coach);margin:0;font-size:1.25em;font-weight:700;letter-spacing:.02em;font-family:var(--font-ui)}
 .pprog-subtabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px;justify-content:center}
 .pprog-subtab{padding:7px 10px;background:#252525;border:1px solid #3a3a3a;border-radius:6px;color:#ddd;font-size:.78em;font-weight:600;cursor:pointer;font-family:inherit}
 .pprog-subtab:hover{border-color:#8e44ad}
@@ -63,9 +100,9 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-overview{list-style:none;margin:0 0 16px;padding:0}
 .pprog-overview li{padding:8px 10px;border-bottom:1px solid #2a2a2a;color:#ccc;font-size:.9em}
 .pprog-overview li strong{color:#b06dcf;margin-left:6px}
-.pprog-day-card{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:16px 16px 14px;margin-bottom:4px}
-.pprog-day-card .card-header{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.pprog-day-card .source-name{color:#b06dcf;font-weight:700;font-size:1.05em;letter-spacing:.03em;flex:1;min-width:0}
+.pprog-day-card{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:16px 16px 14px;margin-bottom:4px}
+.pprog-day-card .card-header{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pprog-day-card .source-name{color:var(--coach);font-weight:700;font-size:1.05em;letter-spacing:.01em;flex:1;min-width:0;font-family:var(--font-ui)}
 .pprog-day-card .card-header .pprog-day-actions{
   display:inline-flex;align-items:center;gap:8px;flex-shrink:0;margin-top:0;flex-wrap:nowrap;
 }
@@ -79,7 +116,22 @@ h1{font-size:2.2em;font-weight:900;letter-spacing:4px;background:linear-gradient
 .pprog-finish-btn:hover{background:linear-gradient(180deg,#255238 0%,#1b3a2a 100%);border-color:#4caf70;color:#fff}
 .pprog-finish-btn:active{transform:scale(.97)}
 .pprog-finish-btn svg{width:15px;height:15px;display:block;flex-shrink:0}
-.pprog-finish-btn.done{background:#1a2a20;border-color:#3a5a45;color:#9ec9ad;box-shadow:none}
+/* Locked report stamp — not a CTA */
+.pprog-finish-btn.reported,
+.pprog-finish-reported{
+  flex-shrink:0;display:inline-flex;align-items:center;gap:4px;margin:0;
+  padding:7px 12px;border:1px solid #2f4a38;border-radius:999px;
+  background:#152019;color:#8fb89a;font-weight:700;font-size:.78em;font-family:inherit;
+  line-height:1;box-shadow:none;cursor:default;pointer-events:none;
+  user-select:none;-webkit-user-select:none;
+}
+.pprog-finish-btn.reported:hover,
+.pprog-finish-reported:hover{background:#152019;border-color:#2f4a38;color:#8fb89a;transform:none}
+@keyframes pprog-finish-lock-pop{
+  from{opacity:.65;transform:scale(.96)}
+  to{opacity:1;transform:scale(1)}
+}
+.pprog-finish-reported.lock-pop{animation:pprog-finish-lock-pop .2s ease-out}
 html.pprog-finish-open,body.pprog-finish-open{overflow:hidden;overscroll-behavior:none}
 .pprog-finish-overlay{
   display:none;position:fixed;inset:0;
@@ -147,24 +199,26 @@ html.pprog-finish-open,body.pprog-finish-open{overflow:hidden;overscroll-behavio
 }
 .pprog-finish-send:disabled{opacity:.45;cursor:default}
 .pprog-day-card .section{margin-bottom:12px}
-.pprog-day-card .section-title{font-size:1em;font-weight:700;text-decoration:underline;color:#1A9B8A;margin-bottom:7px}
+.pprog-day-card .section + .section{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.pprog-day-card .section-title{font-size:.98em;font-weight:700;text-decoration:none;color:var(--part);margin-bottom:7px;letter-spacing:.01em}
 .pprog-day-card .section-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:7px}
 .pprog-day-card .section-title-row .section-title{margin-bottom:0;flex:1;min-width:0}
 .pprog-modified-flag{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:#E8451A;color:#fff;font-size:.64em;font-weight:700;letter-spacing:.06em;vertical-align:middle}
-.pprog-part-note{margin:0 0 8px;padding:0 2px;color:#7eb8c9;font-size:.86em;font-style:italic;line-height:1.4}
-.pprog-part-format{margin:0 0 6px;padding:0 2px;color:#f0ebe0;font-size:.95em;font-weight:700;line-height:1.35}
-.pprog-day-card .section-lines{margin:0;padding:0 0 0 18px;color:#e8e4d8;font-size:.92em;line-height:1.45;list-style:disc}
-.pprog-day-card .section-lines li{margin-bottom:4px}
+/* Coach notes (Target/Intent) — soft cyan, clearly not workout prescription */
+.pprog-part-note{margin:0 0 8px;padding:0 2px;color:var(--note);font-size:.86em;font-style:italic;line-height:1.4;font-weight:500}
+.pprog-part-format{margin:0 0 6px;padding:0 2px;color:var(--text);font-size:.95em;font-weight:700;line-height:1.35}
+.pprog-day-card .section-lines{margin:0;padding:0 0 0 18px;color:var(--text);font-size:.95em;line-height:1.5;list-style:disc;font-family:var(--font-ui)}
+.pprog-day-card .section-lines li{margin-bottom:5px}
 .pprog-day-subrow{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
 .pprog-day-subrow .pprog-summary{flex:1;margin:0;min-width:0}
 .pprog-share-wa{
   flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;gap:0;margin:0;
-  width:34px;height:34px;padding:0;border:1px solid #3a4a3f;border-radius:50%;
-  background:#1a1f1c;color:#8fb89a;font-weight:700;font-size:.82em;font-family:inherit;cursor:pointer;line-height:1;
+  width:34px;height:34px;padding:0;border:1px solid rgba(37,211,102,.35);border-radius:50%;
+  background:#152019;color:#25D366;font-weight:700;font-size:.82em;font-family:inherit;cursor:pointer;line-height:1;
   box-shadow:none;-webkit-tap-highlight-color:transparent;
 }
-.pprog-share-wa:hover{border-color:#4caf70;color:#d7f5e2;background:#222a24}
-.pprog-share-wa svg{width:16px;height:16px;display:block;flex-shrink:0}
+.pprog-share-wa:hover{border-color:#25D366;color:#3be07a;background:#1a2a20}
+.pprog-share-wa svg{width:18px;height:18px;display:block;flex-shrink:0}
 .pprog-day-footer{margin-top:14px;padding-top:12px;border-top:1px solid #333}
 .pprog-session-box{display:block;padding:12px;border-radius:10px;border:1px solid #1A9B8A;background:rgba(26,155,138,.1);box-shadow:inset 0 0 0 1px rgba(26,155,138,.15)}
 .pprog-session-box > label{display:block;color:#1A9B8A;font-weight:700;margin-bottom:2px;font-size:.9em}
@@ -335,7 +389,7 @@ html.pprog-finish-open,body.pprog-finish-open{overflow:hidden;overscroll-behavio
 .pprog-cal-week-col .pprog-cal-week-num{font-size:1.05em;letter-spacing:.02em}
 .pprog-cal-week-col .pprog-cal-week-phase{font-size:.9em;font-weight:600;opacity:.85;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pprog-cal-week-col.loading .pprog-cal-week-num::after{content:"…";opacity:.7}
-.pprog-week-meta{color:#b06dcf;font-size:.78em;font-weight:600;margin:0 0 8px;letter-spacing:.03em}
+.pprog-week-meta{color:var(--coach);font-size:.78em;font-weight:600;margin:0 0 8px;letter-spacing:.02em}
 .pprog-general-card{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:14px 14px 12px;margin-bottom:4px}
 .pprog-general-card h3{margin:0 0 10px;color:#b06dcf;font-size:1em}
 .pprog-overview{list-style:none;margin:0;padding:0}
@@ -363,7 +417,7 @@ html.pprog-finish-open,body.pprog-finish-open{overflow:hidden;overscroll-behavio
 .pprog-fill-status{color:#888;font-size:.75em;text-align:center;margin:0 0 8px}
 .pprog-fill-status.err{color:#e57373}
 .pprog-rest-day{text-align:center;padding:20px 8px 12px}
-.pprog-rest-day-title{font-family:'Oswald','Heebo',sans-serif;font-size:clamp(1.8em,8vw,2.6em);font-weight:700;letter-spacing:.14em;color:#1A9B8A;margin:0 0 14px;line-height:1.1}
+.pprog-rest-day-title{font-family:var(--font-display);font-size:clamp(1.8em,8vw,2.6em);font-weight:700;letter-spacing:.14em;color:var(--part);margin:0 0 14px;line-height:1.1}
 .pprog-rest-day-img{width:min(72vw,260px);max-width:100%;height:auto;display:block;margin:0 auto;border-radius:14px;object-fit:cover;aspect-ratio:1;background:#111}
 .pprog-building-overlay{
   display:none;position:fixed;inset:0;z-index:10002;
@@ -401,9 +455,9 @@ html.pprog-finish-open,body.pprog-finish-open{overflow:hidden;overscroll-behavio
 }
 .pprog-day-stub{background:#1a1a1a;border:1px dashed #444;border-radius:10px;padding:12px;margin:8px 0;color:#bbb;font-size:.88em;line-height:1.45;text-align:left}
 .pprog-day-stub strong{color:#b06dcf;display:block;margin-bottom:4px}
-.tab-content{display:none;padding:20px}
+.tab-content{display:none;padding:20px 16px var(--fab-clearance)}
 .tab-content.active{display:block}
-.tab-btn{font-size:0.78em;padding:7px 10px}
+.tab-btn{font-size:0.72em;padding:8px 4px}
 .ai-notes-shell textarea{width:100%;box-sizing:border-box;padding:10px;background:#222;color:#eee;border:1px solid #444;border-top:none;border-radius:0 0 6px 6px;font-size:1rem;resize:vertical;min-height:90px}
 .ai-tag-dock{display:flex;flex-wrap:wrap;gap:8px;align-items:center;min-height:40px;padding:8px 10px;background:#1a1a1a;border:1px solid #444;border-bottom:none;border-radius:6px 6px 0 0}
 .ai-tag-bank-wrap{margin-bottom:14px}
@@ -456,8 +510,8 @@ html.pprog-finish-open,body.pprog-finish-open{overflow:hidden;overscroll-behavio
 .wod-date{font-size:.75em;color:#555;margin-top:2px}
 .source-note{font-size:.8em;color:#ff9800;margin-top:3px}
 .section{margin-bottom:14px}
-.section-title{font-size:1em;font-weight:700;text-decoration:underline;color:#1A9B8A;margin-bottom:7px}
-.section-subtitle{font-size:0.88em;font-weight:700;text-decoration:underline;color:#1A9B8A;margin-bottom:6px}
+.section-title{font-size:1em;font-weight:700;text-decoration:none;color:var(--part);margin-bottom:7px}
+.section-subtitle{font-size:0.88em;font-weight:700;text-decoration:none;color:var(--part);margin-bottom:6px}
 .section-lines{list-style:none}
 .section-lines li{padding:2px 0 2px 16px;position:relative;color:#e8e4d8;font-size:.92em}
 .section-lines li:before{content:"•";position:absolute;left:0;color:#E8451A;font-weight:bold}
@@ -466,7 +520,7 @@ html.pprog-finish-open,body.pprog-finish-open{overflow:hidden;overscroll-behavio
 .section-lines li.line-spacer{min-height:10px;padding:0;margin:2px 0}
 .section-lines li.line-spacer:before{display:none}
 .card-footer{margin-top:12px;padding-top:10px;border-top:1px solid #2a2a2a}
-.btn{padding:7px 14px;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-size:.88em;transition:all .15s;font-family:'Oswald','Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.btn{padding:7px 14px;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-size:.88em;transition:all .15s;font-family:var(--font-ui)}
 .btn-wa{background:#25d366;color:#fff}
 .btn-wa:hover{background:#1da851}
 .btn-set-workout{background:#E8451A;color:#fff}
@@ -550,7 +604,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 .conv-subtitle{color:#1A9B8A;font-size:1em;margin:20px 0 10px;font-weight:700}
 .conv-subtitle:first-of-type{margin-top:8px}
 .conv-aero-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:14px}
-.conv-grid-table,.conv-aero-table{border-collapse:collapse;width:100%;min-width:280px;font-family:'Oswald','Heebo',sans-serif;background:#1a1a1a}
+.conv-grid-table,.conv-aero-table{border-collapse:collapse;width:100%;min-width:280px;font-family:var(--font-ui);background:#1a1a1a}
 .conv-grid-table{table-layout:fixed}
 .conv-grid-table th,.conv-grid-table td,.conv-aero-table th,.conv-aero-table td{border:2px solid #333;text-align:center;vertical-align:middle;padding:10px 8px}
 .conv-grid-table thead th,.conv-aero-head-row th{background:linear-gradient(180deg,#2a2520 0%,#1e1e1e 100%);color:#F5C518;font-weight:800;font-size:0.78em;text-transform:uppercase;letter-spacing:.06em;border-color:#E8451A;border-bottom-width:3px}
@@ -612,8 +666,8 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 .find-form h2{color:#F5C518;margin-bottom:18px;font-size:1.2em}
 .form-group{margin-bottom:16px}
 .form-group{position:relative}
-.form-group label{display:block;color:#1A9B8A;font-weight:600;margin-bottom:6px;font-size:.9em;font-family:'Oswald','Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-.form-group input[type=number]{width:100%;padding:9px;background:#111;border:1px solid #333;border-radius:6px;color:#f0ece0;font-size:1em;font-family:'Oswald','Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.form-group label{display:block;color:#1A9B8A;font-weight:600;margin-bottom:6px;font-size:.9em;font-family:var(--font-ui)}
+.form-group input[type=number]{width:100%;padding:9px;background:#111;border:1px solid #333;border-radius:6px;color:#f0ece0;font-size:1em;font-family:var(--font-ui)}
 .form-group input[type=number]::-webkit-inner-spin-button,
 .form-group input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .form-group input[type=number]{appearance:textfield;-moz-appearance:textfield}
@@ -642,7 +696,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 .eq-item{display:flex;align-items:center;gap:7px;padding:7px 9px;background:#111;border-radius:5px;cursor:pointer;color:#e8e4d8;font-size:.85em}
 .eq-item:hover{background:#252525}
 .eq-item input{cursor:pointer;accent-color:#E8451A;flex-shrink:0}
-.find-form h2.ai-builder-title-row{color:#1A9B8A;font-size:.9em;margin:0 0 6px;padding:0;font-weight:600;line-height:1.35;font-family:'Oswald','Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.find-form h2.ai-builder-title-row{color:#1A9B8A;font-size:.9em;margin:0 0 6px;padding:0;font-weight:600;line-height:1.35;font-family:var(--font-ui)}
 .ai-builder-title-row .ai-builder-tagline{color:#aaa;font-weight:400;font-size:0.95em}
 .ai-default-tags{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 10px}
 .ai-default-tag{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:6px 10px;font-size:.82em}
@@ -681,8 +735,8 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 .source-item.hero{border:3px solid #2196F3;background:#1a2332;box-shadow:0 0 12px rgba(33,150,243,0.25)}
 .source-item.benchmark{border:3px solid #9C27B0;background:#2a1a32;box-shadow:0 0 12px rgba(156,39,176,0.25)}
 .source-item.open{border:3px solid #4CAF50;background:#1a2e1a;box-shadow:0 0 12px rgba(76,175,80,0.25)}
-.source-item strong{color:#F5C518;font-family:'Oswald','Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-.source-item small{color:#666;display:block;font-size:.78em;margin-top:1px;font-family:'Oswald','Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.source-item strong{color:#F5C518;font-family:var(--font-ui)}
+.source-item small{color:#666;display:block;font-size:.78em;margin-top:1px;font-family:var(--font-ui)}
 .toggle{position:relative;width:52px;height:26px;background:#444;border-radius:13px;cursor:pointer;transition:background .3s;flex-shrink:0}
 .toggle.on{background:#1A9B8A}
 .toggle .knob{position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .3s}
@@ -753,32 +807,36 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
   color: #2e7d32;
 }
 
-/* Fixed FABs: coach chat + scroll-up */
+/* Fixed FABs: coach (right) + scroll-up (left) — no overlap */
 .page-fabs{
-  position:fixed;bottom:88px;right:16px;z-index:1000;
-  display:flex;flex-direction:column-reverse;align-items:center;gap:10px;
+  position:fixed;bottom:calc(var(--tab-bar-h) + 18px);right:16px;z-index:1000;
+  display:flex;flex-direction:column;align-items:center;gap:0;
   pointer-events:none;
 }
 .page-fabs > *{pointer-events:auto}
 .up-btn {
-  position: static;
-  width: 48px;
-  height: 48px;
-  background: #2196F3;
+  position:fixed;
+  left:max(14px, env(safe-area-inset-left));
+  bottom:calc(var(--tab-bar-h) + 18px);
+  z-index:1000;
+  width:44px;
+  height:44px;
+  background:rgba(33,150,243,.92);
   color: white;
   border: none;
   border-radius: 50%;
-  font-size: 20px;
+  font-size: 18px;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.28);
   display: none;
-  transition: all 0.3s;
+  transition: all 0.25s;
   flex-shrink:0;
+  pointer-events:auto;
 }
 .up-btn:hover {
   background: #1976D2;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.35);
 }
 .up-btn.show {
   display: flex;
@@ -786,30 +844,31 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 }
 .pprog-coach-fab{
   display:none;flex-direction:column;align-items:center;justify-content:flex-start;
-  gap:2px;width:auto;max-width:72px;height:auto;
-  padding:5px 5px 4px;margin:0;
-  border:2px solid #b06dcf;border-radius:26px;
-  background:linear-gradient(180deg,#2a1834 0%,#221528 55%,#1a1220 100%);
+  gap:3px;width:auto;max-width:76px;height:auto;
+  padding:5px 5px 6px;margin:0;
+  border:1px solid rgba(176,109,207,.4);border-radius:28px;
+  background:linear-gradient(180deg,#2a1a33 0%,#1c1424 100%);
   cursor:pointer;overflow:visible;flex-shrink:0;
-  box-shadow:0 3px 12px rgba(142,68,173,.42);
+  box-shadow:0 6px 18px rgba(0,0,0,.4);
   transition:transform .2s, box-shadow .2s, border-color .2s;
   -webkit-tap-highlight-color:transparent;
-  font-family:inherit;
+  font-family:var(--font-ui);
 }
 .pprog-coach-fab.show{display:flex}
 .pprog-coach-fab:hover{
   transform:translateY(-2px);
-  box-shadow:0 5px 16px rgba(142,68,173,.55);
+  box-shadow:0 8px 22px rgba(0,0,0,.48);
+  border-color:rgba(176,109,207,.65);
 }
 .pprog-coach-fab:active{transform:scale(.96)}
 .pprog-coach-fab.open{
-  border-color:#F5C518;
-  box-shadow:0 0 0 2px rgba(245,197,24,.35), 0 4px 14px rgba(142,68,173,.4);
+  border-color:rgba(245,197,24,.7);
+  box-shadow:0 0 0 2px rgba(245,197,24,.28), 0 6px 18px rgba(0,0,0,.4);
 }
 .pprog-coach-fab-avatar{
-  width:44px;height:44px;border-radius:50%;padding:0;
+  width:46px;height:46px;border-radius:50%;padding:0;
   border:none;background:#1a1220;overflow:hidden;
-  box-shadow:inset 0 0 0 1px rgba(176,109,207,.25);
+  box-shadow:inset 0 0 0 1px rgba(176,109,207,.2);
   display:block;flex-shrink:0;
 }
 .pprog-coach-fab-avatar img,
@@ -817,11 +876,11 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
   width:100%;height:100%;object-fit:cover;display:block;
 }
 .pprog-coach-fab-caption{
-  display:block;width:100%;max-width:62px;
-  padding:1px 2px 0;margin:0;
-  font-size:8.5px;line-height:1.12;font-weight:700;
-  letter-spacing:.01em;text-align:center;color:#ecdff6;
-  pointer-events:none;user-select:none;
+  display:block;width:100%;max-width:66px;
+  padding:0 2px;margin:0;
+  font-size:8px;line-height:1.15;font-weight:600;
+  letter-spacing:.01em;text-align:center;color:rgba(236,223,246,.88);
+  pointer-events:none;user-select:none;font-family:var(--font-ui);
 }
 .pprog-coach-fab-tip{
   display:none;position:fixed;right:76px;bottom:168px;z-index:1002;
@@ -863,12 +922,13 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 .pprog-coach-float-body .pprog-chat-log{min-height:140px;max-height:min(36vh,280px)}
 .pprog-coach-float-body .pprog-chat-form textarea{min-height:64px}
 @media (max-width:520px){
-  .page-fabs{bottom:82px;right:12px}
+  .page-fabs{bottom:calc(var(--tab-bar-h) + 14px);right:12px}
+  .up-btn{left:max(12px, env(safe-area-inset-left));bottom:calc(var(--tab-bar-h) + 14px);width:42px;height:42px}
   .pprog-coach-float{right:10px;left:10px;width:auto;bottom:200px}
   .pprog-coach-fab-tip{right:12px;left:12px;width:auto;bottom:230px}
-  .pprog-coach-fab{max-width:68px;padding:4px 4px 3px;border-radius:24px}
+  .pprog-coach-fab{max-width:70px;padding:4px 4px 5px;border-radius:24px}
   .pprog-coach-fab-avatar{width:42px;height:42px}
-  .pprog-coach-fab-caption{font-size:8px;max-width:58px}
+  .pprog-coach-fab-caption{font-size:7.5px;max-width:60px}
 }
 
 /* Floating day prev/next — stays on screen while scrolling */
@@ -961,12 +1021,12 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.5</div>
+<div class="header-sub">DAILY WORKOUTS · v21.5.3</div>
 <div class="header-sub" id="coachVersionSub">COACH · v2.1</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap active" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
-<button class="tab-btn" id="tab-browse" onclick="showTab('browse')">Workout's</button>
+<button class="tab-btn" id="tab-browse" onclick="showTab('browse')">Workouts</button>
 <button class="tab-btn tab-generate-wrap" id="tab-aibeta" onclick="showTab('aibeta')" hidden aria-hidden="true" tabindex="-1">Generate Workout</button>
 <button class="tab-btn tab-wtools-wrap" id="tab-workout" onclick="showTab('workout')">Workout Tools</button>
 <button class="tab-btn" id="tab-sources" onclick="showTab('sources')">Sources</button>
@@ -4929,6 +4989,7 @@ function normalizePprogParts(rawParts, dayKey) {
 function isPprogPartIntentNoteLine(line) {
   var t = String(line || "").trim();
   if (!t) return false;
+  if (/^target\s*:/i.test(t)) return true;
   if (/^(target\s+)?duration\s*:/i.test(t)) return true;
   if (/^movement(\s+intent)?\s*:/i.test(t)) return true;
   if (/duration\s*:/i.test(t) && /movement/i.test(t)) return true;
@@ -4942,6 +5003,15 @@ function isPprogPartIntentNoteLine(line) {
   if (/^(intent|focus|cue|note|goal)\s*[:—-]/i.test(t)) return true;
   if (/^focus on\b/i.test(t)) return true;
   return false;
+}
+
+/** Always show Part A/B/C; keep coach title after an em dash (avoid double Part prefix). */
+function formatPprogPartHeading(partIndex, rawTitle) {
+  var letter = String.fromCharCode(65 + (partIndex | 0));
+  var t = String(rawTitle || "").trim();
+  if (!t) return "Part " + letter;
+  if (/^Part\s+[A-Z]\b/i.test(t)) return t;
+  return "Part " + letter + " — " + t;
 }
 
 /** Format / instruction header (AMRAP, sets for quality, etc.). */
@@ -8177,6 +8247,16 @@ function pprogFinishThumbsIcon() {
   );
 }
 
+/** True when training-day ISO (Israel calendar) is after Israel-today — Done hidden. */
+function pprogIsFutureTrainingDay(dayIso) {
+  var today = pprogIsraelTodayIso();
+  return String(dayIso || "") > String(today || "");
+}
+
+function pprogDayHasFinishReport(dayData) {
+  return !!(dayData && dayData.finishFeedback && dayData.finishFeedback.rating);
+}
+
 var pprogFinishDayKey = "";
 var pprogFinishChoice = "";
 var pprogFinishPartRole = "";
@@ -8184,6 +8264,7 @@ var pprogFinishPartTitle = "";
 var pprogFinishPartIndex = -1;
 var pprogFinishPendingParts = null;
 var pprogFinishCloseTimer = null;
+var pprogFinishJustLockedKey = "";
 
 function pprogFinishSetBodyLock(on) {
   try {
@@ -8275,12 +8356,41 @@ function selectPprogFinishPart(part) {
   submitPprogFinishFeedback();
 }
 
+function pprogFinishDayIsoForKey(dayKey) {
+  try {
+    var store = loadPprogStore();
+    ensurePprogBlockFiveWeeks(store);
+    syncStoreActiveWeek(store);
+    var block = store.currentBlock;
+    if (!block || !block.blockStart) return "";
+    var wi = store.activeWeekIndex | 0;
+    var di = PPROG_DAY_KEYS.indexOf(normalizePprogDayKey(dayKey) || dayKey);
+    if (di < 0) return "";
+    return pprogAddDaysIso(block.blockStart, wi * 7 + di);
+  } catch (eIso) {
+    return "";
+  }
+}
+
 function openPprogFinishFeedback(dayKey) {
   if (pprogFinishCloseTimer) {
     clearTimeout(pprogFinishCloseTimer);
     pprogFinishCloseTimer = null;
   }
-  pprogFinishDayKey = normalizePprogDayKey(dayKey) || dayKey;
+  var key = normalizePprogDayKey(dayKey) || dayKey;
+  var dayIso = pprogFinishDayIsoForKey(key);
+  if (dayIso && pprogIsFutureTrainingDay(dayIso)) return;
+  try {
+    var storeGate = loadPprogStore();
+    var weekGate =
+      storeGate.currentWeek ||
+      (storeGate.currentBlock && storeGate.currentBlock.weeks[storeGate.activeWeekIndex | 0]);
+    var dayGate = weekGate && weekGate.days && weekGate.days[key];
+    if (pprogDayHasFinishReport(dayGate)) return; /* locked — no reopen/edit */
+    if (weekGate && isPprogRestDay(key, dayGate || {}, weekGate)) return;
+  } catch (eGate) {}
+
+  pprogFinishDayKey = key;
   pprogFinishChoice = "";
   pprogFinishResetPartState();
   pprogFinishHideReply();
@@ -8298,19 +8408,6 @@ function openPprogFinishFeedback(dayKey) {
     } catch (eMax) {}
   }
   if (sendBtn) sendBtn.disabled = true;
-  try {
-    var store = loadPprogStore();
-    var week = store.currentWeek || (store.currentBlock && store.currentBlock.weeks[store.activeWeekIndex | 0]);
-    var dayData = week && week.days && week.days[pprogFinishDayKey];
-    var prev = dayData && dayData.finishFeedback;
-    if (prev && prev.rating) {
-      selectPprogFinishOption(prev.rating, true);
-      if (prev.rating === "other" && note) note.value = String(prev.note || "").slice(0, PPROG_FINISH_OTHER_MAX || 160);
-      if (prev.part_role) pprogFinishPartRole = String(prev.part_role);
-      if (prev.part_title) pprogFinishPartTitle = String(prev.part_title);
-      syncPprogFinishSendEnabled();
-    }
-  } catch (ePrefill) {}
   if (overlay) {
     try {
       if (overlay.parentNode !== document.body) document.body.appendChild(overlay);
@@ -8407,6 +8504,11 @@ function syncPprogFinishSendEnabled() {
 
 function submitPprogFinishFeedback() {
   if (!pprogFinishDayKey || !pprogFinishChoice) return;
+  var dayIsoGate = pprogFinishDayIsoForKey(pprogFinishDayKey);
+  if (dayIsoGate && pprogIsFutureTrainingDay(dayIsoGate)) {
+    closePprogFinishFeedback();
+    return;
+  }
   var noteEl = document.getElementById("pprogFinishOtherNote");
   var note = noteEl ? String(noteEl.value || "").trim() : "";
   if (typeof pprogFinishTruncateNote === "function") note = pprogFinishTruncateNote(note);
@@ -8440,6 +8542,13 @@ function submitPprogFinishFeedback() {
   if (!week) return;
   if (!week.days) week.days = {};
   if (!week.days[pprogFinishDayKey]) week.days[pprogFinishDayKey] = { parts: [] };
+
+  /* single report — do not overwrite if already saved */
+  if (pprogDayHasFinishReport(week.days[pprogFinishDayKey])) {
+    closePprogFinishFeedback();
+    renderPprogWeek();
+    return;
+  }
 
   var sessionDate = pprogSessionDateForDay(pprogFinishDayKey, wi, store);
   var weekday = String(pprogFinishDayKey || "").slice(0, 12);
@@ -8501,12 +8610,20 @@ function submitPprogFinishFeedback() {
     } catch (eBias) {}
   }
 
+  pprogFinishJustLockedKey = pprogFinishDayKey;
   pprogFinishCloseTimer = setTimeout(function () {
     pprogFinishCloseTimer = null;
     closePprogFinishFeedback();
     try {
       renderPprogWeek();
     } catch (eR) {}
+    try {
+      setTimeout(function () {
+        pprogFinishJustLockedKey = "";
+        var stamp = document.querySelector(".pprog-finish-reported.lock-pop");
+        if (stamp) stamp.classList.remove("lock-pop");
+      }, 280);
+    } catch (eAnim) {}
   }, 900);
 }
 
@@ -8547,7 +8664,7 @@ function renderPprogDayPartsHtml(parts, dayData, dayKey) {
   var modifiedKinds = (dayData && dayData.modifiedPartKinds) || {};
   for (var pi = 0; pi < parts.length; pi++) {
     var part = parts[pi];
-    var defaultTitle = "Part " + String.fromCharCode(65 + pi);
+    var heading = formatPprogPartHeading(pi, part && part.title);
     var kind = normalizePprogPartKind(part && part.title, part && part.lines);
     var modified = !!modifiedKinds[kind];
     var classified = classifyPprogPartLines(part && part.lines);
@@ -8555,7 +8672,7 @@ function renderPprogDayPartsHtml(parts, dayData, dayKey) {
     html += '<div class="section-title-row">';
     html +=
       '<div class="section-title">' +
-      esc(part.title || defaultTitle) +
+      esc(heading) +
       (modified ? '<span class="pprog-modified-flag">MODIFIED</span>' : "") +
       "</div>";
     html += "</div>";
@@ -8833,27 +8950,30 @@ function renderPprogDayCardHtml(block, week, activeWi, day) {
   html += '<div class="pprog-day-card" dir="ltr">';
   var focus = pprogOverviewFocus(week, day);
   var restDay = isPprogRestDay(day, dayData, week);
-  var finishDone = !!(dayData && dayData.finishFeedback && dayData.finishFeedback.rating);
+  var finishReported = pprogDayHasFinishReport(dayData);
+  var finishFuture = pprogIsFutureTrainingDay(dayIso);
   var shareBtn =
     '<button type="button" class="pprog-share-wa" onclick="sharePprogDayWhatsApp(\'' +
     day +
     '\')" title="Share workout on WhatsApp" aria-label="Share workout on WhatsApp">' +
     pprogShareDayWaIcon() +
     "</button>";
-  var finishBtn = restDay
-    ? ""
-    : '<button type="button" class="pprog-finish-btn' +
-      (finishDone ? " done" : "") +
-      '" onclick="openPprogFinishFeedback(\'' +
-      day +
-      "')\" title=\"" +
-      (finishDone ? "Workout check-in saved" : "Mark workout done") +
-      '" aria-label="' +
-      (finishDone ? "Done — edit check-in" : "Done") +
-      '">' +
-      pprogFinishThumbsIcon() +
-      (finishDone ? "Done ✓" : "Done") +
-      "</button>";
+  var finishBtn = "";
+  if (!restDay && !finishFuture) {
+    if (finishReported) {
+      finishBtn =
+        '<span class="pprog-finish-reported' +
+        (pprogFinishJustLockedKey === day ? " lock-pop" : "") +
+        '" role="status" title="Report saved for this day" aria-label="Reported — check-in saved">Reported ✓</span>';
+    } else {
+      finishBtn =
+        '<button type="button" class="pprog-finish-btn" onclick="openPprogFinishFeedback(\'' +
+        day +
+        '\')" title="Mark workout done" aria-label="Done">' +
+        pprogFinishThumbsIcon() +
+        "Done</button>";
+    }
+  }
   html +=
     '<div class="card-header">' +
     '<div class="source-name">' +
@@ -12895,8 +13015,7 @@ function initTimerColorBuckets() {
   initTimerColorBuckets();
 })();
 </script>
-<div class="page-fabs" id="pageFabs" aria-label="Quick actions">
-  <button type="button" class="up-btn" id="upBtn" onclick="scrollToTop()" aria-label="Scroll to top" title="Scroll to top">↑</button>
+<div class="page-fabs" id="pageFabs" aria-label="Coach quick action">
   <button type="button" class="pprog-coach-fab" id="pprogCoachFab" aria-label="Talk to the coach" title="Talk to the coach · whole brick" aria-expanded="false" aria-controls="pprogCoachFloat">
     <span class="pprog-coach-fab-caption">talk to<br>the coach</span>
     <span class="pprog-coach-fab-avatar" aria-hidden="true">
@@ -12904,6 +13023,7 @@ function initTimerColorBuckets() {
     </span>
   </button>
 </div>
+<button type="button" class="up-btn" id="upBtn" onclick="scrollToTop()" aria-label="Scroll to top" title="Scroll to top">↑</button>
 <button type="button" class="pprog-day-nav prev" id="pprogDayNavPrev" onclick="stepPprogDayNav(-1)" aria-label="Previous training day" title="Previous day">
   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M15.4 4.6 13.99 3.2 5.2 12l8.79 8.8 1.41-1.41L8.03 12z"/></svg>
 </button>
