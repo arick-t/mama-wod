@@ -5,6 +5,7 @@
  * DELETE /api/admin-snapshot?id=athleteId — admin deletes a snapshot
  *
  * Storage: private Vercel Blob (admin-snapshots/*.json) with FS fallback for local/dev.
+ * Stage A: device writeKey ownership; fail-closed without Blob on Vercel.
  */
 
 const path = require("path");
@@ -15,12 +16,38 @@ const {
   checkAdminAuth: sharedCheckAdminAuth,
   adminAuthDenied,
 } = require("./admin-auth");
-const { putJson, getJson, listJson, deleteJson, storageInfo } = require("./admin-json-store");
+const {
+  putJson,
+  getJson,
+  listJson,
+  deleteJson,
+  storageInfo,
+  assertDurableStorage,
+} = require("./admin-json-store");
+const { assertSnapshotWriteAllowed, hashWriteKey } = require("./admin-ownership");
+const { appendAdminAudit } = require("./admin-audit");
 const { applyCors } = require("../../../lib/cors-allowlist");
 
-const MAX_SNAPSHOT_BYTES = 64 * 1024; // 64 KB per athlete
+const MAX_SNAPSHOT_BYTES = 64 * 1024;
 const ADMIN_PASSWORD = resolveAdminPassword();
 const SNAP_PREFIX = "admin-snapshots/";
+
+const CLIENT_ALLOWED_KEYS = new Set([
+  "athleteId",
+  "userId",
+  "writeKey",
+  "displayName",
+  "gender",
+  "preferredLanguage",
+  "skillsSummary",
+  "intakeSummary",
+  "joinedAt",
+  "workoutAdjustmentsCount",
+  "coachDebriefsCount",
+  "currentBlock",
+  "pastBlocks",
+  "coachTier",
+]);
 
 function safeAthleteId(raw) {
   return String(raw || "")
@@ -38,6 +65,17 @@ function safeCount(raw, fallback) {
   return Math.floor(n);
 }
 
+function storageUnavailable(res, e) {
+  const code = e && e.code === "blob_required" ? 503 : 500;
+  return res.status(code).json({
+    ok: false,
+    error: (e && e.code) || "storage_error",
+    message:
+      (e && e.message) ||
+      "שמירה לא זמינה כרגע. אם זה נמשך — בדקו הגדרת Blob ב־Vercel.",
+  });
+}
+
 async function readSnapshot(athleteId) {
   const id = safeAthleteId(athleteId);
   if (!id) return null;
@@ -52,15 +90,24 @@ async function writeSnapshot(athleteId, data) {
   await putJson(snapKey(id), data);
 }
 
+function publicSnapshot(row) {
+  if (!row || typeof row !== "object") return row;
+  const out = Object.assign({}, row);
+  delete out.writeKeyHash;
+  delete out.writeKey;
+  return out;
+}
+
 async function listSnapshots() {
   try {
     await ensureSeedAthletes();
     const rows = await listJson(SNAP_PREFIX);
     return rows
-      .map((r) => r.data)
+      .map((r) => publicSnapshot(r.data))
       .filter(Boolean)
       .sort((a, b) => String(b.updatedAt || "").localeCompare(String(a.updatedAt || "")));
   } catch (e) {
+    if (e && e.code === "blob_required") throw e;
     return [];
   }
 }
@@ -102,6 +149,8 @@ async function ensureSeedAthletes() {
       pastBlocks: [],
       coachTier: 2,
       seeded: true,
+      writeKeyHash: null,
+      clientWritesLocked: true,
       updatedAt: now,
       createdAt: now,
     });
@@ -112,14 +161,27 @@ function checkAdminAuth(req) {
   return sharedCheckAdminAuth(req, ADMIN_PASSWORD);
 }
 
+function stripUnknownClientFields(body) {
+  const out = {};
+  Object.keys(body || {}).forEach((k) => {
+    if (CLIENT_ALLOWED_KEYS.has(k)) out[k] = body[k];
+  });
+  return out;
+}
+
 module.exports = async function handler(req, res) {
   applyCors(req, res, {
     methods: "GET,POST,DELETE,OPTIONS",
-    headers: "Content-Type, X-Admin-Password, X-Admin-Token, X-Athlete-Id",
+    headers: "Content-Type, X-Admin-Password, X-Admin-Token, X-Athlete-Id, X-Write-Key",
   });
   if (req.method === "OPTIONS") return res.status(204).end();
 
-  // ── POST: athlete pushes snapshot ──────────────────────────────────────────
+  try {
+    assertDurableStorage();
+  } catch (e) {
+    return storageUnavailable(res, e);
+  }
+
   if (req.method === "POST") {
     const rl = checkRateLimit(req, { name: "admin-snap-post", limit: 20, windowMs: 60_000 });
     if (!rl.ok) return sendRateLimit(res, rl);
@@ -131,25 +193,25 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: "Invalid JSON" });
     }
     req.body = body;
+    const isAdmin = checkAdminAuth(req);
 
     const athleteId = safeAthleteId(body.athleteId || body.userId);
     if (!athleteId && !(body.action === "admin_list" || body.list === true)) {
       return res.status(400).json({ error: "athleteId required" });
     }
 
-    const existing = athleteId ? (await readSnapshot(athleteId)) || {} : {};
-    const isAdmin = checkAdminAuth(req);
-
-    // Admin-only: list athletes via POST (avoids proxies that strip custom GET headers)
     if (body.action === "admin_list" || body.list === true) {
       if (!isAdmin) return adminAuthDenied(res);
       const rlList = checkRateLimit(req, { name: "admin-snap-get", limit: 60, windowMs: 60_000 });
       if (!rlList.ok) return sendRateLimit(res, rlList);
-      const snapshots = await listSnapshots();
-      return res.status(200).json({ ok: true, snapshots, storage: storageInfo() });
+      try {
+        const snapshots = await listSnapshots();
+        return res.status(200).json({ ok: true, snapshots, storage: storageInfo() });
+      } catch (e) {
+        return storageUnavailable(res, e);
+      }
     }
 
-    // Admin-only: update coach directives (and optionally leave other fields intact)
     if (
       body.coachDirectives !== undefined &&
       Object.keys(body).filter(function (k) {
@@ -159,11 +221,13 @@ module.exports = async function handler(req, res) {
           k !== "userId" &&
           k !== "coachDirectives" &&
           k !== "adminPassword" &&
-          k !== "password"
+          k !== "password" &&
+          k !== "writeKey"
         );
       }).length === 0
     ) {
       if (!isAdmin) return adminAuthDenied(res);
+      const existing = (await readSnapshot(athleteId)) || {};
       if (!existing.athleteId && !existing.createdAt) {
         return res.status(404).json({ error: "Athlete not found — wait for first snapshot" });
       }
@@ -171,70 +235,106 @@ module.exports = async function handler(req, res) {
       existing.updatedAt = new Date().toISOString();
       try {
         await writeSnapshot(athleteId, existing);
-      } catch (e) {
-        return res.status(500).json({
-          error: "לא הצלחנו לשמור את ההנחיות",
-          detail: String(e.message),
+        await appendAdminAudit({
+          action: "set_directives",
+          athleteId: athleteId,
+          actor: "admin",
+          ok: true,
         });
+      } catch (e) {
+        return storageUnavailable(res, e);
       }
       return res.status(200).json({ ok: true, storage: storageInfo() });
     }
 
-    // Athlete snapshot push — never accept coachDirectives from the client
+    const existing = (await readSnapshot(athleteId)) || {};
+    const writeKey =
+      body.writeKey ||
+      (req.headers && (req.headers["x-write-key"] || req.headers["X-Write-Key"])) ||
+      "";
+    const gate = assertSnapshotWriteAllowed(existing, writeKey, isAdmin);
+    if (!gate.ok) {
+      await appendAdminAudit({
+        action: "snapshot_denied",
+        athleteId: athleteId,
+        actor: isAdmin ? "admin" : "client",
+        ok: false,
+        detail: gate.error,
+      });
+      return res.status(gate.status).json({
+        ok: false,
+        error: gate.error,
+        message: gate.message,
+      });
+    }
+
+    const clean = isAdmin ? body : stripUnknownClientFields(body);
+
     const snapshot = {
       athleteId,
-      displayName: String(body.displayName || existing.displayName || "").slice(0, 80),
-      email: String(body.email || existing.email || "").slice(0, 120),
-      gender: String(body.gender || existing.gender || "").slice(0, 20),
-      preferredLanguage: String(body.preferredLanguage || existing.preferredLanguage || "").slice(
-        0,
-        10
-      ),
-      skillsSummary: String(body.skillsSummary || existing.skillsSummary || "").slice(0, 400),
-      intakeSummary: String(body.intakeSummary || existing.intakeSummary || "").slice(0, 800),
+      displayName: String(clean.displayName || existing.displayName || "").slice(0, 80),
+      email: String((isAdmin ? clean.email : existing.email) || existing.email || "").slice(0, 120),
+      gender: String(clean.gender || existing.gender || "").slice(0, 20),
+      preferredLanguage: String(
+        clean.preferredLanguage || existing.preferredLanguage || ""
+      ).slice(0, 10),
+      skillsSummary: String(clean.skillsSummary || existing.skillsSummary || "").slice(0, 400),
+      intakeSummary: String(clean.intakeSummary || existing.intakeSummary || "").slice(0, 800),
       coachDirectives: String(existing.coachDirectives || "").slice(0, 1000),
       joinedAt: String(
-        body.joinedAt || existing.joinedAt || existing.createdAt || new Date().toISOString()
+        clean.joinedAt || existing.joinedAt || existing.createdAt || new Date().toISOString()
       ).slice(0, 40),
       workoutAdjustmentsCount: safeCount(
-        body.workoutAdjustmentsCount,
+        clean.workoutAdjustmentsCount,
         safeCount(existing.workoutAdjustmentsCount, 0)
       ),
       coachDebriefsCount: safeCount(
-        body.coachDebriefsCount,
+        clean.coachDebriefsCount,
         safeCount(existing.coachDebriefsCount, 0)
       ),
-      currentBlock: body.currentBlock || existing.currentBlock || null,
-      pastBlocks: body.pastBlocks || existing.pastBlocks || [],
-      coachTier: existing.coachTier || body.coachTier || 2,
+      currentBlock: clean.currentBlock || existing.currentBlock || null,
+      pastBlocks: clean.pastBlocks || existing.pastBlocks || [],
+      coachTier: existing.coachTier || clean.coachTier || 2,
+      writeKeyHash:
+        existing.writeKeyHash ||
+        gate.bindHash ||
+        (isAdmin && clean.writeKey ? hashWriteKey(clean.writeKey) : null) ||
+        null,
+      seeded: !!existing.seeded && !gate.bindHash,
+      clientWritesLocked: false,
       updatedAt: new Date().toISOString(),
       createdAt: existing.createdAt || new Date().toISOString(),
     };
+    if (isAdmin && clean.createdByAdmin) snapshot.createdByAdmin = true;
 
     try {
       await writeSnapshot(athleteId, snapshot);
-    } catch (e) {
-      return res.status(500).json({
-        error: "לא הצלחנו לשמור את המתאמן",
-        detail: String(e.message),
+      await appendAdminAudit({
+        action: existing.athleteId ? "snapshot_update" : "snapshot_create",
+        athleteId: athleteId,
+        actor: isAdmin ? "admin" : "client",
+        ok: true,
       });
+    } catch (e) {
+      return storageUnavailable(res, e);
     }
     return res.status(200).json({ ok: true, storage: storageInfo() });
   }
 
-  // ── GET: admin reads all snapshots ─────────────────────────────────────────
   if (req.method === "GET") {
     if (!checkAdminAuth(req)) {
       return adminAuthDenied(res);
     }
     const rl = checkRateLimit(req, { name: "admin-snap-get", limit: 60, windowMs: 60_000 });
     if (!rl.ok) return sendRateLimit(res, rl);
-
-    const snapshots = await listSnapshots();
-    return res.status(200).json({ ok: true, snapshots, storage: storageInfo() });
+    try {
+      const snapshots = await listSnapshots();
+      return res.status(200).json({ ok: true, snapshots, storage: storageInfo() });
+    } catch (e) {
+      return storageUnavailable(res, e);
+    }
   }
 
-  // ── DELETE: admin removes a snapshot ───────────────────────────────────────
   if (req.method === "DELETE") {
     if (!checkAdminAuth(req)) {
       return adminAuthDenied(res);
@@ -242,6 +342,12 @@ module.exports = async function handler(req, res) {
     const athleteId = safeAthleteId(req.query && req.query.id);
     if (!athleteId) return res.status(400).json({ error: "id required" });
     await deleteJson(snapKey(athleteId));
+    await appendAdminAudit({
+      action: "snapshot_delete",
+      athleteId: athleteId,
+      actor: "admin",
+      ok: true,
+    });
     return res.status(200).json({ ok: true, storage: storageInfo() });
   }
 
@@ -261,3 +367,4 @@ module.exports.readSnapshot = readSnapshot;
 module.exports.writeSnapshot = writeSnapshot;
 module.exports.listSnapshots = listSnapshots;
 module.exports.safeAthleteId = safeAthleteId;
+module.exports.hashWriteKey = hashWriteKey;

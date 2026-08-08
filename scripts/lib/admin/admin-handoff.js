@@ -15,7 +15,9 @@ const {
   resolveAdminPassword,
   checkAdminAuth: sharedCheckAdminAuth,
 } = require("./admin-auth");
-const { putJson, getJson, listJson } = require("./admin-json-store");
+const { putJson, getJson, listJson, putJsonExclusive, assertDurableStorage } = require("./admin-json-store");
+const { makeWriteKey, hashWriteKey } = require("./admin-ownership");
+const { appendAdminAudit } = require("./admin-audit");
 const { applyCors } = require("../../../lib/cors-allowlist");
 
 const ADMIN_PASSWORD = resolveAdminPassword();
@@ -201,7 +203,7 @@ function starterBlock(_displayName) {
   };
 }
 
-function buildPhonePackage(snap) {
+function buildPhonePackage(snap, writeKeyPlain) {
   const athleteId = snap.athleteId;
   const block = snap.currentBlock || null;
   const week0 = block && block.weeks && block.weeks[0] ? block.weeks[0] : null;
@@ -209,7 +211,7 @@ function buildPhonePackage(snap) {
   if (snap.coachDirectives) {
     prefs.push("Admin directive: " + String(snap.coachDirectives).slice(0, 300));
   }
-  return {
+  const pkg = {
     version: 2,
     userId: athleteId,
     athleteId: athleteId,
@@ -244,6 +246,8 @@ function buildPhonePackage(snap) {
     intakeNotifySentAt: new Date().toISOString(),
     handoffInstalledAt: new Date().toISOString(),
   };
+  if (writeKeyPlain) pkg.writeKey = String(writeKeyPlain).slice(0, 128);
+  return pkg;
 }
 
 /** Keep plan on phone; force Personal Coach intake to run again. */
@@ -282,6 +286,7 @@ async function createAthlete(body) {
   }
 
   const now = new Date().toISOString();
+  const deviceWriteKey = makeWriteKey();
   const snapshot = {
     athleteId: athleteId,
     displayName: displayName,
@@ -300,16 +305,32 @@ async function createAthlete(body) {
     updatedAt: now,
     createdByAdmin: true,
     coachTier: 2,
+    writeKeyHash: hashWriteKey(deviceWriteKey),
+    clientWritesLocked: false,
   };
   try {
     await writeSnap(athleteId, snapshot);
+    await appendAdminAudit({
+      action: "create_athlete",
+      athleteId: athleteId,
+      actor: "admin",
+      ok: true,
+    });
   } catch (e) {
     return {
       status: 500,
       json: { error: "לא הצלחנו לשמור מתאמן", detail: String(e.message) },
     };
   }
-  return { status: 200, json: { ok: true, snapshot: snapshot } };
+  return {
+    status: 200,
+    json: {
+      ok: true,
+      snapshot: Object.assign({}, snapshot, { writeKeyHash: undefined }),
+      writeKey: deviceWriteKey,
+      message: "נשמר. שמרו את מפתח המכשיר ללינק handoff או התקינו דרך לינק.",
+    },
+  };
 }
 
 async function createLink(body) {
@@ -328,7 +349,14 @@ async function createLink(body) {
   const isReset = purpose === "reset_intake";
   const token = makeToken();
   const now = Date.now();
-  const pkg = isReset ? buildResetIntakePackage(snap) : buildPhonePackage(snap);
+  // Rotate device ownership onto the redeeming phone (admin-issued link).
+  const deviceWriteKey = makeWriteKey();
+  snap.writeKeyHash = hashWriteKey(deviceWriteKey);
+  snap.clientWritesLocked = false;
+  snap.seeded = false;
+  const pkg = isReset
+    ? Object.assign({}, buildResetIntakePackage(snap), { writeKey: deviceWriteKey })
+    : buildPhonePackage(snap, deviceWriteKey);
   const claim = {
     token: token,
     athleteId: athleteId,
@@ -345,7 +373,6 @@ async function createLink(body) {
   }
   await putJson(claimKey(token), claim);
 
-  // Remember last link meta on snapshot (not the secret package)
   snap.lastHandoffTokenPrefix = token.slice(0, 8);
   snap.lastHandoffCreatedAt = claim.createdAt;
   snap.lastHandoffExpiresAt = claim.expiresAt;
@@ -359,6 +386,13 @@ async function createLink(body) {
   try {
     await writeSnap(athleteId, snap);
   } catch (e) {}
+  await appendAdminAudit({
+    action: isReset ? "create_reset_link" : "create_handoff_link",
+    athleteId: athleteId,
+    actor: "admin",
+    ok: true,
+    detail: token.slice(0, 8),
+  });
 
   return {
     status: 200,
@@ -383,13 +417,41 @@ function createResetIntakeLink(body) {
 }
 
 async function redeemToken(tokenRaw) {
+  try {
+    assertDurableStorage();
+  } catch (e) {
+    return {
+      status: 503,
+      json: {
+        error: "blob_required",
+        message: e.message || "שמירה לא זמינה",
+      },
+    };
+  }
   const token = String(tokenRaw || "").replace(/[^a-zA-Z0-9_\-]/g, "").slice(0, 64);
   if (!token) return { status: 400, json: { error: "token required" } };
+
+  const lockKey = CLAIM_PREFIX + token + ".took.json";
+  try {
+    await putJsonExclusive(lockKey, {
+      token: token,
+      tookAt: new Date().toISOString(),
+    });
+  } catch (e) {
+    return {
+      status: 410,
+      json: {
+        error: "link_used",
+        message: "הלינק כבר נוצל או בטיפול. אפשר לבקש לינק חדש מהמאמן.",
+      },
+    };
+  }
+
   const claim = await getJson(claimKey(token));
   if (!claim) {
     return { status: 404, json: { error: "link_invalid", message: "הלינק לא תקף או כבר לא קיים" } };
   }
-  if (claim.usedAt) {
+  if (claim.usedAt || claim.burned) {
     return {
       status: 410,
       json: { error: "link_used", message: "הלינק כבר נוצל. אפשר לבקש לינק חדש מהמאמן." },
@@ -427,6 +489,14 @@ async function redeemToken(tokenRaw) {
     }
   }
 
+  await appendAdminAudit({
+    action: "redeem_handoff",
+    athleteId: claim.athleteId || "",
+    actor: "public",
+    ok: true,
+    detail: token.slice(0, 8),
+  });
+
   return {
     status: 200,
     json: {
@@ -437,6 +507,7 @@ async function redeemToken(tokenRaw) {
       store: pkg,
       storeKey: "duck-wod-personal-coach-v1",
       uidKey: "dw_uid",
+      writeKey: pkg && pkg.writeKey ? pkg.writeKey : undefined,
     },
   };
 }
