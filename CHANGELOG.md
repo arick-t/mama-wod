@@ -1,5 +1,15 @@
 # Changelog
 
+## [Coach 2.2.2] - 2026-08-09
+
+### Personal Coach — POL-026 calendar shows logged today (not Rest)
+- **Coach subtitle:** `COACH · v2.2.2`.
+- Root cause: `normalizePprogWeek` / week_detail stripped `loggedExtraSession` and could restore overview `Rest`, so the strip + day card stayed **REST DAY** even after Confirm.
+- Preserve `loggedExtra*` through normalize + day revision; keep logged parts when a refill sends Rest stubs; fix overview away from Rest; week_detail copies logged days from prev.
+- UI: calendar cell `.logged-extra`, day card **LOGGED** badge + banner that the session counts toward remaining load.
+
+---
+
 ## [Coach 2.2.1] - 2026-08-09
 
 ### Personal Coach — POL-026 calendar truth + zero essay chat

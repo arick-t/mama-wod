@@ -37,6 +37,11 @@ ok("client extraSessions store", /store\.extraSessions/.test(index));
 ok("client early remember", /function pprogRememberExtraSession/.test(index));
 ok("client calendar truth", /function pprogApplyPol026CalendarTruth/.test(index));
 ok("client logged session builder", /function pprogBuildLoggedSessionParts/.test(index));
+ok("loggedExtra survives normalize", /loggedExtraSession/.test(index) && /POL-026: logged extra session must survive/.test(index));
+ok("loggedExtra not Rest", /pprogDayIsLoggedExtraSession/.test(index) && /athlete-logged session wins/.test(index));
+ok("week_detail preserves logged day", /week_detail must never wipe an athlete-logged/.test(index));
+ok("calendar logged-extra class", /logged-extra/.test(index) && /pprog-logged-extra-flag/.test(index));
+ok("coach version 2.2.2", /COACH_VERSION = "2\.2\.2"/.test(index) && /COACH_VERSION = "2\.2\.2"/.test(pc));
 ok("ATHLETE_EXTRA_SESSIONS card", /ATHLETE_EXTRA_SESSIONS/.test(pc));
 
 const noteHe =
