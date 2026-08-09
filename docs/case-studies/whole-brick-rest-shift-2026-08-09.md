@@ -19,5 +19,9 @@ Skipped planned rest → spontaneous session today (run / back squat / deadlift 
    → on confirm apply WEEK/DAY JSON → `Done.`
 5. **Safety** — injury disclaimer only for pain/injury/distress language — never for “I trained on a rest day.”
 
+## Budget (2026-08-09)
+**Approved-with-conditions.** Target ~3 units/success (1× Confirm chat + 1× surgical apply).
+Hard gates in code: apply only after explicit Confirm; no `generate_block` / Soft Upgrade / large rebuild B / full `BLOCK_JSON` on this path; if no WEEK/DAY JSON after Confirm → local tomorrow→Rest only; `[ATHLETE_EXTRA_SESSIONS]` ≤2 short notes.
+
 ## Branch
 `cursor/fix-whole-brick-rest-shift-d279`
