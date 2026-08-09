@@ -41,6 +41,11 @@ function assertSnapshotWriteAllowed(existing, writeKey, isAdmin) {
   }
 
   if (!bound) {
+    // One-time admin-authorized claim for seeded stubs (e.g. Blob migration).
+    // UIDs may be public — never allow bind unless founder opened seedClaimOpen.
+    if (existing && existing.seeded && existing.seedClaimOpen) {
+      return { ok: true, bindHash: hash };
+    }
     // Seeded / admin-created without device bind — clients cannot overwrite.
     return {
       ok: false,

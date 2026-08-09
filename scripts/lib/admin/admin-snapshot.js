@@ -28,7 +28,7 @@ const { assertSnapshotWriteAllowed, hashWriteKey } = require("./admin-ownership"
 const { appendAdminAudit } = require("./admin-audit");
 const { applyCors } = require("../../../lib/cors-allowlist");
 
-const MAX_SNAPSHOT_BYTES = 64 * 1024;
+const MAX_SNAPSHOT_BYTES = 256 * 1024; /* full 5-week block + thin meta */
 const ADMIN_PASSWORD = resolveAdminPassword();
 const SNAP_PREFIX = "admin-snapshots/";
 
@@ -212,6 +212,38 @@ module.exports = async function handler(req, res) {
       }
     }
 
+    if (body.action === "open_seed_claim" || body.action === "close_seed_claim") {
+      if (!isAdmin) return adminAuthDenied(res);
+      if (!athleteId) return res.status(400).json({ error: "athleteId required" });
+      const existing = (await readSnapshot(athleteId)) || {};
+      if (!existing.athleteId && !existing.createdAt) {
+        return res.status(404).json({ error: "Athlete not found" });
+      }
+      const open = body.action === "open_seed_claim";
+      existing.seedClaimOpen = !!open;
+      existing.seedClaimOpenedAt = open ? new Date().toISOString() : existing.seedClaimOpenedAt || null;
+      existing.updatedAt = new Date().toISOString();
+      try {
+        await writeSnapshot(athleteId, existing);
+        await appendAdminAudit({
+          action: body.action,
+          athleteId: athleteId,
+          actor: "admin",
+          ok: true,
+        });
+      } catch (e) {
+        return storageUnavailable(res, e);
+      }
+      return res.status(200).json({
+        ok: true,
+        seedClaimOpen: !!open,
+        message: open
+          ? "פתוח לסנכרון חד־פעמי מהמכשיר. פתח את האפליקציה במכשיר עם התוכנית, ואז רענן כאן."
+          : "סנכרון מהמכשיר נסגר.",
+        storage: storageInfo(),
+      });
+    }
+
     if (
       body.coachDirectives !== undefined &&
       Object.keys(body).filter(function (k) {
@@ -301,6 +333,7 @@ module.exports = async function handler(req, res) {
         (isAdmin && clean.writeKey ? hashWriteKey(clean.writeKey) : null) ||
         null,
       seeded: !!existing.seeded && !gate.bindHash,
+      seedClaimOpen: !!(existing.seedClaimOpen && !gate.bindHash),
       clientWritesLocked: false,
       updatedAt: new Date().toISOString(),
       createdAt: existing.createdAt || new Date().toISOString(),
@@ -315,9 +348,16 @@ module.exports = async function handler(req, res) {
       "lastHandoffCreatedAt",
       "lastHandoffExpiresAt",
       "createdByAdmin",
+      "seedClaimOpenedAt",
     ].forEach(function (k) {
       if (snapshot[k] === undefined && existing[k] !== undefined) snapshot[k] = existing[k];
     });
+    if (gate.bindHash) {
+      snapshot.writeKeyHash = gate.bindHash;
+      snapshot.seeded = false;
+      snapshot.seedClaimOpen = false;
+      snapshot.clientWritesLocked = false;
+    }
     /* Admin completed real intake/plan for a seed stub → no longer a placeholder row */
     if (
       isAdmin &&
@@ -325,6 +365,7 @@ module.exports = async function handler(req, res) {
         (clean.intakeSummary && !/^Seeded coach member/i.test(String(clean.intakeSummary))))
     ) {
       snapshot.seeded = false;
+      snapshot.seedClaimOpen = false;
       snapshot.intakeResetPending = false;
     }
 

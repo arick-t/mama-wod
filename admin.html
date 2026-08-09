@@ -746,30 +746,74 @@ function renderIntakeSection(a) {
     resetMeta = '<div style="font-size:12px;color:#888;margin-top:8px">לינק איפוס נוצר: ' + esc(fmt(a.intakeResetAt)) + "</div>";
   }
   var bodyHint = placeholder
-    ? '<div style="color:var(--text-muted);font-size:13px;line-height:1.5;margin-bottom:10px">אין תחקור מלא עדיין (רק סימון ראשוני ברשימה). לחץ ״פתח תחקור באדמין״ כדי למלא תחקור ולבנות תוכנית.</div>'
+    ? '<div style="color:var(--text-muted);font-size:13px;line-height:1.5;margin-bottom:10px">אין תחקור מלא בשרת עדיין (רק סימון ראשוני אחרי מעבר ל־Blob). אם התוכנית כבר קיימת בטלפון — סנכרן מהמכשיר. אחרת אפשר לפתוח תחקור כאן.</div>'
     : (lines.length ? lines.join("") : '<div style="color:var(--text-muted);font-size:13px">אין סיכום אינטייק עדיין</div>');
+  var claimOpen = !!a.seedClaimOpen;
+  var claimBtn = placeholder || !a.currentBlock
+    ? '<button type="button" class="btn-primary" id="btn-seed-claim" onclick="toggleSeedClaim(\'' +
+      esc(a.athleteId) +
+      "', " +
+      (claimOpen ? "false" : "true") +
+      ')">' +
+      (claimOpen ? "בטל חלון סנכרון" : "סנכרון חד־פעמי מהמכשיר שלי") +
+      "</button>"
+    : "";
+  var claimHint = claimOpen
+    ? '<div style="font-size:13px;color:#fcd34d;line-height:1.55;margin:10px 0 4px">פתוח לסנכרון עכשיו: פתח את האפליקציה <strong>באותו מכשיר/דפדפן</strong> שבו יש לך את התוכנית (טאב Personal Coach), חכה כמה שניות, ואז לחץ כאן ״↻ רענון״.</div>'
+    : "";
   return '<div class="section">' +
-    "<details" + (placeholder ? " open" : "") + ">" +
+    "<details" + (placeholder || !a.currentBlock ? " open" : "") + ">" +
     '<summary style="cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between">' +
-    '<div class="section-title no-margin">תחקור ראשוני' + (placeholder ? "" : " (לחץ להרחבה)") + "</div>" +
+    '<div class="section-title no-margin">תחקור ראשוני' + (placeholder || !a.currentBlock ? "" : " (לחץ להרחבה)") + "</div>" +
     "</summary>" +
     '<div style="margin-top:12px">' +
     bodyHint +
+    claimHint +
     resetMeta +
     '<div class="sandbox-actions" style="margin-top:12px">' +
-      '<button type="button" class="btn-primary" onclick="openIntakeWorkspace(\'' + esc(a.athleteId) + '\')">פתח תחקור באדמין</button>' +
+      claimBtn +
+      '<button type="button" class="btn-secondary" onclick="openIntakeWorkspace(\'' + esc(a.athleteId) + '\')">פתח תחקור באדמין</button>' +
       '<button type="button" class="btn-secondary wait" onclick="createIntakeResetLink(\'' + esc(a.athleteId) + '\')">אפס תחקור — לינק חד־פעמי</button>' +
     "</div>" +
+    '<div class="sandbox-status" id="seed-claim-status" style="margin-top:8px"></div>' +
     '<div class="sandbox-status" id="intake-reset-status" style="margin-top:8px"></div>' +
     '<div class="handoff-link" id="intake-reset-link" style="display:none"></div>' +
     '<div class="sandbox-actions" id="intake-reset-copy-wrap" style="display:none;margin-top:8px">' +
       '<button type="button" class="btn-secondary good" onclick="copyIntakeResetLink()">העתק לינק</button>' +
       '<a class="btn-secondary" id="intake-reset-open" href="#" target="_blank" rel="noopener">פתח לבדיקה</a>' +
     "</div>" +
-    '<div class="directives-hint">״פתח תחקור באדמין״ = ממלא כאן ושומר למתאמן. לינק האיפוס = פותח תחקור מחדש בטלפון של המתאמן.</div>' +
+    '<div class="directives-hint">סנכרון מהמכשיר = מעתיק את התחקור והבלוק שכבר אצלך בטלפון לשרת (חד־פעמי אחרי Blob). תחקור באדמין = יצירה מחדש.</div>' +
     "</div>" +
     "</details>" +
     "</div>";
+}
+
+function toggleSeedClaim(athleteId, open) {
+  var status = document.getElementById("seed-claim-status");
+  if (status) status.textContent = open ? "פותח חלון סנכרון…" : "סוגר…";
+  fetch("/api/admin-snapshot", {
+    method: "POST",
+    headers: adminAuthHeaders(),
+    body: JSON.stringify(withAdminPassword({
+      action: open ? "open_seed_claim" : "close_seed_claim",
+      athleteId: athleteId
+    }))
+  })
+    .then(function(r) { return r.json().then(function(d) { return { okHttp: r.ok, d: d }; }); })
+    .then(function(x) {
+      if (!x.okHttp || !x.d || !x.d.ok) {
+        if (status) status.textContent = "שגיאה: " + ((x.d && (x.d.message || x.d.error)) || "?");
+        return;
+      }
+      var a = athletes.find(function(row) { return row.athleteId === athleteId; });
+      if (a) a.seedClaimOpen = !!open;
+      if (status) status.textContent = x.d.message || (open ? "פתוח — עבור לאפליקציה" : "נסגר");
+      showHdrToast(open ? "סנכרון פתוח — פתח את האפליקציה עם התוכנית" : "סנכרון נסגר", open ? "" : "warn");
+      renderAthleteList(athletes);
+    })
+    .catch(function() {
+      if (status) status.textContent = "שגיאת רשת";
+    });
 }
 
 var lastIntakeResetUrl = "";
@@ -833,11 +877,19 @@ var MONTHS_HE = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי",
 function renderBlockCalendar(a) {
   var b = a.currentBlock;
   if (!b) {
+    var claimOpen = !!a.seedClaimOpen;
     return '<div class="section">' +
       '<div class="section-title">בלוק נוכחי</div>' +
-      '<div style="color:var(--text-muted);font-size:13px;line-height:1.5;margin-bottom:12px">אין בלוק פעיל — עדיין לא נבנתה תוכנית למתאמן הזה.</div>' +
+      '<div style="color:var(--text-muted);font-size:13px;line-height:1.5;margin-bottom:12px">אין בלוק בשרת — אם יש לך תוכנית בטלפון (לפני Blob), סנכרן מהמכשיר. אחרת בנה תוכנית חדשה.</div>' +
+      (claimOpen
+        ? '<div style="font-size:13px;color:#fcd34d;line-height:1.55;margin-bottom:10px">ממתין לסנכרון מהמכשיר… פתח Personal Coach באפליקציה ואז רענן כאן.</div>'
+        : "") +
       '<div class="sandbox-actions">' +
-        '<button type="button" class="btn-primary" onclick="openIntakeWorkspace(\'' + esc(a.athleteId) + '\')">תחקור + בנה תוכנית</button>' +
+        '<button type="button" class="btn-primary" onclick="toggleSeedClaim(\'' + esc(a.athleteId) + "', " +
+          (claimOpen ? "false" : "true") + ')">' +
+          (claimOpen ? "בטל חלון סנכרון" : "סנכרון חד־פעמי מהמכשיר שלי") +
+        "</button>" +
+        '<button type="button" class="btn-secondary" onclick="openIntakeWorkspace(\'' + esc(a.athleteId) + '\')">תחקור + בנה תוכנית</button>' +
       "</div>" +
       "</div>" +
       renderDayNotesBox(a, null, null, false);

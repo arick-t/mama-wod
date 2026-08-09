@@ -6888,7 +6888,22 @@ function pushAdminSnapshot(store) {
   try {
     if (!localStorage.dw_uid) localStorage.dw_uid = athleteId;
     var skillsSummary = pprogSkillsSummaryForMail(store.skills);
-    var intakeSummary = String(store.profileNotes || "").replace(/\n+/g, " ").trim().slice(0, 400);
+    var intakeSummary = String(store.profileNotes || "").replace(/\n+/g, " ").trim();
+    if (!intakeSummary && Array.isArray(store.chat) && store.chat.length) {
+      intakeSummary = store.chat
+        .slice(-12)
+        .map(function (m) {
+          var role = m && m.role === "user" ? "U" : "C";
+          return role + ": " + String((m && m.text) || "").replace(/\n+/g, " ").trim().slice(0, 100);
+        })
+        .join(" · ");
+    }
+    if (!intakeSummary) {
+      intakeSummary = [store.displayName, store.gender, store.preferredLanguage, skillsSummary]
+        .filter(Boolean)
+        .join(" · ");
+    }
+    intakeSummary = intakeSummary.slice(0, 800);
     var payload = {
       athleteId: athleteId,
       writeKey: getAdminWriteKey(),
@@ -6911,6 +6926,18 @@ function pushAdminSnapshot(store) {
         return r;
       })
       .catch(function () {});
+  } catch (e) {}
+}
+
+/** Push existing phone plan to admin Blob once coach tab is ready (seed claim / migration). */
+var _adminSnapBootPushed = false;
+function maybeBootPushAdminSnapshot() {
+  if (_adminSnapBootPushed) return;
+  try {
+    var store = loadPprogStore();
+    if (!store || !store.intakeComplete || !store.currentBlock) return;
+    _adminSnapBootPushed = true;
+    pushAdminSnapshot(store);
   } catch (e) {}
 }
 

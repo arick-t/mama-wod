@@ -28,6 +28,10 @@ function run() {
   const lockSeed = assertSnapshotWriteAllowed(seeded, k, false);
   assert(lockSeed.ok === false && lockSeed.error === "snapshot_locked", "seed locked");
 
+  const seedOpen = { athleteId: "u_x", createdAt: "t", seeded: true, seedClaimOpen: true };
+  const claim = assertSnapshotWriteAllowed(seedOpen, k, false);
+  assert(claim.ok === true && claim.bindHash === h, "seed claim open binds once");
+
   const bound = { athleteId: "u_x", createdAt: "t", writeKeyHash: h };
   const ok = assertSnapshotWriteAllowed(bound, k, false);
   assert(ok.ok === true, "owner update ok");
