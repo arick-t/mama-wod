@@ -41,7 +41,7 @@ ok("loggedExtra survives normalize", /loggedExtraSession/.test(index) && /POL-02
 ok("loggedExtra not Rest", /pprogDayIsLoggedExtraSession/.test(index) && /athlete-logged session wins/.test(index));
 ok("week_detail preserves logged day", /week_detail must never wipe an athlete-logged/.test(index));
 ok("calendar logged-extra class", /logged-extra/.test(index) && /pprog-logged-extra-flag/.test(index));
-ok("coach version 2.2.2", /COACH_VERSION = "2\.2\.2"/.test(index) && /COACH_VERSION = "2\.2\.2"/.test(pc));
+ok("coach version 2.3", /COACH_VERSION = "2\.3"/.test(index) && /COACH_VERSION = "2\.3"/.test(pc));
 ok("ATHLETE_EXTRA_SESSIONS card", /ATHLETE_EXTRA_SESSIONS/.test(pc));
 
 const noteHe =

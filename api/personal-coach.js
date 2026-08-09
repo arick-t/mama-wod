@@ -12,6 +12,7 @@
  *   2.2 — POL-026 unplanned/extra session whole-brick harden (Budget gates)
  *   2.2.1 — POL-026 calendar truth + Done.-only chat
  *   2.2.2 — POL-026 calendar indicator sticks (loggedExtra survive normalize / week_detail)
+ *   2.3 — ship: calendar LOGGED today + Confirm? one-tap כן
  *
  * Env: GEMINI_API_KEY (optional File Search), GROQ_API_KEY (fallback chat),
  *      PERSONAL_COACH_MODEL (programming), PERSONAL_COACH_CHAT_MODEL (chat/intake),
@@ -22,7 +23,7 @@
  * Groq keeps chat alive when the Gemini key is missing/invalid (common GitHub Pages + Vercel setup).
  * Programming stays Gemini-only (POL-020).
  */
-const COACH_VERSION = "2.2.2";
+const COACH_VERSION = "2.3";
 const fs = require("fs");
 const path = require("path");
 function resolveAppVersion() {

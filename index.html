@@ -273,6 +273,18 @@ html.pprog-finish-open,body.pprog-finish-open{overflow:hidden;overscroll-behavio
 .pprog-reset-btn:hover{background:#b71c1c!important;border-color:#b71c1c!important}
 .pprog-chat-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;direction:ltr}
 .pprog-chat-actions .btn{width:auto;margin-top:0;padding:8px 14px;font-size:.85em}
+.pprog-confirm-yes-row{
+  align-self:flex-end;display:flex;justify-content:flex-end;margin:2px 0 0;max-width:96%;
+}
+.pprog-confirm-yes-btn{
+  appearance:none;-webkit-appearance:none;cursor:pointer;font-family:inherit;
+  border:1px solid rgba(26,155,138,.55);background:rgba(26,155,138,.16);
+  color:#d7f5e2;font-weight:800;font-size:.95em;letter-spacing:.02em;
+  padding:8px 18px;border-radius:10px;min-width:72px;min-height:40px;touch-action:manipulation;
+}
+.pprog-confirm-yes-btn:hover{background:rgba(26,155,138,.28);border-color:#1A9B8A}
+.pprog-confirm-yes-btn:active{transform:scale(.98)}
+.pprog-confirm-yes-btn:disabled{opacity:.45;cursor:default;transform:none}
 .pprog-start-btn{width:100%!important;margin-top:0;padding:16px 18px!important;font-size:1.15em!important;font-weight:800;letter-spacing:.08em;background:#E8451A!important;border:none;border-radius:10px;min-height:54px}
 .pprog-prestart-welcome{
   margin:8px 0 14px;padding:14px 14px 12px;border:1px dashed #3d7a52;border-radius:12px;
@@ -1034,7 +1046,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
 <div class="header-sub">DAILY WORKOUTS · v21.5.1</div>
-<div class="header-sub" id="coachVersionSub">COACH · v2.2.2</div>
+<div class="header-sub" id="coachVersionSub">COACH · v2.3</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap active" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
@@ -1597,10 +1609,11 @@ function rememberAiClientError(summary) {
  *   Coach 2.2 — POL-026 unplanned/extra session whole-brick harden (Budget gates).
  *   Coach 2.2.1 — POL-026 calendar truth (today logged + tomorrow Rest) + Done.-only chat.
  *   Coach 2.2.2 — POL-026 calendar indicator sticks (loggedExtra survive normalize / week_detail).
+ *   Coach 2.3 — ship: calendar LOGGED today + Confirm? one-tap כן.
  * Keep this badge in sync with the brain actually serving /api/personal-coach.
  * Display: header “COACH · v{COACH_VERSION}” only — do NOT bump app DAILY WORKOUTS / <title> here.
  */
-var COACH_VERSION = "2.2.2";
+var COACH_VERSION = "2.3";
 try {
   var __coachVerEl = document.getElementById("coachVersionSub");
   if (__coachVerEl) __coachVerEl.textContent = "COACH · v" + COACH_VERSION;
@@ -2526,6 +2539,7 @@ function renderPprogChat() {
     html =
       '<div class="pprog-msg system"><div class="pprog-bubble system">Ask the coach anything about this brick.</div></div>';
   }
+  if (pprogShouldShowConfirmYesChip(msgs)) html += pprogConfirmYesChipHtml();
   log.innerHTML = html;
   if (pprogBusy) setPprogTyping(true);
   else log.scrollTop = log.scrollHeight;
@@ -2579,6 +2593,7 @@ function renderPprogBrickChatLog() {
     html =
       '<div class="pprog-msg system"><div class="pprog-bubble system">Whole brick chat — full plan, schedule, equipment, goals. For one day only, use the green box under that workout.</div></div>';
   }
+  if (pprogShouldShowConfirmYesChip(msgs)) html += pprogConfirmYesChipHtml();
   log.innerHTML = html;
   if (pprogBusy) setPprogTyping(true);
   else log.scrollTop = log.scrollHeight;
@@ -6895,6 +6910,59 @@ var PPROG_EXPLICIT_CONFIRM_RE =
 
 function pprogIsExplicitConfirm(text) {
   return PPROG_EXPLICIT_CONFIRM_RE.test(String(text || "").trim());
+}
+
+/** Coach Confirm? / אישור line — athlete can tap כן instead of typing. */
+function pprogCoachTextAsksConfirm(text) {
+  var t = String(text || "").trim();
+  if (!t) return false;
+  if (/^done\.?$/i.test(t)) return false;
+  if (/\bconfirm\s*\?/i.test(t)) return true;
+  if (/\bplease\s+confirm\b/i.test(t)) return true;
+  if (/לאשר\s*\?/.test(t) || /מאשר(?:ים)?\s*\?/.test(t)) return true;
+  return false;
+}
+
+function pprogShouldShowConfirmYesChip(msgs) {
+  if (pprogBusy) return false;
+  var list = Array.isArray(msgs) ? msgs : [];
+  for (var i = list.length - 1; i >= 0; i--) {
+    var m = list[i];
+    if (!m) continue;
+    var role = m.role;
+    var text = typeof pprogChatDisplayText === "function" ? pprogChatDisplayText(m.text || "") : String(m.text || "");
+    if (!String(text || "").trim()) continue;
+    if (role === "user" || role === "error") return false;
+    if (role === "model" || role === "coach") return pprogCoachTextAsksConfirm(text);
+  }
+  return false;
+}
+
+function pprogConfirmYesChipHtml() {
+  return (
+    '<div class="pprog-confirm-yes-row" role="group" aria-label="Quick confirm">' +
+    '<button type="button" class="pprog-confirm-yes-btn" id="pprogConfirmYesBtn" ' +
+    'onclick="sendPprogConfirmYes(event)" onmousedown="event.preventDefault()" ' +
+    'title="שלח כן" aria-label="שלח כן">כן</button></div>'
+  );
+}
+
+/** One-tap כן for Confirm? questions (no / לא still typed freely). */
+function sendPprogConfirmYes(ev) {
+  if (ev) {
+    try {
+      ev.preventDefault();
+    } catch (e0) {}
+    try {
+      ev.stopPropagation();
+    } catch (e1) {}
+  }
+  if (pprogBusy) return false;
+  var btn = document.getElementById("pprogConfirmYesBtn");
+  if (btn) btn.disabled = true;
+  var inp = document.getElementById("pprogChatInput");
+  if (inp) inp.value = "כן";
+  return sendPprogMessage(ev || { preventDefault: function () {} });
 }
 
 function pprogBrickThreadIsPol026(msgs) {
