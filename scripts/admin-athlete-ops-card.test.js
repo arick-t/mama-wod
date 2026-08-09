@@ -1,5 +1,5 @@
 /**
- * Admin athlete ops card — identity facts + accordion structure (display).
+ * Admin athlete ops card — decluttered identity + block update + chat history.
  */
 const fs = require("fs");
 const path = require("path");
@@ -12,16 +12,22 @@ const snap = fs.readFileSync(
 );
 
 assert.ok(admin.includes("ath-card"), "identity card class");
-assert.ok(admin.includes("ath-acc-item"), "accordion item");
-assert.ok(admin.includes("toggleAthleteAcc"), "accordion toggle");
-assert.ok(admin.includes("הקפא מנוי"), "freeze CTA");
+assert.ok(admin.includes("btn-freeze-mini"), "mini freeze on register row");
 assert.ok(admin.includes("הצהרה הבאה"), "declaration fact");
-assert.ok(admin.includes("getDeclarationInfo"), "declaration helper");
-assert.ok(admin.includes("openHandoffFromCard"), "handoff from card");
-assert.ok(admin.includes("renderAccItem"), "accordion renderer");
-assert.ok(!admin.includes("תחקור ראשוני (לחץ להרחבה)"), "old flat intake summary gone");
-assert.ok(snap.includes('action === "admin_member_status"'), "member status API");
-assert.ok(snap.includes("membershipFrozen"), "persist freeze flag");
-assert.ok(admin.includes("DUCK-WOD Admin · 1.2"), "admin product label 1.2");
+assert.ok(admin.includes("ath-stats-btn"), "stats chevron by name");
+assert.ok(admin.includes("renderAthleteStatsPop"), "stats popover");
+assert.ok(admin.includes("pushBlockUpdateToAthlete"), "update block to phone");
+assert.ok(admin.includes("btn-update-block"), "update button");
+assert.ok(admin.includes("היסטוריית שיח מול המאמן"), "chat history section");
+assert.ok(admin.includes("admin-chat-fab"), "athlete-scoped chat FAB");
+assert.ok(!/ath-fact-label">בלוק:/.test(admin), "block fact removed from card grid");
+assert.ok(!admin.includes("ath-id-line"), "internal id line removed from card");
+assert.ok(!admin.includes('renderAccItem(\n          "handoff"'), "handoff accordion gone");
+assert.ok(!admin.includes('renderAccItem(\n          "intake"'), "intake accordion gone from main");
+assert.ok(!admin.includes('renderAccItem(\n          "history"'), "usage accordion gone from main");
+assert.ok(admin.includes("openIntakeSheet"), "intake opens from stats popover");
+assert.ok(snap.includes('action === "admin_append_chat"'), "chat log API");
+assert.ok(snap.includes("adminChatLog"), "persist chat log");
+assert.ok(admin.includes("DUCK-WOD Admin · 1.2.2"), "admin product label 1.2.2");
 
 console.log("admin-athlete-ops-card.test.js: ok");

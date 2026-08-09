@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DUCK-WOD Admin · 1.2</title>
+<title>DUCK-WOD Admin · 1.2.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -120,13 +120,33 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .empty-tabs{color:var(--text-meta);font-size:13px;padding:4px 2px}
 
 .main{display:flex;flex:1;overflow:hidden;min-height:0}
-.content{flex:1;overflow-y:auto;padding:20px 24px;background:var(--bg);min-height:0;-webkit-overflow-scrolling:touch}
+.content{flex:1;overflow-y:auto;padding:20px 24px 110px;background:var(--bg);min-height:0;-webkit-overflow-scrolling:touch}
 
 /* ── Athlete ops card (identity + accordion) ── */
 .ath-wrap{max-width:720px;margin:0 auto}
 .ath-card{background:var(--bg-card);border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;margin-bottom:14px}
-.ath-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.ath-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px;position:relative}
+.ath-name-row{display:inline-flex;align-items:center;gap:6px;min-width:0}
 .ath-name{font-size:1.45em;font-weight:800;font-family:var(--font-ui);letter-spacing:.01em;line-height:1.2}
+.ath-stats-btn{
+  appearance:none;border:1px solid var(--line);background:var(--bg-elev);color:var(--text-muted);
+  width:26px;height:26px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+  font-size:11px;line-height:1;flex-shrink:0;padding:0
+}
+.ath-stats-btn:hover,.ath-stats-btn.open{border-color:var(--brand);color:#fff;background:rgba(232,69,26,.12)}
+.ath-stats-pop{
+  display:none;position:absolute;top:calc(100% + 6px);right:0;z-index:20;width:min(92vw,320px);
+  background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;
+  box-shadow:0 12px 32px rgba(0,0,0,.45)
+}
+.ath-stats-pop.open{display:block}
+.ath-stats-row{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:.86em}
+.ath-stats-row:last-child{border-bottom:0}
+.ath-stats-k{color:var(--text-meta);font-weight:600}
+.ath-stats-v{color:var(--text);font-weight:700;text-align:left;word-break:break-all}
+.ath-stats-link{appearance:none;border:none;background:transparent;color:var(--note);font-weight:700;font-size:.86em;cursor:pointer;padding:0;font-family:inherit}
+.ath-stats-link:hover{color:#fff}
+.ath-stats-actions{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
 .ath-chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .ath-chip{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:.72em;font-weight:700;border:1px solid transparent;line-height:1.3}
 .ath-chip.active{background:rgba(76,175,112,.14);border-color:rgba(76,175,112,.4);color:#8fd49a}
@@ -136,18 +156,85 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .ath-fact{min-width:0}
 .ath-fact-label{display:block;font-size:.72em;font-weight:600;color:var(--text-meta);margin-bottom:3px}
 .ath-fact-value{display:block;font-size:.95em;font-weight:700;color:var(--text);line-height:1.35}
+.ath-fact-reg-row{display:flex;align-items:flex-end;justify-content:space-between;gap:8px}
+.ath-fact-reg-row .ath-fact-main{min-width:0;flex:1}
+.btn-freeze-mini{
+  flex-shrink:0;appearance:none;margin:0 0 1px;padding:3px 8px;border-radius:6px;
+  border:1px solid rgba(232,69,26,.55);background:rgba(232,69,26,.12);color:#f0a090;
+  font-size:.68em;font-weight:700;font-family:inherit;cursor:pointer;line-height:1.2;white-space:nowrap
+}
+.btn-freeze-mini:hover{background:rgba(232,69,26,.22);color:#fff;border-color:var(--brand)}
+.btn-freeze-mini.is-frozen{border-color:rgba(76,175,112,.45);background:rgba(76,175,112,.1);color:#8fd49a}
 .ath-progress{margin-top:7px;height:5px;border-radius:999px;background:#2a2a2a;overflow:hidden}
 .ath-progress > i{display:block;height:100%;border-radius:999px;background:var(--brand);width:0}
-.ath-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
-.ath-actions .btn-freeze{background:var(--brand);border:none;border-radius:10px;padding:10px 16px;color:#fff;font-weight:700;font-size:.9em;cursor:pointer}
-.ath-actions .btn-freeze:hover{background:#d03d18}
-.ath-actions .btn-freeze.is-frozen{background:transparent;border:1px solid rgba(76,175,112,.45);color:#8fd49a}
-.ath-actions .btn-handoff{background:var(--bg-elev);border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--text-muted);font-weight:700;font-size:.88em;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
-.ath-actions .btn-handoff:hover{color:var(--text);border-color:#3a3a3a}
-.ath-actions .btn-handoff svg{width:15px;height:15px;display:block}
-.ath-actions .btn-delete-link{appearance:none;background:transparent;border:none;color:#f87171;font-weight:700;font-size:.88em;cursor:pointer;padding:8px 4px}
-.ath-actions .btn-delete-link:hover{color:#fca5a5}
-.ath-id-line{margin-top:10px;font-size:.72em;color:var(--text-meta);word-break:break-all}
+.ath-card-foot{margin-top:12px;display:flex;justify-content:flex-end}
+.ath-card-foot .btn-delete-link{appearance:none;background:transparent;border:none;color:#f87171;font-weight:700;font-size:.82em;cursor:pointer;padding:4px 0;font-family:inherit}
+.ath-card-foot .btn-delete-link:hover{color:#fca5a5}
+.ath-block-panel{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
+.ath-block-panel-title{font-size:.95em;font-weight:800;margin:0 0 12px;color:var(--text)}
+.ath-update-row{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.btn-update-block{
+  appearance:none;border:none;border-radius:10px;padding:11px 16px;background:var(--brand);color:#fff;
+  font-weight:800;font-size:.92em;cursor:pointer;font-family:inherit;width:100%
+}
+.btn-update-block:hover{background:#d03d18}
+.btn-update-block:disabled{opacity:.5;cursor:default}
+.ath-update-status{font-size:.8em;color:var(--text-meta);min-height:18px}
+.ath-chat-log{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow:auto}
+.ath-chat-item{background:var(--bg-elev);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.ath-chat-meta{font-size:.7em;color:var(--text-meta);font-weight:600;margin-bottom:4px}
+.ath-chat-text{font-size:.88em;color:var(--text);line-height:1.45;white-space:pre-wrap;word-break:break-word}
+.ath-intake-sheet{
+  display:none;position:fixed;inset:0;z-index:1100;background:rgba(8,6,12,.78);
+  align-items:center;justify-content:center;padding:16px
+}
+.ath-intake-sheet.open{display:flex}
+.ath-intake-sheet-card{
+  width:min(920px,100%);max-height:min(86vh,720px);overflow:auto;background:var(--bg-card);
+  border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:0 20px 48px rgba(0,0,0,.5)
+}
+.ath-intake-sheet-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.ath-intake-sheet-head h3{margin:0;font-size:1.05em}
+
+/* Athlete chat FAB — same temper as app coach FAB; scoped to selected tab athlete */
+.admin-chat-fab-wrap{
+  position:fixed;right:16px;bottom:18px;z-index:1000;
+  display:none;flex-direction:column;align-items:center;pointer-events:none
+}
+.admin-chat-fab-wrap.show{display:flex}
+.admin-chat-fab-wrap > *{pointer-events:auto}
+.admin-chat-fab{
+  display:flex;flex-direction:column;align-items:center;gap:3px;max-width:76px;
+  padding:5px 5px 6px;margin:0;border:1px solid rgba(176,109,207,.4);border-radius:28px;
+  background:linear-gradient(180deg,#2a1a33 0%,#1c1424 100%);cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,.4);font-family:var(--font-ui);
+  -webkit-tap-highlight-color:transparent
+}
+.admin-chat-fab:hover{transform:translateY(-2px);border-color:rgba(176,109,207,.65)}
+.admin-chat-fab.open{border-color:rgba(245,197,24,.7);box-shadow:0 0 0 2px rgba(245,197,24,.28),0 6px 18px rgba(0,0,0,.4)}
+.admin-chat-fab-avatar{width:46px;height:46px;border-radius:50%;overflow:hidden;background:#1a1220;display:block}
+.admin-chat-fab-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.admin-chat-fab-caption{font-size:8px;line-height:1.15;font-weight:600;text-align:center;color:rgba(236,223,246,.88);max-width:66px}
+.admin-chat-float{
+  display:none;position:fixed;right:16px;bottom:110px;z-index:1001;
+  width:min(92vw,380px);max-height:min(70vh,520px);
+  background:var(--bg-card);border:1px solid #8e44ad;border-radius:14px;
+  box-shadow:0 14px 40px rgba(0,0,0,.55);flex-direction:column;overflow:hidden
+}
+.admin-chat-float.open{display:flex}
+.admin-chat-float-head{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+  padding:12px;background:linear-gradient(180deg,#2a1834 0%,#1a1a1a 100%);
+  border-bottom:1px solid #3a2a4a
+}
+.admin-chat-float-title{font-weight:800;font-size:.95em;color:#e8d8f4}
+.admin-chat-float-sub{display:block;margin-top:3px;font-size:.72em;color:#b09bc4;font-weight:600}
+.admin-chat-float-close{
+  appearance:none;border:none;background:#2a2a2a;color:#ddd;width:30px;height:30px;
+  border-radius:50%;cursor:pointer;font-size:1.05em;line-height:1;flex-shrink:0
+}
+.admin-chat-float-body{padding:12px;display:flex;flex-direction:column;gap:10px;min-height:0;overflow:auto}
+.admin-chat-float .notes-ta{min-height:110px}
 
 .ath-acc{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
 .ath-acc-item{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
@@ -183,8 +270,9 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 
 @media(max-width:520px){
   .ath-facts{grid-template-columns:1fr}
-  .ath-actions{flex-direction:column;align-items:stretch}
-  .ath-actions .btn-delete-link{text-align:center}
+  .ath-stats-pop{right:0;left:0;width:auto}
+  .admin-chat-fab-wrap{right:12px;bottom:14px}
+  .admin-chat-float{right:12px;left:12px;width:auto;bottom:100px}
 }
 
 .block-header{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;flex-wrap:wrap}
@@ -338,7 +426,7 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin</div>
-    <div class="ver">1.2</div>
+    <div class="ver">1.2.2</div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <button type="button" onclick="doLogin()">כניסה</button>
     <div id="login-err"></div>
@@ -350,7 +438,7 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">Admin</span>
-    <span class="ver-badge" title="Coach Admin dashboard">1.2</span>
+    <span class="ver-badge" title="Coach Admin dashboard">1.2.2</span>
     <span class="count-wrap">
       <span class="count" id="athlete-count">0 מתאמנים</span>
       <button type="button" class="hdr-btn drive-sync" id="btn-sync-drive" onclick="syncDriveBrain()" title="סנכרן Drive">
@@ -376,6 +464,39 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
       <div class="empty-content">
         <div class="icon">·</div>
         <p>בחר מתאמן מהרשימה</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating athlete note FAB (scoped to selected tab athlete) -->
+  <div class="admin-chat-fab-wrap" id="adminChatFabWrap" aria-hidden="true">
+    <button type="button" class="admin-chat-fab" id="adminChatFab" onclick="toggleAthleteChatFab()" aria-expanded="false" aria-controls="adminChatFloat" title="הערה למתאמן">
+      <span class="admin-chat-fab-avatar">
+        <img src="assets/hamamen-coach-duck.png" alt="" width="46" height="46" draggable="false">
+      </span>
+      <span class="admin-chat-fab-caption" id="adminChatFabCaption">שיחה</span>
+    </button>
+  </div>
+  <div class="admin-chat-float" id="adminChatFloat" role="dialog" aria-labelledby="adminChatFloatTitle">
+    <div class="admin-chat-float-head">
+      <div>
+        <div class="admin-chat-float-title" id="adminChatFloatTitle">הערה למתאמן</div>
+        <span class="admin-chat-float-sub" id="adminChatFloatSub">בחר מתאמן</span>
+      </div>
+      <button type="button" class="admin-chat-float-close" onclick="closeAthleteChatFab()" aria-label="סגור">×</button>
+    </div>
+    <div class="admin-chat-float-body notes-section" id="adminChatFloatBody" data-notes="sticky">
+      <textarea class="notes-ta" id="notes-ta-sticky" placeholder="הערה על המתאמן… שינויים / התאמות / הנחיות"></textarea>
+      <div class="notes-actions">
+        <button type="button" class="btn-primary" onclick="sendAthleteNote('sticky')">שלח</button>
+        <span class="notes-status" id="notes-status-sticky"></span>
+      </div>
+      <div class="decide-box" id="notes-decide-sticky">
+        <div style="margin-bottom:8px;color:#ddd" id="notes-decide-q-sticky">להטמיע עכשיו או להמתין?</div>
+        <div class="notes-actions">
+          <button type="button" class="btn-secondary good" onclick="decideLearnNote('implement')">להטמיע עכשיו</button>
+          <button type="button" class="btn-secondary wait" onclick="decideLearnNote('wait')">להמתין ולצבור</button>
+        </div>
       </div>
     </div>
   </div>
@@ -428,8 +549,10 @@ var syncInFlight = false;
 var blockMonthOffsetByAthlete = {};
 var selectedDayByAthlete = {};
 var athleteAccOpen = {};
+var athleteStatsOpen = {};
 var learningMode = false;
 var pendingLearnNoteId = null;
+var adminChatFabOpen = false;
 var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
 
 var INTAKE_LIFT_DEFS = [
@@ -500,15 +623,20 @@ function formatTenure(joinedAtIso) {
 
 function getAccState(athleteId) {
   if (!athleteAccOpen[athleteId]) {
-    athleteAccOpen[athleteId] = {
-      intake: true,
-      block: false,
-      handoff: false,
-      directives: false,
-      history: false
-    };
+    athleteAccOpen[athleteId] = { chat: false };
   }
   return athleteAccOpen[athleteId];
+}
+
+function getAdminChatLog(a) {
+  if (!a) return [];
+  if (Array.isArray(a.adminChatLog)) return a.adminChatLog;
+  /* Migrate legacy coachDirectives into readable history once for display */
+  var legacy = String(a.coachDirectives || "").trim();
+  if (!legacy) return [];
+  return legacy.split(/\n+/).filter(Boolean).map(function(line) {
+    return { at: a.updatedAt || a.joinedAt || "", text: line, kind: "note" };
+  });
 }
 
 function toggleAthleteAcc(key) {
@@ -622,7 +750,69 @@ function syncLearningUi() {
       : "מגרש: כבוי";
   }
   if (banner) banner.classList.toggle("visible", learningMode);
+  var a = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
+  syncAthleteChatFab(a || null);
+  syncNotesPlaceholders();
+  var body = document.getElementById("adminChatFloatBody");
+  if (body) body.classList.toggle("learning", learningMode);
 }
+
+function syncAthleteChatFab(a) {
+  var wrap = document.getElementById("adminChatFabWrap");
+  var fab = document.getElementById("adminChatFab");
+  var caption = document.getElementById("adminChatFabCaption");
+  var title = document.getElementById("adminChatFloatTitle");
+  var sub = document.getElementById("adminChatFloatSub");
+  var floatEl = document.getElementById("adminChatFloat");
+  var show = !!(a && a.athleteId);
+  if (wrap) {
+    wrap.classList.toggle("show", show);
+    wrap.setAttribute("aria-hidden", show ? "false" : "true");
+  }
+  if (!show) {
+    adminChatFabOpen = false;
+    if (floatEl) floatEl.classList.remove("open");
+    if (fab) {
+      fab.classList.remove("open");
+      fab.setAttribute("aria-expanded", "false");
+    }
+    return;
+  }
+  var name = a.displayName || a.athleteId;
+  if (caption) caption.textContent = String(name).slice(0, 12);
+  if (title) {
+    title.textContent = learningMode ? "הערה · מגרש לימוד" : "הערה למתאמן";
+  }
+  if (sub) {
+    sub.textContent = learningMode
+      ? "למתאמן: " + name + " · נכנס ללימוד המאמן"
+      : "שיחה מול " + name;
+  }
+  if (fab) {
+    fab.classList.toggle("open", adminChatFabOpen);
+    fab.setAttribute("aria-expanded", adminChatFabOpen ? "true" : "false");
+    fab.title = "הערה · " + name;
+  }
+  if (floatEl) floatEl.classList.toggle("open", adminChatFabOpen);
+}
+
+function toggleAthleteChatFab() {
+  if (!currentAthleteId) return;
+  adminChatFabOpen = !adminChatFabOpen;
+  var a = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
+  syncAthleteChatFab(a || null);
+  if (adminChatFabOpen) {
+    var ta = document.getElementById("notes-ta-sticky");
+    if (ta) setTimeout(function() { ta.focus(); }, 40);
+  }
+}
+
+function closeAthleteChatFab() {
+  adminChatFabOpen = false;
+  var a = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
+  syncAthleteChatFab(a || null);
+}
+
 
 var hdrToastTimer = null;
 function showHdrToast(msg, kind) {
@@ -762,6 +952,8 @@ function renderAthleteList(list) {
 
   if (!athletes.length) {
     currentAthleteId = null;
+    adminChatFabOpen = false;
+    syncAthleteChatFab(null);
     sb.innerHTML = '<div class="empty-tabs">אין מתאמנים עדיין — לחץ ״+ מתאמן״</div>';
     document.getElementById("content").innerHTML =
       '<div class="empty-content"><div class="icon">·</div><p>אין מתאמנים — לחץ ״+ מתאמן״ להתחלת תחקור</p></div>';
@@ -786,8 +978,18 @@ function renderAthleteList(list) {
 }
 
 function selectAthlete(id) {
+  if (currentAthleteId !== id) {
+    adminChatFabOpen = false;
+    if (athleteStatsOpen && currentAthleteId) athleteStatsOpen[currentAthleteId] = false;
+  }
   currentAthleteId = id;
   pendingLearnNoteId = null;
+  var status = document.getElementById("notes-status-sticky");
+  var ta = document.getElementById("notes-ta-sticky");
+  var decide = document.getElementById("notes-decide-sticky");
+  if (status) status.textContent = "";
+  if (ta) ta.value = "";
+  if (decide) decide.classList.remove("open");
   var a = athletes.find(function(x) { return x.athleteId === id; });
   if (!a) return;
   renderAthlete(a);
@@ -799,8 +1001,8 @@ function renderAthlete(a) {
   var joinedAt = a.joinedAt || a.createdAt || "";
   var frozen = !!a.membershipFrozen;
   var decl = getDeclarationInfo(a);
-  var weekLabel = getBlockWeekLabel(a);
   var acc = getAccState(a.athleteId);
+  var chatLog = getAdminChatLog(a);
   var chips =
     '<span class="ath-chip ' + (frozen ? "frozen" : "active") + '">' +
     (frozen ? "מוקפא" : "פעיל") +
@@ -808,100 +1010,229 @@ function renderAthlete(a) {
   if (isCoachMember(a)) {
     chips += '<span class="ath-chip coach">חבר מאמן</span>';
   }
+  var statsOpen = !!(athleteStatsOpen && athleteStatsOpen[a.athleteId]);
 
   content.innerHTML =
     '<div class="ath-wrap">' +
       '<div class="ath-card">' +
         '<div class="ath-card-top">' +
-          '<div class="ath-name">' + esc(a.displayName || a.athleteId) + "</div>" +
+          '<div class="ath-name-row">' +
+            '<div class="ath-name">' + esc(a.displayName || a.athleteId) + "</div>" +
+            '<button type="button" class="ath-stats-btn' +
+            (statsOpen ? " open" : "") +
+            '" onclick="toggleAthleteStatsPop()" title="מידע נוסף" aria-expanded="' +
+            (statsOpen ? "true" : "false") +
+            '">▾</button>' +
+          "</div>" +
           '<div class="ath-chips">' + chips + "</div>" +
+          renderAthleteStatsPop(a, chatLog, statsOpen) +
         "</div>" +
         '<div class="ath-facts">' +
           '<div class="ath-fact">' +
-            '<span class="ath-fact-label">נרשם:</span>' +
-            '<span class="ath-fact-value">' + esc(fmt(joinedAt) || "—") + "</span>" +
+            '<div class="ath-fact-reg-row">' +
+              '<div class="ath-fact-main">' +
+                '<span class="ath-fact-label">נרשם:</span>' +
+                '<span class="ath-fact-value">' + esc(fmt(joinedAt) || "—") + "</span>" +
+              "</div>" +
+              '<button type="button" class="btn-freeze-mini' +
+              (frozen ? " is-frozen" : "") +
+              '" onclick="toggleMembershipFrozen(\'' +
+              esc(a.athleteId) +
+              "')\" title=\"" +
+              (frozen ? "בטל הקפאה" : "הקפא מנוי") +
+              '">' +
+              (frozen ? "בטל הקפאה" : "הקפא") +
+              "</button>" +
+            "</div>" +
           "</div>" +
           '<div class="ath-fact">' +
             '<span class="ath-fact-label">וותק:</span>' +
             '<span class="ath-fact-value">' + esc(formatTenure(joinedAt)) + "</span>" +
           "</div>" +
-          '<div class="ath-fact">' +
+          '<div class="ath-fact" style="grid-column:1/-1">' +
             '<span class="ath-fact-label">הצהרה הבאה:</span>' +
             '<span class="ath-fact-value">' + esc(decl.label) + "</span>" +
             '<div class="ath-progress" title="מחזור הצהרה ~6 חודשים"><i style="width:' +
             Math.max(0, Math.min(100, decl.pct)) +
             '%"></i></div>' +
           "</div>" +
-          '<div class="ath-fact">' +
-            '<span class="ath-fact-label">בלוק:</span>' +
-            '<span class="ath-fact-value">' + esc(weekLabel) + "</span>" +
-          "</div>" +
         "</div>" +
-        '<div class="ath-actions">' +
-          '<button type="button" class="btn-freeze' +
-          (frozen ? " is-frozen" : "") +
-          '" onclick="toggleMembershipFrozen(\'' +
-          esc(a.athleteId) +
-          "')\">" +
-          (frozen ? "בטל הקפאה" : "הקפא מנוי") +
-          "</button>" +
-          '<button type="button" class="btn-handoff" onclick="openHandoffFromCard(\'' +
-          esc(a.athleteId) +
-          "')\">" +
-          '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 20h14v-2H5v2zm7-18L5.33 9h3.92v4h5.5V9h3.92L12 2z"/></svg>' +
-          "לינק הורדה</button>" +
+        '<div class="ath-card-foot">' +
           '<button type="button" class="btn-delete-link" onclick="deleteAthlete(\'' +
           esc(a.athleteId) +
-          "')\">מחק</button>" +
+          "')\">מחק מתאמן</button>" +
         "</div>" +
-        '<div class="ath-id-line">מזהה · ' +
-        esc(a.athleteId) +
-        (a.email ? " · " + esc(a.email) : "") +
+      "</div>" +
+      '<div class="ath-block-panel">' +
+        '<div class="ath-block-panel-title">בלוק אימון</div>' +
+        renderBlockCalendarBody(a) +
+        '<div class="ath-update-row">' +
+          '<button type="button" class="btn-update-block" id="btn-update-block" onclick="pushBlockUpdateToAthlete(\'' +
+          esc(a.athleteId) +
+          "')\">עדכן</button>" +
+          '<div class="ath-update-status" id="update-block-status">' +
+          (a.lastHandoffCreatedAt
+            ? "עדכון אחרון נוצר: " + esc(fmt(a.lastHandoffCreatedAt))
+            : "לאחר שינוי ידני בבלוק — לחץ עדכן כדי לשלוח לטלפון המתאמן") +
+          "</div>" +
+          '<div class="handoff-link" id="handoff-link" style="display:none"></div>' +
+          '<div class="sandbox-actions" id="handoff-copy-wrap" style="display:none">' +
+            '<button type="button" class="btn-secondary good" onclick="copyHandoffLink()">העתק לינק עדכון</button>' +
+            '<a class="btn-secondary" id="handoff-open" href="#" target="_blank" rel="noopener">פתח לבדיקה</a>' +
+          "</div>" +
+          '<div class="sandbox-status" id="handoff-status" style="display:none"></div>' +
         "</div>" +
       "</div>" +
       '<div class="ath-acc">' +
         renderAccItem(
-          "intake",
-          "תחקור ראשוני",
-          intakeAccSummary(a),
-          acc.intake,
-          renderIntakeSectionBody(a)
-        ) +
-        renderAccItem(
-          "block",
-          "בלוק אימון נוכחי",
-          getBlockAccSummary(a),
-          acc.block,
-          renderBlockCalendarBody(a)
-        ) +
-        renderAccItem(
-          "handoff",
-          "מסירה לטלפון",
-          a.lastHandoffCreatedAt ? "לינק אחרון · " + fmt(a.lastHandoffCreatedAt) : "הורדה חד־פעמית למכשיר",
-          acc.handoff,
-          renderHandoffSectionBody(a)
-        ) +
-        renderAccItem(
-          "directives",
-          "הנחיות למאמן",
-          a.coachDirectives ? "יש הנחיות שמורות" : "אין הנחיות עדיין",
-          acc.directives,
-          renderDirectivesBody(a)
-        ) +
-        renderAccItem(
-          "history",
-          "היסטוריה / שימוש",
-          usageAccSummary(a),
-          acc.history,
-          renderUsageSection(a) + renderBlocksRow(a)
+          "chat",
+          "היסטוריית שיח מול המאמן",
+          chatLog.length ? chatLog.length + " הודעות" : "אין הודעות עדיין",
+          acc.chat,
+          renderChatHistoryBody(chatLog)
         ) +
       "</div>" +
-      renderStickyNotesSection(a) +
-    "</div>";
+    "</div>" +
+    renderIntakeSheet(a);
 
-  var ta = document.getElementById("directives-input");
-  if (ta) ta.value = a.coachDirectives || "";
+  syncAthleteChatFab(a);
   syncNotesPlaceholders();
+}
+
+function renderAthleteStatsPop(a, chatLog, open) {
+  var reports = toNum(a.coachDebriefsCount);
+  var chats = Array.isArray(chatLog) ? chatLog.length : 0;
+  var intakeLabel = a.intakeSummary || a.skillsSummary ? "פתח תחקור" : "אין תחקור";
+  return (
+    '<div class="ath-stats-pop' +
+    (open ? " open" : "") +
+    '" id="athStatsPop" onclick="event.stopPropagation()">' +
+    '<div class="ath-stats-row"><span class="ath-stats-k">דיווחים</span><span class="ath-stats-v">' +
+    reports +
+    "</span></div>" +
+    '<div class="ath-stats-row"><span class="ath-stats-k">שיח עם המאמן</span><span class="ath-stats-v">' +
+    chats +
+    "</span></div>" +
+    '<div class="ath-stats-row"><span class="ath-stats-k">מזהה אפליקציה</span><span class="ath-stats-v">' +
+    esc(a.athleteId) +
+    "</span></div>" +
+    '<div class="ath-stats-row"><span class="ath-stats-k">תחקור ראשוני</span>' +
+    '<button type="button" class="ath-stats-link" onclick="openIntakeSheet()">' +
+    esc(intakeLabel) +
+    "</button></div>" +
+    "</div>"
+  );
+}
+
+function renderChatHistoryBody(chatLog) {
+  if (!chatLog || !chatLog.length) {
+    return '<div class="ath-muted">הודעות מהשיח הצף יופיעו כאן.</div>';
+  }
+  var items = chatLog
+    .slice()
+    .reverse()
+    .map(function(m) {
+      var kind =
+        m.kind === "learn" ? "לימוד מאמן" : m.kind === "system" ? "מערכת" : "הערה";
+      return (
+        '<div class="ath-chat-item">' +
+        '<div class="ath-chat-meta">' +
+        esc(kind) +
+        (m.at ? " · " + esc(fmt(m.at) || String(m.at).slice(0, 16)) : "") +
+        "</div>" +
+        '<div class="ath-chat-text">' +
+        esc(m.text || "") +
+        "</div>" +
+        "</div>"
+      );
+    })
+    .join("");
+  return '<div class="ath-chat-log">' + items + "</div>";
+}
+
+function renderIntakeSheet(a) {
+  return (
+    '<div class="ath-intake-sheet" id="athIntakeSheet" onclick="if(event.target===this)closeIntakeSheet()">' +
+    '<div class="ath-intake-sheet-card" onclick="event.stopPropagation()">' +
+    '<div class="ath-intake-sheet-head">' +
+    "<h3>תחקור ראשוני · " +
+    esc(a.displayName || a.athleteId) +
+    "</h3>" +
+    '<button type="button" class="btn-secondary" onclick="closeIntakeSheet()">סגור</button>' +
+    "</div>" +
+    renderIntakeSectionBody(a) +
+    "</div></div>"
+  );
+}
+
+function toggleAthleteStatsPop() {
+  if (!currentAthleteId) return;
+  if (!athleteStatsOpen) athleteStatsOpen = {};
+  athleteStatsOpen[currentAthleteId] = !athleteStatsOpen[currentAthleteId];
+  var a = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
+  if (a) renderAthlete(a);
+}
+
+function openIntakeSheet() {
+  if (athleteStatsOpen && currentAthleteId) athleteStatsOpen[currentAthleteId] = false;
+  var sheet = document.getElementById("athIntakeSheet");
+  if (sheet) sheet.classList.add("open");
+  var pop = document.getElementById("athStatsPop");
+  if (pop) pop.classList.remove("open");
+}
+
+function closeIntakeSheet() {
+  var sheet = document.getElementById("athIntakeSheet");
+  if (sheet) sheet.classList.remove("open");
+}
+
+function pushBlockUpdateToAthlete(athleteId) {
+  var a = athletes.find(function(x) { return x.athleteId === athleteId; });
+  if (!a) return;
+  if (!a.currentBlock) {
+    var st0 = document.getElementById("update-block-status");
+    if (st0) st0.textContent = "אין בלוק לעדכון — המתאמן צריך בלוק פעיל קודם";
+    return;
+  }
+  var btn = document.getElementById("btn-update-block");
+  var status = document.getElementById("update-block-status");
+  var linkEl = document.getElementById("handoff-link");
+  var wrap = document.getElementById("handoff-copy-wrap");
+  if (btn) btn.disabled = true;
+  if (status) status.textContent = "יוצר לינק עדכון לטלפון המתאמן…";
+  if (linkEl) linkEl.style.display = "none";
+  if (wrap) wrap.style.display = "none";
+  fetch("/api/admin-handoff", {
+    method: "POST",
+    headers: adminAuthHeaders(),
+    body: JSON.stringify(withAdminPassword({ action: "create_link", athleteId: athleteId }))
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (btn) btn.disabled = false;
+      if (!d || !d.ok) {
+        if (status) status.textContent = "שגיאה: " + ((d && (d.message || d.error)) || "?");
+        return;
+      }
+      lastHandoffUrl = window.location.origin + d.path;
+      if (linkEl) {
+        linkEl.style.display = "block";
+        linkEl.textContent = lastHandoffUrl;
+      }
+      if (wrap) wrap.style.display = "flex";
+      var open = document.getElementById("handoff-open");
+      if (open) open.href = lastHandoffUrl;
+      if (status) {
+        status.textContent =
+          "מוכן — שלח למתאמן. בפתיחה התוכנית/בלוק המעודכן יורדים למכשיר (חד־פעמי).";
+      }
+      a.lastHandoffCreatedAt = new Date().toISOString();
+      a.lastHandoffExpiresAt = d.expiresAt;
+    })
+    .catch(function() {
+      if (btn) btn.disabled = false;
+      if (status) status.textContent = "שגיאת רשת";
+    });
 }
 
 function renderAccItem(key, title, summary, open, bodyHtml) {
@@ -1130,10 +1461,7 @@ var MONTHS_HE = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי",
 function renderBlockCalendarBody(a) {
   var b = a.currentBlock;
   if (!b) {
-    return (
-      '<div class="ath-muted">אין בלוק פעיל</div>' +
-      renderDayNotesBox(a, null, null, false)
-    );
+    return '<div class="ath-muted">אין בלוק פעיל</div>';
   }
 
   var summaryLine = b.summaryLine || "";
@@ -1168,12 +1496,6 @@ function renderBlockCalendarBody(a) {
     "</div>";
   var calHtml = renderMonthGrid(a, map, shownMonthDate);
   var selectedDetailsHtml = renderSelectedDayWorkout(a, map);
-  var dayNotes = renderDayNotesBox(
-    a,
-    map,
-    selectedDayByAthlete[a.athleteId],
-    true
-  );
 
   return (
     '<div id="block-section">' +
@@ -1183,7 +1505,6 @@ function renderBlockCalendarBody(a) {
     calHtml +
     "</div>" +
     selectedDetailsHtml +
-    dayNotes +
     "</div>"
   );
 }
@@ -1191,7 +1512,6 @@ function renderBlockCalendarBody(a) {
 function changeBlockMonth(delta) {
   var a = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
   if (!a) return;
-  setAthleteAcc("block", true);
   var curr = blockMonthOffsetByAthlete[a.athleteId] || 0;
   blockMonthOffsetByAthlete[a.athleteId] = curr + delta;
   renderAthlete(a);
@@ -1200,7 +1520,6 @@ function changeBlockMonth(delta) {
 function selectBlockDay(dateKey) {
   var a = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
   if (!a) return;
-  setAthleteAcc("block", true);
   selectedDayByAthlete[a.athleteId] = dateKey;
   pendingLearnNoteId = null;
   renderAthlete(a);
@@ -1503,48 +1822,9 @@ function syncNotesPlaceholders() {
   for (var i = 0; i < els.length; i++) els[i].placeholder = notesPlaceholder();
 }
 
-function renderDayNotesBox(a, workoutMap, dayKey, underWorkout) {
-  var plan = dayKey && workoutMap && workoutMap[dayKey] ? workoutMap[dayKey] : null;
-  var title = underWorkout
-    ? (dayKey ? "הערה על האימון שנבחר (" + dayKey + ")" : "הערה")
-    : "הערה";
-  var idSuffix = underWorkout ? "day" : "sticky";
-  var learnClass = learningMode ? " learning" : "";
-  return '<div class="notes-section' + learnClass + '" data-notes="' + idSuffix + '">' +
-    '<div class="section-title">' + esc(title) + (learningMode ? " · לימוד מאמן" : "") + "</div>" +
-    '<textarea class="notes-ta" id="notes-ta-' + idSuffix + '" placeholder="' + esc(notesPlaceholder()) + '"></textarea>' +
-    '<div class="notes-actions">' +
-      '<button type="button" class="btn-primary" onclick="sendAthleteNote(\'' + idSuffix + '\')">שלח</button>' +
-      '<span class="notes-status" id="notes-status-' + idSuffix + '"></span>' +
-    "</div>" +
-    '<div class="decide-box' + (pendingLearnNoteId ? " open" : "") + '" id="notes-decide-' + idSuffix + '">' +
-      '<div style="margin-bottom:8px;color:#ddd" id="notes-decide-q-' + idSuffix + '">להטמיע עכשיו או להמתין?</div>' +
-      '<div class="notes-actions">' +
-        '<button type="button" class="btn-secondary good" onclick="decideLearnNote(\'implement\')">להטמיע עכשיו</button>' +
-        '<button type="button" class="btn-secondary wait" onclick="decideLearnNote(\'wait\')">להמתין ולצבור</button>' +
-      "</div>" +
-    "</div>" +
-  "</div>";
-}
+/* Day notes under block calendar removed — use floating athlete FAB instead. */
 
-function renderStickyNotesSection(a) {
-  var learnClass = learningMode ? " learning" : "";
-  return '<div class="notes-section sticky-notes' + learnClass + '" data-notes="sticky">' +
-    '<div class="section-title">הערות' + (learningMode ? " · מגרש לימוד" : " · למתאמן") + "</div>" +
-    '<textarea class="notes-ta" id="notes-ta-sticky" placeholder="' + esc(notesPlaceholder()) + '"></textarea>' +
-    '<div class="notes-actions">' +
-      '<button type="button" class="btn-primary" onclick="sendAthleteNote(\'sticky\')">שלח</button>' +
-      '<span class="notes-status" id="notes-status-sticky"></span>' +
-    "</div>" +
-    '<div class="decide-box' + (pendingLearnNoteId ? " open" : "") + '" id="notes-decide-sticky">' +
-      '<div style="margin-bottom:8px;color:#ddd" id="notes-decide-q-sticky">להטמיע עכשיו או להמתין?</div>' +
-      '<div class="notes-actions">' +
-        '<button type="button" class="btn-secondary good" onclick="decideLearnNote(\'implement\')">להטמיע עכשיו</button>' +
-        '<button type="button" class="btn-secondary wait" onclick="decideLearnNote(\'wait\')">להמתין ולצבור</button>' +
-      "</div>" +
-    "</div>" +
-  "</div>";
-}
+/* Inline sticky notes removed — notes live in floating athlete FAB (#adminChatFloat). */
 
 function getSelectedWorkoutPayload(a) {
   var dayKey = selectedDayByAthlete[a.athleteId] || "";
@@ -1599,11 +1879,29 @@ function sendAthleteNote(which) {
         pendingLearnNoteId = d.noteId;
         if (ta) ta.value = "";
         if (status) status.textContent = "ההערה התקבלה — בחר מה לעשות.";
-        ["day", "sticky"].forEach(function(id) {
-          var box = document.getElementById("notes-decide-" + id);
-          var q = document.getElementById("notes-decide-q-" + id);
-          if (box) box.classList.add("open");
-          if (q) q.textContent = d.question || "להטמיע עכשיו או להמתין?";
+        appendAdminChatLocal(a, note, "learn");
+        adminChatFabOpen = true;
+        syncAthleteChatFab(a);
+        var box = document.getElementById("notes-decide-sticky");
+        var q = document.getElementById("notes-decide-q-sticky");
+        if (box) box.classList.add("open");
+        if (q) q.textContent = d.question || "להטמיע עכשיו או להמתין?";
+        persistAdminChatLog(a).then(function(ok) {
+          if (ok) {
+            setAthleteAcc("chat", true);
+            /* Refresh history without closing the learn-decision UI in the FAB */
+            var keepDecide = box && box.classList.contains("open");
+            var keepQ = q ? q.textContent : "";
+            renderAthlete(a);
+            adminChatFabOpen = true;
+            syncAthleteChatFab(a);
+            if (keepDecide) {
+              var box2 = document.getElementById("notes-decide-sticky");
+              var q2 = document.getElementById("notes-decide-q-sticky");
+              if (box2) box2.classList.add("open");
+              if (q2) q2.textContent = keepQ;
+            }
+          }
         });
       })
       .catch(function() {
@@ -1612,15 +1910,22 @@ function sendAthleteNote(which) {
     return;
   }
 
+  appendAdminChatLocal(a, note, "note");
   var existing = String(a.coachDirectives || "").trim();
   var merged = existing ? existing + "\n" + note : note;
+  a.coachDirectives = merged;
   fetch("/api/admin-snapshot", {
     method: "POST",
     headers: adminAuthHeaders(),
-    body: JSON.stringify(withAdminPassword({
-      athleteId: a.athleteId,
-      coachDirectives: merged
-    }))
+    body: JSON.stringify(
+      withAdminPassword({
+        action: "admin_append_chat",
+        athleteId: a.athleteId,
+        text: note,
+        kind: "note",
+        coachDirectives: merged
+      })
+    )
   })
     .then(function(r) { return r.json(); })
     .then(function(d) {
@@ -1628,16 +1933,54 @@ function sendAthleteNote(which) {
         if (status) status.textContent = "שגיאה: " + ((d && d.error) || "?");
         return;
       }
-      a.coachDirectives = merged;
+      if (Array.isArray(d.adminChatLog)) a.adminChatLog = d.adminChatLog;
       if (ta) ta.value = "";
-      if (status) status.textContent = "✓ נשמר להנחיות המתאמן";
-      var dirTa = document.getElementById("directives-input");
-      if (dirTa) dirTa.value = merged;
-      loadAthletes();
+      if (status) status.textContent = "✓ נשמר בהיסטוריית השיח";
+      setAthleteAcc("chat", true);
+      renderAthlete(a);
+      adminChatFabOpen = true;
+      syncAthleteChatFab(a);
     })
     .catch(function() {
       if (status) status.textContent = "שגיאת רשת";
     });
+}
+
+function appendAdminChatLocal(a, text, kind) {
+  if (!a) return;
+  if (!Array.isArray(a.adminChatLog)) a.adminChatLog = getAdminChatLog(a).slice();
+  a.adminChatLog.push({
+    at: new Date().toISOString(),
+    text: String(text || "").slice(0, 800),
+    kind: kind || "note"
+  });
+  if (a.adminChatLog.length > 80) a.adminChatLog = a.adminChatLog.slice(-80);
+}
+
+function persistAdminChatLog(a) {
+  if (!a || !a.athleteId) return Promise.resolve(false);
+  var last = (a.adminChatLog || [])[(a.adminChatLog || []).length - 1];
+  if (!last) return Promise.resolve(false);
+  return fetch("/api/admin-snapshot", {
+    method: "POST",
+    headers: adminAuthHeaders(),
+    body: JSON.stringify(
+      withAdminPassword({
+        action: "admin_append_chat",
+        athleteId: a.athleteId,
+        text: last.text,
+        kind: last.kind || "learn",
+        coachDirectives: a.coachDirectives || ""
+      })
+    )
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (!d || !d.ok) return false;
+      if (Array.isArray(d.adminChatLog)) a.adminChatLog = d.adminChatLog;
+      return true;
+    })
+    .catch(function() { return false; });
 }
 
 function decideLearnNote(decision) {
@@ -1663,7 +2006,7 @@ function decideLearnNote(decision) {
       }
       pendingLearnNoteId = null;
       for (var k = 0; k < statuses.length; k++) statuses[k].textContent = d.message || "נשמר";
-      ["day", "sticky"].forEach(function(id) {
+      ["sticky"].forEach(function(id) {
         var box = document.getElementById("notes-decide-" + id);
         if (box) box.classList.remove("open");
       });

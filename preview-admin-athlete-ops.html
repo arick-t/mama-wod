@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Admin · 1.2 athlete ops preview</title>
+<title>Admin · 1.2.1 athlete ops preview</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Heebo:wght@400;600;700;800&display=swap">
 <style>
 :root{
@@ -43,7 +43,7 @@ body{font-family:var(--font-ui);background:var(--bg);color:var(--text);padding:1
 </head>
 <body>
 <div class="wrap">
-  <p class="note">Preview · Admin 1.2 athlete ops card (identity + accordion). Static mock.</p>
+  <p class="note">Preview · Admin 1.2.1 — mini freeze on register row + floating athlete chat FAB (no always-on notes box).</p>
   <div class="ath-card">
     <div class="ath-card-top">
       <div class="ath-name">אריק ט.</div>
@@ -53,7 +53,15 @@ body{font-family:var(--font-ui);background:var(--bg);color:var(--text);padding:1
       </div>
     </div>
     <div class="ath-facts">
-      <div><span class="ath-fact-label">נרשם:</span><span class="ath-fact-value">12.02.2026</span></div>
+      <div>
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:8px">
+          <div>
+            <span class="ath-fact-label">נרשם:</span>
+            <span class="ath-fact-value">12.02.2026</span>
+          </div>
+          <button type="button" style="padding:3px 8px;border-radius:6px;border:1px solid rgba(232,69,26,.55);background:rgba(232,69,26,.12);color:#f0a090;font-size:.68em;font-weight:700">הקפא</button>
+        </div>
+      </div>
       <div><span class="ath-fact-label">וותק:</span><span class="ath-fact-value">6 חודשים</span></div>
       <div>
         <span class="ath-fact-label">הצהרה הבאה:</span>
@@ -63,7 +71,6 @@ body{font-family:var(--font-ui);background:var(--bg);color:var(--text);padding:1
       <div><span class="ath-fact-label">בלוק:</span><span class="ath-fact-value">שבוע 3/5</span></div>
     </div>
     <div class="ath-actions">
-      <button class="btn brand" type="button">הקפא מנוי</button>
       <button class="btn quiet" type="button">לינק הורדה</button>
       <button class="del" type="button">מחק</button>
     </div>

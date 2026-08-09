@@ -1,5 +1,6 @@
 # Changelog
 
+<<<<<<< HEAD
 ## [Coach 2.2] - 2026-08-09
 
 ### Personal Coach — POL-026 unplanned/extra session (whole-brick)
@@ -7,6 +8,27 @@
 - Whole-brick: ingest spontaneous/extra completed sessions as real load; keep today as performed; rest-shift after Confirm; surgical forward bias.
 - Budget approved-with-conditions: Confirm?-only apply; no full `BLOCK_JSON` / Soft Upgrade / large rebuild on this path; local tomorrow→Rest fallback if no surgical JSON; short `[ATHLETE_EXTRA_SESSIONS]`.
 - Engine: `lib/coach-pol026-gates.js` + client gates. Tests: `scripts/pol026-extra-session.test.js`.
+=======
+## [Admin 1.2.2] - 2026-08-09
+
+### Admin athlete page — declutter + עדכן + chat history
+- Removed redundant card fields: block chip, internal id line, handoff accordion, intake accordion, usage accordion.
+- Training **block always shown** under the card with **עדכן** (one-time update link to athlete phone; Stage 3 write-back later).
+- Name ▾ opens stats popover: reports, coach chats, app id, clickable initial intake.
+- **הנחיות למאמן** → **היסטוריית שיח מול המאמן** (`adminChatLog` + `admin_append_chat`).
+- Handoff for brand-new admin-intake athletes kept for a later connection — not on the main athlete page.
+- Admin label **1.2.2**.
+
+---
+
+## [Admin 1.2.1] - 2026-08-09
+
+### Admin athlete page — mini freeze + floating athlete chat
+- Freeze control moved onto the **נרשם** row as a tiny chip (`הקפא` / `בטל הקפאה`) — no full-width CTA.
+- Removed always-on notes box and block-day notes box.
+- Notes open from a **floating duck FAB** (like the athlete app); scoped to the selected athlete tab (caption = name).
+- Admin label **1.2.1**.
+>>>>>>> 272f22ffb9c7674cdb0be9bf55b80e110e9cc499
 
 ---
 
