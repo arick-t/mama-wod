@@ -1524,6 +1524,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
   <span>DUCK-WOD</span>
 </footer>
 
+<script src="lib/coach-intake-sync-contract.js"></script>
 <script>
 var allData = {workouts:{}};
 var specialData = {heroes:[], benchmarks:[], open:[]};
@@ -4089,6 +4090,11 @@ function pprogFixedNext() {
 
 function pprogBuildFixedIntakePrompt(store) {
   var s = store || loadPprogStore();
+  try {
+    if (typeof CoachIntakeSync !== "undefined" && CoachIntakeSync.buildFixedIntakePrompt) {
+      return CoachIntakeSync.buildFixedIntakePrompt(s);
+    }
+  } catch (eShared) {}
   var days = Array.isArray(s.trainingDays) ? s.trainingDays : [];
   var dayLabels = days
     .map(function (d) {
@@ -7354,6 +7360,12 @@ function pushAdminSnapshot(store) {
     if (!localStorage.dw_uid) localStorage.dw_uid = athleteId;
     var skillsSummary = pprogSkillsSummaryForMail(store.skills);
     var intakeSummary = String(store.profileNotes || "").replace(/\n+/g, " ").trim().slice(0, 400);
+    var intakeProfile = null;
+    try {
+      if (typeof CoachIntakeSync !== "undefined" && CoachIntakeSync.normalizeIntakeProfile) {
+        intakeProfile = CoachIntakeSync.normalizeIntakeProfile(store);
+      }
+    } catch (eSync) {}
     var payload = {
       athleteId: athleteId,
       writeKey: getAdminWriteKey(),
@@ -7362,6 +7374,22 @@ function pushAdminSnapshot(store) {
       preferredLanguage: store.preferredLanguage || "",
       skillsSummary: skillsSummary,
       intakeSummary: intakeSummary,
+      intakeProfile: intakeProfile,
+      age: store.age || "",
+      bodyweight: store.bodyweight || "",
+      experience: store.experience || "",
+      trainingDays: Array.isArray(store.trainingDays) ? store.trainingDays : [],
+      scheduleNotes: store.scheduleNotes || "",
+      activeRecoveryPref: store.activeRecoveryPref || "",
+      activeRecoveryDay: store.activeRecoveryDay || "",
+      trainingSetup: store.trainingSetup || "",
+      skills: store.skills || {},
+      lifts: store.lifts || {},
+      sessionLimits: store.sessionLimits || "",
+      injuries: store.injuries || "",
+      goals: store.goals || "",
+      fixedIntakePacket: store.fixedIntakePacket || "",
+      profileNotes: store.profileNotes || "",
       currentBlock: store.currentBlock || null,
       pastBlocks: (store.pastBlocks || []).map(function (b) {
         return { blockStart: b.blockStart, summaryLine: b.summaryLine, archivedAt: b.archivedAt };

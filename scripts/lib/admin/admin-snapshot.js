@@ -41,6 +41,22 @@ const CLIENT_ALLOWED_KEYS = new Set([
   "preferredLanguage",
   "skillsSummary",
   "intakeSummary",
+  "intakeProfile",
+  "age",
+  "bodyweight",
+  "experience",
+  "trainingDays",
+  "scheduleNotes",
+  "activeRecoveryPref",
+  "activeRecoveryDay",
+  "trainingSetup",
+  "skills",
+  "lifts",
+  "sessionLimits",
+  "injuries",
+  "goals",
+  "fixedIntakePacket",
+  "profileNotes",
   "joinedAt",
   "workoutAdjustmentsCount",
   "coachDebriefsCount",
@@ -48,6 +64,8 @@ const CLIENT_ALLOWED_KEYS = new Set([
   "pastBlocks",
   "coachTier",
 ]);
+
+const CoachIntakeSync = require("../../../lib/coach-intake-sync-contract");
 
 function safeAthleteId(raw) {
   return String(raw || "")
@@ -358,6 +376,35 @@ module.exports = async function handler(req, res) {
 
     const clean = isAdmin ? body : stripUnknownClientFields(body);
 
+    let intakeProfile = existing.intakeProfile || null;
+    if (clean.intakeProfile || clean.fixedIntakePacket || clean.skills || clean.lifts) {
+      intakeProfile = CoachIntakeSync.normalizeIntakeProfile(
+        Object.assign({}, existing.intakeProfile || {}, clean.intakeProfile || {}, {
+          displayName: clean.displayName || (existing.intakeProfile && existing.intakeProfile.displayName),
+          gender: clean.gender || (existing.intakeProfile && existing.intakeProfile.gender),
+          preferredLanguage:
+            clean.preferredLanguage ||
+            (existing.intakeProfile && existing.intakeProfile.preferredLanguage),
+          age: clean.age,
+          bodyweight: clean.bodyweight,
+          experience: clean.experience,
+          trainingDays: clean.trainingDays,
+          scheduleNotes: clean.scheduleNotes,
+          activeRecoveryPref: clean.activeRecoveryPref,
+          activeRecoveryDay: clean.activeRecoveryDay,
+          trainingSetup: clean.trainingSetup,
+          skills: clean.skills,
+          lifts: clean.lifts,
+          sessionLimits: clean.sessionLimits,
+          injuries: clean.injuries,
+          goals: clean.goals,
+          fixedIntakePacket: clean.fixedIntakePacket,
+          profileNotes: clean.profileNotes || clean.intakeSummary,
+          intakeComplete: true,
+        })
+      );
+    }
+
     const snapshot = {
       athleteId,
       displayName: String(clean.displayName || existing.displayName || "").slice(0, 80),
@@ -366,8 +413,19 @@ module.exports = async function handler(req, res) {
       preferredLanguage: String(
         clean.preferredLanguage || existing.preferredLanguage || ""
       ).slice(0, 10),
-      skillsSummary: String(clean.skillsSummary || existing.skillsSummary || "").slice(0, 400),
-      intakeSummary: String(clean.intakeSummary || existing.intakeSummary || "").slice(0, 800),
+      skillsSummary: String(
+        clean.skillsSummary ||
+          (intakeProfile && intakeProfile.skillsSummary) ||
+          existing.skillsSummary ||
+          ""
+      ).slice(0, 400),
+      intakeSummary: String(
+        clean.intakeSummary ||
+          (intakeProfile && intakeProfile.profileNotes) ||
+          existing.intakeSummary ||
+          ""
+      ).slice(0, 800),
+      intakeProfile: intakeProfile || existing.intakeProfile || undefined,
       coachDirectives: String(existing.coachDirectives || "").slice(0, 1000),
       joinedAt: String(
         clean.joinedAt || existing.joinedAt || existing.createdAt || new Date().toISOString()

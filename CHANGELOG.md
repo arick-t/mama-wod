@@ -1,5 +1,16 @@
 # Changelog
 
+## [Admin 1.2.3] - 2026-08-09
+
+### Admin «+ מתאמן» — intake parity + full sync contract
+- **HARD:** admin intake = same 9-step fixed questionnaire as the athlete app (same `FIXED INTAKE COMPLETE` packet → `generate_block`).
+- Blob `intakeProfile` + phone claim package carry structured skills/lifts/schedule/recovery/… (no empty skills wipe).
+- `create_athlete` requires real `currentBlock.weeks` + fixed packet (no starterBlock stub); auto-creates one-time handoff link.
+- Athlete `pushAdminSnapshot` syncs the same structured intake back to admin.
+- Shared contract: `lib/coach-intake-sync-contract.js`. Tests: `scripts/admin-intake-parity.test.js`.
+
+---
+
 ## [Coach 2.3] - 2026-08-09
 
 ### Personal Coach — POL-026 calendar truth sticks + Confirm? כן chip

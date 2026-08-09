@@ -19,6 +19,7 @@ const { putJson, getJson, listJson, putJsonExclusive, assertDurableStorage } = r
 const { makeWriteKey, hashWriteKey } = require("./admin-ownership");
 const { appendAdminAudit } = require("./admin-audit");
 const { applyCors } = require("../../../lib/cors-allowlist");
+const CoachIntakeSync = require("../../../lib/coach-intake-sync-contract");
 
 const ADMIN_PASSWORD = resolveAdminPassword();
 const MAX_PACKAGE_BYTES = 256 * 1024;
@@ -211,27 +212,41 @@ function buildPhonePackage(snap, writeKeyPlain) {
   if (snap.coachDirectives) {
     prefs.push("Admin directive: " + String(snap.coachDirectives).slice(0, 300));
   }
-  const pkg = {
+  const intakeProfile = CoachIntakeSync.normalizeIntakeProfile(
+    snap.intakeProfile || {
+      displayName: snap.displayName,
+      gender: snap.gender,
+      preferredLanguage: snap.preferredLanguage || "en",
+      profileNotes: snap.intakeSummary,
+      skillsSummary: snap.skillsSummary,
+      intakeComplete: true,
+    }
+  );
+  let pkg = {
     version: 2,
     userId: athleteId,
     athleteId: athleteId,
-    displayName: String(snap.displayName || "").slice(0, 80),
-    gender: String(snap.gender || "").slice(0, 20),
-    preferredLanguage: String(snap.preferredLanguage || "he").slice(0, 10),
+    displayName: String(snap.displayName || intakeProfile.displayName || "").slice(0, 80),
+    gender: String(snap.gender || intakeProfile.gender || "").slice(0, 20),
+    preferredLanguage: String(
+      intakeProfile.preferredLanguage || snap.preferredLanguage || "en"
+    ).slice(0, 10),
     email: String(snap.email || "").slice(0, 120),
     skills: {},
     lifts: {},
     legalAcceptedAt: new Date().toISOString(),
-    legalAcceptedVersion: 1,
+    legalAcceptedVersion: 3,
     intakeComplete: true,
-    profileNotes: String(snap.intakeSummary || "").slice(0, 800),
+    profileNotes: String(intakeProfile.profileNotes || snap.intakeSummary || "").slice(0, 2500),
     coachPrefs: prefs,
     chat: [
       {
         role: "coach",
         text:
           "Welcome" +
-          (snap.displayName ? ", " + snap.displayName : "") +
+          (snap.displayName || intakeProfile.displayName
+            ? ", " + (snap.displayName || intakeProfile.displayName)
+            : "") +
           ". Your plan was installed from your coach. No need to repeat intake.",
       },
     ],
@@ -246,6 +261,7 @@ function buildPhonePackage(snap, writeKeyPlain) {
     intakeNotifySentAt: new Date().toISOString(),
     handoffInstalledAt: new Date().toISOString(),
   };
+  pkg = CoachIntakeSync.applyIntakeProfileToPhoneStore(pkg, intakeProfile);
   if (writeKeyPlain) pkg.writeKey = String(writeKeyPlain).slice(0, 128);
   return pkg;
 }
@@ -268,13 +284,48 @@ function buildResetIntakePackage(snap) {
 }
 
 async function createAthlete(body) {
-  const displayName = String(body.displayName || "").trim().slice(0, 80);
+  const intakeProfile = CoachIntakeSync.normalizeIntakeProfile(
+    body.intakeProfile || {
+      displayName: body.displayName,
+      gender: body.gender,
+      preferredLanguage: body.preferredLanguage || "en",
+      skills: body.skills,
+      lifts: body.lifts,
+      age: body.age,
+      bodyweight: body.bodyweight,
+      experience: body.experience,
+      trainingDays: body.trainingDays,
+      scheduleNotes: body.scheduleNotes,
+      activeRecoveryPref: body.activeRecoveryPref,
+      activeRecoveryDay: body.activeRecoveryDay,
+      trainingSetup: body.trainingSetup,
+      trainingLocations: body.trainingLocations,
+      trainingLocationOther: body.trainingLocationOther,
+      sessionLimits: body.sessionLimits,
+      injuries: body.injuries,
+      goals: body.goals,
+      fixedIntakePacket: body.fixedIntakePacket,
+      profileNotes: body.profileNotes || body.intakeSummary,
+      intakeComplete: true,
+    }
+  );
+  const displayName = String(intakeProfile.displayName || body.displayName || "")
+    .trim()
+    .slice(0, 80);
   if (!displayName) return { status: 400, json: { error: "displayName required" } };
   const email = String(body.email || "").trim().slice(0, 120);
-  const gender = String(body.gender || "").trim().slice(0, 20);
-  const intakeSummary = String(body.intakeSummary || "").trim().slice(0, 800);
+  const gender = String(intakeProfile.gender || body.gender || "").trim().slice(0, 20);
+  const intakeSummary = String(
+    body.intakeSummary || intakeProfile.profileNotes || ""
+  )
+    .trim()
+    .slice(0, 800);
   const coachDirectives = String(body.coachDirectives || "").trim().slice(0, 1000);
-  const preferredLanguage = String(body.preferredLanguage || "he").trim().slice(0, 10);
+  const preferredLanguage = String(
+    intakeProfile.preferredLanguage || body.preferredLanguage || "en"
+  )
+    .trim()
+    .slice(0, 10);
 
   let athleteId = safeId(body.athleteId);
   if (!athleteId) {
@@ -285,6 +336,27 @@ async function createAthlete(body) {
     return { status: 409, json: { error: "athlete already exists", athleteId: athleteId } };
   }
 
+  const block = body.currentBlock;
+  if (!block || !Array.isArray(block.weeks) || !block.weeks.length) {
+    return {
+      status: 400,
+      json: {
+        error: "currentBlock required",
+        message:
+          "חייב לבנה אמיתית מ־generate_block (weeks לא ריק) — לא נשמר stub / starterBlock.",
+      },
+    };
+  }
+  if (!intakeProfile.fixedIntakePacket || !/^FIXED INTAKE COMPLETE/i.test(intakeProfile.fixedIntakePacket)) {
+    return {
+      status: 400,
+      json: {
+        error: "fixedIntakePacket required",
+        message: "תחקור חייב להיות זהה לאפליקציה (FIXED INTAKE COMPLETE packet).",
+      },
+    };
+  }
+
   const now = new Date().toISOString();
   const deviceWriteKey = makeWriteKey();
   const snapshot = {
@@ -293,13 +365,16 @@ async function createAthlete(body) {
     email: email,
     gender: gender,
     preferredLanguage: preferredLanguage,
-    skillsSummary: String(body.skillsSummary || "").slice(0, 400),
+    skillsSummary: String(
+      body.skillsSummary || intakeProfile.skillsSummary || ""
+    ).slice(0, 400),
     intakeSummary: intakeSummary,
+    intakeProfile: intakeProfile,
     coachDirectives: coachDirectives,
     joinedAt: now,
     workoutAdjustmentsCount: 0,
     coachDebriefsCount: 0,
-    currentBlock: body.currentBlock || starterBlock(displayName),
+    currentBlock: block,
     pastBlocks: [],
     createdAt: now,
     updatedAt: now,
@@ -322,13 +397,27 @@ async function createAthlete(body) {
       json: { error: "לא הצלחנו לשמור מתאמן", detail: String(e.message) },
     };
   }
+
+  let linkJson = null;
+  if (body.autoCreateLink !== false) {
+    try {
+      const linkRes = await createLink({ athleteId: athleteId, purpose: "handoff" });
+      if (linkRes && linkRes.status === 200) linkJson = linkRes.json;
+    } catch (eLink) {
+      linkJson = null;
+    }
+  }
+
   return {
     status: 200,
     json: {
       ok: true,
       snapshot: Object.assign({}, snapshot, { writeKeyHash: undefined }),
-      writeKey: deviceWriteKey,
-      message: "נשמר. שמרו את מפתח המכשיר ללינק handoff או התקינו דרך לינק.",
+      writeKey: (linkJson && linkJson.writeKey) || deviceWriteKey,
+      handoff: linkJson,
+      message: linkJson
+        ? "נשמר + לינק מסירה חד־פעמי מוכן."
+        : "נשמר. צרו לינק מסירה מהכרטיס.",
     },
   };
 }
@@ -405,6 +494,7 @@ async function createLink(body) {
       athleteId: athleteId,
       displayName: claim.displayName,
       oneTime: true,
+      writeKey: deviceWriteKey,
       message: isReset
         ? "לינק איפוס תחקור — כשהמתאמן יפתח אותו, התחקור יתחיל מחדש והתוכנית נשארת"
         : undefined,
