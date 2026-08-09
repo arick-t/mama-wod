@@ -306,6 +306,27 @@ module.exports = async function handler(req, res) {
       createdAt: existing.createdAt || new Date().toISOString(),
     };
     if (isAdmin && clean.createdByAdmin) snapshot.createdByAdmin = true;
+    /* Preserve admin/device meta that this merge path does not re-accept from clients */
+    [
+      "intakeResetAt",
+      "intakeResetPending",
+      "intakeResetRedeemedAt",
+      "lastHandoffTokenPrefix",
+      "lastHandoffCreatedAt",
+      "lastHandoffExpiresAt",
+      "createdByAdmin",
+    ].forEach(function (k) {
+      if (snapshot[k] === undefined && existing[k] !== undefined) snapshot[k] = existing[k];
+    });
+    /* Admin completed real intake/plan for a seed stub → no longer a placeholder row */
+    if (
+      isAdmin &&
+      (clean.currentBlock ||
+        (clean.intakeSummary && !/^Seeded coach member/i.test(String(clean.intakeSummary))))
+    ) {
+      snapshot.seeded = false;
+      snapshot.intakeResetPending = false;
+    }
 
     try {
       await writeSnapshot(athleteId, snapshot);
