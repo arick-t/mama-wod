@@ -253,6 +253,24 @@ Copy a block below. Keep IDs unique (`POL-###`).
   7. Does **not** consume daily POL-COST programmed-edit slots; still respects monthly programming envelope for provider health.
 - **Added:** 2026-08-07 — Budget-approved Done learning v1
 
+### POL-026 — Unplanned / extra completed session → ingest + weigh into remaining brick
+- **Type:** HARD
+- **Scope:** whole-program / brick chat after intake; mid-brick WEEK_JSON / DAY_JSON after Confirm?
+- **Trigger:** athlete reports they already trained today (especially instead of a planned Rest) and/or pastes the session they performed; may also ask to move Rest to another day
+- **Required behavior:**
+  1. **Ingest the work.** Parse movements, loads, volume, duration. Treat it as real completed training load for Israel-today — not chit-chat, not an injury event.
+  2. **Calendar truth.** Keep Israel-today as the performed session (do **not** flip today to Rest). If they request Rest on a later day (e.g. tomorrow), that later day becomes Rest after Confirm?
+  3. **Weigh into the plan.** After Confirm?, surgically ease overlapping lifts / engine / skill on upcoming remaining days so the extra session is accounted for in the general plan. Surgical only (POL-023) — no full brick redesign.
+  4. **Chat (POL-022).** One short Confirm? covering: log today + rest-shift (if any) + soft forward bias. Forbidden: equipment re-ask, goals review, “how are you feeling”, multi-question intake loops.
+  5. **Safety exception.** Skipping/moving Rest or logging an unplanned session must **never** trigger the injury / physical-risks disclaimer. That disclaimer is only for pain / injury / distress / doubt about a movement.
+  6. **Budget gates (HARD):** Apply only after explicit Confirm. Forbidden by default: `generate_block`, Soft Upgrade, large rebuild B, full-brick `BLOCK_JSON`. After Confirm: one surgical `WEEK_JSON`/`DAY_JSON` pass only (target ~3 cost units). If no surgical JSON — do **not** auto large-rebuild; client may set tomorrow→Rest locally. Keep `[ATHLETE_EXTRA_SESSIONS]` short (≤2 notes).
+- **Examples:**  
+  Good: “Schedule: keep today’s session logged, rest tomorrow, ease squat/hinge/engine later this week. Confirm?” → after yes → WEEK_JSON with tomorrow Rest + light bias → “Done.”  
+  Bad: multi-turn equipment/goals/feeling loop with no calendar apply.  
+  Bad: “I am an AI engine and cannot evaluate physical risks…” because they trained on a rest day.
+- **Added:** 2026-08-09 — case study: spontaneous session on rest day must be processed into the plan
+- **Updated:** 2026-08-09 — Budget approved-with-conditions (confirm-only apply; no block/rebuild default)
+
 ### POL-022 — Whole-program / brick chat: ultra-brief double-check
 - **Type:** HARD
 - **Scope:** coach chat after intake (especially “whole program notes” / brick chat); standing prefs that affect many days/weeks
