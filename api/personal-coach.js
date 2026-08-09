@@ -531,9 +531,10 @@ function buildExtraSessionsBlock(profile) {
   if (!profile || typeof profile !== "object") return "";
   const list = Array.isArray(profile.extraSessions) ? profile.extraSessions : [];
   if (!list.length) return "";
-  const lines = list.slice(-4).map((e, i) => {
+  /* Budget: keep card short — last 2 notes, tight lines */
+  const lines = list.slice(-2).map((e, i) => {
     const sd = String((e && e.sessionDate) || "").slice(0, 10);
-    const note = String((e && e.note) || "").replace(/\s+/g, " ").slice(0, 220);
+    const note = String((e && e.note) || "").replace(/\s+/g, " ").slice(0, 160);
     return (i + 1) + ") " + (sd || "?") + " — " + note;
   });
   return (
@@ -543,6 +544,12 @@ function buildExtraSessionsBlock(profile) {
     "\n[/ATHLETE_EXTRA_SESSIONS]\n"
   );
 }
+
+const {
+  isExplicitPol026Confirm,
+  messagesLookLikePol026ExtraSession,
+  enforcePol026BrickChatResponse,
+} = require("../lib/coach-pol026-gates.js");
 
 /** Compact Done-learning cards from athleteProfile.finishSignals / finishLearning (≤~500 chars). */
 function buildFinishLearningBlock(profile, action) {
@@ -1831,7 +1838,7 @@ module.exports = async function handler(req, res) {
       "D) After confirm: adapt ONLY that section's implications on remaining days (POL-023). " +
       "Freeze every other intake section — equipment notes must not reshuffle Rest days; injury notes must not rewrite equipment/schedule/goals.\n" +
       "E) Do NOT invent extra Rest days unless the touched section is weeklySchedule/activeRecovery OR POL-026 rest-shift was requested.\n" +
-      "POL-026 — UNPLANNED / EXTRA COMPLETED SESSION (HARD):\n" +
+      "POL-026 — UNPLANNED / EXTRA COMPLETED SESSION (HARD · Budget-approved-with-conditions):\n" +
       "When the athlete reports they already trained today (especially instead of a planned Rest) and/or pastes the session they did:\n" +
       "1) INGEST: silently parse movements, loads, volume, duration — treat as real completed training load for " +
       todayIso +
@@ -1840,9 +1847,13 @@ module.exports = async function handler(req, res) {
       "If they ask for Rest on a later day (e.g. tomorrow), that later day becomes Rest after confirm.\n" +
       "3) WEIGH INTO PLAN: after confirm, surgically ease overlapping lifts/engine/skill on upcoming remaining days so the extra work is accounted for — " +
       "not ignored, not treated as injury, not a full brick redesign.\n" +
-      "4) CHAT: ONE short Confirm? line covering log-today + rest-shift (if any) + soft forward bias. " +
-      "Forbidden: equipment re-ask, goals review, \"how are you feeling\", multi-question intake loops, injury disclaimer for this case.\n" +
-      "Good: \"Schedule: keep today’s session logged, rest tomorrow, ease squat/hinge/engine later this week. Confirm?\"\n" +
+      "4) CHAT (pre-confirm): ONE short Confirm? line ONLY — exact style: " +
+      "\"Schedule: keep today’s session logged, rest tomorrow, ease squat/hinge/engine later this week. Confirm?\"\n" +
+      "Forbidden pre-confirm: paragraphs, equipment re-ask, goals review, feeling questions, injury disclaimer, ANY WEEK_JSON/DAY_JSON/BLOCK_JSON/PART_JSON.\n" +
+      "5) APPLY only after explicit confirm (yes / כן / Confirm). Then ONE surgical pass: WEEK_JSON and/or DAY_JSON on remaining days only " +
+      "(+ today only to mirror the performed session). Then tiny \"Done.\"\n" +
+      "6) FORBIDDEN for this case (never as default): generate_block, Soft Upgrade, large rebuild B, full-brick BLOCK_JSON. " +
+      "If you cannot emit surgical WEEK/DAY JSON after confirm — reply \"Done.\" only; do NOT open a large rebuild.\n" +
       "Broad change request → reply with ONE short sentence: section + what you will change on REMAINING days + Confirm?\n" +
       "Good: \"Equipment: single-KB options on remaining days (formats + Rest unchanged). Confirm?\"\n" +
       "Good: \"Injuries: no squats rest of brick — substitutes only. Confirm?\"\n" +
@@ -1858,7 +1869,7 @@ module.exports = async function handler(req, res) {
       " through the end of THIS 5-week brick. Do not invent a new brick.\n" +
       "3) SURGICAL edit: keep existing formats, part titles, structure, and session intent. Change only what the mapped intake section / POL-026 requires. " +
       "Do NOT redesign every weekday format.\n" +
-      "4) Prefer DAY_JSON / WEEK_JSON for touched remaining days, or BLOCK_JSON that copies past days unchanged.\n" +
+      "4) Prefer DAY_JSON / WEEK_JSON for touched remaining days. For POL-026 never emit full-brick BLOCK_JSON.\n" +
       (intakeBaseSnap
         ? "INTAKE BASELINE BY SECTION (constitutional — map the note here, then adapt only that section):\n" +
           intakeBaseSnap +
@@ -2294,15 +2305,41 @@ module.exports = async function handler(req, res) {
   /* Cost: Interactions only when client explicitly asks — never auto because store exists. */
   const preferInteractions = !programming && body.preferInteractions === true;
 
+  const lastUserLine =
+    messages.length && messages[messages.length - 1] && messages[messages.length - 1].role === "user"
+      ? String(messages[messages.length - 1].text || "").trim()
+      : "";
+
   function packOk(result, extra) {
-    const guarded = applyCoachOutputGuard(String((result && result.text) || ""), {
+    let rawOut = String((result && result.text) || "");
+    const brickChatTurn = body.brickChat === true || body.wholeProgramChat === true;
+    const pol026Turn =
+      !programming && brickChatTurn && messagesLookLikePol026ExtraSession(messages);
+    const pol026Confirmed = pol026Turn && isExplicitPol026Confirm(lastUserLine);
+    if (pol026Turn) {
+      rawOut = enforcePol026BrickChatResponse(rawOut, { confirmed: pol026Confirmed });
+    }
+    const guarded = applyCoachOutputGuard(rawOut, {
       programming: programming,
     });
-    const safeText = guarded.text;
-    const block = extractBlockJson(safeText);
-    const week = extractWeekJson(safeText, weekIndexForExtract);
-    const part = extractPartJson(safeText);
-    const day = extractDayJson(safeText);
+    let safeText = guarded.text;
+    if (pol026Turn) {
+      /* Re-enforce after output guard so Confirm?/JSON gates always win */
+      safeText = enforcePol026BrickChatResponse(safeText, { confirmed: pol026Confirmed });
+    }
+    let block = extractBlockJson(safeText);
+    let week = extractWeekJson(safeText, weekIndexForExtract);
+    let part = extractPartJson(safeText);
+    let day = extractDayJson(safeText);
+    if (pol026Turn && !pol026Confirmed) {
+      block = null;
+      week = null;
+      part = null;
+      day = null;
+    } else if (pol026Turn && pol026Confirmed) {
+      /* Budget: never full-brick BLOCK on this path */
+      block = null;
+    }
     const out = Object.assign(
       {
         ok: true,
@@ -2316,6 +2353,13 @@ module.exports = async function handler(req, res) {
       },
       extra || {}
     );
+    if (pol026Turn) {
+      out.pol026 = {
+        phase: pol026Confirmed ? "apply" : "confirm",
+        applied: !!(pol026Confirmed && (week || day)),
+        blockForbidden: true,
+      };
+    }
     if (guarded.blocked) {
       out.securityBlock = true;
       out.securityReason = guarded.reason || "output_leak";
@@ -2755,10 +2799,6 @@ module.exports = async function handler(req, res) {
   }
 
   /* Cost: brick chat / Confirm? does not need File Search retrieval billing. */
-  const lastUserLine =
-    messages.length && messages[messages.length - 1] && messages[messages.length - 1].role === "user"
-      ? String(messages[messages.length - 1].text || "").trim()
-      : "";
   const skipChatFileSearch =
     !programming &&
     (body.brickChat === true ||

@@ -4317,10 +4317,10 @@ function athleteProfilePayload(opts) {
     trainingDays: Array.isArray(s.trainingDays) ? s.trainingDays.slice(0, 7) : [],
     scheduleNotes: s.scheduleNotes ? String(s.scheduleNotes).slice(0, 500) : "",
     extraSessions: Array.isArray(s.extraSessions)
-      ? s.extraSessions.slice(-6).map(function (e) {
+      ? s.extraSessions.slice(-2).map(function (e) {
           return {
             sessionDate: String((e && e.sessionDate) || "").slice(0, 10),
-            note: String((e && e.note) || "").slice(0, 400),
+            note: String((e && e.note) || "").slice(0, 160),
             at: String((e && e.at) || "").slice(0, 40),
           };
         })
@@ -4565,6 +4565,12 @@ function sendPprogMessage(ev) {
   msgs.push({ role: "user", text: displayText });
   persistPprogChatMsgs();
   if (inp) inp.value = "";
+  /* POL-026 — remember extra session on first brick note (Budget) */
+  if (brickMode && text) {
+    try {
+      pprogRememberExtraSession(text);
+    } catch (eExtra) {}
+  }
   /* POL-COST-010 — chat unit (does not hard-block chat) */
   try {
     pprogRecordMonthlyUnits(PPROG_COST_UNITS.chat);
@@ -4681,7 +4687,29 @@ function sendPprogMessage(ev) {
       if (!weekFromChat && j.text) {
         weekFromChat = extractPprogWeekJsonFromText(j.text, 1);
       }
+      var dayFromChat = j.day || null;
       pprogBusy = false;
+
+      /* Budget POL-026 hard gates on whole-brick path */
+      var pol026Ctx = brickMode && pprogBrickThreadIsPol026(msgs);
+      var lastUserConfirm = false;
+      if (pol026Ctx) {
+        for (var cui = msgs.length - 1; cui >= 0; cui--) {
+          if (msgs[cui] && msgs[cui].role === "user") {
+            lastUserConfirm = pprogIsExplicitConfirm(msgs[cui].text);
+            break;
+          }
+        }
+        /* Never apply plan JSON before Confirm; never full BLOCK on this case */
+        if (!lastUserConfirm) {
+          blockFromChat = null;
+          weekFromChat = null;
+          dayFromChat = null;
+        } else {
+          blockFromChat = null;
+        }
+      }
+
       if (blockFromChat) {
         if (brickMode) pprogApplyStandingIntakeNote(pprogLatestStandingUserNote(msgs));
         applyPprogBlock(blockFromChat, j.text, {
@@ -4718,15 +4746,44 @@ function sendPprogMessage(ev) {
           } else {
             applyPprogWeek(weekFromChat, j.text);
           }
-          var noteUp2 = String(pprogLatestStandingUserNote(msgs) || "");
-          if (/soft upgrade|new coach|upgrade (my |the )?plan|review my plan|שדרג|מאמן החדש/i.test(noteUp2)) {
-            pprogRecordProgrammedEdit("soft_upgrade");
+          /* POL-026 / surgical brick week = one programmed week edit — not large rebuild */
+          if (pol026Ctx) {
+            pprogRecordProgrammedEdit("week");
           } else {
-            pprogRecordProgrammedEdit("large_rebuild");
+            var noteUp2 = String(pprogLatestStandingUserNote(msgs) || "");
+            if (/soft upgrade|new coach|upgrade (my |the )?plan|review my plan|שדרג|מאמן החדש/i.test(noteUp2)) {
+              pprogRecordProgrammedEdit("soft_upgrade");
+            } else {
+              pprogRecordProgrammedEdit("large_rebuild");
+            }
           }
         } else {
           applyPprogWeek(weekFromChat, j.text);
         }
+      } else if (pol026Ctx && lastUserConfirm && dayFromChat) {
+        /* Surgical DAY_JSON after Confirm — single programmed edit, no large rebuild */
+        try {
+          pprogApplyStandingIntakeNote(pprogLatestStandingUserNote(msgs));
+          var dayKeyApply =
+            normalizePprogDayKey((dayFromChat && dayFromChat.day) || "") ||
+            pprogDayKeyFromIso(pprogAddDaysIso(pprogIsraelTodayIso(), 1));
+          if (dayKeyApply && typeof applyPprogDayRevision === "function") {
+            applyPprogDayRevision(dayKeyApply, dayFromChat);
+            pprogRecordProgrammedEdit("week");
+          }
+        } catch (eDayPol) {}
+      } else if (pol026Ctx && lastUserConfirm) {
+        /* Budget: no surgical JSON after Confirm → local Rest-tomorrow only; never large rebuild */
+        try {
+          if (pprogApplyPol026LocalRestTomorrow()) {
+            pprogApplyStandingIntakeNote(pprogLatestStandingUserNote(msgs));
+            var alreadyDone = /^(done\.?|updated\.?)$/i.test(String(chatText || "").trim());
+            if (!alreadyDone) {
+              msgs.push({ role: "model", text: "Done." });
+              persistPprogChatMsgs();
+            }
+          }
+        } catch (eLocalRest) {}
       } else {
         var storeNow = loadPprogStore();
         if (!storeNow.intakeComplete && pprogShouldForceFirstBlock(storeNow, j.text, msgs)) {
@@ -6582,10 +6639,10 @@ function buildPprogIntakeBaseline(store) {
       goals: s.goals ? String(s.goals).slice(0, 800) : "",
     },
     extraSessions: Array.isArray(s.extraSessions)
-      ? s.extraSessions.slice(-6).map(function (e) {
+      ? s.extraSessions.slice(-2).map(function (e) {
           return {
             sessionDate: String((e && e.sessionDate) || "").slice(0, 10),
-            note: String((e && e.note) || "").slice(0, 400),
+            note: String((e && e.note) || "").slice(0, 160),
           };
         })
       : [],
@@ -6735,6 +6792,108 @@ function pprogNoteIsExtraCompletedSession(text) {
     ) ||
       /במקום\s*יום\s*מנוחה|דילג(תי)?\s*על\s*(יום\s*)?מנוחה/i.test(t))
   );
+}
+
+var PPROG_EXPLICIT_CONFIRM_RE =
+  /^(yes|yep|yeah|ok|okay|sure|confirm|do it|go ahead|כן|בטח|אשר|תבצע|יאללה)[.!\s]*$/i;
+
+function pprogIsExplicitConfirm(text) {
+  return PPROG_EXPLICIT_CONFIRM_RE.test(String(text || "").trim());
+}
+
+function pprogBrickThreadIsPol026(msgs) {
+  var list = Array.isArray(msgs) ? msgs : [];
+  for (var i = list.length - 1; i >= 0 && i >= list.length - 8; i--) {
+    var m = list[i];
+    if (!m || m.role !== "user") continue;
+    var t = String(m.text || "").trim();
+    if (!t || pprogIsExplicitConfirm(t)) continue;
+    if (pprogNoteIsExtraCompletedSession(t)) return true;
+  }
+  return false;
+}
+
+/** Persist extra session on first brick note (Budget condition — don't wait for JSON apply). */
+function pprogRememberExtraSession(noteText) {
+  var note = String(noteText || "").trim().slice(0, 800);
+  if (!note || !pprogNoteIsExtraCompletedSession(note)) return false;
+  var store = loadPprogStore();
+  if (!Array.isArray(store.extraSessions)) store.extraSessions = [];
+  var sd = pprogIsraelTodayIso();
+  for (var i = 0; i < store.extraSessions.length; i++) {
+    if (
+      store.extraSessions[i] &&
+      String(store.extraSessions[i].sessionDate || "").slice(0, 10) === sd &&
+      String(store.extraSessions[i].note || "").slice(0, 120) === note.slice(0, 120)
+    ) {
+      return false;
+    }
+  }
+  store.extraSessions.push({ at: new Date().toISOString(), sessionDate: sd, note: note });
+  if (store.extraSessions.length > 12) store.extraSessions = store.extraSessions.slice(-12);
+  var prev = String(store.scheduleNotes || "").trim();
+  if (prev.indexOf(note) < 0) {
+    store.scheduleNotes = ((prev ? prev + "\n" : "") + "Standing update: " + note).slice(0, 800);
+  }
+  savePprogStore(store);
+  return true;
+}
+
+/**
+ * Budget fallback after Confirm with no WEEK/DAY JSON:
+ * set tomorrow → Rest only (never flip today to Rest). One programmed edit.
+ */
+function pprogApplyPol026LocalRestTomorrow() {
+  var store = loadPprogStore();
+  ensurePprogBlockFiveWeeks(store);
+  syncStoreActiveWeek(store);
+  if (!store.currentBlock || !store.currentBlock.weeks) return false;
+  var today = pprogIsraelTodayIso();
+  var tomorrow = pprogAddDaysIso(today, 1);
+  var bStart = store.currentBlock.blockStart || sundayOfThisWeekIsrael();
+  var applied = false;
+  for (var wi = 0; wi < store.currentBlock.weeks.length && wi < 5; wi++) {
+    var week = store.currentBlock.weeks[wi];
+    if (!week) continue;
+    if (!week.days) week.days = {};
+    for (var di = 0; di < PPROG_DAY_KEYS.length; di++) {
+      var dk = PPROG_DAY_KEYS[di];
+      var iso = pprogAddDaysIso(bStart, wi * 7 + di);
+      if (iso !== tomorrow) continue;
+      week.days[dk] = {
+        parts: [{ id: dk + "-rest", title: "REST DAY", lines: ["Rest"] }],
+        preTalk: (week.days[dk] && week.days[dk].preTalk) || "",
+        debrief: (week.days[dk] && week.days[dk].debrief) || "",
+        lastPreReply: (week.days[dk] && week.days[dk].lastPreReply) || "",
+        lastDebriefReply: (week.days[dk] && week.days[dk].lastDebriefReply) || "",
+        modifiedPartKinds: (week.days[dk] && week.days[dk].modifiedPartKinds) || {},
+        finishFeedback: (week.days[dk] && week.days[dk].finishFeedback) || undefined,
+      };
+      if (!Array.isArray(week.overview)) week.overview = [];
+      var found = false;
+      for (var oi = 0; oi < week.overview.length; oi++) {
+        if (week.overview[oi] && week.overview[oi].day === dk) {
+          week.overview[oi].focus = "Rest";
+          week.overview[oi].label = PPROG_DAY_LABELS[dk];
+          found = true;
+          break;
+        }
+      }
+      if (!found) week.overview.push({ day: dk, label: PPROG_DAY_LABELS[dk], focus: "Rest" });
+      applied = true;
+    }
+    store.currentBlock.weeks[wi] = week;
+  }
+  if (!applied) return false;
+  syncStoreActiveWeek(store);
+  savePprogStore(store);
+  try {
+    pprogRecordProgrammedEdit("week", { sessionDate: today });
+  } catch (eRec) {}
+  try {
+    pushAdminSnapshot(store);
+  } catch (eSnap) {}
+  return true;
 }
 
 function pprogNoteTouchesSchedule(text) {
