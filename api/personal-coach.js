@@ -507,7 +507,8 @@ function languageFollowRule(messages, action, forceJson, profile) {
     (postIntake
       ? "- POL-022: for broad/standing plan changes (whole brick, every Tuesday, etc.) reply with ONE short sentence stating the change + Confirm? No paragraphs, no profile essays, no multi-question offers. When A/B (surgical vs large rebuild) is needed, include A/B in that same short Confirm? line.\n" +
         "- POL-023: after confirm, adapt ONLY remaining days (Israel-today → end of this 5-week brick). Never rewrite past days. Surgical edits — preserve formats/structure; change only what the note requires (e.g. single-KB constraint).\n" +
-        "- POL-024: whole-brick notes → map to the matching intake section (equipment / schedule / injuries / limits / goals / …), adapt only that section on remaining days, freeze every other intake section.\n"
+        "- POL-024: whole-brick notes → map to the matching intake section (equipment / schedule / injuries / limits / goals / …), adapt only that section on remaining days, freeze every other intake section.\n" +
+        "- POL-026: if athlete logged an unplanned/extra session (e.g. trained on a rest day), ingest that work, keep today as performed, apply any requested rest shift, and surgically weigh the load into remaining days — never injury-frame a schedule swap.\n"
       : "")
   );
 }
@@ -522,6 +523,24 @@ function isProgrammingAction(action) {
     a === "revise_day" ||
     a === "revise_part" ||
     a === "finish_micro_bias"
+  );
+}
+
+/** Compact POL-026 extra/unplanned completed sessions for programming + brick chat. */
+function buildExtraSessionsBlock(profile) {
+  if (!profile || typeof profile !== "object") return "";
+  const list = Array.isArray(profile.extraSessions) ? profile.extraSessions : [];
+  if (!list.length) return "";
+  const lines = list.slice(-4).map((e, i) => {
+    const sd = String((e && e.sessionDate) || "").slice(0, 10);
+    const note = String((e && e.note) || "").replace(/\s+/g, " ").slice(0, 220);
+    return (i + 1) + ") " + (sd || "?") + " — " + note;
+  });
+  return (
+    "\n\n[ATHLETE_EXTRA_SESSIONS] (POL-026 — HARD: these are completed training loads already performed; " +
+    "weigh into remaining days surgically; do not injury-frame; do not ignore):\n" +
+    lines.join("\n") +
+    "\n[/ATHLETE_EXTRA_SESSIONS]\n"
   );
 }
 
@@ -577,7 +596,9 @@ const LEGAL_SAFETY_DIRECTIVE =
   "2. At the beginning of the initial intake or first coach conversation, briefly remind the user (English) to ensure they have consulted a certified human trainer and a physician prior to proceeding.\n" +
   "3. If a user mentions pain, injury, physical distress, or uncertainty about a movement, your immediate response MUST be:\n" +
   "\"I am an AI engine and cannot evaluate physical risks or injuries. Please consult a certified human coach or physician immediately. If you are in doubt about any movement, do NOT execute it.\"\n" +
-  "Do not prescribe a substitute workout in that same turn until they confirm they want a non-medical programming adjustment.\n";
+  "Do not prescribe a substitute workout in that same turn until they confirm they want a non-medical programming adjustment.\n" +
+  "4. HARD EXCEPTION — schedule / completed-session reports are NOT medical: skipping or moving a rest day, logging an unplanned workout, " +
+  "or asking to rebalance the calendar must NEVER trigger the injury disclaimer. Treat those as programming/schedule notes only.\n";
 
 const LEGAL_TERMS_ID = "v2.0-legal";
 const LEGAL_MIN_VERSION = 3;
@@ -924,6 +945,7 @@ function buildSystemWithMemory(profile, action, opts) {
       coachPolicyBlock() +
       buildCostCapsRuntimeNote(profile) +
       buildFinishLearningBlock(profile, action) +
+      buildExtraSessionsBlock(profile) +
       "\nFor this request emit <<<" +
       marker +
       " ... " +
@@ -1792,7 +1814,7 @@ module.exports = async function handler(req, res) {
       intakeBaseSnap = "";
     }
     systemText +=
-      "\n\nBRICK / WHOLE-PROGRAM CHAT (POL-022 + POL-023 + POL-024 — HARD):\n" +
+      "\n\nBRICK / WHOLE-PROGRAM CHAT (POL-022 + POL-023 + POL-024 + POL-026 — HARD):\n" +
       "Athlete opened the floating whole-program coach chat. Treat this as GENERAL / CROSS-CUTTING: " +
       "the FULL training brick, standing preferences, schedule, equipment, goals, injuries, or other brick-wide topics — " +
       "NOT a single-session note. (Session-specific talk uses the dedicated box under that day's workout.)\n" +
@@ -1804,24 +1826,37 @@ module.exports = async function handler(req, res) {
       "active recovery, lifts/skills, session limits, injuries, goals).\n" +
       "B) Map the athlete note to the matching intake section(s). Examples: one KB → equipment; " +
       "knee/avoid squats → injuries; shorter sessions → sessionLimits; change Rest days → weeklySchedule; " +
-      "new focus → goals.\n" +
+      "new focus → goals; trained on a rest day / logged an unplanned session → weeklySchedule + POL-026 load accounting.\n" +
       "C) Confirm? names the section + the change only (POL-022). If it conflicts with that intake section, say so briefly.\n" +
       "D) After confirm: adapt ONLY that section's implications on remaining days (POL-023). " +
       "Freeze every other intake section — equipment notes must not reshuffle Rest days; injury notes must not rewrite equipment/schedule/goals.\n" +
-      "E) Do NOT invent extra Rest days unless the touched section is weeklySchedule/activeRecovery.\n" +
+      "E) Do NOT invent extra Rest days unless the touched section is weeklySchedule/activeRecovery OR POL-026 rest-shift was requested.\n" +
+      "POL-026 — UNPLANNED / EXTRA COMPLETED SESSION (HARD):\n" +
+      "When the athlete reports they already trained today (especially instead of a planned Rest) and/or pastes the session they did:\n" +
+      "1) INGEST: silently parse movements, loads, volume, duration — treat as real completed training load for " +
+      todayIso +
+      ".\n" +
+      "2) CALENDAR TRUTH: keep Israel-today as that performed session (do NOT flip today to Rest). " +
+      "If they ask for Rest on a later day (e.g. tomorrow), that later day becomes Rest after confirm.\n" +
+      "3) WEIGH INTO PLAN: after confirm, surgically ease overlapping lifts/engine/skill on upcoming remaining days so the extra work is accounted for — " +
+      "not ignored, not treated as injury, not a full brick redesign.\n" +
+      "4) CHAT: ONE short Confirm? line covering log-today + rest-shift (if any) + soft forward bias. " +
+      "Forbidden: equipment re-ask, goals review, \"how are you feeling\", multi-question intake loops, injury disclaimer for this case.\n" +
+      "Good: \"Schedule: keep today’s session logged, rest tomorrow, ease squat/hinge/engine later this week. Confirm?\"\n" +
       "Broad change request → reply with ONE short sentence: section + what you will change on REMAINING days + Confirm?\n" +
       "Good: \"Equipment: single-KB options on remaining days (formats + Rest unchanged). Confirm?\"\n" +
       "Good: \"Injuries: no squats rest of brick — substitutes only. Confirm?\"\n" +
       "Do NOT write paragraphs. Do NOT mention profile essays or \"would you like me to rewrite this week…\".\n" +
-      "Do NOT apply until they clearly confirm. After confirm: apply + tiny \"Done.\" / \"Updated.\"\n" +
+      "Do NOT apply until they clearly confirm. After confirm: apply WEEK_JSON/DAY_JSON + tiny \"Done.\" / \"Updated.\"\n" +
       "POL-023 (HARD) after confirm:\n" +
       "1) NEVER rewrite or regenerate calendar days before " +
       todayIso +
       " (past days are done — leave them untouched).\n" +
-      "2) Only adapt remaining days from " +
+      "2) Israel-today may be updated only to reflect a completed session the athlete just logged (POL-026); " +
+      "other remaining days from " +
       todayIso +
       " through the end of THIS 5-week brick. Do not invent a new brick.\n" +
-      "3) SURGICAL edit: keep existing formats, part titles, structure, and session intent. Change only what the mapped intake section requires. " +
+      "3) SURGICAL edit: keep existing formats, part titles, structure, and session intent. Change only what the mapped intake section / POL-026 requires. " +
       "Do NOT redesign every weekday format.\n" +
       "4) Prefer DAY_JSON / WEEK_JSON for touched remaining days, or BLOCK_JSON that copies past days unchanged.\n" +
       (intakeBaseSnap
@@ -1833,7 +1868,12 @@ module.exports = async function handler(req, res) {
         ? "REMAINING BRICK SNAPSHOT (edit these only — past days omitted on purpose):\n" +
           remainingSnap +
           "\n"
-        : "");
+        : "") +
+      buildExtraSessionsBlock(
+        body.athleteProfile && typeof body.athleteProfile === "object"
+          ? body.athleteProfile
+          : {}
+      );
   }
 
   if (action === "start_intake") {

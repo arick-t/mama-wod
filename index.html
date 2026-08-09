@@ -4316,6 +4316,15 @@ function athleteProfilePayload(opts) {
         : "",
     trainingDays: Array.isArray(s.trainingDays) ? s.trainingDays.slice(0, 7) : [],
     scheduleNotes: s.scheduleNotes ? String(s.scheduleNotes).slice(0, 500) : "",
+    extraSessions: Array.isArray(s.extraSessions)
+      ? s.extraSessions.slice(-6).map(function (e) {
+          return {
+            sessionDate: String((e && e.sessionDate) || "").slice(0, 10),
+            note: String((e && e.note) || "").slice(0, 400),
+            at: String((e && e.at) || "").slice(0, 40),
+          };
+        })
+      : [],
     skills: s.skills && typeof s.skills === "object" ? s.skills : {},
     lifts: s.lifts && typeof s.lifts === "object" ? s.lifts : {},
     legalAcceptedAt: s.legalAcceptedAt || null,
@@ -6572,6 +6581,14 @@ function buildPprogIntakeBaseline(store) {
       injuries: s.injuries ? String(s.injuries).slice(0, 800) : "",
       goals: s.goals ? String(s.goals).slice(0, 800) : "",
     },
+    extraSessions: Array.isArray(s.extraSessions)
+      ? s.extraSessions.slice(-6).map(function (e) {
+          return {
+            sessionDate: String((e && e.sessionDate) || "").slice(0, 10),
+            note: String((e && e.note) || "").slice(0, 400),
+          };
+        })
+      : [],
     standingUpdates: standing,
     fixedIntakePacket: s.fixedIntakePacket
       ? String(s.fixedIntakePacket).slice(0, 3000)
@@ -6598,7 +6615,7 @@ function pprogClassifyIntakeSections(text) {
     add("trainingSetup");
   }
   if (
-    /\b(rest\s*days?|training\s*days?|work\s*days?|off\s*days?|weekly\s*split|schedule)\b|ימי\s*מנוחה|יום\s*מנוחה|ימי\s*אימון|לוח\s*אימונים|מנוחה\s*ב/i.test(
+    /\b(rest\s*days?|training\s*days?|work\s*days?|off\s*days?|weekly\s*split|schedule|instead\s*of\s*(a\s*)?rest|skipped\s*rest|unplanned|spontaneous)\b|ימי\s*מנוחה|יום\s*מנוחה|ימי\s*אימון|לוח\s*אימונים|מנוחה\s*ב|מחר\s*.{0,24}מנוחה|במקום\s*יום\s*מנוחה|דילג(תי)?\s*על\s*(יום\s*)?מנוחה|ביצעתי\s*אימון/i.test(
       t
     )
   ) {
@@ -6657,11 +6674,23 @@ function pprogApplyStandingIntakeNote(noteText) {
     else if (sec === "injuries") appendField("injuries", 800);
     else if (sec === "goals") appendField("goals", 800);
   }
+  /* POL-026 — remember extra completed session so programming can weigh it */
+  if (pprogNoteIsExtraCompletedSession(note)) {
+    if (!Array.isArray(store.extraSessions)) store.extraSessions = [];
+    store.extraSessions.push({
+      at: new Date().toISOString(),
+      sessionDate: pprogIsraelTodayIso(),
+      note: line.slice(0, 800),
+    });
+    if (store.extraSessions.length > 12) store.extraSessions = store.extraSessions.slice(-12);
+    appendField("scheduleNotes", 800);
+  }
   if (!Array.isArray(store.intakeStandingUpdates)) store.intakeStandingUpdates = [];
   store.intakeStandingUpdates.push({
     at: new Date().toISOString(),
     sections: sections,
     note: line,
+    extraSession: !!pprogNoteIsExtraCompletedSession(note),
   });
   if (store.intakeStandingUpdates.length > 20) {
     store.intakeStandingUpdates = store.intakeStandingUpdates.slice(-20);
@@ -6692,7 +6721,21 @@ function pprogLatestStandingUserNote(msgs) {
 }
 
 var PPROG_SCHEDULE_NOTE_RE =
-  /\b(rest\s*days?|training\s*days?|work\s*days?|off\s*days?|weekly\s*split|schedule|active\s*recovery)\b|ימי\s*מנוחה|יום\s*מנוחה|ימי\s*אימון|לוח\s*אימונים|מנוחה\s*ב|תוסיף\s*מנוחה|תוריד\s*מנוחה|שנה\s*את\s*(ה)?ימי/i;
+  /\b(rest\s*days?|training\s*days?|work\s*days?|off\s*days?|weekly\s*split|schedule|active\s*recovery|instead\s*of\s*(a\s*)?rest|skipped\s*rest|unplanned|spontaneous)\b|ימי\s*מנוחה|יום\s*מנוחה|ימי\s*אימון|לוח\s*אימונים|מנוחה\s*ב|תוסיף\s*מנוחה|תוריד\s*מנוחה|שנה\s*את\s*(ה)?ימי|מחר\s*.{0,24}מנוחה|במקום\s*יום\s*מנוחה|דילג(תי)?\s*על\s*(יום\s*)?מנוחה|ביצעתי\s*אימון/i;
+
+/** True when whole-brick note logs an unplanned / extra completed session (POL-026). */
+function pprogNoteIsExtraCompletedSession(text) {
+  var t = String(text || "");
+  return (
+    /\b(instead\s*of\s*(a\s*)?rest|skipped\s*rest|unplanned|spontaneous|i\s*(already\s*)?(did|trained|performed))\b|במקום\s*יום\s*מנוחה|דילג(תי)?\s*על\s*(יום\s*)?מנוחה|ביצעתי\s*אימון|האימון\s*שביצעתי/i.test(
+      t
+    ) &&
+    (/\b(squat|deadlift|amrap|emom|pull-?up|run|row|bike|press|clean|snatch|\d+\s*x\s*\d+|\d+\s*kg)\b|סקוואט|דדליפט|משיכות|ריצה|ק\"?ג|קילו/i.test(
+      t
+    ) ||
+      /במקום\s*יום\s*מנוחה|דילג(תי)?\s*על\s*(יום\s*)?מנוחה/i.test(t))
+  );
+}
 
 function pprogNoteTouchesSchedule(text) {
   return PPROG_SCHEDULE_NOTE_RE.test(String(text || ""));
