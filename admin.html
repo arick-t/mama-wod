@@ -302,7 +302,7 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">Admin</span>
-    <span class="ver-badge" title="Coach Admin dashboard">1.1</span>
+    <span class="ver-badge" title="Coach Admin dashboard">1.2</span>
     <span class="count-wrap">
       <span class="count" id="athlete-count">0 מתאמנים</span>
       <button type="button" class="hdr-btn drive-sync" id="btn-sync-drive" onclick="syncDriveBrain()" title="סנכרן Drive">
@@ -337,7 +337,7 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
 <div class="modal-backdrop" id="intake-modal" onclick="if(event.target===this)closeIntakeWorkspace()">
   <div class="intake-workspace" dir="rtl" onclick="event.stopPropagation()">
     <div class="intake-ws-header">
-      <h2>תחקור מתאמן חדש</h2>
+      <h2 id="intake-ws-title">תחקור מתאמן חדש</h2>
       <button type="button" class="btn-secondary" onclick="closeIntakeWorkspace()">סגור</button>
     </div>
     <div class="intake-ws-body" id="intake-ws-body">
@@ -361,7 +361,7 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
       <div class="intake-building" id="intake-building">
         <div class="spin"></div>
         <div style="font-weight:700;margin-bottom:6px">בונה תוכנית…</div>
-        <div style="font-size:13px;color:#888">יוצר בלוק אימונים ושומר מתאמן חדש</div>
+        <div style="font-size:13px;color:#888" id="intake-building-hint">יוצר בלוק אימונים ושומר באדמין</div>
       </div>
     </div>
     <div class="intake-footer" id="intake-footer">
@@ -412,8 +412,15 @@ var intakeState = {
   preferredLanguage: "",
   skills: {},
   lifts: {},
-  intakeComplete: false
+  intakeComplete: false,
+  targetAthleteId: null
 };
+
+function isPlaceholderIntake(a) {
+  var s = String((a && a.intakeSummary) || "").trim();
+  if (!s) return true;
+  return /^Seeded coach member/i.test(s);
+}
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 function esc(s) {
@@ -517,7 +524,7 @@ function refreshAdmin() {
   loadAthletes();
 }
 
-/** Sync Drive knowledge → File Search (header button). */
+/** Sync Drive knowledge → File Search L3 only (header button). */
 function syncDriveBrain() {
   if (syncInFlight) return;
   syncInFlight = true;
@@ -525,7 +532,7 @@ function syncDriveBrain() {
   var label = document.getElementById("btn-sync-drive-label");
   if (btn) btn.disabled = true;
   if (label) label.textContent = "מסנכרן…";
-  showHdrToast("מתחיל סנכרון…");
+  showHdrToast("מסנכרן Drive → מח דרגה 3…");
 
   fetch("/api/admin-drive-sync", {
     method: "POST",
@@ -537,20 +544,38 @@ function syncDriveBrain() {
       syncInFlight = false;
       if (btn) btn.disabled = false;
       if (label) label.textContent = "סנכרן";
-      if (res.status === 401) throw new Error("unauthorized");
+      if (res.status === 401 || res.status === 503) {
+        throw new Error((res.j && res.j.message) || "unauthorized");
+      }
       var result = (res.j && res.j.result) || {};
+      var code = String(result.code || "");
       var msg = result.message || (res.j && res.j.message) || "סנכרון הסתיים";
-      if (result.ok || result.code === "noop" || result.code === "empty" || result.code === "synced") {
-        showHdrToast(msg, result.code === "empty" ? "warn" : undefined);
-      } else {
+      var src = result.source === "drive" ? " (מ־Drive)" : result.source === "local" ? " (מקומי)" : "";
+      if (code === "synced" || code === "synced_more") {
+        showHdrToast("סונכרן ✓" + src + " — " + msg);
+      } else if (code === "noop") {
+        showHdrToast("אין שינוי" + src + " — " + msg, "warn");
+      } else if (code === "empty" || code === "drive_empty" || code === "empty_after_filter") {
+        showHdrToast("אין קבצי L3" + src + " — " + msg, "warn");
+      } else if (code === "missing_drive_auth" || code === "missing_key" || code === "missing_store") {
         showHdrToast(msg, "err");
+      } else if (result.ok) {
+        showHdrToast(msg + src);
+      } else {
+        showHdrToast(msg || "סנכרון נכשל", "err");
       }
     })
     .catch(function(e) {
       syncInFlight = false;
       if (btn) btn.disabled = false;
       if (label) label.textContent = "סנכרן";
-      var msg = e && e.message === "unauthorized" ? "סיסמה לא תקפה" : "סנכרון נכשל — בדוק מפתחות Gemini / תיקיית ידע";
+      var em = e && e.message ? String(e.message) : "";
+      var msg =
+        em === "unauthorized" || em.indexOf("סיסמה") >= 0
+          ? "סיסמה לא תקפה"
+          : em && em !== "unauthorized"
+            ? em.slice(0, 180)
+            : "סנכרון נכשל — בדוק Gemini / חיבור Drive ב־Vercel";
       showHdrToast(msg, "err");
     });
 }
@@ -724,9 +749,12 @@ function renderUsageSection(a) {
 }
 
 function renderIntakeSection(a) {
+  var placeholder = isPlaceholderIntake(a);
   var lines = [];
   if (a.skillsSummary) lines.push('<span class="row-label">כישורים:</span>' + esc(a.skillsSummary));
-  if (a.intakeSummary) lines.push('<div class="intake-summary" style="margin-top:8px">' + esc(a.intakeSummary) + "</div>");
+  if (a.intakeSummary && !placeholder) {
+    lines.push('<div class="intake-summary" style="margin-top:8px">' + esc(a.intakeSummary) + "</div>");
+  }
   var resetMeta = "";
   if (a.intakeResetPending) {
     resetMeta = '<div style="font-size:12px;color:#fcd34d;margin-top:8px">ממתין שהמתאמן יפתח את לינק איפוס התחקור</div>';
@@ -735,27 +763,75 @@ function renderIntakeSection(a) {
   } else if (a.intakeResetAt) {
     resetMeta = '<div style="font-size:12px;color:#888;margin-top:8px">לינק איפוס נוצר: ' + esc(fmt(a.intakeResetAt)) + "</div>";
   }
+  var bodyHint = placeholder
+    ? '<div style="color:var(--text-muted);font-size:13px;line-height:1.5;margin-bottom:10px">אין תחקור מלא בשרת עדיין (רק סימון ראשוני אחרי מעבר ל־Blob). אם התוכנית כבר קיימת בטלפון — סנכרן מהמכשיר. אחרת אפשר לפתוח תחקור כאן.</div>'
+    : (lines.length ? lines.join("") : '<div style="color:var(--text-muted);font-size:13px">אין סיכום אינטייק עדיין</div>');
+  var claimOpen = !!a.seedClaimOpen;
+  var claimBtn = placeholder || !a.currentBlock
+    ? '<button type="button" class="btn-primary" id="btn-seed-claim" onclick="toggleSeedClaim(\'' +
+      esc(a.athleteId) +
+      "', " +
+      (claimOpen ? "false" : "true") +
+      ')">' +
+      (claimOpen ? "בטל חלון סנכרון" : "סנכרון חד־פעמי מהמכשיר שלי") +
+      "</button>"
+    : "";
+  var claimHint = claimOpen
+    ? '<div style="font-size:13px;color:#fcd34d;line-height:1.55;margin:10px 0 4px">פתוח לסנכרון עכשיו: פתח את האפליקציה <strong>באותו מכשיר/דפדפן</strong> שבו יש לך את התוכנית (טאב Personal Coach), חכה כמה שניות, ואז לחץ כאן ״↻ רענון״.</div>'
+    : "";
   return '<div class="section">' +
-    "<details>" +
+    "<details" + (placeholder || !a.currentBlock ? " open" : "") + ">" +
     '<summary style="cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between">' +
-    '<div class="section-title no-margin">תחקור ראשוני (לחץ להרחבה)</div>' +
+    '<div class="section-title no-margin">תחקור ראשוני' + (placeholder || !a.currentBlock ? "" : " (לחץ להרחבה)") + "</div>" +
     "</summary>" +
     '<div style="margin-top:12px">' +
-    (lines.length ? lines.join("") : '<div style="color:#555;font-size:13px">אין סיכום אינטייק עדיין</div>') +
+    bodyHint +
+    claimHint +
     resetMeta +
     '<div class="sandbox-actions" style="margin-top:12px">' +
+      claimBtn +
+      '<button type="button" class="btn-secondary" onclick="openIntakeWorkspace(\'' + esc(a.athleteId) + '\')">פתח תחקור באדמין</button>' +
       '<button type="button" class="btn-secondary wait" onclick="createIntakeResetLink(\'' + esc(a.athleteId) + '\')">אפס תחקור — לינק חד־פעמי</button>' +
     "</div>" +
+    '<div class="sandbox-status" id="seed-claim-status" style="margin-top:8px"></div>' +
     '<div class="sandbox-status" id="intake-reset-status" style="margin-top:8px"></div>' +
     '<div class="handoff-link" id="intake-reset-link" style="display:none"></div>' +
     '<div class="sandbox-actions" id="intake-reset-copy-wrap" style="display:none;margin-top:8px">' +
       '<button type="button" class="btn-secondary good" onclick="copyIntakeResetLink()">העתק לינק</button>' +
       '<a class="btn-secondary" id="intake-reset-open" href="#" target="_blank" rel="noopener">פתח לבדיקה</a>' +
     "</div>" +
-    '<div class="directives-hint">כשהמתאמן פותח את הלינק בטלפון — התחקור נפתח מחדש. התוכנית נשארת במכשיר.</div>' +
+    '<div class="directives-hint">סנכרון מהמכשיר = מעתיק את התחקור והבלוק שכבר אצלך בטלפון לשרת (חד־פעמי אחרי Blob). תחקור באדמין = יצירה מחדש.</div>' +
     "</div>" +
     "</details>" +
     "</div>";
+}
+
+function toggleSeedClaim(athleteId, open) {
+  var status = document.getElementById("seed-claim-status");
+  if (status) status.textContent = open ? "פותח חלון סנכרון…" : "סוגר…";
+  fetch("/api/admin-snapshot", {
+    method: "POST",
+    headers: adminAuthHeaders(),
+    body: JSON.stringify(withAdminPassword({
+      action: open ? "open_seed_claim" : "close_seed_claim",
+      athleteId: athleteId
+    }))
+  })
+    .then(function(r) { return r.json().then(function(d) { return { okHttp: r.ok, d: d }; }); })
+    .then(function(x) {
+      if (!x.okHttp || !x.d || !x.d.ok) {
+        if (status) status.textContent = "שגיאה: " + ((x.d && (x.d.message || x.d.error)) || "?");
+        return;
+      }
+      var a = athletes.find(function(row) { return row.athleteId === athleteId; });
+      if (a) a.seedClaimOpen = !!open;
+      if (status) status.textContent = x.d.message || (open ? "פתוח — עבור לאפליקציה" : "נסגר");
+      showHdrToast(open ? "סנכרון פתוח — פתח את האפליקציה עם התוכנית" : "סנכרון נסגר", open ? "" : "warn");
+      renderAthleteList(athletes);
+    })
+    .catch(function() {
+      if (status) status.textContent = "שגיאת רשת";
+    });
 }
 
 var lastIntakeResetUrl = "";
@@ -819,7 +895,21 @@ var MONTHS_HE = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי",
 function renderBlockCalendar(a) {
   var b = a.currentBlock;
   if (!b) {
-    return '<div class="section"><div class="section-title">בלוק נוכחי</div><div style="color:#555;font-size:13px">אין בלוק פעיל</div></div>' +
+    var claimOpen = !!a.seedClaimOpen;
+    return '<div class="section">' +
+      '<div class="section-title">בלוק נוכחי</div>' +
+      '<div style="color:var(--text-muted);font-size:13px;line-height:1.5;margin-bottom:12px">אין בלוק בשרת — אם יש לך תוכנית בטלפון (לפני Blob), סנכרן מהמכשיר. אחרת בנה תוכנית חדשה.</div>' +
+      (claimOpen
+        ? '<div style="font-size:13px;color:#fcd34d;line-height:1.55;margin-bottom:10px">ממתין לסנכרון מהמכשיר… פתח Personal Coach באפליקציה ואז רענן כאן.</div>'
+        : "") +
+      '<div class="sandbox-actions">' +
+        '<button type="button" class="btn-primary" onclick="toggleSeedClaim(\'' + esc(a.athleteId) + "', " +
+          (claimOpen ? "false" : "true") + ')">' +
+          (claimOpen ? "בטל חלון סנכרון" : "סנכרון חד־פעמי מהמכשיר שלי") +
+        "</button>" +
+        '<button type="button" class="btn-secondary" onclick="openIntakeWorkspace(\'' + esc(a.athleteId) + '\')">תחקור + בנה תוכנית</button>' +
+      "</div>" +
+      "</div>" +
       renderDayNotesBox(a, null, null, false);
   }
 
@@ -1502,15 +1592,40 @@ function resetIntakeState() {
     preferredLanguage: "",
     skills: {},
     lifts: {},
-    intakeComplete: false
+    intakeComplete: false,
+    targetAthleteId: null
   };
 }
 
-function openIntakeWorkspace() {
+function openIntakeWorkspace(athleteId) {
   resetIntakeState();
+  var existing = null;
+  var id = athleteId ? String(athleteId) : "";
+  if (id) {
+    existing = athletes.find(function(x) { return x.athleteId === id; }) || null;
+    intakeState.targetAthleteId = id;
+    if (existing) {
+      intakeState.displayName = existing.displayName || "";
+      intakeState.gender = existing.gender || "";
+      intakeState.preferredLanguage = existing.preferredLanguage || "he";
+      intakeState.email = existing.email || "";
+    }
+  }
   var m = document.getElementById("intake-modal");
   if (m) m.classList.add("open");
-  document.getElementById("intake-email").value = "";
+  var title = document.getElementById("intake-ws-title");
+  if (title) {
+    title.textContent = existing
+      ? ("תחקור — " + (existing.displayName || id))
+      : "תחקור מתאמן חדש";
+  }
+  var hint = document.getElementById("intake-building-hint");
+  if (hint) {
+    hint.textContent = existing
+      ? "יוצר בלוק אימונים ומעדכן את המתאמן הקיים"
+      : "יוצר בלוק אימונים ושומר מתאמן חדש";
+  }
+  document.getElementById("intake-email").value = (existing && existing.email) || "";
   document.getElementById("intake-chat-log").innerHTML =
     '<div class="intake-msg system">לחץ ״התחל תחקור״ כדי לפתוח שיחה עם המאמן (13 נושאים — כמו בפרודקשן)</div>';
   document.getElementById("intake-compose").style.display = "none";
@@ -1518,7 +1633,9 @@ function openIntakeWorkspace() {
   document.getElementById("intake-build-btn").style.display = "none";
   document.getElementById("intake-building").classList.remove("visible");
   document.getElementById("intake-chat-log").style.display = "flex";
-  document.getElementById("intake-status").textContent = "";
+  document.getElementById("intake-status").textContent = existing
+    ? ("ממלא תחקור עבור " + (existing.displayName || id))
+    : "";
   hideIntakePickers();
 }
 
@@ -2033,14 +2150,66 @@ function showIntakeBuilding(on) {
 function finalizeNewAthlete(block) {
   intakeState.intakeComplete = true;
   showIntakeBuilding(true);
-  document.getElementById("intake-status").textContent = "שומר מתאמן…";
+  var updating = !!intakeState.targetAthleteId;
+  document.getElementById("intake-status").textContent = updating ? "מעדכן מתאמן…" : "שומר מתאמן…";
 
-  var name = intakeState.displayName || "מתאמן חדש";
+  var name = intakeState.displayName || (updating ? "מתאמן" : "מתאמן חדש");
   var skillsLabels = [];
   for (var i = 0; i < INTAKE_SKILL_DEFS.length; i++) {
     var def = INTAKE_SKILL_DEFS[i];
     if (def.allToggle) continue;
     if (intakeState.skills && intakeState.skills[def.id]) skillsLabels.push(def.label);
+  }
+  var skillsSummary = skillsLabels.join(", ").slice(0, 400);
+  var intakeSummary = buildIntakeSummary();
+  var email = (document.getElementById("intake-email") && document.getElementById("intake-email").value) ||
+    intakeState.email ||
+    "";
+
+  function onSaved(athleteId) {
+    currentAthleteId = athleteId || intakeState.targetAthleteId || currentAthleteId;
+    document.getElementById("intake-status").textContent = updating ? "עודכן בהצלחה ✓" : "נוצר בהצלחה ✓";
+    setTimeout(function() {
+      var m = document.getElementById("intake-modal");
+      if (m) m.classList.remove("open");
+      resetIntakeState();
+      loadAthletes();
+    }, 600);
+  }
+
+  function onFail(msg) {
+    showIntakeBuilding(false);
+    document.getElementById("intake-status").textContent = msg;
+    setIntakeBusy(false);
+  }
+
+  if (updating) {
+    fetch("/api/admin-snapshot", {
+      method: "POST",
+      headers: adminAuthHeaders(),
+      body: JSON.stringify(withAdminPassword({
+        athleteId: intakeState.targetAthleteId,
+        displayName: name,
+        email: email,
+        gender: intakeState.gender || "",
+        preferredLanguage: intakeState.preferredLanguage || "he",
+        intakeSummary: intakeSummary,
+        skillsSummary: skillsSummary,
+        currentBlock: block
+      }))
+    })
+      .then(function(r) { return r.json().then(function(d) { return { okHttp: r.ok, d: d }; }); })
+      .then(function(x) {
+        if (!x.okHttp || !x.d || !x.d.ok) {
+          onFail("שגיאה בעדכון מתאמן: " + ((x.d && (x.d.message || x.d.error)) || "?"));
+          return;
+        }
+        onSaved(intakeState.targetAthleteId);
+      })
+      .catch(function() {
+        onFail("שגיאת רשת בעדכון מתאמן");
+      });
+    return;
   }
 
   fetch("/api/admin-handoff", {
@@ -2049,11 +2218,11 @@ function finalizeNewAthlete(block) {
     body: JSON.stringify(withAdminPassword({
       action: "create_athlete",
       displayName: name,
-      email: intakeState.email || "",
+      email: email,
       gender: intakeState.gender || "",
       preferredLanguage: intakeState.preferredLanguage || "he",
-      intakeSummary: buildIntakeSummary(),
-      skillsSummary: skillsLabels.join(", ").slice(0, 400),
+      intakeSummary: intakeSummary,
+      skillsSummary: skillsSummary,
       coachDirectives: "",
       currentBlock: block
     }))
@@ -2061,25 +2230,13 @@ function finalizeNewAthlete(block) {
     .then(function(r) { return r.json(); })
     .then(function(d) {
       if (!d || !d.ok) {
-        showIntakeBuilding(false);
-        document.getElementById("intake-status").textContent =
-          "שגיאה ביצירת מתאמן: " + ((d && d.error) || "?");
-        setIntakeBusy(false);
+        onFail("שגיאה ביצירת מתאמן: " + ((d && d.error) || "?"));
         return;
       }
-      currentAthleteId = d.snapshot && d.snapshot.athleteId;
-      document.getElementById("intake-status").textContent = "נוצר בהצלחה ✓";
-      setTimeout(function() {
-        var m = document.getElementById("intake-modal");
-        if (m) m.classList.remove("open");
-        resetIntakeState();
-        loadAthletes();
-      }, 600);
+      onSaved(d.snapshot && d.snapshot.athleteId);
     })
     .catch(function() {
-      showIntakeBuilding(false);
-      document.getElementById("intake-status").textContent = "שגיאת רשת בשמירת מתאמן";
-      setIntakeBusy(false);
+      onFail("שגיאת רשת בשמירת מתאמן");
     });
 }
 

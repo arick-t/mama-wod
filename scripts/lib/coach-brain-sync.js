@@ -1,15 +1,26 @@
 /**
- * Shared coach brain sync (Drive/local knowledge → Gemini File Search).
+ * Shared coach brain sync (Drive / local knowledge → Gemini File Search).
  * Used by scripts/coach-sync-brain.js CLI and /api/admin-drive-sync.
+ *
+ * Layer rule: Sync touches L3 (File Search) ONLY.
+ * L1/L2 foundation/ops files are excluded from upload.
  */
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
+const { isExcludedFromL3Sync } = require("./coach-l3-sync-filter");
+const { hasDriveAuth, pullCoachDriveToDir, driveFolderId } = require("./coach-drive-pull");
 
 const ROOT = path.join(__dirname, "..", "..");
 const DEFAULT_INBOX = path.join(ROOT, "experiments", "personal-coach", "knowledge-inbox");
 const MANIFEST_PATH = path.join(ROOT, "experiments", "personal-coach", ".sync-manifest.json");
 const LAST_SYNC_PATH = path.join(ROOT, "data", "admin-meta-sync.json");
+const MANIFEST_BLOB_KEY = "admin-meta/coach-sync-manifest.json";
+const LAST_SYNC_BLOB_KEY = "admin-meta/last-drive-sync.json";
+const DRIVE_PULL_DIR = path.join(
+  process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME ? "/tmp" : path.join(ROOT, "data"),
+  "duck-wod-drive-l3"
+);
 
 const MIME = {
   ".txt": "text/plain",
@@ -51,7 +62,22 @@ function knowledgeDir() {
   return DEFAULT_INBOX;
 }
 
-function loadManifest() {
+function getJsonStore() {
+  try {
+    return require("./admin/admin-json-store");
+  } catch (e) {
+    return null;
+  }
+}
+
+async function loadManifest() {
+  const store = getJsonStore();
+  if (store && store.useBlob && store.useBlob()) {
+    try {
+      const j = await store.getJson(MANIFEST_BLOB_KEY);
+      if (j && typeof j === "object") return j.files ? j : { files: {} };
+    } catch (e) {}
+  }
   try {
     if (!fs.existsSync(MANIFEST_PATH)) return { files: {} };
     const j = JSON.parse(fs.readFileSync(MANIFEST_PATH, "utf8"));
@@ -61,9 +87,20 @@ function loadManifest() {
   }
 }
 
-function saveManifest(m) {
-  fs.mkdirSync(path.dirname(MANIFEST_PATH), { recursive: true });
-  fs.writeFileSync(MANIFEST_PATH, JSON.stringify(m, null, 2), "utf8");
+async function saveManifest(m) {
+  const store = getJsonStore();
+  if (store && store.useBlob && store.useBlob()) {
+    try {
+      await store.putJson(MANIFEST_BLOB_KEY, m);
+      return;
+    } catch (e) {}
+  }
+  try {
+    fs.mkdirSync(path.dirname(MANIFEST_PATH), { recursive: true });
+    fs.writeFileSync(MANIFEST_PATH, JSON.stringify(m, null, 2), "utf8");
+  } catch (e) {
+    /* read-only FS */
+  }
 }
 
 function fileFingerprint(abs) {
@@ -82,19 +119,22 @@ function walkFiles(dir, base, out) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   for (const ent of entries) {
     if (ent.name.startsWith(".")) continue;
-    if (ent.name === "README.md" && path.resolve(dir) === path.resolve(DEFAULT_INBOX)) continue;
     const abs = path.join(dir, ent.name);
-    if (ent.isDirectory()) walkFiles(abs, base, out);
-    else if (ent.isFile()) {
-      const ext = path.extname(ent.name).toLowerCase();
-      if (!MIME[ext]) continue;
-      out.push({
-        abs,
-        rel: path.relative(base, abs).split(path.sep).join("/"),
-        mime: MIME[ext],
-        displayName: ent.name,
-      });
+    if (ent.isDirectory()) {
+      walkFiles(abs, base, out);
+      continue;
     }
+    if (!ent.isFile()) continue;
+    const rel = path.relative(base, abs).split(path.sep).join("/");
+    if (isExcludedFromL3Sync(rel)) continue;
+    const ext = path.extname(ent.name).toLowerCase();
+    if (!MIME[ext]) continue;
+    out.push({
+      abs,
+      rel,
+      mime: MIME[ext],
+      displayName: ent.name,
+    });
   }
   return out;
 }
@@ -175,32 +215,43 @@ async function uploadToStore(key, storeFullName, file) {
   return j;
 }
 
-function saveLastSync(result) {
+async function saveLastSync(result) {
+  const slim = {
+    at: result.at,
+    uploaded: result.uploaded,
+    skipped: result.skipped,
+    failed: result.failed,
+    knowledgeDir: result.knowledgeDir,
+    source: result.source || "",
+    ok: result.ok,
+    code: result.code || "",
+    message: result.message || "",
+    skippedL1L2: result.skippedL1L2 || 0,
+    driveFolderId: result.driveFolderId || "",
+  };
+  const store = getJsonStore();
+  if (store && store.useBlob && store.useBlob()) {
+    try {
+      await store.putJson(LAST_SYNC_BLOB_KEY, slim);
+      return;
+    } catch (e) {}
+  }
   try {
     fs.mkdirSync(path.dirname(LAST_SYNC_PATH), { recursive: true });
-    fs.writeFileSync(
-      LAST_SYNC_PATH,
-      JSON.stringify(
-        {
-          at: result.at,
-          uploaded: result.uploaded,
-          skipped: result.skipped,
-          failed: result.failed,
-          knowledgeDir: result.knowledgeDir,
-          ok: result.ok,
-          message: result.message || "",
-        },
-        null,
-        2
-      ),
-      "utf8"
-    );
+    fs.writeFileSync(LAST_SYNC_PATH, JSON.stringify(slim, null, 2), "utf8");
   } catch (e) {
-    /* ignore persistence failures (e.g. read-only prod FS) */
+    /* ignore */
   }
 }
 
-function readLastSync() {
+async function readLastSync() {
+  const store = getJsonStore();
+  if (store && store.useBlob && store.useBlob()) {
+    try {
+      const j = await store.getJson(LAST_SYNC_BLOB_KEY);
+      if (j) return j;
+    } catch (e) {}
+  }
   try {
     if (!fs.existsSync(LAST_SYNC_PATH)) return null;
     return JSON.parse(fs.readFileSync(LAST_SYNC_PATH, "utf8"));
@@ -209,8 +260,15 @@ function readLastSync() {
   }
 }
 
+function maxUploadsPerRun() {
+  const n = Number(process.env.COACH_SYNC_MAX_UPLOADS || 8);
+  if (!Number.isFinite(n) || n < 1) return 8;
+  return Math.min(40, Math.floor(n));
+}
+
 /**
- * Push new/changed knowledge files into Gemini File Search Store.
+ * Push new/changed L3 knowledge files into Gemini File Search Store.
+ * Prefers Google Drive pull when credentials exist; else local COACH_KNOWLEDGE_DIR / inbox.
  * @returns {Promise<object>}
  */
 async function runCoachBrainSync(options) {
@@ -218,8 +276,11 @@ async function runCoachBrainSync(options) {
   const log = typeof opts.log === "function" ? opts.log : function () {};
   const key = resolveKey();
   const store = resolveStoreName();
-  const dir = knowledgeDir();
   const at = new Date().toISOString();
+  let source = "local";
+  let dir = knowledgeDir();
+  let driveMeta = null;
+  let skippedL1L2 = 0;
 
   if (!key) {
     return {
@@ -233,6 +294,7 @@ async function runCoachBrainSync(options) {
       failed: 0,
       at: at,
       errors: [],
+      source: source,
     };
   }
   if (!store) {
@@ -247,8 +309,88 @@ async function runCoachBrainSync(options) {
       failed: 0,
       at: at,
       errors: [],
+      source: source,
     };
   }
+
+  /* Prefer live Drive pull on production / whenever credentials exist */
+  if (hasDriveAuth() && opts.skipDrive !== true) {
+    try {
+      driveMeta = await pullCoachDriveToDir(DRIVE_PULL_DIR, { log: log });
+      skippedL1L2 += driveMeta.skippedL1L2 || 0;
+      if (driveMeta.pulled > 0) {
+        dir = DRIVE_PULL_DIR;
+        source = "drive";
+      } else if (driveMeta.code === "missing_drive_auth") {
+        /* fall through to local */
+      } else if (!fs.existsSync(dir) || !walkFiles(dir, dir, []).length) {
+        const result = {
+          ok: false,
+          code: driveMeta.code === "empty" ? "empty" : "drive_empty",
+          message: driveMeta.message || "Drive לא החזיר קבצי L3 לסנכרון",
+          knowledgeDir: dir,
+          store: store,
+          uploaded: 0,
+          skipped: 0,
+          failed: 0,
+          at: at,
+          errors: driveMeta.errors || [],
+          source: "drive",
+          driveFolderId: driveFolderId(),
+          skippedL1L2: skippedL1L2,
+        };
+        await saveLastSync(result);
+        return result;
+      }
+    } catch (e) {
+      const msg = String(e.message || e);
+      if (!fs.existsSync(knowledgeDir()) || !walkFiles(knowledgeDir(), knowledgeDir(), []).length) {
+        const result = {
+          ok: false,
+          code: "drive_error",
+          message: "שגיאת Google Drive: " + msg.slice(0, 220),
+          knowledgeDir: knowledgeDir(),
+          store: store,
+          uploaded: 0,
+          skipped: 0,
+          failed: 1,
+          at: at,
+          errors: [{ file: "(drive)", error: msg }],
+          source: "drive",
+          driveFolderId: driveFolderId(),
+        };
+        await saveLastSync(result);
+        return result;
+      }
+      log("drive pull failed, falling back to local: " + msg);
+    }
+  } else if (!String(process.env.COACH_KNOWLEDGE_DIR || "").trim()) {
+    /* On Vercel without Drive auth — local inbox may be mostly L1/L2; say so clearly */
+    const onVercel = !!(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+    if (onVercel) {
+      const localFiles = walkFiles(dir, dir, []);
+      if (!localFiles.length) {
+        const result = {
+          ok: false,
+          code: "missing_drive_auth",
+          message:
+            "בשרת אין חיבור ל־Google Drive ואין קבצי L3 מקומיים. הגדר GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON (או Refresh Token), שתף את תיקיית ה־Drive עם החשבון, Redeploy, ואז לחץ סנכרן שוב.",
+          knowledgeDir: dir,
+          store: store,
+          uploaded: 0,
+          skipped: 0,
+          failed: 0,
+          at: at,
+          errors: [],
+          source: "none",
+          driveFolderId: driveFolderId(),
+        };
+        await saveLastSync(result);
+        return result;
+      }
+    }
+  }
+
   if (!fs.existsSync(dir)) {
     try {
       fs.mkdirSync(dir, { recursive: true });
@@ -256,7 +398,8 @@ async function runCoachBrainSync(options) {
       return {
         ok: false,
         code: "no_knowledge_dir",
-        message: "תיקיית הידע לא נמצאה ולא ניתן ליצור אותה כאן. הגדר COACH_KNOWLEDGE_DIR או הרץ מקומית.",
+        message:
+          "תיקיית הידע לא נמצאה. הגדר חיבור Drive או COACH_KNOWLEDGE_DIR, או הרץ מקומית עם knowledge-inbox.",
         knowledgeDir: dir,
         store: store,
         uploaded: 0,
@@ -264,16 +407,40 @@ async function runCoachBrainSync(options) {
         failed: 0,
         at: at,
         errors: [String(e.message || e)],
+        source: source,
       };
     }
   }
 
-  const files = walkFiles(dir, dir, []);
-  if (!files.length) {
+  const allFiles = walkFiles(dir, dir, []);
+  /* Count L1/L2 skipped for honesty when walking local */
+  if (source === "local" && fs.existsSync(dir)) {
+    try {
+      const rawCount = { n: 0 };
+      (function countAll(d) {
+        if (!fs.existsSync(d)) return;
+        for (const ent of fs.readdirSync(d, { withFileTypes: true })) {
+          if (ent.name.startsWith(".")) continue;
+          const abs = path.join(d, ent.name);
+          if (ent.isDirectory()) countAll(abs);
+          else if (ent.isFile()) {
+            const rel = path.relative(dir, abs).split(path.sep).join("/");
+            if (isExcludedFromL3Sync(rel)) skippedL1L2++;
+            else rawCount.n++;
+          }
+        }
+      })(dir);
+    } catch (e) {}
+  }
+
+  if (!allFiles.length) {
     const result = {
       ok: true,
       code: "empty",
-      message: "לא נמצאו קבצים לסנכרון. העלה קבצים ל־Drive / תיקיית הידע ואז נסה שוב.",
+      message:
+        "לא נמצאו קבצי L3 לסנכרון" +
+        (skippedL1L2 ? " (דולגו L1/L2: " + skippedL1L2 + ")" : "") +
+        ". העלה מאמרים ל־Drive ואז סנכרן שוב.",
       knowledgeDir: dir,
       store: store,
       uploaded: 0,
@@ -282,25 +449,34 @@ async function runCoachBrainSync(options) {
       at: at,
       errors: [],
       fileCount: 0,
+      source: source,
+      driveFolderId: source === "drive" ? driveFolderId() : "",
+      skippedL1L2: skippedL1L2,
     };
-    saveLastSync(result);
+    await saveLastSync(result);
     return result;
   }
 
-  const manifest = loadManifest();
+  const manifest = await loadManifest();
   if (!manifest.files) manifest.files = {};
   let uploaded = 0;
   let skipped = 0;
   let failed = 0;
   const errors = [];
+  const uploadCap = maxUploadsPerRun();
+  let capped = false;
 
-  for (const f of files) {
+  for (const f of allFiles) {
     const fp = fileFingerprint(f.abs);
     const prev = manifest.files[f.rel];
     if (prev && prev.sha256 === fp.sha256) {
       skipped++;
       log("skip " + f.rel);
       continue;
+    }
+    if (uploaded >= uploadCap) {
+      capped = true;
+      break;
     }
     log("sync " + f.rel);
     try {
@@ -310,8 +486,9 @@ async function runCoachBrainSync(options) {
         size: fp.size,
         mtimeMs: fp.mtimeMs,
         syncedAt: new Date().toISOString(),
+        source: source,
       };
-      saveManifest(manifest);
+      await saveManifest(manifest);
       uploaded++;
       log("ok " + f.rel);
     } catch (e) {
@@ -322,15 +499,26 @@ async function runCoachBrainSync(options) {
     }
   }
 
+  let code = failed ? "partial_or_failed" : uploaded ? "synced" : "noop";
+  if (capped && uploaded > 0) code = "synced_more";
+  let message =
+    "הועלו " +
+    uploaded +
+    ", דולגו (ללא שינוי) " +
+    skipped +
+    (failed ? ", נכשלו " + failed : "") +
+    (skippedL1L2 ? ", L1/L2 לא סונכרנו: " + skippedL1L2 : "");
+  if (capped) {
+    message += " — יש עוד קבצים; לחץ «סנכרן» שוב.";
+  }
+  if (code === "noop") {
+    message = "אין שינוי — כל קבצי ה־L3 כבר מסונכרנים" + (skippedL1L2 ? " (L1/L2 לא נכללים)" : "");
+  }
+
   const result = {
     ok: failed === 0,
-    code: failed ? "partial_or_failed" : uploaded ? "synced" : "noop",
-    message:
-      "הועלו " +
-      uploaded +
-      ", דולגו " +
-      skipped +
-      (failed ? ", נכשלו " + failed : ""),
+    code: code,
+    message: message,
     knowledgeDir: dir,
     store: store,
     uploaded: uploaded,
@@ -338,9 +526,13 @@ async function runCoachBrainSync(options) {
     failed: failed,
     at: at,
     errors: errors,
-    fileCount: files.length,
+    fileCount: allFiles.length,
+    source: source,
+    driveFolderId: source === "drive" ? driveFolderId() : "",
+    skippedL1L2: skippedL1L2,
+    moreRemaining: !!capped,
   };
-  saveLastSync(result);
+  await saveLastSync(result);
   return result;
 }
 
@@ -349,6 +541,8 @@ module.exports = {
   readLastSync,
   knowledgeDir,
   resolveStoreName,
+  walkFiles,
+  isExcludedFromL3Sync,
   DEFAULT_INBOX,
   MANIFEST_PATH,
 };

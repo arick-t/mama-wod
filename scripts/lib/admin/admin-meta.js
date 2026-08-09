@@ -49,7 +49,7 @@ function writeMeta(meta) {
   fs.writeFileSync(META_PATH, JSON.stringify(meta, null, 2), "utf8");
 }
 
-function publicMeta() {
+async function publicMeta() {
   const meta = readMeta();
   const credit =
     meta.creditIls == null || !Number.isFinite(Number(meta.creditIls))
@@ -64,7 +64,7 @@ function publicMeta() {
     driveFolderUrl: DRIVE_FOLDER_URL,
     knowledgeDir: knowledgeDir(),
     storeConfigured: !!resolveStoreName(),
-    lastSync: readLastSync(),
+    lastSync: await readLastSync(),
     creditApiNote:
       "לגוגל אין API רשמי ליתרת קרדיט — מעדכנים ידנית אחרי בדיקה ב־AI Studio Billing.",
   };
@@ -92,7 +92,7 @@ module.exports = async function handler(req, res) {
   const action = String(body.action || req.query?.action || "get").trim();
 
   if (action === "get") {
-    return res.status(200).json(publicMeta());
+    return res.status(200).json(await publicMeta());
   }
 
   if (action === "set_credit") {
@@ -114,7 +114,7 @@ module.exports = async function handler(req, res) {
         message: "לא ניתן לשמור יתרה בסביבה הזו (דיסק לקריאה בלבד?). נסה מקומית.",
       });
     }
-    return res.status(200).json(publicMeta());
+    return res.status(200).json(await publicMeta());
   }
 
   return res.status(400).json({ ok: false, error: "unknown_action" });
