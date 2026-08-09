@@ -1022,7 +1022,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
 <div class="header-sub">DAILY WORKOUTS · v21.5.1</div>
-<div class="header-sub" id="coachVersionSub">COACH · v2.2</div>
+<div class="header-sub" id="coachVersionSub">COACH · v2.2.1</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap active" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
@@ -1583,10 +1583,11 @@ function rememberAiClientError(summary) {
  *   Coach 2.0 — Layer 1 retune + Layer 2 ops (programming path).
  *   Coach 2.1 — Cost Guardrails v1 (POL-COST sessionDate hard-block + monthly ≈₪5).
  *   Coach 2.2 — POL-026 unplanned/extra session whole-brick harden (Budget gates).
+ *   Coach 2.2.1 — POL-026 calendar truth (today logged + tomorrow Rest) + Done.-only chat.
  * Keep this badge in sync with the brain actually serving /api/personal-coach.
  * Display: header “COACH · v{COACH_VERSION}” only — do NOT bump app DAILY WORKOUTS / <title> here.
  */
-var COACH_VERSION = "2.2";
+var COACH_VERSION = "2.2.1";
 try {
   var __coachVerEl = document.getElementById("coachVersionSub");
   if (__coachVerEl) __coachVerEl.textContent = "COACH · v" + COACH_VERSION;
@@ -4657,12 +4658,27 @@ function sendPprogMessage(ev) {
         }
         return;
       }
+      /* Budget POL-026 hard gates — decide before pushing any coach bubble */
+      var pol026Ctx = brickMode && pprogBrickThreadIsPol026(msgs);
+      var lastUserConfirm = false;
+      if (pol026Ctx) {
+        for (var cui = msgs.length - 1; cui >= 0; cui--) {
+          if (msgs[cui] && msgs[cui].role === "user") {
+            lastUserConfirm = pprogIsExplicitConfirm(msgs[cui].text);
+            break;
+          }
+        }
+      }
       var chatText = pprogChatDisplayText(String(j.text));
+      if (pol026Ctx) {
+        chatText = lastUserConfirm
+          ? "Done."
+          : "Schedule: keep today’s session logged, rest tomorrow, ease squat/hinge/engine later this week. Confirm?";
+      }
       if (chatText) {
         msgs.push({ role: "model", text: chatText.slice(0, 2000) });
         persistPprogChatMsgs();
       } else {
-        /* Keep parseable raw text out of UI; still available via j.text for block extract below */
         persistPprogChatMsgs();
       }
       var storeSkip = loadPprogStore();
@@ -4691,16 +4707,7 @@ function sendPprogMessage(ev) {
       var dayFromChat = j.day || null;
       pprogBusy = false;
 
-      /* Budget POL-026 hard gates on whole-brick path */
-      var pol026Ctx = brickMode && pprogBrickThreadIsPol026(msgs);
-      var lastUserConfirm = false;
       if (pol026Ctx) {
-        for (var cui = msgs.length - 1; cui >= 0; cui--) {
-          if (msgs[cui] && msgs[cui].role === "user") {
-            lastUserConfirm = pprogIsExplicitConfirm(msgs[cui].text);
-            break;
-          }
-        }
         /* Never apply plan JSON before Confirm; never full BLOCK on this case */
         if (!lastUserConfirm) {
           blockFromChat = null;
@@ -4750,6 +4757,10 @@ function sendPprogMessage(ev) {
           /* POL-026 / surgical brick week = one programmed week edit — not large rebuild */
           if (pol026Ctx) {
             pprogRecordProgrammedEdit("week");
+            /* Ensure today shows logged session + tomorrow Rest even if model left today as Rest */
+            try {
+              pprogApplyPol026CalendarTruth(msgs, { recordEdit: false });
+            } catch (eCal1) {}
           } else {
             var noteUp2 = String(pprogLatestStandingUserNote(msgs) || "");
             if (/soft upgrade|new coach|upgrade (my |the )?plan|review my plan|שדרג|מאמן החדש/i.test(noteUp2)) {
@@ -4772,18 +4783,13 @@ function sendPprogMessage(ev) {
             applyPprogDayRevision(dayKeyApply, dayFromChat);
             pprogRecordProgrammedEdit("week");
           }
+          pprogApplyPol026CalendarTruth(msgs, { recordEdit: false });
         } catch (eDayPol) {}
       } else if (pol026Ctx && lastUserConfirm) {
-        /* Budget: no surgical JSON after Confirm → local Rest-tomorrow only; never large rebuild */
+        /* Budget: no surgical JSON → local today-logged + tomorrow Rest; never large rebuild */
         try {
-          if (pprogApplyPol026LocalRestTomorrow()) {
-            pprogApplyStandingIntakeNote(pprogLatestStandingUserNote(msgs));
-            var alreadyDone = /^(done\.?|updated\.?)$/i.test(String(chatText || "").trim());
-            if (!alreadyDone) {
-              msgs.push({ role: "model", text: "Done." });
-              persistPprogChatMsgs();
-            }
-          }
+          pprogApplyStandingIntakeNote(pprogLatestStandingUserNote(msgs));
+          pprogApplyPol026CalendarTruth(msgs, { recordEdit: true });
         } catch (eLocalRest) {}
       } else {
         var storeNow = loadPprogStore();
@@ -6840,11 +6846,62 @@ function pprogRememberExtraSession(noteText) {
   return true;
 }
 
+/** Build a training-day card from an athlete-logged extra-session note (POL-026). */
+function pprogBuildLoggedSessionParts(dayKey, note) {
+  var raw = String(note || "").trim();
+  var lines = raw
+    .split(/\n+/)
+    .map(function (l) {
+      return String(l || "").trim();
+    })
+    .filter(Boolean)
+    .slice(0, 12)
+    .map(function (l) {
+      return l.slice(0, 140);
+    });
+  if (!lines.length) lines = ["Athlete-logged session (extra)"];
+  var focusBits = [];
+  if (/run|ריצה|treadmill|הליכון|bike|row|ski/i.test(raw)) focusBits.push("Engine");
+  if (/squat|סקוואט/i.test(raw)) focusBits.push("Squat");
+  if (/deadlift|דדליפט|hinge/i.test(raw)) focusBits.push("Hinge");
+  if (/pull-?up|משיכ|muscle-?up/i.test(raw)) focusBits.push("Pull");
+  if (/press|bench|push/i.test(raw)) focusBits.push("Push");
+  var focus = focusBits.length ? "Logged: " + focusBits.join(" + ") : "Logged session";
+  return {
+    focus: focus.slice(0, 80),
+    parts: [
+      {
+        id: String(dayKey || "day") + "-logged",
+        title: "Logged session",
+        lines: lines,
+      },
+    ],
+  };
+}
+
+function pprogLatestExtraSessionNote(msgs) {
+  var fromStanding = pprogLatestStandingUserNote(msgs);
+  if (fromStanding && pprogNoteIsExtraCompletedSession(fromStanding)) return fromStanding;
+  var store = loadPprogStore();
+  var list = Array.isArray(store.extraSessions) ? store.extraSessions : [];
+  var today = pprogIsraelTodayIso();
+  for (var i = list.length - 1; i >= 0; i--) {
+    if (list[i] && String(list[i].sessionDate || "").slice(0, 10) === today && list[i].note) {
+      return String(list[i].note);
+    }
+  }
+  return fromStanding || "";
+}
+
 /**
- * Budget fallback after Confirm with no WEEK/DAY JSON:
- * set tomorrow → Rest only (never flip today to Rest). One programmed edit.
+ * POL-026 calendar truth after Confirm:
+ * - Israel-today → logged session (never leave Rest if they trained)
+ * - tomorrow → Rest when schedule shift requested / default for this case
+ * recordEdit: count one programmed week edit (local fallback only)
  */
-function pprogApplyPol026LocalRestTomorrow() {
+function pprogApplyPol026CalendarTruth(msgs, opts) {
+  opts = opts || {};
+  var recordEdit = opts.recordEdit === true;
   var store = loadPprogStore();
   ensurePprogBlockFiveWeeks(store);
   syncStoreActiveWeek(store);
@@ -6852,49 +6909,77 @@ function pprogApplyPol026LocalRestTomorrow() {
   var today = pprogIsraelTodayIso();
   var tomorrow = pprogAddDaysIso(today, 1);
   var bStart = store.currentBlock.blockStart || sundayOfThisWeekIsrael();
-  var applied = false;
+  var note = pprogLatestExtraSessionNote(msgs);
+  var logged = pprogBuildLoggedSessionParts("day", note);
+  var touched = false;
   for (var wi = 0; wi < store.currentBlock.weeks.length && wi < 5; wi++) {
     var week = store.currentBlock.weeks[wi];
     if (!week) continue;
     if (!week.days) week.days = {};
+    if (!Array.isArray(week.overview)) week.overview = [];
     for (var di = 0; di < PPROG_DAY_KEYS.length; di++) {
       var dk = PPROG_DAY_KEYS[di];
       var iso = pprogAddDaysIso(bStart, wi * 7 + di);
-      if (iso !== tomorrow) continue;
-      week.days[dk] = {
-        parts: [{ id: dk + "-rest", title: "REST DAY", lines: ["Rest"] }],
-        preTalk: (week.days[dk] && week.days[dk].preTalk) || "",
-        debrief: (week.days[dk] && week.days[dk].debrief) || "",
-        lastPreReply: (week.days[dk] && week.days[dk].lastPreReply) || "",
-        lastDebriefReply: (week.days[dk] && week.days[dk].lastDebriefReply) || "",
-        modifiedPartKinds: (week.days[dk] && week.days[dk].modifiedPartKinds) || {},
-        finishFeedback: (week.days[dk] && week.days[dk].finishFeedback) || undefined,
-      };
-      if (!Array.isArray(week.overview)) week.overview = [];
-      var found = false;
-      for (var oi = 0; oi < week.overview.length; oi++) {
-        if (week.overview[oi] && week.overview[oi].day === dk) {
-          week.overview[oi].focus = "Rest";
-          week.overview[oi].label = PPROG_DAY_LABELS[dk];
-          found = true;
-          break;
-        }
+      var prev = week.days[dk] || {};
+      if (iso === today) {
+        var built = pprogBuildLoggedSessionParts(dk, note);
+        week.days[dk] = {
+          parts: built.parts,
+          preTalk: prev.preTalk || "",
+          debrief: prev.debrief || "",
+          lastPreReply: prev.lastPreReply || "",
+          lastDebriefReply: prev.lastDebriefReply || "",
+          modifiedPartKinds: prev.modifiedPartKinds || {},
+          finishFeedback: prev.finishFeedback || undefined,
+        };
+        pprogSetOverviewFocus(week, dk, built.focus);
+        touched = true;
+      } else if (iso === tomorrow) {
+        week.days[dk] = {
+          parts: [{ id: dk + "-rest", title: "REST DAY", lines: ["Rest"] }],
+          preTalk: prev.preTalk || "",
+          debrief: prev.debrief || "",
+          lastPreReply: prev.lastPreReply || "",
+          lastDebriefReply: prev.lastDebriefReply || "",
+          modifiedPartKinds: prev.modifiedPartKinds || {},
+          finishFeedback: prev.finishFeedback || undefined,
+        };
+        pprogSetOverviewFocus(week, dk, "Rest");
+        touched = true;
       }
-      if (!found) week.overview.push({ day: dk, label: PPROG_DAY_LABELS[dk], focus: "Rest" });
-      applied = true;
     }
     store.currentBlock.weeks[wi] = week;
   }
-  if (!applied) return false;
+  if (!touched) return false;
   syncStoreActiveWeek(store);
   savePprogStore(store);
-  try {
-    pprogRecordProgrammedEdit("week", { sessionDate: today });
-  } catch (eRec) {}
+  if (recordEdit) {
+    try {
+      pprogRecordProgrammedEdit("week", { sessionDate: today });
+    } catch (eRec) {}
+  }
   try {
     pushAdminSnapshot(store);
   } catch (eSnap) {}
   return true;
+}
+
+function pprogSetOverviewFocus(week, dayKey, focus) {
+  if (!week || !dayKey) return;
+  if (!Array.isArray(week.overview)) week.overview = [];
+  for (var oi = 0; oi < week.overview.length; oi++) {
+    if (week.overview[oi] && week.overview[oi].day === dayKey) {
+      week.overview[oi].focus = focus;
+      week.overview[oi].label = PPROG_DAY_LABELS[dayKey];
+      return;
+    }
+  }
+  week.overview.push({ day: dayKey, label: PPROG_DAY_LABELS[dayKey], focus: focus });
+}
+
+/** @deprecated name kept for call-sites — use calendar truth (today logged + tomorrow Rest). */
+function pprogApplyPol026LocalRestTomorrow(msgs) {
+  return pprogApplyPol026CalendarTruth(msgs, { recordEdit: true });
 }
 
 function pprogNoteTouchesSchedule(text) {
