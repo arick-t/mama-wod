@@ -1,5 +1,17 @@
 # Changelog
 
+## [Admin 1.2.2] - 2026-08-09
+
+### Admin athlete page — declutter + עדכן + chat history
+- Removed redundant card fields: block chip, internal id line, handoff accordion, intake accordion, usage accordion.
+- Training **block always shown** under the card with **עדכן** (one-time update link to athlete phone; Stage 3 write-back later).
+- Name ▾ opens stats popover: reports, coach chats, app id, clickable initial intake.
+- **הנחיות למאמן** → **היסטוריית שיח מול המאמן** (`adminChatLog` + `admin_append_chat`).
+- Handoff for brand-new admin-intake athletes kept for a later connection — not on the main athlete page.
+- Admin label **1.2.2**.
+
+---
+
 ## [Admin 1.2.1] - 2026-08-09
 
 ### Admin athlete page — mini freeze + floating athlete chat
