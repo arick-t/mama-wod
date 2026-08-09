@@ -9,6 +9,7 @@
  *   1.1 — upgraded brain (Foundation Brief / POL-021 / living-knowledge)
  *   2.0 — Layer 1 retune + Layer 2 ops (programming path)
  *   2.1 — Cost Guardrails v1 (POL-COST sessionDate + server hard-block + monthly ≈₪5)
+ *   2.2 — POL-026 unplanned/extra session whole-brick harden (Budget gates)
  *
  * Env: GEMINI_API_KEY (optional File Search), GROQ_API_KEY (fallback chat),
  *      PERSONAL_COACH_MODEL (programming), PERSONAL_COACH_CHAT_MODEL (chat/intake),
@@ -19,7 +20,7 @@
  * Groq keeps chat alive when the Gemini key is missing/invalid (common GitHub Pages + Vercel setup).
  * Programming stays Gemini-only (POL-020).
  */
-const COACH_VERSION = "2.1";
+const COACH_VERSION = "2.2";
 const fs = require("fs");
 const path = require("path");
 function resolveAppVersion() {

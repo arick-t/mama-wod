@@ -1,5 +1,15 @@
 # Changelog
 
+## [Coach 2.2] - 2026-08-09
+
+### Personal Coach — POL-026 unplanned/extra session (whole-brick)
+- **Coach subtitle:** `COACH · v2.2` (app display stays current DAILY WORKOUTS line — not bumped here).
+- Whole-brick: ingest spontaneous/extra completed sessions as real load; keep today as performed; rest-shift after Confirm; surgical forward bias.
+- Budget approved-with-conditions: Confirm?-only apply; no full `BLOCK_JSON` / Soft Upgrade / large rebuild on this path; local tomorrow→Rest fallback if no surgical JSON; short `[ATHLETE_EXTRA_SESSIONS]`.
+- Engine: `lib/coach-pol026-gates.js` + client gates. Tests: `scripts/pol026-extra-session.test.js`.
+
+---
+
 ## [Admin 1.2] - 2026-08-09
 
 ### Admin athlete page — ops card + accordion
