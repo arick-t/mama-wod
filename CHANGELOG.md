@@ -1,11 +1,13 @@
 # Changelog
 
-## [Admin 1.2.3] - 2026-08-09
+## [Admin 1.3] - 2026-08-09
 
-### Admin «+ מתאמן» — intake parity + full sync contract
+### Admin «+ מתאמן» — intake parity + full sync (production ship)
+- **Admin subtitle / title:** `DUCK-WOD Admin · 1.3`.
 - **HARD:** admin intake = same 9-step fixed questionnaire as the athlete app (same `FIXED INTAKE COMPLETE` packet → `generate_block`).
 - Blob `intakeProfile` + phone claim package carry structured skills/lifts/schedule/recovery/… (no empty skills wipe).
-- `create_athlete` requires real `currentBlock.weeks` + fixed packet (no starterBlock stub); auto-creates one-time handoff link.
+- `create_athlete` requires real `currentBlock.weeks` + fixed packet (no starterBlock stub); auto one-time handoff link (burned after first redeem).
+- Claim path: athlete lands on training block with `intakeComplete` — no re-intake; same Blob identity as self-serve intake.
 - Athlete `pushAdminSnapshot` syncs the same structured intake back to admin.
 - Shared contract: `lib/coach-intake-sync-contract.js`. Tests: `scripts/admin-intake-parity.test.js`.
 
