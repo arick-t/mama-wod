@@ -245,6 +245,61 @@ module.exports = async function handler(req, res) {
       });
     }
 
+    if (body.action === "admin_append_chat") {
+      if (!isAdmin) return adminAuthDenied(res);
+      const existing = (await readSnapshot(athleteId)) || {};
+      if (!existing.athleteId && !existing.createdAt) {
+        return res.status(404).json({ error: "Athlete not found — wait for first snapshot" });
+      }
+      let log = Array.isArray(existing.adminChatLog) ? existing.adminChatLog.slice() : [];
+      if (!log.length && existing.coachDirectives) {
+        String(existing.coachDirectives)
+          .split(/\n+/)
+          .map(function (line) {
+            return String(line || "").trim();
+          })
+          .filter(Boolean)
+          .forEach(function (line) {
+            log.push({
+              at: existing.updatedAt || existing.joinedAt || new Date().toISOString(),
+              text: line.slice(0, 800),
+              kind: "note",
+            });
+          });
+      }
+      const text = String(body.text || "").trim().slice(0, 800);
+      if (!text) {
+        return res.status(400).json({ ok: false, error: "text required" });
+      }
+      log.push({
+        at: new Date().toISOString(),
+        text: text,
+        kind: String(body.kind || "note").slice(0, 20),
+      });
+      if (log.length > 80) log = log.slice(-80);
+      existing.adminChatLog = log;
+      if (body.coachDirectives !== undefined) {
+        existing.coachDirectives = String(body.coachDirectives || "").slice(0, 1000);
+      }
+      existing.updatedAt = new Date().toISOString();
+      try {
+        await writeSnapshot(athleteId, existing);
+        await appendAdminAudit({
+          action: "append_admin_chat",
+          athleteId: athleteId,
+          actor: "admin",
+          ok: true,
+        });
+      } catch (e) {
+        return storageUnavailable(res, e);
+      }
+      return res.status(200).json({
+        ok: true,
+        adminChatLog: existing.adminChatLog,
+        storage: storageInfo(),
+      });
+    }
+
     if (
       body.coachDirectives !== undefined &&
       Object.keys(body).filter(function (k) {
@@ -339,6 +394,7 @@ module.exports = async function handler(req, res) {
           existing.createdAt ||
           ""
       ).slice(0, 40),
+      adminChatLog: Array.isArray(existing.adminChatLog) ? existing.adminChatLog : [],
       writeKeyHash:
         existing.writeKeyHash ||
         gate.bindHash ||
