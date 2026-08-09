@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DUCK-WOD Admin · 1.2</title>
+<title>DUCK-WOD Admin · 1.2.1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -120,7 +120,7 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .empty-tabs{color:var(--text-meta);font-size:13px;padding:4px 2px}
 
 .main{display:flex;flex:1;overflow:hidden;min-height:0}
-.content{flex:1;overflow-y:auto;padding:20px 24px;background:var(--bg);min-height:0;-webkit-overflow-scrolling:touch}
+.content{flex:1;overflow-y:auto;padding:20px 24px 110px;background:var(--bg);min-height:0;-webkit-overflow-scrolling:touch}
 
 /* ── Athlete ops card (identity + accordion) ── */
 .ath-wrap{max-width:720px;margin:0 auto}
@@ -136,18 +136,64 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .ath-fact{min-width:0}
 .ath-fact-label{display:block;font-size:.72em;font-weight:600;color:var(--text-meta);margin-bottom:3px}
 .ath-fact-value{display:block;font-size:.95em;font-weight:700;color:var(--text);line-height:1.35}
+.ath-fact-reg-row{display:flex;align-items:flex-end;justify-content:space-between;gap:8px}
+.ath-fact-reg-row .ath-fact-main{min-width:0;flex:1}
+.btn-freeze-mini{
+  flex-shrink:0;appearance:none;margin:0 0 1px;padding:3px 8px;border-radius:6px;
+  border:1px solid rgba(232,69,26,.55);background:rgba(232,69,26,.12);color:#f0a090;
+  font-size:.68em;font-weight:700;font-family:inherit;cursor:pointer;line-height:1.2;white-space:nowrap
+}
+.btn-freeze-mini:hover{background:rgba(232,69,26,.22);color:#fff;border-color:var(--brand)}
+.btn-freeze-mini.is-frozen{border-color:rgba(76,175,112,.45);background:rgba(76,175,112,.1);color:#8fd49a}
 .ath-progress{margin-top:7px;height:5px;border-radius:999px;background:#2a2a2a;overflow:hidden}
 .ath-progress > i{display:block;height:100%;border-radius:999px;background:var(--brand);width:0}
 .ath-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
-.ath-actions .btn-freeze{background:var(--brand);border:none;border-radius:10px;padding:10px 16px;color:#fff;font-weight:700;font-size:.9em;cursor:pointer}
-.ath-actions .btn-freeze:hover{background:#d03d18}
-.ath-actions .btn-freeze.is-frozen{background:transparent;border:1px solid rgba(76,175,112,.45);color:#8fd49a}
 .ath-actions .btn-handoff{background:var(--bg-elev);border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--text-muted);font-weight:700;font-size:.88em;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
 .ath-actions .btn-handoff:hover{color:var(--text);border-color:#3a3a3a}
 .ath-actions .btn-handoff svg{width:15px;height:15px;display:block}
 .ath-actions .btn-delete-link{appearance:none;background:transparent;border:none;color:#f87171;font-weight:700;font-size:.88em;cursor:pointer;padding:8px 4px}
 .ath-actions .btn-delete-link:hover{color:#fca5a5}
 .ath-id-line{margin-top:10px;font-size:.72em;color:var(--text-meta);word-break:break-all}
+
+/* Athlete chat FAB — same temper as app coach FAB; scoped to selected tab athlete */
+.admin-chat-fab-wrap{
+  position:fixed;right:16px;bottom:18px;z-index:1000;
+  display:none;flex-direction:column;align-items:center;pointer-events:none
+}
+.admin-chat-fab-wrap.show{display:flex}
+.admin-chat-fab-wrap > *{pointer-events:auto}
+.admin-chat-fab{
+  display:flex;flex-direction:column;align-items:center;gap:3px;max-width:76px;
+  padding:5px 5px 6px;margin:0;border:1px solid rgba(176,109,207,.4);border-radius:28px;
+  background:linear-gradient(180deg,#2a1a33 0%,#1c1424 100%);cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,.4);font-family:var(--font-ui);
+  -webkit-tap-highlight-color:transparent
+}
+.admin-chat-fab:hover{transform:translateY(-2px);border-color:rgba(176,109,207,.65)}
+.admin-chat-fab.open{border-color:rgba(245,197,24,.7);box-shadow:0 0 0 2px rgba(245,197,24,.28),0 6px 18px rgba(0,0,0,.4)}
+.admin-chat-fab-avatar{width:46px;height:46px;border-radius:50%;overflow:hidden;background:#1a1220;display:block}
+.admin-chat-fab-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.admin-chat-fab-caption{font-size:8px;line-height:1.15;font-weight:600;text-align:center;color:rgba(236,223,246,.88);max-width:66px}
+.admin-chat-float{
+  display:none;position:fixed;right:16px;bottom:110px;z-index:1001;
+  width:min(92vw,380px);max-height:min(70vh,520px);
+  background:var(--bg-card);border:1px solid #8e44ad;border-radius:14px;
+  box-shadow:0 14px 40px rgba(0,0,0,.55);flex-direction:column;overflow:hidden
+}
+.admin-chat-float.open{display:flex}
+.admin-chat-float-head{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+  padding:12px;background:linear-gradient(180deg,#2a1834 0%,#1a1a1a 100%);
+  border-bottom:1px solid #3a2a4a
+}
+.admin-chat-float-title{font-weight:800;font-size:.95em;color:#e8d8f4}
+.admin-chat-float-sub{display:block;margin-top:3px;font-size:.72em;color:#b09bc4;font-weight:600}
+.admin-chat-float-close{
+  appearance:none;border:none;background:#2a2a2a;color:#ddd;width:30px;height:30px;
+  border-radius:50%;cursor:pointer;font-size:1.05em;line-height:1;flex-shrink:0
+}
+.admin-chat-float-body{padding:12px;display:flex;flex-direction:column;gap:10px;min-height:0;overflow:auto}
+.admin-chat-float .notes-ta{min-height:110px}
 
 .ath-acc{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
 .ath-acc-item{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
@@ -185,6 +231,8 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
   .ath-facts{grid-template-columns:1fr}
   .ath-actions{flex-direction:column;align-items:stretch}
   .ath-actions .btn-delete-link{text-align:center}
+  .admin-chat-fab-wrap{right:12px;bottom:14px}
+  .admin-chat-float{right:12px;left:12px;width:auto;bottom:100px}
 }
 
 .block-header{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;flex-wrap:wrap}
@@ -338,7 +386,7 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin</div>
-    <div class="ver">1.2</div>
+    <div class="ver">1.2.1</div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <button type="button" onclick="doLogin()">כניסה</button>
     <div id="login-err"></div>
@@ -350,7 +398,7 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">Admin</span>
-    <span class="ver-badge" title="Coach Admin dashboard">1.2</span>
+    <span class="ver-badge" title="Coach Admin dashboard">1.2.1</span>
     <span class="count-wrap">
       <span class="count" id="athlete-count">0 מתאמנים</span>
       <button type="button" class="hdr-btn drive-sync" id="btn-sync-drive" onclick="syncDriveBrain()" title="סנכרן Drive">
@@ -376,6 +424,39 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
       <div class="empty-content">
         <div class="icon">·</div>
         <p>בחר מתאמן מהרשימה</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating athlete note FAB (scoped to selected tab athlete) -->
+  <div class="admin-chat-fab-wrap" id="adminChatFabWrap" aria-hidden="true">
+    <button type="button" class="admin-chat-fab" id="adminChatFab" onclick="toggleAthleteChatFab()" aria-expanded="false" aria-controls="adminChatFloat" title="הערה למתאמן">
+      <span class="admin-chat-fab-avatar">
+        <img src="assets/hamamen-coach-duck.png" alt="" width="46" height="46" draggable="false">
+      </span>
+      <span class="admin-chat-fab-caption" id="adminChatFabCaption">שיחה</span>
+    </button>
+  </div>
+  <div class="admin-chat-float" id="adminChatFloat" role="dialog" aria-labelledby="adminChatFloatTitle">
+    <div class="admin-chat-float-head">
+      <div>
+        <div class="admin-chat-float-title" id="adminChatFloatTitle">הערה למתאמן</div>
+        <span class="admin-chat-float-sub" id="adminChatFloatSub">בחר מתאמן</span>
+      </div>
+      <button type="button" class="admin-chat-float-close" onclick="closeAthleteChatFab()" aria-label="סגור">×</button>
+    </div>
+    <div class="admin-chat-float-body notes-section" id="adminChatFloatBody" data-notes="sticky">
+      <textarea class="notes-ta" id="notes-ta-sticky" placeholder="הערה על המתאמן… שינויים / התאמות / הנחיות"></textarea>
+      <div class="notes-actions">
+        <button type="button" class="btn-primary" onclick="sendAthleteNote('sticky')">שלח</button>
+        <span class="notes-status" id="notes-status-sticky"></span>
+      </div>
+      <div class="decide-box" id="notes-decide-sticky">
+        <div style="margin-bottom:8px;color:#ddd" id="notes-decide-q-sticky">להטמיע עכשיו או להמתין?</div>
+        <div class="notes-actions">
+          <button type="button" class="btn-secondary good" onclick="decideLearnNote('implement')">להטמיע עכשיו</button>
+          <button type="button" class="btn-secondary wait" onclick="decideLearnNote('wait')">להמתין ולצבור</button>
+        </div>
       </div>
     </div>
   </div>
@@ -430,6 +511,7 @@ var selectedDayByAthlete = {};
 var athleteAccOpen = {};
 var learningMode = false;
 var pendingLearnNoteId = null;
+var adminChatFabOpen = false;
 var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
 
 var INTAKE_LIFT_DEFS = [
@@ -622,7 +704,69 @@ function syncLearningUi() {
       : "מגרש: כבוי";
   }
   if (banner) banner.classList.toggle("visible", learningMode);
+  var a = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
+  syncAthleteChatFab(a || null);
+  syncNotesPlaceholders();
+  var body = document.getElementById("adminChatFloatBody");
+  if (body) body.classList.toggle("learning", learningMode);
 }
+
+function syncAthleteChatFab(a) {
+  var wrap = document.getElementById("adminChatFabWrap");
+  var fab = document.getElementById("adminChatFab");
+  var caption = document.getElementById("adminChatFabCaption");
+  var title = document.getElementById("adminChatFloatTitle");
+  var sub = document.getElementById("adminChatFloatSub");
+  var floatEl = document.getElementById("adminChatFloat");
+  var show = !!(a && a.athleteId);
+  if (wrap) {
+    wrap.classList.toggle("show", show);
+    wrap.setAttribute("aria-hidden", show ? "false" : "true");
+  }
+  if (!show) {
+    adminChatFabOpen = false;
+    if (floatEl) floatEl.classList.remove("open");
+    if (fab) {
+      fab.classList.remove("open");
+      fab.setAttribute("aria-expanded", "false");
+    }
+    return;
+  }
+  var name = a.displayName || a.athleteId;
+  if (caption) caption.textContent = String(name).slice(0, 12);
+  if (title) {
+    title.textContent = learningMode ? "הערה · מגרש לימוד" : "הערה למתאמן";
+  }
+  if (sub) {
+    sub.textContent = learningMode
+      ? "למתאמן: " + name + " · נכנס ללימוד המאמן"
+      : "שיחה מול " + name;
+  }
+  if (fab) {
+    fab.classList.toggle("open", adminChatFabOpen);
+    fab.setAttribute("aria-expanded", adminChatFabOpen ? "true" : "false");
+    fab.title = "הערה · " + name;
+  }
+  if (floatEl) floatEl.classList.toggle("open", adminChatFabOpen);
+}
+
+function toggleAthleteChatFab() {
+  if (!currentAthleteId) return;
+  adminChatFabOpen = !adminChatFabOpen;
+  var a = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
+  syncAthleteChatFab(a || null);
+  if (adminChatFabOpen) {
+    var ta = document.getElementById("notes-ta-sticky");
+    if (ta) setTimeout(function() { ta.focus(); }, 40);
+  }
+}
+
+function closeAthleteChatFab() {
+  adminChatFabOpen = false;
+  var a = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
+  syncAthleteChatFab(a || null);
+}
+
 
 var hdrToastTimer = null;
 function showHdrToast(msg, kind) {
@@ -762,6 +906,8 @@ function renderAthleteList(list) {
 
   if (!athletes.length) {
     currentAthleteId = null;
+    adminChatFabOpen = false;
+    syncAthleteChatFab(null);
     sb.innerHTML = '<div class="empty-tabs">אין מתאמנים עדיין — לחץ ״+ מתאמן״</div>';
     document.getElementById("content").innerHTML =
       '<div class="empty-content"><div class="icon">·</div><p>אין מתאמנים — לחץ ״+ מתאמן״ להתחלת תחקור</p></div>';
@@ -786,8 +932,15 @@ function renderAthleteList(list) {
 }
 
 function selectAthlete(id) {
+  if (currentAthleteId !== id) adminChatFabOpen = false;
   currentAthleteId = id;
   pendingLearnNoteId = null;
+  var status = document.getElementById("notes-status-sticky");
+  var ta = document.getElementById("notes-ta-sticky");
+  var decide = document.getElementById("notes-decide-sticky");
+  if (status) status.textContent = "";
+  if (ta) ta.value = "";
+  if (decide) decide.classList.remove("open");
   var a = athletes.find(function(x) { return x.athleteId === id; });
   if (!a) return;
   renderAthlete(a);
@@ -818,8 +971,21 @@ function renderAthlete(a) {
         "</div>" +
         '<div class="ath-facts">' +
           '<div class="ath-fact">' +
-            '<span class="ath-fact-label">נרשם:</span>' +
-            '<span class="ath-fact-value">' + esc(fmt(joinedAt) || "—") + "</span>" +
+            '<div class="ath-fact-reg-row">' +
+              '<div class="ath-fact-main">' +
+                '<span class="ath-fact-label">נרשם:</span>' +
+                '<span class="ath-fact-value">' + esc(fmt(joinedAt) || "—") + "</span>" +
+              "</div>" +
+              '<button type="button" class="btn-freeze-mini' +
+              (frozen ? " is-frozen" : "") +
+              '" onclick="toggleMembershipFrozen(\'' +
+              esc(a.athleteId) +
+              "')\" title=\"" +
+              (frozen ? "בטל הקפאה" : "הקפא מנוי") +
+              '">' +
+              (frozen ? "בטל הקפאה" : "הקפא") +
+              "</button>" +
+            "</div>" +
           "</div>" +
           '<div class="ath-fact">' +
             '<span class="ath-fact-label">וותק:</span>' +
@@ -838,13 +1004,6 @@ function renderAthlete(a) {
           "</div>" +
         "</div>" +
         '<div class="ath-actions">' +
-          '<button type="button" class="btn-freeze' +
-          (frozen ? " is-frozen" : "") +
-          '" onclick="toggleMembershipFrozen(\'' +
-          esc(a.athleteId) +
-          "')\">" +
-          (frozen ? "בטל הקפאה" : "הקפא מנוי") +
-          "</button>" +
           '<button type="button" class="btn-handoff" onclick="openHandoffFromCard(\'' +
           esc(a.athleteId) +
           "')\">" +
@@ -896,11 +1055,11 @@ function renderAthlete(a) {
           renderUsageSection(a) + renderBlocksRow(a)
         ) +
       "</div>" +
-      renderStickyNotesSection(a) +
     "</div>";
 
   var ta = document.getElementById("directives-input");
   if (ta) ta.value = a.coachDirectives || "";
+  syncAthleteChatFab(a);
   syncNotesPlaceholders();
 }
 
@@ -1130,10 +1289,7 @@ var MONTHS_HE = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי",
 function renderBlockCalendarBody(a) {
   var b = a.currentBlock;
   if (!b) {
-    return (
-      '<div class="ath-muted">אין בלוק פעיל</div>' +
-      renderDayNotesBox(a, null, null, false)
-    );
+    return '<div class="ath-muted">אין בלוק פעיל</div>';
   }
 
   var summaryLine = b.summaryLine || "";
@@ -1168,12 +1324,6 @@ function renderBlockCalendarBody(a) {
     "</div>";
   var calHtml = renderMonthGrid(a, map, shownMonthDate);
   var selectedDetailsHtml = renderSelectedDayWorkout(a, map);
-  var dayNotes = renderDayNotesBox(
-    a,
-    map,
-    selectedDayByAthlete[a.athleteId],
-    true
-  );
 
   return (
     '<div id="block-section">' +
@@ -1183,7 +1333,6 @@ function renderBlockCalendarBody(a) {
     calHtml +
     "</div>" +
     selectedDetailsHtml +
-    dayNotes +
     "</div>"
   );
 }
@@ -1503,48 +1652,9 @@ function syncNotesPlaceholders() {
   for (var i = 0; i < els.length; i++) els[i].placeholder = notesPlaceholder();
 }
 
-function renderDayNotesBox(a, workoutMap, dayKey, underWorkout) {
-  var plan = dayKey && workoutMap && workoutMap[dayKey] ? workoutMap[dayKey] : null;
-  var title = underWorkout
-    ? (dayKey ? "הערה על האימון שנבחר (" + dayKey + ")" : "הערה")
-    : "הערה";
-  var idSuffix = underWorkout ? "day" : "sticky";
-  var learnClass = learningMode ? " learning" : "";
-  return '<div class="notes-section' + learnClass + '" data-notes="' + idSuffix + '">' +
-    '<div class="section-title">' + esc(title) + (learningMode ? " · לימוד מאמן" : "") + "</div>" +
-    '<textarea class="notes-ta" id="notes-ta-' + idSuffix + '" placeholder="' + esc(notesPlaceholder()) + '"></textarea>' +
-    '<div class="notes-actions">' +
-      '<button type="button" class="btn-primary" onclick="sendAthleteNote(\'' + idSuffix + '\')">שלח</button>' +
-      '<span class="notes-status" id="notes-status-' + idSuffix + '"></span>' +
-    "</div>" +
-    '<div class="decide-box' + (pendingLearnNoteId ? " open" : "") + '" id="notes-decide-' + idSuffix + '">' +
-      '<div style="margin-bottom:8px;color:#ddd" id="notes-decide-q-' + idSuffix + '">להטמיע עכשיו או להמתין?</div>' +
-      '<div class="notes-actions">' +
-        '<button type="button" class="btn-secondary good" onclick="decideLearnNote(\'implement\')">להטמיע עכשיו</button>' +
-        '<button type="button" class="btn-secondary wait" onclick="decideLearnNote(\'wait\')">להמתין ולצבור</button>' +
-      "</div>" +
-    "</div>" +
-  "</div>";
-}
+/* Day notes under block calendar removed — use floating athlete FAB instead. */
 
-function renderStickyNotesSection(a) {
-  var learnClass = learningMode ? " learning" : "";
-  return '<div class="notes-section sticky-notes' + learnClass + '" data-notes="sticky">' +
-    '<div class="section-title">הערות' + (learningMode ? " · מגרש לימוד" : " · למתאמן") + "</div>" +
-    '<textarea class="notes-ta" id="notes-ta-sticky" placeholder="' + esc(notesPlaceholder()) + '"></textarea>' +
-    '<div class="notes-actions">' +
-      '<button type="button" class="btn-primary" onclick="sendAthleteNote(\'sticky\')">שלח</button>' +
-      '<span class="notes-status" id="notes-status-sticky"></span>' +
-    "</div>" +
-    '<div class="decide-box' + (pendingLearnNoteId ? " open" : "") + '" id="notes-decide-sticky">' +
-      '<div style="margin-bottom:8px;color:#ddd" id="notes-decide-q-sticky">להטמיע עכשיו או להמתין?</div>' +
-      '<div class="notes-actions">' +
-        '<button type="button" class="btn-secondary good" onclick="decideLearnNote(\'implement\')">להטמיע עכשיו</button>' +
-        '<button type="button" class="btn-secondary wait" onclick="decideLearnNote(\'wait\')">להמתין ולצבור</button>' +
-      "</div>" +
-    "</div>" +
-  "</div>";
-}
+/* Inline sticky notes removed — notes live in floating athlete FAB (#adminChatFloat). */
 
 function getSelectedWorkoutPayload(a) {
   var dayKey = selectedDayByAthlete[a.athleteId] || "";
@@ -1599,12 +1709,12 @@ function sendAthleteNote(which) {
         pendingLearnNoteId = d.noteId;
         if (ta) ta.value = "";
         if (status) status.textContent = "ההערה התקבלה — בחר מה לעשות.";
-        ["day", "sticky"].forEach(function(id) {
-          var box = document.getElementById("notes-decide-" + id);
-          var q = document.getElementById("notes-decide-q-" + id);
-          if (box) box.classList.add("open");
-          if (q) q.textContent = d.question || "להטמיע עכשיו או להמתין?";
-        });
+        adminChatFabOpen = true;
+        syncAthleteChatFab(a);
+        var box = document.getElementById("notes-decide-sticky");
+        var q = document.getElementById("notes-decide-q-sticky");
+        if (box) box.classList.add("open");
+        if (q) q.textContent = d.question || "להטמיע עכשיו או להמתין?";
       })
       .catch(function() {
         if (status) status.textContent = "שגיאת רשת";
@@ -1663,7 +1773,7 @@ function decideLearnNote(decision) {
       }
       pendingLearnNoteId = null;
       for (var k = 0; k < statuses.length; k++) statuses[k].textContent = d.message || "נשמר";
-      ["day", "sticky"].forEach(function(id) {
+      ["sticky"].forEach(function(id) {
         var box = document.getElementById("notes-decide-" + id);
         if (box) box.classList.remove("open");
       });

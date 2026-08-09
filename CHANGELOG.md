@@ -1,5 +1,15 @@
 # Changelog
 
+## [Admin 1.2.1] - 2026-08-09
+
+### Admin athlete page — mini freeze + floating athlete chat
+- Freeze control moved onto the **נרשם** row as a tiny chip (`הקפא` / `בטל הקפאה`) — no full-width CTA.
+- Removed always-on notes box and block-day notes box.
+- Notes open from a **floating duck FAB** (like the athlete app); scoped to the selected athlete tab (caption = name).
+- Admin label **1.2.1**.
+
+---
+
 ## [Admin 1.2] - 2026-08-09
 
 ### Admin athlete page — ops card + accordion
