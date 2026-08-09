@@ -212,6 +212,39 @@ module.exports = async function handler(req, res) {
       }
     }
 
+    if (body.action === "admin_member_status") {
+      if (!isAdmin) return adminAuthDenied(res);
+      const existing = (await readSnapshot(athleteId)) || {};
+      if (!existing.athleteId && !existing.createdAt) {
+        return res.status(404).json({ error: "Athlete not found — wait for first snapshot" });
+      }
+      if (body.membershipFrozen !== undefined) {
+        existing.membershipFrozen = !!body.membershipFrozen;
+      }
+      if (body.declarationAcceptedAt !== undefined) {
+        existing.declarationAcceptedAt = String(body.declarationAcceptedAt || "").slice(0, 40);
+      }
+      existing.updatedAt = new Date().toISOString();
+      try {
+        await writeSnapshot(athleteId, existing);
+        await appendAdminAudit({
+          action: "set_member_status",
+          athleteId: athleteId,
+          actor: "admin",
+          ok: true,
+          detail: existing.membershipFrozen ? "frozen" : "active",
+        });
+      } catch (e) {
+        return storageUnavailable(res, e);
+      }
+      return res.status(200).json({
+        ok: true,
+        membershipFrozen: !!existing.membershipFrozen,
+        declarationAcceptedAt: existing.declarationAcceptedAt || null,
+        storage: storageInfo(),
+      });
+    }
+
     if (
       body.coachDirectives !== undefined &&
       Object.keys(body).filter(function (k) {
@@ -295,6 +328,17 @@ module.exports = async function handler(req, res) {
       currentBlock: clean.currentBlock || existing.currentBlock || null,
       pastBlocks: clean.pastBlocks || existing.pastBlocks || [],
       coachTier: existing.coachTier || clean.coachTier || 2,
+      membershipFrozen:
+        isAdmin && clean.membershipFrozen !== undefined
+          ? !!clean.membershipFrozen
+          : !!existing.membershipFrozen,
+      declarationAcceptedAt: String(
+        (isAdmin && clean.declarationAcceptedAt) ||
+          existing.declarationAcceptedAt ||
+          existing.joinedAt ||
+          existing.createdAt ||
+          ""
+      ).slice(0, 40),
       writeKeyHash:
         existing.writeKeyHash ||
         gate.bindHash ||

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DUCK-WOD Admin · 1.1</title>
+<title>DUCK-WOD Admin · 1.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -122,7 +122,48 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .main{display:flex;flex:1;overflow:hidden;min-height:0}
 .content{flex:1;overflow-y:auto;padding:20px 24px;background:var(--bg);min-height:0;-webkit-overflow-scrolling:touch}
 
-/* Detail panel */
+/* ── Athlete ops card (identity + accordion) ── */
+.ath-wrap{max-width:720px;margin:0 auto}
+.ath-card{background:var(--bg-card);border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;margin-bottom:14px}
+.ath-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.ath-name{font-size:1.45em;font-weight:800;font-family:var(--font-ui);letter-spacing:.01em;line-height:1.2}
+.ath-chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ath-chip{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:.72em;font-weight:700;border:1px solid transparent;line-height:1.3}
+.ath-chip.active{background:rgba(76,175,112,.14);border-color:rgba(76,175,112,.4);color:#8fd49a}
+.ath-chip.frozen{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.4);color:#fca5a5}
+.ath-chip.coach{background:rgba(155,107,184,.16);border-color:rgba(155,107,184,.4);color:#c9a3dd}
+.ath-facts{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;margin-bottom:16px}
+.ath-fact{min-width:0}
+.ath-fact-label{display:block;font-size:.72em;font-weight:600;color:var(--text-meta);margin-bottom:3px}
+.ath-fact-value{display:block;font-size:.95em;font-weight:700;color:var(--text);line-height:1.35}
+.ath-progress{margin-top:7px;height:5px;border-radius:999px;background:#2a2a2a;overflow:hidden}
+.ath-progress > i{display:block;height:100%;border-radius:999px;background:var(--brand);width:0}
+.ath-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.ath-actions .btn-freeze{background:var(--brand);border:none;border-radius:10px;padding:10px 16px;color:#fff;font-weight:700;font-size:.9em;cursor:pointer}
+.ath-actions .btn-freeze:hover{background:#d03d18}
+.ath-actions .btn-freeze.is-frozen{background:transparent;border:1px solid rgba(76,175,112,.45);color:#8fd49a}
+.ath-actions .btn-handoff{background:var(--bg-elev);border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--text-muted);font-weight:700;font-size:.88em;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.ath-actions .btn-handoff:hover{color:var(--text);border-color:#3a3a3a}
+.ath-actions .btn-handoff svg{width:15px;height:15px;display:block}
+.ath-actions .btn-delete-link{appearance:none;background:transparent;border:none;color:#f87171;font-weight:700;font-size:.88em;cursor:pointer;padding:8px 4px}
+.ath-actions .btn-delete-link:hover{color:#fca5a5}
+.ath-id-line{margin-top:10px;font-size:.72em;color:var(--text-meta);word-break:break-all}
+
+.ath-acc{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.ath-acc-item{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.ath-acc-head{width:100%;display:flex;align-items:center;gap:10px;padding:14px 16px;background:transparent;border:none;color:inherit;cursor:pointer;font-family:inherit;text-align:right}
+.ath-acc-head:hover{background:rgba(255,255,255,.02)}
+.ath-acc-titles{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+.ath-acc-title{font-size:.95em;font-weight:800;color:var(--text)}
+.ath-acc-summary{font-size:.78em;font-weight:600;color:var(--part);line-height:1.35;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ath-acc-chevron{flex-shrink:0;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text-meta);font-size:12px;transition:transform .15s}
+.ath-acc-item.open .ath-acc-chevron{transform:rotate(180deg);color:var(--text-muted)}
+.ath-acc-body{display:none;padding:0 16px 16px;border-top:1px solid transparent}
+.ath-acc-item.open .ath-acc-body{display:block;border-top-color:var(--line);padding-top:14px}
+.ath-acc-body .intake-summary{color:var(--note);font-size:.92em;font-style:normal;line-height:1.55;margin:0 0 12px}
+.ath-muted{color:var(--text-meta);font-size:.88em}
+
+/* Detail panel (legacy helpers still used inside accordion bodies) */
 .panel-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:12px}
 .panel-name{font-size:22px;font-weight:800;font-family:var(--font-ui)}
 .panel-meta{color:var(--text-meta);font-size:13px;margin-top:4px;line-height:1.55}
@@ -133,11 +174,18 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 
 .section{background:var(--bg-panel);border:1px solid var(--line);border-radius:12px;
   padding:18px 20px;margin-bottom:16px}
+.ath-acc-body > .section{margin:0;background:transparent;border:0;padding:0;border-radius:0}
 .section-title{font-size:12px;font-weight:700;text-transform:uppercase;
   letter-spacing:.08em;color:var(--text-meta);margin-bottom:12px}
 .section-title.no-margin{margin-bottom:0}
 .intake-summary{font-size:14px;line-height:1.6;color:var(--text-muted)}
 .row-label{font-size:12px;color:var(--text-meta);display:inline-block;min-width:90px}
+
+@media(max-width:520px){
+  .ath-facts{grid-template-columns:1fr}
+  .ath-actions{flex-direction:column;align-items:stretch}
+  .ath-actions .btn-delete-link{text-align:center}
+}
 
 .block-header{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;flex-wrap:wrap}
 .block-title{font-size:15px;font-weight:700}
@@ -290,7 +338,7 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin</div>
-    <div class="ver">1.1</div>
+    <div class="ver">1.2</div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <button type="button" onclick="doLogin()">כניסה</button>
     <div id="login-err"></div>
@@ -302,7 +350,7 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">Admin</span>
-    <span class="ver-badge" title="Coach Admin dashboard">1.1</span>
+    <span class="ver-badge" title="Coach Admin dashboard">1.2</span>
     <span class="count-wrap">
       <span class="count" id="athlete-count">0 מתאמנים</span>
       <button type="button" class="hdr-btn drive-sync" id="btn-sync-drive" onclick="syncDriveBrain()" title="סנכרן Drive">
@@ -379,8 +427,10 @@ var currentAthleteId = null;
 var syncInFlight = false;
 var blockMonthOffsetByAthlete = {};
 var selectedDayByAthlete = {};
+var athleteAccOpen = {};
 var learningMode = false;
 var pendingLearnNoteId = null;
+var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
 
 var INTAKE_LIFT_DEFS = [
   { id: "back_squat", label: "Back Squat", unit: "kg", kind: "kg" },
@@ -446,6 +496,82 @@ function formatTenure(joinedAtIso) {
   var diffDays = Math.floor((now.getTime() - start.getTime()) / (24 * 60 * 60 * 1000));
   var weeks = Math.floor(Math.max(0, diffDays) / 7);
   return weeks + " שבועות";
+}
+
+function getAccState(athleteId) {
+  if (!athleteAccOpen[athleteId]) {
+    athleteAccOpen[athleteId] = {
+      intake: true,
+      block: false,
+      handoff: false,
+      directives: false,
+      history: false
+    };
+  }
+  return athleteAccOpen[athleteId];
+}
+
+function toggleAthleteAcc(key) {
+  var a = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
+  if (!a) return;
+  var st = getAccState(a.athleteId);
+  st[key] = !st[key];
+  renderAthlete(a);
+}
+
+function setAthleteAcc(key, open) {
+  var a = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
+  if (!a) return;
+  getAccState(a.athleteId)[key] = !!open;
+}
+
+function isCoachMember(a) {
+  if (!a) return false;
+  if (a.coachTier === 2 || a.coachTier === "2") return true;
+  if (a.intakeSummary || a.skillsSummary) return true;
+  if (a.currentBlock) return true;
+  return !!a.seeded;
+}
+
+function getDeclarationInfo(a) {
+  var baseIso = (a && (a.declarationAcceptedAt || a.joinedAt || a.createdAt)) || "";
+  var start = baseIso ? new Date(baseIso) : null;
+  if (!start || isNaN(start.getTime())) {
+    return { label: "לא ידוע", pct: 0, daysLeft: null };
+  }
+  var due = new Date(start.getTime() + DECLARATION_CYCLE_DAYS * 24 * 60 * 60 * 1000);
+  var now = new Date();
+  var daysLeft = Math.ceil((due.getTime() - now.getTime()) / (24 * 60 * 60 * 1000));
+  var elapsed = DECLARATION_CYCLE_DAYS - daysLeft;
+  if (elapsed < 0) elapsed = 0;
+  if (elapsed > DECLARATION_CYCLE_DAYS) elapsed = DECLARATION_CYCLE_DAYS;
+  var pct = Math.round((elapsed / DECLARATION_CYCLE_DAYS) * 100);
+  var label;
+  if (daysLeft < 0) label = "באיחור " + Math.abs(daysLeft) + " ימים";
+  else if (daysLeft === 0) label = "היום";
+  else label = "בעוד " + daysLeft + " ימים";
+  return { label: label, pct: pct, daysLeft: daysLeft, dueIso: due.toISOString() };
+}
+
+function getBlockWeekLabel(a) {
+  var b = a && a.currentBlock;
+  if (!b) return "אין בלוק";
+  var weeks = Array.isArray(b.weeks) ? b.weeks : [];
+  var total = weeks.length || 5;
+  var idx = 0;
+  if (typeof a.activeWeekIndex === "number") idx = a.activeWeekIndex;
+  else if (typeof b.activeWeekIndex === "number") idx = b.activeWeekIndex;
+  idx = Math.max(0, Math.min(total - 1, idx | 0));
+  return "שבוע " + (idx + 1) + "/" + total;
+}
+
+function getBlockAccSummary(a) {
+  var b = a && a.currentBlock;
+  if (!b) return "אין בלוק פעיל";
+  var week = getBlockWeekLabel(a);
+  var line = String(b.summaryLine || "").trim();
+  if (line) return week + " · " + line;
+  return week;
 }
 
 function adminAuthHeaders(extra) {
@@ -670,39 +796,197 @@ function selectAthlete(id) {
 
 function renderAthlete(a) {
   var content = document.getElementById("content");
-  var genderHe = a.gender === "male" ? "זכר" : a.gender === "female" ? "נקבה" : (a.gender || "—");
   var joinedAt = a.joinedAt || a.createdAt || "";
-  var tenureLabel = "פעיל מאז " + fmt(joinedAt) + " (" + formatTenure(joinedAt) + ")";
-  var email = a.email || "—";
+  var frozen = !!a.membershipFrozen;
+  var decl = getDeclarationInfo(a);
+  var weekLabel = getBlockWeekLabel(a);
+  var acc = getAccState(a.athleteId);
+  var chips =
+    '<span class="ath-chip ' + (frozen ? "frozen" : "active") + '">' +
+    (frozen ? "מוקפא" : "פעיל") +
+    "</span>";
+  if (isCoachMember(a)) {
+    chips += '<span class="ath-chip coach">חבר מאמן</span>';
+  }
 
   content.innerHTML =
-    '<div class="panel-header">' +
-      "<div>" +
-        '<div class="panel-name">' + esc(a.displayName || a.athleteId) + "</div>" +
-        '<div class="panel-meta">' +
-          '<span class="row-label">מזהה:</span>' + esc(a.athleteId) + "&nbsp;&nbsp;" +
-          '<span class="row-label">מגדר:</span>' + esc(genderHe) + "&nbsp;&nbsp;" +
-          '<span class="row-label">עדכון:</span>' + fmt(a.updatedAt) + "<br>" +
-          '<span class="row-label">וותק:</span>' + esc(tenureLabel) + "&nbsp;&nbsp;" +
-          '<span class="row-label">מייל:</span>' + esc(email) +
+    '<div class="ath-wrap">' +
+      '<div class="ath-card">' +
+        '<div class="ath-card-top">' +
+          '<div class="ath-name">' + esc(a.displayName || a.athleteId) + "</div>" +
+          '<div class="ath-chips">' + chips + "</div>" +
+        "</div>" +
+        '<div class="ath-facts">' +
+          '<div class="ath-fact">' +
+            '<span class="ath-fact-label">נרשם:</span>' +
+            '<span class="ath-fact-value">' + esc(fmt(joinedAt) || "—") + "</span>" +
+          "</div>" +
+          '<div class="ath-fact">' +
+            '<span class="ath-fact-label">וותק:</span>' +
+            '<span class="ath-fact-value">' + esc(formatTenure(joinedAt)) + "</span>" +
+          "</div>" +
+          '<div class="ath-fact">' +
+            '<span class="ath-fact-label">הצהרה הבאה:</span>' +
+            '<span class="ath-fact-value">' + esc(decl.label) + "</span>" +
+            '<div class="ath-progress" title="מחזור הצהרה ~6 חודשים"><i style="width:' +
+            Math.max(0, Math.min(100, decl.pct)) +
+            '%"></i></div>' +
+          "</div>" +
+          '<div class="ath-fact">' +
+            '<span class="ath-fact-label">בלוק:</span>' +
+            '<span class="ath-fact-value">' + esc(weekLabel) + "</span>" +
+          "</div>" +
+        "</div>" +
+        '<div class="ath-actions">' +
+          '<button type="button" class="btn-freeze' +
+          (frozen ? " is-frozen" : "") +
+          '" onclick="toggleMembershipFrozen(\'' +
+          esc(a.athleteId) +
+          "')\">" +
+          (frozen ? "בטל הקפאה" : "הקפא מנוי") +
+          "</button>" +
+          '<button type="button" class="btn-handoff" onclick="openHandoffFromCard(\'' +
+          esc(a.athleteId) +
+          "')\">" +
+          '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 20h14v-2H5v2zm7-18L5.33 9h3.92v4h5.5V9h3.92L12 2z"/></svg>' +
+          "לינק הורדה</button>" +
+          '<button type="button" class="btn-delete-link" onclick="deleteAthlete(\'' +
+          esc(a.athleteId) +
+          "')\">מחק</button>" +
+        "</div>" +
+        '<div class="ath-id-line">מזהה · ' +
+        esc(a.athleteId) +
+        (a.email ? " · " + esc(a.email) : "") +
         "</div>" +
       "</div>" +
-      '<div class="panel-actions">' +
-        '<button type="button" class="btn-primary" style="white-space:nowrap" onclick="createHandoffLink(\'' + esc(a.athleteId) + '\')">צור לינק הורדה חד־פעמי</button>' +
-        '<button type="button" class="delete-btn" onclick="deleteAthlete(\'' + esc(a.athleteId) + '\')">מחק</button>' +
+      '<div class="ath-acc">' +
+        renderAccItem(
+          "intake",
+          "תחקור ראשוני",
+          intakeAccSummary(a),
+          acc.intake,
+          renderIntakeSectionBody(a)
+        ) +
+        renderAccItem(
+          "block",
+          "בלוק אימון נוכחי",
+          getBlockAccSummary(a),
+          acc.block,
+          renderBlockCalendarBody(a)
+        ) +
+        renderAccItem(
+          "handoff",
+          "מסירה לטלפון",
+          a.lastHandoffCreatedAt ? "לינק אחרון · " + fmt(a.lastHandoffCreatedAt) : "הורדה חד־פעמית למכשיר",
+          acc.handoff,
+          renderHandoffSectionBody(a)
+        ) +
+        renderAccItem(
+          "directives",
+          "הנחיות למאמן",
+          a.coachDirectives ? "יש הנחיות שמורות" : "אין הנחיות עדיין",
+          acc.directives,
+          renderDirectivesBody(a)
+        ) +
+        renderAccItem(
+          "history",
+          "היסטוריה / שימוש",
+          usageAccSummary(a),
+          acc.history,
+          renderUsageSection(a) + renderBlocksRow(a)
+        ) +
       "</div>" +
-    "</div>" +
-    renderHandoffSection(a) +
-    renderIntakeSection(a) +
-    renderBlockCalendar(a) +
-    renderStickyNotesSection(a) +
-    renderUsageSection(a) +
-    renderBlocksRow(a) +
-    renderDirectives(a);
+      renderStickyNotesSection(a) +
+    "</div>";
 
   var ta = document.getElementById("directives-input");
   if (ta) ta.value = a.coachDirectives || "";
   syncNotesPlaceholders();
+}
+
+function renderAccItem(key, title, summary, open, bodyHtml) {
+  return (
+    '<div class="ath-acc-item' +
+    (open ? " open" : "") +
+    '" data-acc="' +
+    esc(key) +
+    '">' +
+    '<button type="button" class="ath-acc-head" onclick="toggleAthleteAcc(\'' +
+    esc(key) +
+    "')\" aria-expanded=\"" +
+    (open ? "true" : "false") +
+    '">' +
+    '<span class="ath-acc-titles">' +
+    '<span class="ath-acc-title">' +
+    esc(title) +
+    "</span>" +
+    (summary
+      ? '<span class="ath-acc-summary">' + esc(summary) + "</span>"
+      : "") +
+    "</span>" +
+    '<span class="ath-acc-chevron" aria-hidden="true">▼</span>' +
+    "</button>" +
+    '<div class="ath-acc-body">' +
+    bodyHtml +
+    "</div>" +
+    "</div>"
+  );
+}
+
+function intakeAccSummary(a) {
+  if (a.intakeResetPending) return "ממתין לאיפוס במכשיר";
+  if (a.intakeSummary) return "הושלם · לחץ לפתיחה";
+  if (a.skillsSummary) return "יש סיכום כישורים";
+  return "אין סיכום עדיין";
+}
+
+function usageAccSummary(a) {
+  return (
+    "התאמות " +
+    toNum(a.workoutAdjustmentsCount) +
+    " · דיווחים " +
+    toNum(a.coachDebriefsCount)
+  );
+}
+
+function openHandoffFromCard(athleteId) {
+  setAthleteAcc("handoff", true);
+  var a = athletes.find(function(x) { return x.athleteId === athleteId; });
+  if (a) renderAthlete(a);
+  createHandoffLink(athleteId);
+}
+
+function toggleMembershipFrozen(athleteId) {
+  var a = athletes.find(function(x) { return x.athleteId === athleteId; });
+  if (!a) return;
+  var next = !a.membershipFrozen;
+  var msg = next
+    ? "להקפיא את המנוי של " + (a.displayName || athleteId) + "?\n\nהמתאמן יוצג כ״מוקפא״ בלוח האדמין."
+    : "לבטל הקפאה עבור " + (a.displayName || athleteId) + "?";
+  if (!confirm(msg)) return;
+  fetch("/api/admin-snapshot", {
+    method: "POST",
+    headers: adminAuthHeaders(),
+    body: JSON.stringify(
+      withAdminPassword({
+        action: "admin_member_status",
+        athleteId: athleteId,
+        membershipFrozen: next
+      })
+    )
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (!d || !d.ok) {
+        alert("לא נשמר: " + ((d && (d.message || d.error)) || "שגיאה"));
+        return;
+      }
+      a.membershipFrozen = next;
+      renderAthlete(a);
+    })
+    .catch(function() {
+      alert("שגיאת רשת — ההקפאה לא נשמרה");
+    });
 }
 
 function renderUsageSection(a) {
@@ -723,39 +1007,51 @@ function renderUsageSection(a) {
   "</div>";
 }
 
-function renderIntakeSection(a) {
+function renderIntakeSectionBody(a) {
   var lines = [];
-  if (a.skillsSummary) lines.push('<span class="row-label">כישורים:</span>' + esc(a.skillsSummary));
-  if (a.intakeSummary) lines.push('<div class="intake-summary" style="margin-top:8px">' + esc(a.intakeSummary) + "</div>");
+  if (a.skillsSummary) {
+    lines.push(
+      '<div style="margin-bottom:8px"><span class="row-label">כישורים:</span> ' +
+        esc(a.skillsSummary) +
+        "</div>"
+    );
+  }
+  if (a.intakeSummary) {
+    lines.push('<div class="intake-summary">' + esc(a.intakeSummary) + "</div>");
+  }
   var resetMeta = "";
   if (a.intakeResetPending) {
-    resetMeta = '<div style="font-size:12px;color:#fcd34d;margin-top:8px">ממתין שהמתאמן יפתח את לינק איפוס התחקור</div>';
+    resetMeta =
+      '<div style="font-size:12px;color:#fcd34d;margin-top:8px">ממתין שהמתאמן יפתח את לינק איפוס התחקור</div>';
   } else if (a.intakeResetRedeemedAt) {
-    resetMeta = '<div style="font-size:12px;color:#888;margin-top:8px">תחקור אופס במכשיר: ' + esc(fmt(a.intakeResetRedeemedAt)) + "</div>";
+    resetMeta =
+      '<div class="ath-muted" style="margin-top:8px">תחקור אופס במכשיר: ' +
+      esc(fmt(a.intakeResetRedeemedAt)) +
+      "</div>";
   } else if (a.intakeResetAt) {
-    resetMeta = '<div style="font-size:12px;color:#888;margin-top:8px">לינק איפוס נוצר: ' + esc(fmt(a.intakeResetAt)) + "</div>";
+    resetMeta =
+      '<div class="ath-muted" style="margin-top:8px">לינק איפוס נוצר: ' +
+      esc(fmt(a.intakeResetAt)) +
+      "</div>";
   }
-  return '<div class="section">' +
-    "<details>" +
-    '<summary style="cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between">' +
-    '<div class="section-title no-margin">תחקור ראשוני (לחץ להרחבה)</div>' +
-    "</summary>" +
-    '<div style="margin-top:12px">' +
-    (lines.length ? lines.join("") : '<div style="color:#555;font-size:13px">אין סיכום אינטייק עדיין</div>') +
+  return (
+    (lines.length
+      ? lines.join("")
+      : '<div class="ath-muted">אין סיכום אינטייק עדיין</div>') +
     resetMeta +
     '<div class="sandbox-actions" style="margin-top:12px">' +
-      '<button type="button" class="btn-secondary wait" onclick="createIntakeResetLink(\'' + esc(a.athleteId) + '\')">אפס תחקור — לינק חד־פעמי</button>' +
+    '<button type="button" class="btn-secondary wait" onclick="createIntakeResetLink(\'' +
+    esc(a.athleteId) +
+    "')\">אפס תחקור</button>" +
     "</div>" +
     '<div class="sandbox-status" id="intake-reset-status" style="margin-top:8px"></div>' +
     '<div class="handoff-link" id="intake-reset-link" style="display:none"></div>' +
     '<div class="sandbox-actions" id="intake-reset-copy-wrap" style="display:none;margin-top:8px">' +
-      '<button type="button" class="btn-secondary good" onclick="copyIntakeResetLink()">העתק לינק</button>' +
-      '<a class="btn-secondary" id="intake-reset-open" href="#" target="_blank" rel="noopener">פתח לבדיקה</a>' +
+    '<button type="button" class="btn-secondary good" onclick="copyIntakeResetLink()">העתק לינק</button>' +
+    '<a class="btn-secondary" id="intake-reset-open" href="#" target="_blank" rel="noopener">פתח לבדיקה</a>' +
     "</div>" +
-    '<div class="directives-hint">כשהמתאמן פותח את הלינק בטלפון — התחקור נפתח מחדש. התוכנית נשארת במכשיר.</div>' +
-    "</div>" +
-    "</details>" +
-    "</div>";
+    '<div class="directives-hint">כשהמתאמן פותח את הלינק בטלפון — התחקור נפתח מחדש. התוכנית נשארת במכשיר.</div>'
+  );
 }
 
 var lastIntakeResetUrl = "";
@@ -795,6 +1091,21 @@ function createIntakeResetLink(athleteId) {
         a.intakeResetAt = new Date().toISOString();
         a.intakeResetPending = true;
         a.intakeResetRedeemedAt = null;
+        setAthleteAcc("intake", true);
+        renderAthlete(a);
+        var st2 = document.getElementById("intake-reset-status");
+        if (st2) st2.textContent = d.message || "מוכן — שלח למתאמן. אחרי פתיחה הלינק נשרף.";
+        if (lastIntakeResetUrl) {
+          var linkEl2 = document.getElementById("intake-reset-link");
+          var wrap2 = document.getElementById("intake-reset-copy-wrap");
+          if (linkEl2) {
+            linkEl2.style.display = "block";
+            linkEl2.textContent = lastIntakeResetUrl;
+          }
+          if (wrap2) wrap2.style.display = "flex";
+          var open2 = document.getElementById("intake-reset-open");
+          if (open2) open2.href = lastIntakeResetUrl;
+        }
       }
     })
     .catch(function() {
@@ -816,48 +1127,71 @@ function copyIntakeResetLink() {
 var DAYS_HE = ["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳", "ש׳"];
 var MONTHS_HE = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
 
-function renderBlockCalendar(a) {
+function renderBlockCalendarBody(a) {
   var b = a.currentBlock;
   if (!b) {
-    return '<div class="section"><div class="section-title">בלוק נוכחי</div><div style="color:#555;font-size:13px">אין בלוק פעיל</div></div>' +
-      renderDayNotesBox(a, null, null, false);
+    return (
+      '<div class="ath-muted">אין בלוק פעיל</div>' +
+      renderDayNotesBox(a, null, null, false)
+    );
   }
 
   var summaryLine = b.summaryLine || "";
   var startStr = b.blockStart || b.start || "";
   var map = buildBlockWorkoutMap(b, startStr);
 
-  var header = '<div class="block-header">' +
-    '<span class="block-title">' + esc(summaryLine) + "</span>" +
+  var header =
+    '<div class="block-header">' +
+    '<span class="block-title">' +
+    esc(summaryLine) +
+    "</span>" +
     (startStr ? '<span class="block-dates">מ‑' + fmt(startStr) + "</span>" : "") +
     "</div>";
 
   var monthBase = startStr ? new Date(startStr) : new Date();
   if (isNaN(monthBase.getTime())) monthBase = new Date();
   var offset = blockMonthOffsetByAthlete[a.athleteId] || 0;
-  var shownMonthDate = new Date(monthBase.getFullYear(), monthBase.getMonth() + offset, 1);
-  var monthLabel = MONTHS_HE[shownMonthDate.getMonth()] + " " + shownMonthDate.getFullYear();
-  var monthNav = '<div class="month-nav">' +
+  var shownMonthDate = new Date(
+    monthBase.getFullYear(),
+    monthBase.getMonth() + offset,
+    1
+  );
+  var monthLabel =
+    MONTHS_HE[shownMonthDate.getMonth()] + " " + shownMonthDate.getFullYear();
+  var monthNav =
+    '<div class="month-nav">' +
     '<button type="button" onclick="changeBlockMonth(-1)" style="background:#2a2a2e;border:1px solid #333;border-radius:6px;padding:3px 10px;color:#ccc;cursor:pointer;font-size:12px">◀</button>' +
-    '<span style="font-size:12px;color:#888">' + esc(monthLabel) + "</span>" +
+    '<span style="font-size:12px;color:#888">' +
+    esc(monthLabel) +
+    "</span>" +
     '<button type="button" onclick="changeBlockMonth(1)" style="background:#2a2a2e;border:1px solid #333;border-radius:6px;padding:3px 10px;color:#ccc;cursor:pointer;font-size:12px">▶</button>' +
     "</div>";
   var calHtml = renderMonthGrid(a, map, shownMonthDate);
   var selectedDetailsHtml = renderSelectedDayWorkout(a, map);
-  var dayNotes = renderDayNotesBox(a, map, selectedDayByAthlete[a.athleteId], true);
+  var dayNotes = renderDayNotesBox(
+    a,
+    map,
+    selectedDayByAthlete[a.athleteId],
+    true
+  );
 
-  return '<div class="section" id="block-section">' +
-    '<div class="section-title">בלוק נוכחי</div>' +
-    header + monthNav +
-    '<div id="month-grid-wrap">' + calHtml + "</div>" +
+  return (
+    '<div id="block-section">' +
+    header +
+    monthNav +
+    '<div id="month-grid-wrap">' +
+    calHtml +
+    "</div>" +
     selectedDetailsHtml +
     dayNotes +
-    "</div>";
+    "</div>"
+  );
 }
 
 function changeBlockMonth(delta) {
   var a = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
   if (!a) return;
+  setAthleteAcc("block", true);
   var curr = blockMonthOffsetByAthlete[a.athleteId] || 0;
   blockMonthOffsetByAthlete[a.athleteId] = curr + delta;
   renderAthlete(a);
@@ -866,6 +1200,7 @@ function changeBlockMonth(delta) {
 function selectBlockDay(dateKey) {
   var a = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
   if (!a) return;
+  setAthleteAcc("block", true);
   selectedDayByAthlete[a.athleteId] = dateKey;
   pendingLearnNoteId = null;
   renderAthlete(a);
@@ -1354,16 +1689,17 @@ function renderBlocksRow(a) {
   return '<div class="section"><div class="section-title">היסטוריית בלוקים</div><div class="blocks-row">' + rows + "</div></div>";
 }
 
-function renderDirectives(a) {
-  return '<div class="section">' +
-    '<div class="section-title">הנחיות למאמן</div>' +
+function renderDirectivesBody(a) {
+  return (
     '<div class="directives-wrap">' +
     '<textarea id="directives-input" placeholder="לדוגמה: המתאמן פצוע בברכיים — פחות לאנג׳ים. מתאים לאימוני בוקר מוקדם.">' +
-    esc(a.coachDirectives || "") + "</textarea>" +
+    esc(a.coachDirectives || "") +
+    "</textarea>" +
     '<button type="button" class="save-directives-btn" id="save-dir-btn" onclick="saveDirectives()">שמור הנחיות</button>' +
     '<div class="save-status" id="dir-status"></div>' +
     '<div class="directives-hint">ההנחיות יוזרקו לכל שיחת מאמן ובנייה של בלוק עבור המתאמן הזה</div>' +
-    "</div></div>";
+    "</div>"
+  );
 }
 
 function saveDirectives() {
@@ -1415,27 +1751,34 @@ function deleteAthlete(id) {
     });
 }
 
-function renderHandoffSection(a) {
+function renderHandoffSectionBody(a) {
   var last = "";
   if (a.lastHandoffCreatedAt) {
-    last = '<div style="font-size:12px;color:#888;margin-top:6px">לינק אחרון נוצר: ' +
+    last =
+      '<div class="ath-muted" style="margin-top:6px">לינק אחרון נוצר: ' +
       esc(fmt(a.lastHandoffCreatedAt)) +
-      (a.lastHandoffExpiresAt ? " · בתוקף עד " + esc(fmt(a.lastHandoffExpiresAt)) : "") +
+      (a.lastHandoffExpiresAt
+        ? " · בתוקף עד " + esc(fmt(a.lastHandoffExpiresAt))
+        : "") +
       "</div>";
   }
-  return '<div class="section">' +
-    '<div class="section-title">מסירה לטלפון (הורדה חד־פעמית)</div>' +
-    '<div style="font-size:13px;color:#aaa;line-height:1.5">יוצר לינק שמוריד את התוכנית למכשיר של המתאמן פעם אחת. אחר כך הניהול נשאר אצלו — לא אצלנו בשרת.</div>' +
-    '<div class="handoff-box" id="handoff-box">' +
-      '<div class="sandbox-status" id="handoff-status"></div>' +
-      '<div class="handoff-link" id="handoff-link" style="display:none"></div>' +
-      '<div class="sandbox-actions" id="handoff-copy-wrap" style="display:none">' +
-        '<button type="button" class="btn-secondary good" onclick="copyHandoffLink()">העתק לינק</button>' +
-        '<a class="btn-secondary" id="handoff-open" href="#" target="_blank" rel="noopener">פתח לבדיקה</a>' +
-      "</div>" +
-      last +
+  return (
+    '<div style="font-size:13px;color:var(--text-muted);line-height:1.5;margin-bottom:10px">יוצר לינק שמוריד את התוכנית למכשיר של המתאמן פעם אחת. אחר כך הניהול נשאר אצלו — לא אצלנו בשרת.</div>' +
+    '<div class="sandbox-actions" style="margin-bottom:8px">' +
+    '<button type="button" class="btn-primary" onclick="createHandoffLink(\'' +
+    esc(a.athleteId) +
+    "')\">צור לינק הורדה חד־פעמי</button>" +
     "</div>" +
-  "</div>";
+    '<div class="handoff-box" id="handoff-box">' +
+    '<div class="sandbox-status" id="handoff-status"></div>' +
+    '<div class="handoff-link" id="handoff-link" style="display:none"></div>' +
+    '<div class="sandbox-actions" id="handoff-copy-wrap" style="display:none">' +
+    '<button type="button" class="btn-secondary good" onclick="copyHandoffLink()">העתק לינק</button>' +
+    '<a class="btn-secondary" id="handoff-open" href="#" target="_blank" rel="noopener">פתח לבדיקה</a>' +
+    "</div>" +
+    last +
+    "</div>"
+  );
 }
 
 var lastHandoffUrl = "";

@@ -1,5 +1,16 @@
 # Changelog
 
+## [Admin 1.2] - 2026-08-09
+
+### Admin athlete page — ops card + accordion
+- **Admin · 1.2:** athlete detail rebuilt as identity card + clear open/closed accordion (not a flat wall of sections).
+- Card facts: registered date, tenure, declaration renewal (~6 months + progress), current block week.
+- Actions: freeze membership (persisted via `admin_member_status`), download handoff link, delete.
+- Accordions: intake · training block · phone handoff · coach directives · history/usage. Sticky notes kept below.
+- Preview: `preview-admin-athlete-ops.html`. No Stage 2 create/edit plan.
+
+---
+
 ## [21.5.1] - 2026-08-08
 
 ### Personal Coach — Done report stamp sticks (no double finish)

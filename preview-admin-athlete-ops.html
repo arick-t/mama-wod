@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Admin · 1.2 athlete ops preview</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Heebo:wght@400;600;700;800&display=swap">
+<style>
+:root{
+  --bg:#121212;--bg-elev:#181818;--bg-card:#1a1a1a;--text:#f5f2ea;--text-muted:#b0aaa0;--text-meta:#8a8580;
+  --brand:#E8451A;--coach:#9b6bb8;--part:#6fafa4;--note:#7eb8c9;--line:#2c2c2c;
+  --font-ui:'Heebo',sans-serif;--font-display:'Oswald','Heebo',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-ui);background:var(--bg);color:var(--text);padding:16px;line-height:1.55}
+.wrap{max-width:420px;margin:0 auto}
+.note{color:var(--text-meta);font-size:.8em;margin:0 0 12px;padding:10px;border:1px dashed var(--line);border-radius:10px}
+.ath-card{background:var(--bg-card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:12px}
+.ath-card-top{display:flex;justify-content:space-between;gap:10px;margin-bottom:14px}
+.ath-name{font-size:1.4em;font-weight:800}
+.ath-chips{display:flex;gap:6px}
+.ath-chip{padding:3px 10px;border-radius:999px;font-size:.72em;font-weight:700;border:1px solid}
+.ath-chip.active{background:rgba(76,175,112,.14);border-color:rgba(76,175,112,.4);color:#8fd49a}
+.ath-chip.coach{background:rgba(155,107,184,.16);border-color:rgba(155,107,184,.4);color:#c9a3dd}
+.ath-facts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.ath-fact-label{display:block;font-size:.72em;color:var(--text-meta);font-weight:600}
+.ath-fact-value{display:block;font-weight:700}
+.ath-progress{margin-top:7px;height:5px;border-radius:999px;background:#2a2a2a}
+.ath-progress>i{display:block;height:100%;width:73%;background:var(--brand);border-radius:999px}
+.ath-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{border:none;border-radius:10px;padding:10px 14px;font-weight:700;font-family:inherit;cursor:pointer}
+.btn.brand{background:var(--brand);color:#fff}
+.btn.quiet{background:var(--bg-elev);border:1px solid var(--line);color:var(--text-muted)}
+.del{background:transparent;border:none;color:#f87171;font-weight:700;font-family:inherit}
+.acc{display:flex;flex-direction:column;gap:10px}
+.item{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.head{display:flex;justify-content:space-between;padding:14px 16px;align-items:center}
+.title{font-weight:800}
+.sum{font-size:.78em;color:var(--part);font-weight:600;margin-top:3px}
+.body{padding:14px 16px;border-top:1px solid var(--line);color:var(--note);font-size:.92em}
+.gold{margin-top:12px;display:inline-block;border:1px solid rgba(245,197,24,.45);color:#e6c86a;border-radius:8px;padding:8px 12px;font-size:.85em;font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="note">Preview · Admin 1.2 athlete ops card (identity + accordion). Static mock.</p>
+  <div class="ath-card">
+    <div class="ath-card-top">
+      <div class="ath-name">אריק ט.</div>
+      <div class="ath-chips">
+        <span class="ath-chip active">פעיל</span>
+        <span class="ath-chip coach">חבר מאמן</span>
+      </div>
+    </div>
+    <div class="ath-facts">
+      <div><span class="ath-fact-label">נרשם:</span><span class="ath-fact-value">12.02.2026</span></div>
+      <div><span class="ath-fact-label">וותק:</span><span class="ath-fact-value">6 חודשים</span></div>
+      <div>
+        <span class="ath-fact-label">הצהרה הבאה:</span>
+        <span class="ath-fact-value">בעוד 48 ימים</span>
+        <div class="ath-progress"><i></i></div>
+      </div>
+      <div><span class="ath-fact-label">בלוק:</span><span class="ath-fact-value">שבוע 3/5</span></div>
+    </div>
+    <div class="ath-actions">
+      <button class="btn brand" type="button">הקפא מנוי</button>
+      <button class="btn quiet" type="button">לינק הורדה</button>
+      <button class="del" type="button">מחק</button>
+    </div>
+  </div>
+  <div class="acc">
+    <div class="item">
+      <div class="head"><div><div class="title">תחקור ראשוני</div><div class="sum">הושלם · לחץ לפתיחה</div></div><span>▲</span></div>
+      <div class="body">הושלם בהצלחה. אין דגלים פתוחים.<div class="gold">אפס תחקור</div></div>
+    </div>
+    <div class="item"><div class="head"><div><div class="title">בלוק אימון נוכחי</div><div class="sum">שבוע 3/5 · Strength emphasis</div></div><span>▼</span></div></div>
+    <div class="item"><div class="head"><div><div class="title">מסירה לטלפון</div><div class="sum">הורדה חד־פעמית למכשיר</div></div><span>▼</span></div></div>
+    <div class="item"><div class="head"><div><div class="title">הנחיות למאמן</div><div class="sum">אין הנחיות עדיין</div></div><span>▼</span></div></div>
+    <div class="item"><div class="head"><div><div class="title">היסטוריה / שימוש</div><div class="sum">התאמות 0 · דיווחים 0</div></div><span>▼</span></div></div>
+  </div>
+</div>
+</body>
+</html>
