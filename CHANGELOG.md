@@ -1,5 +1,13 @@
 # Changelog
 
+## [UX] Confirm? → one-tap כן - 2026-08-09
+
+### Personal Coach chat — quick confirm
+- When the last coach bubble is a **Confirm?** / אישור question, show a **כן** button under the thread.
+- Tap sends `כן` (same as typing it). Decline / changes stay free-text — no auto **לא**.
+
+---
+
 ## [Coach 2.2.1] - 2026-08-09
 
 ### Personal Coach — POL-026 calendar truth + zero essay chat
