@@ -5,8 +5,26 @@ https://drive.google.com/drive/u/0/folders/1WLMbabNpXZ80qJPwgrxAY2I77CdTboAo
 
 Folder ID: `1WLMbabNpXZ80qJPwgrxAY2I77CdTboAo`
 
+## כפתור «סנכרן» באדמין (פרודקשן)
+`/admin.html` → **סנכרן** קורא ל־`/api/admin-drive-sync` (אדמין בלבד).
+
+זרימה:
+1. מושך קבצים מתיקיית ה־Drive (אם מוגדר חיבור Google ב־Vercel)
+2. מסנן החוצה L1/L2 (לא נכנסים ל־File Search)
+3. מעלה חדש/שהשתנה ל־`GEMINI_FILE_SEARCH_STORE` = **מח דרגה 3 בלבד**
+
+הגדר ב־Vercel (ואז Redeploy):
+- `GEMINI_API_KEY` + `GEMINI_FILE_SEARCH_STORE`
+- `GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON` = JSON מלא של Service Account  
+  **או** `GOOGLE_DRIVE_CLIENT_ID` + `GOOGLE_DRIVE_CLIENT_SECRET` + `GOOGLE_DRIVE_REFRESH_TOKEN`
+- אופציונלי: `COACH_DRIVE_FOLDER_ID` (ברירת מחדל = התיקייה למעלה)
+
+שתף את תיקיית ה־Drive עם אימייל ה־Service Account (Viewer).
+
+בלי חיבור Drive בשרת — הכפתור **לא** יכול למשוך מ־Drive; יוחזר toast ברור (`missing_drive_auth`).
+
 **חשוב:** קישור HTTPS ל־Drive **לא** נקרא ישירות ע״י Gemini File Search.
-צריך תיקייה מקומית (Drive Desktop או העתקה ל־inbox) ואז `npm run coach:sync-brain`.
+צריך Drive API (למעלה) **או** תיקייה מקומית (Drive Desktop / inbox) ואז `npm run coach:sync-brain`.
 
 ## מראה מקומי (Google Drive for Desktop)
 במחשב הזה זוהתה תיקייה מסונכרנת:

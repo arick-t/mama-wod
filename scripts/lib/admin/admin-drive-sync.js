@@ -1,11 +1,12 @@
 /**
- * Admin Drive / coach-brain sync
+ * Admin Drive / coach-brain sync (L3 File Search only)
  * POST /api/admin-drive-sync
- *   { adminPassword } — runs scripts/lib/coach-brain-sync (manual File Search push)
+ *   { adminPassword } — pulls Drive (when configured) → Gemini File Search
  *
  * Same effect as: npm run coach:sync-brain
- * Requires GEMINI_API_KEY + GEMINI_FILE_SEARCH_STORE and a readable knowledge dir
- * (COACH_KNOWLEDGE_DIR or experiments/personal-coach/knowledge-inbox).
+ * Requires GEMINI_API_KEY + GEMINI_FILE_SEARCH_STORE
+ * Prefer: GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON (or OAuth refresh) + shared Drive folder
+ * Fallback: COACH_KNOWLEDGE_DIR / knowledge-inbox (L1/L2 filtered out)
  */
 
 const { checkRateLimit, sendRateLimit } = require("../../../lib/rate-limit");
@@ -13,6 +14,7 @@ const { runCoachBrainSync, readLastSync } = require("../coach-brain-sync");
 const {
   resolveAdminPassword,
   checkAdminAuth: sharedCheckAdminAuth,
+  adminAuthDenied,
 } = require("./admin-auth");
 const { applyCors } = require("../../../lib/cors-allowlist");
 
@@ -30,10 +32,9 @@ module.exports = async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(204).end();
 
   if (req.method === "GET") {
-    if (!checkAdminAuth(req)) {
-      return res.status(401).json({ ok: false, error: "unauthorized" });
-    }
-    return res.status(200).json({ ok: true, lastSync: readLastSync() });
+    if (!checkAdminAuth(req)) return adminAuthDenied(res);
+    const lastSync = await readLastSync();
+    return res.status(200).json({ ok: true, lastSync: lastSync });
   }
 
   if (req.method !== "POST") {
@@ -43,16 +44,15 @@ module.exports = async function handler(req, res) {
   const rl = checkRateLimit(req, { name: "admin-drive-sync", limit: 4, windowMs: 60_000 });
   if (!rl.ok) return sendRateLimit(res, rl);
 
-  if (!checkAdminAuth(req)) {
-    return res.status(401).json({ ok: false, error: "unauthorized" });
-  }
+  if (!checkAdminAuth(req)) return adminAuthDenied(res);
 
   try {
     const result = await runCoachBrainSync({});
+    const lastSync = await readLastSync();
     return res.status(200).json({
       ok: !!result.ok,
       result: result,
-      lastSync: readLastSync(),
+      lastSync: lastSync,
     });
   } catch (e) {
     return res.status(500).json({

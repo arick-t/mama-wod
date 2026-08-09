@@ -3332,6 +3332,7 @@ function syncPprogModeUi() {
     else syncPprogBrickChatUi();
   }
   syncPprogNextBlockUi();
+  maybeBootPushAdminSnapshot();
 }
 
 /** After intake: whole-program chat lives in the floating coach panel (FAB), not month-only. */
@@ -12797,6 +12798,7 @@ function showTab(name) {
   if (name === "pprog" && PPROG_TAB_ENABLED) {
     try {
       initPprogUi();
+      maybeBootPushAdminSnapshot();
       if (!sessionStorage.dw_pprog_open_sent) {
         sessionStorage.dw_pprog_open_sent = "1";
         sendAnalytics("personal_coach_opened", { coachArea: "tab_open" });

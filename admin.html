@@ -524,7 +524,7 @@ function refreshAdmin() {
   loadAthletes();
 }
 
-/** Sync Drive knowledge → File Search (header button). */
+/** Sync Drive knowledge → File Search L3 only (header button). */
 function syncDriveBrain() {
   if (syncInFlight) return;
   syncInFlight = true;
@@ -532,7 +532,7 @@ function syncDriveBrain() {
   var label = document.getElementById("btn-sync-drive-label");
   if (btn) btn.disabled = true;
   if (label) label.textContent = "מסנכרן…";
-  showHdrToast("מתחיל סנכרון…");
+  showHdrToast("מסנכרן Drive → מח דרגה 3…");
 
   fetch("/api/admin-drive-sync", {
     method: "POST",
@@ -544,20 +544,38 @@ function syncDriveBrain() {
       syncInFlight = false;
       if (btn) btn.disabled = false;
       if (label) label.textContent = "סנכרן";
-      if (res.status === 401) throw new Error("unauthorized");
+      if (res.status === 401 || res.status === 503) {
+        throw new Error((res.j && res.j.message) || "unauthorized");
+      }
       var result = (res.j && res.j.result) || {};
+      var code = String(result.code || "");
       var msg = result.message || (res.j && res.j.message) || "סנכרון הסתיים";
-      if (result.ok || result.code === "noop" || result.code === "empty" || result.code === "synced") {
-        showHdrToast(msg, result.code === "empty" ? "warn" : undefined);
-      } else {
+      var src = result.source === "drive" ? " (מ־Drive)" : result.source === "local" ? " (מקומי)" : "";
+      if (code === "synced" || code === "synced_more") {
+        showHdrToast("סונכרן ✓" + src + " — " + msg);
+      } else if (code === "noop") {
+        showHdrToast("אין שינוי" + src + " — " + msg, "warn");
+      } else if (code === "empty" || code === "drive_empty" || code === "empty_after_filter") {
+        showHdrToast("אין קבצי L3" + src + " — " + msg, "warn");
+      } else if (code === "missing_drive_auth" || code === "missing_key" || code === "missing_store") {
         showHdrToast(msg, "err");
+      } else if (result.ok) {
+        showHdrToast(msg + src);
+      } else {
+        showHdrToast(msg || "סנכרון נכשל", "err");
       }
     })
     .catch(function(e) {
       syncInFlight = false;
       if (btn) btn.disabled = false;
       if (label) label.textContent = "סנכרן";
-      var msg = e && e.message === "unauthorized" ? "סיסמה לא תקפה" : "סנכרון נכשל — בדוק מפתחות Gemini / תיקיית ידע";
+      var em = e && e.message ? String(e.message) : "";
+      var msg =
+        em === "unauthorized" || em.indexOf("סיסמה") >= 0
+          ? "סיסמה לא תקפה"
+          : em && em !== "unauthorized"
+            ? em.slice(0, 180)
+            : "סנכרון נכשל — בדוק Gemini / חיבור Drive ב־Vercel";
       showHdrToast(msg, "err");
     });
 }
