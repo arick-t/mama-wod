@@ -231,13 +231,19 @@ function testStaticRegressions() {
   const ver = fs.readFileSync(path.join(root, "VERSION"), "utf8").trim();
   const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
   ok("VERSION matches package", ver === pkg.version);
-  ok("coachVersion 2.2 in API", pc.includes('const COACH_VERSION = "2.2"') || pc.includes("COACH_VERSION = \"2.2\""));
+  ok(
+    "coachVersion 2.2.x in API",
+    /const COACH_VERSION = "2\.2(\.\d)?"/.test(pc) || /COACH_VERSION = "2\.2(\.\d)?"/.test(pc)
+  );
   ok(
     "app daily workouts subtitle on 21.3+ display line",
     /DAILY WORKOUTS · v21\.(3(\.\d+)?|4(\.\d+)?|5(\.\d+)?)\b/.test(idx) &&
       !/DAILY WORKOUTS · v2\.1\b/.test(idx)
   );
-  ok("coach subtitle 2.2", idx.includes('COACH_VERSION = "2.2"') || idx.includes("COACH · v2.2"));
+  ok(
+    "coach subtitle 2.2.x",
+    /COACH_VERSION = "2\.2(\.\d)?"/.test(idx) || /COACH · v2\.2(\.\d)?\b/.test(idx)
+  );
 }
 
 function testModulesLoad() {

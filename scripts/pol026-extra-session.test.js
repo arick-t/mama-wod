@@ -32,9 +32,11 @@ ok("POL-026 in coach-policy-rules.md", /POL-026/.test(rules));
 ok("Budget gates in policy", /Budget gates \(HARD\)/.test(rules) || /Budget-approved/.test(policy));
 ok("POL-026 in personal-coach brick chat", /POL-026/.test(pc));
 ok("enforce helper wired", /enforcePol026BrickChatResponse/.test(pc));
+ok("extract JSON before Done display", /Extract plan JSON from raw model text BEFORE/.test(pc));
 ok("client extraSessions store", /store\.extraSessions/.test(index));
 ok("client early remember", /function pprogRememberExtraSession/.test(index));
-ok("client local Rest fallback", /function pprogApplyPol026LocalRestTomorrow/.test(index));
+ok("client calendar truth", /function pprogApplyPol026CalendarTruth/.test(index));
+ok("client logged session builder", /function pprogBuildLoggedSessionParts/.test(index));
 ok("ATHLETE_EXTRA_SESSIONS card", /ATHLETE_EXTRA_SESSIONS/.test(pc));
 
 const noteHe =
@@ -50,20 +52,20 @@ ok(
   ])
 );
 
-const pre = enforcePol026BrickChatResponse(
-  "I am an AI engine and cannot evaluate physical risks or injuries. Please consult.\n\n<<<WEEK_JSON\n{}\nWEEK_JSON>>>\nLots of equipment questions?",
-  { confirmed: false }
-);
-ok("pre-confirm strips JSON + injury", !/WEEK_JSON/i.test(pre) && !/physical risks/i.test(pre));
+const essay =
+  "I'll adjust the schedule accordingly, taking into account the intense workout. " +
+  "Let's review Thursday Friday Saturday. Confirm your availability?";
+const pre = enforcePol026BrickChatResponse(essay + "\n<<<WEEK_JSON\n{}\nWEEK_JSON>>>", {
+  confirmed: false,
+});
+ok("pre-confirm ignores essays", pre === POL026_DEFAULT_CONFIRM);
 ok("pre-confirm has Confirm?", /confirm\?/i.test(pre));
-ok("pre-confirm short default when needed", pre.length < 350);
 
 const post = enforcePol026BrickChatResponse(
-  "Done.\n<<<BLOCK_JSON\n{\"weeks\":[]}\nBLOCK_JSON>>>\n<<<WEEK_JSON\n{\"days\":{}}\nWEEK_JSON>>>",
+  "I'll adjust remaining sessions...\n<<<WEEK_JSON\n{\"days\":{}}\nWEEK_JSON>>>\nDone.",
   { confirmed: true }
 );
-ok("post-confirm strips BLOCK", !/BLOCK_JSON/i.test(post));
-ok("post-confirm keeps WEEK", /WEEK_JSON/i.test(post));
+ok("post-confirm is only Done", post === "Done.");
 ok("default confirm constant set", !!POL026_DEFAULT_CONFIRM);
 
 console.log("All POL-026 Budget gate checks passed.");

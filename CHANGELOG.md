@@ -1,5 +1,15 @@
 # Changelog
 
+## [Coach 2.2.1] - 2026-08-09
+
+### Personal Coach — POL-026 calendar truth + zero essay chat
+- **Coach subtitle:** `COACH · v2.2.1`.
+- After Confirm: force athlete bubble to **Done.** only (no pre-Done essays).
+- Calendar truth: Israel-today → logged session card (never leave Rest); tomorrow → Rest.
+- Pre-confirm: always the short Confirm? line (model essays discarded).
+
+---
+
 ## [Coach 2.2] - 2026-08-09
 
 ### Personal Coach — POL-026 unplanned/extra session (whole-brick)

@@ -20,7 +20,7 @@
  * Groq keeps chat alive when the Gemini key is missing/invalid (common GitHub Pages + Vercel setup).
  * Programming stays Gemini-only (POL-020).
  */
-const COACH_VERSION = "2.2";
+const COACH_VERSION = "2.2.1";
 const fs = require("fs");
 const path = require("path");
 function resolveAppVersion() {
@@ -2312,26 +2312,34 @@ module.exports = async function handler(req, res) {
       : "";
 
   function packOk(result, extra) {
-    let rawOut = String((result && result.text) || "");
+    const rawModel = String((result && result.text) || "");
     const brickChatTurn = body.brickChat === true || body.wholeProgramChat === true;
     const pol026Turn =
       !programming && brickChatTurn && messagesLookLikePol026ExtraSession(messages);
     const pol026Confirmed = pol026Turn && isExplicitPol026Confirm(lastUserLine);
+    /* Extract plan JSON from raw model text BEFORE forcing athlete-facing Done./Confirm? */
+    let block = pol026Turn ? extractBlockJson(rawModel) : null;
+    let week = pol026Turn ? extractWeekJson(rawModel, weekIndexForExtract) : null;
+    let part = pol026Turn ? extractPartJson(rawModel) : null;
+    let day = pol026Turn ? extractDayJson(rawModel) : null;
+
+    let rawOut = rawModel;
     if (pol026Turn) {
-      rawOut = enforcePol026BrickChatResponse(rawOut, { confirmed: pol026Confirmed });
+      rawOut = enforcePol026BrickChatResponse(rawModel, { confirmed: pol026Confirmed });
     }
     const guarded = applyCoachOutputGuard(rawOut, {
       programming: programming,
     });
     let safeText = guarded.text;
     if (pol026Turn) {
-      /* Re-enforce after output guard so Confirm?/JSON gates always win */
       safeText = enforcePol026BrickChatResponse(safeText, { confirmed: pol026Confirmed });
     }
-    let block = extractBlockJson(safeText);
-    let week = extractWeekJson(safeText, weekIndexForExtract);
-    let part = extractPartJson(safeText);
-    let day = extractDayJson(safeText);
+    if (!pol026Turn) {
+      block = extractBlockJson(safeText);
+      week = extractWeekJson(safeText, weekIndexForExtract);
+      part = extractPartJson(safeText);
+      day = extractDayJson(safeText);
+    }
     if (pol026Turn && !pol026Confirmed) {
       block = null;
       week = null;
