@@ -132,6 +132,18 @@ h1{
   to{opacity:1;transform:scale(1)}
 }
 .pprog-finish-reported.lock-pop{animation:pprog-finish-lock-pop .2s ease-out}
+.pprog-logged-extra-flag{
+  display:inline-block;margin-left:8px;padding:2px 8px;border-radius:6px;
+  border:1px solid rgba(26,155,138,.55);background:rgba(26,155,138,.14);
+  color:#8ec8bc;font-size:.62em;font-weight:800;letter-spacing:.04em;vertical-align:middle;
+}
+.pprog-logged-extra-banner{
+  margin:0 0 10px;padding:8px 10px;border-radius:8px;
+  border:1px solid rgba(26,155,138,.35);background:rgba(26,155,138,.08);
+  color:#a8ddd2;font-size:.78em;font-weight:600;line-height:1.35;
+}
+.pprog-cal-cell.logged-extra:not(.active){color:#1A9B8A;box-shadow:inset 0 0 0 1.5px rgba(26,155,138,.55)}
+.pprog-cal-cell.logged-extra.active{box-shadow:inset 0 0 0 2px #8ec8bc}
 html.pprog-finish-open,body.pprog-finish-open{overflow:hidden;overscroll-behavior:none}
 .pprog-finish-overlay{
   display:none;position:fixed;inset:0;
@@ -1022,7 +1034,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
 <div class="header-sub">DAILY WORKOUTS · v21.5.1</div>
-<div class="header-sub" id="coachVersionSub">COACH · v2.2.1</div>
+<div class="header-sub" id="coachVersionSub">COACH · v2.2.2</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap active" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
@@ -1584,10 +1596,11 @@ function rememberAiClientError(summary) {
  *   Coach 2.1 — Cost Guardrails v1 (POL-COST sessionDate hard-block + monthly ≈₪5).
  *   Coach 2.2 — POL-026 unplanned/extra session whole-brick harden (Budget gates).
  *   Coach 2.2.1 — POL-026 calendar truth (today logged + tomorrow Rest) + Done.-only chat.
+ *   Coach 2.2.2 — POL-026 calendar indicator sticks (loggedExtra survive normalize / week_detail).
  * Keep this badge in sync with the brain actually serving /api/personal-coach.
  * Display: header “COACH · v{COACH_VERSION}” only — do NOT bump app DAILY WORKOUTS / <title> here.
  */
-var COACH_VERSION = "2.2.1";
+var COACH_VERSION = "2.2.2";
 try {
   var __coachVerEl = document.getElementById("coachVersionSub");
   if (__coachVerEl) __coachVerEl.textContent = "COACH · v" + COACH_VERSION;
@@ -4798,6 +4811,13 @@ function sendPprogMessage(ev) {
           return;
         }
       }
+      if (pol026Ctx && lastUserConfirm) {
+        try {
+          /* Always re-assert calendar truth + full week re-render so strip/day card leave REST */
+          pprogApplyPol026CalendarTruth(msgs, { recordEdit: false });
+          renderPprogWeek();
+        } catch (eReTruth) {}
+      }
       renderPprogChat();
       syncPprogModeUi();
       keepPprogChatKeyboardOpen();
@@ -4946,11 +4966,26 @@ function isPprogRestFocus(focus) {
   return false;
 }
 
+/** POL-026 logged extra session — must never render as REST DAY. */
+function pprogDayIsLoggedExtraSession(dayData) {
+  if (!dayData || typeof dayData !== "object") return false;
+  if (dayData.loggedExtraSession === true) return true;
+  var parts = Array.isArray(dayData.parts) ? dayData.parts : [];
+  for (var i = 0; i < parts.length; i++) {
+    var title = String((parts[i] && parts[i].title) || "").toLowerCase();
+    if (/^logged\s*session\b/.test(title) || /\blogged\s*extra\b/.test(title)) return true;
+  }
+  return false;
+}
+
 /** Rest day: overview focus / parts indicate rest / מנוחה — never treat empty/loading as rest */
 function isPprogRestDay(dayKey, dayData, week) {
+  /* POL-026: athlete-logged session wins over a stale Rest overview row */
+  if (pprogDayIsLoggedExtraSession(dayData)) return false;
   var focus = pprogOverviewFocus(week, dayKey);
   var focusL = focus.toLowerCase().trim();
   var parts = (dayData && dayData.parts) || [];
+  if (/^logged\b/i.test(focusL)) return false;
   if (isPprogRestFocus(focus)) return true;
   if (/^(recovery|active\s*recovery|recovery\s*day)$/i.test(focusL) && (!parts.length || parts.length <= 1)) {
     var onlyEmpty =
@@ -5599,6 +5634,18 @@ function normalizePprogWeek(week, prevWeek, weekStartOverride, weekMeta) {
     var day = srcDays[k] || {};
     var prev = prevDays[k] || {};
     var parts = normalizePprogParts(day.parts != null ? day.parts : day.workout || day.sections, k);
+    /* POL-026: logged extra session must survive re-normalize / week_detail (same class as finishFeedback) */
+    var loggedExtra =
+      (day && day.loggedExtraSession === true) ||
+      (prev && prev.loggedExtraSession === true) ||
+      pprogDayIsLoggedExtraSession(day) ||
+      pprogDayIsLoggedExtraSession(prev);
+    if (loggedExtra && pprogDayIsLoggedExtraSession(prev)) {
+      var newRestish = pprogPartsLookLikeRestOnly(parts);
+      if (newRestish || !parts.length) {
+        parts = normalizePprogParts(prev.parts != null ? prev.parts : prev.workout || prev.sections, k);
+      }
+    }
     var dayOut = {
       parts: parts,
       preTalk: String((day && day.preTalk) != null ? day.preTalk : prev.preTalk || ""),
@@ -5617,6 +5664,14 @@ function normalizePprogWeek(week, prevWeek, weekStartOverride, weekMeta) {
       pprogNormalizeFinishFeedback(day && day.finishFeedback) ||
       pprogNormalizeFinishFeedback(prev && prev.finishFeedback);
     if (ff) dayOut.finishFeedback = ff;
+    if (loggedExtra) {
+      dayOut.loggedExtraSession = true;
+      var noteKeep =
+        (day && day.loggedExtraNote) || (prev && prev.loggedExtraNote) || "";
+      if (noteKeep) dayOut.loggedExtraNote = String(noteKeep).slice(0, 800);
+      var atKeep = (day && day.loggedExtraAt) || (prev && prev.loggedExtraAt) || "";
+      if (atKeep) dayOut.loggedExtraAt = String(atKeep);
+    }
     out.days[k] = dayOut;
     if (out.notesByDay[k] == null) out.notesByDay[k] = "";
   }
@@ -5631,7 +5686,41 @@ function normalizePprogWeek(week, prevWeek, weekStartOverride, weekMeta) {
       return { day: k, label: PPROG_DAY_LABELS[k], focus: titles || "—" };
     });
   }
+  /* POL-026: never leave overview focus as Rest when the day is a logged extra session */
+  for (var oiFix = 0; oiFix < PPROG_DAY_KEYS.length; oiFix++) {
+    var dkFix = PPROG_DAY_KEYS[oiFix];
+    if (!pprogDayIsLoggedExtraSession(out.days[dkFix])) continue;
+    var focNow = pprogOverviewFocus(out, dkFix);
+    if (!isPprogRestFocus(focNow) && focNow && focNow !== "—" && /^logged\b/i.test(focNow)) continue;
+    var prevFoc = pprogOverviewFocus(prevWeek || {}, dkFix);
+    var fixFocus = /^logged\b/i.test(prevFoc)
+      ? prevFoc
+      : ((out.days[dkFix].parts && out.days[dkFix].parts[0] && out.days[dkFix].parts[0].title) ||
+          "Logged session");
+    if (isPprogRestFocus(fixFocus) || !fixFocus || fixFocus === "—") fixFocus = "Logged session";
+    pprogSetOverviewFocus(out, dkFix, fixFocus);
+  }
   return out;
+}
+
+/** True when parts are empty or only Rest / Off / Recovery / מנוחה stubs. */
+function pprogPartsLookLikeRestOnly(parts) {
+  if (!parts || !parts.length) return true;
+  if (parts.length > 2) return false;
+  for (var i = 0; i < parts.length; i++) {
+    var p = parts[i] || {};
+    var blob = (String(p.title || "") + " " + (p.lines || []).join(" ")).toLowerCase().trim();
+    if (!blob) continue;
+    if (/מנוחה/.test(String(p.title || "") + " " + (p.lines || []).join(" "))) continue;
+    if (/^(rest(\s*day)?|off(\s*day)?|recovery|recovery\s*day)\b/.test(blob) || blob === "rest") continue;
+    if (/\brest\s*day\b/.test(blob) && !(p.lines || []).some(function (ln) {
+      return /[0-9]/.test(ln) && !/rest/i.test(ln);
+    })) {
+      continue;
+    }
+    return false;
+  }
+  return true;
 }
 
 function pprogIsraelTodayIso() {
@@ -6931,6 +7020,9 @@ function pprogApplyPol026CalendarTruth(msgs, opts) {
           lastDebriefReply: prev.lastDebriefReply || "",
           modifiedPartKinds: prev.modifiedPartKinds || {},
           finishFeedback: prev.finishFeedback || undefined,
+          loggedExtraSession: true,
+          loggedExtraNote: String(note || "").slice(0, 800),
+          loggedExtraAt: new Date().toISOString(),
         };
         pprogSetOverviewFocus(week, dk, built.focus);
         touched = true;
@@ -6967,14 +7059,31 @@ function pprogApplyPol026CalendarTruth(msgs, opts) {
 function pprogSetOverviewFocus(week, dayKey, focus) {
   if (!week || !dayKey) return;
   if (!Array.isArray(week.overview)) week.overview = [];
+  var key = normalizePprogDayKey(dayKey) || dayKey;
+  var kept = [];
+  var updated = false;
   for (var oi = 0; oi < week.overview.length; oi++) {
-    if (week.overview[oi] && week.overview[oi].day === dayKey) {
-      week.overview[oi].focus = focus;
-      week.overview[oi].label = PPROG_DAY_LABELS[dayKey];
-      return;
+    var row = week.overview[oi];
+    if (!row) continue;
+    var rd = normalizePprogDayKey(row.day) || String(row.day || "").toLowerCase();
+    if (rd === key) {
+      if (!updated) {
+        kept.push({
+          day: key,
+          label: PPROG_DAY_LABELS[key] || row.label || key,
+          focus: focus,
+        });
+        updated = true;
+      }
+      /* drop duplicate overview rows for the same day */
+      continue;
     }
+    kept.push(row);
   }
-  week.overview.push({ day: dayKey, label: PPROG_DAY_LABELS[dayKey], focus: focus });
+  if (!updated) {
+    kept.push({ day: key, label: PPROG_DAY_LABELS[key] || key, focus: focus });
+  }
+  week.overview = kept;
 }
 
 /** @deprecated name kept for call-sites — use calendar truth (today logged + tomorrow Rest). */
@@ -7354,6 +7463,13 @@ function applyPprogWeekRevision(weekPayload, opts) {
       if (iso >= today) continue;
       pprogCopyWeekDaySlot(next, prev, dk);
     }
+    /* POL-026: never let a week revise wipe an athlete-logged extra session */
+    for (var ldi = 0; ldi < PPROG_DAY_KEYS.length; ldi++) {
+      var ldk = PPROG_DAY_KEYS[ldi];
+      if (prev.days && pprogDayIsLoggedExtraSession(prev.days[ldk])) {
+        pprogCopyWeekDaySlot(next, prev, ldk);
+      }
+    }
     /* POL-024: keep Rest/training roles on remaining days unless schedule note */
     if (!allowScheduleShift) {
       for (var rdi = 0; rdi < PPROG_DAY_KEYS.length; rdi++) {
@@ -7403,6 +7519,12 @@ function applyPprogDayRevision(dayKey, dayPayload) {
   };
   var keepFf = pprogNormalizeFinishFeedback(prev.finishFeedback);
   if (keepFf) revisedDay.finishFeedback = keepFf;
+  /* POL-026 — keep logged-extra stamp across surgical day revises */
+  if (prev.loggedExtraSession === true || pprogDayIsLoggedExtraSession(prev)) {
+    revisedDay.loggedExtraSession = true;
+    if (prev.loggedExtraNote) revisedDay.loggedExtraNote = String(prev.loggedExtraNote).slice(0, 800);
+    if (prev.loggedExtraAt) revisedDay.loggedExtraAt = String(prev.loggedExtraAt);
+  }
   store.currentWeek.days[dayKey] = revisedDay;
   pprogApplyModificationLearning(store, dayKey, modifiedKinds);
   if (Array.isArray(store.currentWeek.overview)) {
@@ -7411,12 +7533,13 @@ function applyPprogDayRevision(dayKey, dayPayload) {
         return p.title;
       })
       .join(" + ");
-    for (var oi = 0; oi < store.currentWeek.overview.length; oi++) {
-      if (store.currentWeek.overview[oi] && store.currentWeek.overview[oi].day === dayKey) {
-        store.currentWeek.overview[oi].focus = focus || "—";
-        store.currentWeek.overview[oi].label = PPROG_DAY_LABELS[dayKey];
-      }
+    if (revisedDay.loggedExtraSession) {
+      var prevLoggedFocus = pprogOverviewFocus(store.currentWeek, dayKey);
+      if (/^logged\b/i.test(prevLoggedFocus)) focus = prevLoggedFocus;
+      else if (!focus || isPprogRestFocus(focus)) focus = "Logged session";
+      else if (!/^logged\b/i.test(focus)) focus = "Logged: " + String(focus).slice(0, 60);
     }
+    pprogSetOverviewFocus(store.currentWeek, dayKey, focus || "—");
   }
   if (store.currentBlock && store.currentBlock.weeks) {
     store.currentBlock.weeks[store.activeWeekIndex | 0] = store.currentWeek;
@@ -7889,6 +8012,15 @@ function requestPprogWeekDetail(weekIndex0, fromQueue) {
           /* Keep prior overview if new one is empty/"—" stubs */
           if (weekHasUsefulOverview(prevW) && !weekHasUsefulOverview(nextW)) {
             nextW.overview = prevW.overview;
+          }
+          /* POL-026: week_detail must never wipe an athlete-logged extra session day */
+          if (prevW && prevW.days) {
+            for (var diLog = 0; diLog < PPROG_DAY_KEYS.length; diLog++) {
+              var dkLog = PPROG_DAY_KEYS[diLog];
+              if (pprogDayIsLoggedExtraSession(prevW.days[dkLog])) {
+                pprogCopyWeekDaySlot(nextW, prevW, dkLog);
+              }
+            }
           }
           s2.currentBlock.weeks[wi] = nextW;
           /* Never reopen intake once we have a programming block */
@@ -9275,6 +9407,7 @@ function renderPprogCalHtml(block, activeWi, activeDay) {
     var week = block.weeks[weekIndex0] || {};
     var dayData = (week.days && week.days[dayKey]) || {};
     var isRest = isPprogRestDay(dayKey, dayData, week);
+    var isLoggedExtra = pprogDayIsLoggedExtraSession(dayData);
     var has =
       !isRest &&
       ((dayData.parts && dayData.parts.length) ||
@@ -9285,6 +9418,7 @@ function renderPprogCalHtml(block, activeWi, activeDay) {
     var cls = "pprog-cal-cell";
     if (isActive) cls += " active";
     if (has) cls += " has-wod";
+    if (isLoggedExtra) cls += " logged-extra";
     if (isRest) cls += " muted";
     /* Macro deload week already means lighter recovery format — no separate AR tint. */
     if (isDeload) cls += " deload-week";
@@ -9420,6 +9554,7 @@ function renderPprogDayCardHtml(block, week, activeWi, day) {
   html += '<div class="pprog-day-card" dir="ltr">';
   var focus = pprogOverviewFocus(week, day);
   var restDay = isPprogRestDay(day, dayData, week);
+  var loggedExtra = pprogDayIsLoggedExtraSession(dayData);
   var finishReported = pprogDayHasFinishReport(dayData);
   var finishFuture = pprogIsFutureTrainingDay(dayIso);
   var shareBtn =
@@ -9448,12 +9583,21 @@ function renderPprogDayCardHtml(block, week, activeWi, day) {
     '<div class="card-header">' +
     '<div class="source-name">' +
     esc(dateLabel) +
+    (loggedExtra
+      ? '<span class="pprog-logged-extra-flag" title="Extra session logged — counted in the plan">LOGGED</span>'
+      : "") +
     "</div>" +
     '<div class="pprog-day-actions">' +
     finishBtn +
     shareBtn +
     "</div>" +
     "</div>";
+  if (loggedExtra && focus) {
+    html +=
+      '<div class="pprog-logged-extra-banner" role="status">' +
+      esc(focus) +
+      " · counted toward remaining week load</div>";
+  }
   if (restDay) {
     html +=
       '<div class="pprog-rest-day">' +

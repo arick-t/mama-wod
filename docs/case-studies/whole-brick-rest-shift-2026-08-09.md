@@ -24,4 +24,9 @@ Skipped planned rest → spontaneous session today (run / back squat / deadlift 
 Hard gates in code: apply only after explicit Confirm; no `generate_block` / Soft Upgrade / large rebuild B / full `BLOCK_JSON` on this path; if no WEEK/DAY JSON after Confirm → local tomorrow→Rest only; `[ATHLETE_EXTRA_SESSIONS]` ≤2 short notes.
 
 ## Branch
-`cursor/fix-whole-brick-rest-shift-d279`
+`cursor/fix-whole-brick-rest-shift-d279` → Coach **2.2** · follow-ups **2.2.1** / **2.2.2** (`cursor/fix-pol026-calendar-indicator-d279`)
+
+## Follow-up (live): today still looked like Rest
+Coach chat claimed to account for the session later in the block, but the calendar strip/day card still showed **REST DAY**.
+Cause: `loggedExtraSession` + logged parts were stripped on `normalizePprogWeek` / `generate_week_detail`, and stale overview `focus: Rest` won the Rest detector.
+**2.2.2:** preserve logged-extra through normalize; never let week_detail wipe it; calendar/day UI shows LOGGED (not Rest).
