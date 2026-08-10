@@ -35,6 +35,11 @@ function roundMoney(n) {
   return Math.round((Number(n) || 0) * 100) / 100;
 }
 
+/** Keep sub-agorot precision while accumulating many small chat turns. */
+function roundMicros(n) {
+  return Math.round((Number(n) || 0) * 1e6) / 1e6;
+}
+
 function emptyLedger() {
   const envCredit = String(process.env.ADMIN_CREDIT_BALANCE_ILS || "").trim();
   const manual =
@@ -73,7 +78,17 @@ function estimateIlsFromUsage(model, usage) {
   const usd = (prompt / 1e6) * p.inPerM + (output / 1e6) * p.outPerM;
   const factor = Number.isFinite(SAFETY_FACTOR) && SAFETY_FACTOR > 0 ? SAFETY_FACTOR : 1.2;
   const rate = Number.isFinite(USD_ILS) && USD_ILS > 0 ? USD_ILS : 3.7;
-  return roundMoney(usd * rate * factor);
+  /* Do NOT round to agorot here — small chat turns would become 0 and never burn. */
+  return roundMicros(usd * rate * factor);
+}
+
+function isNonGeminiBillable(model, via) {
+  const v = String(via || "").toLowerCase();
+  const m = String(model || "").toLowerCase();
+  if (/local-guard|rate-limit|cost-cap|static/.test(v)) return true;
+  if (/^groq/.test(v) || v.indexOf("groq") >= 0) return true;
+  if (/llama|groq|mixtral|gpt-/.test(m)) return true;
+  return false;
 }
 
 async function readRawLedger() {
@@ -117,7 +132,7 @@ async function readRawLedger() {
 
 async function writeRawLedger(ledger) {
   const out = Object.assign(emptyLedger(), ledger, {
-    spentSinceUpdateEstimated: roundMoney(ledger.spentSinceUpdateEstimated || 0),
+    spentSinceUpdateEstimated: roundMicros(ledger.spentSinceUpdateEstimated || 0),
     lastFlushAt: new Date().toISOString(),
     priceTableVersion: PRICE_TABLE_VERSION,
     safetyFactor: SAFETY_FACTOR,
@@ -146,7 +161,7 @@ async function writeRawLedger(ledger) {
 
 async function loadLedger() {
   const raw = await readRawLedger();
-  raw.spentSinceUpdateEstimated = roundMoney(
+  raw.spentSinceUpdateEstimated = roundMicros(
     (Number(raw.spentSinceUpdateEstimated) || 0) + memPendingIls
   );
   return raw;
@@ -226,14 +241,14 @@ async function flushPendingSpend(force) {
     memPendingIls = 0;
     try {
       const base = await readRawLedger();
-      base.spentSinceUpdateEstimated = roundMoney(
+      base.spentSinceUpdateEstimated = roundMicros(
         (Number(base.spentSinceUpdateEstimated) || 0) + add
       );
       await writeRawLedger(base);
       memLastFlushAt = Date.now();
       return base;
     } catch (e) {
-      memPendingIls = roundMoney(memPendingIls + add);
+      memPendingIls = roundMicros(memPendingIls + add);
       return null;
     } finally {
       memFlushInFlight = null;
@@ -245,11 +260,10 @@ async function flushPendingSpend(force) {
 function recordCoachUsageSpend(model, usage, via) {
   try {
     if (!usage) return;
-    const v = String(via || "");
-    if (/local-guard|rate-limit|cost-cap|static/i.test(v)) return;
+    if (isNonGeminiBillable(model, via)) return;
     const ils = estimateIlsFromUsage(model, usage);
-    if (ils <= 0) return;
-    memPendingIls = roundMoney(memPendingIls + ils);
+    if (!(ils > 0)) return;
+    memPendingIls = roundMicros(memPendingIls + ils);
     flushPendingSpend(false).catch(function () {});
   } catch (e) {}
 }
@@ -261,6 +275,7 @@ module.exports = {
   recordCoachUsageSpend,
   flushPendingSpend,
   publicCreditView,
+  isNonGeminiBillable,
   BILLING_URL,
   PRICE_TABLE_VERSION,
   BLOB_KEY,
