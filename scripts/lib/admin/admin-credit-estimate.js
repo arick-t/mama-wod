@@ -4,6 +4,7 @@
  * Durable store: private Blob (duck-wod-admin) via admin-json-store; FS fallback locally.
  */
 const fs = require("fs");
+const path = require("path");
 const { putJson, getJson, useBlob, hasBlobAuth } = require("./admin-json-store");
 const { adminMetaPath } = require("./admin-paths");
 
@@ -14,6 +15,24 @@ const SAFETY_FACTOR = Number(process.env.ADMIN_CREDIT_SAFETY_FACTOR || 1.2);
 const USD_ILS = Number(process.env.ADMIN_USD_ILS_RATE || 3.7);
 const FLUSH_MIN_ILS = 0.05;
 const FLUSH_MIN_MS = 45_000;
+/** Morning Google Billing (2026-08-10). Used only when ledger has no manual balance. Override/disable via ADMIN_CREDIT_SEED_ILS. */
+const EMPTY_LEDGER_SEED_NOTE = "בוקר 2026-08-10 · Google AI Studio Billing";
+
+/**
+ * Resolve one-time empty-ledger seed (₪).
+ * Default 57.25 (this morning). Set ADMIN_CREDIT_SEED_ILS=off to disable.
+ * ADMIN_CREDIT_BALANCE_ILS still wins when set (via emptyLedger).
+ */
+function resolveEmptyLedgerSeedIls() {
+  const raw = process.env.ADMIN_CREDIT_SEED_ILS;
+  if (raw != null && String(raw).trim() !== "") {
+    const s = String(raw).trim().toLowerCase();
+    if (s === "off" || s === "none" || s === "false") return null;
+    const n = Number(String(raw).replace(/,/g, "").replace(/₪/g, "").trim());
+    return Number.isFinite(n) && n >= 0 ? n : null;
+  }
+  return 57.25;
+}
 
 /** Approx Gemini list prices USD / 1M tokens (calibrate later from Google Usage). */
 const MODEL_PRICES = {
@@ -202,8 +221,33 @@ function publicCreditView(ledger) {
   };
 }
 
+/**
+ * If no manual/env balance yet — persist morning seed so the pill shows a real number
+ * and burn tracking can start. Admin can always override via set_credit.
+ */
+async function maybeSeedEmptyLedger(ledger) {
+  if (ledger.balanceManual != null && Number.isFinite(Number(ledger.balanceManual))) {
+    return ledger;
+  }
+  const seed = resolveEmptyLedgerSeedIls();
+  if (seed == null) return ledger;
+  ledger.balanceManual = roundMoney(seed);
+  ledger.balanceUpdatedAt = new Date().toISOString();
+  ledger.spentSinceUpdateEstimated = roundMicros(
+    Number(ledger.spentSinceUpdateEstimated) || 0
+  );
+  if (!ledger.creditNote) ledger.creditNote = EMPTY_LEDGER_SEED_NOTE;
+  try {
+    await writeRawLedger(ledger);
+  } catch (e) {
+    /* still return in-memory seeded view for this request */
+  }
+  return ledger;
+}
+
 async function getCreditEstimate() {
-  const ledger = await loadLedger();
+  let ledger = await loadLedger();
+  ledger = await maybeSeedEmptyLedger(ledger);
   return publicCreditView(ledger);
 }
 
@@ -219,7 +263,11 @@ async function setManualBalance(amountIls, note) {
   ledger.balanceManual = roundMoney(n);
   ledger.balanceUpdatedAt = new Date().toISOString();
   ledger.spentSinceUpdateEstimated = 0;
-  if (typeof note === "string") ledger.creditNote = note.slice(0, 200);
+  if (typeof note === "string") {
+    ledger.creditNote = note.slice(0, 200);
+  } else {
+    ledger.creditNote = "עדכון ידני אדמין";
+  }
   await writeRawLedger(ledger);
   memLastFlushAt = Date.now();
   return publicCreditView(ledger);
@@ -276,6 +324,7 @@ module.exports = {
   flushPendingSpend,
   publicCreditView,
   isNonGeminiBillable,
+  resolveEmptyLedgerSeedIls,
   BILLING_URL,
   PRICE_TABLE_VERSION,
   BLOB_KEY,

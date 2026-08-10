@@ -5,6 +5,7 @@ const {
   estimateIlsFromUsage,
   priceForModel,
   publicCreditView,
+  resolveEmptyLedgerSeedIls,
 } = require("./admin-credit-estimate");
 
 function assert(cond, label) {
@@ -46,6 +47,16 @@ function run() {
   assert(view.remainingEstimated === 55, "remaining");
   assert(view.display === "₪55.00", "display " + view.display);
   assert(String(view.disclaimerHe).indexOf("משוער") >= 0, "disclaimer");
+
+  const prevSeed = process.env.ADMIN_CREDIT_SEED_ILS;
+  delete process.env.ADMIN_CREDIT_SEED_ILS;
+  assert(resolveEmptyLedgerSeedIls() === 57.25, "default morning seed");
+  process.env.ADMIN_CREDIT_SEED_ILS = "off";
+  assert(resolveEmptyLedgerSeedIls() === null, "seed off");
+  process.env.ADMIN_CREDIT_SEED_ILS = "60.5";
+  assert(resolveEmptyLedgerSeedIls() === 60.5, "seed override");
+  if (prevSeed == null) delete process.env.ADMIN_CREDIT_SEED_ILS;
+  else process.env.ADMIN_CREDIT_SEED_ILS = prevSeed;
 
   console.log("admin-credit-estimate test passed");
 }
