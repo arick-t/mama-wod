@@ -341,6 +341,10 @@ function logCoachUsage(label, model, usage, via) {
       })
     );
   } catch (e) {}
+  try {
+    const { recordCoachUsageSpend } = require("../scripts/lib/admin/admin-credit-estimate");
+    recordCoachUsageSpend(model, usage, via || label);
+  } catch (e) {}
 }
 
 function resolveFileSearchStore() {
