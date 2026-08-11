@@ -2069,6 +2069,7 @@ function pprogLegalContinue() {
   store.legalAcceptedAt = new Date().toISOString();
   store.legalAcceptedVersion = PPROG_LEGAL_VERSION;
   store.legalTermsId = PPROG_LEGAL_TERMS_ID;
+  store.pendingAthleteLegal = false;
   store.legalAcceptedFlags = {
     age18: true,
     aiResponsibility: true,
@@ -3373,6 +3374,18 @@ function syncPprogModeUi() {
     (store.currentWeek && store.currentWeek.days)
   );
   var waitingBuild = !hasProg && (store.blockBuildPending || pprogCanRetryFirstBlock(store));
+  /* HARD: plan / post-intake UI stays locked until THIS device signs Terms (legal audit). */
+  if ((hasProg || store.intakeComplete || store.pendingAthleteLegal) && !pprogLegalAccepted(store)) {
+    if (week) week.style.display = "none";
+    if (intake) intake.style.display = "none";
+    pprogEnsureLegalAccepted(function () {
+      var s2 = loadPprogStore();
+      s2.pendingAthleteLegal = false;
+      savePprogStore(s2);
+      syncPprogModeUi();
+    });
+    return;
+  }
   if (store.intakeComplete || waitingBuild) {
     if (week) week.style.display = "block";
     if (intake && waitingBuild && !store.intakeComplete) intake.style.display = "block";
@@ -14123,9 +14136,15 @@ function initTimerColorBuckets() {
             if (typeof renderPprogChat === "function") renderPprogChat();
             if (typeof syncPprogStartBtn === "function") syncPprogStartBtn();
           } catch (e2) {}
+        } else if (q.get("handoff") === "1") {
+          /* Admin one-time link: Terms on this device BEFORE plan UI. */
+          try {
+            if (typeof syncPprogModeUi === "function") syncPprogModeUi();
+          } catch (eHandoff) {}
         } else if (typeof renderPprogWeek === "function") {
           try {
-            renderPprogWeek();
+            if (typeof syncPprogModeUi === "function") syncPprogModeUi();
+            else renderPprogWeek();
           } catch (e1) {}
         }
       }

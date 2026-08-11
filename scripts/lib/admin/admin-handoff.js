@@ -234,8 +234,10 @@ function buildPhonePackage(snap, writeKeyPlain) {
     email: String(snap.email || "").slice(0, 120),
     skills: {},
     lifts: {},
-    legalAcceptedAt: new Date().toISOString(),
-    legalAcceptedVersion: 3,
+    /* Athlete must sign Terms on first open of the handoff link — do NOT pre-accept. */
+    legalAcceptedAt: null,
+    legalAcceptedVersion: 0,
+    pendingAthleteLegal: true,
     intakeComplete: true,
     profileNotes: String(intakeProfile.profileNotes || snap.intakeSummary || "").slice(0, 2500),
     coachPrefs: prefs,
@@ -247,7 +249,7 @@ function buildPhonePackage(snap, writeKeyPlain) {
           (snap.displayName || intakeProfile.displayName
             ? ", " + (snap.displayName || intakeProfile.displayName)
             : "") +
-          ". Your plan was installed from your coach. No need to repeat intake.",
+          ". Your coach prepared your plan. Accept the Terms on this device to unlock it — no need to repeat intake.",
       },
     ],
     currentWeek: week0,
@@ -262,6 +264,10 @@ function buildPhonePackage(snap, writeKeyPlain) {
     handoffInstalledAt: new Date().toISOString(),
   };
   pkg = CoachIntakeSync.applyIntakeProfileToPhoneStore(pkg, intakeProfile);
+  /* Re-assert after merge — applyIntakeProfile must never invent a signature. */
+  pkg.legalAcceptedAt = null;
+  pkg.legalAcceptedVersion = 0;
+  pkg.pendingAthleteLegal = true;
   if (writeKeyPlain) pkg.writeKey = String(writeKeyPlain).slice(0, 128);
   return pkg;
 }

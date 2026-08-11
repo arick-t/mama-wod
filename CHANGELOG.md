@@ -1,5 +1,15 @@
 # Changelog
 
+## [Admin 1.5.6] - 2026-08-11
+
+### CRITICAL — Admin handoff: Terms signed on athlete device before plan unlock
+- **Admin subtitle / title:** `DUCK-WOD Admin · 1.5.6`.
+- Coach fills intake on desktop → one-time link. Opening the link installs the package **without** pre-accepting Terms.
+- Athlete must Agree & continue on-device; acceptance is logged to `data/legal-agreements.jsonl` via `/api/legal-agree`.
+- Plan / calendar UI stays locked until that signature (`pendingAthleteLegal` + `pprogEnsureLegalAccepted`).
+
+---
+
 ## [Admin 1.5.5] - 2026-08-11
 
 ### Admin desktop fixed intake — Build plan overlay + brick save
