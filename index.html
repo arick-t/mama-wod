@@ -369,6 +369,11 @@ html.pprog-finish-open,body.pprog-finish-open{overflow:hidden;overscroll-behavio
 .pprog-fixed-radios{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}
 .pprog-fixed-radios label{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:#222;border:1px solid #444;border-radius:8px;font-size:.88em;color:#e8e4d8;cursor:pointer;line-height:1.35}
 .pprog-fixed-radios input{margin-top:2px;flex-shrink:0}
+.pprog-fixed-recovery-branch{
+  margin:4px 0 12px 14px;padding:10px 12px 10px 14px;
+  border-left:3px solid #1A9B8A;background:rgba(26,155,138,.1);border-radius:0 10px 10px 0}
+.pprog-fixed-recovery-branch .pprog-fixed-note{margin:0 0 8px}
+.pprog-fixed-recovery-branch .pprog-fixed-days{margin-bottom:0}
 .pprog-lifts-picker-note{margin:0 0 12px;font-size:.82em;line-height:1.4;color:#aaa}
 .pprog-lifts-row{display:flex;align-items:center;gap:10px;margin:0 0 10px}
 .pprog-lifts-row label{flex:1;font-size:.9em;color:#e8e4d8;font-weight:600}
@@ -3806,7 +3811,7 @@ function renderPprogFixedStepHtml(step) {
       "</textarea>";
   } else if (key === "recovery") {
     var pref = store.activeRecoveryPref || "";
-    var prefDay = store.activeRecoveryDay || "thu";
+    var prefDay = store.activeRecoveryDay || "";
     var showArDay = pref === "yes";
     html +=
       '<p class="pprog-fixed-title">Active recovery day?</p>' +
@@ -3820,12 +3825,12 @@ function renderPprogFixedStepHtml(step) {
       (pref === "yes" ? " checked" : "") +
       ' onchange="pprogFixedRecoveryPrefChanged()"> <span><strong>Yes</strong> — include one active recovery / daily deload day each training week.</span></label>' +
       "</div>" +
-      '<div id="pprogFxRecoveryDayWrap"' +
+      '<div id="pprogFxRecoveryDayWrap" class="pprog-fixed-recovery-branch"' +
       (showArDay ? "" : ' style="display:none"') +
       ' aria-hidden="' +
       (showArDay ? "false" : "true") +
       '">' +
-      '<p class="pprog-fixed-note" style="margin-top:4px">Which day?</p>' +
+      '<p class="pprog-fixed-note" style="margin-top:0">Under Yes — which day?</p>' +
       '<div class="pprog-fixed-days" id="pprogFxRecoveryDays">';
     for (var rdi = 0; rdi < PPROG_DAY_KEYS.length; rdi++) {
       var rdk = PPROG_DAY_KEYS[rdi];
@@ -3833,7 +3838,7 @@ function renderPprogFixedStepHtml(step) {
         '<label><input type="radio" name="pprogFxRecoveryDay" value="' +
         esc(rdk) +
         '"' +
-        (prefDay === rdk ? " checked" : "") +
+        (prefDay && prefDay === rdk ? " checked" : "") +
         "> " +
         esc(PPROG_DAY_LABELS[rdk] || rdk) +
         "</label>";
@@ -4083,10 +4088,15 @@ function pprogFixedNext() {
     var dayEl = box.querySelector('input[name="pprogFxRecoveryDay"]:checked');
     var prefVal = prefEl ? String(prefEl.value || "") : "no";
     store.activeRecoveryPref = prefVal === "yes" ? "yes" : "no";
-    store.activeRecoveryDay =
-      store.activeRecoveryPref === "yes" && dayEl
-        ? String(dayEl.value || "thu")
-        : "";
+    if (store.activeRecoveryPref === "yes") {
+      if (!dayEl || !dayEl.value) {
+        pprogFixedSetErr("Pick which day is the active recovery day (under Yes).");
+        return;
+      }
+      store.activeRecoveryDay = String(dayEl.value).slice(0, 8);
+    } else {
+      store.activeRecoveryDay = "";
+    }
   } else if (key === "lifts") {
     var liftPack = pprogFixedCollectLiftsFrom(box);
     if (liftPack.bad) {
@@ -7452,10 +7462,50 @@ function pushAdminSnapshot(store) {
       body: JSON.stringify(payload),
     })
       .then(function (r) {
-        return r;
+        return r
+          .json()
+          .catch(function () {
+            return null;
+          })
+          .then(function (j) {
+            return { ok: r.ok, status: r.status, j: j };
+          });
+      })
+      .then(function (x) {
+        if (!x) return;
+        var err = (x.j && (x.j.code || x.j.error)) || "";
+        if (x.status === 410 || err === "athlete_revoked") {
+          pprogHandleAthleteRevoked();
+          return;
+        }
+        if (!x.ok) {
+          try {
+            console.warn("[duck-wod] admin snapshot push failed:", err || x.status);
+          } catch (eWarn) {}
+        }
       })
       .catch(function () {});
   } catch (e) {}
+}
+
+/** Admin deleted this athlete — wipe local Personal Coach access. */
+function pprogHandleAthleteRevoked() {
+  try {
+    localStorage.removeItem("duck-wod-personal-coach-v1");
+    localStorage.removeItem("dw_write_key");
+    localStorage.removeItem("dw_uid");
+    localStorage.removeItem("dw_coach_tier");
+  } catch (e) {}
+  try {
+    if (typeof showToast === "function") {
+      showToast("המתאמן נמחק מהאדמין — הגישה למכשיר בוטלה.", "warn");
+    } else {
+      alert("המתאמן נמחק מהאדמין — הגישה למכשיר בוטלה.");
+    }
+  } catch (e2) {}
+  try {
+    if (typeof syncPprogModeUi === "function") syncPprogModeUi();
+  } catch (e3) {}
 }
 
 /** Pending admin "עדכון בדחיפה" offer shown in coach chat (opt-in). */
@@ -7779,9 +7829,16 @@ function maybeNotifyPprogIntakeComplete(store, opts) {
     gender: store.gender || "",
     preferredLanguage: store.preferredLanguage || "",
     skillsSummary: skillsSummary,
+    writeKey: getAdminWriteKey(),
     blockStart: blockStart,
     blockSummary: blockSummary,
     completedAt: store.intakeNotifySentAt,
+    currentBlock: store.currentBlock || null,
+    planCoachVersion:
+      store.planCoachVersion ||
+      (store.currentBlock && store.currentBlock.coachVersion) ||
+      "",
+    intakeSummary: String(store.profileNotes || "").replace(/\n+/g, " ").trim().slice(0, 400),
     athleteFeedback:
       "Nickname: " +
       (store.displayName || "(none)") +

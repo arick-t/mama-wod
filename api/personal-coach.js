@@ -58,6 +58,7 @@ const {
   FINISH_SIGNAL_COACH_RULE_COMPACT,
 } = require("../lib/coach-finish-signals.js");
 const { applyCors } = require("../lib/cors-allowlist.js");
+const { checkAdminAuth } = require("../scripts/lib/admin/admin-auth.js");
 const {
   classifyCoachUserInput,
   shouldBlockWithoutModel,
@@ -407,7 +408,7 @@ function friendlyProviderError(result) {
 function setCors(req, res) {
   applyCors(req, res, {
     methods: "GET, POST, OPTIONS",
-    headers: "Content-Type",
+    headers: "Content-Type, X-Admin-Password, X-Admin-Token",
   });
 }
 
@@ -1748,8 +1749,10 @@ module.exports = async function handler(req, res) {
   if (body.intakeComplete === true) {
     rawProfile = Object.assign({}, rawProfile || {}, { intakeComplete: true });
   }
-  /* Soft gate: Personal Coach API requires current Terms acceptance (v2.0-legal). */
-  if (!athleteHasAcceptedCurrentTerms(rawProfile, body)) {
+  /* Soft gate: athlete device must accept Terms. Admin Build plan / generate_block
+   * may proceed with verified admin auth — athlete still signs on handoff/device. */
+  const adminProgramming = checkAdminAuth(req);
+  if (!adminProgramming && !athleteHasAcceptedCurrentTerms(rawProfile, body)) {
     return res.status(403).json({
       ok: false,
       error: "Terms acceptance required",

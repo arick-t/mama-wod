@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DUCK-WOD Admin · 1.5.6</title>
+<title>DUCK-WOD Admin · 1.5.7</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -53,9 +53,11 @@ button,input,textarea,select{font-family:inherit}
   margin-bottom:6px;background:linear-gradient(90deg,#E8451A,#F5C518 50%,#1A9B8A);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .login-box .sub{font-size:13px;color:var(--text-meta);margin-bottom:8px;font-weight:600}
-.login-box .ver{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;
+.login-box .ver{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;
   color:var(--note);border:1px solid rgba(126,184,201,.4);border-radius:8px;padding:3px 10px;
-  margin-bottom:22px}
+  margin-bottom:22px;white-space:nowrap}
+.login-box .ver .ver-sep{opacity:.55;margin:0 5px;font-weight:600}
+.login-box .ver .ver-coach{color:#1A9B8A}
 .login-box input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);
   background:var(--bg-elev);color:var(--text);font-size:15px;margin-bottom:14px}
 .login-box input:focus{outline:2px solid var(--brand);border-color:transparent}
@@ -74,8 +76,11 @@ header .logo{font-family:var(--font-display);font-weight:700;font-size:18px;lett
   background:linear-gradient(90deg,#E8451A,#F5C518 50%,#1A9B8A);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 header .tagline{color:var(--text-meta);font-size:13px;margin-left:2px;font-weight:600}
-header .ver-badge{font-size:11px;font-weight:700;letter-spacing:.05em;color:var(--note);
-  border:1px solid rgba(126,184,201,.4);border-radius:8px;padding:3px 9px;margin-left:4px}
+header .ver-badge{font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--note);
+  border:1px solid rgba(126,184,201,.4);border-radius:8px;padding:3px 9px;margin-left:4px;
+  white-space:nowrap}
+header .ver-badge .ver-sep{opacity:.55;margin:0 5px;font-weight:600}
+header .ver-badge .ver-coach{color:#1A9B8A}
 header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
   font-size:12px;color:var(--text-muted);border:1px solid var(--line)}
 .count-wrap{display:inline-flex;align-items:center;gap:8px;margin-right:auto}
@@ -508,6 +513,11 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
 .admin-fixed-checks label,.admin-fixed-radios label{
   display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-muted);
   padding:8px 10px;background:var(--bg-elev);border:1px solid var(--line);border-radius:8px;cursor:pointer}
+.admin-fixed-recovery-branch{
+  margin:4px 0 12px 14px;padding:10px 12px 10px 14px;
+  border-left:3px solid #1A9B8A;background:rgba(26,155,138,.08);border-radius:0 8px 8px 0}
+.admin-fixed-recovery-branch .admin-fixed-note{margin:0 0 8px}
+.admin-fixed-recovery-branch .admin-fixed-checks{margin-bottom:0}
 .admin-fixed-nav{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
 .admin-fixed-err{color:#fca5a5;font-size:12px;margin-top:8px;min-height:1.2em}
 
@@ -530,7 +540,7 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver">1.5.6</div>
+    <div class="ver" id="login-ver-badge" title="Admin 1.5.7 · Coach 2.3.4">Admin 1.5.7<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.4</span></div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <button type="button" onclick="doLogin()">כניסה</button>
     <div id="login-err"></div>
@@ -542,7 +552,7 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">Admin</span>
-    <span class="ver-badge" title="Coach Admin dashboard · 1.5.6">1.5.6</span>
+    <span class="ver-badge" id="admin-ver-badge" title="Admin 1.5.7 · Coach 2.3.4">Admin 1.5.7<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.4</span></span>
     <span class="count-wrap">
       <span class="count" id="athlete-count">0 מתאמנים</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
@@ -685,8 +695,34 @@ var pendingLearnNoteId = null;
 var adminChatFabOpen = false;
 var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
 /** Live Personal Coach brain version — refreshed from GET /api/personal-coach. */
-var LIVE_COACH_VERSION = "2.3.3";
+var ADMIN_UI_VERSION = "1.5.7";
+var LIVE_COACH_VERSION = "2.3.4";
 var LIVE_COACH_VERSION_FETCHED_AT = 0;
+
+function syncAdminVersionLabels() {
+  var admin = ADMIN_UI_VERSION;
+  var coach = String(LIVE_COACH_VERSION || "").replace(/^v/i, "") || "—";
+  var label = "Admin " + admin + " · Coach " + coach;
+  var html =
+    "Admin " +
+    admin +
+    '<span class="ver-sep">·</span><span class="ver-coach">Coach ' +
+    coach +
+    "</span>";
+  var login = document.getElementById("login-ver-badge");
+  if (login) {
+    login.innerHTML = html;
+    login.title = label;
+  }
+  var hdr = document.getElementById("admin-ver-badge");
+  if (hdr) {
+    hdr.innerHTML = html;
+    hdr.title = label;
+  }
+  try {
+    document.title = "DUCK-WOD Admin · " + admin + " · Coach " + coach;
+  } catch (eTitle) {}
+}
 
 var INTAKE_LIFT_DEFS = [
   { id: "back_squat", label: "Back Squat", unit: "kg", kind: "kg" },
@@ -965,6 +1001,7 @@ function showHdrToast(msg, kind) {
 function refreshAdmin() {
   loadAthletes();
   loadCreditEstimate();
+  refreshLiveCoachVersion();
 }
 
 var creditState = null;
@@ -1140,6 +1177,7 @@ function doLogin() {
       app.classList.add("is-open");
       loadLearningMode();
       loadCreditEstimate();
+      refreshLiveCoachVersion();
       renderAthleteList(res.data.snapshots || []);
     })
     .catch(function(e) {
@@ -1250,6 +1288,7 @@ function getPushUpgradeGate(a) {
 function refreshLiveCoachVersion() {
   var now = Date.now();
   if (LIVE_COACH_VERSION_FETCHED_AT && now - LIVE_COACH_VERSION_FETCHED_AT < 60000) {
+    syncAdminVersionLabels();
     return Promise.resolve(LIVE_COACH_VERSION);
   }
   return fetch("/api/personal-coach", { method: "GET" })
@@ -1261,9 +1300,11 @@ function refreshLiveCoachVersion() {
         LIVE_COACH_VERSION = String(j.coachVersion).replace(/^v/i, "").slice(0, 20);
         LIVE_COACH_VERSION_FETCHED_AT = Date.now();
       }
+      syncAdminVersionLabels();
       return LIVE_COACH_VERSION;
     })
     .catch(function() {
+      syncAdminVersionLabels();
       return LIVE_COACH_VERSION;
     });
 }
@@ -2460,7 +2501,18 @@ function deleteAthlete(id) {
     method: "DELETE",
     headers: adminAuthHeaders()
   })
-    .then(function() {
+    .then(function(r) {
+      return r.json().then(function(j) {
+        return { ok: r.ok, j: j };
+      }).catch(function() {
+        return { ok: r.ok, j: null };
+      });
+    })
+    .then(function(x) {
+      if (!x.ok) {
+        alert("מחיקה נכשלה: " + String((x.j && (x.j.message || x.j.error)) || "שגיאה"));
+        return;
+      }
       athletes = athletes.filter(function(x) { return x.athleteId !== id; });
       currentAthleteId = null;
       renderAthleteList(athletes);
@@ -2468,6 +2520,9 @@ function deleteAthlete(id) {
         document.getElementById("content").innerHTML =
           '<div class="empty-content"><div class="icon">·</div><p>בחר מתאמן מהרשימה</p></div>';
       }
+    })
+    .catch(function() {
+      alert("שגיאת רשת במחיקה");
     });
 }
 
@@ -3037,13 +3092,14 @@ function generateIntakeBlock() {
 
   fetch("/api/personal-coach", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: adminAuthHeaders(),
     body: JSON.stringify({
       action: "generate_block",
       messages: payloadMsgs,
       athleteProfile: intakeAthleteProfile({ forceIntakeComplete: true }),
       intakeComplete: true,
-      forceJson: true
+      forceJson: true,
+      adminProgramming: true
     })
   })
     .then(function(r) {
@@ -3200,6 +3256,8 @@ function finalizeNewAthlete(block) {
     });
 }
 
+syncAdminVersionLabels();
+refreshLiveCoachVersion();
 loadLearningMode();
 </script>
 <script src="lib/coach-intake-sync-contract.js"></script>

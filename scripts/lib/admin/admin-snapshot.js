@@ -118,13 +118,17 @@ function publicSnapshot(row) {
   return out;
 }
 
+function isDeletedSnapshot(row) {
+  return !!(row && (row.deleted === true || row.revoked === true));
+}
+
 async function listSnapshots() {
   try {
     await ensureSeedAthletes();
     const rows = await listJson(SNAP_PREFIX);
     return rows
       .map((r) => publicSnapshot(r.data))
-      .filter(Boolean)
+      .filter((row) => row && row.athleteId && !isDeletedSnapshot(row))
       .sort((a, b) => String(b.updatedAt || "").localeCompare(String(a.updatedAt || "")));
   } catch (e) {
     if (e && e.code === "blob_required") throw e;
@@ -150,7 +154,8 @@ async function ensureSeedAthletes() {
     const uid = safeAthleteId(ids[i]);
     if (!uid) continue;
     const existing = await readSnapshot(uid);
-    if (existing && existing.athleteId) continue;
+    /* Tombstone or live row — never re-seed after admin delete. */
+    if (existing && (existing.athleteId || existing.deleted || existing.revoked)) continue;
     const row = seed[ids[i]] || {};
     const now = new Date().toISOString();
     await writeSnapshot(uid, {
@@ -175,6 +180,33 @@ async function ensureSeedAthletes() {
       createdAt: now,
     });
   }
+}
+
+async function burnOpenClaimsForAthlete(athleteId) {
+  const id = safeAthleteId(athleteId);
+  if (!id) return 0;
+  const CLAIM_PREFIX = "admin-claims/";
+  let burned = 0;
+  try {
+    const rows = await listJson(CLAIM_PREFIX);
+    const now = new Date().toISOString();
+    for (let i = 0; i < rows.length; i++) {
+      const key = rows[i].key;
+      const c = rows[i].data || {};
+      if (safeAthleteId(c.athleteId) !== id) continue;
+      if (c.burned || c.usedAt) continue;
+      await putJson(key, Object.assign({}, c, {
+        burned: true,
+        usedAt: now,
+        revokedByDelete: true,
+        revokedAt: now,
+      }));
+      burned += 1;
+    }
+  } catch (e) {
+    /* non-fatal — snapshot tombstone is the primary revoke */
+  }
+  return burned;
 }
 
 function checkAdminAuth(req) {
@@ -553,6 +585,21 @@ module.exports = async function handler(req, res) {
     }
 
     const existing = (await readSnapshot(athleteId)) || {};
+    if (isDeletedSnapshot(existing) && !isAdmin) {
+      await appendAdminAudit({
+        action: "snapshot_denied",
+        athleteId: athleteId,
+        actor: "client",
+        ok: false,
+        detail: "athlete_revoked",
+      });
+      return res.status(410).json({
+        ok: false,
+        error: "athlete_revoked",
+        code: "athlete_revoked",
+        message: "המתאמן נמחק מהאדמין. הגישה מהמכשיר בוטלה.",
+      });
+    }
     const writeKey =
       body.writeKey ||
       (req.headers && (req.headers["x-write-key"] || req.headers["X-Write-Key"])) ||
@@ -719,14 +766,40 @@ module.exports = async function handler(req, res) {
     }
     const athleteId = safeAthleteId(req.query && req.query.id);
     if (!athleteId) return res.status(400).json({ error: "id required" });
-    await deleteJson(snapKey(athleteId));
-    await appendAdminAudit({
-      action: "snapshot_delete",
+    const existing = (await readSnapshot(athleteId)) || {};
+    const now = new Date().toISOString();
+    /* Tombstone (do not deleteJson) so ensureSeedAthletes cannot resurrect from analytics seed. */
+    const tombstone = {
       athleteId: athleteId,
-      actor: "admin",
-      ok: true,
-    });
-    return res.status(200).json({ ok: true, storage: storageInfo() });
+      displayName: String(existing.displayName || athleteId).slice(0, 80),
+      deleted: true,
+      revoked: true,
+      deletedAt: now,
+      revokedAt: now,
+      writeKeyHash: null,
+      clientWritesLocked: true,
+      currentBlock: null,
+      pastBlocks: [],
+      pendingPushUpgrade: null,
+      seeded: !!existing.seeded,
+      createdAt: existing.createdAt || now,
+      updatedAt: now,
+      joinedAt: existing.joinedAt || existing.createdAt || now,
+    };
+    try {
+      await writeSnapshot(athleteId, tombstone);
+      const claimsBurned = await burnOpenClaimsForAthlete(athleteId);
+      await appendAdminAudit({
+        action: "snapshot_delete",
+        athleteId: athleteId,
+        actor: "admin",
+        ok: true,
+        detail: claimsBurned ? "tombstone+claims:" + claimsBurned : "tombstone",
+      });
+    } catch (e) {
+      return storageUnavailable(res, e);
+    }
+    return res.status(200).json({ ok: true, deleted: true, revoked: true, storage: storageInfo() });
   }
 
   return res.status(405).json({ error: "Method not allowed" });
