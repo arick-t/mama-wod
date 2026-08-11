@@ -56,6 +56,7 @@ ok("generate preferredLanguage en", apiProfile.preferredLanguage === "en");
 
 let phone = {
   legalAcceptedVersion: 1,
+  legalAcceptedAt: "2026-01-01T00:00:00.000Z",
   skills: {},
   lifts: {},
   intakeComplete: false,
@@ -64,16 +65,19 @@ phone = CoachIntakeSync.applyIntakeProfileToPhoneStore(phone, profile);
 ok("phone skills preserved", phone.skills && phone.skills.pullups);
 ok("phone lifts preserved", phone.lifts && phone.lifts.back_squat === "120");
 ok("phone intakeComplete", phone.intakeComplete === true);
-ok("phone legal >= 3", (phone.legalAcceptedVersion | 0) >= 3);
+ok("phone legal not auto-stamped", (phone.legalAcceptedVersion | 0) === 1);
+ok("phone legalAcceptedAt preserved", phone.legalAcceptedAt === "2026-01-01T00:00:00.000Z");
 
 ok("admin loads sync contract", /coach-intake-sync-contract\.js/.test(adminHtml));
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
-ok("admin version 1.5.5", /Admin · 1\.5(\.\d+)?/.test(adminHtml) || /DUCK-WOD Admin · 1\.5(\.\d+)?/.test(adminHtml));
+ok("admin version 1.5.6", /Admin · 1\.5(\.\d+)?/.test(adminHtml) || /DUCK-WOD Admin · 1\.5(\.\d+)?/.test(adminHtml));
 ok("admin fixed All skills head", /admin-fixed-skills-head/.test(fixedJs));
 ok("admin fixed All skills toggles cubes", /adminFixedSkillAllChange/.test(fixedJs));
 ok("admin fixed No injuries active chip", /admin-fixed-chip/.test(adminHtml) && /adm-fx-no-injuries-btn/.test(fixedJs));
 ok("admin build overlay uses coach video", /adminIntakeBuildOverlay/.test(adminHtml) && /coach-thinking\.mp4/.test(adminHtml));
 ok("admin build restores goals on fail", /restoreAdminFixedGoals/.test(fixedJs));
+ok("handoff package does not pre-accept legal", /pendingAthleteLegal:\s*true/.test(handoff) && /legalAcceptedVersion:\s*0/.test(handoff));
+ok("app gates plan until legal", /pendingAthleteLegal/.test(index) && /pprogEnsureLegalAccepted/.test(index));
 ok("phone skills picker unchanged all handler", /pprogSkillsCheckboxChange/.test(index));
 ok("fixed intake uses shared packet", /buildFixedIntakePrompt/.test(fixedJs));
 ok("handoff stores intakeProfile", /intakeProfile/.test(handoff));

@@ -36,10 +36,10 @@ p{color:var(--text-muted);font-size:15px;line-height:1.55;margin-bottom:14px}
 <body>
 <div class="card">
   <h1>DUCK-WOD</h1>
-  <p id="msg">מוריד את תוכנית האימונים למכשיר שלך…</p>
+  <p id="msg">מוריד את חבילת האימון למכשיר שלך…</p>
   <div class="status" id="status"></div>
   <a class="btn" id="open-app" href="/" style="display:none">פתח את האפליקציה</a>
-  <div class="muted" id="footer-note">הלינק חד־פעמי. אחרי ההורדה הניהול נשאר אצלך במכשיר.</div>
+  <div class="muted" id="footer-note">הלינק חד־פעמי. אחרי ההורדה תצטרך לאשר את תנאי השימוש במכשיר לפני שהתוכנית נפתחת.</div>
 </div>
 <script>
 (function () {
@@ -144,9 +144,13 @@ p{color:var(--text-muted);font-size:15px;line-height:1.55;margin-bottom:14px}
           window.location.replace("/?tab=pprog&intake_reset=1");
         }, 1600);
       } else {
-        msg.textContent = "התוכנית הותקנה אצלך במכשיר" + (j.displayName ? (" — " + j.displayName) : "");
+        msg.textContent = "החבילה הותקנה" + (j.displayName ? (" — " + j.displayName) : "");
         status.className = "status ok";
-        status.textContent = "הלינק נשרף. אפשר לפתוח את האפליקציה.";
+        status.textContent = "הלינק נשרף. לפני פתיחת התוכנית — אשר תנאי שימוש באפליקציה.";
+        if (footer) {
+          footer.textContent =
+            "החתימה על התנאים נרשמת במסמך המשפטי שלנו. רק אחרי אישור במכשיר התוכנית נפתחת.";
+        }
         openBtn.style.display = "inline-block";
         openBtn.href = "/?tab=pprog&handoff=1";
         setTimeout(function () {
