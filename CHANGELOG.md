@@ -1,5 +1,14 @@
 # Changelog
 
+## [Admin 1.5.4] - 2026-08-11
+
+### Admin desktop fixed intake — No injuries click affordance
+- **Admin subtitle / title:** `DUCK-WOD Admin · 1.5.4`.
+- «No injuries» chip shows clear active state (✓ + teal fill) when selected; clears if the textarea is edited away.
+- Phone athlete intake untouched.
+
+---
+
 ## [Admin 1.5.3] - 2026-08-11
 
 ### Admin desktop fixed intake — All skills UX (phone untouched)
