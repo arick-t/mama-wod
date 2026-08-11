@@ -276,17 +276,23 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - **Scope:** all programming (generate_block / generate_week / generate_week_detail / revise_*)
 - **Trigger:** any athlete setup — especially home / limited / “no equipment” / partial gear lists
 - **Required behavior:**
-  1. **Always-available baseline (no gear required):** program may freely use floor + bodyweight patterns even when intake lists little or no equipment, unless injuries forbid them. Core pool includes (non-exhaustive): air squat, lunges (forward/reverse/walking), burpees (and no-push-up variant), push-ups / knee / pike, sit-ups / hollow / V-ups, planks, mountain climbers, jumping jacks, high knees, broad / lateral jumps, glute bridge, bird-dog / dead bug / Superman, bear crawl / crab walk.
-  2. **Wall (if a stable wall exists — default yes indoors):** wall sit, wall walk / wall climb, HS hold / HSPU progressions to wall. Do **not** require wall work when athlete notes outdoor-only / no wall.
-  3. **Intake equipment list is ADDITIVE, never exclusive.** Listed gear (DB/KB/barbell/bands/box/rope/mono/…) **adds** options; it does **not** replace or erase the baseline pool. Do not treat the list as “only these movements.”
-  4. **When free weights / odd objects exist — combine with baseline patterns.** Prefer loaded versions of the same patterns for variety and progression, e.g. DB/KB squat (not only air squat), DB/KB lunges, DB push press / thruster, weighted burpee / burpee-over-DB, farmer carry if handles exist. Keep unloaded baseline in the rotation too (not gear-only drift).
-  5. **Still honor true constraints:** never invent missing machines/rigs/ropes; never program unmarked Rx skills; injuries / limits still win.
+  1. **EQUIPMENT-INDEPENDENT MOVEMENTS DIRECTIVE:** When generating or adapting plans, do **NOT** restrict selection solely to the logged equipment list. Equipment is an **enhancement**, not a prerequisite. Freely integrate bodyweight, plyometric, core, and space-independent conditioning into warm-ups, strength pieces, and metcons.
+  2. **Always draw from this equipment-free pool** (unless injuries/limits forbid a pattern), regardless of training location:
+     - **Conditioning & cardio:** Burpees (standard / no push-up); Mountain climbers; Jumping jacks / star jumps; High knees / butt kicks; Shuttle runs (short); Broad jumps / tuck jumps / lateral jumps.
+     - **Lower body (BW):** Air squats / jump squats; Walking / reverse / jump lunges; Cossack squats; Single-leg / double glute bridges; Wall sit; Pistol squats (assisted / unassisted); Bear crawl / crab walk.
+     - **Upper body:** Push-ups (standard, diamond, wide, incline, decline); Pike push-ups; Handstand hold / HSPU against wall; Plank shoulder taps; Dips on stable household chairs/objects only when safe and plausible; Superman / bird-dog.
+     - **Core & midline:** Sit-ups / V-ups / tuck-ups; Hollow body hold / hollow rocks; Plank (forearm / high) / side plank; Russian twists; Lying leg raises; Dead bug.
+     - **Wall (indoors default yes):** Wall sit; Wall walk / wall climb; HS / HSPU progressions to wall. Skip wall work if athlete notes outdoor-only / no wall.
+  3. **Intake equipment list is ADDITIVE, never exclusive.** Listed gear (DB/KB/barbell/bands/box/rope/mono/…) **adds** options; it does **not** erase the baseline pool. Never treat the list as “only these movements.”
+  4. **When free weights / odd objects exist — combine seamlessly with baseline patterns.** e.g. DB/KB squat (not only air squat), DB/KB lunges, DB push press / thruster, weighted burpee / burpee-over-DB, farmer carry if handles exist. Keep unloaded baseline in rotation (not gear-only drift).
+  5. **Still honor true constraints:** never invent missing machines/rigs/ropes; never program unmarked Rx skills; injuries / session limits still win.
 - **Examples:**  
   Good (home, DBs only): metcon with DB squats + burpees + lunges + push-ups.  
-  Bad (same athlete): metcon that avoids burpees/lunges entirely because “burpee wasn’t on the equipment list.”  
+  Bad (same athlete): avoids burpees/lunges because they weren’t on the equipment list.  
   Good (no gear): air squat + burpee + sit-up + mountain climber intervals.  
-  Bad (DBs available): only air squats all week — ignore chance to load the squat pattern.
-- **Added:** 2026-08-11 — home setup was over-filtering out universal floor/wall movements; free weights must combine with baseline
+  Bad (DBs available): only air squats all week — ignore loading the squat pattern.
+- **Added:** 2026-08-11 — home setup was over-filtering universal floor/wall movements; free weights must combine with baseline
+- **Updated:** 2026-08-11 — full approved equipment-free pool + Gemini directive wording
 
 ### POL-022 — Whole-program / brick chat: ultra-brief double-check
 - **Type:** HARD

@@ -1,5 +1,15 @@
 # Changelog
 
+## [Coach 2.3.2] - 2026-08-11
+
+### Personal Coach — POL-027 full equipment-free movement pool
+- **Coach subtitle:** `COACH · v2.3.2`.
+- Equipment is an **enhancement**, not a prerequisite (EQUIPMENT-INDEPENDENT MOVEMENTS DIRECTIVE).
+- Full approved pool: conditioning/cardio, lower BW, upper, core, indoor wall — always available unless injury forbids.
+- Free weights **combine** with those patterns (e.g. DB squat); gear list never a closed whitelist.
+
+---
+
 ## [Coach 2.3.1] - 2026-08-11
 
 ### Personal Coach — POL-027 floor/BW baseline + equipment additive
