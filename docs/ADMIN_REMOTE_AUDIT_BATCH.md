@@ -17,6 +17,7 @@ Rule: accumulate → one batch of work. Do not merge to main until founder asks.
 4. **Build plan Terms:** admin auth bypasses TERMS_REQUIRED; athlete device still gated.
 5. **Active recovery UX:** nest days under Yes; no Thursday default; require day if Yes.
 6. **Legal jsonl:** handoff Agree path already posts `/api/legal-agree` (unchanged; verify in retest).
+7. **Coach wire:** branch merged with **Coach 2.3.4** (`COACH_VERSION` + admin `LIVE_COACH_VERSION` fallback).
 
 ## Founder findings (2026-08-11)
 6. Delete athlete did not persist (אריק resurrected) — fixed via tombstone.

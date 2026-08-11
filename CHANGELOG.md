@@ -4,10 +4,22 @@
 
 ### Remote audit batch — delete, phone→admin, Build plan Terms, recovery UX
 - **Admin subtitle / title:** `DUCK-WOD Admin · 1.5.7`.
+- **Coach wire:** Build plan / generate_block uses live **Coach 2.3.4**.
 - **Build plan:** admin `generate_block` sends admin auth; Terms gate no longer blocks brick build (athlete still signs on device/handoff).
 - **Delete athlete:** writes Blob tombstone (no seed resurrect); burns open claims; device push gets `athlete_revoked` and wipes local coach store.
 - **Phone self-serve:** `intake_complete` mail also mirrors athlete into admin snapshot (with writeKey).
 - **Active recovery:** day list nested under Yes (visual branch); no Thursday default — must pick a day.
+
+---
+
+## [Coach 2.3.4] - 2026-08-11
+
+### Personal Coach — honor home inventory (POL-027 harden)
+- **Coach subtitle:** `COACH · v2.3.4`.
+- Lift/skill kg = capability only — do **not** unlock barbell / rings / rope / mono machines unless TRAINING SETUP reports them.
+- Home/DB-KB → map hinge to DB/KB/odd-object loading; no barbell DL / ring MU without that gear.
+- Each training week: ≥1 lunge-family + (indoors) ≥1 wall pattern; anti thruster-spam.
+- Surface `trainingSetup` in athleteProfile + programming ATHLETE MEMORY; remove generate_block “Deadlift then Front Squat” steer.
 
 ---
 

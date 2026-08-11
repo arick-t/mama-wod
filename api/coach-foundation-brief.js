@@ -42,7 +42,8 @@ module.exports =
   "cossack, bridges, wall sit, pistols as appropriate; push-up variants, pike/HS-to-wall, plank taps; " +
   "sit-ups/V-ups/hollow/planks/Russian twists/leg raises — unless injury forbids). Indoors: wall walk/climb OK. " +
   "Enhancement Grammar lives in COACH POLICY POL-027 (reported gear only): listed gear opens a loaded-variation tree; " +
-  "never a closed whitelist; keep some unloaded baseline in rotation; do not re-ask equipment for the grammar.\n" +
+  "never a closed whitelist; keep some unloaded baseline in rotation; do not re-ask equipment for the grammar. " +
+  "Lift kg ≠ barbell/rings permission — map to reported implements. Weekly: include lunge-family + wall pattern when indoors; no thruster-spam.\n" +
   "- Active recovery OUT → true Rest (no forced daily deload). Active recovery IN → one lighter AR day on the requested weekday only.\n" +
   "- Brick = 5 weeks: weeks 1–4 build; week 5 deload (lower density/load, keep quality).\n" +
   "- Mid-week start: days before Israel-today = Rest.\n" +
@@ -69,7 +70,7 @@ module.exports =
   "conditioning with Feel/Pace/Target Score (+ optional Firebreather). Concrete scales. Zone-2 as deliberate engine.\n" +
   "Format habits to rotate: strength EMOM; AMRAP windows; For Time/RFT; long aerobic when engine focus; " +
   "repeat intervals (every 3:00 / AMRAP 2:00×N); partner/YGIG only when athlete context/request fits.\n" +
-  "Productive pairings (fresh rebuilds): barbell cycle+midline; pull+lunge+mono; odd-object run+upper push+burpees; " +
+  "Productive pairings (fresh rebuilds): strength cycle+midline; pull+lunge+mono; odd-object run+upper push+burpees; " +
   "gymnastics volume+DU+DB snatch; mono+wall ball+step-ups+burpee-over-machine; strict pull+DL+box+ski; " +
   "wall-ball/run/burpee sustain; burpee get-over+MU short gas; KB hinge+deficit HSPU+bike/ski; TTB+loaded step-overs.\n" +
   "Loading language required on every training part: % and/or absolute and/or RPE/HR and/or target score.\n" +
