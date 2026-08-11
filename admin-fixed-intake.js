@@ -92,6 +92,11 @@
     if (buildBtn) buildBtn.style.display = "none";
     var building = document.getElementById("intake-building");
     if (building) building.classList.remove("visible");
+    var overlay = document.getElementById("adminIntakeBuildOverlay");
+    if (overlay) {
+      overlay.classList.remove("open");
+      overlay.hidden = true;
+    }
     var status = document.getElementById("intake-status");
     if (status) status.textContent = "";
     if (typeof hideIntakePickers === "function") hideIntakePickers();
@@ -601,6 +606,22 @@
     finishAdminFixedIntakeAndBuild();
   };
 
+  function restoreAdminFixedGoals(errMsg) {
+    showIntakeBuilding(false);
+    setIntakeBusy(false);
+    intakeState.fixedActive = true;
+    intakeState.fixedStep = C().FIXED_STEPS.length - 1;
+    syncAdminFixedIntakeUi();
+    var compose = document.getElementById("intake-compose");
+    if (compose) compose.style.display = "none";
+    var log = document.getElementById("intake-chat-log");
+    if (log) log.style.display = "none";
+    if (errMsg) {
+      document.getElementById("intake-status").textContent = errMsg;
+      setFixedErr(errMsg);
+    }
+  }
+
   function finishAdminFixedIntakeAndBuild() {
     var S = C();
     var prompt = S.buildFixedIntakePrompt(intakeState);
@@ -609,6 +630,10 @@
     intakeState.profileNotes = notes;
     intakeState.fixedActive = false;
     syncAdminFixedIntakeUi();
+    var compose = document.getElementById("intake-compose");
+    if (compose) compose.style.display = "none";
+    var log = document.getElementById("intake-chat-log");
+    if (log) log.style.display = "none";
     intakeState.messages = [
       {
         role: "model",
@@ -630,7 +655,10 @@
   function generateIntakeBlockFromFixedPacket() {
     if (intakeState.busy) return;
     setIntakeBusy(true);
-    showIntakeBuilding(true);
+    showIntakeBuilding(
+      true,
+      "<strong>Coach</strong> is building your 5-week block…"
+    );
     document.getElementById("intake-status").textContent = "בונה לבנה אמיתית (generate_block)…";
 
     var profile = intakeAthleteProfile({ forceIntakeComplete: true });
@@ -660,34 +688,26 @@
           var err =
             typeof friendlyCoachError === "function"
               ? friendlyCoachError(j, x.status)
-              : String((j && j.error) || "build failed");
-          showIntakeBuilding(false);
-          document.getElementById("intake-status").textContent = err;
-          setIntakeBusy(false);
-          intakeState.fixedActive = true;
-          intakeState.fixedStep = C().FIXED_STEPS.length - 1;
-          syncAdminFixedIntakeUi();
+              : String((j && (j.message || j.error)) || "build failed");
+          restoreAdminFixedGoals("בניית הלבנה נכשלה: " + err + " — לחץ Build plan שוב.");
           return;
         }
         var block =
           typeof parseBlockFromText === "function" ? parseBlockFromText(j.text, j) : j.block;
         if (!block || !block.weeks || !block.weeks.length) {
-          showIntakeBuilding(false);
-          document.getElementById("intake-status").textContent =
-            "המאמן לא החזיר BLOCK_JSON תקין — נסה שוב.";
-          setIntakeBusy(false);
-          intakeState.fixedActive = true;
-          intakeState.fixedStep = C().FIXED_STEPS.length - 1;
-          syncAdminFixedIntakeUi();
+          restoreAdminFixedGoals(
+            "המאמן לא החזיר BLOCK_JSON תקין — לחץ Build plan שוב."
+          );
           return;
         }
         finalizeNewAthlete(block);
       })
       .catch(function (e) {
-        showIntakeBuilding(false);
-        document.getElementById("intake-status").textContent =
-          "שגיאת רשת: " + String((e && e.message) || e).slice(0, 200);
-        setIntakeBusy(false);
+        restoreAdminFixedGoals(
+          "שגיאת רשת בבניית לבנה: " +
+            String((e && e.message) || e).slice(0, 200) +
+            " — לחץ Build plan שוב."
+        );
       });
   }
 
@@ -702,7 +722,10 @@
 
   window.finalizeNewAthlete = function finalizeNewAthlete(block) {
     intakeState.intakeComplete = true;
-    showIntakeBuilding(true);
+    showIntakeBuilding(
+      true,
+      "<strong>Coach</strong> — saving athlete + one-time handoff link…"
+    );
     document.getElementById("intake-status").textContent = "שומר מתאמן + לינק מסירה…";
 
     var intakeProfile = C().normalizeIntakeProfile(
