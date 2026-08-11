@@ -1,5 +1,14 @@
 # Changelog
 
+## [Admin 1.5] - 2026-08-11
+
+### Admin — version bump + push-upgrade placement polish
+- **Admin subtitle / title:** `DUCK-WOD Admin · 1.5`.
+- «עדכון בדחיפה» mini trigger opposite **בלוק אימון** (does not compete with «עדכן»).
+- Chooser unchanged: **זול · SOFT** vs **יקר · שכתוב מלא לשארית הבלוק** (`soft` | `remaining_rebuild`).
+
+---
+
 ## [Admin 1.4] - 2026-08-11
 
 ### Admin — עדכון בדחיפה (opt-in coach brain upgrade mid-brick)

@@ -68,7 +68,7 @@ ok("phone legal >= 3", (phone.legalAcceptedVersion | 0) >= 3);
 
 ok("admin loads sync contract", /coach-intake-sync-contract\.js/.test(adminHtml));
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
-ok("admin version 1.4", /Admin · 1\.4/.test(adminHtml) || /DUCK-WOD Admin · 1\.4/.test(adminHtml));
+ok("admin version 1.5", /Admin · 1\.5/.test(adminHtml) || /DUCK-WOD Admin · 1\.5/.test(adminHtml));
 ok("fixed intake uses shared packet", /buildFixedIntakePrompt/.test(fixedJs));
 ok("handoff stores intakeProfile", /intakeProfile/.test(handoff));
 ok("handoff rejects stub block", /currentBlock required/.test(handoff));
