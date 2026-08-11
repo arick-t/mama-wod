@@ -184,7 +184,11 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .ath-card-foot .btn-delete-link{appearance:none;background:transparent;border:none;color:#f87171;font-weight:700;font-size:.82em;cursor:pointer;padding:4px 0;font-family:inherit}
 .ath-card-foot .btn-delete-link:hover{color:#fca5a5}
 .ath-block-panel{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
-.ath-block-panel-title{font-size:.95em;font-weight:800;margin:0 0 12px;color:var(--text)}
+.ath-block-panel-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin:0 0 10px;min-height:28px
+}
+.ath-block-panel-title{font-size:.95em;font-weight:800;margin:0;color:var(--text);line-height:1.2}
 .ath-update-row{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
 .btn-update-block{
   appearance:none;border:none;border-radius:10px;padding:11px 16px;background:var(--brand);color:#fff;
@@ -192,28 +196,39 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 }
 .btn-update-block:hover{background:#d03d18}
 .btn-update-block:disabled{opacity:.5;cursor:default}
+/* Mini trigger opposite «בלוק אימון» — must not compete with full-width «עדכן» */
 .btn-push-upgrade{
-  appearance:none;border:1px solid rgba(245,197,24,.55);border-radius:10px;padding:11px 16px;
-  background:rgba(245,197,24,.12);color:#f5d76e;font-weight:800;font-size:.92em;cursor:pointer;
-  font-family:inherit;width:100%
+  appearance:none;flex:0 0 auto;border:1px solid rgba(245,197,24,.4);border-radius:6px;
+  padding:3px 8px;background:transparent;color:#e8c84a;font-weight:700;font-size:.68em;
+  letter-spacing:.01em;cursor:pointer;font-family:inherit;line-height:1.25;white-space:nowrap;
+  max-width:42%;overflow:hidden;text-overflow:ellipsis
 }
-.btn-push-upgrade:hover{background:rgba(245,197,24,.2);border-color:rgba(245,197,24,.8)}
-.btn-push-upgrade:disabled{opacity:.45;cursor:default;border-color:rgba(255,255,255,.12);color:var(--text-meta);background:transparent}
+.btn-push-upgrade:hover{background:rgba(245,197,24,.12);border-color:rgba(245,197,24,.7)}
+.btn-push-upgrade:disabled{opacity:.4;cursor:default;border-color:rgba(255,255,255,.1);color:var(--text-meta);background:transparent}
 .ath-push-chooser{
-  display:none;flex-direction:column;gap:8px;padding:10px 12px;border-radius:10px;
+  display:none;flex-direction:column;gap:8px;padding:10px 12px;border-radius:10px;margin:0 0 10px;
   border:1px solid var(--line);background:var(--bg-elev)
 }
 .ath-push-chooser.open{display:flex}
-.ath-push-chooser-title{font-size:.82em;font-weight:700;color:var(--text-meta)}
+.ath-push-chooser-title{font-size:.78em;font-weight:700;color:var(--text-meta);line-height:1.35}
 .ath-push-chooser-row{display:flex;flex-direction:column;gap:8px}
 .btn-push-soft,.btn-push-full{
-  appearance:none;border:none;border-radius:9px;padding:10px 14px;font-weight:800;font-size:.88em;
-  cursor:pointer;font-family:inherit;width:100%
+  appearance:none;border:1px solid transparent;border-radius:9px;padding:10px 12px;
+  font-weight:700;font-size:.84em;cursor:pointer;font-family:inherit;width:100%;
+  text-align:right;line-height:1.35
 }
-.btn-push-soft{background:#2a3344;color:#d7e3ff}
+.btn-push-soft{background:#2a3344;color:#d7e3ff;border-color:rgba(167,196,255,.25)}
 .btn-push-soft:hover{background:#364258}
-.btn-push-full{background:#5c2a1e;color:#ffd7c8}
+.btn-push-full{background:#5c2a1e;color:#ffd7c8;border-color:rgba(255,180,140,.28)}
 .btn-push-full:hover{background:#6e3424}
+.btn-push-soft .push-opt-kicker,.btn-push-full .push-opt-kicker{
+  display:block;font-size:.72em;font-weight:800;letter-spacing:.04em;opacity:.85;margin-bottom:2px
+}
+.btn-push-soft .push-opt-main,.btn-push-full .push-opt-main{display:block;font-weight:800}
+.btn-push-soft .push-opt-sub,.btn-push-full .push-opt-sub{
+  display:block;font-size:.76em;font-weight:600;opacity:.78;margin-top:2px
+}
+#push-upgrade-status{margin:0 0 10px;min-height:0}
 .ath-update-status{font-size:.8em;color:var(--text-meta);min-height:18px}
 .ath-chat-log{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow:auto}
 .ath-chat-item{background:var(--bg-elev);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
@@ -1318,30 +1333,43 @@ function renderAthlete(a) {
         "</div>" +
       "</div>" +
       '<div class="ath-block-panel">' +
-        '<div class="ath-block-panel-title">בלוק אימון</div>' +
-        renderBlockCalendarBody(a) +
-        '<div class="ath-update-row">' +
-          '<button type="button" class="btn-update-block" id="btn-update-block" onclick="pushBlockUpdateToAthlete(\'' +
-          esc(a.athleteId) +
-          "')\">עדכן</button>" +
+        '<div class="ath-block-panel-head">' +
+          '<div class="ath-block-panel-title">בלוק אימון</div>' +
           '<button type="button" class="btn-push-upgrade" id="btn-push-upgrade" ' +
           (pushEnabled ? "" : "disabled ") +
           'onclick="togglePushUpgradeChooser(\'' +
           esc(a.athleteId) +
           "')\" title=\"" +
           esc(pushTitle) +
-          '">עדכון בדחיפה</button>' +
-          '<div class="ath-push-chooser" id="ath-push-chooser">' +
-            '<div class="ath-push-chooser-title">בחר סוג עדכון לימים שנותרו בלבנה</div>' +
-            '<div class="ath-push-chooser-row">' +
-              '<button type="button" class="btn-push-soft" onclick="sendPushUpgradeOffer(\'' +
-              esc(a.athleteId) +
-              "', 'soft')\">עדכון סופט</button>" +
-              '<button type="button" class="btn-push-full" onclick="sendPushUpgradeOffer(\'' +
-              esc(a.athleteId) +
-              "', 'remaining_rebuild')\">שכתוב מלא (נותר בלבנה)</button>" +
-            "</div>" +
+          '" aria-expanded="false" aria-controls="ath-push-chooser">עדכון בדחיפה</button>' +
+        "</div>" +
+        '<div class="ath-push-chooser" id="ath-push-chooser" role="group" aria-label="בחירת סוג עדכון בדחיפה">' +
+          '<div class="ath-push-chooser-title">בחר סוג עדכון — רק לימים שנותרו בלבנה (עבר נעול)</div>' +
+          '<div class="ath-push-chooser-row">' +
+            '<button type="button" class="btn-push-soft" onclick="sendPushUpgradeOffer(\'' +
+            esc(a.athleteId) +
+            "', 'soft')\">" +
+              '<span class="push-opt-kicker">זול · רמה 1</span>' +
+              '<span class="push-opt-main">עדכון סופט (מינורי)</span>' +
+              '<span class="push-opt-sub">עד ~3 תיקונים כירורגיים על הימים שנותרו</span>' +
+            "</button>" +
+            '<button type="button" class="btn-push-full" onclick="sendPushUpgradeOffer(\'' +
+            esc(a.athleteId) +
+            "', 'remaining_rebuild')\">" +
+              '<span class="push-opt-kicker">יקר · פרימיום</span>' +
+              '<span class="push-opt-main">שכתוב מלא — בנייה מחדש של שארית הבלוק</span>' +
+              '<span class="push-opt-sub">רק ימים שנותרו עד סוף הלבנה · בלי לבנה חדשה</span>' +
+            "</button>" +
           "</div>" +
+        "</div>" +
+        '<div class="ath-update-status" id="push-upgrade-status">' +
+        esc(pushHint) +
+        "</div>" +
+        renderBlockCalendarBody(a) +
+        '<div class="ath-update-row">' +
+          '<button type="button" class="btn-update-block" id="btn-update-block" onclick="pushBlockUpdateToAthlete(\'' +
+          esc(a.athleteId) +
+          "')\">עדכן</button>" +
           '<div class="ath-update-status" id="update-block-status">' +
           (a.pendingPushUpgrade && a.pendingPushUpgrade.status === "pending"
             ? "הצעת עדכון בדחיפה ממתינה למתאמן (" +
@@ -1352,9 +1380,6 @@ function renderAthlete(a) {
             : a.lastHandoffCreatedAt
             ? "עדכון אחרון נוצר: " + esc(fmt(a.lastHandoffCreatedAt))
             : "לאחר שינוי ידני בבלוק — לחץ עדכן כדי לשלוח לטלפון המתאמן") +
-          "</div>" +
-          '<div class="ath-update-status" id="push-upgrade-status">' +
-          esc(pushHint) +
           "</div>" +
           '<div class="handoff-link" id="handoff-link" style="display:none"></div>' +
           '<div class="sandbox-actions" id="handoff-copy-wrap" style="display:none">' +
@@ -1524,8 +1549,18 @@ function togglePushUpgradeChooser(athleteId) {
     return;
   }
   var box = document.getElementById("ath-push-chooser");
+  var btn = document.getElementById("btn-push-upgrade");
   if (!box) return;
-  box.classList.toggle("open");
+  var open = !box.classList.contains("open");
+  box.classList.toggle("open", open);
+  if (btn) btn.setAttribute("aria-expanded", open ? "true" : "false");
+  if (open) {
+    var hint = document.getElementById("push-upgrade-status");
+    if (hint) {
+      hint.textContent =
+        "בחר: זול = עדכון מינורי (SOFT) · יקר = בנייה מלאה מחדש של שארית הבלוק. בלי אישור המתאמן — אין שינוי.";
+    }
+  }
 }
 
 function sendPushUpgradeOffer(athleteId, mode) {
