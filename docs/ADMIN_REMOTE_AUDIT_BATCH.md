@@ -17,6 +17,10 @@ Rule: accumulate → one batch of work. Do not merge to main until founder asks.
 4. Build plan end-to-end: GIF/video → real brick → one-time link → athlete opens → Terms → then plan.
 5. Legal signature must land in legal-agreements.jsonl on Agree (handoff path).
 
+## Founder findings (2026-08-11, production /admin.html ~1.5.5)
+6. **Delete athlete does not persist:** Deleted "אריק" in admin; after refresh he reappeared (still Active / Coach Member, still in tabs). Admin showed "2 trainees" (אריק + עדי). Delete UI exists but server/Blob snapshot appears to resurrect the athlete — not just device localStorage leftover.
+7. **Phone self-serve signup not landing in admin list:** Opened new user on phone with full intake; join email arrived (~21:11) subject/body like "! אריק פלא has joined the DUCK'S" from DUCK-WOD. Admin still showed only 2 trainees — new athlete never appeared in admin module tabs/count. Analytics/join email fired; admin Blob athlete list apparently not updated from phone registration path.
+
 ## Hard constraints
 - Prefer phone athlete intake UX over desktop admin if conflict.
 - Do not auto-push coach upgrades to all athletes.
