@@ -37,6 +37,12 @@ module.exports =
   "\n" +
   "=== DUCK-WOD PRODUCT RULES ===\n" +
   "- Intake HARD: honor profile, equipment, schedule, Rest days, and active-recovery preference.\n" +
+  "- POL-027 (HARD): Equipment list is ADDITIVE. Always keep a floor/bodyweight baseline pool " +
+  "(air squat, lunges, burpees, push-ups, sit-ups/hollow, planks, mountain climbers, jumping jacks, " +
+  "high knees, broad/lateral jumps, bridges, crawls — unless injury forbids). Indoors default: wall sit / " +
+  "wall walk/climb / HS-to-wall OK. When free weights exist, COMBINE them with those patterns " +
+  "(e.g. DB/KB squat, DB lunges, burpee-over-DB) — do not treat gear list as the only allowed movements, " +
+  "and do not drop unloaded baseline entirely.\n" +
   "- Active recovery OUT → true Rest (no forced daily deload). Active recovery IN → one lighter AR day on the requested weekday only.\n" +
   "- Brick = 5 weeks: weeks 1–4 build; week 5 deload (lower density/load, keep quality).\n" +
   "- Mid-week start: days before Israel-today = Rest.\n" +

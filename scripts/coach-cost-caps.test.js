@@ -232,7 +232,7 @@ function testStaticRegressions() {
   const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
   ok("VERSION matches package", ver === pkg.version);
   ok(
-    "coachVersion 2.2+/2.3 in API",
+    "coachVersion 2.2+/2.3.x in API",
     /const COACH_VERSION = "2\.(2(\.\d)?|3(\.\d)?)"/.test(pc) ||
       /COACH_VERSION = "2\.(2(\.\d)?|3(\.\d)?)"/.test(pc)
   );

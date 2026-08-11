@@ -1,5 +1,15 @@
 # Changelog
 
+## [Coach 2.3.1] - 2026-08-11
+
+### Personal Coach — POL-027 floor/BW baseline + equipment additive
+- **Coach subtitle:** `COACH · v2.3.1`.
+- Always-available floor/bodyweight pool (burpees, lunges, air squat, push-ups, …) even on home / “no gear”.
+- Indoors: wall sit / wall walk/climb allowed by default.
+- Intake equipment list is **additive** — when DBs/KBs/etc. exist, **combine** with baseline patterns (e.g. DB squat, DB lunge), do not treat the list as a closed whitelist.
+
+---
+
 ## [Admin 1.3] - 2026-08-09
 
 ### Admin «+ מתאמן» — intake parity + full sync (production ship)

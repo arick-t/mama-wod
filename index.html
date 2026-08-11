@@ -1046,7 +1046,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
 <div class="header-sub">DAILY WORKOUTS · v21.5.1</div>
-<div class="header-sub" id="coachVersionSub">COACH · v2.3</div>
+<div class="header-sub" id="coachVersionSub">COACH · v2.3.1</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap active" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
@@ -1611,10 +1611,11 @@ function rememberAiClientError(summary) {
  *   Coach 2.2.1 — POL-026 calendar truth (today logged + tomorrow Rest) + Done.-only chat.
  *   Coach 2.2.2 — POL-026 calendar indicator sticks (loggedExtra survive normalize / week_detail).
  *   Coach 2.3 — ship: calendar LOGGED today + Confirm? one-tap כן.
+ *   Coach 2.3.1 — POL-027 floor/BW baseline + equipment additive (combine free weights).
  * Keep this badge in sync with the brain actually serving /api/personal-coach.
  * Display: header “COACH · v{COACH_VERSION}” only — do NOT bump app DAILY WORKOUTS / <title> here.
  */
-var COACH_VERSION = "2.3";
+var COACH_VERSION = "2.3.1";
 try {
   var __coachVerEl = document.getElementById("coachVersionSub");
   if (__coachVerEl) __coachVerEl.textContent = "COACH · v" + COACH_VERSION;
