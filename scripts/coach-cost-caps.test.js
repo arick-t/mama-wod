@@ -143,6 +143,24 @@ function testGate() {
     { costCaps: { softUpgradeUsedForBrick: true } }
   );
   ok("soft upgrade blocked second time", soft && soft.code === "COST_CAP_SOFT");
+  ok(
+    "admin push bypasses soft lock",
+    evaluateCostCapGate(
+      "revise_week",
+      { softUpgrade: true },
+      { costCaps: { softUpgradeUsedForBrick: true } },
+      { adminPushOfferVerified: true }
+    ) === null
+  );
+  ok(
+    "admin push bypasses large lock",
+    evaluateCostCapGate(
+      "revise_week",
+      { largeRebuild: true, israelToday: "2026-08-05" },
+      { costCaps: { lastLargeRebuildAt: "2026-08-01", israelToday: "2026-08-05" } },
+      { adminPushOfferVerified: true }
+    ) === null
+  );
 
   /* Mid-brick generate_block as large rebuild */
   const mid = evaluateCostCapGate(

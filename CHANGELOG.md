@@ -1,5 +1,16 @@
 # Changelog
 
+## [Admin 1.4] - 2026-08-11
+
+### Admin — עדכון בדחיפה (opt-in coach brain upgrade mid-brick)
+- **Admin subtitle / title:** `DUCK-WOD Admin · 1.4`.
+- On athlete page: **עדכון בדחיפה** — enabled only when live coach brain is newer than the athlete’s `planCoachVersion`.
+- Admin chooses **עדכון סופט** or **שכתוב מלא (נותר בלבנה)** → pending offer on Blob → athlete sees CTA in Personal Coach chat.
+- Athlete must tap accept; **default remains no change** until next brick (POL-COST-006).
+- Apply path: remaining days only (POL-023); soft ≤3 patches; full = remaining-days rebuild. Past days locked.
+
+---
+
 ## [Coach 2.3.2] - 2026-08-11
 
 ### Personal Coach — POL-027 full equipment-free movement pool

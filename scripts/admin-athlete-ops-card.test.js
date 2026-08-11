@@ -18,6 +18,8 @@ assert.ok(admin.includes("ath-stats-btn"), "stats chevron by name");
 assert.ok(admin.includes("renderAthleteStatsPop"), "stats popover");
 assert.ok(admin.includes("pushBlockUpdateToAthlete"), "update block to phone");
 assert.ok(admin.includes("btn-update-block"), "update button");
+assert.ok(admin.includes("עדכון בדחיפה"), "push upgrade button");
+assert.ok(admin.includes("sendPushUpgradeOffer"), "push upgrade send");
 assert.ok(admin.includes("היסטוריית שיח מול המאמן"), "chat history section");
 assert.ok(admin.includes("admin-chat-fab"), "athlete-scoped chat FAB");
 assert.ok(!/ath-fact-label">בלוק:/.test(admin), "block fact removed from card grid");
@@ -28,6 +30,7 @@ assert.ok(!admin.includes('renderAccItem(\n          "history"'), "usage accordi
 assert.ok(admin.includes("openIntakeSheet"), "intake opens from stats popover");
 assert.ok(snap.includes('action === "admin_append_chat"'), "chat log API");
 assert.ok(snap.includes("adminChatLog"), "persist chat log");
-assert.ok(admin.includes("DUCK-WOD Admin · 1.2.2"), "admin product label 1.2.2");
+assert.ok(snap.includes('action === "admin_push_upgrade_offer"'), "push upgrade offer API");
+assert.ok(admin.includes("DUCK-WOD Admin · 1.4"), "admin product label 1.4");
 
 console.log("admin-athlete-ops-card.test.js: ok");

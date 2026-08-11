@@ -63,9 +63,11 @@ const CLIENT_ALLOWED_KEYS = new Set([
   "currentBlock",
   "pastBlocks",
   "coachTier",
+  "planCoachVersion",
 ]);
 
 const CoachIntakeSync = require("../../../lib/coach-intake-sync-contract");
+const CoachPushUpgrade = require("../../../lib/coach-push-upgrade");
 
 function safeAthleteId(raw) {
   return String(raw || "")
@@ -318,6 +320,203 @@ module.exports = async function handler(req, res) {
       });
     }
 
+    /* Admin: push soft | remaining_rebuild offer to athlete coach chat (opt-in). */
+    if (body.action === "admin_push_upgrade_offer") {
+      if (!isAdmin) return adminAuthDenied(res);
+      const existing = (await readSnapshot(athleteId)) || {};
+      if (!existing.athleteId && !existing.createdAt) {
+        return res.status(404).json({ error: "Athlete not found — wait for first snapshot" });
+      }
+      if (!existing.currentBlock) {
+        return res.status(400).json({
+          ok: false,
+          error: "no_block",
+          message: "אין לבנה פעילה למתאמן — לא ניתן לשלוח עדכון בדחיפה.",
+        });
+      }
+      const liveCoachVersion = String(
+        body.targetCoachVersion || body.coachVersion || ""
+      )
+        .trim()
+        .slice(0, 20);
+      if (!liveCoachVersion) {
+        return res.status(400).json({
+          ok: false,
+          error: "coach_version_required",
+          message: "חסרה גרסת מח מאמן.",
+        });
+      }
+      const planVer =
+        existing.planCoachVersion ||
+        (existing.currentBlock && existing.currentBlock.coachVersion) ||
+        "";
+      if (!CoachPushUpgrade.isCoachNewerThanPlan(liveCoachVersion, planVer)) {
+        return res.status(400).json({
+          ok: false,
+          error: "no_newer_coach",
+          message:
+            "אין עדכון מח מאמן חדש למתאמן זה (הלבנה כבר על v" +
+            (planVer || liveCoachVersion) +
+            ").",
+          liveCoachVersion: liveCoachVersion,
+          planCoachVersion: planVer || null,
+        });
+      }
+      if (
+        existing.pendingPushUpgrade &&
+        existing.pendingPushUpgrade.status === "pending"
+      ) {
+        return res.status(409).json({
+          ok: false,
+          error: "offer_pending",
+          message: "כבר יש הצעת עדכון בדחיפה ממתינה למתאמן זה.",
+          pendingPushUpgrade: CoachPushUpgrade.publicOffer(existing.pendingPushUpgrade),
+        });
+      }
+      const offer = CoachPushUpgrade.buildPendingOffer({
+        mode: body.mode,
+        targetCoachVersion: liveCoachVersion,
+      });
+      if (!offer) {
+        return res.status(400).json({
+          ok: false,
+          error: "invalid_mode",
+          message: "בחר עדכון סופט או שכתוב מלא של הימים שנותרו.",
+        });
+      }
+      existing.pendingPushUpgrade = offer;
+      let log = Array.isArray(existing.adminChatLog) ? existing.adminChatLog.slice() : [];
+      log.push({
+        at: offer.createdAt,
+        text:
+          "עדכון בדחיפה · " +
+          (offer.mode === "soft" ? "סופט" : "שכתוב מלא (נותר בלבנה)") +
+          " → v" +
+          offer.targetCoachVersion +
+          " (ממתין לאישור מתאמן)",
+        kind: "push_upgrade",
+      });
+      if (log.length > 80) log = log.slice(-80);
+      existing.adminChatLog = log;
+      existing.updatedAt = new Date().toISOString();
+      try {
+        await writeSnapshot(athleteId, existing);
+        await appendAdminAudit({
+          action: "push_upgrade_offer",
+          athleteId: athleteId,
+          actor: "admin",
+          ok: true,
+          detail: offer.mode + "@" + offer.targetCoachVersion,
+        });
+      } catch (e) {
+        return storageUnavailable(res, e);
+      }
+      return res.status(200).json({
+        ok: true,
+        pendingPushUpgrade: CoachPushUpgrade.publicOffer(offer),
+        adminChatLog: existing.adminChatLog,
+        storage: storageInfo(),
+      });
+    }
+
+    /* Athlete device: pull pending push-upgrade offer (writeKey). */
+    if (body.action === "athlete_pull_push_offer") {
+      const existing = (await readSnapshot(athleteId)) || {};
+      if (!existing.athleteId && !existing.createdAt) {
+        return res.status(404).json({ ok: false, error: "not_found" });
+      }
+      const writeKey =
+        body.writeKey ||
+        (req.headers && (req.headers["x-write-key"] || req.headers["X-Write-Key"])) ||
+        "";
+      const gate = assertSnapshotWriteAllowed(existing, writeKey, false);
+      if (!gate.ok) {
+        return res.status(gate.status).json({
+          ok: false,
+          error: gate.error,
+          message: gate.message,
+        });
+      }
+      return res.status(200).json({
+        ok: true,
+        pendingPushUpgrade: CoachPushUpgrade.publicOffer(existing.pendingPushUpgrade),
+        planCoachVersion:
+          existing.planCoachVersion ||
+          (existing.currentBlock && existing.currentBlock.coachVersion) ||
+          null,
+      });
+    }
+
+    /* Athlete device: accept / dismiss push-upgrade offer. */
+    if (body.action === "athlete_resolve_push_offer") {
+      const existing = (await readSnapshot(athleteId)) || {};
+      if (!existing.athleteId && !existing.createdAt) {
+        return res.status(404).json({ ok: false, error: "not_found" });
+      }
+      const writeKey =
+        body.writeKey ||
+        (req.headers && (req.headers["x-write-key"] || req.headers["X-Write-Key"])) ||
+        "";
+      const gate = assertSnapshotWriteAllowed(existing, writeKey, false);
+      if (!gate.ok) {
+        return res.status(gate.status).json({
+          ok: false,
+          error: gate.error,
+          message: gate.message,
+        });
+      }
+      const pending = existing.pendingPushUpgrade;
+      const offerId = String(body.offerId || "").slice(0, 40);
+      if (!pending || pending.status !== "pending" || pending.id !== offerId) {
+        return res.status(409).json({
+          ok: false,
+          error: "offer_mismatch",
+          message: "ההצעה לא ממתינה או כבר טופלה.",
+        });
+      }
+      const resolution = String(body.resolution || "").toLowerCase();
+      if (resolution !== "accepted" && resolution !== "dismissed") {
+        return res.status(400).json({ ok: false, error: "invalid_resolution" });
+      }
+      existing.pendingPushUpgrade = Object.assign({}, pending, {
+        status: resolution,
+        resolvedAt: new Date().toISOString(),
+      });
+      if (resolution === "accepted") {
+        existing.planCoachVersion = String(pending.targetCoachVersion || "").slice(0, 20);
+        if (existing.currentBlock && typeof existing.currentBlock === "object") {
+          existing.currentBlock = Object.assign({}, existing.currentBlock, {
+            coachVersion: existing.planCoachVersion,
+          });
+        }
+        existing.lastAcceptedPushUpgrade = {
+          id: pending.id,
+          mode: pending.mode,
+          targetCoachVersion: pending.targetCoachVersion,
+          at: existing.pendingPushUpgrade.resolvedAt,
+        };
+      }
+      existing.updatedAt = new Date().toISOString();
+      try {
+        await writeSnapshot(athleteId, existing);
+        await appendAdminAudit({
+          action: "resolve_push_upgrade",
+          athleteId: athleteId,
+          actor: "athlete",
+          ok: true,
+          detail: resolution + ":" + pending.mode,
+        });
+      } catch (e) {
+        return storageUnavailable(res, e);
+      }
+      return res.status(200).json({
+        ok: true,
+        pendingPushUpgrade: existing.pendingPushUpgrade,
+        planCoachVersion: existing.planCoachVersion || null,
+        storage: storageInfo(),
+      });
+    }
+
     if (
       body.coachDirectives !== undefined &&
       Object.keys(body).filter(function (k) {
@@ -453,6 +652,17 @@ module.exports = async function handler(req, res) {
           ""
       ).slice(0, 40),
       adminChatLog: Array.isArray(existing.adminChatLog) ? existing.adminChatLog : [],
+      pendingPushUpgrade: existing.pendingPushUpgrade || null,
+      planCoachVersion: (function () {
+        /* Never invent from live COACH_VERSION — only explicit stamp (brick build / accepted push). */
+        if (clean.planCoachVersion) return String(clean.planCoachVersion).slice(0, 20);
+        if (existing.planCoachVersion) return String(existing.planCoachVersion).slice(0, 20);
+        if (existing.currentBlock && existing.currentBlock.coachVersion) {
+          return String(existing.currentBlock.coachVersion).slice(0, 20);
+        }
+        return null;
+      })(),
+      lastAcceptedPushUpgrade: existing.lastAcceptedPushUpgrade || null,
       writeKeyHash:
         existing.writeKeyHash ||
         gate.bindHash ||
@@ -464,6 +674,16 @@ module.exports = async function handler(req, res) {
       createdAt: existing.createdAt || new Date().toISOString(),
     };
     if (isAdmin && clean.createdByAdmin) snapshot.createdByAdmin = true;
+    if (
+      snapshot.planCoachVersion &&
+      snapshot.currentBlock &&
+      typeof snapshot.currentBlock === "object" &&
+      !snapshot.currentBlock.coachVersion
+    ) {
+      snapshot.currentBlock = Object.assign({}, snapshot.currentBlock, {
+        coachVersion: snapshot.planCoachVersion,
+      });
+    }
 
     try {
       await writeSnapshot(athleteId, snapshot);

@@ -285,6 +285,22 @@ html.pprog-finish-open,body.pprog-finish-open{overflow:hidden;overscroll-behavio
 .pprog-confirm-yes-btn:hover{background:rgba(26,155,138,.28);border-color:#1A9B8A}
 .pprog-confirm-yes-btn:active{transform:scale(.98)}
 .pprog-confirm-yes-btn:disabled{opacity:.45;cursor:default;transform:none}
+.pprog-push-upgrade-card{
+  margin:8px 4px 10px;padding:12px 14px;border-radius:12px;
+  border:1px solid rgba(245,197,24,.45);background:rgba(245,197,24,.08);
+  display:flex;flex-direction:column;gap:10px
+}
+.pprog-push-upgrade-msg{font-size:.9em;line-height:1.45;color:#f0e6c8;direction:rtl;text-align:right}
+.pprog-push-upgrade-actions{display:flex;flex-direction:column;gap:8px}
+.pprog-push-upgrade-accept{
+  appearance:none;border:none;border-radius:10px;padding:10px 14px;font-weight:800;font-size:.9em;
+  cursor:pointer;font-family:inherit;background:#c45c2a;color:#fff
+}
+.pprog-push-upgrade-accept:disabled{opacity:.5;cursor:default}
+.pprog-push-upgrade-dismiss{
+  appearance:none;border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:8px 12px;
+  font-weight:700;font-size:.82em;cursor:pointer;font-family:inherit;background:transparent;color:#b8b0a0
+}
 .pprog-start-btn{width:100%!important;margin-top:0;padding:16px 18px!important;font-size:1.15em!important;font-weight:800;letter-spacing:.08em;background:#E8451A!important;border:none;border-radius:10px;min-height:54px}
 .pprog-prestart-welcome{
   margin:8px 0 14px;padding:14px 14px 12px;border:1px dashed #3d7a52;border-radius:12px;
@@ -2543,6 +2559,7 @@ function renderPprogChat() {
       '<div class="pprog-msg system"><div class="pprog-bubble system">Ask the coach anything about this brick.</div></div>';
   }
   if (pprogShouldShowConfirmYesChip(msgs)) html += pprogConfirmYesChipHtml();
+  html = pprogPushUpgradeCardHtml() + html;
   log.innerHTML = html;
   if (pprogBusy) setPprogTyping(true);
   else log.scrollTop = log.scrollHeight;
@@ -2597,6 +2614,7 @@ function renderPprogBrickChatLog() {
       '<div class="pprog-msg system"><div class="pprog-bubble system">Whole brick chat — full plan, schedule, equipment, goals. For one day only, use the green box under that workout.</div></div>';
   }
   if (pprogShouldShowConfirmYesChip(msgs)) html += pprogConfirmYesChipHtml();
+  html = pprogPushUpgradeCardHtml() + html;
   log.innerHTML = html;
   if (pprogBusy) setPprogTyping(true);
   else log.scrollTop = log.scrollHeight;
@@ -3484,6 +3502,9 @@ function openPprogCoachFloat() {
   }
   markPprogCoachFabTipSeen();
   syncPprogCoachFabVisibility();
+  try {
+    pprogMaybePullPushUpgradeOffer();
+  } catch (ePull) {}
   try {
     renderPprogChat();
   } catch (eRender) {}
@@ -7260,6 +7281,14 @@ function applyPprogBlock(block, rawText, opts) {
   } catch (eMergeGuard) {
     /* Never let mid-brick merge guards break applying a valid block */
   }
+  /* Stamp brain version that built this brick — used by admin push-upgrade gate. */
+  if (!opts.preservePastDays && !opts.autoNextBlock) {
+    store.currentBlock.coachVersion = COACH_VERSION;
+    store.planCoachVersion = COACH_VERSION;
+  } else if (opts.autoNextBlock) {
+    store.currentBlock.coachVersion = COACH_VERSION;
+    store.planCoachVersion = COACH_VERSION;
+  }
   ensurePprogBlockFiveWeeks(store);
   if (opts.autoNextBlock && oldBlock && oldBlock.weeks) {
     if (!Array.isArray(store.pastBlocks)) store.pastBlocks = [];
@@ -7393,6 +7422,10 @@ function pushAdminSnapshot(store) {
       fixedIntakePacket: store.fixedIntakePacket || "",
       profileNotes: store.profileNotes || "",
       currentBlock: store.currentBlock || null,
+      planCoachVersion:
+        store.planCoachVersion ||
+        (store.currentBlock && store.currentBlock.coachVersion) ||
+        "",
       pastBlocks: (store.pastBlocks || []).map(function (b) {
         return { blockStart: b.blockStart, summaryLine: b.summaryLine, archivedAt: b.archivedAt };
       }),
@@ -7408,6 +7441,307 @@ function pushAdminSnapshot(store) {
       .catch(function () {});
   } catch (e) {}
 }
+
+/** Pending admin "עדכון בדחיפה" offer shown in coach chat (opt-in). */
+var pprogPendingPushUpgrade = null;
+var pprogPushUpgradePullAt = 0;
+var pprogPushUpgradeBusy = false;
+
+function pprogPushUpgradeCardHtml() {
+  var offer = pprogPendingPushUpgrade;
+  if (!offer || offer.status !== "pending") return "";
+  var msg = offer.messageHe || offer.messageEn || "המאמן שודרג — לחץ לעדכון האימונים שנותרו.";
+  return (
+    '<div class="pprog-push-upgrade-card" id="pprogPushUpgradeCard" role="region" aria-label="Coach upgrade offer">' +
+    '<div class="pprog-push-upgrade-msg">' +
+    esc(msg) +
+    "</div>" +
+    '<div class="pprog-push-upgrade-actions">' +
+    '<button type="button" class="pprog-push-upgrade-accept" id="pprogPushUpgradeAccept" onclick="pprogAcceptPushUpgradeOffer()">' +
+    (offer.mode === "soft" ? "עדכן אימונים (סופט)" : "שכתוב אימונים שנותרו") +
+    "</button>" +
+    '<button type="button" class="pprog-push-upgrade-dismiss" onclick="pprogDismissPushUpgradeOffer()">לא עכשיו</button>' +
+    "</div></div>"
+  );
+}
+
+function pprogMaybePullPushUpgradeOffer() {
+  var store = loadPprogStore();
+  if (!store || !store.intakeComplete) return;
+  var athleteId = store.userId || store.athleteId || pprogAthleteId();
+  if (!athleteId) return;
+  var now = Date.now();
+  if (pprogPushUpgradePullAt && now - pprogPushUpgradePullAt < 20000) return;
+  pprogPushUpgradePullAt = now;
+  var wk = getAdminWriteKey();
+  if (!wk) return;
+  fetch("/api/admin-snapshot", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Write-Key": wk },
+    body: JSON.stringify({
+      action: "athlete_pull_push_offer",
+      athleteId: athleteId,
+      writeKey: wk,
+    }),
+  })
+    .then(function (r) {
+      return r.json();
+    })
+    .then(function (d) {
+      if (!d || !d.ok) return;
+      var next = d.pendingPushUpgrade || null;
+      var prevId = pprogPendingPushUpgrade && pprogPendingPushUpgrade.id;
+      var nextId = next && next.id;
+      pprogPendingPushUpgrade = next;
+      if (d.planCoachVersion && !store.planCoachVersion) {
+        store.planCoachVersion = String(d.planCoachVersion).slice(0, 20);
+        savePprogStore(store);
+      }
+      if (prevId !== nextId) {
+        try {
+          renderPprogChat();
+        } catch (eR) {}
+      }
+    })
+    .catch(function () {});
+}
+
+function pprogResolvePushUpgradeOffer(resolution) {
+  var offer = pprogPendingPushUpgrade;
+  if (!offer || !offer.id) return Promise.resolve(false);
+  var store = loadPprogStore();
+  var athleteId = store.userId || store.athleteId || pprogAthleteId();
+  var wk = getAdminWriteKey();
+  return fetch("/api/admin-snapshot", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Write-Key": wk },
+    body: JSON.stringify({
+      action: "athlete_resolve_push_offer",
+      athleteId: athleteId,
+      writeKey: wk,
+      offerId: offer.id,
+      resolution: resolution,
+    }),
+  })
+    .then(function (r) {
+      return r.json();
+    })
+    .then(function (d) {
+      if (!d || !d.ok) return false;
+      if (resolution === "accepted" && offer.targetCoachVersion) {
+        store.planCoachVersion = String(offer.targetCoachVersion).slice(0, 20);
+        if (store.currentBlock) store.currentBlock.coachVersion = store.planCoachVersion;
+        savePprogStore(store);
+        try {
+          pushAdminSnapshot(store);
+        } catch (eP) {}
+      }
+      pprogPendingPushUpgrade = null;
+      return true;
+    })
+    .catch(function () {
+      return false;
+    });
+}
+
+function pprogDismissPushUpgradeOffer() {
+  if (pprogPushUpgradeBusy) return;
+  pprogPushUpgradeBusy = true;
+  pprogResolvePushUpgradeOffer("dismissed").then(function () {
+    pprogPushUpgradeBusy = false;
+    try {
+      renderPprogChat();
+    } catch (e) {}
+  });
+}
+
+function pprogWeekHasDayBodies(week) {
+  if (!week || !week.days) return false;
+  for (var i = 0; i < PPROG_DAY_KEYS.length; i++) {
+    var d = week.days[PPROG_DAY_KEYS[i]];
+    if (d && Array.isArray(d.parts) && d.parts.length) return true;
+  }
+  return false;
+}
+
+function pprogSlimWeekForRevise(week) {
+  var daysSlim = {};
+  for (var i = 0; i < PPROG_DAY_KEYS.length; i++) {
+    var dk = PPROG_DAY_KEYS[i];
+    var d = (week.days && week.days[dk]) || {};
+    daysSlim[dk] = {
+      parts: (d.parts || []).slice(0, 6).map(function (p) {
+        return {
+          id: p.id,
+          title: p.title,
+          lines: (p.lines || []).slice(0, 8),
+        };
+      }),
+    };
+  }
+  return {
+    weekIndex: week.weekIndex,
+    phase: week.phase,
+    theme: week.theme,
+    summaryLine: week.summaryLine,
+    overview: week.overview || [],
+    days: daysSlim,
+  };
+}
+
+function pprogReviseWeekForPushUpgrade(store, weekIndex0, offer) {
+  var base = getApiBase();
+  if (!base) return Promise.resolve({ ok: false, error: "no_api" });
+  var weeks = (store.currentBlock && store.currentBlock.weeks) || [];
+  var week = weeks[weekIndex0];
+  if (!week) return Promise.resolve({ ok: false, error: "no_week" });
+  var todayIso = pprogIsraelTodayIso();
+  var mode = offer.mode === "soft" ? "soft" : "remaining_rebuild";
+  var feedback =
+    mode === "soft"
+      ? "Admin push soft upgrade to coach v" +
+        offer.targetCoachVersion +
+        ": apply ≤3 surgical patches on remaining days only (latest brain / POL-027)."
+      : "Admin push remaining-days rebuild with coach v" +
+        offer.targetCoachVersion +
+        ": fully rewrite remaining training days only through end of brick (past locked).";
+  return fetchAiWithTimeout(
+    base + "/api/personal-coach",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "revise_week",
+        feedback: feedback,
+        weekIndex: weekIndex0 + 1,
+        israelToday: todayIso,
+        sessionDate: todayIso,
+        softUpgrade: mode === "soft",
+        largeRebuild: mode === "remaining_rebuild",
+        pushUpgradeOfferId: offer.id,
+        pushUpgradeMode: mode,
+        pushUpgradeTargetCoachVersion: offer.targetCoachVersion,
+        forceJson: true,
+        intakeBaseline: buildPprogIntakeBaseline(store),
+        currentWeek: pprogSlimWeekForRevise(week),
+        athleteProfile: athleteProfilePayload({
+          forceIntakeComplete: true,
+          omitChat: true,
+          sessionDate: todayIso,
+        }),
+        messages: [],
+      }),
+    },
+    180000
+  ).then(function (x) {
+    var j = x.j || {};
+    if (!x.ok || !j.ok) {
+      return { ok: false, error: pprogFriendlyApiError(j, x.status), j: j };
+    }
+    var revised = j.week || null;
+    if (!revised && j.text) {
+      revised = extractPprogWeekJsonFromText(j.text, weekIndex0 + 1);
+    }
+    if (!revised) return { ok: false, error: "no_week_json", j: j };
+    var s = loadPprogStore();
+    var prevActive = s.activeWeekIndex | 0;
+    s.activeWeekIndex = weekIndex0;
+    savePprogStore(s);
+    applyPprogWeekRevision(revised, {
+      noteText: feedback,
+      preservePastDays: true,
+    });
+    s = loadPprogStore();
+    s.activeWeekIndex = prevActive;
+    if (s.currentBlock && s.currentBlock.weeks) {
+      s.currentWeek = s.currentBlock.weeks[prevActive] || s.currentWeek;
+    }
+    savePprogStore(s);
+    return { ok: true, week: revised };
+  });
+}
+
+function pprogAcceptPushUpgradeOffer() {
+  if (pprogPushUpgradeBusy) return;
+  var offer = pprogPendingPushUpgrade;
+  if (!offer || offer.status !== "pending") return;
+  var store = loadPprogStore();
+  if (!store.currentBlock || !store.currentBlock.weeks) {
+    setPprogStatus("err", "<strong>Coach</strong> — no active brick to update.");
+    return;
+  }
+  var btn = document.getElementById("pprogPushUpgradeAccept");
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "מעדכן…";
+  }
+  pprogPushUpgradeBusy = true;
+  pprogBusy = true;
+  setPprogTyping(true);
+  var mode = offer.mode === "soft" ? "soft" : "remaining_rebuild";
+  var activeWi = store.activeWeekIndex | 0;
+  var targets = [activeWi];
+  if (mode === "remaining_rebuild") {
+    for (var wi = activeWi + 1; wi < store.currentBlock.weeks.length && wi < 5; wi++) {
+      if (pprogWeekHasDayBodies(store.currentBlock.weeks[wi])) targets.push(wi);
+    }
+  } else if (mode === "soft" && activeWi + 1 < store.currentBlock.weeks.length) {
+    if (pprogWeekHasDayBodies(store.currentBlock.weeks[activeWi + 1])) targets.push(activeWi + 1);
+  }
+
+  var chain = Promise.resolve({ ok: true });
+  targets.forEach(function (wi) {
+    chain = chain.then(function (prev) {
+      if (!prev || !prev.ok) return prev;
+      return pprogReviseWeekForPushUpgrade(loadPprogStore(), wi, offer);
+    });
+  });
+
+  chain
+    .then(function (last) {
+      if (!last || !last.ok) {
+        throw new Error((last && last.error) || "update_failed");
+      }
+      return pprogResolvePushUpgradeOffer("accepted").then(function (ok) {
+        if (!ok) throw new Error("resolve_failed");
+        pprogRecordProgrammedEdit(mode === "soft" ? "soft_upgrade" : "large_rebuild", {
+          sessionDate: pprogIsraelTodayIso(),
+        });
+        try {
+          renderPprogWeek();
+        } catch (eW) {}
+        var msgs = loadPprogBrickMessages();
+        msgs.push({
+          role: "model",
+          text:
+            mode === "soft"
+              ? "Done. Soft-updated remaining workouts with the upgraded coach."
+              : "Done. Rebuilt remaining workouts through end of this brick with the upgraded coach.",
+        });
+        savePprogBrickMessages(msgs);
+        return true;
+      });
+    })
+    .catch(function (err) {
+      var msgs = loadPprogBrickMessages();
+      msgs.push({
+        role: "error",
+        text: "Could not apply coach upgrade: " + String((err && err.message) || err || "error"),
+      });
+      savePprogBrickMessages(msgs);
+    })
+    .then(function () {
+      pprogPushUpgradeBusy = false;
+      pprogBusy = false;
+      setPprogTyping(false);
+      try {
+        renderPprogChat();
+      } catch (e) {}
+    });
+}
+
+window.pprogAcceptPushUpgradeOffer = pprogAcceptPushUpgradeOffer;
+window.pprogDismissPushUpgradeOffer = pprogDismissPushUpgradeOffer;
 
 /** One admin email when intake finishes and first training block is ready (not auto next-block). */
 function maybeNotifyPprogIntakeComplete(store, opts) {

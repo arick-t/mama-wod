@@ -127,10 +127,15 @@ const { scrubMessages, scrubProfile, scrubPiiText } = require("./sanitize-pii.js
 let getCoachDirectives = function () {
   return "";
 };
+let readAdminSnapshot = async function () {
+  return null;
+};
 try {
-  getCoachDirectives =
-    require("../scripts/lib/admin/admin-snapshot.js").getCoachDirectives || getCoachDirectives;
+  const adminSnap = require("../scripts/lib/admin/admin-snapshot.js");
+  getCoachDirectives = adminSnap.getCoachDirectives || getCoachDirectives;
+  readAdminSnapshot = adminSnap.readSnapshot || readAdminSnapshot;
 } catch (e) {}
+const CoachPushUpgrade = require("../lib/coach-push-upgrade.js");
 
 /** Athlete-facing line when they ask for the next block/month too early (POL-008). */
 const EARLY_NEXT_BLOCK_REPLY =
@@ -1744,9 +1749,44 @@ module.exports = async function handler(req, res) {
       hint: "Open Personal Coach, accept the Terms checkboxes, then retry.",
     });
   }
+
+  /* Admin push-upgrade offer — verify pending Blob offer before relaxing soft/large caps. */
+  let adminPushOfferVerified = null;
+  const pushOfferId = String(body.pushUpgradeOfferId || "").slice(0, 40);
+  if (pushOfferId && (action === "revise_week" || action === "generate_week_detail")) {
+    try {
+      const aidPush =
+        (rawProfile && (rawProfile.userId || rawProfile.athleteId)) || uid || "";
+      const snapPush = aidPush ? await readAdminSnapshot(aidPush) : null;
+      const pending = snapPush && snapPush.pendingPushUpgrade;
+      if (
+        pending &&
+        pending.status === "pending" &&
+        String(pending.id) === pushOfferId
+      ) {
+        adminPushOfferVerified = {
+          id: pending.id,
+          mode: CoachPushUpgrade.normalizeMode(pending.mode),
+          targetCoachVersion: String(pending.targetCoachVersion || COACH_VERSION).slice(0, 20),
+        };
+        if (adminPushOfferVerified.mode === "soft") {
+          body.softUpgrade = true;
+          body.largeRebuild = false;
+        } else if (adminPushOfferVerified.mode === "remaining_rebuild") {
+          body.largeRebuild = true;
+          body.softUpgrade = false;
+        }
+        body.pushUpgradeMode = adminPushOfferVerified.mode;
+        body.pushUpgradeTargetCoachVersion = adminPushOfferVerified.targetCoachVersion;
+      }
+    } catch (ePush) {}
+  }
+
   /* POL-COST hard gate — real stop after caps (not prompt-only). Before API-key check so capped
      requests fail closed without needing a provider. Chat/safety stays open. */
-  const costGate = evaluateCostCapGate(action, body, rawProfile);
+  const costGate = evaluateCostCapGate(action, body, rawProfile, {
+    adminPushOfferVerified: !!adminPushOfferVerified,
+  });
   if (costGate) {
     return res.status(403).json(costCapHttpPayload(costGate));
   }
@@ -2231,6 +2271,14 @@ module.exports = async function handler(req, res) {
     } catch (eIb) {
       intakeBaseRw = "";
     }
+    const pushMode = CoachPushUpgrade.normalizeMode(body.pushUpgradeMode);
+    const pushPrompt = pushMode
+      ? CoachPushUpgrade.revisePromptForMode(
+          pushMode,
+          body.pushUpgradeTargetCoachVersion || COACH_VERSION,
+          todayIsoRw
+        ) + "\n\n"
+      : "";
     messages = [
       {
         role: "user",
@@ -2240,6 +2288,7 @@ module.exports = async function handler(req, res) {
           " of the 5-week brick. Israel today=" +
           todayIsoRw +
           ".\n" +
+          pushPrompt +
           (intakeBaseRw
             ? "INTAKE BASELINE BY SECTION (POL-024 — map note → one section; freeze all other sections):\n" +
               intakeBaseRw +
@@ -2253,8 +2302,10 @@ module.exports = async function handler(req, res) {
           todayIsoRw +
           " — copy those day objects unchanged from the snapshot. " +
           "Only adapt remaining days (today → end of this week/brick). " +
-          "SURGICAL: preserve existing formats, part titles, and structure; change only what the mapped intake section requires. " +
-          "Do NOT redesign every session format. " +
+          (pushMode === "remaining_rebuild"
+            ? "PUSH remaining_rebuild: rewrite remaining training days with full latest-coach quality; keep Rest map. "
+            : "SURGICAL: preserve existing formats, part titles, and structure; change only what the mapped intake section requires. " +
+              "Do NOT redesign every session format. ") +
           "POL-024 (HARD): Map this note to an intake section (equipment / schedule / injuries / limits / goals / …). " +
           "Adapt only that section's implications. Freeze every other intake section. " +
           "Do NOT invent extra Rest days unless the note is a schedule/recovery change. " +

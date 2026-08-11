@@ -359,6 +359,19 @@ async function createAthlete(body) {
 
   const now = new Date().toISOString();
   const deviceWriteKey = makeWriteKey();
+  let coachVer = "";
+  try {
+    const pcSrc = require("fs").readFileSync(
+      require("path").join(__dirname, "../../../api/personal-coach.js"),
+      "utf8"
+    );
+    const m = pcSrc.match(/const COACH_VERSION = "([^"]+)"/);
+    if (m) coachVer = m[1];
+  } catch (eCv) {}
+  const blockWithVer =
+    block && typeof block === "object"
+      ? Object.assign({}, block, coachVer ? { coachVersion: coachVer } : {})
+      : block;
   const snapshot = {
     athleteId: athleteId,
     displayName: displayName,
@@ -374,7 +387,8 @@ async function createAthlete(body) {
     joinedAt: now,
     workoutAdjustmentsCount: 0,
     coachDebriefsCount: 0,
-    currentBlock: block,
+    currentBlock: blockWithVer,
+    planCoachVersion: coachVer || null,
     pastBlocks: [],
     createdAt: now,
     updatedAt: now,
