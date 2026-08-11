@@ -1,5 +1,14 @@
 # Changelog
 
+## [Admin 1.5.2] - 2026-08-11
+
+### Admin — push-upgrade affordance; remove legacy «עדכן»
+- **Admin subtitle / title:** `DUCK-WOD Admin · 1.5.2`.
+- «עדכון בדחיפה» styled as a clear bordered chip-button (disabled still looks like a button).
+- Removed the large orange «עדכן» handoff button from the athlete block panel.
+
+---
+
 ## [Admin 1.5.1] - 2026-08-11
 
 ### Admin — «עדכון בדחיפה» glued beside בלוק אימון
