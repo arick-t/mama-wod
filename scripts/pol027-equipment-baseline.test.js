@@ -55,7 +55,18 @@ ok(
   "programming core does not duplicate full inventory table",
   !/\*\*Odd object\*\*:|\*\*Med\/Slam\*\*:/.test(pc)
 );
-ok("coach version 2.3.3", /COACH_VERSION = "2\.3\.3"/.test(pc) && /COACH_VERSION = "2\.3\.3"/.test(index));
+ok("coach version 2.3.4", /COACH_VERSION = "2\.3\.4"/.test(pc) && /COACH_VERSION = "2\.3\.4"/.test(index));
+ok(
+  "lift kg not equipment permission",
+  /Lift \/ skill numbers ≠ equipment permission|lift\/skill kg numbers are capability only/i.test(
+    rules + policy + pc
+  )
+);
+ok("anti thruster-spam", /thruster-spam/i.test(rules) && /thruster-spam/i.test(policy));
+ok("weekly lunge + wall coverage", /lunge-family/i.test(rules) && /wall-sit|wall pattern/i.test(rules));
+ok("trainingSetup in programming memory", /trainingSetup: profile\.trainingSetup/.test(pc));
+ok("trainingSetup in athlete payload", /trainingSetup: s\.trainingSetup/.test(index));
+ok("generate_block no barbell DL steer", !/Deadlift then Front Squat/i.test(pc));
 
 /* Chat path must not get the full grammar table via a dedicated chat inject */
 ok(

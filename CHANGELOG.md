@@ -1,5 +1,16 @@
 # Changelog
 
+## [Coach 2.3.4] - 2026-08-11
+
+### Personal Coach — honor home inventory (POL-027 harden)
+- **Coach subtitle:** `COACH · v2.3.4`.
+- Lift/skill kg = capability only — do **not** unlock barbell / rings / rope / mono machines unless TRAINING SETUP reports them.
+- Home/DB-KB → map hinge to DB/KB/odd-object loading; no barbell DL / ring MU without that gear.
+- Each training week: ≥1 lunge-family + (indoors) ≥1 wall pattern; anti thruster-spam.
+- Surface `trainingSetup` in athleteProfile + programming ATHLETE MEMORY; remove generate_block “Deadlift then Front Squat” steer.
+
+---
+
 ## [Admin 1.5.6] - 2026-08-11
 
 ### CRITICAL — Admin handoff: Terms signed on athlete device before plan unlock

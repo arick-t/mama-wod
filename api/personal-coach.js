@@ -16,6 +16,7 @@
  *   2.3.1 — POL-027 floor/BW baseline + equipment additive (combine free weights)
  *   2.3.2 — POL-027 full equipment-free pool (Gemini directive) shipped
  *   2.3.3 — POL-027 Enhancement Grammar (home gear → loaded variation tree)
+ *   2.3.4 — POL-027 honor home inventory: lift kg ≠ barbell/rings; weekly lunge+wall; anti thruster-spam
  *
  * Env: GEMINI_API_KEY (optional File Search), GROQ_API_KEY (fallback chat),
  *      PERSONAL_COACH_MODEL (programming), PERSONAL_COACH_CHAT_MODEL (chat/intake),
@@ -26,7 +27,7 @@
  * Groq keeps chat alive when the Gemini key is missing/invalid (common GitHub Pages + Vercel setup).
  * Programming stays Gemini-only (POL-020).
  */
-const COACH_VERSION = "2.3.3";
+const COACH_VERSION = "2.3.4";
 const fs = require("fs");
 const path = require("path");
 function resolveAppVersion() {
@@ -678,6 +679,9 @@ const PROGRAMMING_SYSTEM_CORE =
   "Indoors default: wall walk/climb OK. " +
   "Enhancement Grammar (reported gear only — see COACH POLICY POL-027 table): listed gear opens a loaded-variation tree " +
   "(e.g. DB → goblet/front-rack/OH squat, DB lunge, burpee-over-DB); never a closed whitelist; keep unloaded baseline in rotation. " +
+  "HARD: lift/skill kg numbers are capability only — do NOT unlock barbell/rings/rope/rower/ski/bike/GHD unless TRAINING SETUP reports them " +
+  "(home/DB-KB → DB/KB/odd-object hinge + scaled loads; no barbell DL / ring MU without that gear). " +
+  "Each training week: ≥1 lunge-family + (indoors) ≥1 wall pattern; do not thruster-spam. " +
   "Do not re-ask equipment because of the grammar.\n" +
   "Obey COACH POLICY RULES injected below (HARD rules are mandatory).\n" +
   "---\n" +
@@ -880,6 +884,9 @@ function buildProgrammingMemoryBlock(profile) {
       : undefined,
     scheduleNotes: profile.scheduleNotes
       ? String(profile.scheduleNotes).slice(0, 500)
+      : undefined,
+    trainingSetup: profile.trainingSetup
+      ? String(profile.trainingSetup).slice(0, 800)
       : undefined,
     skills:
       profile.skills && typeof profile.skills === "object" ? profile.skills : undefined,
@@ -2028,7 +2035,10 @@ module.exports = async function handler(req, res) {
           "Day keys MUST be exactly: sun,mon,tue,wed,thu,fri,sat (never Sunday/Monday). " +
           "For each day include an explicit effective duration target and movement priorities in the day lines. " +
           "Across weeks, rotate conditioning formats for the same weekday (e.g. do not copy the same Thursday format every week). " +
-          "You may keep lift sequence progression (e.g. Deadlift then Front Squat across the week), but vary format while preserving time effect. " +
+          "Progress strength patterns across the week using implements allowed by TRAINING SETUP only " +
+          "(home/DB-KB → DB/KB/odd-object loading; never invent barbell/rings/rope/mono machines missing from setup). " +
+          "Lift kg values are capability baselines for scaling — not permission to use missing gear. " +
+          "Each training week: include a lunge-family pattern and (if indoors) a wall pattern; avoid thruster-spam. " +
           "CRITICAL — Week 1 DENSITY: week 1 MUST include full days with real workouts for every training day " +
           "(1–3 parts/day, each part with title + lines array of concrete prescriptions, ≤5 lines/part). " +
           "Do NOT leave week 1 days as {}. Athletes open week 1 immediately. " +
