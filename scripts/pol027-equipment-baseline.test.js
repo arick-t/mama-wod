@@ -1,5 +1,5 @@
 /**
- * POL-027 — floor/BW baseline + additive equipment.
+ * POL-027 — floor/BW baseline + additive equipment + Enhancement Grammar.
  * Run: node scripts/pol027-equipment-baseline.test.js
  */
 const assert = require("assert");
@@ -26,9 +26,41 @@ ok("POL-027 in synced policy js", /POL-027/.test(policy));
 ok("enhancement / additive language", /ENHANCEMENT|ADDITIVE|additive/i.test(policy));
 ok("baseline burpee/lunge in policy", /burpee/i.test(policy) && /lunge/i.test(policy));
 ok("full pool markers", /Cossack|Hollow|Mountain climber|Jumping jack/i.test(policy));
-ok("combine free weights in policy", /DB\/KB squat|COMBINE/i.test(policy));
+ok("combine / grammar in policy", /Enhancement Grammar|loaded-variation tree/i.test(policy));
+ok("DB case-study tree", /goblet\/front-rack|burpee-over-DB/i.test(policy));
+ok("never closed whitelist", /never a closed whitelist/i.test(policy));
+ok("do not re-ask equipment", /Do \*\*not\*\* re-ask equipment|do not re-ask equipment/i.test(rules));
+
+const grammarMatch = rules.match(
+  /4\. \*\*Enhancement Grammar[\s\S]*?(?=\n  5\. \*\*)/
+);
+ok("grammar block present", !!grammarMatch);
+ok(
+  "grammar ≤1500 chars (Budget ceiling)",
+  grammarMatch && grammarMatch[0].length <= 1500
+);
+console.log("    grammar_chars:", grammarMatch ? grammarMatch[0].length : 0);
+
 ok("POL-027 in foundation brief", /POL-027/.test(foundation));
-ok("POL-027 in programming core", /EQUIPMENT-INDEPENDENT MOVEMENTS|Equipment inventory is ADDITIVE/.test(pc));
-ok("coach version 2.3.2", /COACH_VERSION = "2\.3\.2"/.test(pc) && /COACH_VERSION = "2\.3\.2"/.test(index));
+ok(
+  "foundation is summary not full table",
+  /Enhancement Grammar lives in COACH POLICY/i.test(foundation) &&
+    !/burpee-over-DB/i.test(foundation)
+);
+ok(
+  "programming core points to grammar",
+  /Enhancement Grammar|loaded-variation tree/i.test(pc)
+);
+ok(
+  "programming core does not duplicate full inventory table",
+  !/\*\*Odd object\*\*:|\*\*Med\/Slam\*\*:/.test(pc)
+);
+ok("coach version 2.3.3", /COACH_VERSION = "2\.3\.3"/.test(pc) && /COACH_VERSION = "2\.3\.3"/.test(index));
+
+/* Chat path must not get the full grammar table via a dedicated chat inject */
+ok(
+  "no chat-only full grammar dump marker",
+  !/CHAT ENHANCEMENT GRAMMAR TABLE/i.test(pc)
+);
 
 console.log("All POL-027 equipment-baseline checks passed.");

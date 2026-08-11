@@ -39,6 +39,17 @@
 
 ---
 
+## [Coach 2.3.3] - 2026-08-11
+
+### Personal Coach — POL-027 Enhancement Grammar (Budget-approved)
+- **Coach subtitle:** `COACH · v2.3.3`.
+- Compact home-gear → loaded-variation tree inside POL-027 (DB/KB/bands/rope/bar/wall/ball/box/odd/straps/run).
+- Full grammar once in policy (≤1500 chars); programming core / foundation keep a short HARD summary only.
+- Programming path only — not daily chat / intake / Confirm? / Done.
+- No auto-rebuild on version bump (POL-COST-006). No UI / cron / admin blast.
+
+---
+
 ## [Coach 2.3.2] - 2026-08-11
 
 ### Personal Coach — POL-027 full equipment-free movement pool

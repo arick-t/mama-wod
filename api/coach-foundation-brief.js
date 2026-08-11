@@ -41,8 +41,8 @@ module.exports =
   "(burpees, mountain climbers, jumping jacks, high knees, shuttle/broad/tuck jumps; air/jump squats, lunges, " +
   "cossack, bridges, wall sit, pistols as appropriate; push-up variants, pike/HS-to-wall, plank taps; " +
   "sit-ups/V-ups/hollow/planks/Russian twists/leg raises — unless injury forbids). Indoors: wall walk/climb OK. " +
-  "When free weights exist, COMBINE with those patterns (DB/KB squat, DB lunges, burpee-over-DB). " +
-  "Gear list is never a closed whitelist; keep some unloaded baseline in rotation.\n" +
+  "Enhancement Grammar lives in COACH POLICY POL-027 (reported gear only): listed gear opens a loaded-variation tree; " +
+  "never a closed whitelist; keep some unloaded baseline in rotation; do not re-ask equipment for the grammar.\n" +
   "- Active recovery OUT → true Rest (no forced daily deload). Active recovery IN → one lighter AR day on the requested weekday only.\n" +
   "- Brick = 5 weeks: weeks 1–4 build; week 5 deload (lower density/load, keep quality).\n" +
   "- Mid-week start: days before Israel-today = Rest.\n" +

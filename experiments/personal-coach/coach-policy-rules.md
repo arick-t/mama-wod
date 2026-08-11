@@ -284,15 +284,28 @@ Copy a block below. Keep IDs unique (`POL-###`).
      - **Core & midline:** Sit-ups / V-ups / tuck-ups; Hollow body hold / hollow rocks; Plank (forearm / high) / side plank; Russian twists; Lying leg raises; Dead bug.
      - **Wall (indoors default yes):** Wall sit; Wall walk / wall climb; HS / HSPU progressions to wall. Skip wall work if athlete notes outdoor-only / no wall.
   3. **Intake equipment list is ADDITIVE, never exclusive.** Listed gear (DB/KB/barbell/bands/box/rope/mono/…) **adds** options; it does **not** erase the baseline pool. Never treat the list as “only these movements.”
-  4. **When free weights / odd objects exist — combine seamlessly with baseline patterns.** e.g. DB/KB squat (not only air squat), DB/KB lunges, DB push press / thruster, weighted burpee / burpee-over-DB, farmer carry if handles exist. Keep unloaded baseline in rotation (not gear-only drift).
-  5. **Still honor true constraints:** never invent missing machines/rigs/ropes; never program unmarked Rx skills; injuries / session limits still win.
+  4. **Enhancement Grammar (HARD — reported gear only):** Listed gear opens a loaded-variation tree on baseline patterns; never a closed whitelist. Keep unloaded baseline in weekly rotation with enhancements.
+     Inv → enhance (≤6) | keep baseline | safety:
+     - **DB:** goblet/front-rack squat, DB OH squat (stable), DB DL, floor press, row, lunge/thruster, farmer carry, burpee-over-DB | air squat, push-up, burpee | no feet-on-DB; verify OH
+     - **KB:** swing R/A, goblet squat, OH press, row, farmer carry, TGU | air squat, plank | no elbow bang; sane swing load
+     - **Bands:** banded squat/push-up/row, pull-apart, banded GM | air squat, plank | never around neck
+     - **Jump rope:** SU/DU | lateral hops, broad jump
+     - **Pull-up bar:** strict/band-assist PU, hanging knee/leg raise | supine row, floor raise | doorway=strict only, no kip
+     - **Wall:** wall-walk, HSPU, wall-sit | push-up, hollow | clean wall; skip if outdoor-only
+     - **Med/Slam:** MB clean/sit-up/GM; slam ONLY if slam ball | air squat, plank | never slam soft medball
+     - **Box/step:** box jump (stable only), step-up, box dip | air squat, lateral hops | no folding chair; chair=step/dip only, no jumps
+     - **Odd object:** pack/sandbag squat/DL/carry/OH hold | air squat, plank | secure contents/handles
+     - **Straps:** susp. row/push-up/leg curl/plank | hollow, supine row | secure anchor required
+     - **Run:** only if outdoor/run access reported | intervals/distance | no invented treadmill
+  5. **Still honor true constraints:** never invent missing machines/rigs/ropes; never program unmarked Rx skills; injuries / session limits still win. Do **not** re-ask equipment inventory because of this grammar.
 - **Examples:**  
-  Good (home, DBs only): metcon with DB squats + burpees + lunges + push-ups.  
+  Good (home, DBs only): metcon with goblet/DB squats + burpees + lunges + push-ups.  
   Bad (same athlete): avoids burpees/lunges because they weren’t on the equipment list.  
   Good (no gear): air squat + burpee + sit-up + mountain climber intervals.  
   Bad (DBs available): only air squats all week — ignore loading the squat pattern.
 - **Added:** 2026-08-11 — home setup was over-filtering universal floor/wall movements; free weights must combine with baseline
 - **Updated:** 2026-08-11 — full approved equipment-free pool + Gemini directive wording
+- **Updated:** 2026-08-11 — Enhancement Grammar compact table (Budget-approved ≤1500 chars; programming path only)
 
 ### POL-022 — Whole-program / brick chat: ultra-brief double-check
 - **Type:** HARD

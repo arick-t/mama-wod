@@ -15,6 +15,7 @@
  *   2.3 — ship: calendar LOGGED today + Confirm? one-tap כן
  *   2.3.1 — POL-027 floor/BW baseline + equipment additive (combine free weights)
  *   2.3.2 — POL-027 full equipment-free pool (Gemini directive) shipped
+ *   2.3.3 — POL-027 Enhancement Grammar (home gear → loaded variation tree)
  *
  * Env: GEMINI_API_KEY (optional File Search), GROQ_API_KEY (fallback chat),
  *      PERSONAL_COACH_MODEL (programming), PERSONAL_COACH_CHAT_MODEL (chat/intake),
@@ -25,7 +26,7 @@
  * Groq keeps chat alive when the Gemini key is missing/invalid (common GitHub Pages + Vercel setup).
  * Programming stays Gemini-only (POL-020).
  */
-const COACH_VERSION = "2.3.2";
+const COACH_VERSION = "2.3.3";
 const fs = require("fs");
 const path = require("path");
 function resolveAppVersion() {
@@ -674,8 +675,10 @@ const PROGRAMMING_SYSTEM_CORE =
   "air/jump squats, walking/reverse/jump lunges, cossack, glute bridges, wall sit, pistols (assisted/unassisted); " +
   "push-up variants, pike push-ups, HS hold/HSPU to wall, plank shoulder taps; " +
   "sit-ups/V-ups/tuck-ups, hollow hold/rocks, planks/side plank, Russian twists, lying leg raises (unless injury forbids). " +
-  "Indoors default: wall walk/climb OK. When DBs/KBs/barbell/odd objects exist, COMBINE seamlessly (DB squat, DB lunge, burpee-over-DB, etc.). " +
-  "Never treat the gear list as a closed whitelist; keep unloaded baseline in rotation.\n" +
+  "Indoors default: wall walk/climb OK. " +
+  "Enhancement Grammar (reported gear only — see COACH POLICY POL-027 table): listed gear opens a loaded-variation tree " +
+  "(e.g. DB → goblet/front-rack/OH squat, DB lunge, burpee-over-DB); never a closed whitelist; keep unloaded baseline in rotation. " +
+  "Do not re-ask equipment because of the grammar.\n" +
   "Obey COACH POLICY RULES injected below (HARD rules are mandatory).\n" +
   "---\n" +
   COST_GUARDRAILS_COMPACT +
