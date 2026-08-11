@@ -840,30 +840,6 @@
       },
       {
         "date": "2026-08-01",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "TEAMS OF 2",
-            "lines": [
-              "3 SETS (EACH/1:1)",
-              "75 Double Unders",
-              "1 Rope Climb or 5 Strict Pull-ups",
-              "10 Shoulder to Overhead 61kg/43kg",
-              "1 Rope Climb or 5 Strict Pull-ups",
-              "10 Shoulder to Overhead 61kg/43kg",
-              "1 Rope Climb or 5 Strict Pull-ups",
-              "75 Double Unders",
-              "* -P2 Rests While P1 Works Then Switch-",
-              "* (Score is Combined Slowest Set)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-08-01",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2828,6 +2804,52 @@
     "2026-08-11": [
       {
         "date": "2026-08-11",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260811",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
+              "LEARN MORE"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-11",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 23.3",
+            "lines": [
+              "Starting with a 6-minute time cap, complete as many reps as possible of:",
+              "5 wall walks",
+              "50 double-unders",
+              "15 snatches (weight 1)",
+              "5 wall walks",
+              "50 double-unders",
+              "12 snatches (weight 2)",
+              "*If completed before the 6-minute time cap, add 3 minutes to the time cap and complete:",
+              "20 strict handstand push-ups",
+              "50 double-unders",
+              "9 snatches (weight 3)",
+              "*If completed before the 9-minute time cap, add 3 minutes to the time cap and complete:",
+              "20 strict handstand push-ups",
+              "50 double-unders",
+              "6 snatches (weight 4)",
+              "*♀ 65 lb, 95 lb, 125 lb, 155 lb*",
+              "*♂ 95 lb, 135 lb, 185 lb, 225 lb*"
+            ]
+          }
+        ],
+        "note": "Open: Open 23.3"
+      },
+      {
+        "date": "2026-08-11",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-08-11/",
@@ -2873,15 +2895,75 @@
       },
       {
         "date": "2026-08-11",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260811",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-august-11-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
-              "LEARN MORE"
+              "AMRAP 5 minutes",
+              ":30 Machine or 100m Run",
+              "6 Ring Rows"
+            ]
+          },
+          {
+            "title": "6 Lighter than WOD weight Kettlebell Swings",
+            "lines": [
+              ":10 Handstand Hold"
+            ]
+          },
+          {
+            "title": "Nate",
+            "lines": [
+              "AMRAP in 20 minutes",
+              "2 Muscle-Ups",
+              "4 Handstand Push-Ups",
+              "8 Kettlebell Swings (2/1.5 pood)",
+              "In honor of Chief Petty Officer Nate Hardy, who was killed Sunday February 4th during combat operations in Iraq.",
+              "https://www.crossfit.com/workout/2008/02/12#/comments",
+              "Feel: Cardio",
+              "Pace: Sustain",
+              "Target Score: 11+ rounds"
+            ]
+          },
+          {
+            "title": "Stamina",
+            "lines": [
+              "Every 4:00 x 3",
+              "Max Distance Assualt Bike in :45",
+              "Stay on the bike flushing at a casual pace for as much of the rest period as you can."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-11",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Power Snatch 5x3",
+              "5 SETS:",
+              "3 Power Snatch @ RPE 7/8*",
+              "*Touch & Go Reps",
+              "* (Score is Weight)"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "2 SETS",
+            "lines": [
+              "12/10 Calorie Air Bike",
+              "24 Chest to Bar",
+              "12/10 Calorie Air Bike",
+              "24 Pull-Ups",
+              "12/10 Calorie Air Bike",
+              "* -Rest 3:00 between Sets-",
+              "* (Score is Slowest Set)"
             ]
           }
         ]
@@ -2933,39 +3015,8 @@
           }
         ],
         "note": "Benchmark: D. \"GRACE"
-      },
-      {
-        "date": "2026-08-11",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 23.3",
-            "lines": [
-              "Starting with a 6-minute time cap, complete as many reps as possible of:",
-              "5 wall walks",
-              "50 double-unders",
-              "15 snatches (weight 1)",
-              "5 wall walks",
-              "50 double-unders",
-              "12 snatches (weight 2)",
-              "*If completed before the 6-minute time cap, add 3 minutes to the time cap and complete:",
-              "20 strict handstand push-ups",
-              "50 double-unders",
-              "9 snatches (weight 3)",
-              "*If completed before the 9-minute time cap, add 3 minutes to the time cap and complete:",
-              "20 strict handstand push-ups",
-              "50 double-unders",
-              "6 snatches (weight 4)",
-              "*♀ 65 lb, 95 lb, 125 lb, 155 lb*",
-              "*♂ 95 lb, 135 lb, 185 lb, 225 lb*"
-            ]
-          }
-        ],
-        "note": "Open: Open 23.3"
       }
     ]
   },
-  "last_updated": "2026-08-11T02:37:16.299190"
+  "last_updated": "2026-08-11T06:03:37.220145"
 }
