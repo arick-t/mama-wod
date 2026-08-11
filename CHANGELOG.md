@@ -1,11 +1,12 @@
 # Changelog
 
-## [Admin 1.5.2] - 2026-08-11
+## [Admin 1.5.2] - 2026-08-11 · **stable / production**
 
-### Admin — push-upgrade affordance; remove legacy «עדכן»
-- **Admin subtitle / title:** `DUCK-WOD Admin · 1.5.2`.
+### Admin — push-upgrade affordance; remove legacy «עדכן» (**יציב**)
+- **Admin subtitle / title:** `DUCK-WOD Admin · 1.5.2` — **stable production**.
 - «עדכון בדחיפה» styled as a clear bordered chip-button (disabled still looks like a button).
 - Removed the large orange «עדכן» handoff button from the athlete block panel.
+- Mid-brick coach upgrade flow (soft | remaining_rebuild → athlete Accept) is the supported path; no auto-push on brain bump.
 
 ---
 
