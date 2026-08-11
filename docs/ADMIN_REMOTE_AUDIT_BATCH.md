@@ -22,6 +22,7 @@ Rule: accumulate → one batch of work. Do not merge to main until founder asks.
 7. **Phone self-serve signup not landing in admin list:** Opened new user on phone with full intake; join email arrived (~21:11) subject/body like "! אריק פלא has joined the DUCK'S" from DUCK-WOD. Admin still showed only 2 trainees — new athlete never appeared in admin module tabs/count. Analytics/join email fired; admin Blob athlete list apparently not updated from phone registration path.
 8. **Desktop fixed intake Skills (OK):** Step 6/9 — "All skills" beside Skills title + all skill cubes checked looks good (founder confirmed). Keep as accepted for 1.5.3 UX.
 9. **Desktop fixed intake Injuries (OK):** Step 8/9 — "No injuries" active chip (✓ + teal) + field looks good (founder confirmed). Keep as accepted for 1.5.4 UX.
+10. **Active recovery day UX (confusing):** Step ~4/9 — Yes/No alone is good. When days expand under Yes, create a clear visual branch/indent hierarchy so day list is obviously nested under the Yes answer (not same level as Yes/No). Also: do **not** default-select Thursday (or any day); leave day unselected until athlete picks.
 
 ## Hard constraints
 - Prefer phone athlete intake UX over desktop admin if conflict.
