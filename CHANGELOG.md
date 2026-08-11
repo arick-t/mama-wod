@@ -1,5 +1,14 @@
 # Changelog
 
+## [Admin 1.5.1] - 2026-08-11
+
+### Admin — «עדכון בדחיפה» glued beside בלוק אימון
+- **Admin subtitle / title:** `DUCK-WOD Admin · 1.5.1`.
+- Push-upgrade trigger sits **immediately next to** the block title (not stretched to the far edge); even smaller chip.
+- Chooser / API unchanged (`soft` | `remaining_rebuild`).
+
+---
+
 ## [Admin 1.5] - 2026-08-11
 
 ### Admin — version bump + push-upgrade placement polish

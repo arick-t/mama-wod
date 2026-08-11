@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DUCK-WOD Admin · 1.5</title>
+<title>DUCK-WOD Admin · 1.5.1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -185,8 +185,8 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .ath-card-foot .btn-delete-link:hover{color:#fca5a5}
 .ath-block-panel{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
 .ath-block-panel-head{
-  display:flex;align-items:center;justify-content:space-between;gap:10px;
-  margin:0 0 10px;min-height:28px
+  display:flex;align-items:center;justify-content:flex-start;flex-wrap:wrap;gap:6px 8px;
+  margin:0 0 10px;min-height:24px
 }
 .ath-block-panel-title{font-size:.95em;font-weight:800;margin:0;color:var(--text);line-height:1.2}
 .ath-update-row{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
@@ -196,15 +196,16 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 }
 .btn-update-block:hover{background:#d03d18}
 .btn-update-block:disabled{opacity:.5;cursor:default}
-/* Mini trigger opposite «בלוק אימון» — must not compete with full-width «עדכן» */
+/* Tiny trigger glued beside «בלוק אימון» — must not compete with full-width «עדכן» */
 .btn-push-upgrade{
-  appearance:none;flex:0 0 auto;border:1px solid rgba(245,197,24,.4);border-radius:6px;
-  padding:3px 8px;background:transparent;color:#e8c84a;font-weight:700;font-size:.68em;
-  letter-spacing:.01em;cursor:pointer;font-family:inherit;line-height:1.25;white-space:nowrap;
-  max-width:42%;overflow:hidden;text-overflow:ellipsis
+  appearance:none;flex:0 0 auto;border:1px solid rgba(255,255,255,.14);border-radius:4px;
+  padding:1px 6px;background:transparent;color:var(--text-meta);font-weight:600;font-size:.58em;
+  letter-spacing:0;cursor:pointer;font-family:inherit;line-height:1.3;white-space:nowrap;
+  max-width:none
 }
-.btn-push-upgrade:hover{background:rgba(245,197,24,.12);border-color:rgba(245,197,24,.7)}
-.btn-push-upgrade:disabled{opacity:.4;cursor:default;border-color:rgba(255,255,255,.1);color:var(--text-meta);background:transparent}
+.btn-push-upgrade:hover{background:rgba(245,197,24,.1);border-color:rgba(245,197,24,.55);color:#e8c84a}
+.btn-push-upgrade:disabled{opacity:.38;cursor:default;border-color:rgba(255,255,255,.08);color:var(--text-meta);background:transparent}
+.btn-push-upgrade:not(:disabled){border-color:rgba(245,197,24,.35);color:#d4b84a}
 .ath-push-chooser{
   display:none;flex-direction:column;gap:8px;padding:10px 12px;border-radius:10px;margin:0 0 10px;
   border:1px solid var(--line);background:var(--bg-elev)
@@ -492,7 +493,7 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin</div>
-    <div class="ver">1.5</div>
+    <div class="ver">1.5.1</div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <button type="button" onclick="doLogin()">כניסה</button>
     <div id="login-err"></div>
@@ -504,7 +505,7 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">Admin</span>
-    <span class="ver-badge" title="Coach Admin dashboard">1.5</span>
+    <span class="ver-badge" title="Coach Admin dashboard">1.5.1</span>
     <span class="count-wrap">
       <span class="count" id="athlete-count">0 מתאמנים</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
