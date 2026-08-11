@@ -73,6 +73,13 @@ ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
 ok("admin version 1.5.7", /DUCK-WOD Admin · 1\.5\.7/.test(adminHtml));
 ok("admin wired to coach 2.3.4", /LIVE_COACH_VERSION = "2\.3\.4"/.test(adminHtml));
 ok("app coach 2.3.4", /COACH_VERSION = "2\.3\.4"/.test(index));
+ok(
+  "admin shows Admin + Coach versions",
+  /Admin 1\.5\.7/.test(adminHtml) &&
+    /ver-coach/.test(adminHtml) &&
+    /syncAdminVersionLabels/.test(adminHtml) &&
+    /ADMIN_UI_VERSION = "1\.5\.7"/.test(adminHtml)
+);
 ok("admin fixed All skills head", /admin-fixed-skills-head/.test(fixedJs));
 ok("admin fixed All skills toggles cubes", /adminFixedSkillAllChange/.test(fixedJs));
 ok("admin fixed No injuries active chip", /admin-fixed-chip/.test(adminHtml) && /adm-fx-no-injuries-btn/.test(fixedJs));

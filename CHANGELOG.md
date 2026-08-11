@@ -4,6 +4,7 @@
 
 ### Remote audit batch — delete, phone→admin, Build plan Terms, recovery UX
 - **Admin subtitle / title:** `DUCK-WOD Admin · 1.5.7`.
+- **Version badge:** always shows **Admin 1.5.7 · Coach 2.3.4** (login + header); coach side refreshes from live `/api/personal-coach`.
 - **Coach wire:** Build plan / generate_block uses live **Coach 2.3.4**.
 - **Build plan:** admin `generate_block` sends admin auth; Terms gate no longer blocks brick build (athlete still signs on device/handoff).
 - **Delete athlete:** writes Blob tombstone (no seed resurrect); burns open claims; device push gets `athlete_revoked` and wipes local coach store.
