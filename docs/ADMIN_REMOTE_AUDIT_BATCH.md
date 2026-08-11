@@ -21,6 +21,7 @@ Rule: accumulate → one batch of work. Do not merge to main until founder asks.
 6. **Delete athlete does not persist:** Deleted "אריק" in admin; after refresh he reappeared (still Active / Coach Member, still in tabs). Admin showed "2 trainees" (אריק + עדי). Delete UI exists but server/Blob snapshot appears to resurrect the athlete — not just device localStorage leftover.
 7. **Phone self-serve signup not landing in admin list:** Opened new user on phone with full intake; join email arrived (~21:11) subject/body like "! אריק פלא has joined the DUCK'S" from DUCK-WOD. Admin still showed only 2 trainees — new athlete never appeared in admin module tabs/count. Analytics/join email fired; admin Blob athlete list apparently not updated from phone registration path.
 8. **Desktop fixed intake Skills (OK):** Step 6/9 — "All skills" beside Skills title + all skill cubes checked looks good (founder confirmed). Keep as accepted for 1.5.3 UX.
+9. **Desktop fixed intake Injuries (OK):** Step 8/9 — "No injuries" active chip (✓ + teal) + field looks good (founder confirmed). Keep as accepted for 1.5.4 UX.
 
 ## Hard constraints
 - Prefer phone athlete intake UX over desktop admin if conflict.
