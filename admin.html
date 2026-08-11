@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DUCK-WOD Admin · 1.5.3</title>
+<title>DUCK-WOD Admin · 1.5.4</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -472,6 +472,18 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
   background:rgba(26,155,138,.1);-webkit-tap-highlight-color:transparent
 }
 .admin-fixed-skills-all input{width:15px;height:15px;flex-shrink:0;accent-color:#1A9B8A}
+.admin-fixed-chip{
+  appearance:none;display:inline-flex;align-items:center;gap:6px;margin:0 0 10px;cursor:pointer;
+  font-family:inherit;font-size:13px;font-weight:700;padding:8px 12px;border-radius:8px;
+  border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.04);color:#cfc7b6;
+  -webkit-tap-highlight-color:transparent
+}
+.admin-fixed-chip:hover{border-color:rgba(26,155,138,.65);color:#fff}
+.admin-fixed-chip.active{
+  background:rgba(26,155,138,.28);border-color:#1A9B8A;color:#e8fff8;
+  box-shadow:inset 0 0 0 1px rgba(26,155,138,.35)
+}
+.admin-fixed-chip.active::before{content:"✓";font-weight:800;color:#8fd9c8}
 .admin-fixed-note{font-size:12px;color:var(--text-muted);margin:0 0 12px;line-height:1.4}
 .admin-fixed-row{display:grid;grid-template-columns:140px 1fr;gap:8px;align-items:center;margin-bottom:8px}
 .admin-fixed-row label{font-size:13px;color:var(--text-muted)}
@@ -505,7 +517,7 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver">1.5.3</div>
+    <div class="ver">1.5.4</div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <button type="button" onclick="doLogin()">כניסה</button>
     <div id="login-err"></div>
@@ -517,7 +529,7 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">Admin</span>
-    <span class="ver-badge" title="Coach Admin dashboard · 1.5.3">1.5.3</span>
+    <span class="ver-badge" title="Coach Admin dashboard · 1.5.4">1.5.4</span>
     <span class="count-wrap">
       <span class="count" id="athlete-count">0 מתאמנים</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"

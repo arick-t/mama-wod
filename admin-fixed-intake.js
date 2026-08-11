@@ -341,10 +341,17 @@
         esc(st.sessionLimits || "") +
         "</textarea>";
     } else if (key === "injuries") {
+      var noInj =
+        /^no injuries\.?$/i.test(String(st.injuries || "").trim()) ||
+        String(st.injuries || "").trim() === "אין פציעות";
       html +=
         '<p class="admin-fixed-title">Injuries &amp; limitations</p>' +
-        '<button type="button" class="btn-secondary" style="margin-bottom:8px" onclick="adminFixedFillNoInjuries()">No injuries</button>' +
-        '<textarea id="adm-fx-injuries" maxlength="800" placeholder="e.g. Left knee — avoid deep squats under fatigue">' +
+        '<button type="button" class="admin-fixed-chip' +
+        (noInj ? " active" : "") +
+        '" id="adm-fx-no-injuries-btn" aria-pressed="' +
+        (noInj ? "true" : "false") +
+        '" onclick="adminFixedFillNoInjuries()">No injuries</button>' +
+        '<textarea id="adm-fx-injuries" maxlength="800" placeholder="e.g. Left knee — avoid deep squats under fatigue" oninput="adminFixedInjuriesInput()">' +
         esc(st.injuries || "") +
         "</textarea>";
     } else if (key === "goals") {
@@ -397,10 +404,25 @@
     syncAdminFixedIntakeUi();
   };
 
+  function syncAdminNoInjuriesChip() {
+    var ta = document.getElementById("adm-fx-injuries");
+    var btn = document.getElementById("adm-fx-no-injuries-btn");
+    if (!btn) return;
+    var raw = ta ? String(ta.value || "").trim() : "";
+    var on = /^no injuries\.?$/i.test(raw) || raw === "אין פציעות";
+    btn.classList.toggle("active", on);
+    btn.setAttribute("aria-pressed", on ? "true" : "false");
+  }
+
   window.adminFixedFillNoInjuries = function () {
     var ta = document.getElementById("adm-fx-injuries");
     if (ta) ta.value = "No injuries";
+    syncAdminNoInjuriesChip();
     setFixedErr("");
+  };
+
+  window.adminFixedInjuriesInput = function () {
+    syncAdminNoInjuriesChip();
   };
 
   window.adminFixedRecoveryPrefChanged = function () {
