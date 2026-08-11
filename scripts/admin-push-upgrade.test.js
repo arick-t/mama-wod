@@ -54,7 +54,7 @@ ok("admin soft mode wiring", admin.includes("'soft'"));
 ok("admin full mode wiring", admin.includes("'remaining_rebuild'"));
 ok("admin push beside block title", admin.includes("ath-block-panel-head"));
 ok("admin push head adjacent layout", /ath-block-panel-head\{[^}]*justify-content:\s*flex-start/.test(admin));
-ok("admin version 1.5.2", /DUCK-WOD Admin · 1\.5(\.\d+)?/.test(admin));
+ok("admin version 1.5.3", /DUCK-WOD Admin · 1\.5(\.\d+)?/.test(admin));
 ok("old עדכן button removed", !admin.includes("btn-update-block"));
 ok("push button bordered affordance", /btn-push-upgrade\{[^}]*border:\s*1px solid/.test(admin));
 ok("admin sendPushUpgradeOffer", admin.includes("sendPushUpgradeOffer"));

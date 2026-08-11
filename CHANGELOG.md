@@ -1,5 +1,14 @@
 # Changelog
 
+## [Admin 1.5.3] - 2026-08-11
+
+### Admin desktop fixed intake — All skills UX (phone untouched)
+- **Admin subtitle / title:** `DUCK-WOD Admin · 1.5.3`.
+- Fixed questionnaire (browser admin only): **All skills** sits beside the Skills title and checks/unchecks every skill cube.
+- Athlete phone intake UI (`index.html`) unchanged.
+
+---
+
 ## [Admin 1.5.2] - 2026-08-11 · **stable / production**
 
 ### Admin — push-upgrade affordance; remove legacy «עדכן» (**יציב**)
