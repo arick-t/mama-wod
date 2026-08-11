@@ -53,7 +53,7 @@ ok("admin full option", admin.includes("שכתוב מלא") && admin.includes("�
 ok("admin soft mode wiring", admin.includes("'soft'"));
 ok("admin full mode wiring", admin.includes("'remaining_rebuild'"));
 ok("admin push beside block title", admin.includes("ath-block-panel-head"));
-ok("admin version 1.4", /DUCK-WOD Admin · 1\.4/.test(admin));
+ok("admin version 1.5", /DUCK-WOD Admin · 1\.5/.test(admin));
 ok("admin sendPushUpgradeOffer", admin.includes("sendPushUpgradeOffer"));
 ok("admin gate helper", admin.includes("getPushUpgradeGate"));
 ok("admin action API", snap.includes('action === "admin_push_upgrade_offer"'));
