@@ -68,7 +68,10 @@ ok("phone legal >= 3", (phone.legalAcceptedVersion | 0) >= 3);
 
 ok("admin loads sync contract", /coach-intake-sync-contract\.js/.test(adminHtml));
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
-ok("admin version 1.5.2", /Admin · 1\.5(\.\d+)?/.test(adminHtml) || /DUCK-WOD Admin · 1\.5(\.\d+)?/.test(adminHtml));
+ok("admin version 1.5.3", /Admin · 1\.5(\.\d+)?/.test(adminHtml) || /DUCK-WOD Admin · 1\.5(\.\d+)?/.test(adminHtml));
+ok("admin fixed All skills head", /admin-fixed-skills-head/.test(fixedJs));
+ok("admin fixed All skills toggles cubes", /adminFixedSkillAllChange/.test(fixedJs));
+ok("phone skills picker unchanged all handler", /pprogSkillsCheckboxChange/.test(index));
 ok("fixed intake uses shared packet", /buildFixedIntakePrompt/.test(fixedJs));
 ok("handoff stores intakeProfile", /intakeProfile/.test(handoff));
 ok("handoff rejects stub block", /currentBlock required/.test(handoff));

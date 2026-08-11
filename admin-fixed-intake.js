@@ -289,17 +289,45 @@
           "</span></div>";
       }
     } else if (key === "skills") {
-      html += '<p class="admin-fixed-title">Skills</p><div class="skills-grid">';
+      var allChecked = !!st.skills.all_skills;
+      if (!allChecked) {
+        var allMarked = true;
+        for (var chk = 0; chk < S.SKILL_DEFS.length; chk++) {
+          if (S.SKILL_DEFS[chk].allToggle) continue;
+          if (!st.skills[S.SKILL_DEFS[chk].id]) {
+            allMarked = false;
+            break;
+          }
+        }
+        if (allMarked) {
+          var anySkill = false;
+          for (var anyi = 0; anyi < S.SKILL_DEFS.length; anyi++) {
+            if (S.SKILL_DEFS[anyi].allToggle) continue;
+            if (st.skills[S.SKILL_DEFS[anyi].id]) {
+              anySkill = true;
+              break;
+            }
+          }
+          allChecked = anySkill;
+        }
+      }
+      html +=
+        '<div class="admin-fixed-skills-head">' +
+        '<p class="admin-fixed-title">Skills</p>' +
+        '<label class="admin-fixed-skills-all">' +
+        '<input type="checkbox" data-skill-id="all_skills" data-skill-all="1"' +
+        (allChecked ? " checked" : "") +
+        ' onchange="adminFixedSkillAllChange(this)"> All skills</label>' +
+        "</div>" +
+        '<div class="skills-grid" id="admin-fixed-skills-grid">';
       for (var si = 0; si < S.SKILL_DEFS.length; si++) {
         var sd = S.SKILL_DEFS[si];
-        var checked = sd.allToggle ? !!st.skills.all_skills : !!st.skills[sd.id];
+        if (sd.allToggle) continue;
+        var checked = allChecked || !!st.skills[sd.id];
         html +=
-          '<label class="' +
-          (sd.allToggle ? "skills-all" : "") +
-          '"><input type="checkbox" data-skill-id="' +
+          '<label><input type="checkbox" data-skill-id="' +
           esc(sd.id) +
           '"' +
-          (sd.allToggle ? ' data-skill-all="1"' : "") +
           (checked ? " checked" : "") +
           "> " +
           esc(sd.label) +
@@ -346,6 +374,20 @@
       ((intakeState.fixedStep | 0) + 1) +
       "/" +
       C().FIXED_STEPS.length;
+  };
+
+  window.adminFixedSkillAllChange = function adminFixedSkillAllChange(inp) {
+    if (!inp || !inp.getAttribute("data-skill-all")) return;
+    var on = !!inp.checked;
+    var root =
+      (inp.closest && inp.closest("#intake-fixed")) ||
+      document.getElementById("intake-fixed");
+    if (!root) return;
+    var cbs = root.querySelectorAll('input[type="checkbox"][data-skill-id]');
+    for (var i = 0; i < cbs.length; i++) {
+      if (cbs[i].getAttribute("data-skill-all")) continue;
+      cbs[i].checked = on;
+    }
   };
 
   window.adminFixedBack = function adminFixedBack() {
