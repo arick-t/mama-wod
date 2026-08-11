@@ -1,4 +1,4 @@
-# Admin remote audit — accumulated tasks (DO NOT auto-ship)
+# Admin remote audit — accumulated tasks (DO NOT auto-ship until founder merges)
 
 Collected from founder remote session (production retest ongoing).
 Branch: cursor/admin-remote-audit-batch-f8bf
@@ -10,19 +10,20 @@ Rule: accumulate → one batch of work. Do not merge to main until founder asks.
 - Admin 1.5.5 Build plan coach video overlay + fail restore to Goals
 - Admin 1.5.6 Handoff Terms gate: no pre-stamp legal; athlete signs on device before plan unlock
 
-## Still open / verify in production retest
-1. After deleting an athlete in admin — device must lose access to that block (not leftover localStorage from before admin sync). Verify claim/ownership revoke path.
-2. Coach 2.3.3 connected to +athlete / intake — verified earlier; re-confirm after new plan build.
-3. Desktop admin fixed intake UX polish (if more found in retest).
-4. Build plan end-to-end: GIF/video → real brick → one-time link → athlete opens → Terms → then plan.
-5. Legal signature must land in legal-agreements.jsonl on Agree (handoff path).
+## Batch implemented on this branch (Admin 1.5.7 — awaiting founder merge)
+1. **Delete persist:** tombstone instead of hard delete; seed cannot resurrect; list filters deleted.
+2. **Delete revoke:** burn open claims; client push → `athlete_revoked` → wipe `duck-wod-personal-coach-v1` + keys.
+3. **Phone → admin list:** `intake_complete` feedback mirrors snapshot server-side (writeKey required).
+4. **Build plan Terms:** admin auth bypasses TERMS_REQUIRED; athlete device still gated.
+5. **Active recovery UX:** nest days under Yes; no Thursday default; require day if Yes.
+6. **Legal jsonl:** handoff Agree path already posts `/api/legal-agree` (unchanged; verify in retest).
 
-## Founder findings (2026-08-11, production /admin.html ~1.5.5)
-6. **Delete athlete does not persist:** Deleted "אריק" in admin; after refresh he reappeared (still Active / Coach Member, still in tabs). Admin showed "2 trainees" (אריק + עדי). Delete UI exists but server/Blob snapshot appears to resurrect the athlete — not just device localStorage leftover.
-7. **Phone self-serve signup not landing in admin list:** Opened new user on phone with full intake; join email arrived (~21:11) subject/body like "! אריק פלא has joined the DUCK'S" from DUCK-WOD. Admin still showed only 2 trainees — new athlete never appeared in admin module tabs/count. Analytics/join email fired; admin Blob athlete list apparently not updated from phone registration path.
-8. **Desktop fixed intake Skills (OK):** Step 6/9 — "All skills" beside Skills title + all skill cubes checked looks good (founder confirmed). Keep as accepted for 1.5.3 UX.
-9. **Desktop fixed intake Injuries (OK):** Step 8/9 — "No injuries" active chip (✓ + teal) + field looks good (founder confirmed). Keep as accepted for 1.5.4 UX.
-10. **Active recovery day UX (confusing):** Step ~4/9 — Yes/No alone is good. When days expand under Yes, create a clear visual branch/indent hierarchy so day list is obviously nested under the Yes answer (not same level as Yes/No). Also: do **not** default-select Thursday (or any day); leave day unselected until athlete picks.
+## Founder findings (2026-08-11)
+6. Delete athlete did not persist (אריק resurrected) — fixed via tombstone.
+7. Phone join email without admin list — fixed via intake_complete mirror.
+8–9. Skills / Injuries OK (accepted).
+10. Active recovery hierarchy + no Thu default — fixed.
+11. Build plan Terms acceptance required — fixed via admin auth bypass.
 
 ## Hard constraints
 - Prefer phone athlete intake UX over desktop admin if conflict.

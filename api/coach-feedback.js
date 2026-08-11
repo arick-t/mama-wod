@@ -10,6 +10,73 @@ const { checkRateLimit, sendRateLimit } = require("../lib/rate-limit.js");
 const { scrubPiiText } = require("./sanitize-pii.js");
 const { resolveAppMailTo } = require("../lib/app-mail.js");
 const { applyCors } = require("../lib/cors-allowlist.js");
+const {
+  readSnapshot,
+  writeSnapshot,
+  safeAthleteId,
+} = require("../scripts/lib/admin/admin-snapshot");
+const { assertSnapshotWriteAllowed } = require("../scripts/lib/admin/admin-ownership");
+const { appendAdminAudit } = require("../scripts/lib/admin/admin-audit");
+
+/**
+ * Mirror phone intake_complete into admin Blob list even if client pushAdminSnapshot failed.
+ * Requires writeKey (same ownership as /api/admin-snapshot). Skips tombstoned athletes.
+ */
+async function ensureAdminSnapshotFromIntake(body) {
+  const athleteId = safeAthleteId(body.userId || body.athleteId);
+  const writeKey = String(body.writeKey || "").trim();
+  if (!athleteId || !writeKey) return { ok: false, reason: "missing_id_or_key" };
+  let existing = {};
+  try {
+    existing = (await readSnapshot(athleteId)) || {};
+  } catch (e) {
+    return { ok: false, reason: "read_failed" };
+  }
+  if (existing.deleted || existing.revoked) {
+    return { ok: false, reason: "athlete_revoked" };
+  }
+  const gate = assertSnapshotWriteAllowed(existing, writeKey, false);
+  if (!gate.ok) return { ok: false, reason: gate.error };
+  const now = new Date().toISOString();
+  const planCoachVersion = String(
+    body.planCoachVersion ||
+      existing.planCoachVersion ||
+      (body.currentBlock && body.currentBlock.coachVersion) ||
+      ""
+  ).slice(0, 20);
+  const snapshot = Object.assign({}, existing, {
+    athleteId: athleteId,
+    displayName: String(body.displayName || existing.displayName || "").slice(0, 80),
+    gender: String(body.gender || existing.gender || "").slice(0, 20),
+    preferredLanguage: String(
+      body.preferredLanguage || existing.preferredLanguage || ""
+    ).slice(0, 10),
+    skillsSummary: String(body.skillsSummary || existing.skillsSummary || "").slice(0, 400),
+    intakeSummary: String(body.intakeSummary || existing.intakeSummary || "").slice(0, 800),
+    currentBlock: body.currentBlock || existing.currentBlock || null,
+    planCoachVersion: planCoachVersion || existing.planCoachVersion || null,
+    joinedAt: existing.joinedAt || existing.createdAt || now,
+    coachTier: existing.coachTier || 2,
+    writeKeyHash: existing.writeKeyHash || gate.bindHash || null,
+    clientWritesLocked: false,
+    deleted: false,
+    revoked: false,
+    updatedAt: now,
+    createdAt: existing.createdAt || now,
+    source: existing.source || "phone_intake_complete",
+  });
+  await writeSnapshot(athleteId, snapshot);
+  try {
+    await appendAdminAudit({
+      action: existing.athleteId ? "snapshot_update" : "snapshot_create",
+      athleteId: athleteId,
+      actor: "client",
+      ok: true,
+      detail: "intake_complete_mail_mirror",
+    });
+  } catch (eAudit) {}
+  return { ok: true };
+}
 
 function setCors(req, res) {
   applyCors(req, res, {
@@ -396,10 +463,25 @@ module.exports = async function handler(req, res) {
     console.log("[coach-feedback] emailed ok →", to, mailResult.id || "");
   }
 
+  let snapshotMirror = null;
+  if (isIntakeCompleteMail) {
+    try {
+      snapshotMirror = await ensureAdminSnapshotFromIntake(body);
+    } catch (eMirror) {
+      snapshotMirror = {
+        ok: false,
+        reason: "mirror_throw",
+        detail: String((eMirror && eMirror.message) || eMirror).slice(0, 120),
+      };
+      console.warn("[coach-feedback] admin snapshot mirror failed:", snapshotMirror.detail);
+    }
+  }
+
   return res.status(200).json({
     ok: true,
     emailed: !!mailResult.sent,
     mail: mailResult,
     to: to,
+    adminSnapshot: snapshotMirror,
   });
 };

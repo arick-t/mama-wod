@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DUCK-WOD Admin · 1.5.6</title>
+<title>DUCK-WOD Admin · 1.5.7</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -508,6 +508,11 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
 .admin-fixed-checks label,.admin-fixed-radios label{
   display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-muted);
   padding:8px 10px;background:var(--bg-elev);border:1px solid var(--line);border-radius:8px;cursor:pointer}
+.admin-fixed-recovery-branch{
+  margin:4px 0 12px 14px;padding:10px 12px 10px 14px;
+  border-left:3px solid #1A9B8A;background:rgba(26,155,138,.08);border-radius:0 8px 8px 0}
+.admin-fixed-recovery-branch .admin-fixed-note{margin:0 0 8px}
+.admin-fixed-recovery-branch .admin-fixed-checks{margin-bottom:0}
 .admin-fixed-nav{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
 .admin-fixed-err{color:#fca5a5;font-size:12px;margin-top:8px;min-height:1.2em}
 
@@ -530,7 +535,7 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver">1.5.6</div>
+    <div class="ver">1.5.7</div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <button type="button" onclick="doLogin()">כניסה</button>
     <div id="login-err"></div>
@@ -542,7 +547,7 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">Admin</span>
-    <span class="ver-badge" title="Coach Admin dashboard · 1.5.6">1.5.6</span>
+    <span class="ver-badge" title="Coach Admin dashboard · 1.5.7">1.5.7</span>
     <span class="count-wrap">
       <span class="count" id="athlete-count">0 מתאמנים</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
@@ -2460,7 +2465,18 @@ function deleteAthlete(id) {
     method: "DELETE",
     headers: adminAuthHeaders()
   })
-    .then(function() {
+    .then(function(r) {
+      return r.json().then(function(j) {
+        return { ok: r.ok, j: j };
+      }).catch(function() {
+        return { ok: r.ok, j: null };
+      });
+    })
+    .then(function(x) {
+      if (!x.ok) {
+        alert("מחיקה נכשלה: " + String((x.j && (x.j.message || x.j.error)) || "שגיאה"));
+        return;
+      }
       athletes = athletes.filter(function(x) { return x.athleteId !== id; });
       currentAthleteId = null;
       renderAthleteList(athletes);
@@ -2468,6 +2484,9 @@ function deleteAthlete(id) {
         document.getElementById("content").innerHTML =
           '<div class="empty-content"><div class="icon">·</div><p>בחר מתאמן מהרשימה</p></div>';
       }
+    })
+    .catch(function() {
+      alert("שגיאת רשת במחיקה");
     });
 }
 
@@ -3037,13 +3056,14 @@ function generateIntakeBlock() {
 
   fetch("/api/personal-coach", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: adminAuthHeaders(),
     body: JSON.stringify({
       action: "generate_block",
       messages: payloadMsgs,
       athleteProfile: intakeAthleteProfile({ forceIntakeComplete: true }),
       intakeComplete: true,
-      forceJson: true
+      forceJson: true,
+      adminProgramming: true
     })
   })
     .then(function(r) {

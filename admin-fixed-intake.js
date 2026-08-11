@@ -55,7 +55,7 @@
       trainingDays: [],
       scheduleNotes: "",
       activeRecoveryPref: "no",
-      activeRecoveryDay: "thu",
+      activeRecoveryDay: "",
       skills: {},
       lifts: {},
       sessionLimits: "",
@@ -246,7 +246,7 @@
         "</textarea>";
     } else if (key === "recovery") {
       var pref = st.activeRecoveryPref || "no";
-      var prefDay = st.activeRecoveryDay || "thu";
+      var prefDay = st.activeRecoveryDay || "";
       var showAr = pref === "yes";
       html +=
         '<p class="admin-fixed-title">Active recovery day?</p>' +
@@ -258,16 +258,16 @@
         '<label><input type="radio" name="admFxRecovery" value="yes"' +
         (pref === "yes" ? " checked" : "") +
         ' onchange="adminFixedRecoveryPrefChanged()"> <span><strong>Yes</strong> — one active recovery day each week.</span></label>' +
-        '</div><div id="admFxRecoveryDayWrap"' +
+        '</div><div id="admFxRecoveryDayWrap" class="admin-fixed-recovery-branch"' +
         (showAr ? "" : ' style="display:none"') +
-        '><div class="admin-fixed-checks">';
+        '><p class="admin-fixed-note">Under Yes — which day?</p><div class="admin-fixed-checks">';
       for (var rdi = 0; rdi < S.DAY_KEYS.length; rdi++) {
         var rdk = S.DAY_KEYS[rdi];
         html +=
           '<label><input type="radio" name="admFxRecoveryDay" value="' +
           esc(rdk) +
           '"' +
-          (prefDay === rdk ? " checked" : "") +
+          (prefDay && prefDay === rdk ? " checked" : "") +
           "> " +
           esc(S.DAY_LABELS[rdk] || rdk) +
           "</label>";
@@ -525,10 +525,15 @@
       var prefEl = box.querySelector('input[name="admFxRecovery"]:checked');
       var dayEl = box.querySelector('input[name="admFxRecoveryDay"]:checked');
       intakeState.activeRecoveryPref = prefEl && prefEl.value === "yes" ? "yes" : "no";
-      intakeState.activeRecoveryDay =
-        intakeState.activeRecoveryPref === "yes" && dayEl
-          ? String(dayEl.value || "thu")
-          : "";
+      if (intakeState.activeRecoveryPref === "yes") {
+        if (!dayEl || !dayEl.value) {
+          setFixedErr("Pick which day is the active recovery day (under Yes).");
+          return;
+        }
+        intakeState.activeRecoveryDay = String(dayEl.value).slice(0, 8);
+      } else {
+        intakeState.activeRecoveryDay = "";
+      }
     } else if (key === "lifts") {
       var lifts = {};
       var lines = [];
@@ -666,15 +671,20 @@
       { role: "user", text: String(intakeState.fixedIntakePacket || "").slice(0, 6000) },
     ];
 
+    var pcHeaders =
+      typeof adminAuthHeaders === "function"
+        ? adminAuthHeaders()
+        : { "Content-Type": "application/json" };
     fetch("/api/personal-coach", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: pcHeaders,
       body: JSON.stringify({
         action: "generate_block",
         messages: payloadMsgs,
         athleteProfile: profile,
         intakeComplete: true,
         forceJson: true,
+        adminProgramming: true,
       }),
     })
       .then(function (r) {

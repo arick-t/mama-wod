@@ -1,5 +1,16 @@
 # Changelog
 
+## [Admin 1.5.7] - 2026-08-11
+
+### Remote audit batch — delete, phone→admin, Build plan Terms, recovery UX
+- **Admin subtitle / title:** `DUCK-WOD Admin · 1.5.7`.
+- **Build plan:** admin `generate_block` sends admin auth; Terms gate no longer blocks brick build (athlete still signs on device/handoff).
+- **Delete athlete:** writes Blob tombstone (no seed resurrect); burns open claims; device push gets `athlete_revoked` and wipes local coach store.
+- **Phone self-serve:** `intake_complete` mail also mirrors athlete into admin snapshot (with writeKey).
+- **Active recovery:** day list nested under Yes (visual branch); no Thursday default — must pick a day.
+
+---
+
 ## [Admin 1.5.6] - 2026-08-11
 
 ### CRITICAL — Admin handoff: Terms signed on athlete device before plan unlock

@@ -35,6 +35,6 @@ assert.ok(admin.includes("openIntakeSheet"), "intake opens from stats popover");
 assert.ok(snap.includes('action === "admin_append_chat"'), "chat log API");
 assert.ok(snap.includes("adminChatLog"), "persist chat log");
 assert.ok(snap.includes('action === "admin_push_upgrade_offer"'), "push upgrade offer API");
-assert.ok(admin.includes("DUCK-WOD Admin · 1.5.6"), "admin product label 1.5.6");
+assert.ok(admin.includes("DUCK-WOD Admin · 1.5.7"), "admin product label 1.5.7");
 
 console.log("admin-athlete-ops-card.test.js: ok");

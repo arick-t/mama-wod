@@ -208,6 +208,10 @@ function testStaticRegressions() {
     "gate after TERMS before API key",
     termsIdx >= 0 && costIdx > termsIdx && secIdx > costIdx && keyIdx > secIdx
   );
+  ok(
+    "admin auth can bypass TERMS gate",
+    pc.includes("adminProgramming") && pc.includes("checkAdminAuth(req)")
+  );
   ok("geminiOnly programming", pc.includes("geminiOnly: true"));
   ok("no Groq for programming comment present", pc.includes("NO Groq for programming (POL-020)"));
   ok("day-by-day opt-in only", pc.includes('PERSONAL_COACH_DAY_BY_DAY || "").trim() === "1"'));
