@@ -1,5 +1,15 @@
 # Changelog
 
+## [Admin 1.5.5] - 2026-08-11
+
+### Admin desktop fixed intake — Build plan overlay + brick save
+- **Admin subtitle / title:** `DUCK-WOD Admin · 1.5.5`.
+- After **Build plan**: show the same `coach-thinking.mp4` overlay as the athlete app (not an empty chat pane).
+- On generate failure: return to Goals with a clear error; do **not** reopen the chat compose bar.
+- Phone athlete intake untouched.
+
+---
+
 ## [Admin 1.5.4] - 2026-08-11
 
 ### Admin desktop fixed intake — No injuries click affordance

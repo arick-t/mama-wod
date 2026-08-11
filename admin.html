@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DUCK-WOD Admin · 1.5.4</title>
+<title>DUCK-WOD Admin · 1.5.5</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -415,13 +415,13 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
 .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(8,6,12,.78);z-index:60;
   align-items:center;justify-content:center;padding:12px}
 .modal-backdrop.open{display:flex}
-.intake-workspace{background:var(--bg-card);border:1px solid var(--line);
+.intake-workspace{position:relative;background:var(--bg-card);border:1px solid var(--line);
   border-radius:14px;width:min(920px,100%);height:min(92vh,900px);display:flex;flex-direction:column;
   overflow:hidden;box-shadow:0 20px 56px rgba(0,0,0,.5)}
 .intake-ws-header{display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:14px 18px;border-bottom:1px solid var(--line);background:var(--bg-elev);flex-shrink:0}
 .intake-ws-header h2{font-size:17px;font-weight:800;font-family:var(--font-ui)}
-.intake-ws-body{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.intake-ws-body{position:relative;flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden}
 .intake-start-bar{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
 .intake-start-bar label{display:block;font-size:11px;color:var(--text-meta);margin-bottom:4px}
 .intake-start-bar input{width:min(280px,100%);padding:9px 11px;border-radius:8px;border:1px solid var(--line);
@@ -456,6 +456,19 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
 .intake-building.visible{display:block}
 .intake-building .spin{width:36px;height:36px;border:3px solid var(--line);border-top-color:var(--brand);
   border-radius:50%;margin:0 auto 16px;animation:spin 0.8s linear infinite}
+/* Full-panel building overlay (same coach-thinking clip as athlete app) */
+.admin-intake-build-overlay{
+  display:none;position:absolute;inset:0;z-index:40;align-items:center;justify-content:center;
+  background:rgba(8,6,12,.92);padding:18px;text-align:center
+}
+.admin-intake-build-overlay.open{display:flex}
+.admin-intake-build-center{display:flex;flex-direction:column;align-items:center;gap:14px;max-width:min(92%,420px)}
+.admin-intake-build-video{
+  width:min(78vw,340px);height:auto;max-height:42vh;border-radius:14px;background:#121018;
+  object-fit:contain
+}
+.admin-intake-build-status{color:var(--text);font-size:.95em;line-height:1.4}
+.admin-intake-build-status strong{color:var(--coach,#b06dcf)}
 @keyframes spin{to{transform:rotate(360deg)}}
 #intake-fixed{flex:1;overflow-y:auto;padding:16px 18px;display:none;direction:ltr;text-align:left}
 .admin-fixed-step{font-size:12px;color:var(--text-meta);margin-bottom:8px}
@@ -517,7 +530,7 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver">1.5.4</div>
+    <div class="ver">1.5.5</div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <button type="button" onclick="doLogin()">כניסה</button>
     <div id="login-err"></div>
@@ -529,7 +542,7 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">Admin</span>
-    <span class="ver-badge" title="Coach Admin dashboard · 1.5.4">1.5.4</span>
+    <span class="ver-badge" title="Coach Admin dashboard · 1.5.5">1.5.5</span>
     <span class="count-wrap">
       <span class="count" id="athlete-count">0 מתאמנים</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
@@ -628,6 +641,26 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
         <div class="spin"></div>
         <div style="font-weight:700;margin-bottom:6px">בונה תוכנית…</div>
         <div style="font-size:13px;color:#888">תחקור זהה לאפליקציה · generate_block · שמירה + לינק מסירה</div>
+      </div>
+      <div id="adminIntakeBuildOverlay" class="admin-intake-build-overlay" aria-live="polite" aria-busy="true" hidden>
+        <div class="admin-intake-build-center">
+          <video
+            id="adminIntakeBuildVideo"
+            class="admin-intake-build-video"
+            muted
+            playsinline
+            webkit-playsinline
+            loop
+            preload="auto"
+            poster="assets/hamamen-coach-duck.png"
+          >
+            <source src="assets/coach-thinking.mp4" type="video/mp4">
+          </video>
+          <img id="adminIntakeBuildFallback" class="admin-intake-build-video" src="assets/hamamen-coach-duck.png" alt="Coach" style="display:none" width="340" height="340">
+          <div class="admin-intake-build-status" id="adminIntakeBuildStatus">
+            <strong>Coach</strong> is building your 5-week block…
+          </div>
+        </div>
       </div>
     </div>
     <div class="intake-footer" id="intake-footer">
@@ -3050,13 +3083,67 @@ function generateIntakeBlock() {
     });
 }
 
-function showIntakeBuilding(on) {
+function showIntakeBuilding(on, statusHtml) {
   var el = document.getElementById("intake-building");
+  var overlay = document.getElementById("adminIntakeBuildOverlay");
+  var video = document.getElementById("adminIntakeBuildVideo");
+  var fallback = document.getElementById("adminIntakeBuildFallback");
+  var statusEl = document.getElementById("adminIntakeBuildStatus");
   var log = document.getElementById("intake-chat-log");
   var compose = document.getElementById("intake-compose");
-  if (el) el.classList.toggle("visible", !!on);
-  if (log) log.style.display = on ? "none" : "flex";
-  if (compose) compose.style.display = on ? "none" : "flex";
+  var fixed = document.getElementById("intake-fixed");
+  var fixedMode = !!(window.intakeState && (intakeState.fixedActive || intakeState.fixedIntakePacket) && !intakeState.intakeComplete);
+  if (statusHtml && statusEl) statusEl.innerHTML = statusHtml;
+  if (el) el.classList.toggle("visible", !!on && !overlay);
+  if (overlay) {
+    if (on) {
+      overlay.hidden = false;
+      overlay.classList.add("open");
+      if (fallback) fallback.style.display = "none";
+      if (video) {
+        try {
+          video.muted = true;
+          video.defaultMuted = true;
+          video.playsInline = true;
+          video.loop = true;
+          video.style.display = "";
+          var p = video.play();
+          if (p && typeof p.catch === "function") {
+            p.catch(function () {
+              if (fallback) {
+                fallback.style.display = "";
+                video.style.display = "none";
+              }
+            });
+          }
+        } catch (ePlay) {
+          if (fallback) {
+            fallback.style.display = "";
+            if (video) video.style.display = "none";
+          }
+        }
+      }
+    } else {
+      overlay.classList.remove("open");
+      overlay.hidden = true;
+      if (video) {
+        try { video.pause(); } catch (ePause) {}
+      }
+    }
+  }
+  if (fixed && on) fixed.style.display = "none";
+  if (log) {
+    if (fixedMode || on) log.style.display = "none";
+    else log.style.display = "flex";
+  }
+  if (compose) {
+    /* Never resurrect chat compose during fixed questionnaire / build. */
+    if (fixedMode || on || (window.intakeState && intakeState.fixedIntakePacket && !intakeState.intakeComplete)) {
+      compose.style.display = "none";
+    } else {
+      compose.style.display = on ? "none" : "flex";
+    }
+  }
   hideIntakePickers();
 }
 
