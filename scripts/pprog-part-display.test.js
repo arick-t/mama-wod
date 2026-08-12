@@ -62,6 +62,8 @@ const bundle =
   extractFn(index, "expandPprogChipperArrowLine") +
   extractFn(index, "expandPprogJoinedMovementLine") +
   extractFn(index, "expandPprogWorkLines") +
+  extractFn(index, "peelInlineTrailingCoachNote") +
+  extractFn(index, "finalizePprogWorkAndNotes") +
   extractFn(index, "isPprogPartFormatLine") +
   extractFn(index, "classifyPprogPartLines");
 eval(bundle);
@@ -133,5 +135,34 @@ const commaWarmup = classifyPprogPartLines([
 ok("comma warmup peels format", /^3 Rounds \(Quality\):$/i.test(commaWarmup.format));
 ok("comma warmup expands to 4", commaWarmup.work.length === 4);
 ok("comma warmup no commas in work", commaWarmup.work.every(function (w) { return !/,/.test(w); }));
+
+/* Image 4 — AMRAP plus join + glued sets with inline Rest */
+const amrapPlus = classifyPprogPartLines([
+  "Intent: Muscular stamina and lower-body threshold (18 min effective duration).",
+  "AMRAP 18 min:",
+  "12 Heavy KB Swings (32kg) + 10 Alternating Pistols + 15 Wall Balls (10kg) + 50 Double Unders.",
+  "Target score: 5+ Rounds. Pace unbroken on KB swings and double unders.",
+]);
+ok("amrap plus expands to 4", amrapPlus.work.length === 4);
+ok(
+  "amrap target score note",
+  amrapPlus.trailingNotes.some(function (n) { return /Target score/i.test(n); })
+);
+ok("amrap keeps 5+ in note (not split)", amrapPlus.trailingNotes.some(function (n) { return /5\+/.test(n); }));
+
+const setsInlineRest = classifyPprogPartLines([
+  "Intent: Trunk stability and posterior chain balance.",
+  "3 Sets (Not for time): 15 DB Russian Twists (15kg) + 45 sec Hollow Hold. Rest 60 sec.",
+]);
+ok("sets format peeled", /^3 Sets \(Not for time\):$/i.test(setsInlineRest.format));
+ok("sets plus expands to 2", setsInlineRest.work.length === 2);
+ok(
+  "inline rest peeled",
+  setsInlineRest.trailingNotes.some(function (n) { return /Rest 60 sec/i.test(n); })
+);
+ok(
+  "hollow hold has no rest glued",
+  setsInlineRest.work.every(function (w) { return !/\bRest\b/i.test(w); })
+);
 
 console.log("All pprog-part-display checks passed.");

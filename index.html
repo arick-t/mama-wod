@@ -5218,7 +5218,7 @@ function isPprogMovementishPart(part) {
   var p = String(part || "").trim();
   if (!p) return false;
   if (/^\d/.test(p)) return true;
-  return /\b(run|row|ski|bike|squat|lunge|deadlift|swing|pull|push|burpee|jump|box|wall|kb|db|du|su|clean|snatch|thruster|press|carry|sit-?up|toes|muscle-?up|handstand|scapular|pike|unders?|shuttle|devil|walk|hold|hang|dip|cluster|jerk)\b/i.test(
+  return /\b(run|row|ski|bike|squat|lunge|deadlift|swing|pull|push|burpee|jump|box|wall|kb|db|du|su|clean|snatch|thruster|press|carry|sit-?up|toes|muscle-?up|handstand|scapular|pike|unders?|shuttle|devil|walk|hold|hang|dip|cluster|jerk|pistol|twist|hollow|ghd|plank)\b/i.test(
     p
   );
 }
@@ -5336,6 +5336,40 @@ function expandPprogWorkLines(workLines) {
   return out;
 }
 
+/**
+ * "45 sec Hollow Hold. Rest 60 sec." → work + trailing rest note.
+ */
+function peelInlineTrailingCoachNote(line) {
+  var t = String(line || "").trim();
+  if (!t) return { work: "", note: "" };
+  var m = t.match(/^(.*?)(?:\.|;)\s+(Rest\b.+)$/i);
+  if (m && String(m[1] || "").trim().length >= 3) {
+    var note = String(m[2] || "").trim();
+    if (isPprogPartCoachNoteLine(note) || /^rest\b/i.test(note)) {
+      return { work: String(m[1] || "").trim(), note: note };
+    }
+  }
+  return { work: t, note: "" };
+}
+
+function finalizePprogWorkAndNotes(workIn, trailingIn) {
+  var work = Array.isArray(workIn) ? workIn.slice() : [];
+  var trailingNotes = Array.isArray(trailingIn) ? trailingIn.slice() : [];
+  var cleaned = [];
+  var inlineNotes = [];
+  for (var i = 0; i < work.length; i++) {
+    var peeled = peelInlineTrailingCoachNote(work[i]);
+    if (peeled.work) cleaned.push(peeled.work.replace(/\.\s*$/, ""));
+    if (peeled.note) inlineNotes.push(peeled.note);
+  }
+  work = cleaned;
+  while (work.length && isPprogPartCoachNoteLine(work[work.length - 1])) {
+    trailingNotes.unshift(work.pop());
+  }
+  trailingNotes = trailingNotes.concat(inlineNotes);
+  return { work: work, trailingNotes: trailingNotes };
+}
+
 /** Always show Part A/B/C; keep coach title after an em dash (avoid double Part prefix). */
 function formatPprogPartHeading(partIndex, rawTitle) {
   var letter = String.fromCharCode(65 + (partIndex | 0));
@@ -5414,8 +5448,13 @@ function classifyPprogPartLines(rawLines) {
     trailingNotes.unshift(work.pop());
   }
   work = expandPprogWorkLines(work);
+  var finalized = finalizePprogWorkAndNotes(work, trailingNotes);
+  work = finalized.work;
+  trailingNotes = finalized.trailingNotes;
   if (!notes.length && !format && !work.length && !trailingNotes.length && lines.length) {
-    work = expandPprogWorkLines(lines.slice());
+    finalized = finalizePprogWorkAndNotes(expandPprogWorkLines(lines.slice()), []);
+    work = finalized.work;
+    trailingNotes = finalized.trailingNotes;
   }
   return { notes: notes, format: format, work: work, trailingNotes: trailingNotes };
 }
