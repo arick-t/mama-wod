@@ -2076,6 +2076,7 @@ function pprogLegalContinue() {
   store.legalAcceptedVersion = PPROG_LEGAL_VERSION;
   store.legalTermsId = PPROG_LEGAL_TERMS_ID;
   store.pendingAthleteLegal = false;
+  store.intakeSittingLegalOk = true;
   store.legalAcceptedFlags = {
     age18: true,
     aiResponsibility: true,
@@ -2105,9 +2106,31 @@ function pprogEnsureLegalAccepted(thenFn) {
   pprogShowLegalModal(thenFn);
 }
 
+/**
+ * Each NEW intake sitting requires a fresh Terms signature (same uid reclaim / returning member).
+ * Mid-sitting: keep the signature from this sitting so Agree is not asked twice.
+ */
+function pprogRequireFreshLegalForNewIntakeSitting(store) {
+  var s = store || loadPprogStore();
+  var sitting = pprogHasIntakeSitting();
+  if (sitting && s.intakeSittingLegalOk && pprogLegalAccepted(s)) return s;
+  s.legalAcceptedAt = null;
+  s.legalAcceptedVersion = 0;
+  s.legalTermsId = "";
+  s.pendingAthleteLegal = true;
+  s.intakeSittingLegalOk = false;
+  savePprogStore(s);
+  return s;
+}
+
 function pprogOnStartClick() {
   pprogMarkIntakeSitting();
+  pprogRequireFreshLegalForNewIntakeSitting();
   pprogEnsureLegalAccepted(function () {
+    var s = loadPprogStore();
+    s.intakeSittingLegalOk = true;
+    s.pendingAthleteLegal = false;
+    savePprogStore(s);
     startPprogFixedIntake();
   });
 }
@@ -7452,6 +7475,9 @@ function pushAdminSnapshot(store) {
       profileNotes: store.profileNotes || "",
       currentBlock: store.currentBlock || null,
       reclaimSameAthlete: true,
+      /* Admin declaration cycle + legal audit — always the latest on-device Agree date. */
+      declarationAcceptedAt: store.legalAcceptedAt || "",
+      legalAcceptedAt: store.legalAcceptedAt || "",
       planCoachVersion:
         store.planCoachVersion ||
         (store.currentBlock && store.currentBlock.coachVersion) ||
@@ -7821,7 +7847,7 @@ function maybeNotifyPprogIntakeComplete(store, opts) {
   if (!store || opts.autoNextBlock) return;
   if (store.intakeNotifySent) return;
   if (!store.intakeComplete || !store.currentBlock) return;
-  /* Mark sent only after we know final athleteId (may rotate on locked seed uid). */
+  /* Mark sent after admin push path (same athleteId reclaim — no uid mint). */
   store.intakeNotifySent = true;
   store.intakeNotifySentAt = new Date().toISOString();
   savePprogStore(store);
@@ -7848,6 +7874,8 @@ function maybeNotifyPprogIntakeComplete(store, opts) {
         finalStore.planCoachVersion ||
         (finalStore.currentBlock && finalStore.currentBlock.coachVersion) ||
         "",
+      declarationAcceptedAt: finalStore.legalAcceptedAt || "",
+      legalAcceptedAt: finalStore.legalAcceptedAt || "",
       intakeSummary: String(finalStore.profileNotes || "").replace(/\n+/g, " ").trim().slice(0, 400),
       athleteFeedback:
         "Nickname: " +
@@ -7885,7 +7913,7 @@ function maybeNotifyPprogIntakeComplete(store, opts) {
     } catch (eTier) {}
   }
 
-  /* Push to admin first so locked/seeded dw_uid can rotate before join email. */
+  /* Push to admin first (same athleteId reclaim) before join email. */
   Promise.resolve(pushAdminSnapshot(store))
     .then(function () {
       var finalStore = loadPprogStore() || store;

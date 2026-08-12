@@ -8,6 +8,7 @@
 - **Build plan connectivity:** 180s AbortController, safer JSON parse, one automatic retry on Safari `Load failed` / network drop — still real `generate_block` only (no stubs).
 - **Hide coach FAB** while intake modal is open (z-index + JS + CSS).
 - **Phone self-serve → admin tab:** keep the **same** `athleteId` (`dw_uid`). Seeded/locked or tombstoned rows are **reclaimed/resurrected** on intake-complete push (bind writeKey, clear deleted) so the athlete reappears in admin like a new tab — not a new user id. Join email runs after admin push.
+- **Legal on reclaim / new intake sitting (CRITICAL):** each new intake sitting forces a fresh Terms Agree; `/api/legal-agree` appends a new dated row to `data/legal-agreements.jsonl`; admin snapshot `declarationAcceptedAt` is updated from the device signature (declaration renewal uses the latest date). New athletes still mint a new `userId` as usual.
 
 ---
 

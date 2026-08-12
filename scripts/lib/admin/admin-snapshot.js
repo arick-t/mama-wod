@@ -64,6 +64,9 @@ const CLIENT_ALLOWED_KEYS = new Set([
   "pastBlocks",
   "coachTier",
   "planCoachVersion",
+  "declarationAcceptedAt",
+  "legalAcceptedAt",
+  "reclaimSameAthlete",
 ]);
 
 const CoachIntakeSync = require("../../../lib/coach-intake-sync-contract");
@@ -697,7 +700,9 @@ module.exports = async function handler(req, res) {
           ? !!clean.membershipFrozen
           : !!existing.membershipFrozen,
       declarationAcceptedAt: String(
-        (isAdmin && clean.declarationAcceptedAt) ||
+        clean.declarationAcceptedAt ||
+          clean.legalAcceptedAt ||
+          /* Prefer fresh device signature; fall back only when client did not send one. */
           existing.declarationAcceptedAt ||
           existing.joinedAt ||
           existing.createdAt ||

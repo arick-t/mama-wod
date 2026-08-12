@@ -82,6 +82,12 @@ async function ensureAdminSnapshotFromIntake(body) {
     revoked: false,
     deletedAt: undefined,
     revokedAt: undefined,
+    declarationAcceptedAt: String(
+      body.declarationAcceptedAt ||
+        body.legalAcceptedAt ||
+        existing.declarationAcceptedAt ||
+        now
+    ).slice(0, 40),
     updatedAt: now,
     createdAt: existing.createdAt || now,
     source: existing.source || "phone_intake_complete",

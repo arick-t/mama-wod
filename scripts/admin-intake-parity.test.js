@@ -119,5 +119,16 @@ ok(
   "snapshot reclaim same id",
   /snapshot_reclaim/.test(snap) && /allowUnboundBind/.test(snap)
 );
+ok(
+  "fresh Terms each new intake sitting",
+  /pprogRequireFreshLegalForNewIntakeSitting/.test(index) &&
+    /intakeSittingLegalOk/.test(index)
+);
+ok(
+  "admin gets declarationAcceptedAt from device",
+  /declarationAcceptedAt:\s*store\.legalAcceptedAt/.test(index) &&
+    /declarationAcceptedAt/.test(snap) &&
+    /CLIENT_ALLOWED_KEYS[\s\S]*declarationAcceptedAt/.test(snap)
+);
 
 console.log("All admin intake parity / sync checks passed.");
