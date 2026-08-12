@@ -266,9 +266,9 @@ Copy a block below. Keep IDs unique (`POL-###`).
   5. **Safety exception.** Skipping/moving Rest or logging an unplanned session must **never** trigger the injury / physical-risks disclaimer. That disclaimer is only for pain / injury / distress / doubt about a movement.
   6. **Budget gates (HARD):** Apply only after explicit Confirm. Forbidden by default: `generate_block`, Soft Upgrade, large rebuild B, full-brick `BLOCK_JSON`. After Confirm: one surgical `WEEK_JSON`/`DAY_JSON` pass only (target ~3 cost units). If no surgical JSON — do **not** auto large-rebuild; client may set tomorrow→Rest locally. Keep `[ATHLETE_EXTRA_SESSIONS]` short (≤2 notes).
 - **Examples:**  
-  Good: “Schedule: keep today’s session logged, rest tomorrow, ease squat/hinge/engine later this week. Confirm?” → after yes → WEEK_JSON with tomorrow Rest + light bias → “Done.”  
+  Good: “Schedule: keep today’s session logged, rest tomorrow, ease squat/hinge/engine later this week. Confirm?” → after yes → WEEK_JSON with tomorrow Rest + light bias → “בוצעו השינויים נא לוודא בבלוק האימון” (no change recap in chat).  
   Bad: multi-turn equipment/goals/feeling loop with no calendar apply.  
-  Bad: “I am an AI engine and cannot evaluate physical risks…” because they trained on a rest day.
+  Bad: “I am an AI engine…” or repeating Friday/Saturday rest changes after apply.
 - **Added:** 2026-08-09 — case study: spontaneous session on rest day must be processed into the plan
 - **Updated:** 2026-08-09 — Budget approved-with-conditions (confirm-only apply; no block/rebuild default)
 

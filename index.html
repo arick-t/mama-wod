@@ -1630,7 +1630,7 @@ function rememberAiClientError(summary) {
  *   Coach 2.1 — Cost Guardrails v1 (POL-COST sessionDate hard-block + monthly ≈₪5).
  *   Coach 2.2 — POL-026 unplanned/extra session whole-brick harden (Budget gates).
  *   Coach 2.2.1 — POL-026 calendar truth (today logged + tomorrow Rest) + Done.-only chat.
- *   Coach 2.2.2 — POL-026 calendar indicator sticks (loggedExtra survive normalize / week_detail).
+ *   Coach 2.3.7 — brick schedule-revise brief reply (no AI intro / no change recap).
  *   Coach 2.3 — ship: calendar LOGGED today + Confirm? one-tap כן.
  *   Coach 2.3.1 — POL-027 floor/BW baseline + equipment additive (combine free weights).
  *   Coach 2.3.2 — POL-027 full equipment-free pool (Gemini directive) shipped.
@@ -1640,7 +1640,7 @@ function rememberAiClientError(summary) {
  * Keep this badge in sync with the brain actually serving /api/personal-coach.
  * Display: header “COACH · v{COACH_VERSION}” only — do NOT bump app DAILY WORKOUTS / <title> here.
  */
-var COACH_VERSION = "2.3.6";
+var COACH_VERSION = "2.3.7";
 try {
   var __coachVerEl = document.getElementById("coachVersionSub");
   if (__coachVerEl) __coachVerEl.textContent = "COACH · v" + COACH_VERSION;
@@ -4779,8 +4779,8 @@ function sendPprogMessage(ev) {
       var chatText = pprogChatDisplayText(String(j.text));
       if (pol026Ctx) {
         chatText = lastUserConfirm
-          ? "Done."
-          : "Schedule: keep today’s session logged, rest tomorrow, ease squat/hinge/engine later this week. Confirm?";
+          ? PPROG_BRICK_SCHEDULE_POST_APPLY_MSG
+          : PPROG_BRICK_SCHEDULE_PRE_CONFIRM_MSG;
       }
       if (chatText) {
         msgs.push({ role: "model", text: chatText.slice(0, 2000) });
@@ -7234,20 +7234,35 @@ function pprogLatestStandingUserNote(msgs) {
   return "";
 }
 
+var PPROG_BRICK_SCHEDULE_POST_APPLY_MSG = "בוצעו השינויים נא לוודא בבלוק האימון";
+var PPROG_BRICK_SCHEDULE_PRE_CONFIRM_MSG =
+  "Schedule: keep today's session logged, rest tomorrow, ease squat/hinge/engine later this week. Confirm?";
 var PPROG_SCHEDULE_NOTE_RE =
   /\b(rest\s*days?|training\s*days?|work\s*days?|off\s*days?|weekly\s*split|schedule|active\s*recovery|instead\s*of\s*(a\s*)?rest|skipped\s*rest|unplanned|spontaneous)\b|ימי\s*מנוחה|יום\s*מנוחה|ימי\s*אימון|לוח\s*אימונים|מנוחה\s*ב|תוסיף\s*מנוחה|תוריד\s*מנוחה|שנה\s*את\s*(ה)?ימי|מחר\s*.{0,24}מנוחה|במקום\s*יום\s*מנוחה|דילג(תי)?\s*על\s*(יום\s*)?מנוחה|ביצעתי\s*אימון/i;
 
 /** True when whole-brick note logs an unplanned / extra completed session (POL-026). */
 function pprogNoteIsExtraCompletedSession(text) {
   var t = String(text || "");
+  var trainedOnRest =
+    /\b(instead\s*of\s*(a\s*)?rest|skipped\s*rest|unplanned|spontaneous|worked\s*out|trained\s*(today|on)|i\s*(already\s*)?(did|trained|performed|worked)|already\s*(worked|trained)|on\s*a\s*rest\s*day)\b|במקום\s*יום\s*מנוחה|דילג(תי)?\s*על\s*(יום\s*)?מנוחה|ביצעתי\s*אימון|האימון\s*שביצעתי|התאמנתי|אימון\s*היום/i.test(
+      t
+    );
+  if (!trainedOnRest) return false;
   return (
-    /\b(instead\s*of\s*(a\s*)?rest|skipped\s*rest|unplanned|spontaneous|i\s*(already\s*)?(did|trained|performed))\b|במקום\s*יום\s*מנוחה|דילג(תי)?\s*על\s*(יום\s*)?מנוחה|ביצעתי\s*אימון|האימון\s*שביצעתי/i.test(
+    /\b(squat|deadlift|amrap|emom|pull-?up|run|row|bike|press|clean|snatch|\d+\s*x\s*\d+|\d+\s*kg|rest\s*day|rest\s*tomorrow|adjust|shift|schedule|tomorrow|today)\b|סקוואט|דדליפט|משיכות|ריצה|ק\"?ג|קילו|יום\s*מנוחה|מחר\s*.{0,24}מנוחה|היום|לו"ז|לוח\s*אימונים/i.test(
       t
-    ) &&
-    (/\b(squat|deadlift|amrap|emom|pull-?up|run|row|bike|press|clean|snatch|\d+\s*x\s*\d+|\d+\s*kg)\b|סקוואט|דדליפט|משיכות|ריצה|ק\"?ג|קילו/i.test(
+    )
+  );
+}
+
+/** Schedule rest-shift in whole-brick chat without a pasted WOD (still brief-reply gated). */
+function pprogNoteIsScheduleRestShift(text) {
+  var t = String(text || "");
+  if (!PPROG_SCHEDULE_NOTE_RE.test(t)) return false;
+  return (
+    /\b(instead\s*of\s*(a\s*)?rest|skipped\s*rest|unplanned|spontaneous|worked\s*out|trained\s*today|i\s*(already\s*)?(did|trained|performed|worked)|already\s*(worked|trained)|on\s*a\s*rest\s*day|rest\s*tomorrow|adjust|shift)\b|במקום\s*יום\s*מנוחה|דילג(תי)?\s*על\s*(יום\s*)?מנוחה|ביצעתי\s*אימון|התאמנתי|מחר\s*.{0,24}מנוחה/i.test(
       t
-    ) ||
-      /במקום\s*יום\s*מנוחה|דילג(תי)?\s*על\s*(יום\s*)?מנוחה/i.test(t))
+    )
   );
 }
 
@@ -7263,6 +7278,7 @@ function pprogCoachTextAsksConfirm(text) {
   var t = String(text || "").trim();
   if (!t) return false;
   if (/^done\.?$/i.test(t)) return false;
+  if (t === PPROG_BRICK_SCHEDULE_POST_APPLY_MSG) return false;
   if (/\bconfirm\s*\?/i.test(t)) return true;
   if (/\bplease\s+confirm\b/i.test(t)) return true;
   if (/לאשר\s*\?/.test(t) || /מאשר(?:ים)?\s*\?/.test(t)) return true;
@@ -7319,6 +7335,7 @@ function pprogBrickThreadIsPol026(msgs) {
     var t = String(m.text || "").trim();
     if (!t || pprogIsExplicitConfirm(t)) continue;
     if (pprogNoteIsExtraCompletedSession(t)) return true;
+    if (pprogNoteIsScheduleRestShift(t)) return true;
   }
   return false;
 }

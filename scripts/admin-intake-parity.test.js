@@ -71,8 +71,8 @@ ok("phone legalAcceptedAt preserved", phone.legalAcceptedAt === "2026-01-01T00:0
 ok("admin loads sync contract", /coach-intake-sync-contract\.js/.test(adminHtml));
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
 ok("admin version 1.5.8", /DUCK-WOD Admin · 1\.5\.8/.test(adminHtml));
-ok("admin wired to coach 2.3.6", /LIVE_COACH_VERSION = "2\.3\.6"/.test(adminHtml));
-ok("app coach 2.3.6", /COACH_VERSION = "2\.3\.6"/.test(index));
+ok("admin wired to coach 2.3.7", /LIVE_COACH_VERSION = "2\.3\.7"/.test(adminHtml));
+ok("app coach 2.3.7", /COACH_VERSION = "2\.3\.7"/.test(index));
 ok(
   "admin shows Admin + Coach versions",
   /Admin 1\.5\.8/.test(adminHtml) &&

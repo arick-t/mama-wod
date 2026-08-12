@@ -1,5 +1,16 @@
 # Changelog
 
+## [Coach 2.3.7] - 2026-08-12
+
+### Whole-brick schedule revise — brief reply only (rest-day shift)
+- **Coach subtitle:** `COACH · v2.3.7`.
+- Expand brick schedule-revise detection: “worked out on rest day / adjust week” without pasted WOD still gated.
+- **Pre-confirm:** one short Confirm? line — strip model essays, “I am an AI engine…”, intake recaps.
+- **Post-confirm:** only `בוצעו השינויים נא לוודא בבלוק האימון` — no repeating Friday/Saturday/rest changes in chat.
+- Server + client hard gates (`coach-pol026-gates.js`, brick FAB chat handler).
+
+---
+
 ## [Coach 2.3.6] - 2026-08-12
 
 ### Personal Coach — generic movement-pattern balance (no movement-specific bans)
