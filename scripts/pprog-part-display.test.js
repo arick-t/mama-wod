@@ -1,5 +1,5 @@
 /**
- * Personal Coach part display — chipper arrows + coach cues as notes.
+ * Personal Coach part display — chipper arrows/+ /commas + coach cues as notes.
  * Run: node scripts/pprog-part-display.test.js
  */
 const assert = require("assert");
@@ -21,27 +21,46 @@ function ok(name, cond) {
 }
 
 ok("expand chipper helper", /function expandPprogChipperArrowLine/.test(index));
+ok("joined movement helper", /function expandPprogJoinedMovementLine/.test(index));
+ok("peel embedded format", /function peelPprogEmbeddedFormat/.test(index));
 ok("coach note helper", /function isPprogPartCoachNoteLine/.test(index));
 ok("classify peels trailing coach notes", /isPprogPartCoachNoteLine\(work\[work\.length - 1\]\)/.test(index));
 ok("classify expands work arrows", /work = expandPprogWorkLines\(work\)/.test(index));
-ok("admin has same helpers", /expandPprogChipperArrowLine/.test(admin) && /isPprogPartCoachNoteLine/.test(admin));
+ok("admin has same helpers", /expandPprogJoinedMovementLine/.test(admin) && /peelPprogEmbeddedFormat/.test(admin));
 ok("admin trailing notes render", /trailingNotes/.test(admin));
 ok("POL-012 one movement per line", /one movement \/ station per line|one movement per line/i.test(rules));
-ok("POL-012 no arrow chipper", /Do \*\*not\*\* join a chipper|no -> chipper/i.test(rules + pc));
+ok("POL-012 no joined movements", /no -> \/ \+ \/ comma|no -> chipper|Do \*\*not\*\* join/i.test(rules + pc));
 ok("flat back cue pattern", /flat back/i.test(index));
 ok("rest between sets pattern", /between\|sets/i.test(index) || /between\|sets\?/.test(index));
 
 /* Execute helpers by eval'ing extracted functions from index (minimal). */
 function extractFn(src, name) {
-  const re = new RegExp("function " + name + "\\([\\s\\S]*?\\n\\}\\n");
-  const m = src.match(re);
-  assert.ok(m, "extract " + name);
-  return m[0];
+  const start = src.indexOf("function " + name + "(");
+  assert.ok(start >= 0, "find " + name);
+  let i = src.indexOf("{", start);
+  assert.ok(i >= 0, "brace " + name);
+  let depth = 0;
+  for (; i < src.length; i++) {
+    const ch = src[i];
+    if (ch === "{") depth++;
+    else if (ch === "}") {
+      depth--;
+      if (depth === 0) {
+        return src.slice(start, i + 1) + "\n";
+      }
+    }
+  }
+  assert.ok(false, "extract " + name);
 }
 const bundle =
   extractFn(index, "isPprogPartIntentNoteLine") +
   extractFn(index, "isPprogPartCoachNoteLine") +
+  extractFn(index, "isPprogMovementishPart") +
+  extractFn(index, "countPprogMovementishParts") +
+  extractFn(index, "isPprogPartFormatHead") +
+  extractFn(index, "peelPprogEmbeddedFormat") +
   extractFn(index, "expandPprogChipperArrowLine") +
+  extractFn(index, "expandPprogJoinedMovementLine") +
   extractFn(index, "expandPprogWorkLines") +
   extractFn(index, "isPprogPartFormatLine") +
   extractFn(index, "classifyPprogPartLines");
@@ -80,5 +99,39 @@ ok(
   "rest in trailing",
   restCue.trailingNotes.some(function (n) { return /Rest 2 min/i.test(n); })
 );
+
+/* Aug 24 — plus joins + glued format + comma warmup */
+const plusEmom = classifyPprogPartLines([
+  "Intent: Build pressing power under controlled rest (12 min target duration).",
+  "E2MOM 10 min (5 sets): 6 Strict Handstand Push-ups (or Heavy Seated DB Press @ 2x22.5kg) + 8 Strict Toes-to-Bar.",
+  "Target loading: Maintain unbroken strict technique across all 5 sets.",
+]);
+ok("plus EMOM peels format", /^E2MOM 10 min \(5 sets\):$/i.test(plusEmom.format));
+ok("plus EMOM expands to 2 work lines", plusEmom.work.length === 2);
+ok("plus EMOM no + left in work", plusEmom.work.every(function (w) { return !/\s\+\s/.test(w); }));
+ok(
+  "target loading is note",
+  plusEmom.trailingNotes.some(function (n) { return /Target loading/i.test(n); })
+);
+
+const plusIntervals = classifyPprogPartLines([
+  "Intent: Aerobic-glycolytic power target 16 min.",
+  "3 Rounds, each for time (Rest 1:00 between rounds):",
+  "400m Shuttle Run + 12 DB Devil Presses (2x15kg or 2x22.5kg) + 15 Toes-to-Bar.",
+  "Target score: Under 3:45 per round. Keep run pace aggressive.",
+]);
+ok("interval plus expands to 3", plusIntervals.work.length === 3);
+ok(
+  "target score note",
+  plusIntervals.trailingNotes.some(function (n) { return /Target score/i.test(n); })
+);
+
+const commaWarmup = classifyPprogPartLines([
+  "Intent: Prep wrists, shoulders, and dynamic heart rate.",
+  "3 Rounds (Quality): 200m Run, 10 Scapular Pull-ups, 8 Pike Push-ups, 30 Single Unders.",
+]);
+ok("comma warmup peels format", /^3 Rounds \(Quality\):$/i.test(commaWarmup.format));
+ok("comma warmup expands to 4", commaWarmup.work.length === 4);
+ok("comma warmup no commas in work", commaWarmup.work.every(function (w) { return !/,/.test(w); }));
 
 console.log("All pprog-part-display checks passed.");
