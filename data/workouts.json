@@ -994,38 +994,6 @@
       },
       {
         "date": "2026-08-03",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "\"AUGUST MONTHLY CHALLENGE\"",
-              "2:00 AMRAP",
-              "Max Bench Press",
-              "* (Score is Total Reps)",
-              "Loading Guidelines:",
-              "Freedom - 155#/95#",
-              "Independence - 135#/85#",
-              "Liberty - 115#/75#"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "5 SETS (2:00 AMRAP)",
-            "lines": [
-              "10 Lateral Burpee Over Bar",
-              "10 Hang Power Cleans 70kg/48kg",
-              "Max Push Ups in the remaining time",
-              "* -Rest 1:00 between Sets-",
-              "* (Scored by Total Reps)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-08-03",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2822,6 +2790,56 @@
     "2026-08-12": [
       {
         "date": "2026-08-12",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260812",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
+              "LEARN MORE"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-12",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 11.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 Double-unders",
+              "15 Power snatches (75lbs / 35kg)",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 Double-unders",
+              "15 Power snatches (55lbs / 25kg)",
+              "*MASTERS MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 Double-unders",
+              "15 Power snatches (65lbs / 30kg)",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 Double-unders",
+              "15 Power snatches (45lbs / 20kg)"
+            ]
+          }
+        ],
+        "note": "Open: Open 11.1"
+      },
+      {
+        "date": "2026-08-12",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-08-12/",
@@ -2868,15 +2886,70 @@
       },
       {
         "date": "2026-08-12",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260812",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-august-12-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
-              "LEARN MORE"
+              "1:00 Spider-Man Lunges",
+              "1:00 Inchworm walk outs",
+              "2:00 Row",
+              "Then",
+              "8 rds :20 on :10 off",
+              "Jump Rope Variants",
+              "Single unders",
+              "S-leg Singles",
+              "X Over Singles",
+              "Double Under Practice"
+            ]
+          },
+          {
+            "title": "8 rounds for time:",
+            "lines": [
+              "50 Double Unders",
+              "Row 300/250m",
+              "Rest 1:00",
+              "*Reverse the order of movements each round (e.g. R1: DU > Row, R2: Row > DU, etc)",
+              "Other Machines:",
+              "Ski: 300/250m",
+              "Air Bike: 0.7/0.6km",
+              "Run: 250m",
+              "Feel: Cardio",
+              "Pace: Reach/Sustain",
+              "Target Score: 1:45-2:15/rd (<25:00 clock time)",
+              "Firebreather Score: <1:45 working time/round (<21:00 clock time)"
+            ]
+          },
+          {
+            "title": "Power Clean",
+            "lines": [
+              "1 @ 80-90%",
+              "3 @ 75-80%",
+              "2 @ 80-85%",
+              "1 @ 85-90%",
+              "3 @ 80-85%",
+              "2 @ 85-90%",
+              "1 @ 90-95%",
+              "Drop and reset reps on triples and doubles. It’s ok if you don’t know your percentages – your heavy single to start will give you guidance. )"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-12",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "10 ROUNDS For Time:",
+            "lines": [
+              "200m Run",
+              "10 Kettlebell Swings 32kg/25kg",
+              "5 Box Jumps 30\"/24\""
             ]
           }
         ]
@@ -2932,43 +3005,8 @@
           }
         ],
         "note": "Benchmark: Baseline"
-      },
-      {
-        "date": "2026-08-12",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 11.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "30 Double-unders",
-              "15 Power snatches (75lbs / 35kg)",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "30 Double-unders",
-              "15 Power snatches (55lbs / 25kg)",
-              "*MASTERS MEN*",
-              "-",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "30 Double-unders",
-              "15 Power snatches (65lbs / 30kg)",
-              "*MASTERS WOMEN*",
-              "-",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "30 Double-unders",
-              "15 Power snatches (45lbs / 20kg)"
-            ]
-          }
-        ],
-        "note": "Open: Open 11.1"
       }
     ]
   },
-  "last_updated": "2026-08-12T02:42:51.264498"
+  "last_updated": "2026-08-12T06:22:39.619970"
 }
