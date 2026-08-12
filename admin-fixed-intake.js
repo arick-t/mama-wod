@@ -21,18 +21,35 @@
   }
 
   function normalizeLiftInput(raw, kind) {
-    var t = String(raw || "")
+    var s = String(raw || "")
       .trim()
-      .replace(",", ".");
-    if (!t) return "";
-    var n = parseFloat(t);
-    if (!isFinite(n) || n <= 0) return "";
-    if (kind === "run") {
-      if (n > 60) return "";
-      return String(Math.round(n * 100) / 100);
+      .replace(/,/g, ".");
+    if (!s) return "";
+    if (kind === "run" && s.indexOf(":") >= 0) {
+      var parts = s.split(":");
+      var mm = parseFloat(parts[0]);
+      var ss = parseFloat(parts[1] || "0");
+      if (!isFinite(mm) || !isFinite(ss) || ss < 0 || ss >= 60) return "";
+      return String(Math.round((mm + ss / 60) * 100) / 100);
     }
-    if (n > 500) return "";
-    return String(Math.round(n * 10) / 10);
+    if (!/^\d+(\.\d+)?$/.test(s)) return "";
+    var n = parseFloat(s);
+    if (!isFinite(n) || n <= 0) return "";
+    if (kind === "kg" && (n < 5 || n > 500)) return "";
+    if (kind === "run" && (n < 4 || n > 40)) return "";
+    return String(n);
+  }
+
+  function refreshFabVisibility() {
+    try {
+      var a =
+        typeof athletes !== "undefined" && Array.isArray(athletes)
+          ? athletes.find(function (x) {
+              return x.athleteId === currentAthleteId;
+            })
+          : null;
+      if (typeof syncAthleteChatFab === "function") syncAthleteChatFab(a || null);
+    } catch (eFab) {}
   }
 
   window.resetIntakeState = function resetIntakeState() {
@@ -71,6 +88,7 @@
     resetIntakeState();
     var m = document.getElementById("intake-modal");
     if (m) m.classList.add("open");
+    refreshFabVisibility();
     var email = document.getElementById("intake-email");
     if (email) email.value = "";
     var startBar = document.getElementById("intake-start-bar");
@@ -79,6 +97,7 @@
     if (fixed) {
       fixed.style.display = "none";
       fixed.innerHTML = "";
+      fixed.classList.add("pprog-fixed-intake");
     }
     var log = document.getElementById("intake-chat-log");
     if (log) {
@@ -102,6 +121,16 @@
     if (typeof hideIntakePickers === "function") hideIntakePickers();
   };
 
+  window.closeIntakeWorkspace = function closeIntakeWorkspace() {
+    if (intakeState.busy) {
+      if (!confirm("תחקור בתהליך — לסגור בכל זאת?")) return;
+    }
+    var m = document.getElementById("intake-modal");
+    if (m) m.classList.remove("open");
+    resetIntakeState();
+    refreshFabVisibility();
+  };
+
   window.startIntakeChat = function startFixedIntake() {
     if (intakeState.busy) return;
     intakeState.email = (document.getElementById("intake-email").value || "").trim();
@@ -123,15 +152,15 @@
   }
 
   function navHtml(step, isLast) {
-    var html = '<div class="admin-fixed-nav">';
+    var html = '<div class="pprog-fixed-nav">';
     if (step > 0) {
       html +=
-        '<button type="button" class="btn-secondary" onclick="adminFixedBack()">Back</button>';
+        '<button type="button" class="btn pprog-fixed-back" onclick="adminFixedBack()">Back</button>';
     }
     html +=
-      '<button type="button" class="btn-primary" onclick="adminFixedNext()">' +
-      (isLast ? "Build plan" : "Next") +
-      "</button></div><p class=\"admin-fixed-err\" id=\"adminFixedErr\"></p>";
+      '<button type="button" class="btn pprog-fixed-next" onclick="adminFixedNext()">' +
+      (isLast ? "Build my plan" : "Next") +
+      "</button></div><p class=\"pprog-fixed-err\" id=\"adminFixedErr\"></p>";
     return html;
   }
 
@@ -141,16 +170,16 @@
     var key = S.FIXED_STEPS[step] || "profile";
     var st = intakeState;
     var html =
-      '<p class="admin-fixed-step">Step ' +
+      '<p class="pprog-fixed-step">Step ' +
       (step + 1) +
       " / " +
       total +
-      " · same questionnaire as the athlete app</p>";
+      "</p>";
 
     if (key === "profile") {
       html +=
-        '<p class="admin-fixed-title">Your profile</p>' +
-        '<p class="admin-fixed-note">English labels match production Personal Coach intake.</p>';
+        '<p class="pprog-fixed-title">Your profile</p>' +
+        '<p class="pprog-fixed-note">Age &amp; bodyweight open a number keypad. Experience stays a normal keyboard.</p>';
       for (var i = 0; i < S.PROFILE_DEFS.length; i++) {
         var def = S.PROFILE_DEFS[i];
         var val = "";
@@ -160,7 +189,7 @@
         else if (def.id === "bodyweight") val = st.bodyweight || "";
         else if (def.id === "experience") val = st.experience || "";
         html +=
-          '<div class="admin-fixed-row"><label for="adm-fx-' +
+          '<div class="pprog-profile-row"><label for="adm-fx-' +
           esc(def.id) +
           '">' +
           esc(def.label) +
@@ -204,8 +233,9 @@
       var locs = st.trainingLocations || {};
       var otherOn = !!locs.other_home;
       html +=
-        '<p class="admin-fixed-title">Where do you usually train?</p>' +
-        '<p class="admin-fixed-note">Select all that apply.</p><div class="admin-fixed-checks">';
+        '<p class="pprog-fixed-title">Where do you usually train?</p>' +
+        '<p class="pprog-fixed-note">Select all that apply (some athletes train in more than one place).</p>' +
+        '<div class="pprog-location-picker">';
       for (var li = 0; li < S.LOCATION_DEFS.length; li++) {
         var loc = S.LOCATION_DEFS[li];
         html +=
@@ -219,16 +249,17 @@
           "</label>";
       }
       html +=
-        '</div><div id="admFxLocationOtherWrap"' +
+        '<div class="pprog-location-other-wrap" id="admFxLocationOtherWrap"' +
         (otherOn ? "" : " hidden") +
-        '><textarea id="adm-fx-location-other" maxlength="500" placeholder="Please specify your setup…">' +
+        '><textarea id="adm-fx-location-other" maxlength="500" placeholder="Please specify your setup (e.g. garage, dumbbells only, no rower…)">' +
         esc(st.trainingLocationOther || "") +
-        "</textarea></div>";
+        "</textarea></div></div>";
     } else if (key === "schedule") {
       var days = Array.isArray(st.trainingDays) ? st.trainingDays : [];
       html +=
-        '<p class="admin-fixed-title">Weekly schedule</p>' +
-        '<div class="admin-fixed-checks">';
+        '<p class="pprog-fixed-title">Weekly schedule</p>' +
+        '<p class="pprog-fixed-note">Mark training days. Optional notes for rest / session length.</p>' +
+        '<div class="pprog-fixed-days">';
       for (var di = 0; di < S.DAY_KEYS.length; di++) {
         var dk = S.DAY_KEYS[di];
         html +=
@@ -241,26 +272,29 @@
           "</label>";
       }
       html +=
-        '</div><textarea id="adm-fx-schedule-notes" maxlength="500" placeholder="Optional schedule notes">' +
+        '</div><textarea id="adm-fx-schedule-notes" maxlength="500" placeholder="Optional: e.g. rest Thu+Sun, sessions ~60 min">' +
         esc(st.scheduleNotes || "") +
         "</textarea>";
     } else if (key === "recovery") {
-      var pref = st.activeRecoveryPref || "no";
+      var pref = st.activeRecoveryPref || "";
       var prefDay = st.activeRecoveryDay || "";
       var showAr = pref === "yes";
       html +=
-        '<p class="admin-fixed-title">Active recovery day?</p>' +
-        '<p class="admin-fixed-note">Preset: week 5 of each brick is a deload week.</p>' +
-        '<div class="admin-fixed-radios">' +
+        '<p class="pprog-fixed-title">Active recovery day?</p>' +
+        '<p class="pprog-fixed-note">Optional lighter day inside the training week (technique + easy engine). Not a full rest day.</p>' +
+        '<p class="pprog-fixed-note">Preset: each 5-week brick ends with <strong>week 5 as a deload week</strong>. If you want deload weeks spaced further apart — or removed entirely — say so in Goals / chat after intake and I will adapt.</p>' +
+        '<div class="pprog-fixed-radios">' +
         '<label><input type="radio" name="admFxRecovery" value="no"' +
-        (pref !== "yes" ? " checked" : "") +
-        ' onchange="adminFixedRecoveryPrefChanged()"> <span><strong>No</strong> — no weekly active recovery day.</span></label>' +
+        (pref === "no" || !pref ? " checked" : "") +
+        ' onchange="adminFixedRecoveryPrefChanged()"> <span><strong>No</strong> — do not include a weekly active recovery day. All training days are full sessions.</span></label>' +
         '<label><input type="radio" name="admFxRecovery" value="yes"' +
         (pref === "yes" ? " checked" : "") +
-        ' onchange="adminFixedRecoveryPrefChanged()"> <span><strong>Yes</strong> — one active recovery day each week.</span></label>' +
-        '</div><div id="admFxRecoveryDayWrap" class="admin-fixed-recovery-branch"' +
+        ' onchange="adminFixedRecoveryPrefChanged()"> <span><strong>Yes</strong> — include one active recovery / daily deload day each training week.</span></label>' +
+        '</div><div id="admFxRecoveryDayWrap" class="pprog-fixed-recovery-branch"' +
         (showAr ? "" : ' style="display:none"') +
-        '><p class="admin-fixed-note">Under Yes — which day?</p><div class="admin-fixed-checks">';
+        ' aria-hidden="' +
+        (showAr ? "false" : "true") +
+        '"><p class="pprog-fixed-note" style="margin-top:0">Under Yes — which day?</p><div class="pprog-fixed-days">';
       for (var rdi = 0; rdi < S.DAY_KEYS.length; rdi++) {
         var rdk = S.DAY_KEYS[rdi];
         html +=
@@ -274,74 +308,59 @@
       }
       html += "</div></div>";
     } else if (key === "lifts") {
-      html += '<p class="admin-fixed-title">Lifts &amp; run</p>';
+      html +=
+        '<p class="pprog-fixed-title">Lifts &amp; run</p>' +
+        '<p class="pprog-lifts-picker-note">Enter weight (kg) and run time. Leave blank = unknown / skip — the coach will estimate.</p>';
       for (var lfi = 0; lfi < S.LIFT_DEFS.length; lfi++) {
         var ld = S.LIFT_DEFS[lfi];
         var lv = st.lifts && st.lifts[ld.id] != null ? String(st.lifts[ld.id]) : "";
+        var ph = ld.placeholder || (ld.kind === "kg" ? "kg" : "");
         html +=
-          '<div class="lifts-row"><label>' +
+          '<div class="pprog-lifts-row"><label for="adm-lift-' +
+          esc(ld.id) +
+          '">' +
           esc(ld.label) +
-          '</label><input type="text" data-lift-id="' +
+          '</label><input id="adm-lift-' +
+          esc(ld.id) +
+          '" type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" autocomplete="off" enterkeyhint="next" data-lift-id="' +
           esc(ld.id) +
           '" data-lift-kind="' +
           esc(ld.kind) +
           '" placeholder="' +
-          esc(ld.placeholder || "") +
+          esc(ph) +
           '" value="' +
           esc(lv) +
-          '"><span class="unit">' +
+          '"><span class="pprog-lifts-unit">' +
           esc(ld.unit) +
           "</span></div>";
       }
     } else if (key === "skills") {
-      var allChecked = !!st.skills.all_skills;
-      if (!allChecked) {
-        var allMarked = true;
-        for (var chk = 0; chk < S.SKILL_DEFS.length; chk++) {
-          if (S.SKILL_DEFS[chk].allToggle) continue;
-          if (!st.skills[S.SKILL_DEFS[chk].id]) {
-            allMarked = false;
-            break;
-          }
-        }
-        if (allMarked) {
-          var anySkill = false;
-          for (var anyi = 0; anyi < S.SKILL_DEFS.length; anyi++) {
-            if (S.SKILL_DEFS[anyi].allToggle) continue;
-            if (st.skills[S.SKILL_DEFS[anyi].id]) {
-              anySkill = true;
-              break;
-            }
-          }
-          allChecked = anySkill;
-        }
-      }
+      var sk = st.skills || {};
       html +=
-        '<div class="admin-fixed-skills-head">' +
-        '<p class="admin-fixed-title">Skills</p>' +
-        '<label class="admin-fixed-skills-all">' +
-        '<input type="checkbox" data-skill-id="all_skills" data-skill-all="1"' +
-        (allChecked ? " checked" : "") +
-        ' onchange="adminFixedSkillAllChange(this)"> All skills</label>' +
-        "</div>" +
-        '<div class="skills-grid" id="admin-fixed-skills-grid">';
+        '<p class="pprog-fixed-title">Skills</p>' +
+        '<p class="pprog-skills-picker-note">Mark skills you control. Unmarked = scale. Missing/partial skills can be noted in Goals or Injuries.</p>' +
+        '<div class="pprog-skills-picker">';
       for (var si = 0; si < S.SKILL_DEFS.length; si++) {
         var sd = S.SKILL_DEFS[si];
-        if (sd.allToggle) continue;
-        var checked = allChecked || !!st.skills[sd.id];
+        var checked = sd.allToggle ? !!sk.all_skills : !!sk[sd.id];
+        if (!sd.allToggle && sk.all_skills) checked = true;
         html +=
-          '<label><input type="checkbox" data-skill-id="' +
+          '<label class="' +
+          (sd.allToggle ? "pprog-skills-all" : "") +
+          '"><input type="checkbox" data-skill-id="' +
           esc(sd.id) +
-          '"' +
-          (checked ? " checked" : "") +
-          "> " +
+          '" ' +
+          (sd.allToggle ? 'data-skill-all="1" ' : "") +
+          (checked ? "checked " : "") +
+          'onchange="adminFixedSkillAllChange(this)"><span>' +
           esc(sd.label) +
-          "</label>";
+          "</span></label>";
       }
       html += "</div>";
     } else if (key === "limits") {
       html +=
-        '<p class="admin-fixed-title">Scheduling limits</p>' +
+        '<p class="pprog-fixed-title">Scheduling limits</p>' +
+        '<p class="pprog-fixed-note">Session time cap or other schedule constraints. Blank = none.</p>' +
         '<textarea id="adm-fx-limits" maxlength="600" placeholder="e.g. Max 50 minutes per session">' +
         esc(st.sessionLimits || "") +
         "</textarea>";
@@ -350,18 +369,20 @@
         /^no injuries\.?$/i.test(String(st.injuries || "").trim()) ||
         String(st.injuries || "").trim() === "אין פציעות";
       html +=
-        '<p class="admin-fixed-title">Injuries &amp; limitations</p>' +
-        '<button type="button" class="admin-fixed-chip' +
+        '<p class="pprog-fixed-title">Injuries &amp; limitations</p>' +
+        '<p class="pprog-fixed-note">Pain points or movements to avoid. Or tap the quick button if none.</p>' +
+        '<div class="pprog-fixed-chips">' +
+        '<button type="button" class="pprog-fixed-chip' +
         (noInj ? " active" : "") +
         '" id="adm-fx-no-injuries-btn" aria-pressed="' +
         (noInj ? "true" : "false") +
-        '" onclick="adminFixedFillNoInjuries()">No injuries</button>' +
+        '" onclick="adminFixedFillNoInjuries()">No injuries</button></div>' +
         '<textarea id="adm-fx-injuries" maxlength="800" placeholder="e.g. Left knee — avoid deep squats under fatigue" oninput="adminFixedInjuriesInput()">' +
         esc(st.injuries || "") +
         "</textarea>";
     } else if (key === "goals") {
       html +=
-        '<p class="admin-fixed-title">Goals</p>' +
+        '<p class="pprog-fixed-title">Goals</p>' +
         '<textarea id="adm-fx-goals" maxlength="800" placeholder="e.g. Engine + Olympic lift consistency">' +
         esc(st.goals || "") +
         "</textarea>";
@@ -374,6 +395,7 @@
   window.syncAdminFixedIntakeUi = function syncAdminFixedIntakeUi() {
     var el = document.getElementById("intake-fixed");
     if (!el) return;
+    el.classList.add("pprog-fixed-intake");
     if (!intakeState.fixedActive || intakeState.intakeComplete) {
       el.style.display = "none";
       el.innerHTML = "";
@@ -389,16 +411,24 @@
   };
 
   window.adminFixedSkillAllChange = function adminFixedSkillAllChange(inp) {
-    if (!inp || !inp.getAttribute("data-skill-all")) return;
-    var on = !!inp.checked;
+    if (!inp) return;
     var root =
       (inp.closest && inp.closest("#intake-fixed")) ||
       document.getElementById("intake-fixed");
     if (!root) return;
     var cbs = root.querySelectorAll('input[type="checkbox"][data-skill-id]');
-    for (var i = 0; i < cbs.length; i++) {
-      if (cbs[i].getAttribute("data-skill-all")) continue;
-      cbs[i].checked = on;
+    if (inp.getAttribute("data-skill-all")) {
+      var on = !!inp.checked;
+      for (var i = 0; i < cbs.length; i++) {
+        if (cbs[i].getAttribute("data-skill-all")) continue;
+        cbs[i].checked = on;
+      }
+      return;
+    }
+    if (!inp.checked) {
+      for (var j = 0; j < cbs.length; j++) {
+        if (cbs[j].getAttribute("data-skill-all")) cbs[j].checked = false;
+      }
     }
   };
 
@@ -436,6 +466,7 @@
     var prefEl = document.querySelector('input[name="admFxRecovery"]:checked');
     var yes = !!(prefEl && prefEl.value === "yes");
     wrap.style.display = yes ? "" : "none";
+    wrap.setAttribute("aria-hidden", yes ? "false" : "true");
   };
 
   window.adminFixedLocationOtherToggle = function () {
@@ -657,8 +688,9 @@
     });
   };
 
-  function generateIntakeBlockFromFixedPacket() {
-    if (intakeState.busy) return;
+  function generateIntakeBlockFromFixedPacket(retryLeft) {
+    if (intakeState.busy && retryLeft == null) return;
+    if (retryLeft == null) retryLeft = 1;
     setIntakeBusy(true);
     showIntakeBuilding(
       true,
@@ -675,6 +707,17 @@
       typeof adminAuthHeaders === "function"
         ? adminAuthHeaders()
         : { "Content-Type": "application/json" };
+
+    var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+    var timer = null;
+    if (controller) {
+      timer = setTimeout(function () {
+        try {
+          controller.abort();
+        } catch (eAbort) {}
+      }, 180000);
+    }
+
     fetch("/api/personal-coach", {
       method: "POST",
       headers: pcHeaders,
@@ -686,10 +729,17 @@
         forceJson: true,
         adminProgramming: true,
       }),
+      signal: controller ? controller.signal : undefined,
     })
       .then(function (r) {
-        return r.json().then(function (j) {
-          return { ok: r.ok, status: r.status, j: j };
+        return r.text().then(function (raw) {
+          var j = null;
+          try {
+            j = raw ? JSON.parse(raw) : null;
+          } catch (eParse) {
+            j = null;
+          }
+          return { ok: r.ok, status: r.status, j: j, raw: raw };
         });
       })
       .then(function (x) {
@@ -698,26 +748,45 @@
           var err =
             typeof friendlyCoachError === "function"
               ? friendlyCoachError(j, x.status)
-              : String((j && (j.message || j.error)) || "build failed");
-          restoreAdminFixedGoals("בניית הלבנה נכשלה: " + err + " — לחץ Build plan שוב.");
+              : String((j && (j.message || j.error)) || (x.raw ? "bad response" : "empty response"));
+          if (retryLeft > 0 && (!x.j || x.status >= 500 || x.status === 0)) {
+            document.getElementById("intake-status").textContent = "מנסה שוב…";
+            setIntakeBusy(false);
+            return generateIntakeBlockFromFixedPacket(retryLeft - 1);
+          }
+          restoreAdminFixedGoals("בניית הלבנה נכשלה: " + err + " — לחץ Build my plan שוב.");
           return;
         }
         var block =
           typeof parseBlockFromText === "function" ? parseBlockFromText(j.text, j) : j.block;
         if (!block || !block.weeks || !block.weeks.length) {
+          if (retryLeft > 0) {
+            setIntakeBusy(false);
+            return generateIntakeBlockFromFixedPacket(retryLeft - 1);
+          }
           restoreAdminFixedGoals(
-            "המאמן לא החזיר BLOCK_JSON תקין — לחץ Build plan שוב."
+            "המאמן לא החזיר BLOCK_JSON תקין — לחץ Build my plan שוב."
           );
           return;
         }
         finalizeNewAthlete(block);
       })
       .catch(function (e) {
-        restoreAdminFixedGoals(
-          "שגיאת רשת בבניית לבנה: " +
-            String((e && e.message) || e).slice(0, 200) +
-            " — לחץ Build plan שוב."
-        );
+        var msg = String((e && e.message) || e || "");
+        var transient =
+          /load failed|failed to fetch|networkerror|aborted|abort|timeout/i.test(msg);
+        if (retryLeft > 0 && transient) {
+          document.getElementById("intake-status").textContent = "חיבור נקטע — מנסה שוב…";
+          setIntakeBusy(false);
+          return generateIntakeBlockFromFixedPacket(retryLeft - 1);
+        }
+        var friendly = transient
+          ? "החיבור נקטע באמצע בניית הלבנה (נפוץ בפלאפון). לחץ Build my plan שוב והמתן עד ~3 דק׳."
+          : "שגיאת רשת בבניית לבנה: " + msg.slice(0, 160) + " — לחץ Build my plan שוב.";
+        restoreAdminFixedGoals(friendly);
+      })
+      .finally(function () {
+        if (timer) clearTimeout(timer);
       });
   }
 

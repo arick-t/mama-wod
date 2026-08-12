@@ -64,6 +64,9 @@ const CLIENT_ALLOWED_KEYS = new Set([
   "pastBlocks",
   "coachTier",
   "planCoachVersion",
+  "declarationAcceptedAt",
+  "legalAcceptedAt",
+  "reclaimSameAthlete",
 ]);
 
 const CoachIntakeSync = require("../../../lib/coach-intake-sync-contract");
@@ -584,27 +587,32 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ ok: true, storage: storageInfo() });
     }
 
-    const existing = (await readSnapshot(athleteId)) || {};
-    if (isDeletedSnapshot(existing) && !isAdmin) {
-      await appendAdminAudit({
-        action: "snapshot_denied",
-        athleteId: athleteId,
-        actor: "client",
-        ok: false,
-        detail: "athlete_revoked",
-      });
-      return res.status(410).json({
-        ok: false,
-        error: "athlete_revoked",
-        code: "athlete_revoked",
-        message: "המתאמן נמחק מהאדמין. הגישה מהמכשיר בוטלה.",
-      });
-    }
+    const existingRaw = (await readSnapshot(athleteId)) || {};
     const writeKey =
       body.writeKey ||
       (req.headers && (req.headers["x-write-key"] || req.headers["X-Write-Key"])) ||
       "";
-    const gate = assertSnapshotWriteAllowed(existing, writeKey, isAdmin);
+    /* Same athleteId reclaim: tombstone → clear deleted flags in-memory so gate can re-bind. */
+    let existing = existingRaw;
+    let resurrecting = false;
+    if (!isAdmin && isDeletedSnapshot(existingRaw)) {
+      resurrecting = true;
+      existing = Object.assign({}, existingRaw, {
+        deleted: false,
+        revoked: false,
+        writeKeyHash: null,
+        clientWritesLocked: false,
+      });
+    }
+    const allowUnboundBind = !!(
+      body.currentBlock ||
+      body.intakeProfile ||
+      body.fixedIntakePacket ||
+      body.reclaimSameAthlete === true
+    );
+    const gate = assertSnapshotWriteAllowed(existing, writeKey, isAdmin, {
+      allowUnboundBind: allowUnboundBind || resurrecting,
+    });
     if (!gate.ok) {
       await appendAdminAudit({
         action: "snapshot_denied",
@@ -692,7 +700,9 @@ module.exports = async function handler(req, res) {
           ? !!clean.membershipFrozen
           : !!existing.membershipFrozen,
       declarationAcceptedAt: String(
-        (isAdmin && clean.declarationAcceptedAt) ||
+        clean.declarationAcceptedAt ||
+          clean.legalAcceptedAt ||
+          /* Prefer fresh device signature; fall back only when client did not send one. */
           existing.declarationAcceptedAt ||
           existing.joinedAt ||
           existing.createdAt ||
@@ -717,9 +727,14 @@ module.exports = async function handler(req, res) {
         null,
       seeded: !!existing.seeded && !gate.bindHash,
       clientWritesLocked: false,
+      deleted: false,
+      revoked: false,
+      deletedAt: undefined,
+      revokedAt: undefined,
       updatedAt: new Date().toISOString(),
       createdAt: existing.createdAt || new Date().toISOString(),
     };
+    if (resurrecting) snapshot.reclaimedAt = new Date().toISOString();
     if (isAdmin && clean.createdByAdmin) snapshot.createdByAdmin = true;
     if (
       snapshot.planCoachVersion &&
@@ -735,10 +750,15 @@ module.exports = async function handler(req, res) {
     try {
       await writeSnapshot(athleteId, snapshot);
       await appendAdminAudit({
-        action: existing.athleteId ? "snapshot_update" : "snapshot_create",
+        action: resurrecting
+          ? "snapshot_reclaim"
+          : existingRaw.athleteId
+            ? "snapshot_update"
+            : "snapshot_create",
         athleteId: athleteId,
         actor: isAdmin ? "admin" : "client",
         ok: true,
+        detail: gate.reclaimed ? "unbound_bind" : undefined,
       });
     } catch (e) {
       return storageUnavailable(res, e);

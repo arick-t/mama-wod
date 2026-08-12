@@ -1,6 +1,9 @@
 /**
  * Device write ownership for admin snapshots (Stage A).
  * Client sends writeKey; server stores only sha256 hex hash.
+ *
+ * Reclaim (same athleteId): unbound seed / tombstone may bind when allowUnboundBind
+ * (self-serve intake complete with a block) — keep the stored user id on the admin list.
  */
 const crypto = require("crypto");
 
@@ -18,10 +21,15 @@ function hashWriteKey(writeKey) {
 }
 
 /**
- * @returns {{ ok: true, bindHash?: string } | { ok: false, status: number, error: string, message: string }}
+ * @param {object} existing
+ * @param {string} writeKey
+ * @param {boolean} isAdmin
+ * @param {{ allowUnboundBind?: boolean }=} opts
+ * @returns {{ ok: true, bindHash?: string, reclaimed?: boolean } | { ok: false, status: number, error: string, message: string }}
  */
-function assertSnapshotWriteAllowed(existing, writeKey, isAdmin) {
+function assertSnapshotWriteAllowed(existing, writeKey, isAdmin, opts) {
   if (isAdmin) return { ok: true };
+  opts = opts || {};
 
   const hash = hashWriteKey(writeKey);
   if (!hash) {
@@ -41,7 +49,11 @@ function assertSnapshotWriteAllowed(existing, writeKey, isAdmin) {
   }
 
   if (!bound) {
-    // Seeded / admin-created without device bind — clients cannot overwrite.
+    // Seeded / admin-created without device bind — allow first bind only when reclaiming
+    // (intake-complete self-serve / resurrect), so the same athleteId reappears in admin.
+    if (opts.allowUnboundBind) {
+      return { ok: true, bindHash: hash, reclaimed: true };
+    }
     return {
       ok: false,
       status: 403,

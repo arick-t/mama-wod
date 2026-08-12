@@ -28,12 +28,26 @@ function run() {
   const lockSeed = assertSnapshotWriteAllowed(seeded, k, false);
   assert(lockSeed.ok === false && lockSeed.error === "snapshot_locked", "seed locked");
 
+  const reclaimSeed = assertSnapshotWriteAllowed(seeded, k, false, { allowUnboundBind: true });
+  assert(
+    reclaimSeed.ok === true && reclaimSeed.bindHash === h && reclaimSeed.reclaimed === true,
+    "seed reclaim bind"
+  );
+
   const bound = { athleteId: "u_x", createdAt: "t", writeKeyHash: h };
   const ok = assertSnapshotWriteAllowed(bound, k, false);
   assert(ok.ok === true, "owner update ok");
 
   const bad = assertSnapshotWriteAllowed(bound, makeWriteKey(), false);
   assert(bad.ok === false && bad.error === "write_key_mismatch", "mismatch denied");
+
+  const mismatchReclaim = assertSnapshotWriteAllowed(bound, makeWriteKey(), false, {
+    allowUnboundBind: true,
+  });
+  assert(
+    mismatchReclaim.ok === false && mismatchReclaim.error === "write_key_mismatch",
+    "reclaim does not steal bound key"
+  );
 
   const admin = assertSnapshotWriteAllowed(bound, "", true);
   assert(admin.ok === true, "admin bypass");

@@ -2077,6 +2077,7 @@ function pprogLegalContinue() {
   store.legalAcceptedVersion = PPROG_LEGAL_VERSION;
   store.legalTermsId = PPROG_LEGAL_TERMS_ID;
   store.pendingAthleteLegal = false;
+  store.intakeSittingLegalOk = true;
   store.legalAcceptedFlags = {
     age18: true,
     aiResponsibility: true,
@@ -2106,9 +2107,31 @@ function pprogEnsureLegalAccepted(thenFn) {
   pprogShowLegalModal(thenFn);
 }
 
+/**
+ * Each NEW intake sitting requires a fresh Terms signature (same uid reclaim / returning member).
+ * Mid-sitting: keep the signature from this sitting so Agree is not asked twice.
+ */
+function pprogRequireFreshLegalForNewIntakeSitting(store) {
+  var s = store || loadPprogStore();
+  var sitting = pprogHasIntakeSitting();
+  if (sitting && s.intakeSittingLegalOk && pprogLegalAccepted(s)) return s;
+  s.legalAcceptedAt = null;
+  s.legalAcceptedVersion = 0;
+  s.legalTermsId = "";
+  s.pendingAthleteLegal = true;
+  s.intakeSittingLegalOk = false;
+  savePprogStore(s);
+  return s;
+}
+
 function pprogOnStartClick() {
   pprogMarkIntakeSitting();
+  pprogRequireFreshLegalForNewIntakeSitting();
   pprogEnsureLegalAccepted(function () {
+    var s = loadPprogStore();
+    s.intakeSittingLegalOk = true;
+    s.pendingAthleteLegal = false;
+    savePprogStore(s);
     startPprogFixedIntake();
   });
 }
@@ -7677,10 +7700,13 @@ function getAdminWriteKey() {
   }
 }
 
+/**
+ * Push athlete snapshot to admin list — keeps the same athleteId (reclaim/resurrect on server).
+ */
 function pushAdminSnapshot(store) {
-  if (!store || !store.intakeComplete) return;
+  if (!store || !store.intakeComplete) return Promise.resolve({ ok: false, skipped: true });
   var athleteId = store.userId || store.athleteId;
-  if (!athleteId) return;
+  if (!athleteId) return Promise.resolve({ ok: false, error: "missing_id" });
   try {
     if (!localStorage.dw_uid) localStorage.dw_uid = athleteId;
     var skillsSummary = pprogSkillsSummaryForMail(store.skills);
@@ -7716,6 +7742,10 @@ function pushAdminSnapshot(store) {
       fixedIntakePacket: store.fixedIntakePacket || "",
       profileNotes: store.profileNotes || "",
       currentBlock: store.currentBlock || null,
+      reclaimSameAthlete: true,
+      /* Admin declaration cycle + legal audit — always the latest on-device Agree date. */
+      declarationAcceptedAt: store.legalAcceptedAt || "",
+      legalAcceptedAt: store.legalAcceptedAt || "",
       planCoachVersion:
         store.planCoachVersion ||
         (store.currentBlock && store.currentBlock.coachVersion) ||
@@ -7724,7 +7754,7 @@ function pushAdminSnapshot(store) {
         return { blockStart: b.blockStart, summaryLine: b.summaryLine, archivedAt: b.archivedAt };
       }),
     };
-    fetch("/api/admin-snapshot", {
+    return fetch("/api/admin-snapshot", {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-Write-Key": payload.writeKey },
       body: JSON.stringify(payload),
@@ -7740,20 +7770,22 @@ function pushAdminSnapshot(store) {
           });
       })
       .then(function (x) {
-        if (!x) return;
+        if (!x) return { ok: false, error: "empty" };
         var err = (x.j && (x.j.code || x.j.error)) || "";
-        if (x.status === 410 || err === "athlete_revoked") {
-          pprogHandleAthleteRevoked();
-          return;
-        }
         if (!x.ok) {
           try {
             console.warn("[duck-wod] admin snapshot push failed:", err || x.status);
           } catch (eWarn) {}
+          return { ok: false, error: err || String(x.status) };
         }
+        return { ok: true, athleteId: athleteId };
       })
-      .catch(function () {});
-  } catch (e) {}
+      .catch(function () {
+        return { ok: false, error: "network" };
+      });
+  } catch (e) {
+    return Promise.resolve({ ok: false, error: "throw" });
+  }
 }
 
 /** Admin deleted this athlete — wipe local Personal Coach access. */
@@ -8083,66 +8115,81 @@ function maybeNotifyPprogIntakeComplete(store, opts) {
   if (!store || opts.autoNextBlock) return;
   if (store.intakeNotifySent) return;
   if (!store.intakeComplete || !store.currentBlock) return;
+  /* Mark sent after admin push path (same athleteId reclaim — no uid mint). */
   store.intakeNotifySent = true;
   store.intakeNotifySentAt = new Date().toISOString();
   savePprogStore(store);
-  var skillsSummary = pprogSkillsSummaryForMail(store.skills);
-  var blockSummary = String(
-    (store.currentBlock && store.currentBlock.summaryLine) || "5-week training block"
-  ).slice(0, 240);
-  var blockStart = (store.currentBlock && store.currentBlock.blockStart) || "";
-  silentAdminFeedback({
-    type: "intake_complete",
-    text: "Intake complete — training plan ready",
-    gender: store.gender || "",
-    preferredLanguage: store.preferredLanguage || "",
-    skillsSummary: skillsSummary,
-    writeKey: getAdminWriteKey(),
-    blockStart: blockStart,
-    blockSummary: blockSummary,
-    completedAt: store.intakeNotifySentAt,
-    currentBlock: store.currentBlock || null,
-    planCoachVersion:
-      store.planCoachVersion ||
-      (store.currentBlock && store.currentBlock.coachVersion) ||
-      "",
-    intakeSummary: String(store.profileNotes || "").replace(/\n+/g, " ").trim().slice(0, 400),
-    athleteFeedback:
-      "Nickname: " +
-      (store.displayName || "(none)") +
-      "\nUser ID: " +
-      (store.userId || store.athleteId || "") +
-      "\nGender: " +
-      (store.gender || "(unknown)") +
-      "\nLanguage: " +
-      (store.preferredLanguage || "(unknown)") +
-      "\nSkills: " +
-      (skillsSummary || "(none)") +
-      "\nBlock start: " +
-      (blockStart || "(n/a)") +
-      "\nPlan: " +
-      blockSummary +
-      "\nCompleted at: " +
-      store.intakeNotifySentAt,
-  });
-  try {
-    sendAnalytics("personal_coach_intake_complete", {
-      coachArea: "intake",
+
+  function sendJoinMailAndAnalytics(finalStore) {
+    var skillsSummary = pprogSkillsSummaryForMail(finalStore.skills);
+    var blockSummary = String(
+      (finalStore.currentBlock && finalStore.currentBlock.summaryLine) || "5-week training block"
+    ).slice(0, 240);
+    var blockStart = (finalStore.currentBlock && finalStore.currentBlock.blockStart) || "";
+    var uid = finalStore.userId || finalStore.athleteId || "";
+    silentAdminFeedback({
+      type: "intake_complete",
+      text: "Intake complete — training plan ready",
+      gender: finalStore.gender || "",
+      preferredLanguage: finalStore.preferredLanguage || "",
+      skillsSummary: skillsSummary,
+      writeKey: getAdminWriteKey(),
       blockStart: blockStart,
+      blockSummary: blockSummary,
+      completedAt: finalStore.intakeNotifySentAt,
+      currentBlock: finalStore.currentBlock || null,
+      planCoachVersion:
+        finalStore.planCoachVersion ||
+        (finalStore.currentBlock && finalStore.currentBlock.coachVersion) ||
+        "",
+      declarationAcceptedAt: finalStore.legalAcceptedAt || "",
+      legalAcceptedAt: finalStore.legalAcceptedAt || "",
+      intakeSummary: String(finalStore.profileNotes || "").replace(/\n+/g, " ").trim().slice(0, 400),
+      athleteFeedback:
+        "Nickname: " +
+        (finalStore.displayName || "(none)") +
+        "\nUser ID: " +
+        uid +
+        "\nGender: " +
+        (finalStore.gender || "(unknown)") +
+        "\nLanguage: " +
+        (finalStore.preferredLanguage || "(unknown)") +
+        "\nSkills: " +
+        (skillsSummary || "(none)") +
+        "\nBlock start: " +
+        (blockStart || "(n/a)") +
+        "\nPlan: " +
+        blockSummary +
+        "\nCompleted at: " +
+        finalStore.intakeNotifySentAt,
     });
-  } catch (e) {}
-  try {
-    pprogSetCoachTier(2);
-    pprogClearIntakeSitting();
-    var sDone = loadPprogStore();
-    if (sDone) {
-      delete sDone.intakeSittingStartedAt;
-      sDone.analyticsTier = 2;
-      savePprogStore(sDone);
-    }
-  } catch (eTier) {}
-  // Push snapshot to admin dashboard
-  pushAdminSnapshot(store);
+    try {
+      sendAnalytics("personal_coach_intake_complete", {
+        coachArea: "intake",
+        blockStart: blockStart,
+      });
+    } catch (e) {}
+    try {
+      pprogSetCoachTier(2);
+      pprogClearIntakeSitting();
+      var sDone = loadPprogStore();
+      if (sDone) {
+        delete sDone.intakeSittingStartedAt;
+        sDone.analyticsTier = 2;
+        savePprogStore(sDone);
+      }
+    } catch (eTier) {}
+  }
+
+  /* Push to admin first (same athleteId reclaim) before join email. */
+  Promise.resolve(pushAdminSnapshot(store))
+    .then(function () {
+      var finalStore = loadPprogStore() || store;
+      sendJoinMailAndAnalytics(finalStore);
+    })
+    .catch(function () {
+      sendJoinMailAndAnalytics(loadPprogStore() || store);
+    });
 }
 
 function applyPprogWeek(week, rawText) {

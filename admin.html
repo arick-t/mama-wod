@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DUCK-WOD Admin · 1.5.7</title>
+<title>DUCK-WOD Admin · 1.5.8</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -417,9 +417,12 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
 .empty-content p{font-size:14px}
 
 /* Intake workspace modal */
-.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(8,6,12,.78);z-index:60;
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(8,6,12,.78);z-index:1200;
   align-items:center;justify-content:center;padding:12px}
 .modal-backdrop.open{display:flex}
+/* Hide coach chat FAB while +מתאמן intake is open (FAB sits above modal otherwise). */
+body:has(#intake-modal.open) #adminChatFabWrap,
+body:has(#intake-modal.open) #adminChatFloat{display:none!important}
 .intake-workspace{position:relative;background:var(--bg-card);border:1px solid var(--line);
   border-radius:14px;width:min(920px,100%);height:min(92vh,900px);display:flex;flex-direction:column;
   overflow:hidden;box-shadow:0 20px 56px rgba(0,0,0,.5)}
@@ -521,6 +524,36 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
 .admin-fixed-nav{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
 .admin-fixed-err{color:#fca5a5;font-size:12px;margin-top:8px;min-height:1.2em}
 
+/* Athlete-app intake parity (pprog-*) scoped under admin #intake-fixed — 1:1 SoT */
+#intake-fixed.pprog-fixed-intake{margin-top:0;padding:14px;background:#181818;border:1px solid #333;border-radius:10px;direction:ltr;text-align:left;overflow-y:auto;flex:1;min-height:0}
+#intake-fixed .pprog-fixed-step{font-size:.72em;color:#1A9B8A;font-weight:700;letter-spacing:.04em;margin:0 0 6px;text-transform:uppercase}
+#intake-fixed .pprog-fixed-title{margin:0 0 8px;font-size:1.05em;color:#e8e4d8;font-weight:700}
+#intake-fixed .pprog-fixed-note{margin:0 0 12px;font-size:.82em;line-height:1.4;color:#aaa}
+#intake-fixed .pprog-profile-row{display:flex;align-items:center;gap:10px;margin:0 0 10px;flex-wrap:wrap}
+#intake-fixed .pprog-profile-row label{flex:1;min-width:110px;font-size:.9em;color:#e8e4d8;font-weight:600}
+#intake-fixed .pprog-profile-row input,#intake-fixed .pprog-profile-row select{width:150px;flex-shrink:0;padding:10px 12px;background:#222;color:#eee;border:1px solid #555;border-radius:8px;font-size:1rem;font-family:inherit}
+#intake-fixed .pprog-location-picker,#intake-fixed .pprog-fixed-radios,#intake-fixed .pprog-skills-picker{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}
+#intake-fixed .pprog-location-picker label,#intake-fixed .pprog-fixed-radios label,#intake-fixed .pprog-skills-picker label{
+  display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:#222;border:1px solid #444;border-radius:8px;font-size:.88em;color:#e8e4d8;cursor:pointer;line-height:1.35}
+#intake-fixed .pprog-skills-all{border-color:rgba(26,155,138,.45)!important}
+#intake-fixed .pprog-fixed-days{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+#intake-fixed .pprog-fixed-days label{display:flex;align-items:center;gap:6px;padding:8px 10px;background:#222;border:1px solid #444;border-radius:8px;font-size:.85em;color:#e8e4d8;cursor:pointer}
+#intake-fixed .pprog-fixed-recovery-branch{
+  margin:4px 0 12px 14px;padding:10px 12px 10px 14px;border-left:3px solid #1A9B8A;background:rgba(26,155,138,.1);border-radius:0 10px 10px 0}
+#intake-fixed .pprog-lifts-picker-note,#intake-fixed .pprog-skills-picker-note{margin:0 0 12px;font-size:.82em;line-height:1.4;color:#aaa}
+#intake-fixed .pprog-lifts-row{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+#intake-fixed .pprog-lifts-row label{flex:1;font-size:.9em;color:#e8e4d8;font-weight:600}
+#intake-fixed .pprog-lifts-row input{width:110px;flex-shrink:0;padding:10px 12px;background:#222;color:#eee;border:1px solid #555;border-radius:8px;font-size:1rem;font-family:inherit;text-align:center}
+#intake-fixed .pprog-lifts-unit{font-size:.75em;color:#888;min-width:28px}
+#intake-fixed .pprog-fixed-chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+#intake-fixed .pprog-fixed-chip{appearance:none;background:#252525;border:1px solid #555;color:#e8e4d8;font-size:.85em;font-weight:700;padding:10px 14px;border-radius:8px;cursor:pointer;font-family:inherit}
+#intake-fixed .pprog-fixed-chip.active{background:#1A9B8A;border-color:#1A9B8A;color:#111}
+#intake-fixed .pprog-fixed-nav{display:flex;gap:8px;margin-top:12px}
+#intake-fixed .pprog-fixed-nav .btn{flex:1;padding:10px;font-weight:700;border:none;border-radius:8px;font-family:inherit;cursor:pointer}
+#intake-fixed .pprog-fixed-back{background:#333!important;color:#eee!important}
+#intake-fixed .pprog-fixed-next{background:#1A9B8A!important;color:#111!important}
+#intake-fixed .pprog-fixed-err{margin:8px 0 0;font-size:.8em;color:#E8451A;min-height:1.2em}
+
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
@@ -540,7 +573,7 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver" id="login-ver-badge" title="Admin 1.5.7 · Coach 2.3.6">Admin 1.5.7<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.6</span></div>
+    <div class="ver" id="login-ver-badge" title="Admin 1.5.8 · Coach 2.3.6">Admin 1.5.8<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.6</span></div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <button type="button" onclick="doLogin()">כניסה</button>
     <div id="login-err"></div>
@@ -552,7 +585,7 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">Admin</span>
-    <span class="ver-badge" id="admin-ver-badge" title="Admin 1.5.7 · Coach 2.3.4">Admin 1.5.7<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.4</span></span>
+    <span class="ver-badge" id="admin-ver-badge" title="Admin 1.5.8 · Coach 2.3.4">Admin 1.5.8<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.4</span></span>
     <span class="count-wrap">
       <span class="count" id="athlete-count">0 מתאמנים</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
@@ -695,7 +728,7 @@ var pendingLearnNoteId = null;
 var adminChatFabOpen = false;
 var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
 /** Live Personal Coach brain version — refreshed from GET /api/personal-coach. */
-var ADMIN_UI_VERSION = "1.5.7";
+var ADMIN_UI_VERSION = "1.5.8";
 var LIVE_COACH_VERSION = "2.3.6";
 var LIVE_COACH_VERSION_FETCHED_AT = 0;
 
@@ -933,7 +966,9 @@ function syncAthleteChatFab(a) {
   var title = document.getElementById("adminChatFloatTitle");
   var sub = document.getElementById("adminChatFloatSub");
   var floatEl = document.getElementById("adminChatFloat");
-  var show = !!(a && a.athleteId);
+  var intakeModal = document.getElementById("intake-modal");
+  var intakeOpen = !!(intakeModal && intakeModal.classList.contains("open"));
+  var show = !!(a && a.athleteId) && !intakeOpen;
   if (wrap) {
     wrap.classList.toggle("show", show);
     wrap.setAttribute("aria-hidden", show ? "false" : "true");
@@ -2903,6 +2938,8 @@ function closeIntakeWorkspace() {
   var m = document.getElementById("intake-modal");
   if (m) m.classList.remove("open");
   resetIntakeState();
+  var a = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
+  syncAthleteChatFab(a || null);
 }
 
 function intakeAthleteProfile(opts) {

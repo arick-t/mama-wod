@@ -70,23 +70,27 @@ ok("phone legalAcceptedAt preserved", phone.legalAcceptedAt === "2026-01-01T00:0
 
 ok("admin loads sync contract", /coach-intake-sync-contract\.js/.test(adminHtml));
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
-ok("admin version 1.5.7", /DUCK-WOD Admin · 1\.5\.7/.test(adminHtml));
+ok("admin version 1.5.8", /DUCK-WOD Admin · 1\.5\.8/.test(adminHtml));
 ok("admin wired to coach 2.3.6", /LIVE_COACH_VERSION = "2\.3\.6"/.test(adminHtml));
 ok("app coach 2.3.6", /COACH_VERSION = "2\.3\.6"/.test(index));
 ok(
   "admin shows Admin + Coach versions",
-  /Admin 1\.5\.7/.test(adminHtml) &&
+  /Admin 1\.5\.8/.test(adminHtml) &&
     /ver-coach/.test(adminHtml) &&
     /syncAdminVersionLabels/.test(adminHtml) &&
-    /ADMIN_UI_VERSION = "1\.5\.7"/.test(adminHtml)
+    /ADMIN_UI_VERSION = "1\.5\.8"/.test(adminHtml)
 );
-ok("admin fixed All skills head", /admin-fixed-skills-head/.test(fixedJs));
-ok("admin fixed All skills toggles cubes", /adminFixedSkillAllChange/.test(fixedJs));
-ok("admin fixed No injuries active chip", /admin-fixed-chip/.test(adminHtml) && /adm-fx-no-injuries-btn/.test(fixedJs));
+ok("admin intake uses pprog classes 1:1", /pprog-fixed-intake/.test(fixedJs) && /pprog-lifts-row/.test(fixedJs));
+ok("admin lifts numeric inputmode", /inputmode="decimal"/.test(fixedJs) && /enterkeyhint="next"/.test(fixedJs));
+ok("admin skills vertical like app", /pprog-skills-picker/.test(fixedJs) && /adminFixedSkillAllChange/.test(fixedJs));
+ok("admin No injuries chip", /pprog-fixed-chip/.test(fixedJs) && /adm-fx-no-injuries-btn/.test(fixedJs));
 ok("admin build overlay uses coach video", /adminIntakeBuildOverlay/.test(adminHtml) && /coach-thinking\.mp4/.test(adminHtml));
 ok("admin build restores goals on fail", /restoreAdminFixedGoals/.test(fixedJs));
 ok("admin Build plan sends admin auth", /adminAuthHeaders\(\)/.test(fixedJs) && /adminProgramming:\s*true/.test(fixedJs));
-ok("admin recovery nested under Yes", /admin-fixed-recovery-branch/.test(adminHtml) && /Under Yes/.test(fixedJs));
+ok("admin Build plan timeout+retry", /180000/.test(fixedJs) && /retryLeft/.test(fixedJs));
+ok("admin Build my plan CTA", /Build my plan/.test(fixedJs));
+ok("admin hides FAB during intake", /intake-modal\.open/.test(adminHtml) && /intakeOpen/.test(adminHtml));
+ok("admin recovery nested under Yes", /pprog-fixed-recovery-branch/.test(fixedJs) && /Under Yes/.test(fixedJs));
 ok("admin recovery no Thu default", /activeRecoveryDay:\s*""/.test(fixedJs));
 ok("phone recovery nested under Yes", /pprog-fixed-recovery-branch/.test(index));
 ok("snapshot delete uses tombstone", /tombstone/.test(snap) && /isDeletedSnapshot/.test(snap));
@@ -103,5 +107,28 @@ ok("snapshot allows intakeProfile", /"intakeProfile"/.test(snap) || /intakeProfi
 ok("app loads sync contract", /coach-intake-sync-contract\.js/.test(index));
 ok("app push syncs intakeProfile", /intakeProfile: intakeProfile/.test(index));
 ok("app shared packet path", /CoachIntakeSync\.buildFixedIntakePrompt/.test(index));
+ok(
+  "phone keeps same athleteId on reclaim",
+  /reclaimSameAthlete:\s*true/.test(index) && !/pprogMintNewAthleteIdentity/.test(index)
+);
+ok(
+  "join email after admin push",
+  /sendJoinMailAndAnalytics/.test(index)
+);
+ok(
+  "snapshot reclaim same id",
+  /snapshot_reclaim/.test(snap) && /allowUnboundBind/.test(snap)
+);
+ok(
+  "fresh Terms each new intake sitting",
+  /pprogRequireFreshLegalForNewIntakeSitting/.test(index) &&
+    /intakeSittingLegalOk/.test(index)
+);
+ok(
+  "admin gets declarationAcceptedAt from device",
+  /declarationAcceptedAt:\s*store\.legalAcceptedAt/.test(index) &&
+    /declarationAcceptedAt/.test(snap) &&
+    /CLIENT_ALLOWED_KEYS[\s\S]*declarationAcceptedAt/.test(snap)
+);
 
 console.log("All admin intake parity / sync checks passed.");
