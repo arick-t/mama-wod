@@ -10058,14 +10058,20 @@ function renderPprogDayPartsHtml(parts, dayData, dayKey) {
     }
     html += '<ul class="section-lines">';
     var work = classified.work;
-    if (!work.length && !classified.notes.length && !classified.format) {
+    var trailing = classified.trailingNotes || [];
+    /* Only fall back to raw lines when classify produced nothing at all (avoid duping notes). */
+    if (
+      !work.length &&
+      !classified.notes.length &&
+      !classified.format &&
+      !trailing.length
+    ) {
       work = part.lines || [];
     }
     for (var li = 0; li < work.length; li++) {
       html += "<li>" + esc(work[li]) + "</li>";
     }
     html += "</ul>";
-    var trailing = classified.trailingNotes || [];
     for (var ti = 0; ti < trailing.length; ti++) {
       html += '<div class="pprog-part-note">' + esc(trailing[ti]) + "</div>";
     }
