@@ -17,6 +17,8 @@
  *   2.3.2 — POL-027 full equipment-free pool (Gemini directive) shipped
  *   2.3.3 — POL-027 Enhancement Grammar (home gear → loaded variation tree)
  *   2.3.6 — POL-027 generic movement-pattern balance (no movement-specific bans)
+ *   2.3.7 — brick schedule-revise brief reply (no AI intro / no change recap)
+ *   2.3.8 — brick schedule-revise calendar apply (pending state + תממש intent)
  *   2.3.4 — POL-027 honor home inventory: lift kg ≠ barbell/rings; weekly lunge+wall; anti thruster-spam
  *
  * Env: GEMINI_API_KEY (optional File Search), GROQ_API_KEY (fallback chat),
@@ -28,7 +30,7 @@
  * Groq keeps chat alive when the Gemini key is missing/invalid (common GitHub Pages + Vercel setup).
  * Programming stays Gemini-only (POL-020).
  */
-const COACH_VERSION = "2.3.6";
+const COACH_VERSION = "2.3.8";
 const fs = require("fs");
 const path = require("path");
 function resolveAppVersion() {
@@ -566,8 +568,12 @@ function buildExtraSessionsBlock(profile) {
 
 const {
   isExplicitPol026Confirm,
+  isScheduleApplyIntent,
   messagesLookLikePol026ExtraSession,
+  messagesLookLikeBrickScheduleRevise,
   enforcePol026BrickChatResponse,
+  enforceBrickScheduleChatResponse,
+  BRICK_SCHEDULE_POST_APPLY_MSG,
 } = require("../lib/coach-pol026-gates.js");
 
 /** Compact Done-learning cards from athleteProfile.finishSignals / finishLearning (≤~500 chars). */
@@ -1921,16 +1927,21 @@ module.exports = async function handler(req, res) {
       "not ignored, not treated as injury, not a full brick redesign.\n" +
       "4) CHAT (pre-confirm): ONE short Confirm? line ONLY — exact style: " +
       "\"Schedule: keep today’s session logged, rest tomorrow, ease squat/hinge/engine later this week. Confirm?\"\n" +
-      "Forbidden pre-confirm: paragraphs, equipment re-ask, goals review, feeling questions, injury disclaimer, ANY WEEK_JSON/DAY_JSON/BLOCK_JSON/PART_JSON.\n" +
+      "Forbidden pre-confirm: \"I am an AI engine\", self-introduction, intake profile recaps, paragraphs explaining what you will do, " +
+      "equipment re-ask, goals review, feeling questions, injury disclaimer, ANY WEEK_JSON/DAY_JSON/BLOCK_JSON/PART_JSON.\n" +
       "5) APPLY only after explicit confirm (yes / כן / Confirm). Then ONE surgical pass: WEEK_JSON and/or DAY_JSON on remaining days only " +
-      "(+ today only to mirror the performed session). Then tiny \"Done.\"\n" +
+      "(+ today only to mirror the performed session). Then ONLY this athlete-facing line (no change recap): \"" +
+      BRICK_SCHEDULE_POST_APPLY_MSG +
+      "\"\n" +
       "6) FORBIDDEN for this case (never as default): generate_block, Soft Upgrade, large rebuild B, full-brick BLOCK_JSON. " +
       "If you cannot emit surgical WEEK/DAY JSON after confirm — reply \"Done.\" only; do NOT open a large rebuild.\n" +
       "Broad change request → reply with ONE short sentence: section + what you will change on REMAINING days + Confirm?\n" +
       "Good: \"Equipment: single-KB options on remaining days (formats + Rest unchanged). Confirm?\"\n" +
       "Good: \"Injuries: no squats rest of brick — substitutes only. Confirm?\"\n" +
       "Do NOT write paragraphs. Do NOT mention profile essays or \"would you like me to rewrite this week…\".\n" +
-      "Do NOT apply until they clearly confirm. After confirm: apply WEEK_JSON/DAY_JSON + tiny \"Done.\" / \"Updated.\"\n" +
+      "Do NOT apply until they clearly confirm. After confirm: apply WEEK_JSON/DAY_JSON + ONLY \"" +
+      BRICK_SCHEDULE_POST_APPLY_MSG +
+      "\" — never repeat the schedule changes in prose.\n" +
       "POL-023 (HARD) after confirm:\n" +
       "1) NEVER rewrite or regenerate calendar days before " +
       todayIso +
@@ -2400,8 +2411,10 @@ module.exports = async function handler(req, res) {
     const rawModel = String((result && result.text) || "");
     const brickChatTurn = body.brickChat === true || body.wholeProgramChat === true;
     const pol026Turn =
-      !programming && brickChatTurn && messagesLookLikePol026ExtraSession(messages);
-    const pol026Confirmed = pol026Turn && isExplicitPol026Confirm(lastUserLine);
+      !programming &&
+      brickChatTurn &&
+      (messagesLookLikeBrickScheduleRevise(messages) || body.brickSchedulePending === true);
+    const pol026Confirmed = pol026Turn && isScheduleApplyIntent(lastUserLine);
     /* Extract plan JSON from raw model text BEFORE forcing athlete-facing Done./Confirm? */
     let block = pol026Turn ? extractBlockJson(rawModel) : null;
     let week = pol026Turn ? extractWeekJson(rawModel, weekIndexForExtract) : null;
@@ -2410,14 +2423,14 @@ module.exports = async function handler(req, res) {
 
     let rawOut = rawModel;
     if (pol026Turn) {
-      rawOut = enforcePol026BrickChatResponse(rawModel, { confirmed: pol026Confirmed });
+      rawOut = enforceBrickScheduleChatResponse(rawModel, { confirmed: pol026Confirmed });
     }
     const guarded = applyCoachOutputGuard(rawOut, {
       programming: programming,
     });
     let safeText = guarded.text;
     if (pol026Turn) {
-      safeText = enforcePol026BrickChatResponse(safeText, { confirmed: pol026Confirmed });
+      safeText = enforceBrickScheduleChatResponse(safeText, { confirmed: pol026Confirmed });
     }
     if (!pol026Turn) {
       block = extractBlockJson(safeText);

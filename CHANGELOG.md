@@ -1,11 +1,32 @@
 # Changelog
 
+## [Coach 2.3.8] - 2026-08-12 · **PRODUCTION**
+
+### Whole-brick schedule revise — calendar actually updates
+- **Coach subtitle:** `COACH · v2.3.8`.
+- **Pending state** (`brickSchedulePending`) survives long confirm loops — gate no longer lost after 8 turns.
+- **Apply intent:** `כן`, `תממש את השינויים`, `בצע את השינויים` → local calendar apply immediately (today LOGGED + tomorrow Rest) without waiting for model JSON.
+- **Rehydrate** pending from brick-chat history when athlete says תממש after model asked confirm again.
+- Server honors `brickSchedulePending` flag on chat POST.
+
+---
+
+## [Coach 2.3.7] - 2026-08-12
+
+### Whole-brick schedule revise — brief reply only (rest-day shift)
+- Expand brick schedule-revise detection: “worked out on rest day / adjust week” without pasted WOD still gated.
+- **Pre-confirm:** one short Confirm? line — strip model essays, “I am an AI engine…”, intake recaps.
+- **Post-confirm:** only `בוצעו השינויים נא לוודא בבלוק האימון` — no repeating Friday/Saturday/rest changes in chat.
+- Server + client hard gates (`coach-pol026-gates.js`, brick FAB chat handler).
+
+---
+
 ## [Admin 1.5.9] - 2026-08-12 · **PRODUCTION**
 
 ### Admin — GitHub Pages → Vercel API wiring (+ retest reject batch)
-- **Admin subtitle / title:** `DUCK-WOD Admin · 1.5.9` · badge **Admin 1.5.9 · Coach 2.3.6**.
+- **Admin subtitle / title:** `DUCK-WOD Admin · 1.5.9` · badge **Admin 1.5.9 · Coach 2.3.8**.
 - **GitHub Pages fix (critical):** `getAdminApiBase` / `adminApiUrl` / `pagesAbsoluteUrl` — all admin + claim fetches reach `mama-wod.vercel.app` (was 404 on `github.io/api/*`).
-- **Build plan:** admin password in body + header, clearer errors, 2 retries; still real `generate_block` only (Coach **2.3.6**).
+- **Build plan:** admin password in body + header, clearer errors, 2 retries; still real `generate_block` only.
 - **FAB hidden** during entire +מתאמן intake (iOS fixed-position fix).
 - **Numeric keyboards** 1:1 with athlete app (`lang=en` + shared `CoachIntakeSync` HTML).
 - **Handoff / claim links** use correct GitHub Pages project path (`/mama-wod/claim.html`).
