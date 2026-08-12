@@ -10,7 +10,9 @@ Rule: free-form notes → confirm understanding → append here → **one batch*
 - Delete tombstone / revoke, phone→admin mirror, Build plan Terms bypass, recovery UX nest
 
 ## Open findings (phone browser retest)
-_(waiting for founder notes)_
+1. **Hide floating coach chat FAB during +מתאמן intake:** While adding a new athlete (intake modal open), the floating duck chat icon (e.g. labeled "עדי") must not appear. Not optional — hide it for the whole new-athlete flow. (Screenshot 1 — overlaps footer on Lifts step.)
+2. **Lifts & run — numeric keyboard:** Step 5/9 lift/run fields open a general/Hebrew symbols keyboard on phone. Must open a **numeric** keypad (`inputmode="decimal"` / `type="number"` or equivalent) for kg and run minutes. (Screenshot 2 — Back Squat focused.)
+3. **Intake parity expectation (HARD product intent):** Founder expected the admin “new athlete” questionnaire on phone to be **exactly the same** as the athlete-app intake — not a parallel/admin-only variant. Treat phone-admin fixed intake as 1:1 with athlete app UX (layout, fields, keyboards, chips). Desktop may differ only where necessary; phone browser admin should match the app.
 
 ## Hard constraints
 - Prefer phone athlete intake UX over desktop admin if conflict.
