@@ -1,5 +1,22 @@
 # Changelog
 
+## [Coach 2.3.10] - 2026-08-12
+
+### POL-026 logged session + keep-tomorrow restore
+- **Logged display** — strip schedule-instruction tail from athlete note; show Engine + Complex parts instead of raw chat paste.
+- **Keep tomorrow** — snapshot programmed day before confirm; restore after apply (fixes wrong “rest tomorrow” from prior apply).
+
+---
+
+## [Coach 2.3.9] - 2026-08-12
+
+### Whole-brick schedule shift — parse Hebrew intent (keep tomorrow / rest Friday)
+- **Dynamic Confirm?** — pre-confirm mirrors parsed athlete note (Hebrew when note is Hebrew), not a fixed English “rest tomorrow” template.
+- **`parseBrickScheduleIntent`** — understands מחר כרגיל, יום שישי מנוחה, שלישי הבא, מחרתיים; calendar apply sets named rest days only (tomorrow unchanged when “keep”).
+- Server passes `brickScheduleNote` + `israelToday` into POL-026 gates.
+
+---
+
 ## [Coach 2.3.8] - 2026-08-12 · **PRODUCTION**
 
 ### Whole-brick schedule revise — calendar actually updates
