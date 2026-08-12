@@ -2189,6 +2189,8 @@ function isPprogPartFormatHead(head) {
   if (/^(AMRAP|EMOM|E2MOM|For\s*Time|Chipper|Tabata|Intervals?\b|Every\s+\d|Build\s+to)/i.test(t)) {
     return true;
   }
+  if (/\b(?:AMRAP|EMOM|E2MOM)\b/i.test(t)) return true;
+  if (/^\d+[-\s]?minute\b/i.test(t) && /\b(?:EMOM|AMRAP|rounds?|stations?)\b/i.test(t)) return true;
   if (/^\d+\s*(?:sets?|rounds?)\b/i.test(t)) return true;
   if (/sets?\s+for\s+quality|quality\s+rounds/i.test(t)) return true;
   if (/\b\d+\s*min\b/i.test(t) && /(?:EMOM|E2MOM|AMRAP|sets?|rounds?)/i.test(t)) return true;
@@ -2211,11 +2213,37 @@ function expandPprogChipperArrowLine(line) {
   return expandPprogJoinedMovementLine(line);
 }
 
+function expandPprogMinStationLine(line) {
+  var t = String(line || "").trim();
+  if (!t) return null;
+  var hits = t.match(/\bMin(?:ute)?\s*\d+\s*:/gi);
+  if (!hits || hits.length < 2) return null;
+  var parts = t
+    .split(/(?=\bMin(?:ute)?\s*\d+\s*:)/i)
+    .map(function (s) {
+      return String(s || "")
+        .trim()
+        .replace(/^[|;]+\s*/, "")
+        .replace(/\s*[|;]+$/, "")
+        .trim();
+    })
+    .filter(Boolean);
+  return parts.length >= 2 ? parts : null;
+}
+
 function expandPprogJoinedMovementLine(line) {
   var t = String(line || "").trim();
   if (!t) return [];
   var i;
   var parts;
+  var minParts = expandPprogMinStationLine(t);
+  if (minParts) {
+    var outMin = [];
+    for (i = 0; i < minParts.length; i++) {
+      outMin = outMin.concat(expandPprogJoinedMovementLine(minParts[i]));
+    }
+    return outMin;
+  }
   if (/(?:->|→|⇒)/.test(t)) {
     parts = t
       .split(/\s*(?:->|→|⇒)\s*/)
@@ -2244,6 +2272,36 @@ function expandPprogJoinedMovementLine(line) {
         outPlus = outPlus.concat(expandPprogJoinedMovementLine(parts[i]));
       }
       return outPlus;
+    }
+  }
+  if (/\s\|\s/.test(t)) {
+    parts = t
+      .split(/\s*\|\s*/)
+      .map(function (s) {
+        return String(s || "").trim();
+      })
+      .filter(Boolean);
+    if (parts.length >= 2 && countPprogMovementishParts(parts) >= 2) {
+      var outPipe = [];
+      for (i = 0; i < parts.length; i++) {
+        outPipe = outPipe.concat(expandPprogJoinedMovementLine(parts[i]));
+      }
+      return outPipe;
+    }
+  }
+  if (/;\s*(?=Min(?:ute)?\s*\d+\s*:)/i.test(t)) {
+    parts = t
+      .split(/\s*;\s*(?=Min(?:ute)?\s*\d+\s*:)/i)
+      .map(function (s) {
+        return String(s || "").trim();
+      })
+      .filter(Boolean);
+    if (parts.length >= 2) {
+      var outSemi = [];
+      for (i = 0; i < parts.length; i++) {
+        outSemi = outSemi.concat(expandPprogJoinedMovementLine(parts[i]));
+      }
+      return outSemi;
     }
   }
   if (/,/.test(t)) {

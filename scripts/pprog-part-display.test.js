@@ -60,6 +60,7 @@ const bundle =
   extractFn(index, "isPprogPartFormatHead") +
   extractFn(index, "peelPprogEmbeddedFormat") +
   extractFn(index, "expandPprogChipperArrowLine") +
+  extractFn(index, "expandPprogMinStationLine") +
   extractFn(index, "expandPprogJoinedMovementLine") +
   extractFn(index, "expandPprogWorkLines") +
   extractFn(index, "peelInlineTrailingCoachNote") +
@@ -188,5 +189,32 @@ ok(
   "accessory rest note",
   accessorySets.trailingNotes.some(function (n) { return /Rest 60 sec/i.test(n); })
 );
+
+/* Image 6 — comma warmup, EMOM Min1; Min2, pipe Min stations */
+const friWarmup = classifyPprogPartLines([
+  "Intent: Prep shoulder alignment and agility balance.",
+  "3 Rounds: 100m Run, 3 Wall Walks, 10 KB Goblet Squats (24kg), 10 Hollow Rocks.",
+]);
+ok("fri warmup expands to 4", friWarmup.work.length === 4);
+
+const emomMins = classifyPprogPartLines([
+  "Intent: Explosive hinge capacity (10 min effective duration).",
+  "EMOM 10 min: Min 1: 6 Alternating DB Snatches (22.5kg) - focus maximum speed; Min 2: 8 Strict Chest-to-Bar Pull-ups.",
+]);
+ok("emom peels format", /^EMOM 10 min:$/i.test(emomMins.format));
+ok("emom min stations split to 2", emomMins.work.length === 2);
+ok("emom min1 kept", /^Min 1:/i.test(emomMins.work[0]));
+ok("emom min2 kept", /^Min 2:/i.test(emomMins.work[1]));
+
+const pipeEmom = classifyPprogPartLines([
+  "Intent: Oxidative engine & gymnastics stamina under clock control (24 min duration).",
+  "24-Minute EMOM (4 Rounds of 6 stations):",
+  "Min 1: 200m Run | Min 2: 10m Handstand Walk (or 3 Wall Walks) | Min 3: 14 Single KB Goblet Walking Lunges (24kg)",
+  "Min 4: 12 Toes-to-Bar | Min 5: 12 Lateral Burpees Over DB | Min 6: Rest.",
+]);
+ok("24-minute EMOM is format", /24-Minute EMOM/i.test(pipeEmom.format));
+ok("pipe mins expand to 6", pipeEmom.work.length === 6);
+ok("pipe mins no | left", pipeEmom.work.every(function (w) { return !/\|/.test(w); }));
+ok("pipe min6 rest station kept", /Min 6:\s*Rest/i.test(pipeEmom.work[5]));
 
 console.log("All pprog-part-display checks passed.");
