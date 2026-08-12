@@ -16,6 +16,7 @@
  *   2.3.1 — POL-027 floor/BW baseline + equipment additive (combine free weights)
  *   2.3.2 — POL-027 full equipment-free pool (Gemini directive) shipped
  *   2.3.3 — POL-027 Enhancement Grammar (home gear → loaded variation tree)
+ *   2.3.6 — POL-027 generic movement-pattern balance (no movement-specific bans)
  *   2.3.4 — POL-027 honor home inventory: lift kg ≠ barbell/rings; weekly lunge+wall; anti thruster-spam
  *
  * Env: GEMINI_API_KEY (optional File Search), GROQ_API_KEY (fallback chat),
@@ -27,7 +28,7 @@
  * Groq keeps chat alive when the Gemini key is missing/invalid (common GitHub Pages + Vercel setup).
  * Programming stays Gemini-only (POL-020).
  */
-const COACH_VERSION = "2.3.4";
+const COACH_VERSION = "2.3.6";
 const fs = require("fs");
 const path = require("path");
 function resolveAppVersion() {
@@ -653,7 +654,7 @@ const PROGRAMMING_SYSTEM_CORE =
   "All workout / overview / theme / summaryLine text MUST be English.\n" +
   "Day keys MUST be exactly: sun,mon,tue,wed,thu,fri,sat.\n" +
   "For each day define: (a) effective duration target (e.g. 12/16/20 min) and (b) movement pattern priorities.\n" +
-  "Part lines hierarchy (POL-012): (1) Duration/Movement intent note, (2) format header ending with :, (3) prescription lines.\n" +
+  "Part lines hierarchy (POL-012): (1) Duration/Movement intent note, (2) format header ending with :, (3) prescription lines — one movement/station per line (no -> / + / | / comma / multi-Min joins; never glue format+work on one line). Rest/cues/Target loading as Note:/Cue: lines, not work bullets.\n" +
   "POL-016 (כלל תחקור משתמש): From intake baselines, silently build a detailed aero + anaerobic capability profile using strength ratio tables and aerobic conversion tables (run/row/ski/bike/cal); program to that profile — do not dump it in chat.\n" +
   "POL-018 (HARD): Be fluent in מאגר methods, injury prevention, and scales/alternatives. Default design = CrossFit L1+L2 foundation (constantly varied + applied coaching judgment) — do not drift into a repetitive specialty-only brick with no athlete focus. Skill/1RM/engine improvement requests are NORMAL and expected: when the athlete asks to improve something specific, you MUST use the מאגר to direct them precisely (progressions, volume, injury prevention, scales) and embed that focus in the week.\n" +
   "POL-021 (HARD — knowledge pyramid): Base always = L1+L2 guides. Layer-2 ops enrich programming (calendar/M-G-W/stimulus/scale). Second floor = athlete inquiry (POL-016) + מאגר craft. Goal → seek method. Patterns inspire — never copy scraped/Hero/Open/Benchmark sessions.\n" +
@@ -682,7 +683,7 @@ const PROGRAMMING_SYSTEM_CORE =
   "(e.g. DB → goblet/front-rack/OH squat, DB lunge, burpee-over-DB); never a closed whitelist; keep unloaded baseline in rotation. " +
   "HARD: lift/skill kg numbers are capability only — do NOT unlock barbell/rings/rope/rower/ski/bike/GHD unless TRAINING SETUP reports them " +
   "(home/DB-KB → DB/KB/odd-object hinge + scaled loads; no barbell DL / ring MU without that gear). " +
-  "Each training week: ≥1 lunge-family + (indoors) ≥1 wall pattern; do not thruster-spam. " +
+  "Each training week: ≥1 lunge-family + (indoors) ≥1 wall pattern; prevent single-pattern dominance (no repeated identical couplet/triplet templates across the week). " +
   "Do not re-ask equipment because of the grammar.\n" +
   "Obey COACH POLICY RULES injected below (HARD rules are mandatory).\n" +
   "---\n" +
@@ -2041,7 +2042,7 @@ module.exports = async function handler(req, res) {
           "Progress strength patterns across the week using implements allowed by TRAINING SETUP only " +
           "(home/DB-KB → DB/KB/odd-object loading; never invent barbell/rings/rope/mono machines missing from setup). " +
           "Lift kg values are capability baselines for scaling — not permission to use missing gear. " +
-          "Each training week: include a lunge-family pattern and (if indoors) a wall pattern; avoid thruster-spam. " +
+          "Each training week: include a lunge-family pattern and (if indoors) a wall pattern; avoid single-pattern dominance and repeated identical couplet/triplet templates. " +
           "CRITICAL — Week 1 DENSITY: week 1 MUST include full days with real workouts for every training day " +
           "(1–3 parts/day, each part with title + lines array of concrete prescriptions, ≤5 lines/part). " +
           "Do NOT leave week 1 days as {}. Athletes open week 1 immediately. " +

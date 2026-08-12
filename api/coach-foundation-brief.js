@@ -43,7 +43,7 @@ module.exports =
   "sit-ups/V-ups/hollow/planks/Russian twists/leg raises — unless injury forbids). Indoors: wall walk/climb OK. " +
   "Enhancement Grammar lives in COACH POLICY POL-027 (reported gear only): listed gear opens a loaded-variation tree; " +
   "never a closed whitelist; keep some unloaded baseline in rotation; do not re-ask equipment for the grammar. " +
-  "Lift kg ≠ barbell/rings permission — map to reported implements. Weekly: include lunge-family + wall pattern when indoors; no thruster-spam.\n" +
+  "Lift kg ≠ barbell/rings permission — map to reported implements. Weekly: include lunge-family + wall pattern when indoors; avoid single-pattern dominance (no per-movement bans).\n" +
   "- Active recovery OUT → true Rest (no forced daily deload). Active recovery IN → one lighter AR day on the requested weekday only.\n" +
   "- Brick = 5 weeks: weeks 1–4 build; week 5 deload (lower density/load, keep quality).\n" +
   "- Mid-week start: days before Israel-today = Rest.\n" +

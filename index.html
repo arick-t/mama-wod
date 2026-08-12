@@ -1067,7 +1067,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
 <div class="header-sub">DAILY WORKOUTS · v21.5.1</div>
-<div class="header-sub" id="coachVersionSub">COACH · v2.3.4</div>
+<div class="header-sub" id="coachVersionSub">COACH · v2.3.6</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap active" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
@@ -1635,11 +1635,12 @@ function rememberAiClientError(summary) {
  *   Coach 2.3.1 — POL-027 floor/BW baseline + equipment additive (combine free weights).
  *   Coach 2.3.2 — POL-027 full equipment-free pool (Gemini directive) shipped.
  *   Coach 2.3.3 — POL-027 Enhancement Grammar (home gear → loaded variation tree).
+ *   Coach 2.3.6 — POL-027 generic movement-pattern balance (no movement-specific bans).
  *   Coach 2.3.4 — POL-027 honor home inventory (lift kg ≠ barbell/rings; lunge+wall; anti thruster-spam).
  * Keep this badge in sync with the brain actually serving /api/personal-coach.
  * Display: header “COACH · v{COACH_VERSION}” only — do NOT bump app DAILY WORKOUTS / <title> here.
  */
-var COACH_VERSION = "2.3.4";
+var COACH_VERSION = "2.3.6";
 try {
   var __coachVerEl = document.getElementById("coachVersionSub");
   if (__coachVerEl) __coachVerEl.textContent = "COACH · v" + COACH_VERSION;
@@ -5206,6 +5207,251 @@ function isPprogPartIntentNoteLine(line) {
   return false;
 }
 
+/**
+ * Coaching cue / rest-between line — display as note, not a prescription bullet.
+ * e.g. "Rest 2 min between sets." / "Maintain flat back and unbroken sets."
+ */
+function isPprogPartCoachNoteLine(line) {
+  var t = String(line || "").trim();
+  if (!t) return false;
+  if (isPprogPartIntentNoteLine(t)) return true;
+  if (/^(note|cue|coach|tip|reminder|coaching)\s*[:—-]/i.test(t)) return true;
+  if (/^target\s+(loading|score|pace|time|effort)\b/i.test(t)) return true;
+  if (/^rest\b/i.test(t) && /(between|sets?|rounds?|amraps?|intervals?)/i.test(t)) return true;
+  if (/^rest\s+\d/i.test(t) && !/(run|row|bike|ski|walk|swim)/i.test(t)) return true;
+  if (
+    /^(maintain|keep|focus on|quality|control|smooth|unbroken|breathe|brace|neutral|chest up|hips back|flat back|core tight|full rom|lockout)\b/i.test(
+      t
+    )
+  ) {
+    return true;
+  }
+  /* Cue-like: no leading reps/load, short coaching sentence */
+  if (
+    !/^\d/.test(t) &&
+    t.length <= 90 &&
+    !/\b(kg|lb|m\b|cal|amrap|emom)\b/i.test(t) &&
+    /\b(maintain|unbroken|quality|tempo|smooth|control|brace|breathe)\b/i.test(t)
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function isPprogMovementishPart(part) {
+  var p = String(part || "").trim();
+  if (!p) return false;
+  if (/^\d/.test(p)) return true;
+  return /\b(run|row|ski|bike|squat|lunge|deadlift|swing|pull|push|burpee|jump|box|wall|kb|db|du|su|clean|snatch|thruster|press|carry|sit-?up|toes|muscle-?up|handstand|scapular|pike|unders?|shuttle|devil|walk|hold|hang|dip|cluster|jerk|pistol|twist|hollow|ghd|plank)\b/i.test(
+    p
+  );
+}
+
+function countPprogMovementishParts(parts) {
+  var n = 0;
+  for (var i = 0; i < parts.length; i++) {
+    if (isPprogMovementishPart(parts[i])) n++;
+  }
+  return n;
+}
+
+/** Format head only (no trailing work) — EMOM / N Rounds / Sets for Quality … */
+function isPprogPartFormatHead(head) {
+  var t = String(head || "").trim().replace(/:\s*$/, "");
+  if (!t || t.length > 100) return false;
+  if (/^(AMRAP|EMOM|E2MOM|For\s*Time|Chipper|Tabata|Intervals?\b|Every\s+\d|Build\s+to)/i.test(t)) {
+    return true;
+  }
+  if (/\b(?:AMRAP|EMOM|E2MOM)\b/i.test(t)) return true;
+  if (/^\d+[-\s]?minute\b/i.test(t) && /\b(?:EMOM|AMRAP|rounds?|stations?)\b/i.test(t)) return true;
+  if (/^\d+\s*(?:sets?|rounds?)\b/i.test(t)) return true;
+  if (/sets?\s+for\s+quality|quality\s+rounds/i.test(t)) return true;
+  if (/\b\d+\s*min\b/i.test(t) && /(?:EMOM|E2MOM|AMRAP|sets?|rounds?)/i.test(t)) return true;
+  return false;
+}
+
+/**
+ * Peel "E2MOM 10 min (5 sets): 6 HSPU + 8 TTB" → format + workRest.
+ * Does not peel Intent:/Duration: notes.
+ */
+function peelPprogEmbeddedFormat(line) {
+  var t = String(line || "").trim();
+  var m = t.match(/^(.+?):\s+(.+)$/);
+  if (!m) return null;
+  var headRaw = String(m[1] || "").trim();
+  var rest = String(m[2] || "").trim();
+  if (!headRaw || !rest) return null;
+  if (/^(intent|focus|cue|note|goal|duration|movement|target)\b/i.test(headRaw)) return null;
+  if (!isPprogPartFormatHead(headRaw)) return null;
+  return { format: headRaw + ":", workRest: rest };
+}
+
+/**
+ * Approved template: one movement per bullet.
+ * Expand joins with -> / → / + / | / Min N: / comma lists into separate work lines.
+ */
+function expandPprogChipperArrowLine(line) {
+  return expandPprogJoinedMovementLine(line);
+}
+
+function expandPprogMinStationLine(line) {
+  var t = String(line || "").trim();
+  if (!t) return null;
+  var hits = t.match(/\bMin(?:ute)?\s*\d+\s*:/gi);
+  if (!hits || hits.length < 2) return null;
+  var parts = t
+    .split(/(?=\bMin(?:ute)?\s*\d+\s*:)/i)
+    .map(function (s) {
+      return String(s || "")
+        .trim()
+        .replace(/^[|;]+\s*/, "")
+        .replace(/\s*[|;]+$/, "")
+        .trim();
+    })
+    .filter(Boolean);
+  return parts.length >= 2 ? parts : null;
+}
+
+function expandPprogJoinedMovementLine(line) {
+  var t = String(line || "").trim();
+  if (!t) return [];
+  var i;
+  var parts;
+  var minParts = expandPprogMinStationLine(t);
+  if (minParts) {
+    var outMin = [];
+    for (i = 0; i < minParts.length; i++) {
+      outMin = outMin.concat(expandPprogJoinedMovementLine(minParts[i]));
+    }
+    return outMin;
+  }
+  if (/(?:->|→|⇒)/.test(t)) {
+    parts = t
+      .split(/\s*(?:->|→|⇒)\s*/)
+      .map(function (s) {
+        return String(s || "").trim();
+      })
+      .filter(Boolean);
+    if (parts.length >= 2 && countPprogMovementishParts(parts) >= 2) {
+      var outArrow = [];
+      for (i = 0; i < parts.length; i++) {
+        outArrow = outArrow.concat(expandPprogJoinedMovementLine(parts[i]));
+      }
+      return outArrow;
+    }
+  }
+  if (/\s\+\s/.test(t)) {
+    parts = t
+      .split(/\s\+\s/)
+      .map(function (s) {
+        return String(s || "").trim();
+      })
+      .filter(Boolean);
+    if (parts.length >= 2 && countPprogMovementishParts(parts) >= 2) {
+      var outPlus = [];
+      for (i = 0; i < parts.length; i++) {
+        outPlus = outPlus.concat(expandPprogJoinedMovementLine(parts[i]));
+      }
+      return outPlus;
+    }
+  }
+  if (/\s\|\s/.test(t)) {
+    parts = t
+      .split(/\s*\|\s*/)
+      .map(function (s) {
+        return String(s || "").trim();
+      })
+      .filter(Boolean);
+    if (parts.length >= 2 && countPprogMovementishParts(parts) >= 2) {
+      var outPipe = [];
+      for (i = 0; i < parts.length; i++) {
+        outPipe = outPipe.concat(expandPprogJoinedMovementLine(parts[i]));
+      }
+      return outPipe;
+    }
+  }
+  if (/;\s*(?=Min(?:ute)?\s*\d+\s*:)/i.test(t)) {
+    parts = t
+      .split(/\s*;\s*(?=Min(?:ute)?\s*\d+\s*:)/i)
+      .map(function (s) {
+        return String(s || "").trim();
+      })
+      .filter(Boolean);
+    if (parts.length >= 2) {
+      var outSemi = [];
+      for (i = 0; i < parts.length; i++) {
+        outSemi = outSemi.concat(expandPprogJoinedMovementLine(parts[i]));
+      }
+      return outSemi;
+    }
+  }
+  if (/,/.test(t)) {
+    parts = [];
+    var buf = "";
+    var depth = 0;
+    for (i = 0; i < t.length; i++) {
+      var ch = t.charAt(i);
+      if (ch === "(") depth++;
+      else if (ch === ")") depth = Math.max(0, depth - 1);
+      if (ch === "," && depth === 0) {
+        if (buf.trim()) parts.push(buf.trim());
+        buf = "";
+        continue;
+      }
+      buf += ch;
+    }
+    if (buf.trim()) parts.push(buf.trim());
+    if (parts.length >= 2 && countPprogMovementishParts(parts) === parts.length) {
+      return parts;
+    }
+  }
+  return [t];
+}
+
+function expandPprogWorkLines(workLines) {
+  var out = [];
+  var arr = Array.isArray(workLines) ? workLines : [];
+  for (var i = 0; i < arr.length; i++) {
+    var expanded = expandPprogJoinedMovementLine(arr[i]);
+    for (var j = 0; j < expanded.length; j++) out.push(expanded[j]);
+  }
+  return out;
+}
+
+/**
+ * "45 sec Hollow Hold. Rest 60 sec." → work + trailing rest note.
+ */
+function peelInlineTrailingCoachNote(line) {
+  var t = String(line || "").trim();
+  if (!t) return { work: "", note: "" };
+  var m = t.match(/^(.*?)(?:\.|;)\s+(Rest\b.+)$/i);
+  if (m && String(m[1] || "").trim().length >= 3) {
+    var note = String(m[2] || "").trim();
+    if (isPprogPartCoachNoteLine(note) || /^rest\b/i.test(note)) {
+      return { work: String(m[1] || "").trim(), note: note };
+    }
+  }
+  return { work: t, note: "" };
+}
+
+function finalizePprogWorkAndNotes(workIn, trailingIn) {
+  var work = Array.isArray(workIn) ? workIn.slice() : [];
+  var trailingNotes = Array.isArray(trailingIn) ? trailingIn.slice() : [];
+  var cleaned = [];
+  var inlineNotes = [];
+  for (var i = 0; i < work.length; i++) {
+    var peeled = peelInlineTrailingCoachNote(work[i]);
+    if (peeled.work) cleaned.push(peeled.work.replace(/\.\s*$/, ""));
+    if (peeled.note) inlineNotes.push(peeled.note);
+  }
+  work = cleaned;
+  while (work.length && isPprogPartCoachNoteLine(work[work.length - 1])) {
+    trailingNotes.unshift(work.pop());
+  }
+  trailingNotes = trailingNotes.concat(inlineNotes);
+  return { work: work, trailingNotes: trailingNotes };
+}
+
 /** Always show Part A/B/C; keep coach title after an em dash (avoid double Part prefix). */
 function formatPprogPartHeading(partIndex, rawTitle) {
   var letter = String.fromCharCode(65 + (partIndex | 0));
@@ -5218,16 +5464,17 @@ function formatPprogPartHeading(partIndex, rawTitle) {
 /** Format / instruction header (AMRAP, sets for quality, etc.). */
 function isPprogPartFormatLine(line) {
   var t = String(line || "").trim();
-  if (!t || t.length > 120) return false;
-  if (/:\s*$/.test(t)) return true;
-  return /^(AMRAP|EMOM|E2MOM|For\s*Time|Chipper|Tabata|Intervals?\b|Every\s+\d|\d+\s*sets?\b|sets?\s+for\s+quality|quality\s+rounds)/i.test(
-    t
-  );
+  if (!t || t.length > 180) return false;
+  if (peelPprogEmbeddedFormat(t)) return true;
+  if (/:\s*$/.test(t) && isPprogPartFormatHead(t)) return true;
+  if (/:\s*$/.test(t) && /^(AMRAP|EMOM|E2MOM|For\s*Time|\d+\s*(?:sets?|rounds?)\b)/i.test(t)) return true;
+  return isPprogPartFormatHead(t);
 }
 
 /**
  * Split flat part.lines into: intent notes → bold format → prescription work.
  * Works for existing workouts that put Duration/AMRAP as ordinary bullets.
+ * Also expands arrow/+ /comma joins and peels coaching cues into note style.
  */
 function classifyPprogPartLines(rawLines) {
   var lines = Array.isArray(rawLines)
@@ -5246,29 +5493,50 @@ function classifyPprogPartLines(rawLines) {
     }
   }
   var i = 0;
+  var embeddedWork = "";
   if (formatIdx >= 0) {
     for (i = 0; i < formatIdx; i++) notes.push(lines[i]);
-    format = lines[formatIdx];
+    var peeledFmt = peelPprogEmbeddedFormat(lines[formatIdx]);
+    if (peeledFmt) {
+      format = peeledFmt.format;
+      embeddedWork = peeledFmt.workRest;
+    } else {
+      format = lines[formatIdx];
+    }
     i = formatIdx + 1;
   } else {
-    while (i < lines.length && isPprogPartIntentNoteLine(lines[i])) {
+    while (i < lines.length && isPprogPartCoachNoteLine(lines[i])) {
       notes.push(lines[i]);
       i++;
     }
     if (i < lines.length && isPprogPartFormatLine(lines[i])) {
-      format = lines[i];
+      peeledFmt = peelPprogEmbeddedFormat(lines[i]);
+      if (peeledFmt) {
+        format = peeledFmt.format;
+        embeddedWork = peeledFmt.workRest;
+      } else {
+        format = lines[i];
+      }
       i++;
     }
   }
+  if (embeddedWork) work.push(embeddedWork);
   while (i < lines.length) {
     work.push(lines[i]);
     i++;
   }
-  while (work.length && isPprogPartIntentNoteLine(work[work.length - 1])) {
+  /* Peel trailing coach cues / rest-between from the work list */
+  while (work.length && isPprogPartCoachNoteLine(work[work.length - 1])) {
     trailingNotes.unshift(work.pop());
   }
+  work = expandPprogWorkLines(work);
+  var finalized = finalizePprogWorkAndNotes(work, trailingNotes);
+  work = finalized.work;
+  trailingNotes = finalized.trailingNotes;
   if (!notes.length && !format && !work.length && !trailingNotes.length && lines.length) {
-    work = lines.slice();
+    finalized = finalizePprogWorkAndNotes(expandPprogWorkLines(lines.slice()), []);
+    work = finalized.work;
+    trailingNotes = finalized.trailingNotes;
   }
   return { notes: notes, format: format, work: work, trailingNotes: trailingNotes };
 }
@@ -9310,11 +9578,16 @@ function buildPprogDayShareText(dayKey) {
     }
     if (classified.format) t += classified.format + "\n";
     var work = classified.work;
-    if (!work.length && !classified.notes.length && !classified.format) {
+    var trailing = classified.trailingNotes || [];
+    if (
+      !work.length &&
+      !classified.notes.length &&
+      !classified.format &&
+      !trailing.length
+    ) {
       work = part.lines || [];
     }
     for (var li = 0; li < work.length; li++) t += "• " + work[li] + "\n";
-    var trailing = classified.trailingNotes || [];
     for (var ti = 0; ti < trailing.length; ti++) t += trailing[ti] + "\n";
     t += "\n";
   }
@@ -9838,14 +10111,20 @@ function renderPprogDayPartsHtml(parts, dayData, dayKey) {
     }
     html += '<ul class="section-lines">';
     var work = classified.work;
-    if (!work.length && !classified.notes.length && !classified.format) {
+    var trailing = classified.trailingNotes || [];
+    /* Only fall back to raw lines when classify produced nothing at all (avoid duping notes). */
+    if (
+      !work.length &&
+      !classified.notes.length &&
+      !classified.format &&
+      !trailing.length
+    ) {
       work = part.lines || [];
     }
     for (var li = 0; li < work.length; li++) {
       html += "<li>" + esc(work[li]) + "</li>";
     }
     html += "</ul>";
-    var trailing = classified.trailingNotes || [];
     for (var ti = 0; ti < trailing.length; ti++) {
       html += '<div class="pprog-part-note">' + esc(trailing[ti]) + "</div>";
     }

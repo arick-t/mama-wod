@@ -1,9 +1,29 @@
 # Changelog
 
+## [Coach 2.3.6] - 2026-08-12
+
+### Personal Coach — generic movement-pattern balance (no movement-specific bans)
+- **Coach subtitle:** `COACH · v2.3.6`.
+- Replace movement-specific anti-spam wording with generic CF rule: avoid single-pattern dominance / repeated identical couplet-triplet templates across the week.
+- Keep weekly lunge-family + (indoors) wall coverage; keep L1/L2 variety doctrine unchanged.
+
+---
+
+## [Display polish — workout parts] - 2026-08-12 · branch `cursor/fix-workout-display-polish-d279`
+
+### Personal Coach / Admin — approved metcon list + cue notes
+- **Chipper display:** expand `->` / `→` / ` + ` / `|` / multi-`Min N:` / comma-joined movements into **one movement per bullet** (approved template).
+- **Glued format:** peel `E2MOM …: 6 X + 8 Y` / `3 Rounds (Quality): A, B, C` / `EMOM …: Min 1: …; Min 2: …` into bold format + separate work lines.
+- **Coaching cues:** trailing lines like `Maintain flat back…` / `Rest 2 min between sets.` / `Target loading:` / `Target score:` render as **notes**, not work bullets.
+- **POL-012:** emit guidance tightened — one movement/station per line; no arrow/+ /| /comma / multi-Min joins; rest/cues as Note/Cue lines.
+- Applies to existing bricks on client classify (no rebuild required for display). Coach version bumped in this branch to **2.3.6** after stability verification.
+
+---
+
 ## [Admin 1.5.8] - 2026-08-12
 
 ### Phone-browser retest batch — intake 1:1, Build plan, hide FAB, new-user admin tab
-- **Admin subtitle / title:** `DUCK-WOD Admin · 1.5.8` · badge **Admin 1.5.8 · Coach 2.3.4**.
+- **Admin subtitle / title:** `DUCK-WOD Admin · 1.5.8` · badge **Admin 1.5.8 · Coach 2.3.6**.
 - **Intake 1:1:** +מתאמן questionnaire uses athlete-app `pprog-*` markup/UX (keyboards `inputmode`, lifts rows, skills list, recovery nest, notes, “Build my plan”).
 - **Build plan connectivity:** 180s AbortController, safer JSON parse, one automatic retry on Safari `Load failed` / network drop — still real `generate_block` only (no stubs).
 - **Hide coach FAB** while intake modal is open (z-index + JS + CSS).
