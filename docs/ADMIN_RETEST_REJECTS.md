@@ -9,10 +9,12 @@ Rule: free-form notes → confirm understanding → append here → **one batch*
 - Intake 1:1, Build plan retry, hide FAB during +מתאמן
 - Same-athleteId reclaim + fresh Terms / declaration date on new intake sitting
 
-## Open rejects
-1. **FAB stays visible during +מתאמן (2026-08-12):** Athlete chat FAB (duck + selected name, e.g. עדי) floats over intake step 2/9 on phone Safari. Expected: hidden for entire intake modal. Fix: move FAB outside `#app` (iOS fixed-in-overflow), `body.admin-intake-open` + `hidden` attribute, sync on open/start/close.
-2. **Numeric keyboards not like app (2026-08-12):** Lifts step (5/9) opens Hebrew keyboard on admin (`lang="he"` page) instead of decimal keypad. Expected: same as athlete app. Fix: shared `CoachIntakeSync.renderFixedLiftsRowsHtml` / `renderFixedProfileInputHtml` with `lang="en"` + `inputmode` on numeric fields; `#intake-fixed` forced `lang=en dir=ltr`.
-3. **Build plan fails at step 9 (2026-08-12):** Red error after Build plan on phone. Root cause (confirmed): admin served from GitHub Pages used relative `/api/*` → 404 on github.io instead of Vercel. Fix: `getAdminApiBase` / `adminApiUrl` / `pagesAbsoluteUrl` in admin.html + claim.html; all fetches routed to `mama-wod.vercel.app`.
+## Open rejects (fixed on branch — pending founder retest)
+1. **FAB stays visible during +מתאמן** — fixed: FAB outside `#app`, `admin-intake-open`, `hidden`.
+2. **Numeric keyboards not like app** — fixed: shared `CoachIntakeSync` numeric HTML, `#intake-fixed lang=en`.
+3. **Build plan fails at step 9** — fixed: `getAdminApiBase` / `adminApiUrl` → `mama-wod.vercel.app`; admin auth + retries.
+
+Admin **1.5.9** on branch (was 1.5.8 on main).
 
 ## Hard constraints
 - Workout programming quality non-negotiable.

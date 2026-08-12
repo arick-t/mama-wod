@@ -715,7 +715,7 @@
       }, 180000);
     }
 
-    fetch(typeof adminApiUrl === "function" ? adminApiUrl("/api/personal-coach") : "/api/personal-coach", {
+    fetch(adminApiUrl("/api/personal-coach"), {
       method: "POST",
       headers: pcHeaders,
       body: JSON.stringify(payload),
@@ -810,7 +810,7 @@
       Object.assign({}, intakeState, { intakeComplete: true })
     );
 
-    fetch(typeof adminApiUrl === "function" ? adminApiUrl("/api/admin-handoff") : "/api/admin-handoff", {
+    fetch(adminApiUrl("/api/admin-handoff"), {
       method: "POST",
       headers: typeof adminAuthHeaders === "function" ? adminAuthHeaders() : { "Content-Type": "application/json" },
       body: JSON.stringify(
