@@ -24,11 +24,13 @@ Branch לטיפולים: `cursor/admin-block-handoff-display-f8bf`
 1. **לינק handoff** — קיים רק ב-popup אחרי יצירה. **חסר** בלשונית המתאמן כפתור «העתק לינק» / תצוגת הלינק שנוצר (יש UI ל-handoff בכרטיס אבל לא מולא אוטומטית אחרי create).
 2. **בלוק אימון ריק** — בלוח «בלוק אימון» כל הימים מציגים **«ללא תכנון»** (אוגוסט 2026), למרות ש-Build plan הסתיים + popup handoff.
 3. **עיצוב בלוק** — לא נראה כמו בלוח האימון באפליקציית המתאמן (pprog day cards, parts, overview strip). Admin משתמש ב-render נפרד.
+4. **מייל פתיחת משתמש חדש** — **לא קיבלתי** מייל על פתיחת/הצטרפות משתמש חדש (join email / notify founder). ציפיתי לקבל אחרי יצירת «אריק מחשב 2» מהאדמין.
 
 ### שאלות אליך (מח)
 1. **האם קיבלת אינדיקציה** על מתאמן חדש **«אריק מחשב 2»** (create_athlete / admin-handoff / snapshot)?
 2. **האם generate_block** החזיר BLOCK_JSON עם `weeks[]` מלא + `blockStart`? אם חסר `blockStart` — האם זה מסביר לוח ריק באדמין?
 3. **למה Build plan** כל כך ארוך — timeout/retries/Gemini — מה מומלץ (בלי לפגוע באיכות)?
+4. **מייל join** — למה לא נשלח? האם `create_athlete` מהאדמין אמור לשלוח `sendJoinMailAndAnalytics` / notify (כמו intake_complete מהטלפון)? איזה endpoint/trigger חסר?
 
 ### בקשת מוצר (HARD — כמו תחקור)
 **הצגת בלוק אימון באדמין = אותו צינור/עיצוב כמו באפליקציה.**
@@ -46,7 +48,8 @@ Branch לטיפולים: `cursor/admin-block-handoff-display-f8bf`
 1. אבחון: למה הלוח ריק + האם אתה רואה את אריק מחשב 2.
 2. תוכנית: איך לחבר תצוגת בלוק admin ל-pprog UI (קבצים / shared module / normalize block on save).
 3. handoff UX: persist + show link בכרטיס אחרי autoCreateLink.
-4. (אופציונלי) build time — המלצות בלי stub.
+4. **join email:** trigger מ-`create_athlete` (admin) — parity עם `sendJoinMailAndAnalytics` מהאפליקציה.
+5. (אופציונלי) build time — המלצות בלי stub.
 
 ענה בעברית, ממוקד, עם רשימת קבצים לשנות.
 ```
@@ -61,6 +64,7 @@ Branch לטיפולים: `cursor/admin-block-handoff-display-f8bf`
 | popup לינק | `window.prompt(...)` — לא מעדכן `lastHandoffUrl` / כרטיס |
 | לוח admin | `admin.html` → `buildBlockWorkoutMap` — **דורש `blockStart` תקין** אחרת map ריק |
 | handoff בכרטיס | `renderHandoffSectionBody` + `createHandoffLink` — קיים, לא נקרא אחרי intake |
+| join email | `index.html` → `sendJoinMailAndAnalytics` — רץ מ-intake_complete **בטלפון**; **לא** מ-`create_athlete` באדמין |
 | אפליקציה | `index.html` → `renderPprogWeek`, `pprog-day-card`, `normalizePprogWeek` |
 
 ## Open fixes (branch)
@@ -68,3 +72,4 @@ Branch לטיפולים: `cursor/admin-block-handoff-display-f8bf`
 1. Persist handoff URL on snapshot + show copy button in athlete tab after create.
 2. Normalize `blockStart` + weeks on save (parity with `applyPprogBlock`).
 3. Shared block calendar/day render from app (or embed pprog read-only view).
+4. **Join email on admin create_athlete** — notify founder when new athlete created from admin (email entered in intake).

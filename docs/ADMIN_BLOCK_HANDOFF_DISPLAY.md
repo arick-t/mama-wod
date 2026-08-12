@@ -11,6 +11,7 @@ Status: **open** — prompt sent to coach engine; code fixes after response.
 - Handoff popup ✓ — need same link in athlete tab
 - Block calendar **empty** («ללא תכנון» all days) — athlete «אריק מחשב 2»
 - Block UI ≠ app pprog display
+- **No join email** received for new user «אריק מחשב 2»
 
 ## Likely root cause (empty calendar)
 
