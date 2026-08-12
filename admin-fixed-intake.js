@@ -672,7 +672,13 @@
 
   function generateIntakeBlockFromFixedPacket(retryLeft) {
     if (intakeState.busy && retryLeft == null) return;
-    if (retryLeft == null) retryLeft = 1;
+    if (retryLeft == null) retryLeft = 2;
+    if (typeof adminPw !== "undefined" && !String(adminPw || "").trim()) {
+      restoreAdminFixedGoals(
+        "פג תוקף ההתחברות לאדמין — צא מ+מתאמן, התחבר מחדש, ואז Build plan."
+      );
+      return;
+    }
     setIntakeBusy(true);
     showIntakeBuilding(
       true,
@@ -689,6 +695,15 @@
       typeof adminAuthHeaders === "function"
         ? adminAuthHeaders()
         : { "Content-Type": "application/json" };
+    var payload = {
+      action: "generate_block",
+      messages: payloadMsgs,
+      athleteProfile: profile,
+      intakeComplete: true,
+      forceJson: true,
+      adminProgramming: true,
+    };
+    if (typeof withAdminPassword === "function") payload = withAdminPassword(payload);
 
     var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
     var timer = null;
@@ -703,14 +718,7 @@
     fetch("/api/personal-coach", {
       method: "POST",
       headers: pcHeaders,
-      body: JSON.stringify({
-        action: "generate_block",
-        messages: payloadMsgs,
-        athleteProfile: profile,
-        intakeComplete: true,
-        forceJson: true,
-        adminProgramming: true,
-      }),
+      body: JSON.stringify(payload),
       signal: controller ? controller.signal : undefined,
     })
       .then(function (r) {
@@ -731,8 +739,17 @@
             typeof friendlyCoachError === "function"
               ? friendlyCoachError(j, x.status)
               : String((j && (j.message || j.error)) || (x.raw ? "bad response" : "empty response"));
-          if (retryLeft > 0 && (!x.j || x.status >= 500 || x.status === 0)) {
-            document.getElementById("intake-status").textContent = "מנסה שוב…";
+          var retryable =
+            retryLeft > 0 &&
+            (!x.j ||
+              x.status === 0 ||
+              x.status >= 500 ||
+              x.status === 401 ||
+              x.status === 403 ||
+              x.status === 429);
+          if (retryable) {
+            document.getElementById("intake-status").textContent =
+              x.status === 401 ? "מתחבר מחדש…" : "מנסה שוב…";
             setIntakeBusy(false);
             return generateIntakeBlockFromFixedPacket(retryLeft - 1);
           }

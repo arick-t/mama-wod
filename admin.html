@@ -2984,17 +2984,32 @@ function intakeAthleteProfile(opts) {
 }
 
 function friendlyCoachError(j, status) {
-  var detail = (j && (j.detail || j.error || j.hint)) || "";
-  var low = String(detail).toLowerCase() + " " + String(status || "");
-  if (/api[_ ]?key|gemini|no[_ ]?key|missing.*key|GEMINI/i.test(low) || status === 503) {
-    return "שירות המאמן לא זמין — חסר מפתח GEMINI או שה־AI לא מחובר. לא ניתן לבצע תחקור מדומה.";
+  var code = String((j && j.code) || (j && j.error) || "").trim();
+  var detail = String((j && (j.detail || j.message || j.hint)) || (j && j.error) || "").trim();
+  var low = (detail + " " + code + " " + String(status || "")).toLowerCase();
+  if (code === "TERMS_REQUIRED") {
+    return "נדרשת החתמה על התנאים — באדמין צריך auth תקין (התחבר מחדש).";
+  }
+  if (status === 401 || code === "Unauthorized") {
+    return "סיסמת אדמין לא נשלחה או פגתה — צא והתחבר מחדש, ואז Build plan.";
+  }
+  if (code === "admin_not_configured") {
+    return String(j.message || j.messageEn || "ADMIN_PASSWORD לא מוגדר בשרת.");
+  }
+  if (/api[_ ]?key|gemini|no[_ ]?key|missing.*key/.test(low) && status === 503) {
+    return "שירות המאמן לא זמין — חסר מפתח GEMINI בשרת. בדוק Vercel env.";
   }
   if (status === 429 || /too many/i.test(low)) return "יותר מדי בקשות — חכה דקה ונסה שוב.";
-  if (/<!doctype|<html|empty response|not return json/i.test(low)) {
+  if (status === 504 || /timeout|timed out|gateway|function_invocation/i.test(low)) {
+    return "בניית הלבנה ארוכה — החיבור נקטע. המתן עד ~3 דק׳ ולחץ Build plan שוב.";
+  }
+  if (status === 503) {
+    return "שירות המאמן לא זמין זמנית — נסה Build plan שוב בעוד דקה.";
+  }
+  if (/<!doctype|<html|empty response|not return json|bad response/i.test(low)) {
     return "תקלת חיבור — נסה שוב.";
   }
-  var clean = String(detail || ("HTTP " + (status || "?")));
-  return clean.slice(0, 400);
+  return String(detail || code || "HTTP " + (status || "?")).slice(0, 400);
 }
 
 function stripPickerMarkers(text) {
