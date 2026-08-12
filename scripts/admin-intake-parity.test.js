@@ -89,7 +89,7 @@ ok("admin build restores goals on fail", /restoreAdminFixedGoals/.test(fixedJs))
 ok("admin Build plan sends admin auth", /adminAuthHeaders\(\)/.test(fixedJs) && /adminProgramming:\s*true/.test(fixedJs));
 ok("admin Build plan timeout+retry", /180000/.test(fixedJs) && /retryLeft/.test(fixedJs));
 ok("admin Build my plan CTA", /Build my plan/.test(fixedJs));
-ok("admin hides FAB during intake", /intake-modal\.open/.test(adminHtml) && /intakeOpen/.test(adminHtml));
+ok("admin hides FAB during intake", /admin-intake-open/.test(adminHtml) && /setAdminIntakeModalOpen/.test(adminHtml) && /adminChatFabWrap[\s\S]*hidden/.test(adminHtml));
 ok("admin recovery nested under Yes", /pprog-fixed-recovery-branch/.test(fixedJs) && /Under Yes/.test(fixedJs));
 ok("admin recovery no Thu default", /activeRecoveryDay:\s*""/.test(fixedJs));
 ok("phone recovery nested under Yes", /pprog-fixed-recovery-branch/.test(index));

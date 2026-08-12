@@ -420,9 +420,13 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
 .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(8,6,12,.78);z-index:1200;
   align-items:center;justify-content:center;padding:12px}
 .modal-backdrop.open{display:flex}
-/* Hide coach chat FAB while +מתאמן intake is open (FAB sits above modal otherwise). */
+/* Hide athlete chat FAB while +מתאמן intake is open (iOS fixed-in-overflow bug). */
+body.admin-intake-open #adminChatFabWrap,
+body.admin-intake-open #adminChatFloat,
 body:has(#intake-modal.open) #adminChatFabWrap,
-body:has(#intake-modal.open) #adminChatFloat{display:none!important}
+body:has(#intake-modal.open) #adminChatFloat{
+  display:none!important;visibility:hidden!important;pointer-events:none!important
+}
 .intake-workspace{position:relative;background:var(--bg-card);border:1px solid var(--line);
   border-radius:14px;width:min(920px,100%);height:min(92vh,900px);display:flex;flex-direction:column;
   overflow:hidden;box-shadow:0 20px 56px rgba(0,0,0,.5)}
@@ -619,36 +623,36 @@ body:has(#intake-modal.open) #adminChatFloat{display:none!important}
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Floating athlete note FAB (scoped to selected tab athlete) -->
-  <div class="admin-chat-fab-wrap" id="adminChatFabWrap" aria-hidden="true">
-    <button type="button" class="admin-chat-fab" id="adminChatFab" onclick="toggleAthleteChatFab()" aria-expanded="false" aria-controls="adminChatFloat" title="הערה למתאמן">
-      <span class="admin-chat-fab-avatar">
-        <img src="assets/hamamen-coach-duck.png" alt="" width="46" height="46" draggable="false">
-      </span>
-      <span class="admin-chat-fab-caption" id="adminChatFabCaption">שיחה</span>
-    </button>
-  </div>
-  <div class="admin-chat-float" id="adminChatFloat" role="dialog" aria-labelledby="adminChatFloatTitle">
-    <div class="admin-chat-float-head">
-      <div>
-        <div class="admin-chat-float-title" id="adminChatFloatTitle">הערה למתאמן</div>
-        <span class="admin-chat-float-sub" id="adminChatFloatSub">בחר מתאמן</span>
-      </div>
-      <button type="button" class="admin-chat-float-close" onclick="closeAthleteChatFab()" aria-label="סגור">×</button>
+<!-- Floating athlete note FAB — outside #app so iOS Safari does not paint it above intake modal -->
+<div class="admin-chat-fab-wrap" id="adminChatFabWrap" aria-hidden="true" hidden>
+  <button type="button" class="admin-chat-fab" id="adminChatFab" onclick="toggleAthleteChatFab()" aria-expanded="false" aria-controls="adminChatFloat" title="הערה למתאמן">
+    <span class="admin-chat-fab-avatar">
+      <img src="assets/hamamen-coach-duck.png" alt="" width="46" height="46" draggable="false">
+    </span>
+    <span class="admin-chat-fab-caption" id="adminChatFabCaption">שיחה</span>
+  </button>
+</div>
+<div class="admin-chat-float" id="adminChatFloat" role="dialog" aria-labelledby="adminChatFloatTitle" hidden>
+  <div class="admin-chat-float-head">
+    <div>
+      <div class="admin-chat-float-title" id="adminChatFloatTitle">הערה למתאמן</div>
+      <span class="admin-chat-float-sub" id="adminChatFloatSub">בחר מתאמן</span>
     </div>
-    <div class="admin-chat-float-body notes-section" id="adminChatFloatBody" data-notes="sticky">
-      <textarea class="notes-ta" id="notes-ta-sticky" placeholder="הערה על המתאמן… שינויים / התאמות / הנחיות"></textarea>
+    <button type="button" class="admin-chat-float-close" onclick="closeAthleteChatFab()" aria-label="סגור">×</button>
+  </div>
+  <div class="admin-chat-float-body notes-section" id="adminChatFloatBody" data-notes="sticky">
+    <textarea class="notes-ta" id="notes-ta-sticky" placeholder="הערה על המתאמן… שינויים / התאמות / הנחיות"></textarea>
+    <div class="notes-actions">
+      <button type="button" class="btn-primary" onclick="sendAthleteNote('sticky')">שלח</button>
+      <span class="notes-status" id="notes-status-sticky"></span>
+    </div>
+    <div class="decide-box" id="notes-decide-sticky">
+      <div style="margin-bottom:8px;color:#ddd" id="notes-decide-q-sticky">להטמיע עכשיו או להמתין?</div>
       <div class="notes-actions">
-        <button type="button" class="btn-primary" onclick="sendAthleteNote('sticky')">שלח</button>
-        <span class="notes-status" id="notes-status-sticky"></span>
-      </div>
-      <div class="decide-box" id="notes-decide-sticky">
-        <div style="margin-bottom:8px;color:#ddd" id="notes-decide-q-sticky">להטמיע עכשיו או להמתין?</div>
-        <div class="notes-actions">
-          <button type="button" class="btn-secondary good" onclick="decideLearnNote('implement')">להטמיע עכשיו</button>
-          <button type="button" class="btn-secondary wait" onclick="decideLearnNote('wait')">להמתין ולצבור</button>
-        </div>
+        <button type="button" class="btn-secondary good" onclick="decideLearnNote('implement')">להטמיע עכשיו</button>
+        <button type="button" class="btn-secondary wait" onclick="decideLearnNote('wait')">להמתין ולצבור</button>
       </div>
     </div>
   </div>
@@ -959,6 +963,21 @@ function syncLearningUi() {
   if (body) body.classList.toggle("learning", learningMode);
 }
 
+function isAdminIntakeModalOpen() {
+  var m = document.getElementById("intake-modal");
+  return !!(m && m.classList.contains("open"));
+}
+
+function setAdminIntakeModalOpen(isOpen) {
+  var m = document.getElementById("intake-modal");
+  if (m) m.classList.toggle("open", !!isOpen);
+  document.body.classList.toggle("admin-intake-open", !!isOpen);
+  var a = athletes.find(function (x) {
+    return x.athleteId === currentAthleteId;
+  });
+  syncAthleteChatFab(a || null);
+}
+
 function syncAthleteChatFab(a) {
   var wrap = document.getElementById("adminChatFabWrap");
   var fab = document.getElementById("adminChatFab");
@@ -966,12 +985,16 @@ function syncAthleteChatFab(a) {
   var title = document.getElementById("adminChatFloatTitle");
   var sub = document.getElementById("adminChatFloatSub");
   var floatEl = document.getElementById("adminChatFloat");
-  var intakeModal = document.getElementById("intake-modal");
-  var intakeOpen = !!(intakeModal && intakeModal.classList.contains("open"));
+  var intakeOpen = isAdminIntakeModalOpen();
   var show = !!(a && a.athleteId) && !intakeOpen;
   if (wrap) {
     wrap.classList.toggle("show", show);
+    wrap.hidden = !show;
     wrap.setAttribute("aria-hidden", show ? "false" : "true");
+  }
+  if (floatEl) {
+    if (!show || !adminChatFabOpen) floatEl.hidden = true;
+    else floatEl.hidden = false;
   }
   if (!show) {
     adminChatFabOpen = false;
@@ -998,6 +1021,7 @@ function syncAthleteChatFab(a) {
     fab.title = "הערה · " + name;
   }
   if (floatEl) floatEl.classList.toggle("open", adminChatFabOpen);
+  if (floatEl) floatEl.hidden = !adminChatFabOpen;
 }
 
 function toggleAthleteChatFab() {
@@ -2917,8 +2941,7 @@ function resetIntakeState() {
 
 function openIntakeWorkspace() {
   resetIntakeState();
-  var m = document.getElementById("intake-modal");
-  if (m) m.classList.add("open");
+  setAdminIntakeModalOpen(true);
   document.getElementById("intake-email").value = "";
   document.getElementById("intake-chat-log").innerHTML =
     '<div class="intake-msg system">לחץ ״התחל תחקור״ כדי לפתוח שיחה עם המאמן (13 נושאים — כמו בפרודקשן)</div>';
@@ -2935,8 +2958,7 @@ function closeIntakeWorkspace() {
   if (intakeState.busy) {
     if (!confirm("תחקור בתהליך — לסגור בכל זאת?")) return;
   }
-  var m = document.getElementById("intake-modal");
-  if (m) m.classList.remove("open");
+  setAdminIntakeModalOpen(false);
   resetIntakeState();
   var a = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
   syncAthleteChatFab(a || null);

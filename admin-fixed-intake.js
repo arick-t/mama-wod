@@ -42,6 +42,10 @@
 
   function refreshFabVisibility() {
     try {
+      if (typeof setAdminIntakeModalOpen === "function" && isAdminIntakeModalOpen()) {
+        setAdminIntakeModalOpen(true);
+        return;
+      }
       var a =
         typeof athletes !== "undefined" && Array.isArray(athletes)
           ? athletes.find(function (x) {
@@ -50,6 +54,17 @@
           : null;
       if (typeof syncAthleteChatFab === "function") syncAthleteChatFab(a || null);
     } catch (eFab) {}
+  }
+
+  function setIntakeModalOpen(isOpen) {
+    if (typeof setAdminIntakeModalOpen === "function") {
+      setAdminIntakeModalOpen(isOpen);
+      return;
+    }
+    var m = document.getElementById("intake-modal");
+    if (m) m.classList.toggle("open", !!isOpen);
+    document.body.classList.toggle("admin-intake-open", !!isOpen);
+    refreshFabVisibility();
   }
 
   window.resetIntakeState = function resetIntakeState() {
@@ -86,9 +101,7 @@
 
   window.openIntakeWorkspace = function openIntakeWorkspace() {
     resetIntakeState();
-    var m = document.getElementById("intake-modal");
-    if (m) m.classList.add("open");
-    refreshFabVisibility();
+    setIntakeModalOpen(true);
     var email = document.getElementById("intake-email");
     if (email) email.value = "";
     var startBar = document.getElementById("intake-start-bar");
@@ -125,14 +138,14 @@
     if (intakeState.busy) {
       if (!confirm("תחקור בתהליך — לסגור בכל זאת?")) return;
     }
-    var m = document.getElementById("intake-modal");
-    if (m) m.classList.remove("open");
+    setIntakeModalOpen(false);
     resetIntakeState();
     refreshFabVisibility();
   };
 
   window.startIntakeChat = function startFixedIntake() {
     if (intakeState.busy) return;
+    setIntakeModalOpen(true);
     intakeState.email = (document.getElementById("intake-email").value || "").trim();
     intakeState.started = true;
     intakeState.fixedActive = true;
@@ -869,9 +882,9 @@
           } catch (ePrompt) {}
         }
         setTimeout(function () {
-          var m = document.getElementById("intake-modal");
-          if (m) m.classList.remove("open");
+          setIntakeModalOpen(false);
           resetIntakeState();
+          refreshFabVisibility();
           if (typeof loadAthletes === "function") loadAthletes();
         }, 700);
       })
