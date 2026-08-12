@@ -719,6 +719,49 @@ body:has(#intake-modal.open) #adminChatFloat{
 
 <script>
 "use strict";
+
+var ADMIN_ANALYTICS_ENDPOINT = (function () {
+  if (typeof location === "undefined") return "https://mama-wod.vercel.app/api/event";
+  var h = location.hostname;
+  var proto = location.protocol;
+  if (h === "localhost" || h === "127.0.0.1") return location.origin + "/api/event";
+  if (proto === "file:") return "https://mama-wod.vercel.app/api/event";
+  if (h === "github.io" || (h.length > 10 && h.slice(-10) === ".github.io"))
+    return "https://mama-wod.vercel.app/api/event";
+  return location.origin.replace(/\/$/, "") + "/api/event";
+})();
+
+function getAdminApiBase() {
+  if (!ADMIN_ANALYTICS_ENDPOINT) return "";
+  var ep = String(ADMIN_ANALYTICS_ENDPOINT).replace(/\/$/, "");
+  return ep.replace(/\/api\/event$/i, "") || (typeof location !== "undefined" ? location.origin : "");
+}
+
+/** GitHub Pages project path, e.g. "/mama-wod" when pathname is /mama-wod/admin.html */
+function getPagesBasePath() {
+  if (typeof location === "undefined") return "";
+  var p = String(location.pathname || "/");
+  if (/\/admin\.html$/i.test(p)) return p.replace(/\/admin\.html$/i, "");
+  if (/\/claim\.html$/i.test(p)) return p.replace(/\/claim\.html$/i, "");
+  if (/\/index\.html$/i.test(p)) return p.replace(/\/index\.html$/i, "");
+  if (p.endsWith("/")) p = p.slice(0, -1);
+  var i = p.lastIndexOf("/");
+  return i > 0 ? p.slice(0, i) : "";
+}
+
+function adminApiUrl(path) {
+  var base = getAdminApiBase();
+  var p = String(path || "");
+  if (!p.startsWith("/")) p = "/" + p;
+  return base ? base.replace(/\/$/, "") + p : p;
+}
+
+function pagesAbsoluteUrl(path) {
+  var p = String(path || "");
+  if (!p.startsWith("/")) p = "/" + p;
+  return location.origin + getPagesBasePath() + p;
+}
+
 var adminPw = "";
 var athletes = [];
 var currentAthleteId = null;
@@ -1093,7 +1136,7 @@ function renderCreditPill(credit) {
 
 function loadCreditEstimate() {
   if (!adminPw) return;
-  fetch("/api/admin-meta", {
+  fetch(adminApiUrl("/api/admin-meta"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(withAdminPassword({ action: "get_credit" }))
@@ -1126,7 +1169,7 @@ function openCreditUpdate() {
     showHdrToast("סכום לא תקין", "err");
     return;
   }
-  fetch("/api/admin-meta", {
+  fetch(adminApiUrl("/api/admin-meta"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(withAdminPassword({ action: "set_credit", creditIls: n, note: "עדכון ידני אדמין" }))
@@ -1162,7 +1205,7 @@ function syncDriveBrain() {
   if (label) label.textContent = "מסנכרן…";
   showHdrToast("מתחיל סנכרון…");
 
-  fetch("/api/admin-drive-sync", {
+  fetch(adminApiUrl("/api/admin-drive-sync"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(withAdminPassword({}))
@@ -1211,7 +1254,7 @@ function doLogin() {
   adminPw = pw;
   var errEl = document.getElementById("login-err");
   if (errEl) errEl.textContent = "מתחבר…";
-  fetch("/api/admin-snapshot", {
+  fetch(adminApiUrl("/api/admin-snapshot"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify({ action: "admin_list", adminPassword: pw })
@@ -1257,7 +1300,7 @@ function doLogin() {
 
 function loadAthletes() {
   refreshLiveCoachVersion();
-  fetch("/api/admin-snapshot", {
+  fetch(adminApiUrl("/api/admin-snapshot"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(withAdminPassword({ action: "admin_list" }))
@@ -1350,7 +1393,7 @@ function refreshLiveCoachVersion() {
     syncAdminVersionLabels();
     return Promise.resolve(LIVE_COACH_VERSION);
   }
-  return fetch("/api/personal-coach", { method: "GET" })
+  return fetch(adminApiUrl("/api/personal-coach"), { method: "GET" })
     .then(function(r) {
       return r.json();
     })
@@ -1669,7 +1712,7 @@ function sendPushUpgradeOffer(athleteId, mode) {
   setBusy(true);
   if (status) status.textContent = "שולח הצעה לצ׳אט המאמן…";
   refreshLiveCoachVersion().then(function(ver) {
-    return fetch("/api/admin-snapshot", {
+    return fetch(adminApiUrl("/api/admin-snapshot"), {
       method: "POST",
       headers: adminAuthHeaders(),
       body: JSON.stringify(
@@ -1772,7 +1815,7 @@ function toggleMembershipFrozen(athleteId) {
     ? "להקפיא את המנוי של " + (a.displayName || athleteId) + "?\n\nהמתאמן יוצג כ״מוקפא״ בלוח האדמין."
     : "לבטל הקפאה עבור " + (a.displayName || athleteId) + "?";
   if (!confirm(msg)) return;
-  fetch("/api/admin-snapshot", {
+  fetch(adminApiUrl("/api/admin-snapshot"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(
@@ -1872,7 +1915,7 @@ function createIntakeResetLink(athleteId) {
   var linkEl = document.getElementById("intake-reset-link");
   var wrap = document.getElementById("intake-reset-copy-wrap");
   if (status) status.textContent = "יוצר לינק איפוס...";
-  fetch("/api/admin-handoff", {
+  fetch(adminApiUrl("/api/admin-handoff"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(withAdminPassword({ action: "reset_intake", athleteId: athleteId }))
@@ -1883,7 +1926,7 @@ function createIntakeResetLink(athleteId) {
         if (status) status.textContent = "שגיאה: " + ((d && d.error) || "?");
         return;
       }
-      lastIntakeResetUrl = window.location.origin + d.path;
+      lastIntakeResetUrl = pagesAbsoluteUrl(d.path);
       if (linkEl) {
         linkEl.style.display = "block";
         linkEl.textContent = lastIntakeResetUrl;
@@ -2592,7 +2635,7 @@ function sendAthleteNote(which) {
 
   if (learningMode) {
     var ctx = getSelectedWorkoutPayload(a);
-    fetch("/api/admin-coach-sandbox", {
+    fetch(adminApiUrl("/api/admin-coach-sandbox"), {
       method: "POST",
       headers: adminAuthHeaders(),
       body: JSON.stringify(withAdminPassword({
@@ -2647,7 +2690,7 @@ function sendAthleteNote(which) {
   var existing = String(a.coachDirectives || "").trim();
   var merged = existing ? existing + "\n" + note : note;
   a.coachDirectives = merged;
-  fetch("/api/admin-snapshot", {
+  fetch(adminApiUrl("/api/admin-snapshot"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(
@@ -2694,7 +2737,7 @@ function persistAdminChatLog(a) {
   if (!a || !a.athleteId) return Promise.resolve(false);
   var last = (a.adminChatLog || [])[(a.adminChatLog || []).length - 1];
   if (!last) return Promise.resolve(false);
-  return fetch("/api/admin-snapshot", {
+  return fetch(adminApiUrl("/api/admin-snapshot"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(
@@ -2720,7 +2763,7 @@ function decideLearnNote(decision) {
   if (!pendingLearnNoteId) return;
   var statuses = document.querySelectorAll(".notes-status");
   for (var i = 0; i < statuses.length; i++) statuses[i].textContent = "שומר החלטה…";
-  fetch("/api/admin-coach-sandbox", {
+  fetch(adminApiUrl("/api/admin-coach-sandbox"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(withAdminPassword({
@@ -2789,7 +2832,7 @@ function saveDirectives() {
   btn.textContent = "שומר...";
   status.textContent = "";
   status.style.color = "#4ade80";
-  fetch("/api/admin-snapshot", {
+  fetch(adminApiUrl("/api/admin-snapshot"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(withAdminPassword({ athleteId: a.athleteId, coachDirectives: ta.value }))
@@ -2812,7 +2855,7 @@ function deleteAthlete(id) {
   var a = athletes.find(function(x) { return x.athleteId === id; });
   var name = (a && a.displayName) || id;
   if (!confirm("למחוק את " + name + "?")) return;
-  fetch("/api/admin-snapshot?id=" + encodeURIComponent(id), {
+  fetch(adminApiUrl("/api/admin-snapshot?id=" + encodeURIComponent(id)), {
     method: "DELETE",
     headers: adminAuthHeaders()
   })
@@ -2878,7 +2921,7 @@ function createHandoffLink(athleteId) {
   var linkEl = document.getElementById("handoff-link");
   var wrap = document.getElementById("handoff-copy-wrap");
   if (status) status.textContent = "יוצר לינק...";
-  fetch("/api/admin-handoff", {
+  fetch(adminApiUrl("/api/admin-handoff"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(withAdminPassword({ action: "create_link", athleteId: athleteId }))
@@ -2889,7 +2932,7 @@ function createHandoffLink(athleteId) {
         if (status) status.textContent = "שגיאה: " + ((d && d.error) || "?");
         return;
       }
-      lastHandoffUrl = window.location.origin + d.path;
+      lastHandoffUrl = pagesAbsoluteUrl(d.path);
       if (linkEl) {
         linkEl.style.display = "block";
         linkEl.textContent = lastHandoffUrl;
@@ -3302,7 +3345,7 @@ function startIntakeChat() {
   document.getElementById("intake-chat-log").innerHTML =
     '<div class="intake-msg system">המאמן מתחיל…</div>';
 
-  fetch("/api/personal-coach", {
+  fetch(adminApiUrl("/api/personal-coach"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -3362,7 +3405,7 @@ function sendIntakeMessage() {
     }
   }
 
-  fetch("/api/personal-coach", {
+  fetch(adminApiUrl("/api/personal-coach"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -3420,7 +3463,7 @@ function generateIntakeBlock() {
     }
   }
 
-  fetch("/api/personal-coach", {
+  fetch(adminApiUrl("/api/personal-coach"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify({
@@ -3546,7 +3589,7 @@ function finalizeNewAthlete(block) {
     if (intakeState.skills && intakeState.skills[def.id]) skillsLabels.push(def.label);
   }
 
-  fetch("/api/admin-handoff", {
+  fetch(adminApiUrl("/api/admin-handoff"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(withAdminPassword({

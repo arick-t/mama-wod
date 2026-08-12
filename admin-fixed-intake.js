@@ -715,7 +715,7 @@
       }, 180000);
     }
 
-    fetch("/api/personal-coach", {
+    fetch(typeof adminApiUrl === "function" ? adminApiUrl("/api/personal-coach") : "/api/personal-coach", {
       method: "POST",
       headers: pcHeaders,
       body: JSON.stringify(payload),
@@ -810,7 +810,7 @@
       Object.assign({}, intakeState, { intakeComplete: true })
     );
 
-    fetch("/api/admin-handoff", {
+    fetch(typeof adminApiUrl === "function" ? adminApiUrl("/api/admin-handoff") : "/api/admin-handoff", {
       method: "POST",
       headers: typeof adminAuthHeaders === "function" ? adminAuthHeaders() : { "Content-Type": "application/json" },
       body: JSON.stringify(
@@ -856,9 +856,11 @@
         }
         var linkPath = d.handoff && d.handoff.path;
         var abs =
-          linkPath && typeof location !== "undefined"
-            ? location.origin + linkPath
-            : linkPath || "";
+          linkPath && typeof pagesAbsoluteUrl === "function"
+            ? pagesAbsoluteUrl(linkPath)
+            : linkPath && typeof location !== "undefined"
+              ? location.origin + linkPath
+              : linkPath || "";
         document.getElementById("intake-status").textContent = abs
           ? "נוצר ✓ לינק מסירה מוכן"
           : "נוצר בהצלחה ✓";

@@ -12,6 +12,7 @@ const adminHtml = fs.readFileSync(path.join(root, "admin.html"), "utf8");
 const handoff = fs.readFileSync(path.join(root, "scripts/lib/admin/admin-handoff.js"), "utf8");
 const snap = fs.readFileSync(path.join(root, "scripts/lib/admin/admin-snapshot.js"), "utf8");
 const fixedJs = fs.readFileSync(path.join(root, "admin-fixed-intake.js"), "utf8");
+const claimHtml = fs.readFileSync(path.join(root, "claim.html"), "utf8");
 const index = fs.readFileSync(path.join(root, "index.html"), "utf8");
 
 function ok(name, cond) {
@@ -114,6 +115,15 @@ ok(
     !/function friendlyCoachError[\s\S]*\|\| status === 503/.test(adminHtml)
 );
 ok("admin Build my plan CTA", /Build my plan/.test(fixedJs));
+ok(
+  "admin api base for GitHub Pages",
+  /function getAdminApiBase/.test(adminHtml) &&
+    /function adminApiUrl/.test(adminHtml) &&
+    /fetch\(adminApiUrl\("\/api\//.test(adminHtml) &&
+    !/fetch\("\/api\//.test(adminHtml)
+);
+ok("admin fixed intake uses adminApiUrl", /adminApiUrl\("\/api\/personal-coach"\)/.test(fixedJs));
+ok("claim uses adminApiUrl", /function adminApiUrl/.test(claimHtml) && /fetch\(adminApiUrl\("\/api\/admin-handoff/.test(claimHtml));
 ok("admin hides FAB during intake", /admin-intake-open/.test(adminHtml) && /setAdminIntakeModalOpen/.test(adminHtml) && /adminChatFabWrap[\s\S]*hidden/.test(adminHtml));
 ok("admin recovery nested under Yes", /pprog-fixed-recovery-branch/.test(fixedJs) && /Under Yes/.test(fixedJs));
 ok("admin recovery no Thu default", /activeRecoveryDay:\s*""/.test(fixedJs));
