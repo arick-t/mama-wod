@@ -1,22 +1,20 @@
-# Admin retest rejects — accumulate only (DO NOT auto-ship)
+# Admin retest rejects — **SHIPPED** Admin 1.5.9 (production)
 
-Branch: `cursor/admin-retest-rejects-f8bf`  
-Base: `main` (post Admin **1.5.8** · Coach **2.3.6**)  
-Rule: free-form notes → confirm understanding → append here → **one batch** when founder says start. Do not merge until asked.
+**Merged:** 2026-08-12 · `main` · PR #79  
+**Live:** GitHub Pages `https://arick-t.github.io/mama-wod/admin.html` · API `https://mama-wod.vercel.app`
 
 ## Production baseline (now live)
-- Admin **1.5.8** · Coach **2.3.6**
-- Intake 1:1, Build plan retry, hide FAB during +מתאמן
-- Same-athleteId reclaim + fresh Terms / declaration date on new intake sitting
+- Admin **1.5.9** · Coach **2.3.6**
+- GitHub Pages admin → Vercel API (`adminApiUrl`)
+- Intake 1:1 · Build plan · FAB hidden · numeric keyboards
+- Same-athleteId reclaim + fresh Terms on new intake sitting
 
-## Open rejects (fixed on branch — pending founder retest)
-1. **FAB stays visible during +מתאמן** — fixed: FAB outside `#app`, `admin-intake-open`, `hidden`.
-2. **Numeric keyboards not like app** — fixed: shared `CoachIntakeSync` numeric HTML, `#intake-fixed lang=en`.
-3. **Build plan fails at step 9** — fixed: `getAdminApiBase` / `adminApiUrl` → `mama-wod.vercel.app`; admin auth + retries.
+## Rejects — all fixed in 1.5.9
+1. **FAB visible during +מתאמן** — FAB outside `#app`, `admin-intake-open`, `hidden`.
+2. **Numeric keyboards** — shared `CoachIntakeSync`, `#intake-fixed lang=en`.
+3. **Build plan fails step 9** — `adminApiUrl` → Vercel; admin auth + retries.
 
-Admin **1.5.9** on branch (was 1.5.8 on main).
-
-## Hard constraints
-- Workout programming quality non-negotiable.
-- Athlete-app intake = source of truth; admin reuses 1:1.
-- Do not auto-push coach upgrades to all athletes.
+## Retest checklist
+1. Hard refresh admin (1.5.9 in title/badge).
+2. Login → +מתאמן → full intake → Build plan (~3 min).
+3. Verify handoff link opens claim.html on GitHub Pages path.
