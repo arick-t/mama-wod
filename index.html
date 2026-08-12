@@ -2957,37 +2957,9 @@ function submitPprogProfilePicker() {
 
 function renderPprogLiftsPickerHtml() {
   var store = loadPprogStore();
-  var lifts = store.lifts || {};
   var note = "Enter weight (kg) and run time. Leave blank = unknown / skip — the coach will estimate.";
   var html = '<p class="pprog-lifts-picker-note">' + note + "</p>";
-  for (var i = 0; i < PPROG_LIFT_DEFS.length; i++) {
-    var def = PPROG_LIFT_DEFS[i];
-    var val = lifts[def.id] != null && lifts[def.id] !== "" ? String(lifts[def.id]) : "";
-    var label = def.label;
-    var ph = def.placeholder || (def.kind === "kg" ? "kg" : "");
-    html +=
-      '<div class="pprog-lifts-row">' +
-      '<label for="pprog-lift-' +
-      esc(def.id) +
-      '">' +
-      esc(label) +
-      "</label>" +
-      '<input id="pprog-lift-' +
-      esc(def.id) +
-      '" type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" autocomplete="off" ' +
-      'enterkeyhint="next" data-lift-id="' +
-      esc(def.id) +
-      '" data-lift-kind="' +
-      esc(def.kind) +
-      '" placeholder="' +
-      esc(ph) +
-      '" value="' +
-      esc(val) +
-      '">' +
-      '<span class="pprog-lifts-unit">' +
-      esc(def.unit) +
-      "</span></div>";
-  }
+  html += CoachIntakeSync.renderFixedLiftsRowsHtml(store.lifts || {}, { idPrefix: "pprog-lift-" });
   html +=
     '<button type="button" class="btn pprog-lifts-submit" onclick="submitPprogLiftsPicker()">' +
     "Send lifts" +
@@ -3704,7 +3676,14 @@ function syncPprogFixedIntakeUi() {
   }
   if (form) form.style.display = "none";
   el.style.display = "block";
+  el.setAttribute("lang", "en");
+  el.setAttribute("dir", "ltr");
   el.innerHTML = renderPprogFixedStepHtml(store.fixedIntakeStep | 0);
+  try {
+    if (typeof CoachIntakeSync !== "undefined" && CoachIntakeSync.bindIntakeNumericKeyboards) {
+      CoachIntakeSync.bindIntakeNumericKeyboards(el);
+    }
+  } catch (eKbd) {}
 }
 
 function pprogFixedNavHtml(step, isLast) {
@@ -3764,22 +3743,10 @@ function renderPprogFixedStepHtml(step) {
         }
         html += "</select>";
       } else {
-        var modeAttr = "";
-        if (def.id === "age") modeAttr = ' inputmode="numeric" pattern="[0-9]*"';
-        else if (def.id === "bodyweight")
-          modeAttr = ' inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*"';
-        html +=
-          '<input id="pprog-fx-' +
-          esc(def.id) +
-          '" type="text"' +
-          modeAttr +
-          ' autocomplete="off" data-fx-id="' +
-          esc(def.id) +
-          '" placeholder="' +
-          esc(def.placeholder || "") +
-          '" value="' +
-          esc(String(val || "")) +
-          '">';
+        html += CoachIntakeSync.renderFixedProfileInputHtml(def, val, {
+          idPrefix: "pprog-fx-",
+          dataAttr: "data-fx-id",
+        });
       }
       html += "</div>";
     }

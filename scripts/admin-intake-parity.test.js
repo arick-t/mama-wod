@@ -80,8 +80,26 @@ ok(
     /syncAdminVersionLabels/.test(adminHtml) &&
     /ADMIN_UI_VERSION = "1\.5\.8"/.test(adminHtml)
 );
-ok("admin intake uses pprog classes 1:1", /pprog-fixed-intake/.test(fixedJs) && /pprog-lifts-row/.test(fixedJs));
-ok("admin lifts numeric inputmode", /inputmode="decimal"/.test(fixedJs) && /enterkeyhint="next"/.test(fixedJs));
+ok(
+  "admin intake uses pprog classes 1:1",
+  /pprog-fixed-intake/.test(fixedJs) &&
+    (/pprog-lifts-row/.test(fixedJs) || /renderFixedLiftsRowsHtml/.test(fixedJs))
+);
+ok(
+  "shared numeric keyboard contract",
+  /renderFixedLiftsRowsHtml/.test(
+    fs.readFileSync(path.join(root, "lib", "coach-intake-sync-contract.js"), "utf8")
+  ) &&
+    /bindIntakeNumericKeyboards/.test(
+      fs.readFileSync(path.join(root, "lib", "coach-intake-sync-contract.js"), "utf8")
+    ) &&
+    /renderFixedLiftsRowsHtml/.test(fixedJs) &&
+    /bindIntakeNumericKeyboards/.test(fixedJs)
+);
+ok(
+  "admin intake fixed lang en",
+  /id="intake-fixed" lang="en" dir="ltr"/.test(adminHtml)
+);
 ok("admin skills vertical like app", /pprog-skills-picker/.test(fixedJs) && /adminFixedSkillAllChange/.test(fixedJs));
 ok("admin No injuries chip", /pprog-fixed-chip/.test(fixedJs) && /adm-fx-no-injuries-btn/.test(fixedJs));
 ok("admin build overlay uses coach video", /adminIntakeBuildOverlay/.test(adminHtml) && /coach-thinking\.mp4/.test(adminHtml));

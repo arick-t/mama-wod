@@ -11,6 +11,7 @@ Rule: free-form notes → confirm understanding → append here → **one batch*
 
 ## Open rejects
 1. **FAB stays visible during +מתאמן (2026-08-12):** Athlete chat FAB (duck + selected name, e.g. עדי) floats over intake step 2/9 on phone Safari. Expected: hidden for entire intake modal. Fix: move FAB outside `#app` (iOS fixed-in-overflow), `body.admin-intake-open` + `hidden` attribute, sync on open/start/close.
+2. **Numeric keyboards not like app (2026-08-12):** Lifts step (5/9) opens Hebrew keyboard on admin (`lang="he"` page) instead of decimal keypad. Expected: same as athlete app. Fix: shared `CoachIntakeSync.renderFixedLiftsRowsHtml` / `renderFixedProfileInputHtml` with `lang="en"` + `inputmode` on numeric fields; `#intake-fixed` forced `lang=en dir=ltr`.
 
 ## Hard constraints
 - Workout programming quality non-negotiable.

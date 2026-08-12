@@ -223,22 +223,10 @@
           }
           html += "</select>";
         } else {
-          var modeAttr = "";
-          if (def.id === "age") modeAttr = ' inputmode="numeric" pattern="[0-9]*"';
-          else if (def.id === "bodyweight")
-            modeAttr = ' inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*"';
-          html +=
-            '<input id="adm-fx-' +
-            esc(def.id) +
-            '" type="text"' +
-            modeAttr +
-            ' autocomplete="off" data-fx-id="' +
-            esc(def.id) +
-            '" placeholder="' +
-            esc(def.placeholder || "") +
-            '" value="' +
-            esc(String(val || "")) +
-            '">';
+          html += S.renderFixedProfileInputHtml(def, val, {
+            idPrefix: "adm-fx-",
+            dataAttr: "data-fx-id",
+          });
         }
         html += "</div>";
       }
@@ -323,30 +311,8 @@
     } else if (key === "lifts") {
       html +=
         '<p class="pprog-fixed-title">Lifts &amp; run</p>' +
-        '<p class="pprog-lifts-picker-note">Enter weight (kg) and run time. Leave blank = unknown / skip — the coach will estimate.</p>';
-      for (var lfi = 0; lfi < S.LIFT_DEFS.length; lfi++) {
-        var ld = S.LIFT_DEFS[lfi];
-        var lv = st.lifts && st.lifts[ld.id] != null ? String(st.lifts[ld.id]) : "";
-        var ph = ld.placeholder || (ld.kind === "kg" ? "kg" : "");
-        html +=
-          '<div class="pprog-lifts-row"><label for="adm-lift-' +
-          esc(ld.id) +
-          '">' +
-          esc(ld.label) +
-          '</label><input id="adm-lift-' +
-          esc(ld.id) +
-          '" type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" autocomplete="off" enterkeyhint="next" data-lift-id="' +
-          esc(ld.id) +
-          '" data-lift-kind="' +
-          esc(ld.kind) +
-          '" placeholder="' +
-          esc(ph) +
-          '" value="' +
-          esc(lv) +
-          '"><span class="pprog-lifts-unit">' +
-          esc(ld.unit) +
-          "</span></div>";
-      }
+        '<p class="pprog-lifts-picker-note">Enter weight (kg) and run time. Leave blank = unknown / skip — the coach will estimate.</p>' +
+        S.renderFixedLiftsRowsHtml(st.lifts, { idPrefix: "adm-lift-" });
     } else if (key === "skills") {
       var sk = st.skills || {};
       html +=
@@ -415,7 +381,10 @@
       return;
     }
     el.style.display = "block";
+    el.setAttribute("lang", "en");
+    el.setAttribute("dir", "ltr");
     el.innerHTML = renderStep(intakeState.fixedStep | 0);
+    S.bindIntakeNumericKeyboards(el);
     document.getElementById("intake-status").textContent =
       "תחקור זהה לאפליקציה · שלב " +
       ((intakeState.fixedStep | 0) + 1) +
