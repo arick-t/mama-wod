@@ -5183,6 +5183,76 @@ function isPprogPartIntentNoteLine(line) {
   return false;
 }
 
+/**
+ * Coaching cue / rest-between line — display as note, not a prescription bullet.
+ * e.g. "Rest 2 min between sets." / "Maintain flat back and unbroken sets."
+ */
+function isPprogPartCoachNoteLine(line) {
+  var t = String(line || "").trim();
+  if (!t) return false;
+  if (isPprogPartIntentNoteLine(t)) return true;
+  if (/^(note|cue|coach|tip|reminder|coaching)\s*[:—-]/i.test(t)) return true;
+  if (/^rest\b/i.test(t) && /(between|sets?|rounds?|amraps?|intervals?)/i.test(t)) return true;
+  if (/^rest\s+\d/i.test(t) && !/(run|row|bike|ski|walk|swim)/i.test(t)) return true;
+  if (
+    /^(maintain|keep|focus on|quality|control|smooth|unbroken|breathe|brace|neutral|chest up|hips back|flat back|core tight|full rom|lockout)\b/i.test(
+      t
+    )
+  ) {
+    return true;
+  }
+  /* Cue-like: no leading reps/load, short coaching sentence */
+  if (
+    !/^\d/.test(t) &&
+    t.length <= 90 &&
+    !/\b(kg|lb|m\b|cal|amrap|emom)\b/i.test(t) &&
+    /\b(maintain|unbroken|quality|tempo|smooth|control|brace|breathe)\b/i.test(t)
+  ) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Approved metcon template: one movement per bullet.
+ * Expand chipper strings joined with -> / → into separate work lines.
+ */
+function expandPprogChipperArrowLine(line) {
+  var t = String(line || "").trim();
+  if (!t || !/(?:->|→|⇒)/.test(t)) return [t];
+  var parts = t
+    .split(/\s*(?:->|→|⇒)\s*/)
+    .map(function (s) {
+      return String(s || "").trim();
+    })
+    .filter(Boolean);
+  if (parts.length < 2) return [t];
+  var movementish = 0;
+  for (var i = 0; i < parts.length; i++) {
+    var p = parts[i];
+    if (
+      /^\d/.test(p) ||
+      /\b(run|row|ski|bike|squat|lunge|deadlift|swing|pull|push|burpee|jump|box|wall|kb|db|du|su|clean|snatch|thruster|press|carry|sit-?up|toes|muscle-?up)\b/i.test(
+        p
+      )
+    ) {
+      movementish++;
+    }
+  }
+  if (movementish < 2) return [t];
+  return parts;
+}
+
+function expandPprogWorkLines(workLines) {
+  var out = [];
+  var arr = Array.isArray(workLines) ? workLines : [];
+  for (var i = 0; i < arr.length; i++) {
+    var expanded = expandPprogChipperArrowLine(arr[i]);
+    for (var j = 0; j < expanded.length; j++) out.push(expanded[j]);
+  }
+  return out;
+}
+
 /** Always show Part A/B/C; keep coach title after an em dash (avoid double Part prefix). */
 function formatPprogPartHeading(partIndex, rawTitle) {
   var letter = String.fromCharCode(65 + (partIndex | 0));
@@ -5205,6 +5275,7 @@ function isPprogPartFormatLine(line) {
 /**
  * Split flat part.lines into: intent notes → bold format → prescription work.
  * Works for existing workouts that put Duration/AMRAP as ordinary bullets.
+ * Also expands arrow-chippers and peels coaching cues into note style.
  */
 function classifyPprogPartLines(rawLines) {
   var lines = Array.isArray(rawLines)
@@ -5228,7 +5299,7 @@ function classifyPprogPartLines(rawLines) {
     format = lines[formatIdx];
     i = formatIdx + 1;
   } else {
-    while (i < lines.length && isPprogPartIntentNoteLine(lines[i])) {
+    while (i < lines.length && isPprogPartCoachNoteLine(lines[i])) {
       notes.push(lines[i]);
       i++;
     }
@@ -5241,11 +5312,13 @@ function classifyPprogPartLines(rawLines) {
     work.push(lines[i]);
     i++;
   }
-  while (work.length && isPprogPartIntentNoteLine(work[work.length - 1])) {
+  /* Peel trailing coach cues / rest-between from the work list */
+  while (work.length && isPprogPartCoachNoteLine(work[work.length - 1])) {
     trailingNotes.unshift(work.pop());
   }
+  work = expandPprogWorkLines(work);
   if (!notes.length && !format && !work.length && !trailingNotes.length && lines.length) {
-    work = lines.slice();
+    work = expandPprogWorkLines(lines.slice());
   }
   return { notes: notes, format: format, work: work, trailingNotes: trailingNotes };
 }

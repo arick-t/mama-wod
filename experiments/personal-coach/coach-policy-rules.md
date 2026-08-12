@@ -157,9 +157,10 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - **Type:** HARD
 - **Scope:** day / week / block programming JSON
 - **Trigger:** writing or revising any training part with `lines`
-- **Required behavior:** Keep the part **title** as the part name (e.g. `Part A - Gymnastics Quality & Pulling`). Inside `lines`, order as: (1) one intent note `Duration: … | Movement: …`, (2) one format/instruction header ending with `:` (e.g. `AMRAP in 16 minutes:` / `4 Sets for Quality:`), (3) prescription lines only. Do not bury format and intent as identical bullet weight.
-- **Examples:** Good: note then `AMRAP in 16 minutes:` then movements. Bad: all lines flat with Duration and AMRAP mixed as equal bullets.
+- **Required behavior:** Keep the part **title** as the part name (e.g. `Part A - Gymnastics Quality & Pulling`). Inside `lines`, order as: (1) one intent note `Duration: … | Movement: …`, (2) one format/instruction header ending with `:` (e.g. `AMRAP in 16 minutes:` / `4 Sets for Quality:` / `For Time (25 min cap):`), (3) **prescription lines only — one movement / station per line**. Do **not** join a chipper with `->` / `→` on a single line. Rest-between-sets and coaching cues belong as short note lines (`Note: …` / `Cue: …` / `Rest 2:00 between sets`), never as equal-weight exercise bullets. Do not bury format and intent as identical bullet weight.
+- **Examples:** Good: note then `For Time (25 min cap):` then separate lines `800m Run` / `30 Goblet Squats` / …. Bad: one line `800m Run -> 30 Squats -> 30 T2B`. Bad: `Maintain flat back…` as a work bullet after the lifts.
 - **Added:** 2026-07-28 — clearer Personal Coach workout card hierarchy
+- **Updated:** 2026-08-12 — one movement per line; cues/rest as notes (display polish)
 
 ### POL-013 — Intake / coach chat: practical, no praise
 - **Type:** HARD

@@ -1,57 +1,84 @@
 /**
- * Part A/B/C headings + Target/Intent note classification (display hierarchy).
+ * Personal Coach part display — chipper arrows + coach cues as notes.
+ * Run: node scripts/pprog-part-display.test.js
  */
+const assert = require("assert");
 const fs = require("fs");
 const path = require("path");
-const assert = require("assert");
 
-function formatPprogPartHeading(partIndex, rawTitle) {
-  var letter = String.fromCharCode(65 + (partIndex | 0));
-  var t = String(rawTitle || "").trim();
-  if (!t) return "Part " + letter;
-  if (/^Part\s+[A-Z]\b/i.test(t)) return t;
-  return "Part " + letter + " — " + t;
-}
-
-function isPprogPartIntentNoteLine(line) {
-  var t = String(line || "").trim();
-  if (!t) return false;
-  if (/^target\s*:/i.test(t)) return true;
-  if (/^(target\s+)?duration\s*:/i.test(t)) return true;
-  if (/^movement(\s+intent)?\s*:/i.test(t)) return true;
-  if (/duration\s*:/i.test(t) && /movement/i.test(t)) return true;
-  if (/\beffective\s+target\b/i.test(t)) return true;
-  if (/^\d+\s*-\s*\d+\s*min(ute)?s?\b/i.test(t) && /target|intent|focus|engine|strength|skill/i.test(t)) {
-    return true;
-  }
-  if (/^\d+\s*min(ute)?s?\b/i.test(t) && /target|intent|focus|engine|priority/i.test(t)) {
-    return true;
-  }
-  if (/^(intent|focus|cue|note|goal)\s*[:—-]/i.test(t)) return true;
-  if (/^focus on\b/i.test(t)) return true;
-  return false;
-}
-
-assert.strictEqual(formatPprogPartHeading(0, "Extended Dynamic Warm-up"), "Part A — Extended Dynamic Warm-up");
-assert.strictEqual(formatPprogPartHeading(1, "Handstand Walk & Pistol Skill"), "Part B — Handstand Walk & Pistol Skill");
-assert.strictEqual(formatPprogPartHeading(2, "Metcon - Weekend Engine Grind"), "Part C — Metcon - Weekend Engine Grind");
-assert.strictEqual(formatPprogPartHeading(0, ""), "Part A");
-assert.strictEqual(formatPprogPartHeading(1, "Part B — Already labeled"), "Part B — Already labeled");
-assert.strictEqual(formatPprogPartHeading(2, "Part C Skill"), "Part C Skill");
-
-assert.ok(
-  isPprogPartIntentNoteLine("Target: 10 min | Intent: Dynamic mobility and aerobic priming without running.")
+const root = path.join(__dirname, "..");
+const index = fs.readFileSync(path.join(root, "index.html"), "utf8");
+const admin = fs.readFileSync(path.join(root, "admin.html"), "utf8");
+const rules = fs.readFileSync(
+  path.join(root, "experiments/personal-coach/coach-policy-rules.md"),
+  "utf8"
 );
-assert.ok(isPprogPartIntentNoteLine("Intent: Coordination under low fatigue."));
-assert.ok(!isPprogPartIntentNoteLine("10 thrusters"));
-assert.ok(!isPprogPartIntentNoteLine("3 Rounds for Quality:"));
+const pc = fs.readFileSync(path.join(root, "api/personal-coach.js"), "utf8");
 
-const indexHtml = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
-assert.ok(indexHtml.includes("function formatPprogPartHeading"), "index.html must define formatPprogPartHeading");
-assert.ok(indexHtml.includes("formatPprogPartHeading(pi,"), "render must use formatPprogPartHeading");
-assert.ok(/--note\s*:\s*#7eb8c9/.test(indexHtml), "note color token must be soft cyan");
-assert.ok(/\.pprog-part-note\{[^}]*color:var\(--note\)/.test(indexHtml), "notes use --note, not muted body text");
-assert.ok(indexHtml.includes("DAILY WORKOUTS · v21.5.1"), "display version is v21.5.1");
-assert.ok(/DAILY WORKOUTS · v21\.5\.1\b/.test(indexHtml), "display must be v21.5.1");
+function ok(name, cond) {
+  assert.ok(cond, name);
+  console.log("ok —", name);
+}
 
-console.log("pprog-part-display.test.js: ok");
+ok("expand chipper helper", /function expandPprogChipperArrowLine/.test(index));
+ok("coach note helper", /function isPprogPartCoachNoteLine/.test(index));
+ok("classify peels trailing coach notes", /isPprogPartCoachNoteLine\(work\[work\.length - 1\]\)/.test(index));
+ok("classify expands work arrows", /work = expandPprogWorkLines\(work\)/.test(index));
+ok("admin has same helpers", /expandPprogChipperArrowLine/.test(admin) && /isPprogPartCoachNoteLine/.test(admin));
+ok("admin trailing notes render", /trailingNotes/.test(admin));
+ok("POL-012 one movement per line", /one movement \/ station per line|one movement per line/i.test(rules));
+ok("POL-012 no arrow chipper", /Do \*\*not\*\* join a chipper|no -> chipper/i.test(rules + pc));
+ok("flat back cue pattern", /flat back/i.test(index));
+ok("rest between sets pattern", /between\|sets/i.test(index) || /between\|sets\?/.test(index));
+
+/* Execute helpers by eval'ing extracted functions from index (minimal). */
+function extractFn(src, name) {
+  const re = new RegExp("function " + name + "\\([\\s\\S]*?\\n\\}\\n");
+  const m = src.match(re);
+  assert.ok(m, "extract " + name);
+  return m[0];
+}
+const bundle =
+  extractFn(index, "isPprogPartIntentNoteLine") +
+  extractFn(index, "isPprogPartCoachNoteLine") +
+  extractFn(index, "expandPprogChipperArrowLine") +
+  extractFn(index, "expandPprogWorkLines") +
+  extractFn(index, "isPprogPartFormatLine") +
+  extractFn(index, "classifyPprogPartLines");
+eval(bundle);
+
+const chipper = classifyPprogPartLines([
+  "Intent: Mixed modal aerobic endurance (Target duration: 25 min).",
+  "For Time (25 min cap):",
+  "800m Run -> 30 Dual DB Goblet Squats (1x22.5 kg) -> 30 Toes-to-Bar -> 400m Run -> 25 Box Jump Overs (24 in) -> 20 KB Swings (32 kg) -> 400m Run",
+]);
+ok("chipper expands to many work lines", chipper.work.length >= 6);
+ok("chipper keeps format", /For Time/i.test(chipper.format));
+ok("no arrows left in work", chipper.work.every(function (w) { return !/->|→/.test(w); }));
+
+const strength = classifyPprogPartLines([
+  "Intent: Hinge strength & stamina (Target duration: 12 min).",
+  "E2MOM 12 min (6 sets):",
+  "10 Dual DB Deadlifts (2x22.5 kg)",
+  "8 Heavy Russian KB Swings (32 kg)",
+  "Maintain flat back and unbroken sets.",
+]);
+ok("cue peeled from work", strength.work.length === 2);
+ok(
+  "cue in trailing notes",
+  strength.trailingNotes.some(function (n) { return /flat back/i.test(n); })
+);
+
+const restCue = classifyPprogPartLines([
+  "5 Sets for Quality:",
+  "8 Dual DB Front Squats (2x22.5 kg)",
+  "6 Strict Pull-Ups",
+  "Rest 2 min between sets.",
+]);
+ok("rest-between peeled", restCue.work.length === 2);
+ok(
+  "rest in trailing",
+  restCue.trailingNotes.some(function (n) { return /Rest 2 min/i.test(n); })
+);
+
+console.log("All pprog-part-display checks passed.");

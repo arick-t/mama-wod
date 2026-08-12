@@ -2139,6 +2139,61 @@ function isPprogPartIntentNoteLine(line) {
   return false;
 }
 
+function isPprogPartCoachNoteLine(line) {
+  var t = String(line || "").trim();
+  if (!t) return false;
+  if (isPprogPartIntentNoteLine(t)) return true;
+  if (/^(note|cue|coach|tip|reminder|coaching)\s*[:—-]/i.test(t)) return true;
+  if (/^rest\b/i.test(t) && /(between|sets?|rounds?|amraps?|intervals?)/i.test(t)) return true;
+  if (/^rest\s+\d/i.test(t) && !/(run|row|bike|ski|walk|swim)/i.test(t)) return true;
+  if (
+    /^(maintain|keep|focus on|quality|control|smooth|unbroken|breathe|brace|neutral|chest up|hips back|flat back|core tight|full rom|lockout)\b/i.test(
+      t
+    )
+  ) {
+    return true;
+  }
+  /* Cue-like: no leading reps/load, short coaching sentence */
+  if (
+    !/^\d/.test(t) &&
+    t.length <= 90 &&
+    !/\b(kg|lb|m\b|cal|amrap|emom)\b/i.test(t) &&
+    /\b(maintain|unbroken|quality|tempo|smooth|control|brace|breathe)\b/i.test(t)
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function expandPprogChipperArrowLine(line) {
+  var t = String(line || "").trim();
+  if (!t || !/(?:->|→|⇒)/.test(t)) return [t];
+  var parts = t.split(/\s*(?:->|→|⇒)\s*/).map(function (s) { return String(s || "").trim(); }).filter(Boolean);
+  if (parts.length < 2) return [t];
+  var movementish = 0;
+  for (var i = 0; i < parts.length; i++) {
+    var p = parts[i];
+    if (
+      /^\d/.test(p) ||
+      /\b(run|row|ski|bike|squat|lunge|deadlift|swing|pull|push|burpee|jump|box|wall|kb|db|du|su|clean|snatch|thruster|press|carry|sit-?up|toes|muscle-?up)\b/i.test(p)
+    ) {
+      movementish++;
+    }
+  }
+  if (movementish < 2) return [t];
+  return parts;
+}
+
+function expandPprogWorkLines(workLines) {
+  var out = [];
+  var arr = Array.isArray(workLines) ? workLines : [];
+  for (var i = 0; i < arr.length; i++) {
+    var expanded = expandPprogChipperArrowLine(arr[i]);
+    for (var j = 0; j < expanded.length; j++) out.push(expanded[j]);
+  }
+  return out;
+}
+
 function formatPprogPartHeading(partIndex, rawTitle) {
   var letter = String.fromCharCode(65 + (partIndex | 0));
   var t = String(rawTitle || "").trim();
@@ -2161,8 +2216,9 @@ function classifyPprogPartLines(rawLines) {
   var notes = [];
   var format = "";
   var work = [];
+  var trailingNotes = [];
   var i = 0;
-  while (i < lines.length && isPprogPartIntentNoteLine(lines[i])) {
+  while (i < lines.length && isPprogPartCoachNoteLine(lines[i])) {
     notes.push(lines[i]);
     i++;
   }
@@ -2174,8 +2230,14 @@ function classifyPprogPartLines(rawLines) {
     work.push(lines[i]);
     i++;
   }
-  if (!notes.length && !format && !work.length && lines.length) work = lines.slice();
-  return { notes: notes, format: format, work: work };
+  while (work.length && isPprogPartCoachNoteLine(work[work.length - 1])) {
+    trailingNotes.unshift(work.pop());
+  }
+  work = expandPprogWorkLines(work);
+  if (!notes.length && !format && !work.length && !trailingNotes.length && lines.length) {
+    work = expandPprogWorkLines(lines.slice());
+  }
+  return { notes: notes, format: format, work: work, trailingNotes: trailingNotes };
 }
 
 function normalizePprogPartKind(rawTitle, rawLines) {
@@ -2217,13 +2279,18 @@ function renderPprogDayPartsHtml(parts, dayData) {
     }
     html += '<ul class="section-lines">';
     var work = classified.work;
-    if (!work.length && !classified.notes.length && !classified.format) {
+    if (!work.length && !classified.notes.length && !classified.format && !(classified.trailingNotes || []).length) {
       work = part.lines || [];
     }
     for (var li = 0; li < work.length; li++) {
       html += "<li>" + esc(work[li]) + "</li>";
     }
-    html += "</ul></div>";
+    html += "</ul>";
+    var trailing = classified.trailingNotes || [];
+    for (var ti = 0; ti < trailing.length; ti++) {
+      html += '<div class="pprog-part-note">' + esc(trailing[ti]) + "</div>";
+    }
+    html += "</div>";
   }
   return html;
 }
