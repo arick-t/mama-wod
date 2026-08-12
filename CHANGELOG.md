@@ -1,5 +1,15 @@
 # Changelog
 
+## [Display polish — workout parts] - 2026-08-12 · branch `cursor/fix-workout-display-polish-d279`
+
+### Personal Coach / Admin — approved metcon list + cue notes
+- **Chipper display:** expand `->` / `→` joined chippers into **one movement per bullet** (approved template).
+- **Coaching cues:** trailing lines like `Maintain flat back…` / `Rest 2 min between sets.` render as **notes**, not work bullets.
+- **POL-012:** emit guidance tightened — one movement per line; no arrow-joined chippers; rest/cues as Note/Cue lines.
+- Applies to existing bricks on client classify (no rebuild required for display). Coach version bump deferred while more polish accumulates on this branch.
+
+---
+
 ## [Admin 1.5.7] - 2026-08-11
 
 ### Remote audit batch — delete, phone→admin, Build plan Terms, recovery UX
