@@ -108,14 +108,16 @@ ok("app loads sync contract", /coach-intake-sync-contract\.js/.test(index));
 ok("app push syncs intakeProfile", /intakeProfile: intakeProfile/.test(index));
 ok("app shared packet path", /CoachIntakeSync\.buildFixedIntakePrompt/.test(index));
 ok(
-  "phone rotates uid on locked snapshot",
-  /pprogMintNewAthleteIdentity/.test(index) &&
-    /snapshot_locked/.test(index) &&
-    /pushAdminSnapshot\(store\)/.test(index)
+  "phone keeps same athleteId on reclaim",
+  /reclaimSameAthlete:\s*true/.test(index) && !/pprogMintNewAthleteIdentity/.test(index)
 );
 ok(
   "join email after admin push",
-  /Push to admin first/.test(index) || /sendJoinMailAndAnalytics/.test(index)
+  /sendJoinMailAndAnalytics/.test(index)
+);
+ok(
+  "snapshot reclaim same id",
+  /snapshot_reclaim/.test(snap) && /allowUnboundBind/.test(snap)
 );
 
 console.log("All admin intake parity / sync checks passed.");

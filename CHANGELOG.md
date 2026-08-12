@@ -7,7 +7,7 @@
 - **Intake 1:1:** +מתאמן questionnaire uses athlete-app `pprog-*` markup/UX (keyboards `inputmode`, lifts rows, skills list, recovery nest, notes, “Build my plan”).
 - **Build plan connectivity:** 180s AbortController, safer JSON parse, one automatic retry on Safari `Load failed` / network drop — still real `generate_block` only (no stubs).
 - **Hide coach FAB** while intake modal is open (z-index + JS + CSS).
-- **Phone self-serve → admin tab:** if device `dw_uid` collides with seeded/locked/revoked snapshot (`snapshot_locked` / mismatch / revoked), mint a **new** athleteId+writeKey and re-push **before** join email — so a new user gets a new admin tab (not a silent email on אריק’s uid).
+- **Phone self-serve → admin tab:** keep the **same** `athleteId` (`dw_uid`). Seeded/locked or tombstoned rows are **reclaimed/resurrected** on intake-complete push (bind writeKey, clear deleted) so the athlete reappears in admin like a new tab — not a new user id. Join email runs after admin push.
 
 ---
 

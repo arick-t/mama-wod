@@ -20,7 +20,8 @@ const { appendAdminAudit } = require("../scripts/lib/admin/admin-audit");
 
 /**
  * Mirror phone intake_complete into admin Blob list even if client pushAdminSnapshot failed.
- * Requires writeKey (same ownership as /api/admin-snapshot). Skips tombstoned athletes.
+ * Requires writeKey (same ownership as /api/admin-snapshot).
+ * Reclaims unbound seed / resurrects tombstone under the same athleteId.
  */
 async function ensureAdminSnapshotFromIntake(body) {
   const athleteId = safeAthleteId(body.userId || body.athleteId);
@@ -32,10 +33,28 @@ async function ensureAdminSnapshotFromIntake(body) {
   } catch (e) {
     return { ok: false, reason: "read_failed" };
   }
+  let resurrecting = false;
   if (existing.deleted || existing.revoked) {
-    return { ok: false, reason: "athlete_revoked" };
+    resurrecting = true;
+    existing = Object.assign({}, existing, {
+      deleted: false,
+      revoked: false,
+      writeKeyHash: null,
+      clientWritesLocked: false,
+      deletedAt: undefined,
+      revokedAt: undefined,
+    });
   }
-  const gate = assertSnapshotWriteAllowed(existing, writeKey, false);
+  const allowUnboundBind = !!(
+    body.currentBlock ||
+    body.intakeProfile ||
+    body.fixedIntakePacket ||
+    body.reclaimSameAthlete === true ||
+    resurrecting
+  );
+  const gate = assertSnapshotWriteAllowed(existing, writeKey, false, {
+    allowUnboundBind: allowUnboundBind,
+  });
   if (!gate.ok) return { ok: false, reason: gate.error };
   const now = new Date().toISOString();
   const planCoachVersion = String(
@@ -61,21 +80,28 @@ async function ensureAdminSnapshotFromIntake(body) {
     clientWritesLocked: false,
     deleted: false,
     revoked: false,
+    deletedAt: undefined,
+    revokedAt: undefined,
     updatedAt: now,
     createdAt: existing.createdAt || now,
     source: existing.source || "phone_intake_complete",
   });
+  if (resurrecting) snapshot.reclaimedAt = now;
   await writeSnapshot(athleteId, snapshot);
   try {
     await appendAdminAudit({
-      action: existing.athleteId ? "snapshot_update" : "snapshot_create",
+      action: resurrecting
+        ? "snapshot_reclaim"
+        : existing.athleteId
+          ? "snapshot_update"
+          : "snapshot_create",
       athleteId: athleteId,
       actor: "client",
       ok: true,
       detail: "intake_complete_mail_mirror",
     });
   } catch (eAudit) {}
-  return { ok: true };
+  return { ok: true, reclaimed: !!(resurrecting || gate.reclaimed) };
 }
 
 function setCors(req, res) {

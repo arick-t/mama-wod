@@ -7410,28 +7410,9 @@ function getAdminWriteKey() {
 }
 
 /**
- * New self-serve identity when device dw_uid collides with a seeded/locked/revoked admin row
- * (e.g. founder phone still holding u_hg7zrwwvyf7 → join email fires, no new admin tab).
+ * Push athlete snapshot to admin list — keeps the same athleteId (reclaim/resurrect on server).
  */
-function pprogMintNewAthleteIdentity(store) {
-  var uid = "u_" + Math.random().toString(36).slice(2, 14);
-  try {
-    localStorage.dw_uid = uid;
-    localStorage.removeItem("dw_write_key");
-  } catch (e) {}
-  getAdminWriteKey();
-  if (store) {
-    store.userId = uid;
-    store.athleteId = uid;
-    try {
-      savePprogStore(store);
-    } catch (eSave) {}
-  }
-  return uid;
-}
-
-function pushAdminSnapshot(store, opts) {
-  opts = opts || {};
+function pushAdminSnapshot(store) {
   if (!store || !store.intakeComplete) return Promise.resolve({ ok: false, skipped: true });
   var athleteId = store.userId || store.athleteId;
   if (!athleteId) return Promise.resolve({ ok: false, error: "missing_id" });
@@ -7470,6 +7451,7 @@ function pushAdminSnapshot(store, opts) {
       fixedIntakePacket: store.fixedIntakePacket || "",
       profileNotes: store.profileNotes || "",
       currentBlock: store.currentBlock || null,
+      reclaimSameAthlete: true,
       planCoachVersion:
         store.planCoachVersion ||
         (store.currentBlock && store.currentBlock.coachVersion) ||
@@ -7496,27 +7478,13 @@ function pushAdminSnapshot(store, opts) {
       .then(function (x) {
         if (!x) return { ok: false, error: "empty" };
         var err = (x.j && (x.j.code || x.j.error)) || "";
-        var collide =
-          err === "snapshot_locked" ||
-          err === "write_key_mismatch" ||
-          err === "athlete_revoked" ||
-          x.status === 410;
-        if (collide && !opts.__rotated) {
-          /* First intake (or re-join) on a phone that still holds a locked/seeded/revoked uid. */
-          pprogMintNewAthleteIdentity(store);
-          return pushAdminSnapshot(store, Object.assign({}, opts, { __rotated: true }));
-        }
-        if (x.status === 410 || err === "athlete_revoked") {
-          pprogHandleAthleteRevoked();
-          return { ok: false, error: "athlete_revoked" };
-        }
         if (!x.ok) {
           try {
             console.warn("[duck-wod] admin snapshot push failed:", err || x.status);
           } catch (eWarn) {}
           return { ok: false, error: err || String(x.status) };
         }
-        return { ok: true, athleteId: store.userId || store.athleteId, rotated: !!opts.__rotated };
+        return { ok: true, athleteId: athleteId };
       })
       .catch(function () {
         return { ok: false, error: "network" };
