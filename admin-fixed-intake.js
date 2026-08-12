@@ -42,6 +42,10 @@
 
   function refreshFabVisibility() {
     try {
+      if (typeof setAdminIntakeModalOpen === "function" && isAdminIntakeModalOpen()) {
+        setAdminIntakeModalOpen(true);
+        return;
+      }
       var a =
         typeof athletes !== "undefined" && Array.isArray(athletes)
           ? athletes.find(function (x) {
@@ -50,6 +54,17 @@
           : null;
       if (typeof syncAthleteChatFab === "function") syncAthleteChatFab(a || null);
     } catch (eFab) {}
+  }
+
+  function setIntakeModalOpen(isOpen) {
+    if (typeof setAdminIntakeModalOpen === "function") {
+      setAdminIntakeModalOpen(isOpen);
+      return;
+    }
+    var m = document.getElementById("intake-modal");
+    if (m) m.classList.toggle("open", !!isOpen);
+    document.body.classList.toggle("admin-intake-open", !!isOpen);
+    refreshFabVisibility();
   }
 
   window.resetIntakeState = function resetIntakeState() {
@@ -86,9 +101,7 @@
 
   window.openIntakeWorkspace = function openIntakeWorkspace() {
     resetIntakeState();
-    var m = document.getElementById("intake-modal");
-    if (m) m.classList.add("open");
-    refreshFabVisibility();
+    setIntakeModalOpen(true);
     var email = document.getElementById("intake-email");
     if (email) email.value = "";
     var startBar = document.getElementById("intake-start-bar");
@@ -125,14 +138,14 @@
     if (intakeState.busy) {
       if (!confirm("תחקור בתהליך — לסגור בכל זאת?")) return;
     }
-    var m = document.getElementById("intake-modal");
-    if (m) m.classList.remove("open");
+    setIntakeModalOpen(false);
     resetIntakeState();
     refreshFabVisibility();
   };
 
   window.startIntakeChat = function startFixedIntake() {
     if (intakeState.busy) return;
+    setIntakeModalOpen(true);
     intakeState.email = (document.getElementById("intake-email").value || "").trim();
     intakeState.started = true;
     intakeState.fixedActive = true;
@@ -210,22 +223,10 @@
           }
           html += "</select>";
         } else {
-          var modeAttr = "";
-          if (def.id === "age") modeAttr = ' inputmode="numeric" pattern="[0-9]*"';
-          else if (def.id === "bodyweight")
-            modeAttr = ' inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*"';
-          html +=
-            '<input id="adm-fx-' +
-            esc(def.id) +
-            '" type="text"' +
-            modeAttr +
-            ' autocomplete="off" data-fx-id="' +
-            esc(def.id) +
-            '" placeholder="' +
-            esc(def.placeholder || "") +
-            '" value="' +
-            esc(String(val || "")) +
-            '">';
+          html += S.renderFixedProfileInputHtml(def, val, {
+            idPrefix: "adm-fx-",
+            dataAttr: "data-fx-id",
+          });
         }
         html += "</div>";
       }
@@ -310,30 +311,8 @@
     } else if (key === "lifts") {
       html +=
         '<p class="pprog-fixed-title">Lifts &amp; run</p>' +
-        '<p class="pprog-lifts-picker-note">Enter weight (kg) and run time. Leave blank = unknown / skip — the coach will estimate.</p>';
-      for (var lfi = 0; lfi < S.LIFT_DEFS.length; lfi++) {
-        var ld = S.LIFT_DEFS[lfi];
-        var lv = st.lifts && st.lifts[ld.id] != null ? String(st.lifts[ld.id]) : "";
-        var ph = ld.placeholder || (ld.kind === "kg" ? "kg" : "");
-        html +=
-          '<div class="pprog-lifts-row"><label for="adm-lift-' +
-          esc(ld.id) +
-          '">' +
-          esc(ld.label) +
-          '</label><input id="adm-lift-' +
-          esc(ld.id) +
-          '" type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" autocomplete="off" enterkeyhint="next" data-lift-id="' +
-          esc(ld.id) +
-          '" data-lift-kind="' +
-          esc(ld.kind) +
-          '" placeholder="' +
-          esc(ph) +
-          '" value="' +
-          esc(lv) +
-          '"><span class="pprog-lifts-unit">' +
-          esc(ld.unit) +
-          "</span></div>";
-      }
+        '<p class="pprog-lifts-picker-note">Enter weight (kg) and run time. Leave blank = unknown / skip — the coach will estimate.</p>' +
+        S.renderFixedLiftsRowsHtml(st.lifts, { idPrefix: "adm-lift-" });
     } else if (key === "skills") {
       var sk = st.skills || {};
       html +=
@@ -402,7 +381,10 @@
       return;
     }
     el.style.display = "block";
+    el.setAttribute("lang", "en");
+    el.setAttribute("dir", "ltr");
     el.innerHTML = renderStep(intakeState.fixedStep | 0);
+    S.bindIntakeNumericKeyboards(el);
     document.getElementById("intake-status").textContent =
       "תחקור זהה לאפליקציה · שלב " +
       ((intakeState.fixedStep | 0) + 1) +
@@ -690,7 +672,13 @@
 
   function generateIntakeBlockFromFixedPacket(retryLeft) {
     if (intakeState.busy && retryLeft == null) return;
-    if (retryLeft == null) retryLeft = 1;
+    if (retryLeft == null) retryLeft = 2;
+    if (typeof adminPw !== "undefined" && !String(adminPw || "").trim()) {
+      restoreAdminFixedGoals(
+        "פג תוקף ההתחברות לאדמין — צא מ+מתאמן, התחבר מחדש, ואז Build plan."
+      );
+      return;
+    }
     setIntakeBusy(true);
     showIntakeBuilding(
       true,
@@ -707,6 +695,15 @@
       typeof adminAuthHeaders === "function"
         ? adminAuthHeaders()
         : { "Content-Type": "application/json" };
+    var payload = {
+      action: "generate_block",
+      messages: payloadMsgs,
+      athleteProfile: profile,
+      intakeComplete: true,
+      forceJson: true,
+      adminProgramming: true,
+    };
+    if (typeof withAdminPassword === "function") payload = withAdminPassword(payload);
 
     var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
     var timer = null;
@@ -718,17 +715,10 @@
       }, 180000);
     }
 
-    fetch("/api/personal-coach", {
+    fetch(adminApiUrl("/api/personal-coach"), {
       method: "POST",
       headers: pcHeaders,
-      body: JSON.stringify({
-        action: "generate_block",
-        messages: payloadMsgs,
-        athleteProfile: profile,
-        intakeComplete: true,
-        forceJson: true,
-        adminProgramming: true,
-      }),
+      body: JSON.stringify(payload),
       signal: controller ? controller.signal : undefined,
     })
       .then(function (r) {
@@ -749,8 +739,17 @@
             typeof friendlyCoachError === "function"
               ? friendlyCoachError(j, x.status)
               : String((j && (j.message || j.error)) || (x.raw ? "bad response" : "empty response"));
-          if (retryLeft > 0 && (!x.j || x.status >= 500 || x.status === 0)) {
-            document.getElementById("intake-status").textContent = "מנסה שוב…";
+          var retryable =
+            retryLeft > 0 &&
+            (!x.j ||
+              x.status === 0 ||
+              x.status >= 500 ||
+              x.status === 401 ||
+              x.status === 403 ||
+              x.status === 429);
+          if (retryable) {
+            document.getElementById("intake-status").textContent =
+              x.status === 401 ? "מתחבר מחדש…" : "מנסה שוב…";
             setIntakeBusy(false);
             return generateIntakeBlockFromFixedPacket(retryLeft - 1);
           }
@@ -811,7 +810,7 @@
       Object.assign({}, intakeState, { intakeComplete: true })
     );
 
-    fetch("/api/admin-handoff", {
+    fetch(adminApiUrl("/api/admin-handoff"), {
       method: "POST",
       headers: typeof adminAuthHeaders === "function" ? adminAuthHeaders() : { "Content-Type": "application/json" },
       body: JSON.stringify(
@@ -857,9 +856,11 @@
         }
         var linkPath = d.handoff && d.handoff.path;
         var abs =
-          linkPath && typeof location !== "undefined"
-            ? location.origin + linkPath
-            : linkPath || "";
+          linkPath && typeof pagesAbsoluteUrl === "function"
+            ? pagesAbsoluteUrl(linkPath)
+            : linkPath && typeof location !== "undefined"
+              ? location.origin + linkPath
+              : linkPath || "";
         document.getElementById("intake-status").textContent = abs
           ? "נוצר ✓ לינק מסירה מוכן"
           : "נוצר בהצלחה ✓";
@@ -869,9 +870,9 @@
           } catch (ePrompt) {}
         }
         setTimeout(function () {
-          var m = document.getElementById("intake-modal");
-          if (m) m.classList.remove("open");
+          setIntakeModalOpen(false);
           resetIntakeState();
+          refreshFabVisibility();
           if (typeof loadAthletes === "function") loadAthletes();
         }, 700);
       })

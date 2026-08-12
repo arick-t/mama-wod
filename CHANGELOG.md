@@ -1,5 +1,17 @@
 # Changelog
 
+## [Admin 1.5.9] - 2026-08-12 · **PRODUCTION**
+
+### Admin — GitHub Pages → Vercel API wiring (+ retest reject batch)
+- **Admin subtitle / title:** `DUCK-WOD Admin · 1.5.9` · badge **Admin 1.5.9 · Coach 2.3.6**.
+- **GitHub Pages fix (critical):** `getAdminApiBase` / `adminApiUrl` / `pagesAbsoluteUrl` — all admin + claim fetches reach `mama-wod.vercel.app` (was 404 on `github.io/api/*`).
+- **Build plan:** admin password in body + header, clearer errors, 2 retries; still real `generate_block` only (Coach **2.3.6**).
+- **FAB hidden** during entire +מתאמן intake (iOS fixed-position fix).
+- **Numeric keyboards** 1:1 with athlete app (`lang=en` + shared `CoachIntakeSync` HTML).
+- **Handoff / claim links** use correct GitHub Pages project path (`/mama-wod/claim.html`).
+
+---
+
 ## [Coach 2.3.6] - 2026-08-12
 
 ### Personal Coach — generic movement-pattern balance (no movement-specific bans)

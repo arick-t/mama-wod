@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DUCK-WOD Admin · 1.5.8</title>
+<title>DUCK-WOD Admin · 1.5.9</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -420,9 +420,13 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
 .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(8,6,12,.78);z-index:1200;
   align-items:center;justify-content:center;padding:12px}
 .modal-backdrop.open{display:flex}
-/* Hide coach chat FAB while +מתאמן intake is open (FAB sits above modal otherwise). */
+/* Hide athlete chat FAB while +מתאמן intake is open (iOS fixed-in-overflow bug). */
+body.admin-intake-open #adminChatFabWrap,
+body.admin-intake-open #adminChatFloat,
 body:has(#intake-modal.open) #adminChatFabWrap,
-body:has(#intake-modal.open) #adminChatFloat{display:none!important}
+body:has(#intake-modal.open) #adminChatFloat{
+  display:none!important;visibility:hidden!important;pointer-events:none!important
+}
 .intake-workspace{position:relative;background:var(--bg-card);border:1px solid var(--line);
   border-radius:14px;width:min(920px,100%);height:min(92vh,900px);display:flex;flex-direction:column;
   overflow:hidden;box-shadow:0 20px 56px rgba(0,0,0,.5)}
@@ -573,7 +577,7 @@ body:has(#intake-modal.open) #adminChatFloat{display:none!important}
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver" id="login-ver-badge" title="Admin 1.5.8 · Coach 2.3.6">Admin 1.5.8<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.6</span></div>
+    <div class="ver" id="login-ver-badge" title="Admin 1.5.9 · Coach 2.3.6">Admin 1.5.9<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.6</span></div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <button type="button" onclick="doLogin()">כניסה</button>
     <div id="login-err"></div>
@@ -585,7 +589,7 @@ body:has(#intake-modal.open) #adminChatFloat{display:none!important}
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">Admin</span>
-    <span class="ver-badge" id="admin-ver-badge" title="Admin 1.5.8 · Coach 2.3.4">Admin 1.5.8<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.4</span></span>
+    <span class="ver-badge" id="admin-ver-badge" title="Admin 1.5.9 · Coach 2.3.6">Admin 1.5.9<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.6</span></span>
     <span class="count-wrap">
       <span class="count" id="athlete-count">0 מתאמנים</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
@@ -619,36 +623,36 @@ body:has(#intake-modal.open) #adminChatFloat{display:none!important}
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Floating athlete note FAB (scoped to selected tab athlete) -->
-  <div class="admin-chat-fab-wrap" id="adminChatFabWrap" aria-hidden="true">
-    <button type="button" class="admin-chat-fab" id="adminChatFab" onclick="toggleAthleteChatFab()" aria-expanded="false" aria-controls="adminChatFloat" title="הערה למתאמן">
-      <span class="admin-chat-fab-avatar">
-        <img src="assets/hamamen-coach-duck.png" alt="" width="46" height="46" draggable="false">
-      </span>
-      <span class="admin-chat-fab-caption" id="adminChatFabCaption">שיחה</span>
-    </button>
-  </div>
-  <div class="admin-chat-float" id="adminChatFloat" role="dialog" aria-labelledby="adminChatFloatTitle">
-    <div class="admin-chat-float-head">
-      <div>
-        <div class="admin-chat-float-title" id="adminChatFloatTitle">הערה למתאמן</div>
-        <span class="admin-chat-float-sub" id="adminChatFloatSub">בחר מתאמן</span>
-      </div>
-      <button type="button" class="admin-chat-float-close" onclick="closeAthleteChatFab()" aria-label="סגור">×</button>
+<!-- Floating athlete note FAB — outside #app so iOS Safari does not paint it above intake modal -->
+<div class="admin-chat-fab-wrap" id="adminChatFabWrap" aria-hidden="true" hidden>
+  <button type="button" class="admin-chat-fab" id="adminChatFab" onclick="toggleAthleteChatFab()" aria-expanded="false" aria-controls="adminChatFloat" title="הערה למתאמן">
+    <span class="admin-chat-fab-avatar">
+      <img src="assets/hamamen-coach-duck.png" alt="" width="46" height="46" draggable="false">
+    </span>
+    <span class="admin-chat-fab-caption" id="adminChatFabCaption">שיחה</span>
+  </button>
+</div>
+<div class="admin-chat-float" id="adminChatFloat" role="dialog" aria-labelledby="adminChatFloatTitle" hidden>
+  <div class="admin-chat-float-head">
+    <div>
+      <div class="admin-chat-float-title" id="adminChatFloatTitle">הערה למתאמן</div>
+      <span class="admin-chat-float-sub" id="adminChatFloatSub">בחר מתאמן</span>
     </div>
-    <div class="admin-chat-float-body notes-section" id="adminChatFloatBody" data-notes="sticky">
-      <textarea class="notes-ta" id="notes-ta-sticky" placeholder="הערה על המתאמן… שינויים / התאמות / הנחיות"></textarea>
+    <button type="button" class="admin-chat-float-close" onclick="closeAthleteChatFab()" aria-label="סגור">×</button>
+  </div>
+  <div class="admin-chat-float-body notes-section" id="adminChatFloatBody" data-notes="sticky">
+    <textarea class="notes-ta" id="notes-ta-sticky" placeholder="הערה על המתאמן… שינויים / התאמות / הנחיות"></textarea>
+    <div class="notes-actions">
+      <button type="button" class="btn-primary" onclick="sendAthleteNote('sticky')">שלח</button>
+      <span class="notes-status" id="notes-status-sticky"></span>
+    </div>
+    <div class="decide-box" id="notes-decide-sticky">
+      <div style="margin-bottom:8px;color:#ddd" id="notes-decide-q-sticky">להטמיע עכשיו או להמתין?</div>
       <div class="notes-actions">
-        <button type="button" class="btn-primary" onclick="sendAthleteNote('sticky')">שלח</button>
-        <span class="notes-status" id="notes-status-sticky"></span>
-      </div>
-      <div class="decide-box" id="notes-decide-sticky">
-        <div style="margin-bottom:8px;color:#ddd" id="notes-decide-q-sticky">להטמיע עכשיו או להמתין?</div>
-        <div class="notes-actions">
-          <button type="button" class="btn-secondary good" onclick="decideLearnNote('implement')">להטמיע עכשיו</button>
-          <button type="button" class="btn-secondary wait" onclick="decideLearnNote('wait')">להמתין ולצבור</button>
-        </div>
+        <button type="button" class="btn-secondary good" onclick="decideLearnNote('implement')">להטמיע עכשיו</button>
+        <button type="button" class="btn-secondary wait" onclick="decideLearnNote('wait')">להמתין ולצבור</button>
       </div>
     </div>
   </div>
@@ -672,7 +676,7 @@ body:has(#intake-modal.open) #adminChatFloat{display:none!important}
       <div class="intake-chat-log" id="intake-chat-log">
         <div class="intake-msg system">אותו תחקור כמו באפליקציה (9 שלבים) → לבנה אמיתית → לינק מסירה. לחץ ״התחל תחקור״.</div>
       </div>
-      <div id="intake-fixed" aria-live="polite"></div>
+      <div id="intake-fixed" lang="en" dir="ltr" aria-live="polite"></div>
       <div class="intake-picker" id="intake-lifts-picker"></div>
       <div class="intake-picker" id="intake-skills-picker"></div>
       <div class="intake-compose" id="intake-compose" style="display:none">
@@ -715,6 +719,49 @@ body:has(#intake-modal.open) #adminChatFloat{display:none!important}
 
 <script>
 "use strict";
+
+var ADMIN_ANALYTICS_ENDPOINT = (function () {
+  if (typeof location === "undefined") return "https://mama-wod.vercel.app/api/event";
+  var h = location.hostname;
+  var proto = location.protocol;
+  if (h === "localhost" || h === "127.0.0.1") return location.origin + "/api/event";
+  if (proto === "file:") return "https://mama-wod.vercel.app/api/event";
+  if (h === "github.io" || (h.length > 10 && h.slice(-10) === ".github.io"))
+    return "https://mama-wod.vercel.app/api/event";
+  return location.origin.replace(/\/$/, "") + "/api/event";
+})();
+
+function getAdminApiBase() {
+  if (!ADMIN_ANALYTICS_ENDPOINT) return "";
+  var ep = String(ADMIN_ANALYTICS_ENDPOINT).replace(/\/$/, "");
+  return ep.replace(/\/api\/event$/i, "") || (typeof location !== "undefined" ? location.origin : "");
+}
+
+/** GitHub Pages project path, e.g. "/mama-wod" when pathname is /mama-wod/admin.html */
+function getPagesBasePath() {
+  if (typeof location === "undefined") return "";
+  var p = String(location.pathname || "/");
+  if (/\/admin\.html$/i.test(p)) return p.replace(/\/admin\.html$/i, "");
+  if (/\/claim\.html$/i.test(p)) return p.replace(/\/claim\.html$/i, "");
+  if (/\/index\.html$/i.test(p)) return p.replace(/\/index\.html$/i, "");
+  if (p.endsWith("/")) p = p.slice(0, -1);
+  var i = p.lastIndexOf("/");
+  return i > 0 ? p.slice(0, i) : "";
+}
+
+function adminApiUrl(path) {
+  var base = getAdminApiBase();
+  var p = String(path || "");
+  if (!p.startsWith("/")) p = "/" + p;
+  return base ? base.replace(/\/$/, "") + p : p;
+}
+
+function pagesAbsoluteUrl(path) {
+  var p = String(path || "");
+  if (!p.startsWith("/")) p = "/" + p;
+  return location.origin + getPagesBasePath() + p;
+}
+
 var adminPw = "";
 var athletes = [];
 var currentAthleteId = null;
@@ -728,7 +775,7 @@ var pendingLearnNoteId = null;
 var adminChatFabOpen = false;
 var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
 /** Live Personal Coach brain version — refreshed from GET /api/personal-coach. */
-var ADMIN_UI_VERSION = "1.5.8";
+var ADMIN_UI_VERSION = "1.5.9";
 var LIVE_COACH_VERSION = "2.3.6";
 var LIVE_COACH_VERSION_FETCHED_AT = 0;
 
@@ -959,6 +1006,21 @@ function syncLearningUi() {
   if (body) body.classList.toggle("learning", learningMode);
 }
 
+function isAdminIntakeModalOpen() {
+  var m = document.getElementById("intake-modal");
+  return !!(m && m.classList.contains("open"));
+}
+
+function setAdminIntakeModalOpen(isOpen) {
+  var m = document.getElementById("intake-modal");
+  if (m) m.classList.toggle("open", !!isOpen);
+  document.body.classList.toggle("admin-intake-open", !!isOpen);
+  var a = athletes.find(function (x) {
+    return x.athleteId === currentAthleteId;
+  });
+  syncAthleteChatFab(a || null);
+}
+
 function syncAthleteChatFab(a) {
   var wrap = document.getElementById("adminChatFabWrap");
   var fab = document.getElementById("adminChatFab");
@@ -966,12 +1028,16 @@ function syncAthleteChatFab(a) {
   var title = document.getElementById("adminChatFloatTitle");
   var sub = document.getElementById("adminChatFloatSub");
   var floatEl = document.getElementById("adminChatFloat");
-  var intakeModal = document.getElementById("intake-modal");
-  var intakeOpen = !!(intakeModal && intakeModal.classList.contains("open"));
+  var intakeOpen = isAdminIntakeModalOpen();
   var show = !!(a && a.athleteId) && !intakeOpen;
   if (wrap) {
     wrap.classList.toggle("show", show);
+    wrap.hidden = !show;
     wrap.setAttribute("aria-hidden", show ? "false" : "true");
+  }
+  if (floatEl) {
+    if (!show || !adminChatFabOpen) floatEl.hidden = true;
+    else floatEl.hidden = false;
   }
   if (!show) {
     adminChatFabOpen = false;
@@ -998,6 +1064,7 @@ function syncAthleteChatFab(a) {
     fab.title = "הערה · " + name;
   }
   if (floatEl) floatEl.classList.toggle("open", adminChatFabOpen);
+  if (floatEl) floatEl.hidden = !adminChatFabOpen;
 }
 
 function toggleAthleteChatFab() {
@@ -1069,7 +1136,7 @@ function renderCreditPill(credit) {
 
 function loadCreditEstimate() {
   if (!adminPw) return;
-  fetch("/api/admin-meta", {
+  fetch(adminApiUrl("/api/admin-meta"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(withAdminPassword({ action: "get_credit" }))
@@ -1102,7 +1169,7 @@ function openCreditUpdate() {
     showHdrToast("סכום לא תקין", "err");
     return;
   }
-  fetch("/api/admin-meta", {
+  fetch(adminApiUrl("/api/admin-meta"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(withAdminPassword({ action: "set_credit", creditIls: n, note: "עדכון ידני אדמין" }))
@@ -1138,7 +1205,7 @@ function syncDriveBrain() {
   if (label) label.textContent = "מסנכרן…";
   showHdrToast("מתחיל סנכרון…");
 
-  fetch("/api/admin-drive-sync", {
+  fetch(adminApiUrl("/api/admin-drive-sync"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(withAdminPassword({}))
@@ -1187,7 +1254,7 @@ function doLogin() {
   adminPw = pw;
   var errEl = document.getElementById("login-err");
   if (errEl) errEl.textContent = "מתחבר…";
-  fetch("/api/admin-snapshot", {
+  fetch(adminApiUrl("/api/admin-snapshot"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify({ action: "admin_list", adminPassword: pw })
@@ -1233,7 +1300,7 @@ function doLogin() {
 
 function loadAthletes() {
   refreshLiveCoachVersion();
-  fetch("/api/admin-snapshot", {
+  fetch(adminApiUrl("/api/admin-snapshot"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(withAdminPassword({ action: "admin_list" }))
@@ -1326,7 +1393,7 @@ function refreshLiveCoachVersion() {
     syncAdminVersionLabels();
     return Promise.resolve(LIVE_COACH_VERSION);
   }
-  return fetch("/api/personal-coach", { method: "GET" })
+  return fetch(adminApiUrl("/api/personal-coach"), { method: "GET" })
     .then(function(r) {
       return r.json();
     })
@@ -1645,7 +1712,7 @@ function sendPushUpgradeOffer(athleteId, mode) {
   setBusy(true);
   if (status) status.textContent = "שולח הצעה לצ׳אט המאמן…";
   refreshLiveCoachVersion().then(function(ver) {
-    return fetch("/api/admin-snapshot", {
+    return fetch(adminApiUrl("/api/admin-snapshot"), {
       method: "POST",
       headers: adminAuthHeaders(),
       body: JSON.stringify(
@@ -1748,7 +1815,7 @@ function toggleMembershipFrozen(athleteId) {
     ? "להקפיא את המנוי של " + (a.displayName || athleteId) + "?\n\nהמתאמן יוצג כ״מוקפא״ בלוח האדמין."
     : "לבטל הקפאה עבור " + (a.displayName || athleteId) + "?";
   if (!confirm(msg)) return;
-  fetch("/api/admin-snapshot", {
+  fetch(adminApiUrl("/api/admin-snapshot"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(
@@ -1848,7 +1915,7 @@ function createIntakeResetLink(athleteId) {
   var linkEl = document.getElementById("intake-reset-link");
   var wrap = document.getElementById("intake-reset-copy-wrap");
   if (status) status.textContent = "יוצר לינק איפוס...";
-  fetch("/api/admin-handoff", {
+  fetch(adminApiUrl("/api/admin-handoff"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(withAdminPassword({ action: "reset_intake", athleteId: athleteId }))
@@ -1859,7 +1926,7 @@ function createIntakeResetLink(athleteId) {
         if (status) status.textContent = "שגיאה: " + ((d && d.error) || "?");
         return;
       }
-      lastIntakeResetUrl = window.location.origin + d.path;
+      lastIntakeResetUrl = pagesAbsoluteUrl(d.path);
       if (linkEl) {
         linkEl.style.display = "block";
         linkEl.textContent = lastIntakeResetUrl;
@@ -2568,7 +2635,7 @@ function sendAthleteNote(which) {
 
   if (learningMode) {
     var ctx = getSelectedWorkoutPayload(a);
-    fetch("/api/admin-coach-sandbox", {
+    fetch(adminApiUrl("/api/admin-coach-sandbox"), {
       method: "POST",
       headers: adminAuthHeaders(),
       body: JSON.stringify(withAdminPassword({
@@ -2623,7 +2690,7 @@ function sendAthleteNote(which) {
   var existing = String(a.coachDirectives || "").trim();
   var merged = existing ? existing + "\n" + note : note;
   a.coachDirectives = merged;
-  fetch("/api/admin-snapshot", {
+  fetch(adminApiUrl("/api/admin-snapshot"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(
@@ -2670,7 +2737,7 @@ function persistAdminChatLog(a) {
   if (!a || !a.athleteId) return Promise.resolve(false);
   var last = (a.adminChatLog || [])[(a.adminChatLog || []).length - 1];
   if (!last) return Promise.resolve(false);
-  return fetch("/api/admin-snapshot", {
+  return fetch(adminApiUrl("/api/admin-snapshot"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(
@@ -2696,7 +2763,7 @@ function decideLearnNote(decision) {
   if (!pendingLearnNoteId) return;
   var statuses = document.querySelectorAll(".notes-status");
   for (var i = 0; i < statuses.length; i++) statuses[i].textContent = "שומר החלטה…";
-  fetch("/api/admin-coach-sandbox", {
+  fetch(adminApiUrl("/api/admin-coach-sandbox"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(withAdminPassword({
@@ -2765,7 +2832,7 @@ function saveDirectives() {
   btn.textContent = "שומר...";
   status.textContent = "";
   status.style.color = "#4ade80";
-  fetch("/api/admin-snapshot", {
+  fetch(adminApiUrl("/api/admin-snapshot"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(withAdminPassword({ athleteId: a.athleteId, coachDirectives: ta.value }))
@@ -2788,7 +2855,7 @@ function deleteAthlete(id) {
   var a = athletes.find(function(x) { return x.athleteId === id; });
   var name = (a && a.displayName) || id;
   if (!confirm("למחוק את " + name + "?")) return;
-  fetch("/api/admin-snapshot?id=" + encodeURIComponent(id), {
+  fetch(adminApiUrl("/api/admin-snapshot?id=" + encodeURIComponent(id)), {
     method: "DELETE",
     headers: adminAuthHeaders()
   })
@@ -2854,7 +2921,7 @@ function createHandoffLink(athleteId) {
   var linkEl = document.getElementById("handoff-link");
   var wrap = document.getElementById("handoff-copy-wrap");
   if (status) status.textContent = "יוצר לינק...";
-  fetch("/api/admin-handoff", {
+  fetch(adminApiUrl("/api/admin-handoff"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(withAdminPassword({ action: "create_link", athleteId: athleteId }))
@@ -2865,7 +2932,7 @@ function createHandoffLink(athleteId) {
         if (status) status.textContent = "שגיאה: " + ((d && d.error) || "?");
         return;
       }
-      lastHandoffUrl = window.location.origin + d.path;
+      lastHandoffUrl = pagesAbsoluteUrl(d.path);
       if (linkEl) {
         linkEl.style.display = "block";
         linkEl.textContent = lastHandoffUrl;
@@ -2917,8 +2984,7 @@ function resetIntakeState() {
 
 function openIntakeWorkspace() {
   resetIntakeState();
-  var m = document.getElementById("intake-modal");
-  if (m) m.classList.add("open");
+  setAdminIntakeModalOpen(true);
   document.getElementById("intake-email").value = "";
   document.getElementById("intake-chat-log").innerHTML =
     '<div class="intake-msg system">לחץ ״התחל תחקור״ כדי לפתוח שיחה עם המאמן (13 נושאים — כמו בפרודקשן)</div>';
@@ -2935,8 +3001,7 @@ function closeIntakeWorkspace() {
   if (intakeState.busy) {
     if (!confirm("תחקור בתהליך — לסגור בכל זאת?")) return;
   }
-  var m = document.getElementById("intake-modal");
-  if (m) m.classList.remove("open");
+  setAdminIntakeModalOpen(false);
   resetIntakeState();
   var a = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
   syncAthleteChatFab(a || null);
@@ -2962,17 +3027,32 @@ function intakeAthleteProfile(opts) {
 }
 
 function friendlyCoachError(j, status) {
-  var detail = (j && (j.detail || j.error || j.hint)) || "";
-  var low = String(detail).toLowerCase() + " " + String(status || "");
-  if (/api[_ ]?key|gemini|no[_ ]?key|missing.*key|GEMINI/i.test(low) || status === 503) {
-    return "שירות המאמן לא זמין — חסר מפתח GEMINI או שה־AI לא מחובר. לא ניתן לבצע תחקור מדומה.";
+  var code = String((j && j.code) || (j && j.error) || "").trim();
+  var detail = String((j && (j.detail || j.message || j.hint)) || (j && j.error) || "").trim();
+  var low = (detail + " " + code + " " + String(status || "")).toLowerCase();
+  if (code === "TERMS_REQUIRED") {
+    return "נדרשת החתמה על התנאים — באדמין צריך auth תקין (התחבר מחדש).";
+  }
+  if (status === 401 || code === "Unauthorized") {
+    return "סיסמת אדמין לא נשלחה או פגתה — צא והתחבר מחדש, ואז Build plan.";
+  }
+  if (code === "admin_not_configured") {
+    return String(j.message || j.messageEn || "ADMIN_PASSWORD לא מוגדר בשרת.");
+  }
+  if (/api[_ ]?key|gemini|no[_ ]?key|missing.*key/.test(low) && status === 503) {
+    return "שירות המאמן לא זמין — חסר מפתח GEMINI בשרת. בדוק Vercel env.";
   }
   if (status === 429 || /too many/i.test(low)) return "יותר מדי בקשות — חכה דקה ונסה שוב.";
-  if (/<!doctype|<html|empty response|not return json/i.test(low)) {
+  if (status === 504 || /timeout|timed out|gateway|function_invocation/i.test(low)) {
+    return "בניית הלבנה ארוכה — החיבור נקטע. המתן עד ~3 דק׳ ולחץ Build plan שוב.";
+  }
+  if (status === 503) {
+    return "שירות המאמן לא זמין זמנית — נסה Build plan שוב בעוד דקה.";
+  }
+  if (/<!doctype|<html|empty response|not return json|bad response/i.test(low)) {
     return "תקלת חיבור — נסה שוב.";
   }
-  var clean = String(detail || ("HTTP " + (status || "?")));
-  return clean.slice(0, 400);
+  return String(detail || code || "HTTP " + (status || "?")).slice(0, 400);
 }
 
 function stripPickerMarkers(text) {
@@ -3265,7 +3345,7 @@ function startIntakeChat() {
   document.getElementById("intake-chat-log").innerHTML =
     '<div class="intake-msg system">המאמן מתחיל…</div>';
 
-  fetch("/api/personal-coach", {
+  fetch(adminApiUrl("/api/personal-coach"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -3325,7 +3405,7 @@ function sendIntakeMessage() {
     }
   }
 
-  fetch("/api/personal-coach", {
+  fetch(adminApiUrl("/api/personal-coach"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -3383,7 +3463,7 @@ function generateIntakeBlock() {
     }
   }
 
-  fetch("/api/personal-coach", {
+  fetch(adminApiUrl("/api/personal-coach"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify({
@@ -3509,7 +3589,7 @@ function finalizeNewAthlete(block) {
     if (intakeState.skills && intakeState.skills[def.id]) skillsLabels.push(def.label);
   }
 
-  fetch("/api/admin-handoff", {
+  fetch(adminApiUrl("/api/admin-handoff"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(withAdminPassword({
