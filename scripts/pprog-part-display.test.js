@@ -165,4 +165,28 @@ ok(
   setsInlineRest.work.every(function (w) { return !/\bRest\b/i.test(w); })
 );
 
+/* Image 5 — For Time chipper + accessory sets with Face Pulls */
+const forTimeChipper = classifyPprogPartLines([
+  "Intent: High stamina threshold piece (20 min effective duration target).",
+  "For Time (18 min cap):",
+  '40 Pull-ups + 40 Burpee Box Jump-Overs (24") + 40 Dual DB Goblet Squats (2x22.5kg) + 400m Run.',
+  "Target score: Finish under 15:30. Break pull-ups early into controlled sets of 8-10.",
+]);
+ok("for-time chipper expands to 4", forTimeChipper.work.length === 4);
+ok(
+  "for-time target score note",
+  forTimeChipper.trailingNotes.some(function (n) { return /Target score/i.test(n); })
+);
+
+const accessorySets = classifyPprogPartLines([
+  "Intent: Rotator cuff and posterior shoulder endurance.",
+  "3 Sets: 12 Single-arm DB Overhead Tricep Extensions/side + 15 Band/DB Face Pulls. Rest 60 sec.",
+]);
+ok("accessory peels 3 Sets format", /^3 Sets:$/i.test(accessorySets.format));
+ok("accessory expands to 2", accessorySets.work.length === 2);
+ok(
+  "accessory rest note",
+  accessorySets.trailingNotes.some(function (n) { return /Rest 60 sec/i.test(n); })
+);
+
 console.log("All pprog-part-display checks passed.");
