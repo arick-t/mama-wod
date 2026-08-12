@@ -9530,11 +9530,16 @@ function buildPprogDayShareText(dayKey) {
     }
     if (classified.format) t += classified.format + "\n";
     var work = classified.work;
-    if (!work.length && !classified.notes.length && !classified.format) {
+    var trailing = classified.trailingNotes || [];
+    if (
+      !work.length &&
+      !classified.notes.length &&
+      !classified.format &&
+      !trailing.length
+    ) {
       work = part.lines || [];
     }
     for (var li = 0; li < work.length; li++) t += "• " + work[li] + "\n";
-    var trailing = classified.trailingNotes || [];
     for (var ti = 0; ti < trailing.length; ti++) t += trailing[ti] + "\n";
     t += "\n";
   }
