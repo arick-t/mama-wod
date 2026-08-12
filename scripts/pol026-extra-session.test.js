@@ -16,6 +16,8 @@ const {
   enforceBrickScheduleChatResponse,
   parseBrickScheduleIntent,
   buildBrickScheduleConfirmMessage,
+  buildLoggedSessionPartsFromNote,
+  extractLoggedWorkoutSegments,
   POL026_DEFAULT_CONFIRM,
   BRICK_SCHEDULE_POST_APPLY_MSG,
 } = require("../lib/coach-pol026-gates.js");
@@ -54,7 +56,9 @@ ok("loggedExtra survives normalize", /loggedExtraSession/.test(index) && /POL-02
 ok("loggedExtra not Rest", /pprogDayIsLoggedExtraSession/.test(index) && /athlete-logged session wins/.test(index));
 ok("week_detail preserves logged day", /week_detail must never wipe an athlete-logged/.test(index));
 ok("calendar logged-extra class", /logged-extra/.test(index) && /pprog-logged-extra-flag/.test(index));
-ok("coach version 2.3.9", /COACH_VERSION = "2\.3\.9"/.test(index) && /COACH_VERSION = "2\.3\.9"/.test(pc));
+ok("coach version 2.3.10", /COACH_VERSION = "2\.3\.10"/.test(index) && /COACH_VERSION = "2\.3\.10"/.test(pc));
+ok("client workout extract", /pprogExtractLoggedWorkoutSegments/.test(index));
+ok("client preserve days", /pprogCaptureSchedulePreserveDays/.test(index));
 ok("client Hebrew post-apply", /PPROG_BRICK_SCHEDULE_POST_APPLY_MSG/.test(index));
 ok("client schedule rest-shift detect", /pprogNoteIsScheduleRestShift/.test(index));
 ok("client brickSchedulePending store", /brickSchedulePending/.test(index));
@@ -134,5 +138,15 @@ const post = enforceBrickScheduleChatResponse(
 );
 ok("post-confirm is verify-in-block Hebrew", post === BRICK_SCHEDULE_POST_APPLY_MSG);
 ok("default confirm constant set", !!POL026_DEFAULT_CONFIRM);
+
+const userWorkoutNote =
+  "בסוף יצא שהיום כן התאמנתי / האימון / 15 דקות ריצת פארטלג 6 סטים של דקה מהר דקה קל / אח״כ קומפלקס כבד של / Power clean / front squat / power jerk / jerk / עשיתי מזה 6 סיבובים / אני צריך אם ככה יום מנוחה ביום שישי ולהשאיר את האימון של מחר כרגיל / לאחר מכן יום המנוחה הבא יהיה יום שלישי בשבוע הבא / נא סדר את זה בהתאם";
+const workoutSegs = extractLoggedWorkoutSegments(userWorkoutNote);
+ok("workout extract strips schedule tail", workoutSegs.indexOf("נא סדר את זה בהתאם") < 0);
+ok("workout extract keeps fartlek", workoutSegs.some(function (s) { return /פארטלג/.test(s); }));
+const builtLogged = buildLoggedSessionPartsFromNote("wed", userWorkoutNote);
+ok("logged parts split engine + complex", builtLogged.parts.length >= 2);
+ok("logged complex joins movements", /Power clean \+ front squat/.test(builtLogged.parts[1].lines[0]));
+ok("logged complex has rounds", /6\s*סיבובים/.test(builtLogged.parts[1].lines.join(" ")));
 
 console.log("All POL-026 / brick schedule brief-reply checks passed.");

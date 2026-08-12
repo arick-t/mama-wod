@@ -30,7 +30,7 @@
  * Groq keeps chat alive when the Gemini key is missing/invalid (common GitHub Pages + Vercel setup).
  * Programming stays Gemini-only (POL-020).
  */
-const COACH_VERSION = "2.3.9";
+const COACH_VERSION = "2.3.10";
 const fs = require("fs");
 const path = require("path");
 function resolveAppVersion() {

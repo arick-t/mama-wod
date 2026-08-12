@@ -1,5 +1,13 @@
 # Changelog
 
+## [Coach 2.3.10] - 2026-08-12
+
+### POL-026 logged session + keep-tomorrow restore
+- **Logged display** — strip schedule-instruction tail from athlete note; show Engine + Complex parts instead of raw chat paste.
+- **Keep tomorrow** — snapshot programmed day before confirm; restore after apply (fixes wrong “rest tomorrow” from prior apply).
+
+---
+
 ## [Coach 2.3.9] - 2026-08-12
 
 ### Whole-brick schedule shift — parse Hebrew intent (keep tomorrow / rest Friday)
