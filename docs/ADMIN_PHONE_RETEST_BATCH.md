@@ -9,12 +9,10 @@ Rule: free-form notes → confirm understanding → append here → **one batch*
 - Admin **1.5.7** · Coach **2.3.4** (badge shows both)
 - Delete tombstone / revoke, phone→admin mirror, Build plan Terms bypass, recovery UX nest
 
-## Batch order (founder confirmed 2026-08-12)
-1. **Intake identical 1:1** — reuse athlete-app questionnaire (no parallel rebuild).
-2. **Coach connectivity at end** — Build plan must return a real brick (fix phone `Load failed`).
-3. **Hide floating coach FAB** during +מתאמן.
-4. Founder retests intake → brick.
-5. Then **handoff link** / send brick to third-party athlete.
+## Batch status (in progress on branch)
+- Implementing Admin **1.5.8**: intake 1:1 (pprog UI), Build plan timeout/retry, hide FAB.
+- Founder parallel: phone self-serve → admin list (re-verify).
+- After ship: founder retests intake→brick, then handoff link.
 
 ## Parallel founder test (same session)
 - Self-serve phone intake as new user → expect athlete in admin dashboard (yesterday failed; re-verify 1.5.7 mirror).

@@ -1,5 +1,15 @@
 # Changelog
 
+## [Admin 1.5.8] - 2026-08-12
+
+### Phone-browser retest batch — intake 1:1, Build plan, hide FAB
+- **Admin subtitle / title:** `DUCK-WOD Admin · 1.5.8` · badge **Admin 1.5.8 · Coach 2.3.4**.
+- **Intake 1:1:** +מתאמן questionnaire uses athlete-app `pprog-*` markup/UX (keyboards `inputmode`, lifts rows, skills list, recovery nest, notes, “Build my plan”).
+- **Build plan connectivity:** 180s AbortController, safer JSON parse, one automatic retry on Safari `Load failed` / network drop — still real `generate_block` only (no stubs).
+- **Hide coach FAB** while intake modal is open (z-index + JS + CSS).
+
+---
+
 ## [Admin 1.5.7] - 2026-08-11
 
 ### Remote audit batch — delete, phone→admin, Build plan Terms, recovery UX
