@@ -1,5 +1,15 @@
 # Changelog
 
+## [Coach 2.3.8] - 2026-08-12
+
+### Whole-brick schedule revise — calendar actually updates
+- **Pending state** (`brickSchedulePending`) survives long confirm loops — gate no longer lost after 8 turns.
+- **Apply intent:** `כן`, `תממש את השינויים`, `בצע את השינויים` → local calendar apply immediately (today LOGGED + tomorrow Rest) without waiting for model JSON.
+- **Rehydrate** pending from brick-chat history when athlete says תממש after model asked confirm again.
+- Server honors `brickSchedulePending` flag on chat POST.
+
+---
+
 ## [Coach 2.3.7] - 2026-08-12
 
 ### Whole-brick schedule revise — brief reply only (rest-day shift)

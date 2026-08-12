@@ -1630,7 +1630,7 @@ function rememberAiClientError(summary) {
  *   Coach 2.1 — Cost Guardrails v1 (POL-COST sessionDate hard-block + monthly ≈₪5).
  *   Coach 2.2 — POL-026 unplanned/extra session whole-brick harden (Budget gates).
  *   Coach 2.2.1 — POL-026 calendar truth (today logged + tomorrow Rest) + Done.-only chat.
- *   Coach 2.3.7 — brick schedule-revise brief reply (no AI intro / no change recap).
+ *   Coach 2.3.8 — brick schedule-revise calendar apply (pending + תממש intent).
  *   Coach 2.3 — ship: calendar LOGGED today + Confirm? one-tap כן.
  *   Coach 2.3.1 — POL-027 floor/BW baseline + equipment additive (combine free weights).
  *   Coach 2.3.2 — POL-027 full equipment-free pool (Gemini directive) shipped.
@@ -1640,7 +1640,7 @@ function rememberAiClientError(summary) {
  * Keep this badge in sync with the brain actually serving /api/personal-coach.
  * Display: header “COACH · v{COACH_VERSION}” only — do NOT bump app DAILY WORKOUTS / <title> here.
  */
-var COACH_VERSION = "2.3.7";
+var COACH_VERSION = "2.3.8";
 try {
   var __coachVerEl = document.getElementById("coachVersionSub");
   if (__coachVerEl) __coachVerEl.textContent = "COACH · v" + COACH_VERSION;
@@ -4674,11 +4674,25 @@ function sendPprogMessage(ev) {
   msgs.push({ role: "user", text: displayText });
   persistPprogChatMsgs();
   if (inp) inp.value = "";
-  /* POL-026 — remember extra session on first brick note (Budget) */
+  /* POL-026 — remember extra session + persist pending schedule-revise (survives long threads) */
   if (brickMode && text) {
     try {
+      if (!pprogIsScheduleApplyIntent(text)) {
+        pprogEnsureBrickSchedulePending(text);
+      }
       pprogRememberExtraSession(text);
     } catch (eExtra) {}
+  }
+  if (brickMode) {
+    try {
+      pprogRehydrateBrickSchedulePending(msgs);
+    } catch (eRehyd) {}
+  }
+  var brickScheduleLocalApplied = false;
+  if (brickMode && text && pprogIsScheduleApplyIntent(text) && pprogGetBrickSchedulePending()) {
+    try {
+      brickScheduleLocalApplied = pprogApplyBrickScheduleLocal(msgs, { recordEdit: true });
+    } catch (eLocalPre) {}
   }
   /* POL-COST-010 — chat unit (does not hard-block chat) */
   try {
@@ -4716,6 +4730,11 @@ function sendPprogMessage(ev) {
   if (brickMode) {
     chatBody.israelToday = pprogIsraelTodayIso();
     chatBody.brickReviseScope = "remaining_only";
+    var pendingSnap = pprogGetBrickSchedulePending();
+    if (pendingSnap) {
+      chatBody.brickSchedulePending = true;
+      chatBody.brickScheduleNote = String(pendingSnap.note || "").slice(0, 800);
+    }
     var remSnap = buildPprogRemainingBrickSnapshot(store);
     if (remSnap) chatBody.remainingBrick = remSnap;
     var intakeBase = buildPprogIntakeBaseline(store);
@@ -4765,22 +4784,23 @@ function sendPprogMessage(ev) {
         }
         return;
       }
-      /* Budget POL-026 hard gates — decide before pushing any coach bubble */
-      var pol026Ctx = brickMode && pprogBrickThreadIsPol026(msgs);
-      var lastUserConfirm = false;
-      if (pol026Ctx) {
+      /* Budget POL-026 / brick schedule gates — decide before pushing any coach bubble */
+      var scheduleGate = brickMode && pprogBrickScheduleGateActive(msgs);
+      var lastUserApply = false;
+      if (scheduleGate) {
         for (var cui = msgs.length - 1; cui >= 0; cui--) {
           if (msgs[cui] && msgs[cui].role === "user") {
-            lastUserConfirm = pprogIsExplicitConfirm(msgs[cui].text);
+            lastUserApply = pprogIsScheduleApplyIntent(msgs[cui].text);
             break;
           }
         }
       }
       var chatText = pprogChatDisplayText(String(j.text));
-      if (pol026Ctx) {
-        chatText = lastUserConfirm
-          ? PPROG_BRICK_SCHEDULE_POST_APPLY_MSG
-          : PPROG_BRICK_SCHEDULE_PRE_CONFIRM_MSG;
+      if (scheduleGate) {
+        chatText =
+          lastUserApply || brickScheduleLocalApplied
+            ? PPROG_BRICK_SCHEDULE_POST_APPLY_MSG
+            : PPROG_BRICK_SCHEDULE_PRE_CONFIRM_MSG;
       }
       if (chatText) {
         msgs.push({ role: "model", text: chatText.slice(0, 2000) });
@@ -4814,9 +4834,9 @@ function sendPprogMessage(ev) {
       var dayFromChat = j.day || null;
       pprogBusy = false;
 
-      if (pol026Ctx) {
-        /* Never apply plan JSON before Confirm; never full BLOCK on this case */
-        if (!lastUserConfirm) {
+      if (scheduleGate) {
+        /* Never apply plan JSON before Confirm/implement; never full BLOCK on this case */
+        if (!lastUserApply && !brickScheduleLocalApplied) {
           blockFromChat = null;
           weekFromChat = null;
           dayFromChat = null;
@@ -4862,7 +4882,7 @@ function sendPprogMessage(ev) {
             applyPprogWeek(weekFromChat, j.text);
           }
           /* POL-026 / surgical brick week = one programmed week edit — not large rebuild */
-          if (pol026Ctx) {
+          if (scheduleGate) {
             pprogRecordProgrammedEdit("week");
             /* Ensure today shows logged session + tomorrow Rest even if model left today as Rest */
             try {
@@ -4879,7 +4899,7 @@ function sendPprogMessage(ev) {
         } else {
           applyPprogWeek(weekFromChat, j.text);
         }
-      } else if (pol026Ctx && lastUserConfirm && dayFromChat) {
+      } else if (scheduleGate && (lastUserApply || brickScheduleLocalApplied) && dayFromChat) {
         /* Surgical DAY_JSON after Confirm — single programmed edit, no large rebuild */
         try {
           pprogApplyStandingIntakeNote(pprogLatestStandingUserNote(msgs));
@@ -4892,11 +4912,12 @@ function sendPprogMessage(ev) {
           }
           pprogApplyPol026CalendarTruth(msgs, { recordEdit: false });
         } catch (eDayPol) {}
-      } else if (pol026Ctx && lastUserConfirm) {
+      } else if (scheduleGate && (lastUserApply || brickScheduleLocalApplied)) {
         /* Budget: no surgical JSON → local today-logged + tomorrow Rest; never large rebuild */
         try {
-          pprogApplyStandingIntakeNote(pprogLatestStandingUserNote(msgs));
-          pprogApplyPol026CalendarTruth(msgs, { recordEdit: true });
+          if (!brickScheduleLocalApplied) {
+            pprogApplyBrickScheduleLocal(msgs, { recordEdit: true });
+          }
         } catch (eLocalRest) {}
       } else {
         var storeNow = loadPprogStore();
@@ -4905,10 +4926,12 @@ function sendPprogMessage(ev) {
           return;
         }
       }
-      if (pol026Ctx && lastUserConfirm) {
+      if (scheduleGate && (lastUserApply || brickScheduleLocalApplied)) {
         try {
           /* Always re-assert calendar truth + full week re-render so strip/day card leave REST */
-          pprogApplyPol026CalendarTruth(msgs, { recordEdit: false });
+          if (!brickScheduleLocalApplied) {
+            pprogApplyPol026CalendarTruth(msgs, { recordEdit: false });
+          }
           renderPprogWeek();
         } catch (eReTruth) {}
       }
@@ -7222,13 +7245,12 @@ function pprogApplyStandingIntakeNote(noteText) {
 /** Latest non-confirm user note from brick/intake chat (for standing intake updates). */
 function pprogLatestStandingUserNote(msgs) {
   var list = Array.isArray(msgs) ? msgs : [];
-  var confirmRe = /^(yes|yep|yeah|ok|okay|sure|confirm|do it|go ahead|כן|בטח|אשר|תבצע|יאללה)[.!\s]*$/i;
   for (var i = list.length - 1; i >= 0; i--) {
     var m = list[i];
     if (!m || m.role !== "user") continue;
     var t = String(m.text || "").trim();
     if (!t || t.indexOf("FIXED INTAKE COMPLETE") === 0) continue;
-    if (confirmRe.test(t)) continue;
+    if (pprogIsScheduleApplyIntent(t)) continue;
     return t.slice(0, 500);
   }
   return "";
@@ -7238,7 +7260,107 @@ var PPROG_BRICK_SCHEDULE_POST_APPLY_MSG = "בוצעו השינויים נא לו
 var PPROG_BRICK_SCHEDULE_PRE_CONFIRM_MSG =
   "Schedule: keep today's session logged, rest tomorrow, ease squat/hinge/engine later this week. Confirm?";
 var PPROG_SCHEDULE_NOTE_RE =
-  /\b(rest\s*days?|training\s*days?|work\s*days?|off\s*days?|weekly\s*split|schedule|active\s*recovery|instead\s*of\s*(a\s*)?rest|skipped\s*rest|unplanned|spontaneous)\b|ימי\s*מנוחה|יום\s*מנוחה|ימי\s*אימון|לוח\s*אימונים|מנוחה\s*ב|תוסיף\s*מנוחה|תוריד\s*מנוחה|שנה\s*את\s*(ה)?ימי|מחר\s*.{0,24}מנוחה|במקום\s*יום\s*מנוחה|דילג(תי)?\s*על\s*(יום\s*)?מנוחה|ביצעתי\s*אימון/i;
+  /\b(rest\s*days?|training\s*days?|work\s*days?|off\s*days?|weekly\s*split|schedule|active\s*recovery|instead\s*of\s*(a\s*)?rest|skipped\s*rest|unplanned|spontaneous)\b|ימי\s*מנוחה|יום\s*מנוחה|ימי\s*אימון|לוח\s*אימונים|מנוחה\s*ב|תוסיף\s*מנוחה|תוריד\s*מנוחה|שנה\s*את\s*(ה)?ימי|מחר\s*.{0,24}מנוחה|במקום\s*יום\s*מנוחה|דילג(תי)?\s*על\s*(יום\s*)?מנוחה|ביצעתי\s*אימון|התאמנתי/i;
+
+function pprogNoteTriggersBrickSchedulePending(text) {
+  return pprogNoteIsExtraCompletedSession(text) || pprogNoteIsScheduleRestShift(text);
+}
+
+function pprogGetBrickSchedulePending() {
+  try {
+    var s = loadPprogStore();
+    var p = s.brickSchedulePending;
+    if (!p || !p.note) return null;
+    return p;
+  } catch (e) {
+    return null;
+  }
+}
+
+function pprogEnsureBrickSchedulePending(noteText) {
+  var note = String(noteText || "").trim().slice(0, 800);
+  if (!note || !pprogNoteTriggersBrickSchedulePending(note)) return false;
+  var store = loadPprogStore();
+  store.brickSchedulePending = {
+    note: note,
+    sessionDate: pprogIsraelTodayIso(),
+    askedAt: new Date().toISOString(),
+  };
+  savePprogStore(store);
+  try {
+    pprogRememberExtraSession(note);
+  } catch (eR) {}
+  return true;
+}
+
+function pprogClearBrickSchedulePending() {
+  try {
+    var store = loadPprogStore();
+    if (store.brickSchedulePending) {
+      delete store.brickSchedulePending;
+      savePprogStore(store);
+    }
+  } catch (e) {}
+}
+
+function pprogRehydrateBrickSchedulePending(msgs) {
+  if (pprogGetBrickSchedulePending()) return true;
+  var note = pprogLatestStandingUserNote(msgs);
+  if (!note || !pprogNoteTriggersBrickSchedulePending(note)) return false;
+  return pprogEnsureBrickSchedulePending(note);
+}
+
+/** Confirm (כן) or implement (תממש את השינויים…) — apply, never re-ask. */
+function pprogIsScheduleApplyIntent(text) {
+  var t = String(text || "").trim();
+  if (!t) return false;
+  if (pprogIsExplicitConfirm(t)) return true;
+  if (/^(תממש|ממש|יישם|יישום|בצע|ביצוע|קדימה|עשה\s*זאת)(\s|$|[.!])/i.test(t)) return true;
+  if (
+    /תממש\s*(את\s*)?(ה)?שינויים|בצע\s*(את\s*)?(ה)?שינויים|ממש\s*(את\s*)?(ה)?שינויים|implement\s*(the\s*)?changes|apply\s*(the\s*)?changes|execute\s*(the\s*)?changes|make\s*(the\s*)?changes/i.test(
+      t
+    )
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function pprogBrickScheduleGateActive(msgs) {
+  if (pprogGetBrickSchedulePending()) return true;
+  return pprogBrickThreadIsPol026(msgs);
+}
+
+/**
+ * Guaranteed local calendar apply (today LOGGED + tomorrow Rest) — does not wait for model JSON.
+ * Returns true when store + calendar were updated.
+ */
+function pprogApplyBrickScheduleLocal(msgs, opts) {
+  opts = opts || {};
+  var pending = pprogGetBrickSchedulePending();
+  var note = (pending && pending.note) || pprogLatestExtraSessionNote(msgs);
+  if (note) {
+    try {
+      pprogApplyStandingIntakeNote(note);
+    } catch (eNote) {}
+  }
+  var ok = false;
+  try {
+    ok = !!pprogApplyPol026CalendarTruth(msgs, { recordEdit: opts.recordEdit !== false });
+  } catch (eCal) {
+    ok = false;
+  }
+  if (ok) {
+    pprogClearBrickSchedulePending();
+    try {
+      jumpPprogToToday();
+    } catch (eJump) {}
+    try {
+      renderPprogWeek();
+    } catch (eRend) {}
+  }
+  return ok;
+}
 
 /** True when whole-brick note logs an unplanned / extra completed session (POL-026). */
 function pprogNoteIsExtraCompletedSession(text) {
@@ -7329,11 +7451,11 @@ function sendPprogConfirmYes(ev) {
 
 function pprogBrickThreadIsPol026(msgs) {
   var list = Array.isArray(msgs) ? msgs : [];
-  for (var i = list.length - 1; i >= 0 && i >= list.length - 8; i--) {
+  for (var i = list.length - 1; i >= 0 && i >= list.length - 24; i--) {
     var m = list[i];
     if (!m || m.role !== "user") continue;
     var t = String(m.text || "").trim();
-    if (!t || pprogIsExplicitConfirm(t)) continue;
+    if (!t || pprogIsScheduleApplyIntent(t)) continue;
     if (pprogNoteIsExtraCompletedSession(t)) return true;
     if (pprogNoteIsScheduleRestShift(t)) return true;
   }

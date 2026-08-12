@@ -17,6 +17,8 @@
  *   2.3.2 — POL-027 full equipment-free pool (Gemini directive) shipped
  *   2.3.3 — POL-027 Enhancement Grammar (home gear → loaded variation tree)
  *   2.3.6 — POL-027 generic movement-pattern balance (no movement-specific bans)
+ *   2.3.7 — brick schedule-revise brief reply (no AI intro / no change recap)
+ *   2.3.8 — brick schedule-revise calendar apply (pending state + תממש intent)
  *   2.3.4 — POL-027 honor home inventory: lift kg ≠ barbell/rings; weekly lunge+wall; anti thruster-spam
  *
  * Env: GEMINI_API_KEY (optional File Search), GROQ_API_KEY (fallback chat),
@@ -28,7 +30,7 @@
  * Groq keeps chat alive when the Gemini key is missing/invalid (common GitHub Pages + Vercel setup).
  * Programming stays Gemini-only (POL-020).
  */
-const COACH_VERSION = "2.3.7";
+const COACH_VERSION = "2.3.8";
 const fs = require("fs");
 const path = require("path");
 function resolveAppVersion() {
@@ -566,6 +568,7 @@ function buildExtraSessionsBlock(profile) {
 
 const {
   isExplicitPol026Confirm,
+  isScheduleApplyIntent,
   messagesLookLikePol026ExtraSession,
   messagesLookLikeBrickScheduleRevise,
   enforcePol026BrickChatResponse,
@@ -2408,8 +2411,10 @@ module.exports = async function handler(req, res) {
     const rawModel = String((result && result.text) || "");
     const brickChatTurn = body.brickChat === true || body.wholeProgramChat === true;
     const pol026Turn =
-      !programming && brickChatTurn && messagesLookLikeBrickScheduleRevise(messages);
-    const pol026Confirmed = pol026Turn && isExplicitPol026Confirm(lastUserLine);
+      !programming &&
+      brickChatTurn &&
+      (messagesLookLikeBrickScheduleRevise(messages) || body.brickSchedulePending === true);
+    const pol026Confirmed = pol026Turn && isScheduleApplyIntent(lastUserLine);
     /* Extract plan JSON from raw model text BEFORE forcing athlete-facing Done./Confirm? */
     let block = pol026Turn ? extractBlockJson(rawModel) : null;
     let week = pol026Turn ? extractWeekJson(rawModel, weekIndexForExtract) : null;

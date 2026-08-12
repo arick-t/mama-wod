@@ -7,6 +7,7 @@ const fs = require("fs");
 const path = require("path");
 const {
   isExplicitPol026Confirm,
+  isScheduleApplyIntent,
   textLooksLikePol026ExtraSession,
   textLooksLikeScheduleRestShift,
   messagesLookLikePol026ExtraSession,
@@ -48,9 +49,14 @@ ok("loggedExtra survives normalize", /loggedExtraSession/.test(index) && /POL-02
 ok("loggedExtra not Rest", /pprogDayIsLoggedExtraSession/.test(index) && /athlete-logged session wins/.test(index));
 ok("week_detail preserves logged day", /week_detail must never wipe an athlete-logged/.test(index));
 ok("calendar logged-extra class", /logged-extra/.test(index) && /pprog-logged-extra-flag/.test(index));
-ok("coach version 2.3.7", /COACH_VERSION = "2\.3\.7"/.test(index) && /COACH_VERSION = "2\.3\.7"/.test(pc));
+ok("coach version 2.3.8", /COACH_VERSION = "2\.3\.8"/.test(index) && /COACH_VERSION = "2\.3\.8"/.test(pc));
 ok("client Hebrew post-apply", /PPROG_BRICK_SCHEDULE_POST_APPLY_MSG/.test(index));
 ok("client schedule rest-shift detect", /pprogNoteIsScheduleRestShift/.test(index));
+ok("client brickSchedulePending store", /brickSchedulePending/.test(index));
+ok("client local schedule apply", /pprogApplyBrickScheduleLocal/.test(index));
+ok("client תממש apply intent", /pprogIsScheduleApplyIntent/.test(index));
+ok("client pending rehydrate", /pprogRehydrateBrickSchedulePending/.test(index));
+ok("server brickSchedulePending flag", /brickSchedulePending/.test(pc));
 ok("ATHLETE_EXTRA_SESSIONS card", /ATHLETE_EXTRA_SESSIONS/.test(pc));
 
 const noteHe =
@@ -67,7 +73,8 @@ ok(
 );
 
 ok("כן is confirm", isExplicitPol026Confirm("כן"));
-ok("לא is not confirm", !isExplicitPol026Confirm("לא"));
+ok("תממש את השינויים is apply intent", isScheduleApplyIntent("תממש את השינויים שביקשתי"));
+ok("לא is not apply intent", !isScheduleApplyIntent("לא"));
 ok(
   "thread detects pol026",
   messagesLookLikePol026ExtraSession([
