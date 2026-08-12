@@ -799,6 +799,9 @@
   };
 
   window.finalizeNewAthlete = function finalizeNewAthlete(block) {
+    if (window.NormalizePprogBlock && block && typeof block === "object") {
+      block = NormalizePprogBlock.normalize(block, null);
+    }
     intakeState.intakeComplete = true;
     showIntakeBuilding(
       true,
@@ -854,21 +857,33 @@
         if (typeof currentAthleteId !== "undefined") {
           window.currentAthleteId = d.snapshot && d.snapshot.athleteId;
         }
-        var linkPath = d.handoff && d.handoff.path;
+        var linkPath =
+          (d.handoff && d.handoff.path) ||
+          (d.snapshot && d.snapshot.lastHandoffPath) ||
+          "";
         var abs =
           linkPath && typeof pagesAbsoluteUrl === "function"
             ? pagesAbsoluteUrl(linkPath)
             : linkPath && typeof location !== "undefined"
               ? location.origin + linkPath
               : linkPath || "";
-        document.getElementById("intake-status").textContent = abs
-          ? "נוצר ✓ לינק מסירה מוכן"
-          : "נוצר בהצלחה ✓";
-        if (abs) {
-          try {
-            window.prompt("לינק מסירה חד־פעמי למתאמן (העתק):", abs);
-          } catch (ePrompt) {}
+        if (typeof lastHandoffUrl !== "undefined") {
+          window.lastHandoffUrl = abs || "";
         }
+        if (typeof athletes !== "undefined" && Array.isArray(athletes) && d.snapshot) {
+          var snap = d.snapshot;
+          var idx = athletes.findIndex(function (x) {
+            return x.athleteId === snap.athleteId;
+          });
+          var row = Object.assign({}, snap, {
+            lastHandoffPath: linkPath || snap.lastHandoffPath || "",
+          });
+          if (idx >= 0) athletes[idx] = Object.assign({}, athletes[idx], row);
+          else athletes.unshift(row);
+        }
+        document.getElementById("intake-status").textContent = abs
+          ? "נוצר ✓ לינק מסירה בכרטיס המתאמן"
+          : "נוצר בהצלחה ✓";
         setTimeout(function () {
           setIntakeModalOpen(false);
           resetIntakeState();
