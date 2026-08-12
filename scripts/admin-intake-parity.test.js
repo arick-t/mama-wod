@@ -12,6 +12,7 @@ const adminHtml = fs.readFileSync(path.join(root, "admin.html"), "utf8");
 const handoff = fs.readFileSync(path.join(root, "scripts/lib/admin/admin-handoff.js"), "utf8");
 const snap = fs.readFileSync(path.join(root, "scripts/lib/admin/admin-snapshot.js"), "utf8");
 const fixedJs = fs.readFileSync(path.join(root, "admin-fixed-intake.js"), "utf8");
+const claimHtml = fs.readFileSync(path.join(root, "claim.html"), "utf8");
 const index = fs.readFileSync(path.join(root, "index.html"), "utf8");
 
 function ok(name, cond) {
@@ -70,26 +71,60 @@ ok("phone legalAcceptedAt preserved", phone.legalAcceptedAt === "2026-01-01T00:0
 
 ok("admin loads sync contract", /coach-intake-sync-contract\.js/.test(adminHtml));
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
-ok("admin version 1.5.8", /DUCK-WOD Admin · 1\.5\.8/.test(adminHtml));
+ok("admin version 1.5.9", /DUCK-WOD Admin · 1\.5\.9/.test(adminHtml));
 ok("admin wired to coach 2.3.8", /LIVE_COACH_VERSION = "2\.3\.8"/.test(adminHtml));
 ok("app coach 2.3.8", /COACH_VERSION = "2\.3\.8"/.test(index));
 ok(
   "admin shows Admin + Coach versions",
-  /Admin 1\.5\.8/.test(adminHtml) &&
+  /Admin 1\.5\.9/.test(adminHtml) &&
     /ver-coach/.test(adminHtml) &&
     /syncAdminVersionLabels/.test(adminHtml) &&
-    /ADMIN_UI_VERSION = "1\.5\.8"/.test(adminHtml)
+    /ADMIN_UI_VERSION = "1\.5\.9"/.test(adminHtml)
 );
-ok("admin intake uses pprog classes 1:1", /pprog-fixed-intake/.test(fixedJs) && /pprog-lifts-row/.test(fixedJs));
-ok("admin lifts numeric inputmode", /inputmode="decimal"/.test(fixedJs) && /enterkeyhint="next"/.test(fixedJs));
+ok(
+  "admin intake uses pprog classes 1:1",
+  /pprog-fixed-intake/.test(fixedJs) &&
+    (/pprog-lifts-row/.test(fixedJs) || /renderFixedLiftsRowsHtml/.test(fixedJs))
+);
+ok(
+  "shared numeric keyboard contract",
+  /renderFixedLiftsRowsHtml/.test(
+    fs.readFileSync(path.join(root, "lib", "coach-intake-sync-contract.js"), "utf8")
+  ) &&
+    /bindIntakeNumericKeyboards/.test(
+      fs.readFileSync(path.join(root, "lib", "coach-intake-sync-contract.js"), "utf8")
+    ) &&
+    /renderFixedLiftsRowsHtml/.test(fixedJs) &&
+    /bindIntakeNumericKeyboards/.test(fixedJs)
+);
+ok(
+  "admin intake fixed lang en",
+  /id="intake-fixed" lang="en" dir="ltr"/.test(adminHtml)
+);
 ok("admin skills vertical like app", /pprog-skills-picker/.test(fixedJs) && /adminFixedSkillAllChange/.test(fixedJs));
 ok("admin No injuries chip", /pprog-fixed-chip/.test(fixedJs) && /adm-fx-no-injuries-btn/.test(fixedJs));
 ok("admin build overlay uses coach video", /adminIntakeBuildOverlay/.test(adminHtml) && /coach-thinking\.mp4/.test(adminHtml));
 ok("admin build restores goals on fail", /restoreAdminFixedGoals/.test(fixedJs));
 ok("admin Build plan sends admin auth", /adminAuthHeaders\(\)/.test(fixedJs) && /adminProgramming:\s*true/.test(fixedJs));
 ok("admin Build plan timeout+retry", /180000/.test(fixedJs) && /retryLeft/.test(fixedJs));
+ok("admin Build plan sends password body", /withAdminPassword\(payload\)/.test(fixedJs));
+ok(
+  "admin build error not blanket 503 gemini",
+  /admin_not_configured/.test(adminHtml) &&
+    /function friendlyCoachError[\s\S]*&& status === 503[\s\S]*GEMINI/.test(adminHtml) &&
+    !/function friendlyCoachError[\s\S]*\|\| status === 503/.test(adminHtml)
+);
 ok("admin Build my plan CTA", /Build my plan/.test(fixedJs));
-ok("admin hides FAB during intake", /intake-modal\.open/.test(adminHtml) && /intakeOpen/.test(adminHtml));
+ok(
+  "admin api base for GitHub Pages",
+  /function getAdminApiBase/.test(adminHtml) &&
+    /function adminApiUrl/.test(adminHtml) &&
+    /fetch\(adminApiUrl\("\/api\//.test(adminHtml) &&
+    !/fetch\("\/api\//.test(adminHtml)
+);
+ok("admin fixed intake uses adminApiUrl", /adminApiUrl\("\/api\/personal-coach"\)/.test(fixedJs));
+ok("claim uses adminApiUrl", /function adminApiUrl/.test(claimHtml) && /fetch\(adminApiUrl\("\/api\/admin-handoff/.test(claimHtml));
+ok("admin hides FAB during intake", /admin-intake-open/.test(adminHtml) && /setAdminIntakeModalOpen/.test(adminHtml) && /adminChatFabWrap[\s\S]*hidden/.test(adminHtml));
 ok("admin recovery nested under Yes", /pprog-fixed-recovery-branch/.test(fixedJs) && /Under Yes/.test(fixedJs));
 ok("admin recovery no Thu default", /activeRecoveryDay:\s*""/.test(fixedJs));
 ok("phone recovery nested under Yes", /pprog-fixed-recovery-branch/.test(index));

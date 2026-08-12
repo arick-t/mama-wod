@@ -43,6 +43,47 @@ p{color:var(--text-muted);font-size:15px;line-height:1.55;margin-bottom:14px}
 </div>
 <script>
 (function () {
+  var ADMIN_ANALYTICS_ENDPOINT = (function () {
+    if (typeof location === "undefined") return "https://mama-wod.vercel.app/api/event";
+    var h = location.hostname;
+    var proto = location.protocol;
+    if (h === "localhost" || h === "127.0.0.1") return location.origin + "/api/event";
+    if (proto === "file:") return "https://mama-wod.vercel.app/api/event";
+    if (h === "github.io" || (h.length > 10 && h.slice(-10) === ".github.io"))
+      return "https://mama-wod.vercel.app/api/event";
+    return location.origin.replace(/\/$/, "") + "/api/event";
+  })();
+
+  function getAdminApiBase() {
+    if (!ADMIN_ANALYTICS_ENDPOINT) return "";
+    var ep = String(ADMIN_ANALYTICS_ENDPOINT).replace(/\/$/, "");
+    return ep.replace(/\/api\/event$/i, "") || (typeof location !== "undefined" ? location.origin : "");
+  }
+
+  function getPagesBasePath() {
+    if (typeof location === "undefined") return "";
+    var p = String(location.pathname || "/");
+    if (/\/admin\.html$/i.test(p)) return p.replace(/\/admin\.html$/i, "");
+    if (/\/claim\.html$/i.test(p)) return p.replace(/\/claim\.html$/i, "");
+    if (/\/index\.html$/i.test(p)) return p.replace(/\/index\.html$/i, "");
+    if (p.endsWith("/")) p = p.slice(0, -1);
+    var i = p.lastIndexOf("/");
+    return i > 0 ? p.slice(0, i) : "";
+  }
+
+  function adminApiUrl(path) {
+    var base = getAdminApiBase();
+    var p = String(path || "");
+    if (!p.startsWith("/")) p = "/" + p;
+    return base ? base.replace(/\/$/, "") + p : p;
+  }
+
+  function pagesAbsoluteUrl(path) {
+    var p = String(path || "");
+    if (!p.startsWith("/")) p = "/" + p;
+    return location.origin + getPagesBasePath() + p;
+  }
+
   var PPROG_STORE_KEY = "duck-wod-personal-coach-v1";
   var UID_KEY = "dw_uid";
   var params = new URLSearchParams(window.location.search);
@@ -110,7 +151,7 @@ p{color:var(--text-muted);font-size:15px;line-height:1.55;margin-bottom:14px}
     return;
   }
 
-  fetch("/api/admin-handoff?token=" + encodeURIComponent(token))
+  fetch(adminApiUrl("/api/admin-handoff?token=" + encodeURIComponent(token)))
     .then(function (r) {
       return r.json().then(function (j) {
         return { okHttp: r.ok, status: r.status, j: j };
@@ -139,9 +180,9 @@ p{color:var(--text-muted);font-size:15px;line-height:1.55;margin-bottom:14px}
         status.textContent = "אפשר לפתוח את המאמן האישי ולהתחיל תחקור מחדש. התוכנית נשארה.";
         if (footer) footer.textContent = "הלינק חד־פעמי. התוכנית במכשיר נשמרה — רק התחקור נפתח מחדש.";
         openBtn.style.display = "inline-block";
-        openBtn.href = "/?tab=pprog&intake_reset=1";
+        openBtn.href = pagesAbsoluteUrl("/?tab=pprog&intake_reset=1");
         setTimeout(function () {
-          window.location.replace("/?tab=pprog&intake_reset=1");
+          window.location.replace(pagesAbsoluteUrl("/?tab=pprog&intake_reset=1"));
         }, 1600);
       } else {
         msg.textContent = "החבילה הותקנה" + (j.displayName ? (" — " + j.displayName) : "");
@@ -152,9 +193,9 @@ p{color:var(--text-muted);font-size:15px;line-height:1.55;margin-bottom:14px}
             "החתימה על התנאים נרשמת במסמך המשפטי שלנו. רק אחרי אישור במכשיר התוכנית נפתחת.";
         }
         openBtn.style.display = "inline-block";
-        openBtn.href = "/?tab=pprog&handoff=1";
+        openBtn.href = pagesAbsoluteUrl("/?tab=pprog&handoff=1");
         setTimeout(function () {
-          window.location.replace("/?tab=pprog&handoff=1");
+          window.location.replace(pagesAbsoluteUrl("/?tab=pprog&handoff=1"));
         }, 1600);
       }
     })
