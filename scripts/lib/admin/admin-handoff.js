@@ -20,6 +20,8 @@ const { makeWriteKey, hashWriteKey } = require("./admin-ownership");
 const { appendAdminAudit } = require("./admin-audit");
 const { applyCors } = require("../../../lib/cors-allowlist");
 const CoachIntakeSync = require("../../../lib/coach-intake-sync-contract");
+const NormalizePprogBlock = require("../../../lib/normalize-pprog-block");
+const { sendAdminIntakeCompleteMail } = require("../../../lib/admin-intake-complete-mail");
 
 const ADMIN_PASSWORD = resolveAdminPassword();
 const MAX_PACKAGE_BYTES = 256 * 1024;
@@ -342,8 +344,8 @@ async function createAthlete(body) {
     return { status: 409, json: { error: "athlete already exists", athleteId: athleteId } };
   }
 
-  const block = body.currentBlock;
-  if (!block || !Array.isArray(block.weeks) || !block.weeks.length) {
+  const blockRaw = body.currentBlock;
+  if (!blockRaw || !Array.isArray(blockRaw.weeks) || !blockRaw.weeks.length) {
     return {
       status: 400,
       json: {
@@ -353,6 +355,7 @@ async function createAthlete(body) {
       },
     };
   }
+  const block = NormalizePprogBlock.normalize(blockRaw, null);
   if (!intakeProfile.fixedIntakePacket || !/^FIXED INTAKE COMPLETE/i.test(intakeProfile.fixedIntakePacket)) {
     return {
       status: 400,
@@ -402,6 +405,7 @@ async function createAthlete(body) {
     coachTier: 2,
     writeKeyHash: hashWriteKey(deviceWriteKey),
     clientWritesLocked: false,
+    intakeNotifySent: false,
   };
   try {
     await writeSnap(athleteId, snapshot);
@@ -418,6 +422,21 @@ async function createAthlete(body) {
     };
   }
 
+  let mailResult = null;
+  try {
+    const notifySnap = Object.assign({}, snapshot, {
+      intakeNotifySentAt: now,
+    });
+    mailResult = await sendAdminIntakeCompleteMail(notifySnap);
+    if (mailResult.sent) {
+      snapshot.intakeNotifySent = true;
+      snapshot.intakeNotifySentAt = now;
+      await writeSnap(athleteId, snapshot);
+    }
+  } catch (eMail) {
+    mailResult = { sent: false, error: String((eMail && eMail.message) || eMail).slice(0, 120) };
+  }
+
   let linkJson = null;
   if (body.autoCreateLink !== false) {
     try {
@@ -428,13 +447,19 @@ async function createAthlete(body) {
     }
   }
 
+  let responseSnap = snapshot;
+  try {
+    responseSnap = (await readSnap(athleteId)) || snapshot;
+  } catch (eFresh) {}
+
   return {
     status: 200,
     json: {
       ok: true,
-      snapshot: Object.assign({}, snapshot, { writeKeyHash: undefined }),
+      snapshot: Object.assign({}, responseSnap, { writeKeyHash: undefined }),
       writeKey: (linkJson && linkJson.writeKey) || deviceWriteKey,
       handoff: linkJson,
+      intakeMail: mailResult,
       message: linkJson
         ? "נשמר + לינק מסירה חד־פעמי מוכן."
         : "נשמר. צרו לינק מסירה מהכרטיס.",
@@ -485,6 +510,7 @@ async function createLink(body) {
   snap.lastHandoffTokenPrefix = token.slice(0, 8);
   snap.lastHandoffCreatedAt = claim.createdAt;
   snap.lastHandoffExpiresAt = claim.expiresAt;
+  snap.lastHandoffPath = "/claim.html?t=" + encodeURIComponent(token);
   if (isReset) {
     snap.intakeSummary = "";
     snap.skillsSummary = "";

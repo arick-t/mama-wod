@@ -70,16 +70,21 @@ ok("phone legal not auto-stamped", (phone.legalAcceptedVersion | 0) === 1);
 ok("phone legalAcceptedAt preserved", phone.legalAcceptedAt === "2026-01-01T00:00:00.000Z");
 
 ok("admin loads sync contract", /coach-intake-sync-contract\.js/.test(adminHtml));
+ok("admin loads normalize block lib", /normalize-pprog-block\.js/.test(adminHtml));
+ok("admin fixed intake normalizes block", /NormalizePprogBlock\.normalize/.test(fixedJs));
+ok("handoff stores lastHandoffPath", /lastHandoffPath/.test(handoff));
+ok("admin create sends intake mail", /sendAdminIntakeCompleteMail/.test(handoff));
+ok("handoff panel in athlete tab", /ath-handoff-panel/.test(adminHtml) && /renderHandoffSectionBody/.test(adminHtml));
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
-ok("admin version 1.5.9", /DUCK-WOD Admin · 1\.5\.9/.test(adminHtml));
+ok("admin version 1.5.10", /DUCK-WOD Admin · 1\.5\.10/.test(adminHtml));
 ok("admin wired to coach 2.3.8", /LIVE_COACH_VERSION = "2\.3\.8"/.test(adminHtml));
 ok("app coach 2.3.8", /COACH_VERSION = "2\.3\.8"/.test(index));
 ok(
   "admin shows Admin + Coach versions",
-  /Admin 1\.5\.9/.test(adminHtml) &&
+  /Admin 1\.5\.10/.test(adminHtml) &&
     /ver-coach/.test(adminHtml) &&
     /syncAdminVersionLabels/.test(adminHtml) &&
-    /ADMIN_UI_VERSION = "1\.5\.9"/.test(adminHtml)
+    /ADMIN_UI_VERSION = "1\.5\.10"/.test(adminHtml)
 );
 ok(
   "admin intake uses pprog classes 1:1",
@@ -140,6 +145,7 @@ ok("handoff autoCreateLink", /autoCreateLink/.test(handoff));
 ok("phone package applies intake", /applyIntakeProfileToPhoneStore/.test(handoff));
 ok("snapshot allows intakeProfile", /"intakeProfile"/.test(snap) || /intakeProfile/.test(snap));
 ok("app loads sync contract", /coach-intake-sync-contract\.js/.test(index));
+ok("app loads normalize block lib", /normalize-pprog-block\.js/.test(index));
 ok("app push syncs intakeProfile", /intakeProfile: intakeProfile/.test(index));
 ok("app shared packet path", /CoachIntakeSync\.buildFixedIntakePrompt/.test(index));
 ok(
@@ -147,8 +153,8 @@ ok(
   /reclaimSameAthlete:\s*true/.test(index) && !/pprogMintNewAthleteIdentity/.test(index)
 );
 ok(
-  "join email after admin push",
-  /sendJoinMailAndAnalytics/.test(index)
+  "join email after admin create",
+  /sendAdminIntakeCompleteMail/.test(handoff)
 );
 ok(
   "snapshot reclaim same id",

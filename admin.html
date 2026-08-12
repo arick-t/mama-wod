@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DUCK-WOD Admin · 1.5.9</title>
+<title>DUCK-WOD Admin · 1.5.10</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -188,6 +188,8 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .ath-card-foot{margin-top:12px;display:flex;justify-content:flex-end}
 .ath-card-foot .btn-delete-link{appearance:none;background:transparent;border:none;color:#f87171;font-weight:700;font-size:.82em;cursor:pointer;padding:4px 0;font-family:inherit}
 .ath-card-foot .btn-delete-link:hover{color:#fca5a5}
+.ath-handoff-panel{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
+.ath-handoff-head{font-size:.95em;font-weight:800;margin:0 0 8px;color:var(--text)}
 .ath-block-panel{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
 .ath-block-panel-head{
   display:flex;align-items:center;justify-content:flex-start;flex-wrap:wrap;gap:6px 8px;
@@ -577,7 +579,7 @@ body:has(#intake-modal.open) #adminChatFloat{
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver" id="login-ver-badge" title="Admin 1.5.9 · Coach 2.3.8">Admin 1.5.9<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.8</span></div>
+    <div class="ver" id="login-ver-badge" title="Admin 1.5.10 · Coach 2.3.8">Admin 1.5.10<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.8</span></div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <button type="button" onclick="doLogin()">כניסה</button>
     <div id="login-err"></div>
@@ -589,7 +591,7 @@ body:has(#intake-modal.open) #adminChatFloat{
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">Admin</span>
-    <span class="ver-badge" id="admin-ver-badge" title="Admin 1.5.9 · Coach 2.3.8">Admin 1.5.9<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.8</span></span>
+    <span class="ver-badge" id="admin-ver-badge" title="Admin 1.5.10 · Coach 2.3.8">Admin 1.5.10<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.8</span></span>
     <span class="count-wrap">
       <span class="count" id="athlete-count">0 מתאמנים</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
@@ -775,7 +777,7 @@ var pendingLearnNoteId = null;
 var adminChatFabOpen = false;
 var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
 /** Live Personal Coach brain version — refreshed from GET /api/personal-coach. */
-var ADMIN_UI_VERSION = "1.5.9";
+var ADMIN_UI_VERSION = "1.5.10";
 var LIVE_COACH_VERSION = "2.3.8";
 var LIVE_COACH_VERSION_FETCHED_AT = 0;
 
@@ -1532,6 +1534,9 @@ function renderAthlete(a) {
           esc(a.athleteId) +
           "')\">מחק מתאמן</button>" +
         "</div>" +
+      "</div>" +
+      '<div class="ath-handoff-panel">' +
+        renderHandoffSectionBody(a) +
       "</div>" +
       '<div class="ath-block-panel">' +
         '<div class="ath-block-panel-head">' +
@@ -2895,19 +2900,38 @@ function renderHandoffSectionBody(a) {
         : "") +
       "</div>";
   }
+  var savedPath = a.lastHandoffPath || "";
+  var savedUrl = savedPath ? pagesAbsoluteUrl(savedPath) : "";
+  var linkVisible = savedUrl ? "block" : "none";
+  var copyVisible = savedUrl ? "flex" : "none";
   return (
+    '<div class="ath-handoff-head">לינק מסירה למכשיר המתאמן</div>' +
     '<div style="font-size:13px;color:var(--text-muted);line-height:1.5;margin-bottom:10px">יוצר לינק שמוריד את התוכנית למכשיר של המתאמן פעם אחת. אחר כך הניהול נשאר אצלו — לא אצלנו בשרת.</div>' +
     '<div class="sandbox-actions" style="margin-bottom:8px">' +
     '<button type="button" class="btn-primary" onclick="createHandoffLink(\'' +
     esc(a.athleteId) +
     "')\">צור לינק הורדה חד־פעמי</button>" +
     "</div>" +
-    '<div class="handoff-box" id="handoff-box">' +
-    '<div class="sandbox-status" id="handoff-status"></div>' +
-    '<div class="handoff-link" id="handoff-link" style="display:none"></div>' +
-    '<div class="sandbox-actions" id="handoff-copy-wrap" style="display:none">' +
-    '<button type="button" class="btn-secondary good" onclick="copyHandoffLink()">העתק לינק</button>' +
-    '<a class="btn-secondary" id="handoff-open" href="#" target="_blank" rel="noopener">פתח לבדיקה</a>' +
+    '<div class="handoff-box" id="handoff-box" data-athlete-id="' +
+    esc(a.athleteId) +
+    '">' +
+    '<div class="sandbox-status" id="handoff-status">' +
+    (savedUrl ? "לינק שמור — העתק והעבר למתאמן." : "") +
+    "</div>" +
+    '<div class="handoff-link" id="handoff-link" style="display:' +
+    linkVisible +
+    '">' +
+    esc(savedUrl) +
+    "</div>" +
+    '<div class="sandbox-actions" id="handoff-copy-wrap" style="display:' +
+    copyVisible +
+    '">' +
+    '<button type="button" class="btn-secondary good" onclick="copyHandoffLink(\'' +
+    esc(a.athleteId) +
+    "')\">העתק לינק</button>" +
+    '<a class="btn-secondary" id="handoff-open" href="' +
+    esc(savedUrl || "#") +
+    '" target="_blank" rel="noopener">פתח לבדיקה</a>' +
     "</div>" +
     last +
     "</div>"
@@ -2915,6 +2939,15 @@ function renderHandoffSectionBody(a) {
 }
 
 var lastHandoffUrl = "";
+
+function handoffUrlForAthlete(athleteId) {
+  if (lastHandoffUrl) return lastHandoffUrl;
+  var a = athletes.find(function (x) {
+    return x.athleteId === athleteId;
+  });
+  if (a && a.lastHandoffPath) return pagesAbsoluteUrl(a.lastHandoffPath);
+  return "";
+}
 
 function createHandoffLink(athleteId) {
   var status = document.getElementById("handoff-status");
@@ -2943,7 +2976,8 @@ function createHandoffLink(athleteId) {
       if (status) status.textContent = "מוכן — חד־פעמי. אחרי הורדה הלינק נשרף.";
       var a = athletes.find(function(x) { return x.athleteId === athleteId; });
       if (a) {
-        a.lastHandoffCreatedAt = d.expiresAt ? new Date().toISOString() : a.lastHandoffCreatedAt;
+        a.lastHandoffPath = d.path;
+        a.lastHandoffCreatedAt = new Date().toISOString();
         a.lastHandoffExpiresAt = d.expiresAt;
       }
     })
@@ -2952,17 +2986,18 @@ function createHandoffLink(athleteId) {
     });
 }
 
-function copyHandoffLink() {
-  if (!lastHandoffUrl) return;
+function copyHandoffLink(athleteId) {
+  var url = handoffUrlForAthlete(athleteId);
+  if (!url) return;
   var status = document.getElementById("handoff-status");
   if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(lastHandoffUrl).then(function() {
+    navigator.clipboard.writeText(url).then(function() {
       if (status) status.textContent = "הלינק הועתק";
     }).catch(function() {
-      if (status) status.textContent = lastHandoffUrl;
+      if (status) status.textContent = url;
     });
   } else if (status) {
-    status.textContent = lastHandoffUrl;
+    status.textContent = url;
   }
 }
 
@@ -3634,6 +3669,7 @@ refreshLiveCoachVersion();
 loadLearningMode();
 </script>
 <script src="lib/coach-intake-sync-contract.js"></script>
+<script src="lib/normalize-pprog-block.js"></script>
 <script src="admin-fixed-intake.js"></script>
 </body>
 </html>

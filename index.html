@@ -1546,6 +1546,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 </footer>
 
 <script src="lib/coach-intake-sync-contract.js"></script>
+<script src="lib/normalize-pprog-block.js"></script>
 <script>
 var allData = {workouts:{}};
 var specialData = {heroes:[], benchmarks:[], open:[]};
@@ -5961,117 +5962,11 @@ function pprogNormalizeFinishFeedback(fb) {
 }
 
 function normalizePprogWeek(week, prevWeek, weekStartOverride, weekMeta) {
-  var meta = weekMeta || {};
-  var out = {
-    weekStart:
-      weekStartOverride ||
-      (week && week.weekStart) ||
-      (prevWeek && prevWeek.weekStart) ||
-      sundayOfThisWeekIsrael(),
-    weekIndex: meta.weekIndex != null ? meta.weekIndex : (week && week.weekIndex) || (prevWeek && prevWeek.weekIndex) || 1,
-    phase: String(meta.phase || (week && week.phase) || (prevWeek && prevWeek.phase) || "build"),
-    theme: String(meta.theme || (week && week.theme) || (prevWeek && prevWeek.theme) || ""),
-    summaryLine: (week && week.summaryLine) || (prevWeek && prevWeek.summaryLine) || "Training week",
-    overview: coercePprogOverview((week && week.overview) || []),
-    days: {},
-    notesByDay: (prevWeek && prevWeek.notesByDay) || {},
-    weekTalk: String((week && week.weekTalk) != null ? week.weekTalk : (prevWeek && prevWeek.weekTalk) || ""),
-    lastWeekReply: String((week && week.lastWeekReply) != null ? week.lastWeekReply : (prevWeek && prevWeek.lastWeekReply) || ""),
-  };
-  var srcDays = coercePprogDaysMap((week && week.days) || {});
-  var prevDays = (prevWeek && prevWeek.days) || {};
-  for (var i = 0; i < PPROG_DAY_KEYS.length; i++) {
-    var k = PPROG_DAY_KEYS[i];
-    var day = srcDays[k] || {};
-    var prev = prevDays[k] || {};
-    var parts = normalizePprogParts(day.parts != null ? day.parts : day.workout || day.sections, k);
-    /* POL-026: logged extra session must survive re-normalize / week_detail (same class as finishFeedback) */
-    var loggedExtra =
-      (day && day.loggedExtraSession === true) ||
-      (prev && prev.loggedExtraSession === true) ||
-      pprogDayIsLoggedExtraSession(day) ||
-      pprogDayIsLoggedExtraSession(prev);
-    if (loggedExtra && pprogDayIsLoggedExtraSession(prev)) {
-      var newRestish = pprogPartsLookLikeRestOnly(parts);
-      if (newRestish || !parts.length) {
-        parts = normalizePprogParts(prev.parts != null ? prev.parts : prev.workout || prev.sections, k);
-      }
-    }
-    var dayOut = {
-      parts: parts,
-      preTalk: String((day && day.preTalk) != null ? day.preTalk : prev.preTalk || ""),
-      debrief: String((day && day.debrief) != null ? day.debrief : prev.debrief || ""),
-      lastPreReply: String(prev.lastPreReply || ""),
-      lastDebriefReply: String(prev.lastDebriefReply || ""),
-      modifiedPartKinds:
-        day && day.modifiedPartKinds && typeof day.modifiedPartKinds === "object"
-          ? day.modifiedPartKinds
-          : prev && prev.modifiedPartKinds && typeof prev.modifiedPartKinds === "object"
-          ? prev.modifiedPartKinds
-          : {},
-    };
-    /* Keep Done report across re-normalize / week fill — do not strip finishFeedback */
-    var ff =
-      pprogNormalizeFinishFeedback(day && day.finishFeedback) ||
-      pprogNormalizeFinishFeedback(prev && prev.finishFeedback);
-    if (ff) dayOut.finishFeedback = ff;
-    if (loggedExtra) {
-      dayOut.loggedExtraSession = true;
-      var noteKeep =
-        (day && day.loggedExtraNote) || (prev && prev.loggedExtraNote) || "";
-      if (noteKeep) dayOut.loggedExtraNote = String(noteKeep).slice(0, 800);
-      var atKeep = (day && day.loggedExtraAt) || (prev && prev.loggedExtraAt) || "";
-      if (atKeep) dayOut.loggedExtraAt = String(atKeep);
-    }
-    out.days[k] = dayOut;
-    if (out.notesByDay[k] == null) out.notesByDay[k] = "";
-  }
-  if (out.notesByDay.week == null) out.notesByDay.week = "";
-  if (!out.overview.length) {
-    out.overview = PPROG_DAY_KEYS.map(function (k) {
-      var titles = (out.days[k].parts || [])
-        .map(function (p) {
-          return p.title;
-        })
-        .join(" + ");
-      return { day: k, label: PPROG_DAY_LABELS[k], focus: titles || "—" };
-    });
-  }
-  /* POL-026: never leave overview focus as Rest when the day is a logged extra session */
-  for (var oiFix = 0; oiFix < PPROG_DAY_KEYS.length; oiFix++) {
-    var dkFix = PPROG_DAY_KEYS[oiFix];
-    if (!pprogDayIsLoggedExtraSession(out.days[dkFix])) continue;
-    var focNow = pprogOverviewFocus(out, dkFix);
-    if (!isPprogRestFocus(focNow) && focNow && focNow !== "—" && /^logged\b/i.test(focNow)) continue;
-    var prevFoc = pprogOverviewFocus(prevWeek || {}, dkFix);
-    var fixFocus = /^logged\b/i.test(prevFoc)
-      ? prevFoc
-      : ((out.days[dkFix].parts && out.days[dkFix].parts[0] && out.days[dkFix].parts[0].title) ||
-          "Logged session");
-    if (isPprogRestFocus(fixFocus) || !fixFocus || fixFocus === "—") fixFocus = "Logged session";
-    pprogSetOverviewFocus(out, dkFix, fixFocus);
-  }
-  return out;
+  return NormalizePprogBlock.normalizeWeek(week, prevWeek, weekStartOverride, weekMeta);
 }
 
-/** True when parts are empty or only Rest / Off / Recovery / מנוחה stubs. */
-function pprogPartsLookLikeRestOnly(parts) {
-  if (!parts || !parts.length) return true;
-  if (parts.length > 2) return false;
-  for (var i = 0; i < parts.length; i++) {
-    var p = parts[i] || {};
-    var blob = (String(p.title || "") + " " + (p.lines || []).join(" ")).toLowerCase().trim();
-    if (!blob) continue;
-    if (/מנוחה/.test(String(p.title || "") + " " + (p.lines || []).join(" "))) continue;
-    if (/^(rest(\s*day)?|off(\s*day)?|recovery|recovery\s*day)\b/.test(blob) || blob === "rest") continue;
-    if (/\brest\s*day\b/.test(blob) && !(p.lines || []).some(function (ln) {
-      return /[0-9]/.test(ln) && !/rest/i.test(ln);
-    })) {
-      continue;
-    }
-    return false;
-  }
-  return true;
+function normalizePprogBlock(block, prevBlock) {
+  return NormalizePprogBlock.normalize(block, prevBlock);
 }
 
 function pprogIsraelTodayIso() {
@@ -6882,7 +6777,7 @@ function pprogDayKeyFromIso(iso) {
 }
 
 function emptyStubWeek(weekIndex, weekStart, phase) {
-  return normalizePprogWeek(
+  return NormalizePprogBlock.normalizeWeek(
     {
       weekIndex: weekIndex,
       phase: phase || (weekIndex >= 5 ? "deload" : "build"),
@@ -6898,49 +6793,7 @@ function emptyStubWeek(weekIndex, weekStart, phase) {
 }
 
 function normalizePprogBlock(block, prevBlock) {
-  var blockStart =
-    (block && block.blockStart) ||
-    (prevBlock && prevBlock.blockStart) ||
-    sundayOfThisWeekIsrael();
-  var prevWeeks = (prevBlock && prevBlock.weeks) || [];
-  var srcWeeks = Array.isArray(block && block.weeks) ? block.weeks : [];
-  /* Legacy: single WEEK_JSON wrapped as block */
-  if (!srcWeeks.length && block && block.days) {
-    srcWeeks = [block];
-  }
-  var weeks = [];
-  for (var i = 0; i < 5; i++) {
-    var src = srcWeeks[i] || null;
-    var prev = prevWeeks[i] || null;
-    var start = pprogAddDaysIso(blockStart, i * 7);
-    if (src) {
-      var probeBlock = { weeks: srcWeeks };
-      var isDeload = pprogIsDeloadWeek(src, i, probeBlock);
-      var srcPhase = String(src.phase || "").toLowerCase().trim();
-      /* Keep coach-programmed phase; clear stale deload when detection says this week is not. */
-      var resolvedPhase = isDeload
-        ? "deload"
-        : srcPhase && srcPhase !== "deload" && srcPhase !== "taper"
-          ? src.phase
-          : "build";
-      weeks.push(
-        normalizePprogWeek(src, prev, start, {
-          weekIndex: i + 1,
-          phase: resolvedPhase,
-          theme: src.theme || "",
-        })
-      );
-    } else if (prev) {
-      weeks.push(normalizePprogWeek(prev, prev, start, { weekIndex: i + 1, phase: prev.phase, theme: prev.theme }));
-    } else {
-      weeks.push(emptyStubWeek(i + 1, start, i === 4 ? "deload" : "build"));
-    }
-  }
-  return {
-    summaryLine: (block && block.summaryLine) || (prevBlock && prevBlock.summaryLine) || "5-week block through first deload",
-    blockStart: blockStart,
-    weeks: weeks,
-  };
+  return NormalizePprogBlock.normalize(block, prevBlock);
 }
 
 function syncStoreActiveWeek(store) {
