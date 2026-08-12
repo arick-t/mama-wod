@@ -157,9 +157,10 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - **Type:** HARD
 - **Scope:** day / week / block programming JSON
 - **Trigger:** writing or revising any training part with `lines`
-- **Required behavior:** Keep the part **title** as the part name (e.g. `Part A - Gymnastics Quality & Pulling`). Inside `lines`, order as: (1) one intent note `Duration: … | Movement: …`, (2) one format/instruction header ending with `:` (e.g. `AMRAP in 16 minutes:` / `4 Sets for Quality:`), (3) prescription lines only. Do not bury format and intent as identical bullet weight.
-- **Examples:** Good: note then `AMRAP in 16 minutes:` then movements. Bad: all lines flat with Duration and AMRAP mixed as equal bullets.
+- **Required behavior:** Keep the part **title** as the part name (e.g. `Part A - Gymnastics Quality & Pulling`). Inside `lines`, order as: (1) one intent note `Duration: … | Movement: …`, (2) one format/instruction header ending with `:` (e.g. `AMRAP in 16 minutes:` / `4 Sets for Quality:` / `For Time (25 min cap):`), (3) **prescription lines only — one movement / station per line**. Do **not** join movements with `->` / `→` / ` + ` / `|` / comma lists / multi-`Min N:` on a single line. Rest-between-sets and coaching cues belong as short note lines (`Note: …` / `Cue: …` / `Rest 2:00 between sets` / `Target loading: …`), never as equal-weight exercise bullets. Do not bury format and intent as identical bullet weight — never glue format + work on one line (`E2MOM …: 6 X + 8 Y`).
+- **Examples:** Good: note then `For Time (25 min cap):` then separate lines `800m Run` / `30 Goblet Squats` / …. Bad: one line `800m Run -> 30 Squats -> 30 T2B`. Bad: `400m Run + 12 Devil Press + 15 TTB`. Bad: `Min 1: … | Min 2: … | Min 3: …`. Bad: `Maintain flat back…` as a work bullet after the lifts.
 - **Added:** 2026-07-28 — clearer Personal Coach workout card hierarchy
+- **Updated:** 2026-08-12 — one movement/station per line; no -> / + / | / comma / multi-Min joins; cues/rest as notes (display polish)
 
 ### POL-013 — Intake / coach chat: practical, no praise
 - **Type:** HARD
@@ -299,18 +300,19 @@ Copy a block below. Keep IDs unique (`POL-###`).
      - **Run:** only if outdoor/run access reported | intervals/distance | no invented treadmill
   5. **Still honor true constraints:** never invent missing machines/rigs/ropes/rings; never program unmarked Rx skills; injuries / session limits still win. Do **not** re-ask equipment inventory because of this grammar.
   6. **Lift / skill numbers ≠ equipment permission (HARD):** Back Squat / Deadlift / C&J / Snatch kg and skill checkmarks are **capability baselines only**. They do **not** unlock a barbell, rings, rope, rower, ski, bike, or GHD unless TRAINING SETUP / reported inventory includes that implement (or athlete selected a well-equipped / conventional gym). Home / limited / DB-KB-only → map hinge to DB/KB / odd-object deadlift (scaled load); map pull to pull-up bar / bands / straps if present, else BW rows — **never** barbell DL or ring muscle-up strength pieces without rings/barbell in setup.
-  7. **Pattern coverage + anti-spam (HARD) across each training week:** Keep unloaded baseline in rotation. Do **not** thruster-spam (same thruster couplet/triplet dominating multiple days or repeating identically across weeks). In each non-Rest training week include at least one **lunge-family** pattern (walking/reverse/jump/DB lunge) and, when indoors / wall available, at least one **wall** pattern (wall-sit and/or wall-walk/climb) somewhere in that week.
+  7. **Pattern coverage + anti-spam (HARD) across each training week:** Keep unloaded baseline in rotation. Prevent **single-pattern dominance**: do not let one movement family or one couplet/triplet template dominate multiple days or repeat identically across weeks. In each non-Rest training week include at least one **lunge-family** pattern (walking/reverse/jump/DB lunge) and, when indoors / wall available, at least one **wall** pattern (wall-sit and/or wall-walk/climb) somewhere in that week.
 - **Examples:**  
   Good (home, DBs only): metcon with goblet/DB squats + burpees + lunges + push-ups.  
   Bad (same athlete): barbell deadlift @ % of intake DL, or ring MU skill work.  
   Bad (same athlete): avoids burpees/lunges because they weren’t on the equipment list.  
-  Bad (DBs available): thrusters every metcon day; zero lunges / zero wall work all brick.  
+  Bad (DBs available): same squat-to-OH couplet/triplet repeated every metcon day; zero lunges / zero wall work all brick.  
   Good (no gear): air squat + burpee + sit-up + mountain climber intervals.  
   Bad (DBs available): only air squats all week — ignore loading the squat pattern.
 - **Added:** 2026-08-11 — home setup was over-filtering universal floor/wall movements; free weights must combine with baseline
 - **Updated:** 2026-08-11 — full approved equipment-free pool + Gemini directive wording
 - **Updated:** 2026-08-11 — Enhancement Grammar compact table (Budget-approved ≤1500 chars; programming path only)
-- **Updated:** 2026-08-11 — lift kg ≠ barbell/rings permission; weekly lunge+wall coverage; anti thruster-spam
+- **Updated:** 2026-08-11 — lift kg ≠ barbell/rings permission; weekly lunge+wall coverage; anti pattern-dominance
+- **Updated:** 2026-08-12 — replace movement-specific anti-spam wording with generic CF pattern balance (no per-movement bans)
 
 ### POL-022 — Whole-program / brick chat: ultra-brief double-check
 - **Type:** HARD
