@@ -145,6 +145,7 @@ ok("handoff autoCreateLink", /autoCreateLink/.test(handoff));
 ok("phone package applies intake", /applyIntakeProfileToPhoneStore/.test(handoff));
 ok("snapshot allows intakeProfile", /"intakeProfile"/.test(snap) || /intakeProfile/.test(snap));
 ok("app loads sync contract", /coach-intake-sync-contract\.js/.test(index));
+ok("app loads normalize block lib", /normalize-pprog-block\.js/.test(index));
 ok("app push syncs intakeProfile", /intakeProfile: intakeProfile/.test(index));
 ok("app shared packet path", /CoachIntakeSync\.buildFixedIntakePrompt/.test(index));
 ok(
