@@ -1067,7 +1067,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
 <div class="header-sub">DAILY WORKOUTS · v21.5.1</div>
-<div class="header-sub" id="coachVersionSub">COACH · v2.3.4</div>
+<div class="header-sub" id="coachVersionSub">COACH · v2.3.6</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap active" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
@@ -1635,11 +1635,12 @@ function rememberAiClientError(summary) {
  *   Coach 2.3.1 — POL-027 floor/BW baseline + equipment additive (combine free weights).
  *   Coach 2.3.2 — POL-027 full equipment-free pool (Gemini directive) shipped.
  *   Coach 2.3.3 — POL-027 Enhancement Grammar (home gear → loaded variation tree).
+ *   Coach 2.3.6 — POL-027 generic movement-pattern balance (no movement-specific bans).
  *   Coach 2.3.4 — POL-027 honor home inventory (lift kg ≠ barbell/rings; lunge+wall; anti thruster-spam).
  * Keep this badge in sync with the brain actually serving /api/personal-coach.
  * Display: header “COACH · v{COACH_VERSION}” only — do NOT bump app DAILY WORKOUTS / <title> here.
  */
-var COACH_VERSION = "2.3.4";
+var COACH_VERSION = "2.3.6";
 try {
   var __coachVerEl = document.getElementById("coachVersionSub");
   if (__coachVerEl) __coachVerEl.textContent = "COACH · v" + COACH_VERSION;

@@ -1,5 +1,14 @@
 # Changelog
 
+## [Coach 2.3.6] - 2026-08-12
+
+### Personal Coach — generic movement-pattern balance (no movement-specific bans)
+- **Coach subtitle:** `COACH · v2.3.6`.
+- Replace movement-specific anti-spam wording with generic CF rule: avoid single-pattern dominance / repeated identical couplet-triplet templates across the week.
+- Keep weekly lunge-family + (indoors) wall coverage; keep L1/L2 variety doctrine unchanged.
+
+---
+
 ## [Display polish — workout parts] - 2026-08-12 · branch `cursor/fix-workout-display-polish-d279`
 
 ### Personal Coach / Admin — approved metcon list + cue notes
@@ -7,7 +16,7 @@
 - **Glued format:** peel `E2MOM …: 6 X + 8 Y` / `3 Rounds (Quality): A, B, C` / `EMOM …: Min 1: …; Min 2: …` into bold format + separate work lines.
 - **Coaching cues:** trailing lines like `Maintain flat back…` / `Rest 2 min between sets.` / `Target loading:` / `Target score:` render as **notes**, not work bullets.
 - **POL-012:** emit guidance tightened — one movement/station per line; no arrow/+ /| /comma / multi-Min joins; rest/cues as Note/Cue lines.
-- Applies to existing bricks on client classify (no rebuild required for display). Coach version bump deferred while more polish accumulates on this branch.
+- Applies to existing bricks on client classify (no rebuild required for display). Coach version bumped in this branch to **2.3.6** after stability verification.
 
 ---
 
