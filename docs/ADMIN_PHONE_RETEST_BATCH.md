@@ -10,9 +10,9 @@ Rule: free-form notes → confirm understanding → append here → **one batch*
 - Delete tombstone / revoke, phone→admin mirror, Build plan Terms bypass, recovery UX nest
 
 ## Batch status (in progress on branch)
-- Implementing Admin **1.5.8**: intake 1:1 (pprog UI), Build plan timeout/retry, hide FAB.
-- Founder parallel: phone self-serve → admin list (re-verify).
-- After ship: founder retests intake→brick, then handoff link.
+- Admin **1.5.8** on branch: intake 1:1, Build plan timeout/retry, hide FAB.
+- **Also:** phone self-serve uid collision → mint new id + push before join email (finding #7).
+- After ship: founder retests intake→brick + new-user admin tab; then handoff link.
 
 ## Parallel founder test (same session)
 - Self-serve phone intake as new user → expect athlete in admin dashboard (yesterday failed; re-verify 1.5.7 mirror).

@@ -107,5 +107,15 @@ ok("snapshot allows intakeProfile", /"intakeProfile"/.test(snap) || /intakeProfi
 ok("app loads sync contract", /coach-intake-sync-contract\.js/.test(index));
 ok("app push syncs intakeProfile", /intakeProfile: intakeProfile/.test(index));
 ok("app shared packet path", /CoachIntakeSync\.buildFixedIntakePrompt/.test(index));
+ok(
+  "phone rotates uid on locked snapshot",
+  /pprogMintNewAthleteIdentity/.test(index) &&
+    /snapshot_locked/.test(index) &&
+    /pushAdminSnapshot\(store\)/.test(index)
+);
+ok(
+  "join email after admin push",
+  /Push to admin first/.test(index) || /sendJoinMailAndAnalytics/.test(index)
+);
 
 console.log("All admin intake parity / sync checks passed.");

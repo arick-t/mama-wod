@@ -2,11 +2,12 @@
 
 ## [Admin 1.5.8] - 2026-08-12
 
-### Phone-browser retest batch — intake 1:1, Build plan, hide FAB
+### Phone-browser retest batch — intake 1:1, Build plan, hide FAB, new-user admin tab
 - **Admin subtitle / title:** `DUCK-WOD Admin · 1.5.8` · badge **Admin 1.5.8 · Coach 2.3.4**.
 - **Intake 1:1:** +מתאמן questionnaire uses athlete-app `pprog-*` markup/UX (keyboards `inputmode`, lifts rows, skills list, recovery nest, notes, “Build my plan”).
 - **Build plan connectivity:** 180s AbortController, safer JSON parse, one automatic retry on Safari `Load failed` / network drop — still real `generate_block` only (no stubs).
 - **Hide coach FAB** while intake modal is open (z-index + JS + CSS).
+- **Phone self-serve → admin tab:** if device `dw_uid` collides with seeded/locked/revoked snapshot (`snapshot_locked` / mismatch / revoked), mint a **new** athleteId+writeKey and re-push **before** join email — so a new user gets a new admin tab (not a silent email on אריק’s uid).
 
 ---
 
