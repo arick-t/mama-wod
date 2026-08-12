@@ -30,7 +30,7 @@
  * Groq keeps chat alive when the Gemini key is missing/invalid (common GitHub Pages + Vercel setup).
  * Programming stays Gemini-only (POL-020).
  */
-const COACH_VERSION = "2.3.8";
+const COACH_VERSION = "2.3.9";
 const fs = require("fs");
 const path = require("path");
 function resolveAppVersion() {
@@ -573,8 +573,22 @@ const {
   messagesLookLikeBrickScheduleRevise,
   enforcePol026BrickChatResponse,
   enforceBrickScheduleChatResponse,
+  parseBrickScheduleIntent,
+  buildBrickScheduleConfirmMessage,
   BRICK_SCHEDULE_POST_APPLY_MSG,
 } = require("../lib/coach-pol026-gates.js");
+
+function latestBrickScheduleNote(messages) {
+  const list = Array.isArray(messages) ? messages : [];
+  for (let i = list.length - 1; i >= 0 && i >= list.length - 24; i--) {
+    const m = list[i];
+    if (!m || m.role !== "user") continue;
+    const t = String(m.text || "").trim();
+    if (!t || isScheduleApplyIntent(t)) continue;
+    return t.slice(0, 800);
+  }
+  return "";
+}
 
 /** Compact Done-learning cards from athleteProfile.finishSignals / finishLearning (≤~500 chars). */
 function buildFinishLearningBlock(profile, action) {
@@ -2415,6 +2429,13 @@ module.exports = async function handler(req, res) {
       brickChatTurn &&
       (messagesLookLikeBrickScheduleRevise(messages) || body.brickSchedulePending === true);
     const pol026Confirmed = pol026Turn && isScheduleApplyIntent(lastUserLine);
+    const scheduleNote = String(body.brickScheduleNote || latestBrickScheduleNote(messages) || "").slice(0, 800);
+    const todayIso = String(body.israelToday || "").slice(0, 10) || undefined;
+    const pol026GateOpts = {
+      confirmed: pol026Confirmed,
+      scheduleNote: scheduleNote,
+      todayIso: todayIso,
+    };
     /* Extract plan JSON from raw model text BEFORE forcing athlete-facing Done./Confirm? */
     let block = pol026Turn ? extractBlockJson(rawModel) : null;
     let week = pol026Turn ? extractWeekJson(rawModel, weekIndexForExtract) : null;
@@ -2423,14 +2444,14 @@ module.exports = async function handler(req, res) {
 
     let rawOut = rawModel;
     if (pol026Turn) {
-      rawOut = enforceBrickScheduleChatResponse(rawModel, { confirmed: pol026Confirmed });
+      rawOut = enforceBrickScheduleChatResponse(rawModel, pol026GateOpts);
     }
     const guarded = applyCoachOutputGuard(rawOut, {
       programming: programming,
     });
     let safeText = guarded.text;
     if (pol026Turn) {
-      safeText = enforceBrickScheduleChatResponse(safeText, { confirmed: pol026Confirmed });
+      safeText = enforceBrickScheduleChatResponse(safeText, pol026GateOpts);
     }
     if (!pol026Turn) {
       block = extractBlockJson(safeText);
