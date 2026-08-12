@@ -299,18 +299,21 @@ Copy a block below. Keep IDs unique (`POL-###`).
      - **Run:** only if outdoor/run access reported | intervals/distance | no invented treadmill
   5. **Still honor true constraints:** never invent missing machines/rigs/ropes/rings; never program unmarked Rx skills; injuries / session limits still win. Do **not** re-ask equipment inventory because of this grammar.
   6. **Lift / skill numbers ≠ equipment permission (HARD):** Back Squat / Deadlift / C&J / Snatch kg and skill checkmarks are **capability baselines only**. They do **not** unlock a barbell, rings, rope, rower, ski, bike, or GHD unless TRAINING SETUP / reported inventory includes that implement (or athlete selected a well-equipped / conventional gym). Home / limited / DB-KB-only → map hinge to DB/KB / odd-object deadlift (scaled load); map pull to pull-up bar / bands / straps if present, else BW rows — **never** barbell DL or ring muscle-up strength pieces without rings/barbell in setup.
-  7. **Pattern coverage + anti-spam (HARD) across each training week:** Keep unloaded baseline in rotation. Do **not** thruster-spam (same thruster couplet/triplet dominating multiple days or repeating identically across weeks). In each non-Rest training week include at least one **lunge-family** pattern (walking/reverse/jump/DB lunge) and, when indoors / wall available, at least one **wall** pattern (wall-sit and/or wall-walk/climb) somewhere in that week.
+  7. **Pattern coverage + anti-spam (HARD) across each training week:** Keep unloaded baseline in rotation. **Thrusters remain a valid classic CrossFit pattern** (Fran-style couplets, DB/KB thrusters, etc.) — program them when they fit stimulus and inventory. Anti-spam ≠ ban: do **not** thruster-spam (same thruster couplet/triplet dominating multiple days or repeating identically across weeks); rotate squat-to-OH / front-rack patterns with lunges, wall-balls, goblet/front squats, and other CF staples. In each non-Rest training week include at least one **lunge-family** pattern (walking/reverse/jump/DB lunge) and, when indoors / wall available, at least one **wall** pattern (wall-sit and/or wall-walk/climb) somewhere in that week.
 - **Examples:**  
   Good (home, DBs only): metcon with goblet/DB squats + burpees + lunges + push-ups.  
+  Good: one thruster piece in the week among varied squat / lunge / wall / pull patterns.  
   Bad (same athlete): barbell deadlift @ % of intake DL, or ring MU skill work.  
   Bad (same athlete): avoids burpees/lunges because they weren’t on the equipment list.  
   Bad (DBs available): thrusters every metcon day; zero lunges / zero wall work all brick.  
+  Bad: **zero thrusters all brick** solely from over-reading anti-spam (balance, don’t ban).  
   Good (no gear): air squat + burpee + sit-up + mountain climber intervals.  
   Bad (DBs available): only air squats all week — ignore loading the squat pattern.
 - **Added:** 2026-08-11 — home setup was over-filtering universal floor/wall movements; free weights must combine with baseline
 - **Updated:** 2026-08-11 — full approved equipment-free pool + Gemini directive wording
 - **Updated:** 2026-08-11 — Enhancement Grammar compact table (Budget-approved ≤1500 chars; programming path only)
 - **Updated:** 2026-08-11 — lift kg ≠ barbell/rings permission; weekly lunge+wall coverage; anti thruster-spam
+- **Updated:** 2026-08-12 — thrusters valid CF; anti-spam ≠ ban (balance, don’t exclude)
 
 ### POL-022 — Whole-program / brick chat: ultra-brief double-check
 - **Type:** HARD

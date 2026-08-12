@@ -1,5 +1,15 @@
 # Changelog
 
+## [Coach 2.3.5] - 2026-08-12
+
+### Personal Coach — thrusters are valid CF (anti-spam ≠ ban)
+- **Coach subtitle:** `COACH · v2.3.5`.
+- **POL-027:** clarify pattern coverage — thrusters remain a classic CrossFit pattern; anti thruster-spam means **don’t dominate the week/brick**, not “never program thrusters.”
+- Compact programming + foundation briefs: same wording so the model doesn’t over-read into a ban.
+- Keep weekly lunge-family + (indoors) wall coverage for real CF balance.
+
+---
+
 ## [Admin 1.5.7] - 2026-08-11
 
 ### Remote audit batch — delete, phone→admin, Build plan Terms, recovery UX

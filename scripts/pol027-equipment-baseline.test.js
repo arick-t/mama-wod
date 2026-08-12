@@ -55,7 +55,7 @@ ok(
   "programming core does not duplicate full inventory table",
   !/\*\*Odd object\*\*:|\*\*Med\/Slam\*\*:/.test(pc)
 );
-ok("coach version 2.3.4", /COACH_VERSION = "2\.3\.4"/.test(pc) && /COACH_VERSION = "2\.3\.4"/.test(index));
+ok("coach version 2.3.5", /COACH_VERSION = "2\.3\.5"/.test(pc) && /COACH_VERSION = "2\.3\.5"/.test(index));
 ok(
   "lift kg not equipment permission",
   /Lift \/ skill numbers ≠ equipment permission|lift\/skill kg numbers are capability only/i.test(
@@ -63,6 +63,11 @@ ok(
   )
 );
 ok("anti thruster-spam", /thruster-spam/i.test(rules) && /thruster-spam/i.test(policy));
+ok(
+  "thrusters valid CF not banned",
+  /thrusters (remain a valid|are valid CF|valid classic)/i.test(rules + pc) &&
+    /anti-spam ≠ ban|not a ban/i.test(rules + pc)
+);
 ok("weekly lunge + wall coverage", /lunge-family/i.test(rules) && /wall-sit|wall pattern/i.test(rules));
 ok("trainingSetup in programming memory", /trainingSetup: profile\.trainingSetup/.test(pc));
 ok("trainingSetup in athlete payload", /trainingSetup: s\.trainingSetup/.test(index));
