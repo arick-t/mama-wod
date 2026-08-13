@@ -1,128 +1,5 @@
 {
   "workouts": {
-    "2026-07-30": [
-      {
-        "date": "2026-07-30",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260730",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Rest Day",
-              "The Smart CrossFit Athlete's Guide To Training Through Soreness",
-              "Waking up sore after a hard workout is not a signal to skip the gym. It is a sign your body is adapting, and how you respond determines how fast you recover. Learn when to train through soreness, when to scale, and how to tell the difference between soreness and pain."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-30",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.5",
-            "lines": [
-              "Complete as many reps as possible in 7 minutes of:",
-              "3 thrusters",
-              "3 chest-to-bar pull-ups",
-              "6 thrusters",
-              "6 chest-to-bar pull-ups",
-              "9 thrusters",
-              "9 chest-to-bar pull-ups",
-              "12 thrusters",
-              "12 chest-to-bar pull-ups",
-              "15 thrusters",
-              "15 chest-to-bar pull-ups",
-              "18 thrusters",
-              "18 chest-to-bar pull-ups",
-              "This is a timed workout. If you complete the round of 18, go on to 21. If you complete 21, go on to 24, etc.",
-              "*Men use 100 lb.*"
-            ]
-          }
-        ],
-        "note": "Open: Open 18.5"
-      },
-      {
-        "date": "2026-07-30",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-july-30-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "2:00 Machine",
-              "Accumulate 1:00 in a Handstand Hold",
-              "20 Ring Rows"
-            ]
-          },
-          {
-            "title": "Double KB Strict Press",
-            "lines": [
-              "3 sets",
-              "1 Max Rep set of Strict Presses",
-              "Rest 3:00 between sets",
-              "The rep begins and ends with knuckles below the chin in a true KB rack position. If mobility is a limiting factor, perform single arm presses.",
-              "Today we mix things up with a double KB strict press. Use weights that allow for 10-20 reps on all sets."
-            ]
-          },
-          {
-            "title": "Choose the appropriate volume to split for time with a partner:",
-            "lines": [
-              "– Rx: 40 rope climbs (20 ea)",
-              "– Intermediate: 30 Rope climbs (15 ea)",
-              "– Beginner: Max Climbs in 8 minutes",
-              "8 minute time cap",
-              "Feel: Muscle Overload",
-              "Pace: Sustain",
-              "Target Score: Sub 8 minutes (Under cap)"
-            ]
-          },
-          {
-            "title": "Accessory:",
-            "lines": [
-              "10 min EMOM:",
-              "min 1: 10-12 GHD sit-ups",
-              "min 2: 10-12 BB Goodmornings"
-            ]
-          },
-          {
-            "title": "Extra Credit",
-            "lines": [
-              "Zone 2 Row"
-            ]
-          },
-          {
-            "title": "12:00 Zone 2 Warm Up",
-            "lines": [
-              "45:00-90:00 Row @ Zone 2"
-            ]
-          },
-          {
-            "title": "12:00 Zone 2 Cool Down",
-            "lines": [
-              "Your Zone 2 today should stay between 160bpm minus your age and 180bpm minus your age."
-            ]
-          },
-          {
-            "title": "Warm up:",
-            "lines": [
-              "Build from resting heartrate to 180bpm minus your age slowly over 12:00. This will feel incredibly slow, but will help your session a lot. Feel free to mix up machines, but end on rower."
-            ]
-          },
-          {
-            "title": "Cool down:",
-            "lines": [
-              "Spend 4:00 on the rower, keeping your heartrate above 150bpm minus your age, then slowly work down to resting for the next 8:00 on any machine or walking."
-            ]
-          }
-        ]
-      }
-    ],
     "2026-07-31": [
       {
         "date": "2026-07-31",
@@ -242,97 +119,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-07-31",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-07-31/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "inverted hamstring stretch",
-              "calf stretch",
-              "90/90 hip rotation",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "100m run",
-              "20sec glute bridge hold",
-              "10 good mornings"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "DEADLIFTS 15MIN",
-            "lines": [
-              "4-5 sets",
-              "5 deadlifts @77-80%",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 17MIN",
-            "lines": [
-              "3 rounds",
-              "",
-              "600m run",
-              "15 deadlifts 100/70kg",
-              "100m farmers carry 2x32/24kg",
-              "* aerobic capacity & muscular endurance"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-07-31",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Then,",
-            "sub_title": "10 rounds of:",
-            "lines": [
-              "49 wall-ball shots",
-              "26 pull-ups",
-              "200-meter run",
-              "8 ring muscle-ups",
-              "40 deadlifts"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-07-31",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Lynne",
-            "lines": [
-              "Five rounds:",
-              "Score is total reps",
-              "SCALED:",
-              "scaled bench press or floor press",
-              "Banded pull-ups or heavy ring rows",
-              "rest as needed",
-              "Bodyweight  bench press  max reps",
-              "Pull-ups max reps",
-              "SCALED:",
-              "scaled  bench press  or  floor press",
-              "Banded pull-ups or heavy  ring row s"
-            ]
-          }
-        ],
-        "note": "Benchmark: Lynne"
       }
     ],
     "2026-08-01": [
@@ -3002,7 +2788,135 @@
         ],
         "note": "Benchmark: Nasty Girls V2"
       }
+    ],
+    "2026-08-14": [
+      {
+        "date": "2026-08-14",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-08-14/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "inverted hamstring stretch",
+              "calf stretch",
+              "90/90 hip rotation",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "20 single unders",
+              "20sec glute bridge hold",
+              "10 good mornings"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "DEADLIFTS 15MIN",
+            "lines": [
+              "4-5 sets",
+              "5 deadlifts @80-83%",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "30 double unders",
+              "max kb swings 32/24kg",
+              "1min rest between amraps",
+              "",
+              "* score: total kb swings",
+              "* anaerobic capacity"
+            ],
+            "sub_title": "1:00 amrap x 8 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-08-14",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260814",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
+              "LEARN MORE"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-14",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Tyler",
+            "sub_title": "5 rounds for time of:",
+            "lines": [
+              "7 muscle-ups",
+              "21 sumo deadlift high pulls"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-14",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Mary",
+            "lines": [
+              "20 minutes AMRAP",
+              "5  handstand push-up s",
+              "10 pistol squat, alternating",
+              "15 pull-ups"
+            ]
+          }
+        ],
+        "note": "Benchmark: Mary"
+      },
+      {
+        "date": "2026-08-14",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 24.1",
+            "lines": [
+              "For time:",
+              "21 dumbbell snatches, arm 1",
+              "21 lateral burpees over dumbbell",
+              "21 dumbbell snatches, arm 2",
+              "21 lateral burpees over dumbbell",
+              "15 dumbbell snatches, arm 1",
+              "15 lateral burpees over dumbbell",
+              "15 dumbbell snatches, arm 2",
+              "15 lateral burpees over dumbbell",
+              "9 dumbbell snatches, arm 1",
+              "9 lateral burpees over dumbbell",
+              "9 dumbbell snatches, arm 2",
+              "9 lateral burpees over dumbbell",
+              "*Time cap: 15 minutes",
+              "♀ 35-lb (15-kg) dumbbell",
+              "♂ 50-lb (22.5-kg) dumbbell"
+            ]
+          }
+        ],
+        "note": "Open: Open 24.1"
+      }
     ]
   },
-  "last_updated": "2026-08-13T10:24:00.105656"
+  "last_updated": "2026-08-14T02:43:11.002152"
 }
