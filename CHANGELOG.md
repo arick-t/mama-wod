@@ -1,5 +1,49 @@
 # Changelog
 
+## [Admin 2.0] - 2026-08-13 · **production**
+
+### T4 day edit → device (0 LLM) + founder retest ship
+- Pencil on a remaining training day → PART edit → Save → phone pull (~20s) auto-applies the same parts + MODIFIED + «המאמן עדכן את האימון»
+- Snapshot bridge `pendingAdminDayEdit` on existing `athlete_pull_push_offer`. No Confirm card. No `generate_*` / `revise_*`
+- Locked: Rest / past / Done / LOGGED / existing debrief. Empty or orphan parts are not saved
+- Join mail only after Terms + real brick. Remember-me is a signed session token. Live admin poll 20s
+- Coach remains **2.3.13**. Intake / claim / handoff / declaration unchanged
+
+## [Admin 1.5.16] - 2026-08-13
+
+### T4 — human day edit syncs to the device (0 LLM)
+- Pencil on a remaining training day → edit PART → Save writes `weeks[wi].days[dayKey].parts` only
+- Snapshot bridge `pendingAdminDayEdit`; device pulls it on the existing `athlete_pull_push_offer` (~20s)
+- Auto-apply on the phone (no Confirm card) + status line «המאמן עדכן את האימון» + MODIFIED
+- Locked: Rest / past / Done / LOGGED / existing debrief. Fail reason stays on the admin card; edit is not deleted
+- Empty / orphan parts are not saved. No `generate_*` / `revise_*` / Soft Upgrade
+
+## [Admin 1.5.15] - 2026-08-13
+
+### Edit workout on the admin day card (UI only — no device push)
+- Pencil beside the day date (`Tue · 25 August`) enters in-card edit
+- Edit PART A/B: title, notes, format, work lines · ＋ Note · ＋ Work line · ＋ Add Part
+- REST DAY: secondary pencil; Add Part converts to a training day
+- Cancel / Save persist the day on the admin snapshot (`admin_save_day`) — **not** T4 to the phone
+- 0 `generate_*` / `revise_*`
+
+## [Admin 1.5.14] - 2026-08-13
+
+### Founder + coach-brain approval (A–D)
+- **A Join mail:** only after real `currentBlock.blockStart` + `declarationAcceptedAt`. Flag `joinMailSent`. No mail on create.
+- **B Live admin:** poll `admin_list` every 20s (no generate_*/revise_*). Tab refresh uses a **signed session token** in sessionStorage. Remember-me stores the token, never the raw password. Clears leftover 1.5.13 password keys.
+- **C Brick sync:** 256KB snapshot cap, shared PprogDisplay, pending-copy spacing, push after each week_detail (already in 1.5.13).
+- **D Fill every missing week** with real `generate_week_detail` on the device — admin does not invent workouts. T4 still out.
+
+## [Admin 1.5.13] - 2026-08-13
+
+### Founder retest — join mail, live admin, brick sync
+- **Join email only after Terms:** no mail on `create_athlete`. Mail fires once the device has a training block **and** `declarationAcceptedAt` (signed declaration).
+- **Remember me + stay logged in on refresh:** session keeps the password for this tab; checkbox stores it on this device.
+- **Live admin list:** polls snapshots every 8s while logged in (declaration chip / brick updates without a full reload).
+- **Brick parity:** device fills **all** weeks that still lack real parts (not only active+next), then pushes the filled brick to admin. Snapshot cap raised to 256KB so the full 5-week brick can save.
+- **Pending-parts copy:** space after “Session pending.”
+
 ## [Admin 1.5.12] - 2026-08-13
 
 ### Founder retest UX (on top of approved 1.5.11 brick display)

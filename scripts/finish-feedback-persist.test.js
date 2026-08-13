@@ -7,15 +7,18 @@ const fs = require("fs");
 const path = require("path");
 
 const html = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
+const norm = fs.readFileSync(path.join(__dirname, "..", "lib", "normalize-pprog-block.js"), "utf8");
+const display = fs.readFileSync(path.join(__dirname, "..", "lib", "pprog-display.js"), "utf8");
 
-function mustInclude(label, re) {
-  assert.ok(re.test(html), "missing: " + label);
+function mustInclude(label, re, src) {
+  assert.ok(re.test(src || html), "missing: " + label);
   console.log("ok —", label);
 }
 
 mustInclude(
   "normalize preserves finishFeedback from day or prev",
-  /pprogNormalizeFinishFeedback\(day && day\.finishFeedback\)\s*\|\|\s*pprogNormalizeFinishFeedback\(prev && prev\.finishFeedback\)/
+  /pprogNormalizeFinishFeedback\(day && day\.finishFeedback\)\s*\|\|\s*pprogNormalizeFinishFeedback\(prev && prev\.finishFeedback\)/,
+  norm
 );
 mustInclude(
   "day revision keeps finishFeedback",
@@ -39,7 +42,8 @@ mustInclude(
 );
 mustInclude(
   "Reported stamp UI",
-  /Reported ✓/
+  /Reported ✓/,
+  display
 );
 
 console.log("All finishFeedback persist checks passed.");

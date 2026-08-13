@@ -21,7 +21,6 @@ const { appendAdminAudit } = require("./admin-audit");
 const { applyCors } = require("../../../lib/cors-allowlist");
 const CoachIntakeSync = require("../../../lib/coach-intake-sync-contract");
 const NormalizePprogBlock = require("../../../lib/normalize-pprog-block");
-const { sendAdminIntakeCompleteMail } = require("../../../lib/admin-intake-complete-mail");
 
 const ADMIN_PASSWORD = resolveAdminPassword();
 const MAX_PACKAGE_BYTES = 256 * 1024;
@@ -261,8 +260,9 @@ function buildPhonePackage(snap, writeKeyPlain) {
     modificationRulesNotified: {},
     pastBlocks: Array.isArray(snap.pastBlocks) ? snap.pastBlocks : [],
     autoNextTriggeredForBlockStart: null,
-    intakeNotifySent: true,
-    intakeNotifySentAt: new Date().toISOString(),
+    /* Join mail waits for on-device Terms — do not pretend it was already sent. */
+    intakeNotifySent: false,
+    intakeNotifySentAt: null,
     handoffInstalledAt: new Date().toISOString(),
   };
   pkg = CoachIntakeSync.applyIntakeProfileToPhoneStore(pkg, intakeProfile);
@@ -422,20 +422,7 @@ async function createAthlete(body) {
     };
   }
 
-  let mailResult = null;
-  try {
-    const notifySnap = Object.assign({}, snapshot, {
-      intakeNotifySentAt: now,
-    });
-    mailResult = await sendAdminIntakeCompleteMail(notifySnap);
-    if (mailResult.sent) {
-      snapshot.intakeNotifySent = true;
-      snapshot.intakeNotifySentAt = now;
-      await writeSnap(athleteId, snapshot);
-    }
-  } catch (eMail) {
-    mailResult = { sent: false, error: String((eMail && eMail.message) || eMail).slice(0, 120) };
-  }
+  /* Join email waits until the athlete signs Terms on the device (admin-snapshot write). */
 
   let linkJson = null;
   if (body.autoCreateLink !== false) {
@@ -459,7 +446,6 @@ async function createAthlete(body) {
       snapshot: Object.assign({}, responseSnap, { writeKeyHash: undefined }),
       writeKey: (linkJson && linkJson.writeKey) || deviceWriteKey,
       handoff: linkJson,
-      intakeMail: mailResult,
       message: linkJson
         ? "נשמר + לינק מסירה חד־פעמי מוכן."
         : "נשמר. צרו לינק מסירה מהכרטיס.",

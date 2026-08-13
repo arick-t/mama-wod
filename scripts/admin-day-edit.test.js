@@ -1,0 +1,194 @@
+/**
+ * T4 admin day edit — 0 LLM lock / quality / apply.
+ * Run: node scripts/admin-day-edit.test.js
+ */
+const assert = require("assert");
+const fs = require("fs");
+const path = require("path");
+const AdminDayEdit = require("../lib/admin-day-edit");
+const NormalizePprogBlock = require("../lib/normalize-pprog-block");
+
+const root = path.join(__dirname, "..");
+const snap = fs.readFileSync(path.join(root, "scripts/lib/admin/admin-snapshot.js"), "utf8");
+const admin = fs.readFileSync(path.join(root, "admin.html"), "utf8");
+const index = fs.readFileSync(path.join(root, "index.html"), "utf8");
+
+function ok(name, cond) {
+  assert.ok(cond, name);
+  console.log("ok —", name);
+}
+
+const week = {
+  overview: [
+    { day: "sun", focus: "Rest" },
+    { day: "mon", focus: "Squat" },
+    { day: "tue", focus: "Engine" },
+  ],
+  days: {
+    sun: { parts: [{ id: "sun-0", title: "REST DAY", lines: ["Rest"] }] },
+    mon: {
+      parts: [
+        {
+          id: "mon-0",
+          title: "Strength",
+          lines: ["Intent: squat pattern", "5x5 Back Squat:", "5 x 80kg"],
+        },
+      ],
+    },
+    tue: {
+      parts: [{ id: "tue-0", title: "Engine", lines: ["AMRAP 12", "Row 250m"] }],
+      finishFeedback: { rating: "good" },
+    },
+  },
+};
+
+ok("training part is saveable", AdminDayEdit.partsAreSaveable(week.days.mon.parts).ok);
+ok(
+  "empty parts rejected",
+  !AdminDayEdit.partsAreSaveable([]).ok && AdminDayEdit.partsAreSaveable([]).error === "empty"
+);
+ok(
+  "intent-only orphan rejected",
+  !AdminDayEdit.partHasRealContent({ title: "Strength", lines: ["Intent: squat"] })
+);
+ok(
+  "title + format accepted",
+  AdminDayEdit.partHasRealContent({ title: "Metcon", lines: ["AMRAP 12"] })
+);
+ok(
+  "title + work accepted without note",
+  AdminDayEdit.partHasRealContent({ title: "Strength", lines: ["Back squat 5x5"] })
+);
+
+ok(
+  "rest day locked",
+  AdminDayEdit.lockReason("sun", week.days.sun, week, "2026-08-16", "2026-08-13", "save").code ===
+    "rest"
+);
+ok(
+  "past day locked",
+  AdminDayEdit.lockReason("mon", week.days.mon, week, "2026-08-12", "2026-08-13", "save").code ===
+    "past"
+);
+ok(
+  "done day locked",
+  AdminDayEdit.lockReason("tue", week.days.tue, week, "2026-08-16", "2026-08-13", "apply").code ===
+    "done"
+);
+ok(
+  "logged extra locked",
+  AdminDayEdit.lockReason(
+    "mon",
+    { parts: week.days.mon.parts, loggedExtraSession: true },
+    week,
+    "2026-08-16",
+    "2026-08-13",
+    "apply"
+  ).code === "logged"
+);
+ok(
+  "today training unlocked",
+  !AdminDayEdit.lockReason("mon", week.days.mon, week, "2026-08-13", "2026-08-13", "save")
+);
+
+const sanitized = AdminDayEdit.sanitizeParts(
+  [{ title: "Strength", lines: ["Back squat 3x5 90kg"] }],
+  week.days.mon.parts,
+  "mon"
+);
+ok("preserve existing part id", sanitized[0].id === "mon-0");
+
+const pending = AdminDayEdit.buildPending({
+  athleteId: "a1",
+  weekIndex: 0,
+  dayKey: "mon",
+  dayIso: "2026-08-16",
+  parts: sanitized,
+  modifiedPartKinds: { strength: true },
+});
+ok("pending starts pending", pending.status === "pending" && /^ade_/.test(pending.id));
+
+const applied = AdminDayEdit.applyPendingToDay(
+  {
+    parts: week.days.mon.parts,
+    preTalk: "knees",
+    debrief: "",
+    lastPreReply: "ok",
+  },
+  pending,
+  { week: week, dayKey: "mon", todayIso: "2026-08-13" }
+);
+ok("apply writes parts", applied.ok && applied.day.parts[0].lines[0].indexOf("90kg") >= 0);
+ok("apply keeps athlete preTalk", applied.day.preTalk === "knees" && applied.day.lastPreReply === "ok");
+ok(
+  "apply sets coach notice",
+  applied.day.coachUpdatedNotice === "המאמן עדכן את האימון" && applied.day.modifiedPartKinds.strength
+);
+
+const conflict = AdminDayEdit.applyPendingToDay(
+  {
+    parts: week.days.mon.parts,
+    athleteDayUpdatedAt: "2026-08-13T12:00:00.000Z",
+  },
+  Object.assign({}, pending, { at: "2026-08-13T11:00:00.000Z" }),
+  { week: week, dayKey: "mon", todayIso: "2026-08-13" }
+);
+ok(
+  "athlete revise after stamp blocks apply",
+  !conflict.ok && conflict.reason === "athlete_updated"
+);
+
+const restApply = AdminDayEdit.applyPendingToDay(week.days.sun, pending, {
+  week: week,
+  dayKey: "sun",
+  todayIso: "2026-08-13",
+});
+ok("do not apply onto rest", !restApply.ok && restApply.reason === "rest");
+
+const protectedBlock = AdminDayEdit.protectPendingDayParts(
+  { weeks: [{ days: { mon: { parts: sanitized } } }] },
+  { weeks: [{ days: { mon: { parts: week.days.mon.parts, preTalk: "from-phone" } } }] },
+  pending
+);
+ok(
+  "protect keeps admin parts while pending",
+  protectedBlock.weeks[0].days.mon.parts[0].lines[0].indexOf("90kg") >= 0 &&
+    protectedBlock.weeks[0].days.mon.preTalk === "from-phone"
+);
+
+const norm = NormalizePprogBlock.normalizeWeek(
+  {
+    days: {
+      mon: {
+        parts: sanitized,
+        athleteDayUpdatedAt: "2026-08-13T12:00:00.000Z",
+        coachUpdatedNotice: "המאמן עדכן את האימון",
+        preTalk: "keep-me",
+      },
+    },
+  },
+  week,
+  "2026-08-09",
+  { weekIndex: 1 }
+);
+ok(
+  "normalize keeps athlete stamp + notice + preTalk",
+  norm.days.mon.athleteDayUpdatedAt === "2026-08-13T12:00:00.000Z" &&
+    norm.days.mon.coachUpdatedNotice === "המאמן עדכן את האימון" &&
+    norm.days.mon.preTalk === "keep-me"
+);
+
+ok("admin_save_day still 0 LLM", !/generate_block|generate_week_detail|revise_day|revise_week/.test(
+  snap.slice(snap.indexOf('action === "admin_save_day"'), snap.indexOf('action === "admin_member_status"'))
+));
+ok("pull returns pendingAdminDayEdit", /pendingAdminDayEdit: AdminDayEdit\.publicPending/.test(snap));
+ok("resolve admin day edit action", /athlete_resolve_admin_day_edit/.test(snap));
+ok("preserve pendingAdminDayEdit on snapshot write", /pendingAdminDayEdit: existing\.pendingAdminDayEdit/.test(snap));
+ok("device pull applies pending", /pprogApplyPendingAdminDayEdit/.test(index));
+ok("device stamps athleteDayUpdatedAt on chat revise", /athleteDayUpdatedAt: pprogNowIso/.test(index));
+ok("admin save does not convert rest", !/REST DAY", lines: \["Rest"\]/.test(admin));
+ok("no generate from pencil save", !/generate_block|generate_week_detail|revise_day/.test(
+  admin.slice(admin.indexOf("function adminPprogEditSave"), admin.indexOf("function changeBlockMonth"))
+));
+
+console.log("All admin-day-edit T4 checks passed.");
