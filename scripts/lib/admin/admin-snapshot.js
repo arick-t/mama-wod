@@ -77,6 +77,8 @@ const CLIENT_ALLOWED_KEYS = new Set([
 
 const CoachIntakeSync = require("../../../lib/coach-intake-sync-contract");
 const CoachPushUpgrade = require("../../../lib/coach-push-upgrade");
+const NormalizePprogBlock = require("../../../lib/normalize-pprog-block");
+const AdminDayEdit = require("../../../lib/admin-day-edit");
 
 function safeAthleteId(raw) {
   return String(raw || "")
@@ -297,50 +299,67 @@ module.exports = async function handler(req, res) {
       if (!block || !Array.isArray(block.weeks) || !block.weeks[wi]) {
         return res.status(400).json({ ok: false, error: "no_block" });
       }
-      const rawParts = Array.isArray(body.parts) ? body.parts.slice(0, 12) : [];
-      const parts = rawParts.map(function (p) {
-        const title = String((p && p.title) || "Part")
-          .trim()
-          .slice(0, 160) || "Part";
-        let lines = [];
-        if (Array.isArray(p.lines)) {
-          lines = p.lines
-            .map(function (l) {
-              return String(l || "").trim().slice(0, 400);
-            })
-            .filter(Boolean)
-            .slice(0, 24);
-        } else {
-          (Array.isArray(p.notes) ? p.notes : []).forEach(function (n) {
-            const t = String(n || "").trim().slice(0, 400);
-            if (t) lines.push(t);
-          });
-          const fmt = String((p && p.format) || "").trim().slice(0, 200);
-          if (fmt) lines.push(fmt);
-          (Array.isArray(p.work) ? p.work : []).forEach(function (w) {
-            const t = String(w || "").trim().slice(0, 400);
-            if (t) lines.push(t);
-          });
-          lines = lines.slice(0, 24);
-        }
-        return { title: title, lines: lines };
-      });
       const week = block.weeks[wi];
       if (!week.days || typeof week.days !== "object") week.days = {};
-      week.days[dayKey] = Object.assign({}, week.days[dayKey] || {}, { parts: parts });
-      if (parts.length && Array.isArray(week.overview)) {
-        const blob0 = String(parts[0].title || "") + " " + (parts[0].lines || []).join(" ");
-        const looksRest = parts.length === 1 && /\brest(\s*day)?\b/i.test(blob0);
-        if (!looksRest) {
-          const focus = String(parts[0].title || "Training")
-            .replace(/^Part\s+[A-Z]\s*[—–-]\s*/i, "")
-            .slice(0, 80);
-          week.overview = week.overview.map(function (row) {
-            if (!row || String(row.day || "").slice(0, 3) !== dayKey) return row;
-            return Object.assign({}, row, { focus: focus || "Training" });
-          });
-        }
+      const existingDay = week.days[dayKey] || {};
+      const dayIso = AdminDayEdit.dayIsoFromBlock(block, wi, dayKey);
+      const todayIso = AdminDayEdit.israelTodayIso();
+      const locked = AdminDayEdit.lockReason(
+        dayKey,
+        existingDay,
+        week,
+        dayIso,
+        todayIso,
+        "save"
+      );
+      if (locked) {
+        return res.status(409).json({
+          ok: false,
+          error: locked.code,
+          message: locked.message,
+        });
       }
+      const prevParts = Array.isArray(existingDay.parts) ? existingDay.parts : [];
+      const parts = AdminDayEdit.sanitizeParts(
+        Array.isArray(body.parts) ? body.parts : [],
+        prevParts,
+        dayKey
+      );
+      const quality = AdminDayEdit.partsAreSaveable(parts);
+      if (!quality.ok) {
+        return res.status(400).json({
+          ok: false,
+          error: quality.error,
+          message: quality.message,
+        });
+      }
+      const detectedKinds = AdminDayEdit.detectModifiedPartKinds(prevParts, parts);
+      const modifiedPartKinds = AdminDayEdit.mergeModifiedKinds(
+        existingDay.modifiedPartKinds,
+        detectedKinds
+      );
+      week.days[dayKey] = Object.assign({}, existingDay, {
+        parts: parts,
+        modifiedPartKinds: modifiedPartKinds,
+      });
+      if (typeof NormalizePprogBlock.normalizeWeek === "function") {
+        block.weeks[wi] = NormalizePprogBlock.normalizeWeek(week, week, week.weekStart, {
+          weekIndex: week.weekIndex,
+          phase: week.phase,
+          theme: week.theme,
+        });
+      }
+      const pending = AdminDayEdit.buildPending({
+        athleteId: athleteId,
+        weekIndex: wi,
+        dayKey: dayKey,
+        dayIso: dayIso,
+        parts: (block.weeks[wi].days[dayKey] && block.weeks[wi].days[dayKey].parts) || parts,
+        modifiedPartKinds:
+          (block.weeks[wi].days[dayKey] && block.weeks[wi].days[dayKey].modifiedPartKinds) ||
+          modifiedPartKinds,
+      });
+      existing.pendingAdminDayEdit = pending;
       existing.updatedAt = new Date().toISOString();
       try {
         await writeSnapshot(athleteId, existing);
@@ -357,6 +376,7 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({
         ok: true,
         currentBlock: existing.currentBlock,
+        pendingAdminDayEdit: pending,
         storage: storageInfo(),
       });
     }
@@ -569,6 +589,7 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({
         ok: true,
         pendingPushUpgrade: CoachPushUpgrade.publicOffer(existing.pendingPushUpgrade),
+        pendingAdminDayEdit: AdminDayEdit.publicPending(existing.pendingAdminDayEdit),
         planCoachVersion:
           existing.planCoachVersion ||
           (existing.currentBlock && existing.currentBlock.coachVersion) ||
@@ -642,6 +663,69 @@ module.exports = async function handler(req, res) {
         ok: true,
         pendingPushUpgrade: existing.pendingPushUpgrade,
         planCoachVersion: existing.planCoachVersion || null,
+        storage: storageInfo(),
+      });
+    }
+
+    /* Athlete device: mark T4 admin day edit applied / failed (writeKey). 0 LLM. */
+    if (body.action === "athlete_resolve_admin_day_edit") {
+      const existing = (await readSnapshot(athleteId)) || {};
+      if (!existing.athleteId && !existing.createdAt) {
+        return res.status(404).json({ ok: false, error: "not_found" });
+      }
+      const writeKey =
+        body.writeKey ||
+        (req.headers && (req.headers["x-write-key"] || req.headers["X-Write-Key"])) ||
+        "";
+      const gate = assertSnapshotWriteAllowed(existing, writeKey, false);
+      if (!gate.ok) {
+        return res.status(gate.status).json({
+          ok: false,
+          error: gate.error,
+          message: gate.message,
+        });
+      }
+      const pending = existing.pendingAdminDayEdit;
+      const editId = String(body.editId || body.id || "").slice(0, 40);
+      if (!pending || pending.id !== editId) {
+        return res.status(409).json({
+          ok: false,
+          error: "edit_mismatch",
+          message: "העריכה לא ממתינה או כבר טופלה.",
+        });
+      }
+      const resolution = String(body.resolution || body.status || "").toLowerCase();
+      if (resolution !== "applied" && resolution !== "failed") {
+        return res.status(400).json({ ok: false, error: "invalid_resolution" });
+      }
+      if (pending.status === "pending") {
+        const reason = String(body.reason || "").slice(0, 40);
+        existing.pendingAdminDayEdit = Object.assign({}, pending, {
+          status: resolution,
+          reason: resolution === "failed" ? reason : null,
+          message:
+            resolution === "failed"
+              ? String(body.message || AdminDayEdit.APPLY_MSG[reason] || "לא הוחל").slice(0, 160)
+              : "הוחל במכשיר",
+          resolvedAt: new Date().toISOString(),
+        });
+        existing.updatedAt = new Date().toISOString();
+        try {
+          await writeSnapshot(athleteId, existing);
+          await appendAdminAudit({
+            action: "resolve_admin_day_edit",
+            athleteId: athleteId,
+            actor: "athlete",
+            ok: true,
+            detail: resolution + (reason ? ":" + reason : ""),
+          });
+        } catch (e) {
+          return storageUnavailable(res, e);
+        }
+      }
+      return res.status(200).json({
+        ok: true,
+        pendingAdminDayEdit: existing.pendingAdminDayEdit,
         storage: storageInfo(),
       });
     }
@@ -801,6 +885,7 @@ module.exports = async function handler(req, res) {
       ).slice(0, 40),
       adminChatLog: Array.isArray(existing.adminChatLog) ? existing.adminChatLog : [],
       pendingPushUpgrade: existing.pendingPushUpgrade || null,
+      pendingAdminDayEdit: existing.pendingAdminDayEdit || null,
       planCoachVersion: (function () {
         /* Never invent from live COACH_VERSION — only explicit stamp (brick build / accepted push). */
         if (clean.planCoachVersion) return String(clean.planCoachVersion).slice(0, 20);
@@ -844,6 +929,13 @@ module.exports = async function handler(req, res) {
       snapshot.currentBlock = Object.assign({}, snapshot.currentBlock, {
         coachVersion: snapshot.planCoachVersion,
       });
+    }
+    if (snapshot.currentBlock && existing.pendingAdminDayEdit) {
+      snapshot.currentBlock = AdminDayEdit.protectPendingDayParts(
+        existing.currentBlock,
+        snapshot.currentBlock,
+        existing.pendingAdminDayEdit
+      );
     }
 
     try {
@@ -923,6 +1015,7 @@ module.exports = async function handler(req, res) {
       currentBlock: null,
       pastBlocks: [],
       pendingPushUpgrade: null,
+      pendingAdminDayEdit: null,
       seeded: !!existing.seeded,
       createdAt: existing.createdAt || now,
       updatedAt: now,

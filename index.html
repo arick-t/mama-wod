@@ -142,6 +142,11 @@ h1{
   border:1px solid rgba(26,155,138,.35);background:rgba(26,155,138,.08);
   color:#a8ddd2;font-size:.78em;font-weight:600;line-height:1.35;
 }
+.pprog-coach-updated-banner{
+  margin:0 0 10px;padding:8px 10px;border-radius:8px;
+  border:1px solid rgba(155,107,184,.4);background:rgba(155,107,184,.12);
+  color:#d7c2e4;font-size:.78em;font-weight:600;line-height:1.35;
+}
 .pprog-cal-cell.logged-extra:not(.active){color:#1A9B8A;box-shadow:inset 0 0 0 1.5px rgba(26,155,138,.55)}
 .pprog-cal-cell.logged-extra.active{box-shadow:inset 0 0 0 2px #8ec8bc}
 html.pprog-finish-open,body.pprog-finish-open{overflow:hidden;overscroll-behavior:none}
@@ -1548,6 +1553,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <script src="lib/coach-intake-sync-contract.js"></script>
 <script src="lib/normalize-pprog-block.js"></script>
 <script src="lib/pprog-display.js"></script>
+<script src="lib/admin-day-edit.js"></script>
 <script>
 var allData = {workouts:{}};
 var specialData = {heroes:[], benchmarks:[], open:[]};
@@ -8900,8 +8906,83 @@ function pprogMaybePullPushUpgradeOffer() {
           renderPprogChat();
         } catch (eR) {}
       }
+      if (d.pendingAdminDayEdit) {
+        pprogApplyPendingAdminDayEdit(d.pendingAdminDayEdit);
+      }
     })
     .catch(function () {});
+}
+
+function pprogResolveAdminDayEdit(pending, resolution, reason, message) {
+  if (!pending || !pending.id) return Promise.resolve(false);
+  var store = loadPprogStore();
+  var athleteId = store.userId || store.athleteId || pprogAthleteId();
+  var wk = getAdminWriteKey();
+  if (!wk || !athleteId) return Promise.resolve(false);
+  return fetch("/api/admin-snapshot", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Write-Key": wk },
+    body: JSON.stringify({
+      action: "athlete_resolve_admin_day_edit",
+      athleteId: athleteId,
+      writeKey: wk,
+      editId: pending.id,
+      resolution: resolution,
+      reason: reason || "",
+      message: message || "",
+    }),
+  })
+    .then(function (r) {
+      return r.json();
+    })
+    .then(function (d) {
+      return !!(d && d.ok);
+    })
+    .catch(function () {
+      return false;
+    });
+}
+
+function pprogApplyPendingAdminDayEdit(pending) {
+  if (!pending || pending.status !== "pending") return;
+  if (typeof AdminDayEdit === "undefined" || !AdminDayEdit.applyPendingToDay) return;
+  var store = loadPprogStore();
+  if (!store || !store.currentBlock || !Array.isArray(store.currentBlock.weeks)) return;
+  var wi = pending.weekIndex | 0;
+  var dayKey = String(pending.dayKey || "");
+  var week = store.currentBlock.weeks[wi];
+  if (!week || !week.days) {
+    pprogResolveAdminDayEdit(pending, "failed", "no_week", "לא הוחל");
+    return;
+  }
+  var prevDay = week.days[dayKey] || {};
+  var result = AdminDayEdit.applyPendingToDay(prevDay, pending, {
+    week: week,
+    dayKey: dayKey,
+    dayIso: pending.dayIso,
+    todayIso: pprogIsraelTodayIso(),
+  });
+  if (!result || !result.ok) {
+    pprogResolveAdminDayEdit(
+      pending,
+      "failed",
+      (result && result.reason) || "failed",
+      (result && result.message) || "לא הוחל"
+    );
+    return;
+  }
+  week.days[dayKey] = result.day;
+  store.currentBlock.weeks[wi] = week;
+  if ((store.activeWeekIndex | 0) === wi) store.currentWeek = week;
+  savePprogStore(store);
+  try {
+    renderPprogWeek();
+  } catch (eW) {}
+  try {
+    renderPprogChat();
+  } catch (eC) {}
+  pprogPushAdminSnapshotDebounced(store, "admin_day_edit");
+  pprogResolveAdminDayEdit(pending, "applied");
 }
 
 function pprogResolvePushUpgradeOffer(resolution) {
@@ -9380,6 +9461,7 @@ function applyPprogDayRevision(dayKey, dayPayload) {
     lastPreReply: prev.lastPreReply || "",
     lastDebriefReply: prev.lastDebriefReply || "",
     modifiedPartKinds: modifiedKinds,
+    athleteDayUpdatedAt: pprogNowIso(),
   };
   var keepFf = pprogNormalizeFinishFeedback(prev.finishFeedback);
   if (keepFf) revisedDay.finishFeedback = keepFf;

@@ -1,11 +1,16 @@
 # Admin block display + handoff UX
 
 Base: approved **Admin 1.5.11** shared brick (`lib/pprog-display.js`, T1+T2+T3).  
-This branch adds founder UX from retest (Admin **1.5.15**).
+This branch adds founder UX from retest (Admin **1.5.16**).
+
+## Round 6 (Admin 1.5.16) — T4 day edit → device (0 LLM)
+- Human PART edit of one remaining training day. Snapshot `pendingAdminDayEdit` is the bridge.
+- Device pulls on existing `athlete_pull_push_offer`, auto-applies, then `pushAdminSnapshot` + resolve.
+- No LLM (`generate_*` / `revise_*`). Rest / past / Done / LOGGED stay locked. Athlete fields (`preTalk`, debrief, `loggedExtra*`) are never overwritten.
 
 ## Round 5 (Admin 1.5.15) — edit workout on the day card
 - Pencil beside the date · in-card PART edit · Save → `admin_save_day` (admin snapshot only)
-- T4 to the athlete device still not included
+- T4 to the athlete device landed in 1.5.16
 
 ## Round 4 (Admin 1.5.14) — approved A–D (Founder + coach brain)
 - Join mail only after Terms + real blockStart

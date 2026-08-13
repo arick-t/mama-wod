@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DUCK-WOD Admin · 1.5.15</title>
+<title>DUCK-WOD Admin · 1.5.16</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -428,8 +428,14 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .pprog-edit-btn:hover,.pprog-edit-btn.is-editing{
   background:rgba(155,107,184,.18);border-color:var(--coach);color:var(--coach)
 }
-.pprog-edit-btn.is-rest{color:var(--text-meta);opacity:.7}
-.pprog-edit-btn.is-rest:hover{opacity:1;border-color:var(--text-meta);background:rgba(138,133,128,.12);color:var(--text-meta)}
+.pprog-coach-updated-banner,.pprog-admin-edit-status{
+  margin:0 0 10px;padding:8px 10px;border-radius:8px;
+  border:1px solid rgba(155,107,184,.35);background:rgba(155,107,184,.1);
+  color:var(--coach);font-size:.78em;font-weight:600;line-height:1.35
+}
+.pprog-admin-edit-status.err{
+  border-color:rgba(232,69,26,.4);background:rgba(232,69,26,.1);color:#e8b4a8
+}
 .pprog-editing-pill{
   display:inline-block;padding:2px 8px;border-radius:999px;background:var(--brand-gold);color:#111;
   font-size:10px;font-weight:800;letter-spacing:.04em;font-family:var(--font-ui);line-height:1.4
@@ -692,7 +698,7 @@ body:has(#intake-modal.open) #adminChatFloat{
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver" id="login-ver-badge" title="Admin 1.5.15 · Coach 2.3.13">Admin 1.5.15<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></div>
+    <div class="ver" id="login-ver-badge" title="Admin 1.5.16 · Coach 2.3.13">Admin 1.5.16<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <label class="login-remember">
       <input type="checkbox" id="pw-remember"/>
@@ -708,7 +714,7 @@ body:has(#intake-modal.open) #adminChatFloat{
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">Admin</span>
-    <span class="ver-badge" id="admin-ver-badge" title="Admin 1.5.15 · Coach 2.3.13">Admin 1.5.15<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></span>
+    <span class="ver-badge" id="admin-ver-badge" title="Admin 1.5.16 · Coach 2.3.13">Admin 1.5.16<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></span>
     <span class="count-wrap">
       <span class="count" id="athlete-count" title="הרשימה מתעדכנת לבד כל כמה שניות — בלי לרענן את הדף">0 מתאמנים</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
@@ -901,7 +907,7 @@ var adminChatFabOpen = false;
 var adminDayEdit = null;
 var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
 /** Live Personal Coach brain version — refreshed from GET /api/personal-coach. */
-var ADMIN_UI_VERSION = "1.5.15";
+var ADMIN_UI_VERSION = "1.5.16";
 var LIVE_COACH_VERSION = "2.3.13";
 var LIVE_COACH_VERSION_FETCHED_AT = 0;
 
@@ -1461,12 +1467,14 @@ function adminSnapshotsFingerprint(list) {
           return i + ":" + n;
         })
         .join(",");
+      var pendingEdit = a.pendingAdminDayEdit || {};
       return [
         a.athleteId,
         a.updatedAt || "",
         a.declarationAcceptedAt || "",
         a.membershipFrozen ? "1" : "0",
         weekMarks,
+        String(pendingEdit.status || "") + ":" + String(pendingEdit.id || "") + ":" + String(pendingEdit.reason || ""),
       ].join("|");
     })
     .join(";;");
@@ -2379,6 +2387,25 @@ function adminPprogDisplayOpts(a) {
     (adminDayEdit.wi | 0) === (view.activeWi | 0) &&
     adminDayEdit.day === view.activeDay
   );
+  var pending = a.pendingAdminDayEdit;
+  var editStatus = null;
+  if (
+    pending &&
+    (pending.weekIndex | 0) === (view.activeWi | 0) &&
+    String(pending.dayKey || "") === String(view.activeDay || "")
+  ) {
+    var msg = "";
+    if (typeof AdminDayEdit !== "undefined" && AdminDayEdit.statusMessage) {
+      msg = AdminDayEdit.statusMessage(pending);
+    } else if (pending.status === "pending") {
+      msg = "ממתין לסנכרון למכשיר";
+    } else if (pending.status === "failed") {
+      msg = pending.message || "לא הוחל";
+    }
+    if (msg && pending.status !== "applied") {
+      editStatus = { status: pending.status, message: msg };
+    }
+  }
   return {
     block: a.currentBlock,
     activeWeekIndex: view.activeWi,
@@ -2395,6 +2422,7 @@ function adminPprogDisplayOpts(a) {
     allowEdit: true,
     editing: editing,
     editDraft: editing ? adminDayEdit : null,
+    adminEditStatus: editStatus,
     hooks: {
       shift: "adminPprogCalShift",
       toggleMode: "adminPprogToggleCalMode",
@@ -2526,11 +2554,26 @@ function adminPprogStartEdit(weekIndex0, dayKey) {
   }
   var week = a.currentBlock.weeks[wi] || {};
   var dayData = (week.days && week.days[day]) || { parts: [] };
+  var dayIso = "";
+  if (typeof AdminDayEdit !== "undefined" && AdminDayEdit.dayIsoFromBlock) {
+    dayIso = AdminDayEdit.dayIsoFromBlock(a.currentBlock, wi, day);
+  }
+  if (typeof AdminDayEdit !== "undefined" && AdminDayEdit.lockReason) {
+    var locked = AdminDayEdit.lockReason(day, dayData, week, dayIso, adminIsraelTodayIso(), "save");
+    if (locked) {
+      showHdrToast(locked.message, "err");
+      return;
+    }
+  }
   var rest = !!(
     typeof NormalizePprogBlock !== "undefined" &&
     NormalizePprogBlock.isRestDay &&
     NormalizePprogBlock.isRestDay(day, dayData, week)
   );
+  if (rest) {
+    showHdrToast("לא נשמר — יום מנוחה", "err");
+    return;
+  }
   var parts = [];
   if (typeof PprogDisplay !== "undefined" && PprogDisplay.draftFromDayData) {
     parts = PprogDisplay.draftFromDayData(dayData, rest) || [];
@@ -2539,7 +2582,7 @@ function adminPprogStartEdit(weekIndex0, dayKey) {
     athleteId: a.athleteId,
     wi: wi,
     day: day,
-    rest: rest,
+    rest: false,
     parts: parts,
   };
   adminPprogRerender();
@@ -2602,6 +2645,7 @@ function adminPprogEditRemoveWork(partIndex, lineIndex) {
 
 function adminPprogEditAddPart() {
   if (!adminDayEdit) return;
+  if (adminDayEdit.rest) return;
   if (!Array.isArray(adminDayEdit.parts)) adminDayEdit.parts = [];
   var letter = adminPprogEditPartLetter(adminDayEdit.parts.length);
   adminDayEdit.parts.push({
@@ -2610,7 +2654,6 @@ function adminPprogEditAddPart() {
     format: "",
     work: [""],
   });
-  adminDayEdit.rest = false;
   adminPprogEditRerenderCard();
 }
 
@@ -2622,7 +2665,7 @@ function adminPprogEditCancel(silent) {
 
 function adminDraftToParts(draft) {
   var src = (draft && draft.parts) || [];
-  return src.map(function (p) {
+  return src.map(function (p, idx) {
     var lines = [];
     (p.notes || []).forEach(function (n) {
       var t = String(n || "").trim();
@@ -2635,27 +2678,22 @@ function adminDraftToParts(draft) {
       if (t) lines.push(t);
     });
     return {
-      title: String(p.title || "Part").trim() || "Part",
+      id: String(p.id || (draft && draft.day ? draft.day + "-" + idx : "day-" + idx)),
+      title: String(p.title || "").trim(),
       lines: lines,
     };
   });
 }
 
-function adminApplyDayPartsToBlock(block, wi, dayKey, parts, wasRest) {
+function adminApplyDayPartsToBlock(block, wi, dayKey, parts, modifiedPartKinds) {
   if (!block || !Array.isArray(block.weeks) || !block.weeks[wi]) return block;
   var week = block.weeks[wi];
   if (!week.days) week.days = {};
   var prev = week.days[dayKey] || {};
-  week.days[dayKey] = Object.assign({}, prev, { parts: parts });
-  if (parts.length && wasRest && Array.isArray(week.overview)) {
-    var focus = String(parts[0].title || "Training")
-      .replace(/^Part\s+[A-Z]\s*[—–-]\s*/i, "")
-      .slice(0, 80);
-    week.overview = week.overview.map(function (row) {
-      if (!row || String(row.day || "").slice(0, 3) !== dayKey) return row;
-      return Object.assign({}, row, { focus: focus || "Training" });
-    });
-  }
+  week.days[dayKey] = Object.assign({}, prev, {
+    parts: parts,
+    modifiedPartKinds: modifiedPartKinds || prev.modifiedPartKinds || {},
+  });
   return block;
 }
 
@@ -2667,25 +2705,31 @@ function adminPprogEditSave() {
   if (!a || !a.currentBlock) return;
   var wi = adminDayEdit.wi | 0;
   var day = adminDayEdit.day;
+  var week = a.currentBlock.weeks[wi] || {};
+  var dayData = (week.days && week.days[day]) || {};
+  var dayIso =
+    typeof AdminDayEdit !== "undefined" && AdminDayEdit.dayIsoFromBlock
+      ? AdminDayEdit.dayIsoFromBlock(a.currentBlock, wi, day)
+      : "";
+  if (typeof AdminDayEdit !== "undefined" && AdminDayEdit.lockReason) {
+    var locked = AdminDayEdit.lockReason(day, dayData, week, dayIso, adminIsraelTodayIso(), "save");
+    if (locked) {
+      showHdrToast(locked.message, "err");
+      return;
+    }
+  }
   var parts = adminDraftToParts(adminDayEdit);
-  if (!parts.length && adminDayEdit.rest) {
-    parts = [{ title: "REST DAY", lines: ["Rest"] }];
+  if (typeof AdminDayEdit !== "undefined" && AdminDayEdit.partsAreSaveable) {
+    var quality = AdminDayEdit.partsAreSaveable(parts);
+    if (!quality.ok) {
+      showHdrToast(quality.message, "err");
+      return;
+    }
+  } else if (!parts.length) {
+    showHdrToast("לא נשמר — אין חלק עם תוכן", "err");
+    return;
   }
-  a.currentBlock = adminApplyDayPartsToBlock(
-    a.currentBlock,
-    wi,
-    day,
-    parts,
-    adminDayEdit.rest
-  );
-  if (typeof NormalizePprogBlock !== "undefined" && NormalizePprogBlock.normalize) {
-    try {
-      a.currentBlock = NormalizePprogBlock.normalize(a.currentBlock, a.currentBlock);
-    } catch (eN) {}
-  }
-  adminDayEdit = null;
-  adminPprogRerender();
-  /* T4 device push: not in this round. Persist admin snapshot only. */
+  /* T4: persist parts only. 0 LLM. Device pulls via athlete_pull_push_offer. */
   fetch(adminApiUrl("/api/admin-snapshot"), {
     method: "POST",
     headers: adminAuthHeaders(),
@@ -2703,13 +2747,27 @@ function adminPprogEditSave() {
       return r.json();
     })
     .then(function (d) {
-      if (d && d.ok && d.currentBlock) {
-        a.currentBlock = d.currentBlock;
+      if (!d || !d.ok) {
+        showHdrToast((d && d.message) || "לא נשמר", "err");
+        return;
       }
-      showHdrToast(d && d.ok ? "האימון נשמר באדמין" : "השמירה המקומית נשמרה — הסנכרון לשרת נכשל", d && d.ok ? null : "err");
+      if (d.currentBlock) a.currentBlock = d.currentBlock;
+      else {
+        a.currentBlock = adminApplyDayPartsToBlock(
+          a.currentBlock,
+          wi,
+          day,
+          parts,
+          d.pendingAdminDayEdit && d.pendingAdminDayEdit.modifiedPartKinds
+        );
+      }
+      if (d.pendingAdminDayEdit) a.pendingAdminDayEdit = d.pendingAdminDayEdit;
+      adminDayEdit = null;
+      adminPprogRerender();
+      showHdrToast("האימון נשמר — ממתין לסנכרון למכשיר");
     })
     .catch(function () {
-      showHdrToast("נשמר בכרטיס — הסנכרון לשרת נכשל", "err");
+      showHdrToast("השמירה לשרת נכשלה — לא נשמר", "err");
     });
 }
 
@@ -4341,6 +4399,7 @@ tryRestoreAdminSession();
 <script src="lib/coach-intake-sync-contract.js"></script>
 <script src="lib/normalize-pprog-block.js"></script>
 <script src="lib/pprog-display.js"></script>
+<script src="lib/admin-day-edit.js"></script>
 <script src="admin-fixed-intake.js"></script>
 </body>
 </html>

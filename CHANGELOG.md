@@ -1,5 +1,14 @@
 # Changelog
 
+## [Admin 1.5.16] - 2026-08-13
+
+### T4 — human day edit syncs to the device (0 LLM)
+- Pencil on a remaining training day → edit PART → Save writes `weeks[wi].days[dayKey].parts` only
+- Snapshot bridge `pendingAdminDayEdit`; device pulls it on the existing `athlete_pull_push_offer` (~20s)
+- Auto-apply on the phone (no Confirm card) + status line «המאמן עדכן את האימון» + MODIFIED
+- Locked: Rest / past / Done / LOGGED / existing debrief. Fail reason stays on the admin card; edit is not deleted
+- Empty / orphan parts are not saved. No `generate_*` / `revise_*` / Soft Upgrade
+
 ## [Admin 1.5.15] - 2026-08-13
 
 ### Edit workout on the admin day card (UI only — no device push)
