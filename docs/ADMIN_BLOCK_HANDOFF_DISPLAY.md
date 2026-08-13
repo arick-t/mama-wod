@@ -1,7 +1,11 @@
 # Admin block display + handoff UX
 
 Base: approved **Admin 1.5.11** shared brick (`lib/pprog-display.js`, T1+T2+T3).  
-This branch ships founder UX + T4 as Admin **2.0**.
+This branch ships founder UX + T4 as Admin **2.0.1**.
+
+## Round 8 (Admin 2.0.1) — session token security (A–C)
+- HMAC key = `ADMIN_SESSION_SECRET` (not raw password) · password fingerprint in payload
+- timingSafeEqual on login · 401 → force logout (incl. silent poll) · התנתק · remember 7d
 
 ## Round 7 (Admin 2.0) — production
 - T4: human PART edit of one remaining training day syncs to the device (0 LLM)
