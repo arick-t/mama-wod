@@ -78,17 +78,17 @@ ok("admin block render is read-only", /readOnly:\s*true/.test(adminHtml));
 ok("admin fixed intake normalizes block", /NormalizePprogBlock\.normalize/.test(fixedJs));
 ok("handoff stores lastHandoffPath", /lastHandoffPath/.test(handoff));
 ok("admin create sends intake mail", /sendAdminIntakeCompleteMail/.test(handoff));
-ok("handoff panel in athlete tab", /ath-handoff-panel/.test(adminHtml) && /renderHandoffSectionBody/.test(adminHtml));
+ok("handoff inline in athlete card", /renderHandoffInline/.test(adminHtml) && /ath-handoff-inline/.test(adminHtml));
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
-ok("admin version 1.5.11", /DUCK-WOD Admin · 1\.5\.11/.test(adminHtml));
+ok("admin version 1.5.12", /DUCK-WOD Admin · 1\.5\.12/.test(adminHtml));
 ok("admin wired to coach 2.3.13", /LIVE_COACH_VERSION = "2\.3\.13"/.test(adminHtml));
 ok("app coach 2.3.13", /COACH_VERSION = "2\.3\.13"/.test(index));
 ok(
   "admin shows Admin + Coach versions",
-  /Admin 1\.5\.11/.test(adminHtml) &&
+  /Admin 1\.5\.12/.test(adminHtml) &&
     /ver-coach/.test(adminHtml) &&
     /syncAdminVersionLabels/.test(adminHtml) &&
-    /ADMIN_UI_VERSION = "1\.5\.11"/.test(adminHtml)
+    /ADMIN_UI_VERSION = "1\.5\.12"/.test(adminHtml)
 );
 ok(
   "admin intake uses pprog classes 1:1",

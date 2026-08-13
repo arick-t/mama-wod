@@ -1,5 +1,12 @@
 # Changelog
 
+## [Admin 1.5.12] - 2026-08-13
+
+### Founder retest UX (on top of approved 1.5.11 brick display)
+- Compact one-time handoff button under **פעיל** (no large extra panel)
+- Removed unused **חבר מאמן** chip
+- **הצהרה לא בתוקף** until device `declarationAcceptedAt`; then **תקפה** + countdown
+
 ## [Admin 1.5.11] - 2026-08-13
 
 ### Admin ↔ athlete brick display (shared render)
