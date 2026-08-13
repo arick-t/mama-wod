@@ -86,6 +86,7 @@ assert.strictEqual(
   false
 );
 process.env.ADMIN_PASSWORD = "test-secret-only";
+process.env.ADMIN_SESSION_SECRET = "unit-test-admin-session-secret-32b!!";
 assert.strictEqual(
   checkAdminAuth({
     headers: { "x-admin-password": "test-secret-only" },
@@ -131,7 +132,12 @@ assert.strictEqual(
   }),
   false
 );
+/* HMAC must not use the password as key — wrong SESSION_SECRET fails */
+process.env.ADMIN_SESSION_SECRET = "completely-different-session-secret-xx";
+assert.strictEqual(verifyAdminSessionToken(sessionTok, "test-secret-only"), false);
+process.env.ADMIN_SESSION_SECRET = "unit-test-admin-session-secret-32b!!";
 delete process.env.ADMIN_PASSWORD;
+delete process.env.ADMIN_SESSION_SECRET;
 
 console.log("ok — input malicious blocks without model");
 console.log("ok — source probe blocks chat only");

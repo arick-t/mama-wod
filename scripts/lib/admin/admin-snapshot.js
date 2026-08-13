@@ -270,10 +270,18 @@ module.exports = async function handler(req, res) {
       try {
         const snapshots = await listSnapshots();
         const json = { ok: true, snapshots, storage: storageInfo() };
+        /* Mint only on password login — never on token poll. Token via response header only (not JSON body). */
         if (adminAuthUsedPassword(req, ADMIN_PASSWORD)) {
-          json.adminSessionToken = mintAdminSessionToken(ADMIN_PASSWORD, {
+          const sessionTok = mintAdminSessionToken(ADMIN_PASSWORD, {
             remember: !!(body.rememberMe || body.remember),
           });
+          if (sessionTok) {
+            try {
+              res.setHeader("X-Admin-Session-Token", sessionTok);
+            } catch (eHdr) {}
+          } else {
+            json.sessionTokenSkipped = "ADMIN_SESSION_SECRET";
+          }
         }
         return res.status(200).json(json);
       } catch (e) {

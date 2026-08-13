@@ -1,13 +1,23 @@
 /**
  * Shared admin auth for founder dashboard APIs.
  * Password lives only in server env (ADMIN_PASSWORD on Vercel).
+ * Session tokens are HMAC-signed with ADMIN_SESSION_SECRET — never the raw password.
  * No hardcoded bootstrap. No password via URL query.
- * Remember-me uses a signed session token — never persist the raw password on the client.
  */
 const crypto = require("crypto");
 
+const SESSION_PREFIX = "aws1";
+const SESSION_MAC_PREFIX = "admin-session.v2.";
+const MIN_SESSION_SECRET_LEN = 32;
+const REMEMBER_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+const TAB_TTL_MS = 12 * 60 * 60 * 1000;
+
 function resolveAdminPassword() {
   return String(process.env.ADMIN_PASSWORD || "").trim();
+}
+
+function resolveAdminSessionSecret() {
+  return String(process.env.ADMIN_SESSION_SECRET || "").trim();
 }
 
 function timingSafeEqualStr(a, b) {
@@ -15,6 +25,19 @@ function timingSafeEqualStr(a, b) {
   const right = Buffer.from(String(b || ""), "utf8");
   if (left.length !== right.length) return false;
   return crypto.timingSafeEqual(left, right);
+}
+
+function passwordFingerprint(adminPassword) {
+  return crypto
+    .createHash("sha256")
+    .update(String(adminPassword || ""), "utf8")
+    .digest("hex")
+    .slice(0, 8);
+}
+
+function sessionSecretReady(secret) {
+  const s = String(secret || resolveAdminSessionSecret() || "");
+  return s.length >= MIN_SESSION_SECRET_LEN;
 }
 
 function extractAdminPasswordCandidate(req) {
@@ -34,33 +57,47 @@ function extractAdminAuthSecret(req) {
   return extractAdminPasswordCandidate(req) || extractAdminSessionToken(req);
 }
 
+/**
+ * Mint signed session token. HMAC key = ADMIN_SESSION_SECRET (not the password).
+ * Payload includes password fingerprint so rotating ADMIN_PASSWORD invalidates tokens.
+ * Returns "" if SESSION_SECRET is missing/short.
+ */
 function mintAdminSessionToken(adminPassword, opts) {
-  const secret = String(adminPassword || resolveAdminPassword() || "");
-  if (!secret) return "";
+  const hmacKey = resolveAdminSessionSecret();
+  if (!sessionSecretReady(hmacKey)) return "";
+  const pw = String(adminPassword || resolveAdminPassword() || "");
+  if (!pw) return "";
   const remember = !!(opts && opts.remember);
-  const ttlMs = remember ? 14 * 24 * 60 * 60 * 1000 : 12 * 60 * 60 * 1000;
+  const ttlMs = remember ? REMEMBER_TTL_MS : TAB_TTL_MS;
   const payload = Buffer.from(
-    JSON.stringify({ v: 1, exp: Date.now() + ttlMs, r: remember ? 1 : 0 }),
+    JSON.stringify({
+      v: 2,
+      exp: Date.now() + ttlMs,
+      r: remember ? 1 : 0,
+      pfp: passwordFingerprint(pw),
+    }),
     "utf8"
   ).toString("base64url");
   const sig = crypto
-    .createHmac("sha256", secret)
-    .update("admin-session.v1." + payload)
+    .createHmac("sha256", hmacKey)
+    .update(SESSION_MAC_PREFIX + payload)
     .digest("base64url");
-  return "aws1." + payload + "." + sig;
+  return SESSION_PREFIX + "." + payload + "." + sig;
 }
 
 function verifyAdminSessionToken(token, adminPassword) {
   const raw = String(token || "");
   const parts = raw.split(".");
-  if (parts.length !== 3 || parts[0] !== "aws1") return false;
-  const secret = String(adminPassword || resolveAdminPassword() || "");
-  if (!secret) return false;
+  if (parts.length !== 3 || parts[0] !== SESSION_PREFIX) return false;
+  const hmacKey = resolveAdminSessionSecret();
+  if (!sessionSecretReady(hmacKey)) return false;
+  const pw = String(adminPassword || resolveAdminPassword() || "");
+  if (!pw) return false;
   const payload = parts[1];
   const sig = parts[2];
   const expected = crypto
-    .createHmac("sha256", secret)
-    .update("admin-session.v1." + payload)
+    .createHmac("sha256", hmacKey)
+    .update(SESSION_MAC_PREFIX + payload)
     .digest("base64url");
   if (!timingSafeEqualStr(sig, expected)) return false;
   let data;
@@ -69,8 +106,9 @@ function verifyAdminSessionToken(token, adminPassword) {
   } catch (e) {
     return false;
   }
-  if (!data || data.v !== 1 || !data.exp) return false;
+  if (!data || data.v !== 2 || !data.exp) return false;
   if (Date.now() > Number(data.exp)) return false;
+  if (!timingSafeEqualStr(String(data.pfp || ""), passwordFingerprint(pw))) return false;
   return true;
 }
 
@@ -78,7 +116,7 @@ function adminAuthUsedPassword(req, adminPassword) {
   const expected = adminPassword || resolveAdminPassword();
   if (!expected) return false;
   const pw = extractAdminPasswordCandidate(req);
-  return !!pw && pw === expected;
+  return !!pw && timingSafeEqualStr(pw, expected);
 }
 
 function checkAdminAuth(req, adminPassword) {
@@ -109,6 +147,9 @@ function adminAuthDenied(res, adminPassword) {
 
 module.exports = {
   resolveAdminPassword,
+  resolveAdminSessionSecret,
+  sessionSecretReady,
+  passwordFingerprint,
   checkAdminAuth,
   adminAuthDenied,
   extractAdminAuthSecret,
@@ -117,4 +158,8 @@ module.exports = {
   mintAdminSessionToken,
   verifyAdminSessionToken,
   adminAuthUsedPassword,
+  timingSafeEqualStr,
+  REMEMBER_TTL_MS,
+  TAB_TTL_MS,
+  MIN_SESSION_SECRET_LEN,
 };

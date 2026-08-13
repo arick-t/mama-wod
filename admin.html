@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DUCK-WOD Admin · 2.0</title>
+<title>DUCK-WOD Admin · 2.0.1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -698,11 +698,11 @@ body:has(#intake-modal.open) #adminChatFloat{
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver" id="login-ver-badge" title="Admin 2.0 · Coach 2.3.13">Admin 2.0<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></div>
+    <div class="ver" id="login-ver-badge" title="Admin 2.0.1 · Coach 2.3.13">Admin 2.0.1<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <label class="login-remember">
       <input type="checkbox" id="pw-remember"/>
-      זכור אותי במכשיר הזה
+      זכור אותי במכשיר הזה (7 ימים)
     </label>
     <button type="button" onclick="doLogin()">כניסה</button>
     <div id="login-err"></div>
@@ -714,7 +714,7 @@ body:has(#intake-modal.open) #adminChatFloat{
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">Admin</span>
-    <span class="ver-badge" id="admin-ver-badge" title="Admin 2.0 · Coach 2.3.13">Admin 2.0<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></span>
+    <span class="ver-badge" id="admin-ver-badge" title="Admin 2.0.1 · Coach 2.3.13">Admin 2.0.1<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></span>
     <span class="count-wrap">
       <span class="count" id="athlete-count" title="הרשימה מתעדכנת לבד כל כמה שניות — בלי לרענן את הדף">0 מתאמנים</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
@@ -734,6 +734,7 @@ body:has(#intake-modal.open) #adminChatFloat{
     </button>
     <button type="button" class="hdr-btn primary" id="btn-add-athlete" onclick="openIntakeWorkspace()">+ מתאמן</button>
     <button type="button" class="hdr-btn" onclick="refreshAdmin()">↻ רענון</button>
+    <button type="button" class="hdr-btn" id="btn-admin-logout" onclick="adminLogout()" title="התנתק מהאדמין">התנתק</button>
   </header>
   <div id="hdr-toast" class="hdr-toast" role="status" aria-live="polite"></div>
   <div class="learn-banner" id="learn-banner">מצב לימוד פעיל — כל הערה שתשלח תיכנס ללמידת המאמן (לא למתאמן)</div>
@@ -907,7 +908,7 @@ var adminChatFabOpen = false;
 var adminDayEdit = null;
 var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
 /** Live Personal Coach brain version — refreshed from GET /api/personal-coach. */
-var ADMIN_UI_VERSION = "2.0";
+var ADMIN_UI_VERSION = "2.0.1";
 var LIVE_COACH_VERSION = "2.3.13";
 var LIVE_COACH_VERSION_FETCHED_AT = 0;
 
@@ -1370,7 +1371,10 @@ function syncDriveBrain() {
       syncInFlight = false;
       if (btn) btn.disabled = false;
       if (label) label.textContent = "סנכרן";
-      if (res.status === 401) throw new Error("unauthorized");
+      if (res.status === 401) {
+        forceAdminLogout("הסשן פג — התחבר מחדש");
+        throw new Error("unauthorized");
+      }
       var result = (res.j && res.j.result) || {};
       var msg = result.message || (res.j && res.j.message) || "סנכרון הסתיים";
       if (result.ok || result.code === "noop" || result.code === "empty" || result.code === "synced") {
@@ -1452,6 +1456,53 @@ function clearAdminSession() {
   clearLegacyAdminPasswordStore();
 }
 
+function showAdminLoginScreen() {
+  try {
+    if (adminPollTimer) {
+      clearInterval(adminPollTimer);
+      adminPollTimer = null;
+    }
+  } catch (ePoll) {}
+  var app = document.getElementById("app");
+  if (app) {
+    app.style.display = "none";
+    app.classList.remove("is-open");
+  }
+  var login = document.getElementById("login-screen");
+  if (login) login.style.display = "flex";
+  try {
+    var inp = document.getElementById("pw-input");
+    if (inp) {
+      inp.value = "";
+      inp.focus();
+    }
+  } catch (eInp) {}
+}
+
+/** Any 401 on an authenticated admin path → wipe storage + login screen. */
+function forceAdminLogout(reason) {
+  clearAdminSession();
+  showAdminLoginScreen();
+  var errEl = document.getElementById("login-err");
+  if (errEl && reason) errEl.textContent = String(reason);
+}
+
+function adminLogout() {
+  forceAdminLogout("");
+}
+
+function readSessionTokenFromResponse(res, data) {
+  try {
+    var hdr =
+      (res && res.headers && typeof res.headers.get === "function" && res.headers.get("X-Admin-Session-Token")) ||
+      "";
+    if (hdr) return String(hdr);
+  } catch (eHdr) {}
+  /* Legacy body field — ignored for new mints; kept for older cached responses only. */
+  if (data && data.adminSessionToken) return String(data.adminSessionToken);
+  return "";
+}
+
 function adminSnapshotsFingerprint(list) {
   return (list || [])
     .map(function (a) {
@@ -1506,8 +1557,8 @@ function openAdminApp(snapshots) {
   startAdminLivePoll();
 }
 
-function applyAdminSessionFromList(data, remember) {
-  var token = data && data.adminSessionToken ? String(data.adminSessionToken) : "";
+function applyAdminSessionFromList(res, data, remember) {
+  var token = readSessionTokenFromResponse(res, data);
   if (token) {
     adminSessionToken = token;
     adminPw = "";
@@ -1516,9 +1567,14 @@ function applyAdminSessionFromList(data, remember) {
       var inp = document.getElementById("pw-input");
       if (inp) inp.value = "";
     } catch (eInp) {}
-  } else if (adminSessionToken) {
-    persistAdminSession(adminSessionToken, remember);
+    return true;
   }
+  if (adminSessionToken) {
+    persistAdminSession(adminSessionToken, remember);
+    return true;
+  }
+  /* Password login without SESSION_SECRET: keep pw in RAM only for this tab (never storage). */
+  return !!adminPw;
 }
 
 function doLogin() {
@@ -1537,26 +1593,36 @@ function doLogin() {
   })
     .then(function(r) {
       return r.json().then(function(data) {
-        return { status: r.status, data: data };
+        return { status: r.status, data: data, res: r };
       }).catch(function() {
-        return { status: r.status, data: null };
+        return { status: r.status, data: null, res: r };
       });
     })
-    .then(function(res) {
-      if (res.status === 503 || (res.data && res.data.error === "admin_not_configured")) {
-        throw new Error((res.data && res.data.message) || "not_configured");
+    .then(function(pack) {
+      if (pack.status === 503 || (pack.data && pack.data.error === "admin_not_configured")) {
+        throw new Error((pack.data && pack.data.message) || "not_configured");
       }
-      if (res.status === 401) throw new Error((res.data && res.data.message) || "wrong_password");
-      if (res.status < 200 || res.status >= 300) throw new Error("http_" + res.status);
-      if (!res.data || !res.data.ok) throw new Error("bad_response");
-      applyAdminSessionFromList(res.data, remember);
-      openAdminApp(res.data.snapshots || []);
+      if (pack.status === 401) throw new Error((pack.data && pack.data.message) || "wrong_password");
+      if (pack.status < 200 || pack.status >= 300) throw new Error("http_" + pack.status);
+      if (!pack.data || !pack.data.ok) throw new Error("bad_response");
+      var okSession = applyAdminSessionFromList(pack.res, pack.data, remember);
+      if (!okSession) {
+        throw new Error("session_secret_missing");
+      }
+      if (pack.data.sessionTokenSkipped === "ADMIN_SESSION_SECRET") {
+        showHdrToast("חסר ADMIN_SESSION_SECRET בשרת — הסשן רק בזיכרון הטאב (בלי זכור אותי)", "warn");
+      }
+      openAdminApp(pack.data.snapshots || []);
     })
     .catch(function(e) {
+      clearAdminSession();
+      adminPw = "";
       var msg = "שגיאת חיבור";
       var em = e && e.message ? String(e.message) : "";
       if (em === "not_configured" || em.indexOf("לא הוגדר") >= 0 || em.indexOf("ADMIN_PASSWORD") >= 0) {
         msg = "לא הוגדר בשרת. הגדר ADMIN_PASSWORD ב־Vercel ואז Redeploy.";
+      } else if (em === "session_secret_missing" || em.indexOf("ADMIN_SESSION_SECRET") >= 0) {
+        msg = "חסר ADMIN_SESSION_SECRET ב־Vercel (32+ תווים אקראיים) — הוסף ו־Redeploy.";
       } else if (em === "wrong_password" || em.indexOf("סיסמה שגויה") >= 0) {
         msg = "סיסמה שגויה";
       } else if (em.indexOf("http_") === 0) {
@@ -1596,8 +1662,7 @@ function tryRestoreAdminSession() {
     })
     .then(function(res) {
       if (res.status === 401) {
-        clearAdminSession();
-        if (errEl) errEl.textContent = "";
+        forceAdminLogout("");
         return;
       }
       if (res.status === 503 || (res.data && res.data.error === "admin_not_configured")) {
@@ -1609,6 +1674,7 @@ function tryRestoreAdminSession() {
       openAdminApp(res.data.snapshots || []);
     })
     .catch(function() {
+      forceAdminLogout("");
       if (errEl) errEl.textContent = "";
     });
 }
@@ -1623,9 +1689,23 @@ function loadAthletes(opts) {
     headers: adminAuthHeaders(),
     body: JSON.stringify(withAdminPassword({ action: "admin_list" }))
   })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      var list = (data && data.snapshots) || [];
+    .then(function(r) {
+      return r.json().then(function(data) {
+        return { status: r.status, data: data };
+      }).catch(function() {
+        return { status: r.status, data: null };
+      });
+    })
+    .then(function(pack) {
+      if (pack.status === 401 || (pack.data && pack.data.error === "Unauthorized")) {
+        forceAdminLogout("הסשן פג — התחבר מחדש");
+        return;
+      }
+      if (pack.status < 200 || pack.status >= 300 || !pack.data || !pack.data.ok) {
+        if (!silent) showHdrToast("רענון הרשימה נכשל", "err");
+        return;
+      }
+      var list = pack.data.snapshots || [];
       var fp = adminSnapshotsFingerprint(list);
       if (silent && fp === lastAdminSnapFingerprint) return;
       lastAdminSnapFingerprint = fp;
@@ -1645,7 +1725,9 @@ function loadAthletes(opts) {
       }
       renderAthleteList(list);
     })
-    .catch(function() {});
+    .catch(function() {
+      if (!silent) showHdrToast("רענון הרשימה נכשל", "err");
+    });
 }
 
 function compareCoachVersionsAdmin(a, b) {
@@ -3796,7 +3878,8 @@ function friendlyCoachError(j, status) {
     return "נדרשת החתמה על התנאים — באדמין צריך auth תקין (התחבר מחדש).";
   }
   if (status === 401 || code === "Unauthorized") {
-    return "סיסמת אדמין לא נשלחה או פגתה — צא והתחבר מחדש, ואז Build plan.";
+    forceAdminLogout("הסשן פג — התחבר מחדש");
+    return "סיסמת אדמין לא נשלחה או פגתה — התחבר מחדש, ואז Build plan.";
   }
   if (code === "admin_not_configured") {
     return String(j.message || j.messageEn || "ADMIN_PASSWORD לא מוגדר בשרת.");
