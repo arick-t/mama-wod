@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DUCK-WOD Admin · 1.5.10</title>
+<title>DUCK-WOD Admin · 1.5.11</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -353,7 +353,43 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 
 /* Personal coach workout format — match index.html day cards */
 .pprog-summary{color:var(--text);font-size:.95em;line-height:1.5;margin:0 0 12px;padding:12px;background:var(--bg-elev);border-radius:8px;border:1px solid var(--line)}
-.pprog-day-card{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:16px 16px 14px;margin-top:12px}
+.pprog-logged-extra-flag{
+  display:inline-block;margin-left:8px;padding:2px 8px;border-radius:6px;
+  border:1px solid rgba(26,155,138,.55);background:rgba(26,155,138,.14);
+  color:#8ec8bc;font-size:.62em;font-weight:800;letter-spacing:.04em;vertical-align:middle;
+}
+.pprog-logged-extra-banner{
+  margin:0 0 10px;padding:8px 10px;border-radius:8px;
+  border:1px solid rgba(26,155,138,.35);background:rgba(26,155,138,.08);
+  color:#a8ddd2;font-size:.78em;font-weight:600;line-height:1.35;
+}
+.pprog-finish-reported{display:inline-flex;align-items:center;color:#8ec8bc;font-size:.78em;font-weight:700}
+.pprog-cal{background:#181818;border:1px solid #333;border-radius:12px;padding:12px 10px 10px;margin:0 0 14px;direction:ltr}
+.pprog-cal-head{display:flex;align-items:center;justify-content:center;gap:8px;margin:0 0 8px;flex-wrap:nowrap}
+.pprog-cal-nav{background:transparent;border:none;color:#aaa;font-size:1.35em;line-height:1;cursor:pointer;padding:4px 10px;font-family:inherit}
+.pprog-cal-nav:hover{color:#fff}
+.pprog-cal-month-btn{background:transparent;border:none;color:#e8e4d8;font-size:1.05em;font-weight:700;cursor:pointer;font-family:inherit;padding:4px 8px;letter-spacing:.02em}
+.pprog-cal-month-btn:hover{color:#b06dcf}
+.pprog-cal-today-row{display:flex;justify-content:center;margin:0 0 10px}
+.pprog-cal-today{appearance:none;background:#F5C518;border:1px solid #F5C518;color:#111;font-size:.72em;font-weight:800;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:inherit;letter-spacing:.02em;line-height:1.2;min-height:34px}
+.pprog-cal-dow,.pprog-cal-row{display:grid;grid-template-columns:minmax(48px,0.85fr) repeat(7,1fr);gap:2px;text-align:center;align-items:center}
+.pprog-cal-dow{margin-bottom:4px}
+.pprog-cal-dow span{color:#888;font-size:.68em;font-weight:600;padding:2px 0}
+.pprog-cal-general,.pprog-cal-week-col{appearance:none;background:#252525;border:1px solid #3a3a3a;color:#ddd;font-size:.62em;font-weight:700;padding:6px 2px;border-radius:8px;cursor:pointer;font-family:inherit;line-height:1.15;min-height:36px;width:100%;max-width:56px;margin:0 auto}
+.pprog-cal-week-col{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:.58em}
+.pprog-cal-general.active,.pprog-cal-week-col.active,.pprog-cal-cell.active{background:#8e44ad;border-color:#b06dcf;color:#fff}
+.pprog-cal-cell{appearance:none;background:transparent;border:none;color:#ddd;font-size:.9em;font-weight:600;padding:6px 0;border-radius:50%;cursor:pointer;font-family:inherit;aspect-ratio:1;max-width:38px;margin:0 auto;display:flex;align-items:center;justify-content:center;width:100%}
+.pprog-cal-cell:hover{background:#2a2a2a}
+.pprog-cal-cell.muted{color:#555}
+.pprog-cal-cell.has-wod:not(.active){color:#1A9B8A}
+.pprog-cal-cell.logged-extra:not(.active){color:#1A9B8A;box-shadow:inset 0 0 0 1.5px rgba(26,155,138,.55)}
+.pprog-cal-cell.deload-week:not(.active){background:rgba(90,140,190,.2);color:#c5daf0;box-shadow:inset 0 0 0 1.5px #5a8cbe}
+.pprog-cal-month-grid{display:flex;flex-direction:column;gap:2px}
+.pprog-cal-week-label{color:#999;font-size:.7em;text-align:center;margin:8px 0 3px}
+.pprog-cal-block-hint{color:#666;font-size:.68em;text-align:center;margin:6px 0 0}
+.pprog-rest-day{text-align:center;padding:8px 0 4px}
+.pprog-rest-day-img{width:min(72vw,260px);max-width:100%;height:auto;display:block;margin:0 auto;border-radius:14px;object-fit:cover;aspect-ratio:1;background:#111}
+.pprog-week-panes{direction:ltr}
 .pprog-day-card .card-header{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 .pprog-day-card .source-name{color:var(--coach);font-weight:700;font-size:1.05em;letter-spacing:.01em;font-family:var(--font-ui)}
 .pprog-day-card .section{margin-bottom:12px;background:transparent;border:0;padding:0}
@@ -579,7 +615,7 @@ body:has(#intake-modal.open) #adminChatFloat{
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver" id="login-ver-badge" title="Admin 1.5.10 · Coach 2.3.8">Admin 1.5.10<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.8</span></div>
+    <div class="ver" id="login-ver-badge" title="Admin 1.5.11 · Coach 2.3.13">Admin 1.5.11<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <button type="button" onclick="doLogin()">כניסה</button>
     <div id="login-err"></div>
@@ -591,7 +627,7 @@ body:has(#intake-modal.open) #adminChatFloat{
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">Admin</span>
-    <span class="ver-badge" id="admin-ver-badge" title="Admin 1.5.10 · Coach 2.3.8">Admin 1.5.10<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.8</span></span>
+    <span class="ver-badge" id="admin-ver-badge" title="Admin 1.5.11 · Coach 2.3.13">Admin 1.5.11<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></span>
     <span class="count-wrap">
       <span class="count" id="athlete-count">0 מתאמנים</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
@@ -777,7 +813,7 @@ var pendingLearnNoteId = null;
 var adminChatFabOpen = false;
 var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
 /** Live Personal Coach brain version — refreshed from GET /api/personal-coach. */
-var ADMIN_UI_VERSION = "1.5.10";
+var ADMIN_UI_VERSION = "1.5.11";
 var LIVE_COACH_VERSION = "2.3.13";
 var LIVE_COACH_VERSION_FETCHED_AT = 0;
 
@@ -1414,7 +1450,15 @@ function refreshLiveCoachVersion() {
 }
 
 function renderAthleteList(list) {
-  athletes = list || [];
+  athletes = (list || []).map(function (a) {
+    if (!a) return a;
+    if (a.currentBlock && typeof NormalizePprogBlock !== "undefined" && NormalizePprogBlock.normalize) {
+      try {
+        a.currentBlock = NormalizePprogBlock.normalize(a.currentBlock, a.currentBlock);
+      } catch (eNorm) {}
+    }
+    return a;
+  });
   document.getElementById("athlete-count").textContent = athletes.length + " מתאמנים";
   var sb = document.getElementById("athlete-tabs");
 
@@ -1979,20 +2023,97 @@ function copyIntakeResetLink() {
   }
 }
 
-// ── Block calendar ────────────────────────────────────────────────────────────
-var DAYS_HE = ["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳", "ש׳"];
-var MONTHS_HE = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
+// ── Block calendar (shared PprogDisplay brick — not Gregorian month grid) ──
+var adminBlockViewByAthlete = {};
+
+function adminIsraelTodayIso() {
+  try {
+    var parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Jerusalem",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).formatToParts(new Date());
+    var y, m, d;
+    for (var i = 0; i < parts.length; i++) {
+      if (parts[i].type === "year") y = parts[i].value;
+      if (parts[i].type === "month") m = parts[i].value;
+      if (parts[i].type === "day") d = parts[i].value;
+    }
+    return y + "-" + m + "-" + d;
+  } catch (e) {
+    return new Date().toISOString().slice(0, 10);
+  }
+}
+
+function adminEnsureBlockView(a) {
+  var id = a && a.athleteId;
+  if (!id) return { calMode: "month", activeWi: 0, activeDay: "sun" };
+  if (!adminBlockViewByAthlete[id]) {
+    var today = adminIsraelTodayIso();
+    var start = (a.currentBlock && a.currentBlock.blockStart) || today;
+    var delta = 0;
+    try {
+      var pa = String(start).slice(0, 10).split("-");
+      var pb = String(today).slice(0, 10).split("-");
+      var da = Date.UTC(+pa[0], +pa[1] - 1, +pa[2]);
+      var db = Date.UTC(+pb[0], +pb[1] - 1, +pb[2]);
+      delta = Math.round((db - da) / 86400000);
+    } catch (eD) {
+      delta = 0;
+    }
+    var wi = Math.max(0, Math.min(4, Math.floor(delta / 7)));
+    var dayKeys = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+    var di = ((delta % 7) + 7) % 7;
+    adminBlockViewByAthlete[id] = {
+      calMode: "month",
+      activeWi: wi,
+      activeDay: dayKeys[di] || "sun",
+    };
+  }
+  return adminBlockViewByAthlete[id];
+}
+
+function adminPprogDisplayOpts(a) {
+  var view = adminEnsureBlockView(a);
+  return {
+    block: a.currentBlock,
+    activeWeekIndex: view.activeWi,
+    activeDay: view.activeDay,
+    calMode: view.calMode,
+    store: {
+      activeRecoveryPref: a.activeRecoveryPref || (a.intakeProfile && a.intakeProfile.activeRecoveryPref) || "",
+      activeRecoveryDay: a.activeRecoveryDay || (a.intakeProfile && a.intakeProfile.activeRecoveryDay) || "",
+    },
+    israelTodayIso: adminIsraelTodayIso(),
+    readOnly: true,
+    showFooter: false,
+    showActions: true,
+    hooks: {
+      shift: "adminPprogCalShift",
+      toggleMode: "adminPprogToggleCalMode",
+      jumpToday: "adminPprogJumpToday",
+      setDay: "adminPprogSetDay",
+    },
+  };
+}
 
 function renderBlockCalendarBody(a) {
   var b = a.currentBlock;
   if (!b) {
     return '<div class="ath-muted">אין בלוק פעיל</div>';
   }
-
+  if (typeof NormalizePprogBlock !== "undefined" && NormalizePprogBlock.normalize) {
+    try {
+      a.currentBlock = NormalizePprogBlock.normalize(b, b);
+      b = a.currentBlock;
+    } catch (eN) {}
+  }
+  if (typeof PprogDisplay === "undefined" || !PprogDisplay.renderBrickView) {
+    return '<div class="ath-muted">מנוע תצוגה לא נטען</div>';
+  }
   var summaryLine = b.summaryLine || "";
-  var startStr = b.blockStart || b.start || "";
-  var map = buildBlockWorkoutMap(b, startStr);
-
+  var startStr = b.blockStart || "";
   var header =
     '<div class="block-header">' +
     '<span class="block-title">' +
@@ -2000,46 +2121,64 @@ function renderBlockCalendarBody(a) {
     "</span>" +
     (startStr ? '<span class="block-dates">מ‑' + fmt(startStr) + "</span>" : "") +
     "</div>";
-
-  var monthBase = startStr ? new Date(startStr) : new Date();
-  if (isNaN(monthBase.getTime())) monthBase = new Date();
-  var offset = blockMonthOffsetByAthlete[a.athleteId] || 0;
-  var shownMonthDate = new Date(
-    monthBase.getFullYear(),
-    monthBase.getMonth() + offset,
-    1
-  );
-  var monthLabel =
-    MONTHS_HE[shownMonthDate.getMonth()] + " " + shownMonthDate.getFullYear();
-  var monthNav =
-    '<div class="month-nav">' +
-    '<button type="button" onclick="changeBlockMonth(-1)" style="background:#2a2a2e;border:1px solid #333;border-radius:6px;padding:3px 10px;color:#ccc;cursor:pointer;font-size:12px">◀</button>' +
-    '<span style="font-size:12px;color:#888">' +
-    esc(monthLabel) +
-    "</span>" +
-    '<button type="button" onclick="changeBlockMonth(1)" style="background:#2a2a2e;border:1px solid #333;border-radius:6px;padding:3px 10px;color:#ccc;cursor:pointer;font-size:12px">▶</button>' +
-    "</div>";
-  var calHtml = renderMonthGrid(a, map, shownMonthDate);
-  var selectedDetailsHtml = renderSelectedDayWorkout(a, map);
-
   return (
-    '<div id="block-section">' +
+    '<div id="block-section" dir="ltr">' +
     header +
-    monthNav +
-    '<div id="month-grid-wrap">' +
-    calHtml +
-    "</div>" +
-    selectedDetailsHtml +
+    PprogDisplay.renderBrickView(adminPprogDisplayOpts(a)) +
     "</div>"
   );
 }
 
-function changeBlockMonth(delta) {
-  var a = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
+function adminPprogRerender() {
+  var a = athletes.find(function (x) {
+    return x.athleteId === currentAthleteId;
+  });
+  if (a) renderAthlete(a);
+}
+
+function adminPprogCalShift(delta) {
+  var a = athletes.find(function (x) {
+    return x.athleteId === currentAthleteId;
+  });
   if (!a) return;
-  var curr = blockMonthOffsetByAthlete[a.athleteId] || 0;
-  blockMonthOffsetByAthlete[a.athleteId] = curr + delta;
-  renderAthlete(a);
+  var view = adminEnsureBlockView(a);
+  view.activeWi = Math.max(0, Math.min(4, (view.activeWi | 0) + (delta | 0)));
+  adminPprogRerender();
+}
+
+function adminPprogToggleCalMode() {
+  var a = athletes.find(function (x) {
+    return x.athleteId === currentAthleteId;
+  });
+  if (!a) return;
+  var view = adminEnsureBlockView(a);
+  view.calMode = view.calMode === "month" ? "week" : "month";
+  adminPprogRerender();
+}
+
+function adminPprogJumpToday() {
+  var a = athletes.find(function (x) {
+    return x.athleteId === currentAthleteId;
+  });
+  if (!a) return;
+  delete adminBlockViewByAthlete[a.athleteId];
+  adminEnsureBlockView(a);
+  adminPprogRerender();
+}
+
+function adminPprogSetDay(weekIndex0, dayKey) {
+  var a = athletes.find(function (x) {
+    return x.athleteId === currentAthleteId;
+  });
+  if (!a) return;
+  var view = adminEnsureBlockView(a);
+  view.activeWi = Math.max(0, Math.min(4, weekIndex0 | 0));
+  view.activeDay = String(dayKey || "sun");
+  adminPprogRerender();
+}
+
+function changeBlockMonth(delta) {
+  adminPprogCalShift(delta);
 }
 
 function selectBlockDay(dateKey) {
@@ -3670,6 +3809,7 @@ loadLearningMode();
 </script>
 <script src="lib/coach-intake-sync-contract.js"></script>
 <script src="lib/normalize-pprog-block.js"></script>
+<script src="lib/pprog-display.js"></script>
 <script src="admin-fixed-intake.js"></script>
 </body>
 </html>

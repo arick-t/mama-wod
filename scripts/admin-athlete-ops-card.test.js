@@ -35,8 +35,8 @@ assert.ok(admin.includes("openIntakeSheet"), "intake opens from stats popover");
 assert.ok(snap.includes('action === "admin_append_chat"'), "chat log API");
 assert.ok(snap.includes("adminChatLog"), "persist chat log");
 assert.ok(snap.includes('action === "admin_push_upgrade_offer"'), "push upgrade offer API");
-assert.ok(admin.includes("DUCK-WOD Admin · 1.5.10"), "admin product label 1.5.10");
-assert.ok(/Admin 1\.5\.10/.test(admin) && /Coach 2\.3\.8/.test(admin), "admin shows Admin + Coach versions");
+assert.ok(admin.includes("DUCK-WOD Admin · 1.5.11"), "admin product label 1.5.11");
+assert.ok(/Admin 1\.5\.11/.test(admin) && /Coach 2\.3\.13/.test(admin), "admin shows Admin + Coach versions");
 assert.ok(admin.includes("ath-handoff-panel"), "handoff panel in athlete tab");
 assert.ok(/intake-modal\.open/.test(admin), "FAB hidden while intake open");
 

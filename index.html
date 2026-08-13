@@ -1547,6 +1547,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 
 <script src="lib/coach-intake-sync-contract.js"></script>
 <script src="lib/normalize-pprog-block.js"></script>
+<script src="lib/pprog-display.js"></script>
 <script>
 var allData = {workouts:{}};
 var specialData = {heroes:[], benchmarks:[], open:[]};
@@ -2088,6 +2089,9 @@ function pprogLegalContinue() {
   savePprogStore(store);
   pprogMarkIntakeSitting();
   pprogLogLegalAgreement(store);
+  try {
+    pprogPushAdminSnapshotDebounced(store, "legal_terms");
+  } catch (eSnapLegal) {}
   try {
     sendAnalytics("personal_coach_legal_agree", {
       coachArea: "legal",
@@ -8703,6 +8707,21 @@ function getAdminWriteKey() {
   }
 }
 
+var pprogAdminSnapshotPushTimer = null;
+function pprogPushAdminSnapshotDebounced(store, reason) {
+  if (pprogAdminSnapshotPushTimer) {
+    try {
+      clearTimeout(pprogAdminSnapshotPushTimer);
+    } catch (eClr) {}
+  }
+  pprogAdminSnapshotPushTimer = setTimeout(function () {
+    pprogAdminSnapshotPushTimer = null;
+    try {
+      pushAdminSnapshot(store || loadPprogStore());
+    } catch (ePush) {}
+  }, 450);
+}
+
 /**
  * Push athlete snapshot to admin list — keeps the same athleteId (reclaim/resurrect on server).
  */
@@ -11011,6 +11030,9 @@ function submitPprogFinishFeedback() {
   store.currentWeek = week;
   if (store.currentBlock && store.currentBlock.weeks) store.currentBlock.weeks[wi] = week;
   savePprogStore(store);
+  try {
+    pprogPushAdminSnapshotDebounced(store, "finish_done");
+  } catch (eSnapDone) {}
 
   try {
     sendAnalytics("personal_coach_message", {
@@ -11086,54 +11108,55 @@ window.selectPprogFinishOption = selectPprogFinishOption;
 window.selectPprogFinishPart = selectPprogFinishPart;
 window.submitPprogFinishFeedback = submitPprogFinishFeedback;
 
+function pprogDisplayHostOpts() {
+  return {
+    calMode: typeof pprogCalMode !== "undefined" ? pprogCalMode : "week",
+    store: typeof loadPprogStore === "function" ? loadPprogStore() : null,
+    fillErrors: typeof pprogFillErrors !== "undefined" ? pprogFillErrors : {},
+    fillAttempts: typeof pprogFillAttempts !== "undefined" ? pprogFillAttempts : {},
+    finishJustLockedKey: typeof pprogFinishJustLockedKey !== "undefined" ? pprogFinishJustLockedKey : "",
+    israelTodayIso: typeof pprogIsraelTodayIso === "function" ? pprogIsraelTodayIso() : "",
+    classifyPartLines: classifyPprogPartLines,
+    formatPartHeading: formatPprogPartHeading,
+    normalizePartKind: normalizePprogPartKind,
+    isRestDay: isPprogRestDay,
+    isLoggedExtra: pprogDayIsLoggedExtraSession,
+    overviewFocus: pprogOverviewFocus,
+    isDeloadWeek: pprogIsDeloadWeek,
+    isActiveRecoveryDay: pprogIsActiveRecoveryDay,
+    weekHasDetailedDays: weekHasDetailedDays,
+    stubPartsFromOverview: stubPartsFromOverview,
+    phaseShort: pprogPhaseShort,
+    shareIcon: typeof pprogShareDayWaIcon === "function" ? pprogShareDayWaIcon() : "",
+    finishIcon: typeof pprogFinishThumbsIcon === "function" ? pprogFinishThumbsIcon() : "",
+    showFooter: true,
+    showActions: true,
+    readOnly: false,
+    onNeedFill: function (wi) {
+      if (typeof requestPprogWeekDetail !== "function") return;
+      if (typeof pprogFillingWeekIndex !== "undefined" && pprogFillingWeekIndex === wi) return;
+      if (typeof pprogFillQueue !== "undefined" && pprogFillQueue.indexOf(wi) >= 0) return;
+      requestPprogWeekDetail(wi, false);
+    },
+    hooks: {
+      shift: "pprogCalShift",
+      toggleMode: "togglePprogCalMode",
+      jumpToday: "jumpPprogToToday",
+      setDay: "setPprogCalDay",
+      retryFill: "retryPprogFillFailures",
+      share: "sharePprogDayWhatsApp",
+      finish: "openPprogFinishFeedback",
+      savePre: "savePprogDayField",
+      sendPre: "submitPprogDayPreTalk",
+    },
+  };
+}
+
 function renderPprogDayPartsHtml(parts, dayData, dayKey) {
-  var html = "";
-  if (!parts || !parts.length) {
-    return '<div class="pprog-empty" style="padding:12px">No parts for this day</div>';
+  if (typeof PprogDisplay !== "undefined" && PprogDisplay.renderDayPartsHtml) {
+    return PprogDisplay.renderDayPartsHtml(parts, dayData, pprogDisplayHostOpts());
   }
-  var modifiedKinds = (dayData && dayData.modifiedPartKinds) || {};
-  for (var pi = 0; pi < parts.length; pi++) {
-    var part = parts[pi];
-    var heading = formatPprogPartHeading(pi, part && part.title);
-    var kind = normalizePprogPartKind(part && part.title, part && part.lines);
-    var modified = !!modifiedKinds[kind];
-    var classified = classifyPprogPartLines(part && part.lines);
-    html += '<div class="section">';
-    html += '<div class="section-title-row">';
-    html +=
-      '<div class="section-title">' +
-      esc(heading) +
-      (modified ? '<span class="pprog-modified-flag">MODIFIED</span>' : "") +
-      "</div>";
-    html += "</div>";
-    for (var ni = 0; ni < classified.notes.length; ni++) {
-      html += '<div class="pprog-part-note">' + esc(classified.notes[ni]) + "</div>";
-    }
-    if (classified.format) {
-      html += '<div class="pprog-part-format">' + esc(classified.format) + "</div>";
-    }
-    html += '<ul class="section-lines">';
-    var work = classified.work;
-    var trailing = classified.trailingNotes || [];
-    /* Only fall back to raw lines when classify produced nothing at all (avoid duping notes). */
-    if (
-      !work.length &&
-      !classified.notes.length &&
-      !classified.format &&
-      !trailing.length
-    ) {
-      work = part.lines || [];
-    }
-    for (var li = 0; li < work.length; li++) {
-      html += "<li>" + esc(work[li]) + "</li>";
-    }
-    html += "</ul>";
-    for (var ti = 0; ti < trailing.length; ti++) {
-      html += '<div class="pprog-part-note">' + esc(trailing[ti]) + "</div>";
-    }
-    html += "</div>";
-  }
-  return html;
+  return '<div class="pprog-empty" style="padding:12px">No parts for this day</div>';
 }
 
 function renderPprogDayFooter(dayKey, dayData) {
@@ -11215,249 +11238,17 @@ function renderPprogGeneralPane(week, activeWi) {
 }
 
 function renderPprogCalHtml(block, activeWi, activeDay) {
-  var start = block.blockStart || sundayOfThisWeekIsrael();
-  var spanLabel = pprogBlockSpanLabel(block) || pprogMonthYearLabel(start);
-  var html =
-    '<div class="pprog-cal-head">' +
-    '<button type="button" class="pprog-cal-nav" onclick="pprogCalShift(-1)" aria-label="Previous week">‹</button>' +
-    '<button type="button" class="pprog-cal-month-btn" onclick="togglePprogCalMode()" title="Toggle week / full block view">' +
-    esc(spanLabel) +
-    "</button>" +
-    '<button type="button" class="pprog-cal-nav" onclick="pprogCalShift(1)" aria-label="Next week">›</button>' +
-    "</div>" +
-    '<div class="pprog-cal-today-row">' +
-    '<button type="button" class="pprog-cal-today" onclick="jumpPprogToToday()" title="Jump to today (Asia/Jerusalem)">Today</button>' +
-    "</div>";
-
-  var calStore = null;
-  try {
-    calStore = loadPprogStore();
-  } catch (eCal) {
-    calStore = null;
+  if (typeof PprogDisplay !== "undefined" && PprogDisplay.renderCalHtml) {
+    return PprogDisplay.renderCalHtml(block, activeWi, activeDay, pprogDisplayHostOpts());
   }
-
-  function cellHtml(weekIndex0, dayIndex, iso) {
-    var dayKey = PPROG_DAY_KEYS[dayIndex];
-    var week = block.weeks[weekIndex0] || {};
-    var dayData = (week.days && week.days[dayKey]) || {};
-    var isRest = isPprogRestDay(dayKey, dayData, week);
-    var isLoggedExtra = pprogDayIsLoggedExtraSession(dayData);
-    var has =
-      !isRest &&
-      ((dayData.parts && dayData.parts.length) ||
-        (pprogOverviewFocus(week, dayKey) && pprogOverviewFocus(week, dayKey) !== "—"));
-    var isActive = weekIndex0 === activeWi && dayKey === activeDay;
-    var isDeload = pprogIsDeloadWeek(week, weekIndex0, block);
-    var isActiveRecovery = pprogIsActiveRecoveryDay(dayKey, dayData, week, calStore);
-    var cls = "pprog-cal-cell";
-    if (isActive) cls += " active";
-    if (has) cls += " has-wod";
-    if (isLoggedExtra) cls += " logged-extra";
-    if (isRest) cls += " muted";
-    /* Macro deload week already means lighter recovery format — no separate AR tint. */
-    if (isDeload) cls += " deload-week";
-    else if (isActiveRecovery) cls += " active-recovery";
-    var dateNum = String(pprogParseIso(iso).getDate());
-    return (
-      '<button type="button" class="' +
-      cls +
-      '" onclick="setPprogCalDay(' +
-      weekIndex0 +
-      ", '" +
-      dayKey +
-      "')\">" +
-      dateNum +
-      "</button>"
-    );
-  }
-
-  function generalBtn(weekIndex0) {
-    var week = block.weeks[weekIndex0] || {};
-    var isDeload = pprogIsDeloadWeek(week, weekIndex0, block);
-    var cls =
-      "pprog-cal-general" +
-      (weekIndex0 === activeWi && activeDay === "general" ? " active" : "") +
-      (isDeload ? " deload-week" : "");
-    return (
-      '<button type="button" class="' +
-      cls +
-      '" onclick="setPprogCalDay(' +
-      weekIndex0 +
-      ", 'general')\">" +
-      (isDeload ? "Deload" : "General") +
-      "</button>"
-    );
-  }
-
-  function weekColBtn(weekIndex0) {
-    var w = block.weeks[weekIndex0] || {};
-    var isDeload = pprogIsDeloadWeek(w, weekIndex0, block);
-    var phase = pprogPhaseShort(w, weekIndex0, block);
-    var loading = !weekHasDetailedDays(w);
-    var cls =
-      "pprog-cal-week-col" +
-      (weekIndex0 === activeWi && activeDay === "general" ? " active" : "") +
-      (loading ? " loading" : "") +
-      (isDeload ? " deload-week" : "");
-    return (
-      '<button type="button" class="' +
-      cls +
-      '" onclick="setPprogCalDay(' +
-      weekIndex0 +
-      ", 'general')\" title=\"Week " +
-      (weekIndex0 + 1) +
-      (phase ? " · " + phase : "") +
-      '">' +
-      '<span class="pprog-cal-week-num">W' +
-      (weekIndex0 + 1) +
-      "</span>" +
-      (phase ? '<span class="pprog-cal-week-phase">' + esc(phase) + "</span>" : "") +
-      "</button>"
-    );
-  }
-
-  if (pprogCalMode === "month") {
-    html += '<div class="pprog-cal-dow"><span></span>';
-    for (var d = 0; d < 7; d++) html += "<span>" + PPROG_DOW_LETTERS[d] + "</span>";
-    html += "</div>";
-    html += '<div class="pprog-cal-month-grid">';
-    var weekCount = Math.max(5, block.weeks.length);
-    for (var wi = 0; wi < weekCount; wi++) {
-      var rowDeload = pprogIsDeloadWeek(block.weeks[wi] || {}, wi, block);
-      html += '<div class="pprog-cal-row' + (rowDeload ? " deload-week" : "") + '">' + weekColBtn(wi);
-      for (var di = 0; di < 7; di++) {
-        html += cellHtml(wi, di, pprogAddDaysIso(start, wi * 7 + di));
-      }
-      html += "</div>";
-    }
-    html += "</div>";
-    html += '<div class="pprog-cal-block-hint">Full 5-week brick · tap a date · ‹ › moves active week</div>';
-  } else {
-    var activeStart = (block.weeks[activeWi] && block.weeks[activeWi].weekStart) || pprogAddDaysIso(start, activeWi * 7);
-    /* Keep week subtitle under month title / above date row — important for athletes */
-    html +=
-      '<div class="pprog-cal-week-label" style="text-align:center;margin:0 0 6px">Week ' +
-      (activeWi + 1) +
-      " · " +
-      esc(pprogWeekRangeLabel(activeStart)) +
-      "</div>";
-    html += '<div class="pprog-cal-dow"><span></span>';
-    for (var d2 = 0; d2 < 7; d2++) html += "<span>" + PPROG_DOW_LETTERS[d2] + "</span>";
-    html += "</div>";
-    html += '<div class="pprog-cal-row">' + generalBtn(activeWi);
-    for (var di2 = 0; di2 < 7; di2++) {
-      html += cellHtml(activeWi, di2, pprogAddDaysIso(start, activeWi * 7 + di2));
-    }
-    html += "</div>";
-    html += '<div class="pprog-cal-block-hint">Tap month title for full 5-week brick</div>';
-  }
-  return html;
+  return "";
 }
 
 function renderPprogDayCardHtml(block, week, activeWi, day) {
-  var dayData = (week && week.days && week.days[day]) || { parts: [], preTalk: "", debrief: "" };
-  var dayIso = pprogAddDaysIso(block.blockStart, activeWi * 7 + PPROG_DAY_KEYS.indexOf(day));
-  var dateLabel =
-    PPROG_DAY_LABELS[day] +
-    " · " +
-    pprogParseIso(dayIso).getDate() +
-    " " +
-    PPROG_MONTH_NAMES[pprogParseIso(dayIso).getMonth()];
-  var detailed = weekHasDetailedDays(week);
-  var html = "";
-  if (!detailed) {
-    if (pprogFillErrors[activeWi] && (pprogFillAttempts[activeWi] || 0) >= PPROG_FILL_MAX_ATTEMPTS) {
-      var failDetail =
-        pprogFillErrors[activeWi] ||
-        "Could not load this week's workouts.";
-      html +=
-        '<div class="pprog-fill-status err" style="padding:8px">' +
-        esc(failDetail) +
-        ' <button type="button" class="btn btn-find" style="padding:4px 10px;font-size:.75em" onclick="retryPprogFillFailures()">Retry fill</button></div>';
-    } else {
-      html += '<div class="pprog-empty" style="padding:12px 8px">Loading this week\'s workouts…</div>';
-      /* Cost/stability: only kick a fill if not already in flight or queued */
-      if (
-        pprogFillingWeekIndex !== activeWi &&
-        pprogFillQueue.indexOf(activeWi) < 0
-      ) {
-        requestPprogWeekDetail(activeWi, false);
-      }
-    }
+  if (typeof PprogDisplay !== "undefined" && PprogDisplay.renderDayCardHtml) {
+    return PprogDisplay.renderDayCardHtml(block, week, activeWi, day, pprogDisplayHostOpts());
   }
-  html += '<div class="pprog-day-card" dir="ltr">';
-  var focus = pprogOverviewFocus(week, day);
-  var restDay = isPprogRestDay(day, dayData, week);
-  var loggedExtra = pprogDayIsLoggedExtraSession(dayData);
-  var finishReported = pprogDayHasFinishReport(dayData);
-  var finishFuture = pprogIsFutureTrainingDay(dayIso);
-  var shareBtn =
-    '<button type="button" class="pprog-share-wa" onclick="sharePprogDayWhatsApp(\'' +
-    day +
-    '\')" title="Share workout on WhatsApp" aria-label="Share workout on WhatsApp">' +
-    pprogShareDayWaIcon() +
-    "</button>";
-  var finishBtn = "";
-  if (!restDay && !finishFuture) {
-    if (finishReported) {
-      finishBtn =
-        '<span class="pprog-finish-reported' +
-        (pprogFinishJustLockedKey === day ? " lock-pop" : "") +
-        '" role="status" title="Report saved for this day" aria-label="Reported — check-in saved">Reported ✓</span>';
-    } else {
-      finishBtn =
-        '<button type="button" class="pprog-finish-btn" onclick="openPprogFinishFeedback(\'' +
-        day +
-        '\')" title="Mark workout done" aria-label="Done">' +
-        pprogFinishThumbsIcon() +
-        "Done</button>";
-    }
-  }
-  html +=
-    '<div class="card-header">' +
-    '<div class="source-name">' +
-    esc(dateLabel) +
-    (loggedExtra
-      ? '<span class="pprog-logged-extra-flag" title="Extra session logged — counted in the plan">LOGGED</span>'
-      : "") +
-    "</div>" +
-    '<div class="pprog-day-actions">' +
-    finishBtn +
-    shareBtn +
-    "</div>" +
-    "</div>";
-  if (loggedExtra && focus) {
-    html +=
-      '<div class="pprog-logged-extra-banner" role="status">' +
-      esc(focus) +
-      " · counted toward remaining week load</div>";
-  }
-  if (restDay) {
-    html +=
-      '<div class="pprog-rest-day">' +
-      '<div class="pprog-rest-day-title">REST DAY</div>' +
-      '<img class="pprog-rest-day-img" src="assets/rest-day-duck.png" alt="Rest day" width="260" height="260" loading="lazy">' +
-      "</div>";
-    html += renderPprogDayFooter(day, dayData);
-  } else {
-    var parts = dayData.parts || [];
-    if ((!parts.length || !parts.some(function (p) { return p.lines && p.lines.length; })) && focus && focus !== "—") {
-      parts = stubPartsFromOverview(week, day);
-    }
-    var hasRealParts = !!(parts.length && parts.some(function (p) { return p && ((p.lines && p.lines.length) || p.title); }));
-    if (!hasRealParts && focus && focus !== "—") {
-      html += '<div class="pprog-summary" style="margin-bottom:10px;font-size:.88em">' + esc(focus) + "</div>";
-    }
-    if (!parts.length && !detailed) {
-      html +=
-        '<div class="pprog-day-stub"><strong>Session pending</strong>Overview is ready; full parts are still being generated for this week.</div>';
-    } else {
-      html += renderPprogDayPartsHtml(parts, dayData, day);
-    }
-    html += renderPprogDayFooter(day, dayData);
-  }
-  html += "</div>";
-  return html;
+  return "";
 }
 
 function renderPprogWeek() {

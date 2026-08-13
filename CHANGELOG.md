@@ -1,5 +1,15 @@
 # Changelog
 
+## [Admin 1.5.11] - 2026-08-13
+
+### Admin ↔ athlete brick display (shared render)
+- **Same engine:** `lib/pprog-display.js` — 5-week brick calendar + day card + parts. Admin and app call one module.
+- **Normalize on load:** missing `blockStart` no longer yields an empty «ללא תכנון» month grid.
+- **Athlete → admin:** debounced `pushAdminSnapshot` after Done and after Terms (0 AI).
+- **Not in this round:** admin editing a workout back to the device (T4).
+
+---
+
 ## [Coach 2.3.13] - 2026-08-13
 
 ### POL-026 rest-day SET/REPLACE + streak chips (Budget)

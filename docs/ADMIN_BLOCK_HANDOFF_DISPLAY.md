@@ -1,26 +1,20 @@
 # Admin block display + handoff UX — accumulate
 
-Branch: `cursor/admin-block-handoff-display-f8bf`  
-Base: `main` (Admin **1.5.9** · Coach **2.3.8**)  
-Status: **open** — prompt sent to coach engine; code fixes after response.
+Status: **round 1 shipped** (Budget 2026-08-13) — T1+T2 (+ T3 debounce). T4 blocked.
 
 ## Founder report (2026-08-12)
 
 - Intake 1:1 ✓
-- Build plan very slow ✓ (completed)
-- Handoff popup ✓ — need same link in athlete tab
-- Block calendar **empty** («ללא תכנון» all days) — athlete «אריק מחשב 2»
-- Block UI ≠ app pprog display
-- **No join email** received for new user «אריק מחשב 2»
+- Claim link ✓ — athlete sees correct brick
+- Admin calendar was Gregorian / «ללא תכנון» / forked day-card
 
-## Likely root cause (empty calendar)
+## Round 1 (Admin 1.5.11)
 
-`buildBlockWorkoutMap` returns `{}` when `currentBlock.blockStart` missing/invalid → all days «ללא תכנון».
+1. **T1 data:** `NormalizePprogBlock.normalize` on every `loadAthletes` / before block render.
+2. **T2 UI:** shared `lib/pprog-display.js` — 5-week brick calendar + day card + parts. Admin + app call the same module. Admin shell unchanged. Block area is `readOnly` (no Done/chat write, no `personal-coach`).
+3. **T3 Athlete→Admin (0 AI):** `pprogPushAdminSnapshotDebounced` after DONE/`finishFeedback` and after Terms accept. Existing `pushAdminSnapshot` payload.
+4. **T4 Admin→Athlete edit:** not in this round.
 
-## Target (same pipeline as intake)
+## Not in this round
 
-1. **Data:** normalize block on `create_athlete` like app `applyPprogBlock`.
-2. **UI:** reuse app pprog calendar + day card renders (shared or iframe contract).
-3. **Handoff:** after `autoCreateLink`, store URL on snapshot + populate handoff section + copy button.
-
-See prompt: `docs/ADMIN_BLOCK_EXPERIMENT_PROMPT.md`
+Human coach editing a day in admin → device. Needs a separate Budget ruling.
