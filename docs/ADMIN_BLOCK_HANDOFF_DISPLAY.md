@@ -1,7 +1,11 @@
 # Admin block display + handoff UX
 
 Base: approved **Admin 1.5.11** shared brick (`lib/pprog-display.js`, T1+T2+T3).  
-This branch adds founder UX from retest (Admin **1.5.14**).
+This branch adds founder UX from retest (Admin **1.5.15**).
+
+## Round 5 (Admin 1.5.15) — edit workout on the day card
+- Pencil beside the date · in-card PART edit · Save → `admin_save_day` (admin snapshot only)
+- T4 to the athlete device still not included
 
 ## Round 4 (Admin 1.5.14) — approved A–D (Founder + coach brain)
 - Join mail only after Terms + real blockStart
