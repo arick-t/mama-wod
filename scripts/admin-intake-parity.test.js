@@ -113,15 +113,15 @@ ok("handoff stores lastHandoffPath", /lastHandoffPath/.test(handoff));
 ok("admin create does not send join mail", !/sendAdminIntakeCompleteMail/.test(handoff));
 ok("handoff inline in athlete card", /renderHandoffInline/.test(adminHtml) && /ath-handoff-inline/.test(adminHtml));
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
-ok("admin version 2.0", /DUCK-WOD Admin · 2\.0/.test(adminHtml));
+ok("admin version 2.0.1", /DUCK-WOD Admin · 2\.0\.1/.test(adminHtml));
 ok("admin wired to coach 2.3.13", /LIVE_COACH_VERSION = "2\.3\.13"/.test(adminHtml));
 ok("app coach 2.3.13", /COACH_VERSION = "2\.3\.13"/.test(index));
 ok(
   "admin shows Admin + Coach versions",
-  /Admin 2\.0/.test(adminHtml) &&
+  /Admin 2\.0\.1/.test(adminHtml) &&
     /ver-coach/.test(adminHtml) &&
     /syncAdminVersionLabels/.test(adminHtml) &&
-    /ADMIN_UI_VERSION = "2\.0"/.test(adminHtml)
+    /ADMIN_UI_VERSION = "2\.0\.1"/.test(adminHtml)
 );
 ok(
   "admin intake uses pprog classes 1:1",
@@ -199,7 +199,9 @@ ok("phone package does not pre-mark join mail", /intakeNotifySent:\s*false/.test
 ok("app join mail requires Terms", /if \(!store\.legalAcceptedAt\) return/.test(index));
 ok("admin remembers session token not password", /pw-remember/.test(adminHtml) && /persistAdminSession/.test(adminHtml) && /tryRestoreAdminSession/.test(adminHtml) && /dw_admin_session/.test(adminHtml) && /clearLegacyAdminPasswordStore/.test(adminHtml));
 ok("admin live poll 15-30s no LLM", /startAdminLivePoll/.test(adminHtml) && /ADMIN_POLL_MS = 20000/.test(adminHtml) && /loadAthletes\(\{ silent: true \}\)/.test(adminHtml));
-ok("admin_list mints session token", /mintAdminSessionToken/.test(snap) && /adminSessionToken/.test(snap));
+ok("admin_list mints session token header", /mintAdminSessionToken/.test(snap) && /X-Admin-Session-Token/.test(snap));
+ok("admin 401 forces logout", /forceAdminLogout/.test(adminHtml) && /loadAthletes[\s\S]{0,900}status === 401/.test(adminHtml));
+ok("admin session uses ADMIN_SESSION_SECRET", /ADMIN_SESSION_SECRET/.test(fs.readFileSync(path.join(root, "scripts/lib/admin/admin-auth.js"), "utf8")));
 ok(
   "snapshot does not stamp declaration from joinedAt",
   /declarationAcceptedAt: String\(/.test(snap) &&

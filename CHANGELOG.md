@@ -1,5 +1,13 @@
 # Changelog
 
+## [Admin 2.0.1] - 2026-08-13 · **production security**
+
+### Session token — security engine A–C
+- **A:** HMAC key is `ADMIN_SESSION_SECRET` (not the raw password). Payload carries password fingerprint so rotating `ADMIN_PASSWORD` still kills tokens
+- **B:** Password login compare uses `timingSafeEqual`
+- **C:** Any 401 on authenticated admin paths → `forceAdminLogout` (including silent 20s poll)
+- Soft: remember-me TTL **7 days**; token returned in `X-Admin-Session-Token` header only; visible **התנתק**
+
 ## [Admin 2.0] - 2026-08-13 · **production**
 
 ### T4 day edit → device (0 LLM) + founder retest ship

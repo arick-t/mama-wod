@@ -31,7 +31,7 @@ assert.ok(claim.includes("/?tab=pprog&handoff=1"), "claim handoff redirect prese
 assert.ok(claim.includes("window.location.replace"), "claim auto-redirect preserved");
 
 assert.ok(/DAILY WORKOUTS · v21\.5\.1\b/.test(index), "app display version intact");
-assert.ok(/DUCK-WOD Admin · 2\.0/.test(admin), "admin UI version 2.0");
+assert.ok(/DUCK-WOD Admin · 2\.0\.1/.test(admin), "admin UI version 2.0.1");
 assert.ok(!/1\.0 beta/.test(admin), "admin no longer shows 1.0 beta");
 
 console.log("admin-design-clarity.test.js: ok");
