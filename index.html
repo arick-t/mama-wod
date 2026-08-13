@@ -1641,7 +1641,7 @@ function rememberAiClientError(summary) {
  * Keep this badge in sync with the brain actually serving /api/personal-coach.
  * Display: header “COACH · v{COACH_VERSION}” only — do NOT bump app DAILY WORKOUTS / <title> here.
  */
-var COACH_VERSION = "2.3.11";
+var COACH_VERSION = "2.3.12";
 try {
   var __coachVerEl = document.getElementById("coachVersionSub");
   if (__coachVerEl) __coachVerEl.textContent = "COACH · v" + COACH_VERSION;
@@ -4656,11 +4656,18 @@ function sendPprogMessage(ev) {
       pprogRehydrateBrickSchedulePending(msgs);
     } catch (eRehyd) {}
   }
+  var pendingBeforeApply = brickMode ? pprogGetBrickSchedulePending() : null;
   var brickScheduleLocalApplied = false;
-  if (brickMode && text && pprogIsScheduleApplyIntent(text) && pprogGetBrickSchedulePending()) {
+  if (brickMode && text && pprogIsScheduleApplyIntent(text)) {
     try {
-      brickScheduleLocalApplied = pprogApplyBrickScheduleLocal(msgs, { recordEdit: true });
-    } catch (eLocalPre) {}
+      if (!pendingBeforeApply) pprogRehydrateBrickSchedulePending(msgs);
+      pendingBeforeApply = pprogGetBrickSchedulePending();
+      if (pendingBeforeApply) {
+        brickScheduleLocalApplied = pprogApplyBrickScheduleLocal(msgs, { recordEdit: true });
+      }
+    } catch (eLocalPre) {
+      brickScheduleLocalApplied = false;
+    }
   }
   /* POL-COST-010 — chat unit (does not hard-block chat) */
   try {
@@ -4698,7 +4705,7 @@ function sendPprogMessage(ev) {
   if (brickMode) {
     chatBody.israelToday = pprogIsraelTodayIso();
     chatBody.brickReviseScope = "remaining_only";
-    var pendingSnap = pprogGetBrickSchedulePending();
+    var pendingSnap = pendingBeforeApply || pprogGetBrickSchedulePending();
     if (pendingSnap) {
       chatBody.brickSchedulePending = true;
       chatBody.brickScheduleNote = String(pendingSnap.note || "").slice(0, 800);
@@ -4766,14 +4773,19 @@ function sendPprogMessage(ev) {
       var chatText = pprogChatDisplayText(String(j.text));
       if (scheduleGate) {
         var schedNote =
+          (pendingBeforeApply && pendingBeforeApply.note) ||
           (pendingSnap && pendingSnap.note) ||
           pprogLatestStandingUserNote(msgs) ||
           pprogLatestExtraSessionNote(msgs) ||
           "";
-        chatText =
-          lastUserApply || brickScheduleLocalApplied
+        if (lastUserApply) {
+          /* Never claim success unless local calendar apply actually landed */
+          chatText = brickScheduleLocalApplied
             ? PPROG_BRICK_SCHEDULE_POST_APPLY_MSG
-            : pprogBrickSchedulePreConfirmMsg(schedNote);
+            : "לא עודכן בלוק האימון. שלח שוב את בקשת הלוז המלאה ואשר עם כן.";
+        } else {
+          chatText = pprogBrickSchedulePreConfirmMsg(schedNote);
+        }
       }
       if (chatText) {
         msgs.push({ role: "model", text: chatText.slice(0, 2000) });
@@ -7177,7 +7189,7 @@ function pprogParseBrickScheduleIntent(noteText, opts) {
   if (keepTomorrowHe || keepTomorrowEn) tomorrowAction = "keep";
   else if (restTomorrowHe || restTomorrowEn) tomorrowAction = "rest";
   var replaceNextRest =
-    /המנוחה\s*(ה)?באה|יום\s*המנוחה\s*(שלאחריו|הבא)|לאחר\s*מכן\s*.{0,24}מנוחה|next\s*rest\s*day|the\s*next\s*rest/i.test(
+    /המנוחה\s*(ה)?באה|יום\s*(ה)?מנוחה\s*(שלאחריו|הבא)|מנוחה\s*שלאחריו|לאחר\s*מכן\s*.{0,24}מנוחה|next\s*rest\s*day|the\s*next\s*rest/i.test(
       t
     );
   var restDays = [];
@@ -7293,6 +7305,7 @@ function pprogBuildBrickScheduleConfirmMessage(intent, opts) {
   var note = String((opts && opts.note) || "");
   var hebrew = opts.hebrew != null ? !!opts.hebrew : pprogNoteLooksHebrew(note);
   var intentSafe = intent || { logToday: true, tomorrowAction: "rest", restDays: [], easeForward: true };
+  var swapPlan = opts.swapPlan || null;
   var todayIso = String((opts && opts.todayIso) || pprogIsraelTodayIso()).slice(0, 10);
   var tomorrowIso = pprogAddDaysIso(todayIso, 1);
   var logIso = intentSafe.logIso || (intentSafe.logToday ? todayIso : null);
@@ -7304,7 +7317,20 @@ function pprogBuildBrickScheduleConfirmMessage(intent, opts) {
     if (intentSafe.todayAction === "need_workout") parts.push("אימון להיום לפי לוח");
     if (intentSafe.tomorrowAction === "keep") parts.push("מחר אימון לפי לוח רגיל");
     else if (intentSafe.tomorrowAction === "rest") parts.push("מחר מנוחה");
-    if (intentSafe.restDays && intentSafe.restDays.length) {
+    if (intentSafe.replaceNextRest) {
+      var move = swapPlan && swapPlan.moves && swapPlan.moves[0];
+      if (move && move.from && move.to) {
+        parts.push(
+          "שינית יום מנוחה ליום " +
+            pprogIsoToHebDayLabel(move.from) +
+            " — להזיז את יום המנוחה מיום " +
+            pprogIsoToHebDayLabel(move.to) +
+            " בהתאם"
+        );
+      } else {
+        parts.push("שינית יום מנוחה — להזיז את ימי המנוחה האחרים בהתאם");
+      }
+    } else if (intentSafe.restDays && intentSafe.restDays.length) {
       var dayLabels = intentSafe.restDays
         .filter(function (iso) {
           return intentSafe.tomorrowAction !== "rest" || iso !== tomorrowIso;
@@ -7312,13 +7338,10 @@ function pprogBuildBrickScheduleConfirmMessage(intent, opts) {
         .map(function (iso) {
           return "יום " + pprogIsoToHebDayLabel(iso);
         });
-      if (dayLabels.length) {
-        parts.push((intentSafe.replaceNextRest ? "המנוחה הבאה ב" : "מנוחה ב") + dayLabels.join(" וב"));
-      }
+      if (dayLabels.length) parts.push("מנוחה ב" + dayLabels.join(" וב"));
     }
-    if (intentSafe.replaceNextRest) parts.push("בלי שני ימי מנוחה רצופים");
-    if (intentSafe.easeForward) parts.push("הקלה קלה בסקוואט/ציר/מנוע בשאר השבוע");
-    return "לוז: " + parts.join(", ") + ". לאשר?";
+    if (intentSafe.easeForward) parts.push("הקלה קלה בעומס בהמשך");
+    return "לוז: " + parts.join(". ") + "? לאשר?";
   }
   var enParts = [];
   if (logIso === todayIso) enParts.push("keep today's session logged");
@@ -7327,9 +7350,22 @@ function pprogBuildBrickScheduleConfirmMessage(intent, opts) {
   if (intentSafe.todayAction === "need_workout") enParts.push("keep today's workout as scheduled");
   if (intentSafe.tomorrowAction === "keep") enParts.push("keep tomorrow's workout as scheduled");
   else if (intentSafe.tomorrowAction === "rest") enParts.push("rest tomorrow");
-  if (intentSafe.restDays && intentSafe.restDays.length) {
+  if (intentSafe.replaceNextRest) {
+    var moveEn = swapPlan && swapPlan.moves && swapPlan.moves[0];
+    if (moveEn && moveEn.from && moveEn.to) {
+      enParts.push(
+        "you changed a rest day to " +
+          pprogIsoToEnDayLabel(moveEn.from) +
+          " — shift the other rest off " +
+          pprogIsoToEnDayLabel(moveEn.to) +
+          " accordingly"
+      );
+    } else {
+      enParts.push("you changed a rest day — shift the other rest days accordingly");
+    }
+  } else if (intentSafe.restDays && intentSafe.restDays.length) {
     enParts.push(
-      (intentSafe.replaceNextRest ? "next rest on " : "rest on ") +
+      "rest on " +
         intentSafe.restDays
           .map(function (iso) {
             return pprogIsoToEnDayLabel(iso);
@@ -7337,20 +7373,29 @@ function pprogBuildBrickScheduleConfirmMessage(intent, opts) {
           .join(" and ")
     );
   }
-  if (intentSafe.replaceNextRest) enParts.push("no back-to-back rest pile-up");
-  if (intentSafe.easeForward) enParts.push("ease squat/hinge/engine later this week");
-  return "Schedule: " + enParts.join(", ") + ". Confirm?";
+  if (intentSafe.easeForward) enParts.push("ease load later this week");
+  return "Schedule: " + enParts.join(". ") + "? Confirm?";
 }
 
 function pprogBrickSchedulePreConfirmMsg(noteText) {
   var note = String(noteText || "").trim();
   var todayIso = pprogIsraelTodayIso();
   if (!note) {
-    return "Schedule: keep today's session logged, rest tomorrow, ease squat/hinge/engine later this week. Confirm?";
+    return "Schedule: keep today's session logged, rest tomorrow, ease load later this week. Confirm?";
   }
-  return pprogBuildBrickScheduleConfirmMessage(pprogParseBrickScheduleIntent(note, { todayIso: todayIso }), {
+  var intent = pprogParseBrickScheduleIntent(note, { todayIso: todayIso });
+  var store = loadPprogStore();
+  var swapPlan = null;
+  try {
+    ensurePprogBlockFiveWeeks(store);
+    swapPlan = pprogPlanRestDaySwap(intent, pprogListExistingRestIsos(store, todayIso));
+  } catch (eSwap) {
+    swapPlan = null;
+  }
+  return pprogBuildBrickScheduleConfirmMessage(intent, {
     note: note,
     todayIso: todayIso,
+    swapPlan: swapPlan,
   });
 }
 
@@ -7695,17 +7740,73 @@ function pprogListExistingRestIsos(store, afterIso) {
   return pprogUniqSortedIsos(out);
 }
 
-function pprogSnapshotPreserveDay(preserve, store, iso) {
-  if (!preserve || !iso) return;
+/** Persist programmed-day backups before schedule mutates overwrite them. */
+function pprogEnsureScheduleDayBackups(store) {
+  if (!store.scheduleDayBackups || typeof store.scheduleDayBackups !== "object") {
+    store.scheduleDayBackups = {};
+  }
+  return store.scheduleDayBackups;
+}
+
+function pprogBackupProgrammedDay(store, iso) {
+  if (!store || !iso) return false;
   var slot = pprogFindBlockDayForIso(store, iso);
-  if (!slot || !slot.day) return;
-  if (isPprogRestDay(slot.dk, slot.day, slot.week)) return;
+  if (!slot || !slot.day) return false;
+  if (isPprogRestDay(slot.dk, slot.day, slot.week)) return false;
+  if (pprogDayIsLoggedExtraSession(slot.day)) return false;
+  var backups = pprogEnsureScheduleDayBackups(store);
+  if (backups[iso] && backups[iso].day && !pprogDayIsLoggedExtraSession(backups[iso].day)) {
+    return false;
+  }
   try {
-    preserve[iso] = {
+    backups[iso] = {
       day: JSON.parse(JSON.stringify(slot.day)),
       focus: slot.focus || "",
+      at: new Date().toISOString(),
     };
-  } catch (eCap) {}
+    var keys = Object.keys(backups);
+    if (keys.length > 28) {
+      keys.sort();
+      for (var ki = 0; ki < keys.length - 28; ki++) delete backups[keys[ki]];
+    }
+    return true;
+  } catch (eBak) {
+    return false;
+  }
+}
+
+function pprogGetDayBackup(store, iso) {
+  var backups = store && store.scheduleDayBackups;
+  if (!backups || !backups[iso] || !backups[iso].day) return null;
+  if (pprogDayIsLoggedExtraSession(backups[iso].day)) return null;
+  return backups[iso];
+}
+
+function pprogSnapshotPreserveDay(preserve, store, iso, opts) {
+  opts = opts || {};
+  if (!preserve || !iso) return;
+  var allowLogged = opts.allowLogged === true;
+  var slot = pprogFindBlockDayForIso(store, iso);
+  if (slot && slot.day && !isPprogRestDay(slot.dk, slot.day, slot.week)) {
+    if (allowLogged || !pprogDayIsLoggedExtraSession(slot.day)) {
+      try {
+        preserve[iso] = {
+          day: JSON.parse(JSON.stringify(slot.day)),
+          focus: slot.focus || "",
+        };
+        return;
+      } catch (eCap) {}
+    }
+  }
+  var bak = pprogGetDayBackup(store, iso);
+  if (bak) {
+    try {
+      preserve[iso] = {
+        day: JSON.parse(JSON.stringify(bak.day)),
+        focus: bak.focus || "",
+      };
+    } catch (eBak) {}
+  }
 }
 
 function pprogCaptureSchedulePreserveDays(store, intent) {
@@ -7713,15 +7814,24 @@ function pprogCaptureSchedulePreserveDays(store, intent) {
   if (!intent) return preserve;
   var today = pprogIsraelTodayIso();
   var tomorrowIso = pprogAddDaysIso(today, 1);
+  /* Backup clean programmed days before any later mutate */
+  pprogBackupProgrammedDay(store, today);
+  pprogBackupProgrammedDay(store, tomorrowIso);
+  if (intent.restDays) {
+    for (var bi = 0; bi < intent.restDays.length; bi++) {
+      pprogBackupProgrammedDay(store, intent.restDays[bi]);
+    }
+  }
   if (intent.todayAction === "need_workout" || intent.todayAction === "keep") {
-    pprogSnapshotPreserveDay(preserve, store, today);
+    /* Never preserve a corrupt LOGGED day as "today's workout" */
+    pprogSnapshotPreserveDay(preserve, store, today, { allowLogged: false });
   }
   if (intent.tomorrowAction === "keep") {
-    pprogSnapshotPreserveDay(preserve, store, tomorrowIso);
+    pprogSnapshotPreserveDay(preserve, store, tomorrowIso, { allowLogged: false });
   }
   if (intent.replaceNextRest && intent.restDays && intent.restDays.length >= 2) {
     for (var ri = 1; ri < intent.restDays.length; ri++) {
-      pprogSnapshotPreserveDay(preserve, store, intent.restDays[ri]);
+      pprogSnapshotPreserveDay(preserve, store, intent.restDays[ri], { allowLogged: false });
     }
   }
   return preserve;
@@ -7789,19 +7899,41 @@ function pprogLatestExtraSessionNote(msgs) {
   var store = loadPprogStore();
   var list = Array.isArray(store.extraSessions) ? store.extraSessions : [];
   var today = pprogIsraelTodayIso();
+  var yesterday = pprogAddDaysIso(today, -1);
   for (var i = list.length - 1; i >= 0; i--) {
-    if (list[i] && String(list[i].sessionDate || "").slice(0, 10) === today && list[i].note) {
+    var sd = list[i] && String(list[i].sessionDate || "").slice(0, 10);
+    if (list[i] && list[i].note && (sd === today || sd === yesterday)) {
       return String(list[i].note);
     }
+  }
+  for (var j = list.length - 1; j >= 0; j--) {
+    if (list[j] && list[j].note) return String(list[j].note);
   }
   return fromStanding || "";
 }
 
+function pprogDayLooksLikeNoteLogged(day, note) {
+  if (!day || !pprogDayIsLoggedExtraSession(day)) return false;
+  var blob = "";
+  var parts = day.parts || [];
+  for (var i = 0; i < parts.length; i++) {
+    blob += " " + ((parts[i] && parts[i].lines) || []).join(" ");
+  }
+  var segs = pprogExtractLoggedWorkoutSegments(note);
+  if (!segs.length) return /logged/i.test(blob);
+  var hits = 0;
+  for (var si = 0; si < segs.length; si++) {
+    var piece = String(segs[si] || "").slice(0, 24);
+    if (piece && blob.indexOf(piece) >= 0) hits++;
+  }
+  return hits >= Math.min(2, segs.length);
+}
+
 /**
  * POL-026 calendar truth after Confirm:
- * - logIso (today OR yesterday) → logged session
- * - todayAction need_workout → restore programmed today (never plant yesterday's WOD)
- * - restDays + replaceNextRest → swap workout from new rest day onto old rest (no consecutive pile-up)
+ * - logIso → logged session
+ * - todayAction need_workout → restore programmed today (never keep corrupt LOGGED-as-today)
+ * - replaceNextRest → swap; verify rest map before reporting success
  */
 function pprogApplyPol026CalendarTruth(msgs, opts) {
   opts = opts || {};
@@ -7829,7 +7961,7 @@ function pprogApplyPol026CalendarTruth(msgs, opts) {
     restIsoMap[pprogAddDaysIso(today, 1)] = true;
   }
   var tomorrowIso = pprogAddDaysIso(today, 1);
-  var preserveDays = (pending && pending.preserveDays) || {};
+  var preserveDays = (pending && pending.preserveDays) || pprogCaptureSchedulePreserveDays(store, intent);
   var existingRests = pprogListExistingRestIsos(store, today);
   var swapPlan = pprogPlanRestDaySwap(intent, existingRests);
   var moveToMap = {};
@@ -7839,15 +7971,17 @@ function pprogApplyPol026CalendarTruth(msgs, opts) {
     if (!mv) continue;
     moveFromMap[mv.from] = mv.to;
     moveToMap[mv.to] = mv.from;
-  }
-  var clearRestMap = {};
-  for (var ci = 0; ci < (swapPlan.clearRest || []).length; ci++) {
-    clearRestMap[swapPlan.clearRest[ci]] = true;
+    pprogBackupProgrammedDay(store, mv.from);
+    if (!preserveDays[mv.from]) {
+      pprogSnapshotPreserveDay(preserveDays, store, mv.from, { allowLogged: false });
+    }
   }
   var bStart = store.currentBlock.blockStart || sundayOfThisWeekIsrael();
   var touched = false;
+  var refillWeeks = {};
 
-  function writeLogged(week, dk, prevDay) {
+  function writeLogged(week, dk, prevDay, isoForBackup) {
+    if (isoForBackup) pprogBackupProgrammedDay(store, isoForBackup);
     var built = pprogBuildLoggedSessionParts(dk, note);
     week.days[dk] = {
       parts: built.parts,
@@ -7864,7 +7998,8 @@ function pprogApplyPol026CalendarTruth(msgs, opts) {
     pprogSetOverviewFocus(week, dk, built.focus);
   }
 
-  function writeRest(week, dk, prevDay) {
+  function writeRest(week, dk, prevDay, iso) {
+    pprogBackupProgrammedDay(store, iso);
     week.days[dk] = {
       parts: [{ id: dk + "-rest", title: "REST DAY", lines: ["Rest"] }],
       preTalk: (prevDay && prevDay.preTalk) || "",
@@ -7877,15 +8012,68 @@ function pprogApplyPol026CalendarTruth(msgs, opts) {
     pprogSetOverviewFocus(week, dk, "Rest");
   }
 
-  function restorePreserved(week, dk, iso) {
-    if (!preserveDays[iso]) return false;
+  function restorePayload(week, dk, payload) {
+    if (!payload || !payload.day) return false;
     try {
-      week.days[dk] = JSON.parse(JSON.stringify(preserveDays[iso].day));
-      if (preserveDays[iso].focus) pprogSetOverviewFocus(week, dk, preserveDays[iso].focus);
+      week.days[dk] = JSON.parse(JSON.stringify(payload.day));
+      if (week.days[dk]) {
+        delete week.days[dk].loggedExtraSession;
+        delete week.days[dk].loggedExtraNote;
+        delete week.days[dk].loggedExtraAt;
+      }
+      if (payload.focus && !/^logged\b/i.test(payload.focus)) {
+        pprogSetOverviewFocus(week, dk, payload.focus);
+      }
       return true;
     } catch (eRestore) {
       return false;
     }
+  }
+
+  function restoreBest(week, dk, iso) {
+    if (preserveDays[iso] && !pprogDayIsLoggedExtraSession(preserveDays[iso].day)) {
+      return restorePayload(week, dk, preserveDays[iso]);
+    }
+    var bak = pprogGetDayBackup(store, iso);
+    if (bak) return restorePayload(week, dk, bak);
+    return false;
+  }
+
+  function clearCorruptLoggedToday(week, dk, prevDay, weekIndex) {
+    if (restoreBest(week, dk, today)) return true;
+    if (!pprogDayLooksLikeNoteLogged(prevDay, note) && !pprogDayIsLoggedExtraSession(prevDay)) {
+      return false;
+    }
+    week.days[dk] = {
+      parts: [],
+      preTalk: (prevDay && prevDay.preTalk) || "",
+      debrief: (prevDay && prevDay.debrief) || "",
+      lastPreReply: (prevDay && prevDay.lastPreReply) || "",
+      lastDebriefReply: (prevDay && prevDay.lastDebriefReply) || "",
+      modifiedPartKinds: {},
+      finishFeedback: undefined,
+      needsScheduleRefill: true,
+    };
+    pprogSetOverviewFocus(week, dk, "Training");
+    refillWeeks[weekIndex] = true;
+    return true;
+  }
+
+  function writeTrainingFromMove(week, dk, fromIso, weekIndex) {
+    if (restoreBest(week, dk, fromIso)) return true;
+    if (restoreBest(week, dk, pprogAddDaysIso(fromIso, 0))) return true;
+    week.days[dk] = {
+      parts: [],
+      preTalk: "",
+      debrief: "",
+      lastPreReply: "",
+      lastDebriefReply: "",
+      modifiedPartKinds: {},
+      needsScheduleRefill: true,
+    };
+    pprogSetOverviewFocus(week, dk, "Training");
+    refillWeeks[weekIndex] = true;
+    return true;
   }
 
   for (var wi = 0; wi < store.currentBlock.weeks.length && wi < 5; wi++) {
@@ -7898,35 +8086,50 @@ function pprogApplyPol026CalendarTruth(msgs, opts) {
       var iso = pprogAddDaysIso(bStart, wi * 7 + di);
       var prev = week.days[dk] || {};
       if (logIso && iso === logIso) {
-        writeLogged(week, dk, prev);
+        writeLogged(week, dk, prev, iso);
         touched = true;
-      } else if (
-        iso === today &&
-        (intent.todayAction === "need_workout" || intent.todayAction === "keep") &&
-        preserveDays[today]
-      ) {
-        if (restorePreserved(week, dk, today)) touched = true;
-      } else if (iso === tomorrowIso && intent.tomorrowAction === "keep" && preserveDays[tomorrowIso]) {
-        if (restorePreserved(week, dk, tomorrowIso)) touched = true;
+      } else if (iso === today && (intent.todayAction === "need_workout" || intent.todayAction === "keep")) {
+        if (clearCorruptLoggedToday(week, dk, prev, wi)) touched = true;
+      } else if (iso === tomorrowIso && intent.tomorrowAction === "keep") {
+        if (restoreBest(week, dk, tomorrowIso)) touched = true;
       } else if (moveToMap[iso]) {
-        /* Old rest day receives workout that lived on the new rest day */
-        var fromIso = moveToMap[iso];
-        if (preserveDays[fromIso]) {
-          if (restorePreserved(week, dk, fromIso)) touched = true;
-        }
+        if (writeTrainingFromMove(week, dk, moveToMap[iso], wi)) touched = true;
       } else if (restIsoMap[iso] || moveFromMap[iso]) {
-        writeRest(week, dk, prev);
+        writeRest(week, dk, prev, iso);
         touched = true;
-      } else if (clearRestMap[iso] && !moveToMap[iso]) {
-        /* Should not happen often — clearRest without a move payload */
-        if (preserveDays[iso]) {
-          if (restorePreserved(week, dk, iso)) touched = true;
-        }
       }
     }
     store.currentBlock.weeks[wi] = week;
   }
   if (!touched) return false;
+
+  /* Verify calendar truth matches intent — else do not claim success */
+  var verified = true;
+  for (var wi2 = 0; wi2 < store.currentBlock.weeks.length && wi2 < 5; wi2++) {
+    var week2 = store.currentBlock.weeks[wi2];
+    if (!week2 || !week2.days) continue;
+    for (var di2 = 0; di2 < PPROG_DAY_KEYS.length; di2++) {
+      var dk2 = PPROG_DAY_KEYS[di2];
+      var iso2 = pprogAddDaysIso(bStart, wi2 * 7 + di2);
+      var day2 = week2.days[dk2] || {};
+      if (logIso && iso2 === logIso) {
+        if (!pprogDayIsLoggedExtraSession(day2)) verified = false;
+      }
+      if (iso2 === today && intent.todayAction === "need_workout") {
+        if (pprogDayIsLoggedExtraSession(day2) && pprogDayLooksLikeNoteLogged(day2, note)) {
+          verified = false;
+        }
+      }
+      if (restIsoMap[iso2]) {
+        if (!isPprogRestDay(dk2, day2, week2)) verified = false;
+      }
+      if (moveToMap[iso2]) {
+        if (isPprogRestDay(dk2, day2, week2)) verified = false;
+      }
+    }
+  }
+  if (!verified) return false;
+
   syncStoreActiveWeek(store);
   savePprogStore(store);
   if (recordEdit) {
@@ -7937,6 +8140,15 @@ function pprogApplyPol026CalendarTruth(msgs, opts) {
   try {
     pushAdminSnapshot(store);
   } catch (eSnap) {}
+  try {
+    var refillKeys = Object.keys(refillWeeks);
+    for (var rfi = 0; rfi < refillKeys.length; rfi++) {
+      var rwi = Number(refillKeys[rfi]);
+      if (typeof requestPprogWeekDetail === "function" && isFinite(rwi)) {
+        requestPprogWeekDetail(rwi, false);
+      }
+    }
+  } catch (eFill) {}
   return true;
 }
 

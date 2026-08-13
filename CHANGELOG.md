@@ -1,5 +1,14 @@
 # Changelog
 
+## [Coach 2.3.12] - 2026-08-13
+
+### Schedule confirm + apply truth
+- **Confirm?** for rest moves asks explicitly: “שינית יום מנוחה — להזיז את ימי המנוחה האחרים בהתאם?” (names days when swap plan known).
+- **No false success** — “בוצעו השינויים…” only after calendar verify; otherwise ask to resend.
+- **Day backups** + skip preserving corrupt LOGGED-as-today; refill week_detail when programmed day must be recovered.
+
+---
+
 ## [Coach 2.3.11] - 2026-08-13
 
 ### POL-026 אתמול vs היום + rest-day move (no consecutive pile-up)

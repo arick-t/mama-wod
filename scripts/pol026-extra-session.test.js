@@ -63,10 +63,12 @@ ok(
 ok("loggedExtra not Rest", /pprogDayIsLoggedExtraSession/.test(index) && /athlete-logged session wins/.test(index));
 ok("week_detail preserves logged day", /week_detail must never wipe an athlete-logged/.test(index));
 ok("calendar logged-extra class", /logged-extra/.test(index) && /pprog-logged-extra-flag/.test(index));
-ok("coach version 2.3.11", /COACH_VERSION = "2\.3\.11"/.test(index) && /COACH_VERSION = "2\.3\.11"/.test(pc));
+ok("coach version 2.3.12", /COACH_VERSION = "2\.3\.12"/.test(index) && /COACH_VERSION = "2\.3\.12"/.test(pc));
 ok("client workout extract", /pprogExtractLoggedWorkoutSegments/.test(index));
 ok("client preserve days", /pprogCaptureSchedulePreserveDays/.test(index));
 ok("client rest-day swap", /pprogPlanRestDaySwap/.test(index));
+ok("client day backups", /scheduleDayBackups/.test(index));
+ok("client apply verify before success", /verified/.test(index) && /לא עודכן בלוק האימון/.test(index));
 ok("client Hebrew post-apply", /PPROG_BRICK_SCHEDULE_POST_APPLY_MSG/.test(index));
 ok("client schedule rest-shift detect", /pprogNoteIsScheduleRestShift/.test(index));
 ok("client brickSchedulePending store", /brickSchedulePending/.test(index));
@@ -125,7 +127,7 @@ const preHe = buildBrickScheduleConfirmMessage(intentShort, {
 });
 ok("Hebrew pre-confirm for short scenario", /לוז:/.test(preHe));
 ok("Hebrew pre-confirm mentions keep tomorrow", /מחר אימון לפי לוח רגיל/.test(preHe));
-ok("Hebrew pre-confirm mentions Friday rest", /שישי/.test(preHe));
+ok("Hebrew pre-confirm asks rest-shift", /שינית יום מנוחה/.test(preHe));
 ok("Hebrew pre-confirm asks לאשר", /לאשר\?/.test(preHe));
 ok("Hebrew pre-confirm does not say rest tomorrow", !/מחר מנוחה/.test(preHe));
 
@@ -174,6 +176,17 @@ const morningConfirm = buildBrickScheduleConfirmMessage(morningIntent, {
 });
 ok("morning confirm mentions yesterday logged", /אתמול/.test(morningConfirm));
 ok("morning confirm mentions workout today", /אימון להיום/.test(morningConfirm));
+ok("morning confirm asks rest-shift question", /שינית יום מנוחה/.test(morningConfirm));
 ok("morning confirm no plant-today log", !/לשמור את אימון היום/.test(morningConfirm));
+
+const morningConfirmWithSwap = buildBrickScheduleConfirmMessage(morningIntent, {
+  note: morningNote,
+  todayIso: "2026-08-13",
+  swapPlan: morningSwap,
+});
+ok(
+  "morning confirm names Tue/Wed shift",
+  /שלישי/.test(morningConfirmWithSwap) && /רביעי/.test(morningConfirmWithSwap) && /להזיז/.test(morningConfirmWithSwap)
+);
 
 console.log("All POL-026 / brick schedule brief-reply checks passed.");
