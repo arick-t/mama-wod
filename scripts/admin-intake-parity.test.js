@@ -77,8 +77,8 @@ ok("admin create sends intake mail", /sendAdminIntakeCompleteMail/.test(handoff)
 ok("handoff panel in athlete tab", /ath-handoff-panel/.test(adminHtml) && /renderHandoffSectionBody/.test(adminHtml));
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
 ok("admin version 1.5.10", /DUCK-WOD Admin · 1\.5\.10/.test(adminHtml));
-ok("admin wired to coach 2.3.8", /LIVE_COACH_VERSION = "2\.3\.8"/.test(adminHtml));
-ok("app coach 2.3.8", /COACH_VERSION = "2\.3\.8"/.test(index));
+ok("admin wired to coach 2.3.13", /LIVE_COACH_VERSION = "2\.3\.13"/.test(adminHtml));
+ok("app coach 2.3.13", /COACH_VERSION = "2\.3\.13"/.test(index));
 ok(
   "admin shows Admin + Coach versions",
   /Admin 1\.5\.10/.test(adminHtml) &&

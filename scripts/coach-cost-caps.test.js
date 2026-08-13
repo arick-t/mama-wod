@@ -255,8 +255,8 @@ function testStaticRegressions() {
   ok("VERSION matches package", ver === pkg.version);
   ok(
     "coachVersion 2.2+/2.3.x in API",
-    /const COACH_VERSION = "2\.(2(\.\d)?|3(\.\d)?)"/.test(pc) ||
-      /COACH_VERSION = "2\.(2(\.\d)?|3(\.\d)?)"/.test(pc)
+    /const COACH_VERSION = "2\.(2(\.\d+)?|3(\.\d+)?)"/.test(pc) ||
+      /COACH_VERSION = "2\.(2(\.\d+)?|3(\.\d+)?)"/.test(pc)
   );
   ok(
     "app daily workouts subtitle on 21.3+ display line",
@@ -265,8 +265,8 @@ function testStaticRegressions() {
   );
   ok(
     "coach subtitle 2.2+/2.3",
-    /COACH_VERSION = "2\.(2(\.\d)?|3(\.\d)?)"/.test(idx) ||
-      /COACH · v2\.(2(\.\d)?|3(\.\d)?)\b/.test(idx)
+    /COACH_VERSION = "2\.(2(\.\d+)?|3(\.\d+)?)"/.test(idx) ||
+      /COACH · v2\.(2(\.\d+)?|3(\.\d+)?)\b/.test(idx)
   );
 }
 

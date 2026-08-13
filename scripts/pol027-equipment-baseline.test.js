@@ -55,7 +55,7 @@ ok(
   "programming core does not duplicate full inventory table",
   !/\*\*Odd object\*\*:|\*\*Med\/Slam\*\*:/.test(pc)
 );
-ok("coach version 2.3.8", /COACH_VERSION = "2\.3\.8"/.test(pc) && /COACH_VERSION = "2\.3\.8"/.test(index));
+ok("coach version 2.3.13", /COACH_VERSION = "2\.3\.13"/.test(pc) && /COACH_VERSION = "2\.3\.13"/.test(index));
 ok(
   "lift kg not equipment permission",
   /Lift \/ skill numbers ≠ equipment permission|lift\/skill kg numbers are capability only/i.test(
