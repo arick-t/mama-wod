@@ -983,32 +983,6 @@
       },
       {
         "date": "2026-08-04",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Front Squat 1x8",
-              "ON 12:00 CLOCK...",
-              "Build to a Heavy 8-Rep Front Squat",
-              "* (Score is Weight)"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "2 ROUNDS FOR TIME",
-            "lines": [
-              "800m Run",
-              "50 Toes to Bar",
-              "25 Thrusters 52kg/34kg"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-08-04",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2806,6 +2780,52 @@
     "2026-08-13": [
       {
         "date": "2026-08-13",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260813",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
+              "LEARN MORE"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-13",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 23.3",
+            "lines": [
+              "Starting with a 6-minute time cap, complete as many reps as possible of:",
+              "5 wall walks",
+              "50 double-unders",
+              "15 snatches (weight 1)",
+              "5 wall walks",
+              "50 double-unders",
+              "12 snatches (weight 2)",
+              "*If completed before the 6-minute time cap, add 3 minutes to the time cap and complete:",
+              "20 strict handstand push-ups",
+              "50 double-unders",
+              "9 snatches (weight 3)",
+              "*If completed before the 9-minute time cap, add 3 minutes to the time cap and complete:",
+              "20 strict handstand push-ups",
+              "50 double-unders",
+              "6 snatches (weight 4)",
+              "*♀ 65 lb, 95 lb, 125 lb, 155 lb*",
+              "*♂ 95 lb, 135 lb, 185 lb, 225 lb*"
+            ]
+          }
+        ],
+        "note": "Open: Open 23.3"
+      },
+      {
+        "date": "2026-08-13",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-08-13/",
@@ -2852,15 +2872,82 @@
       },
       {
         "date": "2026-08-13",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260813",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-august-13-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
-              "LEARN MORE"
+              "3 Rounds",
+              "1:00 Machine or 200m Run",
+              "6 Skater Hops",
+              "12 Dumbbell Push Press (Light and fast reps)"
+            ]
+          },
+          {
+            "title": "Every 3 minutes for 24 Minutes",
+            "lines": [
+              "1 Split Jerk",
+              "+ 6/6 MB Rotational Throw",
+              "MB Throw should be hard, fast and intentional"
+            ]
+          },
+          {
+            "title": "Extra Credit",
+            "lines": [
+              "Zone 2 Run or Bike"
+            ]
+          },
+          {
+            "title": "12:00 Zone 2 Warm Up",
+            "lines": [
+              "45:00-90:00 Run or Bike @ Zone 2"
+            ]
+          },
+          {
+            "title": "12:00 Zone 2 Cool Down",
+            "lines": [
+              "Your Zone 2 today should stay between 160bpm minus your age and 180bpm minus your age."
+            ]
+          },
+          {
+            "title": "Warm up:",
+            "lines": [
+              "Build from resting heartrate to 180bpm minus your age slowly over 12:00. This will feel incredibly slow, but will help your session a lot. Feel free to mix up machines, but end on rower."
+            ]
+          },
+          {
+            "title": "Cool down:",
+            "lines": [
+              "Spend 4:00 on the rower, keeping your heartrate above 150bpm minus your age, then slowly work down to resting for the next 8:00 on any machine or walking."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-13",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Back Squat 1x1",
+              "FOR LOAD",
+              "5-4-3-2-1-1-1",
+              "Back Squat",
+              "* (Score is Heaviest Weight)"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "5 ROUNDS FOR TIME",
+            "lines": [
+              "40 Step Back Lunges",
+              "30 Sit Ups*",
+              "*Option for GHD Sit-Ups"
             ]
           }
         ]
@@ -2914,39 +3001,8 @@
           }
         ],
         "note": "Benchmark: Nasty Girls V2"
-      },
-      {
-        "date": "2026-08-13",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 23.3",
-            "lines": [
-              "Starting with a 6-minute time cap, complete as many reps as possible of:",
-              "5 wall walks",
-              "50 double-unders",
-              "15 snatches (weight 1)",
-              "5 wall walks",
-              "50 double-unders",
-              "12 snatches (weight 2)",
-              "*If completed before the 6-minute time cap, add 3 minutes to the time cap and complete:",
-              "20 strict handstand push-ups",
-              "50 double-unders",
-              "9 snatches (weight 3)",
-              "*If completed before the 9-minute time cap, add 3 minutes to the time cap and complete:",
-              "20 strict handstand push-ups",
-              "50 double-unders",
-              "6 snatches (weight 4)",
-              "*♀ 65 lb, 95 lb, 125 lb, 155 lb*",
-              "*♂ 95 lb, 135 lb, 185 lb, 225 lb*"
-            ]
-          }
-        ],
-        "note": "Open: Open 23.3"
       }
     ]
   },
-  "last_updated": "2026-08-13T02:44:07.423281"
+  "last_updated": "2026-08-13T06:26:15.146246"
 }
