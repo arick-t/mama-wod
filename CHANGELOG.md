@@ -1,5 +1,13 @@
 # Changelog
 
+## [Admin 1.5.14] - 2026-08-13
+
+### Founder + coach-brain approval (A–D)
+- **A Join mail:** only after real `currentBlock.blockStart` + `declarationAcceptedAt`. Flag `joinMailSent`. No mail on create.
+- **B Live admin:** poll `admin_list` every 20s (no generate_*/revise_*). Tab refresh uses a **signed session token** in sessionStorage. Remember-me stores the token, never the raw password. Clears leftover 1.5.13 password keys.
+- **C Brick sync:** 256KB snapshot cap, shared PprogDisplay, pending-copy spacing, push after each week_detail (already in 1.5.13).
+- **D Fill every missing week** with real `generate_week_detail` on the device — admin does not invent workouts. T4 still out.
+
 ## [Admin 1.5.13] - 2026-08-13
 
 ### Founder retest — join mail, live admin, brick sync

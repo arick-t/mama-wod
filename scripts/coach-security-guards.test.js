@@ -13,6 +13,8 @@ const { resolveAllowedOrigin } = require("../lib/cors-allowlist.js");
 const {
   resolveAdminPassword,
   checkAdminAuth,
+  mintAdminSessionToken,
+  verifyAdminSessionToken,
   FOUNDER_BOOTSTRAP_PASSWORD,
 } = require("../scripts/lib/admin/admin-auth.js");
 
@@ -108,6 +110,26 @@ assert.strictEqual(
     query: {},
   }),
   true
+);
+const sessionTok = mintAdminSessionToken("test-secret-only", { remember: true });
+assert.ok(sessionTok.indexOf("aws1.") === 0, "session token prefix");
+assert.strictEqual(verifyAdminSessionToken(sessionTok, "test-secret-only"), true);
+assert.strictEqual(verifyAdminSessionToken(sessionTok, "other-secret"), false);
+assert.strictEqual(
+  checkAdminAuth({
+    headers: { "x-admin-token": sessionTok },
+    body: {},
+    query: {},
+  }),
+  true
+);
+assert.strictEqual(
+  checkAdminAuth({
+    headers: { "x-admin-token": "aws1.nope.sig" },
+    body: {},
+    query: {},
+  }),
+  false
 );
 delete process.env.ADMIN_PASSWORD;
 

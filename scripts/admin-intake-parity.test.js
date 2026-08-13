@@ -54,14 +54,22 @@ ok("skillsSummary non-empty", !!profile.skillsSummary);
 ok(
   "join mail not ready on create (no Terms)",
   !JoinMail.snapshotReadyForJoinMail({
-    currentBlock: { weeks: [{ theme: "W1" }] },
+    currentBlock: { blockStart: "2026-08-09", weeks: [{ theme: "W1" }] },
     intakeNotifySent: false,
   })
 );
 ok(
-  "join mail ready after Terms + block",
-  JoinMail.snapshotReadyForJoinMail({
+  "join mail not ready without blockStart",
+  !JoinMail.snapshotReadyForJoinMail({
     currentBlock: { weeks: [{ theme: "W1" }] },
+    declarationAcceptedAt: "2026-08-13T12:00:00.000Z",
+    intakeNotifySent: false,
+  })
+);
+ok(
+  "join mail ready after Terms + real block",
+  JoinMail.snapshotReadyForJoinMail({
+    currentBlock: { blockStart: "2026-08-09", weeks: [{ theme: "W1" }] },
     declarationAcceptedAt: "2026-08-13T12:00:00.000Z",
     intakeNotifySent: false,
   })
@@ -69,9 +77,9 @@ ok(
 ok(
   "join mail skipped if already sent",
   !JoinMail.snapshotReadyForJoinMail({
-    currentBlock: { weeks: [{ theme: "W1" }] },
+    currentBlock: { blockStart: "2026-08-09", weeks: [{ theme: "W1" }] },
     declarationAcceptedAt: "2026-08-13T12:00:00.000Z",
-    intakeNotifySent: true,
+    joinMailSent: true,
   })
 );
 
@@ -105,15 +113,15 @@ ok("handoff stores lastHandoffPath", /lastHandoffPath/.test(handoff));
 ok("admin create does not send join mail", !/sendAdminIntakeCompleteMail/.test(handoff));
 ok("handoff inline in athlete card", /renderHandoffInline/.test(adminHtml) && /ath-handoff-inline/.test(adminHtml));
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
-ok("admin version 1.5.13", /DUCK-WOD Admin · 1\.5\.13/.test(adminHtml));
+ok("admin version 1.5.14", /DUCK-WOD Admin · 1\.5\.14/.test(adminHtml));
 ok("admin wired to coach 2.3.13", /LIVE_COACH_VERSION = "2\.3\.13"/.test(adminHtml));
 ok("app coach 2.3.13", /COACH_VERSION = "2\.3\.13"/.test(index));
 ok(
   "admin shows Admin + Coach versions",
-  /Admin 1\.5\.13/.test(adminHtml) &&
+  /Admin 1\.5\.14/.test(adminHtml) &&
     /ver-coach/.test(adminHtml) &&
     /syncAdminVersionLabels/.test(adminHtml) &&
-    /ADMIN_UI_VERSION = "1\.5\.13"/.test(adminHtml)
+    /ADMIN_UI_VERSION = "1\.5\.14"/.test(adminHtml)
 );
 ok(
   "admin intake uses pprog classes 1:1",
@@ -189,8 +197,9 @@ ok(
 );
 ok("phone package does not pre-mark join mail", /intakeNotifySent:\s*false/.test(handoff) && /Join mail waits/.test(handoff));
 ok("app join mail requires Terms", /if \(!store\.legalAcceptedAt\) return/.test(index));
-ok("admin remembers password", /pw-remember/.test(adminHtml) && /persistAdminPassword/.test(adminHtml) && /tryRestoreAdminSession/.test(adminHtml));
-ok("admin live poll", /startAdminLivePoll/.test(adminHtml) && /ADMIN_POLL_MS/.test(adminHtml));
+ok("admin remembers session token not password", /pw-remember/.test(adminHtml) && /persistAdminSession/.test(adminHtml) && /tryRestoreAdminSession/.test(adminHtml) && /dw_admin_session/.test(adminHtml) && /clearLegacyAdminPasswordStore/.test(adminHtml));
+ok("admin live poll 15-30s no LLM", /startAdminLivePoll/.test(adminHtml) && /ADMIN_POLL_MS = 20000/.test(adminHtml) && /loadAthletes\(\{ silent: true \}\)/.test(adminHtml));
+ok("admin_list mints session token", /mintAdminSessionToken/.test(snap) && /adminSessionToken/.test(snap));
 ok(
   "snapshot does not stamp declaration from joinedAt",
   /declarationAcceptedAt: String\(/.test(snap) &&

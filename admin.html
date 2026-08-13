@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DUCK-WOD Admin · 1.5.13</title>
+<title>DUCK-WOD Admin · 1.5.14</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -628,7 +628,7 @@ body:has(#intake-modal.open) #adminChatFloat{
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver" id="login-ver-badge" title="Admin 1.5.13 · Coach 2.3.13">Admin 1.5.13<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></div>
+    <div class="ver" id="login-ver-badge" title="Admin 1.5.14 · Coach 2.3.13">Admin 1.5.14<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <label class="login-remember">
       <input type="checkbox" id="pw-remember"/>
@@ -644,7 +644,7 @@ body:has(#intake-modal.open) #adminChatFloat{
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">Admin</span>
-    <span class="ver-badge" id="admin-ver-badge" title="Admin 1.5.13 · Coach 2.3.13">Admin 1.5.13<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></span>
+    <span class="ver-badge" id="admin-ver-badge" title="Admin 1.5.14 · Coach 2.3.13">Admin 1.5.14<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></span>
     <span class="count-wrap">
       <span class="count" id="athlete-count" title="הרשימה מתעדכנת לבד כל כמה שניות — בלי לרענן את הדף">0 מתאמנים</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
@@ -818,12 +818,12 @@ function pagesAbsoluteUrl(path) {
 }
 
 var adminPw = "";
-var ADMIN_PW_SESSION_KEY = "dw_admin_pw";
-var ADMIN_PW_REMEMBER_KEY = "dw_admin_remember";
-var ADMIN_PW_STORE_KEY = "dw_admin_pw_store";
+var adminSessionToken = "";
+var ADMIN_SESSION_KEY = "dw_admin_session";
+var ADMIN_REMEMBER_KEY = "dw_admin_remember";
 var adminPollTimer = null;
 var lastAdminSnapFingerprint = "";
-var ADMIN_POLL_MS = 8000;
+var ADMIN_POLL_MS = 20000;
 var athletes = [];
 var currentAthleteId = null;
 var syncInFlight = false;
@@ -836,7 +836,7 @@ var pendingLearnNoteId = null;
 var adminChatFabOpen = false;
 var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
 /** Live Personal Coach brain version — refreshed from GET /api/personal-coach. */
-var ADMIN_UI_VERSION = "1.5.13";
+var ADMIN_UI_VERSION = "1.5.14";
 var LIVE_COACH_VERSION = "2.3.13";
 var LIVE_COACH_VERSION_FETCHED_AT = 0;
 
@@ -1030,7 +1030,9 @@ function getBlockAccSummary(a) {
 }
 
 function adminAuthHeaders(extra) {
-  var h = { "Content-Type": "application/json", "X-Admin-Password": adminPw || "" };
+  var h = { "Content-Type": "application/json" };
+  if (adminSessionToken) h["X-Admin-Token"] = adminSessionToken;
+  else if (adminPw) h["X-Admin-Password"] = adminPw;
   if (extra) {
     for (var k in extra) {
       if (Object.prototype.hasOwnProperty.call(extra, k)) h[k] = extra[k];
@@ -1040,8 +1042,12 @@ function adminAuthHeaders(extra) {
 }
 function withAdminPassword(payload) {
   var body = payload && typeof payload === "object" ? payload : {};
-  body.adminPassword = adminPw || body.adminPassword || "";
+  if (adminSessionToken) body.adminToken = adminSessionToken;
+  else if (adminPw) body.adminPassword = adminPw || body.adminPassword || "";
   return body;
+}
+function adminIsAuthed() {
+  return !!(adminSessionToken || adminPw);
 }
 
 // ── Learning mode ────────────────────────────────────────────────────────────
@@ -1213,7 +1219,7 @@ function renderCreditPill(credit) {
 }
 
 function loadCreditEstimate() {
-  if (!adminPw) return;
+  if (!adminIsAuthed()) return;
   fetch(adminApiUrl("/api/admin-meta"), {
     method: "POST",
     headers: adminAuthHeaders(),
@@ -1228,7 +1234,7 @@ function loadCreditEstimate() {
 }
 
 function openCreditUpdate() {
-  if (!adminPw) return;
+  if (!adminIsAuthed()) return;
   var current =
     creditState && creditState.balanceManual != null
       ? String(creditState.balanceManual)
@@ -1326,31 +1332,53 @@ document.getElementById("pw-input").addEventListener("keydown", function(e) {
   if (e.key === "Enter") doLogin();
 });
 
-function readStoredAdminPassword() {
+function clearLegacyAdminPasswordStore() {
   try {
-    if (localStorage.getItem(ADMIN_PW_REMEMBER_KEY) === "1") {
-      return String(localStorage.getItem(ADMIN_PW_STORE_KEY) || "");
+    localStorage.removeItem("dw_admin_pw_store");
+    localStorage.removeItem("dw_admin_pw");
+    sessionStorage.removeItem("dw_admin_pw");
+  } catch (eClr) {}
+}
+
+function readStoredAdminSession() {
+  try {
+    if (localStorage.getItem(ADMIN_REMEMBER_KEY) === "1") {
+      return String(localStorage.getItem(ADMIN_SESSION_KEY) || "");
     }
   } catch (eLs) {}
   try {
-    return String(sessionStorage.getItem(ADMIN_PW_SESSION_KEY) || "");
+    return String(sessionStorage.getItem(ADMIN_SESSION_KEY) || "");
   } catch (eSs) {}
   return "";
 }
 
-function persistAdminPassword(pw, remember) {
+function persistAdminSession(token, remember) {
+  var t = String(token || "");
+  if (!t) return;
   try {
-    sessionStorage.setItem(ADMIN_PW_SESSION_KEY, pw);
+    sessionStorage.setItem(ADMIN_SESSION_KEY, t);
   } catch (eSs) {}
   try {
     if (remember) {
-      localStorage.setItem(ADMIN_PW_REMEMBER_KEY, "1");
-      localStorage.setItem(ADMIN_PW_STORE_KEY, pw);
+      localStorage.setItem(ADMIN_REMEMBER_KEY, "1");
+      localStorage.setItem(ADMIN_SESSION_KEY, t);
     } else {
-      localStorage.removeItem(ADMIN_PW_REMEMBER_KEY);
-      localStorage.removeItem(ADMIN_PW_STORE_KEY);
+      localStorage.removeItem(ADMIN_REMEMBER_KEY);
+      localStorage.removeItem(ADMIN_SESSION_KEY);
     }
   } catch (eLs) {}
+  clearLegacyAdminPasswordStore();
+}
+
+function clearAdminSession() {
+  adminPw = "";
+  adminSessionToken = "";
+  try {
+    sessionStorage.removeItem(ADMIN_SESSION_KEY);
+    localStorage.removeItem(ADMIN_SESSION_KEY);
+    localStorage.removeItem(ADMIN_REMEMBER_KEY);
+  } catch (eClr) {}
+  clearLegacyAdminPasswordStore();
 }
 
 function adminSnapshotsFingerprint(list) {
@@ -1382,13 +1410,13 @@ function adminSnapshotsFingerprint(list) {
 function startAdminLivePoll() {
   if (adminPollTimer) return;
   adminPollTimer = setInterval(function () {
-    if (!adminPw) return;
+    if (!adminIsAuthed()) return;
     if (typeof document !== "undefined" && document.hidden) return;
     loadAthletes({ silent: true });
   }, ADMIN_POLL_MS);
   try {
     document.addEventListener("visibilitychange", function () {
-      if (!document.hidden && adminPw) loadAthletes({ silent: true });
+      if (!document.hidden && adminIsAuthed()) loadAthletes({ silent: true });
     });
   } catch (eVis) {}
 }
@@ -1405,10 +1433,26 @@ function openAdminApp(snapshots) {
   startAdminLivePoll();
 }
 
+function applyAdminSessionFromList(data, remember) {
+  var token = data && data.adminSessionToken ? String(data.adminSessionToken) : "";
+  if (token) {
+    adminSessionToken = token;
+    adminPw = "";
+    persistAdminSession(token, remember);
+    try {
+      var inp = document.getElementById("pw-input");
+      if (inp) inp.value = "";
+    } catch (eInp) {}
+  } else if (adminSessionToken) {
+    persistAdminSession(adminSessionToken, remember);
+  }
+}
+
 function doLogin() {
   var pw = document.getElementById("pw-input").value.trim();
   if (!pw) return;
   adminPw = pw;
+  adminSessionToken = "";
   var rememberEl = document.getElementById("pw-remember");
   var remember = !!(rememberEl && rememberEl.checked);
   var errEl = document.getElementById("login-err");
@@ -1416,7 +1460,7 @@ function doLogin() {
   fetch(adminApiUrl("/api/admin-snapshot"), {
     method: "POST",
     headers: adminAuthHeaders(),
-    body: JSON.stringify({ action: "admin_list", adminPassword: pw })
+    body: JSON.stringify({ action: "admin_list", adminPassword: pw, rememberMe: remember })
   })
     .then(function(r) {
       return r.json().then(function(data) {
@@ -1432,7 +1476,7 @@ function doLogin() {
       if (res.status === 401) throw new Error((res.data && res.data.message) || "wrong_password");
       if (res.status < 200 || res.status >= 300) throw new Error("http_" + res.status);
       if (!res.data || !res.data.ok) throw new Error("bad_response");
-      persistAdminPassword(pw, remember);
+      applyAdminSessionFromList(res.data, remember);
       openAdminApp(res.data.snapshots || []);
     })
     .catch(function(e) {
@@ -1452,23 +1496,54 @@ function doLogin() {
 }
 
 function tryRestoreAdminSession() {
-  var pw = readStoredAdminPassword();
-  if (!pw) return;
+  clearLegacyAdminPasswordStore();
+  var token = readStoredAdminSession();
+  if (!token) return;
+  adminSessionToken = token;
+  adminPw = "";
+  var remember = false;
   try {
-    if (localStorage.getItem(ADMIN_PW_REMEMBER_KEY) === "1") {
-      var cb = document.getElementById("pw-remember");
-      if (cb) cb.checked = true;
-    }
+    remember = localStorage.getItem(ADMIN_REMEMBER_KEY) === "1";
+    var cb = document.getElementById("pw-remember");
+    if (cb) cb.checked = remember;
   } catch (eCb) {}
-  var inp = document.getElementById("pw-input");
-  if (inp) inp.value = pw;
-  doLogin();
+  var errEl = document.getElementById("login-err");
+  if (errEl) errEl.textContent = "מתחבר…";
+  fetch(adminApiUrl("/api/admin-snapshot"), {
+    method: "POST",
+    headers: adminAuthHeaders(),
+    body: JSON.stringify({ action: "admin_list", adminToken: token })
+  })
+    .then(function(r) {
+      return r.json().then(function(data) {
+        return { status: r.status, data: data };
+      }).catch(function() {
+        return { status: r.status, data: null };
+      });
+    })
+    .then(function(res) {
+      if (res.status === 401) {
+        clearAdminSession();
+        if (errEl) errEl.textContent = "";
+        return;
+      }
+      if (res.status === 503 || (res.data && res.data.error === "admin_not_configured")) {
+        throw new Error((res.data && res.data.message) || "not_configured");
+      }
+      if (res.status < 200 || res.status >= 300) throw new Error("http_" + res.status);
+      if (!res.data || !res.data.ok) throw new Error("bad_response");
+      persistAdminSession(token, remember);
+      openAdminApp(res.data.snapshots || []);
+    })
+    .catch(function() {
+      if (errEl) errEl.textContent = "";
+    });
 }
 
 function loadAthletes(opts) {
   opts = opts || {};
   var silent = !!opts.silent;
-  if (!adminPw) return;
+  if (!adminIsAuthed()) return;
   if (!silent) refreshLiveCoachVersion();
   fetch(adminApiUrl("/api/admin-snapshot"), {
     method: "POST",

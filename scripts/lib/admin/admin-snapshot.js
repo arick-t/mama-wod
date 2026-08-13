@@ -15,6 +15,8 @@ const {
   resolveAdminPassword,
   checkAdminAuth: sharedCheckAdminAuth,
   adminAuthDenied,
+  mintAdminSessionToken,
+  adminAuthUsedPassword,
 } = require("./admin-auth");
 const {
   putJson,
@@ -265,7 +267,13 @@ module.exports = async function handler(req, res) {
       if (!rlList.ok) return sendRateLimit(res, rlList);
       try {
         const snapshots = await listSnapshots();
-        return res.status(200).json({ ok: true, snapshots, storage: storageInfo() });
+        const json = { ok: true, snapshots, storage: storageInfo() };
+        if (adminAuthUsedPassword(req, ADMIN_PASSWORD)) {
+          json.adminSessionToken = mintAdminSessionToken(ADMIN_PASSWORD, {
+            remember: !!(body.rememberMe || body.remember),
+          });
+        }
+        return res.status(200).json(json);
       } catch (e) {
         return storageUnavailable(res, e);
       }
@@ -722,8 +730,9 @@ module.exports = async function handler(req, res) {
       })(),
       lastAcceptedPushUpgrade: existing.lastAcceptedPushUpgrade || null,
       createdByAdmin: !!(existing.createdByAdmin || (isAdmin && clean.createdByAdmin)),
-      intakeNotifySent: !!existing.intakeNotifySent,
-      intakeNotifySentAt: existing.intakeNotifySentAt || null,
+      intakeNotifySent: !!(existing.intakeNotifySent || existing.joinMailSent),
+      joinMailSent: !!(existing.intakeNotifySent || existing.joinMailSent),
+      intakeNotifySentAt: existing.intakeNotifySentAt || existing.joinMailSentAt || null,
       lastHandoffPath: existing.lastHandoffPath,
       lastHandoffCreatedAt: existing.lastHandoffCreatedAt,
       lastHandoffExpiresAt: existing.lastHandoffExpiresAt,
@@ -772,13 +781,16 @@ module.exports = async function handler(req, res) {
       return storageUnavailable(res, e);
     }
 
-    let joinMailSent = !!snapshot.intakeNotifySent;
+    let joinMailSent = !!(snapshot.intakeNotifySent || snapshot.joinMailSent);
     if (snapshotReadyForJoinMail(snapshot)) {
       try {
         const mailResult = await sendAdminIntakeCompleteMail(snapshot);
         if (mailResult && mailResult.sent) {
+          const nowMail = new Date().toISOString();
           snapshot.intakeNotifySent = true;
-          snapshot.intakeNotifySentAt = new Date().toISOString();
+          snapshot.joinMailSent = true;
+          snapshot.intakeNotifySentAt = nowMail;
+          snapshot.joinMailSentAt = nowMail;
           joinMailSent = true;
           try {
             await writeSnapshot(athleteId, snapshot);
