@@ -71,20 +71,24 @@ ok("phone legalAcceptedAt preserved", phone.legalAcceptedAt === "2026-01-01T00:0
 
 ok("admin loads sync contract", /coach-intake-sync-contract\.js/.test(adminHtml));
 ok("admin loads normalize block lib", /normalize-pprog-block\.js/.test(adminHtml));
+ok("admin loads shared pprog display", /pprog-display\.js/.test(adminHtml));
+ok("admin normalizes snapshot on list", /NormalizePprogBlock\.normalize/.test(adminHtml));
+ok("admin block uses shared brick view", /PprogDisplay\.renderBrickView/.test(adminHtml));
+ok("admin block render is read-only", /readOnly:\s*true/.test(adminHtml));
 ok("admin fixed intake normalizes block", /NormalizePprogBlock\.normalize/.test(fixedJs));
 ok("handoff stores lastHandoffPath", /lastHandoffPath/.test(handoff));
 ok("admin create sends intake mail", /sendAdminIntakeCompleteMail/.test(handoff));
-ok("handoff panel in athlete tab", /ath-handoff-panel/.test(adminHtml) && /renderHandoffSectionBody/.test(adminHtml));
+ok("handoff inline in athlete card", /renderHandoffInline/.test(adminHtml) && /ath-handoff-inline/.test(adminHtml));
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
-ok("admin version 1.5.10", /DUCK-WOD Admin · 1\.5\.10/.test(adminHtml));
+ok("admin version 1.5.12", /DUCK-WOD Admin · 1\.5\.12/.test(adminHtml));
 ok("admin wired to coach 2.3.13", /LIVE_COACH_VERSION = "2\.3\.13"/.test(adminHtml));
 ok("app coach 2.3.13", /COACH_VERSION = "2\.3\.13"/.test(index));
 ok(
   "admin shows Admin + Coach versions",
-  /Admin 1\.5\.10/.test(adminHtml) &&
+  /Admin 1\.5\.12/.test(adminHtml) &&
     /ver-coach/.test(adminHtml) &&
     /syncAdminVersionLabels/.test(adminHtml) &&
-    /ADMIN_UI_VERSION = "1\.5\.10"/.test(adminHtml)
+    /ADMIN_UI_VERSION = "1\.5\.12"/.test(adminHtml)
 );
 ok(
   "admin intake uses pprog classes 1:1",
