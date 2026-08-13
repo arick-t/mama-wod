@@ -1,7 +1,12 @@
 # Admin block display + handoff UX
 
 Base: approved **Admin 1.5.11** shared brick (`lib/pprog-display.js`, T1+T2+T3).  
-This branch adds founder UX from retest (Admin **1.5.16**).
+This branch ships founder UX + T4 as Admin **2.0**.
+
+## Round 7 (Admin 2.0) — production
+- T4: human PART edit of one remaining training day syncs to the device (0 LLM)
+- Snapshot `pendingAdminDayEdit` · pull on existing `athlete_pull_push_offer` · auto-apply + «המאמן עדכן את האימון»
+- Rest / past / Done / LOGGED stay locked. Coach 2.3.13 unchanged
 
 ## Round 6 (Admin 1.5.16) — T4 day edit → device (0 LLM)
 - Human PART edit of one remaining training day. Snapshot `pendingAdminDayEdit` is the bridge.

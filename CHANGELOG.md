@@ -1,5 +1,14 @@
 # Changelog
 
+## [Admin 2.0] - 2026-08-13 · **production**
+
+### T4 day edit → device (0 LLM) + founder retest ship
+- Pencil on a remaining training day → PART edit → Save → phone pull (~20s) auto-applies the same parts + MODIFIED + «המאמן עדכן את האימון»
+- Snapshot bridge `pendingAdminDayEdit` on existing `athlete_pull_push_offer`. No Confirm card. No `generate_*` / `revise_*`
+- Locked: Rest / past / Done / LOGGED / existing debrief. Empty or orphan parts are not saved
+- Join mail only after Terms + real brick. Remember-me is a signed session token. Live admin poll 20s
+- Coach remains **2.3.13**. Intake / claim / handoff / declaration unchanged
+
 ## [Admin 1.5.16] - 2026-08-13
 
 ### T4 — human day edit syncs to the device (0 LLM)

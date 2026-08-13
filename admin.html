@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DUCK-WOD Admin · 1.5.16</title>
+<title>DUCK-WOD Admin · 2.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -698,7 +698,7 @@ body:has(#intake-modal.open) #adminChatFloat{
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver" id="login-ver-badge" title="Admin 1.5.16 · Coach 2.3.13">Admin 1.5.16<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></div>
+    <div class="ver" id="login-ver-badge" title="Admin 2.0 · Coach 2.3.13">Admin 2.0<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <label class="login-remember">
       <input type="checkbox" id="pw-remember"/>
@@ -714,7 +714,7 @@ body:has(#intake-modal.open) #adminChatFloat{
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">Admin</span>
-    <span class="ver-badge" id="admin-ver-badge" title="Admin 1.5.16 · Coach 2.3.13">Admin 1.5.16<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></span>
+    <span class="ver-badge" id="admin-ver-badge" title="Admin 2.0 · Coach 2.3.13">Admin 2.0<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></span>
     <span class="count-wrap">
       <span class="count" id="athlete-count" title="הרשימה מתעדכנת לבד כל כמה שניות — בלי לרענן את הדף">0 מתאמנים</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
@@ -907,7 +907,7 @@ var adminChatFabOpen = false;
 var adminDayEdit = null;
 var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
 /** Live Personal Coach brain version — refreshed from GET /api/personal-coach. */
-var ADMIN_UI_VERSION = "1.5.16";
+var ADMIN_UI_VERSION = "2.0";
 var LIVE_COACH_VERSION = "2.3.13";
 var LIVE_COACH_VERSION_FETCHED_AT = 0;
 
