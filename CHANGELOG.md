@@ -1,5 +1,15 @@
 # Changelog
 
+## [Coach 2.3.13] - 2026-08-13
+
+### POL-026 rest-day SET/REPLACE + streak chips (Budget)
+- **SET** (מנוחה ביום X): local before/after streak check — no question if intake streak unchanged; auto-apply.
+- **Streak lengthened:** coach asks with chips **בסדר ככה** / **תזיז מנוחה**; move = second event.
+- **REPLACE** (המנוחה הבאה): Confirm + swap as before; no “keep consecutive” option.
+- **Cost:** week_detail refill gated — max 1×/event, 2× POL-026 rest-move/month; D-path placeholder when capped.
+
+---
+
 ## [Coach 2.3.12] - 2026-08-13
 
 ### Schedule confirm + apply truth

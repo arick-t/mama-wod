@@ -1641,7 +1641,7 @@ function rememberAiClientError(summary) {
  * Keep this badge in sync with the brain actually serving /api/personal-coach.
  * Display: header “COACH · v{COACH_VERSION}” only — do NOT bump app DAILY WORKOUTS / <title> here.
  */
-var COACH_VERSION = "2.3.12";
+var COACH_VERSION = "2.3.13";
 try {
   var __coachVerEl = document.getElementById("coachVersionSub");
   if (__coachVerEl) __coachVerEl.textContent = "COACH · v" + COACH_VERSION;
@@ -2591,7 +2591,8 @@ function renderPprogChat() {
     html =
       '<div class="pprog-msg system"><div class="pprog-bubble system">Ask the coach anything about this brick.</div></div>';
   }
-  if (pprogShouldShowConfirmYesChip(msgs)) html += pprogConfirmYesChipHtml();
+  if (pprogShouldShowRestStreakChoiceChips(msgs)) html += pprogRestStreakChoiceChipHtml();
+  else if (pprogShouldShowConfirmYesChip(msgs)) html += pprogConfirmYesChipHtml();
   html = pprogPushUpgradeCardHtml() + html;
   log.innerHTML = html;
   if (pprogBusy) setPprogTyping(true);
@@ -2646,7 +2647,8 @@ function renderPprogBrickChatLog() {
     html =
       '<div class="pprog-msg system"><div class="pprog-bubble system">Whole brick chat — full plan, schedule, equipment, goals. For one day only, use the green box under that workout.</div></div>';
   }
-  if (pprogShouldShowConfirmYesChip(msgs)) html += pprogConfirmYesChipHtml();
+  if (pprogShouldShowRestStreakChoiceChips(msgs)) html += pprogRestStreakChoiceChipHtml();
+  else if (pprogShouldShowConfirmYesChip(msgs)) html += pprogConfirmYesChipHtml();
   html = pprogPushUpgradeCardHtml() + html;
   log.innerHTML = html;
   if (pprogBusy) setPprogTyping(true);
@@ -4663,9 +4665,17 @@ function sendPprogMessage(ev) {
       if (!pendingBeforeApply) pprogRehydrateBrickSchedulePending(msgs);
       pendingBeforeApply = pprogGetBrickSchedulePending();
       if (pendingBeforeApply) {
-        brickScheduleLocalApplied = pprogApplyBrickScheduleLocal(msgs, { recordEdit: true });
+        var applyLocalOpts = { recordEdit: true };
+        if (pprogIsRestStreakMoveChoice(text)) applyLocalOpts.restStreakMove = true;
+        brickScheduleLocalApplied = pprogApplyBrickScheduleLocal(msgs, applyLocalOpts);
       }
     } catch (eLocalPre) {
+      brickScheduleLocalApplied = false;
+    }
+  } else if (brickMode && text && pendingBeforeApply && pendingBeforeApply.phase === "set_auto" && pendingBeforeApply.autoApply) {
+    try {
+      brickScheduleLocalApplied = pprogApplyBrickScheduleLocal(msgs, { recordEdit: true });
+    } catch (eAutoSet) {
       brickScheduleLocalApplied = false;
     }
   }
@@ -4709,6 +4719,9 @@ function sendPprogMessage(ev) {
     if (pendingSnap) {
       chatBody.brickSchedulePending = true;
       chatBody.brickScheduleNote = String(pendingSnap.note || "").slice(0, 800);
+      if (pendingSnap.phase) chatBody.brickSchedulePhase = pendingSnap.phase;
+      if (pendingSnap.streakInfo) chatBody.brickScheduleStreakInfo = pendingSnap.streakInfo;
+      if (brickScheduleLocalApplied) chatBody.brickScheduleLocalApplied = true;
     }
     var remSnap = buildPprogRemainingBrickSnapshot(store);
     if (remSnap) chatBody.remainingBrick = remSnap;
@@ -4783,6 +4796,13 @@ function sendPprogMessage(ev) {
           chatText = brickScheduleLocalApplied
             ? PPROG_BRICK_SCHEDULE_POST_APPLY_MSG
             : "לא עודכן בלוק האימון. שלח שוב את בקשת הלוז המלאה ואשר עם כן.";
+        } else if (brickScheduleLocalApplied) {
+          chatText = PPROG_BRICK_SCHEDULE_POST_APPLY_MSG;
+        } else if (pendingBeforeApply && pendingBeforeApply.phase === "streak_choice") {
+          chatText = pprogBuildRestStreakChoiceMessage(
+            pendingBeforeApply.streakInfo,
+            schedNote || pendingBeforeApply.note
+          );
         } else {
           chatText = pprogBrickSchedulePreConfirmMsg(schedNote);
         }
@@ -7300,6 +7320,187 @@ function pprogPlanRestDaySwap(intent, existingRestIsos) {
   return { setRest: setRest, clearRest: pprogUniqSortedIsos(clearRest), moves: moves };
 }
 
+function pprogMaxConsecutiveRestStreak(restIsos) {
+  var sorted = pprogUniqSortedIsos(restIsos || []);
+  if (!sorted.length) return 0;
+  var max = 1;
+  var cur = 1;
+  for (var i = 1; i < sorted.length; i++) {
+    if (pprogIsraelDaysBetween(sorted[i - 1], sorted[i]) === 1) cur++;
+    else {
+      if (cur > max) max = cur;
+      cur = 1;
+    }
+  }
+  return Math.max(max, cur);
+}
+
+function pprogLongestRestStreakSpan(restIsos) {
+  var sorted = pprogUniqSortedIsos(restIsos || []);
+  if (!sorted.length) return null;
+  var best = { len: 1, startIso: sorted[0], endIso: sorted[0] };
+  var curStart = sorted[0];
+  var curLen = 1;
+  for (var i = 1; i < sorted.length; i++) {
+    if (pprogIsraelDaysBetween(sorted[i - 1], sorted[i]) === 1) curLen++;
+    else {
+      if (curLen > best.len) best = { len: curLen, startIso: curStart, endIso: sorted[i - 1] };
+      curStart = sorted[i];
+      curLen = 1;
+    }
+  }
+  if (curLen > best.len) best = { len: curLen, startIso: curStart, endIso: sorted[sorted.length - 1] };
+  return best;
+}
+
+function pprogMergeRestIsoSets(existing, added) {
+  return pprogUniqSortedIsos((existing || []).concat(added || []));
+}
+
+function pprogExpandIsoRange(startIso, endIso) {
+  var out = [];
+  var cur = String(startIso || "").slice(0, 10);
+  var end = String(endIso || "").slice(0, 10);
+  while (cur && end && cur <= end) {
+    out.push(cur);
+    cur = pprogAddDaysIso(cur, 1);
+  }
+  return out;
+}
+
+function pprogDetectRestStreakIncrease(existingRestIsos, addedRestIsos) {
+  var beforeMax = pprogMaxConsecutiveRestStreak(existingRestIsos);
+  var merged = pprogMergeRestIsoSets(existingRestIsos, addedRestIsos);
+  var afterMax = pprogMaxConsecutiveRestStreak(merged);
+  if (afterMax <= beforeMax) return null;
+  var span = pprogLongestRestStreakSpan(merged);
+  return {
+    beforeMax: beforeMax,
+    afterMax: afterMax,
+    startIso: span ? span.startIso : null,
+    endIso: span ? span.endIso : null,
+    streakLen: span ? span.len : afterMax,
+  };
+}
+
+function pprogIsSetRestIntent(intent) {
+  return !!(intent && intent.restDays && intent.restDays.length && !intent.replaceNextRest);
+}
+
+function pprogEvaluateBrickSchedulePhase(intent, existingRestIsos) {
+  var existing = pprogUniqSortedIsos(existingRestIsos || []);
+  if (intent && intent.replaceNextRest) {
+    return { phase: "replace_confirm", autoApply: false, intent: intent };
+  }
+  if (pprogIsSetRestIntent(intent)) {
+    var setRest = pprogUniqSortedIsos(intent.restDays);
+    var streakInfo = pprogDetectRestStreakIncrease(existing, setRest);
+    if (!streakInfo) {
+      return { phase: "set_auto", autoApply: true, intent: intent, setRest: setRest };
+    }
+    return {
+      phase: "streak_choice",
+      autoApply: false,
+      intent: intent,
+      setRest: setRest,
+      streakInfo: streakInfo,
+    };
+  }
+  return { phase: "default_confirm", autoApply: false, intent: intent };
+}
+
+function pprogPlanRestStreakShift(existingRestIsos, setRestIsos) {
+  var existing = pprogUniqSortedIsos(existingRestIsos || []);
+  var setRest = pprogUniqSortedIsos(setRestIsos || []);
+  var merged = pprogMergeRestIsoSets(existing, setRest);
+  var beforeMax = pprogMaxConsecutiveRestStreak(existing);
+  var span = pprogLongestRestStreakSpan(merged);
+  if (!span || span.len <= beforeMax) return { clearRest: [] };
+  var streakIsos = pprogExpandIsoRange(span.startIso, span.endIso);
+  var setMap = {};
+  for (var si = 0; si < setRest.length; si++) setMap[setRest[si]] = true;
+  var existingMap = {};
+  for (var ei = 0; ei < existing.length; ei++) existingMap[existing[ei]] = true;
+  var clearIso = null;
+  for (var ki = 0; ki < streakIsos.length; ki++) {
+    if (existingMap[streakIsos[ki]] && !setMap[streakIsos[ki]]) {
+      clearIso = streakIsos[ki];
+      break;
+    }
+  }
+  if (!clearIso) {
+    for (var mi = 0; mi < streakIsos.length; mi++) {
+      if (!setMap[streakIsos[mi]]) {
+        clearIso = streakIsos[mi];
+        break;
+      }
+    }
+  }
+  if (!clearIso && streakIsos.length) clearIso = streakIsos[0];
+  return { clearRest: clearIso ? [clearIso] : [] };
+}
+
+function pprogBuildRestStreakChoiceMessage(streakInfo, noteText) {
+  var info = streakInfo || {};
+  var hebrew = pprogNoteLooksHebrew(noteText || "");
+  var len = info.streakLen || info.afterMax || 2;
+  var startLabel = info.startIso ? (hebrew ? pprogIsoToHebDayLabel(info.startIso) : pprogIsoToEnDayLabel(info.startIso)) : "";
+  var endLabel = info.endIso ? (hebrew ? pprogIsoToHebDayLabel(info.endIso) : pprogIsoToEnDayLabel(info.endIso)) : "";
+  if (hebrew) {
+    var range =
+      startLabel && endLabel && startLabel !== endLabel ? startLabel + "–" + endLabel : startLabel || String(len);
+    return "אחרי השינוי יצאו " + String(len) + " ימי מנוחה ברצף (" + range + "). מה עושים?";
+  }
+  var rangeEn =
+    startLabel && endLabel && startLabel !== endLabel ? startLabel + "–" + endLabel : startLabel || String(len);
+  return "After the change there are " + String(len) + " rest days in a row (" + rangeEn + "). What next?";
+}
+
+var PPROG_REST_STREAK_KEEP_RE = /^בסדר\s*ככה[.!\s]*$/i;
+var PPROG_REST_STREAK_MOVE_RE = /^תזיז\s*מנוחה[.!\s]*$/i;
+
+function pprogIsRestStreakKeepChoice(text) {
+  return PPROG_REST_STREAK_KEEP_RE.test(String(text || "").trim());
+}
+
+function pprogIsRestStreakMoveChoice(text) {
+  return PPROG_REST_STREAK_MOVE_RE.test(String(text || "").trim());
+}
+
+function pprogIsRestStreakApplyChoice(text) {
+  return pprogIsRestStreakKeepChoice(text) || pprogIsRestStreakMoveChoice(text);
+}
+
+function pprogPol026RestMoveWeekDetailCount(store) {
+  var caps = pprogEnsureCostCaps(store);
+  var monthKey = pprogIsraelMonthKey();
+  if (!caps.pol026RestMoveWeekDetails || typeof caps.pol026RestMoveWeekDetails !== "object") {
+    caps.pol026RestMoveWeekDetails = {};
+  }
+  return caps.pol026RestMoveWeekDetails[monthKey] | 0;
+}
+
+function pprogCanPol026RestMoveWeekDetail(store, pending) {
+  if (pending && pending.weekDetailUsed) return false;
+  if (pprogPol026RestMoveWeekDetailCount(store) >= 2) return false;
+  var caps = pprogEnsureCostCaps(store);
+  var monthKey = pprogIsraelMonthKey();
+  var monthlyUsed = (caps.monthlyUnits && caps.monthlyUnits[monthKey]) | 0;
+  if (monthlyUsed >= PPROG_COST_MONTHLY_CAP) return false;
+  return true;
+}
+
+function pprogRecordPol026RestMoveWeekDetail(store, pending) {
+  var caps = pprogEnsureCostCaps(store);
+  var monthKey = pprogIsraelMonthKey();
+  if (!caps.pol026RestMoveWeekDetails || typeof caps.pol026RestMoveWeekDetails !== "object") {
+    caps.pol026RestMoveWeekDetails = {};
+  }
+  caps.pol026RestMoveWeekDetails[monthKey] = (caps.pol026RestMoveWeekDetails[monthKey] | 0) + 1;
+  if (pending) pending.weekDetailUsed = true;
+  savePprogStore(store);
+}
+
 function pprogBuildBrickScheduleConfirmMessage(intent, opts) {
   opts = opts || {};
   var note = String((opts && opts.note) || "");
@@ -7380,17 +7581,23 @@ function pprogBuildBrickScheduleConfirmMessage(intent, opts) {
 function pprogBrickSchedulePreConfirmMsg(noteText) {
   var note = String(noteText || "").trim();
   var todayIso = pprogIsraelTodayIso();
+  var pending = pprogGetBrickSchedulePending();
+  if (pending && pending.phase === "streak_choice" && pending.streakInfo) {
+    return pprogBuildRestStreakChoiceMessage(pending.streakInfo, note || pending.note);
+  }
   if (!note) {
     return "Schedule: keep today's session logged, rest tomorrow, ease load later this week. Confirm?";
   }
-  var intent = pprogParseBrickScheduleIntent(note, { todayIso: todayIso });
-  var store = loadPprogStore();
-  var swapPlan = null;
-  try {
-    ensurePprogBlockFiveWeeks(store);
-    swapPlan = pprogPlanRestDaySwap(intent, pprogListExistingRestIsos(store, todayIso));
-  } catch (eSwap) {
-    swapPlan = null;
+  var intent = (pending && pending.intent) || pprogParseBrickScheduleIntent(note, { todayIso: todayIso });
+  var swapPlan = (pending && pending.swapPlan) || null;
+  if (!swapPlan && intent.replaceNextRest) {
+    try {
+      var store = loadPprogStore();
+      ensurePprogBlockFiveWeeks(store);
+      swapPlan = pprogPlanRestDaySwap(intent, pprogListExistingRestIsos(store, todayIso));
+    } catch (eSwap) {
+      swapPlan = null;
+    }
   }
   return pprogBuildBrickScheduleConfirmMessage(intent, {
     note: note,
@@ -7425,12 +7632,30 @@ function pprogEnsureBrickSchedulePending(noteText) {
   var todayIso = pprogIsraelTodayIso();
   var intent = pprogParseBrickScheduleIntent(note, { todayIso: todayIso });
   var preserveDays = pprogCaptureSchedulePreserveDays(store, intent);
+  var existingRests = pprogListExistingRestIsos(store, todayIso);
+  var phaseEval = pprogEvaluateBrickSchedulePhase(intent, existingRests);
+  var swapPlan = null;
+  if (phaseEval.phase === "replace_confirm") {
+    try {
+      swapPlan = pprogPlanRestDaySwap(intent, existingRests);
+    } catch (eSwapPlan) {
+      swapPlan = null;
+    }
+  }
   store.brickSchedulePending = {
     note: note,
     sessionDate: todayIso,
     askedAt: new Date().toISOString(),
     intent: intent,
     preserveDays: preserveDays,
+    phase: phaseEval.phase,
+    autoApply: !!phaseEval.autoApply,
+    setRest: phaseEval.setRest || [],
+    streakInfo: phaseEval.streakInfo || null,
+    swapPlan: swapPlan,
+    existingRests: existingRests,
+    weekDetailUsed: false,
+    restMoveEventCount: 1,
   };
   savePprogStore(store);
   try {
@@ -7456,10 +7681,11 @@ function pprogRehydrateBrickSchedulePending(msgs) {
   return pprogEnsureBrickSchedulePending(note);
 }
 
-/** Confirm (כן) or implement (תממש את השינויים…) — apply, never re-ask. */
+/** Confirm (כן) / streak chips / implement — apply calendar, never re-ask. */
 function pprogIsScheduleApplyIntent(text) {
   var t = String(text || "").trim();
   if (!t) return false;
+  if (pprogIsRestStreakApplyChoice(t)) return true;
   if (pprogIsExplicitConfirm(t)) return true;
   if (/^(תממש|ממש|יישם|יישום|בצע|ביצוע|קדימה|עשה\s*זאת)(\s|$|[.!])/i.test(t)) return true;
   if (
@@ -7490,9 +7716,25 @@ function pprogApplyBrickScheduleLocal(msgs, opts) {
       pprogApplyStandingIntakeNote(note);
     } catch (eNote) {}
   }
+  var applyOpts = {
+    recordEdit: opts.recordEdit !== false,
+    clearRestIsos: opts.clearRestIsos || (pending && pending.clearRestIsos) || [],
+    skipSwap: !!(pending && pending.phase === "set_auto"),
+  };
+  if (pending && pending.phase === "streak_choice" && opts.restStreakMove) {
+    var shiftPlan = pprogPlanRestStreakShift(pending.existingRests || [], pending.setRest || []);
+    applyOpts.clearRestIsos = shiftPlan.clearRest || [];
+    var storeMove = loadPprogStore();
+    if (storeMove.brickSchedulePending) {
+      storeMove.brickSchedulePending.clearRestIsos = applyOpts.clearRestIsos;
+      storeMove.brickSchedulePending.restMoveEventCount =
+        (storeMove.brickSchedulePending.restMoveEventCount | 0) + 1;
+      savePprogStore(storeMove);
+    }
+  }
   var ok = false;
   try {
-    ok = !!pprogApplyPol026CalendarTruth(msgs, { recordEdit: opts.recordEdit !== false });
+    ok = !!pprogApplyPol026CalendarTruth(msgs, applyOpts);
   } catch (eCal) {
     ok = false;
   }
@@ -7541,10 +7783,15 @@ function pprogIsExplicitConfirm(text) {
   return PPROG_EXPLICIT_CONFIRM_RE.test(String(text || "").trim());
 }
 
+function pprogCoachTextAsksRestStreakChoice(text) {
+  return /מה\s+עושים\s*\?/.test(String(text || ""));
+}
+
 /** Coach Confirm? / אישור line — athlete can tap כן instead of typing. */
 function pprogCoachTextAsksConfirm(text) {
   var t = String(text || "").trim();
   if (!t) return false;
+  if (pprogCoachTextAsksRestStreakChoice(t)) return false;
   if (/^done\.?$/i.test(t)) return false;
   if (t === PPROG_BRICK_SCHEDULE_POST_APPLY_MSG) return false;
   if (/\bconfirm\s*\?/i.test(t)) return true;
@@ -7576,6 +7823,63 @@ function pprogConfirmYesChipHtml() {
     'onclick="sendPprogConfirmYes(event)" onmousedown="event.preventDefault()" ' +
     'title="שלח כן" aria-label="שלח כן">כן</button></div>'
   );
+}
+
+function pprogShouldShowRestStreakChoiceChips(msgs) {
+  if (pprogBusy) return false;
+  var list = Array.isArray(msgs) ? msgs : [];
+  for (var i = list.length - 1; i >= 0; i--) {
+    var m = list[i];
+    if (!m) continue;
+    var role = m.role;
+    var text = typeof pprogChatDisplayText === "function" ? pprogChatDisplayText(m.text || "") : String(m.text || "");
+    if (!String(text || "").trim()) continue;
+    if (role === "user" || role === "error") return false;
+    if (role === "model" || role === "coach") return pprogCoachTextAsksRestStreakChoice(text);
+  }
+  return false;
+}
+
+function pprogRestStreakChoiceChipHtml() {
+  return (
+    '<div class="pprog-confirm-yes-row" role="group" aria-label="Rest streak choice">' +
+    '<button type="button" class="pprog-confirm-yes-btn" id="pprogRestStreakKeepBtn" ' +
+    'onclick="sendPprogRestStreakKeep(event)" onmousedown="event.preventDefault()" ' +
+    'title="בסדר ככה" aria-label="בסדר ככה">בסדר ככה</button>' +
+    '<button type="button" class="pprog-confirm-yes-btn" id="pprogRestStreakMoveBtn" ' +
+    'onclick="sendPprogRestStreakMove(event)" onmousedown="event.preventDefault()" ' +
+    'title="תזיז מנוחה" aria-label="תזיז מנוחה">תזיז מנוחה</button></div>'
+  );
+}
+
+function sendPprogRestStreakKeep(ev) {
+  if (ev) {
+    try {
+      ev.preventDefault();
+    } catch (e0) {}
+    try {
+      ev.stopPropagation();
+    } catch (e1) {}
+  }
+  if (pprogBusy) return false;
+  var inp = document.getElementById("pprogChatInput");
+  if (inp) inp.value = "בסדר ככה";
+  return sendPprogMessage(ev || { preventDefault: function () {} });
+}
+
+function sendPprogRestStreakMove(ev) {
+  if (ev) {
+    try {
+      ev.preventDefault();
+    } catch (e0) {}
+    try {
+      ev.stopPropagation();
+    } catch (e1) {}
+  }
+  if (pprogBusy) return false;
+  var inp = document.getElementById("pprogChatInput");
+  if (inp) inp.value = "תזיז מנוחה";
+  return sendPprogMessage(ev || { preventDefault: function () {} });
 }
 
 /** One-tap כן for Confirm? questions (no / לא still typed freely). */
@@ -7963,9 +8267,18 @@ function pprogApplyPol026CalendarTruth(msgs, opts) {
   var tomorrowIso = pprogAddDaysIso(today, 1);
   var preserveDays = (pending && pending.preserveDays) || pprogCaptureSchedulePreserveDays(store, intent);
   var existingRests = pprogListExistingRestIsos(store, today);
-  var swapPlan = pprogPlanRestDaySwap(intent, existingRests);
+  var swapPlan =
+    (pending && pending.swapPlan) ||
+    (opts.skipSwap || !intent.replaceNextRest
+      ? { setRest: intent.restDays || [], clearRest: [], moves: [] }
+      : pprogPlanRestDaySwap(intent, existingRests));
   var moveToMap = {};
   var moveFromMap = {};
+  var clearRestMap = {};
+  var clearList = opts.clearRestIsos || (pending && pending.clearRestIsos) || [];
+  for (var ci = 0; ci < clearList.length; ci++) {
+    clearRestMap[String(clearList[ci]).slice(0, 10)] = true;
+  }
   for (var mi = 0; mi < (swapPlan.moves || []).length; mi++) {
     var mv = swapPlan.moves[mi];
     if (!mv) continue;
@@ -8092,6 +8405,8 @@ function pprogApplyPol026CalendarTruth(msgs, opts) {
         if (clearCorruptLoggedToday(week, dk, prev, wi)) touched = true;
       } else if (iso === tomorrowIso && intent.tomorrowAction === "keep") {
         if (restoreBest(week, dk, tomorrowIso)) touched = true;
+      } else if (clearRestMap[iso]) {
+        if (writeTrainingFromMove(week, dk, iso, wi)) touched = true;
       } else if (moveToMap[iso]) {
         if (writeTrainingFromMove(week, dk, moveToMap[iso], wi)) touched = true;
       } else if (restIsoMap[iso] || moveFromMap[iso]) {
@@ -8126,6 +8441,9 @@ function pprogApplyPol026CalendarTruth(msgs, opts) {
       if (moveToMap[iso2]) {
         if (isPprogRestDay(dk2, day2, week2)) verified = false;
       }
+      if (clearRestMap[iso2]) {
+        if (isPprogRestDay(dk2, day2, week2)) verified = false;
+      }
     }
   }
   if (!verified) return false;
@@ -8145,7 +8463,10 @@ function pprogApplyPol026CalendarTruth(msgs, opts) {
     for (var rfi = 0; rfi < refillKeys.length; rfi++) {
       var rwi = Number(refillKeys[rfi]);
       if (typeof requestPprogWeekDetail === "function" && isFinite(rwi)) {
-        requestPprogWeekDetail(rwi, false);
+        if (pprogCanPol026RestMoveWeekDetail(store, pending)) {
+          pprogRecordPol026RestMoveWeekDetail(store, pending);
+          requestPprogWeekDetail(rwi, false);
+        }
       }
     }
   } catch (eFill) {}

@@ -261,13 +261,14 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - **Required behavior:**
   1. **Ingest the work.** Parse movements, loads, volume, duration. Treat it as real completed training load for the session date named by the athlete (**היום / אתמול / today / yesterday**) — not chit-chat, not an injury event.
   2. **Calendar truth.** Log on the reported session date only. If they ask for a workout **today** after logging **yesterday**, do **not** plant yesterday’s session onto today — keep/restore today’s programmed day. If they request Rest on a later day (e.g. tomorrow / Friday), that day becomes Rest after Confirm?
-  2b. **Rest-day move (HARD).** Phrases like “המנוחה הבאה / next rest day will be X” mean **replace/move**, not stack: set Rest on X and move the displaced mid-week rest’s neighbor (prefer same week, non-Sunday, nearest) back to a training day by **swapping** X’s former workout onto that day — never leave two consecutive rests from a single move.
-  2c. **Confirm? must name the rest-shift decision.** When replace/move: ask explicitly whether to shift the other rest day(s) accordingly (e.g. “שינית יום מנוחה לשלישי — להזיז את המנוחה מרביעי בהתאם?”). Do not hide the move inside a generic schedule summary.
-  2d. **Apply truth (HARD).** Post-apply success line only after local calendar verification (log date, today not corrupt LOGGED, named rests, cleared displaced rest). Never claim “בוצעו השינויים” if the block did not change.
+  2b. **Rest-day classification (HARD).** **SET** = “מנוחה ביום X” without “המנוחה הבאה”. **REPLACE** = “המנוחה הבאה / next rest day will be X” → always move (swap), never offer “keep consecutive rests”.
+  2c. **SET path — local streak check first (0 AI).** Compare max consecutive rest **before vs after** the SET (intake baseline rests count in “before”). If streak does **not** lengthen → apply X=Rest only locally; no question about Y; no swap; no week_detail. If streak **lengthens** → ask once: “אחרי השינוי יצאו N ימי מנוחה ברצף… מה עושים?” with chips **בסדר ככה** / **תזיז מנוחה** (conscious opt-in to consecutive rest allowed only here). **תזיז מנוחה** = second event on athlete account.
+  2d. **REPLACE path — Confirm before swap.** Short explicit Confirm naming the move; second question only if local calc still broken after move.
+  2e. **Apply truth (HARD).** Post-apply success line only after local calendar verification. Never claim “בוצעו השינויים” if the block did not change.
   3. **Weigh into the plan.** After Confirm?, surgically ease overlapping lifts / engine / skill on upcoming remaining days so the extra session is accounted for in the general plan. Surgical only (POL-023) — no full brick redesign.
-  4. **Chat (POL-022).** One short Confirm? covering: log session-date + today workout if requested + explicit rest-shift question + soft forward bias. Forbidden: equipment re-ask, goals review, “how are you feeling”, multi-question intake loops.
+  4. **Chat (POL-022).** Ultra-brief; default reply chips where possible. Forbidden: equipment re-ask, goals review, “how are you feeling”, multi-question intake loops.
   5. **Safety exception.** Skipping/moving Rest or logging an unplanned session must **never** trigger the injury / physical-risks disclaimer. That disclaimer is only for pain / injury / distress / doubt about a movement.
-  6. **Budget gates (HARD):** Apply only after explicit Confirm. Forbidden by default: `generate_block`, Soft Upgrade, large rebuild B, full-brick `BLOCK_JSON`. After Confirm: one surgical `WEEK_JSON`/`DAY_JSON` pass only (target ~3 cost units). If no surgical JSON — do **not** auto large-rebuild; client may set tomorrow→Rest locally. Keep `[ATHLETE_EXTRA_SESSIONS]` short (≤2 notes).
+  6. **Budget gates (HARD):** Local apply first (0 AI). Max **1× week_detail** per move/swap event when a training day opens without backup; max **2× POL-026 rest-move week_detail** per athlete / Israel month (inside monthly envelope). No budget → placeholder Training on opened day, no immediate LLM (D). Forbidden: `generate_block`, Soft Upgrade, large rebuild, full `BLOCK_JSON`. No stub/template instead of quality week_detail (POL-020).
 - **Examples:**  
   Good: “Schedule: keep today’s session logged, rest tomorrow, ease squat/hinge/engine later this week. Confirm?” → after yes → WEEK_JSON with tomorrow Rest + light bias → “בוצעו השינויים נא לוודא בבלוק האימון” (no change recap in chat).  
   Good (Hebrew schedule shift): athlete trained today, keep tomorrow’s workout, rest Friday + next Tuesday → pre-confirm in Hebrew mirrors parsed intent (“לוז: … מחר אימון לפי לוח רגיל, מנוחה ביום שישי וביום שלישי … לאשר?”) → after yes → calendar applies logged today + named rest days only (tomorrow unchanged when “keep”).  
@@ -275,6 +276,7 @@ Copy a block below. Keep IDs unique (`POL-###`).
   Bad: multi-turn equipment/goals/feeling loop with no calendar apply.
 - **Added:** 2026-08-09 — case study: spontaneous session on rest day must be processed into the plan
 - **Updated:** 2026-08-09 — Budget approved-with-conditions (confirm-only apply; no block/rebuild default)
+- **Updated:** 2026-08-13 — Budget: SET vs REPLACE; streak check before/after; chips בסדר ככה/תזיז מנוחה; week_detail caps 1/event 2/month
 
 ### POL-027 — Floor/bodyweight baseline + equipment is additive (not a closed list)
 - **Type:** HARD

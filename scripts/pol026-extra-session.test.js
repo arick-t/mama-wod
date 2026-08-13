@@ -19,6 +19,12 @@ const {
   buildBrickScheduleConfirmMessage,
   buildLoggedSessionPartsFromNote,
   extractLoggedWorkoutSegments,
+  evaluateBrickSchedulePhase,
+  detectRestStreakIncrease,
+  planRestStreakShift,
+  buildRestStreakChoiceMessage,
+  isRestStreakKeepChoice,
+  isRestStreakMoveChoice,
   POL026_DEFAULT_CONFIRM,
   BRICK_SCHEDULE_POST_APPLY_MSG,
 } = require("../lib/coach-pol026-gates.js");
@@ -63,13 +69,16 @@ ok(
 ok("loggedExtra not Rest", /pprogDayIsLoggedExtraSession/.test(index) && /athlete-logged session wins/.test(index));
 ok("week_detail preserves logged day", /week_detail must never wipe an athlete-logged/.test(index));
 ok("calendar logged-extra class", /logged-extra/.test(index) && /pprog-logged-extra-flag/.test(index));
-ok("coach version 2.3.12", /COACH_VERSION = "2\.3\.12"/.test(index) && /COACH_VERSION = "2\.3\.12"/.test(pc));
+ok("coach version 2.3.13", /COACH_VERSION = "2\.3\.13"/.test(index) && /COACH_VERSION = "2\.3\.13"/.test(pc));
 ok("client workout extract", /pprogExtractLoggedWorkoutSegments/.test(index));
 ok("client preserve days", /pprogCaptureSchedulePreserveDays/.test(index));
 ok("client rest-day swap", /pprogPlanRestDaySwap/.test(index));
 ok("client day backups", /scheduleDayBackups/.test(index));
 ok("client apply verify before success", /verified/.test(index) && /לא עודכן בלוק האימון/.test(index));
 ok("client Hebrew post-apply", /PPROG_BRICK_SCHEDULE_POST_APPLY_MSG/.test(index));
+ok("client rest streak chips", /pprogRestStreakChoiceChipHtml/.test(index) && /sendPprogRestStreakKeep/.test(index));
+ok("client streak phase eval", /pprogEvaluateBrickSchedulePhase/.test(index));
+ok("client pol026 week_detail cap", /pprogCanPol026RestMoveWeekDetail/.test(index));
 ok("client schedule rest-shift detect", /pprogNoteIsScheduleRestShift/.test(index));
 ok("client brickSchedulePending store", /brickSchedulePending/.test(index));
 ok("client local schedule apply", /pprogApplyBrickScheduleLocal/.test(index));
@@ -188,5 +197,38 @@ ok(
   "morning confirm names Tue/Wed shift",
   /שלישי/.test(morningConfirmWithSwap) && /רביעי/.test(morningConfirmWithSwap) && /להזיז/.test(morningConfirmWithSwap)
 );
+
+const existingFriSat = ["2026-08-14", "2026-08-15"];
+ok("streak: Fri+Sat baseline max 2", detectRestStreakIncrease(existingFriSat, ["2026-08-13"]) !== null);
+ok(
+  "streak: Fri+Sat + Thu => 3",
+  detectRestStreakIncrease(existingFriSat, ["2026-08-13"]).afterMax === 3
+);
+ok(
+  "streak: isolated Wed rest no increase vs Fri+Sat",
+  detectRestStreakIncrease(existingFriSat, ["2026-08-12"]) === null
+);
+
+const setOnlyIntent = parseBrickScheduleIntent("מנוחה ביום חמישי", { todayIso: "2026-08-13" });
+const setPhaseNoStreak = evaluateBrickSchedulePhase(setOnlyIntent, ["2026-08-16", "2026-08-17"]);
+ok("SET phase auto when no streak increase", setPhaseNoStreak.phase === "set_auto" && setPhaseNoStreak.autoApply === true);
+
+const setPhaseStreak = evaluateBrickSchedulePhase(
+  { restDays: ["2026-08-13"], replaceNextRest: false, easeForward: false },
+  existingFriSat
+);
+ok("SET phase streak_choice when lengthened", setPhaseStreak.phase === "streak_choice");
+
+ok("streak keep chip text", isRestStreakKeepChoice("בסדר ככה"));
+ok("streak move chip text", isRestStreakMoveChoice("תזיז מנוחה"));
+
+const streakMsg = buildRestStreakChoiceMessage(
+  { streakLen: 3, startIso: "2026-08-13", endIso: "2026-08-15" },
+  { hebrew: true }
+);
+ok("streak choice message Hebrew", /מה עושים/.test(streakMsg) && /3/.test(streakMsg));
+
+const shiftPlan = planRestStreakShift(existingFriSat, ["2026-08-13"]);
+ok("streak shift clears old rest not new SET", shiftPlan.clearRest.indexOf("2026-08-14") >= 0);
 
 console.log("All POL-026 / brick schedule brief-reply checks passed.");

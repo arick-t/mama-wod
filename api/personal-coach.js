@@ -30,7 +30,7 @@
  * Groq keeps chat alive when the Gemini key is missing/invalid (common GitHub Pages + Vercel setup).
  * Programming stays Gemini-only (POL-020).
  */
-const COACH_VERSION = "2.3.12";
+const COACH_VERSION = "2.3.13";
 const fs = require("fs");
 const path = require("path");
 function resolveAppVersion() {
@@ -574,6 +574,8 @@ const {
   enforcePol026BrickChatResponse,
   enforceBrickScheduleChatResponse,
   parseBrickScheduleIntent,
+  planRestDaySwap,
+  evaluateBrickSchedulePhase,
   buildBrickScheduleConfirmMessage,
   BRICK_SCHEDULE_POST_APPLY_MSG,
 } = require("../lib/coach-pol026-gates.js");
@@ -2431,10 +2433,23 @@ module.exports = async function handler(req, res) {
     const pol026Confirmed = pol026Turn && isScheduleApplyIntent(lastUserLine);
     const scheduleNote = String(body.brickScheduleNote || latestBrickScheduleNote(messages) || "").slice(0, 800);
     const todayIso = String(body.israelToday || "").slice(0, 10) || undefined;
+    let schedulePhase = body.brickSchedulePhase ? String(body.brickSchedulePhase) : "";
+    let streakInfo = body.brickScheduleStreakInfo || null;
+    if (!schedulePhase && scheduleNote && todayIso) {
+      try {
+        const intentProbe = parseBrickScheduleIntent(scheduleNote, { todayIso: todayIso });
+        const phaseEval = evaluateBrickSchedulePhase(intentProbe, body.existingRestIsos || []);
+        schedulePhase = phaseEval.phase;
+        streakInfo = phaseEval.streakInfo || streakInfo;
+      } catch (ePhase) {}
+    }
     const pol026GateOpts = {
       confirmed: pol026Confirmed,
       scheduleNote: scheduleNote,
       todayIso: todayIso,
+      phase: schedulePhase,
+      streakInfo: streakInfo,
+      localApplied: body.brickScheduleLocalApplied === true,
     };
     /* Extract plan JSON from raw model text BEFORE forcing athlete-facing Done./Confirm? */
     let block = pol026Turn ? extractBlockJson(rawModel) : null;
