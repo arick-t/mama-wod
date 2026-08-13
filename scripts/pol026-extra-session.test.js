@@ -15,6 +15,7 @@ const {
   enforcePol026BrickChatResponse,
   enforceBrickScheduleChatResponse,
   parseBrickScheduleIntent,
+  planRestDaySwap,
   buildBrickScheduleConfirmMessage,
   buildLoggedSessionPartsFromNote,
   extractLoggedWorkoutSegments,
@@ -26,6 +27,7 @@ const root = path.join(__dirname, "..");
 const policy = require("../api/coach-policy.js");
 const pc = fs.readFileSync(path.join(root, "api/personal-coach.js"), "utf8");
 const index = fs.readFileSync(path.join(root, "index.html"), "utf8");
+const normalizeBlock = fs.readFileSync(path.join(root, "lib/normalize-pprog-block.js"), "utf8");
 const rules = fs.readFileSync(
   path.join(root, "experiments/personal-coach/coach-policy-rules.md"),
   "utf8"
@@ -52,13 +54,19 @@ ok("client calendar truth", /function pprogApplyPol026CalendarTruth/.test(index)
 ok("client schedule intent parser", /function pprogParseBrickScheduleIntent/.test(index));
 ok("client dynamic pre-confirm", /function pprogBrickSchedulePreConfirmMsg/.test(index));
 ok("client logged session builder", /function pprogBuildLoggedSessionParts/.test(index));
-ok("loggedExtra survives normalize", /loggedExtraSession/.test(index) && /POL-026: logged extra session must survive/.test(index));
+ok(
+  "loggedExtra survives normalize",
+  /loggedExtraSession/.test(index) &&
+    (/POL-026: logged extra session must survive/.test(index) ||
+      /POL-026: logged extra session must survive/.test(normalizeBlock))
+);
 ok("loggedExtra not Rest", /pprogDayIsLoggedExtraSession/.test(index) && /athlete-logged session wins/.test(index));
 ok("week_detail preserves logged day", /week_detail must never wipe an athlete-logged/.test(index));
 ok("calendar logged-extra class", /logged-extra/.test(index) && /pprog-logged-extra-flag/.test(index));
-ok("coach version 2.3.10", /COACH_VERSION = "2\.3\.10"/.test(index) && /COACH_VERSION = "2\.3\.10"/.test(pc));
+ok("coach version 2.3.11", /COACH_VERSION = "2\.3\.11"/.test(index) && /COACH_VERSION = "2\.3\.11"/.test(pc));
 ok("client workout extract", /pprogExtractLoggedWorkoutSegments/.test(index));
 ok("client preserve days", /pprogCaptureSchedulePreserveDays/.test(index));
+ok("client rest-day swap", /pprogPlanRestDaySwap/.test(index));
 ok("client Hebrew post-apply", /PPROG_BRICK_SCHEDULE_POST_APPLY_MSG/.test(index));
 ok("client schedule rest-shift detect", /pprogNoteIsScheduleRestShift/.test(index));
 ok("client brickSchedulePending store", /brickSchedulePending/.test(index));
@@ -148,5 +156,24 @@ const builtLogged = buildLoggedSessionPartsFromNote("wed", userWorkoutNote);
 ok("logged parts split engine + complex", builtLogged.parts.length >= 2);
 ok("logged complex joins movements", /Power clean \+ front squat/.test(builtLogged.parts[1].lines[0]));
 ok("logged complex has rounds", /6\s*סיבובים/.test(builtLogged.parts[1].lines.join(" ")));
+
+const morningNote =
+  "בסוף יצא שאתמול כן התאמנתי / האימון / 15 דקות ריצת פארטלג / Power clean + front squat / אני צריך אם ככה אימון להיום , יום מנוחה מחר ביום שישי, / לאחר מכן יום המנוחה הבא יהיה יום שלישי בשבוע הבא / נא סדר את זה בהתאם";
+const morningIntent = parseBrickScheduleIntent(morningNote, { todayIso: "2026-08-13" });
+ok("morning: log yesterday not today", morningIntent.logIso === "2026-08-12" && !morningIntent.logToday);
+ok("morning: need workout today", morningIntent.todayAction === "need_workout");
+ok("morning: rest tomorrow Friday", morningIntent.tomorrowAction === "rest" && morningIntent.restDays.indexOf("2026-08-14") >= 0);
+ok("morning: next rest Tuesday", morningIntent.restDays.indexOf("2026-08-18") >= 0);
+ok("morning: replaceNextRest", morningIntent.replaceNextRest === true);
+const morningSwap = planRestDaySwap(morningIntent, ["2026-08-16", "2026-08-19"]);
+ok("morning: swap clears Wed not Sunday", morningSwap.clearRest.indexOf("2026-08-19") >= 0 && morningSwap.clearRest.indexOf("2026-08-16") < 0);
+ok("morning: move Tue workout onto Wed", morningSwap.moves.some(function (m) { return m.from === "2026-08-18" && m.to === "2026-08-19"; }));
+const morningConfirm = buildBrickScheduleConfirmMessage(morningIntent, {
+  note: morningNote,
+  todayIso: "2026-08-13",
+});
+ok("morning confirm mentions yesterday logged", /אתמול/.test(morningConfirm));
+ok("morning confirm mentions workout today", /אימון להיום/.test(morningConfirm));
+ok("morning confirm no plant-today log", !/לשמור את אימון היום/.test(morningConfirm));
 
 console.log("All POL-026 / brick schedule brief-reply checks passed.");

@@ -1,5 +1,13 @@
 # Changelog
 
+## [Coach 2.3.11] - 2026-08-13
+
+### POL-026 אתמול vs היום + rest-day move (no consecutive pile-up)
+- **אתמול** — log session on yesterday; **אימון להיום** restores/keeps today’s programmed workout (never plant yesterday’s WOD onto today).
+- **המנוחה הבאה** — replace/move semantics: set new rest day + swap former workout onto the displaced mid-week rest (prefer same week, non-Sunday) so Tue+Wed don’t both stay Rest.
+
+---
+
 ## [Coach 2.3.10] - 2026-08-12
 
 ### POL-026 logged session + keep-tomorrow restore

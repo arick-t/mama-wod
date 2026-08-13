@@ -259,10 +259,11 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - **Scope:** whole-program / brick chat after intake; mid-brick WEEK_JSON / DAY_JSON after Confirm?
 - **Trigger:** athlete reports they already trained today (especially instead of a planned Rest) and/or pastes the session they performed; may also ask to move Rest to another day
 - **Required behavior:**
-  1. **Ingest the work.** Parse movements, loads, volume, duration. Treat it as real completed training load for Israel-today — not chit-chat, not an injury event.
-  2. **Calendar truth.** Keep Israel-today as the performed session (do **not** flip today to Rest). If they request Rest on a later day (e.g. tomorrow), that later day becomes Rest after Confirm?
+  1. **Ingest the work.** Parse movements, loads, volume, duration. Treat it as real completed training load for the session date named by the athlete (**היום / אתמול / today / yesterday**) — not chit-chat, not an injury event.
+  2. **Calendar truth.** Log on the reported session date only. If they ask for a workout **today** after logging **yesterday**, do **not** plant yesterday’s session onto today — keep/restore today’s programmed day. If they request Rest on a later day (e.g. tomorrow / Friday), that day becomes Rest after Confirm?
+  2b. **Rest-day move (HARD).** Phrases like “המנוחה הבאה / next rest day will be X” mean **replace/move**, not stack: set Rest on X and move the displaced mid-week rest’s neighbor (prefer same week, non-Sunday, nearest) back to a training day by **swapping** X’s former workout onto that day — never leave two consecutive rests from a single move.
   3. **Weigh into the plan.** After Confirm?, surgically ease overlapping lifts / engine / skill on upcoming remaining days so the extra session is accounted for in the general plan. Surgical only (POL-023) — no full brick redesign.
-  4. **Chat (POL-022).** One short Confirm? covering: log today + rest-shift (if any) + soft forward bias. Forbidden: equipment re-ask, goals review, “how are you feeling”, multi-question intake loops.
+  4. **Chat (POL-022).** One short Confirm? covering: log session-date + today workout if requested + rest-shift/move + soft forward bias. Forbidden: equipment re-ask, goals review, “how are you feeling”, multi-question intake loops.
   5. **Safety exception.** Skipping/moving Rest or logging an unplanned session must **never** trigger the injury / physical-risks disclaimer. That disclaimer is only for pain / injury / distress / doubt about a movement.
   6. **Budget gates (HARD):** Apply only after explicit Confirm. Forbidden by default: `generate_block`, Soft Upgrade, large rebuild B, full-brick `BLOCK_JSON`. After Confirm: one surgical `WEEK_JSON`/`DAY_JSON` pass only (target ~3 cost units). If no surgical JSON — do **not** auto large-rebuild; client may set tomorrow→Rest locally. Keep `[ATHLETE_EXTRA_SESSIONS]` short (≤2 notes).
 - **Examples:**  
