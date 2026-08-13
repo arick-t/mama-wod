@@ -113,15 +113,15 @@ ok("handoff stores lastHandoffPath", /lastHandoffPath/.test(handoff));
 ok("admin create does not send join mail", !/sendAdminIntakeCompleteMail/.test(handoff));
 ok("handoff inline in athlete card", /renderHandoffInline/.test(adminHtml) && /ath-handoff-inline/.test(adminHtml));
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
-ok("admin version 1.5.14", /DUCK-WOD Admin · 1\.5\.14/.test(adminHtml));
+ok("admin version 1.5.15", /DUCK-WOD Admin · 1\.5\.15/.test(adminHtml));
 ok("admin wired to coach 2.3.13", /LIVE_COACH_VERSION = "2\.3\.13"/.test(adminHtml));
 ok("app coach 2.3.13", /COACH_VERSION = "2\.3\.13"/.test(index));
 ok(
   "admin shows Admin + Coach versions",
-  /Admin 1\.5\.14/.test(adminHtml) &&
+  /Admin 1\.5\.15/.test(adminHtml) &&
     /ver-coach/.test(adminHtml) &&
     /syncAdminVersionLabels/.test(adminHtml) &&
-    /ADMIN_UI_VERSION = "1\.5\.14"/.test(adminHtml)
+    /ADMIN_UI_VERSION = "1\.5\.15"/.test(adminHtml)
 );
 ok(
   "admin intake uses pprog classes 1:1",
@@ -206,6 +206,8 @@ ok(
     /existing\.declarationAcceptedAt \|\|\s*""/.test(snap)
 );
 ok("snapshot size fits full brick", /MAX_SNAPSHOT_BYTES = 256 \* 1024/.test(snap));
+ok("admin_save_day local persist", /admin_save_day/.test(snap) && /function adminPprogEditSave/.test(adminHtml));
+ok("admin edit pencil wired", /allowEdit:\s*true/.test(adminHtml) && /pprog-edit-btn/.test(adminHtml));
 ok("fill all missing weeks", /Fill every week that still lacks real parts/.test(index));
 ok("push snapshot after week fill", /pprogPushAdminSnapshotDebounced\(s2, "week_fill"\)/.test(index));
 ok(

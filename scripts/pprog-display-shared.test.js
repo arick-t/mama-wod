@@ -97,7 +97,11 @@ ok("admin normalizes on load", /NormalizePprogBlock\.normalize/.test(admin));
 ok("T3 debounce helper", /function pprogPushAdminSnapshotDebounced/.test(index));
 ok("T3 after DONE", /pprogPushAdminSnapshotDebounced\(store, "finish_done"\)/.test(index));
 ok("T3 after Terms", /pprogPushAdminSnapshotDebounced\(store, "legal_terms"\)/.test(index));
-ok("T4 not present — no admin write-back", !/adminPprogReviseDay|adminApplyDayEdit/.test(admin));
+ok("T4 device write-back not present", !/pendingAdminDayEdit|athlete_pull_admin_day/.test(admin) && !/adminPprogReviseDay/.test(admin));
+ok("admin local day edit UI", /allowEdit:\s*true/.test(admin) && /adminPprogStartEdit/.test(admin) && /pprog-edit-btn/.test(admin));
+ok("admin save day hook no LLM", /function adminPprogEditSave/.test(admin) && /admin_save_day/.test(admin));
 ok("pending parts copy has a space after Session pending", /Session pending\.<\/strong> Overview/.test(fs.readFileSync(path.join(root, "lib", "pprog-display.js"), "utf8")));
+ok("edit pencil only when allowEdit", /pprog-edit-btn/.test(PprogDisplay.renderDayCardHtml(block, block.weeks[0], 0, "mon", { allowEdit: true, readOnly: true, showFooter: false })) && !/pprog-edit-btn/.test(PprogDisplay.renderDayCardHtml(block, block.weeks[0], 0, "mon", { readOnly: true, showFooter: false })));
+ok("edit mode has Note and Work line chips", /＋ Note/.test(PprogDisplay.renderDayCardHtml(block, block.weeks[0], 0, "mon", { allowEdit: true, editing: true, editDraft: { rest: false, parts: [{ title: "Part A", notes: [""], format: "", work: [""] }] }, readOnly: true, showFooter: false })) && /＋ Work line/.test(PprogDisplay.renderDayCardHtml(block, block.weeks[0], 0, "mon", { allowEdit: true, editing: true, editDraft: { rest: false, parts: [{ title: "Part A", notes: [""], format: "", work: [""] }] }, readOnly: true, showFooter: false })));
 
 console.log("All shared pprog-display checks passed.");

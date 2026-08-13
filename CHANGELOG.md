@@ -1,5 +1,14 @@
 # Changelog
 
+## [Admin 1.5.15] - 2026-08-13
+
+### Edit workout on the admin day card (UI only — no device push)
+- Pencil beside the day date (`Tue · 25 August`) enters in-card edit
+- Edit PART A/B: title, notes, format, work lines · ＋ Note · ＋ Work line · ＋ Add Part
+- REST DAY: secondary pencil; Add Part converts to a training day
+- Cancel / Save persist the day on the admin snapshot (`admin_save_day`) — **not** T4 to the phone
+- 0 `generate_*` / `revise_*`
+
 ## [Admin 1.5.14] - 2026-08-13
 
 ### Founder + coach-brain approval (A–D)

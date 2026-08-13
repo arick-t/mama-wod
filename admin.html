@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DUCK-WOD Admin · 1.5.14</title>
+<title>DUCK-WOD Admin · 1.5.15</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -416,6 +416,70 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .pprog-day-card .section-lines li:before{content:none}
 .pprog-empty{color:var(--text-meta);text-align:center;padding:12px;font-size:.9em}
 .pprog-rest-day-title{color:var(--coach);font-weight:700;font-size:1.05em;margin:8px 0}
+.pprog-day-card .card-header{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.pprog-day-head-main{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+.pprog-day-card.is-editing{border:1px solid rgba(155,107,184,.4);border-radius:12px;padding:12px 10px 14px}
+.pprog-edit-btn{
+  appearance:none;display:inline-flex;align-items:center;justify-content:center;
+  width:28px;height:28px;padding:0;border-radius:50%;flex-shrink:0;
+  background:var(--bg-elev);border:1px solid var(--line);color:var(--coach);cursor:pointer
+}
+.pprog-edit-btn svg{width:18px;height:18px;display:block}
+.pprog-edit-btn:hover,.pprog-edit-btn.is-editing{
+  background:rgba(155,107,184,.18);border-color:var(--coach);color:var(--coach)
+}
+.pprog-edit-btn.is-rest{color:var(--text-meta);opacity:.7}
+.pprog-edit-btn.is-rest:hover{opacity:1;border-color:var(--text-meta);background:rgba(138,133,128,.12);color:var(--text-meta)}
+.pprog-editing-pill{
+  display:inline-block;padding:2px 8px;border-radius:999px;background:var(--brand-gold);color:#111;
+  font-size:10px;font-weight:800;letter-spacing:.04em;font-family:var(--font-ui);line-height:1.4
+}
+.pprog-edit-title{
+  width:100%;background:transparent;border:none;border-bottom:1px solid var(--line);border-radius:0;
+  color:var(--part);font-weight:700;font-size:.98em;padding:4px 0 6px;font-family:inherit;outline:none
+}
+.pprog-edit-note{
+  display:block;width:100%;background:transparent;border:none;border-left:2px dashed var(--note);border-radius:0;
+  color:var(--note);font-style:italic;font-size:.86em;padding:4px 8px;margin:0 0 8px;font-family:inherit;outline:none
+}
+.pprog-edit-format{
+  display:block;width:100%;background:transparent;border:none;border-radius:0;
+  color:var(--text);font-weight:700;font-size:.95em;padding:4px 2px;margin:0 0 6px;font-family:inherit;outline:none
+}
+.pprog-edit-lines{list-style:disc}
+.pprog-edit-work-row{display:flex;align-items:center;gap:8px;list-style:disc}
+.pprog-edit-work-row input{
+  flex:1;min-width:0;background:transparent;border:none;color:var(--text);font-size:.95em;
+  font-family:inherit;outline:none;padding:2px 0
+}
+.pprog-edit-del-line{
+  appearance:none;background:none;border:none;color:var(--text-meta);cursor:pointer;
+  font-size:16px;line-height:1;padding:4px 6px;flex-shrink:0
+}
+.pprog-edit-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.pprog-edit-chip{
+  appearance:none;height:32px;padding:0 12px;border-radius:999px;background:transparent;
+  font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;line-height:30px
+}
+.pprog-edit-chip.note{border:1px solid var(--note);color:var(--note)}
+.pprog-edit-chip.work{border:1px solid var(--line);color:var(--text)}
+.pprog-edit-add-part{
+  display:block;width:100%;height:44px;margin-top:14px;border:1px dashed var(--part);color:var(--part);
+  background:transparent;border-radius:10px;font-weight:700;cursor:pointer;font-family:inherit;font-size:14px
+}
+.pprog-edit-bar{display:flex;gap:8px;margin-top:16px}
+.pprog-edit-cancel,.pprog-edit-save{
+  flex:1;height:44px;border-radius:10px;font-family:inherit;font-weight:800;cursor:pointer;font-size:14px
+}
+.pprog-edit-cancel{background:transparent;border:1px solid var(--line);color:var(--text-muted)}
+.pprog-edit-save{background:var(--brand);border:1px solid var(--brand);color:#fff}
+@media(min-width:641px){
+  .pprog-edit-bar{justify-content:flex-end}
+  .pprog-edit-cancel,.pprog-edit-save{flex:0 0 auto;min-width:120px}
+}
+@media(max-width:640px){
+  .pprog-edit-btn{width:44px;height:44px}
+}
 
 /* Notes */
 .notes-section{background:var(--bg-panel);border:1px solid var(--line);border-radius:12px;
@@ -628,7 +692,7 @@ body:has(#intake-modal.open) #adminChatFloat{
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver" id="login-ver-badge" title="Admin 1.5.14 · Coach 2.3.13">Admin 1.5.14<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></div>
+    <div class="ver" id="login-ver-badge" title="Admin 1.5.15 · Coach 2.3.13">Admin 1.5.15<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <label class="login-remember">
       <input type="checkbox" id="pw-remember"/>
@@ -644,7 +708,7 @@ body:has(#intake-modal.open) #adminChatFloat{
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">Admin</span>
-    <span class="ver-badge" id="admin-ver-badge" title="Admin 1.5.14 · Coach 2.3.13">Admin 1.5.14<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></span>
+    <span class="ver-badge" id="admin-ver-badge" title="Admin 1.5.15 · Coach 2.3.13">Admin 1.5.15<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></span>
     <span class="count-wrap">
       <span class="count" id="athlete-count" title="הרשימה מתעדכנת לבד כל כמה שניות — בלי לרענן את הדף">0 מתאמנים</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
@@ -834,9 +898,10 @@ var athleteStatsOpen = {};
 var learningMode = false;
 var pendingLearnNoteId = null;
 var adminChatFabOpen = false;
+var adminDayEdit = null;
 var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
 /** Live Personal Coach brain version — refreshed from GET /api/personal-coach. */
-var ADMIN_UI_VERSION = "1.5.14";
+var ADMIN_UI_VERSION = "1.5.15";
 var LIVE_COACH_VERSION = "2.3.13";
 var LIVE_COACH_VERSION_FETCHED_AT = 0;
 
@@ -1556,7 +1621,7 @@ function loadAthletes(opts) {
       var fp = adminSnapshotsFingerprint(list);
       if (silent && fp === lastAdminSnapFingerprint) return;
       lastAdminSnapFingerprint = fp;
-      if (silent && document.body.classList.contains("admin-intake-open")) {
+      if (silent && (document.body.classList.contains("admin-intake-open") || adminDayEdit)) {
         athletes = list.map(function (a) {
           if (!a) return a;
           if (a.currentBlock && typeof NormalizePprogBlock !== "undefined" && NormalizePprogBlock.normalize) {
@@ -1720,6 +1785,7 @@ function renderAthleteList(list) {
 function selectAthlete(id) {
   if (currentAthleteId !== id) {
     adminChatFabOpen = false;
+    adminPprogEditCancel(true);
     if (athleteStatsOpen && currentAthleteId) athleteStatsOpen[currentAthleteId] = false;
   }
   currentAthleteId = id;
@@ -2307,6 +2373,12 @@ function adminEnsureBlockView(a) {
 
 function adminPprogDisplayOpts(a) {
   var view = adminEnsureBlockView(a);
+  var editing = !!(
+    adminDayEdit &&
+    adminDayEdit.athleteId === a.athleteId &&
+    (adminDayEdit.wi | 0) === (view.activeWi | 0) &&
+    adminDayEdit.day === view.activeDay
+  );
   return {
     block: a.currentBlock,
     activeWeekIndex: view.activeWi,
@@ -2320,11 +2392,22 @@ function adminPprogDisplayOpts(a) {
     readOnly: true,
     showFooter: false,
     showActions: true,
+    allowEdit: true,
+    editing: editing,
+    editDraft: editing ? adminDayEdit : null,
     hooks: {
       shift: "adminPprogCalShift",
       toggleMode: "adminPprogToggleCalMode",
       jumpToday: "adminPprogJumpToday",
       setDay: "adminPprogSetDay",
+      startEdit: "adminPprogStartEdit",
+      editSet: "adminPprogEditSet",
+      editAddNote: "adminPprogEditAddNote",
+      editAddWork: "adminPprogEditAddWork",
+      editAddPart: "adminPprogEditAddPart",
+      editRemoveWork: "adminPprogEditRemoveWork",
+      editCancel: "adminPprogEditCancel",
+      editSave: "adminPprogEditSave",
     },
   };
 }
@@ -2368,6 +2451,7 @@ function adminPprogRerender() {
 }
 
 function adminPprogCalShift(delta) {
+  adminPprogEditCancel(true);
   var a = athletes.find(function (x) {
     return x.athleteId === currentAthleteId;
   });
@@ -2388,6 +2472,7 @@ function adminPprogToggleCalMode() {
 }
 
 function adminPprogJumpToday() {
+  adminPprogEditCancel(true);
   var a = athletes.find(function (x) {
     return x.athleteId === currentAthleteId;
   });
@@ -2398,14 +2483,234 @@ function adminPprogJumpToday() {
 }
 
 function adminPprogSetDay(weekIndex0, dayKey) {
+  var nextWi = Math.max(0, Math.min(4, weekIndex0 | 0));
+  var nextDay = String(dayKey || "sun");
+  if (
+    adminDayEdit &&
+    ((adminDayEdit.wi | 0) !== nextWi || adminDayEdit.day !== nextDay)
+  ) {
+    adminPprogEditCancel(true);
+  }
   var a = athletes.find(function (x) {
     return x.athleteId === currentAthleteId;
   });
   if (!a) return;
   var view = adminEnsureBlockView(a);
-  view.activeWi = Math.max(0, Math.min(4, weekIndex0 | 0));
-  view.activeDay = String(dayKey || "sun");
+  view.activeWi = nextWi;
+  view.activeDay = nextDay;
   adminPprogRerender();
+}
+
+function adminPprogEditPartLetter(n) {
+  return String.fromCharCode(65 + Math.max(0, n | 0));
+}
+
+function adminPprogStartEdit(weekIndex0, dayKey) {
+  var a = athletes.find(function (x) {
+    return x.athleteId === currentAthleteId;
+  });
+  if (!a || !a.currentBlock || !a.currentBlock.weeks) return;
+  var view = adminEnsureBlockView(a);
+  var wi = weekIndex0 != null ? Math.max(0, Math.min(4, weekIndex0 | 0)) : view.activeWi | 0;
+  var day = dayKey ? String(dayKey) : view.activeDay;
+  if (day === "general") return;
+  view.activeWi = wi;
+  view.activeDay = day;
+  if (
+    adminDayEdit &&
+    adminDayEdit.athleteId === a.athleteId &&
+    (adminDayEdit.wi | 0) === wi &&
+    adminDayEdit.day === day
+  ) {
+    return;
+  }
+  var week = a.currentBlock.weeks[wi] || {};
+  var dayData = (week.days && week.days[day]) || { parts: [] };
+  var rest = !!(
+    typeof NormalizePprogBlock !== "undefined" &&
+    NormalizePprogBlock.isRestDay &&
+    NormalizePprogBlock.isRestDay(day, dayData, week)
+  );
+  var parts = [];
+  if (typeof PprogDisplay !== "undefined" && PprogDisplay.draftFromDayData) {
+    parts = PprogDisplay.draftFromDayData(dayData, rest) || [];
+  }
+  adminDayEdit = {
+    athleteId: a.athleteId,
+    wi: wi,
+    day: day,
+    rest: rest,
+    parts: parts,
+  };
+  adminPprogRerender();
+}
+
+function adminPprogEditRerenderCard() {
+  adminPprogRerender();
+}
+
+function adminPprogEditSet(partIndex, field, a, b) {
+  if (!adminDayEdit || !adminDayEdit.parts) return;
+  var pi = partIndex | 0;
+  var part = adminDayEdit.parts[pi];
+  if (!part) return;
+  if (field === "title") {
+    part.title = String(a || "");
+    return;
+  }
+  if (field === "format") {
+    part.format = String(a || "");
+    return;
+  }
+  if (field === "note") {
+    var ni = a | 0;
+    if (!Array.isArray(part.notes)) part.notes = [];
+    part.notes[ni] = String(b || "");
+    return;
+  }
+  if (field === "work") {
+    var li = a | 0;
+    if (!Array.isArray(part.work)) part.work = [""];
+    part.work[li] = String(b || "");
+  }
+}
+
+function adminPprogEditAddNote(partIndex) {
+  if (!adminDayEdit || !adminDayEdit.parts[partIndex]) return;
+  var part = adminDayEdit.parts[partIndex];
+  if (!Array.isArray(part.notes)) part.notes = [];
+  part.notes.push("");
+  adminPprogEditRerenderCard();
+}
+
+function adminPprogEditAddWork(partIndex) {
+  if (!adminDayEdit || !adminDayEdit.parts[partIndex]) return;
+  var part = adminDayEdit.parts[partIndex];
+  if (!Array.isArray(part.work)) part.work = [];
+  part.work.push("");
+  adminPprogEditRerenderCard();
+}
+
+function adminPprogEditRemoveWork(partIndex, lineIndex) {
+  if (!adminDayEdit || !adminDayEdit.parts[partIndex]) return;
+  var part = adminDayEdit.parts[partIndex];
+  if (!Array.isArray(part.work)) return;
+  part.work.splice(lineIndex | 0, 1);
+  if (!part.work.length) part.work = [""];
+  adminPprogEditRerenderCard();
+}
+
+function adminPprogEditAddPart() {
+  if (!adminDayEdit) return;
+  if (!Array.isArray(adminDayEdit.parts)) adminDayEdit.parts = [];
+  var letter = adminPprogEditPartLetter(adminDayEdit.parts.length);
+  adminDayEdit.parts.push({
+    title: "Part " + letter,
+    notes: [""],
+    format: "",
+    work: [""],
+  });
+  adminDayEdit.rest = false;
+  adminPprogEditRerenderCard();
+}
+
+function adminPprogEditCancel(silent) {
+  if (!adminDayEdit) return;
+  adminDayEdit = null;
+  if (!silent) adminPprogRerender();
+}
+
+function adminDraftToParts(draft) {
+  var src = (draft && draft.parts) || [];
+  return src.map(function (p) {
+    var lines = [];
+    (p.notes || []).forEach(function (n) {
+      var t = String(n || "").trim();
+      if (t) lines.push(t);
+    });
+    var fmt = String(p.format || "").trim();
+    if (fmt) lines.push(fmt);
+    (p.work || []).forEach(function (w) {
+      var t = String(w || "").trim();
+      if (t) lines.push(t);
+    });
+    return {
+      title: String(p.title || "Part").trim() || "Part",
+      lines: lines,
+    };
+  });
+}
+
+function adminApplyDayPartsToBlock(block, wi, dayKey, parts, wasRest) {
+  if (!block || !Array.isArray(block.weeks) || !block.weeks[wi]) return block;
+  var week = block.weeks[wi];
+  if (!week.days) week.days = {};
+  var prev = week.days[dayKey] || {};
+  week.days[dayKey] = Object.assign({}, prev, { parts: parts });
+  if (parts.length && wasRest && Array.isArray(week.overview)) {
+    var focus = String(parts[0].title || "Training")
+      .replace(/^Part\s+[A-Z]\s*[—–-]\s*/i, "")
+      .slice(0, 80);
+    week.overview = week.overview.map(function (row) {
+      if (!row || String(row.day || "").slice(0, 3) !== dayKey) return row;
+      return Object.assign({}, row, { focus: focus || "Training" });
+    });
+  }
+  return block;
+}
+
+function adminPprogEditSave() {
+  if (!adminDayEdit) return;
+  var a = athletes.find(function (x) {
+    return x.athleteId === currentAthleteId;
+  });
+  if (!a || !a.currentBlock) return;
+  var wi = adminDayEdit.wi | 0;
+  var day = adminDayEdit.day;
+  var parts = adminDraftToParts(adminDayEdit);
+  if (!parts.length && adminDayEdit.rest) {
+    parts = [{ title: "REST DAY", lines: ["Rest"] }];
+  }
+  a.currentBlock = adminApplyDayPartsToBlock(
+    a.currentBlock,
+    wi,
+    day,
+    parts,
+    adminDayEdit.rest
+  );
+  if (typeof NormalizePprogBlock !== "undefined" && NormalizePprogBlock.normalize) {
+    try {
+      a.currentBlock = NormalizePprogBlock.normalize(a.currentBlock, a.currentBlock);
+    } catch (eN) {}
+  }
+  adminDayEdit = null;
+  adminPprogRerender();
+  /* T4 device push: not in this round. Persist admin snapshot only. */
+  fetch(adminApiUrl("/api/admin-snapshot"), {
+    method: "POST",
+    headers: adminAuthHeaders(),
+    body: JSON.stringify(
+      withAdminPassword({
+        action: "admin_save_day",
+        athleteId: a.athleteId,
+        weekIndex: wi,
+        dayKey: day,
+        parts: parts,
+      })
+    ),
+  })
+    .then(function (r) {
+      return r.json();
+    })
+    .then(function (d) {
+      if (d && d.ok && d.currentBlock) {
+        a.currentBlock = d.currentBlock;
+      }
+      showHdrToast(d && d.ok ? "האימון נשמר באדמין" : "השמירה המקומית נשמרה — הסנכרון לשרת נכשל", d && d.ok ? null : "err");
+    })
+    .catch(function () {
+      showHdrToast("נשמר בכרטיס — הסנכרון לשרת נכשל", "err");
+    });
 }
 
 function changeBlockMonth(delta) {

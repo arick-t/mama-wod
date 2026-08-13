@@ -279,6 +279,88 @@ module.exports = async function handler(req, res) {
       }
     }
 
+    if (body.action === "admin_save_day") {
+      if (!isAdmin) return adminAuthDenied(res);
+      const existing = (await readSnapshot(athleteId)) || {};
+      if (!existing.athleteId && !existing.createdAt) {
+        return res.status(404).json({ error: "Athlete not found" });
+      }
+      const wi = Math.max(0, Math.min(4, Number(body.weekIndex) || 0));
+      const dayKey = String(body.dayKey || "")
+        .toLowerCase()
+        .slice(0, 3);
+      const allowedDay = { sun: 1, mon: 1, tue: 1, wed: 1, thu: 1, fri: 1, sat: 1 };
+      if (!allowedDay[dayKey]) {
+        return res.status(400).json({ ok: false, error: "dayKey required" });
+      }
+      const block = existing.currentBlock;
+      if (!block || !Array.isArray(block.weeks) || !block.weeks[wi]) {
+        return res.status(400).json({ ok: false, error: "no_block" });
+      }
+      const rawParts = Array.isArray(body.parts) ? body.parts.slice(0, 12) : [];
+      const parts = rawParts.map(function (p) {
+        const title = String((p && p.title) || "Part")
+          .trim()
+          .slice(0, 160) || "Part";
+        let lines = [];
+        if (Array.isArray(p.lines)) {
+          lines = p.lines
+            .map(function (l) {
+              return String(l || "").trim().slice(0, 400);
+            })
+            .filter(Boolean)
+            .slice(0, 24);
+        } else {
+          (Array.isArray(p.notes) ? p.notes : []).forEach(function (n) {
+            const t = String(n || "").trim().slice(0, 400);
+            if (t) lines.push(t);
+          });
+          const fmt = String((p && p.format) || "").trim().slice(0, 200);
+          if (fmt) lines.push(fmt);
+          (Array.isArray(p.work) ? p.work : []).forEach(function (w) {
+            const t = String(w || "").trim().slice(0, 400);
+            if (t) lines.push(t);
+          });
+          lines = lines.slice(0, 24);
+        }
+        return { title: title, lines: lines };
+      });
+      const week = block.weeks[wi];
+      if (!week.days || typeof week.days !== "object") week.days = {};
+      week.days[dayKey] = Object.assign({}, week.days[dayKey] || {}, { parts: parts });
+      if (parts.length && Array.isArray(week.overview)) {
+        const blob0 = String(parts[0].title || "") + " " + (parts[0].lines || []).join(" ");
+        const looksRest = parts.length === 1 && /\brest(\s*day)?\b/i.test(blob0);
+        if (!looksRest) {
+          const focus = String(parts[0].title || "Training")
+            .replace(/^Part\s+[A-Z]\s*[—–-]\s*/i, "")
+            .slice(0, 80);
+          week.overview = week.overview.map(function (row) {
+            if (!row || String(row.day || "").slice(0, 3) !== dayKey) return row;
+            return Object.assign({}, row, { focus: focus || "Training" });
+          });
+        }
+      }
+      existing.updatedAt = new Date().toISOString();
+      try {
+        await writeSnapshot(athleteId, existing);
+        await appendAdminAudit({
+          action: "admin_save_day",
+          athleteId: athleteId,
+          actor: "admin",
+          ok: true,
+          detail: "w" + (wi + 1) + "." + dayKey,
+        });
+      } catch (e) {
+        return storageUnavailable(res, e);
+      }
+      return res.status(200).json({
+        ok: true,
+        currentBlock: existing.currentBlock,
+        storage: storageInfo(),
+      });
+    }
+
     if (body.action === "admin_member_status") {
       if (!isAdmin) return adminAuthDenied(res);
       const existing = (await readSnapshot(athleteId)) || {};
