@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DUCK-WOD Admin · 1.5.12</title>
+<title>DUCK-WOD Admin · 1.5.13</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -65,6 +65,9 @@ button,input,textarea,select{font-family:inherit}
   color:#fff;font-weight:700;font-size:15px;border:none;cursor:pointer;transition:background .15s}
 .login-box button:hover{background:#d03d18}
 #login-err{color:#f87171;font-size:13px;margin-top:10px;min-height:18px}
+.login-remember{display:flex;align-items:center;gap:8px;margin:-4px 0 14px;font-size:13px;color:var(--text-muted);
+  cursor:pointer;user-select:none;text-align:right;justify-content:flex-start}
+.login-box .login-remember input{width:auto;margin:0;accent-color:var(--brand)}
 
 /* ── App shell ── */
 html,body{height:100%}
@@ -625,8 +628,12 @@ body:has(#intake-modal.open) #adminChatFloat{
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver" id="login-ver-badge" title="Admin 1.5.12 · Coach 2.3.13">Admin 1.5.12<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></div>
+    <div class="ver" id="login-ver-badge" title="Admin 1.5.13 · Coach 2.3.13">Admin 1.5.13<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
+    <label class="login-remember">
+      <input type="checkbox" id="pw-remember"/>
+      זכור אותי במכשיר הזה
+    </label>
     <button type="button" onclick="doLogin()">כניסה</button>
     <div id="login-err"></div>
   </div>
@@ -637,9 +644,9 @@ body:has(#intake-modal.open) #adminChatFloat{
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">Admin</span>
-    <span class="ver-badge" id="admin-ver-badge" title="Admin 1.5.12 · Coach 2.3.13">Admin 1.5.12<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></span>
+    <span class="ver-badge" id="admin-ver-badge" title="Admin 1.5.13 · Coach 2.3.13">Admin 1.5.13<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></span>
     <span class="count-wrap">
-      <span class="count" id="athlete-count">0 מתאמנים</span>
+      <span class="count" id="athlete-count" title="הרשימה מתעדכנת לבד כל כמה שניות — בלי לרענן את הדף">0 מתאמנים</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
         title="יתרת קרדיט Gemini משוערת — לחץ לעדכון ידני מגוגל">
         <span class="credit-amt" id="credit-amt">הזן יתרה</span>
@@ -811,6 +818,12 @@ function pagesAbsoluteUrl(path) {
 }
 
 var adminPw = "";
+var ADMIN_PW_SESSION_KEY = "dw_admin_pw";
+var ADMIN_PW_REMEMBER_KEY = "dw_admin_remember";
+var ADMIN_PW_STORE_KEY = "dw_admin_pw_store";
+var adminPollTimer = null;
+var lastAdminSnapFingerprint = "";
+var ADMIN_POLL_MS = 8000;
 var athletes = [];
 var currentAthleteId = null;
 var syncInFlight = false;
@@ -823,7 +836,7 @@ var pendingLearnNoteId = null;
 var adminChatFabOpen = false;
 var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
 /** Live Personal Coach brain version — refreshed from GET /api/personal-coach. */
-var ADMIN_UI_VERSION = "1.5.12";
+var ADMIN_UI_VERSION = "1.5.13";
 var LIVE_COACH_VERSION = "2.3.13";
 var LIVE_COACH_VERSION_FETCHED_AT = 0;
 
@@ -1313,10 +1326,91 @@ document.getElementById("pw-input").addEventListener("keydown", function(e) {
   if (e.key === "Enter") doLogin();
 });
 
+function readStoredAdminPassword() {
+  try {
+    if (localStorage.getItem(ADMIN_PW_REMEMBER_KEY) === "1") {
+      return String(localStorage.getItem(ADMIN_PW_STORE_KEY) || "");
+    }
+  } catch (eLs) {}
+  try {
+    return String(sessionStorage.getItem(ADMIN_PW_SESSION_KEY) || "");
+  } catch (eSs) {}
+  return "";
+}
+
+function persistAdminPassword(pw, remember) {
+  try {
+    sessionStorage.setItem(ADMIN_PW_SESSION_KEY, pw);
+  } catch (eSs) {}
+  try {
+    if (remember) {
+      localStorage.setItem(ADMIN_PW_REMEMBER_KEY, "1");
+      localStorage.setItem(ADMIN_PW_STORE_KEY, pw);
+    } else {
+      localStorage.removeItem(ADMIN_PW_REMEMBER_KEY);
+      localStorage.removeItem(ADMIN_PW_STORE_KEY);
+    }
+  } catch (eLs) {}
+}
+
+function adminSnapshotsFingerprint(list) {
+  return (list || [])
+    .map(function (a) {
+      if (!a) return "";
+      var weeks = (a.currentBlock && a.currentBlock.weeks) || [];
+      var weekMarks = weeks
+        .map(function (w, i) {
+          var days = (w && w.days) || {};
+          var n = 0;
+          for (var k in days) {
+            if (Object.prototype.hasOwnProperty.call(days, k) && days[k] && days[k].parts && days[k].parts.length) n++;
+          }
+          return i + ":" + n;
+        })
+        .join(",");
+      return [
+        a.athleteId,
+        a.updatedAt || "",
+        a.declarationAcceptedAt || "",
+        a.membershipFrozen ? "1" : "0",
+        weekMarks,
+      ].join("|");
+    })
+    .join(";;");
+}
+
+function startAdminLivePoll() {
+  if (adminPollTimer) return;
+  adminPollTimer = setInterval(function () {
+    if (!adminPw) return;
+    if (typeof document !== "undefined" && document.hidden) return;
+    loadAthletes({ silent: true });
+  }, ADMIN_POLL_MS);
+  try {
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden && adminPw) loadAthletes({ silent: true });
+    });
+  } catch (eVis) {}
+}
+
+function openAdminApp(snapshots) {
+  document.getElementById("login-screen").style.display = "none";
+  var app = document.getElementById("app");
+  app.style.display = "flex";
+  app.classList.add("is-open");
+  loadLearningMode();
+  loadCreditEstimate();
+  refreshLiveCoachVersion();
+  renderAthleteList(snapshots || []);
+  startAdminLivePoll();
+}
+
 function doLogin() {
   var pw = document.getElementById("pw-input").value.trim();
   if (!pw) return;
   adminPw = pw;
+  var rememberEl = document.getElementById("pw-remember");
+  var remember = !!(rememberEl && rememberEl.checked);
   var errEl = document.getElementById("login-err");
   if (errEl) errEl.textContent = "מתחבר…";
   fetch(adminApiUrl("/api/admin-snapshot"), {
@@ -1338,14 +1432,8 @@ function doLogin() {
       if (res.status === 401) throw new Error((res.data && res.data.message) || "wrong_password");
       if (res.status < 200 || res.status >= 300) throw new Error("http_" + res.status);
       if (!res.data || !res.data.ok) throw new Error("bad_response");
-      document.getElementById("login-screen").style.display = "none";
-      var app = document.getElementById("app");
-      app.style.display = "flex";
-      app.classList.add("is-open");
-      loadLearningMode();
-      loadCreditEstimate();
-      refreshLiveCoachVersion();
-      renderAthleteList(res.data.snapshots || []);
+      persistAdminPassword(pw, remember);
+      openAdminApp(res.data.snapshots || []);
     })
     .catch(function(e) {
       var msg = "שגיאת חיבור";
@@ -1363,15 +1451,52 @@ function doLogin() {
     });
 }
 
-function loadAthletes() {
-  refreshLiveCoachVersion();
+function tryRestoreAdminSession() {
+  var pw = readStoredAdminPassword();
+  if (!pw) return;
+  try {
+    if (localStorage.getItem(ADMIN_PW_REMEMBER_KEY) === "1") {
+      var cb = document.getElementById("pw-remember");
+      if (cb) cb.checked = true;
+    }
+  } catch (eCb) {}
+  var inp = document.getElementById("pw-input");
+  if (inp) inp.value = pw;
+  doLogin();
+}
+
+function loadAthletes(opts) {
+  opts = opts || {};
+  var silent = !!opts.silent;
+  if (!adminPw) return;
+  if (!silent) refreshLiveCoachVersion();
   fetch(adminApiUrl("/api/admin-snapshot"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify(withAdminPassword({ action: "admin_list" }))
   })
     .then(function(r) { return r.json(); })
-    .then(function(data) { renderAthleteList(data.snapshots || []); })
+    .then(function(data) {
+      var list = (data && data.snapshots) || [];
+      var fp = adminSnapshotsFingerprint(list);
+      if (silent && fp === lastAdminSnapFingerprint) return;
+      lastAdminSnapFingerprint = fp;
+      if (silent && document.body.classList.contains("admin-intake-open")) {
+        athletes = list.map(function (a) {
+          if (!a) return a;
+          if (a.currentBlock && typeof NormalizePprogBlock !== "undefined" && NormalizePprogBlock.normalize) {
+            try {
+              a.currentBlock = NormalizePprogBlock.normalize(a.currentBlock, a.currentBlock);
+            } catch (eNorm) {}
+          }
+          return a;
+        });
+        var countEl = document.getElementById("athlete-count");
+        if (countEl) countEl.textContent = athletes.length + " מתאמנים";
+        return;
+      }
+      renderAthleteList(list);
+    })
     .catch(function() {});
 }
 
@@ -1486,6 +1611,7 @@ function renderAthleteList(list) {
     }
     return a;
   });
+  lastAdminSnapFingerprint = adminSnapshotsFingerprint(athletes);
   document.getElementById("athlete-count").textContent = athletes.length + " מתאמנים";
   var sb = document.getElementById("athlete-tabs");
 
@@ -3830,6 +3956,7 @@ function finalizeNewAthlete(block) {
 syncAdminVersionLabels();
 refreshLiveCoachVersion();
 loadLearningMode();
+tryRestoreAdminSession();
 </script>
 <script src="lib/coach-intake-sync-contract.js"></script>
 <script src="lib/normalize-pprog-block.js"></script>

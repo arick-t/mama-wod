@@ -6,6 +6,7 @@ const assert = require("assert");
 const fs = require("fs");
 const path = require("path");
 const CoachIntakeSync = require("../lib/coach-intake-sync-contract");
+const JoinMail = require("../lib/admin-intake-complete-mail");
 
 const root = path.join(__dirname, "..");
 const adminHtml = fs.readFileSync(path.join(root, "admin.html"), "utf8");
@@ -50,6 +51,30 @@ const profile = CoachIntakeSync.normalizeIntakeProfile(sample);
 ok("normalized has fixedIntakePacket", /^FIXED INTAKE COMPLETE/i.test(profile.fixedIntakePacket));
 ok("skillsSummary non-empty", !!profile.skillsSummary);
 
+ok(
+  "join mail not ready on create (no Terms)",
+  !JoinMail.snapshotReadyForJoinMail({
+    currentBlock: { weeks: [{ theme: "W1" }] },
+    intakeNotifySent: false,
+  })
+);
+ok(
+  "join mail ready after Terms + block",
+  JoinMail.snapshotReadyForJoinMail({
+    currentBlock: { weeks: [{ theme: "W1" }] },
+    declarationAcceptedAt: "2026-08-13T12:00:00.000Z",
+    intakeNotifySent: false,
+  })
+);
+ok(
+  "join mail skipped if already sent",
+  !JoinMail.snapshotReadyForJoinMail({
+    currentBlock: { weeks: [{ theme: "W1" }] },
+    declarationAcceptedAt: "2026-08-13T12:00:00.000Z",
+    intakeNotifySent: true,
+  })
+);
+
 const apiProfile = CoachIntakeSync.athleteProfileForGenerateBlock(sample);
 ok("generate profile has fixedIntakePacket", !!apiProfile.fixedIntakePacket);
 ok("generate profile intakeComplete", apiProfile.intakeComplete === true);
@@ -77,18 +102,18 @@ ok("admin block uses shared brick view", /PprogDisplay\.renderBrickView/.test(ad
 ok("admin block render is read-only", /readOnly:\s*true/.test(adminHtml));
 ok("admin fixed intake normalizes block", /NormalizePprogBlock\.normalize/.test(fixedJs));
 ok("handoff stores lastHandoffPath", /lastHandoffPath/.test(handoff));
-ok("admin create sends intake mail", /sendAdminIntakeCompleteMail/.test(handoff));
+ok("admin create does not send join mail", !/sendAdminIntakeCompleteMail/.test(handoff));
 ok("handoff inline in athlete card", /renderHandoffInline/.test(adminHtml) && /ath-handoff-inline/.test(adminHtml));
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
-ok("admin version 1.5.12", /DUCK-WOD Admin · 1\.5\.12/.test(adminHtml));
+ok("admin version 1.5.13", /DUCK-WOD Admin · 1\.5\.13/.test(adminHtml));
 ok("admin wired to coach 2.3.13", /LIVE_COACH_VERSION = "2\.3\.13"/.test(adminHtml));
 ok("app coach 2.3.13", /COACH_VERSION = "2\.3\.13"/.test(index));
 ok(
   "admin shows Admin + Coach versions",
-  /Admin 1\.5\.12/.test(adminHtml) &&
+  /Admin 1\.5\.13/.test(adminHtml) &&
     /ver-coach/.test(adminHtml) &&
     /syncAdminVersionLabels/.test(adminHtml) &&
-    /ADMIN_UI_VERSION = "1\.5\.12"/.test(adminHtml)
+    /ADMIN_UI_VERSION = "1\.5\.13"/.test(adminHtml)
 );
 ok(
   "admin intake uses pprog classes 1:1",
@@ -157,9 +182,23 @@ ok(
   /reclaimSameAthlete:\s*true/.test(index) && !/pprogMintNewAthleteIdentity/.test(index)
 );
 ok(
-  "join email after admin create",
-  /sendAdminIntakeCompleteMail/.test(handoff)
+  "join email after Terms on snapshot write",
+  /sendAdminIntakeCompleteMail/.test(snap) &&
+    /snapshotReadyForJoinMail/.test(snap) &&
+    /declarationAcceptedAt/.test(fs.readFileSync(path.join(root, "lib", "admin-intake-complete-mail.js"), "utf8"))
 );
+ok("phone package does not pre-mark join mail", /intakeNotifySent:\s*false/.test(handoff) && /Join mail waits/.test(handoff));
+ok("app join mail requires Terms", /if \(!store\.legalAcceptedAt\) return/.test(index));
+ok("admin remembers password", /pw-remember/.test(adminHtml) && /persistAdminPassword/.test(adminHtml) && /tryRestoreAdminSession/.test(adminHtml));
+ok("admin live poll", /startAdminLivePoll/.test(adminHtml) && /ADMIN_POLL_MS/.test(adminHtml));
+ok(
+  "snapshot does not stamp declaration from joinedAt",
+  /declarationAcceptedAt: String\(/.test(snap) &&
+    /existing\.declarationAcceptedAt \|\|\s*""/.test(snap)
+);
+ok("snapshot size fits full brick", /MAX_SNAPSHOT_BYTES = 256 \* 1024/.test(snap));
+ok("fill all missing weeks", /Fill every week that still lacks real parts/.test(index));
+ok("push snapshot after week fill", /pprogPushAdminSnapshotDebounced\(s2, "week_fill"\)/.test(index));
 ok(
   "snapshot reclaim same id",
   /snapshot_reclaim/.test(snap) && /allowUnboundBind/.test(snap)

@@ -468,6 +468,13 @@ module.exports = async function handler(req, res) {
     (Array.isArray(body.parts) && body.parts.length);
   if (!hasContent) return res.status(400).json({ error: "Missing text" });
 
+  if (isIntakeCompleteMail) {
+    const signed = String(body.declarationAcceptedAt || body.legalAcceptedAt || "").trim();
+    if (!/^\d{4}-\d{2}-\d{2}T/.test(signed)) {
+      return res.status(200).json({ ok: true, sent: false, skipped: "not_landed" });
+    }
+  }
+
   const mail = buildMail(body);
   const to = feedbackTo();
 

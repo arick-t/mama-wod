@@ -1,7 +1,15 @@
 # Admin block display + handoff UX
 
 Base: approved **Admin 1.5.11** shared brick (`lib/pprog-display.js`, T1+T2+T3).  
-This branch adds founder UX from retest (Admin **1.5.12**).
+This branch adds founder UX from retest (Admin **1.5.13**).
+
+## Round 3 (Admin 1.5.13) — join mail, live admin, brick sync
+
+- Join email only after Terms signed + block on device
+- Remember admin password (refresh + optional device)
+- Poll `admin_list` so declaration / brick update without reload
+- Fill every week missing real parts; push filled brick to admin
+- Pending-parts copy spacing
 
 ## Round 2 (Admin 1.5.12) — agreed with founder
 

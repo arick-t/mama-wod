@@ -2093,6 +2093,12 @@ function pprogLegalContinue() {
     pprogPushAdminSnapshotDebounced(store, "legal_terms");
   } catch (eSnapLegal) {}
   try {
+    enqueuePprogMissingWeekFills();
+  } catch (eFillLegal) {}
+  try {
+    maybeNotifyPprogIntakeComplete(store);
+  } catch (eMailLegal) {}
+  try {
     sendAnalytics("personal_coach_legal_agree", {
       coachArea: "legal",
       changeType: PPROG_LEGAL_TERMS_ID,
@@ -8800,7 +8806,11 @@ function pushAdminSnapshot(store) {
           } catch (eWarn) {}
           return { ok: false, error: err || String(x.status) };
         }
-        return { ok: true, athleteId: athleteId };
+        return {
+          ok: true,
+          athleteId: athleteId,
+          joinMailSent: !!(x.j && x.j.joinMailSent),
+        };
       })
       .catch(function () {
         return { ok: false, error: "network" };
@@ -9131,60 +9141,65 @@ function pprogAcceptPushUpgradeOffer() {
 window.pprogAcceptPushUpgradeOffer = pprogAcceptPushUpgradeOffer;
 window.pprogDismissPushUpgradeOffer = pprogDismissPushUpgradeOffer;
 
-/** One admin email when intake finishes and first training block is ready (not auto next-block). */
+/** One admin email when intake finishes, Terms are signed, and first training block is ready (not auto next-block). */
 function maybeNotifyPprogIntakeComplete(store, opts) {
   opts = opts || {};
   if (!store || opts.autoNextBlock) return;
   if (store.intakeNotifySent) return;
   if (!store.intakeComplete || !store.currentBlock) return;
+  /* Join mail only after the athlete actually signed Terms on this device. */
+  if (!store.legalAcceptedAt) return;
   /* Mark sent after admin push path (same athleteId reclaim — no uid mint). */
   store.intakeNotifySent = true;
   store.intakeNotifySentAt = new Date().toISOString();
   savePprogStore(store);
 
-  function sendJoinMailAndAnalytics(finalStore) {
+  function sendJoinMailAndAnalytics(finalStore, mailOpts) {
+    mailOpts = mailOpts || {};
     var skillsSummary = pprogSkillsSummaryForMail(finalStore.skills);
     var blockSummary = String(
       (finalStore.currentBlock && finalStore.currentBlock.summaryLine) || "5-week training block"
     ).slice(0, 240);
     var blockStart = (finalStore.currentBlock && finalStore.currentBlock.blockStart) || "";
     var uid = finalStore.userId || finalStore.athleteId || "";
-    silentAdminFeedback({
-      type: "intake_complete",
-      text: "Intake complete — training plan ready",
-      gender: finalStore.gender || "",
-      preferredLanguage: finalStore.preferredLanguage || "",
-      skillsSummary: skillsSummary,
-      writeKey: getAdminWriteKey(),
-      blockStart: blockStart,
-      blockSummary: blockSummary,
-      completedAt: finalStore.intakeNotifySentAt,
-      currentBlock: finalStore.currentBlock || null,
-      planCoachVersion:
-        finalStore.planCoachVersion ||
-        (finalStore.currentBlock && finalStore.currentBlock.coachVersion) ||
-        "",
-      declarationAcceptedAt: finalStore.legalAcceptedAt || "",
-      legalAcceptedAt: finalStore.legalAcceptedAt || "",
-      intakeSummary: String(finalStore.profileNotes || "").replace(/\n+/g, " ").trim().slice(0, 400),
-      athleteFeedback:
-        "Nickname: " +
-        (finalStore.displayName || "(none)") +
-        "\nUser ID: " +
-        uid +
-        "\nGender: " +
-        (finalStore.gender || "(unknown)") +
-        "\nLanguage: " +
-        (finalStore.preferredLanguage || "(unknown)") +
-        "\nSkills: " +
-        (skillsSummary || "(none)") +
-        "\nBlock start: " +
-        (blockStart || "(n/a)") +
-        "\nPlan: " +
-        blockSummary +
-        "\nCompleted at: " +
-        finalStore.intakeNotifySentAt,
-    });
+    if (!mailOpts.skipMail) {
+      silentAdminFeedback({
+        type: "intake_complete",
+        text: "Intake complete — training plan ready",
+        gender: finalStore.gender || "",
+        preferredLanguage: finalStore.preferredLanguage || "",
+        skillsSummary: skillsSummary,
+        writeKey: getAdminWriteKey(),
+        blockStart: blockStart,
+        blockSummary: blockSummary,
+        completedAt: finalStore.intakeNotifySentAt,
+        currentBlock: finalStore.currentBlock || null,
+        planCoachVersion:
+          finalStore.planCoachVersion ||
+          (finalStore.currentBlock && finalStore.currentBlock.coachVersion) ||
+          "",
+        declarationAcceptedAt: finalStore.legalAcceptedAt || "",
+        legalAcceptedAt: finalStore.legalAcceptedAt || "",
+        intakeSummary: String(finalStore.profileNotes || "").replace(/\n+/g, " ").trim().slice(0, 400),
+        athleteFeedback:
+          "Nickname: " +
+          (finalStore.displayName || "(none)") +
+          "\nUser ID: " +
+          uid +
+          "\nGender: " +
+          (finalStore.gender || "(unknown)") +
+          "\nLanguage: " +
+          (finalStore.preferredLanguage || "(unknown)") +
+          "\nSkills: " +
+          (skillsSummary || "(none)") +
+          "\nBlock start: " +
+          (blockStart || "(n/a)") +
+          "\nPlan: " +
+          blockSummary +
+          "\nCompleted at: " +
+          finalStore.intakeNotifySentAt,
+      });
+    }
     try {
       sendAnalytics("personal_coach_intake_complete", {
         coachArea: "intake",
@@ -9203,10 +9218,17 @@ function maybeNotifyPprogIntakeComplete(store, opts) {
     } catch (eTier) {}
   }
 
-  /* Push to admin first (same athleteId reclaim) before join email. */
+  /* Push to admin first (same athleteId reclaim). Server sends join mail after Terms + block. */
   Promise.resolve(pushAdminSnapshot(store))
-    .then(function () {
+    .then(function (res) {
       var finalStore = loadPprogStore() || store;
+      if (res && res.joinMailSent) {
+        finalStore.intakeNotifySent = true;
+        finalStore.intakeNotifySentAt = finalStore.intakeNotifySentAt || new Date().toISOString();
+        savePprogStore(finalStore);
+        sendJoinMailAndAnalytics(finalStore, { skipMail: true });
+        return;
+      }
       sendJoinMailAndAnalytics(finalStore);
     })
     .catch(function () {
@@ -9679,30 +9701,25 @@ function enqueuePprogMissingWeekFills() {
     savePprogStore(store);
   }
   var activeWi = store.activeWeekIndex | 0;
-  /* Cost guard: only pre-fill active + next week. Later weeks fill on navigate (pprogCalShift / Today). */
-  var lazyTargets = [activeWi];
-  if (activeWi + 1 < store.currentBlock.weeks.length) lazyTargets.push(activeWi + 1);
+  var weeks = store.currentBlock.weeks;
+  /* Fill every week that still lacks real parts — a blank week in the brick is a quality failure. */
   var missing = [];
-  for (var ti = 0; ti < lazyTargets.length; ti++) {
-    var i = lazyTargets[ti];
-    if (!weekHasDetailedDays(store.currentBlock.weeks[i])) {
+  for (var i = 0; i < weeks.length; i++) {
+    if (!weekHasDetailedDays(weeks[i])) {
       if ((pprogFillAttempts[i] || 0) >= PPROG_FILL_MAX_ATTEMPTS) continue;
       missing.push(i);
     }
   }
-  /* Active week first, then next */
+  /* Active week first, then next, then remaining holes in order. */
   missing.sort(function (a, b) {
     if (a === activeWi) return -1;
     if (b === activeWi) return 1;
+    if (a === activeWi + 1) return -1;
+    if (b === activeWi + 1) return 1;
     return a - b;
   });
   for (var mi = 0; mi < missing.length; mi++) {
     if (pprogFillQueue.indexOf(missing[mi]) < 0) pprogFillQueue.push(missing[mi]);
-  }
-  /* Drop far-future weeks already queued from older eager-fill builds */
-  for (var qi = pprogFillQueue.length - 1; qi >= 0; qi--) {
-    var qwi = pprogFillQueue[qi];
-    if (qwi !== activeWi && qwi !== activeWi + 1) pprogFillQueue.splice(qi, 1);
   }
   drainPprogFillQueue();
 }
@@ -9727,6 +9744,9 @@ function drainPprogFillQueue() {
   }
   pprogFillingWeekIndex = -1;
   renderPprogWeek();
+  try {
+    pprogPushAdminSnapshotDebounced(loadPprogStore(), "week_fill_done");
+  } catch (eFillSnap) {}
 }
 
 function requestPprogWeekDetail(weekIndex0, fromQueue) {
@@ -9873,6 +9893,9 @@ function requestPprogWeekDetail(weekIndex0, fromQueue) {
             delete pprogFillErrors[wi];
             delete pprogFillAttempts[wi];
             pprogRecordProgrammedEdit("week_fill");
+            try {
+              pprogPushAdminSnapshotDebounced(s2, "week_fill");
+            } catch (eFillPush) {}
           } else {
             pprogFillErrors[wi] =
               "Week " +
@@ -11299,18 +11322,6 @@ function renderPprogWeek() {
   if (calEl) calEl.innerHTML = renderPprogCalHtml(block, activeWi, pprogActiveDay);
 
   var missing = countPprogMissingWeeks();
-  /* Lazy fill: only active+next are prefetched — don't claim far weeks are "loading". */
-  var lazyPending = 0;
-  if (!weekHasDetailedDays(week) && (pprogFillAttempts[activeWi] || 0) < PPROG_FILL_MAX_ATTEMPTS) {
-    lazyPending++;
-  }
-  if (
-    activeWi + 1 < (block.weeks || []).length &&
-    !weekHasDetailedDays(block.weeks[activeWi + 1]) &&
-    (pprogFillAttempts[activeWi + 1] || 0) < PPROG_FILL_MAX_ATTEMPTS
-  ) {
-    lazyPending++;
-  }
   var weekRange = pprogWeekRangeLabel(week.weekStart || pprogAddDaysIso(block.blockStart, activeWi * 7));
   var html = "";
   html +=
@@ -11322,24 +11333,21 @@ function renderPprogWeek() {
     (week.theme ? " · " + esc(String(week.theme).slice(0, 40)) : "") +
     "</div>";
   var fillErrKeys = Object.keys(pprogFillErrors);
-  var activeFillErr = pprogFillErrors[activeWi] || pprogFillErrors[activeWi + 1];
-  if (activeFillErr && !pprogDetailBusy && lazyPending > 0) {
+  var activeFillErr = pprogFillErrors[activeWi] || (fillErrKeys.length ? pprogFillErrors[fillErrKeys[0]] : "");
+  if (activeFillErr && !pprogDetailBusy && missing > 0) {
     html +=
       '<div class="pprog-fill-status err">' +
       esc(activeFillErr) +
       ' <button type="button" class="btn btn-find" style="margin-left:6px;padding:4px 10px;font-size:.75em" onclick="retryPprogFillFailures()">Retry</button>' +
       "</div>";
-  } else if (lazyPending > 0 || pprogDetailBusy) {
+  } else if (missing > 0 || pprogDetailBusy) {
     var fillN = pprogFillingWeekIndex >= 0 ? pprogFillingWeekIndex + 1 : activeWi + 1;
     if (fillN < 1) fillN = 1;
     if (fillN > 5) fillN = 5;
     html +=
       '<div class="pprog-fill-status">' +
-      (pprogDetailBusy ? "Filling week " + fillN + "…" : "Loading nearby weeks…") +
+      (pprogDetailBusy ? "Filling week " + fillN + "…" : "Building remaining weeks…") +
       "</div>";
-  } else if (missing > 0 && !weekHasDetailedDays(week)) {
-    html +=
-      '<div class="pprog-fill-status">This week is not loaded yet — open it to fill.</div>';
   }
 
   if (pprogCalMode === "month") {
@@ -11370,8 +11378,6 @@ function retryPprogFillFailures() {
   var weeks = (store.currentBlock && store.currentBlock.weeks) || [];
   var activeWi = store.activeWeekIndex | 0;
   for (var j = 0; j < weeks.length; j++) {
-    /* Cost: only retry weeks we actually pre-fill (active + next) */
-    if (j !== activeWi && j !== activeWi + 1) continue;
     if (!weekHasDetailedDays(weeks[j])) {
       /* Start at 1 so next request sends forceJson/compact immediately */
       pprogFillAttempts[j] = 1;
@@ -11412,7 +11418,7 @@ function initPprogUi() {
       jumpPprogToToday();
     }
   } catch (eLand) {}
-  /* After landing on today's week — lazy-fill active+next only (not all 5). */
+  /* After landing on today's week — fill any week that still lacks real parts. */
   try {
     enqueuePprogMissingWeekFills();
   } catch (e) {}

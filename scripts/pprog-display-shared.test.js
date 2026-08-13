@@ -98,5 +98,6 @@ ok("T3 debounce helper", /function pprogPushAdminSnapshotDebounced/.test(index))
 ok("T3 after DONE", /pprogPushAdminSnapshotDebounced\(store, "finish_done"\)/.test(index));
 ok("T3 after Terms", /pprogPushAdminSnapshotDebounced\(store, "legal_terms"\)/.test(index));
 ok("T4 not present — no admin write-back", !/adminPprogReviseDay|adminApplyDayEdit/.test(admin));
+ok("pending parts copy has a space after Session pending", /Session pending\.<\/strong> Overview/.test(fs.readFileSync(path.join(root, "lib", "pprog-display.js"), "utf8")));
 
 console.log("All shared pprog-display checks passed.");

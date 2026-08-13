@@ -1,5 +1,14 @@
 # Changelog
 
+## [Admin 1.5.13] - 2026-08-13
+
+### Founder retest — join mail, live admin, brick sync
+- **Join email only after Terms:** no mail on `create_athlete`. Mail fires once the device has a training block **and** `declarationAcceptedAt` (signed declaration).
+- **Remember me + stay logged in on refresh:** session keeps the password for this tab; checkbox stores it on this device.
+- **Live admin list:** polls snapshots every 8s while logged in (declaration chip / brick updates without a full reload).
+- **Brick parity:** device fills **all** weeks that still lack real parts (not only active+next), then pushes the filled brick to admin. Snapshot cap raised to 256KB so the full 5-week brick can save.
+- **Pending-parts copy:** space after “Session pending.”
+
 ## [Admin 1.5.12] - 2026-08-13
 
 ### Founder retest UX (on top of approved 1.5.11 brick display)

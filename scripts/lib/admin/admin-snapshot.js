@@ -27,8 +27,12 @@ const {
 const { assertSnapshotWriteAllowed, hashWriteKey } = require("./admin-ownership");
 const { appendAdminAudit } = require("./admin-audit");
 const { applyCors } = require("../../../lib/cors-allowlist");
+const {
+  sendAdminIntakeCompleteMail,
+  snapshotReadyForJoinMail,
+} = require("../../../lib/admin-intake-complete-mail");
 
-const MAX_SNAPSHOT_BYTES = 64 * 1024;
+const MAX_SNAPSHOT_BYTES = 256 * 1024;
 const ADMIN_PASSWORD = resolveAdminPassword();
 const SNAP_PREFIX = "admin-snapshots/";
 
@@ -702,10 +706,7 @@ module.exports = async function handler(req, res) {
       declarationAcceptedAt: String(
         clean.declarationAcceptedAt ||
           clean.legalAcceptedAt ||
-          /* Prefer fresh device signature; fall back only when client did not send one. */
           existing.declarationAcceptedAt ||
-          existing.joinedAt ||
-          existing.createdAt ||
           ""
       ).slice(0, 40),
       adminChatLog: Array.isArray(existing.adminChatLog) ? existing.adminChatLog : [],
@@ -720,6 +721,13 @@ module.exports = async function handler(req, res) {
         return null;
       })(),
       lastAcceptedPushUpgrade: existing.lastAcceptedPushUpgrade || null,
+      createdByAdmin: !!(existing.createdByAdmin || (isAdmin && clean.createdByAdmin)),
+      intakeNotifySent: !!existing.intakeNotifySent,
+      intakeNotifySentAt: existing.intakeNotifySentAt || null,
+      lastHandoffPath: existing.lastHandoffPath,
+      lastHandoffCreatedAt: existing.lastHandoffCreatedAt,
+      lastHandoffExpiresAt: existing.lastHandoffExpiresAt,
+      lastHandoffTokenPrefix: existing.lastHandoffTokenPrefix,
       writeKeyHash:
         existing.writeKeyHash ||
         gate.bindHash ||
@@ -763,7 +771,27 @@ module.exports = async function handler(req, res) {
     } catch (e) {
       return storageUnavailable(res, e);
     }
-    return res.status(200).json({ ok: true, storage: storageInfo() });
+
+    let joinMailSent = !!snapshot.intakeNotifySent;
+    if (snapshotReadyForJoinMail(snapshot)) {
+      try {
+        const mailResult = await sendAdminIntakeCompleteMail(snapshot);
+        if (mailResult && mailResult.sent) {
+          snapshot.intakeNotifySent = true;
+          snapshot.intakeNotifySentAt = new Date().toISOString();
+          joinMailSent = true;
+          try {
+            await writeSnapshot(athleteId, snapshot);
+          } catch (eFlag) {}
+        }
+      } catch (eMail) {}
+    }
+
+    return res.status(200).json({
+      ok: true,
+      storage: storageInfo(),
+      joinMailSent: joinMailSent,
+    });
   }
 
   if (req.method === "GET") {

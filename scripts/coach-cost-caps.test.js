@@ -244,7 +244,7 @@ function testStaticRegressions() {
   ok("client daily cap 2", idx.includes("PPROG_COST_DAILY_CAP = 2"));
   ok("revise_day sends sessionDate", /action:\s*"revise_day"[\s\S]{0,200}sessionDate/.test(idx));
   ok("COST_CAP friendly errors", idx.includes("COST_CAP_DAILY") && idx.includes("COST_CAP_MONTHLY"));
-  ok("lazy fill active+next only", idx.includes("only pre-fill active + next week"));
+  ok("fill every week that lacks real parts", idx.includes("Fill every week that still lacks real parts"));
   ok("cost lib not under /api", !fs.existsSync(path.join(root, "api/coach-cost-caps.js")));
   ok("cost lib under lib/", fs.existsSync(path.join(root, "lib/coach-cost-caps.js")));
   ok("no premature comment close in cost lib", !costLib.includes("generate_*/revise_*"));
