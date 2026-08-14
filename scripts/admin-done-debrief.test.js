@@ -184,7 +184,7 @@ ok("card width in 320–380", /flex:\s*0 0 360px/.test(admin));
 
 ok("admin loads debrief lib", /admin-done-debrief\.js/.test(admin));
 ok("admin mark-read action", /admin_mark_done_read/.test(snap) && /doneDebriefRead/.test(snap));
-ok("admin shows skeleton vs device snapshot", /שלד בלבד/.test(admin) && /adminBlockPartsReadyCount/.test(admin));
+ok("admin shows skeleton vs device snapshot", /שלד בלבד/.test(admin) && /is-skeleton/.test(admin) && /adminBlockPartsReadyCount/.test(admin));
 ok("admin preserves doneDebriefRead on snapshot write", /doneDebriefRead:/.test(snap));
 ok("admin chat template flag", /דגל אדום/.test(admin) && /ath-done-debrief/.test(admin));
 ok("other quote uses note class not part class", /msg\.note/.test(admin) && /ath-done-debrief-note/.test(admin));

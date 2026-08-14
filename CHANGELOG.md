@@ -1,5 +1,14 @@
 # Changelog
 
+## [Admin 3.0.2] - 2026-08-14 · **Vercel production actually deploys**
+
+### Why Ilia's brick still looked the same after 3.0 / 3.0.1
+- GitHub Pages had 3.0.1. **Vercel Production stayed on 3.0** (`d53270d0`).
+- Cause: `vercel.json` ignoreCommand skipped the 3.0.1 merge because `git diff HEAD~1` on a merge vs first parent was only `data/analytics.jsonl` → status «Canceled by Ignored Build Step».
+- Fix: never skip merge commits. This 3.0.2 commit is a normal (non-merge) ship so Production must build.
+- Admin badge **3.0.2** is the proof the live HTML updated. Skeleton days get a yellow banner — the 5-week calendar overview does not magically fill until the phone pushes real `parts[]`.
+- Coach remains **2.3.13**. No `generate_*` change.
+
 ## [Admin 3.0.1] - 2026-08-14 · **live catch-up**
 
 ### Phone brick still showing as Session pending in Admin
