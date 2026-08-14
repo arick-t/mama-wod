@@ -63,6 +63,10 @@ const {
 const { applyCors } = require("../lib/cors-allowlist.js");
 const { checkAdminAuth } = require("../scripts/lib/admin/admin-auth.js");
 const {
+  pickUsageMeta,
+  recordCoachUsageSpend,
+} = require("../scripts/lib/admin/admin-credit-estimate.js");
+const {
   classifyCoachUserInput,
   shouldBlockWithoutModel,
   applyCoachOutputGuard,
@@ -320,26 +324,7 @@ function resolveCoachChatModel() {
   return aliasCoachModel(raw, "gemini-2.5-flash-lite");
 }
 
-function pickUsageMeta(data) {
-  const u =
-    (data && data.usageMetadata) ||
-    (data && data.usage_metadata) ||
-    (data && data.usage) ||
-    null;
-  if (!u || typeof u !== "object") return null;
-  const prompt = u.promptTokenCount != null ? u.promptTokenCount : u.prompt_tokens;
-  const out = u.candidatesTokenCount != null ? u.candidatesTokenCount : u.completion_tokens;
-  const total = u.totalTokenCount != null ? u.totalTokenCount : u.total_tokens;
-  const meta = {};
-  if (prompt != null) meta.promptTokens = Number(prompt) || 0;
-  if (out != null) meta.outputTokens = Number(out) || 0;
-  if (total != null) meta.totalTokens = Number(total) || 0;
-  return meta.promptTokens != null || meta.outputTokens != null || meta.totalTokens != null
-    ? meta
-    : null;
-}
-
-function logCoachUsage(label, model, usage, via) {
+async function logCoachUsage(label, model, usage, via) {
   if (!usage) return;
   try {
     console.log(
@@ -355,8 +340,7 @@ function logCoachUsage(label, model, usage, via) {
     );
   } catch (e) {}
   try {
-    const { recordCoachUsageSpend } = require("../scripts/lib/admin/admin-credit-estimate");
-    recordCoachUsageSpend(model, usage, via || label);
+    await recordCoachUsageSpend(model, usage, via || label);
   } catch (e) {}
 }
 
@@ -1426,7 +1410,7 @@ async function callInteractions(apiKey, model, messages, storeName, systemText) 
     return { ok: false, status: 502, error: "Empty Interactions response", detail: data };
   }
   const usage = pickUsageMeta(data);
-  if (usage) logCoachUsage("interactions", model, usage, "interactions");
+  if (usage) await logCoachUsage("interactions", model, usage, "interactions");
   return { ok: true, text, via: "interactions", data, usage };
 }
 
@@ -1491,7 +1475,7 @@ async function callGenerateContent(apiKey, model, messages, storeName, systemTex
     return { ok: false, status: 502, error: "Empty Gemini response", detail: data };
   }
   const usage = pickUsageMeta(data);
-  if (usage) logCoachUsage("generateContent", model, usage, "generateContent");
+  if (usage) await logCoachUsage("generateContent", model, usage, "generateContent");
   return { ok: true, text, via: "generateContent", data, usage };
 }
 

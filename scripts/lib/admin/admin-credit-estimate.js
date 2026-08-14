@@ -13,8 +13,9 @@ const BILLING_URL = "https://aistudio.google.com/billing";
 const PRICE_TABLE_VERSION = 1;
 const SAFETY_FACTOR = Number(process.env.ADMIN_CREDIT_SAFETY_FACTOR || 1.2);
 const USD_ILS = Number(process.env.ADMIN_USD_ILS_RATE || 3.7);
-const FLUSH_MIN_ILS = 0.05;
-const FLUSH_MIN_MS = 45_000;
+/* Serverless: never wait to flush — the isolate dies when the response is sent. */
+const FLUSH_MIN_ILS = 0;
+const FLUSH_MIN_MS = 0;
 /** Morning Google Billing (2026-08-10). Used only when ledger has no manual balance. Override/disable via ADMIN_CREDIT_SEED_ILS. */
 const EMPTY_LEDGER_SEED_NOTE = "בוקר 2026-08-10 · Google AI Studio Billing";
 
@@ -99,6 +100,38 @@ function estimateIlsFromUsage(model, usage) {
   const rate = Number.isFinite(USD_ILS) && USD_ILS > 0 ? USD_ILS : 3.7;
   /* Do NOT round to agorot here — small chat turns would become 0 and never burn. */
   return roundMicros(usd * rate * factor);
+}
+
+/**
+ * Normalize Gemini / OpenAI-shaped usage from a raw API body.
+ * promptTokenCount already includes cached tokens — do not add cached again.
+ * thoughtsTokenCount is billed output (thinking) when present.
+ */
+function pickUsageMeta(data) {
+  const u =
+    (data && data.usageMetadata) ||
+    (data && data.usage_metadata) ||
+    (data && data.usage) ||
+    (data && data.metadata && data.metadata.usage) ||
+    null;
+  if (!u || typeof u !== "object") return null;
+  const prompt = u.promptTokenCount != null ? u.promptTokenCount : u.prompt_tokens;
+  const out = u.candidatesTokenCount != null ? u.candidatesTokenCount : u.completion_tokens;
+  const thoughts = u.thoughtsTokenCount != null ? u.thoughtsTokenCount : 0;
+  const total = u.totalTokenCount != null ? u.totalTokenCount : u.total_tokens;
+  const meta = {};
+  if (prompt != null) meta.promptTokens = Number(prompt) || 0;
+  if (out != null || thoughts) {
+    meta.outputTokens = (Number(out) || 0) + (Number(thoughts) || 0);
+  }
+  if (total != null) meta.totalTokens = Number(total) || 0;
+  if (!meta.promptTokens && !meta.outputTokens && meta.totalTokens > 0) {
+    meta.promptTokens = Math.round(meta.totalTokens * 0.7);
+    meta.outputTokens = meta.totalTokens - meta.promptTokens;
+  }
+  return meta.promptTokens != null || meta.outputTokens != null || meta.totalTokens != null
+    ? meta
+    : null;
 }
 
 function isNonGeminiBillable(model, via) {
@@ -191,8 +224,10 @@ function publicCreditView(ledger) {
     ledger.balanceManual == null || !Number.isFinite(Number(ledger.balanceManual))
       ? null
       : roundMoney(ledger.balanceManual);
-  const spent = roundMoney(ledger.spentSinceUpdateEstimated || 0);
-  const remaining = manual == null ? null : roundMoney(Math.max(0, manual - spent));
+  const spentRaw = Number(ledger.spentSinceUpdateEstimated) || 0;
+  const spent = roundMoney(spentRaw);
+  const remaining =
+    manual == null ? null : roundMoney(Math.max(0, manual - spentRaw));
   const low =
     remaining != null && remaining < Number(process.env.ADMIN_CREDIT_WARN_ILS || 30);
   const critical =
@@ -212,6 +247,8 @@ function publicCreditView(ledger) {
     creditNote: ledger.creditNote || "",
     priceTableVersion: ledger.priceTableVersion || PRICE_TABLE_VERSION,
     safetyFactor: ledger.safetyFactor || SAFETY_FACTOR,
+    lastFlushAt: ledger.lastFlushAt || null,
+    spentRaw: spentRaw,
     warnLow: !!low,
     warnCritical: !!critical,
     disclaimerHe:
@@ -294,6 +331,15 @@ async function flushPendingSpend(force) {
       );
       await writeRawLedger(base);
       memLastFlushAt = Date.now();
+      try {
+        console.log(
+          "[credit-estimate] flushed",
+          JSON.stringify({
+            addIls: add,
+            spentSinceUpdateEstimated: base.spentSinceUpdateEstimated,
+          })
+        );
+      } catch (eLog) {}
       return base;
     } catch (e) {
       memPendingIls = roundMicros(memPendingIls + add);
@@ -305,22 +351,34 @@ async function flushPendingSpend(force) {
   return memFlushInFlight;
 }
 
-function recordCoachUsageSpend(model, usage, via) {
+async function recordCoachUsageSpend(model, usage, via) {
   try {
-    if (!usage) return;
-    if (isNonGeminiBillable(model, via)) return;
+    if (!usage) return 0;
+    if (isNonGeminiBillable(model, via)) return 0;
     const ils = estimateIlsFromUsage(model, usage);
-    if (!(ils > 0)) return;
+    if (!(ils > 0)) return 0;
     memPendingIls = roundMicros(memPendingIls + ils);
-    flushPendingSpend(false).catch(function () {});
-  } catch (e) {}
+    /* Await Blob write before the serverless response ends — fire-and-forget never persisted. */
+    await flushPendingSpend(true);
+    return ils;
+  } catch (e) {
+    return 0;
+  }
+}
+
+async function recordGeminiResponseSpend(model, data, via) {
+  const usage = pickUsageMeta(data);
+  if (!usage) return 0;
+  return recordCoachUsageSpend(model, usage, via);
 }
 
 module.exports = {
   estimateIlsFromUsage,
+  pickUsageMeta,
   getCreditEstimate,
   setManualBalance,
   recordCoachUsageSpend,
+  recordGeminiResponseSpend,
   flushPendingSpend,
   publicCreditView,
   isNonGeminiBillable,

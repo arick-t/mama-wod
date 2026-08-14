@@ -1,5 +1,16 @@
 # Changelog
 
+## [Budget] - 2026-08-14 · credit estimate actually decrements
+
+### Why ₪57.23 stayed stuck (Google showed ₪54.61)
+- Spend was added in-memory then `flushPendingSpend` ran **without await**. On Vercel the isolate dies after the HTTP response, so Blob `admin-meta/credit-estimate.json` never updated. Display = manual − spent; spent stayed 0 → pill never moved.
+- Fix: `recordCoachUsageSpend` is async and **awaits** a forced Blob/FS flush before the response ends. Debounce floor removed (serverless cannot wait 45s).
+- Same prepaid wallet: `generate-workout` / Security Coach / admin sandbox now record Gemini `usageMetadata` too (Groq still 0 Google).
+- `thoughtsTokenCount` counted as output. Cached tokens are **not** double-counted on prompt.
+- Admin pill tooltip shows spent-since-update + last flush; tag becomes `−₪x.xx` once burn is stored.
+- After deploy: next real Gemini coach call should drop the estimate. Then **manually set 54.61** once to re-baseline. The unrecorded ₪2.62 will not backfill.
+- 0 extra AI · programming quality unchanged (POL-020)
+
 ## [Budget] - 2026-08-14 · admin first brick billed to new athlete UID
 
 ### Admin `generate_block` under the new athlete envelope
