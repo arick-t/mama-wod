@@ -1,7 +1,17 @@
 # Admin block display + handoff UX
 
 Base: approved **Admin 1.5.11** shared brick (`lib/pprog-display.js`, T1+T2+T3).  
-This branch ships founder UX + T4 as Admin **2.0.1**.
+This branch ships as Admin **3.0**.
+
+## Round 10 (Admin 3.0) — Done debrief + width view + auto-sync
+- Calendar Done dots (admin-only) + Hebrew debrief in the bottom chat pane
+- Multi-day width strip; Save writes full `parts[]` and auto-syncs (0 LLM)
+- Merged main Admin **2.0.2** budget treatments (credit persist + athlete UID billing)
+
+## Round 9 (Admin 2.0.2) — credit estimate persist
+- Await Blob flush of Gemini spend before the serverless response ends (pill was stuck on first manual balance)
+- Same prepaid wallet: generate-workout / security-coach / admin sandbox record usage
+- Pill shows spent-since-update; Groq stays 0 Google
 
 ## Round 8 (Admin 2.0.1) — session token security (A–C)
 - HMAC key = `ADMIN_SESSION_SECRET` (not raw password) · password fingerprint in payload

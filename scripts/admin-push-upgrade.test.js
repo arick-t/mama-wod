@@ -50,8 +50,9 @@ ok(
 ok("admin push button removed", !admin.includes("עדכון בדחיפה") && !admin.includes("btn-push-upgrade"));
 ok("admin green synced label", admin.includes("סונכרן") && admin.includes("adminBlockSyncStatus"));
 ok("admin push beside block title", admin.includes("ath-block-panel-head"));
-ok("admin version 2.0.3", /DUCK-WOD Admin · 2\.0\.3/.test(admin));
-ok("admin shows Coach beside Admin", /Admin 2\.0\.3/.test(admin) && /Coach 2\.3\.13/.test(admin));
+ok("admin push head adjacent layout", /ath-block-panel-head\{[^}]*justify-content:\s*flex-start/.test(admin));
+ok("admin version 3.0", /DUCK-WOD Admin · 3\.0/.test(admin));
+ok("admin shows Coach beside Admin", /Admin 3\.0/.test(admin) && /Coach 2\.3\.13/.test(admin));
 ok("old עדכן button removed", !admin.includes("btn-update-block"));
 ok("admin push-upgrade UI gone", !admin.includes("sendPushUpgradeOffer") && !admin.includes("getPushUpgradeGate"));
 ok("admin action API", snap.includes('action === "admin_push_upgrade_offer"'));

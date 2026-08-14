@@ -57,7 +57,7 @@ ok("client force logout on 401", /function forceAdminLogout/.test(adminHtml) && 
 ok("loadAthletes checks 401", /loadAthletes[\s\S]{0,900}status === 401/.test(adminHtml));
 ok("visible logout button", /adminLogout\(/.test(adminHtml) && /התנתק/.test(adminHtml));
 ok("reads token from response header", /X-Admin-Session-Token/.test(adminHtml));
-ok("admin version 2.0.3", /ADMIN_UI_VERSION = "2\.0\.3"/.test(adminHtml));
+ok("admin version 3.0", /ADMIN_UI_VERSION = "3\.0"/.test(adminHtml));
 
 delete process.env.ADMIN_PASSWORD;
 delete process.env.ADMIN_SESSION_SECRET;

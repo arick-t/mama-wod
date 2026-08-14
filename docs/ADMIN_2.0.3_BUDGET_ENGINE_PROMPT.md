@@ -1,9 +1,10 @@
-# פרומפט למנוע תקציב — Admin 2.0.2–2.0.3 (בראנץ' `cursor/admin-small-tweaks-f8bf`)
+# פרומפט למנוע תקציב — Admin 3.0 (בראנץ' `cursor/admin-small-tweaks-f8bf`)
 
 **מטרה:** להעביר למנוע התקציב / שומר עלות (POL-COST) ולוודא שאין זליגות אחרי יישום שני פיצ'רי האדמין + סנכרון שמירה אוטומטי.
 
 **Branch:** `cursor/admin-small-tweaks-f8bf` (base `main`) · PR https://github.com/arick-t/mama-wod/pull/90  
-**Admin UI:** 2.0.3 · **Coach:** 2.3.13 (לא נגענו)
+**Admin UI:** **3.0** (כותרת עלייה) · **Coach:** 2.3.13 (לא נגענו)  
+**שים לב:** `main` כבר עלה ל־Admin **2.0.2** מפריטי מנוע התקציב (PR #91: חיוב UID + כדור קרדיט). הבראנץ' הזה ממזג את 2.0.2 ועולה ל־3.0 בשביל שני הפיצ'רים. אל תבלבל בין 2.0.2 של התקציב לבין מספרי עבודה פנימיים ישנים (2.0.2/2.0.3) בבראנץ'.
 
 ---
 
@@ -12,7 +13,7 @@
 ```
 אתה מנוע התקציב / שומר עלות של DUCK-WOD (POL-COST-001..010 + שערים ב-lib/coach-cost-caps.js + api/personal-coach.js).
 
-תפקידך: לבדוק האם השינויים בבראנץ' cursor/admin-small-tweaks-f8bf (Admin 2.0.2–2.0.3 מול main) יוצרים **זליגות עלות** — קריאות AI מיותרות, כפילות יחידות, עקיפת caps, חיוב כפול, remaining_rebuild בטעות, או שינוי שמגדיל חשבון בלי כוונה.
+תפקידך: לבדוק האם השינויים בבראנץ' cursor/admin-small-tweaks-f8bf (Admin 3.0 מול main שכבר כולל Admin 2.0.2 תקציב / PR #91) יוצרים **זליגות עלות** — קריאות AI מיותרות, כפילות יחידות, עקיפת caps, חיוב כפול, remaining_rebuild בטעות, או שינוי שמגדיל חשבון בלי כוונה.
 
 ענה בעברית, ממוקד, עם רשימת סיכונים + קבצים. אל תציע stub / תבניות במקום generate_block אמיתי. תקציב ≠ קיצור איכות תכנות.
 
@@ -20,7 +21,7 @@
 0) גבול הסקופ — מה כן / לא בבראנץ'
 ════════════════════════════════════
 
-git diff main...HEAD — 13 קבצים בלבד:
+git diff origin/main...HEAD — פיצ'רי Admin 3.0 בלבד (אחרי מיזוג PR #91):
 
 כן (Admin + תצוגה משותפת + טסטים):
   admin.html
@@ -30,14 +31,17 @@ git diff main...HEAD — 13 קבצים בלבד:
   scripts/lib/admin/admin-snapshot.js
   + טסטים ב-scripts/*
 
-לא נגענו בכלל (חייב להישאר 0 diff מול main):
+כבר ב-main מ-PR #91 (מנוע תקציב, Admin 2.0.2) — לא לגעת שוב / לא להחליש:
+  api/personal-coach.js · lib/coach-cost-caps.js · admin-fixed-intake.js
+  scripts/lib/admin/admin-credit-estimate.js · חיוב UID + flush קרדיט
+
+פיצ'רי 3.0 לא מוסיפים diff על:
   index.html                         ← כפתור Done / picker חלקים / מוח במכשיר
-  api/personal-coach.js              ← generate_* / revise_* / caps
-  lib/coach-cost-caps.js
   lib/coach-push-upgrade.js
   מדיניות מאמן / פרומפטי generate_block / generate_week_detail / revise_*
 
 Coach נשאר 2.3.13. אין Gemini / מודל לכתיבת הודעת תחקיר או לעריכת חלקים.
+כותרת המוצר לעלייה: Admin 3.0 (לא 2.0.2/2.0.3).
 
 ════════════════════════════════════
 1) מה יושם בבראנץ' (שלושה אשכולות)

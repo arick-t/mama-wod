@@ -264,6 +264,7 @@ function buildPhonePackage(snap, writeKeyPlain) {
     intakeNotifySent: false,
     intakeNotifySentAt: null,
     handoffInstalledAt: new Date().toISOString(),
+    costCaps: CoachIntakeSync.cloneCostCaps(snap.costCaps),
   };
   pkg = CoachIntakeSync.applyIntakeProfileToPhoneStore(pkg, intakeProfile);
   /* Re-assert after merge — applyIntakeProfile must never invent a signature. */
@@ -406,6 +407,10 @@ async function createAthlete(body) {
     writeKeyHash: hashWriteKey(deviceWriteKey),
     clientWritesLocked: false,
     intakeNotifySent: false,
+    costCaps:
+      body.costCaps && typeof body.costCaps === "object"
+        ? CoachIntakeSync.cloneCostCaps(body.costCaps)
+        : CoachIntakeSync.emptyCostCaps(),
   };
   try {
     await writeSnap(athleteId, snapshot);
