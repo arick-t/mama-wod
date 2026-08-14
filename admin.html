@@ -1700,6 +1700,26 @@ function tryRestoreAdminSession() {
     });
 }
 
+function ingestAdminSnapshots(list) {
+  var prevById = {};
+  (athletes || []).forEach(function (p) {
+    if (p && p.athleteId) prevById[p.athleteId] = p;
+  });
+  return (list || []).map(function (a) {
+    if (!a) return a;
+    if (a.currentBlock && typeof NormalizePprogBlock !== "undefined" && NormalizePprogBlock.normalize) {
+      try {
+        a.currentBlock = NormalizePprogBlock.normalize(a.currentBlock, a.currentBlock);
+      } catch (eNorm) {}
+    }
+    var prev = prevById[a.athleteId];
+    if (prev && prev.doneDebriefRead && typeof prev.doneDebriefRead === "object") {
+      a.doneDebriefRead = Object.assign({}, a.doneDebriefRead || {}, prev.doneDebriefRead);
+    }
+    return a;
+  });
+}
+
 function loadAthletes(opts) {
   opts = opts || {};
   var silent = !!opts.silent;
@@ -1731,15 +1751,7 @@ function loadAthletes(opts) {
       if (silent && fp === lastAdminSnapFingerprint) return;
       lastAdminSnapFingerprint = fp;
       if (silent && (document.body.classList.contains("admin-intake-open") || adminDayEdit)) {
-        athletes = list.map(function (a) {
-          if (!a) return a;
-          if (a.currentBlock && typeof NormalizePprogBlock !== "undefined" && NormalizePprogBlock.normalize) {
-            try {
-              a.currentBlock = NormalizePprogBlock.normalize(a.currentBlock, a.currentBlock);
-            } catch (eNorm) {}
-          }
-          return a;
-        });
+        athletes = ingestAdminSnapshots(list);
         var countEl = document.getElementById("athlete-count");
         if (countEl) countEl.textContent = athletes.length + " מתאמנים";
         return;
@@ -1791,15 +1803,7 @@ function refreshLiveCoachVersion() {
 }
 
 function renderAthleteList(list) {
-  athletes = (list || []).map(function (a) {
-    if (!a) return a;
-    if (a.currentBlock && typeof NormalizePprogBlock !== "undefined" && NormalizePprogBlock.normalize) {
-      try {
-        a.currentBlock = NormalizePprogBlock.normalize(a.currentBlock, a.currentBlock);
-      } catch (eNorm) {}
-    }
-    return a;
-  });
+  athletes = ingestAdminSnapshots(list);
   lastAdminSnapFingerprint = adminSnapshotsFingerprint(athletes);
   document.getElementById("athlete-count").textContent = athletes.length + " מתאמנים";
   var sb = document.getElementById("athlete-tabs");
@@ -2513,7 +2517,7 @@ function adminPprogMarkDayRead(a, wi, dayKey) {
 
 function renderDoneDebriefCard(a, wi, dayKey) {
   var day = adminPprogDayData(a, wi, dayKey);
-  if (!day || !day.finishFeedback) return "";
+  if (!day || !day.finishFeedback || !day.finishFeedback.rating) return "";
   var msg =
     typeof AdminDoneDebrief !== "undefined" && AdminDoneDebrief.formatMessage
       ? AdminDoneDebrief.formatMessage(day.finishFeedback)

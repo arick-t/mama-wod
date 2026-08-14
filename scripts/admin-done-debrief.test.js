@@ -28,7 +28,28 @@ ok(
   "too_hard + title",
   (() => {
     const m = AdminDoneDebrief.formatMessage({ rating: "too_hard", part_title: "סקוואט כבד" });
-    return m.lines[0] === "קשה מדי" && m.lines[1] === "סקוואט כבד";
+    return m.lines[0] === "קשה מדי" && m.lines[1] === "סקוואט כבד" && m.lines.length === 2;
+  })()
+);
+ok(
+  "too_easy + title",
+  (() => {
+    const m = AdminDoneDebrief.formatMessage({ rating: "too_easy", part_title: "מטקון" });
+    return m.lines[0] === "קל מדי" && m.lines[1] === "מטקון";
+  })()
+);
+ok(
+  "hard without title is type only",
+  AdminDoneDebrief.formatMessage({ rating: "too_hard" }).lines.join("|") === "קשה מדי"
+);
+ok(
+  "other + note quoted",
+  (() => {
+    const m = AdminDoneDebrief.formatMessage({
+      rating: "other",
+      note: "הברכיים צרמו בסקוואט",
+    });
+    return m.lines[0] === "אחר" && m.lines[1] === "«הברכיים צרמו בסקוואט»" && !m.safety;
   })()
 );
 ok(
@@ -39,10 +60,15 @@ ok(
       note: "כאב חד בכתף",
       safety_flag: true,
     });
-    return m.lines[0] === "אחר" && m.lines[1] === "כאב חד בכתף" && m.safety === true;
+    return m.lines[0] === "אחר" && m.lines[1] === "«כאב חד בכתף»" && m.safety === true;
   })()
 );
+ok(
+  "pain word without safety_flag has no flag",
+  AdminDoneDebrief.formatMessage({ rating: "other", note: "כאב", safety_flag: false }).safety === false
+);
 ok("no rating → null", AdminDoneDebrief.formatMessage({}) === null);
+ok("no debrief without rating", AdminDoneDebrief.hasDebrief({ finishFeedback: {} }) === false);
 ok("unread without map", AdminDoneDebrief.isUnread(null, "2026-08-14") === true);
 ok(
   "read after mark",
@@ -159,6 +185,9 @@ ok("admin width CSS desktop strip", /pprog-width-strip\{[^}]*overflow-x:\s*auto/
 ok("admin selected cell uses coach purple not brand", /pprog-cal-cell\.selected:not\(\.active\)\{[^}]*--coach/.test(admin.replace(/\s+/g, "")));
 ok("no generate from debrief/width", !/generate_block|generate_week_detail|revise_day/.test(admin.slice(admin.indexOf("function adminPprogSelectWeek"), admin.indexOf("function adminPprogStartEdit") > 0 ? admin.indexOf("function adminPprogStartEdit") : admin.length)));
 ok("index Done UI untouched by admin dots", !/showDoneDots/.test(index) && !/pprog-done-dot/.test(index));
+ok("Done reads live day.parts", /function pprogFinishDayPartsForKey/.test(index) && /dayData && dayData.parts/.test(index));
+ok("click does not append chat log", !/admin_append_chat/.test(admin.slice(admin.indexOf("function adminPprogMarkDayRead"), admin.indexOf("function renderDoneDebriefCard"))));
+ok("ingest keeps local read across poll", /ingestAdminSnapshots/.test(admin) && /doneDebriefRead/.test(admin.slice(admin.indexOf("function ingestAdminSnapshots"), admin.indexOf("function loadAthletes"))));
 ok("pprog passCalEvent is opt-in", /passCalEvent/.test(pprog) && /showDoneDots/.test(pprog));
 ok("admin save still 0 LLM", /admin_save_day/.test(snap) && !/generate_block/.test(snap.slice(snap.indexOf('action === "admin_save_day"'), snap.indexOf('action === "admin_mark_done_read"'))));
 

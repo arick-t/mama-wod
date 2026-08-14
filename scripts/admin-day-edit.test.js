@@ -86,9 +86,17 @@ ok(
     "apply"
   ).code === "logged"
 );
+ok("today training unlocked", !AdminDayEdit.lockReason("mon", week.days.mon, week, "2026-08-13", "2026-08-13", "save"));
 ok(
-  "today training unlocked",
-  !AdminDayEdit.lockReason("mon", week.days.mon, week, "2026-08-13", "2026-08-13", "save")
+  "finishFeedback locks edit",
+  AdminDayEdit.lockReason(
+    "mon",
+    { parts: week.days.mon.parts, finishFeedback: { rating: "just_right" } },
+    week,
+    "2026-08-16",
+    "2026-08-13",
+    "save"
+  ).code === "done"
 );
 
 const sanitized = AdminDayEdit.sanitizeParts(
@@ -119,6 +127,23 @@ const applied = AdminDayEdit.applyPendingToDay(
   { week: week, dayKey: "mon", todayIso: "2026-08-13" }
 );
 ok("apply writes parts", applied.ok && applied.day.parts[0].lines[0].indexOf("90kg") >= 0);
+ok("apply replaces full parts array", applied.day.parts.length === 1 && applied.day.parts[0].title === "Strength");
+const three = AdminDayEdit.applyPendingToDay(
+  { parts: week.days.mon.parts },
+  AdminDayEdit.buildPending({
+    athleteId: "a1",
+    weekIndex: 0,
+    dayKey: "mon",
+    dayIso: "2026-08-16",
+    parts: [
+      { id: "mon-0", title: "Strength", lines: ["Back squat 3x5"] },
+      { id: "mon-1", title: "Skill", lines: ["HSPU practice"] },
+      { id: "mon-2", title: "Metcon", lines: ["AMRAP 12"] },
+    ],
+  }),
+  { week: week, dayKey: "mon", todayIso: "2026-08-13" }
+);
+ok("apply 2→3 writes three parts", three.ok && three.day.parts.length === 3 && three.day.parts[2].title === "Metcon");
 ok("apply keeps athlete preTalk", applied.day.preTalk === "knees" && applied.day.lastPreReply === "ok");
 ok("apply sets coach notice", applied.day.coachUpdatedNotice === "המאמן עדכן את האימון");
 ok(
