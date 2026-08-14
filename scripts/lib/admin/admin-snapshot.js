@@ -117,9 +117,17 @@ async function readSnapshot(athleteId) {
 async function writeSnapshot(athleteId, data) {
   const id = safeAthleteId(athleteId);
   if (!id) throw new Error("athleteId required");
-  const str = JSON.stringify(data);
+  let payload = data;
+  let str = JSON.stringify(payload);
+  if (str.length > MAX_SNAPSHOT_BYTES) {
+    payload = Object.assign({}, data, { pastBlocks: [] });
+    if (payload.fixedIntakePacket) {
+      payload.fixedIntakePacket = String(payload.fixedIntakePacket).slice(0, 4000);
+    }
+    str = JSON.stringify(payload);
+  }
   if (str.length > MAX_SNAPSHOT_BYTES) throw new Error("Snapshot too large");
-  await putJson(snapKey(id), data);
+  await putJson(snapKey(id), payload);
 }
 
 function publicSnapshot(row) {

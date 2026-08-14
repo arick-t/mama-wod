@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DUCK-WOD Admin · 3.0</title>
+<title>DUCK-WOD Admin · 3.0.1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -321,6 +321,7 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .block-header{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;flex-wrap:wrap}
 .block-title{font-size:15px;font-weight:700}
 .block-dates{font-size:12px;color:var(--text-meta)}
+.block-snap-meta{width:100%;font-size:12px;color:var(--text-meta);margin-top:-8px;margin-bottom:10px;font-weight:600}
 .month-nav{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
 .month-weekday{background:var(--bg-elev);border:1px solid var(--line);border-radius:8px;padding:6px;
@@ -712,7 +713,7 @@ body:has(#intake-modal.open) #adminChatFloat{
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver" id="login-ver-badge" title="Admin 3.0 · Coach 2.3.13">Admin 3.0<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></div>
+    <div class="ver" id="login-ver-badge" title="Admin 3.0.1 · Coach 2.3.13">Admin 3.0.1<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <label class="login-remember">
       <input type="checkbox" id="pw-remember"/>
@@ -728,7 +729,7 @@ body:has(#intake-modal.open) #adminChatFloat{
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">Admin</span>
-    <span class="ver-badge" id="admin-ver-badge" title="Admin 3.0 · Coach 2.3.13">Admin 3.0<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></span>
+    <span class="ver-badge" id="admin-ver-badge" title="Admin 3.0.1 · Coach 2.3.13">Admin 3.0.1<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></span>
     <span class="count-wrap">
       <span class="count" id="athlete-count" title="הרשימה מתעדכנת לבד כל כמה שניות — בלי לרענן את הדף">0 מתאמנים</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
@@ -922,7 +923,7 @@ var adminChatFabOpen = false;
 var adminDayEdit = null;
 var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
 /** Live Personal Coach brain version — refreshed from GET /api/personal-coach. */
-var ADMIN_UI_VERSION = "3.0";
+var ADMIN_UI_VERSION = "3.0.1";
 var LIVE_COACH_VERSION = "2.3.13";
 var LIVE_COACH_VERSION_FETCHED_AT = 0;
 
@@ -1113,6 +1114,30 @@ function getBlockAccSummary(a) {
   var line = String(b.summaryLine || "").trim();
   if (line) return week + " · " + line;
   return week;
+}
+
+function adminBlockPartsReadyCount(a) {
+  var b = a && a.currentBlock;
+  var weeks = b && Array.isArray(b.weeks) ? b.weeks : [];
+  var n = 0;
+  var wi;
+  var k;
+  for (wi = 0; wi < weeks.length; wi++) {
+    var days = (weeks[wi] && weeks[wi].days) || {};
+    for (k in days) {
+      if (!Object.prototype.hasOwnProperty.call(days, k)) continue;
+      var day = days[k] || {};
+      var parts = Array.isArray(day.parts) ? day.parts : [];
+      var hasReal = parts.some(function (p) {
+        if (!p || !p.lines || !p.lines.length) return false;
+        if (p.id && String(p.id).indexOf("overview-stub") >= 0) return false;
+        if (/still loading/i.test(p.lines.join(" "))) return false;
+        return true;
+      });
+      if (hasReal) n++;
+    }
+  }
+  return n;
 }
 
 function adminAuthHeaders(extra) {
@@ -2442,12 +2467,21 @@ function renderBlockCalendarBody(a) {
   }
   var summaryLine = b.summaryLine || "";
   var startStr = b.blockStart || "";
+  var readyN = adminBlockPartsReadyCount(a);
+  var snapAt = fmt(a.updatedAt || a.createdAt || "");
+  var snapMeta =
+    readyN > 0
+      ? "צילום מכשיר" + (snapAt ? " · " + snapAt : "") + " · " + readyN + " ימים עם חלקים"
+      : "שלד בלבד — פתחו המאמן בטלפון ורעננו קשה (הצילום המלא עדיין לא הגיע)";
   var header =
     '<div class="block-header">' +
     '<span class="block-title">' +
     esc(summaryLine) +
     "</span>" +
     (startStr ? '<span class="block-dates">מ‑' + fmt(startStr) + "</span>" : "") +
+    "</div>" +
+    '<div class="block-snap-meta">' +
+    esc(snapMeta) +
     "</div>";
   return (
     '<div id="block-section" dir="ltr">' +

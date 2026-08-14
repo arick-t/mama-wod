@@ -11511,6 +11511,13 @@ function initPprogUi() {
   try {
     enqueuePprogMissingWeekFills();
   } catch (e) {}
+  /* Always push the live brick to admin (GitHub Pages has no /api — uses Vercel base). */
+  try {
+    pprogPushAdminSnapshotDebounced(loadPprogStore(), "pprog_open");
+  } catch (eSnap) {}
+  try {
+    pprogMaybePullPushUpgradeOffer();
+  } catch (ePull) {}
 }
 
 try {

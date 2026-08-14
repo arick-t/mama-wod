@@ -122,15 +122,15 @@ ok("handoff stores lastHandoffPath", /lastHandoffPath/.test(handoff));
 ok("admin create does not send join mail", !/sendAdminIntakeCompleteMail/.test(handoff));
 ok("handoff inline in athlete card", /renderHandoffInline/.test(adminHtml) && /ath-handoff-inline/.test(adminHtml));
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
-ok("admin version 3.0", /DUCK-WOD Admin · 3\.0/.test(adminHtml));
+ok("admin version 3.0.1", /DUCK-WOD Admin · 3\.0\.1/.test(adminHtml));
 ok("admin wired to coach 2.3.13", /LIVE_COACH_VERSION = "2\.3\.13"/.test(adminHtml));
 ok("app coach 2.3.13", /COACH_VERSION = "2\.3\.13"/.test(index));
 ok(
   "admin shows Admin + Coach versions",
-  /Admin 3\.0/.test(adminHtml) &&
+  /Admin 3\.0\.1/.test(adminHtml) &&
     /ver-coach/.test(adminHtml) &&
     /syncAdminVersionLabels/.test(adminHtml) &&
-    /ADMIN_UI_VERSION = "3\.0"/.test(adminHtml)
+    /ADMIN_UI_VERSION = "3\.0\.1"/.test(adminHtml)
 );
 ok(
   "admin intake uses pprog classes 1:1",

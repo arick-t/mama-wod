@@ -211,6 +211,7 @@ ok(
 ok("admin_save_day still 0 LLM", !/generate_block|generate_week_detail|revise_day|revise_week/.test(
   snap.slice(snap.indexOf('action === "admin_save_day"'), snap.indexOf('action === "admin_member_status"'))
 ));
+ok("snapshot write can drop pastBlocks if oversized", /pastBlocks: \[\]/.test(snap) && /Snapshot too large/.test(snap));
 ok(
   "admin_save_day does not stamp MODIFIED",
   /modifiedPartKinds:\s*\{\}/.test(

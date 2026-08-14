@@ -1,6 +1,14 @@
 # Changelog
 
-## [Admin 3.0] - 2026-08-14 · **ready to ship**
+## [Admin 3.0.1] - 2026-08-14 · **live catch-up**
+
+### Phone brick still showing as Session pending in Admin
+- Opening Personal Coach always pushes the live `currentBlock` to admin (`pprog_open`)
+- Admin shows last snapshot time + how many days have real parts (or «שלד בלבד»)
+- Snapshot write drops `pastBlocks` if the brick exceeds 256KB
+- HTML `Cache-Control: no-store` on Vercel for `index.html` / `admin.html`
+
+
 
 ### Human-coach module (0 LLM on these paths)
 - **Done debrief:** calendar dots + Hebrew template in «היסטוריית שיח מול המאמן» from live `finishFeedback`. Read/unread persists. Athlete calendar has no dots.
