@@ -117,6 +117,38 @@ const width = PprogDisplay.renderBrickView({
 });
 ok("width strip for 2+ days", /pprog-width-strip/.test(width) && /pprog-width-status/.test(width));
 ok("width cards chronological", width.indexOf("Mon") < width.indexOf("Thu") || width.indexOf("Strength") < width.indexOf("Engine"));
+ok(
+  "plain click stays one card",
+  (PprogDisplay.renderBrickView({ block, activeWeekIndex: 0, activeDay: "mon" }).match(/pprog-day-card/g) || []).length === 1
+);
+ok(
+  "W3 is seven cards",
+  (PprogDisplay.renderBrickView({
+    block,
+    activeWeekIndex: 2,
+    activeDay: "sun",
+    selectedDays: ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].map(function (d) {
+      return { wi: 2, day: d };
+    }),
+  }).match(/pprog-day-card/g) || []).length === 7
+);
+ok(
+  "Thursday column is five cards",
+  (PprogDisplay.renderBrickView({
+    block,
+    activeWeekIndex: 0,
+    activeDay: "thu",
+    selectedDays: [0, 1, 2, 3, 4].map(function (wi) {
+      return { wi: wi, day: "thu" };
+    }),
+  }).match(/pprog-day-card/g) || []).length === 5
+);
+ok("clear control is נקה בחירה", /aria-label="נקה בחירה"/.test(admin) && /ימים נבחרו/.test(admin));
+ok("phone select hint", /בחר ימים/.test(admin));
+ok("click outside board exits select mode", /onAdminOutsideCalClick/.test(admin));
+ok("width cards keep dir=ltr", /pprog-day-card[\s\S]{0,80}dir="ltr"/.test(pprog) || /dir="ltr" data-wi=/.test(pprog));
+ok("no wrap on desktop strip", /flex-wrap:\s*nowrap/.test(admin) && /overflow-x:\s*auto/.test(admin));
+ok("card width in 320–380", /flex:\s*0 0 360px/.test(admin));
 
 ok("admin loads debrief lib", /admin-done-debrief\.js/.test(admin));
 ok("admin mark-read action", /admin_mark_done_read/.test(snap) && /doneDebriefRead/.test(snap));

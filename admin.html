@@ -368,7 +368,7 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .pprog-cal-general,.pprog-cal-week-col{appearance:none;background:#252525;border:1px solid #3a3a3a;color:#ddd;font-size:.62em;font-weight:700;padding:6px 2px;border-radius:8px;cursor:pointer;font-family:inherit;line-height:1.15;min-height:36px;width:100%;max-width:56px;margin:0 auto}
 .pprog-cal-week-col{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:.58em}
 .pprog-cal-general.active,.pprog-cal-week-col.active,.pprog-cal-cell.active{background:#8e44ad;border-color:#b06dcf;color:#fff}
-.pprog-cal-cell{appearance:none;background:transparent;border:none;color:#ddd;font-size:.9em;font-weight:600;padding:6px 0;border-radius:50%;cursor:pointer;font-family:inherit;aspect-ratio:1;max-width:38px;margin:0 auto;display:flex;align-items:center;justify-content:center;width:100%;position:relative}
+.pprog-cal-cell{appearance:none;background:transparent;border:none;color:#ddd;font-size:.9em;font-weight:600;padding:6px 0;border-radius:50%;cursor:pointer;font-family:inherit;aspect-ratio:1;max-width:38px;margin:0 auto;display:flex;align-items:center;justify-content:center;width:100%;position:relative;-webkit-user-select:none;user-select:none}
 .pprog-cal-cell:hover{background:#2a2a2a}
 .pprog-cal-cell.muted{color:#555}
 .pprog-cal-cell.has-wod:not(.active){color:#1A9B8A}
@@ -401,10 +401,10 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 }
 .pprog-width-strip{
   display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;
-  overflow-x:auto;overflow-y:hidden;padding:0 0 8px;scroll-snap-type:x proximity
+  overflow-x:auto;overflow-y:hidden;padding:0 0 8px;-webkit-overflow-scrolling:touch
 }
 .pprog-width-strip .pprog-day-card{
-  flex:0 0 340px;width:340px;max-width:340px;scroll-snap-align:start
+  flex:0 0 360px;width:360px;max-width:360px
 }
 @media (max-width:719px){
   .pprog-width-strip{flex-direction:column;overflow-x:visible;overflow-y:visible}
@@ -1574,6 +1574,7 @@ function openAdminApp(snapshots) {
     window._adminCalDocBound = true;
     document.addEventListener("mouseup", onAdminCalMouseUp);
     document.addEventListener("keydown", onAdminEscClear);
+    document.addEventListener("click", onAdminOutsideCalClick);
   }
 }
 
@@ -1953,6 +1954,7 @@ function renderAthlete(a) {
   syncAthleteChatFab(a);
   syncNotesPlaceholders();
   bindAdminCalGestures();
+  adminPprogScrollFocusCard();
 }
 
 function renderAthleteStatsPop(a, chatLog, open) {
@@ -2348,13 +2350,13 @@ function adminPprogDisplayOpts(a) {
       '<div class="pprog-width-status">' +
       selected.length +
       " ימים נבחרו · " +
-      '<button type="button" onclick="adminPprogClearSelection()">נקה</button>' +
+      '<button type="button" onclick="adminPprogClearSelection()" aria-label="נקה בחירה">נקה</button>' +
       (view.phoneSelectMode ? " · בחר ימים" : "") +
       "</div>";
   } else if (view.phoneSelectMode) {
     widthStatus =
       '<div class="pprog-width-status">בחר ימים · ' +
-      '<button type="button" onclick="adminPprogClearSelection()">נקה</button></div>';
+      '<button type="button" onclick="adminPprogClearSelection()" aria-label="נקה בחירה">נקה</button></div>';
   }
   return {
     block: a.currentBlock,
@@ -2566,6 +2568,41 @@ function adminPprogSameSelection(list, want) {
   return true;
 }
 
+function adminPprogPaintCalSelection(view) {
+  var cal = document.getElementById("pprogCal");
+  if (!cal || !view) return;
+  var cells = cal.querySelectorAll(".pprog-cal-cell");
+  var selected = view.selected || [];
+  var i;
+  var j;
+  for (i = 0; i < cells.length; i++) {
+    var wi = cells[i].getAttribute("data-wi") | 0;
+    var day = String(cells[i].getAttribute("data-day") || "");
+    var isFocus = wi === (view.activeWi | 0) && day === String(view.activeDay || "");
+    var isSel = false;
+    for (j = 0; j < selected.length; j++) {
+      if ((selected[j].wi | 0) === wi && selected[j].day === day) {
+        isSel = true;
+        break;
+      }
+    }
+    cells[i].classList.toggle("active", isFocus);
+    cells[i].classList.toggle("selected", isSel && !isFocus);
+  }
+}
+
+function adminPprogScrollFocusCard() {
+  var strip = document.querySelector(".pprog-width-strip");
+  if (!strip) return;
+  var focus = strip.querySelector(".pprog-day-card.is-focus");
+  if (!focus) return;
+  try {
+    if (window.matchMedia && window.matchMedia("(max-width:719px)").matches) return;
+    var left = focus.offsetLeft - 12;
+    if (Math.abs(strip.scrollLeft - left) > 8) strip.scrollLeft = left;
+  } catch (eS) {}
+}
+
 function adminPprogClearSelection() {
   var a = athletes.find(function (x) {
     return x.athleteId === currentAthleteId;
@@ -2590,6 +2627,7 @@ function adminPprogSelectWeek(weekIndex0) {
   });
   if (adminPprogSameSelection(view.selected, want)) {
     view.selected = [];
+    view.phoneSelectMode = false;
   } else {
     view.selected = want;
     view.activeWi = wi;
@@ -2612,6 +2650,7 @@ function adminPprogSelectDow(dayIndex) {
   });
   if (adminPprogSameSelection(view.selected, want)) {
     view.selected = [];
+    view.phoneSelectMode = false;
   } else {
     view.selected = want;
     view.activeDay = day;
@@ -2706,6 +2745,32 @@ function adminCalCellFromEvent(ev) {
 function bindAdminCalGestures() {
   var cal = document.getElementById("pprogCal");
   if (!cal) return;
+
+  function currentView() {
+    var a = athletes.find(function (x) {
+      return x.athleteId === currentAthleteId;
+    });
+    return a ? { a: a, view: adminEnsureBlockView(a) } : null;
+  }
+
+  function applyDragTo(cell) {
+    var ctx = currentView();
+    if (!ctx || !adminCalDrag || !cell) return;
+    var to = { wi: cell.getAttribute("data-wi") | 0, day: cell.getAttribute("data-day") };
+    if (!to.day) return;
+    if (to.wi === adminCalDrag.startWi && to.day === adminCalDrag.startDay) return;
+    adminCalDrag.moved = true;
+    adminPprogApplyRange(
+      ctx.view,
+      { wi: adminCalDrag.startWi, day: adminCalDrag.startDay },
+      to,
+      adminCalDrag.additive || ctx.view.phoneSelectMode
+    );
+    ctx.view.activeWi = to.wi;
+    ctx.view.activeDay = to.day;
+    adminPprogPaintCalSelection(ctx.view);
+  }
+
   cal.addEventListener("mousedown", function (ev) {
     if (ev.button !== 0) return;
     var cell = adminCalCellFromEvent(ev);
@@ -2719,41 +2784,30 @@ function bindAdminCalGestures() {
   });
   cal.addEventListener("mouseover", function (ev) {
     if (!adminCalDrag || !(ev.buttons & 1)) return;
-    var cell = adminCalCellFromEvent(ev);
-    if (!cell) return;
-    var a = athletes.find(function (x) {
-      return x.athleteId === currentAthleteId;
-    });
-    if (!a) return;
-    var view = adminEnsureBlockView(a);
-    var to = { wi: cell.getAttribute("data-wi") | 0, day: cell.getAttribute("data-day") };
-    if (to.wi === adminCalDrag.startWi && to.day === adminCalDrag.startDay) return;
-    adminCalDrag.moved = true;
-    adminPprogApplyRange(
-      view,
-      { wi: adminCalDrag.startWi, day: adminCalDrag.startDay },
-      to,
-      adminCalDrag.additive || view.phoneSelectMode
-    );
-    view.activeWi = to.wi;
-    view.activeDay = to.day;
-    adminPprogRerender();
+    applyDragTo(adminCalCellFromEvent(ev));
   });
   cal.addEventListener("touchstart", function (ev) {
     var cell = adminCalCellFromEvent(ev);
     if (!cell) return;
+    var ctx = currentView();
     var startX = ev.touches && ev.touches[0] ? ev.touches[0].clientX : 0;
     var startY = ev.touches && ev.touches[0] ? ev.touches[0].clientY : 0;
+    if (ctx && ctx.view.phoneSelectMode) {
+      adminCalDrag = {
+        startWi: cell.getAttribute("data-wi") | 0,
+        startDay: cell.getAttribute("data-day"),
+        additive: true,
+        moved: false,
+      };
+      return;
+    }
     adminLongPressTimer = setTimeout(function () {
-      var a = athletes.find(function (x) {
-        return x.athleteId === currentAthleteId;
-      });
-      if (!a) return;
-      var view = adminEnsureBlockView(a);
-      view.phoneSelectMode = true;
-      adminPprogToggleSelected(view, cell.getAttribute("data-wi") | 0, cell.getAttribute("data-day"));
-      view.activeWi = cell.getAttribute("data-wi") | 0;
-      view.activeDay = cell.getAttribute("data-day");
+      var now = currentView();
+      if (!now) return;
+      now.view.phoneSelectMode = true;
+      adminPprogToggleSelected(now.view, cell.getAttribute("data-wi") | 0, cell.getAttribute("data-day"));
+      now.view.activeWi = cell.getAttribute("data-wi") | 0;
+      now.view.activeDay = cell.getAttribute("data-day");
       adminIgnoreNextClick = true;
       adminPprogRerender();
     }, 450);
@@ -2767,6 +2821,15 @@ function bindAdminCalGestures() {
     };
     cal.addEventListener("touchmove", cal._lpMove, { passive: true });
   }, { passive: true });
+  cal.addEventListener("touchmove", function (ev) {
+    var ctx = currentView();
+    if (!ctx || !ctx.view.phoneSelectMode || !adminCalDrag) return;
+    var t = ev.touches && ev.touches[0];
+    if (!t) return;
+    var el = document.elementFromPoint(t.clientX, t.clientY);
+    var cell = el && el.closest ? el.closest(".pprog-cal-cell") : null;
+    applyDragTo(cell);
+  }, { passive: true });
   cal.addEventListener("touchend", function () {
     clearTimeout(adminLongPressTimer);
     adminLongPressTimer = null;
@@ -2774,17 +2837,41 @@ function bindAdminCalGestures() {
       cal.removeEventListener("touchmove", cal._lpMove);
       cal._lpMove = null;
     }
+    if (adminCalDrag && adminCalDrag.moved) {
+      adminIgnoreNextClick = true;
+      adminCalDrag = null;
+      adminPprogRerender();
+    }
   });
 }
 
 function onAdminCalMouseUp() {
-  if (adminCalDrag && adminCalDrag.moved) adminIgnoreNextClick = true;
+  if (adminCalDrag && adminCalDrag.moved) {
+    adminIgnoreNextClick = true;
+    adminCalDrag = null;
+    adminPprogRerender();
+    return;
+  }
   adminCalDrag = null;
 }
 
 function onAdminEscClear(ev) {
   if (!ev || ev.key !== "Escape") return;
   if (!adminIsAuthed || !adminIsAuthed()) return;
+  adminPprogClearSelection();
+}
+
+function onAdminOutsideCalClick(ev) {
+  if (adminIgnoreNextClick) return;
+  var a = athletes.find(function (x) {
+    return x.athleteId === currentAthleteId;
+  });
+  if (!a) return;
+  var view = adminEnsureBlockView(a);
+  if (!view.phoneSelectMode) return;
+  var t = ev.target;
+  if (!t || !t.closest) return;
+  if (t.closest("#pprogCal") || t.closest(".pprog-week-panes") || t.closest(".pprog-width-status")) return;
   adminPprogClearSelection();
 }
 
