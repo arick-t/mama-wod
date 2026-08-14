@@ -483,6 +483,10 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
   display:block;width:100%;height:44px;margin-top:14px;border:1px dashed var(--part);color:var(--part);
   background:transparent;border-radius:10px;font-weight:700;cursor:pointer;font-family:inherit;font-size:14px
 }
+.pprog-edit-hint{
+  direction:rtl;text-align:right;margin:8px 0 0;color:var(--text-meta);
+  font-size:.72em;font-weight:600;line-height:1.4;font-family:var(--font-ui)
+}
 .pprog-edit-bar{display:flex;gap:8px;margin-top:16px}
 .pprog-edit-cancel,.pprog-edit-save{
   flex:1;height:44px;border-radius:10px;font-family:inherit;font-weight:800;cursor:pointer;font-size:14px
@@ -2524,9 +2528,9 @@ function renderDoneDebriefCard(a, wi, dayKey) {
       : null;
   if (!msg) return "";
   var html = '<div class="ath-done-debrief" role="status">';
-  html += '<div class="ath-done-debrief-rating">' + esc(msg.lines[0] || "") + "</div>";
-  if (msg.lines[1]) html += '<div class="ath-done-debrief-part">' + esc(msg.lines[1]) + "</div>";
-  if (msg.lines[2]) html += '<div class="ath-done-debrief-note">' + esc(msg.lines[2]) + "</div>";
+  html += '<div class="ath-done-debrief-rating">' + esc(msg.rating || msg.lines[0] || "") + "</div>";
+  if (msg.part) html += '<div class="ath-done-debrief-part">' + esc(msg.part) + "</div>";
+  if (msg.note) html += '<div class="ath-done-debrief-note">' + esc(msg.note) + "</div>";
   if (msg.safety) html += '<div class="ath-done-debrief-flag">דגל אדום</div>';
   html += "</div>";
   return html;

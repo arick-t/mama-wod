@@ -22,13 +22,13 @@ function ok(name, cond) {
 
 ok("just_right is בול only", (() => {
   const m = AdminDoneDebrief.formatMessage({ rating: "just_right", part_title: "Squat" });
-  return m && m.lines.length === 1 && m.lines[0] === "בול" && !m.safety;
+  return m && m.rating === "בול" && !m.part && !m.note && m.lines.length === 1 && !m.safety;
 })());
 ok(
   "too_hard + title",
   (() => {
     const m = AdminDoneDebrief.formatMessage({ rating: "too_hard", part_title: "סקוואט כבד" });
-    return m.lines[0] === "קשה מדי" && m.lines[1] === "סקוואט כבד" && m.lines.length === 2;
+    return m.rating === "קשה מדי" && m.part === "סקוואט כבד" && !m.note && m.lines.length === 2;
   })()
 );
 ok(
@@ -48,8 +48,14 @@ ok(
     const m = AdminDoneDebrief.formatMessage({
       rating: "other",
       note: "הברכיים צרמו בסקוואט",
+      part_title: "סקוואט",
     });
-    return m.lines[0] === "אחר" && m.lines[1] === "«הברכיים צרמו בסקוואט»" && !m.safety;
+    return (
+      m.rating === "אחר" &&
+      !m.part &&
+      m.note === "«הברכיים צרמו בסקוואט»" &&
+      !m.safety
+    );
   })()
 );
 ok(
@@ -180,6 +186,8 @@ ok("admin loads debrief lib", /admin-done-debrief\.js/.test(admin));
 ok("admin mark-read action", /admin_mark_done_read/.test(snap) && /doneDebriefRead/.test(snap));
 ok("admin preserves doneDebriefRead on snapshot write", /doneDebriefRead:/.test(snap));
 ok("admin chat template flag", /דגל אדום/.test(admin) && /ath-done-debrief/.test(admin));
+ok("other quote uses note class not part class", /msg\.note/.test(admin) && /ath-done-debrief-note/.test(admin));
+ok("warmup title hint in editor", /Warm-up \/ Mobility לא יופיע ב-Done/.test(pprog));
 ok("admin width helpers", /adminPprogSelectWeek/.test(admin) && /adminPprogSelectDow/.test(admin) && /adminPprogClearSelection/.test(admin));
 ok("admin width CSS desktop strip", /pprog-width-strip\{[^}]*overflow-x:\s*auto/.test(admin.replace(/\s+/g, "")));
 ok("admin selected cell uses coach purple not brand", /pprog-cal-cell\.selected:not\(\.active\)\{[^}]*--coach/.test(admin.replace(/\s+/g, "")));
