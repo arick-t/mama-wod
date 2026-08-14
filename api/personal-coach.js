@@ -62,10 +62,18 @@ const {
 } = require("../lib/coach-finish-signals.js");
 const { applyCors } = require("../lib/cors-allowlist.js");
 const { checkAdminAuth } = require("../scripts/lib/admin/admin-auth.js");
-const {
-  pickUsageMeta,
-  recordCoachUsageSpend,
-} = require("../scripts/lib/admin/admin-credit-estimate.js");
+/* Credit ledger must never take down the coach. Spend persist is best-effort. */
+let pickUsageMeta = function () {
+  return null;
+};
+let recordCoachUsageSpend = async function () {
+  return 0;
+};
+try {
+  const creditEst = require("../scripts/lib/admin/admin-credit-estimate.js");
+  pickUsageMeta = creditEst.pickUsageMeta;
+  recordCoachUsageSpend = creditEst.recordCoachUsageSpend;
+} catch (eCredit) {}
 const {
   classifyCoachUserInput,
   shouldBlockWithoutModel,
