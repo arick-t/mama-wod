@@ -7,6 +7,7 @@
 - **Width view:** select 2+ days → same day cards in a strip. Board stays on top.
 - **Save = sync:** full `parts[]` replace to the device. No MODIFIED. Push-upgrade button removed from Admin UI (API remains).
 - Includes **Admin 2.0.2** from budget engine (PR #91): athlete UID billing on first brick + Gemini credit estimate actually decrements.
+- **Athlete → admin brick:** phone snapshot push uses Vercel API base (GitHub Pages has no `/api`). Opening the coach after deploy re-sends the filled brick so Admin is not stuck on «Session pending».
 - Coach remains **2.3.13**. No `generate_*` / `revise_*` from these Admin features.
 
 ## [Budget] - 2026-08-14 · credit estimate actually decrements

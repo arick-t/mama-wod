@@ -97,6 +97,7 @@ ok("admin normalizes on load", /NormalizePprogBlock\.normalize/.test(admin));
 ok("T3 debounce helper", /function pprogPushAdminSnapshotDebounced/.test(index));
 ok("T3 after DONE", /pprogPushAdminSnapshotDebounced\(store, "finish_done"\)/.test(index));
 ok("T3 after Terms", /pprogPushAdminSnapshotDebounced\(store, "legal_terms"\)/.test(index));
+ok("T3 snapshot URL uses API base", /function pprogAdminSnapshotUrl/.test(index) && !/fetch\("\/api\/admin-snapshot"/.test(index));
 ok("T4 pendingAdminDayEdit wired", /pendingAdminDayEdit/.test(admin) && /pprogApplyPendingAdminDayEdit/.test(index) && !/adminPprogReviseDay/.test(admin));
 ok("admin local day edit UI", /allowEdit:\s*true/.test(admin) && /adminPprogStartEdit/.test(admin) && /pprog-edit-btn/.test(admin));
 ok("admin save day hook no LLM", /function adminPprogEditSave/.test(admin) && /admin_save_day/.test(admin) && !/generate_week_detail|revise_day/.test(admin.slice(admin.indexOf("function adminPprogEditSave"), admin.indexOf("function changeBlockMonth"))));

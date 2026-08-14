@@ -8699,8 +8699,8 @@ function pprogSkillsSummaryForMail(skills) {
 }
 
 /**
- * Push a lightweight snapshot to /api/admin-snapshot (admin dashboard branch).
- * No-op if the endpoint is not deployed on this branch — never blocks UI.
+ * Push a lightweight snapshot to /api/admin-snapshot (admin dashboard).
+ * GitHub Pages has no /api — same rule as ANALYTICS_ENDPOINT / getApiBase().
  * Requires device writeKey so strangers cannot overwrite another athleteId.
  */
 function getAdminWriteKey() {
@@ -8717,6 +8717,13 @@ function getAdminWriteKey() {
   } catch (e) {
     return "";
   }
+}
+
+function pprogAdminSnapshotUrl() {
+  var base = typeof getApiBase === "function" ? getApiBase() : "";
+  var root = String(base || "").replace(/\/$/, "");
+  if (root) return root + "/api/admin-snapshot";
+  return "/api/admin-snapshot";
 }
 
 var pprogAdminSnapshotPushTimer = null;
@@ -8788,7 +8795,7 @@ function pushAdminSnapshot(store) {
         return { blockStart: b.blockStart, summaryLine: b.summaryLine, archivedAt: b.archivedAt };
       }),
     };
-    return fetch("/api/admin-snapshot", {
+    return fetch(pprogAdminSnapshotUrl(), {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-Write-Key": payload.writeKey },
       body: JSON.stringify(payload),
@@ -8879,7 +8886,7 @@ function pprogMaybePullPushUpgradeOffer() {
   pprogPushUpgradePullAt = now;
   var wk = getAdminWriteKey();
   if (!wk) return;
-  fetch("/api/admin-snapshot", {
+  fetch(pprogAdminSnapshotUrl(), {
     method: "POST",
     headers: { "Content-Type": "application/json", "X-Write-Key": wk },
     body: JSON.stringify({
@@ -8919,7 +8926,7 @@ function pprogResolveAdminDayEdit(pending, resolution, reason, message) {
   var athleteId = store.userId || store.athleteId || pprogAthleteId();
   var wk = getAdminWriteKey();
   if (!wk || !athleteId) return Promise.resolve(false);
-  return fetch("/api/admin-snapshot", {
+  return fetch(pprogAdminSnapshotUrl(), {
     method: "POST",
     headers: { "Content-Type": "application/json", "X-Write-Key": wk },
     body: JSON.stringify({
@@ -8991,7 +8998,7 @@ function pprogResolvePushUpgradeOffer(resolution) {
   var store = loadPprogStore();
   var athleteId = store.userId || store.athleteId || pprogAthleteId();
   var wk = getAdminWriteKey();
-  return fetch("/api/admin-snapshot", {
+  return fetch(pprogAdminSnapshotUrl(), {
     method: "POST",
     headers: { "Content-Type": "application/json", "X-Write-Key": wk },
     body: JSON.stringify({
