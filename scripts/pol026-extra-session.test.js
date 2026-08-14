@@ -69,7 +69,7 @@ ok(
 ok("loggedExtra not Rest", /pprogDayIsLoggedExtraSession/.test(index) && /athlete-logged session wins/.test(index));
 ok("week_detail preserves logged day", /week_detail must never wipe an athlete-logged/.test(index));
 ok("calendar logged-extra class", /logged-extra/.test(index) && /pprog-logged-extra-flag/.test(index));
-ok("coach version 2.3.13", /COACH_VERSION = "2\.3\.13"/.test(index) && /COACH_VERSION = "2\.3\.13"/.test(pc));
+ok("coach version 2.3.14", /COACH_VERSION = "2\.3\.14"/.test(index) && /COACH_VERSION = "2\.3\.14"/.test(pc));
 ok("client workout extract", /pprogExtractLoggedWorkoutSegments/.test(index));
 ok("client preserve days", /pprogCaptureSchedulePreserveDays/.test(index));
 ok("client rest-day swap", /pprogPlanRestDaySwap/.test(index));

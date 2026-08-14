@@ -1072,7 +1072,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
 <div class="header-sub">DAILY WORKOUTS · v21.5.1</div>
-<div class="header-sub" id="coachVersionSub">COACH · v2.3.13</div>
+<div class="header-sub" id="coachVersionSub">COACH · v2.3.14</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap active" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
@@ -1645,10 +1645,11 @@ function rememberAiClientError(summary) {
  *   Coach 2.3.3 — POL-027 Enhancement Grammar (home gear → loaded variation tree).
  *   Coach 2.3.6 — POL-027 generic movement-pattern balance (no movement-specific bans).
  *   Coach 2.3.4 — POL-027 honor home inventory (lift kg ≠ barbell/rings; lunge+wall; anti thruster-spam).
+ *   Coach 2.3.14 — fill every training day in every week; jumping the calendar never drops a queued week.
  * Keep this badge in sync with the brain actually serving /api/personal-coach.
  * Display: header “COACH · v{COACH_VERSION}” only — do NOT bump app DAILY WORKOUTS / <title> here.
  */
-var COACH_VERSION = "2.3.13";
+var COACH_VERSION = "2.3.14";
 try {
   var __coachVerEl = document.getElementById("coachVersionSub");
   if (__coachVerEl) __coachVerEl.textContent = "COACH · v" + COACH_VERSION;
@@ -9329,25 +9330,35 @@ function applyPprogWeek(week, rawText) {
   applyPprogBlock({ summaryLine: (week && week.summaryLine) || "Training block", weeks: [week] }, rawText);
 }
 
+function pprogDayHasRealTrainingParts(dayData) {
+  var parts = (dayData && dayData.parts) || [];
+  var i;
+  for (i = 0; i < parts.length; i++) {
+    var p = parts[i];
+    if (!p || !p.lines || !p.lines.length) continue;
+    if (p.id && String(p.id).indexOf("overview-stub") >= 0) continue;
+    if (/still loading/i.test(p.lines.join(" "))) continue;
+    var blob = (String(p.title || "") + " " + p.lines.join(" ")).toLowerCase();
+    if (/^(rest(\s*day)?|off(\s*day)?)\b/.test(blob.trim())) continue;
+    return true;
+  }
+  return false;
+}
+
 function weekHasDetailedDays(week) {
   if (!week || !week.days) return false;
-  var trainingWithParts = 0;
+  var training = 0;
+  var filled = 0;
   for (var i = 0; i < PPROG_DAY_KEYS.length; i++) {
     var k = PPROG_DAY_KEYS[i];
     var dayData = week.days[k] || {};
-    var parts = dayData.parts || [];
     if (isPprogRestDay(k, dayData, week)) continue;
-    var hasReal = parts.some(function (p) {
-      if (!p || !p.lines || !p.lines.length) return false;
-      if (p.id && String(p.id).indexOf("overview-stub") >= 0) return false;
-      if (/still loading/i.test(p.lines.join(" "))) return false;
-      var blob = (String(p.title || "") + " " + p.lines.join(" ")).toLowerCase();
-      if (/^(rest(\s*day)?|off(\s*day)?)\b/.test(blob.trim())) return false;
-      return true;
-    });
-    if (hasReal) trainingWithParts++;
+    training++;
+    if (pprogDayHasRealTrainingParts(dayData)) filled++;
   }
-  return trainingWithParts >= 1;
+  /* All-rest week is complete. One filled training day is NOT enough — leftover holes stay Session pending. */
+  if (training === 0) return true;
+  return filled >= training;
 }
 
 function weekHasUsefulOverview(week) {
@@ -9791,7 +9802,8 @@ function enqueuePprogMissingWeekFills() {
   }
   var activeWi = store.activeWeekIndex | 0;
   var weeks = store.currentBlock.weeks;
-  /* Fill every week that still lacks real parts — a blank week in the brick is a quality failure. */
+  /* Fill every week that still lacks real parts — a blank week in the brick is a quality failure.
+     Never drop a queued week when the athlete jumps the calendar (Ilia: W3 filled, W2/W4 left empty). */
   var missing = [];
   for (var i = 0; i < weeks.length; i++) {
     if (!weekHasDetailedDays(weeks[i])) {
@@ -9799,12 +9811,10 @@ function enqueuePprogMissingWeekFills() {
       missing.push(i);
     }
   }
-  /* Active week first, then next, then remaining holes in order. */
+  /* Active week first, then remaining holes in brick order. Jumping only reorders — it must not splice others. */
   missing.sort(function (a, b) {
     if (a === activeWi) return -1;
     if (b === activeWi) return 1;
-    if (a === activeWi + 1) return -1;
-    if (b === activeWi + 1) return 1;
     return a - b;
   });
   for (var mi = 0; mi < missing.length; mi++) {
@@ -9964,12 +9974,18 @@ function requestPprogWeekDetail(weekIndex0, fromQueue) {
           if (weekHasUsefulOverview(prevW) && !weekHasUsefulOverview(nextW)) {
             nextW.overview = prevW.overview;
           }
-          /* POL-026: week_detail must never wipe an athlete-logged extra session day */
+          /* POL-026: week_detail must never wipe an athlete-logged extra session day.
+             Also keep Done reports and any day that already has real parts — fill holes only. */
           if (prevW && prevW.days) {
-            for (var diLog = 0; diLog < PPROG_DAY_KEYS.length; diLog++) {
-              var dkLog = PPROG_DAY_KEYS[diLog];
-              if (pprogDayIsLoggedExtraSession(prevW.days[dkLog])) {
-                pprogCopyWeekDaySlot(nextW, prevW, dkLog);
+            for (var diKeep = 0; diKeep < PPROG_DAY_KEYS.length; diKeep++) {
+              var dkKeep = PPROG_DAY_KEYS[diKeep];
+              var prevDay = prevW.days[dkKeep];
+              if (
+                pprogDayIsLoggedExtraSession(prevDay) ||
+                pprogDayHasFinishReport(prevDay) ||
+                pprogDayHasRealTrainingParts(prevDay)
+              ) {
+                pprogCopyWeekDaySlot(nextW, prevW, dkKeep);
               }
             }
           }

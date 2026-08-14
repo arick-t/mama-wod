@@ -18,6 +18,7 @@
  *   2.3.3 — POL-027 Enhancement Grammar (home gear → loaded variation tree)
  *   2.3.6 — POL-027 generic movement-pattern balance (no movement-specific bans)
  *   2.3.7 — brick schedule-revise brief reply (no AI intro / no change recap)
+ *   2.3.14 — fill every training day in every week (holes + no drop on calendar jump)
  *   2.3.8 — brick schedule-revise calendar apply (pending state + תממש intent)
  *   2.3.4 — POL-027 honor home inventory: lift kg ≠ barbell/rings; weekly lunge+wall; anti thruster-spam
  *
@@ -30,7 +31,7 @@
  * Groq keeps chat alive when the Gemini key is missing/invalid (common GitHub Pages + Vercel setup).
  * Programming stays Gemini-only (POL-020).
  */
-const COACH_VERSION = "2.3.13";
+const COACH_VERSION = "2.3.14";
 const fs = require("fs");
 const path = require("path");
 function resolveAppVersion() {

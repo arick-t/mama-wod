@@ -1,5 +1,13 @@
 # Changelog
 
+## [Coach 2.3.14] - 2026-08-14 · **fill every training day — no dropped weeks**
+
+### Why Ilia could have week 3 full and weeks 2 / 4 empty
+- Jumping the calendar used to drop other weeks from the fill queue (older builds). Current `main` already queues every blank week; **a week still counted as “filled” if one training day had parts**, so leftover days stayed `Session pending`.
+- **Fix:** a week is complete only when **every non-rest day** has real parts. Holey weeks re-enter the queue (real `generate_week_detail`, not stubs). Calendar jump reorders (active week first) and **never splices** the rest of the queue.
+- Days that already have real parts / Done / LOGGED are kept; only holes are taken from the new WEEK_JSON.
+- Slow + correct. No Blob / admin-sync change in this ship.
+
 ## [Admin 3.0.2] - 2026-08-14 · **Vercel production actually deploys**
 
 ### Why Ilia's brick still looked the same after 3.0 / 3.0.1

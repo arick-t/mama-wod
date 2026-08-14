@@ -123,8 +123,8 @@ ok("admin create does not send join mail", !/sendAdminIntakeCompleteMail/.test(h
 ok("handoff inline in athlete card", /renderHandoffInline/.test(adminHtml) && /ath-handoff-inline/.test(adminHtml));
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
 ok("admin version 3.0.2", /DUCK-WOD Admin · 3\.0\.2/.test(adminHtml));
-ok("admin wired to coach 2.3.13", /LIVE_COACH_VERSION = "2\.3\.13"/.test(adminHtml));
-ok("app coach 2.3.13", /COACH_VERSION = "2\.3\.13"/.test(index));
+ok("admin wired to coach 2.3.14", /LIVE_COACH_VERSION = "2\.3\.14"/.test(adminHtml));
+ok("app coach 2.3.14", /COACH_VERSION = "2\.3\.14"/.test(index));
 ok(
   "admin shows Admin + Coach versions",
   /Admin 3\.0\.2/.test(adminHtml) &&
