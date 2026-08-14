@@ -961,24 +961,6 @@
       },
       {
         "date": "2026-08-05",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "AMRAP 25:00",
-            "lines": [
-              "30/25 Calorie Air Bike",
-              "40 Alternating Lateral Box Step Overs 24\"/20\"",
-              "50 Walking Lunges",
-              "60 Double Unders"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-08-05",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2792,6 +2774,51 @@
     "2026-08-14": [
       {
         "date": "2026-08-14",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260814",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
+              "LEARN MORE"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-14",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 24.1",
+            "lines": [
+              "For time:",
+              "21 dumbbell snatches, arm 1",
+              "21 lateral burpees over dumbbell",
+              "21 dumbbell snatches, arm 2",
+              "21 lateral burpees over dumbbell",
+              "15 dumbbell snatches, arm 1",
+              "15 lateral burpees over dumbbell",
+              "15 dumbbell snatches, arm 2",
+              "15 lateral burpees over dumbbell",
+              "9 dumbbell snatches, arm 1",
+              "9 lateral burpees over dumbbell",
+              "9 dumbbell snatches, arm 2",
+              "9 lateral burpees over dumbbell",
+              "*Time cap: 15 minutes",
+              "♀ 35-lb (15-kg) dumbbell",
+              "♂ 50-lb (22.5-kg) dumbbell"
+            ]
+          }
+        ],
+        "note": "Open: Open 24.1"
+      },
+      {
+        "date": "2026-08-14",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-08-14/",
@@ -2839,15 +2866,68 @@
       },
       {
         "date": "2026-08-14",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260814",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-august-14-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
-              "LEARN MORE"
+              "3 Rounds",
+              ":20 PVC Overhead Squats",
+              ":10 Rest",
+              ":20 Lateral Burpee over PVC",
+              ":10 Rest",
+              ":20 Ring Rows",
+              ":10 Rest"
+            ]
+          },
+          {
+            "title": "AMRAP 15 Minutes",
+            "lines": [
+              "5 Squat Snatches 135/95lbs",
+              "10 Chest to Bar Pull Ups",
+              "15 Lateral Bar Burpees",
+              "Feel: Gas",
+              "Pace: Sustain",
+              "Target Score: 4-6 rounds",
+              "Firebreather Score: 6+ rounds"
+            ]
+          },
+          {
+            "title": "6 Sets",
+            "lines": [
+              "1 Smooth/Even Set of GHD Sit Ups",
+              "Rest 2:00",
+              "Consider this maintenence work. Do the math on total volume to avoid soreness."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-14",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Push Press 1x10",
+              "EVERY 1:00 (8:00)",
+              "MIN 1 - 10 Push Press @ RPE 6/7",
+              "MIN 2 - :30 Row",
+              "* (Score is Weight)"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "EVERY 3:00 (6 SETS)",
+            "lines": [
+              "250/225m Row",
+              "50 Double Unders",
+              "5 Clean and Jerks 84kg/57kg",
+              "* (Score is Slowest Time)"
             ]
           }
         ]
@@ -2885,38 +2965,8 @@
           }
         ],
         "note": "Benchmark: Mary"
-      },
-      {
-        "date": "2026-08-14",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 24.1",
-            "lines": [
-              "For time:",
-              "21 dumbbell snatches, arm 1",
-              "21 lateral burpees over dumbbell",
-              "21 dumbbell snatches, arm 2",
-              "21 lateral burpees over dumbbell",
-              "15 dumbbell snatches, arm 1",
-              "15 lateral burpees over dumbbell",
-              "15 dumbbell snatches, arm 2",
-              "15 lateral burpees over dumbbell",
-              "9 dumbbell snatches, arm 1",
-              "9 lateral burpees over dumbbell",
-              "9 dumbbell snatches, arm 2",
-              "9 lateral burpees over dumbbell",
-              "*Time cap: 15 minutes",
-              "♀ 35-lb (15-kg) dumbbell",
-              "♂ 50-lb (22.5-kg) dumbbell"
-            ]
-          }
-        ],
-        "note": "Open: Open 24.1"
       }
     ]
   },
-  "last_updated": "2026-08-14T02:43:11.002152"
+  "last_updated": "2026-08-14T06:23:50.830585"
 }
