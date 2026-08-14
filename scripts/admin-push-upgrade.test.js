@@ -47,19 +47,13 @@ ok(
   /Do NOT start a new brick/i.test(Push.revisePromptForMode("soft", "2.3.2", "2026-08-11"))
 );
 
-ok("admin button label", admin.includes("עדכון בדחיפה"));
-ok("admin soft option", admin.includes("עדכון סופט") && admin.includes("זול"));
-ok("admin full option", admin.includes("שכתוב מלא") && admin.includes("יקר"));
-ok("admin soft mode wiring", admin.includes("'soft'"));
-ok("admin full mode wiring", admin.includes("'remaining_rebuild'"));
+ok("admin push button removed", !admin.includes("עדכון בדחיפה") && !admin.includes("btn-push-upgrade"));
+ok("admin green synced label", admin.includes("סונכרן") && admin.includes("adminBlockSyncStatus"));
 ok("admin push beside block title", admin.includes("ath-block-panel-head"));
-ok("admin push head adjacent layout", /ath-block-panel-head\{[^}]*justify-content:\s*flex-start/.test(admin));
-ok("admin version 2.0.1", /DUCK-WOD Admin · 2\.0\.1/.test(admin));
-ok("admin shows Coach beside Admin", /Admin 2\.0\.1/.test(admin) && /Coach 2\.3\.13/.test(admin));
+ok("admin version 2.0.2", /DUCK-WOD Admin · 2\.0\.2/.test(admin));
+ok("admin shows Coach beside Admin", /Admin 2\.0\.2/.test(admin) && /Coach 2\.3\.13/.test(admin));
 ok("old עדכן button removed", !admin.includes("btn-update-block"));
-ok("push button bordered affordance", /btn-push-upgrade\{[^}]*border:\s*1px solid/.test(admin));
-ok("admin sendPushUpgradeOffer", admin.includes("sendPushUpgradeOffer"));
-ok("admin gate helper", admin.includes("getPushUpgradeGate"));
+ok("admin push-upgrade UI gone", !admin.includes("sendPushUpgradeOffer") && !admin.includes("getPushUpgradeGate"));
 ok("admin action API", snap.includes('action === "admin_push_upgrade_offer"'));
 ok("athlete pull API", snap.includes('action === "athlete_pull_push_offer"'));
 ok("athlete resolve API", snap.includes('action === "athlete_resolve_push_offer"'));

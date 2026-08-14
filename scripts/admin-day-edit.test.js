@@ -120,9 +120,14 @@ const applied = AdminDayEdit.applyPendingToDay(
 );
 ok("apply writes parts", applied.ok && applied.day.parts[0].lines[0].indexOf("90kg") >= 0);
 ok("apply keeps athlete preTalk", applied.day.preTalk === "knees" && applied.day.lastPreReply === "ok");
+ok("apply sets coach notice", applied.day.coachUpdatedNotice === "המאמן עדכן את האימון");
 ok(
-  "apply sets coach notice",
-  applied.day.coachUpdatedNotice === "המאמן עדכן את האימון" && applied.day.modifiedPartKinds.strength
+  "human apply does not stamp MODIFIED",
+  !applied.day.modifiedPartKinds || !applied.day.modifiedPartKinds.strength
+);
+ok(
+  "pending save is already synced copy",
+  AdminDayEdit.statusMessage(pending) === "סונכרן"
 );
 
 const conflict = AdminDayEdit.applyPendingToDay(
@@ -181,6 +186,14 @@ ok(
 ok("admin_save_day still 0 LLM", !/generate_block|generate_week_detail|revise_day|revise_week/.test(
   snap.slice(snap.indexOf('action === "admin_save_day"'), snap.indexOf('action === "admin_member_status"'))
 ));
+ok(
+  "admin_save_day does not stamp MODIFIED",
+  /modifiedPartKinds:\s*\{\}/.test(
+    snap.slice(snap.indexOf('action === "admin_save_day"'), snap.indexOf('action === "admin_member_status"'))
+  ) && !/detectModifiedPartKinds/.test(
+    snap.slice(snap.indexOf('action === "admin_save_day"'), snap.indexOf('action === "admin_member_status"'))
+  )
+);
 ok("pull returns pendingAdminDayEdit", /pendingAdminDayEdit: AdminDayEdit\.publicPending/.test(snap));
 ok("resolve admin day edit action", /athlete_resolve_admin_day_edit/.test(snap));
 ok("preserve pendingAdminDayEdit on snapshot write", /pendingAdminDayEdit: existing\.pendingAdminDayEdit/.test(snap));
@@ -190,5 +203,6 @@ ok("admin save does not convert rest", !/REST DAY", lines: \["Rest"\]/.test(admi
 ok("no generate from pencil save", !/generate_block|generate_week_detail|revise_day/.test(
   admin.slice(admin.indexOf("function adminPprogEditSave"), admin.indexOf("function changeBlockMonth"))
 ));
+ok("save toast is synced", /נשמר וסונכרן/.test(admin) && !/ממתין לסנכרון למכשיר/.test(admin));
 
 console.log("All admin-day-edit T4 checks passed.");

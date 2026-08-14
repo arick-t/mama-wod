@@ -341,14 +341,9 @@ module.exports = async function handler(req, res) {
           message: quality.message,
         });
       }
-      const detectedKinds = AdminDayEdit.detectModifiedPartKinds(prevParts, parts);
-      const modifiedPartKinds = AdminDayEdit.mergeModifiedKinds(
-        existingDay.modifiedPartKinds,
-        detectedKinds
-      );
       week.days[dayKey] = Object.assign({}, existingDay, {
         parts: parts,
-        modifiedPartKinds: modifiedPartKinds,
+        modifiedPartKinds: {},
       });
       if (typeof NormalizePprogBlock.normalizeWeek === "function") {
         block.weeks[wi] = NormalizePprogBlock.normalizeWeek(week, week, week.weekStart, {
@@ -363,9 +358,7 @@ module.exports = async function handler(req, res) {
         dayKey: dayKey,
         dayIso: dayIso,
         parts: (block.weeks[wi].days[dayKey] && block.weeks[wi].days[dayKey].parts) || parts,
-        modifiedPartKinds:
-          (block.weeks[wi].days[dayKey] && block.weeks[wi].days[dayKey].modifiedPartKinds) ||
-          modifiedPartKinds,
+        modifiedPartKinds: {},
       });
       existing.pendingAdminDayEdit = pending;
       existing.updatedAt = new Date().toISOString();

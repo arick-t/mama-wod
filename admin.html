@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DUCK-WOD Admin · 2.0.1</title>
+<title>DUCK-WOD Admin · 2.0.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -209,48 +209,9 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
   margin:0 0 10px;min-height:28px
 }
 .ath-block-panel-title{font-size:.95em;font-weight:800;margin:0;color:var(--text);line-height:1.2}
-/* Compact but clearly a real button (border + fill) beside «בלוק אימון» */
-.btn-push-upgrade{
-  appearance:none;flex:0 0 auto;border:1px solid rgba(245,197,24,.55);border-radius:7px;
-  padding:4px 9px;background:rgba(245,197,24,.14);color:#f0d56a;font-weight:700;font-size:.68em;
-  letter-spacing:.01em;cursor:pointer;font-family:inherit;line-height:1.25;white-space:nowrap;
-  box-shadow:inset 0 0 0 1px rgba(245,197,24,.12);-webkit-tap-highlight-color:transparent
-}
-.btn-push-upgrade:hover{
-  background:rgba(245,197,24,.24);border-color:rgba(245,197,24,.85);color:#ffe9a0
-}
-.btn-push-upgrade:focus-visible{
-  outline:2px solid rgba(245,197,24,.7);outline-offset:2px
-}
-.btn-push-upgrade:disabled{
-  opacity:1;cursor:not-allowed;border-color:rgba(255,255,255,.22);color:rgba(200,200,200,.55);
-  background:rgba(255,255,255,.04);box-shadow:none
-}
-.ath-push-chooser{
-  display:none;flex-direction:column;gap:8px;padding:10px 12px;border-radius:10px;margin:0 0 10px;
-  border:1px solid var(--line);background:var(--bg-elev)
-}
-.ath-push-chooser.open{display:flex}
-.ath-push-chooser-title{font-size:.78em;font-weight:700;color:var(--text-meta);line-height:1.35}
-.ath-push-chooser-row{display:flex;flex-direction:column;gap:8px}
-.btn-push-soft,.btn-push-full{
-  appearance:none;border:1px solid transparent;border-radius:9px;padding:10px 12px;
-  font-weight:700;font-size:.84em;cursor:pointer;font-family:inherit;width:100%;
-  text-align:right;line-height:1.35
-}
-.btn-push-soft{background:#2a3344;color:#d7e3ff;border-color:rgba(167,196,255,.25)}
-.btn-push-soft:hover{background:#364258}
-.btn-push-full{background:#5c2a1e;color:#ffd7c8;border-color:rgba(255,180,140,.28)}
-.btn-push-full:hover{background:#6e3424}
-.btn-push-soft .push-opt-kicker,.btn-push-full .push-opt-kicker{
-  display:block;font-size:.72em;font-weight:800;letter-spacing:.04em;opacity:.85;margin-bottom:2px
-}
-.btn-push-soft .push-opt-main,.btn-push-full .push-opt-main{display:block;font-weight:800}
-.btn-push-soft .push-opt-sub,.btn-push-full .push-opt-sub{
-  display:block;font-size:.76em;font-weight:600;opacity:.78;margin-top:2px
-}
-#push-upgrade-status{margin:0 0 10px;min-height:0}
-.ath-update-status{font-size:.8em;color:var(--text-meta);min-height:18px}
+.ath-update-status{font-size:.8em;font-weight:700;min-height:18px;margin:0 0 10px}
+.ath-update-status.ok{color:#8fd49a}
+.ath-update-status.fail{color:#f87171}
 .ath-chat-log{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow:auto}
 .ath-chat-item{background:var(--bg-elev);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
 .ath-chat-meta{font-size:.7em;color:var(--text-meta);font-weight:600;margin-bottom:4px}
@@ -435,6 +396,9 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 }
 .pprog-admin-edit-status.err{
   border-color:rgba(232,69,26,.4);background:rgba(232,69,26,.1);color:#e8b4a8
+}
+.pprog-admin-edit-status.ok{
+  border-color:rgba(143,212,154,.4);background:rgba(143,212,154,.12);color:#8fd49a
 }
 .pprog-editing-pill{
   display:inline-block;padding:2px 8px;border-radius:999px;background:var(--brand-gold);color:#111;
@@ -698,7 +662,7 @@ body:has(#intake-modal.open) #adminChatFloat{
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver" id="login-ver-badge" title="Admin 2.0.1 · Coach 2.3.13">Admin 2.0.1<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></div>
+    <div class="ver" id="login-ver-badge" title="Admin 2.0.2 · Coach 2.3.13">Admin 2.0.2<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <label class="login-remember">
       <input type="checkbox" id="pw-remember"/>
@@ -714,7 +678,7 @@ body:has(#intake-modal.open) #adminChatFloat{
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">Admin</span>
-    <span class="ver-badge" id="admin-ver-badge" title="Admin 2.0.1 · Coach 2.3.13">Admin 2.0.1<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></span>
+    <span class="ver-badge" id="admin-ver-badge" title="Admin 2.0.2 · Coach 2.3.13">Admin 2.0.2<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></span>
     <span class="count-wrap">
       <span class="count" id="athlete-count" title="הרשימה מתעדכנת לבד כל כמה שניות — בלי לרענן את הדף">0 מתאמנים</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
@@ -908,7 +872,7 @@ var adminChatFabOpen = false;
 var adminDayEdit = null;
 var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
 /** Live Personal Coach brain version — refreshed from GET /api/personal-coach. */
-var ADMIN_UI_VERSION = "2.0.1";
+var ADMIN_UI_VERSION = "2.0.2";
 var LIVE_COACH_VERSION = "2.3.13";
 var LIVE_COACH_VERSION_FETCHED_AT = 0;
 
@@ -1730,81 +1694,19 @@ function loadAthletes(opts) {
     });
 }
 
-function compareCoachVersionsAdmin(a, b) {
-  var pa = String(a || "0").replace(/^v/i, "").split(/[^0-9]+/).filter(Boolean).map(function(n) {
-    return parseInt(n, 10) || 0;
-  });
-  var pb = String(b || "0").replace(/^v/i, "").split(/[^0-9]+/).filter(Boolean).map(function(n) {
-    return parseInt(n, 10) || 0;
-  });
-  var len = Math.max(pa.length, pb.length, 1);
-  for (var i = 0; i < len; i++) {
-    var x = pa[i] || 0;
-    var y = pb[i] || 0;
-    if (x > y) return 1;
-    if (x < y) return -1;
+function adminBlockSyncStatus(a) {
+  var pending = a && a.pendingAdminDayEdit;
+  if (pending && pending.status === "failed") {
+    var failMsg = "";
+    if (typeof AdminDayEdit !== "undefined" && AdminDayEdit.statusMessage) {
+      failMsg = AdminDayEdit.statusMessage(pending);
+    }
+    return { cls: "fail", text: failMsg || pending.message || "לא הוחל" };
   }
-  return 0;
-}
-
-function isCoachNewerThanPlanAdmin(live, plan) {
-  var L = String(live || "").trim();
-  if (!L) return false;
-  var P = String(plan || "").trim();
-  if (!P) return true;
-  return compareCoachVersionsAdmin(L, P) > 0;
-}
-
-function athletePlanCoachVersion(a) {
-  if (!a) return "";
-  return String(
-    a.planCoachVersion ||
-      (a.currentBlock && a.currentBlock.coachVersion) ||
-      (a.lastAcceptedPushUpgrade && a.lastAcceptedPushUpgrade.targetCoachVersion) ||
-      ""
-  ).trim();
-}
-
-/** Button enabled only when a newer coach brain shipped vs this athlete's plan. */
-function getPushUpgradeGate(a) {
-  if (!a || !a.currentBlock) {
-    return {
-      enabled: false,
-      title: "אין לבנה פעילה",
-      hint: "עדכון בדחיפה זמין רק למתאמן עם לבנה פעילה.",
-    };
+  if (a && a.currentBlock) {
+    return { cls: "ok", text: "סונכרן" };
   }
-  if (a.pendingPushUpgrade && a.pendingPushUpgrade.status === "pending") {
-    return {
-      enabled: false,
-      title: "הצעה ממתינה",
-      hint: "כבר נשלחה הצעת עדכון — ממתין לאישור המתאמן באפליקציה.",
-    };
-  }
-  var live = LIVE_COACH_VERSION;
-  var plan = athletePlanCoachVersion(a);
-  if (!isCoachNewerThanPlanAdmin(live, plan)) {
-    return {
-      enabled: false,
-      title: "אין עדכון מח חדש",
-      hint:
-        "הכפתור נפתח רק אחרי שעלה מח מאמן חדש. לבנה זו על v" +
-        (plan || live) +
-        " (חי: v" +
-        live +
-        "). דיפולט: בלי שינוי עד הלבנה הבאה.",
-    };
-  }
-  return {
-    enabled: true,
-    title: "שלח הצעת עדכון לצ׳אט המאמן",
-    hint:
-      "מח חי v" +
-      live +
-      " · תוכנית המתאמן v" +
-      (plan || "ישן") +
-      " — בחר סופט או שכתוב מלא (רק ימים שנותרו).",
-  };
+  return { cls: "", text: "" };
 }
 
 function refreshLiveCoachVersion() {
@@ -1904,10 +1806,7 @@ function renderAthlete(a) {
     (frozen ? "מוקפא" : "פעיל") +
     "</span>";
   var statsOpen = !!(athleteStatsOpen && athleteStatsOpen[a.athleteId]);
-  var pushGate = getPushUpgradeGate(a);
-  var pushEnabled = !!pushGate.enabled;
-  var pushTitle = pushGate.title || "";
-  var pushHint = pushGate.hint || "";
+  var syncSt = adminBlockSyncStatus(a);
 
   content.innerHTML =
     '<div class="ath-wrap">' +
@@ -1972,42 +1871,14 @@ function renderAthlete(a) {
       '<div class="ath-block-panel">' +
         '<div class="ath-block-panel-head">' +
           '<div class="ath-block-panel-title">בלוק אימון</div>' +
-          '<button type="button" class="btn-push-upgrade" id="btn-push-upgrade" ' +
-          (pushEnabled ? "" : "disabled ") +
-          'onclick="togglePushUpgradeChooser(\'' +
-          esc(a.athleteId) +
-          "')\" title=\"" +
-          esc(pushTitle) +
-          '" aria-expanded="false" aria-controls="ath-push-chooser">עדכון בדחיפה</button>' +
         "</div>" +
-        '<div class="ath-push-chooser" id="ath-push-chooser" role="group" aria-label="בחירת סוג עדכון בדחיפה">' +
-          '<div class="ath-push-chooser-title">בחר סוג עדכון — רק לימים שנותרו בלבנה (עבר נעול)</div>' +
-          '<div class="ath-push-chooser-row">' +
-            '<button type="button" class="btn-push-soft" onclick="sendPushUpgradeOffer(\'' +
-            esc(a.athleteId) +
-            "', 'soft')\">" +
-              '<span class="push-opt-kicker">זול · רמה 1</span>' +
-              '<span class="push-opt-main">עדכון סופט (מינורי)</span>' +
-              '<span class="push-opt-sub">עד ~3 תיקונים כירורגיים על הימים שנותרו</span>' +
-            "</button>" +
-            '<button type="button" class="btn-push-full" onclick="sendPushUpgradeOffer(\'' +
-            esc(a.athleteId) +
-            "', 'remaining_rebuild')\">" +
-              '<span class="push-opt-kicker">יקר · פרימיום</span>' +
-              '<span class="push-opt-main">שכתוב מלא — בנייה מחדש של שארית הבלוק</span>' +
-              '<span class="push-opt-sub">רק ימים שנותרו עד סוף הלבנה · בלי לבנה חדשה</span>' +
-            "</button>" +
-          "</div>" +
-        "</div>" +
-        '<div class="ath-update-status" id="push-upgrade-status">' +
-        (a.pendingPushUpgrade && a.pendingPushUpgrade.status === "pending"
-          ? "הצעת עדכון בדחיפה ממתינה למתאמן (" +
-            esc(a.pendingPushUpgrade.mode === "soft" ? "סופט" : "שכתוב מלא") +
-            " · v" +
-            esc(a.pendingPushUpgrade.targetCoachVersion || "") +
-            ")"
-          : esc(pushHint)) +
-        "</div>" +
+        (syncSt.text
+          ? '<div class="ath-update-status ' +
+            esc(syncSt.cls) +
+            '" id="ath-block-sync-status">' +
+            esc(syncSt.text) +
+            "</div>"
+          : "") +
         renderBlockCalendarBody(a) +
       "</div>" +
       '<div class="ath-acc">' +
@@ -2111,84 +1982,6 @@ function openIntakeSheet() {
 function closeIntakeSheet() {
   var sheet = document.getElementById("athIntakeSheet");
   if (sheet) sheet.classList.remove("open");
-}
-
-function togglePushUpgradeChooser(athleteId) {
-  var gate = getPushUpgradeGate(athletes.find(function(x) { return x.athleteId === athleteId; }));
-  if (!gate.enabled) {
-    var st = document.getElementById("push-upgrade-status");
-    if (st) st.textContent = gate.hint || "לא זמין";
-    return;
-  }
-  var box = document.getElementById("ath-push-chooser");
-  var btn = document.getElementById("btn-push-upgrade");
-  if (!box) return;
-  var open = !box.classList.contains("open");
-  box.classList.toggle("open", open);
-  if (btn) btn.setAttribute("aria-expanded", open ? "true" : "false");
-  if (open) {
-    var hint = document.getElementById("push-upgrade-status");
-    if (hint) {
-      hint.textContent =
-        "בחר: זול = עדכון מינורי (SOFT) · יקר = בנייה מלאה מחדש של שארית הבלוק. בלי אישור המתאמן — אין שינוי.";
-    }
-  }
-}
-
-function sendPushUpgradeOffer(athleteId, mode) {
-  var a = athletes.find(function(x) { return x.athleteId === athleteId; });
-  if (!a) return;
-  var status = document.getElementById("push-upgrade-status");
-  var softBtn = document.querySelector(".btn-push-soft");
-  var fullBtn = document.querySelector(".btn-push-full");
-  function setBusy(on) {
-    if (softBtn) softBtn.disabled = !!on;
-    if (fullBtn) fullBtn.disabled = !!on;
-  }
-  setBusy(true);
-  if (status) status.textContent = "שולח הצעה לצ׳אט המאמן…";
-  refreshLiveCoachVersion().then(function(ver) {
-    return fetch(adminApiUrl("/api/admin-snapshot"), {
-      method: "POST",
-      headers: adminAuthHeaders(),
-      body: JSON.stringify(
-        withAdminPassword({
-          action: "admin_push_upgrade_offer",
-          athleteId: athleteId,
-          mode: mode,
-          targetCoachVersion: ver || LIVE_COACH_VERSION,
-        })
-      ),
-    });
-  })
-    .then(function(r) {
-      return r.json().then(function(d) {
-        return { status: r.status, d: d };
-      });
-    })
-    .then(function(x) {
-      setBusy(false);
-      var d = x.d || {};
-      if (!d.ok) {
-        if (status) {
-          status.textContent = "שגיאה: " + (d.message || d.error || x.status || "?");
-        }
-        return;
-      }
-      a.pendingPushUpgrade = d.pendingPushUpgrade || null;
-      if (Array.isArray(d.adminChatLog)) a.adminChatLog = d.adminChatLog;
-      var box = document.getElementById("ath-push-chooser");
-      if (box) box.classList.remove("open");
-      if (status) {
-        status.textContent =
-          "נשלח — המתאמן יראה הודעה בצ׳אט המאמן. בלי לחיצה שלו אין שינוי בתוכנית.";
-      }
-      renderAthlete(a);
-    })
-    .catch(function() {
-      setBusy(false);
-      if (status) status.textContent = "שגיאת רשת";
-    });
 }
 
 function renderAccItem(key, title, summary, open, bodyHtml) {
@@ -2479,13 +2272,16 @@ function adminPprogDisplayOpts(a) {
     var msg = "";
     if (typeof AdminDayEdit !== "undefined" && AdminDayEdit.statusMessage) {
       msg = AdminDayEdit.statusMessage(pending);
-    } else if (pending.status === "pending") {
-      msg = "ממתין לסנכרון למכשיר";
     } else if (pending.status === "failed") {
       msg = pending.message || "לא הוחל";
+    } else {
+      msg = "סונכרן";
     }
-    if (msg && pending.status !== "applied") {
-      editStatus = { status: pending.status, message: msg };
+    if (msg) {
+      editStatus = {
+        status: pending.status === "failed" ? "failed" : "ok",
+        message: msg,
+      };
     }
   }
   return {
@@ -2767,14 +2563,14 @@ function adminDraftToParts(draft) {
   });
 }
 
-function adminApplyDayPartsToBlock(block, wi, dayKey, parts, modifiedPartKinds) {
+function adminApplyDayPartsToBlock(block, wi, dayKey, parts) {
   if (!block || !Array.isArray(block.weeks) || !block.weeks[wi]) return block;
   var week = block.weeks[wi];
   if (!week.days) week.days = {};
   var prev = week.days[dayKey] || {};
   week.days[dayKey] = Object.assign({}, prev, {
     parts: parts,
-    modifiedPartKinds: modifiedPartKinds || prev.modifiedPartKinds || {},
+    modifiedPartKinds: {},
   });
   return block;
 }
@@ -2839,14 +2635,13 @@ function adminPprogEditSave() {
           a.currentBlock,
           wi,
           day,
-          parts,
-          d.pendingAdminDayEdit && d.pendingAdminDayEdit.modifiedPartKinds
+          parts
         );
       }
       if (d.pendingAdminDayEdit) a.pendingAdminDayEdit = d.pendingAdminDayEdit;
       adminDayEdit = null;
       adminPprogRerender();
-      showHdrToast("האימון נשמר — ממתין לסנכרון למכשיר");
+      showHdrToast("נשמר וסונכרן");
     })
     .catch(function () {
       showHdrToast("השמירה לשרת נכשלה — לא נשמר", "err");
