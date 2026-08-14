@@ -12,6 +12,10 @@ const {
   costCapHttpPayload,
   DAILY_CAP,
   MONTHLY_CAP,
+  BRICK_FILL_UNITS,
+  recordBrickFill,
+  monthlyUsedFromState,
+  emptyCostCaps,
 } = require("../lib/coach-cost-caps.js");
 
 let passed = 0;
@@ -100,6 +104,35 @@ function testGate() {
         "COST_CAP_MONTHLY"
   );
   ok("MONTHLY_CAP is 40", MONTHLY_CAP === 40);
+  ok("BRICK_FILL_UNITS is 8", BRICK_FILL_UNITS === 8);
+  ok(
+    "brick_fill records 8 units on Israel month",
+    monthlyUsedFromState(
+      Object.assign({}, recordBrickFill(emptyCostCaps(), "2026-08-13"), { israelToday: "2026-08-13" })
+    ) === 8
+  );
+
+  ok(
+    "monthlyUnits map blocks generate_block first brick",
+    evaluateCostCapGate(
+      "generate_block",
+      { intakeComplete: true, israelToday: "2026-08-13" },
+      { costCaps: { monthlyUnits: { "2026-08": 40 } } }
+    ) &&
+      evaluateCostCapGate(
+        "generate_block",
+        { intakeComplete: true, israelToday: "2026-08-13" },
+        { costCaps: { monthlyUnits: { "2026-08": 40 } } }
+      ).code === "COST_CAP_MONTHLY"
+  );
+  ok(
+    "new athlete monthlyUnits empty allows generate_block",
+    evaluateCostCapGate(
+      "generate_block",
+      { intakeComplete: true, israelToday: "2026-08-13" },
+      { costCaps: { monthlyUnits: {} }, athleteId: "a_new" }
+    ) === null
+  );
 
   /* Chat never blocked */
   ok(

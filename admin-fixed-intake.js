@@ -96,6 +96,10 @@
       fixedIntakePacket: "",
       profileNotes: "",
       intakeComplete: false,
+      athleteId: "",
+      costCaps: null,
+      intakeBuildId: "",
+      buildAttempted: false,
     };
   };
 
@@ -661,30 +665,48 @@
       },
       { role: "user", text: prompt },
     ];
+    intakeState.buildAttempted = true;
     generateIntakeBlockFromFixedPacket();
   }
 
   window.intakeAthleteProfile = function intakeAthleteProfile(opts) {
+    ensureAdminAthleteBilling();
     return C().athleteProfileForGenerateBlock(intakeState, {
       forceIntakeComplete: !!(opts && opts.forceIntakeComplete),
+      athleteId: intakeState.athleteId,
+      costCaps: intakeState.costCaps,
     });
   };
 
+  function ensureAdminAthleteBilling() {
+    if (!intakeState.athleteId) intakeState.athleteId = C().newAthleteId();
+    if (!intakeState.costCaps || typeof intakeState.costCaps !== "object") {
+      intakeState.costCaps = C().emptyCostCaps();
+    }
+    if (!intakeState.intakeBuildId) {
+      intakeState.intakeBuildId = "ib_" + intakeState.athleteId + "_" + Date.now();
+    }
+    return intakeState;
+  }
+
   function generateIntakeBlockFromFixedPacket(retryLeft) {
     if (intakeState.busy && retryLeft == null) return;
-    if (retryLeft == null) retryLeft = 2;
+    /* One automatic retry only for clear 5xx — never abort/timeout (duplicate Gemini). */
+    if (retryLeft == null) retryLeft = 1;
     if (typeof adminPw !== "undefined" && !String(adminPw || "").trim()) {
       restoreAdminFixedGoals(
         "פג תוקף ההתחברות לאדמין — צא מ+מתאמן, התחבר מחדש, ואז Build plan."
       );
       return;
     }
+    ensureAdminAthleteBilling();
     setIntakeBusy(true);
     showIntakeBuilding(
       true,
       "<strong>Coach</strong> is building your 5-week block…"
     );
-    document.getElementById("intake-status").textContent = "בונה לבנה אמיתית (generate_block)…";
+    document.getElementById("intake-status").textContent =
+      "בונה לבנה אמיתית (generate_block) · " + intakeState.athleteId + "…";
 
     var profile = intakeAthleteProfile({ forceIntakeComplete: true });
     var payloadMsgs = [
@@ -699,6 +721,9 @@
       action: "generate_block",
       messages: payloadMsgs,
       athleteProfile: profile,
+      athleteId: intakeState.athleteId,
+      costCaps: intakeState.costCaps,
+      intakeBuildId: intakeState.intakeBuildId,
       intakeComplete: true,
       forceJson: true,
       adminProgramming: true,
@@ -739,49 +764,43 @@
             typeof friendlyCoachError === "function"
               ? friendlyCoachError(j, x.status)
               : String((j && (j.message || j.error)) || (x.raw ? "bad response" : "empty response"));
-          var retryable =
-            retryLeft > 0 &&
-            (!x.j ||
-              x.status === 0 ||
-              x.status >= 500 ||
-              x.status === 401 ||
-              x.status === 403 ||
-              x.status === 429);
-          if (retryable) {
-            document.getElementById("intake-status").textContent =
-              x.status === 401 ? "מתחבר מחדש…" : "מנסה שוב…";
+          var retry5xx = retryLeft > 0 && x.status >= 500 && x.status < 600;
+          if (retry5xx) {
+            document.getElementById("intake-status").textContent = "שגיאת שרת — מנסה פעם נוספת…";
             setIntakeBusy(false);
             return generateIntakeBlockFromFixedPacket(retryLeft - 1);
           }
-          restoreAdminFixedGoals("בניית הלבנה נכשלה: " + err + " — לחץ Build my plan שוב.");
+          restoreAdminFixedGoals(
+            "בניית הלבנה נכשלה: " + err + " — לחץ Build my plan שוב רק אם לא נשמר מתאמן."
+          );
           return;
         }
         var block =
           typeof parseBlockFromText === "function" ? parseBlockFromText(j.text, j) : j.block;
         if (!block || !block.weeks || !block.weeks.length) {
-          if (retryLeft > 0) {
-            setIntakeBusy(false);
-            return generateIntakeBlockFromFixedPacket(retryLeft - 1);
-          }
           restoreAdminFixedGoals(
-            "המאמן לא החזיר BLOCK_JSON תקין — לחץ Build my plan שוב."
+            "המאמן לא החזיר BLOCK_JSON תקין — לחץ Build my plan שוב רק אם לא נשמר מתאמן."
           );
           return;
         }
+        intakeState.costCaps = C().recordBrickFill(intakeState.costCaps);
         finalizeNewAthlete(block);
       })
       .catch(function (e) {
         var msg = String((e && e.message) || e || "");
-        var transient =
-          /load failed|failed to fetch|networkerror|aborted|abort|timeout/i.test(msg);
-        if (retryLeft > 0 && transient) {
-          document.getElementById("intake-status").textContent = "חיבור נקטע — מנסה שוב…";
+        var aborted = /aborted|abort|timeout/i.test(msg);
+        var network = /load failed|failed to fetch|networkerror/i.test(msg) && !aborted;
+        if (retryLeft > 0 && network) {
+          document.getElementById("intake-status").textContent =
+            "חיבור נקטע לפני תשובה — מנסה פעם נוספת…";
           setIntakeBusy(false);
           return generateIntakeBlockFromFixedPacket(retryLeft - 1);
         }
-        var friendly = transient
-          ? "החיבור נקטע באמצע בניית הלבנה (נפוץ בפלאפון). לחץ Build my plan שוב והמתן עד ~3 דק׳."
-          : "שגיאת רשת בבניית לבנה: " + msg.slice(0, 160) + " — לחץ Build my plan שוב.";
+        var friendly = aborted
+          ? "החיבור נקטע באמצע בניית הלבנה. אל תלחץ Build שוב מיד — ייתכן שהלבנה כבר נבנתה בשרת. בדוק את רשימת המתאמנים, ורק אז Build שוב."
+          : "שגיאת רשת בבניית לבנה: " +
+            msg.slice(0, 160) +
+            " — לחץ Build my plan שוב רק אם לא נשמר מתאמן.";
         restoreAdminFixedGoals(friendly);
       })
       .finally(function () {
@@ -795,6 +814,17 @@
         "יש להשלים את התחקור הקבוע לפני בניית לבנה.";
       return;
     }
+    if (intakeState.buildAttempted) {
+      var okAgain =
+        typeof window.confirm === "function"
+          ? window.confirm(
+              "כבר ניסינו לבנות לבנה למתאמן הזה. לבנות שוב? (עלול לחייב שוב על אותו UID)"
+            )
+          : true;
+      if (!okAgain) return;
+      intakeState.intakeBuildId = "";
+    }
+    intakeState.buildAttempted = true;
     generateIntakeBlockFromFixedPacket();
   };
 
@@ -832,6 +862,8 @@
               lifts: intakeProfile.lifts,
               coachDirectives: "",
               currentBlock: block,
+              athleteId: intakeState.athleteId,
+              costCaps: intakeState.costCaps,
               autoCreateLink: true,
             })
           : {
@@ -839,6 +871,8 @@
               displayName: intakeProfile.displayName,
               intakeProfile: intakeProfile,
               currentBlock: block,
+              athleteId: intakeState.athleteId,
+              costCaps: intakeState.costCaps,
               autoCreateLink: true,
             }
       ),

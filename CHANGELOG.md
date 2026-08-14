@@ -1,5 +1,15 @@
 # Changelog
 
+## [Budget] - 2026-08-14 · admin first brick billed to new athlete UID
+
+### Admin `generate_block` under the new athlete envelope
+- Allocate `athleteId` **before** Build plan; send `costCaps` on `generate_block`
+- Record `brick_fill` (8 units) on that UID; persist `costCaps` on snapshot + claim package
+- Monthly POL-COST gate reads `monthlyUnits` map (not only `monthlyUnitsUsed`)
+- No auto-retry on abort/timeout (prevents double Gemini). One 5xx retry max
+- Confirm before a second Build on the same intake
+- עלות AI: 0 extra · quality `generate_block` unchanged (POL-020)
+
 ## [Admin 2.0.1] - 2026-08-13 · **production security**
 
 ### Session token — security engine A–C

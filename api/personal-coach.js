@@ -1772,6 +1772,13 @@ module.exports = async function handler(req, res) {
   if (body.intakeComplete === true) {
     rawProfile = Object.assign({}, rawProfile || {}, { intakeComplete: true });
   }
+  if (body.athleteId || body.userId) {
+    const aid = String(body.athleteId || body.userId || "").slice(0, 80);
+    rawProfile = Object.assign({}, rawProfile || {}, { athleteId: aid, userId: aid });
+  }
+  if (body.costCaps && typeof body.costCaps === "object") {
+    rawProfile = Object.assign({}, rawProfile || {}, { costCaps: body.costCaps });
+  }
   /* Soft gate: athlete device must accept Terms. Admin Build plan / generate_block
    * may proceed with verified admin auth — athlete still signs on handoff/device. */
   const adminProgramming = checkAdminAuth(req);
