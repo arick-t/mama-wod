@@ -6,6 +6,8 @@
 const path = require("path");
 
 function adminDataRoot() {
+  const override = String(process.env.ADMIN_DATA_ROOT || "").trim();
+  if (override) return path.resolve(override);
   if (
     !(process.env.BLOB_READ_WRITE_TOKEN || process.env.VERCEL_OIDC_TOKEN) &&
     (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME)

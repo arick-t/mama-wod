@@ -162,6 +162,10 @@ async function callGemini({ system, userText, imageBase64, mimeType }) {
     })
     .join("")
     .trim();
+  try {
+    const { recordGeminiResponseSpend } = require("./admin-credit-estimate");
+    await recordGeminiResponseSpend(model, json, "admin-sandbox");
+  } catch (eSpend) {}
   return text;
 }
 

@@ -170,6 +170,10 @@ async function askGemini(systemText, chatMessages, key, modelId) {
     throw new Error("Gemini error " + r.status + ": " + String(t || "").slice(0, 500));
   }
   const j = await r.json();
+  try {
+    const { recordGeminiResponseSpend } = require("../scripts/lib/admin/admin-credit-estimate");
+    await recordGeminiResponseSpend(modelId, j, "security-coach");
+  } catch (eSpend) {}
   const parts = (((j || {}).candidates || [])[0] || {}).content || {};
   const out = Array.isArray(parts.parts)
     ? parts.parts

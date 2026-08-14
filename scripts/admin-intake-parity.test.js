@@ -87,6 +87,15 @@ const apiProfile = CoachIntakeSync.athleteProfileForGenerateBlock(sample);
 ok("generate profile has fixedIntakePacket", !!apiProfile.fixedIntakePacket);
 ok("generate profile intakeComplete", apiProfile.intakeComplete === true);
 ok("generate preferredLanguage en", apiProfile.preferredLanguage === "en");
+const billed = CoachIntakeSync.athleteProfileForGenerateBlock(sample, {
+  athleteId: "a_testuid1234",
+  costCaps: { monthlyUnits: { "2026-08": 8 } },
+  israelToday: "2026-08-13",
+});
+ok("generate profile carries athleteId", billed.athleteId === "a_testuid1234");
+ok("generate profile monthlyUnitsUsed from map", billed.monthlyUnitsUsed === 8);
+ok("newAthleteId format", /^a_[0-9a-f]{12}$/.test(CoachIntakeSync.newAthleteId()));
+ok("brick fill units match cost lib", CoachIntakeSync.BRICK_FILL_UNITS === 8);
 
 let phone = {
   legalAcceptedVersion: 1,
@@ -113,15 +122,15 @@ ok("handoff stores lastHandoffPath", /lastHandoffPath/.test(handoff));
 ok("admin create does not send join mail", !/sendAdminIntakeCompleteMail/.test(handoff));
 ok("handoff inline in athlete card", /renderHandoffInline/.test(adminHtml) && /ath-handoff-inline/.test(adminHtml));
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
-ok("admin version 2.0.1", /DUCK-WOD Admin · 2\.0\.1/.test(adminHtml));
+ok("admin version 2.0.2", /DUCK-WOD Admin · 2\.0\.2/.test(adminHtml));
 ok("admin wired to coach 2.3.13", /LIVE_COACH_VERSION = "2\.3\.13"/.test(adminHtml));
 ok("app coach 2.3.13", /COACH_VERSION = "2\.3\.13"/.test(index));
 ok(
   "admin shows Admin + Coach versions",
-  /Admin 2\.0\.1/.test(adminHtml) &&
+  /Admin 2\.0\.2/.test(adminHtml) &&
     /ver-coach/.test(adminHtml) &&
     /syncAdminVersionLabels/.test(adminHtml) &&
-    /ADMIN_UI_VERSION = "2\.0\.1"/.test(adminHtml)
+    /ADMIN_UI_VERSION = "2\.0\.2"/.test(adminHtml)
 );
 ok(
   "admin intake uses pprog classes 1:1",
@@ -148,7 +157,12 @@ ok("admin No injuries chip", /pprog-fixed-chip/.test(fixedJs) && /adm-fx-no-inju
 ok("admin build overlay uses coach video", /adminIntakeBuildOverlay/.test(adminHtml) && /coach-thinking\.mp4/.test(adminHtml));
 ok("admin build restores goals on fail", /restoreAdminFixedGoals/.test(fixedJs));
 ok("admin Build plan sends admin auth", /adminAuthHeaders\(\)/.test(fixedJs) && /adminProgramming:\s*true/.test(fixedJs));
-ok("admin Build plan timeout+retry", /180000/.test(fixedJs) && /retryLeft/.test(fixedJs));
+ok("admin Build plan timeout kept", /180000/.test(fixedJs));
+ok("admin does not auto-retry abort/timeout", /אל תלחץ Build שוב מיד/.test(fixedJs));
+ok("admin generate_block sends athleteId", /athleteId: intakeState.athleteId/.test(fixedJs));
+ok("admin records brick_fill on UID", /recordBrickFill/.test(fixedJs));
+ok("handoff snapshot stores costCaps", /costCaps:/.test(handoff) && /cloneCostCaps/.test(handoff));
+ok("handoff phone package inherits costCaps", /costCaps: CoachIntakeSync.cloneCostCaps\(snap.costCaps\)/.test(handoff));
 ok("admin Build plan sends password body", /withAdminPassword\(payload\)/.test(fixedJs));
 ok(
   "admin build error not blanket 503 gemini",

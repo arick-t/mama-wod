@@ -1,7 +1,12 @@
 # Admin block display + handoff UX
 
 Base: approved **Admin 1.5.11** shared brick (`lib/pprog-display.js`, T1+T2+T3).  
-This branch ships founder UX + T4 as Admin **2.0.1**.
+This branch ships founder UX + T4 as Admin **2.0.2**.
+
+## Round 9 (Admin 2.0.2) — credit estimate persist
+- Await Blob flush of Gemini spend before the serverless response ends (pill was stuck on first manual balance)
+- Same prepaid wallet: generate-workout / security-coach / admin sandbox record usage
+- Pill shows spent-since-update; Groq stays 0 Google
 
 ## Round 8 (Admin 2.0.1) — session token security (A–C)
 - HMAC key = `ADMIN_SESSION_SECRET` (not raw password) · password fingerprint in payload

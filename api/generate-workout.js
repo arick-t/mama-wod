@@ -12,6 +12,13 @@ const { checkRateLimit, sendRateLimit } = require("../lib/rate-limit.js");
 const { scrubPiiText } = require("./sanitize-pii.js");
 const { applyCors } = require("../lib/cors-allowlist.js");
 
+async function recordGeminiSpendSafe(model, data, via) {
+  try {
+    const { recordGeminiResponseSpend } = require("../scripts/lib/admin/admin-credit-estimate");
+    await recordGeminiResponseSpend(model, data, via);
+  } catch (e) {}
+}
+
 function allowCors(req, res) {
   applyCors(req, res, {
     methods: "GET, POST, OPTIONS",
@@ -736,7 +743,7 @@ function buildWorkoutGeminiBody(body) {
   return { geminiBody };
 }
 
-async function pipeGeminiSseToClient(res, upstream) {
+async function pipeGeminiSseToClient(res, upstream, model) {
   if (!upstream.body) {
     res.write(`data: ${JSON.stringify({ error: "No stream body from Gemini" })}\n\n`);
     res.end();
@@ -747,6 +754,7 @@ async function pipeGeminiSseToClient(res, upstream) {
   let lineBuf = "";
   let prevFull = "";
   let lastFinishReason = "";
+  let lastUsageObj = null;
   for (;;) {
     const { done, value } = await reader.read();
     if (done) break;
@@ -770,6 +778,7 @@ async function pipeGeminiSseToClient(res, upstream) {
         res.write(`data: ${JSON.stringify({ error: msg })}\n\n`);
         continue;
       }
+      if (obj.usageMetadata || obj.usage_metadata || obj.usage) lastUsageObj = obj;
       const c0 = obj.candidates && obj.candidates[0];
       if (c0 && c0.finishReason) lastFinishReason = String(c0.finishReason);
       const full = extractGeminiTextFromData(obj);
@@ -781,6 +790,9 @@ async function pipeGeminiSseToClient(res, upstream) {
     }
   }
   const truncated = lastFinishReason === "MAX_TOKENS";
+  if (lastUsageObj && model) {
+    await recordGeminiSpendSafe(model, lastUsageObj, "generate-workout-stream");
+  }
   res.write(`data: ${JSON.stringify({ done: true, text: prevFull, truncated })}\n\n`);
   res.end();
 }
@@ -813,7 +825,7 @@ async function handleGenerateStream(res, key, model, geminiBody) {
   res.setHeader("X-Accel-Buffering", "no");
 
   try {
-    await pipeGeminiSseToClient(res, r);
+    await pipeGeminiSseToClient(res, r, model);
   } catch (e) {
     if (!res.headersSent) {
       return res.status(500).json({ error: "Stream failed", detail: e.message });
@@ -1006,6 +1018,7 @@ module.exports = async function handler(req, res) {
 
       const finishReason = cand0 && cand0.finishReason ? String(cand0.finishReason) : "";
       const truncated = finishReason === "MAX_TOKENS";
+      await recordGeminiSpendSafe(model, data, "generate-workout");
       const out = { ok: true, text };
       if (truncated) out.truncated = true;
       return res.status(200).json(out);
@@ -1062,6 +1075,10 @@ module.exports = async function handler(req, res) {
     }
 
     const text = prov.id === "groq" ? extractGroqAssistantText(data) : extractGeminiTextFromData(data);
+
+    if (prov.id !== "groq") {
+      await recordGeminiSpendSafe(model, data, "generate-workout-explain");
+    }
 
     return res.status(200).json({ ok: true, text: text || "(no text)" });
   } catch (e) {

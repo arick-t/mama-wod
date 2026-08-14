@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DUCK-WOD Admin · 2.0.1</title>
+<title>DUCK-WOD Admin · 2.0.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -698,7 +698,7 @@ body:has(#intake-modal.open) #adminChatFloat{
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver" id="login-ver-badge" title="Admin 2.0.1 · Coach 2.3.13">Admin 2.0.1<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></div>
+    <div class="ver" id="login-ver-badge" title="Admin 2.0.2 · Coach 2.3.13">Admin 2.0.2<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <label class="login-remember">
       <input type="checkbox" id="pw-remember"/>
@@ -714,7 +714,7 @@ body:has(#intake-modal.open) #adminChatFloat{
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">Admin</span>
-    <span class="ver-badge" id="admin-ver-badge" title="Admin 2.0.1 · Coach 2.3.13">Admin 2.0.1<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></span>
+    <span class="ver-badge" id="admin-ver-badge" title="Admin 2.0.2 · Coach 2.3.13">Admin 2.0.2<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></span>
     <span class="count-wrap">
       <span class="count" id="athlete-count" title="הרשימה מתעדכנת לבד כל כמה שניות — בלי לרענן את הדף">0 מתאמנים</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
@@ -908,7 +908,7 @@ var adminChatFabOpen = false;
 var adminDayEdit = null;
 var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
 /** Live Personal Coach brain version — refreshed from GET /api/personal-coach. */
-var ADMIN_UI_VERSION = "2.0.1";
+var ADMIN_UI_VERSION = "2.0.2";
 var LIVE_COACH_VERSION = "2.3.13";
 var LIVE_COACH_VERSION_FETCHED_AT = 0;
 
@@ -1273,20 +1273,30 @@ function renderCreditPill(credit) {
   if (!credit || credit.remainingEstimated == null) {
     btn.classList.add("empty");
     amt.textContent = "הזן יתרה";
+    var emptyTag = document.querySelector("#btn-credit-estimate .credit-tag");
+    if (emptyTag) emptyTag.textContent = "משוער";
     btn.title = "לחץ להזין יתרה שראית ב־Google Billing (משוער, לא חי מגוגל) — אפשר לעדכן בכל רגע";
     return;
   }
   amt.textContent = credit.display || ("₪" + Number(credit.remainingEstimated).toFixed(2));
   if (credit.warnCritical) btn.classList.add("critical");
   else if (credit.warnLow) btn.classList.add("warn");
-  var spent = credit.spentSinceUpdateEstimated != null
-    ? Number(credit.spentSinceUpdateEstimated).toFixed(2)
-    : "0.00";
+  var spentNum = credit.spentSinceUpdateEstimated != null
+    ? Number(credit.spentSinceUpdateEstimated)
+    : 0;
+  var spent = spentNum.toFixed(2);
+  var tag = document.querySelector("#btn-credit-estimate .credit-tag");
+  if (tag) tag.textContent = spentNum > 0 ? ("−₪" + spent) : "משוער";
   var updated = credit.balanceUpdatedAt ? fmt(credit.balanceUpdatedAt) : "לא עודכן";
+  var flushed = credit.lastFlushAt ? fmt(credit.lastFlushAt) : "אין שמירת שריפה";
+  var manual = credit.balanceManual != null ? Number(credit.balanceManual).toFixed(2) : "—";
   btn.title =
     "משוער (לא חי מגוגל)\n" +
+    "יתרה ידנית: ₪" + manual + "\n" +
+    "נשרף מאז (אומדן): ₪" + spent +
+    (spentNum === 0 ? " — המספר למעלה לא ירד עד שיש שריפה שמורה\n" : "\n") +
     "עודכן ידנית: " + updated + "\n" +
-    "נשרף מאז (אומדן): ₪" + spent + "\n" +
+    "שמירת שריפה אחרונה: " + flushed + "\n" +
     "לחץ לעדכון ידני בכל רגע · Billing בחלון חדש אחרי שמירה";
 }
 
@@ -1313,8 +1323,17 @@ function openCreditUpdate() {
       : creditState && creditState.remainingEstimated != null
         ? String(creditState.remainingEstimated)
         : "57.25";
+  var spentHint =
+    creditState && creditState.spentSinceUpdateEstimated != null
+      ? Number(creditState.spentSinceUpdateEstimated).toFixed(2)
+      : "0.00";
+  var remainHint =
+    creditState && creditState.remainingEstimated != null
+      ? Number(creditState.remainingEstimated).toFixed(2)
+      : "—";
   var raw = window.prompt(
     "יתרה שראית עכשיו ב־Google AI Studio Billing (₪)\n" +
+      "אומדן נוכחי: ₪" + remainHint + " · נשרף מאז העדכון: ₪" + spentHint + "\n" +
       "עדכון ידני — מאפס את אומדן השריפה מאז העדכון.\n" +
       "לא משיכה חיה מגוגל.",
     current
