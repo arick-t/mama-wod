@@ -79,6 +79,7 @@ const CoachIntakeSync = require("../../../lib/coach-intake-sync-contract");
 const CoachPushUpgrade = require("../../../lib/coach-push-upgrade");
 const NormalizePprogBlock = require("../../../lib/normalize-pprog-block");
 const AdminDayEdit = require("../../../lib/admin-day-edit");
+const AdminDoneDebrief = require("../../../lib/admin-done-debrief");
 
 function safeAthleteId(raw) {
   return String(raw || "")
@@ -378,6 +379,34 @@ module.exports = async function handler(req, res) {
         ok: true,
         currentBlock: existing.currentBlock,
         pendingAdminDayEdit: pending,
+        storage: storageInfo(),
+      });
+    }
+
+    if (body.action === "admin_mark_done_read") {
+      if (!isAdmin) return adminAuthDenied(res);
+      const existing = (await readSnapshot(athleteId)) || {};
+      if (!existing.athleteId && !existing.createdAt) {
+        return res.status(404).json({ error: "Athlete not found" });
+      }
+      const dayIso = String(body.dayIso || "").slice(0, 10);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(dayIso)) {
+        return res.status(400).json({ ok: false, error: "dayIso required" });
+      }
+      existing.doneDebriefRead = AdminDoneDebrief.markRead(
+        existing.doneDebriefRead,
+        dayIso,
+        new Date().toISOString()
+      );
+      existing.updatedAt = new Date().toISOString();
+      try {
+        await writeSnapshot(athleteId, existing);
+      } catch (e) {
+        return storageUnavailable(res, e);
+      }
+      return res.status(200).json({
+        ok: true,
+        doneDebriefRead: existing.doneDebriefRead,
         storage: storageInfo(),
       });
     }
@@ -885,6 +914,10 @@ module.exports = async function handler(req, res) {
           ""
       ).slice(0, 40),
       adminChatLog: Array.isArray(existing.adminChatLog) ? existing.adminChatLog : [],
+      doneDebriefRead:
+        existing.doneDebriefRead && typeof existing.doneDebriefRead === "object"
+          ? existing.doneDebriefRead
+          : {},
       pendingPushUpgrade: existing.pendingPushUpgrade || null,
       pendingAdminDayEdit: existing.pendingAdminDayEdit || null,
       planCoachVersion: (function () {

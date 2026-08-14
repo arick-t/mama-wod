@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DUCK-WOD Admin · 2.0.2</title>
+<title>DUCK-WOD Admin · 2.0.3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -216,6 +216,17 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .ath-chat-item{background:var(--bg-elev);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
 .ath-chat-meta{font-size:.7em;color:var(--text-meta);font-weight:600;margin-bottom:4px}
 .ath-chat-text{font-size:.88em;color:var(--text);line-height:1.45;white-space:pre-wrap;word-break:break-word}
+.ath-done-debrief{
+  background:var(--bg-elev);border:1px solid var(--line);border-radius:10px;padding:10px 12px;
+  direction:rtl;text-align:right;margin:0 0 8px
+}
+.ath-done-debrief-rating{font-weight:800;color:var(--text);font-size:.95em}
+.ath-done-debrief-part{color:var(--part);font-weight:700;margin-top:4px}
+.ath-done-debrief-note{color:var(--text);font-style:italic;margin-top:4px;white-space:pre-wrap}
+.ath-done-debrief-flag{
+  margin-top:8px;color:#f87171;font-weight:800;border:1px solid rgba(248,113,113,.4);
+  background:rgba(232,69,26,.12);border-radius:8px;padding:6px 8px
+}
 .ath-intake-sheet{
   display:none;position:fixed;inset:0;z-index:1100;background:rgba(8,6,12,.78);
   align-items:center;justify-content:center;padding:16px
@@ -348,15 +359,31 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .pprog-cal-today{appearance:none;background:#F5C518;border:1px solid #F5C518;color:#111;font-size:.72em;font-weight:800;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:inherit;letter-spacing:.02em;line-height:1.2;min-height:34px}
 .pprog-cal-dow,.pprog-cal-row{display:grid;grid-template-columns:minmax(48px,0.85fr) repeat(7,1fr);gap:2px;text-align:center;align-items:center}
 .pprog-cal-dow{margin-bottom:4px}
-.pprog-cal-dow span{color:#888;font-size:.68em;font-weight:600;padding:2px 0}
+.pprog-cal-dow span,.pprog-cal-dow-btn{color:#888;font-size:.68em;font-weight:600;padding:2px 0}
+.pprog-cal-dow-btn{
+  appearance:none;background:transparent;border:none;cursor:pointer;font-family:inherit;
+  border-radius:6px;min-height:28px
+}
+.pprog-cal-dow-btn:hover{color:#e8d9f5;background:rgba(155,107,184,.16)}
 .pprog-cal-general,.pprog-cal-week-col{appearance:none;background:#252525;border:1px solid #3a3a3a;color:#ddd;font-size:.62em;font-weight:700;padding:6px 2px;border-radius:8px;cursor:pointer;font-family:inherit;line-height:1.15;min-height:36px;width:100%;max-width:56px;margin:0 auto}
 .pprog-cal-week-col{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:.58em}
 .pprog-cal-general.active,.pprog-cal-week-col.active,.pprog-cal-cell.active{background:#8e44ad;border-color:#b06dcf;color:#fff}
-.pprog-cal-cell{appearance:none;background:transparent;border:none;color:#ddd;font-size:.9em;font-weight:600;padding:6px 0;border-radius:50%;cursor:pointer;font-family:inherit;aspect-ratio:1;max-width:38px;margin:0 auto;display:flex;align-items:center;justify-content:center;width:100%}
+.pprog-cal-cell{appearance:none;background:transparent;border:none;color:#ddd;font-size:.9em;font-weight:600;padding:6px 0;border-radius:50%;cursor:pointer;font-family:inherit;aspect-ratio:1;max-width:38px;margin:0 auto;display:flex;align-items:center;justify-content:center;width:100%;position:relative}
 .pprog-cal-cell:hover{background:#2a2a2a}
 .pprog-cal-cell.muted{color:#555}
 .pprog-cal-cell.has-wod:not(.active){color:#1A9B8A}
 .pprog-cal-cell.logged-extra:not(.active){color:#1A9B8A;box-shadow:inset 0 0 0 1.5px rgba(26,155,138,.55)}
+.pprog-cal-cell.selected:not(.active){
+  background:rgba(155,107,184,.18);color:#e8d9f5;
+  box-shadow:inset 0 0 0 2px var(--coach)
+}
+.pprog-done-dot{
+  position:absolute;top:2px;right:3px;width:7px;height:7px;border-radius:50%;pointer-events:none
+}
+.pprog-cal-cell.done-unread .pprog-done-dot{
+  background:#d4b3ee;box-shadow:0 0 0 2px rgba(155,107,184,.45)
+}
+.pprog-cal-cell.done-read .pprog-done-dot{background:rgba(155,107,184,.42);width:6px;height:6px}
 .pprog-cal-cell.deload-week:not(.active){background:rgba(90,140,190,.2);color:#c5daf0;box-shadow:inset 0 0 0 1.5px #5a8cbe}
 .pprog-cal-month-grid{display:flex;flex-direction:column;gap:2px}
 .pprog-cal-week-label{color:#999;font-size:.7em;text-align:center;margin:8px 0 3px}
@@ -364,6 +391,25 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .pprog-rest-day{text-align:center;padding:8px 0 4px}
 .pprog-rest-day-img{width:min(72vw,260px);max-width:100%;height:auto;display:block;margin:0 auto;border-radius:14px;object-fit:cover;aspect-ratio:1;background:#111}
 .pprog-week-panes{direction:ltr}
+.pprog-width-status{
+  direction:rtl;text-align:right;color:var(--text-meta);font-family:var(--font-ui);
+  font-size:.8em;font-weight:600;margin:0 0 8px;line-height:1.4
+}
+.pprog-width-status button{
+  appearance:none;background:transparent;border:none;color:var(--coach);font-weight:800;
+  cursor:pointer;font-family:inherit;padding:0 2px
+}
+.pprog-width-strip{
+  display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;
+  overflow-x:auto;overflow-y:hidden;padding:0 0 8px;scroll-snap-type:x proximity
+}
+.pprog-width-strip .pprog-day-card{
+  flex:0 0 340px;width:340px;max-width:340px;scroll-snap-align:start
+}
+@media (max-width:719px){
+  .pprog-width-strip{flex-direction:column;overflow-x:visible;overflow-y:visible}
+  .pprog-width-strip .pprog-day-card{flex:1 1 auto;width:100%;max-width:none}
+}
 .pprog-day-card .card-header{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 .pprog-day-card .source-name{color:var(--coach);font-weight:700;font-size:1.05em;letter-spacing:.01em;font-family:var(--font-ui)}
 .pprog-day-card .section{margin-bottom:12px;background:transparent;border:0;padding:0}
@@ -662,7 +708,7 @@ body:has(#intake-modal.open) #adminChatFloat{
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver" id="login-ver-badge" title="Admin 2.0.2 · Coach 2.3.13">Admin 2.0.2<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></div>
+    <div class="ver" id="login-ver-badge" title="Admin 2.0.3 · Coach 2.3.13">Admin 2.0.3<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <label class="login-remember">
       <input type="checkbox" id="pw-remember"/>
@@ -678,7 +724,7 @@ body:has(#intake-modal.open) #adminChatFloat{
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">Admin</span>
-    <span class="ver-badge" id="admin-ver-badge" title="Admin 2.0.2 · Coach 2.3.13">Admin 2.0.2<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></span>
+    <span class="ver-badge" id="admin-ver-badge" title="Admin 2.0.3 · Coach 2.3.13">Admin 2.0.3<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.13</span></span>
     <span class="count-wrap">
       <span class="count" id="athlete-count" title="הרשימה מתעדכנת לבד כל כמה שניות — בלי לרענן את הדף">0 מתאמנים</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
@@ -872,7 +918,7 @@ var adminChatFabOpen = false;
 var adminDayEdit = null;
 var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
 /** Live Personal Coach brain version — refreshed from GET /api/personal-coach. */
-var ADMIN_UI_VERSION = "2.0.2";
+var ADMIN_UI_VERSION = "2.0.3";
 var LIVE_COACH_VERSION = "2.3.13";
 var LIVE_COACH_VERSION_FETCHED_AT = 0;
 
@@ -1476,10 +1522,14 @@ function adminSnapshotsFingerprint(list) {
         .map(function (w, i) {
           var days = (w && w.days) || {};
           var n = 0;
+          var ff = "";
           for (var k in days) {
             if (Object.prototype.hasOwnProperty.call(days, k) && days[k] && days[k].parts && days[k].parts.length) n++;
+            if (days[k] && days[k].finishFeedback && days[k].finishFeedback.rating) {
+              ff += k + ":" + days[k].finishFeedback.rating + ":" + String(days[k].finishFeedback.at || "");
+            }
           }
-          return i + ":" + n;
+          return i + ":" + n + ":" + ff;
         })
         .join(",");
       var pendingEdit = a.pendingAdminDayEdit || {};
@@ -1490,6 +1540,7 @@ function adminSnapshotsFingerprint(list) {
         a.membershipFrozen ? "1" : "0",
         weekMarks,
         String(pendingEdit.status || "") + ":" + String(pendingEdit.id || "") + ":" + String(pendingEdit.reason || ""),
+        JSON.stringify(a.doneDebriefRead || {}),
       ].join("|");
     })
     .join(";;");
@@ -1519,6 +1570,11 @@ function openAdminApp(snapshots) {
   refreshLiveCoachVersion();
   renderAthleteList(snapshots || []);
   startAdminLivePoll();
+  if (!window._adminCalDocBound) {
+    window._adminCalDocBound = true;
+    document.addEventListener("mouseup", onAdminCalMouseUp);
+    document.addEventListener("keydown", onAdminEscClear);
+  }
 }
 
 function applyAdminSessionFromList(res, data, remember) {
@@ -1807,6 +1863,7 @@ function renderAthlete(a) {
     "</span>";
   var statsOpen = !!(athleteStatsOpen && athleteStatsOpen[a.athleteId]);
   var syncSt = adminBlockSyncStatus(a);
+  var view = adminEnsureBlockView(a);
 
   content.innerHTML =
     '<div class="ath-wrap">' +
@@ -1885,9 +1942,9 @@ function renderAthlete(a) {
         renderAccItem(
           "chat",
           "היסטוריית שיח מול המאמן",
-          chatLog.length ? chatLog.length + " הודעות" : "אין הודעות עדיין",
+          chatAccSummary(a, chatLog, view),
           acc.chat,
-          renderChatHistoryBody(chatLog)
+          renderChatHistoryBody(chatLog, renderDoneDebriefCard(a, view.activeWi, view.activeDay))
         ) +
       "</div>" +
     "</div>" +
@@ -1895,6 +1952,7 @@ function renderAthlete(a) {
 
   syncAthleteChatFab(a);
   syncNotesPlaceholders();
+  bindAdminCalGestures();
 }
 
 function renderAthleteStatsPop(a, chatLog, open) {
@@ -1922,11 +1980,12 @@ function renderAthleteStatsPop(a, chatLog, open) {
   );
 }
 
-function renderChatHistoryBody(chatLog) {
-  if (!chatLog || !chatLog.length) {
+function renderChatHistoryBody(chatLog, extraHtml) {
+  var debrief = extraHtml || "";
+  if ((!chatLog || !chatLog.length) && !debrief) {
     return '<div class="ath-muted">הודעות מהשיח הצף יופיעו כאן.</div>';
   }
-  var items = chatLog
+  var items = (chatLog || [])
     .slice()
     .reverse()
     .map(function(m) {
@@ -1945,7 +2004,7 @@ function renderChatHistoryBody(chatLog) {
       );
     })
     .join("");
-  return '<div class="ath-chat-log">' + items + "</div>";
+  return '<div class="ath-chat-log">' + debrief + items + "</div>";
 }
 
 function renderIntakeSheet(a) {
@@ -2249,40 +2308,53 @@ function adminEnsureBlockView(a) {
       calMode: "month",
       activeWi: wi,
       activeDay: dayKeys[di] || "sun",
+      selected: [],
+      phoneSelectMode: false,
     };
   }
+  if (!Array.isArray(adminBlockViewByAthlete[id].selected)) adminBlockViewByAthlete[id].selected = [];
   return adminBlockViewByAthlete[id];
 }
 
 function adminPprogDisplayOpts(a) {
   var view = adminEnsureBlockView(a);
-  var editing = !!(
-    adminDayEdit &&
-    adminDayEdit.athleteId === a.athleteId &&
-    (adminDayEdit.wi | 0) === (view.activeWi | 0) &&
-    adminDayEdit.day === view.activeDay
-  );
+  var editing = !!(adminDayEdit && adminDayEdit.athleteId === a.athleteId);
   var pending = a.pendingAdminDayEdit;
   var editStatus = null;
-  if (
-    pending &&
-    (pending.weekIndex | 0) === (view.activeWi | 0) &&
-    String(pending.dayKey || "") === String(view.activeDay || "")
-  ) {
+  if (pending) {
     var msg = "";
     if (typeof AdminDayEdit !== "undefined" && AdminDayEdit.statusMessage) {
       msg = AdminDayEdit.statusMessage(pending);
     } else if (pending.status === "failed") {
       msg = pending.message || "לא הוחל";
-    } else {
+    } else if (pending.status === "pending" || pending.status === "applied") {
       msg = "סונכרן";
     }
-    if (msg) {
+    if (msg && pending.status !== "applied") {
       editStatus = {
         status: pending.status === "failed" ? "failed" : "ok",
         message: msg,
+        weekIndex: pending.weekIndex | 0,
+        dayKey: String(pending.dayKey || ""),
       };
     }
+  }
+  var selected = AdminDoneDebrief && AdminDoneDebrief.sortSelected
+    ? AdminDoneDebrief.sortSelected(view.selected || [])
+    : view.selected || [];
+  var widthStatus = "";
+  if (selected.length >= 2) {
+    widthStatus =
+      '<div class="pprog-width-status">' +
+      selected.length +
+      " ימים נבחרו · " +
+      '<button type="button" onclick="adminPprogClearSelection()">נקה</button>' +
+      (view.phoneSelectMode ? " · בחר ימים" : "") +
+      "</div>";
+  } else if (view.phoneSelectMode) {
+    widthStatus =
+      '<div class="pprog-width-status">בחר ימים · ' +
+      '<button type="button" onclick="adminPprogClearSelection()">נקה</button></div>';
   }
   return {
     block: a.currentBlock,
@@ -2301,11 +2373,18 @@ function adminPprogDisplayOpts(a) {
     editing: editing,
     editDraft: editing ? adminDayEdit : null,
     adminEditStatus: editStatus,
+    showDoneDots: true,
+    doneDebriefRead: a.doneDebriefRead || {},
+    selectedDays: selected,
+    passCalEvent: true,
+    widthStatusHtml: widthStatus,
     hooks: {
       shift: "adminPprogCalShift",
       toggleMode: "adminPprogToggleCalMode",
       jumpToday: "adminPprogJumpToday",
       setDay: "adminPprogSetDay",
+      selectWeek: "adminPprogSelectWeek",
+      selectDow: "adminPprogSelectDow",
       startEdit: "adminPprogStartEdit",
       editSet: "adminPprogEditSet",
       editAddNote: "adminPprogEditAddNote",
@@ -2388,9 +2467,195 @@ function adminPprogJumpToday() {
   adminPprogRerender();
 }
 
-function adminPprogSetDay(weekIndex0, dayKey) {
-  var nextWi = Math.max(0, Math.min(4, weekIndex0 | 0));
-  var nextDay = String(dayKey || "sun");
+function adminPprogDayData(a, wi, dayKey) {
+  var weeks = a && a.currentBlock && a.currentBlock.weeks;
+  if (!weeks || !weeks[wi] || !weeks[wi].days) return null;
+  return weeks[wi].days[dayKey] || null;
+}
+
+function adminPprogDayIso(a, wi, dayKey) {
+  if (typeof AdminDayEdit !== "undefined" && AdminDayEdit.dayIsoFromBlock && a && a.currentBlock) {
+    return AdminDayEdit.dayIsoFromBlock(a.currentBlock, wi, dayKey);
+  }
+  return "";
+}
+
+function adminPprogHasDebrief(a, wi, dayKey) {
+  var day = adminPprogDayData(a, wi, dayKey);
+  if (typeof AdminDoneDebrief !== "undefined" && AdminDoneDebrief.hasDebrief) {
+    return AdminDoneDebrief.hasDebrief(day);
+  }
+  return !!(day && day.finishFeedback && day.finishFeedback.rating);
+}
+
+function adminPprogMarkDayRead(a, wi, dayKey) {
+  if (!a || !adminPprogHasDebrief(a, wi, dayKey)) return;
+  var iso = adminPprogDayIso(a, wi, dayKey);
+  if (!iso) return;
+  if (typeof AdminDoneDebrief !== "undefined" && AdminDoneDebrief.isUnread) {
+    if (!AdminDoneDebrief.isUnread(a.doneDebriefRead, iso)) return;
+  } else if (a.doneDebriefRead && a.doneDebriefRead[iso]) return;
+  a.doneDebriefRead = AdminDoneDebrief.markRead(a.doneDebriefRead, iso);
+  fetch(adminApiUrl("/api/admin-snapshot"), {
+    method: "POST",
+    headers: adminAuthHeaders(),
+    body: JSON.stringify(
+      withAdminPassword({
+        action: "admin_mark_done_read",
+        athleteId: a.athleteId,
+        dayIso: iso,
+      })
+    ),
+  }).catch(function () {});
+}
+
+function renderDoneDebriefCard(a, wi, dayKey) {
+  var day = adminPprogDayData(a, wi, dayKey);
+  if (!day || !day.finishFeedback) return "";
+  var msg =
+    typeof AdminDoneDebrief !== "undefined" && AdminDoneDebrief.formatMessage
+      ? AdminDoneDebrief.formatMessage(day.finishFeedback)
+      : null;
+  if (!msg) return "";
+  var html = '<div class="ath-done-debrief" role="status">';
+  html += '<div class="ath-done-debrief-rating">' + esc(msg.lines[0] || "") + "</div>";
+  if (msg.lines[1]) html += '<div class="ath-done-debrief-part">' + esc(msg.lines[1]) + "</div>";
+  if (msg.lines[2]) html += '<div class="ath-done-debrief-note">' + esc(msg.lines[2]) + "</div>";
+  if (msg.safety) html += '<div class="ath-done-debrief-flag">דגל אדום</div>';
+  html += "</div>";
+  return html;
+}
+
+function chatAccSummary(a, chatLog, view) {
+  var day = adminPprogDayData(a, view.activeWi, view.activeDay);
+  if (day && day.finishFeedback && day.finishFeedback.rating) {
+    var iso = adminPprogDayIso(a, view.activeWi, view.activeDay);
+    var unread =
+      typeof AdminDoneDebrief !== "undefined"
+        ? AdminDoneDebrief.isUnread(a.doneDebriefRead, iso)
+        : !(a.doneDebriefRead && a.doneDebriefRead[iso]);
+    return unread ? "תחקיר חדש" : "תחקיר Done";
+  }
+  return chatLog.length ? chatLog.length + " הודעות" : "אין הודעות עדיין";
+}
+
+function adminPprogToggleSelected(view, wi, day) {
+  var next = { wi: wi | 0, day: String(day || "") };
+  var list = (view.selected || []).slice();
+  var i;
+  var found = -1;
+  for (i = 0; i < list.length; i++) {
+    if ((list[i].wi | 0) === next.wi && list[i].day === next.day) {
+      found = i;
+      break;
+    }
+  }
+  if (found >= 0) list.splice(found, 1);
+  else list.push(next);
+  view.selected = list;
+}
+
+function adminPprogSameSelection(list, want) {
+  if (!list || list.length !== want.length) return false;
+  var a = AdminDoneDebrief.sortSelected(list);
+  var b = AdminDoneDebrief.sortSelected(want);
+  var i;
+  for (i = 0; i < a.length; i++) {
+    if ((a[i].wi | 0) !== (b[i].wi | 0) || a[i].day !== b[i].day) return false;
+  }
+  return true;
+}
+
+function adminPprogClearSelection() {
+  var a = athletes.find(function (x) {
+    return x.athleteId === currentAthleteId;
+  });
+  if (!a) return;
+  var view = adminEnsureBlockView(a);
+  view.selected = [];
+  view.phoneSelectMode = false;
+  adminPprogRerender();
+}
+
+function adminPprogSelectWeek(weekIndex0) {
+  var a = athletes.find(function (x) {
+    return x.athleteId === currentAthleteId;
+  });
+  if (!a) return;
+  var view = adminEnsureBlockView(a);
+  var wi = Math.max(0, Math.min(4, weekIndex0 | 0));
+  var keys = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+  var want = keys.map(function (d) {
+    return { wi: wi, day: d };
+  });
+  if (adminPprogSameSelection(view.selected, want)) {
+    view.selected = [];
+  } else {
+    view.selected = want;
+    view.activeWi = wi;
+    if (keys.indexOf(view.activeDay) < 0) view.activeDay = "sun";
+  }
+  adminPprogRerender();
+}
+
+function adminPprogSelectDow(dayIndex) {
+  var a = athletes.find(function (x) {
+    return x.athleteId === currentAthleteId;
+  });
+  if (!a) return;
+  var view = adminEnsureBlockView(a);
+  var keys = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+  var day = keys[dayIndex | 0];
+  if (!day) return;
+  var want = [0, 1, 2, 3, 4].map(function (wi) {
+    return { wi: wi, day: day };
+  });
+  if (adminPprogSameSelection(view.selected, want)) {
+    view.selected = [];
+  } else {
+    view.selected = want;
+    view.activeDay = day;
+  }
+  adminPprogRerender();
+}
+
+function adminPprogApplyRange(view, from, to, additive) {
+  var range = AdminDoneDebrief.rangeBetween(from, to);
+  if (!range.length) return;
+  if (!additive) {
+    view.selected = range;
+    return;
+  }
+  var map = {};
+  var i;
+  (view.selected || []).forEach(function (s) {
+    map[AdminDoneDebrief.selId(s.wi, s.day)] = s;
+  });
+  for (i = 0; i < range.length; i++) {
+    map[AdminDoneDebrief.selId(range[i].wi, range[i].day)] = range[i];
+  }
+  view.selected = Object.keys(map).map(function (k) {
+    return map[k];
+  });
+}
+
+function adminPprogSetDay(aOrEv, weekIndex0, dayKey) {
+  if (adminIgnoreNextClick) {
+    adminIgnoreNextClick = false;
+    return;
+  }
+  var ev = null;
+  var nextWi;
+  var nextDay;
+  if (aOrEv && typeof aOrEv === "object" && aOrEv.type) {
+    ev = aOrEv;
+    nextWi = Math.max(0, Math.min(4, weekIndex0 | 0));
+    nextDay = String(dayKey || "sun");
+    if (typeof ev.preventDefault === "function" && (ev.ctrlKey || ev.metaKey)) ev.preventDefault();
+  } else {
+    nextWi = Math.max(0, Math.min(4, aOrEv | 0));
+    nextDay = String(weekIndex0 || "sun");
+  }
   if (
     adminDayEdit &&
     ((adminDayEdit.wi | 0) !== nextWi || adminDayEdit.day !== nextDay)
@@ -2402,9 +2667,125 @@ function adminPprogSetDay(weekIndex0, dayKey) {
   });
   if (!a) return;
   var view = adminEnsureBlockView(a);
-  view.activeWi = nextWi;
-  view.activeDay = nextDay;
+  var additive = !!(ev && (ev.ctrlKey || ev.metaKey)) || !!view.phoneSelectMode;
+  if (nextDay === "general") {
+    view.activeWi = nextWi;
+    view.activeDay = "general";
+    view.selected = [];
+    view.phoneSelectMode = false;
+    adminPprogRerender();
+    return;
+  }
+  if (additive) {
+    adminPprogToggleSelected(view, nextWi, nextDay);
+    view.activeWi = nextWi;
+    view.activeDay = nextDay;
+  } else {
+    view.selected = [];
+    view.phoneSelectMode = false;
+    view.activeWi = nextWi;
+    view.activeDay = nextDay;
+  }
+  if (adminPprogHasDebrief(a, nextWi, nextDay)) {
+    setAthleteAcc("chat", true);
+    adminPprogMarkDayRead(a, nextWi, nextDay);
+  }
   adminPprogRerender();
+}
+
+var adminCalDrag = null;
+var adminLongPressTimer = null;
+var adminIgnoreNextClick = false;
+
+function adminCalCellFromEvent(ev) {
+  var t = ev.target;
+  if (!t || !t.closest) return null;
+  return t.closest(".pprog-cal-cell");
+}
+
+function bindAdminCalGestures() {
+  var cal = document.getElementById("pprogCal");
+  if (!cal) return;
+  cal.addEventListener("mousedown", function (ev) {
+    if (ev.button !== 0) return;
+    var cell = adminCalCellFromEvent(ev);
+    if (!cell) return;
+    adminCalDrag = {
+      startWi: cell.getAttribute("data-wi") | 0,
+      startDay: cell.getAttribute("data-day"),
+      additive: !!(ev.ctrlKey || ev.metaKey),
+      moved: false,
+    };
+  });
+  cal.addEventListener("mouseover", function (ev) {
+    if (!adminCalDrag || !(ev.buttons & 1)) return;
+    var cell = adminCalCellFromEvent(ev);
+    if (!cell) return;
+    var a = athletes.find(function (x) {
+      return x.athleteId === currentAthleteId;
+    });
+    if (!a) return;
+    var view = adminEnsureBlockView(a);
+    var to = { wi: cell.getAttribute("data-wi") | 0, day: cell.getAttribute("data-day") };
+    if (to.wi === adminCalDrag.startWi && to.day === adminCalDrag.startDay) return;
+    adminCalDrag.moved = true;
+    adminPprogApplyRange(
+      view,
+      { wi: adminCalDrag.startWi, day: adminCalDrag.startDay },
+      to,
+      adminCalDrag.additive || view.phoneSelectMode
+    );
+    view.activeWi = to.wi;
+    view.activeDay = to.day;
+    adminPprogRerender();
+  });
+  cal.addEventListener("touchstart", function (ev) {
+    var cell = adminCalCellFromEvent(ev);
+    if (!cell) return;
+    var startX = ev.touches && ev.touches[0] ? ev.touches[0].clientX : 0;
+    var startY = ev.touches && ev.touches[0] ? ev.touches[0].clientY : 0;
+    adminLongPressTimer = setTimeout(function () {
+      var a = athletes.find(function (x) {
+        return x.athleteId === currentAthleteId;
+      });
+      if (!a) return;
+      var view = adminEnsureBlockView(a);
+      view.phoneSelectMode = true;
+      adminPprogToggleSelected(view, cell.getAttribute("data-wi") | 0, cell.getAttribute("data-day"));
+      view.activeWi = cell.getAttribute("data-wi") | 0;
+      view.activeDay = cell.getAttribute("data-day");
+      adminIgnoreNextClick = true;
+      adminPprogRerender();
+    }, 450);
+    cal._lpMove = function (mv) {
+      var t = mv.touches && mv.touches[0];
+      if (!t) return;
+      if (Math.abs(t.clientX - startX) > 12 || Math.abs(t.clientY - startY) > 12) {
+        clearTimeout(adminLongPressTimer);
+        adminLongPressTimer = null;
+      }
+    };
+    cal.addEventListener("touchmove", cal._lpMove, { passive: true });
+  }, { passive: true });
+  cal.addEventListener("touchend", function () {
+    clearTimeout(adminLongPressTimer);
+    adminLongPressTimer = null;
+    if (cal._lpMove) {
+      cal.removeEventListener("touchmove", cal._lpMove);
+      cal._lpMove = null;
+    }
+  });
+}
+
+function onAdminCalMouseUp() {
+  if (adminCalDrag && adminCalDrag.moved) adminIgnoreNextClick = true;
+  adminCalDrag = null;
+}
+
+function onAdminEscClear(ev) {
+  if (!ev || ev.key !== "Escape") return;
+  if (!adminIsAuthed || !adminIsAuthed()) return;
+  adminPprogClearSelection();
 }
 
 function adminPprogEditPartLetter(n) {
@@ -4278,6 +4659,7 @@ tryRestoreAdminSession();
 <script src="lib/normalize-pprog-block.js"></script>
 <script src="lib/pprog-display.js"></script>
 <script src="lib/admin-day-edit.js"></script>
+<script src="lib/admin-done-debrief.js"></script>
 <script src="admin-fixed-intake.js"></script>
 </body>
 </html>
