@@ -2750,46 +2750,6 @@
       },
       {
         "date": "2026-08-15",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-08-15/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "scorpions",
-              "lat stretch",
-              "calf stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "8 scap. push ups",
-              "8 ring rows",
-              "*partner is holding plank"
-            ],
-            "sub_title": "amrap 5min"
-          },
-          {
-            "title": "CONDITIONING 30MIN",
-            "lines": [
-              "in teams of 2",
-              "3 rounds",
-              "",
-              "50 pull ups",
-              "40 v-ups",
-              "30 push ups (each)",
-              "20 synchro goblet squats 32/24kg",
-              "100m suitcase carry"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-08-15",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-august-15-2026/",
@@ -2836,6 +2796,46 @@
               "*If you’ve been following these sessions for the last few months and are plateauing on your rep count due to running out of time, increase AMRAP to 2:30",
               "*No jump = reach up nice and high to grab the rope then get right into your foot hold vs. jump grab hold"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-15",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-08-15/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "scorpions",
+              "lat stretch",
+              "calf stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "8 scap. push ups",
+              "8 ring rows",
+              "*partner is holding plank"
+            ],
+            "sub_title": "amrap 5min"
+          },
+          {
+            "title": "CONDITIONING 30MIN",
+            "lines": [
+              "in teams of 2",
+              "3 rounds",
+              "",
+              "50 pull ups",
+              "40 v-ups",
+              "30 push ups (each)",
+              "20 synchro goblet squats 32/24kg",
+              "100m suitcase carry"
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -2918,5 +2918,5 @@
       }
     ]
   },
-  "last_updated": "2026-08-15T05:13:30.510534"
+  "last_updated": "2026-08-15T06:32:24.832286"
 }
