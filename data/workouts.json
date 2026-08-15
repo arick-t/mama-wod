@@ -924,34 +924,6 @@
       },
       {
         "date": "2026-08-06",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Push Press 1x8",
-              "ON 10:00 CLOCK...",
-              "Build to a Heavy 8-Rep Push Press",
-              "* (Score is Weight)"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "10 SETS (EVERY 2:00)",
-            "lines": [
-              "5 Deadlifts",
-              "4 Power Cleans",
-              "3 Shoulder to Overhead",
-              "*Goal is complete each set between :25-:45. Athletes have the option to build or use the same weight for all sets.",
-              "* (Score by Lightest Set)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-08-06",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2745,6 +2717,39 @@
     "2026-08-15": [
       {
         "date": "2026-08-15",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260815",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
+              "LEARN MORE"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-15",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 19.5",
+            "lines": [
+              "33-27-21-15-9 reps for time of:",
+              "95-lb. thrusters",
+              "Chest-to-bar pull-ups",
+              "Time cap: 20 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 19.5"
+      },
+      {
+        "date": "2026-08-15",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-08-15/",
@@ -2785,16 +2790,71 @@
       },
       {
         "date": "2026-08-15",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260815",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-august-15-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
-              "LEARN MORE"
+              "Partner “Rowling”",
+              "Set a 7 minute clock and alternate with a partner of:",
+              "3 KB Taters",
+              "Row 150m",
+              "For every meter +/- 150m, each partner performs 1 additional KB Tater (10 rep max)"
             ]
+          },
+          {
+            "title": "For time with a partner:",
+            "lines": [
+              "Run 800m",
+              "50 Front Squats 135/95lbs",
+              "Run 800m",
+              "40 Front Squats 185/125lbs",
+              "Run 800m",
+              "30 Front Squats 215/145lbs",
+              "20 minute cap",
+              "Run together. Split squats anyhow, one working/one resting.",
+              "Bar taken from the floor.",
+              "Feel: Gas",
+              "Pace: Sustain",
+              "Target Score: all pairs complete the third 800m run.",
+              "Firebreather Score: complete under the cap."
+            ]
+          },
+          {
+            "title": "AMRAP 2:00*",
+            "lines": [
+              "No Jump Rope Climbs**",
+              "Rest 3 Minutes",
+              "Then"
+            ]
+          },
+          {
+            "title": "Complete the number of Rope Climbs from the AMRAP for time with jumping allowed",
+            "lines": [
+              "*If you’ve been following these sessions for the last few months and are plateauing on your rep count due to running out of time, increase AMRAP to 2:30",
+              "*No jump = reach up nice and high to grab the rope then get right into your foot hold vs. jump grab hold"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-15",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "IN TEAMS OF 2",
+            "lines": [
+              "400m Run (together)",
+              "20 Synchro Toes to Bar",
+              "40 Dumbbell Bench Press (50s/35s)*",
+              "*Run & T2B Complete together. Split DB Bench as needed."
+            ],
+            "sub_title2": "4 ROUNDS FOR TIME"
           }
         ]
       },
@@ -2855,26 +2915,8 @@
           }
         ],
         "note": "Benchmark: Lynne"
-      },
-      {
-        "date": "2026-08-15",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 19.5",
-            "lines": [
-              "33-27-21-15-9 reps for time of:",
-              "95-lb. thrusters",
-              "Chest-to-bar pull-ups",
-              "Time cap: 20 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 19.5"
       }
     ]
   },
-  "last_updated": "2026-08-15T02:24:06.556152"
+  "last_updated": "2026-08-15T05:13:30.510534"
 }
