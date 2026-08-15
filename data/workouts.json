@@ -1,90 +1,5 @@
 {
   "workouts": {
-    "2026-08-01": [
-      {
-        "date": "2026-08-01",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260801",
-        "sections": [
-          {
-            "title": "5 ROUNDS FOR TIME OF",
-            "lines": [
-              "10 dumbbell hang power cleans",
-              "10 dumbbell push presses",
-              "200-meter dumbbell farmers carry",
-              "♀ 35-lb dumbbells",
-              "♂ 50-lb dumbbells"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-08-01",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 16.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 20 minutes of:",
-              "25-ft. overhead walking lunge",
-              "8 burpees",
-              "25-ft. overhead walking lunge",
-              "8 chest-to-bar pull-ups",
-              "*Men lunge 95 lb.*",
-              "*Women lunge 65 lb.*"
-            ]
-          }
-        ],
-        "note": "Open: Open 16.1"
-      },
-      {
-        "date": "2026-08-01",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-august-1-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "With a partner, 3 rounds per athlete:",
-              "P1: Row 250m + 10 Walking Lunges",
-              "P2: :45 plank hold + rest until P1 is done",
-              "Lunge with a single DB in rounds 2-3",
-              "*Start one partner on the row and one planking, each athlete does 3 rounds."
-            ]
-          },
-          {
-            "title": "For Time with a partner:",
-            "lines": [
-              "Row 2,500m",
-              "100 Double DB Front Rack Walking Lunges 50s/35s",
-              "Row 2,500m",
-              "Athletes row a maximum of 250m at a time, one working and one resting. Athletes may row less before switching, but not more. Lunges may be split anyhow, one working one resting.",
-              "Feel: Gas",
-              "Pace: Reach",
-              "Target Score: 24-28 minutes",
-              "Firebreather Score: sub 24 minutes"
-            ]
-          },
-          {
-            "title": "Power Snatch",
-            "lines": [
-              "1 @ 80-90%",
-              "4 @ 70-75%",
-              "3 @ 75-80%",
-              "2 @ 80-85%",
-              "4 @ 75-80%",
-              "3 @ 80-85%",
-              "2 @ 85-90%",
-              "Drop and reset reps. It’s ok if you don’t know your perecentages – your heavy single to start will give you guidance. )"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-08-02": [
       {
         "date": "2026-08-02",
@@ -162,101 +77,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-08-02",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-08-02/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "instep rotations",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. side plank",
-              "2. row",
-              "3. ring rows",
-              "4. db deadlifts / db push press"
-            ],
-            "sub_title": "30sec on / 15sec off x2 rounds"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "1. 20/20sec copenhagen plank hold",
-              "2. 10-15cal row",
-              "3. 8-10 strict pull ups",
-              "4. 10/10 single arm db hang clean & jerks",
-              "5. rest",
-              "Sunday Endurance for Open Gym",
-              "on the 4:00 x 6 sets:",
-              "",
-              "30/24cal  bike",
-              "* cal row in remaining time",
-              "sets 1-2: rpe 5",
-              "sets 3-4: rpe 6",
-              "sets 5-6: rpe 7",
-              "* score: total row cal",
-              "* aerobic power [lactate threshold]"
-            ],
-            "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-08-02",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Hall",
-            "sub_title": "5 rounds for time of:",
-            "lines": [
-              "3 cleans",
-              "200-meter sprint",
-              "20 kettlebell snatches, 10 each arm",
-              "Rest 2 minutes between rounds."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-08-02",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Elizabeth",
-            "lines": [
-              "21–15–9:",
-              "60/42,5kg Squat Cleans",
-              "Ring Dips",
-              "*TC12min",
-              "*COMP:",
-              "Squat Cleans 70/50kg",
-              "Strict Ring Dips",
-              "*SK1:",
-              "Squat Cleans 45/30kg",
-              "Banded Ring/Matador Dip OR Ring Push-Ups",
-              "*SK2:",
-              "Hang Power Cleans",
-              "Front Squats",
-              "Elevated Ring Push-Ups",
-              "Load: 20/15kg"
-            ]
-          }
-        ],
-        "note": "Benchmark: Elizabeth"
       }
     ],
     "2026-08-03": [
@@ -919,21 +739,6 @@
               "* lactate threshold & aerobic power"
             ],
             "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-08-06",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Strength:-10 min EMOM (5 rounds):Min 1: 30–45 sec wall walk or nose-to-wall handstand holdMin 2: 20–30 sec handstand marching or plank shoulder tapsThen 6 mins: strict or kipping HSPU practice, 3 sets building quality",
-              "Metcon:-E2MOM x 9 rounds (18 min):8 Thrusters 30/20kg12/10 Cal Row*1.15min consistent rounds, scale cals / weight not time"
-            ]
           }
         ]
       },
@@ -2916,7 +2721,149 @@
         ],
         "note": "Benchmark: Lynne"
       }
+    ],
+    "2026-08-16": [
+      {
+        "date": "2026-08-16",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-08-16/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "lat stretch",
+              "samson stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. push up to down dog",
+              "2. row",
+              "3. hollow hold",
+              "4. reverse lunges"
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "1. 8-10 single arm devils press",
+              "2. 10-15cal row",
+              "3. 6-10 strict toes to bar",
+              "4. 16-20 jumping lunges",
+              "5. rest",
+              "Sunday Endurance for Open Gym",
+              "4-6 rounds",
+              "2:00 bike [rpe 8]",
+              "2:00 row [rpe 4]",
+              "* aerobic power [lactate threshold]"
+            ],
+            "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-08-16",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Hero Wod:",
+              "Luke 2:",
+              "400m Run15 Clean & Jerks 70/47.5kg400m Run30 Toes to Bar400 m Run45 Wallballs 9/6kg400m Run45 KB Swings 24/16kg400m Run30 Ring Dips400m Run15 Weighted Lunge Steps 70/47.5kg400m Run"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-16",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Pikey",
+            "sub_title": "For time:",
+            "lines": [
+              "Run 400 meters",
+              "12 burpee bar muscle-ups",
+              "15 squat snatches",
+              "Run 800 meters",
+              "12 burpee bar muscle-ups",
+              "20 clean and jerks",
+              "Run 800 meters",
+              "12 burpee bar muscle-ups",
+              "18 thrusters",
+              "Run 400 meters"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-16",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Crossfit Total",
+            "lines": [
+              "Tulos: Kilojen yhteismäärä.",
+              "1RM  Back Squat",
+              "1RM  Shoulder Press",
+              "1RM  Deadlift"
+            ]
+          }
+        ],
+        "note": "Benchmark: Crossfit Total"
+      },
+      {
+        "date": "2026-08-16",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 14.3",
+            "lines": [
+              "Complete as many reps as possible in 8 minutes of:",
+              "135-lb. deadlifts, 10 reps",
+              "15 box jumps, 24-inch",
+              "185-lb. deadlifts, 15 reps",
+              "15 box jumps, 24-inch",
+              "225-lb. deadlifts, 20 reps",
+              "15 box jumps, 24-inch",
+              "275-lb. deadlifts, 25 reps",
+              "15 box jumps, 24-inch",
+              "315-lb. deadlifts, 30 reps",
+              "15 box jumps, 24-inch",
+              "365-lb. deadlifts, 35 reps",
+              "15 box jumps, 24-inch",
+              "*WOMEN*",
+              "*- includes Masters Women up to 54 years old*",
+              "Complete as many reps as possible in 8 minutes of:",
+              "95-lb. deadlifts, 10 reps",
+              "15 box jumps, 20-inch",
+              "135-lb. deadlifts, 15 reps",
+              "15 box jumps, 20-inch",
+              "155-lb. deadlifts, 20 reps",
+              "15 box jumps, 20-inch",
+              "185-lb. deadlifts, 25 reps",
+              "15 box jumps, 20-inch",
+              "205-lb. deadlifts, 30 reps"
+            ]
+          }
+        ],
+        "note": "Open: Open 14.3"
+      }
     ]
   },
-  "last_updated": "2026-08-15T09:34:57.671028"
+  "last_updated": "2026-08-16T02:22:24.850996"
 }
