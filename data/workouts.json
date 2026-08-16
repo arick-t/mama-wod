@@ -2764,49 +2764,6 @@
       },
       {
         "date": "2026-08-16",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-08-16/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "lat stretch",
-              "samson stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. push up to down dog",
-              "2. row",
-              "3. hollow hold",
-              "4. reverse lunges"
-            ],
-            "sub_title": "30sec on / 15sec off x2 rounds"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "1. 8-10 single arm devils press",
-              "2. 10-15cal row",
-              "3. 6-10 strict toes to bar",
-              "4. 16-20 jumping lunges",
-              "5. rest",
-              "Sunday Endurance for Open Gym",
-              "4-6 rounds",
-              "2:00 bike [rpe 8]",
-              "2:00 row [rpe 4]",
-              "* aerobic power [lactate threshold]"
-            ],
-            "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-08-16",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-august-16-2026/",
@@ -2849,6 +2806,49 @@
               "5:00 Machine Flush",
               "3:00 Mobility"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-16",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-08-16/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "lat stretch",
+              "samson stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. push up to down dog",
+              "2. row",
+              "3. hollow hold",
+              "4. reverse lunges"
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "1. 8-10 single arm devils press",
+              "2. 10-15cal row",
+              "3. 6-10 strict toes to bar",
+              "4. 16-20 jumping lunges",
+              "5. rest",
+              "Sunday Endurance for Open Gym",
+              "4-6 rounds",
+              "2:00 bike [rpe 8]",
+              "2:00 row [rpe 4]",
+              "* aerobic power [lactate threshold]"
+            ],
+            "sub_title": "emom 35min (7 rounds)"
           }
         ]
       },
@@ -2912,5 +2912,5 @@
       }
     ]
   },
-  "last_updated": "2026-08-16T05:21:03.764766"
+  "last_updated": "2026-08-16T06:40:54.196711"
 }
