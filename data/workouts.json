@@ -793,27 +793,6 @@
       },
       {
         "date": "2026-08-08",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "TEAMS OF 2",
-            "lines": [
-              "ON A 15:00 RUNNING CLOCK",
-              "50 Burpee Box Jump Overs 24”/20”",
-              "100 Pull Ups",
-              "50 Burpee Box Jump Overs 24”/20”",
-              "Max Reps of Dumbbell Snatch 32kg/23kg in the remaining time",
-              "* (Score by Total Reps of DB Snatch)",
-              "*Complete workout in order. Partner split work as needed."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-08-08",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2752,6 +2731,39 @@
     "2026-08-18": [
       {
         "date": "2026-08-18",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260818",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
+              "LEARN MORE"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-18",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 20.1",
+            "lines": [
+              "10 rounds for time of:",
+              "8 ground-to-overheads, 95 lb.",
+              "10 bar-facing burpees",
+              "Time cap: 15 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 20.1"
+      },
+      {
+        "date": "2026-08-18",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-08-18/",
@@ -2801,15 +2813,72 @@
       },
       {
         "date": "2026-08-18",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260818",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-august-18-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
-              "LEARN MORE"
+              "3 Rounds",
+              "100m-200m-300m Run",
+              "8 Plate Ground to Overhead 15/10lbs plate",
+              ":10-15 Handstand Hold"
+            ]
+          },
+          {
+            "title": "6 RFT",
+            "lines": [
+              "6 rounds for time",
+              "Run 400m",
+              "5 Push Jerks 185/125lbs",
+              "Int: 135/95",
+              "Scale: 95/65",
+              "*Any weight that can be performed unbroken",
+              "*decrease run if not completing in under 2:15min",
+              "Feel: Gas",
+              "Pace: Reach/Sustain",
+              "Target Score: 14-18  minutes",
+              "Firebreather Score: sub 14 minutes"
+            ]
+          },
+          {
+            "title": "For Time",
+            "lines": [
+              "20 Turkish Get Ups 70/53lb KB",
+              "Int: 53/35",
+              "Scale: 35/26",
+              "they should be heavy but use lighter weight to allow for 2 reps per arm before switching",
+              "Feel: Muscle Overload",
+              "Pace: Sustain",
+              "Target Score: <10:00"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-18",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Front Squat 1x2",
+              "EVERY 1:30 (10 SETS)",
+              "2 Front Squats*",
+              "*Start Moderate and Build to Heavy (RPE 8-9)",
+              "* (Score is the Heaviest Weight)"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "12:00 AMRAP",
+            "lines": [
+              "30 Air Squats",
+              "3 Rope Climbs",
+              "* (Score is Rounds + Reps)"
             ]
           }
         ]
@@ -2866,26 +2935,8 @@
           }
         ],
         "note": "Benchmark: Mary"
-      },
-      {
-        "date": "2026-08-18",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 20.1",
-            "lines": [
-              "10 rounds for time of:",
-              "8 ground-to-overheads, 95 lb.",
-              "10 bar-facing burpees",
-              "Time cap: 15 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 20.1"
       }
     ]
   },
-  "last_updated": "2026-08-18T02:24:55.943797"
+  "last_updated": "2026-08-18T05:15:22.404131"
 }
