@@ -959,39 +959,6 @@
       },
       {
         "date": "2026-08-10",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Front Squat 4x8",
-              "EVERY 2:30 (4 SETS)*",
-              "8 Front Squats",
-              "*Start @ RPE 6 and Build into RPE 8/9",
-              "* (Score is Heaviest Weight)"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "FOR TIME",
-            "lines": [
-              "10 Single-Arm Dumbbell Thrusters 23kg/16kg",
-              "15 Push-Ups",
-              "15 Single-Arm Dumbbell Thrusters 23kg/16kg",
-              "25 Push-Ups",
-              "20 Single-Arm Dumbbell Thrusters 23kg/16kg",
-              "35 Push-Ups",
-              "25 Single-Arm Dumbbell Thrusters 23kg/16kg",
-              "45 Push-Ups",
-              "30 Single-Arm Dumbbell Thrusters 23kg/16kg"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-08-10",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2758,6 +2725,42 @@
     "2026-08-19": [
       {
         "date": "2026-08-19",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260819",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
+              "LEARN MORE"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-19",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 15.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 9 minutes of:",
+              "15 toes-to-bars",
+              "10 deadlifts (115 / 75 lb.)",
+              "5 snatches (115 / 75 lb.)",
+              "WORKOUT 15.1a",
+              "1-rep-max clean and jerk",
+              "6-minute time cap"
+            ]
+          }
+        ],
+        "note": "Open: Open 15.1"
+      },
+      {
+        "date": "2026-08-19",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-08-19/",
@@ -2792,15 +2795,51 @@
       },
       {
         "date": "2026-08-19",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260819",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-august-19-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
-              "LEARN MORE"
+              "6:00 Bike or Row",
+              "Every 1:30 perform 8 Russian Kettlebell Swings + 8 Goblet Squats"
+            ]
+          },
+          {
+            "title": "Front Squat",
+            "lines": [
+              "3 Tempo + Pause Front Squats",
+              "Tempo/Pause: 3-second descent + 1-second pause",
+              "Performed in the 40-60% 1RM",
+              "then,",
+              "B) Every 3:30 for 5 sets",
+              "3 Front Squats (no tempo or pause)",
+              "Performed at 75+%, building)"
+            ]
+          },
+          {
+            "title": "6 Sets:",
+            "lines": [
+              "10 Neutral Grip DB Bench Press",
+              "Rest 2:00"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-19",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "FOR TIME",
+            "lines": [
+              "5k Row*",
+              "*Every 3:00 (including 0:00), Perform 10 Bench Press 70kg/43kg",
+              "* (Score is Time)"
             ]
           }
         ]
@@ -2853,29 +2892,8 @@
           }
         ],
         "note": "Benchmark: Gwen"
-      },
-      {
-        "date": "2026-08-19",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 15.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 9 minutes of:",
-              "15 toes-to-bars",
-              "10 deadlifts (115 / 75 lb.)",
-              "5 snatches (115 / 75 lb.)",
-              "WORKOUT 15.1a",
-              "1-rep-max clean and jerk",
-              "6-minute time cap"
-            ]
-          }
-        ],
-        "note": "Open: Open 15.1"
       }
     ]
   },
-  "last_updated": "2026-08-19T02:24:18.721316"
+  "last_updated": "2026-08-19T05:17:55.698028"
 }
