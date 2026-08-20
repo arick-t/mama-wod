@@ -937,37 +937,6 @@
       },
       {
         "date": "2026-08-11",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Power Snatch 5x3",
-              "5 SETS:",
-              "3 Power Snatch @ RPE 7/8*",
-              "*Touch & Go Reps",
-              "* (Score is Weight)"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "2 SETS",
-            "lines": [
-              "12/10 Calorie Air Bike",
-              "24 Chest to Bar",
-              "12/10 Calorie Air Bike",
-              "24 Pull-Ups",
-              "12/10 Calorie Air Bike",
-              "* -Rest 3:00 between Sets-",
-              "* (Score is Slowest Set)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-08-11",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2678,6 +2647,60 @@
     "2026-08-20": [
       {
         "date": "2026-08-20",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260820",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
+              "LEARN MORE"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-20",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 11.5",
+            "lines": [
+              "Complete as many rounds and reps as possible in 20 minutes of:",
+              "5 Power cleans (145lbs / 65kg)",
+              "10 Toes to bar",
+              "15 Wall balls (20lbs to 10' target)",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 20 minutes of:",
+              "5 Power cleans (100lbs / 45kg)",
+              "10 Toes to bar",
+              "15 Wall balls (14lbs to 9' target)",
+              "*MASTERS MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 20 minutes of:",
+              "5 Power cleans (130lbs / 60kg)",
+              "10 Toes to bar",
+              "15 Wall balls (20lbs to 9' target)",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 20 minutes of:",
+              "5 Power cleans (75lbs / 35kg)",
+              "10 Toes to bar",
+              "15 Wall balls (10lbs to 9' target)"
+            ]
+          }
+        ],
+        "note": "Open: Open 11.5"
+      },
+      {
+        "date": "2026-08-20",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-08-20/",
@@ -2724,15 +2747,63 @@
       },
       {
         "date": "2026-08-20",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260820",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-august-20-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
-              "LEARN MORE"
+              "500m Row",
+              "Then",
+              "2 rounds",
+              "15 Ring Rows",
+              "20 Air Squats",
+              "Then",
+              "15 Line Facing Burpees AFAP"
+            ]
+          },
+          {
+            "title": "For Time:",
+            "lines": [
+              "Row 1,000m",
+              "then,",
+              "5 rounds of:",
+              "2 Rope Climbs",
+              "15 Wallballs 20/14lbs",
+              "then,",
+              "30 Line Facing Burpees",
+              "Feel: Gas",
+              "Pace: Sustain",
+              "Target Score: 12-16 minutes",
+              "Firebreather Score: sub 12"
+            ]
+          },
+          {
+            "title": "Extra Credit:",
+            "lines": [
+              "3x100m Double KB OH Waiter Walk",
+              "(1 OH, 1 in the FR, switching after 50m)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-20",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "8 SETS",
+            "lines": [
+              "48 Double Unders",
+              "12 Burpees to Bar",
+              "12 Toes to Bar",
+              "* -Rest 1:00 between Sets-",
+              "*Burpee to Bar Target is 6\" above standing reach",
+              "* (Score is Slowest Set)"
             ]
           }
         ]
@@ -2790,47 +2861,8 @@
           }
         ],
         "note": "Benchmark: Fat Helen"
-      },
-      {
-        "date": "2026-08-20",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 11.5",
-            "lines": [
-              "Complete as many rounds and reps as possible in 20 minutes of:",
-              "5 Power cleans (145lbs / 65kg)",
-              "10 Toes to bar",
-              "15 Wall balls (20lbs to 10' target)",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 20 minutes of:",
-              "5 Power cleans (100lbs / 45kg)",
-              "10 Toes to bar",
-              "15 Wall balls (14lbs to 9' target)",
-              "*MASTERS MEN*",
-              "-",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 20 minutes of:",
-              "5 Power cleans (130lbs / 60kg)",
-              "10 Toes to bar",
-              "15 Wall balls (20lbs to 9' target)",
-              "*MASTERS WOMEN*",
-              "-",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 20 minutes of:",
-              "5 Power cleans (75lbs / 35kg)",
-              "10 Toes to bar",
-              "15 Wall balls (10lbs to 9' target)"
-            ]
-          }
-        ],
-        "note": "Open: Open 11.5"
       }
     ]
   },
-  "last_updated": "2026-08-20T02:24:55.085967"
+  "last_updated": "2026-08-20T05:16:31.832765"
 }
