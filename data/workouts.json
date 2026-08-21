@@ -940,23 +940,6 @@
       },
       {
         "date": "2026-08-12",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "10 ROUNDS For Time:",
-            "lines": [
-              "200m Run",
-              "10 Kettlebell Swings 32kg/25kg",
-              "5 Box Jumps 30\"/24\""
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-08-12",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2670,6 +2653,46 @@
     "2026-08-21": [
       {
         "date": "2026-08-21",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260821",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
+              "LEARN MORE"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-21",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 18.3",
+            "lines": [
+              "2 rounds for time of:",
+              "100 double-unders",
+              "20 overhead squats",
+              "100 double-unders",
+              "12 ring muscle-ups",
+              "100 double-unders",
+              "20 dumbbell snatches",
+              "100 double-unders",
+              "12 bar muscle-ups",
+              "*Men perform 115-lb. OHS, 50-lb. DB snatches*",
+              "Time cap: 14 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 18.3"
+      },
+      {
+        "date": "2026-08-21",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-08-21/",
@@ -2716,15 +2739,94 @@
       },
       {
         "date": "2026-08-21",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260821",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-august-21-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "16 MIN CLOCK:",
             "lines": [
-              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
-              "LEARN MORE"
+              "2 Rounds of",
+              "12 Burpees",
+              "10 jumping lunges",
+              ":30sec handstand hold",
+              "Then…",
+              ":15 OH Squat Hold + 3 OH squats",
+              "1:00 ankle MOB",
+              ":15 OH Squat Hold + 3 OH squats",
+              "1:00 banded lateral walks",
+              ":15 OH Squat Hold + 3 OH squats",
+              "1:00 Active Banded lat stretch",
+              "BB Warm-up (3-5min)"
+            ]
+          },
+          {
+            "title": "Snatch",
+            "lines": [
+              "Drop and reset between reps)"
+            ]
+          },
+          {
+            "title": "Toes to Bar Capacity Test",
+            "lines": [
+              "Choose the appropriate test for you:"
+            ]
+          },
+          {
+            "title": "Rx (84 reps)",
+            "lines": [
+              "21-18-15-12-9-6-3 Unbroken Toes to Bar",
+              "Rest as little as needed between sets to stay unbroken."
+            ]
+          },
+          {
+            "title": "Intermediate 1 (63 reps)",
+            "lines": [
+              "18-15-12-9-6-3 Toes to Bar",
+              "Rest :45 between sets (sets do not need to be unbroken)"
+            ]
+          },
+          {
+            "title": "Intermediate 2 (45 reps)",
+            "lines": [
+              "15-12-9-6-3 Toes to Bar",
+              "Rest :45 between sets (sets do not need to be unbroken)"
+            ]
+          },
+          {
+            "title": "Beginner/Skill",
+            "lines": [
+              "AMRAP 6 minutes",
+              "Max Toes to Bar or Knee Raises"
+            ]
+          },
+          {
+            "title": "10 minute time cap on Rx and Intermediate options.",
+            "lines": [
+              "Record time/reps – this will be re-tested."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-21",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "FOR TIME",
+            "lines": [
+              "9-7-5",
+              "Ring Muscle-Up",
+              "Deadlift 143kg/93kg",
+              "Strength",
+              "FOR LOAD (Post-Workout)",
+              "5-4-3-2-1-1-1",
+              "Deadlift*",
+              "*Start with workout weight and Build",
+              "* (Score is Heaviest Weight)"
             ]
           }
         ]
@@ -2766,33 +2868,8 @@
           }
         ],
         "note": "Benchmark: D. \"GRACE"
-      },
-      {
-        "date": "2026-08-21",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.3",
-            "lines": [
-              "2 rounds for time of:",
-              "100 double-unders",
-              "20 overhead squats",
-              "100 double-unders",
-              "12 ring muscle-ups",
-              "100 double-unders",
-              "20 dumbbell snatches",
-              "100 double-unders",
-              "12 bar muscle-ups",
-              "*Men perform 115-lb. OHS, 50-lb. DB snatches*",
-              "Time cap: 14 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 18.3"
       }
     ]
   },
-  "last_updated": "2026-08-21T02:27:20.144149"
+  "last_updated": "2026-08-21T05:22:56.138835"
 }
