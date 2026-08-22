@@ -947,33 +947,6 @@
       },
       {
         "date": "2026-08-13",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Back Squat 1x1",
-              "FOR LOAD",
-              "5-4-3-2-1-1-1",
-              "Back Squat",
-              "* (Score is Heaviest Weight)"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "5 ROUNDS FOR TIME",
-            "lines": [
-              "40 Step Back Lunges",
-              "30 Sit Ups*",
-              "*Option for GHD Sit-Ups"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-08-13",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2679,6 +2652,42 @@
     "2026-08-22": [
       {
         "date": "2026-08-22",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260822",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
+              "LEARN MORE"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-22",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 19.3",
+            "lines": [
+              "For time:",
+              "200-ft. dumbbell overhead lunge",
+              "50 dumbbell box step-ups",
+              "50 strict handstand push-ups",
+              "200-ft. handstand walk",
+              "50-lb. dumbbell, 24-in. box",
+              "Time cap: 10 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 19.3"
+      },
+      {
+        "date": "2026-08-22",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-08-22/",
@@ -2720,16 +2729,68 @@
       },
       {
         "date": "2026-08-22",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260822",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-august-22-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
-              "LEARN MORE"
+              "3 Rounds each with a partner",
+              "Partner 1: 1:00 Machine",
+              "Partner 2: Hold*",
+              "*R1: Plank Hold",
+              "R2: Wall Facing Handstand Hold",
+              "R3: Farmer’s Carry Hold"
             ]
+          },
+          {
+            "title": "AMRAP 20 Minutes with a partner:",
+            "lines": [
+              "400m Carry*",
+              "6 Synchro Wall Walks",
+              "Pairs switch “carrier” any time.",
+              "Carry:",
+              "– DBs/KBs: 50s/35s",
+              "– Sandbag: 100/70lbs",
+              "– Sled: Lightly Loaded",
+              "– Any implement up to 100lbs",
+              "Feel: Gas",
+              "Pace: Sustain",
+              "Target Score: 4+ rounds",
+              "Firebreather Score: 5+ rounds"
+            ]
+          },
+          {
+            "title": "Squat Clean",
+            "lines": [
+              "2×4 @ 65%",
+              "Tempo Pull to Mid Thigh into Squat Clean",
+              "1×4 @ 65-70%",
+              "Tempo Pull to Knee into Squat Clean",
+              "1×4 @ 65-75%",
+              "Row 500m at flush pace between sets",
+              "Drop and reset between each rep.)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-22",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "IN TEAMS OF 2",
+            "lines": [
+              "200m Run (Together)",
+              "Partner 1: 16 Wall Balls 9kg/6kg",
+              "Partner 2: 16 Box Jump Overs 24\"/20\"",
+              "Switch when both complete"
+            ],
+            "sub_title2": "8 ROUNDS For Time:"
           }
         ]
       },
@@ -2782,29 +2843,8 @@
           }
         ],
         "note": "Benchmark: ANNIE\" - Benchmark"
-      },
-      {
-        "date": "2026-08-22",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 19.3",
-            "lines": [
-              "For time:",
-              "200-ft. dumbbell overhead lunge",
-              "50 dumbbell box step-ups",
-              "50 strict handstand push-ups",
-              "200-ft. handstand walk",
-              "50-lb. dumbbell, 24-in. box",
-              "Time cap: 10 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 19.3"
       }
     ]
   },
-  "last_updated": "2026-08-22T02:26:35.675344"
+  "last_updated": "2026-08-22T05:15:28.966145"
 }
