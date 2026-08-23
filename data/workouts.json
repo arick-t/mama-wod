@@ -2656,6 +2656,45 @@
     "2026-08-23": [
       {
         "date": "2026-08-23",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 12.4",
+            "lines": [
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (20 lbs to 10' target)",
+              "90 Double-unders",
+              "30 Muscle-ups",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (14 lbs to 9' target)",
+              "90 Double-unders",
+              "30 Muscle-ups",
+              "MASTERS",
+              "*MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (20lbs to 9' target)",
+              "90 Double-unders",
+              "30 Muscle-ups",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (10 lbs to 9' target)",
+              "90 Double-unders"
+            ]
+          }
+        ],
+        "note": "Open: Open 12.4"
+      },
+      {
+        "date": "2026-08-23",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-08-23/",
@@ -2694,6 +2733,64 @@
               "choose: run, bike, row, or ski"
             ],
             "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-08-23",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-august-23-2026/",
+        "sections": [
+          {
+            "title": "General Warm-up",
+            "lines": [
+              "15 Sprinter Stretch /side",
+              "20 A-Frame Toe Touches",
+              "20 Dead Bugs",
+              "2:00 Row or Ski",
+              ":30 Burpees",
+              ":30 Russian KB Swings",
+              "1:30 Row or Ski",
+              ":30 Squat Jumps",
+              ":30 KB Cleans (:15 /side)",
+              ":30 KB Shoulder to Overhead (:15/side)",
+              "1:00 Row or Ski",
+              ":30 Burpee Broad Jump",
+              ":30 KB Clean and Jerk (:15/side)"
+            ]
+          },
+          {
+            "title": "2 Rounds for Time",
+            "lines": [
+              "500/450m Row or Ski",
+              "80m Burpee Broad Jump",
+              "500/450m Row or Ski",
+              "30 S-KB Clean and Jerk 53/35lbs",
+              "Feel: Cardio",
+              "Pace: Sustain",
+              "Target Score: 26 minutes",
+              "Firebreather Score: 22 minutes",
+              "Row/Ski: complete under 2:15min or cap",
+              "Sub 1.2/1.2k bike or 400m run",
+              "BurpeeBJ: complete in 4min or decrease distance",
+              "KB: adjust weight as necessary, try to keep it as a KB"
+            ]
+          },
+          {
+            "title": "Extra credit",
+            "lines": [
+              "5+ Rounds",
+              "5:00 Machine Flush",
+              "3:00 Mobility",
+              "Rotate through as many modalities as",
+              "you can, excluding running but not",
+              "walking. Pace should feel very very easy,",
+              "but elicit a nice sweat to aid in your",
+              "mobility routine. The goal with is to work",
+              "through 3-5 different areas of the body",
+              "during the 3:00 Mobility windows."
+            ]
           }
         ]
       },
@@ -2780,47 +2877,8 @@
           }
         ],
         "note": "Benchmark: 121023 ADVANCED BOOTCAMP (JW)"
-      },
-      {
-        "date": "2026-08-23",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 12.4",
-            "lines": [
-              "Complete as many rounds and reps as possible in 12 minutes of:",
-              "150 Wall balls (20 lbs to 10' target)",
-              "90 Double-unders",
-              "30 Muscle-ups",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 12 minutes of:",
-              "150 Wall balls (14 lbs to 9' target)",
-              "90 Double-unders",
-              "30 Muscle-ups",
-              "MASTERS",
-              "*MEN*",
-              "-",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 12 minutes of:",
-              "150 Wall balls (20lbs to 9' target)",
-              "90 Double-unders",
-              "30 Muscle-ups",
-              "*MASTERS WOMEN*",
-              "-",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 12 minutes of:",
-              "150 Wall balls (10 lbs to 9' target)",
-              "90 Double-unders"
-            ]
-          }
-        ],
-        "note": "Open: Open 12.4"
       }
     ]
   },
-  "last_updated": "2026-08-23T02:23:17.977802"
+  "last_updated": "2026-08-23T05:23:07.243812"
 }
