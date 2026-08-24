@@ -2698,6 +2698,40 @@
     "2026-08-24": [
       {
         "date": "2026-08-24",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260824",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
+              "LEARN MORE"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-24",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 15.2",
+            "lines": [
+              "Complete as many rounds and reps as possible in 14 minutes of:",
+              "7 muscle-ups",
+              "50 wall-ball shots",
+              "100 double-unders",
+              "*Men use 20-lb. ball to 10 feet, Women use 14-lb. ball to 9 feet*"
+            ]
+          }
+        ],
+        "note": "Open: Open 15.2"
+      },
+      {
+        "date": "2026-08-24",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-08-24/",
@@ -2743,15 +2777,38 @@
       },
       {
         "date": "2026-08-24",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260824",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-august-24-2026/",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "General Warm-up",
             "lines": [
-              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
-              "LEARN MORE"
+              "2 Rounds:",
+              "20 dead bugs",
+              "12 spidermans",
+              "Then…",
+              ":15 Empty bar front squat hold +2 front squats",
+              "1:00 ankle MOB",
+              ":15 Empty bar front squat hold +2 front squats",
+              "1:00 Deep squat thoracic rotations",
+              ":15 Empty bar front squat hold +2 front squats",
+              "1:00 Front rack lat/tricep stretch"
+            ]
+          },
+          {
+            "title": "Clean and Jerk",
+            "lines": [
+              "6×3 @70-75%",
+              "Drop and reset)"
+            ]
+          },
+          {
+            "title": "Accessory Strength",
+            "lines": [
+              "4 Rounds:",
+              "20 Hip Extensions",
+              "30 S-Arm bent over row (15/arm)"
             ]
           }
         ]
@@ -2823,27 +2880,8 @@
           }
         ],
         "note": "Benchmark: Kelly"
-      },
-      {
-        "date": "2026-08-24",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 15.2",
-            "lines": [
-              "Complete as many rounds and reps as possible in 14 minutes of:",
-              "7 muscle-ups",
-              "50 wall-ball shots",
-              "100 double-unders",
-              "*Men use 20-lb. ball to 10 feet, Women use 14-lb. ball to 9 feet*"
-            ]
-          }
-        ],
-        "note": "Open: Open 15.2"
       }
     ]
   },
-  "last_updated": "2026-08-24T02:23:03.999717"
+  "last_updated": "2026-08-24T05:22:19.565602"
 }
