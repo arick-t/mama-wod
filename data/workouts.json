@@ -2694,32 +2694,6 @@
       },
       {
         "date": "2026-08-26",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-08-26/",
-        "sections": [
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "line drills"
-            ]
-          },
-          {
-            "title": "CONDITIONING 30MIN",
-            "lines": [
-              "30 pull ups",
-              "30 box jumps 60/50cm",
-              "30 double db hang cleans 2x22,5/15kg",
-              "30 burpees to target",
-              "on every 5:00 (starting at 00:00) 200m run",
-              "* aerobic capacity & muscular endurance"
-            ],
-            "sub_title": "amrap 30min"
-          }
-        ]
-      },
-      {
-        "date": "2026-08-26",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-august-26-2026/",
@@ -2778,6 +2752,32 @@
               "Pace: Reach",
               "Programmer Notes: Simple effective couplet, interval style to force intensity."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-26",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-08-26/",
+        "sections": [
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "line drills"
+            ]
+          },
+          {
+            "title": "CONDITIONING 30MIN",
+            "lines": [
+              "30 pull ups",
+              "30 box jumps 60/50cm",
+              "30 double db hang cleans 2x22,5/15kg",
+              "30 burpees to target",
+              "on every 5:00 (starting at 00:00) 200m run",
+              "* aerobic capacity & muscular endurance"
+            ],
+            "sub_title": "amrap 30min"
           }
         ]
       },
@@ -2871,5 +2871,5 @@
       }
     ]
   },
-  "last_updated": "2026-08-26T05:24:23.450067"
+  "last_updated": "2026-08-26T06:45:27.908032"
 }
