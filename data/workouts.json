@@ -2646,51 +2646,6 @@
     "2026-08-27": [
       {
         "date": "2026-08-27",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-08-27/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "90/90 hip rotatios",
-              "thoracic rotations",
-              "sumo squat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 air squats",
-              "30sec plank hold",
-              "10/8cal row"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "BACK SQUATS 15MIN",
-            "lines": [
-              "4 Sets",
-              "4  (paused) back squats @ 70–75 %",
-              "strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 18MIN",
-            "lines": [
-              "30 sit ups",
-              "15/12cal row",
-              "10 front squats 50/35kg",
-              "* aerobic capacity & muscular endurance"
-            ],
-            "sub_title": "5 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-08-27",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260827",
@@ -2748,6 +2703,69 @@
               "Target Score: 6-8 minutes",
               "Firebreather: Sub 6 minutes"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-27",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 19.1",
+            "lines": [
+              "Complete as many rounds as possible in 15 minutes of:",
+              "19 wall-ball shots",
+              "19-cal. row",
+              "*Men throw 20-lb. ball to 10-ft. target*"
+            ]
+          }
+        ],
+        "note": "Open: Open 19.1"
+      },
+      {
+        "date": "2026-08-27",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-08-27/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "90/90 hip rotatios",
+              "thoracic rotations",
+              "sumo squat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 air squats",
+              "30sec plank hold",
+              "10/8cal row"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "BACK SQUATS 15MIN",
+            "lines": [
+              "4 Sets",
+              "4  (paused) back squats @ 70–75 %",
+              "strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 18MIN",
+            "lines": [
+              "30 sit ups",
+              "15/12cal row",
+              "10 front squats 50/35kg",
+              "* aerobic capacity & muscular endurance"
+            ],
+            "sub_title": "5 rounds"
           }
         ]
       },
@@ -2820,26 +2838,8 @@
           }
         ],
         "note": "Benchmark: Jackie"
-      },
-      {
-        "date": "2026-08-27",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 19.1",
-            "lines": [
-              "Complete as many rounds as possible in 15 minutes of:",
-              "19 wall-ball shots",
-              "19-cal. row",
-              "*Men throw 20-lb. ball to 10-ft. target*"
-            ]
-          }
-        ],
-        "note": "Open: Open 19.1"
       }
     ]
   },
-  "last_updated": "2026-08-27T07:23:20.159227"
+  "last_updated": "2026-08-27T13:55:51.960777"
 }
