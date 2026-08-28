@@ -2626,52 +2626,6 @@
     "2026-08-28": [
       {
         "date": "2026-08-28",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-08-28/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "calf stretch",
-              "hand walk",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 push ups to downdog",
-              "30sec kb march",
-              "* *remaining time double unders"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "BENCH PRESSES 15MIN",
-            "lines": [
-              "4 Sets",
-              "4  (paused) bench presses  @ 70–75 %",
-              "strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "6 wall walks",
-              "70 double unders",
-              "100m farmers carry 2x32/24kg",
-              "* score: slowest round",
-              "* aerobic power"
-            ],
-            "sub_title": "on every 4:00x 4 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-08-28",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260828",
@@ -2757,6 +2711,84 @@
       },
       {
         "date": "2026-08-28",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 14.5",
+            "lines": [
+              "21-18-15-12-9-6-3 reps for time of:",
+              "95-lb. thrusters",
+              "Burpees",
+              "*WOMEN*",
+              "*- includes Masters Women up to 54 years old*",
+              "21-18-15-12-9-6-3 reps for time of:",
+              "65-lb. thrusters",
+              "Burpees",
+              "*MASTERS MEN*",
+              "*- includes Masters Men 55+*",
+              "21-18-15-12-9-6-3 reps for time of:",
+              "65-lb. thrusters",
+              "Burpees",
+              "*MASTERS WOMEN*",
+              "*- includes Masters Women 55+*",
+              "21-18-15-12-9-6-3 reps for time of:",
+              "45-lb. thrusters",
+              "Burpees"
+            ]
+          }
+        ],
+        "note": "Open: Open 14.5"
+      },
+      {
+        "date": "2026-08-28",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-08-28/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "calf stretch",
+              "hand walk",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 prone snow angels",
+              "10 push ups to downdog",
+              "30sec kb march",
+              "* *remaining time double unders"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "BENCH PRESSES 15MIN",
+            "lines": [
+              "4 Sets",
+              "4  (paused) bench presses  @ 70–75 %",
+              "strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "6 wall walks",
+              "70 double unders",
+              "100m farmers carry 2x32/24kg",
+              "* score: slowest round",
+              "* aerobic power"
+            ],
+            "sub_title": "on every 4:00x 4 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-08-28",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -2833,40 +2865,8 @@
           }
         ],
         "note": "Benchmark: Eva"
-      },
-      {
-        "date": "2026-08-28",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 14.5",
-            "lines": [
-              "21-18-15-12-9-6-3 reps for time of:",
-              "95-lb. thrusters",
-              "Burpees",
-              "*WOMEN*",
-              "*- includes Masters Women up to 54 years old*",
-              "21-18-15-12-9-6-3 reps for time of:",
-              "65-lb. thrusters",
-              "Burpees",
-              "*MASTERS MEN*",
-              "*- includes Masters Men 55+*",
-              "21-18-15-12-9-6-3 reps for time of:",
-              "65-lb. thrusters",
-              "Burpees",
-              "*MASTERS WOMEN*",
-              "*- includes Masters Women 55+*",
-              "21-18-15-12-9-6-3 reps for time of:",
-              "45-lb. thrusters",
-              "Burpees"
-            ]
-          }
-        ],
-        "note": "Open: Open 14.5"
       }
     ]
   },
-  "last_updated": "2026-08-28T09:48:51.137341"
+  "last_updated": "2026-08-28T15:31:44.758901"
 }
