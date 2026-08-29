@@ -2686,49 +2686,6 @@
     "2026-08-29": [
       {
         "date": "2026-08-29",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-08-29/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "lat stretch",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "8 good mornings",
-              "8 elbow rotations",
-              "*partner is skiing"
-            ],
-            "sub_title": "amrap 5min"
-          },
-          {
-            "title": "CONDITIONING 32MIN",
-            "lines": [
-              "in teams of 2",
-              "20 power cleans",
-              "20 v-ups",
-              "20/18/16cal ski",
-              "into",
-              "amrap 16min",
-              "40 deadlifts",
-              "40 sit ups",
-              "40/36/32cal ski",
-              "* barbell: 60/40kg",
-              "* score: total rounds + reps"
-            ],
-            "sub_title": "amrap 16min"
-          }
-        ]
-      },
-      {
-        "date": "2026-08-29",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260829",
@@ -2790,6 +2747,74 @@
             "lines": [
               "expected round to round."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-29",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 24.3",
+            "lines": [
+              "All for time:",
+              "5 rounds of:",
+              "10 thrusters, weight 1",
+              "10 chest-to-bar pull-ups",
+              "Rest 1 minute, then:",
+              "5 rounds of:",
+              "7 thrusters, weight 2",
+              "7 bar muscle-ups",
+              "Time cap: 15 minutes",
+              "*♀ 65, 95 lb (29, 43 kg)*",
+              "*♂ 95, 135 lb (43, 61 kg)*"
+            ]
+          }
+        ],
+        "note": "Open: Open 24.3"
+      },
+      {
+        "date": "2026-08-29",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-08-29/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "lat stretch",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "8 good mornings",
+              "8 elbow rotations",
+              "*partner is skiing"
+            ],
+            "sub_title": "amrap 5min"
+          },
+          {
+            "title": "CONDITIONING 32MIN",
+            "lines": [
+              "in teams of 2",
+              "20 power cleans",
+              "20 v-ups",
+              "20/18/16cal ski",
+              "into",
+              "amrap 16min",
+              "40 deadlifts",
+              "40 sit ups",
+              "40/36/32cal ski",
+              "* barbell: 60/40kg",
+              "* score: total rounds + reps"
+            ],
+            "sub_title": "amrap 16min"
           }
         ]
       },
@@ -2863,33 +2888,8 @@
           }
         ],
         "note": "Benchmark: Gwen"
-      },
-      {
-        "date": "2026-08-29",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 24.3",
-            "lines": [
-              "All for time:",
-              "5 rounds of:",
-              "10 thrusters, weight 1",
-              "10 chest-to-bar pull-ups",
-              "Rest 1 minute, then:",
-              "5 rounds of:",
-              "7 thrusters, weight 2",
-              "7 bar muscle-ups",
-              "Time cap: 15 minutes",
-              "*♀ 65, 95 lb (29, 43 kg)*",
-              "*♂ 95, 135 lb (43, 61 kg)*"
-            ]
-          }
-        ],
-        "note": "Open: Open 24.3"
       }
     ]
   },
-  "last_updated": "2026-08-29T07:03:56.781667"
+  "last_updated": "2026-08-29T10:40:44.696641"
 }
