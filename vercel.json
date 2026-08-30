@@ -62,9 +62,6 @@
     }
   ],
   "functions": {
-    "api/generate-workout.js": {
-      "maxDuration": 60
-    },
     "api/personal-coach.js": {
       "maxDuration": 300
     },

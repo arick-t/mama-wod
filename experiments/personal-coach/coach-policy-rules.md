@@ -320,6 +320,17 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - **Updated:** 2026-08-11 — lift kg ≠ barbell/rings permission; weekly lunge+wall coverage; anti pattern-dominance
 - **Updated:** 2026-08-12 — replace movement-specific anti-spam wording with generic CF pattern balance (no per-movement bans)
 
+### POL-028 — Athlete span of control: today's session only
+- **Type:** HARD
+- **Scope:** every athlete-originated request to `/api/personal-coach` after intake completes
+- **Trigger:** an athlete asks to change more than the session in front of them
+- **Required behavior:** The athlete owns **today's session** — alternatives, reps, sets, loads, a swapped movement — through the box under the workout (`revise_day` / `revise_part`). The **brick belongs to the human coach** in the admin module. An athlete request may not reshape the program by conversation: **no whole-brick chat, no `revise_week`, no Soft Upgrade, no large rebuild.** Enforced **server-side** in `lib/coach-athlete-scope.js` before any provider call — a blocked request costs nothing. Hiding a button is not turning a thing off.
+- **Stays open on purpose:** (a) **intake** — the opening conversation and the first brick it produces are how an athlete gets a plan at all; (b) **plan fills** — `generate_block` / `generate_week` / `generate_week_detail` are machine steps that build or complete an already-approved brick, still bounded by POL-008 and POL-COST.
+- **Admin:** verified admin auth keeps full reach over the brick. That is the whole point — the human coach programs, the athlete adjusts today.
+- **Reply:** one short English line pointing at the day box. Never name a rule id or an action name to the athlete.
+- **Cost note:** this retires the athlete-facing pressure that POL-COST-004 / 005 / 006 exist to contain. Those caps stay in force for the admin path.
+- **Added:** 2026-08-30 — owner: "מוטת השליטה של מתאמן תהיה רק באימון היומי שלו"
+
 ### POL-022 — Whole-program / brick chat: ultra-brief double-check
 - **Type:** HARD
 - **Scope:** coach chat after intake (especially “whole program notes” / brick chat); standing prefs that affect many days/weeks

@@ -111,9 +111,10 @@ async function main() {
     ok("personal-coach service id", pc.json && pc.json.service === "personal-coach");
     ok("personal-coach hint trimmed", pc.json && String(pc.json.hint || "").indexOf("File Search") < 0);
 
+    /* The retired Groq generator must stay unreachable — an open AI endpoint with
+       no auth, no terms gate and no cost cap is a wallet leak. */
     const gw = await request("GET", "/api/generate-workout");
-    ok("generate-workout GET health", gw.status === 200 && gw.json && gw.json.ok === true);
-    ok("generate-workout no debug blob", gw.json && gw.json.debug === undefined);
+    ok("retired generate-workout is gone", gw.status === 404 || gw.status === 405);
 
     const adminOk = await request("POST", "/api/admin-snapshot", {
       headers: {

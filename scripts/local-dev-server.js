@@ -1,5 +1,5 @@
 /**
- * שרת פיתוח מקומי: מגיש את הפרויקט מהשורש + generate-workout + personal-coach + event + admin-snapshot
+ * שרת פיתוח מקומי: מגיש את הפרויקט מהשורש + personal-coach + event + admin-snapshot
  * הרצה: npm run dev:local
  * קובץ סודות: .env.local (או .env) בראש הפרויקט — ראו .env.example
  */
@@ -224,7 +224,6 @@ const server = http.createServer((req, res) => {
   }
 
   if (
-    pathname === "/api/generate-workout" ||
     pathname === "/api/personal-coach" ||
     pathname === "/api/coach-feedback" ||
     pathname === "/api/event"
@@ -241,8 +240,7 @@ const server = http.createServer((req, res) => {
       return res.end("Method not allowed");
     }
     if (
-      (pathname === "/api/generate-workout" ||
-        pathname === "/api/personal-coach" ||
+      (pathname === "/api/personal-coach" ||
         pathname === "/api/coach-feedback") &&
       (req.method === "GET" || req.method === "HEAD")
     ) {
@@ -255,11 +253,9 @@ const server = http.createServer((req, res) => {
       };
       const fakeRes = wrapRes(res);
       const rel =
-        pathname === "/api/personal-coach"
-          ? "api/personal-coach.js"
-          : pathname === "/api/coach-feedback"
+        pathname === "/api/coach-feedback"
           ? "api/coach-feedback.js"
-          : "api/generate-workout.js";
+          : "api/personal-coach.js";
       loadApiHandler(rel)(fakeReq, fakeRes).catch((e) => {
         if (!res.headersSent) {
           res.statusCode = 500;
@@ -287,9 +283,7 @@ const server = http.createServer((req, res) => {
       const fakeReq = { method: "POST", body: parsedBody, headers: req.headers || {}, query: parsed.query || {}, url: req.url || pathname };
       const fakeRes = wrapRes(res);
       try {
-        if (pathname === "/api/generate-workout") {
-          await loadApiHandler("api/generate-workout.js")(fakeReq, fakeRes);
-        } else if (pathname === "/api/personal-coach") {
+        if (pathname === "/api/personal-coach") {
           await loadApiHandler("api/personal-coach.js")(fakeReq, fakeRes);
         } else if (pathname === "/api/coach-feedback") {
           await loadApiHandler("api/coach-feedback.js")(fakeReq, fakeRes);
@@ -391,7 +385,6 @@ server.listen(PORT, "0.0.0.0", () => {
   } else {
     console.log("  Phone (same Wi‑Fi): http://<this-PC-LAN-IP>:" + PORT + "/");
   }
-  console.log("  API:  http://localhost:" + PORT + "/api/generate-workout");
   console.log("  API:  http://localhost:" + PORT + "/api/personal-coach");
   console.log("  API:  http://localhost:" + PORT + "/api/coach-feedback");
   console.log("  Admin: http://localhost:" + PORT + "/dash");

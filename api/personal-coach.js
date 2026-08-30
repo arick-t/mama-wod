@@ -63,6 +63,7 @@ const {
 } = require("../lib/coach-finish-signals.js");
 const { applyCors } = require("../lib/cors-allowlist.js");
 const { checkAdminAuth } = require("../scripts/lib/admin/admin-auth.js");
+const { evaluateAthleteScopeGate } = require("../lib/coach-athlete-scope.js");
 /* Credit ledger must never take down the coach. Spend persist is best-effort. */
 let pickUsageMeta = function () {
   return null;
@@ -1851,6 +1852,33 @@ async function coachHandler(req, res) {
       termsVersion: LEGAL_TERMS_ID,
       legalMinVersion: LEGAL_MIN_VERSION,
       hint: "Open Personal Coach, accept the Terms checkboxes, then retry.",
+    });
+  }
+
+  /* POL-028 span of control — the brick belongs to the human coach in admin.
+   * Before any provider call, so a blocked request costs nothing. Intake, plan
+   * fills and the day box stay open; whole-brick reshaping does not. */
+  const scopeGate = evaluateAthleteScopeGate(action, body, rawProfile, {
+    isAdmin: adminProgramming,
+  });
+  if (scopeGate) {
+    if (scopeGate.chatShaped) {
+      return res.status(200).json({
+        ok: true,
+        text: scopeGate.text,
+        athleteScopeBlocked: true,
+        scopeReason: scopeGate.reason,
+        code: scopeGate.code,
+        model: "local-guard",
+        coachVersion: COACH_VERSION,
+      });
+    }
+    return res.status(403).json({
+      ok: false,
+      error: scopeGate.error,
+      code: scopeGate.code,
+      scopeReason: scopeGate.reason,
+      hint: scopeGate.text,
     });
   }
 
