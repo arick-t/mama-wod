@@ -95,8 +95,12 @@ function run() {
   assert(/await logCoachUsage/.test(pc), "call paths await logCoachUsage");
   assert(/await recordCoachUsageSpend/.test(pc), "coach awaits spend persist");
 
-  const gw = fs.readFileSync(path.join(__dirname, "../../../api/generate-workout.js"), "utf8");
-  assert(/recordGeminiSpendSafe/.test(gw), "generate-workout records Gemini spend");
+  /* generate-workout (the retired Groq generator) is gone — personal-coach is the
+     only billable path left, and it is asserted above. */
+  assert(
+    !fs.existsSync(path.join(__dirname, "../../../api/generate-workout.js")),
+    "retired generate-workout endpoint stays deleted"
+  );
 
   const adminHtml = fs.readFileSync(path.join(__dirname, "../../../admin.html"), "utf8");
   assert(/נשרף מאז/.test(adminHtml), "admin pill explains spend since update");

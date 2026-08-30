@@ -291,9 +291,11 @@ function testStaticRegressions() {
     /const COACH_VERSION = "2\.(2(\.\d+)?|3(\.\d+)?)"/.test(pc) ||
       /COACH_VERSION = "2\.(2(\.\d+)?|3(\.\d+)?)"/.test(pc)
   );
+  /* Minor is matched as a range, not a list — a hardcoded list fails every release
+     and teaches people to edit the guard instead of reading it. */
   ok(
     "app daily workouts subtitle on 21.3+ display line",
-    /DAILY WORKOUTS · v21\.(3(\.\d+)?|4(\.\d+)?|5(\.\d+)?)\b/.test(idx) &&
+    /DAILY WORKOUTS · v21\.(?:[3-9]|\d{2,})(?:\.\d+)?\b/.test(idx) &&
       !/DAILY WORKOUTS · v2\.1\b/.test(idx)
   );
   ok(

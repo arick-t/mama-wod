@@ -63,6 +63,7 @@ const {
 } = require("../lib/coach-finish-signals.js");
 const { applyCors } = require("../lib/cors-allowlist.js");
 const { checkAdminAuth } = require("../scripts/lib/admin/admin-auth.js");
+const { evaluateAthleteScopeGate } = require("../lib/coach-athlete-scope.js");
 /* Credit ledger must never take down the coach. Spend persist is best-effort. */
 let pickUsageMeta = function () {
   return null;
@@ -1212,6 +1213,10 @@ function extractWeekJson(text, weekIndex1) {
         const w = accept(slice);
         if (w) return w;
       }
+      /* HANG GUARD: lastIndexOf clamps a negative position to 0, so at start===0
+       * it returns 0 again on text beginning with "{" — an infinite loop on a
+       * truncated reply. Stop once the outermost "{" has been tried. */
+      if (start === 0) break;
       start = raw.lastIndexOf("{", start - 1);
     }
     /* Truncated from "days" object */
@@ -1277,32 +1282,55 @@ function extractBlockJson(text) {
         const b = accept(slice);
         if (b) return b;
       }
+      /* HANG GUARD: see extractWeekJson — lastIndexOf("{", -1) returns 0 again. */
+      if (start === 0) break;
       start = raw.lastIndexOf("{", start - 1);
     }
   }
   return null;
 }
 
-function extractPartJson(text) {
+/**
+ * Marker-scoped JSON pull shared by DAY_JSON / PART_JSON.
+ * Same tolerance week/block already had: case-insensitive markers, the
+ * <<<X>>> … <<<X>>> fence form, brace-matching, and ```json fences plus
+ * truncation salvage via tryParseJsonObject. A confirmed athlete change must
+ * not be lost to a stray fence or a cut-off reply (POL-023 / POL-026).
+ */
+function extractMarkerJson(text, marker) {
   const raw = String(text || "");
-  const m = raw.match(/<<<PART_JSON\s*([\s\S]*?)\s*PART_JSON>>>/);
-  if (!m) return null;
-  try {
-    return JSON.parse(m[1].trim());
-  } catch (e) {
-    return null;
+  if (!raw.trim()) return null;
+  const name = String(marker || "");
+
+  let m = raw.match(new RegExp("<<<\\s*" + name + "\\s*([\\s\\S]*?)\\s*" + name + "\\s*>>>", "i"));
+  if (m) {
+    const parsed = tryParseJsonObject(m[1]);
+    if (parsed) return parsed;
   }
+  m = raw.match(new RegExp("<<<\\s*" + name + "\\s*>>>\\s*([\\s\\S]*?)\\s*<<<\\s*" + name + "\\s*>>>", "i"));
+  if (m) {
+    const parsed = tryParseJsonObject(m[1]);
+    if (parsed) return parsed;
+  }
+  /* Unclosed / truncated after the opening marker — both marker spellings */
+  m = raw.match(new RegExp("<<<\\s*" + name + "\\s*(?:>>>)?\\s*([\\s\\S]*)", "i"));
+  if (m) {
+    const body = m[1] || "";
+    const brace = body.indexOf("{");
+    if (brace >= 0) {
+      const parsed = tryParseJsonObject(sliceBalancedObject(body, brace) || body.slice(brace));
+      if (parsed) return parsed;
+    }
+  }
+  return null;
+}
+
+function extractPartJson(text) {
+  return extractMarkerJson(text, "PART_JSON");
 }
 
 function extractDayJson(text) {
-  const raw = String(text || "");
-  const m = raw.match(/<<<DAY_JSON\s*([\s\S]*?)\s*DAY_JSON>>>/);
-  if (!m) return null;
-  try {
-    return JSON.parse(m[1].trim());
-  } catch (e) {
-    return null;
-  }
+  return extractMarkerJson(text, "DAY_JSON");
 }
 
 function slimPartsForPrompt(parts) {
@@ -1395,15 +1423,35 @@ async function callInteractions(apiKey, model, messages, storeName, systemText) 
       },
     ];
   }
-  const r = await fetch("https://generativelanguage.googleapis.com/v1beta/interactions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-goog-api-key": apiKey,
-    },
-    body: JSON.stringify(body),
-  });
-  const raw = await r.text();
+  let r;
+  try {
+    r = await fetch("https://generativelanguage.googleapis.com/v1beta/interactions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiKey,
+      },
+      body: JSON.stringify(body),
+    });
+  } catch (e) {
+    return {
+      ok: false,
+      status: 502,
+      error: "Interactions fetch failed",
+      detail: String((e && e.message) || e).slice(0, 400),
+    };
+  }
+  let raw;
+  try {
+    raw = await r.text();
+  } catch (e) {
+    return {
+      ok: false,
+      status: 502,
+      error: "Interactions response read failed",
+      detail: String((e && e.message) || e).slice(0, 400),
+    };
+  }
   let data = null;
   try {
     data = raw ? JSON.parse(raw) : null;
@@ -1463,12 +1511,33 @@ async function callGenerateContent(apiKey, model, messages, storeName, systemTex
     encodeURIComponent(model) +
     ":generateContent?key=" +
     encodeURIComponent(apiKey);
-  const r = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  const raw = await r.text();
+  let r;
+  try {
+    r = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  } catch (e) {
+    /* Never echo the URL — it carries the API key as a query param. */
+    return {
+      ok: false,
+      status: 502,
+      error: "Gemini fetch failed",
+      detail: String((e && e.message) || e).slice(0, 400),
+    };
+  }
+  let raw;
+  try {
+    raw = await r.text();
+  } catch (e) {
+    return {
+      ok: false,
+      status: 502,
+      error: "Gemini response read failed",
+      detail: String((e && e.message) || e).slice(0, 400),
+    };
+  }
   let data = null;
   try {
     data = raw ? JSON.parse(raw) : null;
@@ -1659,7 +1728,7 @@ async function callCoachLlm(apiKey, groqKey, model, messages, storeName, systemT
   );
 }
 
-module.exports = async function handler(req, res) {
+async function coachHandler(req, res) {
   setCors(req, res);
   if (req.method === "OPTIONS") {
     return res.status(204).json({});
@@ -1783,6 +1852,33 @@ module.exports = async function handler(req, res) {
       termsVersion: LEGAL_TERMS_ID,
       legalMinVersion: LEGAL_MIN_VERSION,
       hint: "Open Personal Coach, accept the Terms checkboxes, then retry.",
+    });
+  }
+
+  /* POL-028 span of control — the brick belongs to the human coach in admin.
+   * Before any provider call, so a blocked request costs nothing. Intake, plan
+   * fills and the day box stay open; whole-brick reshaping does not. */
+  const scopeGate = evaluateAthleteScopeGate(action, body, rawProfile, {
+    isAdmin: adminProgramming,
+  });
+  if (scopeGate) {
+    if (scopeGate.chatShaped) {
+      return res.status(200).json({
+        ok: true,
+        text: scopeGate.text,
+        athleteScopeBlocked: true,
+        scopeReason: scopeGate.reason,
+        code: scopeGate.code,
+        model: "local-guard",
+        coachVersion: COACH_VERSION,
+      });
+    }
+    return res.status(403).json({
+      ok: false,
+      error: scopeGate.error,
+      code: scopeGate.code,
+      scopeReason: scopeGate.reason,
+      hint: scopeGate.text,
     });
   }
 
@@ -2986,4 +3082,33 @@ module.exports = async function handler(req, res) {
     return res.status(200).json(await retryIfIntakeLike(result));
   }
   return res.status(200).json(packOk(result));
+}
+
+/**
+ * Last-resort net. Anything that escapes coachHandler (a socket reset, an
+ * unexpected shape from a provider) must still reach the athlete as the JSON
+ * error the app knows how to show and retry — never a raw platform 500.
+ * Programming still fails loudly (POL-020): no stub plan is ever returned here.
+ */
+module.exports = async function handler(req, res) {
+  try {
+    return await coachHandler(req, res);
+  } catch (e) {
+    const detail = String((e && e.message) || e).slice(0, 400);
+    try {
+      console.error("[personal-coach] unhandled:", detail);
+    } catch (eLog) {}
+    if (res && res.headersSent) return undefined;
+    try {
+      return res.status(502).json({
+        ok: false,
+        error: "Coach is temporarily unavailable — please try again in a moment.",
+        detail: detail,
+        unhandled: true,
+        coachVersion: COACH_VERSION,
+      });
+    } catch (eRes) {
+      return undefined;
+    }
+  }
 };

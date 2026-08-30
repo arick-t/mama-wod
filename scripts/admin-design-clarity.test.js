@@ -30,7 +30,18 @@ assert.ok(/family=Heebo/.test(claim), "claim Heebo");
 assert.ok(claim.includes("/?tab=pprog&handoff=1"), "claim handoff redirect preserved");
 assert.ok(claim.includes("window.location.replace"), "claim auto-redirect preserved");
 
-assert.ok(/DAILY WORKOUTS · v21\.5\.1\b/.test(index), "app display version intact");
+/* The header version is how the owner verifies a deploy actually landed, so the
+   real invariant is that it tracks VERSION — not that it equals a literal that
+   goes stale every release (docs/VERSIONING.md). */
+const VERSION = fs.readFileSync(path.join(__dirname, "..", "VERSION"), "utf8").trim();
+assert.ok(
+  index.includes("DAILY WORKOUTS · v" + VERSION),
+  "app header version must match VERSION (" + VERSION + ")"
+);
+assert.ok(
+  index.includes("<title>DUCK-WOD · v" + VERSION + "</title>"),
+  "app <title> version must match VERSION (" + VERSION + ")"
+);
 assert.ok(/DUCK-WOD Admin · 3\.0\.2/.test(admin), "admin UI version 3.0.2");
 assert.ok(!/1\.0 beta/.test(admin), "admin no longer shows 1.0 beta");
 

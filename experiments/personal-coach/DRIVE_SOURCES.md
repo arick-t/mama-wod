@@ -68,8 +68,9 @@ Gemini API **לא** קורא ישירות מ־Drive URL בלי העלאה ל־Fi
 **דוקטרינה (POL-018 + POL-021):** בסיס פירמידה = **L1 + L2**. מעליהם: תחקור מתאמן + מאגר (שיטות / מניעת פציעות / סקיילים / מנוע־סיבולת / דיג׳סטים חיים). בקשת שיפור בסקיל/1RM/מנוע = תרחיש רגיל. דיג׳סטים = עקרונות, לא העתקת אימונים.
 
 **מסמכים חיים (קוד / inbox — סנכרון מוח רק אחרי אישור):**
-- `living-knowledge/coach-patterns-myleo-restoration.md` — רענון שבועי (יום ראשון)
-- `living-knowledge/coach-formats-warehouse.md` — מחסן Hero/Open/Benchmark
+- `living-knowledge/source-patterns-digest.md` — הדייג'סט השבועי (יום ראשון). זהו המסמך החי היחיד;
+  שני הקבצים הקודמים (`coach-patterns-myleo-restoration.md`, `coach-formats-warehouse.md`) הכילו רק
+  הפניה אליו ונמחקו ב-21.5.2 כדי שלא ייכנסו למוח כזבל.
 - `knowledge-inbox/pro-coach-articles/` — מאמרי מקצוע נוספים (אותו משקל כמו שאר המאגר)
 
 פירוט בטיחות: `LEARNING_LEAP.md`.

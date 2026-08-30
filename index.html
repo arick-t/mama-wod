@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.5.1</title>
+<title>DUCK-WOD · v21.6</title>
 <meta name="theme-color" content="#111">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -81,8 +81,6 @@ h1{
 }
 /* Personal Coach tab visible (v21.2.3). Flip PPROG_TAB_ENABLED=false to hide again. */
 /* #tab-pprog,#pprog-tab{display:none!important} */
-/* Generate Workout tab hidden (v21.2.3): keep code; set GENERATE_WORKOUT_TAB_ENABLED=true + remove rule below to restore. */
-#tab-aibeta,#aibeta-tab{display:none!important}
 .pprog-panel{max-width:720px;margin:0 auto;background:var(--bg-panel);padding:20px 18px 24px;border-radius:12px;border:1px solid var(--line)}
 .pprog-head{display:flex;align-items:center;gap:14px;margin:0 0 14px}
 .pprog-coach-avatar{width:72px;height:72px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.45));cursor:pointer;-webkit-tap-highlight-color:transparent;border-radius:12px}
@@ -1071,13 +1069,12 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.5.1</div>
+<div class="header-sub">DAILY WORKOUTS · v21.6</div>
 <div class="header-sub" id="coachVersionSub">COACH · v2.3.14</div>
 </div>
 <div class="tabs">
 <button class="tab-btn tab-pprog-wrap active" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
 <button class="tab-btn" id="tab-browse" onclick="showTab('browse')">Workouts</button>
-<button class="tab-btn tab-generate-wrap" id="tab-aibeta" onclick="showTab('aibeta')" hidden aria-hidden="true" tabindex="-1">Generate Workout</button>
 <button class="tab-btn tab-wtools-wrap" id="tab-workout" onclick="showTab('workout')">Workout Tools</button>
 <button class="tab-btn" id="tab-sources" onclick="showTab('sources')">Sources</button>
 <button class="tab-btn" id="tab-about" onclick="showTab('about')">About</button>
@@ -1088,139 +1085,6 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 
 <div class="tab-content" id="browse-tab">
   <div class="workouts-grid" id="grid"><div class="empty"><div class="empty-icon">🦆</div>Loading...</div></div>
-</div>
-
-<div class="tab-content" id="aibeta-tab">
-  <div class="find-form">
-    <div class="form-group ai-warehouse-toggle-row" style="margin-bottom:14px">
-      <div class="ai-warehouse-mode-row">
-        <div class="ai-warehouse-text-wrap">
-          <div class="ai-warehouse-text">
-            <strong>Warehouse only (no AI coach)</strong>
-            <small>Search the scraped archive already on your device — no call to the AI engine. Same idea as the old Find tab.</small>
-          </div>
-          <button type="button" class="eq-info-btn" id="aiWarehouseInfoBtn" onclick="toggleAiWarehouseInfo(event)" title="About warehouse-only mode" aria-label="About warehouse-only mode">ℹ️</button>
-        </div>
-        <div class="toggle" id="aiWarehouseToggle" onclick="toggleAiWarehouseMode()" role="switch" aria-checked="false" title="Warehouse only (no AI)"><div class="knob"></div></div>
-      </div>
-      <div id="aiWarehouseInfoPopover" class="eq-info-popover" role="dialog" aria-hidden="true" style="display:none;margin-top:8px">When this is <strong>ON</strong>, nothing is sent to the AI. Results come only from workouts already in the archive (last data load). Use Hero / Benchmark / Open below to pull from the special warehouse lists. The Coach block below is dimmed and not interactive.</div>
-    </div>
-    <div class="form-group ai-presets-group" style="margin-top:4px">
-      <div class="ai-gym-presets-label-row" style="color:#1A9B8A">
-        <span>Gym presets — tap <strong>+</strong>, name &amp; color, pick equipment &amp; time, write the <strong>preset prompt</strong> in the box below the grid, then <strong>Save</strong></span>
-        <button type="button" class="eq-info-btn" id="aiGymPresetsInfoBtn" onclick="toggleAiGymPresetsInfo(event)" title="About gym presets" aria-label="Information">ℹ️</button>
-      </div>
-      <div id="aiGymPresetsInfoPopover" class="eq-info-popover" role="dialog" aria-hidden="true" style="display:none;margin-bottom:8px">Saved on <strong>this device</strong>. <strong>+</strong> → name &amp; tab color → equipment &amp; time → <strong>preset prompt</strong> (dedicated box under the grid; not the free-text box below) → <strong>Save</strong> to close that box. Colored tabs sit next to gray defaults; tap one to dock it in the coach row (like Add Warm-up). On the tabs in this toolbar, <strong>×</strong> deletes (with confirmation) and <strong>✏️</strong> edits. Gray = app defaults only. <span id="aiGymPresetsEmptyLine"><strong>No presets yet</strong> — tap <strong>+</strong> to create one.</span></div>
-      <div class="ai-presets-toolbar">
-        <div class="ai-presets-chips" id="aiPresetChips"></div>
-        <button type="button" class="ai-preset-add-btn" id="aiPresetAddBtn" onclick="addAiPresetDraft()" title="New preset: tap first, then name (optional), write prompt, pick equipment &amp; time, Save" aria-label="Add preset">+</button>
-      </div>
-      <div id="aiPresetEditBar" class="ai-preset-edit-bar" style="display:none" aria-hidden="true">
-        <span class="ai-preset-edit-title">Editing preset — name &amp; tab color (preset prompt &amp; Save are below the equipment grid)</span>
-        <input type="text" id="aiPresetEditName" class="ai-preset-edit-name" maxlength="40" placeholder="Preset name (optional)" aria-label="Preset name" autocomplete="off" enterkeyhint="done">
-        <label class="ai-preset-color-wrap">Tab color <input type="color" id="aiPresetEditColor" value="#1a4d2e" aria-label="Preset tab color"></label>
-      </div>
-    </div>
-    <div id="aiPresetGearTimeBlock" class="ai-preset-gear-time-wrap">
-    <div class="form-group">
-      <label>Available Time (minutes)</label>
-      <div class="ai-time-row-wrap" id="aiTimeAdjustWrap">
-        <div class="time-row ai-time-row-compact">
-          <button class="btn btn-find time-btn" type="button" onclick="adjustAiFindTime(-5)">-5</button>
-          <input type="number" id="aiFindTime" min="1" max="180" value="20" inputmode="numeric" pattern="[0-9]*" aria-label="Minutes">
-          <button class="btn btn-find time-btn" type="button" onclick="adjustAiFindTime(5)">+5</button>
-        </div>
-        <label class="ai-unlimited-inline">
-          <input type="checkbox" id="aiUnlimitedTime" aria-label="Unlimited time">
-          <span>Unlimited Time</span>
-        </label>
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="eq-label-row">Equipment I have <button type="button" class="eq-info-btn" id="eqInfoBtnAi" onclick="toggleEqInfoAi(event)" title="About body-only exercises" aria-label="Information">ℹ️</button> <button type="button" class="eq-full-gym-btn" id="eqFullGymBtnAi" onclick="toggleFullGymAi()">FULL GYM</button></label>
-      <div id="eqInfoPopoverAi" class="eq-info-popover" role="dialog" aria-hidden="true" style="display:none">We assume some exercises can be done anywhere with just your body (e.g. push-ups, burpees, sit-ups, lunges, handstand walk) and are not listed here. Select only equipment you have access to. Checking many items or FULL GYM means you <strong>can</strong> use those tools—the Coach picks a coherent session and does not have to use every checkbox in one workout.</div>
-      <div class="eq-grid" id="eqGridAi">
-        <label class="eq-item"><input type="checkbox" value="RUN"> RUN</label>
-        <label class="eq-item"><input type="checkbox" value="SKI"> SKI</label>
-        <label class="eq-item"><input type="checkbox" value="BIKE"> BIKE</label>
-        <label class="eq-item"><input type="checkbox" value="BARBELL"> BARBELL</label>
-        <label class="eq-item"><input type="checkbox" value="RIG RACK"> RIG / RACK</label>
-        <label class="eq-item"><input type="checkbox" value="PULLUP BAR"> PULLUP BAR</label>
-        <label class="eq-item"><input type="checkbox" value="ROW"> ROW</label>
-        <label class="eq-item"><input type="checkbox" value="DUMBBELL"> DUMBBELL</label>
-        <label class="eq-item"><input type="checkbox" value="KETTLEBELL"> KETTLEBELL</label>
-        <label class="eq-item"><input type="checkbox" value="ROPE CLIMB"> ROPE CLIMB</label>
-        <label class="eq-item"><input type="checkbox" value="SKIPPING ROPE"> SKIPPING ROPE</label>
-        <label class="eq-item"><input type="checkbox" value="WALL BALL"> WALL BALL</label>
-        <label class="eq-item"><input type="checkbox" value="WALL DRILLS"> WALL DRILLS</label>
-        <label class="eq-item"><input type="checkbox" value="RINGS"> RINGS</label>
-        <label class="eq-item"><input type="checkbox" value="SLED"> SLED</label>
-        <label class="eq-item"><input type="checkbox" value="BOX"> BOX</label>
-        <label class="eq-item ai-dball-item">
-          <input type="checkbox" value="D-BALL" id="aiEqDball">
-          <span class="ai-dball-inline">
-            <span>D-BALL</span>
-            <span class="ai-dball-popover" id="aiDballWeightWrap" role="group" aria-hidden="true">
-              <input type="text" id="aiDballWeight" class="ai-dball-kg-input" inputmode="numeric" pattern="[0-9.,\\-\\s]*" placeholder="e.g. 30 / 20-70 / 20,24" autocomplete="off" title="kg — one value, range, or list" aria-label="D-BALL kg: one weight, range, or comma-separated list">
-              <span class="ai-dball-kg-unit">kg</span>
-            </span>
-          </span>
-        </label>
-      </div>
-      <p class="ai-dball-hint" style="font-size:.78em;color:#777;margin:8px 0 0;line-height:1.35">D-BALL: one load, a range (e.g. <code>20-70</code>), or several balls (e.g. <code>20,24,30</code>). Leave empty if unsure — the Coach assumes typical box loads are often in the ~20–70 kg band.</p>
-    </div>
-    </div>
-    <div id="aiPresetPromptPanel" class="ai-preset-prompt-panel" style="display:none" aria-hidden="true">
-      <label for="aiPresetLinkedPrompt" class="ai-preset-prompt-label">Preset-linked coach prompt (only for this gym preset; separate from free text below)</label>
-      <textarea id="aiPresetLinkedPrompt" class="ai-preset-linked-prompt-ta" rows="5" maxlength="1600" placeholder="Context for this preset only — location, fixed loads, intervals, etc." aria-label="Preset-linked coach prompt"></textarea>
-      <div class="ai-preset-save-bottom-wrap">
-        <button type="button" class="btn btn-set-workout" onclick="saveAiPresetEdit()">Save preset</button>
-      </div>
-    </div>
-    <div id="aiWarehouseOptions" class="form-group" style="display:none;margin-top:4px">
-      <label>Also consider (warehouse)</label>
-      <label class="eq-item"><input type="checkbox" id="aiIncludeHero"> Hero WODs (warehouse)</label>
-      <label class="eq-item"><input type="checkbox" id="aiIncludeBenchmark"> Benchmarks (warehouse)</label>
-      <label class="eq-item"><input type="checkbox" id="aiIncludeOpen"> Open workouts (warehouse)</label>
-    </div>
-    <div id="aiWarehouseActions" class="form-group" style="display:none;margin-top:8px">
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button type="button" class="btn btn-find" id="btnFindWarehouse" onclick="findWorkoutFromGenerateTab()" style="flex:1;min-width:140px">Find in warehouse</button>
-        <button type="button" class="btn btn-find" onclick="clearAiWarehouseResults()" style="flex:0.45;min-width:100px;background:#555">Clear results</button>
-      </div>
-    </div>
-    <div id="aiEngineLower" class="ai-engine-lower">
-      <div class="form-group" style="margin-bottom:10px;margin-top:6px">
-        <h2 class="eq-label-row ai-builder-title-row">AI workout builder <span class="ai-builder-tagline">The Coach — original session from your equipment and time.</span> <button type="button" class="eq-info-btn" id="aiInfoBtn" onclick="toggleAiInfo(event)" title="About this builder" aria-label="Information">ℹ️</button></h2>
-        <div id="aiInfoPopover" class="eq-info-popover" role="dialog" aria-hidden="true" style="display:none">Programming only — not lifestyle advice. Standard session rules always apply in the background (not a user toggle). Optional tags add warm-up, strength, or weightlifting blocks, movement demos, or an extended athlete profile. When the app has Open/Hero names cached, a short sample is sent automatically for style context (original programming only). Generation streams live when the server supports it. <strong>Units:</strong> The Coach writes loads in <strong>kg</strong> and distances/heights in <strong>meters or centimeters</strong> only (no lb or inches in the generated text).</div>
-      </div>
-      <div class="ai-tag-bank-wrap">
-        <span class="ai-bank-label">More options — <span class="ai-bank-label-muted">gray</span> = app defaults (tap ✓ to move above the free-text box). <span class="ai-bank-label-presets">Colored tabs</span> = your presets (tap to dock in the coach row). Edit or delete with ✏️ / × on the same tab in the <strong>preset toolbar above</strong>.</span>
-        <div class="ai-tag-bank" id="aiTagBank"></div>
-      </div>
-      <div class="form-group">
-        <label for="aiUserNotes">Before we generate — free-text notes for the coach (not saved inside a gym preset; preset text lives in the preset prompt box while editing)</label>
-        <div class="ai-notes-shell" id="aiNotesShell">
-          <div class="ai-tag-dock" id="aiTagDock"></div>
-          <textarea id="aiUserNotes" rows="4" maxlength="1600" placeholder="Example: Prefer short metcons today · knees OK · partner trades rounds · emphasis on pulling…"></textarea>
-        </div>
-      </div>
-      <div class="ai-extended-panel" id="aiExtendedFields" style="display:none">
-        <div class="form-row"><label for="aiLevel">Athlete level</label><select id="aiLevel"><option value="">— Select —</option><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option><option value="competitor">Competitor</option><option value="amateur_competitor">Amateur competitor</option><option value="other">Other / prefer not to say</option></select></div>
-        <div class="form-row"><label for="aiAthletes">Number of athletes (1 = solo, 2+ = partner / team)</label><div class="ai-athletes-row"><button type="button" class="ai-step-btn" onclick="adjustAiAthletes(-1)" aria-label="Decrease athletes">▼</button><input type="number" id="aiAthletes" min="1" max="20" value="1" inputmode="numeric" style="max-width:5rem;padding:8px"><button type="button" class="ai-step-btn" onclick="adjustAiAthletes(1)" aria-label="Increase athletes">▲</button></div></div>
-        <div class="form-row"><label for="aiYearsTraining">Years in training (this domain)</label><input type="text" id="aiYearsTraining" placeholder="e.g. 3" maxlength="32" autocomplete="off"></div>
-        <div class="form-row"><label for="aiBodyweight">Bodyweight (optional)</label><input type="text" id="aiBodyweight" placeholder="e.g. 70 kg" maxlength="32" autocomplete="off"></div>
-        <div class="form-row"><label for="aiSex">Sex / gender (optional)</label><input type="text" id="aiSex" placeholder="optional" maxlength="48" autocomplete="off"></div>
-        <div class="form-row"><label for="aiAge">Age (optional)</label><input type="text" id="aiAge" placeholder="e.g. 34" maxlength="16" autocomplete="off"></div>
-        <div class="form-row"><label for="aiHealthLimits">Health limitations / clearance</label><textarea id="aiHealthLimits" rows="2" placeholder="Injuries, restrictions, doctor guidance…" maxlength="1200"></textarea></div>
-      </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:stretch">
-        <button type="button" class="btn btn-find" id="btnGenerate" onclick="generateWorkoutAi()" style="flex:1;min-width:140px">Generate Workout</button>
-        <button type="button" class="btn btn-find" onclick="resetAiBetaForm()" style="flex:0.45;min-width:100px;background:#555">Reset all</button>
-      </div>
-    </div>
-  </div>
-  <div class="workouts-grid" id="aiGenResults" style="margin-top:22px"></div>
 </div>
 
 <div class="tab-content active" id="pprog-tab" aria-hidden="false">
@@ -1656,37 +1520,8 @@ try {
 } catch (eCoachVer) {}
 /* true = Personal Coach tab visible to users. */
 var PPROG_TAB_ENABLED = true;
-/* false = hide Generate Workout tab (legacy AI engine kept in code for possible restore). */
-var GENERATE_WORKOUT_TAB_ENABLED = false;
-
-/** Hide/show Generate Workout from first paint (not only after a click). */
-function syncGenerateWorkoutTabVisibility() {
-  var btn = document.getElementById("tab-aibeta");
-  var pane = document.getElementById("aibeta-tab");
-  var on = !!GENERATE_WORKOUT_TAB_ENABLED;
-  if (btn) {
-    btn.hidden = !on;
-    if (on) {
-      btn.removeAttribute("aria-hidden");
-      btn.tabIndex = 0;
-    } else {
-      btn.setAttribute("aria-hidden", "true");
-      btn.tabIndex = -1;
-      btn.classList.remove("active");
-    }
-  }
-  if (pane) {
-    pane.hidden = !on;
-    if (!on) pane.classList.remove("active");
-  }
-}
-try {
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", syncGenerateWorkoutTabVisibility);
-  } else {
-    syncGenerateWorkoutTabVisibility();
-  }
-} catch (eGenTab) {}
+/* Generate Workout (the legacy Groq generator) was retired in v21.5.2 — tab, pane and
+   /api/generate-workout are gone. History keeps the code if it is ever wanted back. */
 
 var PPROG_STORE_KEY = "duck-wod-personal-coach-v1";
 /** Bump when Terms text changes so returning users must re-accept. */
@@ -3443,23 +3278,15 @@ function syncPprogBrickChatUi() {
   }
   if (panel) panel.classList.remove("pprog-brick-mode");
   pprogUnwrapBrickNotesShell(intake);
-  pprogEnsureCoachFloatHost();
-  if (inp) {
-    if (!inp.getAttribute("data-default-ph")) {
-      inp.setAttribute("data-default-ph", inp.placeholder || "Message the coach…");
-    }
-    inp.placeholder = "Whole brick: schedule, equipment, goals…";
-  }
-  syncPprogCoachFabVisibility();
-  if (pprogCoachFloatOpen) renderPprogChat();
+  /* POL-028 (21.6): the whole-brick chat is retired. After intake the athlete's
+     coaching happens in the box under each workout; the brick belongs to the human
+     coach in admin. The chat element stays where intake left it, hidden. */
+  pprogHideBrickChat();
 }
 
-function pprogEnsureCoachFloatHost() {
-  var host = document.getElementById("pprogCoachFloatBody");
-  var chat = document.getElementById("pprogChat");
+/** POL-028 — no athlete-facing whole-brick chat once intake is done. */
+function pprogHideBrickChat() {
   var intake = document.getElementById("pprogIntakeBlock");
-  if (!host || !chat) return;
-  if (chat.parentElement !== host) host.appendChild(chat);
   if (intake) intake.style.display = "none";
 }
 
@@ -3471,123 +3298,27 @@ function pprogRestoreChatToIntake() {
   intake.style.display = "block";
 }
 
-function syncPprogCoachFabVisibility() {
-  var fab = document.getElementById("pprogCoachFab");
-  if (!fab) return;
-  var store = loadPprogStore();
-  var pprogTab = document.getElementById("pprog-tab");
-  var onPprog =
-    !!(pprogTab && !pprogTab.hidden && pprogTab.classList.contains("active")) ||
-    !!(document.getElementById("tab-pprog") && document.getElementById("tab-pprog").classList.contains("active"));
-  var show = !!(store.intakeComplete && onPprog && PPROG_TAB_ENABLED);
-  fab.classList.toggle("show", show);
-  fab.classList.toggle("open", !!(show && pprogCoachFloatOpen));
-  fab.setAttribute("aria-expanded", pprogCoachFloatOpen ? "true" : "false");
-  if (!show && pprogCoachFloatOpen) closePprogCoachFloat(true);
-  syncPprogCoachFabTip(show && !pprogCoachFloatOpen);
-}
-
-var PPROG_COACH_FAB_TIP_KEY = "duck-wod-coach-fab-tip-v1";
-
-function pprogCoachFabTipSeen() {
-  try {
-    return localStorage.getItem(PPROG_COACH_FAB_TIP_KEY) === "1";
-  } catch (e) {
-    return true;
-  }
-}
-
-function markPprogCoachFabTipSeen() {
-  try {
-    localStorage.setItem(PPROG_COACH_FAB_TIP_KEY, "1");
-  } catch (e) {}
-  var tip = document.getElementById("pprogCoachFabTip");
-  if (tip) {
-    tip.classList.remove("show");
-    tip.hidden = true;
-  }
-}
-
-function syncPprogCoachFabTip(showHint) {
-  var tip = document.getElementById("pprogCoachFabTip");
-  if (!tip) return;
-  var show = !!(showHint && !pprogCoachFabTipSeen());
-  tip.classList.toggle("show", show);
-  tip.hidden = !show;
-}
-
-function dismissPprogCoachFabTip(ev) {
-  if (ev && ev.stopPropagation) ev.stopPropagation();
-  markPprogCoachFabTipSeen();
-}
-window.dismissPprogCoachFabTip = dismissPprogCoachFabTip;
-
+/* -- Floating whole-brick coach -- RETIRED in 21.6 (POL-028) -----------------
+ * The athlete's coaching lives in the box under each workout; the brick belongs
+ * to the human coach in admin. The FAB, its tip and the float panel are gone.
+ * These no-ops keep the old call sites harmless rather than throwing.
+ * The server refuses brick-scoped requests too -- see lib/coach-athlete-scope.js. */
+/* Still referenced by the document-click and Escape handlers below. Those branches
+   are unreachable now (pprogCoachFloatOpen never turns true), but an undeclared
+   name would throw the day someone reorders that condition. */
 var pprogCoachFloatIgnoreDocClick = false;
-
-function openPprogCoachFloat() {
-  var store = loadPprogStore();
-  if (!store.intakeComplete) return;
-  pprogEnsureCoachFloatHost();
-  pprogCoachFloatOpen = true;
-  pprogCoachFloatIgnoreDocClick = true;
-  var panel = document.getElementById("pprogCoachFloat");
-  if (panel) {
-    panel.removeAttribute("hidden");
-    panel.hidden = false;
-    panel.classList.add("open");
-  }
-  markPprogCoachFabTipSeen();
-  syncPprogCoachFabVisibility();
-  try {
-    pprogMaybePullPushUpgradeOffer();
-  } catch (ePull) {}
-  try {
-    renderPprogChat();
-  } catch (eRender) {}
-  var inp = document.getElementById("pprogChatInput");
-  if (inp) {
-    try {
-      inp.focus();
-    } catch (e) {}
-  }
-  setTimeout(function () {
-    pprogCoachFloatIgnoreDocClick = false;
-  }, 0);
-}
-
-function closePprogCoachFloat(silent) {
-  pprogCoachFloatOpen = false;
-  var panel = document.getElementById("pprogCoachFloat");
-  if (panel) {
-    panel.classList.remove("open");
-    panel.hidden = true;
-    panel.setAttribute("hidden", "");
-  }
-  syncPprogCoachFabVisibility();
-}
-
-function togglePprogCoachFloat() {
-  if (pprogCoachFloatOpen) closePprogCoachFloat();
-  else openPprogCoachFloat();
-}
+function syncPprogCoachFabVisibility() {}
+function markPprogCoachFabTipSeen() {}
+function syncPprogCoachFabTip() {}
+function dismissPprogCoachFabTip() {}
+function openPprogCoachFloat() {}
+function closePprogCoachFloat() {}
+function togglePprogCoachFloat() {}
+function bindPprogCoachFab() {}
+window.dismissPprogCoachFabTip = dismissPprogCoachFabTip;
 window.togglePprogCoachFloat = togglePprogCoachFloat;
 window.openPprogCoachFloat = openPprogCoachFloat;
 window.closePprogCoachFloat = closePprogCoachFloat;
-
-function bindPprogCoachFab() {
-  var fab = document.getElementById("pprogCoachFab");
-  if (!fab || fab.getAttribute("data-pprog-bound") === "1") return;
-  fab.setAttribute("data-pprog-bound", "1");
-  fab.addEventListener(
-    "click",
-    function (ev) {
-      ev.preventDefault();
-      ev.stopPropagation();
-      togglePprogCoachFloat();
-    },
-    true
-  );
-}
 
 function pprogEnsureBrickNotesShell(intake) {
   if (!intake || document.getElementById("pprogBrickNotes")) return;
@@ -8921,6 +8652,25 @@ function pprogMaybePullPushUpgradeOffer() {
     .catch(function () {});
 }
 
+/* POL-028 made this the product's main artery. With the athlete no longer able to
+ * reshape the brick, a change from the human coach in admin is the ONLY way a plan
+ * changes — and until 21.6 it was pulled in just two places, one of them opening
+ * the floating coach that 21.6 removes. So also pull whenever the athlete brings
+ * the app back to the foreground. pprogMaybePullPushUpgradeOffer throttles itself
+ * to one call per 20s, so these extra triggers are close to free. */
+function pprogPullAdminChangesOnResume() {
+  try {
+    if (document.visibilityState === "hidden") return;
+    var store = loadPprogStore();
+    if (!store || !store.intakeComplete) return;
+    pprogMaybePullPushUpgradeOffer();
+  } catch (e) {}
+}
+try {
+  document.addEventListener("visibilitychange", pprogPullAdminChangesOnResume);
+  window.addEventListener("focus", pprogPullAdminChangesOnResume);
+} catch (eResume) {}
+
 function pprogResolveAdminDayEdit(pending, resolution, reason, message) {
   if (!pending || !pending.id) return Promise.resolve(false);
   var store = loadPprogStore();
@@ -13253,9 +13003,6 @@ function convertUnits(text) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-  try {
-    syncGenerateWorkoutTabVisibility();
-  } catch (eSyncGen) {}
   ["touchstart","pointerdown","click","keydown"].forEach(function(evt) {
     document.addEventListener(evt, timerAudioUnlock, { passive: true });
   });
@@ -14893,17 +14640,14 @@ function showTab(name) {
   if (name === "pprog" && !PPROG_TAB_ENABLED) {
     name = "browse";
   }
-  if (name === "aibeta" && !GENERATE_WORKOUT_TAB_ENABLED) {
-    name = "browse";
-  }
-  var tabs = ["pprog", "browse", "aibeta", "workout", "sources", "about"];
+  var tabs = ["pprog", "browse", "workout", "sources", "about"];
   for (var i = 0; i < tabs.length; i++) {
     var id = tabs[i];
     var btn = document.getElementById("tab-" + id);
     var pane = document.getElementById(id + "-tab");
     var active = id === name;
     if (btn) {
-      var tabExtra = id === "aibeta" ? " tab-generate-wrap" : id === "pprog" ? " tab-pprog-wrap" : id === "workout" ? " tab-wtools-wrap" : "";
+      var tabExtra = id === "pprog" ? " tab-pprog-wrap" : id === "workout" ? " tab-wtools-wrap" : "";
       btn.className = "tab-btn" + tabExtra + (active ? " active" : "");
       if (id === "pprog" && !PPROG_TAB_ENABLED) {
         btn.hidden = true;
@@ -14914,26 +14658,12 @@ function showTab(name) {
         btn.removeAttribute("aria-hidden");
         btn.tabIndex = 0;
       }
-      if (id === "aibeta" && !GENERATE_WORKOUT_TAB_ENABLED) {
-        btn.hidden = true;
-        btn.setAttribute("aria-hidden", "true");
-        btn.tabIndex = -1;
-      } else if (id === "aibeta" && GENERATE_WORKOUT_TAB_ENABLED) {
-        btn.hidden = false;
-        btn.removeAttribute("aria-hidden");
-        btn.tabIndex = 0;
-      }
     }
     if (pane) {
       pane.className = "tab-content" + (active ? " active" : "");
       if (id === "pprog" && !PPROG_TAB_ENABLED) {
         pane.hidden = true;
       } else if (id === "pprog" && PPROG_TAB_ENABLED) {
-        pane.hidden = false;
-      }
-      if (id === "aibeta" && !GENERATE_WORKOUT_TAB_ENABLED) {
-        pane.hidden = true;
-      } else if (id === "aibeta" && GENERATE_WORKOUT_TAB_ENABLED) {
         pane.hidden = false;
       }
     }
@@ -15183,23 +14913,9 @@ function scrollToTop() {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-document.addEventListener("keydown", function (ev) {
-  if (ev.key === "Escape" && pprogCoachFloatOpen) {
-    closePprogCoachFloat();
-  }
-});
-document.addEventListener("click", function (ev) {
-  if (!pprogCoachFloatOpen || pprogCoachFloatIgnoreDocClick) return;
-  var panel = document.getElementById("pprogCoachFloat");
-  var fab = document.getElementById("pprogCoachFab");
-  var t = ev.target;
-  if (panel && panel.contains(t)) return;
-  if (fab && fab.contains(t)) return;
-  closePprogCoachFloat();
-});
-try {
-  bindPprogCoachFab();
-} catch (eBindFab) {}
+/* The Escape / outside-click handlers that dismissed the floating coach went with
+   it in 21.6 — they ran on every keydown and every click for a panel that no
+   longer exists. */
 
 // ——— Workout Timers ———
 function parseMMSS(v) {
@@ -15372,14 +15088,6 @@ function initTimerColorBuckets() {
   initTimerColorBuckets();
 })();
 </script>
-<div class="page-fabs" id="pageFabs" aria-label="Coach quick action">
-  <button type="button" class="pprog-coach-fab" id="pprogCoachFab" aria-label="Talk to the coach" title="Talk to the coach · whole brick" aria-expanded="false" aria-controls="pprogCoachFloat">
-    <span class="pprog-coach-fab-caption">talk to<br>the coach</span>
-    <span class="pprog-coach-fab-avatar" aria-hidden="true">
-      <img src="assets/hamamen-coach-duck.png" alt="" width="48" height="48" draggable="false">
-    </span>
-  </button>
-</div>
 <button type="button" class="up-btn" id="upBtn" onclick="scrollToTop()" aria-label="Scroll to top" title="Scroll to top">↑</button>
 <button type="button" class="pprog-day-nav prev" id="pprogDayNavPrev" onclick="stepPprogDayNav(-1)" aria-label="Previous training day" title="Previous day">
   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M15.4 4.6 13.99 3.2 5.2 12l8.79 8.8 1.41-1.41L8.03 12z"/></svg>
@@ -15387,21 +15095,6 @@ function initTimerColorBuckets() {
 <button type="button" class="pprog-day-nav next" id="pprogDayNavNext" onclick="stepPprogDayNav(1)" aria-label="Next training day" title="Next day">
   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8.6 4.6 10.01 3.2 18.8 12l-8.79 8.8-1.41-1.41L15.97 12z"/></svg>
 </button>
-<div id="pprogCoachFabTip" class="pprog-coach-fab-tip" hidden role="status">
-  <button type="button" class="pprog-coach-fab-tip-close" onclick="dismissPprogCoachFabTip(event)" aria-label="Dismiss">×</button>
-  <strong>Whole brick</strong>
-  Here you talk about the full plan. For one day only — use the green box under that workout.
-</div>
-<div id="pprogCoachFloat" class="pprog-coach-float" role="dialog" aria-modal="false" aria-labelledby="pprogCoachFloatTitle" hidden>
-  <div class="pprog-coach-float-head">
-    <div class="pprog-coach-float-titles">
-      <span class="pprog-coach-float-title" id="pprogCoachFloatTitle">Coach · whole brick</span>
-      <span class="pprog-coach-float-scope">Full 5-week plan, schedule, equipment, goals. For one workout only — use the green box under that day.</span>
-    </div>
-    <button type="button" class="pprog-coach-float-close" onclick="closePprogCoachFloat()" aria-label="Close coach chat">×</button>
-  </div>
-  <div class="pprog-coach-float-body" id="pprogCoachFloatBody"></div>
-</div>
 <!-- ניתור מבוסס Git (נסתר): להפעלה הגדר ANALYTICS_ENDPOINT ב-script למעלה; פרוס api/ ל-Vercel. ראה ANALYTICS_GIT.md -->
 <script>
 (function(){
@@ -15420,7 +15113,7 @@ function initTimerColorBuckets() {
   try {
     var q = new URLSearchParams(window.location.search || "");
     var tab = q.get("tab");
-    var allowed = { pprog: 1, browse: 1, aibeta: 1, workout: 1, sources: 1, about: 1 };
+    var allowed = { pprog: 1, browse: 1, workout: 1, sources: 1, about: 1 };
     if (!tab || !allowed[tab]) {
       tab = typeof PPROG_TAB_ENABLED !== "undefined" && PPROG_TAB_ENABLED ? "pprog" : "browse";
     }
