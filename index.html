@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.5.1</title>
+<title>DUCK-WOD · v21.6</title>
 <meta name="theme-color" content="#111">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -1069,7 +1069,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.5.1</div>
+<div class="header-sub">DAILY WORKOUTS · v21.6</div>
 <div class="header-sub" id="coachVersionSub">COACH · v2.3.14</div>
 </div>
 <div class="tabs">
@@ -3278,23 +3278,15 @@ function syncPprogBrickChatUi() {
   }
   if (panel) panel.classList.remove("pprog-brick-mode");
   pprogUnwrapBrickNotesShell(intake);
-  pprogEnsureCoachFloatHost();
-  if (inp) {
-    if (!inp.getAttribute("data-default-ph")) {
-      inp.setAttribute("data-default-ph", inp.placeholder || "Message the coach…");
-    }
-    inp.placeholder = "Whole brick: schedule, equipment, goals…";
-  }
-  syncPprogCoachFabVisibility();
-  if (pprogCoachFloatOpen) renderPprogChat();
+  /* POL-028 (21.6): the whole-brick chat is retired. After intake the athlete's
+     coaching happens in the box under each workout; the brick belongs to the human
+     coach in admin. The chat element stays where intake left it, hidden. */
+  pprogHideBrickChat();
 }
 
-function pprogEnsureCoachFloatHost() {
-  var host = document.getElementById("pprogCoachFloatBody");
-  var chat = document.getElementById("pprogChat");
+/** POL-028 — no athlete-facing whole-brick chat once intake is done. */
+function pprogHideBrickChat() {
   var intake = document.getElementById("pprogIntakeBlock");
-  if (!host || !chat) return;
-  if (chat.parentElement !== host) host.appendChild(chat);
   if (intake) intake.style.display = "none";
 }
 
@@ -3306,123 +3298,27 @@ function pprogRestoreChatToIntake() {
   intake.style.display = "block";
 }
 
-function syncPprogCoachFabVisibility() {
-  var fab = document.getElementById("pprogCoachFab");
-  if (!fab) return;
-  var store = loadPprogStore();
-  var pprogTab = document.getElementById("pprog-tab");
-  var onPprog =
-    !!(pprogTab && !pprogTab.hidden && pprogTab.classList.contains("active")) ||
-    !!(document.getElementById("tab-pprog") && document.getElementById("tab-pprog").classList.contains("active"));
-  var show = !!(store.intakeComplete && onPprog && PPROG_TAB_ENABLED);
-  fab.classList.toggle("show", show);
-  fab.classList.toggle("open", !!(show && pprogCoachFloatOpen));
-  fab.setAttribute("aria-expanded", pprogCoachFloatOpen ? "true" : "false");
-  if (!show && pprogCoachFloatOpen) closePprogCoachFloat(true);
-  syncPprogCoachFabTip(show && !pprogCoachFloatOpen);
-}
-
-var PPROG_COACH_FAB_TIP_KEY = "duck-wod-coach-fab-tip-v1";
-
-function pprogCoachFabTipSeen() {
-  try {
-    return localStorage.getItem(PPROG_COACH_FAB_TIP_KEY) === "1";
-  } catch (e) {
-    return true;
-  }
-}
-
-function markPprogCoachFabTipSeen() {
-  try {
-    localStorage.setItem(PPROG_COACH_FAB_TIP_KEY, "1");
-  } catch (e) {}
-  var tip = document.getElementById("pprogCoachFabTip");
-  if (tip) {
-    tip.classList.remove("show");
-    tip.hidden = true;
-  }
-}
-
-function syncPprogCoachFabTip(showHint) {
-  var tip = document.getElementById("pprogCoachFabTip");
-  if (!tip) return;
-  var show = !!(showHint && !pprogCoachFabTipSeen());
-  tip.classList.toggle("show", show);
-  tip.hidden = !show;
-}
-
-function dismissPprogCoachFabTip(ev) {
-  if (ev && ev.stopPropagation) ev.stopPropagation();
-  markPprogCoachFabTipSeen();
-}
-window.dismissPprogCoachFabTip = dismissPprogCoachFabTip;
-
+/* -- Floating whole-brick coach -- RETIRED in 21.6 (POL-028) -----------------
+ * The athlete's coaching lives in the box under each workout; the brick belongs
+ * to the human coach in admin. The FAB, its tip and the float panel are gone.
+ * These no-ops keep the old call sites harmless rather than throwing.
+ * The server refuses brick-scoped requests too -- see lib/coach-athlete-scope.js. */
+/* Still referenced by the document-click and Escape handlers below. Those branches
+   are unreachable now (pprogCoachFloatOpen never turns true), but an undeclared
+   name would throw the day someone reorders that condition. */
 var pprogCoachFloatIgnoreDocClick = false;
-
-function openPprogCoachFloat() {
-  var store = loadPprogStore();
-  if (!store.intakeComplete) return;
-  pprogEnsureCoachFloatHost();
-  pprogCoachFloatOpen = true;
-  pprogCoachFloatIgnoreDocClick = true;
-  var panel = document.getElementById("pprogCoachFloat");
-  if (panel) {
-    panel.removeAttribute("hidden");
-    panel.hidden = false;
-    panel.classList.add("open");
-  }
-  markPprogCoachFabTipSeen();
-  syncPprogCoachFabVisibility();
-  try {
-    pprogMaybePullPushUpgradeOffer();
-  } catch (ePull) {}
-  try {
-    renderPprogChat();
-  } catch (eRender) {}
-  var inp = document.getElementById("pprogChatInput");
-  if (inp) {
-    try {
-      inp.focus();
-    } catch (e) {}
-  }
-  setTimeout(function () {
-    pprogCoachFloatIgnoreDocClick = false;
-  }, 0);
-}
-
-function closePprogCoachFloat(silent) {
-  pprogCoachFloatOpen = false;
-  var panel = document.getElementById("pprogCoachFloat");
-  if (panel) {
-    panel.classList.remove("open");
-    panel.hidden = true;
-    panel.setAttribute("hidden", "");
-  }
-  syncPprogCoachFabVisibility();
-}
-
-function togglePprogCoachFloat() {
-  if (pprogCoachFloatOpen) closePprogCoachFloat();
-  else openPprogCoachFloat();
-}
+function syncPprogCoachFabVisibility() {}
+function markPprogCoachFabTipSeen() {}
+function syncPprogCoachFabTip() {}
+function dismissPprogCoachFabTip() {}
+function openPprogCoachFloat() {}
+function closePprogCoachFloat() {}
+function togglePprogCoachFloat() {}
+function bindPprogCoachFab() {}
+window.dismissPprogCoachFabTip = dismissPprogCoachFabTip;
 window.togglePprogCoachFloat = togglePprogCoachFloat;
 window.openPprogCoachFloat = openPprogCoachFloat;
 window.closePprogCoachFloat = closePprogCoachFloat;
-
-function bindPprogCoachFab() {
-  var fab = document.getElementById("pprogCoachFab");
-  if (!fab || fab.getAttribute("data-pprog-bound") === "1") return;
-  fab.setAttribute("data-pprog-bound", "1");
-  fab.addEventListener(
-    "click",
-    function (ev) {
-      ev.preventDefault();
-      ev.stopPropagation();
-      togglePprogCoachFloat();
-    },
-    true
-  );
-}
 
 function pprogEnsureBrickNotesShell(intake) {
   if (!intake || document.getElementById("pprogBrickNotes")) return;
@@ -8755,6 +8651,25 @@ function pprogMaybePullPushUpgradeOffer() {
     })
     .catch(function () {});
 }
+
+/* POL-028 made this the product's main artery. With the athlete no longer able to
+ * reshape the brick, a change from the human coach in admin is the ONLY way a plan
+ * changes — and until 21.6 it was pulled in just two places, one of them opening
+ * the floating coach that 21.6 removes. So also pull whenever the athlete brings
+ * the app back to the foreground. pprogMaybePullPushUpgradeOffer throttles itself
+ * to one call per 20s, so these extra triggers are close to free. */
+function pprogPullAdminChangesOnResume() {
+  try {
+    if (document.visibilityState === "hidden") return;
+    var store = loadPprogStore();
+    if (!store || !store.intakeComplete) return;
+    pprogMaybePullPushUpgradeOffer();
+  } catch (e) {}
+}
+try {
+  document.addEventListener("visibilitychange", pprogPullAdminChangesOnResume);
+  window.addEventListener("focus", pprogPullAdminChangesOnResume);
+} catch (eResume) {}
 
 function pprogResolveAdminDayEdit(pending, resolution, reason, message) {
   if (!pending || !pending.id) return Promise.resolve(false);
@@ -14998,23 +14913,9 @@ function scrollToTop() {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-document.addEventListener("keydown", function (ev) {
-  if (ev.key === "Escape" && pprogCoachFloatOpen) {
-    closePprogCoachFloat();
-  }
-});
-document.addEventListener("click", function (ev) {
-  if (!pprogCoachFloatOpen || pprogCoachFloatIgnoreDocClick) return;
-  var panel = document.getElementById("pprogCoachFloat");
-  var fab = document.getElementById("pprogCoachFab");
-  var t = ev.target;
-  if (panel && panel.contains(t)) return;
-  if (fab && fab.contains(t)) return;
-  closePprogCoachFloat();
-});
-try {
-  bindPprogCoachFab();
-} catch (eBindFab) {}
+/* The Escape / outside-click handlers that dismissed the floating coach went with
+   it in 21.6 — they ran on every keydown and every click for a panel that no
+   longer exists. */
 
 // ——— Workout Timers ———
 function parseMMSS(v) {
@@ -15187,14 +15088,6 @@ function initTimerColorBuckets() {
   initTimerColorBuckets();
 })();
 </script>
-<div class="page-fabs" id="pageFabs" aria-label="Coach quick action">
-  <button type="button" class="pprog-coach-fab" id="pprogCoachFab" aria-label="Talk to the coach" title="Talk to the coach · whole brick" aria-expanded="false" aria-controls="pprogCoachFloat">
-    <span class="pprog-coach-fab-caption">talk to<br>the coach</span>
-    <span class="pprog-coach-fab-avatar" aria-hidden="true">
-      <img src="assets/hamamen-coach-duck.png" alt="" width="48" height="48" draggable="false">
-    </span>
-  </button>
-</div>
 <button type="button" class="up-btn" id="upBtn" onclick="scrollToTop()" aria-label="Scroll to top" title="Scroll to top">↑</button>
 <button type="button" class="pprog-day-nav prev" id="pprogDayNavPrev" onclick="stepPprogDayNav(-1)" aria-label="Previous training day" title="Previous day">
   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M15.4 4.6 13.99 3.2 5.2 12l8.79 8.8 1.41-1.41L8.03 12z"/></svg>
@@ -15202,21 +15095,6 @@ function initTimerColorBuckets() {
 <button type="button" class="pprog-day-nav next" id="pprogDayNavNext" onclick="stepPprogDayNav(1)" aria-label="Next training day" title="Next day">
   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8.6 4.6 10.01 3.2 18.8 12l-8.79 8.8-1.41-1.41L15.97 12z"/></svg>
 </button>
-<div id="pprogCoachFabTip" class="pprog-coach-fab-tip" hidden role="status">
-  <button type="button" class="pprog-coach-fab-tip-close" onclick="dismissPprogCoachFabTip(event)" aria-label="Dismiss">×</button>
-  <strong>Whole brick</strong>
-  Here you talk about the full plan. For one day only — use the green box under that workout.
-</div>
-<div id="pprogCoachFloat" class="pprog-coach-float" role="dialog" aria-modal="false" aria-labelledby="pprogCoachFloatTitle" hidden>
-  <div class="pprog-coach-float-head">
-    <div class="pprog-coach-float-titles">
-      <span class="pprog-coach-float-title" id="pprogCoachFloatTitle">Coach · whole brick</span>
-      <span class="pprog-coach-float-scope">Full 5-week plan, schedule, equipment, goals. For one workout only — use the green box under that day.</span>
-    </div>
-    <button type="button" class="pprog-coach-float-close" onclick="closePprogCoachFloat()" aria-label="Close coach chat">×</button>
-  </div>
-  <div class="pprog-coach-float-body" id="pprogCoachFloatBody"></div>
-</div>
 <!-- ניתור מבוסס Git (נסתר): להפעלה הגדר ANALYTICS_ENDPOINT ב-script למעלה; פרוס api/ ל-Vercel. ראה ANALYTICS_GIT.md -->
 <script>
 (function(){

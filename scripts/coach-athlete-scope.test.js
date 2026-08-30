@@ -95,10 +95,56 @@ ok("gate runs before any provider call", gateAt > 0 && callAt > 0 && gateAt < ca
 const keyAt = pc.indexOf('error: "Missing AI API key"');
 ok("gate runs before the provider-key branch", keyAt > 0 && gateAt < keyAt);
 
-/* --- Non-regression ------------------------------------------------------ */
+/* --- Non-regression on the server --------------------------------------- */
 
 ok("terms gate still runs", /code: "TERMS_REQUIRED"/.test(pc));
 ok("cost caps still run", /costCapHttpPayload\(costGate\)/.test(pc));
 ok("programming stays Gemini-only", pc.includes("geminiOnly: true"));
+
+/* --- The app: floating coach gone, intake untouched --------------------- */
+
+const index = fs.readFileSync(path.join(root, "index.html"), "utf8");
+
+/* The floating whole-brick coach is removed, not merely hidden. */
+ok("no floating coach button markup", !/id="pprogCoachFab"/.test(index));
+ok("no floating coach panel markup", !/id="pprogCoachFloat"/.test(index));
+ok("no floating coach tip markup", !/id="pprogCoachFabTip"/.test(index));
+ok("no whole-brick scope copy left", !/Coach · whole brick/.test(index));
+ok("chat is never relocated into a float host", !/pprogEnsureCoachFloatHost/.test(index));
+
+/* Old call sites must find a no-op, never an undefined name. */
+ok("float open is a stub", /function openPprogCoachFloat\(\) \{\}/.test(index));
+ok("float close is a stub", /function closePprogCoachFloat\(\) \{\}/.test(index));
+ok("fab visibility is a stub", /function syncPprogCoachFabVisibility\(\) \{\}/.test(index));
+ok("fab bind is a stub", /function bindPprogCoachFab\(\) \{\}/.test(index));
+ok(
+  "the doc-click flag is still declared",
+  /var pprogCoachFloatIgnoreDocClick = false;/.test(index)
+);
+
+/* INTAKE MUST SURVIVE — it is the only way an athlete gets a plan at all. */
+ok("intake block still exists", /id="pprogIntakeBlock"/.test(index));
+ok("intake chat still exists", /id="pprogChat"/.test(index));
+ok("intake chat input still exists", /id="pprogChatInput"/.test(index));
+ok("chat is restored to intake while intake runs", /function pprogRestoreChatToIntake/.test(index));
+ok("brick chat is hidden after intake", /function pprogHideBrickChat/.test(index));
+
+/* The day box — the athlete's remaining span of control — must still be wired. */
+ok("day box still calls revise_day", /action: "revise_day"/.test(index));
+
+/* The admin pull is now the only way a plan changes — it must have more than
+   one trigger, since 21.6 removed one of the two it had. */
+ok(
+  "admin changes are pulled when the app resumes",
+  /function pprogPullAdminChangesOnResume/.test(index) &&
+    /addEventListener\("visibilitychange", pprogPullAdminChangesOnResume\)/.test(index)
+);
+ok(
+  "resume pull is throttled by the existing guard",
+  /pprogPushUpgradePullAt && now - pprogPushUpgradePullAt < 20000/.test(index)
+);
+
+/* The retired generator must not creep back into the app shell. */
+ok("no legacy generator tab", !/aibeta/.test(index));
 
 console.log("All POL-028 athlete-scope checks passed.");
