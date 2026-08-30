@@ -2704,51 +2704,6 @@
     "2026-08-30": [
       {
         "date": "2026-08-30",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-08-30/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "lat stretch",
-              "calf stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. air squats",
-              "2. row",
-              "3. scap. push ups",
-              "4. burpees"
-            ],
-            "sub_title": "30sec on / 15sec off x2 rounds"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "1. 30-40sec (weighted) wall sit",
-              "2. 10-15cal row",
-              "3. 4-8 ring dips",
-              "4. 10-15 burpee box get over 60/50cm",
-              "5. rest",
-              "Sunday Endurance for Open Gym",
-              "10 rounds",
-              "",
-              "2:00 work [rpe 6-7]",
-              "0:30 rest",
-              "choose: row, bike, ski, run",
-              "* aerobic power [lactate threshold]"
-            ],
-            "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-08-30",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-august-30-2026/",
@@ -2805,6 +2760,85 @@
               "through 3-5 different areas of the body",
               "during the 3:00 Mobility windreditows."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-30",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 19.2",
+            "lines": [
+              "Beginning on an 8-minute clock, complete as many reps as possible of:",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "15 squat cleans, 135 lb.",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "13 squat cleans, 185 lb.",
+              "If completed before 8 minutes, add 4 minutes to the clock and proceed to:",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "11 squat cleans, 225 lb.",
+              "If completed before 12 minutes, add 4 minutes to the clock and proceed to:",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "9 squat cleans, 275 lb.",
+              "If completed before 16 minutes, add 4 minutes to the clock and proceed to:",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "7 squat cleans, 315 lb.",
+              "Stop at 20 minutes."
+            ]
+          }
+        ],
+        "note": "Open: Open 19.2"
+      },
+      {
+        "date": "2026-08-30",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-08-30/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "lat stretch",
+              "calf stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. air squats",
+              "2. row",
+              "3. scap. push ups",
+              "4. burpees"
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "1. 30-40sec (weighted) wall sit",
+              "2. 10-15cal row",
+              "3. 4-8 ring dips",
+              "4. 10-15 burpee box get over 60/50cm",
+              "5. rest",
+              "Sunday Endurance for Open Gym",
+              "10 rounds",
+              "",
+              "2:00 work [rpe 6-7]",
+              "0:30 rest",
+              "choose: row, bike, ski, run",
+              "* aerobic power [lactate threshold]"
+            ],
+            "sub_title": "emom 35min (7 rounds)"
           }
         ]
       },
@@ -2869,42 +2903,8 @@
           }
         ],
         "note": "Benchmark: ”ANGIE” BENCHMARK"
-      },
-      {
-        "date": "2026-08-30",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 19.2",
-            "lines": [
-              "Beginning on an 8-minute clock, complete as many reps as possible of:",
-              "25 toes-to-bars",
-              "50 double-unders",
-              "15 squat cleans, 135 lb.",
-              "25 toes-to-bars",
-              "50 double-unders",
-              "13 squat cleans, 185 lb.",
-              "If completed before 8 minutes, add 4 minutes to the clock and proceed to:",
-              "25 toes-to-bars",
-              "50 double-unders",
-              "11 squat cleans, 225 lb.",
-              "If completed before 12 minutes, add 4 minutes to the clock and proceed to:",
-              "25 toes-to-bars",
-              "50 double-unders",
-              "9 squat cleans, 275 lb.",
-              "If completed before 16 minutes, add 4 minutes to the clock and proceed to:",
-              "25 toes-to-bars",
-              "50 double-unders",
-              "7 squat cleans, 315 lb.",
-              "Stop at 20 minutes."
-            ]
-          }
-        ],
-        "note": "Open: Open 19.2"
       }
     ]
   },
-  "last_updated": "2026-08-30T04:08:58.479805"
+  "last_updated": "2026-08-30T09:16:21.150911"
 }
