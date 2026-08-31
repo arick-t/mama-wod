@@ -732,6 +732,11 @@ body:has(#intake-modal.open) #adminChatFloat{
     <span class="tagline">Admin</span>
     <span class="ver-badge" id="admin-ver-badge" title="Admin 3.0.2 · Coach 2.3.14">Admin 3.0.2<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.14</span></span>
     <span class="count-wrap">
+      <!-- Client programs live on their own page: a new product surface, and this
+           file is a 201KB hand-written monolith. Session storage is shared, so one
+           login serves both. -->
+      <a class="hdr-btn" id="btn-client-programs" href="admin-clients.html"
+         title="תוכניות אימון ללקוחות — מאמנים וסטודיו">לקוחות</a>
       <span class="count" id="athlete-count" title="הרשימה מתעדכנת לבד כל כמה שניות — בלי לרענן את הדף">0 מתאמנים</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
         title="יתרת קרדיט Gemini משוערת — לחץ לעדכון ידני מגוגל">

@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>DUCK-WOD · לקוחות</title>
+<link rel="icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#121212;--bg-elev:#181818;--bg-card:#1a1a1a;--bg-panel:#1e1e1e;
+  --text:#f5f2ea;--text-muted:#b0aaa0;--text-meta:#8a8580;
+  --brand:#E8451A;--brand-gold:#F5C518;--coach:#9b6bb8;--coach-deep:#6b3d86;
+  --part:#6fafa4;--note:#7eb8c9;--line:#2c2c2c;
+  --font-ui:'Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-display:'Oswald','Heebo',sans-serif;
+  --safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--font-ui);background:var(--bg);color:var(--text);line-height:1.55;
+  font-size:15px;padding:calc(14px + var(--safe-t)) 14px calc(28px + var(--safe-b));
+  min-height:100vh;min-height:100dvh}
+.wrap{max-width:1000px;margin:0 auto}
+header.top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 6px}
+.logo{font-family:var(--font-display);font-size:1.5rem;letter-spacing:1px;color:var(--brand);margin:0}
+.sub{font-size:.74rem;letter-spacing:1.4px;color:var(--text-meta)}
+.backlink{margin:0 0 18px;font-size:.85rem}
+.backlink a{color:var(--coach);text-decoration:none}
+.backlink a:hover{text-decoration:underline}
+
+.card{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:0 0 14px}
+h2{font-family:var(--font-display);font-size:1.05rem;margin:0 0 12px;letter-spacing:.5px}
+p{margin:0 0 10px}
+.muted{color:var(--text-muted)}
+.meta{color:var(--text-meta);font-size:.82rem}
+label.fld{display:block;margin:0 0 10px}
+label.fld span{display:block;font-size:.8rem;color:var(--text-meta);margin:0 0 4px}
+input[type=text],input[type=password],input[type=number],textarea,select{
+  width:100%;font-family:var(--font-ui);font-size:16px;color:var(--text);background:var(--bg-panel);
+  border:1px solid var(--line);border-radius:8px;padding:11px}
+textarea{min-height:150px;resize:vertical;line-height:1.6;direction:ltr;text-align:left}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--coach);outline-offset:1px}
+button{font-family:var(--font-ui);font-size:15px;font-weight:500;cursor:pointer;background:var(--brand);
+  color:#fff;border:0;border-radius:8px;min-height:44px;padding:10px 16px}
+button:disabled{opacity:.5;cursor:default}
+button.ghost{background:transparent;color:var(--text-muted);border:1px solid var(--line)}
+button.ghost:hover{color:var(--text)}
+button.danger{background:transparent;color:var(--brand);border:1px solid var(--brand)}
+button.sm{min-height:34px;padding:5px 11px;font-size:13px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.err{color:var(--brand);font-size:.88rem;margin:8px 0 0;min-height:1.2em}
+.okmsg{color:var(--part);font-size:.88rem;margin:8px 0 0;min-height:1.2em}
+
+.clist{display:flex;flex-direction:column;gap:8px}
+.crow{display:flex;align-items:center;gap:10px;background:var(--bg-panel);border:1px solid var(--line);
+  border-radius:10px;padding:11px 13px;flex-wrap:wrap;cursor:pointer}
+.crow:hover{border-color:var(--coach)}
+.crow.on{border-color:var(--coach);background:rgba(155,107,184,.12)}
+.cname{font-weight:500}
+.cmeta{color:var(--text-meta);font-size:.8rem}
+.spacer{margin-inline-start:auto}
+/* Unread is state, not a counter — one dot per client, however many saves. */
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--brand);flex:0 0 auto}
+.badge{display:inline-block;padding:1px 8px;border-radius:10px;font-size:.68rem;font-weight:700;
+  letter-spacing:.6px;background:rgba(232,69,26,.18);color:var(--brand)}
+.badge.test{background:rgba(245,197,24,.16);color:var(--brand-gold)}
+.total{font-family:var(--font-display);font-size:1.1rem;color:var(--brand-gold)}
+
+.weekbar{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px}
+.weekbar button{min-height:36px;padding:6px 13px;background:var(--bg-panel);color:var(--text-muted);
+  border:1px solid var(--line);white-space:nowrap}
+.weekbar button.on{background:var(--coach-deep);color:#fff;border-color:var(--coach)}
+
+.day{background:var(--bg-panel);border:1px solid var(--line);border-radius:10px;margin:0 0 10px;overflow:hidden}
+.day.unread{border-color:var(--brand)}
+.day-head{display:flex;align-items:center;gap:9px;padding:10px 12px;background:var(--bg-elev);
+  border-bottom:1px solid var(--line);flex-wrap:wrap}
+.day-name{font-family:var(--font-display);font-size:.95rem}
+.day-body{padding:11px 12px}
+.code-out{font-family:var(--font-display);font-size:2rem;letter-spacing:.35em;color:var(--brand-gold);
+  text-align:center;margin:10px 0;direction:ltr}
+.linkbox{background:var(--bg-panel);border:1px solid var(--line);border-radius:8px;padding:10px;
+  font-size:.8rem;word-break:break-all;direction:ltr;text-align:left;margin:0 0 10px}
+.devrow{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);font-size:.85rem}
+.devrow:last-child{border-bottom:0}
+.banner{border-radius:10px;padding:11px 13px;margin:0 0 12px;font-size:.89rem}
+.banner.warn{background:rgba(245,197,24,.12);border:1px solid rgba(245,197,24,.4);color:var(--brand-gold)}
+.banner.bad{background:rgba(232,69,26,.12);border:1px solid rgba(232,69,26,.45);color:#ffb4a0}
+.banner.good{background:rgba(111,175,164,.12);border:1px solid rgba(111,175,164,.4);color:var(--part)}
+@media (max-width:600px){.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1 class="logo">DUCK-WOD</h1>
+    <span class="sub">לקוחות · תוכניות אימון</span>
+  </header>
+  <p class="backlink"><a href="admin.html">← חזרה למודול אדמין</a></p>
+
+  <div id="topBanner"></div>
+
+  <!-- login ------------------------------------------------------------- -->
+  <section id="loginView" class="card" hidden>
+    <h2>כניסה</h2>
+    <label class="fld"><span>סיסמת אדמין</span>
+      <input id="pw" type="password" autocomplete="current-password"></label>
+    <div class="row"><button id="pwBtn" type="button">היכנס</button></div>
+    <p class="err" id="pwErr" role="alert"></p>
+    <p class="meta" id="rememberState"></p>
+  </section>
+
+  <!-- main -------------------------------------------------------------- -->
+  <section id="mainView" hidden>
+
+    <div class="card">
+      <h2>לקוח חדש</h2>
+      <div class="grid2">
+        <label class="fld"><span>שם הלקוח</span><input id="newName" type="text" placeholder="מאמן / סטודיו"></label>
+        <label class="fld"><span>סוג</span>
+          <select id="newKind">
+            <option value="coach">מאמן / סטודיו — מעביר לאחרים</option>
+            <option value="athlete">מתאמן אישי</option>
+          </select></label>
+      </div>
+      <div class="grid2">
+        <label class="fld"><span>מספר שבועות</span><input id="newWeeks" type="number" min="1" max="12" value="5"></label>
+        <label class="fld"><span>תחילת הלבנה (אופציונלי)</span><input id="newStart" type="text" placeholder="2026-09-06"></label>
+      </div>
+      <div class="row">
+        <button id="createBtn" type="button">צור תוכנית</button>
+        <label class="meta" style="display:flex;gap:6px;align-items:center">
+          <input id="newTest" type="checkbox" style="width:auto"> תוכנית בדיקה
+        </label>
+      </div>
+      <p class="err" id="createErr" role="alert"></p>
+    </div>
+
+    <div class="card">
+      <div class="row" style="margin-bottom:10px">
+        <h2 style="margin:0">הלקוחות שלי</h2>
+        <span class="spacer total" id="monthlyTotal"></span>
+        <button id="rebuildBtn" class="ghost sm" type="button" title="אם הרשימה נראית לא מעודכנת">בנה אינדקס מחדש</button>
+      </div>
+      <div class="clist" id="clientList"></div>
+      <p class="meta" id="listMeta"></p>
+    </div>
+
+    <div id="detail" hidden></div>
+  </section>
+</div>
+
+<script src="lib/normalize-pprog-block.js"></script>
+<script src="lib/pprog-display.js"></script>
+<script>
+/* DUCK-WOD — client programs back office.
+ *
+ * A separate page on purpose. admin.html is a 201KB hand-written monolith and this
+ * is a new product surface; putting it here keeps the two apart and means a mistake
+ * in one cannot take the other down. It shares admin.html's session storage keys,
+ * so logging in on either page carries over.
+ *
+ * The owner writes the training. This page gives them the container and the tools —
+ * it never generates content, and it never calls an AI provider.
+ */
+(function () {
+  "use strict";
+
+  var API_BASE = (function () {
+    var h = String(location.hostname || "");
+    if (h === "localhost" || h === "127.0.0.1") return "";
+    return "https://mama-wod.vercel.app";
+  })();
+  /* Same keys as admin.html, so one login serves both pages. */
+  var SESSION_KEY = "dw_admin_session";
+  var REMEMBER_KEY = "dw_admin_remember";
+
+  var S = { token: "", pw: "", rows: [], sel: null, program: null, access: null, week: 1, editing: null };
+
+  function el(id) { return document.getElementById(id); }
+  function show(id, on) { var n = el(id); if (n) n.hidden = !on; }
+  function esc(s) {
+    return (window.PprogDisplay && window.PprogDisplay.esc)
+      ? window.PprogDisplay.esc(s)
+      : String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+        });
+  }
+  function banner(kind, msg) {
+    el("topBanner").innerHTML = msg ? '<div class="banner ' + kind + '">' + esc(msg) + "</div>" : "";
+  }
+
+  function storedToken() {
+    try {
+      if (localStorage.getItem(REMEMBER_KEY) === "1") return localStorage.getItem(SESSION_KEY) || "";
+      return sessionStorage.getItem(SESSION_KEY) || "";
+    } catch (e) { return ""; }
+  }
+
+  function api(body) {
+    var headers = { "Content-Type": "application/json" };
+    if (S.token) headers["X-Admin-Token"] = S.token;
+    else if (S.pw) headers["X-Admin-Password"] = S.pw;
+    return fetch(API_BASE + "/api/client-program", {
+      method: "POST", headers: headers, body: JSON.stringify(body || {}),
+    })
+      .then(function (r) {
+        return r.json().catch(function () { return null; }).then(function (j) {
+          return { status: r.status, body: j || {} };
+        });
+      })
+      .catch(function () { return { status: 0, body: { error: "אין חיבור לשרת." } }; });
+  }
+
+  /* --- login ----------------------------------------------------------- */
+
+  function openLogin(msg) {
+    show("loginView", true); show("mainView", false);
+    if (msg) el("pwErr").textContent = msg;
+    /* a.4.1/a.4.2 — a silent failure is why the owner retyped his password forever.
+       If the server cannot mint a session, the screen says so instead of shrugging. */
+    var remembered = storedToken();
+    el("rememberState").textContent = remembered
+      ? "זכור אותי: פעיל"
+      : "זכור אותי: כבוי — אם זה חוזר בכל כניסה, חסר ADMIN_SESSION_SECRET בהגדרות Vercel.";
+    try { el("pw").focus(); } catch (e) {}
+  }
+
+  function login() {
+    S.pw = String(el("pw").value || "");
+    S.token = "";
+    el("pwErr").textContent = "";
+    if (!S.pw) { el("pwErr").textContent = "צריך סיסמה."; return; }
+    var b = el("pwBtn"); b.disabled = true; b.textContent = "מתחבר…";
+    fetch(API_BASE + "/api/client-program", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Admin-Password": S.pw },
+      body: JSON.stringify({ action: "list" }),
+    })
+      .then(function (r) {
+        var tok = "";
+        try { tok = r.headers.get("X-Admin-Session-Token") || ""; } catch (e) {}
+        return r.json().catch(function () { return {}; }).then(function (j) {
+          return { status: r.status, body: j, token: tok };
+        });
+      })
+      .then(function (x) {
+        b.disabled = false; b.textContent = "היכנס";
+        if (x.status !== 200 || !x.body.ok) {
+          el("pwErr").textContent = x.body.error || x.body.message || "סיסמה שגויה.";
+          return;
+        }
+        if (x.token) {
+          S.token = x.token; S.pw = "";
+          try { sessionStorage.setItem(SESSION_KEY, x.token); } catch (e) {}
+        }
+        el("pw").value = "";
+        renderList(x.body);
+        show("loginView", false); show("mainView", true);
+        if (!x.token) {
+          banner("warn", "התחברת, אבל השרת לא הנפיק כרטיס־זיכרון — כלומר תצטרך להקליד סיסמה שוב בפעם הבאה. חסר ADMIN_SESSION_SECRET בהגדרות Vercel.");
+        }
+      });
+  }
+
+  function loadList() {
+    return api({ action: "list" }).then(function (r) {
+      if (r.status === 401) { openLogin("פג תוקף החיבור."); return; }
+      if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "לא הצלחתי לטעון את הרשימה."); return; }
+      show("loginView", false); show("mainView", true);
+      renderList(r.body);
+    });
+  }
+
+  function renderList(data) {
+    S.rows = data.rows || [];
+    var total = Number(data.monthlyTotal) || 0;
+    el("monthlyTotal").textContent = total ? "סה\"כ חודשי: ₪" + total.toLocaleString() : "";
+    el("listMeta").textContent = S.rows.length
+      ? S.rows.length + " לקוחות" + (data.unreadTotal ? " · " + data.unreadTotal + " ימים לא נקראו" : "")
+      : "";
+    if (!S.rows.length) {
+      el("clientList").innerHTML = '<p class="muted">אין עוד לקוחות. צור תוכנית ראשונה למעלה.</p>';
+      return;
+    }
+    el("clientList").innerHTML = S.rows.map(function (r) {
+      return '<div class="crow' + (S.sel === r.programId ? " on" : "") + '" data-open="' + esc(r.programId) + '">' +
+        (r.unreadCount ? '<span class="dot" title="יש שינוי שלא ראית"></span>' : "") +
+        '<span class="cname">' + esc(r.clientName || "(ללא שם)") + "</span>" +
+        (r.isTest ? '<span class="badge test">בדיקה</span>' : "") +
+        (r.unreadCount ? '<span class="badge">שונה</span>' : "") +
+        '<span class="cmeta">' + esc(r.clientKind === "athlete" ? "מתאמן" : "מאמן") +
+          (r.updatedAt ? " · " + new Date(r.updatedAt).toLocaleDateString() : "") + "</span>" +
+        '<span class="spacer cmeta">v' + esc(r.version) + "</span>" +
+        "</div>";
+    }).join("");
+  }
+
+  /* --- one client ------------------------------------------------------ */
+
+  function openClient(pid) {
+    S.sel = pid; S.week = 1; S.editing = null;
+    api({ action: "read", programId: pid }).then(function (r) {
+      if (r.status === 401) { openLogin("פג תוקף החיבור."); return; }
+      if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "לא הצלחתי לטעון את התוכנית."); return; }
+      S.program = r.body.program; S.access = r.body.access || null;
+      renderList({ rows: S.rows, monthlyTotal: 0 });
+      renderDetail();
+      try { el("detail").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {}
+    });
+  }
+
+  function clientLink(pid) {
+    var base = location.href.replace(/\/[^/]*$/, "/");
+    return base + "client.html?program=" + encodeURIComponent(pid);
+  }
+
+  function renderDetail() {
+    var p = S.program;
+    if (!p) { show("detail", false); return; }
+    var a = S.access || {};
+    var unread = Object.keys(p.unreadDays || {});
+    var html = "";
+
+    html += '<div class="card"><div class="row" style="margin-bottom:10px">' +
+      '<h2 style="margin:0">' + esc(p.clientName || "(ללא שם)") + "</h2>" +
+      '<button class="ghost sm" type="button" data-rename="1" title="שינוי שם">✏️</button>' +
+      '<span class="spacer meta">v' + esc(p.version) + " · " + esc(p.programId) + "</span>" +
+      "</div>";
+
+    html += '<div class="grid2">' +
+      '<label class="fld"><span>סכום חודשי (₪)</span><input id="fAmount" type="number" min="0" value="' +
+        esc(p.monthlyAmount == null ? "" : p.monthlyAmount) + '"></label>' +
+      '<label class="fld"><span>שיטת תשלום</span><input id="fMethod" type="text" value="' +
+        esc(p.paymentMethod || "") + '" placeholder="ביט, 1 לחודש"></label>' +
+      "</div>" +
+      '<p class="meta">הנתונים האלה אצלך בלבד. הלקוח לא רואה אותם.</p>' +
+      '<div class="row"><button class="sm" type="button" data-savemeta="1">שמור פרטים</button>' +
+      '<button class="danger sm" type="button" data-del="1">מחק תוכנית</button></div></div>';
+
+    /* access */
+    html += '<div class="card"><h2>גישה</h2>';
+    html += '<div class="linkbox">' + esc(clientLink(p.programId)) + "</div>";
+    html += '<div class="row"><button class="sm" type="button" data-copylink="1">העתק לינק</button>' +
+      '<button class="sm" type="button" data-code="1">הנפק קוד</button>' +
+      (a.openCodes && a.openCodes.length ? '<button class="ghost sm" type="button" data-revokecodes="1">בטל קודים פתוחים (' + a.openCodes.length + ")</button>" : "") +
+      "</div>";
+    html += '<div id="codeOut"></div>';
+    html += '<p class="meta" style="margin-top:10px">' +
+      (a.signature
+        ? "חתם על " + esc(a.signature.termsVersion) + " ב-" + new Date(a.signature.signedAt).toLocaleString()
+        : "טרם חתם על התנאים.") + "</p>";
+    if (a.devices && a.devices.length) {
+      html += '<p class="meta" style="margin-top:8px">מכשירים (' + a.devices.length + "/" + esc(a.deviceCap) + "):</p>";
+      html += a.devices.map(function (d) {
+        return '<div class="devrow"><span>' + esc(d.label || d.id) + "</span>" +
+          '<span class="spacer meta">' + (d.lastSeenAt ? new Date(d.lastSeenAt).toLocaleDateString() : "") + "</span>" +
+          '<button class="ghost sm" type="button" data-revokedev="' + esc(d.id) + '">בטל</button></div>';
+      }).join("");
+    } else {
+      html += '<p class="meta">אין עוד מכשירים מחוברים.</p>';
+    }
+    html += "</div>";
+
+    /* program */
+    html += '<div class="card"><h2>התוכנית</h2>';
+    if (unread.length) {
+      html += '<div class="banner warn">' + unread.length + ' ימים שהלקוח שינה ואתה עוד לא פתחת. פתח יום כדי לסמן שנקרא.</div>';
+    }
+    html += '<div class="weekbar">' + (p.weeks || []).map(function (w, i) {
+      var n = w.weekIndex || i + 1;
+      return '<button type="button" data-week="' + n + '"' + (n === S.week ? ' class="on"' : "") + ">שבוע " + n + "</button>";
+    }).join("") + "</div>";
+    html += '<div id="adminDays"></div></div>';
+
+    el("detail").innerHTML = html;
+    show("detail", true);
+    renderAdminDays();
+  }
+
+  function currentWeek() {
+    var weeks = (S.program && S.program.weeks) || [];
+    for (var i = 0; i < weeks.length; i++) if ((weeks[i].weekIndex || i + 1) === S.week) return weeks[i];
+    return weeks[0] || null;
+  }
+
+  function partsToText(parts) {
+    return (parts || []).map(function (pt) {
+      var lines = (pt.lines || []).join("\n");
+      var head = String(pt.title || "").trim();
+      return head ? head + "\n" + lines : lines;
+    }).join("\n\n");
+  }
+  function textToParts(text, dayKey) {
+    var out = [];
+    String(text || "").split(/\n\s*\n/).forEach(function (block, i) {
+      var lines = block.split("\n").map(function (l) { return l.trim(); }).filter(Boolean);
+      if (!lines.length) return;
+      out.push({ id: dayKey + "-" + i, title: lines[0], lines: lines.slice(1).length ? lines.slice(1) : [lines[0]] });
+    });
+    return out;
+  }
+
+  function renderAdminDays() {
+    var week = currentWeek();
+    var host = el("adminDays");
+    if (!host) return;
+    if (!week) { host.innerHTML = '<p class="muted">אין שבועות.</p>'; return; }
+    var D = window.PprogDisplay;
+    var keys = (D && D.DAY_KEYS) || ["sun","mon","tue","wed","thu","fri","sat"];
+    var labels = (D && D.DAY_LABELS) || {};
+    var unread = (S.program && S.program.unreadDays) || {};
+    var html = "";
+    for (var i = 0; i < keys.length; i++) {
+      var k = keys[i];
+      var day = (week.days && week.days[k]) || { parts: [] };
+      var tag = "w" + S.week + ":" + k;
+      var isUnread = unread[tag] !== undefined;
+      var editing = S.editing === tag;
+      var body = editing
+        ? '<textarea id="aed-' + k + '">' + esc(partsToText(day.parts)) + "</textarea>" +
+          '<div class="row" style="margin-top:8px"><button class="sm" type="button" data-asave="' + k + '">שמור</button>' +
+          '<button class="ghost sm" type="button" data-acancel="1">בטל</button></div>'
+        : (D && D.renderDayPartsHtml ? D.renderDayPartsHtml(day.parts || [], day) : "");
+      html += '<div class="day' + (isUnread ? " unread" : "") + '">' +
+        '<div class="day-head">' +
+          (isUnread ? '<span class="dot"></span>' : "") +
+          '<span class="day-name">' + esc(labels[k] || k) + "</span>" +
+          (day.modified ? '<span class="badge">שונה ע"י הלקוח</span>' : "") +
+          '<span class="spacer"></span>' +
+          (editing ? "" : '<button class="ghost sm" type="button" data-aedit="' + k + '">כתוב / ערוך</button>') +
+        "</div>" +
+        '<div class="day-body">' + body + "</div></div>";
+    }
+    host.innerHTML = html;
+  }
+
+  /* Opening a changed day is what clears its flag — no extra click (a.2.2). */
+  function markRead(tag) {
+    if (!(S.program.unreadDays || {})[tag]) return Promise.resolve();
+    return api({
+      action: "mark_read", programId: S.program.programId,
+      expectedVersion: S.program.version, days: [tag],
+    }).then(function (r) {
+      if (r.status === 200 && r.body.ok) {
+        S.program.unreadDays = r.body.unreadDays;
+        S.program.version = r.body.version;
+      }
+    });
+  }
+
+  function saveDay(dayKey) {
+    var ta = el("aed-" + dayKey);
+    if (!ta) return;
+    var week = currentWeek();
+    var weeks = JSON.parse(JSON.stringify(S.program.weeks));
+    var wi = S.program.weeks.indexOf(week);
+    weeks[wi].days[dayKey] = { parts: textToParts(ta.value, dayKey) };
+    api({
+      action: "save", programId: S.program.programId,
+      expectedVersion: S.program.version, program: { weeks: weeks },
+    }).then(function (r) {
+      if (r.status === 409) {
+        banner("warn", "הלקוח שינה את התוכנית בזמן שהיה פתוח אצלך. טוען את הגרסה הנוכחית — עשה את השינוי שוב.");
+        openClient(S.program.programId);
+        return;
+      }
+      if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "השמירה נכשלה."); return; }
+      banner("good", "נשמר.");
+      S.program = r.body.program; S.editing = null;
+      renderDetail();
+    });
+  }
+
+  function saveMeta() {
+    var amount = el("fAmount") ? Number(el("fAmount").value) : undefined;
+    var method = el("fMethod") ? String(el("fMethod").value || "") : undefined;
+    api({
+      action: "save", programId: S.program.programId, expectedVersion: S.program.version,
+      program: { monthlyAmount: Number.isFinite(amount) ? amount : 0, paymentMethod: method },
+    }).then(function (r) {
+      if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "השמירה נכשלה."); return; }
+      S.program = r.body.program;
+      banner("good", "הפרטים נשמרו.");
+      loadList();
+    });
+  }
+
+  /* --- events ---------------------------------------------------------- */
+
+  document.addEventListener("click", function (ev) {
+    var t = ev.target;
+    if (!t || !t.getAttribute) return;
+    var g = function (n) { return t.getAttribute(n); };
+
+    var openRow = t.closest ? t.closest("[data-open]") : null;
+    if (openRow && openRow.getAttribute("data-open")) { openClient(openRow.getAttribute("data-open")); return; }
+
+    if (g("data-week")) { S.week = parseInt(g("data-week"), 10) || 1; S.editing = null; renderDetail(); return; }
+    if (g("data-aedit")) {
+      var k = g("data-aedit"); var tag = "w" + S.week + ":" + k;
+      markRead(tag).then(function () { S.editing = tag; renderDetail(); });
+      return;
+    }
+    if (g("data-acancel")) { S.editing = null; renderDetail(); return; }
+    if (g("data-asave")) { saveDay(g("data-asave")); return; }
+    if (g("data-savemeta")) { saveMeta(); return; }
+
+    if (g("data-rename")) {
+      var name = window.prompt("שם הלקוח:", S.program.clientName || "");
+      if (name === null) return;
+      api({ action: "save", programId: S.program.programId, expectedVersion: S.program.version,
+            program: { clientName: name } }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "השינוי נכשל."); return; }
+        S.program = r.body.program; renderDetail(); loadList();
+      });
+      return;
+    }
+    if (g("data-code")) {
+      api({ action: "issue_code", programId: S.program.programId }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "הנפקת הקוד נכשלה."); return; }
+        /* Shown once and never stored in the clear — lose it and issue another. */
+        el("codeOut").innerHTML = '<div class="code-out">' + esc(r.body.code) + "</div>" +
+          '<p class="meta" style="text-align:center">מסור בוואטסאפ. חד-פעמי, בתוקף 7 ימים. לא יוצג שוב.</p>';
+        openClientAccessRefresh();
+      });
+      return;
+    }
+    if (g("data-revokecodes")) {
+      api({ action: "revoke_codes", programId: S.program.programId }).then(function () {
+        el("codeOut").innerHTML = ""; openClientAccessRefresh();
+      });
+      return;
+    }
+    if (g("data-revokedev")) {
+      var id = g("data-revokedev");
+      if (!window.confirm("לבטל את המכשיר הזה? הלקוח יצטרך קוד חדש.")) return;
+      api({ action: "revoke_device", programId: S.program.programId, deviceId: id }).then(function (r) {
+        if (r.status !== 200) { banner("bad", (r.body && r.body.error) || "הביטול נכשל."); return; }
+        S.access = r.body.access; renderDetail();
+      });
+      return;
+    }
+    if (g("data-copylink")) {
+      var link = clientLink(S.program.programId);
+      try {
+        navigator.clipboard.writeText(link).then(function () { banner("good", "הלינק הועתק."); });
+      } catch (e) { banner("warn", "העתק ידנית: " + link); }
+      return;
+    }
+    if (g("data-del")) {
+      if (!window.confirm("למחוק את התוכנית של " + (S.program.clientName || "הלקוח") + "? אין חזרה.")) return;
+      api({ action: "delete", programId: S.program.programId }).then(function () {
+        S.program = null; S.sel = null; show("detail", false); loadList(); banner("good", "נמחק.");
+      });
+      return;
+    }
+  });
+
+  function openClientAccessRefresh() {
+    api({ action: "read", programId: S.program.programId }).then(function (r) {
+      if (r.status === 200 && r.body.ok) {
+        S.access = r.body.access;
+        var out = el("codeOut") ? el("codeOut").innerHTML : "";
+        renderDetail();
+        if (out && el("codeOut")) el("codeOut").innerHTML = out;
+      }
+    });
+  }
+
+  function boot() {
+    el("pwBtn").addEventListener("click", login);
+    el("pw").addEventListener("keydown", function (e) { if (e.key === "Enter") login(); });
+    el("createBtn").addEventListener("click", function () {
+      el("createErr").textContent = "";
+      var name = String(el("newName").value || "").trim();
+      if (!name) { el("createErr").textContent = "צריך שם."; return; }
+      api({
+        action: "create", clientName: name, clientKind: el("newKind").value,
+        weekCount: Number(el("newWeeks").value) || 5,
+        blockStart: String(el("newStart").value || "").trim(),
+        isTest: el("newTest").checked,
+      }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) { el("createErr").textContent = r.body.error || "היצירה נכשלה."; return; }
+        el("newName").value = "";
+        banner("good", "נוצרה תוכנית ריקה. עכשיו תכתוב את האימונים.");
+        loadList().then(function () { openClient(r.body.program.programId); });
+      });
+    });
+    el("rebuildBtn").addEventListener("click", function () {
+      api({ action: "rebuild_index" }).then(function (r) {
+        banner(r.status === 200 ? "good" : "bad",
+          r.status === 200 ? "האינדקס נבנה מחדש (" + r.body.count + " תוכניות)." : "הבנייה נכשלה.");
+        loadList();
+      });
+    });
+
+    S.token = storedToken();
+    /* Deep link from the edit-alert email lands straight on the client (a.2.4). */
+    var deep = new URLSearchParams(location.search).get("program");
+    if (S.token) {
+      loadList().then(function () { if (deep) openClient(deep); });
+    } else openLogin("");
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+</script>
+</body>
+</html>

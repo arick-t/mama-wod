@@ -312,7 +312,11 @@ async function main() {
   ok("one mail was sent", H.mails.length === 1);
   ok("the mail names the client", /Coach A/.test(H.mails[0].subject));
   ok("the mail names the day", /w1:mon/.test(H.mails[0].text));
-  ok("the mail carries a deep link into admin", /admin\.html\?program=/.test(H.mails[0].text));
+  ok(
+    "the mail carries a deep link into the client page",
+    /admin-clients\.html\?program=/.test(H.mails[0].text)
+  );
+  ok("the deep link names the program", H.mails[0].text.indexOf(pid) >= 0);
 
   /* --- five saves to one day, ONE mail ------------------------------ */
 

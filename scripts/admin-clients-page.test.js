@@ -1,0 +1,177 @@
+/**
+ * admin-clients.html — the owner's back office for client programs.
+ * Run: node scripts/admin-clients-page.test.js
+ */
+const assert = require("assert");
+const fs = require("fs");
+const path = require("path");
+const vm = require("vm");
+
+function ok(name, cond) {
+  assert.ok(cond, name);
+  console.log("ok —", name);
+}
+
+const root = path.join(__dirname, "..");
+const page = fs.readFileSync(path.join(root, "admin-clients.html"), "utf8");
+const admin = fs.readFileSync(path.join(root, "admin.html"), "utf8");
+
+/* --- it must parse ------------------------------------------------------- */
+
+const scripts = [];
+const re = /<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi;
+let m;
+while ((m = re.exec(page))) scripts.push(m[1]);
+scripts.forEach(function (code, i) {
+  let err = null;
+  try {
+    new vm.Script(code, { filename: "admin-clients.html #" + (i + 1) });
+  } catch (e) {
+    err = (e && e.message) || String(e);
+  }
+  ok("inline script " + (i + 1) + " parses", err === null);
+});
+
+/* --- reachable from the admin module, sharing its session -------------- */
+
+ok("admin.html links to the client page", /href="admin-clients\.html"/.test(admin));
+ok("the link is labelled for the owner", /id="btn-client-programs"/.test(admin));
+ok("the page links back to admin", /href="admin\.html"/.test(page));
+ok("it reuses admin's session key", /"dw_admin_session"/.test(page));
+ok("it reuses admin's remember key", /"dw_admin_remember"/.test(page));
+ok("it reads the session token header on login", /X-Admin-Session-Token/.test(page));
+ok("it sends the admin token on later calls", /X-Admin-Token/.test(page));
+ok("the password is only sent to log in", (page.match(/X-Admin-Password/g) || []).length <= 2);
+
+/* --- the silent password failure becomes visible (a.4.1 / a.4.2) ------- */
+
+ok("the login screen reports remember-me state", /זכור אותי/.test(page));
+ok(
+  "a missing server secret is named, not shrugged at",
+  /ADMIN_SESSION_SECRET/.test(page)
+);
+ok(
+  "logging in without a session token warns the owner",
+  /לא הנפיק כרטיס־זיכרון/.test(page)
+);
+
+/* --- no AI on this surface either -------------------------------------- */
+
+ok("the page names no AI provider", !/gemini|groq|generativelanguage/i.test(page));
+ok("it never calls personal-coach", !/personal-coach/.test(page));
+ok(
+  "the only endpoint it uses is client-program",
+  (page.match(/\/api\/[a-z-]+/g) || []).every(function (u) {
+    return u === "/api/client-program";
+  })
+);
+
+/* --- a.1.1: the owner authors, we never generate ---------------------- */
+
+ok("creating a client makes an EMPTY program", /נוצרה תוכנית ריקה/.test(page));
+ok("the owner is told to write the training", /תכתוב את האימונים/.test(page));
+
+/* Enumerate what the page can actually ask the server to do, rather than grepping
+   for words — a keyword search keeps matching prose in comments, and the set of
+   actions is the thing that decides whether this surface can generate content. */
+const ACTIONS_ALLOWED = [
+  "list",
+  "read",
+  "create",
+  "save",
+  "delete",
+  "mark_read",
+  "issue_code",
+  "revoke_codes",
+  "revoke_device",
+  "rebuild_index",
+];
+const actionsUsed = Array.from(
+  new Set((page.match(/action:\s*"([a-z_]+)"/g) || []).map(function (s) {
+    return s.replace(/action:\s*"/, "").replace(/"$/, "");
+  }))
+).sort();
+ok("every action the page sends is a known one", actionsUsed.every(function (a) {
+  return ACTIONS_ALLOWED.indexOf(a) >= 0;
+}));
+ok(
+  "none of them generates or revises training content",
+  !actionsUsed.some(function (a) {
+    return /^(generate|revise|finish_micro_bias|chat)/.test(a);
+  })
+);
+ok("the page really does use several of them", actionsUsed.length >= 8);
+
+/* --- shared rendering, one design ------------------------------------- */
+
+ok("it loads the shared display library", /src="lib\/pprog-display\.js"/.test(page));
+ok("days are rendered by the shared library", /D\.renderDayPartsHtml\(/.test(page));
+ok("it uses the app's tokens", /--brand:#E8451A/.test(page) && /--coach:#9b6bb8/.test(page));
+ok("it uses the app's fonts", /family=Heebo/.test(page) && /Oswald/.test(page));
+ok("the page is right-to-left like admin", /dir="rtl"/.test(page));
+
+/* --- codes and devices ------------------------------------------------ */
+
+ok("the owner can issue a code", /action: "issue_code"/.test(page));
+ok("the code is shown once and not stored", /לא יוצג שוב/.test(page));
+ok("the owner is told to pass it by WhatsApp", /בוואטסאפ/.test(page));
+ok("open codes can be revoked", /action: "revoke_codes"/.test(page));
+ok("a device can be revoked", /action: "revoke_device"/.test(page));
+ok("revoking a device asks first", /confirm\("לבטל את המכשיר/.test(page));
+ok("the device cap is shown", /deviceCap/.test(page));
+ok("the signature state is shown", /טרם חתם|חתם על/.test(page));
+ok("the client link is copyable", /data-copylink/.test(page));
+
+/* --- unread flag: state, and cleared by opening ---------------------- */
+
+ok("unread days are highlighted", /\.day\.unread/.test(page));
+ok("one dot per client, not a count", /class="dot"/.test(page));
+ok("opening a day marks it read", /action: "mark_read"/.test(page));
+ok("marking read happens on edit, with no extra click", /markRead\(tag\)\.then/.test(page));
+ok("a client-changed day is labelled", /שונה ע"י הלקוח/.test(page));
+
+/* --- payment fields are owner-only --------------------------------- */
+
+ok("there is a monthly amount field", /id="fAmount"/.test(page));
+ok("the amount is a number so it can be totalled", /id="fAmount" type="number"/.test(page));
+ok("there is a free-text payment method", /id="fMethod" type="text"/.test(page));
+ok("a monthly total is shown", /monthlyTotal/.test(page));
+ok("the owner is reminded the client cannot see this", /הלקוח לא רואה אותם/.test(page));
+
+/* --- rename (a.3.3) ------------------------------------------------- */
+
+ok("there is a pencil to rename", /data-rename/.test(page));
+ok("renaming saves clientName", /program: \{ clientName: name \}/.test(page));
+
+/* --- the label is 'client', not 'athlete' (a.3.2) ------------------ */
+
+ok("the page speaks about clients", /לקוח חדש/.test(page));
+ok("the heading is the owner's clients", /הלקוחות שלי/.test(page));
+
+/* --- index rebuild is available (0.5) ----------------------------- */
+
+ok("the index can be rebuilt from the UI", /action: "rebuild_index"/.test(page));
+
+/* --- conflicts are honest ---------------------------------------- */
+
+ok("a 409 reloads rather than overwriting", /status === 409/.test(page));
+ok("the conflict message names the client", /הלקוח שינה את התוכנית/.test(page));
+
+/* --- deep link from the alert email ------------------------------ */
+
+ok("a ?program= deep link opens that client", /get\("program"\)/.test(page));
+
+/* --- destructive actions ask ------------------------------------ */
+
+ok("delete asks for confirmation", /confirm\("למחוק את התוכנית/.test(page));
+ok("delete is styled as dangerous", /class="danger sm"/.test(page));
+
+/* --- phone reality ---------------------------------------------- */
+
+ok("inputs are 16px so iOS does not zoom", /font-size:16px/.test(page));
+ok("touch targets are 44px", /min-height:44px/.test(page));
+ok("safe-area insets are honoured", /env\(safe-area-inset-top/.test(page));
+ok("there is a small-screen breakpoint", /@media \(max-width:600px\)/.test(page));
+ok("the page is not indexed", /noindex/.test(page));
+
+console.log("All admin clients page checks passed.");

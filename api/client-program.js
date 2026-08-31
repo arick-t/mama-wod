@@ -255,7 +255,8 @@ async function notifyOwnerOfEdit(program, touchedDays, clientName) {
     "At: " + program.updatedAt,
     "",
     "Open it in admin:",
-    "https://arick-t.github.io/mama-wod/admin.html?program=" +
+    /* Deep link straight to this client, so the mail is one tap from the change (a.2.4). */
+    "https://arick-t.github.io/mama-wod/admin-clients.html?program=" +
       encodeURIComponent(program.programId) +
       "&day=" +
       encodeURIComponent(day),
