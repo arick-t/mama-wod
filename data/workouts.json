@@ -2689,59 +2689,6 @@
     "2026-08-31": [
       {
         "date": "2026-08-31",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-08-31/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "instep rotations",
-              "sumo squat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 scap. pull ups",
-              "10 reverse lunges",
-              "20sec deep squat hold"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "BACK SQUATS 14MIN",
-            "lines": [
-              "4 Sets",
-              "4  (paused) back squats",
-              "@ 72–77 %",
-              "strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 10MIN",
-            "lines": [
-              "2-4-6-8-6-4-2",
-              "front squats 70/50kg",
-              "burpee pull ups",
-              "strength endurance & lactate threshold"
-            ],
-            "sub_title": "for time"
-          },
-          {
-            "title": "ARMS & CORE 6MIN",
-            "lines": [
-              "1. pronated barbell curls",
-              "2. barbell straight leg sit ups"
-            ],
-            "sub_title": "20sec on / 15sec off x 10 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-08-31",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260831",
@@ -2811,6 +2758,98 @@
               "If done properly, you will be able to increase reps",
               "on round 2 for all three movement patterns. Flush (very slow) between sets on an air bike or 1 damper ski erg."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-08-31",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 13.5",
+            "lines": [
+              "Complete as many rounds and reps as possible in 4 minutes of:",
+              "100 pound Thruster, 15 reps",
+              "15 Chest to bar Pull-ups",
+              "If 90 reps (3 rounds) are completed in under 4 minutes, time extends to 8 minutes.",
+              "If 180 reps (6 rounds) are completed in under 8 minutes, time extends to 12 minutes.",
+              "If 270 reps (9 rounds) are completed in under 12 minutes, time extends to 16 minutes.",
+              "Etc.",
+              "*WOMEN -*",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 4 minutes of:",
+              "65 pound Thruster, 15 reps",
+              "15 Chest to bar Pull-ups",
+              "If 90 reps (3 rounds) are completed in under 4 minutes, time extends to 8 minutes.",
+              "If 180 reps (6 rounds) are completed in under 8 minutes, time extends to 12 minutes.",
+              "If 270 reps (9 rounds) are completed in under 12 minutes, time extends to 16 minutes.",
+              "Etc.",
+              "*MASTERS MEN -*",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 4 minutes of:",
+              "65 pound Thruster, 15 reps",
+              "15 Chin over bar Pull-ups",
+              "If 90 reps (3 rounds) are completed in under 4 minutes, time extends to 8 minutes.",
+              "If 180 reps (6 rounds) are completed in under 8 minutes, time extends to 12 minutes.",
+              "If 270 reps (9 rounds) are completed in under 12 minutes, time extends to 16 minutes.",
+              "Etc."
+            ]
+          }
+        ],
+        "note": "Open: Open 13.5"
+      },
+      {
+        "date": "2026-08-31",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-08-31/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "instep rotations",
+              "sumo squat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 scap. pull ups",
+              "10 reverse lunges",
+              "20sec deep squat hold"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "BACK SQUATS 14MIN",
+            "lines": [
+              "4 Sets",
+              "4  (paused) back squats",
+              "@ 72–77 %",
+              "strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 10MIN",
+            "lines": [
+              "2-4-6-8-6-4-2",
+              "front squats 70/50kg",
+              "burpee pull ups",
+              "strength endurance & lactate threshold"
+            ],
+            "sub_title": "for time"
+          },
+          {
+            "title": "ARMS & CORE 6MIN",
+            "lines": [
+              "1. pronated barbell curls",
+              "2. barbell straight leg sit ups"
+            ],
+            "sub_title": "20sec on / 15sec off x 10 rounds"
           }
         ]
       },
@@ -2905,47 +2944,8 @@
           }
         ],
         "note": "Benchmark: Lynne"
-      },
-      {
-        "date": "2026-08-31",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 13.5",
-            "lines": [
-              "Complete as many rounds and reps as possible in 4 minutes of:",
-              "100 pound Thruster, 15 reps",
-              "15 Chest to bar Pull-ups",
-              "If 90 reps (3 rounds) are completed in under 4 minutes, time extends to 8 minutes.",
-              "If 180 reps (6 rounds) are completed in under 8 minutes, time extends to 12 minutes.",
-              "If 270 reps (9 rounds) are completed in under 12 minutes, time extends to 16 minutes.",
-              "Etc.",
-              "*WOMEN -*",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 4 minutes of:",
-              "65 pound Thruster, 15 reps",
-              "15 Chest to bar Pull-ups",
-              "If 90 reps (3 rounds) are completed in under 4 minutes, time extends to 8 minutes.",
-              "If 180 reps (6 rounds) are completed in under 8 minutes, time extends to 12 minutes.",
-              "If 270 reps (9 rounds) are completed in under 12 minutes, time extends to 16 minutes.",
-              "Etc.",
-              "*MASTERS MEN -*",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 4 minutes of:",
-              "65 pound Thruster, 15 reps",
-              "15 Chin over bar Pull-ups",
-              "If 90 reps (3 rounds) are completed in under 4 minutes, time extends to 8 minutes.",
-              "If 180 reps (6 rounds) are completed in under 8 minutes, time extends to 12 minutes.",
-              "If 270 reps (9 rounds) are completed in under 12 minutes, time extends to 16 minutes.",
-              "Etc."
-            ]
-          }
-        ],
-        "note": "Open: Open 13.5"
       }
     ]
   },
-  "last_updated": "2026-08-31T04:11:14.869121"
+  "last_updated": "2026-08-31T09:42:44.460521"
 }
