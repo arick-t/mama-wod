@@ -60,10 +60,19 @@ ok(
   AdminDayEdit.partHasRealContent({ title: "Strength", lines: ["Back squat 5x5"] })
 );
 
+/* 21.7 reversed this on purpose. A rest day is a PLAN, not a fact — replacing it
+ * with a session is one of the most ordinary edits there is, and the old lock meant
+ * the pencil either never appeared or appeared and then refused to save.
+ *
+ * The assertion is kept rather than deleted, inverted, so if anyone re-locks rest
+ * days this fails and says why. */
 ok(
-  "rest day locked",
-  AdminDayEdit.lockReason("sun", week.days.sun, week, "2026-08-16", "2026-08-13", "save").code ===
-    "rest"
+  "a rest day is EDITABLE (21.7) — no lock",
+  AdminDayEdit.lockReason("sun", week.days.sun, week, "2026-08-16", "2026-08-13", "save") === null
+);
+ok(
+  "canEditDay agrees a rest day is editable",
+  AdminDayEdit.canEditDay("sun", week.days.sun, week, "2026-08-16", "2026-08-13") === true
 );
 ok(
   "past day locked",
@@ -168,12 +177,41 @@ ok(
   !conflict.ok && conflict.reason === "athlete_updated"
 );
 
-const restApply = AdminDayEdit.applyPendingToDay(week.days.sun, pending, {
+/* Applying onto a rest day now works (21.7) — and it must ALSO move the week's
+ * overview focus, or the day holds real programming and still renders as rest.
+ * That is the trap lib/day-rest-toggle.js exists to prevent, so it is asserted
+ * here against the renderer's own rest test rather than against our own data. */
+const RestToggle = require("../lib/day-rest-toggle.js");
+const Normalize = require("../lib/normalize-pprog-block.js");
+ok(
+  "sunday starts as a rest day",
+  Normalize.isRestDay("sun", week.days.sun, week) === true
+);
+/* Build a pending FOR sunday — applyPendingToDay takes its day key from the pending
+   itself, so reusing the monday pending here would silently test the wrong day. */
+const sundayPending = AdminDayEdit.buildPending({
+  athleteId: "a1",
+  weekIndex: 0,
+  dayKey: "sun",
+  dayIso: "2026-08-16",
+  parts: sanitized,
+});
+const restApply = AdminDayEdit.applyPendingToDay(week.days.sun, sundayPending, {
   week: week,
   dayKey: "sun",
   todayIso: "2026-08-13",
 });
-ok("do not apply onto rest", !restApply.ok && restApply.reason === "rest");
+ok("applying onto a rest day is allowed", restApply.ok === true);
+ok("the session content landed", (restApply.day.parts || []).length > 0);
+ok("a focus change was reported", typeof restApply.focusHint === "string" && restApply.focusHint.length > 0);
+ok(
+  "the week's overview focus moved off Rest",
+  RestToggle.isRestFocusText(RestToggle.overviewFocus(week, "sun")) === false
+);
+ok(
+  "and the renderer now calls it a session",
+  Normalize.isRestDay("sun", restApply.day, week) === false
+);
 
 const protectedBlock = AdminDayEdit.protectPendingDayParts(
   { weeks: [{ days: { mon: { parts: sanitized } } }] },

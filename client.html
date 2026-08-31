@@ -123,6 +123,8 @@ button.ghost:hover{color:var(--text)}
 .wm-line{color:var(--text-meta);font-size:.7rem;letter-spacing:.4px;margin:10px 0 0;
   padding-top:8px;border-top:1px dashed var(--line)}
 
+.rest-card{text-align:center;padding:18px 10px}
+.rest-card .rest-title{font-family:var(--font-display);font-size:1.15rem;letter-spacing:2px;color:var(--coach);margin:0 0 6px}
 .editing textarea{margin:0 0 10px}
 .edit-hint{color:var(--text-meta);font-size:.78rem;margin:0 0 8px}
 
@@ -215,6 +217,9 @@ button.ghost:hover{color:var(--text)}
 
 <script src="lib/normalize-pprog-block.js"></script>
 <script src="lib/pprog-display.js"></script>
+<!-- Rest day ⇄ session, both directions. A day is REST by its overview focus first,
+     so this has to move the focus and the parts together. -->
+<script src="lib/day-rest-toggle.js"></script>
 <!-- The SAME file the server reads, so page and audit trail cannot disagree. -->
 <script src="lib/client-terms.js"></script>
 <script>
@@ -450,6 +455,7 @@ button.ghost:hover{color:var(--text)}
     var host = el("days");
     if (!week) { host.innerHTML = '<div class="card muted">No weeks in this program yet.</div>'; return; }
     var D = window.PprogDisplay;
+    var RT = window.DayRestToggle;
     var keys = (D && D.DAY_KEYS) || ["sun","mon","tue","wed","thu","fri","sat"];
     var labels = (D && D.DAY_LABELS) || {};
     var html = "";
@@ -458,16 +464,31 @@ button.ghost:hover{color:var(--text)}
       var day = (week.days && week.days[k]) || { parts: [] };
       var focus = focusFor(week, k);
       var editing = state.editing === state.week + ":" + k;
+      /* A day is REST by its overview focus first, so ask the shared toggle rather
+         than guessing from the parts (see lib/day-rest-toggle.js). */
+      var isRest = RT ? RT.dayIsRest(week, k) : !(day.parts && day.parts.length);
       var body;
       if (editing) {
         body =
           '<div class="editing">' +
             '<p class="edit-hint">Leave a blank line between parts. The first line of each part is its title.</p>' +
-            '<textarea id="ed-' + k + '" aria-label="Edit ' + esc(k) + '">' + esc(partsToText(day.parts)) + "</textarea>" +
+            '<textarea id="ed-' + k + '" aria-label="Edit ' + esc(k) + '">' +
+              esc(isRest ? "" : partsToText(day.parts)) + "</textarea>" +
             '<div class="row">' +
               '<button type="button" data-save="' + k + '">Save</button>' +
+              (isRest
+                ? ""
+                : '<button type="button" class="ghost" data-rest="' + k + '">Make it a rest day</button>') +
               '<button type="button" class="ghost" data-cancel="' + k + '">Cancel</button>' +
             "</div>" +
+          "</div>";
+      } else if (isRest) {
+        /* Rest still LOOKS like rest — and still has the Edit button above it, so it
+           can be turned into a session. */
+        body =
+          '<div class="rest-card">' +
+            '<div class="rest-title">REST DAY</div>' +
+            '<p class="meta" style="margin:0">Tap Edit to put a session here instead.</p>' +
           "</div>";
       } else if (D && D.renderDayPartsHtml) {
         body = D.renderDayPartsHtml(day.parts || [], day);
@@ -491,17 +512,21 @@ button.ghost:hover{color:var(--text)}
     host.innerHTML = html;
   }
 
-  function saveDay(dayKey) {
+  function saveDay(dayKey, makeRest) {
     if (state.busy) return;
     var ta = el("ed-" + dayKey);
-    if (!ta) return;
-    var parts = textToParts(ta.value, dayKey);
+    if (!ta && !makeRest) return;
+    var parts = makeRest ? [] : textToParts(ta.value, dayKey);
+    if (!makeRest && !parts.length) {
+      banner("warn", "Nothing typed. Use the rest-day button if that is what you meant.");
+      return;
+    }
     state.busy = true;
     banner("", "");
     api({
       action: "save",
       expectedVersion: state.program.version,
-      edits: [{ weekIndex: state.week, dayKey: dayKey, parts: parts }],
+      edits: [{ weekIndex: state.week, dayKey: dayKey, rest: makeRest === true, parts: parts }],
     }).then(function (r) {
       state.busy = false;
       if (r.status === 409) {
@@ -540,6 +565,8 @@ button.ghost:hover{color:var(--text)}
     if (c) { state.editing = null; renderDays(); return; }
     var s = t.getAttribute("data-save");
     if (s) { saveDay(s); return; }
+    var r = t.getAttribute("data-rest");
+    if (r) { saveDay(r, true); return; }
   });
 
   /* Anything copied out carries where it came from. Invisible until pasted. */

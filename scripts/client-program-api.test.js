@@ -383,6 +383,74 @@ async function main() {
     JSON.stringify(staleClient.body.program).indexOf("900") < 0
   );
 
+  /* --- rest day ⇄ session, through the real endpoint --------------- */
+
+  const RT = require("../lib/day-rest-toggle.js");
+  const Normalize = require("../lib/normalize-pprog-block.js");
+
+  /* Sunday was never written, so it starts as rest. */
+  const beforeRest = await H.client(laptopToken, { action: "read", programId: pid });
+  const sunWeek = beforeRest.body.program.weeks[0];
+  ok("an unwritten day starts as rest", RT.dayIsRest(sunWeek, "sun") === true);
+
+  /* The client turns it into a session. */
+  const toSession = await H.client(laptopToken, {
+    action: "save",
+    programId: pid,
+    expectedVersion: beforeRest.body.program.version,
+    edits: [
+      {
+        weekIndex: 1,
+        dayKey: "sun",
+        parts: [{ id: "sun-0", title: "Engine", lines: ["Row 2k", "Rest 3:00", "Row 2k"] }],
+      },
+    ],
+  });
+  ok("a rest day can be turned into a session", toSession.status === 200 && toSession.body.ok === true);
+  const nowSession = toSession.body.program.weeks[0];
+  ok("the session content landed", nowSession.days.sun.parts[0].lines[0] === "Row 2k");
+  /* The assertion that matters: the RENDERER must agree, which needs the overview
+     focus to have moved too — a parts-only write would fail here. */
+  ok(
+    "the renderer now shows a session, not rest",
+    Normalize.isRestDay("sun", nowSession.days.sun, nowSession) === false
+  );
+  ok("the overview focus moved off Rest", RT.overviewFocus(nowSession, "sun") !== "Rest");
+  ok("the change is flagged for the owner", toSession.body.changed.indexOf("w1:sun") >= 0);
+
+  /* And back the other way — the direction the owner asked for second. */
+  const toRest = await H.client(laptopToken, {
+    action: "save",
+    programId: pid,
+    expectedVersion: toSession.body.program.version,
+    edits: [{ weekIndex: 1, dayKey: "sun", rest: true }],
+  });
+  ok("a session can be turned back into a rest day", toRest.status === 200 && toRest.body.ok === true);
+  const backToRest = toRest.body.program.weeks[0];
+  ok("the workout is gone", backToRest.days.sun.parts.length === 1);
+  ok(
+    "the renderer shows rest again",
+    Normalize.isRestDay("sun", backToRest.days.sun, backToRest) === true
+  );
+  ok("a rest edit needs no parts array", true);
+
+  /* The owner can do the same from their side. */
+  const ownerRest = await H.owner({ action: "read", programId: pid });
+  const ownerWeeks = JSON.parse(JSON.stringify(ownerRest.body.program.weeks));
+  RT.makeSession(ownerWeeks[0], "sun", [{ id: "sun-0", title: "Squat", lines: ["Back squat 5x5"] }]);
+  const ownerSaved = await H.owner({
+    action: "save",
+    programId: pid,
+    expectedVersion: ownerRest.body.program.version,
+    program: { weeks: ownerWeeks },
+  });
+  ok("the owner can also replace a rest day", ownerSaved.status === 200);
+  const ownerWeek = ownerSaved.body.program.weeks[0];
+  ok(
+    "and the renderer agrees it is a session",
+    Normalize.isRestDay("sun", ownerWeek.days.sun, ownerWeek) === false
+  );
+
   /* --- revoking a device ------------------------------------------ */
 
   const devId = ownerRead.body.access.devices[0].id;

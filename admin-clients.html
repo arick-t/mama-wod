@@ -232,6 +232,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
 
 <script src="lib/normalize-pprog-block.js"></script>
 <script src="lib/pprog-display.js"></script>
+<script src="lib/day-rest-toggle.js"></script>
 <!-- The same questionnaire definition the server validates against. -->
 <script src="lib/client-intake.js"></script>
 <script>
@@ -489,6 +490,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     if (!host) return;
     if (!week) { host.innerHTML = '<p class="muted">אין שבועות.</p>'; return; }
     var D = window.PprogDisplay;
+    var RT = window.DayRestToggle;
     var keys = (D && D.DAY_KEYS) || ["sun","mon","tue","wed","thu","fri","sat"];
     var labels = (D && D.DAY_LABELS) || {};
     var unread = (S.program && S.program.unreadDays) || {};
@@ -499,17 +501,36 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       var tag = "w" + S.week + ":" + k;
       var isUnread = unread[tag] !== undefined;
       var editing = S.editing === tag;
-      var body = editing
-        ? '<textarea id="aed-' + k + '">' + esc(partsToText(day.parts)) + "</textarea>" +
-          '<div class="row" style="margin-top:8px"><button class="sm" type="button" data-asave="' + k + '">שמור</button>' +
-          '<button class="ghost sm" type="button" data-acancel="1">בטל</button></div>'
-        : (D && D.renderDayPartsHtml ? D.renderDayPartsHtml(day.parts || [], day) : "");
+      /* Ask the shared toggle, not the parts — a day is REST by its overview focus
+         first (lib/day-rest-toggle.js). */
+      var isRest = RT ? RT.dayIsRest(week, k) : !(day.parts && day.parts.length);
+      var body;
+      if (editing) {
+        body =
+          '<textarea id="aed-' + k + '">' + esc(isRest ? "" : partsToText(day.parts)) + "</textarea>" +
+          '<div class="row" style="margin-top:8px">' +
+            '<button class="sm" type="button" data-asave="' + k + '">שמור</button>' +
+            (isRest
+              ? ""
+              : '<button class="ghost sm" type="button" data-arest="' + k + '">הפוך ליום מנוחה</button>') +
+            '<button class="ghost sm" type="button" data-acancel="1">בטל</button>' +
+          "</div>";
+      } else if (isRest) {
+        body =
+          '<div style="text-align:center;padding:14px 8px">' +
+            '<div style="font-family:var(--font-display);letter-spacing:2px;color:var(--coach)">REST DAY</div>' +
+            '<p class="meta" style="margin:6px 0 0">לחץ ״כתוב / ערוך״ כדי לשים כאן אימון.</p>' +
+          "</div>";
+      } else {
+        body = D && D.renderDayPartsHtml ? D.renderDayPartsHtml(day.parts || [], day) : "";
+      }
       html += '<div class="day' + (isUnread ? " unread" : "") + '">' +
         '<div class="day-head">' +
           (isUnread ? '<span class="dot"></span>' : "") +
           '<span class="day-name">' + esc(labels[k] || k) + "</span>" +
           (day.modified ? '<span class="badge">שונה ע"י הלקוח</span>' : "") +
           '<span class="spacer"></span>' +
+          /* The pencil appears on rest days too — that is the point (21.7). */
           (editing ? "" : '<button class="ghost sm" type="button" data-aedit="' + k + '">כתוב / ערוך</button>') +
         "</div>" +
         '<div class="day-body">' + body + "</div></div>";
@@ -531,13 +552,26 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     });
   }
 
-  function saveDay(dayKey) {
+  function saveDay(dayKey, makeRest) {
     var ta = el("aed-" + dayKey);
-    if (!ta) return;
+    if (!ta && !makeRest) return;
     var week = currentWeek();
     var weeks = JSON.parse(JSON.stringify(S.program.weeks));
     var wi = S.program.weeks.indexOf(week);
-    weeks[wi].days[dayKey] = { parts: textToParts(ta.value, dayKey) };
+    /* Both directions through the shared toggle, so the overview focus moves with
+       the parts. Writing parts alone leaves a session that still renders as rest. */
+    if (makeRest) {
+      if (RT) RT.makeRest(weeks[wi], dayKey);
+      else weeks[wi].days[dayKey] = { parts: [] };
+    } else {
+      var parts = textToParts(ta.value, dayKey);
+      if (!parts.length) {
+        banner("warn", "לא הוקלד כלום. אם התכוונת ליום מנוחה — יש כפתור נפרד.");
+        return;
+      }
+      if (RT) RT.makeSession(weeks[wi], dayKey, parts);
+      else weeks[wi].days[dayKey] = { parts: parts };
+    }
     api({
       action: "save", programId: S.program.programId,
       expectedVersion: S.program.version, program: { weeks: weeks },
@@ -587,6 +621,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     }
     if (g("data-acancel")) { S.editing = null; renderDetail(); return; }
     if (g("data-asave")) { saveDay(g("data-asave")); return; }
+    if (g("data-arest")) { saveDay(g("data-arest"), true); return; }
     if (g("data-savemeta")) { saveMeta(); return; }
 
     if (g("data-rename")) {
