@@ -101,50 +101,28 @@ ok("terms gate still runs", /code: "TERMS_REQUIRED"/.test(pc));
 ok("cost caps still run", /costCapHttpPayload\(costGate\)/.test(pc));
 ok("programming stays Gemini-only", pc.includes("geminiOnly: true"));
 
-/* --- The app: floating coach gone, intake untouched --------------------- */
+/* --- The app no longer carries the coach at all (21.7) ------------------- */
 
 const index = fs.readFileSync(path.join(root, "index.html"), "utf8");
 
-/* The floating whole-brick coach is removed, not merely hidden. */
-ok("no floating coach button markup", !/id="pprogCoachFab"/.test(index));
-ok("no floating coach panel markup", !/id="pprogCoachFloat"/.test(index));
-ok("no floating coach tip markup", !/id="pprogCoachFabTip"/.test(index));
-ok("no whole-brick scope copy left", !/Coach · whole brick/.test(index));
-ok("chat is never relocated into a float host", !/pprogEnsureCoachFloatHost/.test(index));
+/* 21.6 removed the floating whole-brick coach, and the assertions that used to sit
+ * here guarded the intake chat that stayed behind. 21.7 moved intake into the admin
+ * module and took the coach out of the app entirely — so guarding app-side intake
+ * markup would now pin the OLD shape in place instead of protecting anything.
+ *
+ * The app-side checks moved to scripts/app-coach-removed.test.js, which asserts the
+ * stronger property: tab, pane and every boot path are gone, and the aggregator
+ * still works.
+ *
+ * What stays here is POL-028 itself — the server-side gate — because that is what
+ * protects the endpoint regardless of which surface calls it. */
+ok("the coach pane is gone from the app", !/id="pprog-tab"/.test(index));
+ok("the floating coach is gone from the app", !/id="pprogCoachFab"/.test(index));
+ok("the coach boot path is gated off", /if \(!PPROG_TAB_ENABLED\) return;/.test(index));
 
-/* Old call sites must find a no-op, never an undefined name. */
-ok("float open is a stub", /function openPprogCoachFloat\(\) \{\}/.test(index));
-ok("float close is a stub", /function closePprogCoachFloat\(\) \{\}/.test(index));
-ok("fab visibility is a stub", /function syncPprogCoachFabVisibility\(\) \{\}/.test(index));
-ok("fab bind is a stub", /function bindPprogCoachFab\(\) \{\}/.test(index));
-ok(
-  "the doc-click flag is still declared",
-  /var pprogCoachFloatIgnoreDocClick = false;/.test(index)
-);
-
-/* INTAKE MUST SURVIVE — it is the only way an athlete gets a plan at all. */
-ok("intake block still exists", /id="pprogIntakeBlock"/.test(index));
-ok("intake chat still exists", /id="pprogChat"/.test(index));
-ok("intake chat input still exists", /id="pprogChatInput"/.test(index));
-ok("chat is restored to intake while intake runs", /function pprogRestoreChatToIntake/.test(index));
-ok("brick chat is hidden after intake", /function pprogHideBrickChat/.test(index));
-
-/* The day box — the athlete's remaining span of control — must still be wired. */
-ok("day box still calls revise_day", /action: "revise_day"/.test(index));
-
-/* The admin pull is now the only way a plan changes — it must have more than
-   one trigger, since 21.6 removed one of the two it had. */
-ok(
-  "admin changes are pulled when the app resumes",
-  /function pprogPullAdminChangesOnResume/.test(index) &&
-    /addEventListener\("visibilitychange", pprogPullAdminChangesOnResume\)/.test(index)
-);
-ok(
-  "resume pull is throttled by the existing guard",
-  /pprogPushUpgradePullAt && now - pprogPushUpgradePullAt < 20000/.test(index)
-);
-
-/* The retired generator must not creep back into the app shell. */
-ok("no legacy generator tab", !/aibeta/.test(index));
+/* The gate must hold with no app surface left, because a stale installed mobile
+   build still carries the old screens and can still POST to the endpoint. */
+ok("the server gate does not depend on the app", /evaluateAthleteScopeGate/.test(pc));
+ok("the gate still runs before any provider call", pc.indexOf("evaluateAthleteScopeGate") < pc.indexOf("result = programming"));
 
 console.log("All POL-028 athlete-scope checks passed.");

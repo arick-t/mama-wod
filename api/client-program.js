@@ -36,6 +36,11 @@ const { resolveAppMailTo } = require("../lib/app-mail.js");
    the program itself, so this works on serverless with no scheduler (checklist a.2.3). */
 const EDIT_MAIL_QUIET_MS = 10 * 60 * 1000;
 
+/* Oldest bundled app build still considered fine. Deliberately behind the current
+   release: nothing about 21.7 breaks an older install, so nobody is nagged yet.
+   Raise it only when a stale bundle would actually misbehave. */
+const MIN_APP_VERSION = String(process.env.MIN_APP_VERSION || "21.0").trim();
+
 const store = ProgramStore.createProgramStore({
   getJson: JsonStore.getJson,
   putJson: JsonStore.putJson,
@@ -443,6 +448,10 @@ async function handler(req, res) {
       service: "client-program",
       /* Stated in the health payload so it is checkable from outside, not just claimed. */
       aiSurface: "none",
+      /* An installed mobile build carries its own bundled copy of index.html and can
+         be arbitrarily old. Raise this only when an old bundle would genuinely
+         misbehave — it puts an "update the app" bar on every older install. */
+      minAppVersion: MIN_APP_VERSION,
       termsVersion: Terms.TERMS_VERSION,
       deviceCap: Access.MAX_DEVICES,
       storage: JsonStore.storageInfo ? JsonStore.storageInfo() : null,
