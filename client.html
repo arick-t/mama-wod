@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- iOS: viewport-fit=cover so the notch inset can be honoured; maximum-scale left
+     open on purpose — pinning it blocks zoom for anyone who needs it. -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>DUCK-WOD · Training Program</title>
+<link rel="icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* Same tokens as the app — this is a third surface of one product, not a lookalike. */
+:root{
+  --bg:#121212;
+  --bg-elev:#181818;
+  --bg-card:#1a1a1a;
+  --bg-panel:#1e1e1e;
+  --text:#f5f2ea;
+  --text-muted:#b0aaa0;
+  --text-meta:#8a8580;
+  --brand:#E8451A;
+  --brand-gold:#F5C518;
+  --coach:#9b6bb8;
+  --coach-deep:#6b3d86;
+  --part:#6fafa4;
+  --note:#7eb8c9;
+  --line:#2c2c2c;
+  --font-ui:'Heebo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-display:'Oswald','Heebo',sans-serif;
+  --safe-t:env(safe-area-inset-top,0px);
+  --safe-b:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;font-family:var(--font-ui);background:var(--bg);color:var(--text);
+  line-height:1.55;font-size:15px;
+  padding:calc(14px + var(--safe-t)) 14px calc(28px + var(--safe-b));
+  /* iOS Safari: 100vh is taller than the visible area. dvh where supported. */
+  min-height:100vh;min-height:100dvh;
+}
+.wrap{max-width:760px;margin:0 auto}
+
+header.top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 18px}
+.logo{font-family:var(--font-display);font-size:1.5rem;letter-spacing:1px;color:var(--brand);margin:0}
+.sub{font-size:.74rem;letter-spacing:1.4px;color:var(--text-meta);text-transform:uppercase}
+
+.card{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:0 0 14px}
+h2{font-family:var(--font-display);font-size:1.1rem;margin:0 0 10px;letter-spacing:.5px}
+p{margin:0 0 10px}
+.muted{color:var(--text-muted)}
+.meta{color:var(--text-meta);font-size:.82rem}
+
+/* 16px minimum or iOS zooms the whole page when a field is focused. */
+input[type=text],input[type=tel],textarea{
+  width:100%;font-family:var(--font-ui);font-size:16px;color:var(--text);
+  background:var(--bg-panel);border:1px solid var(--line);border-radius:8px;padding:12px;
+}
+textarea{min-height:120px;resize:vertical;line-height:1.6}
+input:focus,textarea:focus{outline:2px solid var(--coach);outline-offset:1px}
+
+button{
+  font-family:var(--font-ui);font-size:15px;font-weight:500;cursor:pointer;
+  background:var(--brand);color:#fff;border:0;border-radius:8px;
+  /* 44px is the smallest reliable touch target on a phone. */
+  min-height:44px;padding:11px 18px;
+}
+button:disabled{opacity:.5;cursor:default}
+button.ghost{background:transparent;color:var(--text-muted);border:1px solid var(--line)}
+button.ghost:hover{color:var(--text)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+.code-input{letter-spacing:.5em;text-align:center;font-size:24px;font-weight:700}
+.err{color:var(--brand);font-size:.88rem;margin:8px 0 0;min-height:1.2em}
+.okmsg{color:var(--part);font-size:.88rem;margin:8px 0 0;min-height:1.2em}
+
+/* --- terms ------------------------------------------------------------- */
+.terms-scroll{max-height:46vh;overflow:auto;background:var(--bg-panel);border:1px solid var(--line);
+  border-radius:8px;padding:14px;margin:0 0 12px;-webkit-overflow-scrolling:touch}
+.terms-title{font-family:var(--font-display);font-size:1rem;margin:0 0 4px}
+.terms-sub{color:var(--text-meta);font-size:.8rem;margin:0 0 14px}
+.clause{margin:0 0 14px}
+.clause h4{margin:0 0 5px;font-size:.9rem;color:var(--brand-gold);font-weight:700}
+.clause p{margin:0;font-size:.86rem;color:var(--text-muted);line-height:1.6}
+.terms-he{direction:rtl;text-align:right;border-top:1px solid var(--line);margin-top:18px;padding-top:14px}
+.agree-row{display:flex;gap:10px;align-items:flex-start;margin:0 0 14px}
+.agree-row input{width:20px;height:20px;margin:2px 0 0;flex:0 0 auto;accent-color:var(--brand)}
+.agree-row label{font-size:.88rem;color:var(--text)}
+
+/* --- program ----------------------------------------------------------- */
+.weekbar{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;-webkit-overflow-scrolling:touch}
+.weekbar button{min-height:38px;padding:7px 14px;background:var(--bg-panel);color:var(--text-muted);
+  border:1px solid var(--line);white-space:nowrap}
+.weekbar button.on{background:var(--coach-deep);color:#fff;border-color:var(--coach)}
+
+.day{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;margin:0 0 12px;overflow:hidden}
+.day-head{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg-elev);
+  border-bottom:1px solid var(--line);flex-wrap:wrap}
+.day-name{font-family:var(--font-display);font-size:1rem;letter-spacing:.5px}
+.day-focus{color:var(--text-meta);font-size:.8rem}
+.day-body{padding:12px 14px}
+.day-actions{margin-left:auto;display:flex;gap:8px}
+.day-actions button{min-height:36px;padding:6px 12px;font-size:13px}
+
+/* Reused from the app's part rendering so pprog-display output looks native here. */
+.section{margin:0 0 14px}
+.section-title-row{display:flex;align-items:center;gap:8px;margin:0 0 6px}
+.section-title{font-family:var(--font-display);font-size:.92rem;color:var(--part);letter-spacing:.4px}
+.section-line{margin:0 0 3px;font-size:.9rem}
+.pprog-part-note{color:var(--note);font-size:.85rem;font-style:italic;margin:0 0 5px}
+.pprog-part-format{color:var(--brand-gold);font-size:.88rem;font-weight:500;margin:0 0 5px}
+.pprog-empty{color:var(--text-meta);font-style:italic}
+.pprog-modified-flag{display:inline-block;margin-left:8px;padding:1px 7px;border-radius:10px;
+  background:rgba(232,69,26,.18);color:var(--brand);font-size:.62rem;font-weight:700;letter-spacing:.8px;
+  vertical-align:middle}
+
+/* --- watermark: one quiet identity line, never a diagonal overlay on screen.
+       A wash across the text hurts reading on a phone, which is where this is
+       mostly used. The full mark appears only in print. ---------------------- */
+.wm-line{color:var(--text-meta);font-size:.7rem;letter-spacing:.4px;margin:10px 0 0;
+  padding-top:8px;border-top:1px dashed var(--line)}
+
+.editing textarea{margin:0 0 10px}
+.edit-hint{color:var(--text-meta);font-size:.78rem;margin:0 0 8px}
+
+.banner{border-radius:10px;padding:12px 14px;margin:0 0 14px;font-size:.9rem}
+.banner.warn{background:rgba(245,197,24,.12);border:1px solid rgba(245,197,24,.4);color:var(--brand-gold)}
+.banner.bad{background:rgba(232,69,26,.12);border:1px solid rgba(232,69,26,.45);color:#ffb4a0}
+
+@media (max-width:520px){
+  body{font-size:14.5px;padding-left:11px;padding-right:11px}
+  .logo{font-size:1.3rem}
+  .day-actions{margin-left:0;width:100%}
+  .day-actions button{flex:1}
+}
+
+/* --- print / share: this is the copy that reaches his athletes, so it carries
+       the full watermark and drops every control. ---------------------------- */
+@media print{
+  :root{--bg:#fff;--bg-card:#fff;--bg-elev:#fff;--bg-panel:#fff;--text:#000;
+        --text-muted:#333;--text-meta:#555;--line:#bbb}
+  body{background:#fff;color:#000;padding:0;font-size:11.5pt}
+  button,.weekbar,.day-actions,#authView,#termsView,.banner,#printBtn{display:none!important}
+  .card,.day{border:1px solid #bbb;break-inside:avoid;page-break-inside:avoid;margin-bottom:10pt}
+  .day-head{background:#f2f2f2}
+  .section-title{color:#000}
+  .pprog-part-note,.pprog-part-format{color:#333}
+  .print-mark{display:block!important;position:fixed;bottom:6pt;left:0;right:0;text-align:center;
+    font-size:8.5pt;color:#666}
+  .print-head{display:block!important;margin:0 0 10pt;padding:0 0 6pt;border-bottom:2px solid #000}
+  .wm-line{color:#555}
+}
+.print-mark,.print-head{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="print-head">
+    <strong id="printTitle">DUCK-WOD — Training Program</strong>
+    <div id="printFor" class="meta"></div>
+  </div>
+
+  <header class="top">
+    <h1 class="logo">DUCK-WOD</h1>
+    <span class="sub" id="headSub">Training Program</span>
+  </header>
+
+  <div id="bootErr"></div>
+
+  <!-- 1 · code entry ------------------------------------------------------ -->
+  <section id="authView" class="card" hidden>
+    <h2>Enter your access code</h2>
+    <p class="muted">Your coach sent you a 6-digit code. It works once — after that this
+      device stays signed in.</p>
+    <input id="codeInput" class="code-input" type="tel" inputmode="numeric" autocomplete="one-time-code"
+           maxlength="6" placeholder="——————" aria-label="Six digit access code">
+    <div class="row" style="margin-top:12px">
+      <button id="codeBtn" type="button">Continue</button>
+    </div>
+    <p class="err" id="codeErr" role="alert"></p>
+  </section>
+
+  <!-- 2 · terms ---------------------------------------------------------- -->
+  <section id="termsView" class="card" hidden>
+    <h2>Before we start</h2>
+    <div class="terms-scroll" id="termsScroll" tabindex="0"></div>
+    <div class="agree-row">
+      <input id="agreeBox" type="checkbox">
+      <label for="agreeBox" id="agreeLabel"></label>
+    </div>
+    <div class="row">
+      <button id="agreeBtn" type="button" disabled></button>
+    </div>
+    <p class="err" id="termsErr" role="alert"></p>
+  </section>
+
+  <!-- 3 · the program ---------------------------------------------------- -->
+  <section id="programView" hidden>
+    <div id="progBanner"></div>
+    <div class="weekbar" id="weekBar" role="tablist" aria-label="Weeks"></div>
+    <div id="days"></div>
+    <div class="row" style="margin-top:6px">
+      <button id="printBtn" class="ghost" type="button">Print / share</button>
+      <button id="refreshBtn" class="ghost" type="button">Refresh</button>
+    </div>
+    <p class="meta" id="progFoot" style="margin-top:14px"></p>
+  </section>
+
+  <div class="print-mark" id="printMark"></div>
+</div>
+
+<script src="lib/normalize-pprog-block.js"></script>
+<script src="lib/pprog-display.js"></script>
+<!-- The SAME file the server reads, so page and audit trail cannot disagree. -->
+<script src="lib/client-terms.js"></script>
+<script>
+/* DUCK-WOD client view.
+ *
+ * This page has NO path to an AI provider — it only ever talks to
+ * /api/client-program, which has none either. The client's editing power is
+ * deliberate (they are a coach, master of their own program); what they must
+ * never see is the owner's pricing or unread queue, and that is enforced on the
+ * server by lib/client-view-payload.js, not here.
+ *
+ * The device token is the credential. It is kept in localStorage and sent as a
+ * header, never in the URL, so it stays out of history, logs and shared links.
+ */
+(function () {
+  "use strict";
+
+  var API_BASE = (function () {
+    /* Static site is on Pages; every /api/* call goes to Vercel. */
+    var host = String(location.hostname || "");
+    if (host === "localhost" || host === "127.0.0.1") return "";
+    return "https://mama-wod.vercel.app";
+  })();
+
+  var params = new URLSearchParams(location.search);
+  var PROGRAM_ID = String(params.get("program") || params.get("p") || "").slice(0, 60);
+  var TOKEN_KEY = "dw_client_token_" + PROGRAM_ID;
+
+  var state = { program: null, week: 1, editing: null, watermark: null, busy: false };
+
+  function el(id) { return document.getElementById(id); }
+  function show(id, on) { var n = el(id); if (n) n.hidden = !on; }
+  function esc(s) {
+    return (window.PprogDisplay && window.PprogDisplay.esc)
+      ? window.PprogDisplay.esc(s)
+      : String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+        });
+  }
+
+  function token() { try { return localStorage.getItem(TOKEN_KEY) || ""; } catch (e) { return ""; } }
+  function setToken(t) { try { if (t) localStorage.setItem(TOKEN_KEY, t); } catch (e) {} }
+  function clearToken() { try { localStorage.removeItem(TOKEN_KEY); } catch (e) {} }
+
+  function api(body, useToken) {
+    var headers = { "Content-Type": "application/json" };
+    var t = useToken === false ? "" : token();
+    if (t) headers["X-Client-Token"] = t;
+    return fetch(API_BASE + "/api/client-program", {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(Object.assign({ as: "client", programId: PROGRAM_ID }, body)),
+    })
+      .then(function (r) {
+        return r.json().catch(function () { return null; }).then(function (j) {
+          return { status: r.status, body: j || {} };
+        });
+      })
+      .catch(function () {
+        return { status: 0, body: { error: "No connection. Check your signal and try again." } };
+      });
+  }
+
+  function banner(kind, msg) {
+    var n = el("progBanner");
+    if (!n) return;
+    n.innerHTML = msg ? '<div class="banner ' + kind + '">' + esc(msg) + "</div>" : "";
+  }
+
+  /* --- 1 · code ---------------------------------------------------------- */
+
+  function openAuth(msg) {
+    show("authView", true); show("termsView", false); show("programView", false);
+    if (msg) el("codeErr").textContent = msg;
+    var i = el("codeInput");
+    if (i) { i.value = ""; try { i.focus(); } catch (e) {} }
+  }
+
+  function submitCode() {
+    var raw = String(el("codeInput").value || "").replace(/\D/g, "");
+    el("codeErr").textContent = "";
+    if (raw.length !== 6) { el("codeErr").textContent = "The code is 6 digits."; return; }
+    var btn = el("codeBtn");
+    btn.disabled = true; btn.textContent = "Checking…";
+    api({ action: "claim", code: raw, deviceLabel: navigator.platform || "" }, false)
+      .then(function (r) {
+        btn.disabled = false; btn.textContent = "Continue";
+        if (r.status !== 200 || !r.body.ok) {
+          el("codeErr").textContent = r.body.error || "That code did not work.";
+          return;
+        }
+        setToken(r.body.clientToken);
+        /* Signature belongs to the account, so a second device skips this. */
+        if (r.body.signed) loadProgram(); else openTerms();
+      });
+  }
+
+  /* --- 2 · terms -------------------------------------------------------- */
+
+  function openTerms() {
+    show("authView", false); show("termsView", true); show("programView", false);
+    renderTerms();
+  }
+
+  function clauseHtml(sections) {
+    return (sections || []).map(function (s) {
+      return '<div class="clause"><h4>' + esc(s.heading) + "</h4><p>" + esc(s.body) + "</p></div>";
+    }).join("");
+  }
+
+  function renderTerms() {
+    var t = window.CLIENT_TERMS;
+    if (!t) {
+      el("termsErr").textContent = "Terms could not be loaded. Please reload the page.";
+      return;
+    }
+    el("termsScroll").innerHTML =
+      '<div class="terms-title">' + esc(t.TITLE_EN) + "</div>" +
+      '<div class="terms-sub">' + esc(t.SUBTITLE_EN) + "</div>" +
+      clauseHtml(t.SECTIONS_EN) +
+      '<div class="terms-he">' +
+        '<div class="terms-title">' + esc(t.TITLE_HE) + "</div>" +
+        '<div class="terms-sub">' + esc(t.SUBTITLE_HE) + "</div>" +
+        clauseHtml(t.SECTIONS_HE) +
+      "</div>";
+    el("agreeLabel").textContent = t.CONFIRM_LABEL;
+    el("agreeBtn").textContent = t.AGREE_BUTTON;
+  }
+
+  function submitAgree() {
+    if (!el("agreeBox").checked) return;
+    var btn = el("agreeBtn");
+    btn.disabled = true;
+    el("termsErr").textContent = "";
+    api({ action: "sign", accepted: true, signedAtClient: new Date().toISOString() })
+      .then(function (r) {
+        btn.disabled = false;
+        if (r.status !== 200 || !r.body.ok) {
+          el("termsErr").textContent = r.body.error || "Could not record your acceptance.";
+          return;
+        }
+        loadProgram();
+      });
+  }
+
+  /* --- 3 · the program -------------------------------------------------- */
+
+  function loadProgram() {
+    show("authView", false); show("termsView", false);
+    api({ action: "read" }).then(function (r) {
+      if (r.status === 401) { clearToken(); openAuth("This device is no longer authorised. Ask your coach for a new code."); return; }
+      if (r.status === 403) { openTerms(); return; }
+      if (r.status === 404) { el("bootErr").innerHTML = '<div class="banner bad">This link is not active. Ask your coach for a new one.</div>'; return; }
+      if (r.status !== 200 || !r.body.ok) {
+        el("bootErr").innerHTML = '<div class="banner bad">' + esc(r.body.error || "Could not load your program.") + "</div>";
+        return;
+      }
+      el("bootErr").innerHTML = "";
+      state.program = r.body.program;
+      state.watermark = r.body.watermark || null;
+      show("programView", true);
+      banner("", "");
+      if (r.body.fromCache) banner("warn", "Showing the last version saved on the server — your connection looks unstable.");
+      renderWeekBar();
+      renderDays();
+      renderChrome();
+    });
+  }
+
+  function renderChrome() {
+    var wm = state.watermark || {};
+    var name = wm.clientName || "";
+    el("headSub").textContent = name ? "Program for " + name : "Training Program";
+    el("printFor").textContent = name ? "Prepared for " + name : "";
+    el("printTitle").textContent = "DUCK-WOD — Training Program";
+    /* The mark that travels onto the copy his athletes receive. */
+    el("printMark").textContent =
+      "Prepared for " + (name || "client") +
+      " · DUCK-WOD · " + new Date().toLocaleDateString() +
+      " · Not for redistribution";
+    var p = state.program || {};
+    el("progFoot").textContent = "Version " + (p.version || "?") +
+      (p.updatedAt ? " · last change " + new Date(p.updatedAt).toLocaleString() : "");
+  }
+
+  function renderWeekBar() {
+    var weeks = (state.program && state.program.weeks) || [];
+    el("weekBar").innerHTML = weeks.map(function (w, i) {
+      var n = w.weekIndex || i + 1;
+      return '<button type="button" role="tab" data-week="' + n + '"' +
+        (n === state.week ? ' class="on" aria-selected="true"' : ' aria-selected="false"') +
+        ">Week " + n + (w.phase === "deload" ? " · deload" : "") + "</button>";
+    }).join("");
+  }
+
+  function currentWeek() {
+    var weeks = (state.program && state.program.weeks) || [];
+    for (var i = 0; i < weeks.length; i++) {
+      if ((weeks[i].weekIndex || i + 1) === state.week) return weeks[i];
+    }
+    return weeks[0] || null;
+  }
+
+  function focusFor(week, dayKey) {
+    var ov = (week && week.overview) || [];
+    for (var i = 0; i < ov.length; i++) if (ov[i] && ov[i].day === dayKey) return ov[i].focus || "";
+    return "";
+  }
+
+  function partsToText(parts) {
+    return (parts || []).map(function (p) {
+      var head = String(p.title || "").trim();
+      var lines = (p.lines || []).join("\n");
+      return head ? head + "\n" + lines : lines;
+    }).join("\n\n");
+  }
+
+  /* One textarea per day. A coach editing on a phone wants to type, not fight a
+     form builder — so: blank line separates parts, first line is the title. */
+  function textToParts(text, dayKey) {
+    var blocks = String(text || "").split(/\n\s*\n/);
+    var out = [];
+    for (var i = 0; i < blocks.length; i++) {
+      var lines = blocks[i].split("\n").map(function (l) { return l.trim(); }).filter(Boolean);
+      if (!lines.length) continue;
+      out.push({ id: dayKey + "-" + i, title: lines[0], lines: lines.slice(1).length ? lines.slice(1) : [lines[0]] });
+    }
+    return out;
+  }
+
+  function renderDays() {
+    var week = currentWeek();
+    var host = el("days");
+    if (!week) { host.innerHTML = '<div class="card muted">No weeks in this program yet.</div>'; return; }
+    var D = window.PprogDisplay;
+    var keys = (D && D.DAY_KEYS) || ["sun","mon","tue","wed","thu","fri","sat"];
+    var labels = (D && D.DAY_LABELS) || {};
+    var html = "";
+    for (var i = 0; i < keys.length; i++) {
+      var k = keys[i];
+      var day = (week.days && week.days[k]) || { parts: [] };
+      var focus = focusFor(week, k);
+      var editing = state.editing === state.week + ":" + k;
+      var body;
+      if (editing) {
+        body =
+          '<div class="editing">' +
+            '<p class="edit-hint">Leave a blank line between parts. The first line of each part is its title.</p>' +
+            '<textarea id="ed-' + k + '" aria-label="Edit ' + esc(k) + '">' + esc(partsToText(day.parts)) + "</textarea>" +
+            '<div class="row">' +
+              '<button type="button" data-save="' + k + '">Save</button>' +
+              '<button type="button" class="ghost" data-cancel="' + k + '">Cancel</button>' +
+            "</div>" +
+          "</div>";
+      } else if (D && D.renderDayPartsHtml) {
+        body = D.renderDayPartsHtml(day.parts || [], day);
+      } else {
+        body = '<div class="pprog-empty">Display library unavailable.</div>';
+      }
+      html +=
+        '<div class="day">' +
+          '<div class="day-head">' +
+            '<span class="day-name">' + esc(labels[k] || k) + "</span>" +
+            (focus ? '<span class="day-focus">' + esc(focus) + "</span>" : "") +
+            (day.modified ? '<span class="pprog-modified-flag">MODIFIED</span>' : "") +
+            (editing ? "" : '<span class="day-actions"><button type="button" class="ghost" data-edit="' + k + '">Edit</button></span>') +
+          "</div>" +
+          '<div class="day-body">' + body + "</div>" +
+        "</div>";
+    }
+    /* The quiet identity line — present, not intrusive. */
+    var wmName = (state.watermark && state.watermark.clientName) || "";
+    html += '<p class="wm-line">Prepared for ' + esc(wmName || "client") + " · DUCK-WOD</p>";
+    host.innerHTML = html;
+  }
+
+  function saveDay(dayKey) {
+    if (state.busy) return;
+    var ta = el("ed-" + dayKey);
+    if (!ta) return;
+    var parts = textToParts(ta.value, dayKey);
+    state.busy = true;
+    banner("", "");
+    api({
+      action: "save",
+      expectedVersion: state.program.version,
+      edits: [{ weekIndex: state.week, dayKey: dayKey, parts: parts }],
+    }).then(function (r) {
+      state.busy = false;
+      if (r.status === 409) {
+        /* Someone changed it while this was open. Show theirs rather than
+           overwrite it, and say so plainly. */
+        if (r.body.program) {
+          state.program = r.body.program;
+          state.editing = null;
+          renderDays(); renderChrome();
+        }
+        banner("warn", "Your coach changed this program while you had it open. The current version is shown — please make your change again.");
+        return;
+      }
+      if (r.status === 401) { clearToken(); openAuth("This device is no longer authorised."); return; }
+      if (r.status !== 200 || !r.body.ok) {
+        banner("bad", r.body.error || "Could not save. Please try again.");
+        return;
+      }
+      state.program = r.body.program;
+      state.editing = null;
+      renderDays(); renderChrome();
+      banner("warn", "");
+    });
+  }
+
+  /* --- events ---------------------------------------------------------- */
+
+  document.addEventListener("click", function (ev) {
+    var t = ev.target;
+    if (!t || !t.getAttribute) return;
+    var w = t.getAttribute("data-week");
+    if (w) { state.week = parseInt(w, 10) || 1; state.editing = null; renderWeekBar(); renderDays(); return; }
+    var e = t.getAttribute("data-edit");
+    if (e) { state.editing = state.week + ":" + e; renderDays(); return; }
+    var c = t.getAttribute("data-cancel");
+    if (c) { state.editing = null; renderDays(); return; }
+    var s = t.getAttribute("data-save");
+    if (s) { saveDay(s); return; }
+  });
+
+  /* Anything copied out carries where it came from. Invisible until pasted. */
+  document.addEventListener("copy", function (ev) {
+    try {
+      var sel = String(window.getSelection());
+      if (!sel || sel.length < 40) return;
+      var name = (state.watermark && state.watermark.clientName) || "client";
+      ev.clipboardData.setData("text/plain", sel + "\n\n— DUCK-WOD, prepared for " + name);
+      ev.preventDefault();
+    } catch (e) {}
+  });
+
+  /* A change from the coach's side is the only way this plan moves, so pull
+     whenever the page comes back to the foreground. */
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "visible" && state.program && !state.editing) loadProgram();
+  });
+
+  function boot() {
+    el("codeBtn").addEventListener("click", submitCode);
+    el("codeInput").addEventListener("keydown", function (ev) { if (ev.key === "Enter") submitCode(); });
+    el("agreeBox").addEventListener("change", function () { el("agreeBtn").disabled = !this.checked; });
+    el("agreeBtn").addEventListener("click", submitAgree);
+    el("printBtn").addEventListener("click", function () { window.print(); });
+    el("refreshBtn").addEventListener("click", function () { state.editing = null; loadProgram(); });
+
+    if (!PROGRAM_ID) {
+      el("bootErr").innerHTML = '<div class="banner bad">This link is incomplete. Ask your coach to resend it.</div>';
+      return;
+    }
+    if (token()) loadProgram(); else openAuth("");
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+</script>
+</body>
+</html>
