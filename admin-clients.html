@@ -92,6 +92,18 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
 .banner.warn{background:rgba(245,197,24,.12);border:1px solid rgba(245,197,24,.4);color:var(--brand-gold)}
 .banner.bad{background:rgba(232,69,26,.12);border:1px solid rgba(232,69,26,.45);color:#ffb4a0}
 .banner.good{background:rgba(111,175,164,.12);border:1px solid rgba(111,175,164,.4);color:var(--part)}
+/* Intake tabs (English, LTR — the questionnaire that defines English programming) */
+.itabs{display:flex;gap:6px;overflow-x:auto;padding:0 0 14px;-webkit-overflow-scrolling:touch}
+.itabs button{min-height:36px;padding:6px 13px;background:var(--bg-panel);color:var(--text-muted);
+  border:1px solid var(--line);white-space:nowrap;border-radius:8px;font-size:13.5px}
+.itabs button.on{background:var(--coach-deep);color:#fff;border-color:var(--coach)}
+.itabs button.done{border-color:var(--part);color:var(--part)}
+.itabs button.on.done{color:#fff}
+.ipane label.fld span{font-size:.82rem}
+.ipane textarea{min-height:120px}
+.wk-row{display:grid;grid-template-columns:70px 1fr;gap:9px;align-items:center;margin:0 0 8px}
+.wk-row span{color:var(--text-meta);font-size:.85rem}
+.wk-row input{margin:0}
 @media (max-width:600px){.grid2{grid-template-columns:1fr}}
 </style>
 </head>
@@ -118,24 +130,87 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
   <!-- main -------------------------------------------------------------- -->
   <section id="mainView" hidden>
 
-    <div class="card">
-      <h2>לקוח חדש</h2>
-      <div class="grid2">
-        <label class="fld"><span>שם הלקוח</span><input id="newName" type="text" placeholder="מאמן / סטודיו"></label>
-        <label class="fld"><span>סוג</span>
-          <select id="newKind">
-            <option value="coach">מאמן / סטודיו — מעביר לאחרים</option>
-            <option value="athlete">מתאמן אישי</option>
+    <!-- Coach / studio intake. English throughout, on the owner's instruction: the
+         programming it produces is English, and so is the client's own surface.
+         Cross-cutting only — nothing about one person's capability (checklist 2.c). -->
+    <div class="card" id="intakeCard" dir="ltr" style="text-align:left">
+      <div class="row" style="margin-bottom:12px">
+        <h2 style="margin:0">New coach / studio client</h2>
+        <span class="spacer meta" id="intakeStep"></span>
+      </div>
+
+      <div class="itabs" id="intakeTabs" role="tablist"></div>
+
+      <!-- 1 · client & payment -->
+      <div class="ipane" data-pane="profile">
+        <label class="fld"><span>Client name</span>
+          <input id="inName" type="text" placeholder="Coach, academy, studio or gym"></label>
+        <div class="grid2">
+          <label class="fld"><span>Monthly amount (₪)</span>
+            <input id="inAmount" type="number" min="0" step="1" placeholder="900"></label>
+          <label class="fld"><span>Payment method</span>
+            <input id="inMethod" type="text" placeholder="Bit, 1st of the month"></label>
+        </div>
+        <p class="meta">Payment details stay with you. The client never sees them.</p>
+      </div>
+
+      <!-- 2 · equipment -->
+      <div class="ipane" data-pane="equipment" hidden>
+        <label class="fld"><span>What the place has</span>
+          <select id="inEquip">
+            <option value="functional_gym">Well-equipped functional training gym</option>
+            <option value="other">OTHER</option>
           </select></label>
+        <label class="fld" id="inEquipOtherWrap" hidden><span>Describe what is actually available</span>
+          <textarea id="inEquipOther" placeholder="Rig, 4 barbells, kettlebells 8–32kg, 2 rowers, no rings…"></textarea></label>
       </div>
-      <div class="grid2">
-        <label class="fld"><span>מספר שבועות</span><input id="newWeeks" type="number" min="1" max="12" value="5"></label>
-        <label class="fld"><span>תחילת הלבנה (אופציונלי)</span><input id="newStart" type="text" placeholder="2026-09-06"></label>
+
+      <!-- 3 · schedule -->
+      <div class="ipane" data-pane="schedule" hidden>
+        <label class="fld"><span>How the place trains</span>
+          <select id="inSchedMode">
+            <option value="session_count">Number of sessions — the coach decides when to run them</option>
+            <option value="weekly_schedule">Weekly schedule — sessions pinned to weekdays</option>
+          </select></label>
+
+        <label class="fld" id="inCountWrap"><span>Sessions per week</span>
+          <input id="inSessions" type="number" min="1" max="14" value="3"></label>
+        <p class="meta" id="inCountHint">You write this many sessions with no weekday attached. The coach
+          delivers them whenever suits their groups.</p>
+
+        <div id="inWeekWrap" hidden>
+          <p class="meta" style="margin-bottom:8px">Focus per day. Leave a day blank for rest.</p>
+          <div id="inWeekDays"></div>
+        </div>
       </div>
-      <div class="row">
-        <button id="createBtn" type="button">צור תוכנית</button>
+
+      <!-- 4 · deload -->
+      <div class="ipane" data-pane="deload" hidden>
+        <label class="meta" style="display:flex;gap:9px;align-items:flex-start">
+          <input id="inDeload" type="checkbox" style="width:auto;margin-top:3px">
+          <span style="color:var(--text)">Include a deload week</span>
+        </label>
+        <p class="meta" id="inDeloadHint" style="margin-top:10px"></p>
+      </div>
+
+      <!-- 5 · population & limits -->
+      <div class="ipane" data-pane="population" hidden>
+        <label class="fld"><span>The place, the people, and the limits</span>
+          <textarea id="inPopulation" placeholder="Pre-army prep group, 17–19, mixed ability, 60-minute sessions including warm-up. Two members with knee history."></textarea></label>
+      </div>
+
+      <!-- 6 · goals -->
+      <div class="ipane" data-pane="goals" hidden>
+        <label class="fld"><span>Goals</span>
+          <textarea id="inGoals" placeholder="Army selection: 2000m run, pull-ups, load carry endurance."></textarea></label>
+      </div>
+
+      <div class="row" style="margin-top:14px">
+        <button id="iPrev" class="ghost" type="button">Back</button>
+        <button id="iNext" type="button">Next</button>
+        <button id="createBtn" type="button" hidden>Create program</button>
         <label class="meta" style="display:flex;gap:6px;align-items:center">
-          <input id="newTest" type="checkbox" style="width:auto"> תוכנית בדיקה
+          <input id="newTest" type="checkbox" style="width:auto"> Test program
         </label>
       </div>
       <p class="err" id="createErr" role="alert"></p>
@@ -157,6 +232,8 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
 
 <script src="lib/normalize-pprog-block.js"></script>
 <script src="lib/pprog-display.js"></script>
+<!-- The same questionnaire definition the server validates against. -->
+<script src="lib/client-intake.js"></script>
 <script>
 /* DUCK-WOD — client programs back office.
  *
@@ -501,6 +578,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     var openRow = t.closest ? t.closest("[data-open]") : null;
     if (openRow && openRow.getAttribute("data-open")) { openClient(openRow.getAttribute("data-open")); return; }
 
+    if (g("data-istep")) { iStep = parseInt(g("data-istep"),10)||0; renderIntakeTabs(); return; }
     if (g("data-week")) { S.week = parseInt(g("data-week"), 10) || 1; S.editing = null; renderDetail(); return; }
     if (g("data-aedit")) {
       var k = g("data-aedit"); var tag = "w" + S.week + ":" + k;
@@ -573,25 +651,117 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     });
   }
 
+  /* --- the cross-cutting intake (checklist 2.b) ------------------------- */
+
+  var iStep = 0;
+
+  function intakeDefs() {
+    return (window.CLIENT_INTAKE && window.CLIENT_INTAKE.TABS) || [];
+  }
+
+  function readIntakeForm() {
+    var ws = {};
+    var keys = (window.CLIENT_INTAKE && window.CLIENT_INTAKE.DAY_KEYS) || [];
+    keys.forEach(function (k) {
+      var n = el("inWk-" + k);
+      ws[k] = n ? String(n.value || "") : "";
+    });
+    return {
+      clientName: String(el("inName").value || ""),
+      monthlyAmount: Number(el("inAmount").value) || 0,
+      paymentMethod: String(el("inMethod").value || ""),
+      equipment: el("inEquip").value,
+      equipmentOther: String(el("inEquipOther").value || ""),
+      scheduleMode: el("inSchedMode").value,
+      sessionsPerWeek: Number(el("inSessions").value) || 3,
+      weeklySchedule: ws,
+      deloadWeek: el("inDeload").checked,
+      population: String(el("inPopulation").value || ""),
+      goals: String(el("inGoals").value || ""),
+    };
+  }
+
+  function renderIntakeTabs() {
+    var tabs = intakeDefs();
+    el("intakeTabs").innerHTML = tabs.map(function (t, i) {
+      return '<button type="button" data-istep="' + i + '"' +
+        (i === iStep ? ' class="on"' : "") + ">" + esc(t.label) + "</button>";
+    }).join("");
+    tabs.forEach(function (t, i) {
+      var pane = document.querySelector('.ipane[data-pane="' + t.id + '"]');
+      if (pane) pane.hidden = i !== iStep;
+    });
+    el("intakeStep").textContent = "Step " + (iStep + 1) + " of " + tabs.length;
+    el("iPrev").disabled = iStep === 0;
+    var last = iStep === tabs.length - 1;
+    el("iNext").hidden = last;
+    el("createBtn").hidden = !last;
+  }
+
+  function syncIntakeConditionals() {
+    var other = el("inEquip").value === "other";
+    el("inEquipOtherWrap").hidden = !other;
+
+    var weekly = el("inSchedMode").value === "weekly_schedule";
+    el("inWeekWrap").hidden = !weekly;
+    el("inCountWrap").hidden = weekly;
+    el("inCountHint").hidden = weekly;
+
+    /* Spelling out the consequence, because "no deload" silently changes the block
+       from five weeks to four and that is easy to miss. */
+    el("inDeloadHint").textContent = el("inDeload").checked
+      ? "Blocks are 5 weeks: four build weeks and a deload."
+      : "Blocks are 4 weeks with no deload — the next 4-week block follows straight after. (Default.)";
+  }
+
+  function buildWeekRows() {
+    var CI = window.CLIENT_INTAKE;
+    if (!CI) return;
+    el("inWeekDays").innerHTML = CI.DAY_KEYS.map(function (k) {
+      return '<label class="wk-row"><span>' + esc(CI.DAY_LABELS[k]) + "</span>" +
+        '<input id="inWk-' + k + '" type="text" placeholder="Rest"></label>';
+    }).join("");
+  }
+
+  function submitIntake() {
+    el("createErr").textContent = "";
+    var CI = window.CLIENT_INTAKE;
+    var form = readIntakeForm();
+    var problems = CI ? CI.validateIntake(form) : [];
+    if (problems.length) { el("createErr").textContent = problems.join(" "); return; }
+    var btn = el("createBtn");
+    btn.disabled = true;
+    api({ action: "create", clientKind: "coach", intake: form, isTest: el("newTest").checked })
+      .then(function (r) {
+        btn.disabled = false;
+        if (r.status !== 200 || !r.body.ok) {
+          el("createErr").textContent = r.body.error || "Could not create the program.";
+          return;
+        }
+        var weeks = (r.body.program.weeks || []).length;
+        banner("good", "Created an empty " + weeks + "-week program. Now write the sessions.");
+        iStep = 0;
+        loadList().then(function () { openClient(r.body.program.programId); });
+      });
+  }
+
   function boot() {
     el("pwBtn").addEventListener("click", login);
     el("pw").addEventListener("keydown", function (e) { if (e.key === "Enter") login(); });
-    el("createBtn").addEventListener("click", function () {
-      el("createErr").textContent = "";
-      var name = String(el("newName").value || "").trim();
-      if (!name) { el("createErr").textContent = "צריך שם."; return; }
-      api({
-        action: "create", clientName: name, clientKind: el("newKind").value,
-        weekCount: Number(el("newWeeks").value) || 5,
-        blockStart: String(el("newStart").value || "").trim(),
-        isTest: el("newTest").checked,
-      }).then(function (r) {
-        if (r.status !== 200 || !r.body.ok) { el("createErr").textContent = r.body.error || "היצירה נכשלה."; return; }
-        el("newName").value = "";
-        banner("good", "נוצרה תוכנית ריקה. עכשיו תכתוב את האימונים.");
-        loadList().then(function () { openClient(r.body.program.programId); });
-      });
+
+    buildWeekRows();
+    renderIntakeTabs();
+    syncIntakeConditionals();
+    el("inEquip").addEventListener("change", syncIntakeConditionals);
+    el("inSchedMode").addEventListener("change", syncIntakeConditionals);
+    el("inDeload").addEventListener("change", syncIntakeConditionals);
+    el("iNext").addEventListener("click", function () {
+      if (iStep < intakeDefs().length - 1) { iStep++; renderIntakeTabs(); }
     });
+    el("iPrev").addEventListener("click", function () {
+      if (iStep > 0) { iStep--; renderIntakeTabs(); }
+    });
+    el("createBtn").addEventListener("click", submitIntake);
     el("rebuildBtn").addEventListener("click", function () {
       api({ action: "rebuild_index" }).then(function (r) {
         banner(r.status === 200 ? "good" : "bad",

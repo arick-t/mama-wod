@@ -29,6 +29,7 @@ const ProgramStore = require("../lib/client-program-store.js");
 const Access = require("../lib/client-access.js");
 const Payload = require("../lib/client-view-payload.js");
 const Terms = require("../lib/client-terms.js");
+const Intake = require("../lib/client-intake.js");
 const { sendAppMail, hasMailProvider } = require("../lib/send-app-mail.js");
 const { resolveAppMailTo } = require("../lib/app-mail.js");
 
@@ -121,14 +122,45 @@ async function ownerHandler(req, res, body) {
   }
 
   if (action === "create") {
+    /* A coach/studio client is created FROM the cross-cutting intake, and the intake
+     * is what decides the block's shape: 4 weeks back to back without a deload,
+     * 5 with one (checklist 2.b tab 4). An end-athlete client keeps the old path. */
+    const wantsIntake = body.clientKind !== "athlete";
+    let intake = null;
+    let weekCount = body.weekCount;
+    if (wantsIntake && body.intake) {
+      const problems = Intake.validateIntake(body.intake);
+      if (problems.length) {
+        return bad(res, 400, "INTAKE_INCOMPLETE", problems.join(" "), { problems: problems });
+      }
+      intake = Intake.normalizeIntake(body.intake);
+      weekCount = Intake.weekCountFor(intake);
+    }
     const created = await store.createProgram({
-      clientName: body.clientName,
+      clientName: (intake && intake.clientName) || body.clientName,
       clientKind: body.clientKind,
       blockStart: body.blockStart,
-      weekCount: body.weekCount,
+      weekCount: weekCount,
+      intake: intake,
       isTest: body.isTest === true,
     });
     if (!created.ok) return bad(res, 400, created.code, created.error);
+    /* Carry the payment terms onto the program so the list can total them. */
+    if (intake) {
+      const withPay = await store.updateProgram(
+        created.program.programId,
+        created.program.version,
+        function (draft) {
+          draft.monthlyAmount = intake.monthlyAmount;
+          draft.paymentMethod = intake.paymentMethod;
+          return draft;
+        },
+        { actor: "owner" }
+      );
+      if (withPay.ok) {
+        return res.status(200).json({ ok: true, program: withPay.program, brief: Intake.briefFor(intake) });
+      }
+    }
     return res.status(200).json({ ok: true, program: created.program });
   }
 

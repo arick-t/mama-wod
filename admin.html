@@ -557,6 +557,14 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
 .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(8,6,12,.78);z-index:1200;
   align-items:center;justify-content:center;padding:12px}
 .modal-backdrop.open{display:flex}
+/* Client kind chooser (checklist 2.a) */
+.client-kind-card{display:block;width:100%;text-align:right;background:var(--bg-panel,#1e1e1e);
+  border:1px solid var(--line,#2c2c2c);border-radius:12px;padding:16px;margin:0 0 12px;cursor:pointer;
+  font-family:inherit;color:inherit;min-height:44px}
+.client-kind-card:hover{border-color:var(--coach,#9b6bb8);background:rgba(155,107,184,.10)}
+.client-kind-card .ck-title{display:block;font-family:var(--font-display,inherit);font-size:1.05rem;
+  font-weight:700;margin:0 0 6px}
+.client-kind-card .ck-desc{display:block;font-size:.85rem;color:var(--text-muted,#b0aaa0);line-height:1.55}
 /* Hide athlete chat FAB while +מתאמן intake is open (iOS fixed-in-overflow bug). */
 body.admin-intake-open #adminChatFabWrap,
 body.admin-intake-open #adminChatFloat,
@@ -737,7 +745,7 @@ body:has(#intake-modal.open) #adminChatFloat{
            login serves both. -->
       <a class="hdr-btn" id="btn-client-programs" href="admin-clients.html"
          title="תוכניות אימון ללקוחות — מאמנים וסטודיו">לקוחות</a>
-      <span class="count" id="athlete-count" title="הרשימה מתעדכנת לבד כל כמה שניות — בלי לרענן את הדף">0 מתאמנים</span>
+      <span class="count" id="athlete-count" title="הרשימה מתעדכנת לבד כל כמה שניות — בלי לרענן את הדף">0 לקוחות</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
         title="יתרת קרדיט Gemini משוערת — לחץ לעדכון ידני מגוגל">
         <span class="credit-amt" id="credit-amt">הזן יתרה</span>
@@ -753,7 +761,7 @@ body:has(#intake-modal.open) #adminChatFloat{
     <button type="button" class="learn-toggle off" id="learn-toggle" onclick="toggleLearningMode()" title="מגרש אימונים">
       <span class="lt-label" id="learn-toggle-label">מגרש: כבוי</span>
     </button>
-    <button type="button" class="hdr-btn primary" id="btn-add-athlete" onclick="openIntakeWorkspace()">+ מתאמן</button>
+    <button type="button" class="hdr-btn primary" id="btn-add-athlete" onclick="openClientKindChooser()">+ לקוח</button>
     <button type="button" class="hdr-btn" onclick="refreshAdmin()">↻ רענון</button>
     <button type="button" class="hdr-btn" id="btn-admin-logout" onclick="adminLogout()" title="התנתק מהאדמין">התנתק</button>
   </header>
@@ -805,19 +813,41 @@ body:has(#intake-modal.open) #adminChatFloat{
   </div>
 </div>
 
+<!-- Client kind chooser: one door, two products (checklist 2.a). The end-athlete
+     intake below is unchanged — it works, it is paid-for development, and a coach may
+     one day add their own athletes through it. -->
+<div class="modal-backdrop" id="client-kind-modal" onclick="if(event.target===this)closeClientKindChooser()">
+  <div class="intake-workspace" dir="rtl" onclick="event.stopPropagation()" style="max-width:640px">
+    <div class="intake-ws-header">
+      <h2>לקוח חדש</h2>
+      <button type="button" class="btn-secondary" onclick="closeClientKindChooser()">סגור</button>
+    </div>
+    <div class="intake-ws-body" style="padding:18px">
+      <button type="button" class="client-kind-card" onclick="chooseClientKind('athlete')">
+        <span class="ck-title">מתאמן קצה</span>
+        <span class="ck-desc">אדם אחד. תחקור מלא כמו באפליקציה — פרופיל, ציוד, לו״ז, הרמות, מיומנויות,
+          מגבלות, פציעות, מטרות → לבנה אישית → לינק מסירה.</span>
+      </button>
+      <button type="button" class="client-kind-card" onclick="chooseClientKind('coach')">
+        <span class="ck-title">מאמן / סטודיו</span>
+        <span class="ck-desc">אתה כותב תוכנית שהוא מעביר למתאמנים שלו. תחקור רוחבי — ציוד, לו״ז,
+          דילואד, אופי האוכלוסייה, מטרות. בלי פרמטרים של אדם בודד.</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- Intake workspace -->
 <div class="modal-backdrop" id="intake-modal" onclick="if(event.target===this)closeIntakeWorkspace()">
   <div class="intake-workspace" dir="rtl" onclick="event.stopPropagation()">
     <div class="intake-ws-header">
-      <h2>תחקור מתאמן חדש</h2>
+      <h2>תחקור מתאמן קצה</h2>
       <button type="button" class="btn-secondary" onclick="closeIntakeWorkspace()">סגור</button>
     </div>
     <div class="intake-ws-body" id="intake-ws-body">
       <div class="intake-start-bar" id="intake-start-bar">
-        <div>
-          <label>מייל (אופציונלי)</label>
-          <input type="email" id="intake-email" placeholder="name@example.com" autocomplete="email"/>
-        </div>
+        <!-- The email ask is gone (checklist a.3.1). Nothing ever mailed it — it was
+             stored and carried through the handoff and never sent to. -->
         <button type="button" class="btn-primary" id="intake-start-btn" onclick="startIntakeChat()">התחל תחקור</button>
       </div>
       <div class="intake-chat-log" id="intake-chat-log">
@@ -1807,7 +1837,7 @@ function loadAthletes(opts) {
       if (silent && (document.body.classList.contains("admin-intake-open") || adminDayEdit)) {
         athletes = ingestAdminSnapshots(list);
         var countEl = document.getElementById("athlete-count");
-        if (countEl) countEl.textContent = athletes.length + " מתאמנים";
+        if (countEl) countEl.textContent = athletes.length + " לקוחות";
         return;
       }
       renderAthleteList(list);
@@ -1859,16 +1889,16 @@ function refreshLiveCoachVersion() {
 function renderAthleteList(list) {
   athletes = ingestAdminSnapshots(list);
   lastAdminSnapFingerprint = adminSnapshotsFingerprint(athletes);
-  document.getElementById("athlete-count").textContent = athletes.length + " מתאמנים";
+  document.getElementById("athlete-count").textContent = athletes.length + " לקוחות";
   var sb = document.getElementById("athlete-tabs");
 
   if (!athletes.length) {
     currentAthleteId = null;
     adminChatFabOpen = false;
     syncAthleteChatFab(null);
-    sb.innerHTML = '<div class="empty-tabs">אין מתאמנים עדיין — לחץ ״+ מתאמן״</div>';
+    sb.innerHTML = '<div class="empty-tabs">אין לקוחות עדיין — לחץ ״+ לקוח״</div>';
     document.getElementById("content").innerHTML =
-      '<div class="empty-content"><div class="icon">·</div><p>אין מתאמנים — לחץ ״+ מתאמן״ להתחלת תחקור</p></div>';
+      '<div class="empty-content"><div class="icon">·</div><p>אין לקוחות — לחץ ״+ לקוח״ כדי להתחיל</p></div>';
     return;
   }
 
@@ -1981,7 +2011,7 @@ function renderAthlete(a) {
         '<div class="ath-card-foot">' +
           '<button type="button" class="btn-delete-link" onclick="deleteAthlete(\'' +
           esc(a.athleteId) +
-          "')\">מחק מתאמן</button>" +
+          "')\">מחק לקוח</button>" +
         "</div>" +
       "</div>" +
       '<div class="ath-block-panel">' +
@@ -4158,10 +4188,39 @@ function resetIntakeState() {
   };
 }
 
+/* One door, two products (checklist 2.a).
+ *
+ * "מתאמן קצה" keeps the existing nine-step intake exactly as it is — it works, it is
+ * paid-for development, and a coach may one day add their own athletes through it.
+ *
+ * "מאמן/סטודיו" is the new cross-cutting intake. It lives on admin-clients.html
+ * because that is where the client-program model lives; sending the owner there is
+ * cheaper and far safer than growing a second data model inside this 201KB file. */
+function openClientKindChooser() {
+  var m = document.getElementById("client-kind-modal");
+  if (m) m.classList.add("open");
+}
+
+function closeClientKindChooser() {
+  var m = document.getElementById("client-kind-modal");
+  if (m) m.classList.remove("open");
+}
+
+function chooseClientKind(kind) {
+  closeClientKindChooser();
+  if (kind === "coach") {
+    window.location.href = "admin-clients.html?new=coach";
+    return;
+  }
+  openIntakeWorkspace();
+}
+window.openClientKindChooser = openClientKindChooser;
+window.closeClientKindChooser = closeClientKindChooser;
+window.chooseClientKind = chooseClientKind;
+
 function openIntakeWorkspace() {
   resetIntakeState();
   setAdminIntakeModalOpen(true);
-  document.getElementById("intake-email").value = "";
   document.getElementById("intake-chat-log").innerHTML =
     '<div class="intake-msg system">לחץ ״התחל תחקור״ כדי לפתוח שיחה עם המאמן (13 נושאים — כמו בפרודקשן)</div>';
   document.getElementById("intake-compose").style.display = "none";
@@ -4513,7 +4572,8 @@ function setIntakeBusy(on) {
 
 function startIntakeChat() {
   if (intakeState.busy) return;
-  intakeState.email = (document.getElementById("intake-email").value || "").trim();
+  /* No email is collected any more (a.3.1) — kept empty so nothing downstream breaks. */
+  intakeState.email = "";
   intakeState.messages = [];
   intakeState.started = true;
   setIntakeBusy(true);

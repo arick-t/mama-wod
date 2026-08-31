@@ -68,8 +68,9 @@ ok(
 
 /* --- a.1.1: the owner authors, we never generate ---------------------- */
 
-ok("creating a client makes an EMPTY program", /נוצרה תוכנית ריקה/.test(page));
-ok("the owner is told to write the training", /תכתוב את האימונים/.test(page));
+ok("creating a client makes an EMPTY program", page.indexOf("Created an empty ") >= 0);
+ok("the empty program's length comes from the intake", /weeks \+ "-week program/.test(page));
+ok("the owner is told to write the training", /Now write the sessions/.test(page));
 
 /* Enumerate what the page can actually ask the server to do, rather than grepping
    for words — a keyword search keeps matching prose in comments, and the set of
@@ -145,8 +146,79 @@ ok("renaming saves clientName", /program: \{ clientName: name \}/.test(page));
 
 /* --- the label is 'client', not 'athlete' (a.3.2) ------------------ */
 
-ok("the page speaks about clients", /לקוח חדש/.test(page));
+ok("the page speaks about clients", page.indexOf("New coach / studio client") >= 0);
 ok("the heading is the owner's clients", /הלקוחות שלי/.test(page));
+
+/* --- the cross-cutting intake, in English (checklist 2.b) ---------- */
+
+ok("the page loads the shared intake definition", /src="lib\/client-intake\.js"/.test(page));
+ok("the tabs come from that definition", /CLIENT_INTAKE.*TABS/.test(page));
+
+/* Six panes, one per tab, in the owner's order. */
+const paneIds = (page.match(/data-pane="([a-z]+)"/g) || []).map(function (s) {
+  return s.replace('data-pane="', "").replace('"', "");
+});
+ok("there are six intake panes", paneIds.length === 6);
+ok(
+  "the panes are in the owner's order",
+  JSON.stringify(paneIds) ===
+    JSON.stringify(["profile", "equipment", "schedule", "deload", "population", "goals"])
+);
+
+/* Tab 1 */
+ok("tab 1 asks for the client name", /id="inName"/.test(page));
+ok("tab 1 takes the monthly amount as a number", /id="inAmount" type="number"/.test(page));
+ok("tab 1 takes the payment method as text", /id="inMethod" type="text"/.test(page));
+ok("tab 1 says the client cannot see the price", /client never sees them/i.test(page));
+
+/* Tab 2 — exactly two options, OTHER reveals a box */
+ok("equipment has the well-equipped option", /Well-equipped functional training gym/.test(page));
+ok("equipment has OTHER", /value="other">OTHER/.test(page));
+ok("OTHER reveals a description box", /id="inEquipOtherWrap"/.test(page) && /inEquip"\)\.value === "other"/.test(page));
+ok(
+  "equipment offers exactly two choices",
+  (page.match(/<option value="(functional_gym|other)"/g) || []).length === 2
+);
+
+/* Tab 3 — two modes that change the plan's shape */
+ok("schedule offers a session count", /value="session_count"/.test(page));
+ok("schedule offers a weekly layout", /value="weekly_schedule"/.test(page));
+ok("weekly mode reveals Sun-Sat rows", /id="inWeekWrap"/.test(page) && /inWk-/.test(page));
+ok("session-count mode hides the weekday rows", /el\("inWeekWrap"\)\.hidden = !weekly/.test(page));
+ok("the days come from the shared definition", /CI\.DAY_KEYS/.test(page) && /CI\.DAY_LABELS/.test(page));
+ok("session count is a bounded number", /id="inSessions" type="number" min="1" max="14"/.test(page));
+ok("the owner is told the coach picks the days", /delivers them whenever/i.test(page));
+
+/* Tab 4 — the consequence is spelled out, because it changes 5 weeks to 4 */
+ok("deload is a checkbox", /id="inDeload" type="checkbox"/.test(page));
+ok("with a deload it says 5 weeks", /5 weeks: four build weeks and a deload/.test(page));
+ok("without one it says 4 weeks back to back", /next 4-week block follows straight after/.test(page));
+ok("no deload is the stated default", /\(Default\.\)/.test(page));
+
+/* Tabs 5 & 6 */
+ok("tab 5 asks about the place and the people", /id="inPopulation"/.test(page));
+ok("tab 6 asks for goals", /id="inGoals"/.test(page));
+
+/* 2.c — no individual capability anywhere on this form */
+[
+  "inAge", "inBodyweight", "inLifts", "inSkills", "inInjuries", "inExperience", "inGender",
+].forEach(function (id) {
+  ok('the form has no individual field "' + id + '"', page.indexOf('id="' + id + '"') < 0);
+});
+
+/* English, on the owner's instruction — check the tab and field text, not comments */
+const intakeCard = (page.match(/<div class="card" id="intakeCard"[\s\S]*?<\/div>\s*<div class="card">/) || [""])[0];
+ok("the intake card exists", intakeCard.length > 200);
+ok("the intake card is left-to-right", /id="intakeCard" dir="ltr"/.test(page));
+ok(
+  "no Hebrew in the intake form itself",
+  !/[֐-׿]/.test(intakeCard.replace(/<!--[\s\S]*?-->/g, ""))
+);
+
+/* Validation runs before anything is created */
+ok("the form validates before creating", /validateIntake\(form\)/.test(page));
+ok("problems are shown to the owner", /problems\.join\(" "\)/.test(page));
+ok("create sends the intake, not a week count", /clientKind: "coach", intake: form/.test(page));
 
 /* --- index rebuild is available (0.5) ----------------------------- */
 

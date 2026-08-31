@@ -878,7 +878,10 @@ module.exports = async function handler(req, res) {
     const snapshot = {
       athleteId,
       displayName: String(clean.displayName || existing.displayName || "").slice(0, 80),
-      email: String((isAdmin ? clean.email : existing.email) || existing.email || "").slice(0, 120),
+      /* 21.7: we no longer collect or keep client email (checklist a.3.1). Nothing
+         ever mailed it — it was stored and carried through the handoff and never
+         sent to. Forced empty so any value left on an old row clears on next write. */
+      email: "",
       gender: String(clean.gender || existing.gender || "").slice(0, 20),
       preferredLanguage: String(
         clean.preferredLanguage || existing.preferredLanguage || ""
