@@ -120,6 +120,8 @@ const BRICK_HOOKS = [
   /* A block that starts mid-week still needs its first days written, and the owner
      decided a client edits without limit — so the date lock must be lifted here. */
   ok(file + " lifts the past-date lock", /allowPastEdit:\s*true/.test(all));
+  /* A 4-week program (no deload) must not show a W5 rail that leads nowhere. */
+  ok(file + " shows the program's real length", /weekRows: weekCount\(\)/.test(all));
 });
 
 /* The generated stylesheet must actually carry the two things it exists for. */

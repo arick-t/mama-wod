@@ -709,6 +709,9 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       block: block,
       activeWeekIndex: S.wi | 0,
       activeDay: S.day || "sun",
+      /* A client program is 4 weeks without a deload and 5 with one — show its real
+         length rather than the athlete app's fixed five. */
+      weekRows: weekCount(),
       calMode: S.calMode || "week",
       israelTodayIso: israelTodayIso(),
       /* The owner writes the training. Nothing on this page talks to a provider. */

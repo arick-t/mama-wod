@@ -513,6 +513,9 @@ button.ghost:hover{color:var(--text)}
       block: currentBlock(),
       activeWeekIndex: state.wi | 0,
       activeDay: state.day || "sun",
+      /* A client program is 4 weeks without a deload and 5 with one — show its real
+         length rather than the athlete app's fixed five. */
+      weekRows: weekCount(),
       calMode: state.calMode || "week",
       israelTodayIso: israelIso(false),
       readOnly: true,
