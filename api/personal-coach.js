@@ -757,10 +757,30 @@ const GROQ_POLICY_SLIM =
   "POL-020 quality never compromised (no stub/template WODs; wait/retry > weak fill).\n" +
   "Safety + explicit athlete request win conflicts. You remain Personal Coach — never Generate-Workout one-shot mode.\n";
 
+/**
+ * The whole rule book reaches the coach. Every call, both paths.
+ *
+ * This used to end in `raw.slice(0, 12000)` — a character budget born on 2026-07-29
+ * as an estimate of the old Groq free-tier tokens-per-minute window, then reused here
+ * out of habit. Gemini has no such window (12k chars is ~4k tokens of a 1M context),
+ * so the cut bought nothing and cost everything: the policy grew 18KB → 45KB while the
+ * cap never moved, and by 2026-09-01 it was dropping 24 of 38 rules — POL-016, POL-020,
+ * POL-027, POL-022/023/024 and every POL-COST — out of BOTH the programming system and
+ * chat. Rules we wrote, synced and tested were silently never read: a workout-quality
+ * defect (POL-020), not a formatting one.
+ *
+ * Groq budgets its own copy elsewhere (GROQ_POLICY_SLIM / compactSystemForGroq) and
+ * never depended on this cut.
+ *
+ * COACH_POLICY_MAX_CHARS is an emergency valve. Leave it unset.
+ * Guarded by scripts/coach-policy-injection.test.js.
+ */
 function coachPolicyBlock() {
   const raw = typeof COACH_POLICY === "string" ? COACH_POLICY.trim() : "";
   if (!raw) return "";
-  return "\n\n---\n" + raw.slice(0, 12000) + "\n---\n";
+  const override = parseInt(process.env.COACH_POLICY_MAX_CHARS || "", 10);
+  const body = override > 0 ? raw.slice(0, override) : raw;
+  return "\n\n---\n" + body + "\n---\n";
 }
 
 /** Programming-only Groq pack: keep CORE + quality policy + athlete memory under TPM.
