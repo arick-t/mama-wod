@@ -184,20 +184,44 @@ ok(
 );
 ok(
   "unticking reveals the description box",
-  /id="inEquipOtherWrap"/.test(page) && page.indexOf('!el("inEquipFull").checked') >= 0
+  /id="inEquipOtherWrap"/.test(page) &&
+    page.indexOf('el("inEquipOtherWrap").hidden = el("inEquipFull").checked') >= 0
 );
 ok("the box is hidden by default", /id="inEquipOtherWrap" hidden/.test(page));
 ok("there is no equipment dropdown left", page.indexOf('id="inEquip"') < 0);
 ok("no select element survives on the equipment tab", !/<select id="inEquip/.test(page));
 
-/* Tab 3 — two modes that change the plan's shape */
-ok("schedule offers a session count", /value="session_count"/.test(page));
-ok("schedule offers a weekly layout", /value="weekly_schedule"/.test(page));
-ok("weekly mode reveals Sun-Sat rows", /id="inWeekWrap"/.test(page) && /inWk-/.test(page));
-ok("session-count mode hides the weekday rows", /el\("inWeekWrap"\)\.hidden = !weekly/.test(page));
-ok("the days come from the shared definition", /CI\.DAY_KEYS/.test(page) && /CI\.DAY_LABELS/.test(page));
-ok("session count is a bounded number", /id="inSessions" type="number" min="1" max="14"/.test(page));
+/* Tab 3 — a checkbox picks the mode, and each mode reveals its own follow-ups */
+ok("the mode is a checkbox, ticked by default", /id="inSchedCount" type="checkbox" checked/.test(page));
+ok("there is no schedule dropdown left", !/<select id="inSchedMode/.test(page));
+ok("the session count sits next to it", /id="inSessions" type="number" min="1" max="14"/.test(page));
+ok("the count box is inline with the checkbox", /class="inline-num"/.test(page));
+ok("the count is disabled in weekly mode", page.indexOf('el("inSessions").disabled = !byCount') >= 0);
 ok("the owner is told the coach picks the days", /delivers them whenever/i.test(page));
+
+/* session_count → do the sessions differ? */
+ok("there is a 'sessions differ' checkbox", /id="inSessionsDiffer" type="checkbox"/.test(page));
+ok("it is unticked by default — uniform sessions", !/id="inSessionsDiffer" type="checkbox" checked/.test(page));
+ok("uniform is described as standard CrossFit", /a standard CrossFit week/.test(page));
+ok("differing sessions get one box each, laid out horizontally", /class="sess-grid"/.test(page) && /display:flex/.test(page));
+ok("the boxes are built from the session count", /function buildSessionBoxes/.test(page));
+ok("changing the count rebuilds the boxes", page.indexOf('el("inSessions").addEventListener("input"') >= 0);
+ok("existing text is carried over on rebuild", /prev\[j\]/.test(page));
+ok("the follow-up is hidden in weekly mode", page.indexOf('el("inDifferWrap").hidden = !byCount') >= 0);
+
+/* weekly_schedule → rest days, then standing per-day emphases */
+ok("there is a rest-days checkbox", /id="inRestDays" type="checkbox"/.test(page));
+ok("rest days are OFF by default", !/id="inRestDays" type="checkbox" checked/.test(page));
+ok("off reads as the coach's call", /Rest days are not planned — the coach decides/.test(page));
+ok("there is a standing-emphasis checkbox", /id="inEmphasis" type="checkbox"/.test(page));
+ok("emphases are described as repeating weekly", /repeats every\s*\n?\s*week/.test(page));
+ok("the owner's own example is used", /partner workouts/.test(page));
+ok("ticking a day reveals its note", /function syncEmphasisRow/.test(page));
+ok("the note input starts hidden", /id="inEmTxt-' \+ k \+ '" type="text" hidden/.test(page));
+ok("the day rows are delegated, since they are rebuilt", /data-emph/.test(page));
+ok("the days come from the shared definition", /CI\.DAY_KEYS/.test(page) && /CI\.DAY_LABELS/.test(page));
+/* An unticked day with leftover text must not quietly become an emphasis. */
+ok("only a ticked day contributes a note", /box && box\.checked && txt/.test(page));
 
 /* Tab 4 — the consequence is spelled out, because it changes 5 weeks to 4 */
 ok("deload is a checkbox", /id="inDeload" type="checkbox"/.test(page));

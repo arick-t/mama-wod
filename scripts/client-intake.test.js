@@ -58,11 +58,14 @@ ok(
   "the shape is exactly the owner's six tabs' worth of fields",
   JSON.stringify(shape) ===
     JSON.stringify([
-      "clientName", "deloadWeek", "equipment", "equipmentOther", "goals",
-      "monthlyAmount", "paymentMethod", "population", "scheduleMode",
-      "sessionsPerWeek", "weeklySchedule",
+      "clientName", "dayEmphasis", "dayEmphasisEnabled", "deloadWeek", "equipment",
+      "equipmentOther", "goals", "includeRestDays", "monthlyAmount", "paymentMethod",
+      "population", "scheduleMode", "sessionTypes", "sessionsDiffer", "sessionsPerWeek",
     ])
 );
+/* The old focus-per-weekday field is gone: weekly mode now asks about rest days and
+   standing emphases instead, which is what the owner actually wanted from it. */
+ok("the old weeklySchedule field is gone", shape.indexOf("weeklySchedule") < 0);
 
 /* --- tab 1: client & payment ----------------------------------------- */
 
@@ -92,7 +95,7 @@ ok(
 );
 ok("an unknown equipment value falls back safely", I.normalizeIntake({ equipment: "hacked" }).equipment === "functional_gym");
 
-/* --- tab 3: schedule — two modes that change the plan's shape -------- */
+/* --- tab 3: schedule — two modes, each with its own follow-ups -------- */
 
 ok("there are two schedule modes", I.SCHEDULE_MODES.length === 2);
 ok("the default is a session count", I.emptyIntake().scheduleMode === "session_count");
@@ -100,20 +103,70 @@ ok("the default is three sessions", I.emptyIntake().sessionsPerWeek === 3);
 ok("session count is bounded", I.normalizeIntake({ sessionsPerWeek: 99 }).sessionsPerWeek === 3);
 ok("session count rejects zero", I.normalizeIntake({ sessionsPerWeek: 0 }).sessionsPerWeek === 3);
 
+/* session_count → do the sessions differ? */
+ok("sessions are interchangeable by default", I.emptyIntake().sessionsDiffer === false);
+const differ = I.normalizeIntake({
+  scheduleMode: "session_count", sessionsPerWeek: 3, sessionsDiffer: true,
+  sessionTypes: ["strength + metcon", "engine", "gymnastics"],
+});
+ok("differing sessions are kept", differ.sessionsDiffer === true);
+ok("one description per session", differ.sessionTypes.length === 3);
+ok("the first description is kept", differ.sessionTypes[0] === "strength + metcon");
+
+/* The box count must follow the session count, not the array that was sent. */
+const trimmed = I.normalizeIntake({
+  scheduleMode: "session_count", sessionsPerWeek: 2, sessionsDiffer: true,
+  sessionTypes: ["a", "b", "c", "d"],
+});
+ok("extra descriptions are dropped to match the count", trimmed.sessionTypes.length === 2);
+const padded = I.normalizeIntake({
+  scheduleMode: "session_count", sessionsPerWeek: 4, sessionsDiffer: true, sessionTypes: ["a"],
+});
+ok("missing descriptions are padded, not lost", padded.sessionTypes.length === 4);
+
+ok(
+  "uniform sessions carry no descriptions",
+  I.normalizeIntake({ sessionsDiffer: false, sessionTypes: ["leftover"] }).sessionTypes.length === 0
+);
+ok(
+  "differing sessions with a blank description are refused",
+  I.validateIntake({
+    clientName: "A", population: "p", goals: "g",
+    scheduleMode: "session_count", sessionsPerWeek: 3, sessionsDiffer: true,
+    sessionTypes: ["a", "", "c"],
+  }).some(function (x) { return /describe each one/.test(x); })
+);
+
+/* weekly_schedule → rest days, then standing emphases */
 const weekly = I.normalizeIntake({
-  scheduleMode: "weekly_schedule",
-  weeklySchedule: { mon: "Squat", wed: "Engine", fri: "Full body" },
+  scheduleMode: "weekly_schedule", includeRestDays: true, dayEmphasisEnabled: true,
+  dayEmphasis: { fri: "partner workouts" },
 });
 ok("weekly mode is kept", weekly.scheduleMode === "weekly_schedule");
-ok("all seven days exist, Sun–Sat", JSON.stringify(Object.keys(weekly.weeklySchedule)) === JSON.stringify(I.DAY_KEYS));
-ok("a filled day is kept", weekly.weeklySchedule.mon === "Squat");
-ok("an unfilled day is blank, meaning rest", weekly.weeklySchedule.tue === "");
+ok("rest days default to NO", I.emptyIntake().includeRestDays === false);
+ok("rest days can be turned on", weekly.includeRestDays === true);
+ok("emphases default to off", I.emptyIntake().dayEmphasisEnabled === false);
+ok("a standing note is kept", weekly.dayEmphasis.fri === "partner workouts");
+ok("all seven days exist, Sun–Sat", JSON.stringify(Object.keys(weekly.dayEmphasis)) === JSON.stringify(I.DAY_KEYS));
+ok("an unticked day carries no note", weekly.dayEmphasis.mon === "");
 ok(
-  "weekly mode with no day filled is refused",
-  I.validateIntake({ clientName: "A", scheduleMode: "weekly_schedule", population: "p", goals: "g" }).some(function (p) {
-    return /Weekly schedule/.test(p);
-  })
+  "emphases on with nothing written is refused",
+  I.validateIntake({
+    clientName: "A", population: "p", goals: "g",
+    scheduleMode: "weekly_schedule", dayEmphasisEnabled: true,
+  }).some(function (x) { return /at least one day/.test(x); })
 );
+
+/* Switching mode must not leave the other mode's answers behind. */
+const switched = I.normalizeIntake({
+  scheduleMode: "weekly_schedule", sessionsDiffer: true, sessionTypes: ["x"],
+});
+ok("weekly mode drops session descriptions", switched.sessionsDiffer === false && switched.sessionTypes.length === 0);
+const switchedBack = I.normalizeIntake({
+  scheduleMode: "session_count", includeRestDays: true, dayEmphasisEnabled: true,
+});
+ok("session mode drops rest-day and emphasis answers", switchedBack.includeRestDays === false && switchedBack.dayEmphasisEnabled === false);
+
 ok(
   "session-count mode does not demand weekdays",
   I.validateIntake({ clientName: "A", scheduleMode: "session_count", population: "p", goals: "g" }).length === 0
@@ -174,12 +227,29 @@ ok("the brief does NOT carry the price", brief.indexOf("900") < 0);
 
 const weeklyBrief = I.briefFor({
   clientName: "A", scheduleMode: "weekly_schedule",
-  weeklySchedule: { mon: "Squat", wed: "Engine" },
+  includeRestDays: true, dayEmphasisEnabled: true,
+  dayEmphasis: { fri: "partner workouts" },
   deloadWeek: true, population: "p", goals: "g",
 });
-ok("a weekly brief lists Sun-Sat", /Sun:/.test(weeklyBrief) && /Sat:/.test(weeklyBrief));
-ok("an empty day reads as Rest", /Tue: Rest/.test(weeklyBrief));
+ok("a weekly brief says sessions sit on weekdays", /sessions sit on weekdays/.test(weeklyBrief));
+ok("a weekly brief states the rest-day decision", /REST DAYS: part of the plan/.test(weeklyBrief));
+ok("a standing emphasis appears with its day", /Fri: partner workouts/.test(weeklyBrief));
+ok("emphases are marked as repeating", /repeat every week/.test(weeklyBrief));
 ok("a deload brief says 5 weeks", /BLOCK: 5 weeks/.test(weeklyBrief));
+
+/* Rest days OFF must read as the coach's call, not silently vanish. */
+const noRest = I.briefFor({ clientName: "A", scheduleMode: "weekly_schedule", population: "p", goals: "g" });
+ok("rest days off reads as the coach's call", /not planned — the coach decides/.test(noRest));
+ok("no emphasis section when it is off", noRest.indexOf("STANDING EMPHASES") < 0);
+
+/* session_count: uniform vs differing must be stated, because it changes the plan. */
+const uniform = I.briefFor({ clientName: "A", sessionsPerWeek: 3, population: "p", goals: "g" });
+ok("uniform sessions are stated as standard CrossFit", /interchangeable — a standard CrossFit week/.test(uniform));
+const differing = I.briefFor({
+  clientName: "A", sessionsPerWeek: 2, sessionsDiffer: true,
+  sessionTypes: ["strength + metcon", "engine"], population: "p", goals: "g",
+});
+ok("differing sessions are listed one by one", /Session 1: strength \+ metcon/.test(differing) && /Session 2: engine/.test(differing));
 
 /* --- it never reaches the client -------------------------------- */
 

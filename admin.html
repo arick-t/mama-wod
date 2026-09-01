@@ -4229,8 +4229,14 @@ function chooseClientKind(kind) {
   try {
     startIntakeChat();
   } catch (e) {
+    /* Say WHAT failed. Swallowing the reason turned a one-line bug into a guessing
+       game, and the owner had to report the same screen three times. */
     var st = document.getElementById("intake-status");
-    if (st) st.textContent = "לא הצלחתי להתחיל תחקור — לחץ ״התחל תחקור״.";
+    var why = String((e && (e.message || e.name)) || e || "").slice(0, 160);
+    if (st) st.textContent = "לא הצלחתי להתחיל תחקור: " + why + " — לחץ ״התחל תחקור״.";
+    try {
+      console.error("[admin] startIntakeChat threw:", e);
+    } catch (eLog) {}
   }
 }
 window.openClientKindChooser = openClientKindChooser;

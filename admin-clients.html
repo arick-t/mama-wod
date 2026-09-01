@@ -107,6 +107,20 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
 .chk-row{display:flex;gap:10px;align-items:flex-start;margin:0 0 8px;cursor:pointer}
 .chk-row input{width:20px;height:20px;margin:2px 0 0;flex:0 0 auto;accent-color:var(--brand)}
 .chk-row span{color:var(--text);font-size:.92rem}
+.chk-row .inline-num{width:78px;margin-inline-start:auto;padding:6px 9px;text-align:center;font-size:15px}
+/* One box per session, side by side — the owner asked for them laid out horizontally. */
+.sess-grid{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 6px}
+.sess-box{flex:1 1 150px;min-width:140px;background:var(--bg-panel);border:1px solid var(--line);
+  border-radius:10px;padding:10px}
+.sess-box label{display:block;font-size:.72rem;color:var(--text-meta);margin:0 0 5px;
+  text-transform:uppercase;letter-spacing:.8px}
+.sess-box input{padding:8px 10px;font-size:15px}
+/* Ticking a weekday reveals its standing note. */
+.emph-row{background:var(--bg-panel);border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin:0 0 7px}
+.emph-head{display:flex;gap:9px;align-items:center;cursor:pointer}
+.emph-head input{width:18px;height:18px;margin:0;flex:0 0 auto;accent-color:var(--brand)}
+.emph-head span{font-family:var(--font-display);font-size:.9rem;letter-spacing:.5px}
+.emph-row input[type=text]{margin-top:8px;font-size:15px;padding:8px 10px}
 @media (max-width:600px){.grid2{grid-template-columns:1fr}}
 </style>
 </head>
@@ -171,21 +185,42 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
           <textarea id="inEquipOther" placeholder="Rig, 4 barbells, kettlebells 8–32kg, 2 rowers, no rings…"></textarea></label>
       </div>
 
-      <!-- 3 · schedule -->
+      <!-- 3 · schedule. Checkboxes, and each answer reveals its own follow-up —
+           the two modes lead to genuinely different questions. -->
       <div class="ipane" data-pane="schedule" hidden>
-        <label class="fld"><span>How the place trains</span>
-          <select id="inSchedMode">
-            <option value="session_count">Number of sessions — the coach decides when to run them</option>
-            <option value="weekly_schedule">Weekly schedule — sessions pinned to weekdays</option>
-          </select></label>
+        <label class="chk-row">
+          <input id="inSchedCount" type="checkbox" checked>
+          <span>Number of sessions per week</span>
+          <input id="inSessions" type="number" min="1" max="14" value="3"
+                 class="inline-num" aria-label="Sessions per week">
+        </label>
+        <p class="meta" id="inCountHint" style="margin:0 0 14px">No weekday attached — the coach
+          delivers them whenever suits their groups. Untick to pin sessions to weekdays instead.</p>
 
-        <label class="fld" id="inCountWrap"><span>Sessions per week</span>
-          <input id="inSessions" type="number" min="1" max="14" value="3"></label>
-        <p class="meta" id="inCountHint">You write this many sessions with no weekday attached. The coach
-          delivers them whenever suits their groups.</p>
+        <!-- session_count follow-up -->
+        <div id="inDifferWrap">
+          <label class="chk-row">
+            <input id="inSessionsDiffer" type="checkbox">
+            <span>The sessions differ from one another</span>
+          </label>
+          <p class="meta" id="inDifferHint" style="margin:0 0 10px"></p>
+          <div id="inSessionTypes" class="sess-grid"></div>
+        </div>
 
-        <div id="inWeekWrap" hidden>
-          <p class="meta" style="margin-bottom:8px">Focus per day. Leave a day blank for rest.</p>
+        <!-- weekly_schedule follow-ups -->
+        <div id="inWeeklyWrap" hidden>
+          <label class="chk-row">
+            <input id="inRestDays" type="checkbox">
+            <span>Include rest days in the plan</span>
+          </label>
+          <p class="meta" id="inRestHint" style="margin:0 0 14px"></p>
+
+          <label class="chk-row">
+            <input id="inEmphasis" type="checkbox">
+            <span>Standing emphases for specific weekdays</span>
+          </label>
+          <p class="meta" style="margin:0 0 10px">Tick a day and write a note that repeats every
+            week — e.g. Friday: “partner workouts”.</p>
           <div id="inWeekDays"></div>
         </div>
       </div>
@@ -317,13 +352,30 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
   function openLogin(msg) {
     show("loginView", true); show("mainView", false);
     if (msg) el("pwErr").textContent = msg;
-    /* a.4.1/a.4.2 — a silent failure is why the owner retyped his password forever.
-       If the server cannot mint a session, the screen says so instead of shrugging. */
-    var remembered = storedToken();
-    el("rememberState").textContent = remembered
-      ? "זכור אותי: פעיל"
-      : "זכור אותי: כבוי — אם זה חוזר בכל כניסה, חסר ADMIN_SESSION_SECRET בהגדרות Vercel.";
     try { el("pw").focus(); } catch (e) {}
+
+    /* Ask the SERVER whether remember-me can work at all, instead of inferring it
+     * from whether a token happens to be stored. Guessing here sent the owner off to
+     * change an env var that was not the problem, twice.
+     *
+     * The health route needs no credential and returns a boolean, never the secret. */
+    el("rememberState").textContent = "בודק מצב ״זכור אותי״…";
+    fetch(API_BASE + "/api/client-program")
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (j && j.rememberMeReady === true) {
+          el("rememberState").textContent =
+            "זכור אותי: ✅ פעיל בשרת — כניסה אחת תספיק גם לדף הזה וגם למודול אדמין.";
+          return;
+        }
+        el("rememberState").textContent =
+          "זכור אותי: ❌ כבוי בשרת — ADMIN_SESSION_SECRET חסר או קצר מ־" +
+          ((j && j.sessionSecretMinLength) || 32) +
+          " תווים. עד שיתוקן, כל דף יבקש סיסמה בנפרד.";
+      })
+      .catch(function () {
+        el("rememberState").textContent = "לא הצלחתי לבדוק את מצב ״זכור אותי״ מול השרת.";
+      });
   }
 
   function login() {
@@ -739,25 +791,59 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
   }
 
   function readIntakeForm() {
-    var ws = {};
     var keys = (window.CLIENT_INTAKE && window.CLIENT_INTAKE.DAY_KEYS) || [];
+    var emphasis = {};
     keys.forEach(function (k) {
-      var n = el("inWk-" + k);
-      ws[k] = n ? String(n.value || "") : "";
+      var box = el("inEm-" + k);
+      var txt = el("inEmTxt-" + k);
+      /* Only a ticked day contributes a note — an unticked day with leftover text
+         must not quietly become an emphasis. */
+      emphasis[k] = box && box.checked && txt ? String(txt.value || "") : "";
     });
+    var sessions = Number(el("inSessions").value) || 3;
+    var types = [];
+    for (var i = 0; i < sessions; i++) {
+      var t = el("inSessType-" + i);
+      types.push(t ? String(t.value || "") : "");
+    }
     return {
       clientName: String(el("inName").value || ""),
       monthlyAmount: Number(el("inAmount").value) || 0,
       paymentMethod: String(el("inMethod").value || ""),
       equipment: el("inEquipFull").checked ? "functional_gym" : "other",
       equipmentOther: String(el("inEquipOther").value || ""),
-      scheduleMode: el("inSchedMode").value,
-      sessionsPerWeek: Number(el("inSessions").value) || 3,
-      weeklySchedule: ws,
+      scheduleMode: el("inSchedCount").checked ? "session_count" : "weekly_schedule",
+      sessionsPerWeek: sessions,
+      sessionsDiffer: el("inSessionsDiffer").checked,
+      sessionTypes: types,
+      includeRestDays: el("inRestDays").checked,
+      dayEmphasisEnabled: el("inEmphasis").checked,
+      dayEmphasis: emphasis,
       deloadWeek: el("inDeload").checked,
       population: String(el("inPopulation").value || ""),
       goals: String(el("inGoals").value || ""),
     };
+  }
+
+  /* One box per session, rebuilt when the count changes so the two never disagree.
+     Existing text is carried over rather than wiped. */
+  function buildSessionBoxes() {
+    var host = el("inSessionTypes");
+    if (!host) return;
+    var n = Math.max(1, Math.min(14, Number(el("inSessions").value) || 3));
+    var prev = [];
+    for (var i = 0; i < 14; i++) {
+      var old = el("inSessType-" + i);
+      prev.push(old ? old.value : "");
+    }
+    var html = "";
+    for (var j = 0; j < n; j++) {
+      html +=
+        '<div class="sess-box"><label for="inSessType-' + j + '">Session ' + (j + 1) + "</label>" +
+        '<input id="inSessType-' + j + '" type="text" value="' + esc(prev[j] || "") +
+        '" placeholder="e.g. strength + short metcon"></div>';
+    }
+    host.innerHTML = html;
   }
 
   function renderIntakeTabs() {
@@ -778,13 +864,31 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
   }
 
   function syncIntakeConditionals() {
-    var other = !el("inEquipFull").checked;
-    el("inEquipOtherWrap").hidden = !other;
+    el("inEquipOtherWrap").hidden = el("inEquipFull").checked;
 
-    var weekly = el("inSchedMode").value === "weekly_schedule";
-    el("inWeekWrap").hidden = !weekly;
-    el("inCountWrap").hidden = weekly;
-    el("inCountHint").hidden = weekly;
+    /* One checkbox picks the mode, and each mode has its own follow-ups. Ticked is
+       the default: N sessions a week with no weekday attached. */
+    var byCount = el("inSchedCount").checked;
+    el("inSessions").disabled = !byCount;
+    el("inCountHint").textContent = byCount
+      ? "No weekday attached — the coach delivers them whenever suits their groups. Untick to pin sessions to weekdays instead."
+      : "Sessions sit on weekdays. Tick to go back to a plain weekly session count.";
+    el("inDifferWrap").hidden = !byCount;
+    el("inWeeklyWrap").hidden = byCount;
+
+    /* session_count → do the sessions differ? */
+    var differ = el("inSessionsDiffer").checked;
+    el("inSessionTypes").hidden = !differ;
+    el("inDifferHint").textContent = differ
+      ? "Describe each session's character — they are laid out below in order."
+      : "The sessions are interchangeable — a standard CrossFit week.";
+    if (differ) buildSessionBoxes();
+
+    /* weekly_schedule → rest days, then standing per-day emphases. */
+    el("inRestHint").textContent = el("inRestDays").checked
+      ? "Rest days are part of the plan."
+      : "Rest days are not planned — the coach decides. (Default.)";
+    el("inWeekDays").hidden = !el("inEmphasis").checked;
 
     /* Spelling out the consequence, because "no deload" silently changes the block
        from five weeks to four and that is easy to miss. */
@@ -793,13 +897,28 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       : "Blocks are 4 weeks with no deload — the next 4-week block follows straight after. (Default.)";
   }
 
+  /* Sun–Sat, each with a tick that reveals its standing note. The note repeats every
+     week — "Fridays are partner workouts" — so it is not a one-off comment. */
   function buildWeekRows() {
     var CI = window.CLIENT_INTAKE;
     if (!CI) return;
     el("inWeekDays").innerHTML = CI.DAY_KEYS.map(function (k) {
-      return '<label class="wk-row"><span>' + esc(CI.DAY_LABELS[k]) + "</span>" +
-        '<input id="inWk-' + k + '" type="text" placeholder="Rest"></label>';
+      return '<div class="emph-row">' +
+        '<label class="emph-head"><input id="inEm-' + k + '" type="checkbox" data-emph="' + k + '">' +
+        "<span>" + esc(CI.DAY_LABELS[k]) + "</span></label>" +
+        '<input id="inEmTxt-' + k + '" type="text" hidden placeholder="e.g. partner workouts">' +
+        "</div>";
     }).join("");
+  }
+
+  function syncEmphasisRow(k) {
+    var box = el("inEm-" + k);
+    var txt = el("inEmTxt-" + k);
+    if (!box || !txt) return;
+    txt.hidden = !box.checked;
+    if (box.checked) {
+      try { txt.focus(); } catch (e) {}
+    }
   }
 
   function submitIntake() {
@@ -831,9 +950,21 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     buildWeekRows();
     renderIntakeTabs();
     syncIntakeConditionals();
-    el("inEquipFull").addEventListener("change", syncIntakeConditionals);
-    el("inSchedMode").addEventListener("change", syncIntakeConditionals);
-    el("inDeload").addEventListener("change", syncIntakeConditionals);
+    ["inEquipFull", "inSchedCount", "inSessionsDiffer", "inRestDays", "inEmphasis", "inDeload"]
+      .forEach(function (id) {
+        var n = el(id);
+        if (n) n.addEventListener("change", syncIntakeConditionals);
+      });
+    /* The session count drives how many description boxes exist, so rebuild on input
+       rather than only on blur — otherwise the count and the boxes disagree. */
+    el("inSessions").addEventListener("input", function () {
+      if (el("inSessionsDiffer").checked) buildSessionBoxes();
+    });
+    /* Ticking a weekday reveals its note. Delegated, because the rows are rebuilt. */
+    el("inWeekDays").addEventListener("change", function (ev) {
+      var k = ev.target && ev.target.getAttribute && ev.target.getAttribute("data-emph");
+      if (k) syncEmphasisRow(k);
+    });
     el("iNext").addEventListener("click", function () {
       if (iStep < intakeDefs().length - 1) { iStep++; renderIntakeTabs(); }
     });
