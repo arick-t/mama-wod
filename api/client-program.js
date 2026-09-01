@@ -28,6 +28,8 @@ const {
   adminAuthDenied,
   sessionSecretReady,
   MIN_SESSION_SECRET_LEN,
+  mintAdminSessionToken,
+  adminAuthUsedPassword,
 } = require("../scripts/lib/admin/admin-auth.js");
 const JsonStore = require("../scripts/lib/admin/admin-json-store.js");
 const ProgramStore = require("../lib/client-program-store.js");
@@ -101,6 +103,25 @@ async function ownerHandler(req, res, body) {
   const action = String(body.action || "").toLowerCase();
 
   if (action === "list") {
+    /* Mint a session token on a PASSWORD login, exactly as /api/admin-snapshot does.
+     *
+     * Without this the owner had to retype the password on every visit to the clients
+     * page — and, worse, again after arriving from admin.html — because this endpoint
+     * accepted the password and then handed back nothing to remember. Not the missing
+     * env var, which is what it looked like: my endpoint simply never minted.
+     *
+     * Header only, never the JSON body, and only on a password login — never on a
+     * token poll, which would refresh a session forever. */
+    if (adminAuthUsedPassword(req)) {
+      const tok = mintAdminSessionToken(undefined, {
+        remember: !!(body.rememberMe || body.remember),
+      });
+      if (tok) {
+        try {
+          res.setHeader("X-Admin-Session-Token", tok);
+        } catch (eHdr) {}
+      }
+    }
     const idx = await store.readIndex();
     if (!idx.ok) return bad(res, 503, idx.code, idx.error);
     const rows = idx.index.rows || [];

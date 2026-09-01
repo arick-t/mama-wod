@@ -173,12 +173,22 @@ ok("tab 1 says the client cannot see the price", /client never sees them/i.test(
 
 /* Tab 2 — exactly two options, OTHER reveals a box */
 ok("equipment has the well-equipped option", /Well-equipped functional training gym/.test(page));
-ok("equipment has OTHER", /value="other">OTHER/.test(page));
-ok("OTHER reveals a description box", /id="inEquipOtherWrap"/.test(page) && /inEquip"\)\.value === "other"/.test(page));
+ok("equipment is a checkbox, not a dropdown", /id="inEquipFull" type="checkbox" checked/.test(page));
+ok("the default is ticked — the well-equipped gym", /id="inEquipFull" type="checkbox" checked/.test(page));
+ok("the owner is told what unticking means", /Untick if the place has something else/.test(page));
+/* Plain string search: a regex here needs escaping for ? and " and the escaping is
+   what keeps going wrong, not the assertion. */
 ok(
-  "equipment offers exactly two choices",
-  (page.match(/<option value="(functional_gym|other)"/g) || []).length === 2
+  "ticked maps to the well-equipped gym, unticked to OTHER",
+  page.indexOf('checked ? "functional_gym" : "other"') >= 0
 );
+ok(
+  "unticking reveals the description box",
+  /id="inEquipOtherWrap"/.test(page) && page.indexOf('!el("inEquipFull").checked') >= 0
+);
+ok("the box is hidden by default", /id="inEquipOtherWrap" hidden/.test(page));
+ok("there is no equipment dropdown left", page.indexOf('id="inEquip"') < 0);
+ok("no select element survives on the equipment tab", !/<select id="inEquip/.test(page));
 
 /* Tab 3 — two modes that change the plan's shape */
 ok("schedule offers a session count", /value="session_count"/.test(page));

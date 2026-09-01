@@ -93,12 +93,30 @@ function harness(opts) {
     filename: authPath,
     loaded: true,
     exports: {
+      /* Mirrors the real helper: a password OR a valid session token authenticates. */
       checkAdminAuth(req) {
-        return String((req.headers || {})["x-admin-password"] || "") === "owner-pw";
+        const h = req.headers || {};
+        return (
+          String(h["x-admin-password"] || "") === "owner-pw" ||
+          String(h["x-admin-token"] || "") === "aws1.test.token"
+        );
       },
       adminAuthDenied(res) {
         return res.status(401).json({ ok: false, error: "Unauthorized" });
       },
+      /* The endpoint mints a session token on a password login, so the stub has to
+         answer these too — otherwise the call throws and comes back as a 503, which
+         is exactly how this test caught the missing pieces. */
+      adminAuthUsedPassword(req) {
+        return String((req.headers || {})["x-admin-password"] || "") === "owner-pw";
+      },
+      mintAdminSessionToken() {
+        return "aws1.test.token";
+      },
+      sessionSecretReady() {
+        return true;
+      },
+      MIN_SESSION_SECRET_LEN: 32,
     },
   };
   require.cache[mailPath] = {
@@ -128,26 +146,31 @@ function harness(opts) {
 
   const api = require("../api/client-program.js");
 
-  function call(headers, body) {
+  function call(reqHeaders, body) {
     return new Promise(function (resolve) {
       let statusCode = 200;
+      /* Named apart from the REQUEST headers on purpose — shadowing the parameter
+         here silently sent an empty header bag and every auth check failed. */
+      const resHeaders = {};
       const res = {
         headersSent: false,
-        setHeader() {},
+        setHeader(k, v) {
+          resHeaders[k] = v;
+        },
         status(c) {
           statusCode = c;
           return res;
         },
         json(payload) {
-          resolve({ status: statusCode, body: payload });
+          resolve({ status: statusCode, body: payload, headers: resHeaders });
           return res;
         },
         end() {
-          resolve({ status: statusCode, body: null });
+          resolve({ status: statusCode, body: null, headers: resHeaders });
           return res;
         },
       };
-      api({ method: "POST", headers: headers || {}, body: body || {}, socket: {} }, res);
+      api({ method: "POST", headers: reqHeaders || {}, body: body || {}, socket: {} }, res);
     });
   }
 
@@ -156,6 +179,9 @@ function harness(opts) {
     mails,
     owner(body) {
       return call({ "x-admin-password": "owner-pw" }, body);
+    },
+    ownerWithToken(body) {
+      return call({ "x-admin-token": "aws1.test.token" }, body);
     },
     client(token, body) {
       const h = token ? { "x-client-token": token } : {};
@@ -212,6 +238,19 @@ async function main() {
   /* Owner list carries a monthly total (a.3.5). */
   const listed = await H.owner({ action: "list" });
   ok("owner list works off the index", listed.status === 200 && listed.body.rows.length === 1);
+
+  /* The owner had to retype the password on every visit because this endpoint took
+     the password and handed back nothing to remember. It must mint on a password
+     login, in the header only, and never put the token in the JSON body. */
+  ok("a password login mints a session token", listed.headers["X-Admin-Session-Token"] === "aws1.test.token");
+  ok("the token is not in the response body", JSON.stringify(listed.body).indexOf("aws1.test") < 0);
+
+  const byToken = await H.ownerWithToken({ action: "list" });
+  ok("a token poll still works", byToken.status === 200);
+  ok(
+    "a token poll does NOT mint again — a session cannot renew itself forever",
+    byToken.headers["X-Admin-Session-Token"] === undefined
+  );
 
   /* --- a stale owner save is refused ------------------------------------ */
 

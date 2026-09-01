@@ -104,6 +104,9 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
 .wk-row{display:grid;grid-template-columns:70px 1fr;gap:9px;align-items:center;margin:0 0 8px}
 .wk-row span{color:var(--text-meta);font-size:.85rem}
 .wk-row input{margin:0}
+.chk-row{display:flex;gap:10px;align-items:flex-start;margin:0 0 8px;cursor:pointer}
+.chk-row input{width:20px;height:20px;margin:2px 0 0;flex:0 0 auto;accent-color:var(--brand)}
+.chk-row span{color:var(--text);font-size:.92rem}
 @media (max-width:600px){.grid2{grid-template-columns:1fr}}
 </style>
 </head>
@@ -155,12 +158,15 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       </div>
 
       <!-- 2 · equipment -->
+      <!-- A checkbox, not a dropdown: there are only two states and the default is the
+           well-equipped gym. The description box only exists when it has something to
+           describe, so the tab is one line in the common case. -->
       <div class="ipane" data-pane="equipment" hidden>
-        <label class="fld"><span>What the place has</span>
-          <select id="inEquip">
-            <option value="functional_gym">Well-equipped functional training gym</option>
-            <option value="other">OTHER</option>
-          </select></label>
+        <label class="chk-row">
+          <input id="inEquipFull" type="checkbox" checked>
+          <span>Well-equipped functional training gym</span>
+        </label>
+        <p class="meta" style="margin:0 0 12px">Untick if the place has something else — then describe it.</p>
         <label class="fld" id="inEquipOtherWrap" hidden><span>Describe what is actually available</span>
           <textarea id="inEquipOther" placeholder="Rig, 4 barbells, kettlebells 8–32kg, 2 rowers, no rings…"></textarea></label>
       </div>
@@ -743,7 +749,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       clientName: String(el("inName").value || ""),
       monthlyAmount: Number(el("inAmount").value) || 0,
       paymentMethod: String(el("inMethod").value || ""),
-      equipment: el("inEquip").value,
+      equipment: el("inEquipFull").checked ? "functional_gym" : "other",
       equipmentOther: String(el("inEquipOther").value || ""),
       scheduleMode: el("inSchedMode").value,
       sessionsPerWeek: Number(el("inSessions").value) || 3,
@@ -772,7 +778,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
   }
 
   function syncIntakeConditionals() {
-    var other = el("inEquip").value === "other";
+    var other = !el("inEquipFull").checked;
     el("inEquipOtherWrap").hidden = !other;
 
     var weekly = el("inSchedMode").value === "weekly_schedule";
@@ -825,7 +831,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     buildWeekRows();
     renderIntakeTabs();
     syncIntakeConditionals();
-    el("inEquip").addEventListener("change", syncIntakeConditionals);
+    el("inEquipFull").addEventListener("change", syncIntakeConditionals);
     el("inSchedMode").addEventListener("change", syncIntakeConditionals);
     el("inDeload").addEventListener("change", syncIntakeConditionals);
     el("iNext").addEventListener("click", function () {
