@@ -125,6 +125,56 @@ const authSrc = (admin.match(/function adminAuthHeaders\(extra\)[\s\S]*?\n\}/) |
 ok("the auth helper sends a token when it has one", /X-Admin-Token/.test(authSrc));
 ok("the auth helper falls back to the password", /X-Admin-Password/.test(authSrc));
 
+/* --- 4 · the API base must be same-origin on a Vercel host --------- */
+
+/* Hardcoding the production host made a PREVIEW page call PRODUCTION, where the new
+ * endpoint does not exist yet. The 404 came back with no CORS headers, the browser
+ * blocked it, and the fetch rejected — which is why the login button sat on
+ * "מתחבר…" forever. Same-origin is both correct and what makes a preview testable. */
+const client = fs.readFileSync(path.join(root, "client.html"), "utf8");
+
+[
+  ["admin-clients.html", clients],
+  ["client.html", client],
+].forEach(function (pair) {
+  const name = pair[0];
+  const src = pair[1];
+  const baseSrc = (src.match(/var API_BASE = \(function \(\)[\s\S]*?\}\)\(\);/) || [""])[0];
+  ok(name + " resolves its API base in one place", baseSrc.length > 40);
+  ok(name + " uses same-origin on any *.vercel.app host", /\\\.vercel\\\.app\$\/i\.test\(/.test(baseSrc));
+  ok(name + " still falls back to production for GitHub Pages", /mama-wod\.vercel\.app/.test(baseSrc));
+
+  const b = { location: { hostname: "" } };
+  vm.createContext(b);
+  vm.runInContext("var location = this.location;\n" + baseSrc + "\nthis.base = API_BASE;", b);
+  /* Re-evaluate per hostname — the IIFE runs once, so build it fresh each time. */
+  function baseFor(hostname) {
+    const ctx = { location: { hostname: hostname } };
+    vm.createContext(ctx);
+    vm.runInContext("var location = this.location;\n" + baseSrc + "\nthis.base = API_BASE;", ctx);
+    return ctx.base;
+  }
+  ok(name + " · production Vercel → same origin", baseFor("mama-wod.vercel.app") === "");
+  ok(name + " · branch preview → same origin", baseFor("mama-wod-git-feature-client-view-arick-ts-projects.vercel.app") === "");
+  ok(name + " · per-deploy preview → same origin", baseFor("mama-87eyxz2wy-arick-ts-projects.vercel.app") === "");
+  ok(name + " · localhost → same origin", baseFor("localhost") === "");
+  ok(name + " · GitHub Pages → production Vercel", baseFor("arick-t.github.io") === "https://mama-wod.vercel.app");
+});
+
+/* --- 5 · a failed request must never hang the UI ------------------- */
+
+ok(
+  "the clients login handles a rejected fetch",
+  /\.catch\(function \(e\) \{[\s\S]{0,200}pwErr/.test(clients)
+);
+ok("the reason is recorded", /never reaches \.then/.test(clients));
+
+/* --- 6 · choosing "end athlete" goes straight into the intake ------ */
+
+ok("choosing the athlete kind starts the intake immediately", /openIntakeWorkspace\(\);\s*\n\s*try \{\s*\n\s*startIntakeChat\(\);/.test(admin));
+ok("a failed start still tells the owner", /לא הצלחתי להתחיל תחקור/.test(admin));
+ok("the start bar is still there to retry with", /id="intake-start-bar"/.test(admin));
+
 /* --- and the two static links still point at each other ------------ */
 
 ok("admin links to the client page", /href="admin-clients\.html"/.test(admin));

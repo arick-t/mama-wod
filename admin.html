@@ -4221,7 +4221,17 @@ function chooseClientKind(kind) {
     window.location.href = pagesAbsoluteUrl("/admin-clients.html?new=coach");
     return;
   }
+  /* Straight into the conversation. Choosing "end athlete" IS the decision to start
+     the intake — making the owner click "התחל תחקור" afterwards is a second click
+     for the same intent. The start bar stays in the markup so a failed start can be
+     retried; startIntakeChat hides it on success. */
   openIntakeWorkspace();
+  try {
+    startIntakeChat();
+  } catch (e) {
+    var st = document.getElementById("intake-status");
+    if (st) st.textContent = "לא הצלחתי להתחיל תחקור — לחץ ״התחל תחקור״.";
+  }
 }
 window.openClientKindChooser = openClientKindChooser;
 window.closeClientKindChooser = closeClientKindChooser;

@@ -23,7 +23,12 @@
 
 const { applyCors } = require("../lib/cors-allowlist.js");
 const { checkRateLimit, sendRateLimit, clientIp } = require("../lib/rate-limit.js");
-const { checkAdminAuth, adminAuthDenied } = require("../scripts/lib/admin/admin-auth.js");
+const {
+  checkAdminAuth,
+  adminAuthDenied,
+  sessionSecretReady,
+  MIN_SESSION_SECRET_LEN,
+} = require("../scripts/lib/admin/admin-auth.js");
 const JsonStore = require("../scripts/lib/admin/admin-json-store.js");
 const ProgramStore = require("../lib/client-program-store.js");
 const Access = require("../lib/client-access.js");
@@ -484,6 +489,11 @@ async function handler(req, res) {
          be arbitrarily old. Raise this only when an old bundle would genuinely
          misbehave — it puts an "update the app" bar on every older install. */
       minAppVersion: MIN_APP_VERSION,
+      /* Reports WHETHER remember-me can work, never the secret itself. Without this
+         a missing or too-short ADMIN_SESSION_SECRET is invisible: the server simply
+         mints no session token and every page asks for the password again. */
+      rememberMeReady: sessionSecretReady(),
+      sessionSecretMinLength: MIN_SESSION_SECRET_LEN,
       termsVersion: Terms.TERMS_VERSION,
       deviceCap: Access.MAX_DEVICES,
       storage: JsonStore.storageInfo ? JsonStore.storageInfo() : null,

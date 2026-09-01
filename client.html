@@ -237,10 +237,15 @@ button.ghost:hover{color:var(--text)}
 (function () {
   "use strict";
 
+  /* Static site is on Pages, which has no server, so from there /api/* goes to
+   * Vercel. But when this page is served FROM a Vercel deployment — production or a
+   * branch preview — the API is at the same origin. Hardcoding production made a
+   * preview call production, where the endpoint does not exist yet, and the 404 came
+   * back without CORS headers so the fetch just rejected. */
   var API_BASE = (function () {
-    /* Static site is on Pages; every /api/* call goes to Vercel. */
     var host = String(location.hostname || "");
     if (host === "localhost" || host === "127.0.0.1") return "";
+    if (/\.vercel\.app$/i.test(host)) return "";
     return "https://mama-wod.vercel.app";
   })();
 

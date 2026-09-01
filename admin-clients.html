@@ -249,9 +249,20 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
 (function () {
   "use strict";
 
+  /* Where the API lives.
+   *
+   * The static site is on GitHub Pages, which has no server, so from there every
+   * /api/* call must go to Vercel. But when this page is ITSELF served from a Vercel
+   * deployment — production or a branch preview — the API sits at the same origin.
+   *
+   * Hardcoding the production host broke preview testing badly: the preview page
+   * called production, where /api/client-program does not exist yet, and the 404
+   * came back without CORS headers, so the browser blocked it and the fetch simply
+   * rejected. Same-origin is both correct and what makes a preview testable. */
   var API_BASE = (function () {
     var h = String(location.hostname || "");
     if (h === "localhost" || h === "127.0.0.1") return "";
+    if (/\.vercel\.app$/i.test(h)) return "";
     return "https://mama-wod.vercel.app";
   })();
   /* Same keys as admin.html, so one login serves both pages. */
@@ -343,6 +354,16 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
         if (!x.token) {
           banner("warn", "התחברת, אבל השרת לא הנפיק כרטיס־זיכרון — כלומר תצטרך להקליד סיסמה שוב בפעם הבאה. חסר ADMIN_SESSION_SECRET בהגדרות Vercel.");
         }
+      })
+      /* Without this the button sat on "מתחבר…" forever whenever the request itself
+         failed — a rejected fetch never reaches .then, so nothing reset the button
+         and nothing told the owner anything. That is exactly what happened when the
+         page was calling production from a preview host and CORS blocked it. */
+      .catch(function (e) {
+        b.disabled = false;
+        b.textContent = "היכנס";
+        el("pwErr").textContent =
+          "לא הצלחתי להגיע לשרת (" + String((e && e.message) || e).slice(0, 80) + ").";
       });
   }
 
