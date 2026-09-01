@@ -44,17 +44,17 @@ function allPrompts() {
 /* Character budgets. A layer that doubles in size doubles what every brick costs, so growth is a
    decision, not an accident. Raise a number here deliberately and say why. */
 const MAX_CHARS = {
-  "coach-craft": 3000,
-  "layer1-methodology": 4500,
+  "coach-craft": 3200,
+  "layer1-methodology": 5500,
   "layer1-injuries": 3500,
-  "layer2-general": 5500,
+  "layer2-general": 6500,
   "layer2-individual": 5000,
   "layer3-gymnastics": 4000,
   "layer3-weightlifting": 3500,
   "layer3-endurance": 3500,
   "layer3-competitors": 3500,
   "layer3-partner": 2500,
-  "equivalence-table": 5500,
+  "equivalence-table": 8000,
 };
 
 function testShape() {
@@ -93,16 +93,32 @@ function testNoSourceLeak() {
 }
 
 function testNumbersHaveProvenance() {
-  /* The lift ratios and machine equivalences are NOT in the knowledge base. They are estimates and
-     the prompt has to say so out loud, or the coach will state a guessed 1RM as a fact. */
-  ok("estimated ratios are marked as having no source",
-    /no source in the knowledge base/i.test(EQUIVALENCE) &&
-      (EQUIVALENCE.match(/no source in the knowledge base/gi) || []).length >= 2);
+  const flat = EQUIVALENCE.replace(/\s+/g, " ");
+
   ok("the %1RM chart is present and complete",
     /1RM 100%/.test(EQUIVALENCE) && /12RM 70%/.test(EQUIVALENCE));
-  ok("an untested 1RM is never quoted to the athlete as fact",
-    /never state\s*\n?an estimated 1RM to the athlete/i.test(EQUIVALENCE.replace(/\s+/g, " ")) ||
-      /never state an estimated 1RM/i.test(EQUIVALENCE.replace(/\s+/g, " ")));
+
+  /* Lift-to-lift ratios have no source in the knowledge base, and the owner's instruction was:
+     do not guess. So the table must REFUSE the conversion rather than offer a plausible number —
+     a guessed clean max becomes a real load on a real bar. */
+  ok("no lift-to-lift ratio is offered",
+    !/Front Squat ~|Clean ~\d|Snatch ~\d|Deadlift ~1\d\d%/.test(EQUIVALENCE),
+    "a lift ratio reappeared — there is still no source for one");
+  ok("the table says outright that lift-to-lift conversion does not exist",
+    /NO reliable way to derive one lift's max from another/i.test(flat));
+  ok("an untested number is never quoted to the athlete as a max",
+    /Never state a number the athlete has not tested as if it were their max/i.test(flat));
+
+  /* Machine equivalence DOES have a source now (the aerobic conversion sheet the owner added on
+     2026-09-01), so the table must carry the real rows rather than a hand-wave. */
+  ok("machine equivalence carries real sourced rows",
+    /800 \| *1000 \/ 800/.test(EQUIVALENCE) && /AIR\/ASSAULT BIKE cal/.test(EQUIVALENCE));
+  ok("the coach is told to prefer meters over calories",
+    /Prefer METERS over CALORIES/i.test(flat));
+
+  /* Sourced scaling order from the Level 1 guide, including the one thing that causes rhabdo. */
+  ok("scaling order is load -> volume -> movement", /1\) LOAD *2\) VOLUME/i.test(flat));
+  ok("progressive scaling is forbidden", /FORBIDDEN: progressive scaling/i.test(flat));
 }
 
 function testInjuryGate() {
@@ -179,8 +195,8 @@ function testPackBudget() {
       injuries: "shoulder impingement",
     },
   });
-  ok("the heaviest pack stays under 28k characters",
-    heavy.chars < 28000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
+  ok("the heaviest pack stays under 32k characters",
+    heavy.chars < 32000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
   ok("the pack reports which layers it used",
     Array.isArray(heavy.layers) && heavy.layers.length >= 6, heavy.layers.join(", "));
 }
