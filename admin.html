@@ -772,11 +772,6 @@ body:has(#intake-modal.open) #adminChatFloat{
     <span class="logo">DUCK-WOD</span>
     <span class="ver-badge" id="admin-ver-badge" title="Admin 3.0.2 · Coach 2.3.14">Admin 3.0.2<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.14</span></span>
     <span class="count-wrap">
-      <!-- Client programs live on their own page: a new product surface, and this
-           file is a 201KB hand-written monolith. Session storage is shared, so one
-           login serves both. -->
-      <a class="hdr-btn" id="btn-client-programs" href="admin-clients.html"
-         title="תוכניות אימון למאמנים ולסטודיו — הדף השני">מודול לקוחות</a>
       <span class="count" id="athlete-count" title="הרשימה מתעדכנת לבד כל כמה שניות — בלי לרענן את הדף">0 לקוחות</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
         title="יתרת קרדיט Gemini משוערת — לחץ לעדכון ידני מגוגל">
@@ -973,6 +968,10 @@ var adminPollTimer = null;
 var lastAdminSnapFingerprint = "";
 var ADMIN_POLL_MS = 20000;
 var athletes = [];
+/* The other half of the strip: programmes written for coaches and studios. They live in
+   a different store and are edited on the other screen, but as far as the owner is
+   concerned they are simply more of his clients (his instruction, 2026-09-01). */
+var clientPrograms = [];
 var currentAthleteId = null;
 var syncInFlight = false;
 var blockMonthOffsetByAthlete = {};
@@ -1639,6 +1638,24 @@ function openAdminApp(snapshots) {
   loadCreditEstimate();
   refreshLiveCoachVersion();
   renderAthleteList(snapshots || []);
+  loadClientPrograms();
+  bindPeopleStrip();
+  /* Coming back from the other screen: land on the athlete that was clicked there. */
+  try {
+    var wantAthlete = new URLSearchParams(location.search).get("athlete");
+    if (wantAthlete) {
+      var tries = 0;
+      var jump = setInterval(function () {
+        tries++;
+        if (athletes.some(function (x) { return x.athleteId === wantAthlete; })) {
+          clearInterval(jump);
+          selectAthlete(wantAthlete);
+        } else if (tries > 40) {
+          clearInterval(jump);
+        }
+      }, 150);
+    }
+  } catch (eDeep) {}
   startAdminLivePoll();
   if (!window._adminCalDocBound) {
     window._adminCalDocBound = true;
@@ -1875,16 +1892,16 @@ function refreshLiveCoachVersion() {
 function renderAthleteList(list) {
   athletes = ingestAdminSnapshots(list);
   lastAdminSnapFingerprint = adminSnapshotsFingerprint(athletes);
-  document.getElementById("athlete-count").textContent = athletes.length + " לקוחות";
-  var sb = document.getElementById("athlete-tabs");
+  renderPeopleStrip();
 
   if (!athletes.length) {
     currentAthleteId = null;
     adminChatFabOpen = false;
     syncAthleteChatFab(null);
-    sb.innerHTML = '<div class="empty-tabs">אין לקוחות עדיין — לחץ ״+ לקוח״</div>';
-    document.getElementById("content").innerHTML =
-      '<div class="empty-content"><div class="icon">·</div><p>אין לקוחות — לחץ ״+ לקוח״ כדי להתחיל</p></div>';
+    if (!clientPrograms.length) {
+      document.getElementById("content").innerHTML =
+        '<div class="empty-content"><div class="icon">·</div><p>אין לקוחות — לחץ ״+ לקוח״ כדי להתחיל</p></div>';
+    }
     return;
   }
 
@@ -1892,20 +1909,66 @@ function renderAthleteList(list) {
     currentAthleteId = athletes[0].athleteId;
   }
 
-  sb.innerHTML = athletes.map(function(a) {
-    var active = a.athleteId === currentAthleteId ? " active" : "";
-    return '<button type="button" class="athlete-tab' + active +
-      '" data-id="' + esc(a.athleteId) +
-      '" onclick="selectAthlete(\'' + esc(a.athleteId) + '\')">' +
-      esc(a.displayName || a.athleteId) +
-      "</button>";
-  }).join("");
-
   var cur = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
   if (cur) renderAthlete(cur);
 }
 
+/**
+ * ONE strip, everyone in it. Both screens draw it from lib/admin-people-strip.js, so it
+ * is the same people in the same order wherever the owner is standing — which is the
+ * whole point: he asked for one unified view of his clients, not two lists that happen
+ * to look alike (2026-09-01).
+ */
+function renderPeopleStrip() {
+  var sb = document.getElementById("athlete-tabs");
+  if (!sb || !window.AdminPeopleStrip) return;
+  var rows = AdminPeopleStrip.rows({ athletes: athletes, programs: clientPrograms });
+  sb.innerHTML = AdminPeopleStrip.html(rows, currentAthleteId);
+  document.getElementById("athlete-count").textContent = rows.length + " לקוחות";
+}
+
+/* A click on a chip: an athlete is already here, a programme is on the other screen —
+   and crossing over must land on that exact client, not on a list. */
+function bindPeopleStrip() {
+  var sb = document.getElementById("athlete-tabs");
+  if (!sb) return;
+  sb.addEventListener("click", function (ev) {
+    var chip = ev.target && ev.target.closest ? ev.target.closest("[data-kind]") : null;
+    if (!chip) return;
+    var id = chip.getAttribute("data-id") || "";
+    if (!id) return;
+    if (chip.getAttribute("data-kind") === "program") {
+      /* Absolute, always: Vercel can serve this page at "/admin.html/" and a relative
+         href then resolves one level too deep — the 404 the owner found by clicking. */
+      location.href = pagesAbsoluteUrl("/admin-clients.html?program=" + encodeURIComponent(id));
+      return;
+    }
+    selectAthlete(id);
+  });
+}
+
+/* The programmes, from the client-program store. A failure here must never cost the
+   owner his athletes: the strip simply carries the half that answered. */
+function loadClientPrograms() {
+  if (!adminIsAuthed()) return;
+  fetch(adminApiUrl("/api/client-program"), {
+    method: "POST",
+    headers: adminAuthHeaders(),
+    body: JSON.stringify(withAdminPassword({ action: "list" }))
+  })
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      if (!d || !d.ok || !Array.isArray(d.rows)) return;
+      clientPrograms = d.rows;
+      renderPeopleStrip();
+    })
+    .catch(function () {});
+}
+
 function selectAthlete(id) {
+  /* Repaint the strip through the shared builder, so the active chip is decided in one
+     place for both screens. */
+  if (id !== currentAthleteId) setTimeout(renderPeopleStrip, 0);
   if (currentAthleteId !== id) {
     adminChatFabOpen = false;
     adminPprogEditCancel(true);
@@ -4878,6 +4941,7 @@ refreshLiveCoachVersion();
 tryRestoreAdminSession();
 </script>
 <script src="lib/coach-intake-sync-contract.js"></script>
+<script src="lib/admin-people-strip.js"></script>
 <script src="lib/normalize-pprog-block.js"></script>
 <script src="lib/pprog-display.js"></script>
 <script src="lib/admin-day-edit.js"></script>

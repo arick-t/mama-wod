@@ -192,13 +192,14 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
        at, and the one button he presses. No sync, no learning mode, no refresh, no
        logout — he is the only person who ever opens this and he never logs out.
        "בנה אינדקס" was a repair tool, not a working control; it lives on the keyboard
-       now (Alt+Shift+I) for the one day the list ever looks stale. -->
+       now (Alt+Shift+I) for the one day the list ever looks stale.
+       There is no link to "the admin module" either: this IS the admin module, and the
+       strip below is how he moves between the people in it. -->
   <header>
     <span class="logo">DUCK-WOD</span>
-    <span class="tagline">לקוחות</span>
+    <span class="tagline">Admin</span>
     <span class="ver-badge" id="clientsVerBadge"></span>
     <span class="count-wrap">
-      <a class="hdr-btn" href="admin.html" title="חזרה למודול אדמין">← מודול אדמין</a>
       <span class="count" id="clientCount" title="מספר הלקוחות">0 לקוחות</span>
       <span class="count" id="monthlyTotal" hidden></span>
       <span class="count" id="listMeta" hidden></span>
@@ -398,6 +399,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
   </div>
 </div>
 
+<script src="lib/admin-people-strip.js"></script>
 <script src="lib/normalize-pprog-block.js"></script>
 <script src="lib/pprog-display.js"></script>
 <script src="lib/day-rest-toggle.js"></script>
@@ -487,10 +489,17 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     } catch (e) { return ""; }
   }
 
-  function api(body) {
+  /* One place the credential is attached, so "where does the password go" has one
+     answer and a test can hold it to that. */
+  function authHeaders() {
     var headers = { "Content-Type": "application/json" };
     if (S.token) headers["X-Admin-Token"] = S.token;
     else if (S.pw) headers["X-Admin-Password"] = S.pw;
+    return headers;
+  }
+
+  function api(body) {
+    var headers = authHeaders();
     return fetch(API_BASE + "/api/client-program", {
       method: "POST", headers: headers, body: JSON.stringify(body || {}),
     })
@@ -602,29 +611,52 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     var total = Number(data.monthlyTotal) || 0;
     /* The counters sit in the header bar, where the admin module already keeps
        "N לקוחות" — same place, same shape, one back office. */
-    el("clientCount").textContent = S.rows.length + " לקוחות";
+    el("clientCount").textContent = (S.rows.length + (S.athletes || []).length) + " לקוחות";
     el("monthlyTotal").textContent = total ? "₪" + total.toLocaleString() + " לחודש" : "";
     el("listMeta").textContent = data.unreadTotal ? data.unreadTotal + " ימים לא נקראו" : "";
     /* Hidden when there is nothing to say: an empty pill is a box with nothing in it,
        and it read as a control that had lost its label. */
     show("monthlyTotal", !!total);
     show("listMeta", !!data.unreadTotal);
-    if (!S.rows.length) {
-      el("clientList").innerHTML = '<div class="empty-tabs">אין עוד לקוחות — לחץ ״+ לקוח חדש״</div>';
-      return;
-    }
-    /* A tab carries a NAME. The kind, the date and the version were a row's worth of
-       detail that a strip has no room for and the open client shows anyway; what stays
-       is what changes a decision — the unread dot, and "בדיקה" so a test client is
-       never mistaken for a paying one. */
-    el("clientList").innerHTML = S.rows.map(function (r) {
-      return '<button type="button" class="athlete-tab' + (S.sel === r.programId ? " active" : "") +
-        '" data-open="' + esc(r.programId) + '">' +
-        (r.unreadCount ? '<span class="dot" title="יש שינוי שלא ראית"></span>' : "") +
-        '<span class="cname">' + esc(r.clientName || "(ללא שם)") + "</span>" +
-        (r.isTest ? '<span class="badge test">בדיקה</span>' : "") +
-        "</button>";
-    }).join("");
+    renderPeopleStrip();
+  }
+
+  /**
+   * ONE strip, everyone in it — the same builder the other screen uses, so it is the
+   * same people in the same order wherever he is standing. There is one admin module;
+   * that it happens to live in two files is not something he should ever see
+   * (his instruction, 2026-09-01).
+   */
+  function renderPeopleStrip() {
+    var host = el("clientList");
+    if (!host || !window.AdminPeopleStrip) return;
+    var rows = AdminPeopleStrip.rows({ athletes: S.athletes || [], programs: S.rows || [] });
+    host.innerHTML = AdminPeopleStrip.html(rows, S.sel);
+  }
+
+  /* The athletes, so this screen's strip carries them too. Best effort: if this call
+     fails the page still does its own job, with half a strip rather than none. */
+  function loadAthletes() {
+    return fetch(API_BASE + "/api/admin-snapshot", {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify({ action: "admin_list" }),
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var list = (d && (d.athletes || d.list || d.rows)) || [];
+        S.athletes = list
+          .map(function (a) {
+            var snap = (a && a.snapshot) || a || {};
+            return {
+              athleteId: a && (a.athleteId || a.userId || snap.athleteId),
+              displayName: snap.displayName || (a && a.displayName) || "",
+            };
+          })
+          .filter(function (a) { return a.athleteId; });
+        renderPeopleStrip();
+      })
+      .catch(function () {});
   }
 
   /* --- one client ------------------------------------------------------ */
@@ -1474,6 +1506,18 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     if (!t || !t.getAttribute) return;
     var g = function (n) { return t.getAttribute(n); };
 
+    var chip = t.closest ? t.closest("[data-kind]") : null;
+    if (chip && chip.getAttribute("data-id")) {
+      var chipId = chip.getAttribute("data-id");
+      if (chip.getAttribute("data-kind") === "athlete") {
+        /* Absolute, always — a relative href breaks when the page is served with a
+           trailing slash (scripts/cross-page-links.test.js). */
+        location.href = location.origin + sitePath() + "/admin.html?athlete=" + encodeURIComponent(chipId);
+        return;
+      }
+      openClient(chipId);
+      return;
+    }
     var openRow = t.closest ? t.closest("[data-open]") : null;
     if (openRow && openRow.getAttribute("data-open")) { openClient(openRow.getAttribute("data-open")); return; }
 
@@ -1935,6 +1979,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     bindPickPair("equip");
     bindPickPair("sched");
     bindCalGestures();
+    loadAthletes();
     var verBadge = el("clientsVerBadge");
     if (verBadge) {
       verBadge.textContent = "Admin " + ADMIN_UI_VERSION;

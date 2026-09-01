@@ -59,7 +59,15 @@ assert.ok(/id="admin-ver-badge"/.test(admin), "the versions stay");
 assert.ok(/id="athlete-count"/.test(admin), "the athlete count stays");
 assert.ok(/id="btn-credit-estimate"/.test(admin), "the credit estimate stays");
 assert.ok(/id="btn-add-athlete"/.test(admin), "adding a client stays");
-assert.ok(/id="btn-client-programs"/.test(admin), "the clients page link stays");
+/* There is ONE admin module — the owner has said so several times, most plainly on
+   2026-09-01: "אין מודול לקוחות, אין חיה כזאת". A header button announcing another
+   module was the last place that claim survived. The STRIP is the navigation now: it
+   carries every client he manages, and clicking one opens them wherever he is. */
+assert.ok(!/id="btn-client-programs"/.test(admin), "no link to a second 'module'");
+assert.ok(/lib\/admin-people-strip\.js/.test(admin), "the strip is built by the shared builder");
+assert.ok(/function renderPeopleStrip/.test(admin), "admin draws the unified strip");
+assert.ok(/function loadClientPrograms/.test(admin), "and loads the programmes beside the athletes");
+assert.ok(/admin-clients\.html\?program=/.test(admin), "a programme chip lands on that client");
 
 assert.ok(!/<span class="tagline">Admin<\/span>/.test(admin), "the word Admin beside the logo is gone");
 assert.ok(!/id="btn-sync-drive"/.test(admin), "the drive-sync button is gone");

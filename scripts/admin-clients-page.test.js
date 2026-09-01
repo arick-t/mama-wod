@@ -15,6 +15,8 @@ function ok(name, cond) {
 const root = path.join(__dirname, "..");
 const page = fs.readFileSync(path.join(root, "admin-clients.html"), "utf8");
 const admin = fs.readFileSync(path.join(root, "admin.html"), "utf8");
+/* The chips both screens draw are built here, so assertions about a chip belong here. */
+const strip = fs.readFileSync(path.join(root, "lib", "admin-people-strip.js"), "utf8");
 
 /* --- it must parse ------------------------------------------------------- */
 
@@ -34,9 +36,20 @@ scripts.forEach(function (code, i) {
 
 /* --- reachable from the admin module, sharing its session -------------- */
 
-ok("admin.html links to the client page", /href="admin-clients\.html"/.test(admin));
-ok("the link is labelled for the owner", /id="btn-client-programs"/.test(admin));
-ok("the page links back to admin", /href="admin\.html"/.test(page));
+/* ------------------------------------------------------------------------
+ * ONE admin module, two files.
+ *
+ * The owner's correction, 2026-09-01: "אין מודול לקוחות, אין חיה כזאת. אנחנו בונים את
+ * מודול אדמין == מוטת הניהול שלי." So neither screen advertises the other as a place to
+ * go: they draw the SAME strip, from the same builder, and a click on any client opens
+ * that client — from whichever file the browser happens to be on.
+ * --------------------------------------------------------------------- */
+ok("both screens use one strip builder", /lib\/admin-people-strip\.js/.test(page) && /lib\/admin-people-strip\.js/.test(admin));
+ok("this screen draws it too", /function renderPeopleStrip/.test(page));
+ok("it carries the athletes as well", /function loadAthletes/.test(page) && /admin_list/.test(page));
+ok("an athlete chip lands on that athlete", /admin\.html\?athlete=/.test(page));
+ok("there is no 'back to the admin module' link", !/חזרה למודול אדמין/.test(page));
+ok("the header says Admin, like the other screen", /<span class="tagline">Admin<\/span>/.test(page));
 ok("it reuses admin's session key", /"dw_admin_session"/.test(page));
 ok("it reuses admin's remember key", /"dw_admin_remember"/.test(page));
 ok("it reads the session token header on login", /X-Admin-Session-Token/.test(page));
@@ -59,10 +72,12 @@ ok(
 
 ok("the page names no AI provider", !/gemini|groq|generativelanguage/i.test(page));
 ok("it never calls personal-coach", !/personal-coach/.test(page));
+/* Two endpoints now, both admin ones and neither a generator: the client programmes,
+   and the athlete list that fills the other half of the one shared strip. */
 ok(
-  "the only endpoint it uses is client-program",
+  "it talks to no endpoint that could generate anything",
   (page.match(/\/api\/[a-z-]+/g) || []).every(function (u) {
-    return u === "/api/client-program";
+    return u === "/api/client-program" || u === "/api/admin-snapshot";
   })
 );
 
@@ -95,6 +110,9 @@ const ACTIONS_ALLOWED = [
      month of the calendar can be judged at once. The server refuses it on any real
      client, so it cannot become a way to produce programming (POL-029). */
   "seed_test_block",
+  /* The athlete list, for the other half of the shared strip. It reads; it makes
+     nothing. */
+  "admin_list",
 ];
 const actionsUsed = Array.from(
   new Set((page.match(/action:\s*"([a-z_]+)"/g) || []).map(function (s) {
@@ -163,7 +181,8 @@ ok("the client link is copyable", /data-copylink/.test(page));
 
 /* The unread mark rides the calendar now, not the old day wrapper: the client list
    still carries one dot per client, and opening a day is what clears its flag. */
-ok("one dot per client, not a count", /class="dot"/.test(page));
+/* The dot moved into the shared strip builder with everything else about a chip. */
+ok("one dot per client, not a count", /class="dot"/.test(strip));
 ok("unread days are passed to the view", /unreadDays/.test(page));
 ok("opening a day marks it read", /action: "mark_read"/.test(page));
 ok("marking read happens on opening a day, with no extra click", /markRead\(tag\)\.then/.test(page));
@@ -186,10 +205,9 @@ ok("renaming saves clientName", /program: \{ clientName: name \}/.test(page));
 /* --- the label is 'client', not 'athlete' (a.3.2) ------------------ */
 
 ok("the page speaks about clients", page.indexOf("New coach / studio client") >= 0);
-/* The heading moved into the header bar's tagline when the page took admin.html's
-   frame — a card titled "הלקוחות שלי" above a strip of clients was saying twice what
-   the strip says once. */
-ok("the header says whose page this is", /<span class="tagline">לקוחות<\/span>/.test(page));
+/* The heading moved into the header bar when the page took admin.html's frame — a card
+   titled "הלקוחות שלי" above a strip of clients was saying twice what the strip says
+   once. And the tagline reads "Admin" on both screens, because there is one module. */
 ok("and counts them where admin counts athletes", /id="clientCount"/.test(page));
 
 /* --- the cross-cutting intake, in English (checklist 2.b) ---------- */
@@ -448,7 +466,7 @@ ok("the app frame is admin's", /<div id="app">/.test(page) && /class="tabs-bar"/
 ok("it opens by admin's own class", /classList\.toggle\("is-open"/.test(page));
 ok("the header carries the counters, as admin's does", /id="clientCount"/.test(page) && /class="count-wrap"/.test(page));
 ok("the header buttons are admin's buttons", /class="hdr-btn primary" id="addClientBtn"/.test(page));
-ok("there is a way back to the admin module", /href="admin\.html"/.test(page));
+ok("the count is everyone he manages", /S\.rows\.length \+ \(S\.athletes \|\| \[\]\)\.length/.test(page));
 
 /* ------------------------------------------------------------------------
  * The header the owner specified on 2026-09-01, item by item.
@@ -477,10 +495,9 @@ ok("and they are shown only when they say something", /show\("monthlyTotal", !!t
    were being added: it had no hidden attribute and relied on a wrapper that the admin
    frame replaced. */
 ok("the wizard starts hidden", /id="intakeCard"[^>]*hidden/.test(page));
-ok("a client is an athlete-tab, not a private class", /class="athlete-tab/.test(page));
 ok("no hand-copied strip values are left", !/\.crow\{display:inline-flex/.test(page));
-ok("a test client still says so", /badge test">בדיקה/.test(page));
-ok("the unread dot survives the move", /class="dot" title="יש שינוי שלא ראית"/.test(page));
+ok("a test client still says so", /badge test">בדיקה/.test(strip));
+ok("the unread dot survives the move", /class="dot" title="יש שינוי שלא ראית"/.test(strip));
 
 /* Several days on screen at once — Ctrl-click and drag, as in the admin module. */
 ok("the calendar hands the click event over", /passCalEvent: true/.test(page));

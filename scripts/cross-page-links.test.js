@@ -175,9 +175,17 @@ ok("choosing the athlete kind starts the intake immediately", /openIntakeWorkspa
 ok("a failed start still tells the owner", /לא הצלחתי להתחיל תחקור/.test(admin));
 ok("the start bar is still there to retry with", /id="intake-start-bar"/.test(admin));
 
-/* --- and the two static links still point at each other ------------ */
-
-ok("admin links to the client page", /href="admin-clients\.html"/.test(admin));
-ok("the client page links back to admin", /href="admin\.html"/.test(clients));
+/* --- the two screens are one view now ------------------------------
+ *
+ * The static "go to the other page" links are gone. The owner's instruction on
+ * 2026-09-01: this is ONE view of everyone who uses his services — studios, individual
+ * athletes, all of them — so the strip IS the navigation and a chip opens that client
+ * from whichever file the browser happens to be on. Both crossings must still be
+ * absolute, because a relative one breaks under the trailing slash Vercel can serve.
+ */
+ok("no header link announcing another page", !/id="btn-client-programs"/.test(admin));
+ok("a programme chip crosses absolutely", /pagesAbsoluteUrl\("\/admin-clients\.html\?program=/.test(admin));
+ok("an athlete chip crosses absolutely", /location\.origin \+ sitePath\(\) \+ "\/admin\.html\?athlete=/.test(clients));
+ok("neither crossing is a bare relative href", !/location\.href = "admin-clients\.html/.test(admin) && !/location\.href = "admin\.html/.test(clients));
 
 console.log("All cross-page link checks passed.");
