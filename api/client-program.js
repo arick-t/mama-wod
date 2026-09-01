@@ -150,8 +150,9 @@ async function ownerHandler(req, res, body) {
 
   if (action === "create") {
     /* A coach/studio client is created FROM the cross-cutting intake, and the intake
-     * is what decides the block's shape: 4 weeks back to back without a deload,
-     * 5 with one (checklist 2.b tab 4). An end-athlete client keeps the old path. */
+     * is what decides the block's shape: a month of four weeks, with the deload laid
+     * over the timeline as a cadence (owner, 2026-09-01). An end-athlete client keeps
+     * the old path. */
     const wantsIntake = body.clientKind !== "athlete";
     let intake = null;
     let weekCount = body.weekCount;
@@ -231,6 +232,21 @@ async function ownerHandler(req, res, body) {
       return res.status(status).json(Object.assign({ ok: false }, result));
     }
     return res.status(200).json({ ok: true, program: result.program, version: result.version });
+  }
+
+  /* Another month sold. Four more weeks on the same timeline, so the deload cadence
+   * carries over the month boundary instead of restarting (owner, 2026-09-01).
+   * Empty weeks — this endpoint has no route to a provider and creates no content. */
+  if (action === "add_month") {
+    const result = await store.addMonth(programId, Number(body.expectedVersion));
+    if (!result.ok) {
+      const status =
+        result.code === "VERSION_CONFLICT" ? 409 : result.code === "NOT_FOUND" ? 404 : 400;
+      return res.status(status).json(Object.assign({ ok: false }, result));
+    }
+    return res
+      .status(200)
+      .json({ ok: true, program: result.program, version: result.version, added: result.added });
   }
 
   /* Opening a changed day is what clears its flag — no extra click (a.2.2). */

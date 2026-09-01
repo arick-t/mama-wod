@@ -86,6 +86,9 @@ const ACTIONS_ALLOWED = [
   "revoke_codes",
   "revoke_device",
   "rebuild_index",
+  /* Another month sold: four more empty weeks on the same timeline. It creates no
+     content — the owner writes it — so it does not make this a generating surface. */
+  "add_month",
 ];
 const actionsUsed = Array.from(
   new Set((page.match(/action:\s*"([a-z_]+)"/g) || []).map(function (s) {
@@ -256,6 +259,24 @@ ok(
   "the weekday rows are a sub-question of the emphases",
   /id="inWeekDays" class="sub-branch" hidden/.test(page)
 );
+/* The owner's order, 2026-09-01: the shape of the week first, the rest day under it.
+   Reading the source positions is the only way to pin an order. */
+ok(
+  "the emphases come before the rest days",
+  page.indexOf('id="inEmphasis"') < page.indexOf('id="inRestDays"')
+);
+/* Seven columns of equal width — a week should look like a week, not seven stacked
+   rows the height of a screen. */
+ok("the week is one row of seven", /\.emph-days\{display:grid;grid-template-columns:repeat\(7,1fr\)/.test(page));
+ok("the day chips are a grid cell each", /class="emph-day"/.test(page));
+ok("there are no tall day rows left", !/class="emph-row"/.test(page));
+/* A note box one seventh of a screen wide cannot be written in, so it opens under the
+   row and carries its day's name. */
+ok("the note opens under the row", /id="inEmRow-/.test(page));
+ok("the note is named by its day", /\.emph-note\{display:grid;grid-template-columns:54px 1fr/.test(page));
+ok("ticking a day reveals its note", page.indexOf("row.hidden = !box.checked") >= 0);
+/* On a phone seven columns are unreadable. */
+ok("the phone gets four columns", /@media \(max-width:700px\)\{\.emph-days\{grid-template-columns:repeat\(4,1fr\)/.test(page));
 ok("neither branch shows before a mode is picked", page.indexOf('el("inDifferWrap").hidden = !byCount') >= 0);
 ok("the weekly branch needs the weekly box", page.indexOf('el("inWeeklyWrap").hidden = !byWeek') >= 0);
 ok("with no mode picked the owner is told to pick", /Pick how the place trains/.test(page));
@@ -270,7 +291,14 @@ ok("the count box sits next to its label", /\.inline-num\{[^}]*margin-inline-sta
 ok("the count box is enlarged", /\.inline-num\{[^}]*font-size:19px/.test(page));
 ok("it fits two digits", /\.inline-num\{[^}]*width:82px/.test(page));
 /* The session descriptions are real sentences and will be read by the brain later. */
-ok("the session boxes are roomier", /\.sess-box\{flex:1 1 240px;min-width:220px/.test(page));
+/* Equal columns across the full width. A flex basis stretched whatever landed on the
+   last line, so five sessions came out three wide and two narrow — the owner's
+   objection on 2026-09-01. A grid track is the same width on every row. */
+ok(
+  "the session boxes share the width in equal columns",
+  /\.sess-grid\{display:grid;grid-template-columns:repeat\(auto-fit,minmax\(210px,1fr\)\)/.test(page)
+);
+ok("no session box carries a fixed basis any more", !/\.sess-box\{flex:/.test(page));
 ok("no session count is ever invented", page.indexOf('parseInt(el("inSessions").value, 10) || 0') >= 0);
 ok("an empty count draws no session boxes", /Fill in the number of sessions first/.test(page));
 ok("the owner is told the coach picks the days", /delivers them whenever/i.test(page));
@@ -286,7 +314,7 @@ ok("ticking one unticks its partner", /if \(other !== box\) other\.checked = fal
 ok("there is a 'sessions differ' checkbox", /id="inSessionsDiffer" type="checkbox"/.test(page));
 ok("it is unticked by default — uniform sessions", !/id="inSessionsDiffer" type="checkbox" checked/.test(page));
 ok("uniform is described as standard CrossFit", /a standard CrossFit week/.test(page));
-ok("differing sessions get one box each, laid out horizontally", /class="sess-grid"/.test(page) && /display:flex/.test(page));
+ok("differing sessions get one box each, laid out horizontally", /class="sess-grid"/.test(page) && /\.sess-grid\{display:grid/.test(page));
 /* The boxes appear ONLY once "the sessions differ" is ticked. They were leaking into
    view because label.fld / .sess-grid display rules beat the `hidden` attribute. */
 ok("the session boxes start hidden", /id="inSessionTypes" class="sess-grid" hidden/.test(page));
@@ -305,7 +333,7 @@ ok("there is a standing-emphasis checkbox", /id="inEmphasis" type="checkbox"/.te
 ok("emphases are described as repeating weekly", /repeats every\s*\n?\s*week/.test(page));
 ok("the owner's own example is used", /partner workouts/.test(page));
 ok("ticking a day reveals its note", /function syncEmphasisRow/.test(page));
-ok("the note input starts hidden", /id="inEmTxt-' \+ k \+ '" type="text" hidden/.test(page));
+ok("the note row starts hidden", /id="inEmRow-' \+ k \+ '" hidden/.test(page));
 ok("the day rows are delegated, since they are rebuilt", /data-emph/.test(page));
 ok("the days come from the shared definition", /CI\.DAY_KEYS/.test(page) && /CI\.DAY_LABELS/.test(page));
 /* An unticked day with leftover text must not quietly become an emphasis. */
@@ -321,9 +349,43 @@ ok(
   page.indexOf('data-pane="schedule"') < page.indexOf('id="inDeload"') &&
     page.indexOf('id="inDeload"') < page.indexOf('data-pane="population"')
 );
-ok("with a deload it says 5 weeks", /5 weeks: four build weeks and a deload/.test(page));
-ok("without one it says 4 weeks back to back", /next 4-week block follows straight after/.test(page));
+/* The deload is a CADENCE over a monthly product, not a fifth week bolted onto this
+   month. The owner sells by the month; setting 5 means month TWO opens on the deload
+   (2026-09-01). The wizard has to say that, because "5-week block" is the wrong story
+   and it is the one we told first. */
+ok("there is a week number to fill in", /id="inDeloadAt" type="number" min="4" max="12"/.test(page));
+ok("the number is a sub-question of the deload", /id="inDeloadWrap" class="sub-branch" hidden/.test(page));
+ok("it appears only once the deload is ticked", page.indexOf('el("inDeloadWrap").hidden = !deloadOn') >= 0);
+ok("the number is sent to the server", /deloadEveryWeeks: Number\(el\("inDeloadAt"\)\.value\)/.test(page));
+ok("the owner is told a new month can open on it", /next month opens on the deload/.test(page));
+ok("the cadence is spelled out once he types", /then every " \+ every \+ " weeks/.test(page));
+ok("below four he is told why not", /leanest cycle that works/.test(page));
 ok("no deload is the stated default", /\(Default\.\)/.test(page));
+ok("nothing claims a five-week block any more", !/5 weeks: four build weeks/.test(page));
+
+/* Another month sold — four more empty weeks, continuing the SAME numbering so the
+   cadence survives the month boundary. Empty, because the owner writes the training. */
+ok("there is a way to add a month", /data-addmonth="1"/.test(page));
+ok("it asks before it changes the program", /להוסיף עוד ארבעה שבועות ריקים/.test(page));
+ok("it sends the version it was looking at", /action: "add_month", programId: p\.programId, expectedVersion: p\.version/.test(page));
+ok("a concurrent save is handled, not clobbered", page.indexOf("r.status === 409") >= 0);
+ok("the owner sees how long the program is", /function weeksLabel/.test(page));
+ok("and where the deload sits", /דילואד כל /.test(page));
+
+/* The clients are a STRIP, the way the admin module already lists people. */
+ok("the client list is a horizontal strip", /\.clist\{display:flex;gap:8px;overflow-x:auto/.test(page));
+ok("a client is a tab, not a row", /\.crow\{display:inline-flex[^}]*white-space:nowrap/.test(page));
+ok("the active client is marked the admin way", /\.crow\.on\{background:rgba\(232,69,26,\.16\)/.test(page));
+ok("a test client still says so", /badge test">בדיקה/.test(page));
+ok("the unread dot survives the move", /class="dot" title="יש שינוי שלא ראית"/.test(page));
+
+/* Several days on screen at once — Ctrl-click and drag, as in the admin module. */
+ok("the calendar hands the click event over", /passCalEvent: true/.test(page));
+ok("ctrl or cmd makes the click additive", /if \(ev && \(ev\.ctrlKey \|\| ev\.metaKey\)\) toggleSelected/.test(page));
+ok("dragging across the calendar takes the run", /function bindCalGestures/.test(page));
+ok("the selection maths is not copied", /window\.AdminDoneDebrief/.test(page) && !/function rangeBetween/.test(page));
+ok("a drag does not end in a click that clears it", page.indexOf("cvIgnoreNextClick = true") >= 0);
+ok("dragging paints instead of re-rendering", /function paintCalSelection/.test(page));
 
 /* Tabs 5 & 6 */
 ok("tab 5 asks about the place and the people", /id="inPopulation"/.test(page));

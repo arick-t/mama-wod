@@ -405,8 +405,13 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
   display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;
   overflow-x:auto;overflow-y:hidden;padding:0 0 8px;-webkit-overflow-scrolling:touch
 }
+/* The selected days SHARE the width evenly instead of each taking a fixed 360px.
+   A fixed basis is why two days used half a screen and four ran off its edge with the
+   last one clipped — the owner's objection on 2026-09-01. flex:1 1 0 gives every card
+   the same width whatever the count; min-width keeps a session readable, and only past
+   that does the strip fall back to scrolling. */
 .pprog-width-strip .pprog-day-card{
-  flex:0 0 360px;width:360px;max-width:360px
+  flex:1 1 0;min-width:260px;width:auto;max-width:none
 }
 @media (max-width:719px){
   .pprog-width-strip{flex-direction:column;overflow-x:visible;overflow-y:visible}

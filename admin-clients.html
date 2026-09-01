@@ -25,7 +25,7 @@
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 /* The `hidden` attribute is only display:none from the UA sheet, so ANY author rule
-   with a display wins — label.fld{display:block} and .sess-grid{display:flex} were
+   with a display wins — label.fld{display:block} and .sess-grid{display:grid} were
    both quietly showing elements the code had hidden. One rule closes the whole class
    of bug instead of chasing it per element. */
 [hidden]{display:none!important}
@@ -64,12 +64,19 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
 .err{color:var(--brand);font-size:.88rem;margin:8px 0 0;min-height:1.2em}
 .okmsg{color:var(--part);font-size:.88rem;margin:8px 0 0;min-height:1.2em}
 
-.clist{display:flex;flex-direction:column;gap:8px}
-.crow{display:flex;align-items:center;gap:10px;background:var(--bg-panel);border:1px solid var(--line);
-  border-radius:10px;padding:11px 13px;flex-wrap:wrap;cursor:pointer}
-.crow:hover{border-color:var(--coach)}
-.crow.on{border-color:var(--coach);background:rgba(155,107,184,.12)}
-.cname{font-weight:500}
+/* The clients are a STRIP, not a stack — this is the admin module, and the owner
+   already flips between people along a row of tabs there (his instruction,
+   2026-09-01: do not redesign what is approved). Values copied from admin.html's
+   .tabs-bar / .athlete-tab deliberately, so the two surfaces look like one product. */
+.clist{display:flex;gap:8px;overflow-x:auto;padding:2px 0 8px;-webkit-overflow-scrolling:touch}
+.crow{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;
+  background:var(--bg-panel);color:var(--text-muted);border:1px solid var(--line);
+  font-size:13px;font-weight:600;white-space:nowrap;flex-shrink:0;cursor:pointer;
+  transition:background .15s,border-color .15s,color .15s}
+.crow:hover{background:#252525;border-color:#3a3a3a;color:var(--text)}
+.crow.on{background:rgba(232,69,26,.16);color:#fff;border-color:var(--brand);
+  box-shadow:inset 0 -2px 0 var(--brand)}
+.cname{font-weight:600}
 .cmeta{color:var(--text-meta);font-size:.8rem}
 .spacer{margin-inline-start:auto}
 /* Unread is state, not a counter — one dot per client, however many saves. */
@@ -121,11 +128,13 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
   font-size:19px;font-weight:700;font-family:var(--font-display);letter-spacing:1px;
   color:var(--brand-gold);border-color:var(--coach-deep)}
 .chk-row .inline-num::placeholder{color:var(--text-meta);font-weight:400;letter-spacing:0}
-/* One box per session, side by side — the owner asked for them laid out horizontally.
-   Wider than before: the descriptions are real sentences ("strength part then a short
-   metcon up to 10 minutes"), and they will be read by the coach brain later, so they
-   must be legible while being typed. */
-.sess-grid{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 6px}
+/* One box per session, laid out across the FULL width in columns of equal width.
+   A flex row with a basis stretched whatever landed on the last line, so five sessions
+   came out as three wide boxes and two narrow ones (owner, 2026-09-01). A grid track
+   is the same width on every row, and auto-fit is what spends the whole width instead
+   of leaving a margin on the end. */
+.sess-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:10px;margin:0 0 6px}
 /* A follow-up that belongs to the checkbox above it. The rule on the inline-start edge
    is what makes the hierarchy readable at a glance instead of four flat questions. */
 .sub-branch{margin:2px 0 12px;padding-inline-start:16px;
@@ -134,17 +143,26 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
 /* Two mutually exclusive choices sit side by side, as asked. */
 .pick-row{display:flex;gap:26px;flex-wrap:wrap;margin:0 0 12px}
 .sched-sep{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
-.sess-box{flex:1 1 240px;min-width:220px;background:var(--bg-panel);border:1px solid var(--line);
+.sess-box{min-width:0;background:var(--bg-panel);border:1px solid var(--line);
   border-radius:10px;padding:10px}
 .sess-box label{display:block;font-size:.72rem;color:var(--text-meta);margin:0 0 5px;
   text-transform:uppercase;letter-spacing:.8px}
 .sess-box input{padding:8px 10px;font-size:15px}
 /* Ticking a weekday reveals its standing note. */
-.emph-row{background:var(--bg-panel);border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin:0 0 7px}
-.emph-head{display:flex;gap:9px;align-items:center;cursor:pointer}
-.emph-head input{width:18px;height:18px;margin:0;flex:0 0 auto;accent-color:var(--brand)}
-.emph-head span{font-family:var(--font-display);font-size:.9rem;letter-spacing:.5px}
-.emph-row input[type=text]{margin-top:8px;font-size:15px;padding:8px 10px}
+/* The week reads as a WEEK — seven columns of equal width, not seven stacked rows
+   the height of a screen (owner, 2026-09-01). The note cannot live inside a column
+   that narrow, so ticking a day opens its note under the row, named. */
+.emph-days{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin:0 0 10px}
+.emph-day{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;
+  background:var(--bg-panel);border:1px solid var(--line);border-radius:10px;
+  padding:9px 4px;cursor:pointer}
+.emph-day input{width:18px;height:18px;margin:0;flex:0 0 auto;accent-color:var(--brand)}
+.emph-day span{font-family:var(--font-display);font-size:.85rem;letter-spacing:.5px}
+.emph-note{display:grid;grid-template-columns:54px 1fr;gap:9px;align-items:center;margin:0 0 7px}
+.emph-note > span{color:var(--text-meta);font-size:.85rem;font-family:var(--font-display)}
+.emph-note input[type=text]{font-size:15px;padding:8px 10px}
+/* On a phone seven columns are unreadable; four and four stays uniform. */
+@media (max-width:700px){.emph-days{grid-template-columns:repeat(4,1fr)}}
 @media (max-width:600px){.grid2{grid-template-columns:1fr}}
 </style>
 </head>
@@ -224,10 +242,11 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
                  └ ☐ The sessions differ from one another
                         └ one box per session
              ☐ Full weekly plan
-                 ├ ☐ Include rest days in the plan
-                 └ ☐ Standing emphases for specific weekdays
-                        └ Sun–Sat rows
+                 ├ ☐ Standing emphases for specific weekdays
+                 │      └ Sun–Sat across one row, note under the day that was ticked
+                 └ ☐ Include rest days in the plan
              ☐ Include a deload week          (independent — combines with either)
+                 └ every N weeks, counted across months
       -->
       <div class="ipane" data-pane="schedule" hidden>
         <label class="chk-row">
@@ -252,21 +271,26 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
           <span>Full weekly plan</span>
         </label>
 
-        <!-- Sub-questions of "Full weekly plan". -->
+        <!-- Sub-questions of "Full weekly plan". The standing emphases come FIRST and
+             rest days sit below them, on the owner's instruction (2026-09-01): the
+             shape of the week is the bigger decision, the rest day follows it. -->
         <div id="inWeeklyWrap" class="sub-branch" hidden>
-          <label class="chk-row">
-            <input id="inRestDays" type="checkbox">
-            <span>Include rest days in the plan</span>
-          </label>
-          <p class="meta" id="inRestHint" style="margin:0 0 12px"></p>
-
           <label class="chk-row">
             <input id="inEmphasis" type="checkbox">
             <span>Standing emphases for specific weekdays</span>
           </label>
           <p class="meta" style="margin:0 0 10px">Tick a day and write a note that repeats every
             week — e.g. Friday: “partner workouts”.</p>
-          <div id="inWeekDays" class="sub-branch" hidden></div>
+          <div id="inWeekDays" class="sub-branch" hidden>
+            <div id="inWeekDayRow" class="emph-days"></div>
+            <div id="inWeekDayNotes"></div>
+          </div>
+
+          <label class="chk-row">
+            <input id="inRestDays" type="checkbox">
+            <span>Include rest days in the plan</span>
+          </label>
+          <p class="meta" id="inRestHint" style="margin:0 0 12px"></p>
         </div>
 
         <p class="meta" id="inCountHint" style="margin:2px 0 0"></p>
@@ -278,6 +302,17 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
             <input id="inDeload" type="checkbox">
             <span>Include a deload week</span>
           </label>
+          <!-- The number is a CADENCE, not a block length. The product is sold by the
+               month and a month is four weeks, so "5" means month one is four build
+               weeks and month TWO opens on the deload — the count is not reset by the
+               month boundary (owner, 2026-09-01). Minimum 4 is his professional call. -->
+          <div id="inDeloadWrap" class="sub-branch" hidden>
+            <label class="chk-row">
+              <span>Put the deload on week</span>
+              <input id="inDeloadAt" type="number" min="4" max="12" value=""
+                     class="inline-num" aria-label="Deload week number" placeholder="—">
+            </label>
+          </div>
           <p class="meta" id="inDeloadHint" style="margin:0"></p>
         </div>
       </div>
@@ -329,6 +364,10 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
 <script src="lib/normalize-pprog-block.js"></script>
 <script src="lib/pprog-display.js"></script>
 <script src="lib/day-rest-toggle.js"></script>
+<!-- Loaded for its day-selection maths (selId / rangeBetween / sortSelected), which is
+     what the admin module's calendar already uses. A second copy of "which days are
+     selected" is how two calendars start disagreeing. 0 LLM, like everything here. -->
+<script src="lib/admin-done-debrief.js"></script>
 <!-- The same questionnaire definition the server validates against. -->
 <script src="lib/client-intake.js"></script>
 <script>
@@ -523,16 +562,17 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       el("clientList").innerHTML = '<p class="muted">אין עוד לקוחות. לחץ ״+ לקוח חדש״.</p>';
       return;
     }
+    /* A tab carries a NAME. The kind, the date and the version were a row's worth of
+       detail that a strip has no room for and the open client shows anyway; what stays
+       is what changes a decision — the unread dot, and "בדיקה" so a test client is
+       never mistaken for a paying one. */
     el("clientList").innerHTML = S.rows.map(function (r) {
-      return '<div class="crow' + (S.sel === r.programId ? " on" : "") + '" data-open="' + esc(r.programId) + '">' +
+      return '<button type="button" class="crow' + (S.sel === r.programId ? " on" : "") +
+        '" data-open="' + esc(r.programId) + '">' +
         (r.unreadCount ? '<span class="dot" title="יש שינוי שלא ראית"></span>' : "") +
         '<span class="cname">' + esc(r.clientName || "(ללא שם)") + "</span>" +
         (r.isTest ? '<span class="badge test">בדיקה</span>' : "") +
-        (r.unreadCount ? '<span class="badge">שונה</span>' : "") +
-        '<span class="cmeta">' + esc(r.clientKind === "athlete" ? "מתאמן" : "מאמן") +
-          (r.updatedAt ? " · " + new Date(r.updatedAt).toLocaleDateString() : "") + "</span>" +
-        '<span class="spacer cmeta">v' + esc(r.version) + "</span>" +
-        "</div>";
+        "</button>";
     }).join("");
   }
 
@@ -642,7 +682,11 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     html += "</div>";
 
     /* program */
-    html += '<div class="card"><h2>התוכנית</h2>';
+    html += '<div class="card"><div class="row" style="margin-bottom:10px">' +
+      '<h2 style="margin:0">התוכנית</h2>' +
+      '<span class="spacer meta">' + weeksLabel(p) + "</span>" +
+      '<button class="ghost sm" type="button" data-addmonth="1" ' +
+      'title="עוד ארבעה שבועות ריקים על אותו ציר זמן">+ חודש נוסף</button></div>';
     if (unread.length) {
       html += '<div class="banner warn">' + unread.length + ' ימים שהלקוח שינה ואתה עוד לא פתחת. פתח יום כדי לסמן שנקרא.</div>';
     }
@@ -702,6 +746,34 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
 
   function weekCount() {
     return ((S.program && S.program.weeks) || []).length || 1;
+  }
+
+  /* What the owner has actually sold so far, and where the deload cadence sits — the
+     two facts he needs before deciding to add another month. */
+  function weeksLabel(p) {
+    var weeks = ((p && p.weeks) || []).length;
+    var months = Math.ceil(weeks / 4);
+    var every = p && p.intake && p.intake.deloadWeek ? parseInt(p.intake.deloadEveryWeeks, 10) || 0 : 0;
+    return (
+      weeks + " שבועות · " + months + " חודשים" +
+      (every ? " · דילואד כל " + every + " שבועות" : " · בלי דילואד")
+    );
+  }
+
+  function addMonth() {
+    var p = S.program;
+    if (!p) return;
+    if (!window.confirm("להוסיף עוד ארבעה שבועות ריקים לתוכנית של " + (p.clientName || "הלקוח") + "?")) return;
+    api({ action: "add_month", programId: p.programId, expectedVersion: p.version }).then(function (r) {
+      if (r.status === 409) { banner("warn", "מישהו שמר בינתיים. פותח מחדש."); openClient(p.programId); return; }
+      if (r.status !== 200 || !r.body.ok) {
+        banner("bad", (r.body && r.body.error) || "לא הצלחתי להוסיף חודש.");
+        return;
+      }
+      S.program = r.body.program;
+      banner("good", "נוספו " + r.body.added + " שבועות ריקים. עכשיו תכתוב בהם.");
+      renderDetail();
+    });
   }
 
   function clampWi(n) {
@@ -777,8 +849,9 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       block: block,
       activeWeekIndex: S.wi | 0,
       activeDay: S.day || "sun",
-      /* A client program is 4 weeks without a deload and 5 with one — show its real
-         length rather than the athlete app's fixed five. */
+      /* A month is four weeks and the program grows by a month at a time, so the rail
+         has to show the program's REAL length rather than the athlete app's fixed
+         five. */
       weekRows: weekCount(),
       /* Nothing is "being generated" here: the owner writes this program himself. The
          athlete app's default wording would tell a paying client to wait for an AI that
@@ -806,7 +879,9 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       dayModifiedLabel: 'שונה ע"י הלקוח',
       dayModifiedTitle: "הלקוח שינה את היום הזה",
       selectedDays: selected,
-      passCalEvent: false,
+      /* The calendar passes the click event through, which is what makes Ctrl-click
+         additive rather than just moving the focus. */
+      passCalEvent: true,
       widthStatusHtml: widthStatus,
       hooks: {
         shift: "cvCalShift",
@@ -857,17 +932,138 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     renderAdminDays();
   };
 
-  window.cvSetDay = function (wi, dayKey) {
-    var nextWi = clampWi(wi);
-    var nextDay = String(dayKey || "sun");
+  /* Several days on screen at once, the way the owner already works in the admin
+     module: Ctrl/⌘-click adds a day, and dragging across the calendar takes the whole
+     run between two. The calendar hands us the click event only because brickOpts asks
+     for it (passCalEvent), so this hook takes BOTH shapes — the week rail still calls
+     it without one. */
+  function selMath() {
+    return window.AdminDoneDebrief || null;
+  }
+
+  function toggleSelected(wi, day) {
+    var M = selMath();
+    if (!M) return;
+    var id = M.selId(wi, day);
+    var list = (S.selected || []).filter(function (x) {
+      return M.selId(x.wi, x.day) !== id;
+    });
+    if (list.length === (S.selected || []).length) list.push({ wi: wi | 0, day: day });
+    S.selected = list;
+  }
+
+  function applyRange(from, to, additive) {
+    var M = selMath();
+    if (!M) return;
+    var range = M.rangeBetween(from, to).filter(function (c) {
+      return c.wi >= 0 && c.wi < weekCount();
+    });
+    if (!range.length) return;
+    if (!additive) { S.selected = range; return; }
+    var seen = {};
+    var out = [];
+    (S.selected || []).concat(range).forEach(function (c) {
+      var id = M.selId(c.wi, c.day);
+      if (seen[id]) return;
+      seen[id] = 1;
+      out.push(c);
+    });
+    S.selected = out;
+  }
+
+  window.cvSetDay = function (aOrEv, wi, dayKey) {
+    var ev = null;
+    var nextWi;
+    var nextDay;
+    if (aOrEv && typeof aOrEv === "object" && aOrEv.type) {
+      ev = aOrEv;
+      nextWi = clampWi(wi);
+      nextDay = String(dayKey || "sun");
+      /* Ctrl-click is a browser gesture too; without this it can open a menu. */
+      if (typeof ev.preventDefault === "function" && (ev.ctrlKey || ev.metaKey)) ev.preventDefault();
+    } else {
+      nextWi = clampWi(aOrEv);
+      nextDay = String(wi || "sun");
+    }
+    /* A drag ends on a cell and the browser then fires its click — without this the
+       click would collapse the selection the drag just made. */
+    if (cvIgnoreNextClick) { cvIgnoreNextClick = false; return; }
     S.wi = nextWi;
     S.day = nextDay;
-    S.selected = [];
     /* Moving off the day being edited abandons the draft rather than silently
        carrying it to another day. */
     if (S.edit && (S.edit.wi !== nextWi || S.edit.day !== nextDay)) S.edit = null;
+    if (ev && (ev.ctrlKey || ev.metaKey)) toggleSelected(nextWi, nextDay);
+    else S.selected = [];
     openDayTag(nextWi, nextDay);
   };
+
+  /* Painting classes rather than re-rendering: a full repaint on every mouseover
+     rebuilds the day cards under the cursor mid-drag. */
+  function paintCalSelection() {
+    var M = selMath();
+    var host = el("adminDays");
+    if (!M || !host) return;
+    var cells = host.querySelectorAll(".pprog-cal-cell");
+    var picked = {};
+    (S.selected || []).forEach(function (c) { picked[M.selId(c.wi, c.day)] = 1; });
+    for (var i = 0; i < cells.length; i++) {
+      var wi = cells[i].getAttribute("data-wi") | 0;
+      var day = String(cells[i].getAttribute("data-day") || "");
+      var isFocus = wi === (S.wi | 0) && day === String(S.day || "");
+      var isSel = !!picked[M.selId(wi, day)];
+      cells[i].classList.toggle("active", isFocus);
+      cells[i].classList.toggle("selected", isSel && !isFocus);
+    }
+  }
+
+  var cvCalDrag = null;
+  var cvIgnoreNextClick = false;
+
+  function calCellFrom(ev) {
+    var t = ev && ev.target;
+    if (!t || !t.closest) return null;
+    var cell = t.closest(".pprog-cal-cell");
+    if (!cell || !cell.closest("#adminDays")) return null;
+    return cell;
+  }
+
+  /* Bound on the document because #adminDays is rebuilt on every render — a listener
+     on the host itself would be thrown away with it. */
+  function bindCalGestures() {
+    document.addEventListener("mousedown", function (ev) {
+      if (ev.button !== 0) return;
+      var cell = calCellFrom(ev);
+      if (!cell) return;
+      cvCalDrag = {
+        startWi: cell.getAttribute("data-wi") | 0,
+        startDay: String(cell.getAttribute("data-day") || ""),
+        additive: !!(ev.ctrlKey || ev.metaKey),
+        moved: false,
+      };
+    });
+    document.addEventListener("mouseover", function (ev) {
+      if (!cvCalDrag || !(ev.buttons & 1)) return;
+      var cell = calCellFrom(ev);
+      if (!cell) return;
+      var to = { wi: cell.getAttribute("data-wi") | 0, day: String(cell.getAttribute("data-day") || "") };
+      if (!to.day) return;
+      if (to.wi === cvCalDrag.startWi && to.day === cvCalDrag.startDay) return;
+      cvCalDrag.moved = true;
+      applyRange({ wi: cvCalDrag.startWi, day: cvCalDrag.startDay }, to, cvCalDrag.additive);
+      S.wi = to.wi;
+      S.day = to.day;
+      paintCalSelection();
+    });
+    document.addEventListener("mouseup", function () {
+      if (!cvCalDrag) return;
+      var moved = cvCalDrag.moved;
+      cvCalDrag = null;
+      if (!moved) return;
+      cvIgnoreNextClick = true;
+      renderAdminDays();
+    });
+  }
 
   window.cvSelectWeek = function (wi) {
     S.wi = clampWi(wi);
@@ -1093,6 +1289,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       return;
     }
     if (g("data-savemeta")) { saveMeta(); return; }
+    if (g("data-addmonth")) { addMonth(); return; }
 
     if (g("data-rename")) {
       var name = window.prompt("שם הלקוח:", S.program.clientName || "");
@@ -1200,6 +1397,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       dayEmphasisEnabled: el("inEmphasis").checked,
       dayEmphasis: emphasis,
       deloadWeek: el("inDeload").checked,
+      deloadEveryWeeks: Number(el("inDeloadAt").value) || 0,
       population: String(el("inPopulation").value || ""),
       goals: String(el("inGoals").value || ""),
     };
@@ -1303,32 +1501,49 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       : "Rest days are not planned — the coach decides. (Default.)";
     el("inWeekDays").hidden = !el("inEmphasis").checked;
 
-    /* Spelling out the consequence, because "no deload" silently changes the block
-       from five weeks to four and that is easy to miss. */
-    el("inDeloadHint").textContent = el("inDeload").checked
-      ? "Blocks are 5 weeks: four build weeks and a deload."
-      : "Blocks are 4 weeks with no deload — the next 4-week block follows straight after. (Default.)";
+    /* The deload is a cadence over a monthly product, so the consequence worth
+       spelling out is WHERE it lands — a 5 means this month is four build weeks and
+       next month opens on the deload. Saying "5-week block" would be the old,
+       wrong story. */
+    var deloadOn = el("inDeload").checked;
+    el("inDeloadWrap").hidden = !deloadOn;
+    var every = Math.max(0, parseInt(el("inDeloadAt").value, 10) || 0);
+    el("inDeloadHint").textContent = !deloadOn
+      ? "No deload — four build weeks, month after month. (Default.)"
+      : !every
+      ? "Which week does it land on? A month is four weeks, so 5 means next month opens on the deload."
+      : every < 4
+      ? "Minimum 4 — three build weeks and a deload is the leanest cycle that works."
+      : "Deload on week " + every + ", then every " + every + " weeks (" +
+        every + ", " + every * 2 + ", " + every * 3 +
+        " …). The count runs across months, so a new month can open on it.";
   }
 
-  /* Sun–Sat, each with a tick that reveals its standing note. The note repeats every
-     week — "Fridays are partner workouts" — so it is not a one-off comment. */
+  /* Sun–Sat as ONE ROW of seven equal columns — a week should look like a week. The
+     note repeats every week ("Fridays are partner workouts"), so it is not a one-off
+     comment; it opens under the row, carrying the day's name, because a text box one
+     seventh of the screen wide cannot be written in. */
   function buildWeekRows() {
     var CI = window.CLIENT_INTAKE;
     if (!CI) return;
-    el("inWeekDays").innerHTML = CI.DAY_KEYS.map(function (k) {
-      return '<div class="emph-row">' +
-        '<label class="emph-head"><input id="inEm-' + k + '" type="checkbox" data-emph="' + k + '">' +
-        "<span>" + esc(CI.DAY_LABELS[k]) + "</span></label>" +
-        '<input id="inEmTxt-' + k + '" type="text" hidden placeholder="e.g. partner workouts">' +
+    el("inWeekDayRow").innerHTML = CI.DAY_KEYS.map(function (k) {
+      return '<label class="emph-day"><input id="inEm-' + k + '" type="checkbox" data-emph="' + k + '">' +
+        "<span>" + esc(CI.DAY_LABELS[k]) + "</span></label>";
+    }).join("");
+    el("inWeekDayNotes").innerHTML = CI.DAY_KEYS.map(function (k) {
+      return '<div class="emph-note" id="inEmRow-' + k + '" hidden>' +
+        "<span>" + esc(CI.DAY_LABELS[k]) + "</span>" +
+        '<input id="inEmTxt-' + k + '" type="text" placeholder="e.g. partner workouts">' +
         "</div>";
     }).join("");
   }
 
   function syncEmphasisRow(k) {
     var box = el("inEm-" + k);
+    var row = el("inEmRow-" + k);
     var txt = el("inEmTxt-" + k);
-    if (!box || !txt) return;
-    txt.hidden = !box.checked;
+    if (!box || !row || !txt) return;
+    row.hidden = !box.checked;
     if (box.checked) {
       try { txt.focus(); } catch (e) {}
     }
@@ -1374,6 +1589,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     syncIntakeConditionals();
     bindPickPair("equip");
     bindPickPair("sched");
+    bindCalGestures();
     ["inSessionsDiffer", "inRestDays", "inEmphasis", "inDeload"]
       .forEach(function (id) {
         var n = el(id);
@@ -1384,6 +1600,9 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     el("inSessions").addEventListener("input", function () {
       if (el("inSessionsDiffer").checked) buildSessionBoxes();
     });
+    /* The deload number changes what the line underneath promises, so it has to
+       repaint while he types — not only when the box loses focus. */
+    el("inDeloadAt").addEventListener("input", syncIntakeConditionals);
     /* Ticking a weekday reveals its note. Delegated, because the rows are rebuilt. */
     el("inWeekDays").addEventListener("change", function (ev) {
       var k = ev.target && ev.target.getAttribute && ev.target.getAttribute("data-emph");

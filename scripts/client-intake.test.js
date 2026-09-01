@@ -61,7 +61,7 @@ ok(
   "the shape is exactly the owner's six tabs' worth of fields",
   JSON.stringify(shape) ===
     JSON.stringify([
-      "clientName", "dayEmphasis", "dayEmphasisEnabled", "deloadWeek", "equipment",
+      "clientName", "dayEmphasis", "dayEmphasisEnabled", "deloadEveryWeeks", "deloadWeek", "equipment",
       "equipmentOther", "goals", "includeRestDays", "monthlyAmount", "paymentMethod",
       "population", "scheduleMode", "sessionTypes", "sessionsDiffer", "sessionsPerWeek",
     ])
@@ -237,13 +237,43 @@ ok(
   }).length === 0
 );
 
-/* --- deload (now inside the schedule tab) decides the block length --- */
+/* --- the deload is a CADENCE over a monthly product ------------------
+   The owner sells by the month, and a month is four weeks. Setting the deload to 5
+   does NOT grow this month to five weeks — it means month two OPENS on the deload
+   (owner, 2026-09-01). Everything below pins that, because the tempting reading
+   ("the deload is the last week of the block") is the one we shipped first and it is
+   wrong for a monthly product. */
 
 ok("no deload is the default", I.emptyIntake().deloadWeek === false);
-ok("no deload means a 4-week block", I.weekCountFor({ deloadWeek: false }) === 4);
-ok("a deload means a 5-week block", I.weekCountFor({ deloadWeek: true }) === 5);
-ok("the default block is 4 weeks", I.weekCountFor({}) === 4);
+ok("nothing is assumed about where it lands", I.emptyIntake().deloadEveryWeeks === 0);
+ok("a month is four weeks", I.weekCountFor() === 4);
+ok("a deload does NOT stretch the month", I.weekCountFor({ deloadWeek: true, deloadEveryWeeks: 5 }) === 4);
 ok("only a real true enables it", I.normalizeIntake({ deloadWeek: "yes" }).deloadWeek === false);
+ok("the number is dropped when the deload is off", I.normalizeIntake({ deloadWeek: false, deloadEveryWeeks: 5 }).deloadEveryWeeks === 0);
+
+/* Four is the floor on the owner's professional call: three build weeks and a deload
+   is the leanest cycle that still trains anything. Below it the answer is refused, not
+   rounded up — rounding would quietly program something he did not ask for. */
+ok("three is refused", I.normalizeIntake({ deloadWeek: true, deloadEveryWeeks: 3 }).deloadEveryWeeks === 0);
+ok("four is accepted", I.normalizeIntake({ deloadWeek: true, deloadEveryWeeks: 4 }).deloadEveryWeeks === 4);
+ok("thirteen is refused", I.normalizeIntake({ deloadWeek: true, deloadEveryWeeks: 13 }).deloadEveryWeeks === 0);
+ok(
+  "a deload with no week named blocks the build",
+  I.validateIntake({
+    clientName: "c", scheduleMode: "session_count", sessionsPerWeek: 3,
+    deloadWeek: true, population: "p", goals: "g",
+  }).some(function (m) { return /which week it lands on/.test(m); })
+);
+
+/* The month boundary must NOT reset the count — this is the whole requirement. */
+const every5 = { deloadWeek: true, deloadEveryWeeks: 5 };
+ok("month one is four build weeks", [1, 2, 3, 4].every(function (w) { return !I.isDeloadWeek(every5, w); }));
+ok("month two OPENS on the deload", I.isDeloadWeek(every5, 5) === true);
+ok("and then it comes round again", I.isDeloadWeek(every5, 10) === true && I.isDeloadWeek(every5, 15) === true);
+ok("nothing in between is a deload", !I.isDeloadWeek(every5, 6) && !I.isDeloadWeek(every5, 9));
+ok("a 4-week cadence lands every fourth week", I.isDeloadWeek({ deloadWeek: true, deloadEveryWeeks: 4 }, 8) === true);
+ok("no deload means no deload week ever", !I.isDeloadWeek({ deloadWeek: false }, 5));
+ok("week 0 and nonsense are not deloads", !I.isDeloadWeek(every5, 0) && !I.isDeloadWeek(every5, "x"));
 
 /* --- tabs 5 & 6: free text, and required --------------------------- */
 
@@ -283,8 +313,8 @@ const brief = I.briefFor(complete);
 ok("the brief names the equipment", /Rig, 4 barbells/.test(brief));
 ok("the brief states the session count", /3 sessions per week/.test(brief));
 ok("the brief says the coach picks the days", /coach decides when to run them/.test(brief));
-ok("the brief states the block length", /BLOCK: 4 weeks/.test(brief));
-ok("the brief explains what no-deload means", /next 4-week block follows straight after/.test(brief));
+ok("the brief states the month's length", /MONTH: 4 weeks/.test(brief));
+ok("the brief explains what no-deload means", /no deload — four build weeks, month after month/.test(brief));
 ok("the brief carries the population", /Pre-army group/.test(brief));
 ok("the brief carries the goals", /Army selection/.test(brief));
 /* The brief is for the owner's eyes, so the price must not be in it. */
@@ -294,13 +324,19 @@ const weeklyBrief = I.briefFor({
   clientName: "A", scheduleMode: "weekly_schedule",
   includeRestDays: true, dayEmphasisEnabled: true,
   dayEmphasis: { fri: "partner workouts" },
-  deloadWeek: true, population: "p", goals: "g",
+  deloadWeek: true, deloadEveryWeeks: 5, population: "p", goals: "g",
 });
+/* The brief has to say the cadence crosses the month end, because that is the part
+   the owner cannot see by looking at one month's calendar. */
+ok("the brief states the cadence", /DELOAD every 5 weeks/.test(weeklyBrief));
+ok("the brief spells out the crossing", /cycle crosses month ends/.test(weeklyBrief));
 ok("a weekly brief says sessions sit on weekdays", /sessions sit on weekdays/.test(weeklyBrief));
 ok("a weekly brief states the rest-day decision", /REST DAYS: part of the plan/.test(weeklyBrief));
 ok("a standing emphasis appears with its day", /Fri: partner workouts/.test(weeklyBrief));
 ok("emphases are marked as repeating", /repeat every week/.test(weeklyBrief));
-ok("a deload brief says 5 weeks", /BLOCK: 5 weeks/.test(weeklyBrief));
+/* Not "a 5-week block" — the month stays four weeks and the deload is where the
+   cadence puts it. */
+ok("a deload brief still says a 4-week month", /MONTH: 4 weeks/.test(weeklyBrief));
 
 /* Rest days OFF must read as the coach's call, not silently vanish. */
 const noRest = I.briefFor({ clientName: "A", scheduleMode: "weekly_schedule", population: "p", goals: "g" });

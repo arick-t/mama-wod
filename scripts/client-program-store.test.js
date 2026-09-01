@@ -391,6 +391,50 @@ async function main() {
 
   /* --- this module never talks to a provider ----------------------------- */
 
+  /* ---------------------------------------------------------------------
+   * A month at a time, and the deload cadence survives the month boundary.
+   *
+   * The product is sold BY THE MONTH and a month is four weeks. A deload set to
+   * "week 5" therefore does NOT stretch this month to five weeks — month two OPENS
+   * on the deload (owner, 2026-09-01). That only works if the week numbering keeps
+   * running across months, which is what these assertions pin.
+   * ------------------------------------------------------------------------- */
+  const ioM = fakeStorage();
+  const storeM = Store.createProgramStore(ioM);
+  const intakeM = {
+    clientName: "Studio", scheduleMode: "session_count", sessionsPerWeek: 4,
+    deloadWeek: true, deloadEveryWeeks: 5, population: "p", goals: "g",
+  };
+  const m1 = await storeM.createProgram({ clientName: "Studio", weekCount: 4, intake: intakeM });
+  ok("a month is created four weeks long", m1.ok && m1.program.weeks.length === 4);
+  ok(
+    "month one is all build — the deload has not come round yet",
+    m1.program.weeks.every(function (w) { return w.phase === "build"; })
+  );
+  /* This is the bug the cadence replaced: the old rule tagged the LAST week of the
+     block as a deload, so a four-week month with no deload asked for still got one. */
+  ok("the last week of the month is not a deload by default", m1.program.weeks[3].phase === "build");
+
+  const m2 = await storeM.addMonth(m1.program.programId, m1.program.version);
+  ok("another month can be added", m2.ok && m2.added === 4);
+  ok("the program is now eight weeks", m2.program.weeks.length === 8);
+  ok(
+    "the numbering keeps running rather than restarting",
+    m2.program.weeks.map(function (w) { return w.weekIndex; }).join(",") === "1,2,3,4,5,6,7,8"
+  );
+  ok("month two OPENS on the deload", m2.program.weeks[4].phase === "deload");
+  ok("and the rest of it builds", m2.program.weeks.slice(5).every(function (w) { return w.phase === "build"; }));
+  ok("the new weeks are empty — the owner writes them", m2.program.weeks[4].days.sun.parts.length === 0);
+  ok("adding a month bumps the version like any other write", m2.program.version === m1.program.version + 1);
+
+  const stale = await storeM.addMonth(m1.program.programId, m1.program.version);
+  ok("a stale add is refused, not applied twice", !stale.ok && stale.code === "VERSION_CONFLICT");
+
+  /* Without an intake — the legacy athlete path — the old rule still stands, so that
+     path keeps behaving exactly as it did. */
+  const legacy = Store.emptyProgram({ programId: "p_legacy", weekCount: 5 });
+  ok("the legacy path still closes its block with a deload", legacy.weeks[4].phase === "deload");
+
   const src = require("fs").readFileSync(require("path").join(__dirname, "..", "lib", "client-program-store.js"), "utf8");
   ok("store makes no network calls", !/\bfetch\s*\(/.test(src));
   ok("store references no AI provider", !/gemini|groq|generativelanguage/i.test(src.replace(/never calls a provider/gi, "")));
