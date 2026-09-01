@@ -320,6 +320,44 @@ async function ownerHandler(req, res, body) {
  * Client
  * ------------------------------------------------------------------------- */
 
+/**
+ * A client signed the B2B terms — the owner is told, exactly as he is told when an
+ * athlete finishes intake ("<name> has joined the DUCK'S !", api/coach-feedback.js).
+ * The owner asked for one rule across both products (2026-09-01): a signature is the
+ * moment somebody actually joined, and it must not pass silently.
+ *
+ * No client email or phone exists to report — by design (POL-029). What the owner gets
+ * is who, which program, which terms, and a link straight into the back office.
+ */
+async function notifyOwnerOfSignature(program, signature, clientName) {
+  if (!hasMailProvider()) return { sent: false, reason: "no_mail_provider" };
+  const to = resolveAppMailTo();
+  if (!to) return { sent: false, reason: "no_recipient" };
+  const who = clientName || "A client";
+  const subject = who + " has joined the DUCK'S !";
+  const lines = [
+    "Type: client_signed",
+    "Status: B2B terms signed — the program is now open to them",
+    "Client: " + who,
+    "Program: " + program.programId,
+    "Terms: " + (signature.termsVersion || ""),
+    signature.signerName ? "Signed by: " + signature.signerName : null,
+    "Signed at: " + (signature.signedAt || ""),
+    "",
+    "Open it in admin:",
+    "https://arick-t.github.io/mama-wod/admin-clients.html?program=" +
+      encodeURIComponent(program.programId),
+  ].filter(function (x) {
+    return x !== null;
+  });
+  try {
+    await sendAppMail({ to: to, subject: subject, text: lines.join("\n") });
+    return { sent: true };
+  } catch (e) {
+    return { sent: false, reason: String((e && e.message) || e) };
+  }
+}
+
 async function notifyOwnerOfEdit(program, touchedDays, clientName) {
   if (!hasMailProvider()) return { sent: false, reason: "no_mail_provider" };
   const to = resolveAppMailTo();
@@ -403,6 +441,10 @@ async function clientHandler(req, res, body) {
   if (!verified.ok) return bad(res, 401, verified.code, verified.error);
 
   if (action === "sign") {
+    /* Read before writing: recordSignature overwrites, and "is this new?" is the only
+       thing standing between one join mail and one per device. */
+    const previousSignature =
+      verified.access && verified.access.signature ? verified.access.signature : null;
     const signed = Access.recordSignature(verified.access, {
       programId: programId,
       accepted: body.accepted === true,
@@ -418,7 +460,31 @@ async function clientHandler(req, res, body) {
     } catch (e) {
       return bad(res, 503, "WRITE_FAILED", String((e && e.message) || e));
     }
-    return res.status(200).json({ ok: true, signature: { signedAt: signed.signature.signedAt, termsVersion: signed.signature.termsVersion } });
+    /* Mail only when this is genuinely new: a first signature, or a re-signature after
+       the terms text changed. Signing is per account, so without this a second device
+       would send a second "has joined". Failure to mail never fails the signing — the
+       client is already through the door. */
+    const wasSigned = !!(previousSignature && previousSignature.accepted);
+    const sameTerms =
+      wasSigned && previousSignature.termsVersion === signed.signature.termsVersion;
+    let joinMail = { sent: false, reason: "already_signed" };
+    if (!sameTerms) {
+      let name = "";
+      try {
+        const readForMail = await store.readProgram(programId);
+        if (readForMail.ok) name = readForMail.program.clientName || "";
+        if (readForMail.ok) {
+          joinMail = await notifyOwnerOfSignature(readForMail.program, signed.signature, name);
+        }
+      } catch (e) {
+        joinMail = { sent: false, reason: String((e && e.message) || e) };
+      }
+    }
+    return res.status(200).json({
+      ok: true,
+      signature: { signedAt: signed.signature.signedAt, termsVersion: signed.signature.termsVersion },
+      ownerNotified: joinMail.sent === true,
+    });
   }
 
   /* Everything past here needs a signature on the current terms. */

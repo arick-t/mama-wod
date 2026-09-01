@@ -180,7 +180,11 @@ ok("renaming saves clientName", /program: \{ clientName: name \}/.test(page));
 /* --- the label is 'client', not 'athlete' (a.3.2) ------------------ */
 
 ok("the page speaks about clients", page.indexOf("New coach / studio client") >= 0);
-ok("the heading is the owner's clients", /הלקוחות שלי/.test(page));
+/* The heading moved into the header bar's tagline when the page took admin.html's
+   frame — a card titled "הלקוחות שלי" above a strip of clients was saying twice what
+   the strip says once. */
+ok("the header says whose page this is", /<span class="tagline">לקוחות<\/span>/.test(page));
+ok("and counts them where admin counts athletes", /id="clientCount"/.test(page));
 
 /* --- the cross-cutting intake, in English (checklist 2.b) ---------- */
 
@@ -259,6 +263,14 @@ ok(
   "the weekday rows are a sub-question of the emphases",
   /id="inWeekDays" class="sub-branch" hidden/.test(page)
 );
+/* Rest days say WHICH days, in the same row of seven the emphases use. */
+ok("ticking rest days opens a week", /id="inRestDaysWrap" class="sub-branch" hidden/.test(page));
+ok("it is the same seven-column row", /id="inRestDayRow" class="emph-days"/.test(page));
+ok("it appears only when rest days are on", page.indexOf('el("inRestDaysWrap").hidden = !restOn') >= 0);
+ok("the days are read back from the form", /function restDaysFromForm/.test(page));
+ok("and sent with the intake", /restDays: restDaysFromForm\(\)/.test(page));
+ok("the owner is asked which days", /Tick the days that are rest days/.test(page));
+
 /* The owner's order, 2026-09-01: the shape of the week first, the rest day under it.
    Reading the source positions is the only way to pin an order. */
 ok(
@@ -294,9 +306,11 @@ ok("it fits two digits", /\.inline-num\{[^}]*width:82px/.test(page));
 /* Equal columns across the full width. A flex basis stretched whatever landed on the
    last line, so five sessions came out three wide and two narrow — the owner's
    objection on 2026-09-01. A grid track is the same width on every row. */
+/* Equal columns, and four times as wide as they were: the descriptions are whole
+   sentences and about thirty characters of one were visible (owner, 2026-09-01). */
 ok(
   "the session boxes share the width in equal columns",
-  /\.sess-grid\{display:grid;grid-template-columns:repeat\(auto-fit,minmax\(210px,1fr\)\)/.test(page)
+  /\.sess-grid\{display:grid;grid-template-columns:repeat\(auto-fit,minmax\(min\(100%,840px\),1fr\)\)/.test(page)
 );
 ok("no session box carries a fixed basis any more", !/\.sess-box\{flex:/.test(page));
 ok("no session count is ever invented", page.indexOf('parseInt(el("inSessions").value, 10) || 0') >= 0);
@@ -379,10 +393,24 @@ ok("it only exists while the day is edited", /function restToggleHeaderHtml/.tes
 ok("the old footer row is gone", !/restToggleRowHtml/.test(page));
 ok("it is styled like the client's", /\.rest-inline\{/.test(page));
 
-/* The clients are a STRIP, the way the admin module already lists people. */
-ok("the client list is a horizontal strip", /\.clist\{display:flex;gap:8px;overflow-x:auto/.test(page));
-ok("a client is a tab, not a row", /\.crow\{display:inline-flex[^}]*white-space:nowrap/.test(page));
-ok("the active client is marked the admin way", /\.crow\.on\{background:rgba\(232,69,26,\.16\)/.test(page));
+/* ------------------------------------------------------------------------
+ * This page is a second page of the SAME back office.
+ *
+ * The owner's instruction on 2026-09-01, after seeing it: do not reinvent the admin
+ * module — the landing page's design and the data it shows stay as they are, we build
+ * on top. So the frame is not a lookalike built from copied values; it is admin.html's
+ * own rules, extracted mechanically into styles/admin-shell.css.
+ * --------------------------------------------------------------------- */
+ok("the shell is the generated one", /<link rel="stylesheet" href="styles\/admin-shell\.css">/.test(page));
+ok("the page keeps no second frame of its own", !/\.wrap\{max-width/.test(page) && !/header\.top\{/.test(page));
+ok("the app frame is admin's", /<div id="app">/.test(page) && /class="tabs-bar"/.test(page));
+ok("it opens by admin's own class", /classList\.toggle\("is-open"/.test(page));
+ok("the header carries the counters, as admin's does", /id="clientCount"/.test(page) && /class="count-wrap"/.test(page));
+ok("the header buttons are admin's buttons", /class="hdr-btn primary" id="addClientBtn"/.test(page));
+ok("there is a way back to the admin module", /href="admin\.html"/.test(page));
+ok("and a way out", /id="logoutBtn"/.test(page));
+ok("a client is an athlete-tab, not a private class", /class="athlete-tab/.test(page));
+ok("no hand-copied strip values are left", !/\.crow\{display:inline-flex/.test(page));
 ok("a test client still says so", /badge test">בדיקה/.test(page));
 ok("the unread dot survives the move", /class="dot" title="יש שינוי שלא ראית"/.test(page));
 
@@ -406,11 +434,12 @@ ok("tab 6 asks for goals", /id="inGoals"/.test(page));
 });
 
 /* English, on the owner's instruction — check the tab and field text, not comments */
-/* Slice on the NEXT card's id rather than a bare <div class="card">: the client list
-   became its own identified view (id="listCard") and the old boundary stopped matching,
-   which silently emptied this slice instead of failing loudly on its content. */
+/* Slice on the NEXT identified view rather than a bare <div class="card">: a bare
+   boundary stopped matching once before and silently emptied this slice instead of
+   failing loudly on its content. The list card is gone (the header's strip replaced
+   it), so the open-client view is now what follows the wizard. */
 const intakeStart = page.indexOf('<div class="card" id="intakeCard"');
-const intakeEnd = page.indexOf('id="listCard"');
+const intakeEnd = page.indexOf('id="detail" hidden');
 const intakeCard = intakeStart >= 0 && intakeEnd > intakeStart ? page.slice(intakeStart, intakeEnd) : "";
 ok("the intake card exists", intakeCard.length > 200);
 ok("the intake card is left-to-right", /id="intakeCard" dir="ltr"/.test(page));

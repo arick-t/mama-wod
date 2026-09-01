@@ -306,6 +306,28 @@ async function main() {
   ok("ticking the box signs", signedRes.status === 200 && signedRes.body.ok === true);
   ok("the signature is recorded against v3.4-legal", signedRes.body.signature.termsVersion === "v3.4-legal");
 
+  /* A signature is the moment somebody actually joined, and the owner is told — the
+     same rule the athlete intake follows ("has joined the DUCK'S !"). His instruction,
+     2026-09-01: one rule across both products. */
+  ok("the owner is told somebody joined", signedRes.body.ownerNotified === true);
+  ok("exactly one join mail", H.mails.length === 1);
+  ok("it reads like the athlete one", /has joined the DUCK'S !/.test(H.mails[0].subject));
+  ok("it names the client", /Coach A/.test(H.mails[0].subject));
+  ok("it names the terms signed", /v3\.4-legal/.test(H.mails[0].text));
+  ok("it carries no client email or phone", !/@/.test(H.mails[0].text.replace(/https?:[^\s]+/g, "")));
+
+  /* Signing is per ACCOUNT, so a second device must not send a second "has joined". */
+  const signAgain = await H.client(phoneToken, {
+    action: "sign",
+    programId: pid,
+    accepted: true,
+    signerName: "Coach A",
+  });
+  ok("signing again is still accepted", signAgain.status === 200 && signAgain.body.ok === true);
+  ok("but it does not announce a second joining", signAgain.body.ownerNotified === false);
+  ok("and sends no second mail", H.mails.length === 1);
+  H.mails.length = 0;
+
   /* --- what the client actually receives ------------------------------ */
 
   const clientRead = await H.client(phoneToken, { action: "read", programId: pid });

@@ -63,7 +63,7 @@ ok(
     JSON.stringify([
       "clientName", "dayEmphasis", "dayEmphasisEnabled", "deloadEveryWeeks", "deloadWeek", "equipment",
       "equipmentOther", "goals", "includeRestDays", "monthlyAmount", "paymentMethod",
-      "population", "scheduleMode", "sessionTypes", "sessionsDiffer", "sessionsPerWeek",
+      "population", "restDays", "scheduleMode", "sessionTypes", "sessionsDiffer", "sessionsPerWeek",
     ])
 );
 /* The old focus-per-weekday field is gone: weekly mode now asks about rest days and
@@ -235,6 +235,45 @@ ok(
     clientName: "A", scheduleMode: "session_count", sessionsPerWeek: 3,
     population: "p", goals: "g",
   }).length === 0
+);
+
+/* --- rest days name themselves -------------------------------------
+   "Include rest days" without "which days" leaves the decision to whoever fills the
+   calendar, and for a studio that trains Sunday to Thursday that is a guess with a
+   schedule attached (owner, 2026-09-01). */
+
+const restBase = { clientName: "c", scheduleMode: "weekly_schedule", population: "p", goals: "g" };
+ok("no day is a rest day by default", Object.keys(I.emptyIntake().restDays).every(function (k) {
+  return I.emptyIntake().restDays[k] === false;
+}));
+ok(
+  "rest days on with no day named blocks the build",
+  I.validateIntake(Object.assign({}, restBase, { includeRestDays: true })).some(function (m) {
+    return /tick which days they are/.test(m);
+  })
+);
+ok(
+  "naming them clears it",
+  I.validateIntake(Object.assign({}, restBase, { includeRestDays: true, restDays: { fri: true, sat: true } })).length === 0
+);
+ok(
+  "a week of nothing but rest is refused",
+  I.validateIntake(Object.assign({}, restBase, {
+    includeRestDays: true,
+    restDays: { sun: true, mon: true, tue: true, wed: true, thu: true, fri: true, sat: true },
+  })).some(function (m) { return /at least one training day/.test(m); })
+);
+ok(
+  "the days are dropped when rest days are off",
+  I.normalizeIntake(Object.assign({}, restBase, { includeRestDays: false, restDays: { fri: true } })).restDays.fri === false
+);
+ok(
+  "session_count mode holds no rest days at all",
+  I.normalizeIntake({ scheduleMode: "session_count", sessionsPerWeek: 3, includeRestDays: true, restDays: { fri: true } }).restDays.fri === false
+);
+ok(
+  "the brief names them",
+  /REST DAYS: Fri, Sat/.test(I.briefFor(Object.assign({}, restBase, { includeRestDays: true, restDays: { fri: true, sat: true } })))
 );
 
 /* --- the deload is a CADENCE over a monthly product ------------------

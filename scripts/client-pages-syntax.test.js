@@ -128,12 +128,14 @@ const BRICK_HOOKS = [
   ok(file + " never claims a session is being generated", !/still being generated/.test(all));
 });
 
-/* The wizard and the client list are two VIEWS, never both on screen: the list sat
-   under the wizard through every step of adding a client, where it is noise. */
+/* The list card is gone: the strip in the header bar IS the list, and it is always up
+   (owner, 2026-09-01). The content area below it holds exactly one thing at a time —
+   the wizard, an open client, or the "pick someone" note. */
 const adminPage = fs.readFileSync(path.join(ROOT, "admin-clients.html"), "utf8");
-ok("the client list is its own view", /id="listCard"/.test(adminPage));
+ok("there is no list card left", !/id="listCard"/.test(adminPage));
+ok("the clients are the tab strip", /class="tabs-bar" id="clientList"/.test(adminPage));
 ok("one switch decides which view owns the screen", /function renderViewMode/.test(adminPage));
-ok("the wizard hides the list", adminPage.indexOf('show("listCard", !S.adding)') >= 0);
+ok("nothing is open when nothing is picked", adminPage.indexOf('show("emptyContent", !S.adding && !S.program)') >= 0);
 ok("the list hides the wizard", adminPage.indexOf('show("intakeCard", S.adding)') >= 0);
 ok("a list refresh cannot pull the list back over the wizard", (adminPage.match(/renderViewMode\(\)/g) || []).length >= 3);
 ok("there is a way into the wizard", /id="addClientBtn"/.test(adminPage));
