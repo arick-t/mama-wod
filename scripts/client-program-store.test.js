@@ -562,6 +562,48 @@ async function main() {
   );
   ok("turning a rest day into a session IS a change", tags2.join(",") === "w1:mon");
 
+  /* ---------------------------------------------------------------------
+   * Sending a block flags the WHOLE of it for the client.
+   *
+   * A block they have never seen is new from end to end, so it arrives marked and the
+   * marks come down as they read it — the mirror of the owner's own list (owner,
+   * 2026-09-01). Rest days carry nothing: there is nothing on them to read.
+   * ------------------------------------------------------------------------- */
+  const ioS = fakeStorage();
+  const storeS = Store.createProgramStore(ioS);
+  const restIntakeS = {
+    clientName: "S", scheduleMode: "weekly_schedule", includeRestDays: true,
+    restDays: { fri: true, sat: true }, sessionMinutes: 60, population: "p",
+  };
+  const madeS = await storeS.createProgram({ clientName: "S", weekCount: 4, intake: restIntakeS, isTest: true });
+  const sentS = await storeS.approveBlock(madeS.program.programId, madeS.program.version, 1);
+  ok("the whole block is flagged for the client", Object.keys(sentS.program.clientUnreadDays).length === 20);
+  ok("a training day carries the flag", sentS.program.weeks[0].days.sun.coachModified === true);
+  ok("a rest day does not", sentS.program.weeks[0].days.fri.coachModified === undefined);
+  const readOne = await storeS.updateProgram(
+    madeS.program.programId,
+    sentS.program.version,
+    function (draft) { return draft; },
+    { actor: "client", clearClientUnread: ["w1:sun"] }
+  );
+  ok("reading one day clears one flag", Object.keys(readOne.program.clientUnreadDays).length === 19);
+
+  /* --- the sample fill, and the fence around it ------------------------
+   * It exists so a whole month of the calendar can be LOOKED at. It writes the same
+   * labelled lines everywhere and refuses on anything that is not a test program, so
+   * it can never become a way to produce programming (POL-029).
+   * ------------------------------------------------------------------------- */
+  const seeded = await storeS.seedTestBlock(madeS.program.programId, readOne.program.version, 1);
+  ok("a test program can be filled", seeded.ok && seeded.filled === 20);
+  ok("every training day got the sample", seeded.program.weeks[3].days.thu.parts.length === 2);
+  ok("rest days were left alone", seeded.program.weeks[3].days.fri.parts.length === 0);
+  ok("and it says on the tin that it is a sample", /SAMPLE/.test(seeded.program.weeks[0].days.sun.parts[0].title));
+
+  const realOne = await storeS.createProgram({ clientName: "Paying", weekCount: 4 });
+  const refused = await storeS.seedTestBlock(realOne.program.programId, realOne.program.version, 1);
+  ok("a real client's program is refused", !refused.ok && refused.code === "NOT_A_TEST_PROGRAM");
+  ok("and nothing was written to it", (await storeS.readProgram(realOne.program.programId)).program.weeks[0].days.sun.parts.length === 0);
+
   const src = require("fs").readFileSync(require("path").join(__dirname, "..", "lib", "client-program-store.js"), "utf8");
   ok("store makes no network calls", !/\bfetch\s*\(/.test(src));
   ok("store references no AI provider", !/gemini|groq|generativelanguage/i.test(src.replace(/never calls a provider/gi, "")));

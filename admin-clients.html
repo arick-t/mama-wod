@@ -130,10 +130,10 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
    came out as three wide boxes and two narrow ones (owner, 2026-09-01). A grid track
    is the same width on every row, and auto-fit is what spends the whole width instead
    of leaving a margin on the end. */
-/* Four times the width the boxes had, on the owner's instruction (2026-09-01): the
-   descriptions are whole sentences and he could see about thirty characters of one.
-   min() keeps a phone from overflowing sideways when 840px does not fit. */
-.sess-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,840px),1fr));
+/* Wide enough to read a whole sentence, and still ACROSS the screen: 840px put exactly
+   one box on a line, which is the column the owner objected to (2026-09-01). min() keeps
+   a phone from overflowing sideways. */
+.sess-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));
   gap:10px;margin:0 0 6px}
 /* A follow-up that belongs to the checkbox above it. The rule on the inline-start edge
    is what makes the hierarchy readable at a glance instead of four flat questions. */
@@ -401,10 +401,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
 <script src="lib/normalize-pprog-block.js"></script>
 <script src="lib/pprog-display.js"></script>
 <script src="lib/day-rest-toggle.js"></script>
-<!-- Loaded for its day-selection maths (selId / rangeBetween / sortSelected), which is
-     what the admin module's calendar already uses. A second copy of "which days are
-     selected" is how two calendars start disagreeing. 0 LLM, like everything here. -->
-<script src="lib/admin-done-debrief.js"></script>
+
 <!-- The same questionnaire definition the server validates against. -->
 <script src="lib/client-intake.js"></script>
 <script>
@@ -765,7 +762,15 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       '<h2 style="margin:0">התוכנית</h2>' +
       '<span class="spacer meta">' + weeksLabel(p) + "</span>" +
       '<button class="ghost sm" type="button" data-nextblock="1" ' +
-      'title="תחקור קצר, ואז ארבעה שבועות חדשים בהמשך לקיים">צור לבנה בהמשך</button></div>';
+      'title="תחקור קצר, ואז ארבעה שבועות חדשים בהמשך לקיים">צור לבנת המשך</button>' +
+      /* Only on a program marked as a test: fills the block with one labelled sample
+         session so a whole month of the calendar can be looked at. The server refuses
+         it on any real client (POL-029). */
+      (p.isTest
+        ? '<button class="ghost sm" type="button" data-seedtest="1" ' +
+          'title="ממלא את הלבנה באימון דוגמה — רק בתוכנית בדיקה">מלא אימון דוגמה</button>'
+        : "") +
+      '</div>';
     html += pendingBlockHtml(p);
     if (unread.length) {
       html += '<div class="banner warn">' + unread.length + ' ימים שהלקוח שינה ואתה עוד לא פתחת. פתח יום כדי לסמן שנקרא.</div>';
@@ -877,6 +882,26 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     );
   }
 
+  /* A test program only: fills the block with one labelled sample session so a whole
+     month of the calendar can be judged at once. The server refuses it on a real
+     client, so this button cannot become a way to produce programming. */
+  function seedTestBlock() {
+    var p = S.program;
+    if (!p) return;
+    if (!window.confirm("למלא את הלבנה באימון דוגמה? מה שכתוב בימים יידרס.")) return;
+    api({ action: "seed_test_block", programId: p.programId, expectedVersion: p.version, blockIndex: 1 })
+      .then(function (r) {
+        if (r.status === 409) { banner("warn", "מישהו שמר בינתיים. פותח מחדש."); openClient(p.programId); return; }
+        if (r.status !== 200 || !r.body.ok) {
+          banner("bad", (r.body && r.body.error) || "לא הצלחתי למלא.");
+          return;
+        }
+        S.program = r.body.program;
+        banner("good", "מולאו " + r.body.filled + " ימים באימון דוגמה.");
+        renderDetail();
+      });
+  }
+
   function approveBlock(blockIndex) {
     var p = S.program;
     if (!p) return;
@@ -939,22 +964,23 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     host.innerHTML = head + D.renderBrickView(brickOpts());
   }
 
-  /* The pencil turns a rest day INTO a session; this is the other direction the owner
-     asked for. It is ours rather than the shared day card's, because the card is also
-     the athlete app's and an athlete must not be able to delete a coach's session.
-     It sits BESIDE THE DATE while the day is being edited — the same place, in the
-     same words, as the client's own page. Two surfaces of one product do not put the
-     same control in two different corners (owner, 2026-09-01). */
+  /* A rest day is a TICK BOX while the day is being edited, and it is always there —
+     the button it replaced only appeared once a session had already been written, so on
+     an empty day (which is most of a new block) there was no way to mark rest at all
+     (owner, 2026-09-01). Ticked = this day is rest. Ours rather than the shared card's,
+     because the card is also the athlete app's and an athlete must not be able to
+     delete a coach's session. */
   function restToggleHeaderHtml() {
     if (!S.edit) return "";
     var day = S.edit.day || "";
     if (!day || DAY_KEYS_LOCAL.indexOf(day) < 0) return "";
     var week = ((S.program && S.program.weeks) || [])[S.edit.wi | 0] || {};
     var isRest = RT ? RT.dayIsRest(week, day) : true;
-    if (isRest) return "";
     return (
-      '<button type="button" class="rest-inline" data-makerest="' +
-      (S.edit.wi | 0) + ":" + day + '" title="הפוך ליום מנוחה">יום מנוחה</button>'
+      '<label class="pprog-rest-check" title="יום מנוחה">' +
+      '<input type="checkbox" data-restcheck="' + (S.edit.wi | 0) + ":" + day + '"' +
+      (isRest ? " checked" : "") + ">" +
+      "<span>יום מנוחה</span></label>"
     );
   }
 
@@ -1066,8 +1092,20 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
      run between two. The calendar hands us the click event only because brickOpts asks
      for it (passCalEvent), so this hook takes BOTH shapes — the week rail still calls
      it without one. */
+  /* The selection maths lives beside the calendar that draws it (lib/pprog-display.js),
+     so this page and the client's page share one definition of "which days are picked"
+     without either of them loading the admin module's debrief helper. */
   function selMath() {
-    return window.AdminDoneDebrief || null;
+    var D = pprogLib();
+    return D && D.selId ? D : null;
+  }
+
+  /* Whatever order they were picked in, they are held in date order — Wednesday before
+     Monday is a picking order, not a reading order (owner, 2026-09-01). Over a whole
+     month this stops being a nicety. */
+  function sortSel(list) {
+    var D = pprogLib();
+    return D && D.sortSelectedDays ? D.sortSelectedDays(list) : list;
   }
 
   function toggleSelected(wi, day) {
@@ -1078,7 +1116,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       return M.selId(x.wi, x.day) !== id;
     });
     if (list.length === (S.selected || []).length) list.push({ wi: wi | 0, day: day });
-    S.selected = list;
+    S.selected = sortSel(list);
   }
 
   function applyRange(from, to, additive) {
@@ -1088,7 +1126,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       return c.wi >= 0 && c.wi < weekCount();
     });
     if (!range.length) return;
-    if (!additive) { S.selected = range; return; }
+    if (!additive) { S.selected = sortSel(range); return; }
     var seen = {};
     var out = [];
     (S.selected || []).concat(range).forEach(function (c) {
@@ -1097,7 +1135,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       seen[id] = 1;
       out.push(c);
     });
-    S.selected = out;
+    S.selected = sortSel(out);
   }
 
   window.cvSetDay = function (aOrEv, wi, dayKey) {
@@ -1162,6 +1200,10 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
   function bindCalGestures() {
     document.addEventListener("mousedown", function (ev) {
       if (ev.button !== 0) return;
+      /* A ctrl-click is a click, never the start of a drag. Without this a hand that
+         moves one pixel between press and release turned "add this day" into "take the
+         run from here to there", which is why picking days out of order looked broken. */
+      if (ev.ctrlKey || ev.metaKey) { cvCalDrag = null; return; }
       var cell = calCellFrom(ev);
       if (!cell) return;
       cvCalDrag = {
@@ -1327,6 +1369,33 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     saveDay(clampWi(wi), day, [], true);
   };
 
+  /* The tick box, both ways. Ticking plants a rest day; unticking hands back an empty
+     session to write in. A day with something written in it asks before it is wiped —
+     an empty one has nothing to lose and does not interrupt. */
+  function setRestChecked(wi, dayKey, wantRest) {
+    var day = String(dayKey || "");
+    if (!day) return;
+    var week = ((S.program && S.program.weeks) || [])[wi | 0] || {};
+    var dayData = (week.days && week.days[day]) || { parts: [] };
+    var hasContent = !!(dayData.parts && dayData.parts.length);
+    if (wantRest) {
+      if (hasContent && !window.confirm("להפוך את היום ליום מנוחה? האימון שכתוב בו יימחק.")) {
+        renderAdminDays();
+        return;
+      }
+      saveDay(clampWi(wi), day, [], true);
+      return;
+    }
+    /* Off: not a save, just an editable draft — nothing is written until he saves. */
+    S.edit = {
+      wi: clampWi(wi),
+      day: day,
+      parts: [{ title: "Part A", notes: [""], format: "", work: [""] }],
+      rest: false,
+    };
+    renderAdminDays();
+  }
+
   /* Opening a changed day is what clears its flag — no extra click (a.2.2). */
   function markRead(tag) {
     if (!(S.program.unreadDays || {})[tag]) return Promise.resolve();
@@ -1417,8 +1486,14 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       window.cvMakeRest(parseInt(mr[0], 10) || 0, mr[1] || "");
       return;
     }
+    if (g("data-restcheck")) {
+      var rc = g("data-restcheck").split(":");
+      setRestChecked(parseInt(rc[0], 10) || 0, rc[1] || "", !!t.checked);
+      return;
+    }
     if (g("data-savemeta")) { saveMeta(); return; }
     if (g("data-nextblock")) { startNextBlock(); return; }
+    if (g("data-seedtest")) { seedTestBlock(); return; }
     if (g("data-approve")) { approveBlock(parseInt(g("data-approve"), 10) || 0); return; }
 
     if (g("data-rename")) {
@@ -1566,7 +1641,9 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     el("inMethod").value = v.paymentMethod || "";
 
     el("inEquipOtherOn").checked = v.equipment === "other";
-    el("inEquipGym").checked = v.equipment !== "other";
+    /* #inEquipFull, not #inEquipGym — the wrong id here threw, and a throw in a click
+       handler is a button that does nothing at all, which is exactly how it looked. */
+    el("inEquipFull").checked = v.equipment !== "other";
     el("inEquipOther").value = v.equipmentOther || "";
 
     el("inSchedCount").checked = v.scheduleMode === "session_count";

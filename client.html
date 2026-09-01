@@ -155,32 +155,25 @@ button.ghost:hover{color:var(--text)}
   .day-actions button{flex:1}
 }
 
-/* --- print / share: this is the copy that reaches his athletes, so it carries
-       the full watermark and drops every control. ---------------------------- */
+/* --- printing is refused ------------------------------------------------
+   The owner's call, 2026-09-01: a printed programme is a copy he cannot see, cannot
+   revoke and cannot watermark once it is on paper. The page cannot stop a browser from
+   opening its own print dialog, so it makes the result worthless instead: the whole
+   programme is hidden and a single line goes onto the page. That is the honest limit of
+   what a web page can promise here — anyone determined can still photograph a screen,
+   and no CSS in the world changes that. */
 @media print{
-  :root{--bg:#fff;--bg-card:#fff;--bg-elev:#fff;--bg-panel:#fff;--text:#000;
-        --text-muted:#333;--text-meta:#555;--line:#bbb}
-  body{background:#fff;color:#000;padding:0;font-size:11.5pt}
-  button,.weekbar,.day-actions,#authView,#termsView,.banner,#printBtn,.linkish{display:none!important}
-  .card,.day{border:1px solid #bbb;break-inside:avoid;page-break-inside:avoid;margin-bottom:10pt}
-  .day-head{background:#f2f2f2}
-  .section-title{color:#000}
-  .pprog-part-note,.pprog-part-format{color:#333}
-  .print-mark{display:block!important;position:fixed;bottom:6pt;left:0;right:0;text-align:center;
-    font-size:8.5pt;color:#666}
-  .print-head{display:block!important;margin:0 0 10pt;padding:0 0 6pt;border-bottom:2px solid #000}
-  .wm-line{color:#555}
+  body > *{display:none!important}
+  body{background:#fff;color:#000}
+  body::after{
+    content:"DUCK-WOD — this training program is not available in print.";
+    display:block;padding:40pt 0;text-align:center;font-size:12pt;color:#000
+  }
 }
-.print-mark,.print-head{display:none}
 </style>
 </head>
 <body>
 <div class="wrap">
-
-  <div class="print-head">
-    <strong id="printTitle">DUCK-WOD — Training Program</strong>
-    <div id="printFor" class="meta"></div>
-  </div>
 
   <header class="top">
     <h1 class="logo">DUCK-WOD</h1>
@@ -221,18 +214,14 @@ button.ghost:hover{color:var(--text)}
     <div id="progBanner"></div>
     <!-- No week bar: the calendar carries its own W1…W5 rail. -->
     <div id="days"></div>
-    <!-- Sharing moved to the WhatsApp mark beside the date, where the athlete's app
-         already puts it, and Refresh is gone: the page reloads itself after every save
-         (owner, 2026-09-01). Printing stays, because the printed copy carries the full
-         watermark and is what travels to a coach's own athletes - but it is a quiet
-         link now rather than a button competing with the programme. -->
-    <p class="meta" style="margin-top:8px">
-      <button id="printBtn" class="linkish" type="button">Print this program</button>
-    </p>
+    <!-- No print. The owner's call on 2026-09-01: a printed programme is a copy he
+         cannot see, cannot revoke and cannot watermark once it is on paper, and this
+         page exists precisely so the programme stays somewhere he still controls.
+         Sharing is the WhatsApp mark beside the date — one day at a time, to a person
+         the client chose, not the whole block to a printer. -->
     <p class="meta" id="progFoot" style="margin-top:14px"></p>
   </section>
 
-  <div class="print-mark" id="printMark"></div>
 </div>
 
 <script src="lib/normalize-pprog-block.js"></script>
@@ -428,13 +417,6 @@ button.ghost:hover{color:var(--text)}
     var wm = state.watermark || {};
     var name = wm.clientName || "";
     el("headSub").textContent = name ? "Program for " + name : "Training Program";
-    el("printFor").textContent = name ? "Prepared for " + name : "";
-    el("printTitle").textContent = "DUCK-WOD — Training Program";
-    /* The mark that travels onto the copy his athletes receive. */
-    el("printMark").textContent =
-      "Prepared for " + (name || "client") +
-      " · DUCK-WOD · " + new Date().toLocaleDateString() +
-      " · Not for redistribution";
     var p = state.program || {};
     el("progFoot").textContent = "Version " + (p.version || "?") +
       (p.updatedAt ? " · last change " + new Date(p.updatedAt).toLocaleString() : "");
@@ -557,10 +539,13 @@ button.ghost:hover{color:var(--text)}
       unreadDays: coachChangedTags(),
       /* The WhatsApp mark beside the date, the same one the athlete's app carries. */
       showShare: true,
+      shareBesideDate: true,
       shareIcon: D.waIconSvg ? D.waIconSvg() : "WA",
       editHeaderActionsHtml: restToggleHeaderHtml(),
       selectedDays: selected,
-      passCalEvent: false,
+      /* The calendar passes the click event through, which is what makes ctrl-click
+         additive rather than just moving the focus. */
+      passCalEvent: true,
       widthStatusHtml: widthStatus,
       hooks: {
         shift: "cvCalShift",
@@ -582,20 +567,22 @@ button.ghost:hover{color:var(--text)}
     };
   }
 
-  /* A written day back to rest. Ours rather than the shared card's, so the wording and
-     the confirmation are the client's language - but it now sits BESIDE THE DATE while
-     the day is being edited, instead of at the bottom of the card where it read as a
-     footer control belonging to nothing (owner, 2026-09-01). */
+  /* A rest day is a TICK BOX while the day is being edited, and it is always there —
+     the button it replaced only appeared once a session had already been written, so on
+     an empty day there was no way to mark rest at all (owner, 2026-09-01). Ticked = this
+     day is rest. Ours rather than the shared card's, so the wording and the confirmation
+     are the client's language. */
   function restToggleHeaderHtml() {
     if (!state.edit) return "";
     var day = state.edit.day || "";
     if (!day || DAY_KEYS_LOCAL.indexOf(day) < 0) return "";
     var week = ((state.program && state.program.weeks) || [])[state.edit.wi | 0] || {};
     var isRest = RT ? RT.dayIsRest(week, day) : true;
-    if (isRest) return "";
     return (
-      '<button type="button" class="rest-inline" data-makerest="' +
-      (state.edit.wi | 0) + ":" + day + '" title="Make it a rest day">Rest day</button>'
+      '<label class="pprog-rest-check" title="Rest day">' +
+      '<input type="checkbox" data-restcheck="' + (state.edit.wi | 0) + ":" + day + '"' +
+      (isRest ? " checked" : "") + ">" +
+      "<span>Rest day</span></label>"
     );
   }
 
@@ -642,17 +629,141 @@ button.ghost:hover{color:var(--text)}
     renderDays();
   };
 
-  window.cvSetDay = function (wi, dayKey) {
-    var nextWi = clampWi(wi);
-    var nextDay = String(dayKey || "sun");
+  /* Several days on screen at once, the same way the owner works in his own module:
+     ctrl/⌘-click adds a day, dragging across the calendar takes the run between two.
+     The maths is the display library's, not a second copy. */
+  function selMath() {
+    var D = pprogLib();
+    return D && D.selId ? D : null;
+  }
+
+  function sortSel(list) {
+    var D = pprogLib();
+    return D && D.sortSelectedDays ? D.sortSelectedDays(list) : list;
+  }
+
+  function toggleSelected(wi, day) {
+    var M = selMath();
+    if (!M) return;
+    var id = M.selId(wi, day);
+    var list = (state.selected || []).filter(function (x) {
+      return M.selId(x.wi, x.day) !== id;
+    });
+    if (list.length === (state.selected || []).length) list.push({ wi: wi | 0, day: day });
+    state.selected = sortSel(list);
+  }
+
+  function applyRange(from, to, additive) {
+    var M = selMath();
+    if (!M) return;
+    var range = M.rangeBetween(from, to).filter(function (c) {
+      return c.wi >= 0 && c.wi < weekCount();
+    });
+    if (!range.length) return;
+    if (!additive) { state.selected = sortSel(range); return; }
+    var seen = {};
+    var out = [];
+    (state.selected || []).concat(range).forEach(function (c) {
+      var id = M.selId(c.wi, c.day);
+      if (seen[id]) return;
+      seen[id] = 1;
+      out.push(c);
+    });
+    state.selected = sortSel(out);
+  }
+
+  window.cvSetDay = function (aOrEv, wi, dayKey) {
+    var ev = null;
+    var nextWi;
+    var nextDay;
+    if (aOrEv && typeof aOrEv === "object" && aOrEv.type) {
+      ev = aOrEv;
+      nextWi = clampWi(wi);
+      nextDay = String(dayKey || "sun");
+      if (typeof ev.preventDefault === "function" && (ev.ctrlKey || ev.metaKey)) ev.preventDefault();
+    } else {
+      nextWi = clampWi(aOrEv);
+      nextDay = String(wi || "sun");
+    }
+    /* A drag ends on a cell and the browser then fires its click — without this the
+       click would collapse the selection the drag just made. */
+    if (cvIgnoreNextClick) { cvIgnoreNextClick = false; return; }
     /* Moving off the day being edited abandons the draft rather than carrying it. */
     if (state.edit && (state.edit.wi !== nextWi || state.edit.day !== nextDay)) state.edit = null;
     state.wi = nextWi;
     state.day = nextDay;
-    state.selected = [];
+    if (ev && (ev.ctrlKey || ev.metaKey)) toggleSelected(nextWi, nextDay);
+    else state.selected = [];
     renderDays();
     markCoachChangeSeen(nextWi, nextDay);
   };
+
+  /* Painting classes rather than re-rendering: a full repaint on every mouseover
+     rebuilds the day cards under the cursor mid-drag. */
+  function paintCalSelection() {
+    var M = selMath();
+    var host = el("days");
+    if (!M || !host) return;
+    var cells = host.querySelectorAll(".pprog-cal-cell");
+    var picked = {};
+    (state.selected || []).forEach(function (c) { picked[M.selId(c.wi, c.day)] = 1; });
+    for (var i = 0; i < cells.length; i++) {
+      var wi = cells[i].getAttribute("data-wi") | 0;
+      var day = String(cells[i].getAttribute("data-day") || "");
+      var isFocus = wi === (state.wi | 0) && day === String(state.day || "");
+      var isSel = !!picked[M.selId(wi, day)];
+      cells[i].classList.toggle("active", isFocus);
+      cells[i].classList.toggle("selected", isSel && !isFocus);
+    }
+  }
+
+  var cvCalDrag = null;
+  var cvIgnoreNextClick = false;
+
+  function calCellFrom(ev) {
+    var t = ev && ev.target;
+    if (!t || !t.closest) return null;
+    var cell = t.closest(".pprog-cal-cell");
+    if (!cell || !cell.closest("#days")) return null;
+    return cell;
+  }
+
+  function bindCalGestures() {
+    document.addEventListener("mousedown", function (ev) {
+      if (ev.button !== 0) return;
+      /* A ctrl-click is a click, never the start of a drag. */
+      if (ev.ctrlKey || ev.metaKey) { cvCalDrag = null; return; }
+      var cell = calCellFrom(ev);
+      if (!cell) return;
+      cvCalDrag = {
+        startWi: cell.getAttribute("data-wi") | 0,
+        startDay: String(cell.getAttribute("data-day") || ""),
+        additive: false,
+        moved: false,
+      };
+    });
+    document.addEventListener("mouseover", function (ev) {
+      if (!cvCalDrag || !(ev.buttons & 1)) return;
+      var cell = calCellFrom(ev);
+      if (!cell) return;
+      var to = { wi: cell.getAttribute("data-wi") | 0, day: String(cell.getAttribute("data-day") || "") };
+      if (!to.day) return;
+      if (to.wi === cvCalDrag.startWi && to.day === cvCalDrag.startDay) return;
+      cvCalDrag.moved = true;
+      applyRange({ wi: cvCalDrag.startWi, day: cvCalDrag.startDay }, to, cvCalDrag.additive);
+      state.wi = to.wi;
+      state.day = to.day;
+      paintCalSelection();
+    });
+    document.addEventListener("mouseup", function () {
+      if (!cvCalDrag) return;
+      var moved = cvCalDrag.moved;
+      cvCalDrag = null;
+      if (!moved) return;
+      cvIgnoreNextClick = true;
+      renderDays();
+    });
+  }
 
   /* Opening the day is what takes the coach's flag down - no extra click, the same
      rule the owner's own inbox follows. It is deliberately quiet: a failure here must
@@ -699,7 +810,7 @@ button.ghost:hover{color:var(--text)}
     if (!day) return;
     var out = [];
     for (var i = 0; i < weekCount(); i++) out.push({ wi: i, day: day });
-    state.selected = out;
+    state.selected = sortSel(out);
     state.day = day;
     renderDays();
   };
@@ -806,6 +917,32 @@ button.ghost:hover{color:var(--text)}
     saveDay(clampWi(wi), day, [], true);
   };
 
+  /* Ticking plants a rest day; unticking hands back an empty session to write in. A day
+     with something in it asks before it is wiped — an empty one has nothing to lose. */
+  function setRestChecked(wi, dayKey, wantRest) {
+    var day = String(dayKey || "");
+    if (!day) return;
+    var week = ((state.program && state.program.weeks) || [])[wi | 0] || {};
+    var dayData = (week.days && week.days[day]) || { parts: [] };
+    var hasContent = !!(dayData.parts && dayData.parts.length);
+    if (wantRest) {
+      if (hasContent && !window.confirm("Make this a rest day? The session written here will be removed.")) {
+        renderDays();
+        return;
+      }
+      saveDay(clampWi(wi), day, [], true);
+      return;
+    }
+    /* Off: not a save, just an editable draft — nothing is written until they save. */
+    state.edit = {
+      wi: clampWi(wi),
+      day: day,
+      parts: [{ title: "Part A", notes: [""], format: "", work: [""] }],
+      rest: false,
+    };
+    renderDays();
+  }
+
   /**
    * Writes one day, in either direction.
    * @param {number} wi 0-based week index
@@ -867,6 +1004,12 @@ button.ghost:hover{color:var(--text)}
       window.cvMakeRest(parseInt(bits[0], 10) || 0, bits[1] || "");
       return;
     }
+    var rc = t.getAttribute("data-restcheck");
+    if (rc) {
+      var rcBits = rc.split(":");
+      setRestChecked(parseInt(rcBits[0], 10) || 0, rcBits[1] || "", !!t.checked);
+      return;
+    }
   });
 
   /* Anything copied out carries where it came from. Invisible until pasted. */
@@ -887,11 +1030,11 @@ button.ghost:hover{color:var(--text)}
   });
 
   function boot() {
+    bindCalGestures();
     el("codeBtn").addEventListener("click", submitCode);
     el("codeInput").addEventListener("keydown", function (ev) { if (ev.key === "Enter") submitCode(); });
     el("agreeBox").addEventListener("change", function () { el("agreeBtn").disabled = !this.checked; });
     el("agreeBtn").addEventListener("click", submitAgree);
-    el("printBtn").addEventListener("click", function () { window.print(); });
 
     if (!PROGRAM_ID) {
       el("bootErr").innerHTML = '<div class="banner bad">This link is incomplete. Ask your coach to resend it.</div>';

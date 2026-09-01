@@ -91,6 +91,10 @@ const ACTIONS_ALLOWED = [
   "add_block",
   "approve_block",
   "renewal_check",
+  /* A TEST program only: fills a block with one labelled sample session so a whole
+     month of the calendar can be judged at once. The server refuses it on any real
+     client, so it cannot become a way to produce programming (POL-029). */
+  "seed_test_block",
 ];
 const actionsUsed = Array.from(
   new Set((page.match(/action:\s*"([a-z_]+)"/g) || []).map(function (s) {
@@ -321,7 +325,7 @@ ok("it fits two digits", /\.inline-num\{[^}]*width:82px/.test(page));
    sentences and about thirty characters of one were visible (owner, 2026-09-01). */
 ok(
   "the session boxes share the width in equal columns",
-  /\.sess-grid\{display:grid;grid-template-columns:repeat\(auto-fit,minmax\(min\(100%,840px\),1fr\)\)/.test(page)
+  /\.sess-grid\{display:grid;grid-template-columns:repeat\(auto-fit,minmax\(min\(100%,420px\),1fr\)\)/.test(page)
 );
 ok("no session box carries a fixed basis any more", !/\.sess-box\{flex:/.test(page));
 ok("no session count is ever invented", page.indexOf('parseInt(el("inSessions").value, 10) || 0') >= 0);
@@ -482,7 +486,17 @@ ok("the unread dot survives the move", /class="dot" title="יש שינוי של�
 ok("the calendar hands the click event over", /passCalEvent: true/.test(page));
 ok("ctrl or cmd makes the click additive", /if \(ev && \(ev\.ctrlKey \|\| ev\.metaKey\)\) toggleSelected/.test(page));
 ok("dragging across the calendar takes the run", /function bindCalGestures/.test(page));
-ok("the selection maths is not copied", /window\.AdminDoneDebrief/.test(page) && !/function rangeBetween/.test(page));
+/* The selection maths lives beside the calendar that draws it, in the display library,
+   so this page and the client's page share one definition of "which days are picked" —
+   without either of them loading the admin module's debrief helper for three
+   functions. */
+ok("the selection maths is not copied", /D\.selId \? D : null/.test(page) && !/function rangeBetween/.test(page));
+ok("and it is not the debrief helper any more", !/admin-done-debrief/.test(page));
+/* Picked in any order, held in date order — over a month that stops being a nicety. */
+ok("the selection is kept in date order", /function sortSel/.test(page) && /sortSelectedDays/.test(page));
+/* A hand that moves a pixel between press and release must not turn "add this day"
+   into "take the run from here to there". */
+ok("a ctrl-click never starts a drag", /if \(ev\.ctrlKey \|\| ev\.metaKey\) \{ cvCalDrag = null; return; \}/.test(page));
 ok("a drag does not end in a click that clears it", page.indexOf("cvIgnoreNextClick = true") >= 0);
 ok("dragging paints instead of re-rendering", /function paintCalSelection/.test(page));
 

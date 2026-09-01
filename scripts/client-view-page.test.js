@@ -107,15 +107,22 @@ ok(
   "there is NO diagonal wash over the text on screen",
   !/transform:\s*rotate/.test(html) && !/repeating-linear-gradient/.test(html)
 );
-ok("the full mark appears in print", /\.print-mark\{display:block!important/.test(html));
-ok("the print mark says not for redistribution", /Not for redistribution/.test(html));
+/* PRINTING IS REFUSED (owner, 2026-09-01). A printed programme is a copy he cannot
+   see, cannot revoke and cannot watermark once it is on paper. A page cannot stop a
+   browser opening its own print dialog, so it makes the result worthless instead. */
+ok("there is no way to print from the page", !/printBtn/.test(html) && !/window\.print\(\)/.test(html));
+ok("and the print sheet hides the programme", /@media print\{[\s\S]*body > \*\{display:none!important\}/.test(html));
+ok("the printed page says why", /not available in print/.test(html));
+ok("no print-only watermark is left to maintain", !/print-mark/.test(html));
 ok("copied text carries its origin", /addEventListener\("copy"/.test(html) && /prepared for /.test(html));
 ok("a short selection is not tagged", /sel\.length < 40/.test(html));
 
 /* --- print view drops the controls ----------------------------------- */
 
-ok("print hides the buttons and week bar", /@media print[\s\S]{0,400}display:none!important/.test(html));
-ok("print avoids splitting a day across pages", /page-break-inside:avoid/.test(html));
+/* The print view used to be a feature — a clean, watermarked copy for a coach to hand
+   to their own athletes. It is refused now (see above), so there is no page layout left
+   to protect. */
+ok("there is no print layout left to maintain", !/page-break-inside:avoid/.test(html));
 
 /* --- phone reality --------------------------------------------------- */
 
@@ -156,21 +163,36 @@ ok("there is no manual refresh button left", !/refreshBtn/.test(html));
 
 ok("the share button is switched on", /showShare: true/.test(html));
 ok("the icon is the shared WhatsApp mark", /shareIcon: D\.waIconSvg/.test(html));
+/* It sits beside the date, where the athlete's app puts it — not stranded at the far
+   edge of the header, which is where it landed with no Done button next to it. */
+ok("the mark sits beside the date", /shareBesideDate: true/.test(html));
 ok("the icon is not a second hand-cut copy", !/viewBox="0 0 24 24"/.test(html));
 ok("sharing goes to WhatsApp", /wa\.me/.test(html));
 ok("the message is built by the shared library", /D\.dayShareText\(/.test(html));
 ok("there is no Print / share button any more", !/Print \/ share/.test(html));
-/* Printing itself stays: the printed copy carries the full watermark and is what
-   travels to a coach's own athletes. It is a quiet link now. */
-ok("printing is still reachable", /id="printBtn"/.test(html) && /window\.print\(\)/.test(html));
-ok("and it is a link rather than a button", /class="linkish"/.test(html));
+/* Printing went with it. The owner weighed the watermarked copy against a copy he
+   cannot revoke, and chose to keep the programme where he can still reach it. */
+ok("and no print link either", !/id="printBtn"/.test(html));
 
 /* --- "make it a rest day" belongs beside the date ------------------- */
 
 ok("the rest control is handed to the card header", /editHeaderActionsHtml: restToggleHeaderHtml\(\)/.test(html));
 ok("it only exists while the day is edited", /function restToggleHeaderHtml/.test(html) && /if \(!state\.edit\) return "";/.test(html));
 ok("the footer row it used to live in is gone", !/restToggleRowHtml/.test(html));
-ok("a day that is already rest offers nothing to convert", /if \(isRest\) return "";/.test(html));
+/* A TICK BOX, always there while editing. The button it replaced only appeared once a
+   session had been written, so on an empty day — most of a new block — there was no way
+   to mark rest at all (owner, 2026-09-01). */
+ok("it is a tick box", /class="pprog-rest-check"/.test(html) && /data-restcheck=/.test(html));
+ok("it shows the day's current state", /\(isRest \? " checked" : ""\)/.test(html));
+ok("an empty day can still be marked as rest", !/if \(isRest\) return "";/.test(html));
+ok("unticking hands back an empty session", /function setRestChecked/.test(html) && /rest: false,/.test(html));
+ok("wiping a written day asks first", /hasContent && !window\.confirm/.test(html));
+
+/* The same gestures the owner has in his own module. */
+ok("the client can pick several days too", /function bindCalGestures/.test(html));
+ok("ctrl-click adds one", /if \(ev && \(ev\.ctrlKey \|\| ev\.metaKey\)\) toggleSelected/.test(html));
+ok("a ctrl-click never starts a drag", /if \(ev\.ctrlKey \|\| ev\.metaKey\) \{ cvCalDrag = null; return; \}/.test(html));
+ok("the selection is held in date order", /function sortSel/.test(html) && /sortSelectedDays/.test(html));
 
 /* --- the coach changed a day: the client has to see it -------------- */
 
