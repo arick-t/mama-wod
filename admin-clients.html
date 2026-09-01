@@ -393,9 +393,26 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     });
   }
 
+  /* The link the owner sends a paying client, so it has to be right on every host.
+   *
+   * The old version cut the last path segment off location.href. Vercel can serve
+   * this page at "/admin-clients.html/" — with a trailing slash — and that version
+   * then produced ".../admin-clients.html/client.html", a dead link handed to a
+   * client. Resolve from the origin and an explicit base path instead. */
+  function sitePath() {
+    var p = String(location.pathname || "/");
+    if (/\.html\/$/i.test(p)) p = p.slice(0, -1);
+    var known = ["/admin-clients.html", "/admin.html", "/client.html", "/claim.html", "/index.html"];
+    for (var i = 0; i < known.length; i++) {
+      if (p.toLowerCase().endsWith(known[i])) return p.slice(0, p.length - known[i].length);
+    }
+    if (p.endsWith("/")) p = p.slice(0, -1);
+    var last = p.lastIndexOf("/");
+    return last > 0 ? p.slice(0, last) : "";
+  }
+
   function clientLink(pid) {
-    var base = location.href.replace(/\/[^/]*$/, "/");
-    return base + "client.html?program=" + encodeURIComponent(pid);
+    return location.origin + sitePath() + "/client.html?program=" + encodeURIComponent(pid);
   }
 
   function renderDetail() {

@@ -918,8 +918,14 @@ function getAdminApiBase() {
 function getPagesBasePath() {
   if (typeof location === "undefined") return "";
   var p = String(location.pathname || "/");
+  /* Vercel can serve a page at "/admin.html/" — with a trailing slash — which made
+     every relative link resolve one level too deep (that is how a redirect became
+     /admin.html/admin-clients.html and 404'd). Strip it before matching. */
+  if (/\.html\/$/i.test(p)) p = p.slice(0, -1);
+  if (/\/admin-clients\.html$/i.test(p)) return p.replace(/\/admin-clients\.html$/i, "");
   if (/\/admin\.html$/i.test(p)) return p.replace(/\/admin\.html$/i, "");
   if (/\/claim\.html$/i.test(p)) return p.replace(/\/claim\.html$/i, "");
+  if (/\/client\.html$/i.test(p)) return p.replace(/\/client\.html$/i, "");
   if (/\/index\.html$/i.test(p)) return p.replace(/\/index\.html$/i, "");
   if (p.endsWith("/")) p = p.slice(0, -1);
   var i = p.lastIndexOf("/");
@@ -4209,7 +4215,10 @@ function closeClientKindChooser() {
 function chooseClientKind(kind) {
   closeClientKindChooser();
   if (kind === "coach") {
-    window.location.href = "admin-clients.html?new=coach";
+    /* Absolute, not relative. A bare "admin-clients.html" resolves against the
+       current path — which produced /admin.html/admin-clients.html and a 404 — and
+       it would also have broken under the GitHub Pages project subpath. */
+    window.location.href = pagesAbsoluteUrl("/admin-clients.html?new=coach");
     return;
   }
   openIntakeWorkspace();
@@ -4584,7 +4593,9 @@ function startIntakeChat() {
 
   fetch(adminApiUrl("/api/personal-coach"), {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    /* Must carry admin auth: without it the server sees an anonymous caller and
+       demands the athlete Terms signature, which the owner cannot give here. */
+    headers: adminAuthHeaders(),
     body: JSON.stringify({
       action: "start_intake",
       messages: [],
@@ -4644,7 +4655,9 @@ function sendIntakeMessage() {
 
   fetch(adminApiUrl("/api/personal-coach"), {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    /* Must carry admin auth: without it the server sees an anonymous caller and
+       demands the athlete Terms signature, which the owner cannot give here. */
+    headers: adminAuthHeaders(),
     body: JSON.stringify({
       action: "chat",
       messages: payloadMsgs,
