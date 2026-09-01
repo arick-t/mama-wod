@@ -21,11 +21,14 @@ const root = path.join(__dirname, "..");
 
 /* --- tabs, in English on the owner's instruction ----------------------- */
 
-ok("there are six tabs", I.TABS.length === 6);
+/* Five, not six: the deload was a whole step for one checkbox and it belongs to the
+   schedule anyway (owner, 2026-09-01). */
+ok("there are five tabs", I.TABS.length === 5);
+ok("deload is no longer a tab of its own", I.TABS.every(function (t) { return t.id !== "deload"; }));
 ok(
   "the tabs are in the owner's order",
   JSON.stringify(I.TABS.map(function (t) { return t.id; })) ===
-    JSON.stringify(["profile", "equipment", "schedule", "deload", "population", "goals"])
+    JSON.stringify(["profile", "equipment", "schedule", "population", "goals"])
 );
 ok(
   "every tab label is English, not Hebrew",
@@ -36,7 +39,7 @@ ok(
 ok(
   "the labels read like the owner's spec",
   I.TABS.map(function (t) { return t.label; }).join("|") ===
-    "Client & payment|Equipment|Schedule|Deload week|Population & limits|Goals"
+    "Client & payment|Equipment|Schedule|Population & limits|Goals"
 );
 
 /* No Hebrew anywhere in the shipped strings (comments excluded). */
@@ -99,9 +102,31 @@ ok("an unknown equipment value falls back safely", I.normalizeIntake({ equipment
 
 ok("there are two schedule modes", I.SCHEDULE_MODES.length === 2);
 ok("the default is a session count", I.emptyIntake().scheduleMode === "session_count");
-ok("the default is three sessions", I.emptyIntake().sessionsPerWeek === 3);
-ok("session count is bounded", I.normalizeIntake({ sessionsPerWeek: 99 }).sessionsPerWeek === 3);
-ok("session count rejects zero", I.normalizeIntake({ sessionsPerWeek: 0 }).sessionsPerWeek === 3);
+/* 0 = unanswered. The box starts empty on the owner's instruction, and inventing a
+   "3" for a paying client's program is the quiet default that ships a wrong plan —
+   validateIntake blocks instead. */
+ok("there is no default session count", I.emptyIntake().sessionsPerWeek === 0);
+ok("an out-of-range count is not answered", I.normalizeIntake({ sessionsPerWeek: 99 }).sessionsPerWeek === 0);
+ok("zero stays unanswered", I.normalizeIntake({ sessionsPerWeek: 0 }).sessionsPerWeek === 0);
+ok("a real count survives", I.normalizeIntake({ sessionsPerWeek: 6 }).sessionsPerWeek === 6);
+ok(
+  "an empty count blocks the build",
+  I.validateIntake({ clientName: "A", population: "p", goals: "g" }).some(function (m) {
+    return /how many sessions per week/i.test(m);
+  })
+);
+ok(
+  "a filled count clears that complaint",
+  !I.validateIntake({ clientName: "A", population: "p", goals: "g", sessionsPerWeek: 3 }).some(
+    function (m) { return /how many sessions per week/i.test(m); }
+  )
+);
+ok(
+  "weekly mode never asks for a session count",
+  !I.validateIntake({
+    clientName: "A", population: "p", goals: "g", scheduleMode: "weekly_schedule",
+  }).some(function (m) { return /how many sessions per week/i.test(m); })
+);
 
 /* session_count → do the sessions differ? */
 ok("sessions are interchangeable by default", I.emptyIntake().sessionsDiffer === false);
@@ -169,10 +194,13 @@ ok("session mode drops rest-day and emphasis answers", switchedBack.includeRestD
 
 ok(
   "session-count mode does not demand weekdays",
-  I.validateIntake({ clientName: "A", scheduleMode: "session_count", population: "p", goals: "g" }).length === 0
+  I.validateIntake({
+    clientName: "A", scheduleMode: "session_count", sessionsPerWeek: 3,
+    population: "p", goals: "g",
+  }).length === 0
 );
 
-/* --- tab 4: deload decides the block length ------------------------- */
+/* --- deload (now inside the schedule tab) decides the block length --- */
 
 ok("no deload is the default", I.emptyIntake().deloadWeek === false);
 ok("no deload means a 4-week block", I.weekCountFor({ deloadWeek: false }) === 4);

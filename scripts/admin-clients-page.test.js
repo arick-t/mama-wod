@@ -106,7 +106,34 @@ ok("the page really does use several of them", actionsUsed.length >= 8);
 /* --- shared rendering, one design ------------------------------------- */
 
 ok("it loads the shared display library", /src="lib\/pprog-display\.js"/.test(page));
-ok("days are rendered by the shared library", /D\.renderDayPartsHtml\(/.test(page));
+ok("the program is rendered by the shared library", /D\.renderBrickView\(/.test(page));
+/* THE point of this change: the same calendar + day card the admin module shows,
+   from the same function — not a second hand-written Sun→Sat list beside it. */
+ok("it is the familiar brick view", /renderBrickView\(brickOpts\(\)\)/.test(page));
+ok("it links the shared brick stylesheet", /styles\/pprog-display\.css/.test(page));
+ok("the old hand-written day list is gone", !/function renderAdminDays\(\) \{[\s\S]{0,400}day-head/.test(page));
+/* The calendar carries its own W1…W5 rail, so a second week selector above it only
+   competed with it. */
+ok("there is no separate week bar left", !/data-week=/.test(page));
+/* The wide horizontal spread the owner values: tapping a weekday letter opens that
+   day in every week, side by side. */
+ok("a weekday letter spreads that day across the weeks", /cvSelectDow/.test(page) && /selectedDays/.test(page));
+ok("the spread can be cleared", /cvClearSelection/.test(page));
+/* No AI on this page. The athlete's pre-talk footer must never appear (POL-029). */
+ok("the athlete footer is switched off", /showFooter:\s*false/.test(page));
+/* A session-count program has no weekdays; the calendar still shows the week and
+   the intake's count is stated while writing. */
+ok("a session-count program says how many sessions the week owes", /sessionCountLimit/.test(page));
+/* Both directions, on the owner's explicit instruction. */
+ok("a rest day opens with an empty draft rather than being refused", /rest \? \[\] :/.test(page));
+ok("a written day can go back to rest", /data-makerest/.test(page) && /cvMakeRest/.test(page));
+ok("turning a day to rest asks first", /confirm\("להפוך את היום ליום מנוחה/.test(page));
+ok("both directions go through the shared toggle", /RT\.makeRest/.test(page) && /RT\.makeSession/.test(page));
+/* The bug that made every save throw: RT was declared inside the renderer and read
+   from the save path. One declaration, at module scope. */
+ok("the rest toggle is read once, at module scope", (page.match(/\bvar RT\b/g) || []).length === 1);
+/* An anchored block start, or the calendar's dates drift every time it is opened. */
+ok("a new program is anchored to a real week", /blockStart: israelSundayIso\(\)/.test(page));
 ok("it uses the app's tokens", /--brand:#E8451A/.test(page) && /--coach:#9b6bb8/.test(page));
 ok("it uses the app's fonts", /family=Heebo/.test(page) && /Oswald/.test(page));
 ok("the page is right-to-left like admin", /dir="rtl"/.test(page));
@@ -125,10 +152,13 @@ ok("the client link is copyable", /data-copylink/.test(page));
 
 /* --- unread flag: state, and cleared by opening ---------------------- */
 
-ok("unread days are highlighted", /\.day\.unread/.test(page));
+/* The unread mark rides the calendar now, not the old day wrapper: the client list
+   still carries one dot per client, and opening a day is what clears its flag. */
 ok("one dot per client, not a count", /class="dot"/.test(page));
+ok("unread days are passed to the view", /unreadDays/.test(page));
 ok("opening a day marks it read", /action: "mark_read"/.test(page));
-ok("marking read happens on edit, with no extra click", /markRead\(tag\)\.then/.test(page));
+ok("marking read happens on opening a day, with no extra click", /markRead\(tag\)\.then/.test(page));
+ok("that goes through one place", /function openDayTag/.test(page));
 ok("a client-changed day is labelled", /שונה ע"י הלקוח/.test(page));
 
 /* --- payment fields are owner-only --------------------------------- */
@@ -154,15 +184,15 @@ ok("the heading is the owner's clients", /הלקוחות שלי/.test(page));
 ok("the page loads the shared intake definition", /src="lib\/client-intake\.js"/.test(page));
 ok("the tabs come from that definition", /CLIENT_INTAKE.*TABS/.test(page));
 
-/* Six panes, one per tab, in the owner's order. */
+/* Five panes, one per tab, in the owner's order. */
 const paneIds = (page.match(/data-pane="([a-z]+)"/g) || []).map(function (s) {
   return s.replace('data-pane="', "").replace('"', "");
 });
-ok("there are six intake panes", paneIds.length === 6);
+ok("there are five intake panes", paneIds.length === 5);
 ok(
   "the panes are in the owner's order",
   JSON.stringify(paneIds) ===
-    JSON.stringify(["profile", "equipment", "schedule", "deload", "population", "goals"])
+    JSON.stringify(["profile", "equipment", "schedule", "population", "goals"])
 );
 
 /* Tab 1 */
@@ -173,37 +203,60 @@ ok("tab 1 says the client cannot see the price", /client never sees them/i.test(
 
 /* Tab 2 — exactly two options, OTHER reveals a box */
 ok("equipment has the well-equipped option", /Well-equipped functional training gym/.test(page));
-ok("equipment is a checkbox, not a dropdown", /id="inEquipFull" type="checkbox" checked/.test(page));
-ok("the default is ticked — the well-equipped gym", /id="inEquipFull" type="checkbox" checked/.test(page));
-ok("the owner is told what unticking means", /Untick if the place has something else/.test(page));
+/* Two checkboxes side by side, not one being unticked (owner, 2026-09-01). */
+ok("equipment is a checkbox, not a dropdown", /id="inEquipFull" type="checkbox" data-pick="equip" checked/.test(page));
+ok("the default is ticked — the well-equipped gym", /id="inEquipFull" type="checkbox" data-pick="equip" checked/.test(page));
+ok("OTHER sits beside it as its own checkbox", /id="inEquipOtherOn" type="checkbox" data-pick="equip">/.test(page));
+ok("OTHER is unticked by default", !/id="inEquipOtherOn" type="checkbox" data-pick="equip" checked/.test(page));
+ok("the two sit side by side", /class="pick-row"/.test(page) && /\.pick-row\{display:flex/.test(page));
 /* Plain string search: a regex here needs escaping for ? and " and the escaping is
    what keeps going wrong, not the assertion. */
 ok(
-  "ticked maps to the well-equipped gym, unticked to OTHER",
-  page.indexOf('checked ? "functional_gym" : "other"') >= 0
+  "OTHER maps to other, anything else to the well-equipped gym",
+  page.indexOf('el("inEquipOtherOn").checked ? "other" : "functional_gym"') >= 0
 );
 ok(
-  "unticking reveals the description box",
+  "only OTHER reveals the description box",
   /id="inEquipOtherWrap"/.test(page) &&
-    page.indexOf('el("inEquipOtherWrap").hidden = el("inEquipFull").checked') >= 0
+    page.indexOf('el("inEquipOtherWrap").hidden = !equipOther') >= 0
 );
 ok("the box is hidden by default", /id="inEquipOtherWrap" hidden/.test(page));
+/* The old copy told the owner to untick; there is nothing to untick now. */
+ok("the stale untick instruction is gone", !/Untick if the place has something else/.test(page));
 ok("there is no equipment dropdown left", page.indexOf('id="inEquip"') < 0);
 ok("no select element survives on the equipment tab", !/<select id="inEquip/.test(page));
 
 /* Tab 3 — a checkbox picks the mode, and each mode reveals its own follow-ups */
-ok("the mode is a checkbox, ticked by default", /id="inSchedCount" type="checkbox" checked/.test(page));
+ok("the mode is a checkbox, ticked by default", /id="inSchedCount" type="checkbox" data-pick="sched" checked/.test(page));
+ok("the full weekly plan is its own checkbox below it", /id="inSchedWeekly" type="checkbox" data-pick="sched">/.test(page));
+ok("the weekly plan is unticked by default", !/id="inSchedWeekly" type="checkbox" data-pick="sched" checked/.test(page));
 ok("there is no schedule dropdown left", !/<select id="inSchedMode/.test(page));
 ok("the session count sits next to it", /id="inSessions" type="number" min="1" max="14"/.test(page));
+/* Empty on purpose — the owner types the number, nothing is guessed for a client. */
+ok("the count box starts empty", /id="inSessions" type="number" min="1" max="14" value=""/.test(page));
 ok("the count box is inline with the checkbox", /class="inline-num"/.test(page));
-ok("the count is disabled in weekly mode", page.indexOf('el("inSessions").disabled = !byCount') >= 0);
+ok("the count disappears in weekly mode", page.indexOf('el("inSessions").hidden = !byCount') >= 0);
+ok("no session count is ever invented", page.indexOf('parseInt(el("inSessions").value, 10) || 0') >= 0);
+ok("an empty count draws no session boxes", /Fill in the number of sessions first/.test(page));
 ok("the owner is told the coach picks the days", /delivers them whenever/i.test(page));
+
+/* The two checkboxes are one exclusive choice, and it can never end up empty. */
+ok("the pairs are bound as an exclusive choice", /function bindPickPair/.test(page));
+ok("equipment is one such pair", page.indexOf('bindPickPair("equip")') >= 0);
+ok("the schedule is the other", page.indexOf('bindPickPair("sched")') >= 0);
+ok("re-clicking the active box keeps it ticked", /box\.checked = true;/.test(page));
+ok("ticking one unticks its partner", /if \(other !== box\) other\.checked = false;/.test(page));
 
 /* session_count → do the sessions differ? */
 ok("there is a 'sessions differ' checkbox", /id="inSessionsDiffer" type="checkbox"/.test(page));
 ok("it is unticked by default — uniform sessions", !/id="inSessionsDiffer" type="checkbox" checked/.test(page));
 ok("uniform is described as standard CrossFit", /a standard CrossFit week/.test(page));
 ok("differing sessions get one box each, laid out horizontally", /class="sess-grid"/.test(page) && /display:flex/.test(page));
+/* The boxes appear ONLY once "the sessions differ" is ticked. They were leaking into
+   view because label.fld / .sess-grid display rules beat the `hidden` attribute. */
+ok("the session boxes start hidden", /id="inSessionTypes" class="sess-grid" hidden/.test(page));
+ok("only 'sessions differ' reveals them", page.indexOf('el("inSessionTypes").hidden = !differ') >= 0);
+ok("the hidden attribute actually hides, whatever the display rule", /\[hidden\]\{display:none!important\}/.test(page));
 ok("the boxes are built from the session count", /function buildSessionBoxes/.test(page));
 ok("changing the count rebuilds the boxes", page.indexOf('el("inSessions").addEventListener("input"') >= 0);
 ok("existing text is carried over on rebuild", /prev\[j\]/.test(page));
@@ -223,8 +276,16 @@ ok("the days come from the shared definition", /CI\.DAY_KEYS/.test(page) && /CI\
 /* An unticked day with leftover text must not quietly become an emphasis. */
 ok("only a ticked day contributes a note", /box && box\.checked && txt/.test(page));
 
-/* Tab 4 — the consequence is spelled out, because it changes 5 weeks to 4 */
+/* The deload lives inside the schedule tab now — one checkbox never warranted a step
+   of its own, and it is part of the schedule either way (owner, 2026-09-01). */
 ok("deload is a checkbox", /id="inDeload" type="checkbox"/.test(page));
+ok("there is no deload pane left", !/data-pane="deload"/.test(page));
+ok("the deload sits under the schedule pane", page.indexOf('class="sched-sep"') >= 0);
+ok(
+  "the deload checkbox is inside the schedule pane",
+  page.indexOf('data-pane="schedule"') < page.indexOf('id="inDeload"') &&
+    page.indexOf('id="inDeload"') < page.indexOf('data-pane="population"')
+);
 ok("with a deload it says 5 weeks", /5 weeks: four build weeks and a deload/.test(page));
 ok("without one it says 4 weeks back to back", /next 4-week block follows straight after/.test(page));
 ok("no deload is the stated default", /\(Default\.\)/.test(page));

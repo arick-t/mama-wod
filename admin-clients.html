@@ -9,6 +9,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+<!-- The brick view's look, generated from admin.html so this page renders a program in
+     the SAME view the owner already knows. See scripts/extract-pprog-css.js. -->
+<link rel="stylesheet" href="styles/pprog-display.css">
 <style>
 :root{
   --bg:#121212;--bg-elev:#181818;--bg-card:#1a1a1a;--bg-panel:#1e1e1e;
@@ -21,6 +24,11 @@
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
+/* The `hidden` attribute is only display:none from the UA sheet, so ANY author rule
+   with a display wins — label.fld{display:block} and .sess-grid{display:flex} were
+   both quietly showing elements the code had hidden. One rule closes the whole class
+   of bug instead of chasing it per element. */
+[hidden]{display:none!important}
 body{margin:0;font-family:var(--font-ui);background:var(--bg);color:var(--text);line-height:1.55;
   font-size:15px;padding:calc(14px + var(--safe-t)) 14px calc(28px + var(--safe-b));
   min-height:100vh;min-height:100dvh}
@@ -110,6 +118,9 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
 .chk-row .inline-num{width:78px;margin-inline-start:auto;padding:6px 9px;text-align:center;font-size:15px}
 /* One box per session, side by side — the owner asked for them laid out horizontally. */
 .sess-grid{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 6px}
+/* Two mutually exclusive choices sit side by side, as asked. */
+.pick-row{display:flex;gap:26px;flex-wrap:wrap;margin:0 0 12px}
+.sched-sep{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
 .sess-box{flex:1 1 150px;min-width:140px;background:var(--bg-panel);border:1px solid var(--line);
   border-radius:10px;padding:10px}
 .sess-box label{display:block;font-size:.72rem;color:var(--text-meta);margin:0 0 5px;
@@ -176,11 +187,16 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
            well-equipped gym. The description box only exists when it has something to
            describe, so the tab is one line in the common case. -->
       <div class="ipane" data-pane="equipment" hidden>
-        <label class="chk-row">
-          <input id="inEquipFull" type="checkbox" checked>
-          <span>Well-equipped functional training gym</span>
-        </label>
-        <p class="meta" style="margin:0 0 12px">Untick if the place has something else — then describe it.</p>
+        <div class="pick-row">
+          <label class="chk-row">
+            <input id="inEquipFull" type="checkbox" data-pick="equip" checked>
+            <span>Well-equipped functional training gym</span>
+          </label>
+          <label class="chk-row">
+            <input id="inEquipOtherOn" type="checkbox" data-pick="equip">
+            <span>OTHER</span>
+          </label>
+        </div>
         <label class="fld" id="inEquipOtherWrap" hidden><span>Describe what is actually available</span>
           <textarea id="inEquipOther" placeholder="Rig, 4 barbells, kettlebells 8–32kg, 2 rowers, no rings…"></textarea></label>
       </div>
@@ -189,13 +205,16 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
            the two modes lead to genuinely different questions. -->
       <div class="ipane" data-pane="schedule" hidden>
         <label class="chk-row">
-          <input id="inSchedCount" type="checkbox" checked>
+          <input id="inSchedCount" type="checkbox" data-pick="sched" checked>
           <span>Number of sessions per week</span>
-          <input id="inSessions" type="number" min="1" max="14" value="3"
+          <input id="inSessions" type="number" min="1" max="14" value=""
                  class="inline-num" aria-label="Sessions per week">
         </label>
-        <p class="meta" id="inCountHint" style="margin:0 0 14px">No weekday attached — the coach
-          delivers them whenever suits their groups. Untick to pin sessions to weekdays instead.</p>
+        <label class="chk-row" style="margin-bottom:4px">
+          <input id="inSchedWeekly" type="checkbox" data-pick="sched">
+          <span>Full weekly plan</span>
+        </label>
+        <p class="meta" id="inCountHint" style="margin:0 0 14px"></p>
 
         <!-- session_count follow-up -->
         <div id="inDifferWrap">
@@ -204,7 +223,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
             <span>The sessions differ from one another</span>
           </label>
           <p class="meta" id="inDifferHint" style="margin:0 0 10px"></p>
-          <div id="inSessionTypes" class="sess-grid"></div>
+          <div id="inSessionTypes" class="sess-grid" hidden></div>
         </div>
 
         <!-- weekly_schedule follow-ups -->
@@ -221,26 +240,26 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
           </label>
           <p class="meta" style="margin:0 0 10px">Tick a day and write a note that repeats every
             week — e.g. Friday: “partner workouts”.</p>
-          <div id="inWeekDays"></div>
+          <div id="inWeekDays" hidden></div>
+        </div>
+
+        <!-- The deload is part of the schedule, not a step of its own. -->
+        <div class="sched-sep">
+          <label class="chk-row">
+            <input id="inDeload" type="checkbox">
+            <span>Include a deload week</span>
+          </label>
+          <p class="meta" id="inDeloadHint" style="margin:0"></p>
         </div>
       </div>
 
-      <!-- 4 · deload -->
-      <div class="ipane" data-pane="deload" hidden>
-        <label class="meta" style="display:flex;gap:9px;align-items:flex-start">
-          <input id="inDeload" type="checkbox" style="width:auto;margin-top:3px">
-          <span style="color:var(--text)">Include a deload week</span>
-        </label>
-        <p class="meta" id="inDeloadHint" style="margin-top:10px"></p>
-      </div>
-
-      <!-- 5 · population & limits -->
+      <!-- 4 · population & limits -->
       <div class="ipane" data-pane="population" hidden>
         <label class="fld"><span>The place, the people, and the limits</span>
           <textarea id="inPopulation" placeholder="Pre-army prep group, 17–19, mixed ability, 60-minute sessions including warm-up. Two members with knee history."></textarea></label>
       </div>
 
-      <!-- 6 · goals -->
+      <!-- 5 · goals -->
       <div class="ipane" data-pane="goals" hidden>
         <label class="fld"><span>Goals</span>
           <textarea id="inGoals" placeholder="Army selection: 2000m run, pull-ups, load carry endurance."></textarea></label>
@@ -310,7 +329,20 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
   var SESSION_KEY = "dw_admin_session";
   var REMEMBER_KEY = "dw_admin_remember";
 
-  var S = { token: "", pw: "", rows: [], sel: null, program: null, access: null, week: 1, editing: null };
+  var S = {
+    token: "", pw: "", rows: [], sel: null, program: null, access: null,
+    /* Brick view state, mirroring what the admin module keeps per athlete:
+       wi = 0-based week, day = active day key or "general", calMode = week|month,
+       selected = the multi-day horizontal spread, edit = the one open draft. */
+    wi: 0, day: "sun", calMode: "week", selected: [], edit: null, editStatus: null,
+  };
+
+  var DAY_KEYS_LOCAL = (window.PprogDisplay && window.PprogDisplay.DAY_KEYS) ||
+    ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+  /* Module scope on purpose: saveDay used to read a RT declared inside another
+     function, so every save — including turning a day into a rest day — threw a
+     ReferenceError before it reached the network. */
+  var RT = window.DayRestToggle || null;
 
   function el(id) { return document.getElementById(id); }
   function show(id, on) { var n = el(id); if (n) n.hidden = !on; }
@@ -461,7 +493,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
   /* --- one client ------------------------------------------------------ */
 
   function openClient(pid) {
-    S.sel = pid; S.week = 1; S.editing = null;
+    S.sel = pid; S.wi = 0; S.day = "sun"; S.calMode = "week"; S.selected = []; S.edit = null;
     api({ action: "read", programId: pid }).then(function (r) {
       if (r.status === 401) { openLogin("פג תוקף החיבור."); return; }
       if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "לא הצלחתי לטעון את התוכנית."); return; }
@@ -546,10 +578,8 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     if (unread.length) {
       html += '<div class="banner warn">' + unread.length + ' ימים שהלקוח שינה ואתה עוד לא פתחת. פתח יום כדי לסמן שנקרא.</div>';
     }
-    html += '<div class="weekbar">' + (p.weeks || []).map(function (w, i) {
-      var n = w.weekIndex || i + 1;
-      return '<button type="button" data-week="' + n + '"' + (n === S.week ? ' class="on"' : "") + ">שבוע " + n + "</button>";
-    }).join("") + "</div>";
+    /* No week bar: the calendar carries the W1…W5 rail itself, the same way the admin
+       module shows a brick. A second week selector above it only competed with it. */
     html += '<div id="adminDays"></div></div>';
 
     el("detail").innerHTML = html;
@@ -557,82 +587,343 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     renderAdminDays();
   }
 
-  function currentWeek() {
-    var weeks = (S.program && S.program.weeks) || [];
-    for (var i = 0; i < weeks.length; i++) if ((weeks[i].weekIndex || i + 1) === S.week) return weeks[i];
-    return weeks[0] || null;
+  /* ==================================================================
+     THE PROGRAM VIEW — the same brick the owner already knows
+     ==================================================================
+     Rendered by lib/pprog-display.js (renderBrickView), the very function the admin
+     module uses, so the calendar, the day card and the wide horizontal strip behave
+     identically here. What used to be here was a hand-written Sun→Sat list: a second
+     way of showing the same data, which is the thing that drifts.
+
+     Two deliberate differences from admin.html:
+       · showFooter:false — the athlete's AI pre-talk box has no place on a client's
+         program. This module is not an AI surface (POL-029).
+       · a REST day IS editable, in both directions. admin.html refuses ("לא נשמר —
+         יום מנוחה"); here the owner and the client may turn a rest day into a session
+         and a session back into a rest day.
+     ================================================================== */
+
+  function pprogLib() { return window.PprogDisplay || null; }
+
+  /** An ISO date in Israel time, whatever the viewer's own timezone is. */
+  function israelIso(shiftToSunday) {
+    var il = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Jerusalem" }));
+    if (shiftToSunday) il.setDate(il.getDate() - il.getDay());
+    var m = String(il.getMonth() + 1);
+    var d = String(il.getDate());
+    return il.getFullYear() + "-" + (m.length < 2 ? "0" + m : m) + "-" + (d.length < 2 ? "0" + d : d);
+  }
+  function israelSundayIso() { return israelIso(true); }
+  function israelTodayIso() { return israelIso(false); }
+
+  /** The stored program, shaped as the block renderBrickView expects. */
+  function currentBlock() {
+    var p = S.program;
+    if (!p) return null;
+    return {
+      blockStart: p.blockStart || israelSundayIso(),
+      weeks: p.weeks || [],
+      theme: p.clientName || "",
+    };
   }
 
-  function partsToText(parts) {
-    return (parts || []).map(function (pt) {
-      var lines = (pt.lines || []).join("\n");
-      var head = String(pt.title || "").trim();
-      return head ? head + "\n" + lines : lines;
-    }).join("\n\n");
+  function currentWeek() {
+    var weeks = (S.program && S.program.weeks) || [];
+    return weeks[S.wi | 0] || weeks[0] || null;
   }
-  function textToParts(text, dayKey) {
-    var out = [];
-    String(text || "").split(/\n\s*\n/).forEach(function (block, i) {
-      var lines = block.split("\n").map(function (l) { return l.trim(); }).filter(Boolean);
-      if (!lines.length) return;
-      out.push({ id: dayKey + "-" + i, title: lines[0], lines: lines.slice(1).length ? lines.slice(1) : [lines[0]] });
-    });
-    return out;
+
+  function weekCount() {
+    return ((S.program && S.program.weeks) || []).length || 1;
+  }
+
+  function clampWi(n) {
+    var max = weekCount() - 1;
+    n = n | 0;
+    if (n < 0) return 0;
+    return n > max ? max : n;
+  }
+
+  /* A session-count program has no weekdays at all: N sessions a week, the coach
+     decides when. The calendar still shows a full Sun–Sat week — the owner asked for
+     the calendar shape either way — and this line says how many sessions the week owes,
+     so the count from the intake is visible while writing. */
+  function sessionCountLimit() {
+    var intake = S.program && S.program.intake;
+    if (!intake || intake.scheduleMode !== "session_count") return 0;
+    var n = parseInt(intake.sessionsPerWeek, 10);
+    return n > 0 && n <= 14 ? n : 0;
   }
 
   function renderAdminDays() {
-    var week = currentWeek();
     var host = el("adminDays");
     if (!host) return;
-    if (!week) { host.innerHTML = '<p class="muted">אין שבועות.</p>'; return; }
-    var D = window.PprogDisplay;
-    var RT = window.DayRestToggle;
-    var keys = (D && D.DAY_KEYS) || ["sun","mon","tue","wed","thu","fri","sat"];
-    var labels = (D && D.DAY_LABELS) || {};
-    var unread = (S.program && S.program.unreadDays) || {};
-    var html = "";
-    for (var i = 0; i < keys.length; i++) {
-      var k = keys[i];
-      var day = (week.days && week.days[k]) || { parts: [] };
-      var tag = "w" + S.week + ":" + k;
-      var isUnread = unread[tag] !== undefined;
-      var editing = S.editing === tag;
-      /* Ask the shared toggle, not the parts — a day is REST by its overview focus
-         first (lib/day-rest-toggle.js). */
-      var isRest = RT ? RT.dayIsRest(week, k) : !(day.parts && day.parts.length);
-      var body;
-      if (editing) {
-        body =
-          '<textarea id="aed-' + k + '">' + esc(isRest ? "" : partsToText(day.parts)) + "</textarea>" +
-          '<div class="row" style="margin-top:8px">' +
-            '<button class="sm" type="button" data-asave="' + k + '">שמור</button>' +
-            (isRest
-              ? ""
-              : '<button class="ghost sm" type="button" data-arest="' + k + '">הפוך ליום מנוחה</button>') +
-            '<button class="ghost sm" type="button" data-acancel="1">בטל</button>' +
-          "</div>";
-      } else if (isRest) {
-        body =
-          '<div style="text-align:center;padding:14px 8px">' +
-            '<div style="font-family:var(--font-display);letter-spacing:2px;color:var(--coach)">REST DAY</div>' +
-            '<p class="meta" style="margin:6px 0 0">לחץ ״כתוב / ערוך״ כדי לשים כאן אימון.</p>' +
-          "</div>";
-      } else {
-        body = D && D.renderDayPartsHtml ? D.renderDayPartsHtml(day.parts || [], day) : "";
-      }
-      html += '<div class="day' + (isUnread ? " unread" : "") + '">' +
-        '<div class="day-head">' +
-          (isUnread ? '<span class="dot"></span>' : "") +
-          '<span class="day-name">' + esc(labels[k] || k) + "</span>" +
-          (day.modified ? '<span class="badge">שונה ע"י הלקוח</span>' : "") +
-          '<span class="spacer"></span>' +
-          /* The pencil appears on rest days too — that is the point (21.7). */
-          (editing ? "" : '<button class="ghost sm" type="button" data-aedit="' + k + '">כתוב / ערוך</button>') +
-        "</div>" +
-        '<div class="day-body">' + body + "</div></div>";
+    var D = pprogLib();
+    var block = currentBlock();
+    if (!D || !D.renderBrickView) {
+      host.innerHTML = '<p class="muted">תצוגת התוכנית לא נטענה. רענן את הדף.</p>';
+      return;
     }
-    host.innerHTML = html;
+    if (!block || !block.weeks.length) {
+      host.innerHTML = '<p class="muted">אין שבועות בתוכנית.</p>';
+      return;
+    }
+    var limit = sessionCountLimit();
+    var head = "";
+    if (limit) {
+      head =
+        '<p class="meta" style="margin:0 0 8px">' + limit +
+        " אימונים בשבוע, בלי ימים קבועים — הלוח מציג את השבוע ואתה בוחר באילו ימים לכתוב.</p>";
+    }
+    host.innerHTML = head + D.renderBrickView(brickOpts()) + restToggleRowHtml();
   }
+
+  /* The pencil turns a rest day INTO a session; this is the other direction the owner
+     asked for. It is ours rather than the shared day card's, because the card is also
+     the athlete app's and an athlete must not be able to delete a coach's session. */
+  function restToggleRowHtml() {
+    if (S.edit) return "";
+    var day = S.day || "";
+    if (!day || day === "general" || DAY_KEYS_LOCAL.indexOf(day) < 0) return "";
+    if ((S.selected || []).length >= 2) return "";
+    var week = ((S.program && S.program.weeks) || [])[S.wi | 0] || {};
+    var isRest = RT ? RT.dayIsRest(week, day) : true;
+    if (isRest) return "";
+    return (
+      '<div class="row" style="margin-top:10px;justify-content:flex-end">' +
+      '<button class="ghost sm" type="button" data-makerest="' + (S.wi | 0) + ":" + day + '">' +
+      "הפוך ליום מנוחה</button></div>"
+    );
+  }
+
+  function brickOpts() {
+    var p = S.program || {};
+    var block = currentBlock();
+    var selected = (S.selected || []).slice();
+    var widthStatus = "";
+    if (selected.length >= 2) {
+      widthStatus =
+        '<div class="pprog-width-status">' + selected.length + " ימים נבחרו · " +
+        '<button type="button" onclick="cvClearSelection()" aria-label="נקה בחירה">נקה</button></div>';
+    }
+    return {
+      block: block,
+      activeWeekIndex: S.wi | 0,
+      activeDay: S.day || "sun",
+      calMode: S.calMode || "week",
+      israelTodayIso: israelTodayIso(),
+      /* The owner writes the training. Nothing on this page talks to a provider. */
+      readOnly: true,
+      showFooter: false,
+      showActions: true,
+      allowEdit: true,
+      /* The owner writes the plan — a block that starts mid-week still needs its
+         first days filled, so a past date must not lock the pencil. */
+      allowPastEdit: true,
+      editing: !!S.edit,
+      editDraft: S.edit,
+      adminEditStatus: S.editStatus || null,
+      /* The client's unread changes ride the calendar's dot channel, and the open day
+         card says so in the owner's own words. */
+      showDoneDots: true,
+      unreadDays: p.unreadDays || {},
+      dayModifiedLabel: 'שונה ע"י הלקוח',
+      dayModifiedTitle: "הלקוח שינה את היום הזה",
+      selectedDays: selected,
+      passCalEvent: false,
+      widthStatusHtml: widthStatus,
+      hooks: {
+        shift: "cvCalShift",
+        toggleMode: "cvToggleCalMode",
+        jumpToday: "cvJumpToday",
+        setDay: "cvSetDay",
+        selectWeek: "cvSelectWeek",
+        selectDow: "cvSelectDow",
+        startEdit: "cvStartEdit",
+        editSet: "cvEditSet",
+        editAddNote: "cvEditAddNote",
+        editAddWork: "cvEditAddWork",
+        editAddPart: "cvEditAddPart",
+        editRemoveWork: "cvEditRemoveWork",
+        editCancel: "cvEditCancel",
+        editSave: "cvEditSave",
+      },
+    };
+  }
+
+  /* --- calendar hooks -------------------------------------------------------
+     Global on purpose: lib/pprog-display.js renders these names straight into
+     onclick attributes, so they have to be reachable from the page scope. */
+
+  window.cvCalShift = function (delta) {
+    S.wi = clampWi((S.wi | 0) + (delta | 0));
+    S.selected = [];
+    renderAdminDays();
+  };
+
+  window.cvToggleCalMode = function () {
+    S.calMode = S.calMode === "month" ? "week" : "month";
+    renderAdminDays();
+  };
+
+  window.cvJumpToday = function () {
+    var block = currentBlock();
+    if (!block) return;
+    /* Which week of the block holds today, by date rather than by guess. */
+    var start = Date.parse(block.blockStart + "T00:00:00Z");
+    var today = Date.parse(israelTodayIso() + "T00:00:00Z");
+    var offset = Math.floor((today - start) / 86400000);
+    if (offset >= 0) {
+      S.wi = clampWi(Math.floor(offset / 7));
+      S.day = DAY_KEYS_LOCAL[offset % 7];
+    }
+    S.selected = [];
+    renderAdminDays();
+  };
+
+  window.cvSetDay = function (wi, dayKey) {
+    var nextWi = clampWi(wi);
+    var nextDay = String(dayKey || "sun");
+    S.wi = nextWi;
+    S.day = nextDay;
+    S.selected = [];
+    /* Moving off the day being edited abandons the draft rather than silently
+       carrying it to another day. */
+    if (S.edit && (S.edit.wi !== nextWi || S.edit.day !== nextDay)) S.edit = null;
+    openDayTag(nextWi, nextDay);
+  };
+
+  window.cvSelectWeek = function (wi) {
+    S.wi = clampWi(wi);
+    S.day = "general";
+    S.selected = [];
+    renderAdminDays();
+  };
+
+  /* Tapping a weekday letter selects that day in every week — this is the wide
+     horizontal spread the owner values: several day cards side by side. */
+  window.cvSelectDow = function (dayIndex) {
+    var day = DAY_KEYS_LOCAL[dayIndex | 0];
+    if (!day) return;
+    var out = [];
+    for (var i = 0; i < weekCount(); i++) out.push({ wi: i, day: day });
+    S.selected = out;
+    S.day = day;
+    renderAdminDays();
+  };
+
+  window.cvClearSelection = function () {
+    S.selected = [];
+    renderAdminDays();
+  };
+
+  /* Opening a day the client changed is what clears its flag — no extra click (a.2.2). */
+  function openDayTag(wi, day) {
+    var tag = "w" + ((wi | 0) + 1) + ":" + day;
+    if (((S.program && S.program.unreadDays) || {})[tag] !== undefined) {
+      markRead(tag).then(renderAdminDays, renderAdminDays);
+    } else {
+      renderAdminDays();
+    }
+  }
+
+  /* --- day edit hooks ------------------------------------------------------ */
+
+  window.cvStartEdit = function (wi, dayKey) {
+    var D = pprogLib();
+    var nextWi = clampWi(wi);
+    var day = String(dayKey || "");
+    if (!day || day === "general") return;
+    var week = ((S.program && S.program.weeks) || [])[nextWi] || {};
+    var dayData = (week.days && week.days[day]) || { parts: [] };
+    /* A rest day opens with an EMPTY draft instead of being refused: turning a rest day
+       into a session is exactly why the pencil is there (21.7). admin.html blocks this
+       for athletes; a client's program must allow both directions. */
+    var rest = RT ? RT.dayIsRest(week, day) : !(dayData.parts && dayData.parts.length);
+    var parts = rest ? [] : (D && D.draftFromDayData ? D.draftFromDayData(dayData, false) : []);
+    if (!parts.length) parts = [{ title: "Part A", notes: [""], format: "", work: [""] }];
+    S.wi = nextWi;
+    S.day = day;
+    S.selected = [];
+    S.editStatus = null;
+    S.edit = { wi: nextWi, day: day, rest: false, wasRest: rest, parts: parts };
+    openDayTag(nextWi, day);
+  };
+
+  window.cvEditSet = function (partIndex, field, a, b) {
+    if (!S.edit || !S.edit.parts) return;
+    var part = S.edit.parts[partIndex | 0];
+    if (!part) return;
+    if (field === "title") { part.title = String(a == null ? "" : a); return; }
+    if (field === "format") { part.format = String(a == null ? "" : a); return; }
+    if (field === "note") {
+      if (!Array.isArray(part.notes)) part.notes = [];
+      part.notes[a | 0] = String(b == null ? "" : b);
+      return;
+    }
+    if (field === "work") {
+      if (!Array.isArray(part.work)) part.work = [""];
+      part.work[a | 0] = String(b == null ? "" : b);
+    }
+    /* Deliberately no re-render while typing — it would throw the caret out of the
+       field on every keystroke. The draft is already the source of truth. */
+  };
+
+  window.cvEditAddNote = function (partIndex) {
+    var part = S.edit && S.edit.parts[partIndex | 0];
+    if (!part) return;
+    if (!Array.isArray(part.notes)) part.notes = [];
+    part.notes.push("");
+    renderAdminDays();
+  };
+
+  window.cvEditAddWork = function (partIndex) {
+    var part = S.edit && S.edit.parts[partIndex | 0];
+    if (!part) return;
+    if (!Array.isArray(part.work)) part.work = [];
+    part.work.push("");
+    renderAdminDays();
+  };
+
+  window.cvEditRemoveWork = function (partIndex, lineIndex) {
+    var part = S.edit && S.edit.parts[partIndex | 0];
+    if (!part || !Array.isArray(part.work)) return;
+    part.work.splice(lineIndex | 0, 1);
+    if (!part.work.length) part.work = [""];
+    renderAdminDays();
+  };
+
+  window.cvEditAddPart = function () {
+    if (!S.edit) return;
+    if (!Array.isArray(S.edit.parts)) S.edit.parts = [];
+    var letter = String.fromCharCode(65 + S.edit.parts.length);
+    S.edit.parts.push({ title: "Part " + letter, notes: [""], format: "", work: [""] });
+    renderAdminDays();
+  };
+
+  window.cvEditCancel = function () {
+    S.edit = null;
+    S.editStatus = null;
+    renderAdminDays();
+  };
+
+  window.cvEditSave = function () {
+    if (!S.edit) return;
+    var D = pprogLib();
+    if (!D || !D.partsFromDraft) { banner("bad", "התצוגה לא נטענה. רענן את הדף."); return; }
+    if (!D.draftHasContent(S.edit)) {
+      banner("warn", 'לא הוקלד כלום. אם התכוונת ליום מנוחה — יש כפתור "הפוך ליום מנוחה".');
+      return;
+    }
+    saveDay(S.edit.wi, S.edit.day, D.partsFromDraft({ parts: S.edit.parts, day: S.edit.day }), false);
+  };
+
+  /* The other direction the owner asked for: a written session back to a rest day. */
+  window.cvMakeRest = function (wi, dayKey) {
+    var day = String(dayKey || "");
+    if (!day) return;
+    if (!window.confirm("להפוך את היום ליום מנוחה? האימון שכתוב בו יימחק.")) return;
+    saveDay(clampWi(wi), day, [], true);
+  };
 
   /* Opening a changed day is what clears its flag — no extra click (a.2.2). */
   function markRead(tag) {
@@ -648,20 +939,26 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     });
   }
 
-  function saveDay(dayKey, makeRest) {
-    var ta = el("aed-" + dayKey);
-    if (!ta && !makeRest) return;
-    var week = currentWeek();
+  /**
+   * Writes one day, in either direction.
+   * @param {number} wi 0-based week index
+   * @param {string} dayKey sun…sat
+   * @param {Array} parts ready-made parts (ignored when makeRest)
+   * @param {boolean} makeRest true = this day becomes a rest day
+   */
+  function saveDay(wi, dayKey, parts, makeRest) {
+    if (!S.program || !S.program.weeks) return;
+    wi = wi | 0;
+    if (!S.program.weeks[wi]) return;
     var weeks = JSON.parse(JSON.stringify(S.program.weeks));
-    var wi = S.program.weeks.indexOf(week);
-    /* Both directions through the shared toggle, so the overview focus moves with
-       the parts. Writing parts alone leaves a session that still renders as rest. */
+    /* Both directions through the shared toggle, so the overview focus moves with the
+       parts. Writing parts alone leaves a session that still renders as rest, because
+       isPprogRestDay reads the week overview BEFORE it looks at the parts. */
     if (makeRest) {
       if (RT) RT.makeRest(weeks[wi], dayKey);
       else weeks[wi].days[dayKey] = { parts: [] };
     } else {
-      var parts = textToParts(ta.value, dayKey);
-      if (!parts.length) {
+      if (!parts || !parts.length) {
         banner("warn", "לא הוקלד כלום. אם התכוונת ליום מנוחה — יש כפתור נפרד.");
         return;
       }
@@ -679,7 +976,8 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       }
       if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "השמירה נכשלה."); return; }
       banner("good", "נשמר.");
-      S.program = r.body.program; S.editing = null;
+      S.program = r.body.program;
+      S.edit = null;
       renderDetail();
     });
   }
@@ -709,15 +1007,14 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     if (openRow && openRow.getAttribute("data-open")) { openClient(openRow.getAttribute("data-open")); return; }
 
     if (g("data-istep")) { iStep = parseInt(g("data-istep"),10)||0; renderIntakeTabs(); return; }
-    if (g("data-week")) { S.week = parseInt(g("data-week"), 10) || 1; S.editing = null; renderDetail(); return; }
-    if (g("data-aedit")) {
-      var k = g("data-aedit"); var tag = "w" + S.week + ":" + k;
-      markRead(tag).then(function () { S.editing = tag; renderDetail(); });
+    /* The program's own clicks (week, day, pencil, save, cancel) are the brick view's
+       hooks — cvSetDay / cvStartEdit / cvEditSave and friends. Only the rest-day
+       button is ours, because the shared day card has no such control. */
+    if (g("data-makerest")) {
+      var mr = g("data-makerest").split(":");
+      window.cvMakeRest(parseInt(mr[0], 10) || 0, mr[1] || "");
       return;
     }
-    if (g("data-acancel")) { S.editing = null; renderDetail(); return; }
-    if (g("data-asave")) { saveDay(g("data-asave")); return; }
-    if (g("data-arest")) { saveDay(g("data-arest"), true); return; }
     if (g("data-savemeta")) { saveMeta(); return; }
 
     if (g("data-rename")) {
@@ -800,7 +1097,8 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
          must not quietly become an emphasis. */
       emphasis[k] = box && box.checked && txt ? String(txt.value || "") : "";
     });
-    var sessions = Number(el("inSessions").value) || 3;
+    /* 0 when the box is empty — never a guessed 3. validateIntake refuses to build. */
+    var sessions = Math.max(0, Math.min(14, parseInt(el("inSessions").value, 10) || 0));
     var types = [];
     for (var i = 0; i < sessions; i++) {
       var t = el("inSessType-" + i);
@@ -810,7 +1108,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       clientName: String(el("inName").value || ""),
       monthlyAmount: Number(el("inAmount").value) || 0,
       paymentMethod: String(el("inMethod").value || ""),
-      equipment: el("inEquipFull").checked ? "functional_gym" : "other",
+      equipment: el("inEquipOtherOn").checked ? "other" : "functional_gym",
       equipmentOther: String(el("inEquipOther").value || ""),
       scheduleMode: el("inSchedCount").checked ? "session_count" : "weekly_schedule",
       sessionsPerWeek: sessions,
@@ -830,7 +1128,8 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
   function buildSessionBoxes() {
     var host = el("inSessionTypes");
     if (!host) return;
-    var n = Math.max(1, Math.min(14, Number(el("inSessions").value) || 3));
+    var n = Math.max(0, Math.min(14, parseInt(el("inSessions").value, 10) || 0));
+    if (!n) { host.innerHTML = '<p class="meta" style="margin:0">Fill in the number of sessions first.</p>'; return; }
     var prev = [];
     for (var i = 0; i < 14; i++) {
       var old = el("inSessType-" + i);
@@ -863,20 +1162,44 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     el("createBtn").hidden = !last;
   }
 
-  function syncIntakeConditionals() {
-    el("inEquipOtherWrap").hidden = el("inEquipFull").checked;
+  /* A pair of checkboxes standing in for a two-way choice: ticking one unticks its
+     partner, and clicking the already-active one cannot leave the pair empty — with
+     neither ticked there would be no answer at all, and the form would silently fall
+     back to a mode the owner never picked. */
+  function bindPickPair(groupName) {
+    var boxes = Array.prototype.slice.call(
+      document.querySelectorAll('input[data-pick="' + groupName + '"]')
+    );
+    boxes.forEach(function (box) {
+      box.addEventListener("change", function () {
+        if (!box.checked) {
+          box.checked = true; // re-tick: the choice is exclusive, never empty
+          return;
+        }
+        boxes.forEach(function (other) {
+          if (other !== box) other.checked = false;
+        });
+        syncIntakeConditionals();
+      });
+    });
+  }
 
-    /* One checkbox picks the mode, and each mode has its own follow-ups. Ticked is
-       the default: N sessions a week with no weekday attached. */
+  function syncIntakeConditionals() {
+    /* Equipment: the well-equipped gym is the default and needs no description.
+       Only OTHER opens the box. */
+    var equipOther = el("inEquipOtherOn").checked;
+    el("inEquipOtherWrap").hidden = !equipOther;
+
+    /* Schedule: two checkboxes, and each mode opens a different question. */
     var byCount = el("inSchedCount").checked;
-    el("inSessions").disabled = !byCount;
+    el("inSessions").hidden = !byCount;
     el("inCountHint").textContent = byCount
-      ? "No weekday attached — the coach delivers them whenever suits their groups. Untick to pin sessions to weekdays instead."
-      : "Sessions sit on weekdays. Tick to go back to a plain weekly session count.";
+      ? "No weekday attached — the coach delivers them whenever suits their groups."
+      : "Sessions sit on weekdays, Sun–Sat.";
     el("inDifferWrap").hidden = !byCount;
     el("inWeeklyWrap").hidden = byCount;
 
-    /* session_count → do the sessions differ? */
+    /* session_count → do the sessions differ? The boxes appear ONLY when they do. */
     var differ = el("inSessionsDiffer").checked;
     el("inSessionTypes").hidden = !differ;
     el("inDifferHint").textContent = differ
@@ -929,7 +1252,13 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     if (problems.length) { el("createErr").textContent = problems.join(" "); return; }
     var btn = el("createBtn");
     btn.disabled = true;
-    api({ action: "create", clientKind: "coach", intake: form, isTest: el("newTest").checked })
+    api({
+      action: "create", clientKind: "coach", intake: form,
+      /* Anchor the block to this week's Sunday (Israel), so the calendar shows real
+         dates instead of drifting every time the page is opened. */
+      blockStart: israelSundayIso(),
+      isTest: el("newTest").checked,
+    })
       .then(function (r) {
         btn.disabled = false;
         if (r.status !== 200 || !r.body.ok) {
@@ -950,7 +1279,9 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     buildWeekRows();
     renderIntakeTabs();
     syncIntakeConditionals();
-    ["inEquipFull", "inSchedCount", "inSessionsDiffer", "inRestDays", "inEmphasis", "inDeload"]
+    bindPickPair("equip");
+    bindPickPair("sched");
+    ["inSessionsDiffer", "inRestDays", "inEmphasis", "inDeload"]
       .forEach(function (id) {
         var n = el(id);
         if (n) n.addEventListener("change", syncIntakeConditionals);

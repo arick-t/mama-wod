@@ -11,6 +11,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+<!-- The brick view's look, generated from admin.html so this page renders a program in
+     the SAME view the owner already knows. See scripts/extract-pprog-css.js. -->
+<link rel="stylesheet" href="styles/pprog-display.css">
 <style>
 /* Same tokens as the app — this is a third surface of one product, not a lookalike. */
 :root{
@@ -35,6 +38,9 @@
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
+/* `hidden` is only display:none from the UA sheet, so any author display rule beats
+   it. Without this, hiding a styled element silently does nothing. */
+[hidden]{display:none!important}
 body{
   margin:0;font-family:var(--font-ui);background:var(--bg);color:var(--text);
   line-height:1.55;font-size:15px;
@@ -203,7 +209,7 @@ button.ghost:hover{color:var(--text)}
   <!-- 3 · the program ---------------------------------------------------- -->
   <section id="programView" hidden>
     <div id="progBanner"></div>
-    <div class="weekbar" id="weekBar" role="tablist" aria-label="Weeks"></div>
+    <!-- No week bar: the calendar carries its own W1…W5 rail. -->
     <div id="days"></div>
     <div class="row" style="margin-top:6px">
       <button id="printBtn" class="ghost" type="button">Print / share</button>
@@ -253,7 +259,18 @@ button.ghost:hover{color:var(--text)}
   var PROGRAM_ID = String(params.get("program") || params.get("p") || "").slice(0, 60);
   var TOKEN_KEY = "dw_client_token_" + PROGRAM_ID;
 
-  var state = { program: null, week: 1, editing: null, watermark: null, busy: false };
+  var state = {
+    program: null, watermark: null, busy: false,
+    /* Brick view state, the same shape the back office keeps: wi = 0-based week,
+       day = active day key or "general", selected = the horizontal multi-day spread,
+       edit = the one open draft. */
+    wi: 0, day: "sun", calMode: "week", selected: [], edit: null,
+  };
+
+  var DAY_KEYS_LOCAL = (window.PprogDisplay && window.PprogDisplay.DAY_KEYS) ||
+    ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+  /* Module scope: read once, used by both the renderer and the save path. */
+  var RT = window.DayRestToggle || null;
 
   function el(id) { return document.getElementById(id); }
   function show(id, on) { var n = el(id); if (n) n.hidden = !on; }
@@ -388,7 +405,6 @@ button.ghost:hover{color:var(--text)}
       show("programView", true);
       banner("", "");
       if (r.body.fromCache) banner("warn", "Showing the last version saved on the server — your connection looks unstable.");
-      renderWeekBar();
       renderDays();
       renderChrome();
     });
@@ -410,22 +426,52 @@ button.ghost:hover{color:var(--text)}
       (p.updatedAt ? " · last change " + new Date(p.updatedAt).toLocaleString() : "");
   }
 
-  function renderWeekBar() {
-    var weeks = (state.program && state.program.weeks) || [];
-    el("weekBar").innerHTML = weeks.map(function (w, i) {
-      var n = w.weekIndex || i + 1;
-      return '<button type="button" role="tab" data-week="' + n + '"' +
-        (n === state.week ? ' class="on" aria-selected="true"' : ' aria-selected="false"') +
-        ">Week " + n + (w.phase === "deload" ? " · deload" : "") + "</button>";
-    }).join("");
+  /* ==================================================================
+     THE PROGRAM VIEW — the same brick the owner sees in his back office
+     ==================================================================
+     Rendered by lib/pprog-display.js (renderBrickView), the same function admin.html
+     and admin-clients.html use. One program, one view: what the owner writes is what
+     the client reads, laid out identically.
+
+     What is deliberately different here:
+       · showFooter:false — there is no AI on this page at all, so no pre-talk box.
+       · a REST day carries the pencil, and a written day can go back to rest. Both
+         directions, for the client too — the owner asked for that explicitly.
+     ================================================================== */
+
+  function pprogLib() { return window.PprogDisplay || null; }
+
+  function israelIso(shiftToSunday) {
+    var il = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Jerusalem" }));
+    if (shiftToSunday) il.setDate(il.getDate() - il.getDay());
+    var m = String(il.getMonth() + 1);
+    var d = String(il.getDate());
+    return il.getFullYear() + "-" + (m.length < 2 ? "0" + m : m) + "-" + (d.length < 2 ? "0" + d : d);
+  }
+
+  function currentBlock() {
+    var p = state.program;
+    if (!p) return null;
+    return {
+      blockStart: p.blockStart || israelIso(true),
+      weeks: p.weeks || [],
+    };
   }
 
   function currentWeek() {
     var weeks = (state.program && state.program.weeks) || [];
-    for (var i = 0; i < weeks.length; i++) {
-      if ((weeks[i].weekIndex || i + 1) === state.week) return weeks[i];
-    }
-    return weeks[0] || null;
+    return weeks[state.wi | 0] || weeks[0] || null;
+  }
+
+  function weekCount() {
+    return ((state.program && state.program.weeks) || []).length || 1;
+  }
+
+  function clampWi(n) {
+    var max = weekCount() - 1;
+    n = n | 0;
+    if (n < 0) return 0;
+    return n > max ? max : n;
   }
 
   function focusFor(week, dayKey) {
@@ -434,95 +480,262 @@ button.ghost:hover{color:var(--text)}
     return "";
   }
 
-  function partsToText(parts) {
-    return (parts || []).map(function (p) {
-      var head = String(p.title || "").trim();
-      var lines = (p.lines || []).join("\n");
-      return head ? head + "\n" + lines : lines;
-    }).join("\n\n");
-  }
-
-  /* One textarea per day. A coach editing on a phone wants to type, not fight a
-     form builder — so: blank line separates parts, first line is the title. */
-  function textToParts(text, dayKey) {
-    var blocks = String(text || "").split(/\n\s*\n/);
-    var out = [];
-    for (var i = 0; i < blocks.length; i++) {
-      var lines = blocks[i].split("\n").map(function (l) { return l.trim(); }).filter(Boolean);
-      if (!lines.length) continue;
-      out.push({ id: dayKey + "-" + i, title: lines[0], lines: lines.slice(1).length ? lines.slice(1) : [lines[0]] });
-    }
-    return out;
-  }
-
   function renderDays() {
-    var week = currentWeek();
     var host = el("days");
-    if (!week) { host.innerHTML = '<div class="card muted">No weeks in this program yet.</div>'; return; }
-    var D = window.PprogDisplay;
-    var RT = window.DayRestToggle;
-    var keys = (D && D.DAY_KEYS) || ["sun","mon","tue","wed","thu","fri","sat"];
-    var labels = (D && D.DAY_LABELS) || {};
-    var html = "";
-    for (var i = 0; i < keys.length; i++) {
-      var k = keys[i];
-      var day = (week.days && week.days[k]) || { parts: [] };
-      var focus = focusFor(week, k);
-      var editing = state.editing === state.week + ":" + k;
-      /* A day is REST by its overview focus first, so ask the shared toggle rather
-         than guessing from the parts (see lib/day-rest-toggle.js). */
-      var isRest = RT ? RT.dayIsRest(week, k) : !(day.parts && day.parts.length);
-      var body;
-      if (editing) {
-        body =
-          '<div class="editing">' +
-            '<p class="edit-hint">Leave a blank line between parts. The first line of each part is its title.</p>' +
-            '<textarea id="ed-' + k + '" aria-label="Edit ' + esc(k) + '">' +
-              esc(isRest ? "" : partsToText(day.parts)) + "</textarea>" +
-            '<div class="row">' +
-              '<button type="button" data-save="' + k + '">Save</button>' +
-              (isRest
-                ? ""
-                : '<button type="button" class="ghost" data-rest="' + k + '">Make it a rest day</button>') +
-              '<button type="button" class="ghost" data-cancel="' + k + '">Cancel</button>' +
-            "</div>" +
-          "</div>";
-      } else if (isRest) {
-        /* Rest still LOOKS like rest — and still has the Edit button above it, so it
-           can be turned into a session. */
-        body =
-          '<div class="rest-card">' +
-            '<div class="rest-title">REST DAY</div>' +
-            '<p class="meta" style="margin:0">Tap Edit to put a session here instead.</p>' +
-          "</div>";
-      } else if (D && D.renderDayPartsHtml) {
-        body = D.renderDayPartsHtml(day.parts || [], day);
-      } else {
-        body = '<div class="pprog-empty">Display library unavailable.</div>';
-      }
-      html +=
-        '<div class="day">' +
-          '<div class="day-head">' +
-            '<span class="day-name">' + esc(labels[k] || k) + "</span>" +
-            (focus ? '<span class="day-focus">' + esc(focus) + "</span>" : "") +
-            (day.modified ? '<span class="pprog-modified-flag">MODIFIED</span>' : "") +
-            (editing ? "" : '<span class="day-actions"><button type="button" class="ghost" data-edit="' + k + '">Edit</button></span>') +
-          "</div>" +
-          '<div class="day-body">' + body + "</div>" +
-        "</div>";
+    if (!host) return;
+    var D = pprogLib();
+    var block = currentBlock();
+    if (!D || !D.renderBrickView) {
+      host.innerHTML = '<div class="card muted">Display library unavailable. Please reload.</div>';
+      return;
     }
-    /* The quiet identity line — present, not intrusive. */
+    if (!block || !block.weeks.length) {
+      host.innerHTML = '<div class="card muted">No weeks in this program yet.</div>';
+      return;
+    }
+    /* The quiet identity line stays — present, not intrusive. Print adds the full mark. */
     var wmName = (state.watermark && state.watermark.clientName) || "";
-    html += '<p class="wm-line">Prepared for ' + esc(wmName || "client") + " · DUCK-WOD</p>";
-    host.innerHTML = html;
+    host.innerHTML =
+      D.renderBrickView(brickOpts()) +
+      restToggleRowHtml() +
+      '<p class="wm-line">Prepared for ' + esc(wmName || "client") + " · DUCK-WOD</p>";
   }
 
-  function saveDay(dayKey, makeRest) {
+  function brickOpts() {
+    var selected = (state.selected || []).slice();
+    var widthStatus = "";
+    if (selected.length >= 2) {
+      widthStatus =
+        '<div class="pprog-width-status">' + selected.length + " days shown · " +
+        '<button type="button" onclick="cvClearSelection()" aria-label="Clear selection">Clear</button></div>';
+    }
+    return {
+      block: currentBlock(),
+      activeWeekIndex: state.wi | 0,
+      activeDay: state.day || "sun",
+      calMode: state.calMode || "week",
+      israelTodayIso: israelIso(false),
+      readOnly: true,
+      showFooter: false,
+      showActions: true,
+      allowEdit: true,
+      /* The owner's decision: a client edits without limit, past days included. */
+      allowPastEdit: true,
+      editing: !!state.edit,
+      editDraft: state.edit,
+      /* The client sees which days THEY changed, in their own language. No unread
+         dots here — unread is the owner's inbox, not the client's. */
+      dayModifiedLabel: "MODIFIED",
+      dayModifiedTitle: "You changed this day",
+      selectedDays: selected,
+      passCalEvent: false,
+      widthStatusHtml: widthStatus,
+      hooks: {
+        shift: "cvCalShift",
+        toggleMode: "cvToggleCalMode",
+        jumpToday: "cvJumpToday",
+        setDay: "cvSetDay",
+        selectWeek: "cvSelectWeek",
+        selectDow: "cvSelectDow",
+        startEdit: "cvStartEdit",
+        editSet: "cvEditSet",
+        editAddNote: "cvEditAddNote",
+        editAddWork: "cvEditAddWork",
+        editAddPart: "cvEditAddPart",
+        editRemoveWork: "cvEditRemoveWork",
+        editCancel: "cvEditCancel",
+        editSave: "cvEditSave",
+      },
+    };
+  }
+
+  /* A written day back to rest. Ours rather than the shared card's, so the wording
+     and the confirmation are the client's language. */
+  function restToggleRowHtml() {
+    if (state.edit) return "";
+    var day = state.day || "";
+    if (!day || day === "general" || DAY_KEYS_LOCAL.indexOf(day) < 0) return "";
+    if ((state.selected || []).length >= 2) return "";
+    var week = ((state.program && state.program.weeks) || [])[state.wi | 0] || {};
+    var isRest = RT ? RT.dayIsRest(week, day) : true;
+    if (isRest) return "";
+    return (
+      '<div class="row" style="margin-top:10px;justify-content:flex-end">' +
+      '<button type="button" class="ghost" data-makerest="' + (state.wi | 0) + ":" + day + '">' +
+      "Make it a rest day</button></div>"
+    );
+  }
+
+  /* --- calendar hooks (global: rendered into onclick attributes) ----------- */
+
+  window.cvCalShift = function (delta) {
+    state.wi = clampWi((state.wi | 0) + (delta | 0));
+    state.selected = [];
+    renderDays();
+  };
+
+  window.cvToggleCalMode = function () {
+    state.calMode = state.calMode === "month" ? "week" : "month";
+    renderDays();
+  };
+
+  window.cvJumpToday = function () {
+    var block = currentBlock();
+    if (!block) return;
+    var start = Date.parse(block.blockStart + "T00:00:00Z");
+    var today = Date.parse(israelIso(false) + "T00:00:00Z");
+    var offset = Math.floor((today - start) / 86400000);
+    if (offset >= 0) {
+      state.wi = clampWi(Math.floor(offset / 7));
+      state.day = DAY_KEYS_LOCAL[offset % 7];
+    }
+    state.selected = [];
+    renderDays();
+  };
+
+  window.cvSetDay = function (wi, dayKey) {
+    var nextWi = clampWi(wi);
+    var nextDay = String(dayKey || "sun");
+    /* Moving off the day being edited abandons the draft rather than carrying it. */
+    if (state.edit && (state.edit.wi !== nextWi || state.edit.day !== nextDay)) state.edit = null;
+    state.wi = nextWi;
+    state.day = nextDay;
+    state.selected = [];
+    renderDays();
+  };
+
+  window.cvSelectWeek = function (wi) {
+    state.wi = clampWi(wi);
+    state.day = "general";
+    state.selected = [];
+    renderDays();
+  };
+
+  /* Tapping a weekday letter opens that day across every week, side by side. */
+  window.cvSelectDow = function (dayIndex) {
+    var day = DAY_KEYS_LOCAL[dayIndex | 0];
+    if (!day) return;
+    var out = [];
+    for (var i = 0; i < weekCount(); i++) out.push({ wi: i, day: day });
+    state.selected = out;
+    state.day = day;
+    renderDays();
+  };
+
+  window.cvClearSelection = function () {
+    state.selected = [];
+    renderDays();
+  };
+
+  /* --- day edit hooks ------------------------------------------------------ */
+
+  window.cvStartEdit = function (wi, dayKey) {
+    var D = pprogLib();
+    var nextWi = clampWi(wi);
+    var day = String(dayKey || "");
+    if (!day || day === "general") return;
+    var week = ((state.program && state.program.weeks) || [])[nextWi] || {};
+    var dayData = (week.days && week.days[day]) || { parts: [] };
+    var rest = RT ? RT.dayIsRest(week, day) : !(dayData.parts && dayData.parts.length);
+    var parts = rest ? [] : (D && D.draftFromDayData ? D.draftFromDayData(dayData, false) : []);
+    if (!parts.length) parts = [{ title: "Part A", notes: [""], format: "", work: [""] }];
+    state.wi = nextWi;
+    state.day = day;
+    state.selected = [];
+    state.edit = { wi: nextWi, day: day, rest: false, wasRest: rest, parts: parts };
+    renderDays();
+  };
+
+  window.cvEditSet = function (partIndex, field, a, b) {
+    if (!state.edit || !state.edit.parts) return;
+    var part = state.edit.parts[partIndex | 0];
+    if (!part) return;
+    if (field === "title") { part.title = String(a == null ? "" : a); return; }
+    if (field === "format") { part.format = String(a == null ? "" : a); return; }
+    if (field === "note") {
+      if (!Array.isArray(part.notes)) part.notes = [];
+      part.notes[a | 0] = String(b == null ? "" : b);
+      return;
+    }
+    if (field === "work") {
+      if (!Array.isArray(part.work)) part.work = [""];
+      part.work[a | 0] = String(b == null ? "" : b);
+    }
+    /* No re-render while typing — it would throw the caret out of the field. */
+  };
+
+  window.cvEditAddNote = function (partIndex) {
+    var part = state.edit && state.edit.parts[partIndex | 0];
+    if (!part) return;
+    if (!Array.isArray(part.notes)) part.notes = [];
+    part.notes.push("");
+    renderDays();
+  };
+
+  window.cvEditAddWork = function (partIndex) {
+    var part = state.edit && state.edit.parts[partIndex | 0];
+    if (!part) return;
+    if (!Array.isArray(part.work)) part.work = [];
+    part.work.push("");
+    renderDays();
+  };
+
+  window.cvEditRemoveWork = function (partIndex, lineIndex) {
+    var part = state.edit && state.edit.parts[partIndex | 0];
+    if (!part || !Array.isArray(part.work)) return;
+    part.work.splice(lineIndex | 0, 1);
+    if (!part.work.length) part.work = [""];
+    renderDays();
+  };
+
+  window.cvEditAddPart = function () {
+    if (!state.edit) return;
+    if (!Array.isArray(state.edit.parts)) state.edit.parts = [];
+    var letter = String.fromCharCode(65 + state.edit.parts.length);
+    state.edit.parts.push({ title: "Part " + letter, notes: [""], format: "", work: [""] });
+    renderDays();
+  };
+
+  window.cvEditCancel = function () {
+    state.edit = null;
+    renderDays();
+  };
+
+  window.cvEditSave = function () {
+    if (!state.edit) return;
+    var D = pprogLib();
+    if (!D || !D.partsFromDraft) { banner("bad", "Display library unavailable. Please reload."); return; }
+    if (!D.draftHasContent(state.edit)) {
+      banner("warn", "Nothing typed. Use the rest-day button if that is what you meant.");
+      return;
+    }
+    saveDay(
+      state.edit.wi,
+      state.edit.day,
+      D.partsFromDraft({ parts: state.edit.parts, day: state.edit.day }),
+      false
+    );
+  };
+
+  window.cvMakeRest = function (wi, dayKey) {
+    var day = String(dayKey || "");
+    if (!day) return;
+    if (!window.confirm("Make this a rest day? The session written here will be removed.")) return;
+    saveDay(clampWi(wi), day, [], true);
+  };
+
+  /**
+   * Writes one day, in either direction.
+   * @param {number} wi 0-based week index
+   * @param {string} dayKey sun…sat
+   * @param {Array} parts ready-made parts (ignored when makeRest)
+   * @param {boolean} makeRest true = this day becomes a rest day
+   */
+  function saveDay(wi, dayKey, parts, makeRest) {
     if (state.busy) return;
-    var ta = el("ed-" + dayKey);
-    if (!ta && !makeRest) return;
-    var parts = makeRest ? [] : textToParts(ta.value, dayKey);
-    if (!makeRest && !parts.length) {
+    if (!state.program) return;
+    wi = wi | 0;
+    if (!makeRest && (!parts || !parts.length)) {
       banner("warn", "Nothing typed. Use the rest-day button if that is what you meant.");
       return;
     }
@@ -531,7 +744,9 @@ button.ghost:hover{color:var(--text)}
     api({
       action: "save",
       expectedVersion: state.program.version,
-      edits: [{ weekIndex: state.week, dayKey: dayKey, rest: makeRest === true, parts: parts }],
+      /* weekIndex is 1-based on the wire (lib/client-view-payload.js); the brick
+         view is 0-based. Converted here, in one place. */
+      edits: [{ weekIndex: wi + 1, dayKey: dayKey, rest: makeRest === true, parts: makeRest ? [] : parts }],
     }).then(function (r) {
       state.busy = false;
       if (r.status === 409) {
@@ -539,7 +754,7 @@ button.ghost:hover{color:var(--text)}
            overwrite it, and say so plainly. */
         if (r.body.program) {
           state.program = r.body.program;
-          state.editing = null;
+          state.edit = null;
           renderDays(); renderChrome();
         }
         banner("warn", "Your coach changed this program while you had it open. The current version is shown — please make your change again.");
@@ -551,7 +766,7 @@ button.ghost:hover{color:var(--text)}
         return;
       }
       state.program = r.body.program;
-      state.editing = null;
+      state.edit = null;
       renderDays(); renderChrome();
       banner("warn", "");
     });
@@ -562,16 +777,14 @@ button.ghost:hover{color:var(--text)}
   document.addEventListener("click", function (ev) {
     var t = ev.target;
     if (!t || !t.getAttribute) return;
-    var w = t.getAttribute("data-week");
-    if (w) { state.week = parseInt(w, 10) || 1; state.editing = null; renderWeekBar(); renderDays(); return; }
-    var e = t.getAttribute("data-edit");
-    if (e) { state.editing = state.week + ":" + e; renderDays(); return; }
-    var c = t.getAttribute("data-cancel");
-    if (c) { state.editing = null; renderDays(); return; }
-    var s = t.getAttribute("data-save");
-    if (s) { saveDay(s); return; }
-    var r = t.getAttribute("data-rest");
-    if (r) { saveDay(r, true); return; }
+    /* Week, day, pencil, save and cancel are the brick view's own hooks
+       (cvSetDay / cvStartEdit / cvEditSave …). Only the rest-day button is ours. */
+    var mr = t.getAttribute("data-makerest");
+    if (mr) {
+      var bits = mr.split(":");
+      window.cvMakeRest(parseInt(bits[0], 10) || 0, bits[1] || "");
+      return;
+    }
   });
 
   /* Anything copied out carries where it came from. Invisible until pasted. */
@@ -588,7 +801,7 @@ button.ghost:hover{color:var(--text)}
   /* A change from the coach's side is the only way this plan moves, so pull
      whenever the page comes back to the foreground. */
   document.addEventListener("visibilitychange", function () {
-    if (document.visibilityState === "visible" && state.program && !state.editing) loadProgram();
+    if (document.visibilityState === "visible" && state.program && !state.edit) loadProgram();
   });
 
   function boot() {
@@ -597,7 +810,7 @@ button.ghost:hover{color:var(--text)}
     el("agreeBox").addEventListener("change", function () { el("agreeBtn").disabled = !this.checked; });
     el("agreeBtn").addEventListener("click", submitAgree);
     el("printBtn").addEventListener("click", function () { window.print(); });
-    el("refreshBtn").addEventListener("click", function () { state.editing = null; loadProgram(); });
+    el("refreshBtn").addEventListener("click", function () { state.edit = null; loadProgram(); });
 
     if (!PROGRAM_ID) {
       el("bootErr").innerHTML = '<div class="banner bad">This link is incomplete. Ask your coach to resend it.</div>';

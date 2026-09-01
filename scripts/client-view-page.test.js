@@ -60,8 +60,14 @@ ok("a revoked device clears its token", /clearToken\(\);\s*openAuth/.test(html))
 ok("the page loads the shared display library", /src="lib\/pprog-display\.js"/.test(html));
 ok("the page loads the shared block normaliser", /src="lib\/normalize-pprog-block\.js"/.test(html));
 ok("the page takes the shared library from the global", /window\.PprogDisplay/.test(html));
-ok("day parts are rendered by the shared library", /\bD\.renderDayPartsHtml\(/.test(html));
-ok("day keys and labels come from the shared library too", /D\.DAY_KEYS/.test(html) && /D\.DAY_LABELS/.test(html));
+ok("the program is rendered by the shared library", /\bD\.renderBrickView\(/.test(html));
+/* The familiar view, not a second hand-written list: the same calendar + day card
+   the owner sees in the admin module, from the same function. */
+ok("it is the same brick view the admin module shows", /renderBrickView\(brickOpts\(\)\)/.test(html));
+ok("it links the shared brick stylesheet", /styles\/pprog-display\.css/.test(html));
+ok("day keys come from the shared library too", /PprogDisplay && window\.PprogDisplay\.DAY_KEYS/.test(html));
+/* No AI on this page at all, so no athlete pre-talk footer. */
+ok("the athlete footer is switched off", /showFooter:\s*false/.test(html));
 ok("the page uses the app's design tokens", /--brand:#E8451A/.test(html) && /--coach:#9b6bb8/.test(html));
 ok("the page uses the app's fonts", /family=Heebo/.test(html) && /Oswald/.test(html));
 
@@ -139,13 +145,22 @@ ok("an unstable connection is disclosed", /connection looks unstable/.test(html)
 /* --- the pull that keeps the plan current -------------------------- */
 
 ok("the page pulls on returning to the foreground", /visibilitychange/.test(html));
-ok("it does not pull while the coach is mid-edit", /!state\.editing\) loadProgram/.test(html));
+ok("it does not pull while the coach is mid-edit", /!state\.edit\) loadProgram/.test(html));
 ok("there is a manual refresh too", /refreshBtn/.test(html));
 
 /* --- editing model -------------------------------------------------- */
 
-ok("the coach edits a whole day as text", /textToParts/.test(html) && /partsToText/.test(html));
-ok("the editor explains the format", /blank line between parts/i.test(html));
+/* 21.7: the free-text box gave way to the shared structured editor, so a client's
+   day round-trips through the same title / note / format / work-line shape the
+   owner writes in. partsFromDraft is the exact inverse of draftFromDayData. */
+ok("the day is edited through the shared draft", /draftFromDayData/.test(html));
+ok("a save converts the draft back with the shared inverse", /partsFromDraft/.test(html));
+ok("the free-text editor is gone", !/function textToParts/.test(html));
+ok("an empty draft is refused rather than saved blank", /draftHasContent/.test(html));
+/* Both directions, on the owner's explicit instruction. */
+ok("a rest day can become a session", /rest \? \[\] :/.test(html));
+ok("a session can become a rest day", /data-makerest/.test(html) && /cvMakeRest/.test(html));
+ok("turning a day to rest asks first", /confirm\("Make this a rest day/.test(html));
 ok("a save sends the version it loaded", /expectedVersion: state\.program\.version/.test(html));
 ok("MODIFIED is shown on a changed day", /pprog-modified-flag/.test(html));
 
