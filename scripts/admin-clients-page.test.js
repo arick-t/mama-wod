@@ -445,7 +445,34 @@ ok("it opens by admin's own class", /classList\.toggle\("is-open"/.test(page));
 ok("the header carries the counters, as admin's does", /id="clientCount"/.test(page) && /class="count-wrap"/.test(page));
 ok("the header buttons are admin's buttons", /class="hdr-btn primary" id="addClientBtn"/.test(page));
 ok("there is a way back to the admin module", /href="admin\.html"/.test(page));
-ok("and a way out", /id="logoutBtn"/.test(page));
+
+/* ------------------------------------------------------------------------
+ * The header the owner specified on 2026-09-01, item by item.
+ *
+ * He read the production header out loud and said what survives: the logo, the
+ * versions, how many clients, and the one button he presses. Everything else was a
+ * control he never uses — including a logout, because he is the only person who ever
+ * opens this and there is no scenario in which he logs out.
+ * --------------------------------------------------------------------- */
+ok("no logout", !/id="logoutBtn"/.test(page));
+ok("no rebuild button in the header", !/id="rebuildBtn"/.test(page));
+/* The index rebuild is a repair, not a working control. It stays reachable. */
+ok("but the repair itself is still reachable", /rebuild_index/.test(page) && /ev\.altKey/.test(page));
+ok("the version is shown, as in admin", /id="clientsVerBadge"/.test(page));
+ok(
+  "and it is the SAME version admin shows",
+  (page.match(/var ADMIN_UI_VERSION = "([\d.]+)"/) || [])[1] ===
+    (admin.match(/var ADMIN_UI_VERSION = "([\d.]+)"/) || [])[1]
+);
+/* An empty pill reads as a control that lost its label. */
+ok("the money pill hides when there is none", /id="monthlyTotal" hidden/.test(page));
+ok("so does the unread pill", /id="listMeta" hidden/.test(page));
+ok("and they are shown only when they say something", /show\("monthlyTotal", !!total\)/.test(page));
+
+/* The wizard used to sit under the tab strip on the first paint, as though a client
+   were being added: it had no hidden attribute and relied on a wrapper that the admin
+   frame replaced. */
+ok("the wizard starts hidden", /id="intakeCard"[^>]*hidden/.test(page));
 ok("a client is an athlete-tab, not a private class", /class="athlete-tab/.test(page));
 ok("no hand-copied strip values are left", !/\.crow\{display:inline-flex/.test(page));
 ok("a test client still says so", /badge test">בדיקה/.test(page));

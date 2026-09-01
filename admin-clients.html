@@ -188,18 +188,22 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
 
 <!-- The app: admin.html's frame, rule for rule (styles/admin-shell.css). ---- -->
 <div id="app">
+  <!-- The header the owner specified on 2026-09-01: logo, versions, what he is looking
+       at, and the one button he presses. No sync, no learning mode, no refresh, no
+       logout — he is the only person who ever opens this and he never logs out.
+       "בנה אינדקס" was a repair tool, not a working control; it lives on the keyboard
+       now (Alt+Shift+I) for the one day the list ever looks stale. -->
   <header>
     <span class="logo">DUCK-WOD</span>
     <span class="tagline">לקוחות</span>
+    <span class="ver-badge" id="clientsVerBadge"></span>
     <span class="count-wrap">
       <a class="hdr-btn" href="admin.html" title="חזרה למודול אדמין">← מודול אדמין</a>
       <span class="count" id="clientCount" title="מספר הלקוחות">0 לקוחות</span>
-      <span class="count" id="monthlyTotal"></span>
-      <span class="count" id="listMeta"></span>
+      <span class="count" id="monthlyTotal" hidden></span>
+      <span class="count" id="listMeta" hidden></span>
     </span>
     <button type="button" class="hdr-btn primary" id="addClientBtn">+ לקוח חדש</button>
-    <button type="button" class="hdr-btn" id="rebuildBtn" title="אם הרשימה נראית לא מעודכנת">↻ בנה אינדקס</button>
-    <button type="button" class="hdr-btn" id="logoutBtn" title="התנתק">התנתק</button>
   </header>
   <!-- The strip IS the list: it is how the owner flips between clients, and nothing
        else (his words, 2026-09-01). -->
@@ -211,7 +215,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     <!-- Coach / studio intake. English throughout, on the owner's instruction: the
          programming it produces is English, and so is the client's own surface.
          Cross-cutting only — nothing about one person's capability (checklist 2.c). -->
-    <div class="card" id="intakeCard" dir="ltr" style="text-align:left">
+    <div class="card" id="intakeCard" dir="ltr" style="text-align:left" hidden>
       <div class="row" style="margin-bottom:12px">
         <h2 style="margin:0" id="intakeTitle">New coach / studio client</h2>
         <span class="spacer meta" id="intakeStep"></span>
@@ -434,6 +438,11 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     return "https://mama-wod.vercel.app";
   })();
   /* Same keys as admin.html, so one login serves both pages. */
+  /* The same number admin.html shows, because this is the same back office and two
+     versions on two pages of one product is a bug report waiting to happen.
+     scripts/admin-clients-page.test.js fails if it drifts from admin.html's own. */
+  var ADMIN_UI_VERSION = "3.0.2";
+
   var SESSION_KEY = "dw_admin_session";
   var REMEMBER_KEY = "dw_admin_remember";
 
@@ -599,6 +608,10 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     el("clientCount").textContent = S.rows.length + " לקוחות";
     el("monthlyTotal").textContent = total ? "₪" + total.toLocaleString() + " לחודש" : "";
     el("listMeta").textContent = data.unreadTotal ? data.unreadTotal + " ימים לא נקראו" : "";
+    /* Hidden when there is nothing to say: an empty pill is a box with nothing in it,
+       and it read as a control that had lost its label. */
+    show("monthlyTotal", !!total);
+    show("listMeta", !!data.unreadTotal);
     if (!S.rows.length) {
       el("clientList").innerHTML = '<div class="empty-tabs">אין עוד לקוחות — לחץ ״+ לקוח חדש״</div>';
       return;
@@ -1845,6 +1858,11 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     bindPickPair("equip");
     bindPickPair("sched");
     bindCalGestures();
+    var verBadge = el("clientsVerBadge");
+    if (verBadge) {
+      verBadge.textContent = "Admin " + ADMIN_UI_VERSION;
+      verBadge.title = "Admin " + ADMIN_UI_VERSION;
+    }
     ["inSessionsDiffer", "inRestDays", "inEmphasis", "inDeload", "inHasChanges"]
       .forEach(function (id) {
         var n = el(id);
@@ -1874,30 +1892,22 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     el("addClientBtn").addEventListener("click", function () { setAdding(true); });
     /* The header carries a logout because admin.html's does, and a back office you
        cannot leave on a shared laptop is a back office with a hole in it. */
-    el("logoutBtn").addEventListener("click", function () {
-      if (!window.confirm("להתנתק ממודול הלקוחות?")) return;
-      try {
-        localStorage.removeItem(SESSION_KEY);
-        localStorage.removeItem(REMEMBER_KEY);
-        sessionStorage.removeItem(SESSION_KEY);
-      } catch (e) {}
-      S.sel = null;
-      S.program = null;
-      openLogin("התנתקת.");
+    /* The index is a cache of the list's headlines; rebuilding it is a repair, not a
+       working control, so it is off the header and on a key combination. */
+    document.addEventListener("keydown", function (ev) {
+      if (!ev.altKey || !ev.shiftKey || String(ev.key || "").toLowerCase() !== "i") return;
+      if (!window.confirm("לבנות מחדש את אינדקס הלקוחות?")) return;
+      api({ action: "rebuild_index" }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) { banner("bad", "בניית האינדקס נכשלה."); return; }
+        banner("good", "האינדקס נבנה מחדש (" + r.body.count + " לקוחות).");
+        loadList();
+      });
     });
     el("iCancel").addEventListener("click", function () {
       if (!window.confirm("לצאת מהתחקור? מה שהוקלד יימחק.")) return;
       if (S.blockMode) { leaveBlockMode(); return; }
       setAdding(false);
     });
-    el("rebuildBtn").addEventListener("click", function () {
-      api({ action: "rebuild_index" }).then(function (r) {
-        banner(r.status === 200 ? "good" : "bad",
-          r.status === 200 ? "האינדקס נבנה מחדש (" + r.body.count + " תוכניות)." : "הבנייה נכשלה.");
-        loadList();
-      });
-    });
-
     S.token = storedToken();
     var params = new URLSearchParams(location.search);
     /* Deep link from the edit-alert email lands straight on the client (a.2.4). */

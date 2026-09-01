@@ -45,4 +45,37 @@ assert.ok(
 assert.ok(/DUCK-WOD Admin · 3\.0\.2/.test(admin), "admin UI version 3.0.2");
 assert.ok(!/1\.0 beta/.test(admin), "admin no longer shows 1.0 beta");
 
+/* ------------------------------------------------------------------------
+ * The header, as the owner specified it on 2026-09-01.
+ *
+ * He read the live header out loud and named what survives: the logo, the versions,
+ * how many athletes, the credit estimate, and "+ לקוח". Everything else was a control
+ * he does not use — and the learning ground was a feature he decided will not become
+ * useful, so it is switched off at the source rather than left as a switch nobody
+ * touches.
+ * --------------------------------------------------------------------- */
+assert.ok(/class="logo">DUCK-WOD</.test(admin), "the logo stays");
+assert.ok(/id="admin-ver-badge"/.test(admin), "the versions stay");
+assert.ok(/id="athlete-count"/.test(admin), "the athlete count stays");
+assert.ok(/id="btn-credit-estimate"/.test(admin), "the credit estimate stays");
+assert.ok(/id="btn-add-athlete"/.test(admin), "adding a client stays");
+assert.ok(/id="btn-client-programs"/.test(admin), "the clients page link stays");
+
+assert.ok(!/<span class="tagline">Admin<\/span>/.test(admin), "the word Admin beside the logo is gone");
+assert.ok(!/id="btn-sync-drive"/.test(admin), "the drive-sync button is gone");
+assert.ok(!/onclick="refreshAdmin\(\)"/.test(admin), "the refresh button is gone");
+assert.ok(!/onclick="adminLogout\(\)"/.test(admin), "the logout button is gone");
+
+/* The learning ground: switch, banner, and every function that could turn it on. */
+assert.ok(!/id="learn-toggle"/.test(admin), "the learning toggle is gone");
+assert.ok(!/id="learn-banner"/.test(admin), "its banner is gone");
+assert.ok(!/function toggleLearningMode/.test(admin), "nothing can turn it on any more");
+assert.ok(!/dw_admin_learning_mode/.test(admin), "it is not remembered between visits");
+assert.ok(!/מגרש לימוד/.test(admin), "the note box has one wording");
+
+/* What was deliberately NOT deleted, so a later reader knows it was a decision:
+   the weekly Drive digest (the button went, not the capability) and the sandbox
+   endpoint, which belongs to the coach-brain work running separately. */
+assert.ok(fs.existsSync(path.join(__dirname, "..", "scripts", "coach-weekly-patterns-digest.js")), "the drive sync capability itself is untouched");
+
 console.log("admin-design-clarity.test.js: ok");

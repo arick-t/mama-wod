@@ -37,7 +37,12 @@ assert.ok(snap.includes("adminChatLog"), "persist chat log");
 assert.ok(snap.includes('action === "admin_push_upgrade_offer"'), "push upgrade offer API");
 assert.ok(admin.includes("DUCK-WOD Admin · 3.0.2"), "admin product label 3.0.2");
 assert.ok(/Admin 3\.0\.2/.test(admin) && /Coach 2\.3\.14/.test(admin), "admin shows Admin + Coach versions");
-assert.ok(admin.includes("adminLogout") && admin.includes("התנתק"), "visible logout");
+/* The visible logout came out on the owner's instruction (2026-09-01): he is the only
+   person who opens this and there is no scenario in which he logs out. The FORCED
+   logout on a 401 stays — that one is not a control, it is what happens when the
+   server says the session is over. */
+assert.ok(!/onclick="adminLogout\(\)"/.test(admin), "no logout button in the header");
+assert.ok(admin.includes("forceAdminLogout"), "a dead session still ends itself");
 assert.ok(!admin.includes("חבר מאמן"), "coach member chip removed");
 assert.ok(admin.includes("renderHandoffInline"), "compact handoff in card");
 assert.ok(admin.includes("הצהרה לא בתוקף"), "invalid declaration note");
