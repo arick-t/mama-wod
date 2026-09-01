@@ -21,15 +21,47 @@ const root = path.join(__dirname, "..");
 
 /* --- tabs, in English on the owner's instruction ----------------------- */
 
-/* Five, not six: the deload was a whole step for one checkbox and it belongs to the
-   schedule anyway (owner, 2026-09-01). */
-ok("there are five tabs", I.TABS.length === 5);
+/* Four. The deload was a whole step for one checkbox and belongs to the schedule; then
+   Population and Goals became one tab, because two tabs were describing the same room
+   twice (owner, 2026-09-01). */
+ok("there are four tabs", I.TABS.length === 4);
 ok("deload is no longer a tab of its own", I.TABS.every(function (t) { return t.id !== "deload"; }));
+ok("nor is goals", I.TABS.every(function (t) { return t.id !== "goals"; }));
 ok(
   "the tabs are in the owner's order",
   JSON.stringify(I.TABS.map(function (t) { return t.id; })) ===
-    JSON.stringify(["profile", "equipment", "schedule", "population", "goals"])
+    JSON.stringify(["profile", "equipment", "schedule", "population"])
 );
+
+/* --- a session has a length, and it is asked for --------------------- */
+
+const minutesBase = { clientName: "c", scheduleMode: "session_count", sessionsPerWeek: 3, population: "p" };
+ok("nothing is assumed about how long a session is", I.emptyIntake().sessionMinutes === 0);
+ok(
+  "and it is refused rather than guessed",
+  I.validateIntake(minutesBase).some(function (m) { return /How long is a session/.test(m); })
+);
+ok("twenty minutes is accepted", I.normalizeIntake({ sessionMinutes: 20 }).sessionMinutes === 20);
+ok("nineteen is not", I.normalizeIntake({ sessionMinutes: 19 }).sessionMinutes === 0);
+ok("a hundred and twenty is accepted", I.normalizeIntake({ sessionMinutes: 120 }).sessionMinutes === 120);
+ok("a hundred and twenty one is not", I.normalizeIntake({ sessionMinutes: 121 }).sessionMinutes === 0);
+ok(
+  "a complete answer passes",
+  I.validateIntake(Object.assign({}, minutesBase, { sessionMinutes: 60 })).length === 0
+);
+ok("the brief states it", /SESSION: 60 minutes, warm-up included/.test(
+  I.briefFor(Object.assign({}, minutesBase, { sessionMinutes: 60 }))
+));
+
+/* Goals stopped being a field of its own. A client answered before the merge keeps
+   their words: the one box carries both. */
+ok("goals is folded into the free box", I.mergedPopulation({ population: "Studio of 12", goals: "Army selection" }) === "Studio of 12\n\nArmy selection");
+ok("with nothing to fold, nothing changes", I.mergedPopulation({ population: "Studio of 12" }) === "Studio of 12");
+ok("nor is it doubled if it is already there", I.mergedPopulation({ population: "Army selection prep", goals: "Army selection" }) === "Army selection prep");
+ok("goals alone still reads", I.mergedPopulation({ goals: "Army selection" }) === "Army selection");
+ok("goals are no longer demanded separately", !I.validateIntake(Object.assign({}, minutesBase, { sessionMinutes: 60 })).some(function (m) {
+  return /Goals are required/.test(m);
+}));
 ok(
   "every tab label is English, not Hebrew",
   I.TABS.every(function (t) {
@@ -39,7 +71,7 @@ ok(
 ok(
   "the labels read like the owner's spec",
   I.TABS.map(function (t) { return t.label; }).join("|") ===
-    "Client & payment|Equipment|Schedule|Population & limits|Goals"
+    "Client & payment|Equipment|Schedule|Population & limits"
 );
 
 /* No Hebrew anywhere in the shipped strings (comments excluded). */
@@ -58,12 +90,13 @@ FORBIDDEN.forEach(function (f) {
   ok('no individual field "' + f + '"', shape.indexOf(f) < 0);
 });
 ok(
-  "the shape is exactly the owner's six tabs' worth of fields",
+  "the shape is exactly the owner's tabs worth of fields",
   JSON.stringify(shape) ===
     JSON.stringify([
       "clientName", "dayEmphasis", "dayEmphasisEnabled", "deloadEveryWeeks", "deloadWeek", "equipment",
       "equipmentOther", "goals", "includeRestDays", "monthlyAmount", "paymentMethod",
-      "population", "restDays", "scheduleMode", "sessionTypes", "sessionsDiffer", "sessionsPerWeek",
+      "population", "restDays", "scheduleMode", "sessionMinutes", "sessionTypes", "sessionsDiffer",
+      "sessionsPerWeek",
     ])
 );
 /* The old focus-per-weekday field is gone: weekly mode now asks about rest days and
@@ -92,7 +125,7 @@ ok(
 );
 ok(
   "OTHER without a description is refused",
-  I.validateIntake({ clientName: "A", equipment: "other", population: "p", goals: "g" }).some(function (p) {
+  I.validateIntake({ clientName: "A", equipment: "other", population: "p", goals: "g", sessionMinutes: 60 }).some(function (p) {
     return /OTHER/.test(p);
   })
 );
@@ -109,14 +142,14 @@ ok("an unknown mode stays unanswered", I.normalizeIntake({ scheduleMode: "whatev
 ok("a real mode survives", I.normalizeIntake({ scheduleMode: "weekly_schedule" }).scheduleMode === "weekly_schedule");
 ok(
   "an unchosen mode blocks the build",
-  I.validateIntake({ clientName: "A", population: "p", goals: "g", sessionsPerWeek: 3 }).some(
+  I.validateIntake({ clientName: "A", population: "p", goals: "g", sessionMinutes: 60, sessionsPerWeek: 3 }).some(
     function (m) { return /pick how the place trains/i.test(m); }
   )
 );
 ok(
   "choosing one clears that complaint",
   !I.validateIntake({
-    clientName: "A", population: "p", goals: "g",
+    clientName: "A", population: "p", goals: "g", sessionMinutes: 60,
     scheduleMode: "weekly_schedule",
   }).some(function (m) { return /pick how the place trains/i.test(m); })
 );
@@ -129,7 +162,7 @@ const noMode = I.normalizeIntake({
 ok("no mode keeps no session answers", noMode.sessionsPerWeek === 0 && noMode.sessionsDiffer === false);
 ok("no mode keeps no weekly answers", noMode.includeRestDays === false && noMode.dayEmphasisEnabled === false);
 ok("the brief says the schedule is unanswered", /SCHEDULE: not answered yet/.test(
-  I.briefFor({ clientName: "A", population: "p", goals: "g" })
+  I.briefFor({ clientName: "A", population: "p", goals: "g", sessionMinutes: 60 })
 ));
 /* Weekly mode has no session count at all — carrying one over reads as a contradiction. */
 ok(
@@ -146,7 +179,7 @@ ok("a real count survives", I.normalizeIntake({ scheduleMode: "session_count", s
 ok(
   "an empty count blocks the build",
   I.validateIntake({
-    clientName: "A", population: "p", goals: "g", scheduleMode: "session_count",
+    clientName: "A", population: "p", goals: "g", sessionMinutes: 60, scheduleMode: "session_count",
   }).some(function (m) {
     return /how many sessions per week/i.test(m);
   })
@@ -154,14 +187,14 @@ ok(
 ok(
   "a filled count clears that complaint",
   !I.validateIntake({
-    clientName: "A", population: "p", goals: "g",
+    clientName: "A", population: "p", goals: "g", sessionMinutes: 60,
     scheduleMode: "session_count", sessionsPerWeek: 3,
   }).some(function (m) { return /how many sessions per week/i.test(m); })
 );
 ok(
   "weekly mode never asks for a session count",
   !I.validateIntake({
-    clientName: "A", population: "p", goals: "g", scheduleMode: "weekly_schedule",
+    clientName: "A", population: "p", goals: "g", sessionMinutes: 60, scheduleMode: "weekly_schedule",
   }).some(function (m) { return /how many sessions per week/i.test(m); })
 );
 
@@ -193,7 +226,7 @@ ok(
 ok(
   "differing sessions with a blank description are refused",
   I.validateIntake({
-    clientName: "A", population: "p", goals: "g",
+    clientName: "A", population: "p", goals: "g", sessionMinutes: 60,
     scheduleMode: "session_count", sessionsPerWeek: 3, sessionsDiffer: true,
     sessionTypes: ["a", "", "c"],
   }).some(function (x) { return /describe each one/.test(x); })
@@ -214,7 +247,7 @@ ok("an unticked day carries no note", weekly.dayEmphasis.mon === "");
 ok(
   "emphases on with nothing written is refused",
   I.validateIntake({
-    clientName: "A", population: "p", goals: "g",
+    clientName: "A", population: "p", goals: "g", sessionMinutes: 60,
     scheduleMode: "weekly_schedule", dayEmphasisEnabled: true,
   }).some(function (x) { return /at least one day/.test(x); })
 );
@@ -233,7 +266,7 @@ ok(
   "session-count mode does not demand weekdays",
   I.validateIntake({
     clientName: "A", scheduleMode: "session_count", sessionsPerWeek: 3,
-    population: "p", goals: "g",
+    population: "p", goals: "g", sessionMinutes: 60,
   }).length === 0
 );
 
@@ -242,7 +275,7 @@ ok(
    calendar, and for a studio that trains Sunday to Thursday that is a guess with a
    schedule attached (owner, 2026-09-01). */
 
-const restBase = { clientName: "c", scheduleMode: "weekly_schedule", population: "p", goals: "g" };
+const restBase = { clientName: "c", scheduleMode: "weekly_schedule", population: "p", goals: "g", sessionMinutes: 60 };
 ok("no day is a rest day by default", Object.keys(I.emptyIntake().restDays).every(function (k) {
   return I.emptyIntake().restDays[k] === false;
 }));
@@ -300,7 +333,7 @@ ok(
   "a deload with no week named blocks the build",
   I.validateIntake({
     clientName: "c", scheduleMode: "session_count", sessionsPerWeek: 3,
-    deloadWeek: true, population: "p", goals: "g",
+    deloadWeek: true, population: "p", goals: "g", sessionMinutes: 60,
   }).some(function (m) { return /which week it lands on/.test(m); })
 );
 
@@ -322,13 +355,15 @@ ok(
     return /who trains there/.test(p);
   })
 );
+/* Goals stopped being a field of its own on 2026-09-01 — they live inside the one
+   free box now, so nothing asks for them separately any more. */
 ok(
-  "goals are required",
+  "a session length is required instead",
   I.validateIntake({ clientName: "A", population: "p" }).some(function (p) {
-    return /Goals/.test(p);
+    return /How long is a session/.test(p);
   })
 );
-ok("a name is required", I.validateIntake({ population: "p", goals: "g" }).length > 0);
+ok("a name is required", I.validateIntake({ population: "p", goals: "g", sessionMinutes: 60 }).length > 0);
 ok("long text is clamped, not rejected", I.normalizeIntake({ population: "x".repeat(9000) }).population.length === 2000);
 
 /* A complete intake passes cleanly. */
@@ -341,6 +376,7 @@ const complete = {
   scheduleMode: "session_count",
   sessionsPerWeek: 3,
   deloadWeek: false,
+  sessionMinutes: 60,
   population: "Pre-army group, 17-19, mixed ability, 60-minute sessions",
   goals: "Army selection: 2000m run, pull-ups, load carry",
 };
@@ -363,7 +399,7 @@ const weeklyBrief = I.briefFor({
   clientName: "A", scheduleMode: "weekly_schedule",
   includeRestDays: true, dayEmphasisEnabled: true,
   dayEmphasis: { fri: "partner workouts" },
-  deloadWeek: true, deloadEveryWeeks: 5, population: "p", goals: "g",
+  deloadWeek: true, deloadEveryWeeks: 5, population: "p", goals: "g", sessionMinutes: 60,
 });
 /* The brief has to say the cadence crosses the month end, because that is the part
    the owner cannot see by looking at one month's calendar. */
@@ -378,19 +414,19 @@ ok("emphases are marked as repeating", /repeat every week/.test(weeklyBrief));
 ok("a deload brief still says a 4-week month", /MONTH: 4 weeks/.test(weeklyBrief));
 
 /* Rest days OFF must read as the coach's call, not silently vanish. */
-const noRest = I.briefFor({ clientName: "A", scheduleMode: "weekly_schedule", population: "p", goals: "g" });
+const noRest = I.briefFor({ clientName: "A", scheduleMode: "weekly_schedule", population: "p", goals: "g", sessionMinutes: 60 });
 ok("rest days off reads as the coach's call", /not planned — the coach decides/.test(noRest));
 ok("no emphasis section when it is off", noRest.indexOf("STANDING EMPHASES") < 0);
 
 /* session_count: uniform vs differing must be stated, because it changes the plan. */
 const uniform = I.briefFor({
   clientName: "A", scheduleMode: "session_count", sessionsPerWeek: 3,
-  population: "p", goals: "g",
+  population: "p", goals: "g", sessionMinutes: 60,
 });
 ok("uniform sessions are stated as standard CrossFit", /interchangeable — a standard CrossFit week/.test(uniform));
 const differing = I.briefFor({
   clientName: "A", scheduleMode: "session_count", sessionsPerWeek: 2, sessionsDiffer: true,
-  sessionTypes: ["strength + metcon", "engine"], population: "p", goals: "g",
+  sessionTypes: ["strength + metcon", "engine"], population: "p", goals: "g", sessionMinutes: 60,
 });
 ok("differing sessions are listed one by one", /Session 1: strength \+ metcon/.test(differing) && /Session 2: engine/.test(differing));
 

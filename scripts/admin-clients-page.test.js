@@ -88,7 +88,9 @@ const ACTIONS_ALLOWED = [
   "rebuild_index",
   /* Another month sold: four more empty weeks on the same timeline. It creates no
      content — the owner writes it — so it does not make this a generating surface. */
-  "add_month",
+  "add_block",
+  "approve_block",
+  "renewal_check",
 ];
 const actionsUsed = Array.from(
   new Set((page.match(/action:\s*"([a-z_]+)"/g) || []).map(function (s) {
@@ -191,16 +193,25 @@ ok("and counts them where admin counts athletes", /id="clientCount"/.test(page))
 ok("the page loads the shared intake definition", /src="lib\/client-intake\.js"/.test(page));
 ok("the tabs come from that definition", /CLIENT_INTAKE.*TABS/.test(page));
 
-/* Five panes, one per tab, in the owner's order. */
+/* The panes, in the owner's order. Population and Goals became ONE tab on 2026-09-01 —
+   two tabs were describing the same room twice — and a pane for "additions & changes"
+   joined them, shown only when the next block is being planned. */
 const paneIds = (page.match(/data-pane="([a-z]+)"/g) || []).map(function (s) {
   return s.replace('data-pane="', "").replace('"', "");
 });
-ok("there are five intake panes", paneIds.length === 5);
 ok(
   "the panes are in the owner's order",
   JSON.stringify(paneIds) ===
-    JSON.stringify(["profile", "equipment", "schedule", "population", "goals"])
+    JSON.stringify(["profile", "equipment", "schedule", "changes", "population"])
 );
+ok("goals is no longer a tab of its own", paneIds.indexOf("goals") < 0);
+ok("nor a field of its own", !/id="inGoals"/.test(page));
+
+/* One tab: how long a session is, then one box for the room and what it is for. */
+ok("the merged tab asks how long a session is", /id="inMinutes" type="number" min="20" max="120"/.test(page));
+ok("it says the warm-up is inside that number", /warm-up is inside this number/.test(page));
+ok("the free box asks for the goals too", /what they are training for/.test(page));
+ok("the session length is sent", /sessionMinutes: Number\(el\("inMinutes"\)\.value\)/.test(page));
 
 /* Tab 1 */
 ok("tab 1 asks for the client name", /id="inName"/.test(page));
@@ -377,12 +388,38 @@ ok("below four he is told why not", /leanest cycle that works/.test(page));
 ok("no deload is the stated default", /\(Default\.\)/.test(page));
 ok("nothing claims a five-week block any more", !/5 weeks: four build weeks/.test(page));
 
-/* Another month sold — four more empty weeks, continuing the SAME numbering so the
-   cadence survives the month boundary. Empty, because the owner writes the training. */
-ok("there is a way to add a month", /data-addmonth="1"/.test(page));
-ok("it asks before it changes the program", /להוסיף עוד ארבעה שבועות ריקים/.test(page));
-ok("it sends the version it was looking at", /action: "add_month", programId: p\.programId, expectedVersion: p\.version/.test(page));
+/* ------------------------------------------------------------------------
+ * The next block, and the gate in front of it.
+ *
+ * A block is what the owner plans, approves and SENDS. Nothing in it reaches the
+ * client until he presses approve — block one included (owner, 2026-09-01) — so the
+ * page has to make "planned but not sent" impossible to miss.
+ * --------------------------------------------------------------------- */
+ok("there is a way to plan the next block", /data-nextblock="1"/.test(page));
+ok("the old add-a-month button is gone", !/data-addmonth/.test(page));
+ok("planning it opens the questionnaire again", /function startNextBlock/.test(page));
+ok("it is the SAME questionnaire, filtered", /function intakeDefs/.test(page) && /keep\.indexOf\(t\.id\) >= 0/.test(page));
+ok("payment is not asked again", /keep = \["equipment", "schedule", "population"\]/.test(page));
+ok("but equipment is — a rig arrives, a rower breaks", /equipment/.test(page));
+ok("it opens on what the client already answered", /function fillIntakeForm/.test(page));
+ok("including the schedule they are on", /el\("inRestDays"\)\.checked = v\.includeRestDays/.test(page));
+ok("a goals answer from before the merge is not lost", /mergedPopulation/.test(page));
+ok("the notes pane is only for the next block", /data-pane="changes"/.test(page));
+ok("the block is created with those answers", /action: "add_block"/.test(page));
 ok("a concurrent save is handled, not clobbered", page.indexOf("r.status === 409") >= 0);
+
+ok("an unsent block is shown as unsent", /טרם נשלחה ללקוח/.test(page));
+ok("and can be sent", /data-approve=/.test(page) && /action: "approve_block"/.test(page));
+ok("sending it asks first", /confirm\("לשלוח את לבנה/.test(page));
+ok("the owner is told what sending means", /מרגע זה הוא רואה אותה ויכול לערוך/.test(page));
+
+/* The new block arrives as the owner's own to-do list, in its own visual channel —
+   the red dot already means "the client changed something". */
+ok("the days he has not been over are marked", /reviewDays: reviewTags\(\)/.test(page));
+ok("the mark is read off the days themselves", /function reviewTags/.test(page));
+ok("it is a different flag from the client's", /extraDayFlagField: "ownerUnreviewed"/.test(page));
+ok("worded for him", /לא עברת על זה/.test(page));
+
 ok("the owner sees how long the program is", /function weeksLabel/.test(page));
 ok("and where the deload sits", /דילואד כל /.test(page));
 
@@ -422,9 +459,8 @@ ok("the selection maths is not copied", /window\.AdminDoneDebrief/.test(page) &&
 ok("a drag does not end in a click that clears it", page.indexOf("cvIgnoreNextClick = true") >= 0);
 ok("dragging paints instead of re-rendering", /function paintCalSelection/.test(page));
 
-/* Tabs 5 & 6 */
-ok("tab 5 asks about the place and the people", /id="inPopulation"/.test(page));
-ok("tab 6 asks for goals", /id="inGoals"/.test(page));
+/* The last tab: the room, its limits, and what it is training for — one box. */
+ok("the last tab asks about the place and the people", /id="inPopulation"/.test(page));
 
 /* 2.c — no individual capability anywhere on this form */
 [

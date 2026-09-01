@@ -328,6 +328,24 @@ async function main() {
   ok("and sends no second mail", H.mails.length === 1);
   H.mails.length = 0;
 
+  /* --- the block has to be SENT before any of it exists for the client -
+   *
+   * The owner's rule, 2026-09-01: creating a client hands them nothing. Not an empty
+   * calendar, not "coming soon" — the weeks are absent until he presses approve. The
+   * cut is at the API boundary, so this is the assertion that proves it: a signed-in,
+   * authorised client, reading a program that is genuinely there, gets no weeks. */
+
+  const beforeApproval = await H.client(phoneToken, { action: "read", programId: pid });
+  ok("a client may read a program that has not been sent", beforeApproval.status === 200);
+  ok("but there is nothing in it", (beforeApproval.body.program.weeks || []).length === 0);
+  ok("not even the training the owner has already written", JSON.stringify(beforeApproval.body).indexOf("Back squat") < 0);
+
+  const ownerApprove = await H.owner({ action: "approve_block", programId: pid, blockIndex: 1 });
+  ok("the owner sends the block", ownerApprove.status === 200 && ownerApprove.body.approvedBlock === 1);
+
+  const approveAgain = await H.owner({ action: "approve_block", programId: pid, blockIndex: 1 });
+  ok("sending it twice is refused", approveAgain.status === 400 && approveAgain.body.code === "NOTHING_TO_APPROVE");
+
   /* --- what the client actually receives ------------------------------ */
 
   const clientRead = await H.client(phoneToken, { action: "read", programId: pid });

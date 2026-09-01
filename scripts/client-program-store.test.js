@@ -415,8 +415,8 @@ async function main() {
      block as a deload, so a four-week month with no deload asked for still got one. */
   ok("the last week of the month is not a deload by default", m1.program.weeks[3].phase === "build");
 
-  const m2 = await storeM.addMonth(m1.program.programId, m1.program.version);
-  ok("another month can be added", m2.ok && m2.added === 4);
+  const m2 = await storeM.addBlock(m1.program.programId, m1.program.version, {});
+  ok("another block can be added", m2.ok && m2.added === 4);
   ok("the program is now eight weeks", m2.program.weeks.length === 8);
   ok(
     "the numbering keeps running rather than restarting",
@@ -432,13 +432,68 @@ async function main() {
      change — 28 flags for nothing, which is how a flag stops meaning anything. */
   ok("adding a month raises no change flags", Object.keys(m2.program.clientUnreadDays || {}).length === 0);
 
-  const stale = await storeM.addMonth(m1.program.programId, m1.program.version);
+  const stale = await storeM.addBlock(m1.program.programId, m1.program.version, {});
   ok("a stale add is refused, not applied twice", !stale.ok && stale.code === "VERSION_CONFLICT");
 
-  /* Without an intake — the legacy athlete path — the old rule still stands, so that
+  /* ---------------------------------------------------------------------
+   * Blocks: what the owner plans, approves and sends.
+   *
+   * Nothing reaches the client until he approves — block ONE included. That is the
+   * owner's rule from 2026-09-01, and it is the reason this gate exists at all.
+   * ------------------------------------------------------------------------- */
+  ok("a new program's first block is not approved", m1.program.blocks[0].approvedAt === null);
+  ok("so the client can see nothing of it", Store.approvedWeekCount(m1.program) === 0);
+  ok("the second block is a block of its own", m2.program.blocks.length === 2);
+  ok("it starts where the first ended", m2.program.blocks[1].startWeek === 5);
+  ok("and it is not approved either", m2.program.blocks[1].approvedAt === null);
+  ok("the first block is untouched by the second", m2.program.blocks[0].weekCount === 4);
+
+  const approved1 = await storeM.approveBlock(m2.program.programId, m2.program.version, 1);
+  ok("approving block one sends it", approved1.ok && approved1.approvedBlock === 1);
+  ok("four weeks are now visible", Store.approvedWeekCount(approved1.program) === 4);
+  ok("but not the second block's", Store.approvedWeekCount(approved1.program) < approved1.program.weeks.length);
+
+  const again = await storeM.approveBlock(approved1.program.programId, approved1.program.version, 1);
+  ok("approving it twice is refused rather than pretended", !again.ok && again.code === "NOTHING_TO_APPROVE");
+
+  const approved2 = await storeM.approveBlock(approved1.program.programId, approved1.program.version, 2);
+  ok("approving the second sends the rest", approved2.ok && Store.approvedWeekCount(approved2.program) === 8);
+
+  /* A new block arrives as the owner's own to-do list. */
+  const restIntake = {
+    clientName: "S", scheduleMode: "weekly_schedule", includeRestDays: true,
+    restDays: { fri: true, sat: true }, sessionMinutes: 60, population: "p",
+  };
+  const ioB = fakeStorage();
+  const storeB = Store.createProgramStore(ioB);
+  const withRest = await storeB.createProgram({ clientName: "S", weekCount: 4, intake: restIntake });
+  ok("a training day is marked unreviewed", withRest.program.weeks[0].days.sun.ownerUnreviewed === true);
+  ok("a rest day is not — there is nothing to write on it", withRest.program.weeks[0].days.fri.ownerUnreviewed === undefined);
+  const reviewedOne = await storeB.updateProgram(
+    withRest.program.programId,
+    withRest.program.version,
+    function (draft) { return draft; },
+    { actor: "owner", clearReviewed: ["w1:sun"] }
+  );
+  ok("opening the day takes it off the list", reviewedOne.program.weeks[0].days.sun.ownerUnreviewed === undefined);
+  ok("and leaves the others on it", reviewedOne.program.weeks[0].days.mon.ownerUnreviewed === true);
+
+  /* A program written before blocks existed keeps working, and keeps being visible. */
+  const preBlocks = { programId: "p_old", version: 3, createdAt: "2026-08-01T00:00:00.000Z",
+    weeks: [1, 2, 3, 4].map(function (w) {
+      const days = {};
+      for (const d of Store.DAY_KEYS) days[d] = { parts: [] };
+      return { weekIndex: w, days: days };
+    }) };
+  Store.normalizeBlocks(preBlocks);
+  ok("an old program gets a block", preBlocks.blocks.length === 1 && preBlocks.blocks[0].weekCount === 4);
+  ok("and it is already sent — those clients are reading it today", !!preBlocks.blocks[0].approvedAt);
+  ok("so nothing of theirs disappears", Store.approvedWeekCount(preBlocks) === 4);
+
+  /* Without an intake — the legacyAthlete athlete path — the old rule still stands, so that
      path keeps behaving exactly as it did. */
-  const legacy = Store.emptyProgram({ programId: "p_legacy", weekCount: 5 });
-  ok("the legacy path still closes its block with a deload", legacy.weeks[4].phase === "deload");
+  const legacyAthlete = Store.emptyProgram({ programId: "p_legacyAthlete", weekCount: 5 });
+  ok("the legacyAthlete path still closes its block with a deload", legacyAthlete.weeks[4].phase === "deload");
 
   /* ---------------------------------------------------------------------
    * The mirror flag: the OWNER rewrites a day, the client has to see it.

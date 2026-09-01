@@ -213,7 +213,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
          Cross-cutting only — nothing about one person's capability (checklist 2.c). -->
     <div class="card" id="intakeCard" dir="ltr" style="text-align:left">
       <div class="row" style="margin-bottom:12px">
-        <h2 style="margin:0">New coach / studio client</h2>
+        <h2 style="margin:0" id="intakeTitle">New coach / studio client</h2>
         <span class="spacer meta" id="intakeStep"></span>
       </div>
 
@@ -343,15 +343,32 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       </div>
 
       <!-- 4 · population & limits -->
-      <div class="ipane" data-pane="population" hidden>
-        <label class="fld"><span>The place, the people, and the limits</span>
-          <textarea id="inPopulation" placeholder="Pre-army prep group, 17–19, mixed ability, 60-minute sessions including warm-up. Two members with knee history."></textarea></label>
+      <!-- 0 · additions and changes — only when planning the NEXT block. The first
+           intake has nothing to differ from. -->
+      <div class="ipane" data-pane="changes" hidden>
+        <label class="chk-row">
+          <input id="inHasChanges" type="checkbox">
+          <span>Additions and changes</span>
+        </label>
+        <p class="meta" style="margin:0 0 10px">Anything you want different in the next
+          block. The tabs beside this one open on what is true today — change what moved.</p>
+        <div id="inChangesWrap" class="sub-branch" hidden>
+          <label class="fld"><span>What is different this time</span>
+            <textarea id="inChanges" placeholder="Two members came back from injury. More pulling volume. Keep Fridays light."></textarea></label>
+        </div>
       </div>
 
-      <!-- 5 · goals -->
-      <div class="ipane" data-pane="goals" hidden>
-        <label class="fld"><span>Goals</span>
-          <textarea id="inGoals" placeholder="Army selection: 2000m run, pull-ups, load carry endurance."></textarea></label>
+      <!-- 4 · population, limits and goals — one tab (owner, 2026-09-01). Two tabs
+           were describing the same room twice. -->
+      <div class="ipane" data-pane="population" hidden>
+        <label class="chk-row" style="cursor:default">
+          <span>Session length (minutes, warm-up included)</span>
+          <input id="inMinutes" type="number" min="20" max="120" value=""
+                 class="inline-num" aria-label="Session length in minutes" placeholder="—">
+        </label>
+        <p class="meta" id="inMinutesHint" style="margin:0 0 12px"></p>
+        <label class="fld"><span>The place, the people, the limits — and what they are training for</span>
+          <textarea id="inPopulation" placeholder="Pre-army prep group, 17–19, mixed ability. Two members with knee history. Training for army selection: 2000m run, pull-ups, load carry endurance."></textarea></label>
       </div>
 
       <div class="row" style="margin-top:14px">
@@ -650,6 +667,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
   function setAdding(on) {
     S.adding = !!on;
     if (S.adding) {
+      S.blockMode = false;
       S.sel = null;
       S.program = null;
       iStep = 0;
@@ -658,6 +676,28 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     }
     renderViewMode();
     if (!S.adding) loadList();
+  }
+
+  /* Planning the next block: the same questionnaire, shorter, opened on the answers
+     this client already gave. The open client is kept — cancelling returns to it. */
+  function startNextBlock() {
+    if (!S.program) return;
+    S.blockMode = true;
+    S.adding = true;
+    iStep = 0;
+    el("inHasChanges").checked = false;
+    el("inChanges").value = "";
+    fillIntakeForm(S.program.intake || {});
+    renderIntakeTabs();
+    syncIntakeConditionals();
+    renderViewMode();
+  }
+
+  function leaveBlockMode() {
+    S.blockMode = false;
+    S.adding = false;
+    renderViewMode();
+    renderDetail();
   }
 
   function renderDetail() {
@@ -711,8 +751,9 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     html += '<div class="card"><div class="row" style="margin-bottom:10px">' +
       '<h2 style="margin:0">התוכנית</h2>' +
       '<span class="spacer meta">' + weeksLabel(p) + "</span>" +
-      '<button class="ghost sm" type="button" data-addmonth="1" ' +
-      'title="עוד ארבעה שבועות ריקים על אותו ציר זמן">+ חודש נוסף</button></div>';
+      '<button class="ghost sm" type="button" data-nextblock="1" ' +
+      'title="תחקור קצר, ואז ארבעה שבועות חדשים בהמשך לקיים">צור לבנה בהמשך</button></div>';
+    html += pendingBlockHtml(p);
     if (unread.length) {
       html += '<div class="banner warn">' + unread.length + ' ימים שהלקוח שינה ואתה עוד לא פתחת. פתח יום כדי לסמן שנקרא.</div>';
     }
@@ -776,6 +817,21 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
 
   /* What the owner has actually sold so far, and where the deload cadence sits — the
      two facts he needs before deciding to add another month. */
+  /* Which days are still on the owner's list. Derived from the days themselves, so
+     there is no second list that can disagree with them. */
+  function reviewTags() {
+    var out = {};
+    var weeks = (S.program && S.program.weeks) || [];
+    for (var i = 0; i < weeks.length; i++) {
+      var days = (weeks[i] && weeks[i].days) || {};
+      for (var d = 0; d < DAY_KEYS_LOCAL.length; d++) {
+        var k = DAY_KEYS_LOCAL[d];
+        if (days[k] && days[k].ownerUnreviewed === true) out["w" + (i + 1) + ":" + k] = true;
+      }
+    }
+    return out;
+  }
+
   function weeksLabel(p) {
     var weeks = ((p && p.weeks) || []).length;
     var months = Math.ceil(weeks / 4);
@@ -786,18 +842,45 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     );
   }
 
-  function addMonth() {
+  /* A block the owner has planned and not sent. Until he does, the client does not
+     know it exists — so the only place it is visible is right here. */
+  function pendingBlock(p) {
+    var blocks = (p && p.blocks) || [];
+    for (var i = blocks.length - 1; i >= 0; i--) {
+      if (blocks[i] && !blocks[i].approvedAt) return blocks[i];
+    }
+    return null;
+  }
+
+  function pendingBlockHtml(p) {
+    var b = pendingBlock(p);
+    if (!b) return "";
+    return (
+      '<div class="banner warn" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
+      "<span>לבנה " + b.blockIndex + " מוכנה אצלך · " + b.weekCount +
+      " שבועות · <strong>טרם נשלחה ללקוח</strong></span>" +
+      '<button class="sm" type="button" data-approve="' + b.blockIndex +
+      '" style="margin-inline-start:auto">אשר לבנה ושלח ללקוח</button></div>'
+    );
+  }
+
+  function approveBlock(blockIndex) {
     var p = S.program;
     if (!p) return;
-    if (!window.confirm("להוסיף עוד ארבעה שבועות ריקים לתוכנית של " + (p.clientName || "הלקוח") + "?")) return;
-    api({ action: "add_month", programId: p.programId, expectedVersion: p.version }).then(function (r) {
+    if (!window.confirm("לשלוח את לבנה " + blockIndex + " ל" + (p.clientName || "לקוח") + "? מרגע זה הוא רואה אותה ויכול לערוך.")) return;
+    api({
+      action: "approve_block",
+      programId: p.programId,
+      expectedVersion: p.version,
+      blockIndex: blockIndex,
+    }).then(function (r) {
       if (r.status === 409) { banner("warn", "מישהו שמר בינתיים. פותח מחדש."); openClient(p.programId); return; }
       if (r.status !== 200 || !r.body.ok) {
-        banner("bad", (r.body && r.body.error) || "לא הצלחתי להוסיף חודש.");
+        banner("bad", (r.body && r.body.error) || "לא הצלחתי לאשר את הלבנה.");
         return;
       }
       S.program = r.body.program;
-      banner("good", "נוספו " + r.body.added + " שבועות ריקים. עכשיו תכתוב בהם.");
+      banner("good", "לבנה " + r.body.approvedBlock + " נשלחה ללקוח.");
       renderDetail();
     });
   }
@@ -906,6 +989,11 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       unreadDays: p.unreadDays || {},
       dayModifiedLabel: 'שונה ע"י הלקוח',
       dayModifiedTitle: "הלקוח שינה את היום הזה",
+      /* The owner's own to-do list on a new block, in its own visual channel. */
+      reviewDays: reviewTags(),
+      extraDayFlagField: "ownerUnreviewed",
+      extraDayFlagLabel: "לא עברת על זה",
+      extraDayFlagTitle: "יום אימון מלבנה חדשה שעוד לא פתחת",
       selectedDays: selected,
       /* The calendar passes the click event through, which is what makes Ctrl-click
          additive rather than just moving the focus. */
@@ -1317,7 +1405,8 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       return;
     }
     if (g("data-savemeta")) { saveMeta(); return; }
-    if (g("data-addmonth")) { addMonth(); return; }
+    if (g("data-nextblock")) { startNextBlock(); return; }
+    if (g("data-approve")) { approveBlock(parseInt(g("data-approve"), 10) || 0); return; }
 
     if (g("data-rename")) {
       var name = window.prompt("שם הלקוח:", S.program.clientName || "");
@@ -1385,8 +1474,26 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
 
   var iStep = 0;
 
+  /**
+   * The questionnaire has two modes and ONE implementation.
+   *
+   * A new client answers all of it. Planning the next block for an existing client
+   * answers a shorter version: the payment details do not change between blocks, but
+   * the equipment can (a rig arrives, a rower breaks), the schedule can, and so can who
+   * is in the room. The owner's list, 2026-09-01.
+   *
+   * Building this as a second little form would have produced a second schedule tab
+   * that drifts from the first. It is the same tabs, filtered.
+   */
   function intakeDefs() {
-    return (window.CLIENT_INTAKE && window.CLIENT_INTAKE.TABS) || [];
+    var tabs = (window.CLIENT_INTAKE && window.CLIENT_INTAKE.TABS) || [];
+    if (!S.blockMode) return tabs;
+    var keep = ["equipment", "schedule", "population"];
+    return [{ id: "changes", label: "Additions & changes" }].concat(
+      tabs.filter(function (t) {
+        return keep.indexOf(t.id) >= 0;
+      })
+    );
   }
 
   function readIntakeForm() {
@@ -1427,9 +1534,57 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       dayEmphasis: emphasis,
       deloadWeek: el("inDeload").checked,
       deloadEveryWeeks: Number(el("inDeloadAt").value) || 0,
+      sessionMinutes: Number(el("inMinutes").value) || 0,
       population: String(el("inPopulation").value || ""),
-      goals: String(el("inGoals").value || ""),
     };
+  }
+
+  /**
+   * Put an existing intake back INTO the form. The mini-intake opens on what is true
+   * today — that is the whole point of showing equipment and the schedule again — so
+   * every field has to be able to travel in both directions.
+   */
+  function fillIntakeForm(intake) {
+    var CI = window.CLIENT_INTAKE;
+    if (!CI || !intake) return;
+    var v = CI.normalizeIntake(intake);
+    el("inName").value = v.clientName || "";
+    el("inAmount").value = v.monthlyAmount || "";
+    el("inMethod").value = v.paymentMethod || "";
+
+    el("inEquipOtherOn").checked = v.equipment === "other";
+    el("inEquipGym").checked = v.equipment !== "other";
+    el("inEquipOther").value = v.equipmentOther || "";
+
+    el("inSchedCount").checked = v.scheduleMode === "session_count";
+    el("inSchedWeekly").checked = v.scheduleMode === "weekly_schedule";
+    el("inSessions").value = v.sessionsPerWeek || "";
+    el("inSessionsDiffer").checked = v.sessionsDiffer === true;
+    el("inRestDays").checked = v.includeRestDays === true;
+    el("inEmphasis").checked = v.dayEmphasisEnabled === true;
+    el("inDeload").checked = v.deloadWeek === true;
+    el("inDeloadAt").value = v.deloadEveryWeeks || "";
+    el("inMinutes").value = v.sessionMinutes || "";
+    /* The goals tab is gone; a client answered before the merge keeps their words. */
+    el("inPopulation").value = CI.mergedPopulation ? CI.mergedPopulation(v) : v.population || "";
+
+    CI.DAY_KEYS.forEach(function (k) {
+      var rest = el("inRest-" + k);
+      if (rest) rest.checked = !!(v.restDays && v.restDays[k]);
+      var em = el("inEm-" + k);
+      var txt = el("inEmTxt-" + k);
+      if (em) em.checked = !!(v.dayEmphasis && v.dayEmphasis[k]);
+      if (txt) txt.value = (v.dayEmphasis && v.dayEmphasis[k]) || "";
+    });
+    syncIntakeConditionals();
+    CI.DAY_KEYS.forEach(function (k) { syncEmphasisRow(k); });
+    if (v.sessionsDiffer) {
+      buildSessionBoxes();
+      (v.sessionTypes || []).forEach(function (t, i) {
+        var box = el("inSessType-" + i);
+        if (box) box.value = t || "";
+      });
+    }
   }
 
   /* One box per session, rebuilt when the count changes so the two never disagree.
@@ -1465,6 +1620,13 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       if (pane) pane.hidden = i !== iStep;
     });
     el("intakeStep").textContent = "Step " + (iStep + 1) + " of " + tabs.length;
+    var title = el("intakeTitle");
+    if (title) {
+      title.textContent = S.blockMode
+        ? "לבנה בהמשך · " + ((S.program && S.program.clientName) || "")
+        : "New coach / studio client";
+    }
+    el("createBtn").textContent = S.blockMode ? "צור לבנה" : "Create program";
     el("iPrev").disabled = iStep === 0;
     var last = iStep === tabs.length - 1;
     el("iNext").hidden = last;
@@ -1525,12 +1687,20 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     if (differ) buildSessionBoxes();
 
     /* weekly_schedule → rest days, then standing per-day emphases. */
+    if (el("inChangesWrap")) el("inChangesWrap").hidden = !el("inHasChanges").checked;
     var restOn = el("inRestDays").checked;
     el("inRestDaysWrap").hidden = !restOn;
     el("inRestHint").textContent = restOn
       ? "Rest days are part of the plan — say which days they are."
       : "Rest days are not planned — the coach decides. (Default.)";
     el("inWeekDays").hidden = !el("inEmphasis").checked;
+
+    /* Said plainly, because "60" and "60 including the warm-up" are two different
+       sessions and only one of them is what the room actually has. */
+    var mins = parseInt(el("inMinutes").value, 10) || 0;
+    el("inMinutesHint").textContent = !mins
+      ? "20–120 minutes. The warm-up is inside this number, not on top of it."
+      : mins + " minutes on the floor, warm-up included.";
 
     /* The deload is a cadence over a monthly product, so the consequence worth
        spelling out is WHERE it lands — a 5 means this month is four build weeks and
@@ -1606,10 +1776,41 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     el("createErr").textContent = "";
     var CI = window.CLIENT_INTAKE;
     var form = readIntakeForm();
+    if (S.blockMode) {
+      /* The next block carries the client's own name and payment terms — those tabs are
+         not shown, so they come from the program rather than from an empty form. */
+      form.clientName = S.program.clientName || form.clientName;
+      form.monthlyAmount = S.program.monthlyAmount || 0;
+      form.paymentMethod = S.program.paymentMethod || "";
+    }
     var problems = CI ? CI.validateIntake(form) : [];
     if (problems.length) { el("createErr").textContent = problems.join(" "); return; }
     var btn = el("createBtn");
     btn.disabled = true;
+    if (S.blockMode) {
+      api({
+        action: "add_block",
+        programId: S.program.programId,
+        expectedVersion: S.program.version,
+        intake: form,
+        notes: el("inHasChanges").checked ? String(el("inChanges").value || "") : "",
+      }).then(function (r) {
+        btn.disabled = false;
+        if (r.status === 409) {
+          el("createErr").textContent = "מישהו שמר בינתיים. סגור ופתח את הלקוח מחדש.";
+          return;
+        }
+        if (r.status !== 200 || !r.body.ok) {
+          el("createErr").textContent = (r.body && r.body.error) || "לא הצלחתי ליצור לבנה.";
+          return;
+        }
+        S.program = r.body.program;
+        banner("good", "לבנה " + r.body.blockIndex + " נוצרה — " + r.body.added +
+          " שבועות ריקים. היא לא אצל הלקוח עד שתאשר אותה.");
+        leaveBlockMode();
+      });
+      return;
+    }
     api({
       action: "create", clientKind: "coach", intake: form,
       /* Anchor the block to this week's Sunday (Israel), so the calendar shows real
@@ -1644,7 +1845,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     bindPickPair("equip");
     bindPickPair("sched");
     bindCalGestures();
-    ["inSessionsDiffer", "inRestDays", "inEmphasis", "inDeload"]
+    ["inSessionsDiffer", "inRestDays", "inEmphasis", "inDeload", "inHasChanges"]
       .forEach(function (id) {
         var n = el(id);
         if (n) n.addEventListener("change", syncIntakeConditionals);
@@ -1657,6 +1858,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     /* The deload number changes what the line underneath promises, so it has to
        repaint while he types — not only when the box loses focus. */
     el("inDeloadAt").addEventListener("input", syncIntakeConditionals);
+    el("inMinutes").addEventListener("input", syncIntakeConditionals);
     /* Ticking a weekday reveals its note. Delegated, because the rows are rebuilt. */
     el("inWeekDays").addEventListener("change", function (ev) {
       var k = ev.target && ev.target.getAttribute && ev.target.getAttribute("data-emph");
@@ -1685,6 +1887,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     });
     el("iCancel").addEventListener("click", function () {
       if (!window.confirm("לצאת מהתחקור? מה שהוקלד יימחק.")) return;
+      if (S.blockMode) { leaveBlockMode(); return; }
       setAdding(false);
     });
     el("rebuildBtn").addEventListener("click", function () {

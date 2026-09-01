@@ -38,6 +38,16 @@ const Access = require("../lib/client-access.js");
 const Payload = require("../lib/client-view-payload.js");
 const Terms = require("../lib/client-terms.js");
 const Intake = require("../lib/client-intake.js");
+const Renewal = require("../lib/client-renewal.js");
+
+/** Today, on the owner's calendar — the blocks are planned in Israel time. */
+function israelTodayIso() {
+  try {
+    return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jerusalem" }).format(new Date());
+  } catch (e) {
+    return new Date().toISOString().slice(0, 10);
+  }
+}
 const { sendAppMail, hasMailProvider } = require("../lib/send-app-mail.js");
 const { resolveAppMailTo } = require("../lib/app-mail.js");
 
@@ -132,6 +142,16 @@ async function ownerHandler(req, res, body) {
       const n = Number(r && r.monthlyAmount);
       return sum + (Number.isFinite(n) ? n : 0);
     }, 0);
+    /* The reminder rides on the page the owner opens anyway. It is bounded — the index
+       says who is due, so this costs nothing on a normal load — and it is stamped per
+       block, so it cannot repeat. A failure here must never cost him the list, which is
+       what he actually came for. */
+    let renewal = { checked: 0, mailed: 0 };
+    try {
+      renewal = await runRenewalCheck(store, israelTodayIso(), 5);
+    } catch (e) {
+      renewal = { checked: 0, mailed: 0, error: String((e && e.message) || e) };
+    }
     return res.status(200).json({
       ok: true,
       rows: rows,
@@ -139,7 +159,13 @@ async function ownerHandler(req, res, body) {
       unreadTotal: rows.reduce(function (s, r) {
         return s + (Number(r && r.unreadCount) || 0);
       }, 0),
+      renewal: renewal,
     });
+  }
+
+  if (action === "renewal_check") {
+    const result = await runRenewalCheck(store, String(body.todayIso || israelTodayIso()), 20);
+    return res.status(200).json({ ok: true, renewal: result });
   }
 
   if (action === "rebuild_index") {
@@ -225,7 +251,11 @@ async function ownerHandler(req, res, body) {
         }
         return draft;
       },
-      { actor: "owner", clearUnread: Array.isArray(body.clearUnread) ? body.clearUnread : undefined }
+      {
+        actor: "owner",
+        clearUnread: Array.isArray(body.clearUnread) ? body.clearUnread : undefined,
+        clearReviewed: Array.isArray(body.clearUnread) ? body.clearUnread : undefined,
+      }
     );
     if (!result.ok) {
       const status = result.code === "VERSION_CONFLICT" ? 409 : result.code === "NOT_FOUND" ? 404 : 400;
@@ -234,19 +264,49 @@ async function ownerHandler(req, res, body) {
     return res.status(200).json({ ok: true, program: result.program, version: result.version });
   }
 
-  /* Another month sold. Four more weeks on the same timeline, so the deload cadence
-   * carries over the month boundary instead of restarting (owner, 2026-09-01).
-   * Empty weeks — this endpoint has no route to a provider and creates no content. */
-  if (action === "add_month") {
-    const result = await store.addMonth(programId, Number(body.expectedVersion));
+  /* The next block. Four more weeks on the same timeline, so the deload cadence carries
+   * over the boundary instead of restarting (owner, 2026-09-01). It carries the answers
+   * the owner just revised in the mini-intake and his notes for it, and it arrives
+   * UNAPPROVED — the client sees nothing of it until it is sent.
+   * Empty weeks: this endpoint has no route to a provider and creates no content. */
+  if (action === "add_block") {
+    const result = await store.addBlock(programId, Number(body.expectedVersion), {
+      intake: body.intake && typeof body.intake === "object" ? Intake.normalizeIntake(body.intake) : null,
+      notes: body.notes,
+    });
     if (!result.ok) {
       const status =
         result.code === "VERSION_CONFLICT" ? 409 : result.code === "NOT_FOUND" ? 404 : 400;
       return res.status(status).json(Object.assign({ ok: false }, result));
     }
-    return res
-      .status(200)
-      .json({ ok: true, program: result.program, version: result.version, added: result.added });
+    return res.status(200).json({
+      ok: true,
+      program: result.program,
+      version: result.version,
+      added: result.added,
+      blockIndex: result.blockIndex,
+    });
+  }
+
+  /* Send a block to the client. Block ONE goes through this too: creating a client
+   * hands them nothing until the owner presses it. */
+  if (action === "approve_block") {
+    const result = await store.approveBlock(
+      programId,
+      Number(body.expectedVersion),
+      body.blockIndex
+    );
+    if (!result.ok) {
+      const status =
+        result.code === "VERSION_CONFLICT" ? 409 : result.code === "NOT_FOUND" ? 404 : 400;
+      return res.status(status).json(Object.assign({ ok: false }, result));
+    }
+    return res.status(200).json({
+      ok: true,
+      program: result.program,
+      version: result.version,
+      approvedBlock: result.approvedBlock,
+    });
   }
 
   /* Opening a changed day is what clears its flag — no extra click (a.2.2). */
@@ -259,7 +319,9 @@ async function ownerHandler(req, res, body) {
       function (draft) {
         return draft;
       },
-      { actor: "owner", clearUnread: tags }
+      /* Opening a day is reviewing it: the client's flag and the owner's own
+         "not been over this yet" mark come down in the same write. */
+      { actor: "owner", clearUnread: tags, clearReviewed: tags }
     );
     if (!result.ok) {
       const status = result.code === "VERSION_CONFLICT" ? 409 : 400;
@@ -329,6 +391,54 @@ async function ownerHandler(req, res, body) {
  * No client email or phone exists to report — by design (POL-029). What the owner gets
  * is who, which program, which terms, and a link straight into the back office.
  */
+/**
+ * The reminder the owner asked for: a week before a client's block ends, one mail that
+ * says who and points straight at their page. One per block — the stamp lives on the
+ * block itself, so opening the clients page ten times sends nothing extra.
+ *
+ * The scan is driven off the index (which carries each client's block end date), so a
+ * page load costs one small read plus a full read only for the clients actually due.
+ */
+async function runRenewalCheck(store, todayIso, limit) {
+  const out = { checked: 0, mailed: 0, failures: [] };
+  if (!hasMailProvider()) return Object.assign(out, { skipped: "no_mail_provider" });
+  const to = resolveAppMailTo();
+  if (!to) return Object.assign(out, { skipped: "no_recipient" });
+
+  const idx = await store.readIndex();
+  const rows = (idx && idx.ok && idx.index && idx.index.rows) || [];
+  const candidates = rows.filter(function (r) {
+    if (!r || r.renewalMailed || !r.blockEndIso) return false;
+    const days = Math.round((Date.parse(r.blockEndIso + "T00:00:00Z") - Date.parse(todayIso + "T00:00:00Z")) / 86400000);
+    return Number.isFinite(days) && days <= Renewal.NOTICE_DAYS;
+  });
+
+  for (const row of candidates.slice(0, limit || 5)) {
+    out.checked++;
+    const read = await store.readProgram(row.programId);
+    if (!read.ok) { out.failures.push(row.programId); continue; }
+    const verdict = Renewal.renewalDue(read.program, todayIso);
+    if (!verdict.due) continue;
+    const mail = Renewal.renewalMail(
+      read.program,
+      verdict,
+      "https://arick-t.github.io/mama-wod/admin-clients.html?program=" +
+        encodeURIComponent(read.program.programId)
+    );
+    try {
+      await sendAppMail({ to: to, subject: mail.subject, text: mail.text });
+    } catch (e) {
+      out.failures.push(row.programId);
+      continue;
+    }
+    /* Stamped only after the mail actually left: a failed send must be retried
+       tomorrow, not swallowed. */
+    await store.stampRenewalMailed(row.programId, read.program.version, verdict.block.blockIndex);
+    out.mailed++;
+  }
+  return out;
+}
+
 async function notifyOwnerOfSignature(program, signature, clientName) {
   if (!hasMailProvider()) return { sent: false, reason: "no_mail_provider" };
   const to = resolveAppMailTo();

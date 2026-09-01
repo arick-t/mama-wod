@@ -38,6 +38,10 @@ function loadedProgram() {
   p.accessCode = "123456";
   p.devices = [{ id: "d1" }];
   p.email = "coach@example.com";
+  /* A program the client can actually read is one the owner has SENT. Since 2026-09-01
+     nothing crosses this boundary until he approves the block — block one included — so
+     a fixture that skips the approval is a fixture of a program nobody can see. */
+  p.blocks[0].approvedAt = "2026-08-31T00:00:00.000Z";
   return p;
 }
 
@@ -144,6 +148,8 @@ ok("the client cannot smuggle owner notes into a part", sneakyJson.indexOf("owne
 /* --- applying an edit ---------------------------------------------------- */
 
 const draft = Store.emptyProgram({ clientName: "Coach A" });
+/* Sent to the client, or nothing of it crosses the boundary at all. */
+draft.blocks[0].approvedAt = "2026-08-31T00:00:00.000Z";
 const parsed = P.parseClientEdit({
   expectedVersion: 1,
   edits: [
@@ -182,6 +188,35 @@ ok("stripSensitive removes the unread queue", stripped.unreadDays === undefined)
 
 const src = require("fs").readFileSync(require("path").join(__dirname, "..", "lib", "client-view-payload.js"), "utf8");
 ok("the boundary makes no network calls", !/\bfetch\s*\(/.test(src));
+
+/* --- a block the owner has not sent does not exist for the client --- */
+
+const unsent = loadedProgram();
+unsent.blocks[0].approvedAt = null;
+const unsentOut = P.programForClient(unsent);
+ok("an unapproved block sends no weeks at all", (unsentOut.weeks || []).length === 0);
+ok("not even an empty shell of one", JSON.stringify(unsentOut).indexOf("Back squat") < 0);
+ok("and the client is not told one is coming", unsentOut.blocks === undefined);
+
+/* Two blocks, one sent: the client reads the first and knows nothing of the second. */
+const halfSent = loadedProgram();
+halfSent.weeks = halfSent.weeks.concat(
+  [6, 7, 8, 9].map(function (w) {
+    return Store.emptyWeek(w, null, false);
+  })
+);
+halfSent.blocks.push({ blockIndex: 2, startWeek: 6, weekCount: 4, approvedAt: null });
+const halfOut = P.programForClient(halfSent);
+ok("the sent block crosses in full", halfOut.weeks.length === 5);
+ok("the planned one does not cross at all", halfOut.weeks.length < halfSent.weeks.length);
+
+/* The owner's own to-do list is his. */
+const withReview = loadedProgram();
+withReview.weeks[0].days.tue.ownerUnreviewed = true;
+ok(
+  "\"I have not been over this\" never reaches the client",
+  P.programForClient(withReview).weeks[0].days.tue.ownerUnreviewed === undefined
+);
 
 /* --- the coach's change flag crosses, the owner's queue does not ---- */
 
