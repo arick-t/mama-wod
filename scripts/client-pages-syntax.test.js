@@ -153,4 +153,42 @@ ok("it styles the day card", css.indexOf(".pprog-day-card") >= 0);
 const cssRules = css.slice(css.indexOf("*/") + 2);
 ok("it drags in no admin-only intake scoping", cssRules.indexOf("#intake-fixed") < 0);
 
+/* ------------------------------------------------------------------------
+ * A library handle used in a function that never took one.
+ *
+ * This is not hypothetical: brickOpts() in client.html read "D.waIconSvg" while D was
+ * a local of renderDays(), so building the options threw and the client's page drew
+ * NOTHING — a blank panel with a print link on it. A parser cannot see that, and no
+ * other test executes these pages, so it is checked statically here: any function body
+ * that reaches for one of the library handles must also declare it.
+ * --------------------------------------------------------------------- */
+const HANDLES = ["D", "RT", "CI"];
+for (const page of ["admin-clients.html", "client.html"]) {
+  const src = fs.readFileSync(path.join(ROOT, page), "utf8");
+  for (const m of src.matchAll(/\n  function ([A-Za-z0-9_]+)\(([^)]*)\)\s*\{/g)) {
+    const name = m[1];
+    const args = m[2];
+    /* Read the body by brace depth, starting at the opening brace. */
+    let i = src.indexOf("{", m.index + m[0].length - 1);
+    let depth = 0;
+    let end = i;
+    for (; end < src.length; end++) {
+      if (src[end] === "{") depth++;
+      else if (src[end] === "}") { depth--; if (!depth) break; }
+    }
+    const body = src.slice(i, end + 1);
+    for (const h of HANDLES) {
+      /* A handle declared once at page level (two-space indent, inside the IIFE) is
+         in scope everywhere. Only the ones taken per function have to be taken. */
+      if (new RegExp("\\n  var " + h + "\\s*=").test(src)) continue;
+      const uses = new RegExp("[^A-Za-z0-9_.$]" + h + "\\s*(\\.|&&|\\?|\\|\\|)").test(body);
+      if (!uses) continue;
+      const declares =
+        new RegExp("var\\s+" + h + "\\s*=").test(body) ||
+        new RegExp("(^|[^A-Za-z0-9_])" + h + "([^A-Za-z0-9_]|$)").test(args);
+      ok(page + " · " + name + "() takes its own " + h, declares);
+    }
+  }
+}
+
 console.log("All client page syntax checks passed (" + passed + " assertions).");

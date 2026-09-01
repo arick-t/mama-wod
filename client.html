@@ -515,6 +515,10 @@ button.ghost:hover{color:var(--text)}
   }
 
   function brickOpts() {
+    /* The library handle has to be taken HERE. It was read from renderDays' local D,
+       which does not exist in this scope — the whole page rendered as a blank panel
+       because building the options threw before anything was drawn. */
+    var D = pprogLib() || {};
     var selected = (state.selected || []).slice();
     var widthStatus = "";
     if (selected.length >= 2) {
