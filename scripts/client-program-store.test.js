@@ -427,6 +427,11 @@ async function main() {
   ok("the new weeks are empty — the owner writes them", m2.program.weeks[4].days.sun.parts.length === 0);
   ok("adding a month bumps the version like any other write", m2.program.version === m1.program.version + 1);
 
+  /* Selling another month appends 28 empty days. Every one of them would have arrived
+     at the client flagged "your coach changed this" if an empty day counted as a
+     change — 28 flags for nothing, which is how a flag stops meaning anything. */
+  ok("adding a month raises no change flags", Object.keys(m2.program.clientUnreadDays || {}).length === 0);
+
   const stale = await storeM.addMonth(m1.program.programId, m1.program.version);
   ok("a stale add is refused, not applied twice", !stale.ok && stale.code === "VERSION_CONFLICT");
 
@@ -434,6 +439,73 @@ async function main() {
      path keeps behaving exactly as it did. */
   const legacy = Store.emptyProgram({ programId: "p_legacy", weekCount: 5 });
   ok("the legacy path still closes its block with a deload", legacy.weeks[4].phase === "deload");
+
+  /* ---------------------------------------------------------------------
+   * The mirror flag: the OWNER rewrites a day, the client has to see it.
+   *
+   * Until now the flag only ran one way — the client edited and the owner was told.
+   * A client who is never told about a change will not do it (owner, 2026-09-01).
+   * The owner's save replaces the weeks wholesale, so the flag is raised from a
+   * comparison of what the day actually says, not from a report we would have to
+   * trust the page to send.
+   * ------------------------------------------------------------------------- */
+  const ioF = fakeStorage();
+  const storeF = Store.createProgramStore(ioF);
+  const cF = await storeF.createProgram({ clientName: "Flags", weekCount: 4 });
+  const pidF = cF.program.programId;
+
+  const ownerWrote = await storeF.updateProgram(pidF, cF.program.version, function (draft) {
+    draft.weeks[0].days.mon.parts = [{ id: "a", title: "Part A", lines: ["Back squat 5x5"] }];
+    return draft;
+  }, { actor: "owner" });
+  ok("the owner's write raises the client's flag", ownerWrote.ok && ownerWrote.program.clientUnreadDays["w1:mon"] !== undefined);
+  ok("and the day itself carries it", ownerWrote.program.weeks[0].days.mon.coachModified === true);
+  ok("a day he did not touch stays clean", ownerWrote.program.clientUnreadDays["w1:tue"] === undefined);
+  /* The owner's own inbox is for the CLIENT's edits — his own save must not fill it. */
+  ok("the owner does not flag himself", Object.keys(ownerWrote.program.unreadDays).length === 0);
+
+  /* Saving again without changing anything must not re-flag: a flag that appears on
+     every save is a flag nobody reads. */
+  const ownerResaved = await storeF.updateProgram(pidF, ownerWrote.program.version, function (draft) {
+    draft.clientName = "Flags";
+    return draft;
+  }, { actor: "owner" });
+  const clearedFirst = await storeF.updateProgram(pidF, ownerResaved.program.version, function (draft) {
+    return draft;
+  }, { actor: "client", clearClientUnread: ["w1:mon"] });
+  ok("opening the day clears the flag", clearedFirst.ok && clearedFirst.program.clientUnreadDays["w1:mon"] === undefined);
+  ok("and clears it on the day too", clearedFirst.program.weeks[0].days.mon.coachModified === undefined);
+
+  const untouched = await storeF.updateProgram(pidF, clearedFirst.program.version, function (draft) {
+    draft.clientName = "Flags";
+    return draft;
+  }, { actor: "owner" });
+  ok("a save that changes no training raises nothing", Object.keys(untouched.program.clientUnreadDays).length === 0);
+
+  /* A client editing a day has plainly read it. */
+  const reWrote = await storeF.updateProgram(pidF, untouched.program.version, function (draft) {
+    draft.weeks[0].days.tue.parts = [{ id: "b", title: "Part A", lines: ["Row 2k"] }];
+    return draft;
+  }, { actor: "owner" });
+  ok("the owner flags the second day", reWrote.program.weeks[0].days.tue.coachModified === true);
+  const clientEdit = await storeF.updateProgram(pidF, reWrote.program.version, function (draft) {
+    draft.weeks[0].days.tue.parts = [{ id: "b", title: "Part A", lines: ["Row 1k"] }];
+    return draft;
+  }, { actor: "client", touchedDays: ["w1:tue"] });
+  ok("a client editing a day clears their own flag on it", clientEdit.program.weeks[0].days.tue.coachModified === undefined);
+  ok("and raises the owner's instead", clientEdit.program.unreadDays["w1:tue"] !== undefined);
+
+  /* The comparison must read the content, not the bookkeeping. */
+  const tags = Store.changedDayTags(
+    { weeks: [{ days: { mon: { parts: [{ title: "A", lines: ["x"] }] } } }] },
+    { weeks: [{ days: { mon: { parts: [{ title: "A", lines: ["x"] }], modified: true } } }] }
+  );
+  ok("a flag alone is not a change", tags.length === 0);
+  const tags2 = Store.changedDayTags(
+    { weeks: [{ overview: [{ day: "mon", focus: "Rest" }], days: { mon: { parts: [] } } }] },
+    { weeks: [{ overview: [{ day: "mon", focus: "Strength" }], days: { mon: { parts: [] } } }] }
+  );
+  ok("turning a rest day into a session IS a change", tags2.join(",") === "w1:mon");
 
   const src = require("fs").readFileSync(require("path").join(__dirname, "..", "lib", "client-program-store.js"), "utf8");
   ok("store makes no network calls", !/\bfetch\s*\(/.test(src));

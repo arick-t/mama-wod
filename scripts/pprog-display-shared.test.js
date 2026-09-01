@@ -115,4 +115,73 @@ ok("coach updated banner", /pprog-coach-updated-banner/.test(PprogDisplay.render
 ok("coach updated banner when notice set", /המאמן עדכן את האימון/.test(PprogDisplay.renderDayCardHtml(block, Object.assign({}, block.weeks[0], { days: Object.assign({}, block.weeks[0].days, { mon: Object.assign({}, block.weeks[0].days.mon, { coachUpdatedNotice: "המאמן עדכן את האימון" }) }) }), 0, "mon", { readOnly: true, showFooter: false, israelTodayIso: block.blockStart })));
 ok("default cal has no admin done dots", !/pprog-done-dot/.test(PprogDisplay.renderCalHtml(block, 0, "mon", { calMode: "month" })));
 
+/* --- one icon, one share format, one flag with two directions ------- */
+
+ok("the WhatsApp mark lives in the library", typeof PprogDisplay.waIconSvg === "function" && PprogDisplay.waIconSvg().indexOf("<svg") === 0);
+ok("so does the shared-day message", typeof PprogDisplay.dayShareText === "function");
+
+const shareBlock = {
+  blockStart: "2026-08-30",
+  weeks: [
+    {
+      weekIndex: 1,
+      overview: [{ day: "mon", focus: "Strength" }],
+      days: { mon: { parts: [{ title: "Part A", lines: ["Every 2:00 x 5", "1 Clean"] }] } },
+    },
+  ],
+};
+const shared = PprogDisplay.dayShareText(shareBlock, 0, "mon", { title: "DUCK-WOD", footer: "Train with DUCK-WOD" });
+ok("the message names the day", /Mon . 31 August/.test(shared));
+ok("it carries the focus", /Strength/.test(shared));
+ok("it carries the part title", /Part A/.test(shared));
+ok("work lines are bulleted", /. 1 Clean/.test(shared));
+ok("a day with nothing in it shares nothing", PprogDisplay.dayShareText(shareBlock, 0, "tue", {}).indexOf("Part") < 0);
+
+/* The flag field is the page's choice: the owner watches the client's edits, the
+   client watches the coach's. Same renderer, two directions. */
+const coachSide = PprogDisplay.renderDayCardHtml(shareBlock, shareBlock.weeks[0], 0, "mon", {
+  allowEdit: true,
+  dayModifiedField: "coachModified",
+  dayModifiedLabel: "COACH UPDATED",
+});
+ok("no flag when the field is not set", coachSide.indexOf("COACH UPDATED") < 0);
+
+const flaggedBlock = JSON.parse(JSON.stringify(shareBlock));
+flaggedBlock.weeks[0].days.mon.coachModified = true;
+const flagged = PprogDisplay.renderDayCardHtml(flaggedBlock, flaggedBlock.weeks[0], 0, "mon", {
+  allowEdit: true,
+  dayModifiedField: "coachModified",
+  dayModifiedLabel: "COACH UPDATED",
+});
+ok("the named field raises the flag", flagged.indexOf("COACH UPDATED") >= 0);
+
+/* A page can put its own control beside the date, but only while editing. */
+const withAction = PprogDisplay.renderDayCardHtml(shareBlock, shareBlock.weeks[0], 0, "mon", {
+  allowEdit: true,
+  editing: true,
+  editDraft: { wi: 0, day: "mon", parts: [] },
+  editHeaderActionsHtml: '<button class="rest-inline">Rest day</button>',
+});
+ok("the header slot renders while editing", withAction.indexOf("rest-inline") >= 0);
+const noAction = PprogDisplay.renderDayCardHtml(shareBlock, shareBlock.weeks[0], 0, "mon", {
+  allowEdit: true,
+  editHeaderActionsHtml: '<button class="rest-inline">Rest day</button>',
+});
+ok("and not when the day is merely being read", noAction.indexOf("rest-inline") < 0);
+
+/* Sharing on an editable surface is an explicit opt-in, never a widened condition. */
+const noShare = PprogDisplay.renderDayCardHtml(shareBlock, shareBlock.weeks[0], 0, "mon", {
+  allowEdit: true,
+});
+ok("an editable card has no share button by default", noShare.indexOf("pprog-share-wa") < 0);
+const withShare = PprogDisplay.renderDayCardHtml(shareBlock, shareBlock.weeks[0], 0, "mon", {
+  allowEdit: true, showShare: true,
+});
+ok("showShare turns it on", withShare.indexOf("pprog-share-wa") >= 0);
+const editingShare = PprogDisplay.renderDayCardHtml(shareBlock, shareBlock.weeks[0], 0, "mon", {
+  allowEdit: true, showShare: true,
+  editing: true, editDraft: { wi: 0, day: "mon", parts: [] },
+});
+ok("it steps out of the way while editing", editingShare.indexOf("pprog-share-wa") < 0);
+
 console.log("All shared pprog-display checks passed.");

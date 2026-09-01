@@ -183,4 +183,35 @@ ok("stripSensitive removes the unread queue", stripped.unreadDays === undefined)
 const src = require("fs").readFileSync(require("path").join(__dirname, "..", "lib", "client-view-payload.js"), "utf8");
 ok("the boundary makes no network calls", !/\bfetch\s*\(/.test(src));
 
+/* --- the coach's change flag crosses, the owner's queue does not ---- */
+
+const coachChanged = P.programForClient({
+  programId: "p_flag",
+  clientName: "Coach",
+  version: 4,
+  unreadDays: { "w1:mon": "2026-09-01T00:00:00.000Z" },
+  clientUnreadDays: { "w1:tue": "2026-09-01T00:00:00.000Z" },
+  weeks: [
+    {
+      weekIndex: 1,
+      days: {
+        sun: { parts: [] },
+        mon: { parts: [{ id: "a", title: "Part A", lines: ["x"] }], modified: true },
+        tue: { parts: [{ id: "b", title: "Part A", lines: ["y"] }], coachModified: true },
+        wed: { parts: [] },
+        thu: { parts: [] },
+        fri: { parts: [] },
+        sat: { parts: [] },
+      },
+    },
+  ],
+});
+ok("the coach's change flag reaches the client", coachChanged.weeks[0].days.tue.coachModified === true);
+ok("a day the coach did not touch carries no flag", coachChanged.weeks[0].days.sun.coachModified === undefined);
+/* Both queues are the OWNER's bookkeeping. The client's own flags ride on the days, so
+   there is no second list that could disagree with them. */
+ok("the owner's unread queue does not cross", coachChanged.unreadDays === undefined);
+ok("nor does the client's queue as a list", coachChanged.clientUnreadDays === undefined);
+ok("clientUnreadDays is named as never-to-client", P.NEVER_TO_CLIENT.indexOf("clientUnreadDays") >= 0);
+
 console.log("All client-view payload checks passed.");

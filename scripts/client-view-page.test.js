@@ -146,7 +146,40 @@ ok("an unstable connection is disclosed", /connection looks unstable/.test(html)
 
 ok("the page pulls on returning to the foreground", /visibilitychange/.test(html));
 ok("it does not pull while the coach is mid-edit", /!state\.edit\) loadProgram/.test(html));
-ok("there is a manual refresh too", /refreshBtn/.test(html));
+/* Refresh is gone on the owner's instruction (2026-09-01), and it was redundant: the
+   page already pulls when it comes back to the foreground and reloads itself after
+   every save. A button that repeats what happens anyway reads as a button that is
+   needed. */
+ok("there is no manual refresh button left", !/refreshBtn/.test(html));
+
+/* --- sharing sits beside the date, as in the athlete's app ---------- */
+
+ok("the share button is switched on", /showShare: true/.test(html));
+ok("the icon is the shared WhatsApp mark", /shareIcon: D\.waIconSvg/.test(html));
+ok("the icon is not a second hand-cut copy", !/viewBox="0 0 24 24"/.test(html));
+ok("sharing goes to WhatsApp", /wa\.me/.test(html));
+ok("the message is built by the shared library", /D\.dayShareText\(/.test(html));
+ok("there is no Print / share button any more", !/Print \/ share/.test(html));
+/* Printing itself stays: the printed copy carries the full watermark and is what
+   travels to a coach's own athletes. It is a quiet link now. */
+ok("printing is still reachable", /id="printBtn"/.test(html) && /window\.print\(\)/.test(html));
+ok("and it is a link rather than a button", /class="linkish"/.test(html));
+
+/* --- "make it a rest day" belongs beside the date ------------------- */
+
+ok("the rest control is handed to the card header", /editHeaderActionsHtml: restToggleHeaderHtml\(\)/.test(html));
+ok("it only exists while the day is edited", /function restToggleHeaderHtml/.test(html) && /if \(!state\.edit\) return "";/.test(html));
+ok("the footer row it used to live in is gone", !/restToggleRowHtml/.test(html));
+ok("a day that is already rest offers nothing to convert", /if \(isRest\) return "";/.test(html));
+
+/* --- the coach changed a day: the client has to see it -------------- */
+
+ok("the client's flag reads the coach's field", /dayModifiedField: "coachModified"/.test(html));
+ok("it is worded for the client", /COACH UPDATED/.test(html));
+ok("the calendar dot is derived from the days themselves", /function coachChangedTags/.test(html));
+ok("opening the day takes the flag down", /function markCoachChangeSeen/.test(html));
+ok("clearing is sent as mark_read", /action: "mark_read"/.test(html));
+ok("a failed clear never costs the client the day", /\.catch\(function \(\) \{\}\)/.test(html));
 
 /* --- editing model -------------------------------------------------- */
 

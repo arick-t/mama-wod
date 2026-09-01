@@ -143,6 +143,12 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
 /* Two mutually exclusive choices sit side by side, as asked. */
 .pick-row{display:flex;gap:26px;flex-wrap:wrap;margin:0 0 12px}
 .sched-sep{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+/* Beside the date in the day card, only while that day is being edited. Same shape as
+   the client's page carries, because it is the same control. */
+.rest-inline{appearance:none;background:var(--bg-panel);border:1px solid var(--line);
+  color:var(--text-muted);border-radius:999px;padding:3px 11px;font-size:.72rem;
+  font-weight:700;letter-spacing:.4px;cursor:pointer;margin-inline-start:8px}
+.rest-inline:hover{border-color:var(--coach);color:var(--text)}
 .sess-box{min-width:0;background:var(--bg-panel);border:1px solid var(--line);
   border-radius:10px;padding:10px}
 .sess-box label{display:block;font-size:.72rem;color:var(--text-meta);margin:0 0 5px;
@@ -814,24 +820,25 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
         '<p class="meta" style="margin:0 0 8px">' + limit +
         " אימונים בשבוע, בלי ימים קבועים — הלוח מציג את השבוע ואתה בוחר באילו ימים לכתוב.</p>";
     }
-    host.innerHTML = head + D.renderBrickView(brickOpts()) + restToggleRowHtml();
+    host.innerHTML = head + D.renderBrickView(brickOpts());
   }
 
   /* The pencil turns a rest day INTO a session; this is the other direction the owner
      asked for. It is ours rather than the shared day card's, because the card is also
-     the athlete app's and an athlete must not be able to delete a coach's session. */
-  function restToggleRowHtml() {
-    if (S.edit) return "";
-    var day = S.day || "";
-    if (!day || day === "general" || DAY_KEYS_LOCAL.indexOf(day) < 0) return "";
-    if ((S.selected || []).length >= 2) return "";
-    var week = ((S.program && S.program.weeks) || [])[S.wi | 0] || {};
+     the athlete app's and an athlete must not be able to delete a coach's session.
+     It sits BESIDE THE DATE while the day is being edited — the same place, in the
+     same words, as the client's own page. Two surfaces of one product do not put the
+     same control in two different corners (owner, 2026-09-01). */
+  function restToggleHeaderHtml() {
+    if (!S.edit) return "";
+    var day = S.edit.day || "";
+    if (!day || DAY_KEYS_LOCAL.indexOf(day) < 0) return "";
+    var week = ((S.program && S.program.weeks) || [])[S.edit.wi | 0] || {};
     var isRest = RT ? RT.dayIsRest(week, day) : true;
     if (isRest) return "";
     return (
-      '<div class="row" style="margin-top:10px;justify-content:flex-end">' +
-      '<button class="ghost sm" type="button" data-makerest="' + (S.wi | 0) + ":" + day + '">' +
-      "הפוך ליום מנוחה</button></div>"
+      '<button type="button" class="rest-inline" data-makerest="' +
+      (S.edit.wi | 0) + ":" + day + '" title="הפוך ליום מנוחה">יום מנוחה</button>'
     );
   }
 
@@ -871,6 +878,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       allowPastEdit: true,
       editing: !!S.edit,
       editDraft: S.edit,
+      editHeaderActionsHtml: restToggleHeaderHtml(),
       adminEditStatus: S.editStatus || null,
       /* The client's unread changes ride the calendar's dot channel, and the open day
          card says so in the owner's own words. */

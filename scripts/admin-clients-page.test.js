@@ -372,6 +372,13 @@ ok("a concurrent save is handled, not clobbered", page.indexOf("r.status === 409
 ok("the owner sees how long the program is", /function weeksLabel/.test(page));
 ok("and where the deload sits", /דילואד כל /.test(page));
 
+/* "Make it a rest day" sits beside the date while the day is edited — the same place
+   and the same shape as the client's own page. One control, one corner. */
+ok("the rest control is handed to the card header", /editHeaderActionsHtml: restToggleHeaderHtml\(\)/.test(page));
+ok("it only exists while the day is edited", /function restToggleHeaderHtml/.test(page) && /if \(!S\.edit\) return "";/.test(page));
+ok("the old footer row is gone", !/restToggleRowHtml/.test(page));
+ok("it is styled like the client's", /\.rest-inline\{/.test(page));
+
 /* The clients are a STRIP, the way the admin module already lists people. */
 ok("the client list is a horizontal strip", /\.clist\{display:flex;gap:8px;overflow-x:auto/.test(page));
 ok("a client is a tab, not a row", /\.crow\{display:inline-flex[^}]*white-space:nowrap/.test(page));

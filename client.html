@@ -126,6 +126,16 @@ button.ghost:hover{color:var(--text)}
 /* --- watermark: one quiet identity line, never a diagonal overlay on screen.
        A wash across the text hurts reading on a phone, which is where this is
        mostly used. The full mark appears only in print. ---------------------- */
+/* A link, not a button: printing is a real capability but it is not the point of the
+   page, and a second button beside the programme read as a second action. */
+.linkish{appearance:none;background:none;border:0;padding:0;color:var(--text-meta);
+  font:inherit;text-decoration:underline;cursor:pointer}
+.linkish:hover{color:var(--text)}
+/* Beside the date, in the card header, only while the day is being edited. */
+.rest-inline{appearance:none;background:var(--bg-panel);border:1px solid var(--line);
+  color:var(--text-muted);border-radius:999px;padding:3px 11px;font-size:.72rem;
+  font-weight:700;letter-spacing:.4px;cursor:pointer;margin-inline-start:8px}
+.rest-inline:hover{border-color:var(--coach);color:var(--text)}
 .wm-line{color:var(--text-meta);font-size:.7rem;letter-spacing:.4px;margin:10px 0 0;
   padding-top:8px;border-top:1px dashed var(--line)}
 
@@ -151,7 +161,7 @@ button.ghost:hover{color:var(--text)}
   :root{--bg:#fff;--bg-card:#fff;--bg-elev:#fff;--bg-panel:#fff;--text:#000;
         --text-muted:#333;--text-meta:#555;--line:#bbb}
   body{background:#fff;color:#000;padding:0;font-size:11.5pt}
-  button,.weekbar,.day-actions,#authView,#termsView,.banner,#printBtn{display:none!important}
+  button,.weekbar,.day-actions,#authView,#termsView,.banner,#printBtn,.linkish{display:none!important}
   .card,.day{border:1px solid #bbb;break-inside:avoid;page-break-inside:avoid;margin-bottom:10pt}
   .day-head{background:#f2f2f2}
   .section-title{color:#000}
@@ -211,10 +221,14 @@ button.ghost:hover{color:var(--text)}
     <div id="progBanner"></div>
     <!-- No week bar: the calendar carries its own W1…W5 rail. -->
     <div id="days"></div>
-    <div class="row" style="margin-top:6px">
-      <button id="printBtn" class="ghost" type="button">Print / share</button>
-      <button id="refreshBtn" class="ghost" type="button">Refresh</button>
-    </div>
+    <!-- Sharing moved to the WhatsApp mark beside the date, where the athlete's app
+         already puts it, and Refresh is gone: the page reloads itself after every save
+         (owner, 2026-09-01). Printing stays, because the printed copy carries the full
+         watermark and is what travels to a coach's own athletes - but it is a quiet
+         link now rather than a button competing with the programme. -->
+    <p class="meta" style="margin-top:8px">
+      <button id="printBtn" class="linkish" type="button">Print this program</button>
+    </p>
     <p class="meta" id="progFoot" style="margin-top:14px"></p>
   </section>
 
@@ -497,7 +511,6 @@ button.ghost:hover{color:var(--text)}
     var wmName = (state.watermark && state.watermark.clientName) || "";
     host.innerHTML =
       D.renderBrickView(brickOpts()) +
-      restToggleRowHtml() +
       '<p class="wm-line">Prepared for ' + esc(wmName || "client") + " · DUCK-WOD</p>";
   }
 
@@ -532,8 +545,16 @@ button.ghost:hover{color:var(--text)}
       editDraft: state.edit,
       /* The client sees which days THEY changed, in their own language. No unread
          dots here — unread is the owner's inbox, not the client's. */
-      dayModifiedLabel: "MODIFIED",
-      dayModifiedTitle: "You changed this day",
+      /* The flag the CLIENT needs is not "I changed this" - they know - but "my coach
+         changed this since I last looked". Same flag, other direction. */
+      dayModifiedField: "coachModified",
+      dayModifiedLabel: "COACH UPDATED",
+      dayModifiedTitle: "Your coach changed this day since you last opened it",
+      unreadDays: coachChangedTags(),
+      /* The WhatsApp mark beside the date, the same one the athlete's app carries. */
+      showShare: true,
+      shareIcon: D.waIconSvg ? D.waIconSvg() : "WA",
+      editHeaderActionsHtml: restToggleHeaderHtml(),
       selectedDays: selected,
       passCalEvent: false,
       widthStatusHtml: widthStatus,
@@ -552,25 +573,42 @@ button.ghost:hover{color:var(--text)}
         editRemoveWork: "cvEditRemoveWork",
         editCancel: "cvEditCancel",
         editSave: "cvEditSave",
+        share: "cvShareDay",
       },
     };
   }
 
-  /* A written day back to rest. Ours rather than the shared card's, so the wording
-     and the confirmation are the client's language. */
-  function restToggleRowHtml() {
-    if (state.edit) return "";
-    var day = state.day || "";
-    if (!day || day === "general" || DAY_KEYS_LOCAL.indexOf(day) < 0) return "";
-    if ((state.selected || []).length >= 2) return "";
-    var week = ((state.program && state.program.weeks) || [])[state.wi | 0] || {};
+  /* A written day back to rest. Ours rather than the shared card's, so the wording and
+     the confirmation are the client's language - but it now sits BESIDE THE DATE while
+     the day is being edited, instead of at the bottom of the card where it read as a
+     footer control belonging to nothing (owner, 2026-09-01). */
+  function restToggleHeaderHtml() {
+    if (!state.edit) return "";
+    var day = state.edit.day || "";
+    if (!day || DAY_KEYS_LOCAL.indexOf(day) < 0) return "";
+    var week = ((state.program && state.program.weeks) || [])[state.edit.wi | 0] || {};
     var isRest = RT ? RT.dayIsRest(week, day) : true;
     if (isRest) return "";
     return (
-      '<div class="row" style="margin-top:10px;justify-content:flex-end">' +
-      '<button type="button" class="ghost" data-makerest="' + (state.wi | 0) + ":" + day + '">' +
-      "Make it a rest day</button></div>"
+      '<button type="button" class="rest-inline" data-makerest="' +
+      (state.edit.wi | 0) + ":" + day + '" title="Make it a rest day">Rest day</button>'
     );
+  }
+
+  /* The days the coach rewrote and this client has not opened yet. The flag rides on
+     the day itself (lib/client-view-payload.js), so the calendar's dot is derived here
+     rather than sent as a second list that could disagree with it. */
+  function coachChangedTags() {
+    var out = {};
+    var weeks = (state.program && state.program.weeks) || [];
+    for (var i = 0; i < weeks.length; i++) {
+      var days = (weeks[i] && weeks[i].days) || {};
+      for (var d = 0; d < DAY_KEYS_LOCAL.length; d++) {
+        var k = DAY_KEYS_LOCAL[d];
+        if (days[k] && days[k].coachModified === true) out["w" + (i + 1) + ":" + k] = true;
+      }
+    }
+    return out;
   }
 
   /* --- calendar hooks (global: rendered into onclick attributes) ----------- */
@@ -609,6 +647,39 @@ button.ghost:hover{color:var(--text)}
     state.day = nextDay;
     state.selected = [];
     renderDays();
+    markCoachChangeSeen(nextWi, nextDay);
+  };
+
+  /* Opening the day is what takes the coach's flag down - no extra click, the same
+     rule the owner's own inbox follows. It is deliberately quiet: a failure here must
+     never cost the client the day they came to read. */
+  function markCoachChangeSeen(wi, dayKey) {
+    if (!state.program || DAY_KEYS_LOCAL.indexOf(dayKey) < 0) return;
+    var week = (state.program.weeks || [])[wi | 0];
+    var day = week && week.days ? week.days[dayKey] : null;
+    if (!day || day.coachModified !== true) return;
+    api({
+      action: "mark_read",
+      expectedVersion: state.program.version,
+      days: ["w" + ((wi | 0) + 1) + ":" + dayKey],
+    }).then(function (r) {
+      if (r.status !== 200 || !r.body.ok || !r.body.program) return;
+      state.program = r.body.program;
+      renderDays();
+    }).catch(function () {});
+  }
+
+  /* The same message the athlete's app sends, built by the shared library so the two
+     never drift into two formats. */
+  window.cvShareDay = function (dayKey) {
+    var D = pprogLib();
+    if (!D || !D.dayShareText) return;
+    var text = D.dayShareText(currentBlock(), state.wi | 0, String(dayKey || ""), {
+      title: "🦆 DUCK-WOD",
+      footer: "Train with DUCK-WOD",
+    });
+    if (!text) return;
+    window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank");
   };
 
   window.cvSelectWeek = function (wi) {
@@ -817,7 +888,6 @@ button.ghost:hover{color:var(--text)}
     el("agreeBox").addEventListener("change", function () { el("agreeBtn").disabled = !this.checked; });
     el("agreeBtn").addEventListener("click", submitAgree);
     el("printBtn").addEventListener("click", function () { window.print(); });
-    el("refreshBtn").addEventListener("click", function () { state.edit = null; loadProgram(); });
 
     if (!PROGRAM_ID) {
       el("bootErr").innerHTML = '<div class="banner bad">This link is incomplete. Ask your coach to resend it.</div>';

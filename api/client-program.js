@@ -449,6 +449,30 @@ async function clientHandler(req, res, body) {
     });
   }
 
+  /* Opening a day the COACH changed is what takes its flag down — the mirror of the
+   * owner's mark_read, and the same rule: no extra click (owner, 2026-09-01). */
+  if (action === "mark_read") {
+    const tags = Array.isArray(body.days) ? body.days : [];
+    if (!tags.length) return bad(res, 400, "NO_DAYS", "days is required");
+    const result = await store.updateProgram(
+      programId,
+      Number(body.expectedVersion),
+      function (draft) {
+        return draft;
+      },
+      { actor: "client", clearClientUnread: tags }
+    );
+    if (!result.ok) {
+      const status = result.code === "VERSION_CONFLICT" ? 409 : 400;
+      return res.status(status).json(Object.assign({ ok: false }, result));
+    }
+    return res.status(200).json({
+      ok: true,
+      program: Payload.programForClient(result.program),
+      version: result.version,
+    });
+  }
+
   if (action === "save") {
     const parsed = Payload.parseClientEdit(body);
     if (!parsed.ok) return bad(res, 400, "BAD_EDIT", parsed.error);
