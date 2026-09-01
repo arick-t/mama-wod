@@ -27,6 +27,7 @@ const {
   checkAdminAuth,
   adminAuthDenied,
   sessionSecretReady,
+  sessionSecretSource,
   MIN_SESSION_SECRET_LEN,
   mintAdminSessionToken,
   adminAuthUsedPassword,
@@ -514,6 +515,11 @@ async function handler(req, res) {
          a missing or too-short ADMIN_SESSION_SECRET is invisible: the server simply
          mints no session token and every page asks for the password again. */
       rememberMeReady: sessionSecretReady(),
+      /* "configured" = a proper ADMIN_SESSION_SECRET is set; "derived" = none was, so
+       * the key is derived from an existing strong secret; "none" = no key is possible
+       * and every page will ask for the password again. Naming the source is what ends
+       * the guessing — twice I sent the owner to change an env var that was not it. */
+      sessionSecretSource: sessionSecretSource(),
       sessionSecretMinLength: MIN_SESSION_SECRET_LEN,
       termsVersion: Terms.TERMS_VERSION,
       deviceCap: Access.MAX_DEVICES,

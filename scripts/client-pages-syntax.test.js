@@ -122,7 +122,25 @@ const BRICK_HOOKS = [
   ok(file + " lifts the past-date lock", /allowPastEdit:\s*true/.test(all));
   /* A 4-week program (no deload) must not show a W5 rail that leads nowhere. */
   ok(file + " shows the program's real length", /weekRows: weekCount\(\)/.test(all));
+  /* There is no AI on either page. The athlete app's "still being generated" would tell
+     a paying client to wait for something that is never coming. */
+  ok(file + " words an empty day truthfully", /emptyDayHtml:/.test(all));
+  ok(file + " never claims a session is being generated", !/still being generated/.test(all));
 });
+
+/* The wizard and the client list are two VIEWS, never both on screen: the list sat
+   under the wizard through every step of adding a client, where it is noise. */
+const adminPage = fs.readFileSync(path.join(ROOT, "admin-clients.html"), "utf8");
+ok("the client list is its own view", /id="listCard"/.test(adminPage));
+ok("one switch decides which view owns the screen", /function renderViewMode/.test(adminPage));
+ok("the wizard hides the list", adminPage.indexOf('show("listCard", !S.adding)') >= 0);
+ok("the list hides the wizard", adminPage.indexOf('show("intakeCard", S.adding)') >= 0);
+ok("a list refresh cannot pull the list back over the wizard", (adminPage.match(/renderViewMode\(\)/g) || []).length >= 3);
+ok("there is a way into the wizard", /id="addClientBtn"/.test(adminPage));
+ok("and a way out of it", /id="iCancel"/.test(adminPage));
+ok("leaving the wizard asks first", /confirm\("לצאת מהתחקור/.test(adminPage));
+/* admin.html sends ?new=coach; until now that parameter did nothing at all. */
+ok("the deep link from admin.html opens the wizard", /params\.get\("new"\) === "coach"/.test(adminPage));
 
 /* The generated stylesheet must actually carry the two things it exists for. */
 const css = fs.readFileSync(path.join(ROOT, "styles", "pprog-display.css"), "utf8");

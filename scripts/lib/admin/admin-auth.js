@@ -16,8 +16,83 @@ function resolveAdminPassword() {
   return String(process.env.ADMIN_PASSWORD || "").trim();
 }
 
+/* Existing high-entropy server secrets, in preference order, used to DERIVE a signing
+ * key when ADMIN_SESSION_SECRET is absent or too short. Every one of these is already
+ * required for the app to function, so if the app runs, a strong donor exists. */
+const SESSION_KEY_DONORS = [
+  "BLOB_READ_WRITE_TOKEN",
+  "GEMINI_API_KEY",
+  "GOOGLE_GENERATIVE_AI_API_KEY",
+  "GOOGLE_AI_API_KEY",
+];
+
+/* Domain separation: this label is what stops a derived key from ever colliding with
+ * the donor secret or with any other use of it. Changing it invalidates all sessions. */
+const SESSION_KEY_INFO = "duck-wod/admin-session-hmac/v1";
+
+/**
+ * The HMAC key for admin session tokens.
+ *
+ * WHY THERE IS A DERIVATION PATH AT ALL
+ * Without a usable key, no session token is ever minted — and the visible symptom is
+ * that EVERY admin page asks for the password again, one after another. The owner hit
+ * that three times, and the "fix" of setting a short, memorable ADMIN_SESSION_SECRET is
+ * strictly worse than the annoyance: a guessable signing key lets anyone forge an admin
+ * token WITHOUT the password. So a short value is still refused as a key.
+ *
+ * Instead, when no proper secret is configured, the key is derived with HKDF-SHA256 from
+ * a secret that is already strong and already present. This is the standard way to get a
+ * second key from one high-entropy secret, and it holds because:
+ *   · every serverless instance reads the same env, so every instance derives the same
+ *     key — a token minted on one verifies on another;
+ *   · the info label domain-separates it, so it cannot be confused with the donor;
+ *   · the donor is never logged, returned, or exposed — only the derived output is used.
+ *
+ * A too-short ADMIN_SESSION_SECRET is not ignored: it becomes the HKDF salt, so setting
+ * one still changes the key. Setting a proper 32+ character value takes over completely.
+ *
+ * CAVEAT worth knowing: rotating the donor secret invalidates live sessions, and the
+ * owner types the password once more. That is the whole cost.
+ *
+ * @returns {string} a key of at least MIN_SESSION_SECRET_LEN chars, or "" if none is possible
+ */
 function resolveAdminSessionSecret() {
-  return String(process.env.ADMIN_SESSION_SECRET || "").trim();
+  const configured = String(process.env.ADMIN_SESSION_SECRET || "").trim();
+  if (configured.length >= MIN_SESSION_SECRET_LEN) return configured;
+
+  for (const name of SESSION_KEY_DONORS) {
+    const donor = String(process.env[name] || "").trim();
+    if (donor.length < MIN_SESSION_SECRET_LEN) continue;
+    try {
+      /* The short configured value (if any) is the salt — it must not be trusted as key
+         material on its own, but it is fine as a salt and keeps the owner's setting
+         meaningful. */
+      const derived = crypto.hkdfSync("sha256", donor, configured, SESSION_KEY_INFO, 32);
+      return Buffer.from(derived).toString("hex");
+    } catch (e) {
+      /* hkdfSync missing on a very old runtime — fall back to HMAC, same idea. */
+      try {
+        return crypto
+          .createHmac("sha256", donor)
+          .update(SESSION_KEY_INFO + "\n" + configured, "utf8")
+          .digest("hex");
+      } catch (e2) {
+        return "";
+      }
+    }
+  }
+  return "";
+}
+
+/**
+ * Where the signing key came from — so a health endpoint can state a fact instead of
+ * leaving the owner to guess why a password is being asked for twice.
+ * @returns {"configured"|"derived"|"none"}
+ */
+function sessionSecretSource() {
+  const configured = String(process.env.ADMIN_SESSION_SECRET || "").trim();
+  if (configured.length >= MIN_SESSION_SECRET_LEN) return "configured";
+  return resolveAdminSessionSecret() ? "derived" : "none";
 }
 
 function timingSafeEqualStr(a, b) {
@@ -148,6 +223,7 @@ function adminAuthDenied(res, adminPassword) {
 module.exports = {
   resolveAdminPassword,
   resolveAdminSessionSecret,
+  sessionSecretSource,
   sessionSecretReady,
   passwordFingerprint,
   checkAdminAuth,

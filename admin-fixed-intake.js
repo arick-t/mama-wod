@@ -119,8 +119,10 @@
     var log = document.getElementById("intake-chat-log");
     if (log) {
       log.style.display = "flex";
-      log.innerHTML =
-        '<div class="intake-msg system">אותו תחקור כמו באפליקציה (9 שלבים קבועים) → לבנה אמיתית → לינק מסירה. לחץ ״התחל תחקור״.</div>';
+      /* No "press start" instruction: choosing "מתאמן קצה" already IS that decision
+         and startIntakeChat runs straight after this. The line only ever showed when
+         the start had FAILED — so word it as what it is. */
+      log.innerHTML = '<div class="intake-msg system">פותח תחקור…</div>';
     }
     var compose = document.getElementById("intake-compose");
     if (compose) compose.style.display = "none";
@@ -147,19 +149,43 @@
     refreshFabVisibility();
   };
 
+  /** Set style/text only when the node is really there. */
+  function hideEl(id) {
+    var n = document.getElementById(id);
+    if (n) n.style.display = "none";
+  }
+
+  /* Every status write goes through here. The unguarded reads this replaces had the
+     same shape as the bug that killed the intake: one removed field away from a hard
+     throw, in the one file whose job is to stay standing while a form is filled. */
+  function writeIntakeStatus(text) {
+    var n = document.getElementById("intake-status");
+    if (n) n.textContent = String(text == null ? "" : text);
+  }
+
   window.startIntakeChat = function startFixedIntake() {
     if (intakeState.busy) return;
     setIntakeModalOpen(true);
-    intakeState.email = (document.getElementById("intake-email").value || "").trim();
+    /* The email field was REMOVED on the owner's instruction (a.3.1) — he reaches
+     * clients over WhatsApp and wanted less responsibility for their data. This line
+     * still read it unguarded, so every click on "מתאמן קצה" threw
+     *   Cannot read properties of null (reading 'value')
+     * before the intake could start. Nothing downstream needs a real address, so the
+     * value is simply empty now, and every other node here is guarded too — this
+     * function must not be one deleted field away from a dead button again. */
+    intakeState.email = "";
     intakeState.started = true;
     intakeState.fixedActive = true;
     intakeState.fixedStep = 0;
     intakeState.preferredLanguage = "en";
-    document.getElementById("intake-start-bar").style.display = "none";
-    document.getElementById("intake-chat-log").style.display = "none";
-    document.getElementById("intake-compose").style.display = "none";
+    hideEl("intake-start-bar");
+    hideEl("intake-chat-log");
+    hideEl("intake-compose");
     if (typeof hideIntakePickers === "function") hideIntakePickers();
-    document.getElementById("intake-status").textContent = "תחקור זהה לאפליקציה · שלב 1/" + C().FIXED_STEPS.length;
+    var status = document.getElementById("intake-status");
+    if (status) {
+      status.textContent = "תחקור זהה לאפליקציה · שלב 1/" + C().FIXED_STEPS.length;
+    }
     syncAdminFixedIntakeUi();
   };
 
@@ -389,11 +415,10 @@
     el.setAttribute("dir", "ltr");
     el.innerHTML = renderStep(intakeState.fixedStep | 0);
     S.bindIntakeNumericKeyboards(el);
-    document.getElementById("intake-status").textContent =
-      "תחקור זהה לאפליקציה · שלב " +
+    writeIntakeStatus("תחקור זהה לאפליקציה · שלב " +
       ((intakeState.fixedStep | 0) + 1) +
       "/" +
-      C().FIXED_STEPS.length;
+      C().FIXED_STEPS.length);
   };
 
   window.adminFixedSkillAllChange = function adminFixedSkillAllChange(inp) {
@@ -639,7 +664,7 @@
     var log = document.getElementById("intake-chat-log");
     if (log) log.style.display = "none";
     if (errMsg) {
-      document.getElementById("intake-status").textContent = errMsg;
+      writeIntakeStatus(errMsg);
       setFixedErr(errMsg);
     }
   }
@@ -705,8 +730,7 @@
       true,
       "<strong>Coach</strong> is building your 5-week block…"
     );
-    document.getElementById("intake-status").textContent =
-      "בונה לבנה אמיתית (generate_block) · " + intakeState.athleteId + "…";
+    writeIntakeStatus("בונה לבנה אמיתית (generate_block) · " + intakeState.athleteId + "…");
 
     var profile = intakeAthleteProfile({ forceIntakeComplete: true });
     var payloadMsgs = [
@@ -766,7 +790,7 @@
               : String((j && (j.message || j.error)) || (x.raw ? "bad response" : "empty response"));
           var retry5xx = retryLeft > 0 && x.status >= 500 && x.status < 600;
           if (retry5xx) {
-            document.getElementById("intake-status").textContent = "שגיאת שרת — מנסה פעם נוספת…";
+            writeIntakeStatus("שגיאת שרת — מנסה פעם נוספת…");
             setIntakeBusy(false);
             return generateIntakeBlockFromFixedPacket(retryLeft - 1);
           }
@@ -791,8 +815,7 @@
         var aborted = /aborted|abort|timeout/i.test(msg);
         var network = /load failed|failed to fetch|networkerror/i.test(msg) && !aborted;
         if (retryLeft > 0 && network) {
-          document.getElementById("intake-status").textContent =
-            "חיבור נקטע לפני תשובה — מנסה פעם נוספת…";
+          writeIntakeStatus("חיבור נקטע לפני תשובה — מנסה פעם נוספת…");
           setIntakeBusy(false);
           return generateIntakeBlockFromFixedPacket(retryLeft - 1);
         }
@@ -810,8 +833,7 @@
 
   window.generateIntakeBlock = function generateIntakeBlock() {
     if (!intakeState.fixedIntakePacket) {
-      document.getElementById("intake-status").textContent =
-        "יש להשלים את התחקור הקבוע לפני בניית לבנה.";
+      writeIntakeStatus("יש להשלים את התחקור הקבוע לפני בניית לבנה.");
       return;
     }
     if (intakeState.buildAttempted) {
@@ -837,7 +859,7 @@
       true,
       "<strong>Coach</strong> — saving athlete + one-time handoff link…"
     );
-    document.getElementById("intake-status").textContent = "שומר מתאמן + לינק מסירה…";
+    writeIntakeStatus("שומר מתאמן + לינק מסירה…");
 
     var intakeProfile = C().normalizeIntakeProfile(
       Object.assign({}, intakeState, { intakeComplete: true })
@@ -883,8 +905,7 @@
       .then(function (d) {
         if (!d || !d.ok) {
           showIntakeBuilding(false);
-          document.getElementById("intake-status").textContent =
-            "שגיאה ביצירת מתאמן: " + ((d && (d.message || d.error)) || "?");
+          writeIntakeStatus("שגיאה ביצירת מתאמן: " + ((d && (d.message || d.error)) || "?"));
           setIntakeBusy(false);
           return;
         }
@@ -915,9 +936,9 @@
           if (idx >= 0) athletes[idx] = Object.assign({}, athletes[idx], row);
           else athletes.unshift(row);
         }
-        document.getElementById("intake-status").textContent = abs
+        writeIntakeStatus(abs
           ? "נוצר ✓ לינק מסירה בכרטיס המתאמן"
-          : "נוצר בהצלחה ✓";
+          : "נוצר בהצלחה ✓");
         setTimeout(function () {
           setIntakeModalOpen(false);
           resetIntakeState();
@@ -927,7 +948,7 @@
       })
       .catch(function () {
         showIntakeBuilding(false);
-        document.getElementById("intake-status").textContent = "שגיאת רשת בשמירת מתאמן";
+        writeIntakeStatus("שגיאת רשת בשמירת מתאמן");
         setIntakeBusy(false);
       });
   };

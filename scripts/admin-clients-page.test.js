@@ -227,15 +227,50 @@ ok("there is no equipment dropdown left", page.indexOf('id="inEquip"') < 0);
 ok("no select element survives on the equipment tab", !/<select id="inEquip/.test(page));
 
 /* Tab 3 — a checkbox picks the mode, and each mode reveals its own follow-ups */
-ok("the mode is a checkbox, ticked by default", /id="inSchedCount" type="checkbox" data-pick="sched" checked/.test(page));
-ok("the full weekly plan is its own checkbox below it", /id="inSchedWeekly" type="checkbox" data-pick="sched">/.test(page));
-ok("the weekly plan is unticked by default", !/id="inSchedWeekly" type="checkbox" data-pick="sched" checked/.test(page));
+/* NOTHING is pre-ticked on this tab (owner, 2026-09-01): landing on it should present a
+   decision, not an answer already filled in. */
+ok("the session-count mode is a checkbox", /id="inSchedCount" type="checkbox" data-pick="sched">/.test(page));
+ok("the full weekly plan is its own checkbox", /id="inSchedWeekly" type="checkbox" data-pick="sched">/.test(page));
+ok("neither schedule mode is pre-ticked", !/data-pick="sched" checked/.test(page));
+ok("the deload is the third top-level choice", /id="inDeload" type="checkbox">/.test(page));
+ok("the deload is not pre-ticked either", !/id="inDeload" type="checkbox" checked/.test(page));
+/* A mode the owner did not choose must never be inferred. */
+ok(
+  "no schedule mode is invented when neither is ticked",
+  page.indexOf('el("inSchedWeekly").checked') >= 0 && /:\s*"",/.test(page)
+);
+
+/* HIERARCHY: each follow-up is indented under the choice it belongs to, and hidden
+   until that choice is made. Flat, they read as four unrelated questions. */
+ok("follow-ups are visually indented", /class="sub-branch"/.test(page));
+ok("the indent is a real rule, not whitespace", /\.sub-branch\{[^}]*border-inline-start/.test(page));
+ok(
+  "'the sessions differ' is a sub-question of the session count",
+  /id="inDifferWrap" class="sub-branch" hidden/.test(page)
+);
+ok(
+  "the weekly follow-ups are sub-questions of the weekly plan",
+  /id="inWeeklyWrap" class="sub-branch" hidden/.test(page)
+);
+ok(
+  "the weekday rows are a sub-question of the emphases",
+  /id="inWeekDays" class="sub-branch" hidden/.test(page)
+);
+ok("neither branch shows before a mode is picked", page.indexOf('el("inDifferWrap").hidden = !byCount') >= 0);
+ok("the weekly branch needs the weekly box", page.indexOf('el("inWeeklyWrap").hidden = !byWeek') >= 0);
+ok("with no mode picked the owner is told to pick", /Pick how the place trains/.test(page));
 ok("there is no schedule dropdown left", !/<select id="inSchedMode/.test(page));
 ok("the session count sits next to it", /id="inSessions" type="number" min="1" max="14"/.test(page));
 /* Empty on purpose — the owner types the number, nothing is guessed for a client. */
 ok("the count box starts empty", /id="inSessions" type="number" min="1" max="14" value=""/.test(page));
 ok("the count box is inline with the checkbox", /class="inline-num"/.test(page));
 ok("the count disappears in weekly mode", page.indexOf('el("inSessions").hidden = !byCount') >= 0);
+/* Beside its label, not shoved to the far edge, and big enough for two digits. */
+ok("the count box sits next to its label", /\.inline-num\{[^}]*margin-inline-start:14px/.test(page));
+ok("the count box is enlarged", /\.inline-num\{[^}]*font-size:19px/.test(page));
+ok("it fits two digits", /\.inline-num\{[^}]*width:82px/.test(page));
+/* The session descriptions are real sentences and will be read by the brain later. */
+ok("the session boxes are roomier", /\.sess-box\{flex:1 1 240px;min-width:220px/.test(page));
 ok("no session count is ever invented", page.indexOf('parseInt(el("inSessions").value, 10) || 0') >= 0);
 ok("an empty count draws no session boxes", /Fill in the number of sessions first/.test(page));
 ok("the owner is told the coach picks the days", /delivers them whenever/i.test(page));
@@ -302,7 +337,12 @@ ok("tab 6 asks for goals", /id="inGoals"/.test(page));
 });
 
 /* English, on the owner's instruction — check the tab and field text, not comments */
-const intakeCard = (page.match(/<div class="card" id="intakeCard"[\s\S]*?<\/div>\s*<div class="card">/) || [""])[0];
+/* Slice on the NEXT card's id rather than a bare <div class="card">: the client list
+   became its own identified view (id="listCard") and the old boundary stopped matching,
+   which silently emptied this slice instead of failing loudly on its content. */
+const intakeStart = page.indexOf('<div class="card" id="intakeCard"');
+const intakeEnd = page.indexOf('id="listCard"');
+const intakeCard = intakeStart >= 0 && intakeEnd > intakeStart ? page.slice(intakeStart, intakeEnd) : "";
 ok("the intake card exists", intakeCard.length > 200);
 ok("the intake card is left-to-right", /id="intakeCard" dir="ltr"/.test(page));
 ok(

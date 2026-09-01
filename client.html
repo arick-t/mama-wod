@@ -520,6 +520,10 @@ button.ghost:hover{color:var(--text)}
       israelTodayIso: israelIso(false),
       readOnly: true,
       showFooter: false,
+      /* No AI on this page. "Still being generated" would be untrue and would tell the
+         client to wait for something that is never coming. */
+      emptyDayHtml:
+        '<div class="pprog-day-stub">Nothing written for this day yet.</div>',
       showActions: true,
       allowEdit: true,
       /* The owner's decision: a client edits without limit, past days included. */

@@ -101,25 +101,62 @@ ok("an unknown equipment value falls back safely", I.normalizeIntake({ equipment
 /* --- tab 3: schedule — two modes, each with its own follow-ups -------- */
 
 ok("there are two schedule modes", I.SCHEDULE_MODES.length === 2);
-ok("the default is a session count", I.emptyIntake().scheduleMode === "session_count");
+/* No default mode (owner, 2026-09-01): the Schedule tab opens with nothing ticked, so
+   the tab presents a decision instead of an answer already filled in. Defaulting here
+   is how a studio that asked for a session count gets a weekday plan. */
+ok("no schedule mode is assumed", I.emptyIntake().scheduleMode === "");
+ok("an unknown mode stays unanswered", I.normalizeIntake({ scheduleMode: "whatever" }).scheduleMode === "");
+ok("a real mode survives", I.normalizeIntake({ scheduleMode: "weekly_schedule" }).scheduleMode === "weekly_schedule");
+ok(
+  "an unchosen mode blocks the build",
+  I.validateIntake({ clientName: "A", population: "p", goals: "g", sessionsPerWeek: 3 }).some(
+    function (m) { return /pick how the place trains/i.test(m); }
+  )
+);
+ok(
+  "choosing one clears that complaint",
+  !I.validateIntake({
+    clientName: "A", population: "p", goals: "g",
+    scheduleMode: "weekly_schedule",
+  }).some(function (m) { return /pick how the place trains/i.test(m); })
+);
+/* With no mode chosen, NEITHER branch may keep answers — a half-filled mode that was
+   then abandoned must not reach the brief. */
+const noMode = I.normalizeIntake({
+  sessionsPerWeek: 5, sessionsDiffer: true, sessionTypes: ["a", "b"],
+  includeRestDays: true, dayEmphasisEnabled: true,
+});
+ok("no mode keeps no session answers", noMode.sessionsPerWeek === 0 && noMode.sessionsDiffer === false);
+ok("no mode keeps no weekly answers", noMode.includeRestDays === false && noMode.dayEmphasisEnabled === false);
+ok("the brief says the schedule is unanswered", /SCHEDULE: not answered yet/.test(
+  I.briefFor({ clientName: "A", population: "p", goals: "g" })
+));
+/* Weekly mode has no session count at all — carrying one over reads as a contradiction. */
+ok(
+  "weekly mode drops any session count",
+  I.normalizeIntake({ scheduleMode: "weekly_schedule", sessionsPerWeek: 4 }).sessionsPerWeek === 0
+);
 /* 0 = unanswered. The box starts empty on the owner's instruction, and inventing a
    "3" for a paying client's program is the quiet default that ships a wrong plan —
    validateIntake blocks instead. */
 ok("there is no default session count", I.emptyIntake().sessionsPerWeek === 0);
-ok("an out-of-range count is not answered", I.normalizeIntake({ sessionsPerWeek: 99 }).sessionsPerWeek === 0);
-ok("zero stays unanswered", I.normalizeIntake({ sessionsPerWeek: 0 }).sessionsPerWeek === 0);
-ok("a real count survives", I.normalizeIntake({ sessionsPerWeek: 6 }).sessionsPerWeek === 6);
+ok("an out-of-range count is not answered", I.normalizeIntake({ scheduleMode: "session_count", sessionsPerWeek: 99 }).sessionsPerWeek === 0);
+ok("zero stays unanswered", I.normalizeIntake({ scheduleMode: "session_count", sessionsPerWeek: 0 }).sessionsPerWeek === 0);
+ok("a real count survives", I.normalizeIntake({ scheduleMode: "session_count", sessionsPerWeek: 6 }).sessionsPerWeek === 6);
 ok(
   "an empty count blocks the build",
-  I.validateIntake({ clientName: "A", population: "p", goals: "g" }).some(function (m) {
+  I.validateIntake({
+    clientName: "A", population: "p", goals: "g", scheduleMode: "session_count",
+  }).some(function (m) {
     return /how many sessions per week/i.test(m);
   })
 );
 ok(
   "a filled count clears that complaint",
-  !I.validateIntake({ clientName: "A", population: "p", goals: "g", sessionsPerWeek: 3 }).some(
-    function (m) { return /how many sessions per week/i.test(m); }
-  )
+  !I.validateIntake({
+    clientName: "A", population: "p", goals: "g",
+    scheduleMode: "session_count", sessionsPerWeek: 3,
+  }).some(function (m) { return /how many sessions per week/i.test(m); })
 );
 ok(
   "weekly mode never asks for a session count",
@@ -271,10 +308,13 @@ ok("rest days off reads as the coach's call", /not planned — the coach decides
 ok("no emphasis section when it is off", noRest.indexOf("STANDING EMPHASES") < 0);
 
 /* session_count: uniform vs differing must be stated, because it changes the plan. */
-const uniform = I.briefFor({ clientName: "A", sessionsPerWeek: 3, population: "p", goals: "g" });
+const uniform = I.briefFor({
+  clientName: "A", scheduleMode: "session_count", sessionsPerWeek: 3,
+  population: "p", goals: "g",
+});
 ok("uniform sessions are stated as standard CrossFit", /interchangeable — a standard CrossFit week/.test(uniform));
 const differing = I.briefFor({
-  clientName: "A", sessionsPerWeek: 2, sessionsDiffer: true,
+  clientName: "A", scheduleMode: "session_count", sessionsPerWeek: 2, sessionsDiffer: true,
   sessionTypes: ["strength + metcon", "engine"], population: "p", goals: "g",
 });
 ok("differing sessions are listed one by one", /Session 1: strength \+ metcon/.test(differing) && /Session 2: engine/.test(differing));

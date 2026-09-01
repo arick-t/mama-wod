@@ -115,13 +115,26 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
 .chk-row{display:flex;gap:10px;align-items:flex-start;margin:0 0 8px;cursor:pointer}
 .chk-row input{width:20px;height:20px;margin:2px 0 0;flex:0 0 auto;accent-color:var(--brand)}
 .chk-row span{color:var(--text);font-size:.92rem}
-.chk-row .inline-num{width:78px;margin-inline-start:auto;padding:6px 9px;text-align:center;font-size:15px}
-/* One box per session, side by side — the owner asked for them laid out horizontally. */
-.sess-grid{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 6px}
+/* Sits right beside its label rather than pushed to the far edge, and big enough for
+   two digits without clipping. */
+.chk-row .inline-num{width:82px;margin-inline-start:14px;padding:8px 10px;text-align:center;
+  font-size:19px;font-weight:700;font-family:var(--font-display);letter-spacing:1px;
+  color:var(--brand-gold);border-color:var(--coach-deep)}
+.chk-row .inline-num::placeholder{color:var(--text-meta);font-weight:400;letter-spacing:0}
+/* One box per session, side by side — the owner asked for them laid out horizontally.
+   Wider than before: the descriptions are real sentences ("strength part then a short
+   metcon up to 10 minutes"), and they will be read by the coach brain later, so they
+   must be legible while being typed. */
+.sess-grid{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 6px}
+/* A follow-up that belongs to the checkbox above it. The rule on the inline-start edge
+   is what makes the hierarchy readable at a glance instead of four flat questions. */
+.sub-branch{margin:2px 0 12px;padding-inline-start:16px;
+  border-inline-start:2px solid var(--coach-deep)}
+.sub-branch .sub-branch{margin-bottom:4px}
 /* Two mutually exclusive choices sit side by side, as asked. */
 .pick-row{display:flex;gap:26px;flex-wrap:wrap;margin:0 0 12px}
 .sched-sep{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
-.sess-box{flex:1 1 150px;min-width:140px;background:var(--bg-panel);border:1px solid var(--line);
+.sess-box{flex:1 1 240px;min-width:220px;background:var(--bg-panel);border:1px solid var(--line);
   border-radius:10px;padding:10px}
 .sess-box label{display:block;font-size:.72rem;color:var(--text-meta);margin:0 0 5px;
   text-transform:uppercase;letter-spacing:.8px}
@@ -201,23 +214,31 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
           <textarea id="inEquipOther" placeholder="Rig, 4 barbells, kettlebells 8–32kg, 2 rowers, no rings…"></textarea></label>
       </div>
 
-      <!-- 3 · schedule. Checkboxes, and each answer reveals its own follow-up —
-           the two modes lead to genuinely different questions. -->
+      <!-- 3 · schedule.
+           THREE top-level choices, none pre-ticked: the tab opens with a decision to
+           make, not with an answer already filled in. Every follow-up is INDENTED under
+           the choice it belongs to and appears only once that choice is made — the flat
+           list read as four unrelated questions.
+
+             ☐ Number of sessions per week  [ N ]
+                 └ ☐ The sessions differ from one another
+                        └ one box per session
+             ☐ Full weekly plan
+                 ├ ☐ Include rest days in the plan
+                 └ ☐ Standing emphases for specific weekdays
+                        └ Sun–Sat rows
+             ☐ Include a deload week          (independent — combines with either)
+      -->
       <div class="ipane" data-pane="schedule" hidden>
         <label class="chk-row">
-          <input id="inSchedCount" type="checkbox" data-pick="sched" checked>
+          <input id="inSchedCount" type="checkbox" data-pick="sched">
           <span>Number of sessions per week</span>
           <input id="inSessions" type="number" min="1" max="14" value=""
-                 class="inline-num" aria-label="Sessions per week">
+                 class="inline-num" aria-label="Sessions per week" placeholder="—">
         </label>
-        <label class="chk-row" style="margin-bottom:4px">
-          <input id="inSchedWeekly" type="checkbox" data-pick="sched">
-          <span>Full weekly plan</span>
-        </label>
-        <p class="meta" id="inCountHint" style="margin:0 0 14px"></p>
 
-        <!-- session_count follow-up -->
-        <div id="inDifferWrap">
+        <!-- Sub-question of the line above. -->
+        <div id="inDifferWrap" class="sub-branch" hidden>
           <label class="chk-row">
             <input id="inSessionsDiffer" type="checkbox">
             <span>The sessions differ from one another</span>
@@ -226,13 +247,18 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
           <div id="inSessionTypes" class="sess-grid" hidden></div>
         </div>
 
-        <!-- weekly_schedule follow-ups -->
-        <div id="inWeeklyWrap" hidden>
+        <label class="chk-row">
+          <input id="inSchedWeekly" type="checkbox" data-pick="sched">
+          <span>Full weekly plan</span>
+        </label>
+
+        <!-- Sub-questions of "Full weekly plan". -->
+        <div id="inWeeklyWrap" class="sub-branch" hidden>
           <label class="chk-row">
             <input id="inRestDays" type="checkbox">
             <span>Include rest days in the plan</span>
           </label>
-          <p class="meta" id="inRestHint" style="margin:0 0 14px"></p>
+          <p class="meta" id="inRestHint" style="margin:0 0 12px"></p>
 
           <label class="chk-row">
             <input id="inEmphasis" type="checkbox">
@@ -240,10 +266,13 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
           </label>
           <p class="meta" style="margin:0 0 10px">Tick a day and write a note that repeats every
             week — e.g. Friday: “partner workouts”.</p>
-          <div id="inWeekDays" hidden></div>
+          <div id="inWeekDays" class="sub-branch" hidden></div>
         </div>
 
-        <!-- The deload is part of the schedule, not a step of its own. -->
+        <p class="meta" id="inCountHint" style="margin:2px 0 0"></p>
+
+        <!-- The deload is part of the schedule, not a step of its own, and it is
+             INDEPENDENT of the two modes above — it combines with either. -->
         <div class="sched-sep">
           <label class="chk-row">
             <input id="inDeload" type="checkbox">
@@ -272,14 +301,21 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
         <label class="meta" style="display:flex;gap:6px;align-items:center">
           <input id="newTest" type="checkbox" style="width:auto"> Test program
         </label>
+        <!-- A way back to the list, since the list is no longer on screen. -->
+        <button id="iCancel" class="ghost sm" type="button"
+                style="margin-inline-start:auto">Cancel</button>
       </div>
       <p class="err" id="createErr" role="alert"></p>
     </div>
 
-    <div class="card">
+    <!-- The client list and the new-client wizard are two VIEWS, not two cards on one
+         page. The list used to sit under the wizard through every step of adding a
+         client, where it is noise. -->
+    <div class="card" id="listCard">
       <div class="row" style="margin-bottom:10px">
         <h2 style="margin:0">הלקוחות שלי</h2>
         <span class="spacer total" id="monthlyTotal"></span>
+        <button id="addClientBtn" class="sm" type="button">+ לקוח חדש</button>
         <button id="rebuildBtn" class="ghost sm" type="button" title="אם הרשימה נראית לא מעודכנת">בנה אינדקס מחדש</button>
       </div>
       <div class="clist" id="clientList"></div>
@@ -335,6 +371,8 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
        wi = 0-based week, day = active day key or "general", calMode = week|month,
        selected = the multi-day horizontal spread, edit = the one open draft. */
     wi: 0, day: "sun", calMode: "week", selected: [], edit: null, editStatus: null,
+    /* true = the new-client wizard owns the screen and the list is out of the way. */
+    adding: false,
   };
 
   var DAY_KEYS_LOCAL = (window.PprogDisplay && window.PprogDisplay.DAY_KEYS) ||
@@ -397,13 +435,17 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       .then(function (j) {
         if (j && j.rememberMeReady === true) {
           el("rememberState").textContent =
-            "זכור אותי: ✅ פעיל בשרת — כניסה אחת תספיק גם לדף הזה וגם למודול אדמין.";
+            j.sessionSecretSource === "derived"
+              ? "זכור אותי: ✅ פעיל — כניסה אחת תספיק גם לדף הזה וגם למודול אדמין."
+              : "זכור אותי: ✅ פעיל (מפתח מוגדר) — כניסה אחת לכל הדפים.";
           return;
         }
+        /* Only say "set an env var" when that is genuinely the remaining option. */
         el("rememberState").textContent =
-          "זכור אותי: ❌ כבוי בשרת — ADMIN_SESSION_SECRET חסר או קצר מ־" +
+          "זכור אותי: ❌ כבוי — אין בשרת שום סוד חזק לגזור ממנו מפתח חתימה. " +
+          "צריך ADMIN_SESSION_SECRET באורך " +
           ((j && j.sessionSecretMinLength) || 32) +
-          " תווים. עד שיתוקן, כל דף יבקש סיסמה בנפרד.";
+          " תווים ומעלה. עד אז כל דף יבקש סיסמה בנפרד.";
       })
       .catch(function () {
         el("rememberState").textContent = "לא הצלחתי לבדוק את מצב ״זכור אותי״ מול השרת.";
@@ -442,7 +484,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
         renderList(x.body);
         show("loginView", false); show("mainView", true);
         if (!x.token) {
-          banner("warn", "התחברת, אבל השרת לא הנפיק כרטיס־זיכרון — כלומר תצטרך להקליד סיסמה שוב בפעם הבאה. חסר ADMIN_SESSION_SECRET בהגדרות Vercel.");
+          banner("warn", "התחברת, אבל השרת לא הנפיק כרטיס־זיכרון — תצטרך להקליד סיסמה שוב. אין בשרת סוד חזק לגזור ממנו מפתח חתימה; צריך ADMIN_SESSION_SECRET באורך 32 תווים ומעלה.");
         }
       })
       /* Without this the button sat on "מתחבר…" forever whenever the request itself
@@ -457,12 +499,16 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       });
   }
 
+  /* Painting the list must not put it back on screen while the wizard owns it. */
   function loadList() {
     return api({ action: "list" }).then(function (r) {
       if (r.status === 401) { openLogin("פג תוקף החיבור."); return; }
       if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "לא הצלחתי לטעון את הרשימה."); return; }
       show("loginView", false); show("mainView", true);
       renderList(r.body);
+      /* Re-assert which view owns the screen: a list refresh must not pull the list
+         back up over the wizard. */
+      renderViewMode();
     });
   }
 
@@ -474,7 +520,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       ? S.rows.length + " לקוחות" + (data.unreadTotal ? " · " + data.unreadTotal + " ימים לא נקראו" : "")
       : "";
     if (!S.rows.length) {
-      el("clientList").innerHTML = '<p class="muted">אין עוד לקוחות. צור תוכנית ראשונה למעלה.</p>';
+      el("clientList").innerHTML = '<p class="muted">אין עוד לקוחות. לחץ ״+ לקוח חדש״.</p>';
       return;
     }
     el("clientList").innerHTML = S.rows.map(function (r) {
@@ -524,6 +570,28 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
 
   function clientLink(pid) {
     return location.origin + sitePath() + "/client.html?program=" + encodeURIComponent(pid);
+  }
+
+  /* One switch for which view owns the screen. The wizard and the list are never both
+     up: while adding a client the list is noise, and while browsing clients a half-empty
+     wizard above them is worse. */
+  function renderViewMode() {
+    show("intakeCard", S.adding);
+    show("listCard", !S.adding);
+    if (S.adding) show("detail", false);
+  }
+
+  function setAdding(on) {
+    S.adding = !!on;
+    if (S.adding) {
+      S.sel = null;
+      S.program = null;
+      iStep = 0;
+      renderIntakeTabs();
+      syncIntakeConditionals();
+    }
+    renderViewMode();
+    if (!S.adding) loadList();
   }
 
   function renderDetail() {
@@ -712,6 +780,12 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       /* A client program is 4 weeks without a deload and 5 with one — show its real
          length rather than the athlete app's fixed five. */
       weekRows: weekCount(),
+      /* Nothing is "being generated" here: the owner writes this program himself. The
+         athlete app's default wording would tell a paying client to wait for an AI that
+         is not running. */
+      emptyDayHtml:
+        '<div class="pprog-day-stub">היום הזה עוד ריק. לחץ על העיפרון כדי לכתוב בו אימון, ' +
+        'או השאר אותו כיום מנוחה.</div>',
       calMode: S.calMode || "week",
       israelTodayIso: israelTodayIso(),
       /* The owner writes the training. Nothing on this page talks to a provider. */
@@ -1113,7 +1187,12 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       paymentMethod: String(el("inMethod").value || ""),
       equipment: el("inEquipOtherOn").checked ? "other" : "functional_gym",
       equipmentOther: String(el("inEquipOther").value || ""),
-      scheduleMode: el("inSchedCount").checked ? "session_count" : "weekly_schedule",
+      /* "" when neither is ticked — never a mode the owner did not choose. */
+      scheduleMode: el("inSchedCount").checked
+        ? "session_count"
+        : el("inSchedWeekly").checked
+        ? "weekly_schedule"
+        : "",
       sessionsPerWeek: sessions,
       sessionsDiffer: el("inSessionsDiffer").checked,
       sessionTypes: types,
@@ -1166,9 +1245,12 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
   }
 
   /* A pair of checkboxes standing in for a two-way choice: ticking one unticks its
-     partner, and clicking the already-active one cannot leave the pair empty — with
-     neither ticked there would be no answer at all, and the form would silently fall
-     back to a mode the owner never picked. */
+     partner.
+     Once a choice is made it cannot be un-made back to nothing — the form would then
+     silently fall back to a mode the owner never picked. But the SCHEDULE opens with
+     neither ticked on purpose (owner, 2026-09-01): landing on that tab should present a
+     decision, not an answer already filled in. Equipment does keep its default, because
+     "well-equipped gym" genuinely is the normal case there. */
   function bindPickPair(groupName) {
     var boxes = Array.prototype.slice.call(
       document.querySelectorAll('input[data-pick="' + groupName + '"]')
@@ -1176,7 +1258,7 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     boxes.forEach(function (box) {
       box.addEventListener("change", function () {
         if (!box.checked) {
-          box.checked = true; // re-tick: the choice is exclusive, never empty
+          box.checked = true; // a made choice stays made
           return;
         }
         boxes.forEach(function (other) {
@@ -1193,14 +1275,19 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     var equipOther = el("inEquipOtherOn").checked;
     el("inEquipOtherWrap").hidden = !equipOther;
 
-    /* Schedule: two checkboxes, and each mode opens a different question. */
+    /* Schedule: nothing is ticked until the owner picks, and each choice reveals only
+       its own sub-tree. Neither branch is shown while no mode is chosen — an indented
+       question under an unticked parent is what made the tab read as a flat list. */
     var byCount = el("inSchedCount").checked;
+    var byWeek = el("inSchedWeekly").checked;
     el("inSessions").hidden = !byCount;
+    el("inDifferWrap").hidden = !byCount;
+    el("inWeeklyWrap").hidden = !byWeek;
     el("inCountHint").textContent = byCount
       ? "No weekday attached — the coach delivers them whenever suits their groups."
-      : "Sessions sit on weekdays, Sun–Sat.";
-    el("inDifferWrap").hidden = !byCount;
-    el("inWeeklyWrap").hidden = byCount;
+      : byWeek
+      ? "Sessions sit on weekdays, Sun–Sat."
+      : "Pick how the place trains: a weekly session count, or a full weekly plan.";
 
     /* session_count → do the sessions differ? The boxes appear ONLY when they do. */
     var differ = el("inSessionsDiffer").checked;
@@ -1271,6 +1358,9 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
         var weeks = (r.body.program.weeks || []).length;
         banner("good", "Created an empty " + weeks + "-week program. Now write the sessions.");
         iStep = 0;
+        /* The wizard is done — hand the screen back and open what was just created. */
+        S.adding = false;
+        renderViewMode();
         loadList().then(function () { openClient(r.body.program.programId); });
       });
   }
@@ -1306,6 +1396,11 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
       if (iStep > 0) { iStep--; renderIntakeTabs(); }
     });
     el("createBtn").addEventListener("click", submitIntake);
+    el("addClientBtn").addEventListener("click", function () { setAdding(true); });
+    el("iCancel").addEventListener("click", function () {
+      if (!window.confirm("לצאת מהתחקור? מה שהוקלד יימחק.")) return;
+      setAdding(false);
+    });
     el("rebuildBtn").addEventListener("click", function () {
       api({ action: "rebuild_index" }).then(function (r) {
         banner(r.status === 200 ? "good" : "bad",
@@ -1315,8 +1410,13 @@ button.sm{min-height:34px;padding:5px 11px;font-size:13px}
     });
 
     S.token = storedToken();
+    var params = new URLSearchParams(location.search);
     /* Deep link from the edit-alert email lands straight on the client (a.2.4). */
-    var deep = new URLSearchParams(location.search).get("program");
+    var deep = params.get("program");
+    /* admin.html sends "?new=coach" when the owner picks "מאמן / סטודיו". Until now the
+       wizard was simply always on screen and that parameter did nothing. */
+    S.adding = params.get("new") === "coach";
+    renderViewMode();
     if (S.token) {
       loadList().then(function () { if (deep) openClient(deep); });
     } else openLogin("");
