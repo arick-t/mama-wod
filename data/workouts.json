@@ -2744,35 +2744,6 @@
     "2026-09-01": [
       {
         "date": "2026-09-01",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-09-01/",
-        "sections": [
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "40 on / 20 off  x6",
-              "1. lat stretch / calf stretch",
-              "2. ski / bike",
-              "3. plank push ups / squat jumps"
-            ]
-          },
-          {
-            "title": "CONDITIONING 33MIN",
-            "lines": [
-              "for max reps/cals",
-              "1. double db push press 2x22,5/15kg",
-              "2. cal ski",
-              "3. box jumps 60/50cm",
-              "4. cal bike",
-              "* repeatable high-intensity output (aerobic power)"
-            ],
-            "sub_title": "1:00 on / 1:00 off x 32 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-01",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260901",
@@ -2831,6 +2802,66 @@
               "in this progression, feel free to drop",
               "the weight 5-10lbs in each set."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-01",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 23.3",
+            "lines": [
+              "Starting with a 6-minute time cap, complete as many reps as possible of:",
+              "5 wall walks",
+              "50 double-unders",
+              "15 snatches (weight 1)",
+              "5 wall walks",
+              "50 double-unders",
+              "12 snatches (weight 2)",
+              "*If completed before the 6-minute time cap, add 3 minutes to the time cap and complete:",
+              "20 strict handstand push-ups",
+              "50 double-unders",
+              "9 snatches (weight 3)",
+              "*If completed before the 9-minute time cap, add 3 minutes to the time cap and complete:",
+              "20 strict handstand push-ups",
+              "50 double-unders",
+              "6 snatches (weight 4)",
+              "*♀ 65 lb, 95 lb, 125 lb, 155 lb*",
+              "*♂ 95 lb, 135 lb, 185 lb, 225 lb*"
+            ]
+          }
+        ],
+        "note": "Open: Open 23.3"
+      },
+      {
+        "date": "2026-09-01",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-09-01/",
+        "sections": [
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "40 on / 20 off  x6",
+              "1. lat stretch / calf stretch",
+              "2. ski / bike",
+              "3. plank push ups / squat jumps"
+            ]
+          },
+          {
+            "title": "CONDITIONING 33MIN",
+            "lines": [
+              "for max reps/cals",
+              "1. double db push press 2x22,5/15kg",
+              "2. cal ski",
+              "3. box jumps 60/50cm",
+              "4. cal bike",
+              "* repeatable high-intensity output (aerobic power)"
+            ],
+            "sub_title": "1:00 on / 1:00 off x 32 rounds"
           }
         ]
       },
@@ -2912,39 +2943,8 @@
           }
         ],
         "note": "Benchmark: Crossfit Total"
-      },
-      {
-        "date": "2026-09-01",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 23.3",
-            "lines": [
-              "Starting with a 6-minute time cap, complete as many reps as possible of:",
-              "5 wall walks",
-              "50 double-unders",
-              "15 snatches (weight 1)",
-              "5 wall walks",
-              "50 double-unders",
-              "12 snatches (weight 2)",
-              "*If completed before the 6-minute time cap, add 3 minutes to the time cap and complete:",
-              "20 strict handstand push-ups",
-              "50 double-unders",
-              "9 snatches (weight 3)",
-              "*If completed before the 9-minute time cap, add 3 minutes to the time cap and complete:",
-              "20 strict handstand push-ups",
-              "50 double-unders",
-              "6 snatches (weight 4)",
-              "*♀ 65 lb, 95 lb, 125 lb, 155 lb*",
-              "*♂ 95 lb, 135 lb, 185 lb, 225 lb*"
-            ]
-          }
-        ],
-        "note": "Open: Open 23.3"
       }
     ]
   },
-  "last_updated": "2026-09-01T04:43:21.501896"
+  "last_updated": "2026-09-01T09:02:38.591774"
 }
