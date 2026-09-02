@@ -219,7 +219,7 @@ ok("the device cap is shown", /deviceCap/.test(page));
 /* The card is the athlete's card now, so the signature reads where the health
    declaration reads on theirs: same row, same question. */
 ok("the signature state is shown", /טרם נחתם|נחתם/.test(page));
-ok("it sits where the declaration sits", /תנאי שימוש:/.test(page));
+ok("it sits where the declaration sits", /sum-head">תנאי שימוש/.test(page));
 
 /* --- the summary box, as he laid it out on 2026-09-02 ---------------
  * The terms line answers one question — is this signature in force — and a signature is
@@ -237,11 +237,19 @@ ok("the small chevron is not a primary button", !/class="ath-stats-btn sm" data-
 ok("it wears its own modifier", /class="ath-stats-btn tiny" data-termsmore/.test(page));
 ok("styled to match the one beside the name", /\.ath-stats-btn\.tiny\{[^}]*background:var\(--bg-elev\)/.test(page));
 ok("and behind it are the date and the id", /terms-uid">UID: /.test(page) && /נחתם " \+ esc\(new Date\(a\.signature\.signedAt\)/.test(page));
-/* Access states itself on its own heading — one word did not need a row of its own. */
-ok("the access state rides on the heading", /class="access-state /.test(page));
-ok("green when they are in, orange when they are not", /access-state\.in\{color:#4CAF70/.test(page) && /access-state\.out\{color:#E8451A/.test(page));
-/* The device list is separated from the words above it. */
-ok("the devices heading is a heading", /devices-head/.test(page) && /devices-head\{padding-bottom:8px;margin-bottom:8px;border-bottom/.test(page));
+/* One hierarchy for the whole card (owner, 2026-09-02): three headings the same size as
+   each other and larger than what sits under them; three values that look like each
+   other whether they are a date or a state; and anything that belongs to a heading
+   nested under it. */
+ok("the three headings share one class", (page.match(/class="sum-head"/g) || []).length >= 3);
+ok("the three values share one class", (page.match(/class="sum-value/g) || []).length >= 3);
+ok("a heading is larger than its value", /\.sum-head\{[^}]*font-size:1em/.test(page) && /\.sum-value\{[^}]*font-size:\.9em/.test(page));
+ok("a state is a value, not a pill of its own", !/class="access-state /.test(page));
+ok("good is green and warn is orange", /\.sum-value\.good\{color:#4CAF70\}/.test(page) && /\.sum-value\.warn\{color:#E8451A\}/.test(page));
+/* Devices belong to access — they are HOW this client got in — and the list belongs to
+   the devices. */
+ok("the devices are nested inside access", /sum-sub">[\s\S]{0,200}מכשירים מקושרים/.test(page));
+ok("and their list one level further in", /class="sum-list"/.test(page) && /\.sum-sub\{[^}]*border-inline-start/.test(page));
 ok("the card is built from the athlete card", /ath-fact-label">תאריך הצטרפות:/.test(page));
 ok("the client link is copyable once it exists", /data-copylink/.test(page));
 

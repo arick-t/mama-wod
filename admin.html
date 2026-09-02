@@ -985,11 +985,20 @@ header{flex-wrap:wrap;row-gap:8px}
   margin-inline-start:6px;vertical-align:middle;border:1px solid var(--line);
   background:var(--bg-elev);color:var(--text-muted);border-radius:8px;padding:0}
 #clientScreen .ath-stats-btn.tiny:hover{border-color:#3a3a3a;color:var(--text)}
-#clientScreen .handoff-head{display:flex;align-items:center;gap:10px}
-#clientScreen .access-state{font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;border:1px solid}
-#clientScreen .access-state.in{color:#4CAF70;border-color:rgba(76,175,112,.5);background:rgba(76,175,112,.12)}
-#clientScreen .access-state.out{color:#E8451A;border-color:rgba(232,69,26,.5);background:rgba(232,69,26,.10)}
-#clientScreen .devices-head{padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid var(--line)}
+/* One hierarchy for the whole summary card (owner, 2026-09-02): a heading, its value,
+   and anything that belongs to it nested underneath. The three headings are the same
+   size as each other and larger than what sits under them; the three values look like
+   each other, whether they are a date or a state. */
+#clientScreen .sum-item{display:block;margin:0 0 14px}
+#clientScreen .sum-head{display:flex;align-items:center;gap:8px;font-size:1em;font-weight:800;
+  color:var(--text);margin:0 0 4px}
+#clientScreen .sum-value{font-size:.9em;font-weight:600;color:var(--text-muted);line-height:1.5}
+#clientScreen .sum-value.good{color:#4CAF70}
+#clientScreen .sum-value.warn{color:#E8451A}
+/* A level down: the devices belong to access, and the list belongs to the devices. */
+#clientScreen .sum-sub{margin:12px 0 0;padding-inline-start:12px;border-inline-start:2px solid var(--line)}
+#clientScreen .sum-subhead{font-size:.9em;font-weight:700;color:var(--text-muted);margin:0 0 6px}
+#clientScreen .sum-list{padding-inline-start:10px}
 .purge-report{padding:6px 2px;font-size:.9em;line-height:1.6}
 .purge-report h3{margin:0 0 10px;font-size:1.05em;color:#e8e4d8}
 .purge-report ul{margin:4px 0 12px;padding-inline-start:20px;color:#bdb8ab}
@@ -6235,22 +6244,19 @@ tryRestoreAdminSession();
           renderClientMorePop(p, moreOpen) +
         "</div>" +
         '<div class="ath-facts">' +
-          '<div class="ath-fact">' +
-            '<span class="ath-fact-label">תאריך הצטרפות:</span>' +
-            '<span class="ath-fact-value">' + esc(joined ? new Date(joined).toLocaleDateString() : "—") + "</span>" +
+          '<div class="ath-fact sum-item">' +
+            '<div class="sum-head">תאריך הצטרפות</div>' +
+            '<div class="sum-value">' + esc(joined ? new Date(joined).toLocaleDateString() : "—") + "</div>" +
           "</div>" +
           /* The client's equivalent of the health declaration, and the same question:
              is this person's signature IN FORCE. The version string and the date were
              the answer to a question nobody asks at a glance, so they moved behind the
              chevron with the id (owner, 2026-09-02). */
-          '<div class="ath-fact" style="grid-column:1/-1">' +
-            '<span class="ath-fact-label">תנאי שימוש:' +
-            '<span class="ath-decl-note' + (terms.valid ? " valid" : "") + '">' +
-            esc(terms.label) +
-            "</span>" +
+          '<div class="ath-fact sum-item" style="grid-column:1/-1">' +
+            '<div class="sum-head">תנאי שימוש' +
             '<button type="button" class="ath-stats-btn tiny" data-termsmore="1" title="פרטי החתימה" aria-expanded="' +
-            (S.termsOpen ? "true" : "false") + '">▾</button>' +
-            "</span>" +
+            (S.termsOpen ? "true" : "false") + '">▾</button></div>' +
+            '<div class="sum-value ' + (terms.valid ? "good" : "warn") + '">' + esc(terms.label) + "</div>" +
             (S.termsOpen
               ? '<div class="terms-detail">' +
                 (a.signature
@@ -6265,13 +6271,13 @@ tryRestoreAdminSession();
         /* Access: one button that does the whole thing. Issuing a link and issuing a
            code were two clicks for one intent, and the link sat on screen before it had
            ever been handed to anyone (owner, 2026-09-02). */
-        '<div class="ath-handoff-inline handoff-box">' +
-          /* The state belongs on the heading line: it is one word, and a line of its own
-             for one word cost a row of screen on every client (owner, 2026-09-02). */
-          '<div class="handoff-head">גישה ללקוח' +
-          '<span class="access-state ' + (a.signature ? "in" : "out") + '">' +
+        '<div class="ath-handoff-inline handoff-box sum-item">' +
+          /* Heading, then its value, in the same shape as the two facts above it — one
+             hierarchy for the whole card (owner, 2026-09-02). */
+          '<div class="sum-head">גישה ללקוח</div>' +
+          '<div class="sum-value ' + (a.signature ? "good" : "warn") + '">' +
           (a.signature ? "חתם ונכנס" : linkShown ? "הלינק והקוד מוכנים" : "טרם נכנס") +
-          "</span></div>" +
+          "</div>" +
           '<div class="handoff-link"' + (linkShown ? "" : ' style="display:none"') + '>' +
           (linkShown ? esc(clientLink(p.programId)) : "") + "</div>" +
           '<div id="codeOut">' +
@@ -6288,21 +6294,23 @@ tryRestoreAdminSession();
               ? '<button class="btn-secondary good" type="button" data-copylink="1">העתק לינק</button>'
               : "") +
           "</div>" +
+          /* The devices are part of access, not a section beside it: they are HOW this
+             client got in. Nested one level, and the list one level under them. */
+          (a.devices && a.devices.length
+            ? '<div class="sum-sub">' +
+              '<div class="sum-subhead">מכשירים מקושרים (' +
+              a.devices.length + "/" + esc(a.deviceCap) + ")</div>" +
+              '<div class="sum-list">' +
+              a.devices.map(function (d, i) {
+                return '<div class="devrow"><span>' + (i + 1) + ". " + esc(d.label || d.id) + "</span>" +
+                  '<span class="spacer meta">' +
+                  (d.lastSeenAt ? new Date(d.lastSeenAt).toLocaleDateString() : "") + "</span>" +
+                  '<button class="ghost sm" type="button" data-revokedev="' + esc(d.id) +
+                  '">בטל</button></div>';
+              }).join("") +
+              "</div></div>"
+            : "") +
         "</div>" +
-        /* The devices that got in, numbered, under the door they came through. */
-        (a.devices && a.devices.length
-          ? '<div class="ath-handoff-inline handoff-box">' +
-            '<div class="handoff-head devices-head">מכשירים מקושרים (' +
-            a.devices.length + "/" + esc(a.deviceCap) + ")</div>" +
-            a.devices.map(function (d, i) {
-              return '<div class="devrow"><span>' + (i + 1) + ". " + esc(d.label || d.id) + "</span>" +
-                '<span class="spacer meta">' +
-                (d.lastSeenAt ? new Date(d.lastSeenAt).toLocaleDateString() : "") + "</span>" +
-                '<button class="ghost sm" type="button" data-revokedev="' + esc(d.id) +
-                '">בטל</button></div>';
-            }).join("") +
-            "</div>"
-          : "") +
       "</div></div>";
 
     /* program */
