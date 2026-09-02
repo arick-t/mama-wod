@@ -146,6 +146,7 @@ function harness(opts) {
 
   const api = require("../api/client-program.js");
 
+  let callSeq = 0;
   function call(reqHeaders, body) {
     return new Promise(function (resolve) {
       let statusCode = 200;
@@ -170,7 +171,17 @@ function harness(opts) {
           return res;
         },
       };
-      api({ method: "POST", headers: reqHeaders || {}, body: body || {}, socket: {} }, res);
+      /* One walk through the whole product is more calls than one person makes in a
+         minute, and the rate limiter is keyed by IP — so each call in this harness comes
+         from its own address. The limiter itself is asserted where it is the subject
+         (scripts/security-hardening-smoke.test.js), not here, where it would only cap
+         how much of the journey can be tested. */
+      callSeq += 1;
+      const from = { "x-forwarded-for": "10.9." + ((callSeq >> 8) & 255) + "." + (callSeq & 255) };
+      api(
+        { method: "POST", headers: Object.assign(from, reqHeaders || {}), body: body || {}, socket: {} },
+        res
+      );
     });
   }
 
@@ -541,6 +552,35 @@ async function main() {
   ok("the revoked device is locked out", afterRevoke.status === 401);
   const laptopStill = await H.client(laptopToken, { action: "read", programId: pid });
   ok("the other device still works", laptopStill.status === 200);
+
+  /* --- a second block reaches the client once it is approved -------
+   * He reported after his run-through: "אחרי אישור לבנה ושליחה צד הלקוח לא קיבל כלום".
+   * This walks it: add a block, see that the client is NOT shown it, approve, see that
+   * they are. */
+
+  const beforeAdd = await H.client(laptopToken, { action: "read", programId: pid });
+  const weeksBefore = beforeAdd.body.program.weeks.length;
+  const readOwner = await H.owner({ action: "read", programId: pid });
+  const added = await H.owner({
+    action: "add_block",
+    programId: pid,
+    expectedVersion: readOwner.body.program.version,
+  });
+  ok("the owner adds a second block", added.status === 200 && added.body.ok === true);
+  const afterAdd = await H.client(laptopToken, { action: "read", programId: pid });
+  ok("AN UNAPPROVED BLOCK IS INVISIBLE TO THE CLIENT", afterAdd.body.program.weeks.length === weeksBefore);
+  const approved2 = await H.owner({
+    action: "approve_block",
+    programId: pid,
+    expectedVersion: added.body.program.version,
+    blockIndex: 2,
+  });
+  ok("the owner approves it", approved2.status === 200 && approved2.body.ok === true);
+  const afterApprove = await H.client(laptopToken, { action: "read", programId: pid });
+  ok(
+    "AND THEN THE CLIENT HAS IT — " + weeksBefore + " → " + afterApprove.body.program.weeks.length,
+    afterApprove.body.program.weeks.length > weeksBefore
+  );
 
   /* --- freeze: the door closes, nothing is lost -------------------- */
 

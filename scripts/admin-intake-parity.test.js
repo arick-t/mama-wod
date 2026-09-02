@@ -43,6 +43,36 @@ const sample = {
 
 const packet = CoachIntakeSync.buildFixedIntakePrompt(sample);
 ok("packet starts FIXED INTAKE COMPLETE", /^FIXED INTAKE COMPLETE/i.test(packet));
+/* --- four weeks, and the deload is a fact we hand over ------------------
+ * Settled by the owner on 2026-09-02 and written into the coach's layers: a brick is a
+ * MONTH. The deload runs on an absolute week counter across months, so it can land on
+ * week 2 of one block and week 4 of the next — which means the coach must be TOLD where
+ * it is. "A deload week is given to you. Never choose one yourself."
+ */
+ok("the packet asks for four weeks", /build a full 4-week training brick/.test(packet));
+ok("and says exactly four", /exactly 4 weeks/.test(packet));
+ok("nothing asks for a fifth week any more", !/5-week|exactly 5 weeks|Week 5/.test(packet));
+const wk4 = CoachIntakeSync.buildFixedIntakePrompt(Object.assign({}, sample, { blockStartWeek: 1, deloadEveryWeeks: 4 }));
+ok("the deload is stated as a position", /^DELOAD: week 4 of this 4-week block/m.test(wk4));
+ok("and the coach is told not to move it", /Do NOT choose a different one, and do NOT add a fifth week/.test(wk4));
+const wk2 = CoachIntakeSync.buildFixedIntakePrompt(Object.assign({}, sample, { blockStartWeek: 3, deloadEveryWeeks: 4 }));
+ok("a block that starts mid-cadence carries the deload where it really lands", /^DELOAD: week 2 of/m.test(wk2));
+const none = CoachIntakeSync.buildFixedIntakePrompt(Object.assign({}, sample, { blockStartWeek: 1, deloadEveryWeeks: 6 }));
+ok("a block with no deload in it says so", /^DELOAD: no deload week falls inside this block/m.test(none));
+ok("block 1 of a monthly cadence deloads in week 4", CoachIntakeSync.deloadWeekIndexForBlock(1, 4) === 4);
+ok("so does block 2, counted absolutely", CoachIntakeSync.deloadWeekIndexForBlock(5, 4) === 4);
+ok("a cadence of six leaves a four-week block clean", CoachIntakeSync.deloadWeekIndexForBlock(1, 6) === null);
+ok("no cadence means no deload", CoachIntakeSync.deloadWeekIndexForBlock(1, 0) === null);
+
+/* The coach asked for both as FIELDS: reading them out of prose is one substring away
+   from being wrong, and was (coach agent, 2026-09-02). */
+const gen = CoachIntakeSync.athleteProfileForGenerateBlock(
+  Object.assign({}, sample, { competitor: true }),
+  { blockStartWeek: 5, deloadEveryWeeks: 4 }
+);
+ok("the profile states competitor as a boolean", gen.competitor === true);
+ok("the profile states the block length", gen.blockWeeks === 4);
+ok("and where the deload is", gen.deloadWeekIndex === 4);
 ok("packet has schedule", /Training days: Sun, Mon, Wed, Fri/.test(packet));
 ok("packet has lifts", /Back Squat: 120 kg/.test(packet));
 ok("packet has goals", /Engine \+ strength/.test(packet));
