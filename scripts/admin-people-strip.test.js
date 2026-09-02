@@ -70,6 +70,30 @@ ok("an empty strip says what to do", /אין עדיין לקוחות/.test(Strip
 const nasty = Strip.html(Strip.rows({ programs: [{ programId: "p_1", clientName: '<img src=x onerror="alert(1)">' }] }), "");
 ok("a name cannot break out of the chip", nasty.indexOf("<img") < 0 && /&lt;img/.test(nasty));
 
+/* --- the owner's own colour for a client ----------------------------
+ *
+ * He picks twenty clients out of one strip, so each can carry a colour he chose
+ * (2026-09-02). It lands inside a style attribute, which is the whole reason it is
+ * validated twice — once when the row is built and once when the chip is written.
+ */
+const coloured = Strip.rows({
+  athletes: [
+    { athleteId: "u_c", displayName: "עדי", clientColour: "#E8451A" },
+    { athleteId: "u_n", displayName: "ללא", clientColour: "" },
+    { athleteId: "u_x", displayName: "רע", clientColour: "red; background:url(x)" },
+    { athleteId: "u_y", displayName: "גם רע", clientColour: "javascript:alert(1)" },
+  ],
+});
+ok("a real colour survives", coloured[0].colour === "#E8451A");
+ok("no colour is no colour", coloured[1].colour === "");
+ok("a colour name is not a colour here", coloured[2].colour === "");
+ok("and neither is anything that smells like code", coloured[3].colour === "");
+
+const colouredHtml = Strip.html(coloured, "u_c");
+ok("the chosen colour reaches the chip", /border-inline-start:4px solid #E8451A/.test(colouredHtml));
+ok("nothing else brought a style with it", (colouredHtml.match(/style="/g) || []).length === 1);
+ok("nothing that was refused can appear", colouredHtml.indexOf("javascript") < 0 && colouredHtml.indexOf("url(") < 0);
+
 const src = require("fs").readFileSync(
   require("path").join(__dirname, "..", "lib", "admin-people-strip.js"),
   "utf8"

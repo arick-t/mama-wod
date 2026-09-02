@@ -607,6 +607,18 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
   border:1px solid var(--line,#2c2c2c);border-radius:12px;padding:16px;margin:0 0 12px;cursor:pointer;
   font-family:inherit;color:inherit;min-height:44px}
 .client-kind-card:hover{border-color:var(--coach,#9b6bb8);background:rgba(155,107,184,.10)}
+.ident-label{display:block;font-size:.82rem;color:var(--text-meta);margin:0 0 6px;font-weight:600}
+.ident-input{width:100%;font-family:var(--font-ui);font-size:16px;color:var(--text);
+  background:var(--bg-panel);border:1px solid var(--line);border-radius:8px;padding:11px}
+.ident-swatches{display:flex;flex-wrap:wrap;gap:9px}
+.ident-swatch{width:34px;height:34px;border-radius:50%;border:2px solid transparent;cursor:pointer;
+  padding:0;min-height:0;box-shadow:none}
+.ident-swatch.on{border-color:#fff;box-shadow:0 0 0 2px var(--line)}
+.ident-swatch.none{background:var(--bg-panel);border:1px dashed var(--line);color:var(--text-meta);
+  font-size:16px;line-height:1}
+/* Active and frozen are one question, so they read as one line. */
+.ath-chip-sep{color:var(--text-meta);margin:0 2px;font-weight:700}
+.handoff-head{font-family:var(--font-display);font-size:.92rem;letter-spacing:.4px;margin:0 0 6px}
 .client-kind-card .ck-title{display:block;font-family:var(--font-display,inherit);font-size:1.05rem;
   font-weight:700;margin:0 0 6px}
 .client-kind-card .ck-desc{display:block;font-size:.85rem;color:var(--text-muted,#b0aaa0);line-height:1.55}
@@ -1150,6 +1162,30 @@ header{flex-wrap:wrap;row-gap:8px}
 <!-- Client kind chooser: one door, two products (checklist 2.a). The end-athlete
      intake below is unchanged — it works, it is paid-for development, and a coach may
      one day add their own athletes through it. -->
+<!-- Who this client is, in the owner's words: what he calls them, and the colour he
+     picks them out by in the strip. Both are his labels — the athlete never sees
+     either — and both are saved on the server, so the strip looks the same on his
+     phone as on his laptop (owner, 2026-09-02). -->
+<div class="modal-backdrop" id="client-identity-modal" onclick="if(event.target===this)closeClientIdentity()">
+  <div class="intake-workspace" dir="rtl" onclick="event.stopPropagation()" style="max-width:460px">
+    <div class="intake-ws-header">
+      <h2>שם וצבע</h2>
+      <button type="button" class="btn-secondary" onclick="closeClientIdentity()">סגור</button>
+    </div>
+    <div class="intake-ws-body" style="padding:18px">
+      <label class="ident-label" for="ident-name">שם הלקוח</label>
+      <input id="ident-name" type="text" class="ident-input" maxlength="60" autocomplete="off">
+      <div class="ident-label" style="margin-top:14px">צבע בלשונית</div>
+      <div class="ident-swatches" id="ident-swatches"></div>
+      <div class="row" style="margin-top:16px;display:flex;gap:10px">
+        <button type="button" class="hdr-btn primary" onclick="saveClientIdentity()">שמור</button>
+        <button type="button" class="hdr-btn" onclick="closeClientIdentity()">ביטול</button>
+        <span class="ath-muted" id="ident-status" style="margin-inline-start:auto"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal-backdrop" id="client-kind-modal" onclick="if(event.target===this)closeClientKindChooser()">
   <div class="intake-workspace" dir="rtl" onclick="event.stopPropagation()" style="max-width:640px">
     <div class="intake-ws-header">
@@ -2335,10 +2371,22 @@ function renderAthlete(a) {
   var decl = getDeclarationInfo(a);
   var acc = getAccState(a.athleteId);
   var chatLog = getAdminChatLog(a);
+  /* Active and frozen are two answers to one question, so they read as one control:
+     the state, a slash, and the switch that changes it (owner, 2026-09-02). */
   var chips =
     '<span class="ath-chip ' + (frozen ? "frozen" : "active") + '">' +
     (frozen ? "מוקפא" : "פעיל") +
-    "</span>";
+    "</span>" +
+    '<span class="ath-chip-sep">/</span>' +
+    '<button type="button" class="btn-freeze-mini' +
+    (frozen ? " is-frozen" : "") +
+    '" onclick="toggleMembershipFrozen(\'' +
+    a.athleteId.replace(/'/g, "") +
+    "')\" title=\"" +
+    (frozen ? "בטל הקפאה" : "הקפא מנוי") +
+    '">' +
+    (frozen ? "בטל הקפאה" : "הקפא") +
+    "</button>";
   var statsOpen = !!(athleteStatsOpen && athleteStatsOpen[a.athleteId]);
   var syncSt = adminBlockSyncStatus(a);
   var view = adminEnsureBlockView(a);
@@ -2348,7 +2396,12 @@ function renderAthlete(a) {
       '<div class="ath-card">' +
         '<div class="ath-card-top">' +
           '<div class="ath-name-row">' +
-            '<div class="ath-name">' + esc(a.displayName || a.athleteId) + "</div>" +
+            '<div class="ath-name" style="color:' + esc(clientColour(a)) + '">' +
+            esc(a.displayName || a.athleteId) + "</div>" +
+            /* Rename, and pick the colour that tells this client apart in the strip. */
+            '<button type="button" class="ath-stats-btn" onclick="openClientIdentity(\'' +
+            esc(a.athleteId) +
+            '\')" title="שם וצבע">✎</button>' +
             '<button type="button" class="ath-stats-btn' +
             (statsOpen ? " open" : "") +
             '" onclick="toggleAthleteStatsPop()" title="מידע נוסף" aria-expanded="' +
@@ -2356,7 +2409,6 @@ function renderAthlete(a) {
             '">▾</button>' +
           "</div>" +
           '<div class="ath-chips">' + chips + "</div>" +
-          renderHandoffInline(a) +
           renderAthleteStatsPop(a, chatLog, statsOpen) +
         "</div>" +
         '<div class="ath-facts">' +
@@ -2366,15 +2418,6 @@ function renderAthlete(a) {
                 '<span class="ath-fact-label">נרשם:</span>' +
                 '<span class="ath-fact-value">' + esc(fmt(joinedAt) || "—") + "</span>" +
               "</div>" +
-              '<button type="button" class="btn-freeze-mini' +
-              (frozen ? " is-frozen" : "") +
-              '" onclick="toggleMembershipFrozen(\'' +
-              esc(a.athleteId) +
-              "')\" title=\"" +
-              (frozen ? "בטל הקפאה" : "הקפא מנוי") +
-              '">' +
-              (frozen ? "בטל הקפאה" : "הקפא") +
-              "</button>" +
             "</div>" +
           "</div>" +
           '<div class="ath-fact">' +
@@ -2397,6 +2440,7 @@ function renderAthlete(a) {
               : '<div class="ath-muted" style="margin-top:4px;font-size:12px">תתעדכן אחרי חתימה בלינק המסירה / במכשיר</div>') +
           "</div>" +
         "</div>" +
+        renderHandoffInline(a) +
         '<div class="ath-card-foot">' +
           '<button type="button" class="btn-delete-link" onclick="deleteAthlete(\'' +
           esc(a.athleteId) +
@@ -4470,26 +4514,32 @@ function renderHandoffInline(a) {
     '<div class="ath-handoff-inline handoff-box" id="handoff-box" data-athlete-id="' +
     esc(a.athleteId) +
     '">' +
-    '<button type="button" class="btn-handoff-mini" onclick="createHandoffLink(\'' +
-    esc(a.athleteId) +
-    '\')" title="לינק חד־פעמי — מוריד את התוכנית למכשיר המתאמן">צור לינק הורדה חד־פעמי</button>' +
+    /* One button. A link with no way in is useless and a way in with no link is
+       nothing, so they are issued together — and pressing it again is how a second
+       device gets in (owner, 2026-09-02). */
+    '<div class="handoff-head">גישה למתאמן</div>' +
     '<div class="handoff-status" id="handoff-status">' +
-    (savedUrl ? "לינק מוכן — העתק למתאמן." : "") +
+    (savedUrl ? "לינק מוכן — שלח אותו למתאמן." : "עדיין לא הונפק לינק.") +
     "</div>" +
     '<div class="handoff-link" id="handoff-link" style="display:' +
     linkVisible +
     '">' +
     esc(savedUrl) +
     "</div>" +
-    '<div class="handoff-actions" id="handoff-copy-wrap" style="display:' +
-    copyVisible +
-    '">' +
+    '<div class="handoff-actions">' +
+    '<button type="button" class="btn-handoff-mini" onclick="createHandoffLink(\'' +
+    esc(a.athleteId) +
+    '\')" title="מנפיק לינק חדש — כך גם מחברים מכשיר נוסף">' +
+    (savedUrl ? "צור לינק חדש" : "צור לינק") +
+    "</button>" +
+    '<span id="handoff-copy-wrap" style="display:' + copyVisible + ';gap:8px">' +
     '<button type="button" class="btn-secondary good" onclick="copyHandoffLink(\'' +
     esc(a.athleteId) +
     "')\">העתק לינק</button>" +
     '<a class="btn-secondary" id="handoff-open" href="' +
     esc(savedUrl || "#") +
     '" target="_blank" rel="noopener">פתח</a>' +
+    "</span>" +
     "</div>" +
     last +
     "</div>"
@@ -4583,6 +4633,109 @@ function resetIntakeState() {
  * "מאמן/סטודיו" is the new cross-cutting intake. It lives on admin-clients.html
  * because that is where the client-program model lives; sending the owner there is
  * cheaper and far safer than growing a second data model inside this 201KB file. */
+/* Eight colours, not a colour wheel: the point is telling twenty clients apart at a
+   glance, and a free picker produces twenty shades of the same grey. */
+var CLIENT_COLOURS = ["#E8451A", "#F5C518", "#4CAF70", "#1A9B8A", "#7eb8c9", "#9b6bb8", "#d47ba8", "#b0aaa0"];
+var identityFor = null;
+var identityColour = "";
+
+function clientColour(a) {
+  var c = String((a && a.clientColour) || "");
+  return /^#[0-9a-f]{6}$/i.test(c) ? c : "var(--text)";
+}
+
+function renderIdentitySwatches() {
+  var host = document.getElementById("ident-swatches");
+  if (!host) return;
+  host.innerHTML =
+    '<button type="button" class="ident-swatch none' +
+    (identityColour ? "" : " on") +
+    '" onclick="pickClientColour(\'\')" title="בלי צבע">×</button>' +
+    CLIENT_COLOURS.map(function (c) {
+      return (
+        '<button type="button" class="ident-swatch' +
+        (identityColour.toLowerCase() === c.toLowerCase() ? " on" : "") +
+        '" style="background:' + c + '" onclick="pickClientColour(\'' + c + '\')" title="' + c + '"></button>'
+      );
+    }).join("");
+}
+
+function pickClientColour(c) {
+  identityColour = String(c || "");
+  renderIdentitySwatches();
+}
+
+function openClientIdentity(athleteId) {
+  var a = athletes.find(function (x) { return x.athleteId === athleteId; });
+  if (!a) return;
+  identityFor = athleteId;
+  identityColour = /^#[0-9a-f]{6}$/i.test(String(a.clientColour || "")) ? String(a.clientColour) : "";
+  var name = document.getElementById("ident-name");
+  if (name) name.value = a.displayName || "";
+  var st = document.getElementById("ident-status");
+  if (st) st.textContent = "";
+  renderIdentitySwatches();
+  var m = document.getElementById("client-identity-modal");
+  if (m) m.classList.add("open");
+  try { if (name) name.focus(); } catch (e) {}
+}
+
+function closeClientIdentity() {
+  var m = document.getElementById("client-identity-modal");
+  if (m) m.classList.remove("open");
+  identityFor = null;
+}
+
+function saveClientIdentity() {
+  if (!identityFor) return;
+  var nameEl = document.getElementById("ident-name");
+  var st = document.getElementById("ident-status");
+  var name = String((nameEl && nameEl.value) || "").trim();
+  if (!name) {
+    if (st) st.textContent = "צריך שם.";
+    return;
+  }
+  if (st) st.textContent = "שומר…";
+  var id = identityFor;
+  fetch(adminApiUrl("/api/admin-snapshot"), {
+    method: "POST",
+    headers: adminAuthHeaders(),
+    body: JSON.stringify(withAdminPassword({
+      action: "admin_client_identity",
+      athleteId: id,
+      displayName: name,
+      clientColour: identityColour,
+    }))
+  })
+    .then(function (r) { return r.json().then(function (d) { return { status: r.status, d: d }; }); })
+    .then(function (p) {
+      if (p.status === 401) { forceAdminLogout("הסשן פג — התחבר מחדש"); return; }
+      if (p.status !== 200 || !p.d || !p.d.ok) {
+        if (st) st.textContent = (p.d && p.d.error) || "לא נשמר.";
+        return;
+      }
+      /* Update what is on screen without a round trip: the strip and the open card both
+         read from the same list. */
+      var a = athletes.find(function (x) { return x.athleteId === id; });
+      if (a) {
+        a.displayName = p.d.displayName || name;
+        a.clientColour = p.d.clientColour || "";
+      }
+      closeClientIdentity();
+      renderPeopleStrip();
+      if (a && currentAthleteId === id) renderAthlete(a);
+      showHdrToast("נשמר.");
+    })
+    .catch(function () {
+      if (st) st.textContent = "שגיאת רשת — לא נשמר.";
+    });
+}
+
+window.openClientIdentity = openClientIdentity;
+window.closeClientIdentity = closeClientIdentity;
+window.saveClientIdentity = saveClientIdentity;
+window.pickClientColour = pickClientColour;
+
 function openClientKindChooser() {
   var m = document.getElementById("client-kind-modal");
   if (m) m.classList.add("open");
@@ -5359,7 +5512,13 @@ tryRestoreAdminSession();
         });
   }
   function banner(kind, msg) {
-    el("topBanner").innerHTML = msg ? '<div class="banner ' + kind + '">' + esc(msg) + "</div>" : "";
+    var host = el("topBanner");
+    if (host) host.innerHTML = msg ? '<div class="banner ' + kind + '">' + esc(msg) + "</div>" : "";
+    /* This screen can be behind the athlete side, and a message nobody can see is the
+       same as no message: the owner reads it as "the button does nothing". */
+    if (msg && typeof window.showHdrToast === "function") {
+      window.showHdrToast(msg, kind === "bad" ? "err" : kind === "warn" ? "warn" : "");
+    }
   }
 
   /* The frame belongs to admin.html now. Kept as a no-op rather than deleted at every
@@ -5450,6 +5609,10 @@ tryRestoreAdminSession();
 
   function openClient(pid) {
     S.sel = pid; S.wi = 0; S.day = "sun"; S.calMode = "week"; S.selected = []; S.edit = null;
+    /* Show the screen before the answer comes back, so a slow or failed read leaves the
+       owner looking at this screen with a message on it — not at the previous client. */
+    S.adding = false;
+    renderViewMode();
     api({ action: "read", programId: pid }).then(function (r) {
       if (r.status === 401) { openLogin("פג תוקף החיבור."); return; }
       if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "לא הצלחתי לטעון את התוכנית."); return; }
@@ -6298,20 +6461,9 @@ tryRestoreAdminSession();
     if (!t || !t.getAttribute) return;
     var g = function (n) { return t.getAttribute(n); };
 
-    var chip = t.closest ? t.closest("[data-kind]") : null;
-    if (chip && chip.getAttribute("data-id")) {
-      var chipId = chip.getAttribute("data-id");
-      if (chip.getAttribute("data-kind") === "athlete") {
-        /* Absolute, always — a relative href breaks when the page is served with a
-           trailing slash (scripts/cross-page-links.test.js). */
-        location.href = location.origin + sitePath() + "/admin.html?athlete=" + encodeURIComponent(chipId);
-        return;
-      }
-      openClient(chipId);
-      return;
-    }
-    var openRow = t.closest ? t.closest("[data-open]") : null;
-    if (openRow && openRow.getAttribute("data-open")) { openClient(openRow.getAttribute("data-open")); return; }
+    /* The strip is the PAGE's. Its handler opens an athlete or a client in place; this
+       screen must not also react to a chip, and it certainly must not navigate — the
+       copy that lived here did, which reloaded the whole page on every athlete click. */
 
     if (g("data-istep")) { iStep = parseInt(g("data-istep"),10)||0; renderIntakeTabs(); return; }
     /* The program's own clicks (week, day, pencil, save, cancel) are the brick view's

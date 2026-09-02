@@ -452,6 +452,51 @@ module.exports = async function handler(req, res) {
       });
     }
 
+    /* Who this client is, in the owner's own words: the name he calls them and the
+       colour he picks them out by. Both are his labels, not the athlete's — the athlete
+       never sees either — and both belong on the server, or the strip looks different on
+       his phone than on his laptop (owner, 2026-09-02). */
+    if (body.action === "admin_client_identity") {
+      if (!isAdmin) return adminAuthDenied(res);
+      const existing = (await readSnapshot(athleteId)) || {};
+      if (!existing.athleteId && !existing.createdAt) {
+        return res.status(404).json({ error: "Athlete not found — wait for first snapshot" });
+      }
+      if (body.displayName !== undefined) {
+        const name = String(body.displayName || "").trim().slice(0, 60);
+        /* An empty rename would leave a chip with nothing on it, so it is refused
+           rather than saved. */
+        if (!name) return res.status(400).json({ error: "A name is required" });
+        existing.displayName = name;
+      }
+      if (body.clientColour !== undefined) {
+        /* An allowlist, not free CSS: this string is written into a style attribute in
+           the strip, and a colour a client can choose is a colour that can be an
+           injection. */
+        const colour = String(body.clientColour || "").trim().toLowerCase();
+        existing.clientColour = /^#[0-9a-f]{6}$/.test(colour) ? colour : "";
+      }
+      existing.updatedAt = new Date().toISOString();
+      try {
+        await writeSnapshot(athleteId, existing);
+        await appendAdminAudit({
+          action: "set_client_identity",
+          athleteId: athleteId,
+          actor: "admin",
+          ok: true,
+          detail: existing.displayName || "",
+        });
+      } catch (e) {
+        return storageUnavailable(res, e);
+      }
+      return res.status(200).json({
+        ok: true,
+        displayName: existing.displayName || "",
+        clientColour: existing.clientColour || "",
+        storage: storageInfo(),
+      });
+    }
+
     if (body.action === "admin_append_chat") {
       if (!isAdmin) return adminAuthDenied(res);
       const existing = (await readSnapshot(athleteId)) || {};
