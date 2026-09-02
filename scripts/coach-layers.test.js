@@ -45,7 +45,10 @@ function allPrompts() {
    decision, not an accident. Raise a number here deliberately and say why. */
 const MAX_CHARS = {
   "coach-craft": 3200,
-  "layer1-methodology": 5500,
+  /* Raised from 5500 on 2026-09-02: the owner asked for three additions — the four models are a
+     compass and not a gate for a limited-equipment studio, modality rotation must not be hardened,
+     and the scope limit must be stated out loud. About 40 extra tokens a call. */
+  "layer1-methodology": 6000,
   "layer1-injuries": 3500,
   "layer2-general": 6500,
   "layer2-individual": 5000,
@@ -92,6 +95,35 @@ function testNoSourceLeak() {
   });
 }
 
+function testScope() {
+  /* The owner narrowed the coach's scope below what the sources cover, on 2026-09-01:
+     "אנחנו מגבילים אותו לתנועות, משקלים ומספרים בלבד... אני לא מתיימר להיות אחראי על מאזן נוזלים
+      או על קלוריות והתאוששות של מתאמנים."
+     He then asked for the word nutrition to be deleted outright rather than caveated, because a
+     term present in a prompt is a term a model may volunteer. So no prompt may carry diet,
+     hydration or pathology vocabulary — not even as background, and not even in the source's own
+     safety wording. */
+  const OUT_OF_SCOPE =
+    /nutrition|nutrient|macronutrient|rhabdo|myoglobin|hydrat|dehydrat|electrolyte|carbohydrate|\bdiet\b|calorie intake|grams? of protein|litres? per hour/i;
+  const prompts = allPrompts();
+  Object.keys(prompts).forEach(function (n) {
+    const m = String(prompts[n]).match(OUT_OF_SCOPE);
+    ok("stays inside movements, loads and numbers: " + n, !m, m ? "found: " + m[0] : "");
+  });
+
+  const L1 = require("../lib/coach-layers/layer1-methodology.js");
+  ok("layer 1 states the scope limit out loud", /SCOPE \(HARD\)/.test(L1));
+  ok("the hierarchy of development no longer opens with food",
+    /HIERARCHY OF DEVELOPMENT[\s\S]{0,200}metabolic conditioning -> gymnastics/.test(L1));
+
+  /* Machine calories are a unit of WORK. The scope ban must not accidentally stop the coach from
+     prescribing 20 cal on a rower — which is exactly what an unqualified ban on "calories" does. */
+  ok("machine calories are explicitly still allowed",
+    /unit of WORK and are always fine to prescribe/i.test(L1));
+  ok("the endurance layer still prescribes machine calories",
+    /cal\b/i.test(require("../lib/coach-layers/layer3-endurance.js")));
+}
+
 function testNumbersHaveProvenance() {
   const flat = EQUIVALENCE.replace(/\s+/g, " ");
 
@@ -116,7 +148,7 @@ function testNumbersHaveProvenance() {
   ok("the coach is told to prefer meters over calories",
     /Prefer METERS over CALORIES/i.test(flat));
 
-  /* Sourced scaling order from the Level 1 guide, including the one thing that causes rhabdo. */
+  /* Sourced scaling order from the Level 1 guide, plus the practice it explicitly forbids. */
   ok("scaling order is load -> volume -> movement", /1\) LOAD *2\) VOLUME/i.test(flat));
   ok("progressive scaling is forbidden", /FORBIDDEN: progressive scaling/i.test(flat));
 }
@@ -206,6 +238,7 @@ function main() {
   testShape();
   testNoHebrew();
   testNoSourceLeak();
+  testScope();
   testNumbersHaveProvenance();
   testInjuryGate();
   testRouting();
