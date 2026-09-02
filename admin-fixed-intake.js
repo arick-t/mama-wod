@@ -765,7 +765,17 @@
     if (intakeState.busy && retryLeft == null) return;
     /* One automatic retry only for clear 5xx — never abort/timeout (duplicate Gemini). */
     if (retryLeft == null) retryLeft = 1;
-    if (typeof adminPw !== "undefined" && !String(adminPw || "").trim()) {
+    /* A session token IS being logged in. Asking for the password instead refused every
+       build after an ordinary login, and logging in again could not help — the login is
+       what clears the password (owner, 2026-09-02). */
+    var authed =
+      typeof adminIsAuthed === "function"
+        ? adminIsAuthed()
+        : !!(
+            (typeof adminSessionToken !== "undefined" && adminSessionToken) ||
+            (typeof adminPw !== "undefined" && String(adminPw || "").trim())
+          );
+    if (!authed) {
       restoreAdminFixedGoals(
         "פג תוקף ההתחברות לאדמין — צא מ+מתאמן, התחבר מחדש, ואז Build plan."
       );

@@ -159,6 +159,11 @@ ok("admin build restores goals on fail", /restoreAdminFixedGoals/.test(fixedJs))
 ok("admin Build plan sends admin auth", /adminAuthHeaders\(\)/.test(fixedJs) && /adminProgramming:\s*true/.test(fixedJs));
 ok("admin Build plan timeout kept", /180000/.test(fixedJs));
 ok("admin does not auto-retry abort/timeout", /אל תלחץ Build שוב מיד/.test(fixedJs));
+/* A session token IS being logged in. Gating Build on the raw password refused every
+   build after an ordinary login — the login is what clears the password, so logging in
+   again could not help (owner, 2026-09-02). */
+ok("Build plan accepts a session, not only a password", /adminIsAuthed\(\)/.test(fixedJs));
+ok("and it never gates on the password alone", !/if \(typeof adminPw !== "undefined" && !String\(adminPw \|\| ""\)\.trim\(\)\)/.test(fixedJs));
 ok("admin generate_block sends athleteId", /athleteId: intakeState.athleteId/.test(fixedJs));
 ok("admin records brick_fill on UID", /recordBrickFill/.test(fixedJs));
 ok("handoff snapshot stores costCaps", /costCaps:/.test(handoff) && /cloneCostCaps/.test(handoff));
