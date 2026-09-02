@@ -51,11 +51,11 @@ const MAX_CHARS = {
   "layer1-methodology": 6000,
   "layer1-injuries": 4200,
   "layer2-general": 6500,
-  "layer2-individual": 5000,
+  "layer2-individual": 4000,
   "layer3-gymnastics": 4000,
   "layer3-weightlifting": 3500,
   "layer3-endurance": 3500,
-  "layer3-competitors": 3500,
+  "layer3-competitors": 4200,
   "layer3-partner": 2500,
   "equivalence-table": 5500,
 };
@@ -284,6 +284,37 @@ function testIndividualLayerDecisions() {
     /NEVER swap a\s*pattern out because there is no barbell/i.test(flat));
   ok("the strength stimulus has a route that does not need load",
     /get it from reps, tempo, pauses, unilateral loading,\s*range of motion and shorter rest/i.test(flat));
+
+  /* THE MOVE (2026-09-02). Competitor material was reaching every single athlete: a movement
+     ranking whose own criteria include "likely to be tested in competition", and a week with three
+     olympic-lift days and three squat days offered as a DEFAULT. Both now sit behind the competitor
+     gate. Assert both ends, or the move silently half-happens. */
+  const C = require("../lib/coach-layers/layer3-competitors.js");
+  ok("the movement tiers left the individual layer",
+    !/TIER 1|TIER 2|TIER 3/.test(I), "the tier ranking is still reaching every athlete");
+  ok("the movement tiers are behind the competitor gate", /TIER 1 \(all three\)/.test(C));
+  ok("the tier ranking says out loud that it is competition-weighted",
+    /this ranking is weighted by what a CONTEST tests/.test(C));
+  ok("the barbell-centred week left the individual layer",
+    !/olympic lift \+ back squat volume/.test(I), "competitor volume is still the default week");
+  ok("the barbell-centred week is behind the competitor gate",
+    /olympic lift \+ back squat volume/.test(C) &&
+      /Three olympic-lift days and three squat days is competitor volume/.test(C));
+  ok("a general athlete is told the balance IS the priority",
+    /There is no movement ranking for a general-fitness athlete/.test(I));
+  ok("the individual layer defers the weekly shape to the general layer",
+    /Take it from the general layer/.test(I));
+
+  /* Periodisation is out everywhere, including for a declared competitor. Match the PRESCRIPTION,
+     not the vocabulary — the refusal line below necessarily contains the words it forbids, which is
+     the same trap the calories ban fell into. */
+  ok("no annual plan is prescribed in the competitor layer",
+    !/Annual plan ->|mesocycle|macrocycle|blocks of 2-4 months/i.test(C),
+    "periodisation came back as a prescription");
+  ok("the competitor layer refuses seasons and peaking explicitly",
+    /HARD: no annual plan, no season, no peaking cycle/.test(C));
+  ok("a competitor is trained broadly rather than tapered",
+    /trained broadly, not tapered toward a date/.test(C));
 
   /* What this layer exists for: it must not read like a class programme. */
   ok("the layer states what changes with a single athlete",
