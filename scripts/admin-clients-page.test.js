@@ -220,6 +220,21 @@ ok("the device cap is shown", /deviceCap/.test(page));
    declaration reads on theirs: same row, same question. */
 ok("the signature state is shown", /טרם נחתם|נחתם/.test(page));
 ok("it sits where the declaration sits", /תנאי שימוש:/.test(page));
+
+/* --- the summary box, as he laid it out on 2026-09-02 ---------------
+ * The terms line answers one question — is this signature in force — and a signature is
+ * good for a year. The version string and the date were the answer to a question nobody
+ * asks at a glance, so they moved behind a chevron with the id. */
+ok("the terms line is about validity, not paperwork", /terms\.valid \? "בתוקף" : "לא בתוקף · יש לחדש"/.test(page));
+ok("a year old is not in force", /ageDays <= 365/.test(page));
+ok("an unsigned client says so plainly", /terms\.label = "טרם נחתם"/.test(page));
+ok("there is a chevron for the details", /data-termsmore="1"/.test(page));
+ok("and behind it are the date and the id", /terms-uid">UID: /.test(page) && /נחתם " \+ esc\(new Date\(a\.signature\.signedAt\)/.test(page));
+/* Access states itself on its own heading — one word did not need a row of its own. */
+ok("the access state rides on the heading", /class="access-state /.test(page));
+ok("green when they are in, orange when they are not", /access-state\.in\{color:#4CAF70/.test(page) && /access-state\.out\{color:#E8451A/.test(page));
+/* The device list is separated from the words above it. */
+ok("the devices heading is a heading", /devices-head/.test(page) && /devices-head\{padding-bottom:8px;margin-bottom:8px;border-bottom/.test(page));
 ok("the card is built from the athlete card", /ath-fact-label">תאריך הצטרפות:/.test(page));
 ok("the client link is copyable once it exists", /data-copylink/.test(page));
 

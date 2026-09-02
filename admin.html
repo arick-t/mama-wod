@@ -956,6 +956,17 @@ header{flex-wrap:wrap;row-gap:8px}
   padding:8px 12px;border-radius:8px;cursor:pointer;line-height:1}
 .btn-delete-client:hover{background:rgba(232,69,26,.12);border-color:#E8451A}
 .btn-delete-client svg{flex-shrink:0}
+/* The summary box, tightened on the owner's instruction (2026-09-02): the terms line
+   answers "in force?" and hides the paperwork behind a chevron; access states itself on
+   its own heading; the device list is separated from the words above it. */
+#clientScreen .terms-detail{margin-top:6px;font-size:12px;color:var(--text-muted);line-height:1.6}
+#clientScreen .terms-uid{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;color:var(--text-meta);word-break:break-all}
+#clientScreen .ath-stats-btn.sm{width:20px;height:20px;font-size:11px;line-height:1;margin-inline-start:6px;vertical-align:middle}
+#clientScreen .handoff-head{display:flex;align-items:center;gap:10px}
+#clientScreen .access-state{font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;border:1px solid}
+#clientScreen .access-state.in{color:#4CAF70;border-color:rgba(76,175,112,.5);background:rgba(76,175,112,.12)}
+#clientScreen .access-state.out{color:#E8451A;border-color:rgba(232,69,26,.5);background:rgba(232,69,26,.10)}
+#clientScreen .devices-head{padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid var(--line)}
 .purge-report{padding:6px 2px;font-size:.9em;line-height:1.6}
 .purge-report h3{margin:0 0 10px;font-size:1.05em;color:#e8e4d8}
 .purge-report ul{margin:4px 0 12px;padding-inline-start:20px;color:#bdb8ab}
@@ -6085,6 +6096,17 @@ tryRestoreAdminSession();
       ? String(S.issuedCode.code)
       : "";
     var linkShown = S.linkShown === p.programId || !!liveCode;
+    /* A signature is good for a year. After that it is not "signed" — it is expired,
+       and the difference is the whole reason the line exists (owner, 2026-09-02). */
+    var terms = { valid: false, label: "לא בתוקף" };
+    if (a.signature && a.signature.signedAt) {
+      var signedMs = Date.parse(a.signature.signedAt);
+      var ageDays = isFinite(signedMs) ? (Date.now() - signedMs) / 86400000 : 9999;
+      terms.valid = ageDays <= 365;
+      terms.label = terms.valid ? "בתוקף" : "לא בתוקף · יש לחדש";
+    } else {
+      terms.label = "טרם נחתם";
+    }
     var moreOpen = !!S.moreOpen;
     html +=
       '<div class="ath-wrap"><div class="ath-card">' +
@@ -6119,29 +6141,39 @@ tryRestoreAdminSession();
             '<span class="ath-fact-label">תאריך הצטרפות:</span>' +
             '<span class="ath-fact-value">' + esc(joined ? new Date(joined).toLocaleDateString() : "—") + "</span>" +
           "</div>" +
-          /* The client's equivalent of the health declaration: the B2B terms. Same
-             question — has this person signed what they had to sign. */
+          /* The client's equivalent of the health declaration, and the same question:
+             is this person's signature IN FORCE. The version string and the date were
+             the answer to a question nobody asks at a glance, so they moved behind the
+             chevron with the id (owner, 2026-09-02). */
           '<div class="ath-fact" style="grid-column:1/-1">' +
             '<span class="ath-fact-label">תנאי שימוש:' +
-            (a.signature
-              ? '<span class="ath-decl-note valid">נחתם</span>'
-              : '<span class="ath-decl-note">טרם נחתם</span>') +
+            '<span class="ath-decl-note' + (terms.valid ? " valid" : "") + '">' +
+            esc(terms.label) +
             "</span>" +
-            '<span class="ath-fact-value">' +
-            (a.signature
-              ? esc(a.signature.termsVersion) + " · " + esc(new Date(a.signature.signedAt).toLocaleDateString())
-              : "—") +
+            '<button type="button" class="ath-stats-btn sm" data-termsmore="1" title="פרטי החתימה" aria-expanded="' +
+            (S.termsOpen ? "true" : "false") + '">▾</button>' +
             "</span>" +
+            (S.termsOpen
+              ? '<div class="terms-detail">' +
+                (a.signature
+                  ? "נחתם " + esc(new Date(a.signature.signedAt).toLocaleDateString()) +
+                    " · " + esc(a.signature.termsVersion) +
+                    '<div class="terms-uid">UID: ' + esc(p.programId) + "</div>"
+                  : "עוד לא נחתם. הלקוח חותם בכניסה הראשונה שלו ללינק.") +
+                "</div>"
+              : "") +
           "</div>" +
         "</div>" +
         /* Access: one button that does the whole thing. Issuing a link and issuing a
            code were two clicks for one intent, and the link sat on screen before it had
            ever been handed to anyone (owner, 2026-09-02). */
         '<div class="ath-handoff-inline handoff-box">' +
-          '<div class="handoff-head">גישה ללקוח</div>' +
-          '<div class="handoff-status">' +
-          (a.signature ? "חתם ונכנס." : linkShown ? "מסור בוואטסאפ את הלינק והקוד." : "עדיין לא נכנס.") +
-          "</div>" +
+          /* The state belongs on the heading line: it is one word, and a line of its own
+             for one word cost a row of screen on every client (owner, 2026-09-02). */
+          '<div class="handoff-head">גישה ללקוח' +
+          '<span class="access-state ' + (a.signature ? "in" : "out") + '">' +
+          (a.signature ? "חתם ונכנס" : linkShown ? "הלינק והקוד מוכנים" : "טרם נכנס") +
+          "</span></div>" +
           '<div class="handoff-link"' + (linkShown ? "" : ' style="display:none"') + '>' +
           (linkShown ? esc(clientLink(p.programId)) : "") + "</div>" +
           '<div id="codeOut">' +
@@ -6162,7 +6194,7 @@ tryRestoreAdminSession();
         /* The devices that got in, numbered, under the door they came through. */
         (a.devices && a.devices.length
           ? '<div class="ath-handoff-inline handoff-box">' +
-            '<div class="handoff-head">מכשירים מקושרים (' +
+            '<div class="handoff-head devices-head">מכשירים מקושרים (' +
             a.devices.length + "/" + esc(a.deviceCap) + ")</div>" +
             a.devices.map(function (d, i) {
               return '<div class="devrow"><span>' + (i + 1) + ". " + esc(d.label || d.id) + "</span>" +
@@ -7013,6 +7045,7 @@ tryRestoreAdminSession();
       return;
     }
     if (g("data-clientmore")) { S.moreOpen = !S.moreOpen; renderDetail(); return; }
+    if (g("data-termsmore")) { S.termsOpen = !S.termsOpen; renderDetail(); return; }
     if (g("data-identity")) {
       openClientIdentityFor("client", S.program.programId, S.program.clientName || "", S.program.clientColour || "");
       return;
