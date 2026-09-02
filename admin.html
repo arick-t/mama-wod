@@ -799,18 +799,29 @@ body:has(#intake-modal.open) #adminChatFloat{
 #clientScreen .backlink a{color:var(--coach);text-decoration:none}
 #clientScreen .backlink a:hover{text-decoration:underline}
 #clientScreen .card{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:0 0 14px}
-#clientScreen h2{font-family:var(--font-display);font-size:1.05rem;margin:0 0 12px;letter-spacing:.5px}
-#clientScreen p{margin:0 0 10px}
+#clientScreen h2:not([class]){font-family:var(--font-display);font-size:1.05rem;margin:0 0 12px;letter-spacing:.5px}
+#clientScreen p:not([class]){margin:0 0 10px}
 #clientScreen .muted{color:var(--text-muted)}
 #clientScreen .meta{color:var(--text-meta);font-size:.82rem}
 #clientScreen label.fld{display:block;margin:0 0 10px}
 #clientScreen label.fld span{display:block;font-size:.8rem;color:var(--text-meta);margin:0 0 4px}
-#clientScreen input[type=text],#clientScreen input[type=password],#clientScreen input[type=number],#clientScreen textarea,#clientScreen select{
+#clientScreen input[type=text]:not([class]),#clientScreen input[type=password]:not([class]),
+#clientScreen input[type=number]:not([class]),#clientScreen textarea:not([class]),
+#clientScreen select:not([class]){
   width:100%;font-family:var(--font-ui);font-size:16px;color:var(--text);background:var(--bg-panel);
   border:1px solid var(--line);border-radius:8px;padding:11px}
-#clientScreen textarea{min-height:150px;resize:vertical;line-height:1.6;direction:ltr;text-align:left}
-#clientScreen input:focus,#clientScreen textarea:focus,#clientScreen select:focus{outline:2px solid var(--coach);outline-offset:1px}
-#clientScreen button{font-family:var(--font-ui);font-size:15px;font-weight:500;cursor:pointer;background:var(--brand);
+#clientScreen textarea:not([class]){min-height:150px;resize:vertical;line-height:1.6;direction:ltr;text-align:left}
+#clientScreen input:not([class]):focus,#clientScreen textarea:not([class]):focus,
+#clientScreen select:not([class]):focus{outline:2px solid var(--coach);outline-offset:1px}
+/* :not([class]) is the whole fix. A bare-element selector under an id outranks every
+   class in the page, so this rule used to paint the calendar, the pencil and the delete
+   link brand orange. It reaches the screen's own plain buttons and its three named
+   variants — and nothing that already had a look. */
+#clientScreen button:not([class]),
+#clientScreen button.ghost,
+#clientScreen button.sm,
+#clientScreen button.danger{
+  font-family:var(--font-ui);font-size:15px;font-weight:500;cursor:pointer;background:var(--brand);
   color:#fff;border:0;border-radius:8px;min-height:44px;padding:10px 16px}
 #clientScreen button:disabled{opacity:.5;cursor:default}
 #clientScreen button.ghost{background:transparent;color:var(--text-muted);border:1px solid var(--line)}
@@ -895,8 +906,9 @@ body:has(#intake-modal.open) #adminChatFloat{
 @media (max-width:700px){
 #clientScreen .emph-days{grid-template-columns:repeat(4,1fr)}
 /* Anything under 16px makes iOS zoom the page when the field takes focus. */
-#clientScreen input,#clientScreen textarea,#clientScreen select{font-size:16px}
-#clientScreen button{min-height:44px}
+#clientScreen input:not([class]),#clientScreen textarea:not([class]),
+#clientScreen select:not([class]){font-size:16px}
+#clientScreen button:not([class]){min-height:44px}
 #clientScreen .row{gap:8px}
 #clientScreen .card{padding:13px}
 /* The header wraps rather than pushing its buttons off the edge. */

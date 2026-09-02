@@ -89,4 +89,45 @@ assert.ok(!/מגרש לימוד/.test(admin), "the note box has one wording");
    endpoint, which belongs to the coach-brain work running separately. */
 assert.ok(fs.existsSync(path.join(__dirname, "..", "scripts", "coach-weekly-patterns-digest.js")), "the drive sync capability itself is untouched");
 
+/* ------------------------------------------------------------------------
+ * THE APPROVED LOOK IS NOT NEGOTIABLE, AND A SELECTOR CAN BREAK IT SILENTLY.
+ *
+ * The client screen arrived from a page that styled bare elements — button, input,
+ * textarea, select, h2, p. Harmless while it had a page of its own. Scoped under
+ * #clientScreen those became stronger than every class in the page (an id plus an
+ * element outranks a class), so they painted the brick view's calendar cells, the
+ * pencil, the delete link and the weekday rail solid brand orange. Nothing had been
+ * redesigned; one selector had.
+ *
+ * The owner's rule, 2026-09-02: "יש לנו קו עיצובי שהוא גם פונקציונאלי והוא אושר — אתה
+ * צריך לשמור עליו". This is that rule, mechanically: no bare-element selector may live
+ * under #clientScreen, ever.
+ * --------------------------------------------------------------------- */
+const bareUnderScreen = (admin.match(/#clientScreen (?:button|input|textarea|select|h2|p|a|div|span|label)[\s{,:]/g) || [])
+  .filter(function (hit) {
+    /* A descendant selector is fine — "#clientScreen .card button" is scoped by the
+       class in front of it. What is not fine is the element sitting directly under the
+       id with nothing to narrow it. */
+    return /#clientScreen (?:button|input|textarea|select|h2|p|a|div|span|label)[{,]/.test(hit);
+  });
+assert.ok(
+  bareUnderScreen.length === 0,
+  "no bare-element rule under #clientScreen — it would outrank the approved classes: " + bareUnderScreen.join(" ")
+);
+
+/* The screen's own plain controls still have to look like something, so the rule that
+   used to be bare is now explicit about what it reaches. */
+assert.ok(
+  /#clientScreen button:not\(\[class\]\),/.test(admin),
+  "the screen's plain buttons are styled by an opt-in selector"
+);
+
+/* And the parts of the approved look that were destroyed must still be reachable:
+   the calendar cell, the day card, the athlete card and its controls. */
+["\\.pprog-cal-cell\\{", "\\.pprog-day-card", "\\.ath-card\\{", "\\.ath-stats-btn\\{", "\\.btn-delete-link\\{"].forEach(
+  function (needle) {
+    assert.ok(new RegExp(needle).test(admin), "the approved look still defines " + needle);
+  }
+);
+
 console.log("admin-design-clarity.test.js: ok");
