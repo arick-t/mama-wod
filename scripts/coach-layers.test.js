@@ -50,7 +50,10 @@ const MAX_CHARS = {
      and the scope limit must be stated out loud. About 40 extra tokens a call. */
   "layer1-methodology": 6000,
   "layer1-injuries": 4200,
-  "layer2-general": 6500,
+  /* Raised from 6500 on 2026-09-02: the skill-fresh / capacity-tired distinction moved in here
+     from the competitor layer, where it had been reaching only declared competitors. It is a
+     training rule, not a competition rule. Net across the two files is roughly flat. */
+  "layer2-general": 7000,
   "layer2-individual": 4000,
   "layer3-gymnastics": 4000,
   "layer3-weightlifting": 3500,
@@ -304,6 +307,38 @@ function testIndividualLayerDecisions() {
     /There is no movement ranking for a general-fitness athlete/.test(I));
   ok("the individual layer defers the weekly shape to the general layer",
     /Take it from the general layer/.test(I));
+
+  /* The rest-day clash between this layer and the seven-day studio default, settled 2026-09-02:
+     seven days is a default for a ROOM; the 3-consecutive limit is a limit on a BODY. */
+  const Cflat = C.replace(/\s+/g, " ");
+  ok("the competitor layer says it governs a person, not a room",
+    /THIS IS ONE PERSON, NOT A ROOM \(HARD\)/.test(C) &&
+      /The seven-day studio default does not apply to an individual at all/i.test(Cflat));
+  ok("an individual's intake days are the weekly structure and they win",
+    /individual's own training days from the intake ARE the weekly structure/i.test(Cflat));
+  ok("3 consecutive days holds even when all seven were marked",
+    /NO MORE THAN 3 CONSECUTIVE TRAINING DAYS\. This holds in every case, including when the athlete marked all seven days/i.test(
+      Cflat
+    ));
+  ok("the fourth day is a lighter day, not a dropped one",
+    /make it active recovery if they asked to train that day, or a rest day if the intake left it free/i.test(
+      Cflat
+    ));
+
+  /* Two instructions the source gives that we cannot honour, and one that was in the wrong file. */
+  ok("the advanced multi-session tier is gone",
+    !/ADVANCED —|Multiple sessions daily|3 to 6 hours/i.test(C),
+    "a tier this app does not serve came back");
+  ok("no second session is added to a day",
+    /One session per day\. Do not add a second session to a day/.test(C));
+  ok("the coach no longer scores the athlete on domains it has no data for",
+    !/Score the athlete across their domains/.test(C) &&
+      /Do not invent a score for them across domains you have no data on/i.test(Cflat));
+  ok("skill-fresh / capacity-tired moved to the general layer",
+    !/SKILL gaps \(gymnastics, barbell technique\)/.test(C) &&
+      /SKILL \(gymnastics, barbell technique\) is built ONLY by focused practice while FRESH/.test(
+        require("../lib/coach-layers/layer2-general.js")
+      ));
 
   /* Periodisation is out everywhere, including for a declared competitor. Match the PRESCRIPTION,
      not the vocabulary — the refusal line below necessarily contains the words it forbids, which is
