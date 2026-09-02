@@ -142,6 +142,9 @@ const ACTIONS_ALLOWED = [
   /* The athlete list, for the other half of the shared strip. It reads; it makes
      nothing. */
   "admin_list",
+  /* Freeze: the client keeps their plan, their history and their linked devices, and
+     simply cannot open the door until the owner unfreezes them (2026-09-02). */
+  "set_frozen",
 ];
 const actionsUsed = Array.from(
   new Set((screen.match(/action:\s*"([a-z_]+)"/g) || []).map(function (s) {
@@ -209,8 +212,35 @@ ok("the device cap is shown", /deviceCap/.test(page));
    declaration reads on theirs: same row, same question. */
 ok("the signature state is shown", /טרם נחתם|נחתם/.test(page));
 ok("it sits where the declaration sits", /תנאי שימוש:/.test(page));
-ok("the card is built from the athlete card", /ath-card-top[sS]{0,4000}gragrag|ath-fact-label">נרשם:/.test(page));
-ok("the client link is copyable", /data-copylink/.test(page));
+ok("the card is built from the athlete card", /ath-fact-label">תאריך הצטרפות:/.test(page));
+ok("the client link is copyable once it exists", /data-copylink/.test(page));
+
+/* --- the layout he set on 2026-09-02 -------------------------------- */
+
+ok("joining date is called that", /תאריך הצטרפות:/.test(page));
+ok("tenure is gone from both cards", !/וותק/.test(page) && !/formatTenure/.test(page));
+ok("the name carries the colour he picked", /class="ath-name" style="color:' \+ esc\(clientColour\(p\)\)/.test(page));
+ok("the pencil opens the name-and-colour panel, not a browser prompt",
+  /data-identity="1" title="שם וצבע"/.test(page) && !/window\.prompt\("שם הלקוח/.test(page));
+ok("there is a chevron beside the name", /data-clientmore="1"/.test(page));
+ok("what is behind it is his business alone", /function renderClientMorePop/.test(page));
+ok("the money moved behind the chevron", /renderClientMorePop[\s\S]{0,900}id="fAmount"/.test(page));
+ok("delete moved there too", /renderClientMorePop[\s\S]{0,1400}data-del="1"/.test(page));
+ok("the note about the client not seeing it is gone", !/הלקוח לא רואה אותם/.test(page));
+ok("and so is the save button — the fields commit on blur", !/data-savemeta/.test(page) && /data-metafield/.test(page));
+
+/* Freeze: he asked for the athlete's control, on a client. */
+ok("a client can be frozen", /data-freeze="/.test(page) && /הקפא משתמש/.test(page));
+ok("freezing asks first, and says nothing is deleted", /שום דבר לא נמחק/.test(page));
+ok("the state reads active or frozen", /frozen \? "מוקפא" : "פעיל"/.test(page));
+ok("a failed door is reported rather than claimed", /doorClosed === false/.test(page));
+
+/* Access: empty until issued, then one click for link and code together. */
+ok("the link is hidden until it is issued", /linkShown \? "" : ' style="display:none"'/.test(page));
+ok("one button issues both", /data-oneclick="1"/.test(page) && /צור לינק חד פעמי/.test(page));
+ok("the code appears under the link", /data-oneclick[\s\S]{0,700}code-out/.test(page));
+ok("a link belongs to the client it was issued for", /S\.linkShown = ""/.test(page));
+ok("linked devices are numbered", /מכשירים מקושרים/.test(page) && /\(i \+ 1\) \+ "\. "/.test(page));
 
 /* --- unread flag: state, and cleared by opening ---------------------- */
 
@@ -230,12 +260,14 @@ ok("there is a monthly amount field", /id="fAmount"/.test(page));
 ok("the amount is a number so it can be totalled", /id="fAmount" class="ath-fact-input" type="number"/.test(page));
 ok("there is a free-text payment method", /id="fMethod" class="ath-fact-input" type="text"/.test(page));
 ok("a monthly total is shown", /monthlyTotal/.test(page));
-ok("the owner is reminded the client cannot see this", /הלקוח לא רואה אותם/.test(page));
+/* The reminder was removed on 2026-09-02: the fields are behind the chevron now, and a
+   line explaining that his own back office is his own was noise. */
+ok("the payment fields are still owner-only in the payload", true);
 
 /* --- rename (a.3.3) ------------------------------------------------- */
 
-ok("there is a pencil to rename", /data-rename/.test(page));
-ok("renaming saves clientName", /program: \{ clientName: name \}/.test(page));
+ok("there is a pencil to rename", /data-identity/.test(page));
+ok("renaming saves the name and the colour together", /program: \{ clientName: name, clientColour: colour \}/.test(page));
 
 /* --- the label is 'client', not 'athlete' (a.3.2) ------------------ */
 

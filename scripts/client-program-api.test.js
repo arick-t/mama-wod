@@ -542,6 +542,57 @@ async function main() {
   const laptopStill = await H.client(laptopToken, { action: "read", programId: pid });
   ok("the other device still works", laptopStill.status === 200);
 
+  /* --- freeze: the door closes, nothing is lost -------------------- */
+
+  const frozen = await H.owner({ action: "set_frozen", programId: pid, frozen: true });
+  ok("the owner can freeze a client", frozen.status === 200 && frozen.body.ok === true);
+  ok("and is told the door itself was closed", frozen.body.doorClosed === true);
+  const whileFrozen = await H.client(laptopToken, { action: "read", programId: pid });
+  ok("A FROZEN CLIENT CANNOT READ THEIR PLAN", whileFrozen.status === 403);
+  ok("and is told to talk to their coach, not shown an error", /coach/i.test(String(whileFrozen.body.error || "")));
+  const editWhileFrozen = await H.client(laptopToken, {
+    action: "save",
+    programId: pid,
+    expectedVersion: 99,
+    days: [],
+  });
+  ok("a frozen client cannot write either", editWhileFrozen.status === 403);
+
+  const stillThere = await H.owner({ action: "read", programId: pid });
+  ok("the plan is still there", stillThere.status === 200 && stillThere.body.program.weeks.length > 0);
+  ok("the devices are still linked", (stillThere.body.access.devices || []).length >= 1);
+  ok("the owner's card knows it is frozen", stillThere.body.program.frozen === true);
+
+  const thawed = await H.owner({
+    action: "set_frozen",
+    programId: pid,
+    expectedVersion: stillThere.body.program.version,
+    frozen: false,
+  });
+  ok("the owner can unfreeze", thawed.status === 200);
+  const afterThaw = await H.client(laptopToken, { action: "read", programId: pid });
+  ok("THE SAME DEVICE WALKS BACK IN — no new code", afterThaw.status === 200);
+
+  /* --- the colour is his label, and stays his ---------------------- */
+
+  const coloured = await H.owner({
+    action: "save",
+    programId: pid,
+    expectedVersion: afterThaw.body.program.version,
+    program: { clientName: "Coach A", clientColour: "#E8451A" },
+  });
+  ok("the owner can colour a client", coloured.status === 200 && coloured.body.program.clientColour === "#E8451A");
+  const junk = await H.owner({
+    action: "save",
+    programId: pid,
+    expectedVersion: coloured.body.program.version,
+    program: { clientColour: "red; background:url(x)" },
+  });
+  ok("anything that is not a hex colour is dropped", junk.body.program.clientColour === "");
+  const clientSees = await H.client(laptopToken, { action: "read", programId: pid });
+  ok("the client is never told their colour or their state",
+    clientSees.body.program.clientColour === undefined && clientSees.body.program.frozen === undefined);
+
   /* --- a link that was never activated ---------------------------- */
 
   const ghost = await H.anon({ action: "claim", programId: "p_nothinghere", code: "123456" });

@@ -232,6 +232,49 @@ async function ownerHandler(req, res, body) {
     return res.status(200).json({ ok: true, program: read.program, access: access, fromCache: !!read.fromCache });
   }
 
+  /**
+   * Freeze or unfreeze a client.
+   *
+   * Nothing is deleted and no device is unlinked — the client simply cannot open their
+   * plan until the owner says otherwise. The flag is written to the program (the truth)
+   * and mirrored onto the access row, because the access row is what every client
+   * request already reads. Checking the program at the door instead would put a paid
+   * read on every single client call.
+   */
+  if (action === "set_frozen") {
+    const frozen = body.frozen === true;
+    const result = await store.updateProgram(
+      programId,
+      Number(body.expectedVersion),
+      function (draft) {
+        draft.frozen = frozen;
+        return draft;
+      },
+      { actor: "owner" }
+    );
+    if (!result.ok) {
+      const status = result.code === "VERSION_CONFLICT" ? 409 : result.code === "NOT_FOUND" ? 404 : 400;
+      return res.status(status).json(Object.assign({ ok: false }, result));
+    }
+    /* The mirror. If it fails the program is still frozen, so say so rather than
+       reporting a success the door does not know about. */
+    let doorClosed = true;
+    try {
+      const row = await readAccess(programId);
+      if (row) await writeAccess(programId, Object.assign({}, row, { frozen: frozen }));
+      else doorClosed = false;
+    } catch (e) {
+      doorClosed = false;
+    }
+    return res.status(200).json({
+      ok: true,
+      program: result.program,
+      version: result.version,
+      frozen: frozen,
+      doorClosed: doorClosed,
+    });
+  }
+
   if (action === "save") {
     const patch = body.program;
     if (!patch || typeof patch !== "object") return bad(res, 400, "NO_PROGRAM_BODY", "program is required");
@@ -242,6 +285,10 @@ async function ownerHandler(req, res, body) {
         /* The owner authors freely, but identity and bookkeeping stay server-owned. */
         if (Array.isArray(patch.weeks)) draft.weeks = patch.weeks;
         if (patch.clientName !== undefined) draft.clientName = String(patch.clientName).slice(0, 120);
+        if (patch.clientColour !== undefined) {
+          const col = String(patch.clientColour || "");
+          draft.clientColour = /^#[0-9a-f]{6}$/i.test(col) ? col : "";
+        }
         if (patch.clientKind !== undefined) draft.clientKind = patch.clientKind === "athlete" ? "athlete" : "coach";
         if (patch.blockStart !== undefined) draft.blockStart = String(patch.blockStart).slice(0, 10);
         if (patch.paymentMethod !== undefined) draft.paymentMethod = String(patch.paymentMethod).slice(0, 200);
@@ -568,6 +615,17 @@ async function clientHandler(req, res, body) {
   if (!accessRow) return bad(res, 404, "NO_ACCESS", "this link is not active");
   const verified = Access.verifyDeviceToken(accessRow, token, { programId: programId });
   if (!verified.ok) return bad(res, 401, verified.code, verified.error);
+
+  /* Frozen closes the door for every action, signing included — a frozen client being
+     asked to sign terms would be a worse experience than being told plainly. The
+     device stays linked, so unfreezing needs no new code. */
+  if (accessRow.frozen === true) {
+    return res.status(403).json({
+      ok: false,
+      code: "FROZEN",
+      error: "your access is paused — please talk to your coach",
+    });
+  }
 
   if (action === "sign") {
     /* Read before writing: recordSignature overwrites, and "is this new?" is the only

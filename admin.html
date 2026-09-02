@@ -1458,23 +1458,6 @@ function toNum(v) {
   if (!isFinite(n) || n < 0) return 0;
   return Math.floor(n);
 }
-function formatTenure(joinedAtIso) {
-  if (!joinedAtIso) return "לא ידוע";
-  var start = new Date(joinedAtIso);
-  if (isNaN(start.getTime())) return "לא ידוע";
-  var now = new Date();
-  var months = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth());
-  if (now.getDate() < start.getDate()) months -= 1;
-  if (months < 0) months = 0;
-  if (months >= 12) {
-    var years = Math.floor(months / 12);
-    return years + " שנים";
-  }
-  if (months >= 1) return months + " חודשים";
-  var diffDays = Math.floor((now.getTime() - start.getTime()) / (24 * 60 * 60 * 1000));
-  var weeks = Math.floor(Math.max(0, diffDays) / 7);
-  return weeks + " שבועות";
-}
 
 function getAccState(athleteId) {
   if (!athleteAccOpen[athleteId]) {
@@ -2552,14 +2535,10 @@ function renderAthlete(a) {
           '<div class="ath-fact">' +
             '<div class="ath-fact-reg-row">' +
               '<div class="ath-fact-main">' +
-                '<span class="ath-fact-label">נרשם:</span>' +
+                '<span class="ath-fact-label">תאריך הצטרפות:</span>' +
                 '<span class="ath-fact-value">' + esc(fmt(joinedAt) || "—") + "</span>" +
               "</div>" +
             "</div>" +
-          "</div>" +
-          '<div class="ath-fact">' +
-            '<span class="ath-fact-label">וותק:</span>' +
-            '<span class="ath-fact-value">' + esc(formatTenure(joinedAt)) + "</span>" +
           "</div>" +
           '<div class="ath-fact" style="grid-column:1/-1">' +
             '<span class="ath-fact-label">הצהרה הבאה:' +
@@ -2578,11 +2557,6 @@ function renderAthlete(a) {
           "</div>" +
         "</div>" +
         renderHandoffInline(a) +
-        '<div class="ath-card-foot">' +
-          '<button type="button" class="btn-delete-link" onclick="deleteAthlete(\'' +
-          esc(a.athleteId) +
-          "')\">מחק לקוח</button>" +
-        "</div>" +
       "</div>" +
       '<div class="ath-block-panel">' +
         '<div class="ath-block-panel-head">' +
@@ -2636,6 +2610,13 @@ function renderAthleteStatsPop(a, chatLog, open) {
     '<button type="button" class="ath-stats-link" onclick="openIntakeSheet()">' +
     esc(intakeLabel) +
     "</button></div>" +
+    /* Deleting a person is not a thing to leave under his thumb at the foot of the
+       card — it belongs with the rest of the management, behind the chevron
+       (owner, 2026-09-02). */
+    '<div class="ath-stats-row"><span class="ath-stats-k">מחיקה</span>' +
+    '<button type="button" class="ath-stats-link danger" onclick="deleteAthlete(\'' +
+    esc(a.athleteId) +
+    '\')">מחק לקוח</button></div>' +
     "</div>"
   );
 }
@@ -4791,6 +4772,8 @@ function resetIntakeState() {
    glance, and a free picker produces twenty shades of the same grey. */
 var CLIENT_COLOURS = ["#E8451A", "#F5C518", "#4CAF70", "#1A9B8A", "#7eb8c9", "#9b6bb8", "#d47ba8", "#b0aaa0"];
 var identityFor = null;
+/* "athlete" or "client" — the panel is shared, the save is not. */
+var identityKind = "athlete";
 var identityColour = "";
 
 function clientColour(a) {
@@ -4819,9 +4802,31 @@ function pickClientColour(c) {
   renderIdentitySwatches();
 }
 
+/**
+ * The same panel for a client as for an athlete.
+ *
+ * A client's rename used to be window.prompt — a grey browser box with no colour in it,
+ * which is not the product (owner, 2026-09-02). The panel does not care which of the
+ * two it is editing; only saveClientIdentity does.
+ */
+function openClientIdentityFor(kind, id, name, colour) {
+  identityFor = id;
+  identityKind = kind;
+  identityColour = /^#[0-9a-f]{6}$/i.test(String(colour || "")) ? String(colour) : "";
+  var nameEl = document.getElementById("ident-name");
+  if (nameEl) nameEl.value = name || "";
+  var st = document.getElementById("ident-status");
+  if (st) st.textContent = "";
+  renderIdentitySwatches();
+  var m = document.getElementById("client-identity-modal");
+  if (m) m.classList.add("open");
+  try { if (nameEl) nameEl.focus(); } catch (e) {}
+}
+
 function openClientIdentity(athleteId) {
   var a = athletes.find(function (x) { return x.athleteId === athleteId; });
   if (!a) return;
+  identityKind = "athlete";
   identityFor = athleteId;
   identityColour = /^#[0-9a-f]{6}$/i.test(String(a.clientColour || "")) ? String(a.clientColour) : "";
   var name = document.getElementById("ident-name");
@@ -4850,6 +4855,16 @@ function saveClientIdentity() {
     return;
   }
   if (st) st.textContent = "שומר…";
+  /* A client's name and colour live on the program, not on an athlete snapshot. */
+  if (identityKind === "client") {
+    if (!window.ClientScreen || !window.ClientScreen.saveIdentity) return;
+    window.ClientScreen.saveIdentity(identityFor, name, identityColour, function (errMsg) {
+      if (errMsg) { if (st) st.textContent = errMsg; return; }
+      closeClientIdentity();
+      renderPeopleStrip();
+    });
+    return;
+  }
   var id = identityFor;
   fetch(adminApiUrl("/api/admin-snapshot"), {
     method: "POST",
@@ -5851,6 +5866,40 @@ tryRestoreAdminSession();
     renderDetail();
   }
 
+  /**
+   * What is behind the chevron: the owner's own business about this client.
+   *
+   * Price and payment method are not facts about training, and the owner asked for them
+   * out of sight — the client never sees this card, but he does, over people's
+   * shoulders. They save when you leave the field, so there is no save button to
+   * forget. Delete lives here too: it is the last thing you want under your thumb.
+   */
+  function renderClientMorePop(p, open) {
+    if (!open) return "";
+    return (
+      '<div class="ath-stats-pop open" id="clientMorePop">' +
+        '<div class="ath-fact">' +
+          '<span class="ath-fact-label">סכום חודשי (₪):</span>' +
+          '<input id="fAmount" class="ath-fact-input" type="number" min="0" data-metafield="1" value="' +
+          esc(p.monthlyAmount == null ? "" : p.monthlyAmount) + '">' +
+        "</div>" +
+        '<div class="ath-fact">' +
+          '<span class="ath-fact-label">שיטת תשלום:</span>' +
+          '<input id="fMethod" class="ath-fact-input" type="text" data-metafield="1" value="' +
+          esc(p.paymentMethod || "") + '" placeholder="ביט, 1 לחודש">' +
+        "</div>" +
+        (S.access && S.access.openCodes && S.access.openCodes.length
+          ? '<div class="ath-fact" style="grid-column:1/-1">' +
+            '<button class="ghost sm" type="button" data-revokecodes="1">בטל קודים פתוחים (' +
+            S.access.openCodes.length + ")</button></div>"
+          : "") +
+        '<div class="ath-fact" style="grid-column:1/-1">' +
+          '<button type="button" class="btn-delete-link" data-del="1">מחק לקוח</button>' +
+        "</div>" +
+      "</div>"
+    );
+  }
+
   function renderDetail() {
     var p = S.program;
     if (!p) { show("detail", false); return; }
@@ -5862,28 +5911,43 @@ tryRestoreAdminSession();
        differ in what they are called, never in where they sit: joined, tenure, what they
        signed, how they get in, and delete at the foot. */
     var joined = p.createdAt || "";
-    var sent = !!(p.blocks || []).some(function (b) { return b && b.approvedAt; });
+    var frozen = p.frozen === true;
+    /* The link is not a fact about the client — it is something the owner ISSUES. It
+       stays out of sight until he does (owner, 2026-09-02). */
+    var linkShown = S.linkShown === p.programId;
+    var moreOpen = !!S.moreOpen;
     html +=
       '<div class="ath-wrap"><div class="ath-card">' +
         '<div class="ath-card-top">' +
           '<div class="ath-name-row">' +
-            '<div class="ath-name">' + esc(p.clientName || "(ללא שם)") + "</div>" +
-            '<button type="button" class="ath-stats-btn" data-rename="1" title="שינוי שם">✎</button>' +
+            '<div class="ath-name" style="color:' + esc(clientColour(p)) + '">' +
+            esc(p.clientName || "(ללא שם)") + "</div>" +
+            /* The same panel an athlete's pencil opens — name and the colour he is
+               picked out by in the strip. It used to be a browser prompt. */
+            '<button type="button" class="ath-stats-btn" data-identity="1" title="שם וצבע">✎</button>' +
+            '<button type="button" class="ath-stats-btn' + (moreOpen ? " open" : "") +
+            '" data-clientmore="1" title="מידע נוסף" aria-expanded="' +
+            (moreOpen ? "true" : "false") + '">▾</button>' +
           "</div>" +
+          /* Active and frozen are two answers to one question, so they read as one
+             control: the state, a slash, and the switch that changes it. */
           '<div class="ath-chips">' +
-            '<span class="ath-chip ' + (sent ? "active" : "frozen") + '">' +
-            (sent ? "פעיל" : "טרם נשלח") +
+            '<span class="ath-chip ' + (frozen ? "frozen" : "active") + '">' +
+            (frozen ? "מוקפא" : "פעיל") +
             "</span>" +
+            '<span class="ath-chip-sep">/</span>' +
+            '<button type="button" class="btn-freeze-mini' + (frozen ? " is-frozen" : "") +
+            '" data-freeze="' + (frozen ? "0" : "1") + '" title="' +
+            (frozen ? "בטל הקפאה" : "הלקוח לא יוכל לפתוח את התוכנית עד שתבטל") + '">' +
+            (frozen ? "בטל הקפאה" : "הקפא משתמש") +
+            "</button>" +
           "</div>" +
+          renderClientMorePop(p, moreOpen) +
         "</div>" +
         '<div class="ath-facts">' +
           '<div class="ath-fact">' +
-            '<span class="ath-fact-label">נרשם:</span>' +
+            '<span class="ath-fact-label">תאריך הצטרפות:</span>' +
             '<span class="ath-fact-value">' + esc(joined ? new Date(joined).toLocaleDateString() : "—") + "</span>" +
-          "</div>" +
-          '<div class="ath-fact">' +
-            '<span class="ath-fact-label">וותק:</span>' +
-            '<span class="ath-fact-value">' + esc(formatTenure(joined)) + "</span>" +
           "</div>" +
           /* The client's equivalent of the health declaration: the B2B terms. Same
              question — has this person signed what they had to sign. */
@@ -5899,59 +5963,40 @@ tryRestoreAdminSession();
               : "—") +
             "</span>" +
           "</div>" +
-          /* Payment is the one fact an athlete has no version of, so it sits with the
-             others rather than in a form of its own. */
-          '<div class="ath-fact">' +
-            '<span class="ath-fact-label">סכום חודשי (₪):</span>' +
-            '<input id="fAmount" class="ath-fact-input" type="number" min="0" value="' +
-            esc(p.monthlyAmount == null ? "" : p.monthlyAmount) + '">' +
-          "</div>" +
-          '<div class="ath-fact">' +
-            '<span class="ath-fact-label">שיטת תשלום:</span>' +
-            '<input id="fMethod" class="ath-fact-input" type="text" value="' +
-            esc(p.paymentMethod || "") + '" placeholder="ביט, 1 לחודש">' +
-          "</div>" +
-          '<div class="ath-fact" style="grid-column:1/-1">' +
-            '<span class="ath-muted">הנתונים האלה אצלך בלבד. הלקוח לא רואה אותם.</span>' +
-            '<div class="row" style="margin-top:8px">' +
-            '<button class="sm" type="button" data-savemeta="1">שמור פרטים</button>' +
-            "</div>" +
-          "</div>" +
         "</div>" +
-        /* Access sits where the athlete's does: last thing before delete. */
+        /* Access: one button that does the whole thing. Issuing a link and issuing a
+           code were two clicks for one intent, and the link sat on screen before it had
+           ever been handed to anyone (owner, 2026-09-02). */
         '<div class="ath-handoff-inline handoff-box">' +
           '<div class="handoff-head">גישה ללקוח</div>' +
           '<div class="handoff-status">' +
-          (a.signature ? "חתם ונכנס." : "עדיין לא נכנס.") +
+          (a.signature ? "חתם ונכנס." : linkShown ? "מסור בוואטסאפ את הלינק והקוד." : "עדיין לא נכנס.") +
           "</div>" +
-          '<div class="handoff-link">' + esc(clientLink(p.programId)) + "</div>" +
+          '<div class="handoff-link"' + (linkShown ? "" : ' style="display:none"') + '>' +
+          (linkShown ? esc(clientLink(p.programId)) : "") + "</div>" +
           '<div id="codeOut"></div>' +
           '<div class="handoff-actions">' +
-            '<button class="btn-handoff-mini" type="button" data-code="1" ' +
-            'title="מנפיק קוד חדש — כך גם מחברים מכשיר נוסף">' +
-            (a.openCodes && a.openCodes.length ? "צור קוד חדש" : "צור קוד") +
-            "</button>" +
-            '<button class="btn-secondary good" type="button" data-copylink="1">העתק לינק</button>' +
-            (a.openCodes && a.openCodes.length
-              ? '<button class="btn-secondary" type="button" data-revokecodes="1">בטל קודים פתוחים (' +
-                a.openCodes.length + ")</button>"
+            '<button class="btn-handoff-mini" type="button" data-oneclick="1" ' +
+            'title="מפיק לינק וקוד יחד — כך גם מחברים מכשיר נוסף">צור לינק חד פעמי</button>' +
+            (linkShown
+              ? '<button class="btn-secondary good" type="button" data-copylink="1">העתק לינק</button>'
               : "") +
           "</div>" +
-          (a.devices && a.devices.length
-            ? '<div class="handoff-status" style="margin-top:8px">מכשירים (' +
-              a.devices.length + "/" + esc(a.deviceCap) + "):</div>" +
-              a.devices.map(function (d) {
-                return '<div class="devrow"><span>' + esc(d.label || d.id) + "</span>" +
-                  '<span class="spacer meta">' +
-                  (d.lastSeenAt ? new Date(d.lastSeenAt).toLocaleDateString() : "") + "</span>" +
-                  '<button class="ghost sm" type="button" data-revokedev="' + esc(d.id) +
-                  '">בטל</button></div>';
-              }).join("")
-            : "") +
         "</div>" +
-        '<div class="ath-card-foot">' +
-          '<button type="button" class="btn-delete-link" data-del="1">מחק לקוח</button>' +
-        "</div>" +
+        /* The devices that got in, numbered, under the door they came through. */
+        (a.devices && a.devices.length
+          ? '<div class="ath-handoff-inline handoff-box">' +
+            '<div class="handoff-head">מכשירים מקושרים (' +
+            a.devices.length + "/" + esc(a.deviceCap) + ")</div>" +
+            a.devices.map(function (d, i) {
+              return '<div class="devrow"><span>' + (i + 1) + ". " + esc(d.label || d.id) + "</span>" +
+                '<span class="spacer meta">' +
+                (d.lastSeenAt ? new Date(d.lastSeenAt).toLocaleDateString() : "") + "</span>" +
+                '<button class="ghost sm" type="button" data-revokedev="' + esc(d.id) +
+                '">בטל</button></div>';
+            }).join("") +
+            "</div>"
+          : "") +
       "</div></div>";
 
     /* program */
@@ -6729,27 +6774,43 @@ tryRestoreAdminSession();
       setRestChecked(parseInt(rc[0], 10) || 0, rc[1] || "", !!t.checked);
       return;
     }
-    if (g("data-savemeta")) { saveMeta(); return; }
+    if (g("data-clientmore")) { S.moreOpen = !S.moreOpen; renderDetail(); return; }
+    if (g("data-identity")) {
+      openClientIdentityFor("client", S.program.programId, S.program.clientName || "", S.program.clientColour || "");
+      return;
+    }
+    if (g("data-freeze")) {
+      var makeFrozen = g("data-freeze") === "1";
+      if (makeFrozen && !window.confirm("להקפיא את " + (S.program.clientName || "הלקוח") +
+          "? הוא לא יוכל לפתוח את התוכנית עד שתבטל. שום דבר לא נמחק.")) return;
+      api({ action: "set_frozen", programId: S.program.programId,
+            expectedVersion: S.program.version, frozen: makeFrozen }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) { banner("bad", (r.body && r.body.error) || "לא הצלחתי."); return; }
+        S.program = r.body.program;
+        renderDetail();
+        loadList();
+        /* The door is a second object. If the mirror failed the client can still get
+           in, and saying "הוקפא" would be a lie. */
+        if (r.body.doorClosed === false) banner("warn", "הסימון נשמר, אבל הדלת לא הספיקה להיסגר — נסה שוב.");
+        else banner("good", makeFrozen ? "הלקוח הוקפא." : "ההקפאה בוטלה.");
+      });
+      return;
+    }
     if (g("data-nextblock")) { startNextBlock(); return; }
     if (g("data-seedtest")) { seedTestBlock(); return; }
     if (g("data-approve")) { approveBlock(parseInt(g("data-approve"), 10) || 0); return; }
 
-    if (g("data-rename")) {
-      var name = window.prompt("שם הלקוח:", S.program.clientName || "");
-      if (name === null) return;
-      api({ action: "save", programId: S.program.programId, expectedVersion: S.program.version,
-            program: { clientName: name } }).then(function (r) {
-        if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "השינוי נכשל."); return; }
-        S.program = r.body.program; renderDetail(); loadList();
-      });
-      return;
-    }
-    if (g("data-code")) {
+    /* One click, one intent: the link and the code are the same handover, and asking
+       for them separately was two clicks for one thought (owner, 2026-09-02). */
+    if (g("data-oneclick")) {
       api({ action: "issue_code", programId: S.program.programId }).then(function (r) {
         if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "הנפקת הקוד נכשלה."); return; }
+        S.linkShown = S.program.programId;
         /* Shown once and never stored in the clear — lose it and issue another. */
-        el("codeOut").innerHTML = '<div class="code-out">' + esc(r.body.code) + "</div>" +
-          '<p class="meta" style="text-align:center">מסור בוואטסאפ. חד-פעמי, בתוקף 7 ימים. לא יוצג שוב.</p>';
+        var codeHtml = '<div class="code-out">' + esc(r.body.code) + "</div>" +
+          '<p class="meta" style="text-align:center">מסור בוואטסאפ יחד עם הלינק. חד-פעמי, בתוקף 7 ימים. לא יוצג שוב.</p>';
+        renderDetail();
+        if (el("codeOut")) el("codeOut").innerHTML = codeHtml;
         openClientAccessRefresh();
       });
       return;
@@ -6783,6 +6844,15 @@ tryRestoreAdminSession();
       });
       return;
     }
+  });
+
+  /* The chevron's fields commit on blur. A save button for two numbers was one more
+     thing to forget, and forgetting it looked like the app losing his typing. */
+  document.addEventListener("change", function (ev) {
+    var t = ev.target;
+    if (!t || !t.getAttribute || !t.getAttribute("data-metafield")) return;
+    if (!S.program) return;
+    saveMeta();
   });
 
   function openClientAccessRefresh() {
@@ -7243,7 +7313,28 @@ tryRestoreAdminSession();
     open: function (programId) {
       S.adding = false;
       S.blockMode = false;
+      /* A link belongs to the client it was issued for. */
+      S.linkShown = "";
+      S.moreOpen = false;
       openClient(programId);
+    },
+    /* The name-and-colour panel is the page's; saving a client's is ours. */
+    saveIdentity: function (programId, name, colour, done) {
+      api({
+        action: "save",
+        programId: programId,
+        expectedVersion: S.program && S.program.programId === programId ? S.program.version : undefined,
+        program: { clientName: name, clientColour: colour },
+      }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) {
+          done((r.body && r.body.error) || "לא נשמר.");
+          return;
+        }
+        if (S.program && S.program.programId === programId) S.program = r.body.program;
+        renderDetail();
+        loadList();
+        done("");
+      });
     },
     newClient: function () {
       setAdding(true);
