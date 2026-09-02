@@ -297,6 +297,21 @@ async function main() {
   ok("the terms version is the owner's", claimed.body.termsVersion === "v3.4-legal");
   const phoneToken = claimed.body.clientToken;
 
+  /* Nobody walks in without a code. Asserted as properties of the endpoint rather than
+     of the screen, because the owner's question was exactly this: a link appeared with
+     no code beside it, and a device got in — was that the device it already had, or a
+     door standing open? (owner, 2026-09-02) */
+  const emptyCode = await H.anon({ action: "claim", programId: pid, code: "" });
+  ok("AN EMPTY CODE IS NOT A CODE", emptyCode.status === 401);
+  const shortCode = await H.anon({ action: "claim", programId: pid, code: "123" });
+  ok("nor is a short one", shortCode.status === 401);
+  const noCodeField = await H.anon({ action: "claim", programId: pid });
+  ok("nor is a missing one", noCodeField.status === 401);
+  const noToken = await H.client("", { action: "read", programId: pid });
+  ok("and a caller with no token reads nothing", noToken.status === 401);
+  const madeUpToken = await H.client("not-a-real-token", { action: "read", programId: pid });
+  ok("nor does an invented one", madeUpToken.status === 401);
+
   const reclaim = await H.anon({ action: "claim", programId: pid, code: code });
   ok("the code cannot be reused", reclaim.status === 401);
 

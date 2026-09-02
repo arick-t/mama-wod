@@ -6108,12 +6108,18 @@ tryRestoreAdminSession();
     /* The link is not a fact about the client — it is something the owner ISSUES. It
        stays out of sight until he does (owner, 2026-09-02). */
     var devices = (a.devices || []).length;
-    /* A code that nobody has used yet is still live, so it stays put — through a
-       redraw, a list refresh, a click on another tab. It goes when a device arrives,
-       because that is what spends it. */
-    var liveCode = S.issuedCode && S.issuedCode.programId === p.programId && !devices
-      ? String(S.issuedCode.code)
-      : "";
+    /* A code that nobody has used yet is still live, so it stays put — through a redraw,
+       a list refresh, a click on another tab. It goes when a device arrives, because
+       that is what spends it.
+       Counted from where it stood when the code was ISSUED, not from zero: issuing again
+       is how a second device gets in, and a client who already had one device on the
+       books never saw the new code at all (owner, 2026-09-02). */
+    var liveCode =
+      S.issuedCode &&
+      S.issuedCode.programId === p.programId &&
+      devices <= (S.issuedCode.devicesAt | 0)
+        ? String(S.issuedCode.code)
+        : "";
     var linkShown = S.linkShown === p.programId || !!liveCode;
     /* A signature is good for a year. After that it is not "signed" — it is expired,
        and the difference is the whole reason the line exists (owner, 2026-09-02). */
@@ -7098,7 +7104,11 @@ tryRestoreAdminSession();
         S.linkShown = S.program.programId;
         /* Held in memory, not stored: the server keeps only a hash. It survives every
            redraw until a device uses it (owner, 2026-09-02). */
-        S.issuedCode = { programId: S.program.programId, code: String(r.body.code || "") };
+        S.issuedCode = {
+          programId: S.program.programId,
+          code: String(r.body.code || ""),
+          devicesAt: ((S.access && S.access.devices) || []).length,
+        };
         renderDetail();
         openClientAccessRefresh();
       });

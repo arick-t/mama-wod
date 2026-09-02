@@ -272,7 +272,11 @@ ok("the code appears under the link", /liveCode[\s\S]{0,200}code-out/.test(page)
 /* A code is spent when a device comes in, not when the screen redraws. It used to
    vanish while he was still copying it into WhatsApp (owner, 2026-09-02). */
 ok("the code survives a redraw", /S\.issuedCode = \{ programId/.test(page));
-ok("and goes only when a device has arrived", /S\.issuedCode\.programId === p\.programId && !devices/.test(page));
+ok("and goes only when a NEW device has arrived", /devices <= \(S\.issuedCode\.devicesAt \| 0\)/.test(page));
+/* Counted from where it stood when the code was issued, not from zero: issuing again is
+   how a second device gets in, and a client who already had one device never saw the new
+   code at all (owner, 2026-09-02). */
+ok("the count is taken when the code is issued", /devicesAt: \(\(S\.access && S\.access\.devices\) \|\| \[\]\)\.length/.test(page));
 ok("the owner is told it will not survive a reload", /לא אחרי רענון דף/.test(page));
 ok("delete has a bin, in the page's own font", /trashIconSvg\(\)/.test(page) && /btn-delete-client/.test(page));
 ok("a link belongs to the client it was issued for", /S\.linkShown = ""/.test(page));
