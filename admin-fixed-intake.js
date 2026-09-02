@@ -431,7 +431,10 @@
     el.setAttribute("lang", "en");
     el.setAttribute("dir", "ltr");
     el.innerHTML = renderStep(intakeState.fixedStep | 0);
-    S.bindIntakeNumericKeyboards(el);
+    /* S is a local alias for the shared contract inside renderStep — it never existed
+       here, so every render threw "S is not defined" and the intake could not start
+       (owner, 2026-09-02). */
+    C().bindIntakeNumericKeyboards(el);
     writeIntakeStatus("תחקור זהה לאפליקציה · שלב " +
       ((intakeState.fixedStep | 0) + 1) +
       "/" +
