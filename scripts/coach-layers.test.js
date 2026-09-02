@@ -189,6 +189,25 @@ function testGeneralLayerDecisions() {
   ok("an individual still gets rest days from the intake", /AN INDIVIDUAL: training days and rest days come from the intake/i.test(flat));
   ok("a named day in the intake wins outright", /WHATEVER THE INTAKE NAMES, WINS/.test(G));
 
+  /* The seven-day week is our own synthesis (2026-09-02) and the only rule here with no source.
+     Modality is pinned so a studio can publish a schedule; character drifts so the member who
+     only comes on two fixed days still meets every structure. Both halves have to hold, or one of
+     the two failures it was designed around comes back. */
+  ok("modality is pinned to the weekday",
+    /PINNED — each programmed day's MODALITY/.test(G) &&
+      /keep each day's modality stable from week to week/i.test(flat));
+  ok("character drifts across weeks instead of restarting",
+    /DRIFTS — the day's CHARACTER/.test(G) &&
+      /let the rotation carry on into the next week instead of restarting it/i.test(flat));
+  ok("the seventh day has no special role",
+    /NO DAY IS SPECIAL and no day has a default role/.test(G) &&
+      /the same continuum — including the seventh/.test(flat));
+  ok("no long-mixed-modality default came back for day seven",
+    !/mixed[- ]modality (piece|metcon)|long mixed/i.test(G),
+    "the seventh day was given a default role again");
+  ok("a named day overrides both axes",
+    /that naming replaces BOTH axes for that day/.test(G));
+
   /* "סעיף אנושי לגמרי ואין להתחשב בו" — the engine writes one session at one standard; the human
      coach characterises the room. No experience tiers, and nothing keyed to months of training. */
   ok("no experience tiers", !/BEGINNER:|INTERMEDIATE:|EXPERIENCED:|RETURNING:/.test(G));
