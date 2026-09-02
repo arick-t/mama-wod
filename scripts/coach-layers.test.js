@@ -175,6 +175,51 @@ function testNumbersHaveProvenance() {
   ok("progressive scaling is forbidden", /FORBIDDEN: progressive scaling/i.test(flat));
 }
 
+function testGeneralLayerDecisions() {
+  const G = require("../lib/coach-layers/layer2-general.js");
+  const flat = G.replace(/\s+/g, " ");
+
+  /* A studio has no shared rest day — different people come on different days. The owner rejected
+     the 3-on/1-off cycle for it on 2026-09-02. */
+  ok("a studio is programmed seven days by default", /program SEVEN days a week unless the intake/i.test(flat));
+  ok("the 3-on/1-off cycle is no longer the default shape",
+    !/A repeating block of THREE TRAINING DAYS then rest/.test(G) &&
+      /Do NOT build a 3-on\/1-off cycle/.test(G));
+  ok("inventing a rest day is forbidden for a studio", /do NOT insert a\s*rest day the intake did not ask for/i.test(flat));
+  ok("an individual still gets rest days from the intake", /AN INDIVIDUAL: training days and rest days come from the intake/i.test(flat));
+  ok("a named day in the intake wins outright", /WHATEVER THE INTAKE NAMES, WINS/.test(G));
+
+  /* "סעיף אנושי לגמרי ואין להתחשב בו" — the engine writes one session at one standard; the human
+     coach characterises the room. No experience tiers, and nothing keyed to months of training. */
+  ok("no experience tiers", !/BEGINNER:|INTERMEDIATE:|EXPERIENCED:|RETURNING:/.test(G));
+  ok("no months-of-training thresholds", !/18 months|36 months|18-36/.test(G));
+  ok("one session at one standard, adapted by the human coach",
+    /Write ONE session at ONE standard/.test(G) && /the human coach adapts on the floor/i.test(flat));
+
+  /* The completion window is programming, not a judgement about people, so it survived the cut. */
+  ok("the completion window survived", /COMPLETION WINDOW/.test(G));
+
+  /* The conjugate spine ships on trial and must stay removable in one piece. */
+  ok("the conjugate spine is marked as a pilot in the file",
+    /THE CONJUGATE FRAME IS A PILOT/.test(fs.readFileSync(path.join(LAYERS_DIR, "layer2-general.js"), "utf8")));
+  /* Removable in one piece if the pilot fails: the spine must be a single run of text between two
+     other headings, with no conjugate vocabulary loose elsewhere in the layer. */
+  const spineStart = G.indexOf("--- STRENGTH SPINE ACROSS THE WEEK");
+  const spineEnd = G.indexOf("--- THE MIXED-ATTENDANCE");
+  ok("the conjugate spine is one contiguous, removable section",
+    spineStart > 0 && spineEnd > spineStart, "spine=" + spineStart + " next=" + spineEnd);
+  const outsideSpine = G.slice(0, spineStart) + G.slice(spineEnd);
+  ok("no conjugate vocabulary leaks outside that section",
+    !/MAX EFFORT|DYNAMIC EFFORT|dynamic effort/i.test(outsideSpine),
+    "removing the spine would leave dangling max-effort / dynamic-effort references");
+
+  /* Approved unchanged and worth pinning: the box problem that has no individual equivalent. */
+  ok("the mixed-attendance rule is intact",
+    /Someone who only trains Tue\/Thu\/Sat must still meet squat, hinge/i.test(flat));
+  ok("an explicit request beats format rotation",
+    /that request WINS over format rotation/i.test(flat));
+}
+
 function testInjuryGate() {
   ok("no restriction reported -> injury layer stays off",
     !L.hasNamedRestriction({ goals: "get fitter" }, null));
@@ -262,6 +307,7 @@ function main() {
   testNoSourceLeak();
   testScope();
   testNumbersHaveProvenance();
+  testGeneralLayerDecisions();
   testInjuryGate();
   testRouting();
   testPackBudget();
