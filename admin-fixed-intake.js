@@ -95,6 +95,12 @@
       sessionMinutes: 0,
       sessionTimesDiffer: false,
       competitor: false,
+      improveFocus: {},
+      improveFocusOther: "",
+      avoidMovements: {},
+      avoidMovementsOther: "",
+      heaviestImplementKg: 0,
+      avoidInProgram: "",
       injuries: "",
       goals: "",
       fixedIntakePacket: "",
@@ -290,7 +296,17 @@
         (otherOn ? "" : " hidden") +
         '><textarea id="adm-fx-location-other" maxlength="500" placeholder="Please specify your setup (e.g. garage, dumbbells only, no rower…)">' +
         esc(st.trainingLocationOther || "") +
-        "</textarea></div></div>";
+        "</textarea>" +
+        /* Equipment limits the LOAD, not the movement - a back squat with dumbbells is
+           still a back squat. But that rule cannot be applied without knowing how heavy
+           the room actually gets, and "limited equipment" carries no number, so the
+           coach was guessing weight (coach agent, 2026-09-02). */
+        '<div class="pprog-fixed-row" style="margin-top:10px">' +
+        '<label class="pprog-fixed-inline" for="adm-fx-heaviest">Heaviest implement you have (kg)</label>' +
+        '<input id="adm-fx-heaviest" type="number" min="1" max="300" class="pprog-fixed-num" value="' +
+        esc(parseInt(st.heaviestImplementKg, 10) > 0 ? parseInt(st.heaviestImplementKg, 10) : "") +
+        '" placeholder="-">' +
+        "</div></div></div>";
     } else if (key === "schedule") {
       var days = Array.isArray(st.trainingDays) ? st.trainingDays : [];
       html +=
@@ -414,6 +430,21 @@
         '" onclick="adminFixedFillNoInjuries()">No injuries</button></div>' +
         '<textarea id="adm-fx-injuries" maxlength="800" placeholder="e.g. Left knee — avoid deep squats under fatigue" oninput="adminFixedInjuriesInput()">' +
         esc(st.injuries || "") +
+        "</textarea>" +
+        /* The athlete writes a diagnosis in the box above and the coach is forbidden to
+           reason from it - so the question it MAY act on is asked separately, as marks.
+           Seven families, mapped one-to-one onto the coach substitution matrix
+           (coach agent, 2026-09-02). */
+        '<p class="pprog-fixed-title" style="margin-top:14px">Movements to avoid or limit</p>' +
+        '<div class="pprog-skills-picker">' +
+        S.AVOID_MOVEMENT_DEFS.map(function (d) {
+          return '<label><input type="checkbox" data-avoid-id="' + esc(d.id) + '"' +
+            ((st.avoidMovements || {})[d.id] === true ? " checked" : "") +
+            "><span>" + esc(d.label) + "</span></label>";
+        }).join("") +
+        "</div>" +
+        '<textarea id="adm-fx-avoid-other" maxlength="200" placeholder="Anything else to program around">' +
+        esc(st.avoidMovementsOther || "") +
         "</textarea>";
     } else if (key === "goals") {
       html +=
@@ -426,7 +457,27 @@
         '<label class="pprog-fixed-inline" style="margin-top:12px">' +
         '<input type="checkbox" id="adm-fx-competitor"' +
         (st.competitor === true ? " checked" : "") +
-        "> I am training for a competition / actively competing</label>";
+        "> I am training for a competition / actively competing</label>" +
+        /* "I want to get stronger" in free text reached the coach as nothing at all -
+           not for want of intention, but because no word in it was one the router knew.
+           The free text stays; these anchor it (coach agent, 2026-09-02). */
+        '<p class="pprog-fixed-title" style="margin-top:16px">What do you want to improve?</p>' +
+        '<div class="pprog-skills-picker">' +
+        S.IMPROVE_FOCUS_DEFS.map(function (d) {
+          return '<label><input type="checkbox" data-improve-id="' + esc(d.id) + '"' +
+            ((st.improveFocus || {})[d.id] === true ? " checked" : "") +
+            "><span>" + esc(d.label) + "</span></label>";
+        }).join("") +
+        "</div>" +
+        '<input id="adm-fx-improve-other" type="text" maxlength="200" placeholder="Which skill?" value="' +
+        esc(st.improveFocusOther || "") + '">' +
+        /* Three edits of the same kind is what POL-005 needs before it learns a
+           preference, and every edit is a paid call. One box here saves three months
+           of them (coach agent, 2026-09-02). */
+        '<p class="pprog-fixed-title" style="margin-top:16px">Anything you do NOT want to see in the plan?</p>' +
+        '<textarea id="adm-fx-avoid-program" maxlength="400" placeholder="e.g. no burpees, no running on concrete">' +
+        esc(st.avoidInProgram || "") +
+        "</textarea>";
     }
 
     html += navHtml(step, step >= total - 1);
@@ -617,6 +668,11 @@
       if (locations.other_home && otherDetail) parts.push("Other detail: " + otherDetail);
       intakeState.trainingLocations = locations;
       intakeState.trainingLocationOther = otherDetail;
+      /* A number only when there is a room to describe; a proper box has no ceiling
+         worth stating (coach agent, 2026-09-02). */
+      var heavyEl = document.getElementById("adm-fx-heaviest");
+      var heavyN = heavyEl ? parseInt(heavyEl.value, 10) : 0;
+      intakeState.heaviestImplementKg = heavyN >= 1 && heavyN <= 300 ? heavyN : 0;
       intakeState.trainingSetup = parts.join(" · ").slice(0, 800);
     } else if (key === "schedule") {
       var days = [];
@@ -727,11 +783,35 @@
     } else if (key === "injuries") {
       var injEl = document.getElementById("adm-fx-injuries");
       intakeState.injuries = injEl ? String(injEl.value || "").trim().slice(0, 800) : "";
+      var avoidMap = {};
+      var avoidBoxes = box.querySelectorAll("input[data-avoid-id]");
+      for (var av = 0; av < avoidBoxes.length; av++) {
+        if (avoidBoxes[av].checked) avoidMap[avoidBoxes[av].getAttribute("data-avoid-id")] = true;
+      }
+      intakeState.avoidMovements = avoidMap;
+      var avoidOtherEl = document.getElementById("adm-fx-avoid-other");
+      intakeState.avoidMovementsOther = avoidOtherEl
+        ? String(avoidOtherEl.value || "").trim().slice(0, 200)
+        : "";
     } else if (key === "goals") {
       var goalEl = document.getElementById("adm-fx-goals");
       var compEl = document.getElementById("adm-fx-competitor");
       intakeState.competitor = !!(compEl && compEl.checked);
       intakeState.goals = goalEl ? String(goalEl.value || "").trim().slice(0, 800) : "";
+      var improveMap = {};
+      var improveBoxes = box.querySelectorAll("input[data-improve-id]");
+      for (var im = 0; im < improveBoxes.length; im++) {
+        if (improveBoxes[im].checked) improveMap[improveBoxes[im].getAttribute("data-improve-id")] = true;
+      }
+      intakeState.improveFocus = improveMap;
+      var improveOtherEl = document.getElementById("adm-fx-improve-other");
+      intakeState.improveFocusOther = improveOtherEl
+        ? String(improveOtherEl.value || "").trim().slice(0, 200)
+        : "";
+      var avoidProgEl = document.getElementById("adm-fx-avoid-program");
+      intakeState.avoidInProgram = avoidProgEl
+        ? String(avoidProgEl.value || "").trim().slice(0, 400)
+        : "";
       if (!intakeState.goals) {
         setFixedErr("Add at least a short goal (or write unknown).");
         return;
@@ -845,6 +925,12 @@
         injuries: intakeState.injuries || "",
         goals: intakeState.goals || "",
         competitor: intakeState.competitor === true,
+        improveFocus: prof.improveFocus || {},
+        improveFocusOther: prof.improveFocusOther || "",
+        avoidMovements: prof.avoidMovements || {},
+        avoidMovementsOther: prof.avoidMovementsOther || "",
+        heaviestImplementKg: prof.heaviestImplementKg || 0,
+        avoidInProgram: prof.avoidInProgram || "",
         /* The packet the coach will read on the day he is reconnected. */
         fixedIntakePacket: String(prof.fixedIntakePacket || "").slice(0, 6000),
         profileNotes: String(prof.profileNotes || "").slice(0, 2000),

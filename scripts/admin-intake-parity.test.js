@@ -83,6 +83,81 @@ ok(
   "and says so plainly when they do",
   /^COMPETITOR: YES/m.test(CoachIntakeSync.buildFixedIntakePrompt(Object.assign({}, sample, { competitor: true })))
 );
+/* --- the four marks the coach asked for on 2026-09-02 ------------------
+ * Its argument, and it is right: the intake is remarkably precise about what an athlete
+ * CAN do — fourteen lifts in kg, fourteen skills as marks — and free text in the two
+ * things that actually LIMIT a prescription: what load is available, and what movement
+ * is forbidden. Every answer that carries a decision now gets its own tagged line, in
+ * both directions, each carrying the instruction for when there is no answer.
+ */
+const marked = CoachIntakeSync.buildFixedIntakePrompt(
+  Object.assign({}, sample, {
+    improveFocus: { max_strength: true, gymnastics: true },
+    avoidMovements: { deep_squat: true, jumping: true },
+    heaviestImplementKg: 24,
+    avoidInProgram: "No burpees, ever.",
+  })
+);
+const unmarked = CoachIntakeSync.buildFixedIntakePrompt(sample);
+ok("what to improve is stated", /^IMPROVE FOCUS: Max strength/m.test(marked));
+ok("and stated when nothing was chosen", /^IMPROVE FOCUS: none selected/m.test(unmarked));
+ok("what to program around is stated", /^AVOID: Deep squat/m.test(marked));
+ok("and stated when nothing was marked", /^AVOID: none marked\.$/m.test(unmarked));
+ok("the heaviest implement is a number", /^HEAVIEST IMPLEMENT: 24 kg\.$/m.test(marked));
+ok("and its absence carries the instruction", /^HEAVIEST IMPLEMENT: not stated/m.test(unmarked) && /never by a kg figure/.test(unmarked));
+ok("what he does not want is stated", /^DOES NOT WANT: No burpees, ever\.$/m.test(marked));
+ok("and stated when nothing was said", /^DOES NOT WANT: nothing stated\.$/m.test(unmarked));
+
+/* Keys, not prose — the same reason competitor became a key. */
+const withMarks = CoachIntakeSync.athleteProfileForGenerateBlock(
+  Object.assign({}, sample, {
+    improveFocus: { engine: true },
+    avoidMovements: { running: true },
+    heaviestImplementKg: "32",
+    avoidInProgram: "no burpees",
+  })
+);
+ok("improveFocus is a field", withMarks.improveFocus && withMarks.improveFocus.engine === true);
+ok("avoidMovements is a field", withMarks.avoidMovements && withMarks.avoidMovements.running === true);
+ok("heaviestImplementKg is a number", withMarks.heaviestImplementKg === 32);
+ok("avoidInProgram is a field", withMarks.avoidInProgram === "no burpees");
+ok("an unanswered heaviest implement is 0, not empty", CoachIntakeSync.athleteProfileForGenerateBlock(sample).heaviestImplementKg === 0);
+/* The ids ARE the contract: they map one-to-one onto the coach's substitution matrix,
+   so renaming one silently would break it. */
+ok(
+  "the avoid families are exactly the seven agreed",
+  CoachIntakeSync.AVOID_MOVEMENT_DEFS.map(function (d) { return d.id; }).join(",") ===
+    "deep_squat,hinge_deadlift,overhead_press,hanging_bar,kipping,jumping,running"
+);
+ok(
+  "and the improve focuses are the six agreed",
+  CoachIntakeSync.IMPROVE_FOCUS_DEFS.map(function (d) { return d.id; }).join(",") ===
+    "max_strength,engine,gymnastics,olympic_lifting,general_fitness,specific_skill"
+);
+
+/* --- the studio's own packet ------------------------------------------
+ * Its twin, and deliberately NOT briefFor(): that one is a reminder for the owner while
+ * he writes by hand, and a string serving two masters follows neither rule. */
+const StudioIntake = require("../lib/client-intake.js");
+const studioPacket = StudioIntake.buildStudioIntakePrompt({
+  scheduleMode: "session_count",
+  sessionsPerWeek: 3,
+  sessionsDiffer: true,
+  sessionTypes: ["long strength + short metcon", "partner metcon, one part only", "stations"],
+  stations: "6 barbells, 3 ergs",
+  population: "CrossFit class 12-20",
+  sessionMinutes: 60,
+  deloadWeek: true,
+  deloadEveryWeeks: 4,
+});
+ok("the studio packet exists and asks for four weeks", /^STUDIO INTAKE COMPLETE/.test(studioPacket) && /exactly 4 weeks/.test(studioPacket));
+ok("it states the stations", /^STATIONS: 6 barbells, 3 ergs$/m.test(studioPacket));
+ok("the session types arrive in order", /1\. long strength \+ short metcon[\s\S]*2\. partner metcon[\s\S]*3\. stations/.test(studioPacket));
+ok("and it says there are no weekdays in this mode", /WEEKDAYS: none/.test(studioPacket));
+const emptyStudio = StudioIntake.buildStudioIntakePrompt({});
+ok("an unstated room carries the instruction", /^STATIONS: not stated/m.test(emptyStudio) && /sharing and rotation/.test(emptyStudio));
+ok("briefFor stays a human reminder, not a prompt", !/BLOCK_JSON/.test(StudioIntake.briefFor({})));
+
 ok("the tick box is on the Goals step", /id="adm-fx-competitor"/.test(fixedJs));
 ok("and it is carried on the profile", CoachIntakeSync.normalizeIntakeProfile(Object.assign({}, sample, { competitor: true })).competitor === true);
 

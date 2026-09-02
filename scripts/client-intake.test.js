@@ -97,6 +97,10 @@ ok(
       "equipmentOther", "goals", "includeRestDays", "monthlyAmount", "paymentMethod",
       "population", "restDays", "scheduleMode", "sessionMinutes", "sessionTypes", "sessionsDiffer",
       "sessionsPerWeek",
+      /* How many people can work at once, and on what. The binding constraint in a room
+         of 12-20 is the number of stations, not the brand of equipment: 18 athletes on 6
+         barbells is a different session from 18 on 18 (coach agent, 2026-09-02). */
+      "stations",
     ])
 );
 /* The old focus-per-weekday field is gone: weekly mode now asks about rest days and
@@ -460,5 +464,18 @@ ok(
 
 ok("the intake makes no network calls", !/\bfetch\s*\(/.test(intakeSrc));
 ok("the intake names no AI provider", !/gemini|groq/i.test(intakeSrc));
+
+
+/* --- the room, and the packet the coach reads --------------------------- */
+const roomy = I.normalizeIntake({ stations: "6 barbells, 3 ergs, 2 rigs" });
+ok("the stations answer is kept", roomy.stations === "6 barbells, 3 ergs, 2 rigs");
+ok("it is asked whatever the equipment answer was", I.normalizeIntake({ equipment: "functional_gym", stations: "x" }).stations === "x");
+const packet = I.buildStudioIntakePrompt({ stations: "6 barbells", scheduleMode: "session_count", sessionsPerWeek: 3, sessionsDiffer: true, sessionTypes: ["a", "b", "c"] });
+ok("the studio packet states the room", /^STATIONS: 6 barbells$/m.test(packet));
+ok("and the sessions in order", /1\. a[\s\S]*2\. b[\s\S]*3\. c/.test(packet));
+ok("an unstated room carries its own instruction", /^STATIONS: not stated/m.test(I.buildStudioIntakePrompt({})));
+/* briefFor is a reminder for the owner while he writes by hand. It must never become a
+   prompt: one string serving two masters follows neither rule. */
+ok("briefFor is still not a prompt", !/BLOCK_JSON/.test(I.briefFor({ stations: "6 barbells" })));
 
 console.log("All client intake checks passed.");

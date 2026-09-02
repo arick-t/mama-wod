@@ -1093,6 +1093,13 @@ header{flex-wrap:wrap;row-gap:8px}
         </div>
         <label class="fld" id="inEquipOtherWrap" hidden><span>Describe what is actually available</span>
           <textarea id="inEquipOther" placeholder="Rig, 4 barbells, kettlebells 8–32kg, 2 rowers, no rings…"></textarea></label>
+        <!-- Always asked, whatever the equipment answer was. The binding constraint in a
+             room of 12–20 is how many people can work AT ONCE: 18 athletes on 6 barbells
+             is a different session from 18 on 18, and it decides whether a squat can be
+             written at all (coach agent, 2026-09-02). -->
+        <label class="fld"><span>How many stations are there?</span>
+          <textarea id="inStations" maxlength="600"
+            placeholder="Barbells, ergs, pull-up stations, kettlebells/dumbbells and their weights — anything that limits how many people can work at the same time"></textarea></label>
       </div>
 
       <!-- 3 · schedule.
@@ -7316,6 +7323,7 @@ tryRestoreAdminSession();
       paymentMethod: String(el("inMethod").value || ""),
       equipment: el("inEquipOtherOn").checked ? "other" : "functional_gym",
       equipmentOther: String(el("inEquipOther").value || ""),
+      stations: el("inStations") ? el("inStations").value.trim() : "",
       /* "" when neither is ticked — never a mode the owner did not choose. */
       scheduleMode: el("inSchedCount").checked
         ? "session_count"
@@ -7357,6 +7365,7 @@ tryRestoreAdminSession();
 
     el("inSchedCount").checked = v.scheduleMode === "session_count";
     el("inSchedWeekly").checked = v.scheduleMode === "weekly_schedule";
+    if (el("inStations")) el("inStations").value = v.stations || "";
     el("inSessions").value = v.sessionsPerWeek || "";
     el("inSessionsDiffer").checked = v.sessionsDiffer === true;
     el("inRestDays").checked = v.includeRestDays === true;
