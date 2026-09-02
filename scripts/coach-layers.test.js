@@ -199,19 +199,42 @@ function testGeneralLayerDecisions() {
   /* The completion window is programming, not a judgement about people, so it survived the cut. */
   ok("the completion window survived", /COMPLETION WINDOW/.test(G));
 
-  /* The conjugate spine ships on trial and must stay removable in one piece. */
-  ok("the conjugate spine is marked as a pilot in the file",
-    /THE CONJUGATE FRAME IS A PILOT/.test(fs.readFileSync(path.join(LAYERS_DIR, "layer2-general.js"), "utf8")));
-  /* Removable in one piece if the pilot fails: the spine must be a single run of text between two
-     other headings, with no conjugate vocabulary loose elsewhere in the layer. */
-  const spineStart = G.indexOf("--- STRENGTH SPINE ACROSS THE WEEK");
+  /* THE FENCES around the strength source (2026-09-02). "יש תיעדוף למה שגלסמן אמר בכל הסעיפים."
+     A method may fill the strength slot; it may not reorganise the week. */
+  ok("precedence is stated where the model reads it, not only in policy",
+    /PRECEDENCE INSIDE THIS LAYER \(HARD\)/.test(G) &&
+      /Strength methods fill the strength slot — they NEVER reorganise the week/.test(G));
+  ok("a body-part or lift-type weekly split is refused outright",
+    /If a method implies a weekly split by body part or by lift type, that split does not apply here/.test(
+      flat
+    ));
+
+  /* The powerlifting skeleton is gone: no four-day upper/lower max-effort split. */
+  ok("the ME/DE weekly skeleton is gone",
+    !/MAX EFFORT lower|DYNAMIC EFFORT\s*\n?lower|one MAX EFFORT upper/i.test(G),
+    "the body-part split came back");
+  ok("the strength methods are scoped to the W day, not the week",
+    /FILLING THE STRENGTH SLOT \(does not change the shape of the week\)/.test(G) &&
+      /When a day's focus is W, the lift can be met in one of two ways/.test(G));
+  ok("speed work is justified in Glassman's own terms",
+    /power training in the strict sense — force x distance \/ time/.test(G));
+
+  /* Accessory has a ceiling now, not a share of the week. */
+  ok("accessory carries an explicit ceiling",
+    /NEVER instead of the conditioning\. Conditioning is the bulk of weekly volume/.test(G));
+  ok("accessory is no longer the largest share of volume",
+    !/largest single share of weekly volume|largest proportion/i.test(G),
+    "the powerlifting volume claim came back");
+
+  /* Whatever else is cut, the operations insight must survive on its own. */
+  const spineStart = G.indexOf("--- FILLING THE STRENGTH SLOT");
   const spineEnd = G.indexOf("--- THE MIXED-ATTENDANCE");
-  ok("the conjugate spine is one contiguous, removable section",
-    spineStart > 0 && spineEnd > spineStart, "spine=" + spineStart + " next=" + spineEnd);
-  const outsideSpine = G.slice(0, spineStart) + G.slice(spineEnd);
-  ok("no conjugate vocabulary leaks outside that section",
-    !/MAX EFFORT|DYNAMIC EFFORT|dynamic effort/i.test(outsideSpine),
-    "removing the spine would leave dangling max-effort / dynamic-effort references");
+  ok("the strength block is one contiguous, removable section",
+    spineStart > 0 && spineEnd > spineStart, "block=" + spineStart + " next=" + spineEnd);
+  const outsideBlock = G.slice(0, spineStart) + G.slice(spineEnd);
+  ok("no strength-method vocabulary leaks outside that section",
+    !/HEAVY EFFORT|SPEED EFFORT|ACCESSORY/.test(outsideBlock),
+    "removing the block would leave dangling references");
 
   /* Approved unchanged and worth pinning: the box problem that has no individual equivalent. */
   ok("the mixed-attendance rule is intact",
