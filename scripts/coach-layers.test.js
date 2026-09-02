@@ -406,6 +406,14 @@ function testRouting() {
     picked.join(", "));
   ok("never more than " + L.MAX_LAYER3 + " discipline layers at once",
     picked.length <= L.MAX_LAYER3, picked.join(", "));
+  /* The competitor layer is a mode rather than a discipline, but it is large, so it takes a slot
+     instead of stacking on top. Three layer-3 modules at once is the failure the cap exists for. */
+  const both = L.pickLayer3(
+    { competitor: true, goals: "muscle-up and a heavier clean and jerk" },
+    null
+  );
+  ok("a declared competitor with two goals still gets only " + L.MAX_LAYER3 + " layers",
+    both.length === L.MAX_LAYER3 && both[0] === "competitors", both.join(", "));
 
   const quiet = L.pickLayer3({ goals: "general fitness" }, null);
   ok("a general goal selects no discipline layer", quiet.length === 0, quiet.join(", "));
@@ -436,6 +444,95 @@ function testRouting() {
     forced.layers.indexOf("layer3-partner") >= 0, forced.layers.join(", "));
 }
 
+/**
+ * The router against the REAL intake packet, built by the real contract.
+ *
+ * Every case here was a live bug found on 2026-09-02 when the admin agent's handoff described what
+ * the packet actually contains. Scoring the whole packet with unbounded substrings meant:
+ *   - "COMPETITOR: no" matched "compet", so the competitor layer switched on for exactly the
+ *     athletes it exists to stay away from;
+ *   - "SKILLS" matched "ski", so endurance switched on for everyone;
+ *   - the LIFTS / RUN and SKILLS sections made every athlete look like a weightlifter and an
+ *     endurance athlete, because they had reported a back squat and a row — capability, not intent.
+ */
+function testRouterAgainstRealPacket() {
+  const CI = require("../lib/coach-intake-sync-contract.js");
+  const base = {
+    displayName: "A", gender: "male", age: "34", bodyweight: "80", experience: "2 years",
+    trainingDays: ["sun", "tue", "thu"], scheduleNotes: "Mornings",
+    trainingSetup: "Well-equipped functional training gym", activeRecoveryPref: "no",
+    lifts: { back_squat: 120, deadlift: 160, clean: 80, snatch: 60 },
+    skills: { double_unders: 1, pull_ups: 1, toes_to_bar: 1 },
+    sessionMinutes: 60, injuries: "none", goals: "Get fitter and lose a few kilos",
+    competitor: false,
+  };
+  const withPacket = function (over) {
+    const s = Object.assign({}, base, over || {});
+    return { fixedIntakePacket: CI.buildFixedIntakePrompt(s), goals: s.goals, injuries: s.injuries };
+  };
+
+  ok("a general-fitness packet selects NO discipline layer",
+    L.pickLayer3(withPacket(), null).length === 0,
+    JSON.stringify(L.pickLayer3(withPacket(), null)));
+
+  /* The COMPETITOR line does not exist on main yet — it arrives with the admin release, which is
+     why these two assert against the exact strings that release emits rather than against what
+     the local contract can build today. The router has to satisfy both worlds: an old packet has
+     no such line and falls back to free text, a new one is authoritative in both directions. */
+  const NEW_PACKET_NO = withPacket().fixedIntakePacket +
+    "\nCOMPETITOR: no — general fitness athlete, not preparing for a competition.";
+  const NEW_PACKET_YES = withPacket().fixedIntakePacket +
+    "\nCOMPETITOR: YES — training for a competition / actively competing. Program accordingly.";
+  ok('"COMPETITOR: no" does not switch the competitor layer on',
+    !L.competitorDeclared({ fixedIntakePacket: NEW_PACKET_NO }, null));
+  ok('"COMPETITOR: YES" does switch it on',
+    L.competitorDeclared({ fixedIntakePacket: NEW_PACKET_YES }, null));
+  ok("the explicit competitor field beats everything",
+    L.competitorDeclared({ competitor: true, fixedIntakePacket: NEW_PACKET_NO }, null) &&
+      !L.competitorDeclared({ competitor: false, fixedIntakePacket: NEW_PACKET_YES }, null));
+  ok("today's packet, with no COMPETITOR line, still falls back to stated intent",
+    L.competitorDeclared(withPacket({ goals: "I want to compete at a local throwdown" }), null) &&
+      !L.competitorDeclared(withPacket(), null));
+
+  ok("reported lifts and skills do not imply a discipline focus",
+    L.pickLayer3(withPacket({ goals: "Just want to feel good" }), null).length === 0,
+    "capability is being read as intent");
+
+  ok("a stated gymnastics goal selects gymnastics only",
+    JSON.stringify(L.pickLayer3(withPacket({ goals: "I want my first muscle-up" }), null)) ===
+      '["gymnastics"]');
+  ok("a stated engine goal selects endurance only",
+    JSON.stringify(L.pickLayer3(withPacket({ goals: "Build my engine, I gas out fast" }), null)) ===
+      '["endurance"]');
+  ok("a stated barbell goal selects weightlifting only",
+    JSON.stringify(L.pickLayer3(withPacket({ goals: "Add 10kg to my clean and jerk" }), null)) ===
+      '["weightlifting"]');
+
+  /* The substring casualties, asserted one by one so a future edit to the regexes fails loudly. */
+  [
+    ["preparing for a hike", "gymnastics via 'ring' in 'preparing'"],
+    ["walk more during the week", "gymnastics via 'ring' in 'during'"],
+    ["get a good impression at work events", "weightlifting via 'press' in 'impression'"],
+    ["use the open gym more", "competitors via 'open'"],
+    ["skipping fewer sessions", "gymnastics/endurance via 'kip' and 'ski'"],
+  ].forEach(function (pair) {
+    ok("no false layer from: " + pair[0],
+      L.pickLayer3(withPacket({ goals: pair[0] }), null).length === 0,
+      pair[1] + " -> " + JSON.stringify(L.pickLayer3(withPacket({ goals: pair[0] }), null)));
+  });
+
+  /* The injury gate against the packet's own "none". */
+  ok("the packet's INJURIES: none keeps the injury layer off",
+    L.buildLayerPack({ agent: "individual", profile: withPacket() }).layers.indexOf(
+      "layer1-injuries"
+    ) < 0);
+  ok("a real injury in the packet switches it on",
+    L.buildLayerPack({
+      agent: "individual",
+      profile: withPacket({ injuries: "Left shoulder impingement, avoid overhead" }),
+    }).layers.indexOf("layer1-injuries") >= 0);
+}
+
 function testPackBudget() {
   /* The heaviest realistic pack. If this grows past the cap, every brick got more expensive and
      somebody should have said so. */
@@ -446,12 +543,14 @@ function testPackBudget() {
       injuries: "shoulder impingement",
     },
   });
-  /* Raised from 32k on 2026-09-02 for the load-ceiling rule. It should come back DOWN once the
-     movement tiers and the competitor week move out of layer2-individual and into the competitor
-     layer that already gates on a declared competition — that move is larger than this addition.
-     If this number rises again without a decision behind it, something is being padded. */
-  ok("the heaviest pack stays under 33k characters",
-    heavy.chars < 33000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
+  /* 34k is the real worst case, not a padded one: an injured, declared competitor with a barbell
+     goal — craft + methodology + injuries + equivalence + general + individual + competitors +
+     weightlifting. It went UP when the competitor layer absorbed the tiers and the barbell week
+     from layer2-individual, which is the same characters sitting behind a gate instead of reaching
+     everyone. A general athlete's pack is 22k. If this rises again without a decision behind it,
+     something is being padded. */
+  ok("the heaviest pack stays under 34k characters",
+    heavy.chars < 34000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
   ok("the pack reports which layers it used",
     Array.isArray(heavy.layers) && heavy.layers.length >= 6, heavy.layers.join(", "));
 }
@@ -467,6 +566,7 @@ function main() {
   testIndividualLayerDecisions();
   testInjuryGate();
   testRouting();
+  testRouterAgainstRealPacket();
   testPackBudget();
   console.log("\nPassed:", passed);
   if (process.exitCode) {
