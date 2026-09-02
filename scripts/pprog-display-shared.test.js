@@ -184,4 +184,17 @@ const editingShare = PprogDisplay.renderDayCardHtml(shareBlock, shareBlock.weeks
 });
 ok("it steps out of the way while editing", editingShare.indexOf("pprog-share-wa") < 0);
 
+
+/* --- what counts as "typed" ----------------------------------------
+ * A session whose TITLE the coach wrote — "Strength — heavy singles" — was refused with
+ * "nothing typed", because only lines were counted. He had typed; we were not looking
+ * there (owner, 2026-09-02). A generated heading is still not content.
+ */
+const titleOnly = { day: "sun", parts: [{ title: "Strength — heavy singles", notes: [""], format: "", work: [""] }] };
+const headingOnly = { day: "sun", parts: [{ title: "Part A", notes: [""], format: "", work: [""] }] };
+const withWork = { day: "sun", parts: [{ title: "Part A", notes: [""], format: "", work: ["5x5 back squat"] }] };
+ok("a written title is content", PprogDisplay.draftHasContent(titleOnly) === true);
+ok("a generated heading is not", PprogDisplay.draftHasContent(headingOnly) === false);
+ok("and lines still count", PprogDisplay.draftHasContent(withWork) === true);
+
 console.log("All shared pprog-display checks passed.");

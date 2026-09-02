@@ -267,7 +267,9 @@ button.ghost:hover{color:var(--text)}
     /* Brick view state, the same shape the back office keeps: wi = 0-based week,
        day = active day key or "general", selected = the horizontal multi-day spread,
        edit = the one open draft. */
-    wi: 0, day: "sun", calMode: "week", selected: [], edit: null,
+    /* A brick is a month, and the client should see the month they were sold — the
+       week view hid three quarters of it (owner, 2026-09-02). */
+    wi: 0, day: "sun", calMode: "month", selected: [], edit: null,
   };
 
   var DAY_KEYS_LOCAL = (window.PprogDisplay && window.PprogDisplay.DAY_KEYS) ||
@@ -516,7 +518,7 @@ button.ghost:hover{color:var(--text)}
       /* A client program is 4 weeks without a deload and 5 with one — show its real
          length rather than the athlete app's fixed five. */
       weekRows: weekCount(),
-      calMode: state.calMode || "week",
+      calMode: state.calMode || "month",
       israelTodayIso: israelIso(false),
       readOnly: true,
       showFooter: false,

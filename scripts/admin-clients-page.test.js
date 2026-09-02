@@ -439,9 +439,9 @@ ok("neither branch shows before a mode is picked", page.indexOf('el("inDifferWra
 ok("the weekly branch needs the weekly box", page.indexOf('el("inWeeklyWrap").hidden = !byWeek') >= 0);
 ok("with no mode picked the owner is told to pick", /Pick how the place trains/.test(page));
 ok("there is no schedule dropdown left", !/<select id="inSchedMode/.test(page));
-ok("the session count sits next to it", /id="inSessions" type="number" min="1" max="14"/.test(page));
+ok("the session count sits next to it", /id="inSessions" type="number" min="1" max="7"/.test(page));
 /* Empty on purpose — the owner types the number, nothing is guessed for a client. */
-ok("the count box starts empty", /id="inSessions" type="number" min="1" max="14" value=""/.test(page));
+ok("the count box starts empty", /id="inSessions" type="number" min="1" max="7" value=""/.test(page));
 ok("the count box is inline with the checkbox", /class="inline-num"/.test(page));
 ok("the count disappears in weekly mode", page.indexOf('el("inSessions").hidden = !byCount') >= 0);
 /* Beside its label, not shoved to the far edge, and big enough for two digits. */

@@ -33,7 +33,10 @@
 .pprog-cal-month-btn:hover{color:#b06dcf}
 .pprog-cal-today-row{display:flex;justify-content:center;margin:0 0 10px}
 .pprog-cal-today{appearance:none;background:#F5C518;border:1px solid #F5C518;color:#111;font-size:.72em;font-weight:800;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:inherit;letter-spacing:.02em;line-height:1.2;min-height:34px}
-.pprog-cal-dow,.pprog-cal-row{display:grid;grid-template-columns:minmax(48px,0.85fr) repeat(7,1fr);gap:2px;text-align:center;align-items:center}
+/* Seven columns for a week, N for a programme sold as N sessions — and the cells
+   share the whole width either way. A fixed seven left four empty gaps and read
+   as a broken table (owner, 2026-09-02). Up to ten sessions has to fit too. */
+.pprog-cal-dow,.pprog-cal-row{display:grid;grid-template-columns:minmax(48px,0.85fr) repeat(var(--cal-cols,7),minmax(0,1fr));gap:2px;text-align:center;align-items:center}
 .pprog-cal-dow{margin-bottom:4px}
 .pprog-cal-dow span,.pprog-cal-dow-btn{color:#888;font-size:.68em;font-weight:600;padding:2px 0}
 .pprog-cal-dow-btn{
