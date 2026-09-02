@@ -66,8 +66,11 @@ assert.ok(/id="btn-add-athlete"/.test(admin), "adding a client stays");
 assert.ok(!/id="btn-client-programs"/.test(admin), "no link to a second 'module'");
 assert.ok(/lib\/admin-people-strip\.js/.test(admin), "the strip is built by the shared builder");
 assert.ok(/function renderPeopleStrip/.test(admin), "admin draws the unified strip");
-assert.ok(/function loadClientPrograms/.test(admin), "and loads the programmes beside the athletes");
-assert.ok(/admin-clients\.html\?program=/.test(admin), "a programme chip lands on that client");
+/* The programmes are loaded by the client screen itself, which lives in this file now
+   and hands its rows back through adminOnClientRows. One fetch, one owner. */
+assert.ok(/window\.adminOnClientRows/.test(admin), "the screen hands its rows to the strip");
+assert.ok(/window\.ClientScreen\.open\(id\)/.test(admin), "a programme chip opens in place");
+assert.ok(!/location\.href = pagesAbsoluteUrl\("\/admin-clients/.test(admin), "and never travels to another page");
 
 assert.ok(!/<span class="tagline">Admin<\/span>/.test(admin), "the word Admin beside the logo is gone");
 assert.ok(!/id="btn-sync-drive"/.test(admin), "the drive-sync button is gone");

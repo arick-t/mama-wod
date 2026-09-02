@@ -2,7 +2,10 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<!-- The back office has no business in a search index. It carried no such tag while
+     it was only an athlete admin; now that it also holds paying clients, it says so. -->
+<meta name="robots" content="noindex, nofollow">
 <title>DUCK-WOD Admin · 3.0.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -71,9 +74,17 @@ button,input,textarea,select{font-family:inherit}
 
 /* ── App shell ── */
 html,body{height:100%}
-#app{display:none;flex-direction:column;height:100vh;max-height:100vh;overflow:hidden}
+:root{
+  --safe-t:env(safe-area-inset-top,0px);
+  --safe-b:env(safe-area-inset-bottom,0px);
+}
+/* dvh where the browser has it: on iOS Safari 100vh is taller than what you can see,
+   so a 100vh app frame hides its own bottom under the browser's chrome. */
+#app{display:none;flex-direction:column;height:100vh;height:100dvh;
+  max-height:100vh;max-height:100dvh;overflow:hidden}
 #app.is-open{display:flex}
-header{background:var(--bg-card);border-bottom:3px solid var(--brand);padding:12px 20px;
+header{background:var(--bg-card);border-bottom:3px solid var(--brand);
+  padding:calc(12px + var(--safe-t)) 20px 12px;
   display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0}
 header .logo{font-family:var(--font-display);font-weight:700;font-size:18px;letter-spacing:.1em;
   background:linear-gradient(90deg,#E8451A,#F5C518 50%,#1A9B8A);
@@ -141,7 +152,8 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .empty-tabs{color:var(--text-meta);font-size:13px;padding:4px 2px}
 
 .main{display:flex;flex:1;overflow:hidden;min-height:0}
-.content{flex:1;overflow-y:auto;padding:20px 24px 110px;background:var(--bg);min-height:0;-webkit-overflow-scrolling:touch}
+.content{flex:1;overflow-y:auto;padding:20px 24px calc(110px + var(--safe-b));background:var(--bg);
+  min-height:0;-webkit-overflow-scrolling:touch}
 
 /* ── Athlete ops card (identity + accordion) ── */
 .ath-wrap{max-width:720px;margin:0 auto}
@@ -746,6 +758,131 @@ body:has(#intake-modal.open) #adminChatFloat{
   .lifts-row{grid-template-columns:1fr 80px 32px}
   .learn-toggle .lt-label{font-size:11px;padding:6px 10px}
 }
+
+/* ── The client screen, folded in ───────────────────────────────────────────
+   Every rule scoped under #clientScreen. The screen came from a page that styled
+   bare button / input / h2 / p, and unscoped those would have restyled the whole
+   admin. Scoping is what makes one page possible without a redesign of either half.
+   The owner's instruction, 2026-09-02: one management page, no seam, no combinations.
+   ──────────────────────────────────────────────────────────────────────── */
+#clientScreen /* The `hidden` attribute is only display:none from the UA sheet,#clientScreen so ANY author rule
+   with a display wins — label.fld{display:block}
+#clientScreen and .sess-grid{display:grid}
+#clientScreen were
+   both quietly showing elements the code had hidden. One rule closes the whole class
+   of bug instead of chasing it per element. */
+[hidden]{display:none!important}
+#clientScreen .backlink{margin:0 0 18px;font-size:.85rem}
+#clientScreen .backlink a{color:var(--coach);text-decoration:none}
+#clientScreen .backlink a:hover{text-decoration:underline}
+#clientScreen .card{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:0 0 14px}
+#clientScreen h2{font-family:var(--font-display);font-size:1.05rem;margin:0 0 12px;letter-spacing:.5px}
+#clientScreen p{margin:0 0 10px}
+#clientScreen .muted{color:var(--text-muted)}
+#clientScreen .meta{color:var(--text-meta);font-size:.82rem}
+#clientScreen label.fld{display:block;margin:0 0 10px}
+#clientScreen label.fld span{display:block;font-size:.8rem;color:var(--text-meta);margin:0 0 4px}
+#clientScreen input[type=text],#clientScreen input[type=password],#clientScreen input[type=number],#clientScreen textarea,#clientScreen select{
+  width:100%;font-family:var(--font-ui);font-size:16px;color:var(--text);background:var(--bg-panel);
+  border:1px solid var(--line);border-radius:8px;padding:11px}
+#clientScreen textarea{min-height:150px;resize:vertical;line-height:1.6;direction:ltr;text-align:left}
+#clientScreen input:focus,#clientScreen textarea:focus,#clientScreen select:focus{outline:2px solid var(--coach);outline-offset:1px}
+#clientScreen button{font-family:var(--font-ui);font-size:15px;font-weight:500;cursor:pointer;background:var(--brand);
+  color:#fff;border:0;border-radius:8px;min-height:44px;padding:10px 16px}
+#clientScreen button:disabled{opacity:.5;cursor:default}
+#clientScreen button.ghost{background:transparent;color:var(--text-muted);border:1px solid var(--line)}
+#clientScreen button.ghost:hover{color:var(--text)}
+#clientScreen button.danger{background:transparent;color:var(--brand);border:1px solid var(--brand)}
+#clientScreen button.sm{min-height:34px;padding:5px 11px;font-size:13px}
+#clientScreen .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+#clientScreen .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#clientScreen .err{color:var(--brand);font-size:.88rem;margin:8px 0 0;min-height:1.2em}
+#clientScreen .okmsg{color:var(--part);font-size:.88rem;margin:8px 0 0;min-height:1.2em}
+#clientScreen .cname{font-weight:600}
+#clientScreen .cmeta{color:var(--text-meta);font-size:.8rem}
+#clientScreen .spacer{margin-inline-start:auto}
+#clientScreen .dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--brand);flex:0 0 auto}
+#clientScreen .badge{display:inline-block;padding:1px 8px;border-radius:10px;font-size:.68rem;font-weight:700;
+  letter-spacing:.6px;background:rgba(232,69,26,.18);color:var(--brand)}
+#clientScreen .badge.test{background:rgba(245,197,24,.16);color:var(--brand-gold)}
+#clientScreen .total{font-family:var(--font-display);font-size:1.1rem;color:var(--brand-gold)}
+#clientScreen .weekbar{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px}
+#clientScreen .weekbar button{min-height:36px;padding:6px 13px;background:var(--bg-panel);color:var(--text-muted);
+  border:1px solid var(--line);white-space:nowrap}
+#clientScreen .weekbar button.on{background:var(--coach-deep);color:#fff;border-color:var(--coach)}
+#clientScreen .day{background:var(--bg-panel);border:1px solid var(--line);border-radius:10px;margin:0 0 10px;overflow:hidden}
+#clientScreen .day.unread{border-color:var(--brand)}
+#clientScreen .day-head{display:flex;align-items:center;gap:9px;padding:10px 12px;background:var(--bg-elev);
+  border-bottom:1px solid var(--line);flex-wrap:wrap}
+#clientScreen .day-name{font-family:var(--font-display);font-size:.95rem}
+#clientScreen .day-body{padding:11px 12px}
+#clientScreen .code-out{font-family:var(--font-display);font-size:2rem;letter-spacing:.35em;color:var(--brand-gold);
+  text-align:center;margin:10px 0;direction:ltr}
+#clientScreen .linkbox{background:var(--bg-panel);border:1px solid var(--line);border-radius:8px;padding:10px;
+  font-size:.8rem;word-break:break-all;direction:ltr;text-align:left;margin:0 0 10px}
+#clientScreen .devrow{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);font-size:.85rem}
+#clientScreen .devrow:last-child{border-bottom:0}
+#clientScreen .banner{border-radius:10px;padding:11px 13px;margin:0 0 12px;font-size:.89rem}
+#clientScreen .banner.warn{background:rgba(245,197,24,.12);border:1px solid rgba(245,197,24,.4);color:var(--brand-gold)}
+#clientScreen .banner.bad{background:rgba(232,69,26,.12);border:1px solid rgba(232,69,26,.45);color:#ffb4a0}
+#clientScreen .banner.good{background:rgba(111,175,164,.12);border:1px solid rgba(111,175,164,.4);color:var(--part)}
+#clientScreen .itabs{display:flex;gap:6px;overflow-x:auto;padding:0 0 14px;-webkit-overflow-scrolling:touch}
+#clientScreen .itabs button{min-height:36px;padding:6px 13px;background:var(--bg-panel);color:var(--text-muted);
+  border:1px solid var(--line);white-space:nowrap;border-radius:8px;font-size:13.5px}
+#clientScreen .itabs button.on{background:var(--coach-deep);color:#fff;border-color:var(--coach)}
+#clientScreen .itabs button.done{border-color:var(--part);color:var(--part)}
+#clientScreen .itabs button.on.done{color:#fff}
+#clientScreen .ipane label.fld span{font-size:.82rem}
+#clientScreen .ipane textarea{min-height:120px}
+#clientScreen .wk-row{display:grid;grid-template-columns:70px 1fr;gap:9px;align-items:center;margin:0 0 8px}
+#clientScreen .wk-row span{color:var(--text-meta);font-size:.85rem}
+#clientScreen .wk-row input{margin:0}
+#clientScreen .chk-row{display:flex;gap:10px;align-items:flex-start;margin:0 0 8px;cursor:pointer}
+#clientScreen .chk-row input{width:20px;height:20px;margin:2px 0 0;flex:0 0 auto;accent-color:var(--brand)}
+#clientScreen .chk-row span{color:var(--text);font-size:.92rem}
+#clientScreen .chk-row .inline-num{width:82px;margin-inline-start:14px;padding:8px 10px;text-align:center;
+  font-size:19px;font-weight:700;font-family:var(--font-display);letter-spacing:1px;
+  color:var(--brand-gold);border-color:var(--coach-deep)}
+#clientScreen .chk-row .inline-num::placeholder{color:var(--text-meta);font-weight:400;letter-spacing:0}
+#clientScreen .sess-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));
+  gap:10px;margin:0 0 6px}
+#clientScreen .sub-branch{margin:2px 0 12px;padding-inline-start:16px;
+  border-inline-start:2px solid var(--coach-deep)}
+#clientScreen .sub-branch .sub-branch{margin-bottom:4px}
+#clientScreen .pick-row{display:flex;gap:26px;flex-wrap:wrap;margin:0 0 12px}
+#clientScreen .sched-sep{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+#clientScreen .rest-inline{appearance:none;background:var(--bg-panel);border:1px solid var(--line);
+  color:var(--text-muted);border-radius:999px;padding:3px 11px;font-size:.72rem;
+  font-weight:700;letter-spacing:.4px;cursor:pointer;margin-inline-start:8px}
+#clientScreen .rest-inline:hover{border-color:var(--coach);color:var(--text)}
+#clientScreen .sess-box{min-width:0;background:var(--bg-panel);border:1px solid var(--line);
+  border-radius:10px;padding:10px}
+#clientScreen .sess-box label{display:block;font-size:.72rem;color:var(--text-meta);margin:0 0 5px;
+  text-transform:uppercase;letter-spacing:.8px}
+#clientScreen .sess-box input{padding:8px 10px;font-size:15px}
+#clientScreen .emph-days{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin:0 0 10px}
+#clientScreen .emph-day{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;
+  background:var(--bg-panel);border:1px solid var(--line);border-radius:10px;
+  padding:9px 4px;cursor:pointer}
+#clientScreen .emph-day input{width:18px;height:18px;margin:0;flex:0 0 auto;accent-color:var(--brand)}
+#clientScreen .emph-day span{font-family:var(--font-display);font-size:.85rem;letter-spacing:.5px}
+#clientScreen .emph-note{display:grid;grid-template-columns:54px 1fr;gap:9px;align-items:center;margin:0 0 7px}
+#clientScreen .emph-note > span{color:var(--text-meta);font-size:.85rem;font-family:var(--font-display)}
+#clientScreen .emph-note input[type=text]{font-size:15px;padding:8px 10px}
+@media (max-width:700px){
+#clientScreen .emph-days{grid-template-columns:repeat(4,1fr)}
+/* Anything under 16px makes iOS zoom the page when the field takes focus. */
+#clientScreen input,#clientScreen textarea,#clientScreen select{font-size:16px}
+#clientScreen button{min-height:44px}
+#clientScreen .row{gap:8px}
+#clientScreen .card{padding:13px}
+/* The header wraps rather than pushing its buttons off the edge. */
+header{flex-wrap:wrap;row-gap:8px}
+.tabs-bar{padding:8px 12px}
+}
+@media (max-width:600px){
+#clientScreen .grid2{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
@@ -792,6 +929,188 @@ body:has(#intake-modal.open) #adminChatFloat{
         <p>בחר מתאמן מהרשימה</p>
       </div>
     </div>
+  <!-- The client screen. It lives beside #content rather than inside it, because
+       #content is rewritten whole every time an athlete is rendered. The two take
+       turns, which is what makes opening a studio and opening an athlete the same
+       gesture on the same page (owner, 2026-09-02: one management page, no seam). -->
+  <div class="content" id="clientScreen" hidden>
+    <div id="topBanner"></div>
+    <div class="card" id="intakeCard" dir="ltr" style="text-align:left" hidden>
+      <div class="row" style="margin-bottom:12px">
+        <h2 style="margin:0" id="intakeTitle">New coach / studio client</h2>
+        <span class="spacer meta" id="intakeStep"></span>
+      </div>
+
+      <div class="itabs" id="intakeTabs" role="tablist"></div>
+
+      <!-- 1 · client & payment -->
+      <div class="ipane" data-pane="profile">
+        <label class="fld"><span>Client name</span>
+          <input id="inName" type="text" placeholder="Coach, academy, studio or gym"></label>
+        <div class="grid2">
+          <label class="fld"><span>Monthly amount (₪)</span>
+            <input id="inAmount" type="number" min="0" step="1" placeholder="900"></label>
+          <label class="fld"><span>Payment method</span>
+            <input id="inMethod" type="text" placeholder="Bit, 1st of the month"></label>
+        </div>
+        <p class="meta">Payment details stay with you. The client never sees them.</p>
+      </div>
+
+      <!-- 2 · equipment -->
+      <!-- A checkbox, not a dropdown: there are only two states and the default is the
+           well-equipped gym. The description box only exists when it has something to
+           describe, so the tab is one line in the common case. -->
+      <div class="ipane" data-pane="equipment" hidden>
+        <div class="pick-row">
+          <label class="chk-row">
+            <input id="inEquipFull" type="checkbox" data-pick="equip" checked>
+            <span>Well-equipped functional training gym</span>
+          </label>
+          <label class="chk-row">
+            <input id="inEquipOtherOn" type="checkbox" data-pick="equip">
+            <span>OTHER</span>
+          </label>
+        </div>
+        <label class="fld" id="inEquipOtherWrap" hidden><span>Describe what is actually available</span>
+          <textarea id="inEquipOther" placeholder="Rig, 4 barbells, kettlebells 8–32kg, 2 rowers, no rings…"></textarea></label>
+      </div>
+
+      <!-- 3 · schedule.
+           THREE top-level choices, none pre-ticked: the tab opens with a decision to
+           make, not with an answer already filled in. Every follow-up is INDENTED under
+           the choice it belongs to and appears only once that choice is made — the flat
+           list read as four unrelated questions.
+
+             ☐ Number of sessions per week  [ N ]
+                 └ ☐ The sessions differ from one another
+                        └ one box per session
+             ☐ Full weekly plan
+                 ├ ☐ Standing emphases for specific weekdays
+                 │      └ Sun–Sat across one row, note under the day that was ticked
+                 └ ☐ Include rest days in the plan
+             ☐ Include a deload week          (independent — combines with either)
+                 └ every N weeks, counted across months
+      -->
+      <div class="ipane" data-pane="schedule" hidden>
+        <label class="chk-row">
+          <input id="inSchedCount" type="checkbox" data-pick="sched">
+          <span>Number of sessions per week</span>
+          <input id="inSessions" type="number" min="1" max="14" value=""
+                 class="inline-num" aria-label="Sessions per week" placeholder="—">
+        </label>
+
+        <!-- Sub-question of the line above. -->
+        <div id="inDifferWrap" class="sub-branch" hidden>
+          <label class="chk-row">
+            <input id="inSessionsDiffer" type="checkbox">
+            <span>The sessions differ from one another</span>
+          </label>
+          <p class="meta" id="inDifferHint" style="margin:0 0 10px"></p>
+          <div id="inSessionTypes" class="sess-grid" hidden></div>
+        </div>
+
+        <label class="chk-row">
+          <input id="inSchedWeekly" type="checkbox" data-pick="sched">
+          <span>Full weekly plan</span>
+        </label>
+
+        <!-- Sub-questions of "Full weekly plan". The standing emphases come FIRST and
+             rest days sit below them, on the owner's instruction (2026-09-01): the
+             shape of the week is the bigger decision, the rest day follows it. -->
+        <div id="inWeeklyWrap" class="sub-branch" hidden>
+          <label class="chk-row">
+            <input id="inEmphasis" type="checkbox">
+            <span>Standing emphases for specific weekdays</span>
+          </label>
+          <p class="meta" style="margin:0 0 10px">Tick a day and write a note that repeats every
+            week — e.g. Friday: “partner workouts”.</p>
+          <div id="inWeekDays" class="sub-branch" hidden>
+            <div id="inWeekDayRow" class="emph-days"></div>
+            <div id="inWeekDayNotes"></div>
+          </div>
+
+          <label class="chk-row">
+            <input id="inRestDays" type="checkbox">
+            <span>Include rest days in the plan</span>
+          </label>
+          <p class="meta" id="inRestHint" style="margin:0 0 10px"></p>
+          <!-- Which days, not just whether. Same row of seven as the emphases above,
+               because it is the same week being described (owner, 2026-09-01). -->
+          <div id="inRestDaysWrap" class="sub-branch" hidden>
+            <p class="meta" style="margin:0 0 8px">Tick the days that are rest days.</p>
+            <div id="inRestDayRow" class="emph-days"></div>
+          </div>
+        </div>
+
+        <p class="meta" id="inCountHint" style="margin:2px 0 0"></p>
+
+        <!-- The deload is part of the schedule, not a step of its own, and it is
+             INDEPENDENT of the two modes above — it combines with either. -->
+        <div class="sched-sep">
+          <label class="chk-row">
+            <input id="inDeload" type="checkbox">
+            <span>Include a deload week</span>
+          </label>
+          <!-- The number is a CADENCE, not a block length. The product is sold by the
+               month and a month is four weeks, so "5" means month one is four build
+               weeks and month TWO opens on the deload — the count is not reset by the
+               month boundary (owner, 2026-09-01). Minimum 4 is his professional call. -->
+          <div id="inDeloadWrap" class="sub-branch" hidden>
+            <label class="chk-row">
+              <span>Put the deload on week</span>
+              <input id="inDeloadAt" type="number" min="4" max="12" value=""
+                     class="inline-num" aria-label="Deload week number" placeholder="—">
+            </label>
+          </div>
+          <p class="meta" id="inDeloadHint" style="margin:0"></p>
+        </div>
+      </div>
+
+      <!-- 4 · population & limits -->
+      <!-- 0 · additions and changes — only when planning the NEXT block. The first
+           intake has nothing to differ from. -->
+      <div class="ipane" data-pane="changes" hidden>
+        <label class="chk-row">
+          <input id="inHasChanges" type="checkbox">
+          <span>Additions and changes</span>
+        </label>
+        <p class="meta" style="margin:0 0 10px">Anything you want different in the next
+          block. The tabs beside this one open on what is true today — change what moved.</p>
+        <div id="inChangesWrap" class="sub-branch" hidden>
+          <label class="fld"><span>What is different this time</span>
+            <textarea id="inChanges" placeholder="Two members came back from injury. More pulling volume. Keep Fridays light."></textarea></label>
+        </div>
+      </div>
+
+      <!-- 4 · population, limits and goals — one tab (owner, 2026-09-01). Two tabs
+           were describing the same room twice. -->
+      <div class="ipane" data-pane="population" hidden>
+        <label class="chk-row" style="cursor:default">
+          <span>Session length (minutes, warm-up included)</span>
+          <input id="inMinutes" type="number" min="20" max="120" value=""
+                 class="inline-num" aria-label="Session length in minutes" placeholder="—">
+        </label>
+        <p class="meta" id="inMinutesHint" style="margin:0 0 12px"></p>
+        <label class="fld"><span>The place, the people, the limits — and what they are training for</span>
+          <textarea id="inPopulation" placeholder="Pre-army prep group, 17–19, mixed ability. Two members with knee history. Training for army selection: 2000m run, pull-ups, load carry endurance."></textarea></label>
+      </div>
+
+      <div class="row" style="margin-top:14px">
+        <button id="iPrev" class="ghost" type="button">Back</button>
+        <button id="iNext" type="button">Next</button>
+        <button id="createBtn" type="button" hidden>Create program</button>
+        <label class="meta" style="display:flex;gap:6px;align-items:center">
+          <input id="newTest" type="checkbox" style="width:auto"> Test program
+        </label>
+        <!-- A way back to the list, since the list is no longer on screen. -->
+        <button id="iCancel" class="ghost sm" type="button"
+                style="margin-inline-start:auto">Cancel</button>
+      </div>
+      <p class="err" id="createErr" role="alert"></p>
+    </div>
+
+    <div id="detail" hidden></div>
+  </div>
   </div>
 </div>
 
@@ -1638,8 +1957,20 @@ function openAdminApp(snapshots) {
   loadCreditEstimate();
   refreshLiveCoachVersion();
   renderAthleteList(snapshots || []);
-  loadClientPrograms();
   bindPeopleStrip();
+  /* The client screen shares this page's session and loads its own half of the strip. */
+  if (window.ClientScreen) {
+    window.ClientScreen.start({ token: adminSessionToken, pw: adminPw });
+  }
+  /* A mailed link names a client: land on them, not on a list. */
+  try {
+    var wantProgram = new URLSearchParams(location.search).get("program");
+    if (wantProgram && window.ClientScreen) {
+      currentAthleteId = null;
+      renderPeopleStripActive(wantProgram);
+      window.ClientScreen.open(wantProgram);
+    }
+  } catch (eProg) {}
   /* Coming back from the other screen: land on the athlete that was clicked there. */
   try {
     var wantAthlete = new URLSearchParams(location.search).get("athlete");
@@ -1919,13 +2250,28 @@ function renderAthleteList(list) {
  * whole point: he asked for one unified view of his clients, not two lists that happen
  * to look alike (2026-09-01).
  */
+/* Which chip is lit: an athlete, or a programme. One strip, two kinds of client. */
+var activeProgramId = null;
+
 function renderPeopleStrip() {
   var sb = document.getElementById("athlete-tabs");
   if (!sb || !window.AdminPeopleStrip) return;
   var rows = AdminPeopleStrip.rows({ athletes: athletes, programs: clientPrograms });
-  sb.innerHTML = AdminPeopleStrip.html(rows, currentAthleteId);
+  sb.innerHTML = AdminPeopleStrip.html(rows, activeProgramId || currentAthleteId);
   document.getElementById("athlete-count").textContent = rows.length + " לקוחות";
 }
+
+function renderPeopleStripActive(programId) {
+  activeProgramId = programId || null;
+  renderPeopleStrip();
+}
+
+/* The client screen reports what it loaded; the strip is drawn here, out of both
+   halves, so there is only ever one of it. */
+window.adminOnClientRows = function (rows, monthlyTotal, unreadTotal) {
+  clientPrograms = Array.isArray(rows) ? rows : [];
+  renderPeopleStrip();
+};
 
 /* A click on a chip: an athlete is already here, a programme is on the other screen —
    and crossing over must land on that exact client, not on a list. */
@@ -1938,37 +2284,31 @@ function bindPeopleStrip() {
     var id = chip.getAttribute("data-id") || "";
     if (!id) return;
     if (chip.getAttribute("data-kind") === "program") {
-      /* Absolute, always: Vercel can serve this page at "/admin.html/" and a relative
-         href then resolves one level too deep — the 404 the owner found by clicking. */
-      location.href = pagesAbsoluteUrl("/admin-clients.html?program=" + encodeURIComponent(id));
+      /* In place. This is one page: the client screen takes the content area and the
+         athlete side steps aside (owner, 2026-09-02 — no seam, no combinations). */
+      currentAthleteId = null;
+      renderPeopleStripActive(id);
+      if (window.ClientScreen) window.ClientScreen.open(id);
       return;
     }
+    /* Back to the athlete side: the client screen lets go of the content area. */
+    if (window.ClientScreen) window.ClientScreen.close();
     selectAthlete(id);
   });
 }
 
-/* The programmes, from the client-program store. A failure here must never cost the
-   owner his athletes: the strip simply carries the half that answered. */
-function loadClientPrograms() {
-  if (!adminIsAuthed()) return;
-  fetch(adminApiUrl("/api/client-program"), {
-    method: "POST",
-    headers: adminAuthHeaders(),
-    body: JSON.stringify(withAdminPassword({ action: "list" }))
-  })
-    .then(function (r) { return r.json(); })
-    .then(function (d) {
-      if (!d || !d.ok || !Array.isArray(d.rows)) return;
-      clientPrograms = d.rows;
-      renderPeopleStrip();
-    })
-    .catch(function () {});
-}
+/* The programmes are loaded by the client screen itself (window.ClientScreen.start),
+   which owns that half of the data and hands the rows back through adminOnClientRows.
+   One fetch, one owner. */
 
 function selectAthlete(id) {
-  /* Repaint the strip through the shared builder, so the active chip is decided in one
-     place for both screens. */
-  if (id !== currentAthleteId) setTimeout(renderPeopleStrip, 0);
+  /* An athlete is showing, so no programme is. */
+  activeProgramId = null;
+  var athleteSide = document.getElementById("content");
+  if (athleteSide) athleteSide.hidden = false;
+  var clientSide = document.getElementById("clientScreen");
+  if (clientSide) clientSide.hidden = true;
+  setTimeout(renderPeopleStrip, 0);
   if (currentAthleteId !== id) {
     adminChatFabOpen = false;
     adminPprogEditCancel(true);
@@ -4256,10 +4596,11 @@ function closeClientKindChooser() {
 function chooseClientKind(kind) {
   closeClientKindChooser();
   if (kind === "coach") {
-    /* Absolute, not relative. A bare "admin-clients.html" resolves against the
-       current path — which produced /admin.html/admin-clients.html and a 404 — and
-       it would also have broken under the GitHub Pages project subpath. */
-    window.location.href = pagesAbsoluteUrl("/admin-clients.html?new=coach");
+    /* The cross-cutting intake opens in place. It used to be a trip to another page —
+       which is the seam the owner had me remove (2026-09-02). */
+    currentAthleteId = null;
+    renderPeopleStripActive(null);
+    if (window.ClientScreen) window.ClientScreen.newClient();
     return;
   }
   /* Straight into the conversation. Choosing "end athlete" IS the decision to start
@@ -4947,5 +5288,1582 @@ tryRestoreAdminSession();
 <script src="lib/admin-day-edit.js"></script>
 <script src="lib/admin-done-debrief.js"></script>
 <script src="admin-fixed-intake.js"></script>
+<script src="lib/day-rest-toggle.js"></script>
+<script src="lib/client-intake.js"></script>
+<script>
+/* ══════════════════════════════════════════════════════════════════════════
+   THE CLIENT SCREEN — moved here whole from admin-clients.html.
+
+   The owner's instruction, 2026-09-02: one management page, no seam, no
+   combinations. Two files meant a page load between opening an athlete and opening
+   a studio, and he could see it.
+
+   It arrives as the closed IIFE it always was, so nothing inside it can reach
+   admin.html's globals and nothing of admin's can reach its state. What changed is
+   only what belonged to being a separate PAGE — its login, its strip, its boot — and
+   those are admin's now. It exposes window.ClientScreen and renders into
+   #clientScreen, which sits beside #content and takes turns with it.
+   ══════════════════════════════════════════════════════════════════════════ */
+(function () {
+  "use strict";
+
+  /* Where the API lives.
+   *
+   * The static site is on GitHub Pages, which has no server, so from there every
+   * /api/* call must go to Vercel. But when this page is ITSELF served from a Vercel
+   * deployment — production or a branch preview — the API sits at the same origin.
+   *
+   * Hardcoding the production host broke preview testing badly: the preview page
+   * called production, where /api/client-program does not exist yet, and the 404
+   * came back without CORS headers, so the browser blocked it and the fetch simply
+   * rejected. Same-origin is both correct and what makes a preview testable. */
+  var API_BASE = (function () {
+    var h = String(location.hostname || "");
+    if (h === "localhost" || h === "127.0.0.1") return "";
+    if (/\.vercel\.app$/i.test(h)) return "";
+    return "https://mama-wod.vercel.app";
+  })();
+  /* Same keys as admin.html, so one login serves both pages. */
+  /* The same number admin.html shows, because this is the same back office and two
+     versions on two pages of one product is a bug report waiting to happen.
+     scripts/admin-clients-page.test.js fails if it drifts from admin.html's own. */
+  var ADMIN_UI_VERSION = "3.0.2";
+
+  var SESSION_KEY = "dw_admin_session";
+  var REMEMBER_KEY = "dw_admin_remember";
+
+  var S = {
+    token: "", pw: "", rows: [], sel: null, program: null, access: null,
+    /* Brick view state, mirroring what the admin module keeps per athlete:
+       wi = 0-based week, day = active day key or "general", calMode = week|month,
+       selected = the multi-day horizontal spread, edit = the one open draft. */
+    wi: 0, day: "sun", calMode: "week", selected: [], edit: null, editStatus: null,
+    /* true = the new-client wizard owns the screen and the list is out of the way. */
+    adding: false,
+  };
+
+  var DAY_KEYS_LOCAL = (window.PprogDisplay && window.PprogDisplay.DAY_KEYS) ||
+    ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+  /* Module scope on purpose: saveDay used to read a RT declared inside another
+     function, so every save — including turning a day into a rest day — threw a
+     ReferenceError before it reached the network. */
+  var RT = window.DayRestToggle || null;
+
+  function el(id) { return document.getElementById(id); }
+  function show(id, on) { var n = el(id); if (n) n.hidden = !on; }
+  function esc(s) {
+    return (window.PprogDisplay && window.PprogDisplay.esc)
+      ? window.PprogDisplay.esc(s)
+      : String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+        });
+  }
+  function banner(kind, msg) {
+    el("topBanner").innerHTML = msg ? '<div class="banner ' + kind + '">' + esc(msg) + "</div>" : "";
+  }
+
+  /* The frame belongs to admin.html now. Kept as a no-op rather than deleted at every
+     call site, so this stays a MOVE of working code rather than a rewrite of it. */
+  function appOpen() {}
+
+  function storedToken() {
+    try {
+      if (localStorage.getItem(REMEMBER_KEY) === "1") return localStorage.getItem(SESSION_KEY) || "";
+      return sessionStorage.getItem(SESSION_KEY) || "";
+    } catch (e) { return ""; }
+  }
+
+  /* One place the credential is attached, so "where does the password go" has one
+     answer and a test can hold it to that. */
+  function authHeaders() {
+    var headers = { "Content-Type": "application/json" };
+    if (S.token) headers["X-Admin-Token"] = S.token;
+    else if (S.pw) headers["X-Admin-Password"] = S.pw;
+    return headers;
+  }
+
+  function api(body) {
+    var headers = authHeaders();
+    return fetch(API_BASE + "/api/client-program", {
+      method: "POST", headers: headers, body: JSON.stringify(body || {}),
+    })
+      .then(function (r) {
+        return r.json().catch(function () { return null; }).then(function (j) {
+          return { status: r.status, body: j || {} };
+        });
+      })
+      .catch(function () { return { status: 0, body: { error: "אין חיבור לשרת." } }; });
+  }
+
+  /* --- login ----------------------------------------------------------- */
+
+  /* One login screen on the page, and it is admin's. A dead session must reach admin's
+     own handler, not draw a second password box inside the content area. */
+  function openLogin(msg) {
+    if (typeof window.forceAdminLogout === "function") {
+      window.forceAdminLogout(msg || "הסשן פג — התחבר מחדש");
+      return;
+    }
+    if (msg) banner("warn", msg);
+  }
+
+  /* The login screen and its remember-me report belonged to this being a page of its
+     own. There is one login on this page and it is admin.html's — see openLogin above,
+     which hands a dead session to forceAdminLogout. */
+
+  /* Painting the list must not put it back on screen while the wizard owns it. */
+  function loadList() {
+    return api({ action: "list" }).then(function (r) {
+      if (r.status === 401) { openLogin("פג תוקף החיבור."); return; }
+      if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "לא הצלחתי לטעון את הרשימה."); return; }
+      show("loginView", false); appOpen(true);
+      renderList(r.body);
+      /* Re-assert which view owns the screen: a list refresh must not pull the list
+         back up over the wizard. */
+      renderViewMode();
+    });
+  }
+
+  function renderList(data) {
+    S.rows = data.rows || [];
+    var total = Number(data.monthlyTotal) || 0;
+    /* The counters sit in the header bar, where the admin module already keeps
+       "N לקוחות" — same place, same shape, one back office. */
+    if (el("monthlyTotal")) el("monthlyTotal").textContent = total ? "₪" + total.toLocaleString() + " לחודש" : "";
+    if (el("listMeta")) el("listMeta").textContent = data.unreadTotal ? data.unreadTotal + " ימים לא נקראו" : "";
+    /* Hidden when there is nothing to say: an empty pill is a box with nothing in it,
+       and it read as a control that had lost its label. */
+    show("monthlyTotal", !!total);
+    show("listMeta", !!data.unreadTotal);
+    /* The strip belongs to the PAGE, not to this screen: it carries the athletes too.
+       Hand the rows over and let admin paint one strip out of both halves. */
+    if (typeof window.adminOnClientRows === "function") {
+      window.adminOnClientRows(S.rows, total, data.unreadTotal || 0);
+    }
+  }
+
+  /* The strip and the athlete list belong to the PAGE now — this screen reports its
+     rows through window.adminOnClientRows and draws no strip of its own. Its copy of
+     both went with the merge (owner, 2026-09-02: one page, no combinations). */
+
+  /* --- one client ------------------------------------------------------ */
+
+  function openClient(pid) {
+    S.sel = pid; S.wi = 0; S.day = "sun"; S.calMode = "week"; S.selected = []; S.edit = null;
+    api({ action: "read", programId: pid }).then(function (r) {
+      if (r.status === 401) { openLogin("פג תוקף החיבור."); return; }
+      if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "לא הצלחתי לטעון את התוכנית."); return; }
+      S.program = r.body.program; S.access = r.body.access || null;
+      renderList({ rows: S.rows, monthlyTotal: 0 });
+      renderDetail();
+      try { el("detail").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {}
+    });
+  }
+
+  /* The link the owner sends a paying client, so it has to be right on every host.
+   *
+   * The old version cut the last path segment off location.href. Vercel can serve
+   * this page at "/admin-clients.html/" — with a trailing slash — and that version
+   * then produced ".../admin-clients.html/client.html", a dead link handed to a
+   * client. Resolve from the origin and an explicit base path instead. */
+  function sitePath() {
+    var p = String(location.pathname || "/");
+    if (/\.html\/$/i.test(p)) p = p.slice(0, -1);
+    var known = ["/admin-clients.html", "/admin.html", "/client.html", "/claim.html", "/index.html"];
+    for (var i = 0; i < known.length; i++) {
+      if (p.toLowerCase().endsWith(known[i])) return p.slice(0, p.length - known[i].length);
+    }
+    if (p.endsWith("/")) p = p.slice(0, -1);
+    var last = p.lastIndexOf("/");
+    return last > 0 ? p.slice(0, last) : "";
+  }
+
+  function clientLink(pid) {
+    return location.origin + sitePath() + "/client.html?program=" + encodeURIComponent(pid);
+  }
+
+  /* One switch for which view owns the screen. The wizard and the list are never both
+     up: while adding a client the list is noise, and while browsing clients a half-empty
+     wizard above them is worse. */
+  function renderViewMode() {
+    show("intakeCard", S.adding);
+    if (S.adding) show("detail", false);
+    /* This screen holds exactly one of: the wizard, an open client, or nothing. When it
+       holds nothing the page shows the athlete side instead — the two take turns in the
+       same place, which is what "one management page" actually means. */
+    show("emptyContent", false);
+    var mine = !!(S.adding || S.program);
+    show("clientScreen", mine);
+    var athleteSide = el("content");
+    if (athleteSide) athleteSide.hidden = mine;
+  }
+
+  function setAdding(on) {
+    S.adding = !!on;
+    if (S.adding) {
+      S.blockMode = false;
+      S.sel = null;
+      S.program = null;
+      iStep = 0;
+      renderIntakeTabs();
+      syncIntakeConditionals();
+    }
+    renderViewMode();
+    if (!S.adding) loadList();
+  }
+
+  /* Planning the next block: the same questionnaire, shorter, opened on the answers
+     this client already gave. The open client is kept — cancelling returns to it. */
+  function startNextBlock() {
+    if (!S.program) return;
+    S.blockMode = true;
+    S.adding = true;
+    iStep = 0;
+    el("inHasChanges").checked = false;
+    el("inChanges").value = "";
+    fillIntakeForm(S.program.intake || {});
+    renderIntakeTabs();
+    syncIntakeConditionals();
+    renderViewMode();
+  }
+
+  function leaveBlockMode() {
+    S.blockMode = false;
+    S.adding = false;
+    renderViewMode();
+    renderDetail();
+  }
+
+  function renderDetail() {
+    var p = S.program;
+    if (!p) { show("detail", false); return; }
+    var a = S.access || {};
+    var unread = Object.keys(p.unreadDays || {});
+    var html = "";
+
+    html += '<div class="card"><div class="row" style="margin-bottom:10px">' +
+      '<h2 style="margin:0">' + esc(p.clientName || "(ללא שם)") + "</h2>" +
+      '<button class="ghost sm" type="button" data-rename="1" title="שינוי שם">✏️</button>' +
+      '<span class="spacer meta">v' + esc(p.version) + " · " + esc(p.programId) + "</span>" +
+      "</div>";
+
+    html += '<div class="grid2">' +
+      '<label class="fld"><span>סכום חודשי (₪)</span><input id="fAmount" type="number" min="0" value="' +
+        esc(p.monthlyAmount == null ? "" : p.monthlyAmount) + '"></label>' +
+      '<label class="fld"><span>שיטת תשלום</span><input id="fMethod" type="text" value="' +
+        esc(p.paymentMethod || "") + '" placeholder="ביט, 1 לחודש"></label>' +
+      "</div>" +
+      '<p class="meta">הנתונים האלה אצלך בלבד. הלקוח לא רואה אותם.</p>' +
+      '<div class="row"><button class="sm" type="button" data-savemeta="1">שמור פרטים</button>' +
+      '<button class="danger sm" type="button" data-del="1">מחק תוכנית</button></div></div>';
+
+    /* access */
+    html += '<div class="card"><h2>גישה</h2>';
+    html += '<div class="linkbox">' + esc(clientLink(p.programId)) + "</div>";
+    html += '<div class="row"><button class="sm" type="button" data-copylink="1">העתק לינק</button>' +
+      '<button class="sm" type="button" data-code="1">הנפק קוד</button>' +
+      (a.openCodes && a.openCodes.length ? '<button class="ghost sm" type="button" data-revokecodes="1">בטל קודים פתוחים (' + a.openCodes.length + ")</button>" : "") +
+      "</div>";
+    html += '<div id="codeOut"></div>';
+    html += '<p class="meta" style="margin-top:10px">' +
+      (a.signature
+        ? "חתם על " + esc(a.signature.termsVersion) + " ב-" + new Date(a.signature.signedAt).toLocaleString()
+        : "טרם חתם על התנאים.") + "</p>";
+    if (a.devices && a.devices.length) {
+      html += '<p class="meta" style="margin-top:8px">מכשירים (' + a.devices.length + "/" + esc(a.deviceCap) + "):</p>";
+      html += a.devices.map(function (d) {
+        return '<div class="devrow"><span>' + esc(d.label || d.id) + "</span>" +
+          '<span class="spacer meta">' + (d.lastSeenAt ? new Date(d.lastSeenAt).toLocaleDateString() : "") + "</span>" +
+          '<button class="ghost sm" type="button" data-revokedev="' + esc(d.id) + '">בטל</button></div>';
+      }).join("");
+    } else {
+      html += '<p class="meta">אין עוד מכשירים מחוברים.</p>';
+    }
+    html += "</div>";
+
+    /* program */
+    html += '<div class="card"><div class="row" style="margin-bottom:10px">' +
+      '<h2 style="margin:0">התוכנית</h2>' +
+      '<span class="spacer meta">' + weeksLabel(p) + "</span>" +
+      '<button class="ghost sm" type="button" data-nextblock="1" ' +
+      'title="תחקור קצר, ואז ארבעה שבועות חדשים בהמשך לקיים">צור לבנת המשך</button>' +
+      /* Only on a program marked as a test: fills the block with one labelled sample
+         session so a whole month of the calendar can be looked at. The server refuses
+         it on any real client (POL-029). */
+      (p.isTest
+        ? '<button class="ghost sm" type="button" data-seedtest="1" ' +
+          'title="ממלא את הלבנה באימון דוגמה — רק בתוכנית בדיקה">מלא אימון דוגמה</button>'
+        : "") +
+      '</div>';
+    html += pendingBlockHtml(p);
+    if (unread.length) {
+      html += '<div class="banner warn">' + unread.length + ' ימים שהלקוח שינה ואתה עוד לא פתחת. פתח יום כדי לסמן שנקרא.</div>';
+    }
+    /* No week bar: the calendar carries the W1…W5 rail itself, the same way the admin
+       module shows a brick. A second week selector above it only competed with it. */
+    html += '<div id="adminDays"></div></div>';
+
+    el("detail").innerHTML = html;
+    show("detail", true);
+    renderAdminDays();
+  }
+
+  /* ==================================================================
+     THE PROGRAM VIEW — the same brick the owner already knows
+     ==================================================================
+     Rendered by lib/pprog-display.js (renderBrickView), the very function the admin
+     module uses, so the calendar, the day card and the wide horizontal strip behave
+     identically here. What used to be here was a hand-written Sun→Sat list: a second
+     way of showing the same data, which is the thing that drifts.
+
+     Two deliberate differences from admin.html:
+       · showFooter:false — the athlete's AI pre-talk box has no place on a client's
+         program. This module is not an AI surface (POL-029).
+       · a REST day IS editable, in both directions. admin.html refuses ("לא נשמר —
+         יום מנוחה"); here the owner and the client may turn a rest day into a session
+         and a session back into a rest day.
+     ================================================================== */
+
+  function pprogLib() { return window.PprogDisplay || null; }
+
+  /** An ISO date in Israel time, whatever the viewer's own timezone is. */
+  function israelIso(shiftToSunday) {
+    var il = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Jerusalem" }));
+    if (shiftToSunday) il.setDate(il.getDate() - il.getDay());
+    var m = String(il.getMonth() + 1);
+    var d = String(il.getDate());
+    return il.getFullYear() + "-" + (m.length < 2 ? "0" + m : m) + "-" + (d.length < 2 ? "0" + d : d);
+  }
+  function israelSundayIso() { return israelIso(true); }
+  function israelTodayIso() { return israelIso(false); }
+
+  /** The stored program, shaped as the block renderBrickView expects. */
+  function currentBlock() {
+    var p = S.program;
+    if (!p) return null;
+    return {
+      blockStart: p.blockStart || israelSundayIso(),
+      weeks: p.weeks || [],
+      theme: p.clientName || "",
+    };
+  }
+
+  function currentWeek() {
+    var weeks = (S.program && S.program.weeks) || [];
+    return weeks[S.wi | 0] || weeks[0] || null;
+  }
+
+  function weekCount() {
+    return ((S.program && S.program.weeks) || []).length || 1;
+  }
+
+  /* What the owner has actually sold so far, and where the deload cadence sits — the
+     two facts he needs before deciding to add another month. */
+  /* Which days are still on the owner's list. Derived from the days themselves, so
+     there is no second list that can disagree with them. */
+  function reviewTags() {
+    var out = {};
+    var weeks = (S.program && S.program.weeks) || [];
+    for (var i = 0; i < weeks.length; i++) {
+      var days = (weeks[i] && weeks[i].days) || {};
+      for (var d = 0; d < DAY_KEYS_LOCAL.length; d++) {
+        var k = DAY_KEYS_LOCAL[d];
+        if (days[k] && days[k].ownerUnreviewed === true) out["w" + (i + 1) + ":" + k] = true;
+      }
+    }
+    return out;
+  }
+
+  function weeksLabel(p) {
+    var weeks = ((p && p.weeks) || []).length;
+    var months = Math.ceil(weeks / 4);
+    var every = p && p.intake && p.intake.deloadWeek ? parseInt(p.intake.deloadEveryWeeks, 10) || 0 : 0;
+    return (
+      weeks + " שבועות · " + months + " חודשים" +
+      (every ? " · דילואד כל " + every + " שבועות" : " · בלי דילואד")
+    );
+  }
+
+  /* A block the owner has planned and not sent. Until he does, the client does not
+     know it exists — so the only place it is visible is right here. */
+  function pendingBlock(p) {
+    var blocks = (p && p.blocks) || [];
+    for (var i = blocks.length - 1; i >= 0; i--) {
+      if (blocks[i] && !blocks[i].approvedAt) return blocks[i];
+    }
+    return null;
+  }
+
+  function pendingBlockHtml(p) {
+    var b = pendingBlock(p);
+    if (!b) return "";
+    return (
+      '<div class="banner warn" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
+      "<span>לבנה " + b.blockIndex + " מוכנה אצלך · " + b.weekCount +
+      " שבועות · <strong>טרם נשלחה ללקוח</strong></span>" +
+      '<button class="sm" type="button" data-approve="' + b.blockIndex +
+      '" style="margin-inline-start:auto">אשר לבנה ושלח ללקוח</button></div>'
+    );
+  }
+
+  /* A test program only: fills the block with one labelled sample session so a whole
+     month of the calendar can be judged at once. The server refuses it on a real
+     client, so this button cannot become a way to produce programming. */
+  function seedTestBlock() {
+    var p = S.program;
+    if (!p) return;
+    if (!window.confirm("למלא את הלבנה באימון דוגמה? מה שכתוב בימים יידרס.")) return;
+    api({ action: "seed_test_block", programId: p.programId, expectedVersion: p.version, blockIndex: 1 })
+      .then(function (r) {
+        if (r.status === 409) { banner("warn", "מישהו שמר בינתיים. פותח מחדש."); openClient(p.programId); return; }
+        if (r.status !== 200 || !r.body.ok) {
+          banner("bad", (r.body && r.body.error) || "לא הצלחתי למלא.");
+          return;
+        }
+        S.program = r.body.program;
+        banner("good", "מולאו " + r.body.filled + " ימים באימון דוגמה.");
+        renderDetail();
+      });
+  }
+
+  function approveBlock(blockIndex) {
+    var p = S.program;
+    if (!p) return;
+    if (!window.confirm("לשלוח את לבנה " + blockIndex + " ל" + (p.clientName || "לקוח") + "? מרגע זה הוא רואה אותה ויכול לערוך.")) return;
+    api({
+      action: "approve_block",
+      programId: p.programId,
+      expectedVersion: p.version,
+      blockIndex: blockIndex,
+    }).then(function (r) {
+      if (r.status === 409) { banner("warn", "מישהו שמר בינתיים. פותח מחדש."); openClient(p.programId); return; }
+      if (r.status !== 200 || !r.body.ok) {
+        banner("bad", (r.body && r.body.error) || "לא הצלחתי לאשר את הלבנה.");
+        return;
+      }
+      S.program = r.body.program;
+      banner("good", "לבנה " + r.body.approvedBlock + " נשלחה ללקוח.");
+      renderDetail();
+    });
+  }
+
+  function clampWi(n) {
+    var max = weekCount() - 1;
+    n = n | 0;
+    if (n < 0) return 0;
+    return n > max ? max : n;
+  }
+
+  /* A session-count program has no weekdays at all: N sessions a week, the coach
+     decides when. The calendar still shows a full Sun–Sat week — the owner asked for
+     the calendar shape either way — and this line says how many sessions the week owes,
+     so the count from the intake is visible while writing. */
+  function sessionCountLimit() {
+    var intake = S.program && S.program.intake;
+    if (!intake || intake.scheduleMode !== "session_count") return 0;
+    var n = parseInt(intake.sessionsPerWeek, 10);
+    return n > 0 && n <= 14 ? n : 0;
+  }
+
+  function renderAdminDays() {
+    var host = el("adminDays");
+    if (!host) return;
+    var D = pprogLib();
+    var block = currentBlock();
+    if (!D || !D.renderBrickView) {
+      host.innerHTML = '<p class="muted">תצוגת התוכנית לא נטענה. רענן את הדף.</p>';
+      return;
+    }
+    if (!block || !block.weeks.length) {
+      host.innerHTML = '<p class="muted">אין שבועות בתוכנית.</p>';
+      return;
+    }
+    var limit = sessionCountLimit();
+    var head = "";
+    if (limit) {
+      head =
+        '<p class="meta" style="margin:0 0 8px">' + limit +
+        " אימונים בשבוע, בלי ימים קבועים — הלוח מציג את השבוע ואתה בוחר באילו ימים לכתוב.</p>";
+    }
+    host.innerHTML = head + D.renderBrickView(brickOpts());
+  }
+
+  /* A rest day is a TICK BOX while the day is being edited, and it is always there —
+     the button it replaced only appeared once a session had already been written, so on
+     an empty day (which is most of a new block) there was no way to mark rest at all
+     (owner, 2026-09-01). Ticked = this day is rest. Ours rather than the shared card's,
+     because the card is also the athlete app's and an athlete must not be able to
+     delete a coach's session. */
+  function restToggleHeaderHtml() {
+    if (!S.edit) return "";
+    var day = S.edit.day || "";
+    if (!day || DAY_KEYS_LOCAL.indexOf(day) < 0) return "";
+    var week = ((S.program && S.program.weeks) || [])[S.edit.wi | 0] || {};
+    var isRest = RT ? RT.dayIsRest(week, day) : true;
+    return (
+      '<label class="pprog-rest-check" title="יום מנוחה">' +
+      '<input type="checkbox" data-restcheck="' + (S.edit.wi | 0) + ":" + day + '"' +
+      (isRest ? " checked" : "") + ">" +
+      "<span>יום מנוחה</span></label>"
+    );
+  }
+
+  function brickOpts() {
+    var p = S.program || {};
+    var block = currentBlock();
+    var selected = (S.selected || []).slice();
+    var widthStatus = "";
+    if (selected.length >= 2) {
+      widthStatus =
+        '<div class="pprog-width-status">' + selected.length + " ימים נבחרו · " +
+        '<button type="button" onclick="cvClearSelection()" aria-label="נקה בחירה">נקה</button></div>';
+    }
+    return {
+      block: block,
+      activeWeekIndex: S.wi | 0,
+      activeDay: S.day || "sun",
+      /* A month is four weeks and the program grows by a month at a time, so the rail
+         has to show the program's REAL length rather than the athlete app's fixed
+         five. */
+      weekRows: weekCount(),
+      /* Nothing is "being generated" here: the owner writes this program himself. The
+         athlete app's default wording would tell a paying client to wait for an AI that
+         is not running. */
+      emptyDayHtml:
+        '<div class="pprog-day-stub">היום הזה עוד ריק. לחץ על העיפרון כדי לכתוב בו אימון, ' +
+        'או השאר אותו כיום מנוחה.</div>',
+      calMode: S.calMode || "week",
+      israelTodayIso: israelTodayIso(),
+      /* The owner writes the training. Nothing on this page talks to a provider. */
+      readOnly: true,
+      showFooter: false,
+      showActions: true,
+      allowEdit: true,
+      /* The owner writes the plan — a block that starts mid-week still needs its
+         first days filled, so a past date must not lock the pencil. */
+      allowPastEdit: true,
+      editing: !!S.edit,
+      editDraft: S.edit,
+      editHeaderActionsHtml: restToggleHeaderHtml(),
+      adminEditStatus: S.editStatus || null,
+      /* The client's unread changes ride the calendar's dot channel, and the open day
+         card says so in the owner's own words. */
+      showDoneDots: true,
+      unreadDays: p.unreadDays || {},
+      dayModifiedLabel: 'שונה ע"י הלקוח',
+      dayModifiedTitle: "הלקוח שינה את היום הזה",
+      /* The owner's own to-do list on a new block, in its own visual channel. */
+      reviewDays: reviewTags(),
+      extraDayFlagField: "ownerUnreviewed",
+      extraDayFlagLabel: "לא עברת על זה",
+      extraDayFlagTitle: "יום אימון מלבנה חדשה שעוד לא פתחת",
+      selectedDays: selected,
+      /* The calendar passes the click event through, which is what makes Ctrl-click
+         additive rather than just moving the focus. */
+      passCalEvent: true,
+      widthStatusHtml: widthStatus,
+      hooks: {
+        shift: "cvCalShift",
+        toggleMode: "cvToggleCalMode",
+        jumpToday: "cvJumpToday",
+        setDay: "cvSetDay",
+        selectWeek: "cvSelectWeek",
+        selectDow: "cvSelectDow",
+        startEdit: "cvStartEdit",
+        editSet: "cvEditSet",
+        editAddNote: "cvEditAddNote",
+        editAddWork: "cvEditAddWork",
+        editAddPart: "cvEditAddPart",
+        editRemoveWork: "cvEditRemoveWork",
+        editCancel: "cvEditCancel",
+        editSave: "cvEditSave",
+      },
+    };
+  }
+
+  /* --- calendar hooks -------------------------------------------------------
+     Global on purpose: lib/pprog-display.js renders these names straight into
+     onclick attributes, so they have to be reachable from the page scope. */
+
+  window.cvCalShift = function (delta) {
+    S.wi = clampWi((S.wi | 0) + (delta | 0));
+    S.selected = [];
+    renderAdminDays();
+  };
+
+  window.cvToggleCalMode = function () {
+    S.calMode = S.calMode === "month" ? "week" : "month";
+    renderAdminDays();
+  };
+
+  window.cvJumpToday = function () {
+    var block = currentBlock();
+    if (!block) return;
+    /* Which week of the block holds today, by date rather than by guess. */
+    var start = Date.parse(block.blockStart + "T00:00:00Z");
+    var today = Date.parse(israelTodayIso() + "T00:00:00Z");
+    var offset = Math.floor((today - start) / 86400000);
+    if (offset >= 0) {
+      S.wi = clampWi(Math.floor(offset / 7));
+      S.day = DAY_KEYS_LOCAL[offset % 7];
+    }
+    S.selected = [];
+    renderAdminDays();
+  };
+
+  /* Several days on screen at once, the way the owner already works in the admin
+     module: Ctrl/⌘-click adds a day, and dragging across the calendar takes the whole
+     run between two. The calendar hands us the click event only because brickOpts asks
+     for it (passCalEvent), so this hook takes BOTH shapes — the week rail still calls
+     it without one. */
+  /* The selection maths lives beside the calendar that draws it (lib/pprog-display.js),
+     so this page and the client's page share one definition of "which days are picked"
+     without either of them loading the admin module's debrief helper. */
+  function selMath() {
+    var D = pprogLib();
+    return D && D.selId ? D : null;
+  }
+
+  /* Whatever order they were picked in, they are held in date order — Wednesday before
+     Monday is a picking order, not a reading order (owner, 2026-09-01). Over a whole
+     month this stops being a nicety. */
+  function sortSel(list) {
+    var D = pprogLib();
+    return D && D.sortSelectedDays ? D.sortSelectedDays(list) : list;
+  }
+
+  function toggleSelected(wi, day) {
+    var M = selMath();
+    if (!M) return;
+    var id = M.selId(wi, day);
+    var list = (S.selected || []).filter(function (x) {
+      return M.selId(x.wi, x.day) !== id;
+    });
+    if (list.length === (S.selected || []).length) list.push({ wi: wi | 0, day: day });
+    S.selected = sortSel(list);
+  }
+
+  function applyRange(from, to, additive) {
+    var M = selMath();
+    if (!M) return;
+    var range = M.rangeBetween(from, to).filter(function (c) {
+      return c.wi >= 0 && c.wi < weekCount();
+    });
+    if (!range.length) return;
+    if (!additive) { S.selected = sortSel(range); return; }
+    var seen = {};
+    var out = [];
+    (S.selected || []).concat(range).forEach(function (c) {
+      var id = M.selId(c.wi, c.day);
+      if (seen[id]) return;
+      seen[id] = 1;
+      out.push(c);
+    });
+    S.selected = sortSel(out);
+  }
+
+  window.cvSetDay = function (aOrEv, wi, dayKey) {
+    var ev = null;
+    var nextWi;
+    var nextDay;
+    if (aOrEv && typeof aOrEv === "object" && aOrEv.type) {
+      ev = aOrEv;
+      nextWi = clampWi(wi);
+      nextDay = String(dayKey || "sun");
+      /* Ctrl-click is a browser gesture too; without this it can open a menu. */
+      if (typeof ev.preventDefault === "function" && (ev.ctrlKey || ev.metaKey)) ev.preventDefault();
+    } else {
+      nextWi = clampWi(aOrEv);
+      nextDay = String(wi || "sun");
+    }
+    /* A drag ends on a cell and the browser then fires its click — without this the
+       click would collapse the selection the drag just made. */
+    if (cvIgnoreNextClick) { cvIgnoreNextClick = false; return; }
+    S.wi = nextWi;
+    S.day = nextDay;
+    /* Moving off the day being edited abandons the draft rather than silently
+       carrying it to another day. */
+    if (S.edit && (S.edit.wi !== nextWi || S.edit.day !== nextDay)) S.edit = null;
+    if (ev && (ev.ctrlKey || ev.metaKey)) toggleSelected(nextWi, nextDay);
+    else S.selected = [];
+    openDayTag(nextWi, nextDay);
+  };
+
+  /* Painting classes rather than re-rendering: a full repaint on every mouseover
+     rebuilds the day cards under the cursor mid-drag. */
+  function paintCalSelection() {
+    var M = selMath();
+    var host = el("adminDays");
+    if (!M || !host) return;
+    var cells = host.querySelectorAll(".pprog-cal-cell");
+    var picked = {};
+    (S.selected || []).forEach(function (c) { picked[M.selId(c.wi, c.day)] = 1; });
+    for (var i = 0; i < cells.length; i++) {
+      var wi = cells[i].getAttribute("data-wi") | 0;
+      var day = String(cells[i].getAttribute("data-day") || "");
+      var isFocus = wi === (S.wi | 0) && day === String(S.day || "");
+      var isSel = !!picked[M.selId(wi, day)];
+      cells[i].classList.toggle("active", isFocus);
+      cells[i].classList.toggle("selected", isSel && !isFocus);
+    }
+  }
+
+  var cvCalDrag = null;
+  var cvIgnoreNextClick = false;
+
+  function calCellFrom(ev) {
+    var t = ev && ev.target;
+    if (!t || !t.closest) return null;
+    var cell = t.closest(".pprog-cal-cell");
+    if (!cell || !cell.closest("#adminDays")) return null;
+    return cell;
+  }
+
+  /* Bound on the document because #adminDays is rebuilt on every render — a listener
+     on the host itself would be thrown away with it. */
+  function bindCalGestures() {
+    document.addEventListener("mousedown", function (ev) {
+      if (ev.button !== 0) return;
+      /* A ctrl-click is a click, never the start of a drag. Without this a hand that
+         moves one pixel between press and release turned "add this day" into "take the
+         run from here to there", which is why picking days out of order looked broken. */
+      if (ev.ctrlKey || ev.metaKey) { cvCalDrag = null; return; }
+      var cell = calCellFrom(ev);
+      if (!cell) return;
+      cvCalDrag = {
+        startWi: cell.getAttribute("data-wi") | 0,
+        startDay: String(cell.getAttribute("data-day") || ""),
+        additive: !!(ev.ctrlKey || ev.metaKey),
+        moved: false,
+      };
+    });
+    document.addEventListener("mouseover", function (ev) {
+      if (!cvCalDrag || !(ev.buttons & 1)) return;
+      var cell = calCellFrom(ev);
+      if (!cell) return;
+      var to = { wi: cell.getAttribute("data-wi") | 0, day: String(cell.getAttribute("data-day") || "") };
+      if (!to.day) return;
+      if (to.wi === cvCalDrag.startWi && to.day === cvCalDrag.startDay) return;
+      cvCalDrag.moved = true;
+      applyRange({ wi: cvCalDrag.startWi, day: cvCalDrag.startDay }, to, cvCalDrag.additive);
+      S.wi = to.wi;
+      S.day = to.day;
+      paintCalSelection();
+    });
+    document.addEventListener("mouseup", function () {
+      if (!cvCalDrag) return;
+      var moved = cvCalDrag.moved;
+      cvCalDrag = null;
+      if (!moved) return;
+      cvIgnoreNextClick = true;
+      renderAdminDays();
+    });
+  }
+
+  window.cvSelectWeek = function (wi) {
+    S.wi = clampWi(wi);
+    S.day = "general";
+    S.selected = [];
+    renderAdminDays();
+  };
+
+  /* Tapping a weekday letter selects that day in every week — this is the wide
+     horizontal spread the owner values: several day cards side by side. */
+  window.cvSelectDow = function (dayIndex) {
+    var day = DAY_KEYS_LOCAL[dayIndex | 0];
+    if (!day) return;
+    var out = [];
+    for (var i = 0; i < weekCount(); i++) out.push({ wi: i, day: day });
+    S.selected = out;
+    S.day = day;
+    renderAdminDays();
+  };
+
+  window.cvClearSelection = function () {
+    S.selected = [];
+    renderAdminDays();
+  };
+
+  /* Opening a day the client changed is what clears its flag — no extra click (a.2.2). */
+  function openDayTag(wi, day) {
+    var tag = "w" + ((wi | 0) + 1) + ":" + day;
+    if (((S.program && S.program.unreadDays) || {})[tag] !== undefined) {
+      markRead(tag).then(renderAdminDays, renderAdminDays);
+    } else {
+      renderAdminDays();
+    }
+  }
+
+  /* --- day edit hooks ------------------------------------------------------ */
+
+  window.cvStartEdit = function (wi, dayKey) {
+    var D = pprogLib();
+    var nextWi = clampWi(wi);
+    var day = String(dayKey || "");
+    if (!day || day === "general") return;
+    var week = ((S.program && S.program.weeks) || [])[nextWi] || {};
+    var dayData = (week.days && week.days[day]) || { parts: [] };
+    /* A rest day opens with an EMPTY draft instead of being refused: turning a rest day
+       into a session is exactly why the pencil is there (21.7). admin.html blocks this
+       for athletes; a client's program must allow both directions. */
+    var rest = RT ? RT.dayIsRest(week, day) : !(dayData.parts && dayData.parts.length);
+    var parts = rest ? [] : (D && D.draftFromDayData ? D.draftFromDayData(dayData, false) : []);
+    if (!parts.length) parts = [{ title: "Part A", notes: [""], format: "", work: [""] }];
+    S.wi = nextWi;
+    S.day = day;
+    S.selected = [];
+    S.editStatus = null;
+    S.edit = { wi: nextWi, day: day, rest: false, wasRest: rest, parts: parts };
+    openDayTag(nextWi, day);
+  };
+
+  window.cvEditSet = function (partIndex, field, a, b) {
+    if (!S.edit || !S.edit.parts) return;
+    var part = S.edit.parts[partIndex | 0];
+    if (!part) return;
+    if (field === "title") { part.title = String(a == null ? "" : a); return; }
+    if (field === "format") { part.format = String(a == null ? "" : a); return; }
+    if (field === "note") {
+      if (!Array.isArray(part.notes)) part.notes = [];
+      part.notes[a | 0] = String(b == null ? "" : b);
+      return;
+    }
+    if (field === "work") {
+      if (!Array.isArray(part.work)) part.work = [""];
+      part.work[a | 0] = String(b == null ? "" : b);
+    }
+    /* Deliberately no re-render while typing — it would throw the caret out of the
+       field on every keystroke. The draft is already the source of truth. */
+  };
+
+  window.cvEditAddNote = function (partIndex) {
+    var part = S.edit && S.edit.parts[partIndex | 0];
+    if (!part) return;
+    if (!Array.isArray(part.notes)) part.notes = [];
+    part.notes.push("");
+    renderAdminDays();
+  };
+
+  window.cvEditAddWork = function (partIndex) {
+    var part = S.edit && S.edit.parts[partIndex | 0];
+    if (!part) return;
+    if (!Array.isArray(part.work)) part.work = [];
+    part.work.push("");
+    renderAdminDays();
+  };
+
+  window.cvEditRemoveWork = function (partIndex, lineIndex) {
+    var part = S.edit && S.edit.parts[partIndex | 0];
+    if (!part || !Array.isArray(part.work)) return;
+    part.work.splice(lineIndex | 0, 1);
+    if (!part.work.length) part.work = [""];
+    renderAdminDays();
+  };
+
+  window.cvEditAddPart = function () {
+    if (!S.edit) return;
+    if (!Array.isArray(S.edit.parts)) S.edit.parts = [];
+    var letter = String.fromCharCode(65 + S.edit.parts.length);
+    S.edit.parts.push({ title: "Part " + letter, notes: [""], format: "", work: [""] });
+    renderAdminDays();
+  };
+
+  window.cvEditCancel = function () {
+    S.edit = null;
+    S.editStatus = null;
+    renderAdminDays();
+  };
+
+  window.cvEditSave = function () {
+    if (!S.edit) return;
+    var D = pprogLib();
+    if (!D || !D.partsFromDraft) { banner("bad", "התצוגה לא נטענה. רענן את הדף."); return; }
+    if (!D.draftHasContent(S.edit)) {
+      banner("warn", 'לא הוקלד כלום. אם התכוונת ליום מנוחה — יש כפתור "הפוך ליום מנוחה".');
+      return;
+    }
+    saveDay(S.edit.wi, S.edit.day, D.partsFromDraft({ parts: S.edit.parts, day: S.edit.day }), false);
+  };
+
+  /* The other direction the owner asked for: a written session back to a rest day. */
+  window.cvMakeRest = function (wi, dayKey) {
+    var day = String(dayKey || "");
+    if (!day) return;
+    if (!window.confirm("להפוך את היום ליום מנוחה? האימון שכתוב בו יימחק.")) return;
+    saveDay(clampWi(wi), day, [], true);
+  };
+
+  /* The tick box, both ways. Ticking plants a rest day; unticking hands back an empty
+     session to write in. A day with something written in it asks before it is wiped —
+     an empty one has nothing to lose and does not interrupt. */
+  function setRestChecked(wi, dayKey, wantRest) {
+    var day = String(dayKey || "");
+    if (!day) return;
+    var week = ((S.program && S.program.weeks) || [])[wi | 0] || {};
+    var dayData = (week.days && week.days[day]) || { parts: [] };
+    var hasContent = !!(dayData.parts && dayData.parts.length);
+    if (wantRest) {
+      if (hasContent && !window.confirm("להפוך את היום ליום מנוחה? האימון שכתוב בו יימחק.")) {
+        renderAdminDays();
+        return;
+      }
+      saveDay(clampWi(wi), day, [], true);
+      return;
+    }
+    /* Off: not a save, just an editable draft — nothing is written until he saves. */
+    S.edit = {
+      wi: clampWi(wi),
+      day: day,
+      parts: [{ title: "Part A", notes: [""], format: "", work: [""] }],
+      rest: false,
+    };
+    renderAdminDays();
+  }
+
+  /* Opening a changed day is what clears its flag — no extra click (a.2.2). */
+  function markRead(tag) {
+    if (!(S.program.unreadDays || {})[tag]) return Promise.resolve();
+    return api({
+      action: "mark_read", programId: S.program.programId,
+      expectedVersion: S.program.version, days: [tag],
+    }).then(function (r) {
+      if (r.status === 200 && r.body.ok) {
+        S.program.unreadDays = r.body.unreadDays;
+        S.program.version = r.body.version;
+      }
+    });
+  }
+
+  /**
+   * Writes one day, in either direction.
+   * @param {number} wi 0-based week index
+   * @param {string} dayKey sun…sat
+   * @param {Array} parts ready-made parts (ignored when makeRest)
+   * @param {boolean} makeRest true = this day becomes a rest day
+   */
+  function saveDay(wi, dayKey, parts, makeRest) {
+    if (!S.program || !S.program.weeks) return;
+    wi = wi | 0;
+    if (!S.program.weeks[wi]) return;
+    var weeks = JSON.parse(JSON.stringify(S.program.weeks));
+    /* Both directions through the shared toggle, so the overview focus moves with the
+       parts. Writing parts alone leaves a session that still renders as rest, because
+       isPprogRestDay reads the week overview BEFORE it looks at the parts. */
+    if (makeRest) {
+      if (RT) RT.makeRest(weeks[wi], dayKey);
+      else weeks[wi].days[dayKey] = { parts: [] };
+    } else {
+      if (!parts || !parts.length) {
+        banner("warn", "לא הוקלד כלום. אם התכוונת ליום מנוחה — יש כפתור נפרד.");
+        return;
+      }
+      if (RT) RT.makeSession(weeks[wi], dayKey, parts);
+      else weeks[wi].days[dayKey] = { parts: parts };
+    }
+    api({
+      action: "save", programId: S.program.programId,
+      expectedVersion: S.program.version, program: { weeks: weeks },
+    }).then(function (r) {
+      if (r.status === 409) {
+        banner("warn", "הלקוח שינה את התוכנית בזמן שהיה פתוח אצלך. טוען את הגרסה הנוכחית — עשה את השינוי שוב.");
+        openClient(S.program.programId);
+        return;
+      }
+      if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "השמירה נכשלה."); return; }
+      banner("good", "נשמר.");
+      S.program = r.body.program;
+      S.edit = null;
+      renderDetail();
+    });
+  }
+
+  function saveMeta() {
+    var amount = el("fAmount") ? Number(el("fAmount").value) : undefined;
+    var method = el("fMethod") ? String(el("fMethod").value || "") : undefined;
+    api({
+      action: "save", programId: S.program.programId, expectedVersion: S.program.version,
+      program: { monthlyAmount: Number.isFinite(amount) ? amount : 0, paymentMethod: method },
+    }).then(function (r) {
+      if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "השמירה נכשלה."); return; }
+      S.program = r.body.program;
+      banner("good", "הפרטים נשמרו.");
+      loadList();
+    });
+  }
+
+  /* --- events ---------------------------------------------------------- */
+
+  document.addEventListener("click", function (ev) {
+    var t = ev.target;
+    if (!t || !t.getAttribute) return;
+    var g = function (n) { return t.getAttribute(n); };
+
+    var chip = t.closest ? t.closest("[data-kind]") : null;
+    if (chip && chip.getAttribute("data-id")) {
+      var chipId = chip.getAttribute("data-id");
+      if (chip.getAttribute("data-kind") === "athlete") {
+        /* Absolute, always — a relative href breaks when the page is served with a
+           trailing slash (scripts/cross-page-links.test.js). */
+        location.href = location.origin + sitePath() + "/admin.html?athlete=" + encodeURIComponent(chipId);
+        return;
+      }
+      openClient(chipId);
+      return;
+    }
+    var openRow = t.closest ? t.closest("[data-open]") : null;
+    if (openRow && openRow.getAttribute("data-open")) { openClient(openRow.getAttribute("data-open")); return; }
+
+    if (g("data-istep")) { iStep = parseInt(g("data-istep"),10)||0; renderIntakeTabs(); return; }
+    /* The program's own clicks (week, day, pencil, save, cancel) are the brick view's
+       hooks — cvSetDay / cvStartEdit / cvEditSave and friends. Only the rest-day
+       button is ours, because the shared day card has no such control. */
+    if (g("data-makerest")) {
+      var mr = g("data-makerest").split(":");
+      window.cvMakeRest(parseInt(mr[0], 10) || 0, mr[1] || "");
+      return;
+    }
+    if (g("data-restcheck")) {
+      var rc = g("data-restcheck").split(":");
+      setRestChecked(parseInt(rc[0], 10) || 0, rc[1] || "", !!t.checked);
+      return;
+    }
+    if (g("data-savemeta")) { saveMeta(); return; }
+    if (g("data-nextblock")) { startNextBlock(); return; }
+    if (g("data-seedtest")) { seedTestBlock(); return; }
+    if (g("data-approve")) { approveBlock(parseInt(g("data-approve"), 10) || 0); return; }
+
+    if (g("data-rename")) {
+      var name = window.prompt("שם הלקוח:", S.program.clientName || "");
+      if (name === null) return;
+      api({ action: "save", programId: S.program.programId, expectedVersion: S.program.version,
+            program: { clientName: name } }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "השינוי נכשל."); return; }
+        S.program = r.body.program; renderDetail(); loadList();
+      });
+      return;
+    }
+    if (g("data-code")) {
+      api({ action: "issue_code", programId: S.program.programId }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "הנפקת הקוד נכשלה."); return; }
+        /* Shown once and never stored in the clear — lose it and issue another. */
+        el("codeOut").innerHTML = '<div class="code-out">' + esc(r.body.code) + "</div>" +
+          '<p class="meta" style="text-align:center">מסור בוואטסאפ. חד-פעמי, בתוקף 7 ימים. לא יוצג שוב.</p>';
+        openClientAccessRefresh();
+      });
+      return;
+    }
+    if (g("data-revokecodes")) {
+      api({ action: "revoke_codes", programId: S.program.programId }).then(function () {
+        el("codeOut").innerHTML = ""; openClientAccessRefresh();
+      });
+      return;
+    }
+    if (g("data-revokedev")) {
+      var id = g("data-revokedev");
+      if (!window.confirm("לבטל את המכשיר הזה? הלקוח יצטרך קוד חדש.")) return;
+      api({ action: "revoke_device", programId: S.program.programId, deviceId: id }).then(function (r) {
+        if (r.status !== 200) { banner("bad", (r.body && r.body.error) || "הביטול נכשל."); return; }
+        S.access = r.body.access; renderDetail();
+      });
+      return;
+    }
+    if (g("data-copylink")) {
+      var link = clientLink(S.program.programId);
+      try {
+        navigator.clipboard.writeText(link).then(function () { banner("good", "הלינק הועתק."); });
+      } catch (e) { banner("warn", "העתק ידנית: " + link); }
+      return;
+    }
+    if (g("data-del")) {
+      if (!window.confirm("למחוק את התוכנית של " + (S.program.clientName || "הלקוח") + "? אין חזרה.")) return;
+      api({ action: "delete", programId: S.program.programId }).then(function () {
+        S.program = null; S.sel = null; show("detail", false); loadList(); banner("good", "נמחק.");
+      });
+      return;
+    }
+  });
+
+  function openClientAccessRefresh() {
+    api({ action: "read", programId: S.program.programId }).then(function (r) {
+      if (r.status === 200 && r.body.ok) {
+        S.access = r.body.access;
+        var out = el("codeOut") ? el("codeOut").innerHTML : "";
+        renderDetail();
+        if (out && el("codeOut")) el("codeOut").innerHTML = out;
+      }
+    });
+  }
+
+  /* --- the cross-cutting intake (checklist 2.b) ------------------------- */
+
+  var iStep = 0;
+
+  /**
+   * The questionnaire has two modes and ONE implementation.
+   *
+   * A new client answers all of it. Planning the next block for an existing client
+   * answers a shorter version: the payment details do not change between blocks, but
+   * the equipment can (a rig arrives, a rower breaks), the schedule can, and so can who
+   * is in the room. The owner's list, 2026-09-01.
+   *
+   * Building this as a second little form would have produced a second schedule tab
+   * that drifts from the first. It is the same tabs, filtered.
+   */
+  function intakeDefs() {
+    var tabs = (window.CLIENT_INTAKE && window.CLIENT_INTAKE.TABS) || [];
+    if (!S.blockMode) return tabs;
+    var keep = ["equipment", "schedule", "population"];
+    return [{ id: "changes", label: "Additions & changes" }].concat(
+      tabs.filter(function (t) {
+        return keep.indexOf(t.id) >= 0;
+      })
+    );
+  }
+
+  function readIntakeForm() {
+    var keys = (window.CLIENT_INTAKE && window.CLIENT_INTAKE.DAY_KEYS) || [];
+    var emphasis = {};
+    keys.forEach(function (k) {
+      var box = el("inEm-" + k);
+      var txt = el("inEmTxt-" + k);
+      /* Only a ticked day contributes a note — an unticked day with leftover text
+         must not quietly become an emphasis. */
+      emphasis[k] = box && box.checked && txt ? String(txt.value || "") : "";
+    });
+    /* 0 when the box is empty — never a guessed 3. validateIntake refuses to build. */
+    var sessions = Math.max(0, Math.min(14, parseInt(el("inSessions").value, 10) || 0));
+    var types = [];
+    for (var i = 0; i < sessions; i++) {
+      var t = el("inSessType-" + i);
+      types.push(t ? String(t.value || "") : "");
+    }
+    return {
+      clientName: String(el("inName").value || ""),
+      monthlyAmount: Number(el("inAmount").value) || 0,
+      paymentMethod: String(el("inMethod").value || ""),
+      equipment: el("inEquipOtherOn").checked ? "other" : "functional_gym",
+      equipmentOther: String(el("inEquipOther").value || ""),
+      /* "" when neither is ticked — never a mode the owner did not choose. */
+      scheduleMode: el("inSchedCount").checked
+        ? "session_count"
+        : el("inSchedWeekly").checked
+        ? "weekly_schedule"
+        : "",
+      sessionsPerWeek: sessions,
+      sessionsDiffer: el("inSessionsDiffer").checked,
+      sessionTypes: types,
+      includeRestDays: el("inRestDays").checked,
+      restDays: restDaysFromForm(),
+      dayEmphasisEnabled: el("inEmphasis").checked,
+      dayEmphasis: emphasis,
+      deloadWeek: el("inDeload").checked,
+      deloadEveryWeeks: Number(el("inDeloadAt").value) || 0,
+      sessionMinutes: Number(el("inMinutes").value) || 0,
+      population: String(el("inPopulation").value || ""),
+    };
+  }
+
+  /**
+   * Put an existing intake back INTO the form. The mini-intake opens on what is true
+   * today — that is the whole point of showing equipment and the schedule again — so
+   * every field has to be able to travel in both directions.
+   */
+  function fillIntakeForm(intake) {
+    var CI = window.CLIENT_INTAKE;
+    if (!CI || !intake) return;
+    var v = CI.normalizeIntake(intake);
+    el("inName").value = v.clientName || "";
+    el("inAmount").value = v.monthlyAmount || "";
+    el("inMethod").value = v.paymentMethod || "";
+
+    el("inEquipOtherOn").checked = v.equipment === "other";
+    /* #inEquipFull, not #inEquipGym — the wrong id here threw, and a throw in a click
+       handler is a button that does nothing at all, which is exactly how it looked. */
+    el("inEquipFull").checked = v.equipment !== "other";
+    el("inEquipOther").value = v.equipmentOther || "";
+
+    el("inSchedCount").checked = v.scheduleMode === "session_count";
+    el("inSchedWeekly").checked = v.scheduleMode === "weekly_schedule";
+    el("inSessions").value = v.sessionsPerWeek || "";
+    el("inSessionsDiffer").checked = v.sessionsDiffer === true;
+    el("inRestDays").checked = v.includeRestDays === true;
+    el("inEmphasis").checked = v.dayEmphasisEnabled === true;
+    el("inDeload").checked = v.deloadWeek === true;
+    el("inDeloadAt").value = v.deloadEveryWeeks || "";
+    el("inMinutes").value = v.sessionMinutes || "";
+    /* The goals tab is gone; a client answered before the merge keeps their words. */
+    el("inPopulation").value = CI.mergedPopulation ? CI.mergedPopulation(v) : v.population || "";
+
+    CI.DAY_KEYS.forEach(function (k) {
+      var rest = el("inRest-" + k);
+      if (rest) rest.checked = !!(v.restDays && v.restDays[k]);
+      var em = el("inEm-" + k);
+      var txt = el("inEmTxt-" + k);
+      if (em) em.checked = !!(v.dayEmphasis && v.dayEmphasis[k]);
+      if (txt) txt.value = (v.dayEmphasis && v.dayEmphasis[k]) || "";
+    });
+    syncIntakeConditionals();
+    CI.DAY_KEYS.forEach(function (k) { syncEmphasisRow(k); });
+    if (v.sessionsDiffer) {
+      buildSessionBoxes();
+      (v.sessionTypes || []).forEach(function (t, i) {
+        var box = el("inSessType-" + i);
+        if (box) box.value = t || "";
+      });
+    }
+  }
+
+  /* One box per session, rebuilt when the count changes so the two never disagree.
+     Existing text is carried over rather than wiped. */
+  function buildSessionBoxes() {
+    var host = el("inSessionTypes");
+    if (!host) return;
+    var n = Math.max(0, Math.min(14, parseInt(el("inSessions").value, 10) || 0));
+    if (!n) { host.innerHTML = '<p class="meta" style="margin:0">Fill in the number of sessions first.</p>'; return; }
+    var prev = [];
+    for (var i = 0; i < 14; i++) {
+      var old = el("inSessType-" + i);
+      prev.push(old ? old.value : "");
+    }
+    var html = "";
+    for (var j = 0; j < n; j++) {
+      html +=
+        '<div class="sess-box"><label for="inSessType-' + j + '">Session ' + (j + 1) + "</label>" +
+        '<input id="inSessType-' + j + '" type="text" value="' + esc(prev[j] || "") +
+        '" placeholder="e.g. strength + short metcon"></div>';
+    }
+    host.innerHTML = html;
+  }
+
+  function renderIntakeTabs() {
+    var tabs = intakeDefs();
+    el("intakeTabs").innerHTML = tabs.map(function (t, i) {
+      return '<button type="button" data-istep="' + i + '"' +
+        (i === iStep ? ' class="on"' : "") + ">" + esc(t.label) + "</button>";
+    }).join("");
+    tabs.forEach(function (t, i) {
+      var pane = document.querySelector('.ipane[data-pane="' + t.id + '"]');
+      if (pane) pane.hidden = i !== iStep;
+    });
+    el("intakeStep").textContent = "Step " + (iStep + 1) + " of " + tabs.length;
+    var title = el("intakeTitle");
+    if (title) {
+      title.textContent = S.blockMode
+        ? "לבנה בהמשך · " + ((S.program && S.program.clientName) || "")
+        : "New coach / studio client";
+    }
+    el("createBtn").textContent = S.blockMode ? "צור לבנה" : "Create program";
+    el("iPrev").disabled = iStep === 0;
+    var last = iStep === tabs.length - 1;
+    el("iNext").hidden = last;
+    el("createBtn").hidden = !last;
+  }
+
+  /* A pair of checkboxes standing in for a two-way choice: ticking one unticks its
+     partner.
+     Once a choice is made it cannot be un-made back to nothing — the form would then
+     silently fall back to a mode the owner never picked. But the SCHEDULE opens with
+     neither ticked on purpose (owner, 2026-09-01): landing on that tab should present a
+     decision, not an answer already filled in. Equipment does keep its default, because
+     "well-equipped gym" genuinely is the normal case there. */
+  function bindPickPair(groupName) {
+    var boxes = Array.prototype.slice.call(
+      document.querySelectorAll('input[data-pick="' + groupName + '"]')
+    );
+    boxes.forEach(function (box) {
+      box.addEventListener("change", function () {
+        if (!box.checked) {
+          box.checked = true; // a made choice stays made
+          return;
+        }
+        boxes.forEach(function (other) {
+          if (other !== box) other.checked = false;
+        });
+        syncIntakeConditionals();
+      });
+    });
+  }
+
+  function syncIntakeConditionals() {
+    /* Equipment: the well-equipped gym is the default and needs no description.
+       Only OTHER opens the box. */
+    var equipOther = el("inEquipOtherOn").checked;
+    el("inEquipOtherWrap").hidden = !equipOther;
+
+    /* Schedule: nothing is ticked until the owner picks, and each choice reveals only
+       its own sub-tree. Neither branch is shown while no mode is chosen — an indented
+       question under an unticked parent is what made the tab read as a flat list. */
+    var byCount = el("inSchedCount").checked;
+    var byWeek = el("inSchedWeekly").checked;
+    el("inSessions").hidden = !byCount;
+    el("inDifferWrap").hidden = !byCount;
+    el("inWeeklyWrap").hidden = !byWeek;
+    el("inCountHint").textContent = byCount
+      ? "No weekday attached — the coach delivers them whenever suits their groups."
+      : byWeek
+      ? "Sessions sit on weekdays, Sun–Sat."
+      : "Pick how the place trains: a weekly session count, or a full weekly plan.";
+
+    /* session_count → do the sessions differ? The boxes appear ONLY when they do. */
+    var differ = el("inSessionsDiffer").checked;
+    el("inSessionTypes").hidden = !differ;
+    el("inDifferHint").textContent = differ
+      ? "Describe each session's character — they are laid out below in order."
+      : "The sessions are interchangeable — a standard CrossFit week.";
+    if (differ) buildSessionBoxes();
+
+    /* weekly_schedule → rest days, then standing per-day emphases. */
+    if (el("inChangesWrap")) el("inChangesWrap").hidden = !el("inHasChanges").checked;
+    var restOn = el("inRestDays").checked;
+    el("inRestDaysWrap").hidden = !restOn;
+    el("inRestHint").textContent = restOn
+      ? "Rest days are part of the plan — say which days they are."
+      : "Rest days are not planned — the coach decides. (Default.)";
+    el("inWeekDays").hidden = !el("inEmphasis").checked;
+
+    /* Said plainly, because "60" and "60 including the warm-up" are two different
+       sessions and only one of them is what the room actually has. */
+    var mins = parseInt(el("inMinutes").value, 10) || 0;
+    el("inMinutesHint").textContent = !mins
+      ? "20–120 minutes. The warm-up is inside this number, not on top of it."
+      : mins + " minutes on the floor, warm-up included.";
+
+    /* The deload is a cadence over a monthly product, so the consequence worth
+       spelling out is WHERE it lands — a 5 means this month is four build weeks and
+       next month opens on the deload. Saying "5-week block" would be the old,
+       wrong story. */
+    var deloadOn = el("inDeload").checked;
+    el("inDeloadWrap").hidden = !deloadOn;
+    var every = Math.max(0, parseInt(el("inDeloadAt").value, 10) || 0);
+    el("inDeloadHint").textContent = !deloadOn
+      ? "No deload — four build weeks, month after month. (Default.)"
+      : !every
+      ? "Which week does it land on? A month is four weeks, so 5 means next month opens on the deload."
+      : every < 4
+      ? "Minimum 4 — three build weeks and a deload is the leanest cycle that works."
+      : "Deload on week " + every + ", then every " + every + " weeks (" +
+        every + ", " + every * 2 + ", " + every * 3 +
+        " …). The count runs across months, so a new month can open on it.";
+  }
+
+  /* Sun–Sat as ONE ROW of seven equal columns — a week should look like a week. The
+     note repeats every week ("Fridays are partner workouts"), so it is not a one-off
+     comment; it opens under the row, carrying the day's name, because a text box one
+     seventh of the screen wide cannot be written in. */
+  function buildWeekRows() {
+    var CI = window.CLIENT_INTAKE;
+    if (!CI) return;
+    el("inWeekDayRow").innerHTML = CI.DAY_KEYS.map(function (k) {
+      return '<label class="emph-day"><input id="inEm-' + k + '" type="checkbox" data-emph="' + k + '">' +
+        "<span>" + esc(CI.DAY_LABELS[k]) + "</span></label>";
+    }).join("");
+    el("inWeekDayNotes").innerHTML = CI.DAY_KEYS.map(function (k) {
+      return '<div class="emph-note" id="inEmRow-' + k + '" hidden>' +
+        "<span>" + esc(CI.DAY_LABELS[k]) + "</span>" +
+        '<input id="inEmTxt-' + k + '" type="text" placeholder="e.g. partner workouts">' +
+        "</div>";
+    }).join("");
+  }
+
+  /* Sun-Sat again, this time answering "which days are rest". The same row of seven
+     the emphases use: one week, one shape. */
+  function buildRestDayRow() {
+    var CI = window.CLIENT_INTAKE;
+    if (!CI || !el("inRestDayRow")) return;
+    el("inRestDayRow").innerHTML = CI.DAY_KEYS.map(function (k) {
+      return '<label class="emph-day"><input id="inRest-' + k + '" type="checkbox" data-restday="' + k + '">' +
+        "<span>" + esc(CI.DAY_LABELS[k]) + "</span></label>";
+    }).join("");
+  }
+
+  function restDaysFromForm() {
+    var CI = window.CLIENT_INTAKE;
+    var out = {};
+    if (!CI) return out;
+    CI.DAY_KEYS.forEach(function (k) {
+      var box = el("inRest-" + k);
+      out[k] = !!(box && box.checked);
+    });
+    return out;
+  }
+
+  function syncEmphasisRow(k) {
+    var box = el("inEm-" + k);
+    var row = el("inEmRow-" + k);
+    var txt = el("inEmTxt-" + k);
+    if (!box || !row || !txt) return;
+    row.hidden = !box.checked;
+    if (box.checked) {
+      try { txt.focus(); } catch (e) {}
+    }
+  }
+
+  function submitIntake() {
+    el("createErr").textContent = "";
+    var CI = window.CLIENT_INTAKE;
+    var form = readIntakeForm();
+    if (S.blockMode) {
+      /* The next block carries the client's own name and payment terms — those tabs are
+         not shown, so they come from the program rather than from an empty form. */
+      form.clientName = S.program.clientName || form.clientName;
+      form.monthlyAmount = S.program.monthlyAmount || 0;
+      form.paymentMethod = S.program.paymentMethod || "";
+    }
+    var problems = CI ? CI.validateIntake(form) : [];
+    if (problems.length) { el("createErr").textContent = problems.join(" "); return; }
+    var btn = el("createBtn");
+    btn.disabled = true;
+    if (S.blockMode) {
+      api({
+        action: "add_block",
+        programId: S.program.programId,
+        expectedVersion: S.program.version,
+        intake: form,
+        notes: el("inHasChanges").checked ? String(el("inChanges").value || "") : "",
+      }).then(function (r) {
+        btn.disabled = false;
+        if (r.status === 409) {
+          el("createErr").textContent = "מישהו שמר בינתיים. סגור ופתח את הלקוח מחדש.";
+          return;
+        }
+        if (r.status !== 200 || !r.body.ok) {
+          el("createErr").textContent = (r.body && r.body.error) || "לא הצלחתי ליצור לבנה.";
+          return;
+        }
+        S.program = r.body.program;
+        banner("good", "לבנה " + r.body.blockIndex + " נוצרה — " + r.body.added +
+          " שבועות ריקים. היא לא אצל הלקוח עד שתאשר אותה.");
+        leaveBlockMode();
+      });
+      return;
+    }
+    api({
+      action: "create", clientKind: "coach", intake: form,
+      /* Anchor the block to this week's Sunday (Israel), so the calendar shows real
+         dates instead of drifting every time the page is opened. */
+      blockStart: israelSundayIso(),
+      isTest: el("newTest").checked,
+    })
+      .then(function (r) {
+        btn.disabled = false;
+        if (r.status !== 200 || !r.body.ok) {
+          el("createErr").textContent = r.body.error || "Could not create the program.";
+          return;
+        }
+        var weeks = (r.body.program.weeks || []).length;
+        banner("good", "Created an empty " + weeks + "-week program. Now write the sessions.");
+        iStep = 0;
+        /* The wizard is done — hand the screen back and open what was just created. */
+        S.adding = false;
+        renderViewMode();
+        loadList().then(function () { openClient(r.body.program.programId); });
+      });
+  }
+
+  /**
+   * Everything this screen needs wired, and nothing that belonged to being a page: no
+   * login, no deep link, no first load. admin.html owns those and calls in through
+   * window.ClientScreen below.
+   */
+  function boot() {
+
+    buildWeekRows();
+    buildRestDayRow();
+    renderIntakeTabs();
+    syncIntakeConditionals();
+    bindPickPair("equip");
+    bindPickPair("sched");
+    bindCalGestures();
+    /* The version badge is the page's, painted by syncAdminVersionLabels(). */
+    ["inSessionsDiffer", "inRestDays", "inEmphasis", "inDeload", "inHasChanges"]
+      .forEach(function (id) {
+        var n = el(id);
+        if (n) n.addEventListener("change", syncIntakeConditionals);
+      });
+    /* The session count drives how many description boxes exist, so rebuild on input
+       rather than only on blur — otherwise the count and the boxes disagree. */
+    el("inSessions").addEventListener("input", function () {
+      if (el("inSessionsDiffer").checked) buildSessionBoxes();
+    });
+    /* The deload number changes what the line underneath promises, so it has to
+       repaint while he types — not only when the box loses focus. */
+    el("inDeloadAt").addEventListener("input", syncIntakeConditionals);
+    el("inMinutes").addEventListener("input", syncIntakeConditionals);
+    /* Ticking a weekday reveals its note. Delegated, because the rows are rebuilt. */
+    el("inWeekDays").addEventListener("change", function (ev) {
+      var k = ev.target && ev.target.getAttribute && ev.target.getAttribute("data-emph");
+      if (k) syncEmphasisRow(k);
+    });
+    el("iNext").addEventListener("click", function () {
+      if (iStep < intakeDefs().length - 1) { iStep++; renderIntakeTabs(); }
+    });
+    el("iPrev").addEventListener("click", function () {
+      if (iStep > 0) { iStep--; renderIntakeTabs(); }
+    });
+    el("createBtn").addEventListener("click", submitIntake);
+    /* Adding a client is ONE button on this page — the header's "+ לקוח", which asks
+       which kind and then calls window.ClientScreen.newClient(). This screen no longer
+       carries a button of its own, and reaching for one that is not there would have
+       thrown here and left every listener below unwired. */
+    /* The header carries a logout because admin.html's does, and a back office you
+       cannot leave on a shared laptop is a back office with a hole in it. */
+    /* The index is a cache of the list's headlines; rebuilding it is a repair, not a
+       working control, so it is off the header and on a key combination. */
+    document.addEventListener("keydown", function (ev) {
+      if (!ev.altKey || !ev.shiftKey || String(ev.key || "").toLowerCase() !== "i") return;
+      if (!window.confirm("לבנות מחדש את אינדקס הלקוחות?")) return;
+      api({ action: "rebuild_index" }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) { banner("bad", "בניית האינדקס נכשלה."); return; }
+        banner("good", "האינדקס נבנה מחדש (" + r.body.count + " לקוחות).");
+        loadList();
+      });
+    });
+    el("iCancel").addEventListener("click", function () {
+      if (!window.confirm("לצאת מהתחקור? מה שהוקלד יימחק.")) return;
+      if (S.blockMode) { leaveBlockMode(); return; }
+      setAdding(false);
+    });
+    S.token = storedToken();
+    var params = new URLSearchParams(location.search);
+  }
+
+  /**
+   * The doors admin.html uses. This screen renders into #clientScreen, which sits beside
+   * #content; the page decides which of the two is showing.
+   */
+  window.ClientScreen = {
+    start: function (opts) {
+      var o = opts || {};
+      S.token = o.token || S.token || storedToken();
+      S.pw = o.pw || S.pw;
+      return loadList();
+    },
+    open: function (programId) {
+      S.adding = false;
+      S.blockMode = false;
+      openClient(programId);
+    },
+    newClient: function () {
+      setAdding(true);
+    },
+    close: function () {
+      S.adding = false;
+      S.blockMode = false;
+      S.sel = null;
+      S.program = null;
+      renderViewMode();
+    },
+    reload: function () {
+      return loadList();
+    },
+    rows: function () {
+      return S.rows || [];
+    },
+  };
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+</script>
 </body>
 </html>

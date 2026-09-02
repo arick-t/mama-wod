@@ -13,8 +13,26 @@ function ok(name, cond) {
 }
 
 const root = path.join(__dirname, "..");
-const page = fs.readFileSync(path.join(root, "admin-clients.html"), "utf8");
-const admin = fs.readFileSync(path.join(root, "admin.html"), "utf8");
+/* ------------------------------------------------------------------------
+ * The client screen lives INSIDE admin.html now.
+ *
+ * The owner's instruction, 2026-09-02: one management page, no seam, no combinations.
+ * Everything this file asserts about the screen is unchanged — the screen moved, it was
+ * not rewritten — so "page" simply points at where it lives. admin-clients.html is a
+ * redirect and is checked as one at the bottom.
+ * --------------------------------------------------------------------- */
+const page = fs.readFileSync(path.join(root, "admin.html"), "utf8");
+const admin = page;
+const redirect = fs.readFileSync(path.join(root, "admin-clients.html"), "utf8");
+
+/* The client screen's own code, sliced out of the page it now shares with the athlete
+   side. The athlete side IS an AI surface; the client screen must not be, and after the
+   merge the only honest way to say that is to look at the screen itself rather than at
+   the file around it. */
+const SCREEN_MARK = "THE CLIENT SCREEN — moved here whole";
+const screenAt = page.indexOf(SCREEN_MARK);
+ok("the client screen is identifiable in the page", screenAt > 0);
+const screen = page.slice(screenAt);
 /* The chips both screens draw are built here, so assertions about a chip belong here. */
 const strip = fs.readFileSync(path.join(root, "lib", "admin-people-strip.js"), "utf8");
 
@@ -37,48 +55,59 @@ scripts.forEach(function (code, i) {
 /* --- reachable from the admin module, sharing its session -------------- */
 
 /* ------------------------------------------------------------------------
- * ONE admin module, two files.
+ * ONE page.
  *
- * The owner's correction, 2026-09-01: "אין מודול לקוחות, אין חיה כזאת. אנחנו בונים את
- * מודול אדמין == מוטת הניהול שלי." So neither screen advertises the other as a place to
- * go: they draw the SAME strip, from the same builder, and a click on any client opens
- * that client — from whichever file the browser happens to be on.
+ * 2026-09-01 he said there is no such thing as a clients module; 2026-09-02 he said to
+ * finish the job: "תגרום לזה להיות באמת ובתמים דף ניהול אחד ויחיד בלי קומבינות". So the
+ * client screen is in this file, beside the athlete side, and the two take turns in the
+ * content area. Nothing travels anywhere.
  * --------------------------------------------------------------------- */
-ok("both screens use one strip builder", /lib\/admin-people-strip\.js/.test(page) && /lib\/admin-people-strip\.js/.test(admin));
-ok("this screen draws it too", /function renderPeopleStrip/.test(page));
-ok("it carries the athletes as well", /function loadAthletes/.test(page) && /admin_list/.test(page));
-ok("an athlete chip lands on that athlete", /admin\.html\?athlete=/.test(page));
-ok("there is no 'back to the admin module' link", !/חזרה למודול אדמין/.test(page));
-ok("the header says Admin, like the other screen", /<span class="tagline">Admin<\/span>/.test(page));
+ok("one strip, built by the shared builder", /lib\/admin-people-strip\.js/.test(page));
+ok("the page draws it", /function renderPeopleStrip/.test(page));
+ok("the client screen has a home in this page", /id="clientScreen"/.test(page));
+ok("it takes turns with the athlete side", /athleteSide\.hidden = mine/.test(page));
+ok("a programme chip opens in place", /window\.ClientScreen\.open\(id\)/.test(page));
+ok("an athlete chip hands the area back", /window\.ClientScreen\.close\(\)/.test(page));
+ok("nothing navigates to the old page", !/location\.href = pagesAbsoluteUrl\("\/admin-clients/.test(page));
+/* The old address still resolves: mails and bookmarks are already out in the world. */
+ok("the old address is a redirect", /location\.replace\(target\)/.test(redirect));
+ok("it carries the query across", /"admin\.html" \+ String\(location\.search/.test(redirect));
+ok("and holds no screen of its own any more", redirect.length < 4000 && !/renderBrickView/.test(redirect));
 ok("it reuses admin's session key", /"dw_admin_session"/.test(page));
 ok("it reuses admin's remember key", /"dw_admin_remember"/.test(page));
 ok("it reads the session token header on login", /X-Admin-Session-Token/.test(page));
 ok("it sends the admin token on later calls", /X-Admin-Token/.test(page));
-ok("the password is only sent to log in", (page.match(/X-Admin-Password/g) || []).length <= 2);
+/* Both halves of the page attach the credential in one place each — admin's own
+   adminAuthHeaders(), and the client screen's authHeaders(). Anything beyond that is
+   the password being sprayed around a 5,000-line file. */
+ok("the password is attached in few, named places", (page.match(/X-Admin-Password/g) || []).length <= 6);
 
-/* --- the silent password failure becomes visible (a.4.1 / a.4.2) ------- */
-
-ok("the login screen reports remember-me state", /זכור אותי/.test(page));
-ok(
-  "a missing server secret is named, not shrugged at",
-  /ADMIN_SESSION_SECRET/.test(page)
-);
-ok(
-  "logging in without a session token warns the owner",
-  /לא הנפיק כרטיס־זיכרון/.test(page)
-);
+/* --- one login on the page, and it is admin's ------------------------
+ *
+ * The client screen used to carry its own password box, its own remember-me report and
+ * its own session handling — all of which belonged to being a page. It has none of them
+ * now: a dead session goes to admin's forceAdminLogout, which is the one place that
+ * knows how to end a session on this page.
+ */
+ok("the screen brought no second login with it", !/id="pwBtn"/.test(screen) && !/id="rememberState"/.test(screen));
+ok("a dead session reaches admin's own handler", /window\.forceAdminLogout/.test(screen));
+ok("admin still owns a login screen", /id="login-screen"/.test(page));
 
 /* --- no AI on this surface either -------------------------------------- */
 
-ok("the page names no AI provider", !/gemini|groq|generativelanguage/i.test(page));
-ok("it never calls personal-coach", !/personal-coach/.test(page));
-/* Two endpoints now, both admin ones and neither a generator: the client programmes,
-   and the athlete list that fills the other half of the one shared strip. */
+ok("the client screen names no AI provider", !/gemini|groq|generativelanguage/i.test(screen));
+ok("it never calls personal-coach", !/personal-coach/.test(screen));
+/* One endpoint, and it is the one with no route to a provider in it (POL-029). */
 ok(
   "it talks to no endpoint that could generate anything",
-  (page.match(/\/api\/[a-z-]+/g) || []).every(function (u) {
-    return u === "/api/client-program" || u === "/api/admin-snapshot";
+  (screen.match(/\/api\/[a-z-]+/g) || []).every(function (u) {
+    return u === "/api/client-program";
   })
+);
+/* The guarantee that actually protects a paying client is on the server, not here. */
+ok(
+  "and the endpoint it uses says so about itself",
+  /aiSurface: "none"/.test(fs.readFileSync(path.join(root, "api", "client-program.js"), "utf8"))
 );
 
 /* --- a.1.1: the owner authors, we never generate ---------------------- */
@@ -115,7 +144,7 @@ const ACTIONS_ALLOWED = [
   "admin_list",
 ];
 const actionsUsed = Array.from(
-  new Set((page.match(/action:\s*"([a-z_]+)"/g) || []).map(function (s) {
+  new Set((screen.match(/action:\s*"([a-z_]+)"/g) || []).map(function (s) {
     return s.replace(/action:\s*"/, "").replace(/"$/, "");
   }))
 ).sort();
@@ -137,7 +166,9 @@ ok("the program is rendered by the shared library", /D\.renderBrickView\(/.test(
 /* THE point of this change: the same calendar + day card the admin module shows,
    from the same function — not a second hand-written Sun→Sat list beside it. */
 ok("it is the familiar brick view", /renderBrickView\(brickOpts\(\)\)/.test(page));
-ok("it links the shared brick stylesheet", /styles\/pprog-display\.css/.test(page));
+/* This file IS the source the shared stylesheet is cut from, so it carries the brick
+   rules inline rather than linking the copy of itself. */
+ok("the brick view is styled here", /\.pprog-day-card/.test(page));
 ok("the old hand-written day list is gone", !/function renderAdminDays\(\) \{[\s\S]{0,400}day-head/.test(page));
 /* The calendar carries its own W1…W5 rail, so a second week selector above it only
    competed with it. */
@@ -208,7 +239,7 @@ ok("the page speaks about clients", page.indexOf("New coach / studio client") >=
 /* The heading moved into the header bar when the page took admin.html's frame — a card
    titled "הלקוחות שלי" above a strip of clients was saying twice what the strip says
    once. And the tagline reads "Admin" on both screens, because there is one module. */
-ok("and counts them where admin counts athletes", /id="clientCount"/.test(page));
+ok("and counts them where admin counts athletes", /id="athlete-count"/.test(page));
 
 /* --- the cross-cutting intake, in English (checklist 2.b) ---------- */
 
@@ -321,7 +352,9 @@ ok("the note opens under the row", /id="inEmRow-/.test(page));
 ok("the note is named by its day", /\.emph-note\{display:grid;grid-template-columns:54px 1fr/.test(page));
 ok("ticking a day reveals its note", page.indexOf("row.hidden = !box.checked") >= 0);
 /* On a phone seven columns are unreadable. */
-ok("the phone gets four columns", /@media \(max-width:700px\)\{\.emph-days\{grid-template-columns:repeat\(4,1fr\)/.test(page));
+/* The screen's rules are scoped under #clientScreen now, so it can share a file with
+   the athlete side without restyling it. */
+ok("the phone gets four columns", /#clientScreen \.emph-days\{grid-template-columns:repeat\(4,1fr\)/.test(page));
 ok("neither branch shows before a mode is picked", page.indexOf('el("inDifferWrap").hidden = !byCount') >= 0);
 ok("the weekly branch needs the weekly box", page.indexOf('el("inWeeklyWrap").hidden = !byWeek') >= 0);
 ok("with no mode picked the owner is told to pick", /Pick how the place trains/.test(page));
@@ -453,20 +486,20 @@ ok("the old footer row is gone", !/restToggleRowHtml/.test(page));
 ok("it is styled like the client's", /\.rest-inline\{/.test(page));
 
 /* ------------------------------------------------------------------------
- * This page is a second page of the SAME back office.
+ * One frame, because there is one page.
  *
- * The owner's instruction on 2026-09-01, after seeing it: do not reinvent the admin
- * module — the landing page's design and the data it shows stay as they are, we build
- * on top. So the frame is not a lookalike built from copied values; it is admin.html's
- * own rules, extracted mechanically into styles/admin-shell.css.
+ * 2026-09-01 the instruction was not to reinvent the admin module; 2026-09-02 it was to
+ * stop pretending there were two of anything. The client screen has no frame at all
+ * now — it renders inside admin's, and its own rules are scoped so that sharing a file
+ * restyles nothing.
  * --------------------------------------------------------------------- */
-ok("the shell is the generated one", /<link rel="stylesheet" href="styles\/admin-shell\.css">/.test(page));
-ok("the page keeps no second frame of its own", !/\.wrap\{max-width/.test(page) && !/header\.top\{/.test(page));
+ok("the client screen brought no frame of its own", !/#clientScreen header\{/.test(page) && !/#clientScreen \.tabs-bar\{/.test(page));
+ok("its rules are all scoped", (page.match(/\n#clientScreen /g) || []).length > 40);
 ok("the app frame is admin's", /<div id="app">/.test(page) && /class="tabs-bar"/.test(page));
-ok("it opens by admin's own class", /classList\.toggle\("is-open"/.test(page));
-ok("the header carries the counters, as admin's does", /id="clientCount"/.test(page) && /class="count-wrap"/.test(page));
-ok("the header buttons are admin's buttons", /class="hdr-btn primary" id="addClientBtn"/.test(page));
-ok("the count is everyone he manages", /S\.rows\.length \+ \(S\.athletes \|\| \[\]\)\.length/.test(page));
+ok("it opens by admin's own class", /app\.classList\.add\("is-open"\)/.test(page));
+ok("the header carries the counters", /id="athlete-count"/.test(page) && /class="count-wrap"/.test(page));
+ok("adding a client is one button", /id="btn-add-athlete"/.test(page) && /function chooseClientKind/.test(page));
+ok("the count is everyone he manages", /rows\.length \+ " לקוחות"/.test(page));
 
 /* ------------------------------------------------------------------------
  * The header the owner specified on 2026-09-01, item by item.
@@ -480,16 +513,17 @@ ok("no logout", !/id="logoutBtn"/.test(page));
 ok("no rebuild button in the header", !/id="rebuildBtn"/.test(page));
 /* The index rebuild is a repair, not a working control. It stays reachable. */
 ok("but the repair itself is still reachable", /rebuild_index/.test(page) && /ev\.altKey/.test(page));
-ok("the version is shown, as in admin", /id="clientsVerBadge"/.test(page));
+ok("the version is shown", /id="admin-ver-badge"/.test(page));
 ok(
   "and it is the SAME version admin shows",
   (page.match(/var ADMIN_UI_VERSION = "([\d.]+)"/) || [])[1] ===
     (admin.match(/var ADMIN_UI_VERSION = "([\d.]+)"/) || [])[1]
 );
 /* An empty pill reads as a control that lost its label. */
-ok("the money pill hides when there is none", /id="monthlyTotal" hidden/.test(page));
-ok("so does the unread pill", /id="listMeta" hidden/.test(page));
-ok("and they are shown only when they say something", /show\("monthlyTotal", !!total\)/.test(page));
+/* The second page's own counters went with the second page. What the client screen
+   still computes, it hands to the strip through adminOnClientRows. */
+ok("the screen reports its totals rather than painting a header", /window\.adminOnClientRows\(S\.rows, total, data\.unreadTotal/.test(screen));
+ok("and it guards the header cells it no longer owns", /if \(el\("monthlyTotal"\)\)/.test(screen));
 
 /* The wizard used to sit under the tab strip on the first paint, as though a client
    were being added: it had no hidden attribute and relied on a wrapper that the admin
@@ -508,7 +542,9 @@ ok("dragging across the calendar takes the run", /function bindCalGestures/.test
    without either of them loading the admin module's debrief helper for three
    functions. */
 ok("the selection maths is not copied", /D\.selId \? D : null/.test(page) && !/function rangeBetween/.test(page));
-ok("and it is not the debrief helper any more", !/admin-done-debrief/.test(page));
+/* admin.html loads the debrief helper for the ATHLETE side; what matters is that the
+   client screen does not reach for it. */
+ok("and the client screen does not reach for the debrief helper", !/AdminDoneDebrief/.test(screen));
 /* Picked in any order, held in date order — over a month that stops being a nicety. */
 ok("the selection is kept in date order", /function sortSel/.test(page) && /sortSelectedDays/.test(page));
 /* A hand that moves a pixel between press and release must not turn "add this day"

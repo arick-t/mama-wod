@@ -60,7 +60,10 @@ const BRICK_HOOKS = [
   "cvMakeRest",
 ];
 
-["admin-clients.html", "client.html"].forEach(function (file) {
+/* The client screen moved into admin.html (owner, 2026-09-02: one management page), so
+   that is where these checks look for it. client.html is the client's own surface and
+   is unchanged. */
+["admin.html", "client.html"].forEach(function (file) {
   const html = fs.readFileSync(path.join(ROOT, file), "utf8");
   const blocks = inlineScripts(html);
   ok(file + " has an inline script", blocks.length >= 1);
@@ -108,7 +111,12 @@ const BRICK_HOOKS = [
   /* The brick is rendered by the shared library, not re-implemented. */
   ok(file + " renders the shared brick view", all.indexOf("renderBrickView(") >= 0);
   ok(file + " asks for no footer — this page is not an AI surface", /showFooter:\s*false/.test(all));
-  ok(file + " links the shared brick stylesheet", html.indexOf("styles/pprog-display.css") >= 0);
+  /* admin.html IS the source that stylesheet is cut from, so it carries the rules
+     inline; client.html links the generated copy. Either way the brick is styled. */
+  ok(
+    file + " has the brick view styled",
+    html.indexOf("styles/pprog-display.css") >= 0 || html.indexOf(".pprog-day-card") >= 0
+  );
 
   /* Both directions of the rest toggle, which is what the owner asked for. */
   ok(file + " can turn a written day back into rest", all.indexOf("data-makerest") >= 0);
@@ -128,21 +136,20 @@ const BRICK_HOOKS = [
   ok(file + " never claims a session is being generated", !/still being generated/.test(all));
 });
 
-/* The list card is gone: the strip in the header bar IS the list, and it is always up
-   (owner, 2026-09-01). The content area below it holds exactly one thing at a time —
-   the wizard, an open client, or the "pick someone" note. */
-const adminPage = fs.readFileSync(path.join(ROOT, "admin-clients.html"), "utf8");
+/* One page: the strip carries everyone, and the content area holds exactly one thing at
+   a time — an athlete, an open client, or the wizard (owner, 2026-09-02). */
+const adminPage = fs.readFileSync(path.join(ROOT, "admin.html"), "utf8");
 ok("there is no list card left", !/id="listCard"/.test(adminPage));
-ok("the clients are the tab strip", /class="tabs-bar" id="clientList"/.test(adminPage));
+ok("the strip carries everyone", /class="tabs-bar" id="athlete-tabs"/.test(adminPage));
 ok("one switch decides which view owns the screen", /function renderViewMode/.test(adminPage));
-ok("nothing is open when nothing is picked", adminPage.indexOf('show("emptyContent", !S.adding && !S.program)') >= 0);
-ok("the list hides the wizard", adminPage.indexOf('show("intakeCard", S.adding)') >= 0);
+ok("the client screen and the athlete side take turns", /athleteSide\.hidden = mine/.test(adminPage));
+ok("the wizard hides when it is not wanted", adminPage.indexOf('show("intakeCard", S.adding)') >= 0);
 ok("a list refresh cannot pull the list back over the wizard", (adminPage.match(/renderViewMode\(\)/g) || []).length >= 3);
-ok("there is a way into the wizard", /id="addClientBtn"/.test(adminPage));
+ok("there is one way into the wizard", /function chooseClientKind/.test(adminPage) && /ClientScreen\.newClient\(\)/.test(adminPage));
 ok("and a way out of it", /id="iCancel"/.test(adminPage));
 ok("leaving the wizard asks first", /confirm\("לצאת מהתחקור/.test(adminPage));
-/* admin.html sends ?new=coach; until now that parameter did nothing at all. */
-ok("the deep link from admin.html opens the wizard", /params\.get\("new"\) === "coach"/.test(adminPage));
+/* A mailed link names a client and must land on them, not on a list. */
+ok("a mailed link opens that client", /new URLSearchParams\(location\.search\)\.get\("program"\)/.test(adminPage));
 
 /* The generated stylesheet must actually carry the two things it exists for. */
 const css = fs.readFileSync(path.join(ROOT, "styles", "pprog-display.css"), "utf8");
@@ -165,7 +172,7 @@ ok("it drags in no admin-only intake scoping", cssRules.indexOf("#intake-fixed")
  * that reaches for one of the library handles must also declare it.
  * --------------------------------------------------------------------- */
 const HANDLES = ["D", "RT", "CI"];
-for (const page of ["admin-clients.html", "client.html"]) {
+for (const page of ["admin.html", "client.html"]) {
   const src = fs.readFileSync(path.join(ROOT, page), "utf8");
   for (const m of src.matchAll(/\n  function ([A-Za-z0-9_]+)\(([^)]*)\)\s*\{/g)) {
     const name = m[1];

@@ -392,8 +392,10 @@ async function main() {
   ok("the mail names the client", /Coach A/.test(H.mails[0].subject));
   ok("the mail names the day", /w1:mon/.test(H.mails[0].text));
   ok(
-    "the mail carries a deep link into the client page",
-    /admin-clients\.html\?program=/.test(H.mails[0].text)
+    /* One management page, so the link goes there. The old address still redirects,
+       for the mails that already left. */
+    "the mail carries a deep link straight to the client",
+    /admin\.html\?program=/.test(H.mails[0].text)
   );
   ok("the deep link names the program", H.mails[0].text.indexOf(pid) >= 0);
 

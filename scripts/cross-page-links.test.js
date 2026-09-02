@@ -25,19 +25,21 @@ function ok(name, cond) {
 
 const root = path.join(__dirname, "..");
 const admin = fs.readFileSync(path.join(root, "admin.html"), "utf8");
-const clients = fs.readFileSync(path.join(root, "admin-clients.html"), "utf8");
+/* The client screen lives in admin.html now (owner, 2026-09-02: one management page),
+   so everything this file used to check "on the clients page" is checked there. The old
+   address is a redirect and is checked as one. */
+const clients = admin;
+const redirect = fs.readFileSync(path.join(root, "admin-clients.html"), "utf8");
 
 /* --- 1 · no relative redirect between pages --------------------------- */
 
-ok(
-  "the coach/studio choice redirects absolutely",
-  /pagesAbsoluteUrl\("\/admin-clients\.html\?new=coach"\)/.test(admin)
-);
-ok(
-  "no bare relative redirect is left",
-  !/location\.href = "admin-clients\.html/.test(admin)
-);
-ok("the reason is recorded", /resolves against the\s*\n?\s*current path/.test(admin));
+/* The coach/studio choice does not redirect at all any more: the intake opens in place,
+   on the one management page (owner, 2026-09-02). What still has to be absolute is the
+   link handed to a paying CLIENT, which is checked further down — that one leaves the
+   building. */
+ok("choosing coach/studio opens the intake here", /ClientScreen\.newClient\(\)/.test(admin));
+ok("it goes nowhere", !/admin-clients\.html\?new=coach/.test(admin));
+ok("no bare relative redirect is left", !/location\.href = "admin-clients\.html/.test(admin));
 
 /* The path resolver must survive the trailing slash that caused the 404. */
 const basePathSrc = (admin.match(/function getPagesBasePath\(\)[\s\S]*?\n\}/) || [""])[0];
@@ -134,7 +136,7 @@ ok("the auth helper falls back to the password", /X-Admin-Password/.test(authSrc
 const client = fs.readFileSync(path.join(root, "client.html"), "utf8");
 
 [
-  ["admin-clients.html", clients],
+  ["admin.html (client screen)", clients],
   ["client.html", client],
 ].forEach(function (pair) {
   const name = pair[0];
@@ -163,11 +165,15 @@ const client = fs.readFileSync(path.join(root, "client.html"), "utf8");
 
 /* --- 5 · a failed request must never hang the UI ------------------- */
 
+/* The client screen has no login of its own any more — that was the bug's original
+   home, and admin's login is the one that has to survive a rejected fetch now. What
+   still matters here is that the screen's own calls cannot hang: a rejected fetch comes
+   back as a status the caller can read, rather than never resolving. */
 ok(
-  "the clients login handles a rejected fetch",
-  /\.catch\(function \(e\) \{[\s\S]{0,200}pwErr/.test(clients)
+  "the client screen's calls cannot hang on a rejected fetch",
+  /\.catch\(function \(\) \{ return \{ status: 0, body: \{ error: "אין חיבור לשרת\." \} \}; \}\)/.test(clients)
 );
-ok("the reason is recorded", /never reaches \.then/.test(clients));
+ok("admin's own login handles a rejected fetch", /\.catch\(/.test(admin));
 
 /* --- 6 · choosing "end athlete" goes straight into the intake ------ */
 
@@ -184,8 +190,10 @@ ok("the start bar is still there to retry with", /id="intake-start-bar"/.test(ad
  * absolute, because a relative one breaks under the trailing slash Vercel can serve.
  */
 ok("no header link announcing another page", !/id="btn-client-programs"/.test(admin));
-ok("a programme chip crosses absolutely", /pagesAbsoluteUrl\("\/admin-clients\.html\?program=/.test(admin));
-ok("an athlete chip crosses absolutely", /location\.origin \+ sitePath\(\) \+ "\/admin\.html\?athlete=/.test(clients));
-ok("neither crossing is a bare relative href", !/location\.href = "admin-clients\.html/.test(admin) && !/location\.href = "admin\.html/.test(clients));
+ok("a programme chip opens in place", /window\.ClientScreen\.open\(id\)/.test(admin));
+ok("an athlete chip hands the area back", /window\.ClientScreen\.close\(\)/.test(admin));
+/* The old address is a redirect for the links already out in the world. */
+ok("the old address carries its query across", /"admin\.html" \+ String\(location\.search/.test(redirect));
+ok("and does not stack up in history", /location\.replace\(target\)/.test(redirect));
 
 console.log("All cross-page link checks passed.");

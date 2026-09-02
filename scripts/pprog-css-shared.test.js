@@ -54,7 +54,10 @@ ok(
 ok("its responsive rules survive extraction", /@media[^{]*\{[\s\S]*pprog/.test(fresh.css));
 
 /* Both new pages must actually link it, or all of the above is decoration. */
-["admin-clients.html", "client.html"].forEach(function (f) {
+/* Only client.html links the generated copy now: the client screen moved into
+   admin.html, which is the SOURCE these rules are cut from and carries them inline
+   (owner, 2026-09-02 — one management page). */
+["client.html"].forEach(function (f) {
   const html = fs.readFileSync(path.join(ROOT, f), "utf8");
   ok(f + " links the shared stylesheet", /<link[^>]+styles\/pprog-display\.css/.test(html));
   /* And must not have grown its own copy of the same rules. */

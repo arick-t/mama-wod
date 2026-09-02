@@ -441,7 +441,7 @@ async function runRenewalCheck(store, todayIso, limit) {
     const mail = Renewal.renewalMail(
       read.program,
       verdict,
-      "https://arick-t.github.io/mama-wod/admin-clients.html?program=" +
+      "https://arick-t.github.io/mama-wod/admin.html?program=" +
         encodeURIComponent(read.program.programId)
     );
     try {
@@ -474,7 +474,7 @@ async function notifyOwnerOfSignature(program, signature, clientName) {
     "Signed at: " + (signature.signedAt || ""),
     "",
     "Open it in admin:",
-    "https://arick-t.github.io/mama-wod/admin-clients.html?program=" +
+    "https://arick-t.github.io/mama-wod/admin.html?program=" +
       encodeURIComponent(program.programId),
   ].filter(function (x) {
     return x !== null;
@@ -503,7 +503,7 @@ async function notifyOwnerOfEdit(program, touchedDays, clientName) {
     "",
     "Open it in admin:",
     /* Deep link straight to this client, so the mail is one tap from the change (a.2.4). */
-    "https://arick-t.github.io/mama-wod/admin-clients.html?program=" +
+    "https://arick-t.github.io/mama-wod/admin.html?program=" +
       encodeURIComponent(program.programId) +
       "&day=" +
       encodeURIComponent(day),
