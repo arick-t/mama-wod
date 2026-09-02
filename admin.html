@@ -1614,6 +1614,79 @@ function withAdminPassword(payload) {
   else if (adminPw) body.adminPassword = adminPw || body.adminPassword || "";
   return body;
 }
+/**
+ * Remove every client and every athlete. Alt+Shift+X, then type the word.
+ *
+ * Kept out of the interface on purpose: it is a one-off for clearing rehearsals, not a
+ * feature. The backup is written first — if it cannot be written, nothing is deleted.
+ */
+async function purgeAllPeople() {
+  if (!adminIsAuthed()) { showHdrToast("התחבר קודם.", "err"); return; }
+  var progs = (window.ClientScreen && window.ClientScreen.rows()) || [];
+  var people = (athletes || []).slice();
+  if (!progs.length && !people.length) { showHdrToast("אין מה למחוק — הרשימה ריקה.", "ok"); return; }
+
+  var names = progs.map(function (r) { return "· " + (r.clientName || r.programId); })
+    .concat(people.map(function (a) { return "· " + (a.displayName || a.athleteId); }));
+  var typed = window.prompt(
+    "מוחק " + progs.length + " לקוחות ו-" + people.length + " מתאמנים:\n\n" +
+      names.join("\n") +
+      "\n\nאין חזרה. קודם יישמר גיבוי אצלך.\nכתוב: מחק הכל",
+    ""
+  );
+  if (String(typed || "").trim() !== "מחק הכל") { showHdrToast("בוטל.", "ok"); return; }
+
+  /* The backup, first. A deletion we cannot undo is one thing; one we cannot even
+     look at afterwards is another. */
+  try {
+    var dump = { savedAt: new Date().toISOString(), athletes: people, programs: progs };
+    var blob = new Blob([JSON.stringify(dump, null, 1)], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement("a");
+    link.href = url;
+    link.download = "duck-wod-backup-" + new Date().toISOString().slice(0, 10) + ".json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(function () { try { URL.revokeObjectURL(url); } catch (e) {} }, 4000);
+  } catch (e) {
+    showHdrToast("לא הצלחתי לשמור גיבוי — לא מוחק. " + String((e && e.message) || e), "err");
+    return;
+  }
+
+  var failed = [];
+  for (var i = 0; i < progs.length; i++) {
+    showHdrToast("מוחק לקוח " + (i + 1) + "/" + progs.length + "…", "ok");
+    try {
+      var rp = await fetch(adminApiUrl("/api/client-program"), {
+        method: "POST",
+        headers: adminAuthHeaders(),
+        body: JSON.stringify(withAdminPassword({ action: "delete", programId: progs[i].programId })),
+      });
+      if (rp.status !== 200) failed.push((progs[i].clientName || progs[i].programId) + " (" + rp.status + ")");
+    } catch (e) {
+      failed.push((progs[i].clientName || progs[i].programId) + " (רשת)");
+    }
+  }
+  for (var j = 0; j < people.length; j++) {
+    showHdrToast("מוחק מתאמן " + (j + 1) + "/" + people.length + "…", "ok");
+    try {
+      var ra = await fetch(
+        adminApiUrl("/api/admin-snapshot") + "?id=" + encodeURIComponent(people[j].athleteId),
+        { method: "DELETE", headers: adminAuthHeaders() }
+      );
+      if (ra.status !== 200) failed.push((people[j].displayName || people[j].athleteId) + " (" + ra.status + ")");
+    } catch (e) {
+      failed.push((people[j].displayName || people[j].athleteId) + " (רשת)");
+    }
+  }
+
+  if (window.ClientScreen && window.ClientScreen.reload) window.ClientScreen.reload();
+  loadAthletes({ silent: true });
+  if (failed.length) showHdrToast("נמחק חלקית. נכשלו: " + failed.join(", "), "err");
+  else showHdrToast("הרשימה נוקתה. הגיבוי בהורדות שלך.", "ok");
+}
+
 function adminIsAuthed() {
   return !!(adminSessionToken || adminPw);
 }
@@ -2108,6 +2181,12 @@ function openAdminApp(snapshots) {
     window._adminCalDocBound = true;
     document.addEventListener("mouseup", onAdminCalMouseUp);
     document.addEventListener("keydown", onAdminEscClear);
+  /* Alt+Shift+X — clear every client and athlete. Out of the interface on purpose. */
+  document.addEventListener("keydown", function (ev) {
+    if (!ev.altKey || !ev.shiftKey) return;
+    if (String(ev.key || "").toLowerCase() !== "x") return;
+    purgeAllPeople();
+  });
     document.addEventListener("click", onAdminOutsideCalClick);
   }
 }
