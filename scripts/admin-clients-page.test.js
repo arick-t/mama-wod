@@ -205,7 +205,11 @@ ok("open codes can be revoked", /action: "revoke_codes"/.test(page));
 ok("a device can be revoked", /action: "revoke_device"/.test(page));
 ok("revoking a device asks first", /confirm\("לבטל את המכשיר/.test(page));
 ok("the device cap is shown", /deviceCap/.test(page));
-ok("the signature state is shown", /טרם חתם|חתם על/.test(page));
+/* The card is the athlete's card now, so the signature reads where the health
+   declaration reads on theirs: same row, same question. */
+ok("the signature state is shown", /טרם נחתם|נחתם/.test(page));
+ok("it sits where the declaration sits", /תנאי שימוש:/.test(page));
+ok("the card is built from the athlete card", /ath-card-top[sS]{0,4000}gragrag|ath-fact-label">נרשם:/.test(page));
 ok("the client link is copyable", /data-copylink/.test(page));
 
 /* --- unread flag: state, and cleared by opening ---------------------- */
@@ -223,8 +227,8 @@ ok("a client-changed day is labelled", /שונה ע"י הלקוח/.test(page));
 /* --- payment fields are owner-only --------------------------------- */
 
 ok("there is a monthly amount field", /id="fAmount"/.test(page));
-ok("the amount is a number so it can be totalled", /id="fAmount" type="number"/.test(page));
-ok("there is a free-text payment method", /id="fMethod" type="text"/.test(page));
+ok("the amount is a number so it can be totalled", /id="fAmount" class="ath-fact-input" type="number"/.test(page));
+ok("there is a free-text payment method", /id="fMethod" class="ath-fact-input" type="text"/.test(page));
 ok("a monthly total is shown", /monthlyTotal/.test(page));
 ok("the owner is reminded the client cannot see this", /הלקוח לא רואה אותם/.test(page));
 
@@ -599,7 +603,8 @@ ok("a ?program= deep link opens that client", /get\("program"\)/.test(page));
 /* --- destructive actions ask ------------------------------------ */
 
 ok("delete asks for confirmation", /confirm\("למחוק את התוכנית/.test(page));
-ok("delete is styled as dangerous", /class="danger sm"/.test(page));
+/* It wears the athlete card's delete style now, in the same place at the foot. */
+ok("delete is styled as dangerous", /class="btn-delete-link" data-del="1"/.test(page));
 
 /* --- phone reality ---------------------------------------------- */
 

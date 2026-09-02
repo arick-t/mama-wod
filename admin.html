@@ -619,6 +619,11 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
 /* Active and frozen are one question, so they read as one line. */
 .ath-chip-sep{color:var(--text-meta);margin:0 2px;font-weight:700}
 .handoff-head{font-family:var(--font-display);font-size:.92rem;letter-spacing:.4px;margin:0 0 6px}
+/* A fact the owner can type into: it reads as the value beside its label, not as a
+   form field parked inside a summary. */
+.ath-fact-input{width:100%;margin-top:3px;background:var(--bg-panel);border:1px solid var(--line);
+  border-radius:8px;padding:8px 10px;color:var(--text);font-family:var(--font-ui);font-size:15px}
+.ath-fact-input:focus{outline:2px solid var(--coach);outline-offset:1px}
 .handoff-code{margin:8px 0;padding:9px 12px;border-radius:10px;background:rgba(245,197,24,.1);
   border:1px solid rgba(245,197,24,.35)}
 .handoff-code-label{color:var(--text-meta);font-size:.8rem}
@@ -5727,45 +5732,101 @@ tryRestoreAdminSession();
     var unread = Object.keys(p.unreadDays || {});
     var html = "";
 
-    html += '<div class="card"><div class="row" style="margin-bottom:10px">' +
-      '<h2 style="margin:0">' + esc(p.clientName || "(ללא שם)") + "</h2>" +
-      '<button class="ghost sm" type="button" data-rename="1" title="שינוי שם">✏️</button>' +
-      '<span class="spacer meta">v' + esc(p.version) + " · " + esc(p.programId) + "</span>" +
-      "</div>";
-
-    html += '<div class="grid2">' +
-      '<label class="fld"><span>סכום חודשי (₪)</span><input id="fAmount" type="number" min="0" value="' +
-        esc(p.monthlyAmount == null ? "" : p.monthlyAmount) + '"></label>' +
-      '<label class="fld"><span>שיטת תשלום</span><input id="fMethod" type="text" value="' +
-        esc(p.paymentMethod || "") + '" placeholder="ביט, 1 לחודש"></label>' +
-      "</div>" +
-      '<p class="meta">הנתונים האלה אצלך בלבד. הלקוח לא רואה אותם.</p>' +
-      '<div class="row"><button class="sm" type="button" data-savemeta="1">שמור פרטים</button>' +
-      '<button class="danger sm" type="button" data-del="1">מחק תוכנית</button></div></div>';
-
-    /* access */
-    html += '<div class="card"><h2>גישה</h2>';
-    html += '<div class="linkbox">' + esc(clientLink(p.programId)) + "</div>";
-    html += '<div class="row"><button class="sm" type="button" data-copylink="1">העתק לינק</button>' +
-      '<button class="sm" type="button" data-code="1">הנפק קוד</button>' +
-      (a.openCodes && a.openCodes.length ? '<button class="ghost sm" type="button" data-revokecodes="1">בטל קודים פתוחים (' + a.openCodes.length + ")</button>" : "") +
-      "</div>";
-    html += '<div id="codeOut"></div>';
-    html += '<p class="meta" style="margin-top:10px">' +
-      (a.signature
-        ? "חתם על " + esc(a.signature.termsVersion) + " ב-" + new Date(a.signature.signedAt).toLocaleString()
-        : "טרם חתם על התנאים.") + "</p>";
-    if (a.devices && a.devices.length) {
-      html += '<p class="meta" style="margin-top:8px">מכשירים (' + a.devices.length + "/" + esc(a.deviceCap) + "):</p>";
-      html += a.devices.map(function (d) {
-        return '<div class="devrow"><span>' + esc(d.label || d.id) + "</span>" +
-          '<span class="spacer meta">' + (d.lastSeenAt ? new Date(d.lastSeenAt).toLocaleDateString() : "") + "</span>" +
-          '<button class="ghost sm" type="button" data-revokedev="' + esc(d.id) + '">בטל</button></div>';
-      }).join("");
-    } else {
-      html += '<p class="meta">אין עוד מכשירים מחוברים.</p>';
-    }
-    html += "</div>";
+    /* THE SAME CARD as an athlete's, from the same markup — not a lookalike. The facts
+       differ in what they are called, never in where they sit: joined, tenure, what they
+       signed, how they get in, and delete at the foot. */
+    var joined = p.createdAt || "";
+    var sent = !!(p.blocks || []).some(function (b) { return b && b.approvedAt; });
+    html +=
+      '<div class="ath-wrap"><div class="ath-card">' +
+        '<div class="ath-card-top">' +
+          '<div class="ath-name-row">' +
+            '<div class="ath-name">' + esc(p.clientName || "(ללא שם)") + "</div>" +
+            '<button type="button" class="ath-stats-btn" data-rename="1" title="שינוי שם">✎</button>' +
+          "</div>" +
+          '<div class="ath-chips">' +
+            '<span class="ath-chip ' + (sent ? "active" : "frozen") + '">' +
+            (sent ? "פעיל" : "טרם נשלח") +
+            "</span>" +
+          "</div>" +
+        "</div>" +
+        '<div class="ath-facts">' +
+          '<div class="ath-fact">' +
+            '<span class="ath-fact-label">נרשם:</span>' +
+            '<span class="ath-fact-value">' + esc(joined ? new Date(joined).toLocaleDateString() : "—") + "</span>" +
+          "</div>" +
+          '<div class="ath-fact">' +
+            '<span class="ath-fact-label">וותק:</span>' +
+            '<span class="ath-fact-value">' + esc(formatTenure(joined)) + "</span>" +
+          "</div>" +
+          /* The client's equivalent of the health declaration: the B2B terms. Same
+             question — has this person signed what they had to sign. */
+          '<div class="ath-fact" style="grid-column:1/-1">' +
+            '<span class="ath-fact-label">תנאי שימוש:' +
+            (a.signature
+              ? '<span class="ath-decl-note valid">נחתם</span>'
+              : '<span class="ath-decl-note">טרם נחתם</span>') +
+            "</span>" +
+            '<span class="ath-fact-value">' +
+            (a.signature
+              ? esc(a.signature.termsVersion) + " · " + esc(new Date(a.signature.signedAt).toLocaleDateString())
+              : "—") +
+            "</span>" +
+          "</div>" +
+          /* Payment is the one fact an athlete has no version of, so it sits with the
+             others rather than in a form of its own. */
+          '<div class="ath-fact">' +
+            '<span class="ath-fact-label">סכום חודשי (₪):</span>' +
+            '<input id="fAmount" class="ath-fact-input" type="number" min="0" value="' +
+            esc(p.monthlyAmount == null ? "" : p.monthlyAmount) + '">' +
+          "</div>" +
+          '<div class="ath-fact">' +
+            '<span class="ath-fact-label">שיטת תשלום:</span>' +
+            '<input id="fMethod" class="ath-fact-input" type="text" value="' +
+            esc(p.paymentMethod || "") + '" placeholder="ביט, 1 לחודש">' +
+          "</div>" +
+          '<div class="ath-fact" style="grid-column:1/-1">' +
+            '<span class="ath-muted">הנתונים האלה אצלך בלבד. הלקוח לא רואה אותם.</span>' +
+            '<div class="row" style="margin-top:8px">' +
+            '<button class="sm" type="button" data-savemeta="1">שמור פרטים</button>' +
+            "</div>" +
+          "</div>" +
+        "</div>" +
+        /* Access sits where the athlete's does: last thing before delete. */
+        '<div class="ath-handoff-inline handoff-box">' +
+          '<div class="handoff-head">גישה ללקוח</div>' +
+          '<div class="handoff-status">' +
+          (a.signature ? "חתם ונכנס." : "עדיין לא נכנס.") +
+          "</div>" +
+          '<div class="handoff-link">' + esc(clientLink(p.programId)) + "</div>" +
+          '<div id="codeOut"></div>' +
+          '<div class="handoff-actions">' +
+            '<button class="btn-handoff-mini" type="button" data-code="1" ' +
+            'title="מנפיק קוד חדש — כך גם מחברים מכשיר נוסף">' +
+            (a.openCodes && a.openCodes.length ? "צור קוד חדש" : "צור קוד") +
+            "</button>" +
+            '<button class="btn-secondary good" type="button" data-copylink="1">העתק לינק</button>' +
+            (a.openCodes && a.openCodes.length
+              ? '<button class="btn-secondary" type="button" data-revokecodes="1">בטל קודים פתוחים (' +
+                a.openCodes.length + ")</button>"
+              : "") +
+          "</div>" +
+          (a.devices && a.devices.length
+            ? '<div class="handoff-status" style="margin-top:8px">מכשירים (' +
+              a.devices.length + "/" + esc(a.deviceCap) + "):</div>" +
+              a.devices.map(function (d) {
+                return '<div class="devrow"><span>' + esc(d.label || d.id) + "</span>" +
+                  '<span class="spacer meta">' +
+                  (d.lastSeenAt ? new Date(d.lastSeenAt).toLocaleDateString() : "") + "</span>" +
+                  '<button class="ghost sm" type="button" data-revokedev="' + esc(d.id) +
+                  '">בטל</button></div>';
+              }).join("")
+            : "") +
+        "</div>" +
+        '<div class="ath-card-foot">' +
+          '<button type="button" class="btn-delete-link" data-del="1">מחק לקוח</button>' +
+        "</div>" +
+      "</div></div>";
 
     /* program */
     html += '<div class="card"><div class="row" style="margin-bottom:10px">' +
