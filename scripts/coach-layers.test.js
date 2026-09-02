@@ -49,7 +49,7 @@ const MAX_CHARS = {
      compass and not a gate for a limited-equipment studio, modality rotation must not be hardened,
      and the scope limit must be stated out loud. About 40 extra tokens a call. */
   "layer1-methodology": 6000,
-  "layer1-injuries": 3500,
+  "layer1-injuries": 4200,
   "layer2-general": 6500,
   "layer2-individual": 5000,
   "layer3-gymnastics": 4000,
@@ -57,7 +57,7 @@ const MAX_CHARS = {
   "layer3-endurance": 3500,
   "layer3-competitors": 3500,
   "layer3-partner": 2500,
-  "equivalence-table": 8000,
+  "equivalence-table": 5500,
 };
 
 function testShape() {
@@ -141,12 +141,34 @@ function testNumbersHaveProvenance() {
   ok("an untested number is never quoted to the athlete as a max",
     /Never state a number the athlete has not tested as if it were their max/i.test(flat));
 
-  /* Machine equivalence DOES have a source now (the aerobic conversion sheet the owner added on
-     2026-09-01), so the table must carry the real rows rather than a hand-wave. */
-  ok("machine equivalence carries real sourced rows",
-    /800 \| *1000 \/ 800/.test(EQUIVALENCE) && /AIR\/ASSAULT BIKE cal/.test(EQUIVALENCE));
+  /* Machine equivalence has a source (the aerobic conversion sheet the owner added on 2026-09-01).
+     On 2026-09-02 he chose the WODWELL icon chart over the sex-split alternative on the next page
+     — "מרחק הוא מרחק" — and the two disagreed on bike-erg by 25%, so the row below is the choice
+     itself, not decoration. If someone reinstates the other chart this fails. */
+  ok("the chosen (unsplit) machine table is the one in the file",
+    /1000 \| +800 \| +1000 \| +2000 \| +60/.test(EQUIVALENCE),
+    "the machine table is not the WODWELL rows");
+  ok("no sex-split rows came back",
+    !/\d \/ \d/.test(EQUIVALENCE.slice(0, EQUIVALENCE.indexOf("--- %1RM"))),
+    "an M/W split reappeared in the machine tables");
+  ok("the ratios are given so the coach can convert an unlisted distance",
+    /ski = row · bike-erg = 2x row · run = 0\.8x row/.test(EQUIVALENCE));
   ok("the coach is told to prefer meters over calories",
-    /Prefer METERS over CALORIES/i.test(flat));
+    /Prefer meters over calories/i.test(flat));
+  ok("the time-domain sanity check is present, with the AMRAP example",
+    /12-minute\s*AMRAP gives two slow rounds/.test(flat));
+
+  /* The injury matrix moved to layer1-injuries on 2026-09-02 so a healthy athlete stops paying
+     ~700 tokens a brick for it. Assert both halves of the move. */
+  ok("the injury matrix is no longer in the always-on table",
+    !/SUBSTITUTION MATRIX/i.test(EQUIVALENCE));
+  ok("the injury matrix is in the conditional injury layer",
+    /SUBSTITUTION MATRIX BY RESTRICTED AREA/i.test(
+      require("../lib/coach-layers/layer1-injuries.js")
+    ));
+  ok("machine conversion and stimulus scales stayed always-on",
+    /MACHINE EQUIVALENCE, BY DISTANCE/.test(EQUIVALENCE) &&
+      /STIMULUS-PRESERVING SCALES/.test(EQUIVALENCE));
 
   /* Sourced scaling order from the Level 1 guide, plus the practice it explicitly forbids. */
   ok("scaling order is load -> volume -> movement", /1\) LOAD *2\) VOLUME/i.test(flat));
