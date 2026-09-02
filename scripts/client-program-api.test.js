@@ -605,13 +605,24 @@ async function main() {
   const gone = await H.client(laptopToken, { action: "read", programId: pid });
   ok("access dies with the program", gone.status === 404);
 
+  /* --- the owner learns about a client's change without pressing F5 ---
+   * Nothing ever asked the server whether a client had written something, so his own
+   * screen only moved when he reloaded the page (owner, 2026-09-02). The question is
+   * the same cheap one the athlete list asks: one small read of the index. */
+
+  const stampBefore = await H.owner({ action: "list_stamp" });
+  ok("the cheap question answers", stampBefore.status === 200 && !!stampBefore.body.stamp);
+
   /* --- the clean slate, on this side too -------------------------- */
 
   const p1 = await H.owner({ action: "create", clientName: "Purge A", weekCount: 4 });
   const p2 = await H.owner({ action: "create", clientName: "Purge B", weekCount: 4 });
   ok("two more clients exist", p1.status === 200 && p2.status === 200);
+  const stampAfter = await H.owner({ action: "list_stamp" });
+  ok("A NEW CLIENT MOVES THE STAMP", stampAfter.body.stamp !== stampBefore.body.stamp);
   const listBefore = await H.owner({ action: "list" });
   ok("and the list shows them", listBefore.body.rows.length >= 2);
+  ok("the full list carries the same stamp the poll compares against", listBefore.body.stamp === stampAfter.body.stamp);
   const purge = await H.owner({ action: "purge_all" });
   ok("the purge answers", purge.status === 200 && purge.body.ok === true);
   ok("it names who it removed", (purge.body.removed || []).length === listBefore.body.rows.length);

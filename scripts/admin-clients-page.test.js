@@ -145,6 +145,11 @@ const ACTIONS_ALLOWED = [
   /* Freeze: the client keeps their plan, their history and their linked devices, and
      simply cannot open the door until the owner unfreezes them (2026-09-02). */
   "set_frozen",
+  /* "Has any client changed anything?" — one small read of the index, on the page's
+     own timer, so the owner sees a client's edit without reloading the page. */
+  "list_stamp",
+  /* One call that empties the list, with a receipt. */
+  "purge_all",
 ];
 const actionsUsed = Array.from(
   new Set((screen.match(/action:\s*"([a-z_]+)"/g) || []).map(function (s) {
@@ -256,7 +261,12 @@ ok("linked devices are numbered", /מכשירים מקושרים/.test(page) && 
 ok("one dot per client, not a count", /class="dot"/.test(strip));
 ok("unread days are passed to the view", /unreadDays/.test(page));
 ok("opening a day marks it read", /action: "mark_read"/.test(page));
-ok("marking read happens on opening a day, with no extra click", /markRead\(tag\)\.then/.test(page));
+ok("marking read happens on opening a day, with no extra click", /markRead\(tag, unreviewed\)\.then/.test(page));
+/* Two marks live on a day and they mean different things. Only the client's was ever
+   reported, so on a fresh block — where every training day carries the owner's own
+   "not been over this" — the badge never came down (owner, 2026-09-02). */
+ok("opening a day clears the owner's own mark too", /var unreviewed = dayData\.ownerUnreviewed === true;/.test(page));
+ok("and the badge goes from the copy on screen", /delete dd\.ownerUnreviewed;/.test(page));
 ok("that goes through one place", /function openDayTag/.test(page));
 ok("a client-changed day is labelled", /שונה ע"י הלקוח/.test(page));
 
@@ -377,14 +387,19 @@ ok(
  * 2026-09-02: "המתבקש בתרחיש זה — הצגת 3 אימונים וזהו". Each session still lives on a
  * weekday key behind the scenes, so nothing already written moved.
  * --------------------------------------------------------------------- */
-/* Corrected on 2026-09-02: he wanted three places to write, not a second layout. A
-   stack of cards lost the calendar he had approved, so the calendar stays and only the
-   first N days of the week count as sessions — the others read as rest days. */
-ok("the programme is always the calendar", /host\.innerHTML = D\.renderBrickView\(brickOpts\(\)\)/.test(page));
-ok("there is no second layout any more", !/function renderSessionsView/.test(page));
-ok("only as many sessions as were sold", /DAY_KEYS_LOCAL\.indexOf\(dayKey\) >= sessions/.test(page));
-ok("the rest of the week reads as rest", /isRestDay: sessionRest \|\| undefined/.test(page));
-ok("the open card says which session it is", /"אימון " \+ \(activeIndex \+ 1\)/.test(page));
+/* Settled on 2026-09-02, third attempt: neither a weekday calendar (seven places to
+   write where three were sold) nor a bare stack of cards (which lost the calendar he had
+   approved) — a MATRIX. Four rows for the month, N columns for the sessions. */
+ok("a session-count programme is a matrix", /function renderSessionsMatrix/.test(page));
+ok("a row per week of the month", /for \(var w = 0; w < weeks; w\+\+\)/.test(page));
+ok("a cell per session sold", /for \(var i = 0; i < limit; i\+\+\)/.test(page));
+ok("a cell is a session, not a Tuesday", /"אימון " \+ \(i \+ 1\)/.test(page));
+ok("the open card says which session and which week", /"אימון " \+ \(ci \+ 1\) \+ " · שבוע "/.test(page));
+ok("the card is the shared one, not a second card", /D\.renderDayCardHtml\(block, \(block\.weeks \|\| \[\]\)\[cwi\]/.test(page));
+ok("a weekday programme is still the calendar", /host\.innerHTML = D\.renderBrickView\(brickOpts\(\)\)/.test(page));
+ok("days beyond the sessions sold are not writable", /DAY_KEYS_LOCAL\.indexOf\(dayKey\) >= sessions/.test(page));
+/* A brick is a month: opening on one week hid three quarters of what he sold. */
+ok("the month opens whole", /S\.calMode = "month"/.test(page));
 
 /* Rest days say WHICH days, in the same row of seven the emphases use. */
 ok("ticking rest days opens a week", /id="inRestDaysWrap" class="sub-branch" hidden/.test(page));

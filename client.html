@@ -838,8 +838,9 @@ button.ghost:hover{color:var(--text)}
     if (!parts.length) parts = [{ title: "Part A", notes: [""], format: "", work: [""] }];
     state.wi = nextWi;
     state.day = day;
-    state.selected = [];
-    state.edit = { wi: nextWi, day: day, rest: false, wasRest: rest, parts: parts };
+    /* The selection survives: picking three days to compare and then editing one used
+       to hide the other two (owner, 2026-09-02). */
+    state.edit = { wi: nextWi, day: day, rest: false, wasRest: rest, parts: parts, restIntent: false };
     renderDays();
   };
 
@@ -990,6 +991,9 @@ button.ghost:hover{color:var(--text)}
       }
       state.program = r.body.program;
       state.edit = null;
+      /* Stay where the writing happened. */
+      state.wi = wi;
+      state.day = dayKey;
       renderDays(); renderChrome();
       banner("warn", "");
     });
@@ -1036,13 +1040,21 @@ button.ghost:hover{color:var(--text)}
      dozens of times an hour, and every pull is a read we pay for. Coming back twice in
      a minute shows what is already on screen. */
   var lastProgramLoadMs = 0;
-  var FOREGROUND_MIN_GAP_MS = 60000;
-  document.addEventListener("visibilitychange", function () {
-    if (document.visibilityState !== "visible") return;
+  /* A minute was too long: the coach writes, the client flips back, and sees the old
+     plan (owner, 2026-09-02). Fifteen seconds is still one small read, not a poll. */
+  var FOREGROUND_MIN_GAP_MS = 15000;
+  function pullIfStale() {
     if (!state.program || state.edit) return;
     if (Date.now() - lastProgramLoadMs < FOREGROUND_MIN_GAP_MS) return;
     loadProgram();
+  }
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState !== "visible") return;
+    pullIfStale();
   });
+  /* Coming back to the tab on a desktop does not always change visibility — switching
+     windows fires focus instead, and that was the case where he saw a stale plan. */
+  window.addEventListener("focus", pullIfStale);
 
   function boot() {
     bindCalGestures();

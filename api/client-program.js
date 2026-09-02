@@ -32,6 +32,7 @@ const {
   mintAdminSessionToken,
   adminAuthUsedPassword,
 } = require("../scripts/lib/admin/admin-auth.js");
+const crypto = require("crypto");
 const JsonStore = require("../scripts/lib/admin/admin-json-store.js");
 const ProgramStore = require("../lib/client-program-store.js");
 const Access = require("../lib/client-access.js");
@@ -73,6 +74,17 @@ function corsFor(req, res) {
     methods: "GET, POST, OPTIONS",
     headers: "Content-Type, X-Admin-Password, X-Admin-Token, X-Client-Token",
   });
+}
+
+/** A short fingerprint of the whole client list: same clients, same versions, same stamp. */
+function stampForRows(rows) {
+  const parts = (Array.isArray(rows) ? rows : [])
+    .map(function (r) {
+      return String((r && r.programId) || "") + ":" + String((r && r.version) || "") +
+        ":" + String((r && r.updatedAt) || "") + ":" + String((r && r.unreadCount) || 0);
+    })
+    .sort();
+  return crypto.createHash("sha1").update(parts.join("|"), "utf8").digest("hex").slice(0, 16);
 }
 
 function isPlainObject(v) {
@@ -159,6 +171,8 @@ async function ownerHandler(req, res, body) {
     return res.status(200).json({
       ok: true,
       rows: rows,
+      /* What the poll compares against — see action "list_stamp". */
+      stamp: stampForRows(rows),
       monthlyTotal: monthlyTotal,
       unreadTotal: rows.reduce(function (s, r) {
         return s + (Number(r && r.unreadCount) || 0);
@@ -202,6 +216,20 @@ async function ownerHandler(req, res, body) {
       }
     }
     return res.status(200).json({ ok: true, removed: removed, failed: failed });
+  }
+
+  /**
+   * "Has any client changed anything?" — one small read of the index.
+   *
+   * The index carries a version and an updatedAt per client, which is exactly enough to
+   * answer without touching a single program. Never a list: that is the arithmetic that
+   * suspended the Blob store on 2026-09-02.
+   */
+  if (action === "list_stamp") {
+    const idx = await store.readIndex();
+    if (!idx.ok) return bad(res, 503, idx.code, idx.error);
+    const rows = (idx.index && idx.index.rows) || [];
+    return res.status(200).json({ ok: true, stamp: stampForRows(rows), count: rows.length });
   }
 
   if (action === "rebuild_index") {

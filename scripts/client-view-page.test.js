@@ -231,6 +231,10 @@ ok("localhost still works for dev", /localhost/.test(html));
 /* --- reads are money -------------------------------------------------
  * A phone foregrounds a page dozens of times an hour and each pull is a paid read.
  * On 2026-09-02 the Blob store was suspended over exactly this kind of arithmetic. */
-ok("but not twice in a minute", /FOREGROUND_MIN_GAP_MS = 60000/.test(html) && /Date\.now\(\) - lastProgramLoadMs < FOREGROUND_MIN_GAP_MS/.test(html));
+/* Fifteen seconds, not sixty: the coach writes, the client flips back, and a minute of
+   silence looked like the update never arrived (owner, 2026-09-02). Still one small
+   read on return, never a poll. */
+ok("but not twice in a few seconds", /FOREGROUND_MIN_GAP_MS = 15000/.test(html) && /Date\.now\(\) - lastProgramLoadMs < FOREGROUND_MIN_GAP_MS/.test(html));
+ok("switching windows counts as coming back", /window\.addEventListener\("focus", pullIfStale\)/.test(html));
 
 console.log("All client view page checks passed.");

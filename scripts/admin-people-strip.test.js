@@ -90,8 +90,14 @@ ok("a colour name is not a colour here", coloured[2].colour === "");
 ok("and neither is anything that smells like code", coloured[3].colour === "");
 
 const colouredHtml = Strip.html(coloured, "u_c");
-ok("the chosen colour reaches the chip", /border-inline-start:4px solid #E8451A/.test(colouredHtml));
-ok("nothing else brought a style with it", (colouredHtml.match(/style="/g) || []).length === 1);
+/* The colour IS the chip since 2026-09-02 — a 4px line down the edge did not let him
+   pick a client out of twenty at a glance. */
+ok("the chosen colour paints the whole chip", /background:rgba\(232,69,26,/.test(colouredHtml));
+ok("and outlines it", /border-color:#E8451A/.test(colouredHtml));
+ok("the active chip is the same colour, stronger", /rgba\(232,69,26,\.42\)/.test(colouredHtml));
+ok("a chip with no colour is left alone", (colouredHtml.match(/style="/g) || []).length === 1);
+/* rgba, not colour-mix: this ships inside a Capacitor WebView. */
+ok("no modern colour function that an old WebView would drop", !/color-mix/.test(colouredHtml));
 ok("nothing that was refused can appear", colouredHtml.indexOf("javascript") < 0 && colouredHtml.indexOf("url(") < 0);
 
 const src = require("fs").readFileSync(

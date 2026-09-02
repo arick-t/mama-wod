@@ -269,7 +269,9 @@
       var otherOn = !!locs.other_home;
       html +=
         '<p class="pprog-fixed-title">Where do you usually train?</p>' +
-        '<p class="pprog-fixed-note">Select all that apply (some athletes train in more than one place).</p>' +
+        /* One or the other. Both ticked described nobody, and the coach would have been
+           told two contradictory things about the same athlete (owner, 2026-09-02). */
+        '<p class="pprog-fixed-note">Pick the one that fits.</p>' +
         '<div class="pprog-location-picker">';
       for (var li = 0; li < S.LOCATION_DEFS.length; li++) {
         var loc = S.LOCATION_DEFS[li];
@@ -278,7 +280,7 @@
           esc(loc.id) +
           '"' +
           (locs[loc.id] ? " checked" : "") +
-          (loc.needsDetail ? ' onchange="adminFixedLocationOtherToggle()"' : "") +
+          ' onchange="adminFixedLocationPicked(this)"' +
           "> " +
           esc(loc.label) +
           "</label>";
@@ -527,6 +529,23 @@
     var yes = !!(prefEl && prefEl.value === "yes");
     wrap.style.display = yes ? "" : "none";
     wrap.setAttribute("aria-hidden", yes ? "false" : "true");
+  };
+
+  /**
+   * Ticking one place unticks the other.
+   *
+   * They are checkboxes rather than radios on purpose: he can leave both empty and the
+   * step will tell him to choose, which a radio group cannot do once touched.
+   */
+  window.adminFixedLocationPicked = function (inp) {
+    var root = document.getElementById("intake-fixed");
+    if (root && inp && inp.checked) {
+      var all = root.querySelectorAll("input[data-fx-location]");
+      for (var i = 0; i < all.length; i++) {
+        if (all[i] !== inp) all[i].checked = false;
+      }
+    }
+    window.adminFixedLocationOtherToggle();
   };
 
   window.adminFixedLocationOtherToggle = function () {
