@@ -229,6 +229,13 @@ ok("the terms line is about validity, not paperwork", /terms\.valid \? "בתוק
 ok("a year old is not in force", /ageDays <= 365/.test(page));
 ok("an unsigned client says so plainly", /terms\.label = "טרם נחתם"/.test(page));
 ok("there is a chevron for the details", /data-termsmore="1"/.test(page));
+/* It must look like its twin beside the name. It did not: the class "sm" is this
+   screen's PRIMARY action button, and #clientScreen button.sm beats a bare class — so
+   the chevron came out filled orange (owner, 2026-09-02). Same specificity trap that ate
+   the design once already. */
+ok("the small chevron is not a primary button", !/class="ath-stats-btn sm" data-termsmore/.test(page));
+ok("it wears its own modifier", /class="ath-stats-btn tiny" data-termsmore/.test(page));
+ok("styled to match the one beside the name", /\.ath-stats-btn\.tiny\{[^}]*background:var\(--bg-elev\)/.test(page));
 ok("and behind it are the date and the id", /terms-uid">UID: /.test(page) && /נחתם " \+ esc\(new Date\(a\.signature\.signedAt\)/.test(page));
 /* Access states itself on its own heading — one word did not need a row of its own. */
 ok("the access state rides on the heading", /class="access-state /.test(page));
