@@ -885,6 +885,11 @@ body:has(#intake-modal.open) #adminChatFloat{
 #clientScreen .sub-branch .sub-branch{margin-bottom:4px}
 #clientScreen .pick-row{display:flex;gap:26px;flex-wrap:wrap;margin:0 0 12px}
 #clientScreen .sched-sep{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+/* N sessions, laid out one under the other with the week navigation above them. */
+#clientScreen .sessions-head{display:flex;align-items:center;gap:10px;margin:0 0 8px;flex-wrap:wrap}
+#clientScreen .sessions-title{font-family:var(--font-display);letter-spacing:.4px;
+  margin-inline-start:auto;margin-inline-end:auto;color:var(--text-muted)}
+#clientScreen .session-slot{margin:0 0 12px}
 #clientScreen .rest-inline{appearance:none;background:var(--bg-panel);border:1px solid var(--line);
   color:var(--text-muted);border-radius:999px;padding:3px 11px;font-size:.72rem;
   font-weight:700;letter-spacing:.4px;cursor:pointer;margin-inline-start:8px}
@@ -2280,7 +2285,17 @@ function refreshLiveCoachVersion() {
 }
 
 function renderAthleteList(list) {
-  athletes = ingestAdminSnapshots(list);
+  var incoming = ingestAdminSnapshots(list);
+  /* Losing every athlete at once is almost always a failed answer, not a real change.
+     It is reported and refused rather than painted — a strip that empties itself is
+     indistinguishable, to the person looking at it, from data that is gone. */
+  if (!incoming.length && Array.isArray(athletes) && athletes.length && athletesAnswered) {
+    try { console.warn("[admin] athlete list came back empty — keeping the last good one"); } catch (e) {}
+    showHdrToast("רשימת המתאמנים חזרה ריקה — משאיר את הקודמת. לא נמחק כלום.", "warn");
+    return;
+  }
+  athletes = incoming;
+  athletesAnswered = true;
   lastAdminSnapFingerprint = adminSnapshotsFingerprint(athletes);
   renderPeopleStrip();
 
@@ -2288,7 +2303,9 @@ function renderAthleteList(list) {
     currentAthleteId = null;
     adminChatFabOpen = false;
     syncAthleteChatFab(null);
-    if (!clientPrograms.length) {
+    /* Only when the OTHER half has answered too. Otherwise this is a race: the client
+       programmes load a moment later and the page had already declared nobody home. */
+    if (programsAnswered && !clientPrograms.length) {
       document.getElementById("content").innerHTML =
         '<div class="empty-content"><div class="icon">·</div><p>אין לקוחות — לחץ ״+ לקוח״ כדי להתחיל</p></div>';
     }
@@ -2312,12 +2329,30 @@ function renderAthleteList(list) {
 /* Which chip is lit: an athlete, or a programme. One strip, two kinds of client. */
 var activeProgramId = null;
 
+/* Which halves have actually answered. Empty is not the same as "not yet", and the
+   strip must never present the second as the first. */
+var athletesAnswered = false;
+var programsAnswered = false;
+
 function renderPeopleStrip() {
   var sb = document.getElementById("athlete-tabs");
   if (!sb || !window.AdminPeopleStrip) return;
-  var rows = AdminPeopleStrip.rows({ athletes: athletes, programs: clientPrograms });
+  var list = Array.isArray(athletes) ? athletes : [];
+  var progs = Array.isArray(clientPrograms) ? clientPrograms : [];
+  var rows = AdminPeopleStrip.rows({ athletes: list, programs: progs });
   sb.innerHTML = AdminPeopleStrip.html(rows, activeProgramId || currentAthleteId);
-  document.getElementById("athlete-count").textContent = rows.length + " לקוחות";
+  var countEl = document.getElementById("athlete-count");
+  if (countEl) {
+    /* Both numbers, always. When the owner reported "all my athletes disappeared" there
+       was no way to tell from the screen whether the athlete half had come back empty or
+       had never answered — so now the screen says. */
+    countEl.textContent =
+      rows.length + " לקוחות · " + list.length + " מתאמנים · " + progs.length + " תוכניות";
+  }
+  try {
+    console.log("[admin] strip:", { athletes: list.length, programs: progs.length,
+      athletesAnswered: athletesAnswered, programsAnswered: programsAnswered });
+  } catch (e) {}
 }
 
 function renderPeopleStripActive(programId) {
@@ -2329,7 +2364,16 @@ function renderPeopleStripActive(programId) {
    halves, so there is only ever one of it. */
 window.adminOnClientRows = function (rows, monthlyTotal, unreadTotal) {
   clientPrograms = Array.isArray(rows) ? rows : [];
+  programsAnswered = true;
   renderPeopleStrip();
+  /* The empty state may have been painted before this half answered. */
+  if (clientPrograms.length) {
+    var content = document.getElementById("content");
+    if (content && /אין לקוחות/.test(content.innerHTML)) {
+      content.innerHTML =
+        '<div class="empty-content"><div class="icon">·</div><p>בחר לקוח מהרצועה למעלה</p></div>';
+    }
+  }
 };
 
 /* A click on a chip: an athlete is already here, a programme is on the other screen —
@@ -6013,10 +6057,10 @@ tryRestoreAdminSession();
     return n > max ? max : n;
   }
 
-  /* A session-count program has no weekdays at all: N sessions a week, the coach
-     decides when. The calendar still shows a full Sun–Sat week — the owner asked for
-     the calendar shape either way — and this line says how many sessions the week owes,
-     so the count from the intake is visible while writing. */
+  /* A session-count program has no weekdays at all: N sessions a week, the coach decides
+     when. So it is NOT drawn as a week — it is drawn as N sessions (owner, 2026-09-02).
+     Behind the scenes each session still lives on a weekday key, so the storage, the
+     client's view and everything already written stay exactly as they were. */
   function sessionCountLimit() {
     var intake = S.program && S.program.intake;
     if (!intake || intake.scheduleMode !== "session_count") return 0;
@@ -6038,13 +6082,11 @@ tryRestoreAdminSession();
       return;
     }
     var limit = sessionCountLimit();
-    var head = "";
     if (limit) {
-      head =
-        '<p class="meta" style="margin:0 0 8px">' + limit +
-        " אימונים בשבוע, בלי ימים קבועים — הלוח מציג את השבוע ואתה בוחר באילו ימים לכתוב.</p>";
+      host.innerHTML = renderSessionsView(D, block, limit);
+      return;
     }
-    host.innerHTML = head + D.renderBrickView(brickOpts());
+    host.innerHTML = D.renderBrickView(brickOpts());
   }
 
   /* A rest day is a TICK BOX while the day is being edited, and it is always there —
@@ -6065,6 +6107,48 @@ tryRestoreAdminSession();
       (isRest ? " checked" : "") + ">" +
       "<span>יום מנוחה</span></label>"
     );
+  }
+
+  /**
+   * N sessions, and nothing else. One card per session, the same day card the calendar
+   * would have opened, plus the week navigation — because a block still has weeks even
+   * when its sessions have no weekdays.
+   */
+  function renderSessionsView(D, block, limit) {
+    var wi = clampWi(S.wi | 0);
+    var week = (block.weeks || [])[wi] || {};
+    var weeks = weekCount();
+    var opts = brickOpts();
+    var html =
+      '<div class="sessions-head">' +
+      '<button type="button" class="ghost sm" onclick="cvCalShift(-1)"' +
+      (wi <= 0 ? " disabled" : "") + ">‹ שבוע קודם</button>" +
+      '<span class="sessions-title">שבוע ' + (wi + 1) + " מתוך " + weeks + " · " +
+      limit + " אימונים</span>" +
+      '<button type="button" class="ghost sm" onclick="cvCalShift(1)"' +
+      (wi >= weeks - 1 ? " disabled" : "") + ">שבוע הבא ›</button>" +
+      "</div>" +
+      '<p class="meta" style="margin:0 0 10px">' + limit +
+      " אימונים בשבוע, בלי ימים קבועים. כתוב אותם לפי הסדר — הלקוח יראה אותם כך.</p>";
+
+    for (var i = 0; i < limit; i++) {
+      var dayKey = DAY_KEYS_LOCAL[i] || DAY_KEYS_LOCAL[DAY_KEYS_LOCAL.length - 1];
+      var cardOpts = {};
+      for (var k in opts) {
+        if (Object.prototype.hasOwnProperty.call(opts, k)) cardOpts[k] = opts[k];
+      }
+      cardOpts.activeDay = dayKey;
+      cardOpts.editing = !!(S.edit && S.edit.wi === wi && S.edit.day === dayKey);
+      cardOpts.editDraft = cardOpts.editing ? S.edit : null;
+      cardOpts.cardFocus = false;
+      /* The label the owner and the client both read: this is session 2, not Monday. */
+      cardOpts.dateLabelOverride = "אימון " + (i + 1);
+      html +=
+        '<div class="session-slot">' +
+        D.renderDayCardHtml(block, week, wi, dayKey, cardOpts) +
+        "</div>";
+    }
+    return html;
   }
 
   function brickOpts() {

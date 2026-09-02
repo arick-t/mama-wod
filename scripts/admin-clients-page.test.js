@@ -331,6 +331,21 @@ ok(
   "the weekday rows are a sub-question of the emphases",
   /id="inWeekDays" class="sub-branch" hidden/.test(page)
 );
+/* ------------------------------------------------------------------------
+ * A programme sold by the SESSION is drawn as sessions, not as a week.
+ *
+ * Three sessions a week with no fixed weekdays was being drawn as a Sun–Sat calendar,
+ * which offered seven places to write where the owner had sold three. His report,
+ * 2026-09-02: "המתבקש בתרחיש זה — הצגת 3 אימונים וזהו". Each session still lives on a
+ * weekday key behind the scenes, so nothing already written moved.
+ * --------------------------------------------------------------------- */
+ok("a session-count programme gets a sessions view", /function renderSessionsView/.test(page));
+ok("and the calendar is not used for it", /host\.innerHTML = renderSessionsView\(D, block, limit\)/.test(page));
+ok("exactly as many cards as sessions sold", /for \(var i = 0; i < limit; i\+\+\)/.test(page));
+ok("each card says which session it is", /dateLabelOverride = "אימון "/.test(page));
+ok("the week can still be moved", /cvCalShift\(-1\)/.test(page) && /cvCalShift\(1\)/.test(page));
+ok("the card is the shared one, not a second card", /D\.renderDayCardHtml\(block, week, wi, dayKey, cardOpts\)/.test(page));
+
 /* Rest days say WHICH days, in the same row of seven the emphases use. */
 ok("ticking rest days opens a week", /id="inRestDaysWrap" class="sub-branch" hidden/.test(page));
 ok("it is the same seven-column row", /id="inRestDayRow" class="emph-days"/.test(page));
@@ -503,7 +518,11 @@ ok("the app frame is admin's", /<div id="app">/.test(page) && /class="tabs-bar"/
 ok("it opens by admin's own class", /app\.classList\.add\("is-open"\)/.test(page));
 ok("the header carries the counters", /id="athlete-count"/.test(page) && /class="count-wrap"/.test(page));
 ok("adding a client is one button", /id="btn-add-athlete"/.test(page) && /function chooseClientKind/.test(page));
-ok("the count is everyone he manages", /rows\.length \+ " לקוחות"/.test(page));
+/* The count names both halves. When the owner reported "all my athletes disappeared"
+   there was no way to tell from the screen whether that half had answered empty or had
+   not answered at all — so now the screen says which. */
+ok("the count is everyone he manages", /rows\.length \+ " לקוחות · "/.test(page));
+ok("and it says which half is which", / מתאמנים · /.test(page) && / תוכניות/.test(page));
 
 /* ------------------------------------------------------------------------
  * The header the owner specified on 2026-09-01, item by item.
