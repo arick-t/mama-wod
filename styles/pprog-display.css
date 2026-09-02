@@ -32,7 +32,12 @@
 .pprog-cal-month-btn{background:transparent;border:none;color:#e8e4d8;font-size:1.05em;font-weight:700;cursor:pointer;font-family:inherit;padding:4px 8px;letter-spacing:.02em}
 .pprog-cal-month-btn:hover{color:#b06dcf}
 .pprog-cal-today-row{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 10px}
-.pprog-cal-today{appearance:none;background:#F5C518;border:1px solid #F5C518;color:#111;font-size:.72em;font-weight:800;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:inherit;letter-spacing:.02em;line-height:1.2;min-height:34px}
+/* One family for the whole row (owner, 2026-09-02). Today used to be solid yellow and
+   read as permanently pressed next to the view buttons; making the active view solid
+   orange only moved the problem. Now all four look the same, and the ONLY filled one is
+   the view you are actually in. */
+.pprog-cal-today{appearance:none;background:transparent;border:1px solid var(--line);color:var(--text-muted);font-size:.72em;font-weight:800;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:inherit;letter-spacing:.02em;line-height:1.2;min-height:34px}
+.pprog-cal-today:hover{border-color:#3a3a3a;color:var(--text)}
 /* Seven columns for a week, N for a programme sold as N sessions — and the cells
    share the whole width either way. A fixed seven left four empty gaps and read
    as a broken table (owner, 2026-09-02). Up to ten sessions has to fit too. */
@@ -41,7 +46,12 @@
    new conversation with the client (owner, 2026-09-02). */
 .pprog-cal-blocks{display:flex;flex-direction:column;gap:22px}
 .pprog-cal-block{border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:10px 10px 6px;background:rgba(255,255,255,.015)}
-.pprog-cal-block-title{font-size:12px;font-weight:800;letter-spacing:.02em;color:var(--text-muted);margin:0 0 8px;text-align:center}
+/* A block heading is a heading, and it follows the same rule every other heading in
+   this product follows: the accent colour, real weight, and room around it. It was
+   12px grey and disappeared into the grid (owner, 2026-09-02). */
+.pprog-cal-block-title{display:flex;align-items:center;gap:10px;font-size:1em;font-weight:800;
+  letter-spacing:.01em;color:var(--coach);margin:2px 0 12px;text-align:start}
+.pprog-cal-block-title::after{content:"";flex:1;height:1px;background:linear-gradient(to left,transparent,var(--line))}
 /* Three ways to read one programme, beside Today. */
 /* Same button as Today in every dimension — they share a row and do the same kind of
    thing (owner, 2026-09-02). But Today is an ACTION and the views are a STATE, so they

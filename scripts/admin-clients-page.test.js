@@ -675,8 +675,23 @@ ok("they are the same shape as Today", /\.pprog-cal-view\{appearance:none;backgr
 /* Today is an ACTION, the views are a STATE. Both solid yellow made Today read as
    permanently pressed (owner, 2026-09-02). */
 ok("the current view is orange, not yellow", /\.pprog-cal-view\.on\{background:var\(--brand\)/.test(page));
-ok("and Today keeps the yellow to itself", /\.pprog-cal-today\{appearance:none;background:#F5C518/.test(page));
+/* All four are one family now: Today filled yellow read as permanently pressed beside
+   them, and moving the fill to orange only moved the problem (owner, 2026-09-02). */
+ok("Today wears the same clothes as the views", /\.pprog-cal-today\{appearance:none;background:transparent;border:1px solid var\(--line\)/.test(page));
+ok("and only the view you are in is filled", /\.pprog-cal-view\.on\{background:var\(--brand\)/.test(page) && !/\.pprog-cal-today\{[^}]*background:#F5C518/.test(page));
 ok("and hands the hook to the calendar", /setView: "cvSetView"/.test(page));
+/* A block heading follows the same rule as every other heading here: accent colour,
+   real weight, room around it. It was 12px grey and vanished into the grid. */
+ok("a block heading reads as a heading", /\.pprog-cal-block-title\{[^}]*color:var\(--coach\)/.test(page));
+/* One press, one person — and a press that survives the strip being redrawn. */
+ok("the strip acts on the press, not only the click", /sb\.addEventListener\("pointerdown"/.test(page) && /sb\.addEventListener\("pointerup"/.test(page));
+ok("a drag is a scroll, not a choice", /Math\.abs\(ev\.clientX - p\.x\) > 8/.test(page));
+ok("both halves open through one door", /function openPersonFromStrip/.test(page));
+/* First entry lands on somebody rather than an empty content area. */
+ok("first entry opens someone", /if \(!adminOpenedSomeone && !currentAthleteId && !activeProgramId && clientPrograms\.length\)/.test(page));
+/* Sessions mode must not redefine what a rest day is. */
+ok("a rest day is still a rest day inside a sessions programme", /NormalizePprogBlock\.isRestDay\(dayKey, dayData, week\)/.test(page));
+
 ok("the calendar is told where the blocks divide", /blockGroups: \(\(S\.program && S\.program\.blocks\)/.test(page));
 ok("tapping a week opens that week, not its general note", /for \(var i = 0; i < limit; i\+\+\) out\.push\(\{ wi: w, day: DAY_KEYS_LOCAL\[i\] \}\);/.test(page));
 /* The selection maths lives beside the calendar that draws it, in the display library,
