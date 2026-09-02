@@ -393,6 +393,7 @@ button.ghost:hover{color:var(--text)}
   /* --- 3 · the program -------------------------------------------------- */
 
   function loadProgram() {
+    lastProgramLoadMs = Date.now();
     show("authView", false); show("termsView", false);
     api({ action: "read" }).then(function (r) {
       if (r.status === 401) { clearToken(); openAuth("This device is no longer authorised. Ask your coach for a new code."); return; }
@@ -1024,9 +1025,16 @@ button.ghost:hover{color:var(--text)}
   });
 
   /* A change from the coach's side is the only way this plan moves, so pull
-     whenever the page comes back to the foreground. */
+     whenever the page comes back to the foreground — but a phone foregrounds a page
+     dozens of times an hour, and every pull is a read we pay for. Coming back twice in
+     a minute shows what is already on screen. */
+  var lastProgramLoadMs = 0;
+  var FOREGROUND_MIN_GAP_MS = 60000;
   document.addEventListener("visibilitychange", function () {
-    if (document.visibilityState === "visible" && state.program && !state.edit) loadProgram();
+    if (document.visibilityState !== "visible") return;
+    if (!state.program || state.edit) return;
+    if (Date.now() - lastProgramLoadMs < FOREGROUND_MIN_GAP_MS) return;
+    loadProgram();
   });
 
   function boot() {

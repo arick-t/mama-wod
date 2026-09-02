@@ -1349,7 +1349,14 @@ var ADMIN_SESSION_KEY = "dw_admin_session";
 var ADMIN_REMEMBER_KEY = "dw_admin_remember";
 var adminPollTimer = null;
 var lastAdminSnapFingerprint = "";
-var ADMIN_POLL_MS = 20000;
+/* Every twenty seconds used to mean downloading every athlete in full, training blocks
+   and all — the leak that had the Blob store suspended for a month on 2026-09-02. A poll
+   now reads one small stamp, so the interval is cheap; it is still slower than it was,
+   because nothing here changes twice a minute. */
+var ADMIN_POLL_MS = 45000;
+/* The fingerprint of the list we are currently showing. A poll that matches it costs one
+   small read and nothing else happens. */
+var lastAdminListStamp = "";
 var athletes = [];
 /* The other half of the strip: programmes written for coaches and studios. They live in
    a different store and are edited on the other screen, but as far as the owner is
@@ -2016,16 +2023,45 @@ function adminSnapshotsFingerprint(list) {
     .join(";;");
 }
 
+/**
+ * Ask the cheap question: has anything changed? Only a "yes" costs a real list.
+ *
+ * This is the difference between ~2,300 full object reads an hour per open tab and ~80
+ * tiny ones. It is the whole reason the store was suspended.
+ */
+function pollAdminListStamp() {
+  if (!adminIsAuthed()) return;
+  fetch(adminApiUrl("/api/admin-snapshot"), {
+    method: "POST",
+    headers: adminAuthHeaders(),
+    body: JSON.stringify(withAdminPassword({ action: "admin_list_stamp" }))
+  })
+    .then(function (r) { return r.json().then(function (j) { return { status: r.status, j: j }; }); })
+    .then(function (res) {
+      if (res.status === 401) { forceAdminLogout("הסשן פג — התחבר מחדש"); return; }
+      if (res.status !== 200 || !res.j || !res.j.ok) return;
+      if (res.j.listError) {
+        showHdrToast("לא הצלחתי לקרוא את רשימת המתאמנים — " + res.j.listError + ". שום דבר לא נמחק.", "err");
+        return;
+      }
+      var stamp = String(res.j.stamp || "");
+      if (!stamp || stamp === lastAdminListStamp) return;
+      /* Something really moved: now — and only now — pay for the full list. */
+      loadAthletes({ silent: true });
+    })
+    .catch(function () {});
+}
+
 function startAdminLivePoll() {
   if (adminPollTimer) return;
   adminPollTimer = setInterval(function () {
     if (!adminIsAuthed()) return;
     if (typeof document !== "undefined" && document.hidden) return;
-    loadAthletes({ silent: true });
+    pollAdminListStamp();
   }, ADMIN_POLL_MS);
   try {
     document.addEventListener("visibilitychange", function () {
-      if (!document.hidden && adminIsAuthed()) loadAthletes({ silent: true });
+      if (!document.hidden && adminIsAuthed()) pollAdminListStamp();
     });
   } catch (eVis) {}
 }
@@ -2192,6 +2228,7 @@ function tryRestoreAdminSession() {
       if (!res.data || !res.data.ok) throw new Error("bad_response");
       persistAdminSession(token, remember);
       warnIfStorageIsNotDurable(res.data.storage);
+      lastAdminListStamp = String(res.data.stamp || "");
       openAdminApp(res.data.snapshots || []);
       if (res.data.listError) {
         showHdrToast("לא הצלחתי לקרוא את רשימת המתאמנים — " + res.data.listError + ". שום דבר לא נמחק.", "err");
@@ -2261,6 +2298,7 @@ function loadAthletes(opts) {
         return;
       }
       var list = pack.data.snapshots || [];
+      lastAdminListStamp = String(pack.data.stamp || "");
       var fp = adminSnapshotsFingerprint(list);
       if (silent && fp === lastAdminSnapFingerprint) return;
       lastAdminSnapFingerprint = fp;

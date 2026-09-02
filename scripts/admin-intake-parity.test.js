@@ -213,7 +213,32 @@ ok(
 ok("phone package does not pre-mark join mail", /intakeNotifySent:\s*false/.test(handoff) && /Join mail waits/.test(handoff));
 ok("app join mail requires Terms", /if \(!store\.legalAcceptedAt\) return/.test(index));
 ok("admin remembers session token not password", /pw-remember/.test(adminHtml) && /persistAdminSession/.test(adminHtml) && /tryRestoreAdminSession/.test(adminHtml) && /dw_admin_session/.test(adminHtml) && /clearLegacyAdminPasswordStore/.test(adminHtml));
-ok("admin live poll 15-30s no LLM", /startAdminLivePoll/.test(adminHtml) && /ADMIN_POLL_MS = 20000/.test(adminHtml) && /loadAthletes\(\{ silent: true \}\)/.test(adminHtml));
+/* ------------------------------------------------------------------------
+ * THE POLL MUST NOT COST THE WHOLE LIST.
+ *
+ * It used to: every twenty seconds the admin downloaded every athlete in full, training
+ * blocks and all, because building the list means fetching each object. Roughly 2,300
+ * object reads and tens of megabytes an hour, per open tab. On 2026-09-02 Vercel
+ * suspended the Blob store for the month and the whole product went dark — production
+ * included.
+ *
+ * A poll asks one small question now. These assertions are the reason it stays that way.
+ * --------------------------------------------------------------------- */
+ok("there is still a live poll", /startAdminLivePoll/.test(adminHtml));
+ok("it asks for a stamp, not the list", /pollAdminListStamp\(\);/.test(adminHtml) && /action: "admin_list_stamp"/.test(adminHtml));
+ok("the poll does NOT fetch the list directly", !/\}, ADMIN_POLL_MS\);[\s\S]{0,80}loadAthletes/.test(adminHtml));
+ok("only a changed stamp pays for the list", /if \(!stamp \|\| stamp === lastAdminListStamp\) return;/.test(adminHtml));
+ok("returning to the tab asks the cheap question too", /if \(!document\.hidden && adminIsAuthed\(\)\) pollAdminListStamp\(\)/.test(adminHtml));
+ok("the interval is not faster than it was", /ADMIN_POLL_MS = 45000/.test(adminHtml));
+ok("the page remembers what it is holding", /lastAdminListStamp = String\(/.test(adminHtml));
+
+/* The server side of the same promise. */
+ok("the stamp is its own action", /body\.action === "admin_list_stamp"/.test(snap));
+ok("it reads an index, not every athlete", /async function readSnapshotStamp/.test(snap) && /getJson\(SNAP_INDEX_KEY\)/.test(snap));
+ok("the index is kept true on every write", /await touchSnapshotIndex\(id, payload\)/.test(snap));
+ok("a full list still carries the stamp to compare against", /stamp: stampFromRows\(listed\.rows\)/.test(snap));
+/* Rebuilding is the expensive path and must stay off the poll. */
+ok("a rebuild only happens when there is no index at all", /if \(!idx \|\| !Array\.isArray\(idx\.rows\)\) idx = await rebuildSnapshotIndex\(\)/.test(snap));
 ok("admin_list mints session token header", /mintAdminSessionToken/.test(snap) && /X-Admin-Session-Token/.test(snap));
 ok("admin 401 forces logout", /forceAdminLogout/.test(adminHtml) && /loadAthletes[\s\S]{0,900}status === 401/.test(adminHtml));
 ok("admin session uses ADMIN_SESSION_SECRET", /ADMIN_SESSION_SECRET/.test(fs.readFileSync(path.join(root, "scripts/lib/admin/admin-auth.js"), "utf8")));

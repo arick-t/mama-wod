@@ -152,7 +152,7 @@ ok("an unstable connection is disclosed", /connection looks unstable/.test(html)
 /* --- the pull that keeps the plan current -------------------------- */
 
 ok("the page pulls on returning to the foreground", /visibilitychange/.test(html));
-ok("it does not pull while the coach is mid-edit", /!state\.edit\) loadProgram/.test(html));
+ok("it does not pull while the coach is mid-edit", /if \(!state\.program \|\| state\.edit\) return;/.test(html));
 /* Refresh is gone on the owner's instruction (2026-09-01), and it was redundant: the
    page already pulls when it comes back to the foreground and reloads itself after
    every save. A button that repeats what happens anyway reads as a button that is
@@ -223,5 +223,10 @@ ok("MODIFIED is shown on a changed day", /pprog-modified-flag/.test(html));
 
 ok("api calls go to the Vercel base, not a relative path", /mama-wod\.vercel\.app/.test(html));
 ok("localhost still works for dev", /localhost/.test(html));
+
+/* --- reads are money -------------------------------------------------
+ * A phone foregrounds a page dozens of times an hour and each pull is a paid read.
+ * On 2026-09-02 the Blob store was suspended over exactly this kind of arithmetic. */
+ok("but not twice in a minute", /FOREGROUND_MIN_GAP_MS = 60000/.test(html) && /Date\.now\(\) - lastProgramLoadMs < FOREGROUND_MIN_GAP_MS/.test(html));
 
 console.log("All client view page checks passed.");

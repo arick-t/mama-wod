@@ -8,6 +8,7 @@
  * Stage A: device writeKey ownership; fail-closed without Blob on Vercel.
  */
 
+const crypto = require("crypto");
 const path = require("path");
 const fs = require("fs");
 const { checkRateLimit, sendRateLimit } = require("../../../lib/rate-limit");
@@ -114,10 +115,96 @@ async function readSnapshot(athleteId) {
   return getJson(snapKey(id));
 }
 
+/* One small object holding "who exists and when did they last change". Reading it is
+   one request of a few hundred bytes; reading the real list is one request PER ATHLETE,
+   each carrying a full training block. That difference is what suspended the store. */
+const SNAP_INDEX_KEY = SNAP_PREFIX + "_index.json";
+
+/** A short, stable fingerprint of the whole list. Same people, same stamp. */
+function stampFromRows(rows) {
+  const parts = (Array.isArray(rows) ? rows : [])
+    .map((r) => String((r && r.athleteId) || "") + ":" + String((r && r.updatedAt) || ""))
+    .sort();
+  return crypto.createHash("sha1").update(parts.join("|"), "utf8").digest("hex").slice(0, 16);
+}
+
+/**
+ * The index, rebuilt from truth. Expensive — one read per athlete — so it happens when
+ * there is no index at all, and never on a poll.
+ */
+/* The last rebuild this instance did, and when. Purely a brake: if the index write is
+   failing, this is what stops every poll from turning into a full read of everyone. */
+let rebuiltIndexCache = null;
+let rebuiltIndexAt = 0;
+const REBUILD_COOLDOWN_MS = 5 * 60 * 1000;
+
+async function rebuildSnapshotIndex() {
+  if (rebuiltIndexCache && Date.now() - rebuiltIndexAt < REBUILD_COOLDOWN_MS) {
+    return rebuiltIndexCache;
+  }
+  const rows = await listJson(SNAP_PREFIX);
+  const list = rows
+    .map((r) => r && r.data)
+    .filter((d) => d && d.athleteId && !isDeletedSnapshot(d))
+    .map((d) => ({ athleteId: d.athleteId, updatedAt: d.updatedAt || "" }));
+  const idx = { rows: list, count: list.length, updatedAt: new Date().toISOString() };
+  rebuiltIndexCache = idx;
+  rebuiltIndexAt = Date.now();
+  try {
+    await putJson(SNAP_INDEX_KEY, idx);
+  } catch (e) {}
+  return idx;
+}
+
+/** Keep the index true on every write, so it never has to be rebuilt in anger. */
+async function touchSnapshotIndex(athleteId, payload) {
+  const id = safeAthleteId(athleteId);
+  if (!id) return;
+  let idx = null;
+  try {
+    idx = await getJson(SNAP_INDEX_KEY);
+  } catch (e) {}
+  rebuiltIndexCache = null;
+  const rows = idx && Array.isArray(idx.rows) ? idx.rows.slice() : [];
+  const gone = !payload || isDeletedSnapshot(payload);
+  const next = rows.filter((r) => r && r.athleteId !== id);
+  /* Exactly what was stored — never a fresher invention, or the stamps drift apart. */
+  if (!gone) next.push({ athleteId: id, updatedAt: String((payload && payload.updatedAt) || "") });
+  try {
+    await putJson(SNAP_INDEX_KEY, {
+      rows: next,
+      count: next.length,
+      updatedAt: new Date().toISOString(),
+    });
+  } catch (e) {}
+}
+
+/**
+ * What a poll asks for: has anything changed? One small read, and only a rebuild when
+ * there is no index yet.
+ */
+async function readSnapshotStamp() {
+  let idx = null;
+  try {
+    idx = await getJson(SNAP_INDEX_KEY);
+  } catch (e) {
+    return { stamp: "", count: 0, error: String((e && (e.message || e.code)) || "read_failed") };
+  }
+  if (!idx || !Array.isArray(idx.rows)) idx = await rebuildSnapshotIndex();
+  return { stamp: stampFromRows(idx.rows), count: idx.rows.length, error: "" };
+}
+
 async function writeSnapshot(athleteId, data) {
   const id = safeAthleteId(athleteId);
   if (!id) throw new Error("athleteId required");
   let payload = data;
+  /* The index and the list must agree on when a row last moved, or the poll thinks the
+     list is stale every single time and fetches everyone anyway — the leak, restored in
+     disguise. Callers normally set this; when one forgets, we set it here so both sides
+     read the same truth. */
+  if (payload && typeof payload === "object" && !payload.updatedAt) {
+    payload = Object.assign({}, payload, { updatedAt: new Date().toISOString() });
+  }
   let str = JSON.stringify(payload);
   if (str.length > MAX_SNAPSHOT_BYTES) {
     payload = Object.assign({}, data, { pastBlocks: [] });
@@ -128,6 +215,8 @@ async function writeSnapshot(athleteId, data) {
   }
   if (str.length > MAX_SNAPSHOT_BYTES) throw new Error("Snapshot too large");
   await putJson(snapKey(id), payload);
+  /* The index is what a poll reads instead of everything. It must never lag a write. */
+  await touchSnapshotIndex(id, payload);
 }
 
 function publicSnapshot(row) {
@@ -289,7 +378,11 @@ module.exports = async function handler(req, res) {
     const isAdmin = checkAdminAuth(req);
 
     const athleteId = safeAthleteId(body.athleteId || body.userId);
-    if (!athleteId && !(body.action === "admin_list" || body.list === true)) {
+    /* The admin-wide actions are about everyone, so there is no athlete to name.
+       Leaving the stamp out of this list answered every poll with 400 and the page
+       quietly stopped refreshing at all (caught by admin-poll-cost.test.js). */
+    const wholeStoreAction = body.action === "admin_list" || body.action === "admin_list_stamp" || body.list === true;
+    if (!athleteId && !wholeStoreAction) {
       return res.status(400).json({ error: "athleteId required" });
     }
 
@@ -302,6 +395,9 @@ module.exports = async function handler(req, res) {
         const json = {
           ok: true,
           snapshots: listed.rows,
+          /* What the poll will compare against, so a quiet minute costs one small read
+             instead of the whole list (2026-09-02). */
+          stamp: stampFromRows(listed.rows),
           /* Empty because there is nobody, or empty because the read failed? The page
              cannot tell them apart on its own, and treating the second as the first is
              what made a full list look deleted. */
@@ -322,6 +418,30 @@ module.exports = async function handler(req, res) {
           }
         }
         return res.status(200).json(json);
+      } catch (e) {
+        return storageUnavailable(res, e);
+      }
+    }
+
+    /**
+     * "Has anything changed?" — one small read.
+     *
+     * This exists because the admin polls every few seconds and the honest answer used
+     * to cost a full download of every athlete. It reads the index and nothing else.
+     */
+    if (body.action === "admin_list_stamp") {
+      if (!isAdmin) return adminAuthDenied(res);
+      const rlStamp = checkRateLimit(req, { name: "admin-snap-stamp", limit: 240, windowMs: 60_000 });
+      if (!rlStamp.ok) return sendRateLimit(res, rlStamp);
+      try {
+        const st = await readSnapshotStamp();
+        return res.status(200).json({
+          ok: true,
+          stamp: st.stamp,
+          count: st.count,
+          listError: st.error || undefined,
+          storage: storageInfo(),
+        });
       } catch (e) {
         return storageUnavailable(res, e);
       }
@@ -1110,6 +1230,7 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({
         ok: true,
         snapshots: listed.rows,
+        stamp: stampFromRows(listed.rows),
         listError: listed.error || undefined,
         storage: storageInfo(),
       });
