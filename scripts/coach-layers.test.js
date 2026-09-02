@@ -55,6 +55,8 @@ const MAX_CHARS = {
      training rule, not a competition rule. Net across the two files is roughly flat. */
   "layer2-general": 7000,
   "layer2-individual": 4000,
+  /* Conditional: only a studio that bought N sessions a week pays for it. */
+  "layer2-session-count": 3200,
   "layer3-gymnastics": 4000,
   "layer3-weightlifting": 3500,
   "layer3-endurance": 3500,
@@ -239,7 +241,7 @@ function testGeneralLayerDecisions() {
     /FILLING THE STRENGTH SLOT \(does not change the shape of the week\)/.test(G) &&
       /When a day's focus is W, the lift can be met in one of two ways/.test(G));
   ok("speed work is justified in Glassman's own terms",
-    /power training in the strict sense — force x distance \/ time/.test(G));
+    /power training — force x distance \/ time/.test(G));
 
   /* Accessory has a ceiling now, not a share of the week. */
   ok("accessory carries an explicit ceiling",
@@ -263,6 +265,22 @@ function testGeneralLayerDecisions() {
     /Someone who only trains Tue\/Thu\/Sat must still meet squat, hinge/i.test(flat));
   ok("an explicit request beats format rotation",
     /that request WINS over format rotation/i.test(flat));
+
+  /* A brick is a month (4 weeks) and the deload is a continuous cadence across months, not the
+     last week of a block: ask for every 4 weeks and it lands in week 4 of block 1; ask for 5+ and
+     it lands inside a later block. So placement is an INPUT, and a block may hold none. */
+  ok("a block is four weeks", /A block is FOUR weeks — one month/.test(G));
+  ok("the coach never chooses the deload week itself",
+    /A DELOAD WEEK IS GIVEN TO YOU\. NEVER CHOOSE ONE YOURSELF/.test(G));
+  ok("a block may hold no deload at all",
+    /Named none: all four are build weeks/.test(flat) &&
+      /a block may hold one or none, at any of its four\s*weeks/i.test(flat));
+  ok("the last week of a block is not assumed to be a deload",
+    /NEVER decide that the last week of a block is a deload/.test(flat));
+  ok("no fifth week is ever added", /never add a fifth week/.test(flat));
+  ok("no five-week brick language survives in this layer",
+    !/5[- ]week|five week|week 5\b|weeks 1-4/i.test(G),
+    "the five-week brick came back into the layer");
 }
 
 function testIndividualLayerDecisions() {
@@ -533,6 +551,70 @@ function testRouterAgainstRealPacket() {
     }).layers.indexOf("layer1-injuries") >= 0);
 }
 
+/**
+ * A studio can buy a NUMBER of sessions instead of a weekly plan, and then describe each one:
+ * "long strength + short metcon under 10 minutes", "one part only, partner metcon", "stations".
+ * The intake screen says what that mode means — "No weekday attached — the coach delivers them
+ * whenever suits their groups" — so every weekday rule in layer2-general needs a translation, and
+ * the descriptions have to be read as instructions rather than hints (owner, 2026-09-02).
+ */
+function testSessionCountMode() {
+  const S = require("../lib/coach-layers/layer2-session-count.js");
+  const flat = S.replace(/\s+/g, " ");
+
+  ok("session-count mode is detected from the mode", L.sellsSessionsByCount({ scheduleMode: "session_count" }));
+  ok("a weekly-plan studio is not session-count",
+    !L.sellsSessionsByCount({ scheduleMode: "weekly_schedule", sessionsPerWeek: 3 }));
+  ok("a half-filled intake with a count still routes correctly",
+    L.sellsSessionsByCount({ sessionsPerWeek: 3 }));
+  ok("an individual never gets the session-count layer",
+    L.buildLayerPack({ agent: "individual", profile: { goals: "get fitter" } }).layers.indexOf(
+      "layer2-session-count"
+    ) < 0);
+  ok("a weekly-plan studio never gets it",
+    L.buildLayerPack({ agent: "studio", studioIntake: { scheduleMode: "weekly_schedule" } }).layers.indexOf(
+      "layer2-session-count"
+    ) < 0);
+  ok("a session-count studio does get it",
+    L.buildLayerPack({
+      agent: "studio",
+      studioIntake: { scheduleMode: "session_count", sessionsPerWeek: 3 },
+    }).layers.indexOf("layer2-session-count") >= 0);
+
+  ok("the session index replaces the weekday as the thing that carries identity",
+    /The session INDEX carries the identity a weekday carries elsewhere/.test(S));
+  ok("no weekdays and no invented rest days in this mode",
+    /Do NOT attach weekdays, and\s*do NOT invent rest days/i.test(flat));
+  ok("the exact number of sessions is produced",
+    /Produce EXACTLY the number of sessions asked for/.test(S));
+
+  /* The descriptions are instructions. These four are the owner's own examples. */
+  ok("a described session is a HARD instruction, every week",
+    /Treat every such description as a HARD instruction for that session, EVERY week/.test(S));
+  ok("'one part only' is honoured literally",
+    /'One part only' means ONE part/.test(S) &&
+      /Do not add a warm-up part, an accessory part or a second\s*piece/i.test(flat));
+  ok("a named time cap is a ceiling for the room",
+    /the piece must finish inside 10 minutes for the room, not for the fittest person in it/.test(
+      flat
+    ));
+  ok("a description outranks a default in any other layer",
+    /If a description conflicts with a default in any other layer, THE DESCRIPTION WINS/.test(S));
+  ok("undescribed sessions are treated as interchangeable",
+    /If the sessions are NOT described, treat them as interchangeable/.test(flat));
+
+  /* The descriptions also feed discipline selection — "partner metcon" should reach the router. */
+  const pack = L.buildLayerPack({
+    agent: "studio",
+    studioIntake: {
+      scheduleMode: "session_count", sessionsPerWeek: 3, sessionsDiffer: true,
+      sessionTypes: ["long strength + short metcon under 10 minutes", "one part only, partner metcon", "stations"],
+    },
+  });
+  ok("a session description steers the discipline layer too",
+    pack.layers.indexOf("layer3-partner") >= 0, pack.layers.join(", "));
+}
+
 function testPackBudget() {
   /* The heaviest realistic pack. If this grows past the cap, every brick got more expensive and
      somebody should have said so. */
@@ -567,6 +649,7 @@ function main() {
   testInjuryGate();
   testRouting();
   testRouterAgainstRealPacket();
+  testSessionCountMode();
   testPackBudget();
   console.log("\nPassed:", passed);
   if (process.exitCode) {
