@@ -187,7 +187,7 @@ function testGeneralLayerDecisions() {
   ok("a studio is programmed seven days by default", /program SEVEN days a week unless the intake/i.test(flat));
   ok("the 3-on/1-off cycle is no longer the default shape",
     !/A repeating block of THREE TRAINING DAYS then rest/.test(G) &&
-      /Do NOT build a 3-on\/1-off cycle/.test(G));
+      /Do NOT build a 3-on\/1-off cycle/.test(flat));
   ok("inventing a rest day is forbidden for a studio", /do NOT insert a\s*rest day the intake did not ask for/i.test(flat));
   ok("an individual still gets rest days from the intake", /AN INDIVIDUAL: training days and rest days come from the intake/i.test(flat));
   ok("a named day in the intake wins outright", /WHATEVER THE INTAKE NAMES, WINS/.test(G));
@@ -201,7 +201,7 @@ function testGeneralLayerDecisions() {
       /keep each day's modality stable from week to week/i.test(flat));
   ok("character drifts across weeks instead of restarting",
     /DRIFTS — the day's CHARACTER/.test(G) &&
-      /let the rotation carry on into the next week instead of restarting it/i.test(flat));
+      /let\s*the rotation carry into the next week instead of restarting it/i.test(flat));
   ok("the seventh day has no special role",
     /NO DAY IS SPECIAL and no day has a default role/.test(G) &&
       /the same continuum — including the seventh/.test(flat));
@@ -329,8 +329,22 @@ function testIndividualLayerDecisions() {
   ok("the advanced multi-session tier is gone",
     !/ADVANCED —|Multiple sessions daily|3 to 6 hours/i.test(C),
     "a tier this app does not serve came back");
-  ok("no second session is added to a day",
-    /One session per day\. Do not add a second session to a day/.test(C));
+  /* "יום כפול - לא חלק מהשירותים שאנחנו נותנים - אין אצלינו דבר כזה." The app renders one workout
+     per calendar day, so this is a product fact and not only a competitor rule: it is stated in
+     the always-on general layer, and restated here because this is the one source that pushes the
+     other way. Both have to hold. */
+  ok("no double days in the competitor layer",
+    /NO DOUBLE DAYS, ever, at any level/.test(C));
+  ok("extra work becomes a part, not a second session",
+    /Extra work becomes another part of that session, not a second session/.test(Cflat));
+  ok("one session per programmed day is stated in the always-on general layer",
+    /ONE SESSION PER PROGRAMMED DAY \(HARD\)/.test(
+      require("../lib/coach-layers/layer2-general.js")
+    ));
+  ok("splitting a day into morning and evening is forbidden",
+    /never split a day into a morning and an evening piece/i.test(
+      require("../lib/coach-layers/layer2-general.js").replace(/\s+/g, " ")
+    ));
   ok("the coach no longer scores the athlete on domains it has no data for",
     !/Score the athlete across their domains/.test(C) &&
       /Do not invent a score for them across domains you have no data on/i.test(Cflat));
