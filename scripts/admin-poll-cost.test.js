@@ -161,6 +161,23 @@ function athlete(n) {
   ok("the deleted athlete leaves the count", s5.payload.count === s4.payload.count - 1);
   ok("deleting reads the one athlete, not all of them", count.objectsListed === beforeDelete);
 
+  /* --- the clean slate, proven ------------------------------------------------
+   * His first purge left every athlete standing and the only trace was a toast that
+   * had already been replaced. One call, and it has to actually empty the list. */
+  const beforePurge = await post({ action: "admin_list" });
+  ok("there are people to remove", beforePurge.payload.snapshots.length > 0);
+  const purged = await post({ action: "admin_purge_all" });
+  ok("the purge answers", purged.statusCode === 200 && purged.payload.ok === true);
+  ok("it names who it removed", (purged.payload.removed || []).length === beforePurge.payload.snapshots.length);
+  ok("and nothing failed silently", (purged.payload.failed || []).length === 0);
+  const afterPurge = await post({ action: "admin_list" });
+  ok("THE LIST IS EMPTY", afterPurge.payload.snapshots.length === 0);
+  const stampAfter = await post({ action: "admin_list_stamp" });
+  ok("the poll agrees it is empty", stampAfter.payload.count === 0);
+  /* Seeded members must not walk back in — that is why deletion is a tombstone. */
+  const secondList = await post({ action: "admin_list" });
+  ok("and they stay gone on the next list", secondList.payload.snapshots.length === 0);
+
   console.log("admin-poll-cost.test.js passed");
 })().catch((e) => {
   console.error(e);

@@ -939,6 +939,10 @@ header{flex-wrap:wrap;row-gap:8px}
   padding:8px 12px;border-radius:8px;cursor:pointer;line-height:1}
 .btn-delete-client:hover{background:rgba(232,69,26,.12);border-color:#E8451A}
 .btn-delete-client svg{flex-shrink:0}
+.purge-report{padding:6px 2px;font-size:.9em;line-height:1.6}
+.purge-report h3{margin:0 0 10px;font-size:1.05em;color:#e8e4d8}
+.purge-report ul{margin:4px 0 12px;padding-inline-start:20px;color:#bdb8ab}
+.purge-report ul.purge-bad{color:#fca5a5}
 </style>
 </head>
 <body>
@@ -1654,37 +1658,59 @@ async function purgeAllPeople() {
     return;
   }
 
-  var failed = [];
-  for (var i = 0; i < progs.length; i++) {
-    showHdrToast("מוחק לקוח " + (i + 1) + "/" + progs.length + "…", "ok");
-    try {
-      var rp = await fetch(adminApiUrl("/api/client-program"), {
-        method: "POST",
-        headers: adminAuthHeaders(),
-        body: JSON.stringify(withAdminPassword({ action: "delete", programId: progs[i].programId })),
-      });
-      if (rp.status !== 200) failed.push((progs[i].clientName || progs[i].programId) + " (" + rp.status + ")");
-    } catch (e) {
-      failed.push((progs[i].clientName || progs[i].programId) + " (רשת)");
-    }
-  }
-  for (var j = 0; j < people.length; j++) {
-    showHdrToast("מוחק מתאמן " + (j + 1) + "/" + people.length + "…", "ok");
-    try {
-      var ra = await fetch(
-        adminApiUrl("/api/admin-snapshot") + "?id=" + encodeURIComponent(people[j].athleteId),
-        { method: "DELETE", headers: adminAuthHeaders() }
-      );
-      if (ra.status !== 200) failed.push((people[j].displayName || people[j].athleteId) + " (" + ra.status + ")");
-    } catch (e) {
-      failed.push((people[j].displayName || people[j].athleteId) + " (רשת)");
-    }
+  /* One call each. Per-person requests from the browser were five separate ways to
+     fail quietly, and they did — the first purge left every athlete standing. */
+  function post(url, body) {
+    return fetch(adminApiUrl(url), {
+      method: "POST",
+      headers: adminAuthHeaders(),
+      body: JSON.stringify(withAdminPassword(body)),
+    })
+      .then(function (r) { return r.json().then(function (j) { return { status: r.status, j: j }; }); })
+      .catch(function (e) { return { status: 0, j: { error: String((e && e.message) || e) } }; });
   }
 
+  showHdrToast("מוחק…", "ok");
+  var clientsRes = await post("/api/client-program", { action: "purge_all" });
+  var athletesRes = await post("/api/admin-snapshot", { action: "admin_purge_all" });
+
+  function receipt(title, res) {
+    if (res.status !== 200 || !res.j || !res.j.ok) {
+      return "<p><strong>" + title + "</strong> — נכשל: " +
+        esc(String((res.j && (res.j.error || res.j.message)) || res.status)) + "</p>";
+    }
+    var removed = res.j.removed || [];
+    var bad = res.j.failed || [];
+    return (
+      "<p><strong>" + title + "</strong> — נמחקו " + removed.length +
+      (bad.length ? ", נכשלו " + bad.length : "") + "</p>" +
+      (removed.length
+        ? "<ul>" + removed.map(function (x) { return "<li>" + esc(x.name || x.id) + "</li>"; }).join("") + "</ul>"
+        : "") +
+      (bad.length
+        ? '<ul class="purge-bad">' + bad.map(function (x) {
+            return "<li>" + esc(x.id) + " — " + esc(x.why || "") + "</li>";
+          }).join("") + "</ul>"
+        : "")
+    );
+  }
+
+  /* The receipt stays on screen. A toast would be gone before he read it. */
+  var content = document.getElementById("content");
+  if (content) {
+    content.innerHTML =
+      '<div class="ath-wrap"><div class="ath-card"><div class="purge-report">' +
+      "<h3>ניקוי הרשימה</h3>" +
+      receipt("לקוחות", clientsRes) +
+      receipt("מתאמנים", athletesRes) +
+      '<p class="ath-muted">הגיבוי נשמר אצלך בהורדות לפני המחיקה.</p>' +
+      "</div></div></div>";
+  }
+
+  if (window.ClientScreen && window.ClientScreen.close) window.ClientScreen.close();
   if (window.ClientScreen && window.ClientScreen.reload) window.ClientScreen.reload();
+  currentAthleteId = null;
   loadAthletes({ silent: true });
-  if (failed.length) showHdrToast("נמחק חלקית. נכשלו: " + failed.join(", "), "err");
-  else showHdrToast("הרשימה נוקתה. הגיבוי בהורדות שלך.", "ok");
 }
 
 function adminIsAuthed() {

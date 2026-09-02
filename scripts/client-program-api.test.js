@@ -605,6 +605,22 @@ async function main() {
   const gone = await H.client(laptopToken, { action: "read", programId: pid });
   ok("access dies with the program", gone.status === 404);
 
+  /* --- the clean slate, on this side too -------------------------- */
+
+  const p1 = await H.owner({ action: "create", clientName: "Purge A", weekCount: 4 });
+  const p2 = await H.owner({ action: "create", clientName: "Purge B", weekCount: 4 });
+  ok("two more clients exist", p1.status === 200 && p2.status === 200);
+  const listBefore = await H.owner({ action: "list" });
+  ok("and the list shows them", listBefore.body.rows.length >= 2);
+  const purge = await H.owner({ action: "purge_all" });
+  ok("the purge answers", purge.status === 200 && purge.body.ok === true);
+  ok("it names who it removed", (purge.body.removed || []).length === listBefore.body.rows.length);
+  ok("nothing failed silently", (purge.body.failed || []).length === 0);
+  const listAfter = await H.owner({ action: "list" });
+  ok("THE CLIENT LIST IS EMPTY", listAfter.body.rows.length === 0);
+  const goneRead = await H.owner({ action: "read", programId: p1.body.program.programId });
+  ok("a purged client is really gone", goneRead.status === 404);
+
   console.log("All client-program API checks passed.");
 }
 

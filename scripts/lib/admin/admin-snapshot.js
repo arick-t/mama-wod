@@ -381,7 +381,11 @@ module.exports = async function handler(req, res) {
     /* The admin-wide actions are about everyone, so there is no athlete to name.
        Leaving the stamp out of this list answered every poll with 400 and the page
        quietly stopped refreshing at all (caught by admin-poll-cost.test.js). */
-    const wholeStoreAction = body.action === "admin_list" || body.action === "admin_list_stamp" || body.list === true;
+    const wholeStoreAction =
+      body.action === "admin_list" ||
+      body.action === "admin_list_stamp" ||
+      body.action === "admin_purge_all" ||
+      body.list === true;
     if (!athleteId && !wholeStoreAction) {
       return res.status(400).json({ error: "athleteId required" });
     }
@@ -442,6 +446,70 @@ module.exports = async function handler(req, res) {
           listError: st.error || undefined,
           storage: storageInfo(),
         });
+      } catch (e) {
+        return storageUnavailable(res, e);
+      }
+    }
+
+    /**
+     * Remove every athlete, in one call.
+     *
+     * The owner clears his rehearsals before a real run-through. Doing it from the
+     * browser was one DELETE per person and every one of them could fail on its own;
+     * this reports exactly who went and who did not, so a partial result is visible
+     * instead of looking like a clean slate.
+     *
+     * Tombstones, like the single delete — a hard delete would let the seed put the
+     * founder's own rows back.
+     */
+    if (body.action === "admin_purge_all") {
+      if (!isAdmin) return adminAuthDenied(res);
+      const rlPurge = checkRateLimit(req, { name: "admin-snap-purge", limit: 4, windowMs: 60_000 });
+      if (!rlPurge.ok) return sendRateLimit(res, rlPurge);
+      try {
+        const listed = await listSnapshots();
+        if (listed.error) return storageUnavailable(res, new Error(listed.error));
+        const removed = [];
+        const failed = [];
+        const now = new Date().toISOString();
+        for (const row of listed.rows) {
+          const id = safeAthleteId(row && row.athleteId);
+          if (!id) {
+            failed.push({ id: String((row && row.athleteId) || "?"), why: "bad id" });
+            continue;
+          }
+          try {
+            const existing = (await readSnapshot(id)) || {};
+            await writeSnapshot(id, {
+              athleteId: id,
+              displayName: String(existing.displayName || id).slice(0, 80),
+              deleted: true,
+              revoked: true,
+              deletedAt: now,
+              revokedAt: now,
+              writeKeyHash: null,
+              clientWritesLocked: true,
+              currentBlock: null,
+              pastBlocks: [],
+              pendingPushUpgrade: null,
+              pendingAdminDayEdit: null,
+              seeded: !!existing.seeded,
+              createdAt: existing.createdAt || now,
+              updatedAt: now,
+              joinedAt: existing.joinedAt || existing.createdAt || now,
+            });
+            try {
+              await burnOpenClaimsForAthlete(id);
+            } catch (eClaim) {}
+            removed.push({ id: id, name: existing.displayName || id });
+          } catch (e) {
+            failed.push({ id: id, why: String((e && (e.message || e.code)) || e).slice(0, 120) });
+          }
+        }
+        try {
+          await rebuildSnapshotIndex();
+        } catch (eIdx) {}
+        return res.status(200).json({ ok: true, removed: removed, failed: failed });
       } catch (e) {
         return storageUnavailable(res, e);
       }

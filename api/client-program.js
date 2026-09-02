@@ -172,6 +172,38 @@ async function ownerHandler(req, res, body) {
     return res.status(200).json({ ok: true, renewal: result });
   }
 
+  /**
+   * Remove every client, in one call — the twin of admin_purge_all.
+   *
+   * Same reason: one request per client meant failures nobody saw. The access row goes
+   * with the program, so no code and no linked device survives it.
+   */
+  if (action === "purge_all") {
+    const idx = await store.readIndex();
+    if (!idx.ok) return bad(res, 503, idx.code, idx.error);
+    const rows = (idx.index && idx.index.rows) || [];
+    const removed = [];
+    const failed = [];
+    for (const row of rows) {
+      const id = String((row && row.programId) || "");
+      if (!id) continue;
+      try {
+        const del = await store.deleteProgram(id);
+        if (!del.ok) {
+          failed.push({ id: id, why: del.error || del.code });
+          continue;
+        }
+        try {
+          await JsonStore.deleteJson(Access.accessKey(id));
+        } catch (eAcc) {}
+        removed.push({ id: id, name: row.clientName || id });
+      } catch (e) {
+        failed.push({ id: id, why: String((e && e.message) || e).slice(0, 120) });
+      }
+    }
+    return res.status(200).json({ ok: true, removed: removed, failed: failed });
+  }
+
   if (action === "rebuild_index") {
     const rebuilt = await store.rebuildIndex();
     if (!rebuilt.ok) return bad(res, 503, rebuilt.code, rebuilt.error);
