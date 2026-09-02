@@ -297,8 +297,13 @@ ok(
   "a failed snapshot read is not swallowed into an empty list",
   !/if \(e && e\.code === "blob_required"\) throw e;\s*\n\s*return \[\];/.test(snap)
 );
-ok("the reason is written down where it happened", /NEVER an empty list/.test(snap));
-ok("the endpoint answers with the storage failure", /return storageUnavailable\(res, e\)/.test(snap));
+ok("the reason is written down where it happened", /indistinguishable from data loss/.test(snap));
+/* Reporting it must not take the page down either — throwing turned the silent empty
+   list into a 500 that would not open at all. The failure travels WITH the answer, so
+   the admin still opens and still tells the truth about what it could not read. */
+ok("a read failure is reported, not thrown", /listError: listed\.error \|\| undefined/.test(snap));
+ok("the page refuses to believe an unreadable list", /לא הצלחתי לקרוא את רשימת המתאמנים/.test(adminHtml));
+ok("and says nothing was deleted", /שום דבר לא נמחק/.test(adminHtml));
 
 /* And the page must not present a failure as data. */
 ok("a failed list refresh is always announced", /רענון הרשימה נכשל/.test(adminHtml));

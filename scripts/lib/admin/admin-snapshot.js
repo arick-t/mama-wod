@@ -142,20 +142,38 @@ function isDeletedSnapshot(row) {
   return !!(row && (row.deleted === true || row.revoked === true));
 }
 
+/**
+ * The athlete list, and — when it cannot be read — WHY.
+ *
+ * This used to swallow every failure into an empty array, so a storage hiccup reached
+ * the owner as "you have no clients": no error, no logout, nothing to act on. That is
+ * indistinguishable from data loss to the person reading the screen, and it cost him a
+ * morning on 2026-09-02.
+ *
+ * Throwing instead was the other extreme — it took the whole admin down. So the failure
+ * travels WITH the answer: an empty list plus the reason it is empty. The page shows the
+ * reason and refuses to believe the list.
+ *
+ * @returns {{rows: object[], error: string}}
+ */
 async function listSnapshots() {
   try {
     await ensureSeedAthletes();
+  } catch (eSeed) {
+    /* Seeding is a convenience; failing it must not hide the athletes that DO exist. */
+  }
+  try {
     const rows = await listJson(SNAP_PREFIX);
-    return rows
-      .map((r) => publicSnapshot(r.data))
-      .filter((row) => row && row.athleteId && !isDeletedSnapshot(row))
-      .sort((a, b) => String(b.updatedAt || "").localeCompare(String(a.updatedAt || "")));
+    return {
+      rows: rows
+        .map((r) => publicSnapshot(r.data))
+        .filter((row) => row && row.athleteId && !isDeletedSnapshot(row))
+        .sort((a, b) => String(b.updatedAt || "").localeCompare(String(a.updatedAt || ""))),
+      error: "",
+    };
   } catch (e) {
-    /* NEVER an empty list. A failed read reported as "no athletes" is data loss as far
-       as the person reading the screen is concerned — it cost the owner a morning on
-       2026-09-02, staring at a strip that said he had no clients. Let it through; the
-       endpoint answers storageUnavailable and the page says so. */
-    throw e;
+    if (e && e.code === "blob_required") throw e;
+    return { rows: [], error: String((e && (e.message || e.code)) || "read_failed").slice(0, 300) };
   }
 }
 
@@ -280,8 +298,16 @@ module.exports = async function handler(req, res) {
       const rlList = checkRateLimit(req, { name: "admin-snap-get", limit: 60, windowMs: 60_000 });
       if (!rlList.ok) return sendRateLimit(res, rlList);
       try {
-        const snapshots = await listSnapshots();
-        const json = { ok: true, snapshots, storage: storageInfo() };
+        const listed = await listSnapshots();
+        const json = {
+          ok: true,
+          snapshots: listed.rows,
+          /* Empty because there is nobody, or empty because the read failed? The page
+             cannot tell them apart on its own, and treating the second as the first is
+             what made a full list look deleted. */
+          listError: listed.error || undefined,
+          storage: storageInfo(),
+        };
         /* Mint only on password login — never on token poll. Token via response header only (not JSON body). */
         if (adminAuthUsedPassword(req, ADMIN_PASSWORD)) {
           const sessionTok = mintAdminSessionToken(ADMIN_PASSWORD, {
@@ -1080,8 +1106,13 @@ module.exports = async function handler(req, res) {
     const rl = checkRateLimit(req, { name: "admin-snap-get", limit: 60, windowMs: 60_000 });
     if (!rl.ok) return sendRateLimit(res, rl);
     try {
-      const snapshots = await listSnapshots();
-      return res.status(200).json({ ok: true, snapshots, storage: storageInfo() });
+      const listed = await listSnapshots();
+      return res.status(200).json({
+        ok: true,
+        snapshots: listed.rows,
+        listError: listed.error || undefined,
+        storage: storageInfo(),
+      });
     } catch (e) {
       return storageUnavailable(res, e);
     }

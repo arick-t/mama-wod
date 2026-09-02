@@ -2193,6 +2193,9 @@ function tryRestoreAdminSession() {
       persistAdminSession(token, remember);
       warnIfStorageIsNotDurable(res.data.storage);
       openAdminApp(res.data.snapshots || []);
+      if (res.data.listError) {
+        showHdrToast("לא הצלחתי לקרוא את רשימת המתאמנים — " + res.data.listError + ". שום דבר לא נמחק.", "err");
+      }
     })
     .catch(function() {
       forceAdminLogout("");
@@ -2252,6 +2255,11 @@ function loadAthletes(opts) {
         return;
       }
       warnIfStorageIsNotDurable(pack.data.storage);
+      /* The server answered, but could not read. An empty list here is not a fact. */
+      if (pack.data.listError) {
+        showHdrToast("לא הצלחתי לקרוא את רשימת המתאמנים — " + pack.data.listError + ". שום דבר לא נמחק.", "err");
+        return;
+      }
       var list = pack.data.snapshots || [];
       var fp = adminSnapshotsFingerprint(list);
       if (silent && fp === lastAdminSnapFingerprint) return;
