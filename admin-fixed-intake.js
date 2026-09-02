@@ -91,6 +91,9 @@
       skills: {},
       lifts: {},
       sessionLimits: "",
+      /* Minutes per session. 0 = not answered. */
+      sessionMinutes: 0,
+      sessionTimesDiffer: false,
       injuries: "",
       goals: "",
       fixedIntakePacket: "",
@@ -302,8 +305,29 @@
           esc(S.DAY_LABELS[dk] || dk) +
           "</label>";
       }
+      var mins = parseInt(st.sessionMinutes, 10);
+      var differs = st.sessionTimesDiffer === true || !!String(st.sessionLimits || "").trim();
       html +=
-        '</div><textarea id="adm-fx-schedule-notes" maxlength="500" placeholder="Optional: e.g. rest Thu+Sun, sessions ~60 min">' +
+        "</div>" +
+        /* The length of a session, as a number — the same question a studio answers,
+           asked the same way (owner, 2026-09-02). */
+        '<div class="pprog-fixed-row">' +
+        '<label class="pprog-fixed-inline" for="adm-fx-minutes">Session length (minutes)</label>' +
+        '<input id="adm-fx-minutes" type="number" min="20" max="120" class="pprog-fixed-num" value="' +
+        esc(mins > 0 ? mins : "") +
+        '" placeholder="—">' +
+        '<label class="pprog-fixed-inline"><input type="checkbox" id="adm-fx-times-differ"' +
+        (differs ? " checked" : "") +
+        ' onchange="adminFixedToggleTimes()"> Different times on different days</label>' +
+        "</div>" +
+        /* Only when a single number cannot say it: "45 minutes, but Friday can be an
+           hour and a half". */
+        '<textarea id="adm-fx-limits" maxlength="600" placeholder="e.g. 45 min most days, Friday can be 90"' +
+        (differs ? "" : " hidden") +
+        ">" +
+        esc(st.sessionLimits || "") +
+        "</textarea>" +
+        '<textarea id="adm-fx-schedule-notes" maxlength="500" placeholder="Optional: e.g. rest Thu+Sun">' +
         esc(st.scheduleNotes || "") +
         "</textarea>";
     } else if (key === "recovery") {
@@ -366,13 +390,6 @@
           "</span></label>";
       }
       html += "</div>";
-    } else if (key === "limits") {
-      html +=
-        '<p class="pprog-fixed-title">Scheduling limits</p>' +
-        '<p class="pprog-fixed-note">Session time cap or other schedule constraints. Blank = none.</p>' +
-        '<textarea id="adm-fx-limits" maxlength="600" placeholder="e.g. Max 50 minutes per session">' +
-        esc(st.sessionLimits || "") +
-        "</textarea>";
     } else if (key === "injuries") {
       var noInj =
         /^no injuries\.?$/i.test(String(st.injuries || "").trim()) ||
@@ -459,6 +476,19 @@
     btn.classList.toggle("active", on);
     btn.setAttribute("aria-pressed", on ? "true" : "false");
   }
+
+  /* Ticking "different times" is what makes the free text exist. Untick and it goes
+     away rather than sitting there as an answer nobody meant to give. */
+  function adminFixedToggleTimes() {
+    var box = document.getElementById("adm-fx-times-differ");
+    var text = document.getElementById("adm-fx-limits");
+    if (!box || !text) return;
+    text.hidden = !box.checked;
+    if (box.checked) {
+      try { text.focus(); } catch (e) {}
+    }
+  }
+  if (typeof window !== "undefined") window.adminFixedToggleTimes = adminFixedToggleTimes;
 
   window.adminFixedFillNoInjuries = function () {
     var ta = document.getElementById("adm-fx-injuries");
@@ -557,10 +587,27 @@
         if (dayCbs[d].checked) days.push(dayCbs[d].getAttribute("data-fx-day"));
       }
       var schEl = document.getElementById("adm-fx-schedule-notes");
+      var minEl = document.getElementById("adm-fx-minutes");
+      var diffEl = document.getElementById("adm-fx-times-differ");
+      var limEl = document.getElementById("adm-fx-limits");
       intakeState.trainingDays = days;
       intakeState.scheduleNotes = schEl ? String(schEl.value || "").trim().slice(0, 500) : "";
+      var minsIn = parseInt(minEl && minEl.value, 10);
+      intakeState.sessionMinutes = minsIn >= 20 && minsIn <= 120 ? minsIn : 0;
+      intakeState.sessionTimesDiffer = !!(diffEl && diffEl.checked);
+      /* The free text is only kept while the tick box says the times differ — leftover
+         text under an unticked box is an answer nobody gave. */
+      intakeState.sessionLimits = intakeState.sessionTimesDiffer && limEl
+        ? String(limEl.value || "").trim().slice(0, 600)
+        : "";
       if (!days.length && !intakeState.scheduleNotes) {
         setFixedErr("Mark at least one training day, or add a short schedule note.");
+        return;
+      }
+      /* A session with no length is a guess with a stopwatch attached — the same rule
+         the studio intake follows. */
+      if (!intakeState.sessionMinutes && !intakeState.sessionLimits) {
+        setFixedErr("How long is a session? 20–120 minutes, or tick the box and describe it.");
         return;
       }
     } else if (key === "recovery") {
@@ -629,9 +676,6 @@
         }
       }
       intakeState.skills = skills;
-    } else if (key === "limits") {
-      var limEl = document.getElementById("adm-fx-limits");
-      intakeState.sessionLimits = limEl ? String(limEl.value || "").trim().slice(0, 600) : "";
     } else if (key === "injuries") {
       var injEl = document.getElementById("adm-fx-injuries");
       intakeState.injuries = injEl ? String(injEl.value || "").trim().slice(0, 800) : "";

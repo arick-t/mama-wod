@@ -244,4 +244,43 @@ ok(
     /CLIENT_ALLOWED_KEYS[\s\S]*declarationAcceptedAt/.test(snap)
 );
 
+/* ------------------------------------------------------------------------
+ * Scheduling limits folded into the weekly schedule.
+ *
+ * They were two steps asking one question — when do you train, and for how long — four
+ * steps apart, which is how an athlete ends up describing their week differently in each
+ * half. The owner merged them on 2026-09-02, in the shape the studio intake already
+ * uses: a number, and a tick box for the case a number cannot say it ("45 minutes, but
+ * Friday can be 90").
+ *
+ * THREE files hold this questionnaire and all three have to agree.
+ * --------------------------------------------------------------------- */
+const contractSrc = fs.readFileSync(path.join(root, "lib", "coach-intake-sync-contract.js"), "utf8");
+
+ok("the contract has eight steps, not nine", /"skills",\s*\n\s*"injuries",/.test(contractSrc));
+ok("there is no limits step left", !/"limits",/.test(contractSrc));
+ok("the admin's copy has no limits step", !/key === "limits"/.test(fixedJs));
+ok("the athlete's copy has no limits step either", !/key === "limits"/.test(index));
+
+/* The number, asked identically on both sides. */
+ok("the admin asks how long a session is", /id="adm-fx-minutes" type="number" min="20" max="120"/.test(fixedJs));
+ok("the athlete is asked the same", /id="pprog-fx-minutes" type="number" min="20" max="120"/.test(index));
+ok("the admin has the different-times box", /id="adm-fx-times-differ"/.test(fixedJs));
+ok("the athlete has it too", /id="pprog-fx-times-differ"/.test(index));
+ok("ticking it reveals the text, on both", /function adminFixedToggleTimes/.test(fixedJs) && /function pprogFixedToggleTimes/.test(index));
+
+/* An answer nobody gave must not be kept: text under an unticked box is discarded. */
+ok("the admin drops text when the box is unticked", /intakeState\.sessionTimesDiffer && limEl/.test(fixedJs));
+ok("so does the athlete", /store\.sessionTimesDiffer && limEl/.test(index));
+
+/* And it is refused rather than guessed, exactly as the studio intake refuses it. */
+ok("the admin refuses a session with no length", /How long is a session\?/.test(fixedJs));
+ok("the athlete is refused too", /How long is a session\?/.test(index));
+
+/* The point of asking: the coach has to be told. */
+ok("the length reaches the coach's packet", /SESSION LENGTH:/.test(contractSrc));
+ok("and the athlete's own prompt", /"Session length: "/.test(index));
+ok("it travels with the rest of the intake", /"sessionMinutes",/.test(contractSrc));
+ok("and onto the phone package", /pkg\.sessionMinutes = p\.sessionMinutes/.test(contractSrc));
+
 console.log("All admin intake parity / sync checks passed.");

@@ -3524,8 +3524,28 @@ function renderPprogFixedStepHtml(step) {
         esc(PPROG_DAY_LABELS[dk] || dk) +
         "</label>";
     }
+    var fxMins = parseInt(store.sessionMinutes, 10);
+    var fxDiffers = store.sessionTimesDiffer === true || !!String(store.sessionLimits || "").trim();
     html +=
-      "</div><textarea id=\"pprog-fx-schedule-notes\" maxlength=\"500\" placeholder=\"Optional: e.g. rest Thu+Sun, sessions ~60 min\">" +
+      "</div>" +
+      /* How long a session is, as a number — the same question the studio intake asks,
+         asked the same way (owner, 2026-09-02). Scheduling limits used to be a whole
+         step of its own, four steps later. */
+      '<div class="pprog-fixed-row">' +
+      '<label class="pprog-fixed-inline" for="pprog-fx-minutes">Session length (minutes)</label>' +
+      '<input id="pprog-fx-minutes" type="number" min="20" max="120" class="pprog-fixed-num" value="' +
+      esc(fxMins > 0 ? fxMins : "") +
+      '" placeholder="—">' +
+      '<label class="pprog-fixed-inline"><input type="checkbox" id="pprog-fx-times-differ"' +
+      (fxDiffers ? " checked" : "") +
+      ' onchange="pprogFixedToggleTimes()"> Different times on different days</label>' +
+      "</div>" +
+      '<textarea id="pprog-fx-limits" maxlength="600" placeholder="e.g. 45 min most days, Friday can be 90"' +
+      (fxDiffers ? "" : " hidden") +
+      ">" +
+      esc(store.sessionLimits || "") +
+      "</textarea>" +
+      '<textarea id="pprog-fx-schedule-notes" maxlength="500" placeholder="Optional: e.g. rest Thu+Sun">' +
       esc(store.scheduleNotes || "") +
       "</textarea>";
   } else if (key === "recovery") {
@@ -3581,13 +3601,6 @@ function renderPprogFixedStepHtml(step) {
         ""
       ) +
       "</div>";
-  } else if (key === "limits") {
-    html +=
-      '<p class="pprog-fixed-title">Scheduling limits</p>' +
-      '<p class="pprog-fixed-note">Session time cap or other schedule constraints. Blank = none.</p>' +
-      '<textarea id="pprog-fx-limits" maxlength="600" placeholder="e.g. Max 50 minutes per session">' +
-      esc(store.sessionLimits || "") +
-      "</textarea>";
   } else if (key === "injuries") {
     html +=
       '<p class="pprog-fixed-title">Injuries &amp; limitations</p>' +
@@ -3613,6 +3626,17 @@ function renderPprogFixedStepHtml(step) {
 function pprogFixedSetErr(msg) {
   var err = document.getElementById("pprogFixedErr");
   if (err) err.textContent = msg || "";
+}
+
+/* Ticking "different times" is what makes the free text exist. */
+function pprogFixedToggleTimes() {
+  var box = document.getElementById("pprog-fx-times-differ");
+  var text = document.getElementById("pprog-fx-limits");
+  if (!box || !text) return;
+  text.hidden = !box.checked;
+  if (box.checked) {
+    try { text.focus(); } catch (e) {}
+  }
 }
 
 function pprogFixedFillNoInjuries() {
@@ -3796,10 +3820,25 @@ function pprogFixedNext() {
       if (dayCbs[d].checked) days.push(dayCbs[d].getAttribute("data-fx-day"));
     }
     var schEl = document.getElementById("pprog-fx-schedule-notes");
+    var minEl = document.getElementById("pprog-fx-minutes");
+    var diffEl = document.getElementById("pprog-fx-times-differ");
+    var limEl = document.getElementById("pprog-fx-limits");
     store.trainingDays = days;
     store.scheduleNotes = schEl ? String(schEl.value || "").trim().slice(0, 500) : "";
+    var minsIn = parseInt(minEl && minEl.value, 10);
+    store.sessionMinutes = minsIn >= 20 && minsIn <= 120 ? minsIn : 0;
+    store.sessionTimesDiffer = !!(diffEl && diffEl.checked);
+    /* Text under an unticked box is an answer nobody gave. */
+    store.sessionLimits = store.sessionTimesDiffer && limEl
+      ? String(limEl.value || "").trim().slice(0, 600)
+      : "";
     if (!days.length && !store.scheduleNotes) {
       pprogFixedSetErr("Mark at least one training day, or add a short schedule note.");
+      return;
+    }
+    /* A session with no length is a guess with a stopwatch attached. */
+    if (!store.sessionMinutes && !store.sessionLimits) {
+      pprogFixedSetErr("How long is a session? 20–120 minutes, or tick the box and describe it.");
       return;
     }
   } else if (key === "recovery") {
@@ -3830,9 +3869,6 @@ function pprogFixedNext() {
     store.skills = skillPack.skills;
     store.intakeSkillsDone = true;
     store.awaitingSkillsAfterLifts = false;
-  } else if (key === "limits") {
-    var limEl = document.getElementById("pprog-fx-limits");
-    store.sessionLimits = limEl ? String(limEl.value || "").trim().slice(0, 600) : "";
   } else if (key === "injuries") {
     var injEl = document.getElementById("pprog-fx-injuries");
     store.injuries = injEl ? String(injEl.value || "").trim().slice(0, 800) : "";
@@ -3897,6 +3933,8 @@ function pprogBuildFixedIntakePrompt(store) {
     "",
     "WEEKLY SCHEDULE:",
     "Training days: " + (dayLabels || "unknown"),
+    /* How long a session is, asked in the same step as when they train (2026-09-02). */
+    "Session length: " + (s.sessionMinutes ? s.sessionMinutes + " minutes" : "unknown"),
     "Notes: " + (s.scheduleNotes || "none"),
     "",
     "ACTIVE RECOVERY:",
@@ -3914,7 +3952,7 @@ function pprogBuildFixedIntakePrompt(store) {
     skillLabels.length ? skillLabels.join(", ") : "None marked — scale gymnastics as needed",
     "",
     "SESSION / SCHEDULE LIMITS:",
-    s.sessionLimits || "none",
+    s.sessionLimits || (s.sessionMinutes ? s.sessionMinutes + " minutes per session" : "none"),
     "",
     "INJURIES / LIMITATIONS:",
     s.injuries || "none",
@@ -3944,6 +3982,7 @@ function pprogFinishFixedIntake(store) {
     "Age: " + (s.age || "unknown"),
     "Bodyweight: " + (s.bodyweight || "unknown") + " kg",
     "Experience: " + (s.experience || "unknown"),
+    "Session length: " + (s.sessionMinutes ? s.sessionMinutes + " min" : "unknown"),
     "Session limits: " + (s.sessionLimits || "none"),
     "Injuries/limitations: " + (s.injuries || "none"),
     "Goals: " + (s.goals || "unknown"),
