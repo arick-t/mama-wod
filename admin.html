@@ -894,24 +894,6 @@ body:has(#intake-modal.open) #adminChatFloat{
 #clientScreen .pick-row{display:flex;gap:26px;flex-wrap:wrap;margin:0 0 12px}
 #clientScreen .sched-sep{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
 /* N sessions, laid out one under the other with the week navigation above them. */
-/* The month as a matrix: a row per week, a cell per session. A programme sold as
-   "three a week" is not a seven-day calendar (owner, 2026-09-02). */
-#clientScreen .sess-matrix-head{display:flex;align-items:baseline;gap:12px;margin:0 0 10px;flex-wrap:wrap}
-#clientScreen .sess-matrix-title{font-weight:800;color:var(--text)}
-#clientScreen .sess-matrix{display:flex;flex-direction:column;gap:8px;margin:0 0 16px}
-#clientScreen .sess-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-#clientScreen .sess-week{min-width:104px;font-size:12px;font-weight:700;color:var(--text-muted)}
-#clientScreen .sess-week.deload{color:#f5c518}
-#clientScreen .sess-cell{position:relative;flex:1 1 0;min-width:96px;padding:12px 10px;border-radius:10px;
-  background:var(--bg-panel);border:1px solid var(--line);color:var(--text-muted);font-family:inherit;
-  font-size:13px;font-weight:700;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
-#clientScreen .sess-cell:hover{border-color:#3a3a3a;color:var(--text)}
-#clientScreen .sess-cell.written{color:var(--text);border-color:rgba(26,155,138,.5);background:rgba(26,155,138,.10)}
-#clientScreen .sess-cell.picked{border-color:var(--brand)}
-#clientScreen .sess-cell.active{background:rgba(232,69,26,.16);border-color:var(--brand);color:#fff}
-#clientScreen .sess-cell.needs-review{outline:2px dashed rgba(232,69,26,.55);outline-offset:-3px}
-#clientScreen .sess-cell .dot{position:absolute;top:6px;inset-inline-end:6px;width:8px;height:8px;
-  border-radius:50%;background:var(--brand)}
 #clientScreen .sessions-head{display:flex;align-items:center;gap:10px;margin:0 0 8px;flex-wrap:wrap}
 #clientScreen .sessions-title{font-family:var(--font-display);letter-spacing:.4px;
   margin-inline-start:auto;margin-inline-end:auto;color:var(--text-muted)}
@@ -5803,7 +5785,8 @@ tryRestoreAdminSession();
     /* Brick view state, mirroring what the admin module keeps per athlete:
        wi = 0-based week, day = active day key or "general", calMode = week|month,
        selected = the multi-day horizontal spread, edit = the one open draft. */
-    wi: 0, day: "sun", calMode: "week", selected: [], edit: null, editStatus: null,
+    /* A brick is a month, so that is what opens (owner, 2026-09-02). */
+    wi: 0, day: "sun", calMode: "month", selected: [], edit: null, editStatus: null,
     /* true = the new-client wizard owns the screen and the list is out of the way. */
     adding: false,
   };
@@ -6367,11 +6350,6 @@ tryRestoreAdminSession();
       host.innerHTML = '<p class="muted">אין שבועות בתוכנית.</p>';
       return;
     }
-    var sessions = sessionCountLimit();
-    if (sessions) {
-      host.innerHTML = renderSessionsMatrix(D, block, sessions);
-      return;
-    }
     host.innerHTML = D.renderBrickView(brickOpts());
   }
 
@@ -6397,84 +6375,6 @@ tryRestoreAdminSession();
     );
   }
 
-  /**
-   * The month as a matrix: a row per week, a cell per session.
-   *
-   * The cards underneath are the shared ones — the same card the calendar opens, so a
-   * session written here looks exactly like a session written anywhere else.
-   */
-  function renderSessionsMatrix(D, block, limit) {
-    var weeks = weekCount();
-    var opts = brickOpts();
-    var html =
-      '<div class="sess-matrix-head">' +
-      '<span class="sess-matrix-title">' + limit + " אימונים בשבוע · " + weeks + " שבועות</span>" +
-      '<span class="meta">הלקוח יראה אותם לפי הסדר, בלי ימים קבועים.</span>' +
-      "</div>" +
-      '<div class="sess-matrix">';
-    for (var w = 0; w < weeks; w++) {
-      var week = (block.weeks || [])[w] || {};
-      var deload = String(week.phase || "") === "deload";
-      html +=
-        '<div class="sess-row">' +
-        '<span class="sess-week' + (deload ? " deload" : "") + '">שבוע ' + (w + 1) +
-        (deload ? " · דילואד" : "") + "</span>";
-      for (var i = 0; i < limit; i++) {
-        var dayKey = DAY_KEYS_LOCAL[i];
-        var dayData = (week.days && week.days[dayKey]) || {};
-        var written = !!(dayData.parts && dayData.parts.length);
-        var unreviewed = dayData.ownerUnreviewed === true;
-        var unread = ((S.program && S.program.unreadDays) || {})["w" + (w + 1) + ":" + dayKey] !== undefined;
-        var active = (S.wi | 0) === w && S.day === dayKey;
-        var picked = (S.selected || []).some(function (x) {
-          return (x.wi | 0) === w && x.day === dayKey;
-        });
-        html +=
-          '<button type="button" class="sess-cell' +
-          (written ? " written" : "") +
-          (active ? " active" : picked ? " picked" : "") +
-          (unreviewed ? " needs-review" : "") +
-          '" onclick="cvSetDay(event, ' + w + ", '" + dayKey + "')\">" +
-          (unread ? '<span class="dot" title="הלקוח שינה"></span>' : "") +
-          "אימון " + (i + 1) +
-          "</button>";
-      }
-      html += "</div>";
-    }
-    html += "</div>";
-
-    /* The card, or the strip of cards when several sessions are open side by side. */
-    var picks = (S.selected || []).filter(function (x) {
-      return DAY_KEYS_LOCAL.indexOf(x.day) < limit;
-    });
-    var cards = [];
-    var list = picks.length >= 2 ? picks : [{ wi: S.wi | 0, day: S.day || DAY_KEYS_LOCAL[0] }];
-    for (var c = 0; c < list.length; c++) {
-      var cwi = clampWi(list[c].wi);
-      var cday = String(list[c].day || DAY_KEYS_LOCAL[0]);
-      var ci = DAY_KEYS_LOCAL.indexOf(cday);
-      if (ci < 0 || ci >= limit) continue;
-      var cardOpts = {};
-      for (var k in opts) {
-        if (Object.prototype.hasOwnProperty.call(opts, k)) cardOpts[k] = opts[k];
-      }
-      cardOpts.activeDay = cday;
-      cardOpts.activeWeekIndex = cwi;
-      cardOpts.editing = !!(S.edit && S.edit.wi === cwi && S.edit.day === cday);
-      cardOpts.editDraft = cardOpts.editing ? S.edit : null;
-      cardOpts.cardFocus = cwi === (S.wi | 0) && cday === S.day;
-      cardOpts.dateLabelOverride = "אימון " + (ci + 1) + " · שבוע " + (cwi + 1);
-      cards.push(D.renderDayCardHtml(block, (block.weeks || [])[cwi] || {}, cwi, cday, cardOpts));
-    }
-    return (
-      html +
-      (opts.widthStatusHtml || "") +
-      (cards.length > 1
-        ? '<div class="pprog-width-strip">' + cards.join("") + "</div>"
-        : cards.join(""))
-    );
-  }
-
   function brickOpts() {
     var p = S.program || {};
     var block = currentBlock();
@@ -6485,15 +6385,23 @@ tryRestoreAdminSession();
         '<div class="pprog-width-status">' + selected.length + " ימים נבחרו · " +
         '<button type="button" onclick="cvClearSelection()" aria-label="נקה בחירה">נקה</button></div>';
     }
-    /* Sessions rather than weekdays: the matrix draws them, and a day that is not one
-       of the sessions sold is not a place to write. */
+    /* Sessions rather than weekdays. The calendar draws the same month it always
+       draws — same grid, same circles, same deload row — with one circle per session
+       sold instead of one per weekday (owner, 2026-09-02: "באותו עיצוב בדיוק"). */
     var sessions = sessionCountLimit();
     var sessionRest = sessions
       ? function (dayKey) {
           return DAY_KEYS_LOCAL.indexOf(dayKey) >= sessions;
         }
       : null;
+    var activeIndex = DAY_KEYS_LOCAL.indexOf(S.day || "sun");
     return {
+      sessionColumns: sessions || 0,
+      /* The card under the calendar names the session, not a Tuesday. */
+      dateLabelOverride:
+        sessions && activeIndex >= 0 && activeIndex < sessions
+          ? "אימון " + (activeIndex + 1) + " · שבוע " + ((S.wi | 0) + 1)
+          : "",
       block: block,
       activeWeekIndex: S.wi | 0,
       activeDay: S.day || "sun",
@@ -6508,7 +6416,7 @@ tryRestoreAdminSession();
       emptyDayHtml:
         '<div class="pprog-day-stub">היום הזה עוד ריק. לחץ על העיפרון כדי לכתוב בו אימון, ' +
         'או השאר אותו כיום מנוחה.</div>',
-      calMode: S.calMode || "week",
+      calMode: S.calMode || "month",
       israelTodayIso: israelTodayIso(),
       /* The owner writes the training. Nothing on this page talks to a provider. */
       readOnly: true,

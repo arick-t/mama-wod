@@ -387,19 +387,25 @@ ok(
  * 2026-09-02: "המתבקש בתרחיש זה — הצגת 3 אימונים וזהו". Each session still lives on a
  * weekday key behind the scenes, so nothing already written moved.
  * --------------------------------------------------------------------- */
-/* Settled on 2026-09-02, third attempt: neither a weekday calendar (seven places to
-   write where three were sold) nor a bare stack of cards (which lost the calendar he had
-   approved) — a MATRIX. Four rows for the month, N columns for the sessions. */
-ok("a session-count programme is a matrix", /function renderSessionsMatrix/.test(page));
-ok("a row per week of the month", /for \(var w = 0; w < weeks; w\+\+\)/.test(page));
-ok("a cell per session sold", /for \(var i = 0; i < limit; i\+\+\)/.test(page));
-ok("a cell is a session, not a Tuesday", /"אימון " \+ \(i \+ 1\)/.test(page));
-ok("the open card says which session and which week", /"אימון " \+ \(ci \+ 1\) \+ " · שבוע "/.test(page));
-ok("the card is the shared one, not a second card", /D\.renderDayCardHtml\(block, \(block\.weeks \|\| \[\]\)\[cwi\]/.test(page));
-ok("a weekday programme is still the calendar", /host\.innerHTML = D\.renderBrickView\(brickOpts\(\)\)/.test(page));
+/* Settled on 2026-09-02, fourth attempt — and the answer was there all along: there is
+   ONE calendar in this product, and a programme sold as "four sessions a week" is that
+   calendar with four circles instead of seven. Not a weekday grid (seven places to
+   write where four were sold), not a stack of cards, not a matrix of dashed boxes. His
+   words: "באותו עיצוב בדיוק כמו התצוגה החודשית עם העיגולים המאושרת". */
+ok("there is no second layout", !/function renderSessionsMatrix/.test(page) && !/sess-cell/.test(page));
+ok("the programme is always the calendar", /host\.innerHTML = D\.renderBrickView\(brickOpts\(\)\)/.test(page));
+ok("the calendar is told how many sessions were sold", /sessionColumns: sessions \|\| 0/.test(page));
 ok("days beyond the sessions sold are not writable", /DAY_KEYS_LOCAL\.indexOf\(dayKey\) >= sessions/.test(page));
+ok("the card names the session and the week", /"אימון " \+ \(activeIndex \+ 1\) \+ " · שבוע "/.test(page));
 /* A brick is a month: opening on one week hid three quarters of what he sold. */
 ok("the month opens whole", /S\.calMode = "month"/.test(page));
+
+/* The calendar's own side of that bargain. */
+const calSrc = fs.readFileSync(path.join(root, "lib", "pprog-display.js"), "utf8");
+ok("the shared calendar takes a column count", /opts\.sessionColumns > 0 \? Math\.min\(7, opts\.sessionColumns \| 0\) : 7/.test(calSrc));
+ok("a session column is numbered, not named", /if \(bySession\) \{\s*for \(d = 0; d < cols; d\+\+\) row \+= "<span>" \+ \(d \+ 1\)/.test(calSrc));
+ok("the circle carries the session number", /var dateNum = bySession/.test(calSrc));
+ok("and the weekday calendar is unchanged when nobody asks", /: 7;/.test(calSrc));
 
 /* Rest days say WHICH days, in the same row of seven the emphases use. */
 ok("ticking rest days opens a week", /id="inRestDaysWrap" class="sub-branch" hidden/.test(page));

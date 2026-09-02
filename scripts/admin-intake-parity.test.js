@@ -46,6 +46,15 @@ ok("packet starts FIXED INTAKE COMPLETE", /^FIXED INTAKE COMPLETE/i.test(packet)
 ok("packet has schedule", /Training days: Sun, Mon, Wed, Fri/.test(packet));
 ok("packet has lifts", /Back Squat: 120 kg/.test(packet));
 ok("packet has goals", /Engine \+ strength/.test(packet));
+/* Competing changes what a block is for, so the coach is told in as many words rather
+   than left to notice it inside free text (owner, 2026-09-02). */
+ok("packet states whether the athlete competes", /^COMPETITOR: no —/m.test(packet));
+ok(
+  "and says so plainly when they do",
+  /^COMPETITOR: YES/m.test(CoachIntakeSync.buildFixedIntakePrompt(Object.assign({}, sample, { competitor: true })))
+);
+ok("the tick box is on the Goals step", /id="adm-fx-competitor"/.test(fixedJs));
+ok("and it is carried on the profile", CoachIntakeSync.normalizeIntakeProfile(Object.assign({}, sample, { competitor: true })).competitor === true);
 
 const profile = CoachIntakeSync.normalizeIntakeProfile(sample);
 ok("normalized has fixedIntakePacket", /^FIXED INTAKE COMPLETE/i.test(profile.fixedIntakePacket));
