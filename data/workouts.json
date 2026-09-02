@@ -920,37 +920,6 @@
       },
       {
         "date": "2026-08-24",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Front Squat 1x6",
-              "EVERY 2:00 (4 SETS)",
-              "6 Front Squats",
-              "*Start Moderate and Build to Moderate Heavy (RPE 7)",
-              "* (Score is the Heaviest Weight)"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "FOR TIME",
-            "lines": [
-              "400m Run",
-              "15 Clean and Jerks 61kg/43kg",
-              "400m Run",
-              "12 Clean and Jerks 61kg/43kg",
-              "400m Run",
-              "9 Clean and Jerks 61kg/43kg",
-              "* Unbroken Clean and Jerks, 200m Penalty Run each break"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-08-24",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2746,51 +2715,6 @@
     "2026-09-02": [
       {
         "date": "2026-09-02",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-09-02/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "90/90 hip rotatios",
-              "seated pike stretch",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 cossack squats",
-              "10 good mornings",
-              "20sec hollow hold"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "SUMO DEADLIFTS 15MIN",
-            "lines": [
-              "4 Sets",
-              "4 (paused) sumo deadlifts @ 72–77 %",
-              "strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 14MIN",
-            "lines": [
-              "4 deadlifts 120/85kg",
-              "8 burpees over the bar",
-              "12 toes to bar",
-              "strength endurance & lactate threshold"
-            ],
-            "sub_title": "amrap 14min"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-02",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260902",
@@ -2854,6 +2778,99 @@
       },
       {
         "date": "2026-09-02",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 22.1",
+            "lines": [
+              "Complete as many rounds as possible in 15 minutes of:",
+              "3 wall walks",
+              "12 dumbbell snatches",
+              "15 box jump-overs",
+              "35-lb dumbbell, 20-in box"
+            ]
+          }
+        ],
+        "note": "Open: Open 22.1"
+      },
+      {
+        "date": "2026-09-02",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-09-02/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "90/90 hip rotatios",
+              "seated pike stretch",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 cossack squats",
+              "10 good mornings",
+              "20sec hollow hold"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "SUMO DEADLIFTS 15MIN",
+            "lines": [
+              "4 Sets",
+              "4 (paused) sumo deadlifts @ 72–77 %",
+              "strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 14MIN",
+            "lines": [
+              "4 deadlifts 120/85kg",
+              "8 burpees over the bar",
+              "12 toes to bar",
+              "strength endurance & lactate threshold"
+            ],
+            "sub_title": "amrap 14min"
+          }
+        ]
+      },
+      {
+        "date": "2026-09-02",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Power Snatch + Hang Power Snatch + Snatch 1x3",
+              "EVERY 2:00 (5 SETS)",
+              "1 Power Snatch + 1 Hang Power Snatch + 1 Squat Snatch*",
+              "*All 3 reps unbroken, start light build in weight to Moderate-Heavy (RPE 7)",
+              "* (Score is Heaviest Weight)"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "EVENT 12 | '26 CFG -- THE HOPPER 2026",
+            "lines": [
+              "21 Toes to Bar",
+              "7 Unbroken Power Snatch 43kg/29kg",
+              "7 Unbroken Hang Power Snatch 43kg/29kg",
+              "7 Unbroken Squat Snatch 43kg/29kg"
+            ],
+            "sub_title2": "3 ROUNDS FOR TIME"
+          }
+        ]
+      },
+      {
+        "date": "2026-09-02",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2899,27 +2916,8 @@
           }
         ],
         "note": "Benchmark: Mary"
-      },
-      {
-        "date": "2026-09-02",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 22.1",
-            "lines": [
-              "Complete as many rounds as possible in 15 minutes of:",
-              "3 wall walks",
-              "12 dumbbell snatches",
-              "15 box jump-overs",
-              "35-lb dumbbell, 20-in box"
-            ]
-          }
-        ],
-        "note": "Open: Open 22.1"
       }
     ]
   },
-  "last_updated": "2026-09-02T03:53:33.015986"
+  "last_updated": "2026-09-02T08:28:21.521013"
 }
