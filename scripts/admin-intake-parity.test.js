@@ -283,4 +283,35 @@ ok("and the athlete's own prompt", /"Session length: "/.test(index));
 ok("it travels with the rest of the intake", /"sessionMinutes",/.test(contractSrc));
 ok("and onto the phone package", /pkg\.sessionMinutes = p\.sessionMinutes/.test(contractSrc));
 
+/* ------------------------------------------------------------------------
+ * A FAILED READ IS NOT AN EMPTY LIST.
+ *
+ * listSnapshots() used to turn any read failure into [], and the endpoint returned it
+ * with ok:true. A storage hiccup therefore reached the owner as "you have no clients" —
+ * no error, no logout, nothing to act on. On 2026-09-02 he sat looking at a strip that
+ * said "0 לקוחות · 0 מתאמנים · 0 תוכניות" while his session, his header and his credit
+ * balance all worked, and the only honest reading of that screen was that his data was
+ * gone. It was not.
+ * --------------------------------------------------------------------- */
+ok(
+  "a failed snapshot read is not swallowed into an empty list",
+  !/if \(e && e\.code === "blob_required"\) throw e;\s*\n\s*return \[\];/.test(snap)
+);
+ok("the reason is written down where it happened", /NEVER an empty list/.test(snap));
+ok("the endpoint answers with the storage failure", /return storageUnavailable\(res, e\)/.test(snap));
+
+/* And the page must not present a failure as data. */
+ok("a failed list refresh is always announced", /רענון הרשימה נכשל/.test(adminHtml));
+/* The dangerous path was the one that answered "ok" with nothing in it — that one is
+   never silent now. A dropped connection stays quiet on a background poll: a toast on
+   every network blip is noise, and a blip never presented itself as data. */
+ok(
+  "a bad answer is announced even on a background poll",
+  /showHdrToast\(\s*\n?\s*"רענון הרשימה נכשל"/.test(adminHtml)
+);
+ok("the page reads the server's own storage report", /function warnIfStorageIsNotDurable/.test(adminHtml));
+ok("and says so plainly when it is not durable", /אחסון לא זמין בשרת/.test(adminHtml));
+ok("the warning insists nothing was deleted", /שום דבר לא נמחק/.test(adminHtml));
+ok("it is checked on both the restore and the refresh", (adminHtml.match(/warnIfStorageIsNotDurable\(/g) || []).length >= 3);
+
 console.log("All admin intake parity / sync checks passed.");

@@ -1943,6 +1943,23 @@ function showAdminLoginScreen() {
 }
 
 /** Any 401 on an authenticated admin path → wipe storage + login screen. */
+/**
+ * The server tells us what its storage is doing. When that storage is not durable, an
+ * empty list means nothing — and the owner needs to know that BEFORE he concludes his
+ * clients are gone (2026-09-02).
+ */
+function warnIfStorageIsNotDurable(storage) {
+  if (!storage || typeof storage !== "object") return;
+  if (storage.durable !== false && storage.blobConfigured !== false) return;
+  showHdrToast(
+    "אחסון לא זמין בשרת (Blob לא מוגדר) — הרשימה שמוצגת אינה אמינה. שום דבר לא נמחק.",
+    "err"
+  );
+  try {
+    console.error("[admin] storage is not durable:", storage);
+  } catch (e) {}
+}
+
 function forceAdminLogout(reason) {
   clearAdminSession();
   showAdminLoginScreen();
@@ -2174,6 +2191,7 @@ function tryRestoreAdminSession() {
       if (res.status < 200 || res.status >= 300) throw new Error("http_" + res.status);
       if (!res.data || !res.data.ok) throw new Error("bad_response");
       persistAdminSession(token, remember);
+      warnIfStorageIsNotDurable(res.data.storage);
       openAdminApp(res.data.snapshots || []);
     })
     .catch(function() {
@@ -2225,9 +2243,15 @@ function loadAthletes(opts) {
         return;
       }
       if (pack.status < 200 || pack.status >= 300 || !pack.data || !pack.data.ok) {
-        if (!silent) showHdrToast("רענון הרשימה נכשל", "err");
+        /* Loud either way: a silent failure here is what makes a full list look empty. */
+        showHdrToast(
+          "רענון הרשימה נכשל" +
+            (pack.data && pack.data.message ? " — " + pack.data.message : " (" + pack.status + ")"),
+          "err"
+        );
         return;
       }
+      warnIfStorageIsNotDurable(pack.data.storage);
       var list = pack.data.snapshots || [];
       var fp = adminSnapshotsFingerprint(list);
       if (silent && fp === lastAdminSnapFingerprint) return;

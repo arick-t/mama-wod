@@ -151,8 +151,11 @@ async function listSnapshots() {
       .filter((row) => row && row.athleteId && !isDeletedSnapshot(row))
       .sort((a, b) => String(b.updatedAt || "").localeCompare(String(a.updatedAt || "")));
   } catch (e) {
-    if (e && e.code === "blob_required") throw e;
-    return [];
+    /* NEVER an empty list. A failed read reported as "no athletes" is data loss as far
+       as the person reading the screen is concerned — it cost the owner a morning on
+       2026-09-02, staring at a strip that said he had no clients. Let it through; the
+       endpoint answers storageUnavailable and the page says so. */
+    throw e;
   }
 }
 
