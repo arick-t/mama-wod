@@ -107,4 +107,27 @@ const src = require("fs").readFileSync(
 ok("the strip fetches nothing itself", !/\bfetch\s*\(/.test(src));
 ok("and names no AI provider", !/gemini|groq|generativelanguage/i.test(src));
 
+
+/* --- the same rows produce the same markup -------------------------
+ * A click is mousedown and mouseup on the same element. If the strip is rewritten
+ * between the two the browser fires no click, and the owner presses twice — which is
+ * exactly what he reported on 2026-09-02. The page skips the rewrite when the markup is
+ * unchanged, and that only works if the markup is genuinely stable for stable input.
+ */
+const stableRows = Strip.rows({
+  athletes: [{ athleteId: "u_a", displayName: "A", clientColour: "#E8451A" }],
+  programs: [{ programId: "p_b", clientName: "B", unreadCount: 2, isTest: true }],
+});
+ok(
+  "identical input renders identical markup",
+  Strip.html(stableRows, "p_b") === Strip.html(Strip.rows({
+    athletes: [{ athleteId: "u_a", displayName: "A", clientColour: "#E8451A" }],
+    programs: [{ programId: "p_b", clientName: "B", unreadCount: 2, isTest: true }],
+  }), "p_b")
+);
+ok(
+  "and a different active chip does not",
+  Strip.html(stableRows, "p_b") !== Strip.html(stableRows, "u_a")
+);
+
 console.log("All admin people strip checks passed (" + passed + " assertions).");

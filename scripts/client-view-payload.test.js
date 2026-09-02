@@ -249,4 +249,41 @@ ok("the owner's unread queue does not cross", coachChanged.unreadDays === undefi
 ok("nor does the client's queue as a list", coachChanged.clientUnreadDays === undefined);
 ok("clientUnreadDays is named as never-to-client", P.NEVER_TO_CLIENT.indexOf("clientUnreadDays") >= 0);
 
+
+/* --- the client's calendar is told the SHAPE, never the questionnaire ----
+ * A client who bought three sessions a week was shown a seven-day week, while the
+ * owner's screen showed three (owner, 2026-09-02). The fix is one derived number, not
+ * the intake — which carries their price.
+ */
+const shapeWeeks = [1, 2, 3, 4].map(function (i) {
+  return { weekIndex: i, phase: "build", theme: "", overview: [], days: {} };
+});
+const shapeBase = {
+  programId: "p_shape",
+  clientName: "Shape",
+  version: 1,
+  updatedAt: "",
+  blockStart: "2026-08-30",
+  weeks: shapeWeeks,
+  blocks: [{ blockIndex: 1, startWeek: 1, weekCount: 4, approvedAt: "2026-08-30T00:00:00Z" }],
+};
+const sessionsOut = P.programForClient(
+  Object.assign({}, shapeBase, {
+    intake: { scheduleMode: "session_count", sessionsPerWeek: 3, monthlyAmount: 900, paymentMethod: "bit" },
+  })
+);
+ok("a session-count client is told how many", sessionsOut.sessionColumns === 3);
+ok("but never the questionnaire", sessionsOut.intake === undefined);
+ok("nor what they pay", sessionsOut.monthlyAmount === undefined && sessionsOut.paymentMethod === undefined);
+const weekdayOut = P.programForClient(
+  Object.assign({}, shapeBase, { intake: { scheduleMode: "weekly_schedule", monthlyAmount: 900 } })
+);
+ok("a weekday client is told nothing extra", weekdayOut.sessionColumns === 0);
+const wildOut = P.programForClient(
+  Object.assign({}, shapeBase, { intake: { scheduleMode: "session_count", sessionsPerWeek: 99 } })
+);
+ok("a number the week cannot hold is refused", wildOut.sessionColumns === 0);
+/* Where the months divide, from APPROVED blocks only. */
+ok("the client is told where the blocks divide", JSON.stringify(sessionsOut.blockGroups) === '[{"startWeek":1,"weekCount":4}]');
+
 console.log("All client-view payload checks passed.");

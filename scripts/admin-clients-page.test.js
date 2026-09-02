@@ -277,6 +277,9 @@ ok("linked devices are numbered", /מכשירים מקושרים/.test(page) && 
    still carries one dot per client, and opening a day is what clears its flag. */
 /* The dot moved into the shared strip builder with everything else about a chip. */
 ok("one dot per client, not a count", /class="dot"/.test(strip));
+/* A click is mousedown and mouseup on the same element; rewriting the strip between
+   them eats the click and the owner has to press twice (owner, 2026-09-02). */
+ok("the strip is only rewritten when it changed", /if \(sb\.innerHTML !== nextHtml\) sb\.innerHTML = nextHtml;/.test(page));
 ok("unread days are passed to the view", /unreadDays/.test(page));
 ok("opening a day marks it read", /action: "mark_read"/.test(page));
 ok("marking read happens on opening a day, with no extra click", /markRead\(tag, unreviewed\)\.then/.test(page));
@@ -657,8 +660,11 @@ ok("the views are named in English", /All blocks<\/button>/.test(calLib) && /Thi
 ok("so is the block heading", /"pprog-cal-block-title">Block /.test(calLib));
 ok("and the sessions label", /cols \+ " sessions a week"/.test(calLib));
 ok("no Hebrew is left on the calendar bar", !/כל הלבנות|לבנה נוכחית|השבוע<|אימונים בשבוע/.test(calLib));
-ok("they are the same button as Today", /\.pprog-cal-view\{appearance:none;background:transparent;border:1px solid #F5C518/.test(page));
-ok("and the active one is filled like Today", /\.pprog-cal-view\.on\{background:#F5C518;color:#111\}/.test(page));
+ok("they are the same shape as Today", /\.pprog-cal-view\{appearance:none;background:transparent[^}]*min-height:34px\}/.test(page));
+/* Today is an ACTION, the views are a STATE. Both solid yellow made Today read as
+   permanently pressed (owner, 2026-09-02). */
+ok("the current view is orange, not yellow", /\.pprog-cal-view\.on\{background:var\(--brand\)/.test(page));
+ok("and Today keeps the yellow to itself", /\.pprog-cal-today\{appearance:none;background:#F5C518/.test(page));
 ok("and hands the hook to the calendar", /setView: "cvSetView"/.test(page));
 ok("the calendar is told where the blocks divide", /blockGroups: \(\(S\.program && S\.program\.blocks\)/.test(page));
 ok("tapping a week opens that week, not its general note", /for \(var i = 0; i < limit; i\+\+\) out\.push\(\{ wi: w, day: DAY_KEYS_LOCAL\[i\] \}\);/.test(page));

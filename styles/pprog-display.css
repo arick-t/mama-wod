@@ -43,13 +43,16 @@
 .pprog-cal-block{border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:10px 10px 6px;background:rgba(255,255,255,.015)}
 .pprog-cal-block-title{font-size:12px;font-weight:800;letter-spacing:.02em;color:var(--text-muted);margin:0 0 8px;text-align:center}
 /* Three ways to read one programme, beside Today. */
-/* Same button as Today, in every dimension — they sit on one row and doing the same
-   kind of thing (owner, 2026-09-02). Only the fill says which one is on. */
-.pprog-cal-view{appearance:none;background:transparent;border:1px solid #F5C518;color:#F5C518;font-size:.72em;
-  font-weight:800;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:inherit;letter-spacing:.02em;
-  line-height:1.2;min-height:34px}
-.pprog-cal-view:hover{background:rgba(245,197,24,.14)}
-.pprog-cal-view.on{background:#F5C518;color:#111}
+/* Same button as Today in every dimension — they share a row and do the same kind of
+   thing (owner, 2026-09-02). But Today is an ACTION and the views are a STATE, so they
+   cannot both be solid yellow: filled yellow then reads as "Today is pressed", which is
+   exactly what he saw. Yellow = the action. Orange = where you are, the same orange the
+   active client chip uses. */
+.pprog-cal-view{appearance:none;background:transparent;border:1px solid var(--line);color:var(--text-muted);
+  font-size:.72em;font-weight:800;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:inherit;
+  letter-spacing:.02em;line-height:1.2;min-height:34px}
+.pprog-cal-view:hover{border-color:#3a3a3a;color:var(--text)}
+.pprog-cal-view.on{background:var(--brand);border-color:var(--brand);color:#fff}
 .pprog-cal-dow,.pprog-cal-row{display:grid;grid-template-columns:minmax(48px,0.85fr) repeat(var(--cal-cols,7),minmax(0,1fr));gap:2px;text-align:center;align-items:center}
 .pprog-cal-dow{margin-bottom:4px}
 .pprog-cal-dow span,.pprog-cal-dow-btn{color:#888;font-size:.68em;font-weight:600;padding:2px 0}

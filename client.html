@@ -525,6 +525,10 @@ button.ghost:hover{color:var(--text)}
          length rather than the athlete app's fixed five. */
       weekRows: weekCount(),
       calMode: state.calMode || "month",
+      /* Three sessions a week is three circles here too. The number is derived and sent
+         by the server; the questionnaire it comes from never leaves it. */
+      sessionColumns: (state.program && state.program.sessionColumns) || 0,
+      dateLabelOverride: sessionCardLabel(),
       /* The client sees the same block boundaries the owner does — a month is a month
          on both screens (owner, 2026-09-02). */
       blockGroups: ((state.program && state.program.blockGroups) || []).map(function (b) {
@@ -587,6 +591,16 @@ button.ghost:hover{color:var(--text)}
      an empty day there was no way to mark rest at all (owner, 2026-09-01). Ticked = this
      day is rest. Ours rather than the shared card's, so the wording and the confirmation
      are the client's language. */
+  /* A day in a session-count programme is "Session 2", not a Tuesday — the client picks
+     their own days, so the date on the card would be a promise nobody made. */
+  function sessionCardLabel() {
+    var cols = (state.program && state.program.sessionColumns) || 0;
+    if (!cols) return "";
+    var i = DAY_KEYS_LOCAL.indexOf(state.day || "sun");
+    if (i < 0 || i >= cols) return "";
+    return "Session " + (i + 1) + " · Week " + ((state.wi | 0) + 1);
+  }
+
   function restToggleHeaderHtml() {
     if (!state.edit) return "";
     var day = state.edit.day || "";
@@ -854,8 +868,9 @@ button.ghost:hover{color:var(--text)}
      week's "general" note and clear the selection (owner, 2026-09-02). */
   window.cvSelectWeek = function (wi) {
     var w = clampWi(wi);
+    var limit = (state.program && state.program.sessionColumns) || DAY_KEYS_LOCAL.length;
     var out = [];
-    for (var i = 0; i < DAY_KEYS_LOCAL.length; i++) out.push({ wi: w, day: DAY_KEYS_LOCAL[i] });
+    for (var i = 0; i < limit; i++) out.push({ wi: w, day: DAY_KEYS_LOCAL[i] });
     state.wi = w;
     state.day = DAY_KEYS_LOCAL[0];
     state.selected = out;
