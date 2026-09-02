@@ -262,6 +262,36 @@ function testGeneralLayerDecisions() {
     /that request WINS over format rotation/i.test(flat));
 }
 
+function testIndividualLayerDecisions() {
+  const I = require("../lib/coach-layers/layer2-individual.js");
+  const flat = I.replace(/\s+/g, " ");
+
+  /* Periodisation deleted rather than gated on 2026-09-02 — a gate invites the model to look for a
+     reason to open it: "עונות - לא רלוונטי כלל וכלל... אנחנו נכין אותו לרוחב". */
+  ok("no training seasons", !/OFF-SEASON|PRE-SEASON|COMPETITION SEASON/.test(I));
+  ok("periodisation is refused outright, not gated",
+    /NO PERIODISATION/.test(I) && /do not name a season, and do not\s*build toward a peak/i.test(flat));
+  ok("a date the athlete mentions constrains the block, nothing more",
+    /honour it as a constraint on that block — not as a reason to\s*restructure their training year/i.test(flat));
+
+  /* The owner's correction, 2026-09-02: equipment caps the load, not the movement. An earlier
+     draft was going to hedge the progressions into "the main loaded pattern", which implied a
+     dumbbell athlete cannot squat. He is right that they can. */
+  ok("equipment limits load, not movement",
+    /Equipment limits the LOAD, not the movement/.test(I) &&
+      /A back squat with dumbbells is still a back squat/.test(I));
+  ok("swapping a pattern for lack of a barbell is forbidden",
+    /NEVER swap a\s*pattern out because there is no barbell/i.test(flat));
+  ok("the strength stimulus has a route that does not need load",
+    /get it from reps, tempo, pauses, unilateral loading,\s*range of motion and shorter rest/i.test(flat));
+
+  /* What this layer exists for: it must not read like a class programme. */
+  ok("the layer states what changes with a single athlete",
+    /A one-athlete brick that\s*looks like a class programme is a wasted brick/i.test(flat));
+  ok("core lifts are trained across rep ranges",
+    /trained only as a 1RM is half-trained/.test(I));
+}
+
 function testInjuryGate() {
   ok("no restriction reported -> injury layer stays off",
     !L.hasNamedRestriction({ goals: "get fitter" }, null));
@@ -336,8 +366,12 @@ function testPackBudget() {
       injuries: "shoulder impingement",
     },
   });
-  ok("the heaviest pack stays under 32k characters",
-    heavy.chars < 32000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
+  /* Raised from 32k on 2026-09-02 for the load-ceiling rule. It should come back DOWN once the
+     movement tiers and the competitor week move out of layer2-individual and into the competitor
+     layer that already gates on a declared competition — that move is larger than this addition.
+     If this number rises again without a decision behind it, something is being padded. */
+  ok("the heaviest pack stays under 33k characters",
+    heavy.chars < 33000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
   ok("the pack reports which layers it used",
     Array.isArray(heavy.layers) && heavy.layers.length >= 6, heavy.layers.join(", "));
 }
@@ -350,6 +384,7 @@ function main() {
   testScope();
   testNumbersHaveProvenance();
   testGeneralLayerDecisions();
+  testIndividualLayerDecisions();
   testInjuryGate();
   testRouting();
   testPackBudget();
