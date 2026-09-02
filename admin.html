@@ -387,9 +387,9 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 /* A block heading is a heading, and it follows the same rule every other heading in
    this product follows: the accent colour, real weight, and room around it. It was
    12px grey and disappeared into the grid (owner, 2026-09-02). */
-.pprog-cal-block-title{display:flex;align-items:center;gap:10px;font-size:1em;font-weight:800;
-  letter-spacing:.01em;color:var(--coach);margin:2px 0 12px;text-align:start}
-.pprog-cal-block-title::after{content:"";flex:1;height:1px;background:linear-gradient(to left,transparent,var(--line))}
+.pprog-cal-block-title{display:flex;align-items:center;justify-content:center;gap:12px;font-size:1em;
+  font-weight:800;letter-spacing:.01em;color:var(--coach);margin:2px 0 12px;text-align:center}
+.pprog-cal-block-title::before,.pprog-cal-block-title::after{content:"";flex:1;height:1px;background:var(--line);max-width:120px}
 /* Three ways to read one programme, beside Today. */
 /* Same button as Today in every dimension — they share a row and do the same kind of
    thing (owner, 2026-09-02). But Today is an ACTION and the views are a STATE, so they
@@ -1037,7 +1037,7 @@ header{flex-wrap:wrap;row-gap:8px}
     <div class="content" id="content">
       <div class="empty-content">
         <div class="icon">·</div>
-        <p>בחר מתאמן מהרשימה</p>
+        <p>בחר לקוח מהרצועה למעלה</p>
       </div>
     </div>
   <!-- The client screen. It lives beside #content rather than inside it, because
@@ -2533,6 +2533,9 @@ function renderAthleteList(list) {
     currentAthleteId = null;
     adminChatFabOpen = false;
     syncAthleteChatFab(null);
+    /* No athletes is not an empty product: the clients are the other half of this
+       strip, and one of them should be on screen. */
+    if (openFirstPersonIfNeeded()) return;
     /* Only when the OTHER half has answered too. Otherwise this is a race: the client
        programmes load a moment later and the page had already declared nobody home. */
     if (programsAnswered && !clientPrograms.length) {
@@ -2546,6 +2549,7 @@ function renderAthleteList(list) {
     currentAthleteId = athletes[0].athleteId;
   }
   adminOpenedSomeone = true;
+  activeProgramId = null;
 
   var cur = athletes.find(function(x) { return x.athleteId === currentAthleteId; });
   if (cur) renderAthlete(cur);
@@ -2605,15 +2609,7 @@ window.adminOnClientRows = function (rows, monthlyTotal, unreadTotal) {
   clientPrograms = Array.isArray(rows) ? rows : [];
   programsAnswered = true;
   renderPeopleStrip();
-  /* First entry lands ON somebody. An empty content area with a full strip above it
-     asks the owner to click before the product will say anything (owner, 2026-09-02).
-     Athletes already auto-open in renderAthleteList; this is the other half, and it runs
-     once — after that, where he is standing is his business. */
-  if (!adminOpenedSomeone && !currentAthleteId && !activeProgramId && clientPrograms.length) {
-    adminOpenedSomeone = true;
-    openPersonFromStrip("program", clientPrograms[0].programId);
-    return;
-  }
+  if (openFirstPersonIfNeeded()) return;
   /* The empty state may have been painted before this half answered. */
   if (clientPrograms.length) {
     var content = document.getElementById("content");
@@ -2666,6 +2662,25 @@ function bindPeopleStrip() {
     if (id === (activeProgramId || currentAthleteId)) return;
     openPersonFromStrip(chip.getAttribute("data-kind"), id);
   });
+}
+
+/**
+ * First entry lands ON somebody.
+ *
+ * A full strip above an empty content area asks the owner to click before the product
+ * will say anything, and the message it showed — "choose an athlete" — was written for
+ * a page that had athletes (owner, 2026-09-02). Called from both halves because either
+ * may answer first; it acts once, and only when nothing is open.
+ */
+function openFirstPersonIfNeeded() {
+  if (adminOpenedSomeone) return false;
+  if (currentAthleteId || activeProgramId) return false;
+  if (!athletesAnswered || !programsAnswered) return false;
+  if (Array.isArray(athletes) && athletes.length) return false; /* renderAthleteList has it */
+  if (!Array.isArray(clientPrograms) || !clientPrograms.length) return false;
+  adminOpenedSomeone = true;
+  openPersonFromStrip("program", clientPrograms[0].programId);
+  return true;
 }
 
 /** Open whoever was chosen in the strip — one door for both halves of it. */
@@ -4838,7 +4853,7 @@ function deleteAthlete(id) {
       renderAthleteList(athletes);
       if (!athletes.length) {
         document.getElementById("content").innerHTML =
-          '<div class="empty-content"><div class="icon">·</div><p>בחר מתאמן מהרשימה</p></div>';
+          '<div class="empty-content"><div class="icon">·</div><p>בחר לקוח מהרצועה למעלה</p></div>';
       }
     })
     .catch(function() {
@@ -6630,18 +6645,33 @@ tryRestoreAdminSession();
     renderAdminDays();
   };
 
+  /**
+   * Today — which week of the programme we are actually in.
+   *
+   * It used to do nothing you could see in two common cases (owner, 2026-09-02): a
+   * programme that has not started yet, or whose weeks are already behind us, left the
+   * calendar exactly where it was; and in a programme sold as N sessions, today's
+   * WEEKDAY is meaningless — it could land on a slot that does not exist, so the page
+   * appeared to ignore the press. It now always moves, and it shows the week it moved to.
+   */
   window.cvJumpToday = function () {
     var block = currentBlock();
     if (!block) return;
-    /* Which week of the block holds today, by date rather than by guess. */
     var start = Date.parse(block.blockStart + "T00:00:00Z");
     var today = Date.parse(israelTodayIso() + "T00:00:00Z");
     var offset = Math.floor((today - start) / 86400000);
-    if (offset >= 0) {
-      S.wi = clampWi(Math.floor(offset / 7));
-      S.day = DAY_KEYS_LOCAL[offset % 7];
-    }
+    if (!isFinite(offset)) offset = 0;
+    /* Before the first week or after the last, the honest answer is the nearest one. */
+    S.wi = clampWi(Math.floor(Math.max(0, offset) / 7));
+    var sessions = sessionCountLimit();
+    var dayIndex = Math.max(0, offset) % 7;
+    /* A session-count programme has no weekdays: today means the first session of the
+       week we are in. */
+    S.day = DAY_KEYS_LOCAL[sessions ? 0 : dayIndex];
     S.selected = [];
+    /* Showing the week is the point of the button — from "all blocks" it otherwise
+       moved a highlight three screens down. */
+    S.calMode = "week";
     renderAdminDays();
   };
 

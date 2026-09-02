@@ -49,9 +49,9 @@
 /* A block heading is a heading, and it follows the same rule every other heading in
    this product follows: the accent colour, real weight, and room around it. It was
    12px grey and disappeared into the grid (owner, 2026-09-02). */
-.pprog-cal-block-title{display:flex;align-items:center;gap:10px;font-size:1em;font-weight:800;
-  letter-spacing:.01em;color:var(--coach);margin:2px 0 12px;text-align:start}
-.pprog-cal-block-title::after{content:"";flex:1;height:1px;background:linear-gradient(to left,transparent,var(--line))}
+.pprog-cal-block-title{display:flex;align-items:center;justify-content:center;gap:12px;font-size:1em;
+  font-weight:800;letter-spacing:.01em;color:var(--coach);margin:2px 0 12px;text-align:center}
+.pprog-cal-block-title::before,.pprog-cal-block-title::after{content:"";flex:1;height:1px;background:var(--line);max-width:120px}
 /* Three ways to read one programme, beside Today. */
 /* Same button as Today in every dimension — they share a row and do the same kind of
    thing (owner, 2026-09-02). But Today is an ACTION and the views are a STATE, so they

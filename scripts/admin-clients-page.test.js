@@ -682,13 +682,25 @@ ok("and only the view you are in is filled", /\.pprog-cal-view\.on\{background:v
 ok("and hands the hook to the calendar", /setView: "cvSetView"/.test(page));
 /* A block heading follows the same rule as every other heading here: accent colour,
    real weight, room around it. It was 12px grey and vanished into the grid. */
+/* Today did nothing you could see: a programme not yet started, or already behind us,
+   left the calendar where it was — and in a sessions programme today's weekday can point
+   at a slot that does not exist (owner, 2026-09-02). */
+ok("Today always moves to a real week", /S\.wi = clampWi\(Math\.floor\(Math\.max\(0, offset\) \/ 7\)\)/.test(page));
+ok("in a sessions programme it means the first session", /S\.day = DAY_KEYS_LOCAL\[sessions \? 0 : dayIndex\]/.test(page));
+ok("and it shows the week it moved to", /S\.calMode = "week";[\s\S]{0,40}renderAdminDays\(\);/.test(page));
+
 ok("a block heading reads as a heading", /\.pprog-cal-block-title\{[^}]*color:var\(--coach\)/.test(page));
 /* One press, one person — and a press that survives the strip being redrawn. */
 ok("the strip acts on the press, not only the click", /sb\.addEventListener\("pointerdown"/.test(page) && /sb\.addEventListener\("pointerup"/.test(page));
 ok("a drag is a scroll, not a choice", /Math\.abs\(ev\.clientX - p\.x\) > 8/.test(page));
 ok("both halves open through one door", /function openPersonFromStrip/.test(page));
 /* First entry lands on somebody rather than an empty content area. */
-ok("first entry opens someone", /if \(!adminOpenedSomeone && !currentAthleteId && !activeProgramId && clientPrograms\.length\)/.test(page));
+ok("first entry opens someone", /function openFirstPersonIfNeeded/.test(page));
+/* Either half may answer first, so both call it — and it acts once, only when nothing
+   is open and only after both halves have spoken (owner, 2026-09-02). */
+ok("it waits for both halves", /if \(!athletesAnswered \|\| !programsAnswered\) return false;/.test(page));
+ok("it does not fight the athlete half", /if \(Array\.isArray\(athletes\) && athletes\.length\) return false;/.test(page));
+ok("and the empty message speaks about clients", !/בחר מתאמן מהרשימה/.test(page));
 /* Sessions mode must not redefine what a rest day is. */
 ok("a rest day is still a rest day inside a sessions programme", /NormalizePprogBlock\.isRestDay\(dayKey, dayData, week\)/.test(page));
 
