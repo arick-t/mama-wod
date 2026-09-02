@@ -650,6 +650,15 @@ ok("and only when the drag stays in one column", /if \(to\.day === cvCalDrag\.st
 
 /* --- three ways to read one programme ------------------------------- */
 ok("the page offers all blocks, this block, this week", /window\.cvSetView = function/.test(page));
+/* One row, one kind of button: the three views wear Today's clothes, and the whole bar
+   is in English like every other label on the calendar (owner, 2026-09-02). */
+const calLib = fs.readFileSync(path.join(root, "lib", "pprog-display.js"), "utf8");
+ok("the views are named in English", /All blocks<\/button>/.test(calLib) && /This block<\/button>/.test(calLib) && /This week<\/button>/.test(calLib));
+ok("so is the block heading", /"pprog-cal-block-title">Block /.test(calLib));
+ok("and the sessions label", /cols \+ " sessions a week"/.test(calLib));
+ok("no Hebrew is left on the calendar bar", !/כל הלבנות|לבנה נוכחית|השבוע<|אימונים בשבוע/.test(calLib));
+ok("they are the same button as Today", /\.pprog-cal-view\{appearance:none;background:transparent;border:1px solid #F5C518/.test(page));
+ok("and the active one is filled like Today", /\.pprog-cal-view\.on\{background:#F5C518;color:#111\}/.test(page));
 ok("and hands the hook to the calendar", /setView: "cvSetView"/.test(page));
 ok("the calendar is told where the blocks divide", /blockGroups: \(\(S\.program && S\.program\.blocks\)/.test(page));
 ok("tapping a week opens that week, not its general note", /for \(var i = 0; i < limit; i\+\+\) out\.push\(\{ wi: w, day: DAY_KEYS_LOCAL\[i\] \}\);/.test(page));
