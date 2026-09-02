@@ -25,6 +25,13 @@ h1{font-family:var(--font-display);font-size:24px;font-weight:700;letter-spacing
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 p{color:var(--text-muted);font-size:15px;line-height:1.55;margin-bottom:14px}
 .status{min-height:24px;font-size:14px;color:var(--text-meta);margin-top:8px}
+/* 16px or iOS zooms the page the moment the field is focused; letter-spacing so six
+   digits read as six digits. */
+.code-input{display:block;width:100%;margin:10px 0;padding:13px;font-size:22px;
+  letter-spacing:.4em;text-align:center;border-radius:10px;border:1px solid #2c2c2c;
+  background:#1e1e1e;color:#f5f2ea;font-family:inherit}
+.code-input:focus{outline:2px solid #E8451A;outline-offset:1px}
+#code-box label{display:block;margin-top:6px}
 .status.ok{color:#4ade80}
 .status.err{color:#f87171}
 .btn{display:inline-block;margin-top:12px;background:var(--brand);color:#fff;border:none;border-radius:10px;
@@ -38,6 +45,14 @@ p{color:var(--text-muted);font-size:15px;line-height:1.55;margin-bottom:14px}
   <h1>DUCK-WOD</h1>
   <p id="msg">מוריד את חבילת האימון למכשיר שלך…</p>
   <div class="status" id="status"></div>
+  <!-- Shown only when the link actually carries a code. An older link opens straight
+       through, because it was issued before codes existed. -->
+  <div id="code-box" style="display:none">
+    <label class="muted" for="code-input">הקוד בן 6 הספרות מהמאמן</label>
+    <input id="code-input" type="text" inputmode="numeric" autocomplete="one-time-code"
+           maxlength="6" class="code-input" aria-label="קוד בן 6 ספרות">
+    <button type="button" class="btn" id="code-btn">פתח את התוכנית</button>
+  </div>
   <a class="btn" id="open-app" href="/" style="display:none">פתח את האפליקציה</a>
   <div class="muted" id="footer-note">הלינק חד־פעמי. אחרי ההורדה תצטרך לאשר את תנאי השימוש במכשיר לפני שהתוכנית נפתחת.</div>
 </div>
@@ -151,14 +166,57 @@ p{color:var(--text-muted);font-size:15px;line-height:1.55;margin-bottom:14px}
     return;
   }
 
-  fetch(adminApiUrl("/api/admin-handoff?token=" + encodeURIComponent(token)))
-    .then(function (r) {
-      return r.json().then(function (j) {
-        return { okHttp: r.ok, status: r.status, j: j };
+  var codeBox = document.getElementById("code-box");
+  var codeInput = document.getElementById("code-input");
+  var codeBtn = document.getElementById("code-btn");
+
+  function askForCode(note) {
+    msg.textContent = "כמעט שם";
+    status.className = "status";
+    status.textContent = note || "הכנס את הקוד שקיבלת מהמאמן.";
+    if (codeBox) codeBox.style.display = "block";
+    try { if (codeInput) codeInput.focus(); } catch (e) {}
+  }
+
+  function redeem(code) {
+    var url =
+      adminApiUrl("/api/admin-handoff?token=" + encodeURIComponent(token)) +
+      (code ? "&code=" + encodeURIComponent(code) : "");
+    return fetch(url)
+      .then(function (r) {
+        return r.json().then(function (j) {
+          return { okHttp: r.ok, status: r.status, j: j };
+        });
       });
-    })
-    .then(function (x) {
+  }
+
+  if (codeBtn) {
+    codeBtn.addEventListener("click", function () {
+      var code = String((codeInput && codeInput.value) || "").replace(/\D/g, "");
+      if (code.length !== 6) {
+        status.className = "status err";
+        status.textContent = "צריך שש ספרות.";
+        return;
+      }
+      status.className = "status";
+      status.textContent = "בודק…";
+      redeem(code).then(handleRedeem).catch(function () { fail("אין חיבור לשרת"); });
+    });
+  }
+  if (codeInput) {
+    codeInput.addEventListener("keydown", function (ev) {
+      if (ev.key === "Enter" && codeBtn) codeBtn.click();
+    });
+  }
+
+  function handleRedeem(x) {
       var j = x.j || {};
+      /* The link needs a code and none was sent — nothing has been burned. */
+      if (j && (j.error === "code_required" || j.error === "code_wrong")) {
+        askForCode(j.message);
+        if (j.error === "code_wrong") status.className = "status err";
+        return;
+      }
       if (!x.okHttp || !j.ok || !j.store) {
         fail(j.message || j.error || ("שגיאה " + x.status));
         return;
@@ -198,10 +256,13 @@ p{color:var(--text-muted);font-size:15px;line-height:1.55;margin-bottom:14px}
           window.location.replace(pagesAbsoluteUrl("/?tab=pprog&handoff=1"));
         }, 1600);
       }
-    })
-    .catch(function () {
-      fail("שגיאת רשת — נסה שוב");
-    });
+  }
+
+  /* The first call carries no code: an older link opens on it, and a newer one answers
+     "code_required" without being spent. */
+  redeem("").then(handleRedeem).catch(function () {
+    fail("אין חיבור לשרת");
+  });
 })();
 </script>
 </body>

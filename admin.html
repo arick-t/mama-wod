@@ -619,6 +619,12 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
 /* Active and frozen are one question, so they read as one line. */
 .ath-chip-sep{color:var(--text-meta);margin:0 2px;font-weight:700}
 .handoff-head{font-family:var(--font-display);font-size:.92rem;letter-spacing:.4px;margin:0 0 6px}
+.handoff-code{margin:8px 0;padding:9px 12px;border-radius:10px;background:rgba(245,197,24,.1);
+  border:1px solid rgba(245,197,24,.35)}
+.handoff-code-label{color:var(--text-meta);font-size:.8rem}
+.handoff-code-value{font-family:var(--font-display);font-size:1.5rem;letter-spacing:.35em;
+  color:var(--brand-gold);font-weight:700}
+.handoff-code-note{display:block;color:var(--text-meta);font-size:.72rem;margin-top:3px}
 .client-kind-card .ck-title{display:block;font-family:var(--font-display,inherit);font-size:1.05rem;
   font-weight:700;margin:0 0 6px}
 .client-kind-card .ck-desc{display:block;font-size:.85rem;color:var(--text-muted,#b0aaa0);line-height:1.55}
@@ -4519,8 +4525,11 @@ function renderHandoffInline(a) {
        device gets in (owner, 2026-09-02). */
     '<div class="handoff-head">גישה למתאמן</div>' +
     '<div class="handoff-status" id="handoff-status">' +
-    (savedUrl ? "לינק מוכן — שלח אותו למתאמן." : "עדיין לא הונפק לינק.") +
+    (savedUrl ? "לינק מוכן — שלח אותו למתאמן עם הקוד." : "עדיין לא הונפק לינק.") +
     "</div>" +
+    /* Filled in only at the moment a link is created; a code that could be re-read
+       later would not be a code. */
+    '<div class="handoff-code" id="handoff-code" style="display:none"></div>' +
     '<div class="handoff-link" id="handoff-link" style="display:' +
     linkVisible +
     '">' +
@@ -4581,7 +4590,21 @@ function createHandoffLink(athleteId) {
       if (wrap) wrap.style.display = "flex";
       var open = document.getElementById("handoff-open");
       if (open) open.href = lastHandoffUrl;
-      if (status) status.textContent = "מוכן — חד־פעמי. אחרי הורדה הלינק נשרף.";
+      /* The code is shown ONCE and stored nowhere in plaintext — if he loses it the
+         answer is another link, not a lookup. Same rule the studio side follows. */
+      var codeEl = document.getElementById("handoff-code");
+      if (codeEl) {
+        if (d.code) {
+          codeEl.style.display = "block";
+          codeEl.innerHTML =
+            '<span class="handoff-code-label">הקוד:</span> <span class="handoff-code-value">' +
+            esc(d.code) +
+            '</span> <span class="handoff-code-note">לא יוצג שוב — שלח אותו יחד עם הלינק</span>';
+        } else {
+          codeEl.style.display = "none";
+        }
+      }
+      if (status) status.textContent = "מוכן — שלח את הלינק והקוד. הלינק חד־פעמי.";
       var a = athletes.find(function(x) { return x.athleteId === athleteId; });
       if (a) {
         a.lastHandoffPath = d.path;

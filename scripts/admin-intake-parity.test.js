@@ -179,7 +179,8 @@ ok(
     !/fetch\("\/api\//.test(adminHtml)
 );
 ok("admin fixed intake uses adminApiUrl", /adminApiUrl\("\/api\/personal-coach"\)/.test(fixedJs));
-ok("claim uses adminApiUrl", /function adminApiUrl/.test(claimHtml) && /fetch\(adminApiUrl\("\/api\/admin-handoff/.test(claimHtml));
+/* The claim page builds its URL before fetching it — it may carry a code now. */
+ok("claim uses adminApiUrl", /function adminApiUrl/.test(claimHtml) && /adminApiUrl\("\/api\/admin-handoff/.test(claimHtml));
 ok("admin hides FAB during intake", /admin-intake-open/.test(adminHtml) && /setAdminIntakeModalOpen/.test(adminHtml) && /adminChatFabWrap[\s\S]*hidden/.test(adminHtml));
 ok("admin recovery nested under Yes", /pprog-fixed-recovery-branch/.test(fixedJs) && /Under Yes/.test(fixedJs));
 ok("admin recovery no Thu default", /activeRecoveryDay:\s*""/.test(fixedJs));

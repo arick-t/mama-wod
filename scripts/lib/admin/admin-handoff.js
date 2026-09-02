@@ -21,6 +21,12 @@ const { appendAdminAudit } = require("./admin-audit");
 const { applyCors } = require("../../../lib/cors-allowlist");
 const CoachIntakeSync = require("../../../lib/coach-intake-sync-contract");
 const NormalizePprogBlock = require("../../../lib/normalize-pprog-block");
+const Access = require("../../../lib/client-access");
+
+/* Wrong guesses before the link dies. Six digits is a million combinations, so five is
+   generous for a human and hopeless for a script — and the owner can always issue
+   another link, which is one press. */
+const MAX_CODE_ATTEMPTS = 5;
 
 const ADMIN_PASSWORD = resolveAdminPassword();
 const MAX_PACKAGE_BYTES = 256 * 1024;
@@ -482,6 +488,9 @@ async function createLink(body) {
   const pkg = isReset
     ? Object.assign({}, buildResetIntakePackage(snap), { writeKey: deviceWriteKey })
     : buildPhonePackage(snap, deviceWriteKey);
+  /* A link with no code is a program anyone who sees the link can take. The code is
+     kept as a salted hash and shown to the owner exactly once, on this response. */
+  const accessCode = Access.generateCode();
   const claim = {
     token: token,
     athleteId: athleteId,
@@ -490,6 +499,8 @@ async function createLink(body) {
     createdAt: new Date(now).toISOString(),
     expiresAt: new Date(now + CLAIM_TTL_MS).toISOString(),
     usedAt: null,
+    codeHash: Access.hashValue(accessCode),
+    codeAttempts: 0,
     package: pkg,
   };
   const str = JSON.stringify(claim);
@@ -500,6 +511,8 @@ async function createLink(body) {
 
   snap.lastHandoffTokenPrefix = token.slice(0, 8);
   snap.lastHandoffCreatedAt = claim.createdAt;
+  /* That a code was issued, never the code itself. */
+  snap.lastHandoffCodeAt = claim.createdAt;
   snap.lastHandoffExpiresAt = claim.expiresAt;
   snap.lastHandoffPath = "/claim.html?t=" + encodeURIComponent(token);
   if (isReset) {
@@ -531,6 +544,9 @@ async function createLink(body) {
       athleteId: athleteId,
       displayName: claim.displayName,
       oneTime: true,
+      /* Shown once. It is not stored anywhere in plaintext, so if he loses it the
+         answer is another link, not a lookup. */
+      code: accessCode,
       writeKey: deviceWriteKey,
       message: isReset
         ? "לינק איפוס תחקור — כשהמתאמן יפתח אותו, התחקור יתחיל מחדש והתוכנית נשארת"
@@ -543,7 +559,7 @@ function createResetIntakeLink(body) {
   return createLink(Object.assign({}, body, { purpose: "reset_intake" }));
 }
 
-async function redeemToken(tokenRaw) {
+async function redeemToken(tokenRaw, codeRaw) {
   try {
     assertDurableStorage();
   } catch (e) {
@@ -557,6 +573,56 @@ async function redeemToken(tokenRaw) {
   }
   const token = String(tokenRaw || "").replace(/[^a-zA-Z0-9_\-]/g, "").slice(0, 64);
   if (!token) return { status: 400, json: { error: "token required" } };
+
+  /* READ BEFORE BURNING. The burn lock used to be taken first, which was fine when the
+     link was the only credential — but with a code, a wrong guess would have destroyed
+     a link the athlete had every right to use. */
+  const claim = await getJson(claimKey(token));
+  if (!claim) {
+    return { status: 404, json: { error: "link_invalid", message: "הלינק לא תקף או כבר לא קיים" } };
+  }
+
+  /* Links issued before codes existed carry no hash, and they keep working: some are
+     already in athletes' hands and breaking them would be a support call, not a
+     security improvement. */
+  if (claim.codeHash) {
+    const submitted = String(codeRaw || "").replace(/\\D/g, "");
+    if (!submitted) {
+      return {
+        status: 401,
+        json: {
+          error: "code_required",
+          message: "צריך גם את הקוד בן 6 הספרות שקיבלת מהמאמן.",
+        },
+      };
+    }
+    if (Number(claim.codeAttempts) >= MAX_CODE_ATTEMPTS) {
+      return {
+        status: 429,
+        json: {
+          error: "code_locked",
+          message: "יותר מדי ניסיונות. בקש מהמאמן לינק וקוד חדשים.",
+        },
+      };
+    }
+    if (!Access.safeEqual(claim.codeHash, Access.hashValue(submitted))) {
+      claim.codeAttempts = (Number(claim.codeAttempts) || 0) + 1;
+      try {
+        await putJson(claimKey(token), claim);
+      } catch (e) {}
+      const left = Math.max(0, MAX_CODE_ATTEMPTS - claim.codeAttempts);
+      return {
+        status: 401,
+        json: {
+          error: "code_wrong",
+          message: left
+            ? "הקוד לא נכון. נשארו " + left + " ניסיונות."
+            : "יותר מדי ניסיונות. בקש מהמאמן לינק וקוד חדשים.",
+          attemptsLeft: left,
+        },
+      };
+    }
+  }
 
   const lockKey = CLAIM_PREFIX + token + ".took.json";
   try {
@@ -572,11 +638,6 @@ async function redeemToken(tokenRaw) {
         message: "הלינק כבר נוצל או בטיפול. אפשר לבקש לינק חדש מהמאמן.",
       },
     };
-  }
-
-  const claim = await getJson(claimKey(token));
-  if (!claim) {
-    return { status: 404, json: { error: "link_invalid", message: "הלינק לא תקף או כבר לא קיים" } };
   }
   if (claim.usedAt || claim.burned) {
     return {
@@ -676,7 +737,7 @@ module.exports = async function handler(req, res) {
   if (req.method === "GET" && tokenFromQuery) {
     const rl = checkRateLimit(req, { name: "admin-handoff-redeem", limit: 30, windowMs: 60_000 });
     if (!rl.ok) return sendRateLimit(res, rl);
-    const result = await redeemToken(tokenFromQuery);
+    const result = await redeemToken(tokenFromQuery, query.code || query.c || "");
     return res.status(result.status).json(result.json);
   }
 
@@ -705,7 +766,7 @@ module.exports = async function handler(req, res) {
   if (action === "redeem" || body.token) {
     const rl = checkRateLimit(req, { name: "admin-handoff-redeem", limit: 30, windowMs: 60_000 });
     if (!rl.ok) return sendRateLimit(res, rl);
-    const result = await redeemToken(body.token || tokenFromQuery);
+    const result = await redeemToken(body.token || tokenFromQuery, body.code || query.code || "");
     return res.status(result.status).json(result.json);
   }
 
