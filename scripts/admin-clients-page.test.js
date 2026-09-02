@@ -148,6 +148,9 @@ const ACTIONS_ALLOWED = [
   /* "Has any client changed anything?" — one small read of the index, on the page's
      own timer, so the owner sees a client's edit without reloading the page. */
   "list_stamp",
+  /* "Am I still allowed in?" — the client's cheapest question, so a paused account
+     stops reading the plan without waiting for a reload. */
+  "ping",
   /* One call that empties the list, with a receipt. */
   "purge_all",
 ];
@@ -619,8 +622,22 @@ ok("the unread dot survives the move", /class="dot" title="יש שינוי של�
 
 /* Several days on screen at once — Ctrl-click and drag, as in the admin module. */
 ok("the calendar hands the click event over", /passCalEvent: true/.test(page));
-ok("ctrl or cmd makes the click additive", /if \(ev && \(ev\.ctrlKey \|\| ev\.metaKey\)\) toggleSelected/.test(page));
+ok("ctrl or cmd makes the click additive", /toggleSelected\(nextWi, nextDay\);/.test(page));
+/* Adding a day to a comparison is not "I have been over this". Reporting it as read
+   fired a write per click, and two quick picks raced on the same version — which is why
+   picking 1→2→3 behaved differently from 3→2→1 (owner, 2026-09-02). */
+ok("an additive pick does not report the day as read", /toggleSelected\(nextWi, nextDay\);[\s\S]{0,80}renderAdminDays\(\);[\s\S]{0,20}return;/.test(page));
 ok("dragging across the calendar takes the run", /function bindCalGestures/.test(page));
+/* Straight down a column is a column — every Thursday of the block, not the whole run
+   of days between them. */
+ok("a vertical drag selects the column", /function applyColumn/.test(page));
+ok("and only when the drag stays in one column", /if \(to\.day === cvCalDrag\.startDay && to\.wi !== cvCalDrag\.startWi\)/.test(page));
+
+/* --- three ways to read one programme ------------------------------- */
+ok("the page offers all blocks, this block, this week", /window\.cvSetView = function/.test(page));
+ok("and hands the hook to the calendar", /setView: "cvSetView"/.test(page));
+ok("the calendar is told where the blocks divide", /blockGroups: \(\(S\.program && S\.program\.blocks\)/.test(page));
+ok("tapping a week opens that week, not its general note", /for \(var i = 0; i < limit; i\+\+\) out\.push\(\{ wi: w, day: DAY_KEYS_LOCAL\[i\] \}\);/.test(page));
 /* The selection maths lives beside the calendar that draws it, in the display library,
    so this page and the client's page share one definition of "which days are picked" —
    without either of them loading the admin module's debrief helper for three

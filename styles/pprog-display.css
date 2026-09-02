@@ -36,6 +36,17 @@
 /* Seven columns for a week, N for a programme sold as N sessions — and the cells
    share the whole width either way. A fixed seven left four empty gaps and read
    as a broken table (owner, 2026-09-02). Up to ten sessions has to fit too. */
+/* A block is a month, and it is drawn as one: its own dates above it, and air between
+   it and the next. W4 and W5 are not neighbours — W5 is a new month, a new invoice, a
+   new conversation with the client (owner, 2026-09-02). */
+.pprog-cal-blocks{display:flex;flex-direction:column;gap:22px}
+.pprog-cal-block{border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:10px 10px 6px;background:rgba(255,255,255,.015)}
+.pprog-cal-block-title{font-size:12px;font-weight:800;letter-spacing:.02em;color:var(--text-muted);margin:0 0 8px;text-align:center}
+/* Three ways to read one programme, beside Today. */
+.pprog-cal-view{appearance:none;background:transparent;border:1px solid var(--line);color:var(--text-muted);
+  font-family:inherit;font-size:11px;font-weight:700;padding:5px 10px;border-radius:999px;cursor:pointer;margin-inline-start:6px}
+.pprog-cal-view:hover{border-color:#3a3a3a;color:var(--text)}
+.pprog-cal-view.on{background:rgba(232,69,26,.16);border-color:var(--brand);color:#fff}
 .pprog-cal-dow,.pprog-cal-row{display:grid;grid-template-columns:minmax(48px,0.85fr) repeat(var(--cal-cols,7),minmax(0,1fr));gap:2px;text-align:center;align-items:center}
 .pprog-cal-dow{margin-bottom:4px}
 .pprog-cal-dow span,.pprog-cal-dow-btn{color:#888;font-size:.68em;font-weight:600;padding:2px 0}

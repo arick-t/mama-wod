@@ -795,6 +795,20 @@ async function clientHandler(req, res, body) {
     });
   }
 
+  /**
+   * "Am I still allowed in?" — the cheapest question a client can ask.
+   *
+   * Everything above this line has already answered it: the token was verified against
+   * the access row, and a frozen account was refused there with 403 FROZEN. So this
+   * costs the one small read the gate makes anyway, and never touches the programme.
+   *
+   * It exists because a paused client with the tab open kept reading their month until
+   * they happened to reload (owner, 2026-09-02).
+   */
+  if (action === "ping") {
+    return res.status(200).json({ ok: true });
+  }
+
   if (action === "read") {
     const read = await store.readProgram(programId);
     if (!read.ok) return bad(res, read.code === "NOT_FOUND" ? 404 : 503, read.code, read.error);

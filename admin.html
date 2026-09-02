@@ -374,6 +374,17 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 /* Seven columns for a week, N for a programme sold as N sessions — and the cells
    share the whole width either way. A fixed seven left four empty gaps and read
    as a broken table (owner, 2026-09-02). Up to ten sessions has to fit too. */
+/* A block is a month, and it is drawn as one: its own dates above it, and air between
+   it and the next. W4 and W5 are not neighbours — W5 is a new month, a new invoice, a
+   new conversation with the client (owner, 2026-09-02). */
+.pprog-cal-blocks{display:flex;flex-direction:column;gap:22px}
+.pprog-cal-block{border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:10px 10px 6px;background:rgba(255,255,255,.015)}
+.pprog-cal-block-title{font-size:12px;font-weight:800;letter-spacing:.02em;color:var(--text-muted);margin:0 0 8px;text-align:center}
+/* Three ways to read one programme, beside Today. */
+.pprog-cal-view{appearance:none;background:transparent;border:1px solid var(--line);color:var(--text-muted);
+  font-family:inherit;font-size:11px;font-weight:700;padding:5px 10px;border-radius:999px;cursor:pointer;margin-inline-start:6px}
+.pprog-cal-view:hover{border-color:#3a3a3a;color:var(--text)}
+.pprog-cal-view.on{background:rgba(232,69,26,.16);border-color:var(--brand);color:#fff}
 .pprog-cal-dow,.pprog-cal-row{display:grid;grid-template-columns:minmax(48px,0.85fr) repeat(var(--cal-cols,7),minmax(0,1fr));gap:2px;text-align:center;align-items:center}
 .pprog-cal-dow{margin-bottom:4px}
 .pprog-cal-dow span,.pprog-cal-dow-btn{color:#888;font-size:.68em;font-weight:600;padding:2px 0}
@@ -6428,6 +6439,11 @@ tryRestoreAdminSession();
         '<div class="pprog-day-stub">היום הזה עוד ריק. לחץ על העיפרון כדי לכתוב בו אימון, ' +
         'או השאר אותו כיום מנוחה.</div>',
       calMode: S.calMode || "month",
+      /* The real block boundaries, so the calendar can draw a month as a month rather
+         than guessing fours (owner, 2026-09-02). */
+      blockGroups: ((S.program && S.program.blocks) || []).map(function (b) {
+        return { startWeek: b.startWeek, weekCount: b.weekCount };
+      }),
       israelTodayIso: israelTodayIso(),
       /* The owner writes the training. Nothing on this page talks to a provider. */
       readOnly: true,
@@ -6462,6 +6478,7 @@ tryRestoreAdminSession();
         toggleMode: "cvToggleCalMode",
         jumpToday: "cvJumpToday",
         setDay: "cvSetDay",
+        setView: "cvSetView",
         selectWeek: "cvSelectWeek",
         selectDow: "cvSelectDow",
         startEdit: "cvStartEdit",
@@ -6538,6 +6555,29 @@ tryRestoreAdminSession();
     S.selected = sortSel(list);
   }
 
+  /** One weekday, down the weeks — the vertical twin of applyRange. */
+  function applyColumn(day, fromWi, toWi, additive) {
+    var M = selMath();
+    if (!M) return;
+    var lo = Math.min(fromWi | 0, toWi | 0);
+    var hi = Math.max(fromWi | 0, toWi | 0);
+    var range = [];
+    for (var i = lo; i <= hi; i++) {
+      if (i >= 0 && i < weekCount()) range.push({ wi: i, day: day });
+    }
+    if (!range.length) return;
+    if (!additive) { S.selected = sortSel(range); return; }
+    var seen = {};
+    var out = [];
+    (S.selected || []).concat(range).forEach(function (c) {
+      var id = M.selId(c.wi, c.day);
+      if (seen[id]) return;
+      seen[id] = 1;
+      out.push(c);
+    });
+    S.selected = sortSel(out);
+  }
+
   function applyRange(from, to, additive) {
     var M = selMath();
     if (!M) return;
@@ -6579,8 +6619,16 @@ tryRestoreAdminSession();
     /* Moving off the day being edited abandons the draft rather than silently
        carrying it to another day. */
     if (S.edit && (S.edit.wi !== nextWi || S.edit.day !== nextDay)) S.edit = null;
-    if (ev && (ev.ctrlKey || ev.metaKey)) toggleSelected(nextWi, nextDay);
-    else S.selected = [];
+    if (ev && (ev.ctrlKey || ev.metaKey)) {
+      /* Adding a day to a comparison is not "I have been over this", and reporting it as
+         read fired a write per click — two quick picks raced each other on the same
+         version and the second was refused, which is what made picking 1→2→3 behave
+         differently from 3→2→1 (owner, 2026-09-02). */
+      toggleSelected(nextWi, nextDay);
+      renderAdminDays();
+      return;
+    }
+    S.selected = [];
     openDayTag(nextWi, nextDay);
   };
 
@@ -6640,7 +6688,14 @@ tryRestoreAdminSession();
       if (!to.day) return;
       if (to.wi === cvCalDrag.startWi && to.day === cvCalDrag.startDay) return;
       cvCalDrag.moved = true;
-      applyRange({ wi: cvCalDrag.startWi, day: cvCalDrag.startDay }, to, cvCalDrag.additive);
+      /* Straight down a column is a column: every Thursday of the block, not the whole
+         run of days between them (owner, 2026-09-02). Sideways or diagonal is still the
+         chronological run. */
+      if (to.day === cvCalDrag.startDay && to.wi !== cvCalDrag.startWi) {
+        applyColumn(cvCalDrag.startDay, cvCalDrag.startWi, to.wi, cvCalDrag.additive);
+      } else {
+        applyRange({ wi: cvCalDrag.startWi, day: cvCalDrag.startDay }, to, cvCalDrag.additive);
+      }
       S.wi = to.wi;
       S.day = to.day;
       paintCalSelection();
@@ -6655,10 +6710,23 @@ tryRestoreAdminSession();
     });
   }
 
+  /* All blocks · this block · this week. Three ways to read one programme. */
+  window.cvSetView = function (mode) {
+    S.calMode = mode === "block" || mode === "week" ? mode : "month";
+    renderAdminDays();
+  };
+
+  /* Tapping W3 opens that week — every session in it, side by side. It used to jump to
+     the week's "general" note and clear the selection, which is not what a week button
+     looks like it does (owner, 2026-09-02). */
   window.cvSelectWeek = function (wi) {
-    S.wi = clampWi(wi);
-    S.day = "general";
-    S.selected = [];
+    var w = clampWi(wi);
+    var limit = sessionCountLimit() || DAY_KEYS_LOCAL.length;
+    var out = [];
+    for (var i = 0; i < limit; i++) out.push({ wi: w, day: DAY_KEYS_LOCAL[i] });
+    S.wi = w;
+    S.day = DAY_KEYS_LOCAL[0];
+    S.selected = out;
     renderAdminDays();
   };
 

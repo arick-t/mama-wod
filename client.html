@@ -302,7 +302,13 @@ button.ghost:hover{color:var(--text)}
     })
       .then(function (r) {
         return r.json().catch(function () { return null; }).then(function (j) {
-          return { status: r.status, body: j || {} };
+          var out = { status: r.status, body: j || {} };
+          /* Frozen is not an error to report on a card — it is the door closing. It has
+             to take the plan off the screen wherever it is discovered, because the
+             alternative is a paused client reading their programme until they happen to
+             reload (owner, 2026-09-02). */
+          if (out.status === 403 && out.body && out.body.code === "FROZEN") showFrozen();
+          return out;
         });
       })
       .catch(function () {
@@ -519,6 +525,11 @@ button.ghost:hover{color:var(--text)}
          length rather than the athlete app's fixed five. */
       weekRows: weekCount(),
       calMode: state.calMode || "month",
+      /* The client sees the same block boundaries the owner does — a month is a month
+         on both screens (owner, 2026-09-02). */
+      blockGroups: ((state.program && state.program.blockGroups) || []).map(function (b) {
+        return { startWeek: b.startWeek, weekCount: b.weekCount };
+      }),
       israelTodayIso: israelIso(false),
       readOnly: true,
       showFooter: false,
@@ -555,6 +566,7 @@ button.ghost:hover{color:var(--text)}
         toggleMode: "cvToggleCalMode",
         jumpToday: "cvJumpToday",
         setDay: "cvSetDay",
+        setView: "cvSetView",
         selectWeek: "cvSelectWeek",
         selectDow: "cvSelectDow",
         startEdit: "cvStartEdit",
@@ -616,6 +628,12 @@ button.ghost:hover{color:var(--text)}
     renderDays();
   };
 
+  /* All blocks · this block · this week — the same three the owner has. */
+  window.cvSetView = function (mode) {
+    state.calMode = mode === "block" || mode === "week" ? mode : "month";
+    renderDays();
+  };
+
   window.cvToggleCalMode = function () {
     state.calMode = state.calMode === "month" ? "week" : "month";
     renderDays();
@@ -657,6 +675,29 @@ button.ghost:hover{color:var(--text)}
     });
     if (list.length === (state.selected || []).length) list.push({ wi: wi | 0, day: day });
     state.selected = sortSel(list);
+  }
+
+  /** One weekday, down the weeks — the vertical twin of applyRange. */
+  function applyColumn(day, fromWi, toWi, additive) {
+    var M = selMath();
+    if (!M) return;
+    var lo = Math.min(fromWi | 0, toWi | 0);
+    var hi = Math.max(fromWi | 0, toWi | 0);
+    var range = [];
+    for (var i = lo; i <= hi; i++) {
+      if (i >= 0 && i < weekCount()) range.push({ wi: i, day: day });
+    }
+    if (!range.length) return;
+    if (!additive) { state.selected = sortSel(range); return; }
+    var seen = {};
+    var out = [];
+    (state.selected || []).concat(range).forEach(function (c) {
+      var id = M.selId(c.wi, c.day);
+      if (seen[id]) return;
+      seen[id] = 1;
+      out.push(c);
+    });
+    state.selected = sortSel(out);
   }
 
   function applyRange(from, to, additive) {
@@ -756,7 +797,13 @@ button.ghost:hover{color:var(--text)}
       if (!to.day) return;
       if (to.wi === cvCalDrag.startWi && to.day === cvCalDrag.startDay) return;
       cvCalDrag.moved = true;
-      applyRange({ wi: cvCalDrag.startWi, day: cvCalDrag.startDay }, to, cvCalDrag.additive);
+      /* Straight down a column is a column — every Thursday — not the run of days
+         between them (owner, 2026-09-02). */
+      if (to.day === cvCalDrag.startDay && to.wi !== cvCalDrag.startWi) {
+        applyColumn(cvCalDrag.startDay, cvCalDrag.startWi, to.wi, cvCalDrag.additive);
+      } else {
+        applyRange({ wi: cvCalDrag.startWi, day: cvCalDrag.startDay }, to, cvCalDrag.additive);
+      }
       state.wi = to.wi;
       state.day = to.day;
       paintCalSelection();
@@ -803,10 +850,15 @@ button.ghost:hover{color:var(--text)}
     window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank");
   };
 
+  /* Tapping W3 opens that week — every day of it, side by side. It used to jump to the
+     week's "general" note and clear the selection (owner, 2026-09-02). */
   window.cvSelectWeek = function (wi) {
-    state.wi = clampWi(wi);
-    state.day = "general";
-    state.selected = [];
+    var w = clampWi(wi);
+    var out = [];
+    for (var i = 0; i < DAY_KEYS_LOCAL.length; i++) out.push({ wi: w, day: DAY_KEYS_LOCAL[i] });
+    state.wi = w;
+    state.day = DAY_KEYS_LOCAL[0];
+    state.selected = out;
     renderDays();
   };
 
@@ -1046,6 +1098,7 @@ button.ghost:hover{color:var(--text)}
      plan (owner, 2026-09-02). Fifteen seconds is still one small read, not a poll. */
   var FOREGROUND_MIN_GAP_MS = 15000;
   function pullIfStale() {
+    if (frozenShown) return;
     if (!state.program || state.edit) return;
     if (Date.now() - lastProgramLoadMs < FOREGROUND_MIN_GAP_MS) return;
     loadProgram();
@@ -1057,6 +1110,41 @@ button.ghost:hover{color:var(--text)}
   /* Coming back to the tab on a desktop does not always change visibility — switching
      windows fires focus instead, and that was the case where he saw a stale plan. */
   window.addEventListener("focus", pullIfStale);
+
+  /* A paused account has to stop being able to read the plan, and a client who leaves
+     the tab open all morning never triggers a pull. So while the page is actually being
+     looked at, it asks the cheapest question there is once a minute — "am I still
+     allowed in?" — which costs the access row the server reads anyway and never touches
+     the programme (owner, 2026-09-02). */
+  setInterval(function () {
+    if (frozenShown || !state.program) return;
+    if (typeof document !== "undefined" && document.hidden) return;
+    api({ action: "ping" });
+  }, 60000);
+
+  /**
+   * The plan comes off the screen, and stays off until the coach unfreezes.
+   *
+   * Not a banner over the workouts: a client whose access is paused should not be
+   * reading the month while they are told they cannot.
+   */
+  var frozenShown = false;
+  function showFrozen() {
+    if (frozenShown) return;
+    frozenShown = true;
+    state.program = null;
+    state.edit = null;
+    state.selected = [];
+    show("programView", false);
+    show("authView", false);
+    show("termsView", false);
+    var b = el("bootErr");
+    if (b) {
+      b.innerHTML =
+        '<div class="banner warn">Your access is paused. Please talk to your coach — ' +
+        "nothing you have written has been lost.</div>";
+    }
+  }
 
   function boot() {
     bindCalGestures();

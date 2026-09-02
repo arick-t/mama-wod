@@ -587,6 +587,8 @@ async function main() {
   const frozen = await H.owner({ action: "set_frozen", programId: pid, frozen: true });
   ok("the owner can freeze a client", frozen.status === 200 && frozen.body.ok === true);
   ok("and is told the door itself was closed", frozen.body.doorClosed === true);
+  const pingFrozen = await H.client(laptopToken, { action: "ping", programId: pid });
+  ok("THE CHEAP CHECK SEES THE FREEZE", pingFrozen.status === 403 && pingFrozen.body.code === "FROZEN");
   const whileFrozen = await H.client(laptopToken, { action: "read", programId: pid });
   ok("A FROZEN CLIENT CANNOT READ THEIR PLAN", whileFrozen.status === 403);
   ok("and is told to talk to their coach, not shown an error", /coach/i.test(String(whileFrozen.body.error || "")));
@@ -612,6 +614,8 @@ async function main() {
   ok("the owner can unfreeze", thawed.status === 200);
   const afterThaw = await H.client(laptopToken, { action: "read", programId: pid });
   ok("THE SAME DEVICE WALKS BACK IN — no new code", afterThaw.status === 200);
+  const pingThawed = await H.client(laptopToken, { action: "ping", programId: pid });
+  ok("and the cheap check agrees", pingThawed.status === 200 && pingThawed.body.ok === true);
 
   /* --- the colour is his label, and stays his ---------------------- */
 

@@ -237,4 +237,15 @@ ok("localhost still works for dev", /localhost/.test(html));
 ok("but not twice in a few seconds", /FOREGROUND_MIN_GAP_MS = 15000/.test(html) && /Date\.now\(\) - lastProgramLoadMs < FOREGROUND_MIN_GAP_MS/.test(html));
 ok("switching windows counts as coming back", /window\.addEventListener\("focus", pullIfStale\)/.test(html));
 
+
+/* --- a paused client stops reading the plan -------------------------
+ * Freeze only bit after a manual reload: a client with the tab open kept reading their
+ * month (owner, 2026-09-02). Now any refused call takes the plan off the screen, and a
+ * visible tab asks the cheapest question there is once a minute. */
+ok("a frozen answer is recognised wherever it arrives", /out\.body\.code === "FROZEN"\) showFrozen\(\)/.test(html));
+ok("the plan comes off the screen, not a banner over it", /function showFrozen/.test(html) && /state\.program = null;/.test(html));
+ok("and the client is told nothing was lost", /nothing you have written has been lost/.test(html));
+ok("a visible tab keeps asking", /api\(\{ action: "ping" \}\)/.test(html));
+ok("but never while hidden", /if \(typeof document !== "undefined" && document\.hidden\) return;/.test(html));
+
 console.log("All client view page checks passed.");
