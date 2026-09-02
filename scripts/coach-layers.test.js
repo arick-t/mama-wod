@@ -50,10 +50,16 @@ const MAX_CHARS = {
      and the scope limit must be stated out loud. About 40 extra tokens a call. */
   "layer1-methodology": 6000,
   "layer1-injuries": 4200,
-  /* Raised from 6500 on 2026-09-02: the skill-fresh / capacity-tired distinction moved in here
-     from the competitor layer, where it had been reaching only declared competitors. It is a
-     training rule, not a competition rule. Net across the two files is roughly flat. */
-  "layer2-general": 7000,
+  /* 7600 as of 2026-09-02. Two raises and two real trims got it here, and every line is
+     owner-approved and universal: the skill-fresh / capacity-tired distinction moved in from the
+     competitor layer (a training rule, not a competition rule), and the session-length ceiling
+     arrived once the admin module confirmed the contract for it. This is the always-on
+     construction layer, so it is the one budget worth watching.
+     IF IT HAS TO SHRINK, the first thing out is "HOW MANY DAYS, AND WHOSE DAYS THEY ARE": half of
+     it is a studio rule an individual reads for nothing and half is the reverse. Splitting it per
+     agent would take ~600 characters off every brick. Do that before trimming anything the owner
+     approved line by line. */
+  "layer2-general": 7900,
   "layer2-individual": 4000,
   /* Conditional: only a studio that bought N sessions a week pays for it. */
   "layer2-session-count": 3200,
@@ -278,6 +284,30 @@ function testGeneralLayerDecisions() {
   ok("the last week of a block is not assumed to be a deload",
     /NEVER decide that the last week of a block is a deload/.test(flat));
   ok("no fifth week is ever added", /never add a fifth week/.test(flat));
+  /* The admin module's own worked examples: block 1 (start 1, every 4) -> week 4; a block that
+     starts mid-cadence (start 3, every 4) -> week 2. So week 4 must not be assumed. */
+  ok("week 4 is not assumed to be the deload",
+    /The deload can land on week 2 of one block and week 4 of the next\. Do NOT assume week 4/.test(
+      flat
+    ));
+  ok("a request with no deload instruction is treated as an old one",
+    /If the request carries no deload instruction AT ALL, it is an old request: build four weeks with\s*no deload and invent no placement/i.test(
+      flat
+    ));
+
+  /* Session length: the admin module confirmed the contract, including what is NOT guaranteed —
+     sessionLimits is the coach's free-text box and may carry no number at all. */
+  ok("session length is a ceiling, not a target",
+    /--- HOW LONG A SESSION IS ---/.test(G) && /it is a CEILING, not a target/.test(flat));
+  ok("the whole session fits inside the stated minutes",
+    /the WHOLE session fits inside it — warm-up, strength, conditioning,\s*accessory/i.test(flat));
+  ok("with no number given, the notes are the only source and nothing is invented",
+    /the schedule notes are the only source/.test(flat) &&
+      /If they carry no number either, do NOT invent one/.test(flat));
+  ok("a duration is never inferred from the sessions-differ flag",
+    /Never read a duration out of the fact that sessions differ\. That is a flag, not a value/.test(
+      flat
+    ));
   ok("no five-week brick language survives in this layer",
     !/5[- ]week|five week|week 5\b|weeks 1-4/i.test(G),
     "the five-week brick came back into the layer");
@@ -587,6 +617,12 @@ function testSessionCountMode() {
     /Do NOT attach weekdays, and\s*do NOT invent rest days/i.test(flat));
   ok("the exact number of sessions is produced",
     /Produce EXACTLY the number of sessions asked for/.test(S));
+  /* The admin module capped sessionsPerWeek at 7, not 14: a week is held by weekdays and there are
+     seven places to write. Two sessions on one day are two parts of that day's card — which is the
+     same rule layer2-general already states as ONE SESSION PER PROGRAMMED DAY. */
+  ok("at most seven sessions a week, and a doubled day is two parts",
+    /At most SEVEN sessions a week/.test(S) &&
+      /they are two PARTS of that\s*day's single session — never two sessions on one day/i.test(flat));
 
   /* The descriptions are instructions. These four are the owner's own examples. */
   ok("a described session is a HARD instruction, every week",
@@ -631,8 +667,8 @@ function testPackBudget() {
      from layer2-individual, which is the same characters sitting behind a gate instead of reaching
      everyone. A general athlete's pack is 22k. If this rises again without a decision behind it,
      something is being padded. */
-  ok("the heaviest pack stays under 34k characters",
-    heavy.chars < 34000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
+  ok("the heaviest pack stays under 35k characters",
+    heavy.chars < 35000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
   ok("the pack reports which layers it used",
     Array.isArray(heavy.layers) && heavy.layers.length >= 6, heavy.layers.join(", "));
 }
