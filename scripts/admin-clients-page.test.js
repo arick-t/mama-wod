@@ -271,7 +271,7 @@ ok("one button issues both", /data-oneclick="1"/.test(page) && /צור לינק 
 ok("the code appears under the link", /liveCode[\s\S]{0,200}code-out/.test(page));
 /* A code is spent when a device comes in, not when the screen redraws. It used to
    vanish while he was still copying it into WhatsApp (owner, 2026-09-02). */
-ok("the code survives a redraw", /S\.issuedCode = \{ programId/.test(page));
+ok("the code survives a redraw", /S\.issuedCode = \{[\s\S]{0,60}programId: S\.program\.programId/.test(page));
 ok("and goes only when a NEW device has arrived", /devices <= \(S\.issuedCode\.devicesAt \| 0\)/.test(page));
 /* Counted from where it stood when the code was issued, not from zero: issuing again is
    how a second device gets in, and a client who already had one device never saw the new
