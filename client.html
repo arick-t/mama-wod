@@ -577,12 +577,15 @@ button.ghost:hover{color:var(--text)}
     if (!state.edit) return "";
     var day = state.edit.day || "";
     if (!day || DAY_KEYS_LOCAL.indexOf(day) < 0) return "";
-    var week = ((state.program && state.program.weeks) || [])[state.edit.wi | 0] || {};
-    var isRest = RT ? RT.dayIsRest(week, day) : true;
+    /* It used to mirror the day's state, which meant it opened already ticked on every
+       empty day — most of a new block. Ticking a ticked box does nothing, so the
+       control read as broken (owner, 2026-09-02). While editing it is an INTENT, not a
+       mirror: it starts empty, and ticking it plants a rest day over whatever was
+       written here. */
     return (
       '<label class="pprog-rest-check" title="Rest day">' +
       '<input type="checkbox" data-restcheck="' + (state.edit.wi | 0) + ":" + day + '"' +
-      (isRest ? " checked" : "") + ">" +
+      (state.edit.restIntent ? " checked" : "") + ">" +
       "<span>Rest day</span></label>"
     );
   }
@@ -1008,7 +1011,11 @@ button.ghost:hover{color:var(--text)}
     var rc = t.getAttribute("data-restcheck");
     if (rc) {
       var rcBits = rc.split(":");
-      setRestChecked(parseInt(rcBits[0], 10) || 0, rcBits[1] || "", !!t.checked);
+      if (state.edit) state.edit.restIntent = !!t.checked;
+      /* Unticking is simply changing your mind before saving — it must not write an
+         empty session over the day. Only ticking does something. */
+      if (!t.checked) return;
+      setRestChecked(parseInt(rcBits[0], 10) || 0, rcBits[1] || "", true);
       return;
     }
   });

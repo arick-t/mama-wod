@@ -75,6 +75,10 @@ function corsFor(req, res) {
   });
 }
 
+function isPlainObject(v) {
+  return !!v && typeof v === "object" && !Array.isArray(v);
+}
+
 function bad(res, status, code, error, extra) {
   return res.status(status).json(Object.assign({ ok: false, code: code, error: error }, extra || {}));
 }
@@ -182,6 +186,36 @@ async function ownerHandler(req, res, body) {
     const wantsIntake = body.clientKind !== "athlete";
     let intake = null;
     let weekCount = body.weekCount;
+    /* An individual athlete answers a different questionnaire (the eight-step one the
+       app uses), but the block is shaped by the same two facts: which weekdays they
+       train, and the deload cadence. So their answers are folded into the same shape
+       rather than growing a second way to lay out a month. */
+    let athleteIntake = null;
+    if (!wantsIntake && isPlainObject(body.athleteIntake)) {
+      athleteIntake = body.athleteIntake;
+      const trains = isPlainObject(athleteIntake.trainingDaysMap)
+        ? athleteIntake.trainingDaysMap
+        : {};
+      const rest = {};
+      for (const k of Intake.DAY_KEYS) rest[k] = trains[k] !== true;
+      const trainingCount = Intake.DAY_KEYS.filter((k) => !rest[k]).length;
+      intake = Intake.normalizeIntake({
+        clientName: body.clientName,
+        scheduleMode: "weekly_schedule",
+        /* Every day they did not tick IS a rest day — that is what the eight-step
+           intake means by picking training days. */
+        includeRestDays: trainingCount > 0,
+        restDays: rest,
+        sessionsPerWeek: trainingCount,
+        sessionMinutes: athleteIntake.sessionMinutes,
+        /* The product is monthly: the fourth week is a deload unless he changes it. */
+        deloadWeek: true,
+        deloadEveryWeeks: Intake.MIN_DELOAD_EVERY,
+        population: "Individual athlete",
+        goals: String(athleteIntake.goals || "").slice(0, 600),
+      });
+      weekCount = Intake.weekCountFor(intake);
+    }
     if (wantsIntake && body.intake) {
       const problems = Intake.validateIntake(body.intake);
       if (problems.length) {
@@ -199,6 +233,23 @@ async function ownerHandler(req, res, body) {
       isTest: body.isTest === true,
     });
     if (!created.ok) return bad(res, 400, created.code, created.error);
+    /* The eight-step answers, kept whole. Nothing reads them today — the coach is
+       disconnected while the skeleton is built — and they are what makes reconnecting
+       him in production one switch rather than a second intake. */
+    if (athleteIntake) {
+      const withIntake = await store.updateProgram(
+        created.program.programId,
+        created.program.version,
+        function (draft) {
+          draft.athleteIntake = athleteIntake;
+          return draft;
+        },
+        { actor: "owner" }
+      );
+      if (withIntake.ok) {
+        return res.status(200).json({ ok: true, program: withIntake.program });
+      }
+    }
     /* Carry the payment terms onto the program so the list can total them. */
     if (intake) {
       const withPay = await store.updateProgram(

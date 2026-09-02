@@ -55,7 +55,16 @@ function makeEl(id) {
   el.addEventListener = function () {};
   el.removeEventListener = function () {};
   el.querySelector = function () { return null; };
-  el.querySelectorAll = function () { return []; };
+  /* Real enough to be worth something: the wizard finds its fields by attribute, so
+     the stand-in answers by attribute too. */
+  el.querySelectorAll = function (sel) {
+    const groups = String(sel).match(/\[data-[a-z-]+\]/g) || [];
+    const attr = groups.length ? groups[0].replace(/[\[\]]/g, "") : "";
+    if (!attr) return [];
+    return Object.keys(els)
+      .map(function (k) { return els[k]; })
+      .filter(function (e) { return e.getAttribute(attr) !== null; });
+  };
   el.closest = function () { return null; };
   el.focus = function () {};
   el.blur = function () {};
@@ -68,6 +77,22 @@ function byId(id) {
   if (!els[id]) els[id] = makeEl(id);
   return els[id];
 }
+
+/* The fields as the wizard will look for them. */
+function field(id, attr, value) {
+  const e = byId(id);
+  e.setAttribute(attr, value);
+  return e;
+}
+["display_name", "gender", "age", "bodyweight", "experience"].forEach(function (id) {
+  field("adm-fx-" + id, "data-fx-id", id);
+});
+field("adm-fx-loc-full", "data-fx-location", "functional_gym");
+["sun", "mon", "tue", "wed", "thu", "fri", "sat"].forEach(function (d) {
+  field("adm-fx-day-" + d, "data-fx-day", d);
+});
+const skillAll = field("adm-fx-skill-all", "data-skill-id", "all_skills");
+skillAll.setAttribute("data-skill-all", "1");
 
 const thrown = [];
 const sandbox = {
@@ -128,20 +153,51 @@ ok("there are eight steps", steps.length === 8);
 function answer(step) {
   const key = steps[step];
   if (key === "profile") {
-    byId("adm-fx-displayName").value = "Test Athlete";
+    byId("adm-fx-display_name").value = "Test Athlete";
     byId("adm-fx-gender").value = "male";
     byId("adm-fx-age").value = "34";
     byId("adm-fx-bodyweight").value = "80";
     byId("adm-fx-experience").value = "3 years";
   }
-  if (key === "locations") byId("inEquipFull").checked = true;
+  if (key === "locations" || key === "setup") byId("adm-fx-loc-full").checked = true;
   if (key === "schedule") {
     ["sun", "tue", "thu"].forEach(function (d) { byId("adm-fx-day-" + d).checked = true; });
     byId("adm-fx-minutes").value = "60";
   }
   if (key === "goals") byId("adm-fx-goals").value = "General fitness";
   if (key === "injuries") byId("adm-fx-injuries").value = "None";
+  /* A plan cannot be scaled to someone whose skills are unknown, so the step refuses
+     to be walked past empty. */
+  if (key === "skills") byId("adm-fx-skill-all").checked = true;
 }
+
+/** Which step the wizard is actually showing, read off what it drew. */
+function stepShown() {
+  const m = String(byId("intake-fixed").innerHTML).match(/Step (\d+) \/ (\d+)/i);
+  return m ? parseInt(m[1], 10) : -1;
+}
+
+/* --- the gate he asked for: skills cannot be skipped -------------------- */
+
+ok("the wizard starts at step 1", stepShown() === 1);
+/* Walk to Skills without answering it, and try to leave. */
+for (let guard = 0; guard < 20 && steps[stepShown() - 1] !== "skills"; guard++) {
+  answer(stepShown() - 1);
+  sandbox.window.adminFixedNext();
+}
+const atSkills = stepShown();
+ok("we are standing on Skills", steps[atSkills - 1] === "skills");
+sandbox.window.adminFixedNext();
+ok("SKILLS CANNOT BE WALKED PAST EMPTY", stepShown() === atSkills);
+ok("and it says why", /Mark at least one skill/.test(String(byId("adminFixedErr").textContent || "")));
+byId("adm-fx-skill-all").checked = true;
+sandbox.window.adminFixedNext();
+ok("marking All skills lets it through", stepShown() === atSkills + 1);
+
+/* --- start over for the full walk -------------------------------------- */
+
+sandbox.window.openIntakeWorkspace();
+sandbox.window.startIntakeChat();
 
 for (let step = 0; step < steps.length - 1; step++) {
   answer(step);

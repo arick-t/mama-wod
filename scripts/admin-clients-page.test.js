@@ -238,7 +238,13 @@ ok("a failed door is reported rather than claimed", /doorClosed === false/.test(
 /* Access: empty until issued, then one click for link and code together. */
 ok("the link is hidden until it is issued", /linkShown \? "" : ' style="display:none"'/.test(page));
 ok("one button issues both", /data-oneclick="1"/.test(page) && /צור לינק חד פעמי/.test(page));
-ok("the code appears under the link", /data-oneclick[\s\S]{0,700}code-out/.test(page));
+ok("the code appears under the link", /liveCode[\s\S]{0,200}code-out/.test(page));
+/* A code is spent when a device comes in, not when the screen redraws. It used to
+   vanish while he was still copying it into WhatsApp (owner, 2026-09-02). */
+ok("the code survives a redraw", /S\.issuedCode = \{ programId/.test(page));
+ok("and goes only when a device has arrived", /S\.issuedCode\.programId === p\.programId && !devices/.test(page));
+ok("the owner is told it will not survive a reload", /לא אחרי רענון דף/.test(page));
+ok("delete has a bin, in the page's own font", /trashIconSvg\(\)/.test(page) && /btn-delete-client/.test(page));
 ok("a link belongs to the client it was issued for", /S\.linkShown = ""/.test(page));
 ok("linked devices are numbered", /מכשירים מקושרים/.test(page) && /\(i \+ 1\) \+ "\. "/.test(page));
 
@@ -371,12 +377,14 @@ ok(
  * 2026-09-02: "המתבקש בתרחיש זה — הצגת 3 אימונים וזהו". Each session still lives on a
  * weekday key behind the scenes, so nothing already written moved.
  * --------------------------------------------------------------------- */
-ok("a session-count programme gets a sessions view", /function renderSessionsView/.test(page));
-ok("and the calendar is not used for it", /host\.innerHTML = renderSessionsView\(D, block, limit\)/.test(page));
-ok("exactly as many cards as sessions sold", /for \(var i = 0; i < limit; i\+\+\)/.test(page));
-ok("each card says which session it is", /dateLabelOverride = "אימון "/.test(page));
-ok("the week can still be moved", /cvCalShift\(-1\)/.test(page) && /cvCalShift\(1\)/.test(page));
-ok("the card is the shared one, not a second card", /D\.renderDayCardHtml\(block, week, wi, dayKey, cardOpts\)/.test(page));
+/* Corrected on 2026-09-02: he wanted three places to write, not a second layout. A
+   stack of cards lost the calendar he had approved, so the calendar stays and only the
+   first N days of the week count as sessions — the others read as rest days. */
+ok("the programme is always the calendar", /host\.innerHTML = D\.renderBrickView\(brickOpts\(\)\)/.test(page));
+ok("there is no second layout any more", !/function renderSessionsView/.test(page));
+ok("only as many sessions as were sold", /DAY_KEYS_LOCAL\.indexOf\(dayKey\) >= sessions/.test(page));
+ok("the rest of the week reads as rest", /isRestDay: sessionRest \|\| undefined/.test(page));
+ok("the open card says which session it is", /"אימון " \+ \(activeIndex \+ 1\)/.test(page));
 
 /* Rest days say WHICH days, in the same row of seven the emphases use. */
 ok("ticking rest days opens a week", /id="inRestDaysWrap" class="sub-branch" hidden/.test(page));
@@ -654,8 +662,9 @@ ok("a ?program= deep link opens that client", /get\("program"\)/.test(page));
 /* --- destructive actions ask ------------------------------------ */
 
 ok("delete asks for confirmation", /confirm\("למחוק את התוכנית/.test(page));
-/* It wears the athlete card's delete style now, in the same place at the foot. */
-ok("delete is styled as dangerous", /class="btn-delete-link" data-del="1"/.test(page));
+/* Behind the chevron since 2026-09-02, with a bin and the page's own font — it was
+   rendering as a bare browser button in the middle of the panel. */
+ok("delete is styled as dangerous", /class="btn-delete-client" data-del="1"/.test(page));
 
 /* --- phone reality ---------------------------------------------- */
 

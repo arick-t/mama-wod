@@ -94,6 +94,7 @@
       /* Minutes per session. 0 = not answered. */
       sessionMinutes: 0,
       sessionTimesDiffer: false,
+      competitor: false,
       injuries: "",
       goals: "",
       fixedIntakePacket: "",
@@ -312,10 +313,15 @@
         /* The length of a session, as a number — the same question a studio answers,
            asked the same way (owner, 2026-09-02). */
         '<div class="pprog-fixed-row">' +
+        /* Hidden the moment he says the days differ: one number and "they are all
+           different" cannot both be the answer, and showing both invites him to
+           believe the number still means something (owner, 2026-09-02). */
+        '<span class="pprog-fixed-len" id="adm-fx-len-wrap"' + (differs ? ' hidden' : "") + ">" +
         '<label class="pprog-fixed-inline" for="adm-fx-minutes">Session length (minutes)</label>' +
         '<input id="adm-fx-minutes" type="number" min="20" max="120" class="pprog-fixed-num" value="' +
         esc(mins > 0 ? mins : "") +
         '" placeholder="—">' +
+        "</span>" +
         '<label class="pprog-fixed-inline"><input type="checkbox" id="adm-fx-times-differ"' +
         (differs ? " checked" : "") +
         ' onchange="adminFixedToggleTimes()"> Different times on different days</label>' +
@@ -372,6 +378,7 @@
       html +=
         '<p class="pprog-fixed-title">Skills</p>' +
         '<p class="pprog-skills-picker-note">Mark skills you control. Unmarked = scale. Missing/partial skills can be noted in Goals or Injuries.</p>' +
+        '<p class="pprog-skills-picker-note"><strong>Mark at least one</strong> — or tick <strong>All skills</strong>. A plan cannot be scaled to someone whose skills are unknown.</p>' +
         '<div class="pprog-skills-picker">';
       for (var si = 0; si < S.SKILL_DEFS.length; si++) {
         var sd = S.SKILL_DEFS[si];
@@ -411,7 +418,13 @@
         '<p class="pprog-fixed-title">Goals</p>' +
         '<textarea id="adm-fx-goals" maxlength="800" placeholder="e.g. Engine + Olympic lift consistency">' +
         esc(st.goals || "") +
-        "</textarea>";
+        "</textarea>" +
+        /* Competing changes what a block is for — peaking, testing, and how heavy a
+           week may get. The coach is told in as many words (owner, 2026-09-02). */
+        '<label class="pprog-fixed-inline" style="margin-top:12px">' +
+        '<input type="checkbox" id="adm-fx-competitor"' +
+        (st.competitor === true ? " checked" : "") +
+        "> I am training for a competition / actively competing</label>";
     }
 
     html += navHtml(step, step >= total - 1);
@@ -487,6 +500,9 @@
     var text = document.getElementById("adm-fx-limits");
     if (!box || !text) return;
     text.hidden = !box.checked;
+    /* The single number goes away with it — see the comment where it is rendered. */
+    var lenWrap = document.getElementById("adm-fx-len-wrap");
+    if (lenWrap) lenWrap.hidden = !!box.checked;
     if (box.checked) {
       try { text.focus(); } catch (e) {}
     }
@@ -596,8 +612,10 @@
       intakeState.trainingDays = days;
       intakeState.scheduleNotes = schEl ? String(schEl.value || "").trim().slice(0, 500) : "";
       var minsIn = parseInt(minEl && minEl.value, 10);
-      intakeState.sessionMinutes = minsIn >= 20 && minsIn <= 120 ? minsIn : 0;
       intakeState.sessionTimesDiffer = !!(diffEl && diffEl.checked);
+      /* If the days differ there is no single length, so we keep none. */
+      intakeState.sessionMinutes =
+        !intakeState.sessionTimesDiffer && minsIn >= 20 && minsIn <= 120 ? minsIn : 0;
       /* The free text is only kept while the tick box says the times differ — leftover
          text under an unticked box is an answer nobody gave. */
       intakeState.sessionLimits = intakeState.sessionTimesDiffer && limEl
@@ -678,12 +696,22 @@
           if (!S.SKILL_DEFS[sk].allToggle) skills[S.SKILL_DEFS[sk].id] = true;
         }
       }
+      /* Walking past this step untouched used to be allowed, and it produced an
+         athlete whose whole skill profile was "nothing marked" — indistinguishable
+         from a beginner who controls nothing (owner, 2026-09-02). */
+      var markedAny = Object.keys(skills).some(function (k) { return skills[k] === true; });
+      if (!markedAny) {
+        setFixedErr("Mark at least one skill, or tick All skills.");
+        return;
+      }
       intakeState.skills = skills;
     } else if (key === "injuries") {
       var injEl = document.getElementById("adm-fx-injuries");
       intakeState.injuries = injEl ? String(injEl.value || "").trim().slice(0, 800) : "";
     } else if (key === "goals") {
       var goalEl = document.getElementById("adm-fx-goals");
+      var compEl = document.getElementById("adm-fx-competitor");
+      intakeState.competitor = !!(compEl && compEl.checked);
       intakeState.goals = goalEl ? String(goalEl.value || "").trim().slice(0, 800) : "";
       if (!intakeState.goals) {
         setFixedErr("Add at least a short goal (or write unknown).");
@@ -716,6 +744,95 @@
     }
   }
 
+  /**
+   * OFF until production (owner, 2026-09-02).
+   *
+   * True means finishing the intake asks Gemini for a five-week block — real money, on
+   * every rehearsal. It also puts a plan in front of the athlete that the owner has not
+   * read, which is the opposite of the procedure he set: he writes, he approves, he
+   * sends. Turn this on when the product goes live, not before.
+   */
+  var ATHLETE_AI_BUILD_ENABLED = false;
+
+  /**
+   * The individual, created the same way a studio client is: an empty month shaped by
+   * the days they train, waiting for the owner to write it.
+   */
+  function createAthleteAsClient() {
+    var S = C();
+    var prof = S.normalizeIntakeProfile(Object.assign({}, intakeState, { intakeComplete: true }));
+    var dayMap = {};
+    (Array.isArray(intakeState.trainingDays) ? intakeState.trainingDays : []).forEach(function (d) {
+      dayMap[String(d)] = true;
+    });
+    setIntakeBusy(true);
+    showIntakeBuilding(true, "<strong>Coach</strong> — saving the athlete…");
+    writeIntakeStatus("שומר מתאמן…");
+    fetch(adminApiUrl("/api/client-program"), {
+      method: "POST",
+      headers: typeof adminAuthHeaders === "function" ? adminAuthHeaders() : { "Content-Type": "application/json" },
+      body: JSON.stringify(
+        typeof withAdminPassword === "function"
+          ? withAdminPassword(athleteCreateBody(prof, dayMap))
+          : athleteCreateBody(prof, dayMap)
+      ),
+    })
+      .then(function (r) { return r.json().then(function (j) { return { status: r.status, j: j }; }); })
+      .then(function (res) {
+        if (res.status === 401) {
+          restoreAdminFixedGoals("פג תוקף ההתחברות לאדמין — התחבר מחדש ואז נסה שוב.");
+          return;
+        }
+        if (res.status !== 200 || !res.j || !res.j.ok || !res.j.program) {
+          restoreAdminFixedGoals((res.j && res.j.error) || "לא הצלחתי לשמור את המתאמן.");
+          return;
+        }
+        intakeState.intakeComplete = true;
+        showIntakeBuilding(false);
+        setIntakeBusy(false);
+        if (typeof window.closeIntakeWorkspace === "function") window.closeIntakeWorkspace();
+        /* Straight to his card, where he writes the month and then issues the link. */
+        if (window.ClientScreen && window.ClientScreen.reload) {
+          window.ClientScreen.reload().then(function () {
+            window.ClientScreen.open(res.j.program.programId);
+          });
+        }
+      })
+      .catch(function (e) {
+        restoreAdminFixedGoals("שגיאת רשת בשמירת המתאמן: " + String((e && e.message) || e).slice(0, 160));
+      });
+  }
+
+  function athleteCreateBody(prof, dayMap) {
+    return {
+      action: "create",
+      clientKind: "athlete",
+      clientName: prof.displayName || "מתאמן",
+      athleteIntake: {
+        displayName: prof.displayName || "",
+        gender: prof.gender || "",
+        age: intakeState.age || "",
+        bodyweight: intakeState.bodyweight || "",
+        experience: intakeState.experience || "",
+        trainingSetup: prof.trainingSetup || "",
+        trainingDaysMap: dayMap,
+        sessionMinutes: parseInt(intakeState.sessionMinutes, 10) || 0,
+        sessionTimesDiffer: intakeState.sessionTimesDiffer === true,
+        sessionLimits: intakeState.sessionLimits || "",
+        activeRecoveryPref: intakeState.activeRecoveryPref || "",
+        lifts: prof.lifts || {},
+        skills: prof.skills || {},
+        skillsSummary: prof.skillsSummary || "",
+        injuries: intakeState.injuries || "",
+        goals: intakeState.goals || "",
+        competitor: intakeState.competitor === true,
+        /* The packet the coach will read on the day he is reconnected. */
+        fixedIntakePacket: String(prof.fixedIntakePacket || "").slice(0, 6000),
+        profileNotes: String(prof.profileNotes || "").slice(0, 2000),
+      },
+    };
+  }
+
   function finishAdminFixedIntakeAndBuild() {
     var S = C();
     var prompt = S.buildFixedIntakePrompt(intakeState);
@@ -738,6 +855,10 @@
       { role: "user", text: prompt },
     ];
     intakeState.buildAttempted = true;
+    if (!ATHLETE_AI_BUILD_ENABLED) {
+      createAthleteAsClient();
+      return;
+    }
     generateIntakeBlockFromFixedPacket();
   }
 
@@ -904,6 +1025,10 @@
       intakeState.intakeBuildId = "";
     }
     intakeState.buildAttempted = true;
+    if (!ATHLETE_AI_BUILD_ENABLED) {
+      createAthleteAsClient();
+      return;
+    }
     generateIntakeBlockFromFixedPacket();
   };
 

@@ -752,7 +752,15 @@ body:has(#intake-modal.open) #adminChatFloat{
 #intake-fixed .pprog-location-picker,#intake-fixed .pprog-fixed-radios,#intake-fixed .pprog-skills-picker{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}
 #intake-fixed .pprog-location-picker label,#intake-fixed .pprog-fixed-radios label,#intake-fixed .pprog-skills-picker label{
   display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:#222;border:1px solid #444;border-radius:8px;font-size:.88em;color:#e8e4d8;cursor:pointer;line-height:1.35}
-#intake-fixed .pprog-skills-all{border-color:rgba(26,155,138,.45)!important}
+/* "All skills" is not one more line in a list of twenty — it is the answer that
+   replaces all of them, so it reads like one (owner, 2026-09-02). */
+#intake-fixed .pprog-skills-all{border-color:#1A9B8A!important;background:rgba(26,155,138,.14)!important;font-weight:800;color:#f5c518;margin-bottom:12px;font-size:.95em!important}
+/* The session-length row: the app's own font, and room to breathe. */
+#intake-fixed .pprog-fixed-row{display:flex;align-items:center;flex-wrap:wrap;gap:14px;margin:0 0 14px;font-family:inherit}
+#intake-fixed .pprog-fixed-len{display:flex;align-items:center;gap:10px}
+#intake-fixed .pprog-fixed-inline{display:flex;align-items:center;gap:8px;font-size:.9em;color:#e8e4d8;font-weight:600;font-family:inherit}
+#intake-fixed .pprog-fixed-num{width:92px;padding:10px 12px;background:#222;color:#eee;border:1px solid #555;border-radius:8px;font-size:1rem;font-family:inherit;text-align:center}
+#intake-fixed textarea{width:100%;box-sizing:border-box;margin:0 0 12px;padding:10px 12px;background:#222;color:#eee;border:1px solid #555;border-radius:8px;font-size:.95rem;font-family:inherit;line-height:1.45;min-height:76px}
 #intake-fixed .pprog-fixed-days{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
 #intake-fixed .pprog-fixed-days label{display:flex;align-items:center;gap:6px;padding:8px 10px;background:#222;border:1px solid #444;border-radius:8px;font-size:.85em;color:#e8e4d8;cursor:pointer}
 #intake-fixed .pprog-fixed-recovery-branch{
@@ -923,6 +931,14 @@ header{flex-wrap:wrap;row-gap:8px}
 @media (max-width:600px){
 #clientScreen .grid2{grid-template-columns:1fr}
 }
+
+/* Delete, in the page's own font, with a small bin. It was rendering as a bare
+   browser button in the middle of the panel (owner, 2026-09-02). */
+.btn-delete-client{display:inline-flex;align-items:center;gap:7px;appearance:none;background:transparent;
+  border:1px solid rgba(232,69,26,.5);color:#E8451A;font-family:inherit;font-size:.82em;font-weight:700;
+  padding:8px 12px;border-radius:8px;cursor:pointer;line-height:1}
+.btn-delete-client:hover{background:rgba(232,69,26,.12);border-color:#E8451A}
+.btn-delete-client svg{flex-shrink:0}
 </style>
 </head>
 <body>
@@ -5894,9 +5910,20 @@ tryRestoreAdminSession();
             S.access.openCodes.length + ")</button></div>"
           : "") +
         '<div class="ath-fact" style="grid-column:1/-1">' +
-          '<button type="button" class="btn-delete-link" data-del="1">מחק לקוח</button>' +
+          '<button type="button" class="btn-delete-client" data-del="1">' +
+          trashIconSvg() +
+          "<span>מחק לקוח</span></button>" +
         "</div>" +
       "</div>"
+    );
+  }
+
+  /* Small, and unmistakably a delete. */
+  function trashIconSvg() {
+    return (
+      '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" ' +
+      'stroke-width="2" stroke-linecap="round" aria-hidden="true">' +
+      '<path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/></svg>'
     );
   }
 
@@ -5914,7 +5941,14 @@ tryRestoreAdminSession();
     var frozen = p.frozen === true;
     /* The link is not a fact about the client — it is something the owner ISSUES. It
        stays out of sight until he does (owner, 2026-09-02). */
-    var linkShown = S.linkShown === p.programId;
+    var devices = (a.devices || []).length;
+    /* A code that nobody has used yet is still live, so it stays put — through a
+       redraw, a list refresh, a click on another tab. It goes when a device arrives,
+       because that is what spends it. */
+    var liveCode = S.issuedCode && S.issuedCode.programId === p.programId && !devices
+      ? String(S.issuedCode.code)
+      : "";
+    var linkShown = S.linkShown === p.programId || !!liveCode;
     var moreOpen = !!S.moreOpen;
     html +=
       '<div class="ath-wrap"><div class="ath-card">' +
@@ -5974,7 +6008,13 @@ tryRestoreAdminSession();
           "</div>" +
           '<div class="handoff-link"' + (linkShown ? "" : ' style="display:none"') + '>' +
           (linkShown ? esc(clientLink(p.programId)) : "") + "</div>" +
-          '<div id="codeOut"></div>' +
+          '<div id="codeOut">' +
+          (liveCode
+            ? '<div class="code-out">' + esc(liveCode) + "</div>" +
+              '<p class="meta" style="text-align:center">מסור בוואטסאפ יחד עם הלינק. ' +
+              "יישאר כאן עד שהמתאמן ייכנס — אבל לא אחרי רענון דף.</p>"
+            : "") +
+          "</div>" +
           '<div class="handoff-actions">' +
             '<button class="btn-handoff-mini" type="button" data-oneclick="1" ' +
             'title="מפיק לינק וקוד יחד — כך גם מחברים מכשיר נוסף">צור לינק חד פעמי</button>' +
@@ -6196,11 +6236,6 @@ tryRestoreAdminSession();
       host.innerHTML = '<p class="muted">אין שבועות בתוכנית.</p>';
       return;
     }
-    var limit = sessionCountLimit();
-    if (limit) {
-      host.innerHTML = renderSessionsView(D, block, limit);
-      return;
-    }
     host.innerHTML = D.renderBrickView(brickOpts());
   }
 
@@ -6224,48 +6259,6 @@ tryRestoreAdminSession();
     );
   }
 
-  /**
-   * N sessions, and nothing else. One card per session, the same day card the calendar
-   * would have opened, plus the week navigation — because a block still has weeks even
-   * when its sessions have no weekdays.
-   */
-  function renderSessionsView(D, block, limit) {
-    var wi = clampWi(S.wi | 0);
-    var week = (block.weeks || [])[wi] || {};
-    var weeks = weekCount();
-    var opts = brickOpts();
-    var html =
-      '<div class="sessions-head">' +
-      '<button type="button" class="ghost sm" onclick="cvCalShift(-1)"' +
-      (wi <= 0 ? " disabled" : "") + ">‹ שבוע קודם</button>" +
-      '<span class="sessions-title">שבוע ' + (wi + 1) + " מתוך " + weeks + " · " +
-      limit + " אימונים</span>" +
-      '<button type="button" class="ghost sm" onclick="cvCalShift(1)"' +
-      (wi >= weeks - 1 ? " disabled" : "") + ">שבוע הבא ›</button>" +
-      "</div>" +
-      '<p class="meta" style="margin:0 0 10px">' + limit +
-      " אימונים בשבוע, בלי ימים קבועים. כתוב אותם לפי הסדר — הלקוח יראה אותם כך.</p>";
-
-    for (var i = 0; i < limit; i++) {
-      var dayKey = DAY_KEYS_LOCAL[i] || DAY_KEYS_LOCAL[DAY_KEYS_LOCAL.length - 1];
-      var cardOpts = {};
-      for (var k in opts) {
-        if (Object.prototype.hasOwnProperty.call(opts, k)) cardOpts[k] = opts[k];
-      }
-      cardOpts.activeDay = dayKey;
-      cardOpts.editing = !!(S.edit && S.edit.wi === wi && S.edit.day === dayKey);
-      cardOpts.editDraft = cardOpts.editing ? S.edit : null;
-      cardOpts.cardFocus = false;
-      /* The label the owner and the client both read: this is session 2, not Monday. */
-      cardOpts.dateLabelOverride = "אימון " + (i + 1);
-      html +=
-        '<div class="session-slot">' +
-        D.renderDayCardHtml(block, week, wi, dayKey, cardOpts) +
-        "</div>";
-    }
-    return html;
-  }
-
   function brickOpts() {
     var p = S.program || {};
     var block = currentBlock();
@@ -6276,10 +6269,25 @@ tryRestoreAdminSession();
         '<div class="pprog-width-status">' + selected.length + " ימים נבחרו · " +
         '<button type="button" onclick="cvClearSelection()" aria-label="נקה בחירה">נקה</button></div>';
     }
+    /* Sessions rather than weekdays: only the first N days of the week are sessions,
+       and the calendar treats the others exactly as it treats a rest day. */
+    var sessions = sessionCountLimit();
+    var sessionRest = sessions
+      ? function (dayKey) {
+          return DAY_KEYS_LOCAL.indexOf(dayKey) >= sessions;
+        }
+      : null;
+    var activeIndex = DAY_KEYS_LOCAL.indexOf(S.day || "sun");
     return {
       block: block,
       activeWeekIndex: S.wi | 0,
       activeDay: S.day || "sun",
+      /* A day in this programme is "session 2", not "Tuesday". */
+      dateLabelOverride:
+        sessions && activeIndex >= 0 && activeIndex < sessions
+          ? "אימון " + (activeIndex + 1)
+          : "",
+      isRestDay: sessionRest || undefined,
       /* A month is four weeks and the program grows by a month at a time, so the rail
          has to show the program's REAL length rather than the athlete app's fixed
          five. */
@@ -6806,11 +6814,10 @@ tryRestoreAdminSession();
       api({ action: "issue_code", programId: S.program.programId }).then(function (r) {
         if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "הנפקת הקוד נכשלה."); return; }
         S.linkShown = S.program.programId;
-        /* Shown once and never stored in the clear — lose it and issue another. */
-        var codeHtml = '<div class="code-out">' + esc(r.body.code) + "</div>" +
-          '<p class="meta" style="text-align:center">מסור בוואטסאפ יחד עם הלינק. חד-פעמי, בתוקף 7 ימים. לא יוצג שוב.</p>';
+        /* Held in memory, not stored: the server keeps only a hash. It survives every
+           redraw until a device uses it (owner, 2026-09-02). */
+        S.issuedCode = { programId: S.program.programId, code: String(r.body.code || "") };
         renderDetail();
-        if (el("codeOut")) el("codeOut").innerHTML = codeHtml;
         openClientAccessRefresh();
       });
       return;
@@ -6859,9 +6866,8 @@ tryRestoreAdminSession();
     api({ action: "read", programId: S.program.programId }).then(function (r) {
       if (r.status === 200 && r.body.ok) {
         S.access = r.body.access;
-        var out = el("codeOut") ? el("codeOut").innerHTML : "";
+        /* A device came in: the code did its job and renderDetail will drop it. */
         renderDetail();
-        if (out && el("codeOut")) el("codeOut").innerHTML = out;
       }
     });
   }

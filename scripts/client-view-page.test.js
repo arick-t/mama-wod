@@ -183,7 +183,11 @@ ok("the footer row it used to live in is gone", !/restToggleRowHtml/.test(html))
    session had been written, so on an empty day — most of a new block — there was no way
    to mark rest at all (owner, 2026-09-01). */
 ok("it is a tick box", /class="pprog-rest-check"/.test(html) && /data-restcheck=/.test(html));
-ok("it shows the day's current state", /\(isRest \? " checked" : ""\)/.test(html));
+/* Corrected 2026-09-02: mirroring the day meant it opened already ticked on every
+   empty day, and ticking a ticked box does nothing — the control read as broken. While
+   editing it is an intent: empty, and ticking it plants a rest day. */
+ok("it opens empty, as an intent", /state\.edit\.restIntent \? " checked" : ""/.test(html));
+ok("unticking does not write anything", /if \(!t\.checked\) return;/.test(html));
 ok("an empty day can still be marked as rest", !/if \(isRest\) return "";/.test(html));
 ok("unticking hands back an empty session", /function setRestChecked/.test(html) && /rest: false,/.test(html));
 ok("wiping a written day asks first", /hasContent && !window\.confirm/.test(html));
