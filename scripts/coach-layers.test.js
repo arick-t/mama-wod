@@ -95,7 +95,12 @@ const MAX_CHARS = {
   "layer3-gymnastics": 4000,
   "layer3-weightlifting": 3500,
   "layer3-endurance": 3500,
-  "layer3-competitors": 4200,
+  /* 4600 as of 2026-09-03, owner review: the two experience tiers came out and were replaced by
+     the rule that the intake's days are the whole answer — "אם יש מישהו עם שאיפות תחרותיות
+     שמתאמן רק 3 פעמים בשבוע הוא יקבל 3 אימונים הכי מתאימים לו" — plus the precedence line that
+     settles this layer against a discipline layer. Net growth, and worth it: both replaced rules
+     were producing a session count nobody asked for. */
+  "layer3-competitors": 4600,
   "layer3-partner": 2500,
   "equivalence-table": 5500,
 };
@@ -1039,12 +1044,13 @@ function testPackBudget() {
      an athlete with two training places, a skill claimed and its pattern avoided, and a weekend
      session longer than the stated ceiling. Two of the three are conditional (injuries, individual)
      and only the session-length line is always-on. A second brick is now folded into the fixture, so the number is the true worst case. The
-     weightlifting layer then grew ~800 characters in the owner review that replaced its experience
-     tiers with tests on the reported numbers. This pack is
+     weightlifting and competitor layers then grew in the owner reviews that replaced their
+     experience tiers with rules resting on data we hold — the reported numbers, and the intake's
+     own training days. This pack is
      ~10.2k tokens; the general
      healthy athlete still pays 22k, which is what most bricks actually cost. */
-  ok("the heaviest pack stays under 41k characters",
-    heavy.chars < 41000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
+  ok("the heaviest pack stays under 42k characters",
+    heavy.chars < 42000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
   ok("the pack reports which layers it used",
     Array.isArray(heavy.layers) && heavy.layers.length >= 6, heavy.layers.join(", "));
 }
@@ -1393,6 +1399,68 @@ function testPartner() {
     "the owner left this to the human coach on purpose");
 }
 
+
+/* Competitors, reviewed with the owner 2026-09-03. Four changes. */
+function testCompetitorReview() {
+  const C2 = require("../lib/coach-layers/layer3-competitors.js");
+  const flat = C2.replace(/\s+/g, " ");
+
+  /* Fourth layer to carry experience tiers, and the worst of the four: they prescribed a session
+     count ("3-4 days rising toward 6", "up to 6 days a week") against an intake that already
+     states the training days, which the owner ruled is the winning answer. */
+  ok("no experience tier survives in the competitor layer",
+    !/DEVELOPING —/.test(C2) && !/INTERMEDIATE —/.test(C2) && !/days a week rising toward/.test(flat),
+    "an experience tier is back in the competitor layer");
+  ok("the intake's days are the whole answer",
+    /HOW MANY DAYS THEY GET \(HARD\)/.test(C2) &&
+      /The days in their intake, and nothing else/.test(C2));
+  ok("a competitive goal earns no extra sessions",
+    /A competitive goal does not earn an athlete more sessions than they said they train/i.test(flat));
+  ok("three days a week gets the three best sessions",
+    /trains three times a week gets the three sessions that serve them best/i.test(flat));
+  ok("volume is never inferred from how serious the goal sounds",
+    /Never infer a training volume from how serious the goal sounds/.test(C2));
+  ok("the skill sessions survived the tier deletion, attached to existing days",
+    /up to two low-intensity skill sessions a week/i.test(flat) &&
+      /attached to the start or end of a session they already have\. Attached — never a session of their own/i.test(
+        flat
+      ));
+
+  /* The owner's precedence call, and it runs the other way from the recommendation put to him:
+     "תוכנית המתחרים תנצח את תוכנית המוט ולמה? כי היא מדברת על רוחב למתחרה ולא על סקיל ספציפי." */
+  ok("this layer wins a clash with a discipline layer",
+    /IF THIS SHAPE CLASHES WITH A DISCIPLINE LAYER, THIS ONE WINS/.test(C2));
+  ok("the reason for that precedence is stated, not just asserted",
+    /this layer is about preparing a competitor BROADLY, and the barbell density here is breadth for them rather than specialisation/i.test(
+      flat
+    ));
+
+  /* "גם לא ימסר תאריך - אנחנו לא נותנים שירות כזה וזה לא קהל הלקוחות שלנו." No event week, and no
+     intake field for a date either. */
+  ok("there is no event week and no date is requested",
+    /NO EVENT WEEK/.test(C2) &&
+      /Do not build a week around a contest date, and do not ask for one/i.test(flat));
+  ok("a date the athlete mentions changes nothing here",
+    /a date they happen to mention changes nothing/i.test(flat));
+  ok("the old event-week choreography is gone",
+    !/dry run, rest, game day/i.test(flat));
+
+  /* Kept on purpose — the core of the layer, all of it resting on data we hold. */
+  ok("the weakness is still read off unmarked skills and the lowest lifts",
+    /the unmarked skills and the lowest lifts in the intake/i.test(flat));
+  ok("no invented domain score",
+    /Do not invent a score for them across domains you have no data on/i.test(flat));
+  ok("one weakness per block is kept",
+    /A block carries ONE primary goal or weakness/.test(C2));
+  ok("the tier ranking is kept and still declares itself contest-weighted",
+    /TIER 1 \(all three\)/.test(C2) &&
+      /this ranking is weighted by what a CONTEST tests/i.test(flat));
+  ok("the header no longer says the competitor field is still coming",
+    /field HAS since arrived/.test(
+      require("fs").readFileSync(path.join(LAYERS_DIR, "layer3-competitors.js"), "utf8")
+    ));
+}
+
 function main() {
   console.log("\n=== Coach knowledge layers ===\n");
   testShape();
@@ -1413,6 +1481,7 @@ function main() {
   testWeightlifting();
   testEndurance();
   testPartner();
+  testCompetitorReview();
   testPackBudget();
   console.log("\nPassed:", passed);
   if (process.exitCode) {
