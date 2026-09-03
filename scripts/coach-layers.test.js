@@ -179,6 +179,15 @@ function testNumbersHaveProvenance() {
     /ski = row · bike-erg = 2x row · run = 0\.8x row/.test(EQUIVALENCE));
   ok("the coach is told to prefer meters over calories",
     /Prefer meters over calories/i.test(flat));
+  /* A real studio: rig, seven barbells, kettlebells, dumbbells, wall balls, boxes, and 200 m of
+     road outside. No rower, no bike, no ski. The table lists what is EQUIVALENT, not what is
+     available, and nothing said so — the swap rule could have sent the coach to a machine that is
+     not in the room. */
+  ok("a swap is limited to equipment the place actually has",
+    /ONLY SWAP TO SOMETHING THE PLACE ACTUALLY HAS/.test(EQUIVALENCE) &&
+      /A room with no ergometers gets its cyclic work from running, shuttles, jump rope and loaded carries/i.test(
+        flat
+      ));
   ok("the time-domain sanity check is present, with the AMRAP example",
     /12-minute\s*AMRAP gives two slow rounds/.test(flat));
 
@@ -262,6 +271,11 @@ function testGeneralLayerDecisions() {
      coach characterises the room. No experience tiers, and nothing keyed to months of training. */
   ok("no experience tiers", !/BEGINNER:|INTERMEDIATE:|EXPERIENCED:|RETURNING:/.test(G));
   ok("no months-of-training thresholds", !/18 months|36 months|18-36/.test(G));
+  /* From a real studio: seven barbells, room for eight to ten athletes. A barbell-for-everyone
+     session cannot run there, and nothing told the coach to check the ratio. */
+  ok("the station-to-people ratio is checked before a one-each piece",
+    /COUNT THE STATIONS AGAINST THE PEOPLE before writing a piece that needs one each/.test(flat) &&
+      /a session built to SHARE/.test(G));
   ok("one session at one standard, adapted by the human coach",
     /Write ONE session at ONE standard/.test(G) && /the human coach adapts on the floor/i.test(flat));
 
