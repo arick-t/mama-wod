@@ -650,6 +650,7 @@ button.ghost:hover{color:var(--text)}
 
   /* All blocks · this block · this week — the same three the owner has. */
   window.cvSetView = function (mode) {
+    autosaveDraft();
     state.calMode = mode === "block" || mode === "week" ? mode : "month";
     renderDays();
   };
@@ -663,6 +664,7 @@ button.ghost:hover{color:var(--text)}
      not started yet or was already behind us, and in a programme sold as N sessions
      today's weekday can point at a slot that does not exist (owner, 2026-09-02). */
   window.cvJumpToday = function () {
+    autosaveDraft();
     var block = currentBlock();
     if (!block) return;
     var start = Date.parse(block.blockStart + "T00:00:00Z");
@@ -760,7 +762,8 @@ button.ghost:hover{color:var(--text)}
        click would collapse the selection the drag just made. */
     if (cvIgnoreNextClick) { cvIgnoreNextClick = false; return; }
     /* Moving off the day being edited abandons the draft rather than carrying it. */
-    if (state.edit && (state.edit.wi !== nextWi || state.edit.day !== nextDay)) state.edit = null;
+    /* Moving off the day being written SAVES it (owner, 2026-09-03). */
+    if (state.edit && (state.edit.wi !== nextWi || state.edit.day !== nextDay)) autosaveDraft();
     /* The day that WAS open, before this click replaces it. */
     var prevWi = state.wi | 0;
     var prevDay = state.day;
@@ -890,6 +893,7 @@ button.ghost:hover{color:var(--text)}
   /* Tapping W3 opens that week — every day of it, side by side. It used to jump to the
      week's "general" note and clear the selection (owner, 2026-09-02). */
   window.cvSelectWeek = function (wi) {
+    autosaveDraft();
     var w = clampWi(wi);
     var limit = (state.program && state.program.sessionColumns) || DAY_KEYS_LOCAL.length;
     var out = [];
@@ -928,6 +932,8 @@ button.ghost:hover{color:var(--text)}
     var rest = RT ? RT.dayIsRest(week, day) : !(dayData.parts && dayData.parts.length);
     var parts = rest ? [] : (D && D.draftFromDayData ? D.draftFromDayData(dayData, false) : []);
     if (!parts.length) parts = [{ title: "Part A", notes: [""], format: "", work: [""] }];
+    /* The pencil on another card is also leaving this one. */
+    if (state.edit && (state.edit.wi !== nextWi || state.edit.day !== day)) autosaveDraft();
     state.wi = nextWi;
     state.day = day;
     /* The selection survives: picking three days to compare and then editing one used
@@ -991,6 +997,40 @@ button.ghost:hover{color:var(--text)}
     renderDays();
   };
 
+  /**
+   * Leaving an edit saves it — the client has the same hands as the owner.
+   *
+   * Moving to another day used to throw away what had just been typed unless Save
+   * was pressed first, and nobody presses Save before clicking the next day
+   * (owner, 2026-09-03). Cancel still discards: that is what it is for.
+   */
+  function autosaveDraft() {
+    var draft = state.edit;
+    if (!draft) return;
+    var D = pprogLib();
+    state.edit = null;
+    if (!D || !D.partsFromDraft || !D.draftHasContent(draft)) return;
+    var parts = D.partsFromDraft({ parts: draft.parts, day: draft.day });
+    if (samePartsAsStored(draft.wi, draft.day, parts)) return;
+    saveDay(draft.wi, draft.day, parts, false, { quiet: true });
+  }
+
+  /** Already what the programme holds? Then there is nothing to save. */
+  function samePartsAsStored(wi, dayKey, parts) {
+    var week = ((state.program && state.program.weeks) || [])[wi | 0] || {};
+    var stored = ((week.days && week.days[dayKey]) || {}).parts || [];
+    var strip = function (list) {
+      return (list || []).map(function (p) {
+        return { title: String((p && p.title) || ""), lines: ((p && p.lines) || []).slice() };
+      });
+    };
+    try {
+      return JSON.stringify(strip(stored)) === JSON.stringify(strip(parts));
+    } catch (e) {
+      return false;
+    }
+  }
+
   window.cvEditSave = function () {
     if (!state.edit) return;
     var D = pprogLib();
@@ -1047,7 +1087,7 @@ button.ghost:hover{color:var(--text)}
    * @param {Array} parts ready-made parts (ignored when makeRest)
    * @param {boolean} makeRest true = this day becomes a rest day
    */
-  function saveDay(wi, dayKey, parts, makeRest) {
+  function saveDay(wi, dayKey, parts, makeRest, opts) {
     if (state.busy) return;
     if (!state.program) return;
     wi = wi | 0;
@@ -1083,6 +1123,7 @@ button.ghost:hover{color:var(--text)}
       }
       state.program = r.body.program;
       state.edit = null;
+      if (opts && opts.quiet) banner("good", "Saved automatically.");
       /* Stay where the writing happened. */
       state.wi = wi;
       state.day = dayKey;

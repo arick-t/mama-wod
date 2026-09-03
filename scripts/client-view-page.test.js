@@ -241,6 +241,14 @@ ok("but not twice in a few seconds", /FOREGROUND_MIN_GAP_MS = 15000/.test(html) 
 ok("switching windows counts as coming back", /window\.addEventListener\("focus", pullIfStale\)/.test(html));
 
 
+/* --- autosave, on the client side too (owner, 2026-09-03) ------------ */
+ok("there is one place that commits a draft", /function autosaveDraft\(\)/.test(html));
+ok("moving to another day saves it", /if \(state\.edit && \(state\.edit\.wi !== nextWi \|\| state\.edit\.day !== nextDay\)\) autosaveDraft\(\)/.test(html));
+ok("so does the pencil on another card", /if \(state\.edit && \(state\.edit\.wi !== nextWi \|\| state\.edit\.day !== day\)\) autosaveDraft\(\)/.test(html));
+ok("cancel still discards", /window\.cvEditCancel = function \(\) \{\s*state\.edit = null;/.test(html));
+ok("an unchanged draft costs no request", /if \(samePartsAsStored\(draft\.wi, draft\.day, parts\)\) return;/.test(html));
+ok("the Save button is still there", /window\.cvEditSave = function/.test(html));
+
 /* --- a paused client stops reading the plan -------------------------
  * Freeze only bit after a manual reload: a client with the tab open kept reading their
  * month (owner, 2026-09-02). Now any refused call takes the plan off the screen, and a

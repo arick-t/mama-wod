@@ -732,6 +732,24 @@ ok("the created client goes on screen from the response it came in", /S\.program
 ok("and the strip moves to them", /renderPeopleStripActive\(S\.program\.programId\)/.test(page));
 ok("a failed open is said out loud, not into a hidden banner", /showHdrToast\(why, "err"\)/.test(page));
 
+/* --- autosave: leaving an edit saves it (owner, 2026-09-03) ----------
+ * Writing a month means moving between days, and every move used to throw away what
+ * had just been typed unless Save was pressed first. Nobody presses Save before
+ * clicking the next day — they click the next day.
+ */
+ok("there is one place that commits a draft", /function autosaveDraft\(\)/.test(page));
+ok("moving to another day saves it", /if \(S\.edit && \(S\.edit\.wi !== nextWi \|\| S\.edit\.day !== nextDay\)\) autosaveDraft\(\)/.test(page));
+ok("so does the pencil on another card", /if \(S\.edit && \(S\.edit\.wi !== nextWi \|\| S\.edit\.day !== day\)\) autosaveDraft\(\)/.test(page));
+ok("so do the week, the view and Today", (page.match(/autosaveDraft\(\);/g) || []).length >= 5);
+ok("and switching client", /try \{ autosaveDraft\(\); \} catch \(eSave\)/.test(page));
+/* Cancel is the only way to say "forget this", so it must NOT save. */
+ok("cancel still discards", /window\.cvEditCancel = function \(\) \{\s*S\.edit = null;/.test(page));
+ok("an empty draft is dropped, not written", /if \(!D \|\| !D\.partsFromDraft \|\| !D\.draftHasContent\(draft\)\) return;/.test(page));
+ok("and an unchanged one costs no request", /if \(samePartsAsStored\(draft\.wi, draft\.day, parts\)\) return;/.test(page));
+/* He has already moved on, so a failed autosave has to be loud. */
+ok("a failed save is said out loud", /showHdrToast\(\(r\.body && r\.body\.error\) \|\| "השמירה נכשלה\."/.test(page));
+ok("the Save button is still there", /window\.cvEditSave = function/.test(page));
+
 ok("the view is decided again once the client has arrived", /S\.program = r\.body\.program;[\s\S]{0,1400}renderViewMode\(\);\s*renderDetail\(\);/.test(page));
 
 ok("first entry opens someone", /function openFirstPersonIfNeeded/.test(page));
