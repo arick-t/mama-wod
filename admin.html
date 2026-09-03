@@ -2681,6 +2681,28 @@ function bindPeopleStrip() {
   });
   sb.addEventListener("pointercancel", function () { pressed = null; });
 
+
+  /* Right-click a chip: name and colour, where the finger already is.
+     The pencil is inside the client's card, which means opening the client first just
+     to rename them. From the strip it is one gesture (owner, 2026-09-03). */
+  sb.addEventListener("contextmenu", function (ev) {
+    var chip = ev.target && ev.target.closest ? ev.target.closest("[data-kind]") : null;
+    if (!chip) return;
+    ev.preventDefault();
+    var id = chip.getAttribute("data-id") || "";
+    if (!id) return;
+    if (chip.getAttribute("data-kind") === "program") {
+      var row = null;
+      for (var i = 0; i < (clientPrograms || []).length; i++) {
+        if (clientPrograms[i] && clientPrograms[i].programId === id) row = clientPrograms[i];
+      }
+      if (!row) return;
+      openClientIdentityFor("client", id, row.clientName || "", row.clientColour || "");
+    } else {
+      openClientIdentity(id);
+    }
+    placeIdentityPanelAt(ev.clientX, ev.clientY);
+  });
   sb.addEventListener("click", function (ev) {
     var chip = ev.target && ev.target.closest ? ev.target.closest("[data-kind]") : null;
     if (!chip) return;
@@ -5083,6 +5105,40 @@ function pickClientColour(c) {
  * which is not the product (owner, 2026-09-02). The panel does not care which of the
  * two it is editing; only saveClientIdentity does.
  */
+/**
+ * Put the name-and-colour panel where the click happened.
+ *
+ * A panel that opens in the middle of the screen after a right-click on a chip at the
+ * top edge makes the owner look for it. Clamped so it cannot open half off-screen,
+ * and cleared on close so the pencil inside a card still opens it centred.
+ */
+function placeIdentityPanelAt(x, y) {
+  var m = document.getElementById("client-identity-modal");
+  var panel = m ? m.querySelector(".intake-workspace") : null;
+  if (!panel) return;
+  var w = 460;
+  var h = Math.min(360, window.innerHeight - 20);
+  var left = Math.max(10, Math.min((x | 0) - 20, window.innerWidth - w - 10));
+  var top = Math.max(10, Math.min((y | 0) + 8, window.innerHeight - h - 10));
+  panel.style.position = "fixed";
+  panel.style.margin = "0";
+  panel.style.left = left + "px";
+  panel.style.top = top + "px";
+  panel.style.width = "min(" + w + "px, calc(100vw - 20px))";
+}
+
+/** Back to the middle, for every other way of opening it. */
+function clearIdentityPanelPosition() {
+  var m = document.getElementById("client-identity-modal");
+  var panel = m ? m.querySelector(".intake-workspace") : null;
+  if (!panel) return;
+  panel.style.position = "";
+  panel.style.margin = "";
+  panel.style.left = "";
+  panel.style.top = "";
+  panel.style.width = "";
+}
+
 function openClientIdentityFor(kind, id, name, colour) {
   identityFor = id;
   identityKind = kind;
@@ -5100,6 +5156,7 @@ function openClientIdentityFor(kind, id, name, colour) {
 function openClientIdentity(athleteId) {
   var a = athletes.find(function (x) { return x.athleteId === athleteId; });
   if (!a) return;
+  clearIdentityPanelPosition();
   identityKind = "athlete";
   identityFor = athleteId;
   identityColour = /^#[0-9a-f]{6}$/i.test(String(a.clientColour || "")) ? String(a.clientColour) : "";
@@ -5116,6 +5173,7 @@ function openClientIdentity(athleteId) {
 function closeClientIdentity() {
   var m = document.getElementById("client-identity-modal");
   if (m) m.classList.remove("open");
+  clearIdentityPanelPosition();
   identityFor = null;
 }
 

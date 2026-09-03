@@ -732,6 +732,17 @@ ok("the created client goes on screen from the response it came in", /S\.program
 ok("and the strip moves to them", /renderPeopleStripActive\(S\.program\.programId\)/.test(page));
 ok("a failed open is said out loud, not into a hidden banner", /showHdrToast\(why, "err"\)/.test(page));
 
+/* --- right-click a chip: name and colour, there and then -------------
+ * The pencil lives inside the client's card, so renaming meant opening the client
+ * first. From the strip it is one gesture (owner, 2026-09-03). */
+ok("right-clicking a chip is a gesture the strip knows", /sb\.addEventListener\("contextmenu"/.test(page));
+ok("and it does not open the browser menu", /ev\.preventDefault\(\);/.test(page));
+ok("a client opens with its own name and colour", /openClientIdentityFor\("client", id, row\.clientName \|\| "", row\.clientColour \|\| ""\)/.test(page));
+ok("an athlete opens the same panel", /openClientIdentity\(id\);/.test(page));
+ok("the panel opens where the click was", /function placeIdentityPanelAt/.test(page));
+ok("clamped so it cannot open half off-screen", /Math\.max\(10, Math\.min\(\(x \| 0\) - 20, window\.innerWidth - w - 10\)\)/.test(page));
+ok("and every other way of opening it is still centred", /function clearIdentityPanelPosition/.test(page));
+
 /* --- autosave: leaving an edit saves it (owner, 2026-09-03) ----------
  * Writing a month means moving between days, and every move used to throw away what
  * had just been typed unless Save was pressed first. Nobody presses Save before
