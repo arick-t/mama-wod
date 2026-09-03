@@ -669,6 +669,12 @@ ok("ctrl or cmd makes the click additive", /toggleSelected\(nextWi, nextDay\);/.
 /* Adding a day to a comparison is not "I have been over this". Reporting it as read
    fired a write per click, and two quick picks raced on the same version — which is why
    picking 1→2→3 behaved differently from 3→2→1 (owner, 2026-09-02). */
+/* "Session 1 is on screen, ctrl-click session 2" means BOTH. The selection started
+   empty, so the first ctrl-click produced a list of one and nothing appeared side by
+   side; picking 3 then 2 then 1 worked because by the second ctrl-click there were two.
+   That was the "only in descending order" report (owner, 2026-09-03). */
+ok("the day already open joins the first ctrl-click", /if \(!\(S\.selected \|\| \[\]\)\.length && S\.day && S\.day !== "general"/.test(page));
+
 ok("an additive pick does not report the day as read", /toggleSelected\(nextWi, nextDay\);[\s\S]{0,80}renderAdminDays\(\);[\s\S]{0,20}return;/.test(page));
 ok("dragging across the calendar takes the run", /function bindCalGestures/.test(page));
 /* Straight down a column is a column — every Thursday of the block, not the whole run

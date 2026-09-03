@@ -197,4 +197,29 @@ ok("a written title is content", PprogDisplay.draftHasContent(titleOnly) === tru
 ok("a generated heading is not", PprogDisplay.draftHasContent(headingOnly) === false);
 ok("and lines still count", PprogDisplay.draftHasContent(withWork) === true);
 
+
+/* --- a programme is months, not one five-week brick --------------------
+ * The ceiling was written as the number 5, from when a brick always was five weeks. On
+ * an eight-week programme it clamped the active week to five and dropped every selected
+ * day past it from the side-by-side strip (owner, 2026-09-03).
+ */
+function wkFull() {
+  const w = { weekIndex: 1, phase: "build", overview: [], days: {} };
+  ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].forEach(function (k) {
+    w.days[k] = { parts: [{ title: "Part A", lines: ["work"] }] };
+  });
+  return w;
+}
+const longBlock = { blockStart: "2026-08-30", weeks: Array.from({ length: 8 }, wkFull) };
+const deepCards = PprogDisplay.renderBrickView({
+  block: longBlock,
+  activeWeekIndex: 6,
+  activeDay: "sun",
+  weekRows: 8,
+  calMode: "block",
+  selectedDays: [{ wi: 5, day: "sun" }, { wi: 6, day: "mon" }],
+});
+ok("days in week 6 and 7 still render side by side", (deepCards.match(/pprog-day-card/g) || []).length === 2);
+ok("and the second block is what is shown", /Block 2/.test(deepCards));
+
 console.log("All shared pprog-display checks passed.");

@@ -687,6 +687,12 @@ button.ghost:hover{color:var(--text)}
   function toggleSelected(wi, day) {
     var M = selMath();
     if (!M) return;
+    /* The day already open counts as picked - "this one is on screen, ctrl-click that one"
+       means both. Without it the first ctrl-click produced a list of one and nothing
+       appeared side by side (owner, 2026-09-03). */
+    if (!(state.selected || []).length && state.day && state.day !== "general" && !(state.wi === wi && state.day === day)) {
+      state.selected = [{ wi: state.wi | 0, day: state.day }];
+    }
     var id = M.selId(wi, day);
     var list = (state.selected || []).filter(function (x) {
       return M.selId(x.wi, x.day) !== id;
