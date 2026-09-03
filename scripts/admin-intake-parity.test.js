@@ -275,6 +275,14 @@ ok("admin fixed intake normalizes block", /NormalizePprogBlock\.normalize/.test(
 ok("handoff stores lastHandoffPath", /lastHandoffPath/.test(handoff));
 ok("admin create does not send join mail", !/sendAdminIntakeCompleteMail/.test(handoff));
 ok("handoff inline in athlete card", /renderHandoffInline/.test(adminHtml) && /ath-handoff-inline/.test(adminHtml));
+/* --- a click beside the box is not a decision ------------------------
+ * He was two steps into an intake, clicked next to it by accident, and lost everything
+ * he had typed (owner, 2026-09-03). */
+ok("the intake box does not close on an outside click", !/id="intake-modal" onclick/.test(adminHtml));
+ok("nor does the kind chooser", !/id="client-kind-modal" onclick/.test(adminHtml));
+ok("and closing it on purpose asks first", /לצאת מהתחקור\? מה שהוקלד יימחק\./.test(fixedJs));
+ok("but only while something is actually being filled in", /intakeState\.fixedActive && !intakeState\.intakeComplete/.test(fixedJs));
+
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
 ok("admin version 3.1.0", /DUCK-WOD Admin · 3\.1\.0/.test(adminHtml));
 ok("admin wired to coach 2.3.14", /LIVE_COACH_VERSION = "2\.3\.14"/.test(adminHtml));

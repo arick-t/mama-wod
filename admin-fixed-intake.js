@@ -153,6 +153,10 @@
   window.closeIntakeWorkspace = function closeIntakeWorkspace() {
     if (intakeState.busy) {
       if (!confirm("תחקור בתהליך — לסגור בכל זאת?")) return;
+    } else if (intakeState.fixedActive && !intakeState.intakeComplete) {
+      /* Everything typed goes with it, so it is worth one question. A click beside the
+         box used to do this silently (owner, 2026-09-03). */
+      if (!confirm("לצאת מהתחקור? מה שהוקלד יימחק.")) return;
     }
     setIntakeModalOpen(false);
     resetIntakeState();

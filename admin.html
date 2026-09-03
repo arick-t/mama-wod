@@ -1326,7 +1326,7 @@ header{flex-wrap:wrap;row-gap:8px}
   </div>
 </div>
 
-<div class="modal-backdrop" id="client-kind-modal" onclick="if(event.target===this)closeClientKindChooser()">
+<div class="modal-backdrop" id="client-kind-modal">
   <div class="intake-workspace" dir="rtl" onclick="event.stopPropagation()" style="max-width:640px">
     <div class="intake-ws-header">
       <h2>לקוח חדש</h2>
@@ -1348,7 +1348,10 @@ header{flex-wrap:wrap;row-gap:8px}
 </div>
 
 <!-- Intake workspace -->
-<div class="modal-backdrop" id="intake-modal" onclick="if(event.target===this)closeIntakeWorkspace()">
+<!-- A click beside the box does NOT close it. The owner was two steps into an intake,
+     clicked next to it by accident, and lost everything he had typed (owner,
+     2026-09-03). Only "סגור" closes this, and it asks first. -->
+<div class="modal-backdrop" id="intake-modal">
   <div class="intake-workspace" dir="rtl" onclick="event.stopPropagation()">
     <div class="intake-ws-header">
       <h2>תחקור מתאמן קצה</h2>
