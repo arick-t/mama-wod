@@ -242,8 +242,14 @@ ok("and behind it are the date and the id", /terms-uid">UID: /.test(page) && /נ
    other whether they are a date or a state; and anything that belongs to a heading
    nested under it. */
 ok("the three headings share one class", (page.match(/class="sum-head"/g) || []).length >= 3);
-ok("the three values share one class", (page.match(/class="sum-value/g) || []).length >= 3);
+/* A whole row for one word was two rows of the card spent on two words: the state rides
+   on its heading line now (owner, 2026-09-03). */
+ok("the states ride on their heading lines", (page.match(/class="sum-inline /g) || []).length >= 2);
+ok("only the date still needs a row of its own", (page.match(/class="sum-value/g) || []).length >= 1);
 ok("a heading is larger than its value", /\.sum-head\{[^}]*font-size:1em/.test(page) && /\.sum-value\{[^}]*font-size:\.9em/.test(page));
+/* A device is one line: label, last seen, revoke — the spacer was pushing them to the
+   far edges of a wide card. */
+ok("a device row reads as one line", /\.sum-list \.devrow\{display:flex;align-items:center;gap:10px;justify-content:flex-start/.test(page));
 ok("a state is a value, not a pill of its own", !/class="access-state /.test(page));
 ok("good is green and warn is orange", /\.sum-value\.good\{color:#4CAF70\}/.test(page) && /\.sum-value\.warn\{color:#E8451A\}/.test(page));
 /* Devices belong to access — they are HOW this client got in — and the list belongs to
@@ -703,6 +709,12 @@ ok("the strip acts on the press, not only the click", /sb\.addEventListener\("po
 ok("a drag is a scroll, not a choice", /Math\.abs\(ev\.clientX - p\.x\) > 8/.test(page));
 ok("both halves open through one door", /function openPersonFromStrip/.test(page));
 /* First entry lands on somebody rather than an empty content area. */
+/* renderViewMode shows this screen only when S.program exists, and when openClient runs
+   it does not yet — the read has not come back. Without a second call after it does, the
+   client is loaded behind a hidden panel and the owner is left looking at the empty
+   athlete side. That was "one click does nothing, two clicks work" (owner, 2026-09-03). */
+ok("the view is decided again once the client has arrived", /S\.program = r\.body\.program;[\s\S]{0,1400}renderViewMode\(\);\s*renderDetail\(\);/.test(page));
+
 ok("first entry opens someone", /function openFirstPersonIfNeeded/.test(page));
 /* Either half may answer first, so both call it — and it acts once, only when nothing
    is open and only after both halves have spoken (owner, 2026-09-02). */

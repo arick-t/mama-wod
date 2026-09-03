@@ -999,6 +999,18 @@ header{flex-wrap:wrap;row-gap:8px}
 #clientScreen .sum-sub{margin:12px 0 0;padding-inline-start:12px;border-inline-start:2px solid var(--line)}
 #clientScreen .sum-subhead{font-size:.9em;font-weight:700;color:var(--text-muted);margin:0 0 6px}
 #clientScreen .sum-list{padding-inline-start:10px}
+/* The answer sits on the heading line rather than taking a row of its own. */
+#clientScreen .sum-inline{font-size:.85em;font-weight:700}
+#clientScreen .sum-inline.good{color:#4CAF70}
+#clientScreen .sum-inline.warn{color:#E8451A}
+/* One continuous line: the label, when it was last seen, and the way to revoke it. The
+   spacer was pushing the date and the button to the far edge of a wide card, so a device
+   read as three unrelated things (owner, 2026-09-03). */
+#clientScreen .sum-list .devrow{display:flex;align-items:center;gap:10px;justify-content:flex-start;
+  padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+#clientScreen .sum-list .devrow:last-child{border-bottom:0}
+#clientScreen .sum-list .devrow .spacer{flex:0 0 auto;margin:0}
+#clientScreen .sum-list .devrow .meta{font-size:.8em;color:var(--text-meta)}
 .purge-report{padding:6px 2px;font-size:.9em;line-height:1.6}
 .purge-report h3{margin:0 0 10px;font-size:1.05em;color:#e8e4d8}
 .purge-report ul{margin:4px 0 12px;padding-inline-start:20px;color:#bdb8ab}
@@ -6057,7 +6069,16 @@ tryRestoreAdminSession();
       if (r.status === 401) { openLogin("פג תוקף החיבור."); return; }
       if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "לא הצלחתי לטעון את התוכנית."); return; }
       S.program = r.body.program; S.access = r.body.access || null;
+      /* THE screen decision, and it has to be made again HERE.
+         renderViewMode shows this screen only when S.program exists — and when
+         openClient runs, it does not: the read has not come back yet. So the first open
+         painted the client behind a hidden panel and left the owner looking at the empty
+         athlete side. A second click then worked, because by then S.program was set.
+         That is the whole "one click does nothing, two clicks work" report, and why
+         first entry looked like it had ignored the client it had just opened
+         (owner, 2026-09-02 / 2026-09-03). */
       renderList({ rows: S.rows, monthlyTotal: 0 });
+      renderViewMode();
       renderDetail();
       try { el("detail").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {}
     });
@@ -6260,10 +6281,13 @@ tryRestoreAdminSession();
              the answer to a question nobody asks at a glance, so they moved behind the
              chevron with the id (owner, 2026-09-02). */
           '<div class="ath-fact sum-item" style="grid-column:1/-1">' +
+            /* The answer rides on the heading line. A whole row for one word - "בתוקף",
+               "חתם ונכנס" - was two rows of the card spent on two words
+               (owner, 2026-09-03). */
             '<div class="sum-head">תנאי שימוש' +
+            '<span class="sum-inline ' + (terms.valid ? "good" : "warn") + '">' + esc(terms.label) + "</span>" +
             '<button type="button" class="ath-stats-btn tiny" data-termsmore="1" title="פרטי החתימה" aria-expanded="' +
             (S.termsOpen ? "true" : "false") + '">▾</button></div>' +
-            '<div class="sum-value ' + (terms.valid ? "good" : "warn") + '">' + esc(terms.label) + "</div>" +
             (S.termsOpen
               ? '<div class="terms-detail">' +
                 (a.signature
@@ -6281,10 +6305,10 @@ tryRestoreAdminSession();
         '<div class="ath-handoff-inline handoff-box sum-item">' +
           /* Heading, then its value, in the same shape as the two facts above it — one
              hierarchy for the whole card (owner, 2026-09-02). */
-          '<div class="sum-head">גישה ללקוח</div>' +
-          '<div class="sum-value ' + (a.signature ? "good" : "warn") + '">' +
+          '<div class="sum-head">גישה ללקוח' +
+          '<span class="sum-inline ' + (a.signature ? "good" : "warn") + '">' +
           (a.signature ? "חתם ונכנס" : linkShown ? "הלינק והקוד מוכנים" : "טרם נכנס") +
-          "</div>" +
+          "</span></div>" +
           '<div class="handoff-link"' + (linkShown ? "" : ' style="display:none"') + '>' +
           (linkShown ? esc(clientLink(p.programId)) : "") + "</div>" +
           '<div id="codeOut">' +
