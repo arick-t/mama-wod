@@ -121,7 +121,7 @@ Copy a block below. Keep IDs unique (`POL-###`).
 ### POL-008 — No early next-block generation (athlete request)
 - **Type:** HARD
 - **Scope:** global / block transition
-- **Trigger:** athlete asks to generate the next month, next block, next 5 weeks, plan a year ahead, or skip ahead before the current brick ends
+- **Trigger:** athlete asks to generate the next month, next block, next 4 weeks, plan a year ahead, or skip ahead before the current brick ends
 - **Required behavior:** Do **not** emit a new BLOCK_JSON or promise a manual full rebuild now. Reply briefly in English with this line (or close paraphrase): **“The next block generates automatically on Thursday of week 4 at 10:00 (Israel time). Until then, we keep working your current block.”** Then redirect to the current week (adjustments, pre-talk, debrief). Never dump a future full block in chat to “preview” months ahead — token-efficient continuity uses a structured handoff from the previous brick (not full workout history in prompt).
 - **Examples:** Bad: building block 2 in week 2. Good: athlete on week 2 asks for next month → standard line + offer to tweak this week’s session.
 - **Added:** 2026-07-27 — product rule before 21.0; pairs with auto next-block **Thursday week 4, 10:00 Asia/Jerusalem**
@@ -129,7 +129,7 @@ Copy a block below. Keep IDs unique (`POL-###`).
 ### POL-009 — Block handoff (next brick continuity)
 - **Type:** HARD
 - **Scope:** block transition (system / auto generate only)
-- **Trigger:** app auto-generates the next 5-week brick after the current one
+- **Trigger:** app auto-generates the next 4-week brick after the current one
 - **Required behavior:** Continue from a **compact handoff** of the previous brick (themes, strength progression by weekday, formats used, deload intent, athlete prefs/modifications) — not the full prior BLOCK_JSON in prompt. Progress logically; rotate formats per POL-002.
 - **Added:** 2026-07-27 — agreed architecture for token efficiency + continuity
 
@@ -230,7 +230,7 @@ Copy a block below. Keep IDs unique (`POL-###`).
      - **Base / Layer 1 (always):** CrossFit **Level 1** + **Level 2** — applied via the runtime **Foundation Brief** on every brick fill (methodology + session application).  
      - **Layer 2 ops (programming path):** elite-stimulus protocol — intake calendar first, M/G/W × Single/Couplet/Triplet rotation, primers/accessory, preserve intended stimulus when scaling. Injected on `generate_*` / `revise_*` only (not daily chat).  
      - **Second floor:** (a) athlete inquiry / intake / goals / capability profile (**POL-016**), then (b) **מסמך דפוסי מקורות** (source-patterns digest: myleo+Restoration + warehouse formats) + specialty Drive craft when needed.  
-  2. **Goal → seek method:** If the athlete wants a focus (e.g. improve cardio/engine across a 5-week brick), go find the relevant professional method and embed it inside a coherent CF week — do not invent a random specialty plan that abandons the base.
+  2. **Goal → seek method:** If the athlete wants a focus (e.g. improve cardio/engine across a 4-week brick), go find the relevant professional method and embed it inside a coherent CF week — do not invent a random specialty plan that abandons the base.
   3. **Patterns ≠ copy:** מסמך דפוסי מקורות teaches *principles* (architecture, pairings, formats, intensity language). **Never** copy a scraped session, Hero, Open, or Benchmark verbatim into athlete JSON.
   4. **Warehouses are occasional seasoning:** Hero / Open / Benchmark structures may appear rarely when they align with athlete goals; they must be rebuilt/scaled for this athlete and must not dominate the brick.
   5. **Conflict order:** athlete safety + explicit request → HARD policy → L1/L2 foundation → Layer-2 ops → stated focus via מאגר → מסמך דפוסי מקורות as craft flavor. No stated focus → do not let source patterns collapse the brick into one source’s style. Intake schedule / Rest / mid-week start beat rigid template day numbers.
@@ -363,15 +363,15 @@ Copy a block below. Keep IDs unique (`POL-###`).
 ### POL-023 — Mid-brick revise: remaining days only + preserve formats
 - **Type:** HARD
 - **Scope:** whole-program / brick chat after confirm; revise_week / any mid-brick BLOCK_JSON or WEEK_JSON rewrite
-- **Trigger:** athlete asks to adapt the current plan (equipment, loads, session length, weekday pattern) while a 5-week brick is already running
+- **Trigger:** athlete asks to adapt the current plan (equipment, loads, session length, weekday pattern) while a 4-week brick is already running
 - **Required behavior:**
   1. **No rewriting the past.** Calendar days before Israel-today are frozen — copy them unchanged. Do not regenerate completed sessions.
-  2. **Scope = remaining brick only.** Adapt only from Israel-today through the end of the **current** 5-week brick. Do not invent a new brick or burn tokens on past weeks.
+  2. **Scope = remaining brick only.** Adapt only from Israel-today through the end of the **current** 4-week brick. Do not invent a new brick or burn tokens on past weeks.
   3. **Surgical edit (HARD).** Keep existing session formats, part titles, structure, and intent. Change only what the athlete note requires (e.g. two kettlebells → single-KB / unilateral / alternating options). Do **not** redesign every weekday format or rewrite the whole plan from scratch.
   4. Prefer DAY_JSON / WEEK_JSON for touched remaining days, or BLOCK_JSON that leaves past days identical.
 - **Examples:**  
   Good: athlete has one KB per weight → keep AMRAP/EMOM structures, swap double-KB movements for single-KB alternatives on remaining days.  
-  Bad: regenerating all five weeks with new formats because of one equipment note.  
+  Bad: regenerating all four weeks with new formats because of one equipment note.  
   Bad: rewriting last Monday when today is Saturday.
 - **Added:** 2026-08-01 — user: don't waste resources on past days; preserve invested formats
 
@@ -469,7 +469,7 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - **Type:** HARD
 - **Scope:** infrastructure / routing / prompt injection scope
 - **Trigger:** any change sold as “saving money” or “faster”
-- **Required behavior:** No flash-lite/Groq for `generate_*` / `revise_*`. No eager 5-week fill. No default day-by-day cascade. No Layer 2 ops blob in daily chat / Confirm?
+- **Required behavior:** No flash-lite/Groq for `generate_*` / `revise_*`. No eager 4-week fill. No default day-by-day cascade. No Layer 2 ops blob in daily chat / Confirm?
 - **Added:** 2026-08-03 — cost guardrails
 
 ### POL-COST-010 — Monthly envelope (≈ ₪5)

@@ -2260,7 +2260,7 @@ function loadPprogStore() {
       o.finishLearning.paidAdaptationsByMonth = {};
     }
     if (!Array.isArray(o.finishLearning.safetyLog)) o.finishLearning.safetyLog = [];
-    /* Migrate legacy single-week store → 5-week block shell */
+    /* Migrate legacy single-week store → 4-week block shell */
     if (!o.currentBlock && o.currentWeek && o.currentWeek.days) {
       o.currentBlock = {
         summaryLine: o.currentWeek.summaryLine || "Training block",
@@ -3918,7 +3918,7 @@ function pprogBuildFixedIntakePrompt(store) {
   return [
     "FIXED INTAKE COMPLETE — build a full 5-week training brick now.",
     "Athlete answers may be in any language; all workout/program text MUST be English.",
-    "Return <<<BLOCK_JSON>>> with exactly 5 weeks. Do not re-ask intake questions.",
+    "Return <<<BLOCK_JSON>>> with exactly 4 weeks. Do not re-ask intake questions.",
     "",
     "PROFILE:",
     "Name: " + (s.displayName || "unknown"),
@@ -9410,14 +9410,14 @@ function requestPprogWeek(retryCount, opts) {
   setPprogStatus(
     "pending",
     opts.autoNextBlock
-      ? "<strong>Coach</strong> — building your next 5-week block…"
-      : "<strong>Coach</strong> — building 5-week block…"
+      ? "<strong>Coach</strong> — building your next 4-week block…"
+      : "<strong>Coach</strong> — building 4-week block…"
   );
   setPprogBuildingOverlay(
     true,
     opts.autoNextBlock
-      ? "<strong>Coach</strong> is building your <strong>next</strong> 5-week block…"
-      : "<strong>Coach</strong> is building your 5-week block…"
+      ? "<strong>Coach</strong> is building your <strong>next</strong> 4-week block…"
+      : "<strong>Coach</strong> is building your 4-week block…"
   );
   var msgs = loadPprogMessages();
   var payloadMsgs = [];
@@ -9432,7 +9432,7 @@ function requestPprogWeek(retryCount, opts) {
     payloadMsgs.push({
       role: "user",
       text:
-        "Previous reply had no valid <<<BLOCK_JSON>>>. Return only a full BLOCK_JSON with exactly 5 weeks now — no long chat. All workout text in English.",
+        "Previous reply had no valid <<<BLOCK_JSON>>>. Return only a full BLOCK_JSON with exactly 4 weeks now — no long chat. All workout text in English.",
     });
   }
   var keepOverlayForRetry = false;
