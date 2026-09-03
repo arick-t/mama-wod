@@ -154,6 +154,9 @@ const week = L.weekRange("2026-09-03");
 ok("a week starts on Sunday", L.weekdayOf(week.from) === 0);
 ok("and ends on Saturday", L.weekdayOf(week.to) === 6);
 ok("the day asked about is inside it", week.from <= "2026-09-03" && week.to >= "2026-09-03");
+const yr = L.yearRange("2026-09-15");
+ok("a year runs January to December", yr.from === "2026-01-01" && yr.to === "2026-12-31");
+ok("and it is the year of the day asked about", L.yearRange("2025-02-02").from === "2025-01-01");
 const mr = L.monthRange("2026-09-15");
 ok("a month range is the whole month", mr.from === "2026-09-01" && mr.to === "2026-09-30");
 
@@ -168,5 +171,46 @@ ok("a runaway range cannot spin forever", L.monthsBetween("1900-01-01", "2200-01
 const src = require("fs").readFileSync(require("path").join(__dirname, "..", "lib", "coach-ledger.js"), "utf8");
 ok("the book makes no network calls", !/\bfetch\s*\(/.test(src));
 ok("and knows no AI provider", !/gemini|groq|generativelanguage/i.test(src));
+
+
+/* --- favourites: everyone, busiest first, with a name and a colour --------
+ * "Favourites" the way he means it: not a shortlist he curates, but the places he
+ * actually goes to, ordered by how often they appear in the calendar.
+ * ------------------------------------------------------------------------- */
+
+let fw = L.emptyWarehouse();
+["רימון", "רימון", "רימון", "אולם", "אולם", "חוף"].forEach(function (n) {
+  fw = L.rememberPlace(fw, { name: n, service: "אישי", price: 200 }, { clock: clock });
+});
+const ranked = L.placesByUse(fw);
+ok("the busiest place is first", ranked[0].name === "רימון" && ranked[0].uses === 3);
+ok("then the next busiest", ranked[1].name === "אולם" && ranked[1].uses === 2);
+ok("and everyone is in the list, not just five", ranked.length === 3);
+
+const painted = L.setPlaceColour(fw, "רימון", "#4CAF70");
+ok("a place can be given a colour", painted.ok && L.placeColour(painted.warehouse, "רימון") === "#4CAF70");
+ok("only a real colour is kept", L.setPlaceColour(painted.warehouse, "אולם", "javascript:alert(1)").warehouse.places.every(function (p) { return p.colour !== "javascript:alert(1)"; }));
+ok("the map is name to colour", L.colourMap(painted.warehouse)["רימון"] === "#4CAF70");
+ok("a place with no colour is not in the map", L.colourMap(painted.warehouse)["אולם"] === undefined);
+ok("colouring something that is not there says so", L.setPlaceColour(fw, "לא קיים", "#E8451A").code === "NOT_FOUND");
+
+const renamed = L.renamePlace(painted.warehouse, "רימון", "רימון פיטנס");
+ok("a place can be renamed", renamed.ok);
+ok("and keeps its colour", L.placeColour(renamed.warehouse, "רימון פיטנס") === "#4CAF70");
+ok("and its count", L.placesByUse(renamed.warehouse)[0].uses === 3);
+ok("a name that is already taken is refused", L.renamePlace(renamed.warehouse, "אולם", "רימון פיטנס").code === "NAME_TAKEN");
+ok("an empty name is refused", L.renamePlace(renamed.warehouse, "אולם", "   ").code === "NO_NAME");
+ok("renaming what is not there says so", L.renamePlace(renamed.warehouse, "לא קיים", "משהו").code === "NOT_FOUND");
+ok("using it again does not wipe the colour", L.placeColour(L.rememberPlace(renamed.warehouse, { name: "רימון פיטנס", price: 300 }), "רימון פיטנס") === "#4CAF70");
+
+/* A rename that leaves the old name on the rows splits the list in two. */
+let rm = L.emptyMonth("2026-09");
+rm = L.addDeal(rm, { day: "2026-09-02", name: "רימון", price: 250 }, { clock: clock }).doc;
+rm = L.addDeal(rm, { day: "2026-09-09", name: "אולם", price: 180 }, { clock: clock }).doc;
+const movedRows = L.renameInMonth(rm, "רימון", "רימון פיטנס");
+ok("the rows follow the new name", movedRows.changed === 1);
+ok("and say how many moved", L.dealsOfDay(movedRows.doc, "2026-09-02")[0].name === "רימון פיטנס");
+ok("everyone else is untouched", L.dealsOfDay(movedRows.doc, "2026-09-09")[0].name === "אולם");
+ok("and the money did not move with the name", L.monthTotal(movedRows.doc) === 430);
 
 console.log("\nAll coach ledger checks passed (" + passed + " assertions).");

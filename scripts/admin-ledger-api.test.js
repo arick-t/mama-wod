@@ -163,10 +163,15 @@ async function main() {
   const byPrice = await call({ action: "range", from: "2026-09-01", to: "2026-10-31", minPrice: 200 });
   ok("so does a floor price", byPrice.body.deals.every(function (d) { return d.price >= 200; }));
 
-  /* A year is not a licence to read a hundred objects. */
+  /* A year is twelve small objects, and he asked for the button (2026-09-03). Two years
+     is still twelve: the cap is what stops a range from becoming a scan. */
   reads.length = 0;
-  await call({ action: "range", from: "2026-01-01", to: "2026-12-31" });
-  ok("a huge range is capped rather than reading the whole history", reads.length <= 3);
+  const year = await call({ action: "range", from: "2026-01-01", to: "2026-12-31" });
+  ok("a year answers", year.status === 200 && year.body.ok === true);
+  ok("and reads twelve objects at most", reads.length <= 12);
+  reads.length = 0;
+  await call({ action: "range", from: "2020-01-01", to: "2026-12-31" });
+  ok("seven years is still capped at twelve", reads.length <= 12);
 
   /* --- last month is still last month ------------------------------------ */
 
@@ -177,6 +182,38 @@ async function main() {
 
   const bad = await call({ action: "nonsense" });
   ok("an unknown action is refused", bad.status === 400 && bad.body.code === "BAD_ACTION");
+
+
+  /* --- the favourites box, and the pencil in it ------------------------- */
+
+  const stranger2 = await call({ action: "places" }, { auth: false });
+  ok("the list of places is his alone", stranger2.status === 401);
+
+  await call({ action: "add_deal", day: "2026-10-03", name: "רימון", service: "קבוצתי", price: 300 });
+  const list = await call({ action: "places" });
+  ok("the box lists everyone he has worked for", list.status === 200 && list.body.places.length >= 2);
+  ok("busiest first", list.body.places[0].uses >= list.body.places[1].uses);
+
+  const coloured = await call({ action: "update_place", name: "רימון", colour: "#4CAF70" });
+  ok("a place can be given a colour", coloured.status === 200 && coloured.body.colours["רימון"] === "#4CAF70");
+  const month2 = await call({ action: "month", month: "2026-10" });
+  ok("and the colour travels with the month, so rows can be painted", month2.body.colours["רימון"] === "#4CAF70");
+
+  const renamedApi = await call({ action: "update_place", name: "רימון", newName: "רימון פיטנס" });
+  ok("a place can be renamed", renamedApi.status === 200);
+  ok("the rows that carried the old name moved with it", renamedApi.body.renamedRows >= 1);
+  const after = await call({ action: "month", month: "2026-10" });
+  ok("so the calendar shows the corrected name", after.body.deals.every(function (d) { return d.name !== "רימון"; }));
+  ok("and the colour survived the rename", after.body.colours["רימון פיטנס"] === "#4CAF70");
+  ok("the month total did not move with the name", after.body.total === month2.body.total);
+
+  const taken = await call({ action: "update_place", name: "אולם העירייה", newName: "רימון פיטנס" });
+  ok("two places cannot be merged by a typo", taken.status === 400 && taken.body.code === "NAME_TAKEN");
+
+  /* A rename is deliberate, but it still may not become a scan of the whole store. */
+  reads.length = 0;
+  await call({ action: "update_place", name: "רימון פיטנס", newName: "רימון" });
+  ok("and it is bounded — two years back, three months forward", reads.length <= 32);
 
   /* --- properties of the code itself ------------------------------------- */
 

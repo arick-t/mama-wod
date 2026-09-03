@@ -156,21 +156,54 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .led-total{font-size:20px;font-weight:900;color:#4CAF70}
 .led-dow{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:2px}
 .led-dow span{text-align:center;font-size:11px;color:var(--text-muted);font-weight:700}
-.led-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.led-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+/* Small enough that a whole month fits without scrolling (owner, 2026-09-03). */
 .led-day{position:relative;appearance:none;border:1px solid var(--line);background:var(--bg-elev);
-  border-radius:10px;min-height:82px;padding:8px;cursor:pointer;color:var(--text);
-  display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+  border-radius:9px;min-height:52px;padding:5px 7px;cursor:pointer;color:var(--text);
+  display:flex;flex-direction:column;align-items:flex-start;gap:2px}
 .led-day:hover{border-color:var(--brand)}
 .led-blank{border:none;background:transparent;cursor:default;min-height:0}
 .led-num{font-size:12px;font-weight:700;opacity:.8}
 .led-sum{font-size:12px;font-weight:800;color:#4CAF70}
-.led-day.is-today{border-color:var(--brand)}
-.led-day.is-open{outline:2px solid var(--brand);outline-offset:-2px}
+/* Today is a hint, not a selection. Wearing the same orange ring as the open day made
+   the 3rd look permanently chosen (owner, 2026-09-03). */
+.led-day.is-today{border-color:#3a3a3a}
+.led-day.is-today .led-num{color:var(--brand)}
+.led-day.is-open{outline:2px solid var(--brand);outline-offset:-2px;background:rgba(232,69,26,.10)}
 .led-day.has-deals{background:rgba(76,175,112,.07)}
 .led-plus{position:absolute;inset-inline-end:6px;bottom:4px;font-size:14px;font-weight:800;
   color:var(--text-muted);opacity:0;transition:opacity .12s}
 .led-day:hover .led-plus,.led-day.is-open .led-plus{opacity:1}
-.led-daybox{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--bg-elev)}
+/* The open day, floating over the square it belongs to — a little larger than a
+   square, never the width of the page. */
+#ledCalWrap{position:relative}
+#ledDay{position:absolute;z-index:35}
+.led-pop{box-shadow:0 16px 40px rgba(0,0,0,.55);min-width:250px;max-width:330px}
+.led-popclose{position:absolute;top:6px;inset-inline-start:8px;appearance:none;border:none;
+  background:transparent;color:var(--text-muted);font-size:17px;line-height:1;cursor:pointer;padding:2px}
+.led-popclose:hover{color:var(--text)}
+.led-pop .led-row{grid-template-columns:1.2fr .9fr .7fr auto auto;font-size:12px}
+.led-pop .led-editor{grid-template-columns:1fr;gap:6px}
+.led-pop .led-pickpanel{position:static;width:auto;box-shadow:none;padding:8px 0 0;border:none;background:transparent}
+/* Add a session from anywhere — the same fields, plus the day they land on. */
+.led-manual{display:grid;grid-template-columns:1.3fr 1.1fr .7fr .9fr auto;gap:8px;align-items:center;position:relative}
+/* The favourites box: a fold, a list, and one pencil per name. */
+.led-fold{appearance:none;width:100%;display:flex;align-items:center;gap:10px;background:transparent;
+  border:none;color:var(--text);font:inherit;font-size:1.05rem;font-family:var(--font-display);
+  letter-spacing:.5px;cursor:pointer;padding:0;text-align:start}
+.led-fold-caret{color:var(--text-muted);font-size:12px}
+.led-fold-count{margin-inline-start:auto;font-size:11px;color:var(--text-muted);font-weight:700}
+.led-fav-rows{display:flex;flex-direction:column;gap:4px;margin-top:12px}
+.led-fav-row{display:grid;grid-template-columns:1.2fr auto 1fr auto;gap:10px;align-items:center;
+  padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg-elev);font-size:13px}
+.led-fav-row.is-editing{grid-template-columns:1.2fr auto auto auto}
+.led-fav-uses{font-size:11px;color:var(--text-muted);font-weight:700;white-space:nowrap}
+.led-swatches{display:flex;gap:4px;flex-wrap:wrap}
+.led-swatch{width:20px;height:20px;border-radius:6px;border:1px solid var(--line);cursor:pointer;padding:0}
+.led-swatch.on{outline:2px solid #fff;outline-offset:1px}
+.led-swatch-none{background:transparent;color:var(--text-muted);font-size:11px;line-height:1}
+.led-manual .led-pickpanel{inset-inline-start:0}
+.led-daybox{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--bg-card)}
 .led-daybox h3{margin:0;font-size:14px}
 .led-daybox-head{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
 .led-daysum{font-size:13px;font-weight:800;color:#4CAF70}
@@ -1211,14 +1244,23 @@ header{flex-wrap:wrap;row-gap:8px}
          (owner, 2026-09-03). -->
     <div class="card led-wrap">
       <div id="ledHeader"></div>
-      <div id="ledCalendar"></div>
-      <div id="ledDay"></div>
+      <!-- The open day floats over its own square rather than under the month: he wants
+           to see WHICH day he is writing on while he writes (owner, 2026-09-03). -->
+      <div id="ledCalWrap">
+        <div id="ledCalendar"></div>
+        <div id="ledDay" hidden></div>
+      </div>
+    </div>
+    <div class="card led-add-card">
+      <div class="row" style="margin-bottom:10px"><h2 style="margin:0">הוסף אימון</h2></div>
+      <div id="ledManual"></div>
     </div>
     <div class="card led-deals">
       <div class="row" style="margin-bottom:10px"><h2 style="margin:0">טבלת עסקאות</h2></div>
       <div class="led-filters">
         <button type="button" class="led-chip" data-led-range="week">השבוע</button>
         <button type="button" class="led-chip" data-led-range="month">החודש</button>
+        <button type="button" class="led-chip" data-led-range="year">השנה</button>
         <input id="ledFName" class="led-field" maxlength="80" placeholder="סינון לפי שם">
         <input id="ledFMin" class="led-field led-num-field" type="number" min="0" placeholder="ממחיר">
         <input id="ledFMax" class="led-field led-num-field" type="number" min="0" placeholder="עד מחיר">
@@ -1228,6 +1270,11 @@ header{flex-wrap:wrap;row-gap:8px}
         <button type="button" class="led-chip" data-led-clear="1">נקה</button>
       </div>
       <div id="ledTable"></div>
+    </div>
+    <!-- Everyone he works for, busiest first. Folded away by default: it is a reference,
+         not a working surface (owner, 2026-09-03). -->
+    <div class="card led-fav-card">
+      <div id="ledFavourites"></div>
     </div>
     <!-- Two incomes and their sum, at the foot of the page on his instruction: it is
          the answer, and an answer belongs after the working area (owner, 2026-09-03). -->
@@ -8769,6 +8816,15 @@ tryRestoreAdminSession();
     personal: 0,
     /* The entry row appears when he asks for it with the plus, and not before. */
     adding: false,
+    /* Which form the five places are being offered to: the open day, or the box that
+       can put a session on any date. */
+    pickTarget: "day",
+    manual: null,
+    /* The favourites box: folded until he opens it, and one name at a time is edited. */
+    favOpen: false,
+    favEditing: "",
+    places: [],
+    colours: {},
     open: false,
     month: "",
     data: null,
@@ -8826,6 +8882,7 @@ tryRestoreAdminSession();
         return;
       }
       LS.data = r.body;
+      LS.colours = r.body.colours || {};
       /* Only the current month feeds the header figure — browsing back must not
          rewrite what he is earning now. */
       if (month === L.monthKey()) {
@@ -8856,6 +8913,8 @@ tryRestoreAdminSession();
 
   function render() {
     renderIncome();
+    renderManual();
+    renderFavourites();
     var head = el("ledHeader");
     var cal = el("ledCalendar");
     var day = el("ledDay");
@@ -8868,7 +8927,66 @@ tryRestoreAdminSession();
       today: todayIso(),
       selected: LS.day,
     });
-    day.innerHTML = LS.day ? dayBoxHtml() : "";
+    redrawDay();
+  }
+
+  /** The permanent way in: three fields and the day they land on. */
+  function renderManual() {
+    var host = el("ledManual");
+    if (!host) return;
+    var m = LS.manual || {};
+    host.innerHTML =
+      V.manualFormHtml({
+        name: m.name || "",
+        service: m.service || "",
+        price: m.price || "",
+        date: m.date || todayIso(),
+      }) + (LS.pickOpen && LS.pickTarget === "manual" ? V.favouritesHtml(favouriteList()) : "");
+  }
+
+  function favouriteList() {
+    return (LS.data && LS.data.favourites) || [];
+  }
+
+  /** The box under the table: everyone, and the pencil that names and colours them. */
+  function renderFavourites() {
+    var host = el("ledFavourites");
+    if (!host) return;
+    host.innerHTML = V.favouritesBoxHtml({
+      places: LS.places,
+      open: LS.favOpen,
+      editing: LS.favEditing,
+    });
+  }
+
+  /* Loaded once when he opens the box, and again after an edit — never on a timer. */
+  function loadPlaces() {
+    return api({ action: "places" }).then(function (r) {
+      if (r.status === 200 && r.body.ok) LS.places = r.body.places || [];
+      renderFavourites();
+    });
+  }
+
+  /**
+   * Put the open day over its own square.
+   *
+   * Measured from the grid rather than from the viewport, so it stays put while the
+   * page scrolls, and clamped inside it so a Saturday does not hang off the edge.
+   */
+  function placeDayPopover() {
+    var pop = el("ledDay");
+    var wrap = el("ledCalWrap");
+    if (!pop || !wrap) return;
+    var square = wrap.querySelector('[data-led-day="' + LS.day + '"]');
+    if (!square) return;
+    pop.hidden = false;
+    var w = pop.offsetWidth || 260;
+    var left = square.offsetLeft + square.offsetWidth / 2 - w / 2;
+    var max = wrap.clientWidth - w;
+    if (left < 0) left = 0;
+    if (left > max) left = max > 0 ? max : 0;
+    pop.style.left = Math.round(left) + "px";
+    pop.style.top = Math.round(square.offsetTop) + "px";
   }
 
   function dayBoxHtml() {
@@ -8886,12 +9004,19 @@ tryRestoreAdminSession();
             price: LS.picked ? LS.picked.price : "",
           }) + (LS.pickOpen ? V.favouritesHtml((LS.data && LS.data.favourites) || []) : "")
         : "";
-    return V.dayPanelHtml({ day: LS.day, deals: deals, editorHtml: editor });
+    return V.dayPanelHtml({ day: LS.day, deals: deals, editorHtml: editor, colours: LS.colours });
   }
 
   function redrawDay() {
     var day = el("ledDay");
-    if (day) day.innerHTML = LS.day ? dayBoxHtml() : "";
+    if (!day) return;
+    if (!LS.day) {
+      day.hidden = true;
+      day.innerHTML = "";
+      return;
+    }
+    day.innerHTML = dayBoxHtml();
+    placeDayPopover();
   }
 
   /* ---------------------------------------------------------------- table */
@@ -8902,6 +9027,9 @@ tryRestoreAdminSession();
          browsing — it is a question about now. */
       return L.weekRange(todayIso());
     }
+    /* "This year" follows the month on screen, so browsing back to 2025 and pressing it
+       answers about 2025 (owner, 2026-09-03). */
+    if (LS.range === "year") return L.yearRange(LS.month + "-15");
     return L.monthRange(LS.month + "-15");
   }
 
@@ -8921,7 +9049,7 @@ tryRestoreAdminSession();
         host.innerHTML = '<p class="led-empty">לא הצלחתי לטעון את העסקאות.</p>';
         return;
       }
-      host.innerHTML = V.tableHtml(res.body.deals, res.body.total);
+      host.innerHTML = V.tableHtml(res.body.deals, res.body.total, LS.colours);
       syncRangeChips();
     });
   }
@@ -8972,6 +9100,80 @@ tryRestoreAdminSession();
       render();
       loadTable();
       toast("נשמר ✓");
+    });
+  }
+
+  function manualDate() {
+    var d = el("ledMDate");
+    return (d && d.value) || todayIso();
+  }
+
+  /**
+   * A session added from the box, not from a square.
+   *
+   * It lands on the day in its date field — including a day in another month, in which
+   * case the calendar follows it there rather than saving somewhere he cannot see
+   * (owner, 2026-09-03).
+   */
+  function saveManual() {
+    var name = LS.manual && LS.manual.name ? LS.manual.name : "";
+    var service = (el("ledMService") && el("ledMService").value) || "";
+    var price = (el("ledMPrice") && el("ledMPrice").value) || "";
+    var day = manualDate();
+    if (!name) { toast("בחר או הקלד שם מקום", "err"); return; }
+    if (!(Number(price) > 0)) { toast("חסר מחיר", "err"); return; }
+    api({ action: "add_deal", day: day, name: name, service: service, price: price }).then(function (r) {
+      if (r.status !== 200 || !r.body.ok) {
+        toast((r.body && r.body.error) || "לא הצלחתי לשמור", "err");
+        return;
+      }
+      LS.manual = null;
+      LS.pickOpen = false;
+      var landed = L.monthKey(day);
+      if (landed !== LS.month) {
+        LS.month = landed;
+        LS.day = day;
+        loadMonth(landed);
+        toast("נשמר ✓ — עברתי לחודש שבו זה נחת");
+        return;
+      }
+      LS.data = r.body;
+      LS.day = day;
+      if (LS.month === L.monthKey()) {
+        LS.personal = Number(r.body.total) || 0;
+        if (typeof window.adminOnPersonalIncome === "function") window.adminOnPersonalIncome(LS.personal);
+      }
+      render();
+      loadTable();
+      toast("נשמר ✓");
+    });
+  }
+
+  /**
+   * A place renamed, recoloured, or both.
+   *
+   * A rename rewrites the rows that carry the old name — the server does that, month by
+   * month — so the month on screen and the table are reloaded afterwards rather than
+   * patched here (owner, 2026-09-03).
+   */
+  function savePlace(name, newName, colour) {
+    if (!name) return;
+    var body = { action: "update_place", name: name };
+    if (newName !== null && newName !== undefined) body.newName = String(newName).trim();
+    if (colour !== undefined) body.colour = colour;
+    api(body).then(function (r) {
+      if (r.status !== 200 || !r.body.ok) {
+        toast((r.body && r.body.error) || "לא הצלחתי לשמור", "err");
+        return;
+      }
+      LS.places = r.body.places || [];
+      LS.colours = r.body.colours || {};
+      if (newName !== null && newName !== undefined) LS.favEditing = "";
+      renderFavourites();
+      /* The rows carry the name and the colour, so both views are redrawn. */
+      loadMonth(LS.month);
+      if (r.body.renamedRows) toast("עודכן ✓ " + r.body.renamedRows + " שורות");
+      else toast("עודכן ✓");
     });
   }
 
@@ -9029,9 +9231,22 @@ tryRestoreAdminSession();
       return;
     }
 
-    if (t.closest("[data-led-pick]")) {
-      LS.pickOpen = !LS.pickOpen;
-      redrawDay();
+    var pick = t.closest("[data-led-pick]");
+    if (pick) {
+      var target = pick.getAttribute("data-led-pick") === "manual" ? "manual" : "day";
+      LS.pickOpen = !(LS.pickOpen && LS.pickTarget === target);
+      LS.pickTarget = target;
+      if (target === "manual") renderManual();
+      else redrawDay();
+      return;
+    }
+
+    if (t.closest("[data-led-dayclose]")) {
+      LS.day = "";
+      LS.adding = false;
+      LS.editing = null;
+      LS.pickOpen = false;
+      render();
       return;
     }
 
@@ -9040,14 +9255,20 @@ tryRestoreAdminSession();
       /* A known place plants its service and its last price, and the price stays
          editable for this deal only (owner, 2026-09-03). */
       var wanted = fav.getAttribute("data-led-place");
-      var hit = ((LS.data && LS.data.favourites) || []).filter(function (p) {
+      var hit = favouriteList().filter(function (p) {
         return p.name === wanted;
       })[0];
-      LS.picked = hit
+      var chosen = hit
         ? { name: hit.name, service: hit.service, price: hit.price }
         : { name: wanted, service: "", price: "" };
       LS.pickOpen = false;
-      redrawDay();
+      if (LS.pickTarget === "manual") {
+        LS.manual = Object.assign({}, LS.manual, chosen, { date: manualDate() });
+        renderManual();
+      } else {
+        LS.picked = chosen;
+        redrawDay();
+      }
       return;
     }
 
@@ -9056,13 +9277,58 @@ tryRestoreAdminSession();
       if (!typed) { toast("הקלד שם מקום", "err"); return; }
       /* A new place is remembered when the DEAL is saved, not now: a name typed and
          abandoned is not a place he trains at. */
-      LS.picked = { name: typed, service: "", price: "" };
       LS.pickOpen = false;
-      redrawDay();
+      if (LS.pickTarget === "manual") {
+        LS.manual = Object.assign({}, LS.manual, { name: typed, service: "", price: "", date: manualDate() });
+        renderManual();
+      } else {
+        LS.picked = { name: typed, service: "", price: "" };
+        redrawDay();
+      }
       return;
     }
 
     if (t.closest("[data-led-save]")) { saveDeal(); return; }
+
+    if (t.closest("[data-led-manual-save]")) { saveManual(); return; }
+
+    /* ---- the favourites box ---------------------------------------------- */
+
+    if (t.closest("[data-led-fav-toggle]")) {
+      LS.favOpen = !LS.favOpen;
+      LS.favEditing = "";
+      renderFavourites();
+      /* Read once, when he opens it. A reference list on a timer is money. */
+      if (LS.favOpen && !LS.places.length) loadPlaces();
+      return;
+    }
+
+    var favEdit = t.closest("[data-led-fav-edit]");
+    if (favEdit) {
+      LS.favEditing = favEdit.getAttribute("data-led-fav-edit") || "";
+      renderFavourites();
+      return;
+    }
+
+    if (t.closest("[data-led-fav-cancel]")) {
+      LS.favEditing = "";
+      renderFavourites();
+      return;
+    }
+
+    var swatch = t.closest("[data-led-fav-colour]");
+    if (swatch) {
+      /* A colour is applied on the spot: it is one field, and there is nothing to lose
+         by being wrong for a second. The name still waits for Save. */
+      savePlace(LS.favEditing, null, swatch.getAttribute("data-led-fav-colour") || "");
+      return;
+    }
+
+    if (t.closest("[data-led-fav-save]")) {
+      var newName = (el("ledFavName") && el("ledFavName").value) || "";
+      savePlace(LS.favEditing, newName, undefined);
+      return;
+    }
 
     if (t.closest("[data-led-cancel]")) {
       LS.editing = null;
@@ -9111,7 +9377,17 @@ tryRestoreAdminSession();
        about the intake box (owner, 2026-09-02). */
     if (LS.pickOpen && !t.closest(".led-pickpanel")) {
       LS.pickOpen = false;
-      redrawDay();
+      if (LS.pickTarget === "manual") renderManual();
+      else redrawDay();
+      return;
+    }
+
+    /* A click on the month outside the open day closes it — but never while a line is
+       being written, because losing typed work to a stray click is the complaint he
+       already made once (owner, 2026-09-02). */
+    if (LS.day && !LS.adding && !LS.editing && !t.closest(".led-daybox") && !t.closest("[data-led-day]")) {
+      LS.day = "";
+      render();
     }
   });
 

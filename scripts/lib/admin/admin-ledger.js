@@ -86,6 +86,8 @@ async function monthPayload(month) {
     totalsByDay: Ledger.totalsByDay(doc),
     /* Never the whole warehouse: it is not a screen, it is the five it can offer. */
     favourites: Ledger.favourites(places),
+    /* name → colour, so a row can be painted without a second request. */
+    colours: Ledger.colourMap(places),
   };
 }
 
@@ -172,12 +174,74 @@ module.exports = async function handler(req, res) {
       return res.status(200).json(await monthPayload(month));
     }
 
+    /* Everyone he has worked for, busiest first — the list behind the "favourites"
+       box. One object, and it is the same one the five come from. */
+    if (action === "places") {
+      const places = await readPlaces();
+      return res.status(200).json({ ok: true, places: Ledger.placesByUse(places) });
+    }
+
+    /**
+     * A place renamed or given a colour.
+     *
+     * A colour is written once, on the place. A RENAME also rewrites the rows that
+     * carry the old name, month by month — otherwise the old deals keep the typo and
+     * the list splits in two. Bounded to two years back: it is a deliberate action, not
+     * a timer, but it still may not turn into a scan of the whole store.
+     */
+    if (action === "update_place") {
+      const places = await readPlaces();
+      const from = String(body.name || "");
+      let next = places;
+      let renamed = 0;
+
+      if (body.newName !== undefined && String(body.newName || "").trim() !== from.trim()) {
+        const r = Ledger.renamePlace(next, from, body.newName);
+        if (!r.ok) return bad(res, r.code === "NOT_FOUND" ? 404 : 400, r.code, r.error);
+        next = r.warehouse;
+        const today = Ledger.dayIso();
+        /* Two years back and three months forward: a session can be written ahead of
+           today, and a rename that skipped it would leave the old name on a row he can
+           still see (found by the test, 2026-09-03). Bounded on purpose — a rename is a
+           deliberate action, never a timer. */
+        const months = Ledger.monthsBetween(
+          Ledger.shiftMonth(Ledger.monthKey(today), -23) + "-01",
+          Ledger.shiftMonth(Ledger.monthKey(today), 3) + "-28"
+        ).slice(0, 30);
+        for (const m of months) {
+          const doc = await readMonth(m);
+          if (!doc.deals.length) continue;
+          const moved = Ledger.renameInMonth(doc, from, body.newName);
+          if (!moved.changed) continue;
+          await writeMonth(moved.doc);
+          renamed += moved.changed;
+        }
+      }
+
+      if (body.colour !== undefined) {
+        const c = Ledger.setPlaceColour(next, body.newName || from, body.colour);
+        if (!c.ok) return bad(res, 404, c.code, c.error);
+        next = c.warehouse;
+      }
+
+      await writePlaces(next);
+      return res.status(200).json({
+        ok: true,
+        places: Ledger.placesByUse(next),
+        colours: Ledger.colourMap(next),
+        renamedRows: renamed,
+      });
+    }
+
     /* "This week" crosses a month boundary six times a year, so a range reads the one
        or two month objects it touches — never a list, never the whole history. */
     if (action === "range") {
       const from = Ledger.dayIso(body.from);
       const to = Ledger.dayIso(body.to);
-      const months = Ledger.monthsBetween(from, to).slice(0, 3);
+      /* A year is twelve small objects and he asked for the button, so twelve is the
+         ceiling. It is still a hard cap: a range is answered from the months it
+         touches, never from a listing of the store (owner, 2026-09-03). */
+      const months = Ledger.monthsBetween(from, to).slice(0, 12);
       let deals = [];
       for (const m of months) {
         const doc = await readMonth(m);

@@ -83,7 +83,10 @@ ok("with a place for the month header", /id="ledHeader"/.test(page));
 ok("the calendar", /id="ledCalendar"/.test(page));
 ok("the open day", /id="ledDay"/.test(page));
 ok("and the deals table", /id="ledTable"/.test(page));
-ok("the two automatic buttons are there", /data-led-range="week"/.test(page) && /data-led-range="month"/.test(page));
+ok("the automatic buttons are there", /data-led-range="week"/.test(page) && /data-led-range="month"/.test(page) && /data-led-range="year"/.test(page));
+/* "This year" follows the month on screen, so browsing back to 2025 and pressing it
+   answers about 2025 (owner, 2026-09-03). */
+ok("a year is answered about the month being browsed", /if \(LS\.range === "year"\) return L\.yearRange\(LS\.month \+ "-15"\);/.test(page));
 ok("so are the three filters he asked for", /id="ledFName"/.test(page) && /id="ledFMin"/.test(page) && /id="ledFFrom"/.test(page));
 ok("the page loads the book and its view", /lib\/coach-ledger\.js/.test(page) && /lib\/admin-ledger-view\.js/.test(page));
 ok("the screen talks to its own endpoint", /adminApiUrl\("\/api\/admin-ledger"\)/.test(page));
@@ -181,5 +184,75 @@ const viewSrc = fs.readFileSync(path.join(root, "lib", "admin-ledger-view.js"), 
 ok("the view makes no network calls", !/\bfetch\s*\(/.test(viewSrc));
 ok("and knows no AI provider", !/gemini|groq|generativelanguage/i.test(viewSrc));
 ok("the pinned chip is documented where it is created", /not a person and it is not a\s*\n\s*client/.test(strip));
+
+
+/* --- the open day floats over its own square (owner, 2026-09-03) ---------- */
+
+ok("the month grid is the frame the day is placed in", /id="ledCalWrap"/.test(page) && /#ledCalWrap\{position:relative\}/.test(page));
+ok("the day starts hidden rather than empty", /<div id="ledDay" hidden><\/div>/.test(page));
+ok("it is placed over the square it belongs to", /function placeDayPopover\(\)/.test(page) && /square\.offsetLeft \+ square\.offsetWidth \/ 2 - w \/ 2/.test(page));
+ok("and clamped inside the month so a Saturday does not hang off", /if \(left > max\) left = max > 0 \? max : 0;/.test(page));
+ok("the popover can be closed", V.dayPanelHtml({ day: "2026-09-01", deals: [] }).indexOf("data-led-dayclose") >= 0);
+ok("it is a little wider than a square, not the page", /\.led-pop\{[^}]*min-width:250px;max-width:330px/.test(page));
+ok("the squares are small enough for a whole month", /\.led-day\{[\s\S]{0,200}min-height:52px/.test(page));
+ok("today is a hint, not a selection", /\.led-day\.is-today\{border-color:#3a3a3a\}/.test(page));
+ok("and the open day is the one with the ring", /\.led-day\.is-open\{outline:2px solid var\(--brand\)/.test(page));
+
+/* --- adding a session from anywhere -------------------------------------- */
+
+const manual = V.manualFormHtml({ date: "2026-09-03" });
+ok("the box asks for a place", manual.indexOf('id="ledMName"') >= 0);
+ok("a service", manual.indexOf('id="ledMService"') >= 0);
+ok("a price", manual.indexOf('id="ledMPrice"') >= 0);
+ok("and the day it lands on", manual.indexOf('id="ledMDate"') >= 0 && manual.indexOf('value="2026-09-03"') >= 0);
+ok("its place field offers the same five", manual.indexOf('data-led-pick="manual"') >= 0);
+ok("a session added there is written to the date in the field", /function saveManual\(\)[\s\S]{0,700}action: "add_deal", day: day/.test(page));
+ok(
+  "and if that day is in another month, the calendar follows it there",
+  /if \(landed !== LS\.month\)[\s\S]{0,200}loadMonth\(landed\)/.test(page)
+);
+ok("the picker knows which of the two forms asked for it", /LS\.pickTarget === "manual"/.test(page));
+ok("a click on the month closes the open day", /!t\.closest\("\.led-daybox"\) && !t\.closest\("\[data-led-day\]"\)/.test(page));
+ok("but never while a line is being written", /if \(LS\.day && !LS\.adding && !LS\.editing/.test(page));
+
+
+/* --- the favourites box (owner, 2026-09-03) ------------------------------- */
+
+const favPlaces = [
+  { name: "רימון", uses: 7, service: "קבוצתי", price: 250, colour: "#4CAF70" },
+  { name: "אולם העירייה", uses: 2, service: "אישי", price: 180, colour: "" },
+];
+const boxClosed = V.favouritesBoxHtml({ places: favPlaces });
+ok("the box is folded away by default", boxClosed.indexOf("led-fav-rows") < 0);
+ok("but says how many are in it", boxClosed.indexOf("led-fold-count") >= 0);
+const boxOpen = V.favouritesBoxHtml({ places: favPlaces, open: true });
+ok("opening it lists everyone", (boxOpen.match(/data-led-fav="/g) || []).length === 2);
+ok("busiest first, with the count visible", boxOpen.indexOf("7 פעמים") >= 0);
+ok("each name has a pencil", (boxOpen.match(/data-led-fav-edit=/g) || []).length === 2);
+ok("a coloured place shows its colour", boxOpen.indexOf("border-inline-start:3px solid #4CAF70") >= 0);
+const boxEditing = V.favouritesBoxHtml({ places: favPlaces, open: true, editing: "רימון" });
+ok("the pencil opens a name field", boxEditing.indexOf('id="ledFavName"') >= 0);
+ok("and a palette", (boxEditing.match(/data-led-fav-colour="#/g) || []).length === V.DEFAULT_COLOURS.length);
+ok("including a way back to no colour", boxEditing.indexOf('data-led-fav-colour=""') >= 0);
+ok("an empty box invites the first", V.favouritesBoxHtml({ places: [], open: true }).indexOf("עוד לא נתת שירות") >= 0);
+
+/* The colour is the point: it must reach both the day and the table. */
+ok(
+  "a place's colour paints its rows in the open day",
+  V.dayDealsHtml([{ id: "a", name: "רימון", price: 10 }], { "רימון": "#4CAF70" }).indexOf("#4CAF70") >= 0
+);
+ok(
+  "and its rows in the summary table",
+  V.tableHtml([{ id: "a", day: "2026-09-03", name: "רימון", price: 10 }], 10, { "רימון": "#4CAF70" }).indexOf("#4CAF70") >= 0
+);
+ok(
+  "a colour that is not a colour never reaches the style attribute",
+  V.tableHtml([{ id: "a", day: "2026-09-03", name: "x", price: 10 }], 10, { x: '" onload="alert(1)' }).indexOf("onload") < 0
+);
+
+ok("the box is on the page under the table", page.indexOf('id="ledFavourites"') > page.indexOf('id="ledTable"'));
+ok("it is read once, when he opens it", /if \(LS\.favOpen && !LS\.places\.length\) loadPlaces\(\);/.test(page));
+ok("the pencil saves through the server", /function savePlace\(name, newName, colour\)/.test(page));
+ok("and the month is redrawn afterwards, because the rows carry both", /savePlace[\s\S]{0,900}loadMonth\(LS\.month\)/.test(page));
 
 console.log("\nAll admin ledger page checks passed (" + passed + " assertions).");
