@@ -794,6 +794,10 @@ ok("a ?program= deep link opens that client", /get\("program"\)/.test(page));
 /* --- destructive actions ask ------------------------------------ */
 
 ok("delete asks for confirmation", /confirm\("למחוק את התוכנית/.test(page));
+/* The delete button holds a bin icon and a span, so a click on either arrived with no
+   data-del on it and the button did nothing — it only worked on its padding (owner,
+   2026-09-03). The handler asks the nearest ancestor that carries the attribute. */
+ok("a click on a button's icon still reaches the button", /t\.closest\("\[" \+ n \+ "\]"\)/.test(page));
 /* Behind the chevron since 2026-09-02, with a bin and the page's own font — it was
    rendering as a bare browser button in the middle of the panel. */
 ok("delete is styled as dangerous", /class="btn-delete-client" data-del="1"/.test(page));

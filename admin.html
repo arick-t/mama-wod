@@ -7188,7 +7188,15 @@ tryRestoreAdminSession();
   document.addEventListener("click", function (ev) {
     var t = ev.target;
     if (!t || !t.getAttribute) return;
-    var g = function (n) { return t.getAttribute(n); };
+    /* Ask the nearest ANCESTOR that carries the attribute, not the exact node clicked.
+       "מחק לקוח" holds a bin icon and a span, so a click on either of them arrived with
+       no data-del on it and the button did nothing — it only worked on its padding
+       (owner, 2026-09-03). Every button in this screen has the same shape of problem the
+       moment it grows an icon. */
+    var g = function (n) {
+      var owner = t.closest ? t.closest("[" + n + "]") : null;
+      return owner ? owner.getAttribute(n) : t.getAttribute(n);
+    };
 
     /* The strip is the PAGE's. Its handler opens an athlete or a client in place; this
        screen must not also react to a chip, and it certainly must not navigate — the
