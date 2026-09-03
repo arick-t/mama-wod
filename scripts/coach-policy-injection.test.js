@@ -163,6 +163,19 @@ function testBlockLengthIsFourWeeks() {
      says five and is KNOWN debt for the migration branch — it sits behind
      ATHLETE_AI_BUILD_ENABLED, which is off. */
   const app = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
+  /* The coach's OWN instructions said five weeks in fifteen places while the intake packet asked
+     for four — two contradictory orders inside one request, which is exactly how a five-week brick
+     gets built. Found 2026-09-03 while writing the output contract for the admin module. */
+  const pcSrc = fs.readFileSync(PC_PATH, "utf8");
+  ok(
+    "the coach never asks the model for a five-week brick",
+    !/5[- ]week|five[- ]week|next 5 weeks|exactly 5 weeks/i.test(pcSrc),
+    "a five-week instruction is back in personal-coach.js"
+  );
+  ok(
+    "the deload week is taken from the request, not assumed",
+    /NAMED IN THE REQUEST/.test(pcSrc) && /NEVER add a fifth/.test(pcSrc)
+  );
   ok(
     "the block retry asks the coach for four weeks",
     /Return only a full BLOCK_JSON with exactly 4 weeks now/.test(app),
