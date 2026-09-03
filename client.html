@@ -308,6 +308,8 @@ button.ghost:hover{color:var(--text)}
              alternative is a paused client reading their programme until they happen to
              reload (owner, 2026-09-02). */
           if (out.status === 403 && out.body && out.body.code === "FROZEN") showFrozen();
+          /* Deleted, or the access row revoked: same consequence for the reader. */
+          if (out.status === 404) showGone();
           return out;
         });
       })
@@ -325,6 +327,10 @@ button.ghost:hover{color:var(--text)}
   /* --- 1 · code ---------------------------------------------------------- */
 
   function openAuth(msg) {
+    /* Behind the code box is still on the page. Drop what it was holding. */
+    state.program = null;
+    state.edit = null;
+    state.selected = [];
     show("authView", true); show("termsView", false); show("programView", false);
     if (msg) el("codeErr").textContent = msg;
     var i = el("codeInput");
@@ -406,7 +412,7 @@ button.ghost:hover{color:var(--text)}
     api({ action: "read" }).then(function (r) {
       if (r.status === 401) { clearToken(); openAuth("This device is no longer authorised. Ask your coach for a new code."); return; }
       if (r.status === 403) { openTerms(); return; }
-      if (r.status === 404) { el("bootErr").innerHTML = '<div class="banner bad">This link is not active. Ask your coach for a new one.</div>'; return; }
+      if (r.status === 404) { showGone(); return; }
       if (r.status !== 200 || !r.body.ok) {
         el("bootErr").innerHTML = '<div class="banner bad">' + esc(r.body.error || "Could not load your program.") + "</div>";
         return;
@@ -1154,7 +1160,18 @@ button.ghost:hover{color:var(--text)}
    * reading the month while they are told they cannot.
    */
   var frozenShown = false;
-  function showFrozen() {
+
+  /**
+   * The plan comes off the screen. Not a banner over it.
+   *
+   * A message above a month of training the reader can still scroll through is not an
+   * answer to "you no longer have access" — the owner deleted a client and watched them
+   * keep reading (owner, 2026-09-03). Freezing and deleting differ in whether they can
+   * be undone, not in what the client can see meanwhile.
+   *
+   * @param {string} html the banner to leave in its place
+   */
+  function lockOut(html) {
     if (frozenShown) return;
     frozenShown = true;
     state.program = null;
@@ -1164,11 +1181,21 @@ button.ghost:hover{color:var(--text)}
     show("authView", false);
     show("termsView", false);
     var b = el("bootErr");
-    if (b) {
-      b.innerHTML =
-        '<div class="banner warn">Your access is paused. Please talk to your coach — ' +
-        "nothing you have written has been lost.</div>";
-    }
+    if (b) b.innerHTML = html;
+  }
+
+  function showFrozen() {
+    lockOut(
+      '<div class="banner warn">Your access is paused. Please talk to your coach — ' +
+        "nothing you have written has been lost.</div>"
+    );
+  }
+
+  /* A programme that is gone is gone: the link is dead and so is what it showed. */
+  function showGone() {
+    lockOut(
+      '<div class="banner bad">This link is not active. Ask your coach for a new one.</div>'
+    );
   }
 
   function boot() {

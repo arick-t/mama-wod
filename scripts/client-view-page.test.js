@@ -243,6 +243,14 @@ ok("switching windows counts as coming back", /window\.addEventListener\("focus"
  * month (owner, 2026-09-02). Now any refused call takes the plan off the screen, and a
  * visible tab asks the cheapest question there is once a minute. */
 ok("a frozen answer is recognised wherever it arrives", /out\.body\.code === "FROZEN"\) showFrozen\(\)/.test(html));
+/* Deleting a client left their tab reading the month with a message above it. Freezing
+   and deleting differ in whether they can be undone, not in what the reader can see
+   meanwhile (owner, 2026-09-03). */
+ok("one place takes the plan off the screen", /function lockOut/.test(html));
+ok("a deleted programme uses it", /function showGone/.test(html) && /if \(r\.status === 404\) \{ showGone\(\); return; \}/.test(html));
+ok("the heartbeat notices a deletion, not only a freeze", /if \(out\.status === 404\) showGone\(\)/.test(html));
+ok("and an unauthorised device does not keep it behind the code box", /function openAuth\(msg\) \{[\s\S]{0,200}state\.program = null;/.test(html));
+ok("nothing about the plan is kept in local storage", !/localStorage\.setItem\([^)]*program/i.test(html));
 ok("the plan comes off the screen, not a banner over it", /function showFrozen/.test(html) && /state\.program = null;/.test(html));
 ok("and the client is told nothing was lost", /nothing you have written has been lost/.test(html));
 ok("a visible tab keeps asking", /api\(\{ action: "ping" \}\)/.test(html));
