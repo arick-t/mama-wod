@@ -61,6 +61,9 @@ const MAX_CHARS = {
      approved line by line. */
   "layer2-general": 7900,
   "layer2-individual": 4000,
+  /* The two halves of the old HOW MANY DAYS section, each read by one product only. */
+  "layer2-days-studio": 800,
+  "layer2-days-individual": 800,
   /* Conditional: only a studio that bought N sessions a week pays for it. */
   "layer2-session-count": 3200,
   "layer3-gymnastics": 4000,
@@ -74,11 +77,18 @@ const MAX_CHARS = {
 function testShape() {
   const prompts = allPrompts();
   const names = Object.keys(prompts).sort();
-  ok("every layer module exports a string (" + names.length + " modules)",
+  /* The floor is only here to catch a module that was emptied by accident. It was 400 until the
+     day-count split on 2026-09-03 produced two legitimately tiny modules — a rule that applies to
+     one product should not be padded to clear a test threshold. */
+  ok("every layer module exports a non-empty string (" + names.length + " modules)",
     names.every(function (n) {
-      return typeof prompts[n] === "string" && prompts[n].length > 400;
+      return typeof prompts[n] === "string" && prompts[n].length > 100;
     }),
-    names.filter(function (n) { return typeof prompts[n] !== "string"; }).join(", "));
+    names
+      .filter(function (n) {
+        return typeof prompts[n] !== "string" || prompts[n].length <= 100;
+      })
+      .join(", "));
 
   names.forEach(function (n) {
     ok("within its character budget: " + n,
@@ -192,12 +202,24 @@ function testGeneralLayerDecisions() {
 
   /* A studio has no shared rest day — different people come on different days. The owner rejected
      the 3-on/1-off cycle for it on 2026-09-02. */
-  ok("a studio is programmed seven days by default", /program SEVEN days a week unless the intake/i.test(flat));
+  /* The day-count rule split per product on 2026-09-03 — each side reads only its own half. */
+  const DAYS_STUDIO = require("../lib/coach-layers/layer2-days-studio.js").replace(/\s+/g, " ");
+  const DAYS_INDIV = require("../lib/coach-layers/layer2-days-individual.js").replace(/\s+/g, " ");
+  ok("a studio is programmed seven days by default",
+    /Program SEVEN days a week unless the intake asks for fewer/i.test(DAYS_STUDIO));
   ok("the 3-on/1-off cycle is no longer the default shape",
     !/A repeating block of THREE TRAINING DAYS then rest/.test(G) &&
-      /Do NOT build a 3-on\/1-off cycle/.test(flat));
-  ok("inventing a rest day is forbidden for a studio", /do NOT insert a\s*rest day the intake did not ask for/i.test(flat));
-  ok("an individual still gets rest days from the intake", /AN INDIVIDUAL: training days and rest days come from the intake/i.test(flat));
+      /Do NOT build a 3-on\/1-off cycle/.test(DAYS_STUDIO));
+  ok("inventing a rest day is forbidden for a studio",
+    /do NOT insert a rest day the intake did not ask for/i.test(DAYS_STUDIO));
+  ok("an individual still gets rest days from the intake",
+    /Training days and rest days come from the intake exactly/i.test(DAYS_INDIV) &&
+      /Their marked days ARE the weekly structure/i.test(DAYS_INDIV));
+  ok("neither product reads the other's day rule",
+    !/SEVEN days/i.test(DAYS_INDIV) && !/come from the intake exactly/i.test(DAYS_STUDIO));
+  ok("the day rules left layer2-general entirely",
+    !/SEVEN days a week|AN INDIVIDUAL:/.test(G),
+    "the split half-happened — layer2-general still carries a day rule");
   ok("a named day in the intake wins outright", /WHATEVER THE INTAKE NAMES, WINS/.test(G));
 
   /* The seven-day week is our own synthesis (2026-09-02) and the only rule here with no source.
@@ -651,6 +673,67 @@ function testSessionCountMode() {
     pack.layers.indexOf("layer3-partner") >= 0, pack.layers.join(", "));
 }
 
+/**
+ * The four structured fields the admin module added on 2026-09-03, at this layer's request.
+ * Each one replaces an inference with a decision — the same fix as competitor, for the same
+ * reason: a ticked box is an answer, a sentence is something a model may or may not weigh.
+ */
+function testStructuredIntakeFields() {
+  /* improveFocus{} drives discipline selection. It became load-bearing when the movement tiers
+     moved behind the competitor gate and "the athlete's stated goal decides where the dedicated
+     strength and skill time goes" took their place. */
+  ok("a ticked gymnastics focus selects gymnastics",
+    JSON.stringify(L.pickLayer3({ improveFocus: { gymnastics: true } }, null)) === '["gymnastics"]');
+  ok("engine and olympic lifting select both layers",
+    L.pickLayer3({ improveFocus: { engine: true, olympic_lifting: true } }, null).sort().join() ===
+      "endurance,weightlifting");
+
+  /* Two focuses map to NOTHING on purpose, and both would be wrong to map. */
+  ok("max strength alone loads no discipline layer",
+    L.pickLayer3({ improveFocus: { max_strength: true } }, null).length === 0,
+    "layer3-weightlifting is about the olympic lifts; heavy/speed effort is already in layer 2");
+  ok("general fitness alone loads no discipline layer",
+    L.pickLayer3({ improveFocus: { general_fitness: true } }, null).length === 0,
+    "for a general athlete the balance IS the priority");
+
+  /* "A specific skill" is a tick plus a box. The tick says nothing; the box is the answer — and
+     the admin module warned the box may be empty even when the tick is set. */
+  ok("a specific skill routes from the box beside it",
+    JSON.stringify(
+      L.pickLayer3({ improveFocus: { specific_skill: true }, improveFocusOther: "muscle-up" }, null)
+    ) === '["gymnastics"]');
+  ok("an empty specific-skill box selects nothing rather than guessing",
+    L.pickLayer3({ improveFocus: { specific_skill: true }, improveFocusOther: "" }, null).length === 0);
+
+  /* A tick outranks prose, and prose still fills what the ticks leave open. */
+  ok("prose still routes when nothing is ticked",
+    JSON.stringify(L.pickLayer3({ improveFocus: {}, goals: "I want a bigger engine" }, null)) ===
+      '["endurance"]');
+  ok("a declared competitor plus a focus still fits the cap",
+    L.pickLayer3({ competitor: true, improveFocus: { gymnastics: true, engine: true } }, null)
+      .length === L.MAX_LAYER3);
+
+  /* avoidMovements{} settles the injury gate outright — no inference about severity, which is the
+     whole point of asking about movements rather than conditions. */
+  ok("a ticked movement family is a named restriction",
+    L.hasNamedRestriction({ injuries: "", avoidMovements: { deep_squat: true } }, null));
+  ok("the free box beside it counts too",
+    L.hasNamedRestriction({ injuries: "", avoidMovements: {}, avoidMovementsOther: "no burpees" }, null));
+  ok("an empty avoidMovements object is not a restriction",
+    !L.hasNamedRestriction({ injuries: "", avoidMovements: {} }, null));
+  ok("the seven families match the substitution matrix families",
+    ["deep_squat", "hinge_deadlift", "overhead_press", "hanging_bar", "kipping", "jumping", "running"]
+      .every(function (k) {
+        return L.hasNamedRestriction({ avoidMovements: { [k]: true } }, null);
+      }));
+
+  /* A stated dislike is an intake constraint, not a preference to argue with. */
+  ok("a stated dislike is honoured as a constraint",
+    /A STATED DISLIKE IS A CONSTRAINT TOO/.test(
+      require("../lib/coach-layers/layer2-general.js")
+    ));
+}
+
 function testPackBudget() {
   /* The heaviest realistic pack. If this grows past the cap, every brick got more expensive and
      somebody should have said so. */
@@ -686,6 +769,7 @@ function main() {
   testRouting();
   testRouterAgainstRealPacket();
   testSessionCountMode();
+  testStructuredIntakeFields();
   testPackBudget();
   console.log("\nPassed:", passed);
   if (process.exitCode) {
