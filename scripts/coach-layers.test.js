@@ -79,11 +79,12 @@ const MAX_CHARS = {
      of the setup instead of the single tick — and, once the admin module shipped the fields, at the
      Primary / Also trains / LOAD lines by name, including the case where no days are given. */
   "layer2-individual": 4500,
-  /* 1400 as of 2026-09-03. POL-009 demanded a handoff-driven continuation and the plumbing for it
-     already worked end to end — index.html builds it, personal-coach.js injects it — but no layer
-     said what to DO with one, and the router could not tell brick 2 from brick 1. Fires only on a
-     continuation, so a first brick pays nothing. */
-  "layer2-continuation": 1400,
+  /* 3200 as of 2026-09-03. Started at 1220 as four continuity bullets. The owner then reset its
+     priority — "חשוב מאוד שלא יהיו 2 לבנות זהות אחרת אין התקדמות לעולם" — so not-repeating became
+     the headline with the four progression axes under it, and a studio section was added because
+     the same failure is worse in a room where nobody can ask for a revision. Fires only on a
+     continuation, so a first brick still pays nothing. */
+  "layer2-continuation": 3200,
   /* The two halves of the old HOW MANY DAYS section, each read by one product only. Both grew on
      2026-09-03: the studio took the station-to-people rule out of the always-on layer, and the
      individual took the 3-consecutive-day limit out of the competitor layer. Both are now on the
@@ -1049,8 +1050,8 @@ function testPackBudget() {
      own training days. This pack is
      ~10.2k tokens; the general
      healthy athlete still pays 22k, which is what most bricks actually cost. */
-  ok("the heaviest pack stays under 42k characters",
-    heavy.chars < 42000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
+  ok("the heaviest pack stays under 44k characters",
+    heavy.chars < 44000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
   ok("the pack reports which layers it used",
     Array.isArray(heavy.layers) && heavy.layers.length >= 6, heavy.layers.join(", "));
 }
@@ -1064,10 +1065,37 @@ function testContinuation() {
   const flat = K.replace(/\s+/g, " ");
   ok("the continuation layer knows it is not the first brick",
     /--- THIS IS NOT THE FIRST BRICK \(HARD\) ---/.test(K));
-  ok("re-serving the previous block is forbidden",
-    /DO NOT RE-SERVE THE PREVIOUS BLOCK/.test(K));
-  ok("the loaded work progresses from where the handoff leaves it",
-    /PROGRESS THE LOADED WORK from where the handoff leaves it/.test(K));
+  ok("two identical bricks are called a product failure",
+    /TWO IDENTICAL BRICKS ARE A PRODUCT FAILURE/.test(K));
+  ok("the transition itself is named as the progression",
+    /The move from one brick to the next IS the athlete's progression/i.test(flat));
+  /* The likeliest path to a repeated month: the athlete changed nothing, so the packet is
+     identical and the model has no reason to do anything different. */
+  ok("an unchanged intake is not permission to repeat",
+    /AN UNCHANGED INTAKE IS NOT PERMISSION TO REPEAT/.test(K) &&
+      /Constraints repeat; work does not/.test(K));
+  ok("the brick has to say what moved",
+    /SAY WHAT MOVED/.test(K) &&
+      /If you cannot name what progressed, you have not written a continuation/i.test(flat));
+  ok("one axis at a time, and all five are named",
+    /PROGRESS ON ONE AXIS AT A TIME, never all of them at once/.test(K) &&
+      /- LOAD —/.test(K) && /- DENSITY —/.test(K) && /- VOLUME —/.test(K) &&
+      /- COMPLEXITY —/.test(K) && /- FORMAT AND STRUCTURE —/.test(K));
+  /* The owner's note, and the reason it is not a softer case: "דמיין מישהו שמגיע כל חודש לאותו
+     אימון בסטודיו - זה משעמם ולא אפקטיבי!!" A room has no 1RM, and a class member cannot ask for
+     a revision, so nobody reports the repetition. */
+  ok("a studio's progression is format and structure, and it matters more not less",
+    /FOR A STUDIO THIS MATTERS MORE, NOT LESS \(HARD\)/.test(K) &&
+      /A room has no 1RM to move, so FORMAT AND STRUCTURE are its progression/i.test(flat));
+  ok("the layer says out loud that nobody will report this failure",
+    /unlike a single athlete they have no way to ask you to change it\. Nobody will report this failure/i.test(
+      flat
+    ));
+  ok("reprinting last month with new numbers is named and refused",
+    /never by quietly reprinting last month with new numbers/i.test(flat));
+  ok("the load axis starts from where the handoff leaves it",
+    /the next rung of the same scheme, from where the handoff leaves it/i.test(flat) &&
+      /Not a fresh start at the bottom, and not a jump you have no evidence for/i.test(flat));
   ok("a format already used is not repeated unless it is a declared retest",
     /DO NOT REPEAT A NAMED FORMAT/.test(K) &&
       /unless it is a benchmark being retested on purpose/i.test(flat));
@@ -1461,6 +1489,37 @@ function testCompetitorReview() {
     ));
 }
 
+
+/* The craft layer had a budget and a routing assertion and no content assertions at all. It has
+   one now, for the principle the owner escalated on 2026-09-03 from a layer tweak to a product
+   foundation: "תיקון שורש פילוסופי של כל התפיסה של איך אנחנו מסתכלים על לקוח == נשאר אצלינו +
+   מתפתח ומשתפר באופן מתמיד". It therefore has to live in the ALWAYS-ON layer and in the policy,
+   not only in the conditional continuation layer that a first brick never reads. */
+function testCraftFoundation() {
+  const CR = require("../lib/coach-layers/coach-craft.js");
+  const flat = CR.replace(/\s+/g, " ");
+  ok("the long-term relationship is stated in the always-on craft layer",
+    /THE CLIENT STAYS, AND IMPROVES/.test(CR) &&
+      /This is a long-term relationship, not a delivered product/.test(CR));
+  ok("the client is assumed to still be here next month",
+    /will still be here next month, and the month after/i.test(flat));
+  ok("the progression is named as what the client pays for",
+    /that progression IS what they are paying for/i.test(flat));
+  ok("two identical blocks are a failure even when both are good",
+    /TWO IDENTICAL BLOCKS ARE A FAILURE even when both are good blocks/.test(CR));
+  ok("an unchanged intake is not a reason for unchanged work, in the always-on layer too",
+    /the constraints repeat, the work does not/i.test(flat));
+  /* Both agents, both actions: a studio brick and a first individual brick must carry it. */
+  ok("a studio brick carries the principle",
+    L.buildLayerPack({ agent: "studio", studioIntake: {} }).text.indexOf(
+      "THE CLIENT STAYS, AND IMPROVES"
+    ) >= 0);
+  ok("a first individual brick carries it too",
+    L.buildLayerPack({ agent: "individual", profile: {} }).text.indexOf(
+      "THE CLIENT STAYS, AND IMPROVES"
+    ) >= 0);
+}
+
 function main() {
   console.log("\n=== Coach knowledge layers ===\n");
   testShape();
@@ -1475,6 +1534,7 @@ function main() {
   testRouterAgainstRealPacket();
   testSessionCountMode();
   testStructuredIntakeFields();
+  testCraftFoundation();
   testContinuation();
   testGymnastics();
   testHebrewBoundary();

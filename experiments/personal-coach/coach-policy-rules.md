@@ -467,6 +467,17 @@ Copy a block below. Keep IDs unique (`POL-###`).
 ---
 
 
+### POL-029 — The client stays, and improves (product foundation)
+- **Type:** HARD
+- **Scope:** global — every brick / week / day fill, every revision and debrief, individual and studio alike
+- **Trigger:** always
+- **Required behavior:** Treat every client as a long-term relationship, not a delivered product. The athlete or the room stays with us, and each block must leave them measurably further along than the last. **Two identical blocks are a failure even when both are good blocks** — a client who receives the same month twice stood still. Progress ONE axis deliberately (load, density, volume, movement complexity, or format and structure) and name what advanced in the block's theme / summary. For a STUDIO the axis is normally format and structure rather than load, and the requirement is stronger rather than weaker: a person in a class cannot request a revision, so a repeated month is never reported by anyone. Never read an unchanged intake as a reason to write unchanged work — the constraints repeat, the work does not.
+- **Examples:** Bad: brick 2 reprints brick 1 with new week numbers. Bad: a studio meets the same four session shapes every month. Good: same weekday modality, next rung of the strength scheme, a format the room has not met.
+- **Added:** 2026-09-03 — owner, as a root product decision and not a layer tweak: "תיקון שורש פילוסופי של כל התפיסה של איך אנחנו מסתכלים על לקוח == נשאר אצלינו + מתפתח ומשתפר באופן מתמיד"; and on the studio case: "דמיין מישהו שמגיע כל חודש לאותו אימון בסטודיו - זה משעמם ולא אפקטיבי!!"
+
+---
+
+
 ## Notes for maintainers
 - Prefer few **HARD** rules; put preferences in **SOFT**.
 - When a rule conflicts with athlete memory/prefs, athlete safety + explicit athlete requests win, then HARD policy, then SOFT, then Drive knowledge.
@@ -475,4 +486,5 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - Chat gets **one** COST compact reminder only — do not duplicate POL-COST one-liners in language rules; full POL-COST text stays in this policy file.
 - **POL-021** defines how Drive / digests are applied; it does not weaken POL-018 / POL-016.
 - **POL-024** maps whole-brick notes onto intake sections, then adapts only that section while freezing the rest; pairs with POL-003 / POL-022 / POL-023.
+- **POL-029** is a product foundation, not a programming preference: it binds POL-009 (handoff continuity) to a reason. A block that repeats its predecessor violates POL-029 even when the handoff was honoured.
 - Do not dump this whole file into athlete-visible chat.
