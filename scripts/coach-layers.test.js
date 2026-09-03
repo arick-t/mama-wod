@@ -68,7 +68,7 @@ const MAX_CHARS = {
      2026-09-03: the studio took the station-to-people rule out of the always-on layer, and the
      individual took the 3-consecutive-day limit out of the competitor layer. Both are now on the
      one path that needs them instead of on every path or none. */
-  "layer2-days-studio": 1200,
+  "layer2-room-studio": 1800,
   "layer2-days-individual": 1200,
   /* Conditional: only a studio that bought N sessions a week pays for it. */
   "layer2-session-count": 3200,
@@ -232,7 +232,7 @@ function testGeneralLayerDecisions() {
   /* A studio has no shared rest day — different people come on different days. The owner rejected
      the 3-on/1-off cycle for it on 2026-09-02. */
   /* The day-count rule split per product on 2026-09-03 — each side reads only its own half. */
-  const DAYS_STUDIO = require("../lib/coach-layers/layer2-days-studio.js").replace(/\s+/g, " ");
+  const DAYS_STUDIO = require("../lib/coach-layers/layer2-room-studio.js").replace(/\s+/g, " ");
   const DAYS_INDIV = require("../lib/coach-layers/layer2-days-individual.js").replace(/\s+/g, " ");
   ok("a studio is programmed seven days by default",
     /Program SEVEN days a week unless the intake asks for fewer/i.test(DAYS_STUDIO));
@@ -282,6 +282,31 @@ function testGeneralLayerDecisions() {
       /Bodyweight, running, carries and shared implements scale to any number of\s*people/i.test(
         DAYS_STUDIO
       ));
+
+  /* A studio's character is two things wearing one coat: identity, which sets tone, and a
+     BOUNDARY, which decides what is never written. "לא עושים סנאצ'ים עם מוט" is the second kind,
+     and it was buried in a paragraph about atmosphere for the coach to infer. */
+  ok("a place's boundary is a house rule, not a mood",
+    /A place's boundary is a HOUSE RULE, not a mood/.test(DAYS_STUDIO) &&
+      /It holds in every session, every week/.test(DAYS_STUDIO));
+  ok("the boundary may not be evaded on a technicality",
+    /DO NOT EVADE IT ON A TECHNICALITY/.test(DAYS_STUDIO) &&
+      /do not reach for\s*something that is obviously the same thing under another name/i.test(
+        DAYS_STUDIO
+      ) &&
+      /do not go looking for the gap/i.test(DAYS_STUDIO));
+  ok("the function survives the boundary",
+    /Keep the movement's FUNCTION — explosive hip extension, load overhead — with a tool that fits/i.test(
+      DAYS_STUDIO
+    ));
+  /* The line that stops this becoming an excuse for a soft programme. */
+  ok("character narrows the vocabulary and never the standards",
+    /A PLACE'S CHARACTER NARROWS THE VOCABULARY, NEVER THE STANDARDS/.test(DAYS_STUDIO) &&
+      /It\s*gets a good session from a different vocabulary — not a loose one/i.test(DAYS_STUDIO));
+  ok("an individual never reads the studio's house rules",
+    L.buildLayerPack({ agent: "individual", profile: { goals: "get fit" } }).text.indexOf(
+      "HOUSE RULE"
+    ) < 0);
   ok("the day rules left layer2-general entirely",
     !/SEVEN days a week|AN INDIVIDUAL:/.test(G),
     "the split half-happened — layer2-general still carries a day rule");
