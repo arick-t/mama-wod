@@ -454,6 +454,36 @@ function testInjuryGate() {
   ok("a studio population that names a limitation switches it on",
     L.hasNamedRestriction(null, { population: "several members with knee pain" }));
 
+  /* The studio's goals field was folded into the population box on 2026-09-03, so that box now
+     carries ordinary programming words as well as restrictions. A bare body part must not count:
+     "back squat" and "shoulder press" are what a studio trains, not what it avoids. */
+  [
+    "a women's studio, ages 23-50",
+    "סטודיו נשים בין הגילאים 23-50",
+    "we do a lot of back squat and shoulder press",
+    "mixed adults, knee sleeves available",
+  ].forEach(function (t) {
+    ok("not a restriction: " + t, !L.hasNamedRestriction(null, { population: t }));
+  });
+  [
+    "a few members with knee pain",
+    "שניים עם כאב בברך",
+    "one member post-op shoulder",
+    "יש מגבלות אצל חלק",
+    "several need to avoid overhead",
+  ].forEach(function (t) {
+    ok("is a restriction: " + t, L.hasNamedRestriction(null, { population: t }));
+  });
+
+  /* And the same box now has to reach INTENT, or a studio that says what it trains for selects
+     nothing at all. */
+  ok("the population box routes a discipline when it names one",
+    L.pickLayer3(null, { population: "סטודיו נשים 23-50. רוצות לשפר ריצה וסיבולת" }).indexOf(
+      "endurance"
+    ) >= 0);
+  ok("a purely descriptive population still selects nothing",
+    L.pickLayer3(null, { population: "סטודיו נשים בין הגילאים 23-50" }).length === 0);
+
   const off = L.buildLayerPack({ agent: "individual", profile: { goals: "get fitter" } });
   ok("the pack really omits the injury layer when nothing was reported",
     off.layers.indexOf("layer1-injuries") < 0, off.layers.join(", "));
@@ -665,17 +695,53 @@ function testSessionCountMode() {
   /* The descriptions are instructions. These four are the owner's own examples. */
   ok("a described session is a HARD instruction, every week",
     /Treat every such description as a HARD instruction for that session, EVERY week/.test(S));
-  ok("'one part only' is honoured literally",
-    /'One part only' means ONE part/.test(S) &&
-      /Do not add a warm-up part, an accessory part or a second\s*piece/i.test(flat));
-  ok("a named time cap is a ceiling for the room",
-    /the piece must finish inside 10 minutes for the room, not for the fittest person in it/.test(
-      flat
-    ));
+  /* The owner fills these boxes in Hebrew — "מטקון ארוך בלבד", "כוח ומטקון קצר" — so the rules
+     may not depend on an English phrase, and the lengths he writes are RELATIVE rather than
+     numeric. Both had to be stated as principles instead of quoted examples. */
+  ok("descriptions are read in any language",
+    /Descriptions may be written in ANY language/.test(S));
+  ok("a single-piece description is honoured, however it is phrased",
+    /means ONE part/.test(S) &&
+      /Do not add a warm-up part, an accessory part or a\s*second piece/i.test(flat));
+  ok("a named length is a ceiling for the room",
+    /A named length is a CEILING for the room, not a target/.test(S) &&
+      /not for the fittest person in it/.test(flat));
+  ok("relative lengths are instructions and stay consistent across the week",
+    /RELATIVE lengths — short, medium, long — are the normal way this gets written/.test(S) &&
+      /the long one must actually be materially longer/.test(flat));
+  ok("a format word like 'stations' is an instruction too",
+    /A 'stations' session is a format instruction\s*in the same way — build it as stations/i.test(flat));
   ok("a description outranks a default in any other layer",
     /If a description conflicts with a default in any other layer, THE DESCRIPTION WINS/.test(S));
   ok("undescribed sessions are treated as interchangeable",
     /If the sessions are NOT described, treat them as interchangeable/.test(flat));
+
+  /* Hebrew is a first-class input: the intake header says answers may be in any language, and the
+     owner fills these boxes in Hebrew. With an English-only trigger table his four sessions
+     selected NO discipline layer, while the same four in English selected endurance. */
+  const hebrewStudio = {
+    scheduleMode: "session_count", sessionsPerWeek: 4, sessionsDiffer: true,
+    sessionTypes: ["תחנות אירובי", "כוח ומטקון קצר", "כוח קצר ומטקון בינוני באורכו", "מטקון ארוך בלבד"],
+  };
+  ok("Hebrew session descriptions select a discipline layer",
+    L.pickLayer3(null, hebrewStudio).indexOf("endurance") >= 0,
+    JSON.stringify(L.pickLayer3(null, hebrewStudio)));
+  ok("Hebrew and English descriptions route the same way",
+    JSON.stringify(L.pickLayer3(null, hebrewStudio)) ===
+      JSON.stringify(
+        L.pickLayer3(null, Object.assign({}, hebrewStudio, {
+          sessionTypes: ["aerobic stations", "strength and short metcon", "short strength and medium metcon", "long metcon only"],
+        }))
+      ));
+  /* \b is not a boundary for Hebrew in JS, so these two would otherwise match מתח (pull-up). */
+  ok("מתחיל and מתחרה do not trigger the gymnastics layer",
+    L.pickLayer3({ goals: "אני מתחיל להתאמן" }, null).length === 0 &&
+      L.pickLayer3({ goals: "אני לא מתחרה" }, null).indexOf("gymnastics") < 0);
+  ok("real Hebrew terms do route",
+    L.pickLayer3({ goals: "הליכת ידיים" }, null).indexOf("gymnastics") >= 0 &&
+      L.pickLayer3({ goals: "לשפר ריצה" }, null).indexOf("endurance") >= 0 &&
+      L.pickLayer3({ goals: "סנאץ' כבד" }, null).indexOf("weightlifting") >= 0 &&
+      L.pickLayer3({ goals: "אימון בזוגות" }, null).indexOf("partner") >= 0);
 
   /* The descriptions also feed discipline selection — "partner metcon" should reach the router. */
   const pack = L.buildLayerPack({
