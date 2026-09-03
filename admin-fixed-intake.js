@@ -457,10 +457,15 @@
         '<label class="pprog-fixed-inline" style="margin-top:12px">' +
         '<input type="checkbox" id="adm-fx-competitor"' +
         (st.competitor === true ? " checked" : "") +
-        "> I am training for a competition / actively competing</label>" +
+        ' onchange="adminFixedCompetitorChanged()"> I am training for a competition / actively competing</label>' +
         /* "I want to get stronger" in free text reached the coach as nothing at all -
            not for want of intention, but because no word in it was one the router knew.
            The free text stays; these anchor it (coach agent, 2026-09-02). */
+        /* Only a competitor is asked where the dedicated time goes. The owner's call
+           (2026-09-03): for someone training for general fitness the answer is the
+           balance itself, and asking invites an answer that narrows a plan nobody wanted
+           narrowed. The packet still carries the line in both directions. */
+        '<div id="adm-fx-improve-wrap"' + (st.competitor === true ? "" : " hidden") + ">" +
         '<p class="pprog-fixed-title" style="margin-top:16px">What do you want to improve?</p>' +
         '<div class="pprog-skills-picker">' +
         S.IMPROVE_FOCUS_DEFS.map(function (d) {
@@ -470,7 +475,7 @@
         }).join("") +
         "</div>" +
         '<input id="adm-fx-improve-other" type="text" maxlength="200" placeholder="Which skill?" value="' +
-        esc(st.improveFocusOther || "") + '">' +
+        esc(st.improveFocusOther || "") + '"></div>' +
         /* Three edits of the same kind is what POL-005 needs before it learns a
            preference, and every edit is a paid call. One box here saves three months
            of them (coach agent, 2026-09-02). */
@@ -561,6 +566,17 @@
     }
   }
   if (typeof window !== "undefined") window.adminFixedToggleTimes = adminFixedToggleTimes;
+
+  /* Ticking "I compete" is what opens the improve list; unticking closes it and drops
+     what was marked, so a stale answer cannot travel with an athlete who is not
+     competing (owner, 2026-09-03). */
+  window.adminFixedCompetitorChanged = function () {
+    var box = document.getElementById("adm-fx-competitor");
+    var wrap = document.getElementById("adm-fx-improve-wrap");
+    if (!box || !wrap) return;
+    if (box.checked) wrap.removeAttribute("hidden");
+    else wrap.setAttribute("hidden", "");
+  };
 
   window.adminFixedFillNoInjuries = function () {
     var ta = document.getElementById("adm-fx-injuries");
@@ -803,11 +819,13 @@
       for (var im = 0; im < improveBoxes.length; im++) {
         if (improveBoxes[im].checked) improveMap[improveBoxes[im].getAttribute("data-improve-id")] = true;
       }
-      intakeState.improveFocus = improveMap;
+      /* Not a competitor means no focus was asked for, so none is carried. */
+      intakeState.improveFocus = intakeState.competitor === true ? improveMap : {};
       var improveOtherEl = document.getElementById("adm-fx-improve-other");
-      intakeState.improveFocusOther = improveOtherEl
-        ? String(improveOtherEl.value || "").trim().slice(0, 200)
-        : "";
+      intakeState.improveFocusOther =
+        intakeState.competitor === true && improveOtherEl
+          ? String(improveOtherEl.value || "").trim().slice(0, 200)
+          : "";
       var avoidProgEl = document.getElementById("adm-fx-avoid-program");
       intakeState.avoidInProgram = avoidProgEl
         ? String(avoidProgEl.value || "").trim().slice(0, 400)

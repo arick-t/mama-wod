@@ -159,6 +159,13 @@ ok("an unstated room carries the instruction", /^STATIONS: not stated/m.test(emp
 ok("briefFor stays a human reminder, not a prompt", !/BLOCK_JSON/.test(StudioIntake.briefFor({})));
 
 ok("the tick box is on the Goals step", /id="adm-fx-competitor"/.test(fixedJs));
+/* The improve list belongs to that tick box (owner, 2026-09-03): for someone training
+   for general fitness the answer is the balance itself, and asking invites an answer
+   that narrows a plan nobody wanted narrowed. The packet still carries the line in both
+   directions, so nothing downstream changes shape. */
+ok("the improve list is hidden until he says he competes", /id="adm-fx-improve-wrap"' \+ \(st\.competitor === true \? "" : " hidden"\)/.test(fixedJs));
+ok("ticking it opens the list", /adminFixedCompetitorChanged/.test(fixedJs));
+ok("and unticking drops what was marked", /intakeState\.improveFocus = intakeState\.competitor === true \? improveMap : \{\}/.test(fixedJs));
 ok("and it is carried on the profile", CoachIntakeSync.normalizeIntakeProfile(Object.assign({}, sample, { competitor: true })).competitor === true);
 
 const profile = CoachIntakeSync.normalizeIntakeProfile(sample);
