@@ -1094,6 +1094,62 @@ function testContinuation() {
       .layers.indexOf("layer2-continuation") < 0);
 }
 
+
+/* The gymnastics layer, reviewed line by line with the owner on 2026-09-03. Five decisions came
+   out of it and all five are asserted here, because each one reverses something the source said. */
+function testGymnastics() {
+  const G = require("../lib/coach-layers/layer3-gymnastics.js");
+  const flat = G.replace(/\s+/g, " ");
+
+  /* The source made the Tabata hollow standard a GATE: no skill until it holds. We have no way to
+     know whether it holds — it is not in the intake — so the coach would either ignore the rule or
+     refuse an athlete the muscle-up they asked for. It is now a prescription hung on the one thing
+     we can actually see: the marked skills. */
+  ok("the core readiness standard is a prescription, not a gate",
+    /THAT STANDARD IS A PRESCRIPTION, NOT A GATE/.test(G));
+  ok("the skill the athlete asked for is never withheld while waiting to find out",
+    /never withhold the skill they asked for while you wait to find out/i.test(flat));
+  ok("the marked skills are named as the visible evidence",
+    /The MARKED SKILLS are what you can see/.test(G) &&
+      /A skill they marked is a skill they perform: program it/.test(G));
+  ok("core work runs alongside the goal, never instead of it",
+    /run ALONGSIDE the progression below, never instead of the goal they stated/i.test(flat));
+
+  /* "מסכים אנחנו לא מתעסקים בזה." An age-based slowdown contradicts the expectation rule in
+     coach-craft — program for the best, scale for the rest — and added nothing the strict-phase
+     rule did not already say. */
+  ok("no age-based slowdown survives",
+    !/40\+/.test(G) && !/progress more slowly/i.test(flat),
+    "an age tier is back in the gymnastics layer");
+
+  /* Kilograms and metres, so millimetres for equipment. The source specified bands and bars in
+     inches. */
+  ok("equipment is specified in metric",
+    !/inch/i.test(G) && /nothing wider than 20 mm/.test(G) && /any bar 38 mm or under/.test(G));
+
+  /* "משאירים פרפר זה רלוונטי לנו." The source called butterfly a dead end. It is not a rung in
+     building the pull, but it is a real technique for this product's athletes and is not banned. */
+  ok("butterfly is barred from the progression but not from the programme",
+    /BUTTERFLY is not a step in building the pull/.test(G) &&
+      /it is legitimate to train once the kipping pull-up is solid/i.test(flat));
+  ok("butterfly is no longer called a dead end",
+    !/dead end/i.test(G));
+
+  /* A ring dip was listed as a prerequisite for the kipping dip while rings were also the advanced
+     apparatus — circular. The prerequisite is now the two static ones. */
+  ok("the kipping-dip prerequisite no longer requires the advanced apparatus",
+    /No kipping dip until strict push-up and parallel-bar dip are solid/.test(G));
+  ok("static apparatus still precedes dynamic",
+    /Static apparatus \(floor, bar\) before dynamic apparatus \(rings\)/.test(G));
+
+  /* Regression guard: the toes-to-bar progression was nearly lost to an edit that removed the line
+     above it. It is the kind of loss no other assertion would have caught. */
+  ok("the toes-to-bar progression is intact",
+    /TOES-TO-BAR: strict knee-to-elbow -> flexed-knee to elbow then extend to bar -> straight leg to parallel and back to L-sit -> straight-leg toes-to-bar -> kipping/.test(
+      flat
+    ));
+}
+
 function main() {
   console.log("\n=== Coach knowledge layers ===\n");
   testShape();
@@ -1109,6 +1165,7 @@ function main() {
   testSessionCountMode();
   testStructuredIntakeFields();
   testContinuation();
+  testGymnastics();
   testPackBudget();
   console.log("\nPassed:", passed);
   if (process.exitCode) {
