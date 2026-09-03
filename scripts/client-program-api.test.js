@@ -116,6 +116,11 @@ function harness(opts) {
       sessionSecretReady() {
         return true;
       },
+      /* The status GET reports it, and nothing here called that path until the
+         configuration report was tested from the outside (2026-09-03). */
+      sessionSecretSource() {
+        return "configured";
+      },
       MIN_SESSION_SECRET_LEN: 32,
     },
   };
@@ -856,6 +861,37 @@ async function main() {
   ok("THE CLIENT LIST IS EMPTY", listAfter.body.rows.length === 0);
   const goneRead = await H.owner({ action: "read", programId: p1.body.program.programId });
   ok("a purged client is really gone", goneRead.status === 404);
+
+  /* --- the configuration report goes to the OWNER, not to a client ---------
+   * It first shipped attached to the claim response - a client's reply - because the
+   * edit matched the wrong "termsVersion" line, and the library-level test could not
+   * see it (2026-09-03). So this drives the real handler and reads the real JSON.
+   * ------------------------------------------------------------------------- */
+  const status = await new Promise(function (resolve) {
+    let code = 200;
+    const res = {
+      headersSent: false,
+      setHeader() {},
+      status(c) { code = c; return res; },
+      json(payload) { resolve({ status: code, body: payload }); return res; },
+      end() { resolve({ status: code, body: null }); return res; },
+    };
+    require("../api/client-program.js")(
+      { method: "GET", headers: { "x-forwarded-for": "10.9.255.254" }, body: {}, socket: {} },
+      res
+    );
+  });
+  ok("the status GET answers", status.status === 200 && status.body && status.body.ok === true);
+  ok(
+    "and it names WHICH secret salts the client codes",
+    ["client_secret", "session_secret", "admin_password", "none"].indexOf(status.body.clientCodeSalt) >= 0
+  );
+  ok("never the secret itself", !/secret[-_]?value|CLIENT_ACCESS_SECRET=/.test(JSON.stringify(status.body)));
+  /* One home, and it is this one. */
+  ok("the report exists in exactly one place in the source", (apiSrc.match(/clientCodeSalt/g) || []).length === 1);
+  const claimIdx = apiSrc.indexOf('if (action === "claim")');
+  const claimReply = claimIdx >= 0 ? apiSrc.slice(claimIdx, claimIdx + 1600) : "";
+  ok("a client redeeming a code is told nothing about it", claimReply.indexOf("clientCodeSalt") < 0);
 
   console.log("All client-program API checks passed.");
 }

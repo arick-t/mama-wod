@@ -758,10 +758,6 @@ async function clientHandler(req, res, body) {
       deviceId: redeemed.device.id,
       /* Signature is per ACCOUNT — a second device walks straight in (b.3). */
       signed: Access.isSignedForCurrentTerms(redeemed.access),
-      /* WHICH secret salts the client codes — never the secret. "client_secret" is the
-         only answer that survives an admin-password change: the other two tie every
-         code and every linked device to a value that exists for another purpose. */
-      clientCodeSalt: Access.saltSource(),
       termsVersion: Terms.TERMS_VERSION,
     });
   }
@@ -990,6 +986,12 @@ async function handler(req, res) {
        * the guessing — twice I sent the owner to change an env var that was not it. */
       sessionSecretSource: sessionSecretSource(),
       sessionSecretMinLength: MIN_SESSION_SECRET_LEN,
+      /* WHICH secret salts the client codes — never the secret. "client_secret" is the
+         only answer that survives an admin-password change: the other two tie every code
+         and every linked device to a value that exists for another purpose. It belongs
+         HERE, beside the other configuration facts, and nowhere else: it first shipped by
+         mistake on the claim response, which is a client's reply (2026-09-03). */
+      clientCodeSalt: Access.saltSource(),
       termsVersion: Terms.TERMS_VERSION,
       deviceCap: Access.MAX_DEVICES,
       storage: JsonStore.storageInfo ? JsonStore.storageInfo() : null,
