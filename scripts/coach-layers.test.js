@@ -458,6 +458,22 @@ function testInjuryGate() {
   ok("the pack really omits the injury layer when nothing was reported",
     off.layers.indexOf("layer1-injuries") < 0, off.layers.join(", "));
 
+  /* From a real screen: "No injuries" in the free text AND "Deep squat" ticked. Not a
+     contradiction, and probably the commonest answer a healthy adult gives. Both halves have to
+     hold: the gate fires, and the layer does not let "no injuries" cancel the marked list. */
+  const mixed = { injuries: "No injuries", avoidMovements: { deep_squat: true } };
+  ok('"No injuries" plus a ticked movement still switches the layer on',
+    L.hasNamedRestriction(mixed, null));
+  ok("the avoid list is stated as authoritative over the free text",
+    /THE AVOID LIST IS AUTHORITATIVE \(HARD\)/.test(
+      require("../lib/coach-layers/layer1-injuries.js")
+    ) &&
+      /even when the free text says 'no injuries'/i.test(
+        require("../lib/coach-layers/layer1-injuries.js").replace(/\s+/g, " ")
+      ));
+  ok("the layer does not assume a restriction means an injury",
+    /AN INJURY IS ONLY ONE REASON/.test(require("../lib/coach-layers/layer1-injuries.js")));
+
   /* The owner's actual worry, asserted: one prescription per line, no menus. */
   const INJ = require("../lib/coach-layers/layer1-injuries.js");
   ok("the injury layer forbids 'or' inside a workout line",
