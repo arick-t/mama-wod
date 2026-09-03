@@ -194,7 +194,10 @@ ok("wiping a written day asks first", /hasContent && !window\.confirm/.test(html
 
 /* The same gestures the owner has in his own module. */
 ok("the client can pick several days too", /function bindCalGestures/.test(html));
-ok("ctrl-click adds one", /if \(ev && \(ev\.ctrlKey \|\| ev\.metaKey\)\) toggleSelected/.test(html));
+/* "This one is on screen, ctrl-click that one" means both, so the open day is seeded
+   into an empty selection before the clicked one is added (owner, 2026-09-03). */
+ok("ctrl-click adds one", /toggleSelected\(nextWi, nextDay\);/.test(html));
+ok("and the day already open joins it", /state\.selected = \[\{ wi: prevWi, day: prevDay \}\];/.test(html));
 ok("a ctrl-click never starts a drag", /if \(ev\.ctrlKey \|\| ev\.metaKey\) \{ cvCalDrag = null; return; \}/.test(html));
 ok("the selection is held in date order", /function sortSel/.test(html) && /sortSelectedDays/.test(html));
 

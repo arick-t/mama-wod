@@ -673,7 +673,12 @@ ok("ctrl or cmd makes the click additive", /toggleSelected\(nextWi, nextDay\);/.
    empty, so the first ctrl-click produced a list of one and nothing appeared side by
    side; picking 3 then 2 then 1 worked because by the second ctrl-click there were two.
    That was the "only in descending order" report (owner, 2026-09-03). */
-ok("the day already open joins the first ctrl-click", /if \(!\(S\.selected \|\| \[\]\)\.length && S\.day && S\.day !== "general"/.test(page));
+ok("the day already open joins the first ctrl-click", /S\.selected = \[\{ wi: prevWi, day: prevDay \}\];/.test(page));
+/* My first attempt read that day AFTER the click had already overwritten it, so the
+   seeding never happened and the owner reported the same bug a third time. It is
+   captured before the assignment now — and scripts/admin-selection-runs.test.js runs the
+   real function instead of reading it (owner, 2026-09-03). */
+ok("captured before the click overwrites it", /var prevWi = S\.wi \| 0;[\s\S]{0,60}var prevDay = S\.day;[\s\S]{0,20}S\.wi = nextWi;/.test(page));
 
 ok("an additive pick does not report the day as read", /toggleSelected\(nextWi, nextDay\);[\s\S]{0,80}renderAdminDays\(\);[\s\S]{0,20}return;/.test(page));
 ok("dragging across the calendar takes the run", /function bindCalGestures/.test(page));

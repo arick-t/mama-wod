@@ -6745,15 +6745,6 @@ tryRestoreAdminSession();
   function toggleSelected(wi, day) {
     var M = selMath();
     if (!M) return;
-    /* The day already open counts as picked.
-       "Session 1 is on screen, ctrl-click session 2" means BOTH — but the selection
-       started empty, so the first ctrl-click produced a list of one and nothing appeared
-       side by side. Picking 3 then 2 then 1 worked, because by the second ctrl-click
-       there were two in the list. That is the whole "only in descending order" report
-       (owner, 2026-09-03). */
-    if (!(S.selected || []).length && S.day && S.day !== "general" && !(S.wi === wi && S.day === day)) {
-      S.selected = [{ wi: S.wi | 0, day: S.day }];
-    }
     var id = M.selId(wi, day);
     var list = (S.selected || []).filter(function (x) {
       return M.selId(x.wi, x.day) !== id;
@@ -6821,6 +6812,12 @@ tryRestoreAdminSession();
     /* A drag ends on a cell and the browser then fires its click — without this the
        click would collapse the selection the drag just made. */
     if (cvIgnoreNextClick) { cvIgnoreNextClick = false; return; }
+    /* The day that WAS open, before this click replaces it. My first attempt at the
+       ctrl-click fix read it after the assignment below, by which time it was already
+       the day just clicked - so the seeding never happened and nothing changed
+       (owner, 2026-09-03). */
+    var prevWi = S.wi | 0;
+    var prevDay = S.day;
     S.wi = nextWi;
     S.day = nextDay;
     /* Moving off the day being edited abandons the draft rather than silently
@@ -6831,6 +6828,17 @@ tryRestoreAdminSession();
          read fired a write per click — two quick picks raced each other on the same
          version and the second was refused, which is what made picking 1→2→3 behave
          differently from 3→2→1 (owner, 2026-09-02). */
+      /* "This one is on screen, ctrl-click that one" means BOTH. Starting from an empty
+         list made the first ctrl-click produce a list of one, and nothing appeared side
+         by side (owner, 2026-09-03). */
+      if (
+        !(S.selected || []).length &&
+        prevDay &&
+        prevDay !== "general" &&
+        !(prevWi === nextWi && prevDay === nextDay)
+      ) {
+        S.selected = [{ wi: prevWi, day: prevDay }];
+      }
       toggleSelected(nextWi, nextDay);
       renderAdminDays();
       return;
