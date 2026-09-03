@@ -6609,7 +6609,8 @@ tryRestoreAdminSession();
     var intake = S.program && S.program.intake;
     if (!intake || intake.scheduleMode !== "session_count") return 0;
     var n = parseInt(intake.sessionsPerWeek, 10);
-    return n > 0 && n <= 14 ? n : 0;
+    /* Seven is what a week in the programme can hold - see MAX_SESSIONS_PER_WEEK. */
+    return n > 0 && n <= 7 ? n : 0;
   }
 
   function renderAdminDays() {

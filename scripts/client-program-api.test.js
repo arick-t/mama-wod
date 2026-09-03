@@ -664,6 +664,117 @@ async function main() {
   const gone = await H.client(laptopToken, { action: "read", programId: pid });
   ok("access dies with the program", gone.status === 404);
 
+  /* --- BOTH KINDS OF CLIENT, on both screens -------------------------
+   * A studio and an individual are the same object: one client programme, one admin
+   * screen, one client page. That is the whole reason the individual was moved onto
+   * this road. But "by construction" is exactly what I claimed twice before being
+   * wrong, so it is walked here for both (owner, 2026-09-03).
+   */
+
+  const studio = await H.owner({
+    action: "create",
+    clientKind: "coach",
+    intake: {
+      clientName: "Studio Both",
+      equipment: "functional_gym",
+      scheduleMode: "session_count",
+      sessionsPerWeek: 3,
+      sessionsDiffer: false,
+      sessionMinutes: 60,
+      deloadWeek: true,
+      deloadEveryWeeks: 4,
+      population: "CrossFit class",
+      goals: "general fitness",
+      monthlyAmount: 900,
+      paymentMethod: "bit",
+      stations: "6 barbells",
+    },
+  });
+  ok("a studio client is created", studio.status === 200 && studio.body.ok === true);
+
+  const individual = await H.owner({
+    action: "create",
+    clientKind: "athlete",
+    clientName: "Individual Both",
+    athleteIntake: {
+      displayName: "Individual Both",
+      trainingDaysMap: { sun: true, tue: true, thu: true },
+      sessionMinutes: 45,
+      goals: "engine",
+      competitor: false,
+      fixedIntakePacket: "FIXED INTAKE COMPLETE - ...",
+    },
+  });
+  ok("an individual is created the same way", individual.status === 200 && individual.body.ok === true);
+
+  const kinds = [
+    { label: "studio", res: studio, columns: 3 },
+    { label: "individual", res: individual, columns: 0 },
+  ];
+
+  for (const kind of kinds) {
+    const id = kind.res.body.program.programId;
+    ok(kind.label + ": a month of four weeks", kind.res.body.program.weeks.length === 4);
+    ok(kind.label + ": nothing was written into it", !kind.res.body.program.weeks.some(function (w) {
+      return Object.keys(w.days || {}).some(function (k) {
+        return ((w.days[k] || {}).parts || []).length;
+      });
+    }));
+
+    /* The door: a code, a device, a signature - identical for both. */
+    const code = (await H.owner({ action: "issue_code", programId: id })).body.code;
+    const claim = await H.anon({ action: "claim", programId: id, code: code });
+    ok(kind.label + ": the code lets a device in", claim.status === 200);
+    const tok = claim.body.clientToken;
+    await H.client(tok, {
+      action: "sign",
+      programId: id,
+      accepted: true,
+      signerName: "Someone",
+      signedAtClient: "2026-09-03T09:00:00.000Z",
+    });
+
+    /* An unapproved block is invisible to both. */
+    const before = await H.client(tok, { action: "read", programId: id });
+    ok(kind.label + ": an unapproved block shows nothing", before.body.program.weeks.length === 0);
+
+    const owned = await H.owner({ action: "read", programId: id });
+    const approved = await H.owner({
+      action: "approve_block",
+      programId: id,
+      expectedVersion: owned.body.program.version,
+      blockIndex: 1,
+    });
+    ok(kind.label + ": the owner approves it", approved.status === 200);
+
+    const seen = await H.client(tok, { action: "read", programId: id });
+    ok(kind.label + ": and then the client has the month", seen.body.program.weeks.length === 4);
+    ok(kind.label + ": their calendar knows where the block divides",
+      JSON.stringify(seen.body.program.blockGroups) === '[{"startWeek":1,"weekCount":4}]');
+    ok(kind.label + ": their calendar knows its shape", seen.body.program.sessionColumns === kind.columns);
+    ok(kind.label + ": the questionnaire never travels",
+      seen.body.program.intake === undefined && seen.body.program.athleteIntake === undefined);
+    ok(kind.label + ": nor what they pay", seen.body.program.monthlyAmount === undefined);
+
+    /* Freeze shuts the door on both, and the cheap check sees it. */
+    const fr = await H.owner({ action: "set_frozen", programId: id, frozen: true });
+    ok(kind.label + ": can be frozen", fr.status === 200);
+    ok(kind.label + ": frozen means no reading", (await H.client(tok, { action: "read", programId: id })).status === 403);
+    ok(kind.label + ": and the cheap check agrees", (await H.client(tok, { action: "ping", programId: id })).status === 403);
+    const th = await H.owner({
+      action: "set_frozen",
+      programId: id,
+      expectedVersion: fr.body.program.version,
+      frozen: false,
+    });
+    ok(kind.label + ": and unfrozen", th.status === 200);
+    ok(kind.label + ": the same device walks back in", (await H.client(tok, { action: "read", programId: id })).status === 200);
+
+    /* Deleting shuts it for good. */
+    await H.owner({ action: "delete", programId: id });
+    ok(kind.label + ": deleted means gone", (await H.client(tok, { action: "read", programId: id })).status === 404);
+  }
+
   /* --- the owner learns about a client's change without pressing F5 ---
    * Nothing ever asked the server whether a client had written something, so his own
    * screen only moved when he reloaded the page (owner, 2026-09-02). The question is

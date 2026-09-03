@@ -732,6 +732,15 @@ ok("the created client goes on screen from the response it came in", /S\.program
 ok("and the strip moves to them", /renderPeopleStripActive\(S\.program\.programId\)/.test(page));
 ok("a failed open is said out loud, not into a hidden banner", /showHdrToast\(why, "err"\)/.test(page));
 
+/* --- one screen for both kinds of client -----------------------------
+ * A studio and an individual are the same object here: one card, one programme view,
+ * one set of handlers. Nothing branches on clientKind, which is what makes every fix
+ * on this screen apply to both (owner, 2026-09-03). */
+ok("the screen does not branch on the kind of client", (page.match(/clientKind/g) || []).length <= 1);
+ok("there is one card renderer", (page.match(/function renderDetail\(\)/g) || []).length === 1);
+ok("and one programme renderer", (page.match(/function renderAdminDays\(\)/g) || []).length === 1);
+ok("the sessions ceiling matches what a week can hold", /n > 0 && n <= 7 \? n : 0/.test(page));
+
 /* --- right-click a chip: name and colour, there and then -------------
  * The pencil lives inside the client's card, so renaming meant opening the client
  * first. From the strip it is one gesture (owner, 2026-09-03). */
