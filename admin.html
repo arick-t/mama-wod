@@ -114,6 +114,16 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .hdr-btn{background:var(--bg-panel);border:1px solid var(--line);border-radius:9px;padding:7px 14px;
   color:var(--text-muted);font-size:13px;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:7px}
 .hdr-btn:hover{background:#252525;color:var(--text);border-color:#3a3a3a}
+/* The duck, beside the name. */
+.hdr-duck{width:26px;height:26px;object-fit:contain;flex-shrink:0;border-radius:6px}
+/* What the month brings in: a chevron, and the number only when he asks for it. */
+.income-wrap{display:inline-flex;align-items:center;gap:8px}
+.income-toggle{appearance:none;width:24px;height:24px;border-radius:8px;border:1px solid var(--line);
+  background:var(--bg-elev);color:var(--text-muted);font-size:11px;line-height:1;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;padding:0}
+.income-toggle:hover{border-color:#3a3a3a;color:var(--text)}
+.income-toggle.on{background:rgba(232,69,26,.16);border-color:var(--brand);color:#fff}
+.income-line{font-size:12px;font-weight:800;color:#4CAF70;white-space:nowrap}
 .hdr-btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
 .hdr-btn.primary:hover{background:#d03d18}
 .hdr-btn .hdr-ico{width:16px;height:16px;flex-shrink:0;display:block}
@@ -1051,6 +1061,7 @@ header{flex-wrap:wrap;row-gap:8px}
 <!-- App -->
 <div id="app">
   <header>
+    <img class="hdr-duck" src="assets/duck-wod-logo.png" alt="" width="26" height="26" draggable="false">
     <span class="logo">DUCK-WOD</span>
     <span class="ver-badge" id="admin-ver-badge" title="Admin 3.1.0 · Coach 2.3.14">Admin 3.1.0<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.14</span></span>
     <span class="count-wrap">
@@ -1060,6 +1071,15 @@ header{flex-wrap:wrap;row-gap:8px}
         <span class="credit-amt" id="credit-amt">הזן יתרה</span>
         <span class="credit-tag">משוער</span>
       </button>
+      <!-- What the month brings in, from every client — studio and individual alike,
+           because both are the same kind of client now. Folded away behind a chevron on
+           the owner's instruction: it is his number, and this bar is often on a screen
+           other people can see (owner, 2026-09-03). -->
+      <span class="income-wrap">
+        <button type="button" class="income-toggle" id="btn-income" onclick="toggleMonthlyIncome()"
+          aria-expanded="false" aria-controls="income-line" title="הכנסה חודשית">▾</button>
+        <span class="income-line" id="income-line" hidden>הכנסה חודשית: —</span>
+      </span>
     </span>
     <button type="button" class="hdr-btn primary" id="btn-add-athlete" onclick="openClientKindChooser()">+ לקוח</button>
   </header>
@@ -2668,6 +2688,37 @@ var adminOpenedSomeone = false;
 var athletesAnswered = false;
 var programsAnswered = false;
 
+/**
+ * What every client pays, added up.
+ *
+ * One number for both kinds of client: an individual is a client programme like a studio
+ * is, so the total the client list already computes covers them both. Hidden until he
+ * asks for it — this bar is often on a screen other people can see (owner, 2026-09-03).
+ */
+var monthlyIncomeTotal = 0;
+var monthlyIncomeOpen = false;
+
+function setMonthlyIncome(total) {
+  monthlyIncomeTotal = Number(total) || 0;
+  renderMonthlyIncome();
+}
+
+function renderMonthlyIncome() {
+  var line = document.getElementById("income-line");
+  var btn = document.getElementById("btn-income");
+  if (!line || !btn) return;
+  line.hidden = !monthlyIncomeOpen;
+  btn.setAttribute("aria-expanded", monthlyIncomeOpen ? "true" : "false");
+  btn.classList.toggle("on", monthlyIncomeOpen);
+  line.textContent =
+    "הכנסה חודשית: " + (monthlyIncomeTotal ? "₪" + monthlyIncomeTotal.toLocaleString() : "—");
+}
+
+function toggleMonthlyIncome() {
+  monthlyIncomeOpen = !monthlyIncomeOpen;
+  renderMonthlyIncome();
+}
+
 function renderPeopleStrip() {
   var sb = document.getElementById("athlete-tabs");
   if (!sb || !window.AdminPeopleStrip) return;
@@ -2704,6 +2755,7 @@ function renderPeopleStripActive(programId) {
    halves, so there is only ever one of it. */
 window.adminOnClientRows = function (rows, monthlyTotal, unreadTotal) {
   clientPrograms = Array.isArray(rows) ? rows : [];
+  setMonthlyIncome(monthlyTotal);
   programsAnswered = true;
   renderPeopleStrip();
   if (openFirstPersonIfNeeded()) return;

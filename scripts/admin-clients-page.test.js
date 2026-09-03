@@ -748,6 +748,17 @@ ok("a new client starts on an empty form", /function clearIntakeForm/.test(page)
 ok("and it is called when adding one", /clearIntakeForm\(\);[\s\S]{0,40}renderIntakeTabs\(\);/.test(page));
 ok("the individual tab is emptied too", /fillAthleteGoalsTab\(null\)/.test(page));
 
+/* --- what the month brings in (owner, 2026-09-03) --------------------
+ * One number for both kinds of client, because an individual is a client programme like
+ * a studio is. Folded away behind a chevron: it is his number, and this bar is often on
+ * a screen other people can see. */
+ok("there is a chevron for the income", /id="btn-income"/.test(page) && /toggleMonthlyIncome/.test(page));
+ok("the number is hidden until he asks", /id="income-line" hidden/.test(page));
+ok("and it is the total of every client", /setMonthlyIncome\(monthlyTotal\)/.test(page));
+ok("shown as one line with a currency", /"הכנסה חודשית: " \+ \(monthlyIncomeTotal \? "₪"/.test(page));
+/* The duck, beside the name. */
+ok("the header carries the duck", /class="hdr-duck" src="assets\/duck-wod-logo\.png"/.test(page));
+
 /* --- the studio is asked capacity, not stations (coach agent, 2026-09-03) */
 ok("how many train at once is a number", /id="inMaxAtOnce" type="number"/.test(page));
 ok("and a room with no ceiling can say so", /id="inNoCap"/.test(page));
