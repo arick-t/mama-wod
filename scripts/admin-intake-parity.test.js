@@ -104,7 +104,40 @@ ok("and stated when nothing was chosen", /^IMPROVE FOCUS: none selected/m.test(u
 ok("what to program around is stated", /^AVOID: Deep squat/m.test(marked));
 ok("and stated when nothing was marked", /^AVOID: none marked\.$/m.test(unmarked));
 ok("the heaviest implement is a number", /^HEAVIEST IMPLEMENT: 24 kg\.$/m.test(marked));
-ok("and its absence carries the instruction", /^HEAVIEST IMPLEMENT: not stated/m.test(unmarked) && /never by a kg figure/.test(unmarked));
+/* --- and the line reads the ROOM, not the value ------------------------
+ * In a proper box the question is never asked, so a zero there means "no ceiling", not
+ * "unknown". The old wording told the coach "never by a kg figure" for an athlete who
+ * had just reported fourteen lifts in kg — it would have cancelled the %1RM table for
+ * most of them (coach agent, 2026-09-03).
+ */
+const fullGym = CoachIntakeSync.buildFixedIntakePrompt(
+  Object.assign({}, sample, { trainingLocations: { functional_gym: true }, heaviestImplementKg: 0 })
+);
+const smallRoom = CoachIntakeSync.buildFixedIntakePrompt(
+  Object.assign({}, sample, { trainingLocations: { other_home: true }, heaviestImplementKg: 0 })
+);
+ok("a full gym is told to prescribe by %1RM", /^HEAVIEST IMPLEMENT: full gym loading available/m.test(fullGym));
+ok("and is never told to avoid kg figures", !/never by a kg figure/.test(fullGym));
+ok("a limited room carries the ceiling warning", /^HEAVIEST IMPLEMENT: not stated/m.test(smallRoom) && /never by a kg figure/.test(smallRoom));
+/* Older profiles carry only the sentence, not the map — and an explicit map always wins
+   over the sentence, which is why this one is built without one. */
+const legacyRoom = Object.assign({}, sample);
+delete legacyRoom.trainingLocations;
+legacyRoom.trainingSetup = "Other - home or limited equipment";
+legacyRoom.heaviestImplementKg = 0;
+ok(
+  "a legacy profile is read from its setup text",
+  /never by a kg figure/.test(CoachIntakeSync.buildFixedIntakePrompt(legacyRoom))
+);
+
+/* The box under the movement families reached the coach nowhere at all. */
+ok(
+  "what else to program around has a line of its own",
+  /^AVOID \(also\): no burpees after the knee$/m.test(
+    CoachIntakeSync.buildFixedIntakePrompt(Object.assign({}, sample, { avoidMovementsOther: "no burpees after the knee" }))
+  )
+);
+ok("and it is there when empty too", /^AVOID \(also\): nothing else stated\.$/m.test(unmarked));
 ok("what he does not want is stated", /^DOES NOT WANT: No burpees, ever\.$/m.test(marked));
 ok("and stated when nothing was said", /^DOES NOT WANT: nothing stated\.$/m.test(unmarked));
 
