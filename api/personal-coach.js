@@ -50,6 +50,10 @@ const HAMAMEN_SYSTEM = require("./hamamen-prompt.js");
 const COACH_POLICY = require("./coach-policy.js");
 const COACH_FOUNDATION_BRIEF = require("./coach-foundation-brief.js");
 const COACH_LAYER2_OPS_BRIEF = require("../lib/coach-layer2-ops-brief.js");
+/* The layer pack. Replaces the two briefs above on the PROGRAMMING path only — see
+   buildLayerKnowledgeBlock. Wired 2026-09-03, after all fifteen modules were reviewed line by
+   line with the owner. */
+const { buildLayerPack } = require("../lib/coach-layers");
 /* Legacy alias — foundation brief supersedes pattern-only brief */
 const COACH_PATTERN_BRIEF = COACH_FOUNDATION_BRIEF;
 
@@ -705,9 +709,10 @@ const PROGRAMMING_SYSTEM_CORE =
   "---\n" +
   COST_GUARDRAILS_COMPACT +
   "---\n" +
-  (typeof COACH_FOUNDATION_BRIEF === "string" ? COACH_FOUNDATION_BRIEF : "") +
-  "---\n" +
-  (typeof COACH_LAYER2_OPS_BRIEF === "string" ? COACH_LAYER2_OPS_BRIEF : "") +
+  /* The two briefs used to sit here. The routed layer pack carries this ground now and is\n
+     appended per request in buildSystemWithMemory, because unlike a static brief it depends on\n
+     WHO is being programmed. The brief files stay on disk: chat still injects the foundation\n
+     brief, and POL-027 equipment pool assertions still read it. */
   "---\n";
 
 /**
@@ -994,6 +999,57 @@ function buildAthleteMemoryBlock(profile) {
   }
 }
 
+/* Which product this request is for. The individual packet is the one this file has always built;
+   a studio packet is produced by the admin module, so detection keys off the labelled lines that
+   module confirmed it emits. Anything unrecognised is an individual — the studio layers speak about
+   a ROOM, and handing them to one athlete is worse than the reverse. */
+function coachAgentFor(profile) {
+  const packet = String((profile && profile.fixedIntakePacket) || "");
+  if (/^\s*STUDIO INTAKE COMPLETE/im.test(packet)) return "studio";
+  if (/^\s*(POPULATION AND GOALS|MAX AT ONCE|DOES NOT DO):/im.test(packet)) return "studio";
+  return "individual";
+}
+
+/* Per-request knowledge. A static brief could be concatenated into a module-level constant; a
+   routed pack cannot, because which layers apply depends on the athlete's goals, restrictions,
+   product and block index. */
+function buildLayerKnowledgeBlock(profile, opts) {
+  const o = opts && typeof opts === "object" ? opts : {};
+  let pack = null;
+  try {
+    pack = buildLayerPack({
+      agent: coachAgentFor(profile),
+      profile: profile || {},
+      studioIntake: o.studioIntake || null,
+      programming: true,
+      blockStartWeek: o.blockStartWeek,
+      blockHandoff: o.blockHandoff,
+    });
+  } catch (eLayers) {
+    /* POL-020 and the workout-quality rule: a brick with no methodology behind it is worse than no
+       brick. Fail loudly rather than quietly programming from nothing. */
+    throw new Error(
+      "coach layer pack failed: " + (eLayers && eLayers.message ? eLayers.message : String(eLayers))
+    );
+  }
+  if (!pack || !pack.text) {
+    throw new Error("coach layer pack returned empty");
+  }
+  return "\n\n---\n" + pack.text + "\n---\n";
+}
+
+/* Lifts blockStartWeek / blockHandoff / studioIntake off the request body so the router can tell a
+   continuation from a first brick. Everything is optional; absent means first brick. */
+function layerOptsFromBody(body, extra) {
+  const b = body && typeof body === "object" ? body : {};
+  const out = extra && typeof extra === "object" ? Object.assign({}, extra) : {};
+  const bsw = parseInt(b.blockStartWeek, 10);
+  if (bsw > 0) out.blockStartWeek = bsw;
+  if (b.blockHandoff) out.blockHandoff = b.blockHandoff;
+  if (b.studioIntake) out.studioIntake = b.studioIntake;
+  return out;
+}
+
 function buildSystemWithMemory(profile, action, opts) {
   const programming = isProgrammingAction(action);
   const forceJson = !!(opts && opts.forceJson);
@@ -1021,6 +1077,7 @@ function buildSystemWithMemory(profile, action, opts) {
       PROGRAMMING_SYSTEM_CORE +
       LEGAL_SAFETY_DIRECTIVE +
       coachPolicyBlock() +
+      buildLayerKnowledgeBlock(profile, opts) +
       buildCostCapsRuntimeNote(profile) +
       buildFinishLearningBlock(profile, action) +
       buildExtraSessionsBlock(profile) +
@@ -2001,7 +2058,7 @@ async function coachHandler(req, res) {
       model: resolveCoachModel(),
     });
   }
-  let systemText = buildSystemWithMemory(athleteProfile, action, { forceJson: forceJson });
+  let systemText = buildSystemWithMemory(athleteProfile, action, layerOptsFromBody(body, { forceJson: forceJson }));
   let messages = earlyMessages;
   if (body.feedback) body.feedback = scrubPiiText(body.feedback);
   if (body.text) body.text = scrubPiiText(body.text);
@@ -2160,7 +2217,7 @@ async function coachHandler(req, res) {
     if (fixedIntakePacket && athleteProfile) {
       athleteProfile.fixedIntakePacket = fixedIntakePacket.slice(0, 4500);
       /* Rebuild programming system so memory includes the packet for POL-016 depth */
-      systemText = buildSystemWithMemory(athleteProfile, action, { forceJson: forceJson });
+      systemText = buildSystemWithMemory(athleteProfile, action, layerOptsFromBody(body, { forceJson: forceJson }));
       systemText += languageFollowRule([], action, forceJson, athleteProfile);
     }
 
@@ -2700,7 +2757,7 @@ async function coachHandler(req, res) {
       (action === "revise_part" && !packed.part);
     if (!needRetry || forceJson) return packed;
 
-    const strictSys = buildSystemWithMemory(athleteProfile, action, { forceJson: true });
+    const strictSys = buildSystemWithMemory(athleteProfile, action, layerOptsFromBody(body, { forceJson: true }));
     let strictMsgs = messages;
     if (isWeekDetail && weekDetailMeta && weekDetailMeta.compactPrompt) {
       strictMsgs = [{ role: "user", text: weekDetailMeta.compactPrompt }];
@@ -2959,7 +3016,7 @@ async function coachHandler(req, res) {
     let packed = await retryIfIntakeLike(primary);
     if (weekHasPartContent(packed.week)) return packed;
 
-    const strictSys = buildSystemWithMemory(athleteProfile, action, { forceJson: true });
+    const strictSys = buildSystemWithMemory(athleteProfile, action, layerOptsFromBody(body, { forceJson: true }));
 
     /* Compact full-week retry when primary was the long prompt */
     if (weekDetailMeta && !weekDetailMeta.compactOnly) {

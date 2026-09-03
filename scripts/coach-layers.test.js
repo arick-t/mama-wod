@@ -72,7 +72,14 @@ const MAX_CHARS = {
      flattened the long day away. Then the admin module delivered sessionMinutesByDay, so the
      bullet list had to name the per-day case as its own — with a single number now legitimately
      absent rather than missing. */
-  "layer2-general": 8350,
+  /* 9500 as of 2026-09-03, from the coverage pass before wiring the layers into the coach: three
+     rules in the two live briefs had no equivalent anywhere in the layers and would have been lost
+     silently — the nervous-system stacking limit, priming a pattern before loading it, and the
+     requirement that every part carry loading language and not only a stated stimulus. All three
+     are always-on, which is why they land here. The pairing PRINCIPLE came with them; the source's
+     list of ten concrete pairings deliberately did not, because POL-021 says patterns inspire and
+     are never copied, and a list in the prompt is an invitation to copy it. */
+  "layer2-general": 9500,
   /* 4500 as of 2026-09-03: MORE THAN ONE PLACE. "קצה 1" trains in a full box mid-week and at home
      at weekends; the intake has one setting, so the packet said "never prescribe a kg figure" for
      an athlete with a tested 160 kg back squat. The layer now reads the athlete's own description
@@ -1047,11 +1054,13 @@ function testPackBudget() {
      and only the session-length line is always-on. A second brick is now folded into the fixture, so the number is the true worst case. The
      weightlifting and competitor layers then grew in the owner reviews that replaced their
      experience tiers with rules resting on data we hold — the reported numbers, and the intake's
-     own training days. This pack is
+     own training days. The coverage pass before wiring then moved three always-on rules in from the
+     two live briefs, which is a transfer rather than growth: the briefs stop being injected the
+     moment the router becomes the source. This pack is
      ~10.2k tokens; the general
      healthy athlete still pays 22k, which is what most bricks actually cost. */
-  ok("the heaviest pack stays under 44k characters",
-    heavy.chars < 44000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
+  ok("the heaviest pack stays under 45k characters",
+    heavy.chars < 45000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
   ok("the pack reports which layers it used",
     Array.isArray(heavy.layers) && heavy.layers.length >= 6, heavy.layers.join(", "));
 }
@@ -1520,6 +1529,44 @@ function testCraftFoundation() {
     ) >= 0);
 }
 
+
+/* The coverage pass, 2026-09-03: what the two live briefs held that the layers did not. Kept as
+   assertions because the whole point of the exercise was that these three would otherwise vanish
+   the moment coach-foundation-brief and coach-layer2-ops-brief stop being injected. */
+function testBriefCoverage() {
+  const G2 = require("../lib/coach-layers/layer2-general.js");
+  const flat = G2.replace(/\s+/g, " ");
+  ok("the nervous-system stacking limit survived the move",
+    /HOW THE WEEK'S TAXES STACK \(HARD\)/.test(G2) &&
+      /NEVER STACK THREE MAXIMAL-NERVOUS-SYSTEM DAYS IN A ROW/.test(flat));
+  ok("the hard/moderate distribution across consecutive days is stated",
+    /HARD - HARD - MODERATE, or HARD - MODERATE - HARD/.test(G2));
+  ok("a moderate or skill day goes between them",
+    /Put a moderate day or a skill day between them/i.test(flat));
+  ok("priming a pattern before loading it survived",
+    /PRIME THE PATTERN BEFORE YOU LOAD IT/.test(G2) &&
+      /A primer is never there to make the athlete tired/i.test(flat));
+  ok("loading language is required on every part",
+    /EVERY TRAINING PART CARRIES LOADING LANGUAGE \(HARD\)/.test(G2));
+  ok("the difference between a stimulus and loading language is spelled out",
+    /A stated stimulus is the INTENTION; loading language is what the athlete actually executes/i.test(
+      flat
+    ));
+  ok("a part with neither is refused",
+    /A part carrying neither is not a prescription, it is a suggestion/i.test(flat));
+  ok("the complementary pairing principle came across",
+    /PAIR ELEMENTS THAT DO NOT COMPETE/.test(G2) &&
+      /so the limiter is the intended stimulus and not one exhausted muscle group/i.test(flat));
+  /* And deliberately NOT the source's pairing list. If someone adds it, they delete this. */
+  ok("the source's concrete pairing list was not imported",
+    !/strength cycle\+midline|pull\+lunge\+mono/i.test(G2),
+    "POL-021 says patterns inspire and are never copied");
+  /* The interference rule was already here under different wording — asserted so a future
+     coverage pass does not re-add it as a duplicate. */
+  ok("the interference rule is here once, not twice",
+    (flat.match(/maximal strength tax and maximal long-aerobic tax/g) || []).length === 1);
+}
+
 function main() {
   console.log("\n=== Coach knowledge layers ===\n");
   testShape();
@@ -1535,6 +1582,7 @@ function main() {
   testSessionCountMode();
   testStructuredIntakeFields();
   testCraftFoundation();
+  testBriefCoverage();
   testContinuation();
   testGymnastics();
   testHebrewBoundary();
