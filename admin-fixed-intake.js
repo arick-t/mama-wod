@@ -936,6 +936,14 @@
         bodyweight: intakeState.bodyweight || "",
         experience: intakeState.experience || "",
         trainingSetup: prof.trainingSetup || "",
+        /* The raw answers, not only the sentence built from them: the next block asks
+           these questions again, and reading them back out of prose is how it came to
+           show a well-equipped box to someone who had described a garage
+           (owner, 2026-09-03). */
+        trainingLocations: prof.trainingLocations || {},
+        trainingLocationOther: intakeState.trainingLocationOther || "",
+        trainingDays: prof.trainingDays || [],
+        scheduleNotes: prof.scheduleNotes || "",
         trainingDaysMap: dayMap,
         sessionMinutes: parseInt(intakeState.sessionMinutes, 10) || 0,
         sessionTimesDiffer: intakeState.sessionTimesDiffer === true,

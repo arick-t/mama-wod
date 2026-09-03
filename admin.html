@@ -6217,6 +6217,7 @@ tryRestoreAdminSession();
       S.program = null;
       iStep = 0;
       renderIntakeTabs();
+      syncStationsVisibility(false);
       syncIntakeConditionals();
     }
     renderViewMode();
@@ -6225,6 +6226,64 @@ tryRestoreAdminSession();
 
   /* Planning the next block: the same questionnaire, shorter, opened on the answers
      this client already gave. The open client is kept — cancelling returns to it. */
+  /**
+   * An individual's next block asks about the room and the week again - so it opens
+   * on the answers THEY gave, not on a studio's defaults.
+   *
+   * It used to fill the form from program.intake, which for an individual is the shell
+   * the server derives to shape the month: equipment defaulted to a well-equipped box
+   * and the week was rebuilt from rest days. So a client who had described a garage
+   * was shown a full gym, and the schedule did not match either (owner, 2026-09-03).
+   */
+  function intakeFormFromAthlete(p) {
+    var a = (p && p.athleteIntake) || {};
+    var shell = (p && p.intake) || {};
+    var locs = a.trainingLocations && typeof a.trainingLocations === "object" ? a.trainingLocations : {};
+    /* Clients created before the raw answers were carried have only the sentence. */
+    var setupText = String(a.trainingSetup || "");
+    var isOther =
+      locs.other_home === true ||
+      (!locs.functional_gym && /^other\b|home or limited/i.test(setupText));
+    var otherDetail = String(a.trainingLocationOther || "").trim();
+    if (!otherDetail && isOther) {
+      var m = setupText.split(/Other detail:/i);
+      otherDetail = (m[1] || "").replace(/^[\s\u00b7-]+/, "").trim() || setupText;
+    }
+    /* The week as the athlete answered it: the days they train, so the rest days are
+       everything else - which is exactly how the month was shaped for them. */
+    var trains = {};
+    var dayList = Array.isArray(a.trainingDays) ? a.trainingDays : [];
+    if (!dayList.length && a.trainingDaysMap && typeof a.trainingDaysMap === "object") {
+      dayList = Object.keys(a.trainingDaysMap).filter(function (k) {
+        return a.trainingDaysMap[k] === true;
+      });
+    }
+    dayList.forEach(function (d) { trains[String(d)] = true; });
+    var rest = {};
+    DAY_KEYS_LOCAL.forEach(function (k) { rest[k] = trains[k] !== true; });
+    var trainingCount = DAY_KEYS_LOCAL.filter(function (k) { return trains[k] === true; }).length;
+    return {
+      clientName: p.clientName || a.displayName || "",
+      monthlyAmount: p.monthlyAmount,
+      paymentMethod: p.paymentMethod,
+      equipment: isOther ? "other" : "functional_gym",
+      equipmentOther: isOther ? otherDetail : "",
+      /* An individual trains on named days, never "three sessions, any day". */
+      scheduleMode: "weekly_schedule",
+      includeRestDays: trainingCount > 0,
+      restDays: rest,
+      sessionsPerWeek: trainingCount,
+      sessionMinutes: parseInt(a.sessionMinutes, 10) || shell.sessionMinutes || 0,
+      /* The cadence is the product's, and it is already on the shell. */
+      deloadWeek: shell.deloadWeek !== false,
+      deloadEveryWeeks: shell.deloadEveryWeeks || 4,
+      population: "Individual athlete",
+      goals: String(a.goals || shell.goals || ""),
+      /* Stations describe a room shared by twelve people. An individual has none. */
+      stations: "",
+    };
+  }
+
   function startNextBlock() {
     if (!S.program) return;
     S.blockMode = true;
@@ -6232,7 +6291,10 @@ tryRestoreAdminSession();
     iStep = 0;
     el("inHasChanges").checked = false;
     el("inChanges").value = "";
-    fillIntakeForm(S.program.intake || {});
+    /* An individual answered a different questionnaire; open on THEIR answers. */
+    var isIndividual = S.program.clientKind === "athlete" || !!S.program.athleteIntake;
+    fillIntakeForm(isIndividual ? intakeFormFromAthlete(S.program) : (S.program.intake || {}));
+    syncStationsVisibility(isIndividual);
     renderIntakeTabs();
     syncIntakeConditionals();
     renderViewMode();
@@ -7691,6 +7753,13 @@ tryRestoreAdminSession();
         syncIntakeConditionals();
       });
     });
+  }
+
+  /* A room shared by twelve people has stations; one athlete does not. */
+  function syncStationsVisibility(isIndividual) {
+    var box = el("inStations");
+    var wrap = box && box.closest ? box.closest("label") : null;
+    if (wrap) wrap.hidden = !!isIndividual;
   }
 
   function syncIntakeConditionals() {

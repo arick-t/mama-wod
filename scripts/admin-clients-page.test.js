@@ -736,7 +736,12 @@ ok("a failed open is said out loud, not into a hidden banner", /showHdrToast\(wh
  * A studio and an individual are the same object here: one card, one programme view,
  * one set of handlers. Nothing branches on clientKind, which is what makes every fix
  * on this screen apply to both (owner, 2026-09-03). */
-ok("the screen does not branch on the kind of client", (page.match(/clientKind/g) || []).length <= 1);
+/* The CARD and the PROGRAMME are the same for both kinds — that is what makes every fix
+   here apply to both. The only thing that may differ is the questionnaire the next
+   block opens on, because the two kinds answered different questionnaires
+   (owner, 2026-09-03). */
+ok("the card and the programme do not branch on the kind", !/clientKind/.test(page.slice(page.indexOf("function renderDetail()"), page.indexOf("function brickOpts()"))));
+ok("only the next block does, and deliberately", /S\.program\.clientKind === "athlete" \|\| !!S\.program\.athleteIntake/.test(page));
 ok("there is one card renderer", (page.match(/function renderDetail\(\)/g) || []).length === 1);
 ok("and one programme renderer", (page.match(/function renderAdminDays\(\)/g) || []).length === 1);
 ok("the sessions ceiling matches what a week can hold", /n > 0 && n <= 7 \? n : 0/.test(page));
