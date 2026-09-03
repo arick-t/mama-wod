@@ -608,6 +608,27 @@ async function main() {
   ok("store makes no network calls", !/\bfetch\s*\(/.test(src));
   ok("store references no AI provider", !/gemini|groq|generativelanguage/i.test(src.replace(/never calls a provider/gi, "")));
 
+  /* --- a new cadence counts from the last rest, not from week one -------
+   * He set five weeks on a second block whose first block had deloaded on week 4, and got
+   * weeks 4 and 5 back to back (owner, 2026-09-03).
+   */
+  const cadenceStore = Store.createProgramStore(fakeStorage());
+  const cadence = await cadenceStore.createProgram({
+    clientName: "Cadence",
+    clientKind: "coach",
+    weekCount: 4,
+    intake: { scheduleMode: "weekly_schedule", deloadWeek: true, deloadEveryWeeks: 4 },
+  });
+  ok("a first block deloads on its fourth week", cadence.program.weeks[3].phase === "deload");
+  const grown = await cadenceStore.addBlock(cadence.program.programId, cadence.program.version, {
+    intake: { scheduleMode: "weekly_schedule", deloadWeek: true, deloadEveryWeeks: 5 },
+  });
+  ok("a second block is added", grown.ok === true);
+  const phases = grown.program.weeks.map(function (w) { return w.phase; });
+  ok("NO TWO DELOADS SIDE BY SIDE", !(phases[3] === "deload" && phases[4] === "deload"));
+  ok("week 5 is a build week", phases[4] === "build");
+  ok("and the new cadence lands five weeks after the last rest", phases[8] === "deload" || grown.program.weeks.length < 9);
+
   console.log("All client program store checks passed.");
 }
 

@@ -433,8 +433,36 @@ async function ownerHandler(req, res, body) {
    * UNAPPROVED — the client sees nothing of it until it is sent.
    * Empty weeks: this endpoint has no route to a provider and creates no content. */
   if (action === "add_block") {
+    /* An individual's month is shaped by the days THEY train, and that is on their own
+       answers - not on a rest-days checkbox in a form written for studios. Read from the
+       programme, so a new block lands on the same weekdays as the first (owner,
+       2026-09-03). */
+    let blockIntake =
+      body.intake && typeof body.intake === "object" ? Intake.normalizeIntake(body.intake) : null;
+    if (blockIntake) {
+      const read = await store.readProgram(programId);
+      const days =
+        read.ok && isPlainObject(read.program.athleteIntake)
+          ? read.program.athleteIntake.trainingDaysMap
+          : null;
+      if (isPlainObject(days)) {
+        const rest = {};
+        for (const k of Intake.DAY_KEYS) rest[k] = days[k] !== true;
+        const trains = Intake.DAY_KEYS.filter((k) => !rest[k]).length;
+        if (trains > 0) {
+          blockIntake = Intake.normalizeIntake(
+            Object.assign({}, blockIntake, {
+              scheduleMode: "weekly_schedule",
+              includeRestDays: true,
+              restDays: rest,
+              sessionsPerWeek: trains,
+            })
+          );
+        }
+      }
+    }
     const result = await store.addBlock(programId, Number(body.expectedVersion), {
-      intake: body.intake && typeof body.intake === "object" ? Intake.normalizeIntake(body.intake) : null,
+      intake: blockIntake,
       notes: body.notes,
       /* An individual answers about themselves again for a new block: what they are
          training for, and what has to be worked around. It is a PATCH onto the answers

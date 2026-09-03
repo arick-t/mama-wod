@@ -820,6 +820,13 @@ async function main() {
   ok("what to avoid is replaced by the new answer", after.avoidMovements && after.avoidMovements.jumping === true);
   ok("and an answer he did not touch is left alone", after.injuries === "left knee");
   ok("the programme is eight weeks now", nextBlock.body.program.weeks.length === 8);
+  /* The month is shaped by the days HE trains, read from his own answers - not from a
+     rest-days checkbox in a form written for studios (owner, 2026-09-03). */
+  const wk5 = nextBlock.body.program.weeks[4];
+  const reviewable = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].filter(function (k) {
+    return ((wk5.days || {})[k] || {}).ownerUnreviewed === true;
+  });
+  ok("the second block lands on the same two weekdays", reviewable.join(",") === "sun,wed");
   await H.owner({ action: "delete", programId: ind2id });
 
 

@@ -6314,7 +6314,11 @@ tryRestoreAdminSession();
       equipmentOther: isOther ? otherDetail : "",
       /* An individual trains on named days, never "three sessions, any day". */
       scheduleMode: "weekly_schedule",
-      includeRestDays: trainingCount > 0,
+      /* NOT ticked. He never answered a rest-days question - he answered which days he
+         trains, and ticking a studio question on his behalf is inventing an answer
+         (owner, 2026-09-03). The days he trains still shape the month: the server
+         derives them from his own answers, whatever this box says. */
+      includeRestDays: false,
       restDays: rest,
       sessionsPerWeek: trainingCount,
       sessionMinutes: parseInt(a.sessionMinutes, 10) || shell.sessionMinutes || 0,

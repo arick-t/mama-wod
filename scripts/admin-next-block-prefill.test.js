@@ -60,6 +60,11 @@ ok("what he pays comes back", garage.monthlyAmount === 900 && garage.paymentMeth
 /* --- the week he actually answered --------------------------------------- */
 
 ok("an individual trains on named days", garage.scheduleMode === "weekly_schedule");
+/* He never answered a rest-days question — he answered which days he trains, and
+   ticking a studio question on his behalf is inventing an answer (owner, 2026-09-03).
+   The month is still shaped by his days: the server derives them from his own
+   answers, whatever this box says. */
+ok("and the rest-days box is not ticked for him", garage.includeRestDays === false);
 ok(
   "the days he trains are not rest days",
   garage.restDays.sun === false && garage.restDays.tue === false && garage.restDays.thu === false
