@@ -49,7 +49,10 @@ const MAX_CHARS = {
      compass and not a gate for a limited-equipment studio, modality rotation must not be hardened,
      and the scope limit must be stated out loud. About 40 extra tokens a call. */
   "layer1-methodology": 6000,
-  "layer1-injuries": 4200,
+  /* 4900 as of 2026-09-03: the marked movement FAMILIES are the primary input now, and the
+     matrix underneath is indexed by AREA — the coach had to bridge the two by inference. It no
+     longer does. */
+  "layer1-injuries": 4900,
   /* 7600 as of 2026-09-02. Two raises and two real trims got it here, and every line is
      owner-approved and universal: the skill-fresh / capacity-tired distinction moved in from the
      competitor layer (a training rule, not a competition rule), and the session-length ceiling
@@ -184,7 +187,21 @@ function testNumbersHaveProvenance() {
   ok("the injury matrix is no longer in the always-on table",
     !/SUBSTITUTION MATRIX/i.test(EQUIVALENCE));
   ok("the injury matrix is in the conditional injury layer",
-    /SUBSTITUTION MATRIX BY RESTRICTED AREA/i.test(
+    /SUBSTITUTION MATRIX, when an AREA was named instead/i.test(
+      require("../lib/coach-layers/layer1-injuries.js")
+    ));
+  /* The intake sends movement FAMILIES, the matrix is indexed by AREA, and the coach was left to
+     bridge the two by inference. Both routes are spelled out now. */
+  ok("a marked movement family maps to a substitute directly",
+    /--- A MARKED MOVEMENT FAMILY \(the usual input\) ---/.test(
+      require("../lib/coach-layers/layer1-injuries.js")
+    ) &&
+      ["deep squat ->", "hinge / deadlift ->", "overhead press ->", "hanging from the bar ->",
+        "kipping ->", "jumping ->", "running ->"].every(function (k) {
+        return require("../lib/coach-layers/layer1-injuries.js").indexOf(k) >= 0;
+      }));
+  ok("the function is kept rather than deleted",
+    /Keep its FUNCTION with a lower-demand version, do not delete the function/.test(
       require("../lib/coach-layers/layer1-injuries.js")
     ));
   ok("machine conversion and stimulus scales stayed always-on",
