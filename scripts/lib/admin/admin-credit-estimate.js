@@ -35,17 +35,40 @@ function resolveEmptyLedgerSeedIls() {
   return 57.25;
 }
 
-/** Approx Gemini list prices USD / 1M tokens (calibrate later from Google Usage). */
-const MODEL_PRICES = {
-  "gemini-2.5-flash-lite": { inPerM: 0.1, outPerM: 0.4 },
-  "gemini-2.0-flash-lite": { inPerM: 0.1, outPerM: 0.4 },
-  "gemini-2.5-flash": { inPerM: 0.15, outPerM: 0.6 },
-  "gemini-2.0-flash": { inPerM: 0.15, outPerM: 0.6 },
-  "gemini-3.6-flash": { inPerM: 0.15, outPerM: 0.6 },
-  "gemini-3-flash": { inPerM: 0.15, outPerM: 0.6 },
-};
+/**
+ * Gemini list prices, USD per 1M tokens.
+ *
+ * The output price for 2.5 Flash was carried over from the Flash-Lite family and was
+ * roughly four times too low — and THINKING tokens are billed as output on that model,
+ * which is most of what a brick generation produces. An estimate built on it could only
+ * ever say there was more money left than there was (owner, 2026-09-03).
+ *
+ * These are list prices and they move. ADMIN_GEMINI_PRICES accepts a JSON object of the
+ * same shape so a price change does not need a deploy, and the calibration below corrects
+ * whatever is still off, from real observed spend.
+ */
+const MODEL_PRICES = Object.assign(
+  {
+    "gemini-2.5-flash-lite": { inPerM: 0.1, outPerM: 0.4 },
+    "gemini-2.0-flash-lite": { inPerM: 0.1, outPerM: 0.4 },
+    "gemini-2.5-flash": { inPerM: 0.3, outPerM: 2.5 },
+    "gemini-2.0-flash": { inPerM: 0.1, outPerM: 0.4 },
+    "gemini-3.6-flash": { inPerM: 0.3, outPerM: 2.5 },
+    "gemini-3-flash": { inPerM: 0.3, outPerM: 2.5 },
+  },
+  (function () {
+    try {
+      const raw = String(process.env.ADMIN_GEMINI_PRICES || "").trim();
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      return {};
+    }
+  })()
+);
 
-const DEFAULT_PRICE = { inPerM: 0.15, outPerM: 0.6 };
+/* An unknown model is assumed to be a thinking Flash, because that is what this product
+   runs. Guessing low is the failure that hides money being spent. */
+const DEFAULT_PRICE = { inPerM: 0.3, outPerM: 2.5 };
 
 let memPendingIls = 0;
 let memLastFlushAt = 0;
@@ -73,6 +96,11 @@ function emptyLedger() {
     usdIls: USD_ILS,
     lastFlushAt: null,
     creditNote: "",
+    /* What the last corrections taught us. 1 = the price table was right. Above 1 means
+       real spend ran ahead of the estimate and future burn is scaled up to match
+       (owner, 2026-09-03: "it fakes it — see if you can make it better"). */
+    calibrationFactor: 1,
+    calibrationSamples: 0,
   };
 }
 
@@ -89,6 +117,10 @@ function priceForModel(model) {
   return DEFAULT_PRICE;
 }
 
+/* Set from the stored ledger on every read, so the running estimate uses what the last
+   correction taught us without threading it through every call site. */
+let memCalibration = 1;
+
 function estimateIlsFromUsage(model, usage) {
   if (!usage || typeof usage !== "object") return 0;
   const prompt = Number(usage.promptTokens || usage.promptTokenCount || 0) || 0;
@@ -98,8 +130,8 @@ function estimateIlsFromUsage(model, usage) {
   const usd = (prompt / 1e6) * p.inPerM + (output / 1e6) * p.outPerM;
   const factor = Number.isFinite(SAFETY_FACTOR) && SAFETY_FACTOR > 0 ? SAFETY_FACTOR : 1.2;
   const rate = Number.isFinite(USD_ILS) && USD_ILS > 0 ? USD_ILS : 3.7;
-  /* Do NOT round to agorot here — small chat turns would become 0 and never burn. */
-  return roundMicros(usd * rate * factor);
+  const learned = Number.isFinite(memCalibration) && memCalibration > 0 ? memCalibration : 1;
+  return roundMicros(usd * rate * factor * learned);
 }
 
 /**
@@ -211,8 +243,17 @@ async function writeRawLedger(ledger) {
   return out;
 }
 
+/** Remember what the ledger learned, so the running estimate uses it. */
+function syncCalibrationFromLedger(ledger) {
+  const f = Number(ledger && ledger.calibrationFactor);
+  memCalibration = Number.isFinite(f) && f > 0 ? f : 1;
+  return ledger;
+}
+
 async function loadLedger() {
   const raw = await readRawLedger();
+  /* Every read teaches the running estimate what the last correction learned. */
+  syncCalibrationFromLedger(raw);
   raw.spentSinceUpdateEstimated = roundMicros(
     (Number(raw.spentSinceUpdateEstimated) || 0) + memPendingIls
   );
@@ -232,10 +273,29 @@ function publicCreditView(ledger) {
     remaining != null && remaining < Number(process.env.ADMIN_CREDIT_WARN_ILS || 30);
   const critical =
     remaining != null && remaining < Number(process.env.ADMIN_CREDIT_CRITICAL_ILS || 15);
+  /* How old the anchor is. An estimate hanging off a number he typed three weeks ago is
+     not wrong so much as unanchored, and the screen should say so rather than presenting
+     it as today's balance (owner, 2026-09-03). */
+  const anchorMs = Date.parse(ledger.balanceUpdatedAt || "");
+  const ageDays = Number.isFinite(anchorMs)
+    ? Math.max(0, Math.floor((Date.now() - anchorMs) / 86400000))
+    : null;
+  const stale = ageDays == null || ageDays >= 7;
   return {
     ok: true,
     estimated: true,
     labelHe: "משוער",
+    balanceAgeDays: ageDays,
+    stale: stale,
+    staleHe:
+      ageDays == null
+        ? "לא עודכן מעולם — הזן את היתרה מגוגל"
+        : ageDays === 0
+        ? "עודכן היום"
+        : "עודכן לפני " + ageDays + " ימים" + (stale ? " — כדאי לעדכן מגוגל" : ""),
+    calibrationFactor: Number(ledger.calibrationFactor) > 0 ? Number(ledger.calibrationFactor) : 1,
+    calibrationSamples: Number(ledger.calibrationSamples) || 0,
+    calibrationNote: ledger.calibrationNote || "",
     labelEn: "Estimated",
     balanceManual: manual,
     balanceUpdatedAt: ledger.balanceUpdatedAt || null,
@@ -297,6 +357,28 @@ async function setManualBalance(amountIls, note) {
   }
   memPendingIls = 0;
   const ledger = await readRawLedger();
+  /* LEARN. He has just read the real number off Google, so we know what actually went
+     between the last correction and this one - and what we predicted. The ratio is the
+     only honest calibration available without a balance API: no Google endpoint gives it
+     to us, and every failed write and every price we guessed lives inside that ratio
+     (owner, 2026-09-03: "it fakes it - see if you can make it better"). */
+  const prev = Number(ledger.balanceManual);
+  const predicted = Number(ledger.spentSinceUpdateEstimated) || 0;
+  if (Number.isFinite(prev) && prev > 0 && predicted > 0) {
+    const observed = prev - n;
+    /* Only when the balance actually fell. A top-up teaches nothing about burn. */
+    if (observed > 0) {
+      const measured = observed / predicted;
+      /* Clamped, and blended with what we already knew, so one odd month cannot throw
+         the estimate off a cliff. */
+      const clamped = Math.max(0.2, Math.min(20, measured));
+      const before = Number(ledger.calibrationFactor) > 0 ? Number(ledger.calibrationFactor) : 1;
+      ledger.calibrationFactor = Math.round((before * 0.5 + clamped * 0.5) * 1000) / 1000;
+      ledger.calibrationSamples = (Number(ledger.calibrationSamples) || 0) + 1;
+      ledger.calibrationNote =
+        "נמדד " + roundMoney(observed) + "₪ מול הערכה של " + roundMoney(predicted) + "₪";
+    }
+  }
   ledger.balanceManual = roundMoney(n);
   ledger.balanceUpdatedAt = new Date().toISOString();
   ledger.spentSinceUpdateEstimated = 0;
@@ -307,6 +389,7 @@ async function setManualBalance(amountIls, note) {
   }
   await writeRawLedger(ledger);
   memLastFlushAt = Date.now();
+  syncCalibrationFromLedger(ledger);
   return publicCreditView(ledger);
 }
 

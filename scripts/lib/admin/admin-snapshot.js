@@ -8,6 +8,7 @@
  * Stage A: device writeKey ownership; fail-closed without Blob on Vercel.
  */
 
+const crypto = require("crypto");
 const path = require("path");
 const fs = require("fs");
 const { checkRateLimit, sendRateLimit } = require("../../../lib/rate-limit");
@@ -114,10 +115,96 @@ async function readSnapshot(athleteId) {
   return getJson(snapKey(id));
 }
 
+/* One small object holding "who exists and when did they last change". Reading it is
+   one request of a few hundred bytes; reading the real list is one request PER ATHLETE,
+   each carrying a full training block. That difference is what suspended the store. */
+const SNAP_INDEX_KEY = SNAP_PREFIX + "_index.json";
+
+/** A short, stable fingerprint of the whole list. Same people, same stamp. */
+function stampFromRows(rows) {
+  const parts = (Array.isArray(rows) ? rows : [])
+    .map((r) => String((r && r.athleteId) || "") + ":" + String((r && r.updatedAt) || ""))
+    .sort();
+  return crypto.createHash("sha1").update(parts.join("|"), "utf8").digest("hex").slice(0, 16);
+}
+
+/**
+ * The index, rebuilt from truth. Expensive — one read per athlete — so it happens when
+ * there is no index at all, and never on a poll.
+ */
+/* The last rebuild this instance did, and when. Purely a brake: if the index write is
+   failing, this is what stops every poll from turning into a full read of everyone. */
+let rebuiltIndexCache = null;
+let rebuiltIndexAt = 0;
+const REBUILD_COOLDOWN_MS = 5 * 60 * 1000;
+
+async function rebuildSnapshotIndex() {
+  if (rebuiltIndexCache && Date.now() - rebuiltIndexAt < REBUILD_COOLDOWN_MS) {
+    return rebuiltIndexCache;
+  }
+  const rows = await listJson(SNAP_PREFIX);
+  const list = rows
+    .map((r) => r && r.data)
+    .filter((d) => d && d.athleteId && !isDeletedSnapshot(d))
+    .map((d) => ({ athleteId: d.athleteId, updatedAt: d.updatedAt || "" }));
+  const idx = { rows: list, count: list.length, updatedAt: new Date().toISOString() };
+  rebuiltIndexCache = idx;
+  rebuiltIndexAt = Date.now();
+  try {
+    await putJson(SNAP_INDEX_KEY, idx);
+  } catch (e) {}
+  return idx;
+}
+
+/** Keep the index true on every write, so it never has to be rebuilt in anger. */
+async function touchSnapshotIndex(athleteId, payload) {
+  const id = safeAthleteId(athleteId);
+  if (!id) return;
+  let idx = null;
+  try {
+    idx = await getJson(SNAP_INDEX_KEY);
+  } catch (e) {}
+  rebuiltIndexCache = null;
+  const rows = idx && Array.isArray(idx.rows) ? idx.rows.slice() : [];
+  const gone = !payload || isDeletedSnapshot(payload);
+  const next = rows.filter((r) => r && r.athleteId !== id);
+  /* Exactly what was stored — never a fresher invention, or the stamps drift apart. */
+  if (!gone) next.push({ athleteId: id, updatedAt: String((payload && payload.updatedAt) || "") });
+  try {
+    await putJson(SNAP_INDEX_KEY, {
+      rows: next,
+      count: next.length,
+      updatedAt: new Date().toISOString(),
+    });
+  } catch (e) {}
+}
+
+/**
+ * What a poll asks for: has anything changed? One small read, and only a rebuild when
+ * there is no index yet.
+ */
+async function readSnapshotStamp() {
+  let idx = null;
+  try {
+    idx = await getJson(SNAP_INDEX_KEY);
+  } catch (e) {
+    return { stamp: "", count: 0, error: String((e && (e.message || e.code)) || "read_failed") };
+  }
+  if (!idx || !Array.isArray(idx.rows)) idx = await rebuildSnapshotIndex();
+  return { stamp: stampFromRows(idx.rows), count: idx.rows.length, error: "" };
+}
+
 async function writeSnapshot(athleteId, data) {
   const id = safeAthleteId(athleteId);
   if (!id) throw new Error("athleteId required");
   let payload = data;
+  /* The index and the list must agree on when a row last moved, or the poll thinks the
+     list is stale every single time and fetches everyone anyway — the leak, restored in
+     disguise. Callers normally set this; when one forgets, we set it here so both sides
+     read the same truth. */
+  if (payload && typeof payload === "object" && !payload.updatedAt) {
+    payload = Object.assign({}, payload, { updatedAt: new Date().toISOString() });
+  }
   let str = JSON.stringify(payload);
   if (str.length > MAX_SNAPSHOT_BYTES) {
     payload = Object.assign({}, data, { pastBlocks: [] });
@@ -128,6 +215,8 @@ async function writeSnapshot(athleteId, data) {
   }
   if (str.length > MAX_SNAPSHOT_BYTES) throw new Error("Snapshot too large");
   await putJson(snapKey(id), payload);
+  /* The index is what a poll reads instead of everything. It must never lag a write. */
+  await touchSnapshotIndex(id, payload);
 }
 
 function publicSnapshot(row) {
@@ -142,17 +231,38 @@ function isDeletedSnapshot(row) {
   return !!(row && (row.deleted === true || row.revoked === true));
 }
 
+/**
+ * The athlete list, and — when it cannot be read — WHY.
+ *
+ * This used to swallow every failure into an empty array, so a storage hiccup reached
+ * the owner as "you have no clients": no error, no logout, nothing to act on. That is
+ * indistinguishable from data loss to the person reading the screen, and it cost him a
+ * morning on 2026-09-02.
+ *
+ * Throwing instead was the other extreme — it took the whole admin down. So the failure
+ * travels WITH the answer: an empty list plus the reason it is empty. The page shows the
+ * reason and refuses to believe the list.
+ *
+ * @returns {{rows: object[], error: string}}
+ */
 async function listSnapshots() {
   try {
     await ensureSeedAthletes();
+  } catch (eSeed) {
+    /* Seeding is a convenience; failing it must not hide the athletes that DO exist. */
+  }
+  try {
     const rows = await listJson(SNAP_PREFIX);
-    return rows
-      .map((r) => publicSnapshot(r.data))
-      .filter((row) => row && row.athleteId && !isDeletedSnapshot(row))
-      .sort((a, b) => String(b.updatedAt || "").localeCompare(String(a.updatedAt || "")));
+    return {
+      rows: rows
+        .map((r) => publicSnapshot(r.data))
+        .filter((row) => row && row.athleteId && !isDeletedSnapshot(row))
+        .sort((a, b) => String(b.updatedAt || "").localeCompare(String(a.updatedAt || ""))),
+      error: "",
+    };
   } catch (e) {
     if (e && e.code === "blob_required") throw e;
-    return [];
+    return { rows: [], error: String((e && (e.message || e.code)) || "read_failed").slice(0, 300) };
   }
 }
 
@@ -268,7 +378,15 @@ module.exports = async function handler(req, res) {
     const isAdmin = checkAdminAuth(req);
 
     const athleteId = safeAthleteId(body.athleteId || body.userId);
-    if (!athleteId && !(body.action === "admin_list" || body.list === true)) {
+    /* The admin-wide actions are about everyone, so there is no athlete to name.
+       Leaving the stamp out of this list answered every poll with 400 and the page
+       quietly stopped refreshing at all (caught by admin-poll-cost.test.js). */
+    const wholeStoreAction =
+      body.action === "admin_list" ||
+      body.action === "admin_list_stamp" ||
+      body.action === "admin_purge_all" ||
+      body.list === true;
+    if (!athleteId && !wholeStoreAction) {
       return res.status(400).json({ error: "athleteId required" });
     }
 
@@ -277,8 +395,19 @@ module.exports = async function handler(req, res) {
       const rlList = checkRateLimit(req, { name: "admin-snap-get", limit: 60, windowMs: 60_000 });
       if (!rlList.ok) return sendRateLimit(res, rlList);
       try {
-        const snapshots = await listSnapshots();
-        const json = { ok: true, snapshots, storage: storageInfo() };
+        const listed = await listSnapshots();
+        const json = {
+          ok: true,
+          snapshots: listed.rows,
+          /* What the poll will compare against, so a quiet minute costs one small read
+             instead of the whole list (2026-09-02). */
+          stamp: stampFromRows(listed.rows),
+          /* Empty because there is nobody, or empty because the read failed? The page
+             cannot tell them apart on its own, and treating the second as the first is
+             what made a full list look deleted. */
+          listError: listed.error || undefined,
+          storage: storageInfo(),
+        };
         /* Mint only on password login — never on token poll. Token via response header only (not JSON body). */
         if (adminAuthUsedPassword(req, ADMIN_PASSWORD)) {
           const sessionTok = mintAdminSessionToken(ADMIN_PASSWORD, {
@@ -293,6 +422,94 @@ module.exports = async function handler(req, res) {
           }
         }
         return res.status(200).json(json);
+      } catch (e) {
+        return storageUnavailable(res, e);
+      }
+    }
+
+    /**
+     * "Has anything changed?" — one small read.
+     *
+     * This exists because the admin polls every few seconds and the honest answer used
+     * to cost a full download of every athlete. It reads the index and nothing else.
+     */
+    if (body.action === "admin_list_stamp") {
+      if (!isAdmin) return adminAuthDenied(res);
+      const rlStamp = checkRateLimit(req, { name: "admin-snap-stamp", limit: 240, windowMs: 60_000 });
+      if (!rlStamp.ok) return sendRateLimit(res, rlStamp);
+      try {
+        const st = await readSnapshotStamp();
+        return res.status(200).json({
+          ok: true,
+          stamp: st.stamp,
+          count: st.count,
+          listError: st.error || undefined,
+          storage: storageInfo(),
+        });
+      } catch (e) {
+        return storageUnavailable(res, e);
+      }
+    }
+
+    /**
+     * Remove every athlete, in one call.
+     *
+     * The owner clears his rehearsals before a real run-through. Doing it from the
+     * browser was one DELETE per person and every one of them could fail on its own;
+     * this reports exactly who went and who did not, so a partial result is visible
+     * instead of looking like a clean slate.
+     *
+     * Tombstones, like the single delete — a hard delete would let the seed put the
+     * founder's own rows back.
+     */
+    if (body.action === "admin_purge_all") {
+      if (!isAdmin) return adminAuthDenied(res);
+      const rlPurge = checkRateLimit(req, { name: "admin-snap-purge", limit: 4, windowMs: 60_000 });
+      if (!rlPurge.ok) return sendRateLimit(res, rlPurge);
+      try {
+        const listed = await listSnapshots();
+        if (listed.error) return storageUnavailable(res, new Error(listed.error));
+        const removed = [];
+        const failed = [];
+        const now = new Date().toISOString();
+        for (const row of listed.rows) {
+          const id = safeAthleteId(row && row.athleteId);
+          if (!id) {
+            failed.push({ id: String((row && row.athleteId) || "?"), why: "bad id" });
+            continue;
+          }
+          try {
+            const existing = (await readSnapshot(id)) || {};
+            await writeSnapshot(id, {
+              athleteId: id,
+              displayName: String(existing.displayName || id).slice(0, 80),
+              deleted: true,
+              revoked: true,
+              deletedAt: now,
+              revokedAt: now,
+              writeKeyHash: null,
+              clientWritesLocked: true,
+              currentBlock: null,
+              pastBlocks: [],
+              pendingPushUpgrade: null,
+              pendingAdminDayEdit: null,
+              seeded: !!existing.seeded,
+              createdAt: existing.createdAt || now,
+              updatedAt: now,
+              joinedAt: existing.joinedAt || existing.createdAt || now,
+            });
+            try {
+              await burnOpenClaimsForAthlete(id);
+            } catch (eClaim) {}
+            removed.push({ id: id, name: existing.displayName || id });
+          } catch (e) {
+            failed.push({ id: id, why: String((e && (e.message || e.code)) || e).slice(0, 120) });
+          }
+        }
+        try {
+          await rebuildSnapshotIndex();
+        } catch (eIdx) {}
+        return res.status(200).json({ ok: true, removed: removed, failed: failed });
       } catch (e) {
         return storageUnavailable(res, e);
       }
@@ -448,6 +665,51 @@ module.exports = async function handler(req, res) {
         ok: true,
         membershipFrozen: !!existing.membershipFrozen,
         declarationAcceptedAt: existing.declarationAcceptedAt || null,
+        storage: storageInfo(),
+      });
+    }
+
+    /* Who this client is, in the owner's own words: the name he calls them and the
+       colour he picks them out by. Both are his labels, not the athlete's — the athlete
+       never sees either — and both belong on the server, or the strip looks different on
+       his phone than on his laptop (owner, 2026-09-02). */
+    if (body.action === "admin_client_identity") {
+      if (!isAdmin) return adminAuthDenied(res);
+      const existing = (await readSnapshot(athleteId)) || {};
+      if (!existing.athleteId && !existing.createdAt) {
+        return res.status(404).json({ error: "Athlete not found — wait for first snapshot" });
+      }
+      if (body.displayName !== undefined) {
+        const name = String(body.displayName || "").trim().slice(0, 60);
+        /* An empty rename would leave a chip with nothing on it, so it is refused
+           rather than saved. */
+        if (!name) return res.status(400).json({ error: "A name is required" });
+        existing.displayName = name;
+      }
+      if (body.clientColour !== undefined) {
+        /* An allowlist, not free CSS: this string is written into a style attribute in
+           the strip, and a colour a client can choose is a colour that can be an
+           injection. */
+        const colour = String(body.clientColour || "").trim().toLowerCase();
+        existing.clientColour = /^#[0-9a-f]{6}$/.test(colour) ? colour : "";
+      }
+      existing.updatedAt = new Date().toISOString();
+      try {
+        await writeSnapshot(athleteId, existing);
+        await appendAdminAudit({
+          action: "set_client_identity",
+          athleteId: athleteId,
+          actor: "admin",
+          ok: true,
+          detail: existing.displayName || "",
+        });
+      } catch (e) {
+        return storageUnavailable(res, e);
+      }
+      return res.status(200).json({
+        ok: true,
+        displayName: existing.displayName || "",
+        clientColour: existing.clientColour || "",
         storage: storageInfo(),
       });
     }
@@ -878,7 +1140,10 @@ module.exports = async function handler(req, res) {
     const snapshot = {
       athleteId,
       displayName: String(clean.displayName || existing.displayName || "").slice(0, 80),
-      email: String((isAdmin ? clean.email : existing.email) || existing.email || "").slice(0, 120),
+      /* 21.7: we no longer collect or keep client email (checklist a.3.1). Nothing
+         ever mailed it — it was stored and carried through the handoff and never
+         sent to. Forced empty so any value left on an old row clears on next write. */
+      email: "",
       gender: String(clean.gender || existing.gender || "").slice(0, 20),
       preferredLanguage: String(
         clean.preferredLanguage || existing.preferredLanguage || ""
@@ -1029,8 +1294,14 @@ module.exports = async function handler(req, res) {
     const rl = checkRateLimit(req, { name: "admin-snap-get", limit: 60, windowMs: 60_000 });
     if (!rl.ok) return sendRateLimit(res, rl);
     try {
-      const snapshots = await listSnapshots();
-      return res.status(200).json({ ok: true, snapshots, storage: storageInfo() });
+      const listed = await listSnapshots();
+      return res.status(200).json({
+        ok: true,
+        snapshots: listed.rows,
+        stamp: stampFromRows(listed.rows),
+        listError: listed.error || undefined,
+        storage: storageInfo(),
+      });
     } catch (e) {
       return storageUnavailable(res, e);
     }

@@ -43,9 +43,229 @@ const sample = {
 
 const packet = CoachIntakeSync.buildFixedIntakePrompt(sample);
 ok("packet starts FIXED INTAKE COMPLETE", /^FIXED INTAKE COMPLETE/i.test(packet));
+/* --- four weeks, and the deload is a fact we hand over ------------------
+ * Settled by the owner on 2026-09-02 and written into the coach's layers: a brick is a
+ * MONTH. The deload runs on an absolute week counter across months, so it can land on
+ * week 2 of one block and week 4 of the next — which means the coach must be TOLD where
+ * it is. "A deload week is given to you. Never choose one yourself."
+ */
+ok("the packet asks for four weeks", /build a full 4-week training brick/.test(packet));
+ok("and says exactly four", /exactly 4 weeks/.test(packet));
+ok("nothing asks for a fifth week any more", !/5-week|exactly 5 weeks|Week 5/.test(packet));
+const wk4 = CoachIntakeSync.buildFixedIntakePrompt(Object.assign({}, sample, { blockStartWeek: 1, deloadEveryWeeks: 4 }));
+ok("the deload is stated as a position", /^DELOAD: week 4 of this 4-week block/m.test(wk4));
+ok("and the coach is told not to move it", /Do NOT choose a different one, and do NOT add a fifth week/.test(wk4));
+const wk2 = CoachIntakeSync.buildFixedIntakePrompt(Object.assign({}, sample, { blockStartWeek: 3, deloadEveryWeeks: 4 }));
+ok("a block that starts mid-cadence carries the deload where it really lands", /^DELOAD: week 2 of/m.test(wk2));
+const none = CoachIntakeSync.buildFixedIntakePrompt(Object.assign({}, sample, { blockStartWeek: 1, deloadEveryWeeks: 6 }));
+ok("a block with no deload in it says so", /^DELOAD: no deload week falls inside this block/m.test(none));
+ok("block 1 of a monthly cadence deloads in week 4", CoachIntakeSync.deloadWeekIndexForBlock(1, 4) === 4);
+ok("so does block 2, counted absolutely", CoachIntakeSync.deloadWeekIndexForBlock(5, 4) === 4);
+ok("a cadence of six leaves a four-week block clean", CoachIntakeSync.deloadWeekIndexForBlock(1, 6) === null);
+ok("no cadence means no deload", CoachIntakeSync.deloadWeekIndexForBlock(1, 0) === null);
+
+/* The coach asked for both as FIELDS: reading them out of prose is one substring away
+   from being wrong, and was (coach agent, 2026-09-02). */
+const gen = CoachIntakeSync.athleteProfileForGenerateBlock(
+  Object.assign({}, sample, { competitor: true }),
+  { blockStartWeek: 5, deloadEveryWeeks: 4 }
+);
+ok("the profile states competitor as a boolean", gen.competitor === true);
+ok("the profile states the block length", gen.blockWeeks === 4);
+ok("and where the deload is", gen.deloadWeekIndex === 4);
 ok("packet has schedule", /Training days: Sun, Mon, Wed, Fri/.test(packet));
 ok("packet has lifts", /Back Squat: 120 kg/.test(packet));
 ok("packet has goals", /Engine \+ strength/.test(packet));
+/* Competing changes what a block is for, so the coach is told in as many words rather
+   than left to notice it inside free text (owner, 2026-09-02). */
+ok("packet states whether the athlete competes", /^COMPETITOR: no —/m.test(packet));
+ok(
+  "and says so plainly when they do",
+  /^COMPETITOR: YES/m.test(CoachIntakeSync.buildFixedIntakePrompt(Object.assign({}, sample, { competitor: true })))
+);
+/* --- the four marks the coach asked for on 2026-09-02 ------------------
+ * Its argument, and it is right: the intake is remarkably precise about what an athlete
+ * CAN do — fourteen lifts in kg, fourteen skills as marks — and free text in the two
+ * things that actually LIMIT a prescription: what load is available, and what movement
+ * is forbidden. Every answer that carries a decision now gets its own tagged line, in
+ * both directions, each carrying the instruction for when there is no answer.
+ */
+const marked = CoachIntakeSync.buildFixedIntakePrompt(
+  Object.assign({}, sample, {
+    improveFocus: { max_strength: true, gymnastics: true },
+    avoidMovements: { deep_squat: true, jumping: true },
+    heaviestImplementKg: 24,
+    avoidInProgram: "No burpees, ever.",
+  })
+);
+const unmarked = CoachIntakeSync.buildFixedIntakePrompt(sample);
+ok("what to improve is stated", /^IMPROVE FOCUS: Max strength/m.test(marked));
+ok("and stated when nothing was chosen", /^IMPROVE FOCUS: none selected/m.test(unmarked));
+ok("what to program around is stated", /^AVOID: Deep squat/m.test(marked));
+ok("and stated when nothing was marked", /^AVOID: none marked\.$/m.test(unmarked));
+ok("the heaviest implement is a number", /^HEAVIEST IMPLEMENT: 24 kg\.$/m.test(marked));
+/* --- and the line reads the ROOM, not the value ------------------------
+ * In a proper box the question is never asked, so a zero there means "no ceiling", not
+ * "unknown". The old wording told the coach "never by a kg figure" for an athlete who
+ * had just reported fourteen lifts in kg — it would have cancelled the %1RM table for
+ * most of them (coach agent, 2026-09-03).
+ */
+const fullGym = CoachIntakeSync.buildFixedIntakePrompt(
+  Object.assign({}, sample, { trainingLocations: { functional_gym: true }, heaviestImplementKg: 0 })
+);
+const smallRoom = CoachIntakeSync.buildFixedIntakePrompt(
+  Object.assign({}, sample, { trainingLocations: { other_home: true }, heaviestImplementKg: 0 })
+);
+ok("a full gym is told to prescribe by %1RM", /^HEAVIEST IMPLEMENT: full gym loading available/m.test(fullGym));
+ok("and is never told to avoid kg figures", !/never by a kg figure/.test(fullGym));
+ok("a limited room carries the ceiling warning", /^HEAVIEST IMPLEMENT: not stated/m.test(smallRoom) && /never by a kg figure/.test(smallRoom));
+/* Older profiles carry only the sentence, not the map — and an explicit map always wins
+   over the sentence, which is why this one is built without one. */
+const legacyRoom = Object.assign({}, sample);
+delete legacyRoom.trainingLocations;
+legacyRoom.trainingSetup = "Other - home or limited equipment";
+legacyRoom.heaviestImplementKg = 0;
+ok(
+  "a legacy profile is read from its setup text",
+  /never by a kg figure/.test(CoachIntakeSync.buildFixedIntakePrompt(legacyRoom))
+);
+
+/* The box under the movement families reached the coach nowhere at all. */
+ok(
+  "what else to program around has a line of its own",
+  /^AVOID \(also\): no burpees after the knee$/m.test(
+    CoachIntakeSync.buildFixedIntakePrompt(Object.assign({}, sample, { avoidMovementsOther: "no burpees after the knee" }))
+  )
+);
+ok("and it is there when empty too", /^AVOID \(also\): nothing else stated\.$/m.test(unmarked));
+ok("what he does not want is stated", /^DOES NOT WANT: No burpees, ever\.$/m.test(marked));
+ok("and stated when nothing was said", /^DOES NOT WANT: nothing stated\.$/m.test(unmarked));
+
+/* Keys, not prose — the same reason competitor became a key. */
+const withMarks = CoachIntakeSync.athleteProfileForGenerateBlock(
+  Object.assign({}, sample, {
+    improveFocus: { engine: true },
+    avoidMovements: { running: true },
+    heaviestImplementKg: "32",
+    avoidInProgram: "no burpees",
+  })
+);
+ok("improveFocus is a field", withMarks.improveFocus && withMarks.improveFocus.engine === true);
+ok("avoidMovements is a field", withMarks.avoidMovements && withMarks.avoidMovements.running === true);
+ok("heaviestImplementKg is a number", withMarks.heaviestImplementKg === 32);
+ok("avoidInProgram is a field", withMarks.avoidInProgram === "no burpees");
+ok("an unanswered heaviest implement is 0, not empty", CoachIntakeSync.athleteProfileForGenerateBlock(sample).heaviestImplementKg === 0);
+/* The ids ARE the contract: they map one-to-one onto the coach's substitution matrix,
+   so renaming one silently would break it. */
+ok(
+  "the avoid families are exactly the seven agreed",
+  CoachIntakeSync.AVOID_MOVEMENT_DEFS.map(function (d) { return d.id; }).join(",") ===
+    "deep_squat,hinge_deadlift,overhead_press,hanging_bar,kipping,jumping,running"
+);
+ok(
+  "and the improve focuses are the six agreed",
+  CoachIntakeSync.IMPROVE_FOCUS_DEFS.map(function (d) { return d.id; }).join(",") ===
+    "max_strength,engine,gymnastics,olympic_lifting,general_fitness,specific_skill"
+);
+
+/* --- one athlete, two settings (coach agent, 2026-09-03) --------------
+ * A box on weekdays and a garage on Saturday was described as "limited equipment", and
+ * the packet printed four maxima in kilograms and then forbade kilograms underneath
+ * them. That is the same failure that cancelled %1RM for a full gym, coming in through
+ * the second door. */
+const twoPlaces = CoachIntakeSync.buildFixedIntakePrompt(
+  Object.assign({}, sample, {
+    trainingDays: ["mon", "tue", "thu", "fri", "sat"],
+    trainingSetup: "Well-equipped functional training gym",
+    trainingLocations: { functional_gym: true },
+    trainsMultipleLocations: true,
+    secondaryLocationDays: ["sat"],
+    secondaryLocationEquipment: "kettlebell 24/32, dumbbells 15+22.5",
+    secondaryHeaviestImplementKg: 32,
+  })
+);
+ok("the primary days are named", /^Primary \(Mon, Tue, Thu, Fri\): /m.test(twoPlaces));
+ok("and so is the other place", /^Also trains \(Sat\): kettlebell 24\/32/m.test(twoPlaces));
+ok("the coach is told to name the setting", /^LOAD: TWO SETTINGS\./m.test(twoPlaces) && /NAME THE SETTING in the session itself\./.test(twoPlaces));
+ok("NEVER forbid kilograms for an athlete with a full gym", !/never by a kg figure/.test(twoPlaces));
+ok("the second room states its own ceiling", /^HEAVIEST IMPLEMENT \(Sat\): 32 kg\.$/m.test(twoPlaces));
+/* Ticked but with no days named is not a guess. */
+const vagueSecond = CoachIntakeSync.buildFixedIntakePrompt(
+  Object.assign({}, sample, { trainsMultipleLocations: true, secondaryLocationDays: [] })
+);
+ok("no days named is said, not guessed", /Also trains: days not stated - treat the reported setup as the primary one\./.test(vagueSecond));
+ok("and the load line is not suppressed", /^LOAD: TWO SETTINGS\./m.test(vagueSecond));
+
+/* --- a long day survives ---------------------------------------------- */
+const perDay = CoachIntakeSync.buildFixedIntakePrompt(
+  Object.assign({}, sample, {
+    trainingDays: ["mon", "sat"],
+    sessionMinutes: 45,
+    sessionTimesDiffer: true,
+    sessionMinutesByDay: { mon: 45, sat: 60 },
+  })
+);
+ok("each day carries its own ceiling", /^Mon 45 · Sat 60 minutes \(each a ceiling, not a target\)$/m.test(perDay));
+ok("a uniform week is unchanged", /^60 minutes$/m.test(CoachIntakeSync.buildFixedIntakePrompt(Object.assign({}, sample, { sessionMinutes: 60 }))));
+
+/* --- a stated limit beats a marked skill ------------------------------- */
+/* The owner's ruling, 2026-09-03: a movement limitation is the clause that wins. */
+const clash = CoachIntakeSync.buildFixedIntakePrompt(
+  Object.assign({}, sample, { skills: { all_skills: true }, avoidMovements: { deep_squat: true } })
+);
+ok("the contradiction is settled in the packet", /^AVOID OVERRIDES THESE MARKED SKILLS: Pistol\./m.test(clash));
+ok("and the avoid list is named as the winner", /the avoid list wins/.test(clash));
+ok("with nothing to settle it says so", /^AVOID OVERRIDES THESE MARKED SKILLS: none/m.test(unmarked));
+
+/* --- ten of what? ------------------------------------------------------ */
+ok("a bare number is years, because that is what the question asks", /^Experience: 10 years$/m.test(CoachIntakeSync.buildFixedIntakePrompt(Object.assign({}, sample, { experience: "10" }))));
+ok("and a sentence is left alone", /^Experience: 4 years CF$/m.test(CoachIntakeSync.buildFixedIntakePrompt(sample)));
+ok("the question names the unit", /label: "Training experience \(years\)"/.test(fs.readFileSync(path.join(root, "lib", "coach-intake-sync-contract.js"), "utf8")));
+
+/* --- the individual chooses their own down week ------------------------ */
+ok("a cadence he chose lands in the block", /^DELOAD: week 4 of this 4-week block/m.test(CoachIntakeSync.buildFixedIntakePrompt(Object.assign({}, sample, { blockStartWeek: 1, deloadEveryWeeks: 4 }))));
+ok("and choosing none is respected", /^DELOAD: no deload week falls inside this block/m.test(CoachIntakeSync.buildFixedIntakePrompt(Object.assign({}, sample, { blockStartWeek: 1, deloadEveryWeeks: 0 }))));
+
+/* --- the studio's own packet ------------------------------------------
+ * Its twin, and deliberately NOT briefFor(): that one is a reminder for the owner while
+ * he writes by hand, and a string serving two masters follows neither rule. */
+const StudioIntake = require("../lib/client-intake.js");
+const studioPacket = StudioIntake.buildStudioIntakePrompt({
+  scheduleMode: "session_count",
+  sessionsPerWeek: 3,
+  sessionsDiffer: true,
+  sessionTypes: ["long strength + short metcon", "partner metcon, one part only", "stations"],
+  maxAthletesAtOnce: 10,
+  avoidInProgram: "no barbell snatches",
+  population: "CrossFit class 12-20",
+  sessionMinutes: 60,
+  deloadWeek: true,
+  deloadEveryWeeks: 4,
+});
+ok("the studio packet exists and asks for four weeks", /^STUDIO INTAKE COMPLETE/.test(studioPacket) && /exactly 4 weeks/.test(studioPacket));
+/* Capacity, asked as a number because that is the answer he actually gives; the
+   equipment count stays in the equipment box (coach agent, 2026-09-03). */
+ok("it states how many train at once", /^MAX AT ONCE: 10 athletes at the busiest class\.$/m.test(studioPacket));
+ok("and what the place does not do", /^DOES NOT DO: no barbell snatches$/m.test(studioPacket));
+ok("the session types arrive in order", /1\. long strength \+ short metcon[\s\S]*2\. partner metcon[\s\S]*3\. stations/.test(studioPacket));
+ok("and it says there are no weekdays in this mode", /WEEKDAYS: none/.test(studioPacket));
+const emptyStudio = StudioIntake.buildStudioIntakePrompt({});
+/* Three answers, not two: a room with no ceiling and a question nobody answered are
+   different rooms, and the coach does different things in them. */
+ok("an unanswered capacity carries its instruction", /^MAX AT ONCE: not stated - do NOT assume one station per person\.$/m.test(emptyStudio));
+ok("and a room with no ceiling says so", /^MAX AT ONCE: no practical limit/m.test(StudioIntake.buildStudioIntakePrompt({ noCapacityCap: true })));
+ok("silence about what it does not do is stated too", /^DOES NOT DO: nothing stated\.$/m.test(emptyStudio));
+ok("briefFor stays a human reminder, not a prompt", !/BLOCK_JSON/.test(StudioIntake.briefFor({})));
+
+ok("the tick box is on the Goals step", /id="adm-fx-competitor"/.test(fixedJs));
+/* The improve list belongs to that tick box (owner, 2026-09-03): for someone training
+   for general fitness the answer is the balance itself, and asking invites an answer
+   that narrows a plan nobody wanted narrowed. The packet still carries the line in both
+   directions, so nothing downstream changes shape. */
+ok("the improve list is hidden until he says he competes", /id="adm-fx-improve-wrap"' \+ \(st\.competitor === true \? "" : " hidden"\)/.test(fixedJs));
+ok("ticking it opens the list", /adminFixedCompetitorChanged/.test(fixedJs));
+ok("and unticking drops what was marked", /intakeState\.improveFocus = intakeState\.competitor === true \? improveMap : \{\}/.test(fixedJs));
+ok("and it is carried on the profile", CoachIntakeSync.normalizeIntakeProfile(Object.assign({}, sample, { competitor: true })).competitor === true);
 
 const profile = CoachIntakeSync.normalizeIntakeProfile(sample);
 ok("normalized has fixedIntakePacket", /^FIXED INTAKE COMPLETE/i.test(profile.fixedIntakePacket));
@@ -121,16 +341,39 @@ ok("admin fixed intake normalizes block", /NormalizePprogBlock\.normalize/.test(
 ok("handoff stores lastHandoffPath", /lastHandoffPath/.test(handoff));
 ok("admin create does not send join mail", !/sendAdminIntakeCompleteMail/.test(handoff));
 ok("handoff inline in athlete card", /renderHandoffInline/.test(adminHtml) && /ath-handoff-inline/.test(adminHtml));
+/* --- a click beside the box is not a decision ------------------------
+ * He was two steps into an intake, clicked next to it by accident, and lost everything
+ * he had typed (owner, 2026-09-03). */
+ok("the intake box does not close on an outside click", !/id="intake-modal" onclick/.test(adminHtml));
+ok("nor does the kind chooser", !/id="client-kind-modal" onclick/.test(adminHtml));
+ok("and closing it on purpose asks first", /לצאת מהתחקור\? מה שהוקלד יימחק\./.test(fixedJs));
+ok("but only while something is actually being filled in", /intakeState\.fixedActive && !intakeState\.intakeComplete/.test(fixedJs));
+
+/* An individual pays like any other client, asked in their first step. */
+ok("the individual intake asks what they pay", /id="adm-fx-amount"/.test(fixedJs) && /id="adm-fx-paymethod"/.test(fixedJs));
+ok("and it travels with the client", /monthlyAmount: intakeState\.monthlyAmount/.test(fixedJs));
+
+/* --- the questions behind the new lines (coach agent + owner, 2026-09-03) */
+ok("the individual is asked about a second place", /id="adm-fx-multiplace"/.test(fixedJs) && /data-fx-second-day/.test(fixedJs));
+ok("and what is there, and how heavy", /id="adm-fx-second-kit"/.test(fixedJs) && /id="adm-fx-second-heaviest"/.test(fixedJs));
+ok("nothing is kept from a second place he unticked", /intakeState\.secondaryLocationDays = intakeState\.trainsMultipleLocations \? secondDays : \[\]/.test(fixedJs));
+/* Only when he says the days differ - a uniform week stays one number. */
+ok("minutes per day appear only behind that tick", /id="adm-fx-perday-wrap"/.test(fixedJs) && /perDay\.hidden = !box\.checked/.test(fixedJs));
+ok("and each day opens on the main number", /parseInt\(byDay\[dk\], 10\) > 0 \? parseInt\(byDay\[dk\], 10\) : mins > 0 \? mins : ""/.test(fixedJs));
+ok("the individual chooses a deload cadence", /id="adm-fx-deload"/.test(fixedJs) && /id="adm-fx-nodeload"/.test(fixedJs));
+ok("and \"no deload\" is an answer, not a blank", /noDeloadEl && noDeloadEl\.checked \? 0 :/.test(fixedJs));
+ok("all of it travels with the client", /trainsMultipleLocations: prof\.trainsMultipleLocations === true/.test(fixedJs) && /deloadEveryWeeks: prof\.deloadEveryWeeks/.test(fixedJs));
+
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
-ok("admin version 3.0.2", /DUCK-WOD Admin · 3\.0\.2/.test(adminHtml));
+ok("admin version 4.0", /DUCK-WOD Admin · 4\.0/.test(adminHtml));
 ok("admin wired to coach 2.3.14", /LIVE_COACH_VERSION = "2\.3\.14"/.test(adminHtml));
 ok("app coach 2.3.14", /COACH_VERSION = "2\.3\.14"/.test(index));
 ok(
   "admin shows Admin + Coach versions",
-  /Admin 3\.0\.2/.test(adminHtml) &&
+  /Admin 4\.0/.test(adminHtml) &&
     /ver-coach/.test(adminHtml) &&
     /syncAdminVersionLabels/.test(adminHtml) &&
-    /ADMIN_UI_VERSION = "3\.0\.2"/.test(adminHtml)
+    /ADMIN_UI_VERSION = "4\.0"/.test(adminHtml)
 );
 ok(
   "admin intake uses pprog classes 1:1",
@@ -159,6 +402,11 @@ ok("admin build restores goals on fail", /restoreAdminFixedGoals/.test(fixedJs))
 ok("admin Build plan sends admin auth", /adminAuthHeaders\(\)/.test(fixedJs) && /adminProgramming:\s*true/.test(fixedJs));
 ok("admin Build plan timeout kept", /180000/.test(fixedJs));
 ok("admin does not auto-retry abort/timeout", /אל תלחץ Build שוב מיד/.test(fixedJs));
+/* A session token IS being logged in. Gating Build on the raw password refused every
+   build after an ordinary login — the login is what clears the password, so logging in
+   again could not help (owner, 2026-09-02). */
+ok("Build plan accepts a session, not only a password", /adminIsAuthed\(\)/.test(fixedJs));
+ok("and it never gates on the password alone", !/if \(typeof adminPw !== "undefined" && !String\(adminPw \|\| ""\)\.trim\(\)\)/.test(fixedJs));
 ok("admin generate_block sends athleteId", /athleteId: intakeState.athleteId/.test(fixedJs));
 ok("admin records brick_fill on UID", /recordBrickFill/.test(fixedJs));
 ok("handoff snapshot stores costCaps", /costCaps:/.test(handoff) && /cloneCostCaps/.test(handoff));
@@ -179,7 +427,8 @@ ok(
     !/fetch\("\/api\//.test(adminHtml)
 );
 ok("admin fixed intake uses adminApiUrl", /adminApiUrl\("\/api\/personal-coach"\)/.test(fixedJs));
-ok("claim uses adminApiUrl", /function adminApiUrl/.test(claimHtml) && /fetch\(adminApiUrl\("\/api\/admin-handoff/.test(claimHtml));
+/* The claim page builds its URL before fetching it — it may carry a code now. */
+ok("claim uses adminApiUrl", /function adminApiUrl/.test(claimHtml) && /adminApiUrl\("\/api\/admin-handoff/.test(claimHtml));
 ok("admin hides FAB during intake", /admin-intake-open/.test(adminHtml) && /setAdminIntakeModalOpen/.test(adminHtml) && /adminChatFabWrap[\s\S]*hidden/.test(adminHtml));
 ok("admin recovery nested under Yes", /pprog-fixed-recovery-branch/.test(fixedJs) && /Under Yes/.test(fixedJs));
 ok("admin recovery no Thu default", /activeRecoveryDay:\s*""/.test(fixedJs));
@@ -212,7 +461,32 @@ ok(
 ok("phone package does not pre-mark join mail", /intakeNotifySent:\s*false/.test(handoff) && /Join mail waits/.test(handoff));
 ok("app join mail requires Terms", /if \(!store\.legalAcceptedAt\) return/.test(index));
 ok("admin remembers session token not password", /pw-remember/.test(adminHtml) && /persistAdminSession/.test(adminHtml) && /tryRestoreAdminSession/.test(adminHtml) && /dw_admin_session/.test(adminHtml) && /clearLegacyAdminPasswordStore/.test(adminHtml));
-ok("admin live poll 15-30s no LLM", /startAdminLivePoll/.test(adminHtml) && /ADMIN_POLL_MS = 20000/.test(adminHtml) && /loadAthletes\(\{ silent: true \}\)/.test(adminHtml));
+/* ------------------------------------------------------------------------
+ * THE POLL MUST NOT COST THE WHOLE LIST.
+ *
+ * It used to: every twenty seconds the admin downloaded every athlete in full, training
+ * blocks and all, because building the list means fetching each object. Roughly 2,300
+ * object reads and tens of megabytes an hour, per open tab. On 2026-09-02 Vercel
+ * suspended the Blob store for the month and the whole product went dark — production
+ * included.
+ *
+ * A poll asks one small question now. These assertions are the reason it stays that way.
+ * --------------------------------------------------------------------- */
+ok("there is still a live poll", /startAdminLivePoll/.test(adminHtml));
+ok("it asks for a stamp, not the list", /pollAdminListStamp\(\);/.test(adminHtml) && /action: "admin_list_stamp"/.test(adminHtml));
+ok("the poll does NOT fetch the list directly", !/\}, ADMIN_POLL_MS\);[\s\S]{0,80}loadAthletes/.test(adminHtml));
+ok("only a changed stamp pays for the list", /if \(!stamp \|\| stamp === lastAdminListStamp\) return;/.test(adminHtml));
+ok("returning to the tab asks the cheap question too", /if \(!document\.hidden && adminIsAuthed\(\)\) pollAdminListStamp\(\)/.test(adminHtml));
+ok("the interval is not faster than it was", /ADMIN_POLL_MS = 45000/.test(adminHtml));
+ok("the page remembers what it is holding", /lastAdminListStamp = String\(/.test(adminHtml));
+
+/* The server side of the same promise. */
+ok("the stamp is its own action", /body\.action === "admin_list_stamp"/.test(snap));
+ok("it reads an index, not every athlete", /async function readSnapshotStamp/.test(snap) && /getJson\(SNAP_INDEX_KEY\)/.test(snap));
+ok("the index is kept true on every write", /await touchSnapshotIndex\(id, payload\)/.test(snap));
+ok("a full list still carries the stamp to compare against", /stamp: stampFromRows\(listed\.rows\)/.test(snap));
+/* Rebuilding is the expensive path and must stay off the poll. */
+ok("a rebuild only happens when there is no index at all", /if \(!idx \|\| !Array\.isArray\(idx\.rows\)\) idx = await rebuildSnapshotIndex\(\)/.test(snap));
 ok("admin_list mints session token header", /mintAdminSessionToken/.test(snap) && /X-Admin-Session-Token/.test(snap));
 ok("admin 401 forces logout", /forceAdminLogout/.test(adminHtml) && /loadAthletes[\s\S]{0,900}status === 401/.test(adminHtml));
 ok("admin session uses ADMIN_SESSION_SECRET", /ADMIN_SESSION_SECRET/.test(fs.readFileSync(path.join(root, "scripts/lib/admin/admin-auth.js"), "utf8")));
@@ -242,5 +516,80 @@ ok(
     /declarationAcceptedAt/.test(snap) &&
     /CLIENT_ALLOWED_KEYS[\s\S]*declarationAcceptedAt/.test(snap)
 );
+
+/* ------------------------------------------------------------------------
+ * Scheduling limits folded into the weekly schedule.
+ *
+ * They were two steps asking one question — when do you train, and for how long — four
+ * steps apart, which is how an athlete ends up describing their week differently in each
+ * half. The owner merged them on 2026-09-02, in the shape the studio intake already
+ * uses: a number, and a tick box for the case a number cannot say it ("45 minutes, but
+ * Friday can be 90").
+ *
+ * THREE files hold this questionnaire and all three have to agree.
+ * --------------------------------------------------------------------- */
+const contractSrc = fs.readFileSync(path.join(root, "lib", "coach-intake-sync-contract.js"), "utf8");
+
+ok("the contract has eight steps, not nine", /"skills",\s*\n\s*"injuries",/.test(contractSrc));
+ok("there is no limits step left", !/"limits",/.test(contractSrc));
+ok("the admin's copy has no limits step", !/key === "limits"/.test(fixedJs));
+ok("the athlete's copy has no limits step either", !/key === "limits"/.test(index));
+
+/* The number, asked identically on both sides. */
+ok("the admin asks how long a session is", /id="adm-fx-minutes" type="number" min="20" max="120"/.test(fixedJs));
+ok("the athlete is asked the same", /id="pprog-fx-minutes" type="number" min="20" max="120"/.test(index));
+ok("the admin has the different-times box", /id="adm-fx-times-differ"/.test(fixedJs));
+ok("the athlete has it too", /id="pprog-fx-times-differ"/.test(index));
+ok("ticking it reveals the text, on both", /function adminFixedToggleTimes/.test(fixedJs) && /function pprogFixedToggleTimes/.test(index));
+
+/* An answer nobody gave must not be kept: text under an unticked box is discarded. */
+ok("the admin drops text when the box is unticked", /intakeState\.sessionTimesDiffer && limEl/.test(fixedJs));
+ok("so does the athlete", /store\.sessionTimesDiffer && limEl/.test(index));
+
+/* And it is refused rather than guessed, exactly as the studio intake refuses it. */
+ok("the admin refuses a session with no length", /How long is a session\?/.test(fixedJs));
+ok("the athlete is refused too", /How long is a session\?/.test(index));
+
+/* The point of asking: the coach has to be told. */
+ok("the length reaches the coach's packet", /SESSION LENGTH:/.test(contractSrc));
+ok("and the athlete's own prompt", /"Session length: "/.test(index));
+ok("it travels with the rest of the intake", /"sessionMinutes",/.test(contractSrc));
+ok("and onto the phone package", /pkg\.sessionMinutes = p\.sessionMinutes/.test(contractSrc));
+
+/* ------------------------------------------------------------------------
+ * A FAILED READ IS NOT AN EMPTY LIST.
+ *
+ * listSnapshots() used to turn any read failure into [], and the endpoint returned it
+ * with ok:true. A storage hiccup therefore reached the owner as "you have no clients" —
+ * no error, no logout, nothing to act on. On 2026-09-02 he sat looking at a strip that
+ * said "0 לקוחות · 0 מתאמנים · 0 תוכניות" while his session, his header and his credit
+ * balance all worked, and the only honest reading of that screen was that his data was
+ * gone. It was not.
+ * --------------------------------------------------------------------- */
+ok(
+  "a failed snapshot read is not swallowed into an empty list",
+  !/if \(e && e\.code === "blob_required"\) throw e;\s*\n\s*return \[\];/.test(snap)
+);
+ok("the reason is written down where it happened", /indistinguishable from data loss/.test(snap));
+/* Reporting it must not take the page down either — throwing turned the silent empty
+   list into a 500 that would not open at all. The failure travels WITH the answer, so
+   the admin still opens and still tells the truth about what it could not read. */
+ok("a read failure is reported, not thrown", /listError: listed\.error \|\| undefined/.test(snap));
+ok("the page refuses to believe an unreadable list", /לא הצלחתי לקרוא את רשימת המתאמנים/.test(adminHtml));
+ok("and says nothing was deleted", /שום דבר לא נמחק/.test(adminHtml));
+
+/* And the page must not present a failure as data. */
+ok("a failed list refresh is always announced", /רענון הרשימה נכשל/.test(adminHtml));
+/* The dangerous path was the one that answered "ok" with nothing in it — that one is
+   never silent now. A dropped connection stays quiet on a background poll: a toast on
+   every network blip is noise, and a blip never presented itself as data. */
+ok(
+  "a bad answer is announced even on a background poll",
+  /showHdrToast\(\s*\n?\s*"רענון הרשימה נכשל"/.test(adminHtml)
+);
+ok("the page reads the server's own storage report", /function warnIfStorageIsNotDurable/.test(adminHtml));
+ok("and says so plainly when it is not durable", /אחסון לא זמין בשרת/.test(adminHtml));
+ok("the warning insists nothing was deleted", /שום דבר לא נמחק/.test(adminHtml));
+ok("it is checked on both the restore and the refresh", (adminHtml.match(/warnIfStorageIsNotDurable\(/g) || []).length >= 3);
 
 console.log("All admin intake parity / sync checks passed.");

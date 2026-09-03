@@ -1,0 +1,241 @@
+/* GENERATED FILE — DO NOT EDIT BY HAND.
+   Source: admin.html  ·  Regenerate: node scripts/extract-pprog-css.js
+
+   The personal-coach brick view's look: the calendar, the day card, and the wide
+   horizontal strip that appears when several days are selected.
+
+   Extracted verbatim from admin.html so admin-clients.html and client.html render a
+   program in the SAME view the owner already knows, instead of a second hand-written
+   list that drifts from it. lib/pprog-display.js emits the markup; this file styles it.
+
+   Rules scoped to admin.html's own #intake-fixed modal are deliberately excluded —
+   they exist to make the athlete intake fit inside the admin overlay and mean nothing
+   on a page that has no such overlay. */
+
+/* Personal coach workout format — match index.html day cards */
+.pprog-summary{color:var(--text);font-size:.95em;line-height:1.5;margin:0 0 12px;padding:12px;background:var(--bg-elev);border-radius:8px;border:1px solid var(--line)}
+.pprog-logged-extra-flag{
+  display:inline-block;margin-left:8px;padding:2px 8px;border-radius:6px;
+  border:1px solid rgba(26,155,138,.55);background:rgba(26,155,138,.14);
+  color:#8ec8bc;font-size:.62em;font-weight:800;letter-spacing:.04em;vertical-align:middle;
+}
+.pprog-logged-extra-banner{
+  margin:0 0 10px;padding:8px 10px;border-radius:8px;
+  border:1px solid rgba(26,155,138,.35);background:rgba(26,155,138,.08);
+  color:#a8ddd2;font-size:.78em;font-weight:600;line-height:1.35;
+}
+.pprog-finish-reported{display:inline-flex;align-items:center;color:#8ec8bc;font-size:.78em;font-weight:700}
+.pprog-cal{background:#181818;border:1px solid #333;border-radius:12px;padding:12px 10px 10px;margin:0 0 14px;direction:ltr}
+.pprog-cal-head{display:flex;align-items:center;justify-content:center;gap:8px;margin:0 0 8px;flex-wrap:nowrap}
+.pprog-cal-nav{background:transparent;border:none;color:#aaa;font-size:1.35em;line-height:1;cursor:pointer;padding:4px 10px;font-family:inherit}
+.pprog-cal-nav:hover{color:#fff}
+.pprog-cal-month-btn{background:transparent;border:none;color:#e8e4d8;font-size:1.05em;font-weight:700;cursor:pointer;font-family:inherit;padding:4px 8px;letter-spacing:.02em}
+.pprog-cal-month-btn:hover{color:#b06dcf}
+.pprog-cal-today-row{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 10px}
+/* One family for the whole row (owner, 2026-09-02). Today used to be solid yellow and
+   read as permanently pressed next to the view buttons; making the active view solid
+   orange only moved the problem. Now all four look the same, and the ONLY filled one is
+   the view you are actually in. */
+.pprog-cal-today{appearance:none;background:transparent;border:1px solid var(--line);color:var(--text-muted);font-size:.72em;font-weight:800;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:inherit;letter-spacing:.02em;line-height:1.2;min-height:34px}
+.pprog-cal-today:hover{border-color:#3a3a3a;color:var(--text)}
+/* Seven columns for a week, N for a programme sold as N sessions — and the cells
+   share the whole width either way. A fixed seven left four empty gaps and read
+   as a broken table (owner, 2026-09-02). Up to ten sessions has to fit too. */
+/* A block is a month, and it is drawn as one: its own dates above it, and air between
+   it and the next. W4 and W5 are not neighbours — W5 is a new month, a new invoice, a
+   new conversation with the client (owner, 2026-09-02). */
+.pprog-cal-blocks{display:flex;flex-direction:column;gap:22px}
+.pprog-cal-block{border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:10px 10px 6px;background:rgba(255,255,255,.015)}
+/* A block heading is a heading, and it follows the same rule every other heading in
+   this product follows: the accent colour, real weight, and room around it. It was
+   12px grey and disappeared into the grid (owner, 2026-09-02). */
+.pprog-cal-block-title{display:flex;align-items:center;justify-content:center;gap:12px;font-size:1em;
+  font-weight:800;letter-spacing:.01em;color:var(--coach);margin:2px 0 12px;text-align:center}
+.pprog-cal-block-title::before,.pprog-cal-block-title::after{content:"";flex:1;height:1px;background:var(--line);max-width:120px}
+/* Three ways to read one programme, beside Today. */
+/* Same button as Today in every dimension — they share a row and do the same kind of
+   thing (owner, 2026-09-02). But Today is an ACTION and the views are a STATE, so they
+   cannot both be solid yellow: filled yellow then reads as "Today is pressed", which is
+   exactly what he saw. Yellow = the action. Orange = where you are, the same orange the
+   active client chip uses. */
+.pprog-cal-view{appearance:none;background:transparent;border:1px solid var(--line);color:var(--text-muted);
+  font-size:.72em;font-weight:800;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:inherit;
+  letter-spacing:.02em;line-height:1.2;min-height:34px}
+.pprog-cal-view:hover{border-color:#3a3a3a;color:var(--text)}
+.pprog-cal-view.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.pprog-cal-dow,.pprog-cal-row{display:grid;grid-template-columns:minmax(48px,0.85fr) repeat(var(--cal-cols,7),minmax(0,1fr));gap:2px;text-align:center;align-items:center}
+.pprog-cal-dow{margin-bottom:4px}
+.pprog-cal-dow span,.pprog-cal-dow-btn{color:#888;font-size:.68em;font-weight:600;padding:2px 0}
+.pprog-cal-dow-btn{
+  appearance:none;background:transparent;border:none;cursor:pointer;font-family:inherit;
+  border-radius:6px;min-height:28px
+}
+.pprog-cal-dow-btn:hover{color:#e8d9f5;background:rgba(155,107,184,.16)}
+.pprog-cal-general,.pprog-cal-week-col{appearance:none;background:#252525;border:1px solid #3a3a3a;color:#ddd;font-size:.62em;font-weight:700;padding:6px 2px;border-radius:8px;cursor:pointer;font-family:inherit;line-height:1.15;min-height:36px;width:100%;max-width:56px;margin:0 auto}
+.pprog-cal-week-col{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:.58em}
+.pprog-cal-general.active,.pprog-cal-week-col.active,.pprog-cal-cell.active{background:#8e44ad;border-color:#b06dcf;color:#fff}
+.pprog-cal-cell{appearance:none;background:transparent;border:none;color:#ddd;font-size:.9em;font-weight:600;padding:6px 0;border-radius:50%;cursor:pointer;font-family:inherit;aspect-ratio:1;max-width:38px;margin:0 auto;display:flex;align-items:center;justify-content:center;width:100%;position:relative;-webkit-user-select:none;user-select:none}
+.pprog-cal-cell:hover{background:#2a2a2a}
+.pprog-cal-cell.muted{color:#555}
+.pprog-cal-cell.has-wod:not(.active){color:#1A9B8A}
+.pprog-cal-cell.logged-extra:not(.active){color:#1A9B8A;box-shadow:inset 0 0 0 1.5px rgba(26,155,138,.55)}
+.pprog-cal-cell.selected:not(.active){
+  background:rgba(155,107,184,.18);color:#e8d9f5;
+  box-shadow:inset 0 0 0 2px var(--coach)
+}
+/* The WhatsApp share mark. Its rules lived only in index.html, which meant the client
+   page — which links the generated sheet, not index.html — rendered a bare orange
+   button. Kept here so both surfaces get the same mark from one place. */
+.pprog-share-wa{
+  flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;gap:0;margin:0;
+  width:34px;height:34px;padding:0;border:1px solid rgba(37,211,102,.35);border-radius:50%;
+  background:#152019;color:#25D366;font-weight:700;font-size:.82em;font-family:inherit;cursor:pointer;line-height:1;
+  box-shadow:none;-webkit-tap-highlight-color:transparent
+}
+.pprog-share-wa:hover{border-color:#25D366;color:#3be07a;background:#1a2a20}
+.pprog-share-wa svg{width:18px;height:18px;display:block;flex-shrink:0}
+/* The rest-day switch inside the day header, while the day is being edited. */
+.pprog-rest-check{
+  display:inline-flex;align-items:center;gap:7px;margin-inline-start:10px;cursor:pointer;
+  background:var(--bg-panel);border:1px solid var(--line);border-radius:999px;
+  padding:4px 12px;font-size:.74rem;font-weight:700;letter-spacing:.3px;color:var(--text-muted);
+  white-space:nowrap
+}
+.pprog-rest-check:hover{border-color:var(--coach);color:var(--text)}
+.pprog-rest-check input{width:15px;height:15px;margin:0;accent-color:var(--brand);cursor:pointer}
+.pprog-done-dot{
+  position:absolute;top:2px;right:3px;width:7px;height:7px;border-radius:50%;pointer-events:none
+}
+.pprog-cal-cell.done-unread .pprog-done-dot{
+  background:#d4b3ee;box-shadow:0 0 0 2px rgba(155,107,184,.45)
+}
+.pprog-cal-cell.done-read .pprog-done-dot{background:rgba(155,107,184,.42);width:6px;height:6px}
+.pprog-cal-cell.deload-week:not(.active){background:rgba(90,140,190,.2);color:#c5daf0;box-shadow:inset 0 0 0 1.5px #5a8cbe}
+.pprog-cal-month-grid{display:flex;flex-direction:column;gap:2px}
+.pprog-cal-week-label{color:#999;font-size:.7em;text-align:center;margin:8px 0 3px}
+.pprog-cal-block-hint{color:#666;font-size:.68em;text-align:center;margin:6px 0 0}
+.pprog-rest-day{text-align:center;padding:8px 0 4px}
+.pprog-rest-day-img{width:min(72vw,260px);max-width:100%;height:auto;display:block;margin:0 auto;border-radius:14px;object-fit:cover;aspect-ratio:1;background:#111}
+.pprog-week-panes{direction:ltr}
+/* "I have not been over this yet" on a block the owner has just created. Same dot as
+   everything else on this calendar, in gold — the owner asked for a dot, and the colour
+   is what keeps it apart from the client's change (2026-09-01). */
+.pprog-cal-cell.needs-review::after{
+  content:"";position:absolute;top:2px;left:3px;width:7px;height:7px;border-radius:50%;
+  background:var(--brand-gold);box-shadow:0 0 0 2px rgba(245,197,24,.35);pointer-events:none
+}
+.pprog-modified-flag.needs-review-flag{color:var(--brand-gold);border-color:var(--brand-gold)}
+.pprog-width-status{
+  direction:rtl;text-align:right;color:var(--text-meta);font-family:var(--font-ui);
+  font-size:.8em;font-weight:600;margin:0 0 8px;line-height:1.4
+}
+.pprog-width-status button{
+  appearance:none;background:transparent;border:none;color:var(--coach);font-weight:800;
+  cursor:pointer;font-family:inherit;padding:0 2px
+}
+.pprog-width-strip{
+  display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;
+  overflow-x:auto;overflow-y:hidden;padding:0 0 8px;-webkit-overflow-scrolling:touch
+}
+/* The selected days SHARE the width evenly instead of each taking a fixed 360px.
+   A fixed basis is why two days used half a screen and four ran off its edge with the
+   last one clipped — the owner's objection on 2026-09-01. flex:1 1 0 gives every card
+   the same width whatever the count; min-width keeps a session readable, and only past
+   that does the strip fall back to scrolling. */
+.pprog-width-strip .pprog-day-card{
+  flex:1 1 0;min-width:260px;width:auto;max-width:none
+}
+@media (max-width:719px){
+.pprog-width-strip{flex-direction:column;overflow-x:visible;overflow-y:visible}
+.pprog-width-strip .pprog-day-card{flex:1 1 auto;width:100%;max-width:none}
+}
+.pprog-day-card .card-header{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.pprog-day-card .source-name{color:var(--coach);font-weight:700;font-size:1.05em;letter-spacing:.01em;font-family:var(--font-ui)}
+.pprog-day-card .section{margin-bottom:12px;background:transparent;border:0;padding:0}
+.pprog-day-card .section + .section{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.pprog-day-card .section-title{font-size:.98em;font-weight:700;text-decoration:none;color:var(--part);margin-bottom:7px;letter-spacing:.01em;text-transform:none}
+.pprog-modified-flag{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:var(--brand);color:#fff;font-size:.64em;font-weight:700;letter-spacing:.06em;vertical-align:middle}
+.pprog-part-note{margin:0 0 8px;padding:0 2px;color:var(--note);font-size:.86em;font-style:italic;line-height:1.4;font-weight:500}
+.pprog-part-format{margin:0 0 6px;padding:0 2px;color:var(--text);font-size:.95em;font-weight:700;line-height:1.35}
+.pprog-day-card .section-lines{margin:0;padding-inline-start:18px;color:var(--text);font-size:.95em;line-height:1.5;list-style:disc;font-family:var(--font-ui)}
+.pprog-day-card .section-lines li{margin-bottom:5px;padding:0;position:static}
+.pprog-day-card .section-lines li:before{content:none}
+.pprog-empty{color:var(--text-meta);text-align:center;padding:12px;font-size:.9em}
+.pprog-rest-day-title{color:var(--coach);font-weight:700;font-size:1.05em;margin:8px 0}
+.pprog-day-card .card-header{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.pprog-day-head-main{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+.pprog-day-card.is-editing{border:1px solid rgba(155,107,184,.4);border-radius:12px;padding:12px 10px 14px}
+.pprog-edit-btn{
+  appearance:none;display:inline-flex;align-items:center;justify-content:center;
+  width:28px;height:28px;padding:0;border-radius:50%;flex-shrink:0;
+  background:var(--bg-elev);border:1px solid var(--line);color:var(--coach);cursor:pointer
+}
+.pprog-edit-btn svg{width:18px;height:18px;display:block}
+.pprog-edit-btn:hover,.pprog-edit-btn.is-editing{
+  background:rgba(155,107,184,.18);border-color:var(--coach);color:var(--coach)
+}
+.pprog-coach-updated-banner,.pprog-admin-edit-status{
+  margin:0 0 10px;padding:8px 10px;border-radius:8px;
+  border:1px solid rgba(155,107,184,.35);background:rgba(155,107,184,.1);
+  color:var(--coach);font-size:.78em;font-weight:600;line-height:1.35
+}
+.pprog-admin-edit-status.err{
+  border-color:rgba(232,69,26,.4);background:rgba(232,69,26,.1);color:#e8b4a8
+}
+.pprog-admin-edit-status.ok{
+  border-color:rgba(143,212,154,.4);background:rgba(143,212,154,.12);color:#8fd49a
+}
+.pprog-editing-pill{
+  display:inline-block;padding:2px 8px;border-radius:999px;background:var(--brand-gold);color:#111;
+  font-size:10px;font-weight:800;letter-spacing:.04em;font-family:var(--font-ui);line-height:1.4
+}
+.pprog-edit-title{
+  width:100%;background:transparent;border:none;border-bottom:1px solid var(--line);border-radius:0;
+  color:var(--part);font-weight:700;font-size:.98em;padding:4px 0 6px;font-family:inherit;outline:none
+}
+.pprog-edit-note{
+  display:block;width:100%;background:transparent;border:none;border-left:2px dashed var(--note);border-radius:0;
+  color:var(--note);font-style:italic;font-size:.86em;padding:4px 8px;margin:0 0 8px;font-family:inherit;outline:none
+}
+.pprog-edit-format{
+  display:block;width:100%;background:transparent;border:none;border-radius:0;
+  color:var(--text);font-weight:700;font-size:.95em;padding:4px 2px;margin:0 0 6px;font-family:inherit;outline:none
+}
+.pprog-edit-lines{list-style:disc}
+.pprog-edit-work-row{display:flex;align-items:center;gap:8px;list-style:disc}
+.pprog-edit-work-row input{
+  flex:1;min-width:0;background:transparent;border:none;color:var(--text);font-size:.95em;
+  font-family:inherit;outline:none;padding:2px 0
+}
+.pprog-edit-del-line{
+  appearance:none;background:none;border:none;color:var(--text-meta);cursor:pointer;
+  font-size:16px;line-height:1;padding:4px 6px;flex-shrink:0
+}
+.pprog-edit-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.pprog-edit-chip{
+  appearance:none;height:32px;padding:0 12px;border-radius:999px;background:transparent;
+  font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;line-height:30px
+}
+.pprog-edit-chip.note{border:1px solid var(--note);color:var(--note)}
+.pprog-edit-chip.work{border:1px solid var(--line);color:var(--text)}
+.pprog-edit-add-part{
+  display:block;width:100%;height:44px;margin-top:14px;border:1px dashed var(--part);color:var(--part);
+  background:transparent;border-radius:10px;font-weight:700;cursor:pointer;font-family:inherit;font-size:14px
+}
+.pprog-edit-hint{
+  direction:rtl;text-align:right;margin:8px 0 0;color:var(--text-meta);
+  font-size:.72em;font-weight:600;line-height:1.4;font-family:var(--font-ui)
+}
+.pprog-edit-bar{display:flex;gap:8px;margin-top:16px}
+.pprog-edit-cancel,.pprog-edit-save{
+  flex:1;height:44px;border-radius:10px;font-family:inherit;font-weight:800;cursor:pointer;font-size:14px
+}
+.pprog-edit-cancel{background:transparent;border:1px solid var(--line);color:var(--text-muted)}
+.pprog-edit-save{background:var(--brand);border:1px solid var(--brand);color:#fff}
+@media(min-width:641px){
+.pprog-edit-bar{justify-content:flex-end}
+.pprog-edit-cancel,.pprog-edit-save{flex:0 0 auto;min-width:120px}
+}
+@media(max-width:640px){
+.pprog-edit-btn{width:44px;height:44px}
+}

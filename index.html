@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.6</title>
+<title>DUCK-WOD · v22.0</title>
 <meta name="theme-color" content="#111">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -1069,12 +1069,10 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.6</div>
-<div class="header-sub" id="coachVersionSub">COACH · v2.3.14</div>
+<div class="header-sub">DAILY WORKOUTS · v22.0</div>
 </div>
 <div class="tabs">
-<button class="tab-btn tab-pprog-wrap active" id="tab-pprog" type="button" onclick="showTab('pprog')">Personal Coach</button>
-<button class="tab-btn" id="tab-browse" onclick="showTab('browse')">Workouts</button>
+<button class="tab-btn active" id="tab-browse" onclick="showTab('browse')">Workouts</button>
 <button class="tab-btn tab-wtools-wrap" id="tab-workout" onclick="showTab('workout')">Workout Tools</button>
 <button class="tab-btn" id="tab-sources" onclick="showTab('sources')">Sources</button>
 <button class="tab-btn" id="tab-about" onclick="showTab('about')">About</button>
@@ -1083,88 +1081,10 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <!-- Days selector - sticky below tabs (browse only; hidden on coach landing) -->
 <div id="days-bar" style="display:none;position:sticky;top:0;z-index:100;background:#1a1a1a;border-bottom:2px solid #E8451A;padding:8px 0;overflow-x:auto;white-space:nowrap"></div>
 
-<div class="tab-content" id="browse-tab">
+<div class="tab-content active" id="browse-tab">
   <div class="workouts-grid" id="grid"><div class="empty"><div class="empty-icon">🦆</div>Loading...</div></div>
 </div>
 
-<div class="tab-content active" id="pprog-tab" aria-hidden="false">
-  <div class="pprog-panel">
-    <div class="pprog-head">
-      <img class="pprog-coach-avatar" id="pprogCoachAvatar" src="assets/hamamen-coach-duck.png" alt="Personal Coach" width="72" height="72" role="button" tabindex="0" title="Personal Coach" aria-label="Personal Coach" onclick="resetPprogUser()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();resetPprogUser();}">
-      <h2>Personal Coach</h2>
-    </div>
-
-    <!-- Intake chat — after intake, hosted in the floating coach panel (FAB) -->
-    <div id="pprogIntakeBlock">
-      <div class="pprog-chat" id="pprogChat">
-        <div class="pprog-chat-log" id="pprogChatLog" aria-live="polite"></div>
-        <div id="pprogFixedIntake" class="pprog-fixed-intake" style="display:none" aria-live="polite"></div>
-        <div id="pprogProfilePicker" class="pprog-profile-picker" style="display:none" aria-live="polite"></div>
-        <div id="pprogLiftsPicker" class="pprog-lifts-picker" style="display:none" aria-live="polite"></div>
-        <div id="pprogSkillsPicker" class="pprog-skills-picker" style="display:none" aria-live="polite"></div>
-        <form class="pprog-chat-form" id="pprogChatForm" style="display:none" onsubmit="return sendPprogMessage(event)">
-          <textarea id="pprogChatInput" rows="3" placeholder="Message the coach…" maxlength="4000" dir="ltr" aria-label="Message the coach"></textarea>
-          <div class="pprog-send-stack">
-            <button type="button" class="btn pprog-reset-btn" id="pprogResetBtn" onclick="resetPprogUser()" title="Reset intake user">&#10227; Reset</button>
-            <button type="submit" class="btn btn-find pprog-send-btn" id="pprogSendBtn" onmousedown="event.preventDefault()" ontouchend="event.preventDefault(); sendPprogMessage(event);">&#10148; Send</button>
-          </div>
-        </form>
-        <div class="pprog-chat-actions" id="pprogIntakeActions">
-          <button type="button" class="btn btn-find pprog-start-btn" id="pprogStartBtn" onclick="pprogOnStartClick()">START</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Week UI -->
-    <div id="pprogWeekBlock" class="pprog-week-shell" style="display:none;margin-top:8px">
-      <div id="pprogCal" class="pprog-cal" aria-label="Training calendar"></div>
-      <div id="pprogWeekPanes"></div>
-    </div>
-  </div>
-</div>
-
-<div id="pprogLegalOverlay" class="pprog-legal-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="pprogLegalTitle">
-  <div class="pprog-legal-card">
-    <div class="pprog-legal-scroll" id="pprogLegalScroll"></div>
-    <div class="pprog-legal-foot">
-      <div class="pprog-legal-sign-box">
-        <label class="pprog-legal-check" for="pprogLegalCbAge">
-          <input type="checkbox" id="pprogLegalCbAge" onchange="syncPprogLegalContinueBtn()">
-          <span>I confirm that I am at least 18 years of age.</span>
-        </label>
-        <label class="pprog-legal-check" for="pprogLegalCbAi">
-          <input type="checkbox" id="pprogLegalCbAi" onchange="syncPprogLegalContinueBtn()">
-          <span>I understand that the AI Coach is NOT a certified trainer or medical professional. I agree to consult with a qualified human trainer and a physician BEFORE completing this intake or starting any workout, and I assume FULL RESPONSIBILITY for my use of the app.</span>
-        </label>
-        <label class="pprog-legal-check" for="pprogLegalCbTerms">
-          <input type="checkbox" id="pprogLegalCbTerms" onchange="syncPprogLegalContinueBtn()">
-          <span>I have read, understood, and agree to the full Terms of Service and Privacy Policy.</span>
-        </label>
-      </div>
-      <button type="button" class="btn pprog-legal-continue" id="pprogLegalContinueBtn" disabled onclick="pprogLegalContinue()">Agree &amp; continue</button>
-    </div>
-  </div>
-</div>
-
-<div id="pprogBuildingOverlay" class="pprog-building-overlay" aria-live="polite" aria-busy="true" hidden>
-    <div class="pprog-building-center">
-      <video
-        id="pprogBuildingVideo"
-        class="pprog-building-video"
-        autoplay
-        muted
-        loop
-        playsinline
-        webkit-playsinline
-        preload="auto"
-        poster="assets/hamamen-coach-duck.png"
-      >
-        <source src="assets/coach-thinking.mp4" type="video/mp4">
-      </video>
-      <img id="pprogBuildingFallback" class="pprog-building-video" src="assets/hamamen-coach-duck.png" alt="Coach" style="display:none" width="340" height="340">
-      <div class="pprog-building-status"><strong>Coach</strong> is building your 4-week block…</div>
-    </div>
-  </div>
 </div>
 
 <div class="tab-content" id="workout-tab">
@@ -1514,12 +1434,68 @@ function rememberAiClientError(summary) {
  * Display: header “COACH · v{COACH_VERSION}” only — do NOT bump app DAILY WORKOUTS / <title> here.
  */
 var COACH_VERSION = "2.3.14";
-try {
-  var __coachVerEl = document.getElementById("coachVersionSub");
-  if (__coachVerEl) __coachVerEl.textContent = "COACH · v" + COACH_VERSION;
-} catch (eCoachVer) {}
-/* true = Personal Coach tab visible to users. */
-var PPROG_TAB_ENABLED = true;
+/* The brain's version line left the app header in 22.0: the coach is not part of this
+   product any more, so telling the public which build of it is running was noise about
+   something they cannot reach (owner, 2026-09-03). The admin module still shows it,
+   where it is the number that matters. */
+/* Personal Coach left the app in 21.7 (POL-029). Programming is now written by a
+   human in the admin module and delivered by link through client.html — the app is
+   the workout aggregator again. The flag stays as the single gate every coach boot
+   path checks, so none of that code can run against a pane that no longer exists. */
+var PPROG_TAB_ENABLED = false;
+
+/* Bundled build version. An installed iOS/Android app carries its own copy of this
+   file, so it can be arbitrarily old — and a stale bundle talking to a moved server
+   is how a user gets a broken screen with no explanation. This lets any future
+   change tell an old build to update instead (checklist g.4). */
+var DW_BUILD_VERSION = "22.0";
+
+function dwIsNativeBuild() {
+  try {
+    var cap = window.Capacitor;
+    return !!(cap && cap.isNativePlatform && cap.isNativePlatform());
+  } catch (e) {
+    return false;
+  }
+}
+
+/** Compare dotted versions without assuming equal length. */
+function dwVersionLessThan(a, b) {
+  var pa = String(a || "0").split(".").map(Number);
+  var pb = String(b || "0").split(".").map(Number);
+  for (var i = 0; i < Math.max(pa.length, pb.length); i++) {
+    var x = Number.isFinite(pa[i]) ? pa[i] : 0;
+    var y = Number.isFinite(pb[i]) ? pb[i] : 0;
+    if (x !== y) return x < y;
+  }
+  return false;
+}
+
+function dwShowUpdateNotice() {
+  if (document.getElementById("dwUpdateNotice")) return;
+  var bar = document.createElement("div");
+  bar.id = "dwUpdateNotice";
+  bar.setAttribute("role", "status");
+  bar.style.cssText =
+    "position:fixed;left:0;right:0;top:0;z-index:9999;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px;" +
+    "background:#F5C518;color:#111;font-size:14px;font-weight:500;text-align:center;line-height:1.4";
+  bar.textContent = "A newer version of DUCK-WOD is available. Please update the app.";
+  document.body.appendChild(bar);
+}
+
+/* Best-effort and never blocking: if the check fails, the app carries on as before. */
+function dwCheckMinimumVersion() {
+  if (!dwIsNativeBuild()) return;
+  var base = typeof getApiBase === "function" ? getApiBase() : "";
+  if (!base) return;
+  fetch(base.replace(/\/$/, "") + "/api/client-program", { method: "GET" })
+    .then(function (r) { return r.json(); })
+    .then(function (j) {
+      var min = j && j.minAppVersion;
+      if (min && dwVersionLessThan(DW_BUILD_VERSION, min)) dwShowUpdateNotice();
+    })
+    .catch(function () {});
+}
 /* Generate Workout (the legacy Groq generator) was retired in v21.5.2 — tab, pane and
    /api/generate-workout are gone. History keeps the code if it is ever wanted back. */
 
@@ -3547,8 +3523,28 @@ function renderPprogFixedStepHtml(step) {
         esc(PPROG_DAY_LABELS[dk] || dk) +
         "</label>";
     }
+    var fxMins = parseInt(store.sessionMinutes, 10);
+    var fxDiffers = store.sessionTimesDiffer === true || !!String(store.sessionLimits || "").trim();
     html +=
-      "</div><textarea id=\"pprog-fx-schedule-notes\" maxlength=\"500\" placeholder=\"Optional: e.g. rest Thu+Sun, sessions ~60 min\">" +
+      "</div>" +
+      /* How long a session is, as a number — the same question the studio intake asks,
+         asked the same way (owner, 2026-09-02). Scheduling limits used to be a whole
+         step of its own, four steps later. */
+      '<div class="pprog-fixed-row">' +
+      '<label class="pprog-fixed-inline" for="pprog-fx-minutes">Session length (minutes)</label>' +
+      '<input id="pprog-fx-minutes" type="number" min="20" max="120" class="pprog-fixed-num" value="' +
+      esc(fxMins > 0 ? fxMins : "") +
+      '" placeholder="—">' +
+      '<label class="pprog-fixed-inline"><input type="checkbox" id="pprog-fx-times-differ"' +
+      (fxDiffers ? " checked" : "") +
+      ' onchange="pprogFixedToggleTimes()"> Different times on different days</label>' +
+      "</div>" +
+      '<textarea id="pprog-fx-limits" maxlength="600" placeholder="e.g. 45 min most days, Friday can be 90"' +
+      (fxDiffers ? "" : " hidden") +
+      ">" +
+      esc(store.sessionLimits || "") +
+      "</textarea>" +
+      '<textarea id="pprog-fx-schedule-notes" maxlength="500" placeholder="Optional: e.g. rest Thu+Sun">' +
       esc(store.scheduleNotes || "") +
       "</textarea>";
   } else if (key === "recovery") {
@@ -3604,13 +3600,6 @@ function renderPprogFixedStepHtml(step) {
         ""
       ) +
       "</div>";
-  } else if (key === "limits") {
-    html +=
-      '<p class="pprog-fixed-title">Scheduling limits</p>' +
-      '<p class="pprog-fixed-note">Session time cap or other schedule constraints. Blank = none.</p>' +
-      '<textarea id="pprog-fx-limits" maxlength="600" placeholder="e.g. Max 50 minutes per session">' +
-      esc(store.sessionLimits || "") +
-      "</textarea>";
   } else if (key === "injuries") {
     html +=
       '<p class="pprog-fixed-title">Injuries &amp; limitations</p>' +
@@ -3636,6 +3625,17 @@ function renderPprogFixedStepHtml(step) {
 function pprogFixedSetErr(msg) {
   var err = document.getElementById("pprogFixedErr");
   if (err) err.textContent = msg || "";
+}
+
+/* Ticking "different times" is what makes the free text exist. */
+function pprogFixedToggleTimes() {
+  var box = document.getElementById("pprog-fx-times-differ");
+  var text = document.getElementById("pprog-fx-limits");
+  if (!box || !text) return;
+  text.hidden = !box.checked;
+  if (box.checked) {
+    try { text.focus(); } catch (e) {}
+  }
 }
 
 function pprogFixedFillNoInjuries() {
@@ -3819,10 +3819,25 @@ function pprogFixedNext() {
       if (dayCbs[d].checked) days.push(dayCbs[d].getAttribute("data-fx-day"));
     }
     var schEl = document.getElementById("pprog-fx-schedule-notes");
+    var minEl = document.getElementById("pprog-fx-minutes");
+    var diffEl = document.getElementById("pprog-fx-times-differ");
+    var limEl = document.getElementById("pprog-fx-limits");
     store.trainingDays = days;
     store.scheduleNotes = schEl ? String(schEl.value || "").trim().slice(0, 500) : "";
+    var minsIn = parseInt(minEl && minEl.value, 10);
+    store.sessionMinutes = minsIn >= 20 && minsIn <= 120 ? minsIn : 0;
+    store.sessionTimesDiffer = !!(diffEl && diffEl.checked);
+    /* Text under an unticked box is an answer nobody gave. */
+    store.sessionLimits = store.sessionTimesDiffer && limEl
+      ? String(limEl.value || "").trim().slice(0, 600)
+      : "";
     if (!days.length && !store.scheduleNotes) {
       pprogFixedSetErr("Mark at least one training day, or add a short schedule note.");
+      return;
+    }
+    /* A session with no length is a guess with a stopwatch attached. */
+    if (!store.sessionMinutes && !store.sessionLimits) {
+      pprogFixedSetErr("How long is a session? 20–120 minutes, or tick the box and describe it.");
       return;
     }
   } else if (key === "recovery") {
@@ -3853,9 +3868,6 @@ function pprogFixedNext() {
     store.skills = skillPack.skills;
     store.intakeSkillsDone = true;
     store.awaitingSkillsAfterLifts = false;
-  } else if (key === "limits") {
-    var limEl = document.getElementById("pprog-fx-limits");
-    store.sessionLimits = limEl ? String(limEl.value || "").trim().slice(0, 600) : "";
   } else if (key === "injuries") {
     var injEl = document.getElementById("pprog-fx-injuries");
     store.injuries = injEl ? String(injEl.value || "").trim().slice(0, 800) : "";
@@ -3920,6 +3932,8 @@ function pprogBuildFixedIntakePrompt(store) {
     "",
     "WEEKLY SCHEDULE:",
     "Training days: " + (dayLabels || "unknown"),
+    /* How long a session is, asked in the same step as when they train (2026-09-02). */
+    "Session length: " + (s.sessionMinutes ? s.sessionMinutes + " minutes" : "unknown"),
     "Notes: " + (s.scheduleNotes || "none"),
     "",
     "ACTIVE RECOVERY:",
@@ -3937,7 +3951,7 @@ function pprogBuildFixedIntakePrompt(store) {
     skillLabels.length ? skillLabels.join(", ") : "None marked — scale gymnastics as needed",
     "",
     "SESSION / SCHEDULE LIMITS:",
-    s.sessionLimits || "none",
+    s.sessionLimits || (s.sessionMinutes ? s.sessionMinutes + " minutes per session" : "none"),
     "",
     "INJURIES / LIMITATIONS:",
     s.injuries || "none",
@@ -3967,6 +3981,7 @@ function pprogFinishFixedIntake(store) {
     "Age: " + (s.age || "unknown"),
     "Bodyweight: " + (s.bodyweight || "unknown") + " kg",
     "Experience: " + (s.experience || "unknown"),
+    "Session length: " + (s.sessionMinutes ? s.sessionMinutes + " min" : "unknown"),
     "Session limits: " + (s.sessionLimits || "none"),
     "Injuries/limitations: " + (s.injuries || "none"),
     "Goals: " + (s.goals || "unknown"),
@@ -8660,6 +8675,9 @@ function pprogMaybePullPushUpgradeOffer() {
  * to one call per 20s, so these extra triggers are close to free. */
 function pprogPullAdminChangesOnResume() {
   try {
+    /* 21.7: the coach left the app, so there is no plan here to keep current.
+       Client programs are delivered by client.html, which pulls for itself. */
+    if (!PPROG_TAB_ENABLED) return;
     if (document.visibilityState === "hidden") return;
     var store = loadPprogStore();
     if (!store || !store.intakeComplete) return;
@@ -11244,6 +11262,10 @@ function retryPprogFillFailures() {
 }
 
 function initPprogUi() {
+  /* The one gate that matters. Everything below touches the coach pane, and the
+     pane is gone in 21.7 — so this must return before any of it runs, whether or
+     not each individual function happens to guard its own lookups. */
+  if (!PPROG_TAB_ENABLED) return;
   if (maybeResetPprogFromQuery()) return;
   try {
     pprogEnforceOneSittingIntake();
@@ -13003,6 +13025,7 @@ function convertUnits(text) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
+  try { dwCheckMinimumVersion(); } catch (eVer) {}
   ["touchstart","pointerdown","click","keydown"].forEach(function(evt) {
     document.addEventListener(evt, timerAudioUnlock, { passive: true });
   });
@@ -14640,14 +14663,14 @@ function showTab(name) {
   if (name === "pprog" && !PPROG_TAB_ENABLED) {
     name = "browse";
   }
-  var tabs = ["pprog", "browse", "workout", "sources", "about"];
+  var tabs = ["browse", "workout", "sources", "about"];
   for (var i = 0; i < tabs.length; i++) {
     var id = tabs[i];
     var btn = document.getElementById("tab-" + id);
     var pane = document.getElementById(id + "-tab");
     var active = id === name;
     if (btn) {
-      var tabExtra = id === "pprog" ? " tab-pprog-wrap" : id === "workout" ? " tab-wtools-wrap" : "";
+      var tabExtra = id === "workout" ? " tab-wtools-wrap" : "";
       btn.className = "tab-btn" + tabExtra + (active ? " active" : "");
       if (id === "pprog" && !PPROG_TAB_ENABLED) {
         btn.hidden = true;
@@ -15107,37 +15130,22 @@ function initTimerColorBuckets() {
   } catch (e) {}
 })();
 </script>
-<!-- Default landing: Personal Coach. Deep-link ?tab=browse|workout|… still honored. -->
+<!-- Default landing: the workout aggregator (21.7). An old ?tab=pprog link is accepted
+     and redirected by showTab rather than dead-ending. -->
 <script>
 (function () {
   try {
     var q = new URLSearchParams(window.location.search || "");
     var tab = q.get("tab");
-    var allowed = { pprog: 1, browse: 1, workout: 1, sources: 1, about: 1 };
+    var allowed = { pprog: 1, browse: 1, workout: 1, sources: 1, about: 1 }; /* pprog kept on purpose: an old shared link must redirect, not dead-end (checklist g.3) */
     if (!tab || !allowed[tab]) {
       tab = typeof PPROG_TAB_ENABLED !== "undefined" && PPROG_TAB_ENABLED ? "pprog" : "browse";
     }
     if (typeof showTab === "function") {
+      /* showTab redirects "pprog" to "browse" internally, but the local `tab` here
+         stays "pprog" — so the coach follow-up that used to live below would still
+         have fired against a pane deleted in 21.7. Removed rather than guarded. */
       showTab(tab);
-      if (tab === "pprog") {
-        if (q.get("intake_reset") === "1") {
-          try {
-            if (typeof syncPprogModeUi === "function") syncPprogModeUi();
-            if (typeof renderPprogChat === "function") renderPprogChat();
-            if (typeof syncPprogStartBtn === "function") syncPprogStartBtn();
-          } catch (e2) {}
-        } else if (q.get("handoff") === "1") {
-          /* Admin one-time link: Terms on this device BEFORE plan UI. */
-          try {
-            if (typeof syncPprogModeUi === "function") syncPprogModeUi();
-          } catch (eHandoff) {}
-        } else if (typeof renderPprogWeek === "function") {
-          try {
-            if (typeof syncPprogModeUi === "function") syncPprogModeUi();
-            else renderPprogWeek();
-          } catch (e1) {}
-        }
-      }
     }
   } catch (e) {}
 })();

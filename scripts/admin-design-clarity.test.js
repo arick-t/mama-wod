@@ -42,7 +42,92 @@ assert.ok(
   index.includes("<title>DUCK-WOD · v" + VERSION + "</title>"),
   "app <title> version must match VERSION (" + VERSION + ")"
 );
-assert.ok(/DUCK-WOD Admin · 3\.0\.2/.test(admin), "admin UI version 3.0.2");
+assert.ok(/DUCK-WOD Admin · 4\.0/.test(admin), "admin UI version 4.0");
 assert.ok(!/1\.0 beta/.test(admin), "admin no longer shows 1.0 beta");
+
+/* ------------------------------------------------------------------------
+ * The header, as the owner specified it on 2026-09-01.
+ *
+ * He read the live header out loud and named what survives: the logo, the versions,
+ * how many athletes, the credit estimate, and "+ לקוח". Everything else was a control
+ * he does not use — and the learning ground was a feature he decided will not become
+ * useful, so it is switched off at the source rather than left as a switch nobody
+ * touches.
+ * --------------------------------------------------------------------- */
+assert.ok(/class="logo">DUCK-WOD</.test(admin), "the logo stays");
+assert.ok(/id="admin-ver-badge"/.test(admin), "the versions stay");
+assert.ok(/id="athlete-count"/.test(admin), "the athlete count stays");
+assert.ok(/id="btn-credit-estimate"/.test(admin), "the credit estimate stays");
+assert.ok(/id="btn-add-athlete"/.test(admin), "adding a client stays");
+/* There is ONE admin module — the owner has said so several times, most plainly on
+   2026-09-01: "אין מודול לקוחות, אין חיה כזאת". A header button announcing another
+   module was the last place that claim survived. The STRIP is the navigation now: it
+   carries every client he manages, and clicking one opens them wherever he is. */
+assert.ok(!/id="btn-client-programs"/.test(admin), "no link to a second 'module'");
+assert.ok(/lib\/admin-people-strip\.js/.test(admin), "the strip is built by the shared builder");
+assert.ok(/function renderPeopleStrip/.test(admin), "admin draws the unified strip");
+/* The programmes are loaded by the client screen itself, which lives in this file now
+   and hands its rows back through adminOnClientRows. One fetch, one owner. */
+assert.ok(/window\.adminOnClientRows/.test(admin), "the screen hands its rows to the strip");
+assert.ok(/window\.ClientScreen\.open\(id\)/.test(admin), "a programme chip opens in place");
+assert.ok(!/location\.href = pagesAbsoluteUrl\("\/admin-clients/.test(admin), "and never travels to another page");
+
+assert.ok(!/<span class="tagline">Admin<\/span>/.test(admin), "the word Admin beside the logo is gone");
+assert.ok(!/id="btn-sync-drive"/.test(admin), "the drive-sync button is gone");
+assert.ok(!/onclick="refreshAdmin\(\)"/.test(admin), "the refresh button is gone");
+assert.ok(!/onclick="adminLogout\(\)"/.test(admin), "the logout button is gone");
+
+/* The learning ground: switch, banner, and every function that could turn it on. */
+assert.ok(!/id="learn-toggle"/.test(admin), "the learning toggle is gone");
+assert.ok(!/id="learn-banner"/.test(admin), "its banner is gone");
+assert.ok(!/function toggleLearningMode/.test(admin), "nothing can turn it on any more");
+assert.ok(!/dw_admin_learning_mode/.test(admin), "it is not remembered between visits");
+assert.ok(!/מגרש לימוד/.test(admin), "the note box has one wording");
+
+/* What was deliberately NOT deleted, so a later reader knows it was a decision:
+   the weekly Drive digest (the button went, not the capability) and the sandbox
+   endpoint, which belongs to the coach-brain work running separately. */
+assert.ok(fs.existsSync(path.join(__dirname, "..", "scripts", "coach-weekly-patterns-digest.js")), "the drive sync capability itself is untouched");
+
+/* ------------------------------------------------------------------------
+ * THE APPROVED LOOK IS NOT NEGOTIABLE, AND A SELECTOR CAN BREAK IT SILENTLY.
+ *
+ * The client screen arrived from a page that styled bare elements — button, input,
+ * textarea, select, h2, p. Harmless while it had a page of its own. Scoped under
+ * #clientScreen those became stronger than every class in the page (an id plus an
+ * element outranks a class), so they painted the brick view's calendar cells, the
+ * pencil, the delete link and the weekday rail solid brand orange. Nothing had been
+ * redesigned; one selector had.
+ *
+ * The owner's rule, 2026-09-02: "יש לנו קו עיצובי שהוא גם פונקציונאלי והוא אושר — אתה
+ * צריך לשמור עליו". This is that rule, mechanically: no bare-element selector may live
+ * under #clientScreen, ever.
+ * --------------------------------------------------------------------- */
+const bareUnderScreen = (admin.match(/#clientScreen (?:button|input|textarea|select|h2|p|a|div|span|label)[\s{,:]/g) || [])
+  .filter(function (hit) {
+    /* A descendant selector is fine — "#clientScreen .card button" is scoped by the
+       class in front of it. What is not fine is the element sitting directly under the
+       id with nothing to narrow it. */
+    return /#clientScreen (?:button|input|textarea|select|h2|p|a|div|span|label)[{,]/.test(hit);
+  });
+assert.ok(
+  bareUnderScreen.length === 0,
+  "no bare-element rule under #clientScreen — it would outrank the approved classes: " + bareUnderScreen.join(" ")
+);
+
+/* The screen's own plain controls still have to look like something, so the rule that
+   used to be bare is now explicit about what it reaches. */
+assert.ok(
+  /#clientScreen button:not\(\[class\]\),/.test(admin),
+  "the screen's plain buttons are styled by an opt-in selector"
+);
+
+/* And the parts of the approved look that were destroyed must still be reachable:
+   the calendar cell, the day card, the athlete card and its controls. */
+["\\.pprog-cal-cell\\{", "\\.pprog-day-card", "\\.ath-card\\{", "\\.ath-stats-btn\\{", "\\.btn-delete-link\\{"].forEach(
+  function (needle) {
+    assert.ok(new RegExp(needle).test(admin), "the approved look still defines " + needle);
+  }
+);
 
 console.log("admin-design-clarity.test.js: ok");

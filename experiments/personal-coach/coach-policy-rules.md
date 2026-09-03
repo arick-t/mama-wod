@@ -320,6 +320,21 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - **Updated:** 2026-08-11 — lift kg ≠ barbell/rings permission; weekly lunge+wall coverage; anti pattern-dominance
 - **Updated:** 2026-08-12 — replace movement-specific anti-spam wording with generic CF pattern balance (no per-movement bans)
 
+### POL-029 — Client programs: written by a human, delivered by link, no AI on the client side
+- **Type:** HARD
+- **Scope:** the client-view product — `api/client-program.js`, `client.html`, `admin-clients.html`, `lib/client-program-store.js`, `lib/client-access.js`, `lib/client-view-payload.js`, `lib/client-terms.js`
+- **Trigger:** any work on programs delivered to a paying client (a coach, academy, studio or gym)
+- **Required behavior:**
+  1. **The owner writes the programming.** The system provides the container and the editor and **never generates content** for a client program. Creating a client yields an empty skeleton.
+  2. **No AI surface on the client side, as a property of the code.** No module in this product may hold a route to a provider. Hiding a control is not turning a thing off — `/api/generate-workout` was UI-hidden for three releases while still answering the internet.
+  3. **The Blob is the source of truth**, not the device. Every write carries a version checked inside a lock; a stale write is **refused** and handed the live copy. Blob has no conditional write, so this is the only thing standing between two editors and a silently lost change.
+  4. **Everything crossing to a client is an allowlist.** Payment terms and the owner's unread queue never travel. A denylist is the wrong default for a surface answering a non-admin party.
+  5. **The client owns their content.** A coach may edit freely and their edit is **live immediately** — no approval gate. They bear professional responsibility for what they deliver (see the B2B terms), and a gate would put the owner back in that chain.
+  6. **The owner is told, not asked.** An unread flag is **state, not a count** — five saves to one day are one flag. One email per changed workout, then quiet on that workout.
+  7. **Access is identity, not a link.** A single-use code the owner issues personally; device tokens and codes stored only as salted hashes; a device cap; the terms signature recorded against the **account** so a coach with a phone and a laptop signs once.
+- **Forbidden:** generating or revising client training content; any provider call from this product; a client-facing payload built by deletion; an approval gate on the client's own edits; storing a code or token in the clear.
+- **Added:** 2026-08-31 — owner: "אני אבנה את התוכנית... אנחנו בונים פה את השלד"
+
 ### POL-028 — Athlete span of control: today's session only
 - **Type:** HARD
 - **Scope:** every athlete-originated request to `/api/personal-coach` after intake completes

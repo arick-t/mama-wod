@@ -91,6 +91,32 @@
       skills: {},
       lifts: {},
       sessionLimits: "",
+      /* Minutes per session. 0 = not answered. */
+      sessionMinutes: 0,
+      sessionTimesDiffer: false,
+      competitor: false,
+      /* What this athlete pays. Asked here for the same reason a studio is asked in
+         its first tab: it is the owner's record of the client, and it never reaches
+         the athlete (owner, 2026-09-03). */
+      trainsMultipleLocations: false,
+      secondaryLocationDays: [],
+      secondaryLocationEquipment: "",
+      secondaryHeaviestImplementKg: 0,
+      sessionMinutesByDay: {},
+      deloadEveryWeeks: 4,
+      monthlyAmount: 0,
+      paymentMethod: "",
+      /* What this athlete pays. Asked here for the same reason a studio is asked in
+         its first tab: it is the owner's record of the client, and it never reaches
+         the athlete (owner, 2026-09-03). */
+      monthlyAmount: 0,
+      paymentMethod: "",
+      improveFocus: {},
+      improveFocusOther: "",
+      avoidMovements: {},
+      avoidMovementsOther: "",
+      heaviestImplementKg: 0,
+      avoidInProgram: "",
       injuries: "",
       goals: "",
       fixedIntakePacket: "",
@@ -119,8 +145,10 @@
     var log = document.getElementById("intake-chat-log");
     if (log) {
       log.style.display = "flex";
-      log.innerHTML =
-        '<div class="intake-msg system">אותו תחקור כמו באפליקציה (9 שלבים קבועים) → לבנה אמיתית → לינק מסירה. לחץ ״התחל תחקור״.</div>';
+      /* No "press start" instruction: choosing "מתאמן קצה" already IS that decision
+         and startIntakeChat runs straight after this. The line only ever showed when
+         the start had FAILED — so word it as what it is. */
+      log.innerHTML = '<div class="intake-msg system">פותח תחקור…</div>';
     }
     var compose = document.getElementById("intake-compose");
     if (compose) compose.style.display = "none";
@@ -141,25 +169,53 @@
   window.closeIntakeWorkspace = function closeIntakeWorkspace() {
     if (intakeState.busy) {
       if (!confirm("תחקור בתהליך — לסגור בכל זאת?")) return;
+    } else if (intakeState.fixedActive && !intakeState.intakeComplete) {
+      /* Everything typed goes with it, so it is worth one question. A click beside the
+         box used to do this silently (owner, 2026-09-03). */
+      if (!confirm("לצאת מהתחקור? מה שהוקלד יימחק.")) return;
     }
     setIntakeModalOpen(false);
     resetIntakeState();
     refreshFabVisibility();
   };
 
+  /** Set style/text only when the node is really there. */
+  function hideEl(id) {
+    var n = document.getElementById(id);
+    if (n) n.style.display = "none";
+  }
+
+  /* Every status write goes through here. The unguarded reads this replaces had the
+     same shape as the bug that killed the intake: one removed field away from a hard
+     throw, in the one file whose job is to stay standing while a form is filled. */
+  function writeIntakeStatus(text) {
+    var n = document.getElementById("intake-status");
+    if (n) n.textContent = String(text == null ? "" : text);
+  }
+
   window.startIntakeChat = function startFixedIntake() {
     if (intakeState.busy) return;
     setIntakeModalOpen(true);
-    intakeState.email = (document.getElementById("intake-email").value || "").trim();
+    /* The email field was REMOVED on the owner's instruction (a.3.1) — he reaches
+     * clients over WhatsApp and wanted less responsibility for their data. This line
+     * still read it unguarded, so every click on "מתאמן קצה" threw
+     *   Cannot read properties of null (reading 'value')
+     * before the intake could start. Nothing downstream needs a real address, so the
+     * value is simply empty now, and every other node here is guarded too — this
+     * function must not be one deleted field away from a dead button again. */
+    intakeState.email = "";
     intakeState.started = true;
     intakeState.fixedActive = true;
     intakeState.fixedStep = 0;
     intakeState.preferredLanguage = "en";
-    document.getElementById("intake-start-bar").style.display = "none";
-    document.getElementById("intake-chat-log").style.display = "none";
-    document.getElementById("intake-compose").style.display = "none";
+    hideEl("intake-start-bar");
+    hideEl("intake-chat-log");
+    hideEl("intake-compose");
     if (typeof hideIntakePickers === "function") hideIntakePickers();
-    document.getElementById("intake-status").textContent = "תחקור זהה לאפליקציה · שלב 1/" + C().FIXED_STEPS.length;
+    var status = document.getElementById("intake-status");
+    if (status) {
+      status.textContent = "תחקור זהה לאפליקציה · שלב 1/" + C().FIXED_STEPS.length;
+    }
     syncAdminFixedIntakeUi();
   };
 
@@ -234,12 +290,25 @@
         }
         html += "</div>";
       }
+      /* Money sits with the profile, where a studio's does - and it stays with the
+         owner: nothing here ever reaches the athlete (owner, 2026-09-03). */
+      html +=
+        '<div class="pprog-profile-row"><label for="adm-fx-amount">Monthly amount (ILS)</label>' +
+        '<input id="adm-fx-amount" type="number" min="0" max="99999" inputmode="numeric" value="' +
+        esc(parseInt(st.monthlyAmount, 10) > 0 ? parseInt(st.monthlyAmount, 10) : "") +
+        '" placeholder="e.g. 900"></div>' +
+        '<div class="pprog-profile-row"><label for="adm-fx-paymethod">Payment method</label>' +
+        '<input id="adm-fx-paymethod" type="text" maxlength="200" value="' +
+        esc(st.paymentMethod || "") +
+        '" placeholder="Bit, 1st of the month"></div>';
     } else if (key === "setup") {
       var locs = st.trainingLocations || {};
       var otherOn = !!locs.other_home;
       html +=
         '<p class="pprog-fixed-title">Where do you usually train?</p>' +
-        '<p class="pprog-fixed-note">Select all that apply (some athletes train in more than one place).</p>' +
+        /* One or the other. Both ticked described nobody, and the coach would have been
+           told two contradictory things about the same athlete (owner, 2026-09-02). */
+        '<p class="pprog-fixed-note">Pick the one that fits.</p>' +
         '<div class="pprog-location-picker">';
       for (var li = 0; li < S.LOCATION_DEFS.length; li++) {
         var loc = S.LOCATION_DEFS[li];
@@ -248,7 +317,7 @@
           esc(loc.id) +
           '"' +
           (locs[loc.id] ? " checked" : "") +
-          (loc.needsDetail ? ' onchange="adminFixedLocationOtherToggle()"' : "") +
+          ' onchange="adminFixedLocationPicked(this)"' +
           "> " +
           esc(loc.label) +
           "</label>";
@@ -258,7 +327,41 @@
         (otherOn ? "" : " hidden") +
         '><textarea id="adm-fx-location-other" maxlength="500" placeholder="Please specify your setup (e.g. garage, dumbbells only, no rower…)">' +
         esc(st.trainingLocationOther || "") +
-        "</textarea></div></div>";
+        "</textarea>" +
+        /* Equipment limits the LOAD, not the movement - a back squat with dumbbells is
+           still a back squat. But that rule cannot be applied without knowing how heavy
+           the room actually gets, and "limited equipment" carries no number, so the
+           coach was guessing weight (coach agent, 2026-09-02). */
+        '<div class="pprog-fixed-row" style="margin-top:10px">' +
+        '<label class="pprog-fixed-inline" for="adm-fx-heaviest">Heaviest implement you have (kg)</label>' +
+        '<input id="adm-fx-heaviest" type="number" min="1" max="300" class="pprog-fixed-num" value="' +
+        esc(parseInt(st.heaviestImplementKg, 10) > 0 ? parseInt(st.heaviestImplementKg, 10) : "") +
+        '" placeholder="-">' +
+        "</div></div></div>" +
+        /* One athlete, two settings. A box on weekdays and a garage on Saturday was being
+           described as "limited equipment", which threw away four maxima in kilograms and
+           then forbade kilograms underneath them (coach agent, 2026-09-03). */
+        '<label class="pprog-fixed-inline" style="margin-top:14px">' +
+        '<input type="checkbox" id="adm-fx-multiplace"' +
+        (st.trainsMultipleLocations === true ? " checked" : "") +
+        ' onchange="adminFixedMultiPlaceChanged()"> I train in more than one place</label>' +
+        '<div id="adm-fx-second-wrap"' + (st.trainsMultipleLocations === true ? "" : " hidden") + ">" +
+        '<p class="pprog-fixed-note" style="margin-top:10px">Which days are you in the OTHER place?</p>' +
+        '<div class="pprog-fixed-days">' +
+        S.DAY_KEYS.map(function (dk) {
+          return '<label><input type="checkbox" data-fx-second-day="' + esc(dk) + '"' +
+            ((st.secondaryLocationDays || []).indexOf(dk) >= 0 ? " checked" : "") +
+            "> " + esc(S.DAY_LABELS[dk] || dk) + "</label>";
+        }).join("") +
+        "</div>" +
+        '<textarea id="adm-fx-second-kit" maxlength="600" placeholder="What do you have there? e.g. kettlebell 24/32, dumbbells 15+22.5, box, rig, 10kg wall ball">' +
+        esc(st.secondaryLocationEquipment || "") +
+        "</textarea>" +
+        '<div class="pprog-fixed-row">' +
+        '<label class="pprog-fixed-inline" for="adm-fx-second-heaviest">Heaviest implement there (kg)</label>' +
+        '<input id="adm-fx-second-heaviest" type="number" min="1" max="300" class="pprog-fixed-num" value="' +
+        esc(parseInt(st.secondaryHeaviestImplementKg, 10) > 0 ? parseInt(st.secondaryHeaviestImplementKg, 10) : "") +
+        '" placeholder="-"></div></div>';
     } else if (key === "schedule") {
       var days = Array.isArray(st.trainingDays) ? st.trainingDays : [];
       html +=
@@ -276,8 +379,62 @@
           esc(S.DAY_LABELS[dk] || dk) +
           "</label>";
       }
+      var mins = parseInt(st.sessionMinutes, 10);
+      var differs = st.sessionTimesDiffer === true || !!String(st.sessionLimits || "").trim();
       html +=
-        '</div><textarea id="adm-fx-schedule-notes" maxlength="500" placeholder="Optional: e.g. rest Thu+Sun, sessions ~60 min">' +
+        "</div>" +
+        /* The length of a session, as a number — the same question a studio answers,
+           asked the same way (owner, 2026-09-02). */
+        '<div class="pprog-fixed-row">' +
+        /* Hidden the moment he says the days differ: one number and "they are all
+           different" cannot both be the answer, and showing both invites him to
+           believe the number still means something (owner, 2026-09-02). */
+        '<span class="pprog-fixed-len" id="adm-fx-len-wrap"' + (differs ? ' hidden' : "") + ">" +
+        '<label class="pprog-fixed-inline" for="adm-fx-minutes">Session length (minutes)</label>' +
+        '<input id="adm-fx-minutes" type="number" min="20" max="120" class="pprog-fixed-num" value="' +
+        esc(mins > 0 ? mins : "") +
+        '" placeholder="—">' +
+        "</span>" +
+        '<label class="pprog-fixed-inline"><input type="checkbox" id="adm-fx-times-differ"' +
+        (differs ? " checked" : "") +
+        ' onchange="adminFixedToggleTimes()"> Different times on different days</label>' +
+        "</div>" +
+        /* Only when a single number cannot say it: "45 minutes, but Friday can be an
+           hour and a half". */
+        '<textarea id="adm-fx-limits" maxlength="600" placeholder="e.g. 45 min most days, Friday can be 90"' +
+        (differs ? "" : " hidden") +
+        ">" +
+        esc(st.sessionLimits || "") +
+        "</textarea>" +
+        /* One number per training day, and only when he says they differ - prefilled
+           with the main number so he changes the one day that is different. A note in a
+           free box ("weekends can reach 60") survived as prose and the coach flattened the
+           week to 45 (coach agent, 2026-09-03). */
+        '<div id="adm-fx-perday-wrap"' + (differs ? "" : " hidden") + ">" +
+        '<p class="pprog-fixed-note" style="margin-top:4px">How long is each day?</p>' +
+        '<div class="pprog-fixed-days">' +
+        days
+          .map(function (dk) {
+            var byDay = st.sessionMinutesByDay || {};
+            var val = parseInt(byDay[dk], 10) > 0 ? parseInt(byDay[dk], 10) : mins > 0 ? mins : "";
+            return '<label><span>' + esc(S.DAY_LABELS[dk] || dk) + "</span>" +
+              '<input type="number" min="20" max="180" class="pprog-fixed-num" data-fx-day-mins="' +
+              esc(dk) + '" value="' + esc(val) + '"></label>';
+          })
+          .join("") +
+        "</div></div>" +
+        /* The individual chooses their own down week. Until this question existed every
+           packet said "no deload week falls inside this block" - months of building with
+           no rest (coach agent + owner, 2026-09-03). */
+        '<div class="pprog-fixed-row">' +
+        '<label class="pprog-fixed-inline" for="adm-fx-deload">Deload week every … weeks</label>' +
+        '<input id="adm-fx-deload" type="number" min="3" max="12" class="pprog-fixed-num" value="' +
+        esc(parseInt(st.deloadEveryWeeks, 10) > 0 ? parseInt(st.deloadEveryWeeks, 10) : "") +
+        '" placeholder="4">' +
+        '<label class="pprog-fixed-inline"><input type="checkbox" id="adm-fx-nodeload"' +
+        (parseInt(st.deloadEveryWeeks, 10) > 0 ? "" : " checked") +
+        "> No deload</label></div>" +
+        '<textarea id="adm-fx-schedule-notes" maxlength="500" placeholder="Optional: e.g. rest Thu+Sun">' +
         esc(st.scheduleNotes || "") +
         "</textarea>";
     } else if (key === "recovery") {
@@ -322,6 +479,7 @@
       html +=
         '<p class="pprog-fixed-title">Skills</p>' +
         '<p class="pprog-skills-picker-note">Mark skills you control. Unmarked = scale. Missing/partial skills can be noted in Goals or Injuries.</p>' +
+        '<p class="pprog-skills-picker-note"><strong>Mark at least one</strong> — or tick <strong>All skills</strong>. A plan cannot be scaled to someone whose skills are unknown.</p>' +
         '<div class="pprog-skills-picker">';
       for (var si = 0; si < S.SKILL_DEFS.length; si++) {
         var sd = S.SKILL_DEFS[si];
@@ -340,13 +498,6 @@
           "</span></label>";
       }
       html += "</div>";
-    } else if (key === "limits") {
-      html +=
-        '<p class="pprog-fixed-title">Scheduling limits</p>' +
-        '<p class="pprog-fixed-note">Session time cap or other schedule constraints. Blank = none.</p>' +
-        '<textarea id="adm-fx-limits" maxlength="600" placeholder="e.g. Max 50 minutes per session">' +
-        esc(st.sessionLimits || "") +
-        "</textarea>";
     } else if (key === "injuries") {
       var noInj =
         /^no injuries\.?$/i.test(String(st.injuries || "").trim()) ||
@@ -362,12 +513,58 @@
         '" onclick="adminFixedFillNoInjuries()">No injuries</button></div>' +
         '<textarea id="adm-fx-injuries" maxlength="800" placeholder="e.g. Left knee — avoid deep squats under fatigue" oninput="adminFixedInjuriesInput()">' +
         esc(st.injuries || "") +
+        "</textarea>" +
+        /* The athlete writes a diagnosis in the box above and the coach is forbidden to
+           reason from it - so the question it MAY act on is asked separately, as marks.
+           Seven families, mapped one-to-one onto the coach substitution matrix
+           (coach agent, 2026-09-02). */
+        '<p class="pprog-fixed-title" style="margin-top:14px">Movements to avoid or limit</p>' +
+        '<div class="pprog-skills-picker">' +
+        S.AVOID_MOVEMENT_DEFS.map(function (d) {
+          return '<label><input type="checkbox" data-avoid-id="' + esc(d.id) + '"' +
+            ((st.avoidMovements || {})[d.id] === true ? " checked" : "") +
+            "><span>" + esc(d.label) + "</span></label>";
+        }).join("") +
+        "</div>" +
+        '<textarea id="adm-fx-avoid-other" maxlength="200" placeholder="Anything else to program around">' +
+        esc(st.avoidMovementsOther || "") +
         "</textarea>";
     } else if (key === "goals") {
       html +=
         '<p class="pprog-fixed-title">Goals</p>' +
         '<textarea id="adm-fx-goals" maxlength="800" placeholder="e.g. Engine + Olympic lift consistency">' +
         esc(st.goals || "") +
+        "</textarea>" +
+        /* Competing changes what a block is for — peaking, testing, and how heavy a
+           week may get. The coach is told in as many words (owner, 2026-09-02). */
+        '<label class="pprog-fixed-inline" style="margin-top:12px">' +
+        '<input type="checkbox" id="adm-fx-competitor"' +
+        (st.competitor === true ? " checked" : "") +
+        ' onchange="adminFixedCompetitorChanged()"> I am training for a competition / actively competing</label>' +
+        /* "I want to get stronger" in free text reached the coach as nothing at all -
+           not for want of intention, but because no word in it was one the router knew.
+           The free text stays; these anchor it (coach agent, 2026-09-02). */
+        /* Only a competitor is asked where the dedicated time goes. The owner's call
+           (2026-09-03): for someone training for general fitness the answer is the
+           balance itself, and asking invites an answer that narrows a plan nobody wanted
+           narrowed. The packet still carries the line in both directions. */
+        '<div id="adm-fx-improve-wrap"' + (st.competitor === true ? "" : " hidden") + ">" +
+        '<p class="pprog-fixed-title" style="margin-top:16px">What do you want to improve?</p>' +
+        '<div class="pprog-skills-picker">' +
+        S.IMPROVE_FOCUS_DEFS.map(function (d) {
+          return '<label><input type="checkbox" data-improve-id="' + esc(d.id) + '"' +
+            ((st.improveFocus || {})[d.id] === true ? " checked" : "") +
+            "><span>" + esc(d.label) + "</span></label>";
+        }).join("") +
+        "</div>" +
+        '<input id="adm-fx-improve-other" type="text" maxlength="200" placeholder="Which skill?" value="' +
+        esc(st.improveFocusOther || "") + '"></div>' +
+        /* Three edits of the same kind is what POL-005 needs before it learns a
+           preference, and every edit is a paid call. One box here saves three months
+           of them (coach agent, 2026-09-02). */
+        '<p class="pprog-fixed-title" style="margin-top:16px">Anything you do NOT want to see in the plan?</p>' +
+        '<textarea id="adm-fx-avoid-program" maxlength="400" placeholder="e.g. no burpees, no running on concrete">' +
+        esc(st.avoidInProgram || "") +
         "</textarea>";
     }
 
@@ -388,12 +585,14 @@
     el.setAttribute("lang", "en");
     el.setAttribute("dir", "ltr");
     el.innerHTML = renderStep(intakeState.fixedStep | 0);
-    S.bindIntakeNumericKeyboards(el);
-    document.getElementById("intake-status").textContent =
-      "תחקור זהה לאפליקציה · שלב " +
+    /* S is a local alias for the shared contract inside renderStep — it never existed
+       here, so every render threw "S is not defined" and the intake could not start
+       (owner, 2026-09-02). */
+    C().bindIntakeNumericKeyboards(el);
+    writeIntakeStatus("תחקור זהה לאפליקציה · שלב " +
       ((intakeState.fixedStep | 0) + 1) +
       "/" +
-      C().FIXED_STEPS.length;
+      C().FIXED_STEPS.length);
   };
 
   window.adminFixedSkillAllChange = function adminFixedSkillAllChange(inp) {
@@ -435,6 +634,36 @@
     btn.setAttribute("aria-pressed", on ? "true" : "false");
   }
 
+  /* Ticking "different times" is what makes the free text exist. Untick and it goes
+     away rather than sitting there as an answer nobody meant to give. */
+  function adminFixedToggleTimes() {
+    var box = document.getElementById("adm-fx-times-differ");
+    var text = document.getElementById("adm-fx-limits");
+    if (!box || !text) return;
+    text.hidden = !box.checked;
+    /* The single number goes away with it — see the comment where it is rendered. */
+    var lenWrap = document.getElementById("adm-fx-len-wrap");
+    if (lenWrap) lenWrap.hidden = !!box.checked;
+    /* And one number per day appears in its place. */
+    var perDay = document.getElementById("adm-fx-perday-wrap");
+    if (perDay) perDay.hidden = !box.checked;
+    if (box.checked) {
+      try { text.focus(); } catch (e) {}
+    }
+  }
+  if (typeof window !== "undefined") window.adminFixedToggleTimes = adminFixedToggleTimes;
+
+  /* Ticking "I compete" is what opens the improve list; unticking closes it and drops
+     what was marked, so a stale answer cannot travel with an athlete who is not
+     competing (owner, 2026-09-03). */
+  window.adminFixedCompetitorChanged = function () {
+    var box = document.getElementById("adm-fx-competitor");
+    var wrap = document.getElementById("adm-fx-improve-wrap");
+    if (!box || !wrap) return;
+    if (box.checked) wrap.removeAttribute("hidden");
+    else wrap.setAttribute("hidden", "");
+  };
+
   window.adminFixedFillNoInjuries = function () {
     var ta = document.getElementById("adm-fx-injuries");
     if (ta) ta.value = "No injuries";
@@ -453,6 +682,32 @@
     var yes = !!(prefEl && prefEl.value === "yes");
     wrap.style.display = yes ? "" : "none";
     wrap.setAttribute("aria-hidden", yes ? "false" : "true");
+  };
+
+  /**
+   * Ticking one place unticks the other.
+   *
+   * They are checkboxes rather than radios on purpose: he can leave both empty and the
+   * step will tell him to choose, which a radio group cannot do once touched.
+   */
+  /* The second place opens with the tick, and closes with it. */
+  window.adminFixedMultiPlaceChanged = function () {
+    var box = document.getElementById("adm-fx-multiplace");
+    var wrap = document.getElementById("adm-fx-second-wrap");
+    if (!box || !wrap) return;
+    if (box.checked) wrap.removeAttribute("hidden");
+    else wrap.setAttribute("hidden", "");
+  };
+
+  window.adminFixedLocationPicked = function (inp) {
+    var root = document.getElementById("intake-fixed");
+    if (root && inp && inp.checked) {
+      var all = root.querySelectorAll("input[data-fx-location]");
+      for (var i = 0; i < all.length; i++) {
+        if (all[i] !== inp) all[i].checked = false;
+      }
+    }
+    window.adminFixedLocationOtherToggle();
   };
 
   window.adminFixedLocationOtherToggle = function () {
@@ -492,6 +747,11 @@
         setFixedErr("Bodyweight should be between 35 and 200 kg.");
         return;
       }
+      var amountEl = document.getElementById("adm-fx-amount");
+      var methodEl = document.getElementById("adm-fx-paymethod");
+      var amountN = amountEl ? parseInt(amountEl.value, 10) : 0;
+      intakeState.monthlyAmount = amountN > 0 && amountN <= 99999 ? amountN : 0;
+      intakeState.paymentMethod = methodEl ? String(methodEl.value || "").trim().slice(0, 200) : "";
       intakeState.displayName = vals.display_name.slice(0, 80);
       intakeState.gender = vals.gender.slice(0, 16).toLowerCase();
       intakeState.preferredLanguage = "en";
@@ -524,6 +784,27 @@
       if (locations.other_home && otherDetail) parts.push("Other detail: " + otherDetail);
       intakeState.trainingLocations = locations;
       intakeState.trainingLocationOther = otherDetail;
+      /* A number only when there is a room to describe; a proper box has no ceiling
+         worth stating (coach agent, 2026-09-02). */
+      var heavyEl = document.getElementById("adm-fx-heaviest");
+      var heavyN = heavyEl ? parseInt(heavyEl.value, 10) : 0;
+      intakeState.heaviestImplementKg = heavyN >= 1 && heavyN <= 300 ? heavyN : 0;
+      var multiEl = document.getElementById("adm-fx-multiplace");
+      intakeState.trainsMultipleLocations = !!(multiEl && multiEl.checked);
+      var secondDays = [];
+      var secondBoxes = box.querySelectorAll("input[data-fx-second-day]");
+      for (var sd = 0; sd < secondBoxes.length; sd++) {
+        if (secondBoxes[sd].checked) secondDays.push(secondBoxes[sd].getAttribute("data-fx-second-day"));
+      }
+      var kitEl = document.getElementById("adm-fx-second-kit");
+      var secondHeavyEl = document.getElementById("adm-fx-second-heaviest");
+      var secondHeavyN = secondHeavyEl ? parseInt(secondHeavyEl.value, 10) : 0;
+      /* Nothing is kept from a second place he unticked. */
+      intakeState.secondaryLocationDays = intakeState.trainsMultipleLocations ? secondDays : [];
+      intakeState.secondaryLocationEquipment =
+        intakeState.trainsMultipleLocations && kitEl ? String(kitEl.value || "").trim().slice(0, 600) : "";
+      intakeState.secondaryHeaviestImplementKg =
+        intakeState.trainsMultipleLocations && secondHeavyN >= 1 && secondHeavyN <= 300 ? secondHeavyN : 0;
       intakeState.trainingSetup = parts.join(" · ").slice(0, 800);
     } else if (key === "schedule") {
       var days = [];
@@ -532,10 +813,45 @@
         if (dayCbs[d].checked) days.push(dayCbs[d].getAttribute("data-fx-day"));
       }
       var schEl = document.getElementById("adm-fx-schedule-notes");
+      var minEl = document.getElementById("adm-fx-minutes");
+      var diffEl = document.getElementById("adm-fx-times-differ");
+      var limEl = document.getElementById("adm-fx-limits");
       intakeState.trainingDays = days;
       intakeState.scheduleNotes = schEl ? String(schEl.value || "").trim().slice(0, 500) : "";
+      var minsIn = parseInt(minEl && minEl.value, 10);
+      intakeState.sessionTimesDiffer = !!(diffEl && diffEl.checked);
+      /* If the days differ there is no single length, so we keep none. */
+      intakeState.sessionMinutes =
+        !intakeState.sessionTimesDiffer && minsIn >= 20 && minsIn <= 120 ? minsIn : 0;
+      var byDay = {};
+      if (intakeState.sessionTimesDiffer) {
+        var dayMinBoxes = box.querySelectorAll("input[data-fx-day-mins]");
+        for (var dm = 0; dm < dayMinBoxes.length; dm++) {
+          var dmKey = dayMinBoxes[dm].getAttribute("data-fx-day-mins");
+          var dmVal = parseInt(dayMinBoxes[dm].value, 10);
+          if (days.indexOf(dmKey) >= 0 && dmVal >= 20 && dmVal <= 180) byDay[dmKey] = dmVal;
+        }
+      }
+      intakeState.sessionMinutesByDay = byDay;
+      var noDeloadEl = document.getElementById("adm-fx-nodeload");
+      var deloadEl = document.getElementById("adm-fx-deload");
+      var deloadN = deloadEl ? parseInt(deloadEl.value, 10) : 0;
+      /* "No deload" is an answer, not a missing one. */
+      intakeState.deloadEveryWeeks =
+        noDeloadEl && noDeloadEl.checked ? 0 : deloadN >= 3 && deloadN <= 12 ? deloadN : 4;
+      /* The free text is only kept while the tick box says the times differ — leftover
+         text under an unticked box is an answer nobody gave. */
+      intakeState.sessionLimits = intakeState.sessionTimesDiffer && limEl
+        ? String(limEl.value || "").trim().slice(0, 600)
+        : "";
       if (!days.length && !intakeState.scheduleNotes) {
         setFixedErr("Mark at least one training day, or add a short schedule note.");
+        return;
+      }
+      /* A session with no length is a guess with a stopwatch attached — the same rule
+         the studio intake follows. */
+      if (!intakeState.sessionMinutes && !intakeState.sessionLimits) {
+        setFixedErr("How long is a session? 20–120 minutes, or tick the box and describe it.");
         return;
       }
     } else if (key === "recovery") {
@@ -603,16 +919,49 @@
           if (!S.SKILL_DEFS[sk].allToggle) skills[S.SKILL_DEFS[sk].id] = true;
         }
       }
+      /* Walking past this step untouched used to be allowed, and it produced an
+         athlete whose whole skill profile was "nothing marked" — indistinguishable
+         from a beginner who controls nothing (owner, 2026-09-02). */
+      var markedAny = Object.keys(skills).some(function (k) { return skills[k] === true; });
+      if (!markedAny) {
+        setFixedErr("Mark at least one skill, or tick All skills.");
+        return;
+      }
       intakeState.skills = skills;
-    } else if (key === "limits") {
-      var limEl = document.getElementById("adm-fx-limits");
-      intakeState.sessionLimits = limEl ? String(limEl.value || "").trim().slice(0, 600) : "";
     } else if (key === "injuries") {
       var injEl = document.getElementById("adm-fx-injuries");
       intakeState.injuries = injEl ? String(injEl.value || "").trim().slice(0, 800) : "";
+      var avoidMap = {};
+      var avoidBoxes = box.querySelectorAll("input[data-avoid-id]");
+      for (var av = 0; av < avoidBoxes.length; av++) {
+        if (avoidBoxes[av].checked) avoidMap[avoidBoxes[av].getAttribute("data-avoid-id")] = true;
+      }
+      intakeState.avoidMovements = avoidMap;
+      var avoidOtherEl = document.getElementById("adm-fx-avoid-other");
+      intakeState.avoidMovementsOther = avoidOtherEl
+        ? String(avoidOtherEl.value || "").trim().slice(0, 200)
+        : "";
     } else if (key === "goals") {
       var goalEl = document.getElementById("adm-fx-goals");
+      var compEl = document.getElementById("adm-fx-competitor");
+      intakeState.competitor = !!(compEl && compEl.checked);
       intakeState.goals = goalEl ? String(goalEl.value || "").trim().slice(0, 800) : "";
+      var improveMap = {};
+      var improveBoxes = box.querySelectorAll("input[data-improve-id]");
+      for (var im = 0; im < improveBoxes.length; im++) {
+        if (improveBoxes[im].checked) improveMap[improveBoxes[im].getAttribute("data-improve-id")] = true;
+      }
+      /* Not a competitor means no focus was asked for, so none is carried. */
+      intakeState.improveFocus = intakeState.competitor === true ? improveMap : {};
+      var improveOtherEl = document.getElementById("adm-fx-improve-other");
+      intakeState.improveFocusOther =
+        intakeState.competitor === true && improveOtherEl
+          ? String(improveOtherEl.value || "").trim().slice(0, 200)
+          : "";
+      var avoidProgEl = document.getElementById("adm-fx-avoid-program");
+      intakeState.avoidInProgram = avoidProgEl
+        ? String(avoidProgEl.value || "").trim().slice(0, 400)
+        : "";
       if (!intakeState.goals) {
         setFixedErr("Add at least a short goal (or write unknown).");
         return;
@@ -639,9 +988,120 @@
     var log = document.getElementById("intake-chat-log");
     if (log) log.style.display = "none";
     if (errMsg) {
-      document.getElementById("intake-status").textContent = errMsg;
+      writeIntakeStatus(errMsg);
       setFixedErr(errMsg);
     }
+  }
+
+  /**
+   * OFF until production (owner, 2026-09-02).
+   *
+   * True means finishing the intake asks Gemini for a five-week block — real money, on
+   * every rehearsal. It also puts a plan in front of the athlete that the owner has not
+   * read, which is the opposite of the procedure he set: he writes, he approves, he
+   * sends. Turn this on when the product goes live, not before.
+   */
+  var ATHLETE_AI_BUILD_ENABLED = false;
+
+  /**
+   * The individual, created the same way a studio client is: an empty month shaped by
+   * the days they train, waiting for the owner to write it.
+   */
+  function createAthleteAsClient() {
+    var S = C();
+    var prof = S.normalizeIntakeProfile(Object.assign({}, intakeState, { intakeComplete: true }));
+    var dayMap = {};
+    (Array.isArray(intakeState.trainingDays) ? intakeState.trainingDays : []).forEach(function (d) {
+      dayMap[String(d)] = true;
+    });
+    setIntakeBusy(true);
+    showIntakeBuilding(true, "<strong>Coach</strong> — saving the athlete…");
+    writeIntakeStatus("שומר מתאמן…");
+    fetch(adminApiUrl("/api/client-program"), {
+      method: "POST",
+      headers: typeof adminAuthHeaders === "function" ? adminAuthHeaders() : { "Content-Type": "application/json" },
+      body: JSON.stringify(
+        typeof withAdminPassword === "function"
+          ? withAdminPassword(athleteCreateBody(prof, dayMap))
+          : athleteCreateBody(prof, dayMap)
+      ),
+    })
+      .then(function (r) { return r.json().then(function (j) { return { status: r.status, j: j }; }); })
+      .then(function (res) {
+        if (res.status === 401) {
+          restoreAdminFixedGoals("פג תוקף ההתחברות לאדמין — התחבר מחדש ואז נסה שוב.");
+          return;
+        }
+        if (res.status !== 200 || !res.j || !res.j.ok || !res.j.program) {
+          restoreAdminFixedGoals((res.j && res.j.error) || "לא הצלחתי לשמור את המתאמן.");
+          return;
+        }
+        intakeState.intakeComplete = true;
+        showIntakeBuilding(false);
+        setIntakeBusy(false);
+        if (typeof window.closeIntakeWorkspace === "function") window.closeIntakeWorkspace();
+        /* Straight to his card, where he writes the month and then issues the link. */
+        if (window.ClientScreen && window.ClientScreen.reload) {
+          window.ClientScreen.reload().then(function () {
+            window.ClientScreen.open(res.j.program.programId);
+          });
+        }
+      })
+      .catch(function (e) {
+        restoreAdminFixedGoals("שגיאת רשת בשמירת המתאמן: " + String((e && e.message) || e).slice(0, 160));
+      });
+  }
+
+  function athleteCreateBody(prof, dayMap) {
+    return {
+      action: "create",
+      clientKind: "athlete",
+      clientName: prof.displayName || "מתאמן",
+      monthlyAmount: intakeState.monthlyAmount || 0,
+      paymentMethod: intakeState.paymentMethod || "",
+      athleteIntake: {
+        displayName: prof.displayName || "",
+        gender: prof.gender || "",
+        age: intakeState.age || "",
+        bodyweight: intakeState.bodyweight || "",
+        experience: intakeState.experience || "",
+        trainingSetup: prof.trainingSetup || "",
+        /* The raw answers, not only the sentence built from them: the next block asks
+           these questions again, and reading them back out of prose is how it came to
+           show a well-equipped box to someone who had described a garage
+           (owner, 2026-09-03). */
+        trainingLocations: prof.trainingLocations || {},
+        trainingLocationOther: intakeState.trainingLocationOther || "",
+        trainingDays: prof.trainingDays || [],
+        scheduleNotes: prof.scheduleNotes || "",
+        trainingDaysMap: dayMap,
+        sessionMinutes: parseInt(intakeState.sessionMinutes, 10) || 0,
+        sessionTimesDiffer: intakeState.sessionTimesDiffer === true,
+        sessionLimits: intakeState.sessionLimits || "",
+        activeRecoveryPref: intakeState.activeRecoveryPref || "",
+        lifts: prof.lifts || {},
+        skills: prof.skills || {},
+        skillsSummary: prof.skillsSummary || "",
+        injuries: intakeState.injuries || "",
+        goals: intakeState.goals || "",
+        competitor: intakeState.competitor === true,
+        trainsMultipleLocations: prof.trainsMultipleLocations === true,
+        secondaryLocationDays: prof.secondaryLocationDays || [],
+        secondaryLocationEquipment: prof.secondaryLocationEquipment || "",
+        secondaryHeaviestImplementKg: prof.secondaryHeaviestImplementKg || 0,
+        sessionMinutesByDay: prof.sessionMinutesByDay || {},
+        deloadEveryWeeks: prof.deloadEveryWeeks || 0,
+        improveFocus: prof.improveFocus || {},
+        improveFocusOther: prof.improveFocusOther || "",
+        avoidMovements: prof.avoidMovements || {},
+        avoidMovementsOther: prof.avoidMovementsOther || "",
+        heaviestImplementKg: prof.heaviestImplementKg || 0,
+        avoidInProgram: prof.avoidInProgram || "",
+        /* The packet the coach will read on the day he is reconnected. */
+        fixedIntakePacket: String(prof.fixedIntakePacket || "").slice(0, 6000),
+        profileNotes: String(prof.profileNotes || "").slice(0, 2000),
+      },
+    };
   }
 
   function finishAdminFixedIntakeAndBuild() {
@@ -666,6 +1126,10 @@
       { role: "user", text: prompt },
     ];
     intakeState.buildAttempted = true;
+    if (!ATHLETE_AI_BUILD_ENABLED) {
+      createAthleteAsClient();
+      return;
+    }
     generateIntakeBlockFromFixedPacket();
   }
 
@@ -693,7 +1157,17 @@
     if (intakeState.busy && retryLeft == null) return;
     /* One automatic retry only for clear 5xx — never abort/timeout (duplicate Gemini). */
     if (retryLeft == null) retryLeft = 1;
-    if (typeof adminPw !== "undefined" && !String(adminPw || "").trim()) {
+    /* A session token IS being logged in. Asking for the password instead refused every
+       build after an ordinary login, and logging in again could not help — the login is
+       what clears the password (owner, 2026-09-02). */
+    var authed =
+      typeof adminIsAuthed === "function"
+        ? adminIsAuthed()
+        : !!(
+            (typeof adminSessionToken !== "undefined" && adminSessionToken) ||
+            (typeof adminPw !== "undefined" && String(adminPw || "").trim())
+          );
+    if (!authed) {
       restoreAdminFixedGoals(
         "פג תוקף ההתחברות לאדמין — צא מ+מתאמן, התחבר מחדש, ואז Build plan."
       );
@@ -705,8 +1179,7 @@
       true,
       "<strong>Coach</strong> is building your 5-week block…"
     );
-    document.getElementById("intake-status").textContent =
-      "בונה לבנה אמיתית (generate_block) · " + intakeState.athleteId + "…";
+    writeIntakeStatus("בונה לבנה אמיתית (generate_block) · " + intakeState.athleteId + "…");
 
     var profile = intakeAthleteProfile({ forceIntakeComplete: true });
     var payloadMsgs = [
@@ -766,7 +1239,7 @@
               : String((j && (j.message || j.error)) || (x.raw ? "bad response" : "empty response"));
           var retry5xx = retryLeft > 0 && x.status >= 500 && x.status < 600;
           if (retry5xx) {
-            document.getElementById("intake-status").textContent = "שגיאת שרת — מנסה פעם נוספת…";
+            writeIntakeStatus("שגיאת שרת — מנסה פעם נוספת…");
             setIntakeBusy(false);
             return generateIntakeBlockFromFixedPacket(retryLeft - 1);
           }
@@ -791,8 +1264,7 @@
         var aborted = /aborted|abort|timeout/i.test(msg);
         var network = /load failed|failed to fetch|networkerror/i.test(msg) && !aborted;
         if (retryLeft > 0 && network) {
-          document.getElementById("intake-status").textContent =
-            "חיבור נקטע לפני תשובה — מנסה פעם נוספת…";
+          writeIntakeStatus("חיבור נקטע לפני תשובה — מנסה פעם נוספת…");
           setIntakeBusy(false);
           return generateIntakeBlockFromFixedPacket(retryLeft - 1);
         }
@@ -810,8 +1282,7 @@
 
   window.generateIntakeBlock = function generateIntakeBlock() {
     if (!intakeState.fixedIntakePacket) {
-      document.getElementById("intake-status").textContent =
-        "יש להשלים את התחקור הקבוע לפני בניית לבנה.";
+      writeIntakeStatus("יש להשלים את התחקור הקבוע לפני בניית לבנה.");
       return;
     }
     if (intakeState.buildAttempted) {
@@ -825,10 +1296,24 @@
       intakeState.intakeBuildId = "";
     }
     intakeState.buildAttempted = true;
+    if (!ATHLETE_AI_BUILD_ENABLED) {
+      createAthleteAsClient();
+      return;
+    }
     generateIntakeBlockFromFixedPacket();
   };
 
   window.finalizeNewAthlete = function finalizeNewAthlete(block) {
+    /* 22.0: a block that comes back is proof the pipe works, and nothing more. See
+       COACH_BUILD_MAY_SAVE in admin.html for why it is not saved. */
+    if (window.COACH_BUILD_MAY_SAVE !== true) {
+      showIntakeBuilding(false);
+      setIntakeBusy(false);
+      writeIntakeStatus(
+        "המאמן החזיר לבנה — והיא לא נשמרה. בגרסה הזו החיבור למאמן הוא בדיקת צינור בלבד."
+      );
+      return;
+    }
     if (window.NormalizePprogBlock && block && typeof block === "object") {
       block = NormalizePprogBlock.normalize(block, null);
     }
@@ -837,7 +1322,7 @@
       true,
       "<strong>Coach</strong> — saving athlete + one-time handoff link…"
     );
-    document.getElementById("intake-status").textContent = "שומר מתאמן + לינק מסירה…";
+    writeIntakeStatus("שומר מתאמן + לינק מסירה…");
 
     var intakeProfile = C().normalizeIntakeProfile(
       Object.assign({}, intakeState, { intakeComplete: true })
@@ -883,8 +1368,7 @@
       .then(function (d) {
         if (!d || !d.ok) {
           showIntakeBuilding(false);
-          document.getElementById("intake-status").textContent =
-            "שגיאה ביצירת מתאמן: " + ((d && (d.message || d.error)) || "?");
+          writeIntakeStatus("שגיאה ביצירת מתאמן: " + ((d && (d.message || d.error)) || "?"));
           setIntakeBusy(false);
           return;
         }
@@ -915,9 +1399,9 @@
           if (idx >= 0) athletes[idx] = Object.assign({}, athletes[idx], row);
           else athletes.unshift(row);
         }
-        document.getElementById("intake-status").textContent = abs
+        writeIntakeStatus(abs
           ? "נוצר ✓ לינק מסירה בכרטיס המתאמן"
-          : "נוצר בהצלחה ✓";
+          : "נוצר בהצלחה ✓");
         setTimeout(function () {
           setIntakeModalOpen(false);
           resetIntakeState();
@@ -927,7 +1411,7 @@
       })
       .catch(function () {
         showIntakeBuilding(false);
-        document.getElementById("intake-status").textContent = "שגיאת רשת בשמירת מתאמן";
+        writeIntakeStatus("שגיאת רשת בשמירת מתאמן");
         setIntakeBusy(false);
       });
   };

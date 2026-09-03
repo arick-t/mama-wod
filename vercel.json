@@ -21,6 +21,24 @@
       ]
     },
     {
+      "source": "/client.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate, max-age=0"
+        }
+      ]
+    },
+    {
+      "source": "/claim.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate, max-age=0"
+        }
+      ]
+    },
+    {
       "source": "/data/workouts.json",
       "headers": [
         {
@@ -62,6 +80,9 @@
     }
   ],
   "functions": {
+    "api/client-program.js": {
+      "maxDuration": 30
+    },
     "api/personal-coach.js": {
       "maxDuration": 300
     },

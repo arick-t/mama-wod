@@ -28,7 +28,10 @@ ok(
 ok("no bare fetch /api/ in admin.html", !/fetch\("\/api\//.test(adminHtml));
 ok("fixed intake uses adminApiUrl for coach", /fetch\(adminApiUrl\("\/api\/personal-coach"\)/.test(fixedJs));
 ok("fixed intake uses adminApiUrl for handoff", /fetch\(adminApiUrl\("\/api\/admin-handoff"\)/.test(fixedJs));
-ok("claim uses adminApiUrl", /fetch\(adminApiUrl\("\/api\/admin-handoff/.test(claimHtml));
+/* The claim page builds its URL before fetching it now — it may carry a code — so what
+   matters is that the base comes from adminApiUrl and never from a bare path. */
+ok("claim builds its URL with adminApiUrl", /adminApiUrl\("\/api\/admin-handoff/.test(claimHtml));
+ok("claim never fetches a bare /api path", !/fetch\("\/api\//.test(claimHtml));
 ok("athlete snapshot helper uses getApiBase", /function pprogAdminSnapshotUrl/.test(indexHtml) && /getApiBase\(\)/.test(indexHtml.slice(indexHtml.indexOf("function pprogAdminSnapshotUrl"), indexHtml.indexOf("function pprogAdminSnapshotUrl") + 400)));
 ok("athlete snapshot push is not relative /api", !/fetch\("\/api\/admin-snapshot"/.test(indexHtml));
 ok("athlete snapshot fetch uses helper", /fetch\(pprogAdminSnapshotUrl\(\)/.test(indexHtml));

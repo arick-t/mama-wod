@@ -29,12 +29,19 @@ function run() {
   const lite = priceForModel("gemini-2.5-flash-lite");
   assert(lite.inPerM < flash.inPerM || lite.outPerM < flash.outPerM, "lite cheaper");
 
-  /* 1M in + 1M out flash @ 0.15/0.60 * 3.7 * 1.2 = (0.75)*3.7*1.2 = 3.33 */
+  /* 1M in + 1M out on 2.5 Flash @ 0.30/2.50 USD * 3.7 ILS * 1.2 safety = 12.43.
+     The old table priced output at 0.60 — carried over from the Lite family — and
+     THINKING tokens are billed as output on this model, which is most of what a brick
+     produces. An estimate built on that could only ever say there was more money left
+     than there was (owner, 2026-09-03). */
   const oneM = estimateIlsFromUsage("gemini-2.5-flash", {
     promptTokens: 1_000_000,
     outputTokens: 1_000_000,
   });
-  assert(almost(oneM, 3.33, 0.05), "1M flash pricing got " + oneM);
+  assert(almost(oneM, 12.43, 0.1), "1M flash pricing got " + oneM);
+  /* Output costs more than input on a thinking model, and by a lot. */
+  const flashPrice = priceForModel("gemini-2.5-flash");
+  assert(flashPrice.outPerM >= flashPrice.inPerM * 5, "thinking output is priced as output");
 
   const liteCost = estimateIlsFromUsage("gemini-2.5-flash-lite", {
     promptTokens: 1_000_000,
@@ -170,7 +177,60 @@ async function runPersistence() {
 }
 
 run();
-runPersistence().catch(function (e) {
+/* Chained, not parallel: these share ADMIN_DATA_ROOT and the module cache, and running
+   them at once had one test's store answering the other's questions. */
+runPersistence()
+  .then(calibrationTest)
+  .catch(function (e) {
   console.error(e);
   process.exit(1);
 });
+
+/* --- it learns from every correction ---------------------------------
+ * There is no Google endpoint that gives a balance, so the only honest calibration is
+ * the one the owner hands us each time he reads the real number: what actually went,
+ * against what we predicted. Every failed write and every price we guessed lives inside
+ * that ratio (owner, 2026-09-03: "it fakes it - see if you can make it better").
+ */
+async function calibrationTest() {
+  process.env.ADMIN_DATA_ROOT = require("os").tmpdir() + "/dw-credit-cal-" + Date.now();
+  const M = requireFresh();
+  await M.setManualBalance(100, "start");
+  await M.recordCoachUsageSpend("gemini-2.5-flash", { promptTokens: 40000, outputTokens: 12000 }, "generate_block");
+  await M.flushPendingSpend(true);
+  const before = await M.getCreditEstimate();
+  assert(before.spentSinceUpdateEstimated > 0, "a brick costs something");
+  assert(before.calibrationSamples === 0, "nothing learned yet");
+
+  /* He reads Google: the balance really fell by 20, not by our estimate. */
+  const corrected = await M.setManualBalance(80, "from Google");
+  assert(corrected.calibrationSamples === 1, "one correction recorded");
+  assert(corrected.calibrationFactor > 1, "and it learned we were under-counting");
+
+  await M.recordCoachUsageSpend("gemini-2.5-flash", { promptTokens: 40000, outputTokens: 12000 }, "generate_block");
+  await M.flushPendingSpend(true);
+  const after = await M.getCreditEstimate();
+  assert(
+    after.spentSinceUpdateEstimated > before.spentSinceUpdateEstimated * 2,
+    "the same brick now costs what it really costs"
+  );
+
+  /* A top-up teaches nothing about burn. */
+  const toppedUp = await M.setManualBalance(500, "bought credit");
+  assert(toppedUp.calibrationSamples === 1, "a top-up is not a lesson");
+
+  /* And the screen is told how old the anchor is, so it never looks live. */
+  const fresh = await M.getCreditEstimate();
+  assert(fresh.balanceAgeDays === 0, "anchored today");
+  assert(fresh.stale === false, "and not stale");
+  assert(/עודכן היום/.test(fresh.staleHe), "and says so");
+  console.log("admin-credit-estimate calibration test passed");
+}
+
+function requireFresh() {
+  const p = require.resolve("./admin-credit-estimate.js");
+  delete require.cache[p];
+  return require(p);
+}
+
+
