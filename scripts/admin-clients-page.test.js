@@ -757,7 +757,8 @@ ok("the number is hidden until he asks", /id="income-line" hidden/.test(page));
 ok("and it is the total of every client", /setMonthlyIncome\(monthlyTotal\)/.test(page));
 ok("shown as one line with a currency", /"הכנסה חודשית: " \+ \(monthlyIncomeTotal \? "₪"/.test(page));
 /* The duck, beside the name. */
-ok("the header carries the duck", /class="hdr-duck" src="assets\/duck-wod-logo\.png"/.test(page));
+/* The coach duck, on his instruction — not the wordmark (owner, 2026-09-03). */
+ok("the header carries the duck", /class="hdr-duck" src="assets\/hamamen-coach-duck\.png"/.test(page));
 
 /* --- the studio is asked capacity, not stations (coach agent, 2026-09-03) */
 ok("how many train at once is a number", /id="inMaxAtOnce" type="number"/.test(page));
