@@ -1150,6 +1150,53 @@ function testGymnastics() {
     ));
 }
 
+
+/* THE HEBREW BOUNDARY, revisited 2026-09-03. Three separate defects in one helper, all found by
+   typing goals the way an athlete actually types them:
+     1. Hebrew glues its prepositions and its definite article to the front of the word, so the
+        "no Hebrew letter before" guard rejected בסנאץ, הסנאץ, המנוע, במאסל אפ. Eight of nine real
+        phrasings selected NO layer.
+     2. \w does not match Hebrew, so the suffix wildcard on פיסטול, אולימפי, אירובי and
+        ג'ימנסטיק matched nothing — פיסטולים and אולימפיות failed even spelled bare.
+     3. The apostrophe in ג'ימנסטיק, ג'רק and סנאץ' comes in three characters: ASCII ', the Hebrew
+        geresh ׳ and the typographic ’. Only the first was accepted.
+   The suffix lookahead still does the work it was added for, which is what keeps מתח out of
+   מתחיל and מתחרה. Assert both halves — a prefix fix that also matches beginners is worse than
+   the bug. */
+function testHebrewBoundary() {
+  const hits = [
+    ["רוצה להוסיף קילו בסנאץ", "weightlifting", "prefix ב"],
+    ["לשפר את הסנאץ שלי", "weightlifting", "prefix ה"],
+    ["לשפר את המנוע", "endurance", "prefix ה"],
+    ["להתקדם במאסל אפ", "gymnastics", "prefix ב"],
+    ["להשתפר בחתירה", "endurance", "prefix ב"],
+    ["לעבוד על הקיפינג", "gymnastics", "prefix ה"],
+    ["בכפיפות מתח", "gymnastics", "prefix ב on a two-word term"],
+    ["פיסטולים", "gymnastics", "Hebrew plural suffix"],
+    ["הרמות אולימפיות", "weightlifting", "Hebrew feminine plural suffix"],
+    ["להשתפר באירובי", "endurance", "prefix plus suffix"],
+    ["לעבוד על הג'ימנסטיקס", "gymnastics", "ASCII apostrophe"],
+    ["לעבוד על הג\u05f3ימנסטיקס", "gymnastics", "Hebrew geresh"],
+    ["לעבוד על הג\u2019ימנסטיקס", "gymnastics", "typographic apostrophe"],
+    ["ג\u05f3רק", "weightlifting", "geresh in ג'רק"],
+  ];
+  hits.forEach(function (row) {
+    const got = L.pickLayer3({ goals: row[0] }, null);
+    ok('"' + row[0] + '" selects ' + row[1] + " (" + row[2] + ")",
+      got.indexOf(row[1]) >= 0,
+      "got " + JSON.stringify(got));
+  });
+
+  /* The other half of the guard: these must still select nothing. מתח (pull-up) lives inside
+     מתחיל and מתחרה, and a prefix rule that let those through would be a worse bug than the one
+     it fixed. */
+  ["אני מתחיל", "אני לא מתחרה", "להתחיל להתאמן", "מתחיל להתאמן השבוע"].forEach(function (g) {
+    ok('"' + g + '" still selects no discipline',
+      L.pickLayer3({ goals: g }, null).length === 0,
+      JSON.stringify(L.pickLayer3({ goals: g }, null)));
+  });
+}
+
 function main() {
   console.log("\n=== Coach knowledge layers ===\n");
   testShape();
@@ -1166,6 +1213,7 @@ function main() {
   testStructuredIntakeFields();
   testContinuation();
   testGymnastics();
+  testHebrewBoundary();
   testPackBudget();
   console.log("\nPassed:", passed);
   if (process.exitCode) {
