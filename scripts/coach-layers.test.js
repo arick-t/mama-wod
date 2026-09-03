@@ -64,9 +64,12 @@ const MAX_CHARS = {
      approved line by line. */
   "layer2-general": 7900,
   "layer2-individual": 4000,
-  /* The two halves of the old HOW MANY DAYS section, each read by one product only. */
-  "layer2-days-studio": 800,
-  "layer2-days-individual": 800,
+  /* The two halves of the old HOW MANY DAYS section, each read by one product only. Both grew on
+     2026-09-03: the studio took the station-to-people rule out of the always-on layer, and the
+     individual took the 3-consecutive-day limit out of the competitor layer. Both are now on the
+     one path that needs them instead of on every path or none. */
+  "layer2-days-studio": 1200,
+  "layer2-days-individual": 1200,
   /* Conditional: only a studio that bought N sessions a week pays for it. */
   "layer2-session-count": 3200,
   "layer3-gymnastics": 4000,
@@ -242,7 +245,43 @@ function testGeneralLayerDecisions() {
     /Training days and rest days come from the intake exactly/i.test(DAYS_INDIV) &&
       /Their marked days ARE the weekly structure/i.test(DAYS_INDIV));
   ok("neither product reads the other's day rule",
-    !/SEVEN days/i.test(DAYS_INDIV) && !/come from the intake exactly/i.test(DAYS_STUDIO));
+    !/Program SEVEN days a week/i.test(DAYS_INDIV) &&
+      !/come from the intake exactly/i.test(DAYS_STUDIO));
+
+  /* Moved here on 2026-09-03 after the owner asked what happens when a general-fitness athlete
+     marks all seven days: the answer was nothing, because the rule lived in the competitor layer
+     and that only lights up for a declared competitor. It is a limit on a body. */
+  ok("every individual gets the 3-consecutive-day limit, not just competitors",
+    /NEVER MORE THAN 3 CONSECUTIVE TRAINING DAYS \(HARD\)/.test(DAYS_INDIV) &&
+      /it holds in\s*every case, including when the athlete marked all seven days/i.test(DAYS_INDIV));
+  ok("the fourth day is downgraded, not deleted",
+    /make it ACTIVE RECOVERY/.test(DAYS_INDIV) &&
+      /The intake left that day free: it is a rest day/.test(DAYS_INDIV) &&
+      /Seven marked days become three on, one light, three on/.test(DAYS_INDIV));
+  ok("no escape hatch is offered",
+    /There is no exception to this\. Do not create one for an athlete who says they can handle more/.test(
+      DAYS_INDIV
+    ));
+  ok("a general-fitness athlete's pack actually contains the limit",
+    L.buildLayerPack({ agent: "individual", profile: { competitor: false, goals: "get fit" } })
+      .text.indexOf("3 CONSECUTIVE TRAINING DAYS") >= 0);
+
+  /* The station-to-people rule moved the other way: out of the always-on layer and onto the studio
+     path, because an individual was reading a rule about sharing barbells in a class. */
+  ok("the station-to-people rule is on the studio path only",
+    /COUNT THE STATIONS AGAINST THE PEOPLE/.test(DAYS_STUDIO) && !/COUNT THE STATIONS/.test(G));
+  ok("an individual's pack does not carry it",
+    L.buildLayerPack({ agent: "individual", profile: { goals: "get fit" } }).text.indexOf(
+      "COUNT THE STATIONS"
+    ) < 0);
+  /* "לעיתים לא תהיה מגבלה == סטודיו גדול / מאמנים שמאמנים בחוץ" — a missing cap is a real answer,
+     not a missing one, and inventing a number there would constrain a room that is not constrained. */
+  ok("no capacity cap means the equipment is the whole constraint",
+    /IF NO CAP IS GIVEN, do not invent one/.test(DAYS_STUDIO) &&
+      /the whole constraint is the EQUIPMENT/.test(DAYS_STUDIO) &&
+      /Bodyweight, running, carries and shared implements scale to any number of\s*people/i.test(
+        DAYS_STUDIO
+      ));
   ok("the day rules left layer2-general entirely",
     !/SEVEN days a week|AN INDIVIDUAL:/.test(G),
     "the split half-happened — layer2-general still carries a day rule");
@@ -271,11 +310,6 @@ function testGeneralLayerDecisions() {
      coach characterises the room. No experience tiers, and nothing keyed to months of training. */
   ok("no experience tiers", !/BEGINNER:|INTERMEDIATE:|EXPERIENCED:|RETURNING:/.test(G));
   ok("no months-of-training thresholds", !/18 months|36 months|18-36/.test(G));
-  /* From a real studio: seven barbells, room for eight to ten athletes. A barbell-for-everyone
-     session cannot run there, and nothing told the coach to check the ratio. */
-  ok("the station-to-people ratio is checked before a one-each piece",
-    /COUNT THE STATIONS AGAINST THE PEOPLE before writing a piece that needs one each/.test(flat) &&
-      /a session built to SHARE/.test(G));
   ok("one session at one standard, adapted by the human coach",
     /Write ONE session at ONE standard/.test(G) && /the human coach adapts on the floor/i.test(flat));
 
@@ -416,15 +450,14 @@ function testIndividualLayerDecisions() {
     /THIS IS ONE PERSON, NOT A ROOM \(HARD\)/.test(C) &&
       /The seven-day studio default does not apply to an individual at all/i.test(Cflat));
   ok("an individual's intake days are the weekly structure and they win",
-    /individual's own training days from the intake ARE the weekly structure/i.test(Cflat));
-  ok("3 consecutive days holds even when all seven were marked",
-    /NO MORE THAN 3 CONSECUTIVE TRAINING DAYS\. This holds in every case, including when the athlete marked all seven days/i.test(
-      Cflat
-    ));
-  ok("the fourth day is a lighter day, not a dropped one",
-    /make it active recovery if they asked to train that day, or a rest day if the intake left it free/i.test(
-      Cflat
-    ));
+    /their own training days from the intake ARE the weekly structure/i.test(Cflat));
+  /* The 3-consecutive rule itself moved to layer2-days-individual on 2026-09-03 — it is a limit on
+     a body, and leaving it here meant a general-fitness athlete who marked seven days got nothing.
+     This layer now points at it rather than restating it, so there is one copy to change. */
+  ok("the competitor layer defers to the individual day limit rather than restating it",
+    /the 3-consecutive-day limit stated for every individual applies here unchanged/i.test(Cflat) &&
+      !/NO MORE THAN 3 CONSECUTIVE TRAINING DAYS/.test(C),
+    "the rule is stated twice — one copy will drift");
 
   /* Two instructions the source gives that we cannot honour, and one that was in the wrong file. */
   ok("the advanced multi-session tier is gone",
