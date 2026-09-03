@@ -27,6 +27,9 @@ const athletes = [
   { athleteId: "u_1", displayName: "אריק" },
   { athleteId: "u_2", displayName: "עדי" },
 ];
+/* isTest is written here on purpose: it is a marker some rows saved during the test
+   phase still carry, and from 22.0 nothing may render it. A "test client" badge on a
+   strip that only ever holds paying people is a leftover, not information. */
 const programs = [
   { programId: "p_a", clientName: "סטודיו א", isTest: false, unreadCount: 0 },
   { programId: "p_b", clientName: "בדיקה 7", isTest: true, unreadCount: 3 },
@@ -37,7 +40,8 @@ ok("everyone is in one list", rows.length === 4);
 ok("athletes first, then the programmes", rows.map(function (r) { return r.kind; }).join(",") === "athlete,athlete,program,program");
 ok("each row knows which kind it is", rows[0].kind === "athlete" && rows[3].kind === "program");
 ok("names come across", rows[2].name === "סטודיו א");
-ok("a test programme is marked", rows[3].test === true && rows[2].test === false);
+ok("no row carries a test marker any more", rows[3].test === undefined && rows[2].test === undefined);
+ok("and no chip renders a test badge", Strip.html(rows, "p_b").indexOf("badge test") < 0);
 /* State, not a count: five saves to one day are still one thing to look at. */
 ok("unread is a flag, not a number", rows[3].unread === true && rows[2].unread === false);
 
@@ -61,7 +65,7 @@ ok("the chips are admin's own class", /class="athlete-tab/.test(html));
 ok("the active one is marked", /class="athlete-tab active" data-kind="program" data-id="p_b"/.test(html));
 ok("only one is active", (html.match(/athlete-tab active/g) || []).length === 1);
 ok("each chip says what it is and who", /data-kind="athlete" data-id="u_1"/.test(html));
-ok("a test programme says so on the chip", /badge test">בדיקה/.test(html));
+ok("no chip carries a test badge", !/badge test">בדיקה/.test(html));
 ok("an unread programme carries the dot", /class="dot" title="יש שינוי שלא ראית"/.test(html));
 ok("a quiet one does not", (html.match(/class="dot"/g) || []).length === 1);
 ok("an empty strip says what to do", /אין עדיין לקוחות/.test(Strip.html([], "")));

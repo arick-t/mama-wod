@@ -135,10 +135,6 @@ const ACTIONS_ALLOWED = [
   "add_block",
   "approve_block",
   "renewal_check",
-  /* A TEST program only: fills a block with one labelled sample session so a whole
-     month of the calendar can be judged at once. The server refuses it on any real
-     client, so it cannot become a way to produce programming (POL-029). */
-  "seed_test_block",
   /* The athlete list, for the other half of the shared strip. It reads; it makes
      nothing. */
   "admin_list",
@@ -666,7 +662,7 @@ ok("and it guards the header cells it no longer owns", /if \(el\("monthlyTotal"\
    frame replaced. */
 ok("the wizard starts hidden", /id="intakeCard"[^>]*hidden/.test(page));
 ok("no hand-copied strip values are left", !/\.crow\{display:inline-flex/.test(page));
-ok("a test client still says so", /badge test">בדיקה/.test(strip));
+ok("the test-client badge is gone from the strip", !/badge test">בדיקה/.test(strip));
 ok("the unread dot survives the move", /class="dot" title="יש שינוי שלא ראית"/.test(strip));
 
 /* Several days on screen at once — Ctrl-click and drag, as in the admin module. */

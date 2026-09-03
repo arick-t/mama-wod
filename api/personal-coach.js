@@ -62,7 +62,7 @@ const {
   FINISH_SIGNAL_COACH_RULE_COMPACT,
 } = require("../lib/coach-finish-signals.js");
 const { applyCors } = require("../lib/cors-allowlist.js");
-const { checkAdminAuth } = require("../scripts/lib/admin/admin-auth.js");
+const { checkAdminAuth, adminAuthDenied } = require("../scripts/lib/admin/admin-auth.js");
 const { evaluateAthleteScopeGate } = require("../lib/coach-athlete-scope.js");
 /* Credit ledger must never take down the coach. Spend persist is best-effort. */
 let pickUsageMeta = function () {
@@ -1765,6 +1765,24 @@ async function coachHandler(req, res) {
 
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  /**
+   * The coach brain answers to the owner and to nobody else (owner, 2026-09-03).
+   *
+   * From 22.0 the app carries no AI at all: the coach tab and the workout generator are
+   * gone from it, so the only legitimate caller of this endpoint is the admin module,
+   * where the owner does the programming himself. Leaving it open to the internet is the
+   * exact mistake the changelog names — /api/generate-workout was hidden in the UI for
+   * three releases while it still answered anyone who found the URL, on his Gemini
+   * wallet.
+   *
+   * Deliberately BEFORE the body is parsed and before any provider call, so a refused
+   * request costs nothing. The GET above still answers unauthenticated: it reports the
+   * brain's version and holds no AI call.
+   */
+  if (!checkAdminAuth(req)) {
+    return adminAuthDenied(res);
   }
 
   let body;

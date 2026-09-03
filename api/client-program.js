@@ -295,7 +295,6 @@ async function ownerHandler(req, res, body) {
       blockStart: body.blockStart,
       weekCount: weekCount,
       intake: intake,
-      isTest: body.isTest === true,
     });
     if (!created.ok) return bad(res, 400, created.code, created.error);
     /* The eight-step answers, kept whole. Nothing reads them today — the coach is
@@ -511,25 +510,6 @@ async function ownerHandler(req, res, body) {
       added: result.added,
       blockIndex: result.blockIndex,
     });
-  }
-
-  /* Fill a TEST program's block with one sample session, so a whole month of the
-   * calendar can be judged at once. Refused on anything not marked as a test — this is
-   * a way to look at the display, never a way to produce programming (POL-029). */
-  if (action === "seed_test_block") {
-    const result = await store.seedTestBlock(
-      programId,
-      Number(body.expectedVersion),
-      body.blockIndex
-    );
-    if (!result.ok) {
-      const status =
-        result.code === "VERSION_CONFLICT" ? 409 : result.code === "NOT_FOUND" ? 404 : 400;
-      return res.status(status).json(Object.assign({ ok: false }, result));
-    }
-    return res
-      .status(200)
-      .json({ ok: true, program: result.program, version: result.version, filled: result.filled });
   }
 
   /* Send a block to the client. Block ONE goes through this too: creating a client

@@ -576,6 +576,8 @@ async function main() {
     restDays: { fri: true, sat: true }, sessionMinutes: 60, population: "p",
   };
   const madeS = await storeS.createProgram({ clientName: "S", weekCount: 4, intake: restIntakeS, isTest: true });
+  /* Passed in on purpose: the flag is not a field any more, so it must be dropped. */
+  ok("a test marker is not kept on a programme", madeS.program.isTest === undefined);
   const sentS = await storeS.approveBlock(madeS.program.programId, madeS.program.version, 1);
   ok("the whole block is flagged for the client", Object.keys(sentS.program.clientUnreadDays).length === 20);
   ok("a training day carries the flag", sentS.program.weeks[0].days.sun.coachModified === true);
@@ -588,21 +590,14 @@ async function main() {
   );
   ok("reading one day clears one flag", Object.keys(readOne.program.clientUnreadDays).length === 19);
 
-  /* --- the sample fill, and the fence around it ------------------------
-   * It exists so a whole month of the calendar can be LOOKED at. It writes the same
-   * labelled lines everywhere and refuses on anything that is not a test program, so
-   * it can never become a way to produce programming (POL-029).
+  /* --- nothing but a human writes a session ---------------------------
+   * A sample-session filler lived here through the test phase so a whole month of the
+   * calendar could be LOOKED at. It is gone in 22.0 along with the "test program"
+   * tick: the product now only ever holds paying clients, and a machine that can put
+   * lines into a day is exactly what POL-029 says must not exist. Asserted as an
+   * absence, because a dormant one would come back the moment someone needed a demo.
    * ------------------------------------------------------------------------- */
-  const seeded = await storeS.seedTestBlock(madeS.program.programId, readOne.program.version, 1);
-  ok("a test program can be filled", seeded.ok && seeded.filled === 20);
-  ok("every training day got the sample", seeded.program.weeks[3].days.thu.parts.length === 2);
-  ok("rest days were left alone", seeded.program.weeks[3].days.fri.parts.length === 0);
-  ok("and it says on the tin that it is a sample", /SAMPLE/.test(seeded.program.weeks[0].days.sun.parts[0].title));
-
-  const realOne = await storeS.createProgram({ clientName: "Paying", weekCount: 4 });
-  const refused = await storeS.seedTestBlock(realOne.program.programId, realOne.program.version, 1);
-  ok("a real client's program is refused", !refused.ok && refused.code === "NOT_A_TEST_PROGRAM");
-  ok("and nothing was written to it", (await storeS.readProgram(realOne.program.programId)).program.weeks[0].days.sun.parts.length === 0);
+  ok("the store offers no way to fill a block with content", typeof storeS.seedTestBlock === "undefined");
 
   const src = require("fs").readFileSync(require("path").join(__dirname, "..", "lib", "client-program-store.js"), "utf8");
   ok("store makes no network calls", !/\bfetch\s*\(/.test(src));

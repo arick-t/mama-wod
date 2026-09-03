@@ -293,10 +293,15 @@ function testStaticRegressions() {
   );
   /* Minor is matched as a range, not a list — a hardcoded list fails every release
      and teaches people to edit the guard instead of reading it. */
+  /* Compared as numbers, not matched as a regex of allowed minors: the old pattern
+     had to be widened by hand at every release, which teaches people to edit the
+     guard instead of reading it (2026-09-03, on the way to 22.0). */
+  const subM = /DAILY WORKOUTS . v(\d+)\.(\d+)/.exec(idx);
+  const subMajor = subM ? parseInt(subM[1], 10) : 0;
+  const subMinor = subM ? parseInt(subM[2], 10) : 0;
   ok(
-    "app daily workouts subtitle on 21.3+ display line",
-    /DAILY WORKOUTS · v21\.(?:[3-9]|\d{2,})(?:\.\d+)?\b/.test(idx) &&
-      !/DAILY WORKOUTS · v2\.1\b/.test(idx)
+    "the app header carries a real version, 21.3 or later",
+    !!subM && (subMajor > 21 || (subMajor === 21 && subMinor >= 3))
   );
   ok(
     "coach subtitle 2.2+/2.3",
@@ -337,10 +342,18 @@ async function testLivePreviewOptional() {
 async function testHandlerHardBlock() {
   const handler = require("../api/personal-coach.js");
 
+  /* From 22.0 the brain answers the owner only, so every request here carries admin
+     auth — the cost caps are a fence around HIS spending, and a test that reached the
+     caps without authenticating would be testing a door that no longer exists. */
+  process.env.ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "test-admin-password";
   function mockReq(method, body) {
     return {
       method,
-      headers: { "content-type": "application/json", "x-forwarded-for": "127.0.0.1" },
+      headers: {
+        "content-type": "application/json",
+        "x-forwarded-for": "127.0.0.1",
+        "x-admin-password": process.env.ADMIN_PASSWORD,
+      },
       body: body || {},
     };
   }
@@ -408,19 +421,29 @@ async function testHandlerHardBlock() {
     monthly.statusCode === 403 && monthly.body && monthly.body.code === "COST_CAP_MONTHLY"
   );
 
-  const terms = mockRes();
-  await handler(
-    mockReq("POST", {
-      action: "revise_day",
-      messages: [],
-      athleteProfile: {
-        intakeComplete: true,
-        costCaps: { dailyEdits: { "2026-08-03": 2 }, dailyLocked: true },
-      },
-    }),
-    terms
+  /* The strongest cost guard there is: a caller who is not the owner never reaches the
+     brain at all. It used to be the athlete Terms signature that stopped them here;
+     from 22.0 the app carries no coach, so the door itself is shut and the refusal
+     happens before the body is even read (owner, 2026-09-03). */
+  const stranger = mockRes();
+  const strangerReq = mockReq("POST", {
+    action: "revise_day",
+    messages: [],
+    athleteProfile: {
+      intakeComplete: true,
+      costCaps: { dailyEdits: { "2026-08-03": 2 }, dailyLocked: true },
+    },
+  });
+  delete strangerReq.headers["x-admin-password"];
+  await handler(strangerReq, stranger);
+  ok(
+    "a caller who is not the owner is refused outright",
+    stranger.statusCode === 401 || stranger.statusCode === 403
   );
-  ok("handler terms before cost", terms.statusCode === 403 && terms.body && terms.body.code === "TERMS_REQUIRED");
+  ok(
+    "and it is not a terms problem — the door is shut",
+    !stranger.body || stranger.body.code !== "TERMS_REQUIRED"
+  );
 
   const chat = await post(
     "chat",

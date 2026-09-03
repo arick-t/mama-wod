@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v21.7</title>
+<title>DUCK-WOD · v22.0</title>
 <meta name="theme-color" content="#111">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -1069,8 +1069,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v21.7</div>
-<div class="header-sub" id="coachVersionSub">COACH · v2.3.14</div>
+<div class="header-sub">DAILY WORKOUTS · v22.0</div>
 </div>
 <div class="tabs">
 <button class="tab-btn active" id="tab-browse" onclick="showTab('browse')">Workouts</button>
@@ -1435,10 +1434,10 @@ function rememberAiClientError(summary) {
  * Display: header “COACH · v{COACH_VERSION}” only — do NOT bump app DAILY WORKOUTS / <title> here.
  */
 var COACH_VERSION = "2.3.14";
-try {
-  var __coachVerEl = document.getElementById("coachVersionSub");
-  if (__coachVerEl) __coachVerEl.textContent = "COACH · v" + COACH_VERSION;
-} catch (eCoachVer) {}
+/* The brain's version line left the app header in 22.0: the coach is not part of this
+   product any more, so telling the public which build of it is running was noise about
+   something they cannot reach (owner, 2026-09-03). The admin module still shows it,
+   where it is the number that matters. */
 /* Personal Coach left the app in 21.7 (POL-029). Programming is now written by a
    human in the admin module and delivered by link through client.html — the app is
    the workout aggregator again. The flag stays as the single gate every coach boot
@@ -1449,7 +1448,7 @@ var PPROG_TAB_ENABLED = false;
    file, so it can be arbitrarily old — and a stale bundle talking to a moved server
    is how a user gets a broken screen with no explanation. This lets any future
    change tell an old build to update instead (checklist g.4). */
-var DW_BUILD_VERSION = "21.7";
+var DW_BUILD_VERSION = "22.0";
 
 function dwIsNativeBuild() {
   try {

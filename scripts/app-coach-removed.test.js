@@ -81,7 +81,10 @@ ok("the reason is written down", /must redirect, not dead-end/.test(index));
 
 /* --- minimum version check (g.4) ------------------------------------ */
 
-ok("the bundle carries its build version", /var DW_BUILD_VERSION = "21\.7";/.test(index));
+ok("the bundle carries its build version", /var DW_BUILD_VERSION = "22\.0";/.test(index));
+/* 22.0: the brain is not part of this product, so its version is not in this header. */
+ok("the coach version line left the app header", !/id="coachVersionSub"/.test(index));
+ok("and nothing tries to write into it", !/COACH · v" \+ COACH_VERSION/.test(index));
 ok("native builds are detected", /function dwIsNativeBuild/.test(index));
 ok("versions compare without assuming equal length", /function dwVersionLessThan/.test(index));
 ok("an old build is told to update", /function dwShowUpdateNotice/.test(index) && /Please update the app/.test(index));
