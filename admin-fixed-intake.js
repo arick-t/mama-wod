@@ -98,6 +98,12 @@
       /* What this athlete pays. Asked here for the same reason a studio is asked in
          its first tab: it is the owner's record of the client, and it never reaches
          the athlete (owner, 2026-09-03). */
+      trainsMultipleLocations: false,
+      secondaryLocationDays: [],
+      secondaryLocationEquipment: "",
+      secondaryHeaviestImplementKg: 0,
+      sessionMinutesByDay: {},
+      deloadEveryWeeks: 4,
       monthlyAmount: 0,
       paymentMethod: "",
       /* What this athlete pays. Asked here for the same reason a studio is asked in
@@ -331,7 +337,31 @@
         '<input id="adm-fx-heaviest" type="number" min="1" max="300" class="pprog-fixed-num" value="' +
         esc(parseInt(st.heaviestImplementKg, 10) > 0 ? parseInt(st.heaviestImplementKg, 10) : "") +
         '" placeholder="-">' +
-        "</div></div></div>";
+        "</div></div></div>" +
+        /* One athlete, two settings. A box on weekdays and a garage on Saturday was being
+           described as "limited equipment", which threw away four maxima in kilograms and
+           then forbade kilograms underneath them (coach agent, 2026-09-03). */
+        '<label class="pprog-fixed-inline" style="margin-top:14px">' +
+        '<input type="checkbox" id="adm-fx-multiplace"' +
+        (st.trainsMultipleLocations === true ? " checked" : "") +
+        ' onchange="adminFixedMultiPlaceChanged()"> I train in more than one place</label>' +
+        '<div id="adm-fx-second-wrap"' + (st.trainsMultipleLocations === true ? "" : " hidden") + ">" +
+        '<p class="pprog-fixed-note" style="margin-top:10px">Which days are you in the OTHER place?</p>' +
+        '<div class="pprog-fixed-days">' +
+        S.DAY_KEYS.map(function (dk) {
+          return '<label><input type="checkbox" data-fx-second-day="' + esc(dk) + '"' +
+            ((st.secondaryLocationDays || []).indexOf(dk) >= 0 ? " checked" : "") +
+            "> " + esc(S.DAY_LABELS[dk] || dk) + "</label>";
+        }).join("") +
+        "</div>" +
+        '<textarea id="adm-fx-second-kit" maxlength="600" placeholder="What do you have there? e.g. kettlebell 24/32, dumbbells 15+22.5, box, rig, 10kg wall ball">' +
+        esc(st.secondaryLocationEquipment || "") +
+        "</textarea>" +
+        '<div class="pprog-fixed-row">' +
+        '<label class="pprog-fixed-inline" for="adm-fx-second-heaviest">Heaviest implement there (kg)</label>' +
+        '<input id="adm-fx-second-heaviest" type="number" min="1" max="300" class="pprog-fixed-num" value="' +
+        esc(parseInt(st.secondaryHeaviestImplementKg, 10) > 0 ? parseInt(st.secondaryHeaviestImplementKg, 10) : "") +
+        '" placeholder="-"></div></div>';
     } else if (key === "schedule") {
       var days = Array.isArray(st.trainingDays) ? st.trainingDays : [];
       html +=
@@ -376,6 +406,34 @@
         ">" +
         esc(st.sessionLimits || "") +
         "</textarea>" +
+        /* One number per training day, and only when he says they differ - prefilled
+           with the main number so he changes the one day that is different. A note in a
+           free box ("weekends can reach 60") survived as prose and the coach flattened the
+           week to 45 (coach agent, 2026-09-03). */
+        '<div id="adm-fx-perday-wrap"' + (differs ? "" : " hidden") + ">" +
+        '<p class="pprog-fixed-note" style="margin-top:4px">How long is each day?</p>' +
+        '<div class="pprog-fixed-days">' +
+        days
+          .map(function (dk) {
+            var byDay = st.sessionMinutesByDay || {};
+            var val = parseInt(byDay[dk], 10) > 0 ? parseInt(byDay[dk], 10) : mins > 0 ? mins : "";
+            return '<label><span>' + esc(S.DAY_LABELS[dk] || dk) + "</span>" +
+              '<input type="number" min="20" max="180" class="pprog-fixed-num" data-fx-day-mins="' +
+              esc(dk) + '" value="' + esc(val) + '"></label>';
+          })
+          .join("") +
+        "</div></div>" +
+        /* The individual chooses their own down week. Until this question existed every
+           packet said "no deload week falls inside this block" - months of building with
+           no rest (coach agent + owner, 2026-09-03). */
+        '<div class="pprog-fixed-row">' +
+        '<label class="pprog-fixed-inline" for="adm-fx-deload">Deload week every … weeks</label>' +
+        '<input id="adm-fx-deload" type="number" min="3" max="12" class="pprog-fixed-num" value="' +
+        esc(parseInt(st.deloadEveryWeeks, 10) > 0 ? parseInt(st.deloadEveryWeeks, 10) : "") +
+        '" placeholder="4">' +
+        '<label class="pprog-fixed-inline"><input type="checkbox" id="adm-fx-nodeload"' +
+        (parseInt(st.deloadEveryWeeks, 10) > 0 ? "" : " checked") +
+        "> No deload</label></div>" +
         '<textarea id="adm-fx-schedule-notes" maxlength="500" placeholder="Optional: e.g. rest Thu+Sun">' +
         esc(st.scheduleNotes || "") +
         "</textarea>";
@@ -586,6 +644,9 @@
     /* The single number goes away with it — see the comment where it is rendered. */
     var lenWrap = document.getElementById("adm-fx-len-wrap");
     if (lenWrap) lenWrap.hidden = !!box.checked;
+    /* And one number per day appears in its place. */
+    var perDay = document.getElementById("adm-fx-perday-wrap");
+    if (perDay) perDay.hidden = !box.checked;
     if (box.checked) {
       try { text.focus(); } catch (e) {}
     }
@@ -629,6 +690,15 @@
    * They are checkboxes rather than radios on purpose: he can leave both empty and the
    * step will tell him to choose, which a radio group cannot do once touched.
    */
+  /* The second place opens with the tick, and closes with it. */
+  window.adminFixedMultiPlaceChanged = function () {
+    var box = document.getElementById("adm-fx-multiplace");
+    var wrap = document.getElementById("adm-fx-second-wrap");
+    if (!box || !wrap) return;
+    if (box.checked) wrap.removeAttribute("hidden");
+    else wrap.setAttribute("hidden", "");
+  };
+
   window.adminFixedLocationPicked = function (inp) {
     var root = document.getElementById("intake-fixed");
     if (root && inp && inp.checked) {
@@ -719,6 +789,22 @@
       var heavyEl = document.getElementById("adm-fx-heaviest");
       var heavyN = heavyEl ? parseInt(heavyEl.value, 10) : 0;
       intakeState.heaviestImplementKg = heavyN >= 1 && heavyN <= 300 ? heavyN : 0;
+      var multiEl = document.getElementById("adm-fx-multiplace");
+      intakeState.trainsMultipleLocations = !!(multiEl && multiEl.checked);
+      var secondDays = [];
+      var secondBoxes = box.querySelectorAll("input[data-fx-second-day]");
+      for (var sd = 0; sd < secondBoxes.length; sd++) {
+        if (secondBoxes[sd].checked) secondDays.push(secondBoxes[sd].getAttribute("data-fx-second-day"));
+      }
+      var kitEl = document.getElementById("adm-fx-second-kit");
+      var secondHeavyEl = document.getElementById("adm-fx-second-heaviest");
+      var secondHeavyN = secondHeavyEl ? parseInt(secondHeavyEl.value, 10) : 0;
+      /* Nothing is kept from a second place he unticked. */
+      intakeState.secondaryLocationDays = intakeState.trainsMultipleLocations ? secondDays : [];
+      intakeState.secondaryLocationEquipment =
+        intakeState.trainsMultipleLocations && kitEl ? String(kitEl.value || "").trim().slice(0, 600) : "";
+      intakeState.secondaryHeaviestImplementKg =
+        intakeState.trainsMultipleLocations && secondHeavyN >= 1 && secondHeavyN <= 300 ? secondHeavyN : 0;
       intakeState.trainingSetup = parts.join(" · ").slice(0, 800);
     } else if (key === "schedule") {
       var days = [];
@@ -737,6 +823,22 @@
       /* If the days differ there is no single length, so we keep none. */
       intakeState.sessionMinutes =
         !intakeState.sessionTimesDiffer && minsIn >= 20 && minsIn <= 120 ? minsIn : 0;
+      var byDay = {};
+      if (intakeState.sessionTimesDiffer) {
+        var dayMinBoxes = box.querySelectorAll("input[data-fx-day-mins]");
+        for (var dm = 0; dm < dayMinBoxes.length; dm++) {
+          var dmKey = dayMinBoxes[dm].getAttribute("data-fx-day-mins");
+          var dmVal = parseInt(dayMinBoxes[dm].value, 10);
+          if (days.indexOf(dmKey) >= 0 && dmVal >= 20 && dmVal <= 180) byDay[dmKey] = dmVal;
+        }
+      }
+      intakeState.sessionMinutesByDay = byDay;
+      var noDeloadEl = document.getElementById("adm-fx-nodeload");
+      var deloadEl = document.getElementById("adm-fx-deload");
+      var deloadN = deloadEl ? parseInt(deloadEl.value, 10) : 0;
+      /* "No deload" is an answer, not a missing one. */
+      intakeState.deloadEveryWeeks =
+        noDeloadEl && noDeloadEl.checked ? 0 : deloadN >= 3 && deloadN <= 12 ? deloadN : 4;
       /* The free text is only kept while the tick box says the times differ — leftover
          text under an unticked box is an answer nobody gave. */
       intakeState.sessionLimits = intakeState.sessionTimesDiffer && limEl
@@ -983,6 +1085,12 @@
         injuries: intakeState.injuries || "",
         goals: intakeState.goals || "",
         competitor: intakeState.competitor === true,
+        trainsMultipleLocations: prof.trainsMultipleLocations === true,
+        secondaryLocationDays: prof.secondaryLocationDays || [],
+        secondaryLocationEquipment: prof.secondaryLocationEquipment || "",
+        secondaryHeaviestImplementKg: prof.secondaryHeaviestImplementKg || 0,
+        sessionMinutesByDay: prof.sessionMinutesByDay || {},
+        deloadEveryWeeks: prof.deloadEveryWeeks || 0,
         improveFocus: prof.improveFocus || {},
         improveFocusOther: prof.improveFocusOther || "",
         avoidMovements: prof.avoidMovements || {},

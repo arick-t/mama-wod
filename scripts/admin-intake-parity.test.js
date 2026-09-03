@@ -168,6 +168,64 @@ ok(
     "max_strength,engine,gymnastics,olympic_lifting,general_fitness,specific_skill"
 );
 
+/* --- one athlete, two settings (coach agent, 2026-09-03) --------------
+ * A box on weekdays and a garage on Saturday was described as "limited equipment", and
+ * the packet printed four maxima in kilograms and then forbade kilograms underneath
+ * them. That is the same failure that cancelled %1RM for a full gym, coming in through
+ * the second door. */
+const twoPlaces = CoachIntakeSync.buildFixedIntakePrompt(
+  Object.assign({}, sample, {
+    trainingDays: ["mon", "tue", "thu", "fri", "sat"],
+    trainingSetup: "Well-equipped functional training gym",
+    trainingLocations: { functional_gym: true },
+    trainsMultipleLocations: true,
+    secondaryLocationDays: ["sat"],
+    secondaryLocationEquipment: "kettlebell 24/32, dumbbells 15+22.5",
+    secondaryHeaviestImplementKg: 32,
+  })
+);
+ok("the primary days are named", /^Primary \(Mon, Tue, Thu, Fri\): /m.test(twoPlaces));
+ok("and so is the other place", /^Also trains \(Sat\): kettlebell 24\/32/m.test(twoPlaces));
+ok("the coach is told to name the setting", /^LOAD: TWO SETTINGS\./m.test(twoPlaces) && /NAME THE SETTING in the session itself\./.test(twoPlaces));
+ok("NEVER forbid kilograms for an athlete with a full gym", !/never by a kg figure/.test(twoPlaces));
+ok("the second room states its own ceiling", /^HEAVIEST IMPLEMENT \(Sat\): 32 kg\.$/m.test(twoPlaces));
+/* Ticked but with no days named is not a guess. */
+const vagueSecond = CoachIntakeSync.buildFixedIntakePrompt(
+  Object.assign({}, sample, { trainsMultipleLocations: true, secondaryLocationDays: [] })
+);
+ok("no days named is said, not guessed", /Also trains: days not stated - treat the reported setup as the primary one\./.test(vagueSecond));
+ok("and the load line is not suppressed", /^LOAD: TWO SETTINGS\./m.test(vagueSecond));
+
+/* --- a long day survives ---------------------------------------------- */
+const perDay = CoachIntakeSync.buildFixedIntakePrompt(
+  Object.assign({}, sample, {
+    trainingDays: ["mon", "sat"],
+    sessionMinutes: 45,
+    sessionTimesDiffer: true,
+    sessionMinutesByDay: { mon: 45, sat: 60 },
+  })
+);
+ok("each day carries its own ceiling", /^Mon 45 · Sat 60 minutes \(each a ceiling, not a target\)$/m.test(perDay));
+ok("a uniform week is unchanged", /^60 minutes$/m.test(CoachIntakeSync.buildFixedIntakePrompt(Object.assign({}, sample, { sessionMinutes: 60 }))));
+
+/* --- a stated limit beats a marked skill ------------------------------- */
+/* The owner's ruling, 2026-09-03: a movement limitation is the clause that wins. */
+const clash = CoachIntakeSync.buildFixedIntakePrompt(
+  Object.assign({}, sample, { skills: { all_skills: true }, avoidMovements: { deep_squat: true } })
+);
+ok("the contradiction is settled in the packet", /^AVOID OVERRIDES THESE MARKED SKILLS: Pistol\./m.test(clash));
+ok("and the avoid list is named as the winner", /the avoid list wins/.test(clash));
+ok("with nothing to settle it says so", /^AVOID OVERRIDES THESE MARKED SKILLS: none/m.test(unmarked));
+
+/* --- ten of what? ------------------------------------------------------ */
+ok("a bare number is years, because that is what the question asks", /^Experience: 10 years$/m.test(CoachIntakeSync.buildFixedIntakePrompt(Object.assign({}, sample, { experience: "10" }))));
+ok("and a sentence is left alone", /^Experience: 4 years CF$/m.test(CoachIntakeSync.buildFixedIntakePrompt(sample)));
+ok("the question names the unit", /label: "Training experience \(years\)"/.test(fs.readFileSync(path.join(root, "lib", "coach-intake-sync-contract.js"), "utf8")));
+
+/* --- the individual chooses their own down week ------------------------ */
+ok("a cadence he chose lands in the block", /^DELOAD: week 4 of this 4-week block/m.test(CoachIntakeSync.buildFixedIntakePrompt(Object.assign({}, sample, { blockStartWeek: 1, deloadEveryWeeks: 4 }))));
+ok("and choosing none is respected", /^DELOAD: no deload week falls inside this block/m.test(CoachIntakeSync.buildFixedIntakePrompt(Object.assign({}, sample, { blockStartWeek: 1, deloadEveryWeeks: 0 }))));
+
 /* --- the studio's own packet ------------------------------------------
  * Its twin, and deliberately NOT briefFor(): that one is a reminder for the owner while
  * he writes by hand, and a string serving two masters follows neither rule. */
@@ -177,18 +235,26 @@ const studioPacket = StudioIntake.buildStudioIntakePrompt({
   sessionsPerWeek: 3,
   sessionsDiffer: true,
   sessionTypes: ["long strength + short metcon", "partner metcon, one part only", "stations"],
-  stations: "6 barbells, 3 ergs",
+  maxAthletesAtOnce: 10,
+  avoidInProgram: "no barbell snatches",
   population: "CrossFit class 12-20",
   sessionMinutes: 60,
   deloadWeek: true,
   deloadEveryWeeks: 4,
 });
 ok("the studio packet exists and asks for four weeks", /^STUDIO INTAKE COMPLETE/.test(studioPacket) && /exactly 4 weeks/.test(studioPacket));
-ok("it states the stations", /^STATIONS: 6 barbells, 3 ergs$/m.test(studioPacket));
+/* Capacity, asked as a number because that is the answer he actually gives; the
+   equipment count stays in the equipment box (coach agent, 2026-09-03). */
+ok("it states how many train at once", /^MAX AT ONCE: 10 athletes at the busiest class\.$/m.test(studioPacket));
+ok("and what the place does not do", /^DOES NOT DO: no barbell snatches$/m.test(studioPacket));
 ok("the session types arrive in order", /1\. long strength \+ short metcon[\s\S]*2\. partner metcon[\s\S]*3\. stations/.test(studioPacket));
 ok("and it says there are no weekdays in this mode", /WEEKDAYS: none/.test(studioPacket));
 const emptyStudio = StudioIntake.buildStudioIntakePrompt({});
-ok("an unstated room carries the instruction", /^STATIONS: not stated/m.test(emptyStudio) && /sharing and rotation/.test(emptyStudio));
+/* Three answers, not two: a room with no ceiling and a question nobody answered are
+   different rooms, and the coach does different things in them. */
+ok("an unanswered capacity carries its instruction", /^MAX AT ONCE: not stated - do NOT assume one station per person\.$/m.test(emptyStudio));
+ok("and a room with no ceiling says so", /^MAX AT ONCE: no practical limit/m.test(StudioIntake.buildStudioIntakePrompt({ noCapacityCap: true })));
+ok("silence about what it does not do is stated too", /^DOES NOT DO: nothing stated\.$/m.test(emptyStudio));
 ok("briefFor stays a human reminder, not a prompt", !/BLOCK_JSON/.test(StudioIntake.briefFor({})));
 
 ok("the tick box is on the Goals step", /id="adm-fx-competitor"/.test(fixedJs));
@@ -286,6 +352,17 @@ ok("but only while something is actually being filled in", /intakeState\.fixedAc
 /* An individual pays like any other client, asked in their first step. */
 ok("the individual intake asks what they pay", /id="adm-fx-amount"/.test(fixedJs) && /id="adm-fx-paymethod"/.test(fixedJs));
 ok("and it travels with the client", /monthlyAmount: intakeState\.monthlyAmount/.test(fixedJs));
+
+/* --- the questions behind the new lines (coach agent + owner, 2026-09-03) */
+ok("the individual is asked about a second place", /id="adm-fx-multiplace"/.test(fixedJs) && /data-fx-second-day/.test(fixedJs));
+ok("and what is there, and how heavy", /id="adm-fx-second-kit"/.test(fixedJs) && /id="adm-fx-second-heaviest"/.test(fixedJs));
+ok("nothing is kept from a second place he unticked", /intakeState\.secondaryLocationDays = intakeState\.trainsMultipleLocations \? secondDays : \[\]/.test(fixedJs));
+/* Only when he says the days differ - a uniform week stays one number. */
+ok("minutes per day appear only behind that tick", /id="adm-fx-perday-wrap"/.test(fixedJs) && /perDay\.hidden = !box\.checked/.test(fixedJs));
+ok("and each day opens on the main number", /parseInt\(byDay\[dk\], 10\) > 0 \? parseInt\(byDay\[dk\], 10\) : mins > 0 \? mins : ""/.test(fixedJs));
+ok("the individual chooses a deload cadence", /id="adm-fx-deload"/.test(fixedJs) && /id="adm-fx-nodeload"/.test(fixedJs));
+ok("and \"no deload\" is an answer, not a blank", /noDeloadEl && noDeloadEl\.checked \? 0 :/.test(fixedJs));
+ok("all of it travels with the client", /trainsMultipleLocations: prof\.trainsMultipleLocations === true/.test(fixedJs) && /deloadEveryWeeks: prof\.deloadEveryWeeks/.test(fixedJs));
 
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
 ok("admin version 3.1.0", /DUCK-WOD Admin · 3\.1\.0/.test(adminHtml));

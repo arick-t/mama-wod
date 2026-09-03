@@ -1118,13 +1118,19 @@ header{flex-wrap:wrap;row-gap:8px}
         </div>
         <label class="fld" id="inEquipOtherWrap" hidden><span>Describe what is actually available</span>
           <textarea id="inEquipOther" placeholder="Rig, 4 barbells, kettlebells 8–32kg, 2 rowers, no rings…"></textarea></label>
-        <!-- Always asked, whatever the equipment answer was. The binding constraint in a
-             room of 12–20 is how many people can work AT ONCE: 18 athletes on 6 barbells
-             is a different session from 18 on 18, and it decides whether a squat can be
-             written at all (coach agent, 2026-09-02). -->
-        <label class="fld"><span>How many stations are there?</span>
-          <textarea id="inStations" maxlength="600"
-            placeholder="Barbells, ergs, pull-up stations, kettlebells/dumbbells and their weights — anything that limits how many people can work at the same time"></textarea></label>
+        <!-- Asked as a NUMBER, because that is the answer he actually gave when the
+             question said "stations": he answered capacity here and counted the equipment
+             in the box above (coach agent, 2026-09-03). And a room with no practical
+             ceiling has to be able to say so — forcing a number invents a limit. -->
+        <label class="chk-row" style="cursor:default">
+          <span>How many athletes train at once, at the busiest class?</span>
+          <input id="inMaxAtOnce" type="number" min="1" max="200" value=""
+                 class="inline-num" aria-label="Athletes at once" placeholder="—">
+        </label>
+        <label class="chk-row">
+          <input id="inNoCap" type="checkbox">
+          <span>No practical limit</span>
+        </label>
       </div>
 
       <!-- 3 · schedule.
@@ -1255,6 +1261,12 @@ header{flex-wrap:wrap;row-gap:8px}
         <p class="meta" id="inMinutesHint" style="margin:0 0 12px"></p>
         <label class="fld"><span>The place, the people, the limits — and what they are training for</span>
           <textarea id="inPopulation" placeholder="Pre-army prep group, 17–19, mixed ability. Two members with knee history. Training for army selection: 2000m run, pull-ups, load carry endurance."></textarea></label>
+        <!-- The boundary, next to the identity. "No barbell snatches" buried in a
+             paragraph about atmosphere is a rule the coach has to infer — the same
+             failure COMPETITOR had (coach agent, 2026-09-03). -->
+        <label class="fld"><span>Anything this place does NOT do?</span>
+          <textarea id="inAvoidProgram" maxlength="400"
+            placeholder="e.g. no barbell snatches · no kipping · nobody here competes"></textarea></label>
       </div>
 
       <!-- An individual's fourth tab. A studio answers "who is in the room"; a person
@@ -6327,8 +6339,9 @@ tryRestoreAdminSession();
       deloadEveryWeeks: shell.deloadEveryWeeks || 4,
       population: "Individual athlete",
       goals: String(a.goals || shell.goals || ""),
-      /* Stations describe a room shared by twelve people. An individual has none. */
-      stations: "",
+      /* Capacity describes a room shared by twelve people. An individual has none. */
+      maxAthletesAtOnce: 0,
+      noCapacityCap: false,
     };
   }
 
@@ -7752,7 +7765,9 @@ tryRestoreAdminSession();
       paymentMethod: String(el("inMethod").value || ""),
       equipment: el("inEquipOtherOn").checked ? "other" : "functional_gym",
       equipmentOther: String(el("inEquipOther").value || ""),
-      stations: el("inStations") ? el("inStations").value.trim() : "",
+      maxAthletesAtOnce: el("inMaxAtOnce") ? parseInt(el("inMaxAtOnce").value, 10) || 0 : 0,
+      noCapacityCap: !!(el("inNoCap") && el("inNoCap").checked),
+      avoidInProgram: el("inAvoidProgram") ? el("inAvoidProgram").value.trim() : "",
       /* "" when neither is ticked — never a mode the owner did not choose. */
       scheduleMode: el("inSchedCount").checked
         ? "session_count"
@@ -7803,7 +7818,9 @@ tryRestoreAdminSession();
       sessionMinutes: "",
       population: "",
       goals: "",
-      stations: "",
+      maxAthletesAtOnce: "",
+      noCapacityCap: false,
+      avoidInProgram: "",
     });
     if (el("inHasChanges")) el("inHasChanges").checked = false;
     if (el("inChanges")) el("inChanges").value = "";
@@ -7831,7 +7848,9 @@ tryRestoreAdminSession();
 
     el("inSchedCount").checked = v.scheduleMode === "session_count";
     el("inSchedWeekly").checked = v.scheduleMode === "weekly_schedule";
-    if (el("inStations")) el("inStations").value = v.stations || "";
+    if (el("inMaxAtOnce")) el("inMaxAtOnce").value = v.maxAthletesAtOnce || "";
+    if (el("inNoCap")) el("inNoCap").checked = v.noCapacityCap === true;
+    if (el("inAvoidProgram")) el("inAvoidProgram").value = v.avoidInProgram || "";
     el("inSessions").value = v.sessionsPerWeek || "";
     el("inSessionsDiffer").checked = v.sessionsDiffer === true;
     el("inRestDays").checked = v.includeRestDays === true;
@@ -7938,11 +7957,13 @@ tryRestoreAdminSession();
     });
   }
 
-  /* A room shared by twelve people has stations; one athlete does not. */
+  /* A room shared by twelve people has a capacity; one athlete does not. */
   function syncStationsVisibility(isIndividual) {
-    var box = el("inStations");
-    var wrap = box && box.closest ? box.closest("label") : null;
-    if (wrap) wrap.hidden = !!isIndividual;
+    ["inMaxAtOnce", "inNoCap"].forEach(function (id) {
+      var box = el(id);
+      var wrap = box && box.closest ? box.closest("label") : null;
+      if (wrap) wrap.hidden = !!isIndividual;
+    });
   }
 
   function syncIntakeConditionals() {

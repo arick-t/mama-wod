@@ -748,6 +748,12 @@ ok("a new client starts on an empty form", /function clearIntakeForm/.test(page)
 ok("and it is called when adding one", /clearIntakeForm\(\);[\s\S]{0,40}renderIntakeTabs\(\);/.test(page));
 ok("the individual tab is emptied too", /fillAthleteGoalsTab\(null\)/.test(page));
 
+/* --- the studio is asked capacity, not stations (coach agent, 2026-09-03) */
+ok("how many train at once is a number", /id="inMaxAtOnce" type="number"/.test(page));
+ok("and a room with no ceiling can say so", /id="inNoCap"/.test(page));
+ok("the stations question is gone", !/id="inStations"/.test(page));
+ok("what the place does not do is asked beside who it is", /id="inAvoidProgram"/.test(page));
+
 /* --- an individual's fourth tab -------------------------------------
  * A studio answers "who is in the room"; a person answers what THEY are training for
  * and what has to be worked around - the last tab of their own eight-step intake

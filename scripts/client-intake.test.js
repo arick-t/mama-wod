@@ -82,6 +82,9 @@ ok("no Hebrew in the intake strings", !/[֐-׿]/.test(codeOnly));
 /* --- 2.c: cross-cutting only ------------------------------------------ */
 
 const shape = Object.keys(I.emptyIntake()).sort();
+/* "avoidInProgram" is the same field name the individual uses, deliberately: it is the
+   same idea, and the packet says DOES NOT DO for a place and DOES NOT WANT for a person
+   (coach agent, 2026-09-03). */
 const FORBIDDEN = [
   "age", "bodyweight", "experience", "gender", "lifts", "skills",
   "injuries", "trainingDays", "activeRecoveryPref", "sessionLimits", "displayName",
@@ -93,14 +96,11 @@ ok(
   "the shape is exactly the owner's tabs worth of fields",
   JSON.stringify(shape) ===
     JSON.stringify([
-      "clientName", "dayEmphasis", "dayEmphasisEnabled", "deloadEveryWeeks", "deloadWeek", "equipment",
-      "equipmentOther", "goals", "includeRestDays", "monthlyAmount", "paymentMethod",
+      "avoidInProgram", "clientName", "dayEmphasis", "dayEmphasisEnabled", "deloadEveryWeeks",
+      "deloadWeek", "equipment", "equipmentOther", "goals", "includeRestDays",
+      "maxAthletesAtOnce", "monthlyAmount", "noCapacityCap", "paymentMethod",
       "population", "restDays", "scheduleMode", "sessionMinutes", "sessionTypes", "sessionsDiffer",
       "sessionsPerWeek",
-      /* How many people can work at once, and on what. The binding constraint in a room
-         of 12-20 is the number of stations, not the brand of equipment: 18 athletes on 6
-         barbells is a different session from 18 on 18 (coach agent, 2026-09-02). */
-      "stations",
     ])
 );
 /* The old focus-per-weekday field is gone: weekly mode now asks about rest days and
@@ -467,15 +467,19 @@ ok("the intake names no AI provider", !/gemini|groq/i.test(intakeSrc));
 
 
 /* --- the room, and the packet the coach reads --------------------------- */
-const roomy = I.normalizeIntake({ stations: "6 barbells, 3 ergs, 2 rigs" });
-ok("the stations answer is kept", roomy.stations === "6 barbells, 3 ergs, 2 rigs");
-ok("it is asked whatever the equipment answer was", I.normalizeIntake({ equipment: "functional_gym", stations: "x" }).stations === "x");
-const packet = I.buildStudioIntakePrompt({ stations: "6 barbells", scheduleMode: "session_count", sessionsPerWeek: 3, sessionsDiffer: true, sessionTypes: ["a", "b", "c"] });
-ok("the studio packet states the room", /^STATIONS: 6 barbells$/m.test(packet));
+const roomy = I.normalizeIntake({ maxAthletesAtOnce: "10", avoidInProgram: "no barbell snatches" });
+ok("how many train at once is a number", roomy.maxAthletesAtOnce === 10);
+ok("what the place does not do is kept", roomy.avoidInProgram === "no barbell snatches");
+/* A room with no practical ceiling must be able to say so - forcing a number invents a
+   limit that is not there (coach agent, 2026-09-03). */
+ok("no practical limit is an answer", I.normalizeIntake({ noCapacityCap: true }).noCapacityCap === true);
+ok("and it is not the same as unanswered", I.normalizeIntake({}).noCapacityCap === false && I.normalizeIntake({}).maxAthletesAtOnce === 0);
+const packet = I.buildStudioIntakePrompt({ maxAthletesAtOnce: 12, scheduleMode: "session_count", sessionsPerWeek: 3, sessionsDiffer: true, sessionTypes: ["a", "b", "c"] });
+ok("the studio packet states the room", /^MAX AT ONCE: 12 athletes at the busiest class\.$/m.test(packet));
 ok("and the sessions in order", /1\. a[\s\S]*2\. b[\s\S]*3\. c/.test(packet));
-ok("an unstated room carries its own instruction", /^STATIONS: not stated/m.test(I.buildStudioIntakePrompt({})));
+ok("an unstated room carries its own instruction", /^MAX AT ONCE: not stated/m.test(I.buildStudioIntakePrompt({})));
 /* briefFor is a reminder for the owner while he writes by hand. It must never become a
    prompt: one string serving two masters follows neither rule. */
-ok("briefFor is still not a prompt", !/BLOCK_JSON/.test(I.briefFor({ stations: "6 barbells" })));
+ok("briefFor is still not a prompt", !/BLOCK_JSON/.test(I.briefFor({ maxAthletesAtOnce: 12 })));
 
 console.log("All client intake checks passed.");

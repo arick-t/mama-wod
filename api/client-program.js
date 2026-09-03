@@ -268,9 +268,14 @@ async function ownerHandler(req, res, body) {
         restDays: rest,
         sessionsPerWeek: trainingCount,
         sessionMinutes: athleteIntake.sessionMinutes,
-        /* The product is monthly: the fourth week is a deload unless he changes it. */
-        deloadWeek: true,
-        deloadEveryWeeks: Intake.MIN_DELOAD_EVERY,
+        /* His own answer, not ours. Every individual used to get "no deload week falls
+           inside this block" because the question did not exist; hard-coding four instead
+           would be the same mistake with a nicer number (coach agent + owner,
+           2026-09-03). */
+        deloadWeek: parseInt(athleteIntake.deloadEveryWeeks, 10) > 0,
+        deloadEveryWeeks: parseInt(athleteIntake.deloadEveryWeeks, 10) > 0
+          ? parseInt(athleteIntake.deloadEveryWeeks, 10)
+          : 0,
         population: "Individual athlete",
         goals: String(athleteIntake.goals || "").slice(0, 600),
       });

@@ -76,7 +76,7 @@ ok(
 ok("three training days is three sessions", garage.sessionsPerWeek === 3);
 ok("his session length comes back", garage.sessionMinutes === 45);
 ok("the cadence stays the product's", garage.deloadWeek === true && garage.deloadEveryWeeks === 4);
-ok("and a person has no stations", garage.stations === "");
+ok("and a person has no capacity to state", garage.maxAthletesAtOnce === 0 && garage.noCapacityCap === false);
 
 /* --- clients created before the raw answers were carried ----------------- */
 
