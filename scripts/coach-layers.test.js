@@ -1038,11 +1038,13 @@ function testPackBudget() {
   /* 38k as of 2026-09-03, from the "קצה 1" audit: three real conflicts a live intake produced —
      an athlete with two training places, a skill claimed and its pattern avoided, and a weekend
      session longer than the stated ceiling. Two of the three are conditional (injuries, individual)
-     and only the session-length line is always-on. A second brick is now folded into the fixture, so the number is the true worst case. This pack is
+     and only the session-length line is always-on. A second brick is now folded into the fixture, so the number is the true worst case. The
+     weightlifting layer then grew ~800 characters in the owner review that replaced its experience
+     tiers with tests on the reported numbers. This pack is
      ~10.2k tokens; the general
      healthy athlete still pays 22k, which is what most bricks actually cost. */
-  ok("the heaviest pack stays under 40k characters",
-    heavy.chars < 40000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
+  ok("the heaviest pack stays under 41k characters",
+    heavy.chars < 41000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
   ok("the pack reports which layers it used",
     Array.isArray(heavy.layers) && heavy.layers.length >= 6, heavy.layers.join(", "));
 }
@@ -1197,6 +1199,85 @@ function testHebrewBoundary() {
   });
 }
 
+
+/* Weightlifting, reviewed with the owner 2026-09-03. Six decisions, each reversing the source. */
+function testWeightlifting() {
+  const W = require("../lib/coach-layers/layer3-weightlifting.js");
+  const flat = W.replace(/\s+/g, " ");
+
+  /* The experience tiers again — third layer to carry them, third time out. The replacement is the
+     data we hold: a reported 90 kg snatch is not a beginner, and an empty field is the signal. */
+  ok("no experience tier survives in the weightlifting layer",
+    !/beginner/i.test(W) && !/intermediate lifter/i.test(W) && !/less skilled/i.test(W),
+    "an experience tier is back in the weightlifting layer");
+  ok("the reported numbers replace the label",
+    /READ THE REPORTED NUMBERS, NEVER AN EXPERIENCE LABEL/.test(W) &&
+      /A reported snatch or clean & jerk figure is a tested lift/.test(W));
+  ok("an empty field means the pattern is the work",
+    /No figure reported for a lift, or the skill left unmarked: the PATTERN is the work/.test(W));
+  ok("load still follows position",
+    /Load follows position, never leads it/.test(W));
+
+  /* 3-5 lifting sessions a week is a weightlifting programme. Our athlete has five training days
+     in total and this is one focus among several. */
+  ok("the lifting spreads across existing days instead of taking the week",
+    /HOW MUCH OF THE WEEK THIS TAKES \(HARD\)/.test(W) &&
+      /spread the barbell work across the training days the athlete already has/i.test(flat));
+  ok("no days are added and the week does not become a lifting programme",
+    /Do NOT add days, and do NOT turn the week into a weightlifting programme/i.test(flat));
+  ok("no session-count prescription is left in the layer",
+    !/3-5 sessions a week/i.test(flat), "a specialist frequency came back");
+
+  /* Banned outright rather than gated: a list of exceptions invites the model to find a way in,
+     and this is the same family as the powerlifting source the owner refused. */
+  ok("daily-max squat templates are banned for everyone",
+    /NO DAILY-MAX SQUAT TEMPLATES\. Not for anyone, at any level, under any condition/.test(W));
+  ok("the ban is not a list of exceptions",
+    !/contraindicated for/i.test(W));
+
+  /* The coach writes four weeks ahead and cannot know last session's single, so a kg figure it
+     computes is invented. The intent survives, addressed to the athlete. */
+  ok("the heavy single is judged on feel and never taken to failure",
+    /A heavy single is judged on FEEL and never taken to failure/.test(W));
+  ok("the increment is the athlete's, not a number the coach writes",
+    /Tell the ATHLETE in the session to add a little on their last session if it is there; never write that kg figure yourself/i.test(
+      flat
+    ));
+  ok("no computed kilo increment survives",
+    !/beat the previous session by at least 1 kg/i.test(flat));
+
+  /* The two-setting athlete reached this layer too. */
+  ok("technical work goes where the barbell is",
+    /PUT THE TECHNICAL WORK ON THE DAYS THE BARBELL EXISTS/.test(W) &&
+      /on the other days keep the pattern with the implement they have/i.test(flat));
+
+  /* Kept from the source, and worth pinning: these are the safety rules. */
+  ok("never ending on a miss is kept",
+    /NEVER end a set or a session on a miss/.test(W));
+  ok("the three-miss ceiling is kept",
+    /Maximum 3 missed attempts on heavy snatch or clean & jerk in a session/.test(W));
+  ok("a barbell in a metcon is still called conditioning",
+    /A barbell in a metcon is conditioning, not lifting/.test(W));
+
+  /* Both layer-3 headers claimed the router selects them by the day's modality. It never sees the
+     day. Documentation, but a lie in a header is how the next person builds the wrong thing. */
+  const fs2 = require("fs");
+  ["layer3-weightlifting.js", "layer3-gymnastics.js"].forEach(function (f) {
+    const src = fs2.readFileSync(path.join(LAYERS_DIR, f), "utf8").split(String.fromCharCode(10)).join(" ").replace(/ \* /g, "");
+    ok(f + " does not claim the router sees the day's modality",
+      /router never sees the day/.test(src) && !/Lights up when the day's modality/.test(src));
+  });
+
+  /* The endurance verbs. "לרוץ יותר" is how a person writes it; the table only knew the noun. */
+  ["לרוץ יותר", "רוצה לרוץ 10 קמ", "לחתור טוב יותר", "לשחות", "רכיבה על אופניים"].forEach(
+    function (g) {
+      ok('"' + g + '" selects endurance',
+        L.pickLayer3({ goals: g }, null).indexOf("endurance") >= 0,
+        JSON.stringify(L.pickLayer3({ goals: g }, null)));
+    }
+  );
+}
+
 function main() {
   console.log("\n=== Coach knowledge layers ===\n");
   testShape();
@@ -1214,6 +1295,7 @@ function main() {
   testContinuation();
   testGymnastics();
   testHebrewBoundary();
+  testWeightlifting();
   testPackBudget();
   console.log("\nPassed:", passed);
   if (process.exitCode) {
