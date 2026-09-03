@@ -1278,6 +1278,75 @@ function testWeightlifting() {
   );
 }
 
+
+/* Endurance, reviewed with the owner 2026-09-03. The layer was priced entirely in %HRmax and the
+   intake collects neither a max heart rate nor whether the athlete owns a monitor. */
+function testEndurance() {
+  const E = require("../lib/coach-layers/layer3-endurance.js");
+  const flat = E.replace(/\s+/g, " ");
+
+  ok("no heart-rate percentage survives anywhere in the layer",
+    (E.match(/\d+%/g) || []).length === 0 && !/HRmax/i.test(E),
+    "a heart-rate percentage is back in a layer whose athlete has no monitor");
+  ok("the ban on prescribing a heart rate is stated out loud",
+    /Never prescribe a heart-rate percentage/.test(E) &&
+      /the athlete has not told us their max and may own no monitor/i.test(flat));
+
+  /* The owner's four parameters, each defined by something an athlete can judge without kit. */
+  ok("the four paces are the intensity language",
+    /THE FOUR PACES — THIS IS THE ONLY INTENSITY LANGUAGE/.test(E));
+  ["EASY PACE", "MODERATE PACE", "HIGH PACE", "MAXIMAL PACE"].forEach(function (p) {
+    ok(p + " is defined", new RegExp("- " + p + ":").test(E));
+  });
+  ok("the paces are defined by breathing and by how long they hold",
+    /full sentences while moving\. Holds for an hour or more/.test(E) &&
+      /a word at a time\. Holds 5-20 minutes/.test(E) &&
+      /no talking, and it cannot be held/.test(E));
+  ok("no conversion from a reported time to a pace band is invented",
+    /never invent a conversion between a time and a pace band/i.test(flat));
+
+  /* "להוריד את השער - לא לשם אנחנו מכוונים לא רלוונטי למוצר שלנו." */
+  ok("the four-week base gate is gone",
+    !/at least 4 weeks/i.test(flat) &&
+      !/only after the 4-week base/i.test(flat) &&
+      !/PHASE 1|PHASE 2/.test(E),
+    "the base-before-threshold gate came back");
+  ok("both session types still exist without a sequence between them",
+    /--- ?THE LONG SESSION|THE LONG SESSION:/.test(E) && /THE THRESHOLD SESSION:/.test(E));
+
+  /* "הכי טוב במגבלות מה שיש." */
+  ok("a place with none of the five modalities still gets engine work",
+    /IF THE PLACE HAS NONE OF THE FIVE, do the best available/.test(E) &&
+      /otherwise a cyclical bodyweight movement held at the target pace/i.test(flat));
+  ok("even then it is never a loaded implement",
+    /Still never a loaded implement/.test(E));
+  ok("loaded engine work is still refused outright",
+    /Do NOT build aerobic capacity with barbells or dumbbells/.test(E));
+
+  /* Calories per minute is an output, not a distance. */
+  ok("the EMOM calorie figures are marked as an example",
+    /THE CALORIE FIGURES ARE AN EXAMPLE, NOT A PRESCRIPTION/.test(flat));
+  ok("the number scales to the athlete while the ratio is kept",
+    /pick a number this athlete can actually hold for the whole piece/i.test(flat) &&
+      /keep the RATIO between the machines from the equivalence table/i.test(flat));
+  ok("no single calorie figure is copied across the three machines",
+    /Do not copy one number across all three/.test(E));
+
+  /* Kept: the dose, and the refusal to convert a brick into zone work. */
+  ok("engine work stays an addition to a varied week",
+    /Engine work is an ADDITION to a varied week, never a replacement for it/.test(E));
+  ok("the whole brick is never turned into easy aerobic work",
+    /never turn an athlete's whole brick into easy aerobic work/i.test(flat));
+  ok("the endurance header no longer claims the router sees the day",
+    /router never sees the day/.test(
+      require("fs")
+        .readFileSync(path.join(LAYERS_DIR, "layer3-endurance.js"), "utf8")
+        .split(String.fromCharCode(10))
+        .join(" ")
+        .replace(/ \* /g, "")
+    ));
+}
+
 function main() {
   console.log("\n=== Coach knowledge layers ===\n");
   testShape();
@@ -1296,6 +1365,7 @@ function main() {
   testGymnastics();
   testHebrewBoundary();
   testWeightlifting();
+  testEndurance();
   testPackBudget();
   console.log("\nPassed:", passed);
   if (process.exitCode) {
