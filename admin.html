@@ -7304,13 +7304,21 @@ tryRestoreAdminSession();
         try { showHdrToast((r.body && r.body.error) || "השמירה נכשלה.", "err"); } catch (eT) {}
         return;
       }
-      banner("good", opts && opts.quiet ? "נשמר אוטומטית." : "נשמר.");
+      var quiet = !!(opts && opts.quiet);
+      banner("good", quiet ? "נשמר אוטומטית." : "נשמר.");
       S.program = r.body.program;
-      S.edit = null;
-      /* Stay on the day he just wrote. Jumping back to the first session of the block
-         after every save made writing a month a fight (owner, 2026-09-02). */
-      S.wi = wi;
-      S.day = dayKey;
+      if (!quiet) {
+        /* Pressing Save means staying on the day just written. Jumping back to the first
+           session of the block after every save made writing a month a fight
+           (owner, 2026-09-02). */
+        S.edit = null;
+        S.wi = wi;
+        S.day = dayKey;
+      }
+      /* An AUTOSAVE must not drag him back. He left this day on purpose, and this answer
+         arrives after he is already somewhere else — moving him here made it take two
+         clicks to change day, and killed the edit he had just opened on the next card
+         (owner, 2026-09-03). */
       renderDetail();
     });
   }

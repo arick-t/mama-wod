@@ -766,6 +766,11 @@ ok("and an unchanged one costs no request", /if \(samePartsAsStored\(draft\.wi, 
 /* He has already moved on, so a failed autosave has to be loud. */
 ok("a failed save is said out loud", /showHdrToast\(\(r\.body && r\.body\.error\) \|\| "השמירה נכשלה\."/.test(page));
 ok("the Save button is still there", /window\.cvEditSave = function/.test(page));
+/* One click, not two. The autosave answer arrives after he is already on the next day,
+   so moving him to the saved one made changing day take two clicks and killed the edit
+   he had just opened on the next card (owner, 2026-09-03). */
+ok("pressing Save stays on the day written", /if \(!quiet\) \{[\s\S]{0,400}S\.wi = wi;[\s\S]{0,40}S\.day = dayKey;/.test(page));
+ok("an autosave does not move him at all", /var quiet = !!\(opts && opts\.quiet\);/.test(page));
 
 ok("the view is decided again once the client has arrived", /S\.program = r\.body\.program;[\s\S]{0,1400}renderViewMode\(\);\s*renderDetail\(\);/.test(page));
 

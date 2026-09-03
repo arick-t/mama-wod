@@ -248,6 +248,8 @@ ok("so does the pencil on another card", /if \(state\.edit && \(state\.edit\.wi 
 ok("cancel still discards", /window\.cvEditCancel = function \(\) \{\s*state\.edit = null;/.test(html));
 ok("an unchanged draft costs no request", /if \(samePartsAsStored\(draft\.wi, draft\.day, parts\)\) return;/.test(html));
 ok("the Save button is still there", /window\.cvEditSave = function/.test(html));
+/* An autosave must not drag the reader back to the day they just left. */
+ok("an autosave does not move them", /var quiet = !!\(opts && opts\.quiet\);/.test(html));
 
 /* --- a paused client stops reading the plan -------------------------
  * Freeze only bit after a manual reload: a client with the tab open kept reading their

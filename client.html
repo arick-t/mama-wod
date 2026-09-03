@@ -1122,11 +1122,15 @@ button.ghost:hover{color:var(--text)}
         return;
       }
       state.program = r.body.program;
-      state.edit = null;
-      if (opts && opts.quiet) banner("good", "Saved automatically.");
-      /* Stay where the writing happened. */
-      state.wi = wi;
-      state.day = dayKey;
+      var quiet = !!(opts && opts.quiet);
+      if (quiet) banner("good", "Saved automatically.");
+      if (!quiet) {
+        /* Pressing Save means staying on the day just written. An autosave must not drag
+           the reader back to it — they left it on purpose (owner, 2026-09-03). */
+        state.edit = null;
+        state.wi = wi;
+        state.day = dayKey;
+      }
       renderDays(); renderChrome();
       banner("warn", "");
     });
