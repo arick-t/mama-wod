@@ -1347,6 +1347,52 @@ function testEndurance() {
     ));
 }
 
+
+/* Partner, reviewed with the owner 2026-09-03. Four changes; the odd-number-of-people case was
+   deliberately left out — "תניח לזה ותן למאמן האנושי להתמודד". */
+function testPartner() {
+  const P = require("../lib/coach-layers/layer3-partner.js");
+  const flat = P.replace(/\s+/g, " ");
+
+  /* The header said four structures and listed five. */
+  ok("the structure list is not miscounted",
+    !/FOUR STRUCTURES/.test(P) && /THE STRUCTURES, AND WHAT EACH IS FOR:/.test(P));
+  ["YOU GO / I GO", "CHIPPER", "SYNCHRO", "CARDIO SPLIT", "ALTERNATING EMOM"].forEach(function (k) {
+    ok(k + " is still one of them", P.indexOf("- " + k) >= 0);
+  });
+
+  /* Double the volume, same clock. Without this said out loud, a 45-minute ceiling becomes 90. */
+  ok("doubled volume does not double the clock",
+    /THE CLOCK DOES NOT CHANGE/.test(P) &&
+      /The session-length ceiling from the intake holds exactly as it does on any other day/i.test(
+        flat
+      ));
+  ok("the reason the extra volume fits is stated",
+    /The extra volume fits because each athlete rests half the time/i.test(flat) &&
+      /not a reason to write a longer session/i.test(flat));
+  ok("the volume rule itself is intact",
+    /the total volume is DOUBLE or TRIPLE the individual prescription/i.test(flat));
+
+  /* The connection to the room layer: a pair halves the stations a piece needs. This is what turns
+     a partner day from a change of pace into the answer to the station-versus-people count. */
+  ok("partner structures are named as the answer to a station shortage",
+    /WHEN THE EQUIPMENT IS SHORT, THIS IS THE TOOL:/.test(P) &&
+      /a partner structure halves the stations a piece needs/i.test(flat));
+  ok("it is reached for before staggering starts or dropping the loaded work",
+    /rather than staggering starts or dropping the loaded work/i.test(flat));
+
+  /* A home studio or an outdoor coach has no machine, and the cardio split assumed one. */
+  ok("the cardio split works with no machine",
+    /WITH NO MACHINE, the holding partner holds a position or a carry instead/i.test(flat) &&
+      /the structure is unchanged/i.test(flat));
+
+  /* Deliberately absent. If someone adds it later they should have to delete this assertion and
+     think about why it was left out. */
+  ok("no rule was invented for an odd number of athletes",
+    !/odd number/i.test(P),
+    "the owner left this to the human coach on purpose");
+}
+
 function main() {
   console.log("\n=== Coach knowledge layers ===\n");
   testShape();
@@ -1366,6 +1412,7 @@ function main() {
   testHebrewBoundary();
   testWeightlifting();
   testEndurance();
+  testPartner();
   testPackBudget();
   console.log("\nPassed:", passed);
   if (process.exitCode) {
