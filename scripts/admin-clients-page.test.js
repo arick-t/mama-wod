@@ -773,10 +773,22 @@ ok("what the place does not do is asked beside who it is", /id="inAvoidProgram"/
 ok("there is a goals-and-limits pane", /data-pane="athlete_goals"/.test(page));
 ok("an individual gets it as the fourth tab", /\{ id: "athlete_goals", label: "Goals & limits" \}/.test(page));
 ok("a studio still gets population", /return t\.id === "population";/.test(page));
-ok("the first three tabs are shared", /var keep = \["equipment", "schedule"\]/.test(page) && /id: "changes", label: "Additions & changes"/.test(page));
+/* Corrected 2026-09-03: the SCHEDULE tab is not shared either. A studio answers
+   "sessions per week or a full weekly plan, and are rest days part of it"; a person
+   answers which days they train, how long each is, and how often they take a down
+   week. Only the notes tab and Equipment are common. */
+ok("a studio keeps its own schedule tab", /var keep = individual \? \["equipment"\] : \["equipment", "schedule"\]/.test(page));
+ok("an individual gets theirs", /if \(individual\) mid = mid\.concat\(\[\{ id: "athlete_schedule", label: "Schedule" \}\]\)/.test(page));
+ok("there is a pane for it", /data-pane="athlete_schedule"/.test(page));
+ok("it asks which days they train", /id="inADays"/.test(page));
+ok("how long each session is", /id="inASessionMinutes"/.test(page) && /id="inADiffer"/.test(page) && /id="inAPerDay"/.test(page));
+ok("and how often they take a down week", /id="inADeload"/.test(page) && /id="inANoDeload"/.test(page));
+ok("opened on the answers already on file", /function fillAthleteScheduleTab/.test(page));
+ok("and read back with the rest of the patch", /Object\.assign\(\{\}, readAthleteScheduleTab\(\), readAthleteGoalsTab\(\)\)/.test(page));
+ok("the notes tab is still first", /id: "changes", label: "Additions & changes"/.test(page));
 ok("the marks come from the one contract", /C\.IMPROVE_FOCUS_DEFS/.test(page) && /C\.AVOID_MOVEMENT_DEFS/.test(page));
 ok("the improve list still belongs to the competitor tick", /function syncAthleteImproveVisibility/.test(page));
-ok("and what the tab says travels with the block", /athleteIntake: isIndividualClient\(\) \? readAthleteGoalsTab\(\) : undefined/.test(page));
+ok("and what the tabs say travels with the block", /athleteIntake: isIndividualClient\(\)[\s\S]{0,120}readAthleteGoalsTab\(\)/.test(page));
 
 /* --- one screen for both kinds of client -----------------------------
  * A studio and an individual are the same object here: one card, one programme view,

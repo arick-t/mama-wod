@@ -446,21 +446,41 @@ async function ownerHandler(req, res, body) {
       body.intake && typeof body.intake === "object" ? Intake.normalizeIntake(body.intake) : null;
     if (blockIntake) {
       const read = await store.readProgram(programId);
-      const days =
-        read.ok && isPlainObject(read.program.athleteIntake)
-          ? read.program.athleteIntake.trainingDaysMap
-          : null;
+      /* The days he answered in THIS mini-intake win over the ones on file: he may have
+         just changed them, and the block being created is the one they apply to
+         (owner, 2026-09-03). */
+      const patchDays = isPlainObject(body.athleteIntake) ? body.athleteIntake.trainingDaysMap : null;
+      const days = isPlainObject(patchDays)
+        ? patchDays
+        : read.ok && isPlainObject(read.program.athleteIntake)
+        ? read.program.athleteIntake.trainingDaysMap
+        : null;
       if (isPlainObject(days)) {
         const rest = {};
         for (const k of Intake.DAY_KEYS) rest[k] = days[k] !== true;
         const trains = Intake.DAY_KEYS.filter((k) => !rest[k]).length;
         if (trains > 0) {
+          /* His own cadence, from this mini-intake or from the file - never the studio
+             form's default (owner, 2026-09-03). */
+          const storedEvery =
+            read.ok && isPlainObject(read.program.athleteIntake)
+              ? parseInt(read.program.athleteIntake.deloadEveryWeeks, 10)
+              : 0;
+          const patchEvery = isPlainObject(body.athleteIntake)
+            ? parseInt(body.athleteIntake.deloadEveryWeeks, 10)
+            : NaN;
+          const every = Number.isFinite(patchEvery) ? patchEvery : storedEvery;
           blockIntake = Intake.normalizeIntake(
             Object.assign({}, blockIntake, {
               scheduleMode: "weekly_schedule",
               includeRestDays: true,
               restDays: rest,
               sessionsPerWeek: trains,
+              deloadWeek: every > 0,
+              deloadEveryWeeks: every > 0 ? every : 0,
+              sessionMinutes:
+                (isPlainObject(body.athleteIntake) && parseInt(body.athleteIntake.sessionMinutes, 10)) ||
+                blockIntake.sessionMinutes,
             })
           );
         }

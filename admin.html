@@ -1294,6 +1294,37 @@ header{flex-wrap:wrap;row-gap:8px}
            answers what THEY are training for and what has to be worked around, which is
            the last tab of their own eight-step intake (owner, 2026-09-03). Only one of
            the two panes is ever shown: intakeDefs decides which. -->
+      <!-- An individual's week is not a studio's. A studio answers "sessions per week or
+           a full weekly plan, and are rest days part of it"; a person answers WHICH DAYS
+           they train, how long each is, and how often they take a down week. Showing them
+           the studio tab asked questions they had never been asked and hid the ones they
+           had (owner, 2026-09-03). -->
+      <div class="ipane" data-pane="athlete_schedule" hidden>
+        <p class="meta" style="margin:0 0 8px">Which days do they train?</p>
+        <div class="emph-days" id="inADays"></div>
+        <label class="chk-row" style="cursor:default">
+          <span>Session length (minutes, warm-up included)</span>
+          <input id="inASessionMinutes" type="number" min="20" max="180" value=""
+                 class="inline-num" aria-label="Session length" placeholder="—">
+        </label>
+        <label class="chk-row">
+          <input id="inADiffer" type="checkbox">
+          <span>Different times on different days</span>
+        </label>
+        <div id="inAPerDayWrap" hidden>
+          <p class="meta" style="margin:0 0 6px">How long is each day?</p>
+          <div class="emph-days" id="inAPerDay"></div>
+        </div>
+        <label class="chk-row" style="cursor:default">
+          <span>Deload week every … weeks</span>
+          <input id="inADeload" type="number" min="3" max="12" value=""
+                 class="inline-num" aria-label="Deload cadence" placeholder="4">
+        </label>
+        <label class="chk-row">
+          <input id="inANoDeload" type="checkbox">
+          <span>No deload</span>
+        </label>
+      </div>
       <div class="ipane" data-pane="athlete_goals" hidden>
         <label class="chk-row" style="cursor:default">
           <span>Session length (minutes, warm-up included)</span>
@@ -6418,6 +6449,7 @@ tryRestoreAdminSession();
     fillIntakeForm(isIndividual ? intakeFormFromAthlete(S.program) : (S.program.intake || {}));
     syncStationsVisibility(isIndividual);
     fillAthleteGoalsTab(S.program);
+    fillAthleteScheduleTab(S.program);
     if (el("inBlockAmount")) {
       el("inBlockAmount").value = S.program.monthlyAmount ? S.program.monthlyAmount : "";
     }
@@ -7708,15 +7740,20 @@ tryRestoreAdminSession();
   function intakeDefs() {
     var tabs = (window.CLIENT_INTAKE && window.CLIENT_INTAKE.TABS) || [];
     if (!S.blockMode) return tabs;
-    var keep = ["equipment", "schedule"];
+    var individual = isIndividualClient();
+    /* A studio's schedule tab asks about sessions per week and standing emphases; an
+       individual answers which days they train and how long each is. Different product,
+       different question (owner, 2026-09-03). */
+    var keep = individual ? ["equipment"] : ["equipment", "schedule"];
     var first = [{ id: "changes", label: "Additions & changes" }];
     var mid = tabs.filter(function (t) {
       return keep.indexOf(t.id) >= 0;
     });
+    if (individual) mid = mid.concat([{ id: "athlete_schedule", label: "Schedule" }]);
     /* A studio answers "who is in the room". A person answers what THEY are training for
        and what has to be worked around - the last tab of their own eight-step intake
        (owner, 2026-09-03). */
-    var last = isIndividualClient()
+    var last = individual
       ? [{ id: "athlete_goals", label: "Goals & limits" }]
       : tabs.filter(function (t) {
           return t.id === "population";
@@ -7736,6 +7773,113 @@ tryRestoreAdminSession();
    * them in the product: the eight-step intake and this tab cannot drift apart, and
    * the coach's substitution matrix keys off those exact ids (coach agent, 2026-09-02).
    */
+  /**
+   * The individual's week, opened on the week they are already on.
+   *
+   * Same questions as their eight-step intake, same vocabulary - a studio's schedule tab
+   * asks about sessions per week and standing emphases, which is a different product
+   * (owner, 2026-09-03).
+   */
+  function fillAthleteScheduleTab(p) {
+    var a = (p && p.athleteIntake) || {};
+    var trains = {};
+    var listed = Array.isArray(a.trainingDays) ? a.trainingDays : [];
+    if (!listed.length && a.trainingDaysMap && typeof a.trainingDaysMap === "object") {
+      listed = Object.keys(a.trainingDaysMap).filter(function (k) {
+        return a.trainingDaysMap[k] === true;
+      });
+    }
+    listed.forEach(function (d) { trains[String(d)] = true; });
+    var mins = parseInt(a.sessionMinutes, 10) > 0 ? parseInt(a.sessionMinutes, 10) : 0;
+    var byDay = a.sessionMinutesByDay && typeof a.sessionMinutesByDay === "object" ? a.sessionMinutesByDay : {};
+    var differs = a.sessionTimesDiffer === true || Object.keys(byDay).length > 0;
+    if (el("inADays")) {
+      el("inADays").innerHTML = DAY_KEYS_LOCAL.map(function (k) {
+        return '<label class="emph-day"><input type="checkbox" data-a-day="' + esc(k) + '"' +
+          (trains[k] ? " checked" : "") + "><span>" + esc(dayLabel(k)) + "</span></label>";
+      }).join("");
+    }
+    if (el("inASessionMinutes")) el("inASessionMinutes").value = mins || "";
+    if (el("inADiffer")) el("inADiffer").checked = differs;
+    if (el("inADeload")) {
+      el("inADeload").value = parseInt(a.deloadEveryWeeks, 10) > 0 ? parseInt(a.deloadEveryWeeks, 10) : "";
+    }
+    if (el("inANoDeload")) el("inANoDeload").checked = !(parseInt(a.deloadEveryWeeks, 10) > 0);
+    renderAthletePerDayMinutes(trains, byDay, mins);
+  }
+
+  /* One box per training day, prefilled with the main number so only the odd day is
+     edited. Shown only when he says the days differ. */
+  function renderAthletePerDayMinutes(trains, byDay, mins) {
+    var host = el("inAPerDay");
+    var wrap = el("inAPerDayWrap");
+    var differs = !!(el("inADiffer") && el("inADiffer").checked);
+    if (wrap) wrap.hidden = !differs;
+    if (!host) return;
+    var picked = trains || readAthleteDayTicks();
+    var minutes = byDay || {};
+    var fallback = mins || parseInt(el("inASessionMinutes") ? el("inASessionMinutes").value : 0, 10) || 0;
+    host.innerHTML = DAY_KEYS_LOCAL.filter(function (k) {
+      return picked[k] === true;
+    })
+      .map(function (k) {
+        var v = parseInt(minutes[k], 10) > 0 ? parseInt(minutes[k], 10) : fallback || "";
+        return '<label class="emph-day"><span>' + esc(dayLabel(k)) + "</span>" +
+          '<input type="number" min="20" max="180" class="inline-num" data-a-day-mins="' +
+          esc(k) + '" value="' + esc(v) + '"></label>';
+      })
+      .join("");
+  }
+
+  function readAthleteDayTicks() {
+    var out = {};
+    var boxes = document.querySelectorAll("#inADays input[data-a-day]");
+    for (var i = 0; i < boxes.length; i++) {
+      if (boxes[i].checked) out[boxes[i].getAttribute("data-a-day")] = true;
+    }
+    return out;
+  }
+
+  /** What the individual's schedule tab now says. */
+  function readAthleteScheduleTab() {
+    var trains = readAthleteDayTicks();
+    var days = DAY_KEYS_LOCAL.filter(function (k) {
+      return trains[k] === true;
+    });
+    var differs = !!(el("inADiffer") && el("inADiffer").checked);
+    var byDay = {};
+    if (differs) {
+      var boxes = document.querySelectorAll("#inAPerDay input[data-a-day-mins]");
+      for (var i = 0; i < boxes.length; i++) {
+        var k = boxes[i].getAttribute("data-a-day-mins");
+        var v = parseInt(boxes[i].value, 10);
+        if (trains[k] === true && v >= 20 && v <= 180) byDay[k] = v;
+      }
+    }
+    var mainMins = parseInt(el("inASessionMinutes") ? el("inASessionMinutes").value : 0, 10) || 0;
+    var noDeload = !!(el("inANoDeload") && el("inANoDeload").checked);
+    var every = parseInt(el("inADeload") ? el("inADeload").value : 0, 10) || 0;
+    var map = {};
+    days.forEach(function (d) { map[d] = true; });
+    return {
+      trainingDays: days,
+      /* The server shapes the month from this map, so it travels with the block. */
+      trainingDaysMap: map,
+      sessionTimesDiffer: differs,
+      /* One number and "they all differ" cannot both be the answer. */
+      sessionMinutes: differs ? 0 : mainMins >= 20 && mainMins <= 180 ? mainMins : 0,
+      sessionMinutesByDay: byDay,
+      deloadEveryWeeks: noDeload ? 0 : every >= 3 && every <= 12 ? every : 4,
+    };
+  }
+
+  /** Sun…Sat, in the owner's own words. */
+  function dayLabel(k) {
+    var C = window.CoachIntakeSync;
+    if (C && C.DAY_LABELS && C.DAY_LABELS[k]) return C.DAY_LABELS[k];
+    return String(k || "").toUpperCase();
+  }
+
   function fillAthleteGoalsTab(p) {
     var C = window.CoachIntakeSync;
     /* null means "nobody" - the tab is emptied rather than left holding the last
@@ -7891,6 +8035,7 @@ tryRestoreAdminSession();
     if (el("createErr")) el("createErr").textContent = "";
     /* And the individual's tab, which belongs to nobody until a client is open. */
     fillAthleteGoalsTab(null);
+    fillAthleteScheduleTab(null);
   }
 
   function fillIntakeForm(intake) {
@@ -8165,7 +8310,9 @@ tryRestoreAdminSession();
         /* An individual's fourth tab is about THEM, not about a room, so it travels as a
            patch onto their own answers - which is what the coach will read on the day it
            is reconnected (owner, 2026-09-03). */
-        athleteIntake: isIndividualClient() ? readAthleteGoalsTab() : undefined,
+        athleteIntake: isIndividualClient()
+          ? Object.assign({}, readAthleteScheduleTab(), readAthleteGoalsTab())
+          : undefined,
         /* A new block is when a price changes; leaving these alone changes nothing. */
         monthlyAmount: el("inBlockAmount") ? parseInt(el("inBlockAmount").value, 10) || 0 : undefined,
         paymentMethod: el("inBlockMethod") ? String(el("inBlockMethod").value || "").trim() : undefined,
@@ -8260,6 +8407,16 @@ tryRestoreAdminSession();
        rather than only on blur — otherwise the count and the boxes disagree. */
     if (el("inACompetitor")) {
       el("inACompetitor").addEventListener("change", syncAthleteImproveVisibility);
+    }
+    if (el("inADiffer")) {
+      el("inADiffer").addEventListener("change", function () {
+        renderAthletePerDayMinutes(null, null, 0);
+      });
+    }
+    if (el("inADays")) {
+      el("inADays").addEventListener("change", function () {
+        renderAthletePerDayMinutes(null, null, 0);
+      });
     }
     el("inSessions").addEventListener("input", function () {
       if (el("inSessionsDiffer").checked) buildSessionBoxes();
