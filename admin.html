@@ -6257,6 +6257,9 @@ tryRestoreAdminSession();
       S.sel = null;
       S.program = null;
       iStep = 0;
+      /* A new client is a blank questionnaire. Nothing was clearing the fields, so the
+         previous client's answers were sitting in them (owner, 2026-09-03). */
+      clearIntakeForm();
       renderIntakeTabs();
       syncStationsVisibility(false);
       syncIntakeConditionals();
@@ -7657,6 +7660,8 @@ tryRestoreAdminSession();
    */
   function fillAthleteGoalsTab(p) {
     var C = window.CoachIntakeSync;
+    /* null means "nobody" - the tab is emptied rather than left holding the last
+       client's answers (owner, 2026-09-03). */
     var a = (p && p.athleteIntake) || {};
     if (el("inAMinutes")) el("inAMinutes").value = parseInt(a.sessionMinutes, 10) > 0 ? parseInt(a.sessionMinutes, 10) : "";
     if (el("inAGoals")) el("inAGoals").value = a.goals || "";
@@ -7769,6 +7774,43 @@ tryRestoreAdminSession();
    * today — that is the whole point of showing equipment and the schedule again — so
    * every field has to be able to travel in both directions.
    */
+  /**
+   * Empty the questionnaire.
+   *
+   * fillIntakeForm writes answers in; nothing wrote them out, so opening it for a new
+   * client showed the last one's (owner, 2026-09-03). Written as "fill with nothing" on
+   * purpose: one function decides what a field is, so a field added to the form cannot
+   * be forgotten here.
+   */
+  function clearIntakeForm() {
+    fillIntakeForm({
+      clientName: "",
+      monthlyAmount: "",
+      paymentMethod: "",
+      equipment: "functional_gym",
+      equipmentOther: "",
+      scheduleMode: "",
+      sessionsPerWeek: "",
+      sessionsDiffer: false,
+      includeRestDays: false,
+      dayEmphasisEnabled: false,
+      deloadWeek: false,
+      deloadEveryWeeks: "",
+      sessionMinutes: "",
+      population: "",
+      goals: "",
+      stations: "",
+    });
+    if (el("inHasChanges")) el("inHasChanges").checked = false;
+    if (el("inChanges")) el("inChanges").value = "";
+    if (el("inBlockAmount")) el("inBlockAmount").value = "";
+    if (el("inBlockMethod")) el("inBlockMethod").value = "";
+    if (el("newTest")) el("newTest").checked = false;
+    if (el("createErr")) el("createErr").textContent = "";
+    /* And the individual's tab, which belongs to nobody until a client is open. */
+    fillAthleteGoalsTab(null);
+  }
+
   function fillIntakeForm(intake) {
     var CI = window.CLIENT_INTAKE;
     if (!CI || !intake) return;
@@ -7843,9 +7885,15 @@ tryRestoreAdminSession();
       return '<button type="button" data-istep="' + i + '"' +
         (i === iStep ? ' class="on"' : "") + ">" + esc(t.label) + "</button>";
     }).join("");
+    /* Hide them ALL first. A pane that belongs to no tab in the current list was never
+       touched, so it kept whatever it was last time - which is how backing out of an
+       individual's intake and then adding a studio client showed the individual's
+       next-block pane (owner, 2026-09-03). */
+    var allPanes = document.querySelectorAll(".ipane");
+    for (var pi = 0; pi < allPanes.length; pi++) allPanes[pi].hidden = true;
     tabs.forEach(function (t, i) {
       var pane = document.querySelector('.ipane[data-pane="' + t.id + '"]');
-      if (pane) pane.hidden = i !== iStep;
+      if (pane && i === iStep) pane.hidden = false;
     });
     el("intakeStep").textContent = "Step " + (iStep + 1) + " of " + tabs.length;
     var title = el("intakeTitle");

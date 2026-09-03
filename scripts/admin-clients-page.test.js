@@ -738,6 +738,16 @@ ok("the created client goes on screen from the response it came in", /S\.program
 ok("and the strip moves to them", /renderPeopleStripActive\(S\.program\.programId\)/.test(page));
 ok("a failed open is said out loud, not into a hidden banner", /showHdrToast\(why, "err"\)/.test(page));
 
+/* --- a new client is a blank questionnaire ---------------------------
+ * He opened an individual intake, backed out, added a studio client - and got the
+ * individual's next-block window. Two causes, both here: a pane belonging to no tab in
+ * the current list was never touched, so it kept whatever it was last time; and nothing
+ * emptied the fields between clients (owner, 2026-09-03). */
+ok("every pane is hidden before the current one is shown", /var allPanes = document\.querySelectorAll\("\.ipane"\)/.test(page));
+ok("a new client starts on an empty form", /function clearIntakeForm/.test(page));
+ok("and it is called when adding one", /clearIntakeForm\(\);[\s\S]{0,40}renderIntakeTabs\(\);/.test(page));
+ok("the individual tab is emptied too", /fillAthleteGoalsTab\(null\)/.test(page));
+
 /* --- an individual's fourth tab -------------------------------------
  * A studio answers "who is in the room"; a person answers what THEY are training for
  * and what has to be worked around - the last tab of their own eight-step intake
