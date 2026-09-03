@@ -882,8 +882,12 @@ function testPackBudget() {
      from layer2-individual, which is the same characters sitting behind a gate instead of reaching
      everyone. A general athlete's pack is 22k. If this rises again without a decision behind it,
      something is being padded. */
-  ok("the heaviest pack stays under 35k characters",
-    heavy.chars < 35000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
+  /* 36k as of 2026-09-03: the movement-family mapping added ~650 characters to the injury layer,
+     which is in the heaviest pack by definition. It is the layer's primary input path, so the
+     mapping is not optional — but this pack is now 9.4k tokens and worth watching. A general
+     healthy athlete's pack is 22k, and that is the number most bricks actually pay. */
+  ok("the heaviest pack stays under 36k characters",
+    heavy.chars < 36000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
   ok("the pack reports which layers it used",
     Array.isArray(heavy.layers) && heavy.layers.length >= 6, heavy.layers.join(", "));
 }
