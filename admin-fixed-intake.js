@@ -95,6 +95,16 @@
       sessionMinutes: 0,
       sessionTimesDiffer: false,
       competitor: false,
+      /* What this athlete pays. Asked here for the same reason a studio is asked in
+         its first tab: it is the owner's record of the client, and it never reaches
+         the athlete (owner, 2026-09-03). */
+      monthlyAmount: 0,
+      paymentMethod: "",
+      /* What this athlete pays. Asked here for the same reason a studio is asked in
+         its first tab: it is the owner's record of the client, and it never reaches
+         the athlete (owner, 2026-09-03). */
+      monthlyAmount: 0,
+      paymentMethod: "",
       improveFocus: {},
       improveFocusOther: "",
       avoidMovements: {},
@@ -274,6 +284,17 @@
         }
         html += "</div>";
       }
+      /* Money sits with the profile, where a studio's does - and it stays with the
+         owner: nothing here ever reaches the athlete (owner, 2026-09-03). */
+      html +=
+        '<div class="pprog-profile-row"><label for="adm-fx-amount">Monthly amount (ILS)</label>' +
+        '<input id="adm-fx-amount" type="number" min="0" max="99999" inputmode="numeric" value="' +
+        esc(parseInt(st.monthlyAmount, 10) > 0 ? parseInt(st.monthlyAmount, 10) : "") +
+        '" placeholder="e.g. 900"></div>' +
+        '<div class="pprog-profile-row"><label for="adm-fx-paymethod">Payment method</label>' +
+        '<input id="adm-fx-paymethod" type="text" maxlength="200" value="' +
+        esc(st.paymentMethod || "") +
+        '" placeholder="Bit, 1st of the month"></div>';
     } else if (key === "setup") {
       var locs = st.trainingLocations || {};
       var otherOn = !!locs.other_home;
@@ -656,6 +677,11 @@
         setFixedErr("Bodyweight should be between 35 and 200 kg.");
         return;
       }
+      var amountEl = document.getElementById("adm-fx-amount");
+      var methodEl = document.getElementById("adm-fx-paymethod");
+      var amountN = amountEl ? parseInt(amountEl.value, 10) : 0;
+      intakeState.monthlyAmount = amountN > 0 && amountN <= 99999 ? amountN : 0;
+      intakeState.paymentMethod = methodEl ? String(methodEl.value || "").trim().slice(0, 200) : "";
       intakeState.displayName = vals.display_name.slice(0, 80);
       intakeState.gender = vals.gender.slice(0, 16).toLowerCase();
       intakeState.preferredLanguage = "en";
@@ -929,6 +955,8 @@
       action: "create",
       clientKind: "athlete",
       clientName: prof.displayName || "מתאמן",
+      monthlyAmount: intakeState.monthlyAmount || 0,
+      paymentMethod: intakeState.paymentMethod || "",
       athleteIntake: {
         displayName: prof.displayName || "",
         gender: prof.gender || "",

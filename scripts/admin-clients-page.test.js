@@ -580,7 +580,13 @@ ok("there is a way to plan the next block", /data-nextblock="1"/.test(page));
 ok("the old add-a-month button is gone", !/data-addmonth/.test(page));
 ok("planning it opens the questionnaire again", /function startNextBlock/.test(page));
 ok("it is the SAME questionnaire, filtered", /function intakeDefs/.test(page) && /keep\.indexOf\(t\.id\) >= 0/.test(page));
-ok("payment is not asked again", /keep = \["equipment", "schedule", "population"\]/.test(page));
+/* Payment IS asked again, and only here: a new block is when a price changes, so the
+   mini-intake opens on what is being paid now and leaving it alone changes nothing
+   (owner, 2026-09-03). */
+ok("payment is asked again, on the block tab", /id="inBlockAmount"/.test(page) && /id="inBlockMethod"/.test(page));
+ok("prefilled with what is being paid now", /el\("inBlockAmount"\)\.value = S\.program\.monthlyAmount/.test(page));
+ok("and it travels with the block", /monthlyAmount: el\("inBlockAmount"\)/.test(page));
+ok("the client still never sees it", /Payment details stay with you/.test(page));
 ok("but equipment is — a rig arrives, a rower breaks", /equipment/.test(page));
 ok("it opens on what the client already answered", /function fillIntakeForm/.test(page));
 ok("including the schedule they are on", /el\("inRestDays"\)\.checked = v\.includeRestDays/.test(page));
@@ -732,6 +738,18 @@ ok("the created client goes on screen from the response it came in", /S\.program
 ok("and the strip moves to them", /renderPeopleStripActive\(S\.program\.programId\)/.test(page));
 ok("a failed open is said out loud, not into a hidden banner", /showHdrToast\(why, "err"\)/.test(page));
 
+/* --- an individual's fourth tab -------------------------------------
+ * A studio answers "who is in the room"; a person answers what THEY are training for
+ * and what has to be worked around - the last tab of their own eight-step intake
+ * (owner, 2026-09-03). Tabs 1-3 are the same for both. */
+ok("there is a goals-and-limits pane", /data-pane="athlete_goals"/.test(page));
+ok("an individual gets it as the fourth tab", /\{ id: "athlete_goals", label: "Goals & limits" \}/.test(page));
+ok("a studio still gets population", /return t\.id === "population";/.test(page));
+ok("the first three tabs are shared", /var keep = \["equipment", "schedule"\]/.test(page) && /id: "changes", label: "Additions & changes"/.test(page));
+ok("the marks come from the one contract", /C\.IMPROVE_FOCUS_DEFS/.test(page) && /C\.AVOID_MOVEMENT_DEFS/.test(page));
+ok("the improve list still belongs to the competitor tick", /function syncAthleteImproveVisibility/.test(page));
+ok("and what the tab says travels with the block", /athleteIntake: isIndividualClient\(\) \? readAthleteGoalsTab\(\) : undefined/.test(page));
+
 /* --- one screen for both kinds of client -----------------------------
  * A studio and an individual are the same object here: one card, one programme view,
  * one set of handlers. Nothing branches on clientKind, which is what makes every fix
@@ -741,7 +759,7 @@ ok("a failed open is said out loud, not into a hidden banner", /showHdrToast\(wh
    block opens on, because the two kinds answered different questionnaires
    (owner, 2026-09-03). */
 ok("the card and the programme do not branch on the kind", !/clientKind/.test(page.slice(page.indexOf("function renderDetail()"), page.indexOf("function brickOpts()"))));
-ok("only the next block does, and deliberately", /S\.program\.clientKind === "athlete" \|\| !!S\.program\.athleteIntake/.test(page));
+ok("only the next block does, and deliberately", /function isIndividualClient\(\)/.test(page) && /S\.program\.clientKind === "athlete" \|\| S\.program\.athleteIntake/.test(page));
 ok("there is one card renderer", (page.match(/function renderDetail\(\)/g) || []).length === 1);
 ok("and one programme renderer", (page.match(/function renderAdminDays\(\)/g) || []).length === 1);
 ok("the sessions ceiling matches what a week can hold", /n > 0 && n <= 7 \? n : 0/.test(page));

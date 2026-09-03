@@ -302,6 +302,11 @@ async function ownerHandler(req, res, body) {
         created.program.version,
         function (draft) {
           draft.athleteIntake = athleteIntake;
+          /* An individual is a paying client like any other, and the list totals what
+             they pay (owner, 2026-09-03). */
+          const amount = Number(body.monthlyAmount);
+          draft.monthlyAmount = Number.isFinite(amount) && amount >= 0 ? amount : 0;
+          draft.paymentMethod = String(body.paymentMethod || "").slice(0, 200);
           return draft;
         },
         { actor: "owner" }
@@ -431,6 +436,15 @@ async function ownerHandler(req, res, body) {
     const result = await store.addBlock(programId, Number(body.expectedVersion), {
       intake: body.intake && typeof body.intake === "object" ? Intake.normalizeIntake(body.intake) : null,
       notes: body.notes,
+      /* An individual answers about themselves again for a new block: what they are
+         training for, and what has to be worked around. It is a PATCH onto the answers
+         already on the programme - a new block must not erase the eight-step packet the
+         coach will read (owner, 2026-09-03). */
+      athleteIntake: isPlainObject(body.athleteIntake) ? body.athleteIntake : null,
+      /* A new block is when a price changes. Undefined means "not asked", which is not
+         the same as zero. */
+      monthlyAmount: body.monthlyAmount === undefined ? undefined : Number(body.monthlyAmount),
+      paymentMethod: body.paymentMethod === undefined ? undefined : String(body.paymentMethod).slice(0, 200),
     });
     if (!result.ok) {
       const status =

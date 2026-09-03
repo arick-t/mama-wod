@@ -775,6 +775,54 @@ async function main() {
     ok(kind.label + ": deleted means gone", (await H.client(tok, { action: "read", programId: id })).status === 404);
   }
 
+  /* --- an individual's next block is about THEM --------------------
+   * The fourth tab of the mini-intake is goals and limits, not "who is in the room",
+   * and what it says is a PATCH onto their own answers: a new block must not erase the
+   * eight-step packet the coach will read (owner, 2026-09-03). */
+
+  const ind2 = await H.owner({
+    action: "create",
+    clientKind: "athlete",
+    clientName: "Next block athlete",
+    athleteIntake: {
+      displayName: "Next block athlete",
+      trainingDaysMap: { sun: true, wed: true },
+      sessionMinutes: 45,
+      goals: "engine",
+      injuries: "left knee",
+      fixedIntakePacket: "FIXED INTAKE COMPLETE - the original packet",
+      avoidMovements: { deep_squat: true },
+    },
+  });
+  ok("an individual exists", ind2.status === 200);
+  const ind2id = ind2.body.program.programId;
+
+  const nextBlock = await H.owner({
+    action: "add_block",
+    programId: ind2id,
+    expectedVersion: ind2.body.program.version,
+    athleteIntake: {
+      goals: "peak for a competition",
+      competitor: true,
+      improveFocus: { max_strength: true },
+      avoidMovements: { jumping: true },
+      sessionMinutes: 60,
+    },
+    notes: "coming back from the knee",
+  });
+  ok("a second block is added", nextBlock.status === 200 && nextBlock.body.ok === true);
+  const after = nextBlock.body.program.athleteIntake || {};
+  ok("THE ORIGINAL PACKET SURVIVES", after.fixedIntakePacket === "FIXED INTAKE COMPLETE - the original packet");
+  ok("the new goals replace the old", after.goals === "peak for a competition");
+  ok("the new session length too", after.sessionMinutes === 60);
+  ok("what he now competes for is recorded", after.competitor === true);
+  ok("what to improve is recorded", after.improveFocus && after.improveFocus.max_strength === true);
+  ok("what to avoid is replaced by the new answer", after.avoidMovements && after.avoidMovements.jumping === true);
+  ok("and an answer he did not touch is left alone", after.injuries === "left knee");
+  ok("the programme is eight weeks now", nextBlock.body.program.weeks.length === 8);
+  await H.owner({ action: "delete", programId: ind2id });
+
+
   /* --- the owner learns about a client's change without pressing F5 ---
    * Nothing ever asked the server whether a client had written something, so his own
    * screen only moved when he reloaded the page (owner, 2026-09-02). The question is

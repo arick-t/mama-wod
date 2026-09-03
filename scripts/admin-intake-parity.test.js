@@ -283,6 +283,10 @@ ok("nor does the kind chooser", !/id="client-kind-modal" onclick/.test(adminHtml
 ok("and closing it on purpose asks first", /לצאת מהתחקור\? מה שהוקלד יימחק\./.test(fixedJs));
 ok("but only while something is actually being filled in", /intakeState\.fixedActive && !intakeState\.intakeComplete/.test(fixedJs));
 
+/* An individual pays like any other client, asked in their first step. */
+ok("the individual intake asks what they pay", /id="adm-fx-amount"/.test(fixedJs) && /id="adm-fx-paymethod"/.test(fixedJs));
+ok("and it travels with the client", /monthlyAmount: intakeState\.monthlyAmount/.test(fixedJs));
+
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
 ok("admin version 3.1.0", /DUCK-WOD Admin · 3\.1\.0/.test(adminHtml));
 ok("admin wired to coach 2.3.14", /LIVE_COACH_VERSION = "2\.3\.14"/.test(adminHtml));

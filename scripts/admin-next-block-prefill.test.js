@@ -103,9 +103,11 @@ ok("five days is five sessions", box.sessionsPerWeek === 5);
 
 /* --- and the page uses it for individuals only -------------------------- */
 
+/* One question, asked in one place, used by the prefill and by the tabs. */
 ok(
   "the next block opens on the athlete's answers when there are any",
-  /var isIndividual = S\.program\.clientKind === "athlete" \|\| !!S\.program\.athleteIntake;/.test(src)
+  /function isIndividualClient\(\)/.test(src) &&
+    /return !!\(S\.program && \(S\.program\.clientKind === "athlete" \|\| S\.program\.athleteIntake\)\);/.test(src)
 );
 ok(
   "a studio still opens on its own questionnaire",

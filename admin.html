@@ -1222,6 +1222,16 @@ header{flex-wrap:wrap;row-gap:8px}
       <!-- 0 · additions and changes — only when planning the NEXT block. The first
            intake has nothing to differ from. -->
       <div class="ipane" data-pane="changes" hidden>
+        <!-- What is being paid now, editable here because a new block is when a price
+             changes. Prefilled from the client, so leaving it alone changes nothing
+             (owner, 2026-09-03). -->
+        <div class="row" style="gap:12px;flex-wrap:wrap">
+          <label class="fld" style="flex:1;min-width:180px"><span>Monthly amount (ILS)</span>
+            <input id="inBlockAmount" type="number" min="0" max="99999" placeholder="900"></label>
+          <label class="fld" style="flex:1;min-width:180px"><span>Payment method</span>
+            <input id="inBlockMethod" type="text" maxlength="200" placeholder="Bit, 1st of the month"></label>
+        </div>
+        <p class="meta" style="margin:0 0 12px">Payment details stay with you. The client never sees them.</p>
         <label class="chk-row">
           <input id="inHasChanges" type="checkbox">
           <span>Additions and changes</span>
@@ -1247,6 +1257,37 @@ header{flex-wrap:wrap;row-gap:8px}
           <textarea id="inPopulation" placeholder="Pre-army prep group, 17–19, mixed ability. Two members with knee history. Training for army selection: 2000m run, pull-ups, load carry endurance."></textarea></label>
       </div>
 
+      <!-- An individual's fourth tab. A studio answers "who is in the room"; a person
+           answers what THEY are training for and what has to be worked around, which is
+           the last tab of their own eight-step intake (owner, 2026-09-03). Only one of
+           the two panes is ever shown: intakeDefs decides which. -->
+      <div class="ipane" data-pane="athlete_goals" hidden>
+        <label class="chk-row" style="cursor:default">
+          <span>Session length (minutes, warm-up included)</span>
+          <input id="inAMinutes" type="number" min="20" max="120" value=""
+                 class="inline-num" aria-label="Session length in minutes" placeholder="—">
+        </label>
+        <label class="fld"><span>Goals for this block</span>
+          <textarea id="inAGoals" maxlength="800" placeholder="e.g. engine + Olympic lift consistency"></textarea></label>
+        <label class="chk-row">
+          <input id="inACompetitor" type="checkbox">
+          <span>Training for a competition / actively competing</span>
+        </label>
+        <div id="inAImproveWrap" hidden>
+          <p class="meta" style="margin:0 0 6px">What to improve in this block</p>
+          <div class="emph-days" id="inAImprove"></div>
+          <label class="fld"><span>Which skill?</span>
+            <input id="inAImproveOther" type="text" maxlength="200"></label>
+        </div>
+        <p class="meta" style="margin:12px 0 6px">Movements to avoid or limit</p>
+        <div class="emph-days" id="inAAvoid"></div>
+        <label class="fld"><span>Anything else to program around</span>
+          <input id="inAAvoidOther" type="text" maxlength="200"></label>
+        <label class="fld"><span>Injuries / pain points</span>
+          <textarea id="inAInjuries" maxlength="800" placeholder="Left knee — avoid deep squats under fatigue"></textarea></label>
+        <label class="fld"><span>Anything you do NOT want to see in the plan</span>
+          <textarea id="inAAvoidProgram" maxlength="400" placeholder="e.g. no burpees, no running on concrete"></textarea></label>
+      </div>
       <div class="row" style="margin-top:14px">
         <button id="iPrev" class="ghost" type="button">Back</button>
         <button id="iNext" type="button">Next</button>
@@ -6292,9 +6333,14 @@ tryRestoreAdminSession();
     el("inHasChanges").checked = false;
     el("inChanges").value = "";
     /* An individual answered a different questionnaire; open on THEIR answers. */
-    var isIndividual = S.program.clientKind === "athlete" || !!S.program.athleteIntake;
+    var isIndividual = isIndividualClient();
     fillIntakeForm(isIndividual ? intakeFormFromAthlete(S.program) : (S.program.intake || {}));
     syncStationsVisibility(isIndividual);
+    fillAthleteGoalsTab(S.program);
+    if (el("inBlockAmount")) {
+      el("inBlockAmount").value = S.program.monthlyAmount ? S.program.monthlyAmount : "";
+    }
+    if (el("inBlockMethod")) el("inBlockMethod").value = S.program.paymentMethod || "";
     renderIntakeTabs();
     syncIntakeConditionals();
     renderViewMode();
@@ -7581,12 +7627,97 @@ tryRestoreAdminSession();
   function intakeDefs() {
     var tabs = (window.CLIENT_INTAKE && window.CLIENT_INTAKE.TABS) || [];
     if (!S.blockMode) return tabs;
-    var keep = ["equipment", "schedule", "population"];
-    return [{ id: "changes", label: "Additions & changes" }].concat(
-      tabs.filter(function (t) {
-        return keep.indexOf(t.id) >= 0;
-      })
-    );
+    var keep = ["equipment", "schedule"];
+    var first = [{ id: "changes", label: "Additions & changes" }];
+    var mid = tabs.filter(function (t) {
+      return keep.indexOf(t.id) >= 0;
+    });
+    /* A studio answers "who is in the room". A person answers what THEY are training for
+       and what has to be worked around - the last tab of their own eight-step intake
+       (owner, 2026-09-03). */
+    var last = isIndividualClient()
+      ? [{ id: "athlete_goals", label: "Goals & limits" }]
+      : tabs.filter(function (t) {
+          return t.id === "population";
+        });
+    return first.concat(mid, last);
+  }
+
+  /** Did this client answer the eight-step intake rather than the studio one? */
+  function isIndividualClient() {
+    return !!(S.program && (S.program.clientKind === "athlete" || S.program.athleteIntake));
+  }
+
+  /**
+   * The individual's fourth tab, opened on what they already answered.
+   *
+   * The marks come from lib/coach-intake-sync-contract.js so there is one list of
+   * them in the product: the eight-step intake and this tab cannot drift apart, and
+   * the coach's substitution matrix keys off those exact ids (coach agent, 2026-09-02).
+   */
+  function fillAthleteGoalsTab(p) {
+    var C = window.CoachIntakeSync;
+    var a = (p && p.athleteIntake) || {};
+    if (el("inAMinutes")) el("inAMinutes").value = parseInt(a.sessionMinutes, 10) > 0 ? parseInt(a.sessionMinutes, 10) : "";
+    if (el("inAGoals")) el("inAGoals").value = a.goals || "";
+    if (el("inACompetitor")) el("inACompetitor").checked = a.competitor === true;
+    if (el("inAImproveOther")) el("inAImproveOther").value = a.improveFocusOther || "";
+    if (el("inAAvoidOther")) el("inAAvoidOther").value = a.avoidMovementsOther || "";
+    if (el("inAInjuries")) el("inAInjuries").value = a.injuries || "";
+    if (el("inAAvoidProgram")) el("inAAvoidProgram").value = a.avoidInProgram || "";
+    if (!C) return;
+    var boxes = function (host, defs, marked, attr) {
+      var wrap = el(host);
+      if (!wrap) return;
+      wrap.innerHTML = defs
+        .map(function (d) {
+          return '<label class="emph-day"><input type="checkbox" ' + attr + '="' + esc(d.id) + '"' +
+            ((marked || {})[d.id] === true ? " checked" : "") +
+            "><span>" + esc(d.label) + "</span></label>";
+        })
+        .join("");
+    };
+    boxes("inAImprove", C.IMPROVE_FOCUS_DEFS, a.improveFocus, "data-a-improve");
+    boxes("inAAvoid", C.AVOID_MOVEMENT_DEFS, a.avoidMovements, "data-a-avoid");
+    syncAthleteImproveVisibility();
+  }
+
+  /* The improve list belongs to the competitor tick, here as in the intake itself. */
+  function syncAthleteImproveVisibility() {
+    var box = el("inACompetitor");
+    var wrap = el("inAImproveWrap");
+    if (!box || !wrap) return;
+    wrap.hidden = !box.checked;
+  }
+
+  /** What this tab now says, ready to be merged onto the client's answers. */
+  function readAthleteGoalsTab() {
+    var out = {
+      sessionMinutes: parseInt(el("inAMinutes") ? el("inAMinutes").value : 0, 10) || 0,
+      goals: el("inAGoals") ? String(el("inAGoals").value || "").trim().slice(0, 800) : "",
+      competitor: !!(el("inACompetitor") && el("inACompetitor").checked),
+      improveFocus: {},
+      improveFocusOther: "",
+      avoidMovements: {},
+      avoidMovementsOther: el("inAAvoidOther") ? String(el("inAAvoidOther").value || "").trim().slice(0, 200) : "",
+      injuries: el("inAInjuries") ? String(el("inAInjuries").value || "").trim().slice(0, 800) : "",
+      avoidInProgram: el("inAAvoidProgram") ? String(el("inAAvoidProgram").value || "").trim().slice(0, 400) : "",
+    };
+    var imp = document.querySelectorAll("#inAImprove input[data-a-improve]");
+    for (var i = 0; i < imp.length; i++) {
+      if (imp[i].checked) out.improveFocus[imp[i].getAttribute("data-a-improve")] = true;
+    }
+    /* Not a competitor means no focus was asked for, so none is carried - the same
+       rule as the intake (owner, 2026-09-03). */
+    if (!out.competitor) out.improveFocus = {};
+    else if (el("inAImproveOther")) {
+      out.improveFocusOther = String(el("inAImproveOther").value || "").trim().slice(0, 200);
+    }
+    var av = document.querySelectorAll("#inAAvoid input[data-a-avoid]");
+    for (var j = 0; j < av.length; j++) {
+      if (av[j].checked) out.avoidMovements[av[j].getAttribute("data-a-avoid")] = true;
+    }
+    return out;
   }
 
   function readIntakeForm() {
@@ -7897,6 +8028,13 @@ tryRestoreAdminSession();
         programId: S.program.programId,
         expectedVersion: S.program.version,
         intake: form,
+        /* An individual's fourth tab is about THEM, not about a room, so it travels as a
+           patch onto their own answers - which is what the coach will read on the day it
+           is reconnected (owner, 2026-09-03). */
+        athleteIntake: isIndividualClient() ? readAthleteGoalsTab() : undefined,
+        /* A new block is when a price changes; leaving these alone changes nothing. */
+        monthlyAmount: el("inBlockAmount") ? parseInt(el("inBlockAmount").value, 10) || 0 : undefined,
+        paymentMethod: el("inBlockMethod") ? String(el("inBlockMethod").value || "").trim() : undefined,
         notes: el("inHasChanges").checked ? String(el("inChanges").value || "") : "",
       }).then(function (r) {
         btn.disabled = false;
@@ -7986,6 +8124,9 @@ tryRestoreAdminSession();
       });
     /* The session count drives how many description boxes exist, so rebuild on input
        rather than only on blur — otherwise the count and the boxes disagree. */
+    if (el("inACompetitor")) {
+      el("inACompetitor").addEventListener("change", syncAthleteImproveVisibility);
+    }
     el("inSessions").addEventListener("input", function () {
       if (el("inSessionsDiffer").checked) buildSessionBoxes();
     });
