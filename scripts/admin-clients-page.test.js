@@ -758,6 +758,15 @@ ok("the shape comes off again when it closes", /panel\.classList\.remove\("as-po
 ok("clamped so it cannot open half off-screen", /Math\.max\(10, Math\.min\(\(x \| 0\) - 20, window\.innerWidth - w - 10\)\)/.test(page));
 ok("and every other way of opening it is still centred", /function clearIdentityPanelPosition/.test(page));
 
+/* --- the rest tick is a MARK, not a write ---------------------------
+ * It used to save and close the editor on the spot, so one stray click replaced a
+ * written session with a rest day and there was nothing to undo (owner, 2026-09-03).
+ */
+ok("ticking rest writes nothing", /if \(S\.edit\) S\.edit\.restIntent = !!t\.checked;[\s\S]{0,20}return;/.test(page));
+ok("Save honours the mark", /if \(S\.edit\.restIntent\) \{[\s\S]{0,400}saveDay\(S\.edit\.wi, S\.edit\.day, \[\], true\);/.test(page));
+ok("so does leaving the day", /if \(draft\.restIntent\) \{[\s\S]{0,400}saveDay\(draft\.wi, draft\.day, \[\], true, \{ quiet: true \}\);/.test(page));
+ok("and a written session is never replaced without asking", /function dayHasWrittenSession/.test(page) && (page.match(/להפוך את היום ליום מנוחה\? האימון שכתוב בו יימחק\./g) || []).length >= 2);
+
 /* --- autosave: leaving an edit saves it (owner, 2026-09-03) ----------
  * Writing a month means moving between days, and every move used to throw away what
  * had just been typed unless Save was pressed first. Nobody presses Save before

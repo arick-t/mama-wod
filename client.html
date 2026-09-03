@@ -1009,10 +1009,27 @@ button.ghost:hover{color:var(--text)}
     if (!draft) return;
     var D = pprogLib();
     state.edit = null;
+    if (draft.restIntent) {
+      if (dayHasWrittenSession(draft.wi, draft.day) &&
+          !window.confirm("Make this a rest day? The session written here will be removed.")) {
+        return;
+      }
+      saveDay(draft.wi, draft.day, [], true, { quiet: true });
+      return;
+    }
     if (!D || !D.partsFromDraft || !D.draftHasContent(draft)) return;
     var parts = D.partsFromDraft({ parts: draft.parts, day: draft.day });
     if (samePartsAsStored(draft.wi, draft.day, parts)) return;
     saveDay(draft.wi, draft.day, parts, false, { quiet: true });
+  }
+
+  /** Is there a written session on this day - something a rest day would replace? */
+  function dayHasWrittenSession(wi, dayKey) {
+    var week = ((state.program && state.program.weeks) || [])[wi | 0] || {};
+    var parts = ((week.days && week.days[dayKey]) || {}).parts || [];
+    return parts.some(function (p) {
+      return p && ((p.lines && p.lines.length) || String(p.title || "").trim());
+    });
   }
 
   /** Already what the programme holds? Then there is nothing to save. */
@@ -1035,6 +1052,14 @@ button.ghost:hover{color:var(--text)}
     if (!state.edit) return;
     var D = pprogLib();
     if (!D || !D.partsFromDraft) { banner("bad", "Display library unavailable. Please reload."); return; }
+    if (state.edit.restIntent) {
+      if (dayHasWrittenSession(state.edit.wi, state.edit.day) &&
+          !window.confirm("Make this a rest day? The session written here will be removed.")) {
+        return;
+      }
+      saveDay(state.edit.wi, state.edit.day, [], true);
+      return;
+    }
     if (!D.draftHasContent(state.edit)) {
       banner("warn", "Nothing typed. Use the rest-day button if that is what you meant.");
       return;
@@ -1151,12 +1176,9 @@ button.ghost:hover{color:var(--text)}
     }
     var rc = t.getAttribute("data-restcheck");
     if (rc) {
-      var rcBits = rc.split(":");
+      /* A MARK, not a write - nothing is written until Save, or until the day is left
+         (owner, 2026-09-03). */
       if (state.edit) state.edit.restIntent = !!t.checked;
-      /* Unticking is simply changing your mind before saving — it must not write an
-         empty session over the day. Only ticking does something. */
-      if (!t.checked) return;
-      setRestChecked(parseInt(rcBits[0], 10) || 0, rcBits[1] || "", true);
       return;
     }
   });

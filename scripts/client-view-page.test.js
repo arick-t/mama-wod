@@ -187,7 +187,9 @@ ok("it is a tick box", /class="pprog-rest-check"/.test(html) && /data-restcheck=
    empty day, and ticking a ticked box does nothing — the control read as broken. While
    editing it is an intent: empty, and ticking it plants a rest day. */
 ok("it opens empty, as an intent", /state\.edit\.restIntent \? " checked" : ""/.test(html));
-ok("unticking does not write anything", /if \(!t\.checked\) return;/.test(html));
+/* Nothing is written on tick OR untick: the box is a mark now, and Save (or leaving
+   the day) is what writes (owner, 2026-09-03). */
+ok("neither ticking nor unticking writes anything", !/setRestChecked\(parseInt\(rcBits/.test(html));
 ok("an empty day can still be marked as rest", !/if \(isRest\) return "";/.test(html));
 ok("unticking hands back an empty session", /function setRestChecked/.test(html) && /rest: false,/.test(html));
 ok("wiping a written day asks first", /hasContent && !window\.confirm/.test(html));
@@ -240,6 +242,12 @@ ok("localhost still works for dev", /localhost/.test(html));
 ok("but not twice in a few seconds", /FOREGROUND_MIN_GAP_MS = 15000/.test(html) && /Date\.now\(\) - lastProgramLoadMs < FOREGROUND_MIN_GAP_MS/.test(html));
 ok("switching windows counts as coming back", /window\.addEventListener\("focus", pullIfStale\)/.test(html));
 
+
+/* The rest tick is a mark here too: nothing is written until Save, or until the day is
+   left (owner, 2026-09-03). */
+ok("ticking rest writes nothing", /if \(state\.edit\) state\.edit\.restIntent = !!t\.checked;[\s\S]{0,20}return;/.test(html));
+ok("Save honours the mark", /if \(state\.edit\.restIntent\) \{/.test(html));
+ok("and a written session is never replaced without asking", /function dayHasWrittenSession/.test(html));
 
 /* --- autosave, on the client side too (owner, 2026-09-03) ------------ */
 ok("there is one place that commits a draft", /function autosaveDraft\(\)/.test(html));

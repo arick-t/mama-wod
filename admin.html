@@ -7173,10 +7173,29 @@ tryRestoreAdminSession();
        him. */
     S.edit = null;
     S.editStatus = null;
+    if (draft.restIntent) {
+      /* Leaving a day marked as rest writes it - but never over a real session without
+         asking, because he has not pressed anything that says "yes" yet. */
+      if (dayHasWrittenSession(draft.wi, draft.day) &&
+          !window.confirm("להפוך את היום ליום מנוחה? האימון שכתוב בו יימחק.")) {
+        return;
+      }
+      saveDay(draft.wi, draft.day, [], true, { quiet: true });
+      return;
+    }
     if (!D || !D.partsFromDraft || !D.draftHasContent(draft)) return;
     var parts = D.partsFromDraft({ parts: draft.parts, day: draft.day });
     if (samePartsAsStored(draft.wi, draft.day, parts)) return;
     saveDay(draft.wi, draft.day, parts, false, { quiet: true });
+  }
+
+  /** Is there a written session on this day - something a rest day would replace? */
+  function dayHasWrittenSession(wi, dayKey) {
+    var week = ((S.program && S.program.weeks) || [])[wi | 0] || {};
+    var parts = ((week.days && week.days[dayKey]) || {}).parts || [];
+    return parts.some(function (p) {
+      return p && ((p.lines && p.lines.length) || String(p.title || "").trim());
+    });
   }
 
   /** Is this draft already what the programme holds? Then there is nothing to save. */
@@ -7199,6 +7218,16 @@ tryRestoreAdminSession();
     if (!S.edit) return;
     var D = pprogLib();
     if (!D || !D.partsFromDraft) { banner("bad", "התצוגה לא נטענה. רענן את הדף."); return; }
+    /* "יום מנוחה" was ticked: that IS the answer for this day, and it replaces whatever
+       was written here - so it asks once, at the moment it happens. */
+    if (S.edit.restIntent) {
+      if (dayHasWrittenSession(S.edit.wi, S.edit.day) &&
+          !window.confirm("להפוך את היום ליום מנוחה? האימון שכתוב בו יימחק.")) {
+        return;
+      }
+      saveDay(S.edit.wi, S.edit.day, [], true);
+      return;
+    }
     if (!D.draftHasContent(S.edit)) {
       banner("warn", 'לא הוקלד כלום. אם התכוונת ליום מנוחה — יש כפתור "הפוך ליום מנוחה".');
       return;
@@ -7370,12 +7399,11 @@ tryRestoreAdminSession();
       return;
     }
     if (g("data-restcheck")) {
-      var rc = g("data-restcheck").split(":");
+      /* A MARK, not a write. Ticking it used to save and close the editor on the spot,
+         so one stray click replaced a written session with a rest day and there was
+         nothing to undo (owner, 2026-09-03). Nothing is written until he presses Save or
+         leaves the day - the same rule as every other thing typed here. */
       if (S.edit) S.edit.restIntent = !!t.checked;
-      /* Unticking is changing your mind before saving; it must not write an empty
-         session over the day. Only ticking does something. */
-      if (!t.checked) return;
-      setRestChecked(parseInt(rc[0], 10) || 0, rc[1] || "", true);
       return;
     }
     if (g("data-clientmore")) { S.moreOpen = !S.moreOpen; renderDetail(); return; }
