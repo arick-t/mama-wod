@@ -1598,6 +1598,21 @@ var adminChatFabOpen = false;
 var adminDayEdit = null;
 var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
 /** Live Personal Coach brain version — refreshed from GET /api/personal-coach. */
+/**
+ * May a block that came back from the brain be SAVED? In 22.0: no.
+ *
+ * The owner's rule for this release (2026-09-03): the wiring to the brain is technical
+ * only — prove the pipe is open, the packet arrives and an answer comes back, then
+ * throw the answer away. Nobody gets a programme written by a machine until the new
+ * brain is up, tested and wired into a CLIENT programme as an unapproved draft.
+ *
+ * Today a returned block would be saved into the retired athlete/handoff world, whose
+ * viewer left with the app's coach tab — a plan nobody can open. So the save is closed
+ * here rather than left to whoever presses the button. Turning it on is a 22.1 decision,
+ * and by then it should be writing somewhere a client can actually read.
+ */
+var COACH_BUILD_MAY_SAVE = false;
+
 var ADMIN_UI_VERSION = "4.0";
 var LIVE_COACH_VERSION = "2.3.14";
 var LIVE_COACH_VERSION_FETCHED_AT = 0;
@@ -6043,6 +6058,14 @@ function showIntakeBuilding(on, statusHtml) {
 }
 
 function finalizeNewAthlete(block) {
+  /* Pipe test, not production: show that an answer came back, save nothing. */
+  if (COACH_BUILD_MAY_SAVE !== true) {
+    showIntakeBuilding(false);
+    setIntakeBusy(false);
+    document.getElementById("intake-status").textContent =
+      "המאמן החזיר לבנה — והיא לא נשמרה. בגרסה הזו החיבור למאמן הוא בדיקת צינור בלבד.";
+    return;
+  }
   intakeState.intakeComplete = true;
   showIntakeBuilding(true);
   document.getElementById("intake-status").textContent = "שומר מתאמן…";

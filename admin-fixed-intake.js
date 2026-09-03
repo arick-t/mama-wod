@@ -1304,6 +1304,16 @@
   };
 
   window.finalizeNewAthlete = function finalizeNewAthlete(block) {
+    /* 22.0: a block that comes back is proof the pipe works, and nothing more. See
+       COACH_BUILD_MAY_SAVE in admin.html for why it is not saved. */
+    if (window.COACH_BUILD_MAY_SAVE !== true) {
+      showIntakeBuilding(false);
+      setIntakeBusy(false);
+      writeIntakeStatus(
+        "המאמן החזיר לבנה — והיא לא נשמרה. בגרסה הזו החיבור למאמן הוא בדיקת צינור בלבד."
+      );
+      return;
+    }
     if (window.NormalizePprogBlock && block && typeof block === "object") {
       block = NormalizePprogBlock.normalize(block, null);
     }

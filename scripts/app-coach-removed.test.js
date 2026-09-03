@@ -152,4 +152,31 @@ ok(
   (index.match(/"\/api\/generate-workout"/g) || []).length <= 3
 );
 
+/* --- and no machine writes a programme in this release --------------------
+ * The owner's rule for 22.0 (2026-09-03): the wiring to the brain is a PIPE TEST.
+ * A block that comes back is proof the pipe is open and nothing more - it is shown and
+ * thrown away. Saving one today would put it in the retired athlete/handoff world,
+ * whose viewer left with the app's coach tab: a plan nobody can open.
+ * ------------------------------------------------------------------------- */
+const adminPage = fs.readFileSync(path.join(root, "admin.html"), "utf8");
+const fixedIntake = fs.readFileSync(path.join(root, "admin-fixed-intake.js"), "utf8");
+
+ok("saving a generated block is switched off", /var COACH_BUILD_MAY_SAVE = false;/.test(adminPage));
+ok("and the reason is written where the switch is", /pipe test/i.test(adminPage));
+ok(
+  "the admin intake checks before it saves",
+  /function finalizeNewAthlete\(block\) \{[\s\S]{0,240}?if \(COACH_BUILD_MAY_SAVE !== true\) \{/.test(adminPage)
+);
+ok(
+  "so does the fixed intake",
+  /window\.finalizeNewAthlete = function finalizeNewAthlete\(block\) \{[\s\S]{0,300}?if \(window\.COACH_BUILD_MAY_SAVE !== true\) \{/.test(fixedIntake)
+);
+/* The check must come BEFORE the request that creates the athlete, or it guards nothing. */
+const adminFinal = (adminPage.match(/function finalizeNewAthlete\(block\)[\s\S]*?admin-handoff/) || [""])[0];
+const fixedFinal = (fixedIntake.match(/window\.finalizeNewAthlete = function[\s\S]*?admin-handoff/) || [""])[0];
+ok("the admin guard precedes the create call", adminFinal.indexOf("COACH_BUILD_MAY_SAVE") > 0);
+ok("the fixed-intake guard precedes the create call", fixedFinal.indexOf("COACH_BUILD_MAY_SAVE") > 0);
+/* Finishing an intake must not quietly ask for a block either. */
+ok("finishing an intake still builds nothing", /var ATHLETE_AI_BUILD_ENABLED = false;/.test(fixedIntake));
+
 console.log("All app coach-removal checks passed.");
