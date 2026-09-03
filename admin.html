@@ -122,7 +122,19 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
    Its own prefix so nothing here can reach the client screen by accident, and the
    month grid is a plain 7-column grid: in an RTL page the first cell IS Sunday on
    the right, which is how he reads a week (owner, 2026-09-03). */
+/* This screen has cards of its own — the card rules on the page are scoped to the
+   client screen, so without these the summary tab drew as bare text. */
+#ledgerScreen .card{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;
+  padding:16px;margin:0 0 14px}
+#ledgerScreen h2:not([class]){font-family:var(--font-display);font-size:1.05rem;margin:0;
+  letter-spacing:.5px}
+/* The month uses the whole page. The athlete panel used to sit beside it and take half
+   the width for an empty message (owner, 2026-09-03). */
+#ledgerScreen{width:100%}
 .led-wrap{display:flex;flex-direction:column;gap:14px}
+/* A record, not a working surface: its own box, its own title, under the calendar. */
+.led-deals{border-top:2px solid var(--brand)}
+.led-money .led-inc{min-width:160px}
 /* Two incomes and their sum. The total is the loud one — it is the answer to the
    question he actually asks (owner, 2026-09-03). */
 .led-income{display:flex;gap:10px;flex-wrap:wrap}
@@ -144,10 +156,10 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .led-total{font-size:20px;font-weight:900;color:#4CAF70}
 .led-dow{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:2px}
 .led-dow span{text-align:center;font-size:11px;color:var(--text-muted);font-weight:700}
-.led-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.led-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
 .led-day{position:relative;appearance:none;border:1px solid var(--line);background:var(--bg-elev);
-  border-radius:10px;min-height:62px;padding:6px;cursor:pointer;color:var(--text);
-  display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+  border-radius:10px;min-height:82px;padding:8px;cursor:pointer;color:var(--text);
+  display:flex;flex-direction:column;align-items:flex-start;gap:3px}
 .led-day:hover{border-color:var(--brand)}
 .led-blank{border:none;background:transparent;cursor:default;min-height:0}
 .led-num{font-size:12px;font-weight:700;opacity:.8}
@@ -159,7 +171,15 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
   color:var(--text-muted);opacity:0;transition:opacity .12s}
 .led-day:hover .led-plus,.led-day.is-open .led-plus{opacity:1}
 .led-daybox{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--bg-elev)}
-.led-daybox h3{margin:0 0 10px;font-size:14px}
+.led-daybox h3{margin:0;font-size:14px}
+.led-daybox-head{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+.led-daysum{font-size:13px;font-weight:800;color:#4CAF70}
+/* The plus lives in the corner of the open day, and it is the only way in. */
+.led-daybox-foot{display:flex;justify-content:flex-start;margin-top:10px}
+.led-add{appearance:none;width:34px;height:34px;border-radius:10px;border:1px dashed var(--line);
+  background:transparent;color:var(--text-muted);font-size:20px;line-height:1;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;padding:0}
+.led-add:hover{border-color:var(--brand);color:#fff;background:rgba(232,69,26,.14);border-style:solid}
 .led-row{display:grid;grid-template-columns:1.4fr 1.2fr .8fr auto auto;gap:8px;align-items:center;
   padding:7px 4px;border-bottom:1px solid var(--line);font-size:13px}
 .led-row:last-child{border-bottom:none}
@@ -1186,16 +1206,16 @@ header{flex-wrap:wrap;row-gap:8px}
        turns with #content and #clientScreen the same way they take turns with each
        other: one page, no seam. -->
   <div class="content" id="ledgerScreen" hidden>
+    <!-- The month, and nothing else in this box: the calendar is the management view
+         and the deals table is a record. He asked for a clear line between them
+         (owner, 2026-09-03). -->
     <div class="card led-wrap">
-      <!-- Two incomes and their sum. They stay two figures because they are two
-           businesses; the sum exists because he asked what he makes (owner, 2026-09-03). -->
-      <div id="ledIncome"></div>
       <div id="ledHeader"></div>
       <div id="ledCalendar"></div>
       <div id="ledDay"></div>
     </div>
-    <div class="card">
-      <div class="row" style="margin-bottom:10px"><h2 style="margin:0">עסקאות</h2></div>
+    <div class="card led-deals">
+      <div class="row" style="margin-bottom:10px"><h2 style="margin:0">טבלת עסקאות</h2></div>
       <div class="led-filters">
         <button type="button" class="led-chip" data-led-range="week">השבוע</button>
         <button type="button" class="led-chip" data-led-range="month">החודש</button>
@@ -1208,6 +1228,12 @@ header{flex-wrap:wrap;row-gap:8px}
         <button type="button" class="led-chip" data-led-clear="1">נקה</button>
       </div>
       <div id="ledTable"></div>
+    </div>
+    <!-- Two incomes and their sum, at the foot of the page on his instruction: it is
+         the answer, and an answer belongs after the working area (owner, 2026-09-03). -->
+    <div class="card led-money">
+      <div class="row" style="margin-bottom:10px"><h2 style="margin:0">הכנסות החודש</h2></div>
+      <div id="ledIncome"></div>
     </div>
   </div>
 
@@ -6541,7 +6567,14 @@ tryRestoreAdminSession();
     var mine = !!(S.adding || S.program);
     show("clientScreen", mine);
     var athleteSide = el("content");
-    if (athleteSide) athleteSide.hidden = mine;
+    if (athleteSide) {
+      /* The athlete side comes back only if nobody else is holding the screen. The
+         summary tab is the third thing that can hold it, and closing a client used to
+         hand the page back to an empty athlete panel beside it — which is why the
+         calendar was drawn in half the width (owner, 2026-09-03). */
+      var ledgerHolds = !!(window.LedgerScreen && window.LedgerScreen.isOpen && window.LedgerScreen.isOpen());
+      athleteSide.hidden = mine || ledgerHolds;
+    }
   }
 
   function setAdding(on) {
@@ -8734,6 +8767,9 @@ tryRestoreAdminSession();
   var LS = {
     /* What THIS month earned on the floor, whatever month is on screen. */
     personal: 0,
+    /* The entry row appears when he asks for it with the plus, and not before. */
+    adding: false,
+    open: false,
     month: "",
     data: null,
     day: "",
@@ -8767,6 +8803,7 @@ tryRestoreAdminSession();
 
   function open() {
     var box = el("ledgerScreen");
+    LS.open = true;
     if (box) box.hidden = false;
     if (!LS.month) LS.month = L.monthKey();
     if (!LS.data) loadMonth(LS.month);
@@ -8775,6 +8812,7 @@ tryRestoreAdminSession();
 
   function close() {
     var box = el("ledgerScreen");
+    LS.open = false;
     if (box) box.hidden = true;
     LS.pickOpen = false;
   }
@@ -8838,20 +8876,17 @@ tryRestoreAdminSession();
     var editing = LS.editing
       ? deals.filter(function (d) { return d.id === LS.editing; })[0] || null
       : null;
-    return (
-      '<div class="led-daybox">' +
-      "<h3>" + V.esc(V.hebDate(LS.day)) + "</h3>" +
-      V.dayDealsHtml(deals) +
-      V.editorHtml({
-        deal: editing,
-        /* A place chosen in the panel survives the redraw that follows it. */
-        name: LS.picked ? LS.picked.name : "",
-        service: LS.picked ? LS.picked.service : "",
-        price: LS.picked ? LS.picked.price : "",
-      }) +
-      (LS.pickOpen ? V.favouritesHtml((LS.data && LS.data.favourites) || []) : "") +
-      "</div>"
-    );
+    var editor =
+      LS.adding || editing
+        ? V.editorHtml({
+            deal: editing,
+            /* A place chosen in the panel survives the redraw that follows it. */
+            name: LS.picked ? LS.picked.name : "",
+            service: LS.picked ? LS.picked.service : "",
+            price: LS.picked ? LS.picked.price : "",
+          }) + (LS.pickOpen ? V.favouritesHtml((LS.data && LS.data.favourites) || []) : "")
+        : "";
+    return V.dayPanelHtml({ day: LS.day, deals: deals, editorHtml: editor });
   }
 
   function redrawDay() {
@@ -8933,6 +8968,7 @@ tryRestoreAdminSession();
       LS.editing = null;
       LS.picked = null;
       LS.pickOpen = false;
+      LS.adding = false;
       render();
       loadTable();
       toast("נשמר ✓");
@@ -8980,7 +9016,16 @@ tryRestoreAdminSession();
       LS.editing = null;
       LS.picked = null;
       LS.pickOpen = false;
+      LS.adding = false;
       render();
+      return;
+    }
+
+    if (t.closest("[data-led-add]")) {
+      LS.adding = true;
+      LS.editing = null;
+      LS.picked = null;
+      redrawDay();
       return;
     }
 
@@ -9023,6 +9068,7 @@ tryRestoreAdminSession();
       LS.editing = null;
       LS.picked = null;
       LS.pickOpen = false;
+      LS.adding = false;
       redrawDay();
       return;
     }
@@ -9030,6 +9076,7 @@ tryRestoreAdminSession();
     var edit = t.closest("[data-led-edit]");
     if (edit) {
       LS.editing = edit.getAttribute("data-led-edit");
+      LS.adding = false;
       LS.picked = null;
       LS.pickOpen = false;
       redrawDay();
@@ -9073,6 +9120,8 @@ tryRestoreAdminSession();
     close: close,
     /* The programme income arrived after this screen drew itself. */
     refreshIncome: renderIncome,
+    /* The client screen asks before it hands the page back to the athlete side. */
+    isOpen: function () { return LS.open === true; },
     reload: function () { return loadMonth(LS.month || L.monthKey()); },
     state: function () { return { month: LS.month, day: LS.day, range: LS.range }; },
   };

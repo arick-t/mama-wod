@@ -70,6 +70,15 @@ ok(
 /* --- the screen it renders into ------------------------------------------ */
 
 ok("the screen exists beside the others", /<div class="content" id="ledgerScreen" hidden>/.test(page));
+/* The athlete panel used to come back beside it and take half the width for an empty
+   message — the client screen handed the page back without asking who else held it. */
+ok("the summary tab is asked before the athlete side returns", /LedgerScreen\.isOpen\(\)[\s\S]{0,120}athleteSide\.hidden = mine \|\| ledgerHolds/.test(page));
+ok("and it says when it is holding the screen", /isOpen: function \(\) \{ return LS\.open === true; \}/.test(page));
+/* Management above, record below, money last — in that order and in three boxes. */
+ok("the deals table is its own box with its own title", /<div class="card led-deals">[\s\S]{0,200}טבלת עסקאות/.test(page));
+ok("the money sits at the foot of the page", page.indexOf('id="ledIncome"') > page.indexOf('id="ledTable"'));
+ok("with a title of its own", /<div class="card led-money">[\s\S]{0,200}הכנסות החודש/.test(page));
+ok("and the entry row waits for the plus", /LS\.adding \|\| editing/.test(page));
 ok("with a place for the month header", /id="ledHeader"/.test(page));
 ok("the calendar", /id="ledCalendar"/.test(page));
 ok("the open day", /id="ledDay"/.test(page));
@@ -103,7 +112,9 @@ ok("the first lands on its weekday", (cal.match(/led-blank/g) || []).length === 
 ok("a day that earned says how much", cal.indexOf("₪430") >= 0);
 ok("today is marked", cal.indexOf("is-today") >= 0);
 ok("the open day is marked", cal.indexOf("is-open") >= 0);
-ok("and every square offers a new deal", cal.indexOf("led-plus") >= 0);
+/* Changed 2026-09-03: a square opens the day, and the plus lives inside that panel.
+   A plus on every square advertised an entry row he had not asked for. */
+ok("a square opens the day rather than an entry row", cal.indexOf("led-plus") < 0);
 ok("a quiet day shows no number", (cal.match(/led-sum/g) || []).length === 1);
 
 /* --- the day box --------------------------------------------------------- */
@@ -112,6 +123,15 @@ const deals = [
   { id: "d1", day: "2026-09-03", name: "רימון", service: "אימון קבוצתי", price: 250, createdAt: "2026-09-03T06:00:00Z" },
   { id: "d2", day: "2026-09-03", name: "אולם העירייה", service: "", price: 180, createdAt: "2026-09-03T09:00:00Z" },
 ];
+const panel = V.dayPanelHtml({ day: "2026-09-03", deals: deals });
+ok("the day opens as a panel with its date", panel.indexOf("03/09/2026") >= 0);
+ok("and what that day earned", panel.indexOf("₪430") >= 0);
+ok("a new line is offered by one plus, in the corner", (panel.match(/data-led-add/g) || []).length === 1);
+ok("and the entry row is NOT standing open", panel.indexOf('id="ledPrice"') < 0);
+const panelAdding = V.dayPanelHtml({ day: "2026-09-03", deals: deals, editorHtml: V.editorHtml({}) });
+ok("pressing it is what brings the row", panelAdding.indexOf('id="ledPrice"') >= 0);
+ok("and the plus steps aside while the row is open", panelAdding.indexOf("data-led-add") < 0);
+
 const dayHtml = V.dayDealsHtml(deals);
 ok("a day lists its deals", (dayHtml.match(/data-led-deal="/g) || []).length === 2);
 ok("each one can be edited", dayHtml.indexOf('data-led-edit="d1"') >= 0);
