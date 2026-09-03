@@ -610,6 +610,31 @@ function testRouterAgainstRealPacket() {
     L.competitorDeclared(withPacket({ goals: "I want to compete at a local throwdown" }), null) &&
       !L.competitorDeclared(withPacket(), null));
 
+  /* The packet's tail order settled on 2026-09-03: GOALS, COMPETITOR, IMPROVE FOCUS, AVOID,
+     AVOID (also), HEAVIEST IMPLEMENT, DOES NOT WANT. The GOALS extractor has to stop at the first
+     of those and not swallow the rest, or every athlete inherits the whole tail as "intent". */
+  const TAIL =
+    "GOALS:\nFirst muscle-up this year, and stay injury free.\n" +
+    "COMPETITOR: no — general fitness athlete, not preparing for a competition.\n" +
+    "IMPROVE FOCUS: none selected — general fitness, no single focus. Priority is the balance itself.\n" +
+    "AVOID: none marked.\n" +
+    "AVOID (also): nothing else stated.\n" +
+    "HEAVIEST IMPLEMENT: full gym loading available — prescribe by %1RM from the reported lifts.\n" +
+    "DOES NOT WANT: nothing stated.";
+  const fullPacket =
+    "PROFILE:\nName: A\n\nLIFTS / RUN:\nBack Squat: 140 kg\n\n" +
+    "SKILLS (marked = Rx-capable; unmarked = scale):\nDouble unders\n\n" + TAIL;
+  ok("the goals section is read out of the new tail order",
+    JSON.stringify(L.pickLayer3({ fixedIntakePacket: fullPacket }, null)) === '["gymnastics"]',
+    JSON.stringify(L.pickLayer3({ fixedIntakePacket: fullPacket }, null)));
+  ok("the tail's own boilerplate does not leak into intent",
+    L.pickLayer3({ fixedIntakePacket: fullPacket.replace(/First muscle-up[^\n]*/, "Get fitter.") }, null)
+      .length === 0,
+    "a line from the tail is being scored as if the athlete had said it");
+  ok("the full packet reads as non-competitor and unrestricted",
+    !L.competitorDeclared({ fixedIntakePacket: fullPacket }, null) &&
+      !L.hasNamedRestriction({ fixedIntakePacket: fullPacket, injuries: "" }, null));
+
   ok("reported lifts and skills do not imply a discipline focus",
     L.pickLayer3(withPacket({ goals: "Just want to feel good" }), null).length === 0,
     "capability is being read as intent");
@@ -787,10 +812,18 @@ function testStructuredIntakeFields() {
   ok("an empty specific-skill box selects nothing rather than guessing",
     L.pickLayer3({ improveFocus: { specific_skill: true }, improveFocusOther: "" }, null).length === 0);
 
-  /* A tick outranks prose, and prose still fills what the ticks leave open. */
+  /* A tick outranks prose, and prose still fills what the ticks leave open.
+     This matters more than it did: the owner narrowed improveFocus on 2026-09-03 to competitors
+     only, so it is EMPTY for every general-fitness athlete and prose is their only route. If this
+     ever fails, the majority of athletes silently stop getting a discipline layer. */
   ok("prose still routes when nothing is ticked",
     JSON.stringify(L.pickLayer3({ improveFocus: {}, goals: "I want a bigger engine" }, null)) ===
       '["endurance"]');
+  ok("a general-fitness athlete routes from prose alone, in both languages",
+    L.pickLayer3({ competitor: false, improveFocus: {}, goals: "first muscle-up" }, null)
+      .indexOf("gymnastics") >= 0 &&
+      L.pickLayer3({ competitor: false, improveFocus: {}, goals: "לשפר ריצה" }, null)
+        .indexOf("endurance") >= 0);
   ok("a declared competitor plus a focus still fits the cap",
     L.pickLayer3({ competitor: true, improveFocus: { gymnastics: true, engine: true } }, null)
       .length === L.MAX_LAYER3);
