@@ -207,6 +207,68 @@ function testClientImprovesRule() {
     /\*\*POL-029\*\* is a product foundation[\s\S]{0,200}POL-009/.test(md));
 }
 
+/* The mid-week clamp, found leaking into week 2 on 2026-09-03 while filling a real test brick.
+   Monday and Tuesday came back REST in week 2 — correct in week 1, two lost training days a week
+   after that. The rule now takes the week index and says the opposite thing for a future week. */
+/* POL-029 widened from block-to-block to week-to-week inside a brick, and the data half that makes
+   it possible: the week-fill prompt now carries a compact movement inventory of the earlier weeks.
+   Both halves asserted, because either alone does nothing. */
+function testSameBrickWeekContinuity() {
+  const src = fs.readFileSync(PC_PATH, "utf8");
+  const pol = String(COACH_POLICY).replace(/\s+/g, " ");
+  ok("POL-029 covers weeks inside a brick, not only brick to brick",
+    /This holds BETWEEN WEEKS of one brick as well as between bricks/i.test(pol));
+  ok("rotating the format while keeping the movements is refused in the policy",
+    /rotating the FORMAT while keeping every movement is not rotation/i.test(pol));
+  ok("the coach can summarise the earlier weeks of a brick",
+    /function priorWeeksSummary\(priorWeeks, weekIndex\)/.test(src) &&
+      /function priorWeeksBlock\(body, weekIndex\)/.test(src));
+  ok("both week-detail prompts carry it",
+    (src.match(/  priorWeeksBlock\(body, weekIndex\) \+/g) || []).length === 2,
+    "a week-fill prompt is still blind to the rest of the brick");
+  /* The summary carried "24 inch box" out of week 1 and week 2 dutifully wrote "24 in box" — a
+     prior-week digest teaches whatever it repeats, mistakes included. Imperial is stripped for
+     that reason and not for tidiness. */
+  ok("the summary strips imperial units too, so it cannot teach them forward",
+    /prior-week summary that carries "24 inch box" forward/i.test(src) &&
+      /in\|inch\|inches\|ft\|foot\|feet\|lb\|lbs/.test(src));
+  ok("the summary strips loads and keeps movements",
+    /movements only, loads stripped/i.test(src));
+  /* Match the phrase halves separately: the sentence is split across two JS string literals, so
+     whitespace-normalising the SOURCE still leaves a `" + "` between them. */
+  ok("a missing summary is stated rather than guessed",
+    /NO PRIOR-WEEK DATA WAS SENT/.test(src) &&
+      /do not guess what the earlier weeks contained/i.test(src) &&
+      /claim continuity you cannot see/i.test(src));
+  ok("the app sends the earlier weeks of the brick",
+    /priorWeeks: \(\(store\.currentBlock && store\.currentBlock\.weeks\) \|\| \[\]\)\.slice\(0, wi\)/.test(
+      fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8")
+    ));
+}
+
+function testMidWeekClampIsWeekScoped() {
+  const src = fs.readFileSync(PC_PATH, "utf8");
+  ok(
+    "the mid-week rule takes a week index",
+    /function midWeekStartRuleText\(weekIndex\)/.test(src),
+    "the clamp is week-blind again"
+  );
+  ok(
+    "a future week is told the clamp does not apply",
+    /IS ENTIRELY IN THE FUTURE/.test(src) &&
+      /do NOT carry it \" \+[\s\S]{0,40}forward into this week/.test(src)
+  );
+  ok(
+    "a future week programs every scheduled training day",
+    /Program EVERY scheduled training day here/.test(src)
+  );
+  ok(
+    "both week-detail prompts pass the week index",
+    (src.match(/  midWeekStartRuleText\(weekIndex\) \+/g) || []).length === 2,
+    "a week-detail prompt is still calling it without the index"
+  );
+}
+
 function main() {
   console.log("\n=== Coach policy injection (POL-020 guard) ===\n");
   testWholePolicyArrives();
@@ -215,6 +277,8 @@ function main() {
   testBothPathsStillInject();
   testBlockLengthIsFourWeeks();
   testClientImprovesRule();
+  testMidWeekClampIsWeekScoped();
+  testSameBrickWeekContinuity();
   console.log("\nPassed:", passed);
   if (process.exitCode) {
     console.error("\nPOLICY INJECTION CHECKS FAILED");

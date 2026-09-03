@@ -79,7 +79,16 @@ const MAX_CHARS = {
      are always-on, which is why they land here. The pairing PRINCIPLE came with them; the source's
      list of ten concrete pairings deliberately did not, because POL-021 says patterns inspire and
      are never copied, and a list in the prompt is an invitation to copy it. */
-  "layer2-general": 9500,
+  /* 10200 as of 2026-09-03, from reading the first brick the wired brain produced. Three faults
+     in it were writing faults, not programming faults: a part titled "Snatch Progression" whose
+     first line worked up to a CLEAN, a three-movement piece labelled a couplet, and a box in
+     inches after we had just taken inches out of the gymnastics layer. All three are always-on
+     and cheap to state. */
+  /* 11100 as of 2026-09-03. The owner's framing after reading week 2 of a real brick, which had
+     repeated week 1's Saturday movement for movement: "אין סיכוי שאין קשר בין שבוע 1>2>3>4 זה
+     נבנה זה מתקשר אחד עם השני וזה חייב להיות מגולם בשיטה שבה המוח חושב = זה קרוספיט." A WEEK IS
+     NOT AN ISLAND is the rule half of that; the data half is priorWeeksBlock() in the coach. */
+  "layer2-general": 11100,
   /* 4500 as of 2026-09-03: MORE THAN ONE PLACE. "קצה 1" trains in a full box mid-week and at home
      at weekends; the intake has one setting, so the packet said "never prescribe a kg figure" for
      an athlete with a tested 160 kg back squat. The layer now reads the athlete's own description
@@ -766,10 +775,12 @@ function testRouterAgainstRealPacket() {
     L.pickLayer3(withPacket(), null).length === 0,
     JSON.stringify(L.pickLayer3(withPacket(), null)));
 
-  /* The COMPETITOR line does not exist on main yet — it arrives with the admin release, which is
-     why these two assert against the exact strings that release emits rather than against what
-     the local contract can build today. The router has to satisfy both worlds: an old packet has
-     no such line and falls back to free text, a new one is authoritative in both directions. */
+  /* The COMPETITOR line SHIPPED with 22.0, and merging it turned this block red: every packet the
+     contract builds now carries an authoritative "COMPETITOR: no", so a competitive phrase in the
+     free-text goal no longer switches the layer on. That is the behaviour the owner asked for —
+     "תיבה מסומנת היא החלטה" — so the assertion was stale, not the router. The fallback still
+     matters for a packet stored before the release, and it is asserted against a packet with the
+     line stripped rather than against the contract declining to emit one. */
   const NEW_PACKET_NO = withPacket().fixedIntakePacket +
     "\nCOMPETITOR: no — general fitness athlete, not preparing for a competition.";
   const NEW_PACKET_YES = withPacket().fixedIntakePacket +
@@ -781,9 +792,27 @@ function testRouterAgainstRealPacket() {
   ok("the explicit competitor field beats everything",
     L.competitorDeclared({ competitor: true, fixedIntakePacket: NEW_PACKET_NO }, null) &&
       !L.competitorDeclared({ competitor: false, fixedIntakePacket: NEW_PACKET_YES }, null));
-  ok("today's packet, with no COMPETITOR line, still falls back to stated intent",
-    L.competitorDeclared(withPacket({ goals: "I want to compete at a local throwdown" }), null) &&
-      !L.competitorDeclared(withPacket(), null));
+  /* An authoritative "no" beats a competitive phrase in the goal text. This is the case the
+     release created and the one that was asserted backwards. */
+  ok('"COMPETITOR: no" beats a competitive goal in free text',
+    !L.competitorDeclared(
+      withPacket({ goals: "I want to compete at a local throwdown" }),
+      null
+    ));
+  /* A packet stored before 22.0 has no such line. Strip it to build that world, rather than
+     trusting the contract not to emit one — which is exactly what broke here. */
+  const OLD_PACKET = function (goals) {
+    const p = withPacket({ goals: goals }).fixedIntakePacket
+      .split(String.fromCharCode(10))
+      .filter(function (l) {
+        return !/^COMPETITOR:/.test(l);
+      })
+      .join(String.fromCharCode(10));
+    return { fixedIntakePacket: p, goals: goals };
+  };
+  ok("a pre-22.0 packet still falls back to stated intent",
+    L.competitorDeclared(OLD_PACKET("I want to compete at a local throwdown"), null) &&
+      !L.competitorDeclared(OLD_PACKET("Get fitter and lose a few kilos"), null));
 
   /* The packet's tail order settled on 2026-09-03: GOALS, COMPETITOR, IMPROVE FOCUS, AVOID,
      AVOID (also), HEAVIEST IMPLEMENT, DOES NOT WANT. The GOALS extractor has to stop at the first
@@ -1059,8 +1088,8 @@ function testPackBudget() {
      moment the router becomes the source. This pack is
      ~10.2k tokens; the general
      healthy athlete still pays 22k, which is what most bricks actually cost. */
-  ok("the heaviest pack stays under 45k characters",
-    heavy.chars < 45000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
+  ok("the heaviest pack stays under 47k characters",
+    heavy.chars < 47000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
   ok("the pack reports which layers it used",
     Array.isArray(heavy.layers) && heavy.layers.length >= 6, heavy.layers.join(", "));
 }
@@ -1567,6 +1596,55 @@ function testBriefCoverage() {
     (flat.match(/maximal strength tax and maximal long-aerobic tax/g) || []).length === 1);
 }
 
+
+/* Written after reading the first brick the wired brain actually produced (2026-09-03). Every rule
+   here fixes something that was in the output, not something imagined. */
+function testWritingRules() {
+  const G3 = require("../lib/coach-layers/layer2-general.js");
+  const flat = G3.replace(/\s+/g, " ");
+  ok("a part's title, focus and work must name the same movement",
+    /A PART'S TITLE, ITS STATED FOCUS AND ITS WORK NAME THE SAME MOVEMENT/.test(G3));
+  ok("the snatch/clean contradiction is named as the example",
+    /If the part is a snatch progression, no line in it works up to a clean/i.test(flat));
+  ok("a couplet is two elements and a triplet three",
+    /A couplet has exactly TWO elements and a triplet exactly THREE/.test(G3) &&
+      /Do not label a three-movement piece a couplet/i.test(flat));
+  ok("metric only, with the box height as the example",
+    /METRIC ONLY\. Kilograms, metres, centimetres/.test(G3) &&
+      /a 24 inch box is a 60 cm box/i.test(flat));
+  ok("no imperial unit is used anywhere in the layer itself",
+    !/inches(?![^.]*is a)/i.test(flat.replace("24 inch box is a 60 cm box", "")),
+    "an imperial unit crept back in");
+}
+
+
+/* Same-brick week continuity, 2026-09-03. The failure that produced it: week 2 of a real brick put
+   the identical 30 single-arm DB snatches at 22.5 kg in the identical Saturday slot as week 1,
+   because the week-fill call carried no trace of week 1 and nothing required the movements to move.
+   The rule is here; the data it reads is assembled in api/personal-coach.js. */
+function testWeekContinuity() {
+  const G4 = require("../lib/coach-layers/layer2-general.js");
+  const flat = G4.replace(/\s+/g, " ");
+  ok("a week is not an island",
+    /--- A WEEK IS NOT AN ISLAND \(HARD\) ---/.test(G4) &&
+      /Weeks 1 to 4 of a brick BUILD ON EACH OTHER/.test(G4));
+  ok("week 2 is described as what week 1 earned",
+    /Week 2 is what week 1 earned, week 3 is what week 2 earned/i.test(flat));
+  ok("the earlier weeks are read and moved on from",
+    /WHERE THE EARLIER WEEKS OF THIS BRICK ARE GIVEN TO YOU, READ THEM AND MOVE ON FROM THEM/.test(
+      flat
+    ));
+  ok("the repeated weekday slot is named as the commonest failure",
+    /The same loaded movement in the same weekday slot two weeks running/i.test(flat));
+  ok("rotating the format while keeping the movements is refused",
+    /ROTATION APPLIES TO THE WORK, NOT ONLY TO THE FORMAT/.test(G4) &&
+      /it is the same session with more of it/i.test(flat));
+  ok("progressing volume does not excuse repeating the selection",
+    /Progressing the volume is good and does not excuse repeating the selection/i.test(flat));
+  ok("with no prior weeks given, nothing is invented",
+    /WHERE THEY ARE NOT GIVEN, do not invent what came before/.test(flat));
+}
+
 function main() {
   console.log("\n=== Coach knowledge layers ===\n");
   testShape();
@@ -1583,6 +1661,8 @@ function main() {
   testStructuredIntakeFields();
   testCraftFoundation();
   testBriefCoverage();
+  testWritingRules();
+  testWeekContinuity();
   testContinuation();
   testGymnastics();
   testHebrewBoundary();

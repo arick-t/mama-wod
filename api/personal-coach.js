@@ -215,9 +215,27 @@ function israelWeekdayKey() {
   return ["sun", "mon", "tue", "wed", "thu", "fri", "sat"][dt.getDay()] || "sun";
 }
 
-function midWeekStartRuleText() {
+/* The mid-week clamp belongs to the week that CONTAINS today, and nothing else.
+ * Found 2026-09-03 by filling week 2 of a real test brick: Monday and Tuesday came back as REST
+ * DAY in week 2, exactly as they correctly were in week 1, because this text said "do NOT program
+ * workouts for any day BEFORE today" with no week attached. Week 2's Monday is in the future. Left
+ * alone it costs the athlete two training days in every week after the first. */
+function midWeekStartRuleText(weekIndex) {
   const today = israelTodayIso();
   const dow = israelWeekdayKey();
+  const wi = parseInt(weekIndex, 10);
+  if (wi > 1) {
+    return (
+      "WEEK " +
+      wi +
+      " IS ENTIRELY IN THE FUTURE (Asia/Jerusalem; today is " +
+      today +
+      "). " +
+      "The mid-week start clamp applies ONLY to the week that contains today — do NOT carry it " +
+      "forward into this week. Program EVERY scheduled training day here. " +
+      "The only Rest days in this week are the athlete's own rest weekdays from the intake."
+    );
+  }
   return (
     "MID-WEEK START (HARD — Asia/Jerusalem): today is " +
     today +
@@ -228,6 +246,131 @@ function midWeekStartRuleText() {
     "Those past days MUST be Rest (overview focus exactly \"Rest\"; parts [] OR {title:\"REST DAY\",lines:[\"Rest\"]}). " +
     "First real training day is today if it is a training day, otherwise the next scheduled training day. " +
     "Honor athlete rest weekdays (from intake schedule) on week 1 AND all later weeks — never fill a rest weekday with a full session."
+  );
+}
+
+
+/* What the earlier weeks of THIS brick already used, compact enough to send on every week fill.
+ * Movement names only, stripped of reps and loads: the point is recognition, so the coach can
+ * rotate away from what is already there and progress what should carry forward. Added 2026-09-03
+ * after week 2 of a real brick repeated week 1's Saturday movement for movement. */
+const PRIOR_WEEKS_MAX_CHARS = 2000;
+
+function movementFromLine(line) {
+  let t = String(line || "").trim();
+  if (!t) return "";
+  /* Notes, cues and headers are not work. */
+  if (/^(note|cue|target|intent|duration|rest)\b/i.test(t)) return "";
+  if (/^(amrap|emom|e2mom|for time|rft|\d+\s*(rounds|sets)|work up|every)\b/i.test(t)) return "";
+  t = t.replace(/\([^)]*\)/g, " ");                    /* (22.5 kg) */
+  t = t.replace(/\bwith\b[\s\S]*$/i, " ");             /* with 22.5 kg DBs */
+  t = t.replace(/\bat\b\s*\d[\s\S]*$/i, " ");         /* at 70% 1RM */
+  t = t.replace(/^[\d\s.:x/-]+/, " ");                  /* leading 30 / 4x / 21-15-9 */
+  /* Imperial is in the list because a prior-week summary that carries "24 inch box" forward
+     TEACHES the mistake to the next week. It happened. */
+  t = t.replace(/\b\d+(\.\d+)?\s*(kg|m|cm|km|min|sec|s|%|in|inch|inches|ft|foot|feet|lb|lbs)\b/gi, " ");
+  t = t.replace(/\bper (side|leg|arm)\b/gi, " ");
+  /* Stripping the number can leave the unit stranded at the front: "800m Run" -> "m Run",
+     "30 second Hollow Hold" -> "second Hollow Hold". Drop the orphan. */
+  t = t.replace(/^(m|km|cm|kg|cal|calorie|calories|sec|secs|second|seconds|min|mins|minute|minutes|rep|reps|round|rounds)\b/i, " ");
+  t = t.replace(/\s{2,}/g, " ").replace(/[\s,.;:-]+$/, "").trim();
+  if (t.length < 3) return "";
+  return t.slice(0, 34);
+}
+
+function formatFromParts(parts) {
+  const hay = (parts || [])
+    .map(function (p) {
+      return String((p && p.title) || "") + " " + ((p && p.lines) || []).join(" ");
+    })
+    .join(" ");
+  const hits = [];
+  [
+    ["AMRAP", /\bAMRAP\b/i],
+    ["EMOM", /\bE?\d?MOM\b|\bEMOM\b/i],
+    ["For Time", /\bfor time\b/i],
+    ["intervals", /\bintervals?\b|work \/ ?\d+ ?min(ute)? rest|\brounds,\s*\d+ minutes work\b/i],
+    ["chipper", /\bchipper\b/i],
+    ["quality sets", /\bfor quality\b/i],
+    ["heavy singles", /\bheavy single|\bwork up to\b/i],
+    ["couplet", /\bcouplet\b/i],
+    ["triplet", /\btriplet\b/i],
+  ].forEach(function (row) {
+    if (row[1].test(hay) && hits.indexOf(row[0]) < 0) hits.push(row[0]);
+  });
+  return hits.slice(0, 3).join("+");
+}
+
+/** Compact "what this brick has already done" for the weeks before weekIndex. */
+function priorWeeksSummary(priorWeeks, weekIndex) {
+  const wi = parseInt(weekIndex, 10) || 0;
+  if (!Array.isArray(priorWeeks) || !priorWeeks.length || wi < 2) return "";
+  const dayKeys = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+  const out = [];
+  for (let i = 0; i < priorWeeks.length; i++) {
+    const w = priorWeeks[i] || {};
+    const idx = parseInt(w.weekIndex || w.weekNumber, 10) || i + 1;
+    if (idx >= wi) continue;
+    const days = (w && w.days) || {};
+    const rows = [];
+    for (let d = 0; d < dayKeys.length; d++) {
+      const key = dayKeys[d];
+      const parts = ((days[key] || {}).parts) || [];
+      if (!parts.length) continue;
+      const titles = parts
+        .map(function (p) {
+          return String((p && p.title) || "");
+        })
+        .join(" ");
+      if (/rest day/i.test(titles) && parts.length === 1) continue;
+      const moves = [];
+      parts.forEach(function (p) {
+        ((p && p.lines) || []).forEach(function (l) {
+          const m = movementFromLine(l);
+          if (m && moves.indexOf(m) < 0) moves.push(m);
+        });
+      });
+      if (!moves.length) continue;
+      const fmt = formatFromParts(parts);
+      rows.push(
+        "  " + key + ": " + (fmt ? fmt + " · " : "") + moves.slice(0, 7).join(", ")
+      );
+    }
+    if (!rows.length) continue;
+    out.push("W" + idx + " (" + String(w.theme || "").slice(0, 60) + ")");
+    out.push(rows.join("\n"));
+  }
+  if (!out.length) return "";
+  return out.join("\n").slice(0, PRIOR_WEEKS_MAX_CHARS);
+}
+
+function priorWeeksBlock(body, weekIndex) {
+  const b = body && typeof body === "object" ? body : {};
+  let text = "";
+  if (typeof b.priorWeeksSummary === "string" && b.priorWeeksSummary.trim()) {
+    text = b.priorWeeksSummary.slice(0, PRIOR_WEEKS_MAX_CHARS);
+  } else {
+    const src = Array.isArray(b.priorWeeks)
+      ? b.priorWeeks
+      : b.block && Array.isArray(b.block.weeks)
+        ? b.block.weeks
+        : [];
+    text = priorWeeksSummary(src, weekIndex);
+  }
+  if (!text) {
+    return (
+      " NO PRIOR-WEEK DATA WAS SENT. Do not guess what the earlier weeks contained and do not " +
+      "claim continuity you cannot see — but still write this week as week " +
+      String(weekIndex) +
+      " of a brick that is building, not as a standalone week."
+    );
+  }
+  return (
+    "\n\nEARLIER WEEKS OF THIS BRICK (same-brick continuity — movements only, loads stripped):\n" +
+    text +
+    "\nBUILD ON IT: keep each weekday's modality, PROGRESS one axis (load, density, volume or " +
+    "complexity), and ROTATE the movements this list already shows in that slot. Repeating a " +
+    "weekday's movement selection week after week is the failure this list exists to prevent.\n"
   );
 }
 
@@ -2261,6 +2404,14 @@ async function coachHandler(req, res) {
           "(home/DB-KB → DB/KB/odd-object loading; never invent barbell/rings/rope/mono machines missing from setup). " +
           "Lift kg values are capability baselines for scaling — not permission to use missing gear. " +
           "Each training week: include a lunge-family pattern and (if indoors) a wall pattern; avoid single-pattern dominance and repeated identical couplet/triplet templates. " +
+          "BLOCK_JSON SHAPE (exact keys — a different key name means the app cannot read the week): " +
+          "{\"weeks\":[{\"weekIndex\":1,\"phase\":\"build\",\"theme\":\"...\",\"summaryLine\":\"...\"," +
+          "\"overview\":[{\"day\":\"sun\",\"label\":\"Sun\",\"focus\":\"...\"}, ... all 7 days ...]," +
+          "\"days\":{\"sun\":{\"parts\":[{\"id\":\"sun-0\",\"title\":\"...\",\"lines\":[\"...\"]}]}, ...}}]} " +
+          "Use weekIndex, NOT weekNumber. phase is one of build / intensify / peak / deload. " +
+          "OVERVIEW IS REQUIRED ON EVERY WEEK INCLUDING WEEK 1 — all 7 day keys, every week, " +
+          "even where days is empty. A true REST day has focus exactly \"Rest\". Without overview the " +
+          "calendar has nothing to show. " +
           "CRITICAL — Week 1 DENSITY: week 1 MUST include full days with real workouts for every training day " +
           "(1–3 parts/day, each part with title + lines array of concrete prescriptions, ≤5 lines/part). " +
           "Do NOT leave week 1 days as {}. Athletes open week 1 immediately. " +
@@ -2324,7 +2475,9 @@ async function coachHandler(req, res) {
       "WEEK_JSON>>>\n" +
       "Rules: English only. Keys sun,mon,tue,wed,thu,fri,sat required. Every training day needs 1–3 parts with concrete lines (≤5 lines/part). " +
       'Rest days: focus exactly "Rest", parts [] OR one part {title:"REST DAY",lines:["Rest"]}. ' +
-      midWeekStartRuleText() +
+      midWeekStartRuleText(weekIndex) +
+      " " +
+      priorWeeksBlock(body, weekIndex) +
       " " +
       (overviewHint ? "Honor overview focus map: " + overviewHint + ". " : "") +
       "No BLOCK_JSON. No prose outside markers.";
@@ -2346,7 +2499,9 @@ async function coachHandler(req, res) {
       "4) days: ALL 7 keys populated with parts: [{id,title,lines:[...]}] concrete prescriptions.\n" +
       '5) Rest days: focus exactly "Rest"; parts [] OR {title:"REST DAY",lines:["Rest"]}.\n' +
       "6) " +
-      midWeekStartRuleText() +
+      midWeekStartRuleText(weekIndex) +
+      "\n" +
+      priorWeeksBlock(body, weekIndex) +
       "\n" +
       "7) ACTIVE RECOVERY from athlete profile: if NO — do not force thu/any day into daily deload; if YES — one lighter day on requested weekday. If phase=deload: low volume all week.\n" +
       "8) For each day specify effective duration target + movement priorities.\n" +

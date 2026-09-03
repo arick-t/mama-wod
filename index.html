@@ -9678,6 +9678,9 @@ function requestPprogWeekDetail(weekIndex0, fromQueue) {
         phase: week.phase || "",
         overview: overviewSnap,
         summaryLine: week.summaryLine || "",
+        /* Same-brick continuity: the weeks already written. The server compacts them to
+           movements only — week 2 used to be built blind to week 1 and repeated it. */
+        priorWeeks: ((store.currentBlock && store.currentBlock.weeks) || []).slice(0, wi),
         /* Force programming mode — never re-trigger intake from chat history */
         intakeComplete: true,
         athleteProfile: athleteProfilePayload({ forceIntakeComplete: true, omitChat: true }),
