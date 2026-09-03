@@ -52,11 +52,12 @@ const MAX_CHARS = {
   /* 4900 as of 2026-09-03: the marked movement FAMILIES are the primary input now, and the
      matrix underneath is indexed by AREA — the coach had to bridge the two by inference. It no
      longer does. */
-  /* 5500 as of 2026-09-03: an intake arrived with every skill marked Rx-capable AND "deep squat"
+  /* 5600 as of 2026-09-03: an intake arrived with every skill marked Rx-capable AND "deep squat"
      marked to avoid. The layer said the avoid list wins but never said it also removes a SKILL the
      athlete claims — so a pistol and a squat snatch were still on the menu. Conditional layer:
-     only a restricted athlete pays for it. */
-  "layer1-injuries": 5500,
+     only a restricted athlete pays for it. The last 100 point the coach at the explicit
+     AVOID OVERRIDES line the admin module now emits. */
+  "layer1-injuries": 5600,
   /* 7600 as of 2026-09-02. Two raises and two real trims got it here, and every line is
      owner-approved and universal: the skill-fresh / capacity-tired distinction moved in from the
      competitor layer (a training rule, not a competition rule), and the session-length ceiling
@@ -66,15 +67,23 @@ const MAX_CHARS = {
      it is a studio rule an individual reads for nothing and half is the reverse. Splitting it per
      agent would take ~600 characters off every brick. Do that before trimming anything the owner
      approved line by line. */
-  /* 8200 as of 2026-09-03: session length is one number, but athletes report a longer weekend in
+  /* 8350 as of 2026-09-03: session length is one number, but athletes report a longer weekend in
      the notes ("45, weekends I can reach 60"). The ceiling rule read as uniform and would have
-     flattened the long day away. */
-  "layer2-general": 8200,
-  /* 4300 as of 2026-09-03: MORE THAN ONE PLACE. "קצה 1" trains in a full box mid-week and at home
+     flattened the long day away. Then the admin module delivered sessionMinutesByDay, so the
+     bullet list had to name the per-day case as its own — with a single number now legitimately
+     absent rather than missing. */
+  "layer2-general": 8350,
+  /* 4500 as of 2026-09-03: MORE THAN ONE PLACE. "קצה 1" trains in a full box mid-week and at home
      at weekends; the intake has one setting, so the packet said "never prescribe a kg figure" for
      an athlete with a tested 160 kg back squat. The layer now reads the athlete's own description
-     of the setup instead of the single tick. */
-  "layer2-individual": 4300,
+     of the setup instead of the single tick — and, once the admin module shipped the fields, at the
+     Primary / Also trains / LOAD lines by name, including the case where no days are given. */
+  "layer2-individual": 4500,
+  /* 1400 as of 2026-09-03. POL-009 demanded a handoff-driven continuation and the plumbing for it
+     already worked end to end — index.html builds it, personal-coach.js injects it — but no layer
+     said what to DO with one, and the router could not tell brick 2 from brick 1. Fires only on a
+     continuation, so a first brick pays nothing. */
+  "layer2-continuation": 1400,
   /* The two halves of the old HOW MANY DAYS section, each read by one product only. Both grew on
      2026-09-03: the studio took the station-to-people rule out of the always-on layer, and the
      individual took the 3-consecutive-day limit out of the competitor layer. Both are now on the
@@ -480,7 +489,7 @@ function testIndividualLayerDecisions() {
   ok("two places is a case the layer knows",
     /MORE THAN ONE PLACE IS COMMON \(HARD\)/.test(I));
   ok("two places means no single load ceiling",
-    /there is no single load ceiling and you must not apply one/i.test(flat));
+    /there is no single load ceiling in this case and you must not apply one/i.test(flat));
   ok("the gym days are prescribed from the reported lifts",
     /On the days they have the gym: prescribe from their REPORTED LIFTS, by %1RM/.test(I));
   ok("a blanket refusal to name a kg is called out as data thrown away",
@@ -1011,6 +1020,10 @@ function testPackBudget() {
       goals: "muscle-up, clean and jerk, better engine, first competition",
       injuries: "shoulder impingement",
     },
+    /* The real worst case is a SECOND brick: an injured competitor whose block continues from a
+       handoff. Added 2026-09-03 with the continuation layer, because a fixture that quietly builds
+       a first brick understates what the app actually pays. */
+    blockStartWeek: 5,
   });
   /* 34k is the real worst case, not a padded one: an injured, declared competitor with a barbell
      goal — craft + methodology + injuries + equivalence + general + individual + competitors +
@@ -1025,12 +1038,60 @@ function testPackBudget() {
   /* 38k as of 2026-09-03, from the "קצה 1" audit: three real conflicts a live intake produced —
      an athlete with two training places, a skill claimed and its pattern avoided, and a weekend
      session longer than the stated ceiling. Two of the three are conditional (injuries, individual)
-     and only the session-length line is always-on. This pack is now ~9.9k tokens; the general
+     and only the session-length line is always-on. A second brick is now folded into the fixture, so the number is the true worst case. This pack is
+     ~10.2k tokens; the general
      healthy athlete still pays 22k, which is what most bricks actually cost. */
-  ok("the heaviest pack stays under 38k characters",
-    heavy.chars < 38000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
+  ok("the heaviest pack stays under 40k characters",
+    heavy.chars < 40000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
   ok("the pack reports which layers it used",
     Array.isArray(heavy.layers) && heavy.layers.length >= 6, heavy.layers.join(", "));
+}
+
+
+/* POL-009: brick 2 is not brick 1. Added 2026-09-03 after finding that nothing in thirteen layers
+   mentioned a previous block, while the policy called handoff continuity a HARD rule and the app
+   had been sending a handoff all along. */
+function testContinuation() {
+  const K = require("../lib/coach-layers/layer2-continuation.js");
+  const flat = K.replace(/\s+/g, " ");
+  ok("the continuation layer knows it is not the first brick",
+    /--- THIS IS NOT THE FIRST BRICK \(HARD\) ---/.test(K));
+  ok("re-serving the previous block is forbidden",
+    /DO NOT RE-SERVE THE PREVIOUS BLOCK/.test(K));
+  ok("the loaded work progresses from where the handoff leaves it",
+    /PROGRESS THE LOADED WORK from where the handoff leaves it/.test(K));
+  ok("a format already used is not repeated unless it is a declared retest",
+    /DO NOT REPEAT A NAMED FORMAT/.test(K) &&
+      /unless it is a benchmark being retested on purpose/i.test(flat));
+  ok("a change asked for last block does not expire with the block",
+    /It does not expire with the block, and they should not have to ask twice/i.test(flat));
+  ok("with no handoff, no history is invented",
+    /IF NO HANDOFF IS GIVEN, DO NOT INVENT ONE/.test(K) &&
+      /do not claim a continuity you cannot see/i.test(flat));
+  ok("intake is never restarted on a continuation",
+    /NEVER RESTART INTAKE/.test(K));
+
+  /* The gate, in both directions. A rule about "the previous block" is a lie on a first brick, so
+     the false case matters more than the true one. */
+  const L = require("../lib/coach-layers");
+  const first = L.buildLayerPack({ agent: "individual", profile: {} });
+  const second = L.buildLayerPack({ agent: "individual", profile: {}, blockStartWeek: 5 });
+  const studio2 = L.buildLayerPack({ agent: "studio", studioIntake: {}, continuation: true });
+  ok("a first brick does not read the continuation layer",
+    first.layers.indexOf("layer2-continuation") < 0, first.layers.join(", "));
+  ok("a later brick does, on blockStartWeek alone",
+    second.layers.indexOf("layer2-continuation") >= 0, second.layers.join(", "));
+  ok("a studio continuation reads it too",
+    studio2.layers.indexOf("layer2-continuation") >= 0, studio2.layers.join(", "));
+  ok("the presence of a handoff is enough on its own",
+    L.isContinuationBrick({ blockHandoff: "themes: engine" }) === true);
+  ok("nothing stated means a first brick",
+    L.isContinuationBrick({}) === false &&
+      L.isContinuationBrick({ blockStartWeek: 1 }) === false &&
+      L.isContinuationBrick({ blockStartWeek: "" }) === false);
+  ok("chat pays nothing for it",
+    L.buildLayerPack({ agent: "individual", profile: {}, blockStartWeek: 9, programming: false })
+      .layers.indexOf("layer2-continuation") < 0);
 }
 
 function main() {
@@ -1047,6 +1108,7 @@ function main() {
   testRouterAgainstRealPacket();
   testSessionCountMode();
   testStructuredIntakeFields();
+  testContinuation();
   testPackBudget();
   console.log("\nPassed:", passed);
   if (process.exitCode) {

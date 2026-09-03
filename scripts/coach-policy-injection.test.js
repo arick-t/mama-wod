@@ -137,12 +137,46 @@ function testBothPathsStillInject() {
   );
 }
 
+/* A block became four weeks on 2026-09-02, but six lines of the policy the coach reads verbatim
+   still said five — POL-008, POL-009, POL-016, POL-023 (twice) and POL-COST. Four of them sit in
+   rules that the 12,000-character slice used to cut off, so fixing the truncation is what delivered
+   the stale number to the model: the layers said four weeks and the policy said five, inside the
+   same prompt. Guard the source of truth, not the generated file. */
+function testBlockLengthIsFourWeeks() {
+  const md = fs.readFileSync(
+    path.join(__dirname, "..", "experiments", "personal-coach", "coach-policy-rules.md"),
+    "utf8"
+  );
+  ok(
+    "the policy rules never call a brick five weeks",
+    !/5[- ]week|five[- ]week|next 5 weeks/i.test(md),
+    "a five-week reference is back in the policy the coach reads"
+  );
+  ok(
+    "the synced policy module carries no five-week language either",
+    !/5[- ]week|five[- ]week|next 5 weeks/i.test(String(COACH_POLICY)),
+    "coach-policy.js is out of sync with the rules, or a new rule says five weeks"
+  );
+  /* The one live request string that names a week count: the retry sent when a block generation
+     came back without valid JSON. It reaches the model on the continuation path, which is exactly
+     where a wrong week count does damage. The athlete-side intake builder in the same file still
+     says five and is KNOWN debt for the migration branch — it sits behind
+     ATHLETE_AI_BUILD_ENABLED, which is off. */
+  const app = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
+  ok(
+    "the block retry asks the coach for four weeks",
+    /Return only a full BLOCK_JSON with exactly 4 weeks now/.test(app),
+    "the retry instruction is asking for a week count the brick no longer has"
+  );
+}
+
 function main() {
   console.log("\n=== Coach policy injection (POL-020 guard) ===\n");
   testWholePolicyArrives();
   testNoSilentCap();
   testEmergencyValve();
   testBothPathsStillInject();
+  testBlockLengthIsFourWeeks();
   console.log("\nPassed:", passed);
   if (process.exitCode) {
     console.error("\nPOLICY INJECTION CHECKS FAILED");

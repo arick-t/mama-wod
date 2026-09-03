@@ -1162,7 +1162,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
         <source src="assets/coach-thinking.mp4" type="video/mp4">
       </video>
       <img id="pprogBuildingFallback" class="pprog-building-video" src="assets/hamamen-coach-duck.png" alt="Coach" style="display:none" width="340" height="340">
-      <div class="pprog-building-status"><strong>Coach</strong> is building your 5-week block…</div>
+      <div class="pprog-building-status"><strong>Coach</strong> is building your 4-week block…</div>
     </div>
   </div>
 </div>
@@ -9392,14 +9392,14 @@ function requestPprogWeek(retryCount, opts) {
   setPprogStatus(
     "pending",
     opts.autoNextBlock
-      ? "<strong>Coach</strong> — building your next 5-week block…"
-      : "<strong>Coach</strong> — building 5-week block…"
+      ? "<strong>Coach</strong> — building your next 4-week block…"
+      : "<strong>Coach</strong> — building 4-week block…"
   );
   setPprogBuildingOverlay(
     true,
     opts.autoNextBlock
-      ? "<strong>Coach</strong> is building your <strong>next</strong> 5-week block…"
-      : "<strong>Coach</strong> is building your 5-week block…"
+      ? "<strong>Coach</strong> is building your <strong>next</strong> 4-week block…"
+      : "<strong>Coach</strong> is building your 4-week block…"
   );
   var msgs = loadPprogMessages();
   var payloadMsgs = [];
@@ -9414,7 +9414,7 @@ function requestPprogWeek(retryCount, opts) {
     payloadMsgs.push({
       role: "user",
       text:
-        "Previous reply had no valid <<<BLOCK_JSON>>>. Return only a full BLOCK_JSON with exactly 5 weeks now — no long chat. All workout text in English.",
+        "Previous reply had no valid <<<BLOCK_JSON>>>. Return only a full BLOCK_JSON with exactly 4 weeks now — no long chat. All workout text in English.",
     });
   }
   var keepOverlayForRetry = false;
