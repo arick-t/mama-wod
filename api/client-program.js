@@ -758,6 +758,10 @@ async function clientHandler(req, res, body) {
       deviceId: redeemed.device.id,
       /* Signature is per ACCOUNT — a second device walks straight in (b.3). */
       signed: Access.isSignedForCurrentTerms(redeemed.access),
+      /* WHICH secret salts the client codes — never the secret. "client_secret" is the
+         only answer that survives an admin-password change: the other two tie every
+         code and every linked device to a value that exists for another purpose. */
+      clientCodeSalt: Access.saltSource(),
       termsVersion: Terms.TERMS_VERSION,
     });
   }

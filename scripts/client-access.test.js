@@ -205,3 +205,39 @@ ok("access layer uses timing-safe comparison", /timingSafeEqual/.test(src));
 ok("access layer stores only hashes", /tokenHash/.test(src) && !/token:\s*token,\s*$/m.test(src.split("module.exports")[0].replace(/return \{[\s\S]*?\};/g, "")));
 
 console.log("All client access checks passed.");
+
+/* --- which secret salts the codes, reported without revealing it -----------
+ * The salt falls back to the admin password when nothing better is set, and that is a
+ * trap: change the password and every client's code and linked device dies at once.
+ * The status GET names the source so the answer is checkable, never remembered.
+ * ------------------------------------------------------------------------- */
+(function saltSourceIsHonest() {
+  const keep = {
+    CLIENT_ACCESS_SECRET: process.env.CLIENT_ACCESS_SECRET,
+    ADMIN_SESSION_SECRET: process.env.ADMIN_SESSION_SECRET,
+    ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
+  };
+  const set = function (o) {
+    for (const k of Object.keys(keep)) {
+      if (o[k] === undefined) delete process.env[k];
+      else process.env[k] = o[k];
+    }
+  };
+
+  set({});
+  ok("nothing configured is reported as none", A.saltSource() === "none");
+
+  set({ ADMIN_PASSWORD: "pw" });
+  ok("the admin password is named as the fallback it is", A.saltSource() === "admin_password");
+
+  set({ ADMIN_PASSWORD: "pw", ADMIN_SESSION_SECRET: "s".repeat(40) });
+  ok("the session secret wins over the password", A.saltSource() === "session_secret");
+
+  set({ ADMIN_PASSWORD: "pw", ADMIN_SESSION_SECRET: "s".repeat(40), CLIENT_ACCESS_SECRET: "c".repeat(40) });
+  ok("a secret of its own wins over both", A.saltSource() === "client_secret");
+
+  /* And the report is a name, never the value. */
+  ok("no secret leaks through the name", ["none", "admin_password", "session_secret", "client_secret"].indexOf(A.saltSource()) >= 0);
+
+  set(keep);
+})();
