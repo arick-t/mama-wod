@@ -719,6 +719,14 @@ ok("both halves open through one door", /function openPersonFromStrip/.test(page
    it does not yet — the read has not come back. Without a second call after it does, the
    client is loaded behind a hidden panel and the owner is left looking at the empty
    athlete side. That was "one click does nothing, two clicks work" (owner, 2026-09-03). */
+/* Finishing the wizard has to land ON the client he just built. It did not: the client
+   was already in the create response, but the page threw it away and asked for it again,
+   and when that read failed the message went to a banner INSIDE the hidden client
+   screen — so it looked like the app had ignored him (owner, 2026-09-03). */
+ok("the created client goes on screen from the response it came in", /S\.program = r\.body\.program;[\s\S]{0,400}renderViewMode\(\);[\s\S]{0,30}renderDetail\(\);[\s\S]{0,200}loadList\(\);/.test(page));
+ok("and the strip moves to them", /renderPeopleStripActive\(S\.program\.programId\)/.test(page));
+ok("a failed open is said out loud, not into a hidden banner", /showHdrToast\(why, "err"\)/.test(page));
+
 ok("the view is decided again once the client has arrived", /S\.program = r\.body\.program;[\s\S]{0,1400}renderViewMode\(\);\s*renderDetail\(\);/.test(page));
 
 ok("first entry opens someone", /function openFirstPersonIfNeeded/.test(page));

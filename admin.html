@@ -6067,7 +6067,14 @@ tryRestoreAdminSession();
     renderViewMode();
     api({ action: "read", programId: pid }).then(function (r) {
       if (r.status === 401) { openLogin("פג תוקף החיבור."); return; }
-      if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "לא הצלחתי לטעון את התוכנית."); return; }
+      if (r.status !== 200 || !r.body.ok) {
+        /* The banner lives inside this screen, and this screen is hidden until a client
+           is open — so a failed open used to be silent (owner, 2026-09-03). */
+        var why = (r.body && r.body.error) || "לא הצלחתי לטעון את התוכנית.";
+        banner("bad", why);
+        try { showHdrToast(why, "err"); } catch (eToast) {}
+        return;
+      }
       S.program = r.body.program; S.access = r.body.access || null;
       /* THE screen decision, and it has to be made again HERE.
          renderViewMode shows this screen only when S.program exists — and when
@@ -7676,10 +7683,36 @@ tryRestoreAdminSession();
         var weeks = (r.body.program.weeks || []).length;
         banner("good", "Created an empty " + weeks + "-week program. Now write the sessions.");
         iStep = 0;
-        /* The wizard is done — hand the screen back and open what was just created. */
+        /* The wizard is done. The client he just created is ALREADY in this response, so
+           it goes on screen from here rather than through another read that can fail
+           somewhere he cannot see: the failure banner lives inside the client screen,
+           which is hidden until a client is open — so a failed re-read looked exactly
+           like the app ignoring him (owner, 2026-09-03). */
         S.adding = false;
+        S.sel = r.body.program.programId;
+        S.program = r.body.program;
+        S.access = null;
+        S.wi = 0;
+        S.day = "sun";
+        S.calMode = "month";
+        S.selected = [];
+        S.edit = null;
+        adminOpenedSomeone = true;
+        try {
+          if (typeof window.renderPeopleStripActive === "function") {
+            window.renderPeopleStripActive(S.program.programId);
+          }
+        } catch (eStrip) {}
         renderViewMode();
-        loadList().then(function () { openClient(r.body.program.programId); });
+        renderDetail();
+        /* The list and the access row catch up behind him. */
+        loadList();
+        api({ action: "read", programId: S.program.programId }).then(function (rr) {
+          if (rr.status !== 200 || !rr.body.ok) return;
+          S.program = rr.body.program;
+          S.access = rr.body.access || null;
+          renderDetail();
+        });
       });
   }
 
