@@ -52,7 +52,11 @@ const MAX_CHARS = {
   /* 4900 as of 2026-09-03: the marked movement FAMILIES are the primary input now, and the
      matrix underneath is indexed by AREA — the coach had to bridge the two by inference. It no
      longer does. */
-  "layer1-injuries": 4900,
+  /* 5500 as of 2026-09-03: an intake arrived with every skill marked Rx-capable AND "deep squat"
+     marked to avoid. The layer said the avoid list wins but never said it also removes a SKILL the
+     athlete claims — so a pistol and a squat snatch were still on the menu. Conditional layer:
+     only a restricted athlete pays for it. */
+  "layer1-injuries": 5500,
   /* 7600 as of 2026-09-02. Two raises and two real trims got it here, and every line is
      owner-approved and universal: the skill-fresh / capacity-tired distinction moved in from the
      competitor layer (a training rule, not a competition rule), and the session-length ceiling
@@ -62,8 +66,15 @@ const MAX_CHARS = {
      it is a studio rule an individual reads for nothing and half is the reverse. Splitting it per
      agent would take ~600 characters off every brick. Do that before trimming anything the owner
      approved line by line. */
-  "layer2-general": 7900,
-  "layer2-individual": 4000,
+  /* 8200 as of 2026-09-03: session length is one number, but athletes report a longer weekend in
+     the notes ("45, weekends I can reach 60"). The ceiling rule read as uniform and would have
+     flattened the long day away. */
+  "layer2-general": 8200,
+  /* 4300 as of 2026-09-03: MORE THAN ONE PLACE. "קצה 1" trains in a full box mid-week and at home
+     at weekends; the intake has one setting, so the packet said "never prescribe a kg figure" for
+     an athlete with a tested 160 kg back squat. The layer now reads the athlete's own description
+     of the setup instead of the single tick. */
+  "layer2-individual": 4300,
   /* The two halves of the old HOW MANY DAYS section, each read by one product only. Both grew on
      2026-09-03: the studio took the station-to-people rule out of the always-on layer, and the
      individual took the 3-consecutive-day limit out of the competitor layer. Both are now on the
@@ -420,6 +431,19 @@ function testGeneralLayerDecisions() {
     /Never read a duration out of the fact that sessions differ\. That is a flag, not a value/.test(
       flat
     ));
+
+  /* "קצה 1", 2026-09-03: session length 45, "different times on different days" UNTICKED, and the
+     notes saying "at the weekend I can reach 60". Both answers are true, and the ceiling rule read
+     as uniform — which would have flattened away the one long session of the week, the session
+     that most needs the time because it is the day he trains at home. */
+  ok("a note naming a longer day is honoured alongside the number",
+    /A number given AND the notes name a DIFFERENT length for some days/.test(G));
+  ok("the long day gets the piece that needs the time",
+    /Use the longer day — put the piece that needs the time there/i.test(flat));
+  ok("neither flattening nor stretching every session is allowed",
+    /Do not flatten every session to the smaller number and do not stretch them all to the\s*larger one/i.test(
+      flat
+    ));
   ok("no five-week brick language survives in this layer",
     !/5[- ]week|five week|week 5\b|weeks 1-4/i.test(G),
     "the five-week brick came back into the layer");
@@ -447,6 +471,24 @@ function testIndividualLayerDecisions() {
     /NEVER swap a\s*pattern out because there is no barbell/i.test(flat));
   ok("the strength stimulus has a route that does not need load",
     /get it from reps, tempo, pauses, unilateral loading,\s*range of motion and shorter rest/i.test(flat));
+
+  /* "קצה 1", 2026-09-03. The intake has ONE equipment setting per athlete, and he has two: a full
+     box Mon-Fri and a garage on Saturday. He ticked "home or limited equipment" and left the
+     heaviest-implement box empty, so the packet emitted four tested 1RMs (160 kg back squat) and
+     then "never by a kg figure" underneath them. The layer has to read his own description of the
+     setup rather than the single tick, or the best data in the intake is thrown away. */
+  ok("two places is a case the layer knows",
+    /MORE THAN ONE PLACE IS COMMON \(HARD\)/.test(I));
+  ok("two places means no single load ceiling",
+    /there is no single load ceiling and you must not apply one/i.test(flat));
+  ok("the gym days are prescribed from the reported lifts",
+    /On the days they have the gym: prescribe from their REPORTED LIFTS, by %1RM/.test(I));
+  ok("a blanket refusal to name a kg is called out as data thrown away",
+    /a blanket 'no kg figures' throws them away/i.test(flat));
+  ok("the athlete is told which day the session was written for",
+    /SAY WHICH DAY IS WHICH in the session itself/.test(I));
+  ok("loaded work is placed on the gym days",
+    /Put the loaded work on the gym days and the equipment-light work on the others/.test(I));
 
   /* THE MOVE (2026-09-02). Competitor material was reaching every single athlete: a movement
      ranking whose own criteria include "likely to be tested in competition", and a week with three
@@ -592,6 +634,28 @@ function testInjuryGate() {
       ));
   ok("the layer does not assume a restriction means an injury",
     /AN INJURY IS ONLY ONE REASON/.test(require("../lib/coach-layers/layer1-injuries.js")));
+
+  /* Same intake, second conflict: "All skills" ticked as Rx-capable AND "deep squat" ticked to
+     avoid. A pistol IS a deep squat, and so is a squat snatch — which he also reported at 90 kg.
+     The avoid list already won over the free text; it now has to win over a claimed SKILL too, or
+     the coach resolves the clash in favour of the more flattering answer. */
+  const INJflat = require("../lib/coach-layers/layer1-injuries.js").replace(/\s+/g, " ");
+  ok("an avoided pattern also removes a skill the athlete says they have",
+    /AND IT ALSO REMOVES A SKILL THEY SAID THEY HAVE/.test(
+      require("../lib/coach-layers/layer1-injuries.js")
+    ));
+  ok("the clash is not resolved in favour of the skill",
+    /That is not a contradiction to resolve in favour of the skill: the avoid list wins/i.test(
+      INJflat
+    ));
+  ok("deep squat avoided is spelled out down to the movements",
+    /Deep squat avoided means no pistol, no squat snatch, no squat clean, no overhead squat, no thruster/i.test(
+      INJflat
+    ));
+  ok("the athlete's confidence does not reopen the pattern",
+    /however confident the athlete is/i.test(INJflat));
+  ok("the function survives the removal",
+    /Keep the FUNCTION with a version that stays out of the bottom/i.test(INJflat));
 
   /* The owner's actual worry, asserted: one prescription per line, no menus. */
   const INJ = require("../lib/coach-layers/layer1-injuries.js");
@@ -958,8 +1022,13 @@ function testPackBudget() {
      which is in the heaviest pack by definition. It is the layer's primary input path, so the
      mapping is not optional — but this pack is now 9.4k tokens and worth watching. A general
      healthy athlete's pack is 22k, and that is the number most bricks actually pay. */
-  ok("the heaviest pack stays under 36k characters",
-    heavy.chars < 36000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
+  /* 38k as of 2026-09-03, from the "קצה 1" audit: three real conflicts a live intake produced —
+     an athlete with two training places, a skill claimed and its pattern avoided, and a weekend
+     session longer than the stated ceiling. Two of the three are conditional (injuries, individual)
+     and only the session-length line is always-on. This pack is now ~9.9k tokens; the general
+     healthy athlete still pays 22k, which is what most bricks actually cost. */
+  ok("the heaviest pack stays under 38k characters",
+    heavy.chars < 38000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
   ok("the pack reports which layers it used",
     Array.isArray(heavy.layers) && heavy.layers.length >= 6, heavy.layers.join(", "));
 }
