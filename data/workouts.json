@@ -945,36 +945,6 @@
       },
       {
         "date": "2026-08-25",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "BAR TO BAR",
-            "lines": [
-              "20 Toes to Bar",
-              "20 Burpees to Bar",
-              "*Target is 6\" Above Standing Reach"
-            ],
-            "sub_title2": "5 ROUNDS FOR TIME"
-          },
-          {
-            "title": "Strength",
-            "lines": [
-              "3 SETS (Post-Workout)",
-              "Max Bench Press at Monthly Challenge Weight",
-              "* -Rest 1:00 b/t Sets-",
-              "Loading Guidelines:",
-              "Freedom - 155/95",
-              "Independence - 135/85",
-              "Liberty - 115/75"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-08-25",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2759,52 +2729,6 @@
     "2026-09-03": [
       {
         "date": "2026-09-03",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-09-03/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "thoracic rotatios",
-              "calf stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "100m run",
-              "10 ring rows",
-              "30sec plank hold"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "BENT OVER ROW 12 MIN",
-            "lines": [
-              "4 sets",
-              "12 barbell bent over rows",
-              "hypertrophy & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 20MIN",
-            "lines": [
-              "5 rounds",
-              "",
-              "400m run",
-              "2 rope climbs",
-              "100m double db overhead carry 2x15/10kg",
-              "aerobic capacity"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-03",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260903",
@@ -2875,6 +2799,113 @@
       },
       {
         "date": "2026-09-03",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 15.4",
+            "lines": [
+              "Complete as many reps as possible in 8 minutes of:",
+              "3 handstand push-ups",
+              "3 cleans",
+              "6 handstand push-ups",
+              "3 cleans",
+              "9 handstand push-ups",
+              "3 cleans",
+              "12 handstand push-ups",
+              "6 cleans",
+              "15 handstand push-ups",
+              "6 cleans",
+              "18 handstand push-ups",
+              "6 cleans",
+              "21 handstand push-ups",
+              "9 cleans",
+              "Etc., adding 3 reps to the handstand push-up each round, and 3 reps to the clean every 3 rounds.",
+              "*Men clean 185 lb.*",
+              "*Women clean 125 lb.*"
+            ]
+          }
+        ],
+        "note": "Open: Open 15.4"
+      },
+      {
+        "date": "2026-09-03",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-09-03/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "thoracic rotatios",
+              "calf stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "100m run",
+              "10 ring rows",
+              "30sec plank hold"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "BENT OVER ROW 12 MIN",
+            "lines": [
+              "4 sets",
+              "12 barbell bent over rows",
+              "hypertrophy & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 20MIN",
+            "lines": [
+              "5 rounds",
+              "",
+              "400m run",
+              "2 rope climbs",
+              "100m double db overhead carry 2x15/10kg",
+              "aerobic capacity"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-09-03",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "ON A 10:00 CLOCK",
+              "Triple Under, Double Under, or Single Under Practice",
+              "Freedom (Advanced) - Triple Under Practice",
+              "Independence (Intermediate)  - Double Unders or Crossover Singles Practice",
+              "Liberty (Beginner) - Single Under or Crossover Single Practice",
+              "WOD",
+              "EVENT 7 | '26 CFG -- SWIM STANDARD",
+              "FOR TIME",
+              "1000m Row",
+              "40 Line Facing Burpees",
+              "750m Row",
+              "30 Line Facing Burpees",
+              "500m Row",
+              "20 Line Facing Burpees",
+              "250m Row",
+              "10 Line Facing Burpees"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-03",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2929,40 +2960,8 @@
           }
         ],
         "note": "Benchmark: BARBARA"
-      },
-      {
-        "date": "2026-09-03",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 15.4",
-            "lines": [
-              "Complete as many reps as possible in 8 minutes of:",
-              "3 handstand push-ups",
-              "3 cleans",
-              "6 handstand push-ups",
-              "3 cleans",
-              "9 handstand push-ups",
-              "3 cleans",
-              "12 handstand push-ups",
-              "6 cleans",
-              "15 handstand push-ups",
-              "6 cleans",
-              "18 handstand push-ups",
-              "6 cleans",
-              "21 handstand push-ups",
-              "9 cleans",
-              "Etc., adding 3 reps to the handstand push-up each round, and 3 reps to the clean every 3 rounds.",
-              "*Men clean 185 lb.*",
-              "*Women clean 125 lb.*"
-            ]
-          }
-        ],
-        "note": "Open: Open 15.4"
       }
     ]
   },
-  "last_updated": "2026-09-03T04:00:16.702564"
+  "last_updated": "2026-09-03T08:29:48.084746"
 }
