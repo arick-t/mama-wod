@@ -740,6 +740,12 @@ ok("and it does not open the browser menu", /ev\.preventDefault\(\);/.test(page)
 ok("a client opens with its own name and colour", /openClientIdentityFor\("client", id, row\.clientName \|\| "", row\.clientColour \|\| ""\)/.test(page));
 ok("an athlete opens the same panel", /openClientIdentity\(id\);/.test(page));
 ok("the panel opens where the click was", /function placeIdentityPanelAt/.test(page));
+/* And as a small thing beside the name, not a takeover: the whole screen went dark for
+   a name and eight colours (owner, 2026-09-03). */
+ok("from the strip it is a popover", /panel\.classList\.add\("as-popover"\)/.test(page));
+ok("the ground is not dimmed for it", /\.modal-backdrop\.as-popover\{background:transparent\}/.test(page));
+ok("and it is small", /\.intake-workspace\.as-popover\{width:min\(300px/.test(page));
+ok("the shape comes off again when it closes", /panel\.classList\.remove\("as-popover"\)/.test(page));
 ok("clamped so it cannot open half off-screen", /Math\.max\(10, Math\.min\(\(x \| 0\) - 20, window\.innerWidth - w - 10\)\)/.test(page));
 ok("and every other way of opening it is still centred", /function clearIdentityPanelPosition/.test(page));
 

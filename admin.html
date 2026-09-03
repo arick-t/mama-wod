@@ -629,6 +629,19 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
 .empty-content p{font-size:14px}
 
 /* Intake workspace modal */
+/* The same panel, as a small thing beside the name.
+   Opened from the strip it is a popover, not a takeover: the owner right-clicked a chip
+   to rename someone and the whole screen went dark for a name and eight colours
+   (owner, 2026-09-03). The intake modal's own shape - full height, dimmed ground - is
+   right for the intake and wrong for this. */
+.modal-backdrop.as-popover{background:transparent}
+.intake-workspace.as-popover{width:min(300px,calc(100vw - 20px));height:auto;min-height:0;
+  border-radius:12px;box-shadow:0 14px 40px rgba(0,0,0,.55)}
+.intake-workspace.as-popover .intake-ws-header{padding:8px 12px}
+.intake-workspace.as-popover .intake-ws-header h2{font-size:.95em;margin:0}
+.intake-workspace.as-popover .intake-ws-body{padding:12px!important;overflow:visible}
+.intake-workspace.as-popover .ident-swatch{width:26px;height:26px}
+.intake-workspace.as-popover .ident-swatches{gap:7px}
 .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(8,6,12,.78);z-index:1200;
   align-items:center;justify-content:center;padding:12px}
 .modal-backdrop.open{display:flex}
@@ -5116,15 +5129,18 @@ function placeIdentityPanelAt(x, y) {
   var m = document.getElementById("client-identity-modal");
   var panel = m ? m.querySelector(".intake-workspace") : null;
   if (!panel) return;
-  var w = 460;
-  var h = Math.min(360, window.innerHeight - 20);
+  var w = 300;
+  var h = 260;
   var left = Math.max(10, Math.min((x | 0) - 20, window.innerWidth - w - 10));
   var top = Math.max(10, Math.min((y | 0) + 8, window.innerHeight - h - 10));
+  var back = document.getElementById("client-identity-modal");
+  if (back) back.classList.add("as-popover");
+  panel.classList.add("as-popover");
   panel.style.position = "fixed";
   panel.style.margin = "0";
   panel.style.left = left + "px";
   panel.style.top = top + "px";
-  panel.style.width = "min(" + w + "px, calc(100vw - 20px))";
+  panel.style.width = "";
 }
 
 /** Back to the middle, for every other way of opening it. */
@@ -5132,6 +5148,9 @@ function clearIdentityPanelPosition() {
   var m = document.getElementById("client-identity-modal");
   var panel = m ? m.querySelector(".intake-workspace") : null;
   if (!panel) return;
+  var back = document.getElementById("client-identity-modal");
+  if (back) back.classList.remove("as-popover");
+  panel.classList.remove("as-popover");
   panel.style.position = "";
   panel.style.margin = "";
   panel.style.left = "";
