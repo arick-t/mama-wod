@@ -118,6 +118,92 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 /* The duck, beside the name. */
 .hdr-duck{width:30px;height:30px;object-fit:cover;flex-shrink:0;border-radius:50%;border:1px solid var(--line)}
 /* What the month brings in: a chevron, and the number only when he asks for it. */
+/* ── The coach's own book: the summary tab ─────────────────────────────────
+   Its own prefix so nothing here can reach the client screen by accident, and the
+   month grid is a plain 7-column grid: in an RTL page the first cell IS Sunday on
+   the right, which is how he reads a week (owner, 2026-09-03). */
+.led-wrap{display:flex;flex-direction:column;gap:14px}
+/* Two incomes and their sum. The total is the loud one — it is the answer to the
+   question he actually asks (owner, 2026-09-03). */
+.led-income{display:flex;gap:10px;flex-wrap:wrap}
+.led-inc{flex:1;min-width:130px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;
+  background:var(--bg-elev);display:flex;flex-direction:column;gap:3px}
+.led-inc-label{font-size:11px;color:var(--text-muted);font-weight:700}
+.led-inc-val{font-size:18px;font-weight:800}
+.led-inc.is-total{border-color:rgba(76,175,112,.45);background:rgba(76,175,112,.08)}
+.led-inc.is-total .led-inc-val{color:#4CAF70;font-size:20px;font-weight:900}
+.inc-part{font-size:12px;font-weight:700;color:var(--text-muted)}
+.inc-sep{opacity:.5;margin:0 2px}
+.inc-total{font-size:12px;font-weight:900;color:#4CAF70}
+.led-head{display:flex;align-items:center;gap:12px;justify-content:center}
+.led-nav{appearance:none;width:32px;height:32px;border-radius:10px;border:1px solid var(--line);
+  background:var(--bg-elev);color:var(--text);font-size:18px;line-height:1;cursor:pointer}
+.led-nav:hover{border-color:#3a3a3a}
+.led-title{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:180px}
+.led-month{font-size:15px;font-weight:800;letter-spacing:.2px}
+.led-total{font-size:20px;font-weight:900;color:#4CAF70}
+.led-dow{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:2px}
+.led-dow span{text-align:center;font-size:11px;color:var(--text-muted);font-weight:700}
+.led-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.led-day{position:relative;appearance:none;border:1px solid var(--line);background:var(--bg-elev);
+  border-radius:10px;min-height:62px;padding:6px;cursor:pointer;color:var(--text);
+  display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.led-day:hover{border-color:var(--brand)}
+.led-blank{border:none;background:transparent;cursor:default;min-height:0}
+.led-num{font-size:12px;font-weight:700;opacity:.8}
+.led-sum{font-size:12px;font-weight:800;color:#4CAF70}
+.led-day.is-today{border-color:var(--brand)}
+.led-day.is-open{outline:2px solid var(--brand);outline-offset:-2px}
+.led-day.has-deals{background:rgba(76,175,112,.07)}
+.led-plus{position:absolute;inset-inline-end:6px;bottom:4px;font-size:14px;font-weight:800;
+  color:var(--text-muted);opacity:0;transition:opacity .12s}
+.led-day:hover .led-plus,.led-day.is-open .led-plus{opacity:1}
+.led-daybox{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--bg-elev)}
+.led-daybox h3{margin:0 0 10px;font-size:14px}
+.led-row{display:grid;grid-template-columns:1.4fr 1.2fr .8fr auto auto;gap:8px;align-items:center;
+  padding:7px 4px;border-bottom:1px solid var(--line);font-size:13px}
+.led-row:last-child{border-bottom:none}
+.led-cell{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.led-price{font-weight:800;color:#4CAF70}
+.led-mini{appearance:none;border:1px solid var(--line);background:transparent;color:var(--text-muted);
+  border-radius:8px;width:26px;height:26px;cursor:pointer;font-size:12px;line-height:1;padding:0}
+.led-mini:hover{color:var(--text);border-color:#3a3a3a}
+.led-mini.led-danger:hover{color:#fca5a5;border-color:#7f1d1d}
+.led-editor{display:grid;grid-template-columns:1.4fr 1.2fr .8fr auto auto;gap:8px;margin-top:10px;
+  align-items:center;position:relative}
+.led-field{background:var(--bg);border:1px solid var(--line);border-radius:9px;color:var(--text);
+  padding:8px 10px;font:inherit;font-size:13px;min-width:0;text-align:start}
+.led-pick{cursor:pointer}
+.led-hint{color:var(--text-muted)}
+.led-save{appearance:none;border:none;border-radius:9px;background:var(--brand);color:#fff;
+  font-weight:800;padding:8px 14px;cursor:pointer;font-size:13px}
+.led-cancel{appearance:none;border:1px solid var(--line);border-radius:9px;background:transparent;
+  color:var(--text-muted);padding:8px 12px;cursor:pointer;font-size:13px}
+.led-pickpanel{position:absolute;z-index:40;top:calc(100% + 6px);inset-inline-start:0;width:min(320px,90vw);
+  background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:10px;
+  box-shadow:0 12px 30px rgba(0,0,0,.45)}
+.led-fav-list{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
+.led-fav{appearance:none;text-align:start;border:1px solid transparent;background:transparent;
+  color:var(--text);border-radius:8px;padding:7px 8px;cursor:pointer;display:flex;
+  flex-direction:column;gap:2px}
+.led-fav:hover{border-color:var(--line);background:var(--bg)}
+.led-fav-name{font-size:13px;font-weight:700}
+.led-fav-meta{font-size:11px;color:var(--text-muted)}
+.led-newplace{display:flex;gap:6px}
+.led-newplace .led-field{flex:1}
+.led-empty{color:var(--text-muted);font-size:13px;margin:6px 2px}
+.led-filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.led-filters .led-field{max-width:150px}
+.led-chip{appearance:none;border:1px solid var(--line);background:var(--bg-elev);color:var(--text-muted);
+  border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer}
+.led-chip:hover{color:var(--text);border-color:#3a3a3a}
+.led-chip.on{background:rgba(232,69,26,.16);border-color:var(--brand);color:#fff}
+.led-table-head,.led-table .led-row{grid-template-columns:1.4fr 1.2fr .8fr .9fr}
+.led-table-head{display:grid;gap:8px;padding:6px 4px;font-size:11px;font-weight:800;
+  color:var(--text-muted);border-bottom:1px solid var(--line)}
+.led-table-total{margin-top:10px;text-align:start;font-size:13px;color:var(--text-muted)}
+.led-table-total strong{color:#4CAF70;font-size:15px}
+.led-date{color:var(--text-muted)}
 .income-wrap{display:inline-flex;align-items:center;gap:8px}
 .income-toggle{appearance:none;width:24px;height:24px;border-radius:8px;border:1px solid var(--line);
   background:var(--bg-elev);color:var(--text-muted);font-size:11px;line-height:1;cursor:pointer;
@@ -1095,6 +1181,36 @@ header{flex-wrap:wrap;row-gap:8px}
         <p>בחר לקוח מהרצועה למעלה</p>
       </div>
     </div>
+  <!-- The summary tab: the coach's own book. First chip in the strip, opens on every
+       entry, and cannot be removed — it is not a client (owner, 2026-09-03). It takes
+       turns with #content and #clientScreen the same way they take turns with each
+       other: one page, no seam. -->
+  <div class="content" id="ledgerScreen" hidden>
+    <div class="card led-wrap">
+      <!-- Two incomes and their sum. They stay two figures because they are two
+           businesses; the sum exists because he asked what he makes (owner, 2026-09-03). -->
+      <div id="ledIncome"></div>
+      <div id="ledHeader"></div>
+      <div id="ledCalendar"></div>
+      <div id="ledDay"></div>
+    </div>
+    <div class="card">
+      <div class="row" style="margin-bottom:10px"><h2 style="margin:0">עסקאות</h2></div>
+      <div class="led-filters">
+        <button type="button" class="led-chip" data-led-range="week">השבוע</button>
+        <button type="button" class="led-chip" data-led-range="month">החודש</button>
+        <input id="ledFName" class="led-field" maxlength="80" placeholder="סינון לפי שם">
+        <input id="ledFMin" class="led-field led-num-field" type="number" min="0" placeholder="ממחיר">
+        <input id="ledFMax" class="led-field led-num-field" type="number" min="0" placeholder="עד מחיר">
+        <input id="ledFFrom" class="led-field" type="date" title="מתאריך">
+        <input id="ledFTo" class="led-field" type="date" title="עד תאריך">
+        <button type="button" class="led-chip" data-led-filter="1">סנן</button>
+        <button type="button" class="led-chip" data-led-clear="1">נקה</button>
+      </div>
+      <div id="ledTable"></div>
+    </div>
+  </div>
+
   <!-- The client screen. It lives beside #content rather than inside it, because
        #content is rewritten whole every time an athlete is rendered. The two take
        turns, which is what makes opening a studio and opening an athlete the same
@@ -2714,6 +2830,11 @@ function renderAthleteList(list) {
     return;
   }
 
+  /* The athletes arriving must not push the summary tab off the screen: he opened the
+     module, not an athlete (owner, 2026-09-03). */
+  if (adminOpenedSomeone && !currentAthleteId) {
+    return;
+  }
   if (!currentAthleteId || !athletes.some(function(x) { return x.athleteId === currentAthleteId; })) {
     currentAthleteId = athletes[0].athleteId;
   }
@@ -2748,12 +2869,27 @@ var programsAnswered = false;
  * asks for it — this bar is often on a screen other people can see (owner, 2026-09-03).
  */
 var monthlyIncomeTotal = 0;
+/* What he earned on the floor this month — the summary tab reports it up. */
+var personalIncomeTotal = 0;
 var monthlyIncomeOpen = false;
 
 function setMonthlyIncome(total) {
   monthlyIncomeTotal = Number(total) || 0;
   renderMonthlyIncome();
+  /* The summary tab shows the same three numbers, so it redraws with them. */
+  try { if (window.LedgerScreen && window.LedgerScreen.refreshIncome) window.LedgerScreen.refreshIncome(); } catch (e) {}
 }
+
+/** What the deals in the summary tab brought in THIS month. */
+function setPersonalIncome(total) {
+  personalIncomeTotal = Number(total) || 0;
+  renderMonthlyIncome();
+}
+
+/** Read by the summary tab, so one number has one owner. */
+window.adminProgramsIncome = function () { return monthlyIncomeTotal; };
+window.adminPersonalIncome = function () { return personalIncomeTotal; };
+window.adminOnPersonalIncome = function (total) { setPersonalIncome(total); };
 
 function renderMonthlyIncome() {
   var line = document.getElementById("income-line");
@@ -2762,8 +2898,19 @@ function renderMonthlyIncome() {
   line.hidden = !monthlyIncomeOpen;
   btn.setAttribute("aria-expanded", monthlyIncomeOpen ? "true" : "false");
   btn.classList.toggle("on", monthlyIncomeOpen);
-  line.textContent =
-    "הכנסה חודשית: " + (monthlyIncomeTotal ? "₪" + monthlyIncomeTotal.toLocaleString() : "—");
+  /* Two figures and their sum, the same ones the summary tab shows: what the
+     programme clients pay each month, and what he earned coaching (owner, 2026-09-03). */
+  if (window.AdminLedgerView) {
+    line.innerHTML = window.AdminLedgerView.incomeBreakdownHtml({
+      programs: monthlyIncomeTotal,
+      personal: personalIncomeTotal,
+      compact: true,
+    });
+  } else {
+    line.textContent =
+      "הכנסה חודשית: " +
+      (monthlyIncomeTotal ? "₪" + monthlyIncomeTotal.toLocaleString() : "—");
+  }
 }
 
 function toggleMonthlyIncome() {
@@ -2861,6 +3008,9 @@ function bindPeopleStrip() {
   sb.addEventListener("contextmenu", function (ev) {
     var chip = ev.target && ev.target.closest ? ev.target.closest("[data-kind]") : null;
     if (!chip) return;
+    /* The summary tab has no name to change and no colour to pick, and it cannot be
+       removed — it is a screen, not a client (owner, 2026-09-03). */
+    if (chip.getAttribute("data-kind") === "ledger") return;
     ev.preventDefault();
     var id = chip.getAttribute("data-id") || "";
     if (!id) return;
@@ -2895,20 +3045,37 @@ function bindPeopleStrip() {
  * a page that had athletes (owner, 2026-09-02). Called from both halves because either
  * may answer first; it acts once, and only when nothing is open.
  */
+/**
+ * What the module opens on.
+ *
+ * The summary tab, always — before any client and whether or not there are any. It is
+ * the first thing he asked to see on entry (owner, 2026-09-03), and it needs neither
+ * half of the strip to have answered, so there is no race to lose.
+ */
 function openFirstPersonIfNeeded() {
   if (adminOpenedSomeone) return false;
   if (currentAthleteId || activeProgramId) return false;
-  if (!athletesAnswered || !programsAnswered) return false;
-  if (Array.isArray(athletes) && athletes.length) return false; /* renderAthleteList has it */
-  if (!Array.isArray(clientPrograms) || !clientPrograms.length) return false;
   adminOpenedSomeone = true;
-  openPersonFromStrip("program", clientPrograms[0].programId);
+  openPersonFromStrip("ledger", "ledger");
   return true;
 }
 
 /** Open whoever was chosen in the strip — one door for both halves of it. */
 function openPersonFromStrip(kind, id) {
   if (!id) return;
+  /* The summary tab is the first chip and it is not a client: it is his own book.
+     Every entry to the module lands here (owner, 2026-09-03). */
+  if (kind === "ledger") {
+    if (window.ClientScreen) window.ClientScreen.close();
+    currentAthleteId = null;
+    activeProgramId = null;
+    var athleteSideL = document.getElementById("content");
+    if (athleteSideL) athleteSideL.hidden = true;
+    renderPeopleStripActive("ledger");
+    if (window.LedgerScreen) window.LedgerScreen.open();
+    return;
+  }
+  if (window.LedgerScreen) window.LedgerScreen.close();
   if (kind === "program") {
     /* In place. This is one page: the client screen takes the content area and the
        athlete side steps aside (owner, 2026-09-02 — no seam, no combinations). */
@@ -2927,8 +3094,9 @@ function openPersonFromStrip(kind, id) {
    One fetch, one owner. */
 
 function selectAthlete(id) {
-  /* An athlete is showing, so no programme is. */
+  /* An athlete is showing, so no programme is — and no ledger either. */
   activeProgramId = null;
+  if (window.LedgerScreen) window.LedgerScreen.close();
   var athleteSide = document.getElementById("content");
   if (athleteSide) athleteSide.hidden = false;
   var clientSide = document.getElementById("clientScreen");
@@ -6131,6 +6299,8 @@ tryRestoreAdminSession();
 <script src="admin-fixed-intake.js"></script>
 <script src="lib/day-rest-toggle.js"></script>
 <script src="lib/client-intake.js"></script>
+<script src="lib/coach-ledger.js"></script>
+<script src="lib/admin-ledger-view.js"></script>
 <script>
 /* ══════════════════════════════════════════════════════════════════════════
    THE CLIENT SCREEN — moved here whole from admin-clients.html.
@@ -8540,6 +8710,372 @@ tryRestoreAdminSession();
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
+})();
+</script>
+<script>
+/* ══════════════════════════════════════════════════════════════════════════
+   THE SUMMARY TAB — the coach's own book.
+
+   Not the client-programme world. There he writes a plan for someone who holds a
+   link; here he is the coach on somebody else's floor, and the only questions are
+   which place, which service, how much (owner, 2026-09-03).
+
+   A closed IIFE like the client screen: it exposes window.LedgerScreen and touches
+   nothing of admin's beyond the helpers it needs to reach the server. The arithmetic
+   and the markup live in lib/coach-ledger.js and lib/admin-ledger-view.js, so both
+   are testable without a browser.
+   ══════════════════════════════════════════════════════════════════════════ */
+(function () {
+  "use strict";
+  var L = window.CoachLedger;
+  var V = window.AdminLedgerView;
+  if (!L || !V) return;
+
+  var LS = {
+    /* What THIS month earned on the floor, whatever month is on screen. */
+    personal: 0,
+    month: "",
+    data: null,
+    day: "",
+    editing: null,
+    picked: null,
+    pickOpen: false,
+    range: "month",
+  };
+
+  function el(id) { return document.getElementById(id); }
+  function todayIso() { return L.dayIso(); }
+
+  /** One door to the server, and it carries the owner's credential. */
+  function api(body) {
+    return fetch(adminApiUrl("/api/admin-ledger"), {
+      method: "POST",
+      headers: adminAuthHeaders(),
+      body: JSON.stringify(body || {}),
+    })
+      .then(function (r) {
+        return r.json().then(function (j) { return { status: r.status, body: j || {} }; });
+      })
+      .catch(function (e) {
+        return { status: 0, body: { ok: false, error: String((e && e.message) || e) } };
+      });
+  }
+
+  function toast(msg, kind) {
+    try { showHdrToast(msg, kind || "ok"); } catch (e) {}
+  }
+
+  function open() {
+    var box = el("ledgerScreen");
+    if (box) box.hidden = false;
+    if (!LS.month) LS.month = L.monthKey();
+    if (!LS.data) loadMonth(LS.month);
+    else render();
+  }
+
+  function close() {
+    var box = el("ledgerScreen");
+    if (box) box.hidden = true;
+    LS.pickOpen = false;
+  }
+
+  function loadMonth(month) {
+    LS.month = month;
+    render();
+    return api({ action: "month", month: month }).then(function (r) {
+      if (r.status !== 200 || !r.body.ok) {
+        toast((r.body && r.body.error) || "לא הצלחתי לטעון את החודש", "err");
+        return;
+      }
+      LS.data = r.body;
+      /* Only the current month feeds the header figure — browsing back must not
+         rewrite what he is earning now. */
+      if (month === L.monthKey()) {
+        LS.personal = Number(r.body.total) || 0;
+        if (typeof window.adminOnPersonalIncome === "function") {
+          window.adminOnPersonalIncome(LS.personal);
+        }
+      }
+      render();
+      loadTable();
+    });
+  }
+
+  /* ------------------------------------------------------------- rendering */
+
+  /**
+   * The two incomes, in the tab.
+   *
+   * Both are THIS month, never the month being browsed: the programme figure is a
+   * monthly rate and has no history to show against September (owner, 2026-09-03).
+   */
+  function renderIncome() {
+    var host = el("ledIncome");
+    if (!host) return;
+    var programs = typeof window.adminProgramsIncome === "function" ? window.adminProgramsIncome() : 0;
+    host.innerHTML = V.incomeBreakdownHtml({ programs: programs, personal: LS.personal });
+  }
+
+  function render() {
+    renderIncome();
+    var head = el("ledHeader");
+    var cal = el("ledCalendar");
+    var day = el("ledDay");
+    if (!head || !cal || !day) return;
+    var data = LS.data || { total: 0, totalsByDay: {}, deals: [], favourites: [] };
+    head.innerHTML = V.headerHtml(LS.month, data.total);
+    cal.innerHTML = V.calendarHtml({
+      month: LS.month,
+      totalsByDay: data.totalsByDay,
+      today: todayIso(),
+      selected: LS.day,
+    });
+    day.innerHTML = LS.day ? dayBoxHtml() : "";
+  }
+
+  function dayBoxHtml() {
+    var deals = L.dealsOfDay({ month: LS.month, deals: (LS.data && LS.data.deals) || [] }, LS.day);
+    var editing = LS.editing
+      ? deals.filter(function (d) { return d.id === LS.editing; })[0] || null
+      : null;
+    return (
+      '<div class="led-daybox">' +
+      "<h3>" + V.esc(V.hebDate(LS.day)) + "</h3>" +
+      V.dayDealsHtml(deals) +
+      V.editorHtml({
+        deal: editing,
+        /* A place chosen in the panel survives the redraw that follows it. */
+        name: LS.picked ? LS.picked.name : "",
+        service: LS.picked ? LS.picked.service : "",
+        price: LS.picked ? LS.picked.price : "",
+      }) +
+      (LS.pickOpen ? V.favouritesHtml((LS.data && LS.data.favourites) || []) : "") +
+      "</div>"
+    );
+  }
+
+  function redrawDay() {
+    var day = el("ledDay");
+    if (day) day.innerHTML = LS.day ? dayBoxHtml() : "";
+  }
+
+  /* ---------------------------------------------------------------- table */
+
+  function currentRange() {
+    if (LS.range === "week") {
+      /* "This week" is the week we are in, not a week of whichever month he is
+         browsing — it is a question about now. */
+      return L.weekRange(todayIso());
+    }
+    return L.monthRange(LS.month + "-15");
+  }
+
+  function loadTable() {
+    var host = el("ledTable");
+    if (!host) return;
+    var r = currentRange();
+    return api({
+      action: "range",
+      from: (el("ledFFrom") && el("ledFFrom").value) || r.from,
+      to: (el("ledFTo") && el("ledFTo").value) || r.to,
+      name: (el("ledFName") && el("ledFName").value) || "",
+      minPrice: (el("ledFMin") && el("ledFMin").value) || "",
+      maxPrice: (el("ledFMax") && el("ledFMax").value) || "",
+    }).then(function (res) {
+      if (res.status !== 200 || !res.body.ok) {
+        host.innerHTML = '<p class="led-empty">לא הצלחתי לטעון את העסקאות.</p>';
+        return;
+      }
+      host.innerHTML = V.tableHtml(res.body.deals, res.body.total);
+      syncRangeChips();
+    });
+  }
+
+  function syncRangeChips() {
+    var chips = document.querySelectorAll("[data-led-range]");
+    for (var i = 0; i < chips.length; i++) {
+      chips[i].classList.toggle("on", chips[i].getAttribute("data-led-range") === LS.range);
+    }
+  }
+
+  /* --------------------------------------------------------------- writing */
+
+  function readEditor() {
+    var nameBtn = el("ledName");
+    var name = LS.picked ? LS.picked.name : (nameBtn ? String(nameBtn.textContent || "").trim() : "");
+    if (name === "שם המקום…") name = "";
+    return {
+      name: name,
+      service: (el("ledService") && el("ledService").value) || "",
+      price: (el("ledPrice") && el("ledPrice").value) || "",
+    };
+  }
+
+  function saveDeal() {
+    var form = readEditor();
+    if (!form.name) { toast("בחר או הקלד שם מקום", "err"); return; }
+    if (!(Number(form.price) > 0)) { toast("חסר מחיר", "err"); return; }
+    var body = LS.editing
+      ? { action: "update_deal", id: LS.editing, month: LS.month, day: LS.day, name: form.name, service: form.service, price: form.price }
+      : { action: "add_deal", day: LS.day, name: form.name, service: form.service, price: form.price };
+    api(body).then(function (r) {
+      if (r.status !== 200 || !r.body.ok) {
+        toast((r.body && r.body.error) || "לא הצלחתי לשמור", "err");
+        return;
+      }
+      LS.data = r.body;
+      if (LS.month === L.monthKey()) {
+        LS.personal = Number(r.body.total) || 0;
+        if (typeof window.adminOnPersonalIncome === "function") {
+          window.adminOnPersonalIncome(LS.personal);
+        }
+      }
+      LS.editing = null;
+      LS.picked = null;
+      LS.pickOpen = false;
+      render();
+      loadTable();
+      toast("נשמר ✓");
+    });
+  }
+
+  function deleteDeal(id) {
+    if (!window.confirm("למחוק את העסקה?")) return;
+    api({ action: "delete_deal", id: id, month: LS.month, day: LS.day }).then(function (r) {
+      if (r.status !== 200 || !r.body.ok) {
+        toast((r.body && r.body.error) || "לא הצלחתי למחוק", "err");
+        return;
+      }
+      LS.data = r.body;
+      LS.editing = null;
+      render();
+      loadTable();
+      toast("נמחק");
+    });
+  }
+
+  /* ---------------------------------------------------------------- events */
+
+  document.addEventListener("click", function (ev) {
+    var box = el("ledgerScreen");
+    if (!box || box.hidden) return;
+    var t = ev.target;
+    if (!t || !t.closest) return;
+
+    var nav = t.closest(".led-nav");
+    if (nav) {
+      var dir = nav.getAttribute("data-led-month");
+      LS.day = "";
+      LS.editing = null;
+      LS.picked = null;
+      loadMonth(L.shiftMonth(LS.month, dir === "prev" ? -1 : 1));
+      return;
+    }
+
+    var dayBtn = t.closest("[data-led-day]");
+    if (dayBtn) {
+      var iso = dayBtn.getAttribute("data-led-day");
+      /* Clicking the open day again closes it — a square is a toggle. */
+      LS.day = LS.day === iso ? "" : iso;
+      LS.editing = null;
+      LS.picked = null;
+      LS.pickOpen = false;
+      render();
+      return;
+    }
+
+    if (t.closest("[data-led-pick]")) {
+      LS.pickOpen = !LS.pickOpen;
+      redrawDay();
+      return;
+    }
+
+    var fav = t.closest("[data-led-place]");
+    if (fav) {
+      /* A known place plants its service and its last price, and the price stays
+         editable for this deal only (owner, 2026-09-03). */
+      var wanted = fav.getAttribute("data-led-place");
+      var hit = ((LS.data && LS.data.favourites) || []).filter(function (p) {
+        return p.name === wanted;
+      })[0];
+      LS.picked = hit
+        ? { name: hit.name, service: hit.service, price: hit.price }
+        : { name: wanted, service: "", price: "" };
+      LS.pickOpen = false;
+      redrawDay();
+      return;
+    }
+
+    if (t.closest("[data-led-place-new]")) {
+      var typed = String((el("ledNewPlace") && el("ledNewPlace").value) || "").trim();
+      if (!typed) { toast("הקלד שם מקום", "err"); return; }
+      /* A new place is remembered when the DEAL is saved, not now: a name typed and
+         abandoned is not a place he trains at. */
+      LS.picked = { name: typed, service: "", price: "" };
+      LS.pickOpen = false;
+      redrawDay();
+      return;
+    }
+
+    if (t.closest("[data-led-save]")) { saveDeal(); return; }
+
+    if (t.closest("[data-led-cancel]")) {
+      LS.editing = null;
+      LS.picked = null;
+      LS.pickOpen = false;
+      redrawDay();
+      return;
+    }
+
+    var edit = t.closest("[data-led-edit]");
+    if (edit) {
+      LS.editing = edit.getAttribute("data-led-edit");
+      LS.picked = null;
+      LS.pickOpen = false;
+      redrawDay();
+      return;
+    }
+
+    var del = t.closest("[data-led-del]");
+    if (del) { deleteDeal(del.getAttribute("data-led-del")); return; }
+
+    var range = t.closest("[data-led-range]");
+    if (range) {
+      LS.range = range.getAttribute("data-led-range");
+      if (el("ledFFrom")) el("ledFFrom").value = "";
+      if (el("ledFTo")) el("ledFTo").value = "";
+      loadTable();
+      return;
+    }
+
+    if (t.closest("[data-led-filter]")) { loadTable(); return; }
+
+    if (t.closest("[data-led-clear]")) {
+      ["ledFName", "ledFMin", "ledFMax", "ledFFrom", "ledFTo"].forEach(function (id) {
+        if (el(id)) el(id).value = "";
+      });
+      LS.range = "month";
+      loadTable();
+      return;
+    }
+
+    /* A click elsewhere closes the picker — but never the open day, and never an edit
+       in progress: losing typed work to a stray click is the complaint he already made
+       about the intake box (owner, 2026-09-02). */
+    if (LS.pickOpen && !t.closest(".led-pickpanel")) {
+      LS.pickOpen = false;
+      redrawDay();
+    }
+  });
+
+  window.LedgerScreen = {
+    open: open,
+    close: close,
+    /* The programme income arrived after this screen drew itself. */
+    refreshIncome: renderIncome,
+    reload: function () { return loadMonth(LS.month || L.monthKey()); },
+    state: function () { return { month: LS.month, day: LS.day, range: LS.range }; },
+  };
 })();
 </script>
 </body>

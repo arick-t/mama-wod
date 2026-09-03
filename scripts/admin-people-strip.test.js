@@ -35,7 +35,7 @@ const programs = [
   { programId: "p_b", clientName: "בדיקה 7", isTest: true, unreadCount: 3 },
 ];
 
-const rows = Strip.rows({ athletes: athletes, programs: programs });
+const rows = Strip.rows({ athletes: athletes, programs: programs, ledger: false });
 ok("everyone is in one list", rows.length === 4);
 ok("athletes first, then the programmes", rows.map(function (r) { return r.kind; }).join(",") === "athlete,athlete,program,program");
 ok("each row knows which kind it is", rows[0].kind === "athlete" && rows[3].kind === "program");
@@ -48,14 +48,15 @@ ok("unread is a flag, not a number", rows[3].unread === true && rows[2].unread =
 /* The order is deliberately fixed. A strip is muscle memory; one that re-sorts itself
    by name or by date is a strip he has to read every time. */
 const reordered = Strip.rows({
+  ledger: false,
   athletes: [{ athleteId: "u_9", displayName: "בבב" }, { athleteId: "u_8", displayName: "understand" }],
   programs: [],
 });
 ok("the given order is kept, not sorted", reordered[0].id === "u_9" && reordered[1].id === "u_8");
 
-ok("nameless rows are skipped, not rendered blank", Strip.rows({ athletes: [{}, { athleteId: "u_3" }] }).length === 1);
-ok("a programme with no name still reads", Strip.rows({ programs: [{ programId: "p_x" }] })[0].name === "(ללא שם)");
-ok("nothing in, nothing out", Strip.rows(null).length === 0);
+ok("nameless rows are skipped, not rendered blank", Strip.rows({ athletes: [{}, { athleteId: "u_3" }], ledger: false }).length === 1);
+ok("a programme with no name still reads", Strip.rows({ programs: [{ programId: "p_x" }], ledger: false })[0].name === "(ללא שם)");
+ok("nothing in, nothing out", Strip.rows({ ledger: false }).length === 0);
 
 /* --- the markup both screens paint ---------------------------------- */
 
@@ -71,7 +72,7 @@ ok("a quiet one does not", (html.match(/class="dot"/g) || []).length === 1);
 ok("an empty strip says what to do", /אין עדיין לקוחות/.test(Strip.html([], "")));
 
 /* A client's name is theirs, not ours — it must never be able to close a tag. */
-const nasty = Strip.html(Strip.rows({ programs: [{ programId: "p_1", clientName: '<img src=x onerror="alert(1)">' }] }), "");
+const nasty = Strip.html(Strip.rows({ programs: [{ programId: "p_1", clientName: '<img src=x onerror="alert(1)">' }], ledger: false }), "");
 ok("a name cannot break out of the chip", nasty.indexOf("<img") < 0 && /&lt;img/.test(nasty));
 
 /* --- the owner's own colour for a client ----------------------------
@@ -81,6 +82,7 @@ ok("a name cannot break out of the chip", nasty.indexOf("<img") < 0 && /&lt;img/
  * validated twice — once when the row is built and once when the chip is written.
  */
 const coloured = Strip.rows({
+  ledger: false,
   athletes: [
     { athleteId: "u_c", displayName: "עדי", clientColour: "#E8451A" },
     { athleteId: "u_n", displayName: "ללא", clientColour: "" },
@@ -119,12 +121,14 @@ ok("and names no AI provider", !/gemini|groq|generativelanguage/i.test(src));
  * unchanged, and that only works if the markup is genuinely stable for stable input.
  */
 const stableRows = Strip.rows({
+  ledger: false,
   athletes: [{ athleteId: "u_a", displayName: "A", clientColour: "#E8451A" }],
   programs: [{ programId: "p_b", clientName: "B", unreadCount: 2, isTest: true }],
 });
 ok(
   "identical input renders identical markup",
   Strip.html(stableRows, "p_b") === Strip.html(Strip.rows({
+    ledger: false,
     athletes: [{ athleteId: "u_a", displayName: "A", clientColour: "#E8451A" }],
     programs: [{ programId: "p_b", clientName: "B", unreadCount: 2, isTest: true }],
   }), "p_b")
@@ -135,3 +139,16 @@ ok(
 );
 
 console.log("All admin people strip checks passed (" + passed + " assertions).");
+
+/* --- the summary tab is the first chip, and it is not a person ------------
+ * The coach's own book: what he earned coaching, beside the clients he writes plans
+ * for. It opens on every entry to the module, and it cannot be removed — so it is
+ * pinned here rather than left to whoever renders the strip (owner, 2026-09-03).
+ * ------------------------------------------------------------------------- */
+const withLedger = Strip.rows({ athletes: athletes, programs: programs });
+ok("it is there without being asked for", withLedger[0].kind === "ledger");
+ok("it is first, before every person", withLedger.length === 5 && withLedger[1].kind === "athlete");
+ok("it is pinned", withLedger[0].pinned === true);
+ok("it carries no unread dot and no colour", withLedger[0].unread === false && !withLedger[0].colour);
+ok("it renders as a chip", Strip.html(withLedger, "ledger").indexOf('data-id="ledger"') >= 0);
+ok("and a screen that wants only people can leave it out", Strip.rows({ athletes: athletes, ledger: false }).length === 2);

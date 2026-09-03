@@ -32,7 +32,14 @@ const redirect = fs.readFileSync(path.join(root, "admin-clients.html"), "utf8");
 const SCREEN_MARK = "THE CLIENT SCREEN — moved here whole";
 const screenAt = page.indexOf(SCREEN_MARK);
 ok("the client screen is identifiable in the page", screenAt > 0);
-const screen = page.slice(screenAt);
+/* Ends where it ends. The summary tab was appended after it (22.1), and slicing to the
+   end of the file quietly folded that screen's code into every assertion here — the
+   first of them to notice was "it talks to no endpoint that could generate anything",
+   which is exactly the kind of guard that must not drift (2026-09-03). */
+const SCREEN_END = "THE SUMMARY TAB";
+const screenEnd = page.indexOf(SCREEN_END);
+ok("and it has an end, not the rest of the file", screenEnd > screenAt);
+const screen = page.slice(screenAt, screenEnd > screenAt ? screenEnd : undefined);
 /* The chips both screens draw are built here, so assertions about a chip belong here. */
 const strip = fs.readFileSync(path.join(root, "lib", "admin-people-strip.js"), "utf8");
 
@@ -751,7 +758,15 @@ ok("the individual tab is emptied too", /fillAthleteGoalsTab\(null\)/.test(page)
 ok("there is a chevron for the income", /id="btn-income"/.test(page) && /toggleMonthlyIncome/.test(page));
 ok("the number is hidden until he asks", /id="income-line" hidden/.test(page));
 ok("and it is the total of every client", /setMonthlyIncome\(monthlyTotal\)/.test(page));
-ok("shown as one line with a currency", /"הכנסה חודשית: " \+ \(monthlyIncomeTotal \? "₪"/.test(page));
+/* Upgraded 2026-09-03: two figures and their sum, and the same three numbers appear in
+   the summary tab. They stay separate because they are two businesses — what the
+   programme clients pay, and what he earns coaching — and the total is the answer to
+   the question he actually asks. */
+ok("it shows what the programmes bring in", /programs: monthlyIncomeTotal/.test(page));
+ok("what he earns coaching", /personal: personalIncomeTotal/.test(page));
+ok("and their sum, from the one renderer both places use", /AdminLedgerView\.incomeBreakdownHtml/.test(page));
+ok("the summary tab reports its month up", /window\.adminOnPersonalIncome = function/.test(page));
+ok("and a month he browses back to does not rewrite it", /browsing back must not/.test(page));
 /* The duck, beside the name. */
 /* The coach duck, on his instruction — not the wordmark (owner, 2026-09-03). */
 ok("the header carries the duck", /class="hdr-duck" src="assets\/hamamen-coach-duck\.png"/.test(page));
@@ -851,11 +866,14 @@ ok("an autosave does not move him at all", /var quiet = !!\(opts && opts\.quiet\
 
 ok("the view is decided again once the client has arrived", /S\.program = r\.body\.program;[\s\S]{0,1400}renderViewMode\(\);\s*renderDetail\(\);/.test(page));
 
-ok("first entry opens someone", /function openFirstPersonIfNeeded/.test(page));
-/* Either half may answer first, so both call it — and it acts once, only when nothing
-   is open and only after both halves have spoken (owner, 2026-09-02). */
-ok("it waits for both halves", /if \(!athletesAnswered \|\| !programsAnswered\) return false;/.test(page));
-ok("it does not fight the athlete half", /if \(Array\.isArray\(athletes\) && athletes\.length\) return false;/.test(page));
+ok("first entry opens something", /function openFirstPersonIfNeeded/.test(page));
+/* Changed 2026-09-03: it used to wait for both halves of the strip and open the first
+   client. The landing is now the summary tab, which needs neither half to have answered
+   — so there is no race left to lose, and nothing that arrives later may take the screen
+   from it. */
+ok("first entry lands on the summary tab", /openPersonFromStrip\("ledger", "ledger"\)/.test(page));
+ok("it needs neither half of the strip to have answered", !/function openFirstPersonIfNeeded\(\)[\s\S]{0,400}programsAnswered/.test(page));
+ok("and the athletes arriving do not take the screen from it", /if \(adminOpenedSomeone && !currentAthleteId\)/.test(page));
 ok("and the empty message speaks about clients", !/בחר מתאמן מהרשימה/.test(page));
 /* Sessions mode must not redefine what a rest day is. */
 ok("a rest day is still a rest day inside a sessions programme", /NormalizePprogBlock\.isRestDay\(dayKey, dayData, week\)/.test(page));
