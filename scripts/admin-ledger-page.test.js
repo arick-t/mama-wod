@@ -545,4 +545,21 @@ ok("one visit is not \"1 times\"", V.favouritesBoxHtml({ places: [{ name: "x", u
 ok("removing one warns that the sessions stay", /האימונים שכבר נרשמו לא ימחקו/.test(page));
 ok("and the autocomplete is re-read afterwards", /action: "delete_place"[\s\S]{0,700}loadMonth\(LS\.month\)/.test(page));
 
+
+/* --- one screen at a time (owner, 2026-09-04) -----------------------------
+ * Creating a client left the management tab on screen beside it: both are children of
+ * the same row, so they shared the width and he got half of each.
+ * ------------------------------------------------------------------------- */
+
+ok(
+  "opening a client makes the management tab let go",
+  /var mine = !!\(S\.adding \|\| S\.program\);[\s\S]{0,600}if \(mine\) \{[\s\S]{0,120}LedgerScreen\.close\(\)/.test(page)
+);
+ok(
+  "and the reason is written where it happens",
+  page.indexOf("he got half a screen each") >= 0
+);
+/* The other direction was already true and must stay true. */
+ok("opening the management tab closes the client screen", /if \(kind === "ledger"\)[\s\S]{0,400}ClientScreen\.close\(\)/.test(page));
+
 console.log("\nAll admin ledger page checks passed (" + passed + " assertions).");
