@@ -250,6 +250,12 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
  */
 [hidden]{display:none!important}
 .blank-row{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:center;font-size:13px}
+/* A row that belongs to the row above it: indented, hanging off a line, and quieter —
+   it is an answer to that choice, not a question of its own (owner, 2026-09-04). */
+.blank-row.is-sub{margin-inline-start:16px;padding-inline-start:10px;
+  border-inline-start:2px solid var(--line);grid-template-columns:104px 1fr}
+.blank-row.is-sub > span{color:var(--text-muted);font-size:12px;display:flex;align-items:center;gap:5px}
+.blank-row.is-sub .sub-tick{font-style:normal;opacity:.55;font-size:11px}
 .blank-row input,.blank-row select{background:var(--bg);border:1px solid var(--line);border-radius:9px;
   color:var(--text);padding:9px 11px;font:inherit;font-size:13px;width:100%}
 .blank-err{color:#fca5a5;font-size:12px;min-height:16px;margin:10px 2px 0}
@@ -1782,9 +1788,12 @@ header{flex-wrap:wrap;row-gap:8px}
             <option value="weekly_schedule">שבועית (ימים)</option>
             <option value="session_count">מספר אימונים בשבוע</option>
           </select></label>
-        <label class="blank-row" id="blankSessionsRow" hidden><span>אימונים בשבוע</span>
+        <!-- Hangs off the choice above it, because it only exists as an answer to
+             that choice (owner, 2026-09-04). -->
+        <label class="blank-row is-sub" id="blankSessionsRow" hidden>
+          <span><i class="sub-tick" aria-hidden="true">└</i> כמות האימונים</span>
           <input id="blankSessions" type="number" inputmode="numeric" min="1" max="7" value="4"
-                 title="כמה אימונים בשבוע"></label>
+                 title="כמות האימונים בשבוע"></label>
         <label class="blank-row"><span>אורך לבנה</span>
           <input id="blankWeeks" type="number" inputmode="numeric" min="1" max="12" value="4"
                  title="מספר שבועות בלבנה"></label>

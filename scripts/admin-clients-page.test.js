@@ -1035,6 +1035,8 @@ ok("the short form asks which shape the programme is", /id="blankMode"/.test(pag
 ok("with the two he named", /value="weekly_schedule"[\s\S]{0,80}value="session_count"/.test(page));
 ok("and it opens on a week of days", /id="blankMode"[\s\S]{0,120}<option value="weekly_schedule"/.test(page));
 ok("how many sessions is asked only for the second", /id="blankSessionsRow" hidden/.test(page));
+ok("it is called what he calls it", /כמות האימונים/.test(page));
+ok("and it hangs off the choice above it", /class="blank-row is-sub" id="blankSessionsRow"/.test(page) && /\.blank-row\.is-sub\{[^}]*border-inline-start/.test(page));
 ok("and appears when it is chosen", /function syncBlankMode\(\)[\s\S]{0,200}row\.hidden = mode\.value !== "session_count";/.test(page));
 ok("both travel with the create", /scheduleMode: String\(\(document\.getElementById\("blankMode"\)/.test(page) && /sessionsPerWeek: \(document\.getElementById\("blankSessions"\)/.test(page));
 ok("and reach the server", /scheduleMode: f\.scheduleMode,\s*\n\s*sessionsPerWeek: f\.sessionsPerWeek,/.test(screen));
