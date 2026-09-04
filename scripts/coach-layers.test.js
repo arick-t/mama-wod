@@ -88,7 +88,7 @@ const MAX_CHARS = {
      repeated week 1's Saturday movement for movement: "אין סיכוי שאין קשר בין שבוע 1>2>3>4 זה
      נבנה זה מתקשר אחד עם השני וזה חייב להיות מגולם בשיטה שבה המוח חושב = זה קרוספיט." A WEEK IS
      NOT AN ISLAND is the rule half of that; the data half is priorWeeksBlock() in the coach. */
-  "layer2-general": 11100,
+  "layer2-general": 11700,
   /* 4500 as of 2026-09-03: MORE THAN ONE PLACE. "קצה 1" trains in a full box mid-week and at home
      at weekends; the intake has one setting, so the packet said "never prescribe a kg figure" for
      an athlete with a tested 160 kg back squat. The layer now reads the athlete's own description
@@ -1781,6 +1781,38 @@ function testStudioFormatRules() {
     ) < 0);
 }
 
+
+/* The warm-up checkbox, 2026-09-04. Studio-only was my call and the owner corrected it: his own
+   test athlete trains in a full box mid-week, where the box runs the group warm-up, and at home at
+   weekends where it has to be written. An experienced athlete with a routine of their own would
+   otherwise lose eight of forty-five minutes to a block they skip. Lives in layer2-general so one
+   rule serves both products. */
+function testWarmUpIsAnIntakeAnswer() {
+  const G5 = require("../lib/coach-layers/layer2-general.js");
+  const flat = G5.replace(/\s+/g, " ");
+  ok("writing the warm-up is an intake answer, not the coach's choice",
+    /WHETHER YOU WRITE THE WARM-UP IS AN INTAKE ANSWER, not your choice/.test(flat));
+  ok("when written it sits inside the session length and is not a working part",
+    /it counts inside the stated session length and it is not one of the working parts/i.test(flat));
+  ok("when declined the session opens with the first working part",
+    /write none and open with the first working part/i.test(flat));
+  /* The dangerous reading, closed explicitly: "no warm-up" is not "no preparation". */
+  ok("declining the warm-up never removes the primer",
+    /THAT NEVER REMOVES THE PRIMER/.test(G5) &&
+      /belongs to the WORKING part, not to the warm-up, and it stays whatever the answer was/i.test(
+        flat
+      ));
+  ok("the reason is stated, not just the rule",
+    /Nobody goes from nothing to a heavy set/i.test(flat));
+  /* Both products, since the field is on both intakes. */
+  ["individual", "studio"].forEach(function (a) {
+    ok(a + " reads the warm-up rule",
+      L.buildLayerPack(
+        a === "studio" ? { agent: "studio", studioIntake: {} } : { agent: "individual", profile: {} }
+      ).text.indexOf("WHETHER YOU WRITE THE WARM-UP IS AN INTAKE ANSWER") >= 0);
+  });
+}
+
 function main() {
   console.log("\n=== Coach knowledge layers ===\n");
   testShape();
@@ -1801,6 +1833,7 @@ function main() {
   testWeekContinuity();
   testOneRmGate();
   testStudioFormatRules();
+  testWarmUpIsAnIntakeAnswer();
   testContinuation();
   testGymnastics();
   testHebrewBoundary();
