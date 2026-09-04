@@ -229,6 +229,20 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ ok: true, places: Ledger.placesByUse(places) });
     }
 
+    /* A place dropped from the memory list. The deals done at it are untouched — this
+       is the list he picks a name from, not the record (owner, 2026-09-04). */
+    if (action === "delete_place") {
+      const places = await readPlaces();
+      const gone = Ledger.forgetPlace(places, body.name);
+      if (!gone.ok) return bad(res, 404, gone.code, gone.error);
+      await writePlaces(gone.warehouse);
+      return res.status(200).json({
+        ok: true,
+        places: Ledger.placesByUse(gone.warehouse),
+        colours: Ledger.colourMap(gone.warehouse),
+      });
+    }
+
     /**
      * A place renamed or given a colour.
      *

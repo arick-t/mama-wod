@@ -539,4 +539,10 @@ ok(
   V.dayDealsHtml([{ id: "a", name: "x", service: "אימון אישי", price: 1 }]).indexOf(V.serviceColour("אימון אישי")) >= 0
 );
 
+
+ok("a place can be removed from the list", V.favouritesBoxHtml({ places: [{ name: "x", uses: 2, service: "", price: 1 }], open: true }).indexOf("data-led-fav-del") >= 0);
+ok("one visit is not \"1 times\"", V.favouritesBoxHtml({ places: [{ name: "x", uses: 1, service: "", price: 1 }], open: true }).indexOf("פעם אחת") >= 0);
+ok("removing one warns that the sessions stay", /האימונים שכבר נרשמו לא ימחקו/.test(page));
+ok("and the autocomplete is re-read afterwards", /action: "delete_place"[\s\S]{0,700}loadMonth\(LS\.month\)/.test(page));
+
 console.log("\nAll admin ledger page checks passed (" + passed + " assertions).");

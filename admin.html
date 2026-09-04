@@ -9824,6 +9824,26 @@ tryRestoreAdminSession();
       return;
     }
 
+    var favDel = t.closest("[data-led-fav-del]");
+    if (favDel) {
+      var doomed = favDel.getAttribute("data-led-fav-del") || "";
+      if (!window.confirm('להסיר את "' + doomed + '" מרשימת המקומות? האימונים שכבר נרשמו לא ימחקו.')) return;
+      api({ action: "delete_place", name: doomed }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) {
+          toast((r.body && r.body.error) || "לא הצלחתי להסיר", "err");
+          return;
+        }
+        LS.places = r.body.places || [];
+        LS.colours = r.body.colours || {};
+        LS.favEditing = "";
+        renderFavourites();
+        /* The autocomplete comes off the month, so it is re-read too. */
+        loadMonth(LS.month);
+        toast("הוסר מהרשימה");
+      });
+      return;
+    }
+
     var favEdit = t.closest("[data-led-fav-edit]");
     if (favEdit) {
       LS.favEditing = favEdit.getAttribute("data-led-fav-edit") || "";

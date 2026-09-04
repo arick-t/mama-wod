@@ -245,4 +245,20 @@ ok("and again turns it round", L.sortGroups(groups, "price", -1)[0].name === "א
 ok("a place list can be read alphabetically", L.sortGroups(groups, "name", 1)[0].name === "רימון");
 ok("or by who is still unbilled", L.sortGroups(groups, "invoiced", 1)[0].invoiced === false);
 
+
+/* --- a place can be forgotten (owner, 2026-09-04) -------------------------
+ * A name typed wrong stays in the list he picks from for ever unless he can remove
+ * it. The warehouse is a memory, not a record: forgetting a place changes no session
+ * that was ever done at it.
+ * ------------------------------------------------------------------------- */
+
+let fgw = L.emptyWarehouse();
+fgw = L.rememberPlace(fgw, { name: "רימון", price: 100 }, { clock: clock });
+fgw = L.rememberPlace(fgw, { name: "טעות", price: 100 }, { clock: clock });
+const forgotten = L.forgetPlace(fgw, "טעות");
+ok("a place can be dropped from the list", forgotten.ok && forgotten.warehouse.places.length === 1);
+ok("the right one goes", forgotten.warehouse.places[0].name === "רימון");
+ok("forgetting what is not there says so", L.forgetPlace(forgotten.warehouse, "אין כזה").code === "NOT_FOUND");
+ok("and it is case- and space-insensitive like everything else here", L.forgetPlace(fgw, "  טעות ").ok === true);
+
 console.log("\nAll coach ledger checks passed (" + passed + " assertions).");
