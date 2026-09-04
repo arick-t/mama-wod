@@ -978,7 +978,8 @@ ok("choosing it opens four questions, not a questionnaire", /if \(kind === "blan
   ok("the short form asks " + id, new RegExp('id="' + id + '"').test(page));
 });
 /* Five, since 2026-09-04: the block length joined them, and only here. */
-ok("and nothing else", (page.match(/class="blank-row"/g) || []).length === 5);
+/* Seven since 2026-09-04: the programme type and, behind it, how many sessions. */
+ok("and nothing else", (page.match(/class="blank-row"/g) || []).length === 7);
 ok("a client with no name is refused before the network", /if \(!name\) \{[\s\S]{0,120}צריך שם/.test(page));
 ok("the create goes through the client screen, like every other kind", /createBlank: function \(form\)/.test(screen));
 ok("with the kind the server shapes the month from", /clientKind: "blank"/.test(screen));
@@ -1026,5 +1027,16 @@ ok("pasting warns before it overwrites", /להדביק את היום הזה\? מ
 ok("and goes through one server write", /action: "copy_day"/.test(screen));
 ok("a stale paste reopens the client rather than overwriting", /action: "copy_day"[\s\S]{0,700}openClient\(S\.program\.programId\)/.test(screen));
 ok("both menus are placed by the same code", /function placeMenuAt\(m, x, y\)/.test(screen));
+
+
+/* --- a blank client sold as sessions (owner, 2026-09-04) ------------------ */
+
+ok("the short form asks which shape the programme is", /id="blankMode"/.test(page));
+ok("with the two he named", /value="weekly_schedule"[\s\S]{0,80}value="session_count"/.test(page));
+ok("and it opens on a week of days", /id="blankMode"[\s\S]{0,120}<option value="weekly_schedule"/.test(page));
+ok("how many sessions is asked only for the second", /id="blankSessionsRow" hidden/.test(page));
+ok("and appears when it is chosen", /function syncBlankMode\(\)[\s\S]{0,200}row\.hidden = mode\.value !== "session_count";/.test(page));
+ok("both travel with the create", /scheduleMode: String\(\(document\.getElementById\("blankMode"\)/.test(page) && /sessionsPerWeek: \(document\.getElementById\("blankSessions"\)/.test(page));
+ok("and reach the server", /scheduleMode: f\.scheduleMode,\s*\n\s*sessionsPerWeek: f\.sessionsPerWeek,/.test(screen));
 
 console.log("All admin clients page checks passed.");

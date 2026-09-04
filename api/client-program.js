@@ -301,9 +301,16 @@ async function ownerHandler(req, res, body) {
       weekCount = Intake.weekCountFor(intake);
     }
     if (isBlank) {
+      /* Two shapes of month, and he chooses on the short form: a week of days, or a
+         number of sessions with no weekday attached at all (owner, 2026-09-04). The
+         second is the mode the product already knows — the same one a studio can be
+         sold — so this adds a choice, not a third kind of calendar. */
+      const bySessions = String(body.scheduleMode || "") === "session_count";
+      const sessions = Math.max(1, Math.min(7, parseInt(body.sessionsPerWeek, 10) || 3));
       intake = Intake.normalizeIntake({
         clientName: body.clientName,
-        scheduleMode: "weekly_schedule",
+        scheduleMode: bySessions ? "session_count" : "weekly_schedule",
+        sessionsPerWeek: bySessions ? sessions : 0,
         /* The point of this kind: NO day is a rest day, so every square is his to
            write on. */
         includeRestDays: false,

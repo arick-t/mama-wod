@@ -1754,6 +1754,14 @@ header{flex-wrap:wrap;row-gap:8px}
         <!-- Only here. A blank client's month is whatever length he says; the studio
              and the individual are untouched, and so is the coach's four-week contract
              (owner, 2026-09-04, twice). -->
+        <label class="blank-row"><span>סוג תוכנית</span>
+          <select id="blankMode" onchange="syncBlankMode()">
+            <option value="weekly_schedule">שבועית (ימים)</option>
+            <option value="session_count">מספר אימונים בשבוע</option>
+          </select></label>
+        <label class="blank-row" id="blankSessionsRow" hidden><span>אימונים בשבוע</span>
+          <input id="blankSessions" type="number" inputmode="numeric" min="1" max="7" value="4"
+                 title="כמה אימונים בשבוע"></label>
         <label class="blank-row"><span>אורך לבנה</span>
           <input id="blankWeeks" type="number" inputmode="numeric" min="1" max="12" value="4"
                  title="מספר שבועות בלבנה"></label>
@@ -5853,11 +5861,23 @@ function openBlankClientForm() {
   });
   /* Four weeks unless he says otherwise — the number we have always used. */
   if (document.getElementById("blankWeeks")) document.getElementById("blankWeeks").value = "4";
+  /* A week of days unless he says otherwise — the shape everything else uses. */
+  if (document.getElementById("blankMode")) document.getElementById("blankMode").value = "weekly_schedule";
+  if (document.getElementById("blankSessions")) document.getElementById("blankSessions").value = "4";
+  syncBlankMode();
   if (document.getElementById("blankGender")) document.getElementById("blankGender").value = "";
   if (document.getElementById("blankErr")) document.getElementById("blankErr").textContent = "";
   m.classList.add("open");
   var name = document.getElementById("blankName");
   if (name) name.focus();
+}
+
+/** The session count is asked only when the programme is sold as a number of them. */
+function syncBlankMode() {
+  var mode = document.getElementById("blankMode");
+  var row = document.getElementById("blankSessionsRow");
+  if (!mode || !row) return;
+  row.hidden = mode.value !== "session_count";
 }
 
 function closeBlankClientForm() {
@@ -5893,6 +5913,8 @@ function createBlankClient() {
     monthlyAmount: (document.getElementById("blankAmount") || {}).value || 0,
     paymentMethod: String((document.getElementById("blankMethod") || {}).value || ""),
     blockWeeks: (document.getElementById("blankWeeks") || {}).value || 4,
+    scheduleMode: String((document.getElementById("blankMode") || {}).value || "weekly_schedule"),
+    sessionsPerWeek: (document.getElementById("blankSessions") || {}).value || 4,
   }).then(function (r) {
     if (btn) btn.disabled = false;
     if (!r || !r.ok) {
@@ -5904,6 +5926,7 @@ function createBlankClient() {
   });
 }
 
+window.syncBlankMode = syncBlankMode;
 window.openBlankClientForm = openBlankClientForm;
 window.closeBlankClientForm = closeBlankClientForm;
 window.createBlankClient = createBlankClient;
@@ -9192,6 +9215,8 @@ tryRestoreAdminSession();
       return api({
         action: "create",
         clientKind: "blank",
+        scheduleMode: f.scheduleMode,
+        sessionsPerWeek: f.sessionsPerWeek,
         clientName: f.clientName,
         clientGender: f.clientGender,
         monthlyAmount: f.monthlyAmount,

@@ -1127,6 +1127,70 @@ async function main() {
   });
   ok("and not onto something that is not a weekday", badDay.status === 400 && badDay.body.code === "BAD_DAY");
 
+
+  /* --- a blank client sold as a number of sessions (owner, 2026-09-04) ----- */
+
+  const bySess = await H.owner({
+    action: "create",
+    clientKind: "blank",
+    clientName: "ארבעה",
+    scheduleMode: "session_count",
+    sessionsPerWeek: 4,
+    blockWeeks: 6,
+    blockStart: "2026-09-06",
+  });
+  ok("a blank client can be sold as sessions", bySess.status === 200);
+  ok("the mode is recorded", bySess.body.program.intake.scheduleMode === "session_count");
+  ok("with the number he sold", bySess.body.program.intake.sessionsPerWeek === 4);
+  ok("and the block is as long as he asked", bySess.body.program.weeks.length === 6);
+  ok(
+    "every week still holds seven day slots underneath",
+    bySess.body.program.weeks.every(function (w) { return Object.keys(w.days).length === 7; })
+  );
+
+  /* What the client's page draws its columns from. */
+  const sessView = require("../lib/client-view-payload.js").programForClient(bySess.body.program);
+  ok("the client's calendar is told to draw four columns", sessView.sessionColumns === 4);
+  const weeklyView = require("../lib/client-view-payload.js").programForClient(blank.body.program);
+  ok("and a weekly one is told nothing, so it draws seven", weeklyView.sessionColumns === 0);
+
+  /* The two gestures must work here too. */
+  const sessId = bySess.body.program.programId;
+  const sessWrote = await H.owner({
+    action: "save",
+    programId: sessId,
+    expectedVersion: bySess.body.program.version,
+    program: {
+      weeks: (function () {
+        const w = JSON.parse(JSON.stringify(bySess.body.program.weeks));
+        w[0].days.sun.parts = [{ id: "x1", title: "Session 1", lines: ["EMOM 12"] }];
+        return w;
+      })(),
+    },
+  });
+  const sessWeek = await H.owner({
+    action: "copy_week",
+    programId: sessId,
+    expectedVersion: sessWrote.body.program.version,
+    fromWeek: 1,
+    toWeek: 4,
+  });
+  ok("a week copies in sessions mode", sessWeek.status === 200 && sessWeek.body.copiedDays === 1);
+  const sessDay = await H.owner({
+    action: "copy_day",
+    programId: sessId,
+    expectedVersion: sessWeek.body.program.version,
+    fromWeek: 1,
+    fromDay: "sun",
+    toWeek: 2,
+    toDay: "tue",
+  });
+  ok("and so does a day", sessDay.status === 200 && sessDay.body.copiedParts === 1);
+  ok(
+    "landing where it was pasted",
+    sessDay.body.program.weeks[1].days.tue.parts[0].lines[0] === "EMOM 12"
+  );
+
   /* --- the configuration report goes to the OWNER, not to a client ---------
    * It first shipped attached to the claim response - a client's reply - because the
    * edit matched the wrong "termsVersion" line, and the library-level test could not
