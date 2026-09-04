@@ -115,7 +115,7 @@ const MAX_CHARS = {
      format one is the load-bearing insight: in a room where everything is stations, the FORMAT is
      the variety and the progression at once, because the movements are whatever the place owns and
      the load is self-selected. Studio path only — an individual pays nothing for any of it. */
-  "layer2-room-studio": 3400,
+  "layer2-room-studio": 3900,
   "layer2-days-individual": 1200,
   /* Conditional: only a studio that bought N sessions a week pays for it. */
   "layer2-session-count": 3200,
@@ -1738,6 +1738,18 @@ function testStudioFormatRules() {
     /200 m as ten turns of a 20 m lane is twenty changes of direction/i.test(flat));
   ok("a room with no running distance still gets the stimulus",
     /take the same stimulus from carries, lunge walks, single-length sprints/i.test(flat));
+
+  /* The owner settled what a "no barbells" boundary means, the same day: "עושים שם הכל פשוט לא עם
+     מוט - קלינים, תראסטרים וכו'". The boundary is the IMPLEMENT. Stated because the
+     no-technicality rule right above it could otherwise be read as a reason to drop the pattern
+     too, which turns a house rule into a thinner programme. */
+  ok("an implement boundary limits the implement and nothing else",
+    /IT LIMITS THE IMPLEMENT AND NOTHING ELSE/.test(R) &&
+      /does not remove the clean, the snatch, the thruster or the jerk from this place/i.test(flat));
+  ok("every pattern is still trained with what the room owns",
+    /Every pattern is still trained, with the dumbbells and kettlebells the room owns/.test(flat));
+  ok("a banned implement is not a request for a timid programme",
+    /a place that banned an implement did not ask for a timid programme/i.test(flat));
 
   /* None of it reaches an individual. */
   ok("an individual pays nothing for the studio format rules",
