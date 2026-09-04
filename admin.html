@@ -191,6 +191,12 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .led-manual .led-field{flex:1 1 150px;min-width:0}
 .led-manual .led-num-field{flex:0 1 120px}
 /* The favourites box: a fold, a list, and one pencil per name. */
+/* The blank client's four questions. */
+.blank-form{display:flex;flex-direction:column;gap:10px}
+.blank-row{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:center;font-size:13px}
+.blank-row input,.blank-row select{background:var(--bg);border:1px solid var(--line);border-radius:9px;
+  color:var(--text);padding:9px 11px;font:inherit;font-size:13px;width:100%}
+.blank-err{color:#fca5a5;font-size:12px;min-height:16px;margin:10px 2px 0}
 .led-fold{appearance:none;width:100%;display:flex;align-items:center;gap:10px;background:transparent;
   border:none;color:var(--text);font:inherit;font-size:1.05rem;font-family:var(--font-display);
   letter-spacing:.5px;cursor:pointer;padding:0;text-align:start}
@@ -1637,11 +1643,48 @@ header{flex-wrap:wrap;row-gap:8px}
         <span class="ck-desc">אדם אחד. תחקור מלא כמו באפליקציה — פרופיל, ציוד, לו״ז, הרמות, מיומנויות,
           מגבלות, פציעות, מטרות → לבנה אישית → לינק מסירה.</span>
       </button>
+      <button type="button" class="client-kind-card" onclick="chooseClientKind('blank')">
+        <span class="ck-title">לקוח ריק</span>
+        <span class="ck-desc">בלי תחקור. שם, מין, תשלום — וחודש של ימים ריקים שאתה כותב בעצמך.
+          לינק, קוד ומסירה בדיוק כמו כל לקוח אחר.</span>
+      </button>
       <button type="button" class="client-kind-card" onclick="chooseClientKind('coach')">
         <span class="ck-title">מאמן / סטודיו</span>
         <span class="ck-desc">אתה כותב תוכנית שהוא מעביר למתאמנים שלו. תחקור רוחבי — ציוד, לו״ז,
           דילואד, אופי האוכלוסייה, מטרות. בלי פרמטרים של אדם בודד.</span>
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- The blank client: the shortest way into the product. Four questions, and then a
+     month of empty squares he writes himself (owner, 2026-09-04). -->
+<div class="modal-backdrop" id="blank-client-modal">
+  <div class="intake-workspace" dir="rtl" onclick="event.stopPropagation()" style="max-width:520px">
+    <div class="intake-ws-header">
+      <h2>לקוח ריק</h2>
+      <button type="button" class="btn-secondary" onclick="closeBlankClientForm()">סגור</button>
+    </div>
+    <div class="intake-ws-body" style="padding:18px">
+      <div class="blank-form">
+        <label class="blank-row"><span>שם</span>
+          <input id="blankName" maxlength="120" placeholder="שם הלקוח"></label>
+        <label class="blank-row"><span>מין</span>
+          <select id="blankGender">
+            <option value="">—</option>
+            <option value="male">זכר</option>
+            <option value="female">נקבה</option>
+          </select></label>
+        <label class="blank-row"><span>תשלום חודשי</span>
+          <input id="blankAmount" type="number" inputmode="numeric" min="0" max="100000" placeholder="₪"></label>
+        <label class="blank-row"><span>אופן התשלום</span>
+          <input id="blankMethod" maxlength="200" placeholder="ביט / העברה / מזומן"></label>
+      </div>
+      <p class="blank-err" id="blankErr"></p>
+      <div class="row" style="margin-top:14px;gap:8px">
+        <button type="button" class="hdr-btn primary" id="blankCreate" onclick="createBlankClient()">צור לקוח</button>
+        <button type="button" class="btn-secondary" onclick="closeBlankClientForm()">בטל</button>
+      </div>
     </div>
   </div>
 </div>
@@ -5677,6 +5720,11 @@ function closeClientKindChooser() {
 
 function chooseClientKind(kind) {
   closeClientKindChooser();
+  /* Four questions and a month of empty squares — no questionnaire at all. */
+  if (kind === "blank") {
+    openBlankClientForm();
+    return;
+  }
   if (kind === "coach") {
     /* The cross-cutting intake opens in place. It used to be a trip to another page —
        which is the seam the owner had me remove (2026-09-02). */
@@ -5703,6 +5751,66 @@ function chooseClientKind(kind) {
     } catch (eLog) {}
   }
 }
+function openBlankClientForm() {
+  var m = document.getElementById("blank-client-modal");
+  if (!m) return;
+  ["blankName", "blankAmount", "blankMethod"].forEach(function (id) {
+    var f = document.getElementById(id);
+    if (f) f.value = "";
+  });
+  if (document.getElementById("blankGender")) document.getElementById("blankGender").value = "";
+  if (document.getElementById("blankErr")) document.getElementById("blankErr").textContent = "";
+  m.classList.add("open");
+  var name = document.getElementById("blankName");
+  if (name) name.focus();
+}
+
+function closeBlankClientForm() {
+  var m = document.getElementById("blank-client-modal");
+  if (m) m.classList.remove("open");
+}
+
+/**
+ * Create a client with nothing but a name, and open him.
+ *
+ * The month that comes back has no rest days and no sessions — the server builds it
+ * that way for this kind. Everything after this point is the ordinary client screen:
+ * write the days, approve, hand over a link and a code (owner, 2026-09-04).
+ */
+function createBlankClient() {
+  var err = document.getElementById("blankErr");
+  var name = String((document.getElementById("blankName") || {}).value || "").trim();
+  if (!name) {
+    if (err) err.textContent = "צריך שם.";
+    return;
+  }
+  var btn = document.getElementById("blankCreate");
+  if (btn) btn.disabled = true;
+  if (err) err.textContent = "";
+  if (!window.ClientScreen || !window.ClientScreen.createBlank) {
+    if (err) err.textContent = "מסך הלקוחות עוד לא נטען — נסה שוב בעוד רגע.";
+    if (btn) btn.disabled = false;
+    return;
+  }
+  window.ClientScreen.createBlank({
+    clientName: name,
+    clientGender: String((document.getElementById("blankGender") || {}).value || ""),
+    monthlyAmount: (document.getElementById("blankAmount") || {}).value || 0,
+    paymentMethod: String((document.getElementById("blankMethod") || {}).value || ""),
+  }).then(function (r) {
+    if (btn) btn.disabled = false;
+    if (!r || !r.ok) {
+      if (err) err.textContent = (r && r.error) || "לא הצלחתי ליצור את הלקוח.";
+      return;
+    }
+    closeBlankClientForm();
+    showHdrToast("נוצר לקוח ריק ✓", "ok");
+  });
+}
+
+window.openBlankClientForm = openBlankClientForm;
+window.closeBlankClientForm = closeBlankClientForm;
+window.createBlankClient = createBlankClient;
 window.openClientKindChooser = openClientKindChooser;
 window.closeClientKindChooser = closeClientKindChooser;
 window.chooseClientKind = chooseClientKind;
@@ -6717,6 +6825,23 @@ tryRestoreAdminSession();
 
   function startNextBlock() {
     if (!S.program) return;
+    /* Nothing to ask a blank client: another month of empty squares, on the spot
+       (owner, 2026-09-04). */
+    if (isBlankClient()) {
+      if (!window.confirm("להוסיף חודש נוסף של ימים ריקים?")) return;
+      api({ action: "add_block", programId: S.program.programId, expectedVersion: S.program.version })
+        .then(function (r) {
+          if (r.status !== 200 || !r.body.ok) {
+            banner("bad", (r.body && r.body.error) || "לא הצלחתי להוסיף לבנה.");
+            return;
+          }
+          S.program = r.body.program;
+          banner("good", "לבנה " + r.body.blockIndex + " נוצרה — " + r.body.added +
+            " שבועות ריקים. היא לא אצל הלקוח עד שתאשר אותה.");
+          renderDetail();
+        });
+      return;
+    }
     S.blockMode = true;
     S.adding = true;
     iStep = 0;
@@ -8016,6 +8141,11 @@ tryRestoreAdminSession();
     return !!(S.program && (S.program.clientKind === "athlete" || S.program.athleteIntake));
   }
 
+  /** Four answers and an empty month — no questionnaire to open, ever. */
+  function isBlankClient() {
+    return !!(S.program && S.program.clientKind === "blank");
+  }
+
   /**
    * The individual's fourth tab, opened on what they already answered.
    *
@@ -8752,6 +8882,50 @@ tryRestoreAdminSession();
     },
     newClient: function () {
       setAdding(true);
+    },
+    /**
+     * A client with four answers and an empty month.
+     *
+     * Goes through the same create as everyone else — the SERVER decides the shape of
+     * the month from the kind, so there is no second way to lay one out. The client is
+     * opened from the response rather than re-read: a failed re-read used to look
+     * exactly like the page ignoring him (owner, 2026-09-03).
+     */
+    createBlank: function (form) {
+      var f = form || {};
+      return api({
+        action: "create",
+        clientKind: "blank",
+        clientName: f.clientName,
+        clientGender: f.clientGender,
+        monthlyAmount: f.monthlyAmount,
+        paymentMethod: f.paymentMethod,
+        blockStart: israelSundayIso(),
+      }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) {
+          return { ok: false, error: (r.body && r.body.error) || "" };
+        }
+        S.adding = false;
+        S.blockMode = false;
+        S.sel = r.body.program.programId;
+        S.program = r.body.program;
+        S.access = null;
+        S.wi = 0;
+        S.day = "sun";
+        S.calMode = "month";
+        S.selected = [];
+        S.edit = null;
+        adminOpenedSomeone = true;
+        try {
+          if (typeof window.renderPeopleStripActive === "function") {
+            window.renderPeopleStripActive(S.program.programId);
+          }
+        } catch (eStrip) {}
+        renderViewMode();
+        renderDetail();
+        loadList();
+        return { ok: true, program: r.body.program };
+      });
     },
     close: function () {
       S.adding = false;

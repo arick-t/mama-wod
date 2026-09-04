@@ -958,4 +958,27 @@ ok("safe-area insets are honoured", /env\(safe-area-inset-top/.test(page));
 ok("there is a small-screen breakpoint", /@media \(max-width:600px\)/.test(page));
 ok("the page is not indexed", /noindex/.test(page));
 
+
+/* --- the blank client (owner, 2026-09-04) --------------------------------
+ * A third kind, and the shortest way into the product: name, gender, what they pay
+ * and how — then a month of empty squares he writes himself. Everything after that is
+ * the ordinary client screen, link and code included. The only thing it does NOT have
+ * is a questionnaire.
+ * ------------------------------------------------------------------------- */
+
+ok("the chooser offers a third kind", /chooseClientKind\('blank'\)/.test(page));
+ok("and says what it is", /לקוח ריק<\/span>[\s\S]{0,200}בלי תחקור/.test(page));
+ok("choosing it opens four questions, not a questionnaire", /if \(kind === "blank"\) \{\s*\n\s*openBlankClientForm\(\);/.test(page));
+["blankName", "blankGender", "blankAmount", "blankMethod"].forEach(function (id) {
+  ok("the short form asks " + id, new RegExp('id="' + id + '"').test(page));
+});
+ok("and nothing else", (page.match(/class="blank-row"/g) || []).length === 4);
+ok("a client with no name is refused before the network", /if \(!name\) \{[\s\S]{0,120}צריך שם/.test(page));
+ok("the create goes through the client screen, like every other kind", /createBlank: function \(form\)/.test(screen));
+ok("with the kind the server shapes the month from", /clientKind: "blank"/.test(screen));
+ok("and the client is opened from the response", /createBlank[\s\S]{0,1400}renderViewMode\(\);[\s\S]{0,40}renderDetail\(\);/.test(screen));
+/* A blank client has nothing to be asked between blocks either. */
+ok("the screen knows the kind", /function isBlankClient\(\)/.test(screen));
+ok("and a second month is added on the spot", /if \(isBlankClient\(\)\) \{[\s\S]{0,300}action: "add_block"/.test(screen));
+
 console.log("All admin clients page checks passed.");

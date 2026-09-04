@@ -862,6 +862,78 @@ async function main() {
   const goneRead = await H.owner({ action: "read", programId: p1.body.program.programId });
   ok("a purged client is really gone", goneRead.status === 404);
 
+
+  /* --- the blank client (owner, 2026-09-04) -----------------------------
+   * Four questions — name, gender, what they pay, how — and a month of empty squares.
+   * No AI wrote it and nothing shaped it: every day is open, none is a rest day, and
+   * the owner fills it himself. Everything else about them is a client like any other.
+   * ------------------------------------------------------------------------- */
+
+  const blank = await H.owner({
+    action: "create",
+    clientKind: "blank",
+    clientName: "דני",
+    clientGender: "male",
+    monthlyAmount: 450,
+    paymentMethod: "ביט",
+    blockStart: "2026-09-06",
+  });
+  ok("a blank client is created", blank.status === 200 && blank.body.ok === true);
+  const bp = blank.body.program;
+  ok("it knows which kind it is", bp.clientKind === "blank");
+  ok("a month of weeks arrives", bp.weeks.length === 4);
+  ok(
+    "every day of every week is there",
+    bp.weeks.every(function (w) { return Object.keys(w.days).length === 7; })
+  );
+  ok(
+    "and NOT ONE of them is a rest day",
+    bp.weeks.every(function (w) {
+      return Object.keys(w.days).every(function (k) { return w.days[k].ownerUnreviewed === true; });
+    })
+  );
+  ok(
+    "nothing is written on any of them",
+    bp.weeks.every(function (w) {
+      return Object.keys(w.days).every(function (k) { return (w.days[k].parts || []).length === 0; });
+    })
+  );
+  ok("no week is a deload", bp.weeks.every(function (w) { return w.phase !== "deload"; }));
+  ok("what they pay is on the programme", bp.monthlyAmount === 450 && bp.paymentMethod === "ביט");
+  ok("and their gender, owner-side", bp.clientGender === "male");
+  ok("the block is NOT approved — he sends it when he is ready", bp.blocks[0].approved !== true);
+
+  /* The delivery half is identical: this is the whole point of the kind. */
+  const bCode = await H.owner({ action: "issue_code", programId: bp.programId });
+  ok("a blank client gets a code like anyone else", bCode.status === 200 && /^\d{6}$/.test(bCode.body.code));
+  const bClaim = await H.anon({ action: "claim", programId: bp.programId, code: bCode.body.code, deviceLabel: "phone" });
+  ok("and can redeem it", bClaim.status === 200 && !!bClaim.body.clientToken);
+  const bBeforeSign = await H.client(bClaim.body.clientToken, { action: "read", programId: bp.programId });
+  ok("and signs the same terms as everyone else", bBeforeSign.status === 403 && bBeforeSign.body.code === "TERMS_REQUIRED");
+  await H.client(bClaim.body.clientToken, { action: "sign", programId: bp.programId, accepted: true });
+  const bView = await H.client(bClaim.body.clientToken, { action: "read", programId: bp.programId });
+  ok("but sees nothing until the block is approved", bView.status === 200 && (bView.body.program.blockGroups || []).length === 0);
+  await H.owner({ action: "approve_block", programId: bp.programId, expectedVersion: bp.version, blockIndex: 1 });
+  const bView2 = await H.client(bClaim.body.clientToken, { action: "read", programId: bp.programId });
+  ok("and everything after approval", (bView2.body.program.blockGroups || []).length === 1);
+  ok("what they pay never crosses to them", bView2.body.program.monthlyAmount === undefined);
+  ok("nor does their gender", bView2.body.program.clientGender === undefined);
+
+  /* A second month is empty in exactly the same way. */
+  const bAfter = await H.owner({ action: "read", programId: bp.programId });
+  const bNext = await H.owner({
+    action: "add_block",
+    programId: bp.programId,
+    expectedVersion: bAfter.body.program.version,
+  });
+  ok("a blank client gets another empty month", bNext.status === 200 && bNext.body.program.weeks.length === 8);
+  ok(
+    "with no rest days in it either",
+    bNext.body.program.weeks.slice(4).every(function (w) {
+      return Object.keys(w.days).every(function (k) { return w.days[k].ownerUnreviewed === true; });
+    })
+  );
+
   /* --- the configuration report goes to the OWNER, not to a client ---------
    * It first shipped attached to the claim response - a client's reply - because the
    * edit matched the wrong "termsVersion" line, and the library-level test could not

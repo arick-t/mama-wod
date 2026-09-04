@@ -243,7 +243,12 @@ async function ownerHandler(req, res, body) {
      * is what decides the block's shape: a month of four weeks, with the deload laid
      * over the timeline as a cadence (owner, 2026-09-01). An end-athlete client keeps
      * the old path. */
-    const wantsIntake = body.clientKind !== "athlete";
+    /* A blank client answers four questions — name, gender, what they pay and how —
+       and gets a month of empty squares. No questionnaire to validate, and nothing to
+       shape the month with: every day is open, none is a rest day, and there is no
+       deload to place (owner, 2026-09-04). */
+    const isBlank = body.clientKind === "blank";
+    const wantsIntake = body.clientKind !== "athlete" && !isBlank;
     let intake = null;
     let weekCount = body.weekCount;
     /* An individual athlete answers a different questionnaire (the eight-step one the
@@ -281,6 +286,22 @@ async function ownerHandler(req, res, body) {
       });
       weekCount = Intake.weekCountFor(intake);
     }
+    if (isBlank) {
+      intake = Intake.normalizeIntake({
+        clientName: body.clientName,
+        scheduleMode: "weekly_schedule",
+        /* The point of this kind: NO day is a rest day, so every square is his to
+           write on. */
+        includeRestDays: false,
+        restDays: {},
+        deloadWeek: false,
+        deloadEveryWeeks: 0,
+        population: "לקוח ריק",
+        monthlyAmount: body.monthlyAmount,
+        paymentMethod: body.paymentMethod,
+      });
+      weekCount = Intake.weekCountFor(intake);
+    }
     if (wantsIntake && body.intake) {
       const problems = Intake.validateIntake(body.intake);
       if (problems.length) {
@@ -292,6 +313,7 @@ async function ownerHandler(req, res, body) {
     const created = await store.createProgram({
       clientName: (intake && intake.clientName) || body.clientName,
       clientKind: body.clientKind,
+      clientGender: body.clientGender,
       blockStart: body.blockStart,
       weekCount: weekCount,
       intake: intake,
@@ -318,6 +340,23 @@ async function ownerHandler(req, res, body) {
       if (withIntake.ok) {
         return res.status(200).json({ ok: true, program: withIntake.program });
       }
+    }
+    /* A blank client pays like anyone else, and the list totals what they pay. Their
+       gender was asked on the short form and stays owner-side. */
+    if (isBlank) {
+      const withBlank = await store.updateProgram(
+        created.program.programId,
+        created.program.version,
+        function (draft) {
+          const amount = Number(body.monthlyAmount);
+          draft.monthlyAmount = Number.isFinite(amount) && amount >= 0 ? amount : 0;
+          draft.paymentMethod = String(body.paymentMethod || "").slice(0, 200);
+          draft.clientGender = String(body.clientGender || "").slice(0, 20);
+          return draft;
+        },
+        { actor: "owner" }
+      );
+      if (withBlank.ok) return res.status(200).json({ ok: true, program: withBlank.program });
     }
     /* Carry the payment terms onto the program so the list can total them. */
     if (intake) {
@@ -409,7 +448,9 @@ async function ownerHandler(req, res, body) {
           const col = String(patch.clientColour || "");
           draft.clientColour = /^#[0-9a-f]{6}$/i.test(col) ? col : "";
         }
-        if (patch.clientKind !== undefined) draft.clientKind = patch.clientKind === "athlete" ? "athlete" : "coach";
+        if (patch.clientKind !== undefined) {
+          draft.clientKind = ["athlete", "blank"].indexOf(patch.clientKind) >= 0 ? patch.clientKind : "coach";
+        }
         if (patch.blockStart !== undefined) draft.blockStart = String(patch.blockStart).slice(0, 10);
         if (patch.paymentMethod !== undefined) draft.paymentMethod = String(patch.paymentMethod).slice(0, 200);
         if (patch.monthlyAmount !== undefined) {
