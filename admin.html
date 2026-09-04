@@ -6,7 +6,7 @@
 <!-- The back office has no business in a search index. It carried no such tag while
      it was only an athlete admin; now that it also holds paying clients, it says so. -->
 <meta name="robots" content="noindex, nofollow">
-<title>DUCK-WOD Admin · 4.2</title>
+<title>DUCK-WOD Admin · 4.2.1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -1325,7 +1325,7 @@ header{flex-wrap:wrap;row-gap:8px}
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver" id="login-ver-badge" title="Admin 4.2 · Coach 2.3.14">Admin 4.2<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.14</span></div>
+    <div class="ver" id="login-ver-badge" title="Admin 4.2.1 · Coach 2.3.14">Admin 4.2.1<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.14</span></div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <label class="login-remember">
       <input type="checkbox" id="pw-remember"/>
@@ -1341,7 +1341,7 @@ header{flex-wrap:wrap;row-gap:8px}
   <header>
     <img class="hdr-duck" src="assets/hamamen-coach-duck.png" alt="" width="30" height="30" draggable="false">
     <span class="logo">DUCK-WOD</span>
-    <span class="ver-badge" id="admin-ver-badge" title="Admin 4.2 · Coach 2.3.14">Admin 4.2<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.14</span></span>
+    <span class="ver-badge" id="admin-ver-badge" title="Admin 4.2.1 · Coach 2.3.14">Admin 4.2.1<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.14</span></span>
     <span class="count-wrap">
       <span class="count" id="athlete-count" title="הרשימה מתעדכנת לבד כל כמה שניות — בלי לרענן את הדף">0 לקוחות</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
@@ -1985,7 +1985,7 @@ var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
  */
 var COACH_BUILD_MAY_SAVE = false;
 
-var ADMIN_UI_VERSION = "4.2";
+var ADMIN_UI_VERSION = "4.2.1";
 var LIVE_COACH_VERSION = "2.3.14";
 var LIVE_COACH_VERSION_FETCHED_AT = 0;
 
@@ -2849,6 +2849,31 @@ function applyAdminSessionFromList(res, data, remember) {
   return !!adminPw;
 }
 
+/**
+ * A request that cannot hang for ever.
+ *
+ * "מתחבר…" with no end is the worst state this page can be in: it says something is
+ * happening when nothing is, and there is nothing on screen to act on. Fifteen seconds
+ * and it says so instead (owner, 2026-09-05).
+ */
+function fetchWithTimeout(url, opts, ms) {
+  var wait = Number(ms) > 0 ? Number(ms) : 15000;
+  var ctl = typeof AbortController === "function" ? new AbortController() : null;
+  var timer = null;
+  var options = Object.assign({}, opts || {});
+  if (ctl) options.signal = ctl.signal;
+  return new Promise(function (resolve, reject) {
+    timer = setTimeout(function () {
+      try { if (ctl) ctl.abort(); } catch (eAbort) {}
+      reject(new Error("timeout"));
+    }, wait);
+    fetch(url, options).then(
+      function (r) { clearTimeout(timer); resolve(r); },
+      function (e) { clearTimeout(timer); reject(e); }
+    );
+  });
+}
+
 function doLogin() {
   var pw = document.getElementById("pw-input").value.trim();
   if (!pw) return;
@@ -2858,11 +2883,11 @@ function doLogin() {
   var remember = !!(rememberEl && rememberEl.checked);
   var errEl = document.getElementById("login-err");
   if (errEl) errEl.textContent = "מתחבר…";
-  fetch(adminApiUrl("/api/admin-snapshot"), {
+  fetchWithTimeout(adminApiUrl("/api/admin-snapshot"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify({ action: "admin_list", adminPassword: pw, rememberMe: remember })
-  })
+  }, 15000)
     .then(function(r) {
       return r.json().then(function(data) {
         return { status: r.status, data: data, res: r };
@@ -2891,7 +2916,11 @@ function doLogin() {
       adminPw = "";
       var msg = "שגיאת חיבור";
       var em = e && e.message ? String(e.message) : "";
-      if (em === "not_configured" || em.indexOf("לא הוגדר") >= 0 || em.indexOf("ADMIN_PASSWORD") >= 0) {
+      if (em === "timeout" || em.indexOf("aborted") >= 0 || (e && e.name === "AbortError")) {
+        /* Fifteen seconds of nothing. Say so, and leave the button pressable — the
+           screen used to sit on "מתחבר…" with nothing to do (owner, 2026-09-05). */
+        msg = "השרת לא ענה תוך 15 שניות. בדוק חיבור לאינטרנט ונסה שוב.";
+      } else if (em === "not_configured" || em.indexOf("לא הוגדר") >= 0 || em.indexOf("ADMIN_PASSWORD") >= 0) {
         msg = "לא הוגדר בשרת. הגדר ADMIN_PASSWORD ב־Vercel ואז Redeploy.";
       } else if (em === "session_secret_missing" || em.indexOf("ADMIN_SESSION_SECRET") >= 0) {
         msg = "חסר ADMIN_SESSION_SECRET ב־Vercel (32+ תווים אקראיים) — הוסף ו־Redeploy.";
@@ -2920,11 +2949,11 @@ function tryRestoreAdminSession() {
   } catch (eCb) {}
   var errEl = document.getElementById("login-err");
   if (errEl) errEl.textContent = "מתחבר…";
-  fetch(adminApiUrl("/api/admin-snapshot"), {
+  fetchWithTimeout(adminApiUrl("/api/admin-snapshot"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify({ action: "admin_list", adminToken: token })
-  })
+  }, 15000)
     .then(function(r) {
       return r.json().then(function(data) {
         return { status: r.status, data: data };
@@ -2950,9 +2979,14 @@ function tryRestoreAdminSession() {
         showHdrToast("לא הצלחתי לקרוא את רשימת המתאמנים — " + res.data.listError + ". שום דבר לא נמחק.", "err");
       }
     })
-    .catch(function() {
+    .catch(function(e) {
       forceAdminLogout("");
-      if (errEl) errEl.textContent = "";
+      /* A remembered session that could not be checked leaves the password form —
+         but if the SERVER never answered, say so rather than showing a blank form he
+         has no reason to distrust (owner, 2026-09-05). */
+      var em = e && e.message ? String(e.message) : "";
+      var timedOut = em === "timeout" || em.indexOf("aborted") >= 0 || (e && e.name === "AbortError");
+      if (errEl) errEl.textContent = timedOut ? "השרת לא ענה — התחבר שוב." : "";
     });
 }
 
@@ -6692,7 +6726,7 @@ tryRestoreAdminSession();
   /* The same number admin.html shows, because this is the same back office and two
      versions on two pages of one product is a bug report waiting to happen.
      scripts/admin-clients-page.test.js fails if it drifts from admin.html's own. */
-  var ADMIN_UI_VERSION = "4.2";
+  var ADMIN_UI_VERSION = "4.2.1";
 
   var SESSION_KEY = "dw_admin_session";
   var REMEMBER_KEY = "dw_admin_remember";

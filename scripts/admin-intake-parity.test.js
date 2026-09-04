@@ -370,10 +370,10 @@ ok("admin wired to coach 2.3.14", /LIVE_COACH_VERSION = "2\.3\.14"/.test(adminHt
 ok("app coach 2.3.14", /COACH_VERSION = "2\.3\.14"/.test(index));
 ok(
   "admin shows Admin + Coach versions",
-  /Admin 4\.2/.test(adminHtml) &&
+  /Admin 4\.2\.1/.test(adminHtml) &&
     /ver-coach/.test(adminHtml) &&
     /syncAdminVersionLabels/.test(adminHtml) &&
-    /ADMIN_UI_VERSION = "4\.2"/.test(adminHtml)
+    /ADMIN_UI_VERSION = "4\.2\.1"/.test(adminHtml)
 );
 ok(
   "admin intake uses pprog classes 1:1",

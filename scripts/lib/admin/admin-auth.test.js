@@ -60,8 +60,19 @@ ok("loadAthletes checks 401", /loadAthletes[\s\S]{0,900}status === 401/.test(adm
 ok("no logout button in the header", !/onclick="adminLogout\(\)"/.test(adminHtml));
 ok("a 401 still clears the session", /function forceAdminLogout/.test(adminHtml));
 ok("reads token from response header", /X-Admin-Session-Token/.test(adminHtml));
-ok("admin version 4.2", /ADMIN_UI_VERSION = "4\.2"/.test(adminHtml));
+ok("admin version 4.2", /ADMIN_UI_VERSION = "4\.2\.1"/.test(adminHtml));
 
 delete process.env.ADMIN_PASSWORD;
 delete process.env.ADMIN_SESSION_SECRET;
+
+/* --- a login cannot hang for ever (owner, 2026-09-05) ---------------------
+ * He watched "connecting..." sit there with nothing to press. Fifteen seconds, and
+ * the page says what happened instead.
+ * ------------------------------------------------------------------------- */
+ok("the page has a request that times out", /function fetchWithTimeout\(url, opts, ms\)/.test(adminHtml));
+ok("both logins go through it", (adminHtml.match(/fetchWithTimeout\(adminApiUrl\("\/api\/admin-snapshot"\)/g) || []).length === 2);
+ok("fifteen seconds", /\}, 15000\)/.test(adminHtml));
+ok("and it aborts the request rather than leaving it running", /ctl\.abort\(\)/.test(adminHtml));
+ok("the password form says what happened", adminHtml.indexOf("השרת לא ענה תוך 15") >= 0);
+ok("and so does a remembered session that could not be checked", adminHtml.indexOf("השרת לא ענה — התחבר שוב") >= 0);
 console.log("All admin-auth session secret checks passed.");
