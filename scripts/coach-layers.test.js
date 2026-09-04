@@ -111,7 +111,11 @@ const MAX_CHARS = {
      2026-09-03: the studio took the station-to-people rule out of the always-on layer, and the
      individual took the 3-consecutive-day limit out of the competitor layer. Both are now on the
      one path that needs them instead of on every path or none. */
-  "layer2-room-studio": 1800,
+  /* 3400 as of 2026-09-04, from the owner reading the first studio brick. Three rules, and the
+     format one is the load-bearing insight: in a room where everything is stations, the FORMAT is
+     the variety and the progression at once, because the movements are whatever the place owns and
+     the load is self-selected. Studio path only — an individual pays nothing for any of it. */
+  "layer2-room-studio": 3400,
   "layer2-days-individual": 1200,
   /* Conditional: only a studio that bought N sessions a week pays for it. */
   "layer2-session-count": 3200,
@@ -1694,6 +1698,54 @@ function testOneRmGate() {
     /the back squat is the last lift to spend that on/i.test(flat));
 }
 
+
+/* The three studio rules from 2026-09-04. Each one fixes something that was in the first brick for
+   "סטודיו בראשית", not something imagined. */
+function testStudioFormatRules() {
+  const R = require("../lib/coach-layers/layer2-room-studio.js");
+  const flat = R.replace(/\s+/g, " ");
+  /* Two stations sessions in week 1 came back with the same skeleton and different numbers. */
+  ok("the format is named as the variety in a room",
+    /--- IN A ROOM, THE FORMAT \*IS\* THE VARIETY \(HARD\) ---/.test(R) &&
+      /the FORMAT is what makes one session different from another, not the movement list/i.test(
+        flat
+      ));
+  ok("the same format may not appear more than once in two weeks",
+    /THE SAME FORMAT MAY NOT APPEAR MORE THAN ONCE IN TWO WEEKS/.test(flat));
+  ok("changing the numbers is not changing the format",
+    /4 rounds of 40s work \/ 20s rest and 3 rounds of 50s \/ 10s are the same format twice/i.test(
+      flat
+    ));
+  ok("the prior weeks are named as where the used formats are listed",
+    /they name the formats already used: read them and choose one that is not there/i.test(flat));
+  ok("the format is called the room's progression axis too",
+    /This is also the room's progression axis/i.test(flat));
+
+  /* "אימון בן 3 חלקים - קשה למאמן וגם למתאמן הלא מרוכז." */
+  ok("two parts is the studio shape",
+    /--- TWO PARTS IS THE SHAPE \(HARD\) ---/.test(R) &&
+      /A THREE-PART SESSION APPEARS AT MOST ONCE IN TWO WEEKS/.test(flat));
+  ok("the reason is the coach's floor, not a preference",
+    /a session the coach manages instead of coaches/i.test(flat));
+
+  /* A 200 m shuttle inside a 20 m indoor lane. */
+  ok("a short lane is not a running track",
+    /--- A SHORT INDOOR LANE IS NOT A RUNNING TRACK \(HARD\) ---/.test(R) &&
+      /THE TURNS ARE THE COST, NOT THE METRES/.test(flat));
+  ok("the lane is for carries, lunge walks and short sprints",
+    /A 20 m lane is for CARRIES, LUNGE WALKS and SHORT SPRINTS of one or two lengths/.test(flat));
+  ok("accumulating distance in the lane is refused with its arithmetic",
+    /200 m as ten turns of a 20 m lane is twenty changes of direction/i.test(flat));
+  ok("a room with no running distance still gets the stimulus",
+    /take the same stimulus from carries, lunge walks, single-length sprints/i.test(flat));
+
+  /* None of it reaches an individual. */
+  ok("an individual pays nothing for the studio format rules",
+    L.buildLayerPack({ agent: "individual", profile: {} }).text.indexOf(
+      "THE FORMAT *IS* THE VARIETY"
+    ) < 0);
+}
+
 function main() {
   console.log("\n=== Coach knowledge layers ===\n");
   testShape();
@@ -1713,6 +1765,7 @@ function main() {
   testWritingRules();
   testWeekContinuity();
   testOneRmGate();
+  testStudioFormatRules();
   testContinuation();
   testGymnastics();
   testHebrewBoundary();
