@@ -115,7 +115,7 @@ const MAX_CHARS = {
      format one is the load-bearing insight: in a room where everything is stations, the FORMAT is
      the variety and the progression at once, because the movements are whatever the place owns and
      the load is self-selected. Studio path only — an individual pays nothing for any of it. */
-  "layer2-room-studio": 4400,
+  "layer2-room-studio": 4700,
   "layer2-days-individual": 1200,
   /* Conditional: only a studio that bought N sessions a week pays for it. */
   "layer2-session-count": 3200,
@@ -1735,9 +1735,19 @@ function testStudioFormatRules() {
     /This is also the room's progression axis/i.test(flat));
 
   /* "אימון בן 3 חלקים - קשה למאמן וגם למתאמן הלא מרוכז." */
-  ok("two parts is the studio shape",
+  ok("two working parts is the studio shape",
     /--- TWO PARTS IS THE SHAPE \(HARD\) ---/.test(R) &&
-      /A THREE-PART SESSION APPEARS AT MOST ONCE IN TWO WEEKS/.test(flat));
+      /A THREE-WORKING-PART SESSION APPEARS AT MOST ONCE IN TWO WEEKS/.test(flat));
+  /* The coach wrote an explicit warm-up part into all four sessions, which pushed two of them to
+     three parts. Owner: "מאשר חימום לא נספר, לעיתים אולי נתבקש אפילו לא ליצור אותו." The limit was
+     about three WORKING blocks — three explanations and three equipment resets — and a warm-up is
+     not one of those. */
+  ok("a warm-up part does not count toward the limit",
+    /A WARM-UP PART DOES NOT COUNT toward that/.test(flat) &&
+      /Warm-up plus two working parts is the normal shape/.test(flat));
+  ok("a place that runs its own warm-up gets none written",
+    /IF THE INTAKE SAYS THE PLACE RUNS ITS OWN WARM-UP, do not write one at all/.test(flat) &&
+      /let the floor coach do their job/i.test(flat));
   ok("the reason is the coach's floor, not a preference",
     /a session the coach manages instead of coaches/i.test(flat));
 
