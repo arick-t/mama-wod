@@ -330,6 +330,33 @@ function testSameBrickWeekContinuity() {
 /* The coach is told the WARM-UP packet line exists, in its own description of what a fixed-intake
    packet contains — otherwise it only ever meets the line by accident. All three cases are there,
    including the one that holds until the admin module ships the field: no line means write one. */
+/* A percentage needs a number to be a percentage OF. Found 2026-09-04: a competitor who reported
+   no lifts got week 1 in RPE, correctly, and week 2 in "75% 1RM", "80% 1RM Front Squat", "@ 87%" —
+   percentages of a maximum that does not exist. The rule was already in the weightlifting layer,
+   and a rule the model must remember to apply lost to one it applies by habit. So it is a stated
+   fact about the request now, like the deload placement and the 1RM window. */
+function testLoadBasisWhenNoLiftsReported() {
+  const src = fs.readFileSync(PC_PATH, "utf8");
+  const flat = src.replace(/\s+/g, " ");
+  ok("the coach counts the reported lifts",
+    /function reportedLiftCount\(profile\)/.test(src) &&
+      /function loadBasisText\(profile\)/.test(src));
+  ok("with no lifts reported, percentages are forbidden outright",
+    /NO 1RM WAS REPORTED FOR ANY LIFT, so a percentage has nothing to be a percentage of/.test(
+      flat
+    ) && flat.indexOf("Do NOT " + String.fromCharCode(34) + "write %1RM") < 0 &&
+      /write %1RM, and do not write an absolute kilogram figure/.test(flat));
+  ok("an inferred kilogram figure is forbidden too",
+    /do not write an absolute kilogram figure you inferred from nothing/.test(flat));
+  ok("RPE and a rep target are named as the full prescription, not a fallback",
+    /That is a full prescription an/.test(flat) &&
+      /compromise: it is how a lift is loaded before anyone has tested it/.test(flat));
+  ok("the fact reaches the programming prompt",
+    /loadBasisText\(profile\) \+/.test(src));
+  ok("an athlete who DID report a lift gets no such line",
+    /if \(n > 0\) return "";/.test(src));
+}
+
 function testCoachKnowsTheWarmUpField() {
   const src = fs.readFileSync(PC_PATH, "utf8").replace(/\s+/g, " ");
   ok("the packet description names the warm-up line",
@@ -382,6 +409,7 @@ function main() {
   testBothPathsStillInject();
   testBlockLengthIsFourWeeks();
   testClientImprovesRule();
+  testLoadBasisWhenNoLiftsReported();
   testCoachKnowsTheWarmUpField();
   testMidWeekClampIsWeekScoped();
   testSessionCountStudioHasNoCalendar();

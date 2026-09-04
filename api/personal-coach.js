@@ -1264,6 +1264,36 @@ function oneRmTestGateText(blockStartWeek, profile, opts) {
   );
 }
 
+
+/* Percentages need a number to be a percentage of.
+ * Found 2026-09-04: a competitor who reported NO lifts got week 1 in RPE — correct — and week 2 in
+ * "75% 1RM", "80% 1RM Front Squat", "@ 87%". Percentages of a maximum that does not exist, which
+ * the athlete cannot execute. The rule was already in the weightlifting layer; a rule the model
+ * has to remember to apply lost to a rule it applies by habit. So it becomes a stated FACT about
+ * this request, the way the deload placement and the 1RM window are. */
+function reportedLiftCount(profile) {
+  const l = profile && typeof profile.lifts === "object" && profile.lifts ? profile.lifts : {};
+  let n = 0;
+  Object.keys(l).forEach(function (k) {
+    const v = parseFloat(l[k]);
+    if (v > 0) n++;
+  });
+  return n;
+}
+
+function loadBasisText(profile) {
+  const n = reportedLiftCount(profile);
+  if (n > 0) return "";
+  return (
+    "\n\nLOAD BASIS (HARD — a fact about this athlete, not a preference):\n" +
+    "NO 1RM WAS REPORTED FOR ANY LIFT, so a percentage has nothing to be a percentage of. Do NOT " +
+    "write %1RM, and do not write an absolute kilogram figure you inferred from nothing. " +
+    "Prescribe by RPE, by a rep target, or by a described quality — 'build to a heavy triple for " +
+    "today', 'RPE 8', 'a load that lets the position hold'. That is a full prescription and not a " +
+    "compromise: it is how a lift is loaded before anyone has tested it.\n"
+  );
+}
+
 function coachAgentFor(profile) {
   const packet = String((profile && profile.fixedIntakePacket) || "");
   if (/^\s*STUDIO INTAKE COMPLETE/im.test(packet)) return "studio";
@@ -1342,6 +1372,7 @@ function buildSystemWithMemory(profile, action, opts) {
       coachPolicyBlock() +
       buildLayerKnowledgeBlock(profile, opts) +
       oneRmTestGateText(opts && opts.blockStartWeek, profile, opts) +
+      loadBasisText(profile) +
       buildCostCapsRuntimeNote(profile) +
       buildFinishLearningBlock(profile, action) +
       buildExtraSessionsBlock(profile) +
