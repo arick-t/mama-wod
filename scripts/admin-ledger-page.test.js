@@ -526,4 +526,17 @@ ok("every option in the filter carries its colour", (svcFilter.match(/<option va
 ok('"all services" is the neutral one', svcFilter.indexOf('<option value="" style="color:' + V.SERVICE_COLOURS.neutral) >= 0);
 ok("and the closed field wears whatever is chosen", svcFilter.indexOf('id="ledFService" data-led-filter="service" style="color:#B57BE8"') >= 0);
 
+
+ok(
+  "the open day paints its services the same way",
+  V.dayDealsHtml([
+    { id: "a", name: "x", service: "אימון קבוצתי", price: 1 },
+    { id: "b", name: "x", service: "הרצאה", price: 1 },
+  ]).indexOf("color:#B57BE8") >= 0
+);
+ok(
+  "one service, one colour, wherever it is written",
+  V.dayDealsHtml([{ id: "a", name: "x", service: "אימון אישי", price: 1 }]).indexOf(V.serviceColour("אימון אישי")) >= 0
+);
+
 console.log("\nAll admin ledger page checks passed (" + passed + " assertions).");
