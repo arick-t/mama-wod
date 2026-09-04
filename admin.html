@@ -213,19 +213,42 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
   box-shadow:0 0 0 2px rgba(128,121,255,.30)}
 .athlete-tab.is-ledger .tab-mark{font-size:14px;line-height:1;opacity:.95}
 
-/* Right-click a week: copy it, paste it. Fixed to the viewport because it opens where
-   the finger is, and the calendar under it scrolls (owner, 2026-09-04). */
-.week-menu{position:fixed;z-index:120;background:var(--bg-elev);border:1px solid var(--line);
-  border-radius:10px;padding:5px;box-shadow:0 14px 34px rgba(0,0,0,.5);display:flex;
-  flex-direction:column;gap:2px;min-width:180px}
-.week-menu button{appearance:none;background:transparent;border:none;color:var(--text);
-  font:inherit;font-size:13px;text-align:start;padding:8px 10px;border-radius:8px;cursor:pointer}
-.week-menu button:hover{background:rgba(232,69,26,.16)}
-.week-menu .wm-from{color:var(--text-muted);font-size:11px}
+/* Copy and paste, for a week or a day.
+   Scoped under #clientScreen because that screen paints every classless button orange
+   — which is what made this menu look like a warning instead of a choice
+   (owner, 2026-09-04). Quiet panel, one row per action, an icon to read it by. */
+.week-menu{position:fixed;z-index:120;background:var(--bg-card);border:1px solid var(--line);
+  border-radius:12px;padding:6px;box-shadow:0 18px 44px rgba(0,0,0,.55);display:flex;
+  flex-direction:column;gap:2px;min-width:190px}
+.week-menu .wm-title{font-size:11px;font-weight:800;color:var(--text-muted);letter-spacing:.3px;
+  padding:6px 10px 4px}
+#clientScreen .week-menu .wm-item,
+.week-menu .wm-item{appearance:none;background:transparent;border:none;border-radius:9px;
+  color:var(--text);font:inherit;font-size:13.5px;font-weight:600;min-height:38px;
+  padding:8px 10px;cursor:pointer;display:flex;align-items:center;gap:9px;text-align:start;
+  width:100%}
+#clientScreen .week-menu .wm-item:hover,
+.week-menu .wm-item:hover{background:rgba(255,255,255,.06);color:#fff}
+#clientScreen .week-menu .wm-paste:hover,
+.week-menu .wm-paste:hover{background:rgba(76,175,112,.16)}
+.week-menu .wm-ico{width:20px;text-align:center;font-size:14px;color:var(--text-muted)}
+.week-menu .wm-item:hover .wm-ico{color:#fff}
+.week-menu .wm-from{display:block;font-size:11px;font-weight:600;color:var(--text-muted);
+  margin-top:1px}
 .week-menu .wm-hint{color:var(--text-muted);font-size:12px;padding:8px 10px}
 
 /* The blank client's four questions. */
 .blank-form{display:flex;flex-direction:column;gap:10px}
+/**
+ * hidden means hidden — everywhere on this page.
+ *
+ * The `hidden` attribute is only display:none in the browser's own sheet, so ANY rule
+ * of ours with a display beats it. There WAS a rule saying this, but a scoping pass
+ * put "#clientScreen" in front of the comment above it, which turned the selector into
+ * "#clientScreen [hidden]" — so it only held inside the client screen, and a row the
+ * code had hidden was showing in the blank client's form (owner, 2026-09-04).
+ */
+[hidden]{display:none!important}
 .blank-row{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:center;font-size:13px}
 .blank-row input,.blank-row select{background:var(--bg);border:1px solid var(--line);border-radius:9px;
   color:var(--text);padding:9px 11px;font:inherit;font-size:13px;width:100%}
@@ -7388,6 +7411,74 @@ tryRestoreAdminSession();
     document.addEventListener("keydown", function (ev) {
       if (ev.key === "Escape") closeWeekMenu();
     });
+
+    /* A phone has no right button, so a long press is one. Cancelled by a scroll or by
+       letting go early, and the tap that follows it is swallowed so the menu does not
+       open and close in the same gesture (owner, 2026-09-04). */
+    var pressTimer = null;
+    var pressAt = null;
+    var openedByPress = 0;
+    function cancelPress() {
+      if (pressTimer) clearTimeout(pressTimer);
+      pressTimer = null;
+      pressAt = null;
+    }
+    document.addEventListener(
+      "touchstart",
+      function (ev) {
+        var host = el("adminDays");
+        if (!host || !S.program || !ev.target || !ev.target.closest) return;
+        var touch = (ev.touches && ev.touches[0]) || null;
+        if (!touch) return;
+        var cube = ev.target.closest("[data-week]");
+        var cell = ev.target.closest("[data-day][data-wi]");
+        var onCube = cube && host.contains(cube);
+        var onCell = cell && host.contains(cell);
+        if (!onCube && !onCell) return;
+        pressAt = { x: touch.clientX, y: touch.clientY };
+        cancelPressTimerOnly();
+        pressTimer = setTimeout(function () {
+          pressTimer = null;
+          openedByPress = Date.now();
+          if (onCube) {
+            openWeekMenu(parseInt(cube.getAttribute("data-week"), 10) || 0, pressAt.x, pressAt.y);
+          } else {
+            var dayKey = cell.getAttribute("data-day") || "";
+            if (!dayKey || dayKey === "general") return;
+            openDayMenu((parseInt(cell.getAttribute("data-wi"), 10) || 0) + 1, dayKey, pressAt.x, pressAt.y);
+          }
+        }, 500);
+      },
+      { passive: true }
+    );
+    function cancelPressTimerOnly() {
+      if (pressTimer) clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+    document.addEventListener(
+      "touchmove",
+      function (ev) {
+        var touch = (ev.touches && ev.touches[0]) || null;
+        if (!pressAt || !touch) return cancelPress();
+        if (Math.abs(touch.clientX - pressAt.x) > 10 || Math.abs(touch.clientY - pressAt.y) > 10) {
+          cancelPress();
+        }
+      },
+      { passive: true }
+    );
+    document.addEventListener("touchend", cancelPress, { passive: true });
+    document.addEventListener("touchcancel", cancelPress, { passive: true });
+    /* The click the phone sends after a long press must not close what it opened. */
+    document.addEventListener(
+      "click",
+      function (ev) {
+        if (openedByPress && Date.now() - openedByPress < 700) {
+          ev.stopPropagation();
+          openedByPress = 0;
+        }
+      },
+      true
+    );
   }
 
   function renderAdminDays() {
@@ -8412,10 +8503,13 @@ tryRestoreAdminSession();
     if (!m) return;
     var canPaste = !!(weekClip && weekClip.programId === (S.program && S.program.programId));
     m.innerHTML =
-      '<button type="button" data-week-copy="' + weekNum + '">העתק שבוע ' + weekNum + "</button>" +
+      '<div class="wm-title">שבוע ' + weekNum + "</div>" +
+      '<button type="button" class="wm-item" data-week-copy="' + weekNum + '">' +
+      '<span class="wm-ico" aria-hidden="true">⧉</span><span>העתק שבוע</span></button>' +
       (canPaste
-        ? '<button type="button" data-week-paste="' + weekNum + '">הדבק לשבוע ' + weekNum +
-          ' <span class="wm-from">(משבוע ' + weekClip.week + ")</span></button>"
+        ? '<button type="button" class="wm-item wm-paste" data-week-paste="' + weekNum + '">' +
+          '<span class="wm-ico" aria-hidden="true">⤵</span><span>הדבק כאן' +
+          '<span class="wm-from">משבוע ' + weekClip.week + "</span></span></button>"
         : '<span class="wm-hint">אין שבוע מועתק</span>');
     m.hidden = false;
     placeMenuAt(m, x, y);
@@ -8441,10 +8535,13 @@ tryRestoreAdminSession();
     var canPaste = !!(dayClip && dayClip.programId === (S.program && S.program.programId));
     var here = wi + ":" + dayKey;
     m.innerHTML =
-      '<button type="button" data-day-copy="' + here + '">העתק יום · ' + dayMenuLabel(wi, dayKey) + "</button>" +
+      '<div class="wm-title">' + dayMenuLabel(wi, dayKey) + "</div>" +
+      '<button type="button" class="wm-item" data-day-copy="' + here + '">' +
+      '<span class="wm-ico" aria-hidden="true">⧉</span><span>העתק יום</span></button>' +
       (canPaste
-        ? '<button type="button" data-day-paste="' + here + '">הדבק ליום הזה' +
-          ' <span class="wm-from">(מ־' + dayMenuLabel(dayClip.week, dayClip.day) + ")</span></button>"
+        ? '<button type="button" class="wm-item wm-paste" data-day-paste="' + here + '">' +
+          '<span class="wm-ico" aria-hidden="true">⤵</span><span>הדבק כאן' +
+          '<span class="wm-from">' + dayMenuLabel(dayClip.week, dayClip.day) + "</span></span></button>"
         : '<span class="wm-hint">אין יום מועתק</span>');
     m.hidden = false;
     placeMenuAt(m, x, y);

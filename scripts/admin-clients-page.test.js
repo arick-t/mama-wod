@@ -1039,4 +1039,31 @@ ok("and appears when it is chosen", /function syncBlankMode\(\)[\s\S]{0,200}row\
 ok("both travel with the create", /scheduleMode: String\(\(document\.getElementById\("blankMode"\)/.test(page) && /sessionsPerWeek: \(document\.getElementById\("blankSessions"\)/.test(page));
 ok("and reach the server", /scheduleMode: f\.scheduleMode,\s*\n\s*sessionsPerWeek: f\.sessionsPerWeek,/.test(screen));
 
+
+/* --- hidden means hidden (owner, 2026-09-04) ------------------------------
+ * The rule that says so had been scoped by accident: a scoping pass put
+ * "#clientScreen" in front of the COMMENT above it, and the selector became
+ * "#clientScreen [hidden]". Everything outside the client screen was left with the
+ * browser's own rule, which any of ours with a display beats — so a row the code had
+ * hidden was on screen in the blank client's form.
+ * ------------------------------------------------------------------------- */
+
+ok("the page has an unscoped hidden rule", /\n\[hidden\]\{display:none!important\}/.test(page));
+ok("and it sits outside every media block and every scope", page.indexOf("\n[hidden]{display:none!important}") < page.indexOf("@media"));
+ok("the sessions row is hidden until it is the answer", /id="blankSessionsRow" hidden/.test(page));
+
+
+/* --- the menu on a phone, and what it looks like (owner, 2026-09-04) ------ */
+
+ok("a long press opens it where a right-click would", /addEventListener\(\s*\n?\s*"touchstart"/.test(screen));
+ok("half a second, not a tap", /\}, 500\);/.test(screen));
+ok("a scroll cancels it", /addEventListener\(\s*\n?\s*"touchmove"[\s\S]{0,400}cancelPress\(\)/.test(screen));
+ok("and the tap that follows does not close what it opened", /openedByPress && Date\.now\(\) - openedByPress < 700/.test(screen));
+
+ok("the menu items carry a class", /class="wm-item"/.test(screen));
+ok("so the client screen's orange button rule lets go", /#clientScreen \.week-menu \.wm-item,/.test(page));
+ok("the panel is a card, not a warning", /\.week-menu\{position:fixed[^}]*background:var\(--bg-card\)/.test(page));
+ok("each action has an icon to read it by", /class="wm-ico"/.test(screen));
+ok("and the menu says what it is acting on", /class="wm-title"/.test(screen));
+
 console.log("All admin clients page checks passed.");
