@@ -94,7 +94,13 @@ const MAX_CHARS = {
      an athlete with a tested 160 kg back squat. The layer now reads the athlete's own description
      of the setup instead of the single tick — and, once the admin module shipped the fields, at the
      Primary / Also trains / LOAD lines by name, including the case where no days are given. */
-  "layer2-individual": 4500,
+  /* 5500 as of 2026-09-04. The 1RM gate: week 4 of a real brick tested a 100% back squat single
+     and put 45 heavy deadlifts in the same session, and nobody had asked for a test — the block
+     call invented a "Performance Testing" theme weeks earlier and the week fill obeyed it. Owner:
+     "1RM זה מבחן שלא צריך לעשות אותו בטווחי זמן שמישהו זוכר בכלל כשהמטרה שלך היא רק להתאמן."
+     The two lines that used to grant a soft permission ("test a single only occasionally") now
+     point at the computed gate instead of reading as licence. */
+  "layer2-individual": 5500,
   /* 3200 as of 2026-09-03. Started at 1220 as four continuity bullets. The owner then reset its
      priority — "חשוב מאוד שלא יהיו 2 לבנות זהות אחרת אין התקדמות לעולם" — so not-repeating became
      the headline with the four progression axes under it, and a studio section was added because
@@ -1645,6 +1651,40 @@ function testWeekContinuity() {
     /WHERE THEY ARE NOT GIVEN, do not invent what came before/.test(flat));
 }
 
+
+/* The 1RM gate, 2026-09-04. Cadence is the owner's: a general individual tests a major lift once
+   every six bricks and never before the third; a declared competitor every four, from the third.
+   No exceptions. The layer states the reasoning; whether THIS brick may test is a computed fact in
+   the request, so the coach never has to remember when a lift was last tested. */
+function testOneRmGate() {
+  const I2 = require("../lib/coach-layers/layer2-individual.js");
+  const flat = I2.replace(/\s+/g, " ");
+  ok("testing a 1RM is stated as rare and HARD",
+    /--- TESTING A 1RM IS RARE \(HARD\) ---/.test(I2));
+  ok("a max is called a test, not training",
+    /A one-rep max is a TEST, not training/.test(I2));
+  ok("permission comes from the request, never from the coach",
+    /Whether this brick may carry one is a fact stated in the request/i.test(flat) &&
+      /You never decide to test/i.test(flat));
+  ok("a week theme is not permission",
+    /you never infer permission from a week theme/i.test(flat),
+    "the exact route the failure took is not closed");
+  ok("the cadence is written down with no exceptions",
+    /once every SIX bricks and never before the third/i.test(flat) &&
+      /a declared competitor once every four/i.test(flat) &&
+      /NO EXCEPTIONS/.test(I2));
+  ok("the owner's reason is kept, not just the number",
+    /does not need a number at intervals they would even remember/i.test(flat));
+  ok("heavy triples and percentage work are explicitly not tests",
+    /Heavy triples, a 5RM, ascending sets and percentage work are not tests/i.test(flat));
+  /* Both soft permissions rewritten — either one alone reads as licence. */
+  ok("no soft permission to test a single survives",
+    !/test a single only/i.test(I2) && !/more often than a max back squat/i.test(I2),
+    "a line still reads as permission to test");
+  ok("the back squat is named the last lift to spend a test on",
+    /the back squat is the last lift to spend that on/i.test(flat));
+}
+
 function main() {
   console.log("\n=== Coach knowledge layers ===\n");
   testShape();
@@ -1663,6 +1703,7 @@ function main() {
   testBriefCoverage();
   testWritingRules();
   testWeekContinuity();
+  testOneRmGate();
   testContinuation();
   testGymnastics();
   testHebrewBoundary();

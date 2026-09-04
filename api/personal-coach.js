@@ -1146,6 +1146,65 @@ function buildAthleteMemoryBlock(profile) {
    a studio packet is produced by the admin module, so detection keys off the labelled lines that
    module confirmed it emits. Anything unrecognised is an individual — the studio layers speak about
    a ROOM, and handing them to one athlete is worse than the reverse. */
+
+/* Which brick this is, counted from the absolute week the block starts on. Four weeks to a brick,
+ * so weeks 1-4 are brick 1, weeks 5-8 brick 2, weeks 9-12 brick 3. Returns 0 when unknown. */
+function brickIndexFromStartWeek(blockStartWeek) {
+  const w = parseInt(blockStartWeek, 10);
+  if (!(w >= 1)) return 0;
+  return Math.floor((w - 1) / 4) + 1;
+}
+
+/* Is a true 1RM attempt permitted in this brick?
+ * General individual: the window opens at brick 3 and returns every 6 bricks (3, 9, 15 …).
+ * Declared competitor: opens at brick 3 and returns every 4 (3, 7, 11 …).
+ * Unknown brick index means NO — a test we cannot date is a test we do not run. */
+function oneRmWindowOpen(blockStartWeek, competitor) {
+  const bi = brickIndexFromStartWeek(blockStartWeek);
+  if (bi < 3) return false;
+  const every = competitor ? 4 : 6;
+  return (bi - 3) % every === 0;
+}
+
+function oneRmTestGateText(blockStartWeek, profile) {
+  const bi = brickIndexFromStartWeek(blockStartWeek);
+  const competitor = !!(profile && profile.competitor === true);
+  const open = oneRmWindowOpen(blockStartWeek, competitor);
+  const head =
+    "\n\n1RM TESTING (HARD — this is a fact about this brick, not a judgement call):\n";
+  const what =
+    "A 1RM TEST means a true single at or near maximum. Heavy triples, a 5RM, ascending sets and " +
+    "percentage work are NOT tests and are always available.\n";
+  if (!open) {
+    return (
+      head +
+      what +
+      (bi
+        ? "This is brick " + bi + ". "
+        : "The brick number was not sent, so it cannot be established that a test is due. ") +
+      "NO 1RM TEST IS PERMITTED IN THIS BRICK, for any movement, with NO EXCEPTIONS. " +
+      "Do not write a max single, do not build a week around testing, and do not name a week " +
+      "'testing' or 'benchmark' — inventing a test nobody asked for is the failure this line " +
+      "exists to stop. Program to percentages of the reported lifts instead.\n"
+    );
+  }
+  return (
+    head +
+    what +
+    "This is brick " +
+    bi +
+    ", which IS a testing window for this athlete (" +
+    (competitor ? "declared competitor: every 4 bricks" : "general athlete: every 6 bricks") +
+    ", never before brick 3).\n" +
+    "- ONE MAJOR LIFT PER SESSION, on its own day. Never two maximal efforts in one session.\n" +
+    "- THE TEST IS THE SESSION. The day carrying a max single carries no heavy volume of a second " +
+    "big lift and no high-volume gymnastics. A 100% single earns the whole day.\n" +
+    "- The back squat is the most expensive lift to test and the least worth testing; prefer the " +
+    "front squat where the athlete's goal allows it.\n" +
+    "- Say in the session that it is a test, and give the athlete a target from their reported lift.\n"
+  );
+}
+
 function coachAgentFor(profile) {
   const packet = String((profile && profile.fixedIntakePacket) || "");
   if (/^\s*STUDIO INTAKE COMPLETE/im.test(packet)) return "studio";
@@ -1221,6 +1280,7 @@ function buildSystemWithMemory(profile, action, opts) {
       LEGAL_SAFETY_DIRECTIVE +
       coachPolicyBlock() +
       buildLayerKnowledgeBlock(profile, opts) +
+      oneRmTestGateText(opts && opts.blockStartWeek, profile) +
       buildCostCapsRuntimeNote(profile) +
       buildFinishLearningBlock(profile, action) +
       buildExtraSessionsBlock(profile) +

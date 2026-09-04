@@ -213,6 +213,32 @@ function testClientImprovesRule() {
 /* POL-029 widened from block-to-block to week-to-week inside a brick, and the data half that makes
    it possible: the week-fill prompt now carries a compact movement inventory of the earlier weeks.
    Both halves asserted, because either alone does nothing. */
+/* The computed half of the 1RM gate. The cadence is arithmetic on blockStartWeek, so it needs no
+   memory of when a lift was last tested — and an unknown brick number must read as NO, because a
+   test we cannot date is a test we do not run. */
+function testOneRmGateIsComputed() {
+  const src = fs.readFileSync(PC_PATH, "utf8");
+  ok("the brick index is derived from the absolute start week",
+    /function brickIndexFromStartWeek\(blockStartWeek\)/.test(src));
+  ok("the window cadence is in code, not left to the model",
+    /function oneRmWindowOpen\(blockStartWeek, competitor\)/.test(src) &&
+      /const every = competitor \? 4 : 6;/.test(src) &&
+      /if \(bi < 3\) return false;/.test(src));
+  ok("an unknown brick number forbids testing",
+    /a test we cannot date is a test we do not run/i.test(src.replace(/\s+/g, " ")));
+  ok("the gate reaches the programming prompt",
+    /oneRmTestGateText\(opts && opts\.blockStartWeek, profile\)/.test(src));
+  ok("a closed window says no exceptions and bans a testing week theme",
+    /NO 1RM TEST IS PERMITTED IN THIS BRICK, for any movement, with NO EXCEPTIONS/.test(src) &&
+      /do not name a week/.test(src));
+  ok("an open window still forbids two maximal efforts in one session",
+    /ONE MAJOR LIFT PER SESSION, on its own day\. Never two maximal efforts in one session/.test(
+      src
+    ));
+  ok("the test day carries nothing else maximal",
+    /carries no heavy volume of a second/.test(src) && /A 100% single earns the whole day/.test(src));
+}
+
 function testSameBrickWeekContinuity() {
   const src = fs.readFileSync(PC_PATH, "utf8");
   const pol = String(COACH_POLICY).replace(/\s+/g, " ");
@@ -279,6 +305,7 @@ function main() {
   testClientImprovesRule();
   testMidWeekClampIsWeekScoped();
   testSameBrickWeekContinuity();
+  testOneRmGateIsComputed();
   console.log("\nPassed:", passed);
   if (process.exitCode) {
     console.error("\nPOLICY INJECTION CHECKS FAILED");
