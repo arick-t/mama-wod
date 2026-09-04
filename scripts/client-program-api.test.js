@@ -1057,6 +1057,76 @@ async function main() {
   });
   ok("nor onto a week that is not there", noWeek.status === 400);
 
+
+  /* --- a day copied onto another day (owner, 2026-09-04) ----------------- */
+
+  const cd = await H.owner({ action: "create", clientKind: "blank", clientName: "יום", blockStart: "2026-09-06" });
+  const cdId = cd.body.program.programId;
+  const cdWrote = await H.owner({
+    action: "save",
+    programId: cdId,
+    expectedVersion: cd.body.program.version,
+    program: {
+      weeks: (function () {
+        const w = JSON.parse(JSON.stringify(cd.body.program.weeks));
+        w[0].days.mon.parts = [{ id: "m1", title: "Part A", lines: ["10 min AMRAP"] }];
+        w[0].overview = [{ day: "mon", focus: "Engine" }, { day: "wed", focus: "Rest" }];
+        return w;
+      })(),
+    },
+  });
+  ok("a day is written", cdWrote.status === 200);
+
+  const dayCopied = await H.owner({
+    action: "copy_day",
+    programId: cdId,
+    expectedVersion: cdWrote.body.program.version,
+    fromWeek: 1,
+    fromDay: "mon",
+    toWeek: 2,
+    toDay: "thu",
+  });
+  ok("a day can be copied onto another", dayCopied.status === 200 && dayCopied.body.copiedParts === 1);
+  const afterDay = dayCopied.body.program;
+  ok("the session arrived", afterDay.weeks[1].days.thu.parts[0].lines[0] === "10 min AMRAP");
+  ok("with an id of its own", afterDay.weeks[1].days.thu.parts[0].id !== afterDay.weeks[0].days.mon.parts[0].id);
+  ok("the day it came from is untouched", afterDay.weeks[0].days.mon.parts.length === 1);
+  ok(
+    "and the focus line travelled with it",
+    (afterDay.weeks[1].overview || []).filter(function (o) { return o.day === "thu"; })[0].focus === "Engine"
+  );
+
+  /* A rest day is a rest day because of that focus line — so copying one must move it. */
+  const restCopied = await H.owner({
+    action: "copy_day",
+    programId: cdId,
+    expectedVersion: afterDay.version,
+    fromWeek: 1,
+    fromDay: "wed",
+    toWeek: 1,
+    toDay: "sun",
+  });
+  ok(
+    "copying a rest day makes the target a rest day",
+    (restCopied.body.program.weeks[0].overview || []).filter(function (o) { return o.day === "sun"; })[0].focus === "Rest"
+  );
+  ok("and empties it", restCopied.body.program.weeks[0].days.sun.parts.length === 0);
+
+  const sameDay = await H.owner({
+    action: "copy_day",
+    programId: cdId,
+    expectedVersion: restCopied.body.program.version,
+    fromWeek: 1, fromDay: "mon", toWeek: 1, toDay: "mon",
+  });
+  ok("a day cannot be copied onto itself", sameDay.status === 400 && sameDay.body.code === "SAME_DAY");
+  const badDay = await H.owner({
+    action: "copy_day",
+    programId: cdId,
+    expectedVersion: restCopied.body.program.version,
+    fromWeek: 1, fromDay: "mon", toWeek: 1, toDay: "funday",
+  });
+  ok("and not onto something that is not a weekday", badDay.status === 400 && badDay.body.code === "BAD_DAY");
+
   /* --- the configuration report goes to the OWNER, not to a client ---------
    * It first shipped attached to the claim response - a client's reply - because the
    * edit matched the wrong "termsVersion" line, and the library-level test could not

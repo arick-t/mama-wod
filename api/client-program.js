@@ -605,6 +605,27 @@ async function ownerHandler(req, res, body) {
     });
   }
 
+  /* One day the owner wrote, copied onto another day — sessions and focus together. */
+  if (action === "copy_day") {
+    const result = await store.copyDay(
+      programId,
+      Number(body.expectedVersion),
+      { week: body.fromWeek, day: body.fromDay },
+      { week: body.toWeek, day: body.toDay }
+    );
+    if (!result.ok) {
+      const status =
+        result.code === "VERSION_CONFLICT" ? 409 : result.code === "NOT_FOUND" ? 404 : 400;
+      return res.status(status).json(Object.assign({ ok: false }, result));
+    }
+    return res.status(200).json({
+      ok: true,
+      program: result.program,
+      version: result.version,
+      copiedParts: result.copiedParts,
+    });
+  }
+
   /* Send a block to the client. Block ONE goes through this too: creating a client
    * hands them nothing until the owner presses it. */
   if (action === "approve_block") {

@@ -7339,11 +7339,22 @@ tryRestoreAdminSession();
     window._adminWeekMenuBound = true;
     document.addEventListener("contextmenu", function (ev) {
       var host = el("adminDays");
-      var cube = ev.target && ev.target.closest ? ev.target.closest("[data-week]") : null;
-      if (!host || !cube || !host.contains(cube)) return;
-      if (!S.program) return;
-      ev.preventDefault();
-      openWeekMenu(parseInt(cube.getAttribute("data-week"), 10) || 0, ev.clientX, ev.clientY);
+      if (!host || !S.program || !ev.target || !ev.target.closest) return;
+      var cube = ev.target.closest("[data-week]");
+      if (cube && host.contains(cube)) {
+        ev.preventDefault();
+        openWeekMenu(parseInt(cube.getAttribute("data-week"), 10) || 0, ev.clientX, ev.clientY);
+        return;
+      }
+      /* A day cell. Its week index is 0-based in the display library, and every week
+         number the owner sees is 1-based, so it is converted once, here. */
+      var cell = ev.target.closest("[data-day][data-wi]");
+      if (cell && host.contains(cell)) {
+        var dayKey = cell.getAttribute("data-day") || "";
+        if (!dayKey || dayKey === "general") return;
+        ev.preventDefault();
+        openDayMenu((parseInt(cell.getAttribute("data-wi"), 10) || 0) + 1, dayKey, ev.clientX, ev.clientY);
+      }
     });
     document.addEventListener("click", function (ev) {
       var m = el("weekMenu");
@@ -8205,6 +8216,47 @@ tryRestoreAdminSession();
       });
       return;
     }
+    var dCopy = t.closest && t.closest("[data-day-copy]");
+    if (dCopy) {
+      var fromBits = String(dCopy.getAttribute("data-day-copy") || "").split(":");
+      dayClip = {
+        programId: S.program && S.program.programId,
+        week: parseInt(fromBits[0], 10) || 0,
+        day: fromBits[1] || "",
+      };
+      closeWeekMenu();
+      banner("good", "היום הועתק — לחץ ימני על יום אחר כדי להדביק.");
+      return;
+    }
+    var dPaste = t.closest && t.closest("[data-day-paste]");
+    if (dPaste) {
+      var toBits = String(dPaste.getAttribute("data-day-paste") || "").split(":");
+      var toWeek = parseInt(toBits[0], 10) || 0;
+      var toDay = toBits[1] || "";
+      closeWeekMenu();
+      if (!dayClip || !toWeek || !toDay) return;
+      if (dayClip.week === toWeek && dayClip.day === toDay) return;
+      if (!window.confirm("להדביק את היום הזה? מה שכתוב בו יידרס.")) return;
+      api({
+        action: "copy_day",
+        programId: S.program.programId,
+        expectedVersion: S.program.version,
+        fromWeek: dayClip.week,
+        fromDay: dayClip.day,
+        toWeek: toWeek,
+        toDay: toDay,
+      }).then(function (r) {
+        if (r.status === 409) { banner("warn", "מישהו שמר בינתיים. פותח מחדש."); openClient(S.program.programId); return; }
+        if (r.status !== 200 || !r.body.ok) {
+          banner("bad", (r.body && r.body.error) || "לא הצלחתי להדביק.");
+          return;
+        }
+        S.program = r.body.program;
+        banner("good", "היום הודבק — " + r.body.copiedParts + " חלקים.");
+        renderDetail();
+      });
+      return;
+    }
     if (g("data-nextblock")) { startNextBlock(); return; }
     if (g("data-approve")) { approveBlock(parseInt(g("data-approve"), 10) || 0); return; }
 
@@ -8323,6 +8375,9 @@ tryRestoreAdminSession();
   /* The week on the clipboard, as {programId, week}. Kept in memory only: it is a
      gesture, not a document, and it should not survive a reload. */
   var weekClip = null;
+  /* And the day, as {programId, week, day} — the same gesture, one square smaller
+     (owner, 2026-09-04). */
+  var dayClip = null;
 
   function closeWeekMenu() {
     var m = el("weekMenu");
@@ -8340,7 +8395,40 @@ tryRestoreAdminSession();
           ' <span class="wm-from">(משבוע ' + weekClip.week + ")</span></button>"
         : '<span class="wm-hint">אין שבוע מועתק</span>');
     m.hidden = false;
-    /* Measured from the page, and kept inside it. */
+    placeMenuAt(m, x, y);
+  }
+
+  /** Sun…Sat in his own words, for the menu on a day. */
+  function dayMenuLabel(wi, dayKey) {
+    var D = pprogLib();
+    var name = (D && D.DAY_LABELS && D.DAY_LABELS[dayKey]) || String(dayKey || "").toUpperCase();
+    return name + " · שבוע " + wi;
+  }
+
+  /**
+   * Right-click a day: copy it, or paste the one on the clipboard onto it.
+   *
+   * The same gesture as a week, one square smaller. A day carries its sessions AND its
+   * focus line, which is where "Rest" is written — so a rest day copied onto a training
+   * day makes it a rest day (owner, 2026-09-04).
+   */
+  function openDayMenu(wi, dayKey, x, y) {
+    var m = el("weekMenu");
+    if (!m) return;
+    var canPaste = !!(dayClip && dayClip.programId === (S.program && S.program.programId));
+    var here = wi + ":" + dayKey;
+    m.innerHTML =
+      '<button type="button" data-day-copy="' + here + '">העתק יום · ' + dayMenuLabel(wi, dayKey) + "</button>" +
+      (canPaste
+        ? '<button type="button" data-day-paste="' + here + '">הדבק ליום הזה' +
+          ' <span class="wm-from">(מ־' + dayMenuLabel(dayClip.week, dayClip.day) + ")</span></button>"
+        : '<span class="wm-hint">אין יום מועתק</span>');
+    m.hidden = false;
+    placeMenuAt(m, x, y);
+  }
+
+  /** Both menus open where the finger is, and stay inside the window. */
+  function placeMenuAt(m, x, y) {
     var w = m.offsetWidth || 190;
     var h = m.offsetHeight || 80;
     var left = Math.min(Math.max(0, x), Math.max(0, window.innerWidth - w - 8));

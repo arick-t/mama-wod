@@ -144,6 +144,8 @@ const ACTIONS_ALLOWED = [
   /* A week the owner wrote, moved onto another week — one write, and it creates no
      content of its own (owner, 2026-09-04). */
   "copy_week",
+  /* And one day onto another day — the same gesture, one square smaller. */
+  "copy_day",
   "renewal_check",
   /* The athlete list, for the other half of the shared strip. It reads; it makes
      nothing. */
@@ -1009,5 +1011,20 @@ ok("a blank client's next month asks again", /כמה שבועות בלבנה ה�
 /* The fence, from the page's side: no other form has this field. */
 ok("the studio intake has no block-length field", !/id="inBlockWeeks"/.test(page));
 ok("nor does the individual's", !/id="inABlockWeeks"/.test(page));
+
+
+/* --- copy a day, paste a day (owner, 2026-09-04) -------------------------- */
+
+ok("right-clicking a day opens a menu too", /var cell = ev\.target\.closest\("\[data-day\]\[data-wi\]"\);/.test(screen));
+ok("the week rail still opens its own", /var cube = ev\.target\.closest\("\[data-week\]"\);/.test(screen));
+ok("a general column is not a day", /if \(!dayKey \|\| dayKey === "general"\) return;/.test(screen));
+ok("the display's 0-based week becomes the number he sees", /\(parseInt\(cell\.getAttribute\("data-wi"\), 10\) \|\| 0\) \+ 1/.test(screen));
+ok("the menu offers to copy the day", /data-day-copy=/.test(screen));
+ok("and to paste it, only when one is on the clipboard", /canPaste[\s\S]{0,240}data-day-paste=/.test(screen));
+ok("the clipboard belongs to the client it was copied from", /dayClip\.programId === \(S\.program && S\.program\.programId\)/.test(screen));
+ok("pasting warns before it overwrites", /להדביק את היום הזה\? מה שכתוב בו יידרס/.test(screen));
+ok("and goes through one server write", /action: "copy_day"/.test(screen));
+ok("a stale paste reopens the client rather than overwriting", /action: "copy_day"[\s\S]{0,700}openClient\(S\.program\.programId\)/.test(screen));
+ok("both menus are placed by the same code", /function placeMenuAt\(m, x, y\)/.test(screen));
 
 console.log("All admin clients page checks passed.");
