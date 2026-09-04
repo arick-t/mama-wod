@@ -159,16 +159,24 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .led-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
 /* Small enough that a whole month fits without scrolling (owner, 2026-09-03). */
 .led-day{position:relative;appearance:none;border:1px solid var(--line);background:var(--bg-elev);
-  border-radius:9px;min-height:52px;padding:5px 7px;cursor:pointer;color:var(--text);
-  display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+  border-radius:9px;min-height:66px;padding:5px 7px;cursor:pointer;color:var(--text);
+  display:flex;flex-direction:column;align-items:stretch;gap:1px;overflow:hidden}
+.led-day .led-num{align-self:flex-start}
+/* Who he trained, in the order he wrote them. Truncated rather than wrapped: a square
+   that grows with its content breaks the month into a scroll (owner, 2026-09-04). */
+.led-line{display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--text-muted);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;text-align:start}
+.led-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.led-more{font-size:11px;color:var(--text-muted);line-height:1;text-align:start}
 .led-day:hover{border-color:var(--brand)}
 .led-blank{border:none;background:transparent;cursor:default;min-height:0}
 .led-num{font-size:12px;font-weight:700;opacity:.8}
 .led-sum{font-size:12px;font-weight:800;color:#4CAF70}
-/* Today is a hint, not a selection. Wearing the same orange ring as the open day made
-   the 3rd look permanently chosen (owner, 2026-09-03). */
+/* Today is a hint, not a selection — and not a colour either: an orange number read
+   as "this day is marked" two days running (owner, 2026-09-04). It is a dot. */
 .led-day.is-today{border-color:#3a3a3a}
-.led-day.is-today .led-num{color:var(--brand)}
+.led-day.is-today .led-num::after{content:"";display:inline-block;width:4px;height:4px;
+  border-radius:50%;background:var(--text-muted);margin-inline-start:4px;vertical-align:middle}
 .led-day.is-open{outline:2px solid var(--brand);outline-offset:-2px;background:rgba(232,69,26,.10)}
 .led-day.has-deals{background:rgba(76,175,112,.07)}
 .led-plus{position:absolute;inset-inline-end:6px;bottom:4px;font-size:14px;font-weight:800;
@@ -214,7 +222,8 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .led-manual .led-pickpanel{inset-inline-start:0}
 .led-daybox{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--bg-card)}
 .led-daybox h3{margin:0;font-size:14px}
-.led-daybox-head{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+/* Room for the close button, which was sitting on top of the date (owner, 2026-09-04). */
+.led-daybox-head{display:flex;align-items:baseline;gap:10px;margin-bottom:8px;padding-inline-start:24px}
 .led-daysum{font-size:13px;font-weight:800;color:#4CAF70}
 /* The plus lives in the corner of the open day, and it is the only way in. */
 .led-daybox-foot{display:flex;justify-content:flex-start;margin-top:10px}
@@ -6541,6 +6550,8 @@ tryRestoreAdminSession();
     wi: 0, day: "sun", calMode: "month", selected: [], edit: null, editStatus: null,
     /* true = the new-client wizard owns the screen and the list is out of the way. */
     adding: false,
+    /* The row being duplicated, until it is saved or cancelled. */
+    copying: null,
   };
 
   var DAY_KEYS_LOCAL = (window.PprogDisplay && window.PprogDisplay.DAY_KEYS) ||
@@ -9103,6 +9114,9 @@ tryRestoreAdminSession();
     cal.innerHTML = V.calendarHtml({
       month: LS.month,
       totalsByDay: data.totalsByDay,
+      /* Who he trained that day, in the order he entered them. */
+      dealsByDay: dealsByDay(),
+      colours: LS.colours,
       today: todayIso(),
       selected: LS.day,
     });
@@ -9120,6 +9134,22 @@ tryRestoreAdminSession();
       price: m.price || "",
       date: m.date || todayIso(),
     });
+  }
+
+  /** The day → its rows, in the order they were written. */
+  function dealsByDay() {
+    var out = {};
+    var all = (LS.data && LS.data.deals) || [];
+    all
+      .slice()
+      .sort(function (a, b) {
+        return String(a.createdAt) < String(b.createdAt) ? -1 : 1;
+      })
+      .forEach(function (d) {
+        if (!out[d.day]) out[d.day] = [];
+        out[d.day].push({ name: d.name, price: d.price });
+      });
+    return out;
   }
 
   /** The names behind the autocomplete, and what each one is known for. */
@@ -9183,6 +9213,18 @@ tryRestoreAdminSession();
     });
   }
 
+  /**
+   * A place list that is out of date.
+   *
+   * A place used for the first time only reaches the favourites box when the box asks
+   * again — which it did not, so a new place added from the box at the foot of the page
+   * never appeared there (owner, 2026-09-04).
+   */
+  function forgetPlaces() {
+    LS.places = [];
+    if (LS.favOpen) loadPlaces();
+  }
+
   /* Loaded once when he opens the box, and again after an edit — never on a timer. */
   function loadPlaces() {
     return api({ action: "places" }).then(function (r) {
@@ -9220,9 +9262,18 @@ tryRestoreAdminSession();
       : null;
     var editor =
       LS.adding || editing
-        ? V.editorHtml({
-            deal: editing,
-          })
+        ? V.editorHtml(
+            editing
+              ? { deal: editing }
+              : LS.copying
+              ? {
+                  name: LS.copying.name,
+                  service: LS.copying.service,
+                  price: LS.copying.price,
+                  date: LS.copying.date,
+                }
+              : {}
+          )
         : "";
     return V.dayPanelHtml({ day: LS.day, deals: deals, editorHtml: editor, colours: LS.colours });
   }
@@ -9295,23 +9346,39 @@ tryRestoreAdminSession();
     var form = readEditor();
     if (!form.name) { toast("בחר או הקלד שם מקום", "err"); return; }
     if (!(Number(form.price) > 0)) { toast("חסר מחיר", "err"); return; }
+    /* A duplicate carries its own date field; a plain add belongs to the open day. */
+    var onDay = (el("ledDate") && el("ledDate").value) || LS.day;
     var body = LS.editing
       ? { action: "update_deal", id: LS.editing, month: LS.month, day: LS.day, name: form.name, service: form.service, price: form.price }
-      : { action: "add_deal", day: LS.day, name: form.name, service: form.service, price: form.price };
+      : { action: "add_deal", day: onDay, name: form.name, service: form.service, price: form.price };
     api(body).then(function (r) {
       if (r.status !== 200 || !r.body.ok) {
         toast((r.body && r.body.error) || "לא הצלחתי לשמור", "err");
         return;
       }
+      LS.editing = null;
+      LS.adding = false;
+      LS.copying = null;
+      /* A place used for the first time is new in the favourites box too — the list is
+         re-read rather than left stale (owner, 2026-09-04). */
+      forgetPlaces();
+      var landed = L.monthKey(onDay);
+      if (landed !== LS.month) {
+        LS.month = landed;
+        LS.day = onDay;
+        loadMonth(landed);
+        toast("נשמר ✓ — עברתי לחודש שבו זה נחת");
+        return;
+      }
       LS.data = r.body;
+      LS.colours = r.body.colours || LS.colours;
+      LS.day = onDay;
       if (LS.month === L.monthKey()) {
         LS.personal = Number(r.body.total) || 0;
         if (typeof window.adminOnPersonalIncome === "function") {
           window.adminOnPersonalIncome(LS.personal);
         }
       }
-      LS.editing = null;
-      LS.adding = false;
       render();
       loadTable();
       toast("נשמר ✓");
@@ -9343,6 +9410,7 @@ tryRestoreAdminSession();
         return;
       }
       LS.manual = null;
+      forgetPlaces();
       var landed = L.monthKey(day);
       if (landed !== LS.month) {
         LS.month = landed;
@@ -9496,7 +9564,23 @@ tryRestoreAdminSession();
     if (t.closest("[data-led-cancel]")) {
       LS.editing = null;
       LS.adding = false;
+      LS.copying = null;
       redrawDay();
+      return;
+    }
+
+    var copy = t.closest("[data-led-copy]");
+    if (copy) {
+      var src = L.dealsOfDay({ month: LS.month, deals: (LS.data && LS.data.deals) || [] }, LS.day)
+        .filter(function (d) { return d.id === copy.getAttribute("data-led-copy"); })[0];
+      if (!src) return;
+      /* Same values, and the day it came from as the default — changing it plants the
+         copy on the day he chooses (owner, 2026-09-04). */
+      LS.copying = { name: src.name, service: src.service, price: src.price, date: src.day };
+      LS.adding = true;
+      LS.editing = null;
+      redrawDay();
+      try { if (el("ledName")) el("ledName").focus(); } catch (eF) {}
       return;
     }
 

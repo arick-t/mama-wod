@@ -107,18 +107,26 @@ ok("but agorot are shown when there are any", V.shekel(250.5) === "₪250.50");
 const cal = V.calendarHtml({
   month: "2026-09",
   totalsByDay: { "2026-09-03": 430 },
-  today: "2026-09-03",
+  dealsByDay: {
+    "2026-09-03": [{ name: "רימון" }, { name: "אולם העירייה" }, { name: "חוף הים" }],
+  },
+  colours: { "רימון": "#4CAF70" },
+  today: "2026-09-04",
   selected: "2026-09-03",
 });
 ok("every day of the month is a square", (cal.match(/data-led-day="/g) || []).length === 30);
 ok("the first lands on its weekday", (cal.match(/led-blank/g) || []).length === L.weekdayOf("2026-09-01"));
-ok("a day that earned says how much", cal.indexOf("₪430") >= 0);
 ok("today is marked", cal.indexOf("is-today") >= 0);
 ok("the open day is marked", cal.indexOf("is-open") >= 0);
-/* Changed 2026-09-03: a square opens the day, and the plus lives inside that panel.
-   A plus on every square advertised an entry row he had not asked for. */
-ok("a square opens the day rather than an entry row", cal.indexOf("led-plus") < 0);
-ok("a quiet day shows no number", (cal.match(/led-sum/g) || []).length === 1);
+
+/* Changed 2026-09-04: a closed square says WHO he trained, not what he earned. The
+   money is in the header and in the table; the square is for reading the month. */
+ok("a square carries no money", cal.indexOf("led-sum") < 0 && cal.indexOf("₪430") < 0);
+ok("it lists the places instead", cal.indexOf("רימון") >= 0 && cal.indexOf("אולם העירייה") >= 0);
+ok("in the order they were entered", cal.indexOf("רימון") < cal.indexOf("אולם העירייה"));
+ok("and says there is more rather than growing", cal.indexOf("חוף הים") < 0 && cal.indexOf("led-more") >= 0);
+ok("a place with a colour carries it onto the square", cal.indexOf('class="led-dot" style="background:#4CAF70"') >= 0);
+ok("a quiet day says nothing at all", (cal.match(/led-line/g) || []).length === 2);
 
 /* --- the day box --------------------------------------------------------- */
 
@@ -217,8 +225,10 @@ ok("it is placed over the square it belongs to", /function placeDayPopover\(\)/.
 ok("and clamped inside the month so a Saturday does not hang off", /if \(left > max\) left = max > 0 \? max : 0;/.test(page));
 ok("the popover can be closed", V.dayPanelHtml({ day: "2026-09-01", deals: [] }).indexOf("data-led-dayclose") >= 0);
 ok("it is a little wider than a square, not the page", /\.led-pop\{[^}]*min-width:250px;max-width:330px/.test(page));
-ok("the squares are small enough for a whole month", /\.led-day\{[\s\S]{0,200}min-height:52px/.test(page));
-ok("today is a hint, not a selection", /\.led-day\.is-today\{border-color:#3a3a3a\}/.test(page));
+ok("the squares still fit a month on one screen", /\.led-day\{[\s\S]{0,200}min-height:66px/.test(page));
+/* Corrected 2026-09-04: today is a dot, not a colour — an orange number read as
+   "this day is chosen" two days running. */
+ok("today is marked by a dot, not by paint", /\.led-day\.is-today \.led-num::after\{content:""/.test(page) && !/is-today \.led-num\{color:var\(--brand\)/.test(page));
 ok("and the open day is the one with the ring", /\.led-day\.is-open\{outline:2px solid var\(--brand\)/.test(page));
 
 /* --- adding a session from anywhere -------------------------------------- */
@@ -276,5 +286,26 @@ ok("the box is on the page under the table", page.indexOf('id="ledFavourites"') 
 ok("it is read once, when he opens it", /if \(LS\.favOpen && !LS\.places\.length\) loadPlaces\(\);/.test(page));
 ok("the pencil saves through the server", /function savePlace\(name, newName, colour\)/.test(page));
 ok("and the month is redrawn afterwards, because the rows carry both", /savePlace[\s\S]{0,900}loadMonth\(LS\.month\)/.test(page));
+
+
+/* --- duplicating a session (owner, 2026-09-04) ---------------------------- */
+
+ok("every row can be copied", V.dayDealsHtml([{ id: "d1", name: "רימון", price: 250 }]).indexOf('data-led-copy="d1"') >= 0);
+const copyLine = V.editorHtml({ name: "רימון", service: "אימון קבוצתי", price: 250, date: "2026-09-04" });
+ok("a copy opens on the values it came from", copyLine.indexOf('value="רימון"') >= 0 && copyLine.indexOf('value="250"') >= 0);
+ok("with the day it came from as the default", copyLine.indexOf('id="ledDate"') >= 0 && copyLine.indexOf('value="2026-09-04"') >= 0);
+ok("and says what it is about to do", copyLine.indexOf("הכפל") >= 0);
+ok("a plain new line has no date field — it belongs to the open day", V.editorHtml({}).indexOf('id="ledDate"') < 0);
+ok("the copy carries the row's values into the state", /LS\.copying = \{ name: src\.name, service: src\.service, price: src\.price, date: src\.day \}/.test(page));
+ok("and is saved to the day in the field", /var onDay = \(el\("ledDate"\) && el\("ledDate"\)\.value\) \|\| LS\.day;/.test(page));
+ok("even when that day is in another month", /var landed = L\.monthKey\(onDay\)[\s\S]{0,300}loadMonth\(landed\)/.test(page));
+
+/* A place used for the first time must reach the favourites box too. */
+ok("the place list is dropped after a write", /function forgetPlaces\(\)/.test(page));
+ok("and re-read at once if the box is open", /if \(LS\.favOpen\) loadPlaces\(\);/.test(page));
+ok("a session added from the box drops it too", /LS\.manual = null;\s*\n\s*forgetPlaces\(\);/.test(page));
+
+/* The close button was sitting on top of the date. */
+ok("the day's header leaves room for the close button", /\.led-daybox-head\{[^}]*padding-inline-start:24px/.test(page));
 
 console.log("\nAll admin ledger page checks passed (" + passed + " assertions).");

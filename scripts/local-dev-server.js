@@ -156,6 +156,11 @@ const server = http.createServer((req, res) => {
     pathname === "/api/admin-handoff" ||
     pathname === "/api/admin-meta" ||
     pathname === "/api/admin-drive-sync" ||
+    /* The client programmes and the coach's own book — without these the admin page
+       runs locally with two of its three screens dead (owner, 2026-09-04: work on the
+       design here, not on Vercel). */
+    pathname === "/api/client-program" ||
+    pathname === "/api/admin-ledger" ||
     pathname === "/api/admin"
   ) {
     if (req.method === "OPTIONS") {
@@ -169,7 +174,11 @@ const server = http.createServer((req, res) => {
       return res.end();
     }
     const apiRel =
-      pathname === "/api/admin-coach-sandbox"
+      pathname === "/api/client-program"
+        ? "api/client-program.js"
+        : pathname === "/api/admin-ledger"
+        ? "scripts/lib/admin/admin-ledger.js"
+        : pathname === "/api/admin-coach-sandbox"
         ? "scripts/lib/admin/admin-coach-sandbox.js"
         : pathname === "/api/admin-handoff"
         ? "scripts/lib/admin/admin-handoff.js"
