@@ -493,4 +493,37 @@ ok("a session's price is the quiet green", /\.led-price\{font-weight:700;color:#
 ok("a place's own line is brighter and bigger", /\.led-row\.is-group \.led-price\{color:#6FE39B;font-weight:900/.test(page));
 ok("and the grand total is the loudest", /\.led-table-total strong\{color:#A8F5C8/.test(page));
 
+
+/* --- a service has a colour, and it is the same colour everywhere ---------
+ * Personal is pale blue, group is blue, anything he typed himself is orange, and
+ * "mixed" is white like "all services" — it is the absence of one service, not a
+ * third kind of one (owner, 2026-09-04).
+ * ------------------------------------------------------------------------- */
+
+ok("personal training is pale blue", V.serviceColour("אימון אישי") === "#7DD3F0");
+ok("group training is blue", V.serviceColour("אימון קבוצתי") === "#4C8DF6");
+ok("anything he typed himself is orange", V.serviceColour("הרצאה") === "#F0913E");
+ok("and nothing at all is the neutral", V.serviceColour("") === V.SERVICE_COLOURS.neutral);
+
+const svcTable = V.tableHtml(
+  [
+    { id: "a", day: "2026-09-01", name: "x", service: "אימון אישי", price: 1 },
+    { id: "b", day: "2026-09-02", name: "x", service: "הרצאה", price: 1 },
+  ],
+  2, {}, null, {}
+);
+ok("the table paints each session's service", svcTable.indexOf("color:#7DD3F0") >= 0 && svcTable.indexOf("color:#F0913E") >= 0);
+
+const mixedRow = V.tableHtml(
+  [{ name: "x", count: 2, total: 2, service: "", mixed: true, invoiced: false }],
+  2, {}, null, { grouped: true, rangeLabel: "החודש" }
+);
+ok("a place with several services says מגוון in white", mixedRow.indexOf("מגוון") >= 0 && mixedRow.indexOf("color:#E8E4D8") >= 0);
+ok("and it is no longer orange", mixedRow.indexOf("color:var(--brand)") < 0);
+
+const svcFilter = V.filtersHtml({ services: ["אימון אישי", "אימון קבוצתי", "הרצאה"], service: "אימון קבוצתי" });
+ok("every option in the filter carries its colour", (svcFilter.match(/<option value="[^"]+"[^>]*style="color:#/g) || []).length === 3);
+ok('"all services" is the neutral one', svcFilter.indexOf('<option value="" style="color:' + V.SERVICE_COLOURS.neutral) >= 0);
+ok("and the closed field wears whatever is chosen", svcFilter.indexOf('id="ledFService" data-led-filter="service" style="color:#4C8DF6"') >= 0);
+
 console.log("\nAll admin ledger page checks passed (" + passed + " assertions).");

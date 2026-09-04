@@ -319,7 +319,10 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
    it is the one word in the row that means "look closer" (owner, 2026-09-04). */
 .led-row.is-group{font-weight:600}
 .led-count{color:var(--text-muted);font-weight:700;font-size:11px}
-.led-service.is-mixed{color:var(--brand);font-weight:800}
+/* The colour is set inline, per service — this only carries the weight. "מגוון" is
+   white like "all services", because it is the absence of one service, not a third
+   kind (owner, 2026-09-04). */
+.led-service.is-mixed{font-weight:800}
 /* A place opened under its own line: indented, quieter, with its own sum. */
 .led-expand{appearance:none;background:transparent;border:none;color:var(--text-muted);
   font-size:10px;line-height:1;cursor:pointer;padding:0 4px 0 0}
@@ -342,7 +345,8 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .led-datebtn{position:absolute;inset-inline-end:4px;appearance:none;background:transparent;
   border:none;color:var(--text-muted);font-size:12px;line-height:1;cursor:pointer;padding:2px}
 .led-datebtn:hover{color:var(--text)}
-.led-filters select.led-field{max-width:170px}
+.led-filters select.led-field{max-width:170px;font-weight:700}
+.led-filters select.led-field option{background:var(--bg-elev)}
 .led-table-head{display:grid;gap:8px;padding:6px 4px;font-size:11px;font-weight:800;
   color:var(--text-muted);border-bottom:1px solid var(--line)}
 .led-table-total{margin-top:10px;text-align:start;font-size:13px;color:var(--text-muted)}
