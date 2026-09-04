@@ -407,7 +407,7 @@ ok("and its own tick", detail.indexOf('data-led-invoiced="x"') >= 0);
 ok("the button is beside clear", /data-led-detail="1"[\s\S]{0,200}data-led-clear="1"/.test(V.filtersHtml({})));
 ok("and it is marked when it is on", V.filtersHtml({ detail: true }).indexOf('led-chip on" data-led-detail') >= 0);
 ok("the page opens grouped", /detail: false,/.test(page));
-ok("pressing it switches the view without losing the filter", /LS\.detail = !LS\.detail;\s*\n\s*renderFilters\(\);\s*\n\s*loadTable\(\);/.test(page));
+ok("pressing it switches the view without losing the filter", /LS\.detail = !LS\.detail;[\s\S]{0,80}renderFilters\(\);[\s\S]{0,40}loadTable\(\);/.test(page));
 ok("the grouped date column is told which range is on", /function rangeLabel\(\)/.test(page));
 ok("a chosen date range reads as two dates", /V\.hebDate\(r\.from\) \+ " - " \+ V\.hebDate\(r\.to\)/.test(page));
 ok("ticking a place writes every session in it", /action: "invoice_place"/.test(page));
@@ -436,7 +436,59 @@ const ledgerRow = Strip.rows({})[0];
 ok("the tab is general management", ledgerRow.name === "ניהול כללי");
 ok("not a summary of anything", ledgerRow.name.indexOf("סיכום") < 0);
 const ledgerHtml = Strip.html(Strip.rows({}), "ledger");
-ok("its mark is a panel, not a sigma", ledgerHtml.indexOf("▦") >= 0 && ledgerHtml.indexOf("∑") < 0);
+/* A dumbbell, drawn rather than an emoji so it takes the chip's colour (owner,
+   2026-09-04). */
+ok("its mark is a dumbbell", ledgerHtml.indexOf('<svg class="tab-mark"') >= 0);
+ok("not a sigma and not an emoji", ledgerHtml.indexOf("∑") < 0 && ledgerHtml.indexOf("▦") < 0 && ledgerHtml.indexOf("🏋") < 0);
+ok("and it takes the colour of the chip it sits on", ledgerHtml.indexOf('fill="currentColor"') >= 0);
 ok("and the reason is written down", stripSrc2.indexOf("not a sum of the clients") >= 0);
+
+
+/* --- one place, opened under its own line (owner, 2026-09-04) ------------- */
+
+const gOne = [{ name: "רימון", count: 2, total: 550, service: "", mixed: true, invoiced: false }];
+const gDeals = [
+  { id: "s1", day: "2026-09-01", name: "רימון", service: "אימון קבוצתי", price: 250 },
+  { id: "s2", day: "2026-09-08", name: "רימון", service: "אימון אישי", price: 300 },
+  { id: "s3", day: "2026-09-09", name: "אולם", service: "אימון אישי", price: 180 },
+];
+const closedRow = V.tableHtml(gOne, 550, {}, null, { grouped: true, rangeLabel: "החודש" });
+ok("every place has a chevron beside its name", closedRow.indexOf('data-led-expand="רימון"') >= 0);
+ok("and closed, it shows no sessions", closedRow.indexOf("data-led-deal=") < 0);
+
+const openRow = V.tableHtml(gOne, 550, {}, null, {
+  grouped: true,
+  rangeLabel: "החודש",
+  expanded: "רימון",
+  expandedRows: gDeals,
+});
+ok("opened, that place's sessions appear under it", (openRow.match(/data-led-deal=/g) || []).length === 2);
+ok("and only that place's", openRow.indexOf('data-led-deal="s3"') < 0);
+ok("each with its own date", openRow.indexOf("01/09/26") >= 0);
+/* Changed 2026-09-04: the place's own line above already carries the sum, so the one
+   under the sessions was saying it twice. */
+ok("with no sum repeated under them", openRow.indexOf("led-sub-total") < 0);
+ok("because the line above already says it", openRow.indexOf("₪550") >= 0);
+ok("the chevron says it is open", openRow.indexOf('aria-expanded="true"') >= 0);
+ok("opening one costs no request — the rows are already here", /expandedRows: LS\.tableDeals/.test(page));
+ok("and only one place opens at a time", /LS\.expanded = LS\.expanded === who \? "" : who;/.test(page));
+ok("leaving the grouped view closes it", /LS\.detail = !LS\.detail;\s*\n\s*LS\.expanded = "";/.test(page));
+
+
+/* --- the bug he found: an invoice tick that was never heard --------------- */
+
+ok(
+  "the change listener does not require an id",
+  /var t = ev\.target;[\s\S]{0,400}if \(!t \|\| !t\.hasAttribute\) return;/.test(page)
+);
+ok(
+  "and the reason is written where the guard is",
+  page.indexOf("this guard was silently swallowing every one of their changes") >= 0
+);
+ok("the invoice boxes are identified by data, not id", /data-led-invoiced="/.test(V.tableHtml([{ id: "z", day: "2026-09-01", name: "a", price: 1 }], 1, {}, null, {})));
+
+/* Two shades of green: a row, and the answer. */
+ok("a row's price is the quieter green", /\.led-price\{font-weight:800;color:#3E9E63\}/.test(page));
+ok("and the total is the brighter one", /\.led-table-total strong\{color:#6FE39B/.test(page));
 
 console.log("\nAll admin ledger page checks passed (" + passed + " assertions).");

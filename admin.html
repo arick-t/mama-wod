@@ -263,7 +263,9 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .led-rowacts{display:inline-flex;gap:4px;flex:0 0 auto;white-space:nowrap}
 .led-row:last-child{border-bottom:none}
 .led-cell{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.led-price{font-weight:800;color:#4CAF70}
+/* Two shades: a row is the quieter green, the grand total the brighter one, so the
+   answer stands out from the arithmetic behind it (owner, 2026-09-04). */
+.led-price{font-weight:800;color:#3E9E63}
 .led-mini{appearance:none;border:1px solid var(--line);background:transparent;color:var(--text-muted);
   border-radius:8px;width:26px;height:26px;cursor:pointer;font-size:12px;line-height:1;padding:0}
 .led-mini:hover{color:var(--text);border-color:#3a3a3a}
@@ -315,6 +317,15 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .led-row.is-group{font-weight:600}
 .led-count{color:var(--text-muted);font-weight:700;font-size:11px}
 .led-service.is-mixed{color:var(--brand);font-weight:800}
+/* A place opened under its own line: indented, quieter, with its own sum. */
+.led-expand{appearance:none;background:transparent;border:none;color:var(--text-muted);
+  font-size:10px;line-height:1;cursor:pointer;padding:0 4px 0 0}
+.led-expand:hover{color:var(--text)}
+.led-sub{margin:0 0 6px;padding-inline-start:14px;border-inline-start:2px solid var(--line)}
+.led-sub .led-row{font-size:12px;font-weight:400;opacity:.92}
+.led-sub-total{padding:6px 4px 2px;font-size:12px;color:var(--text-muted);text-align:start}
+.led-sub-total strong{color:#6FE39B}
+.led-sub-empty{padding:6px 10px;font-size:12px;color:var(--text-muted)}
 /* The two dates live behind their own button. */
 .led-dates{display:inline-flex;gap:6px}
 /* A date field of our own: dd/mm/yy, with the browser's picker one tap away. The
@@ -332,7 +343,7 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .led-table-head{display:grid;gap:8px;padding:6px 4px;font-size:11px;font-weight:800;
   color:var(--text-muted);border-bottom:1px solid var(--line)}
 .led-table-total{margin-top:10px;text-align:start;font-size:13px;color:var(--text-muted)}
-.led-table-total strong{color:#4CAF70;font-size:15px}
+.led-table-total strong{color:#6FE39B;font-size:16px}
 .led-date{color:var(--text-muted)}
 .income-wrap{display:inline-flex;align-items:center;gap:8px}
 .income-toggle{appearance:none;width:24px;height:24px;border-radius:8px;border:1px solid var(--line);
@@ -9205,6 +9216,10 @@ tryRestoreAdminSession();
     /* The table opens grouped — one line per place, which is the question he brings
        to it. The session-by-session view is behind "full detail" (owner, 2026-09-04). */
     detail: false,
+    /* One place opened under its own line, and the rows the last answer carried — so
+       opening it costs nothing: they are already here. */
+    expanded: "",
+    tableDeals: [],
     names: [],
     services: [],
   };
@@ -9545,12 +9560,18 @@ tryRestoreAdminSession();
       LS.services = res.body.services || [];
       renderFilters();
       var grouped = !LS.detail;
+      LS.tableDeals = res.body.deals || [];
       host.innerHTML = V.tableHtml(
-        grouped ? res.body.groups || [] : res.body.deals,
+        grouped ? res.body.groups || [] : LS.tableDeals,
         res.body.total,
         LS.colours,
         { by: LS.sortBy, dir: LS.sortDir },
-        { grouped: grouped, rangeLabel: rangeLabel() }
+        {
+          grouped: grouped,
+          rangeLabel: rangeLabel(),
+          expanded: LS.expanded,
+          expandedRows: LS.tableDeals,
+        }
       );
     });
   }
@@ -9883,10 +9904,20 @@ tryRestoreAdminSession();
       return;
     }
 
+    var expand = t.closest("[data-led-expand]");
+    if (expand) {
+      var who = expand.getAttribute("data-led-expand") || "";
+      /* One at a time: two open places make a list, which is what "full detail" is. */
+      LS.expanded = LS.expanded === who ? "" : who;
+      loadTable();
+      return;
+    }
+
     if (t.closest("[data-led-detail]")) {
       /* Both directions work: a place already chosen stays chosen when he opens the
          detail, and a detail already open stays open when he chooses a place. */
       LS.detail = !LS.detail;
+      LS.expanded = "";
       renderFilters();
       loadTable();
       return;
@@ -9901,6 +9932,7 @@ tryRestoreAdminSession();
       LS.sortBy = "day";
       LS.sortDir = 1;
       LS.detail = false;
+      LS.expanded = "";
       renderFilters();
       loadTable();
       return;
@@ -9922,10 +9954,14 @@ tryRestoreAdminSession();
     var box = el("ledgerScreen");
     if (!box || box.hidden) return;
     var t = ev.target;
-    if (!t || !t.id) return;
+    /* An element, not necessarily one with an id: the invoice boxes are identified by a
+       data attribute, and this guard was silently swallowing every one of their changes
+       — he ticked an invoice, nothing was saved, and the tick came back off on the next
+       draw (owner, 2026-09-04). */
+    if (!t || !t.hasAttribute) return;
 
     /* "Other" opens the free line, and closes it again if he changes his mind. */
-    if (t.hasAttribute && t.hasAttribute("data-led-service")) {
+    if (t.hasAttribute("data-led-service")) {
       var other = el(t.id + "Other");
       if (other) {
         other.hidden = t.value !== V.SERVICE_OTHER;
