@@ -310,6 +310,11 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .led-arrow{font-size:9px}
 .led-inv{display:flex;justify-content:center}
 .led-inv input{width:16px;height:16px;cursor:pointer;accent-color:#4CAF70}
+/* One line per place: the count beside the name, and "mixed" said in orange because
+   it is the one word in the row that means "look closer" (owner, 2026-09-04). */
+.led-row.is-group{font-weight:600}
+.led-count{color:var(--text-muted);font-weight:700;font-size:11px}
+.led-service.is-mixed{color:var(--brand);font-weight:800}
 /* The two dates live behind their own button. */
 .led-dates{display:inline-flex;gap:6px}
 /* A date field of our own: dd/mm/yy, with the browser's picker one tap away. The
@@ -9182,6 +9187,9 @@ tryRestoreAdminSession();
     to: "",
     sortBy: "day",
     sortDir: 1,
+    /* The table opens grouped — one line per place, which is the question he brings
+       to it. The session-by-session view is behind "full detail" (owner, 2026-09-04). */
+    detail: false,
     names: [],
     services: [],
   };
@@ -9478,6 +9486,7 @@ tryRestoreAdminSession();
     if (!host) return;
     var r = currentRange();
     host.innerHTML = V.filtersHtml({
+      detail: LS.detail,
       range: LS.range,
       names: LS.names,
       services: LS.services,
@@ -9486,6 +9495,15 @@ tryRestoreAdminSession();
       from: LS.from || r.from,
       to: LS.to || r.to,
     });
+  }
+
+  /** "החודש" · "השנה" · "01/09/26 - 30/09/26" — what the grouped date column says. */
+  function rangeLabel() {
+    if (LS.range === "week") return "השבוע";
+    if (LS.range === "month") return "החודש";
+    if (LS.range === "year") return "השנה";
+    var r = currentRange();
+    return V.hebDate(r.from) + " - " + V.hebDate(r.to);
   }
 
   function loadTable() {
@@ -9511,10 +9529,14 @@ tryRestoreAdminSession();
       LS.names = res.body.names || [];
       LS.services = res.body.services || [];
       renderFilters();
-      host.innerHTML = V.tableHtml(res.body.deals, res.body.total, LS.colours, {
-        by: LS.sortBy,
-        dir: LS.sortDir,
-      });
+      var grouped = !LS.detail;
+      host.innerHTML = V.tableHtml(
+        grouped ? res.body.groups || [] : res.body.deals,
+        res.body.total,
+        LS.colours,
+        { by: LS.sortBy, dir: LS.sortDir },
+        { grouped: grouped, rangeLabel: rangeLabel() }
+      );
     });
   }
 
@@ -9846,6 +9868,15 @@ tryRestoreAdminSession();
       return;
     }
 
+    if (t.closest("[data-led-detail]")) {
+      /* Both directions work: a place already chosen stays chosen when he opens the
+         detail, and a detail already open stays open when he chooses a place. */
+      LS.detail = !LS.detail;
+      renderFilters();
+      loadTable();
+      return;
+    }
+
     if (t.closest("[data-led-clear]")) {
       LS.filterName = "";
       LS.filterService = "";
@@ -9854,6 +9885,7 @@ tryRestoreAdminSession();
       LS.range = "month";
       LS.sortBy = "day";
       LS.sortDir = 1;
+      LS.detail = false;
       renderFilters();
       loadTable();
       return;
@@ -9937,6 +9969,29 @@ tryRestoreAdminSession();
       }
     }
 
+    /* A whole place at once: every session at it, in the range on screen. */
+    if (t.hasAttribute && t.hasAttribute("data-led-invoice-place")) {
+      var placeName = t.getAttribute("data-led-invoice-place");
+      var wantInv = t.checked === true;
+      var rr = currentRange();
+      api({
+        action: "invoice_place",
+        name: placeName,
+        from: rr.from,
+        to: rr.to,
+        invoiced: wantInv,
+      }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) {
+          t.checked = !wantInv;
+          toast((r.body && r.body.error) || "לא הצלחתי לעדכן", "err");
+          return;
+        }
+        toast(wantInv ? "סומן ✓ " + r.body.changed + " אימונים" : "בוטל הסימון");
+        loadTable();
+      });
+      return;
+    }
+
     /* His own tick: did this session get an invoice. Written the moment he ticks it. */
     if (t.hasAttribute && t.hasAttribute("data-led-invoiced")) {
       var wasChecked = t.checked === true;
@@ -9951,11 +10006,14 @@ tryRestoreAdminSession();
           toast((r.body && r.body.error) || "לא הצלחתי לעדכן", "err");
           return;
         }
-        /* The month on screen may be the one that changed. */
+        /* The month on screen may be the one that changed — and the grouped view has
+           to follow, because one session unticked means the place is no longer
+           invoiced (owner, 2026-09-04). */
         if (r.body.month === LS.month) {
           LS.data = r.body;
           render();
         }
+        if (!LS.detail) loadTable();
       });
     }
   });

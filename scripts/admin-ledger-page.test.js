@@ -373,4 +373,44 @@ ok("what he types is parsed before it is sent", /V\.parseHeDate\(el\("ledMDate"\
 ok("a date that cannot be read is marked rather than silently dropped", /t\.classList\.add\("bad"\)/.test(page));
 ok("and the picker writes back in his format", /target\.value = V\.hebDate\(t\.value\)/.test(page));
 
+
+/* --- the table opens grouped (owner, 2026-09-04) -------------------------- */
+
+const gRows = [
+  { name: "רימון", count: 3, total: 750, service: "", mixed: true, invoiced: false },
+  { name: "אולם", count: 1, total: 180, service: "אימון אישי", mixed: false, invoiced: true },
+];
+const grouped = V.tableHtml(gRows, 930, { "רימון": "#F5C518" }, { by: "price", dir: 1 }, {
+  grouped: true,
+  rangeLabel: "החודש",
+});
+ok("a line per place", (grouped.match(/data-led-group=/g) || []).length === 2);
+ok("the count sits beside the name", grouped.indexOf("(3)") >= 0);
+ok("the money is the sum for that place", grouped.indexOf("₪750") >= 0);
+ok("one service is named", grouped.indexOf("אימון אישי") >= 0);
+ok("several are called mixed", grouped.indexOf("מגוון") >= 0);
+ok("and mixed is marked so it can be coloured", grouped.indexOf("is-mixed") >= 0);
+ok("the date column says which range he chose", grouped.indexOf("החודש") >= 0);
+ok("one tick covers the whole place", (grouped.match(/data-led-invoice-place=/g) || []).length === 2);
+ok("a place with everything billed shows ticked", /data-led-invoice-place="אולם" checked/.test(grouped));
+ok("and one with a session left over does not", !/data-led-invoice-place="רימון" checked/.test(grouped));
+
+/* Full detail is what it was: one line per session, with its own date. */
+const detail = V.tableHtml(
+  [{ id: "x", day: "2026-09-04", name: "רימון", service: "אימון אישי", price: 250 }],
+  250, {}, null, { grouped: false }
+);
+ok("full detail is a line per session", detail.indexOf('data-led-deal="x"') >= 0);
+ok("with the day it happened on", detail.indexOf("04/09/26") >= 0);
+ok("and its own tick", detail.indexOf('data-led-invoiced="x"') >= 0);
+
+ok("the button is beside clear", /data-led-detail="1"[\s\S]{0,200}data-led-clear="1"/.test(V.filtersHtml({})));
+ok("and it is marked when it is on", V.filtersHtml({ detail: true }).indexOf('led-chip on" data-led-detail') >= 0);
+ok("the page opens grouped", /detail: false,/.test(page));
+ok("pressing it switches the view without losing the filter", /LS\.detail = !LS\.detail;\s*\n\s*renderFilters\(\);\s*\n\s*loadTable\(\);/.test(page));
+ok("the grouped date column is told which range is on", /function rangeLabel\(\)/.test(page));
+ok("a chosen date range reads as two dates", /V\.hebDate\(r\.from\) \+ " - " \+ V\.hebDate\(r\.to\)/.test(page));
+ok("ticking a place writes every session in it", /action: "invoice_place"/.test(page));
+ok("and unticking one session redraws the grouped answer", /if \(!LS\.detail\) loadTable\(\);/.test(page));
+
 console.log("\nAll admin ledger page checks passed (" + passed + " assertions).");

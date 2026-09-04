@@ -215,6 +215,50 @@ async function main() {
   await call({ action: "update_place", name: "רימון פיטנס", newName: "רימון" });
   ok("and it is bounded — two years back, three months forward", reads.length <= 32);
 
+
+  /* --- grouped, and invoiced a place at a time (owner, 2026-09-04) -------- */
+
+  const gp = await call({ action: "range", from: "2026-09-01", to: "2026-10-31" });
+  ok("the range answers grouped as well as itemised", Array.isArray(gp.body.groups));
+  ok("a place appears once", gp.body.groups.filter(function (g) { return g.name === "רימון פיטנס"; }).length <= 1);
+  ok("with its own count and sum", gp.body.groups.every(function (g) { return g.count >= 1 && g.total >= 0; }));
+
+  const target2 = gp.body.groups[0];
+  const billed = await call({
+    action: "invoice_place",
+    name: target2.name,
+    from: "2026-09-01",
+    to: "2026-10-31",
+    invoiced: true,
+  });
+  ok("a whole place can be invoiced at once", billed.status === 200 && billed.body.changed >= 1);
+  const after2 = await call({ action: "range", from: "2026-09-01", to: "2026-10-31" });
+  const nowGroup = after2.body.groups.filter(function (g) { return g.name === target2.name; })[0];
+  ok("and the place reads as invoiced", nowGroup.invoiced === true);
+  ok("every session under it too", after2.body.deals.filter(function (d) { return d.name === target2.name; }).every(function (d) { return d.invoiced === true; }));
+
+  /* Untick ONE session and the place is no longer invoiced — that is the truth. */
+  const oneOfThem = after2.body.deals.filter(function (d) { return d.name === target2.name; })[0];
+  await call({
+    action: "update_deal",
+    id: oneOfThem.id,
+    month: String(oneOfThem.day).slice(0, 7),
+    invoiced: false,
+  });
+  const after3 = await call({ action: "range", from: "2026-09-01", to: "2026-10-31" });
+  const brokenGroup = after3.body.groups.filter(function (g) { return g.name === target2.name; })[0];
+  ok("one session unbilled makes the place unbilled", brokenGroup.invoiced === false);
+  ok("and the other sessions keep their tick", after3.body.deals.filter(function (d) {
+    return d.name === target2.name && d.id !== oneOfThem.id;
+  }).every(function (d) { return d.invoiced === true; }));
+
+  const noName2 = await call({ action: "invoice_place", from: "2026-09-01", to: "2026-09-30", invoiced: true });
+  ok("invoicing nobody is refused", noName2.status === 400 && noName2.body.code === "NO_NAME");
+
+  reads.length = 0;
+  await call({ action: "invoice_place", name: "לא קיים", from: "2020-01-01", to: "2026-12-31", invoiced: true });
+  ok("and a huge range is still capped at twelve months", reads.length <= 12);
+
   /* --- properties of the code itself ------------------------------------- */
 
   const src = fs.readFileSync(path.join(root, "scripts", "lib", "admin", "admin-ledger.js"), "utf8");

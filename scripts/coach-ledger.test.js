@@ -213,4 +213,36 @@ ok("and say how many moved", L.dealsOfDay(movedRows.doc, "2026-09-02")[0].name =
 ok("everyone else is untouched", L.dealsOfDay(movedRows.doc, "2026-09-09")[0].name === "אולם");
 ok("and the money did not move with the name", L.monthTotal(movedRows.doc) === 430);
 
+
+/* --- one line per place (owner, 2026-09-04) -------------------------------
+ * The question he brings to the table is "what do I invoice each of them for", and
+ * that is a question about a place, not about a session.
+ * ------------------------------------------------------------------------- */
+
+const gRows = [
+  { id: "g1", day: "2026-09-01", name: "רימון", service: "אימון קבוצתי", price: 250, invoiced: true, createdAt: "2026-09-01T06:00:00Z" },
+  { id: "g2", day: "2026-09-08", name: "רימון", service: "אימון אישי", price: 300, invoiced: false, createdAt: "2026-09-08T06:00:00Z" },
+  { id: "g3", day: "2026-09-03", name: "אולם", service: "אימון אישי", price: 180, invoiced: true, createdAt: "2026-09-03T06:00:00Z" },
+];
+const groups = L.groupByPlace(gRows);
+ok("a line per place, not per session", groups.length === 2);
+ok("it counts the sessions", groups[0].count === 2 && groups[1].count === 1);
+ok("and sums what they came to", groups[0].total === 550 && groups[1].total === 180);
+ok("one service is named", groups[1].service === "אימון אישי" && groups[1].mixed === false);
+ok("two are called mixed rather than one being picked", groups[0].mixed === true && groups[0].service === "");
+ok("a place is invoiced only when every session in it is", groups[0].invoiced === false && groups[1].invoiced === true);
+ok("and it remembers which sessions it holds", groups[0].ids.length === 2);
+ok("nothing in, nothing out", L.groupByPlace([]).length === 0);
+
+const allBilled = L.groupByPlace([
+  { id: "x", day: "2026-09-01", name: "רימון", price: 100, invoiced: true },
+  { id: "y", day: "2026-09-02", name: "רימון", price: 100, invoiced: true },
+]);
+ok("every session billed means the place is billed", allBilled[0].invoiced === true);
+
+ok("the biggest place comes first", L.sortGroups(groups, "price", 1)[0].name === "רימון");
+ok("and again turns it round", L.sortGroups(groups, "price", -1)[0].name === "אולם");
+ok("a place list can be read alphabetically", L.sortGroups(groups, "name", 1)[0].name === "רימון");
+ok("or by who is still unbilled", L.sortGroups(groups, "invoiced", 1)[0].invoiced === false);
+
 console.log("\nAll coach ledger checks passed (" + passed + " assertions).");

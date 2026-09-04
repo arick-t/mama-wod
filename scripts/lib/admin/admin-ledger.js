@@ -187,6 +187,41 @@ module.exports = async function handler(req, res) {
       return res.status(200).json(await monthPayload(month));
     }
 
+    /**
+     * "I invoiced this place" — every session at it, inside the range on screen.
+     *
+     * Bounded to the months the range touches, which is at most twelve: the same fence
+     * every other multi-month write here has. Unticking is the same call with false,
+     * because a place stops being invoiced the moment one of its sessions does
+     * (owner, 2026-09-04).
+     */
+    if (action === "invoice_place") {
+      const from = Ledger.dayIso(body.from);
+      const to = Ledger.dayIso(body.to);
+      const want = body.invoiced === true;
+      const name = String(body.name || "");
+      if (!name) return bad(res, 400, "NO_NAME", "which place?");
+      const months = Ledger.monthsBetween(from, to).slice(0, 12);
+      let changed = 0;
+      for (const m of months) {
+        const doc = await readMonth(m);
+        if (!doc.deals.length) continue;
+        let touched = false;
+        const next = Object.assign({}, doc, {
+          deals: doc.deals.map(function (d) {
+            const inRange = d.day >= from && d.day <= to;
+            const samePlace = d.name.trim().toLowerCase() === name.trim().toLowerCase();
+            if (!inRange || !samePlace || d.invoiced === want) return d;
+            touched = true;
+            changed += 1;
+            return Object.assign({}, d, { invoiced: want });
+          }),
+        });
+        if (touched) await writeMonth(next);
+      }
+      return res.status(200).json({ ok: true, changed: changed, invoiced: want });
+    }
+
     /* Everyone he has worked for, busiest first — the list behind the "favourites"
        box. One object, and it is the same one the five come from. */
     if (action === "places") {
@@ -274,12 +309,17 @@ module.exports = async function handler(req, res) {
         to: to,
       });
       const ordered = Ledger.sortDeals(rows, body.sortBy, body.sortDir);
+      /* One line per place, which is what the table opens on. Computed here so the
+         page renders one answer rather than doing arithmetic on a list it happens to
+         hold (owner, 2026-09-04). */
+      const groups = Ledger.sortGroups(Ledger.groupByPlace(rows), body.sortBy, body.sortDir);
       return res.status(200).json({
         ok: true,
         from: from,
         to: to,
         months: months,
         deals: ordered,
+        groups: groups,
         total: Ledger.sumOf(ordered),
         /* What the two lists can offer — computed BEFORE the name and service filters,
            or choosing a place would collapse the list to that one place and he could
