@@ -115,7 +115,7 @@ const MAX_CHARS = {
      format one is the load-bearing insight: in a room where everything is stations, the FORMAT is
      the variety and the progression at once, because the movements are whatever the place owns and
      the load is self-selected. Studio path only — an individual pays nothing for any of it. */
-  "layer2-room-studio": 4700,
+  "layer2-room-studio": 5600,
   "layer2-days-individual": 1200,
   /* Conditional: only a studio that bought N sessions a week pays for it. */
   "layer2-session-count": 3200,
@@ -1710,29 +1710,48 @@ function testStudioFormatRules() {
       /the FORMAT is what makes one session different from another, not the movement list/i.test(
         flat
       ));
-  /* Scoped to the session's PRINCIPAL format after the first pass listed seven formats used in
-     week 1 alone — a session carries two or three labels, so a literal "no format twice" is
-     unsatisfiable and would be ignored. */
-  ok("the principal format may not appear more than once in two weeks",
-    /THE SESSION'S PRINCIPAL FORMAT MAY NOT APPEAR MORE THAN ONCE IN TWO WEEKS/.test(flat));
-  ok("a strength part written as quality sets is a staple that repeats freely",
-    /A strength part written as sets for quality is a staple and repeats freely/i.test(flat));
+  /* A calendar window did not survive contact. The owner: "זה גם לא פותר את הבעיה אם יהיה סטודיו
+     שרוצה רק 3 אימונים או אחד של 5, סתם לקחנו 4 כדוגמה." A rotation scales to any session count
+     on its own — with M structures and N slots a week the cycle takes M/N weeks. */
+  ok("it is a rotation, not a calendar window",
+    /HOW IT WORKS: A ROTATION, NOT A CALENDAR WINDOW/.test(R) &&
+      /does not repeat one until that rotation has been exhausted/i.test(flat));
+  ok("the rotation scales to three sessions a week or five",
+    /a room buying three sessions a week, or five, consumes the rotation at its own rate/i.test(
+      flat
+    ) && /the cycle simply takes M\/N weeks/.test(flat));
+  ok("the rotation is never stretched to fit a calendar",
+    /Never stretch or compress the rotation to land on a calendar/.test(flat));
+  /* The fix for the inventory problem, and it was free: the slots do not share one list. Week 1
+     using AMRAP in a regular session had been spending it for the stations slot too. */
+  ok("each session type has its own rotation",
+    /THE ROTATIONS ARE SEPARATE PER SESSION TYPE/.test(R) &&
+      /an AMRAP couplet in session 1 does not spend AMRAP for the stations slot/i.test(flat));
+  /* The owner's own point, placed on the right axis: an EMOM every 90s instead of every 60s is
+     not variety. It is the progression of a structure the room already knows. */
+  ok("structure is the variety and the dials are the progression",
+    /STRUCTURE IS THE VARIETY\. THE DIALS ARE THE PROGRESSION/.test(R));
+  ok("moving a dial is not a new structure, with the arithmetic",
+    /Moving a dial is NOT a new structure: 4 rounds of 40s\/20s and 3 rounds of 90s\/30s are one structure twice/i.test(
+      flat
+    ));
+  ok("EMOM and E2MOM are named as one family",
+    /a fixed window that rotates the stations \(EMOM, E2MOM — one family\)/.test(flat));
+  ok("the dials move when a structure comes round again",
+    /When a structure comes round again in the rotation, THAT is when the dials move/.test(flat));
   /* And stations are what the room BOUGHT, not a format to rotate away from. */
   ok("stations are not treated as a format",
     /STATIONS ARE NOT A FORMAT/.test(flat) &&
       /They are what this place bought, and they appear as often as the intake says/i.test(flat));
   ok("what rotates is the structure inside the stations",
-    /What rotates is the structure INSIDE them: a work\/rest interval one week, an EMOM the next/i.test(
-      flat
-    ));
-  ok("changing the numbers is not changing the format",
-    /4 rounds of 40s work \/ 20s rest and 3 rounds of 50s \/ 10s are the same format twice/i.test(
-      flat
-    ));
+    /What rotates is the structure INSIDE them/.test(flat));
+
   ok("the prior weeks are named as where the used formats are listed",
-    /they name the formats already used: read them and choose one that is not there/i.test(flat));
+    /they name the formats already used\. Read them, and take the next structure in the rotation/i.test(
+      flat
+    ));
   ok("the format is called the room's progression axis too",
-    /This is also the room's progression axis/i.test(flat));
+    /It is also the room's progression axis, so it is doing two jobs at once/i.test(flat));
 
   /* "אימון בן 3 חלקים - קשה למאמן וגם למתאמן הלא מרוכז." */
   ok("two working parts is the studio shape",
