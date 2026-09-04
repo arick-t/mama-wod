@@ -979,7 +979,8 @@ ok("choosing it opens four questions, not a questionnaire", /if \(kind === "blan
 });
 /* Five, since 2026-09-04: the block length joined them, and only here. */
 /* Seven since 2026-09-04: the programme type and, behind it, how many sessions. */
-ok("and nothing else", (page.match(/class="blank-row"/g) || []).length === 7);
+/* Six plain rows plus the sub-branch, which carries its own class (2026-09-04). */
+ok("and nothing else", (page.match(/class="blank-row"/g) || []).length === 6 && (page.match(/class="blank-row is-sub"/g) || []).length === 1);
 ok("a client with no name is refused before the network", /if \(!name\) \{[\s\S]{0,120}צריך שם/.test(page));
 ok("the create goes through the client screen, like every other kind", /createBlank: function \(form\)/.test(screen));
 ok("with the kind the server shapes the month from", /clientKind: "blank"/.test(screen));
