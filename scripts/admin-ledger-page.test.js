@@ -49,6 +49,8 @@ ok(
 
 /* --- the landing --------------------------------------------------------- */
 
+/* Confirmed again 2026-09-04: EVERY entry to the module lands here, whatever else
+   has loaded. */
 ok(
   "the module opens on the summary tab",
   /function openFirstPersonIfNeeded\(\)[\s\S]{0,700}openPersonFromStrip\("ledger", "ledger"\)/.test(page)
@@ -83,11 +85,22 @@ ok("with a place for the month header", /id="ledHeader"/.test(page));
 ok("the calendar", /id="ledCalendar"/.test(page));
 ok("the open day", /id="ledDay"/.test(page));
 ok("and the deals table", /id="ledTable"/.test(page));
-ok("the automatic buttons are there", /data-led-range="week"/.test(page) && /data-led-range="month"/.test(page) && /data-led-range="year"/.test(page));
+/* The bar is RENDERED now, so what it offers is asserted by running it — the page
+   only holds the box it is drawn into (owner, 2026-09-04). */
+ok("the record has a bar of its own", /id="ledFilters"/.test(page));
+const bar = V.filtersHtml({ range: "month", names: ["מ1", "מ2"], services: ["אימון אישי"] });
+ok("the ranges are there", /data-led-range="week"/.test(bar) && /data-led-range="month"/.test(bar) && /data-led-range="year"/.test(bar));
+ok("the month is the one it opens on", /data-led-range="month" class|led-chip on" data-led-range="month"/.test(bar) || bar.indexOf('class="led-chip on" data-led-range="month"') >= 0);
+ok("a date range hides behind its own button", /data-led-range="custom"/.test(bar) && /class="led-dates" hidden/.test(bar));
+ok("the place filter is a list of the places in range", (bar.match(/<option value="מ/g) || []).length === 2);
+ok("so is the service filter", bar.indexOf('id="ledFService"') >= 0 && bar.indexOf("אימון אישי") >= 0);
+ok("the price boxes are gone", bar.indexOf("ledFMin") < 0 && bar.indexOf("ledFMax") < 0);
+ok("and so is the filter button — choosing IS filtering", bar.indexOf('data-led-filter="1"') < 0);
+ok("clearing is still one press", /data-led-clear="1"/.test(bar));
 /* "This year" follows the month on screen, so browsing back to 2025 and pressing it
    answers about 2025 (owner, 2026-09-03). */
 ok("a year is answered about the month being browsed", /if \(LS\.range === "year"\) return L\.yearRange\(LS\.month \+ "-15"\);/.test(page));
-ok("so are the three filters he asked for", /id="ledFName"/.test(page) && /id="ledFMin"/.test(page) && /id="ledFFrom"/.test(page));
+ok("choosing a place filters at once", /data-led-filter"\)\) \{|hasAttribute\("data-led-filter"\)/.test(page));
 ok("the page loads the book and its view", /lib\/coach-ledger\.js/.test(page) && /lib\/admin-ledger-view\.js/.test(page));
 ok("the screen talks to its own endpoint", /adminApiUrl\("\/api\/admin-ledger"\)/.test(page));
 ok("and carries the owner's credential", /\/api\/admin-ledger"\)[\s\S]{0,200}adminAuthHeaders\(\)/.test(page));
@@ -108,7 +121,11 @@ const cal = V.calendarHtml({
   month: "2026-09",
   totalsByDay: { "2026-09-03": 430 },
   dealsByDay: {
-    "2026-09-03": [{ name: "רימון" }, { name: "אולם העירייה" }, { name: "חוף הים" }],
+    "2026-09-03": [
+      { name: "רימון", service: "אימון קבוצתי" },
+      { name: "אולם העירייה", service: "אימון אישי" },
+      { name: "חוף הים", service: "אימון אישי" },
+    ],
   },
   colours: { "רימון": "#4CAF70" },
   today: "2026-09-04",
@@ -125,7 +142,8 @@ ok("a square carries no money", cal.indexOf("led-sum") < 0 && cal.indexOf("₪43
 ok("it lists the places instead", cal.indexOf("רימון") >= 0 && cal.indexOf("אולם העירייה") >= 0);
 ok("in the order they were entered", cal.indexOf("רימון") < cal.indexOf("אולם העירייה"));
 ok("and says there is more rather than growing", cal.indexOf("חוף הים") < 0 && cal.indexOf("led-more") >= 0);
-ok("a place with a colour carries it onto the square", cal.indexOf('class="led-dot" style="background:#4CAF70"') >= 0);
+ok("a place with a colour paints the WHOLE line", cal.indexOf('style="color:#4CAF70"') >= 0);
+ok("and the line says place - service", cal.indexOf("רימון - אימון קבוצתי") >= 0);
 ok("a quiet day says nothing at all", (cal.match(/led-line/g) || []).length === 2);
 
 /* --- the day box --------------------------------------------------------- */
@@ -193,12 +211,25 @@ ok("pressing the plus puts the cursor in the name", /if \(el\("ledName"\)\) el\(
 
 /* --- the table ----------------------------------------------------------- */
 
-const table = V.tableHtml(deals, 430);
+const table = V.tableHtml(deals, 430, {}, { by: "day", dir: 1 });
 ok("the table names its columns", table.indexOf("שם") >= 0 && table.indexOf("מחיר") >= 0 && table.indexOf("תאריך") >= 0);
 ok("a row per deal", (table.match(/data-led-deal="/g) || []).length === 2);
 ok("the date is written the way he writes it", table.indexOf("03/09/2026") >= 0);
 ok("and the sum of what is shown", table.indexOf("₪430") >= 0);
-ok("an empty range says so", V.tableHtml([], 0).indexOf("אין עסקאות בטווח") >= 0);
+ok("an empty range says so", V.tableHtml([], 0, {}, null).indexOf("אין עסקאות בטווח") >= 0);
+
+/* --- the record: sorted by its headers, and his own invoice tick ----------- */
+
+ok("every column is a button", (table.match(/data-led-sort=/g) || []).length === 5);
+ok("including the invoice column he fills himself", table.indexOf('data-led-sort="invoiced"') >= 0);
+ok("each row carries its tick", (table.match(/data-led-invoiced=/g) || []).length === 2);
+const tickedTable = V.tableHtml([{ id: "x", day: "2026-09-03", name: "a", price: 1, invoiced: true }], 1, {}, null);
+ok("a session already invoiced shows as ticked", /data-led-invoiced="x"[^>]*checked/.test(tickedTable));
+ok("the sorted column is marked", V.tableHtml(deals, 430, {}, { by: "price", dir: -1 }).indexOf("led-arrow") >= 0);
+ok("and the arrow follows the direction", V.tableHtml(deals, 430, {}, { by: "price", dir: -1 }).indexOf("▴") >= 0);
+ok("a header click sorts, and again turns it round", /if \(LS\.sortBy === key\) LS\.sortDir = LS\.sortDir === 1 \? -1 : 1;/.test(page));
+ok("the tick is written the moment it is ticked", /action: "update_deal"[\s\S]{0,200}invoiced: wasChecked/.test(page));
+ok("and put back if the server refuses", /t\.checked = !wasChecked;/.test(page));
 
 /* --- a place named like an attack --------------------------------------- */
 
@@ -245,7 +276,11 @@ ok(
   /if \(landed !== LS\.month\)[\s\S]{0,200}loadMonth\(landed\)/.test(page)
 );
 ok("a click on the month closes the open day", /!t\.closest\("\.led-daybox"\) && !t\.closest\("\[data-led-day\]"\)/.test(page));
-ok("but never while a line is being written", /if \(LS\.day && !LS\.adding && !LS\.editing/.test(page));
+/* Replaced 2026-09-04: leaving the day no longer throws the line away — it SAVES
+   it. The Save button stays; this is the autosave he asked for everywhere. */
+ok("leaving the day saves what is in the line", /function autosaveLine\(\)/.test(page));
+ok("and moving to another day saves on the way out", /if \(iso !== LS\.day && autosaveLine\(\)\) return;/.test(page));
+ok("a line with nothing in it is dropped, not shouted about", /if \(!form\.name \|\| !\(Number\(form\.price\) > 0\)\)/.test(page));
 
 
 /* --- the favourites box (owner, 2026-09-03) ------------------------------- */

@@ -190,7 +190,8 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .led-popclose{position:absolute;top:6px;inset-inline-start:8px;appearance:none;border:none;
   background:transparent;color:var(--text-muted);font-size:17px;line-height:1;cursor:pointer;padding:2px}
 .led-popclose:hover{color:var(--text)}
-.led-pop .led-row{grid-template-columns:1.2fr .9fr .7fr auto auto;font-size:12px}
+.led-pop .led-row{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr) auto auto;font-size:12px;gap:6px}
+.led-pop .led-mini{width:24px;height:24px;font-size:11px}
 .led-pop .led-editor{flex-direction:column;align-items:stretch;gap:6px}
 .led-pop .led-editor .led-field{flex:1 1 auto}
 .led-pop .led-pickpanel{position:static;width:auto;box-shadow:none;padding:8px 0 0;border:none;background:transparent}
@@ -199,6 +200,19 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .led-manual .led-field{flex:1 1 150px;min-width:0}
 .led-manual .led-num-field{flex:0 1 120px}
 /* The favourites box: a fold, a list, and one pencil per name. */
+/* The summary tab is a screen, not a person.
+
+   Indigo — deliberately NOT one of CLIENT_COLOURS, so no client can ever be given it —
+   plus a sigma and a squarer corner. It reads as "the total", never as another client
+   (owner, 2026-09-04). */
+.athlete-tab.is-ledger{background:linear-gradient(180deg,rgba(91,84,232,.24),rgba(91,84,232,.10));
+  border-color:#5B54E8;color:#c3bffb;border-radius:8px;font-weight:800;letter-spacing:.4px;
+  display:inline-flex;align-items:center;gap:6px}
+.athlete-tab.is-ledger:hover{border-color:#8079ff;color:#e2e0ff}
+.athlete-tab.is-ledger.active{background:#5B54E8;color:#fff;border-color:#8079ff;
+  box-shadow:0 0 0 2px rgba(128,121,255,.30)}
+.athlete-tab.is-ledger .tab-mark{font-size:14px;line-height:1;opacity:.95}
+
 /* Right-click a week: copy it, paste it. Fixed to the viewport because it opens where
    the finger is, and the calendar under it scrolls (owner, 2026-09-04). */
 .week-menu{position:fixed;z-index:120;background:var(--bg-elev);border:1px solid var(--line);
@@ -242,8 +256,11 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
   background:transparent;color:var(--text-muted);font-size:20px;line-height:1;cursor:pointer;
   display:inline-flex;align-items:center;justify-content:center;padding:0}
 .led-add:hover{border-color:var(--brand);color:#fff;background:rgba(232,69,26,.14);border-style:solid}
-.led-row{display:grid;grid-template-columns:1.4fr 1.2fr .8fr auto auto;gap:8px;align-items:center;
+.led-row{display:grid;grid-template-columns:1.4fr 1.2fr .8fr auto;gap:8px;align-items:center;
   padding:7px 4px;border-bottom:1px solid var(--line);font-size:13px}
+/* Edit, duplicate and delete belong to ONE session, so they sit on one line together
+   and never wrap onto a line of their own (owner, 2026-09-04). */
+.led-rowacts{display:inline-flex;gap:4px;flex:0 0 auto;white-space:nowrap}
 .led-row:last-child{border-bottom:none}
 .led-cell{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .led-price{font-weight:800;color:#4CAF70}
@@ -283,7 +300,19 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
   border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer}
 .led-chip:hover{color:var(--text);border-color:#3a3a3a}
 .led-chip.on{background:rgba(232,69,26,.16);border-color:var(--brand);color:#fff}
-.led-table-head,.led-table .led-row{grid-template-columns:1.4fr 1.2fr .8fr .9fr}
+.led-table-head,.led-table .led-row{grid-template-columns:1.3fr 1.1fr .8fr .9fr 70px}
+/* A column header is a button now — it sorts, and again turns it round. */
+.led-th{appearance:none;background:transparent;border:none;color:var(--text-muted);font:inherit;
+  font-size:11px;font-weight:800;cursor:pointer;padding:0;text-align:start;display:flex;
+  align-items:center;gap:4px}
+.led-th:hover{color:var(--text)}
+.led-th.on{color:var(--brand)}
+.led-arrow{font-size:9px}
+.led-inv{display:flex;justify-content:center}
+.led-inv input{width:16px;height:16px;cursor:pointer;accent-color:#4CAF70}
+/* The two dates live behind their own button. */
+.led-dates{display:inline-flex;gap:6px}
+.led-filters select.led-field{max-width:170px}
 .led-table-head{display:grid;gap:8px;padding:6px 4px;font-size:11px;font-weight:800;
   color:var(--text-muted);border-bottom:1px solid var(--line)}
 .led-table-total{margin-top:10px;text-align:start;font-size:13px;color:var(--text-muted)}
@@ -1291,18 +1320,7 @@ header{flex-wrap:wrap;row-gap:8px}
     </div>
     <div class="card led-deals">
       <div class="row" style="margin-bottom:10px"><h2 style="margin:0">טבלת עסקאות</h2></div>
-      <div class="led-filters">
-        <button type="button" class="led-chip" data-led-range="week">השבוע</button>
-        <button type="button" class="led-chip" data-led-range="month">החודש</button>
-        <button type="button" class="led-chip" data-led-range="year">השנה</button>
-        <input id="ledFName" class="led-field" maxlength="80" placeholder="סינון לפי שם">
-        <input id="ledFMin" class="led-field led-num-field" type="number" min="0" placeholder="ממחיר">
-        <input id="ledFMax" class="led-field led-num-field" type="number" min="0" placeholder="עד מחיר">
-        <input id="ledFFrom" class="led-field" type="date" title="מתאריך">
-        <input id="ledFTo" class="led-field" type="date" title="עד תאריך">
-        <button type="button" class="led-chip" data-led-filter="1">סנן</button>
-        <button type="button" class="led-chip" data-led-clear="1">נקה</button>
-      </div>
+      <div class="led-filters" id="ledFilters"></div>
       <div id="ledTable"></div>
     </div>
     <!-- Everyone he works for, busiest first. Folded away by default: it is a reference,
@@ -9144,6 +9162,17 @@ tryRestoreAdminSession();
     day: "",
     editing: null,
     range: "month",
+    /* What the record is showing: which place, which service, which order. All of it
+       applies the moment he chooses it — there is no "filter" button any more
+       (owner, 2026-09-04). */
+    filterName: "",
+    filterService: "",
+    from: "",
+    to: "",
+    sortBy: "day",
+    sortDir: 1,
+    names: [],
+    services: [],
   };
 
   function el(id) { return document.getElementById(id); }
@@ -9225,6 +9254,7 @@ tryRestoreAdminSession();
     renderIncome();
     renderManual();
     renderFavourites();
+    renderFilters();
     var listHost = el("ledPlaces");
     if (listHost) listHost.innerHTML = V.placeListHtml(placeNames());
     var head = el("ledHeader");
@@ -9415,6 +9445,11 @@ tryRestoreAdminSession();
   /* ---------------------------------------------------------------- table */
 
   function currentRange() {
+    /* A range he set himself, behind its own button. */
+    if (LS.range === "custom") {
+      var mr = L.monthRange(LS.month + "-15");
+      return { from: LS.from || mr.from, to: LS.to || mr.to };
+    }
     if (LS.range === "week") {
       /* "This week" is the week we are in, not a week of whichever month he is
          browsing — it is a question about now. */
@@ -9426,32 +9461,50 @@ tryRestoreAdminSession();
     return L.monthRange(LS.month + "-15");
   }
 
+  /** The bar above the record: what is being shown, and how it is ordered. */
+  function renderFilters() {
+    var host = el("ledFilters");
+    if (!host) return;
+    var r = currentRange();
+    host.innerHTML = V.filtersHtml({
+      range: LS.range,
+      names: LS.names,
+      services: LS.services,
+      name: LS.filterName,
+      service: LS.filterService,
+      from: LS.from || r.from,
+      to: LS.to || r.to,
+    });
+  }
+
   function loadTable() {
     var host = el("ledTable");
     if (!host) return;
     var r = currentRange();
     return api({
       action: "range",
-      from: (el("ledFFrom") && el("ledFFrom").value) || r.from,
-      to: (el("ledFTo") && el("ledFTo").value) || r.to,
-      name: (el("ledFName") && el("ledFName").value) || "",
-      minPrice: (el("ledFMin") && el("ledFMin").value) || "",
-      maxPrice: (el("ledFMax") && el("ledFMax").value) || "",
+      from: r.from,
+      to: r.to,
+      /* A place picked from the list is an exact answer — "what do I invoice this gym
+         for this month" — not a search (owner, 2026-09-04). */
+      name: LS.filterName,
+      exactName: !!LS.filterName,
+      service: LS.filterService,
+      sortBy: LS.sortBy,
+      sortDir: LS.sortDir,
     }).then(function (res) {
       if (res.status !== 200 || !res.body.ok) {
         host.innerHTML = '<p class="led-empty">לא הצלחתי לטעון את העסקאות.</p>';
         return;
       }
-      host.innerHTML = V.tableHtml(res.body.deals, res.body.total, LS.colours);
-      syncRangeChips();
+      LS.names = res.body.names || [];
+      LS.services = res.body.services || [];
+      renderFilters();
+      host.innerHTML = V.tableHtml(res.body.deals, res.body.total, LS.colours, {
+        by: LS.sortBy,
+        dir: LS.sortDir,
+      });
     });
-  }
-
-  function syncRangeChips() {
-    var chips = document.querySelectorAll("[data-led-range]");
-    for (var i = 0; i < chips.length; i++) {
-      chips[i].classList.toggle("on", chips[i].getAttribute("data-led-range") === LS.range);
-    }
   }
 
   /* --------------------------------------------------------------- writing */
@@ -9462,6 +9515,27 @@ tryRestoreAdminSession();
       service: readService("led"),
       price: (el("ledPrice") && el("ledPrice").value) || "",
     };
+  }
+
+  /**
+   * Save a line he is in the middle of, on his way out of it.
+   *
+   * Returns true when it started a save — the caller stops there, because the save
+   * redraws the day itself. A line with nothing in it is not work: it is dropped
+   * silently rather than shouting "there is no price" at a man who is leaving
+   * (owner, 2026-09-04).
+   */
+  function autosaveLine() {
+    if (!LS.adding && !LS.editing) return false;
+    var form = readEditor();
+    if (!form.name || !(Number(form.price) > 0)) {
+      LS.adding = false;
+      LS.editing = null;
+      LS.copying = null;
+      return false;
+    }
+    saveDeal();
+    return true;
   }
 
   function saveDeal() {
@@ -9616,6 +9690,8 @@ tryRestoreAdminSession();
     var dayBtn = t.closest("[data-led-day]");
     if (dayBtn) {
       var iso = dayBtn.getAttribute("data-led-day");
+      /* Moving to another day is leaving this one — so it saves on the way out. */
+      if (iso !== LS.day && autosaveLine()) return;
       /* Clicking the open day again closes it — a square is a toggle. */
       LS.day = LS.day === iso ? "" : iso;
       LS.editing = null;
@@ -9720,27 +9796,48 @@ tryRestoreAdminSession();
     var range = t.closest("[data-led-range]");
     if (range) {
       LS.range = range.getAttribute("data-led-range");
-      if (el("ledFFrom")) el("ledFFrom").value = "";
-      if (el("ledFTo")) el("ledFTo").value = "";
+      /* Every range but the one he sets himself forgets the two dates. */
+      if (LS.range !== "custom") {
+        LS.from = "";
+        LS.to = "";
+      }
+      renderFilters();
       loadTable();
       return;
     }
 
-    if (t.closest("[data-led-filter]")) { loadTable(); return; }
+    /* A column header: sort by it, and again to turn it round. */
+    var sortBtn = t.closest("[data-led-sort]");
+    if (sortBtn) {
+      var key = sortBtn.getAttribute("data-led-sort");
+      if (LS.sortBy === key) LS.sortDir = LS.sortDir === 1 ? -1 : 1;
+      else {
+        LS.sortBy = key;
+        LS.sortDir = 1;
+      }
+      loadTable();
+      return;
+    }
 
     if (t.closest("[data-led-clear]")) {
-      ["ledFName", "ledFMin", "ledFMax", "ledFFrom", "ledFTo"].forEach(function (id) {
-        if (el(id)) el(id).value = "";
-      });
+      LS.filterName = "";
+      LS.filterService = "";
+      LS.from = "";
+      LS.to = "";
       LS.range = "month";
+      LS.sortBy = "day";
+      LS.sortDir = 1;
+      renderFilters();
       loadTable();
       return;
     }
 
-    /* A click on the month outside the open day closes it — but never while a line is
-       being written, because losing typed work to a stray click is the complaint he
-       already made once (owner, 2026-09-02). */
-    if (LS.day && !LS.adding && !LS.editing && !t.closest(".led-daybox") && !t.closest("[data-led-day]")) {
+    /* Leaving a day SAVES what is in the line — clicking another day, or anywhere
+       outside the box. The Save button stays; this is the convenience he asked for
+       everywhere (owner, 2026-09-04). Nothing is lost to a stray click any more,
+       which is the older complaint the same rule used to serve (owner, 2026-09-02). */
+    if (LS.day && !t.closest(".led-daybox") && !t.closest("[data-led-day]")) {
+      if (autosaveLine()) return;
       LS.day = "";
       render();
     }
@@ -9767,6 +9864,44 @@ tryRestoreAdminSession();
     /* A name he finished typing that we already know fills the rest. */
     if (t.hasAttribute && t.hasAttribute("data-led-name")) {
       applyPlaceDefaults(t.id.replace(/Name$/, ""));
+      return;
+    }
+
+    /* The record's own filters: choosing IS filtering. */
+    if (t.hasAttribute && t.hasAttribute("data-led-filter")) {
+      if (t.getAttribute("data-led-filter") === "name") LS.filterName = t.value || "";
+      else LS.filterService = t.value || "";
+      loadTable();
+      return;
+    }
+    if (t.id === "ledFFrom" || t.id === "ledFTo") {
+      LS.range = "custom";
+      LS.from = (el("ledFFrom") && el("ledFFrom").value) || "";
+      LS.to = (el("ledFTo") && el("ledFTo").value) || "";
+      loadTable();
+      return;
+    }
+
+    /* His own tick: did this session get an invoice. Written the moment he ticks it. */
+    if (t.hasAttribute && t.hasAttribute("data-led-invoiced")) {
+      var wasChecked = t.checked === true;
+      api({
+        action: "update_deal",
+        id: t.getAttribute("data-led-invoiced"),
+        month: t.getAttribute("data-led-month") || LS.month,
+        invoiced: wasChecked,
+      }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) {
+          t.checked = !wasChecked;
+          toast((r.body && r.body.error) || "לא הצלחתי לעדכן", "err");
+          return;
+        }
+        /* The month on screen may be the one that changed. */
+        if (r.body.month === LS.month) {
+          LS.data = r.body;
+          render();
+        }
+      });
     }
   });
 

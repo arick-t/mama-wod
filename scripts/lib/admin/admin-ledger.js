@@ -161,6 +161,9 @@ module.exports = async function handler(req, res) {
         service: body.service,
         price: body.price,
         day: body.day,
+        /* Undefined means "not part of this edit" — ticking the invoice box sends only
+           this, and editing a row must not clear it (owner, 2026-09-04). */
+        invoiced: body.invoiced === undefined ? undefined : body.invoiced === true,
       });
       if (!updated.ok) {
         return bad(res, updated.code === "NOT_FOUND" ? 404 : 400, updated.code, updated.error);
@@ -257,20 +260,32 @@ module.exports = async function handler(req, res) {
         const doc = await readMonth(m);
         deals = deals.concat(doc.deals);
       }
+      /* The range on its own, for the lists. */
+      const inRange = Ledger.filterDeals(deals, { from: from, to: to });
       const rows = Ledger.filterDeals(deals, {
         name: body.name,
+        /* A place chosen from the list is an exact answer to "what do I invoice this
+           gym for", not a search (owner, 2026-09-04). */
+        exactName: body.exactName === true,
+        service: body.service,
         minPrice: body.minPrice,
         maxPrice: body.maxPrice,
         from: from,
         to: to,
       });
+      const ordered = Ledger.sortDeals(rows, body.sortBy, body.sortDir);
       return res.status(200).json({
         ok: true,
         from: from,
         to: to,
         months: months,
-        deals: rows,
-        total: Ledger.sumOf(rows),
+        deals: ordered,
+        total: Ledger.sumOf(ordered),
+        /* What the two lists can offer — computed BEFORE the name and service filters,
+           or choosing a place would collapse the list to that one place and he could
+           never switch (owner, 2026-09-04). */
+        names: Array.from(new Set(inRange.map(function (d) { return d.name; }))).sort(),
+        services: Array.from(new Set(inRange.map(function (d) { return d.service; }).filter(Boolean))).sort(),
       });
     }
 
