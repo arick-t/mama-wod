@@ -170,6 +170,21 @@ button.ghost:hover{color:var(--text)}
     display:block;padding:40pt 0;text-align:center;font-size:12pt;color:#000
   }
 }
+
+/* Copy a day, copy a week — the client's own menu. A card, not an alarm: one row per
+   action, an icon to read it by, green on the paste (owner, 2026-09-04). */
+.copy-menu{position:fixed;z-index:140;background:var(--card,#161616);border:1px solid rgba(255,255,255,.14);
+  border-radius:12px;padding:6px;box-shadow:0 18px 44px rgba(0,0,0,.55);display:flex;
+  flex-direction:column;gap:2px;min-width:200px}
+.copy-menu .cm-title{font-size:11px;font-weight:800;opacity:.6;letter-spacing:.3px;padding:6px 10px 4px}
+.copy-menu .cm-item{appearance:none;background:transparent;border:none;border-radius:9px;
+  color:inherit;font:inherit;font-size:13.5px;font-weight:600;min-height:38px;padding:8px 10px;
+  cursor:pointer;display:flex;align-items:center;gap:9px;text-align:start;width:100%}
+.copy-menu .cm-item:hover{background:rgba(255,255,255,.07)}
+.copy-menu .cm-paste:hover{background:rgba(76,175,112,.18)}
+.copy-menu .cm-ico{width:20px;text-align:center;font-size:14px;opacity:.7}
+.copy-menu .cm-from{display:block;font-size:11px;font-weight:600;opacity:.6;margin-top:1px}
+.copy-menu .cm-hint{font-size:12px;opacity:.6;padding:8px 10px}
 </style>
 </head>
 <body>
@@ -214,6 +229,8 @@ button.ghost:hover{color:var(--text)}
     <div id="progBanner"></div>
     <!-- No week bar: the calendar carries its own W1…W5 rail. -->
     <div id="days"></div>
+    <!-- Copy a day, copy a week: the menu opens where the finger is. -->
+    <div id="copyMenu" class="copy-menu" hidden></div>
     <!-- No print. The owner's call on 2026-09-01: a printed programme is a copy he
          cannot see, cannot revoke and cannot watermark once it is on paper, and this
          page exists precisely so the programme stays somewhere he still controls.
@@ -815,6 +832,153 @@ button.ghost:hover{color:var(--text)}
     return cell;
   }
 
+  /**
+   * Right-click a day or a week to copy it; right-click another to paste.
+   *
+   * A phone has no right button, so half a second of holding is one. The tap that
+   * follows a long press is swallowed, or the menu would open and close in the same
+   * gesture (owner, 2026-09-04).
+   */
+  function bindCopyGestures() {
+    var host = el("days");
+    if (!host) return;
+
+    document.addEventListener("contextmenu", function (ev) {
+      if (!state.program || !ev.target || !ev.target.closest) return;
+      var box = el("days");
+      if (!box) return;
+      var cube = ev.target.closest("[data-week]");
+      if (cube && box.contains(cube)) {
+        ev.preventDefault();
+        openCopyMenu("week", (parseInt(cube.getAttribute("data-week"), 10) || 1) - 1, "", ev.clientX, ev.clientY);
+        return;
+      }
+      var cell = ev.target.closest("[data-day][data-wi]");
+      if (cell && box.contains(cell)) {
+        var dayKey = cell.getAttribute("data-day") || "";
+        if (!dayKey || dayKey === "general") return;
+        ev.preventDefault();
+        openCopyMenu("day", parseInt(cell.getAttribute("data-wi"), 10) || 0, dayKey, ev.clientX, ev.clientY);
+      }
+    });
+
+    var pressTimer = null;
+    var pressAt = null;
+    var openedByPress = 0;
+    function cancelPress() {
+      if (pressTimer) clearTimeout(pressTimer);
+      pressTimer = null;
+      pressAt = null;
+    }
+    document.addEventListener(
+      "touchstart",
+      function (ev) {
+        var box = el("days");
+        if (!box || !state.program || !ev.target || !ev.target.closest) return;
+        var touch = (ev.touches && ev.touches[0]) || null;
+        if (!touch) return;
+        var cube = ev.target.closest("[data-week]");
+        var cell = ev.target.closest("[data-day][data-wi]");
+        var onCube = cube && box.contains(cube);
+        var onCell = cell && box.contains(cell);
+        if (!onCube && !onCell) return;
+        pressAt = { x: touch.clientX, y: touch.clientY };
+        if (pressTimer) clearTimeout(pressTimer);
+        pressTimer = setTimeout(function () {
+          pressTimer = null;
+          openedByPress = Date.now();
+          if (onCube) {
+            openCopyMenu("week", (parseInt(cube.getAttribute("data-week"), 10) || 1) - 1, "", pressAt.x, pressAt.y);
+          } else {
+            var dayKey = cell.getAttribute("data-day") || "";
+            if (!dayKey || dayKey === "general") return;
+            openCopyMenu("day", parseInt(cell.getAttribute("data-wi"), 10) || 0, dayKey, pressAt.x, pressAt.y);
+          }
+        }, 500);
+      },
+      { passive: true }
+    );
+    document.addEventListener(
+      "touchmove",
+      function (ev) {
+        var touch = (ev.touches && ev.touches[0]) || null;
+        if (!pressAt || !touch) return cancelPress();
+        if (Math.abs(touch.clientX - pressAt.x) > 10 || Math.abs(touch.clientY - pressAt.y) > 10) cancelPress();
+      },
+      { passive: true }
+    );
+    document.addEventListener("touchend", cancelPress, { passive: true });
+    document.addEventListener("touchcancel", cancelPress, { passive: true });
+    document.addEventListener(
+      "click",
+      function (ev) {
+        if (openedByPress && Date.now() - openedByPress < 700) {
+          ev.stopPropagation();
+          openedByPress = 0;
+        }
+      },
+      true
+    );
+
+    /* What the two menu rows do. */
+    document.addEventListener("click", function (ev) {
+      var t = ev.target;
+      if (!t || !t.closest) return;
+      var m = el("copyMenu");
+
+      var cw = t.closest("[data-copy-week]");
+      if (cw) {
+        copyClip = { kind: "week", wi: parseInt(String(cw.getAttribute("data-copy-week")).split(":")[0], 10) || 0 };
+        closeCopyMenu();
+        banner("good", "Week " + (copyClip.wi + 1) + " copied — long-press or right-click another week to paste it.");
+        return;
+      }
+      var cd = t.closest("[data-copy-day]");
+      if (cd) {
+        var cbits = String(cd.getAttribute("data-copy-day")).split(":");
+        copyClip = { kind: "day", wi: parseInt(cbits[0], 10) || 0, dayKey: cbits[1] || "" };
+        closeCopyMenu();
+        banner("good", "Day copied — long-press or right-click another day to paste it.");
+        return;
+      }
+      var pw = t.closest("[data-paste-week]");
+      if (pw) {
+        var toWi = parseInt(String(pw.getAttribute("data-paste-week")).split(":")[0], 10) || 0;
+        closeCopyMenu();
+        if (!copyClip || copyClip.kind !== "week" || copyClip.wi === toWi) return;
+        if (!window.confirm("Paste week " + (copyClip.wi + 1) + " onto week " + (toWi + 1) + "? What is written there will be replaced.")) return;
+        var D = pprogLib();
+        var keys = (D && D.DAY_KEYS) || ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+        saveCopied(
+          keys.map(function (k) {
+            return editFor(copyClip.wi, k, toWi, k);
+          }),
+          "Week " + (copyClip.wi + 1)
+        );
+        return;
+      }
+      var pd = t.closest("[data-paste-day]");
+      if (pd) {
+        var pbits = String(pd.getAttribute("data-paste-day")).split(":");
+        var pWi = parseInt(pbits[0], 10) || 0;
+        var pDay = pbits[1] || "";
+        closeCopyMenu();
+        if (!copyClip || copyClip.kind !== "day" || !pDay) return;
+        if (copyClip.wi === pWi && copyClip.dayKey === pDay) return;
+        if (!window.confirm("Paste it here? What is written on this day will be replaced.")) return;
+        saveCopied([editFor(copyClip.wi, copyClip.dayKey, pWi, pDay)], "Day");
+        return;
+      }
+
+      /* Anywhere else closes it. */
+      if (m && !m.hidden && !t.closest("#copyMenu")) closeCopyMenu();
+    });
+
+    document.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape") closeCopyMenu();
+    });
+  }
+
   function bindCalGestures() {
     document.addEventListener("mousedown", function (ev) {
       if (ev.button !== 0) return;
@@ -1112,6 +1276,141 @@ button.ghost:hover{color:var(--text)}
    * @param {Array} parts ready-made parts (ignored when makeRest)
    * @param {boolean} makeRest true = this day becomes a rest day
    */
+  /* ══════════════════════════════════════════════════════════════════════
+     COPY A DAY, COPY A WEEK — on the client's own page.
+
+     Our clients are coaches: they build programmes in here, and repeating a week by
+     hand is the work the gesture exists to remove (owner, 2026-09-04).
+
+     It writes through the ORDINARY client edit — the same `edits` array a typed change
+     uses — so every guard already in place applies unchanged: the token, the version
+     check that refuses a stale save, the owner's unread flag, and the allowlist. There
+     is no new permission here: it is the edits they could make by hand, made at once.
+     ══════════════════════════════════════════════════════════════════════ */
+
+  /* Kept in memory only: a gesture, not a document. */
+  var copyClip = null;
+
+  function closeCopyMenu() {
+    var m = el("copyMenu");
+    if (m) { m.hidden = true; m.innerHTML = ""; }
+  }
+
+  function placeCopyMenu(m, x, y) {
+    var w = m.offsetWidth || 190;
+    var h = m.offsetHeight || 80;
+    var left = Math.min(Math.max(0, x), Math.max(0, window.innerWidth - w - 8));
+    var top = Math.min(Math.max(0, y), Math.max(0, window.innerHeight - h - 8));
+    m.style.left = Math.round(left) + "px";
+    m.style.top = Math.round(top) + "px";
+  }
+
+  function dayName(dayKey) {
+    var D = pprogLib();
+    return (D && D.DAY_LABELS && D.DAY_LABELS[dayKey]) || String(dayKey || "").toUpperCase();
+  }
+
+  function openCopyMenu(kind, wi, dayKey, x, y) {
+    var m = el("copyMenu");
+    if (!m || !state.program) return;
+    var canPaste = !!(copyClip && copyClip.kind === kind);
+    var title = kind === "week" ? "Week " + (wi + 1) : dayName(dayKey) + " · week " + (wi + 1);
+    var from =
+      canPaste && kind === "week"
+        ? "week " + (copyClip.wi + 1)
+        : canPaste
+        ? dayName(copyClip.dayKey) + " · week " + (copyClip.wi + 1)
+        : "";
+    m.innerHTML =
+      '<div class="cm-title">' + esc(title) + "</div>" +
+      '<button type="button" class="cm-item" data-copy-' + kind + '="' + wi + ":" + esc(dayKey || "") + '">' +
+      '<span class="cm-ico" aria-hidden="true">\u29c9</span><span>Copy ' + kind + "</span></button>" +
+      (canPaste
+        ? '<button type="button" class="cm-item cm-paste" data-paste-' + kind + '="' + wi + ":" + esc(dayKey || "") + '">' +
+          '<span class="cm-ico" aria-hidden="true">\u2935</span><span>Paste here' +
+          '<span class="cm-from">from ' + esc(from) + "</span></span></button>"
+        : '<span class="cm-hint">Nothing copied yet</span>');
+    m.hidden = false;
+    placeCopyMenu(m, x, y);
+  }
+
+  /** Is this day a rest day? The library's own answer, so it matches what is drawn. */
+  function dayIsRest(wi, dayKey) {
+    var D = pprogLib();
+    var week = weekAt(wi);
+    var day = week && week.days ? week.days[dayKey] : null;
+    if (!D || !week) return false;
+    if (window.NormalizePprogBlock && NormalizePprogBlock.isRestDay) {
+      return NormalizePprogBlock.isRestDay(dayKey, day, week);
+    }
+    return !(day && day.parts && day.parts.length);
+  }
+
+  function weekAt(wi) {
+    var weeks = (state.program && state.program.weeks) || [];
+    return weeks[wi | 0] || null;
+  }
+
+  /** The parts of a day, ready to be written somewhere else. */
+  function partsAt(wi, dayKey) {
+    var week = weekAt(wi);
+    var day = week && week.days ? week.days[dayKey] : null;
+    var parts = (day && day.parts) || [];
+    return parts.map(function (p) {
+      return { title: String((p && p.title) || ""), lines: ((p && p.lines) || []).slice() };
+    });
+  }
+
+  /** One edit for one day, carrying its rest-ness rather than just its emptiness. */
+  function editFor(fromWi, fromDay, toWi, toDay) {
+    if (dayIsRest(fromWi, fromDay)) {
+      return { weekIndex: toWi + 1, dayKey: toDay, rest: true, parts: [] };
+    }
+    return { weekIndex: toWi + 1, dayKey: toDay, rest: false, parts: partsAt(fromWi, fromDay) };
+  }
+
+  /**
+   * Write a set of copied days.
+   *
+   * One save, so a copied week is one version bump and one flag for the coach rather
+   * than seven — and so a refused stale save refuses the whole thing, never half.
+   */
+  function saveCopied(edits, what) {
+    if (state.busy || !state.program) return;
+    var real = edits.filter(function (e) {
+      return e && (e.rest === true || (e.parts && e.parts.length));
+    });
+    if (!real.length) {
+      banner("warn", "There is nothing written there to copy.");
+      return;
+    }
+    state.busy = true;
+    banner("", "");
+    api({ action: "save", expectedVersion: state.program.version, edits: real }).then(function (r) {
+      state.busy = false;
+      if (r.status === 409) {
+        if (r.body.program) {
+          state.program = r.body.program;
+          state.edit = null;
+          renderDays();
+          renderChrome();
+        }
+        banner("warn", "Your coach changed this program while you had it open. The current version is shown — please copy again.");
+        return;
+      }
+      if (r.status === 401) { clearToken(); openAuth("This device is no longer authorised."); return; }
+      if (r.status !== 200 || !r.body.ok) {
+        banner("bad", r.body.error || "Could not save. Please try again.");
+        return;
+      }
+      state.program = r.body.program;
+      state.edit = null;
+      renderDays();
+      renderChrome();
+      banner("good", what + " pasted.");
+    });
+  }
+
   function saveDay(wi, dayKey, parts, makeRest, opts) {
     if (state.busy) return;
     if (!state.program) return;
@@ -1274,6 +1573,7 @@ button.ghost:hover{color:var(--text)}
 
   function boot() {
     bindCalGestures();
+    bindCopyGestures();
     el("codeBtn").addEventListener("click", submitCode);
     el("codeInput").addEventListener("keydown", function (ev) { if (ev.key === "Enter") submitCode(); });
     el("agreeBox").addEventListener("change", function () { el("agreeBtn").disabled = !this.checked; });

@@ -277,4 +277,33 @@ ok("and the client is told nothing was lost", /nothing you have written has been
 ok("a visible tab keeps asking", /api\(\{ action: "ping" \}\)/.test(html));
 ok("but never while hidden", /if \(typeof document !== "undefined" && document\.hidden\) return;/.test(html));
 
+
+/* --- the client can copy a day and a week too (owner, 2026-09-04) ---------
+ * "Our clients are coaches themselves and they use the system to build programmes."
+ * So they get the same gesture — written through the ORDINARY client edit, which is
+ * the point: no new permission, no new server action, and every guard already there
+ * (the token, the version check, the coach's unread flag, the allowlist) applies
+ * unchanged. It is the edits they could make by hand, made at once.
+ * ------------------------------------------------------------------------- */
+
+ok("the page has a menu of its own", /id="copyMenu"/.test(html));
+ok("right-clicking a week opens it", /addEventListener\("contextmenu"[\s\S]{0,400}closest\("\[data-week\]"\)/.test(html));
+ok("and right-clicking a day", /closest\("\[data-day\]\[data-wi\]"\)/.test(html));
+ok("a long press is the right-click a phone has not got", /addEventListener\(\s*\n?\s*"touchstart"/.test(html));
+ok("half a second of holding", /\}, 500\);/.test(html));
+ok("a scroll cancels it", /"touchmove"[\s\S]{0,300}cancelPress\(\)/.test(html));
+ok("and the tap after it does not close what it opened", /openedByPress && Date\.now\(\) - openedByPress < 700/.test(html));
+
+ok("copying is remembered in memory only", /var copyClip = null;/.test(html));
+ok("pasting a week writes every day of it", /keys\.map\(function \(k\) \{\s*\n\s*return editFor\(copyClip\.wi, k, toWi, k\);/.test(html));
+ok("in ONE save, so it is one version and one flag", /function saveCopied\(edits, what\)/.test(html));
+ok("through the same edit the client already uses", /api\(\{ action: "save", expectedVersion: state\.program\.version, edits: real \}\)/.test(html));
+ok("a rest day copies as a rest day, not as an empty one", /function editFor[\s\S]{0,300}rest: true/.test(html));
+ok("an empty copy says so instead of writing nothing", /There is nothing written there to copy/.test(html));
+ok("a stale save shows the coach's version rather than overwriting it", /function saveCopied[\s\S]{0,1200}please copy again/i.test(html));
+ok("pasting asks first", /What is written there will be replaced|What is written on this day will be replaced/.test(html));
+ok("and the menu is a card, not an alarm", /\.copy-menu\{position:fixed[^}]*border-radius:12px/.test(html));
+
+/* It must NOT have grown a new way into the server. */
+ok("no new client action was invented", !/action: "copy_week"|action: "copy_day"/.test(html));
 console.log("All client view page checks passed.");

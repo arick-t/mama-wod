@@ -924,6 +924,20 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
   border:1px solid var(--line,#2c2c2c);border-radius:12px;padding:16px;margin:0 0 12px;cursor:pointer;
   font-family:inherit;color:inherit;min-height:44px}
 .client-kind-card:hover{border-color:var(--coach,#9b6bb8);background:rgba(155,107,184,.10)}
+/* A colour per kind, quiet: a bar down the starting edge, a tinted ground, and the
+   title in the same hue. It reuses the language the ledger already taught him —
+   pale blue is one person, purple is a group — with a calm teal for the blank one,
+   which is neither (owner, 2026-09-04). */
+.client-kind-card{border-inline-start:3px solid transparent;transition:background .12s,border-color .12s}
+.client-kind-card.is-athlete{border-inline-start-color:#7DD3F0;background:rgba(125,211,240,.06)}
+.client-kind-card.is-athlete .ck-title{color:#9adcf5}
+.client-kind-card.is-athlete:hover{border-color:#7DD3F0;background:rgba(125,211,240,.13)}
+.client-kind-card.is-blank{border-inline-start-color:#4EC9B0;background:rgba(78,201,176,.06)}
+.client-kind-card.is-blank .ck-title{color:#79dcc7}
+.client-kind-card.is-blank:hover{border-color:#4EC9B0;background:rgba(78,201,176,.13)}
+.client-kind-card.is-coach{border-inline-start-color:#B57BE8;background:rgba(181,123,232,.06)}
+.client-kind-card.is-coach .ck-title{color:#caa1f2}
+.client-kind-card.is-coach:hover{border-color:#B57BE8;background:rgba(181,123,232,.13)}
 .ident-label{display:block;font-size:.82rem;color:var(--text-meta);margin:0 0 6px;font-weight:600}
 .ident-input{width:100%;font-family:var(--font-ui);font-size:16px;color:var(--text);
   background:var(--bg-panel);border:1px solid var(--line);border-radius:8px;padding:11px}
@@ -1739,17 +1753,17 @@ header{flex-wrap:wrap;row-gap:8px}
       <button type="button" class="btn-secondary" onclick="closeClientKindChooser()">סגור</button>
     </div>
     <div class="intake-ws-body" style="padding:18px">
-      <button type="button" class="client-kind-card" onclick="chooseClientKind('athlete')">
+      <button type="button" class="client-kind-card is-athlete" onclick="chooseClientKind('athlete')">
         <span class="ck-title">מתאמן קצה</span>
         <span class="ck-desc">אדם אחד. תחקור מלא כמו באפליקציה — פרופיל, ציוד, לו״ז, הרמות, מיומנויות,
           מגבלות, פציעות, מטרות → לבנה אישית → לינק מסירה.</span>
       </button>
-      <button type="button" class="client-kind-card" onclick="chooseClientKind('blank')">
+      <button type="button" class="client-kind-card is-blank" onclick="chooseClientKind('blank')">
         <span class="ck-title">לקוח ריק</span>
         <span class="ck-desc">בלי תחקור. שם, מין, תשלום — וחודש של ימים ריקים שאתה כותב בעצמך.
           לינק, קוד ומסירה בדיוק כמו כל לקוח אחר.</span>
       </button>
-      <button type="button" class="client-kind-card" onclick="chooseClientKind('coach')">
+      <button type="button" class="client-kind-card is-coach" onclick="chooseClientKind('coach')">
         <span class="ck-title">מאמן / סטודיו</span>
         <span class="ck-desc">אתה כותב תוכנית שהוא מעביר למתאמנים שלו. תחקור רוחבי — ציוד, לו״ז,
           דילואד, אופי האוכלוסייה, מטרות. בלי פרמטרים של אדם בודד.</span>

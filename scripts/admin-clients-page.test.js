@@ -1069,4 +1069,13 @@ ok("the panel is a card, not a warning", /\.week-menu\{position:fixed[^}]*backgr
 ok("each action has an icon to read it by", /class="wm-ico"/.test(screen));
 ok("and the menu says what it is acting on", /class="wm-title"/.test(screen));
 
+
+/* --- the three kinds are told apart by colour (owner, 2026-09-04) --------- */
+
+ok("each card says which kind it is", /client-kind-card is-athlete/.test(page) && /client-kind-card is-blank/.test(page) && /client-kind-card is-coach/.test(page));
+ok("one person is the pale blue the ledger already uses", /\.client-kind-card\.is-athlete\{border-inline-start-color:#7DD3F0/.test(page));
+ok("a group is the same purple", /\.client-kind-card\.is-coach\{border-inline-start-color:#B57BE8/.test(page));
+ok("and the blank one gets a calm colour of its own", /\.client-kind-card\.is-blank\{border-inline-start-color:#4EC9B0/.test(page));
+ok("the colour is a bar and a tint, not a fill", /\.client-kind-card\{border-inline-start:3px solid transparent/.test(page));
+
 console.log("All admin clients page checks passed.");
