@@ -1166,15 +1166,23 @@ function oneRmWindowOpen(blockStartWeek, competitor) {
   return (bi - 3) % every === 0;
 }
 
-function oneRmTestGateText(blockStartWeek, profile) {
+function oneRmTestGateText(blockStartWeek, profile, opts) {
   const bi = brickIndexFromStartWeek(blockStartWeek);
   const competitor = !!(profile && profile.competitor === true);
-  const open = oneRmWindowOpen(blockStartWeek, competitor);
+  const authorised = !!(opts && opts.allowOneRmTest === true);
+  const open = authorised || oneRmWindowOpen(blockStartWeek, competitor);
   const head =
     "\n\n1RM TESTING (HARD — this is a fact about this brick, not a judgement call):\n";
   const what =
     "A 1RM TEST means a true single at or near maximum. Heavy triples, a 5RM, ascending sets and " +
     "percentage work are NOT tests and are always available.\n";
+  const sessionRules =
+    "- ONE MAJOR LIFT PER SESSION, on its own day. Never two maximal efforts in one session.\n" +
+    "- THE TEST IS THE SESSION. The day carrying a max single carries no heavy volume of a second " +
+    "big lift and no high-volume gymnastics. A 100% single earns the whole day.\n" +
+    "- The back squat is the most expensive lift to test and the least worth testing; prefer the " +
+    "front squat where the athlete's goal allows it.\n" +
+    "- Say in the session that it is a test, and give the athlete a target from their reported lift.\n";
   if (!open) {
     return (
       head +
@@ -1182,26 +1190,31 @@ function oneRmTestGateText(blockStartWeek, profile) {
       (bi
         ? "This is brick " + bi + ". "
         : "The brick number was not sent, so it cannot be established that a test is due. ") +
-      "NO 1RM TEST IS PERMITTED IN THIS BRICK, for any movement, with NO EXCEPTIONS. " +
-      "Do not write a max single, do not build a week around testing, and do not name a week " +
-      "'testing' or 'benchmark' — inventing a test nobody asked for is the failure this line " +
-      "exists to stop. Program to percentages of the reported lifts instead.\n"
+      "YOU DO NOT TEST IN THIS BRICK. Not for any movement, and not on your own initiative — do " +
+      "not write a max single, do not build a week around testing, and do not name a week " +
+      "'testing' or 'benchmark'. Inventing a test nobody asked for is the failure this line " +
+      "exists to stop. Program to percentages of the reported lifts instead.\n" +
+      "THIS BINDS YOU, NOT THE HUMAN COACH. This athlete has one, and judging whether a max suits " +
+      "them after three or four months is HIS call, not yours. If he instructs a test — in the " +
+      "request, in a brick note, or through the athlete's own approved request — honour it and " +
+      "apply the session rules below. What you must never do is decide it yourself or read " +
+      "permission into a goal, a theme or an athlete who sounds keen.\n" +
+      sessionRules
     );
   }
   return (
     head +
     what +
-    "This is brick " +
-    bi +
-    ", which IS a testing window for this athlete (" +
-    (competitor ? "declared competitor: every 4 bricks" : "general athlete: every 6 bricks") +
-    ", never before brick 3).\n" +
-    "- ONE MAJOR LIFT PER SESSION, on its own day. Never two maximal efforts in one session.\n" +
-    "- THE TEST IS THE SESSION. The day carrying a max single carries no heavy volume of a second " +
-    "big lift and no high-volume gymnastics. A 100% single earns the whole day.\n" +
-    "- The back squat is the most expensive lift to test and the least worth testing; prefer the " +
-    "front squat where the athlete's goal allows it.\n" +
-    "- Say in the session that it is a test, and give the athlete a target from their reported lift.\n"
+    (authorised
+      ? "THE HUMAN COACH HAS AUTHORISED A TEST IN THIS BRICK. His instruction opens the window " +
+        "whatever the cadence says — he is the coach and this is his call.\n"
+      : "This is brick " +
+        bi +
+        ", which IS a testing window for this athlete (" +
+        (competitor ? "declared competitor: every 4 bricks" : "general athlete: every 6 bricks") +
+        ", never before brick 3). Test at most one major lift, and only if it serves this " +
+        "athlete — an open window is permission, not an instruction.\n") +
+    sessionRules
   );
 }
 
@@ -1249,6 +1262,8 @@ function layerOptsFromBody(body, extra) {
   if (bsw > 0) out.blockStartWeek = bsw;
   if (b.blockHandoff) out.blockHandoff = b.blockHandoff;
   if (b.studioIntake) out.studioIntake = b.studioIntake;
+  /* The owner authorising a 1RM test for this brick. The cadence binds the coach, not him. */
+  if (b.allowOneRmTest === true) out.allowOneRmTest = true;
   return out;
 }
 
@@ -1280,7 +1295,7 @@ function buildSystemWithMemory(profile, action, opts) {
       LEGAL_SAFETY_DIRECTIVE +
       coachPolicyBlock() +
       buildLayerKnowledgeBlock(profile, opts) +
-      oneRmTestGateText(opts && opts.blockStartWeek, profile) +
+      oneRmTestGateText(opts && opts.blockStartWeek, profile, opts) +
       buildCostCapsRuntimeNote(profile) +
       buildFinishLearningBlock(profile, action) +
       buildExtraSessionsBlock(profile) +

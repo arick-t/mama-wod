@@ -227,10 +227,21 @@ function testOneRmGateIsComputed() {
   ok("an unknown brick number forbids testing",
     /a test we cannot date is a test we do not run/i.test(src.replace(/\s+/g, " ")));
   ok("the gate reaches the programming prompt",
-    /oneRmTestGateText\(opts && opts\.blockStartWeek, profile\)/.test(src));
-  ok("a closed window says no exceptions and bans a testing week theme",
-    /NO 1RM TEST IS PERMITTED IN THIS BRICK, for any movement, with NO EXCEPTIONS/.test(src) &&
-      /do not name a week/.test(src));
+    /oneRmTestGateText\(opts && opts\.blockStartWeek, profile, opts\)/.test(src));
+  ok("a closed window stops the coach and bans a testing week theme",
+    /YOU DO NOT TEST IN THIS BRICK/.test(src) && /do not name a week/.test(src));
+  /* And it stops the COACH only. The owner is why the cadence is safe, and POL-030 puts his manual
+     decision above HARD policy — a gate that blocked him would invert the product. */
+  ok("the gate says out loud that it does not bind the human coach",
+    /THIS BINDS YOU, NOT THE HUMAN COACH/.test(src) &&
+      /is HIS call, not yours/.test(src));
+  ok("an authorisation from the owner opens the window whatever the cadence says",
+    /allowOneRmTest === true\) out\.allowOneRmTest = true/.test(src) &&
+      /THE HUMAN COACH HAS AUTHORISED A TEST IN THIS BRICK/.test(src) &&
+      /His instruction opens the window /.test(src) &&
+      /whatever the cadence says/.test(src));
+  ok("an open window is permission and not an instruction",
+    /an open window is permission, not an instruction/.test(src));
   ok("an open window still forbids two maximal efforts in one session",
     /ONE MAJOR LIFT PER SESSION, on its own day\. Never two maximal efforts in one session/.test(
       src

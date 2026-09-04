@@ -100,7 +100,7 @@ const MAX_CHARS = {
      "1RM זה מבחן שלא צריך לעשות אותו בטווחי זמן שמישהו זוכר בכלל כשהמטרה שלך היא רק להתאמן."
      The two lines that used to grant a soft permission ("test a single only occasionally") now
      point at the computed gate instead of reading as licence. */
-  "layer2-individual": 5500,
+  "layer2-individual": 5700,
   /* 3200 as of 2026-09-03. Started at 1220 as four continuity bullets. The owner then reset its
      priority — "חשוב מאוד שלא יהיו 2 לבנות זהות אחרת אין התקדמות לעולם" — so not-repeating became
      the headline with the four progression axes under it, and a studio section was added because
@@ -1669,10 +1669,19 @@ function testOneRmGate() {
   ok("a week theme is not permission",
     /you never infer permission from a week theme/i.test(flat),
     "the exact route the failure took is not closed");
-  ok("the cadence is written down with no exceptions",
+  ok("the cadence is written down",
     /once every SIX bricks and never before the third/i.test(flat) &&
-      /a declared competitor once every four/i.test(flat) &&
-      /NO EXCEPTIONS/.test(I2));
+      /a declared competitor once every four/i.test(flat));
+  /* The first version said NO EXCEPTIONS, which also bound the OWNER — and he is the reason the
+     cadence is safe: "אל תשכח שיש לו מאמן אנושי, בגלל זה הוא שם כדי לראות אם מתאים לו מבחן 1RM
+     אחרי 3 או 4 חודשים." That wording inverted POL-030's own ladder, where a manual decision by
+     the owner sits above HARD policy, and would have fought a brick note under POL-024. */
+  ok("the cadence binds the coach, not the human coach",
+    /THAT CADENCE BINDS YOU, NOT THE HUMAN COACH/.test(I2) &&
+      /whether a max suits them after three or four months is his judgement to make/i.test(flat));
+  ok("an instruction from the human coach is honoured",
+    /When he instructs a test, honour it and keep the session rules/i.test(flat) &&
+      /what is forbidden is deciding it yourself/i.test(flat));
   ok("the owner's reason is kept, not just the number",
     /does not need a number at intervals they would even remember/i.test(flat));
   ok("heavy triples and percentage work are explicitly not tests",
