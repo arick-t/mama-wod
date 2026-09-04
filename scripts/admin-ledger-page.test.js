@@ -488,7 +488,9 @@ ok(
 ok("the invoice boxes are identified by data, not id", /data-led-invoiced="/.test(V.tableHtml([{ id: "z", day: "2026-09-01", name: "a", price: 1 }], 1, {}, null, {})));
 
 /* Two shades of green: a row, and the answer. */
-ok("a row's price is the quieter green", /\.led-price\{font-weight:800;color:#3E9E63\}/.test(page));
-ok("and the total is the brighter one", /\.led-table-total strong\{color:#6FE39B/.test(page));
+/* Three ranks, one hue: a session, a place, the whole answer. */
+ok("a session's price is the quiet green", /\.led-price\{font-weight:700;color:#357850/.test(page));
+ok("a place's own line is brighter and bigger", /\.led-row\.is-group \.led-price\{color:#6FE39B;font-weight:900/.test(page));
+ok("and the grand total is the loudest", /\.led-table-total strong\{color:#A8F5C8/.test(page));
 
 console.log("\nAll admin ledger page checks passed (" + passed + " assertions).");

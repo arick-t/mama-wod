@@ -263,9 +263,12 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .led-rowacts{display:inline-flex;gap:4px;flex:0 0 auto;white-space:nowrap}
 .led-row:last-child{border-bottom:none}
 .led-cell{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-/* Two shades: a row is the quieter green, the grand total the brighter one, so the
-   answer stands out from the arithmetic behind it (owner, 2026-09-04). */
-.led-price{font-weight:800;color:#3E9E63}
+/* Three shades of one green, so a number's rank is visible without reading it: the
+   sessions are the quiet arithmetic, a place's own line is the answer he is looking
+   for, and the grand total is the loudest (owner, 2026-09-04). */
+.led-price{font-weight:700;color:#35785099}
+.led-sub .led-price{color:#357850}
+.led-row.is-group .led-price{color:#6FE39B;font-weight:900;font-size:14.5px}
 .led-mini{appearance:none;border:1px solid var(--line);background:transparent;color:var(--text-muted);
   border-radius:8px;width:26px;height:26px;cursor:pointer;font-size:12px;line-height:1;padding:0}
 .led-mini:hover{color:var(--text);border-color:#3a3a3a}
@@ -343,7 +346,7 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .led-table-head{display:grid;gap:8px;padding:6px 4px;font-size:11px;font-weight:800;
   color:var(--text-muted);border-bottom:1px solid var(--line)}
 .led-table-total{margin-top:10px;text-align:start;font-size:13px;color:var(--text-muted)}
-.led-table-total strong{color:#6FE39B;font-size:16px}
+.led-table-total strong{color:#A8F5C8;font-size:17px}
 .led-date{color:var(--text-muted)}
 .income-wrap{display:inline-flex;align-items:center;gap:8px}
 .income-toggle{appearance:none;width:24px;height:24px;border-radius:8px;border:1px solid var(--line);
