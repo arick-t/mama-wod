@@ -183,10 +183,13 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
   background:transparent;color:var(--text-muted);font-size:17px;line-height:1;cursor:pointer;padding:2px}
 .led-popclose:hover{color:var(--text)}
 .led-pop .led-row{grid-template-columns:1.2fr .9fr .7fr auto auto;font-size:12px}
-.led-pop .led-editor{grid-template-columns:1fr;gap:6px}
+.led-pop .led-editor{flex-direction:column;align-items:stretch;gap:6px}
+.led-pop .led-editor .led-field{flex:1 1 auto}
 .led-pop .led-pickpanel{position:static;width:auto;box-shadow:none;padding:8px 0 0;border:none;background:transparent}
 /* Add a session from anywhere — the same fields, plus the day they land on. */
-.led-manual{display:grid;grid-template-columns:1.3fr 1.1fr .7fr .9fr auto;gap:8px;align-items:center;position:relative}
+.led-manual{display:flex;flex-wrap:wrap;gap:8px;align-items:center;position:relative}
+.led-manual .led-field{flex:1 1 150px;min-width:0}
+.led-manual .led-num-field{flex:0 1 120px}
 /* The favourites box: a fold, a list, and one pencil per name. */
 .led-fold{appearance:none;width:100%;display:flex;align-items:center;gap:10px;background:transparent;
   border:none;color:var(--text);font:inherit;font-size:1.05rem;font-family:var(--font-display);
@@ -222,8 +225,11 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
   border-radius:8px;width:26px;height:26px;cursor:pointer;font-size:12px;line-height:1;padding:0}
 .led-mini:hover{color:var(--text);border-color:#3a3a3a}
 .led-mini.led-danger:hover{color:#fca5a5;border-color:#7f1d1d}
-.led-editor{display:grid;grid-template-columns:1.4fr 1.2fr .8fr auto auto;gap:8px;margin-top:10px;
-  align-items:center;position:relative}
+/* Flex, not a grid: the free-text service appears and disappears, and a grid would
+   leave a hole where it used to be (owner, 2026-09-04). */
+.led-editor{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center;position:relative}
+.led-editor .led-field{flex:1 1 130px;min-width:0}
+.led-editor .led-num-field{flex:0 1 110px}
 .led-field{background:var(--bg);border:1px solid var(--line);border-radius:9px;color:var(--text);
   padding:8px 10px;font:inherit;font-size:13px;min-width:0;text-align:start}
 .led-pick{cursor:pointer}
@@ -1246,6 +1252,8 @@ header{flex-wrap:wrap;row-gap:8px}
       <div id="ledHeader"></div>
       <!-- The open day floats over its own square rather than under the month: he wants
            to see WHICH day he is writing on while he writes (owner, 2026-09-03). -->
+      <!-- One autocomplete list for both entry forms. -->
+      <div id="ledPlaces"></div>
       <div id="ledCalWrap">
         <div id="ledCalendar"></div>
         <div id="ledDay" hidden></div>
@@ -8816,9 +8824,7 @@ tryRestoreAdminSession();
     personal: 0,
     /* The entry row appears when he asks for it with the plus, and not before. */
     adding: false,
-    /* Which form the five places are being offered to: the open day, or the box that
-       can put a session on any date. */
-    pickTarget: "day",
+    /* What the box at the foot of the page is holding while he fills it. */
     manual: null,
     /* The favourites box: folded until he opens it, and one name at a time is edited. */
     favOpen: false,
@@ -8830,8 +8836,6 @@ tryRestoreAdminSession();
     data: null,
     day: "",
     editing: null,
-    picked: null,
-    pickOpen: false,
     range: "month",
   };
 
@@ -8870,7 +8874,6 @@ tryRestoreAdminSession();
     var box = el("ledgerScreen");
     LS.open = false;
     if (box) box.hidden = true;
-    LS.pickOpen = false;
   }
 
   function loadMonth(month) {
@@ -8915,6 +8918,8 @@ tryRestoreAdminSession();
     renderIncome();
     renderManual();
     renderFavourites();
+    var listHost = el("ledPlaces");
+    if (listHost) listHost.innerHTML = V.placeListHtml(placeNames());
     var head = el("ledHeader");
     var cal = el("ledCalendar");
     var day = el("ledDay");
@@ -8935,17 +8940,62 @@ tryRestoreAdminSession();
     var host = el("ledManual");
     if (!host) return;
     var m = LS.manual || {};
-    host.innerHTML =
-      V.manualFormHtml({
-        name: m.name || "",
-        service: m.service || "",
-        price: m.price || "",
-        date: m.date || todayIso(),
-      }) + (LS.pickOpen && LS.pickTarget === "manual" ? V.favouritesHtml(favouriteList()) : "");
+    host.innerHTML = V.manualFormHtml({
+      name: m.name || "",
+      service: m.service || "",
+      price: m.price || "",
+      date: m.date || todayIso(),
+    });
   }
 
-  function favouriteList() {
-    return (LS.data && LS.data.favourites) || [];
+  /** The names behind the autocomplete, and what each one is known for. */
+  function placeNames() {
+    return (LS.data && LS.data.placeNames) || [];
+  }
+
+  function placeDefaultsFor(name) {
+    var all = (LS.data && LS.data.placeDefaults) || {};
+    var wanted = String(name || "").trim().toLowerCase();
+    var keys = Object.keys(all);
+    for (var i = 0; i < keys.length; i++) {
+      if (keys[i].trim().toLowerCase() === wanted) return all[keys[i]];
+    }
+    return null;
+  }
+
+  /**
+   * A name he finished typing that we already know.
+   *
+   * Fills the service and the price from the last time — the price stays editable for
+   * this deal, and what he leaves is what gets remembered for next time.
+   */
+  function applyPlaceDefaults(prefix) {
+    var nameEl = el(prefix + "Name");
+    if (!nameEl) return;
+    var hit = placeDefaultsFor(nameEl.value);
+    if (!hit) return;
+    var priceEl = el(prefix + "Price");
+    if (priceEl && !priceEl.value) priceEl.value = hit.price || "";
+    var sel = el(prefix + "Service");
+    var other = el(prefix + "ServiceOther");
+    if (!sel) return;
+    if (!sel.value) {
+      if (V.SERVICES.indexOf(hit.service) >= 0) {
+        sel.value = hit.service;
+      } else if (hit.service) {
+        sel.value = V.SERVICE_OTHER;
+        if (other) { other.hidden = false; other.value = hit.service; }
+      }
+    }
+  }
+
+  /** What the service field says: one of the known ones, or the free line. */
+  function readService(prefix) {
+    var sel = el(prefix + "Service");
+    var other = el(prefix + "ServiceOther");
+    if (!sel) return "";
+    if (sel.value === V.SERVICE_OTHER) return (other && other.value) || "";
+    return sel.value || "";
   }
 
   /** The box under the table: everyone, and the pencil that names and colours them. */
@@ -8998,11 +9048,7 @@ tryRestoreAdminSession();
       LS.adding || editing
         ? V.editorHtml({
             deal: editing,
-            /* A place chosen in the panel survives the redraw that follows it. */
-            name: LS.picked ? LS.picked.name : "",
-            service: LS.picked ? LS.picked.service : "",
-            price: LS.picked ? LS.picked.price : "",
-          }) + (LS.pickOpen ? V.favouritesHtml((LS.data && LS.data.favourites) || []) : "")
+          })
         : "";
     return V.dayPanelHtml({ day: LS.day, deals: deals, editorHtml: editor, colours: LS.colours });
   }
@@ -9064,12 +9110,9 @@ tryRestoreAdminSession();
   /* --------------------------------------------------------------- writing */
 
   function readEditor() {
-    var nameBtn = el("ledName");
-    var name = LS.picked ? LS.picked.name : (nameBtn ? String(nameBtn.textContent || "").trim() : "");
-    if (name === "שם המקום…") name = "";
     return {
-      name: name,
-      service: (el("ledService") && el("ledService").value) || "",
+      name: String((el("ledName") && el("ledName").value) || "").trim(),
+      service: readService("led"),
       price: (el("ledPrice") && el("ledPrice").value) || "",
     };
   }
@@ -9094,8 +9137,6 @@ tryRestoreAdminSession();
         }
       }
       LS.editing = null;
-      LS.picked = null;
-      LS.pickOpen = false;
       LS.adding = false;
       render();
       loadTable();
@@ -9116,8 +9157,8 @@ tryRestoreAdminSession();
    * (owner, 2026-09-03).
    */
   function saveManual() {
-    var name = LS.manual && LS.manual.name ? LS.manual.name : "";
-    var service = (el("ledMService") && el("ledMService").value) || "";
+    var name = String((el("ledMName") && el("ledMName").value) || "").trim();
+    var service = readService("ledM");
     var price = (el("ledMPrice") && el("ledMPrice").value) || "";
     var day = manualDate();
     if (!name) { toast("בחר או הקלד שם מקום", "err"); return; }
@@ -9128,7 +9169,6 @@ tryRestoreAdminSession();
         return;
       }
       LS.manual = null;
-      LS.pickOpen = false;
       var landed = L.monthKey(day);
       if (landed !== LS.month) {
         LS.month = landed;
@@ -9205,7 +9245,6 @@ tryRestoreAdminSession();
       var dir = nav.getAttribute("data-led-month");
       LS.day = "";
       LS.editing = null;
-      LS.picked = null;
       loadMonth(L.shiftMonth(LS.month, dir === "prev" ? -1 : 1));
       return;
     }
@@ -9216,8 +9255,6 @@ tryRestoreAdminSession();
       /* Clicking the open day again closes it — a square is a toggle. */
       LS.day = LS.day === iso ? "" : iso;
       LS.editing = null;
-      LS.picked = null;
-      LS.pickOpen = false;
       LS.adding = false;
       render();
       return;
@@ -9226,18 +9263,9 @@ tryRestoreAdminSession();
     if (t.closest("[data-led-add]")) {
       LS.adding = true;
       LS.editing = null;
-      LS.picked = null;
       redrawDay();
-      return;
-    }
-
-    var pick = t.closest("[data-led-pick]");
-    if (pick) {
-      var target = pick.getAttribute("data-led-pick") === "manual" ? "manual" : "day";
-      LS.pickOpen = !(LS.pickOpen && LS.pickTarget === target);
-      LS.pickTarget = target;
-      if (target === "manual") renderManual();
-      else redrawDay();
+      /* Pressing the plus is asking to type a place — so the cursor goes there. */
+      try { if (el("ledName")) el("ledName").focus(); } catch (eFocus) {}
       return;
     }
 
@@ -9245,46 +9273,7 @@ tryRestoreAdminSession();
       LS.day = "";
       LS.adding = false;
       LS.editing = null;
-      LS.pickOpen = false;
       render();
-      return;
-    }
-
-    var fav = t.closest("[data-led-place]");
-    if (fav) {
-      /* A known place plants its service and its last price, and the price stays
-         editable for this deal only (owner, 2026-09-03). */
-      var wanted = fav.getAttribute("data-led-place");
-      var hit = favouriteList().filter(function (p) {
-        return p.name === wanted;
-      })[0];
-      var chosen = hit
-        ? { name: hit.name, service: hit.service, price: hit.price }
-        : { name: wanted, service: "", price: "" };
-      LS.pickOpen = false;
-      if (LS.pickTarget === "manual") {
-        LS.manual = Object.assign({}, LS.manual, chosen, { date: manualDate() });
-        renderManual();
-      } else {
-        LS.picked = chosen;
-        redrawDay();
-      }
-      return;
-    }
-
-    if (t.closest("[data-led-place-new]")) {
-      var typed = String((el("ledNewPlace") && el("ledNewPlace").value) || "").trim();
-      if (!typed) { toast("הקלד שם מקום", "err"); return; }
-      /* A new place is remembered when the DEAL is saved, not now: a name typed and
-         abandoned is not a place he trains at. */
-      LS.pickOpen = false;
-      if (LS.pickTarget === "manual") {
-        LS.manual = Object.assign({}, LS.manual, { name: typed, service: "", price: "", date: manualDate() });
-        renderManual();
-      } else {
-        LS.picked = { name: typed, service: "", price: "" };
-        redrawDay();
-      }
       return;
     }
 
@@ -9332,8 +9321,6 @@ tryRestoreAdminSession();
 
     if (t.closest("[data-led-cancel]")) {
       LS.editing = null;
-      LS.picked = null;
-      LS.pickOpen = false;
       LS.adding = false;
       redrawDay();
       return;
@@ -9343,8 +9330,6 @@ tryRestoreAdminSession();
     if (edit) {
       LS.editing = edit.getAttribute("data-led-edit");
       LS.adding = false;
-      LS.picked = null;
-      LS.pickOpen = false;
       redrawDay();
       return;
     }
@@ -9372,22 +9357,36 @@ tryRestoreAdminSession();
       return;
     }
 
-    /* A click elsewhere closes the picker — but never the open day, and never an edit
-       in progress: losing typed work to a stray click is the complaint he already made
-       about the intake box (owner, 2026-09-02). */
-    if (LS.pickOpen && !t.closest(".led-pickpanel")) {
-      LS.pickOpen = false;
-      if (LS.pickTarget === "manual") renderManual();
-      else redrawDay();
-      return;
-    }
-
     /* A click on the month outside the open day closes it — but never while a line is
        being written, because losing typed work to a stray click is the complaint he
        already made once (owner, 2026-09-02). */
     if (LS.day && !LS.adding && !LS.editing && !t.closest(".led-daybox") && !t.closest("[data-led-day]")) {
       LS.day = "";
       render();
+    }
+  });
+
+  /* Typing and choosing are not clicks, so they get their own listener. */
+  document.addEventListener("change", function (ev) {
+    var box = el("ledgerScreen");
+    if (!box || box.hidden) return;
+    var t = ev.target;
+    if (!t || !t.id) return;
+
+    /* "Other" opens the free line, and closes it again if he changes his mind. */
+    if (t.hasAttribute && t.hasAttribute("data-led-service")) {
+      var other = el(t.id + "Other");
+      if (other) {
+        other.hidden = t.value !== V.SERVICE_OTHER;
+        if (other.hidden) other.value = "";
+        else other.focus();
+      }
+      return;
+    }
+
+    /* A name he finished typing that we already know fills the rest. */
+    if (t.hasAttribute && t.hasAttribute("data-led-name")) {
+      applyPlaceDefaults(t.id.replace(/Name$/, ""));
     }
   });
 

@@ -146,21 +146,42 @@ const editor = V.editorHtml({});
 ok("the entry line asks for a place", editor.indexOf('id="ledName"') >= 0);
 ok("a service", editor.indexOf('id="ledService"') >= 0);
 ok("and a price", editor.indexOf('id="ledPrice"') >= 0);
-ok("the place field opens the picker rather than typing", editor.indexOf('data-led-pick="1"') >= 0);
+ok("the place field is typed into", editor.indexOf('id="ledName"') >= 0 && editor.indexOf("data-led-pick") < 0);
 const editing = V.editorHtml({ deal: deals[0] });
 ok("editing an existing deal plants what it was", editing.indexOf("רימון") >= 0 && editing.indexOf('value="250"') >= 0);
 ok("and says it is an update", editing.indexOf("עדכן") >= 0);
 
-/* --- the five places ----------------------------------------------------- */
+/* --- typing a place, choosing a service, tapping a price ------------------
+ * The name used to be a button that opened a panel with another button in it. He
+ * pressed it and could not type: "the place name field is not clickable and you
+ * cannot type in it" (owner, 2026-09-04). It is a text field now, with the saved
+ * places offered as the browser's own autocomplete.
+ * ------------------------------------------------------------------------- */
 
-const favs = V.favouritesHtml([
-  { name: "רימון", service: "אימון קבוצתי", price: 250 },
-  { name: "אולם העירייה", service: "אישי", price: 180 },
-]);
-ok("the picker offers the places he trained at", (favs.match(/data-led-place="/g) || []).length === 2);
-ok("each with its service and last price", favs.indexOf("אימון קבוצתי · ₪250") >= 0);
-ok("and a way to type a new one", favs.indexOf('id="ledNewPlace"') >= 0);
-ok("with nothing yet, it invites the first", V.favouritesHtml([]).indexOf("עוד לא אימנת") >= 0);
+const entry = V.editorHtml({});
+ok("the place is typed, not picked", /<input[^>]*id="ledName"/.test(entry));
+ok("with the saved places as autocomplete", entry.indexOf('list="ledPlaceList"') >= 0);
+ok("and no panel behind it any more", entry.indexOf("data-led-pick") < 0 && entry.indexOf("led-pickpanel") < 0);
+ok("the old picker is gone from the library too", typeof V.favouritesHtml === "undefined");
+ok("the list is the names he has worked at", V.placeListHtml(["רימון", "אולם"]).indexOf('<option value="רימון">') >= 0);
+
+ok("the service is a short list", (entry.match(/<option/g) || []).length === 4);
+ok("of the two he gives", entry.indexOf(">אימון אישי<") >= 0 && entry.indexOf(">אימון קבוצתי<") >= 0);
+ok("plus a way out of it", entry.indexOf(">אחר<") >= 0);
+ok("whose free line is closed until it is chosen", /id="ledServiceOther"[^>]*hidden/.test(entry));
+const oldService = V.editorHtml({ deal: { id: "d", name: "x", service: "אימון בבריכה", price: 100 } });
+ok("an old service that is neither opens as other", /id="ledServiceOther"[^>]*value="אימון בבריכה"/.test(oldService));
+ok("and is not quietly rewritten", oldService.indexOf('hidden') < oldService.indexOf('id="ledServiceOther"') || !/id="ledServiceOther"[^>]*hidden/.test(oldService));
+
+ok("the price asks for the number pad", /id="ledPrice"[^>]*inputmode="numeric"/.test(entry));
+ok("and so does the one in the box", /id="ledMPrice"[^>]*inputmode="numeric"/.test(V.manualFormHtml({})));
+
+ok("choosing other opens the line", /other\.hidden = t\.value !== V\.SERVICE_OTHER/.test(page));
+ok("a known name fills the rest", /function applyPlaceDefaults\(prefix\)/.test(page));
+ok("but never overwrites a price he already typed", /if \(priceEl && !priceEl\.value\)/.test(page));
+ok("what the field says is what gets saved", /function readService\(prefix\)/.test(page));
+ok("the names travel with the month", /placeNames: Ledger\.placesByUse\(places\)/.test(fs.readFileSync(path.join(root, "scripts", "lib", "admin", "admin-ledger.js"), "utf8")));
+ok("pressing the plus puts the cursor in the name", /if \(el\("ledName"\)\) el\("ledName"\)\.focus\(\)/.test(page));
 
 /* --- the table ----------------------------------------------------------- */
 
@@ -175,8 +196,10 @@ ok("an empty range says so", V.tableHtml([], 0).indexOf("אין עסקאות ב�
 
 const nasty = V.dayDealsHtml([{ id: "x", day: "2026-09-03", name: '<img src=x onerror="alert(1)">', service: "", price: 10 }]);
 ok("a place name cannot inject markup", nasty.indexOf("<img src=x") < 0 && nasty.indexOf("&lt;img") >= 0);
-const nastyFav = V.favouritesHtml([{ name: '"><script>alert(1)</script>', service: "", price: 1 }]);
-ok("neither can one in the picker", nastyFav.indexOf("<script>alert(1)") < 0);
+const nastyList = V.placeListHtml(['"><script>alert(1)</script>']);
+ok("neither can one in the autocomplete list", nastyList.indexOf("<script>alert(1)") < 0);
+const nastyFavBox = V.favouritesBoxHtml({ places: [{ name: '"><img src=x onerror="alert(1)">', uses: 1, service: "", price: 1 }], open: true });
+ok("nor one in the favourites box", nastyFavBox.indexOf("<img src=x") < 0);
 
 /* --- what this screen is not -------------------------------------------- */
 
@@ -205,13 +228,12 @@ ok("the box asks for a place", manual.indexOf('id="ledMName"') >= 0);
 ok("a service", manual.indexOf('id="ledMService"') >= 0);
 ok("a price", manual.indexOf('id="ledMPrice"') >= 0);
 ok("and the day it lands on", manual.indexOf('id="ledMDate"') >= 0 && manual.indexOf('value="2026-09-03"') >= 0);
-ok("its place field offers the same five", manual.indexOf('data-led-pick="manual"') >= 0);
+ok("its place field offers the same autocomplete", manual.indexOf('list="ledPlaceList"') >= 0);
 ok("a session added there is written to the date in the field", /function saveManual\(\)[\s\S]{0,700}action: "add_deal", day: day/.test(page));
 ok(
   "and if that day is in another month, the calendar follows it there",
   /if \(landed !== LS\.month\)[\s\S]{0,200}loadMonth\(landed\)/.test(page)
 );
-ok("the picker knows which of the two forms asked for it", /LS\.pickTarget === "manual"/.test(page));
 ok("a click on the month closes the open day", /!t\.closest\("\.led-daybox"\) && !t\.closest\("\[data-led-day\]"\)/.test(page));
 ok("but never while a line is being written", /if \(LS\.day && !LS\.adding && !LS\.editing/.test(page));
 

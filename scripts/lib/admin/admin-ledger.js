@@ -88,6 +88,16 @@ async function monthPayload(month) {
     favourites: Ledger.favourites(places),
     /* name → colour, so a row can be painted without a second request. */
     colours: Ledger.colourMap(places),
+    /* The names behind the autocomplete, busiest first, and what each one is known
+       for — so typing a place he knows fills the other two fields without a round
+       trip (owner, 2026-09-04). Names and two small fields, never the warehouse. */
+    placeNames: Ledger.placesByUse(places).map(function (p) {
+      return p.name;
+    }).slice(0, 300),
+    placeDefaults: Ledger.placesByUse(places).slice(0, 300).reduce(function (acc, p) {
+      acc[p.name] = { service: p.service, price: p.price };
+      return acc;
+    }, {}),
   };
 }
 
