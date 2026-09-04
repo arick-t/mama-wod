@@ -106,7 +106,7 @@ const MAX_CHARS = {
      אפקטיבי". An hour divided three ways is eighteen minutes a piece before transitions. The
      studio has its own version of this rule for its own reason — the coach's floor — so the two
      are stated separately rather than shared. */
-  "layer2-individual": 6600,
+  "layer2-individual": 7000,
   /* 3200 as of 2026-09-03. Started at 1220 as four continuity bullets. The owner then reset its
      priority — "חשוב מאוד שלא יהיו 2 לבנות זהות אחרת אין התקדמות לעולם" — so not-repeating became
      the headline with the four progression axes under it, and a studio section was added because
@@ -1104,8 +1104,8 @@ function testPackBudget() {
      moment the router becomes the source. This pack is
      ~10.2k tokens; the general
      healthy athlete still pays 22k, which is what most bricks actually cost. */
-  ok("the heaviest pack stays under 49k characters",
-    heavy.chars < 49000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
+  ok("the heaviest pack stays under 50k characters",
+    heavy.chars < 50000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
   ok("the pack reports which layers it used",
     Array.isArray(heavy.layers) && heavy.layers.length >= 6, heavy.layers.join(", "));
 }
@@ -1850,6 +1850,15 @@ function testWarmUpIsAnIntakeAnswer() {
 function testTwoWorkingParts() {
   const I3 = require("../lib/coach-layers/layer2-individual.js");
   const flat = I3.replace(/\s+/g, " ");
+  /* Brick 2 wrote "20/15 kg" and "24/16 kg" for a single female athlete — Rx/scaled notation,
+     written for a room. Found 2026-09-04. */
+  ok("one athlete gets one number",
+    /ONE ATHLETE GETS ONE NUMBER/.test(I3) &&
+      /Never write a class prescription like '20\/15 kg' or '24\/16 kg' for a single person/i.test(
+        flat
+      ));
+  ok("the reason is that choosing the load is the job",
+    /handing it to one athlete makes them decide what you were paid to decide/i.test(flat));
   ok("two working parts is the session",
     /--- TWO WORKING PARTS IS THE SESSION \(HARD\) ---/.test(I3) &&
       /TWO working parts is the default/.test(flat));
