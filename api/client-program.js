@@ -91,6 +91,20 @@ function isPlainObject(v) {
   return !!v && typeof v === "object" && !Array.isArray(v);
 }
 
+/**
+ * How many weeks a BLANK client's block is.
+ *
+ * Four unless he says otherwise, one to twelve. It exists only on this path: no other
+ * kind of client reads it, `lib/client-intake.js` does not know about it, and the
+ * coach's contract still says four weeks — which is asserted by a test, because that
+ * contract is the thing the owner asked twice not to break (owner, 2026-09-04).
+ */
+function blankBlockWeeks(raw, fallback) {
+  const n = parseInt(raw, 10);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.max(1, Math.min(12, n));
+}
+
 function bad(res, status, code, error, extra) {
   return res.status(status).json(Object.assign({ ok: false, code: code, error: error }, extra || {}));
 }
@@ -301,6 +315,10 @@ async function ownerHandler(req, res, body) {
         paymentMethod: body.paymentMethod,
       });
       weekCount = Intake.weekCountFor(intake);
+      /* HIS choice, and only for this kind. The shared intake, the studio and the
+         individual paths, and the coach's four-week contract are all untouched — the
+         owner was explicit about that, twice (owner, 2026-09-04). */
+      weekCount = blankBlockWeeks(body.blockWeeks, weekCount);
     }
     if (wantsIntake && body.intake) {
       const problems = Intake.validateIntake(body.intake);
@@ -526,9 +544,20 @@ async function ownerHandler(req, res, body) {
         }
       }
     }
+    /* A blank client's next month may be any length he asks for. Read from the
+       PROGRAMME, not from the request: no other kind can reach this, whatever it
+       sends (owner, 2026-09-04). */
+    let blankWeeks;
+    if (body.blockWeeks !== undefined) {
+      const kindRead = await store.readProgram(programId);
+      if (kindRead.ok && kindRead.program.clientKind === "blank") {
+        blankWeeks = blankBlockWeeks(body.blockWeeks, undefined);
+      }
+    }
     const result = await store.addBlock(programId, Number(body.expectedVersion), {
       intake: blockIntake,
       notes: body.notes,
+      weekCount: blankWeeks,
       /* An individual answers about themselves again for a new block: what they are
          training for, and what has to be worked around. It is a PATCH onto the answers
          already on the programme - a new block must not erase the eight-step packet the
@@ -550,6 +579,29 @@ async function ownerHandler(req, res, body) {
       version: result.version,
       added: result.added,
       blockIndex: result.blockIndex,
+    });
+  }
+
+  /* A week the owner wrote, copied onto another week — one write, not seven. */
+  if (action === "copy_week") {
+    const result = await store.copyWeek(
+      programId,
+      Number(body.expectedVersion),
+      body.fromWeek,
+      body.toWeek
+    );
+    if (!result.ok) {
+      const status =
+        result.code === "VERSION_CONFLICT" ? 409 : result.code === "NOT_FOUND" ? 404 : 400;
+      return res.status(status).json(Object.assign({ ok: false }, result));
+    }
+    return res.status(200).json({
+      ok: true,
+      program: result.program,
+      version: result.version,
+      copiedDays: result.copiedDays,
+      fromWeek: result.fromWeek,
+      toWeek: result.toWeek,
     });
   }
 

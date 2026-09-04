@@ -199,6 +199,17 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .led-manual .led-field{flex:1 1 150px;min-width:0}
 .led-manual .led-num-field{flex:0 1 120px}
 /* The favourites box: a fold, a list, and one pencil per name. */
+/* Right-click a week: copy it, paste it. Fixed to the viewport because it opens where
+   the finger is, and the calendar under it scrolls (owner, 2026-09-04). */
+.week-menu{position:fixed;z-index:120;background:var(--bg-elev);border:1px solid var(--line);
+  border-radius:10px;padding:5px;box-shadow:0 14px 34px rgba(0,0,0,.5);display:flex;
+  flex-direction:column;gap:2px;min-width:180px}
+.week-menu button{appearance:none;background:transparent;border:none;color:var(--text);
+  font:inherit;font-size:13px;text-align:start;padding:8px 10px;border-radius:8px;cursor:pointer}
+.week-menu button:hover{background:rgba(232,69,26,.16)}
+.week-menu .wm-from{color:var(--text-muted);font-size:11px}
+.week-menu .wm-hint{color:var(--text-muted);font-size:12px;padding:8px 10px}
+
 /* The blank client's four questions. */
 .blank-form{display:flex;flex-direction:column;gap:10px}
 .blank-row{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:center;font-size:13px}
@@ -1688,6 +1699,12 @@ header{flex-wrap:wrap;row-gap:8px}
           <input id="blankAmount" type="number" inputmode="numeric" min="0" max="100000" placeholder="₪"></label>
         <label class="blank-row"><span>אופן התשלום</span>
           <input id="blankMethod" maxlength="200" placeholder="ביט / העברה / מזומן"></label>
+        <!-- Only here. A blank client's month is whatever length he says; the studio
+             and the individual are untouched, and so is the coach's four-week contract
+             (owner, 2026-09-04, twice). -->
+        <label class="blank-row"><span>אורך לבנה</span>
+          <input id="blankWeeks" type="number" inputmode="numeric" min="1" max="12" value="4"
+                 title="מספר שבועות בלבנה"></label>
       </div>
       <p class="blank-err" id="blankErr"></p>
       <div class="row" style="margin-top:14px;gap:8px">
@@ -5767,6 +5784,8 @@ function openBlankClientForm() {
     var f = document.getElementById(id);
     if (f) f.value = "";
   });
+  /* Four weeks unless he says otherwise — the number we have always used. */
+  if (document.getElementById("blankWeeks")) document.getElementById("blankWeeks").value = "4";
   if (document.getElementById("blankGender")) document.getElementById("blankGender").value = "";
   if (document.getElementById("blankErr")) document.getElementById("blankErr").textContent = "";
   m.classList.add("open");
@@ -5806,6 +5825,7 @@ function createBlankClient() {
     clientGender: String((document.getElementById("blankGender") || {}).value || ""),
     monthlyAmount: (document.getElementById("blankAmount") || {}).value || 0,
     paymentMethod: String((document.getElementById("blankMethod") || {}).value || ""),
+    blockWeeks: (document.getElementById("blankWeeks") || {}).value || 4,
   }).then(function (r) {
     if (btn) btn.disabled = false;
     if (!r || !r.ok) {
@@ -6839,8 +6859,17 @@ tryRestoreAdminSession();
     /* Nothing to ask a blank client: another month of empty squares, on the spot
        (owner, 2026-09-04). */
     if (isBlankClient()) {
-      if (!window.confirm("להוסיף חודש נוסף של ימים ריקים?")) return;
-      api({ action: "add_block", programId: S.program.programId, expectedVersion: S.program.version })
+      var lastBlock = (S.program.blocks || [])[(S.program.blocks || []).length - 1];
+      var suggest = (lastBlock && parseInt(lastBlock.weekCount, 10)) || 4;
+      var asked = window.prompt("כמה שבועות בלבנה הבאה?", String(suggest));
+      if (asked === null) return;
+      var weeks = Math.max(1, Math.min(12, parseInt(asked, 10) || suggest));
+      api({
+        action: "add_block",
+        programId: S.program.programId,
+        expectedVersion: S.program.version,
+        blockWeeks: weeks,
+      })
         .then(function (r) {
           if (r.status !== 200 || !r.body.ok) {
             banner("bad", (r.body && r.body.error) || "לא הצלחתי להוסיף לבנה.");
@@ -7079,7 +7108,11 @@ tryRestoreAdminSession();
     }
     /* No week bar: the calendar carries the W1…W5 rail itself, the same way the admin
        module shows a brick. A second week selector above it only competed with it. */
-    html += '<div id="adminDays"></div></div>';
+    html += '<div id="adminDays"></div>' +
+      /* Right-click a week cube: copy the week, then paste it onto another one
+         (owner, 2026-09-04). A menu rather than a drag, because a drag on a calendar
+         is how you move a week by accident. */
+      '<div id="weekMenu" class="week-menu" hidden></div></div>';
 
     el("detail").innerHTML = html;
     show("detail", true);
@@ -7222,6 +7255,29 @@ tryRestoreAdminSession();
     var n = parseInt(intake.sessionsPerWeek, 10);
     /* Seven is what a week in the programme can hold - see MAX_SESSIONS_PER_WEEK. */
     return n > 0 && n <= 7 ? n : 0;
+  }
+
+  /* Bound once, on the page: the calendar is rewritten constantly, and a listener on
+     a redrawn element is a listener that quietly stops working. */
+  if (!window._adminWeekMenuBound) {
+    window._adminWeekMenuBound = true;
+    document.addEventListener("contextmenu", function (ev) {
+      var host = el("adminDays");
+      var cube = ev.target && ev.target.closest ? ev.target.closest("[data-week]") : null;
+      if (!host || !cube || !host.contains(cube)) return;
+      if (!S.program) return;
+      ev.preventDefault();
+      openWeekMenu(parseInt(cube.getAttribute("data-week"), 10) || 0, ev.clientX, ev.clientY);
+    });
+    document.addEventListener("click", function (ev) {
+      var m = el("weekMenu");
+      if (!m || m.hidden) return;
+      if (ev.target && ev.target.closest && ev.target.closest("#weekMenu")) return;
+      closeWeekMenu();
+    });
+    document.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape") closeWeekMenu();
+    });
   }
 
   function renderAdminDays() {
@@ -8037,6 +8093,42 @@ tryRestoreAdminSession();
       });
       return;
     }
+    var wCopy = t.closest && t.closest("[data-week-copy]");
+    if (wCopy) {
+      weekClip = {
+        programId: S.program && S.program.programId,
+        week: parseInt(wCopy.getAttribute("data-week-copy"), 10) || 0,
+      };
+      closeWeekMenu();
+      banner("good", "שבוע " + weekClip.week + " הועתק — לחץ ימני על שבוע אחר כדי להדביק.");
+      return;
+    }
+    var wPaste = t.closest && t.closest("[data-week-paste]");
+    if (wPaste) {
+      var toWeek = parseInt(wPaste.getAttribute("data-week-paste"), 10) || 0;
+      closeWeekMenu();
+      if (!weekClip || !toWeek || toWeek === weekClip.week) return;
+      if (!window.confirm("להדביק את שבוע " + weekClip.week + " על שבוע " + toWeek +
+        "? מה שכתוב בשבוע " + toWeek + " יידרס.")) return;
+      api({
+        action: "copy_week",
+        programId: S.program.programId,
+        expectedVersion: S.program.version,
+        fromWeek: weekClip.week,
+        toWeek: toWeek,
+      }).then(function (r) {
+        if (r.status === 409) { banner("warn", "מישהו שמר בינתיים. פותח מחדש."); openClient(S.program.programId); return; }
+        if (r.status !== 200 || !r.body.ok) {
+          banner("bad", (r.body && r.body.error) || "לא הצלחתי להדביק.");
+          return;
+        }
+        S.program = r.body.program;
+        banner("good", "שבוע " + r.body.fromWeek + " הודבק על שבוע " + r.body.toWeek +
+          " — " + r.body.copiedDays + " ימים.");
+        renderDetail();
+      });
+      return;
+    }
     if (g("data-nextblock")) { startNextBlock(); return; }
     if (g("data-approve")) { approveBlock(parseInt(g("data-approve"), 10) || 0); return; }
 
@@ -8150,6 +8242,35 @@ tryRestoreAdminSession();
   /** Did this client answer the eight-step intake rather than the studio one? */
   function isIndividualClient() {
     return !!(S.program && (S.program.clientKind === "athlete" || S.program.athleteIntake));
+  }
+
+  /* The week on the clipboard, as {programId, week}. Kept in memory only: it is a
+     gesture, not a document, and it should not survive a reload. */
+  var weekClip = null;
+
+  function closeWeekMenu() {
+    var m = el("weekMenu");
+    if (m) { m.hidden = true; m.innerHTML = ""; }
+  }
+
+  function openWeekMenu(weekNum, x, y) {
+    var m = el("weekMenu");
+    if (!m) return;
+    var canPaste = !!(weekClip && weekClip.programId === (S.program && S.program.programId));
+    m.innerHTML =
+      '<button type="button" data-week-copy="' + weekNum + '">העתק שבוע ' + weekNum + "</button>" +
+      (canPaste
+        ? '<button type="button" data-week-paste="' + weekNum + '">הדבק לשבוע ' + weekNum +
+          ' <span class="wm-from">(משבוע ' + weekClip.week + ")</span></button>"
+        : '<span class="wm-hint">אין שבוע מועתק</span>');
+    m.hidden = false;
+    /* Measured from the page, and kept inside it. */
+    var w = m.offsetWidth || 190;
+    var h = m.offsetHeight || 80;
+    var left = Math.min(Math.max(0, x), Math.max(0, window.innerWidth - w - 8));
+    var top = Math.min(Math.max(0, y), Math.max(0, window.innerHeight - h - 8));
+    m.style.left = Math.round(left) + "px";
+    m.style.top = Math.round(top) + "px";
   }
 
   /** Four answers and an empty month — no questionnaire to open, ever. */
@@ -8911,6 +9032,7 @@ tryRestoreAdminSession();
         clientGender: f.clientGender,
         monthlyAmount: f.monthlyAmount,
         paymentMethod: f.paymentMethod,
+        blockWeeks: f.blockWeeks,
         blockStart: israelSundayIso(),
       }).then(function (r) {
         if (r.status !== 200 || !r.body.ok) {

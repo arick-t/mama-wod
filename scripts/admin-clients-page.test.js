@@ -141,6 +141,9 @@ const ACTIONS_ALLOWED = [
      content — the owner writes it — so it does not make this a generating surface. */
   "add_block",
   "approve_block",
+  /* A week the owner wrote, moved onto another week — one write, and it creates no
+     content of its own (owner, 2026-09-04). */
+  "copy_week",
   "renewal_check",
   /* The athlete list, for the other half of the shared strip. It reads; it makes
      nothing. */
@@ -969,16 +972,42 @@ ok("the page is not indexed", /noindex/.test(page));
 ok("the chooser offers a third kind", /chooseClientKind\('blank'\)/.test(page));
 ok("and says what it is", /לקוח ריק<\/span>[\s\S]{0,200}בלי תחקור/.test(page));
 ok("choosing it opens four questions, not a questionnaire", /if \(kind === "blank"\) \{\s*\n\s*openBlankClientForm\(\);/.test(page));
-["blankName", "blankGender", "blankAmount", "blankMethod"].forEach(function (id) {
+["blankName", "blankGender", "blankAmount", "blankMethod", "blankWeeks"].forEach(function (id) {
   ok("the short form asks " + id, new RegExp('id="' + id + '"').test(page));
 });
-ok("and nothing else", (page.match(/class="blank-row"/g) || []).length === 4);
+/* Five, since 2026-09-04: the block length joined them, and only here. */
+ok("and nothing else", (page.match(/class="blank-row"/g) || []).length === 5);
 ok("a client with no name is refused before the network", /if \(!name\) \{[\s\S]{0,120}צריך שם/.test(page));
 ok("the create goes through the client screen, like every other kind", /createBlank: function \(form\)/.test(screen));
 ok("with the kind the server shapes the month from", /clientKind: "blank"/.test(screen));
 ok("and the client is opened from the response", /createBlank[\s\S]{0,1400}renderViewMode\(\);[\s\S]{0,40}renderDetail\(\);/.test(screen));
 /* A blank client has nothing to be asked between blocks either. */
 ok("the screen knows the kind", /function isBlankClient\(\)/.test(screen));
-ok("and a second month is added on the spot", /if \(isBlankClient\(\)\) \{[\s\S]{0,300}action: "add_block"/.test(screen));
+/* Updated 2026-09-04: it asks how many weeks first — the length is his to choose. */
+ok("and a second month is added on the spot", /if \(isBlankClient\(\)\) \{[\s\S]{0,700}action: "add_block"/.test(screen));
+
+
+/* --- a week copied onto another week (owner, 2026-09-04) ------------------ */
+
+ok("a week cube can be grabbed by the menu", /data-week="' \+\s*\n?\s*\(weekIndex0 \+ 1\)/.test(fs.readFileSync(path.join(root, "lib", "pprog-display.js"), "utf8")));
+ok("right-clicking one opens a menu", /addEventListener\("contextmenu"[\s\S]{0,400}closest\("\[data-week\]"\)/.test(screen));
+ok("and it is bound once, not on every redraw", /window\._adminWeekMenuBound/.test(screen));
+ok("the menu offers a copy", /data-week-copy=/.test(screen));
+ok("and a paste, only when something is on the clipboard", /canPaste[\s\S]{0,200}data-week-paste=/.test(screen));
+ok("the clipboard belongs to the client it was copied from", /weekClip\.programId === \(S\.program && S\.program\.programId\)/.test(screen));
+ok("pasting warns that the week will be overwritten", /יידרס/.test(screen));
+ok("and goes through one server write", /action: "copy_week"/.test(screen));
+ok("a stale paste is refused and the client reopened", /if \(r\.status === 409\)[\s\S]{0,120}openClient\(S\.program\.programId\)/.test(screen));
+ok("escape closes the menu", /if \(ev\.key === "Escape"\) closeWeekMenu\(\)/.test(screen));
+
+/* --- the blank client's block length lives HERE and nowhere else ---------- */
+
+ok("the short form asks how long the block is", /id="blankWeeks"/.test(page));
+ok("and it opens on four", /id="blankWeeks"[^>]*value="4"/.test(page));
+ok("the number travels with the create", /blockWeeks: \(document\.getElementById\("blankWeeks"\)/.test(page));
+ok("a blank client's next month asks again", /כמה שבועות בלבנה הבאה\?/.test(screen));
+/* The fence, from the page's side: no other form has this field. */
+ok("the studio intake has no block-length field", !/id="inBlockWeeks"/.test(page));
+ok("nor does the individual's", !/id="inABlockWeeks"/.test(page));
 
 console.log("All admin clients page checks passed.");

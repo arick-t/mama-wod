@@ -482,4 +482,34 @@ ok("an unstated room carries its own instruction", /^MAX AT ONCE: not stated/m.t
    prompt: one string serving two masters follows neither rule. */
 ok("briefFor is still not a prompt", !/BLOCK_JSON/.test(I.briefFor({ maxAthletesAtOnce: 12 })));
 
+
+/* --- the fence around the coach's format (owner, 2026-09-04) --------------
+ * A blank client may ask for a block of any length. The owner asked twice, in the
+ * strongest terms, that this must not reach the other kinds of client or the coach's
+ * rules. These assertions fail if it ever does.
+ * ------------------------------------------------------------------------- */
+
+const fenceIntakeSrc = fs.readFileSync(path.join(__dirname, "..", "lib", "client-intake.js"), "utf8");
+const contractSrc = fs.readFileSync(
+  path.join(__dirname, "..", "lib", "coach-intake-sync-contract.js"),
+  "utf8"
+);
+
+ok("a month is still four weeks in the shared intake", /var WEEKS_PER_MONTH = 4;/.test(fenceIntakeSrc));
+ok("the shared intake knows nothing about a block length", fenceIntakeSrc.indexOf("blockWeeks") < 0);
+ok("and neither does anything it builds", I.normalizeIntake({}).blockWeeks === undefined);
+
+ok("the coach's contract is still four weeks", /var BLOCK_WEEKS = 4;/.test(contractSrc));
+ok("and the packet still asks him for exactly four", /exactly 4 weeks/.test(contractSrc));
+/* The contract DOES carry a block length — hard-wired to the constant, which is the
+   whole point: the coach is told "four weeks" and nothing the owner types anywhere can
+   change what he is told. */
+ok("what the coach is told is the constant, not a field", /blockWeeks: BLOCK_WEEKS,/.test(contractSrc));
+ok("and it is never read from an intake or a request", !/blockWeeks:\s*(raw|src|opts|body|s)\./.test(contractSrc));
+
+/* Where it DOES live: on the API path for that one kind, read from the programme. */
+const apiSrc = fs.readFileSync(path.join(__dirname, "..", "api", "client-program.js"), "utf8");
+ok("the length is a blank-client function", /function blankBlockWeeks\(raw, fallback\)/.test(apiSrc));
+ok("and a later block checks the KIND before honouring it", /kindRead\.program\.clientKind === "blank"/.test(apiSrc));
+
 console.log("All client intake checks passed.");

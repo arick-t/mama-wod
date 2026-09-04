@@ -934,6 +934,129 @@ async function main() {
     })
   );
 
+
+  /* --- a blank client's block can be any length, and NOBODY ELSE'S CAN ------
+   * The owner said it twice: this field lives in the blank client's form, affects the
+   * blank client only, and may not touch the studio path, the individual path, or the
+   * coach's four-week contract (owner, 2026-09-04).
+   * ------------------------------------------------------------------------- */
+
+  const six = await H.owner({
+    action: "create",
+    clientKind: "blank",
+    clientName: "שישה",
+    monthlyAmount: 300,
+    blockWeeks: 6,
+    blockStart: "2026-09-06",
+  });
+  ok("a blank client can be six weeks long", six.body.program.weeks.length === 6);
+  ok("and the block record says six", six.body.program.blocks[0].weekCount === 6);
+  ok("with no rest day anywhere in them", six.body.program.weeks.every(function (w) {
+    return Object.keys(w.days).every(function (k) { return w.days[k].ownerUnreviewed === true; });
+  }));
+
+  /* Delivery is the point of the question he asked: all six, not four. */
+  const sixCode = await H.owner({ action: "issue_code", programId: six.body.program.programId });
+  const sixClaim = await H.anon({ action: "claim", programId: six.body.program.programId, code: sixCode.body.code, deviceLabel: "p" });
+  await H.client(sixClaim.body.clientToken, { action: "sign", programId: six.body.program.programId, accepted: true });
+  const sixRead = await H.owner({ action: "read", programId: six.body.program.programId });
+  await H.owner({
+    action: "approve_block",
+    programId: six.body.program.programId,
+    expectedVersion: sixRead.body.program.version,
+    blockIndex: 1,
+  });
+  const sixSeen = await H.client(sixClaim.body.clientToken, { action: "read", programId: six.body.program.programId });
+  ok("the client receives all six weeks", sixSeen.body.program.weeks.length === 6);
+  ok("as one block of six", (sixSeen.body.program.blockGroups || [])[0].weekCount === 6);
+
+  const sixAgain = await H.owner({ action: "read", programId: six.body.program.programId });
+  const sixNext = await H.owner({
+    action: "add_block",
+    programId: six.body.program.programId,
+    expectedVersion: sixAgain.body.program.version,
+    blockWeeks: 3,
+  });
+  ok("a later month can be a different length again", sixNext.body.added === 3);
+  ok("and the timeline grows by exactly that", sixNext.body.program.weeks.length === 9);
+
+  /* The fence. A studio client asking for six gets four, because the field is not his. */
+  const studioSix = await H.owner({
+    action: "create",
+    clientName: "סטודיו רגיל",
+    blockWeeks: 6,
+    intake: {
+      clientName: "סטודיו רגיל",
+      population: "adults",
+      goals: "general",
+      equipment: "functional_gym",
+      scheduleMode: "sessions_per_week",
+      sessionsPerWeek: 3,
+      monthlyAmount: 500,
+      paymentMethod: "bit",
+    },
+  });
+  ok(
+    "a studio client is four weeks whatever the request says",
+    studioSix.status !== 200 || studioSix.body.program.weeks.length === 4
+  );
+
+  const athleteSix = await H.owner({
+    action: "create",
+    clientKind: "athlete",
+    clientName: "אינדיבידואל רגיל",
+    blockWeeks: 6,
+    athleteIntake: { trainingDaysMap: { sun: true, tue: true, thu: true }, deloadEveryWeeks: 4 },
+  });
+  ok("and so is an individual", athleteSix.body.program.weeks.length === 4);
+
+  /* --- a week copied whole (owner, 2026-09-04) --------------------------- */
+
+  const cw = await H.owner({ action: "create", clientKind: "blank", clientName: "העתקה", blockStart: "2026-09-06" });
+  const cwId = cw.body.program.programId;
+  const cwWrote = await H.owner({
+    action: "save",
+    programId: cwId,
+    expectedVersion: cw.body.program.version,
+    program: {
+      weeks: (function () {
+        const w = JSON.parse(JSON.stringify(cw.body.program.weeks));
+        w[0].days.sun.parts = [{ id: "p1", title: "Part A", lines: ["5x5 back squat"] }];
+        return w;
+      })(),
+    },
+  });
+  ok("a day is written on week 1", cwWrote.status === 200);
+  const copied = await H.owner({
+    action: "copy_week",
+    programId: cwId,
+    expectedVersion: cwWrote.body.program.version,
+    fromWeek: 1,
+    toWeek: 3,
+  });
+  ok("the week is copied in one write", copied.status === 200 && copied.body.copiedDays === 1);
+  const cwAfter = copied.body.program;
+  ok("the sessions arrived", cwAfter.weeks[2].days.sun.parts[0].lines[0] === "5x5 back squat");
+  ok("with ids of their own, not shared with the week they came from",
+    cwAfter.weeks[2].days.sun.parts[0].id !== cwAfter.weeks[0].days.sun.parts[0].id);
+  ok("the week it came from is untouched", cwAfter.weeks[0].days.sun.parts.length === 1);
+  const sameWeek = await H.owner({
+    action: "copy_week",
+    programId: cwId,
+    expectedVersion: cwAfter.version,
+    fromWeek: 2,
+    toWeek: 2,
+  });
+  ok("a week cannot be copied onto itself", sameWeek.status === 400 && sameWeek.body.code === "SAME_WEEK");
+  const noWeek = await H.owner({
+    action: "copy_week",
+    programId: cwId,
+    expectedVersion: cwAfter.version,
+    fromWeek: 1,
+    toWeek: 99,
+  });
+  ok("nor onto a week that is not there", noWeek.status === 400);
+
   /* --- the configuration report goes to the OWNER, not to a client ---------
    * It first shipped attached to the claim response - a client's reply - because the
    * edit matched the wrong "termsVersion" line, and the library-level test could not
