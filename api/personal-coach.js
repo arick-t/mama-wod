@@ -873,6 +873,7 @@ const PROGRAMMING_SYSTEM_CORE =
   "ACTIVE RECOVERY (from athlete intake): If profile says NO active recovery — do not force Thursday/any day into daily deload. If YES — one lighter day on the requested weekday only.\n" +
   "FIXED INTAKE MODE: The app may send one complete athlete packet (all questionnaire answers at once) instead of turn-by-turn Q&A. " +
   "Treat that packet as fully answered intake — never re-ask profile/lifts/skills/schedule/goals. Program the brick from those facts with full POL-016 capability profiling depth.\n" +
+  "WARM-UP (a packet line as of 2026-09-04): the intake now answers whether we write the warm-up. A WARM-UP: line saying to write one means it goes in every session, inside the stated session length, and it is NOT one of the working parts. A WARM-UP: line saying not to means write none and open with the first working part — they warm up themselves, or a coach on the floor does. NO WARM-UP LINE AT ALL means WRITE ONE: that is the default, and an older packet simply predates the field. None of those three cases removes the movement-specific PRIMER before a loaded lift, which belongs to the working part.\n" +
   'Rest days: overview focus exactly "Rest"; parts [] OR one part {title:"REST DAY",lines:["Rest"]}.\n' +
   "MID-WEEK START (HARD): The brick calendar is Sunday–Saturday, but programming begins on TODAY (Asia/Jerusalem). " +
   "Any calendar day BEFORE today MUST be Rest (focus \"Rest\", REST DAY parts) — never invent workouts for days already passed. " +

@@ -327,6 +327,29 @@ function testSameBrickWeekContinuity() {
     ));
 }
 
+/* The coach is told the WARM-UP packet line exists, in its own description of what a fixed-intake
+   packet contains — otherwise it only ever meets the line by accident. All three cases are there,
+   including the one that holds until the admin module ships the field: no line means write one. */
+function testCoachKnowsTheWarmUpField() {
+  const src = fs.readFileSync(PC_PATH, "utf8").replace(/\s+/g, " ");
+  ok("the packet description names the warm-up line",
+    /WARM-UP \(a packet line as of 2026-09-04\): the intake now answers whether we write the warm-up/.test(
+      src
+    ));
+  ok("write-one is described with its two properties",
+    /it goes in every session, inside the stated session length, and it is NOT one of the working parts/.test(
+      src
+    ));
+  ok("write-none opens with the first working part",
+    /means write none and open with the first working part/.test(src));
+  ok("an absent line defaults to writing one",
+    /NO WARM-UP LINE AT ALL means WRITE ONE: that is the default, and an older packet simply predates the field/.test(
+      src
+    ));
+  ok("no case removes the primer",
+    /None of those three cases removes the movement-specific PRIMER before a loaded lift/.test(src));
+}
+
 function testMidWeekClampIsWeekScoped() {
   const src = fs.readFileSync(PC_PATH, "utf8");
   ok(
@@ -359,6 +382,7 @@ function main() {
   testBothPathsStillInject();
   testBlockLengthIsFourWeeks();
   testClientImprovesRule();
+  testCoachKnowsTheWarmUpField();
   testMidWeekClampIsWeekScoped();
   testSessionCountStudioHasNoCalendar();
   testSameBrickWeekContinuity();

@@ -88,7 +88,7 @@ const MAX_CHARS = {
      repeated week 1's Saturday movement for movement: "אין סיכוי שאין קשר בין שבוע 1>2>3>4 זה
      נבנה זה מתקשר אחד עם השני וזה חייב להיות מגולם בשיטה שבה המוח חושב = זה קרוספיט." A WEEK IS
      NOT AN ISLAND is the rule half of that; the data half is priorWeeksBlock() in the coach. */
-  "layer2-general": 11700,
+  "layer2-general": 11900,
   /* 4500 as of 2026-09-03: MORE THAN ONE PLACE. "קצה 1" trains in a full box mid-week and at home
      at weekends; the intake has one setting, so the packet said "never prescribe a kg figure" for
      an athlete with a tested 160 kg back squat. The layer now reads the athlete's own description
@@ -1804,6 +1804,11 @@ function testWarmUpIsAnIntakeAnswer() {
       ));
   ok("the reason is stated, not just the rule",
     /Nobody goes from nothing to a heavy set/i.test(flat));
+  /* The third case, and the one that matters until the field ships: an older packet has no such
+     line, and silence must not be read as a refusal. */
+  ok("no warm-up line at all means write one",
+    /WITH NO SUCH LINE IN THE PACKET AT ALL, WRITE ONE/.test(flat) &&
+      /do not read silence as a refusal/i.test(flat));
   /* Both products, since the field is on both intakes. */
   ["individual", "studio"].forEach(function (a) {
     ok(a + " reads the warm-up rule",
