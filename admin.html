@@ -2696,6 +2696,21 @@ function openAdminApp(snapshots) {
   app.classList.add("is-open");
   loadCreditEstimate();
   refreshLiveCoachVersion();
+  /**
+   * The landing, decided HERE.
+   *
+   * It used to be decided by whichever half of the strip answered first: with athletes
+   * on file, the athlete list won the race and opened one of them, so a refresh landed
+   * on a client instead of on the management screen (owner, 2026-09-04). A link that
+   * names a client or an athlete still wins — that is a different intent, and it is
+   * applied a few lines below.
+   */
+  try {
+    var deepLink = new URLSearchParams(location.search);
+    if (!deepLink.get("program") && !deepLink.get("athlete")) openFirstPersonIfNeeded();
+  } catch (eLand) {
+    openFirstPersonIfNeeded();
+  }
   renderAthleteList(snapshots || []);
   bindPeopleStrip();
   /* The client screen shares this page's session and loads its own half of the strip. */

@@ -413,4 +413,30 @@ ok("a chosen date range reads as two dates", /V\.hebDate\(r\.from\) \+ " - " \+ 
 ok("ticking a place writes every session in it", /action: "invoice_place"/.test(page));
 ok("and unticking one session redraws the grouped answer", /if \(!LS\.detail\) loadTable\(\);/.test(page));
 
+
+/* --- the landing survives a refresh (owner, 2026-09-04) ------------------- */
+
+ok(
+  "the landing is decided when the module opens, not by a race",
+  /function openAdminApp\(snapshots\)[\s\S]{0,900}openFirstPersonIfNeeded\(\)/.test(page)
+);
+ok(
+  "and a link that names a client still wins",
+  /if \(!deepLink\.get\("program"\) && !deepLink\.get\("athlete"\)\) openFirstPersonIfNeeded\(\);/.test(page)
+);
+ok(
+  "so athletes answering first cannot take the screen",
+  page.indexOf("the athlete list won the race") >= 0
+);
+
+/* --- what the tab is called, and what it is not --------------------------- */
+
+const stripSrc2 = fs.readFileSync(path.join(root, "lib", "admin-people-strip.js"), "utf8");
+const ledgerRow = Strip.rows({})[0];
+ok("the tab is general management", ledgerRow.name === "ניהול כללי");
+ok("not a summary of anything", ledgerRow.name.indexOf("סיכום") < 0);
+const ledgerHtml = Strip.html(Strip.rows({}), "ledger");
+ok("its mark is a panel, not a sigma", ledgerHtml.indexOf("▦") >= 0 && ledgerHtml.indexOf("∑") < 0);
+ok("and the reason is written down", stripSrc2.indexOf("not a sum of the clients") >= 0);
+
 console.log("\nAll admin ledger page checks passed (" + passed + " assertions).");
