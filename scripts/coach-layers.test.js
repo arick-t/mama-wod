@@ -115,7 +115,7 @@ const MAX_CHARS = {
      format one is the load-bearing insight: in a room where everything is stations, the FORMAT is
      the variety and the progression at once, because the movements are whatever the place owns and
      the load is self-selected. Studio path only — an individual pays nothing for any of it. */
-  "layer2-room-studio": 3900,
+  "layer2-room-studio": 4400,
   "layer2-days-individual": 1200,
   /* Conditional: only a studio that bought N sessions a week pays for it. */
   "layer2-session-count": 3200,
@@ -1710,8 +1710,21 @@ function testStudioFormatRules() {
       /the FORMAT is what makes one session different from another, not the movement list/i.test(
         flat
       ));
-  ok("the same format may not appear more than once in two weeks",
-    /THE SAME FORMAT MAY NOT APPEAR MORE THAN ONCE IN TWO WEEKS/.test(flat));
+  /* Scoped to the session's PRINCIPAL format after the first pass listed seven formats used in
+     week 1 alone — a session carries two or three labels, so a literal "no format twice" is
+     unsatisfiable and would be ignored. */
+  ok("the principal format may not appear more than once in two weeks",
+    /THE SESSION'S PRINCIPAL FORMAT MAY NOT APPEAR MORE THAN ONCE IN TWO WEEKS/.test(flat));
+  ok("a strength part written as quality sets is a staple that repeats freely",
+    /A strength part written as sets for quality is a staple and repeats freely/i.test(flat));
+  /* And stations are what the room BOUGHT, not a format to rotate away from. */
+  ok("stations are not treated as a format",
+    /STATIONS ARE NOT A FORMAT/.test(flat) &&
+      /They are what this place bought, and they appear as often as the intake says/i.test(flat));
+  ok("what rotates is the structure inside the stations",
+    /What rotates is the structure INSIDE them: a work\/rest interval one week, an EMOM the next/i.test(
+      flat
+    ));
   ok("changing the numbers is not changing the format",
     /4 rounds of 40s work \/ 20s rest and 3 rounds of 50s \/ 10s are the same format twice/i.test(
       flat

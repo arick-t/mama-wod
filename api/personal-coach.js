@@ -296,14 +296,22 @@ function formatFromParts(parts) {
       return String((p && p.title) || "") + " " + ((p && p.lines) || []).join(" ");
     })
     .join(" ");
+  /* "stations" is NOT in this list on purpose. It is the session's delivery shape, dictated by
+     what the studio bought — Studio Bereshit buys two stations sessions a week — so listing it
+     as a used FORMAT would forbid the thing the room paid for. What rotates is the structure
+     INSIDE the stations: a work/rest interval one week, an EMOM the next. */
   const hits = [];
   [
     ["AMRAP", /\bAMRAP\b/i],
-    ["EMOM", /\bE?\d?MOM\b|\bEMOM\b/i],
-    ["For Time", /\bfor time\b/i],
-    ["intervals", /\bintervals?\b|work \/ ?\d+ ?min(ute)? rest|\brounds,\s*\d+ minutes work\b/i],
+    ["EMOM", /\bE?\d?MOM\b/i],
+    ["for time", /\bfor time\b/i],
+    ["work/rest intervals", /\d+\s*(s|sec|second)s?\s*work\s*[/]|work\s*[/]\s*\d+\s*(s|sec|second|min)|\bintervals?\b|\bon the minute\b/i],
     ["chipper", /\bchipper\b/i],
-    ["quality sets", /\bfor quality\b/i],
+    ["quality sets", /\bfor quality\b|\bsets for quality\b/i],
+    ["rounds for time", /\d+\s*rounds? for time/i],
+    ["tabata", /\btabata\b/i],
+    ["ladder", /\bladder\b|21-15-9|\bascending reps\b/i],
+    ["partner", /\bpartner\b|\byou go [/] ?i go\b|\bsynchro\b/i],
     ["heavy singles", /\bheavy single|\bwork up to\b/i],
     ["couplet", /\bcouplet\b/i],
     ["triplet", /\btriplet\b/i],
@@ -353,7 +361,30 @@ function priorWeeksSummary(priorWeeks, weekIndex) {
     out.push(rows.join("\n"));
   }
   if (!out.length) return "";
-  return out.join("\n").slice(0, PRIOR_WEEKS_MAX_CHARS);
+  /* Formats get a line of their own. Buried as a prefix on a movement list they were read as
+     decoration and reused two weeks running — and in a room the format IS the variety. */
+  const fmts = [];
+  /* out holds header strings and MULTI-LINE row blocks, so split before matching or only the
+     first day of each week is seen. */
+  out
+    .join(String.fromCharCode(10))
+    .split(String.fromCharCode(10))
+    .forEach(function (line) {
+    const m = String(line).match(/^  [a-z]{3}: ([^\u00B7]+) \u00B7/);
+    if (!m) return;
+    m[1]
+      .split("+")
+      .map(function (x) {
+        return x.trim();
+      })
+        .forEach(function (f) {
+          if (f && fmts.indexOf(f) < 0) fmts.push(f);
+        });
+    });
+  const head = fmts.length
+    ? "FORMATS ALREADY USED IN THIS BRICK: " + fmts.join(", ") + "\n"
+    : "";
+  return (head + out.join("\n")).slice(0, PRIOR_WEEKS_MAX_CHARS);
 }
 
 function priorWeeksBlock(body, weekIndex) {
@@ -380,9 +411,11 @@ function priorWeeksBlock(body, weekIndex) {
   return (
     "\n\nEARLIER WEEKS OF THIS BRICK (same-brick continuity — movements only, loads stripped):\n" +
     text +
-    "\nBUILD ON IT: keep each weekday's modality, PROGRESS one axis (load, density, volume or " +
-    "complexity), and ROTATE the movements this list already shows in that slot. Repeating a " +
-    "weekday's movement selection week after week is the failure this list exists to prevent.\n"
+    "\nBUILD ON IT. Do NOT reuse a FORMAT named above — in a room the format is the whole of the " +
+    "variety, and a fortnight is the minimum before one returns. Keep each weekday's modality, " +
+    "PROGRESS one axis (load, density, volume or complexity), and ROTATE THE MOVEMENTS this list " +
+    "already shows in that slot. Repeating a slot's format or its movement selection week after " +
+    "week is the failure this list exists to prevent.\n"
   );
 }
 

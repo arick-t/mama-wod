@@ -290,6 +290,26 @@ function testSameBrickWeekContinuity() {
   /* The summary carried "24 inch box" out of week 1 and week 2 dutifully wrote "24 in box" — a
      prior-week digest teaches whatever it repeats, mistakes included. Imperial is stripped for
      that reason and not for tidiness. */
+  /* Studio week 2 reused week 1's stations interval AND its EMOM. Two causes: the work/rest
+     stations format produced no label at all, and the one label that did appear was buried as a
+     prefix on a movement list whose instruction said to rotate the MOVEMENTS. */
+  ok("the format detector knows a work/rest interval without the word",
+    src.indexOf('["work/rest intervals"') >= 0 &&
+      src.indexOf("work" + String.fromCharCode(92) + "s*[/]") >= 0);
+  ok("formats get a line of their own",
+    /FORMATS ALREADY USED IN THIS BRICK/.test(src));
+  ok("the instruction forbids reusing a format, not only a movement",
+    /Do NOT reuse a FORMAT named above/.test(src) &&
+      /a fortnight is the minimum before one returns/.test(src));
+  /* Stations are the delivery the studio bought, so listing them as a used format would forbid
+     the thing it pays for. */
+  ok("stations are deliberately absent from the format table",
+    /"stations" is NOT in this list on purpose/.test(src) &&
+      /listing it as a used FORMAT would forbid the thing the room paid for/i.test(
+        src.replace(/\s+/g, " ")
+      ));
+  ok("the summary is aggregated across every line, not just the first",
+    /out holds header strings and MULTI-LINE row blocks/.test(src));
   ok("the summary strips imperial units too, so it cannot teach them forward",
     /prior-week summary that carries "24 inch box" forward/i.test(src) &&
       /in\|inch\|inches\|ft\|foot\|feet\|lb\|lbs/.test(src));
