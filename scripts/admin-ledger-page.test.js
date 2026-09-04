@@ -501,7 +501,7 @@ ok("and the grand total is the loudest", /\.led-table-total strong\{color:#A8F5C
  * ------------------------------------------------------------------------- */
 
 ok("personal training is pale blue", V.serviceColour("אימון אישי") === "#7DD3F0");
-ok("group training is blue", V.serviceColour("אימון קבוצתי") === "#4C8DF6");
+ok("group training is purple", V.serviceColour("אימון קבוצתי") === "#B57BE8");
 ok("anything he typed himself is orange", V.serviceColour("הרצאה") === "#F0913E");
 ok("and nothing at all is the neutral", V.serviceColour("") === V.SERVICE_COLOURS.neutral);
 
@@ -524,6 +524,6 @@ ok("and it is no longer orange", mixedRow.indexOf("color:var(--brand)") < 0);
 const svcFilter = V.filtersHtml({ services: ["אימון אישי", "אימון קבוצתי", "הרצאה"], service: "אימון קבוצתי" });
 ok("every option in the filter carries its colour", (svcFilter.match(/<option value="[^"]+"[^>]*style="color:#/g) || []).length === 3);
 ok('"all services" is the neutral one', svcFilter.indexOf('<option value="" style="color:' + V.SERVICE_COLOURS.neutral) >= 0);
-ok("and the closed field wears whatever is chosen", svcFilter.indexOf('id="ledFService" data-led-filter="service" style="color:#4C8DF6"') >= 0);
+ok("and the closed field wears whatever is chosen", svcFilter.indexOf('id="ledFService" data-led-filter="service" style="color:#B57BE8"') >= 0);
 
 console.log("\nAll admin ledger page checks passed (" + passed + " assertions).");
