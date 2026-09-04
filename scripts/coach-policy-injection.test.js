@@ -250,6 +250,30 @@ function testOneRmGateIsComputed() {
     /carries no heavy volume of a second/.test(src) && /A 100% single earns the whole day/.test(src));
 }
 
+/* A studio selling N sessions a week has no calendar, so the mid-week clamp must not touch it.
+   Found 2026-09-04: "Studio Bereshit" buys four sessions a week; the brick was generated on a
+   Friday and week 1 came back with ONE session, because Sunday to Thursday were "before today".
+   Three paid sessions deleted by a rule about a calendar the room does not keep. Weeks 2-4 were
+   correct, which is what made it worth catching — a partial failure reads as a working brick. */
+function testSessionCountStudioHasNoCalendar() {
+  const src = fs.readFileSync(PC_PATH, "utf8");
+  ok("the mid-week rule takes a no-weekdays flag",
+    /function midWeekStartRuleText\(weekIndex, noWeekdays\)/.test(src));
+  ok("a calendar-less studio is told there is nothing to clamp",
+    /SESSIONS ARE SOLD BY COUNT, so there is NO CALENDAR TO CLAMP/.test(src) &&
+      /Produce EVERY session /.test(src) &&
+      /asked for in EVERY week, including this one/.test(src));
+  ok("no session is marked rest because of the date",
+    /never mark a session Rest /.test(src) && /because of what day it is/.test(src));
+  ok("all three prompts pass the flag from the studio intake",
+    (src.match(/sellsSessionsByCount\(body\.studioIntake\)/g) || []).length === 3,
+    "a prompt is still clamping a studio that has no weekdays");
+  ok("the gate helper is imported for it",
+    /const \{ buildLayerPack, sellsSessionsByCount \} = require\("\.\.\/lib\/coach-layers"\);/.test(
+      src
+    ));
+}
+
 function testSameBrickWeekContinuity() {
   const src = fs.readFileSync(PC_PATH, "utf8");
   const pol = String(COACH_POLICY).replace(/\s+/g, " ");
@@ -287,7 +311,7 @@ function testMidWeekClampIsWeekScoped() {
   const src = fs.readFileSync(PC_PATH, "utf8");
   ok(
     "the mid-week rule takes a week index",
-    /function midWeekStartRuleText\(weekIndex\)/.test(src),
+    /function midWeekStartRuleText\(weekIndex, noWeekdays\)/.test(src),
     "the clamp is week-blind again"
   );
   ok(
@@ -301,7 +325,8 @@ function testMidWeekClampIsWeekScoped() {
   );
   ok(
     "both week-detail prompts pass the week index",
-    (src.match(/  midWeekStartRuleText\(weekIndex\) \+/g) || []).length === 2,
+    (src.match(/  midWeekStartRuleText\(weekIndex, sellsSessionsByCount\(body\.studioIntake\)\) \+/g) ||
+      []).length === 2,
     "a week-detail prompt is still calling it without the index"
   );
 }
@@ -315,6 +340,7 @@ function main() {
   testBlockLengthIsFourWeeks();
   testClientImprovesRule();
   testMidWeekClampIsWeekScoped();
+  testSessionCountStudioHasNoCalendar();
   testSameBrickWeekContinuity();
   testOneRmGateIsComputed();
   console.log("\nPassed:", passed);

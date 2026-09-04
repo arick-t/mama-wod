@@ -53,7 +53,7 @@ const COACH_LAYER2_OPS_BRIEF = require("../lib/coach-layer2-ops-brief.js");
 /* The layer pack. Replaces the two briefs above on the PROGRAMMING path only — see
    buildLayerKnowledgeBlock. Wired 2026-09-03, after all fifteen modules were reviewed line by
    line with the owner. */
-const { buildLayerPack } = require("../lib/coach-layers");
+const { buildLayerPack, sellsSessionsByCount } = require("../lib/coach-layers");
 /* Legacy alias — foundation brief supersedes pattern-only brief */
 const COACH_PATTERN_BRIEF = COACH_FOUNDATION_BRIEF;
 
@@ -220,10 +220,22 @@ function israelWeekdayKey() {
  * DAY in week 2, exactly as they correctly were in week 1, because this text said "do NOT program
  * workouts for any day BEFORE today" with no week attached. Week 2's Monday is in the future. Left
  * alone it costs the athlete two training days in every week after the first. */
-function midWeekStartRuleText(weekIndex) {
+function midWeekStartRuleText(weekIndex, noWeekdays) {
   const today = israelTodayIso();
   const dow = israelWeekdayKey();
   const wi = parseInt(weekIndex, 10);
+  /* A studio that sells N sessions a week has no calendar to clamp. Found 2026-09-04: a
+   * four-session studio brick generated on a Friday came back with ONE session in week 1,
+   * because Sunday to Thursday were "before today" — three paid sessions deleted by a rule
+   * about a calendar the room does not keep. */
+  if (noWeekdays) {
+    return (
+      "SESSIONS ARE SOLD BY COUNT, so there is NO CALENDAR TO CLAMP. Produce EVERY session " +
+      "asked for in EVERY week, including this one. Today's date is irrelevant here — the " +
+      "studio delivers the sessions whenever suits its groups, so never mark a session Rest " +
+      "because of what day it is."
+    );
+  }
   if (wi > 1) {
     return (
       "WEEK " +
@@ -2469,7 +2481,7 @@ async function coachHandler(req, res) {
           "If athlete declined active recovery — do NOT force Thursday (or any training day) into daily deload/active recovery; keep training days as full purposeful sessions. " +
           "If athlete requested active recovery — place exactly one lighter day on the requested weekday. " +
           "True REST days: overview focus MUST be exactly \"Rest\", day title sense = REST DAY, parts empty [] OR one part {title:\"REST DAY\",lines:[\"Rest\"]}. " +
-          midWeekStartRuleText() +
+          midWeekStartRuleText(1, sellsSessionsByCount(body.studioIntake)) +
           " " +
           "HARD RULE: ALL workout / overview / theme / summaryLine text in BLOCK_JSON MUST be English only (no Hebrew in JSON fields). " +
           "Day keys MUST be exactly: sun,mon,tue,wed,thu,fri,sat (never Sunday/Monday). " +
@@ -2550,7 +2562,7 @@ async function coachHandler(req, res) {
       "WEEK_JSON>>>\n" +
       "Rules: English only. Keys sun,mon,tue,wed,thu,fri,sat required. Every training day needs 1–3 parts with concrete lines (≤5 lines/part). " +
       'Rest days: focus exactly "Rest", parts [] OR one part {title:"REST DAY",lines:["Rest"]}. ' +
-      midWeekStartRuleText(weekIndex) +
+      midWeekStartRuleText(weekIndex, sellsSessionsByCount(body.studioIntake)) +
       " " +
       priorWeeksBlock(body, weekIndex) +
       " " +
@@ -2574,7 +2586,7 @@ async function coachHandler(req, res) {
       "4) days: ALL 7 keys populated with parts: [{id,title,lines:[...]}] concrete prescriptions.\n" +
       '5) Rest days: focus exactly "Rest"; parts [] OR {title:"REST DAY",lines:["Rest"]}.\n' +
       "6) " +
-      midWeekStartRuleText(weekIndex) +
+      midWeekStartRuleText(weekIndex, sellsSessionsByCount(body.studioIntake)) +
       "\n" +
       priorWeeksBlock(body, weekIndex) +
       "\n" +
