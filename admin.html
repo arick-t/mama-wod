@@ -312,6 +312,17 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .led-inv input{width:16px;height:16px;cursor:pointer;accent-color:#4CAF70}
 /* The two dates live behind their own button. */
 .led-dates{display:inline-flex;gap:6px}
+/* A date field of our own: dd/mm/yy, with the browser's picker one tap away. The
+   native field renders in the BROWSER's locale, which is why it is not the field he
+   types into (owner, 2026-09-04). */
+.led-datefield{position:relative;display:inline-flex;align-items:center}
+.led-date-in{width:110px;padding-inline-end:26px}
+.led-date-in.bad{border-color:#7f1d1d;color:#fca5a5}
+.led-date-native{position:absolute;inset-inline-end:2px;width:22px;height:22px;opacity:0;
+  pointer-events:none}
+.led-datebtn{position:absolute;inset-inline-end:4px;appearance:none;background:transparent;
+  border:none;color:var(--text-muted);font-size:12px;line-height:1;cursor:pointer;padding:2px}
+.led-datebtn:hover{color:var(--text)}
 .led-filters select.led-field{max-width:170px}
 .led-table-head{display:grid;gap:8px;padding:6px 4px;font-size:11px;font-weight:800;
   color:var(--text-muted);border-bottom:1px solid var(--line)}
@@ -9543,7 +9554,7 @@ tryRestoreAdminSession();
     if (!form.name) { toast("בחר או הקלד שם מקום", "err"); return; }
     if (!(Number(form.price) > 0)) { toast("חסר מחיר", "err"); return; }
     /* A duplicate carries its own date field; a plain add belongs to the open day. */
-    var onDay = (el("ledDate") && el("ledDate").value) || LS.day;
+    var onDay = (el("ledDate") && V.parseHeDate(el("ledDate").value)) || LS.day;
     var body = LS.editing
       ? { action: "update_deal", id: LS.editing, month: LS.month, day: LS.day, name: form.name, service: form.service, price: form.price }
       : { action: "add_deal", day: onDay, name: form.name, service: form.service, price: form.price };
@@ -9583,7 +9594,7 @@ tryRestoreAdminSession();
 
   function manualDate() {
     var d = el("ledMDate");
-    return (d && d.value) || todayIso();
+    return (d && V.parseHeDate(d.value)) || todayIso();
   }
 
   /**
@@ -9720,6 +9731,22 @@ tryRestoreAdminSession();
     if (t.closest("[data-led-save]")) { saveDeal(); return; }
 
     if (t.closest("[data-led-manual-save]")) { saveManual(); return; }
+
+    var dateOpen = t.closest("[data-led-dateopen]");
+    if (dateOpen) {
+      /* The browser's picker, on request — it renders in the browser's locale, which is
+         why it is not the field itself (owner, 2026-09-04). */
+      var nat = el(dateOpen.getAttribute("data-led-dateopen") + "Native");
+      if (nat) {
+        try {
+          if (typeof nat.showPicker === "function") nat.showPicker();
+          else nat.click();
+        } catch (ePick) {
+          nat.click();
+        }
+      }
+      return;
+    }
 
     /* ---- the favourites box ---------------------------------------------- */
 
@@ -9876,10 +9903,38 @@ tryRestoreAdminSession();
     }
     if (t.id === "ledFFrom" || t.id === "ledFTo") {
       LS.range = "custom";
-      LS.from = (el("ledFFrom") && el("ledFFrom").value) || "";
-      LS.to = (el("ledFTo") && el("ledFTo").value) || "";
+      LS.from = (el("ledFFrom") && V.parseHeDate(el("ledFFrom").value)) || "";
+      LS.to = (el("ledFTo") && V.parseHeDate(el("ledFTo").value)) || "";
       loadTable();
       return;
+    }
+
+    /* The calendar button wrote a date: put it back into the field in HIS format and
+       let the field's own handler take it from there. */
+    if (t.hasAttribute && t.hasAttribute("data-led-datepick")) {
+      var target = el(t.getAttribute("data-led-datepick"));
+      if (target) {
+        target.value = V.hebDate(t.value);
+        try {
+          target.dispatchEvent(new Event("change", { bubbles: true }));
+        } catch (eEv) {}
+      }
+      return;
+    }
+
+    /* A date he typed: tidy it to dd/mm/yy so what he sees is what was understood. */
+    if (t.hasAttribute && t.hasAttribute("data-led-datefield")) {
+      var iso = V.parseHeDate(t.value);
+      if (iso) {
+        t.value = V.hebDate(iso);
+        t.classList.remove("bad");
+        var native = el(t.id + "Native");
+        if (native) native.value = iso;
+      } else if (String(t.value || "").trim()) {
+        t.classList.add("bad");
+      } else {
+        t.classList.remove("bad");
+      }
     }
 
     /* His own tick: did this session get an invoice. Written the moment he ticks it. */

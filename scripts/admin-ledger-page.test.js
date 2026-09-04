@@ -153,7 +153,7 @@ const deals = [
   { id: "d2", day: "2026-09-03", name: "אולם העירייה", service: "", price: 180, createdAt: "2026-09-03T09:00:00Z" },
 ];
 const panel = V.dayPanelHtml({ day: "2026-09-03", deals: deals });
-ok("the day opens as a panel with its date", panel.indexOf("03/09/2026") >= 0);
+ok("the day opens as a panel with its date", panel.indexOf("03/09/26") >= 0);
 ok("and what that day earned", panel.indexOf("₪430") >= 0);
 ok("a new line is offered by one plus, in the corner", (panel.match(/data-led-add/g) || []).length === 1);
 ok("and the entry row is NOT standing open", panel.indexOf('id="ledPrice"') < 0);
@@ -214,7 +214,7 @@ ok("pressing the plus puts the cursor in the name", /if \(el\("ledName"\)\) el\(
 const table = V.tableHtml(deals, 430, {}, { by: "day", dir: 1 });
 ok("the table names its columns", table.indexOf("שם") >= 0 && table.indexOf("מחיר") >= 0 && table.indexOf("תאריך") >= 0);
 ok("a row per deal", (table.match(/data-led-deal="/g) || []).length === 2);
-ok("the date is written the way he writes it", table.indexOf("03/09/2026") >= 0);
+ok("the date is written the way he writes it", table.indexOf("03/09/26") >= 0);
 ok("and the sum of what is shown", table.indexOf("₪430") >= 0);
 ok("an empty range says so", V.tableHtml([], 0, {}, null).indexOf("אין עסקאות בטווח") >= 0);
 
@@ -332,7 +332,7 @@ ok("with the day it came from as the default", copyLine.indexOf('id="ledDate"') 
 ok("and says what it is about to do", copyLine.indexOf("הכפל") >= 0);
 ok("a plain new line has no date field — it belongs to the open day", V.editorHtml({}).indexOf('id="ledDate"') < 0);
 ok("the copy carries the row's values into the state", /LS\.copying = \{ name: src\.name, service: src\.service, price: src\.price, date: src\.day \}/.test(page));
-ok("and is saved to the day in the field", /var onDay = \(el\("ledDate"\) && el\("ledDate"\)\.value\) \|\| LS\.day;/.test(page));
+ok("and is saved to the day in the field", /var onDay = \(el\("ledDate"\) && V\.parseHeDate\(el\("ledDate"\)\.value\)\) \|\| LS\.day;/.test(page));
 ok("even when that day is in another month", /var landed = L\.monthKey\(onDay\)[\s\S]{0,300}loadMonth\(landed\)/.test(page));
 
 /* A place used for the first time must reach the favourites box too. */
@@ -342,5 +342,35 @@ ok("a session added from the box drops it too", /LS\.manual = null;\s*\n\s*forge
 
 /* The close button was sitting on top of the date. */
 ok("the day's header leaves room for the close button", /\.led-daybox-head\{[^}]*padding-inline-start:24px/.test(page));
+
+
+/* --- dates are written the way they are written here (owner, 2026-09-04) ---
+ * The browser's own date field renders in the BROWSER's locale, and his showed
+ * 09/04/2026 for the fourth of September. The ledger writes and reads its own dates
+ * now; the native picker is kept behind a button.
+ * ------------------------------------------------------------------------- */
+
+ok("a date reads day, month, two-digit year", V.hebDate("2026-09-04") === "04/09/26");
+ok("the table uses it", V.tableHtml([{ id: "a", day: "2026-09-04", name: "x", price: 1 }], 1, {}, null).indexOf("04/09/26") >= 0);
+ok("and so does the open day", V.dayPanelHtml({ day: "2026-09-04", deals: [] }).indexOf("04/09/26") >= 0);
+
+ok("he can type it short", V.parseHeDate("4/9/26") === "2026-09-04");
+ok("or padded", V.parseHeDate("04/09/26") === "2026-09-04");
+ok("or as six digits", V.parseHeDate("040926") === "2026-09-04");
+ok("or with a full year", V.parseHeDate("04/09/2026") === "2026-09-04");
+ok("an ISO date is still understood", V.parseHeDate("2026-09-04") === "2026-09-04");
+ok("a day that does not exist is refused", V.parseHeDate("31/09/26") === "");
+ok("and so is anything else", V.parseHeDate("hello") === "" && V.parseHeDate("") === "");
+ok("two digits mean this century", V.parseHeDate("01/01/99") === "2099-01-01");
+
+const dateField = V.dateFieldHtml("ledMDate", "2026-09-04", "תאריך");
+ok("the field he types into is ours", /id="ledMDate"[^>]*data-led-datefield/.test(dateField));
+ok("and shows his format", dateField.indexOf('value="04/09/26"') >= 0);
+ok("the browser's picker is behind a button", dateField.indexOf('data-led-dateopen="ledMDate"') >= 0);
+ok("which opens the native field", /id="ledMDateNative"[^>]*type="date"|type="date"[^>]*id="ledMDateNative"/.test(dateField));
+ok("every date on the page goes through the same field", (V.filtersHtml({ range: "custom" }).match(/data-led-datefield/g) || []).length === 2);
+ok("what he types is parsed before it is sent", /V\.parseHeDate\(el\("ledMDate"\)\.value\)|V\.parseHeDate\(d\.value\)/.test(page));
+ok("a date that cannot be read is marked rather than silently dropped", /t\.classList\.add\("bad"\)/.test(page));
+ok("and the picker writes back in his format", /target\.value = V\.hebDate\(t\.value\)/.test(page));
 
 console.log("\nAll admin ledger page checks passed (" + passed + " assertions).");
