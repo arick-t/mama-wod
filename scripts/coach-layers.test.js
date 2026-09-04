@@ -100,7 +100,13 @@ const MAX_CHARS = {
      "1RM זה מבחן שלא צריך לעשות אותו בטווחי זמן שמישהו זוכר בכלל כשהמטרה שלך היא רק להתאמן."
      The two lines that used to grant a soft permission ("test a single only occasionally") now
      point at the computed gate instead of reading as licence. */
-  "layer2-individual": 5700,
+  /* 6600 as of 2026-09-04: the two-working-parts rule. Week 2 of the competitor's brick came back
+     with a third part in FIVE sessions out of five, and the owner's arithmetic is the reason it
+     matters: "אנחנו מדברים על שעה אפקטיבית, 3 חלקים בכזה יחס של כמות אימונים בני שעה זה לא
+     אפקטיבי". An hour divided three ways is eighteen minutes a piece before transitions. The
+     studio has its own version of this rule for its own reason — the coach's floor — so the two
+     are stated separately rather than shared. */
+  "layer2-individual": 6600,
   /* 3200 as of 2026-09-03. Started at 1220 as four continuity bullets. The owner then reset its
      priority — "חשוב מאוד שלא יהיו 2 לבנות זהות אחרת אין התקדמות לעולם" — so not-repeating became
      the headline with the four progression axes under it, and a studio section was added because
@@ -1098,8 +1104,8 @@ function testPackBudget() {
      moment the router becomes the source. This pack is
      ~10.2k tokens; the general
      healthy athlete still pays 22k, which is what most bricks actually cost. */
-  ok("the heaviest pack stays under 48k characters",
-    heavy.chars < 48000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
+  ok("the heaviest pack stays under 49k characters",
+    heavy.chars < 49000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
   ok("the pack reports which layers it used",
     Array.isArray(heavy.layers) && heavy.layers.length >= 6, heavy.layers.join(", "));
 }
@@ -1837,6 +1843,42 @@ function testWarmUpIsAnIntakeAnswer() {
   });
 }
 
+
+/* An individual's session shape, 2026-09-04. Same conclusion as the studio rule, different reason:
+   the studio's is about a coach running a room, this one is about an hour not dividing into three
+   useful pieces. */
+function testTwoWorkingParts() {
+  const I3 = require("../lib/coach-layers/layer2-individual.js");
+  const flat = I3.replace(/\s+/g, " ");
+  ok("two working parts is the session",
+    /--- TWO WORKING PARTS IS THE SESSION \(HARD\) ---/.test(I3) &&
+      /TWO working parts is the default/.test(flat));
+  ok("the arithmetic is given, not just the rule",
+    /Divide an hour three ways and each piece gets about eighteen minutes before transitions/i.test(
+      flat
+    ));
+  ok("half-doing three things is named as the failure",
+    /half-done three things instead of finishing two/i.test(flat));
+  ok("a third part is a short accessory and nothing else",
+    /A THIRD PART IS A SHORT ACCESSORY AND NOTHING ELSE/.test(flat) &&
+      /It is not a second conditioning piece and not a second skill block/i.test(flat));
+  ok("three training stimuli in one session are refused outright",
+    /NEVER THREE TRAINING STIMULI IN ONE SESSION/.test(flat) &&
+      /whatever the minutes add up to/i.test(flat));
+  ok("the accessory is capped at twice a week",
+    /The accessory appears at most TWICE A WEEK/.test(flat) &&
+      /Every session carrying one is the failure this rule exists to stop/i.test(flat));
+  /* Studio keeps its own rule, for its own reason. */
+  ok("the studio version is separate and still there",
+    /--- TWO PARTS IS THE SHAPE \(HARD\) ---/.test(
+      require("../lib/coach-layers/layer2-room-studio.js")
+    ));
+  ok("a studio does not read the individual version",
+    L.buildLayerPack({ agent: "studio", studioIntake: {} }).text.indexOf(
+      "TWO WORKING PARTS IS THE SESSION"
+    ) < 0);
+}
+
 function main() {
   console.log("\n=== Coach knowledge layers ===\n");
   testShape();
@@ -1858,6 +1900,7 @@ function main() {
   testOneRmGate();
   testStudioFormatRules();
   testWarmUpIsAnIntakeAnswer();
+  testTwoWorkingParts();
   testContinuation();
   testGymnastics();
   testHebrewBoundary();
