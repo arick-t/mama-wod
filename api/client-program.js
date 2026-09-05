@@ -339,6 +339,35 @@ async function ownerHandler(req, res, body) {
     });
   }
 
+  /* How many sessions a week, from a given week on.
+     BLANK CLIENTS ONLY, on the owner's instruction: a studio's and an individual's
+     programmes are written by the coach's brain, and adding an empty session to one of
+     those is a question for the brain, not for the calendar (owner, 2026-09-05). */
+  if (action === "set_week_sessions") {
+    const read = await store.readProgram(programId);
+    if (!read.ok) return bad(res, 404, read.code, read.error);
+    if (read.program.clientKind !== "blank") {
+      return bad(res, 400, "NOT_BLANK",
+        "שינוי מספר האימונים בשבוע קיים כרגע ללקוח ריק בלבד — תוכנית של סטודיו או של מתאמן יחיד נבנית על ידי מוח המאמן.");
+    }
+    const done = await store.setWeekSessions(
+      programId,
+      Number(body.expectedVersion),
+      body.fromWeek,
+      body.sessions
+    );
+    if (!done.ok) {
+      const status = done.code === "VERSION_CONFLICT" ? 409 : done.code === "NOT_FOUND" ? 404 : 400;
+      return res.status(status).json(Object.assign({ ok: false }, done));
+    }
+    return res.status(200).json({
+      ok: true,
+      program: done.program,
+      changed: done.changed,
+      sessions: done.sessions,
+    });
+  }
+
   if (action === "renewal_check") {
     const result = await runRenewalCheck(store, String(body.todayIso || israelTodayIso()), 20);
     return res.status(200).json({ ok: true, renewal: result });

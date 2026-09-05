@@ -171,6 +171,8 @@ const ACTIONS_ALLOWED = [
   "block_duplicate",
   "block_remove",
   "block_move",
+  /* How many sessions a week, from a given week on — blank clients only. */
+  "set_week_sessions",
   "paste_block",
   /* The shelf: its list, one block off it, and taking one off for good. */
   "block_list",

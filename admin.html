@@ -878,6 +878,21 @@ body.is-dragging-part-now{user-select:none}
 .week-menu .wm-item.wm-danger{color:#F2867A}
 #clientScreen .week-menu .wm-item.wm-danger:hover,
 .week-menu .wm-item.wm-danger:hover{background:rgba(242,134,122,.14);color:#F2867A}
+/* A place in the grid that this week does not use — it holds the column open so the
+   weeks stay under one another (owner, 2026-09-05). */
+.pprog-cal-cell.is-off{visibility:hidden;pointer-events:none}
+/* What this client gets a week, beside the heading it belongs to. */
+.prog-sessions{font-size:12px;font-weight:700;color:var(--text-muted);display:inline-flex;
+  align-items:center;gap:4px;margin-inline-start:10px;white-space:nowrap}
+.prog-sessions-edit{appearance:none;background:none;border:none;color:var(--part);cursor:pointer;
+  padding:2px 4px;line-height:0;border-radius:6px}
+.prog-sessions-edit:hover{background:rgba(255,255,255,.08)}
+.week-menu .wm-body{display:flex;gap:8px;align-items:center;padding:8px 10px}
+.week-menu .wm-body input{width:62px;height:32px;text-align:center;border-radius:8px;
+  border:1px solid var(--line);background:var(--bg-elev);color:var(--text);font:inherit;font-weight:800}
+.week-menu .wm-go{appearance:none;height:32px;padding:0 14px;border-radius:8px;border:none;
+  background:var(--brand);color:#fff;font:inherit;font-weight:800;cursor:pointer}
+.week-menu .wm-note{padding:0 10px 10px;font-size:11.5px;color:var(--text-muted);max-width:280px;line-height:1.5}
 .pprog-cal-block-title{cursor:context-menu}
 /* A block can be picked up by its heading and dropped between the others. */
 .pprog-cal-block[data-block] .pprog-cal-block-title{cursor:grab}
@@ -7682,6 +7697,9 @@ tryRestoreAdminSession();
     /* program */
     html += '<div class="card"><div class="row" style="margin-bottom:10px">' +
       '<h2 style="margin:0">התוכנית</h2>' +
+      /* What this client actually gets a week, and — for a blank client — the pencil
+         that changes it from here on (owner, 2026-09-05). */
+      sessionsLineHtml(p) +
       '<span class="spacer meta">' + weeksLabel(p) + "</span>" +
       '<button class="ghost sm" type="button" data-nextblock="1" ' +
       'title="תחקור קצר, ואז ארבעה שבועות חדשים בהמשך לקיים">צור לבנת המשך</button>' +
@@ -8986,6 +9004,34 @@ tryRestoreAdminSession();
       );
       return;
     }
+    if (t.closest && t.closest("[data-sessions-edit]")) {
+      var pencil = t.closest("[data-sessions-edit]").getBoundingClientRect();
+      openSessionsBox(pencil.left, pencil.bottom + 6);
+      return;
+    }
+    var sessSave = t.closest && t.closest("[data-sessions-save]");
+    if (sessSave) {
+      var fromWeek = parseInt(sessSave.getAttribute("data-sessions-save"), 10) || 1;
+      var field = el("sessCount");
+      var want = parseInt(field && field.value, 10);
+      closeWeekMenu();
+      if (!(want >= 1 && want <= 7)) { banner("warn", "מספר בין 1 ל-7."); return; }
+      if (want === sessionsNow(S.program)) return;
+      api({
+        action: "set_week_sessions",
+        programId: S.program.programId,
+        expectedVersion: S.program.version,
+        fromWeek: fromWeek,
+        sessions: want,
+      }).then(function (r) {
+        if (r.status === 409) { banner("warn", "מישהו שמר בינתיים. פותח מחדש."); openClient(S.program.programId); return; }
+        if (r.status !== 200 || !r.body.ok) { banner("bad", (r.body && r.body.error) || "לא הצלחתי לשנות."); return; }
+        S.program = r.body.program;
+        banner("good", "משבוע " + fromWeek + " והלאה: " + r.body.sessions + " אימונים בשבוע.");
+        renderDetail();
+      });
+      return;
+    }
     var bCopy = t.closest && t.closest("[data-block-copy]");
     if (bCopy) {
       var bcIdx = parseInt(bCopy.getAttribute("data-block-copy"), 10) || 0;
@@ -9679,6 +9725,69 @@ tryRestoreAdminSession();
       }
     }
     return "לבנה " + blockIndex;
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     HOW MANY SESSIONS A WEEK — and changing it from today on.
+
+     A client trained four times a week and now trains five. The weeks already written
+     keep their four; the change starts at the week he is standing in and runs to the
+     end of the plan. Nothing is deleted: a session that stops being shown is still on
+     file, so putting the number back brings it back (owner, 2026-09-05).
+
+     Blank clients only. A studio's and an individual's programmes come from the coach's
+     brain, and an empty session in one of those is a question for the brain.
+     ══════════════════════════════════════════════════════════════════════ */
+
+  /** How many sessions the week he is standing in holds. */
+  function sessionsNow(p) {
+    var weeks = (p && p.weeks) || [];
+    var here = weeks[S.wi | 0];
+    var n = parseInt(here && here.sessions, 10);
+    if (n >= 1 && n <= 7) return n;
+    var intake = (p && p.intake) || {};
+    if (intake.scheduleMode === "session_count") {
+      var sold = parseInt(intake.sessionsPerWeek, 10);
+      if (sold >= 1 && sold <= 7) return sold;
+    }
+    return 7;
+  }
+
+  function sessionsLineHtml(p) {
+    var n = sessionsNow(p);
+    var words = n === 7 ? "7 ימי אימון שבועיים" : n + " אימונים שבועיים";
+    var canEdit = !!(p && p.clientKind === "blank");
+    return (
+      '<span class="prog-sessions" title="' +
+      (canEdit ? "שינוי כמות האימונים מהשבוע הזה והלאה" : "כמות האימונים בשבוע") +
+      '">' +
+      esc(words) +
+      (canEdit
+        ? ' <button type="button" class="prog-sessions-edit" data-sessions-edit="1" aria-label="שנה כמות אימונים">' +
+          '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+          '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>'
+        : "") +
+      "</span>"
+    );
+  }
+
+  /** The little box: one number, and what it will do said in a sentence. */
+  function openSessionsBox(x, y) {
+    var m = el("weekMenu");
+    if (!m || !S.program) return;
+    var now = sessionsNow(S.program);
+    var week = (S.wi | 0) + 1;
+    m.innerHTML =
+      '<div class="wm-title">אימונים בשבוע · משבוע ' + week + " והלאה</div>" +
+      '<div class="wm-body">' +
+      '<input type="number" id="sessCount" min="1" max="7" step="1" value="' + now + '" ' +
+      'inputmode="numeric" aria-label="כמות אימונים בשבוע">' +
+      '<button type="button" class="wm-go" data-sessions-save="' + week + '">שנה</button>' +
+      "</div>" +
+      '<div class="wm-note">השינוי חל משבוע ' + week + " עד סוף התוכנית. שבועות קודמים לא זזים, " +
+      "ואימון שיוצא מהתצוגה לא נמחק — החזרת המספר תחזיר אותו.</div>";
+    m.hidden = false;
+    placeMenuAt(m, x, y);
   }
 
   /** Both menus open where the finger is, and stay inside the window. */

@@ -243,6 +243,9 @@
 .pprog-day-card .section-title-row[data-part]{cursor:default}
 .pprog-day-card.is-editing .section-title-row[data-part]{cursor:grab}
 .pprog-day-card.is-drop-target{outline:2px dashed var(--part);outline-offset:3px}
+/* A place in the grid that this week does not use — it holds the column open so the
+   weeks stay under one another (owner, 2026-09-05). */
+.pprog-cal-cell.is-off{visibility:hidden;pointer-events:none}
 .pprog-cal-block-title{cursor:context-menu}
 /* A block can be picked up by its heading and dropped between the others. */
 .pprog-cal-block[data-block] .pprog-cal-block-title{cursor:grab}
