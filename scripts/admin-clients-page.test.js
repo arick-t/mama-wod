@@ -998,14 +998,18 @@ ok("and a second month is added on the spot", /if \(isBlankClient\(\)\) \{[\s\S]
 /* --- a week copied onto another week (owner, 2026-09-04) ------------------ */
 
 ok("a week cube can be grabbed by the menu", /data-week="' \+\s*\n?\s*\(weekIndex0 \+ 1\)/.test(fs.readFileSync(path.join(root, "lib", "pprog-display.js"), "utf8")));
-ok("right-clicking one opens a menu", /addEventListener\("contextmenu"[\s\S]{0,400}closest\("\[data-week\]"\)/.test(screen));
+ok("right-clicking one opens a menu", /addEventListener\("contextmenu"[\s\S]{0,900}closest\("\[data-week\]"\)/.test(screen));
 ok("and it is bound once, not on every redraw", /window\._adminWeekMenuBound/.test(screen));
 ok("the menu offers a copy", /data-week-copy=/.test(screen));
-ok("and a paste, only when something is on the clipboard", /canPaste[\s\S]{0,200}data-week-paste=/.test(screen));
-ok("the clipboard belongs to the client it was copied from", /weekClip\.programId === \(S\.program && S\.program\.programId\)/.test(screen));
+ok("and a paste, only when something is on the clipboard", /var held = clipRead\("week"\);[\s\S]{0,400}data-week-paste=/.test(screen));
+/* The clipboard now holds the CONTENT and crosses between clients, which is what the
+   owner asked for on 2026-09-05 — so it is no longer tied to the client it came from,
+   and a paste is an ordinary save of the client it lands in. */
+ok("the clipboard is not tied to the client it came from", !/weekClip\.programId/.test(screen));
+ok("it says where it came from instead", /Clip\.describe\(held\)/.test(screen));
 ok("pasting warns that the week will be overwritten", /יידרס/.test(screen));
-ok("and goes through one server write", /action: "copy_week"/.test(screen));
-ok("a stale paste is refused and the client reopened", /if \(r\.status === 409\)[\s\S]{0,120}openClient\(S\.program\.programId\)/.test(screen));
+ok("and goes through the ordinary save", /pasteIntoProgram\(/.test(screen) && /action: "save",[\s\S]{0,200}program: \{ weeks: weeks \}/.test(screen));
+ok("a stale paste is refused and the client reopened", /if \(r\.status === 409\)[\s\S]{0,160}openClient\(S\.program\.programId\)/.test(screen));
 ok("escape closes the menu", /if \(ev\.key === "Escape"\) closeWeekMenu\(\)/.test(screen));
 
 /* --- the blank client's block length lives HERE and nowhere else ---------- */
@@ -1026,12 +1030,30 @@ ok("the week rail still opens its own", /var cube = ev\.target\.closest\("\[data
 ok("a general column is not a day", /if \(!dayKey \|\| dayKey === "general"\) return;/.test(screen));
 ok("the display's 0-based week becomes the number he sees", /\(parseInt\(cell\.getAttribute\("data-wi"\), 10\) \|\| 0\) \+ 1/.test(screen));
 ok("the menu offers to copy the day", /data-day-copy=/.test(screen));
-ok("and to paste it, only when one is on the clipboard", /canPaste[\s\S]{0,240}data-day-paste=/.test(screen));
-ok("the clipboard belongs to the client it was copied from", /dayClip\.programId === \(S\.program && S\.program\.programId\)/.test(screen));
-ok("pasting warns before it overwrites", /להדביק את היום הזה\? מה שכתוב בו יידרס/.test(screen));
-ok("and goes through one server write", /action: "copy_day"/.test(screen));
-ok("a stale paste reopens the client rather than overwriting", /action: "copy_day"[\s\S]{0,700}openClient\(S\.program\.programId\)/.test(screen));
+ok("and to paste it, only when one is on the clipboard", /var held = clipRead\("day"\);[\s\S]{0,400}data-day-paste=/.test(screen));
+ok("a day travels to another client too", !/dayClip\.programId/.test(screen));
+ok("pasting warns before it overwrites", /מה שכתוב ביום הזה יידרס/.test(screen));
+ok("and goes through the ordinary save", /Clip\.pasteDay\(weeks, toWi - 1, toDay, dHeld\.payload\)/.test(screen));
 ok("both menus are placed by the same code", /function placeMenuAt\(m, x, y\)/.test(screen));
+
+
+/* --- copy a PART, and paste it under the last one (owner, 2026-09-05) ------ */
+
+ok("a part heading can be grabbed", /var partRow = ev\.target\.closest\("\[data-part\]"\);/.test(screen));
+ok("and it is asked about before the day card it sits in", screen.indexOf('var partRow = ev.target.closest("[data-part]");') < screen.indexOf('var cube = ev.target.closest("[data-week]");'));
+ok("a long press opens it on a phone", /if \(onPart\) \{\s*\n\s*openPartMenu\(/.test(screen));
+ok("the menu offers to copy the part", /data-part-copy=/.test(screen));
+ok("and to plant one, only when one is on the clipboard", /var held = clipRead\("part"\);[\s\S]{0,900}data-part-paste=/.test(screen));
+/* Nothing is overwritten, so nothing is confirmed: it goes UNDER the last part. */
+ok("a pasted part is added, never written over", /החלק נשתל מתחת לחלק האחרון/.test(screen));
+ok("into the draft when that day is open for editing", /if \(S\.edit && \(S\.edit\.wi \| 0\) === weekNum - 1 && S\.edit\.day === dayKey\)/.test(screen));
+ok("what he sees is what he copies", /draftPartAt\(pWi, pDay, pIdx\) \|\| storedPartAt\(pWi - 1, pDay, pIdx\)/.test(screen));
+
+/* --- one clipboard, four sizes, across clients ---------------------------- */
+
+ok("the page loads the shared clipboard", /<script src="lib\/pprog-clipboard\.js"><\/script>/.test(page));
+ok("and reads it through one door", /function clipRead\(kind\)/.test(screen) && /function clipWrite\(kind, payload, label\)/.test(screen));
+ok("copying says it can be pasted at another client", /גם אצל לקוח אחר/.test(screen));
 
 
 /* --- a blank client sold as sessions (owner, 2026-09-04) ------------------ */

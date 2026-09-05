@@ -6930,6 +6930,7 @@ tryRestoreAdminSession();
 </script>
 <script src="lib/coach-intake-sync-contract.js"></script>
 <script src="lib/admin-people-strip.js"></script>
+<script src="lib/pprog-clipboard.js"></script>
 <script src="lib/normalize-pprog-block.js"></script>
 <script src="lib/pprog-display.js"></script>
 <script src="lib/admin-day-edit.js"></script>
@@ -7693,6 +7694,21 @@ tryRestoreAdminSession();
     document.addEventListener("contextmenu", function (ev) {
       var host = el("adminDays");
       if (!host || !S.program || !ev.target || !ev.target.closest) return;
+      /* A part heading first: it sits INSIDE a day card, so it has to be asked about
+         before the card it is in (owner, 2026-09-05). */
+      var partRow = ev.target.closest("[data-part]");
+      var card = partRow && partRow.closest(".pprog-day-card[data-wi][data-day]");
+      if (partRow && card && host.contains(card)) {
+        ev.preventDefault();
+        openPartMenu(
+          (parseInt(card.getAttribute("data-wi"), 10) || 0) + 1,
+          card.getAttribute("data-day") || "",
+          parseInt(partRow.getAttribute("data-part"), 10) || 0,
+          ev.clientX,
+          ev.clientY
+        );
+        return;
+      }
       var cube = ev.target.closest("[data-week]");
       if (cube && host.contains(cube)) {
         ev.preventDefault();
@@ -7739,15 +7755,26 @@ tryRestoreAdminSession();
         if (!touch) return;
         var cube = ev.target.closest("[data-week]");
         var cell = ev.target.closest("[data-day][data-wi]");
+        var partRow = ev.target.closest("[data-part]");
+        var partCard = partRow && partRow.closest(".pprog-day-card[data-wi][data-day]");
+        var onPart = partRow && partCard && host.contains(partCard);
         var onCube = cube && host.contains(cube);
         var onCell = cell && host.contains(cell);
-        if (!onCube && !onCell) return;
+        if (!onPart && !onCube && !onCell) return;
         pressAt = { x: touch.clientX, y: touch.clientY };
         cancelPressTimerOnly();
         pressTimer = setTimeout(function () {
           pressTimer = null;
           openedByPress = Date.now();
-          if (onCube) {
+          if (onPart) {
+            openPartMenu(
+              (parseInt(partCard.getAttribute("data-wi"), 10) || 0) + 1,
+              partCard.getAttribute("data-day") || "",
+              parseInt(partRow.getAttribute("data-part"), 10) || 0,
+              pressAt.x,
+              pressAt.y
+            );
+          } else if (onCube) {
             openWeekMenu(parseInt(cube.getAttribute("data-week"), 10) || 0, pressAt.x, pressAt.y);
           } else {
             var dayKey = cell.getAttribute("data-day") || "";
@@ -8740,79 +8767,80 @@ tryRestoreAdminSession();
     }
     var wCopy = t.closest && t.closest("[data-week-copy]");
     if (wCopy) {
-      weekClip = {
-        programId: S.program && S.program.programId,
-        week: parseInt(wCopy.getAttribute("data-week-copy"), 10) || 0,
-      };
+      var wFrom = parseInt(wCopy.getAttribute("data-week-copy"), 10) || 0;
       closeWeekMenu();
-      banner("good", "שבוע " + weekClip.week + " הועתק — לחץ ימני על שבוע אחר כדי להדביק.");
+      var wSrc = ((S.program && S.program.weeks) || [])[wFrom - 1];
+      if (!wSrc) { banner("bad", "לא מצאתי את השבוע הזה."); return; }
+      clipWrite("week", Clip.weekPayload(wSrc), "שבוע " + wFrom);
+      banner("good", "שבוע " + wFrom + " הועתק — לחץ ימני על שבוע אחר, גם אצל לקוח אחר, כדי להדביק.");
       return;
     }
     var wPaste = t.closest && t.closest("[data-week-paste]");
     if (wPaste) {
       var toWeek = parseInt(wPaste.getAttribute("data-week-paste"), 10) || 0;
       closeWeekMenu();
-      if (!weekClip || !toWeek || toWeek === weekClip.week) return;
-      if (!window.confirm("להדביק את שבוע " + weekClip.week + " על שבוע " + toWeek +
-        "? מה שכתוב בשבוע " + toWeek + " יידרס.")) return;
-      api({
-        action: "copy_week",
-        programId: S.program.programId,
-        expectedVersion: S.program.version,
-        fromWeek: weekClip.week,
-        toWeek: toWeek,
-      }).then(function (r) {
-        if (r.status === 409) { banner("warn", "מישהו שמר בינתיים. פותח מחדש."); openClient(S.program.programId); return; }
-        if (r.status !== 200 || !r.body.ok) {
-          banner("bad", (r.body && r.body.error) || "לא הצלחתי להדביק.");
-          return;
-        }
-        S.program = r.body.program;
-        banner("good", "שבוע " + r.body.fromWeek + " הודבק על שבוע " + r.body.toWeek +
-          " — " + r.body.copiedDays + " ימים.");
-        renderDetail();
-      });
+      var wHeld = clipRead("week");
+      if (!wHeld || !toWeek) return;
+      if (!window.confirm("להדביק כאן את " + Clip.describe(wHeld) + "? מה שכתוב בשבוע " + toWeek + " יידרס.")) return;
+      pasteIntoProgram(
+        function (weeks) { return Clip.pasteWeek(weeks, toWeek - 1, wHeld.payload); },
+        "השבוע הודבק."
+      );
       return;
     }
     var dCopy = t.closest && t.closest("[data-day-copy]");
     if (dCopy) {
       var fromBits = String(dCopy.getAttribute("data-day-copy") || "").split(":");
-      dayClip = {
-        programId: S.program && S.program.programId,
-        week: parseInt(fromBits[0], 10) || 0,
-        day: fromBits[1] || "",
-      };
+      var dWi = parseInt(fromBits[0], 10) || 0;
+      var dKey = fromBits[1] || "";
       closeWeekMenu();
-      banner("good", "היום הועתק — לחץ ימני על יום אחר כדי להדביק.");
+      var dSrc = ((S.program && S.program.weeks) || [])[dWi - 1];
+      if (!dSrc) { banner("bad", "לא מצאתי את היום הזה."); return; }
+      clipWrite("day", Clip.dayPayload(dSrc, dKey), dayMenuLabel(dWi, dKey));
+      banner("good", "היום הועתק — לחץ ימני על יום אחר, גם אצל לקוח אחר, כדי להדביק.");
       return;
     }
     var dPaste = t.closest && t.closest("[data-day-paste]");
     if (dPaste) {
       var toBits = String(dPaste.getAttribute("data-day-paste") || "").split(":");
-      var toWeek = parseInt(toBits[0], 10) || 0;
+      var toWi = parseInt(toBits[0], 10) || 0;
       var toDay = toBits[1] || "";
       closeWeekMenu();
-      if (!dayClip || !toWeek || !toDay) return;
-      if (dayClip.week === toWeek && dayClip.day === toDay) return;
-      if (!window.confirm("להדביק את היום הזה? מה שכתוב בו יידרס.")) return;
-      api({
-        action: "copy_day",
-        programId: S.program.programId,
-        expectedVersion: S.program.version,
-        fromWeek: dayClip.week,
-        fromDay: dayClip.day,
-        toWeek: toWeek,
-        toDay: toDay,
-      }).then(function (r) {
-        if (r.status === 409) { banner("warn", "מישהו שמר בינתיים. פותח מחדש."); openClient(S.program.programId); return; }
-        if (r.status !== 200 || !r.body.ok) {
-          banner("bad", (r.body && r.body.error) || "לא הצלחתי להדביק.");
-          return;
-        }
-        S.program = r.body.program;
-        banner("good", "היום הודבק — " + r.body.copiedParts + " חלקים.");
-        renderDetail();
-      });
+      var dHeld = clipRead("day");
+      if (!dHeld || !toWi || !toDay) return;
+      if (!window.confirm("להדביק כאן את " + Clip.describe(dHeld) + "? מה שכתוב ביום הזה יידרס.")) return;
+      pasteIntoProgram(
+        function (weeks) { return Clip.pasteDay(weeks, toWi - 1, toDay, dHeld.payload); },
+        "היום הודבק."
+      );
+      return;
+    }
+    var pCopy = t.closest && t.closest("[data-part-copy]");
+    if (pCopy) {
+      var pBits = String(pCopy.getAttribute("data-part-copy") || "").split(":");
+      var pWi = parseInt(pBits[0], 10) || 0;
+      var pDay = pBits[1] || "";
+      var pIdx = parseInt(pBits[2], 10);
+      closeWeekMenu();
+      /* From the draft when the day is open for editing — what he SEES is what he
+         copies — and from the programme itself when it is not. */
+      var part = draftPartAt(pWi, pDay, pIdx) || storedPartAt(pWi - 1, pDay, pIdx);
+      if (!part) { banner("bad", "לא מצאתי את החלק הזה."); return; }
+      clipWrite("part", part, partNameAt(pWi - 1, pDay, pIdx) + " · " + dayMenuLabel(pWi, pDay));
+      banner("good", "החלק הועתק — לחץ ימני על חלק ביום אחר, גם אצל לקוח אחר, כדי להדביק אותו שם.");
+      return;
+    }
+    var pPaste = t.closest && t.closest("[data-part-paste]");
+    if (pPaste) {
+      var ppBits = String(pPaste.getAttribute("data-part-paste") || "").split(":");
+      var ppWi = parseInt(ppBits[0], 10) || 0;
+      var ppDay = ppBits[1] || "";
+      closeWeekMenu();
+      var pHeld = clipRead("part");
+      if (!pHeld || !ppWi || !ppDay) return;
+      /* Nothing is overwritten, so there is nothing to confirm: it is planted under the
+         last part of the day (owner, 2026-09-05). */
+      pastePartHere(ppWi, ppDay, pHeld.payload);
       return;
     }
     if (g("data-nextblock")) { startNextBlock(); return; }
@@ -8930,12 +8958,37 @@ tryRestoreAdminSession();
     return !!(S.program && (S.program.clientKind === "athlete" || S.program.athleteIntake));
   }
 
-  /* The week on the clipboard, as {programId, week}. Kept in memory only: it is a
-     gesture, not a document, and it should not survive a reload. */
-  var weekClip = null;
-  /* And the day, as {programId, week, day} — the same gesture, one square smaller
-     (owner, 2026-09-04). */
-  var dayClip = null;
+  /* ══════════════════════════════════════════════════════════════════════
+     THE CLIPBOARD — a part, a day, a week, and between two clients.
+
+     It used to hold a POINTER ({programId, week}) and paste through a server-side copy,
+     which meant a copy could only be pasted back into the client it came from. The
+     owner asked for all of it to cross between clients (owner, 2026-09-05), so it holds
+     the CONTENT now and lives in lib/pprog-clipboard.js — which is also where the one
+     honest definition of "a copy of a part" lives, the one the server reads too.
+
+     It survives switching client and reloading the page. That is the whole point: copy
+     here, open someone else, paste there.
+     ══════════════════════════════════════════════════════════════════════ */
+  var Clip = window.PprogClipboard || null;
+  var clipStore = Clip ? Clip.makeStore(null) : null;
+
+  function clipRead(kind) {
+    if (!clipStore || !Clip) return null;
+    var e = clipStore.read();
+    return Clip.isUsable(e, kind) ? e : null;
+  }
+
+  function clipWrite(kind, payload, label) {
+    if (!clipStore || !Clip) return null;
+    var e = Clip.entryFor(kind, payload, {
+      programId: (S.program && S.program.programId) || "",
+      clientName: (S.program && S.program.clientName) || "",
+      label: label || "",
+    });
+    if (e) clipStore.write(e);
+    return e;
+  }
 
   function closeWeekMenu() {
     var m = el("weekMenu");
@@ -8945,15 +8998,15 @@ tryRestoreAdminSession();
   function openWeekMenu(weekNum, x, y) {
     var m = el("weekMenu");
     if (!m) return;
-    var canPaste = !!(weekClip && weekClip.programId === (S.program && S.program.programId));
+    var held = clipRead("week");
     m.innerHTML =
       '<div class="wm-title">שבוע ' + weekNum + "</div>" +
       '<button type="button" class="wm-item" data-week-copy="' + weekNum + '">' +
       '<span class="wm-ico" aria-hidden="true">⧉</span><span>העתק שבוע</span></button>' +
-      (canPaste
+      (held
         ? '<button type="button" class="wm-item wm-paste" data-week-paste="' + weekNum + '">' +
           '<span class="wm-ico" aria-hidden="true">⤵</span><span>הדבק כאן' +
-          '<span class="wm-from">משבוע ' + weekClip.week + "</span></span></button>"
+          '<span class="wm-from">' + esc(Clip.describe(held)) + "</span></span></button>"
         : '<span class="wm-hint">אין שבוע מועתק</span>');
     m.hidden = false;
     placeMenuAt(m, x, y);
@@ -8976,19 +9029,137 @@ tryRestoreAdminSession();
   function openDayMenu(wi, dayKey, x, y) {
     var m = el("weekMenu");
     if (!m) return;
-    var canPaste = !!(dayClip && dayClip.programId === (S.program && S.program.programId));
+    var held = clipRead("day");
     var here = wi + ":" + dayKey;
     m.innerHTML =
       '<div class="wm-title">' + dayMenuLabel(wi, dayKey) + "</div>" +
       '<button type="button" class="wm-item" data-day-copy="' + here + '">' +
       '<span class="wm-ico" aria-hidden="true">⧉</span><span>העתק יום</span></button>' +
-      (canPaste
+      (held
         ? '<button type="button" class="wm-item wm-paste" data-day-paste="' + here + '">' +
           '<span class="wm-ico" aria-hidden="true">⤵</span><span>הדבק כאן' +
-          '<span class="wm-from">' + dayMenuLabel(dayClip.week, dayClip.day) + "</span></span></button>"
+          '<span class="wm-from">' + esc(Clip.describe(held)) + "</span></span></button>"
         : '<span class="wm-hint">אין יום מועתק</span>');
     m.hidden = false;
     placeMenuAt(m, x, y);
+  }
+
+  /**
+   * Right-click a part: copy it, or plant the one on the clipboard under the last part
+   * of this day.
+   *
+   * A part is the smallest of the four sizes, and it is the one he reuses most: the
+   * same warm-up, the same accessory block, moved from day to day and from client to
+   * client. Nothing is overwritten — it is added (owner, 2026-09-05).
+   */
+  function openPartMenu(wi, dayKey, partIndex, x, y) {
+    var m = el("weekMenu");
+    if (!m) return;
+    var held = clipRead("part");
+    var here = wi + ":" + dayKey + ":" + partIndex;
+    var name = partNameAt(wi - 1, dayKey, partIndex);
+    m.innerHTML =
+      '<div class="wm-title">' + esc(name) + "</div>" +
+      '<button type="button" class="wm-item" data-part-copy="' + here + '">' +
+      '<span class="wm-ico" aria-hidden="true">⧉</span><span>העתק חלק</span></button>' +
+      (held
+        ? '<button type="button" class="wm-item wm-paste" data-part-paste="' + here + '">' +
+          '<span class="wm-ico" aria-hidden="true">⤵</span><span>הדבק חלק' +
+          '<span class="wm-from">' + esc(Clip.describe(held)) + "</span></span></button>"
+        : '<span class="wm-hint">אין חלק מועתק</span>');
+    m.hidden = false;
+    placeMenuAt(m, x, y);
+  }
+
+  /** What this part is called, for the top line of the menu. */
+  function partNameAt(wi, dayKey, partIndex) {
+    var part = storedPartAt(wi, dayKey, partIndex);
+    var title = String((part && part.title) || "").trim();
+    return title || "חלק " + ((partIndex | 0) + 1);
+  }
+
+  function storedPartAt(wi, dayKey, partIndex) {
+    var week = ((S.program && S.program.weeks) || [])[wi | 0] || {};
+    var day = (week.days && week.days[dayKey]) || {};
+    var parts = Array.isArray(day.parts) ? day.parts : [];
+    return parts[partIndex | 0] || null;
+  }
+
+  /**
+   * Write a paste into the open client and save it.
+   *
+   * Always the whole `weeks` array through the ordinary save, rather than through a
+   * server-side copy action: the thing being pasted may have come from a DIFFERENT
+   * client, and the server has no way to fetch it from there on his behalf
+   * (owner, 2026-09-05). A stale version is refused by the save as usual.
+   */
+  function pasteIntoProgram(mutate, okMessage) {
+    if (!S.program || !Array.isArray(S.program.weeks)) return;
+    var weeks;
+    try {
+      weeks = JSON.parse(JSON.stringify(S.program.weeks));
+    } catch (e) {
+      banner("bad", "לא הצלחתי להעתיק את התוכנית.");
+      return;
+    }
+    var res = mutate(weeks);
+    if (!res || res.ok !== true) {
+      banner("bad", (res && res.error) || "לא הצלחתי להדביק כאן.");
+      return;
+    }
+    api({
+      action: "save",
+      programId: S.program.programId,
+      expectedVersion: S.program.version,
+      program: { weeks: weeks },
+    }).then(function (r) {
+      if (r.status === 409) { banner("warn", "מישהו שמר בינתיים. פותח מחדש."); openClient(S.program.programId); return; }
+      if (r.status !== 200 || !r.body.ok) {
+        banner("bad", (r.body && r.body.error) || "לא הצלחתי להדביק.");
+        return;
+      }
+      S.program = r.body.program;
+      banner("good", okMessage);
+      renderDetail();
+    });
+  }
+
+  /**
+   * Plant a part under the last part of a day.
+   *
+   * If that day is open for editing, it goes into the DRAFT — otherwise the save would
+   * be overwritten by the autosave the moment he leaves the day. Anywhere else it is an
+   * ordinary paste into the programme.
+   */
+  function pastePartHere(weekNum, dayKey, part) {
+    if (S.edit && (S.edit.wi | 0) === weekNum - 1 && S.edit.day === dayKey) {
+      var D = pprogLib();
+      if (!Array.isArray(S.edit.parts)) S.edit.parts = [];
+      S.edit.parts.push(draftPartFrom(part, D));
+      renderAdminDays();
+      banner("good", "החלק נשתל כאן. יישמר עם שאר היום.");
+      return;
+    }
+    pasteIntoProgram(
+      function (weeks) { return Clip.pastePart(weeks, weekNum - 1, dayKey, part); },
+      "החלק נשתל מתחת לחלק האחרון."
+    );
+  }
+
+  /** A stored part, in the shape the editor works in. */
+  function draftPartFrom(part, D) {
+    var made = D && D.draftFromDayData ? D.draftFromDayData({ parts: [part] }, false) : null;
+    if (made && made.length) return made[0];
+    return { title: String((part && part.title) || ""), notes: [], format: "", work: (part && part.lines) || [""] };
+  }
+
+  /** The part he is looking at while a day is open for editing. */
+  function draftPartAt(weekNum, dayKey, partIndex) {
+    if (!S.edit || (S.edit.wi | 0) !== weekNum - 1 || S.edit.day !== dayKey) return null;
+    var D = pprogLib();
+    if (!D || !D.partsFromDraft) return null;
+    var parts = D.partsFromDraft({ parts: S.edit.parts, day: dayKey });
+    return parts[partIndex | 0] || null;
   }
 
   /** Both menus open where the finger is, and stay inside the window. */
