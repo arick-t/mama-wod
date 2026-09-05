@@ -315,6 +315,11 @@ const editableDay = PprogDisplay.renderBrickView({
   block: untouchedBlock, activeWi: 0, activeDay: "sun", calMode: "week", allowEdit: true, showFooter: false,
 });
 ok("a day he has never touched still shows the count", editableDay.indexOf("pprog-day-when") >= 0);
+/* And it keeps its heading: the note beside the pencil repeats the label, it does not
+   take its place — an unnamed day was left with a yellow note and no title at all
+   (owner, 2026-09-05). */
+ok("and keeps the automatic heading too", /class="source-name">[^<]+/.test(editableDay));
+ok("both say the same thing", (editableDay.match(/Sun · 6 September/g) || []).length >= 2);
 const readOnlyDay = PprogDisplay.renderBrickView({
   block: untouchedBlock, activeWi: 0, activeDay: "sun", calMode: "week", allowEdit: false, showFooter: false,
 });
