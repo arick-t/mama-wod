@@ -170,6 +170,7 @@ const ACTIONS_ALLOWED = [
   "block_insert",
   "block_duplicate",
   "block_remove",
+  "block_move",
   "paste_block",
   /* The shelf: its list, one block off it, and taking one off for good. */
   "block_list",

@@ -879,6 +879,9 @@ body.is-dragging-part-now{user-select:none}
 #clientScreen .week-menu .wm-item.wm-danger:hover,
 .week-menu .wm-item.wm-danger:hover{background:rgba(242,134,122,.14);color:#F2867A}
 .pprog-cal-block-title{cursor:context-menu}
+/* A block can be picked up by its heading and dropped between the others. */
+.pprog-cal-block[data-block] .pprog-cal-block-title{cursor:grab}
+.pprog-cal-block.is-dragging-block{opacity:.65;outline:2px dashed var(--part);outline-offset:4px;border-radius:10px}
 .athlete-tab.is-dragging{opacity:.75;transform:scale(1.04);box-shadow:0 10px 24px rgba(0,0,0,.45);cursor:grabbing}
 .athlete-tab[data-drag="1"]{cursor:grab}
 .athlete-tab.is-loading{
@@ -7826,8 +7829,9 @@ tryRestoreAdminSession();
      a redrawn element is a listener that quietly stops working. */
   if (!window._adminWeekMenuBound) {
     window._adminWeekMenuBound = true;
-    /* The calendar host outlives every redraw, so this can be bound once with it. */
+    /* The calendar host outlives every redraw, so these can be bound once with it. */
     try { bindPartDrag(); } catch (ePd) {}
+    try { bindBlockDrag(); } catch (eBd) {}
     document.addEventListener("contextmenu", function (ev) {
       var host = el("adminDays");
       if (!host || !S.program || !ev.target || !ev.target.closest) return;
@@ -7967,6 +7971,8 @@ tryRestoreAdminSession();
   function renderAdminDays() {
     var host = el("adminDays");
     if (!host) return;
+    /* Not while he is holding a block: a redraw would take it out of his hand. */
+    if (blockDragging) return;
     var D = pprogLib();
     var block = currentBlock();
     if (!D || !D.renderBrickView) {
@@ -9199,6 +9205,9 @@ tryRestoreAdminSession();
      It survives switching client and reloading the page. That is the whole point: copy
      here, open someone else, paste there.
      ══════════════════════════════════════════════════════════════════════ */
+  /* True only while a block is being carried, so nothing redraws under his hand. */
+  var blockDragging = false;
+
   var Clip = window.PprogClipboard || null;
   var clipStore = Clip ? Clip.makeStore(null) : null;
 
@@ -9408,6 +9417,117 @@ tryRestoreAdminSession();
     if (!D || !D.partsFromDraft) return null;
     var parts = D.partsFromDraft({ parts: S.edit.parts, day: dayKey });
     return parts[partIndex | 0] || null;
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     DRAGGING A BLOCK INTO ANOTHER PLACE IN THE PLAN.
+
+     In "All blocks" the months are stacked one under another. Press a block's heading
+     and drag it up or down over the others to change their order (owner, 2026-09-05).
+
+     Mouse only, like the part drag: on a phone the long press already opens the block's
+     menu. And it is refused — loudly — if the new order would put a block he has not
+     sent in front of one he has, because what a client may see is counted in weeks from
+     the start of the plan.
+     ══════════════════════════════════════════════════════════════════════ */
+
+  function bindBlockDrag() {
+    var host = el("adminDays");
+    if (!host || host.dataset.blockDragBound === "1") return;
+    host.dataset.blockDragBound = "1";
+    var held = null;
+
+    function blocksNow() {
+      return Array.prototype.slice.call(host.querySelectorAll(".pprog-cal-block[data-block]"));
+    }
+
+    function stop() {
+      if (held && held.el) held.el.classList.remove("is-dragging-block");
+      document.body.classList.remove("is-dragging-part-now");
+      blockDragging = false;
+      held = null;
+    }
+
+    host.addEventListener("pointerdown", function (ev) {
+      if (ev.pointerType === "touch") return;
+      if (ev.button !== undefined && ev.button !== 0) return;
+      var head = ev.target && ev.target.closest ? ev.target.closest("[data-block-title]") : null;
+      if (!head) return;
+      var box = head.closest(".pprog-cal-block[data-block]");
+      if (!box || !host.contains(box)) return;
+      held = {
+        el: box,
+        from: parseInt(box.getAttribute("data-block"), 10) || 0,
+        y: ev.clientY,
+        dragging: false,
+      };
+    });
+
+    host.addEventListener("pointermove", function (ev) {
+      if (!held) return;
+      if (!held.dragging) {
+        if (Math.abs(ev.clientY - held.y) < 6) return;
+        held.dragging = true;
+        blockDragging = true;
+        held.el.classList.add("is-dragging-block");
+        document.body.classList.add("is-dragging-part-now");
+      }
+      ev.preventDefault();
+      var list = blocksNow();
+      for (var i = 0; i < list.length; i++) {
+        var other = list[i];
+        if (other === held.el) continue;
+        var box = other.getBoundingClientRect();
+        if (ev.clientY < box.top || ev.clientY > box.bottom) continue;
+        var below = ev.clientY > box.top + box.height / 2;
+        if (below) other.parentNode.insertBefore(held.el, other.nextSibling);
+        else other.parentNode.insertBefore(held.el, other);
+        break;
+      }
+    });
+
+    host.addEventListener("pointerup", function () {
+      if (!held) return;
+      var was = held;
+      var order = blocksNow().map(function (b) {
+        return parseInt(b.getAttribute("data-block"), 10) || 0;
+      });
+      stop();
+      if (!was.dragging) return;
+      var to = order.indexOf(was.from) + 1;
+      if (!to || to === was.from) { renderAdminDays(); return; }
+      api({
+        action: "block_move",
+        programId: S.program.programId,
+        expectedVersion: S.program.version,
+        blockIndex: was.from,
+        toIndex: to,
+      }).then(function (r) {
+        /* A refusal has to put the picture back: the blocks are standing where he
+           dropped them, and the plan on file did not move. */
+        if (r.status !== 200 || !r.body.ok) {
+          renderAdminDays();
+          banner("bad", (r.body && r.body.error) || "לא הצלחתי לשנות את הסדר.");
+          return;
+        }
+        S.program = r.body.program;
+        banner("good", "סדר הלבנות עודכן.");
+        renderDetail();
+      });
+    });
+
+    host.addEventListener("pointercancel", function () {
+      var was = held;
+      stop();
+      if (was && was.dragging) renderAdminDays();
+    });
+    document.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape" && held) {
+        var was = held;
+        stop();
+        if (was.dragging) renderAdminDays();
+      }
+    });
   }
 
   /* ══════════════════════════════════════════════════════════════════════
