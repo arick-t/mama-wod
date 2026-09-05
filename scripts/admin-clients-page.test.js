@@ -163,6 +163,18 @@ const ACTIONS_ALLOWED = [
   "purge_all",
   /* The order he dragged his strip into — ids only, saved once when he lets go. */
   "set_strip_order",
+  /* A whole block: copied out of a client, put on the shelf, planted in front of
+     another, duplicated, deleted (owner, 2026-09-05). */
+  "block_copy",
+  "block_save",
+  "block_insert",
+  "block_duplicate",
+  "block_remove",
+  "paste_block",
+  /* The shelf: its list, one block off it, and taking one off for good. */
+  "block_list",
+  "block_read",
+  "block_delete",
 ];
 const actionsUsed = Array.from(
   new Set((screen.match(/action:\s*"([a-z_]+)"/g) || []).map(function (s) {
@@ -709,7 +721,10 @@ ok("the page offers all blocks, this block, this week", /window\.cvSetView = fun
    is in English like every other label on the calendar (owner, 2026-09-02). */
 const calLib = fs.readFileSync(path.join(root, "lib", "pprog-display.js"), "utf8");
 ok("the views are named in English", /All blocks<\/button>/.test(calLib) && /This block<\/button>/.test(calLib) && /This week<\/button>/.test(calLib));
-ok("so is the block heading", /"pprog-cal-block-title">Block /.test(calLib));
+ok("so is the block heading", calLib.indexOf('class="pprog-cal-block-title" data-block-title="') >= 0 && calLib.indexOf(">Block ") >= 0);
+/* And a block says which block it is, so it can be copied, duplicated, moved or
+   deleted from where it is drawn (owner, 2026-09-05). */
+ok("a block can be grabbed by its heading", calLib.indexOf('<div class="pprog-cal-block" data-block="') >= 0);
 ok("and the sessions label", /cols \+ " sessions a week"/.test(calLib));
 ok("no Hebrew is left on the calendar bar", !/כל הלבנות|לבנה נוכחית|השבוע<|אימונים בשבוע/.test(calLib));
 ok("they are the same shape as Today", /\.pprog-cal-view\{appearance:none;background:transparent[^}]*min-height:34px\}/.test(page));
@@ -998,7 +1013,9 @@ ok("and a second month is added on the spot", /if \(isBlankClient\(\)\) \{[\s\S]
 /* --- a week copied onto another week (owner, 2026-09-04) ------------------ */
 
 ok("a week cube can be grabbed by the menu", /data-week="' \+\s*\n?\s*\(weekIndex0 \+ 1\)/.test(fs.readFileSync(path.join(root, "lib", "pprog-display.js"), "utf8")));
-ok("right-clicking one opens a menu", /addEventListener\("contextmenu"[\s\S]{0,900}closest\("\[data-week\]"\)/.test(screen));
+ok("right-clicking one opens a menu", /addEventListener\("contextmenu"[\s\S]{0,1600}closest\("\[data-week\]"\)/.test(screen));
+/* The block heading is asked about before the weeks inside it. */
+ok("a block heading opens the block menu", /closest\("\[data-block-title\]"\)[\s\S]{0,200}openBlockMenu\(/.test(screen));
 ok("and it is bound once, not on every redraw", /window\._adminWeekMenuBound/.test(screen));
 ok("the menu offers a copy", /data-week-copy=/.test(screen));
 ok("and a paste, only when something is on the clipboard", /var held = clipRead\("week"\);[\s\S]{0,400}data-week-paste=/.test(screen));

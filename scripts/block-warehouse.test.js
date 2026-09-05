@@ -200,6 +200,30 @@ async function main() {
   /* Block 1 is sent, so putting an unsent block in front of it would hand it over. */
   ok("planting an unsent block in front of a sent one is refused too", !before.ok);
 
+  /* --- the screens ------------------------------------------------------- */
+
+  const admin = fs.readFileSync(path.join(__dirname, "..", "admin.html"), "utf8");
+  const view = fs.readFileSync(path.join(__dirname, "..", "lib", "admin-ledger-view.js"), "utf8");
+
+  ok("the shelf has a card on the management screen", admin.indexOf('id="ledBlocks"') >= 0);
+  ok("with one row per saved block", view.indexOf("function blocksBoxHtml") >= 0);
+  ok("naming what he asked to see", /שם לבנה[\s\S]{0,300}תיאור[\s\S]{0,300}נוצרה[\s\S]{0,300}סוג[\s\S]{0,300}אימונים בשבוע/.test(view));
+  ok("and an empty shelf explains how to fill it", /אין עדיין לבנות במחסן/.test(view));
+  ok("every row can be taken off the shelf", view.indexOf("data-block-take=") >= 0);
+  ok("or removed from it", view.indexOf("data-block-drop=") >= 0);
+  ok("the shelf is asked for when the screen opens", admin.indexOf("loadBlocks();") >= 0);
+  ok("and again the moment a block is saved onto it", admin.indexOf("window.adminBlocksChanged = function") >= 0);
+
+  /* The menu on a block: the five he listed, in his order (owner, 2026-09-05). */
+  ok("a block heading opens a menu", admin.indexOf("function openBlockMenu(") >= 0);
+  ok("1. copy the block", admin.indexOf("data-block-copy=") >= 0 && admin.indexOf("העתק לבנה") >= 0);
+  ok("2. put it on the shelf, under a name he types", admin.indexOf("data-block-fav=") >= 0 && admin.indexOf("שם ללבנה במחסן") >= 0);
+  ok("3. plant the copied one in front of it", admin.indexOf("data-block-paste=") >= 0 && admin.indexOf('action: "block_insert"') >= 0);
+  ok("4. duplicate it, straight after itself", admin.indexOf("data-block-dup=") >= 0 && admin.indexOf('action: "block_duplicate"') >= 0);
+  ok("5. delete it, and say plainly that there is no way back", admin.indexOf("data-block-del=") >= 0 && admin.indexOf("אין דרך לשחזר לבנה שנמחקה") >= 0);
+  ok("planting from the strip is offered only with a block in hand", admin.indexOf('if (chip.getAttribute("data-kind") === "program" && pageHeldBlock())') >= 0);
+  ok("and it lands as the client's last block, unsent", admin.indexOf("לא תישלח אליו עד שתאשר") >= 0);
+
   console.log("\nAll block warehouse checks passed (" + passed + " assertions).");
 }
 

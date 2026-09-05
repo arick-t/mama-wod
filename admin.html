@@ -264,6 +264,22 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
   letter-spacing:.5px;cursor:pointer;padding:0;text-align:start}
 .led-fold-caret{color:var(--text-muted);font-size:12px}
 .led-fold-count{margin-inline-start:auto;font-size:11px;color:var(--text-muted);font-weight:700}
+/* THE BLOCK WAREHOUSE — his own shelf, on his own screen (owner, 2026-09-05).
+   A table rather than cards: he reads it the way he reads the deals above it. */
+.blocks-table{width:100%;border-collapse:collapse;font-size:13px}
+.blocks-table th{text-align:start;font-size:11px;font-weight:800;color:var(--text-muted);
+  letter-spacing:.3px;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.blocks-table td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.blocks-table tr:last-child td{border-bottom:none}
+.blocks-table .blk-source{display:block;font-size:11px;color:var(--text-muted);font-weight:600;margin-top:2px}
+.blocks-table .blk-actions{white-space:nowrap;text-align:end}
+.led-table-wrap{overflow-x:auto}
+.btn-mini{appearance:none;height:28px;padding:0 12px;border-radius:8px;border:1px solid var(--line);
+  background:transparent;color:var(--text);font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.btn-mini:hover{border-color:var(--brand);background:rgba(232,69,26,.12)}
+.led-bin{appearance:none;background:none;border:none;color:var(--text-muted);cursor:pointer;
+  font-size:14px;padding:4px 6px;margin-inline-start:4px;border-radius:6px}
+.led-bin:hover{background:rgba(242,134,122,.16)}
 .led-fav-rows{display:flex;flex-direction:column;gap:4px;margin-top:12px}
 .led-fav-row{display:grid;grid-template-columns:1.2fr auto 1fr auto;gap:10px;align-items:center;
   padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg-elev);font-size:13px}
@@ -857,6 +873,12 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .section-title-row.is-dragging-part{opacity:.5}
 .pprog-day-card.is-drop-target{outline:2px dashed var(--part);outline-offset:3px}
 body.is-dragging-part-now{user-select:none}
+/* The one row in any menu that cannot be undone. */
+#clientScreen .week-menu .wm-item.wm-danger,
+.week-menu .wm-item.wm-danger{color:#F2867A}
+#clientScreen .week-menu .wm-item.wm-danger:hover,
+.week-menu .wm-item.wm-danger:hover{background:rgba(242,134,122,.14);color:#F2867A}
+.pprog-cal-block-title{cursor:context-menu}
 .athlete-tab.is-dragging{opacity:.75;transform:scale(1.04);box-shadow:0 10px 24px rgba(0,0,0,.45);cursor:grabbing}
 .athlete-tab[data-drag="1"]{cursor:grab}
 .athlete-tab.is-loading{
@@ -1489,6 +1511,11 @@ header{flex-wrap:wrap;row-gap:8px}
     <div class="card led-fav-card">
       <div id="ledFavourites"></div>
     </div>
+    <!-- His own shelf of programming: a block he was happy with, saved under a name and
+         ready to be planted at anyone (owner, 2026-09-05). -->
+    <div class="card led-blocks-card">
+      <div id="ledBlocks"></div>
+    </div>
     <!-- Two incomes and their sum, at the foot of the page on his instruction: it is
          the answer, and an answer belongs after the working area (owner, 2026-09-03). -->
     <div class="card led-money">
@@ -2040,6 +2067,15 @@ var clientPrograms = [];
 var clientStripOrder = [];
 /* While a chip is being dragged the strip must not be repainted under his finger. */
 var stripDragging = false;
+/* The page reads the same clipboard the client screen writes — one box, one key — so a
+   block copied inside a client can be planted from the strip, on someone else
+   (owner, 2026-09-05). */
+var pageClipStore = window.PprogClipboard ? window.PprogClipboard.makeStore(null) : null;
+function pageHeldBlock() {
+  if (!pageClipStore || !window.PprogClipboard) return null;
+  var e = pageClipStore.read();
+  return window.PprogClipboard.isUsable(e, "block") ? e : null;
+}
 var currentAthleteId = null;
 var syncInFlight = false;
 var blockMonthOffsetByAthlete = {};
@@ -3512,6 +3548,92 @@ function bindStripDrag() {
   });
 }
 
+/**
+ * The strip's own menu: plant the copied block on this client, or open name and colour.
+ *
+ * It only appears when there is a block to plant — otherwise the right button keeps
+ * doing exactly what it did before.
+ */
+function openStripMenu(programId, chip, x, y) {
+  var m = document.getElementById("stripMenu");
+  if (!m) {
+    m = document.createElement("div");
+    m.id = "stripMenu";
+    m.className = "week-menu";
+    m.hidden = true;
+    document.body.appendChild(m);
+  }
+  var held = pageHeldBlock();
+  var name = chip ? String(chip.textContent || "").trim() : "";
+  m.innerHTML =
+    '<div class="wm-title">' + escHtml(name) + "</div>" +
+    (held
+      ? '<button type="button" class="wm-item wm-paste" data-strip-paste="' + escHtml(programId) + '">' +
+        '<span class="wm-ico" aria-hidden="true">⤵</span><span>הדבק לבנה' +
+        '<span class="wm-from">' + escHtml(window.PprogClipboard.describe(held)) + "</span></span></button>"
+      : "") +
+    '<button type="button" class="wm-item" data-strip-identity="' + escHtml(programId) + '">' +
+    '<span class="wm-ico" aria-hidden="true">✎</span><span>שם וצבע</span></button>';
+  m.hidden = false;
+  var w = m.offsetWidth || 200;
+  var h = m.offsetHeight || 90;
+  m.style.left = Math.round(Math.min(Math.max(0, x), Math.max(0, window.innerWidth - w - 8))) + "px";
+  m.style.top = Math.round(Math.min(Math.max(0, y), Math.max(0, window.innerHeight - h - 8))) + "px";
+}
+
+function closeStripMenu() {
+  var m = document.getElementById("stripMenu");
+  if (m) { m.hidden = true; m.innerHTML = ""; }
+}
+
+/** Escaping for the strip menu — the page's own, so it does not lean on a screen. */
+function escHtml(v) {
+  return String(v == null ? "" : v).replace(/[&<>"]/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+  });
+}
+
+if (!window._stripMenuBound) {
+  window._stripMenuBound = true;
+  document.addEventListener("click", function (ev) {
+    var t = ev.target;
+    if (!t || !t.closest) return;
+    var paste = t.closest("[data-strip-paste]");
+    if (paste) {
+      var pid = paste.getAttribute("data-strip-paste") || "";
+      var held = pageHeldBlock();
+      closeStripMenu();
+      if (!pid || !held || !window.ClientScreen || !window.ClientScreen.plantBlockAt) return;
+      if (!window.confirm("לשתול את " + window.PprogClipboard.describe(held) +
+        " אצל הלקוח הזה? היא תיכנס כלבנה האחרונה שלו, ולא תישלח אליו עד שתאשר.")) return;
+      window.ClientScreen.plantBlockAt(pid, held.payload, function (err, added) {
+        if (err) { showHdrToast(err, "err"); return; }
+        showHdrToast("הלבנה נשתלה — " + added + " שבועות. היא מחכה לאישור שליחה.", "ok");
+      });
+      return;
+    }
+    var ident = t.closest("[data-strip-identity]");
+    if (ident) {
+      var iid = ident.getAttribute("data-strip-identity") || "";
+      closeStripMenu();
+      var row = null;
+      for (var i = 0; i < (clientPrograms || []).length; i++) {
+        if (clientPrograms[i] && clientPrograms[i].programId === iid) row = clientPrograms[i];
+      }
+      if (row) {
+        openClientIdentityFor("client", iid, row.clientName || "", row.clientColour || "");
+        placeIdentityPanelAt(window.innerWidth / 2, 120);
+      }
+      return;
+    }
+    var m = document.getElementById("stripMenu");
+    if (m && !m.hidden && !t.closest("#stripMenu")) closeStripMenu();
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape") closeStripMenu();
+  });
+}
+
 /* When the drag ended, so the click it ends with does not also open a client. */
 var stripDragEndedAt = 0;
 
@@ -3565,6 +3687,12 @@ function bindPeopleStrip() {
     ev.preventDefault();
     var id = chip.getAttribute("data-id") || "";
     if (!id) return;
+    /* A block on the clipboard turns this into a choice: plant it on this client, or
+       do what the right button has always done here (owner, 2026-09-05). */
+    if (chip.getAttribute("data-kind") === "program" && pageHeldBlock()) {
+      openStripMenu(id, chip, ev.clientX, ev.clientY);
+      return;
+    }
     if (chip.getAttribute("data-kind") === "program") {
       var row = null;
       for (var i = 0; i < (clientPrograms || []).length; i++) {
@@ -7718,6 +7846,14 @@ tryRestoreAdminSession();
         );
         return;
       }
+      /* The block heading. It is not inside a week cube, but it IS inside the block
+         that holds them, so it is asked about before the cube. */
+      var blockHead = ev.target.closest("[data-block-title]");
+      if (blockHead && host.contains(blockHead)) {
+        ev.preventDefault();
+        openBlockMenu(parseInt(blockHead.getAttribute("data-block-title"), 10) || 0, ev.clientX, ev.clientY);
+        return;
+      }
       var cube = ev.target.closest("[data-week]");
       if (cube && host.contains(cube)) {
         ev.preventDefault();
@@ -7762,6 +7898,8 @@ tryRestoreAdminSession();
         if (!host || !S.program || !ev.target || !ev.target.closest) return;
         var touch = (ev.touches && ev.touches[0]) || null;
         if (!touch) return;
+        var blockHead = ev.target.closest("[data-block-title]");
+        var onBlock = blockHead && host.contains(blockHead);
         var cube = ev.target.closest("[data-week]");
         var cell = ev.target.closest("[data-day][data-wi]");
         var partRow = ev.target.closest("[data-part]");
@@ -7769,13 +7907,15 @@ tryRestoreAdminSession();
         var onPart = partRow && partCard && host.contains(partCard);
         var onCube = cube && host.contains(cube);
         var onCell = cell && host.contains(cell);
-        if (!onPart && !onCube && !onCell) return;
+        if (!onBlock && !onPart && !onCube && !onCell) return;
         pressAt = { x: touch.clientX, y: touch.clientY };
         cancelPressTimerOnly();
         pressTimer = setTimeout(function () {
           pressTimer = null;
           openedByPress = Date.now();
-          if (onPart) {
+          if (onBlock) {
+            openBlockMenu(parseInt(blockHead.getAttribute("data-block-title"), 10) || 0, pressAt.x, pressAt.y);
+          } else if (onPart) {
             openPartMenu(
               (parseInt(partCard.getAttribute("data-wi"), 10) || 0) + 1,
               partCard.getAttribute("data-day") || "",
@@ -8824,6 +8964,86 @@ tryRestoreAdminSession();
       );
       return;
     }
+    var bCopy = t.closest && t.closest("[data-block-copy]");
+    if (bCopy) {
+      var bcIdx = parseInt(bCopy.getAttribute("data-block-copy"), 10) || 0;
+      closeWeekMenu();
+      api({ action: "block_copy", programId: S.program.programId, blockIndex: bcIdx }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) { banner("bad", (r.body && r.body.error) || "לא הצלחתי להעתיק את הלבנה."); return; }
+        clipWrite("block", r.body.block, blockLabelOf(bcIdx));
+        banner("good", "הלבנה הועתקה — לחץ ימני על לבנה אצל לקוח אחר כדי לשתול אותה שם.");
+      });
+      return;
+    }
+    var bFav = t.closest && t.closest("[data-block-fav]");
+    if (bFav) {
+      var bfIdx = parseInt(bFav.getAttribute("data-block-fav"), 10) || 0;
+      closeWeekMenu();
+      var suggested = (S.program.clientName || "") + " · " + blockLabelOf(bfIdx);
+      var name = window.prompt("שם ללבנה במחסן:", suggested);
+      if (name === null) return;
+      name = String(name).trim();
+      if (!name) { banner("warn", "לבנה במחסן חייבת שם."); return; }
+      api({
+        action: "block_save",
+        programId: S.program.programId,
+        blockIndex: bfIdx,
+        name: name,
+        description: "",
+      }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) { banner("bad", (r.body && r.body.error) || "לא נשמר במחסן."); return; }
+        banner("good", '"' + name + '" נשמרה במחסן הלבנות — היא מחכה לך בלשונית ניהול כללי.');
+        if (typeof window.adminBlocksChanged === "function") window.adminBlocksChanged();
+      });
+      return;
+    }
+    var bPaste = t.closest && t.closest("[data-block-paste]");
+    if (bPaste) {
+      var bpIdx = parseInt(bPaste.getAttribute("data-block-paste"), 10) || 0;
+      closeWeekMenu();
+      var bHeld = clipRead("block");
+      if (!bHeld) return;
+      if (!window.confirm("לשתול את " + Clip.describe(bHeld) + " לפני לבנה " + bpIdx + "? היא תיכנס כלבנה חדשה ולא תדרוס כלום.")) return;
+      api({
+        action: "block_insert",
+        programId: S.program.programId,
+        expectedVersion: S.program.version,
+        blockIndex: bpIdx,
+        block: bHeld.payload,
+      }).then(afterBlockChange("הלבנה נשתלה."));
+      return;
+    }
+    var bDup = t.closest && t.closest("[data-block-dup]");
+    if (bDup) {
+      var bdIdx = parseInt(bDup.getAttribute("data-block-dup"), 10) || 0;
+      closeWeekMenu();
+      if (!window.confirm("להכפיל את לבנה " + bdIdx + "? העותק ייכנס מיד אחריה, ותוכל לגרור אותו לאן שתרצה.")) return;
+      api({
+        action: "block_duplicate",
+        programId: S.program.programId,
+        expectedVersion: S.program.version,
+        blockIndex: bdIdx,
+      }).then(afterBlockChange("הלבנה הוכפלה."));
+      return;
+    }
+    var bDel = t.closest && t.closest("[data-block-del]");
+    if (bDel) {
+      var bxIdx = parseInt(bDel.getAttribute("data-block-del"), 10) || 0;
+      closeWeekMenu();
+      /* Said twice on purpose: this is the one gesture on this page with nothing behind
+         it. There is no undo and there is no copy anywhere else (owner, 2026-09-05). */
+      if (!window.confirm(
+        "למחוק את " + blockLabelOf(bxIdx) + " של " + (S.program.clientName || "הלקוח") + "?\n\n" +
+        "כל האימונים שכתובים בה יימחקו איתה. אין דרך לשחזר לבנה שנמחקה."
+      )) return;
+      api({
+        action: "block_remove",
+        programId: S.program.programId,
+        expectedVersion: S.program.version,
+        blockIndex: bxIdx,
+      }).then(afterBlockChange("הלבנה נמחקה."));
+      return;
+    }
     var pCopy = t.closest && t.closest("[data-part-copy]");
     if (pCopy) {
       var pBits = String(pCopy.getAttribute("data-part-copy") || "").split(":");
@@ -9102,6 +9322,25 @@ tryRestoreAdminSession();
    * client, and the server has no way to fetch it from there on his behalf
    * (owner, 2026-09-05). A stale version is refused by the save as usual.
    */
+  /**
+   * What happens after a block was moved, planted, duplicated or deleted.
+   *
+   * One handler for the four, because the four answer the same way: a stale version
+   * reopens the client, a refusal is said out loud, and a success redraws.
+   */
+  function afterBlockChange(okMessage) {
+    return function (r) {
+      if (r.status === 409) { banner("warn", "מישהו שמר בינתיים. פותח מחדש."); openClient(S.program.programId); return; }
+      if (r.status !== 200 || !r.body.ok) {
+        banner("bad", (r.body && r.body.error) || "הפעולה נכשלה.");
+        return;
+      }
+      S.program = r.body.program;
+      banner("good", okMessage);
+      renderDetail();
+    };
+  }
+
   function pasteIntoProgram(mutate, okMessage) {
     if (!S.program || !Array.isArray(S.program.weeks)) return;
     var weeks;
@@ -9260,6 +9499,50 @@ tryRestoreAdminSession();
     document.addEventListener("keydown", function (ev) {
       if (ev.key === "Escape" && held) stop();
     });
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     THE BLOCK MENU — everything a whole month can be (owner, 2026-09-05).
+
+     Right-click a block heading: copy it, put it on the shelf under a name, plant the
+     copied one in front of it, duplicate it, or delete it. The same five wherever a
+     block is drawn, and the paste works whether what is on the clipboard came from the
+     shelf or from another client.
+     ══════════════════════════════════════════════════════════════════════ */
+
+  function openBlockMenu(blockIndex, x, y) {
+    var m = el("weekMenu");
+    if (!m || !S.program) return;
+    var held = clipRead("block");
+    var label = blockLabelOf(blockIndex);
+    m.innerHTML =
+      '<div class="wm-title">' + esc(label) + "</div>" +
+      '<button type="button" class="wm-item" data-block-copy="' + blockIndex + '">' +
+      '<span class="wm-ico" aria-hidden="true">⧉</span><span>העתק לבנה</span></button>' +
+      '<button type="button" class="wm-item" data-block-fav="' + blockIndex + '">' +
+      '<span class="wm-ico" aria-hidden="true">★</span><span>הוסף למועדפים</span></button>' +
+      (held
+        ? '<button type="button" class="wm-item wm-paste" data-block-paste="' + blockIndex + '">' +
+          '<span class="wm-ico" aria-hidden="true">⤵</span><span>הדבק לבנה כאן' +
+          '<span class="wm-from">' + esc(Clip.describe(held)) + "</span></span></button>"
+        : '<span class="wm-hint">אין לבנה מועתקת</span>') +
+      '<button type="button" class="wm-item" data-block-dup="' + blockIndex + '">' +
+      '<span class="wm-ico" aria-hidden="true">⧉⧉</span><span>הכפל לבנה</span></button>' +
+      '<button type="button" class="wm-item wm-danger" data-block-del="' + blockIndex + '">' +
+      '<span class="wm-ico" aria-hidden="true">🗑</span><span>מחק לבנה</span></button>';
+    m.hidden = false;
+    placeMenuAt(m, x, y);
+  }
+
+  /** "לבנה 2 · 4 שבועות" — the top line of the menu and the default name on the shelf. */
+  function blockLabelOf(blockIndex) {
+    var blocks = (S.program && S.program.blocks) || [];
+    for (var i = 0; i < blocks.length; i++) {
+      if ((parseInt(blocks[i].blockIndex, 10) || 0) === (blockIndex | 0)) {
+        return "לבנה " + blockIndex + " · " + (parseInt(blocks[i].weekCount, 10) || 0) + " שבועות";
+      }
+    }
+    return "לבנה " + blockIndex;
   }
 
   /** Both menus open where the finger is, and stay inside the window. */
@@ -9985,6 +10268,47 @@ tryRestoreAdminSession();
     },
     /* The strip belongs to the page, but this screen owns the endpoint — so the page
        hands the new order here to be written (owner, 2026-09-05). */
+    /**
+     * Plant a block on a client who is not the one on screen.
+     *
+     * No expectedVersion: this is a client nobody has open, and the alternative is
+     * fetching him first only to be told his version — a read he does not need. The
+     * block lands at the end and unapproved, so there is nothing here to overwrite.
+     */
+    plantBlockAt: function (programId, payload, done) {
+      api({ action: "paste_block", programId: programId, block: payload }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) {
+          done && done((r.body && r.body.error) || "לא הצלחתי לשתול את הלבנה.");
+          return;
+        }
+        /* If he happens to be looking at that client, show it immediately. */
+        if (S.program && S.program.programId === programId) {
+          S.program = r.body.program;
+          renderDetail();
+        }
+        loadList();
+        done && done(null, r.body.added || 0);
+      });
+    },
+    /* The shelf: its list, one block off it, and taking one off for good. */
+    blocksList: function (done) {
+      api({ action: "block_list" }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) { done && done((r.body && r.body.error) || "לא הצלחתי לקרוא את המחסן."); return; }
+        done && done(null, r.body.rows || []);
+      });
+    },
+    blockRead: function (id, done) {
+      api({ action: "block_read", id: id }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) { done && done((r.body && r.body.error) || "לא מצאתי את הלבנה במחסן."); return; }
+        done && done(null, r.body.block, r.body.block);
+      });
+    },
+    blockDelete: function (id, done) {
+      api({ action: "block_delete", id: id }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) { done && done((r.body && r.body.error) || "לא הצלחתי למחוק מהמחסן."); return; }
+        done && done(null);
+      });
+    },
     saveStripOrder: function (ids, done) {
       api({ action: "set_strip_order", ids: ids }).then(function (r) {
         if (r.status !== 200 || !r.body.ok) {
@@ -10150,6 +10474,9 @@ tryRestoreAdminSession();
     favEditing: "",
     places: [],
     colours: {},
+    /* His own shelf of blocks — rows only; the weeks stay on the server until one is
+       actually taken off it (owner, 2026-09-05). */
+    blocks: [],
     open: false,
     month: "",
     data: null,
@@ -10205,6 +10532,9 @@ tryRestoreAdminSession();
     if (!LS.month) LS.month = L.monthKey();
     if (!LS.data) loadMonth(LS.month);
     else render();
+    /* The shelf is its own one-read index, so it is asked for separately and a slow
+       answer never holds up the month. */
+    loadBlocks();
   }
 
   function close() {
@@ -10353,6 +10683,73 @@ tryRestoreAdminSession();
     if (!sel) return "";
     if (sel.value === V.SERVICE_OTHER) return (other && other.value) || "";
     return sel.value || "";
+  }
+
+  /* ── the block warehouse ──────────────────────────────────────────────── */
+
+  /** The shelf, drawn from the rows the server keeps in one small index. */
+  function renderBlocks() {
+    var host = el("ledBlocks");
+    if (!host || !V.blocksBoxHtml) return;
+    host.innerHTML = V.blocksBoxHtml({ rows: LS.blocks || [] });
+  }
+
+  /**
+   * Ask for the shelf.
+   *
+   * One read of one index — the weeks of a block are only fetched when he actually
+   * takes one off the shelf.
+   */
+  function loadBlocks() {
+    if (!window.ClientScreen || !window.ClientScreen.blocksList) return;
+    window.ClientScreen.blocksList(function (err, rows) {
+      if (err) return;
+      LS.blocks = rows || [];
+      renderBlocks();
+    });
+  }
+
+  /* Something changed the shelf from the client screen — a block was just saved. */
+  window.adminBlocksChanged = function () {
+    loadBlocks();
+  };
+
+  /* Taking one off the shelf puts it on the clipboard; planting it is a right-click on
+     a client in the strip, which is the same gesture as pasting a block copied from
+     another client (owner, 2026-09-05). */
+  if (!window._ledBlocksBound) {
+    window._ledBlocksBound = true;
+    document.addEventListener("click", function (ev) {
+      var t = ev.target;
+      if (!t || !t.closest) return;
+      var take = t.closest("[data-block-take]");
+      if (take) {
+        var id = take.getAttribute("data-block-take") || "";
+        if (!id || !window.ClientScreen || !window.ClientScreen.blockRead) return;
+        window.ClientScreen.blockRead(id, function (err, block, row) {
+          if (err) { showHdrToast(err, "err"); return; }
+          if (!window.PprogClipboard || !pageClipStore) return;
+          pageClipStore.write(
+            window.PprogClipboard.entryFor("block", { weeks: block.weeks, intake: block.intake }, {
+              label: (row && row.name) || "לבנה מהמחסן",
+              clientName: "מחסן הלבנות",
+            })
+          );
+          showHdrToast('"' + ((row && row.name) || "הלבנה") + '" הועתקה — לחץ ימני על לקוח ברצועה כדי לשתול אותה אצלו.', "ok");
+        });
+        return;
+      }
+      var drop = t.closest("[data-block-drop]");
+      if (drop) {
+        var did = drop.getAttribute("data-block-drop") || "";
+        if (!did || !window.ClientScreen || !window.ClientScreen.blockDelete) return;
+        if (!window.confirm("למחוק את הלבנה הזו מהמחסן? התוכניות שכבר נשתלו אצל לקוחות לא ייפגעו.")) return;
+        window.ClientScreen.blockDelete(did, function (err) {
+          if (err) { showHdrToast(err, "err"); return; }
+          loadBlocks();
+        });
+      }
+    });
   }
 
   /** The box under the table: everyone, and the pencil that names and colours them. */

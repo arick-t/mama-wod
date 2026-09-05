@@ -243,6 +243,7 @@
 .pprog-day-card .section-title-row[data-part]{cursor:default}
 .pprog-day-card.is-editing .section-title-row[data-part]{cursor:grab}
 .pprog-day-card.is-drop-target{outline:2px dashed var(--part);outline-offset:3px}
+.pprog-cal-block-title{cursor:context-menu}
 .pprog-edit-lines.pprog-numbered{list-style:none;padding-inline-start:0}
 /* The number in the circle is a field while the day is open — digits only, and it must
    not be stretched by the rule that makes the work line itself fill the row. */
