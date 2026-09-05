@@ -8120,6 +8120,10 @@ tryRestoreAdminSession();
     var draft = S.edit;
     if (!draft) return;
     var D = pprogLib();
+    /* Whatever is in the heading counts as part of the day, like every other field:
+       he renamed a day, moved to the next one, and the name was gone
+       (owner, 2026-09-05). Read BEFORE the card is redrawn. */
+    var titleNow = readDayTitleField();
     /* Leave the edit NOW: he is already on the next day, and the write goes on behind
        him. */
     S.edit = null;
@@ -8131,13 +8135,41 @@ tryRestoreAdminSession();
           !window.confirm("להפוך את היום ליום מנוחה? האימון שכתוב בו יימחק.")) {
         return;
       }
-      saveDay(draft.wi, draft.day, [], true, { quiet: true });
+      saveDay(draft.wi, draft.day, [], true, { quiet: true, title: titleNow });
       return;
     }
-    if (!D || !D.partsFromDraft || !D.draftHasContent(draft)) return;
+    /* A name on its own is a change worth keeping, even when nothing was typed into
+       the session itself. */
+    var titleChanged = titleNow !== undefined && titleNow !== storedDayTitle(draft.wi, draft.day);
+    if (!D || !D.partsFromDraft || !D.draftHasContent(draft)) {
+      /* Nothing was typed into the session, but the day may have been renamed. */
+      if (titleChanged) saveTitleOnly(draft.wi, draft.day, titleNow);
+      return;
+    }
     var parts = D.partsFromDraft({ parts: draft.parts, day: draft.day });
-    if (samePartsAsStored(draft.wi, draft.day, parts)) return;
-    saveDay(draft.wi, draft.day, parts, false, { quiet: true });
+    if (samePartsAsStored(draft.wi, draft.day, parts) && !titleChanged) return;
+    saveDay(draft.wi, draft.day, parts, false, { quiet: true, title: titleNow });
+  }
+
+  /** The name the day is stored under right now. */
+  function storedDayTitle(wi, dayKey) {
+    var week = ((S.program && S.program.weeks) || [])[wi | 0] || {};
+    var day = (week.days && week.days[dayKey]) || {};
+    return String(day.title || "");
+  }
+
+  /**
+   * Only the name changed, and there is a session under it to keep.
+   *
+   * saveDay refuses to write a day with no parts (that is what the rest-day button is
+   * for), so a rename of a written day goes through with the parts it already has.
+   */
+  function saveTitleOnly(wi, dayKey, title) {
+    var week = ((S.program && S.program.weeks) || [])[wi | 0] || {};
+    var day = (week.days && week.days[dayKey]) || {};
+    var parts = Array.isArray(day.parts) ? day.parts : [];
+    if (!parts.length) return;
+    saveDay(wi, dayKey, parts, false, { quiet: true, title: title });
   }
 
   /** Is there a written session on this day - something a rest day would replace? */

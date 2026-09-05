@@ -1175,19 +1175,43 @@ button.ghost:hover{color:var(--text)}
     var draft = state.edit;
     if (!draft) return;
     var D = pprogLib();
+    /* The heading is part of the day like every other field — read before the card is
+       redrawn, or the name he just typed is gone (owner, 2026-09-05). */
+    var titleNow = readDayTitleField();
     state.edit = null;
     if (draft.restIntent) {
       if (dayHasWrittenSession(draft.wi, draft.day) &&
           !window.confirm("Make this a rest day? The session written here will be removed.")) {
         return;
       }
-      saveDay(draft.wi, draft.day, [], true, { quiet: true });
+      saveDay(draft.wi, draft.day, [], true, { quiet: true, title: titleNow });
       return;
     }
-    if (!D || !D.partsFromDraft || !D.draftHasContent(draft)) return;
+    var titleChanged = titleNow !== undefined && titleNow !== storedDayTitle(draft.wi, draft.day);
+    if (!D || !D.partsFromDraft || !D.draftHasContent(draft)) {
+      /* Nothing typed into the session, but the day may have been renamed. */
+      if (titleChanged) saveTitleOnly(draft.wi, draft.day, titleNow);
+      return;
+    }
     var parts = D.partsFromDraft({ parts: draft.parts, day: draft.day });
-    if (samePartsAsStored(draft.wi, draft.day, parts)) return;
-    saveDay(draft.wi, draft.day, parts, false, { quiet: true });
+    if (samePartsAsStored(draft.wi, draft.day, parts) && !titleChanged) return;
+    saveDay(draft.wi, draft.day, parts, false, { quiet: true, title: titleNow });
+  }
+
+  /** The name this day is stored under right now. */
+  function storedDayTitle(wi, dayKey) {
+    var week = ((state.program && state.program.weeks) || [])[wi | 0] || {};
+    var day = (week.days && week.days[dayKey]) || {};
+    return String(day.title || "");
+  }
+
+  /** Only the name changed — write it with the session that is already there. */
+  function saveTitleOnly(wi, dayKey, title) {
+    var week = ((state.program && state.program.weeks) || [])[wi | 0] || {};
+    var day = (week.days && week.days[dayKey]) || {};
+    var parts = Array.isArray(day.parts) ? day.parts : [];
+    if (!parts.length) return;
+    saveDay(wi, dayKey, parts, false, { quiet: true, title: title });
   }
 
   /** Is there a written session on this day - something a rest day would replace? */

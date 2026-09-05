@@ -843,7 +843,7 @@ ok("and every other way of opening it is still centred", /function clearIdentity
  */
 ok("ticking rest writes nothing", /if \(S\.edit\) S\.edit\.restIntent = !!t\.checked;[\s\S]{0,20}return;/.test(page));
 ok("Save honours the mark", /if \(S\.edit\.restIntent\) \{[\s\S]{0,400}saveDay\(S\.edit\.wi, S\.edit\.day, \[\], true, \{ title: readDayTitleField\(\) \}\);/.test(page));
-ok("so does leaving the day", /if \(draft\.restIntent\) \{[\s\S]{0,400}saveDay\(draft\.wi, draft\.day, \[\], true, \{ quiet: true \}\);/.test(page));
+ok("so does leaving the day", /if \(draft\.restIntent\) \{[\s\S]{0,400}saveDay\(draft\.wi, draft\.day, \[\], true, \{ quiet: true, title: titleNow \}\);/.test(page));
 ok("and a written session is never replaced without asking", /function dayHasWrittenSession/.test(page) && (page.match(/להפוך את היום ליום מנוחה\? האימון שכתוב בו יימחק\./g) || []).length >= 2);
 
 /* --- autosave: leaving an edit saves it (owner, 2026-09-03) ----------
@@ -858,8 +858,10 @@ ok("so do the week, the view and Today", (page.match(/autosaveDraft\(\);/g) || [
 ok("and switching client", /try \{ autosaveDraft\(\); \} catch \(eSave\)/.test(page));
 /* Cancel is the only way to say "forget this", so it must NOT save. */
 ok("cancel still discards", /window\.cvEditCancel = function \(\) \{\s*S\.edit = null;/.test(page));
-ok("an empty draft is dropped, not written", /if \(!D \|\| !D\.partsFromDraft \|\| !D\.draftHasContent\(draft\)\) return;/.test(page));
-ok("and an unchanged one costs no request", /if \(samePartsAsStored\(draft\.wi, draft\.day, parts\)\) return;/.test(page));
+/* Since 2026-09-05 an empty draft may still carry a NAME for the day, which is worth
+   keeping on its own — the session under it is written as it stands. */
+ok("an empty draft writes nothing of its own", /if \(!D \|\| !D\.partsFromDraft \|\| !D\.draftHasContent\(draft\)\) \{[\s\S]{0,200}if \(titleChanged\) saveTitleOnly/.test(page));
+ok("and an unchanged one costs no request", /if \(samePartsAsStored\(draft\.wi, draft\.day, parts\) && !titleChanged\) return;/.test(page));
 /* He has already moved on, so a failed autosave has to be loud. */
 ok("a failed save is said out loud", /showHdrToast\(\(r\.body && r\.body\.error\) \|\| "השמירה נכשלה\."/.test(page));
 ok("the Save button is still there", /window\.cvEditSave = function/.test(page));
