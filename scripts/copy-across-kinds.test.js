@@ -143,8 +143,20 @@ async function main() {
       made.program.programId,
       made.program.version,
       function (draft) {
+        /* A day written the way he actually writes one: a note first, then the format
+           line, then the work — one line coloured, the part numbered, and a name on the
+           day itself. A copy has to be all of that (owner, 2026-09-05). */
+        draft.weeks[0].days.sun.title = "אימון תחנות";
         draft.weeks[0].days.sun.parts = [
-          { id: "p1", title: "Part A", lines: ["12 min EMOM", "8 thrusters"] },
+          {
+            id: "p1",
+            title: "Part A",
+            lines: ["כל סבב במלוא הכוח", "12 min EMOM", "8 thrusters"],
+            noteLines: 1,
+            numbered: true,
+            lineColors: { 0: "red" },
+            lineNums: { 0: 3 },
+          },
         ];
         draft.weeks[0].overview = [{ day: "sun", focus: "Engine" }];
         return draft;
@@ -164,8 +176,22 @@ async function main() {
     ok(kind.label + ": a day copies", dayCopy.ok && dayCopy.copiedParts === 1);
     ok(
       kind.label + ": the sessions arrive",
-      dayCopy.program.weeks[1].days.tue.parts[0].lines[0] === "12 min EMOM"
+      dayCopy.program.weeks[1].days.tue.parts[0].lines[1] === "12 min EMOM"
     );
+    /* The bug he hit on production: a copied day came back as bare work lines, with the
+       notes, the colours and the numbering all gone (owner, 2026-09-05). */
+    const copiedPart = dayCopy.program.weeks[1].days.tue.parts[0];
+    ok(kind.label + ": the note is still a note", copiedPart.noteLines === 1);
+    ok(kind.label + ": the colour came with it", copiedPart.lineColors["0"] === "red");
+    ok(
+      kind.label + ": so did the numbering",
+      copiedPart.numbered === true && copiedPart.lineNums["0"] === 3
+    );
+    ok(
+      kind.label + ": and the name of the day",
+      dayCopy.program.weeks[1].days.tue.title === "אימון תחנות"
+    );
+    ok(kind.label + ": with an id of its own", copiedPart.id !== "p1");
     ok(
       kind.label + ": and the focus with them",
       (dayCopy.program.weeks[1].overview || []).filter(function (o) { return o.day === "tue"; })[0].focus === "Engine"
@@ -182,7 +208,15 @@ async function main() {
     ok(kind.label + ": a week copies", weekCopy.ok && weekCopy.copiedDays === 1);
     ok(
       kind.label + ": onto the week asked for",
-      weekCopy.program.weeks[2].days.sun.parts[0].lines[1] === "8 thrusters"
+      weekCopy.program.weeks[2].days.sun.parts[0].lines[2] === "8 thrusters"
+    );
+    const weekPart = weekCopy.program.weeks[2].days.sun.parts[0];
+    ok(
+      kind.label + ": a copied week is the week that was copied",
+      weekPart.noteLines === 1 &&
+        weekPart.numbered === true &&
+        weekPart.lineColors["0"] === "red" &&
+        weekCopy.program.weeks[2].days.sun.title === "אימון תחנות"
     );
     ok(
       kind.label + ": the week it came from is untouched",
@@ -200,11 +234,16 @@ async function main() {
     const view = Payload.programForClient(sent.program);
     ok(
       kind.label + ": the pasted day is on the client's copy",
-      view.weeks[1].days.tue.parts[0].lines[0] === "12 min EMOM"
+      view.weeks[1].days.tue.parts[0].lines[1] === "12 min EMOM"
     );
     ok(
       kind.label + ": so is the pasted week",
-      view.weeks[2].days.sun.parts[0].lines[1] === "8 thrusters"
+      view.weeks[2].days.sun.parts[0].lines[2] === "8 thrusters"
+    );
+    ok(
+      kind.label + ": and the client sees it the way it was written",
+      view.weeks[1].days.tue.parts[0].numbered === true &&
+        view.weeks[1].days.tue.parts[0].lineColors["0"] === "red"
     );
     ok(
       kind.label + ": and it is flagged as something new to read",
@@ -224,6 +263,14 @@ async function main() {
       ok(kind.label + ": a weekly programme draws seven", view.sessionColumns === 0);
     }
   }
+
+  /* The client copies through the ordinary edit rather than through the store, so its
+     own helper has to carry the same fields (owner, 2026-09-05). */
+  const clientSrc = require("fs").readFileSync(path.join(__dirname, "..", "client.html"), "utf8");
+  ok("the client's copy carries the notes", clientSrc.indexOf("if (p && p.noteLines) out.noteLines = p.noteLines;") >= 0);
+  ok("the colours", clientSrc.indexOf("if (p && p.lineColors) out.lineColors = p.lineColors;") >= 0);
+  ok("the numbering", clientSrc.indexOf("if (p && p.lineNums) out.lineNums = p.lineNums;") >= 0);
+  ok("and the name of the day", clientSrc.indexOf("parts: partsAt(fromWi, fromDay), title: title") >= 0);
 
   console.log("\nAll copy-across-kinds checks passed (" + passed + " assertions).");
 }
