@@ -236,6 +236,22 @@
   border-radius:50%;border:1.5px solid currentColor;font-size:11px;font-weight:800;
   line-height:1;margin-inline-end:8px;flex:0 0 auto;vertical-align:1px;opacity:.9
 }
+@media (max-width:719px){
+/* ON A PHONE the numbers stand in a column down the LEFT edge, whatever language the
+     line is written in (owner, 2026-09-05, on an iPhone: in Hebrew the circle drifted
+     into the middle of the line, in a different place on every line).
+     The ROW is laid out left-to-right; the text keeps its own direction inside its own
+     box, so a Hebrew line still reads right-to-left and an English one is untouched.
+     Phone only — on a desktop it already looked right and nothing here changes it.
+     The comment lives INSIDE the query because scripts/extract-pprog-css.js reads the
+     text before the first brace as the selector. */
+  .pprog-day-card .section-lines.pprog-numbered{padding-inline-start:0}
+.pprog-day-card .section-lines.pprog-numbered li.pprog-li-numbered{
+    display:flex;direction:ltr;align-items:flex-start;gap:8px
+  }
+.pprog-day-card .section-lines.pprog-numbered li.pprog-li-numbered .pprog-li-num{margin-inline-end:0}
+.pprog-day-card .section-lines.pprog-numbered li.pprog-li-numbered .pprog-li-text{flex:1;min-width:0}
+}
 .pprog-edit-lines.pprog-numbered{list-style:none;padding-inline-start:0}
 /* The number in the circle is a field while the day is open — digits only, and it must
    not be stretched by the rule that makes the work line itself fill the row. */
