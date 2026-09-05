@@ -301,7 +301,10 @@ ok("copying is remembered in memory only", /var copyClip = null;/.test(html));
 ok("pasting a week writes every day of it", /keys\.map\(function \(k\) \{\s*\n\s*return editFor\(copyClip\.wi, k, toWi, k\);/.test(html));
 ok("in ONE save, so it is one version and one flag", /function saveCopied\(edits, what\)/.test(html));
 ok("through the same edit the client already uses", /api\(\{ action: "save", expectedVersion: state\.program\.version, edits: real \}\)/.test(html));
-ok("a rest day copies as a rest day, not as an empty one", /function editFor[\s\S]{0,300}rest: true/.test(html));
+ok("a rest day copies as a rest day, not as an empty one", /function editFor[\s\S]{0,700}rest: true/.test(html));
+/* And a copied day is the day that was copied — notes, colours, numbering and the
+   name he gave it (owner, 2026-09-05, on production). */
+ok("a copy carries the name of the day", /parts: partsAt\(fromWi, fromDay\), title: title/.test(html));
 ok("an empty copy says so instead of writing nothing", /There is nothing written there to copy/.test(html));
 ok("a stale save shows the coach's version rather than overwriting it", /function saveCopied[\s\S]{0,1200}please copy again/i.test(html));
 ok("pasting asks first", /What is written there will be replaced|What is written on this day will be replaced/.test(html));

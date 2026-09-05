@@ -1474,23 +1474,31 @@ button.ghost:hover{color:var(--text)}
     var day = week && week.days ? week.days[dayKey] : null;
     var parts = (day && day.parts) || [];
     return parts.map(function (p) {
-      return {
-          title: String((p && p.title) || ""),
-          lines: ((p && p.lines) || []).slice(),
-          /* A colour or a numbering he switched on IS a change — without them here
-             the day looked identical and the autosave skipped it (owner, 2026-09-05). */
-          numbered: (p && p.numbered) === true,
-          lineColors: (p && p.lineColors) || null,
-        };
+      /* Everything the part carries — a copied day must be the day that was copied,
+         notes, colours and numbering included (owner, 2026-09-05). */
+      var out = {
+        title: String((p && p.title) || ""),
+        lines: ((p && p.lines) || []).slice(),
+      };
+      if (p && p.noteLines) out.noteLines = p.noteLines;
+      if (p && p.numbered === true) out.numbered = true;
+      if (p && p.lineColors) out.lineColors = p.lineColors;
+      if (p && p.lineNums) out.lineNums = p.lineNums;
+      return out;
     });
   }
 
   /** One edit for one day, carrying its rest-ness rather than just its emptiness. */
   function editFor(fromWi, fromDay, toWi, toDay) {
+    /* The name he gave the day travels with it — an edit that leaves `title` out says
+       "not part of this change", so it is passed only when there is one. */
+    var week = weekAt(fromWi);
+    var src = (week && week.days && week.days[fromDay]) || {};
+    var title = typeof src.title === "string" ? src.title.trim() : "";
     if (dayIsRest(fromWi, fromDay)) {
-      return { weekIndex: toWi + 1, dayKey: toDay, rest: true, parts: [] };
+      return { weekIndex: toWi + 1, dayKey: toDay, rest: true, parts: [], title: title };
     }
-    return { weekIndex: toWi + 1, dayKey: toDay, rest: false, parts: partsAt(fromWi, fromDay) };
+    return { weekIndex: toWi + 1, dayKey: toDay, rest: false, parts: partsAt(fromWi, fromDay), title: title };
   }
 
   /**

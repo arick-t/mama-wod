@@ -60,7 +60,7 @@ ok("loadAthletes checks 401", /loadAthletes[\s\S]{0,900}status === 401/.test(adm
 ok("no logout button in the header", !/onclick="adminLogout\(\)"/.test(adminHtml));
 ok("a 401 still clears the session", /function forceAdminLogout/.test(adminHtml));
 ok("reads token from response header", /X-Admin-Session-Token/.test(adminHtml));
-ok("admin version 4.3", /ADMIN_UI_VERSION = "4\.3"/.test(adminHtml));
+ok("admin version 4.3", /ADMIN_UI_VERSION = "4\.3\.1"/.test(adminHtml));
 
 delete process.env.ADMIN_PASSWORD;
 delete process.env.ADMIN_SESSION_SECRET;
