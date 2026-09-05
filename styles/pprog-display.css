@@ -228,6 +228,45 @@
   appearance:none;background:none;border:none;color:var(--text-meta);cursor:pointer;
   font-size:16px;line-height:1;padding:4px 6px;flex-shrink:0
 }
+/* A COLOUR FOR A LINE, AND NUMBERING FOR A PART (owner, 2026-09-05).
+   The circle takes the line's own colour, because it belongs to that line. */
+.pprog-day-card .section-lines.pprog-numbered{list-style:none;padding-inline-start:0}
+.pprog-li-num{
+  display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;
+  border-radius:50%;border:1.5px solid currentColor;font-size:11px;font-weight:800;
+  line-height:1;margin-inline-end:8px;flex:0 0 auto;vertical-align:1px;opacity:.9
+}
+.pprog-edit-lines.pprog-numbered{list-style:none;padding-inline-start:0}
+.pprog-edit-work-row .pprog-edit-num{margin-inline-end:2px}
+.pprog-edit-work-row{position:relative}
+.pprog-colour-btn{
+  appearance:none;background:none;border:none;color:var(--text-meta);cursor:pointer;
+  padding:4px 4px;line-height:0;flex-shrink:0;border-radius:6px
+}
+.pprog-colour-btn:hover{background:rgba(255,255,255,.07)}
+.pprog-colour-pop{
+  position:absolute;inset-inline-end:34px;top:100%;z-index:60;display:flex;gap:6px;
+  padding:7px;border-radius:10px;background:var(--card,#161616);
+  border:1px solid rgba(255,255,255,.14);box-shadow:0 14px 34px rgba(0,0,0,.5)
+}
+.pprog-swatch{
+  appearance:none;width:20px;height:20px;border-radius:50%;border:1.5px solid transparent;
+  cursor:pointer;padding:0;flex:0 0 auto
+}
+.pprog-swatch.is-on{border-color:var(--text);box-shadow:0 0 0 2px rgba(255,255,255,.18)}
+.pprog-swatch-none{background:transparent;border-color:var(--text-meta);position:relative}
+.pprog-swatch-none:after{
+  content:"";position:absolute;inset-inline-start:2px;top:8px;width:14px;height:1.5px;
+  background:var(--text-meta);transform:rotate(-45deg)
+}
+/* "Add numbering" — beside the part heading, quiet until it is ticked. */
+.pprog-num-toggle{
+  display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;
+  color:var(--text-meta);cursor:pointer;user-select:none;flex-shrink:0;white-space:nowrap
+}
+.pprog-num-toggle input{width:14px;height:14px;accent-color:var(--part);cursor:pointer;margin:0}
+.pprog-day-card .section-title-row{display:flex;align-items:center;gap:10px}
+.pprog-day-card .section-title-row .pprog-edit-title{flex:1;min-width:0}
 .pprog-edit-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .pprog-edit-chip{
   appearance:none;height:32px;padding:0 12px;border-radius:999px;background:transparent;

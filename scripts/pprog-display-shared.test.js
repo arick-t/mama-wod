@@ -242,7 +242,13 @@ const src = fs.readFileSync(path.join(__dirname, "..", "lib", "pprog-display.js"
 ok("notes decide too", /class="pprog-part-note" dir="auto"/.test(src));
 ok("so does a format line", /class="pprog-part-format" dir="auto"/.test(src));
 ok("and the part heading", /class="section-title" dir="auto"/.test(src));
-ok("the fields he types into as well", /class="pprog-edit-note pprog-part-note" dir="auto"/.test(src) && /<li class="pprog-edit-work-row"><input type="text" dir="auto"/.test(src));
+/* Checked on what is DRAWN rather than on the source line: the work row now also
+   carries a number and a colour pencil, so the two tags are no longer neighbours. */
+const bidiEditor = PprogDisplay.renderDayCardHtml(block, block.weeks[0], 0, "mon", {
+  allowEdit: true, editing: true, readOnly: true, showFooter: false, israelTodayIso: block.blockStart,
+  editDraft: { wi: 0, day: "mon", parts: [{ title: "Part A", notes: ["הערה"], format: "", work: ["יד קדמית 3X15"] }] },
+});
+ok("the fields he types into as well", /class="pprog-edit-note pprog-part-note" dir="auto"/.test(src) && /class="pprog-edit-work-row">(?:<span[^>]*>[^<]*<\/span>)?<input type="text" dir="auto"/.test(bidiEditor));
 
 /* --- a note can be removed (owner, 2026-09-05) ---------------------------- */
 
