@@ -298,4 +298,28 @@ const twoHtml = PprogDisplay.renderDayPartsHtml(twoNotes);
 ok("and both are drawn as notes", (twoHtml.match(/pprog-part-note/g) || []).length >= 2);
 ok("the work line is still work", twoHtml.indexOf("<li dir=\"auto\">5x5</li>") >= 0);
 
+
+/* --- the count is always beside the pencil (owner, 2026-09-05) ------------ */
+
+const untouchedBlock = {
+  blockStart: "2026-09-06",
+  weeks: [
+    {
+      weekIndex: 1,
+      days: { sun: { parts: [] }, mon: { parts: [] }, tue: { parts: [] }, wed: { parts: [] }, thu: { parts: [] }, fri: { parts: [] }, sat: { parts: [] } },
+      overview: [],
+    },
+  ],
+};
+const editableDay = PprogDisplay.renderBrickView({
+  block: untouchedBlock, activeWi: 0, activeDay: "sun", calMode: "week", allowEdit: true, showFooter: false,
+});
+ok("a day he has never touched still shows the count", editableDay.indexOf("pprog-day-when") >= 0);
+const readOnlyDay = PprogDisplay.renderBrickView({
+  block: untouchedBlock, activeWi: 0, activeDay: "sun", calMode: "week", allowEdit: false, showFooter: false,
+});
+ok("where there is no pencil it stays the heading instead", readOnlyDay.indexOf("pprog-day-when") < 0);
+ok("so a read-only day never loses its name", /class="source-name">[^<]+/.test(readOnlyDay));
+ok("it is light yellow and italic", /\.pprog-day-when\{[^}]*color:#F5D97A;font-style:italic/.test(admin));
+
 console.log("All shared pprog-display checks passed.");
