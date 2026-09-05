@@ -335,6 +335,123 @@ function testSameBrickWeekContinuity() {
    percentages of a maximum that does not exist. The rule was already in the weightlifting layer,
    and a rule the model must remember to apply lost to one it applies by habit. So it is a stated
    fact about the request now, like the deload placement and the 1RM window. */
+/* The deterministic brick check, approved 2026-09-05 with one condition that shaped the whole
+   design: "מאשר, אבל שלא יהיה דבר מציק ומתיש של אזהרות ושל שיח הלוך חזור, מינון הוא המפתח."
+   So it never rejects, never retries, never speaks to the athlete, and only covers violations a
+   machine can be certain about. A warning that is sometimes wrong teaches people to ignore the
+   ones that are right. */
+function testBrickFlags() {
+  const { brickFlags, MAX_FLAGS } = require("../lib/coach-brick-flags.js");
+  const src = fs.readFileSync(PC_PATH, "utf8");
+
+  ok("a clean brick produces no flags",
+    brickFlags(
+      { weeks: [{ weekIndex: 1, days: { mon: { parts: [{ title: "A", lines: ["10 squats"] }] } } }] },
+      { lifts: { back_squat: 100 } }
+    ).length === 0);
+
+  ok("three working parts is flagged",
+    /Three or more working parts/.test(
+      brickFlags(
+        {
+          weeks: [
+            {
+              weekIndex: 1,
+              days: {
+                mon: {
+                  parts: [
+                    { title: "Part A - Strength", lines: ["Duration: 20 min"] },
+                    { title: "Part B - Metcon", lines: ["Duration: 15 min"] },
+                    { title: "Part C - More Metcon", lines: ["Duration: 15 min"] },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+        {}
+      ).join(" ")
+    ));
+
+  /* A warm-up does not count toward the three, which is the owner's rule from yesterday. */
+  ok("a leading warm-up part is not counted as working",
+    brickFlags(
+      {
+        weeks: [
+          {
+            weekIndex: 1,
+            days: {
+              mon: {
+                parts: [
+                  { title: "Part A - Dynamic Warm-Up", lines: ["Duration: 8 min"] },
+                  { title: "Part B - Strength", lines: ["Duration: 20 min"] },
+                  { title: "Part C - Metcon", lines: ["Duration: 15 min"] },
+                ],
+              },
+            },
+          },
+        ],
+      },
+      {}
+    ).length === 0);
+
+  /* And the correction that made it accurate: matching the word ANYWHERE excluded "Snatch Complex
+     & Technical Primer", a working snatch complex, and hid a real three-part session. */
+  ok("a working part with a warm-up word later in its title still counts",
+    /Three or more working parts/.test(
+      brickFlags(
+        {
+          weeks: [
+            {
+              weekIndex: 1,
+              days: {
+                fri: {
+                  parts: [
+                    { title: "Part A - Snatch Complex & Technical Primer", lines: ["Duration: 25 min"] },
+                    { title: "Part B - Couplet", lines: ["Duration: 12 min"] },
+                    { title: "Part C - Accessory", lines: ["Duration: 10 min"] },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+        {}
+      ).join(" ")
+    ));
+
+  ok("percentages with no reported lift are flagged",
+    /reported no 1RM/.test(
+      brickFlags(
+        { weeks: [{ weekIndex: 1, days: { mon: { parts: [{ title: "A", lines: ["3 squats @ 80% 1RM"] }] } } }] },
+        { lifts: {} }
+      ).join(" ")
+    ));
+  ok("the same percentages are fine when a lift WAS reported",
+    brickFlags(
+      { weeks: [{ weekIndex: 1, days: { mon: { parts: [{ title: "A", lines: ["3 squats @ 80% 1RM"] }] } } }] },
+      { lifts: { back_squat: 160 } }
+    ).length === 0);
+
+  ok("imperial units are flagged",
+    /Imperial units/.test(
+      brickFlags(
+        { weeks: [{ weekIndex: 1, days: { mon: { parts: [{ title: "A", lines: ["20 box jumps 24 inch"] }] } } }] },
+        { lifts: { a: 1 } }
+      ).join(" ")
+    ));
+  ok("a five-week brick is flagged",
+    /a brick is four/.test(
+      brickFlags({ weeks: [{}, {}, {}, {}, {}] }, { lifts: { a: 1 } }).join(" ")
+    ));
+
+  ok("the list is capped so it cannot become noise", MAX_FLAGS <= 6);
+  ok("the flags never reject or retry — they only ride along on the response",
+    /out\.brickFlags = f;/.test(src) && !/throw[\s\S]{0,80}brickFlags/.test(src));
+  ok("a failure in the check can never break a response",
+    /catch \(eFlags\) \{\}/.test(src));
+}
+
 function testLoadBasisWhenNoLiftsReported() {
   const src = fs.readFileSync(PC_PATH, "utf8");
   const flat = src.replace(/\s+/g, " ");
@@ -409,6 +526,7 @@ function main() {
   testBothPathsStillInject();
   testBlockLengthIsFourWeeks();
   testClientImprovesRule();
+  testBrickFlags();
   testLoadBasisWhenNoLiftsReported();
   testCoachKnowsTheWarmUpField();
   testMidWeekClampIsWeekScoped();

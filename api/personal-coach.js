@@ -54,6 +54,7 @@ const COACH_LAYER2_OPS_BRIEF = require("../lib/coach-layer2-ops-brief.js");
    buildLayerKnowledgeBlock. Wired 2026-09-03, after all fifteen modules were reviewed line by
    line with the owner. */
 const { buildLayerPack, sellsSessionsByCount } = require("../lib/coach-layers");
+const { brickFlags } = require("../lib/coach-brick-flags.js");
 /* Legacy alias — foundation brief supersedes pattern-only brief */
 const COACH_PATTERN_BRIEF = COACH_FOUNDATION_BRIEF;
 
@@ -1294,7 +1295,11 @@ function loadBasisText(profile) {
   );
 }
 
-function coachAgentFor(profile) {
+function coachAgentFor(profile, opts) {
+  /* studioIntake on the request is DEFINITIVE — the admin module only builds one for a room, so
+     its presence settles the question without pattern-matching anything. The packet markers below
+     are the fallback for a caller that does not send it. */
+  if (opts && opts.studioIntake && typeof opts.studioIntake === "object") return "studio";
   const packet = String((profile && profile.fixedIntakePacket) || "");
   if (/^\s*STUDIO INTAKE COMPLETE/im.test(packet)) return "studio";
   if (/^\s*(POPULATION AND GOALS|MAX AT ONCE|DOES NOT DO):/im.test(packet)) return "studio";
@@ -1309,7 +1314,7 @@ function buildLayerKnowledgeBlock(profile, opts) {
   let pack = null;
   try {
     pack = buildLayerPack({
-      agent: coachAgentFor(profile),
+      agent: coachAgentFor(profile, o),
       profile: profile || {},
       studioIntake: o.studioIntake || null,
       programming: true,
@@ -1334,9 +1339,13 @@ function buildLayerKnowledgeBlock(profile, opts) {
 function layerOptsFromBody(body, extra) {
   const b = body && typeof body === "object" ? body : {};
   const out = extra && typeof extra === "object" ? Object.assign({}, extra) : {};
-  const bsw = parseInt(b.blockStartWeek, 10);
+  /* The admin module already HAS this — athleteProfileForGenerateBlock takes it to compute the
+     deload index — it just does not pass it on. Read it from either place so the day it appears in
+     the profile, the 1RM window and the continuation layer start working with no change here. */
+  const prof = b.athleteProfile && typeof b.athleteProfile === "object" ? b.athleteProfile : {};
+  const bsw = parseInt(b.blockStartWeek, 10) || parseInt(prof.blockStartWeek, 10);
   if (bsw > 0) out.blockStartWeek = bsw;
-  if (b.blockHandoff) out.blockHandoff = b.blockHandoff;
+  if (b.blockHandoff || prof.blockHandoff) out.blockHandoff = b.blockHandoff || prof.blockHandoff;
   if (b.studioIntake) out.studioIntake = b.studioIntake;
   /* The owner authorising a 1RM test for this brick. The cadence binds the coach, not him. */
   if (b.allowOneRmTest === true) out.allowOneRmTest = true;
@@ -3008,6 +3017,15 @@ async function coachHandler(req, res) {
     if (result.usage) out.usage = result.usage;
     if (block) out.block = block;
     if (week) out.week = week;
+    /* Deterministic post-check, no model call and no retry. At most a handful of flags for the
+       back office to show the owner — dosage is the design, per his condition on approving it. */
+    try {
+      const checked = block || (week ? { weeks: [week] } : null);
+      if (checked) {
+        const f = brickFlags(checked, athleteProfile);
+        if (f && f.length) out.brickFlags = f;
+      }
+    } catch (eFlags) {}
     if (part) out.part = part;
     if (day) out.day = day;
     return out;
