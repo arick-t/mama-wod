@@ -222,4 +222,37 @@ const deepCards = PprogDisplay.renderBrickView({
 ok("days in week 6 and 7 still render side by side", (deepCards.match(/pprog-day-card/g) || []).length === 2);
 ok("and the second block is what is shown", /Block 2/.test(deepCards));
 
+
+/* --- Hebrew reads right to left, English is untouched (owner, 2026-09-05) --
+ * He types "פולי עליון 3X15" and the card showed "3X15פולי עליון". Each line now
+ * carries dir="auto", which reads that line's FIRST STRONG letter and nothing else:
+ * a line starting in English is laid out exactly as it was, and one starting in
+ * Hebrew reads right to left. His rule: if it changes English, English wins.
+ * ------------------------------------------------------------------------- */
+
+const bidi = PprogDisplay.renderDayPartsHtml([
+  { id: "p", title: "Part A", lines: ["12 min EMOM", "פולי עליון 3X15", "10 push-ups"] },
+]);
+ok("every work line decides its own direction", (bidi.match(/<li dir="auto">/g) || []).length >= 2);
+ok("the Hebrew line is there whole", bidi.indexOf("פולי עליון 3X15") >= 0);
+ok("and so is the English one", bidi.indexOf("10 push-ups") >= 0);
+ok("nothing was forced to RTL", bidi.indexOf('dir="rtl"') < 0);
+
+const src = fs.readFileSync(path.join(__dirname, "..", "lib", "pprog-display.js"), "utf8");
+ok("notes decide too", /class="pprog-part-note" dir="auto"/.test(src));
+ok("so does a format line", /class="pprog-part-format" dir="auto"/.test(src));
+ok("and the part heading", /class="section-title" dir="auto"/.test(src));
+ok("the fields he types into as well", /class="pprog-edit-note pprog-part-note" dir="auto"/.test(src) && /<li class="pprog-edit-work-row"><input type="text" dir="auto"/.test(src));
+
+/* --- a note can be removed (owner, 2026-09-05) ---------------------------- */
+
+ok("a note is rendered in a row with a remove button", /pprog-edit-note-row[\s\S]{0,600}pprog-edit-del-line/.test(src));
+ok("which calls a hook of its own", /var removeNoteFn = hook\(opts, "editRemoveNote", "adminPprogEditRemoveNote"\);/.test(src));
+
+/* --- a day can be given a name --------------------------------------------- */
+
+ok("a named day shows the name", /var dayTitle = String\(\(dayData && dayData\.title\) \|\| ""\)\.trim\(\);/.test(src));
+ok("with the automatic label kept beside it", /class="pprog-day-when"/.test(src));
+ok("and the heading becomes a field only where the page allows it", /opts\.allowTitleEdit === true/.test(src));
+
 console.log("All shared pprog-display checks passed.");

@@ -566,6 +566,9 @@ button.ghost:hover{color:var(--text)}
         '<div class="pprog-day-stub">Nothing written for this day yet.</div>',
       showActions: true,
       allowEdit: true,
+      /* They are coaches building programmes in here, so a day can be given a name
+         on this side too (owner, 2026-09-05). */
+      allowTitleEdit: true,
       /* The owner's decision: a client edits without limit, past days included. */
       allowPastEdit: true,
       editing: !!state.edit,
@@ -1221,7 +1224,7 @@ button.ghost:hover{color:var(--text)}
           !window.confirm("Make this a rest day? The session written here will be removed.")) {
         return;
       }
-      saveDay(state.edit.wi, state.edit.day, [], true);
+      saveDay(state.edit.wi, state.edit.day, [], true, { title: readDayTitleField() });
       return;
     }
     if (!D.draftHasContent(state.edit)) {
@@ -1232,9 +1235,17 @@ button.ghost:hover{color:var(--text)}
       state.edit.wi,
       state.edit.day,
       D.partsFromDraft({ parts: state.edit.parts, day: state.edit.day }),
-      false
+      false,
+      { title: readDayTitleField() }
     );
   };
+
+  /** What the heading field says, or undefined when no day is open for editing. */
+  function readDayTitleField() {
+    var f = document.querySelector("#days [data-day-title]");
+    if (!f) return undefined;
+    return String(f.value || "").trim().slice(0, 80);
+  }
 
   window.cvMakeRest = function (wi, dayKey) {
     var day = String(dayKey || "");
@@ -1426,7 +1437,16 @@ button.ghost:hover{color:var(--text)}
       expectedVersion: state.program.version,
       /* weekIndex is 1-based on the wire (lib/client-view-payload.js); the brick
          view is 0-based. Converted here, in one place. */
-      edits: [{ weekIndex: wi + 1, dayKey: dayKey, rest: makeRest === true, parts: makeRest ? [] : parts }],
+      edits: [
+        {
+          weekIndex: wi + 1,
+          dayKey: dayKey,
+          rest: makeRest === true,
+          parts: makeRest ? [] : parts,
+          /* Undefined when the heading was not on screen — "not part of this edit". */
+          title: opts && opts.title !== undefined ? opts.title : undefined,
+        },
+      ],
     }).then(function (r) {
       state.busy = false;
       if (r.status === 409) {

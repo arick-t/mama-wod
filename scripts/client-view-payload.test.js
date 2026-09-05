@@ -286,4 +286,63 @@ ok("a number the week cannot hold is refused", wildOut.sessionColumns === 0);
 /* Where the months divide, from APPROVED blocks only. */
 ok("the client is told where the blocks divide", JSON.stringify(sessionsOut.blockGroups) === '[{"startWeek":1,"weekCount":4}]');
 
+
+/* --- a day can be given a name (owner, 2026-09-05) ------------------------
+ * "Week 1 · session 1" is a count, not a name. He wanted to call a day what it is —
+ * "אימון תחנות" — and keep the count beside it, small and un-editable.
+ * ------------------------------------------------------------------------- */
+
+const named = P.programForClient({
+  programId: "p_named",
+  version: 3,
+  weeks: [
+    {
+      weekIndex: 1,
+      days: {
+        sun: { parts: [{ id: "a", title: "Part A", lines: ["x"] }], title: "אימון תחנות" },
+        mon: { parts: [] }, tue: { parts: [] }, wed: { parts: [] },
+        thu: { parts: [] }, fri: { parts: [] }, sat: { parts: [] },
+      },
+      overview: [],
+    },
+  ],
+  blocks: [{ blockIndex: 1, startWeek: 1, weekCount: 1, approvedAt: "2026-09-01T00:00:00Z" }],
+  monthlyAmount: 500,
+});
+ok("the name travels to the client with the plan", named.weeks[0].days.sun.title === "אימון תחנות");
+ok("and the price still does not", named.monthlyAmount === undefined);
+
+const withTitle = P.parseClientEdit({
+  expectedVersion: 3,
+  edits: [{ weekIndex: 1, dayKey: "sun", parts: [{ title: "A", lines: ["y"] }], title: "  אימון תחנות  " }],
+});
+ok("a client may name a day of their own programme", withTitle.ok && withTitle.edits[0].title === "אימון תחנות");
+const noTitle = P.parseClientEdit({
+  expectedVersion: 3,
+  edits: [{ weekIndex: 1, dayKey: "sun", parts: [{ title: "A", lines: ["y"] }] }],
+});
+ok("saying nothing about it leaves it alone", noTitle.ok && noTitle.edits[0].title === undefined);
+
+const draftDay = {
+  weeks: [{ days: { sun: { parts: [], title: "old" } }, overview: [] }],
+};
+P.applyClientEdit(draftDay, withTitle);
+ok("naming one writes it", draftDay.weeks[0].days.sun.title === "אימון תחנות");
+P.applyClientEdit(draftDay, noTitle);
+ok("and an edit that says nothing keeps it", draftDay.weeks[0].days.sun.title === "אימון תחנות");
+const clearTitle = P.parseClientEdit({
+  expectedVersion: 3,
+  edits: [{ weekIndex: 1, dayKey: "sun", parts: [{ title: "A", lines: ["y"] }], title: "" }],
+});
+P.applyClientEdit(draftDay, clearTitle);
+ok("an empty one takes it off", draftDay.weeks[0].days.sun.title === undefined);
+
+/* A name belongs to the DAY, so it survives the day changing shape. */
+const RT = require("../lib/day-rest-toggle.js");
+const wk = { days: { sun: { parts: [{ id: "a", title: "A", lines: ["x"] }], title: "אימון תחנות" } }, overview: [] };
+RT.makeRest(wk, "sun");
+ok("it survives becoming a rest day", wk.days.sun.title === "אימון תחנות");
+RT.makeSession(wk, "sun", [{ id: "b", title: "A", lines: ["y"] }]);
+ok("and coming back from one", wk.days.sun.title === "אימון תחנות");
+
 console.log("All client-view payload checks passed.");

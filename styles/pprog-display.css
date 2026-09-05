@@ -151,6 +151,17 @@
 }
 .pprog-day-card .card-header{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 .pprog-day-card .source-name{color:var(--coach);font-weight:700;font-size:1.05em;letter-spacing:.01em;font-family:var(--font-ui)}
+/* The automatic label — "אימון 1 · שבוע 1" — kept beside a name he gave the day. It is
+   the count and the order, so it stays readable and stays un-editable; small enough not
+   to compete with the name (owner, 2026-09-05). */
+.pprog-day-card .pprog-day-when{margin-inline-start:8px;font-size:.72em;font-weight:600;
+  color:var(--text-muted);letter-spacing:.02em;white-space:nowrap}
+/* The heading while the day is open: a field, not a label. */
+.pprog-day-card .pprog-day-title-in{width:min(260px,60vw);background:var(--bg);color:var(--text);
+  border:1px solid var(--line);border-radius:8px;padding:5px 9px;font:inherit;font-size:.95em;
+  font-weight:700;font-family:var(--font-ui)}
+.pprog-day-card .pprog-day-title-in::placeholder{color:var(--text-muted);font-weight:600}
+.pprog-day-card .pprog-day-title-in:focus{outline:none;border-color:var(--coach)}
 .pprog-day-card .section{margin-bottom:12px;background:transparent;border:0;padding:0}
 .pprog-day-card .section + .section{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
 .pprog-day-card .section-title{font-size:.98em;font-weight:700;text-decoration:none;color:var(--part);margin-bottom:7px;letter-spacing:.01em;text-transform:none}
@@ -202,6 +213,10 @@
   color:var(--text);font-weight:700;font-size:.95em;padding:4px 2px;margin:0 0 6px;font-family:inherit;outline:none
 }
 .pprog-edit-lines{list-style:disc}
+/* A note now sits in a row with its own × — the same shape a work line has, so the
+   two read as the same kind of thing (owner, 2026-09-05). */
+.pprog-edit-note-row{display:flex;align-items:center;gap:6px;margin:0 0 8px}
+.pprog-edit-note-row .pprog-edit-note{flex:1;min-width:0;margin:0}
 .pprog-edit-work-row{display:flex;align-items:center;gap:8px;list-style:disc}
 .pprog-edit-work-row input{
   flex:1;min-width:0;background:transparent;border:none;color:var(--text);font-size:.95em;
