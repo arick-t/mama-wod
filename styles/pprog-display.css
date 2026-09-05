@@ -237,17 +237,28 @@
   line-height:1;margin-inline-end:8px;flex:0 0 auto;vertical-align:1px;opacity:.9
 }
 .pprog-edit-lines.pprog-numbered{list-style:none;padding-inline-start:0}
+/* The number in the circle is a field while the day is open — digits only, and it must
+   not be stretched by the rule that makes the work line itself fill the row. */
+.pprog-edit-work-row input.pprog-num-in{
+  flex:0 0 auto;width:22px;height:22px;text-align:center;padding:0;
+  background:transparent;color:inherit;font-size:11px;font-weight:800;font-family:inherit;
+  border:1.5px solid currentColor;border-radius:50%;outline:none;opacity:.9
+}
+.pprog-edit-work-row input.pprog-num-in:focus{opacity:1;box-shadow:0 0 0 2px rgba(255,255,255,.14)}
 .pprog-edit-work-row .pprog-edit-num{margin-inline-end:2px}
-.pprog-edit-work-row{position:relative}
+" is the more specific rule,
+   so it was never anchored to its own line at all — the pencil looked dead
+   (owner, 2026-09-05). Nothing to clip and nothing to position. */
+.pprog-edit-work-row{flex-wrap:wrap}
 .pprog-colour-btn{
   appearance:none;background:none;border:none;color:var(--text-meta);cursor:pointer;
   padding:4px 4px;line-height:0;flex-shrink:0;border-radius:6px
 }
 .pprog-colour-btn:hover{background:rgba(255,255,255,.07)}
 .pprog-colour-pop{
-  position:absolute;inset-inline-end:34px;top:100%;z-index:60;display:flex;gap:6px;
-  padding:7px;border-radius:10px;background:var(--card,#161616);
-  border:1px solid rgba(255,255,255,.14);box-shadow:0 14px 34px rgba(0,0,0,.5)
+  flex:0 0 100%;display:flex;gap:8px;align-items:center;margin:6px 0 2px;
+  padding:7px 9px;border-radius:10px;background:rgba(255,255,255,.05);
+  border:1px solid var(--line)
 }
 .pprog-swatch{
   appearance:none;width:20px;height:20px;border-radius:50%;border:1.5px solid transparent;

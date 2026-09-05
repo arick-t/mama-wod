@@ -849,17 +849,30 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
   line-height:1;margin-inline-end:8px;flex:0 0 auto;vertical-align:1px;opacity:.9
 }
 .pprog-edit-lines.pprog-numbered{list-style:none;padding-inline-start:0}
+/* The number in the circle is a field while the day is open — digits only, and it must
+   not be stretched by the rule that makes the work line itself fill the row. */
+.pprog-edit-work-row input.pprog-num-in{
+  flex:0 0 auto;width:22px;height:22px;text-align:center;padding:0;
+  background:transparent;color:inherit;font-size:11px;font-weight:800;font-family:inherit;
+  border:1.5px solid currentColor;border-radius:50%;outline:none;opacity:.9
+}
+.pprog-edit-work-row input.pprog-num-in:focus{opacity:1;box-shadow:0 0 0 2px rgba(255,255,255,.14)}
 .pprog-edit-work-row .pprog-edit-num{margin-inline-end:2px}
-.pprog-edit-work-row{position:relative}
+/* The palette opens INSIDE the row, on a line of its own underneath it. It floated
+   over the card first, and two things ate it: the day cards sit in a strip with
+   overflow hidden, and ".section-lines li{position:static}" is the more specific rule,
+   so it was never anchored to its own line at all — the pencil looked dead
+   (owner, 2026-09-05). Nothing to clip and nothing to position. */
+.pprog-edit-work-row{flex-wrap:wrap}
 .pprog-colour-btn{
   appearance:none;background:none;border:none;color:var(--text-meta);cursor:pointer;
   padding:4px 4px;line-height:0;flex-shrink:0;border-radius:6px
 }
 .pprog-colour-btn:hover{background:rgba(255,255,255,.07)}
 .pprog-colour-pop{
-  position:absolute;inset-inline-end:34px;top:100%;z-index:60;display:flex;gap:6px;
-  padding:7px;border-radius:10px;background:var(--card,#161616);
-  border:1px solid rgba(255,255,255,.14);box-shadow:0 14px 34px rgba(0,0,0,.5)
+  flex:0 0 100%;display:flex;gap:8px;align-items:center;margin:6px 0 2px;
+  padding:7px 9px;border-radius:10px;background:rgba(255,255,255,.05);
+  border:1px solid var(--line)
 }
 .pprog-swatch{
   appearance:none;width:20px;height:20px;border-radius:50%;border:1.5px solid transparent;
@@ -7748,6 +7761,7 @@ tryRestoreAdminSession();
         editRemoveNote: "cvEditRemoveNote",
         editSetColour: "cvEditSetColour",
         editSetNumbering: "cvEditSetNumbering",
+        editSetNumber: "cvEditSetNumber",
         editCancel: "cvEditCancel",
         editSave: "cvEditSave",
       },
@@ -8122,13 +8136,41 @@ tryRestoreAdminSession();
     renderAdminDays();
   };
 
-  window.cvEditAddWork = function (partIndex) {
+  /**
+   * A new work line — at the end from the chip, or right after the line he pressed
+   * Enter on. The colour and the number of the lines below move down with them.
+   */
+  window.cvEditAddWork = function (partIndex, atIndex) {
     var part = S.edit && S.edit.parts[partIndex | 0];
     if (!part) return;
     if (!Array.isArray(part.work)) part.work = [];
-    part.work.push("");
+    var at = atIndex === undefined || atIndex === null ? part.work.length : Math.max(0, Math.min(part.work.length, atIndex | 0));
+    part.work.splice(at, 0, "");
+    if (Array.isArray(part.colors)) part.colors.splice(at, 0, "");
+    if (Array.isArray(part.nums)) part.nums.splice(at, 0, "");
     renderAdminDays();
+    focusWorkLine(partIndex | 0, at);
   };
+
+  /**
+   * Put the caret in a work line after the card has been redrawn.
+   *
+   * The inputs carry no ids — the card is rendered by the shared library — so they are
+   * found by where they sit: the nth part, the nth line inside it. The number in the
+   * circle is an input too, hence the exclusion.
+   */
+  function focusWorkLine(partIndex, lineIndex) {
+    setTimeout(function () {
+      try {
+        var lists = document.querySelectorAll(".pprog-day-card .pprog-edit-lines");
+        var list = lists[partIndex];
+        if (!list) return;
+        var boxes = list.querySelectorAll('input[type="text"]:not(.pprog-num-in)');
+        var box = boxes[lineIndex];
+        if (box) box.focus();
+      } catch (e) {}
+    }, 0);
+  }
 
   window.cvEditRemoveWork = function (partIndex, lineIndex) {
     var part = S.edit && S.edit.parts[partIndex | 0];
@@ -8136,6 +8178,7 @@ tryRestoreAdminSession();
     part.work.splice(lineIndex | 0, 1);
     /* The colours belong to the lines, so they move up with them. */
     if (Array.isArray(part.colors)) part.colors.splice(lineIndex | 0, 1);
+    if (Array.isArray(part.nums)) part.nums.splice(lineIndex | 0, 1);
     if (!part.work.length) part.work = [""];
     renderAdminDays();
   };
@@ -8157,6 +8200,19 @@ tryRestoreAdminSession();
     if (!Array.isArray(part.colors)) part.colors = [];
     part.colors[lineIndex | 0] = String(colourKey || "");
     renderAdminDays();
+  };
+
+  /**
+   * The number on one line. Digits only, and nothing is redrawn while he types —
+   * a redraw on every keystroke would throw the caret out of the box.
+   */
+  window.cvEditSetNumber = function (partIndex, lineIndex, el) {
+    var part = S.edit && S.edit.parts[partIndex | 0];
+    if (!part || !el) return;
+    var clean = String(el.value == null ? "" : el.value).replace(/[^0-9]/g, "").slice(0, 3);
+    if (el.value !== clean) el.value = clean;
+    if (!Array.isArray(part.nums)) part.nums = [];
+    part.nums[lineIndex | 0] = clean === "" ? "" : parseInt(clean, 10);
   };
 
   window.cvEditSetNumbering = function (partIndex, on) {

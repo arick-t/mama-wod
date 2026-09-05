@@ -137,6 +137,47 @@ const untouched = D.partsFromDraft({
 ok("and a part nobody coloured stores exactly what it always did",
   JSON.stringify(untouched[0]) === JSON.stringify({ id: "sun-0", noteLines: 1, title: "Part A", lines: ["note", "5x5"] }));
 
+/* --- the numbers can be written over (owner, 2026-09-05) ------------------ */
+
+const renumbered = D.renderDayPartsHtml(
+  [{ id: "n1", title: "Part A", lines: ["a", "b", "c"], numbered: true, lineNums: { 1: 1 } }],
+  null,
+  {}
+);
+const circles = (renumbered.match(/class="pprog-li-num"[^>]*>(\d+)</g) || []).map(function (m) {
+  return m.replace(/[^\d]/g, "");
+});
+/* He asked for exactly this: three lines counting 1, 2, 3; he calls the second one 1;
+   it stays 1, and the third goes on being 3. */
+ok("a line he renumbered keeps the number he gave it", circles.join(",") === "1,1,3");
+
+const numberedEditor = editorHtml({ allowLineColour: true });
+ok("the number is a field while the day is open", /class="pprog-li-num pprog-edit-num pprog-num-in"/.test(numberedEditor));
+ok("and it takes digits", /inputmode="numeric"/.test(numberedEditor));
+ok("typing in it does not redraw the card", /oninput="[A-Za-z]*SetNumber\(\d+,\d+,this\)"/.test(numberedEditor));
+
+const numsOut = D.partsFromDraft({
+  day: "sun",
+  parts: [{ title: "Part A", notes: [], format: "", work: ["a", "b", "c"], colors: [], nums: [1, 1, 3], numbered: true }],
+});
+ok("only the number he wrote over the count is stored", JSON.stringify(numsOut[0].lineNums) === '{"1":1}');
+
+const numsNone = D.partsFromDraft({
+  day: "sun",
+  parts: [{ title: "Part A", notes: [], format: "", work: ["a", "b"], colors: [], nums: [1, 2], numbered: true }],
+});
+ok("plain counting stores nothing at all", numsNone[0].lineNums === undefined);
+
+/* --- Enter opens the next line (owner, 2026-09-05) ------------------------ */
+
+ok("Enter inside a work line adds one", /onkeydown="if\(event\.key==='Enter'\)\{event\.preventDefault\(\);[A-Za-z]*AddWork\(0,1\);\}"/.test(numberedEditor));
+for (const [label, src] of [["the admin", admin], ["the client page", client]]) {
+  ok(label + " can add a line in the middle", /window\.cvEditAddWork = function \(partIndex, atIndex\)/.test(src));
+  ok(label + " puts the caret in the new line", src.indexOf("function focusWorkLine(") >= 0);
+  ok(label + " has the number handler", src.indexOf("window.cvEditSetNumber = function") >= 0);
+  ok(label + " wires it", src.indexOf('editSetNumber: "cvEditSetNumber"') >= 0);
+}
+
 /* --- the wire ------------------------------------------------------------- */
 
 const sent = Payload.programForClient({
@@ -145,6 +186,11 @@ const sent = Payload.programForClient({
 });
 const sentPart = sent.weeks[0].days.sun.parts[0];
 ok("the client's copy carries the colours", sentPart.lineColors["0"] === "red");
+const sentNums = Payload.programForClient({
+  weeks: [{ weekIndex: 1, days: { sun: { parts: [{ id: "p", title: "A", lines: ["a", "b"], numbered: true, lineNums: { 1: 1, 5: 9, 0: "x" } }] } } }],
+  approvedThroughWeek: 1,
+}).weeks[0].days.sun.parts[0];
+ok("and the numbers he wrote over the count", JSON.stringify(sentNums.lineNums) === '{"1":1}');
 ok("and the numbering", sentPart.numbered === true);
 
 const parsed = Payload.parseClientEdit({
@@ -202,7 +248,11 @@ for (const [label, src] of [["the admin", admin], ["the client page", client]]) 
 ok("the circle is a circle", /\.pprog-li-num\{[^}]*border-radius:50%/.test(css));
 ok("it takes the colour of its line", /\.pprog-li-num\{[^}]*border:1\.5px solid currentColor/.test(css));
 ok("a numbered list drops its bullets", /\.section-lines\.pprog-numbered\{[^}]*list-style:none/.test(css));
-ok("the palette floats over the card", /\.pprog-colour-pop\{[^}]*position:absolute/.test(css));
+/* Inside the row, never floating: the strip of day cards clips anything that tries
+   to hang outside it (owner, 2026-09-05). */
+ok("the palette opens inside the row", /\.pprog-colour-pop\{[^}]*flex:0 0 100%/.test(css));
+ok("and nothing about it is positioned", /\.pprog-colour-pop\{[^}]*position:/.test(css) === false);
+ok("so the row can carry it on a second line", /\.pprog-edit-work-row\{flex-wrap:wrap\}/.test(css));
 ok("and the chosen colour is ringed", /\.pprog-swatch\.is-on\{/.test(css));
 
 /* --- a name on a day with nothing written in it (owner, 2026-09-05) -------- */
