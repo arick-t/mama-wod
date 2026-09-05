@@ -182,9 +182,20 @@ async function ownerHandler(req, res, body) {
     } catch (e) {
       renewal = { checked: 0, mailed: 0, error: String((e && e.message) || e) };
     }
+    /* The order he dragged his strip into rides on the list he is already asking for:
+       one small object, no second round trip (owner, 2026-09-05). A failure here must
+       never cost him the list — the strip simply falls back to its natural order. */
+    let stripOrder = [];
+    try {
+      const so = await store.readStripOrder();
+      if (so.ok) stripOrder = so.ids;
+    } catch (eOrder) {
+      stripOrder = [];
+    }
     return res.status(200).json({
       ok: true,
       rows: rows,
+      stripOrder: stripOrder,
       /* What the poll compares against — see action "list_stamp". */
       stamp: stampForRows(rows),
       monthlyTotal: monthlyTotal,
@@ -193,6 +204,18 @@ async function ownerHandler(req, res, body) {
       }, 0),
       renewal: renewal,
     });
+  }
+
+  /* The strip is muscle memory: the owner puts his people in the order HE wants and it
+     follows him from the laptop to the phone, which is why it is stored here and not in
+     the browser (owner, 2026-09-05). Ids only — it says nothing about anybody. */
+  if (action === "set_strip_order") {
+    const ids = Array.isArray(body.ids) ? body.ids : null;
+    if (!ids) return bad(res, 400, "BAD_ORDER", "ids must be a list");
+    if (ids.length > 400) return bad(res, 400, "TOO_MANY", "that is not a strip");
+    const saved = await store.writeStripOrder(ids);
+    if (!saved.ok) return bad(res, 503, saved.code, saved.error);
+    return res.status(200).json({ ok: true, stripOrder: saved.ids });
   }
 
   if (action === "renewal_check") {

@@ -848,6 +848,10 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
   border-radius:50%;border:1.5px solid currentColor;font-size:11px;font-weight:800;
   line-height:1;margin-inline-end:8px;flex:0 0 auto;vertical-align:1px;opacity:.9
 }
+/* The chip he is holding. It stays in the strip and the others move around it, so the
+   thing he is dragging is the thing he sees (owner, 2026-09-05). */
+.athlete-tab.is-dragging{opacity:.75;transform:scale(1.04);box-shadow:0 10px 24px rgba(0,0,0,.45);cursor:grabbing}
+.athlete-tab[data-drag="1"]{cursor:grab}
 .athlete-tab.is-loading{
   opacity:.55;font-style:italic;cursor:default;pointer-events:none;
   border-style:dashed
@@ -2024,6 +2028,11 @@ var athletes = [];
    a different store and are edited on the other screen, but as far as the owner is
    concerned they are simply more of his clients (his instruction, 2026-09-01). */
 var clientPrograms = [];
+/* The order he dragged his strip into, as it came back from the server. Ids only —
+   athletes and clients in one list (owner, 2026-09-05). */
+var clientStripOrder = [];
+/* While a chip is being dragged the strip must not be repainted under his finger. */
+var stripDragging = false;
 var currentAthleteId = null;
 var syncInFlight = false;
 var blockMonthOffsetByAthlete = {};
@@ -3299,9 +3308,12 @@ function toggleMonthlyIncome() {
 function renderPeopleStrip() {
   var sb = document.getElementById("athlete-tabs");
   if (!sb || !window.AdminPeopleStrip) return;
+  /* Not while he is holding one. A poll that redraws the strip mid-drag takes the chip
+     out of his hand (owner, 2026-09-05). */
+  if (stripDragging) return;
   var list = Array.isArray(athletes) ? athletes : [];
   var progs = Array.isArray(clientPrograms) ? clientPrograms : [];
-  var rows = AdminPeopleStrip.rows({ athletes: list, programs: progs });
+  var rows = AdminPeopleStrip.rows({ athletes: list, programs: progs, order: clientStripOrder });
   var nextHtml = AdminPeopleStrip.html(rows, activeProgramId || currentAthleteId);
   /* The clients half arrives on its own request, and on a cold serverless start that
      can be a few seconds behind the athletes. Twice now that silence read as "all my
@@ -3338,8 +3350,11 @@ function renderPeopleStripActive(programId) {
 
 /* The client screen reports what it loaded; the strip is drawn here, out of both
    halves, so there is only ever one of it. */
-window.adminOnClientRows = function (rows, monthlyTotal, unreadTotal) {
+window.adminOnClientRows = function (rows, monthlyTotal, unreadTotal, stripOrder) {
   clientPrograms = Array.isArray(rows) ? rows : [];
+  /* Undefined means "this answer did not carry an order" — keep the one we have rather
+     than falling back to the natural order for a moment. */
+  if (Array.isArray(stripOrder)) clientStripOrder = stripOrder.map(String);
   setMonthlyIncome(monthlyTotal);
   programsAnswered = true;
   renderPeopleStrip();
@@ -3354,11 +3369,151 @@ window.adminOnClientRows = function (rows, monthlyTotal, unreadTotal) {
   }
 };
 
+/* ══════════════════════════════════════════════════════════════════════════
+   PUTTING THE PEOPLE IN THE ORDER HE WANTS.
+
+   Drag a chip left or right with the mouse; on a phone, hold it for half a second
+   first and then drag — the same gesture the calendar already uses, because the strip
+   scrolls sideways and a finger that moves immediately is scrolling, not dragging
+   (owner, 2026-09-05).
+
+   "ניהול כללי" cannot be dragged and nothing can be dropped in front of it: it is the
+   screen the module opens on, and it is first.
+
+   The order is saved on the server, so it follows him from the laptop to the phone.
+   It is saved once, when he lets go — not on every step of the drag.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+function bindStripDrag() {
+  var sb = document.getElementById("athlete-tabs");
+  if (!sb || sb.dataset.dragBound === "1") return;
+  sb.dataset.dragBound = "1";
+
+  var held = null;
+
+  function chipUnder(x, y) {
+    var el = document.elementFromPoint(x, y);
+    if (!el || !el.closest) return null;
+    var chip = el.closest(".athlete-tab");
+    if (!chip || chip.parentNode !== sb) return null;
+    return chip;
+  }
+
+  function beginDrag() {
+    if (!held || held.dragging) return;
+    held.dragging = true;
+    stripDragging = true;
+    held.el.classList.add("is-dragging");
+    /* The strip stops scrolling under the finger for the length of the drag only. */
+    sb.style.touchAction = "none";
+    try { held.el.setPointerCapture(held.pointerId); } catch (eCap) {}
+  }
+
+  function moveTo(chip, x) {
+    if (!chip || chip === held.el) return;
+    if (chip.getAttribute("data-pinned") === "1") return;
+    var box = chip.getBoundingClientRect();
+    var after = x > box.left + box.width / 2;
+    /* Right of the middle means "after this one" — reading order is right-to-left in
+       Hebrew but the DOM is not, and insertBefore is the DOM's. */
+    if (after) sb.insertBefore(held.el, chip.nextSibling);
+    else sb.insertBefore(held.el, chip);
+  }
+
+  function finish(save) {
+    if (!held) return;
+    var was = held;
+    held = null;
+    if (was.timer) clearTimeout(was.timer);
+    sb.style.touchAction = "";
+    if (!was.dragging) return;
+    was.el.classList.remove("is-dragging");
+    stripDragging = false;
+    /* The click that ends a drag is not a click on a client. */
+    stripDragEndedAt = Date.now();
+    if (!save) {
+      renderPeopleStrip();
+      return;
+    }
+    var ids = [];
+    var chips = sb.querySelectorAll(".athlete-tab");
+    for (var i = 0; i < chips.length; i++) {
+      if (chips[i].getAttribute("data-pinned") === "1") continue;
+      var id = chips[i].getAttribute("data-id");
+      if (id) ids.push(id);
+    }
+    if (!ids.length) return;
+    clientStripOrder = ids;
+    if (window.ClientScreen && window.ClientScreen.saveStripOrder) {
+      window.ClientScreen.saveStripOrder(ids, function (err, saved) {
+        if (err) {
+          showHdrToast("הסדר החדש לא נשמר — " + err, "err");
+          return;
+        }
+        if (Array.isArray(saved)) clientStripOrder = saved.map(String);
+      });
+    }
+  }
+
+  sb.addEventListener("pointerdown", function (ev) {
+    if (ev.button !== undefined && ev.button !== 0) return;
+    var chip = ev.target && ev.target.closest ? ev.target.closest(".athlete-tab") : null;
+    if (!chip || chip.parentNode !== sb) return;
+    if (chip.getAttribute("data-drag") !== "1") return;
+    held = {
+      el: chip,
+      pointerId: ev.pointerId,
+      x: ev.clientX,
+      y: ev.clientY,
+      touch: ev.pointerType === "touch",
+      dragging: false,
+      timer: null,
+    };
+    if (held.touch) {
+      /* Half a second of holding IS the right button, exactly as on the calendar. */
+      held.timer = setTimeout(function () {
+        if (held) beginDrag();
+      }, 500);
+    }
+  });
+
+  sb.addEventListener("pointermove", function (ev) {
+    if (!held) return;
+    var dx = Math.abs(ev.clientX - held.x);
+    var dy = Math.abs(ev.clientY - held.y);
+    if (!held.dragging) {
+      /* A finger that moves before the hold is over is scrolling the strip. */
+      if (held.touch) {
+        if (dx > 10 || dy > 10) finish(false);
+        return;
+      }
+      if (dx > 6) beginDrag();
+      else return;
+    }
+    ev.preventDefault();
+    moveTo(chipUnder(ev.clientX, ev.clientY), ev.clientX);
+    /* Near an edge the strip walks along, or a long strip cannot be crossed. */
+    var box = sb.getBoundingClientRect();
+    if (ev.clientX < box.left + 40) sb.scrollLeft -= 12;
+    else if (ev.clientX > box.right - 40) sb.scrollLeft += 12;
+  });
+
+  sb.addEventListener("pointerup", function () { finish(true); });
+  sb.addEventListener("pointercancel", function () { finish(false); });
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape" && held) finish(false);
+  });
+}
+
+/* When the drag ended, so the click it ends with does not also open a client. */
+var stripDragEndedAt = 0;
+
 /* A click on a chip: an athlete is already here, a programme is on the other screen —
    and crossing over must land on that exact client, not on a list. */
 function bindPeopleStrip() {
   var sb = document.getElementById("athlete-tabs");
   if (!sb) return;
+  bindStripDrag();
 
   /* A click is mousedown and mouseup on the SAME element. At first entry the strip is
      drawn twice — once when the athletes answer, once when the clients do — so the very
@@ -3383,6 +3538,9 @@ function bindPeopleStrip() {
     pressed = null;
     if (!p || !p.id) return;
     if (Math.abs(ev.clientX - p.x) > 8 || Math.abs(ev.clientY - p.y) > 8) return;
+    /* A chip that was just dragged back to roughly where it started is still a drag,
+       not a choice (owner, 2026-09-05). */
+    if (Date.now() - stripDragEndedAt < 400) return;
     openPersonFromStrip(p.kind, p.id);
   });
   sb.addEventListener("pointercancel", function () { pressed = null; });
@@ -6939,7 +7097,7 @@ tryRestoreAdminSession();
     /* The strip belongs to the PAGE, not to this screen: it carries the athletes too.
        Hand the rows over and let admin paint one strip out of both halves. */
     if (typeof window.adminOnClientRows === "function") {
-      window.adminOnClientRows(S.rows, total, data.unreadTotal || 0);
+      window.adminOnClientRows(S.rows, total, data.unreadTotal || 0, data.stripOrder);
     }
   }
 
@@ -9553,6 +9711,17 @@ tryRestoreAdminSession();
       S.token = o.token || S.token || storedToken();
       S.pw = o.pw || S.pw;
       return loadList();
+    },
+    /* The strip belongs to the page, but this screen owns the endpoint — so the page
+       hands the new order here to be written (owner, 2026-09-05). */
+    saveStripOrder: function (ids, done) {
+      api({ action: "set_strip_order", ids: ids }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) {
+          done && done((r.body && r.body.error) || "לא הצלחתי לשמור את הסדר.");
+          return;
+        }
+        done && done(null, r.body.stripOrder || ids);
+      });
     },
     open: function (programId) {
       /* Switching client is leaving the day too. */

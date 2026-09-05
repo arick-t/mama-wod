@@ -161,6 +161,8 @@ const ACTIONS_ALLOWED = [
   "ping",
   /* One call that empties the list, with a receipt. */
   "purge_all",
+  /* The order he dragged his strip into — ids only, saved once when he lets go. */
+  "set_strip_order",
 ];
 const actionsUsed = Array.from(
   new Set((screen.match(/action:\s*"([a-z_]+)"/g) || []).map(function (s) {
