@@ -850,6 +850,13 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 }
 /* The chip he is holding. It stays in the strip and the others move around it, so the
    thing he is dragging is the thing he sees (owner, 2026-09-05). */
+/* Dragging a part from one open day to another (owner, 2026-09-05). The card it would
+   land in lights up; the heading being carried goes quiet. */
+.pprog-day-card .section-title-row[data-part]{cursor:default}
+.pprog-day-card.is-editing .section-title-row[data-part]{cursor:grab}
+.section-title-row.is-dragging-part{opacity:.5}
+.pprog-day-card.is-drop-target{outline:2px dashed var(--part);outline-offset:3px}
+body.is-dragging-part-now{user-select:none}
 .athlete-tab.is-dragging{opacity:.75;transform:scale(1.04);box-shadow:0 10px 24px rgba(0,0,0,.45);cursor:grabbing}
 .athlete-tab[data-drag="1"]{cursor:grab}
 .athlete-tab.is-loading{
@@ -7691,6 +7698,8 @@ tryRestoreAdminSession();
      a redrawn element is a listener that quietly stops working. */
   if (!window._adminWeekMenuBound) {
     window._adminWeekMenuBound = true;
+    /* The calendar host outlives every redraw, so this can be bound once with it. */
+    try { bindPartDrag(); } catch (ePd) {}
     document.addEventListener("contextmenu", function (ev) {
       var host = el("adminDays");
       if (!host || !S.program || !ev.target || !ev.target.closest) return;
@@ -9160,6 +9169,97 @@ tryRestoreAdminSession();
     if (!D || !D.partsFromDraft) return null;
     var parts = D.partsFromDraft({ parts: S.edit.parts, day: dayKey });
     return parts[partIndex | 0] || null;
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     DRAGGING A PART FROM ONE OPEN DAY TO ANOTHER.
+
+     In the width view several days stand side by side. With one of them open for
+     editing, a part can be picked up by its heading and dropped on any other day that
+     is on screen — it is planted under the last part there, and nothing is overwritten
+     (owner, 2026-09-05).
+
+     Mouse only, on purpose: on a phone a long press already opens the part's own menu,
+     and one gesture cannot mean two things. The menu does the same job there.
+     ══════════════════════════════════════════════════════════════════════ */
+
+  function bindPartDrag() {
+    var host = el("adminDays");
+    if (!host || host.dataset.partDragBound === "1") return;
+    host.dataset.partDragBound = "1";
+    var held = null;
+
+    function cardOf(node) {
+      return node && node.closest ? node.closest(".pprog-day-card[data-wi][data-day]") : null;
+    }
+
+    function clearTargets() {
+      var lit = host.querySelectorAll(".pprog-day-card.is-drop-target");
+      for (var i = 0; i < lit.length; i++) lit[i].classList.remove("is-drop-target");
+    }
+
+    function stop() {
+      if (held && held.row) held.row.classList.remove("is-dragging-part");
+      clearTargets();
+      document.body.classList.remove("is-dragging-part-now");
+      held = null;
+    }
+
+    host.addEventListener("pointerdown", function (ev) {
+      if (ev.pointerType === "touch") return;
+      if (ev.button !== undefined && ev.button !== 0) return;
+      var row = ev.target && ev.target.closest ? ev.target.closest("[data-part]") : null;
+      if (!row) return;
+      var card = cardOf(row);
+      /* Only out of the day he is editing: that is the one whose parts are his to move
+         right now, and it is where the gesture reads as picking something up. */
+      if (!card || !card.classList.contains("is-editing")) return;
+      /* Not off the fields inside the heading — typing a part's name is not a drag. */
+      if (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA") return;
+      held = {
+        row: row,
+        card: card,
+        wi: parseInt(card.getAttribute("data-wi"), 10) || 0,
+        day: card.getAttribute("data-day") || "",
+        index: parseInt(row.getAttribute("data-part"), 10) || 0,
+        x: ev.clientX,
+        y: ev.clientY,
+        dragging: false,
+      };
+    });
+
+    host.addEventListener("pointermove", function (ev) {
+      if (!held) return;
+      if (!held.dragging) {
+        if (Math.abs(ev.clientX - held.x) < 6 && Math.abs(ev.clientY - held.y) < 6) return;
+        held.dragging = true;
+        held.row.classList.add("is-dragging-part");
+        document.body.classList.add("is-dragging-part-now");
+      }
+      ev.preventDefault();
+      clearTargets();
+      var over = cardOf(document.elementFromPoint(ev.clientX, ev.clientY));
+      if (over && over !== held.card) over.classList.add("is-drop-target");
+    });
+
+    host.addEventListener("pointerup", function (ev) {
+      if (!held) return;
+      var was = held;
+      var over = was.dragging ? cardOf(document.elementFromPoint(ev.clientX, ev.clientY)) : null;
+      stop();
+      if (!over || over === was.card) return;
+      var part = draftPartAt(was.wi + 1, was.day, was.index) || storedPartAt(was.wi, was.day, was.index);
+      if (!part) { banner("bad", "לא מצאתי את החלק הזה."); return; }
+      var toWi = parseInt(over.getAttribute("data-wi"), 10) || 0;
+      var toDay = over.getAttribute("data-day") || "";
+      if (!toDay) return;
+      pastePartHere(toWi + 1, toDay, part);
+    });
+
+    host.addEventListener("pointercancel", stop);
+    document.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape" && held) stop();
+    });
   }
 
   /** Both menus open where the finger is, and stay inside the window. */

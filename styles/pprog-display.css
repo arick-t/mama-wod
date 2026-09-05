@@ -236,6 +236,13 @@
   border-radius:50%;border:1.5px solid currentColor;font-size:11px;font-weight:800;
   line-height:1;margin-inline-end:8px;flex:0 0 auto;vertical-align:1px;opacity:.9
 }
+/* The chip he is holding. It stays in the strip and the others move around it, so the
+   thing he is dragging is the thing he sees (owner, 2026-09-05). */
+/* Dragging a part from one open day to another (owner, 2026-09-05). The card it would
+   land in lights up; the heading being carried goes quiet. */
+.pprog-day-card .section-title-row[data-part]{cursor:default}
+.pprog-day-card.is-editing .section-title-row[data-part]{cursor:grab}
+.pprog-day-card.is-drop-target{outline:2px dashed var(--part);outline-offset:3px}
 .pprog-edit-lines.pprog-numbered{list-style:none;padding-inline-start:0}
 /* The number in the circle is a field while the day is open — digits only, and it must
    not be stretched by the rule that makes the work line itself fill the row. */

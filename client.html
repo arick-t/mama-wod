@@ -858,6 +858,20 @@ button.ghost:hover{color:var(--text)}
       if (!state.program || !ev.target || !ev.target.closest) return;
       var box = el("days");
       if (!box) return;
+      /* A part heading sits INSIDE a day card, so it is asked about first. */
+      var partRow = ev.target.closest("[data-part]");
+      var partCard = partRow && partRow.closest(".pprog-day-card[data-wi][data-day]");
+      if (partRow && partCard && box.contains(partCard)) {
+        ev.preventDefault();
+        openPartMenu(
+          parseInt(partCard.getAttribute("data-wi"), 10) || 0,
+          partCard.getAttribute("data-day") || "",
+          parseInt(partRow.getAttribute("data-part"), 10) || 0,
+          ev.clientX,
+          ev.clientY
+        );
+        return;
+      }
       var cube = ev.target.closest("[data-week]");
       if (cube && box.contains(cube)) {
         ev.preventDefault();
@@ -890,15 +904,26 @@ button.ghost:hover{color:var(--text)}
         if (!touch) return;
         var cube = ev.target.closest("[data-week]");
         var cell = ev.target.closest("[data-day][data-wi]");
+        var partRow = ev.target.closest("[data-part]");
+        var partCard = partRow && partRow.closest(".pprog-day-card[data-wi][data-day]");
+        var onPart = partRow && partCard && box.contains(partCard);
         var onCube = cube && box.contains(cube);
         var onCell = cell && box.contains(cell);
-        if (!onCube && !onCell) return;
+        if (!onPart && !onCube && !onCell) return;
         pressAt = { x: touch.clientX, y: touch.clientY };
         if (pressTimer) clearTimeout(pressTimer);
         pressTimer = setTimeout(function () {
           pressTimer = null;
           openedByPress = Date.now();
-          if (onCube) {
+          if (onPart) {
+            openPartMenu(
+              parseInt(partCard.getAttribute("data-wi"), 10) || 0,
+              partCard.getAttribute("data-day") || "",
+              parseInt(partRow.getAttribute("data-part"), 10) || 0,
+              pressAt.x,
+              pressAt.y
+            );
+          } else if (onCube) {
             openCopyMenu("week", (parseInt(cube.getAttribute("data-week"), 10) || 1) - 1, "", pressAt.x, pressAt.y);
           } else {
             var dayKey = cell.getAttribute("data-day") || "";
@@ -937,6 +962,35 @@ button.ghost:hover{color:var(--text)}
       if (!t || !t.closest) return;
       var m = el("copyMenu");
 
+      var cp = t.closest("[data-copy-part]");
+      if (cp) {
+        var cpBits = String(cp.getAttribute("data-copy-part")).split(":");
+        var cpWi = parseInt(cpBits[0], 10) || 0;
+        var cpDay = cpBits[1] || "";
+        var cpIdx = parseInt(cpBits[2], 10) || 0;
+        closeCopyMenu();
+        var picked = draftPartAt(cpWi, cpDay, cpIdx) || storedPartAt(cpWi, cpDay, cpIdx);
+        if (!picked || !PartClip || !partClipStore) { banner("bad", "Could not copy that part."); return; }
+        partClipStore.write(
+          PartClip.entryFor("part", PartClip.copyPart(picked), {
+            label: partNameAt(cpWi, cpDay, cpIdx) + " · " + dayName(cpDay) + " · week " + (cpWi + 1),
+          })
+        );
+        banner("good", "Part copied — long-press or right-click a part on another day to plant it there.");
+        return;
+      }
+      var pp = t.closest("[data-paste-part]");
+      if (pp) {
+        var ppBits = String(pp.getAttribute("data-paste-part")).split(":");
+        var ppWi = parseInt(ppBits[0], 10) || 0;
+        var ppDay = ppBits[1] || "";
+        closeCopyMenu();
+        var heldPart = partClipRead();
+        if (!heldPart || !ppDay) return;
+        /* Nothing is overwritten — it goes under the last part — so nothing is asked. */
+        pastePartHere(ppWi, ppDay, heldPart.payload);
+        return;
+      }
       var cw = t.closest("[data-copy-week]");
       if (cw) {
         copyClip = { kind: "week", wi: parseInt(String(cw.getAttribute("data-copy-week")).split(":")[0], 10) || 0 };
@@ -1450,6 +1504,91 @@ button.ghost:hover{color:var(--text)}
         : '<span class="cm-hint">Nothing copied yet</span>');
     m.hidden = false;
     placeCopyMenu(m, x, y);
+  }
+
+  /**
+   * Right-click a part heading: copy that part, or plant the copied one under the last
+   * part of this day.
+   *
+   * Our clients are coaches building their own programmes, so they get the same gesture
+   * the owner has (owner, 2026-09-05). It writes through the ordinary client edit, so
+   * every guard already in place applies unchanged.
+   */
+  function openPartMenu(wi, dayKey, partIndex, x, y) {
+    var m = el("copyMenu");
+    if (!m || !state.program) return;
+    var held = partClipRead();
+    var here = wi + ":" + esc(dayKey) + ":" + partIndex;
+    var name = partNameAt(wi, dayKey, partIndex);
+    m.innerHTML =
+      '<div class="cm-title">' + esc(name) + "</div>" +
+      '<button type="button" class="cm-item" data-copy-part="' + here + '">' +
+      '<span class="cm-ico" aria-hidden="true">\u29c9</span><span>Copy part</span></button>' +
+      (held
+        ? '<button type="button" class="cm-item cm-paste" data-paste-part="' + here + '">' +
+          '<span class="cm-ico" aria-hidden="true">\u2935</span><span>Paste part' +
+          '<span class="cm-from">' + esc(String(held.from && held.from.label) || "copied part") + "</span></span></button>"
+        : '<span class="cm-hint">No part copied yet</span>');
+    m.hidden = false;
+    placeCopyMenu(m, x, y);
+  }
+
+  /* The clipboard is the shared one, so a part copied here survives a reload the same
+     way it does on the owner's side. */
+  var PartClip = window.PprogClipboard || null;
+  var partClipStore = PartClip ? PartClip.makeStore(null) : null;
+
+  function partClipRead() {
+    if (!partClipStore || !PartClip) return null;
+    var e = partClipStore.read();
+    return PartClip.isUsable(e, "part") ? e : null;
+  }
+
+  function partNameAt(wi, dayKey, partIndex) {
+    var part = storedPartAt(wi, dayKey, partIndex);
+    var title = String((part && part.title) || "").trim();
+    return title || "Part " + ((partIndex | 0) + 1);
+  }
+
+  function storedPartAt(wi, dayKey, partIndex) {
+    var week = weekAt(wi);
+    var day = (week && week.days && week.days[dayKey]) || {};
+    var parts = Array.isArray(day.parts) ? day.parts : [];
+    return parts[partIndex | 0] || null;
+  }
+
+  /** The part he is looking at while a day is open for editing. */
+  function draftPartAt(wi, dayKey, partIndex) {
+    if (!state.edit || (state.edit.wi | 0) !== (wi | 0) || state.edit.day !== dayKey) return null;
+    var D = pprogLib();
+    if (!D || !D.partsFromDraft) return null;
+    var parts = D.partsFromDraft({ parts: state.edit.parts, day: dayKey });
+    return parts[partIndex | 0] || null;
+  }
+
+  /**
+   * Plant a part under the last part of a day.
+   *
+   * Into the draft when that day is the one open for editing — otherwise the autosave
+   * on the way out would write over it. Anywhere else it is one ordinary edit.
+   */
+  function pastePartHere(wi, dayKey, part) {
+    var D = pprogLib();
+    if (state.edit && (state.edit.wi | 0) === (wi | 0) && state.edit.day === dayKey) {
+      if (!Array.isArray(state.edit.parts)) state.edit.parts = [];
+      var made = D && D.draftFromDayData ? D.draftFromDayData({ parts: [part] }, false) : null;
+      state.edit.parts.push(
+        made && made.length
+          ? made[0]
+          : { title: String((part && part.title) || ""), notes: [], format: "", work: (part && part.lines) || [""] }
+      );
+      renderDays();
+      banner("good", "Part added — it saves with the rest of the day.");
+      return;
+    }
+    var existing = partsAt(wi, dayKey);
+    var next = existing.concat([PartClip ? PartClip.copyPart(part) : part]);
+    saveCopied([{ weekIndex: wi + 1, dayKey: dayKey, rest: false, parts: next }], "Part");
   }
 
   /** Is this day a rest day? The library's own answer, so it matches what is drawn. */

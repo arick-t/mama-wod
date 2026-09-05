@@ -290,7 +290,14 @@ ok("but never while hidden", /if \(typeof document !== "undefined" && document\.
  * ------------------------------------------------------------------------- */
 
 ok("the page has a menu of its own", /id="copyMenu"/.test(html));
-ok("right-clicking a week opens it", /addEventListener\("contextmenu"[\s\S]{0,400}closest\("\[data-week\]"\)/.test(html));
+ok("right-clicking a week opens it", /addEventListener\("contextmenu"[\s\S]{0,900}closest\("\[data-week\]"\)/.test(html));
+/* A part too: our clients are coaches, and they build programmes in here
+   (owner, 2026-09-05). */
+ok("a part heading can be copied", /data-copy-part=/.test(html));
+ok("and planted under the last part of another day", /data-paste-part=/.test(html));
+ok("through the ordinary client edit", /saveCopied\(\[\{ weekIndex: wi \+ 1, dayKey: dayKey, rest: false, parts: next \}\], "Part"\)/.test(html));
+ok("into the draft when that day is the one open", /if \(state\.edit && \(state\.edit\.wi \| 0\) === \(wi \| 0\) && state\.edit\.day === dayKey\)/.test(html));
+ok("using the shared clipboard", /window\.PprogClipboard/.test(html) && /lib\/pprog-clipboard\.js/.test(html));
 ok("and right-clicking a day", /closest\("\[data-day\]\[data-wi\]"\)/.test(html));
 ok("a long press is the right-click a phone has not got", /addEventListener\(\s*\n?\s*"touchstart"/.test(html));
 ok("half a second of holding", /\}, 500\);/.test(html));
