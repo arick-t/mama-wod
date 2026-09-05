@@ -255,4 +255,47 @@ ok("a named day shows the name", /var dayTitle = String\(\(dayData && dayData\.t
 ok("with the automatic label kept beside it", /class="pprog-day-when"/.test(src));
 ok("and the heading becomes a field only where the page allows it", /opts\.allowTitleEdit === true/.test(src));
 
+
+/* --- a note he wrote stays a note (owner, 2026-09-05) ---------------------
+ * Lines are stored flat, so their shape is worked out again when they are drawn — by
+ * rules that are English ("note:", "cue:", "rest between sets"). A note in Hebrew
+ * matched none of them and came back as a work line the moment it was saved. A part
+ * now remembers how many of its leading lines he wrote as notes.
+ * ------------------------------------------------------------------------- */
+
+const hebPart = PprogDisplay.partsFromDraft({
+  day: "sun",
+  parts: [{ title: "Part B", notes: ["בדיקה בדיקה"], format: "", work: ["לבחור 3 תרגילים", "bench press 3 X15"] }],
+});
+ok("the note is still the first line stored", hebPart[0].lines[0] === "בדיקה בדיקה");
+ok("and the part records how many notes it has", hebPart[0].noteLines === 1);
+const hebHtml = PprogDisplay.renderDayPartsHtml(hebPart);
+ok("so it is drawn as a note", hebHtml.indexOf('class="pprog-part-note" dir="auto">בדיקה בדיקה') >= 0);
+ok("and never as a work line", hebHtml.indexOf('<li dir="auto">בדיקה בדיקה') < 0);
+
+/* English must be exactly as it was — his rule. */
+const engPart = PprogDisplay.partsFromDraft({
+  day: "sun",
+  parts: [{ title: "Part A", notes: ["12 min duration / strength priority"], format: "EMOM 12", work: ["3 back squats"] }],
+});
+const engHtml = PprogDisplay.renderDayPartsHtml(engPart);
+ok("an English note is still a note", engHtml.indexOf("12 min duration / strength priority") >= 0 && engHtml.indexOf("pprog-part-note") >= 0);
+ok("the format is still the format", engHtml.indexOf("pprog-part-format") >= 0 && engHtml.indexOf("EMOM 12") >= 0);
+
+/* A part written before today carries no count and must classify as it always did. */
+const legacy = PprogDisplay.renderDayPartsHtml([
+  { id: "x", title: "Part A", lines: ["Note: keep it light", "EMOM 12", "3 back squats"] },
+]);
+ok("a part with no count is read the old way", legacy.indexOf("pprog-part-note") >= 0 && legacy.indexOf("Note: keep it light") >= 0);
+
+/* Two notes, and one of them Hebrew. */
+const twoNotes = PprogDisplay.partsFromDraft({
+  day: "mon",
+  parts: [{ title: "Part C", notes: ["Cue: brace", "שים לב לגב"], format: "", work: ["5x5"] }],
+});
+ok("both are kept", twoNotes[0].noteLines === 2);
+const twoHtml = PprogDisplay.renderDayPartsHtml(twoNotes);
+ok("and both are drawn as notes", (twoHtml.match(/pprog-part-note/g) || []).length >= 2);
+ok("the work line is still work", twoHtml.indexOf("<li dir=\"auto\">5x5</li>") >= 0);
+
 console.log("All shared pprog-display checks passed.");
