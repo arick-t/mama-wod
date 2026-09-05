@@ -1044,6 +1044,90 @@ button.ghost:hover{color:var(--text)}
     });
   }
 
+  /* ══════════════════════════════════════════════════════════════════════
+     SWIPING BETWEEN DAYS ON A PHONE (owner, 2026-09-05).
+
+     Swipe left to go forward a day, right to go back — the way every other card on a
+     phone behaves. At the end of a week it steps into the next one, so a whole block
+     can be read with a thumb.
+
+     It listens on the day card only, never on the calendar: the calendar scrolls
+     sideways of its own accord, and a swipe there is a scroll. A finger that moves more
+     up than across is a scroll too, and is left alone.
+     ══════════════════════════════════════════════════════════════════════ */
+
+  /** The day keys this programme actually draws, in order. */
+  function swipeDayKeys() {
+    var cols = (state.program && state.program.sessionColumns) || 0;
+    if (cols > 0 && cols <= DAY_KEYS_LOCAL.length) return DAY_KEYS_LOCAL.slice(0, cols);
+    return DAY_KEYS_LOCAL.slice();
+  }
+
+  /**
+   * One day forward or back, stepping over the week boundary.
+   * @param {number} dir +1 forward, -1 back
+   */
+  function stepDay(dir) {
+    if (!state.program) return;
+    var keys = swipeDayKeys();
+    var here = keys.indexOf(state.day || "sun");
+    if (here < 0) here = 0;
+    var wi = state.wi | 0;
+    var next = here + (dir > 0 ? 1 : -1);
+    if (next >= keys.length) {
+      if (wi + 1 > weekCount() - 1) return;
+      wi += 1;
+      next = 0;
+    } else if (next < 0) {
+      if (wi - 1 < 0) return;
+      wi -= 1;
+      next = keys.length - 1;
+    }
+    window.cvSetDay(wi, keys[next]);
+  }
+
+  function bindDaySwipe() {
+    var host = el("days");
+    if (!host || host.dataset.swipeBound === "1") return;
+    host.dataset.swipeBound = "1";
+    var at = null;
+
+    host.addEventListener(
+      "touchstart",
+      function (ev) {
+        var t = (ev.touches && ev.touches[0]) || null;
+        /* Not while a day is open for editing: a finger in a text field is not a swipe,
+           and losing what he typed to a stray gesture would be unforgivable. */
+        if (!t || state.edit) { at = null; return; }
+        /* The calendar is its own scrolling thing. */
+        if (ev.target && ev.target.closest && ev.target.closest(".pprog-cal, .pprog-cal-blocks")) { at = null; return; }
+        at = { x: t.clientX, y: t.clientY, t: Date.now() };
+      },
+      { passive: true }
+    );
+
+    host.addEventListener(
+      "touchend",
+      function (ev) {
+        if (!at) return;
+        var t = (ev.changedTouches && ev.changedTouches[0]) || null;
+        var start = at;
+        at = null;
+        if (!t) return;
+        var dx = t.clientX - start.x;
+        var dy = t.clientY - start.y;
+        /* Far enough across, and more across than down, and not a slow drag. */
+        if (Math.abs(dx) < 60) return;
+        if (Math.abs(dx) < Math.abs(dy) * 1.4) return;
+        if (Date.now() - start.t > 800) return;
+        stepDay(dx < 0 ? 1 : -1);
+      },
+      { passive: true }
+    );
+
+    host.addEventListener("touchcancel", function () { at = null; }, { passive: true });
+  }
+
   function bindCalGestures() {
     document.addEventListener("mousedown", function (ev) {
       if (ev.button !== 0) return;
@@ -1856,6 +1940,7 @@ button.ghost:hover{color:var(--text)}
   function boot() {
     bindCalGestures();
     bindCopyGestures();
+    bindDaySwipe();
     el("codeBtn").addEventListener("click", submitCode);
     el("codeInput").addEventListener("keydown", function (ev) { if (ev.key === "Enter") submitCode(); });
     el("agreeBox").addEventListener("change", function () { el("agreeBtn").disabled = !this.checked; });

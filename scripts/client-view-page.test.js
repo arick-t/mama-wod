@@ -319,4 +319,19 @@ ok("and the menu is a card, not an alarm", /\.copy-menu\{position:fixed[^}]*bord
 
 /* It must NOT have grown a new way into the server. */
 ok("no new client action was invented", !/action: "copy_week"|action: "copy_day"/.test(html));
+/* --- a thumb reads the block (owner, 2026-09-05) -------------------------- */
+
+/* Swipe left for the next day, right for the one before — the way every other card on
+   a phone behaves. It listens on the day card only: the calendar scrolls sideways of
+   its own accord, and a swipe there is a scroll. */
+ok("the day card listens for a swipe", /function bindDaySwipe\(\)/.test(html));
+ok("and it is bound at boot", /bindDaySwipe\(\);/.test(html));
+ok("left goes forward, right goes back", /stepDay\(dx < 0 \? 1 : -1\)/.test(html));
+ok("a short flick is not a swipe", /if \(Math\.abs\(dx\) < 60\) return;/.test(html));
+ok("nor is a finger that moves more up than across", /if \(Math\.abs\(dx\) < Math\.abs\(dy\) \* 1\.4\) return;/.test(html));
+ok("the calendar is left to scroll", /closest\("\.pprog-cal, \.pprog-cal-blocks"\)/.test(html));
+ok("and a day being edited is never swiped away", /if \(!t \|\| state\.edit\) \{ at = null; return; \}/.test(html));
+ok("it steps into the next week at the end of one", /if \(wi \+ 1 > weekCount\(\) - 1\) return;/.test(html));
+ok("a programme sold as sessions swipes through its own columns", /function swipeDayKeys\(\)/.test(html));
+
 console.log("All client view page checks passed.");
