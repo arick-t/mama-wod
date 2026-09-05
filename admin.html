@@ -848,6 +848,10 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
   border-radius:50%;border:1.5px solid currentColor;font-size:11px;font-weight:800;
   line-height:1;margin-inline-end:8px;flex:0 0 auto;vertical-align:1px;opacity:.9
 }
+.athlete-tab.is-loading{
+  opacity:.55;font-style:italic;cursor:default;pointer-events:none;
+  border-style:dashed
+}
 .pprog-edit-lines.pprog-numbered{list-style:none;padding-inline-start:0}
 /* The number in the circle is a field while the day is open — digits only, and it must
    not be stretched by the rule that makes the work line itself fill the row. */
@@ -3299,6 +3303,13 @@ function renderPeopleStrip() {
   var progs = Array.isArray(clientPrograms) ? clientPrograms : [];
   var rows = AdminPeopleStrip.rows({ athletes: list, programs: progs });
   var nextHtml = AdminPeopleStrip.html(rows, activeProgramId || currentAthleteId);
+  /* The clients half arrives on its own request, and on a cold serverless start that
+     can be a few seconds behind the athletes. Twice now that silence read as "all my
+     clients are gone" (owner, 2026-09-04, 2026-09-05) — so the strip SAYS it is still
+     waiting instead of looking finished. */
+  if (!programsAnswered) {
+    nextHtml += '<span class="athlete-tab is-loading" aria-live="polite">טוען לקוחות…</span>';
+  }
   /* Only when it actually changed.
      A click is mousedown and mouseup on the SAME element; replacing the strip's markup
      between the two makes the browser fire no click at all, and the owner has to press
@@ -3311,7 +3322,8 @@ function renderPeopleStrip() {
        was no way to tell from the screen whether the athlete half had come back empty or
        had never answered — so now the screen says. */
     countEl.textContent =
-      rows.length + " לקוחות · " + list.length + " מתאמנים · " + progs.length + " תוכניות";
+      rows.length + " לקוחות · " + list.length + " מתאמנים · " +
+      (programsAnswered ? progs.length + " תוכניות" : "טוען תוכניות…");
   }
   try {
     console.log("[admin] strip:", { athletes: list.length, programs: progs.length,

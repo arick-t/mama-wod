@@ -152,3 +152,10 @@ ok("it is pinned", withLedger[0].pinned === true);
 ok("it carries no unread dot and no colour", withLedger[0].unread === false && !withLedger[0].colour);
 ok("it renders as a chip", Strip.html(withLedger, "ledger").indexOf('data-id="ledger"') >= 0);
 ok("and a screen that wants only people can leave it out", Strip.rows({ athletes: athletes, ledger: false }).length === 2);
+
+/* --- while the clients half is still in the air (owner, 2026-09-05) -------- */
+const fs2 = require("fs");
+const adminSrc = fs2.readFileSync(require("path").join(__dirname, "..", "admin.html"), "utf8");
+ok("the strip says it is still waiting for the clients", adminSrc.indexOf('טוען לקוחות…') >= 0);
+ok("and only until they answer", /if \(!programsAnswered\) \{/.test(adminSrc));
+ok("the count says so too", adminSrc.indexOf('"טוען תוכניות…"') >= 0);
