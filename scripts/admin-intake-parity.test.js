@@ -365,15 +365,15 @@ ok("and \"no deload\" is an answer, not a blank", /noDeloadEl && noDeloadEl\.che
 ok("all of it travels with the client", /trainsMultipleLocations: prof\.trainsMultipleLocations === true/.test(fixedJs) && /deloadEveryWeeks: prof\.deloadEveryWeeks/.test(fixedJs));
 
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
-ok("admin version 4.2", /DUCK-WOD Admin · 4\.2/.test(adminHtml));
+ok("admin version 4.3", /DUCK-WOD Admin · 4\.3/.test(adminHtml));
 ok("admin wired to coach 2.3.14", /LIVE_COACH_VERSION = "2\.3\.14"/.test(adminHtml));
 ok("app coach 2.3.14", /COACH_VERSION = "2\.3\.14"/.test(index));
 ok(
   "admin shows Admin + Coach versions",
-  /Admin 4\.2\.1/.test(adminHtml) &&
+  /Admin 4\.3/.test(adminHtml) &&
     /ver-coach/.test(adminHtml) &&
     /syncAdminVersionLabels/.test(adminHtml) &&
-    /ADMIN_UI_VERSION = "4\.2\.1"/.test(adminHtml)
+    /ADMIN_UI_VERSION = "4\.3"/.test(adminHtml)
 );
 ok(
   "admin intake uses pprog classes 1:1",
