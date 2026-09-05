@@ -35,6 +35,9 @@ const {
 const crypto = require("crypto");
 const JsonStore = require("../scripts/lib/admin/admin-json-store.js");
 const ProgramStore = require("../lib/client-program-store.js");
+/* The one definition of a copied part, day, week and block — the page uses the same
+   file, so a copy made by hand and one made here are the same thing. */
+const Clipboard = require("../lib/pprog-clipboard.js");
 const Access = require("../lib/client-access.js");
 const Payload = require("../lib/client-view-payload.js");
 const Terms = require("../lib/client-terms.js");
@@ -140,6 +143,18 @@ function clientTokenFrom(req, body) {
  * Owner
  * ------------------------------------------------------------------------- */
 
+/** The answers a given block was built from, falling back to the programme's own. */
+function blockIntakeOf(program, blockIndex1) {
+  const blocks = Array.isArray(program && program.blocks) ? program.blocks : [];
+  const want = parseInt(blockIndex1, 10);
+  for (const b of blocks) {
+    if ((parseInt(b && b.blockIndex, 10) || 0) === want && b && typeof b.intake === "object" && b.intake) {
+      return b.intake;
+    }
+  }
+  return (program && program.intake) || {};
+}
+
 async function ownerHandler(req, res, body) {
   const action = String(body.action || "").toLowerCase();
 
@@ -216,6 +231,112 @@ async function ownerHandler(req, res, body) {
     const saved = await store.writeStripOrder(ids);
     if (!saved.ok) return bad(res, 503, saved.code, saved.error);
     return res.status(200).json({ ok: true, stripOrder: saved.ids });
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     THE BLOCK WAREHOUSE (owner, 2026-09-05).
+
+     His own shelf: a block he is happy with, saved under a name and planted at any
+     client afterwards. The weeks are read from the PROGRAMME on the server rather than
+     sent up from the page — the page says which block, never what is in it.
+     ══════════════════════════════════════════════════════════════════════ */
+
+  if (action === "block_list") {
+    const idx = await store.readWarehouseIndex();
+    if (!idx.ok) return bad(res, 503, idx.code, idx.error);
+    return res.status(200).json({ ok: true, rows: idx.rows });
+  }
+
+  if (action === "block_save") {
+    const name = String(body.name || "").trim();
+    if (!name) return bad(res, 400, "NO_NAME", "a saved block needs a name");
+    const read = await store.readProgram(programId);
+    if (!read.ok) return bad(res, 404, read.code, read.error);
+    const weeks = ProgramStore.weeksOfBlock(read.program, body.blockIndex);
+    if (!weeks.length) return bad(res, 404, "NO_BLOCK", "that block is not in this programme");
+    const saved = await store.saveWarehouseBlock({
+      name: name,
+      description: body.description,
+      /* The answers the block was built from decide how its row reads — weekly, or so
+         many sessions a week. */
+      intake: blockIntakeOf(read.program, body.blockIndex),
+      weeks: Clipboard.blockPayload(weeks).weeks,
+      sourceName: read.program.clientName,
+    });
+    if (!saved.ok) return bad(res, 400, saved.code, saved.error);
+    return res.status(200).json({ ok: true, row: saved.row });
+  }
+
+  if (action === "block_read") {
+    const got = await store.readWarehouseBlock(String(body.id || ""));
+    if (!got.ok) return bad(res, 404, got.code, got.error);
+    return res.status(200).json({ ok: true, block: got.block });
+  }
+
+  if (action === "block_delete") {
+    const gone = await store.deleteWarehouseBlock(String(body.id || ""));
+    if (!gone.ok) return bad(res, 503, gone.code, gone.error);
+    return res.status(200).json({ ok: true, removed: gone.removed });
+  }
+
+  /* Copying a block OUT of a client, for the clipboard. */
+  if (action === "block_copy") {
+    const read = await store.readProgram(programId);
+    if (!read.ok) return bad(res, 404, read.code, read.error);
+    const weeks = ProgramStore.weeksOfBlock(read.program, body.blockIndex);
+    if (!weeks.length) return bad(res, 404, "NO_BLOCK", "that block is not in this programme");
+    return res.status(200).json({
+      ok: true,
+      block: {
+        weeks: Clipboard.blockPayload(weeks).weeks,
+        intake: blockIntakeOf(read.program, body.blockIndex),
+        sourceName: read.program.clientName,
+      },
+    });
+  }
+
+  /* Planting one at a client — from the shelf or from another client, same road. It
+     arrives UNAPPROVED like every other new block: nothing reaches the client until he
+     sends it. */
+  if (action === "paste_block") {
+    const payload = isPlainObject(body.block) ? body.block : null;
+    if (!payload) return bad(res, 400, "NO_BLOCK_BODY", "block is required");
+    const done = await store.pasteBlock(programId, Number(body.expectedVersion), payload, {
+      notes: body.notes,
+    });
+    if (!done.ok) {
+      const status = done.code === "VERSION_CONFLICT" ? 409 : done.code === "NOT_FOUND" ? 404 : 400;
+      return res.status(status).json(Object.assign({ ok: false }, done));
+    }
+    return res.status(200).json({ ok: true, program: done.program, added: done.added, blockIndex: done.blockIndex });
+  }
+
+  /* Rearranging the blocks of one client: remove, duplicate, plant in front of, move.
+     All four go through the store, which renumbers the weeks and the blocks together —
+     and refuses any order that would hand the client a block he was never sent. */
+  if (action === "block_remove" || action === "block_duplicate" || action === "block_move" || action === "block_insert") {
+    const version = Number(body.expectedVersion);
+    const at = parseInt(body.blockIndex, 10);
+    let done;
+    if (action === "block_remove") done = await store.deleteBlock(programId, version, at);
+    else if (action === "block_duplicate") done = await store.duplicateBlock(programId, version, at);
+    else if (action === "block_move") done = await store.moveBlock(programId, version, at, body.toIndex);
+    else done = await store.insertBlockBefore(programId, version, at, body.block);
+    if (!done.ok) {
+      /* The one refusal that is a rule rather than a fault, said in his words. */
+      if (String(done.error || "").indexOf("UNSENT_BEFORE_SENT") >= 0) {
+        return bad(res, 400, "UNSENT_BEFORE_SENT",
+          "אי אפשר להעביר לבנה שלא נשלחה אל מעל לבנה שכבר נשלחה ללקוח — הוא היה רואה אותה מיד.");
+      }
+      const status = done.code === "VERSION_CONFLICT" ? 409 : done.code === "NOT_FOUND" ? 404 : 400;
+      return res.status(status).json(Object.assign({ ok: false }, done));
+    }
+    return res.status(200).json({
+      ok: true,
+      program: done.program,
+      added: done.added || 0,
+      removedWeeks: done.removedWeeks || 0,
+    });
   }
 
   if (action === "renewal_check") {
