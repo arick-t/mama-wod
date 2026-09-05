@@ -379,4 +379,31 @@ const sentShape = Payload.programForClient({
 }).weeks[0].days.sun.parts[0];
 ok("and it arrives with it", sentShape.formatLine === 1 && sentShape.noteLines === 1);
 
+/* --- the numbers stand in a column on a phone (owner, 2026-09-05) --------- */
+
+/* On an iPhone the circle drifted into the middle of a Hebrew line, in a different
+   place on every line. The row is laid out left-to-right on a phone so the circles line
+   up down the left edge; the text keeps its own direction inside its own box, so a
+   Hebrew line still reads right-to-left and an English one is untouched. */
+const numberedHtml = PprogDisplay.renderDayPartsHtml(
+  [{ id: "n", title: "Part A", lines: ["פולי עליון 3X15", "חתירה במכונה 2X12"], numbered: true }],
+  null,
+  {}
+);
+ok("a numbered line puts its text in a box of its own", /<span class="pprog-li-text" dir="auto">/.test(numberedHtml));
+ok("carrying the same dir=auto the line had", (numberedHtml.match(/dir="auto"/g) || []).length >= 4);
+
+const plainHtml = PprogDisplay.renderDayPartsHtml(
+  [{ id: "p", title: "Part A", lines: ["5x5", "10 pull-ups"] }],
+  null,
+  {}
+);
+/* Nothing changes for a line with no number — same one text node it always was. */
+ok("a line with no number is untouched", plainHtml.indexOf('<li dir="auto">5x5</li>') >= 0);
+ok("and has no text box at all", plainHtml.indexOf("pprog-li-text") < 0);
+
+const sharedCss = fs.readFileSync(path.join(__dirname, "..", "styles", "pprog-display.css"), "utf8");
+ok("the column is a PHONE rule and nothing else", /@media \(max-width:719px\)\{[\s\S]*?li\.pprog-li-numbered\{[^}]*direction:ltr/.test(sharedCss));
+ok("the text keeps its own box on the row", /li\.pprog-li-numbered \.pprog-li-text\{flex:1/.test(sharedCss));
+
 console.log("All shared pprog-display checks passed.");
