@@ -224,6 +224,18 @@ async function main() {
   ok("planting from the strip is offered only with a block in hand", admin.indexOf('if (chip.getAttribute("data-kind") === "program" && pageHeldBlock())') >= 0);
   ok("and it lands as the client's last block, unsent", admin.indexOf("לא תישלח אליו עד שתאשר") >= 0);
 
+  /* Every action that is about ONE client must sit BELOW the line where the endpoint
+     reads the programme id — above it, the id does not exist yet and the whole thing
+     fails with nothing but a storage error to show for it (found on the local server,
+     2026-09-05). */
+  const idLine = api.indexOf('const programId = String(body.programId || "").slice(0, 60);');
+  for (const perClient of ["block_save", "block_copy", "paste_block", "block_remove", "set_week_sessions"]) {
+    ok(perClient + " is handled after the id is read", api.indexOf('action === "' + perClient + '"') > idLine);
+  }
+  for (const shelfOnly of ["block_list", "block_read", "block_delete"]) {
+    ok(shelfOnly + " needs no client at all", api.indexOf('action === "' + shelfOnly + '"') < idLine);
+  }
+
   console.log("\nAll block warehouse checks passed (" + passed + " assertions).");
 }
 
