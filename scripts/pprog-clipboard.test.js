@@ -24,6 +24,7 @@ const PART = {
   title: "Part A",
   lines: ["כל סבב במלוא הכוח", "E2MOM 10", "5 back squat"],
   noteLines: 1,
+  formatLine: 1,
   numbered: true,
   lineColors: { 0: "red" },
   lineNums: { 0: 3 },
@@ -35,6 +36,9 @@ const PART = {
 const copy = C.copyPart(PART, "new-id");
 ok("the lines travel", copy.lines.join("|") === PART.lines.join("|"));
 ok("the notes travel", copy.noteLines === 1);
+/* And the shape with them, or the copy is read differently from its original
+   (owner, 2026-09-05). */
+ok("the shape travels", copy.formatLine === 1);
 ok("the colours travel", copy.lineColors["0"] === "red");
 ok("the numbering travels", copy.numbered === true && copy.lineNums["0"] === 3);
 ok("it gets the id it was given", copy.id === "new-id");

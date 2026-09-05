@@ -35,10 +35,10 @@ assert.ok(admin.includes("openIntakeSheet"), "intake opens from stats popover");
 assert.ok(snap.includes('action === "admin_append_chat"'), "chat log API");
 assert.ok(snap.includes("adminChatLog"), "persist chat log");
 assert.ok(snap.includes('action === "admin_push_upgrade_offer"'), "push upgrade offer API");
-assert.ok(/DUCK-WOD Admin . 4\.3\.1/.test(admin), "admin product label 4.3");
+assert.ok(/DUCK-WOD Admin . 4\.3\.2/.test(admin), "admin product label 4.3");
 /* The brain's version belongs HERE and only here: this is where it is the number that
    matters, and the owner asked for it to stay when it left the app (2026-09-03). */
-assert.ok(/Admin 4\.3\.1/.test(admin) && /Coach 2\.3\.14/.test(admin), "admin shows Admin + Coach versions");
+assert.ok(/Admin 4\.3\.2/.test(admin) && /Coach 2\.3\.14/.test(admin), "admin shows Admin + Coach versions");
 /* The visible logout came out on the owner's instruction (2026-09-01): he is the only
    person who opens this and there is no scenario in which he logs out. The FORCED
    logout on a 401 stays — that one is not a control, it is what happens when the
