@@ -333,4 +333,50 @@ ok("where there is no pencil it stays the heading instead", readOnlyDay.indexOf(
 ok("so a read-only day never loses its name", /class="source-name">[^<]+/.test(readOnlyDay));
 ok("it is light yellow and italic", /\.pprog-day-when\{[^}]*color:#F5D97A;font-style:italic/.test(admin));
 
+/* --- a part written here remembers its own SHAPE (owner, 2026-09-05) ------- */
+
+/* The classifier guesses by English words — "note:", "AMRAP", "3 rounds". A session
+   written in Hebrew has none of them, so the guess moved his lines between the boxes
+   every time the card was drawn: he edited a work line on production and it came back
+   as a note, or appeared not to have been saved at all.
+   A part saved from the editor now records how many leading lines are notes and
+   whether the next one is the format line, and that is READ rather than guessed. */
+
+const shaped = PprogDisplay.partsFromDraft({
+  day: "sun",
+  parts: [{ title: "Part C", notes: ["הערה"], format: "AMRAP 12", work: ["10 מתח", "15 שכיבות"] }],
+});
+ok("the shape is written down with the lines", shaped[0].noteLines === 1 && shaped[0].formatLine === 1);
+ok("in the order the card reads them back", shaped[0].lines.join("|") === "הערה|AMRAP 12|10 מתח|15 שכיבות");
+
+const readBack = PprogDisplay.draftFromDayData({ parts: shaped }, false)[0];
+ok("the note comes back a note", readBack.notes.join("|") === "הערה");
+ok("the format line comes back the format line", readBack.format === "AMRAP 12");
+ok("and both work lines come back work", readBack.work.join("|") === "10 מתח|15 שכיבות");
+
+/* The exact shape that used to break: a work line sitting before a line that contains
+   a word the guesser knows. */
+const trap = PprogDisplay.partsFromDraft({
+  day: "sun",
+  parts: [{ title: "Part C", notes: [], format: "", work: ["10 מתח", "AMRAP 12", "שונה"] }],
+});
+const trapBack = PprogDisplay.draftFromDayData({ parts: trap }, false)[0];
+ok("a work line that merely mentions AMRAP stays a work line", trapBack.work.join("|") === "10 מתח|AMRAP 12|שונה");
+ok("and nothing is pulled out as a note", trapBack.notes.length === 0 && trapBack.format === "");
+
+/* Nothing older changes: a part with no shape on file is classified exactly as before. */
+const legacyShape = PprogDisplay.classifyPartLines(["Note: keep the chest up", "AMRAP 12", "10 pull-ups"]);
+ok("a part with no shape on file is still guessed", legacyShape.notes.length === 1 && legacyShape.format === "AMRAP 12" && legacyShape.work.length === 1);
+const halfLegacy = PprogDisplay.classifyPartLines(["הערה", "AMRAP 12", "10 מתח"], 1);
+ok("and one that knows only its notes keeps that much", halfLegacy.notes.join("|") === "הערה" && halfLegacy.format === "AMRAP 12");
+
+/* The shape crosses to the client and back, or their copy is read differently. */
+const Payload = require("../lib/client-view-payload.js");
+ok("the shape is a field the client may carry", Payload.PART_FIELDS.indexOf("formatLine") >= 0);
+const sentShape = Payload.programForClient({
+  weeks: [{ weekIndex: 1, days: { sun: { parts: shaped } } }],
+  approvedThroughWeek: 1,
+}).weeks[0].days.sun.parts[0];
+ok("and it arrives with it", sentShape.formatLine === 1 && sentShape.noteLines === 1);
+
 console.log("All shared pprog-display checks passed.");

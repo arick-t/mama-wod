@@ -6,7 +6,7 @@
 <!-- The back office has no business in a search index. It carried no such tag while
      it was only an athlete admin; now that it also holds paying clients, it says so. -->
 <meta name="robots" content="noindex, nofollow">
-<title>DUCK-WOD Admin · 4.3.1</title>
+<title>DUCK-WOD Admin · 4.3.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -1398,7 +1398,7 @@ header{flex-wrap:wrap;row-gap:8px}
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver" id="login-ver-badge" title="Admin 4.3.1 · Coach 2.3.14">Admin 4.3.1<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.14</span></div>
+    <div class="ver" id="login-ver-badge" title="Admin 4.3.2 · Coach 2.3.14">Admin 4.3.2<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.14</span></div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <label class="login-remember">
       <input type="checkbox" id="pw-remember"/>
@@ -1414,7 +1414,7 @@ header{flex-wrap:wrap;row-gap:8px}
   <header>
     <img class="hdr-duck" src="assets/hamamen-coach-duck.png" alt="" width="30" height="30" draggable="false">
     <span class="logo">DUCK-WOD</span>
-    <span class="ver-badge" id="admin-ver-badge" title="Admin 4.3.1 · Coach 2.3.14">Admin 4.3.1<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.14</span></span>
+    <span class="ver-badge" id="admin-ver-badge" title="Admin 4.3.2 · Coach 2.3.14">Admin 4.3.2<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.14</span></span>
     <span class="count-wrap">
       <span class="count" id="athlete-count" title="הרשימה מתעדכנת לבד כל כמה שניות — בלי לרענן את הדף">0 לקוחות</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
@@ -2058,7 +2058,7 @@ var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
  */
 var COACH_BUILD_MAY_SAVE = false;
 
-var ADMIN_UI_VERSION = "4.3.1";
+var ADMIN_UI_VERSION = "4.3.2";
 var LIVE_COACH_VERSION = "2.3.14";
 var LIVE_COACH_VERSION_FETCHED_AT = 0;
 
@@ -6818,7 +6818,7 @@ tryRestoreAdminSession();
   /* The same number admin.html shows, because this is the same back office and two
      versions on two pages of one product is a bug report waiting to happen.
      scripts/admin-clients-page.test.js fails if it drifts from admin.html's own. */
-  var ADMIN_UI_VERSION = "4.3.1";
+  var ADMIN_UI_VERSION = "4.3.2";
 
   var SESSION_KEY = "dw_admin_session";
   var REMEMBER_KEY = "dw_admin_remember";

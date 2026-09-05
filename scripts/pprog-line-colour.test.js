@@ -134,8 +134,9 @@ const untouched = D.partsFromDraft({
   day: "sun",
   parts: [{ title: "Part A", notes: ["note"], format: "", work: ["5x5"], colors: [], numbered: false }],
 });
-ok("and a part nobody coloured stores exactly what it always did",
-  JSON.stringify(untouched[0]) === JSON.stringify({ id: "sun-0", noteLines: 1, title: "Part A", lines: ["note", "5x5"] }));
+ok("and a part nobody coloured stores nothing but its shape and its lines",
+  JSON.stringify(untouched[0]) ===
+    JSON.stringify({ id: "sun-0", noteLines: 1, formatLine: 0, title: "Part A", lines: ["note", "5x5"] }));
 
 /* --- the numbers can be written over (owner, 2026-09-05) ------------------ */
 
