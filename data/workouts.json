@@ -754,33 +754,6 @@
       },
       {
         "date": "2026-08-28",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Push Press 1x6",
-              "EVERY 2:00 (4 SETS)",
-              "6 Push Press",
-              "*Start Moderate and Build to Moderate Heavy (RPE 7)",
-              "* (Score is the Heaviest Weight)"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "10 ROUNDS FOR TIME",
-            "lines": [
-              "200/175m Row",
-              "48 Double Unders",
-              "8 Push Press 52kg/34kg"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-08-28",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2775,54 +2748,6 @@
     "2026-09-07": [
       {
         "date": "2026-09-07",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-09-07/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "90/90 hip rotatios",
-              "lying hip cross over",
-              "samson stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 cossack squats",
-              "10 good mornings",
-              "10 plank push ups"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "SUMO DEADLIFTS 15MIN",
-            "lines": [
-              "4 Sets",
-              "3 (paused) sumo deadlifts @ 77-82 %",
-              "strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "6 rounds",
-              "",
-              "10 db hang power cleans",
-              "10 db push presses",
-              "100m db farmers carry",
-              "dumbbells: 2x22,5/15kg",
-              "* muscular endurance & aerobic power"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-07",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260907",
@@ -2886,6 +2811,104 @@
       },
       {
         "date": "2026-09-07",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 16.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 20 minutes of:",
+              "25-ft. overhead walking lunge",
+              "8 burpees",
+              "25-ft. overhead walking lunge",
+              "8 chest-to-bar pull-ups",
+              "*Men lunge 95 lb.*",
+              "*Women lunge 65 lb.*"
+            ]
+          }
+        ],
+        "note": "Open: Open 16.1"
+      },
+      {
+        "date": "2026-09-07",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-09-07/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "90/90 hip rotatios",
+              "lying hip cross over",
+              "samson stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 cossack squats",
+              "10 good mornings",
+              "10 plank push ups"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "SUMO DEADLIFTS 15MIN",
+            "lines": [
+              "4 Sets",
+              "3 (paused) sumo deadlifts @ 77-82 %",
+              "strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "6 rounds",
+              "",
+              "10 db hang power cleans",
+              "10 db push presses",
+              "100m db farmers carry",
+              "dumbbells: 2x22,5/15kg",
+              "* muscular endurance & aerobic power"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-09-07",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Front Squat 1x8",
+              "ON 12:00 CLOCK...",
+              "Build to a Heavy 8-Rep Front Squat",
+              "*Retest from 8/4"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "“Partner DANIEL",
+            "lines": [
+              "400m Run (Together)",
+              "60 Pull Ups (Split)",
+              "30 Thrusters (Split)",
+              "* (Score is Rounds + Reps)",
+              "From CrossFit Mainsite…"
+            ],
+            "sub_title2": "AMRAP x 20-25 MIN"
+          }
+        ]
+      },
+      {
+        "date": "2026-09-07",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2935,29 +2958,8 @@
           }
         ],
         "note": "Benchmark: Nasty Girls V2"
-      },
-      {
-        "date": "2026-09-07",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 16.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 20 minutes of:",
-              "25-ft. overhead walking lunge",
-              "8 burpees",
-              "25-ft. overhead walking lunge",
-              "8 chest-to-bar pull-ups",
-              "*Men lunge 95 lb.*",
-              "*Women lunge 65 lb.*"
-            ]
-          }
-        ],
-        "note": "Open: Open 16.1"
       }
     ]
   },
-  "last_updated": "2026-09-07T03:45:44.742212"
+  "last_updated": "2026-09-07T08:43:23.432807"
 }
