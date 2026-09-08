@@ -1,79 +1,5 @@
 {
   "workouts": {
-    "2026-08-24": [
-      {
-        "date": "2026-08-24",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260824",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "JOIN THE 2026 COMMUNITY CUP FROM AUG. 1-31 |",
-              "LEARN MORE"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-08-24",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 15.2",
-            "lines": [
-              "Complete as many rounds and reps as possible in 14 minutes of:",
-              "7 muscle-ups",
-              "50 wall-ball shots",
-              "100 double-unders",
-              "*Men use 20-lb. ball to 10 feet, Women use 14-lb. ball to 9 feet*"
-            ]
-          }
-        ],
-        "note": "Open: Open 15.2"
-      },
-      {
-        "date": "2026-08-24",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-august-24-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "2 Rounds:",
-              "20 dead bugs",
-              "12 spidermans",
-              "Then…",
-              ":15 Empty bar front squat hold +2 front squats",
-              "1:00 ankle MOB",
-              ":15 Empty bar front squat hold +2 front squats",
-              "1:00 Deep squat thoracic rotations",
-              ":15 Empty bar front squat hold +2 front squats",
-              "1:00 Front rack lat/tricep stretch"
-            ]
-          },
-          {
-            "title": "Clean and Jerk",
-            "lines": [
-              "6×3 @70-75%",
-              "Drop and reset)"
-            ]
-          },
-          {
-            "title": "Accessory Strength",
-            "lines": [
-              "4 Rounds:",
-              "20 Hip Extensions",
-              "30 S-Arm bent over row (15/arm)"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-08-25": [
       {
         "date": "2026-08-25",
@@ -162,99 +88,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-08-25",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-08-25/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "crab stretch",
-              "instep rotation",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 scap. push ups",
-              "10 box step ups",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "SKILL 10MIN",
-            "lines": [
-              "emom 10min",
-              "1. 20-30sec headstand hold",
-              "2. 3-5 slow eccentric handstand push ups"
-            ]
-          },
-          {
-            "title": "CONDITIONING 20MIN",
-            "lines": [
-              "10 rounds",
-              "",
-              "4 handstand push ups",
-              "8 d-ball box step ups  20/15kg 60/50cm",
-              "12/10cal bike/ski",
-              "* skill capacity & aerobic power"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-08-25",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Alphabetical (Z-A)",
-            "sub_title": "LOG YOUR BENCHMARKS IN THE APP",
-            "lines": [
-              "Access Hero WODs, benchmark workouts, and daily programming — all in the CrossFit app.",
-              "About CrossFit",
-              "CrossFit Methodology"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-08-25",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Chelsea",
-            "lines": [
-              "On the minute every minute for 30 minutes:",
-              "5 pull-ups",
-              "10 push-ups",
-              "15 air squats",
-              "Scaling options for both workouts:",
-              "pull-ups to ring row or jumping pull ups",
-              "push-ups to against box or rubber band",
-              "Intermediate:",
-              "4 pull-ups",
-              "8 push-ups",
-              "12 air squats",
-              "Beginner:",
-              "3 pull-ups",
-              "6 push-ups",
-              "9 air squats"
-            ]
-          }
-        ],
-        "note": "Benchmark: Chelsea"
       }
     ],
     "2026-08-26": [
@@ -411,17 +244,17 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "Nicole",
+            "title": "Metcon",
             "lines": [
-              "20 min AMRAP:",
-              "Your final score is total pull-up reps after 20minutes.",
-              "Every Time you break on the pull ups go for a run! Choose a scaling option that always allows more than 10 Pull Up repetitions each time.",
-              "400 m  run  or erg cals 25/20",
-              "max rep unbroken pull-ups"
+              "\"Cindy\"",
+              "AMRAP 20",
+              "5 Pull-ups",
+              "10 Push-ups",
+              "15 Air squats"
             ]
           }
         ],
-        "note": "Benchmark: Nicole"
+        "note": "Benchmark: Metcon"
       }
     ],
     "2026-08-27": [
@@ -941,20 +774,6 @@
               "6 Lateral Burpee Over Bar",
               "12 Air Squats",
               "* (Scored by Rounds + Reps Each Set)"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-08-29",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Killer #7SchmallsBuy in 800m run2 rounds50 Burpees40 Pull ups30 Pistols20 KB swings 24/16kg10 HSPUCash out 800m Run"
             ]
           }
         ]
@@ -2959,7 +2778,184 @@
         ],
         "note": "Benchmark: Nasty Girls V2"
       }
+    ],
+    "2026-09-08": [
+      {
+        "date": "2026-09-08",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-09-08/",
+        "sections": [
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "line drills"
+            ]
+          },
+          {
+            "title": "CONDITIONING 32MIN",
+            "lines": [
+              "40 air squats",
+              "200m run",
+              "20 pull ups",
+              "40 sit ups",
+              "* score: slowest round",
+              "* muscular endurance & aerobic capacity"
+            ],
+            "sub_title": "on every 8:00 x 4 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-09-08",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260908",
+        "sections": [
+          {
+            "title": "FOR TIME",
+            "lines": [
+              "800-meter run",
+              "42 kettlebell swings",
+              "21 kettlebell goblet squats",
+              "30 kettlebell swings",
+              "15 kettlebell goblet squats",
+              "18 kettlebell swings",
+              "9 kettlebell goblet squats",
+              "800-meter run",
+              "♀ 53-lb kettlebell",
+              "♂ 70-lb kettlebell"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-08",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-september-8-2026/",
+        "sections": [
+          {
+            "title": "General Warmup",
+            "lines": [
+              "Banded glute activation (10 reps of everything)",
+              "2 Rounds:",
+              "8 empty BB strict press",
+              "8 empty BB Front squats",
+              "5 perfect Split jerks"
+            ]
+          },
+          {
+            "title": "Clean and Jerk",
+            "lines": [
+              "7×2 @ 80-85%",
+              "Drop and reset)"
+            ]
+          },
+          {
+            "title": "AMRAP 1:30 x 6",
+            "lines": [
+              "2 Rope Climbs",
+              "Max box jumps (30/24″)",
+              "1:00 Rest",
+              "Feel: Gas",
+              "Pace: Reach",
+              "Target Score: 12+ Box Jump /rd",
+              "Firebreather: 15+ Box Jump /rd"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-08",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Hero Wod:- Whitten5 Rounds For Time22 Kettlebell Swings 32/24kg22 Box Jumps 24/20 in400 meter Run22 Burpees22 Wall Ball Shots 9/6kg"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-08",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Alphabetical (Z-A)",
+            "sub_title": "LOG YOUR BENCHMARKS IN THE APP",
+            "lines": [
+              "Access Hero WODs, benchmark workouts, and daily programming — all in the CrossFit app.",
+              "About CrossFit",
+              "CrossFit Methodology"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-08",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Nicole",
+            "lines": [
+              "20 min AMRAP:",
+              "Your final score is total pull-up reps after 20minutes.",
+              "Every Time you break on the pull ups go for a run! Choose a scaling option that always allows more than 10 Pull Up repetitions each time.",
+              "400 m  run  or erg cals 25/20",
+              "max rep unbroken pull-ups"
+            ]
+          }
+        ],
+        "note": "Benchmark: Nicole"
+      },
+      {
+        "date": "2026-09-08",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 12.4",
+            "lines": [
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (20 lbs to 10' target)",
+              "90 Double-unders",
+              "30 Muscle-ups",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (14 lbs to 9' target)",
+              "90 Double-unders",
+              "30 Muscle-ups",
+              "MASTERS",
+              "*MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (20lbs to 9' target)",
+              "90 Double-unders",
+              "30 Muscle-ups",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 12 minutes of:",
+              "150 Wall balls (10 lbs to 9' target)",
+              "90 Double-unders"
+            ]
+          }
+        ],
+        "note": "Open: Open 12.4"
+      }
     ]
   },
-  "last_updated": "2026-09-07T14:38:04.160867"
+  "last_updated": "2026-09-08T04:00:04.813213"
 }
