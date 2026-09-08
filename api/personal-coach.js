@@ -1386,7 +1386,7 @@ function buildSystemWithMemory(profile, action, opts) {
       coachPolicyBlock() +
       buildLayerKnowledgeBlock(profile, opts) +
       oneRmTestGateText(opts && opts.blockStartWeek, profile, opts) +
-      loadBasisText(profile, coachAgentFor(profile, o)) +
+      loadBasisText(profile, coachAgentFor(profile, opts)) +
       buildCostCapsRuntimeNote(profile) +
       buildFinishLearningBlock(profile, action) +
       buildExtraSessionsBlock(profile) +

@@ -498,7 +498,7 @@ function testLoadBasisWhenNoLiftsReported() {
     /That is a full prescription an/.test(flat) &&
       /compromise: it is how a lift is loaded before anyone has tested it/.test(flat));
   ok("the fact reaches the programming prompt",
-    /loadBasisText\(profile, coachAgentFor\(profile, o\)\) \+/.test(src));
+    /loadBasisText\(profile, coachAgentFor\(profile, opts\)\) \+/.test(src));
   ok("an athlete who DID report a lift gets no such line",
     /if \(n > 0\) return "";/.test(src));
 }
@@ -547,6 +547,53 @@ function testMidWeekClampIsWeekScoped() {
   );
 }
 
+/* EXECUTION, not source text. Every assertion in this file reads personal-coach.js as a string,
+   which is the right guard for prompt wording and useless against a typo in a variable name — a
+   `coachAgentFor(profile, o)` where the variable is `opts` sailed through the whole suite and came
+   back as a 502 from a live call. So: actually build a programming system prompt, for both
+   products, and see that it does not throw. */
+function testSystemPromptActuallyBuilds() {
+  const src = fs.readFileSync(PC_PATH, "utf8");
+  /* buildSystemWithMemory is not exported, so lift it and everything it closes over the only way
+     available: run the module's own source in a sandbox with the env it expects. */
+  const Module = require("module");
+  const m = new Module(PC_PATH, null);
+  m.filename = PC_PATH; /* relative requires inside the module resolve against this */
+  m.paths = Module._nodeModulePaths(path.dirname(PC_PATH));
+  let threw = null;
+  try {
+    m._compile(
+      src +
+        String.fromCharCode(10) +
+        "module.exports.__test = { buildSystemWithMemory: buildSystemWithMemory };" +
+        String.fromCharCode(10),
+      PC_PATH
+    );
+  } catch (e) {
+    threw = e;
+  }
+  ok("the coach module compiles with a test export appended", !threw, threw && threw.message);
+  if (threw) return;
+  const build = m.exports.__test.buildSystemWithMemory;
+  const profile = { intakeComplete: true, fixedIntakePacket: "FIXED INTAKE COMPLETE", lifts: {} };
+  [
+    ["individual", { forceJson: true, blockStartWeek: 1 }],
+    ["studio", { forceJson: true, blockStartWeek: 1, studioIntake: { sessionsPerWeek: 4 } }],
+    ["continuation", { forceJson: true, blockStartWeek: 9, blockHandoff: "PRIOR BLOCK 1" }],
+  ].forEach(function (row) {
+    let out = null;
+    let err = null;
+    try {
+      out = build(profile, "generate_block", row[1]);
+    } catch (e) {
+      err = e;
+    }
+    ok("the " + row[0] + " programming prompt builds without throwing", !err, err && err.message);
+    ok("the " + row[0] + " prompt carries the layer pack",
+      !!out && out.indexOf("=== COACH LAYER") >= 0);
+  });
+}
+
 function main() {
   console.log("\n=== Coach policy injection (POL-020 guard) ===\n");
   testWholePolicyArrives();
@@ -556,6 +603,7 @@ function main() {
   testBlockLengthIsFourWeeks();
   testClientImprovesRule();
   testOutputBudgetAndTruncation();
+  testSystemPromptActuallyBuilds();
   testBrickFlags();
   testLoadBasisWhenNoLiftsReported();
   testCoachKnowsTheWarmUpField();
