@@ -100,20 +100,53 @@ ok("the screen brought no second login with it", !/id="pwBtn"/.test(screen) && !
 ok("a dead session reaches admin's own handler", /window\.forceAdminLogout/.test(screen));
 ok("admin still owns a login screen", /id="login-screen"/.test(page));
 
-/* --- no AI on this surface either -------------------------------------- */
+/* --- who may ask the coach anything ------------------------------------ */
 
-ok("the client screen names no AI provider", !/gemini|groq|generativelanguage/i.test(screen));
-ok("it never calls personal-coach", !/personal-coach/.test(screen));
-/* One endpoint, and it is the one with no route to a provider in it (POL-029). */
+/* THE RULE CHANGED, and it changed for a reason he stated himself (owner, 2026-09-08):
+ * he is the only person who ever sits in this module, he wants to fill in an intake
+ * and get a whole month back, and what he meant by "no AI for the user" was the APP
+ * and the page a client opens by link.
+ *
+ * So this screen — which lives INSIDE his back office — may ask the coach to write a
+ * month. The half of the rule that protects the end user is asserted below, and again
+ * where it belongs: scripts/client-view-page.test.js and scripts/app-coach-removed.test.js.
+ */
+ok("the client screen names no AI provider directly", !/gemini|groq|generativelanguage/i.test(screen));
+ok("it reaches the coach through our own endpoint", screen.indexOf('adminApiUrl("/api/personal-coach")') >= 0);
+/* Only behind his own button — no timer, no poll, nothing on open. */
+ok("the coach is asked only when he presses the button", screen.indexOf("data-brainsend") >= 0 && screen.indexOf("function brainStep()") >= 0);
+ok("and never on a timer", /setInterval\([^)]{0,80}brainStep/.test(screen) === false);
+/* And it shows him his own answers before spending anything. */
+ok("what will be sent is shown first", screen.indexOf("זה מה שנשלח למאמן — קרא ואשר") >= 0);
+ok("with the price and the fact that it lands unapproved", screen.indexOf("לא מאושר") >= 0);
+
+const clientPage = fs.readFileSync(path.join(root, "client.html"), "utf8");
+const appPage = fs.readFileSync(path.join(root, "index.html"), "utf8");
+ok("the page a client opens by link has no coach at all", clientPage.indexOf("personal-coach") < 0);
+ok("and names no provider", !/gemini|groq|generativelanguage/i.test(clientPage));
+ok("the app's coach tab is still gone", appPage.indexOf('id="tab-pprog"') < 0);
+/* WHICH endpoints this screen may reach, and why the list grew by exactly one.
+ *
+ * Until 2026-09-08 the answer was "one, and it has no route to a provider" (POL-029).
+ * The owner then decided that HIS module — this screen included — is where he fills in
+ * an intake and gets a month back, while the app and the client's link keep no AI at
+ * all. So the list is now two, named one by one rather than loosened into a pattern:
+ *   /api/client-program  — the programme itself, no provider behind it;
+ *   /api/personal-coach  — the coach, asked only behind his own button.
+ * Anything else appearing here is a change nobody decided.
+ */
+const ALLOWED_ENDPOINTS = ["/api/client-program", "/api/personal-coach", "/api/admin-snapshot"];
+const usedEndpoints = Array.from(new Set(screen.match(/\/api\/[a-z-]+/g) || []));
 ok(
-  "it talks to no endpoint that could generate anything",
-  (screen.match(/\/api\/[a-z-]+/g) || []).every(function (u) {
-    return u === "/api/client-program";
+  "it talks only to endpoints that were decided on",
+  usedEndpoints.every(function (u) {
+    return ALLOWED_ENDPOINTS.indexOf(u) >= 0;
   })
 );
-/* The guarantee that actually protects a paying client is on the server, not here. */
+/* The guarantee that actually protects a paying client is on the server, not here: the
+   programme endpoint still carries no route to a provider. */
 ok(
-  "and the endpoint it uses says so about itself",
+  "and the programme endpoint still says so about itself",
   /aiSurface: "none"/.test(fs.readFileSync(path.join(root, "api", "client-program.js"), "utf8"))
 );
 

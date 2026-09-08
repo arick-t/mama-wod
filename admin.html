@@ -302,6 +302,28 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .coach-fill-spin{width:13px;height:13px;border-radius:50%;border:2px solid var(--line);
   border-top-color:var(--brand);animation:coachFillSpin .8s linear infinite;flex:0 0 auto}
 @keyframes coachFillSpin{to{transform:rotate(360deg)}}
+/* THE COACH WRITES THE MONTH — his own module, his own button (owner, 2026-09-08).
+   The panel shows him his own answers before a shekel is spent. */
+.brain-write{border-color:var(--part) !important;color:var(--part) !important}
+.brain-write:hover{background:rgba(129,199,132,.14) !important}
+.brain-panel{margin:0 0 12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;
+  background:var(--bg-elev);display:flex;flex-direction:column;gap:8px}
+.brain-panel.is-bad{border-color:#F2867A}
+.brain-panel.is-busy{flex-direction:row;align-items:center;gap:10px;flex-wrap:wrap}
+.brain-panel-head{font-size:13px;font-weight:800;color:var(--text)}
+.brain-panel-note{font-size:11.5px;color:var(--text-muted);line-height:1.6}
+.brain-facts{display:flex;flex-wrap:wrap;gap:8px;font-size:11.5px;font-weight:700;color:var(--text-muted)}
+.brain-facts span{padding:3px 9px;border:1px solid var(--line);border-radius:999px}
+.brain-brief{margin:0;max-height:260px;overflow:auto;padding:10px 12px;border-radius:10px;
+  background:var(--bg-card);border:1px solid var(--line);font-family:var(--font-ui);
+  font-size:11.5px;line-height:1.6;white-space:pre-wrap;color:var(--text)}
+.brain-go{appearance:none;align-self:flex-start;height:34px;padding:0 16px;border-radius:9px;border:none;
+  background:var(--brand);color:#fff;font:inherit;font-weight:800;font-size:13px;cursor:pointer}
+.brain-cancel{appearance:none;align-self:flex-start;height:34px;padding:0 14px;border-radius:9px;
+  border:1px solid var(--line);background:transparent;color:var(--text-muted);font:inherit;
+  font-weight:700;font-size:12.5px;cursor:pointer}
+.brain-spin{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);
+  border-top-color:var(--brand);animation:coachFillSpin .8s linear infinite;flex:0 0 auto}
 .brick-flags{margin-top:10px;display:flex;flex-direction:column;gap:8px}
 .brick-flags-head{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:#F0A44E}
 .brick-flags-mark{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;
@@ -7650,6 +7672,7 @@ tryRestoreAdminSession();
 <script src="lib/coach-block-handoff.js"></script>
 <script src="lib/coach-brick-flags-view.js"></script>
 <script src="lib/coach-week-fill-plan.js"></script>
+<script src="lib/coach-client-brief.js"></script>
 <script src="lib/normalize-pprog-block.js"></script>
 <script src="lib/pprog-display.js"></script>
 <script src="lib/admin-day-edit.js"></script>
@@ -8251,9 +8274,13 @@ tryRestoreAdminSession();
          that changes it from here on (owner, 2026-09-05). */
       sessionsLineHtml(p) +
       '<span class="spacer meta">' + weeksLabel(p) + "</span>" +
+      /* The coach writes the month. His module, his button — the app and the client's
+         own page have no AI at all, which is the rule he set (owner, 2026-09-08). */
+      brainWriteButtonHtml(p) +
       '<button class="ghost sm" type="button" data-nextblock="1" ' +
       'title="תחקור קצר, ואז ארבעה שבועות חדשים בהמשך לקיים">צור לבנת המשך</button>' +
       '</div>';
+    html += '<div id="cvBrainPanel"></div>';
     html += pendingBlockHtml(p);
     if (unread.length) {
       html += '<div class="banner warn">' + unread.length + ' ימים שהלקוח שינה ואתה עוד לא פתחת. פתח יום כדי לסמן שנקרא.</div>';
@@ -9652,6 +9679,29 @@ tryRestoreAdminSession();
       });
       return;
     }
+    if (t.closest && t.closest("[data-brainwrite]")) {
+      cvBrain.error = "";
+      cvBrain.preview = true;
+      renderBrainPanel();
+      return;
+    }
+    if (t.closest && t.closest("[data-brainclose]")) {
+      cvBrain.preview = false;
+      cvBrain.error = "";
+      renderBrainPanel();
+      return;
+    }
+    if (t.closest && t.closest("[data-brainsend]")) {
+      cvBrain.preview = false;
+      cvBrain.error = "";
+      brainStep();
+      return;
+    }
+    if (t.closest && t.closest("[data-brainresume]")) {
+      cvBrain.error = "";
+      brainStep();
+      return;
+    }
     var bName = t.closest && t.closest("[data-block-rename]");
     if (bName) {
       var bnIdx = parseInt(bName.getAttribute("data-block-rename"), 10) || 0;
@@ -10483,6 +10533,309 @@ tryRestoreAdminSession();
       "ואימון שיוצא מהתצוגה לא נמחק — החזרת המספר תחזיר אותו.</div>";
     m.hidden = false;
     placeMenuAt(m, x, y);
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     THE COACH WRITES THE MONTH.
+
+     He is the only person who ever sits in this module, and what he asked for is one
+     sentence: he fills in an intake and gets a whole month back (owner, 2026-09-08).
+     His rule about "no AI for the user" is about the APP and about the page a client
+     opens by link — never about his own back office.
+
+     Three things this deliberately does NOT do:
+      · it never runs by itself. The intake saves the client; the month is written when
+        he presses the button, because a call costs real money;
+      · it shows him the EXACT text that will be sent first. He asked for that in as
+        many words — "this is a real client" — and reading his own answers back is the
+        only way to be sure the file is right before spending;
+      · it changes nothing about approval. The month lands UNAPPROVED and the client
+        sees nothing until he presses send.
+
+     A blank client is refused: that kind exists for him to write by hand.
+     ══════════════════════════════════════════════════════════════════════ */
+
+  var cvBrain = { running: false, week: 0, total: 0, error: "", preview: false };
+
+  function brainLibs() {
+    return {
+      brief: window.CoachClientBrief || null,
+      plan: window.CoachWeekFillPlan || null,
+    };
+  }
+
+  /** The button, where he can see it — and only where the brain may write. */
+  function brainWriteButtonHtml(p) {
+    var L = brainLibs();
+    if (!L.brief || !L.plan) return "";
+    var allowed = L.brief.canBrainWrite(p);
+    if (!allowed.ok) return "";
+    var plan = L.plan.planFor({ weeks: L.brief.blockWeekWindow(p, currentBlockIndex(p)).weeks });
+    var label = plan.written ? "השלם את החודש עם המאמן" : "תן למאמן לכתוב את החודש";
+    return (
+      '<button class="ghost sm brain-write" type="button" data-brainwrite="1"' +
+      ' title="המאמן כותב את החודש הזה — אתה מאשר לפני שהלקוח רואה">' +
+      "🧠 " + label +
+      "</button>"
+    );
+  }
+
+  /** Which block is on screen: the one the calendar is showing. */
+  function currentBlockIndex(p) {
+    var prog = p || S.program;
+    var blocks = (prog && prog.blocks) || [];
+    var wi = (S.wi | 0) + 1;
+    for (var i = 0; i < blocks.length; i++) {
+      var b = blocks[i] || {};
+      var start = parseInt(b.startWeek, 10) || 1;
+      var end = start - 1 + (parseInt(b.weekCount, 10) || 0);
+      if (wi >= start && wi <= end) return parseInt(b.blockIndex, 10) || 1;
+    }
+    return blocks.length || 1;
+  }
+
+  /**
+   * What is about to be sent, in full, before a shekel is spent.
+   *
+   * This is his own questionnaire read back to him. If a line here is wrong, the file
+   * is wrong — and it is cheaper to find that out now than in a month of programming.
+   */
+  function renderBrainPanel() {
+    var host = el("cvBrainPanel");
+    var L = brainLibs();
+    if (!host || !L.brief || !L.plan || !S.program) return;
+    if (cvBrain.error) {
+      host.innerHTML =
+        '<div class="brain-panel is-bad"><div class="brain-panel-head">הבנייה נעצרה — ' +
+        esc(cvBrain.error) + "</div>" +
+        '<div class="brain-panel-note">' + brainWrittenLine() + " ההמשכה מריצה רק את מה שחסר." +
+        "</div>" +
+        '<button type="button" class="brain-go" data-brainresume="1">המשך מהנקודה שנעצרה</button>' +
+        '<button type="button" class="brain-cancel" data-brainclose="1">סגור</button></div>';
+      return;
+    }
+    if (cvBrain.running) {
+      host.innerHTML =
+        '<div class="brain-panel is-busy"><span class="brain-spin" aria-hidden="true"></span>' +
+        "<span>" + esc(L.plan.progressText({ week: cvBrain.week, total: cvBrain.total })) + "</span>" +
+        '<div class="brain-panel-note">' + brainWrittenLine() +
+        " אתה יכול לעבוד על לקוח אחר בזמן הזה." +
+        "</div></div>";
+      return;
+    }
+    if (!cvBrain.preview) { host.innerHTML = ""; return; }
+
+    var req = L.brief.blockRequestFor({
+      program: S.program,
+      blockIndex: currentBlockIndex(),
+      handoff: typeof coachBlockHandoffFor === "function" ? "" : "",
+    });
+    if (!req.ok) {
+      host.innerHTML = '<div class="brain-panel is-bad"><div class="brain-panel-head">' +
+        esc(req.why || "לא ניתן") + "</div>" +
+        '<button type="button" class="brain-cancel" data-brainclose="1">סגור</button></div>';
+      return;
+    }
+    var prof = req.athleteProfile || {};
+    var kindWord = req.kind === L.brief.STUDIO ? "סטודיו (חדר)" : "מתאמן יחיד";
+    var deload = prof.deloadWeekIndex ? "שבוע " + prof.deloadWeekIndex : "בלי דילואד";
+    host.innerHTML =
+      '<div class="brain-panel"><div class="brain-panel-head">זה מה שנשלח למאמן — קרא ואשר</div>' +
+      '<div class="brain-facts">' +
+      '<span><b>' + esc(kindWord) + "</b></span>" +
+      "<span>לבנה " + currentBlockIndex() + " · מתחילה בשבוע " + req.blockStartWeek + "</span>" +
+      "<span>" + esc(prof.blockWeeks || 4) + " שבועות</span>" +
+      "<span>דילואד: " + esc(deload) + "</span>" +
+      "</div>" +
+      '<pre class="brain-brief" dir="auto">' + esc(req.body.messages[0].text) + "</pre>" +
+      '<div class="brain-panel-note">הבנייה לוקחת 2–4 דקות ועולה בערך ₪0.35. ' +
+      "החודש נכתב <b>לא מאושר</b> — הלקוח לא רואה כלום עד שתשלח.</div>" +
+      '<button type="button" class="brain-go" data-brainsend="1">שלח לבנייה</button>' +
+      '<button type="button" class="brain-cancel" data-brainclose="1">בטל</button></div>';
+  }
+
+  function brainWrittenLine() {
+    var L = brainLibs();
+    if (!L.brief || !L.plan || !S.program) return "";
+    var win = L.brief.blockWeekWindow(S.program, currentBlockIndex());
+    var plan = L.plan.planFor({ weeks: win.weeks });
+    return plan.written + " מתוך " + plan.total + " שבועות נכתבו.";
+  }
+
+  /**
+   * One week at a time, into the client's own programme.
+   *
+   * SERIAL, and the next week is asked for only after this one is SAVED: each call has
+   * to see the weeks before it or all of them reach the same conclusions and the month
+   * repeats itself (coach agent, 2026-09-08).
+   */
+  function brainStep() {
+    var L = brainLibs();
+    if (!L.brief || !L.plan || !S.program) return;
+    var blockIndex = currentBlockIndex();
+    var win = L.brief.blockWeekWindow(S.program, blockIndex);
+    var plan = L.plan.planFor({ weeks: win.weeks });
+    cvBrain.total = plan.total;
+    if (plan.done) {
+      cvBrain.running = false;
+      cvBrain.week = 0;
+      cvBrain.preview = false;
+      banner("good", "החודש נכתב — " + plan.total + " שבועות. עבור עליו, ואז שלח ללקוח.");
+      renderDetail();
+      return;
+    }
+    var localWeek = plan.next;
+    cvBrain.running = true;
+    cvBrain.week = localWeek;
+    renderBrainPanel();
+
+    /* Week 1 of the block is the block itself; the rest are fills. */
+    var req = L.brief.blockRequestFor({ program: S.program, blockIndex: blockIndex });
+    if (!req.ok) {
+      cvBrain.running = false;
+      cvBrain.error = req.why || "לא ניתן לבנות";
+      renderBrainPanel();
+      return;
+    }
+    var body;
+    if (localWeek === 1) {
+      body = req.body;
+    } else {
+      body = L.plan.weekFillBody({
+        block: { weeks: win.weeks },
+        weekIndex: localWeek,
+        athleteProfile: req.athleteProfile,
+        studioIntake: req.studioIntake,
+        blockStartWeek: req.blockStartWeek,
+      });
+      if (!body) {
+        cvBrain.running = false;
+        cvBrain.error = "לא הצלחתי להרכיב את הבקשה לשבוע " + localWeek;
+        renderBrainPanel();
+        return;
+      }
+      body.adminProgramming = true;
+    }
+
+    fetch(adminApiUrl("/api/personal-coach"), {
+      method: "POST",
+      headers: adminAuthHeaders(),
+      body: JSON.stringify(withAdminPassword(body)),
+    })
+      .then(function (r) {
+        return r.json().then(function (j) { return { ok: r.ok, status: r.status, j: j || {} }; });
+      })
+      .then(function (x) {
+        var j = x.j || {};
+        if (!x.ok || !j.ok) {
+          cvBrain.running = false;
+          cvBrain.error =
+            typeof friendlyCoachError === "function"
+              ? friendlyCoachError(j, x.status)
+              : (j.error || "המאמן לא ענה");
+          renderBrainPanel();
+          return;
+        }
+        if (typeof showBrickFlags === "function") showBrickFlags(j);
+        var week = null;
+        if (localWeek === 1) {
+          var built = typeof parseBlockFromText === "function" ? parseBlockFromText(j.text, j) : j.block;
+          var builtWeeks = (built && built.weeks) || [];
+          week = builtWeeks.length ? Object.assign({}, builtWeeks[0], { weekIndex: 1 }) : null;
+          /* The block also comes back with the HEADERS of the weeks after it — theme,
+             phase and the day map — and those are the plan the fills are written
+             against, so they are kept now rather than asked for again. */
+          brainSaveWeek(localWeek, week, builtWeeks.slice(1), j);
+          return;
+        }
+        week = j.week || null;
+        brainSaveWeek(localWeek, week, [], j);
+      })
+      .catch(function (e) {
+        cvBrain.running = false;
+        cvBrain.error = "שגיאת רשת: " + String((e && e.message) || e).slice(0, 120);
+        renderBrainPanel();
+      });
+  }
+
+  /**
+   * Write what came back into the programme, and only into this block's weeks.
+   *
+   * Through the ordinary save, so the version check that refuses a stale write applies
+   * exactly as it does to a day he types himself.
+   */
+  function brainSaveWeek(localWeek, week, headers, res) {
+    var L = brainLibs();
+    if (!week || !week.days) {
+      cvBrain.running = false;
+      cvBrain.error = res && res.truncated === true ? "התשובה נקטעה באמצע" : "השבוע חזר בלי ימים";
+      renderBrainPanel();
+      return;
+    }
+    var blockIndex = currentBlockIndex();
+    var win = L.brief.blockWeekWindow(S.program, blockIndex);
+    var weeks;
+    try {
+      weeks = JSON.parse(JSON.stringify(S.program.weeks || []));
+    } catch (e) {
+      cvBrain.running = false;
+      cvBrain.error = "לא הצלחתי להעתיק את התוכנית";
+      renderBrainPanel();
+      return;
+    }
+    var target = win.fromIndex + localWeek - 1;
+    if (!weeks[target]) {
+      cvBrain.running = false;
+      cvBrain.error = "השבוע הזה לא קיים בתוכנית";
+      renderBrainPanel();
+      return;
+    }
+    var applied = L.plan.applyWeek({ weeks: [weeks[target]] }, Object.assign({}, week, { weekIndex: 1 }));
+    if (!applied.ok) {
+      cvBrain.running = false;
+      cvBrain.error = applied.error || "לא הצלחתי לכתוב את השבוע";
+      renderBrainPanel();
+      return;
+    }
+    weeks[target] = Object.assign({}, applied.block.weeks[0], { weekIndex: weeks[target].weekIndex });
+    /* The headers of the weeks still to come — the plan the fills are written against. */
+    for (var h = 0; h < (headers || []).length; h++) {
+      var idx = win.fromIndex + localWeek + h;
+      if (!weeks[idx] || !headers[h]) continue;
+      weeks[idx] = Object.assign({}, weeks[idx], {
+        phase: String(headers[h].phase || weeks[idx].phase || ""),
+        theme: String(headers[h].theme || weeks[idx].theme || ""),
+        summaryLine: String(headers[h].summaryLine || weeks[idx].summaryLine || ""),
+        overview: Array.isArray(headers[h].overview) && headers[h].overview.length
+          ? headers[h].overview.slice(0, 7)
+          : weeks[idx].overview,
+      });
+    }
+
+    api({
+      action: "save",
+      programId: S.program.programId,
+      expectedVersion: S.program.version,
+      program: { weeks: weeks },
+    }).then(function (r) {
+      if (r.status === 409) {
+        cvBrain.running = false;
+        cvBrain.error = "מישהו שמר בינתיים — פותח מחדש";
+        openClient(S.program.programId);
+        return;
+      }
+      if (r.status !== 200 || !r.body.ok) {
+        cvBrain.running = false;
+        cvBrain.error = "השבוע נבנה אבל לא נשמר — " + ((r.body && r.body.error) || "?");
+        renderBrainPanel();
+        return;
+      }
+      S.program = r.body.program;
+      /* On screen the moment it is saved: he watches the month fill in. */
+      renderDetail();
+      renderBrainPanel();
+      brainStep();
+    });
   }
 
   /** Both menus open where the finger is, and stay inside the window. */

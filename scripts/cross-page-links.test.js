@@ -105,10 +105,16 @@ ok("every coach call from admin is found", coachCalls.length >= 4);
 const postCalls = coachCalls.filter(function (body) {
   return body.indexOf('method: "POST"') >= 0;
 });
-/* Four now: the fourth is the week fill, which is a call of its own per week —
-   a brick is written in four requests from the browser, never four inside one
-   server request (coach agent, 2026-09-08). */
-ok("all of them are POSTs", postCalls.length === 4);
+/* One coach call is a GET — the version check, which asks the endpoint who it is and
+   sends nothing. Every OTHER call is a POST carrying admin auth, and the number of them
+   is deliberately not asserted: it grew the day the coach began writing a client's
+   month (owner, 2026-09-08), and a count here only teaches people to edit the count. */
+const getCalls = coachCalls.filter(function (body) {
+  return body.indexOf('method: "GET"') >= 0;
+});
+ok("the only GET is the version check", getCalls.length === 1);
+ok("everything else is a POST", postCalls.length === coachCalls.length - getCalls.length);
+ok("and there are at least four posts", postCalls.length >= 4);
 postCalls.forEach(function (body, i) {
   const action = (body.match(/action:\s*"([a-z_]+)"/) || [])[1] || "(unknown)";
   ok(
