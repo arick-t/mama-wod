@@ -147,6 +147,14 @@ async function main() {
   ok("and a failed save says so out loud", /הסדר החדש לא נשמר/.test(admin));
   ok("the click that ends a drag opens nobody", /Date\.now\(\) - stripDragEndedAt < 400/.test(admin));
   ok("Escape puts it back", /ev\.key === "Escape" && held/.test(admin));
+  /* The chips SLIDE out of the way rather than teleporting — otherwise it is not
+     obvious that anything moved (owner, 2026-09-08). */
+  ok("the other chips slide out of the way", admin.indexOf("function slideOthers(change)") >= 0);
+  ok("measured before the DOM changes, released after", /var was = chips\.map[\s\S]{0,120}change\(\);/.test(admin));
+  ok("the one in his hand is left alone", /if \(held && c === held\.el\) continue;/.test(admin));
+  ok("and nothing is left holding a transform",
+    admin.indexOf("function clearSlides()") >= 0 &&
+      /clearSlides\(\);[\s\S]{0,40}if \(!was\.dragging\) return;/.test(admin));
 
   console.log("\nAll strip-order checks passed (" + passed + " assertions).");
 }

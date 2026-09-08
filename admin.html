@@ -280,6 +280,22 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .led-bin{appearance:none;background:none;border:none;color:var(--text-muted);cursor:pointer;
   font-size:14px;padding:4px 6px;margin-inline-start:4px;border-radius:6px}
 .led-bin:hover{background:rgba(242,134,122,.16)}
+/* WHAT IS STILL WAITING FOR AN INVOICE (owner, 2026-09-08).
+   Beside the table's heading, at the far end of the row — it is counting that table.
+   Amber while there is work to do; quiet once everything is ticked. */
+.led-deals-head{display:flex;align-items:center;gap:12px}
+.led-due{margin-inline-start:auto;padding:6px 12px;border-radius:10px;text-align:end;
+  border:1px solid #F0A44E55;background:rgba(240,164,78,.10);min-width:150px}
+.led-due-title{font-size:10.5px;font-weight:800;letter-spacing:.3px;color:#F0A44E}
+.led-due-sum{font-size:19px;font-weight:900;color:#F5C88A;line-height:1.15}
+.led-due-range{font-size:10.5px;color:var(--text-muted);font-weight:700;margin-top:1px}
+.led-due.is-clear{border-color:var(--line);background:transparent}
+.led-due.is-clear .led-due-title{color:var(--text-muted)}
+.led-due.is-clear .led-due-sum{color:#6FE39B;font-size:15px}
+@media (max-width:719px){
+  .led-deals-head{flex-wrap:wrap}
+  .led-due{margin-inline-start:0;width:100%;text-align:start}
+}
 .led-fav-rows{display:flex;flex-direction:column;gap:4px;margin-top:12px}
 .led-fav-row{display:grid;grid-template-columns:1.2fr auto 1fr auto;gap:10px;align-items:center;
   padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg-elev);font-size:13px}
@@ -1536,7 +1552,11 @@ header{flex-wrap:wrap;row-gap:8px}
       <div id="ledManual"></div>
     </div>
     <div class="card led-deals">
-      <div class="row" style="margin-bottom:10px"><h2 style="margin:0">טבלת עסקאות</h2></div>
+      <div class="row led-deals-head" style="margin-bottom:10px"><h2 style="margin:0">טבלת עסקאות</h2>
+        <!-- What is still waiting for an invoice: the only number on this screen that is
+             a task rather than a record (owner, 2026-09-08). -->
+        <div id="ledDue"></div>
+      </div>
       <div class="led-filters" id="ledFilters"></div>
       <div id="ledTable"></div>
     </div>
@@ -3493,8 +3513,55 @@ function bindStripDrag() {
     var after = x > box.left + box.width / 2;
     /* Right of the middle means "after this one" — reading order is right-to-left in
        Hebrew but the DOM is not, and insertBefore is the DOM's. */
-    if (after) sb.insertBefore(held.el, chip.nextSibling);
-    else sb.insertBefore(held.el, chip);
+    slideOthers(function () {
+      if (after) sb.insertBefore(held.el, chip.nextSibling);
+      else sb.insertBefore(held.el, chip);
+    });
+  }
+
+  /**
+   * Make the other chips SLIDE out of the way instead of teleporting.
+   *
+   * The whole strip is one row of buttons, so a reorder is a change of DOM order and the
+   * browser redraws it instantly — the chips arrived at their new places with no motion
+   * at all, and it was not obvious that anything had been moved rather than swapped
+   * (owner, 2026-09-08).
+   *
+   * The oldest trick there is: measure where everything was, let the DOM change, then
+   * put each chip back where it was with a transform and release it on the next frame.
+   * Nothing about the layout is faked — only the last 160ms of it.
+   */
+  function slideOthers(change) {
+    var chips = Array.prototype.slice.call(sb.querySelectorAll(".athlete-tab"));
+    var was = chips.map(function (c) { return c.getBoundingClientRect().left; });
+    change();
+    for (var i = 0; i < chips.length; i++) {
+      var c = chips[i];
+      /* Not the one in his hand: that one is following the pointer already. */
+      if (held && c === held.el) continue;
+      var dx = was[i] - c.getBoundingClientRect().left;
+      if (!dx) continue;
+      c.style.transition = "none";
+      c.style.transform = "translateX(" + dx + "px)";
+      /* Two frames: one to take the offset, one to let it go. */
+      (function (el) {
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            el.style.transition = "transform 160ms cubic-bezier(.2,.7,.3,1)";
+            el.style.transform = "";
+          });
+        });
+      })(c);
+    }
+  }
+
+  /** Inline transforms are the animation's own; nothing may be left holding one. */
+  function clearSlides() {
+    var chips = sb.querySelectorAll(".athlete-tab");
+    for (var i = 0; i < chips.length; i++) {
+      chips[i].style.transition = "";
+      chips[i].style.transform = "";
+    }
   }
 
   function finish(save) {
@@ -3503,6 +3570,7 @@ function bindStripDrag() {
     held = null;
     if (was.timer) clearTimeout(was.timer);
     sb.style.touchAction = "";
+    clearSlides();
     if (!was.dragging) return;
     was.el.classList.remove("is-dragging");
     stripDragging = false;
@@ -11159,6 +11227,8 @@ tryRestoreAdminSession();
         return;
       }
       LS.names = res.body.names || [];
+      /* The rows that came back ARE the rows on screen, so the sum beside the heading
+         counts exactly what he is looking at — and says which range that was. */
       LS.services = res.body.services || [];
       renderFilters();
       var grouped = !LS.detail;
@@ -11175,6 +11245,17 @@ tryRestoreAdminSession();
           expandedRows: LS.tableDeals,
         }
       );
+      renderDue();
+    });
+  }
+
+  /** "סכום לחשבונית קרובה" — the rows with no tick, added up. */
+  function renderDue() {
+    var host = el("ledDue");
+    if (!host || !V.dueBoxHtml) return;
+    host.innerHTML = V.dueBoxHtml({
+      amount: L.uninvoicedTotal(LS.tableDeals || []),
+      rangeLabel: rangeLabel(),
     });
   }
 

@@ -562,4 +562,24 @@ ok(
 /* The other direction was already true and must stay true. */
 ok("opening the management tab closes the client screen", /if \(kind === "ledger"\)[\s\S]{0,400}ClientScreen\.close\(\)/.test(page));
 
+/* --- what is still waiting for an invoice (owner, 2026-09-08) ------------- */
+
+/* The only number on this screen that is a TASK rather than a record: what he has not
+   invoiced yet, beside the table it is counting, going to zero as he ticks the rows. */
+ok("the box sits in the table's own heading row", page.indexOf('id="ledDue"') >= 0);
+ok("it is titled the way he asked", viewSrc.indexOf("סכום לחשבונית קרובה") >= 0);
+ok("it counts the rows with no tick", /L\.uninvoicedTotal\(LS\.tableDeals \|\| \[\]\)/.test(page));
+ok("and says which range it counted", /rangeLabel: rangeLabel\(\)/.test(page));
+ok("it is redrawn with the table, so a tick empties it", /host\.innerHTML = V\.tableHtml\([\s\S]{0,400}renderDue\(\);/.test(page));
+ok("nothing owing reads as nothing owing", V.dueBoxHtml({ amount: 0 }).indexOf("הכל חויב") >= 0);
+ok("and a sum reads as a sum", V.dueBoxHtml({ amount: 300 }).indexOf("300") >= 0);
+
+const Ledger = require("../lib/coach-ledger.js");
+ok("three uninvoiced sessions of a hundred are three hundred",
+  Ledger.uninvoicedTotal([{ price: 100 }, { price: 100, invoiced: false }, { price: 100 }]) === 300);
+ok("a ticked row is not counted",
+  Ledger.uninvoicedTotal([{ price: 100, invoiced: true }, { price: 40 }]) === 40);
+ok("and rubbish in a price is not counted either",
+  Ledger.uninvoicedTotal([{ price: "x" }, { price: 25 }]) === 25);
+
 console.log("\nAll admin ledger page checks passed (" + passed + " assertions).");
