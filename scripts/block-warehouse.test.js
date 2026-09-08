@@ -220,6 +220,12 @@ async function main() {
   ok("2. put it on the shelf, under a name he types", admin.indexOf("data-block-fav=") >= 0 && admin.indexOf("שם ללבנה במחסן") >= 0);
   ok("3. plant the copied one in front of it", admin.indexOf("data-block-paste=") >= 0 && admin.indexOf('action: "block_insert"') >= 0);
   ok("4. duplicate it, straight after itself", admin.indexOf("data-block-dup=") >= 0 && admin.indexOf('action: "block_duplicate"') >= 0);
+  /* Its icon is drawn, not typed: the doubled glyph came out huge beside the others
+     (owner, 2026-09-08). */
+  ok(
+    "with an icon the size of the others",
+    /data-block-dup[\s\S]{0,400}<svg viewBox="0 0 24 24" width="13" height="13"/.test(admin)
+  );
   ok("5. delete it, and say plainly that there is no way back", admin.indexOf("data-block-del=") >= 0 && admin.indexOf("אין דרך לשחזר לבנה שנמחקה") >= 0);
   ok("planting from the strip is offered only with a block in hand", admin.indexOf('if (chip.getAttribute("data-kind") === "program" && pageHeldBlock())') >= 0);
   ok("and it lands as the client's last block, unsent", admin.indexOf("לא תישלח אליו עד שתאשר") >= 0);

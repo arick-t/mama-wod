@@ -231,7 +231,10 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .week-menu .wm-item:hover{background:rgba(255,255,255,.06);color:#fff}
 #clientScreen .week-menu .wm-paste:hover,
 .week-menu .wm-paste:hover{background:rgba(76,175,112,.16)}
-.week-menu .wm-ico{width:20px;text-align:center;font-size:14px;color:var(--text-muted)}
+/* The slot lines a DRAWN icon up with a typed one, so the rows read as one list. */
+.week-menu .wm-ico{width:20px;text-align:center;font-size:14px;color:var(--text-muted);
+  display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
+.week-menu .wm-ico svg{display:block}
 .week-menu .wm-item:hover .wm-ico{color:#fff}
 .week-menu .wm-from{display:block;font-size:11px;font-weight:600;color:var(--text-muted);
   margin-top:1px}
@@ -10044,7 +10047,12 @@ tryRestoreAdminSession();
           '<span class="wm-from">' + esc(Clip.describe(held)) + "</span></span></button>"
         : '<span class="wm-hint">אין לבנה מועתקת</span>') +
       '<button type="button" class="wm-item" data-block-dup="' + blockIndex + '">' +
-      '<span class="wm-ico" aria-hidden="true">⧉⧉</span><span>הכפל לבנה</span></button>' +
+      /* Two neat squares, drawn rather than typed: the doubled ⧉⧉ glyph came out huge
+         and uneven beside the others (owner, 2026-09-08). */
+      '<span class="wm-ico" aria-hidden="true">' +
+      '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+      '<rect x="9" y="9" width="11" height="11" rx="2.5"/>' +
+      '<path d="M5 15V6a1 1 0 0 1 1-1h9"/></svg></span><span>הכפל לבנה</span></button>' +
       '<button type="button" class="wm-item wm-danger" data-block-del="' + blockIndex + '">' +
       '<span class="wm-ico" aria-hidden="true">🗑</span><span>מחק לבנה</span></button>';
     m.hidden = false;
