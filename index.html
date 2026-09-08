@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUCK-WOD · v22.3.3</title>
+<title>DUCK-WOD · v23.0</title>
 <meta name="theme-color" content="#111">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -1069,7 +1069,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
 <div class="header">
 <img class="header-logo" src="assets/duck-wod-logo.png" alt="DUCK-WOD">
 <h1>DUCK-WOD</h1>
-<div class="header-sub">DAILY WORKOUTS · v22.3.3</div>
+<div class="header-sub">DAILY WORKOUTS · v23.0</div>
 </div>
 <div class="tabs">
 <button class="tab-btn active" id="tab-browse" onclick="showTab('browse')">Workouts</button>
@@ -9410,14 +9410,14 @@ function requestPprogWeek(retryCount, opts) {
   setPprogStatus(
     "pending",
     opts.autoNextBlock
-      ? "<strong>Coach</strong> — building your next 5-week block…"
-      : "<strong>Coach</strong> — building 5-week block…"
+      ? "<strong>Coach</strong> — building your next 4-week block…"
+      : "<strong>Coach</strong> — building 4-week block…"
   );
   setPprogBuildingOverlay(
     true,
     opts.autoNextBlock
-      ? "<strong>Coach</strong> is building your <strong>next</strong> 5-week block…"
-      : "<strong>Coach</strong> is building your 5-week block…"
+      ? "<strong>Coach</strong> is building your <strong>next</strong> 4-week block…"
+      : "<strong>Coach</strong> is building your 4-week block…"
   );
   var msgs = loadPprogMessages();
   var payloadMsgs = [];
@@ -9432,7 +9432,7 @@ function requestPprogWeek(retryCount, opts) {
     payloadMsgs.push({
       role: "user",
       text:
-        "Previous reply had no valid <<<BLOCK_JSON>>>. Return only a full BLOCK_JSON with exactly 5 weeks now — no long chat. All workout text in English.",
+        "Previous reply had no valid <<<BLOCK_JSON>>>. Return only a full BLOCK_JSON with exactly 4 weeks now — no long chat. All workout text in English.",
     });
   }
   var keepOverlayForRetry = false;
@@ -9678,6 +9678,9 @@ function requestPprogWeekDetail(weekIndex0, fromQueue) {
         phase: week.phase || "",
         overview: overviewSnap,
         summaryLine: week.summaryLine || "",
+        /* Same-brick continuity: the weeks already written. The server compacts them to
+           movements only — week 2 used to be built blind to week 1 and repeated it. */
+        priorWeeks: ((store.currentBlock && store.currentBlock.weeks) || []).slice(0, wi),
         /* Force programming mode — never re-trigger intake from chat history */
         intakeComplete: true,
         athleteProfile: athleteProfilePayload({ forceIntakeComplete: true, omitChat: true }),

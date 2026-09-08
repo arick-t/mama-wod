@@ -1,0 +1,661 @@
+/**
+ * The coach must receive the WHOLE rule book — POL-020 guard.
+ *
+ * Why this file exists: from 2026-07-29 to 2026-09-01, `coachPolicyBlock()` ended in
+ * `raw.slice(0, 12000)` — a character budget copied from the old Groq free-tier
+ * tokens-per-minute estimate. The policy grew 18KB -> 45KB behind it, so 24 of 38
+ * rules (POL-016, POL-020, POL-027, POL-022/023/024, all POL-COST) never reached
+ * either the programming system or chat. Nothing in the suite noticed, because every
+ * other coach test asserts that a rule exists in coach-policy.js — not that it
+ * survives the trip into the prompt.
+ *
+ * So this test does not read the policy file. It executes the real injection function
+ * against the real policy and checks what comes out the other side.
+ *
+ * Run: node scripts/coach-policy-injection.test.js
+ */
+const fs = require("fs");
+const path = require("path");
+
+const root = path.join(__dirname, "..");
+const PC_PATH = path.join(root, "api", "personal-coach.js");
+const COACH_POLICY = require("../api/coach-policy.js");
+
+let passed = 0;
+function ok(name, cond, detail) {
+  if (!cond) {
+    console.error("FAIL:", name, detail || "");
+    process.exitCode = 1;
+    throw new Error(name);
+  }
+  passed++;
+  console.log("ok —", name);
+}
+
+const src = fs.readFileSync(PC_PATH, "utf8");
+
+/** Pull the live coachPolicyBlock out of the handler and run it with a chosen env. */
+function runPolicyBlock(env) {
+  const m = src.match(/\nfunction coachPolicyBlock\(\)\s*\{[\s\S]*?\n\}\n/);
+  if (!m) throw new Error("coachPolicyBlock() not found in api/personal-coach.js");
+  /* eslint-disable no-new-func */
+  const fn = new Function(
+    "COACH_POLICY",
+    "process",
+    m[0] + "\nreturn coachPolicyBlock();"
+  );
+  return fn(COACH_POLICY, { env: env || {} });
+}
+
+function uniquePolIds(text) {
+  const found = String(text || "").match(/POL-[A-Z0-9]+(?:-[0-9]+)?/g) || [];
+  return Array.from(new Set(found)).sort();
+}
+
+function testWholePolicyArrives() {
+  const block = runPolicyBlock({});
+  const policy = String(COACH_POLICY).trim();
+
+  ok(
+    "policy is a non-trivial string",
+    typeof COACH_POLICY === "string" && policy.length > 20000,
+    "length=" + policy.length
+  );
+  ok(
+    "the whole policy reaches the prompt",
+    block.indexOf(policy) >= 0,
+    "block=" + block.length + " policy=" + policy.length
+  );
+
+  const all = uniquePolIds(policy);
+  const arrived = uniquePolIds(block);
+  const missing = all.filter(function (id) {
+    return arrived.indexOf(id) < 0;
+  });
+  ok(
+    "every POL rule id survives injection (" + all.length + " rules)",
+    missing.length === 0,
+    "missing: " + missing.join(", ")
+  );
+
+  /* The rules the 12000-char cut used to eat. Named so a future regression is legible. */
+  [
+    "POL-016",
+    "POL-019",
+    "POL-020",
+    "POL-022",
+    "POL-023",
+    "POL-024",
+    "POL-026",
+    "POL-027",
+    "POL-COST-010",
+  ].forEach(function (id) {
+    ok(
+      "rule reaches the coach: " + id,
+      all.indexOf(id) < 0 || block.indexOf(id) >= 0,
+      id + " is in the policy but not in the injected block"
+    );
+  });
+}
+
+function testNoSilentCap() {
+  const m = src.match(/\nfunction coachPolicyBlock\(\)\s*\{[\s\S]*?\n\}\n/);
+  const body = m ? m[0] : "";
+  ok(
+    "coachPolicyBlock holds no hard-coded character cap",
+    !/\.slice\(\s*0\s*,\s*\d+\s*\)/.test(body),
+    "a numeric slice is back in coachPolicyBlock — that is the 2026-08 defect"
+  );
+}
+
+function testEmergencyValve() {
+  const capped = runPolicyBlock({ COACH_POLICY_MAX_CHARS: "500" });
+  ok(
+    "COACH_POLICY_MAX_CHARS still trims when deliberately set",
+    capped.length < 700 && capped.length > 400,
+    "length=" + capped.length
+  );
+  const ignored = runPolicyBlock({ COACH_POLICY_MAX_CHARS: "0" });
+  ok(
+    "a zero/blank override is ignored, not treated as an empty policy",
+    ignored.indexOf(String(COACH_POLICY).trim()) >= 0
+  );
+}
+
+function testBothPathsStillInject() {
+  const calls = src.match(/coachPolicyBlock\(\)/g) || [];
+  ok(
+    "coachPolicyBlock is injected on both the programming and chat systems",
+    calls.length >= 2,
+    "call sites: " + calls.length
+  );
+  const programming = src.indexOf("PROGRAMMING_SYSTEM_CORE +\n      LEGAL_SAFETY_DIRECTIVE +\n      coachPolicyBlock()");
+  ok(
+    "the programming system still opens with core + safety + policy",
+    programming >= 0,
+    "programming system assembly changed — re-check that policy is still injected there"
+  );
+}
+
+/* A block became four weeks on 2026-09-02, but six lines of the policy the coach reads verbatim
+   still said five — POL-008, POL-009, POL-016, POL-023 (twice) and POL-COST. Four of them sit in
+   rules that the 12,000-character slice used to cut off, so fixing the truncation is what delivered
+   the stale number to the model: the layers said four weeks and the policy said five, inside the
+   same prompt. Guard the source of truth, not the generated file. */
+function testBlockLengthIsFourWeeks() {
+  const md = fs.readFileSync(
+    path.join(__dirname, "..", "experiments", "personal-coach", "coach-policy-rules.md"),
+    "utf8"
+  );
+  ok(
+    "the policy rules never call a brick five weeks",
+    !/5[- ]week|five[- ]week|next 5 weeks/i.test(md),
+    "a five-week reference is back in the policy the coach reads"
+  );
+  ok(
+    "the synced policy module carries no five-week language either",
+    !/5[- ]week|five[- ]week|next 5 weeks/i.test(String(COACH_POLICY)),
+    "coach-policy.js is out of sync with the rules, or a new rule says five weeks"
+  );
+  /* The one live request string that names a week count: the retry sent when a block generation
+     came back without valid JSON. It reaches the model on the continuation path, which is exactly
+     where a wrong week count does damage. The athlete-side intake builder in the same file still
+     says five and is KNOWN debt for the migration branch — it sits behind
+     ATHLETE_AI_BUILD_ENABLED, which is off. */
+  const app = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
+  /* The coach's OWN instructions said five weeks in fifteen places while the intake packet asked
+     for four — two contradictory orders inside one request, which is exactly how a five-week brick
+     gets built. Found 2026-09-03 while writing the output contract for the admin module. */
+  const pcSrc = fs.readFileSync(PC_PATH, "utf8");
+  ok(
+    "the coach never asks the model for a five-week brick",
+    !/5[- ]week|five[- ]week|next 5 weeks|exactly 5 weeks/i.test(pcSrc),
+    "a five-week instruction is back in personal-coach.js"
+  );
+  ok(
+    "the deload week is taken from the request, not assumed",
+    /NAMED IN THE REQUEST/.test(pcSrc) && /NEVER add a fifth/.test(pcSrc)
+  );
+  ok(
+    "the block retry asks the coach for four weeks",
+    /Return only a full BLOCK_JSON with exactly 4 weeks now/.test(app),
+    "the retry instruction is asking for a week count the brick no longer has"
+  );
+}
+
+/* POL-029, added 2026-09-03 as a product foundation rather than a programming preference. It is
+   the rule that makes a repeated block a violation in its own right, so it has to survive
+   injection like every other id — and the maintainers' note has to tie it to POL-009. */
+function testClientImprovesRule() {
+  const md = fs.readFileSync(
+    path.join(__dirname, "..", "experiments", "personal-coach", "coach-policy-rules.md"),
+    "utf8"
+  );
+  const pol = String(COACH_POLICY);
+  ok("POL-029 exists at the source of truth", /### POL-029/.test(md));
+  ok("POL-029 is HARD and global", /### POL-029[\s\S]{0,200}\*\*Type:\*\* HARD/.test(md));
+  ok("POL-029 survives injection into the prompt", /POL-029/.test(pol));
+  ok("two identical blocks are a failure in the policy itself",
+    /Two identical blocks are a failure even when both are good blocks/i.test(
+      pol.replace(/\s+/g, " ")
+    ));
+  ok("the studio case is stronger, not weaker, in the policy",
+    /the requirement is stronger rather than weaker/i.test(pol.replace(/\s+/g, " ")));
+  ok("an unchanged intake is not a licence to repeat, in the policy",
+    /the constraints repeat, the work does not/i.test(pol.replace(/\s+/g, " ")));
+  ok("the maintainers note ties POL-029 to POL-009",
+    /\*\*POL-029\*\* is a product foundation[\s\S]{0,200}POL-009/.test(md));
+}
+
+/* The mid-week clamp, found leaking into week 2 on 2026-09-03 while filling a real test brick.
+   Monday and Tuesday came back REST in week 2 — correct in week 1, two lost training days a week
+   after that. The rule now takes the week index and says the opposite thing for a future week. */
+/* POL-029 widened from block-to-block to week-to-week inside a brick, and the data half that makes
+   it possible: the week-fill prompt now carries a compact movement inventory of the earlier weeks.
+   Both halves asserted, because either alone does nothing. */
+/* The computed half of the 1RM gate. The cadence is arithmetic on blockStartWeek, so it needs no
+   memory of when a lift was last tested — and an unknown brick number must read as NO, because a
+   test we cannot date is a test we do not run. */
+function testOneRmGateIsComputed() {
+  const src = fs.readFileSync(PC_PATH, "utf8");
+  ok("the brick index is derived from the absolute start week",
+    /function brickIndexFromStartWeek\(blockStartWeek\)/.test(src));
+  ok("the window cadence is in code, not left to the model",
+    /function oneRmWindowOpen\(blockStartWeek, competitor\)/.test(src) &&
+      /const every = competitor \? 4 : 6;/.test(src) &&
+      /if \(bi < 3\) return false;/.test(src));
+  ok("an unknown brick number forbids testing",
+    /a test we cannot date is a test we do not run/i.test(src.replace(/\s+/g, " ")));
+  ok("the gate reaches the programming prompt",
+    /oneRmTestGateText\(opts && opts\.blockStartWeek, profile, opts\)/.test(src));
+  ok("a closed window stops the coach and bans a testing week theme",
+    /YOU DO NOT TEST IN THIS BRICK/.test(src) && /do not name a week/.test(src));
+  /* And it stops the COACH only. The owner is why the cadence is safe, and POL-030 puts his manual
+     decision above HARD policy — a gate that blocked him would invert the product. */
+  ok("the gate says out loud that it does not bind the human coach",
+    /THIS BINDS YOU, NOT THE HUMAN COACH/.test(src) &&
+      /is HIS call, not yours/.test(src));
+  ok("an authorisation from the owner opens the window whatever the cadence says",
+    /allowOneRmTest === true\) out\.allowOneRmTest = true/.test(src) &&
+      /THE HUMAN COACH HAS AUTHORISED A TEST IN THIS BRICK/.test(src) &&
+      /His instruction opens the window /.test(src) &&
+      /whatever the cadence says/.test(src));
+  ok("an open window is permission and not an instruction",
+    /an open window is permission, not an instruction/.test(src));
+  ok("an open window still forbids two maximal efforts in one session",
+    /ONE MAJOR LIFT PER SESSION, on its own day\. Never two maximal efforts in one session/.test(
+      src
+    ));
+  ok("the test day carries nothing else maximal",
+    /carries no heavy volume of a second/.test(src) && /A 100% single earns the whole day/.test(src));
+}
+
+/* A studio selling N sessions a week has no calendar, so the mid-week clamp must not touch it.
+   Found 2026-09-04: "Studio Bereshit" buys four sessions a week; the brick was generated on a
+   Friday and week 1 came back with ONE session, because Sunday to Thursday were "before today".
+   Three paid sessions deleted by a rule about a calendar the room does not keep. Weeks 2-4 were
+   correct, which is what made it worth catching — a partial failure reads as a working brick. */
+function testSessionCountStudioHasNoCalendar() {
+  const src = fs.readFileSync(PC_PATH, "utf8");
+  ok("the mid-week rule takes a no-weekdays flag",
+    /function midWeekStartRuleText\(weekIndex, noWeekdays\)/.test(src));
+  ok("a calendar-less studio is told there is nothing to clamp",
+    /SESSIONS ARE SOLD BY COUNT, so there is NO CALENDAR TO CLAMP/.test(src) &&
+      /Produce EVERY session /.test(src) &&
+      /asked for in EVERY week, including this one/.test(src));
+  ok("no session is marked rest because of the date",
+    /never mark a session Rest /.test(src) && /because of what day it is/.test(src));
+  ok("all three prompts pass the flag from the studio intake",
+    (src.match(/sellsSessionsByCount\(body\.studioIntake\)/g) || []).length === 3,
+    "a prompt is still clamping a studio that has no weekdays");
+  ok("the gate helper is imported for it",
+    /const \{ buildLayerPack, sellsSessionsByCount \} = require\("\.\.\/lib\/coach-layers"\);/.test(
+      src
+    ));
+}
+
+function testSameBrickWeekContinuity() {
+  const src = fs.readFileSync(PC_PATH, "utf8");
+  const pol = String(COACH_POLICY).replace(/\s+/g, " ");
+  ok("POL-029 covers weeks inside a brick, not only brick to brick",
+    /This holds BETWEEN WEEKS of one brick as well as between bricks/i.test(pol));
+  ok("rotating the format while keeping the movements is refused in the policy",
+    /rotating the FORMAT while keeping every movement is not rotation/i.test(pol));
+  ok("the coach can summarise the earlier weeks of a brick",
+    /function priorWeeksSummary\(priorWeeks, weekIndex\)/.test(src) &&
+      /function priorWeeksBlock\(body, weekIndex\)/.test(src));
+  ok("both week-detail prompts carry it",
+    (src.match(/  priorWeeksBlock\(body, weekIndex\) \+/g) || []).length === 2,
+    "a week-fill prompt is still blind to the rest of the brick");
+  /* The summary carried "24 inch box" out of week 1 and week 2 dutifully wrote "24 in box" — a
+     prior-week digest teaches whatever it repeats, mistakes included. Imperial is stripped for
+     that reason and not for tidiness. */
+  /* Studio week 2 reused week 1's stations interval AND its EMOM. Two causes: the work/rest
+     stations format produced no label at all, and the one label that did appear was buried as a
+     prefix on a movement list whose instruction said to rotate the MOVEMENTS. */
+  ok("the format detector knows a work/rest interval without the word",
+    src.indexOf('["work/rest intervals"') >= 0 &&
+      src.indexOf("work" + String.fromCharCode(92) + "s*[/]") >= 0);
+  ok("formats get a line of their own",
+    /FORMATS ALREADY USED IN THIS BRICK/.test(src));
+  ok("the instruction forbids reusing a format, not only a movement",
+    /Do NOT reuse a FORMAT named above/.test(src) &&
+      /a fortnight is the minimum before one returns/.test(src));
+  /* Stations are the delivery the studio bought, so listing them as a used format would forbid
+     the thing it pays for. */
+  ok("stations are deliberately absent from the format table",
+    /"stations" is NOT in this list on purpose/.test(src) &&
+      /listing it as a used FORMAT would forbid the thing the room paid for/i.test(
+        src.replace(/\s+/g, " ")
+      ));
+  ok("the summary is aggregated across every line, not just the first",
+    /out holds header strings and MULTI-LINE row blocks/.test(src));
+  ok("the summary strips imperial units too, so it cannot teach them forward",
+    /prior-week summary that carries "24 inch box" forward/i.test(src) &&
+      /in\|inch\|inches\|ft\|foot\|feet\|lb\|lbs/.test(src));
+  ok("the summary strips loads and keeps movements",
+    /movements only, loads stripped/i.test(src));
+  /* Match the phrase halves separately: the sentence is split across two JS string literals, so
+     whitespace-normalising the SOURCE still leaves a `" + "` between them. */
+  ok("a missing summary is stated rather than guessed",
+    /NO PRIOR-WEEK DATA WAS SENT/.test(src) &&
+      /do not guess what the earlier weeks contained/i.test(src) &&
+      /claim continuity you cannot see/i.test(src));
+  ok("the app sends the earlier weeks of the brick",
+    /priorWeeks: \(\(store\.currentBlock && store\.currentBlock\.weeks\) \|\| \[\]\)\.slice\(0, wi\)/.test(
+      fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8")
+    ));
+}
+
+/* The coach is told the WARM-UP packet line exists, in its own description of what a fixed-intake
+   packet contains — otherwise it only ever meets the line by accident. All three cases are there,
+   including the one that holds until the admin module ships the field: no line means write one. */
+/* A percentage needs a number to be a percentage OF. Found 2026-09-04: a competitor who reported
+   no lifts got week 1 in RPE, correctly, and week 2 in "75% 1RM", "80% 1RM Front Squat", "@ 87%" —
+   percentages of a maximum that does not exist. The rule was already in the weightlifting layer,
+   and a rule the model must remember to apply lost to one it applies by habit. So it is a stated
+   fact about the request now, like the deload placement and the 1RM window. */
+/* The deterministic brick check, approved 2026-09-05 with one condition that shaped the whole
+   design: "מאשר, אבל שלא יהיה דבר מציק ומתיש של אזהרות ושל שיח הלוך חזור, מינון הוא המפתח."
+   So it never rejects, never retries, never speaks to the athlete, and only covers violations a
+   machine can be certain about. A warning that is sometimes wrong teaches people to ignore the
+   ones that are right. */
+/* The seven-day box brick, 2026-09-08: 8,188 output tokens against a cap of 8,192, truncated
+   mid-JSON. The marker opened and never closed, nothing parsed, and the caller was told only that
+   there was no block — which reads as a refusal and is not one. This model counts its THINKING
+   against maxOutputTokens, so that response had roughly 1,800 tokens left for the answer. */
+function testOutputBudgetAndTruncation() {
+  const src = fs.readFileSync(PC_PATH, "utf8");
+  ok("the programming budget is no longer 8k",
+    /maxOutputTokens: 32768,/.test(src) &&
+      src.indexOf("maxOutputTokens: 8192,") !== src.lastIndexOf("maxOutputTokens: 8192,"));
+  ok("the reason is recorded next to the number",
+    /counts its THINKING against the same budget/.test(src.replace(/\s+/g, " ")));
+  ok("an unclosed marker is reported as a truncation, not a missing block",
+    /out\.truncated = true;/.test(src) && /out\.truncatedMarker = "BLOCK_JSON";/.test(src));
+  ok("the distinction is stated, because the fix differs",
+    /the fix for a cut-off answer is a retry, not a rewrite/i.test(src.replace(/\s+/g, " ")));
+}
+
+function testBrickFlags() {
+  const { brickFlags, MAX_FLAGS } = require("../lib/coach-brick-flags.js");
+  const src = fs.readFileSync(PC_PATH, "utf8");
+
+  ok("a clean brick produces no flags",
+    brickFlags(
+      { weeks: [{ weekIndex: 1, days: { mon: { parts: [{ title: "A", lines: ["10 squats"] }] } } }] },
+      { lifts: { back_squat: 100 } }
+    ).length === 0);
+
+  ok("three working parts is flagged",
+    /Three or more working parts/.test(
+      brickFlags(
+        {
+          weeks: [
+            {
+              weekIndex: 1,
+              days: {
+                mon: {
+                  parts: [
+                    { title: "Part A - Strength", lines: ["Duration: 20 min"] },
+                    { title: "Part B - Metcon", lines: ["Duration: 15 min"] },
+                    { title: "Part C - More Metcon", lines: ["Duration: 15 min"] },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+        {}
+      ).join(" ")
+    ));
+
+  /* A warm-up does not count toward the three, which is the owner's rule from yesterday. */
+  ok("a leading warm-up part is not counted as working",
+    brickFlags(
+      {
+        weeks: [
+          {
+            weekIndex: 1,
+            days: {
+              mon: {
+                parts: [
+                  { title: "Part A - Dynamic Warm-Up", lines: ["Duration: 8 min"] },
+                  { title: "Part B - Strength", lines: ["Duration: 20 min"] },
+                  { title: "Part C - Metcon", lines: ["Duration: 15 min"] },
+                ],
+              },
+            },
+          },
+        ],
+      },
+      {}
+    ).length === 0);
+
+  /* And the correction that made it accurate: matching the word ANYWHERE excluded "Snatch Complex
+     & Technical Primer", a working snatch complex, and hid a real three-part session. */
+  ok("a working part with a warm-up word later in its title still counts",
+    /Three or more working parts/.test(
+      brickFlags(
+        {
+          weeks: [
+            {
+              weekIndex: 1,
+              days: {
+                fri: {
+                  parts: [
+                    { title: "Part A - Snatch Complex & Technical Primer", lines: ["Duration: 25 min"] },
+                    { title: "Part B - Couplet", lines: ["Duration: 12 min"] },
+                    { title: "Part C - Accessory", lines: ["Duration: 10 min"] },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+        {}
+      ).join(" ")
+    ));
+
+  /* A ROOM is exempt, and this was my bug: the box brick was told not to write percentages and
+     then flagged for writing them. Fifteen people from one month to ten years of training age
+     share no maximum — %1RM is exactly how you write load for a class, each member taking the
+     percentage of THEIR own number. Found 2026-09-08 on the box's first brick. */
+  ok("a studio is exempt from the percentage check",
+    brickFlags(
+      { weeks: [{ weekIndex: 1, days: { mon: { parts: [{ title: "A", lines: ["3 squats @ 80% 1RM"] }] } } }] },
+      { lifts: {} },
+      { agent: "studio" }
+    ).length === 0);
+  ok("the coach does not tell a room to avoid percentages either",
+    /if \(agent === "studio"\) return "";/.test(fs.readFileSync(PC_PATH, "utf8")));
+  ok("percentages with no reported lift are flagged",
+    /reported no 1RM/.test(
+      brickFlags(
+        { weeks: [{ weekIndex: 1, days: { mon: { parts: [{ title: "A", lines: ["3 squats @ 80% 1RM"] }] } } }] },
+        { lifts: {} }
+      ).join(" ")
+    ));
+  ok("the same percentages are fine when a lift WAS reported",
+    brickFlags(
+      { weeks: [{ weekIndex: 1, days: { mon: { parts: [{ title: "A", lines: ["3 squats @ 80% 1RM"] }] } } }] },
+      { lifts: { back_squat: 160 } }
+    ).length === 0);
+
+  /* The owner's under-scaling point, made checkable. "Pull-Ups / Ring Rows" is the CORRECT form —
+     standard on the line, scale beside it — and must never flag; "10 Strict Ring Rows" alone must. */
+  ok("a scale written as the prescription is flagged",
+    /Scaled movement\(s\) written as the prescription/.test(
+      brickFlags(
+        { weeks: [{ weekIndex: 1, days: { mon: { parts: [{ title: "A", lines: ["10 Strict Ring Rows"] }] } } }] },
+        { lifts: { a: 1 } },
+        { agent: "studio" }
+      ).join(" ")
+    ));
+  ok("the standard beside the scale is not flagged",
+    brickFlags(
+      { weeks: [{ weekIndex: 1, days: { mon: { parts: [{ title: "A", lines: ["60 Pull-Ups / Ring Rows"] }] } } }] },
+      { lifts: { a: 1 } },
+      { agent: "studio" }
+    ).length === 0);
+  ok("several scales ride on one flag line, not several",
+    brickFlags(
+      {
+        weeks: [
+          {
+            weekIndex: 1,
+            days: {
+              mon: { parts: [{ title: "A", lines: ["10 Ring Rows", "50 Single-Unders"] }] },
+            },
+          },
+        ],
+      },
+      { lifts: { a: 1 } },
+      { agent: "studio" }
+    ).length === 1);
+  /* And the fact the flag backs up. */
+  ok("the known scales are listed to the coach as a fact",
+    /WHAT GOES ON THE PRESCRIPTION LINE \(HARD\)/.test(fs.readFileSync(PC_PATH, "utf8")) &&
+      /THE DUMBBELL STANDARD IS 22\.5 kg/.test(fs.readFileSync(PC_PATH, "utf8")));
+  ok("a room whose population sits below a standard may set its own",
+    /A ROOM WHOSE WHOLE POPULATION SITS BELOW A STANDARD may set its own/.test(
+      fs.readFileSync(PC_PATH, "utf8")
+    ));
+  ok("imperial units are flagged",
+    /Imperial units/.test(
+      brickFlags(
+        { weeks: [{ weekIndex: 1, days: { mon: { parts: [{ title: "A", lines: ["20 box jumps 24 inch"] }] } } }] },
+        { lifts: { a: 1 } }
+      ).join(" ")
+    ));
+  ok("a five-week brick is flagged",
+    /a brick is four/.test(
+      brickFlags({ weeks: [{}, {}, {}, {}, {}] }, { lifts: { a: 1 } }).join(" ")
+    ));
+
+  ok("the list is capped so it cannot become noise", MAX_FLAGS <= 6);
+  ok("the flags never reject or retry — they only ride along on the response",
+    /out\.brickFlags = f;/.test(src) && !/throw[\s\S]{0,80}brickFlags/.test(src));
+  ok("a failure in the check can never break a response",
+    /catch \(eFlags\) \{\}/.test(src));
+}
+
+function testLoadBasisWhenNoLiftsReported() {
+  const src = fs.readFileSync(PC_PATH, "utf8");
+  const flat = src.replace(/\s+/g, " ");
+  ok("the coach counts the reported lifts",
+    /function reportedLiftCount\(profile\)/.test(src) &&
+      /function loadBasisText\(profile, agent\)/.test(src));
+  ok("with no lifts reported, percentages are forbidden outright",
+    /NO 1RM WAS REPORTED FOR ANY LIFT, so a percentage has nothing to be a percentage of/.test(
+      flat
+    ) && flat.indexOf("Do NOT " + String.fromCharCode(34) + "write %1RM") < 0 &&
+      /write %1RM, and do not write an absolute kilogram figure/.test(flat));
+  ok("an inferred kilogram figure is forbidden too",
+    /do not write an absolute kilogram figure you inferred from nothing/.test(flat));
+  ok("RPE and a rep target are named as the full prescription, not a fallback",
+    /That is a full prescription an/.test(flat) &&
+      /compromise: it is how a lift is loaded before anyone has tested it/.test(flat));
+  ok("the fact reaches the programming prompt",
+    /loadBasisText\(profile, coachAgentFor\(profile, opts\)\) \+/.test(src));
+  ok("an athlete who DID report a lift gets no such line",
+    /if \(n > 0\) return "";/.test(src));
+}
+
+function testCoachKnowsTheWarmUpField() {
+  const src = fs.readFileSync(PC_PATH, "utf8").replace(/\s+/g, " ");
+  ok("the packet description names the warm-up line",
+    /WARM-UP \(a packet line as of 2026-09-04\): the intake now answers whether we write the warm-up/.test(
+      src
+    ));
+  ok("write-one is described with its two properties",
+    /it goes in every session, inside the stated session length, and it is NOT one of the working parts/.test(
+      src
+    ));
+  ok("write-none opens with the first working part",
+    /means write none and open with the first working part/.test(src));
+  ok("an absent line defaults to writing one",
+    /NO WARM-UP LINE AT ALL means WRITE ONE: that is the default, and an older packet simply predates the field/.test(
+      src
+    ));
+  ok("no case removes the primer",
+    /None of those three cases removes the movement-specific PRIMER before a loaded lift/.test(src));
+}
+
+function testMidWeekClampIsWeekScoped() {
+  const src = fs.readFileSync(PC_PATH, "utf8");
+  ok(
+    "the mid-week rule takes a week index",
+    /function midWeekStartRuleText\(weekIndex, noWeekdays\)/.test(src),
+    "the clamp is week-blind again"
+  );
+  ok(
+    "a future week is told the clamp does not apply",
+    /IS ENTIRELY IN THE FUTURE/.test(src) &&
+      /do NOT carry it \" \+[\s\S]{0,40}forward into this week/.test(src)
+  );
+  ok(
+    "a future week programs every scheduled training day",
+    /Program EVERY scheduled training day here/.test(src)
+  );
+  ok(
+    "both week-detail prompts pass the week index",
+    (src.match(/  midWeekStartRuleText\(weekIndex, sellsSessionsByCount\(body\.studioIntake\)\) \+/g) ||
+      []).length === 2,
+    "a week-detail prompt is still calling it without the index"
+  );
+}
+
+/* EXECUTION, not source text. Every assertion in this file reads personal-coach.js as a string,
+   which is the right guard for prompt wording and useless against a typo in a variable name — a
+   `coachAgentFor(profile, o)` where the variable is `opts` sailed through the whole suite and came
+   back as a 502 from a live call. So: actually build a programming system prompt, for both
+   products, and see that it does not throw. */
+function testSystemPromptActuallyBuilds() {
+  const src = fs.readFileSync(PC_PATH, "utf8");
+  /* buildSystemWithMemory is not exported, so lift it and everything it closes over the only way
+     available: run the module's own source in a sandbox with the env it expects. */
+  const Module = require("module");
+  const m = new Module(PC_PATH, null);
+  m.filename = PC_PATH; /* relative requires inside the module resolve against this */
+  m.paths = Module._nodeModulePaths(path.dirname(PC_PATH));
+  let threw = null;
+  try {
+    m._compile(
+      src +
+        String.fromCharCode(10) +
+        "module.exports.__test = { buildSystemWithMemory: buildSystemWithMemory };" +
+        String.fromCharCode(10),
+      PC_PATH
+    );
+  } catch (e) {
+    threw = e;
+  }
+  ok("the coach module compiles with a test export appended", !threw, threw && threw.message);
+  if (threw) return;
+  const build = m.exports.__test.buildSystemWithMemory;
+  const profile = { intakeComplete: true, fixedIntakePacket: "FIXED INTAKE COMPLETE", lifts: {} };
+  [
+    ["individual", { forceJson: true, blockStartWeek: 1 }],
+    ["studio", { forceJson: true, blockStartWeek: 1, studioIntake: { sessionsPerWeek: 4 } }],
+    ["continuation", { forceJson: true, blockStartWeek: 9, blockHandoff: "PRIOR BLOCK 1" }],
+  ].forEach(function (row) {
+    let out = null;
+    let err = null;
+    try {
+      out = build(profile, "generate_block", row[1]);
+    } catch (e) {
+      err = e;
+    }
+    ok("the " + row[0] + " programming prompt builds without throwing", !err, err && err.message);
+    ok("the " + row[0] + " prompt carries the layer pack",
+      !!out && out.indexOf("=== COACH LAYER") >= 0);
+  });
+}
+
+function main() {
+  console.log("\n=== Coach policy injection (POL-020 guard) ===\n");
+  testWholePolicyArrives();
+  testNoSilentCap();
+  testEmergencyValve();
+  testBothPathsStillInject();
+  testBlockLengthIsFourWeeks();
+  testClientImprovesRule();
+  testOutputBudgetAndTruncation();
+  testSystemPromptActuallyBuilds();
+  testBrickFlags();
+  testLoadBasisWhenNoLiftsReported();
+  testCoachKnowsTheWarmUpField();
+  testMidWeekClampIsWeekScoped();
+  testSessionCountStudioHasNoCalendar();
+  testSameBrickWeekContinuity();
+  testOneRmGateIsComputed();
+  console.log("\nPassed:", passed);
+  if (process.exitCode) {
+    console.error("\nPOLICY INJECTION CHECKS FAILED");
+    process.exit(1);
+  }
+  console.log("\nPOLICY INJECTION CHECKS PASSED");
+}
+
+main();
