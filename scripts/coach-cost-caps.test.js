@@ -286,11 +286,13 @@ function testStaticRegressions() {
   const ver = fs.readFileSync(path.join(root, "VERSION"), "utf8").trim();
   const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
   ok("VERSION matches package", ver === pkg.version);
-  ok(
-    "coachVersion 2.2+/2.3.x in API",
-    /const COACH_VERSION = "2\.(2(\.\d+)?|3(\.\d+)?)"/.test(pc) ||
-      /COACH_VERSION = "2\.(2(\.\d+)?|3(\.\d+)?)"/.test(pc)
-  );
+  /* The coach's own number, read as a NUMBER rather than matched against a list of
+     allowed minors: the owner set it to 3.0 for this release (2026-09-08), and a guard
+     that spells out which versions are acceptable fails every release and teaches
+     people to edit the guard instead of reading it. */
+  const coachVer = ((pc.match(/COACH_VERSION = "([\d.]+)"/) || [])[1] || "0");
+  ok("the API names a coach version", /^\d+(\.\d+)*$/.test(coachVer));
+  ok("and it is 2.2 or later", parseFloat(coachVer) >= 2.2);
   /* Minor is matched as a range, not a list — a hardcoded list fails every release
      and teaches people to edit the guard instead of reading it. */
   /* Compared as numbers, not matched as a regex of allowed minors: the old pattern
@@ -303,11 +305,12 @@ function testStaticRegressions() {
     "the app header carries a real version, 21.3 or later",
     !!subM && (subMajor > 21 || (subMajor === 21 && subMinor >= 3))
   );
-  ok(
-    "coach subtitle 2.2+/2.3",
-    /COACH_VERSION = "2\.(2(\.\d+)?|3(\.\d+)?)"/.test(idx) ||
-      /COACH · v2\.(2(\.\d+)?|3(\.\d+)?)\b/.test(idx)
-  );
+  /* Same rule as the API's: a number, compared as a number. */
+  const appCoachVer = (idx.match(/COACH_VERSION = "([\d.]+)"/) || [])[1] || "0";
+  ok("the app names the same kind of coach version", /^\d+(\.\d+)*$/.test(appCoachVer));
+  ok("2.2 or later", parseFloat(appCoachVer) >= 2.2);
+  /* And the two sides agree — a mismatch here is how the header lies about the brain. */
+  ok("the app and the API name the same coach", appCoachVer === coachVer);
 }
 
 function testModulesLoad() {
