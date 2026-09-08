@@ -1255,6 +1255,9 @@
           );
           return;
         }
+        /* Whatever the brain noticed about this block — notes to the owner, not errors,
+           and a cut answer gets its own "try again" (coach agent, 2026-09-08). */
+        if (typeof showBrickFlags === "function") showBrickFlags(j);
         var block =
           typeof parseBlockFromText === "function" ? parseBlockFromText(j.text, j) : j.block;
         if (!block || !block.weeks || !block.weeks.length) {

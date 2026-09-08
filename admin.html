@@ -285,6 +285,24 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .led-pen{appearance:none;background:none;border:none;color:var(--text-muted);cursor:pointer;
   font-size:14px;padding:4px 6px;margin-inline-start:4px;border-radius:6px}
 .led-pen:hover{background:rgba(255,255,255,.10);color:#fff}
+/* WHAT THE BRAIN NOTICED (coach agent, 2026-09-08).
+   Amber and quiet: these are notes to the owner about a block that is valid and saved,
+   so nothing here is red and nothing here is a button. The CUT row is the exception —
+   a cut answer is a delivery failure, and asking again is the fix. */
+.brick-flags{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+.brick-flags-head{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:#F0A44E}
+.brick-flags-mark{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;
+  border-radius:50%;border:1.5px solid currentColor;font-size:11px;font-weight:900;font-style:italic}
+.brick-flags-count{margin-inline-start:auto;font-size:11px;color:var(--text-muted);font-weight:700}
+.brick-flags-list{margin:0;padding-inline-start:26px;display:flex;flex-direction:column;gap:5px;
+  font-size:12.5px;line-height:1.5;color:var(--text)}
+.brick-flags-foot{font-size:11.5px;color:var(--text-muted);line-height:1.5}
+.brick-cut{border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:rgba(255,255,255,.03)}
+.brick-cut-head{font-size:12px;font-weight:800;color:var(--text)}
+.brick-cut-marker{font-size:10.5px;font-weight:700;color:var(--text-muted)}
+.brick-cut-body{font-size:11.5px;color:var(--text-muted);line-height:1.5;margin-top:3px}
+.brick-cut-retry{appearance:none;margin-top:8px;height:30px;padding:0 14px;border-radius:8px;border:none;
+  background:var(--brand);color:#fff;font:inherit;font-weight:800;font-size:12px;cursor:pointer}
 .led-bin:hover{background:rgba(242,134,122,.16)}
 /* WHAT IS STILL WAITING FOR AN INVOICE (owner, 2026-09-08).
    Beside the table's heading, at the far end of the row — it is counting that table.
@@ -2087,6 +2105,9 @@ header{flex-wrap:wrap;row-gap:8px}
     </div>
     <div class="intake-footer" id="intake-footer">
       <div class="intake-status" id="intake-status"></div>
+      <!-- What the brain noticed about the block it just wrote, and what it could not
+           finish. Notes, not errors — see lib/coach-brick-flags.js. -->
+      <div id="intake-flags"></div>
       <button type="button" class="btn-secondary" id="intake-build-btn" style="display:none" onclick="generateIntakeBlock()">בנה תוכנית</button>
     </div>
   </div>
@@ -7160,6 +7181,36 @@ function sendIntakeMessage() {
     });
 }
 
+/**
+ * Show what the brain noticed about the block it just wrote.
+ *
+ * Flags are notes to the owner and carry no button: the block is valid and saved, and
+ * dosage is the planning — he decides whether to touch it. A CUT answer is a different
+ * thing and does get "try again", because trying again is the fix
+ * (coach agent, 2026-09-08).
+ */
+function showBrickFlags(res) {
+  var host = document.getElementById("intake-flags");
+  if (!host) return;
+  if (!window.CoachBrickFlags) { host.innerHTML = ""; return; }
+  host.innerHTML = window.CoachBrickFlags.flagsBoxHtml(res || {}, {
+    retryFn: "retryIntakeBlockAfterCut",
+  });
+}
+window.showBrickFlags = showBrickFlags;
+
+/** The one button a cut answer gets: ask for the same block again. */
+function retryIntakeBlockAfterCut() {
+  var host = document.getElementById("intake-flags");
+  if (host) host.innerHTML = "";
+  if (typeof window.generateIntakeBlockAgain === "function") {
+    window.generateIntakeBlockAgain();
+    return;
+  }
+  generateIntakeBlock();
+}
+window.retryIntakeBlockAfterCut = retryIntakeBlockAfterCut;
+
 function generateIntakeBlock() {
   if (intakeState.busy) return;
   setIntakeBusy(true);
@@ -7206,6 +7257,8 @@ function generateIntakeBlock() {
       if (j.text) {
         intakeState.messages.push({ role: "model", text: String(j.text).slice(0, 6000) });
       }
+      /* Whatever the brain noticed, said once, whether or not the block parsed. */
+      showBrickFlags(j);
       var block = parseBlockFromText(j.text, j);
       if (!block) {
         showIntakeBuilding(false);
@@ -7359,6 +7412,7 @@ tryRestoreAdminSession();
 <script src="lib/admin-people-strip.js"></script>
 <script src="lib/pprog-clipboard.js"></script>
 <script src="lib/coach-block-handoff.js"></script>
+<script src="lib/coach-brick-flags.js"></script>
 <script src="lib/normalize-pprog-block.js"></script>
 <script src="lib/pprog-display.js"></script>
 <script src="lib/admin-day-edit.js"></script>
