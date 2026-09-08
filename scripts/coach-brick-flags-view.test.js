@@ -26,7 +26,7 @@ function ok(name, cond) {
   console.log("ok —", name);
 }
 
-const F = require("../lib/coach-brick-flags.js");
+const F = require("../lib/coach-brick-flags-view.js");
 const root = path.join(__dirname, "..");
 const admin = fs.readFileSync(path.join(root, "admin.html"), "utf8");
 const fixed = fs.readFileSync(path.join(root, "admin-fixed-intake.js"), "utf8");
@@ -85,7 +85,7 @@ ok("and the one button belongs to the cut", (both.match(/<button/g) || []).lengt
 
 /* --- on the page ---------------------------------------------------------- */
 
-ok("the page loads the formatter", admin.indexOf('<script src="lib/coach-brick-flags.js"></script>') >= 0);
+ok("the page loads the formatter", admin.indexOf('<script src="lib/coach-brick-flags-view.js"></script>') >= 0);
 ok("there is a place for it under the status line", admin.indexOf('<div id="intake-flags"></div>') >= 0);
 ok("both senders report what came back", admin.indexOf("showBrickFlags(j);") >= 0 && fixed.indexOf("showBrickFlags(j)") >= 0);
 ok("the try-again asks for the same block again", admin.indexOf("function retryIntakeBlockAfterCut()") >= 0);

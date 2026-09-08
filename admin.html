@@ -7199,8 +7199,8 @@ function sendIntakeMessage() {
 function showBrickFlags(res) {
   var host = document.getElementById("intake-flags");
   if (!host) return;
-  if (!window.CoachBrickFlags) { host.innerHTML = ""; return; }
-  host.innerHTML = window.CoachBrickFlags.flagsBoxHtml(res || {}, {
+  if (!window.CoachBrickFlagsView) { host.innerHTML = ""; return; }
+  host.innerHTML = window.CoachBrickFlagsView.flagsBoxHtml(res || {}, {
     retryFn: "retryIntakeBlockAfterCut",
   });
 }
@@ -7419,7 +7419,7 @@ tryRestoreAdminSession();
 <script src="lib/admin-people-strip.js"></script>
 <script src="lib/pprog-clipboard.js"></script>
 <script src="lib/coach-block-handoff.js"></script>
-<script src="lib/coach-brick-flags.js"></script>
+<script src="lib/coach-brick-flags-view.js"></script>
 <script src="lib/normalize-pprog-block.js"></script>
 <script src="lib/pprog-display.js"></script>
 <script src="lib/admin-day-edit.js"></script>
