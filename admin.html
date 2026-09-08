@@ -9451,7 +9451,15 @@ tryRestoreAdminSession();
    * ordinary paste into the programme.
    */
   function pastePartHere(weekNum, dayKey, part) {
-    if (S.edit && (S.edit.wi | 0) === weekNum - 1 && S.edit.day === dayKey) {
+    /* Pasting onto a day he is not editing OPENS that day for editing and plants the
+       part in the draft, so he carries on writing where the part landed instead of
+       being handed a saved day and having to press the pencil (owner, 2026-09-08). */
+    var onThisDay = !!(S.edit && (S.edit.wi | 0) === weekNum - 1 && S.edit.day === dayKey);
+    if (!onThisDay && typeof window.cvStartEdit === "function") {
+      window.cvStartEdit(weekNum - 1, dayKey);
+      onThisDay = !!(S.edit && (S.edit.wi | 0) === weekNum - 1 && S.edit.day === dayKey);
+    }
+    if (onThisDay) {
       var D = pprogLib();
       if (!Array.isArray(S.edit.parts)) S.edit.parts = [];
       S.edit.parts.push(draftPartFrom(part, D));

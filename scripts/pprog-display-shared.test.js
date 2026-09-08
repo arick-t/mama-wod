@@ -406,4 +406,49 @@ const sharedCss = fs.readFileSync(path.join(__dirname, "..", "styles", "pprog-di
 ok("the column is a PHONE rule and nothing else", /@media \(max-width:719px\)\{[\s\S]*?li\.pprog-li-numbered\{[^}]*direction:ltr/.test(sharedCss));
 ok("the text keeps its own box on the row", /li\.pprog-li-numbered \.pprog-li-text\{flex:1/.test(sharedCss));
 
+/* --- a part he NAMED is a part (owner, 2026-09-08) ------------------------ */
+
+/* "Full session details still loading…" belongs to a day the coach's brain has planned
+   but not yet filled. His own day — headings typed, lines still to come — was being
+   drawn as that, which read as if his work had been lost. */
+function dayWith(parts, focus) {
+  return {
+    weekIndex: 1,
+    days: { sun: { parts: parts }, mon: { parts: [] }, tue: { parts: [] }, wed: { parts: [] }, thu: { parts: [] }, fri: { parts: [] }, sat: { parts: [] } },
+    overview: [{ day: "sun", focus: focus }],
+  };
+}
+function cardFor(week) {
+  return PprogDisplay.renderBrickView({
+    block: { blockStart: "2026-09-06", weeks: [week] },
+    activeWi: 0, activeDay: "sun", calMode: "week", allowEdit: true, showFooter: false,
+  });
+}
+
+const namedOnly = cardFor(dayWith([{ id: "a", title: "Part A — גב", lines: [] }], "Part A — גב"));
+ok("a part he named is not replaced by a loading message", /still loading/.test(namedOnly) === false);
+ok("and his own heading is what he sees", namedOnly.indexOf("גב") >= 0);
+
+const brainPlanned = cardFor(dayWith([], "Engine"));
+ok("a day planned and not yet filled still says so", /still loading/.test(brainPlanned));
+const emptyBox = cardFor(dayWith([{ id: "a", title: "Part A", lines: [] }], "Engine"));
+ok("and so does one holding nothing but the empty box the editor opens with", /still loading/.test(emptyBox));
+
+/* That empty box is no longer SAVED either: it used to be written in front of whatever
+   was pasted underneath, and the day's focus line was then taken from it. */
+const savedParts = PprogDisplay.partsFromDraft({
+  day: "sun",
+  parts: [
+    { title: "Part A", notes: [""], format: "", work: [""] },
+    { title: "Part A", notes: ["הערה"], format: "", work: ["10 מתח"] },
+  ],
+});
+ok("an untouched default part is not saved", savedParts.length === 1);
+ok("and what he wrote is", savedParts[0].lines.join("|") === "הערה|10 מתח");
+const namedEmpty = PprogDisplay.partsFromDraft({
+  day: "sun",
+  parts: [{ title: "Part A — גב", notes: [], format: "", work: [""] }],
+});
+ok("a part he named is saved even with nothing under it yet", namedEmpty.length === 1 && namedEmpty[0].title === "Part A — גב");
+
 console.log("All shared pprog-display checks passed.");

@@ -1658,7 +1658,14 @@ button.ghost:hover{color:var(--text)}
    */
   function pastePartHere(wi, dayKey, part) {
     var D = pprogLib();
-    if (state.edit && (state.edit.wi | 0) === (wi | 0) && state.edit.day === dayKey) {
+    /* The same as on the owner's side: pasting onto a day that is not open opens it,
+       so the part lands somewhere he can carry on typing (owner, 2026-09-08). */
+    var onThisDay = !!(state.edit && (state.edit.wi | 0) === (wi | 0) && state.edit.day === dayKey);
+    if (!onThisDay && typeof window.cvStartEdit === "function") {
+      window.cvStartEdit(wi, dayKey);
+      onThisDay = !!(state.edit && (state.edit.wi | 0) === (wi | 0) && state.edit.day === dayKey);
+    }
+    if (onThisDay) {
       if (!Array.isArray(state.edit.parts)) state.edit.parts = [];
       var made = D && D.draftFromDayData ? D.draftFromDayData({ parts: [part] }, false) : null;
       state.edit.parts.push(

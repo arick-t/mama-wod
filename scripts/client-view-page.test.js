@@ -296,7 +296,8 @@ ok("right-clicking a week opens it", /addEventListener\("contextmenu"[\s\S]{0,90
 ok("a part heading can be copied", /data-copy-part=/.test(html));
 ok("and planted under the last part of another day", /data-paste-part=/.test(html));
 ok("through the ordinary client edit", /saveCopied\(\[\{ weekIndex: wi \+ 1, dayKey: dayKey, rest: false, parts: next \}\], "Part"\)/.test(html));
-ok("into the draft when that day is the one open", /if \(state\.edit && \(state\.edit\.wi \| 0\) === \(wi \| 0\) && state\.edit\.day === dayKey\)/.test(html));
+ok("into the draft when that day is the one open", /var onThisDay = !!\(state\.edit && \(state\.edit\.wi \| 0\) === \(wi \| 0\) && state\.edit\.day === dayKey\);/.test(html));
+ok("and a day that is not open is opened first", /if \(!onThisDay && typeof window\.cvStartEdit === "function"\)/.test(html));
 ok("using the shared clipboard", /window\.PprogClipboard/.test(html) && /lib\/pprog-clipboard\.js/.test(html));
 ok("and right-clicking a day", /closest\("\[data-day\]\[data-wi\]"\)/.test(html));
 ok("a long press is the right-click a phone has not got", /addEventListener\(\s*\n?\s*"touchstart"/.test(html));

@@ -1066,7 +1066,10 @@ ok("the menu offers to copy the part", /data-part-copy=/.test(screen));
 ok("and to plant one, only when one is on the clipboard", /var held = clipRead\("part"\);[\s\S]{0,900}data-part-paste=/.test(screen));
 /* Nothing is overwritten, so nothing is confirmed: it goes UNDER the last part. */
 ok("a pasted part is added, never written over", /החלק נשתל מתחת לחלק האחרון/.test(screen));
-ok("into the draft when that day is open for editing", /if \(S\.edit && \(S\.edit\.wi \| 0\) === weekNum - 1 && S\.edit\.day === dayKey\)/.test(screen));
+ok("into the draft when that day is open for editing", /var onThisDay = !!\(S\.edit && \(S\.edit\.wi \| 0\) === weekNum - 1 && S\.edit\.day === dayKey\);/.test(screen));
+/* And a day that is NOT open is opened first, so the part lands somewhere he can
+   carry on typing (owner, 2026-09-08). */
+ok("a day that is not open is opened for him", /if \(!onThisDay && typeof window\.cvStartEdit === "function"\)/.test(screen));
 ok("what he sees is what he copies", /draftPartAt\(pWi, pDay, pIdx\) \|\| storedPartAt\(pWi - 1, pDay, pIdx\)/.test(screen));
 
 /* --- one clipboard, four sizes, across clients ---------------------------- */
