@@ -60,6 +60,24 @@ const calRows = drawn.split("pprog-cal-row").slice(1).map(function (r) {
   return (r.match(/pprog-cal-cell is-off/g) || []).length;
 });
 ok("a narrower week keeps its place in the grid", calRows[0] === 1 && calRows[1] === 1);
+/* But only inside its OWN block: each month is its own grid with its own headings, so
+   a block of three planted in a programme of five is drawn as three (owner, 2026-09-08). */
+const twoBlocks = D.renderBrickView({
+  block: {
+    blockStart: "2026-09-06",
+    blocks: [
+      { blockIndex: 1, startWeek: 1, weekCount: 2, approvedAt: "2026-09-01T00:00:00Z" },
+      { blockIndex: 2, startWeek: 3, weekCount: 2, approvedAt: null },
+    ],
+    weeks: [emptyWeek(1, 3), emptyWeek(2, 3), emptyWeek(3, 5), emptyWeek(4, 5)],
+  },
+  activeWeekIndex: 0, activeDay: "sun", calMode: "month", sessionColumns: 5, showFooter: false,
+  blockGroups: [{ startWeek: 1, weekCount: 2 }, { startWeek: 3, weekCount: 2 }],
+});
+const widths = (twoBlocks.match(/--cal-cols:\d/g) || []).join(" ");
+ok("a three-session month is drawn as three", /--cal-cols:3/.test(widths));
+ok("beside a five-session month drawn as five", /--cal-cols:5/.test(widths));
+ok("and neither has an empty place in it", twoBlocks.indexOf("pprog-cal-cell is-off") < 0);
 ok("and a week that holds five fills the row", calRows[2] === 0 && calRows[3] === 0);
 ok("and that place is invisible rather than clickable", /\.pprog-cal-cell\.is-off\{visibility:hidden;pointer-events:none\}/.test(css));
 
@@ -69,10 +87,13 @@ const plain = D.renderBrickView({
 });
 ok("a programme nobody has changed draws exactly as it did", plain.indexOf("is-off") < 0 && plain.indexOf("--cal-cols") < 0);
 
+/* One week on its own is exactly as wide as it is — there is nothing to line it up
+   with, so it needs no empty places at all (owner, 2026-09-08). */
 const weekView = D.renderBrickView({
-  block: mixed, activeWi: 0, activeDay: "sun", calMode: "week", sessionColumns: 4, showFooter: false,
+  block: mixed, activeWeekIndex: 2, activeDay: "sun", calMode: "week", sessionColumns: 4, showFooter: false,
 });
-ok("one week on its own is drawn the same way", (weekView.match(/pprog-cal-cell is-off/g) || []).length === 1);
+ok("one week on its own needs no empty places", weekView.indexOf("pprog-cal-cell is-off") < 0);
+ok("and it is as wide as that week", /--cal-cols:5/.test(weekView));
 
 /* His case: sold as five, every week cut to three. The grid must be three wide — it
    kept five columns open and drew three sessions under five headings, because the width

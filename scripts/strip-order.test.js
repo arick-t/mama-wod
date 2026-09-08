@@ -149,12 +149,18 @@ async function main() {
   ok("Escape puts it back", /ev\.key === "Escape" && held/.test(admin));
   /* The chips SLIDE out of the way rather than teleporting — otherwise it is not
      obvious that anything moved (owner, 2026-09-08). */
-  ok("the other chips slide out of the way", admin.indexOf("function slideOthers(change)") >= 0);
-  ok("measured before the DOM changes, released after", /var was = chips\.map[\s\S]{0,120}change\(\);/.test(admin));
-  ok("the one in his hand is left alone", /if \(held && c === held\.el\) continue;/.test(admin));
-  ok("and nothing is left holding a transform",
-    admin.indexOf("function clearSlides()") >= 0 &&
-      /clearSlides\(\);[\s\S]{0,40}if \(!was\.dragging\) return;/.test(admin));
+  /* One slide, shared by both drags on this page — the strip of people and the stack of
+     blocks — so moving something looks the same wherever he does it
+     (owner, 2026-09-08). */
+  ok("the other chips slide out of the way", admin.indexOf("function slideThings(nodes, skip, change)") >= 0);
+  ok("measured before the DOM changes, released after", /var was = list\.map[\s\S]{0,200}change\(\);/.test(admin));
+  ok("the one in his hand is left alone", /if \(skip && node === skip\) continue;/.test(admin));
+  ok("the strip uses it", /slideThings\(sb\.querySelectorAll\(".athlete-tab"\), held && held\.el, change\)/.test(admin));
+  ok("and so does the stack of blocks", /slideThings\(list, held\.el, function \(\) \{/.test(admin));
+  ok("nothing is left holding a transform",
+    admin.indexOf("function clearSlides(nodes)") >= 0 &&
+      /clearChipSlides\(\);[\s\S]{0,40}if \(!was\.dragging\) return;/.test(admin));
+  ok("the chip in his hand is lifted the way a block is", /\.athlete-tab\.is-dragging\{[\s\S]{0,200}outline:2px dashed/.test(admin));
 
   console.log("\nAll strip-order checks passed (" + passed + " assertions).");
 }

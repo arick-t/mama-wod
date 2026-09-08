@@ -291,6 +291,30 @@ async function main() {
   ok("the clipboard is what carries the shape", /out\.sessions = sessions;/.test(fs.readFileSync(path.join(__dirname, "..", "lib", "pprog-clipboard.js"), "utf8")));
   ok("and the endpoint stamps it from the programme it was sold as", api.indexOf("function blockWeeksForClipboard(") >= 0);
 
+  /* --- a shelved block can be renamed (owner, 2026-09-08) ----------------- */
+
+  const shelved = await store.saveWarehouseBlock({
+    name: "משה שבוע 3",
+    intake: { scheduleMode: "session_count", sessionsPerWeek: 3 },
+    weeks: [{ days: {}, overview: [] }],
+    sourceName: "משה",
+  });
+  const renamedShelf = await store.renameWarehouseBlock(shelved.row.id, "כוח למתאמן מתחיל");
+  ok("a block on the shelf can be renamed", renamedShelf.ok && renamedShelf.name === "כוח למתאמן מתחיל");
+  const shelfRows = await store.readWarehouseIndex();
+  ok("the table shows the new name", shelfRows.rows.filter(function (r) { return r.id === shelved.row.id; })[0].name === "כוח למתאמן מתחיל");
+  const shelfBlock = await store.readWarehouseBlock(shelved.row.id);
+  ok("and the block itself carries it, so planting uses it", shelfBlock.block.name === "כוח למתאמן מתחיל");
+  const noName = await store.renameWarehouseBlock(shelved.row.id, "   ");
+  ok("a nameless block on a shelf is refused", !noName.ok);
+  await store.deleteWarehouseBlock(shelved.row.id);
+
+  const viewSrc = fs.readFileSync(path.join(__dirname, "..", "lib", "admin-ledger-view.js"), "utf8");
+  ok("every row on the shelf has a pencil", viewSrc.indexOf("data-block-name=") >= 0);
+  const adminPage = fs.readFileSync(path.join(__dirname, "..", "admin.html"), "utf8");
+  ok("which asks for the new name", adminPage.indexOf("שם ללבנה במחסן:") >= 0);
+  ok("and refuses an empty one", adminPage.indexOf("לבנה במחסן חייבת שם.") >= 0);
+
   console.log("\nAll block warehouse checks passed (" + passed + " assertions).");
 }
 

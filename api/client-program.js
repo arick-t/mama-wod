@@ -288,6 +288,12 @@ async function ownerHandler(req, res, body) {
     return res.status(200).json({ ok: true, block: got.block });
   }
 
+  if (action === "block_shelf_rename") {
+    const renamed = await store.renameWarehouseBlock(String(body.id || ""), body.name);
+    if (!renamed.ok) return bad(res, renamed.code === "NOT_FOUND" ? 404 : 400, renamed.code, renamed.error);
+    return res.status(200).json({ ok: true, id: renamed.id, name: renamed.name });
+  }
+
   if (action === "block_delete") {
     const gone = await store.deleteWarehouseBlock(String(body.id || ""));
     if (!gone.ok) return bad(res, 503, gone.code, gone.error);

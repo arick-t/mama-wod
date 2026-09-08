@@ -242,6 +242,13 @@
    land in lights up; the heading being carried goes quiet. */
 .pprog-day-card .section-title-row[data-part]{cursor:default}
 .pprog-day-card.is-editing .section-title-row[data-part]{cursor:grab}
+/* The grip: the only place a part can be picked up from. */
+.pprog-part-grip{
+  color:var(--text-meta);cursor:grab;font-size:13px;line-height:1;letter-spacing:1px;
+  padding:2px 4px;border-radius:5px;flex:0 0 auto;user-select:none;opacity:.6
+}
+.pprog-part-grip:hover{opacity:1;background:rgba(255,255,255,.08);color:var(--text)}
+.section-title-row.is-dragging-part .pprog-part-grip{cursor:grabbing;opacity:1}
 .pprog-day-card.is-drop-target{outline:2px dashed var(--part);outline-offset:3px}
 /* A place in the grid that this week does not use — it holds the column open so the
    weeks stay under one another (owner, 2026-09-05). */

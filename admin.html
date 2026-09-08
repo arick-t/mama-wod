@@ -279,6 +279,9 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .btn-mini:hover{border-color:var(--brand);background:rgba(232,69,26,.12)}
 .led-bin{appearance:none;background:none;border:none;color:var(--text-muted);cursor:pointer;
   font-size:14px;padding:4px 6px;margin-inline-start:4px;border-radius:6px}
+.led-pen{appearance:none;background:none;border:none;color:var(--text-muted);cursor:pointer;
+  font-size:14px;padding:4px 6px;margin-inline-start:4px;border-radius:6px}
+.led-pen:hover{background:rgba(255,255,255,.10);color:#fff}
 .led-bin:hover{background:rgba(242,134,122,.16)}
 /* WHAT IS STILL WAITING FOR AN INVOICE (owner, 2026-09-08).
    Beside the table's heading, at the far end of the row — it is counting that table.
@@ -886,7 +889,14 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
    land in lights up; the heading being carried goes quiet. */
 .pprog-day-card .section-title-row[data-part]{cursor:default}
 .pprog-day-card.is-editing .section-title-row[data-part]{cursor:grab}
+/* The grip: the only place a part can be picked up from. */
+.pprog-part-grip{
+  color:var(--text-meta);cursor:grab;font-size:13px;line-height:1;letter-spacing:1px;
+  padding:2px 4px;border-radius:5px;flex:0 0 auto;user-select:none;opacity:.6
+}
+.pprog-part-grip:hover{opacity:1;background:rgba(255,255,255,.08);color:var(--text)}
 .section-title-row.is-dragging-part{opacity:.5}
+.section-title-row.is-dragging-part .pprog-part-grip{cursor:grabbing;opacity:1}
 .pprog-day-card.is-drop-target{outline:2px dashed var(--part);outline-offset:3px}
 body.is-dragging-part-now{user-select:none}
 /* The one row in any menu that cannot be undone. */
@@ -925,7 +935,12 @@ button.prog-sessions.is-editable:hover{background:rgba(129,199,132,.20);color:#f
   cursor:pointer;padding:2px 5px;line-height:0;border-radius:6px;margin-inline-start:6px;vertical-align:middle}
 .pprog-block-rename:hover{background:rgba(255,255,255,.10);color:#fff}
 .pprog-cal-block.is-dragging-block{opacity:.65;outline:2px dashed var(--part);outline-offset:4px;border-radius:10px}
-.athlete-tab.is-dragging{opacity:.75;transform:scale(1.04);box-shadow:0 10px 24px rgba(0,0,0,.45);cursor:grabbing}
+/* The thing in his hand looks the same in both drags: lifted, and outlined so it is
+   obvious it is being moved rather than pressed (owner, 2026-09-08). */
+.athlete-tab.is-dragging{
+  opacity:.85;transform:scale(1.04);box-shadow:0 10px 24px rgba(0,0,0,.45);cursor:grabbing;
+  outline:2px dashed var(--part);outline-offset:3px
+}
 .athlete-tab[data-drag="1"]{cursor:grab}
 .athlete-tab.is-loading.is-failed{border-style:solid;border-color:#F2867A;color:#F2867A;opacity:1;font-style:normal}
 .athlete-tab.is-loading{
@@ -3536,6 +3551,55 @@ window.adminOnClientRows = function (rows, monthlyTotal, unreadTotal, stripOrder
    It is saved once, when he lets go — not on every step of the drag.
    ══════════════════════════════════════════════════════════════════════════ */
 
+/**
+ * The oldest trick there is, in one place: measure where things are, let the DOM
+ * change, then put each one back where it was with a transform and release it on the
+ * next frame.
+ *
+ * Both drags on this page use it — the strip of people and the stack of blocks — so
+ * moving something looks the same wherever he does it (owner, 2026-09-08).
+ *
+ * @param {Element[]} nodes the things that may move
+ * @param {Element|null} skip the one in his hand, which is already following the pointer
+ * @param {Function} change the DOM change to make between the two measurements
+ */
+function slideThings(nodes, skip, change) {
+  var list = Array.prototype.slice.call(nodes || []);
+  var was = list.map(function (n) {
+    var box = n.getBoundingClientRect();
+    return { x: box.left, y: box.top };
+  });
+  change();
+  for (var i = 0; i < list.length; i++) {
+    var node = list[i];
+    if (skip && node === skip) continue;
+    var now = node.getBoundingClientRect();
+    var dx = was[i].x - now.left;
+    var dy = was[i].y - now.top;
+    if (!dx && !dy) continue;
+    node.style.transition = "none";
+    node.style.transform = "translate(" + dx + "px," + dy + "px)";
+    /* Two frames: one to take the offset, one to let it go. */
+    (function (el) {
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          el.style.transition = "transform 160ms cubic-bezier(.2,.7,.3,1)";
+          el.style.transform = "";
+        });
+      });
+    })(node);
+  }
+}
+
+/** Inline transforms are the animation's own; nothing may be left holding one. */
+function clearSlides(nodes) {
+  var list = nodes || [];
+  for (var i = 0; i < list.length; i++) {
+    list[i].style.transition = "";
+    list[i].style.transform = "";
+  }
+}
+
 function bindStripDrag() {
   var sb = document.getElementById("athlete-tabs");
   if (!sb || sb.dataset.dragBound === "1") return;
@@ -3587,36 +3651,11 @@ function bindStripDrag() {
    * Nothing about the layout is faked — only the last 160ms of it.
    */
   function slideOthers(change) {
-    var chips = Array.prototype.slice.call(sb.querySelectorAll(".athlete-tab"));
-    var was = chips.map(function (c) { return c.getBoundingClientRect().left; });
-    change();
-    for (var i = 0; i < chips.length; i++) {
-      var c = chips[i];
-      /* Not the one in his hand: that one is following the pointer already. */
-      if (held && c === held.el) continue;
-      var dx = was[i] - c.getBoundingClientRect().left;
-      if (!dx) continue;
-      c.style.transition = "none";
-      c.style.transform = "translateX(" + dx + "px)";
-      /* Two frames: one to take the offset, one to let it go. */
-      (function (el) {
-        requestAnimationFrame(function () {
-          requestAnimationFrame(function () {
-            el.style.transition = "transform 160ms cubic-bezier(.2,.7,.3,1)";
-            el.style.transform = "";
-          });
-        });
-      })(c);
-    }
+    slideThings(sb.querySelectorAll(".athlete-tab"), held && held.el, change);
   }
 
-  /** Inline transforms are the animation's own; nothing may be left holding one. */
-  function clearSlides() {
-    var chips = sb.querySelectorAll(".athlete-tab");
-    for (var i = 0; i < chips.length; i++) {
-      chips[i].style.transition = "";
-      chips[i].style.transform = "";
-    }
+  function clearChipSlides() {
+    clearSlides(sb.querySelectorAll(".athlete-tab"));
   }
 
   function finish(save) {
@@ -3625,7 +3664,7 @@ function bindStripDrag() {
     held = null;
     if (was.timer) clearTimeout(was.timer);
     sb.style.touchAction = "";
-    clearSlides();
+    clearChipSlides();
     if (!was.dragging) return;
     was.el.classList.remove("is-dragging");
     stripDragging = false;
@@ -9780,6 +9819,7 @@ tryRestoreAdminSession();
     function stop() {
       if (held && held.el) held.el.classList.remove("is-dragging-block");
       document.body.classList.remove("is-dragging-part-now");
+      clearSlides(blocksNow());
       blockDragging = false;
       held = null;
     }
@@ -9820,8 +9860,12 @@ tryRestoreAdminSession();
         var box = other.getBoundingClientRect();
         if (ev.clientY < box.top || ev.clientY > box.bottom) continue;
         var below = ev.clientY > box.top + box.height / 2;
-        if (below) other.parentNode.insertBefore(held.el, other.nextSibling);
-        else other.parentNode.insertBefore(held.el, other);
+        /* The months slide past one another, the same way the chips in the strip do
+           (owner, 2026-09-08). */
+        slideThings(list, held.el, function () {
+          if (below) other.parentNode.insertBefore(held.el, other.nextSibling);
+          else other.parentNode.insertBefore(held.el, other);
+        });
         break;
       }
     });
@@ -9915,14 +9959,19 @@ tryRestoreAdminSession();
       if (ev.button !== undefined && ev.button !== 0) return;
       var host = hostNow();
       if (!host) return;
-      var row = ev.target && ev.target.closest ? ev.target.closest("[data-part]") : null;
-      if (!row || !host.contains(row)) return;
+      /* Only from the grip. The row is mostly a text field, and pressing a field is
+         typing in it — which is why press-and-drag anywhere on the row did nothing but
+         select the words (owner, 2026-09-08). */
+      var grip = ev.target && ev.target.closest ? ev.target.closest("[data-part-grip]") : null;
+      if (!grip || !host.contains(grip)) return;
+      var row = grip.closest("[data-part]");
+      if (!row) return;
       var card = cardOf(row);
       /* Only out of the day he is editing: that is the one whose parts are his to move
          right now, and it is where the gesture reads as picking something up. */
       if (!card || !card.classList.contains("is-editing")) return;
-      /* Not off the fields inside the heading — typing a part's name is not a drag. */
-      if (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA") return;
+      /* Or the browser starts selecting text instead of moving the part. */
+      ev.preventDefault();
       held = {
         row: row,
         card: card,
@@ -10836,6 +10885,12 @@ tryRestoreAdminSession();
         done && done(null, r.body.block, r.body.block);
       });
     },
+    blockShelfRename: function (id, name, done) {
+      api({ action: "block_shelf_rename", id: id, name: name }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) { done && done((r.body && r.body.error) || "לא הצלחתי לשנות את השם."); return; }
+        done && done(null, r.body.name);
+      });
+    },
     blockDelete: function (id, done) {
       api({ action: "block_delete", id: id }).then(function (r) {
         if (r.status !== 200 || !r.body.ok) { done && done((r.body && r.body.error) || "לא הצלחתי למחוק מהמחסן."); return; }
@@ -11274,6 +11329,23 @@ tryRestoreAdminSession();
             })
           );
           showHdrToast('"' + ((row && row.name) || "הלבנה") + '" הועתקה — לחץ ימני על לקוח ברצועה כדי לשתול אותה אצלו.', "ok");
+        });
+        return;
+      }
+      var rename = t.closest("[data-block-name]");
+      if (rename) {
+        var rid = rename.getAttribute("data-block-name") || "";
+        var was = "";
+        for (var ri = 0; ri < (LS.blocks || []).length; ri++) {
+          if (LS.blocks[ri] && LS.blocks[ri].id === rid) was = LS.blocks[ri].name || "";
+        }
+        var next = window.prompt("שם ללבנה במחסן:", was);
+        if (next === null) return;
+        if (!String(next).trim()) { showHdrToast("לבנה במחסן חייבת שם.", "err"); return; }
+        if (!window.ClientScreen || !window.ClientScreen.blockShelfRename) return;
+        window.ClientScreen.blockShelfRename(rid, String(next).trim(), function (err) {
+          if (err) { showHdrToast(err, "err"); return; }
+          loadBlocks();
         });
         return;
       }

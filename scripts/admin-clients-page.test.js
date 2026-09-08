@@ -180,6 +180,8 @@ const ACTIONS_ALLOWED = [
   "block_list",
   "block_read",
   "block_delete",
+  /* And its name on the shelf, which is what he finds it by. */
+  "block_shelf_rename",
 ];
 const actionsUsed = Array.from(
   new Set((screen.match(/action:\s*"([a-z_]+)"/g) || []).map(function (s) {
@@ -476,7 +478,10 @@ ok("the month opens whole", /S\.calMode = "month"/.test(page));
 /* The calendar's own side of that bargain. */
 const calSrc = fs.readFileSync(path.join(root, "lib", "pprog-display.js"), "utf8");
 ok("the shared calendar takes a column count", /opts\.sessionColumns > 0 \? Math\.min\(7, opts\.sessionColumns \| 0\) : 7/.test(calSrc));
-ok("a session column is numbered, not named", /if \(bySession\) \{\s*for \(d = 0; d < cols; d\+\+\) row \+= "<span>" \+ \(d \+ 1\)/.test(calSrc));
+/* The headings belong to ONE grid, so the count comes from that grid — each month is
+   drawn at its own width (owner, 2026-09-08). */
+ok("a session column is numbered, not named", /if \(bySession\) \{\s*for \(d = 0; d < n; d\+\+\) row \+= "<span>" \+ \(d \+ 1\)/.test(calSrc));
+ok("and a block is drawn at its own width", /function colsForGroup\(g\)/.test(calSrc));
 ok("the circle carries the session number", /var dateNum = bySession/.test(calSrc));
 ok("and the weekday calendar is unchanged when nobody asks", /: 7;/.test(calSrc));
 
