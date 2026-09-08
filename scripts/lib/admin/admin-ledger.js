@@ -19,6 +19,24 @@ const { applyCors } = require("../../../lib/cors-allowlist");
 
 const MONTH_PREFIX = "coach-ledger/";
 const PLACES_KEY = "coach-ledger/places.json";
+/* ══════════════════════════════════════════════════════════════════════════
+   WHAT WAS NEVER INVOICED — a running total, since ever.
+
+   The owner's rule: this number is "everything I have not invoiced, from the beginning
+   of time", so that nothing is ever missed. It must not depend on the month on screen
+   or on any filter (owner, 2026-09-08).
+
+   Reading every month to add that up on every screen is the pattern that had the Blob
+   store suspended on 2026-09-02. So it is kept as ONE small object — a number per month
+   and their sum — rewritten only when a month actually changes. Drawing the box is one
+   read; a month he edits costs one extra write.
+
+   It is built once, from a bounded window of months, the first time it is asked for.
+   ══════════════════════════════════════════════════════════════════════════ */
+const UNINVOICED_KEY = "coach-ledger/_uninvoiced.json";
+/* How far back the first build looks. Two years of a coach's book, bounded — and after
+   that first build nothing ever scans again. */
+const BUILD_MONTHS_BACK = 23;
 
 function monthKeyFor(month) {
   const m = /^(\d{4})-(\d{2})$/.exec(String(month || ""));
@@ -74,6 +92,87 @@ async function writePlaces(warehouse) {
 }
 
 /* The month a caller asked for, and the five places behind the name field. */
+async function readUninvoiced() {
+  let doc = null;
+  try {
+    doc = await JsonStore.getJson(UNINVOICED_KEY);
+  } catch (e) {
+    doc = null;
+  }
+  if (!doc || typeof doc !== "object" || typeof doc.months !== "object" || !doc.months) return null;
+  return doc;
+}
+
+function sumOf(months) {
+  let total = 0;
+  for (const k of Object.keys(months || {})) {
+    const n = Number(months[k]);
+    if (Number.isFinite(n)) total += n;
+  }
+  return Math.round(total * 100) / 100;
+}
+
+async function writeUninvoiced(months) {
+  const clean = {};
+  for (const k of Object.keys(months || {})) {
+    const n = Number(months[k]);
+    /* A month with nothing outstanding is dropped rather than stored as a zero: the
+       object stays the size of the work, not the size of the calendar. */
+    if (Number.isFinite(n) && n > 0) clean[k] = Math.round(n * 100) / 100;
+  }
+  const doc = {
+    version: 1,
+    updatedAt: new Date().toISOString(),
+    months: clean,
+    total: sumOf(clean),
+  };
+  await JsonStore.putJson(UNINVOICED_KEY, doc);
+  return doc;
+}
+
+/**
+ * One month changed — write down what it owes now.
+ *
+ * Called after every write to a month, with the document that was just saved, so the
+ * running total is a consequence of the write rather than a second opinion about it.
+ */
+async function noteUninvoiced(doc) {
+  if (!doc || !doc.month) return null;
+  const idx = (await readUninvoiced()) || { months: {} };
+  const months = Object.assign({}, idx.months);
+  const owed = Ledger.uninvoicedTotal(doc.deals || []);
+  if (owed > 0) months[doc.month] = owed;
+  else delete months[doc.month];
+  try {
+    return await writeUninvoiced(months);
+  } catch (e) {
+    /* The number is a convenience; losing it must never cost him the write that
+       mattered. It rebuilds itself the next time it is asked for. */
+    return null;
+  }
+}
+
+/**
+ * Build it for the first time, from a bounded window of months.
+ *
+ * This is the ONLY place that reads more than one month, it happens once, and it is
+ * fenced at two years — see the comment on UNINVOICED_KEY.
+ */
+async function buildUninvoiced(todayIso) {
+  const from = Ledger.shiftMonth(Ledger.monthKey(todayIso), -BUILD_MONTHS_BACK);
+  const months = {};
+  let cursor = from;
+  for (let i = 0; i <= BUILD_MONTHS_BACK + 3; i++) {
+    const doc = await readMonth(cursor);
+    if (doc && doc.deals && doc.deals.length) {
+      const owed = Ledger.uninvoicedTotal(doc.deals);
+      if (owed > 0) months[cursor] = owed;
+    }
+    cursor = Ledger.shiftMonth(cursor, 1);
+  }
+  return writeUninvoiced(months);
+}
+
 async function monthPayload(month) {
   const doc = await readMonth(month);
   const places = await readPlaces();
@@ -142,7 +241,8 @@ module.exports = async function handler(req, res) {
         price: body.price,
       });
       if (!added.ok) return bad(res, 400, added.code, added.error);
-      await writeMonth(added.doc);
+      const addedDoc = await writeMonth(added.doc);
+      await noteUninvoiced(addedDoc);
       /* The place is remembered from the deal that was actually saved, so a typo in a
          refused deal never reaches the warehouse. */
       await writePlaces(await readPlaces().then(function (w) {
@@ -168,7 +268,8 @@ module.exports = async function handler(req, res) {
       if (!updated.ok) {
         return bad(res, updated.code === "NOT_FOUND" ? 404 : 400, updated.code, updated.error);
       }
-      await writeMonth(updated.doc);
+      const updatedDoc = await writeMonth(updated.doc);
+      await noteUninvoiced(updatedDoc);
       /* A corrected price is what to offer next time — the other deals keep theirs. */
       await writePlaces(await readPlaces().then(function (w) {
         return Ledger.rememberPlace(w, updated.deal);
@@ -183,7 +284,8 @@ module.exports = async function handler(req, res) {
       const doc = await readMonth(month);
       const removed = Ledger.removeDeal(doc, body.id);
       if (!removed.ok) return bad(res, 404, removed.code, removed.error);
-      await writeMonth(removed.doc);
+      const removedDoc = await writeMonth(removed.doc);
+      await noteUninvoiced(removedDoc);
       return res.status(200).json(await monthPayload(month));
     }
 
@@ -217,9 +319,26 @@ module.exports = async function handler(req, res) {
             return Object.assign({}, d, { invoiced: want });
           }),
         });
-        if (touched) await writeMonth(next);
+        if (touched) await noteUninvoiced(await writeMonth(next));
       }
       return res.status(200).json({ ok: true, changed: changed, invoiced: want });
+    }
+
+    /**
+     * "סכום לחשבונית קרובה" — everything not invoiced, since ever.
+     *
+     * One read of one small object. It is not affected by the month on screen or by any
+     * filter, because the number's whole job is that nothing is missed
+     * (owner, 2026-09-08).
+     */
+    if (action === "uninvoiced") {
+      let idx = await readUninvoiced();
+      if (!idx) idx = await buildUninvoiced(Ledger.dayIso(body.today) || undefined);
+      return res.status(200).json({
+        ok: true,
+        total: Number(idx && idx.total) || 0,
+        months: (idx && idx.months) || {},
+      });
     }
 
     /* Everyone he has worked for, busiest first — the list behind the "favourites"

@@ -327,16 +327,10 @@
 .pprog-num-toggle input[type="checkbox"]{
   width:15px;height:15px;margin:0;flex:0 0 auto;cursor:pointer;accent-color:var(--part)
 }
-.pprog-num-mark{
-  display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;
-  border-radius:50%;border:1.5px solid currentColor;font-size:10.5px;font-weight:900;
-  line-height:1;flex:0 0 auto;opacity:.7
-}
 .pprog-num-toggle:hover{border-color:var(--text-meta);color:var(--text)}
 /* Ticked: the whole pill takes the accent colour. Where :has is not understood the
    checkbox still shows the state on its own, so nothing is lost. */
 .pprog-num-toggle:has(input:checked){color:var(--part);border-color:var(--part);background:rgba(129,199,132,.14)}
-.pprog-num-toggle:has(input:checked) .pprog-num-mark{opacity:1}
 /* The × that removes a whole part sits at the end of the same row. */
 .pprog-day-card .section-title-row .pprog-del-part{margin-inline-start:2px;font-size:17px}
 .pprog-day-card .section-title-row .pprog-del-part:hover{color:#F2867A}

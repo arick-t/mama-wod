@@ -272,7 +272,9 @@ ok("and it says what it removes", editor.indexOf("מחק את החלק כולו"
    clicking it focused an input parked off-layout, so the browser scrolled the page away
    from the field he was typing in (owner, 2026-09-08). */
 ok("the numbering control is a real checkbox", /<input type="checkbox"[^>]*onchange="[A-Za-z]*SetNumbering/.test(editor));
-ok("with the circled number beside it", /class="pprog-num-mark" aria-hidden="true">1</.test(editor));
+/* The circled 1 is gone — he asked for the pill and the tick box alone
+   (owner, 2026-09-08). */
+ok("and nothing but the words beside it", editor.indexOf("pprog-num-mark") < 0);
 ok("and the words that say what it does", editor.indexOf("Add numbering") >= 0);
 ok("nothing is parked off-layout any more", /\.pprog-num-toggle input\{position:absolute/.test(css) === false);
 ok("the box wears our own colour", /\.pprog-num-toggle input\[type="checkbox"\]\{[^}]*accent-color:var\(--part\)/.test(css));

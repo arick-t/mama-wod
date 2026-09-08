@@ -568,9 +568,24 @@ ok("opening the management tab closes the client screen", /if \(kind === "ledger
    invoiced yet, beside the table it is counting, going to zero as he ticks the rows. */
 ok("the box sits in the table's own heading row", page.indexOf('id="ledDue"') >= 0);
 ok("it is titled the way he asked", viewSrc.indexOf("סכום לחשבונית קרובה") >= 0);
-ok("it counts the rows with no tick", /L\.uninvoicedTotal\(LS\.tableDeals \|\| \[\]\)/.test(page));
-ok("and says which range it counted", /rangeLabel: rangeLabel\(\)/.test(page));
-ok("it is redrawn with the table, so a tick empties it", /host\.innerHTML = V\.tableHtml\([\s\S]{0,400}renderDue\(\);/.test(page));
+/* It counts EVERYTHING not invoiced, since ever — not the range on screen and not what
+   any filter is showing. Its whole job is that nothing is missed, so a date range
+   beside it would only invite the reading that it counts less than it does
+   (owner, 2026-09-08). */
+ok("the number comes from the server, not from the rows on screen", /amount: Number\(LS\.due\) \|\| 0/.test(page));
+ok("asked for in one read of one object", /action: "uninvoiced", today: todayIso\(\)/.test(page));
+ok("no range is shown beside it", viewSrc.indexOf("led-due-range") < 0);
+ok("and nothing about it is filtered", page.indexOf("L.uninvoicedTotal(LS.tableDeals") < 0);
+ok("it is asked for when the screen opens", /loadUninvoiced\(\);/.test(page));
+ok("and again after anything that changes a deal", /function afterLedgerWrite\(\)/.test(page) && (page.match(/afterLedgerWrite\(\);/g) || []).length >= 10);
+
+const ledgerApi = fs.readFileSync(path.join(root, "scripts", "lib", "admin", "admin-ledger.js"), "utf8");
+ok("the server keeps a running total", ledgerApi.indexOf('const UNINVOICED_KEY = "coach-ledger/_uninvoiced.json"') >= 0);
+ok("rewritten only when a month actually changes", /async function noteUninvoiced\(doc\)/.test(ledgerApi));
+ok("every write to a month tells it", (ledgerApi.match(/noteUninvoiced\(/g) || []).length >= 5);
+/* The lesson of 2026-09-02 in one assertion: the only multi-month read happens once. */
+ok("it is built once, from a fenced window", /const BUILD_MONTHS_BACK = 23;/.test(ledgerApi) && /async function buildUninvoiced\(todayIso\)/.test(ledgerApi));
+ok("and losing the number never costs him the write", /return null;[\s\S]{0,40}\}\s*\}/.test(ledgerApi));
 ok("nothing owing reads as nothing owing", V.dueBoxHtml({ amount: 0 }).indexOf("הכל חויב") >= 0);
 ok("and a sum reads as a sum", V.dueBoxHtml({ amount: 300 }).indexOf("300") >= 0);
 

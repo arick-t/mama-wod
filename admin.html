@@ -1016,16 +1016,10 @@ button.prog-sessions.is-editable:hover{background:rgba(129,199,132,.20);color:#f
 .pprog-num-toggle input[type="checkbox"]{
   width:15px;height:15px;margin:0;flex:0 0 auto;cursor:pointer;accent-color:var(--part)
 }
-.pprog-num-mark{
-  display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;
-  border-radius:50%;border:1.5px solid currentColor;font-size:10.5px;font-weight:900;
-  line-height:1;flex:0 0 auto;opacity:.7
-}
 .pprog-num-toggle:hover{border-color:var(--text-meta);color:var(--text)}
 /* Ticked: the whole pill takes the accent colour. Where :has is not understood the
    checkbox still shows the state on its own, so nothing is lost. */
 .pprog-num-toggle:has(input:checked){color:var(--part);border-color:var(--part);background:rgba(129,199,132,.14)}
-.pprog-num-toggle:has(input:checked) .pprog-num-mark{opacity:1}
 /* The × that removes a whole part sits at the end of the same row. */
 .pprog-day-card .section-title-row .pprog-del-part{margin-inline-start:2px;font-size:17px}
 .pprog-day-card .section-title-row .pprog-del-part:hover{color:#F2867A}
@@ -10111,12 +10105,13 @@ tryRestoreAdminSession();
           '<span class="wm-from">' + esc(Clip.describe(held)) + "</span></span></button>"
         : '<span class="wm-hint">אין לבנה מועתקת</span>') +
       '<button type="button" class="wm-item" data-block-dup="' + blockIndex + '">' +
-      /* Two neat squares, drawn rather than typed: the doubled ⧉⧉ glyph came out huge
-         and uneven beside the others (owner, 2026-09-08). */
+      /* One square with a PLUS in it — "make another one".
+         Two overlapping squares read as "copy", which is the row above it, and the two
+         icons were too close to tell apart (owner, 2026-09-08). */
       '<span class="wm-ico" aria-hidden="true">' +
       '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-      '<rect x="9" y="9" width="11" height="11" rx="2.5"/>' +
-      '<path d="M5 15V6a1 1 0 0 1 1-1h9"/></svg></span><span>הכפל לבנה</span></button>' +
+      '<rect x="4" y="4" width="16" height="16" rx="3"/>' +
+      '<path d="M12 8.5v7M8.5 12h7"/></svg></span><span>הכפל לבנה</span></button>' +
       '<button type="button" class="wm-item wm-danger" data-block-del="' + blockIndex + '">' +
       '<span class="wm-ico" aria-hidden="true">🗑</span><span>מחק לבנה</span></button>';
     m.hidden = false;
@@ -11137,6 +11132,8 @@ tryRestoreAdminSession();
     /* His own shelf of blocks — rows only; the weeks stay on the server until one is
        actually taken off it (owner, 2026-09-05). */
     blocks: [],
+    /* What he has not invoiced, since ever — one number from the server. */
+    due: 0,
     open: false,
     month: "",
     data: null,
@@ -11193,8 +11190,9 @@ tryRestoreAdminSession();
     if (!LS.data) loadMonth(LS.month);
     else render();
     /* The shelf is its own one-read index, so it is asked for separately and a slow
-       answer never holds up the month. */
+       answer never holds up the month. Same for the outstanding total. */
     loadBlocks();
+    loadUninvoiced();
   }
 
   function close() {
@@ -11223,6 +11221,7 @@ tryRestoreAdminSession();
       }
       render();
       loadTable();
+      afterLedgerWrite();
     });
   }
 
@@ -11567,6 +11566,12 @@ tryRestoreAdminSession();
     return V.hebDate(r.from) + " - " + V.hebDate(r.to);
   }
 
+  /* Anything that changes a deal changes what is owed, so the number is asked for
+     again — one small read, and only after a write (owner, 2026-09-08). */
+  function afterLedgerWrite() {
+    loadUninvoiced();
+  }
+
   function loadTable() {
     var host = el("ledTable");
     if (!host) return;
@@ -11606,17 +11611,28 @@ tryRestoreAdminSession();
           expandedRows: LS.tableDeals,
         }
       );
-      renderDue();
     });
   }
 
-  /** "סכום לחשבונית קרובה" — the rows with no tick, added up. */
+  /**
+   * "סכום לחשבונית קרובה" — everything not invoiced, since ever.
+   *
+   * It used to add up the rows on screen, which meant it changed with the range and the
+   * filters. Its whole job is that nothing is missed, so it is now one number kept on
+   * the server and it is the same number whatever he is looking at (owner, 2026-09-08).
+   */
   function renderDue() {
     var host = el("ledDue");
     if (!host || !V.dueBoxHtml) return;
-    host.innerHTML = V.dueBoxHtml({
-      amount: L.uninvoicedTotal(LS.tableDeals || []),
-      rangeLabel: rangeLabel(),
+    host.innerHTML = V.dueBoxHtml({ amount: Number(LS.due) || 0 });
+  }
+
+  /** Ask for it. One read of one small object on the server. */
+  function loadUninvoiced() {
+    return api({ action: "uninvoiced", today: todayIso() }).then(function (r) {
+      if (r.status !== 200 || !r.body.ok) return;
+      LS.due = Number(r.body.total) || 0;
+      renderDue();
     });
   }
 
@@ -11690,6 +11706,7 @@ tryRestoreAdminSession();
       }
       render();
       loadTable();
+      afterLedgerWrite();
       toast("נשמר ✓");
     });
   }
@@ -11736,6 +11753,7 @@ tryRestoreAdminSession();
       }
       render();
       loadTable();
+      afterLedgerWrite();
       toast("נשמר ✓");
     });
   }
@@ -11763,6 +11781,7 @@ tryRestoreAdminSession();
       renderFavourites();
       /* The rows carry the name and the colour, so both views are redrawn. */
       loadMonth(LS.month);
+      afterLedgerWrite();
       if (r.body.renamedRows) toast("עודכן ✓ " + r.body.renamedRows + " שורות");
       else toast("עודכן ✓");
     });
@@ -11779,6 +11798,7 @@ tryRestoreAdminSession();
       LS.editing = null;
       render();
       loadTable();
+      afterLedgerWrite();
       toast("נמחק");
     });
   }
@@ -11876,6 +11896,7 @@ tryRestoreAdminSession();
         renderFavourites();
         /* The autocomplete comes off the month, so it is re-read too. */
         loadMonth(LS.month);
+      afterLedgerWrite();
         toast("הוסר מהרשימה");
       });
       return;
@@ -11952,6 +11973,7 @@ tryRestoreAdminSession();
       }
       renderFilters();
       loadTable();
+      afterLedgerWrite();
       return;
     }
 
@@ -11965,6 +11987,7 @@ tryRestoreAdminSession();
         LS.sortDir = 1;
       }
       loadTable();
+      afterLedgerWrite();
       return;
     }
 
@@ -11974,6 +11997,7 @@ tryRestoreAdminSession();
       /* One at a time: two open places make a list, which is what "full detail" is. */
       LS.expanded = LS.expanded === who ? "" : who;
       loadTable();
+      afterLedgerWrite();
       return;
     }
 
@@ -11984,6 +12008,7 @@ tryRestoreAdminSession();
       LS.expanded = "";
       renderFilters();
       loadTable();
+      afterLedgerWrite();
       return;
     }
 
@@ -11999,6 +12024,7 @@ tryRestoreAdminSession();
       LS.expanded = "";
       renderFilters();
       loadTable();
+      afterLedgerWrite();
       return;
     }
 
@@ -12046,6 +12072,7 @@ tryRestoreAdminSession();
       if (t.getAttribute("data-led-filter") === "name") LS.filterName = t.value || "";
       else LS.filterService = t.value || "";
       loadTable();
+      afterLedgerWrite();
       return;
     }
     if (t.id === "ledFFrom" || t.id === "ledFTo") {
@@ -12053,6 +12080,7 @@ tryRestoreAdminSession();
       LS.from = (el("ledFFrom") && V.parseHeDate(el("ledFFrom").value)) || "";
       LS.to = (el("ledFTo") && V.parseHeDate(el("ledFTo").value)) || "";
       loadTable();
+      afterLedgerWrite();
       return;
     }
 
@@ -12103,6 +12131,7 @@ tryRestoreAdminSession();
         }
         toast(wantInv ? "סומן ✓ " + r.body.changed + " אימונים" : "בוטל הסימון");
         loadTable();
+      afterLedgerWrite();
       });
       return;
     }

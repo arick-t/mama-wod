@@ -226,6 +226,12 @@ async function main() {
     "with an icon the size of the others",
     /data-block-dup[\s\S]{0,400}<svg viewBox="0 0 24 24" width="13" height="13"/.test(admin)
   );
+  /* And one that cannot be mistaken for the row above it: two overlapping squares read
+     as "copy", which is exactly what "copy" is (owner, 2026-09-08). */
+  ok(
+    "and one that does not read as a copy",
+    admin.indexOf('<path d="M12 8.5v7M8.5 12h7"/>') >= 0
+  );
   ok("5. delete it, and say plainly that there is no way back", admin.indexOf("data-block-del=") >= 0 && admin.indexOf("אין דרך לשחזר לבנה שנמחקה") >= 0);
   ok("planting from the strip is offered only with a block in hand", admin.indexOf('if (chip.getAttribute("data-kind") === "program" && pageHeldBlock())') >= 0);
   ok("and it lands as the client's last block, unsent", admin.indexOf("לא תישלח אליו עד שתאשר") >= 0);
