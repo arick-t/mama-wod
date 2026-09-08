@@ -418,7 +418,7 @@ ok("and unticking one session redraws the grouped answer", /if \(!LS\.detail\) l
 
 ok(
   "the landing is decided when the module opens, not by a race",
-  /function openAdminApp\(snapshots\)[\s\S]{0,900}openFirstPersonIfNeeded\(\)/.test(page)
+  /function openAdminApp\(snapshots\)[\s\S]{0,2200}openFirstPersonIfNeeded\(\)/.test(page)
 );
 ok(
   "and a link that names a client still wins",

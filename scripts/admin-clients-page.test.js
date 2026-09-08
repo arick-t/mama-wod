@@ -1127,4 +1127,19 @@ ok("a group is the same purple", /\.client-kind-card\.is-coach\{border-inline-st
 ok("and the blank one gets a calm colour of its own", /\.client-kind-card\.is-blank\{border-inline-start-color:#4EC9B0/.test(page));
 ok("the colour is a bar and a tint, not a fill", /\.client-kind-card\{border-inline-start:3px solid transparent/.test(page));
 
+/* --- the app must not open before its own page exists (owner, 2026-09-08) -- */
+
+/* openAdminApp runs from the answer to the login request. With a remembered session
+   that answer can arrive while the browser is still parsing this file — and everything
+   it does reaches for things declared further down, the client screen most of all. The
+   strip then sat on "טוען לקוחות…" for ever with no clients in it. Reproduced in a
+   browser with a remembered session, and fixed by waiting for the page. */
+ok("the app waits for the page to be parsed", /if \(document\.readyState === "loading"\)[\s\S]{0,260}openAdminApp\(snapshots\);/.test(page));
+ok("and it only waits once", /\{ once: true \}/.test(page));
+ok("the client half is started through one door", /startClientHalf\(0\);/.test(page));
+ok("which asks again if the screen is not there yet", /function startClientHalf\(tries\)[\s\S]{0,400}setTimeout\(function \(\) \{ startClientHalf\(n\); \}, 50\);/.test(page));
+ok("and gives up out loud rather than quietly", /clientHalfFailed = true;[\s\S]{0,200}רשימת הלקוחות לא נטענה/.test(page));
+ok("the strip says so too", page.indexOf("הלקוחות לא נטענו — רענן") >= 0);
+ok("and stops saying it the moment they answer", /clientHalfFailed = false;/.test(page));
+
 console.log("All admin clients page checks passed.");

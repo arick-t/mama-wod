@@ -915,6 +915,7 @@ body.is-dragging-part-now{user-select:none}
 .pprog-cal-block.is-dragging-block{opacity:.65;outline:2px dashed var(--part);outline-offset:4px;border-radius:10px}
 .athlete-tab.is-dragging{opacity:.75;transform:scale(1.04);box-shadow:0 10px 24px rgba(0,0,0,.45);cursor:grabbing}
 .athlete-tab[data-drag="1"]{cursor:grab}
+.athlete-tab.is-loading.is-failed{border-style:solid;border-color:#F2867A;color:#F2867A;opacity:1;font-style:normal}
 .athlete-tab.is-loading{
   opacity:.55;font-style:italic;cursor:default;pointer-events:none;
   border-style:dashed
@@ -2121,6 +2122,9 @@ var clientPrograms = [];
 var clientStripOrder = [];
 /* While a chip is being dragged the strip must not be repainted under his finger. */
 var stripDragging = false;
+/* True only if the client half never answered at all — the strip then says so rather
+   than waiting for ever (owner, 2026-09-08). */
+var clientHalfFailed = false;
 /* The page reads the same clipboard the client screen writes — one box, one key — so a
    block copied inside a client can be planted from the strip, on someone else
    (owner, 2026-09-05). */
@@ -2941,6 +2945,23 @@ function startAdminLivePoll() {
 }
 
 function openAdminApp(snapshots) {
+  /* ── WAIT FOR THE PAGE TO EXIST ─────────────────────────────────────────
+     This runs from the answer to the login request, and with a remembered session
+     that answer can arrive while the browser is still parsing the rest of this file.
+     Everything below reaches for things that are DECLARED further down — the client
+     screen most of all — so on a fast connection the client half of the strip was
+     never started at all: "טוען לקוחות…" and nothing after it, for ever
+     (owner, 2026-09-08; reproduced in a browser with a remembered session).
+
+     So: if the page is still being read, come back when it has been. */
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      function () { openAdminApp(snapshots); },
+      { once: true }
+    );
+    return;
+  }
   document.getElementById("login-screen").style.display = "none";
   var app = document.getElementById("app");
   app.style.display = "flex";
@@ -2965,9 +2986,7 @@ function openAdminApp(snapshots) {
   renderAthleteList(snapshots || []);
   bindPeopleStrip();
   /* The client screen shares this page's session and loads its own half of the strip. */
-  if (window.ClientScreen) {
-    window.ClientScreen.start({ token: adminSessionToken, pw: adminPw });
-  }
+  startClientHalf(0);
   /* A mailed link names a client: land on them, not on a list. */
   try {
     var wantProgram = new URLSearchParams(location.search).get("program");
@@ -3417,7 +3436,9 @@ function renderPeopleStrip() {
      clients are gone" (owner, 2026-09-04, 2026-09-05) — so the strip SAYS it is still
      waiting instead of looking finished. */
   if (!programsAnswered) {
-    nextHtml += '<span class="athlete-tab is-loading" aria-live="polite">טוען לקוחות…</span>';
+    nextHtml += clientHalfFailed
+      ? '<span class="athlete-tab is-loading is-failed" aria-live="polite">הלקוחות לא נטענו — רענן</span>'
+      : '<span class="athlete-tab is-loading" aria-live="polite">טוען לקוחות…</span>';
   }
   /* Only when it actually changed.
      A click is mousedown and mouseup on the SAME element; replacing the strip's markup
@@ -3432,7 +3453,7 @@ function renderPeopleStrip() {
        had never answered — so now the screen says. */
     countEl.textContent =
       rows.length + " לקוחות · " + list.length + " מתאמנים · " +
-      (programsAnswered ? progs.length + " תוכניות" : "טוען תוכניות…");
+      (programsAnswered ? progs.length + " תוכניות" : clientHalfFailed ? "לא נטענו" : "טוען תוכניות…");
   }
   try {
     console.log("[admin] strip:", { athletes: list.length, programs: progs.length,
@@ -3452,6 +3473,7 @@ window.adminOnClientRows = function (rows, monthlyTotal, unreadTotal, stripOrder
   /* Undefined means "this answer did not carry an order" — keep the one we have rather
      than falling back to the natural order for a moment. */
   if (Array.isArray(stripOrder)) clientStripOrder = stripOrder.map(String);
+  clientHalfFailed = false;
   setMonthlyIncome(monthlyTotal);
   programsAnswered = true;
   renderPeopleStrip();
@@ -3833,6 +3855,29 @@ function bindPeopleStrip() {
  * the first thing he asked to see on entry (owner, 2026-09-03), and it needs neither
  * half of the strip to have answered, so there is no race to lose.
  */
+/**
+ * Start the client half of the strip, and do not give up quietly.
+ *
+ * The screen it belongs to is defined further down this file, so on a fast login it may
+ * not exist yet even after DOMContentLoaded (a stylesheet or a script can still be in
+ * flight). It is asked for again a few times, and if it truly never arrives the strip
+ * SAYS so instead of sitting on "טוען לקוחות…" for ever (owner, 2026-09-08).
+ */
+function startClientHalf(tries) {
+  if (window.ClientScreen && window.ClientScreen.start) {
+    window.ClientScreen.start({ token: adminSessionToken, pw: adminPw });
+    return;
+  }
+  var n = (tries | 0) + 1;
+  if (n > 60) {
+    clientHalfFailed = true;
+    renderPeopleStrip();
+    try { showHdrToast("רשימת הלקוחות לא נטענה — רענן את הדף", "err"); } catch (eT) {}
+    return;
+  }
+  setTimeout(function () { startClientHalf(n); }, 50);
+}
+
 function openFirstPersonIfNeeded() {
   if (adminOpenedSomeone) return false;
   if (currentAthleteId || activeProgramId) return false;
