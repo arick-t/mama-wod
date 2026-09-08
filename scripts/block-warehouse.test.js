@@ -265,6 +265,32 @@ async function main() {
   ok("the calendar draws the name after the dates", lib.indexOf('pprog-cal-block-name') >= 0);
   ok("and the pencil only where the page can save one", /opts\.allowBlockRename === true/.test(lib));
 
+  /* --- a copied block keeps its own shape (owner, 2026-09-08) -------------- */
+
+  /* He tried planting a block written as four sessions a week at a client who trains
+     seven. The block is the thing being copied, so its weeks keep their four — and the
+     client's earlier weeks are not touched. */
+  const sevenDay = (await store.createProgram({
+    clientName: "שבעה",
+    clientKind: "blank",
+    weekCount: 4,
+    intake: { clientName: "שבעה", scheduleMode: "weekly_schedule" },
+    blockStart: "2026-09-06",
+  })).program;
+  const fourAWeek = await store.pasteBlock(sevenDay.programId, sevenDay.version, {
+    weeks: [
+      { days: { sun: { parts: [{ title: "A", lines: ["x"] }] } }, overview: [], sessions: 4 },
+      { days: {}, overview: [], sessions: 4 },
+    ],
+    name: "ארבעה בשבוע",
+  });
+  ok("a four-a-week block plants at a seven-day client", fourAWeek.ok);
+  ok("and its weeks keep their four", fourAWeek.program.weeks.slice(4).every(function (w) { return w.sessions === 4; }));
+  ok("while the weeks he already had are untouched", fourAWeek.program.weeks.slice(0, 4).every(function (w) { return w.sessions === undefined; }));
+  ok("and the month arrives under its name", fourAWeek.program.blocks[1].name === "ארבעה בשבוע");
+  ok("the clipboard is what carries the shape", /out\.sessions = sessions;/.test(fs.readFileSync(path.join(__dirname, "..", "lib", "pprog-clipboard.js"), "utf8")));
+  ok("and the endpoint stamps it from the programme it was sold as", api.indexOf("function blockWeeksForClipboard(") >= 0);
+
   console.log("\nAll block warehouse checks passed (" + passed + " assertions).");
 }
 

@@ -143,6 +143,31 @@ function clientTokenFrom(req, body) {
  * Owner
  * ------------------------------------------------------------------------- */
 
+/**
+ * The weeks of a block, ready to travel, each carrying the number of sessions it was
+ * written with.
+ *
+ * A week that says nothing takes the number the PROGRAMME was sold as, so a block of
+ * four a week stays four when it is planted at a client who trains seven — the block is
+ * the thing being copied (owner, 2026-09-08).
+ */
+function blockWeeksForClipboard(program, blockIndex1) {
+  const weeks = ProgramStore.weeksOfBlock(program, blockIndex1);
+  const intake = blockIntakeOf(program, blockIndex1);
+  let sold = 0;
+  if (isPlainObject(intake) && intake.scheduleMode === "session_count") {
+    const n = parseInt(intake.sessionsPerWeek, 10);
+    if (n >= 1 && n <= 7) sold = n;
+  }
+  const out = Clipboard.blockPayload(weeks).weeks;
+  for (let i = 0; i < out.length; i++) {
+    const own = parseInt(weeks[i] && weeks[i].sessions, 10);
+    if (own >= 1 && own <= 7) out[i].sessions = own;
+    else if (sold) out[i].sessions = sold;
+  }
+  return out;
+}
+
 /** The name he gave a block, if he gave it one. */
 function blockNameOf(program, blockIndex1) {
   const blocks = Array.isArray(program && program.blocks) ? program.blocks : [];
@@ -497,7 +522,7 @@ async function ownerHandler(req, res, body) {
       /* The answers the block was built from decide how its row reads — weekly, or so
          many sessions a week. */
       intake: blockIntakeOf(read.program, body.blockIndex),
-      weeks: Clipboard.blockPayload(weeks).weeks,
+      weeks: blockWeeksForClipboard(read.program, body.blockIndex),
       sourceName: read.program.clientName,
     });
     /* The shelf's name becomes the month's name wherever it is planted. */
@@ -513,7 +538,7 @@ async function ownerHandler(req, res, body) {
     return res.status(200).json({
       ok: true,
       block: {
-        weeks: Clipboard.blockPayload(weeks).weeks,
+        weeks: blockWeeksForClipboard(read.program, body.blockIndex),
         intake: blockIntakeOf(read.program, body.blockIndex),
         sourceName: read.program.clientName,
         /* The name he gave the month travels with it, at the shelf and across
