@@ -75,18 +75,30 @@ const MIME = {
 const ROOT = path.join(__dirname, "..");
 
 /** Always load fresh API handlers in local dev (avoid stale require cache after edits). */
+/**
+ * Load an API handler, and everything it leans on, FRESH.
+ *
+ * It used to bust only the handler's own folder (api/), so a change to lib/ or to
+ * scripts/lib/ was invisible until the server was restarted by hand — and the answer
+ * to the browser was "Storage is temporarily unavailable", which says nothing about a
+ * stale module. That cost the owner two bug reports about code that was already
+ * correct on disk (owner, 2026-09-08).
+ *
+ * Everything under the repo is dropped from the cache except node_modules: locally
+ * that is a few milliseconds a request, and it means what is on disk is what answers.
+ */
 function loadApiHandler(relPath) {
   const abs = require.resolve(path.join(ROOT, relPath));
-  delete require.cache[abs];
-  /* Also bust sibling requires used by the handler (e.g. hamamen-prompt.js). */
   try {
-    const dir = path.dirname(abs);
+    const skip = path.join(ROOT, "node_modules");
     Object.keys(require.cache).forEach(function (k) {
-      if (k.indexOf(dir + path.sep) === 0 || k.indexOf(dir + "/") === 0) {
-        delete require.cache[k];
-      }
+      if (k.indexOf(ROOT) !== 0) return;
+      if (k.indexOf(skip) === 0) return;
+      delete require.cache[k];
     });
-  } catch (e) {}
+  } catch (e) {
+    delete require.cache[abs];
+  }
   return require(abs);
 }
 

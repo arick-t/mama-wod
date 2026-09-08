@@ -74,6 +74,22 @@ const weekView = D.renderBrickView({
 });
 ok("one week on its own is drawn the same way", (weekView.match(/pprog-cal-cell is-off/g) || []).length === 1);
 
+/* His case: sold as five, every week cut to three. The grid must be three wide — it
+   kept five columns open and drew three sessions under five headings, because the width
+   started from the sale rather than from the weeks (owner, 2026-09-08). */
+const allCut = {
+  blockStart: "2026-09-06",
+  blocks: [{ blockIndex: 1, startWeek: 1, weekCount: 4, approvedAt: "2026-09-01T00:00:00Z" }],
+  weeks: [emptyWeek(1, 3), emptyWeek(2, 3), emptyWeek(3, 3), emptyWeek(4, 3)],
+};
+const cutDrawn = D.renderBrickView({
+  block: allCut, activeWeekIndex: 0, activeDay: "sun", calMode: "month", sessionColumns: 5, showFooter: false,
+});
+ok("cutting every week narrows the grid", /--cal-cols:3/.test(cutDrawn));
+ok("with no empty places left over", cutDrawn.indexOf("pprog-cal-cell is-off") < 0);
+ok("and the label says three", /3 sessions a week/.test(cutDrawn));
+ok("the footer says it too, not the old number", /5 sessions a week/.test(cutDrawn) === false);
+
 /* --- the number travels to the client ------------------------------------ */
 
 ok("a week may carry its own number", Payload.WEEK_OUT.indexOf("sessions") >= 0);
@@ -123,6 +139,12 @@ async function main() {
   /* THE rule: this is a display decision, not a deletion. */
   ok("nothing written anywhere was deleted", changed.program.weeks[0].days.thu.parts[0].title === "החמישי");
   p = changed.program;
+
+  /* And a new month continues the shape he is working in now. */
+  const nextBlock = await store.addBlock(changed.program.programId, changed.program.version, { weekCount: 2 });
+  ok("a new block continues the shape he is working in", nextBlock.ok &&
+    nextBlock.program.weeks.slice(4).every(function (w) { return w.sessions === 5; }));
+  p = nextBlock.program;
 
   const back = await store.setWeekSessions(p.programId, p.version, 3, 4);
   ok("putting the number back brings the session back", back.ok && back.program.weeks[2].sessions === 4);
