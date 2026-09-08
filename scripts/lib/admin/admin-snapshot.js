@@ -608,6 +608,76 @@ module.exports = async function handler(req, res) {
       });
     }
 
+    /**
+     * One whole WEEK written into an athlete's block.
+     *
+     * A brick is built in four calls — one for the block, one for each of weeks 2 to 4
+     * (coach agent, 2026-09-08) — and each filled week has to land somewhere the moment
+     * it arrives, so the owner sees the table grow instead of waiting four minutes for
+     * one answer.
+     *
+     * One read and one write per week. Saving it day by day through admin_save_day
+     * would be seven of each, and it would refuse a day that has already passed — which
+     * is right for an edit and wrong for filling a month that was just planned.
+     */
+    if (body.action === "admin_save_week") {
+      if (!isAdmin) return adminAuthDenied(res);
+      const existing = (await readSnapshot(athleteId)) || {};
+      if (!existing.athleteId && !existing.createdAt) {
+        return res.status(404).json({ error: "Athlete not found" });
+      }
+      const wi = Math.max(0, Math.min(4, Number(body.weekIndex) || 0));
+      const block = existing.currentBlock;
+      if (!block || !Array.isArray(block.weeks) || !block.weeks[wi]) {
+        return res.status(400).json({ ok: false, error: "no_block" });
+      }
+      const incoming = body.week && typeof body.week === "object" ? body.week : null;
+      if (!incoming || !incoming.days || typeof incoming.days !== "object") {
+        return res.status(400).json({ ok: false, error: "week_required" });
+      }
+      const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+      const week = block.weeks[wi];
+      if (!week.days || typeof week.days !== "object") week.days = {};
+      let written = 0;
+      for (const dayKey of DAYS) {
+        const src = incoming.days[dayKey];
+        if (!src || typeof src !== "object") continue;
+        const prevParts = Array.isArray((week.days[dayKey] || {}).parts)
+          ? week.days[dayKey].parts
+          : [];
+        /* The same sanitiser every saved day goes through, so a filled week cannot
+           carry anything a hand-written day could not. */
+        const parts = AdminDayEdit.sanitizeParts(
+          Array.isArray(src.parts) ? src.parts : [],
+          prevParts,
+          dayKey
+        );
+        week.days[dayKey] = Object.assign({}, week.days[dayKey] || {}, { parts: parts });
+        if (parts.length) written += 1;
+      }
+      /* The overview is the day map, and the filled week is what decides it. The rest of
+         the header — theme, phase, summaryLine — stays as the block planned it. */
+      if (Array.isArray(incoming.overview) && incoming.overview.length) {
+        week.overview = incoming.overview.slice(0, 7).map(function (o) {
+          return {
+            day: String((o && o.day) || "").slice(0, 3),
+            label: String((o && o.label) || "").slice(0, 20),
+            focus: String((o && o.focus) || "").slice(0, 200),
+          };
+        });
+      }
+      block.weeks[wi] = week;
+      existing.currentBlock = block;
+      existing.updatedAt = new Date().toISOString();
+      await writeSnapshot(athleteId, existing);
+      return res.status(200).json({
+        ok: true,
+        weekIndex: wi,
+        daysWritten: written,
+        currentBlock: block,
+      });
+    }
+
     if (body.action === "admin_mark_done_read") {
       if (!isAdmin) return adminAuthDenied(res);
       const existing = (await readSnapshot(athleteId)) || {};

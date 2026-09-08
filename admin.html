@@ -289,6 +289,19 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
    Amber and quiet: these are notes to the owner about a block that is valid and saved,
    so nothing here is red and nothing here is a button. The CUT row is the exception —
    a cut answer is a delivery failure, and asking again is the fix. */
+/* THE FOUR CALLS, on screen. Two to four minutes with a number in it, never a spinner
+   with no count — and a way back in when a week fails (coach agent, 2026-09-08). */
+.coach-fill{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 16px 10px;
+  padding:9px 13px;border-radius:10px;border:1px solid var(--line);background:var(--bg-elev);
+  font-size:12.5px;font-weight:700;color:var(--text)}
+.coach-fill-note{font-size:11.5px;font-weight:600;color:var(--text-muted)}
+.coach-fill-ok{color:#6FE39B;font-weight:800}
+.coach-fill-bad{color:#F2867A;font-weight:800}
+.coach-fill-go{appearance:none;margin-inline-start:auto;height:30px;padding:0 14px;border-radius:8px;
+  border:none;background:var(--brand);color:#fff;font:inherit;font-weight:800;font-size:12px;cursor:pointer}
+.coach-fill-spin{width:13px;height:13px;border-radius:50%;border:2px solid var(--line);
+  border-top-color:var(--brand);animation:coachFillSpin .8s linear infinite;flex:0 0 auto}
+@keyframes coachFillSpin{to{transform:rotate(360deg)}}
 .brick-flags{margin-top:10px;display:flex;flex-direction:column;gap:8px}
 .brick-flags-head{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:#F0A44E}
 .brick-flags-mark{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;
@@ -1582,6 +1595,11 @@ header{flex-wrap:wrap;row-gap:8px}
     <button type="button" class="hdr-btn primary" id="btn-add-athlete" onclick="openClientKindChooser()">+ לקוח</button>
   </header>
   <div id="hdr-toast" class="hdr-toast" role="status" aria-live="polite"></div>
+  <!-- A brick is built in four calls and takes two to four minutes. This says which
+       week is being written, and offers to carry on from where it stopped. It lives
+       here rather than inside the athlete card because the card is redrawn every time a
+       week lands (coach agent, 2026-09-08). -->
+  <div id="coachFillBar" class="coach-fill" hidden></div>
   <div class="tabs-bar" id="athlete-tabs">
     <div class="empty-tabs">טוען...</div>
   </div>
@@ -7350,6 +7368,208 @@ function showIntakeBuilding(on, statusHtml) {
   hideIntakePickers();
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   THE FOUR CALLS.
+
+   One generate_block returns week 1 and three headers — by design, because four full
+   weeks in one answer is what used to cut a block mid-JSON. Weeks 2 to 4 are filled by
+   generate_week_detail, one call each, and NOBODY WAS MAKING THOSE CALLS: every athlete
+   had one week of training and three empty ones (coach agent, 2026-09-08).
+
+   The brain has no memory, so the programme is fed forward from here. What the plan is
+   and why it is serial lives in lib/coach-week-fill-plan.js; this is the part that
+   talks to the network, saves each week as it lands, and can carry on where it stopped.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+var coachFill = {
+  athleteId: "",
+  block: null,
+  profile: null,
+  studioIntake: null,
+  blockStartWeek: 1,
+  running: false,
+  week: 0,
+  total: 0,
+  error: "",
+};
+
+function coachFillPlanner() {
+  return window.CoachWeekFillPlan || null;
+}
+
+/** The bar: which week is being written, or what to do about a week that failed. */
+function renderCoachFillBar() {
+  var host = document.getElementById("coachFillBar");
+  var P = coachFillPlanner();
+  if (!host || !P) return;
+  if (!coachFill.block) { host.hidden = true; host.innerHTML = ""; return; }
+  var plan = P.planFor(coachFill.block);
+  host.hidden = false;
+  if (coachFill.error) {
+    host.innerHTML =
+      '<span class="coach-fill-bad">בניית שבוע ' + (coachFill.week || plan.next) + " נעצרה — " +
+      esc(coachFill.error) + "</span>" +
+      '<span class="coach-fill-note">' + plan.written + " מתוך " + plan.total +
+      " שבועות נשמרו. ההמשכה מריצה רק את מה שחסר.</span>" +
+      '<button type="button" class="coach-fill-go" onclick="coachFillResume()">המשך מהנקודה שנעצרה</button>';
+    return;
+  }
+  if (plan.done) {
+    host.innerHTML = '<span class="coach-fill-ok">' + esc(P.progressText({ done: true, total: plan.total })) + "</span>";
+    setTimeout(function () {
+      if (!coachFill.running && !coachFill.error) {
+        var h = document.getElementById("coachFillBar");
+        if (h) { h.hidden = true; h.innerHTML = ""; }
+      }
+    }, 6000);
+    return;
+  }
+  host.innerHTML =
+    '<span class="coach-fill-spin" aria-hidden="true"></span>' +
+    "<span>" + esc(P.progressText({ week: coachFill.week || plan.next, total: plan.total })) + "</span>" +
+    '<span class="coach-fill-note">' + plan.written + " מתוך " + plan.total + " שבועות נשמרו — אתה יכול לעבוד בינתיים</span>";
+}
+
+/**
+ * Start filling what is missing.
+ *
+ * Called the moment week 1 is saved, so the table is on screen while the rest is
+ * written — the owner asked for exactly that, and it costs nothing (same calls).
+ */
+function coachFillStart(o) {
+  var P = coachFillPlanner();
+  if (!P) return;
+  var opts = o || {};
+  coachFill.athleteId = String(opts.athleteId || "");
+  coachFill.block = opts.block || null;
+  coachFill.profile = opts.athleteProfile || null;
+  coachFill.studioIntake = opts.studioIntake || null;
+  coachFill.blockStartWeek = parseInt(opts.blockStartWeek, 10) || 1;
+  coachFill.error = "";
+  coachFill.week = 0;
+  if (!coachFill.athleteId || !coachFill.block) return;
+  coachFill.total = P.planFor(coachFill.block).total;
+  coachFillStep();
+}
+
+/** Carry on from where it stopped — only what is missing, never a rebuild. */
+function coachFillResume() {
+  coachFill.error = "";
+  renderCoachFillBar();
+  coachFillStep();
+}
+window.coachFillResume = coachFillResume;
+
+/**
+ * One week, then the next.
+ *
+ * SERIAL on purpose: each call must see the weeks before it, or all three reach the
+ * same conclusions and the month repeats itself. And one browser request per week —
+ * never four inside one server request, which would run into Vercel's 300-second
+ * ceiling (coach agent, 2026-09-08).
+ */
+function coachFillStep() {
+  var P = coachFillPlanner();
+  if (!P || !coachFill.block) return;
+  var plan = P.planFor(coachFill.block);
+  if (plan.done) {
+    coachFill.running = false;
+    coachFill.week = 0;
+    renderCoachFillBar();
+    loadAthletes({ silent: true });
+    return;
+  }
+  var wi = plan.next;
+  coachFill.running = true;
+  coachFill.week = wi;
+  renderCoachFillBar();
+
+  var body = P.weekFillBody({
+    block: coachFill.block,
+    weekIndex: wi,
+    athleteProfile: coachFill.profile,
+    studioIntake: coachFill.studioIntake,
+    blockStartWeek: coachFill.blockStartWeek,
+    athleteId: coachFill.athleteId,
+  });
+  if (!body) {
+    coachFill.running = false;
+    coachFill.error = "לא הצלחתי להרכיב את הבקשה לשבוע " + wi;
+    renderCoachFillBar();
+    return;
+  }
+
+  fetch(adminApiUrl("/api/personal-coach"), {
+    method: "POST",
+    headers: adminAuthHeaders(),
+    body: JSON.stringify(withAdminPassword(body)),
+  })
+    .then(function (r) {
+      return r.json().then(function (j) { return { ok: r.ok, status: r.status, j: j || {} }; });
+    })
+    .then(function (x) {
+      var j = x.j || {};
+      if (!x.ok || !j.ok) {
+        coachFill.running = false;
+        coachFill.error = friendlyCoachError(j, x.status);
+        renderCoachFillBar();
+        return;
+      }
+      /* Whatever the brain noticed about this week, said once. */
+      if (typeof showBrickFlags === "function") showBrickFlags(j);
+      var week = j.week || (j.block && j.block.weeks && j.block.weeks[wi - 1]) || null;
+      var applied = P.applyWeek(coachFill.block, week || {});
+      if (!applied.ok) {
+        coachFill.running = false;
+        /* A cut answer is a delivery failure, and asking again IS the fix — so the bar
+           offers exactly that rather than a shrug. */
+        coachFill.error = j.truncated === true ? "התשובה נקטעה באמצע" : applied.error;
+        renderCoachFillBar();
+        return;
+      }
+      coachFill.block = applied.block;
+      coachFillSaveWeek(wi, applied.block.weeks[wi - 1]);
+    })
+    .catch(function (e) {
+      coachFill.running = false;
+      coachFill.error = "שגיאת רשת: " + String((e && e.message) || e).slice(0, 120);
+      renderCoachFillBar();
+    });
+}
+
+/** Save the week that just landed, then show it, then ask for the next one. */
+function coachFillSaveWeek(wi, week) {
+  fetch(adminApiUrl("/api/admin-snapshot"), {
+    method: "POST",
+    headers: adminAuthHeaders(),
+    body: JSON.stringify(withAdminPassword({
+      action: "admin_save_week",
+      athleteId: coachFill.athleteId,
+      weekIndex: wi - 1,
+      week: week,
+    })),
+  })
+    .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j || {} }; }); })
+    .then(function (x) {
+      if (!x.ok || !x.j.ok) {
+        coachFill.running = false;
+        coachFill.error = "השבוע נבנה אבל לא נשמר — " + ((x.j && (x.j.message || x.j.error)) || "?");
+        renderCoachFillBar();
+        return;
+      }
+      /* On screen the moment it is saved: he watches the month fill in. */
+      if (x.j.currentBlock) coachFill.block = x.j.currentBlock;
+      loadAthletes({ silent: true });
+      renderCoachFillBar();
+      coachFillStep();
+    })
+    .catch(function (e) {
+      coachFill.running = false;
+      coachFill.error = "שגיאת רשת בשמירת שבוע " + wi;
+      renderCoachFillBar();
+    });
+}
+
 function finalizeNewAthlete(block) {
   /* Pipe test, not production: show that an answer came back, save nothing. */
   if (COACH_BUILD_MAY_SAVE !== true) {
@@ -7397,6 +7617,15 @@ function finalizeNewAthlete(block) {
       }
       currentAthleteId = d.snapshot && d.snapshot.athleteId;
       document.getElementById("intake-status").textContent = "נוצר בהצלחה ✓";
+      /* Week 1 is saved and about to be on screen. Weeks 2 to 4 are three more calls,
+         one at a time, each saved and shown as it lands (coach agent, 2026-09-08). */
+      coachFillStart({
+        athleteId: currentAthleteId,
+        block: (d.snapshot && d.snapshot.currentBlock) || block,
+        athleteProfile: intakeAthleteProfile({ forceIntakeComplete: true }),
+        studioIntake: intakeState.studioIntake || null,
+        blockStartWeek: 1,
+      });
       setTimeout(function() {
         var m = document.getElementById("intake-modal");
         if (m) m.classList.remove("open");
@@ -7420,6 +7649,7 @@ tryRestoreAdminSession();
 <script src="lib/pprog-clipboard.js"></script>
 <script src="lib/coach-block-handoff.js"></script>
 <script src="lib/coach-brick-flags-view.js"></script>
+<script src="lib/coach-week-fill-plan.js"></script>
 <script src="lib/normalize-pprog-block.js"></script>
 <script src="lib/pprog-display.js"></script>
 <script src="lib/admin-day-edit.js"></script>

@@ -105,7 +105,10 @@ ok("every coach call from admin is found", coachCalls.length >= 4);
 const postCalls = coachCalls.filter(function (body) {
   return body.indexOf('method: "POST"') >= 0;
 });
-ok("three of them are POSTs", postCalls.length === 3);
+/* Four now: the fourth is the week fill, which is a call of its own per week —
+   a brick is written in four requests from the browser, never four inside one
+   server request (coach agent, 2026-09-08). */
+ok("all of them are POSTs", postCalls.length === 4);
 postCalls.forEach(function (body, i) {
   const action = (body.match(/action:\s*"([a-z_]+)"/) || [])[1] || "(unknown)";
   ok(
