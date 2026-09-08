@@ -212,6 +212,12 @@ async function main() {
   ok("every row can be taken off the shelf", view.indexOf("data-block-take=") >= 0);
   ok("or removed from it", view.indexOf("data-block-drop=") >= 0);
   ok("the shelf is asked for when the screen opens", admin.indexOf("loadBlocks();") >= 0);
+  /* And asked AGAIN until it is answered: this screen is the landing, so it opens
+     before the client screen — whose session the shelf's request needs — has been
+     handed one. The first ask came back unauthorised and the table stayed empty
+     until something else happened to ask (owner, 2026-09-08). */
+  ok("and asked again until it is answered", /function loadBlocks\(tries\)[\s\S]{0,600}setTimeout\(function \(\) \{ loadBlocks\(\(tries \| 0\) \+ 1\); \}, 300\);/.test(admin));
+  ok("and once more the moment the session is certainly alive", /window\.LedgerScreen\.isOpen\(\)[\s\S]{0,160}adminBlocksChanged\(\)/.test(admin));
   ok("and again the moment a block is saved onto it", admin.indexOf("window.adminBlocksChanged = function") >= 0);
 
   /* The menu on a block: the five he listed, in his order (owner, 2026-09-05). */

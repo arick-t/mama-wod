@@ -3540,6 +3540,13 @@ window.adminOnClientRows = function (rows, monthlyTotal, unreadTotal, stripOrder
      than falling back to the natural order for a moment. */
   if (Array.isArray(stripOrder)) clientStripOrder = stripOrder.map(String);
   clientHalfFailed = false;
+  /* The client screen has a session now, which is what the shelf's request needs — so
+     if the management screen is on, its shelf is asked for again (owner, 2026-09-08). */
+  try {
+    if (window.LedgerScreen && window.LedgerScreen.isOpen && window.LedgerScreen.isOpen()) {
+      if (typeof window.adminBlocksChanged === "function") window.adminBlocksChanged();
+    }
+  } catch (eShelf) {}
   setMonthlyIncome(monthlyTotal);
   programsAnswered = true;
   renderPeopleStrip();
@@ -11413,10 +11420,26 @@ tryRestoreAdminSession();
    * One read of one index — the weeks of a block are only fetched when he actually
    * takes one off the shelf.
    */
-  function loadBlocks() {
-    if (!window.ClientScreen || !window.ClientScreen.blocksList) return;
+  /**
+   * Ask for the shelf, and do not give up on the first "no".
+   *
+   * This screen is the LANDING, so it opens before the client screen has been handed
+   * its session — and the shelf's request is the client screen's. The first ask came
+   * back unauthorised and the table was empty until he happened to save another block,
+   * which is when something asked again (owner, 2026-09-08).
+   *
+   * One read of one index, so asking again a few times costs nothing worth counting.
+   */
+  function loadBlocks(tries) {
+    if (!window.ClientScreen || !window.ClientScreen.blocksList) {
+      if ((tries | 0) < 20) setTimeout(function () { loadBlocks((tries | 0) + 1); }, 150);
+      return;
+    }
     window.ClientScreen.blocksList(function (err, rows) {
-      if (err) return;
+      if (err) {
+        if ((tries | 0) < 20) setTimeout(function () { loadBlocks((tries | 0) + 1); }, 300);
+        return;
+      }
       LS.blocks = rows || [];
       renderBlocks();
     });
