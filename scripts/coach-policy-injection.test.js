@@ -462,6 +462,45 @@ function testBrickFlags() {
       { lifts: { back_squat: 160 } }
     ).length === 0);
 
+  /* The owner's under-scaling point, made checkable. "Pull-Ups / Ring Rows" is the CORRECT form —
+     standard on the line, scale beside it — and must never flag; "10 Strict Ring Rows" alone must. */
+  ok("a scale written as the prescription is flagged",
+    /Scaled movement\(s\) written as the prescription/.test(
+      brickFlags(
+        { weeks: [{ weekIndex: 1, days: { mon: { parts: [{ title: "A", lines: ["10 Strict Ring Rows"] }] } } }] },
+        { lifts: { a: 1 } },
+        { agent: "studio" }
+      ).join(" ")
+    ));
+  ok("the standard beside the scale is not flagged",
+    brickFlags(
+      { weeks: [{ weekIndex: 1, days: { mon: { parts: [{ title: "A", lines: ["60 Pull-Ups / Ring Rows"] }] } } }] },
+      { lifts: { a: 1 } },
+      { agent: "studio" }
+    ).length === 0);
+  ok("several scales ride on one flag line, not several",
+    brickFlags(
+      {
+        weeks: [
+          {
+            weekIndex: 1,
+            days: {
+              mon: { parts: [{ title: "A", lines: ["10 Ring Rows", "50 Single-Unders"] }] },
+            },
+          },
+        ],
+      },
+      { lifts: { a: 1 } },
+      { agent: "studio" }
+    ).length === 1);
+  /* And the fact the flag backs up. */
+  ok("the known scales are listed to the coach as a fact",
+    /WHAT GOES ON THE PRESCRIPTION LINE \(HARD\)/.test(fs.readFileSync(PC_PATH, "utf8")) &&
+      /THE DUMBBELL STANDARD IS 22\.5 kg/.test(fs.readFileSync(PC_PATH, "utf8")));
+  ok("a room whose population sits below a standard may set its own",
+    /A ROOM WHOSE WHOLE POPULATION SITS BELOW A STANDARD may set its own/.test(
+      fs.readFileSync(PC_PATH, "utf8")
+    ));
   ok("imperial units are flagged",
     /Imperial units/.test(
       brickFlags(

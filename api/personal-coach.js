@@ -1300,6 +1300,42 @@ function loadBasisText(profile, agent) {
   );
 }
 
+
+/* Named standards, as a FACT rather than a principle. coach-craft says the standard goes on the
+ * prescription line and the scale underneath; the brick written straight after that rule landed
+ * still prescribed ring rows and 20 kg dumbbells. A list is checkable in a way a principle is not. */
+const KNOWN_SCALES = [
+  ["ring row", "pull-up"],
+  ["banded or band-assisted pull-up", "pull-up"],
+  ["jumping pull-up", "pull-up"],
+  ["knee, box or incline push-up", "push-up"],
+  ["pike or box handstand push-up", "handstand push-up"],
+  ["single-under", "double-under"],
+  ["box step-up", "box jump"],
+];
+
+function standardsText(agent) {
+  const pairs = KNOWN_SCALES.map(function (r) {
+    return r[0] + " -> " + r[1];
+  }).join("; ");
+  return (
+    "\n\nWHAT GOES ON THE PRESCRIPTION LINE (HARD):\n" +
+    "These are SCALES. Each belongs UNDER the line as an alternative, never on it as the " +
+    "prescription: " +
+    pairs +
+    ".\n" +
+    "Writing a scale as the prescription makes the session smaller for everyone who did not need " +
+    "it. Write the standard, then offer the scale to whoever does.\n" +
+    "THE DUMBBELL STANDARD IS 22.5 kg (paired with 15 kg where the room writes an Rx pair), and " +
+    "you scale DOWN from it. Do not open at 20 or 17.5 and call that the prescription.\n" +
+    (agent === "studio"
+      ? "A ROOM WHOSE WHOLE POPULATION SITS BELOW A STANDARD may set its own — a studio where " +
+        "nobody has a pull-up writes what it can do. That comes from the population in the " +
+        "intake, never from caution, and the same rule then applies to the standard it set.\n"
+      : "")
+  );
+}
+
 function coachAgentFor(profile, opts) {
   /* studioIntake on the request is DEFINITIVE — the admin module only builds one for a room, so
      its presence settles the question without pattern-matching anything. The packet markers below
@@ -1387,6 +1423,7 @@ function buildSystemWithMemory(profile, action, opts) {
       buildLayerKnowledgeBlock(profile, opts) +
       oneRmTestGateText(opts && opts.blockStartWeek, profile, opts) +
       loadBasisText(profile, coachAgentFor(profile, opts)) +
+      standardsText(coachAgentFor(profile, opts)) +
       buildCostCapsRuntimeNote(profile) +
       buildFinishLearningBlock(profile, action) +
       buildExtraSessionsBlock(profile) +
