@@ -44,7 +44,12 @@ function allPrompts() {
 /* Character budgets. A layer that doubles in size doubles what every brick costs, so growth is a
    decision, not an accident. Raise a number here deliberately and say why. */
 const MAX_CHARS = {
-  "coach-craft": 3200,
+  /* 4000 as of 2026-09-08: write the standard, offer the scale. The box brick prescribed RING
+     ROWS and dumbbells at 15, 17.5 and 20 kg — starting below the standard rather than at it. The
+     owner: "אימון שיש בו RING ROWS במקום מתח הוא UNDER סקיילינג... בדיוק כמו שלא היינו כותבים מתח
+     עם גומיה... כולנו יודעים שהסטנדרט הוא 22.5 ומשם מדרדרים." This strengthens the
+     program-for-the-best rule that was already here and evidently not specific enough to bite. */
+  "coach-craft": 4000,
   /* Raised from 5500 on 2026-09-02: the owner asked for three additions — the four models are a
      compass and not a gate for a limited-equipment studio, modality rotation must not be hardened,
      and the scope limit must be stated out loud. About 40 extra tokens a call. */
@@ -1104,8 +1109,8 @@ function testPackBudget() {
      moment the router becomes the source. This pack is
      ~10.2k tokens; the general
      healthy athlete still pays 22k, which is what most bricks actually cost. */
-  ok("the heaviest pack stays under 50k characters",
-    heavy.chars < 50000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
+  ok("the heaviest pack stays under 51k characters",
+    heavy.chars < 51000, heavy.chars + " chars, layers: " + heavy.layers.join(", "));
   ok("the pack reports which layers it used",
     Array.isArray(heavy.layers) && heavy.layers.length >= 6, heavy.layers.join(", "));
 }
@@ -1888,6 +1893,39 @@ function testTwoWorkingParts() {
     ) < 0);
 }
 
+
+/* Write the standard, offer the scale. 2026-09-08, from the box brick. "Program for the best and
+   scale for the rest" had been in this layer since the first review and did not bite: the brick
+   still put the scaled version ON the prescription line. Naming the failure and naming a known
+   standard is what makes it actionable. */
+function testWriteTheStandard() {
+  const CR2 = require("../lib/coach-layers/coach-craft.js");
+  const flat = CR2.replace(/\s+/g, " ");
+  ok("the standard goes on the line and the scale underneath",
+    /WRITE THE STANDARD ON THE LINE\. PUT THE SCALE UNDERNEATH IT/.test(CR2));
+  ok("the ring row and the banded pull-up are named as alternatives, not prescriptions",
+    /A ring row instead of a pull-up, a banded pull-up, a lighter dumbbell/i.test(flat) &&
+      /belong under the line, never on it/i.test(flat));
+  ok("under-scaling is named as what it costs",
+    /WRITING THE SCALED VERSION AS THE PRESCRIPTION UNDER-SCALES THE WHOLE ROOM/.test(flat) &&
+      /tells the capable majority that the day was not written for them/i.test(flat));
+  ok("the reference point is the average-and-above member",
+    /THE REFERENCE IS THE AVERAGE-AND-ABOVE MEMBER, never the newest one/.test(flat));
+  ok("the owner's two standards are written down",
+    /The dumbbell is 22\.5 kg/.test(flat) &&
+      /The movement is the pull-up and the ring row is its scale/.test(flat));
+  /* And the case that would otherwise be broken by it: a women's studio whose own Rx is lighter. */
+  ok("a room's own population may set a different standard",
+    /Where a room's own population sets a different Rx, that is the room's standard/i.test(flat));
+  /* Always-on: both products, every action. */
+  ["individual", "studio"].forEach(function (a) {
+    ok(a + " reads it",
+      L.buildLayerPack(
+        a === "studio" ? { agent: "studio", studioIntake: {} } : { agent: "individual", profile: {} }
+      ).text.indexOf("WRITE THE STANDARD ON THE LINE") >= 0);
+  });
+}
+
 function main() {
   console.log("\n=== Coach knowledge layers ===\n");
   testShape();
@@ -1903,6 +1941,7 @@ function main() {
   testSessionCountMode();
   testStructuredIntakeFields();
   testCraftFoundation();
+  testWriteTheStandard();
   testBriefCoverage();
   testWritingRules();
   testWeekContinuity();
