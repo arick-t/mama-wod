@@ -1201,6 +1201,13 @@
       forceJson: true,
       adminProgramming: true,
     };
+    /* Last month, when this athlete has one. Read from the snapshot on the page rather
+       than from the intake state: the intake is about who they are, the handoff is
+       about what they just did (coach agent, 2026-09-08). */
+    if (typeof coachBlockHandoffFor === "function" && typeof adminCurrentAthlete === "function") {
+      var handoff = coachBlockHandoffFor(adminCurrentAthlete());
+      if (handoff) payload.blockHandoff = handoff;
+    }
     if (typeof withAdminPassword === "function") payload = withAdminPassword(payload);
 
     var controller = typeof AbortController !== "undefined" ? new AbortController() : null;

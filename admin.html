@@ -6659,7 +6659,30 @@ function closeIntakeWorkspace() {
 }
 
 function intakeAthleteProfile(opts) {
-  var forceComplete = opts && opts.forceIntakeComplete;
+  var forceComplete = !!(opts && opts.forceIntakeComplete);
+  var chatTail = intakeState.messages.slice(-8).map(function(m) {
+    return (m.role === "user" ? "מתאמן: " : "מאמן: ") + String(m.text || "").slice(0, 400);
+  }).join("\n");
+  /* THROUGH THE CONTRACT, not beside it.
+     This used to hand-build eleven fields, and the ones it left out were the ones the
+     brain needed most: blockWeeks, deloadEveryWeeks and deloadWeekIndex. Without the
+     deload week the brain cannot open the 1RM window — it is counted from the block
+     number — and it writes month two as if month one never happened
+     (coach agent, 2026-09-08). lib/coach-intake-sync-contract.js computes all three;
+     admin-fixed-intake.js has always used it and this fallback did not. One sender
+     obeying the contract and one going around it is how a field goes missing. */
+  var C = window.CoachIntakeSync;
+  if (C && C.athleteProfileForGenerateBlock) {
+    var built = C.athleteProfileForGenerateBlock(intakeState, {
+      forceIntakeComplete: forceComplete,
+      athleteId: intakeState.athleteId,
+      costCaps: intakeState.costCaps,
+      blockStartWeek: intakeState.blockStartWeek,
+      deloadEveryWeeks: intakeState.deloadEveryWeeks
+    });
+    built.chatSummaryTail = chatTail;
+    return built;
+  }
   return {
     preferredLanguage: intakeState.preferredLanguage || "",
     gender: intakeState.gender || "",
@@ -6671,10 +6694,46 @@ function intakeAthleteProfile(opts) {
     coachPrefs: [],
     hasCurrentWeek: false,
     hasCurrentBlock: false,
-    chatSummaryTail: intakeState.messages.slice(-8).map(function(m) {
-      return (m.role === "user" ? "מתאמן: " : "מאמן: ") + String(m.text || "").slice(0, 400);
-    }).join("\n")
+    chatSummaryTail: chatTail
   };
+}
+
+/**
+ * Last month, in a paragraph the coach's brain can read — or "" when there is no last
+ * month to tell it about.
+ *
+ * Built from the athlete's own snapshot: the block they are finishing, which block it
+ * is (the past ones plus this one) and where it sits in the plan. The shape, and the
+ * two traps in it, are in lib/coach-block-handoff.js.
+ */
+/** The athlete whose card is open, or null — one place to ask. */
+function adminCurrentAthlete() {
+  var id = typeof currentAthleteId !== "undefined" ? currentAthleteId : "";
+  var list = typeof athletes !== "undefined" && Array.isArray(athletes) ? athletes : [];
+  for (var i = 0; i < list.length; i++) {
+    if (list[i] && list[i].athleteId === id) return list[i];
+  }
+  return null;
+}
+
+function coachBlockHandoffFor(a) {
+  if (!a || !window.CoachBlockHandoff || !a.currentBlock) return "";
+  var weeks = ((a.currentBlock.weeks) || []).length;
+  if (!weeks) return "";
+  var past = Array.isArray(a.pastBlocks) ? a.pastBlocks.length : 0;
+  var C = window.CoachIntakeSync;
+  var blockWeeks = (C && C.BLOCK_WEEKS) || 4;
+  var deloadEvery = parseInt(a.deloadEveryWeeks, 10) > 0 ? parseInt(a.deloadEveryWeeks, 10) : 0;
+  var startWeek = past * blockWeeks + 1;
+  var deloadIdx =
+    C && C.deloadWeekIndexForBlock ? C.deloadWeekIndexForBlock(startWeek, deloadEvery, weeks) : 0;
+  return window.CoachBlockHandoff.buildHandoffText({
+    block: a.currentBlock,
+    blockIndex: past + 1,
+    startWeek: startWeek,
+    deloadWeekIndex: deloadIdx || 0,
+    profile: a
+  });
 }
 
 function friendlyCoachError(j, status) {
@@ -7129,7 +7188,11 @@ function generateIntakeBlock() {
       athleteProfile: intakeAthleteProfile({ forceIntakeComplete: true }),
       intakeComplete: true,
       forceJson: true,
-      adminProgramming: true
+      adminProgramming: true,
+      /* Last month, when there is one. The brain reads body.blockHandoff and degrades
+         safely without it — but without it, month two is written as if month one never
+         happened (coach agent, 2026-09-08). */
+      blockHandoff: coachBlockHandoffFor(adminCurrentAthlete()) || undefined
     })
   })
     .then(function(r) {
@@ -7301,6 +7364,7 @@ tryRestoreAdminSession();
 <script src="lib/coach-intake-sync-contract.js"></script>
 <script src="lib/admin-people-strip.js"></script>
 <script src="lib/pprog-clipboard.js"></script>
+<script src="lib/coach-block-handoff.js"></script>
 <script src="lib/normalize-pprog-block.js"></script>
 <script src="lib/pprog-display.js"></script>
 <script src="lib/admin-day-edit.js"></script>
