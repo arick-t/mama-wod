@@ -175,4 +175,48 @@ ok("it writes through the ordinary save, version check and all", /expectedVersio
 ok("a stale write reopens the client instead of overwriting", /cvBrain\.error = "מישהו שמר בינתיים/.test(admin));
 ok("and a failure offers to carry on", admin.indexOf('data-brainresume="1"') >= 0);
 
+/* --- IN A BROWSER, WHICH IS WHERE IT BROKE ------------------------------- */
+
+/* He pressed the button on a real client and got a red panel saying the studio brief
+ * builder was not loaded — while the file was served and sitting right there
+ * (owner, 2026-09-08). Two mistakes of mine in one line: the global that
+ * lib/client-intake.js publishes is CLIENT_INTAKE, not ClientIntake; and this file
+ * captured its neighbours the moment it was parsed, when the one it needed most was
+ * still further down the page.
+ *
+ * Node never saw it — under require() the dependency is simply there. So the browser is
+ * simulated here: the file is loaded FIRST, into a pagedow with nothing on it, and the
+ * libraries appear afterwards, exactly as a later <script> tag does.
+ */
+const vm = require("vm");
+const page = {};
+page.pagedow = page;
+page.self = page;
+function loadInto(w, file) {
+  vm.runInNewContext(fs.readFileSync(path.join(root, "lib", file), "utf8"), w);
+}
+loadInto(page, "coach-client-brief.js");
+ok("the file publishes itself on the page", typeof page.CoachClientBrief === "object");
+/* Now the neighbours arrive — after it, as they do in admin.html's script list. */
+loadInto(page, "client-intake.js");
+loadInto(page, "coach-intake-sync-contract.js");
+ok(
+  "the questionnaire library is published as CLIENT_INTAKE",
+  typeof page.CLIENT_INTAKE === "object" &&
+    typeof page.CLIENT_INTAKE.buildStudioIntakePrompt === "function"
+);
+const inBrowser = page.CoachClientBrief.blockRequestFor({ program: studioProgram(), blockIndex: 1 });
+ok("and a request builds in the browser, load order and all", inBrowser.ok === true);
+ok(
+  "the room's own answers are in it there too",
+  /STUDIO INTAKE COMPLETE/.test(inBrowser.body.messages[0].text) &&
+    /12/.test(inBrowser.body.messages[0].text)
+);
+ok("with the deload week named", inBrowser.athleteProfile.deloadWeekIndex === 4);
+
+/* And the page itself no longer leans on being forgiving: the questionnaire library is
+   listed before the files that read it. */
+const scriptOrder = admin.match(/lib\/(?:client-intake|coach-client-brief)\.js/g) || [];
+ok("admin.html loads the questionnaire library first", scriptOrder[0] === "lib/client-intake.js");
+
 console.log("\nAll coach-client-brief checks passed (" + passed + " assertions).");
