@@ -2909,10 +2909,16 @@ async function coachHandler(req, res) {
     Math.max(1, Math.min(5, parseInt(body.weekIndex, 10) || 1));
   const isWeekDetail = action === "generate_week_detail";
   /* Programming actions: Gemini-first evening brain. Never thin system for Groq. Never 8b backup. */
+  /* 32768 as of 2026-09-08. A seven-day box brick hit 8,188 output tokens against a cap of 8,192
+   * and came back truncated mid-JSON — the marker opened and never closed, so nothing parsed and
+   * the whole call was wasted. This model counts its THINKING against the same budget: that
+   * response spent roughly 6,400 tokens thinking and had about 1,800 left for the answer, which is
+   * not a brick. Raising a cap costs nothing on its own — Gemini bills tokens produced, not tokens
+   * allowed — and the alternative, a silent truncation, costs the whole call. */
   const gcOpts = programming
     ? {
         temperature: forceJson ? 0.15 : isWeekDetail ? 0.3 : 0.35,
-        maxOutputTokens: 8192,
+        maxOutputTokens: 32768,
         skipTools: true,
         skipCompact: true,
         disallowBackupModel: true,
@@ -3017,6 +3023,16 @@ async function coachHandler(req, res) {
     if (result.usage) out.usage = result.usage;
     if (block) out.block = block;
     if (week) out.week = week;
+    /* A marker that opens and never closes is a TRUNCATION, not a refusal. Say so: silently
+       returning no block sends the caller down the "model would not answer" path, and the fix for
+       a cut-off answer is a retry, not a rewrite. */
+    if (!block && !week) {
+      const rawOut = String((result && (result.text || result.raw)) || "");
+      if (/<<<\s*BLOCK_JSON/i.test(rawOut) && !/BLOCK_JSON\s*>>>/i.test(rawOut)) {
+        out.truncated = true;
+        out.truncatedMarker = "BLOCK_JSON";
+      }
+    }
     /* Deterministic post-check, no model call and no retry. At most a handful of flags for the
        back office to show the owner — dosage is the design, per his condition on approving it. */
     try {

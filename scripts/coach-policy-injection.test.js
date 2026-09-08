@@ -340,6 +340,23 @@ function testSameBrickWeekContinuity() {
    So it never rejects, never retries, never speaks to the athlete, and only covers violations a
    machine can be certain about. A warning that is sometimes wrong teaches people to ignore the
    ones that are right. */
+/* The seven-day box brick, 2026-09-08: 8,188 output tokens against a cap of 8,192, truncated
+   mid-JSON. The marker opened and never closed, nothing parsed, and the caller was told only that
+   there was no block — which reads as a refusal and is not one. This model counts its THINKING
+   against maxOutputTokens, so that response had roughly 1,800 tokens left for the answer. */
+function testOutputBudgetAndTruncation() {
+  const src = fs.readFileSync(PC_PATH, "utf8");
+  ok("the programming budget is no longer 8k",
+    /maxOutputTokens: 32768,/.test(src) &&
+      src.indexOf("maxOutputTokens: 8192,") !== src.lastIndexOf("maxOutputTokens: 8192,"));
+  ok("the reason is recorded next to the number",
+    /counts its THINKING against the same budget/.test(src.replace(/\s+/g, " ")));
+  ok("an unclosed marker is reported as a truncation, not a missing block",
+    /out\.truncated = true;/.test(src) && /out\.truncatedMarker = "BLOCK_JSON";/.test(src));
+  ok("the distinction is stated, because the fix differs",
+    /the fix for a cut-off answer is a retry, not a rewrite/i.test(src.replace(/\s+/g, " ")));
+}
+
 function testBrickFlags() {
   const { brickFlags, MAX_FLAGS } = require("../lib/coach-brick-flags.js");
   const src = fs.readFileSync(PC_PATH, "utf8");
@@ -526,6 +543,7 @@ function main() {
   testBothPathsStillInject();
   testBlockLengthIsFourWeeks();
   testClientImprovesRule();
+  testOutputBudgetAndTruncation();
   testBrickFlags();
   testLoadBasisWhenNoLiftsReported();
   testCoachKnowsTheWarmUpField();
