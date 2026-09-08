@@ -1278,6 +1278,25 @@ button.ghost:hover{color:var(--text)}
     renderDays();
   };
 
+  /**
+   * Redraw the card without moving the page under him.
+   *
+   * Every one of these controls rebuilds the whole day card, and the browser then puts
+   * the scroll wherever the new markup happens to fall — he ticked "Add numbering" and
+   * the page jumped away from the line he was typing in (owner, 2026-09-08).
+   */
+  function keepScroll(redraw) {
+    var x = window.pageXOffset || 0;
+    var y = window.pageYOffset || (document.documentElement && document.documentElement.scrollTop) || 0;
+    var box = el("days");
+    var inner = box ? box.scrollTop : 0;
+    redraw();
+    try {
+      window.scrollTo(x, y);
+      if (box) box.scrollTop = inner;
+    } catch (e) {}
+  }
+
   window.cvEditSet = function (partIndex, field, a, b) {
     if (!state.edit || !state.edit.parts) return;
     var part = state.edit.parts[partIndex | 0];
@@ -1301,7 +1320,7 @@ button.ghost:hover{color:var(--text)}
     if (!part) return;
     if (!Array.isArray(part.notes)) part.notes = [];
     part.notes.push("");
-    renderDays();
+    keepScroll(renderDays);
   };
 
   /**
@@ -1316,7 +1335,7 @@ button.ghost:hover{color:var(--text)}
     part.work.splice(at, 0, "");
     if (Array.isArray(part.colors)) part.colors.splice(at, 0, "");
     if (Array.isArray(part.nums)) part.nums.splice(at, 0, "");
-    renderDays();
+    keepScroll(renderDays);
     focusWorkLine(partIndex | 0, at);
   };
 
@@ -1346,7 +1365,7 @@ button.ghost:hover{color:var(--text)}
     var part = state.edit && state.edit.parts[partIndex | 0];
     if (!part || !Array.isArray(part.notes)) return;
     part.notes.splice(noteIndex | 0, 1);
-    renderDays();
+    keepScroll(renderDays);
   };
 
   window.cvEditSetColour = function (partIndex, lineIndex, colourKey) {
@@ -1354,7 +1373,7 @@ button.ghost:hover{color:var(--text)}
     if (!part) return;
     if (!Array.isArray(part.colors)) part.colors = [];
     part.colors[lineIndex | 0] = String(colourKey || "");
-    renderDays();
+    keepScroll(renderDays);
   };
 
   /**
@@ -1393,14 +1412,14 @@ button.ghost:hover{color:var(--text)}
     if (!state.edit.parts.length) {
       state.edit.parts = [{ title: "Part A", notes: [""], format: "", work: [""] }];
     }
-    renderDays();
+    keepScroll(renderDays);
   };
 
   window.cvEditSetNumbering = function (partIndex, on) {
     var part = state.edit && state.edit.parts[partIndex | 0];
     if (!part) return;
     part.numbered = on === true;
-    renderDays();
+    keepScroll(renderDays);
   };
 
   window.cvEditRemoveWork = function (partIndex, lineIndex) {
@@ -1411,7 +1430,7 @@ button.ghost:hover{color:var(--text)}
     if (Array.isArray(part.colors)) part.colors.splice(lineIndex | 0, 1);
     if (Array.isArray(part.nums)) part.nums.splice(lineIndex | 0, 1);
     if (!part.work.length) part.work = [""];
-    renderDays();
+    keepScroll(renderDays);
   };
 
   window.cvEditAddPart = function () {
@@ -1419,7 +1438,7 @@ button.ghost:hover{color:var(--text)}
     if (!Array.isArray(state.edit.parts)) state.edit.parts = [];
     var letter = String.fromCharCode(65 + state.edit.parts.length);
     state.edit.parts.push({ title: "Part " + letter, notes: [""], format: "", work: [""] });
-    renderDays();
+    keepScroll(renderDays);
   };
 
   window.cvEditCancel = function () {

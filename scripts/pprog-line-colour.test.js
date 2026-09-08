@@ -267,11 +267,22 @@ ok("no session is invented to hold the name", admin.indexOf("} else if (parts &&
 ok("the part row carries an × of its own", /class="pprog-edit-del-line pprog-del-part"/.test(editor));
 ok("in the same shape as every other × here", editor.indexOf('pprog-edit-del-line pprog-del-part') >= 0 && editor.indexOf(">×</button>") >= 0);
 ok("and it says what it removes", editor.indexOf("מחק את החלק כולו") >= 0);
-ok("the numbering toggle is drawn as a pill", /class="pprog-num-pill"/.test(editor));
-ok("with the circled number inside it", /class="pprog-num-mark" aria-hidden="true">1</.test(editor));
-ok("over a real checkbox", /<input type="checkbox"[^>]*onchange="[A-Za-z]*SetNumbering/.test(editor));
-ok("that is hidden rather than removed", /\.pprog-num-toggle input\{position:absolute;opacity:0/.test(css));
-ok("and lights the pill when it is on", /input:checked \+ \.pprog-num-pill\{/.test(css));
+/* A real tick box, in the flow of the row. It was drawn as a pill over a HIDDEN
+   checkbox, and that was wrong twice: it did not read as something you tick, and
+   clicking it focused an input parked off-layout, so the browser scrolled the page away
+   from the field he was typing in (owner, 2026-09-08). */
+ok("the numbering control is a real checkbox", /<input type="checkbox"[^>]*onchange="[A-Za-z]*SetNumbering/.test(editor));
+ok("with the circled number beside it", /class="pprog-num-mark" aria-hidden="true">1</.test(editor));
+ok("and the words that say what it does", editor.indexOf("Add numbering") >= 0);
+ok("nothing is parked off-layout any more", /\.pprog-num-toggle input\{position:absolute/.test(css) === false);
+ok("the box wears our own colour", /\.pprog-num-toggle input\[type="checkbox"\]\{[^}]*accent-color:var\(--part\)/.test(css));
+ok("and ticking it lights the whole pill", /\.pprog-num-toggle:has\(input:checked\)\{/.test(css));
+
+/* Every control here rebuilds the card, and the page must not move under him. */
+const adminKeep = require("fs").readFileSync(require("path").join(__dirname, "..", "admin.html"), "utf8");
+const clientKeep = require("fs").readFileSync(require("path").join(__dirname, "..", "client.html"), "utf8");
+ok("the admin keeps the scroll where it was", /function keepScroll\(redraw\)/.test(adminKeep) && (adminKeep.match(/keepScroll\(renderAdminDays\)/g) || []).length >= 8);
+ok("and so does the client page", /function keepScroll\(redraw\)/.test(clientKeep) && (clientKeep.match(/keepScroll\(renderDays\)/g) || []).length >= 8);
 
 const adminSrc = require("fs").readFileSync(require("path").join(__dirname, "..", "admin.html"), "utf8");
 const clientSrc = require("fs").readFileSync(require("path").join(__dirname, "..", "client.html"), "utf8");

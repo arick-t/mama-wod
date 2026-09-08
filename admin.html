@@ -984,28 +984,30 @@ button.prog-sessions.is-editable:hover{background:rgba(129,199,132,.20);color:#f
   content:"";position:absolute;inset-inline-start:2px;top:8px;width:14px;height:1.5px;
   background:var(--text-meta);transform:rotate(-45deg)
 }
-/* "Add numbering" — a pill beside the part heading, quiet until it is ticked, and the
-   circled 1 inside it shows what it is about (owner, 2026-09-08). The checkbox itself is
-   a real one, hidden behind the pill, so a keyboard and a screen reader still work. */
-.pprog-num-toggle{display:inline-flex;align-items:center;flex-shrink:0;cursor:pointer;user-select:none}
-.pprog-num-toggle input{position:absolute;opacity:0;width:1px;height:1px;margin:0;pointer-events:none}
-.pprog-num-pill{
-  display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
-  font-size:11.5px;font-weight:800;letter-spacing:.2px;color:var(--text-meta);
-  border:1px solid var(--line);border-radius:999px;padding:4px 11px 4px 5px;
-  background:transparent;transition:background .15s ease,border-color .15s ease,color .15s ease
+/* "Add numbering" — a real tick box with a label around it (owner, 2026-09-08).
+   It was drawn as a pill over a HIDDEN checkbox, and that was wrong twice: it did not
+   read as something you tick, and clicking it focused an input parked off-layout, so
+   the browser scrolled the page to it and he lost the field he was typing in. The box
+   is a plain checkbox in the flow of the row now, in our own colour. */
+.pprog-num-toggle{
+  display:inline-flex;align-items:center;gap:7px;flex-shrink:0;cursor:pointer;
+  user-select:none;white-space:nowrap;font-size:11.5px;font-weight:800;letter-spacing:.2px;
+  color:var(--text-meta);border:1px solid var(--line);border-radius:999px;padding:4px 11px 4px 8px;
+  transition:background .15s ease,border-color .15s ease,color .15s ease
+}
+.pprog-num-toggle input[type="checkbox"]{
+  width:15px;height:15px;margin:0;flex:0 0 auto;cursor:pointer;accent-color:var(--part)
 }
 .pprog-num-mark{
   display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;
   border-radius:50%;border:1.5px solid currentColor;font-size:10.5px;font-weight:900;
-  line-height:1;flex:0 0 auto;opacity:.75
+  line-height:1;flex:0 0 auto;opacity:.7
 }
-.pprog-num-toggle:hover .pprog-num-pill{border-color:var(--text-meta);color:var(--text)}
-.pprog-num-toggle input:checked + .pprog-num-pill{
-  color:var(--part);border-color:var(--part);background:rgba(129,199,132,.14)
-}
-.pprog-num-toggle input:checked + .pprog-num-pill .pprog-num-mark{opacity:1}
-.pprog-num-toggle input:focus-visible + .pprog-num-pill{box-shadow:0 0 0 2px rgba(255,255,255,.25)}
+.pprog-num-toggle:hover{border-color:var(--text-meta);color:var(--text)}
+/* Ticked: the whole pill takes the accent colour. Where :has is not understood the
+   checkbox still shows the state on its own, so nothing is lost. */
+.pprog-num-toggle:has(input:checked){color:var(--part);border-color:var(--part);background:rgba(129,199,132,.14)}
+.pprog-num-toggle:has(input:checked) .pprog-num-mark{opacity:1}
 /* The × that removes a whole part sits at the end of the same row. */
 .pprog-day-card .section-title-row .pprog-del-part{margin-inline-start:2px;font-size:17px}
 .pprog-day-card .section-title-row .pprog-del-part:hover{color:#F2867A}
@@ -8677,6 +8679,25 @@ tryRestoreAdminSession();
     openDayTag(nextWi, day);
   };
 
+  /**
+   * Redraw the card without moving the page under him.
+   *
+   * Every one of these controls rebuilds the whole day card, and the browser then puts
+   * the scroll wherever the new markup happens to fall — he ticked "Add numbering" and
+   * the page jumped away from the line he was typing in (owner, 2026-09-08).
+   */
+  function keepScroll(redraw) {
+    var x = window.pageXOffset || 0;
+    var y = window.pageYOffset || (document.documentElement && document.documentElement.scrollTop) || 0;
+    var box = el("clientScreen");
+    var inner = box ? box.scrollTop : 0;
+    redraw();
+    try {
+      window.scrollTo(x, y);
+      if (box) box.scrollTop = inner;
+    } catch (e) {}
+  }
+
   window.cvEditSet = function (partIndex, field, a, b) {
     if (!S.edit || !S.edit.parts) return;
     var part = S.edit.parts[partIndex | 0];
@@ -8701,7 +8722,7 @@ tryRestoreAdminSession();
     if (!part) return;
     if (!Array.isArray(part.notes)) part.notes = [];
     part.notes.push("");
-    renderAdminDays();
+    keepScroll(renderAdminDays);
   };
 
   /**
@@ -8716,7 +8737,7 @@ tryRestoreAdminSession();
     part.work.splice(at, 0, "");
     if (Array.isArray(part.colors)) part.colors.splice(at, 0, "");
     if (Array.isArray(part.nums)) part.nums.splice(at, 0, "");
-    renderAdminDays();
+    keepScroll(renderAdminDays);
     focusWorkLine(partIndex | 0, at);
   };
 
@@ -8748,7 +8769,7 @@ tryRestoreAdminSession();
     if (Array.isArray(part.colors)) part.colors.splice(lineIndex | 0, 1);
     if (Array.isArray(part.nums)) part.nums.splice(lineIndex | 0, 1);
     if (!part.work.length) part.work = [""];
-    renderAdminDays();
+    keepScroll(renderAdminDays);
   };
 
   /* A note can be taken off again — unlike a work line, a part with no note at all is
@@ -8757,7 +8778,7 @@ tryRestoreAdminSession();
     var part = S.edit && S.edit.parts[partIndex | 0];
     if (!part || !Array.isArray(part.notes)) return;
     part.notes.splice(noteIndex | 0, 1);
-    renderAdminDays();
+    keepScroll(renderAdminDays);
   };
 
   /* The colour of one work line, and whether this part numbers its lines. Both are
@@ -8767,7 +8788,7 @@ tryRestoreAdminSession();
     if (!part) return;
     if (!Array.isArray(part.colors)) part.colors = [];
     part.colors[lineIndex | 0] = String(colourKey || "");
-    renderAdminDays();
+    keepScroll(renderAdminDays);
   };
 
   /**
@@ -8806,14 +8827,14 @@ tryRestoreAdminSession();
     if (!S.edit.parts.length) {
       S.edit.parts = [{ title: "Part A", notes: [""], format: "", work: [""] }];
     }
-    renderAdminDays();
+    keepScroll(renderAdminDays);
   };
 
   window.cvEditSetNumbering = function (partIndex, on) {
     var part = S.edit && S.edit.parts[partIndex | 0];
     if (!part) return;
     part.numbered = on === true;
-    renderAdminDays();
+    keepScroll(renderAdminDays);
   };
 
   window.cvEditAddPart = function () {
@@ -8821,7 +8842,7 @@ tryRestoreAdminSession();
     if (!Array.isArray(S.edit.parts)) S.edit.parts = [];
     var letter = String.fromCharCode(65 + S.edit.parts.length);
     S.edit.parts.push({ title: "Part " + letter, notes: [""], format: "", work: [""] });
-    renderAdminDays();
+    keepScroll(renderAdminDays);
   };
 
   window.cvEditCancel = function () {
