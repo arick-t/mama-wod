@@ -32,7 +32,14 @@ const redirect = fs.readFileSync(path.join(root, "admin-clients.html"), "utf8");
 const SCREEN_MARK = "THE CLIENT SCREEN — moved here whole";
 const screenAt = page.indexOf(SCREEN_MARK);
 ok("the client screen is identifiable in the page", screenAt > 0);
-const screen = page.slice(screenAt);
+/* Ends where it ends. The summary tab was appended after it (22.1), and slicing to the
+   end of the file quietly folded that screen's code into every assertion here — the
+   first of them to notice was "it talks to no endpoint that could generate anything",
+   which is exactly the kind of guard that must not drift (2026-09-03). */
+const SCREEN_END = "THE SUMMARY TAB";
+const screenEnd = page.indexOf(SCREEN_END);
+ok("and it has an end, not the rest of the file", screenEnd > screenAt);
+const screen = page.slice(screenAt, screenEnd > screenAt ? screenEnd : undefined);
 /* The chips both screens draw are built here, so assertions about a chip belong here. */
 const strip = fs.readFileSync(path.join(root, "lib", "admin-people-strip.js"), "utf8");
 
@@ -134,6 +141,11 @@ const ACTIONS_ALLOWED = [
      content — the owner writes it — so it does not make this a generating surface. */
   "add_block",
   "approve_block",
+  /* A week the owner wrote, moved onto another week — one write, and it creates no
+     content of its own (owner, 2026-09-04). */
+  "copy_week",
+  /* And one day onto another day — the same gesture, one square smaller. */
+  "copy_day",
   "renewal_check",
   /* The athlete list, for the other half of the shared strip. It reads; it makes
      nothing. */
@@ -751,7 +763,15 @@ ok("the individual tab is emptied too", /fillAthleteGoalsTab\(null\)/.test(page)
 ok("there is a chevron for the income", /id="btn-income"/.test(page) && /toggleMonthlyIncome/.test(page));
 ok("the number is hidden until he asks", /id="income-line" hidden/.test(page));
 ok("and it is the total of every client", /setMonthlyIncome\(monthlyTotal\)/.test(page));
-ok("shown as one line with a currency", /"הכנסה חודשית: " \+ \(monthlyIncomeTotal \? "₪"/.test(page));
+/* Upgraded 2026-09-03: two figures and their sum, and the same three numbers appear in
+   the summary tab. They stay separate because they are two businesses — what the
+   programme clients pay, and what he earns coaching — and the total is the answer to
+   the question he actually asks. */
+ok("it shows what the programmes bring in", /programs: monthlyIncomeTotal/.test(page));
+ok("what he earns coaching", /personal: personalIncomeTotal/.test(page));
+ok("and their sum, from the one renderer both places use", /AdminLedgerView\.incomeBreakdownHtml/.test(page));
+ok("the summary tab reports its month up", /window\.adminOnPersonalIncome = function/.test(page));
+ok("and a month he browses back to does not rewrite it", /browsing back must not/.test(page));
 /* The duck, beside the name. */
 /* The coach duck, on his instruction — not the wordmark (owner, 2026-09-03). */
 ok("the header carries the duck", /class="hdr-duck" src="assets\/hamamen-coach-duck\.png"/.test(page));
@@ -822,8 +842,8 @@ ok("and every other way of opening it is still centred", /function clearIdentity
  * written session with a rest day and there was nothing to undo (owner, 2026-09-03).
  */
 ok("ticking rest writes nothing", /if \(S\.edit\) S\.edit\.restIntent = !!t\.checked;[\s\S]{0,20}return;/.test(page));
-ok("Save honours the mark", /if \(S\.edit\.restIntent\) \{[\s\S]{0,400}saveDay\(S\.edit\.wi, S\.edit\.day, \[\], true\);/.test(page));
-ok("so does leaving the day", /if \(draft\.restIntent\) \{[\s\S]{0,400}saveDay\(draft\.wi, draft\.day, \[\], true, \{ quiet: true \}\);/.test(page));
+ok("Save honours the mark", /if \(S\.edit\.restIntent\) \{[\s\S]{0,400}saveDay\(S\.edit\.wi, S\.edit\.day, \[\], true, \{ title: readDayTitleField\(\) \}\);/.test(page));
+ok("so does leaving the day", /if \(draft\.restIntent\) \{[\s\S]{0,400}saveDay\(draft\.wi, draft\.day, \[\], true, \{ quiet: true, title: titleNow \}\);/.test(page));
 ok("and a written session is never replaced without asking", /function dayHasWrittenSession/.test(page) && (page.match(/להפוך את היום ליום מנוחה\? האימון שכתוב בו יימחק\./g) || []).length >= 2);
 
 /* --- autosave: leaving an edit saves it (owner, 2026-09-03) ----------
@@ -838,8 +858,10 @@ ok("so do the week, the view and Today", (page.match(/autosaveDraft\(\);/g) || [
 ok("and switching client", /try \{ autosaveDraft\(\); \} catch \(eSave\)/.test(page));
 /* Cancel is the only way to say "forget this", so it must NOT save. */
 ok("cancel still discards", /window\.cvEditCancel = function \(\) \{\s*S\.edit = null;/.test(page));
-ok("an empty draft is dropped, not written", /if \(!D \|\| !D\.partsFromDraft \|\| !D\.draftHasContent\(draft\)\) return;/.test(page));
-ok("and an unchanged one costs no request", /if \(samePartsAsStored\(draft\.wi, draft\.day, parts\)\) return;/.test(page));
+/* Since 2026-09-05 an empty draft may still carry a NAME for the day, which is worth
+   keeping on its own — the session under it is written as it stands. */
+ok("an empty draft writes nothing of its own", /if \(!D \|\| !D\.partsFromDraft \|\| !D\.draftHasContent\(draft\)\) \{[\s\S]{0,200}if \(titleChanged\) saveTitleOnly/.test(page));
+ok("and an unchanged one costs no request", /if \(samePartsAsStored\(draft\.wi, draft\.day, parts\) && !titleChanged\) return;/.test(page));
 /* He has already moved on, so a failed autosave has to be loud. */
 ok("a failed save is said out loud", /showHdrToast\(\(r\.body && r\.body\.error\) \|\| "השמירה נכשלה\."/.test(page));
 ok("the Save button is still there", /window\.cvEditSave = function/.test(page));
@@ -851,11 +873,14 @@ ok("an autosave does not move him at all", /var quiet = !!\(opts && opts\.quiet\
 
 ok("the view is decided again once the client has arrived", /S\.program = r\.body\.program;[\s\S]{0,1400}renderViewMode\(\);\s*renderDetail\(\);/.test(page));
 
-ok("first entry opens someone", /function openFirstPersonIfNeeded/.test(page));
-/* Either half may answer first, so both call it — and it acts once, only when nothing
-   is open and only after both halves have spoken (owner, 2026-09-02). */
-ok("it waits for both halves", /if \(!athletesAnswered \|\| !programsAnswered\) return false;/.test(page));
-ok("it does not fight the athlete half", /if \(Array\.isArray\(athletes\) && athletes\.length\) return false;/.test(page));
+ok("first entry opens something", /function openFirstPersonIfNeeded/.test(page));
+/* Changed 2026-09-03: it used to wait for both halves of the strip and open the first
+   client. The landing is now the summary tab, which needs neither half to have answered
+   — so there is no race left to lose, and nothing that arrives later may take the screen
+   from it. */
+ok("first entry lands on the summary tab", /openPersonFromStrip\("ledger", "ledger"\)/.test(page));
+ok("it needs neither half of the strip to have answered", !/function openFirstPersonIfNeeded\(\)[\s\S]{0,400}programsAnswered/.test(page));
+ok("and the athletes arriving do not take the screen from it", /if \(adminOpenedSomeone && !currentAthleteId\)/.test(page));
 ok("and the empty message speaks about clients", !/בחר מתאמן מהרשימה/.test(page));
 /* Sessions mode must not redefine what a rest day is. */
 ok("a rest day is still a rest day inside a sessions programme", /NormalizePprogBlock\.isRestDay\(dayKey, dayData, week\)/.test(page));
@@ -939,5 +964,120 @@ ok("touch targets are 44px", /min-height:44px/.test(page));
 ok("safe-area insets are honoured", /env\(safe-area-inset-top/.test(page));
 ok("there is a small-screen breakpoint", /@media \(max-width:600px\)/.test(page));
 ok("the page is not indexed", /noindex/.test(page));
+
+
+/* --- the blank client (owner, 2026-09-04) --------------------------------
+ * A third kind, and the shortest way into the product: name, gender, what they pay
+ * and how — then a month of empty squares he writes himself. Everything after that is
+ * the ordinary client screen, link and code included. The only thing it does NOT have
+ * is a questionnaire.
+ * ------------------------------------------------------------------------- */
+
+ok("the chooser offers a third kind", /chooseClientKind\('blank'\)/.test(page));
+ok("and says what it is", /לקוח ריק<\/span>[\s\S]{0,200}בלי תחקור/.test(page));
+ok("choosing it opens four questions, not a questionnaire", /if \(kind === "blank"\) \{\s*\n\s*openBlankClientForm\(\);/.test(page));
+["blankName", "blankGender", "blankAmount", "blankMethod", "blankWeeks"].forEach(function (id) {
+  ok("the short form asks " + id, new RegExp('id="' + id + '"').test(page));
+});
+/* Five, since 2026-09-04: the block length joined them, and only here. */
+/* Seven since 2026-09-04: the programme type and, behind it, how many sessions. */
+/* Six plain rows plus the sub-branch, which carries its own class (2026-09-04). */
+ok("and nothing else", (page.match(/class="blank-row"/g) || []).length === 6 && (page.match(/class="blank-row is-sub"/g) || []).length === 1);
+ok("a client with no name is refused before the network", /if \(!name\) \{[\s\S]{0,120}צריך שם/.test(page));
+ok("the create goes through the client screen, like every other kind", /createBlank: function \(form\)/.test(screen));
+ok("with the kind the server shapes the month from", /clientKind: "blank"/.test(screen));
+ok("and the client is opened from the response", /createBlank[\s\S]{0,1400}renderViewMode\(\);[\s\S]{0,40}renderDetail\(\);/.test(screen));
+/* A blank client has nothing to be asked between blocks either. */
+ok("the screen knows the kind", /function isBlankClient\(\)/.test(screen));
+/* Updated 2026-09-04: it asks how many weeks first — the length is his to choose. */
+ok("and a second month is added on the spot", /if \(isBlankClient\(\)\) \{[\s\S]{0,700}action: "add_block"/.test(screen));
+
+
+/* --- a week copied onto another week (owner, 2026-09-04) ------------------ */
+
+ok("a week cube can be grabbed by the menu", /data-week="' \+\s*\n?\s*\(weekIndex0 \+ 1\)/.test(fs.readFileSync(path.join(root, "lib", "pprog-display.js"), "utf8")));
+ok("right-clicking one opens a menu", /addEventListener\("contextmenu"[\s\S]{0,400}closest\("\[data-week\]"\)/.test(screen));
+ok("and it is bound once, not on every redraw", /window\._adminWeekMenuBound/.test(screen));
+ok("the menu offers a copy", /data-week-copy=/.test(screen));
+ok("and a paste, only when something is on the clipboard", /canPaste[\s\S]{0,200}data-week-paste=/.test(screen));
+ok("the clipboard belongs to the client it was copied from", /weekClip\.programId === \(S\.program && S\.program\.programId\)/.test(screen));
+ok("pasting warns that the week will be overwritten", /יידרס/.test(screen));
+ok("and goes through one server write", /action: "copy_week"/.test(screen));
+ok("a stale paste is refused and the client reopened", /if \(r\.status === 409\)[\s\S]{0,120}openClient\(S\.program\.programId\)/.test(screen));
+ok("escape closes the menu", /if \(ev\.key === "Escape"\) closeWeekMenu\(\)/.test(screen));
+
+/* --- the blank client's block length lives HERE and nowhere else ---------- */
+
+ok("the short form asks how long the block is", /id="blankWeeks"/.test(page));
+ok("and it opens on four", /id="blankWeeks"[^>]*value="4"/.test(page));
+ok("the number travels with the create", /blockWeeks: \(document\.getElementById\("blankWeeks"\)/.test(page));
+ok("a blank client's next month asks again", /כמה שבועות בלבנה הבאה\?/.test(screen));
+/* The fence, from the page's side: no other form has this field. */
+ok("the studio intake has no block-length field", !/id="inBlockWeeks"/.test(page));
+ok("nor does the individual's", !/id="inABlockWeeks"/.test(page));
+
+
+/* --- copy a day, paste a day (owner, 2026-09-04) -------------------------- */
+
+ok("right-clicking a day opens a menu too", /var cell = ev\.target\.closest\("\[data-day\]\[data-wi\]"\);/.test(screen));
+ok("the week rail still opens its own", /var cube = ev\.target\.closest\("\[data-week\]"\);/.test(screen));
+ok("a general column is not a day", /if \(!dayKey \|\| dayKey === "general"\) return;/.test(screen));
+ok("the display's 0-based week becomes the number he sees", /\(parseInt\(cell\.getAttribute\("data-wi"\), 10\) \|\| 0\) \+ 1/.test(screen));
+ok("the menu offers to copy the day", /data-day-copy=/.test(screen));
+ok("and to paste it, only when one is on the clipboard", /canPaste[\s\S]{0,240}data-day-paste=/.test(screen));
+ok("the clipboard belongs to the client it was copied from", /dayClip\.programId === \(S\.program && S\.program\.programId\)/.test(screen));
+ok("pasting warns before it overwrites", /להדביק את היום הזה\? מה שכתוב בו יידרס/.test(screen));
+ok("and goes through one server write", /action: "copy_day"/.test(screen));
+ok("a stale paste reopens the client rather than overwriting", /action: "copy_day"[\s\S]{0,700}openClient\(S\.program\.programId\)/.test(screen));
+ok("both menus are placed by the same code", /function placeMenuAt\(m, x, y\)/.test(screen));
+
+
+/* --- a blank client sold as sessions (owner, 2026-09-04) ------------------ */
+
+ok("the short form asks which shape the programme is", /id="blankMode"/.test(page));
+ok("with the two he named", /value="weekly_schedule"[\s\S]{0,80}value="session_count"/.test(page));
+ok("and it opens on a week of days", /id="blankMode"[\s\S]{0,120}<option value="weekly_schedule"/.test(page));
+ok("how many sessions is asked only for the second", /id="blankSessionsRow" hidden/.test(page));
+ok("it is called what he calls it", /כמות האימונים/.test(page));
+ok("and it hangs off the choice above it", /class="blank-row is-sub" id="blankSessionsRow"/.test(page) && /\.blank-row\.is-sub\{[^}]*border-inline-start/.test(page));
+ok("and appears when it is chosen", /function syncBlankMode\(\)[\s\S]{0,200}row\.hidden = mode\.value !== "session_count";/.test(page));
+ok("both travel with the create", /scheduleMode: String\(\(document\.getElementById\("blankMode"\)/.test(page) && /sessionsPerWeek: \(document\.getElementById\("blankSessions"\)/.test(page));
+ok("and reach the server", /scheduleMode: f\.scheduleMode,\s*\n\s*sessionsPerWeek: f\.sessionsPerWeek,/.test(screen));
+
+
+/* --- hidden means hidden (owner, 2026-09-04) ------------------------------
+ * The rule that says so had been scoped by accident: a scoping pass put
+ * "#clientScreen" in front of the COMMENT above it, and the selector became
+ * "#clientScreen [hidden]". Everything outside the client screen was left with the
+ * browser's own rule, which any of ours with a display beats — so a row the code had
+ * hidden was on screen in the blank client's form.
+ * ------------------------------------------------------------------------- */
+
+ok("the page has an unscoped hidden rule", /\n\[hidden\]\{display:none!important\}/.test(page));
+ok("and it sits outside every media block and every scope", page.indexOf("\n[hidden]{display:none!important}") < page.indexOf("@media"));
+ok("the sessions row is hidden until it is the answer", /id="blankSessionsRow" hidden/.test(page));
+
+
+/* --- the menu on a phone, and what it looks like (owner, 2026-09-04) ------ */
+
+ok("a long press opens it where a right-click would", /addEventListener\(\s*\n?\s*"touchstart"/.test(screen));
+ok("half a second, not a tap", /\}, 500\);/.test(screen));
+ok("a scroll cancels it", /addEventListener\(\s*\n?\s*"touchmove"[\s\S]{0,400}cancelPress\(\)/.test(screen));
+ok("and the tap that follows does not close what it opened", /openedByPress && Date\.now\(\) - openedByPress < 700/.test(screen));
+
+ok("the menu items carry a class", /class="wm-item"/.test(screen));
+ok("so the client screen's orange button rule lets go", /#clientScreen \.week-menu \.wm-item,/.test(page));
+ok("the panel is a card, not a warning", /\.week-menu\{position:fixed[^}]*background:var\(--bg-card\)/.test(page));
+ok("each action has an icon to read it by", /class="wm-ico"/.test(screen));
+ok("and the menu says what it is acting on", /class="wm-title"/.test(screen));
+
+
+/* --- the three kinds are told apart by colour (owner, 2026-09-04) --------- */
+
+ok("each card says which kind it is", /client-kind-card is-athlete/.test(page) && /client-kind-card is-blank/.test(page) && /client-kind-card is-coach/.test(page));
+ok("one person is the pale blue the ledger already uses", /\.client-kind-card\.is-athlete\{border-inline-start-color:#7DD3F0/.test(page));
+ok("a group is the same purple", /\.client-kind-card\.is-coach\{border-inline-start-color:#B57BE8/.test(page));
+ok("and the blank one gets a calm colour of its own", /\.client-kind-card\.is-blank\{border-inline-start-color:#4EC9B0/.test(page));
+ok("the colour is a bar and a tint, not a fill", /\.client-kind-card\{border-inline-start:3px solid transparent/.test(page));
 
 console.log("All admin clients page checks passed.");

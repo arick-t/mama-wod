@@ -222,4 +222,188 @@ const deepCards = PprogDisplay.renderBrickView({
 ok("days in week 6 and 7 still render side by side", (deepCards.match(/pprog-day-card/g) || []).length === 2);
 ok("and the second block is what is shown", /Block 2/.test(deepCards));
 
+
+/* --- Hebrew reads right to left, English is untouched (owner, 2026-09-05) --
+ * He types "פולי עליון 3X15" and the card showed "3X15פולי עליון". Each line now
+ * carries dir="auto", which reads that line's FIRST STRONG letter and nothing else:
+ * a line starting in English is laid out exactly as it was, and one starting in
+ * Hebrew reads right to left. His rule: if it changes English, English wins.
+ * ------------------------------------------------------------------------- */
+
+const bidi = PprogDisplay.renderDayPartsHtml([
+  { id: "p", title: "Part A", lines: ["12 min EMOM", "פולי עליון 3X15", "10 push-ups"] },
+]);
+ok("every work line decides its own direction", (bidi.match(/<li dir="auto">/g) || []).length >= 2);
+ok("the Hebrew line is there whole", bidi.indexOf("פולי עליון 3X15") >= 0);
+ok("and so is the English one", bidi.indexOf("10 push-ups") >= 0);
+ok("nothing was forced to RTL", bidi.indexOf('dir="rtl"') < 0);
+
+const src = fs.readFileSync(path.join(__dirname, "..", "lib", "pprog-display.js"), "utf8");
+ok("notes decide too", /class="pprog-part-note" dir="auto"/.test(src));
+ok("so does a format line", /class="pprog-part-format" dir="auto"/.test(src));
+ok("and the part heading", /class="section-title" dir="auto"/.test(src));
+/* Checked on what is DRAWN rather than on the source line: the work row now also
+   carries a number and a colour pencil, so the two tags are no longer neighbours. */
+const bidiEditor = PprogDisplay.renderDayCardHtml(block, block.weeks[0], 0, "mon", {
+  allowEdit: true, editing: true, readOnly: true, showFooter: false, israelTodayIso: block.blockStart,
+  editDraft: { wi: 0, day: "mon", parts: [{ title: "Part A", notes: ["הערה"], format: "", work: ["יד קדמית 3X15"] }] },
+});
+ok("the fields he types into as well", /class="pprog-edit-note pprog-part-note" dir="auto"/.test(src) && /class="pprog-edit-work-row">(?:<span[^>]*>[^<]*<\/span>)?<input type="text" dir="auto"/.test(bidiEditor));
+
+/* --- a note can be removed (owner, 2026-09-05) ---------------------------- */
+
+ok("a note is rendered in a row with a remove button", /pprog-edit-note-row[\s\S]{0,600}pprog-edit-del-line/.test(src));
+ok("which calls a hook of its own", /var removeNoteFn = hook\(opts, "editRemoveNote", "adminPprogEditRemoveNote"\);/.test(src));
+
+/* --- a day can be given a name --------------------------------------------- */
+
+ok("a named day shows the name", /var dayTitle = String\(\(dayData && dayData\.title\) \|\| ""\)\.trim\(\);/.test(src));
+ok("with the automatic label kept beside it", /class="pprog-day-when"/.test(src));
+ok("and the heading becomes a field only where the page allows it", /opts\.allowTitleEdit === true/.test(src));
+
+
+/* --- a note he wrote stays a note (owner, 2026-09-05) ---------------------
+ * Lines are stored flat, so their shape is worked out again when they are drawn — by
+ * rules that are English ("note:", "cue:", "rest between sets"). A note in Hebrew
+ * matched none of them and came back as a work line the moment it was saved. A part
+ * now remembers how many of its leading lines he wrote as notes.
+ * ------------------------------------------------------------------------- */
+
+const hebPart = PprogDisplay.partsFromDraft({
+  day: "sun",
+  parts: [{ title: "Part B", notes: ["בדיקה בדיקה"], format: "", work: ["לבחור 3 תרגילים", "bench press 3 X15"] }],
+});
+ok("the note is still the first line stored", hebPart[0].lines[0] === "בדיקה בדיקה");
+ok("and the part records how many notes it has", hebPart[0].noteLines === 1);
+const hebHtml = PprogDisplay.renderDayPartsHtml(hebPart);
+ok("so it is drawn as a note", hebHtml.indexOf('class="pprog-part-note" dir="auto">בדיקה בדיקה') >= 0);
+ok("and never as a work line", hebHtml.indexOf('<li dir="auto">בדיקה בדיקה') < 0);
+
+/* English must be exactly as it was — his rule. */
+const engPart = PprogDisplay.partsFromDraft({
+  day: "sun",
+  parts: [{ title: "Part A", notes: ["12 min duration / strength priority"], format: "EMOM 12", work: ["3 back squats"] }],
+});
+const engHtml = PprogDisplay.renderDayPartsHtml(engPart);
+ok("an English note is still a note", engHtml.indexOf("12 min duration / strength priority") >= 0 && engHtml.indexOf("pprog-part-note") >= 0);
+ok("the format is still the format", engHtml.indexOf("pprog-part-format") >= 0 && engHtml.indexOf("EMOM 12") >= 0);
+
+/* A part written before today carries no count and must classify as it always did. */
+const legacy = PprogDisplay.renderDayPartsHtml([
+  { id: "x", title: "Part A", lines: ["Note: keep it light", "EMOM 12", "3 back squats"] },
+]);
+ok("a part with no count is read the old way", legacy.indexOf("pprog-part-note") >= 0 && legacy.indexOf("Note: keep it light") >= 0);
+
+/* Two notes, and one of them Hebrew. */
+const twoNotes = PprogDisplay.partsFromDraft({
+  day: "mon",
+  parts: [{ title: "Part C", notes: ["Cue: brace", "שים לב לגב"], format: "", work: ["5x5"] }],
+});
+ok("both are kept", twoNotes[0].noteLines === 2);
+const twoHtml = PprogDisplay.renderDayPartsHtml(twoNotes);
+ok("and both are drawn as notes", (twoHtml.match(/pprog-part-note/g) || []).length >= 2);
+ok("the work line is still work", twoHtml.indexOf("<li dir=\"auto\">5x5</li>") >= 0);
+
+
+/* --- the count is always beside the pencil (owner, 2026-09-05) ------------ */
+
+const untouchedBlock = {
+  blockStart: "2026-09-06",
+  weeks: [
+    {
+      weekIndex: 1,
+      days: { sun: { parts: [] }, mon: { parts: [] }, tue: { parts: [] }, wed: { parts: [] }, thu: { parts: [] }, fri: { parts: [] }, sat: { parts: [] } },
+      overview: [],
+    },
+  ],
+};
+const editableDay = PprogDisplay.renderBrickView({
+  block: untouchedBlock, activeWi: 0, activeDay: "sun", calMode: "week", allowEdit: true, showFooter: false,
+});
+ok("a day he has never touched still shows the count", editableDay.indexOf("pprog-day-when") >= 0);
+/* And it keeps its heading: the note beside the pencil repeats the label, it does not
+   take its place — an unnamed day was left with a yellow note and no title at all
+   (owner, 2026-09-05). */
+ok("and keeps the automatic heading too", /class="source-name">[^<]+/.test(editableDay));
+ok("both say the same thing", (editableDay.match(/Sun · 6 September/g) || []).length >= 2);
+const readOnlyDay = PprogDisplay.renderBrickView({
+  block: untouchedBlock, activeWi: 0, activeDay: "sun", calMode: "week", allowEdit: false, showFooter: false,
+});
+ok("where there is no pencil it stays the heading instead", readOnlyDay.indexOf("pprog-day-when") < 0);
+ok("so a read-only day never loses its name", /class="source-name">[^<]+/.test(readOnlyDay));
+ok("it is light yellow and italic", /\.pprog-day-when\{[^}]*color:#F5D97A;font-style:italic/.test(admin));
+
+/* --- a part written here remembers its own SHAPE (owner, 2026-09-05) ------- */
+
+/* The classifier guesses by English words — "note:", "AMRAP", "3 rounds". A session
+   written in Hebrew has none of them, so the guess moved his lines between the boxes
+   every time the card was drawn: he edited a work line on production and it came back
+   as a note, or appeared not to have been saved at all.
+   A part saved from the editor now records how many leading lines are notes and
+   whether the next one is the format line, and that is READ rather than guessed. */
+
+const shaped = PprogDisplay.partsFromDraft({
+  day: "sun",
+  parts: [{ title: "Part C", notes: ["הערה"], format: "AMRAP 12", work: ["10 מתח", "15 שכיבות"] }],
+});
+ok("the shape is written down with the lines", shaped[0].noteLines === 1 && shaped[0].formatLine === 1);
+ok("in the order the card reads them back", shaped[0].lines.join("|") === "הערה|AMRAP 12|10 מתח|15 שכיבות");
+
+const readBack = PprogDisplay.draftFromDayData({ parts: shaped }, false)[0];
+ok("the note comes back a note", readBack.notes.join("|") === "הערה");
+ok("the format line comes back the format line", readBack.format === "AMRAP 12");
+ok("and both work lines come back work", readBack.work.join("|") === "10 מתח|15 שכיבות");
+
+/* The exact shape that used to break: a work line sitting before a line that contains
+   a word the guesser knows. */
+const trap = PprogDisplay.partsFromDraft({
+  day: "sun",
+  parts: [{ title: "Part C", notes: [], format: "", work: ["10 מתח", "AMRAP 12", "שונה"] }],
+});
+const trapBack = PprogDisplay.draftFromDayData({ parts: trap }, false)[0];
+ok("a work line that merely mentions AMRAP stays a work line", trapBack.work.join("|") === "10 מתח|AMRAP 12|שונה");
+ok("and nothing is pulled out as a note", trapBack.notes.length === 0 && trapBack.format === "");
+
+/* Nothing older changes: a part with no shape on file is classified exactly as before. */
+const legacyShape = PprogDisplay.classifyPartLines(["Note: keep the chest up", "AMRAP 12", "10 pull-ups"]);
+ok("a part with no shape on file is still guessed", legacyShape.notes.length === 1 && legacyShape.format === "AMRAP 12" && legacyShape.work.length === 1);
+const halfLegacy = PprogDisplay.classifyPartLines(["הערה", "AMRAP 12", "10 מתח"], 1);
+ok("and one that knows only its notes keeps that much", halfLegacy.notes.join("|") === "הערה" && halfLegacy.format === "AMRAP 12");
+
+/* The shape crosses to the client and back, or their copy is read differently. */
+const Payload = require("../lib/client-view-payload.js");
+ok("the shape is a field the client may carry", Payload.PART_FIELDS.indexOf("formatLine") >= 0);
+const sentShape = Payload.programForClient({
+  weeks: [{ weekIndex: 1, days: { sun: { parts: shaped } } }],
+  approvedThroughWeek: 1,
+}).weeks[0].days.sun.parts[0];
+ok("and it arrives with it", sentShape.formatLine === 1 && sentShape.noteLines === 1);
+
+/* --- the numbers stand in a column on a phone (owner, 2026-09-05) --------- */
+
+/* On an iPhone the circle drifted into the middle of a Hebrew line, in a different
+   place on every line. The row is laid out left-to-right on a phone so the circles line
+   up down the left edge; the text keeps its own direction inside its own box, so a
+   Hebrew line still reads right-to-left and an English one is untouched. */
+const numberedHtml = PprogDisplay.renderDayPartsHtml(
+  [{ id: "n", title: "Part A", lines: ["פולי עליון 3X15", "חתירה במכונה 2X12"], numbered: true }],
+  null,
+  {}
+);
+ok("a numbered line puts its text in a box of its own", /<span class="pprog-li-text" dir="auto">/.test(numberedHtml));
+ok("carrying the same dir=auto the line had", (numberedHtml.match(/dir="auto"/g) || []).length >= 4);
+
+const plainHtml = PprogDisplay.renderDayPartsHtml(
+  [{ id: "p", title: "Part A", lines: ["5x5", "10 pull-ups"] }],
+  null,
+  {}
+);
+/* Nothing changes for a line with no number — same one text node it always was. */
+ok("a line with no number is untouched", plainHtml.indexOf('<li dir="auto">5x5</li>') >= 0);
+ok("and has no text box at all", plainHtml.indexOf("pprog-li-text") < 0);
+
+const sharedCss = fs.readFileSync(path.join(__dirname, "..", "styles", "pprog-display.css"), "utf8");
+ok("the column is a PHONE rule and nothing else", /@media \(max-width:719px\)\{[\s\S]*?li\.pprog-li-numbered\{[^}]*direction:ltr/.test(sharedCss));
+ok("the text keeps its own box on the row", /li\.pprog-li-numbered \.pprog-li-text\{flex:1/.test(sharedCss));
+
 console.log("All shared pprog-display checks passed.");

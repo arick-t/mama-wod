@@ -91,6 +91,20 @@ function isPlainObject(v) {
   return !!v && typeof v === "object" && !Array.isArray(v);
 }
 
+/**
+ * How many weeks a BLANK client's block is.
+ *
+ * Four unless he says otherwise, one to twelve. It exists only on this path: no other
+ * kind of client reads it, `lib/client-intake.js` does not know about it, and the
+ * coach's contract still says four weeks — which is asserted by a test, because that
+ * contract is the thing the owner asked twice not to break (owner, 2026-09-04).
+ */
+function blankBlockWeeks(raw, fallback) {
+  const n = parseInt(raw, 10);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.max(1, Math.min(12, n));
+}
+
 function bad(res, status, code, error, extra) {
   return res.status(status).json(Object.assign({ ok: false, code: code, error: error }, extra || {}));
 }
@@ -243,7 +257,12 @@ async function ownerHandler(req, res, body) {
      * is what decides the block's shape: a month of four weeks, with the deload laid
      * over the timeline as a cadence (owner, 2026-09-01). An end-athlete client keeps
      * the old path. */
-    const wantsIntake = body.clientKind !== "athlete";
+    /* A blank client answers four questions — name, gender, what they pay and how —
+       and gets a month of empty squares. No questionnaire to validate, and nothing to
+       shape the month with: every day is open, none is a rest day, and there is no
+       deload to place (owner, 2026-09-04). */
+    const isBlank = body.clientKind === "blank";
+    const wantsIntake = body.clientKind !== "athlete" && !isBlank;
     let intake = null;
     let weekCount = body.weekCount;
     /* An individual athlete answers a different questionnaire (the eight-step one the
@@ -281,6 +300,33 @@ async function ownerHandler(req, res, body) {
       });
       weekCount = Intake.weekCountFor(intake);
     }
+    if (isBlank) {
+      /* Two shapes of month, and he chooses on the short form: a week of days, or a
+         number of sessions with no weekday attached at all (owner, 2026-09-04). The
+         second is the mode the product already knows — the same one a studio can be
+         sold — so this adds a choice, not a third kind of calendar. */
+      const bySessions = String(body.scheduleMode || "") === "session_count";
+      const sessions = Math.max(1, Math.min(7, parseInt(body.sessionsPerWeek, 10) || 3));
+      intake = Intake.normalizeIntake({
+        clientName: body.clientName,
+        scheduleMode: bySessions ? "session_count" : "weekly_schedule",
+        sessionsPerWeek: bySessions ? sessions : 0,
+        /* The point of this kind: NO day is a rest day, so every square is his to
+           write on. */
+        includeRestDays: false,
+        restDays: {},
+        deloadWeek: false,
+        deloadEveryWeeks: 0,
+        population: "לקוח ריק",
+        monthlyAmount: body.monthlyAmount,
+        paymentMethod: body.paymentMethod,
+      });
+      weekCount = Intake.weekCountFor(intake);
+      /* HIS choice, and only for this kind. The shared intake, the studio and the
+         individual paths, and the coach's four-week contract are all untouched — the
+         owner was explicit about that, twice (owner, 2026-09-04). */
+      weekCount = blankBlockWeeks(body.blockWeeks, weekCount);
+    }
     if (wantsIntake && body.intake) {
       const problems = Intake.validateIntake(body.intake);
       if (problems.length) {
@@ -292,6 +338,7 @@ async function ownerHandler(req, res, body) {
     const created = await store.createProgram({
       clientName: (intake && intake.clientName) || body.clientName,
       clientKind: body.clientKind,
+      clientGender: body.clientGender,
       blockStart: body.blockStart,
       weekCount: weekCount,
       intake: intake,
@@ -318,6 +365,23 @@ async function ownerHandler(req, res, body) {
       if (withIntake.ok) {
         return res.status(200).json({ ok: true, program: withIntake.program });
       }
+    }
+    /* A blank client pays like anyone else, and the list totals what they pay. Their
+       gender was asked on the short form and stays owner-side. */
+    if (isBlank) {
+      const withBlank = await store.updateProgram(
+        created.program.programId,
+        created.program.version,
+        function (draft) {
+          const amount = Number(body.monthlyAmount);
+          draft.monthlyAmount = Number.isFinite(amount) && amount >= 0 ? amount : 0;
+          draft.paymentMethod = String(body.paymentMethod || "").slice(0, 200);
+          draft.clientGender = String(body.clientGender || "").slice(0, 20);
+          return draft;
+        },
+        { actor: "owner" }
+      );
+      if (withBlank.ok) return res.status(200).json({ ok: true, program: withBlank.program });
     }
     /* Carry the payment terms onto the program so the list can total them. */
     if (intake) {
@@ -409,7 +473,9 @@ async function ownerHandler(req, res, body) {
           const col = String(patch.clientColour || "");
           draft.clientColour = /^#[0-9a-f]{6}$/i.test(col) ? col : "";
         }
-        if (patch.clientKind !== undefined) draft.clientKind = patch.clientKind === "athlete" ? "athlete" : "coach";
+        if (patch.clientKind !== undefined) {
+          draft.clientKind = ["athlete", "blank"].indexOf(patch.clientKind) >= 0 ? patch.clientKind : "coach";
+        }
         if (patch.blockStart !== undefined) draft.blockStart = String(patch.blockStart).slice(0, 10);
         if (patch.paymentMethod !== undefined) draft.paymentMethod = String(patch.paymentMethod).slice(0, 200);
         if (patch.monthlyAmount !== undefined) {
@@ -485,9 +551,20 @@ async function ownerHandler(req, res, body) {
         }
       }
     }
+    /* A blank client's next month may be any length he asks for. Read from the
+       PROGRAMME, not from the request: no other kind can reach this, whatever it
+       sends (owner, 2026-09-04). */
+    let blankWeeks;
+    if (body.blockWeeks !== undefined) {
+      const kindRead = await store.readProgram(programId);
+      if (kindRead.ok && kindRead.program.clientKind === "blank") {
+        blankWeeks = blankBlockWeeks(body.blockWeeks, undefined);
+      }
+    }
     const result = await store.addBlock(programId, Number(body.expectedVersion), {
       intake: blockIntake,
       notes: body.notes,
+      weekCount: blankWeeks,
       /* An individual answers about themselves again for a new block: what they are
          training for, and what has to be worked around. It is a PATCH onto the answers
          already on the programme - a new block must not erase the eight-step packet the
@@ -509,6 +586,50 @@ async function ownerHandler(req, res, body) {
       version: result.version,
       added: result.added,
       blockIndex: result.blockIndex,
+    });
+  }
+
+  /* A week the owner wrote, copied onto another week — one write, not seven. */
+  if (action === "copy_week") {
+    const result = await store.copyWeek(
+      programId,
+      Number(body.expectedVersion),
+      body.fromWeek,
+      body.toWeek
+    );
+    if (!result.ok) {
+      const status =
+        result.code === "VERSION_CONFLICT" ? 409 : result.code === "NOT_FOUND" ? 404 : 400;
+      return res.status(status).json(Object.assign({ ok: false }, result));
+    }
+    return res.status(200).json({
+      ok: true,
+      program: result.program,
+      version: result.version,
+      copiedDays: result.copiedDays,
+      fromWeek: result.fromWeek,
+      toWeek: result.toWeek,
+    });
+  }
+
+  /* One day the owner wrote, copied onto another day — sessions and focus together. */
+  if (action === "copy_day") {
+    const result = await store.copyDay(
+      programId,
+      Number(body.expectedVersion),
+      { week: body.fromWeek, day: body.fromDay },
+      { week: body.toWeek, day: body.toDay }
+    );
+    if (!result.ok) {
+      const status =
+        result.code === "VERSION_CONFLICT" ? 409 : result.code === "NOT_FOUND" ? 404 : 400;
+      return res.status(status).json(Object.assign({ ok: false }, result));
+    }
+    return res.status(200).json({
+      ok: true,
+      program: result.program,
+      version: result.version,
+      copiedParts: result.copiedParts,
     });
   }
 

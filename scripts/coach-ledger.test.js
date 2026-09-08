@@ -1,0 +1,264 @@
+/**
+ * The coach's own book — the arithmetic.
+ * Run: node scripts/coach-ledger.test.js
+ *
+ * Two promises are asserted harder than anything else here, because both are about
+ * money the owner has already earned:
+ *   - a past deal keeps the price it was done at, whatever he charges next time;
+ *   - a month's total is that month's deals and nothing else.
+ */
+const assert = require("assert");
+const L = require("../lib/coach-ledger.js");
+
+let passed = 0;
+function ok(name, cond) {
+  assert.ok(cond, name);
+  passed += 1;
+  console.log("ok —", name);
+}
+
+/* A fixed clock, so "last used" ordering is a fact and not a race. */
+let t = Date.UTC(2026, 8, 3, 9, 0, 0);
+const clock = function () {
+  t += 1000;
+  return t;
+};
+
+/* --- dates, the way a month is read ------------------------------------- */
+
+ok("a month key is the first seven characters", L.monthKey("2026-09-03") === "2026-09");
+ok("September has thirty days", L.daysInMonth("2026-09").length === 30);
+ok("February 2028 has twenty-nine", L.daysInMonth("2028-02").length === 29);
+ok("the first of September 2026 is a Tuesday", L.weekdayOf("2026-09-01") === 2);
+ok("a month steps back over a year boundary", L.shiftMonth("2026-01", -1) === "2025-12");
+ok("and forward", L.shiftMonth("2026-12", 1) === "2027-01");
+ok("garbage does not become a date", L.daysInMonth("nonsense").length === 0);
+
+/* --- money ------------------------------------------------------------- */
+
+ok("a price rounds to agorot", L.money("250.456") === 250.46);
+ok("a shekel sign does not break it", L.money("₪180") === 180);
+ok("a negative price is refused as zero", L.money(-40) === 0);
+ok("an absurd price is capped, not stored", L.money(999999999) === L.MAX_PRICE);
+ok("nonsense is zero, never NaN", L.money("abc") === 0);
+
+/* --- writing a deal ---------------------------------------------------- */
+
+let month = L.emptyMonth("2026-09");
+const first = L.addDeal(month, { day: "2026-09-03", name: "רימון", service: "אימון קבוצתי", price: 250 }, { clock: clock });
+ok("a deal is written", first.ok && first.doc.deals.length === 1);
+ok("it carries a hidden timestamp", /^\d{4}-\d{2}-\d{2}T/.test(first.deal.createdAt));
+ok("and an id of its own", !!first.deal.id);
+month = first.doc;
+
+ok(
+  "a deal with no place is refused",
+  L.addDeal(month, { day: "2026-09-03", price: 100 }).code === "NO_NAME"
+);
+ok(
+  "a deal with no price is refused",
+  L.addDeal(month, { day: "2026-09-03", name: "רימון" }).code === "NO_PRICE"
+);
+ok(
+  "a day from another month is refused",
+  L.addDeal(month, { day: "2026-10-01", name: "רימון", price: 100 }).code === "WRONG_MONTH"
+);
+
+const second = L.addDeal(month, { day: "2026-09-03", name: "אולם העירייה", service: "אישי", price: 180 }, { clock: clock });
+month = second.doc;
+const third = L.addDeal(month, { day: "2026-09-20", name: "רימון", service: "אימון קבוצתי", price: 250 }, { clock: clock });
+month = third.doc;
+
+ok("the month totals what it holds", L.monthTotal(month) === 680);
+ok("a day totals what it holds", L.totalsByDay(month)["2026-09-03"] === 430);
+ok("a quiet day carries nothing", L.totalsByDay(month)["2026-09-04"] === undefined);
+ok("a day lists its own deals only", L.dealsOfDay(month, "2026-09-20").length === 1);
+ok(
+  "two deals on one day keep the order they were entered",
+  L.dealsOfDay(month, "2026-09-03")[0].name === "רימון"
+);
+
+/* --- fixing a mistake -------------------------------------------------- */
+
+const fixed = L.updateDeal(month, second.deal.id, { price: 200 }, { clock: clock });
+ok("a price can be corrected", fixed.ok && fixed.deal.price === 200);
+ok("and the id does not change", fixed.deal.id === second.deal.id);
+ok("the month follows the correction", L.monthTotal(fixed.doc) === 700);
+month = fixed.doc;
+
+const moved = L.updateDeal(month, second.deal.id, { day: "2026-09-04" }, { clock: clock });
+ok("a deal can move to the right square", moved.ok && L.dealsOfDay(moved.doc, "2026-09-04").length === 1);
+ok(
+  "but not out of the month",
+  L.updateDeal(month, second.deal.id, { day: "2026-10-04" }).code === "WRONG_MONTH"
+);
+ok("an unknown deal is not found", L.updateDeal(month, "nope", { price: 5 }).code === "NOT_FOUND");
+ok("a correction to nothing is refused", L.updateDeal(month, second.deal.id, { price: 0 }).code === "NO_PRICE");
+
+const removed = L.removeDeal(month, second.deal.id);
+ok("a deal can be deleted", removed.ok && removed.doc.deals.length === 2);
+ok("deleting nothing says so", L.removeDeal(month, "nope").code === "NOT_FOUND");
+
+/* --- the warehouse ------------------------------------------------------ */
+
+let w = L.emptyWarehouse();
+w = L.rememberPlace(w, { name: "רימון", service: "אימון קבוצתי", price: 250 }, { clock: clock });
+w = L.rememberPlace(w, { name: "אולם העירייה", service: "אישי", price: 180 }, { clock: clock });
+ok("a place is remembered the first time it is used", w.places.length === 2);
+ok("with what it is known for", L.placeDefaults(w, "רימון").service === "אימון קבוצתי");
+ok("and what it last paid", L.placeDefaults(w, "רימון").price === 250);
+
+w = L.rememberPlace(w, { name: "  רימון ", service: "אימון קבוצתי", price: 300 }, { clock: clock });
+ok("the same place typed loosely is the same place", w.places.length === 2);
+ok("a new price becomes the default for next time", L.placeDefaults(w, "רימון").price === 300);
+ok("and it counts the visits", L.placeDefaults(w, "רימון") && w.places.find(function (p) { return p.name === "רימון"; }).uses === 2);
+
+w = L.rememberPlace(w, { name: "רימון", service: "", price: 300 }, { clock: clock });
+ok(
+  "a blank service does not erase what the place is known for",
+  L.placeDefaults(w, "רימון").service === "אימון קבוצתי"
+);
+
+/* THE promise: a new price never reaches a deal already done. */
+ok("the deal done at 250 is still 250", L.dealsOfDay(month, "2026-09-03")[0].price === 250);
+ok("and the month it belongs to has not moved", L.monthTotal(month) === 700);
+
+["גימיני", "סטודיו ב", "מכון הכפר", "בית ספר", "חוף הים"].forEach(function (n) {
+  w = L.rememberPlace(w, { name: n, service: "אישי", price: 150 }, { clock: clock });
+});
+const favs = L.favourites(w);
+ok("the name field is offered five places", favs.length === 5);
+ok("the most recent is first", favs[0].name === "חוף הים");
+ok("and the oldest fell off the list", !favs.some(function (p) { return p.name === "אולם העירייה"; }));
+ok("a place nobody used is not invented", L.placeDefaults(w, "מקום שלא היה") === null);
+
+/* --- the table ---------------------------------------------------------- */
+
+const rows = [
+  { id: "a", day: "2026-09-01", name: "רימון", service: "קבוצתי", price: 250, createdAt: "2026-09-01T06:00:00Z" },
+  { id: "b", day: "2026-09-15", name: "אולם העירייה", service: "אישי", price: 180, createdAt: "2026-09-15T06:00:00Z" },
+  { id: "c", day: "2026-10-02", name: "רימון", service: "קבוצתי", price: 300, createdAt: "2026-10-02T06:00:00Z" },
+];
+ok("newest first", L.filterDeals(rows, {})[0].id === "c");
+ok("filtering by place is a contains, not an exact match", L.filterDeals(rows, { name: "רימ" }).length === 2);
+ok("filtering by place ignores case", L.filterDeals(rows, { name: "רימון" }).length === 2);
+ok("a floor price filters", L.filterDeals(rows, { minPrice: 200 }).length === 2);
+ok("a ceiling price filters", L.filterDeals(rows, { maxPrice: 200 }).length === 1);
+ok("a date range filters", L.filterDeals(rows, { from: "2026-09-01", to: "2026-09-30" }).length === 2);
+ok("filters combine", L.filterDeals(rows, { name: "רימון", from: "2026-10-01", to: "2026-10-31" }).length === 1);
+ok("the sum is of what is shown", L.sumOf(L.filterDeals(rows, { name: "רימון" })) === 550);
+
+/* --- the two buttons ---------------------------------------------------- */
+
+const week = L.weekRange("2026-09-03");
+ok("a week starts on Sunday", L.weekdayOf(week.from) === 0);
+ok("and ends on Saturday", L.weekdayOf(week.to) === 6);
+ok("the day asked about is inside it", week.from <= "2026-09-03" && week.to >= "2026-09-03");
+const yr = L.yearRange("2026-09-15");
+ok("a year runs January to December", yr.from === "2026-01-01" && yr.to === "2026-12-31");
+ok("and it is the year of the day asked about", L.yearRange("2025-02-02").from === "2025-01-01");
+const mr = L.monthRange("2026-09-15");
+ok("a month range is the whole month", mr.from === "2026-09-01" && mr.to === "2026-09-30");
+
+/* A week that straddles two months must read both boxes — and only both. */
+ok("a range names the months it touches", JSON.stringify(L.monthsBetween("2026-09-28", "2026-10-04")) === '["2026-09","2026-10"]');
+ok("one month is one read", L.monthsBetween("2026-09-01", "2026-09-30").length === 1);
+ok("a reversed range still answers", L.monthsBetween("2026-10-04", "2026-09-28").length === 2);
+ok("a runaway range cannot spin forever", L.monthsBetween("1900-01-01", "2200-01-01").length <= 240);
+
+/* --- what must never happen --------------------------------------------- */
+
+const src = require("fs").readFileSync(require("path").join(__dirname, "..", "lib", "coach-ledger.js"), "utf8");
+ok("the book makes no network calls", !/\bfetch\s*\(/.test(src));
+ok("and knows no AI provider", !/gemini|groq|generativelanguage/i.test(src));
+
+
+/* --- favourites: everyone, busiest first, with a name and a colour --------
+ * "Favourites" the way he means it: not a shortlist he curates, but the places he
+ * actually goes to, ordered by how often they appear in the calendar.
+ * ------------------------------------------------------------------------- */
+
+let fw = L.emptyWarehouse();
+["רימון", "רימון", "רימון", "אולם", "אולם", "חוף"].forEach(function (n) {
+  fw = L.rememberPlace(fw, { name: n, service: "אישי", price: 200 }, { clock: clock });
+});
+const ranked = L.placesByUse(fw);
+ok("the busiest place is first", ranked[0].name === "רימון" && ranked[0].uses === 3);
+ok("then the next busiest", ranked[1].name === "אולם" && ranked[1].uses === 2);
+ok("and everyone is in the list, not just five", ranked.length === 3);
+
+const painted = L.setPlaceColour(fw, "רימון", "#4CAF70");
+ok("a place can be given a colour", painted.ok && L.placeColour(painted.warehouse, "רימון") === "#4CAF70");
+ok("only a real colour is kept", L.setPlaceColour(painted.warehouse, "אולם", "javascript:alert(1)").warehouse.places.every(function (p) { return p.colour !== "javascript:alert(1)"; }));
+ok("the map is name to colour", L.colourMap(painted.warehouse)["רימון"] === "#4CAF70");
+ok("a place with no colour is not in the map", L.colourMap(painted.warehouse)["אולם"] === undefined);
+ok("colouring something that is not there says so", L.setPlaceColour(fw, "לא קיים", "#E8451A").code === "NOT_FOUND");
+
+const renamed = L.renamePlace(painted.warehouse, "רימון", "רימון פיטנס");
+ok("a place can be renamed", renamed.ok);
+ok("and keeps its colour", L.placeColour(renamed.warehouse, "רימון פיטנס") === "#4CAF70");
+ok("and its count", L.placesByUse(renamed.warehouse)[0].uses === 3);
+ok("a name that is already taken is refused", L.renamePlace(renamed.warehouse, "אולם", "רימון פיטנס").code === "NAME_TAKEN");
+ok("an empty name is refused", L.renamePlace(renamed.warehouse, "אולם", "   ").code === "NO_NAME");
+ok("renaming what is not there says so", L.renamePlace(renamed.warehouse, "לא קיים", "משהו").code === "NOT_FOUND");
+ok("using it again does not wipe the colour", L.placeColour(L.rememberPlace(renamed.warehouse, { name: "רימון פיטנס", price: 300 }), "רימון פיטנס") === "#4CAF70");
+
+/* A rename that leaves the old name on the rows splits the list in two. */
+let rm = L.emptyMonth("2026-09");
+rm = L.addDeal(rm, { day: "2026-09-02", name: "רימון", price: 250 }, { clock: clock }).doc;
+rm = L.addDeal(rm, { day: "2026-09-09", name: "אולם", price: 180 }, { clock: clock }).doc;
+const movedRows = L.renameInMonth(rm, "רימון", "רימון פיטנס");
+ok("the rows follow the new name", movedRows.changed === 1);
+ok("and say how many moved", L.dealsOfDay(movedRows.doc, "2026-09-02")[0].name === "רימון פיטנס");
+ok("everyone else is untouched", L.dealsOfDay(movedRows.doc, "2026-09-09")[0].name === "אולם");
+ok("and the money did not move with the name", L.monthTotal(movedRows.doc) === 430);
+
+
+/* --- one line per place (owner, 2026-09-04) -------------------------------
+ * The question he brings to the table is "what do I invoice each of them for", and
+ * that is a question about a place, not about a session.
+ * ------------------------------------------------------------------------- */
+
+const gRows = [
+  { id: "g1", day: "2026-09-01", name: "רימון", service: "אימון קבוצתי", price: 250, invoiced: true, createdAt: "2026-09-01T06:00:00Z" },
+  { id: "g2", day: "2026-09-08", name: "רימון", service: "אימון אישי", price: 300, invoiced: false, createdAt: "2026-09-08T06:00:00Z" },
+  { id: "g3", day: "2026-09-03", name: "אולם", service: "אימון אישי", price: 180, invoiced: true, createdAt: "2026-09-03T06:00:00Z" },
+];
+const groups = L.groupByPlace(gRows);
+ok("a line per place, not per session", groups.length === 2);
+ok("it counts the sessions", groups[0].count === 2 && groups[1].count === 1);
+ok("and sums what they came to", groups[0].total === 550 && groups[1].total === 180);
+ok("one service is named", groups[1].service === "אימון אישי" && groups[1].mixed === false);
+ok("two are called mixed rather than one being picked", groups[0].mixed === true && groups[0].service === "");
+ok("a place is invoiced only when every session in it is", groups[0].invoiced === false && groups[1].invoiced === true);
+ok("and it remembers which sessions it holds", groups[0].ids.length === 2);
+ok("nothing in, nothing out", L.groupByPlace([]).length === 0);
+
+const allBilled = L.groupByPlace([
+  { id: "x", day: "2026-09-01", name: "רימון", price: 100, invoiced: true },
+  { id: "y", day: "2026-09-02", name: "רימון", price: 100, invoiced: true },
+]);
+ok("every session billed means the place is billed", allBilled[0].invoiced === true);
+
+ok("the biggest place comes first", L.sortGroups(groups, "price", 1)[0].name === "רימון");
+ok("and again turns it round", L.sortGroups(groups, "price", -1)[0].name === "אולם");
+ok("a place list can be read alphabetically", L.sortGroups(groups, "name", 1)[0].name === "רימון");
+ok("or by who is still unbilled", L.sortGroups(groups, "invoiced", 1)[0].invoiced === false);
+
+
+/* --- a place can be forgotten (owner, 2026-09-04) -------------------------
+ * A name typed wrong stays in the list he picks from for ever unless he can remove
+ * it. The warehouse is a memory, not a record: forgetting a place changes no session
+ * that was ever done at it.
+ * ------------------------------------------------------------------------- */
+
+let fgw = L.emptyWarehouse();
+fgw = L.rememberPlace(fgw, { name: "רימון", price: 100 }, { clock: clock });
+fgw = L.rememberPlace(fgw, { name: "טעות", price: 100 }, { clock: clock });
+const forgotten = L.forgetPlace(fgw, "טעות");
+ok("a place can be dropped from the list", forgotten.ok && forgotten.warehouse.places.length === 1);
+ok("the right one goes", forgotten.warehouse.places[0].name === "רימון");
+ok("forgetting what is not there says so", L.forgetPlace(forgotten.warehouse, "אין כזה").code === "NOT_FOUND");
+ok("and it is case- and space-insensitive like everything else here", L.forgetPlace(fgw, "  טעות ").ok === true);
+
+console.log("\nAll coach ledger checks passed (" + passed + " assertions).");

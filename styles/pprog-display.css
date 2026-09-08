@@ -151,6 +151,19 @@
 }
 .pprog-day-card .card-header{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 .pprog-day-card .source-name{color:var(--coach);font-weight:700;font-size:1.05em;letter-spacing:.01em;font-family:var(--font-ui)}
+/* The automatic label — "אימון 1 · שבוע 1" — kept beside a name he gave the day. It is
+   the count and the order, so it stays readable and stays un-editable; small enough not
+   to compete with the name (owner, 2026-09-05). */
+/* Light yellow and italic, on his instruction: it is an aside about the day — the
+   count and the order — not part of what is written on it (owner, 2026-09-05). */
+.pprog-day-card .pprog-day-when{margin-inline-start:8px;font-size:.74em;font-weight:600;
+  color:#F5D97A;font-style:italic;letter-spacing:.02em;white-space:nowrap}
+/* The heading while the day is open: a field, not a label. */
+.pprog-day-card .pprog-day-title-in{width:min(260px,60vw);background:var(--bg);color:var(--text);
+  border:1px solid var(--line);border-radius:8px;padding:5px 9px;font:inherit;font-size:.95em;
+  font-weight:700;font-family:var(--font-ui)}
+.pprog-day-card .pprog-day-title-in::placeholder{color:var(--text-muted);font-weight:600}
+.pprog-day-card .pprog-day-title-in:focus{outline:none;border-color:var(--coach)}
 .pprog-day-card .section{margin-bottom:12px;background:transparent;border:0;padding:0}
 .pprog-day-card .section + .section{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
 .pprog-day-card .section-title{font-size:.98em;font-weight:700;text-decoration:none;color:var(--part);margin-bottom:7px;letter-spacing:.01em;text-transform:none}
@@ -202,6 +215,10 @@
   color:var(--text);font-weight:700;font-size:.95em;padding:4px 2px;margin:0 0 6px;font-family:inherit;outline:none
 }
 .pprog-edit-lines{list-style:disc}
+/* A note now sits in a row with its own × — the same shape a work line has, so the
+   two read as the same kind of thing (owner, 2026-09-05). */
+.pprog-edit-note-row{display:flex;align-items:center;gap:6px;margin:0 0 8px}
+.pprog-edit-note-row .pprog-edit-note{flex:1;min-width:0;margin:0}
 .pprog-edit-work-row{display:flex;align-items:center;gap:8px;list-style:disc}
 .pprog-edit-work-row input{
   flex:1;min-width:0;background:transparent;border:none;color:var(--text);font-size:.95em;
@@ -211,6 +228,72 @@
   appearance:none;background:none;border:none;color:var(--text-meta);cursor:pointer;
   font-size:16px;line-height:1;padding:4px 6px;flex-shrink:0
 }
+/* A COLOUR FOR A LINE, AND NUMBERING FOR A PART (owner, 2026-09-05).
+   The circle takes the line's own colour, because it belongs to that line. */
+.pprog-day-card .section-lines.pprog-numbered{list-style:none;padding-inline-start:0}
+.pprog-li-num{
+  display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;
+  border-radius:50%;border:1.5px solid currentColor;font-size:11px;font-weight:800;
+  line-height:1;margin-inline-end:8px;flex:0 0 auto;vertical-align:1px;opacity:.9
+}
+@media (max-width:719px){
+/* ON A PHONE the numbers stand in a column down the LEFT edge, whatever language the
+     line is written in (owner, 2026-09-05, on an iPhone: in Hebrew the circle drifted
+     into the middle of the line, in a different place on every line).
+     The ROW is laid out left-to-right; the text keeps its own direction inside its own
+     box, so a Hebrew line still reads right-to-left and an English one is untouched.
+     Phone only — on a desktop it already looked right and nothing here changes it.
+     The comment lives INSIDE the query because scripts/extract-pprog-css.js reads the
+     text before the first brace as the selector. */
+  .pprog-day-card .section-lines.pprog-numbered{padding-inline-start:0}
+.pprog-day-card .section-lines.pprog-numbered li.pprog-li-numbered{
+    display:flex;direction:ltr;align-items:flex-start;gap:8px
+  }
+.pprog-day-card .section-lines.pprog-numbered li.pprog-li-numbered .pprog-li-num{margin-inline-end:0}
+.pprog-day-card .section-lines.pprog-numbered li.pprog-li-numbered .pprog-li-text{flex:1;min-width:0}
+}
+.pprog-edit-lines.pprog-numbered{list-style:none;padding-inline-start:0}
+/* The number in the circle is a field while the day is open — digits only, and it must
+   not be stretched by the rule that makes the work line itself fill the row. */
+.pprog-edit-work-row input.pprog-num-in{
+  flex:0 0 auto;width:22px;height:22px;text-align:center;padding:0;
+  background:transparent;color:inherit;font-size:11px;font-weight:800;font-family:inherit;
+  border:1.5px solid currentColor;border-radius:50%;outline:none;opacity:.9
+}
+.pprog-edit-work-row input.pprog-num-in:focus{opacity:1;box-shadow:0 0 0 2px rgba(255,255,255,.14)}
+.pprog-edit-work-row .pprog-edit-num{margin-inline-end:2px}
+" is the more specific rule,
+   so it was never anchored to its own line at all — the pencil looked dead
+   (owner, 2026-09-05). Nothing to clip and nothing to position. */
+.pprog-edit-work-row{flex-wrap:wrap}
+.pprog-colour-btn{
+  appearance:none;background:none;border:none;color:var(--text-meta);cursor:pointer;
+  padding:4px 4px;line-height:0;flex-shrink:0;border-radius:6px
+}
+.pprog-colour-btn:hover{background:rgba(255,255,255,.07)}
+.pprog-colour-pop{
+  flex:0 0 100%;display:flex;gap:8px;align-items:center;margin:6px 0 2px;
+  padding:7px 9px;border-radius:10px;background:rgba(255,255,255,.05);
+  border:1px solid var(--line)
+}
+.pprog-swatch{
+  appearance:none;width:20px;height:20px;border-radius:50%;border:1.5px solid transparent;
+  cursor:pointer;padding:0;flex:0 0 auto
+}
+.pprog-swatch.is-on{border-color:var(--text);box-shadow:0 0 0 2px rgba(255,255,255,.18)}
+.pprog-swatch-none{background:transparent;border-color:var(--text-meta);position:relative}
+.pprog-swatch-none:after{
+  content:"";position:absolute;inset-inline-start:2px;top:8px;width:14px;height:1.5px;
+  background:var(--text-meta);transform:rotate(-45deg)
+}
+/* "Add numbering" — beside the part heading, quiet until it is ticked. */
+.pprog-num-toggle{
+  display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;
+  color:var(--text-meta);cursor:pointer;user-select:none;flex-shrink:0;white-space:nowrap
+}
+.pprog-num-toggle input{width:14px;height:14px;accent-color:var(--part);cursor:pointer;margin:0}
+.pprog-day-card .section-title-row{display:flex;align-items:center;gap:10px}
+.pprog-day-card .section-title-row .pprog-edit-title{flex:1;min-width:0}
 .pprog-edit-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .pprog-edit-chip{
   appearance:none;height:32px;padding:0 12px;border-radius:999px;background:transparent;

@@ -170,6 +170,21 @@ button.ghost:hover{color:var(--text)}
     display:block;padding:40pt 0;text-align:center;font-size:12pt;color:#000
   }
 }
+
+/* Copy a day, copy a week — the client's own menu. A card, not an alarm: one row per
+   action, an icon to read it by, green on the paste (owner, 2026-09-04). */
+.copy-menu{position:fixed;z-index:140;background:var(--card,#161616);border:1px solid rgba(255,255,255,.14);
+  border-radius:12px;padding:6px;box-shadow:0 18px 44px rgba(0,0,0,.55);display:flex;
+  flex-direction:column;gap:2px;min-width:200px}
+.copy-menu .cm-title{font-size:11px;font-weight:800;opacity:.6;letter-spacing:.3px;padding:6px 10px 4px}
+.copy-menu .cm-item{appearance:none;background:transparent;border:none;border-radius:9px;
+  color:inherit;font:inherit;font-size:13.5px;font-weight:600;min-height:38px;padding:8px 10px;
+  cursor:pointer;display:flex;align-items:center;gap:9px;text-align:start;width:100%}
+.copy-menu .cm-item:hover{background:rgba(255,255,255,.07)}
+.copy-menu .cm-paste:hover{background:rgba(76,175,112,.18)}
+.copy-menu .cm-ico{width:20px;text-align:center;font-size:14px;opacity:.7}
+.copy-menu .cm-from{display:block;font-size:11px;font-weight:600;opacity:.6;margin-top:1px}
+.copy-menu .cm-hint{font-size:12px;opacity:.6;padding:8px 10px}
 </style>
 </head>
 <body>
@@ -214,6 +229,8 @@ button.ghost:hover{color:var(--text)}
     <div id="progBanner"></div>
     <!-- No week bar: the calendar carries its own W1…W5 rail. -->
     <div id="days"></div>
+    <!-- Copy a day, copy a week: the menu opens where the finger is. -->
+    <div id="copyMenu" class="copy-menu" hidden></div>
     <!-- No print. The owner's call on 2026-09-01: a printed programme is a copy he
          cannot see, cannot revoke and cannot watermark once it is on paper, and this
          page exists precisely so the programme stays somewhere he still controls.
@@ -549,6 +566,9 @@ button.ghost:hover{color:var(--text)}
         '<div class="pprog-day-stub">Nothing written for this day yet.</div>',
       showActions: true,
       allowEdit: true,
+      /* They are coaches building programmes in here, so a day can be given a name
+         on this side too (owner, 2026-09-05). */
+      allowTitleEdit: true,
       /* The owner's decision: a client edits without limit, past days included. */
       allowPastEdit: true,
       editing: !!state.edit,
@@ -571,6 +591,9 @@ button.ghost:hover{color:var(--text)}
          additive rather than just moving the focus. */
       passCalEvent: true,
       widthStatusHtml: widthStatus,
+      /* Our clients are coaches building their own programmes: they get the colour and
+         the numbering too (owner, 2026-09-05). */
+      allowLineColour: true,
       hooks: {
         shift: "cvCalShift",
         toggleMode: "cvToggleCalMode",
@@ -585,6 +608,10 @@ button.ghost:hover{color:var(--text)}
         editAddWork: "cvEditAddWork",
         editAddPart: "cvEditAddPart",
         editRemoveWork: "cvEditRemoveWork",
+        editRemoveNote: "cvEditRemoveNote",
+        editSetColour: "cvEditSetColour",
+        editSetNumbering: "cvEditSetNumbering",
+        editSetNumber: "cvEditSetNumber",
         editCancel: "cvEditCancel",
         editSave: "cvEditSave",
         share: "cvShareDay",
@@ -815,6 +842,153 @@ button.ghost:hover{color:var(--text)}
     return cell;
   }
 
+  /**
+   * Right-click a day or a week to copy it; right-click another to paste.
+   *
+   * A phone has no right button, so half a second of holding is one. The tap that
+   * follows a long press is swallowed, or the menu would open and close in the same
+   * gesture (owner, 2026-09-04).
+   */
+  function bindCopyGestures() {
+    var host = el("days");
+    if (!host) return;
+
+    document.addEventListener("contextmenu", function (ev) {
+      if (!state.program || !ev.target || !ev.target.closest) return;
+      var box = el("days");
+      if (!box) return;
+      var cube = ev.target.closest("[data-week]");
+      if (cube && box.contains(cube)) {
+        ev.preventDefault();
+        openCopyMenu("week", (parseInt(cube.getAttribute("data-week"), 10) || 1) - 1, "", ev.clientX, ev.clientY);
+        return;
+      }
+      var cell = ev.target.closest("[data-day][data-wi]");
+      if (cell && box.contains(cell)) {
+        var dayKey = cell.getAttribute("data-day") || "";
+        if (!dayKey || dayKey === "general") return;
+        ev.preventDefault();
+        openCopyMenu("day", parseInt(cell.getAttribute("data-wi"), 10) || 0, dayKey, ev.clientX, ev.clientY);
+      }
+    });
+
+    var pressTimer = null;
+    var pressAt = null;
+    var openedByPress = 0;
+    function cancelPress() {
+      if (pressTimer) clearTimeout(pressTimer);
+      pressTimer = null;
+      pressAt = null;
+    }
+    document.addEventListener(
+      "touchstart",
+      function (ev) {
+        var box = el("days");
+        if (!box || !state.program || !ev.target || !ev.target.closest) return;
+        var touch = (ev.touches && ev.touches[0]) || null;
+        if (!touch) return;
+        var cube = ev.target.closest("[data-week]");
+        var cell = ev.target.closest("[data-day][data-wi]");
+        var onCube = cube && box.contains(cube);
+        var onCell = cell && box.contains(cell);
+        if (!onCube && !onCell) return;
+        pressAt = { x: touch.clientX, y: touch.clientY };
+        if (pressTimer) clearTimeout(pressTimer);
+        pressTimer = setTimeout(function () {
+          pressTimer = null;
+          openedByPress = Date.now();
+          if (onCube) {
+            openCopyMenu("week", (parseInt(cube.getAttribute("data-week"), 10) || 1) - 1, "", pressAt.x, pressAt.y);
+          } else {
+            var dayKey = cell.getAttribute("data-day") || "";
+            if (!dayKey || dayKey === "general") return;
+            openCopyMenu("day", parseInt(cell.getAttribute("data-wi"), 10) || 0, dayKey, pressAt.x, pressAt.y);
+          }
+        }, 500);
+      },
+      { passive: true }
+    );
+    document.addEventListener(
+      "touchmove",
+      function (ev) {
+        var touch = (ev.touches && ev.touches[0]) || null;
+        if (!pressAt || !touch) return cancelPress();
+        if (Math.abs(touch.clientX - pressAt.x) > 10 || Math.abs(touch.clientY - pressAt.y) > 10) cancelPress();
+      },
+      { passive: true }
+    );
+    document.addEventListener("touchend", cancelPress, { passive: true });
+    document.addEventListener("touchcancel", cancelPress, { passive: true });
+    document.addEventListener(
+      "click",
+      function (ev) {
+        if (openedByPress && Date.now() - openedByPress < 700) {
+          ev.stopPropagation();
+          openedByPress = 0;
+        }
+      },
+      true
+    );
+
+    /* What the two menu rows do. */
+    document.addEventListener("click", function (ev) {
+      var t = ev.target;
+      if (!t || !t.closest) return;
+      var m = el("copyMenu");
+
+      var cw = t.closest("[data-copy-week]");
+      if (cw) {
+        copyClip = { kind: "week", wi: parseInt(String(cw.getAttribute("data-copy-week")).split(":")[0], 10) || 0 };
+        closeCopyMenu();
+        banner("good", "Week " + (copyClip.wi + 1) + " copied — long-press or right-click another week to paste it.");
+        return;
+      }
+      var cd = t.closest("[data-copy-day]");
+      if (cd) {
+        var cbits = String(cd.getAttribute("data-copy-day")).split(":");
+        copyClip = { kind: "day", wi: parseInt(cbits[0], 10) || 0, dayKey: cbits[1] || "" };
+        closeCopyMenu();
+        banner("good", "Day copied — long-press or right-click another day to paste it.");
+        return;
+      }
+      var pw = t.closest("[data-paste-week]");
+      if (pw) {
+        var toWi = parseInt(String(pw.getAttribute("data-paste-week")).split(":")[0], 10) || 0;
+        closeCopyMenu();
+        if (!copyClip || copyClip.kind !== "week" || copyClip.wi === toWi) return;
+        if (!window.confirm("Paste week " + (copyClip.wi + 1) + " onto week " + (toWi + 1) + "? What is written there will be replaced.")) return;
+        var D = pprogLib();
+        var keys = (D && D.DAY_KEYS) || ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+        saveCopied(
+          keys.map(function (k) {
+            return editFor(copyClip.wi, k, toWi, k);
+          }),
+          "Week " + (copyClip.wi + 1)
+        );
+        return;
+      }
+      var pd = t.closest("[data-paste-day]");
+      if (pd) {
+        var pbits = String(pd.getAttribute("data-paste-day")).split(":");
+        var pWi = parseInt(pbits[0], 10) || 0;
+        var pDay = pbits[1] || "";
+        closeCopyMenu();
+        if (!copyClip || copyClip.kind !== "day" || !pDay) return;
+        if (copyClip.wi === pWi && copyClip.dayKey === pDay) return;
+        if (!window.confirm("Paste it here? What is written on this day will be replaced.")) return;
+        saveCopied([editFor(copyClip.wi, copyClip.dayKey, pWi, pDay)], "Day");
+        return;
+      }
+
+      /* Anywhere else closes it. */
+      if (m && !m.hidden && !t.closest("#copyMenu")) closeCopyMenu();
+    });
+
+    document.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape") closeCopyMenu();
+    });
+  }
+
   function bindCalGestures() {
     document.addEventListener("mousedown", function (ev) {
       if (ev.button !== 0) return;
@@ -968,11 +1142,76 @@ button.ghost:hover{color:var(--text)}
     renderDays();
   };
 
-  window.cvEditAddWork = function (partIndex) {
+  /**
+   * A new work line — at the end from the chip, or right after the line he pressed
+   * Enter on. The colour and the number of the lines below move down with them.
+   */
+  window.cvEditAddWork = function (partIndex, atIndex) {
     var part = state.edit && state.edit.parts[partIndex | 0];
     if (!part) return;
     if (!Array.isArray(part.work)) part.work = [];
-    part.work.push("");
+    var at = atIndex === undefined || atIndex === null ? part.work.length : Math.max(0, Math.min(part.work.length, atIndex | 0));
+    part.work.splice(at, 0, "");
+    if (Array.isArray(part.colors)) part.colors.splice(at, 0, "");
+    if (Array.isArray(part.nums)) part.nums.splice(at, 0, "");
+    renderDays();
+    focusWorkLine(partIndex | 0, at);
+  };
+
+  /**
+   * Put the caret in a work line after the card has been redrawn.
+   *
+   * The inputs carry no ids — the card is rendered by the shared library — so they are
+   * found by where they sit: the nth part, the nth line inside it. The number in the
+   * circle is an input too, hence the exclusion.
+   */
+  function focusWorkLine(partIndex, lineIndex) {
+    setTimeout(function () {
+      try {
+        var lists = document.querySelectorAll(".pprog-day-card .pprog-edit-lines");
+        var list = lists[partIndex];
+        if (!list) return;
+        var boxes = list.querySelectorAll('input[type="text"]:not(.pprog-num-in)');
+        var box = boxes[lineIndex];
+        if (box) box.focus();
+      } catch (e) {}
+    }, 0);
+  }
+
+  /* A note can be taken off again, the colour of a line, and whether this part numbers
+     its lines — the same three the owner has (owner, 2026-09-05). */
+  window.cvEditRemoveNote = function (partIndex, noteIndex) {
+    var part = state.edit && state.edit.parts[partIndex | 0];
+    if (!part || !Array.isArray(part.notes)) return;
+    part.notes.splice(noteIndex | 0, 1);
+    renderDays();
+  };
+
+  window.cvEditSetColour = function (partIndex, lineIndex, colourKey) {
+    var part = state.edit && state.edit.parts[partIndex | 0];
+    if (!part) return;
+    if (!Array.isArray(part.colors)) part.colors = [];
+    part.colors[lineIndex | 0] = String(colourKey || "");
+    renderDays();
+  };
+
+  /**
+   * The number on one line. Digits only, and nothing is redrawn while he types —
+   * a redraw on every keystroke would throw the caret out of the box.
+   */
+  window.cvEditSetNumber = function (partIndex, lineIndex, el) {
+    var part = state.edit && state.edit.parts[partIndex | 0];
+    if (!part || !el) return;
+    var clean = String(el.value == null ? "" : el.value).replace(/[^0-9]/g, "").slice(0, 3);
+    if (el.value !== clean) el.value = clean;
+    if (!Array.isArray(part.nums)) part.nums = [];
+    part.nums[lineIndex | 0] = clean === "" ? "" : parseInt(clean, 10);
+  };
+
+  window.cvEditSetNumbering = function (partIndex, on) {
+    var part = state.edit && state.edit.parts[partIndex | 0];
+    if (!part) return;
+    part.numbered = on === true;
     renderDays();
   };
 
@@ -980,6 +1219,9 @@ button.ghost:hover{color:var(--text)}
     var part = state.edit && state.edit.parts[partIndex | 0];
     if (!part || !Array.isArray(part.work)) return;
     part.work.splice(lineIndex | 0, 1);
+    /* The colour and the number belong to the line, so they go with it. */
+    if (Array.isArray(part.colors)) part.colors.splice(lineIndex | 0, 1);
+    if (Array.isArray(part.nums)) part.nums.splice(lineIndex | 0, 1);
     if (!part.work.length) part.work = [""];
     renderDays();
   };
@@ -1008,19 +1250,43 @@ button.ghost:hover{color:var(--text)}
     var draft = state.edit;
     if (!draft) return;
     var D = pprogLib();
+    /* The heading is part of the day like every other field — read before the card is
+       redrawn, or the name he just typed is gone (owner, 2026-09-05). */
+    var titleNow = readDayTitleField();
     state.edit = null;
     if (draft.restIntent) {
       if (dayHasWrittenSession(draft.wi, draft.day) &&
           !window.confirm("Make this a rest day? The session written here will be removed.")) {
         return;
       }
-      saveDay(draft.wi, draft.day, [], true, { quiet: true });
+      saveDay(draft.wi, draft.day, [], true, { quiet: true, title: titleNow });
       return;
     }
-    if (!D || !D.partsFromDraft || !D.draftHasContent(draft)) return;
+    var titleChanged = titleNow !== undefined && titleNow !== storedDayTitle(draft.wi, draft.day);
+    if (!D || !D.partsFromDraft || !D.draftHasContent(draft)) {
+      /* Nothing typed into the session, but the day may have been renamed. */
+      if (titleChanged) saveTitleOnly(draft.wi, draft.day, titleNow);
+      return;
+    }
     var parts = D.partsFromDraft({ parts: draft.parts, day: draft.day });
-    if (samePartsAsStored(draft.wi, draft.day, parts)) return;
-    saveDay(draft.wi, draft.day, parts, false, { quiet: true });
+    if (samePartsAsStored(draft.wi, draft.day, parts) && !titleChanged) return;
+    saveDay(draft.wi, draft.day, parts, false, { quiet: true, title: titleNow });
+  }
+
+  /** The name this day is stored under right now. */
+  function storedDayTitle(wi, dayKey) {
+    var week = ((state.program && state.program.weeks) || [])[wi | 0] || {};
+    var day = (week.days && week.days[dayKey]) || {};
+    return String(day.title || "");
+  }
+
+  /** Only the name changed — write it with the session that is already there. */
+  function saveTitleOnly(wi, dayKey, title) {
+    var week = ((state.program && state.program.weeks) || [])[wi | 0] || {};
+    var day = (week.days && week.days[dayKey]) || {};
+    var parts = Array.isArray(day.parts) ? day.parts : [];
+    if (!parts.length) return;
+    saveDay(wi, dayKey, parts, false, { quiet: true, title: title });
   }
 
   /** Is there a written session on this day - something a rest day would replace? */
@@ -1038,7 +1304,14 @@ button.ghost:hover{color:var(--text)}
     var stored = ((week.days && week.days[dayKey]) || {}).parts || [];
     var strip = function (list) {
       return (list || []).map(function (p) {
-        return { title: String((p && p.title) || ""), lines: ((p && p.lines) || []).slice() };
+        return {
+          title: String((p && p.title) || ""),
+          lines: ((p && p.lines) || []).slice(),
+          /* A colour or a numbering he switched on IS a change — without them here
+             the day looked identical and the autosave skipped it (owner, 2026-09-05). */
+          numbered: (p && p.numbered) === true,
+          lineColors: (p && p.lineColors) || null,
+        };
       });
     };
     try {
@@ -1057,7 +1330,7 @@ button.ghost:hover{color:var(--text)}
           !window.confirm("Make this a rest day? The session written here will be removed.")) {
         return;
       }
-      saveDay(state.edit.wi, state.edit.day, [], true);
+      saveDay(state.edit.wi, state.edit.day, [], true, { title: readDayTitleField() });
       return;
     }
     if (!D.draftHasContent(state.edit)) {
@@ -1068,9 +1341,17 @@ button.ghost:hover{color:var(--text)}
       state.edit.wi,
       state.edit.day,
       D.partsFromDraft({ parts: state.edit.parts, day: state.edit.day }),
-      false
+      false,
+      { title: readDayTitleField() }
     );
   };
+
+  /** What the heading field says, or undefined when no day is open for editing. */
+  function readDayTitleField() {
+    var f = document.querySelector("#days [data-day-title]");
+    if (!f) return undefined;
+    return String(f.value || "").trim().slice(0, 80);
+  }
 
   window.cvMakeRest = function (wi, dayKey) {
     var day = String(dayKey || "");
@@ -1112,6 +1393,157 @@ button.ghost:hover{color:var(--text)}
    * @param {Array} parts ready-made parts (ignored when makeRest)
    * @param {boolean} makeRest true = this day becomes a rest day
    */
+  /* ══════════════════════════════════════════════════════════════════════
+     COPY A DAY, COPY A WEEK — on the client's own page.
+
+     Our clients are coaches: they build programmes in here, and repeating a week by
+     hand is the work the gesture exists to remove (owner, 2026-09-04).
+
+     It writes through the ORDINARY client edit — the same `edits` array a typed change
+     uses — so every guard already in place applies unchanged: the token, the version
+     check that refuses a stale save, the owner's unread flag, and the allowlist. There
+     is no new permission here: it is the edits they could make by hand, made at once.
+     ══════════════════════════════════════════════════════════════════════ */
+
+  /* Kept in memory only: a gesture, not a document. */
+  var copyClip = null;
+
+  function closeCopyMenu() {
+    var m = el("copyMenu");
+    if (m) { m.hidden = true; m.innerHTML = ""; }
+  }
+
+  function placeCopyMenu(m, x, y) {
+    var w = m.offsetWidth || 190;
+    var h = m.offsetHeight || 80;
+    var left = Math.min(Math.max(0, x), Math.max(0, window.innerWidth - w - 8));
+    var top = Math.min(Math.max(0, y), Math.max(0, window.innerHeight - h - 8));
+    m.style.left = Math.round(left) + "px";
+    m.style.top = Math.round(top) + "px";
+  }
+
+  function dayName(dayKey) {
+    var D = pprogLib();
+    return (D && D.DAY_LABELS && D.DAY_LABELS[dayKey]) || String(dayKey || "").toUpperCase();
+  }
+
+  function openCopyMenu(kind, wi, dayKey, x, y) {
+    var m = el("copyMenu");
+    if (!m || !state.program) return;
+    var canPaste = !!(copyClip && copyClip.kind === kind);
+    var title = kind === "week" ? "Week " + (wi + 1) : dayName(dayKey) + " · week " + (wi + 1);
+    var from =
+      canPaste && kind === "week"
+        ? "week " + (copyClip.wi + 1)
+        : canPaste
+        ? dayName(copyClip.dayKey) + " · week " + (copyClip.wi + 1)
+        : "";
+    m.innerHTML =
+      '<div class="cm-title">' + esc(title) + "</div>" +
+      '<button type="button" class="cm-item" data-copy-' + kind + '="' + wi + ":" + esc(dayKey || "") + '">' +
+      '<span class="cm-ico" aria-hidden="true">\u29c9</span><span>Copy ' + kind + "</span></button>" +
+      (canPaste
+        ? '<button type="button" class="cm-item cm-paste" data-paste-' + kind + '="' + wi + ":" + esc(dayKey || "") + '">' +
+          '<span class="cm-ico" aria-hidden="true">\u2935</span><span>Paste here' +
+          '<span class="cm-from">from ' + esc(from) + "</span></span></button>"
+        : '<span class="cm-hint">Nothing copied yet</span>');
+    m.hidden = false;
+    placeCopyMenu(m, x, y);
+  }
+
+  /** Is this day a rest day? The library's own answer, so it matches what is drawn. */
+  function dayIsRest(wi, dayKey) {
+    var D = pprogLib();
+    var week = weekAt(wi);
+    var day = week && week.days ? week.days[dayKey] : null;
+    if (!D || !week) return false;
+    if (window.NormalizePprogBlock && NormalizePprogBlock.isRestDay) {
+      return NormalizePprogBlock.isRestDay(dayKey, day, week);
+    }
+    return !(day && day.parts && day.parts.length);
+  }
+
+  function weekAt(wi) {
+    var weeks = (state.program && state.program.weeks) || [];
+    return weeks[wi | 0] || null;
+  }
+
+  /** The parts of a day, ready to be written somewhere else. */
+  function partsAt(wi, dayKey) {
+    var week = weekAt(wi);
+    var day = week && week.days ? week.days[dayKey] : null;
+    var parts = (day && day.parts) || [];
+    return parts.map(function (p) {
+      /* Everything the part carries — a copied day must be the day that was copied,
+         notes, colours and numbering included (owner, 2026-09-05). */
+      var out = {
+        title: String((p && p.title) || ""),
+        lines: ((p && p.lines) || []).slice(),
+      };
+      if (p && p.noteLines) out.noteLines = p.noteLines;
+      if (p && (p.formatLine === 0 || p.formatLine === 1)) out.formatLine = p.formatLine;
+      if (p && p.numbered === true) out.numbered = true;
+      if (p && p.lineColors) out.lineColors = p.lineColors;
+      if (p && p.lineNums) out.lineNums = p.lineNums;
+      return out;
+    });
+  }
+
+  /** One edit for one day, carrying its rest-ness rather than just its emptiness. */
+  function editFor(fromWi, fromDay, toWi, toDay) {
+    /* The name he gave the day travels with it — an edit that leaves `title` out says
+       "not part of this change", so it is passed only when there is one. */
+    var week = weekAt(fromWi);
+    var src = (week && week.days && week.days[fromDay]) || {};
+    var title = typeof src.title === "string" ? src.title.trim() : "";
+    if (dayIsRest(fromWi, fromDay)) {
+      return { weekIndex: toWi + 1, dayKey: toDay, rest: true, parts: [], title: title };
+    }
+    return { weekIndex: toWi + 1, dayKey: toDay, rest: false, parts: partsAt(fromWi, fromDay), title: title };
+  }
+
+  /**
+   * Write a set of copied days.
+   *
+   * One save, so a copied week is one version bump and one flag for the coach rather
+   * than seven — and so a refused stale save refuses the whole thing, never half.
+   */
+  function saveCopied(edits, what) {
+    if (state.busy || !state.program) return;
+    var real = edits.filter(function (e) {
+      return e && (e.rest === true || (e.parts && e.parts.length));
+    });
+    if (!real.length) {
+      banner("warn", "There is nothing written there to copy.");
+      return;
+    }
+    state.busy = true;
+    banner("", "");
+    api({ action: "save", expectedVersion: state.program.version, edits: real }).then(function (r) {
+      state.busy = false;
+      if (r.status === 409) {
+        if (r.body.program) {
+          state.program = r.body.program;
+          state.edit = null;
+          renderDays();
+          renderChrome();
+        }
+        banner("warn", "Your coach changed this program while you had it open. The current version is shown — please copy again.");
+        return;
+      }
+      if (r.status === 401) { clearToken(); openAuth("This device is no longer authorised."); return; }
+      if (r.status !== 200 || !r.body.ok) {
+        banner("bad", r.body.error || "Could not save. Please try again.");
+        return;
+      }
+      state.program = r.body.program;
+      state.edit = null;
+      renderDays();
+      renderChrome();
+      banner("good", what + " pasted.");
+    });
+  }
+
   function saveDay(wi, dayKey, parts, makeRest, opts) {
     if (state.busy) return;
     if (!state.program) return;
@@ -1127,7 +1559,16 @@ button.ghost:hover{color:var(--text)}
       expectedVersion: state.program.version,
       /* weekIndex is 1-based on the wire (lib/client-view-payload.js); the brick
          view is 0-based. Converted here, in one place. */
-      edits: [{ weekIndex: wi + 1, dayKey: dayKey, rest: makeRest === true, parts: makeRest ? [] : parts }],
+      edits: [
+        {
+          weekIndex: wi + 1,
+          dayKey: dayKey,
+          rest: makeRest === true,
+          parts: makeRest ? [] : parts,
+          /* Undefined when the heading was not on screen — "not part of this edit". */
+          title: opts && opts.title !== undefined ? opts.title : undefined,
+        },
+      ],
     }).then(function (r) {
       state.busy = false;
       if (r.status === 409) {
@@ -1274,6 +1715,7 @@ button.ghost:hover{color:var(--text)}
 
   function boot() {
     bindCalGestures();
+    bindCopyGestures();
     el("codeBtn").addEventListener("click", submitCode);
     el("codeInput").addEventListener("keydown", function (ev) { if (ev.key === "Enter") submitCode(); });
     el("agreeBox").addEventListener("change", function () { el("agreeBtn").disabled = !this.checked; });

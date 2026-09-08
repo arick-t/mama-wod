@@ -862,6 +862,335 @@ async function main() {
   const goneRead = await H.owner({ action: "read", programId: p1.body.program.programId });
   ok("a purged client is really gone", goneRead.status === 404);
 
+
+  /* --- the blank client (owner, 2026-09-04) -----------------------------
+   * Four questions — name, gender, what they pay, how — and a month of empty squares.
+   * No AI wrote it and nothing shaped it: every day is open, none is a rest day, and
+   * the owner fills it himself. Everything else about them is a client like any other.
+   * ------------------------------------------------------------------------- */
+
+  const blank = await H.owner({
+    action: "create",
+    clientKind: "blank",
+    clientName: "דני",
+    clientGender: "male",
+    monthlyAmount: 450,
+    paymentMethod: "ביט",
+    blockStart: "2026-09-06",
+  });
+  ok("a blank client is created", blank.status === 200 && blank.body.ok === true);
+  const bp = blank.body.program;
+  ok("it knows which kind it is", bp.clientKind === "blank");
+  ok("a month of weeks arrives", bp.weeks.length === 4);
+  ok(
+    "every day of every week is there",
+    bp.weeks.every(function (w) { return Object.keys(w.days).length === 7; })
+  );
+  ok(
+    "and NOT ONE of them is a rest day",
+    bp.weeks.every(function (w) {
+      return Object.keys(w.days).every(function (k) { return w.days[k].ownerUnreviewed === true; });
+    })
+  );
+  ok(
+    "nothing is written on any of them",
+    bp.weeks.every(function (w) {
+      return Object.keys(w.days).every(function (k) { return (w.days[k].parts || []).length === 0; });
+    })
+  );
+  ok("no week is a deload", bp.weeks.every(function (w) { return w.phase !== "deload"; }));
+  ok("what they pay is on the programme", bp.monthlyAmount === 450 && bp.paymentMethod === "ביט");
+  ok("and their gender, owner-side", bp.clientGender === "male");
+  ok("the block is NOT approved — he sends it when he is ready", bp.blocks[0].approved !== true);
+
+  /* The delivery half is identical: this is the whole point of the kind. */
+  const bCode = await H.owner({ action: "issue_code", programId: bp.programId });
+  ok("a blank client gets a code like anyone else", bCode.status === 200 && /^\d{6}$/.test(bCode.body.code));
+  const bClaim = await H.anon({ action: "claim", programId: bp.programId, code: bCode.body.code, deviceLabel: "phone" });
+  ok("and can redeem it", bClaim.status === 200 && !!bClaim.body.clientToken);
+  const bBeforeSign = await H.client(bClaim.body.clientToken, { action: "read", programId: bp.programId });
+  ok("and signs the same terms as everyone else", bBeforeSign.status === 403 && bBeforeSign.body.code === "TERMS_REQUIRED");
+  await H.client(bClaim.body.clientToken, { action: "sign", programId: bp.programId, accepted: true });
+  const bView = await H.client(bClaim.body.clientToken, { action: "read", programId: bp.programId });
+  ok("but sees nothing until the block is approved", bView.status === 200 && (bView.body.program.blockGroups || []).length === 0);
+  await H.owner({ action: "approve_block", programId: bp.programId, expectedVersion: bp.version, blockIndex: 1 });
+  const bView2 = await H.client(bClaim.body.clientToken, { action: "read", programId: bp.programId });
+  ok("and everything after approval", (bView2.body.program.blockGroups || []).length === 1);
+  ok("what they pay never crosses to them", bView2.body.program.monthlyAmount === undefined);
+  ok("nor does their gender", bView2.body.program.clientGender === undefined);
+
+  /* A second month is empty in exactly the same way. */
+  const bAfter = await H.owner({ action: "read", programId: bp.programId });
+  const bNext = await H.owner({
+    action: "add_block",
+    programId: bp.programId,
+    expectedVersion: bAfter.body.program.version,
+  });
+  ok("a blank client gets another empty month", bNext.status === 200 && bNext.body.program.weeks.length === 8);
+  ok(
+    "with no rest days in it either",
+    bNext.body.program.weeks.slice(4).every(function (w) {
+      return Object.keys(w.days).every(function (k) { return w.days[k].ownerUnreviewed === true; });
+    })
+  );
+
+
+  /* --- a blank client's block can be any length, and NOBODY ELSE'S CAN ------
+   * The owner said it twice: this field lives in the blank client's form, affects the
+   * blank client only, and may not touch the studio path, the individual path, or the
+   * coach's four-week contract (owner, 2026-09-04).
+   * ------------------------------------------------------------------------- */
+
+  const six = await H.owner({
+    action: "create",
+    clientKind: "blank",
+    clientName: "שישה",
+    monthlyAmount: 300,
+    blockWeeks: 6,
+    blockStart: "2026-09-06",
+  });
+  ok("a blank client can be six weeks long", six.body.program.weeks.length === 6);
+  ok("and the block record says six", six.body.program.blocks[0].weekCount === 6);
+  ok("with no rest day anywhere in them", six.body.program.weeks.every(function (w) {
+    return Object.keys(w.days).every(function (k) { return w.days[k].ownerUnreviewed === true; });
+  }));
+
+  /* Delivery is the point of the question he asked: all six, not four. */
+  const sixCode = await H.owner({ action: "issue_code", programId: six.body.program.programId });
+  const sixClaim = await H.anon({ action: "claim", programId: six.body.program.programId, code: sixCode.body.code, deviceLabel: "p" });
+  await H.client(sixClaim.body.clientToken, { action: "sign", programId: six.body.program.programId, accepted: true });
+  const sixRead = await H.owner({ action: "read", programId: six.body.program.programId });
+  await H.owner({
+    action: "approve_block",
+    programId: six.body.program.programId,
+    expectedVersion: sixRead.body.program.version,
+    blockIndex: 1,
+  });
+  const sixSeen = await H.client(sixClaim.body.clientToken, { action: "read", programId: six.body.program.programId });
+  ok("the client receives all six weeks", sixSeen.body.program.weeks.length === 6);
+  ok("as one block of six", (sixSeen.body.program.blockGroups || [])[0].weekCount === 6);
+
+  const sixAgain = await H.owner({ action: "read", programId: six.body.program.programId });
+  const sixNext = await H.owner({
+    action: "add_block",
+    programId: six.body.program.programId,
+    expectedVersion: sixAgain.body.program.version,
+    blockWeeks: 3,
+  });
+  ok("a later month can be a different length again", sixNext.body.added === 3);
+  ok("and the timeline grows by exactly that", sixNext.body.program.weeks.length === 9);
+
+  /* The fence. A studio client asking for six gets four, because the field is not his. */
+  const studioSix = await H.owner({
+    action: "create",
+    clientName: "סטודיו רגיל",
+    blockWeeks: 6,
+    intake: {
+      clientName: "סטודיו רגיל",
+      population: "adults",
+      goals: "general",
+      equipment: "functional_gym",
+      scheduleMode: "sessions_per_week",
+      sessionsPerWeek: 3,
+      monthlyAmount: 500,
+      paymentMethod: "bit",
+    },
+  });
+  ok(
+    "a studio client is four weeks whatever the request says",
+    studioSix.status !== 200 || studioSix.body.program.weeks.length === 4
+  );
+
+  const athleteSix = await H.owner({
+    action: "create",
+    clientKind: "athlete",
+    clientName: "אינדיבידואל רגיל",
+    blockWeeks: 6,
+    athleteIntake: { trainingDaysMap: { sun: true, tue: true, thu: true }, deloadEveryWeeks: 4 },
+  });
+  ok("and so is an individual", athleteSix.body.program.weeks.length === 4);
+
+  /* --- a week copied whole (owner, 2026-09-04) --------------------------- */
+
+  const cw = await H.owner({ action: "create", clientKind: "blank", clientName: "העתקה", blockStart: "2026-09-06" });
+  const cwId = cw.body.program.programId;
+  const cwWrote = await H.owner({
+    action: "save",
+    programId: cwId,
+    expectedVersion: cw.body.program.version,
+    program: {
+      weeks: (function () {
+        const w = JSON.parse(JSON.stringify(cw.body.program.weeks));
+        w[0].days.sun.parts = [{ id: "p1", title: "Part A", lines: ["5x5 back squat"] }];
+        return w;
+      })(),
+    },
+  });
+  ok("a day is written on week 1", cwWrote.status === 200);
+  const copied = await H.owner({
+    action: "copy_week",
+    programId: cwId,
+    expectedVersion: cwWrote.body.program.version,
+    fromWeek: 1,
+    toWeek: 3,
+  });
+  ok("the week is copied in one write", copied.status === 200 && copied.body.copiedDays === 1);
+  const cwAfter = copied.body.program;
+  ok("the sessions arrived", cwAfter.weeks[2].days.sun.parts[0].lines[0] === "5x5 back squat");
+  ok("with ids of their own, not shared with the week they came from",
+    cwAfter.weeks[2].days.sun.parts[0].id !== cwAfter.weeks[0].days.sun.parts[0].id);
+  ok("the week it came from is untouched", cwAfter.weeks[0].days.sun.parts.length === 1);
+  const sameWeek = await H.owner({
+    action: "copy_week",
+    programId: cwId,
+    expectedVersion: cwAfter.version,
+    fromWeek: 2,
+    toWeek: 2,
+  });
+  ok("a week cannot be copied onto itself", sameWeek.status === 400 && sameWeek.body.code === "SAME_WEEK");
+  const noWeek = await H.owner({
+    action: "copy_week",
+    programId: cwId,
+    expectedVersion: cwAfter.version,
+    fromWeek: 1,
+    toWeek: 99,
+  });
+  ok("nor onto a week that is not there", noWeek.status === 400);
+
+
+  /* --- a day copied onto another day (owner, 2026-09-04) ----------------- */
+
+  const cd = await H.owner({ action: "create", clientKind: "blank", clientName: "יום", blockStart: "2026-09-06" });
+  const cdId = cd.body.program.programId;
+  const cdWrote = await H.owner({
+    action: "save",
+    programId: cdId,
+    expectedVersion: cd.body.program.version,
+    program: {
+      weeks: (function () {
+        const w = JSON.parse(JSON.stringify(cd.body.program.weeks));
+        w[0].days.mon.parts = [{ id: "m1", title: "Part A", lines: ["10 min AMRAP"] }];
+        w[0].overview = [{ day: "mon", focus: "Engine" }, { day: "wed", focus: "Rest" }];
+        return w;
+      })(),
+    },
+  });
+  ok("a day is written", cdWrote.status === 200);
+
+  const dayCopied = await H.owner({
+    action: "copy_day",
+    programId: cdId,
+    expectedVersion: cdWrote.body.program.version,
+    fromWeek: 1,
+    fromDay: "mon",
+    toWeek: 2,
+    toDay: "thu",
+  });
+  ok("a day can be copied onto another", dayCopied.status === 200 && dayCopied.body.copiedParts === 1);
+  const afterDay = dayCopied.body.program;
+  ok("the session arrived", afterDay.weeks[1].days.thu.parts[0].lines[0] === "10 min AMRAP");
+  ok("with an id of its own", afterDay.weeks[1].days.thu.parts[0].id !== afterDay.weeks[0].days.mon.parts[0].id);
+  ok("the day it came from is untouched", afterDay.weeks[0].days.mon.parts.length === 1);
+  ok(
+    "and the focus line travelled with it",
+    (afterDay.weeks[1].overview || []).filter(function (o) { return o.day === "thu"; })[0].focus === "Engine"
+  );
+
+  /* A rest day is a rest day because of that focus line — so copying one must move it. */
+  const restCopied = await H.owner({
+    action: "copy_day",
+    programId: cdId,
+    expectedVersion: afterDay.version,
+    fromWeek: 1,
+    fromDay: "wed",
+    toWeek: 1,
+    toDay: "sun",
+  });
+  ok(
+    "copying a rest day makes the target a rest day",
+    (restCopied.body.program.weeks[0].overview || []).filter(function (o) { return o.day === "sun"; })[0].focus === "Rest"
+  );
+  ok("and empties it", restCopied.body.program.weeks[0].days.sun.parts.length === 0);
+
+  const sameDay = await H.owner({
+    action: "copy_day",
+    programId: cdId,
+    expectedVersion: restCopied.body.program.version,
+    fromWeek: 1, fromDay: "mon", toWeek: 1, toDay: "mon",
+  });
+  ok("a day cannot be copied onto itself", sameDay.status === 400 && sameDay.body.code === "SAME_DAY");
+  const badDay = await H.owner({
+    action: "copy_day",
+    programId: cdId,
+    expectedVersion: restCopied.body.program.version,
+    fromWeek: 1, fromDay: "mon", toWeek: 1, toDay: "funday",
+  });
+  ok("and not onto something that is not a weekday", badDay.status === 400 && badDay.body.code === "BAD_DAY");
+
+
+  /* --- a blank client sold as a number of sessions (owner, 2026-09-04) ----- */
+
+  const bySess = await H.owner({
+    action: "create",
+    clientKind: "blank",
+    clientName: "ארבעה",
+    scheduleMode: "session_count",
+    sessionsPerWeek: 4,
+    blockWeeks: 6,
+    blockStart: "2026-09-06",
+  });
+  ok("a blank client can be sold as sessions", bySess.status === 200);
+  ok("the mode is recorded", bySess.body.program.intake.scheduleMode === "session_count");
+  ok("with the number he sold", bySess.body.program.intake.sessionsPerWeek === 4);
+  ok("and the block is as long as he asked", bySess.body.program.weeks.length === 6);
+  ok(
+    "every week still holds seven day slots underneath",
+    bySess.body.program.weeks.every(function (w) { return Object.keys(w.days).length === 7; })
+  );
+
+  /* What the client's page draws its columns from. */
+  const sessView = require("../lib/client-view-payload.js").programForClient(bySess.body.program);
+  ok("the client's calendar is told to draw four columns", sessView.sessionColumns === 4);
+  const weeklyView = require("../lib/client-view-payload.js").programForClient(blank.body.program);
+  ok("and a weekly one is told nothing, so it draws seven", weeklyView.sessionColumns === 0);
+
+  /* The two gestures must work here too. */
+  const sessId = bySess.body.program.programId;
+  const sessWrote = await H.owner({
+    action: "save",
+    programId: sessId,
+    expectedVersion: bySess.body.program.version,
+    program: {
+      weeks: (function () {
+        const w = JSON.parse(JSON.stringify(bySess.body.program.weeks));
+        w[0].days.sun.parts = [{ id: "x1", title: "Session 1", lines: ["EMOM 12"] }];
+        return w;
+      })(),
+    },
+  });
+  const sessWeek = await H.owner({
+    action: "copy_week",
+    programId: sessId,
+    expectedVersion: sessWrote.body.program.version,
+    fromWeek: 1,
+    toWeek: 4,
+  });
+  ok("a week copies in sessions mode", sessWeek.status === 200 && sessWeek.body.copiedDays === 1);
+  const sessDay = await H.owner({
+    action: "copy_day",
+    programId: sessId,
+    expectedVersion: sessWeek.body.program.version,
+    fromWeek: 1,
+    fromDay: "sun",
+    toWeek: 2,
+    toDay: "tue",
+  });
+  ok("and so does a day", sessDay.status === 200 && sessDay.body.copiedParts === 1);
+  ok(
+    "landing where it was pasted",
+    sessDay.body.program.weeks[1].days.tue.parts[0].lines[0] === "EMOM 12"
+  );
+
   /* --- the configuration report goes to the OWNER, not to a client ---------
    * It first shipped attached to the claim response - a client's reply - because the
    * edit matched the wrong "termsVersion" line, and the library-level test could not

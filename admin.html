@@ -6,7 +6,7 @@
 <!-- The back office has no business in a search index. It carried no such tag while
      it was only an athlete admin; now that it also holds paying clients, it says so. -->
 <meta name="robots" content="noindex, nofollow">
-<title>DUCK-WOD Admin · 4.0</title>
+<title>DUCK-WOD Admin · 4.3.3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -118,6 +118,269 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 /* The duck, beside the name. */
 .hdr-duck{width:30px;height:30px;object-fit:cover;flex-shrink:0;border-radius:50%;border:1px solid var(--line)}
 /* What the month brings in: a chevron, and the number only when he asks for it. */
+/* ── The coach's own book: the summary tab ─────────────────────────────────
+   Its own prefix so nothing here can reach the client screen by accident, and the
+   month grid is a plain 7-column grid: in an RTL page the first cell IS Sunday on
+   the right, which is how he reads a week (owner, 2026-09-03). */
+/* This screen has cards of its own — the card rules on the page are scoped to the
+   client screen, so without these the summary tab drew as bare text. */
+#ledgerScreen .card{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;
+  padding:16px;margin:0 0 14px}
+#ledgerScreen h2:not([class]){font-family:var(--font-display);font-size:1.05rem;margin:0;
+  letter-spacing:.5px}
+/* The month uses the whole page. The athlete panel used to sit beside it and take half
+   the width for an empty message (owner, 2026-09-03). */
+#ledgerScreen{width:100%}
+.led-wrap{display:flex;flex-direction:column;gap:14px}
+/* A record, not a working surface: its own box, its own title, under the calendar. */
+.led-deals{border-top:2px solid var(--brand)}
+.led-money .led-inc{min-width:160px}
+/* Two incomes and their sum. The total is the loud one — it is the answer to the
+   question he actually asks (owner, 2026-09-03). */
+.led-income{display:flex;gap:10px;flex-wrap:wrap}
+.led-inc{flex:1;min-width:130px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;
+  background:var(--bg-elev);display:flex;flex-direction:column;gap:3px}
+.led-inc-label{font-size:11px;color:var(--text-muted);font-weight:700}
+.led-inc-val{font-size:18px;font-weight:800}
+.led-inc.is-total{border-color:rgba(76,175,112,.45);background:rgba(76,175,112,.08)}
+.led-inc.is-total .led-inc-val{color:#4CAF70;font-size:20px;font-weight:900}
+.inc-part{font-size:12px;font-weight:700;color:var(--text-muted)}
+.inc-sep{opacity:.5;margin:0 2px}
+.inc-total{font-size:12px;font-weight:900;color:#4CAF70}
+.led-head{display:flex;align-items:center;gap:12px;justify-content:center}
+.led-nav{appearance:none;width:32px;height:32px;border-radius:10px;border:1px solid var(--line);
+  background:var(--bg-elev);color:var(--text);font-size:18px;line-height:1;cursor:pointer}
+.led-nav:hover{border-color:#3a3a3a}
+.led-title{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:180px}
+.led-month{font-size:15px;font-weight:800;letter-spacing:.2px}
+.led-total{font-size:20px;font-weight:900;color:#4CAF70}
+.led-dow{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:2px}
+.led-dow span{text-align:center;font-size:11px;color:var(--text-muted);font-weight:700}
+.led-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+/* Small enough that a whole month fits without scrolling (owner, 2026-09-03). */
+.led-day{position:relative;appearance:none;border:1px solid var(--line);background:var(--bg-elev);
+  border-radius:9px;min-height:66px;padding:5px 7px;cursor:pointer;color:var(--text);
+  display:flex;flex-direction:column;align-items:stretch;gap:1px;overflow:hidden}
+.led-day .led-num{align-self:flex-start}
+/* Who he trained, in the order he wrote them. Truncated rather than wrapped: a square
+   that grows with its content breaks the month into a scroll (owner, 2026-09-04). */
+.led-line{display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--text-muted);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;text-align:start}
+.led-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.led-more{font-size:11px;color:var(--text-muted);line-height:1;text-align:start}
+.led-day:hover{border-color:var(--brand)}
+.led-blank{border:none;background:transparent;cursor:default;min-height:0}
+.led-num{font-size:12px;font-weight:700;opacity:.8}
+.led-sum{font-size:12px;font-weight:800;color:#4CAF70}
+/* Today is a hint, not a selection — and not a colour either: an orange number read
+   as "this day is marked" two days running (owner, 2026-09-04). It is a dot. */
+.led-day.is-today{border-color:#3a3a3a}
+.led-day.is-today .led-num::after{content:"";display:inline-block;width:4px;height:4px;
+  border-radius:50%;background:var(--text-muted);margin-inline-start:4px;vertical-align:middle}
+.led-day.is-open{outline:2px solid var(--brand);outline-offset:-2px;background:rgba(232,69,26,.10)}
+.led-day.has-deals{background:rgba(76,175,112,.07)}
+.led-plus{position:absolute;inset-inline-end:6px;bottom:4px;font-size:14px;font-weight:800;
+  color:var(--text-muted);opacity:0;transition:opacity .12s}
+.led-day:hover .led-plus,.led-day.is-open .led-plus{opacity:1}
+/* The open day, floating over the square it belongs to — a little larger than a
+   square, never the width of the page. */
+#ledCalWrap{position:relative}
+#ledDay{position:absolute;z-index:35}
+.led-pop{box-shadow:0 16px 40px rgba(0,0,0,.55);min-width:250px;max-width:330px}
+.led-popclose{position:absolute;top:6px;inset-inline-start:8px;appearance:none;border:none;
+  background:transparent;color:var(--text-muted);font-size:17px;line-height:1;cursor:pointer;padding:2px}
+.led-popclose:hover{color:var(--text)}
+.led-pop .led-row{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr) auto auto;font-size:12px;gap:6px}
+.led-pop .led-mini{width:24px;height:24px;font-size:11px}
+.led-pop .led-editor{flex-direction:column;align-items:stretch;gap:6px}
+.led-pop .led-editor .led-field{flex:1 1 auto}
+.led-pop .led-pickpanel{position:static;width:auto;box-shadow:none;padding:8px 0 0;border:none;background:transparent}
+/* Add a session from anywhere — the same fields, plus the day they land on. */
+.led-manual{display:flex;flex-wrap:wrap;gap:8px;align-items:center;position:relative}
+.led-manual .led-field{flex:1 1 150px;min-width:0}
+.led-manual .led-num-field{flex:0 1 120px}
+/* The favourites box: a fold, a list, and one pencil per name. */
+/* The summary tab is a screen, not a person.
+
+   Indigo — deliberately NOT one of CLIENT_COLOURS, so no client can ever be given it —
+   plus a sigma and a squarer corner. It reads as "the total", never as another client
+   (owner, 2026-09-04). */
+.athlete-tab.is-ledger{background:linear-gradient(180deg,rgba(91,84,232,.24),rgba(91,84,232,.10));
+  border-color:#5B54E8;color:#c3bffb;border-radius:8px;font-weight:800;letter-spacing:.4px;
+  display:inline-flex;align-items:center;gap:6px}
+.athlete-tab.is-ledger:hover{border-color:#8079ff;color:#e2e0ff}
+.athlete-tab.is-ledger.active{background:#5B54E8;color:#fff;border-color:#8079ff;
+  box-shadow:0 0 0 2px rgba(128,121,255,.30)}
+.athlete-tab.is-ledger .tab-mark{font-size:14px;line-height:1;opacity:.95}
+
+/* Copy and paste, for a week or a day.
+   Scoped under #clientScreen because that screen paints every classless button orange
+   — which is what made this menu look like a warning instead of a choice
+   (owner, 2026-09-04). Quiet panel, one row per action, an icon to read it by. */
+.week-menu{position:fixed;z-index:120;background:var(--bg-card);border:1px solid var(--line);
+  border-radius:12px;padding:6px;box-shadow:0 18px 44px rgba(0,0,0,.55);display:flex;
+  flex-direction:column;gap:2px;min-width:190px}
+.week-menu .wm-title{font-size:11px;font-weight:800;color:var(--text-muted);letter-spacing:.3px;
+  padding:6px 10px 4px}
+#clientScreen .week-menu .wm-item,
+.week-menu .wm-item{appearance:none;background:transparent;border:none;border-radius:9px;
+  color:var(--text);font:inherit;font-size:13.5px;font-weight:600;min-height:38px;
+  padding:8px 10px;cursor:pointer;display:flex;align-items:center;gap:9px;text-align:start;
+  width:100%}
+#clientScreen .week-menu .wm-item:hover,
+.week-menu .wm-item:hover{background:rgba(255,255,255,.06);color:#fff}
+#clientScreen .week-menu .wm-paste:hover,
+.week-menu .wm-paste:hover{background:rgba(76,175,112,.16)}
+.week-menu .wm-ico{width:20px;text-align:center;font-size:14px;color:var(--text-muted)}
+.week-menu .wm-item:hover .wm-ico{color:#fff}
+.week-menu .wm-from{display:block;font-size:11px;font-weight:600;color:var(--text-muted);
+  margin-top:1px}
+.week-menu .wm-hint{color:var(--text-muted);font-size:12px;padding:8px 10px}
+
+/* The blank client's four questions. */
+.blank-form{display:flex;flex-direction:column;gap:10px}
+/**
+ * hidden means hidden — everywhere on this page.
+ *
+ * The `hidden` attribute is only display:none in the browser's own sheet, so ANY rule
+ * of ours with a display beats it. There WAS a rule saying this, but a scoping pass
+ * put "#clientScreen" in front of the comment above it, which turned the selector into
+ * "#clientScreen [hidden]" — so it only held inside the client screen, and a row the
+ * code had hidden was showing in the blank client's form (owner, 2026-09-04).
+ */
+[hidden]{display:none!important}
+.blank-row{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:center;font-size:13px}
+/* A row that belongs to the row above it: indented, hanging off a line, and quieter —
+   it is an answer to that choice, not a question of its own (owner, 2026-09-04). */
+.blank-row.is-sub{margin-inline-start:16px;padding-inline-start:10px;
+  border-inline-start:2px solid var(--line);grid-template-columns:104px 1fr}
+.blank-row.is-sub > span{color:var(--text-muted);font-size:12px;display:flex;align-items:center;gap:5px}
+.blank-row.is-sub .sub-tick{font-style:normal;opacity:.55;font-size:11px}
+.blank-row input,.blank-row select{background:var(--bg);border:1px solid var(--line);border-radius:9px;
+  color:var(--text);padding:9px 11px;font:inherit;font-size:13px;width:100%}
+.blank-err{color:#fca5a5;font-size:12px;min-height:16px;margin:10px 2px 0}
+.led-fold{appearance:none;width:100%;display:flex;align-items:center;gap:10px;background:transparent;
+  border:none;color:var(--text);font:inherit;font-size:1.05rem;font-family:var(--font-display);
+  letter-spacing:.5px;cursor:pointer;padding:0;text-align:start}
+.led-fold-caret{color:var(--text-muted);font-size:12px}
+.led-fold-count{margin-inline-start:auto;font-size:11px;color:var(--text-muted);font-weight:700}
+.led-fav-rows{display:flex;flex-direction:column;gap:4px;margin-top:12px}
+.led-fav-row{display:grid;grid-template-columns:1.2fr auto 1fr auto;gap:10px;align-items:center;
+  padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg-elev);font-size:13px}
+.led-fav-row.is-editing{grid-template-columns:1.2fr auto auto auto}
+.led-fav-uses{font-size:11px;color:var(--text-muted);font-weight:700;white-space:nowrap}
+.led-swatches{display:flex;gap:4px;flex-wrap:wrap}
+.led-swatch{width:20px;height:20px;border-radius:6px;border:1px solid var(--line);cursor:pointer;padding:0}
+.led-swatch.on{outline:2px solid #fff;outline-offset:1px}
+.led-swatch-none{background:transparent;color:var(--text-muted);font-size:11px;line-height:1}
+.led-manual .led-pickpanel{inset-inline-start:0}
+.led-daybox{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--bg-card)}
+.led-daybox h3{margin:0;font-size:14px}
+/* Room for the close button, which was sitting on top of the date (owner, 2026-09-04). */
+.led-daybox-head{display:flex;align-items:baseline;gap:10px;margin-bottom:8px;padding-inline-start:24px}
+.led-daysum{font-size:13px;font-weight:800;color:#4CAF70}
+/* The plus lives in the corner of the open day, and it is the only way in. */
+.led-daybox-foot{display:flex;justify-content:flex-start;margin-top:10px}
+.led-add{appearance:none;width:34px;height:34px;border-radius:10px;border:1px dashed var(--line);
+  background:transparent;color:var(--text-muted);font-size:20px;line-height:1;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;padding:0}
+.led-add:hover{border-color:var(--brand);color:#fff;background:rgba(232,69,26,.14);border-style:solid}
+.led-row{display:grid;grid-template-columns:1.4fr 1.2fr .8fr auto;gap:8px;align-items:center;
+  padding:7px 4px;border-bottom:1px solid var(--line);font-size:13px}
+/* Edit, duplicate and delete belong to ONE session, so they sit on one line together
+   and never wrap onto a line of their own (owner, 2026-09-04). */
+.led-rowacts{display:inline-flex;gap:4px;flex:0 0 auto;white-space:nowrap}
+.led-row:last-child{border-bottom:none}
+.led-cell{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Three shades of one green, so a number's rank is visible without reading it: the
+   sessions are the quiet arithmetic, a place's own line is the answer he is looking
+   for, and the grand total is the loudest (owner, 2026-09-04). */
+.led-price{font-weight:700;color:#35785099}
+.led-sub .led-price{color:#357850}
+.led-row.is-group .led-price{color:#6FE39B;font-weight:900;font-size:14.5px}
+.led-mini{appearance:none;border:1px solid var(--line);background:transparent;color:var(--text-muted);
+  border-radius:8px;width:26px;height:26px;cursor:pointer;font-size:12px;line-height:1;padding:0}
+.led-mini:hover{color:var(--text);border-color:#3a3a3a}
+.led-mini.led-danger:hover{color:#fca5a5;border-color:#7f1d1d}
+/* Flex, not a grid: the free-text service appears and disappears, and a grid would
+   leave a hole where it used to be (owner, 2026-09-04). */
+.led-editor{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center;position:relative}
+.led-editor .led-field{flex:1 1 130px;min-width:0}
+.led-editor .led-num-field{flex:0 1 110px}
+.led-field{background:var(--bg);border:1px solid var(--line);border-radius:9px;color:var(--text);
+  padding:8px 10px;font:inherit;font-size:13px;min-width:0;text-align:start}
+.led-pick{cursor:pointer}
+.led-hint{color:var(--text-muted)}
+.led-save{appearance:none;border:none;border-radius:9px;background:var(--brand);color:#fff;
+  font-weight:800;padding:8px 14px;cursor:pointer;font-size:13px}
+.led-cancel{appearance:none;border:1px solid var(--line);border-radius:9px;background:transparent;
+  color:var(--text-muted);padding:8px 12px;cursor:pointer;font-size:13px}
+.led-pickpanel{position:absolute;z-index:40;top:calc(100% + 6px);inset-inline-start:0;width:min(320px,90vw);
+  background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:10px;
+  box-shadow:0 12px 30px rgba(0,0,0,.45)}
+.led-fav-list{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
+.led-fav{appearance:none;text-align:start;border:1px solid transparent;background:transparent;
+  color:var(--text);border-radius:8px;padding:7px 8px;cursor:pointer;display:flex;
+  flex-direction:column;gap:2px}
+.led-fav:hover{border-color:var(--line);background:var(--bg)}
+.led-fav-name{font-size:13px;font-weight:700}
+.led-fav-meta{font-size:11px;color:var(--text-muted)}
+.led-newplace{display:flex;gap:6px}
+.led-newplace .led-field{flex:1}
+.led-empty{color:var(--text-muted);font-size:13px;margin:6px 2px}
+.led-filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.led-filters .led-field{max-width:150px}
+.led-chip{appearance:none;border:1px solid var(--line);background:var(--bg-elev);color:var(--text-muted);
+  border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer}
+.led-chip:hover{color:var(--text);border-color:#3a3a3a}
+.led-chip.on{background:rgba(232,69,26,.16);border-color:var(--brand);color:#fff}
+.led-table-head,.led-table .led-row{grid-template-columns:1.3fr 1.1fr .8fr .9fr 70px}
+/* A column header is a button now — it sorts, and again turns it round. */
+.led-th{appearance:none;background:transparent;border:none;color:var(--text-muted);font:inherit;
+  font-size:11px;font-weight:800;cursor:pointer;padding:0;text-align:start;display:flex;
+  align-items:center;gap:4px}
+.led-th:hover{color:var(--text)}
+.led-th.on{color:var(--brand)}
+.led-arrow{font-size:9px}
+.led-inv{display:flex;justify-content:center}
+.led-inv input{width:16px;height:16px;cursor:pointer;accent-color:#4CAF70}
+/* One line per place: the count beside the name, and "mixed" said in orange because
+   it is the one word in the row that means "look closer" (owner, 2026-09-04). */
+.led-row.is-group{font-weight:600}
+.led-count{color:var(--text-muted);font-weight:700;font-size:11px}
+/* The colour is set inline, per service — this only carries the weight. "מגוון" is
+   white like "all services", because it is the absence of one service, not a third
+   kind (owner, 2026-09-04). */
+.led-service.is-mixed{font-weight:800}
+/* A place opened under its own line: indented, quieter, with its own sum. */
+.led-expand{appearance:none;background:transparent;border:none;color:var(--text-muted);
+  font-size:10px;line-height:1;cursor:pointer;padding:0 4px 0 0}
+.led-expand:hover{color:var(--text)}
+.led-sub{margin:0 0 6px;padding-inline-start:14px;border-inline-start:2px solid var(--line)}
+.led-sub .led-row{font-size:12px;font-weight:400;opacity:.92}
+.led-sub-total{padding:6px 4px 2px;font-size:12px;color:var(--text-muted);text-align:start}
+.led-sub-total strong{color:#6FE39B}
+.led-sub-empty{padding:6px 10px;font-size:12px;color:var(--text-muted)}
+/* The two dates live behind their own button. */
+.led-dates{display:inline-flex;gap:6px}
+/* A date field of our own: dd/mm/yy, with the browser's picker one tap away. The
+   native field renders in the BROWSER's locale, which is why it is not the field he
+   types into (owner, 2026-09-04). */
+.led-datefield{position:relative;display:inline-flex;align-items:center}
+.led-date-in{width:110px;padding-inline-end:26px}
+.led-date-in.bad{border-color:#7f1d1d;color:#fca5a5}
+.led-date-native{position:absolute;inset-inline-end:2px;width:22px;height:22px;opacity:0;
+  pointer-events:none}
+.led-datebtn{position:absolute;inset-inline-end:4px;appearance:none;background:transparent;
+  border:none;color:var(--text-muted);font-size:12px;line-height:1;cursor:pointer;padding:2px}
+.led-datebtn:hover{color:var(--text)}
+.led-filters select.led-field{max-width:170px;font-weight:700}
+.led-filters select.led-field option{background:var(--bg-elev)}
+.led-table-head{display:grid;gap:8px;padding:6px 4px;font-size:11px;font-weight:800;
+  color:var(--text-muted);border-bottom:1px solid var(--line)}
+.led-table-total{margin-top:10px;text-align:start;font-size:13px;color:var(--text-muted)}
+.led-table-total strong{color:#A8F5C8;font-size:17px}
+.led-date{color:var(--text-muted)}
 .income-wrap{display:inline-flex;align-items:center;gap:8px}
 .income-toggle{appearance:none;width:24px;height:24px;border-radius:8px;border:1px solid var(--line);
   background:var(--bg-elev);color:var(--text-muted);font-size:11px;line-height:1;cursor:pointer;
@@ -500,6 +763,19 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 }
 .pprog-day-card .card-header{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 .pprog-day-card .source-name{color:var(--coach);font-weight:700;font-size:1.05em;letter-spacing:.01em;font-family:var(--font-ui)}
+/* The automatic label — "אימון 1 · שבוע 1" — kept beside a name he gave the day. It is
+   the count and the order, so it stays readable and stays un-editable; small enough not
+   to compete with the name (owner, 2026-09-05). */
+/* Light yellow and italic, on his instruction: it is an aside about the day — the
+   count and the order — not part of what is written on it (owner, 2026-09-05). */
+.pprog-day-card .pprog-day-when{margin-inline-start:8px;font-size:.74em;font-weight:600;
+  color:#F5D97A;font-style:italic;letter-spacing:.02em;white-space:nowrap}
+/* The heading while the day is open: a field, not a label. */
+.pprog-day-card .pprog-day-title-in{width:min(260px,60vw);background:var(--bg);color:var(--text);
+  border:1px solid var(--line);border-radius:8px;padding:5px 9px;font:inherit;font-size:.95em;
+  font-weight:700;font-family:var(--font-ui)}
+.pprog-day-card .pprog-day-title-in::placeholder{color:var(--text-muted);font-weight:600}
+.pprog-day-card .pprog-day-title-in:focus{outline:none;border-color:var(--coach)}
 .pprog-day-card .section{margin-bottom:12px;background:transparent;border:0;padding:0}
 .pprog-day-card .section + .section{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
 .pprog-day-card .section-title{font-size:.98em;font-weight:700;text-decoration:none;color:var(--part);margin-bottom:7px;letter-spacing:.01em;text-transform:none}
@@ -551,6 +827,10 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
   color:var(--text);font-weight:700;font-size:.95em;padding:4px 2px;margin:0 0 6px;font-family:inherit;outline:none
 }
 .pprog-edit-lines{list-style:disc}
+/* A note now sits in a row with its own × — the same shape a work line has, so the
+   two read as the same kind of thing (owner, 2026-09-05). */
+.pprog-edit-note-row{display:flex;align-items:center;gap:6px;margin:0 0 8px}
+.pprog-edit-note-row .pprog-edit-note{flex:1;min-width:0;margin:0}
 .pprog-edit-work-row{display:flex;align-items:center;gap:8px;list-style:disc}
 .pprog-edit-work-row input{
   flex:1;min-width:0;background:transparent;border:none;color:var(--text);font-size:.95em;
@@ -560,6 +840,78 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
   appearance:none;background:none;border:none;color:var(--text-meta);cursor:pointer;
   font-size:16px;line-height:1;padding:4px 6px;flex-shrink:0
 }
+/* A COLOUR FOR A LINE, AND NUMBERING FOR A PART (owner, 2026-09-05).
+   The circle takes the line's own colour, because it belongs to that line. */
+.pprog-day-card .section-lines.pprog-numbered{list-style:none;padding-inline-start:0}
+.pprog-li-num{
+  display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;
+  border-radius:50%;border:1.5px solid currentColor;font-size:11px;font-weight:800;
+  line-height:1;margin-inline-end:8px;flex:0 0 auto;vertical-align:1px;opacity:.9
+}
+.athlete-tab.is-loading{
+  opacity:.55;font-style:italic;cursor:default;pointer-events:none;
+  border-style:dashed
+}
+@media (max-width:719px){
+  /* ON A PHONE the numbers stand in a column down the LEFT edge, whatever language the
+     line is written in (owner, 2026-09-05, on an iPhone: in Hebrew the circle drifted
+     into the middle of the line, in a different place on every line).
+     The ROW is laid out left-to-right; the text keeps its own direction inside its own
+     box, so a Hebrew line still reads right-to-left and an English one is untouched.
+     Phone only — on a desktop it already looked right and nothing here changes it.
+     The comment lives INSIDE the query because scripts/extract-pprog-css.js reads the
+     text before the first brace as the selector. */
+  .pprog-day-card .section-lines.pprog-numbered{padding-inline-start:0}
+  .pprog-day-card .section-lines.pprog-numbered li.pprog-li-numbered{
+    display:flex;direction:ltr;align-items:flex-start;gap:8px
+  }
+  .pprog-day-card .section-lines.pprog-numbered li.pprog-li-numbered .pprog-li-num{margin-inline-end:0}
+  .pprog-day-card .section-lines.pprog-numbered li.pprog-li-numbered .pprog-li-text{flex:1;min-width:0}
+}
+.pprog-edit-lines.pprog-numbered{list-style:none;padding-inline-start:0}
+/* The number in the circle is a field while the day is open — digits only, and it must
+   not be stretched by the rule that makes the work line itself fill the row. */
+.pprog-edit-work-row input.pprog-num-in{
+  flex:0 0 auto;width:22px;height:22px;text-align:center;padding:0;
+  background:transparent;color:inherit;font-size:11px;font-weight:800;font-family:inherit;
+  border:1.5px solid currentColor;border-radius:50%;outline:none;opacity:.9
+}
+.pprog-edit-work-row input.pprog-num-in:focus{opacity:1;box-shadow:0 0 0 2px rgba(255,255,255,.14)}
+.pprog-edit-work-row .pprog-edit-num{margin-inline-end:2px}
+/* The palette opens INSIDE the row, on a line of its own underneath it. It floated
+   over the card first, and two things ate it: the day cards sit in a strip with
+   overflow hidden, and ".section-lines li{position:static}" is the more specific rule,
+   so it was never anchored to its own line at all — the pencil looked dead
+   (owner, 2026-09-05). Nothing to clip and nothing to position. */
+.pprog-edit-work-row{flex-wrap:wrap}
+.pprog-colour-btn{
+  appearance:none;background:none;border:none;color:var(--text-meta);cursor:pointer;
+  padding:4px 4px;line-height:0;flex-shrink:0;border-radius:6px
+}
+.pprog-colour-btn:hover{background:rgba(255,255,255,.07)}
+.pprog-colour-pop{
+  flex:0 0 100%;display:flex;gap:8px;align-items:center;margin:6px 0 2px;
+  padding:7px 9px;border-radius:10px;background:rgba(255,255,255,.05);
+  border:1px solid var(--line)
+}
+.pprog-swatch{
+  appearance:none;width:20px;height:20px;border-radius:50%;border:1.5px solid transparent;
+  cursor:pointer;padding:0;flex:0 0 auto
+}
+.pprog-swatch.is-on{border-color:var(--text);box-shadow:0 0 0 2px rgba(255,255,255,.18)}
+.pprog-swatch-none{background:transparent;border-color:var(--text-meta);position:relative}
+.pprog-swatch-none:after{
+  content:"";position:absolute;inset-inline-start:2px;top:8px;width:14px;height:1.5px;
+  background:var(--text-meta);transform:rotate(-45deg)
+}
+/* "Add numbering" — beside the part heading, quiet until it is ticked. */
+.pprog-num-toggle{
+  display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;
+  color:var(--text-meta);cursor:pointer;user-select:none;flex-shrink:0;white-space:nowrap
+}
+.pprog-num-toggle input{width:14px;height:14px;accent-color:var(--part);cursor:pointer;margin:0}
+.pprog-day-card .section-title-row{display:flex;align-items:center;gap:10px}
+.pprog-day-card .section-title-row .pprog-edit-title{flex:1;min-width:0}
 .pprog-edit-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .pprog-edit-chip{
   appearance:none;height:32px;padding:0 12px;border-radius:999px;background:transparent;
@@ -661,6 +1013,20 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
   border:1px solid var(--line,#2c2c2c);border-radius:12px;padding:16px;margin:0 0 12px;cursor:pointer;
   font-family:inherit;color:inherit;min-height:44px}
 .client-kind-card:hover{border-color:var(--coach,#9b6bb8);background:rgba(155,107,184,.10)}
+/* A colour per kind, quiet: a bar down the starting edge, a tinted ground, and the
+   title in the same hue. It reuses the language the ledger already taught him —
+   pale blue is one person, purple is a group — with a calm teal for the blank one,
+   which is neither (owner, 2026-09-04). */
+.client-kind-card{border-inline-start:3px solid transparent;transition:background .12s,border-color .12s}
+.client-kind-card.is-athlete{border-inline-start-color:#7DD3F0;background:rgba(125,211,240,.06)}
+.client-kind-card.is-athlete .ck-title{color:#9adcf5}
+.client-kind-card.is-athlete:hover{border-color:#7DD3F0;background:rgba(125,211,240,.13)}
+.client-kind-card.is-blank{border-inline-start-color:#4EC9B0;background:rgba(78,201,176,.06)}
+.client-kind-card.is-blank .ck-title{color:#79dcc7}
+.client-kind-card.is-blank:hover{border-color:#4EC9B0;background:rgba(78,201,176,.13)}
+.client-kind-card.is-coach{border-inline-start-color:#B57BE8;background:rgba(181,123,232,.06)}
+.client-kind-card.is-coach .ck-title{color:#caa1f2}
+.client-kind-card.is-coach:hover{border-color:#B57BE8;background:rgba(181,123,232,.13)}
 .ident-label{display:block;font-size:.82rem;color:var(--text-meta);margin:0 0 6px;font-weight:600}
 .ident-input{width:100%;font-family:var(--font-ui);font-size:16px;color:var(--text);
   background:var(--bg-panel);border:1px solid var(--line);border-radius:8px;padding:11px}
@@ -1048,7 +1414,7 @@ header{flex-wrap:wrap;row-gap:8px}
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver" id="login-ver-badge" title="Admin 4.0 · Coach 2.3.14">Admin 4.0<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.14</span></div>
+    <div class="ver" id="login-ver-badge" title="Admin 4.3.3 · Coach 2.3.14">Admin 4.3.3<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.14</span></div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <label class="login-remember">
       <input type="checkbox" id="pw-remember"/>
@@ -1064,7 +1430,7 @@ header{flex-wrap:wrap;row-gap:8px}
   <header>
     <img class="hdr-duck" src="assets/hamamen-coach-duck.png" alt="" width="30" height="30" draggable="false">
     <span class="logo">DUCK-WOD</span>
-    <span class="ver-badge" id="admin-ver-badge" title="Admin 4.0 · Coach 2.3.14">Admin 4.0<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.14</span></span>
+    <span class="ver-badge" id="admin-ver-badge" title="Admin 4.3.3 · Coach 2.3.14">Admin 4.3.3<span class="ver-sep">·</span><span class="ver-coach">Coach 2.3.14</span></span>
     <span class="count-wrap">
       <span class="count" id="athlete-count" title="הרשימה מתעדכנת לבד כל כמה שניות — בלי לרענן את הדף">0 לקוחות</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
@@ -1095,6 +1461,47 @@ header{flex-wrap:wrap;row-gap:8px}
         <p>בחר לקוח מהרצועה למעלה</p>
       </div>
     </div>
+  <!-- The summary tab: the coach's own book. First chip in the strip, opens on every
+       entry, and cannot be removed — it is not a client (owner, 2026-09-03). It takes
+       turns with #content and #clientScreen the same way they take turns with each
+       other: one page, no seam. -->
+  <div class="content" id="ledgerScreen" hidden>
+    <!-- The month, and nothing else in this box: the calendar is the management view
+         and the deals table is a record. He asked for a clear line between them
+         (owner, 2026-09-03). -->
+    <div class="card led-wrap">
+      <div id="ledHeader"></div>
+      <!-- The open day floats over its own square rather than under the month: he wants
+           to see WHICH day he is writing on while he writes (owner, 2026-09-03). -->
+      <!-- One autocomplete list for both entry forms. -->
+      <div id="ledPlaces"></div>
+      <div id="ledCalWrap">
+        <div id="ledCalendar"></div>
+        <div id="ledDay" hidden></div>
+      </div>
+    </div>
+    <div class="card led-add-card">
+      <div class="row" style="margin-bottom:10px"><h2 style="margin:0">הוסף אימון</h2></div>
+      <div id="ledManual"></div>
+    </div>
+    <div class="card led-deals">
+      <div class="row" style="margin-bottom:10px"><h2 style="margin:0">טבלת עסקאות</h2></div>
+      <div class="led-filters" id="ledFilters"></div>
+      <div id="ledTable"></div>
+    </div>
+    <!-- Everyone he works for, busiest first. Folded away by default: it is a reference,
+         not a working surface (owner, 2026-09-03). -->
+    <div class="card led-fav-card">
+      <div id="ledFavourites"></div>
+    </div>
+    <!-- Two incomes and their sum, at the foot of the page on his instruction: it is
+         the answer, and an answer belongs after the working area (owner, 2026-09-03). -->
+    <div class="card led-money">
+      <div class="row" style="margin-bottom:10px"><h2 style="margin:0">הכנסות החודש</h2></div>
+      <div id="ledIncome"></div>
+    </div>
+  </div>
+
   <!-- The client screen. It lives beside #content rather than inside it, because
        #content is rewritten whole every time an athlete is rendered. The two take
        turns, which is what makes opening a studio and opening an athlete the same
@@ -1435,16 +1842,70 @@ header{flex-wrap:wrap;row-gap:8px}
       <button type="button" class="btn-secondary" onclick="closeClientKindChooser()">סגור</button>
     </div>
     <div class="intake-ws-body" style="padding:18px">
-      <button type="button" class="client-kind-card" onclick="chooseClientKind('athlete')">
+      <button type="button" class="client-kind-card is-athlete" onclick="chooseClientKind('athlete')">
         <span class="ck-title">מתאמן קצה</span>
         <span class="ck-desc">אדם אחד. תחקור מלא כמו באפליקציה — פרופיל, ציוד, לו״ז, הרמות, מיומנויות,
           מגבלות, פציעות, מטרות → לבנה אישית → לינק מסירה.</span>
       </button>
-      <button type="button" class="client-kind-card" onclick="chooseClientKind('coach')">
+      <button type="button" class="client-kind-card is-blank" onclick="chooseClientKind('blank')">
+        <span class="ck-title">לקוח ריק</span>
+        <span class="ck-desc">בלי תחקור. שם, מין, תשלום — וחודש של ימים ריקים שאתה כותב בעצמך.
+          לינק, קוד ומסירה בדיוק כמו כל לקוח אחר.</span>
+      </button>
+      <button type="button" class="client-kind-card is-coach" onclick="chooseClientKind('coach')">
         <span class="ck-title">מאמן / סטודיו</span>
         <span class="ck-desc">אתה כותב תוכנית שהוא מעביר למתאמנים שלו. תחקור רוחבי — ציוד, לו״ז,
           דילואד, אופי האוכלוסייה, מטרות. בלי פרמטרים של אדם בודד.</span>
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- The blank client: the shortest way into the product. Four questions, and then a
+     month of empty squares he writes himself (owner, 2026-09-04). -->
+<div class="modal-backdrop" id="blank-client-modal">
+  <div class="intake-workspace" dir="rtl" onclick="event.stopPropagation()" style="max-width:520px">
+    <div class="intake-ws-header">
+      <h2>לקוח ריק</h2>
+      <button type="button" class="btn-secondary" onclick="closeBlankClientForm()">סגור</button>
+    </div>
+    <div class="intake-ws-body" style="padding:18px">
+      <div class="blank-form">
+        <label class="blank-row"><span>שם</span>
+          <input id="blankName" maxlength="120" placeholder="שם הלקוח"></label>
+        <label class="blank-row"><span>מין</span>
+          <select id="blankGender">
+            <option value="">—</option>
+            <option value="male">זכר</option>
+            <option value="female">נקבה</option>
+          </select></label>
+        <label class="blank-row"><span>תשלום חודשי</span>
+          <input id="blankAmount" type="number" inputmode="numeric" min="0" max="100000" placeholder="₪"></label>
+        <label class="blank-row"><span>אופן התשלום</span>
+          <input id="blankMethod" maxlength="200" placeholder="ביט / העברה / מזומן"></label>
+        <!-- Only here. A blank client's month is whatever length he says; the studio
+             and the individual are untouched, and so is the coach's four-week contract
+             (owner, 2026-09-04, twice). -->
+        <label class="blank-row"><span>סוג תוכנית</span>
+          <select id="blankMode" onchange="syncBlankMode()">
+            <option value="weekly_schedule">שבועית (ימים)</option>
+            <option value="session_count">מספר אימונים בשבוע</option>
+          </select></label>
+        <!-- Hangs off the choice above it, because it only exists as an answer to
+             that choice (owner, 2026-09-04). -->
+        <label class="blank-row is-sub" id="blankSessionsRow" hidden>
+          <span><i class="sub-tick" aria-hidden="true">└</i> כמות האימונים</span>
+          <input id="blankSessions" type="number" inputmode="numeric" min="1" max="7" value="4"
+                 title="כמות האימונים בשבוע"></label>
+        <label class="blank-row"><span>אורך לבנה</span>
+          <input id="blankWeeks" type="number" inputmode="numeric" min="1" max="12" value="4"
+                 title="מספר שבועות בלבנה"></label>
+      </div>
+      <p class="blank-err" id="blankErr"></p>
+      <div class="row" style="margin-top:14px;gap:8px">
+        <button type="button" class="hdr-btn primary" id="blankCreate" onclick="createBlankClient()">צור לקוח</button>
+        <button type="button" class="btn-secondary" onclick="closeBlankClientForm()">בטל</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1613,7 +2074,7 @@ var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
  */
 var COACH_BUILD_MAY_SAVE = false;
 
-var ADMIN_UI_VERSION = "4.0";
+var ADMIN_UI_VERSION = "4.3.3";
 var LIVE_COACH_VERSION = "2.3.14";
 var LIVE_COACH_VERSION_FETCHED_AT = 0;
 
@@ -2396,6 +2857,21 @@ function openAdminApp(snapshots) {
   app.classList.add("is-open");
   loadCreditEstimate();
   refreshLiveCoachVersion();
+  /**
+   * The landing, decided HERE.
+   *
+   * It used to be decided by whichever half of the strip answered first: with athletes
+   * on file, the athlete list won the race and opened one of them, so a refresh landed
+   * on a client instead of on the management screen (owner, 2026-09-04). A link that
+   * names a client or an athlete still wins — that is a different intent, and it is
+   * applied a few lines below.
+   */
+  try {
+    var deepLink = new URLSearchParams(location.search);
+    if (!deepLink.get("program") && !deepLink.get("athlete")) openFirstPersonIfNeeded();
+  } catch (eLand) {
+    openFirstPersonIfNeeded();
+  }
   renderAthleteList(snapshots || []);
   bindPeopleStrip();
   /* The client screen shares this page's session and loads its own half of the strip. */
@@ -2462,6 +2938,31 @@ function applyAdminSessionFromList(res, data, remember) {
   return !!adminPw;
 }
 
+/**
+ * A request that cannot hang for ever.
+ *
+ * "מתחבר…" with no end is the worst state this page can be in: it says something is
+ * happening when nothing is, and there is nothing on screen to act on. Fifteen seconds
+ * and it says so instead (owner, 2026-09-05).
+ */
+function fetchWithTimeout(url, opts, ms) {
+  var wait = Number(ms) > 0 ? Number(ms) : 15000;
+  var ctl = typeof AbortController === "function" ? new AbortController() : null;
+  var timer = null;
+  var options = Object.assign({}, opts || {});
+  if (ctl) options.signal = ctl.signal;
+  return new Promise(function (resolve, reject) {
+    timer = setTimeout(function () {
+      try { if (ctl) ctl.abort(); } catch (eAbort) {}
+      reject(new Error("timeout"));
+    }, wait);
+    fetch(url, options).then(
+      function (r) { clearTimeout(timer); resolve(r); },
+      function (e) { clearTimeout(timer); reject(e); }
+    );
+  });
+}
+
 function doLogin() {
   var pw = document.getElementById("pw-input").value.trim();
   if (!pw) return;
@@ -2471,11 +2972,11 @@ function doLogin() {
   var remember = !!(rememberEl && rememberEl.checked);
   var errEl = document.getElementById("login-err");
   if (errEl) errEl.textContent = "מתחבר…";
-  fetch(adminApiUrl("/api/admin-snapshot"), {
+  fetchWithTimeout(adminApiUrl("/api/admin-snapshot"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify({ action: "admin_list", adminPassword: pw, rememberMe: remember })
-  })
+  }, 15000)
     .then(function(r) {
       return r.json().then(function(data) {
         return { status: r.status, data: data, res: r };
@@ -2504,7 +3005,11 @@ function doLogin() {
       adminPw = "";
       var msg = "שגיאת חיבור";
       var em = e && e.message ? String(e.message) : "";
-      if (em === "not_configured" || em.indexOf("לא הוגדר") >= 0 || em.indexOf("ADMIN_PASSWORD") >= 0) {
+      if (em === "timeout" || em.indexOf("aborted") >= 0 || (e && e.name === "AbortError")) {
+        /* Fifteen seconds of nothing. Say so, and leave the button pressable — the
+           screen used to sit on "מתחבר…" with nothing to do (owner, 2026-09-05). */
+        msg = "השרת לא ענה תוך 15 שניות. בדוק חיבור לאינטרנט ונסה שוב.";
+      } else if (em === "not_configured" || em.indexOf("לא הוגדר") >= 0 || em.indexOf("ADMIN_PASSWORD") >= 0) {
         msg = "לא הוגדר בשרת. הגדר ADMIN_PASSWORD ב־Vercel ואז Redeploy.";
       } else if (em === "session_secret_missing" || em.indexOf("ADMIN_SESSION_SECRET") >= 0) {
         msg = "חסר ADMIN_SESSION_SECRET ב־Vercel (32+ תווים אקראיים) — הוסף ו־Redeploy.";
@@ -2533,11 +3038,11 @@ function tryRestoreAdminSession() {
   } catch (eCb) {}
   var errEl = document.getElementById("login-err");
   if (errEl) errEl.textContent = "מתחבר…";
-  fetch(adminApiUrl("/api/admin-snapshot"), {
+  fetchWithTimeout(adminApiUrl("/api/admin-snapshot"), {
     method: "POST",
     headers: adminAuthHeaders(),
     body: JSON.stringify({ action: "admin_list", adminToken: token })
-  })
+  }, 15000)
     .then(function(r) {
       return r.json().then(function(data) {
         return { status: r.status, data: data };
@@ -2563,9 +3068,14 @@ function tryRestoreAdminSession() {
         showHdrToast("לא הצלחתי לקרוא את רשימת המתאמנים — " + res.data.listError + ". שום דבר לא נמחק.", "err");
       }
     })
-    .catch(function() {
+    .catch(function(e) {
       forceAdminLogout("");
-      if (errEl) errEl.textContent = "";
+      /* A remembered session that could not be checked leaves the password form —
+         but if the SERVER never answered, say so rather than showing a blank form he
+         has no reason to distrust (owner, 2026-09-05). */
+      var em = e && e.message ? String(e.message) : "";
+      var timedOut = em === "timeout" || em.indexOf("aborted") >= 0 || (e && e.name === "AbortError");
+      if (errEl) errEl.textContent = timedOut ? "השרת לא ענה — התחבר שוב." : "";
     });
 }
 
@@ -2714,6 +3224,11 @@ function renderAthleteList(list) {
     return;
   }
 
+  /* The athletes arriving must not push the summary tab off the screen: he opened the
+     module, not an athlete (owner, 2026-09-03). */
+  if (adminOpenedSomeone && !currentAthleteId) {
+    return;
+  }
   if (!currentAthleteId || !athletes.some(function(x) { return x.athleteId === currentAthleteId; })) {
     currentAthleteId = athletes[0].athleteId;
   }
@@ -2748,12 +3263,27 @@ var programsAnswered = false;
  * asks for it — this bar is often on a screen other people can see (owner, 2026-09-03).
  */
 var monthlyIncomeTotal = 0;
+/* What he earned on the floor this month — the summary tab reports it up. */
+var personalIncomeTotal = 0;
 var monthlyIncomeOpen = false;
 
 function setMonthlyIncome(total) {
   monthlyIncomeTotal = Number(total) || 0;
   renderMonthlyIncome();
+  /* The summary tab shows the same three numbers, so it redraws with them. */
+  try { if (window.LedgerScreen && window.LedgerScreen.refreshIncome) window.LedgerScreen.refreshIncome(); } catch (e) {}
 }
+
+/** What the deals in the summary tab brought in THIS month. */
+function setPersonalIncome(total) {
+  personalIncomeTotal = Number(total) || 0;
+  renderMonthlyIncome();
+}
+
+/** Read by the summary tab, so one number has one owner. */
+window.adminProgramsIncome = function () { return monthlyIncomeTotal; };
+window.adminPersonalIncome = function () { return personalIncomeTotal; };
+window.adminOnPersonalIncome = function (total) { setPersonalIncome(total); };
 
 function renderMonthlyIncome() {
   var line = document.getElementById("income-line");
@@ -2762,8 +3292,19 @@ function renderMonthlyIncome() {
   line.hidden = !monthlyIncomeOpen;
   btn.setAttribute("aria-expanded", monthlyIncomeOpen ? "true" : "false");
   btn.classList.toggle("on", monthlyIncomeOpen);
-  line.textContent =
-    "הכנסה חודשית: " + (monthlyIncomeTotal ? "₪" + monthlyIncomeTotal.toLocaleString() : "—");
+  /* Two figures and their sum, the same ones the summary tab shows: what the
+     programme clients pay each month, and what he earned coaching (owner, 2026-09-03). */
+  if (window.AdminLedgerView) {
+    line.innerHTML = window.AdminLedgerView.incomeBreakdownHtml({
+      programs: monthlyIncomeTotal,
+      personal: personalIncomeTotal,
+      compact: true,
+    });
+  } else {
+    line.textContent =
+      "הכנסה חודשית: " +
+      (monthlyIncomeTotal ? "₪" + monthlyIncomeTotal.toLocaleString() : "—");
+  }
 }
 
 function toggleMonthlyIncome() {
@@ -2778,6 +3319,13 @@ function renderPeopleStrip() {
   var progs = Array.isArray(clientPrograms) ? clientPrograms : [];
   var rows = AdminPeopleStrip.rows({ athletes: list, programs: progs });
   var nextHtml = AdminPeopleStrip.html(rows, activeProgramId || currentAthleteId);
+  /* The clients half arrives on its own request, and on a cold serverless start that
+     can be a few seconds behind the athletes. Twice now that silence read as "all my
+     clients are gone" (owner, 2026-09-04, 2026-09-05) — so the strip SAYS it is still
+     waiting instead of looking finished. */
+  if (!programsAnswered) {
+    nextHtml += '<span class="athlete-tab is-loading" aria-live="polite">טוען לקוחות…</span>';
+  }
   /* Only when it actually changed.
      A click is mousedown and mouseup on the SAME element; replacing the strip's markup
      between the two makes the browser fire no click at all, and the owner has to press
@@ -2790,7 +3338,8 @@ function renderPeopleStrip() {
        was no way to tell from the screen whether the athlete half had come back empty or
        had never answered — so now the screen says. */
     countEl.textContent =
-      rows.length + " לקוחות · " + list.length + " מתאמנים · " + progs.length + " תוכניות";
+      rows.length + " לקוחות · " + list.length + " מתאמנים · " +
+      (programsAnswered ? progs.length + " תוכניות" : "טוען תוכניות…");
   }
   try {
     console.log("[admin] strip:", { athletes: list.length, programs: progs.length,
@@ -2861,6 +3410,9 @@ function bindPeopleStrip() {
   sb.addEventListener("contextmenu", function (ev) {
     var chip = ev.target && ev.target.closest ? ev.target.closest("[data-kind]") : null;
     if (!chip) return;
+    /* The summary tab has no name to change and no colour to pick, and it cannot be
+       removed — it is a screen, not a client (owner, 2026-09-03). */
+    if (chip.getAttribute("data-kind") === "ledger") return;
     ev.preventDefault();
     var id = chip.getAttribute("data-id") || "";
     if (!id) return;
@@ -2895,20 +3447,37 @@ function bindPeopleStrip() {
  * a page that had athletes (owner, 2026-09-02). Called from both halves because either
  * may answer first; it acts once, and only when nothing is open.
  */
+/**
+ * What the module opens on.
+ *
+ * The summary tab, always — before any client and whether or not there are any. It is
+ * the first thing he asked to see on entry (owner, 2026-09-03), and it needs neither
+ * half of the strip to have answered, so there is no race to lose.
+ */
 function openFirstPersonIfNeeded() {
   if (adminOpenedSomeone) return false;
   if (currentAthleteId || activeProgramId) return false;
-  if (!athletesAnswered || !programsAnswered) return false;
-  if (Array.isArray(athletes) && athletes.length) return false; /* renderAthleteList has it */
-  if (!Array.isArray(clientPrograms) || !clientPrograms.length) return false;
   adminOpenedSomeone = true;
-  openPersonFromStrip("program", clientPrograms[0].programId);
+  openPersonFromStrip("ledger", "ledger");
   return true;
 }
 
 /** Open whoever was chosen in the strip — one door for both halves of it. */
 function openPersonFromStrip(kind, id) {
   if (!id) return;
+  /* The summary tab is the first chip and it is not a client: it is his own book.
+     Every entry to the module lands here (owner, 2026-09-03). */
+  if (kind === "ledger") {
+    if (window.ClientScreen) window.ClientScreen.close();
+    currentAthleteId = null;
+    activeProgramId = null;
+    var athleteSideL = document.getElementById("content");
+    if (athleteSideL) athleteSideL.hidden = true;
+    renderPeopleStripActive("ledger");
+    if (window.LedgerScreen) window.LedgerScreen.open();
+    return;
+  }
+  if (window.LedgerScreen) window.LedgerScreen.close();
   if (kind === "program") {
     /* In place. This is one page: the client screen takes the content area and the
        athlete side steps aside (owner, 2026-09-02 — no seam, no combinations). */
@@ -2927,8 +3496,9 @@ function openPersonFromStrip(kind, id) {
    One fetch, one owner. */
 
 function selectAthlete(id) {
-  /* An athlete is showing, so no programme is. */
+  /* An athlete is showing, so no programme is — and no ledger either. */
   activeProgramId = null;
+  if (window.LedgerScreen) window.LedgerScreen.close();
   var athleteSide = document.getElementById("content");
   if (athleteSide) athleteSide.hidden = false;
   var clientSide = document.getElementById("clientScreen");
@@ -3501,6 +4071,7 @@ function adminPprogDisplayOpts(a) {
       editAddWork: "adminPprogEditAddWork",
       editAddPart: "adminPprogEditAddPart",
       editRemoveWork: "adminPprogEditRemoveWork",
+      editRemoveNote: "adminPprogEditRemoveNote",
       editCancel: "adminPprogEditCancel",
       editSave: "adminPprogEditSave",
     },
@@ -4096,6 +4667,16 @@ function adminPprogEditAddWork(partIndex) {
   var part = adminDayEdit.parts[partIndex];
   if (!Array.isArray(part.work)) part.work = [];
   part.work.push("");
+  adminPprogEditRerenderCard();
+}
+
+function adminPprogEditRemoveNote(partIndex, noteIndex) {
+  if (!adminDayEdit || !adminDayEdit.parts[partIndex]) return;
+  var part = adminDayEdit.parts[partIndex];
+  if (!Array.isArray(part.notes)) return;
+  part.notes.splice(noteIndex | 0, 1);
+  /* Unlike a work line, a part with no note is perfectly normal — so nothing is put
+     back in its place (owner, 2026-09-05). */
   adminPprogEditRerenderCard();
 }
 
@@ -5428,6 +6009,11 @@ function closeClientKindChooser() {
 
 function chooseClientKind(kind) {
   closeClientKindChooser();
+  /* Four questions and a month of empty squares — no questionnaire at all. */
+  if (kind === "blank") {
+    openBlankClientForm();
+    return;
+  }
   if (kind === "coach") {
     /* The cross-cutting intake opens in place. It used to be a trip to another page —
        which is the seam the owner had me remove (2026-09-02). */
@@ -5454,6 +6040,84 @@ function chooseClientKind(kind) {
     } catch (eLog) {}
   }
 }
+function openBlankClientForm() {
+  var m = document.getElementById("blank-client-modal");
+  if (!m) return;
+  ["blankName", "blankAmount", "blankMethod"].forEach(function (id) {
+    var f = document.getElementById(id);
+    if (f) f.value = "";
+  });
+  /* Four weeks unless he says otherwise — the number we have always used. */
+  if (document.getElementById("blankWeeks")) document.getElementById("blankWeeks").value = "4";
+  /* A week of days unless he says otherwise — the shape everything else uses. */
+  if (document.getElementById("blankMode")) document.getElementById("blankMode").value = "weekly_schedule";
+  if (document.getElementById("blankSessions")) document.getElementById("blankSessions").value = "4";
+  syncBlankMode();
+  if (document.getElementById("blankGender")) document.getElementById("blankGender").value = "";
+  if (document.getElementById("blankErr")) document.getElementById("blankErr").textContent = "";
+  m.classList.add("open");
+  var name = document.getElementById("blankName");
+  if (name) name.focus();
+}
+
+/** The session count is asked only when the programme is sold as a number of them. */
+function syncBlankMode() {
+  var mode = document.getElementById("blankMode");
+  var row = document.getElementById("blankSessionsRow");
+  if (!mode || !row) return;
+  row.hidden = mode.value !== "session_count";
+}
+
+function closeBlankClientForm() {
+  var m = document.getElementById("blank-client-modal");
+  if (m) m.classList.remove("open");
+}
+
+/**
+ * Create a client with nothing but a name, and open him.
+ *
+ * The month that comes back has no rest days and no sessions — the server builds it
+ * that way for this kind. Everything after this point is the ordinary client screen:
+ * write the days, approve, hand over a link and a code (owner, 2026-09-04).
+ */
+function createBlankClient() {
+  var err = document.getElementById("blankErr");
+  var name = String((document.getElementById("blankName") || {}).value || "").trim();
+  if (!name) {
+    if (err) err.textContent = "צריך שם.";
+    return;
+  }
+  var btn = document.getElementById("blankCreate");
+  if (btn) btn.disabled = true;
+  if (err) err.textContent = "";
+  if (!window.ClientScreen || !window.ClientScreen.createBlank) {
+    if (err) err.textContent = "מסך הלקוחות עוד לא נטען — נסה שוב בעוד רגע.";
+    if (btn) btn.disabled = false;
+    return;
+  }
+  window.ClientScreen.createBlank({
+    clientName: name,
+    clientGender: String((document.getElementById("blankGender") || {}).value || ""),
+    monthlyAmount: (document.getElementById("blankAmount") || {}).value || 0,
+    paymentMethod: String((document.getElementById("blankMethod") || {}).value || ""),
+    blockWeeks: (document.getElementById("blankWeeks") || {}).value || 4,
+    scheduleMode: String((document.getElementById("blankMode") || {}).value || "weekly_schedule"),
+    sessionsPerWeek: (document.getElementById("blankSessions") || {}).value || 4,
+  }).then(function (r) {
+    if (btn) btn.disabled = false;
+    if (!r || !r.ok) {
+      if (err) err.textContent = (r && r.error) || "לא הצלחתי ליצור את הלקוח.";
+      return;
+    }
+    closeBlankClientForm();
+    showHdrToast("נוצר לקוח ריק ✓", "ok");
+  });
+}
+
+window.syncBlankMode = syncBlankMode;
+window.openBlankClientForm = openBlankClientForm;
+window.closeBlankClientForm = closeBlankClientForm;
+window.createBlankClient = createBlankClient;
 window.openClientKindChooser = openClientKindChooser;
 window.closeClientKindChooser = closeClientKindChooser;
 window.chooseClientKind = chooseClientKind;
@@ -6131,6 +6795,8 @@ tryRestoreAdminSession();
 <script src="admin-fixed-intake.js"></script>
 <script src="lib/day-rest-toggle.js"></script>
 <script src="lib/client-intake.js"></script>
+<script src="lib/coach-ledger.js"></script>
+<script src="lib/admin-ledger-view.js"></script>
 <script>
 /* ══════════════════════════════════════════════════════════════════════════
    THE CLIENT SCREEN — moved here whole from admin-clients.html.
@@ -6168,7 +6834,7 @@ tryRestoreAdminSession();
   /* The same number admin.html shows, because this is the same back office and two
      versions on two pages of one product is a bug report waiting to happen.
      scripts/admin-clients-page.test.js fails if it drifts from admin.html's own. */
-  var ADMIN_UI_VERSION = "4.0";
+  var ADMIN_UI_VERSION = "4.3.3";
 
   var SESSION_KEY = "dw_admin_session";
   var REMEMBER_KEY = "dw_admin_remember";
@@ -6182,6 +6848,8 @@ tryRestoreAdminSession();
     wi: 0, day: "sun", calMode: "month", selected: [], edit: null, editStatus: null,
     /* true = the new-client wizard owns the screen and the list is out of the way. */
     adding: false,
+    /* The row being duplicated, until it is saved or cancelled. */
+    copying: null,
   };
 
   var DAY_KEYS_LOCAL = (window.PprogDisplay && window.PprogDisplay.DAY_KEYS) ||
@@ -6370,8 +7038,24 @@ tryRestoreAdminSession();
     show("emptyContent", false);
     var mine = !!(S.adding || S.program);
     show("clientScreen", mine);
+    /* Three things can hold this page — the athlete side, this screen, and the
+       management tab — and only one of them at a time. When a client is opened (or the
+       wizard is), the management tab lets go; without this it stayed on screen beside
+       the new client and he got half a screen each (owner, 2026-09-04). */
+    if (mine) {
+      try {
+        if (window.LedgerScreen) window.LedgerScreen.close();
+      } catch (eLedger) {}
+    }
     var athleteSide = el("content");
-    if (athleteSide) athleteSide.hidden = mine;
+    if (athleteSide) {
+      /* The athlete side comes back only if nobody else is holding the screen. The
+         summary tab is the third thing that can hold it, and closing a client used to
+         hand the page back to an empty athlete panel beside it — which is why the
+         calendar was drawn in half the width (owner, 2026-09-03). */
+      var ledgerHolds = !!(window.LedgerScreen && window.LedgerScreen.isOpen && window.LedgerScreen.isOpen());
+      athleteSide.hidden = mine || ledgerHolds;
+    }
   }
 
   function setAdding(on) {
@@ -6459,6 +7143,32 @@ tryRestoreAdminSession();
 
   function startNextBlock() {
     if (!S.program) return;
+    /* Nothing to ask a blank client: another month of empty squares, on the spot
+       (owner, 2026-09-04). */
+    if (isBlankClient()) {
+      var lastBlock = (S.program.blocks || [])[(S.program.blocks || []).length - 1];
+      var suggest = (lastBlock && parseInt(lastBlock.weekCount, 10)) || 4;
+      var asked = window.prompt("כמה שבועות בלבנה הבאה?", String(suggest));
+      if (asked === null) return;
+      var weeks = Math.max(1, Math.min(12, parseInt(asked, 10) || suggest));
+      api({
+        action: "add_block",
+        programId: S.program.programId,
+        expectedVersion: S.program.version,
+        blockWeeks: weeks,
+      })
+        .then(function (r) {
+          if (r.status !== 200 || !r.body.ok) {
+            banner("bad", (r.body && r.body.error) || "לא הצלחתי להוסיף לבנה.");
+            return;
+          }
+          S.program = r.body.program;
+          banner("good", "לבנה " + r.body.blockIndex + " נוצרה — " + r.body.added +
+            " שבועות ריקים. היא לא אצל הלקוח עד שתאשר אותה.");
+          renderDetail();
+        });
+      return;
+    }
     S.blockMode = true;
     S.adding = true;
     iStep = 0;
@@ -6685,7 +7395,11 @@ tryRestoreAdminSession();
     }
     /* No week bar: the calendar carries the W1…W5 rail itself, the same way the admin
        module shows a brick. A second week selector above it only competed with it. */
-    html += '<div id="adminDays"></div></div>';
+    html += '<div id="adminDays"></div>' +
+      /* Right-click a week cube: copy the week, then paste it onto another one
+         (owner, 2026-09-04). A menu rather than a drag, because a drag on a calendar
+         is how you move a week by accident. */
+      '<div id="weekMenu" class="week-menu" hidden></div></div>';
 
     el("detail").innerHTML = html;
     show("detail", true);
@@ -6830,6 +7544,108 @@ tryRestoreAdminSession();
     return n > 0 && n <= 7 ? n : 0;
   }
 
+  /* Bound once, on the page: the calendar is rewritten constantly, and a listener on
+     a redrawn element is a listener that quietly stops working. */
+  if (!window._adminWeekMenuBound) {
+    window._adminWeekMenuBound = true;
+    document.addEventListener("contextmenu", function (ev) {
+      var host = el("adminDays");
+      if (!host || !S.program || !ev.target || !ev.target.closest) return;
+      var cube = ev.target.closest("[data-week]");
+      if (cube && host.contains(cube)) {
+        ev.preventDefault();
+        openWeekMenu(parseInt(cube.getAttribute("data-week"), 10) || 0, ev.clientX, ev.clientY);
+        return;
+      }
+      /* A day cell. Its week index is 0-based in the display library, and every week
+         number the owner sees is 1-based, so it is converted once, here. */
+      var cell = ev.target.closest("[data-day][data-wi]");
+      if (cell && host.contains(cell)) {
+        var dayKey = cell.getAttribute("data-day") || "";
+        if (!dayKey || dayKey === "general") return;
+        ev.preventDefault();
+        openDayMenu((parseInt(cell.getAttribute("data-wi"), 10) || 0) + 1, dayKey, ev.clientX, ev.clientY);
+      }
+    });
+    document.addEventListener("click", function (ev) {
+      var m = el("weekMenu");
+      if (!m || m.hidden) return;
+      if (ev.target && ev.target.closest && ev.target.closest("#weekMenu")) return;
+      closeWeekMenu();
+    });
+    document.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape") closeWeekMenu();
+    });
+
+    /* A phone has no right button, so a long press is one. Cancelled by a scroll or by
+       letting go early, and the tap that follows it is swallowed so the menu does not
+       open and close in the same gesture (owner, 2026-09-04). */
+    var pressTimer = null;
+    var pressAt = null;
+    var openedByPress = 0;
+    function cancelPress() {
+      if (pressTimer) clearTimeout(pressTimer);
+      pressTimer = null;
+      pressAt = null;
+    }
+    document.addEventListener(
+      "touchstart",
+      function (ev) {
+        var host = el("adminDays");
+        if (!host || !S.program || !ev.target || !ev.target.closest) return;
+        var touch = (ev.touches && ev.touches[0]) || null;
+        if (!touch) return;
+        var cube = ev.target.closest("[data-week]");
+        var cell = ev.target.closest("[data-day][data-wi]");
+        var onCube = cube && host.contains(cube);
+        var onCell = cell && host.contains(cell);
+        if (!onCube && !onCell) return;
+        pressAt = { x: touch.clientX, y: touch.clientY };
+        cancelPressTimerOnly();
+        pressTimer = setTimeout(function () {
+          pressTimer = null;
+          openedByPress = Date.now();
+          if (onCube) {
+            openWeekMenu(parseInt(cube.getAttribute("data-week"), 10) || 0, pressAt.x, pressAt.y);
+          } else {
+            var dayKey = cell.getAttribute("data-day") || "";
+            if (!dayKey || dayKey === "general") return;
+            openDayMenu((parseInt(cell.getAttribute("data-wi"), 10) || 0) + 1, dayKey, pressAt.x, pressAt.y);
+          }
+        }, 500);
+      },
+      { passive: true }
+    );
+    function cancelPressTimerOnly() {
+      if (pressTimer) clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+    document.addEventListener(
+      "touchmove",
+      function (ev) {
+        var touch = (ev.touches && ev.touches[0]) || null;
+        if (!pressAt || !touch) return cancelPress();
+        if (Math.abs(touch.clientX - pressAt.x) > 10 || Math.abs(touch.clientY - pressAt.y) > 10) {
+          cancelPress();
+        }
+      },
+      { passive: true }
+    );
+    document.addEventListener("touchend", cancelPress, { passive: true });
+    document.addEventListener("touchcancel", cancelPress, { passive: true });
+    /* The click the phone sends after a long press must not close what it opened. */
+    document.addEventListener(
+      "click",
+      function (ev) {
+        if (openedByPress && Date.now() - openedByPress < 700) {
+          ev.stopPropagation();
+          openedByPress = 0;
+        }
+      },
+      true
+    );
+  }
+
   function renderAdminDays() {
     var host = el("adminDays");
     if (!host) return;
@@ -6897,6 +7713,9 @@ tryRestoreAdminSession();
     var activeIndex = DAY_KEYS_LOCAL.indexOf(S.day || "sun");
     return {
       sessionColumns: sessions || 0,
+      /* The heading of the open day is a field: he can name it "אימון תחנות" and the
+         automatic "אימון 1 · שבוע 1" stays beside it, small (owner, 2026-09-05). */
+      allowTitleEdit: true,
       /* The card under the calendar names the session, not a Tuesday. */
       dateLabelOverride:
         sessions && activeIndex >= 0 && activeIndex < sessions
@@ -6965,9 +7784,16 @@ tryRestoreAdminSession();
         editAddWork: "cvEditAddWork",
         editAddPart: "cvEditAddPart",
         editRemoveWork: "cvEditRemoveWork",
+        /* Its own, or the × on a note called the OTHER editor on this page and quietly
+           did nothing (owner, 2026-09-05). */
+        editRemoveNote: "cvEditRemoveNote",
+        editSetColour: "cvEditSetColour",
+        editSetNumbering: "cvEditSetNumbering",
+        editSetNumber: "cvEditSetNumber",
         editCancel: "cvEditCancel",
         editSave: "cvEditSave",
       },
+      allowLineColour: true,
     };
   }
 
@@ -7338,19 +8164,89 @@ tryRestoreAdminSession();
     renderAdminDays();
   };
 
-  window.cvEditAddWork = function (partIndex) {
+  /**
+   * A new work line — at the end from the chip, or right after the line he pressed
+   * Enter on. The colour and the number of the lines below move down with them.
+   */
+  window.cvEditAddWork = function (partIndex, atIndex) {
     var part = S.edit && S.edit.parts[partIndex | 0];
     if (!part) return;
     if (!Array.isArray(part.work)) part.work = [];
-    part.work.push("");
+    var at = atIndex === undefined || atIndex === null ? part.work.length : Math.max(0, Math.min(part.work.length, atIndex | 0));
+    part.work.splice(at, 0, "");
+    if (Array.isArray(part.colors)) part.colors.splice(at, 0, "");
+    if (Array.isArray(part.nums)) part.nums.splice(at, 0, "");
     renderAdminDays();
+    focusWorkLine(partIndex | 0, at);
   };
+
+  /**
+   * Put the caret in a work line after the card has been redrawn.
+   *
+   * The inputs carry no ids — the card is rendered by the shared library — so they are
+   * found by where they sit: the nth part, the nth line inside it. The number in the
+   * circle is an input too, hence the exclusion.
+   */
+  function focusWorkLine(partIndex, lineIndex) {
+    setTimeout(function () {
+      try {
+        var lists = document.querySelectorAll(".pprog-day-card .pprog-edit-lines");
+        var list = lists[partIndex];
+        if (!list) return;
+        var boxes = list.querySelectorAll('input[type="text"]:not(.pprog-num-in)');
+        var box = boxes[lineIndex];
+        if (box) box.focus();
+      } catch (e) {}
+    }, 0);
+  }
 
   window.cvEditRemoveWork = function (partIndex, lineIndex) {
     var part = S.edit && S.edit.parts[partIndex | 0];
     if (!part || !Array.isArray(part.work)) return;
     part.work.splice(lineIndex | 0, 1);
+    /* The colours belong to the lines, so they move up with them. */
+    if (Array.isArray(part.colors)) part.colors.splice(lineIndex | 0, 1);
+    if (Array.isArray(part.nums)) part.nums.splice(lineIndex | 0, 1);
     if (!part.work.length) part.work = [""];
+    renderAdminDays();
+  };
+
+  /* A note can be taken off again — unlike a work line, a part with no note at all is
+     perfectly normal, so nothing is put back in its place (owner, 2026-09-05). */
+  window.cvEditRemoveNote = function (partIndex, noteIndex) {
+    var part = S.edit && S.edit.parts[partIndex | 0];
+    if (!part || !Array.isArray(part.notes)) return;
+    part.notes.splice(noteIndex | 0, 1);
+    renderAdminDays();
+  };
+
+  /* The colour of one work line, and whether this part numbers its lines. Both are
+     part of the day like any other field: the autosave that follows writes them. */
+  window.cvEditSetColour = function (partIndex, lineIndex, colourKey) {
+    var part = S.edit && S.edit.parts[partIndex | 0];
+    if (!part) return;
+    if (!Array.isArray(part.colors)) part.colors = [];
+    part.colors[lineIndex | 0] = String(colourKey || "");
+    renderAdminDays();
+  };
+
+  /**
+   * The number on one line. Digits only, and nothing is redrawn while he types —
+   * a redraw on every keystroke would throw the caret out of the box.
+   */
+  window.cvEditSetNumber = function (partIndex, lineIndex, el) {
+    var part = S.edit && S.edit.parts[partIndex | 0];
+    if (!part || !el) return;
+    var clean = String(el.value == null ? "" : el.value).replace(/[^0-9]/g, "").slice(0, 3);
+    if (el.value !== clean) el.value = clean;
+    if (!Array.isArray(part.nums)) part.nums = [];
+    part.nums[lineIndex | 0] = clean === "" ? "" : parseInt(clean, 10);
+  };
+
+  window.cvEditSetNumbering = function (partIndex, on) {
+    var part = S.edit && S.edit.parts[partIndex | 0];
+    if (!part) return;
+    part.numbered = on === true;
     renderAdminDays();
   };
 
@@ -7383,6 +8279,10 @@ tryRestoreAdminSession();
     var draft = S.edit;
     if (!draft) return;
     var D = pprogLib();
+    /* Whatever is in the heading counts as part of the day, like every other field:
+       he renamed a day, moved to the next one, and the name was gone
+       (owner, 2026-09-05). Read BEFORE the card is redrawn. */
+    var titleNow = readDayTitleField();
     /* Leave the edit NOW: he is already on the next day, and the write goes on behind
        him. */
     S.edit = null;
@@ -7394,13 +8294,42 @@ tryRestoreAdminSession();
           !window.confirm("להפוך את היום ליום מנוחה? האימון שכתוב בו יימחק.")) {
         return;
       }
-      saveDay(draft.wi, draft.day, [], true, { quiet: true });
+      saveDay(draft.wi, draft.day, [], true, { quiet: true, title: titleNow });
       return;
     }
-    if (!D || !D.partsFromDraft || !D.draftHasContent(draft)) return;
+    /* A name on its own is a change worth keeping, even when nothing was typed into
+       the session itself. */
+    var titleChanged = titleNow !== undefined && titleNow !== storedDayTitle(draft.wi, draft.day);
+    if (!D || !D.partsFromDraft || !D.draftHasContent(draft)) {
+      /* Nothing was typed into the session, but the day may have been renamed. */
+      if (titleChanged) saveTitleOnly(draft.wi, draft.day, titleNow);
+      return;
+    }
     var parts = D.partsFromDraft({ parts: draft.parts, day: draft.day });
-    if (samePartsAsStored(draft.wi, draft.day, parts)) return;
-    saveDay(draft.wi, draft.day, parts, false, { quiet: true });
+    if (samePartsAsStored(draft.wi, draft.day, parts) && !titleChanged) return;
+    saveDay(draft.wi, draft.day, parts, false, { quiet: true, title: titleNow });
+  }
+
+  /** The name the day is stored under right now. */
+  function storedDayTitle(wi, dayKey) {
+    var week = ((S.program && S.program.weeks) || [])[wi | 0] || {};
+    var day = (week.days && week.days[dayKey]) || {};
+    return String(day.title || "");
+  }
+
+  /**
+   * Only the name changed, and there is a session under it to keep.
+   *
+   * saveDay refuses to write a day with no parts (that is what the rest-day button is
+   * for), so a rename of a written day goes through with the parts it already has.
+   */
+  function saveTitleOnly(wi, dayKey, title) {
+    var week = ((S.program && S.program.weeks) || [])[wi | 0] || {};
+    var day = (week.days && week.days[dayKey]) || {};
+    var parts = Array.isArray(day.parts) ? day.parts : [];
+    /* An empty day can be named too — he named one, moved to the next day, and the
+       name was gone because there was no session to hang it on (owner, 2026-09-05). */
+    saveDay(wi, dayKey, parts, false, { quiet: true, title: title, titleOnly: true });
   }
 
   /** Is there a written session on this day - something a rest day would replace? */
@@ -7418,7 +8347,14 @@ tryRestoreAdminSession();
     var stored = ((week.days && week.days[dayKey]) || {}).parts || [];
     var strip = function (list) {
       return (list || []).map(function (p) {
-        return { title: String((p && p.title) || ""), lines: ((p && p.lines) || []).slice() };
+        return {
+          title: String((p && p.title) || ""),
+          lines: ((p && p.lines) || []).slice(),
+          /* A colour or a numbering he switched on IS a change — without them here
+             the day looked identical and the autosave skipped it (owner, 2026-09-05). */
+          numbered: (p && p.numbered) === true,
+          lineColors: (p && p.lineColors) || null,
+        };
       });
     };
     try {
@@ -7439,15 +8375,24 @@ tryRestoreAdminSession();
           !window.confirm("להפוך את היום ליום מנוחה? האימון שכתוב בו יימחק.")) {
         return;
       }
-      saveDay(S.edit.wi, S.edit.day, [], true);
+      saveDay(S.edit.wi, S.edit.day, [], true, { title: readDayTitleField() });
       return;
     }
     if (!D.draftHasContent(S.edit)) {
       banner("warn", 'לא הוקלד כלום. אם התכוונת ליום מנוחה — יש כפתור "הפוך ליום מנוחה".');
       return;
     }
-    saveDay(S.edit.wi, S.edit.day, D.partsFromDraft({ parts: S.edit.parts, day: S.edit.day }), false);
+    saveDay(S.edit.wi, S.edit.day, D.partsFromDraft({ parts: S.edit.parts, day: S.edit.day }), false, {
+      title: readDayTitleField(),
+    });
   };
+
+  /** What the heading field says, or undefined when the day is not open for editing. */
+  function readDayTitleField() {
+    var f = document.querySelector("#adminDays [data-day-title]");
+    if (!f) return undefined;
+    return String(f.value || "").trim().slice(0, 80);
+  }
 
   /* The other direction the owner asked for: a written session back to a rest day. */
   window.cvMakeRest = function (wi, dayKey) {
@@ -7524,17 +8469,25 @@ tryRestoreAdminSession();
     /* Both directions through the shared toggle, so the overview focus moves with the
        parts. Writing parts alone leaves a session that still renders as rest, because
        isPprogRestDay reads the week overview BEFORE it looks at the parts. */
+    /* A name typed into the heading is written before the toggle runs, so the toggle
+       carries it through whichever shape the day takes (owner, 2026-09-05). */
+    if (opts && opts.title !== undefined && weeks[wi].days && weeks[wi].days[dayKey]) {
+      if (opts.title) weeks[wi].days[dayKey].title = String(opts.title).slice(0, 80);
+      else delete weeks[wi].days[dayKey].title;
+    }
     if (makeRest) {
       if (RT) RT.makeRest(weeks[wi], dayKey);
       else weeks[wi].days[dayKey] = { parts: [] };
-    } else {
-      if (!parts || !parts.length) {
-        banner("warn", "לא הוקלד כלום. אם התכוונת ליום מנוחה — יש כפתור נפרד.");
-        return;
-      }
+    } else if (parts && parts.length) {
       if (RT) RT.makeSession(weeks[wi], dayKey, parts);
       else weeks[wi].days[dayKey] = { parts: parts };
+    } else if (!(opts && opts.titleOnly === true)) {
+      banner("warn", "לא הוקלד כלום. אם התכוונת ליום מנוחה — יש כפתור נפרד.");
+      return;
     }
+    /* titleOnly: he named a day he has not written yet, and moved on. The name is
+       saved and the day stays empty — it is neither a session nor a rest day
+       (owner, 2026-09-05). */
     api({
       action: "save", programId: S.program.programId,
       expectedVersion: S.program.version, program: { weeks: weeks },
@@ -7640,6 +8593,83 @@ tryRestoreAdminSession();
            in, and saying "הוקפא" would be a lie. */
         if (r.body.doorClosed === false) banner("warn", "הסימון נשמר, אבל הדלת לא הספיקה להיסגר — נסה שוב.");
         else banner("good", makeFrozen ? "הלקוח הוקפא." : "ההקפאה בוטלה.");
+      });
+      return;
+    }
+    var wCopy = t.closest && t.closest("[data-week-copy]");
+    if (wCopy) {
+      weekClip = {
+        programId: S.program && S.program.programId,
+        week: parseInt(wCopy.getAttribute("data-week-copy"), 10) || 0,
+      };
+      closeWeekMenu();
+      banner("good", "שבוע " + weekClip.week + " הועתק — לחץ ימני על שבוע אחר כדי להדביק.");
+      return;
+    }
+    var wPaste = t.closest && t.closest("[data-week-paste]");
+    if (wPaste) {
+      var toWeek = parseInt(wPaste.getAttribute("data-week-paste"), 10) || 0;
+      closeWeekMenu();
+      if (!weekClip || !toWeek || toWeek === weekClip.week) return;
+      if (!window.confirm("להדביק את שבוע " + weekClip.week + " על שבוע " + toWeek +
+        "? מה שכתוב בשבוע " + toWeek + " יידרס.")) return;
+      api({
+        action: "copy_week",
+        programId: S.program.programId,
+        expectedVersion: S.program.version,
+        fromWeek: weekClip.week,
+        toWeek: toWeek,
+      }).then(function (r) {
+        if (r.status === 409) { banner("warn", "מישהו שמר בינתיים. פותח מחדש."); openClient(S.program.programId); return; }
+        if (r.status !== 200 || !r.body.ok) {
+          banner("bad", (r.body && r.body.error) || "לא הצלחתי להדביק.");
+          return;
+        }
+        S.program = r.body.program;
+        banner("good", "שבוע " + r.body.fromWeek + " הודבק על שבוע " + r.body.toWeek +
+          " — " + r.body.copiedDays + " ימים.");
+        renderDetail();
+      });
+      return;
+    }
+    var dCopy = t.closest && t.closest("[data-day-copy]");
+    if (dCopy) {
+      var fromBits = String(dCopy.getAttribute("data-day-copy") || "").split(":");
+      dayClip = {
+        programId: S.program && S.program.programId,
+        week: parseInt(fromBits[0], 10) || 0,
+        day: fromBits[1] || "",
+      };
+      closeWeekMenu();
+      banner("good", "היום הועתק — לחץ ימני על יום אחר כדי להדביק.");
+      return;
+    }
+    var dPaste = t.closest && t.closest("[data-day-paste]");
+    if (dPaste) {
+      var toBits = String(dPaste.getAttribute("data-day-paste") || "").split(":");
+      var toWeek = parseInt(toBits[0], 10) || 0;
+      var toDay = toBits[1] || "";
+      closeWeekMenu();
+      if (!dayClip || !toWeek || !toDay) return;
+      if (dayClip.week === toWeek && dayClip.day === toDay) return;
+      if (!window.confirm("להדביק את היום הזה? מה שכתוב בו יידרס.")) return;
+      api({
+        action: "copy_day",
+        programId: S.program.programId,
+        expectedVersion: S.program.version,
+        fromWeek: dayClip.week,
+        fromDay: dayClip.day,
+        toWeek: toWeek,
+        toDay: toDay,
+      }).then(function (r) {
+        if (r.status === 409) { banner("warn", "מישהו שמר בינתיים. פותח מחדש."); openClient(S.program.programId); return; }
+        if (r.status !== 200 || !r.body.ok) {
+          banner("bad", (r.body && r.body.error) || "לא הצלחתי להדביק.");
+          return;
+        }
+        S.program = r.body.program;
+        banner("good", "היום הודבק — " + r.body.copiedParts + " חלקים.");
+        renderDetail();
       });
       return;
     }
@@ -7756,6 +8786,82 @@ tryRestoreAdminSession();
   /** Did this client answer the eight-step intake rather than the studio one? */
   function isIndividualClient() {
     return !!(S.program && (S.program.clientKind === "athlete" || S.program.athleteIntake));
+  }
+
+  /* The week on the clipboard, as {programId, week}. Kept in memory only: it is a
+     gesture, not a document, and it should not survive a reload. */
+  var weekClip = null;
+  /* And the day, as {programId, week, day} — the same gesture, one square smaller
+     (owner, 2026-09-04). */
+  var dayClip = null;
+
+  function closeWeekMenu() {
+    var m = el("weekMenu");
+    if (m) { m.hidden = true; m.innerHTML = ""; }
+  }
+
+  function openWeekMenu(weekNum, x, y) {
+    var m = el("weekMenu");
+    if (!m) return;
+    var canPaste = !!(weekClip && weekClip.programId === (S.program && S.program.programId));
+    m.innerHTML =
+      '<div class="wm-title">שבוע ' + weekNum + "</div>" +
+      '<button type="button" class="wm-item" data-week-copy="' + weekNum + '">' +
+      '<span class="wm-ico" aria-hidden="true">⧉</span><span>העתק שבוע</span></button>' +
+      (canPaste
+        ? '<button type="button" class="wm-item wm-paste" data-week-paste="' + weekNum + '">' +
+          '<span class="wm-ico" aria-hidden="true">⤵</span><span>הדבק כאן' +
+          '<span class="wm-from">משבוע ' + weekClip.week + "</span></span></button>"
+        : '<span class="wm-hint">אין שבוע מועתק</span>');
+    m.hidden = false;
+    placeMenuAt(m, x, y);
+  }
+
+  /** Sun…Sat in his own words, for the menu on a day. */
+  function dayMenuLabel(wi, dayKey) {
+    var D = pprogLib();
+    var name = (D && D.DAY_LABELS && D.DAY_LABELS[dayKey]) || String(dayKey || "").toUpperCase();
+    return name + " · שבוע " + wi;
+  }
+
+  /**
+   * Right-click a day: copy it, or paste the one on the clipboard onto it.
+   *
+   * The same gesture as a week, one square smaller. A day carries its sessions AND its
+   * focus line, which is where "Rest" is written — so a rest day copied onto a training
+   * day makes it a rest day (owner, 2026-09-04).
+   */
+  function openDayMenu(wi, dayKey, x, y) {
+    var m = el("weekMenu");
+    if (!m) return;
+    var canPaste = !!(dayClip && dayClip.programId === (S.program && S.program.programId));
+    var here = wi + ":" + dayKey;
+    m.innerHTML =
+      '<div class="wm-title">' + dayMenuLabel(wi, dayKey) + "</div>" +
+      '<button type="button" class="wm-item" data-day-copy="' + here + '">' +
+      '<span class="wm-ico" aria-hidden="true">⧉</span><span>העתק יום</span></button>' +
+      (canPaste
+        ? '<button type="button" class="wm-item wm-paste" data-day-paste="' + here + '">' +
+          '<span class="wm-ico" aria-hidden="true">⤵</span><span>הדבק כאן' +
+          '<span class="wm-from">' + dayMenuLabel(dayClip.week, dayClip.day) + "</span></span></button>"
+        : '<span class="wm-hint">אין יום מועתק</span>');
+    m.hidden = false;
+    placeMenuAt(m, x, y);
+  }
+
+  /** Both menus open where the finger is, and stay inside the window. */
+  function placeMenuAt(m, x, y) {
+    var w = m.offsetWidth || 190;
+    var h = m.offsetHeight || 80;
+    var left = Math.min(Math.max(0, x), Math.max(0, window.innerWidth - w - 8));
+    var top = Math.min(Math.max(0, y), Math.max(0, window.innerHeight - h - 8));
+    m.style.left = Math.round(left) + "px";
+    m.style.top = Math.round(top) + "px";
+  }
+
+  /** Four answers and an empty month — no questionnaire to open, ever. */
+  function isBlankClient() {
+    return !!(S.program && S.program.clientKind === "blank");
   }
 
   /**
@@ -8495,6 +9601,53 @@ tryRestoreAdminSession();
     newClient: function () {
       setAdding(true);
     },
+    /**
+     * A client with four answers and an empty month.
+     *
+     * Goes through the same create as everyone else — the SERVER decides the shape of
+     * the month from the kind, so there is no second way to lay one out. The client is
+     * opened from the response rather than re-read: a failed re-read used to look
+     * exactly like the page ignoring him (owner, 2026-09-03).
+     */
+    createBlank: function (form) {
+      var f = form || {};
+      return api({
+        action: "create",
+        clientKind: "blank",
+        scheduleMode: f.scheduleMode,
+        sessionsPerWeek: f.sessionsPerWeek,
+        clientName: f.clientName,
+        clientGender: f.clientGender,
+        monthlyAmount: f.monthlyAmount,
+        paymentMethod: f.paymentMethod,
+        blockWeeks: f.blockWeeks,
+        blockStart: israelSundayIso(),
+      }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) {
+          return { ok: false, error: (r.body && r.body.error) || "" };
+        }
+        S.adding = false;
+        S.blockMode = false;
+        S.sel = r.body.program.programId;
+        S.program = r.body.program;
+        S.access = null;
+        S.wi = 0;
+        S.day = "sun";
+        S.calMode = "month";
+        S.selected = [];
+        S.edit = null;
+        adminOpenedSomeone = true;
+        try {
+          if (typeof window.renderPeopleStripActive === "function") {
+            window.renderPeopleStripActive(S.program.programId);
+          }
+        } catch (eStrip) {}
+        renderViewMode();
+        renderDetail();
+        loadList();
+        return { ok: true, program: r.body.program };
+      });
+    },
     close: function () {
       S.adding = false;
       S.blockMode = false;
@@ -8540,6 +9693,940 @@ tryRestoreAdminSession();
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
+})();
+</script>
+<script>
+/* ══════════════════════════════════════════════════════════════════════════
+   THE SUMMARY TAB — the coach's own book.
+
+   Not the client-programme world. There he writes a plan for someone who holds a
+   link; here he is the coach on somebody else's floor, and the only questions are
+   which place, which service, how much (owner, 2026-09-03).
+
+   A closed IIFE like the client screen: it exposes window.LedgerScreen and touches
+   nothing of admin's beyond the helpers it needs to reach the server. The arithmetic
+   and the markup live in lib/coach-ledger.js and lib/admin-ledger-view.js, so both
+   are testable without a browser.
+   ══════════════════════════════════════════════════════════════════════════ */
+(function () {
+  "use strict";
+  var L = window.CoachLedger;
+  var V = window.AdminLedgerView;
+  if (!L || !V) return;
+
+  var LS = {
+    /* What THIS month earned on the floor, whatever month is on screen. */
+    personal: 0,
+    /* The entry row appears when he asks for it with the plus, and not before. */
+    adding: false,
+    /* What the box at the foot of the page is holding while he fills it. */
+    manual: null,
+    /* The favourites box: folded until he opens it, and one name at a time is edited. */
+    favOpen: false,
+    favEditing: "",
+    places: [],
+    colours: {},
+    open: false,
+    month: "",
+    data: null,
+    day: "",
+    editing: null,
+    range: "month",
+    /* What the record is showing: which place, which service, which order. All of it
+       applies the moment he chooses it — there is no "filter" button any more
+       (owner, 2026-09-04). */
+    filterName: "",
+    filterService: "",
+    from: "",
+    to: "",
+    sortBy: "day",
+    sortDir: 1,
+    /* The table opens grouped — one line per place, which is the question he brings
+       to it. The session-by-session view is behind "full detail" (owner, 2026-09-04). */
+    detail: false,
+    /* One place opened under its own line, and the rows the last answer carried — so
+       opening it costs nothing: they are already here. */
+    expanded: "",
+    tableDeals: [],
+    names: [],
+    services: [],
+  };
+
+  function el(id) { return document.getElementById(id); }
+  function todayIso() { return L.dayIso(); }
+
+  /** One door to the server, and it carries the owner's credential. */
+  function api(body) {
+    return fetch(adminApiUrl("/api/admin-ledger"), {
+      method: "POST",
+      headers: adminAuthHeaders(),
+      body: JSON.stringify(body || {}),
+    })
+      .then(function (r) {
+        return r.json().then(function (j) { return { status: r.status, body: j || {} }; });
+      })
+      .catch(function (e) {
+        return { status: 0, body: { ok: false, error: String((e && e.message) || e) } };
+      });
+  }
+
+  function toast(msg, kind) {
+    try { showHdrToast(msg, kind || "ok"); } catch (e) {}
+  }
+
+  function open() {
+    var box = el("ledgerScreen");
+    LS.open = true;
+    if (box) box.hidden = false;
+    if (!LS.month) LS.month = L.monthKey();
+    if (!LS.data) loadMonth(LS.month);
+    else render();
+  }
+
+  function close() {
+    var box = el("ledgerScreen");
+    LS.open = false;
+    if (box) box.hidden = true;
+  }
+
+  function loadMonth(month) {
+    LS.month = month;
+    render();
+    return api({ action: "month", month: month }).then(function (r) {
+      if (r.status !== 200 || !r.body.ok) {
+        toast((r.body && r.body.error) || "לא הצלחתי לטעון את החודש", "err");
+        return;
+      }
+      LS.data = r.body;
+      LS.colours = r.body.colours || {};
+      /* Only the current month feeds the header figure — browsing back must not
+         rewrite what he is earning now. */
+      if (month === L.monthKey()) {
+        LS.personal = Number(r.body.total) || 0;
+        if (typeof window.adminOnPersonalIncome === "function") {
+          window.adminOnPersonalIncome(LS.personal);
+        }
+      }
+      render();
+      loadTable();
+    });
+  }
+
+  /* ------------------------------------------------------------- rendering */
+
+  /**
+   * The two incomes, in the tab.
+   *
+   * Both are THIS month, never the month being browsed: the programme figure is a
+   * monthly rate and has no history to show against September (owner, 2026-09-03).
+   */
+  function renderIncome() {
+    var host = el("ledIncome");
+    if (!host) return;
+    var programs = typeof window.adminProgramsIncome === "function" ? window.adminProgramsIncome() : 0;
+    host.innerHTML = V.incomeBreakdownHtml({ programs: programs, personal: LS.personal });
+  }
+
+  function render() {
+    renderIncome();
+    renderManual();
+    renderFavourites();
+    renderFilters();
+    var listHost = el("ledPlaces");
+    if (listHost) listHost.innerHTML = V.placeListHtml(placeNames());
+    var head = el("ledHeader");
+    var cal = el("ledCalendar");
+    var day = el("ledDay");
+    if (!head || !cal || !day) return;
+    var data = LS.data || { total: 0, totalsByDay: {}, deals: [], favourites: [] };
+    head.innerHTML = V.headerHtml(LS.month, data.total);
+    cal.innerHTML = V.calendarHtml({
+      month: LS.month,
+      totalsByDay: data.totalsByDay,
+      /* Who he trained that day, in the order he entered them. */
+      dealsByDay: dealsByDay(),
+      colours: LS.colours,
+      today: todayIso(),
+      selected: LS.day,
+    });
+    redrawDay();
+  }
+
+  /** The permanent way in: three fields and the day they land on. */
+  function renderManual() {
+    var host = el("ledManual");
+    if (!host) return;
+    var m = LS.manual || {};
+    host.innerHTML = V.manualFormHtml({
+      name: m.name || "",
+      service: m.service || "",
+      price: m.price || "",
+      date: m.date || todayIso(),
+    });
+  }
+
+  /** The day → its rows, in the order they were written. */
+  function dealsByDay() {
+    var out = {};
+    var all = (LS.data && LS.data.deals) || [];
+    all
+      .slice()
+      .sort(function (a, b) {
+        return String(a.createdAt) < String(b.createdAt) ? -1 : 1;
+      })
+      .forEach(function (d) {
+        if (!out[d.day]) out[d.day] = [];
+        out[d.day].push({ name: d.name, price: d.price });
+      });
+    return out;
+  }
+
+  /** The names behind the autocomplete, and what each one is known for. */
+  function placeNames() {
+    return (LS.data && LS.data.placeNames) || [];
+  }
+
+  function placeDefaultsFor(name) {
+    var all = (LS.data && LS.data.placeDefaults) || {};
+    var wanted = String(name || "").trim().toLowerCase();
+    var keys = Object.keys(all);
+    for (var i = 0; i < keys.length; i++) {
+      if (keys[i].trim().toLowerCase() === wanted) return all[keys[i]];
+    }
+    return null;
+  }
+
+  /**
+   * A name he finished typing that we already know.
+   *
+   * Fills the service and the price from the last time — the price stays editable for
+   * this deal, and what he leaves is what gets remembered for next time.
+   */
+  function applyPlaceDefaults(prefix) {
+    var nameEl = el(prefix + "Name");
+    if (!nameEl) return;
+    var hit = placeDefaultsFor(nameEl.value);
+    if (!hit) return;
+    var priceEl = el(prefix + "Price");
+    if (priceEl && !priceEl.value) priceEl.value = hit.price || "";
+    var sel = el(prefix + "Service");
+    var other = el(prefix + "ServiceOther");
+    if (!sel) return;
+    if (!sel.value) {
+      if (V.SERVICES.indexOf(hit.service) >= 0) {
+        sel.value = hit.service;
+      } else if (hit.service) {
+        sel.value = V.SERVICE_OTHER;
+        if (other) { other.hidden = false; other.value = hit.service; }
+      }
+    }
+  }
+
+  /** What the service field says: one of the known ones, or the free line. */
+  function readService(prefix) {
+    var sel = el(prefix + "Service");
+    var other = el(prefix + "ServiceOther");
+    if (!sel) return "";
+    if (sel.value === V.SERVICE_OTHER) return (other && other.value) || "";
+    return sel.value || "";
+  }
+
+  /** The box under the table: everyone, and the pencil that names and colours them. */
+  function renderFavourites() {
+    var host = el("ledFavourites");
+    if (!host) return;
+    host.innerHTML = V.favouritesBoxHtml({
+      places: LS.places,
+      open: LS.favOpen,
+      editing: LS.favEditing,
+    });
+  }
+
+  /**
+   * A place list that is out of date.
+   *
+   * A place used for the first time only reaches the favourites box when the box asks
+   * again — which it did not, so a new place added from the box at the foot of the page
+   * never appeared there (owner, 2026-09-04).
+   */
+  function forgetPlaces() {
+    LS.places = [];
+    if (LS.favOpen) loadPlaces();
+  }
+
+  /* Loaded once when he opens the box, and again after an edit — never on a timer. */
+  function loadPlaces() {
+    return api({ action: "places" }).then(function (r) {
+      if (r.status === 200 && r.body.ok) LS.places = r.body.places || [];
+      renderFavourites();
+    });
+  }
+
+  /**
+   * Put the open day over its own square.
+   *
+   * Measured from the grid rather than from the viewport, so it stays put while the
+   * page scrolls, and clamped inside it so a Saturday does not hang off the edge.
+   */
+  function placeDayPopover() {
+    var pop = el("ledDay");
+    var wrap = el("ledCalWrap");
+    if (!pop || !wrap) return;
+    var square = wrap.querySelector('[data-led-day="' + LS.day + '"]');
+    if (!square) return;
+    pop.hidden = false;
+    var w = pop.offsetWidth || 260;
+    var left = square.offsetLeft + square.offsetWidth / 2 - w / 2;
+    var max = wrap.clientWidth - w;
+    if (left < 0) left = 0;
+    if (left > max) left = max > 0 ? max : 0;
+    pop.style.left = Math.round(left) + "px";
+    pop.style.top = Math.round(square.offsetTop) + "px";
+  }
+
+  function dayBoxHtml() {
+    var deals = L.dealsOfDay({ month: LS.month, deals: (LS.data && LS.data.deals) || [] }, LS.day);
+    var editing = LS.editing
+      ? deals.filter(function (d) { return d.id === LS.editing; })[0] || null
+      : null;
+    var editor =
+      LS.adding || editing
+        ? V.editorHtml(
+            editing
+              ? { deal: editing }
+              : LS.copying
+              ? {
+                  name: LS.copying.name,
+                  service: LS.copying.service,
+                  price: LS.copying.price,
+                  date: LS.copying.date,
+                }
+              : {}
+          )
+        : "";
+    return V.dayPanelHtml({ day: LS.day, deals: deals, editorHtml: editor, colours: LS.colours });
+  }
+
+  function redrawDay() {
+    var day = el("ledDay");
+    if (!day) return;
+    if (!LS.day) {
+      day.hidden = true;
+      day.innerHTML = "";
+      return;
+    }
+    day.innerHTML = dayBoxHtml();
+    placeDayPopover();
+  }
+
+  /* ---------------------------------------------------------------- table */
+
+  function currentRange() {
+    /* A range he set himself, behind its own button. */
+    if (LS.range === "custom") {
+      var mr = L.monthRange(LS.month + "-15");
+      return { from: LS.from || mr.from, to: LS.to || mr.to };
+    }
+    if (LS.range === "week") {
+      /* "This week" is the week we are in, not a week of whichever month he is
+         browsing — it is a question about now. */
+      return L.weekRange(todayIso());
+    }
+    /* "This year" follows the month on screen, so browsing back to 2025 and pressing it
+       answers about 2025 (owner, 2026-09-03). */
+    if (LS.range === "year") return L.yearRange(LS.month + "-15");
+    return L.monthRange(LS.month + "-15");
+  }
+
+  /** The bar above the record: what is being shown, and how it is ordered. */
+  function renderFilters() {
+    var host = el("ledFilters");
+    if (!host) return;
+    var r = currentRange();
+    host.innerHTML = V.filtersHtml({
+      detail: LS.detail,
+      range: LS.range,
+      names: LS.names,
+      services: LS.services,
+      name: LS.filterName,
+      service: LS.filterService,
+      from: LS.from || r.from,
+      to: LS.to || r.to,
+    });
+  }
+
+  /** "החודש" · "השנה" · "01/09/26 - 30/09/26" — what the grouped date column says. */
+  function rangeLabel() {
+    if (LS.range === "week") return "השבוע";
+    if (LS.range === "month") return "החודש";
+    if (LS.range === "year") return "השנה";
+    var r = currentRange();
+    return V.hebDate(r.from) + " - " + V.hebDate(r.to);
+  }
+
+  function loadTable() {
+    var host = el("ledTable");
+    if (!host) return;
+    var r = currentRange();
+    return api({
+      action: "range",
+      from: r.from,
+      to: r.to,
+      /* A place picked from the list is an exact answer — "what do I invoice this gym
+         for this month" — not a search (owner, 2026-09-04). */
+      name: LS.filterName,
+      exactName: !!LS.filterName,
+      service: LS.filterService,
+      sortBy: LS.sortBy,
+      sortDir: LS.sortDir,
+    }).then(function (res) {
+      if (res.status !== 200 || !res.body.ok) {
+        host.innerHTML = '<p class="led-empty">לא הצלחתי לטעון את העסקאות.</p>';
+        return;
+      }
+      LS.names = res.body.names || [];
+      LS.services = res.body.services || [];
+      renderFilters();
+      var grouped = !LS.detail;
+      LS.tableDeals = res.body.deals || [];
+      host.innerHTML = V.tableHtml(
+        grouped ? res.body.groups || [] : LS.tableDeals,
+        res.body.total,
+        LS.colours,
+        { by: LS.sortBy, dir: LS.sortDir },
+        {
+          grouped: grouped,
+          rangeLabel: rangeLabel(),
+          expanded: LS.expanded,
+          expandedRows: LS.tableDeals,
+        }
+      );
+    });
+  }
+
+  /* --------------------------------------------------------------- writing */
+
+  function readEditor() {
+    return {
+      name: String((el("ledName") && el("ledName").value) || "").trim(),
+      service: readService("led"),
+      price: (el("ledPrice") && el("ledPrice").value) || "",
+    };
+  }
+
+  /**
+   * Save a line he is in the middle of, on his way out of it.
+   *
+   * Returns true when it started a save — the caller stops there, because the save
+   * redraws the day itself. A line with nothing in it is not work: it is dropped
+   * silently rather than shouting "there is no price" at a man who is leaving
+   * (owner, 2026-09-04).
+   */
+  function autosaveLine() {
+    if (!LS.adding && !LS.editing) return false;
+    var form = readEditor();
+    if (!form.name || !(Number(form.price) > 0)) {
+      LS.adding = false;
+      LS.editing = null;
+      LS.copying = null;
+      return false;
+    }
+    saveDeal();
+    return true;
+  }
+
+  function saveDeal() {
+    var form = readEditor();
+    if (!form.name) { toast("בחר או הקלד שם מקום", "err"); return; }
+    if (!(Number(form.price) > 0)) { toast("חסר מחיר", "err"); return; }
+    /* A duplicate carries its own date field; a plain add belongs to the open day. */
+    var onDay = (el("ledDate") && V.parseHeDate(el("ledDate").value)) || LS.day;
+    var body = LS.editing
+      ? { action: "update_deal", id: LS.editing, month: LS.month, day: LS.day, name: form.name, service: form.service, price: form.price }
+      : { action: "add_deal", day: onDay, name: form.name, service: form.service, price: form.price };
+    api(body).then(function (r) {
+      if (r.status !== 200 || !r.body.ok) {
+        toast((r.body && r.body.error) || "לא הצלחתי לשמור", "err");
+        return;
+      }
+      LS.editing = null;
+      LS.adding = false;
+      LS.copying = null;
+      /* A place used for the first time is new in the favourites box too — the list is
+         re-read rather than left stale (owner, 2026-09-04). */
+      forgetPlaces();
+      var landed = L.monthKey(onDay);
+      if (landed !== LS.month) {
+        LS.month = landed;
+        LS.day = onDay;
+        loadMonth(landed);
+        toast("נשמר ✓ — עברתי לחודש שבו זה נחת");
+        return;
+      }
+      LS.data = r.body;
+      LS.colours = r.body.colours || LS.colours;
+      LS.day = onDay;
+      if (LS.month === L.monthKey()) {
+        LS.personal = Number(r.body.total) || 0;
+        if (typeof window.adminOnPersonalIncome === "function") {
+          window.adminOnPersonalIncome(LS.personal);
+        }
+      }
+      render();
+      loadTable();
+      toast("נשמר ✓");
+    });
+  }
+
+  function manualDate() {
+    var d = el("ledMDate");
+    return (d && V.parseHeDate(d.value)) || todayIso();
+  }
+
+  /**
+   * A session added from the box, not from a square.
+   *
+   * It lands on the day in its date field — including a day in another month, in which
+   * case the calendar follows it there rather than saving somewhere he cannot see
+   * (owner, 2026-09-03).
+   */
+  function saveManual() {
+    var name = String((el("ledMName") && el("ledMName").value) || "").trim();
+    var service = readService("ledM");
+    var price = (el("ledMPrice") && el("ledMPrice").value) || "";
+    var day = manualDate();
+    if (!name) { toast("בחר או הקלד שם מקום", "err"); return; }
+    if (!(Number(price) > 0)) { toast("חסר מחיר", "err"); return; }
+    api({ action: "add_deal", day: day, name: name, service: service, price: price }).then(function (r) {
+      if (r.status !== 200 || !r.body.ok) {
+        toast((r.body && r.body.error) || "לא הצלחתי לשמור", "err");
+        return;
+      }
+      LS.manual = null;
+      forgetPlaces();
+      var landed = L.monthKey(day);
+      if (landed !== LS.month) {
+        LS.month = landed;
+        LS.day = day;
+        loadMonth(landed);
+        toast("נשמר ✓ — עברתי לחודש שבו זה נחת");
+        return;
+      }
+      LS.data = r.body;
+      LS.day = day;
+      if (LS.month === L.monthKey()) {
+        LS.personal = Number(r.body.total) || 0;
+        if (typeof window.adminOnPersonalIncome === "function") window.adminOnPersonalIncome(LS.personal);
+      }
+      render();
+      loadTable();
+      toast("נשמר ✓");
+    });
+  }
+
+  /**
+   * A place renamed, recoloured, or both.
+   *
+   * A rename rewrites the rows that carry the old name — the server does that, month by
+   * month — so the month on screen and the table are reloaded afterwards rather than
+   * patched here (owner, 2026-09-03).
+   */
+  function savePlace(name, newName, colour) {
+    if (!name) return;
+    var body = { action: "update_place", name: name };
+    if (newName !== null && newName !== undefined) body.newName = String(newName).trim();
+    if (colour !== undefined) body.colour = colour;
+    api(body).then(function (r) {
+      if (r.status !== 200 || !r.body.ok) {
+        toast((r.body && r.body.error) || "לא הצלחתי לשמור", "err");
+        return;
+      }
+      LS.places = r.body.places || [];
+      LS.colours = r.body.colours || {};
+      if (newName !== null && newName !== undefined) LS.favEditing = "";
+      renderFavourites();
+      /* The rows carry the name and the colour, so both views are redrawn. */
+      loadMonth(LS.month);
+      if (r.body.renamedRows) toast("עודכן ✓ " + r.body.renamedRows + " שורות");
+      else toast("עודכן ✓");
+    });
+  }
+
+  function deleteDeal(id) {
+    if (!window.confirm("למחוק את העסקה?")) return;
+    api({ action: "delete_deal", id: id, month: LS.month, day: LS.day }).then(function (r) {
+      if (r.status !== 200 || !r.body.ok) {
+        toast((r.body && r.body.error) || "לא הצלחתי למחוק", "err");
+        return;
+      }
+      LS.data = r.body;
+      LS.editing = null;
+      render();
+      loadTable();
+      toast("נמחק");
+    });
+  }
+
+  /* ---------------------------------------------------------------- events */
+
+  document.addEventListener("click", function (ev) {
+    var box = el("ledgerScreen");
+    if (!box || box.hidden) return;
+    var t = ev.target;
+    if (!t || !t.closest) return;
+
+    var nav = t.closest(".led-nav");
+    if (nav) {
+      var dir = nav.getAttribute("data-led-month");
+      LS.day = "";
+      LS.editing = null;
+      loadMonth(L.shiftMonth(LS.month, dir === "prev" ? -1 : 1));
+      return;
+    }
+
+    var dayBtn = t.closest("[data-led-day]");
+    if (dayBtn) {
+      var iso = dayBtn.getAttribute("data-led-day");
+      /* Moving to another day is leaving this one — so it saves on the way out. */
+      if (iso !== LS.day && autosaveLine()) return;
+      /* Clicking the open day again closes it — a square is a toggle. */
+      LS.day = LS.day === iso ? "" : iso;
+      LS.editing = null;
+      LS.adding = false;
+      render();
+      return;
+    }
+
+    if (t.closest("[data-led-add]")) {
+      LS.adding = true;
+      LS.editing = null;
+      redrawDay();
+      /* Pressing the plus is asking to type a place — so the cursor goes there. */
+      try { if (el("ledName")) el("ledName").focus(); } catch (eFocus) {}
+      return;
+    }
+
+    if (t.closest("[data-led-dayclose]")) {
+      LS.day = "";
+      LS.adding = false;
+      LS.editing = null;
+      render();
+      return;
+    }
+
+    if (t.closest("[data-led-save]")) { saveDeal(); return; }
+
+    if (t.closest("[data-led-manual-save]")) { saveManual(); return; }
+
+    var dateOpen = t.closest("[data-led-dateopen]");
+    if (dateOpen) {
+      /* The browser's picker, on request — it renders in the browser's locale, which is
+         why it is not the field itself (owner, 2026-09-04). */
+      var nat = el(dateOpen.getAttribute("data-led-dateopen") + "Native");
+      if (nat) {
+        try {
+          if (typeof nat.showPicker === "function") nat.showPicker();
+          else nat.click();
+        } catch (ePick) {
+          nat.click();
+        }
+      }
+      return;
+    }
+
+    /* ---- the favourites box ---------------------------------------------- */
+
+    if (t.closest("[data-led-fav-toggle]")) {
+      LS.favOpen = !LS.favOpen;
+      LS.favEditing = "";
+      renderFavourites();
+      /* Read once, when he opens it. A reference list on a timer is money. */
+      if (LS.favOpen && !LS.places.length) loadPlaces();
+      return;
+    }
+
+    var favDel = t.closest("[data-led-fav-del]");
+    if (favDel) {
+      var doomed = favDel.getAttribute("data-led-fav-del") || "";
+      if (!window.confirm('להסיר את "' + doomed + '" מרשימת המקומות? האימונים שכבר נרשמו לא ימחקו.')) return;
+      api({ action: "delete_place", name: doomed }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) {
+          toast((r.body && r.body.error) || "לא הצלחתי להסיר", "err");
+          return;
+        }
+        LS.places = r.body.places || [];
+        LS.colours = r.body.colours || {};
+        LS.favEditing = "";
+        renderFavourites();
+        /* The autocomplete comes off the month, so it is re-read too. */
+        loadMonth(LS.month);
+        toast("הוסר מהרשימה");
+      });
+      return;
+    }
+
+    var favEdit = t.closest("[data-led-fav-edit]");
+    if (favEdit) {
+      LS.favEditing = favEdit.getAttribute("data-led-fav-edit") || "";
+      renderFavourites();
+      return;
+    }
+
+    if (t.closest("[data-led-fav-cancel]")) {
+      LS.favEditing = "";
+      renderFavourites();
+      return;
+    }
+
+    var swatch = t.closest("[data-led-fav-colour]");
+    if (swatch) {
+      /* A colour is applied on the spot: it is one field, and there is nothing to lose
+         by being wrong for a second. The name still waits for Save. */
+      savePlace(LS.favEditing, null, swatch.getAttribute("data-led-fav-colour") || "");
+      return;
+    }
+
+    if (t.closest("[data-led-fav-save]")) {
+      var newName = (el("ledFavName") && el("ledFavName").value) || "";
+      savePlace(LS.favEditing, newName, undefined);
+      return;
+    }
+
+    if (t.closest("[data-led-cancel]")) {
+      LS.editing = null;
+      LS.adding = false;
+      LS.copying = null;
+      redrawDay();
+      return;
+    }
+
+    var copy = t.closest("[data-led-copy]");
+    if (copy) {
+      var src = L.dealsOfDay({ month: LS.month, deals: (LS.data && LS.data.deals) || [] }, LS.day)
+        .filter(function (d) { return d.id === copy.getAttribute("data-led-copy"); })[0];
+      if (!src) return;
+      /* Same values, and the day it came from as the default — changing it plants the
+         copy on the day he chooses (owner, 2026-09-04). */
+      LS.copying = { name: src.name, service: src.service, price: src.price, date: src.day };
+      LS.adding = true;
+      LS.editing = null;
+      redrawDay();
+      try { if (el("ledName")) el("ledName").focus(); } catch (eF) {}
+      return;
+    }
+
+    var edit = t.closest("[data-led-edit]");
+    if (edit) {
+      LS.editing = edit.getAttribute("data-led-edit");
+      LS.adding = false;
+      redrawDay();
+      return;
+    }
+
+    var del = t.closest("[data-led-del]");
+    if (del) { deleteDeal(del.getAttribute("data-led-del")); return; }
+
+    var range = t.closest("[data-led-range]");
+    if (range) {
+      LS.range = range.getAttribute("data-led-range");
+      /* Every range but the one he sets himself forgets the two dates. */
+      if (LS.range !== "custom") {
+        LS.from = "";
+        LS.to = "";
+      }
+      renderFilters();
+      loadTable();
+      return;
+    }
+
+    /* A column header: sort by it, and again to turn it round. */
+    var sortBtn = t.closest("[data-led-sort]");
+    if (sortBtn) {
+      var key = sortBtn.getAttribute("data-led-sort");
+      if (LS.sortBy === key) LS.sortDir = LS.sortDir === 1 ? -1 : 1;
+      else {
+        LS.sortBy = key;
+        LS.sortDir = 1;
+      }
+      loadTable();
+      return;
+    }
+
+    var expand = t.closest("[data-led-expand]");
+    if (expand) {
+      var who = expand.getAttribute("data-led-expand") || "";
+      /* One at a time: two open places make a list, which is what "full detail" is. */
+      LS.expanded = LS.expanded === who ? "" : who;
+      loadTable();
+      return;
+    }
+
+    if (t.closest("[data-led-detail]")) {
+      /* Both directions work: a place already chosen stays chosen when he opens the
+         detail, and a detail already open stays open when he chooses a place. */
+      LS.detail = !LS.detail;
+      LS.expanded = "";
+      renderFilters();
+      loadTable();
+      return;
+    }
+
+    if (t.closest("[data-led-clear]")) {
+      LS.filterName = "";
+      LS.filterService = "";
+      LS.from = "";
+      LS.to = "";
+      LS.range = "month";
+      LS.sortBy = "day";
+      LS.sortDir = 1;
+      LS.detail = false;
+      LS.expanded = "";
+      renderFilters();
+      loadTable();
+      return;
+    }
+
+    /* Leaving a day SAVES what is in the line — clicking another day, or anywhere
+       outside the box. The Save button stays; this is the convenience he asked for
+       everywhere (owner, 2026-09-04). Nothing is lost to a stray click any more,
+       which is the older complaint the same rule used to serve (owner, 2026-09-02). */
+    if (LS.day && !t.closest(".led-daybox") && !t.closest("[data-led-day]")) {
+      if (autosaveLine()) return;
+      LS.day = "";
+      render();
+    }
+  });
+
+  /* Typing and choosing are not clicks, so they get their own listener. */
+  document.addEventListener("change", function (ev) {
+    var box = el("ledgerScreen");
+    if (!box || box.hidden) return;
+    var t = ev.target;
+    /* An element, not necessarily one with an id: the invoice boxes are identified by a
+       data attribute, and this guard was silently swallowing every one of their changes
+       — he ticked an invoice, nothing was saved, and the tick came back off on the next
+       draw (owner, 2026-09-04). */
+    if (!t || !t.hasAttribute) return;
+
+    /* "Other" opens the free line, and closes it again if he changes his mind. */
+    if (t.hasAttribute("data-led-service")) {
+      var other = el(t.id + "Other");
+      if (other) {
+        other.hidden = t.value !== V.SERVICE_OTHER;
+        if (other.hidden) other.value = "";
+        else other.focus();
+      }
+      return;
+    }
+
+    /* A name he finished typing that we already know fills the rest. */
+    if (t.hasAttribute && t.hasAttribute("data-led-name")) {
+      applyPlaceDefaults(t.id.replace(/Name$/, ""));
+      return;
+    }
+
+    /* The record's own filters: choosing IS filtering. */
+    if (t.hasAttribute && t.hasAttribute("data-led-filter")) {
+      if (t.getAttribute("data-led-filter") === "name") LS.filterName = t.value || "";
+      else LS.filterService = t.value || "";
+      loadTable();
+      return;
+    }
+    if (t.id === "ledFFrom" || t.id === "ledFTo") {
+      LS.range = "custom";
+      LS.from = (el("ledFFrom") && V.parseHeDate(el("ledFFrom").value)) || "";
+      LS.to = (el("ledFTo") && V.parseHeDate(el("ledFTo").value)) || "";
+      loadTable();
+      return;
+    }
+
+    /* The calendar button wrote a date: put it back into the field in HIS format and
+       let the field's own handler take it from there. */
+    if (t.hasAttribute && t.hasAttribute("data-led-datepick")) {
+      var target = el(t.getAttribute("data-led-datepick"));
+      if (target) {
+        target.value = V.hebDate(t.value);
+        try {
+          target.dispatchEvent(new Event("change", { bubbles: true }));
+        } catch (eEv) {}
+      }
+      return;
+    }
+
+    /* A date he typed: tidy it to dd/mm/yy so what he sees is what was understood. */
+    if (t.hasAttribute && t.hasAttribute("data-led-datefield")) {
+      var iso = V.parseHeDate(t.value);
+      if (iso) {
+        t.value = V.hebDate(iso);
+        t.classList.remove("bad");
+        var native = el(t.id + "Native");
+        if (native) native.value = iso;
+      } else if (String(t.value || "").trim()) {
+        t.classList.add("bad");
+      } else {
+        t.classList.remove("bad");
+      }
+    }
+
+    /* A whole place at once: every session at it, in the range on screen. */
+    if (t.hasAttribute && t.hasAttribute("data-led-invoice-place")) {
+      var placeName = t.getAttribute("data-led-invoice-place");
+      var wantInv = t.checked === true;
+      var rr = currentRange();
+      api({
+        action: "invoice_place",
+        name: placeName,
+        from: rr.from,
+        to: rr.to,
+        invoiced: wantInv,
+      }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) {
+          t.checked = !wantInv;
+          toast((r.body && r.body.error) || "לא הצלחתי לעדכן", "err");
+          return;
+        }
+        toast(wantInv ? "סומן ✓ " + r.body.changed + " אימונים" : "בוטל הסימון");
+        loadTable();
+      });
+      return;
+    }
+
+    /* His own tick: did this session get an invoice. Written the moment he ticks it. */
+    if (t.hasAttribute && t.hasAttribute("data-led-invoiced")) {
+      var wasChecked = t.checked === true;
+      api({
+        action: "update_deal",
+        id: t.getAttribute("data-led-invoiced"),
+        month: t.getAttribute("data-led-month") || LS.month,
+        invoiced: wasChecked,
+      }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) {
+          t.checked = !wasChecked;
+          toast((r.body && r.body.error) || "לא הצלחתי לעדכן", "err");
+          return;
+        }
+        /* The month on screen may be the one that changed — and the grouped view has
+           to follow, because one session unticked means the place is no longer
+           invoiced (owner, 2026-09-04). */
+        if (r.body.month === LS.month) {
+          LS.data = r.body;
+          render();
+        }
+        if (!LS.detail) loadTable();
+      });
+    }
+  });
+
+  window.LedgerScreen = {
+    open: open,
+    close: close,
+    /* The programme income arrived after this screen drew itself. */
+    refreshIncome: renderIncome,
+    /* The client screen asks before it hands the page back to the athlete side. */
+    isOpen: function () { return LS.open === true; },
+    reload: function () { return loadMonth(LS.month || L.monthKey()); },
+    state: function () { return { month: LS.month, day: LS.day, range: LS.range }; },
+  };
 })();
 </script>
 </body>

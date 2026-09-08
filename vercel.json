@@ -75,6 +75,10 @@
       "destination": "/api/admin?h=meta"
     },
     {
+      "source": "/api/admin-ledger",
+      "destination": "/api/admin?h=ledger"
+    },
+    {
       "source": "/api/admin-drive-sync",
       "destination": "/api/admin?h=drive-sync"
     }
