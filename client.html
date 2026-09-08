@@ -185,6 +185,7 @@ button.ghost:hover{color:var(--text)}
 .copy-menu .cm-ico{width:20px;text-align:center;font-size:14px;opacity:.7}
 .copy-menu .cm-from{display:block;font-size:11px;font-weight:600;opacity:.6;margin-top:1px}
 .copy-menu .cm-hint{font-size:12px;opacity:.6;padding:8px 10px}
+.copy-menu .cm-sep{height:1px;background:rgba(255,255,255,.12);margin:4px 6px}
 </style>
 </head>
 <body>
@@ -556,7 +557,7 @@ button.ghost:hover{color:var(--text)}
       /* The client sees the same block boundaries the owner does — a month is a month
          on both screens (owner, 2026-09-02). */
       blockGroups: ((state.program && state.program.blockGroups) || []).map(function (b) {
-        return { startWeek: b.startWeek, weekCount: b.weekCount };
+        return { startWeek: b.startWeek, weekCount: b.weekCount, name: b.name };
       }),
       israelTodayIso: israelIso(false),
       readOnly: true,
@@ -883,7 +884,16 @@ button.ghost:hover{color:var(--text)}
         var dayKey = cell.getAttribute("data-day") || "";
         if (!dayKey || dayKey === "general") return;
         ev.preventDefault();
-        openCopyMenu("day", parseInt(cell.getAttribute("data-wi"), 10) || 0, dayKey, ev.clientX, ev.clientY);
+        openDayCardMenu(parseInt(cell.getAttribute("data-wi"), 10) || 0, dayKey, ev.clientX, ev.clientY, null);
+        return;
+      }
+      /* Anywhere else on the open day card is still that day. */
+      var card = ev.target.closest(".pprog-day-card[data-wi][data-day]");
+      if (card && box.contains(card)) {
+        var cardDay = card.getAttribute("data-day") || "";
+        if (!cardDay || cardDay === "general") return;
+        ev.preventDefault();
+        openDayCardMenu(parseInt(card.getAttribute("data-wi"), 10) || 0, cardDay, ev.clientX, ev.clientY, null);
       }
     });
 
@@ -909,7 +919,11 @@ button.ghost:hover{color:var(--text)}
         var onPart = partRow && partCard && box.contains(partCard);
         var onCube = cube && box.contains(cube);
         var onCell = cell && box.contains(cell);
-        if (!onPart && !onCube && !onCell) return;
+        var openCardT = ev.target.closest(".pprog-day-card[data-wi][data-day]");
+        var onCard = openCardT && box.contains(openCardT) &&
+          String(openCardT.getAttribute("data-day") || "") &&
+          String(openCardT.getAttribute("data-day")) !== "general";
+        if (!onPart && !onCube && !onCell && !onCard) return;
         pressAt = { x: touch.clientX, y: touch.clientY };
         if (pressTimer) clearTimeout(pressTimer);
         pressTimer = setTimeout(function () {
@@ -925,10 +939,18 @@ button.ghost:hover{color:var(--text)}
             );
           } else if (onCube) {
             openCopyMenu("week", (parseInt(cube.getAttribute("data-week"), 10) || 1) - 1, "", pressAt.x, pressAt.y);
-          } else {
+          } else if (onCell) {
             var dayKey = cell.getAttribute("data-day") || "";
             if (!dayKey || dayKey === "general") return;
-            openCopyMenu("day", parseInt(cell.getAttribute("data-wi"), 10) || 0, dayKey, pressAt.x, pressAt.y);
+            openDayCardMenu(parseInt(cell.getAttribute("data-wi"), 10) || 0, dayKey, pressAt.x, pressAt.y, null);
+          } else if (onCard) {
+            openDayCardMenu(
+              parseInt(openCardT.getAttribute("data-wi"), 10) || 0,
+              openCardT.getAttribute("data-day") || "",
+              pressAt.x,
+              pressAt.y,
+              null
+            );
           }
         }, 500);
       },
@@ -1598,23 +1620,49 @@ button.ghost:hover{color:var(--text)}
    * the owner has (owner, 2026-09-05). It writes through the ordinary client edit, so
    * every guard already in place applies unchanged.
    */
-  function openPartMenu(wi, dayKey, partIndex, x, y) {
+  /**
+   * The menu for a day on this page: the day itself, and — when a part was clicked —
+   * that part's own two lines underneath.
+   *
+   * The same shape as the owner's, because our clients are coaches doing the same job:
+   * anywhere on the open day card is the day, and beside a part heading it is the day
+   * AND that part (owner, 2026-09-08).
+   *
+   * @param {number|null} partIndex the part clicked on, or null for "just the day"
+   */
+  function openDayCardMenu(wi, dayKey, x, y, partIndex) {
     var m = el("copyMenu");
     if (!m || !state.program) return;
-    var held = partClipRead();
-    var here = wi + ":" + esc(dayKey) + ":" + partIndex;
-    var name = partNameAt(wi, dayKey, partIndex);
+    var heldDay = copyClip && copyClip.kind === "day" ? copyClip : null;
+    var onPart = partIndex !== undefined && partIndex !== null && partIndex >= 0;
+    var heldPart = onPart ? partClipRead() : null;
+    var here = wi + ":" + esc(dayKey || "");
     m.innerHTML =
-      '<div class="cm-title">' + esc(name) + "</div>" +
-      '<button type="button" class="cm-item" data-copy-part="' + here + '">' +
-      '<span class="cm-ico" aria-hidden="true">\u29c9</span><span>Copy part</span></button>' +
-      (held
-        ? '<button type="button" class="cm-item cm-paste" data-paste-part="' + here + '">' +
-          '<span class="cm-ico" aria-hidden="true">\u2935</span><span>Paste part' +
-          '<span class="cm-from">' + esc(String(held.from && held.from.label) || "copied part") + "</span></span></button>"
-        : '<span class="cm-hint">No part copied yet</span>');
+      '<div class="cm-title">' + esc(dayName(dayKey) + " · week " + (wi + 1)) + "</div>" +
+      '<button type="button" class="cm-item" data-copy-day="' + here + '">' +
+      '<span class="cm-ico" aria-hidden="true">\u29c9</span><span>Copy day</span></button>' +
+      (heldDay
+        ? '<button type="button" class="cm-item cm-paste" data-paste-day="' + here + '">' +
+          '<span class="cm-ico" aria-hidden="true">\u2935</span><span>Paste day here' +
+          '<span class="cm-from">from ' + esc(dayName(heldDay.dayKey) + " · week " + (heldDay.wi + 1)) + "</span></span></button>"
+        : '<span class="cm-hint">No day copied yet</span>') +
+      (onPart
+        ? '<div class="cm-sep"></div>' +
+          '<div class="cm-title">' + esc(partNameAt(wi, dayKey, partIndex)) + "</div>" +
+          '<button type="button" class="cm-item" data-copy-part="' + here + ":" + partIndex + '">' +
+          '<span class="cm-ico" aria-hidden="true">\u29c9</span><span>Copy part</span></button>' +
+          (heldPart
+            ? '<button type="button" class="cm-item cm-paste" data-paste-part="' + here + ":" + partIndex + '">' +
+              '<span class="cm-ico" aria-hidden="true">\u2935</span><span>Paste part' +
+              '<span class="cm-from">' + esc(String((heldPart.from && heldPart.from.label) || "copied part")) + "</span></span></button>"
+            : '<span class="cm-hint">No part copied yet</span>')
+        : "");
     m.hidden = false;
     placeCopyMenu(m, x, y);
+  }
+
+  function openPartMenu(wi, dayKey, partIndex, x, y) {
+    openDayCardMenu(wi, dayKey, x, y, partIndex);
   }
 
   /* The clipboard is the shared one, so a part copied here survives a reload the same

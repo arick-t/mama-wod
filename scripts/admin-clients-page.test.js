@@ -173,6 +173,8 @@ const ACTIONS_ALLOWED = [
   "block_move",
   /* How many sessions a week, from a given week on — blank clients only. */
   "set_week_sessions",
+  /* A name for a month — "כוח בסיסי" — after its dates. */
+  "block_rename",
   "paste_block",
   /* The shelf: its list, one block off it, and taking one off for good. */
   "block_list",
@@ -728,7 +730,9 @@ ok("so is the block heading", calLib.indexOf('class="pprog-cal-block-title" data
 /* And a block says which block it is, so it can be copied, duplicated, moved or
    deleted from where it is drawn (owner, 2026-09-05). */
 ok("a block can be grabbed by its heading", calLib.indexOf('<div class="pprog-cal-block" data-block="') >= 0);
-ok("and the sessions label", /cols \+ " sessions a week"/.test(calLib));
+/* The label names the week he is LOOKING at, not the widest week in the plan — a
+   header that says 5 over a week of 4 is a header that lies (owner, 2026-09-08). */
+ok("and the sessions label", /weekSessionsAt\(activeWi\) \+ " sessions a week"/.test(calLib));
 ok("no Hebrew is left on the calendar bar", !/כל הלבנות|לבנה נוכחית|השבוע<|אימונים בשבוע/.test(calLib));
 ok("they are the same shape as Today", /\.pprog-cal-view\{appearance:none;background:transparent[^}]*min-height:34px\}/.test(page));
 /* Today is an ACTION, the views are a STATE. Both solid yellow made Today read as
@@ -1050,7 +1054,7 @@ ok("the week rail still opens its own", /var cube = ev\.target\.closest\("\[data
 ok("a general column is not a day", /if \(!dayKey \|\| dayKey === "general"\) return;/.test(screen));
 ok("the display's 0-based week becomes the number he sees", /\(parseInt\(cell\.getAttribute\("data-wi"\), 10\) \|\| 0\) \+ 1/.test(screen));
 ok("the menu offers to copy the day", /data-day-copy=/.test(screen));
-ok("and to paste it, only when one is on the clipboard", /var held = clipRead\("day"\);[\s\S]{0,400}data-day-paste=/.test(screen));
+ok("and to paste it, only when one is on the clipboard", /var held = clipRead\("day"\);[\s\S]{0,900}data-day-paste=/.test(screen));
 ok("a day travels to another client too", !/dayClip\.programId/.test(screen));
 ok("pasting warns before it overwrites", /מה שכתוב ביום הזה יידרס/.test(screen));
 ok("and goes through the ordinary save", /Clip\.pasteDay\(weeks, toWi - 1, toDay, dHeld\.payload\)/.test(screen));
@@ -1063,7 +1067,12 @@ ok("a part heading can be grabbed", /var partRow = ev\.target\.closest\("\[data-
 ok("and it is asked about before the day card it sits in", screen.indexOf('var partRow = ev.target.closest("[data-part]");') < screen.indexOf('var cube = ev.target.closest("[data-week]");'));
 ok("a long press opens it on a phone", /if \(onPart\) \{\s*\n\s*openPartMenu\(/.test(screen));
 ok("the menu offers to copy the part", /data-part-copy=/.test(screen));
-ok("and to plant one, only when one is on the clipboard", /var held = clipRead\("part"\);[\s\S]{0,900}data-part-paste=/.test(screen));
+/* One menu now: the day, and — when he clicked a part — that part underneath it
+   (owner, 2026-09-08). */
+ok("and to plant one, only when one is on the clipboard", /var heldPart = onPart \? clipRead\("part"\) : null;[\s\S]{0,1400}data-part-paste=/.test(screen));
+ok("the right button answers over the whole open day", /var openCard = ev\.target\.closest\("\.pprog-day-card\[data-wi\]\[data-day\]"\);/.test(screen));
+ok("and a long press does too", /} else if \(onCard\) \{/.test(screen));
+ok("a part is the extra, never a replacement for the day", screen.indexOf('data-day-copy="') < screen.indexOf('data-part-copy="'));
 /* Nothing is overwritten, so nothing is confirmed: it goes UNDER the last part. */
 ok("a pasted part is added, never written over", /החלק נשתל מתחת לחלק האחרון/.test(screen));
 ok("into the draft when that day is open for editing", /var onThisDay = !!\(S\.edit && \(S\.edit\.wi \| 0\) === weekNum - 1 && S\.edit\.day === dayKey\);/.test(screen));

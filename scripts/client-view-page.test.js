@@ -335,4 +335,13 @@ ok("and a day being edited is never swiped away", /if \(!t \|\| state\.edit\) \{
 ok("it steps into the next week at the end of one", /if \(wi \+ 1 > weekCount\(\) - 1\) return;/.test(html));
 ok("a programme sold as sessions swipes through its own columns", /function swipeDayKeys\(\)/.test(html));
 
+/* --- the same gestures as the owner's screen (owner, 2026-09-08) ---------- */
+
+ok("one menu for the day, with the part underneath it", /function openDayCardMenu\(wi, dayKey, x, y, partIndex\)/.test(html));
+ok("anywhere on the open card is that day", /var card = ev\.target\.closest\("\.pprog-day-card\[data-wi\]\[data-day\]"\);/.test(html));
+ok("and a long press does the same", /} else if \(onCard\) \{/.test(html));
+ok("the day is offered before the part", html.indexOf('data-copy-day="') < html.indexOf('data-copy-part="'));
+/* The name the coach gave the month reads on their screen too. */
+ok("the name of the month travels to their calendar", /name: b\.name/.test(html));
+
 console.log("All client view page checks passed.");

@@ -755,7 +755,7 @@ async function main() {
     const seen = await H.client(tok, { action: "read", programId: id });
     ok(kind.label + ": and then the client has the month", seen.body.program.weeks.length === 4);
     ok(kind.label + ": their calendar knows where the block divides",
-      JSON.stringify(seen.body.program.blockGroups) === '[{"startWeek":1,"weekCount":4}]');
+      JSON.stringify(seen.body.program.blockGroups) === '[{"startWeek":1,"weekCount":4,"name":""}]');
     ok(kind.label + ": their calendar knows its shape", seen.body.program.sessionColumns === kind.columns);
     ok(kind.label + ": the questionnaire never travels",
       seen.body.program.intake === undefined && seen.body.program.athleteIntake === undefined);

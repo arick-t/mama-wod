@@ -890,6 +890,8 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .pprog-day-card.is-drop-target{outline:2px dashed var(--part);outline-offset:3px}
 body.is-dragging-part-now{user-select:none}
 /* The one row in any menu that cannot be undone. */
+#clientScreen .week-menu .wm-sep,
+.week-menu .wm-sep{height:1px;background:rgba(255,255,255,.10);margin:4px 6px}
 #clientScreen .week-menu .wm-item.wm-danger,
 .week-menu .wm-item.wm-danger{color:#F2867A}
 #clientScreen .week-menu .wm-item.wm-danger:hover,
@@ -899,10 +901,14 @@ body.is-dragging-part-now{user-select:none}
 .pprog-cal-cell.is-off{visibility:hidden;pointer-events:none}
 /* What this client gets a week, beside the heading it belongs to. */
 .prog-sessions{font-size:12px;font-weight:700;color:var(--text-muted);display:inline-flex;
-  align-items:center;gap:4px;margin-inline-start:10px;white-space:nowrap}
-.prog-sessions-edit{appearance:none;background:none;border:none;color:var(--part);cursor:pointer;
-  padding:2px 4px;line-height:0;border-radius:6px}
-.prog-sessions-edit:hover{background:rgba(255,255,255,.08)}
+  align-items:center;gap:6px;margin-inline-start:10px;white-space:nowrap}
+/* Where he MAY change it, the line is the button: bordered, in the accent colour, with
+   the pencil inside it (owner, 2026-09-08). */
+button.prog-sessions.is-editable{appearance:none;font-family:inherit;cursor:pointer;
+  color:var(--part);border:1px solid var(--part);background:rgba(129,199,132,.10);
+  border-radius:999px;padding:4px 11px;font-size:12px;font-weight:800}
+button.prog-sessions.is-editable:hover{background:rgba(129,199,132,.20);color:#fff}
+.prog-sessions-pen{flex:0 0 auto;opacity:.9}
 .week-menu .wm-body{display:flex;gap:8px;align-items:center;padding:8px 10px}
 .week-menu .wm-body input{width:62px;height:32px;text-align:center;border-radius:8px;
   border:1px solid var(--line);background:var(--bg-elev);color:var(--text);font:inherit;font-weight:800}
@@ -911,7 +917,13 @@ body.is-dragging-part-now{user-select:none}
 .week-menu .wm-note{padding:0 10px 10px;font-size:11.5px;color:var(--text-muted);max-width:280px;line-height:1.5}
 .pprog-cal-block-title{cursor:context-menu}
 /* A block can be picked up by its heading and dropped between the others. */
-.pprog-cal-block[data-block] .pprog-cal-block-title{cursor:grab}
+.pprog-cal-block[data-block] .pprog-cal-block-title{cursor:grab;user-select:none}
+/* The name he gave the month, after its dates — and the pencil that asks for one. */
+.pprog-cal-block-name{color:var(--text);font-weight:800;margin-inline-start:8px}
+.pprog-cal-block-name:before{content:"· "}
+.pprog-block-rename{appearance:none;background:none;border:none;color:var(--text-meta);
+  cursor:pointer;padding:2px 5px;line-height:0;border-radius:6px;margin-inline-start:6px;vertical-align:middle}
+.pprog-block-rename:hover{background:rgba(255,255,255,.10);color:#fff}
 .pprog-cal-block.is-dragging-block{opacity:.65;outline:2px dashed var(--part);outline-offset:4px;border-radius:10px}
 .athlete-tab.is-dragging{opacity:.75;transform:scale(1.04);box-shadow:0 10px 24px rgba(0,0,0,.45);cursor:grabbing}
 .athlete-tab[data-drag="1"]{cursor:grab}
@@ -8019,6 +8031,17 @@ tryRestoreAdminSession();
         if (!dayKey || dayKey === "general") return;
         ev.preventDefault();
         openDayMenu((parseInt(cell.getAttribute("data-wi"), 10) || 0) + 1, dayKey, ev.clientX, ev.clientY);
+        return;
+      }
+      /* Anywhere else on the open day CARD is still that day: he asked for the right
+         button to answer over the whole card, not only over the square in the calendar
+         (owner, 2026-09-08). */
+      var openCard = ev.target.closest(".pprog-day-card[data-wi][data-day]");
+      if (openCard && host.contains(openCard)) {
+        var cardDay = openCard.getAttribute("data-day") || "";
+        if (!cardDay || cardDay === "general") return;
+        ev.preventDefault();
+        openDayMenu((parseInt(openCard.getAttribute("data-wi"), 10) || 0) + 1, cardDay, ev.clientX, ev.clientY);
       }
     });
     document.addEventListener("click", function (ev) {
@@ -8058,7 +8081,11 @@ tryRestoreAdminSession();
         var onPart = partRow && partCard && host.contains(partCard);
         var onCube = cube && host.contains(cube);
         var onCell = cell && host.contains(cell);
-        if (!onBlock && !onPart && !onCube && !onCell) return;
+        var openCardT = ev.target.closest(".pprog-day-card[data-wi][data-day]");
+        var onCard = openCardT && host.contains(openCardT) &&
+          String(openCardT.getAttribute("data-day") || "") &&
+          String(openCardT.getAttribute("data-day")) !== "general";
+        if (!onBlock && !onPart && !onCube && !onCell && !onCard) return;
         pressAt = { x: touch.clientX, y: touch.clientY };
         cancelPressTimerOnly();
         pressTimer = setTimeout(function () {
@@ -8076,10 +8103,17 @@ tryRestoreAdminSession();
             );
           } else if (onCube) {
             openWeekMenu(parseInt(cube.getAttribute("data-week"), 10) || 0, pressAt.x, pressAt.y);
-          } else {
+          } else if (onCell) {
             var dayKey = cell.getAttribute("data-day") || "";
             if (!dayKey || dayKey === "general") return;
             openDayMenu((parseInt(cell.getAttribute("data-wi"), 10) || 0) + 1, dayKey, pressAt.x, pressAt.y);
+          } else if (onCard) {
+            openDayMenu(
+              (parseInt(openCardT.getAttribute("data-wi"), 10) || 0) + 1,
+              openCardT.getAttribute("data-day") || "",
+              pressAt.x,
+              pressAt.y
+            );
           }
         }, 500);
       },
@@ -8210,8 +8244,10 @@ tryRestoreAdminSession();
       /* The real block boundaries, so the calendar can draw a month as a month rather
          than guessing fours (owner, 2026-09-02). */
       blockGroups: ((S.program && S.program.blocks) || []).map(function (b) {
-        return { startWeek: b.startWeek, weekCount: b.weekCount };
+        return { startWeek: b.startWeek, weekCount: b.weekCount, name: b.name };
       }),
+      /* Only his screen may name a month. */
+      allowBlockRename: true,
       israelTodayIso: israelTodayIso(),
       /* The owner writes the training. Nothing on this page talks to a provider. */
       readOnly: true,
@@ -9145,6 +9181,25 @@ tryRestoreAdminSession();
       });
       return;
     }
+    var bName = t.closest && t.closest("[data-block-rename]");
+    if (bName) {
+      var bnIdx = parseInt(bName.getAttribute("data-block-rename"), 10) || 0;
+      var current = "";
+      var blocksNow2 = (S.program && S.program.blocks) || [];
+      for (var bi2 = 0; bi2 < blocksNow2.length; bi2++) {
+        if ((parseInt(blocksNow2[bi2].blockIndex, 10) || 0) === bnIdx) current = blocksNow2[bi2].name || "";
+      }
+      var given = window.prompt("שם ללבנה " + bnIdx + " (ריק כדי להסיר):", current);
+      if (given === null) return;
+      api({
+        action: "block_rename",
+        programId: S.program.programId,
+        expectedVersion: S.program.version,
+        blockIndex: bnIdx,
+        name: given,
+      }).then(afterBlockChange(String(given).trim() ? "הלבנה נקראת עכשיו " + String(given).trim() + "." : "השם הוסר."));
+      return;
+    }
     var bCopy = t.closest && t.closest("[data-block-copy]");
     if (bCopy) {
       var bcIdx = parseInt(bCopy.getAttribute("data-block-copy"), 10) || 0;
@@ -9439,20 +9494,44 @@ tryRestoreAdminSession();
    * focus line, which is where "Rest" is written — so a rest day copied onto a training
    * day makes it a rest day (owner, 2026-09-04).
    */
-  function openDayMenu(wi, dayKey, x, y) {
+  /**
+   * The menu for a day: copy it, paste one onto it — and, when he clicked on a PART of
+   * it, that part's own two lines underneath.
+   *
+   * Anywhere on an open day card is the day. Beside a part heading it is the day AND
+   * that part: the smaller thing is the extra, never a replacement for the bigger one
+   * (owner, 2026-09-08).
+   *
+   * @param {number} wi the week the owner sees, 1-based
+   * @param {number|null} partIndex the part he clicked on, or null for "just the day"
+   */
+  function openDayMenu(wi, dayKey, x, y, partIndex) {
     var m = el("weekMenu");
     if (!m) return;
     var held = clipRead("day");
     var here = wi + ":" + dayKey;
+    var onPart = partIndex !== undefined && partIndex !== null && partIndex >= 0;
+    var heldPart = onPart ? clipRead("part") : null;
     m.innerHTML =
       '<div class="wm-title">' + dayMenuLabel(wi, dayKey) + "</div>" +
       '<button type="button" class="wm-item" data-day-copy="' + here + '">' +
       '<span class="wm-ico" aria-hidden="true">⧉</span><span>העתק יום</span></button>' +
       (held
         ? '<button type="button" class="wm-item wm-paste" data-day-paste="' + here + '">' +
-          '<span class="wm-ico" aria-hidden="true">⤵</span><span>הדבק כאן' +
+          '<span class="wm-ico" aria-hidden="true">⤵</span><span>הדבק יום כאן' +
           '<span class="wm-from">' + esc(Clip.describe(held)) + "</span></span></button>"
-        : '<span class="wm-hint">אין יום מועתק</span>');
+        : '<span class="wm-hint">אין יום מועתק</span>') +
+      (onPart
+        ? '<div class="wm-sep"></div>' +
+          '<div class="wm-title">' + esc(partNameAt(wi - 1, dayKey, partIndex)) + "</div>" +
+          '<button type="button" class="wm-item" data-part-copy="' + here + ":" + partIndex + '">' +
+          '<span class="wm-ico" aria-hidden="true">⧉</span><span>העתק חלק</span></button>' +
+          (heldPart
+            ? '<button type="button" class="wm-item wm-paste" data-part-paste="' + here + ":" + partIndex + '">' +
+              '<span class="wm-ico" aria-hidden="true">⤵</span><span>הדבק חלק' +
+              '<span class="wm-from">' + esc(Clip.describe(heldPart)) + "</span></span></button>"
+            : '<span class="wm-hint">אין חלק מועתק</span>')
+        : "");
     m.hidden = false;
     placeMenuAt(m, x, y);
   }
@@ -9466,22 +9545,7 @@ tryRestoreAdminSession();
    * client. Nothing is overwritten — it is added (owner, 2026-09-05).
    */
   function openPartMenu(wi, dayKey, partIndex, x, y) {
-    var m = el("weekMenu");
-    if (!m) return;
-    var held = clipRead("part");
-    var here = wi + ":" + dayKey + ":" + partIndex;
-    var name = partNameAt(wi - 1, dayKey, partIndex);
-    m.innerHTML =
-      '<div class="wm-title">' + esc(name) + "</div>" +
-      '<button type="button" class="wm-item" data-part-copy="' + here + '">' +
-      '<span class="wm-ico" aria-hidden="true">⧉</span><span>העתק חלק</span></button>' +
-      (held
-        ? '<button type="button" class="wm-item wm-paste" data-part-paste="' + here + '">' +
-          '<span class="wm-ico" aria-hidden="true">⤵</span><span>הדבק חלק' +
-          '<span class="wm-from">' + esc(Clip.describe(held)) + "</span></span></button>"
-        : '<span class="wm-hint">אין חלק מועתק</span>');
-    m.hidden = false;
-    placeMenuAt(m, x, y);
+    openDayMenu(wi, dayKey, x, y, partIndex);
   }
 
   /** What this part is called, for the top line of the menu. */
@@ -9615,13 +9679,22 @@ tryRestoreAdminSession();
      ══════════════════════════════════════════════════════════════════════ */
 
   function bindBlockDrag() {
-    var host = el("adminDays");
-    if (!host || host.dataset.blockDragBound === "1") return;
-    host.dataset.blockDragBound = "1";
+    /* Bound to the DOCUMENT, once.
+       The calendar's host div is written by renderDetail into a string of HTML, so at
+       the moment this module is read it does not exist yet — the listeners went nowhere
+       and dragging a block did nothing but select its heading (owner, 2026-09-08). The
+       page outlives every redraw; the host does not. */
+    if (window._adminBlockDragBound) return;
+    window._adminBlockDragBound = true;
     var held = null;
 
+    function hostNow() {
+      return el("adminDays");
+    }
+
     function blocksNow() {
-      return Array.prototype.slice.call(host.querySelectorAll(".pprog-cal-block[data-block]"));
+      var host = hostNow();
+      return host ? Array.prototype.slice.call(host.querySelectorAll(".pprog-cal-block[data-block]")) : [];
     }
 
     function stop() {
@@ -9631,13 +9704,17 @@ tryRestoreAdminSession();
       held = null;
     }
 
-    host.addEventListener("pointerdown", function (ev) {
+    document.addEventListener("pointerdown", function (ev) {
       if (ev.pointerType === "touch") return;
       if (ev.button !== undefined && ev.button !== 0) return;
+      var host = hostNow();
+      if (!host) return;
       var head = ev.target && ev.target.closest ? ev.target.closest("[data-block-title]") : null;
       if (!head) return;
       var box = head.closest(".pprog-cal-block[data-block]");
       if (!box || !host.contains(box)) return;
+      /* Or the browser starts selecting the heading instead of moving the block. */
+      ev.preventDefault();
       held = {
         el: box,
         from: parseInt(box.getAttribute("data-block"), 10) || 0,
@@ -9646,7 +9723,7 @@ tryRestoreAdminSession();
       };
     });
 
-    host.addEventListener("pointermove", function (ev) {
+    document.addEventListener("pointermove", function (ev) {
       if (!held) return;
       if (!held.dragging) {
         if (Math.abs(ev.clientY - held.y) < 6) return;
@@ -9669,7 +9746,7 @@ tryRestoreAdminSession();
       }
     });
 
-    host.addEventListener("pointerup", function () {
+    document.addEventListener("pointerup", function () {
       if (!held) return;
       var was = held;
       var order = blocksNow().map(function (b) {
@@ -9699,7 +9776,7 @@ tryRestoreAdminSession();
       });
     });
 
-    host.addEventListener("pointercancel", function () {
+    document.addEventListener("pointercancel", function () {
       var was = held;
       stop();
       if (was && was.dragging) renderAdminDays();
@@ -9726,17 +9803,23 @@ tryRestoreAdminSession();
      ══════════════════════════════════════════════════════════════════════ */
 
   function bindPartDrag() {
-    var host = el("adminDays");
-    if (!host || host.dataset.partDragBound === "1") return;
-    host.dataset.partDragBound = "1";
+    /* Bound to the DOCUMENT, once — see bindBlockDrag: the calendar's host does not
+       exist yet when this module is read (owner, 2026-09-08). */
+    if (window._adminPartDragBound) return;
+    window._adminPartDragBound = true;
     var held = null;
+
+    function hostNow() {
+      return el("adminDays");
+    }
 
     function cardOf(node) {
       return node && node.closest ? node.closest(".pprog-day-card[data-wi][data-day]") : null;
     }
 
     function clearTargets() {
-      var lit = host.querySelectorAll(".pprog-day-card.is-drop-target");
+      var host = hostNow();
+      var lit = host ? host.querySelectorAll(".pprog-day-card.is-drop-target") : [];
       for (var i = 0; i < lit.length; i++) lit[i].classList.remove("is-drop-target");
     }
 
@@ -9747,11 +9830,13 @@ tryRestoreAdminSession();
       held = null;
     }
 
-    host.addEventListener("pointerdown", function (ev) {
+    document.addEventListener("pointerdown", function (ev) {
       if (ev.pointerType === "touch") return;
       if (ev.button !== undefined && ev.button !== 0) return;
+      var host = hostNow();
+      if (!host) return;
       var row = ev.target && ev.target.closest ? ev.target.closest("[data-part]") : null;
-      if (!row) return;
+      if (!row || !host.contains(row)) return;
       var card = cardOf(row);
       /* Only out of the day he is editing: that is the one whose parts are his to move
          right now, and it is where the gesture reads as picking something up. */
@@ -9770,7 +9855,7 @@ tryRestoreAdminSession();
       };
     });
 
-    host.addEventListener("pointermove", function (ev) {
+    document.addEventListener("pointermove", function (ev) {
       if (!held) return;
       if (!held.dragging) {
         if (Math.abs(ev.clientX - held.x) < 6 && Math.abs(ev.clientY - held.y) < 6) return;
@@ -9784,7 +9869,7 @@ tryRestoreAdminSession();
       if (over && over !== held.card) over.classList.add("is-drop-target");
     });
 
-    host.addEventListener("pointerup", function (ev) {
+    document.addEventListener("pointerup", function (ev) {
       if (!held) return;
       var was = held;
       var over = was.dragging ? cardOf(document.elementFromPoint(ev.clientX, ev.clientY)) : null;
@@ -9798,7 +9883,7 @@ tryRestoreAdminSession();
       pastePartHere(toWi + 1, toDay, part);
     });
 
-    host.addEventListener("pointercancel", stop);
+    document.addEventListener("pointercancel", stop);
     document.addEventListener("keydown", function (ev) {
       if (ev.key === "Escape" && held) stop();
     });
@@ -9878,17 +9963,19 @@ tryRestoreAdminSession();
     var n = sessionsNow(p);
     var words = n === 7 ? "7 ימי אימון שבועיים" : n + " אימונים שבועיים";
     var canEdit = !!(p && p.clientKind === "blank");
+    /* The whole thing is the button where he may change it: he looked for the pencil,
+       did not find it, and a 14px grey mark beside Hebrew text is not something anybody
+       finds (owner, 2026-09-08). Where he may not change it, it is plain text. */
+    if (!canEdit) {
+      return '<span class="prog-sessions" title="כמות האימונים בשבוע">' + esc(words) + "</span>";
+    }
     return (
-      '<span class="prog-sessions" title="' +
-      (canEdit ? "שינוי כמות האימונים מהשבוע הזה והלאה" : "כמות האימונים בשבוע") +
-      '">' +
+      '<button type="button" class="prog-sessions is-editable" data-sessions-edit="1"' +
+      ' title="שינוי כמות האימונים מהשבוע הזה והלאה">' +
       esc(words) +
-      (canEdit
-        ? ' <button type="button" class="prog-sessions-edit" data-sessions-edit="1" aria-label="שנה כמות אימונים">' +
-          '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-          '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>'
-        : "") +
-      "</span>"
+      '<svg class="prog-sessions-pen" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>' +
+      "</button>"
     );
   }
 
@@ -11096,7 +11183,12 @@ tryRestoreAdminSession();
           if (err) { showHdrToast(err, "err"); return; }
           if (!window.PprogClipboard || !pageClipStore) return;
           pageClipStore.write(
-            window.PprogClipboard.entryFor("block", { weeks: block.weeks, intake: block.intake }, {
+            window.PprogClipboard.entryFor("block", {
+              weeks: block.weeks,
+              intake: block.intake,
+              /* Planting it names the month what the shelf calls it. */
+              name: (row && row.name) || block.name || "",
+            }, {
               label: (row && row.name) || "לבנה מהמחסן",
               clientName: "מחסן הלבנות",
             })

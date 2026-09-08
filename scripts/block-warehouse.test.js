@@ -236,6 +236,35 @@ async function main() {
     ok(shelfOnly + " needs no client at all", api.indexOf('action === "' + shelfOnly + '"') < idLine);
   }
 
+  /* --- a name for a month (owner, 2026-09-08) ----------------------------- */
+
+  let named = (await store.createProgram({
+    clientName: "שם ללבנה",
+    clientKind: "blank",
+    weekCount: 2,
+    intake: { clientName: "שם ללבנה" },
+    blockStart: "2026-09-06",
+  })).program;
+  const gotName = await store.renameBlock(named.programId, named.version, 1, "כוח בסיסי");
+  ok("a block can be named", gotName.ok && gotName.program.blocks[0].name === "כוח בסיסי");
+  named = gotName.program;
+  /* The name has to survive every rearrangement, because newBlock is what rebuilds a
+     block record — and duplicating, moving and deleting all go through it. */
+  const dupNamed = await store.duplicateBlock(named.programId, named.version, 1);
+  ok("and it survives being duplicated", dupNamed.ok && dupNamed.program.blocks[1].name === "כוח בסיסי");
+  const cleared = await store.renameBlock(dupNamed.program.programId, dupNamed.program.version, 1, "   ");
+  ok("an empty name takes it off again", cleared.ok && cleared.program.blocks[0].name === "");
+  ok("the endpoint has a door for it", api.indexOf('action === "block_rename"') >= 0);
+  ok("and it is a client-scoped action, so it sits below the id",
+    api.indexOf('action === "block_rename"') > api.indexOf('const programId = String(body.programId || "").slice(0, 60);'));
+
+  const adminSrc = fs.readFileSync(path.join(__dirname, "..", "admin.html"), "utf8");
+  ok("only his screen offers the pencil", /allowBlockRename: true/.test(adminSrc));
+  ok("which asks for a name", adminSrc.indexOf("שם ללבנה ") >= 0);
+  const lib = fs.readFileSync(path.join(__dirname, "..", "lib", "pprog-display.js"), "utf8");
+  ok("the calendar draws the name after the dates", lib.indexOf('pprog-cal-block-name') >= 0);
+  ok("and the pencil only where the page can save one", /opts\.allowBlockRename === true/.test(lib));
+
   console.log("\nAll block warehouse checks passed (" + passed + " assertions).");
 }
 

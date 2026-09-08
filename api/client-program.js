@@ -143,6 +143,16 @@ function clientTokenFrom(req, body) {
  * Owner
  * ------------------------------------------------------------------------- */
 
+/** The name he gave a block, if he gave it one. */
+function blockNameOf(program, blockIndex1) {
+  const blocks = Array.isArray(program && program.blocks) ? program.blocks : [];
+  const want = parseInt(blockIndex1, 10);
+  for (const b of blocks) {
+    if ((parseInt(b && b.blockIndex, 10) || 0) === want) return String((b && b.name) || "");
+  }
+  return "";
+}
+
 /** The answers a given block was built from, falling back to the programme's own. */
 function blockIntakeOf(program, blockIndex1) {
   const blocks = Array.isArray(program && program.blocks) ? program.blocks : [];
@@ -490,6 +500,7 @@ async function ownerHandler(req, res, body) {
       weeks: Clipboard.blockPayload(weeks).weeks,
       sourceName: read.program.clientName,
     });
+    /* The shelf's name becomes the month's name wherever it is planted. */
     if (!saved.ok) return bad(res, 400, saved.code, saved.error);
     return res.status(200).json({ ok: true, row: saved.row });
   }
@@ -505,6 +516,9 @@ async function ownerHandler(req, res, body) {
         weeks: Clipboard.blockPayload(weeks).weeks,
         intake: blockIntakeOf(read.program, body.blockIndex),
         sourceName: read.program.clientName,
+        /* The name he gave the month travels with it, at the shelf and across
+           clients (owner, 2026-09-08). */
+        name: blockNameOf(read.program, body.blockIndex),
       },
     });
   }
@@ -557,6 +571,21 @@ async function ownerHandler(req, res, body) {
      BLANK CLIENTS ONLY, on the owner's instruction: a studio's and an individual's
      programmes are written by the coach's brain, and adding an empty session to one of
      those is a question for the brain, not for the calendar (owner, 2026-09-05). */
+  /* A name for a month: "Block 1 · Sep 6 – Oct 3 2026 · כוח בסיסי". */
+  if (action === "block_rename") {
+    const done = await store.renameBlock(
+      programId,
+      Number(body.expectedVersion),
+      body.blockIndex,
+      body.name
+    );
+    if (!done.ok) {
+      const status = done.code === "VERSION_CONFLICT" ? 409 : done.code === "NOT_FOUND" ? 404 : 400;
+      return res.status(status).json(Object.assign({ ok: false }, done));
+    }
+    return res.status(200).json({ ok: true, program: done.program, name: done.name });
+  }
+
   if (action === "set_week_sessions") {
     const read = await store.readProgram(programId);
     if (!read.ok) return bad(res, 404, read.code, read.error);

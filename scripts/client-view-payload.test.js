@@ -284,7 +284,15 @@ const wildOut = P.programForClient(
 );
 ok("a number the week cannot hold is refused", wildOut.sessionColumns === 0);
 /* Where the months divide, from APPROVED blocks only. */
-ok("the client is told where the blocks divide", JSON.stringify(sessionsOut.blockGroups) === '[{"startWeek":1,"weekCount":4}]');
+ok("the client is told where the blocks divide", JSON.stringify(sessionsOut.blockGroups) === '[{"startWeek":1,"weekCount":4,"name":""}]');
+/* And what the coach calls that month, so both screens name it the same
+   (owner, 2026-09-08). */
+const namedBlock = P.programForClient({
+  weeks: [{ weekIndex: 1, days: {} }],
+  approvedThroughWeek: 1,
+  blocks: [{ blockIndex: 1, startWeek: 1, weekCount: 1, approvedAt: "2026-09-01T00:00:00Z", name: "כוח בסיסי" }],
+});
+ok("the name of the month travels with it", namedBlock.blockGroups[0].name === "כוח בסיסי");
 
 
 /* --- a day can be given a name (owner, 2026-09-05) ------------------------
