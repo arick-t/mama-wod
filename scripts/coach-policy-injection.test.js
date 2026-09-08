@@ -437,6 +437,18 @@ function testBrickFlags() {
       ).join(" ")
     ));
 
+  /* A ROOM is exempt, and this was my bug: the box brick was told not to write percentages and
+     then flagged for writing them. Fifteen people from one month to ten years of training age
+     share no maximum — %1RM is exactly how you write load for a class, each member taking the
+     percentage of THEIR own number. Found 2026-09-08 on the box's first brick. */
+  ok("a studio is exempt from the percentage check",
+    brickFlags(
+      { weeks: [{ weekIndex: 1, days: { mon: { parts: [{ title: "A", lines: ["3 squats @ 80% 1RM"] }] } } }] },
+      { lifts: {} },
+      { agent: "studio" }
+    ).length === 0);
+  ok("the coach does not tell a room to avoid percentages either",
+    /if \(agent === "studio"\) return "";/.test(fs.readFileSync(PC_PATH, "utf8")));
   ok("percentages with no reported lift are flagged",
     /reported no 1RM/.test(
       brickFlags(
@@ -474,7 +486,7 @@ function testLoadBasisWhenNoLiftsReported() {
   const flat = src.replace(/\s+/g, " ");
   ok("the coach counts the reported lifts",
     /function reportedLiftCount\(profile\)/.test(src) &&
-      /function loadBasisText\(profile\)/.test(src));
+      /function loadBasisText\(profile, agent\)/.test(src));
   ok("with no lifts reported, percentages are forbidden outright",
     /NO 1RM WAS REPORTED FOR ANY LIFT, so a percentage has nothing to be a percentage of/.test(
       flat
@@ -486,7 +498,7 @@ function testLoadBasisWhenNoLiftsReported() {
     /That is a full prescription an/.test(flat) &&
       /compromise: it is how a lift is loaded before anyone has tested it/.test(flat));
   ok("the fact reaches the programming prompt",
-    /loadBasisText\(profile\) \+/.test(src));
+    /loadBasisText\(profile, coachAgentFor\(profile, o\)\) \+/.test(src));
   ok("an athlete who DID report a lift gets no such line",
     /if \(n > 0\) return "";/.test(src));
 }

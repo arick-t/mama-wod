@@ -1282,7 +1282,12 @@ function reportedLiftCount(profile) {
   return n;
 }
 
-function loadBasisText(profile) {
+function loadBasisText(profile, agent) {
+  /* A ROOM has no reported lifts and never will — fifteen people from one month to ten years of
+     training age share no maximum. Percentages are exactly how you write load for them: each
+     member takes the percentage of THEIR own number. Found 2026-09-08, when the box brick was
+     told not to write percentages and the flag fired on a correct prescription. */
+  if (agent === "studio") return "";
   const n = reportedLiftCount(profile);
   if (n > 0) return "";
   return (
@@ -1381,7 +1386,7 @@ function buildSystemWithMemory(profile, action, opts) {
       coachPolicyBlock() +
       buildLayerKnowledgeBlock(profile, opts) +
       oneRmTestGateText(opts && opts.blockStartWeek, profile, opts) +
-      loadBasisText(profile) +
+      loadBasisText(profile, coachAgentFor(profile, o)) +
       buildCostCapsRuntimeNote(profile) +
       buildFinishLearningBlock(profile, action) +
       buildExtraSessionsBlock(profile) +
@@ -3038,7 +3043,9 @@ async function coachHandler(req, res) {
     try {
       const checked = block || (week ? { weeks: [week] } : null);
       if (checked) {
-        const f = brickFlags(checked, athleteProfile);
+        const f = brickFlags(checked, athleteProfile, {
+          agent: body && body.studioIntake ? "studio" : "individual",
+        });
         if (f && f.length) out.brickFlags = f;
       }
     } catch (eFlags) {}
