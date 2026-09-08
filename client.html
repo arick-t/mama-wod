@@ -614,6 +614,7 @@ button.ghost:hover{color:var(--text)}
         editSetColour: "cvEditSetColour",
         editSetNumbering: "cvEditSetNumbering",
         editSetNumber: "cvEditSetNumber",
+        editRemovePart: "cvEditRemovePart",
         editCancel: "cvEditCancel",
         editSave: "cvEditSave",
         share: "cvShareDay",
@@ -1367,6 +1368,32 @@ button.ghost:hover{color:var(--text)}
     if (el.value !== clean) el.value = clean;
     if (!Array.isArray(part.nums)) part.nums = [];
     part.nums[lineIndex | 0] = clean === "" ? "" : parseInt(clean, 10);
+  };
+
+  /**
+   * Take a whole part out of the day being written.
+   *
+   * It asks first when there is something in it — this is the one control here that
+   * removes work rather than adding it (owner, 2026-09-08). A day is never left with no
+   * box at all: the last part removed leaves the empty one the editor opens with, so
+   * there is somewhere to type.
+   */
+  window.cvEditRemovePart = function (partIndex) {
+    if (!S.edit || !Array.isArray(state.edit.parts)) return;
+    var i = partIndex | 0;
+    var part = state.edit.parts[i];
+    if (!part) return;
+    var hasSomething = !!(
+      (part.notes || []).join("").trim() ||
+      String(part.format || "").trim() ||
+      (part.work || []).join("").trim()
+    );
+    if (hasSomething && !window.confirm("Remove this part from the day? What is written in it will be deleted.")) return;
+    state.edit.parts.splice(i, 1);
+    if (!state.edit.parts.length) {
+      state.edit.parts = [{ title: "Part A", notes: [""], format: "", work: [""] }];
+    }
+    renderDays();
   };
 
   window.cvEditSetNumbering = function (partIndex, on) {

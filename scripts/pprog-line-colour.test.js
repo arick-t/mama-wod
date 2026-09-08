@@ -262,4 +262,26 @@ ok("the admin can save a name alone", admin.indexOf("opts.titleOnly === true") >
 ok("and the autosave asks it to", /saveDay\(wi, dayKey, parts, false, \{ quiet: true, title: title, titleOnly: true \}\)/.test(admin));
 ok("no session is invented to hold the name", admin.indexOf("} else if (parts && parts.length) {") >= 0);
 
+/* --- a whole part can be removed, and the toggle is a pill (owner, 2026-09-08) --- */
+
+ok("the part row carries an × of its own", /class="pprog-edit-del-line pprog-del-part"/.test(editor));
+ok("in the same shape as every other × here", editor.indexOf('pprog-edit-del-line pprog-del-part') >= 0 && editor.indexOf(">×</button>") >= 0);
+ok("and it says what it removes", editor.indexOf("מחק את החלק כולו") >= 0);
+ok("the numbering toggle is drawn as a pill", /class="pprog-num-pill"/.test(editor));
+ok("with the circled number inside it", /class="pprog-num-mark" aria-hidden="true">1</.test(editor));
+ok("over a real checkbox", /<input type="checkbox"[^>]*onchange="[A-Za-z]*SetNumbering/.test(editor));
+ok("that is hidden rather than removed", /\.pprog-num-toggle input\{position:absolute;opacity:0/.test(css));
+ok("and lights the pill when it is on", /input:checked \+ \.pprog-num-pill\{/.test(css));
+
+const adminSrc = require("fs").readFileSync(require("path").join(__dirname, "..", "admin.html"), "utf8");
+const clientSrc = require("fs").readFileSync(require("path").join(__dirname, "..", "client.html"), "utf8");
+for (const [label, src] of [["the admin", adminSrc], ["the client page", clientSrc]]) {
+  ok(label + " can remove a part", src.indexOf("window.cvEditRemovePart = function") >= 0);
+  ok(label + " wires the ×", src.indexOf('editRemovePart: "cvEditRemovePart"') >= 0);
+  /* The one control here that takes work away rather than adding it. */
+  ok(label + " asks before removing something written", /hasSomething && !window\.confirm/.test(src));
+  ok(label + " never leaves the day with nowhere to type", /parts = \[\{ title: "Part A", notes: \[""\], format: "", work: \[""\] \}\]/.test(src));
+}
+ok("the older admin editor has one too", adminSrc.indexOf("function adminPprogEditRemovePart(") >= 0);
+
 console.log("\nAll line-colour and numbering checks passed (" + passed + " assertions).");

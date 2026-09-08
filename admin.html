@@ -984,12 +984,31 @@ button.prog-sessions.is-editable:hover{background:rgba(129,199,132,.20);color:#f
   content:"";position:absolute;inset-inline-start:2px;top:8px;width:14px;height:1.5px;
   background:var(--text-meta);transform:rotate(-45deg)
 }
-/* "Add numbering" — beside the part heading, quiet until it is ticked. */
-.pprog-num-toggle{
-  display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;
-  color:var(--text-meta);cursor:pointer;user-select:none;flex-shrink:0;white-space:nowrap
+/* "Add numbering" — a pill beside the part heading, quiet until it is ticked, and the
+   circled 1 inside it shows what it is about (owner, 2026-09-08). The checkbox itself is
+   a real one, hidden behind the pill, so a keyboard and a screen reader still work. */
+.pprog-num-toggle{display:inline-flex;align-items:center;flex-shrink:0;cursor:pointer;user-select:none}
+.pprog-num-toggle input{position:absolute;opacity:0;width:1px;height:1px;margin:0;pointer-events:none}
+.pprog-num-pill{
+  display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
+  font-size:11.5px;font-weight:800;letter-spacing:.2px;color:var(--text-meta);
+  border:1px solid var(--line);border-radius:999px;padding:4px 11px 4px 5px;
+  background:transparent;transition:background .15s ease,border-color .15s ease,color .15s ease
 }
-.pprog-num-toggle input{width:14px;height:14px;accent-color:var(--part);cursor:pointer;margin:0}
+.pprog-num-mark{
+  display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;
+  border-radius:50%;border:1.5px solid currentColor;font-size:10.5px;font-weight:900;
+  line-height:1;flex:0 0 auto;opacity:.75
+}
+.pprog-num-toggle:hover .pprog-num-pill{border-color:var(--text-meta);color:var(--text)}
+.pprog-num-toggle input:checked + .pprog-num-pill{
+  color:var(--part);border-color:var(--part);background:rgba(129,199,132,.14)
+}
+.pprog-num-toggle input:checked + .pprog-num-pill .pprog-num-mark{opacity:1}
+.pprog-num-toggle input:focus-visible + .pprog-num-pill{box-shadow:0 0 0 2px rgba(255,255,255,.25)}
+/* The × that removes a whole part sits at the end of the same row. */
+.pprog-day-card .section-title-row .pprog-del-part{margin-inline-start:2px;font-size:17px}
+.pprog-day-card .section-title-row .pprog-del-part:hover{color:#F2867A}
 .pprog-day-card .section-title-row{display:flex;align-items:center;gap:10px}
 .pprog-day-card .section-title-row .pprog-edit-title{flex:1;min-width:0}
 .pprog-edit-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
@@ -5125,6 +5144,19 @@ function adminPprogEditRemoveWork(partIndex, lineIndex) {
   adminPprogEditRerenderCard();
 }
 
+/** The same × on the admin's own editor, so the control is never a dead one. */
+function adminPprogEditRemovePart(partIndex) {
+  if (!adminDayEdit || !Array.isArray(adminDayEdit.parts)) return;
+  var i = partIndex | 0;
+  if (!adminDayEdit.parts[i]) return;
+  if (!window.confirm("למחוק את החלק הזה מהיום?")) return;
+  adminDayEdit.parts.splice(i, 1);
+  if (!adminDayEdit.parts.length) {
+    adminDayEdit.parts = [{ title: "Part A", notes: [""], format: "", work: [""] }];
+  }
+  adminPprogEditRerenderCard();
+}
+
 function adminPprogEditAddPart() {
   if (!adminDayEdit) return;
   if (adminDayEdit.rest) return;
@@ -8297,6 +8329,7 @@ tryRestoreAdminSession();
         editSetColour: "cvEditSetColour",
         editSetNumbering: "cvEditSetNumbering",
         editSetNumber: "cvEditSetNumber",
+        editRemovePart: "cvEditRemovePart",
         editCancel: "cvEditCancel",
         editSave: "cvEditSave",
       },
@@ -8748,6 +8781,32 @@ tryRestoreAdminSession();
     if (el.value !== clean) el.value = clean;
     if (!Array.isArray(part.nums)) part.nums = [];
     part.nums[lineIndex | 0] = clean === "" ? "" : parseInt(clean, 10);
+  };
+
+  /**
+   * Take a whole part out of the day being written.
+   *
+   * It asks first when there is something in it — this is the one control here that
+   * removes work rather than adding it (owner, 2026-09-08). A day is never left with no
+   * box at all: the last part removed leaves the empty one the editor opens with, so
+   * there is somewhere to type.
+   */
+  window.cvEditRemovePart = function (partIndex) {
+    if (!S.edit || !Array.isArray(S.edit.parts)) return;
+    var i = partIndex | 0;
+    var part = S.edit.parts[i];
+    if (!part) return;
+    var hasSomething = !!(
+      (part.notes || []).join("").trim() ||
+      String(part.format || "").trim() ||
+      (part.work || []).join("").trim()
+    );
+    if (hasSomething && !window.confirm("למחוק את החלק הזה מהיום? מה שכתוב בו יימחק.")) return;
+    S.edit.parts.splice(i, 1);
+    if (!S.edit.parts.length) {
+      S.edit.parts = [{ title: "Part A", notes: [""], format: "", work: [""] }];
+    }
+    renderAdminDays();
   };
 
   window.cvEditSetNumbering = function (partIndex, on) {
