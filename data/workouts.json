@@ -2740,51 +2740,6 @@
     "2026-09-09": [
       {
         "date": "2026-09-09",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-09-09/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "crab stretch",
-              "instep rotation",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 scap. push ups",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:00 x 2 rounds"
-          },
-          {
-            "title": "BENCH PRESSES 14MIN",
-            "lines": [
-              "4 Sets",
-              "3  (paused) bench presses  @77-82%",
-              "strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 18MIN",
-            "lines": [
-              "8/6 ring dips",
-              "10 hand release push ups",
-              "max cal bike/ski",
-              "* score: total cals",
-              "* muscular endurance & aerobic power"
-            ],
-            "sub_title": "amrap 3:00 x 6"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-09",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260909",
@@ -2848,6 +2803,90 @@
               "5:00 of time under tension to finish",
               "the job."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-09",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 12.2",
+            "lines": [
+              "Complete as many rounds and reps as possible in 18 minutes of:",
+              "15 Box jumps, 24\" box",
+              "115 pound Push press, 12 reps",
+              "9 Toes-to-bar",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 18 minutes of:",
+              "15 Box jumps, 20\" box",
+              "75 pound Push press, 12 reps",
+              "9 Toes-to-bar",
+              "*MASTERS MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 18 minutes of:",
+              "15 Box jumps or step-ups, 20\" box",
+              "95 pound Push press, 12 reps",
+              "9 Toes-to-bar",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 18 minutes of:",
+              "15 Box jumps or step-ups, 20\" box",
+              "55 pound Push press, 12 reps",
+              "9 Toes-to-bar"
+            ]
+          }
+        ],
+        "note": "Open: Open 12.2"
+      },
+      {
+        "date": "2026-09-09",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-09-09/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "crab stretch",
+              "instep rotation",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 prone snow angels",
+              "10 scap. push ups",
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:00 x 2 rounds"
+          },
+          {
+            "title": "BENCH PRESSES 14MIN",
+            "lines": [
+              "4 Sets",
+              "3  (paused) bench presses  @77-82%",
+              "strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 18MIN",
+            "lines": [
+              "8/6 ring dips",
+              "10 hand release push ups",
+              "max cal bike/ski",
+              "* score: total cals",
+              "* muscular endurance & aerobic power"
+            ],
+            "sub_title": "amrap 3:00 x 6"
           }
         ]
       },
@@ -2930,47 +2969,8 @@
           }
         ],
         "note": "Benchmark: Chelsea"
-      },
-      {
-        "date": "2026-09-09",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 12.2",
-            "lines": [
-              "Complete as many rounds and reps as possible in 18 minutes of:",
-              "15 Box jumps, 24\" box",
-              "115 pound Push press, 12 reps",
-              "9 Toes-to-bar",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 18 minutes of:",
-              "15 Box jumps, 20\" box",
-              "75 pound Push press, 12 reps",
-              "9 Toes-to-bar",
-              "*MASTERS MEN*",
-              "-",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 18 minutes of:",
-              "15 Box jumps or step-ups, 20\" box",
-              "95 pound Push press, 12 reps",
-              "9 Toes-to-bar",
-              "*MASTERS WOMEN*",
-              "-",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 18 minutes of:",
-              "15 Box jumps or step-ups, 20\" box",
-              "55 pound Push press, 12 reps",
-              "9 Toes-to-bar"
-            ]
-          }
-        ],
-        "note": "Open: Open 12.2"
       }
     ]
   },
-  "last_updated": "2026-09-09T04:05:27.484248"
+  "last_updated": "2026-09-09T08:44:37.809619"
 }
