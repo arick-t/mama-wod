@@ -6,7 +6,7 @@
 <!-- The back office has no business in a search index. It carried no such tag while
      it was only an athlete admin; now that it also holds paying clients, it says so. -->
 <meta name="robots" content="noindex, nofollow">
-<title>DUCK-WOD Admin · 5.3</title>
+<title>DUCK-WOD Admin · 5.4</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -974,6 +974,16 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .section-title-row.is-dragging-part .pprog-part-grip{cursor:grabbing;opacity:1}
 .pprog-day-card.is-drop-target{outline:2px dashed var(--part);outline-offset:3px}
 body.is-dragging-part-now{user-select:none}
+/* The questionnaire that was sent, folded under the progress line. */
+.brain-sent{margin-top:8px}
+.brain-sent>summary{
+  cursor:pointer;font-size:12px;color:var(--text-muted);list-style:none;
+  padding:4px 0;user-select:none
+}
+.brain-sent>summary::-webkit-details-marker{display:none}
+.brain-sent>summary::before{content:"▸ ";font-size:10px}
+.brain-sent[open]>summary::before{content:"▾ "}
+.brain-sent>summary:hover{color:var(--text)}
 /* Where a dragged part will land, drawn on the row it will land beside. */
 .section-title-row.pprog-part-drop-above{box-shadow:inset 0 2px 0 0 var(--part)}
 .section-title-row.pprog-part-drop-below{box-shadow:inset 0 -2px 0 0 var(--part)}
@@ -8316,7 +8326,6 @@ tryRestoreAdminSession();
       '<span class="spacer meta">' + weeksLabel(p) + "</span>" +
       /* The coach writes the month. His module, his button — the app and the client's
          own page have no AI at all, which is the rule he set (owner, 2026-09-08). */
-      brainWriteButtonHtml(p) +
       '<button class="ghost sm" type="button" data-nextblock="1" ' +
       'title="תחקור קצר, ואז ארבעה שבועות חדשים בהמשך לקיים">צור לבנת המשך</button>' +
       '</div>';
@@ -10037,27 +10046,16 @@ tryRestoreAdminSession();
       });
       return;
     }
-    if (t.closest && t.closest("[data-brainwrite]")) {
-      cvBrain.error = "";
-      cvBrain.preview = true;
-      renderBrainPanel();
-      return;
-    }
-    if (t.closest && t.closest("[data-brainclose]")) {
-      cvBrain.preview = false;
-      cvBrain.error = "";
-      renderBrainPanel();
-      return;
-    }
-    if (t.closest && t.closest("[data-brainsend]")) {
-      cvBrain.preview = false;
-      cvBrain.error = "";
-      brainStep();
-      return;
-    }
+    /* Nothing starts the build by hand any more (owner, 2026-09-09) — a questionnaire
+       does. What is left is a build that STOPPED: carry on, or put the message away. */
     if (t.closest && t.closest("[data-brainresume]")) {
       cvBrain.error = "";
       brainStep();
+      return;
+    }
+    if (t.closest && t.closest("[data-brainclose]")) {
+      cvBrain.error = "";
+      renderBrainPanel();
       return;
     }
     var bName = t.closest && t.closest("[data-block-rename]");
@@ -10977,7 +10975,7 @@ tryRestoreAdminSession();
      A blank client is refused: that kind exists for him to write by hand.
      ══════════════════════════════════════════════════════════════════════ */
 
-  var cvBrain = { running: false, week: 0, total: 0, error: "", preview: false };
+  var cvBrain = { running: false, week: 0, total: 0, error: "", why: "" };
 
   function brainLibs() {
     return {
@@ -10986,20 +10984,67 @@ tryRestoreAdminSession();
     };
   }
 
-  /** The button, where he can see it — and only where the brain may write. */
-  function brainWriteButtonHtml(p) {
+  /**
+   * THERE IS NO BUTTON ANY MORE (owner, 2026-09-09).
+   *
+   * "כפתור השלם את החודש עם המאמן מיותר ואני רוצה להיפטר ממנו. לאחר תחקור שבוצע ממודול
+   * אדמין > מעבר ישירות לבניית לבנה מלאה באופן אוטומטי > מעבר בין לבנות עדיין נשמר ע"י
+   * הכפתור צור לבנה חדשה."
+   *
+   * Filling in a questionnaire IS the instruction to build the month — pressing a
+   * second button to say so again was a step that carried no decision. So the two
+   * moments that produce an empty month now start the build themselves:
+   *   - a client created from a questionnaire in this module;
+   *   - "צור לבנה חדשה", which stays the way to reach the next month.
+   * What was in the confirmation panel is still readable, in the progress panel, while
+   * it builds. A blank client is refused as it always was: that kind exists so he can
+   * write by hand.
+   */
+  function brainAutoStart(why) {
     var L = brainLibs();
-    if (!L.brief || !L.plan) return "";
-    var allowed = L.brief.canBrainWrite(p);
-    if (!allowed.ok) return "";
-    var plan = L.plan.planFor({ weeks: L.brief.blockWeekWindow(p, currentBlockIndex(p)).weeks });
-    var label = plan.written ? "השלם את החודש עם המאמן" : "תן למאמן לכתוב את החודש";
-    return (
-      '<button class="ghost sm brain-write" type="button" data-brainwrite="1"' +
-      ' title="המאמן כותב את החודש הזה — אתה מאשר לפני שהלקוח רואה">' +
-      "🧠 " + label +
-      "</button>"
-    );
+    if (!L.brief || !L.plan || !S.program) return false;
+    if (cvBrain.running) return false;
+    if (!L.brief.canBrainWrite(S.program).ok) return false;
+    var win = L.brief.blockWeekWindow(S.program, currentBlockIndex());
+    var plan = L.plan.planFor({ weeks: win.weeks });
+    /* Already written — a month is never rewritten behind his back. */
+    if (plan.done) return false;
+    cvBrain.error = "";
+    cvBrain.why = String(why || "");
+    brainStep();
+    return true;
+  }
+
+  /**
+   * The month before this one, in the words the brain reads.
+   *
+   * A block that continues a plan must know what the plan already did — the loads it
+   * moved, the formats it used, the standing requests (the brain's own agent asked for
+   * this as `blockHandoff`, 2026-09-08). Block 1 has nothing before it.
+   */
+  function clientBlockHandoff(blockIndex) {
+    var L = brainLibs();
+    if (!window.CoachBlockHandoff || !L.brief || !S.program) return "";
+    var prev = (blockIndex | 0) - 1;
+    if (prev < 1) return "";
+    var win = L.brief.blockWeekWindow(S.program, prev);
+    if (!win.weeks.length) return "";
+    var req = L.brief.blockRequestFor({ program: S.program, blockIndex: prev });
+    var prof = (req && req.athleteProfile) || {};
+    try {
+      return (
+        window.CoachBlockHandoff.buildHandoffText({
+          block: { weeks: win.weeks },
+          blockIndex: prev,
+          startWeek: L.brief.blockStartWeekOf(S.program, prev),
+          deloadWeekIndex: prof.deloadWeekIndex || 0,
+          profile: prof,
+        }) || ""
+      );
+    } catch (e) {
+      /* A handoff is help, not a requirement: the month is still built without it. */
+      return "";
+    }
   }
 
   /** Which block is on screen: the one the calendar is showing. */
@@ -11037,43 +11082,49 @@ tryRestoreAdminSession();
       return;
     }
     if (cvBrain.running) {
+      /* WHAT WAS SENT is still here, one press away — it was the whole value of the
+         panel that used to stop him (owner, 2026-09-09). It does not stop him now. */
       host.innerHTML =
         '<div class="brain-panel is-busy"><span class="brain-spin" aria-hidden="true"></span>' +
         "<span>" + esc(L.plan.progressText({ week: cvBrain.week, total: cvBrain.total })) + "</span>" +
         '<div class="brain-panel-note">' + brainWrittenLine() +
-        " אתה יכול לעבוד על לקוח אחר בזמן הזה." +
-        "</div></div>";
+        " החודש נכתב <b>לא מאושר</b> — הלקוח לא רואה כלום עד שתשלח. " +
+        "הבנייה לוקחת 2–4 דקות ועולה בערך ₪0.35, ואתה יכול לעבוד על לקוח אחר בזמן הזה." +
+        "</div>" +
+        brainBriefDetailsHtml() +
+        "</div>";
       return;
     }
-    if (!cvBrain.preview) { host.innerHTML = ""; return; }
+    host.innerHTML = "";
+  }
 
+  /** The questionnaire that was sent, folded away under the progress line. */
+  function brainBriefDetailsHtml() {
+    var L = brainLibs();
+    if (!L.brief || !S.program) return "";
     var req = L.brief.blockRequestFor({
       program: S.program,
       blockIndex: currentBlockIndex(),
-      handoff: typeof coachBlockHandoffFor === "function" ? "" : "",
+      handoff: clientBlockHandoff(currentBlockIndex()),
     });
-    if (!req.ok) {
-      host.innerHTML = '<div class="brain-panel is-bad"><div class="brain-panel-head">' +
-        esc(req.why || "לא ניתן") + "</div>" +
-        '<button type="button" class="brain-cancel" data-brainclose="1">סגור</button></div>';
-      return;
-    }
+    if (!req.ok) return "";
     var prof = req.athleteProfile || {};
     var kindWord = req.kind === L.brief.STUDIO ? "סטודיו (חדר)" : "מתאמן יחיד";
     var deload = prof.deloadWeekIndex ? "שבוע " + prof.deloadWeekIndex : "בלי דילואד";
-    host.innerHTML =
-      '<div class="brain-panel"><div class="brain-panel-head">זה מה שנשלח למאמן — קרא ואשר</div>' +
+    return (
+      '<details class="brain-sent"><summary>מה נשלח למאמן</summary>' +
       '<div class="brain-facts">' +
-      '<span><b>' + esc(kindWord) + "</b></span>" +
+      "<span><b>" + esc(kindWord) + "</b></span>" +
       "<span>לבנה " + currentBlockIndex() + " · מתחילה בשבוע " + req.blockStartWeek + "</span>" +
       "<span>" + esc(prof.blockWeeks || 4) + " שבועות</span>" +
       "<span>דילואד: " + esc(deload) + "</span>" +
       "</div>" +
       '<pre class="brain-brief" dir="auto">' + esc(req.body.messages[0].text) + "</pre>" +
-      '<div class="brain-panel-note">הבנייה לוקחת 2–4 דקות ועולה בערך ₪0.35. ' +
-      "החודש נכתב <b>לא מאושר</b> — הלקוח לא רואה כלום עד שתשלח.</div>" +
-      '<button type="button" class="brain-go" data-brainsend="1">שלח לבנייה</button>' +
-      '<button type="button" class="brain-cancel" data-brainclose="1">בטל</button></div>';
+      (req.body.blockHandoff
+        ? '<pre class="brain-brief" dir="auto">' + esc(req.body.blockHandoff) + "</pre>"
+        : "") +
+      "</details>"
+    );
   }
 
   function brainWrittenLine() {
@@ -11101,7 +11152,6 @@ tryRestoreAdminSession();
     if (plan.done) {
       cvBrain.running = false;
       cvBrain.week = 0;
-      cvBrain.preview = false;
       banner("good", "החודש נכתב — " + plan.total + " שבועות. עבור עליו, ואז שלח ללקוח.");
       renderDetail();
       return;
@@ -11111,8 +11161,13 @@ tryRestoreAdminSession();
     cvBrain.week = localWeek;
     renderBrainPanel();
 
-    /* Week 1 of the block is the block itself; the rest are fills. */
-    var req = L.brief.blockRequestFor({ program: S.program, blockIndex: blockIndex });
+    /* Week 1 of the block is the block itself; the rest are fills. A block that
+       continues a plan carries the month before it (owner's brain agent, 2026-09-08). */
+    var req = L.brief.blockRequestFor({
+      program: S.program,
+      blockIndex: blockIndex,
+      handoff: clientBlockHandoff(blockIndex),
+    });
     if (!req.ok) {
       cvBrain.running = false;
       cvBrain.error = req.why || "לא ניתן לבנות";
@@ -11839,6 +11894,20 @@ tryRestoreAdminSession();
         banner("good", "לבנה " + r.body.blockIndex + " נוצרה — " + r.body.added +
           " שבועות ריקים. היא לא אצל הלקוח עד שתאשר אותה.");
         leaveBlockMode();
+        /* "צור לבנה חדשה" stays the way to the next month, and now it writes it too:
+           the block starts empty and the brain fills it, carrying the month before it
+           (owner, 2026-09-09). A blank client is refused inside brainAutoStart. */
+        try {
+          /* Stand ON the new block before building: which block is built is the one the
+             calendar is showing. add_block answers with its number, and the programme
+             it answers with says which week that block starts on. */
+          var madeIdx = parseInt(r.body.blockIndex, 10) || 0;
+          var madeBlock = ((S.program && S.program.blocks) || []).filter(function (b) {
+            return (parseInt(b && b.blockIndex, 10) || 0) === madeIdx;
+          })[0];
+          if (madeBlock) S.wi = Math.max(0, (parseInt(madeBlock.startWeek, 10) || 1) - 1);
+          if (brainAutoStart("next-block")) renderDetail();
+        } catch (eBrain2) {}
       });
       return;
     }
@@ -11887,6 +11956,13 @@ tryRestoreAdminSession();
           S.program = rr.body.program;
           S.access = rr.body.access || null;
           renderDetail();
+          /* AND THE MONTH IS BUILT. The questionnaire he just filled in is the
+             instruction; the button that asked him to say so again is gone
+             (owner, 2026-09-09). Started after this read, so the build works from the
+             programme as the server actually stored it. */
+          try {
+            if (brainAutoStart("intake")) renderDetail();
+          } catch (eBrain) {}
         });
       });
   }

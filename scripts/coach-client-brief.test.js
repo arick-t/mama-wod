@@ -162,12 +162,17 @@ ok("and their file marked complete", person.body.intakeComplete === true);
 
 /* --- the button and the panel in his module ------------------------------ */
 
-ok("the button exists where he can see it", admin.indexOf('data-brainwrite="1"') >= 0);
-ok("only where the brain may write", admin.indexOf("function brainWriteButtonHtml(p)") >= 0 && /canBrainWrite\(p\)/.test(admin));
-/* He asked for this in as many words: read the file back before spending. */
-ok("it shows him what will be sent, first", admin.indexOf("זה מה שנשלח למאמן — קרא ואשר") >= 0);
+/* NO BUTTON (owner, 2026-09-09). A questionnaire filled in inside his module is the
+   instruction to build the month; a second press that only repeated it was a step
+   carrying no decision. */
+ok("nothing asks him to press anything", admin.indexOf("data-brainwrite") < 0 && admin.indexOf("data-brainsend") < 0);
+ok("a questionnaire builds the month", /brainAutoStart\("intake"\)/.test(admin));
+ok("and the next month comes from צור לבנה חדשה", /brainAutoStart\("next-block"\)/.test(admin));
+ok("only where the brain may write", /canBrainWrite\(S\.program\)\.ok/.test(admin));
+/* He can still read exactly what was sent, while it builds. */
+ok("what was sent is readable", admin.indexOf("מה נשלח למאמן") >= 0);
 ok("with the questionnaire itself on screen", /class="brain-brief"/.test(admin));
-ok("and it only sends when he says so", admin.indexOf('data-brainsend="1"') >= 0);
+ok("and the month before it, when there is one", /req\.body\.blockHandoff/.test(admin));
 ok("the price is on the panel", admin.indexOf("₪0.35") >= 0);
 /* Nothing about approval changes: the client sees nothing until he sends. */
 ok("the month lands unapproved and it says so", admin.indexOf("הלקוח לא רואה כלום עד שתשלח") >= 0);

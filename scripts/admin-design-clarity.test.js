@@ -42,7 +42,7 @@ assert.ok(
   index.includes("<title>DUCK-WOD · v" + VERSION + "</title>"),
   "app <title> version must match VERSION (" + VERSION + ")"
 );
-assert.ok(/DUCK-WOD Admin · 5\.3/.test(admin), "admin UI version 5.3");
+assert.ok(/DUCK-WOD Admin · 5\.4/.test(admin), "admin UI version 5.4");
 assert.ok(!/1\.0 beta/.test(admin), "admin no longer shows 1.0 beta");
 
 /* ------------------------------------------------------------------------

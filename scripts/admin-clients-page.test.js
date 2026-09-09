@@ -113,12 +113,22 @@ ok("admin still owns a login screen", /id="login-screen"/.test(page));
  */
 ok("the client screen names no AI provider directly", !/gemini|groq|generativelanguage/i.test(screen));
 ok("it reaches the coach through our own endpoint", screen.indexOf('adminApiUrl("/api/personal-coach")') >= 0);
-/* Only behind his own button — no timer, no poll, nothing on open. */
-ok("the coach is asked only when he presses the button", screen.indexOf("data-brainsend") >= 0 && screen.indexOf("function brainStep()") >= 0);
-ok("and never on a timer", /setInterval\([^)]{0,80}brainStep/.test(screen) === false);
-/* And it shows him his own answers before spending anything. */
-ok("what will be sent is shown first", screen.indexOf("זה מה שנשלח למאמן — קרא ואשר") >= 0);
-ok("with the price and the fact that it lands unapproved", screen.indexOf("לא מאושר") >= 0);
+/* WHAT STARTS IT CHANGED (owner, 2026-09-09): "כפתור השלם את החודש עם המאמן מיותר
+ * ואני רוצה להיפטר ממנו. לאחר תחקור שבוצע ממודול אדמין > מעבר ישירות לבניית לבנה מלאה
+ * באופן אוטומטי".
+ * Filling in a questionnaire IS the instruction, so the button is gone and the two
+ * moments that produce an empty month start the build themselves. What has NOT changed
+ * is who may ask and when: only an action of his, never a timer, never on open. */
+ok("the button is gone", screen.indexOf("data-brainwrite") < 0 && screen.indexOf("data-brainsend") < 0);
+ok("a questionnaire starts it", /function brainAutoStart\(why\)/.test(screen) && /brainAutoStart\("intake"\)/.test(screen));
+ok("and so does צור לבנה חדשה", /brainAutoStart\("next-block"\)/.test(screen));
+ok("both go through the one place that builds", screen.indexOf("function brainStep()") >= 0);
+ok("never on a timer", /setInterval\([^)]{0,80}brainStep/.test(screen) === false);
+ok("and never over a month that is already written", /if \(plan\.done\) return false;/.test(screen));
+ok("a blank client is still refused", /if \(!L\.brief\.canBrainWrite\(S\.program\)\.ok\) return false;/.test(screen));
+/* His own answers are still readable while it builds — that was the panel's worth. */
+ok("what was sent stays readable", screen.indexOf("מה נשלח למאמן") >= 0 && /function brainBriefDetailsHtml\(\)/.test(screen));
+ok("with the price and the fact that it lands unapproved", screen.indexOf("לא מאושר") >= 0 && screen.indexOf("₪0.35") >= 0);
 
 const clientPage = fs.readFileSync(path.join(root, "client.html"), "utf8");
 const appPage = fs.readFileSync(path.join(root, "index.html"), "utf8");
