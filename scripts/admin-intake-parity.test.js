@@ -365,7 +365,7 @@ ok("and \"no deload\" is an answer, not a blank", /noDeloadEl && noDeloadEl\.che
 ok("all of it travels with the client", /trainsMultipleLocations: prof\.trainsMultipleLocations === true/.test(fixedJs) && /deloadEveryWeeks: prof\.deloadEveryWeeks/.test(fixedJs));
 
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
-ok("admin version 5.1.1", /DUCK-WOD Admin · 5\.1\.1/.test(adminHtml));
+ok("admin version 5.2", /DUCK-WOD Admin · 5\.2/.test(adminHtml));
 ok("admin wired to coach 3.0", /LIVE_COACH_VERSION = "3\.0"/.test(adminHtml));
 ok("app coach 3.0", /COACH_VERSION = "3\.0"/.test(index));
 ok(
