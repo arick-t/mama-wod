@@ -10,7 +10,10 @@ const { resolveAllowedOrigin } = require("../lib/cors-allowlist.js");
 
 const ROOT = path.join(__dirname, "..");
 const PORT = 3877;
-const ADMIN_PW = "0523701404";
+/* This test starts its own server, so it sets its own password rather than borrowing
+   the real one. A test that hard-codes a live credential puts it in the repo forever;
+   this one did, and the repo is public (found 2026-09-09). */
+const ADMIN_PW = "smoke-test-password-not-a-real-one";
 
 function loadEnvLocal() {
   const p = path.join(ROOT, ".env.local");
@@ -83,14 +86,10 @@ function waitForServer(ms) {
 
 async function main() {
   loadEnvLocal();
-  if (!process.env.ADMIN_PASSWORD) {
-    console.error("Missing ADMIN_PASSWORD in .env.local");
-    process.exit(1);
-  }
 
   const child = spawn("node", ["scripts/local-dev-server.js"], {
     cwd: ROOT,
-    env: Object.assign({}, process.env, { PORT: String(PORT) }),
+    env: Object.assign({}, process.env, { PORT: String(PORT), ADMIN_PASSWORD: ADMIN_PW }),
     stdio: ["ignore", "pipe", "pipe"],
   });
 
