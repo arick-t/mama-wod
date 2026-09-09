@@ -553,7 +553,7 @@ button.ghost:hover{color:var(--text)}
       /* Three sessions a week is three circles here too. The number is derived and sent
          by the server; the questionnaire it comes from never leaves it. */
       sessionColumns: (state.program && state.program.sessionColumns) || 0,
-      dateLabelOverride: sessionCardLabel(),
+      dateLabelOverride: sessionCardLabel,
       /* The client sees the same block boundaries the owner does — a month is a month
          on both screens (owner, 2026-09-02). */
       blockGroups: ((state.program && state.program.blockGroups) || []).map(function (b) {
@@ -629,12 +629,16 @@ button.ghost:hover{color:var(--text)}
      are the client's language. */
   /* A day in a session-count programme is "Session 2", not a Tuesday — the client picks
      their own days, so the date on the card would be a promise nobody made. */
-  function sessionCardLabel() {
+/* Asked BY THE CARD, for the card's own week and slot. It used to read the page's
+     current selection, which labelled every card on screen with the day picked last —
+     four cards all reading the same session and week (owner, 2026-09-09). */
+  function sessionCardLabel(wi, dayKey) {
     var cols = (state.program && state.program.sessionColumns) || 0;
     if (!cols) return "";
-    var i = DAY_KEYS_LOCAL.indexOf(state.day || "sun");
+    var i = DAY_KEYS_LOCAL.indexOf(String(dayKey == null ? state.day || "sun" : dayKey));
     if (i < 0 || i >= cols) return "";
-    return "Session " + (i + 1) + " · Week " + ((state.wi | 0) + 1);
+    var w = wi === undefined || wi === null ? state.wi | 0 : wi | 0;
+    return "Session " + (i + 1) + " · Week " + (w + 1);
   }
 
   function restToggleHeaderHtml() {
@@ -1267,7 +1271,7 @@ button.ghost:hover{color:var(--text)}
     var dayData = (week.days && week.days[day]) || { parts: [] };
     var rest = RT ? RT.dayIsRest(week, day) : !(dayData.parts && dayData.parts.length);
     var parts = rest ? [] : (D && D.draftFromDayData ? D.draftFromDayData(dayData, false) : []);
-    if (!parts.length) parts = [{ title: "Part A", notes: [""], format: "", work: [""] }];
+    if (!parts.length) parts = [{ title: "", notes: [""], format: "", work: [""] }];
     /* The pencil on another card is also leaving this one. */
     if (state.edit && (state.edit.wi !== nextWi || state.edit.day !== day)) autosaveDraft();
     state.wi = nextWi;
@@ -1315,13 +1319,36 @@ button.ghost:hover{color:var(--text)}
     /* No re-render while typing — it would throw the caret out of the field. */
   };
 
-  window.cvEditAddNote = function (partIndex) {
+  /**
+   * A new note — at the end from the chip, or right below the one Enter was pressed
+   * in, exactly as a work line behaves (owner, 2026-09-09).
+   */
+  window.cvEditAddNote = function (partIndex, atIndex) {
     var part = state.edit && state.edit.parts[partIndex | 0];
     if (!part) return;
     if (!Array.isArray(part.notes)) part.notes = [];
-    part.notes.push("");
+    var at =
+      atIndex === undefined || atIndex === null
+        ? part.notes.length
+        : Math.max(0, Math.min(part.notes.length, atIndex | 0));
+    part.notes.splice(at, 0, "");
     keepScroll(renderDays);
+    focusNoteRow(partIndex | 0, at);
   };
+
+  /** The caret into the note just opened, the way focusWorkLine does it. */
+  function focusNoteRow(partIndex, noteIndex) {
+    setTimeout(function () {
+      try {
+        var cards = document.querySelectorAll(".pprog-day-card .section");
+        var card = cards[partIndex];
+        if (!card) return;
+        var boxes = card.querySelectorAll(".pprog-edit-note-row .pprog-edit-note");
+        var box = boxes[noteIndex];
+        if (box) box.focus();
+      } catch (e) {}
+    }, 0);
+  }
 
   /**
    * A new work line — at the end from the chip, or right after the line he pressed
@@ -1410,7 +1437,7 @@ button.ghost:hover{color:var(--text)}
     if (hasSomething && !window.confirm("Remove this part from the day? What is written in it will be deleted.")) return;
     state.edit.parts.splice(i, 1);
     if (!state.edit.parts.length) {
-      state.edit.parts = [{ title: "Part A", notes: [""], format: "", work: [""] }];
+      state.edit.parts = [{ title: "", notes: [""], format: "", work: [""] }];
     }
     keepScroll(renderDays);
   };
@@ -1436,8 +1463,9 @@ button.ghost:hover{color:var(--text)}
   window.cvEditAddPart = function () {
     if (!state.edit) return;
     if (!Array.isArray(state.edit.parts)) state.edit.parts = [];
-    var letter = String.fromCharCode(65 + state.edit.parts.length);
-    state.edit.parts.push({ title: "Part " + letter, notes: [""], format: "", work: [""] });
+    /* The number is drawn beside the field; the name is theirs to type
+       (owner, 2026-09-09). */
+    state.edit.parts.push({ title: "", notes: [""], format: "", work: [""] });
     keepScroll(renderDays);
   };
 
@@ -1453,6 +1481,20 @@ button.ghost:hover{color:var(--text)}
    * was pressed first, and nobody presses Save before clicking the next day
    * (owner, 2026-09-03). Cancel still discards: that is what it is for.
    */
+  /** Has anything been typed into the open draft? Asked before rest may replace it. */
+  function draftHasTypedContent(draft) {
+    var D = pprogLib();
+    if (D && D.draftHasContent) return !!D.draftHasContent(draft);
+    var parts = (draft && draft.parts) || [];
+    for (var i = 0; i < parts.length; i++) {
+      var pt = parts[i] || {};
+      if (String(pt.title || "").trim() || String(pt.format || "").trim()) return true;
+      if ((pt.notes || []).some(function (n) { return String(n || "").trim(); })) return true;
+      if ((pt.work || []).some(function (w) { return String(w || "").trim(); })) return true;
+    }
+    return false;
+  }
+
   function autosaveDraft() {
     var draft = state.edit;
     if (!draft) return;
@@ -1462,12 +1504,19 @@ button.ghost:hover{color:var(--text)}
     var titleNow = readDayTitleField();
     state.edit = null;
     if (draft.restIntent) {
-      if (dayHasWrittenSession(draft.wi, draft.day) &&
-          !window.confirm("Make this a rest day? The session written here will be removed.")) {
+      /* Typed work wins over the tick. An autosave is nobody pressing anything, and
+         it used to replace a whole day's writing with a rest day without a word
+         (owner, 2026-09-09). */
+      if (draftHasTypedContent(draft)) {
+        draft.restIntent = false;
+      } else {
+        if (dayHasWrittenSession(draft.wi, draft.day) &&
+            !window.confirm("Make this a rest day? The session written here will be removed.")) {
+          return;
+        }
+        saveDay(draft.wi, draft.day, [], true, { quiet: true, title: titleNow });
         return;
       }
-      saveDay(draft.wi, draft.day, [], true, { quiet: true, title: titleNow });
-      return;
     }
     var titleChanged = titleNow !== undefined && titleNow !== storedDayTitle(draft.wi, draft.day);
     if (!D || !D.partsFromDraft || !D.draftHasContent(draft)) {
@@ -1533,7 +1582,7 @@ button.ghost:hover{color:var(--text)}
     var D = pprogLib();
     if (!D || !D.partsFromDraft) { banner("bad", "Display library unavailable. Please reload."); return; }
     if (state.edit.restIntent) {
-      if (dayHasWrittenSession(state.edit.wi, state.edit.day) &&
+      if ((dayHasWrittenSession(state.edit.wi, state.edit.day) || draftHasTypedContent(state.edit)) &&
           !window.confirm("Make this a rest day? The session written here will be removed.")) {
         return;
       }
@@ -1587,7 +1636,7 @@ button.ghost:hover{color:var(--text)}
     state.edit = {
       wi: clampWi(wi),
       day: day,
-      parts: [{ title: "Part A", notes: [""], format: "", work: [""] }],
+      parts: [{ title: "", notes: [""], format: "", work: [""] }],
       rest: false,
     };
     renderDays();
@@ -1943,11 +1992,111 @@ button.ghost:hover{color:var(--text)}
     var rc = t.getAttribute("data-restcheck");
     if (rc) {
       /* A MARK, not a write - nothing is written until Save, or until the day is left
-         (owner, 2026-09-03). */
-      if (state.edit) state.edit.restIntent = !!t.checked;
+         (owner, 2026-09-03). It does ask straight away when there is typed work under
+         it: on a phone this tick is a thumb's width from the numbering control, and a
+         stray tap turned a written day into a rest day silently (owner, 2026-09-09). */
+      if (!state.edit) return;
+      if (t.checked && draftHasTypedContent(state.edit)) {
+        if (!window.confirm("Mark this as a rest day? What is written here will be removed when you save.")) {
+          t.checked = false;
+          state.edit.restIntent = false;
+          return;
+        }
+      }
+      state.edit.restIntent = !!t.checked;
       return;
     }
   });
+
+  /**
+   * Take a part by its grip and move it up or down inside the day (owner, 2026-09-09).
+   *
+   * Only the open draft is touched, so nothing is written until the day is saved — and
+   * the numbering follows the move by itself, because a part's number is where it sits.
+   * Bound to the document once: the card is redrawn constantly.
+   */
+  window.cvMovePart = function (from, to) {
+    var parts = state.edit && state.edit.parts;
+    if (!Array.isArray(parts)) return;
+    var f = from | 0;
+    var t2 = Math.max(0, Math.min(parts.length - 1, to | 0));
+    if (f === t2 || f < 0 || f >= parts.length) return;
+    var moved = parts.splice(f, 1)[0];
+    parts.splice(t2, 0, moved);
+    keepScroll(renderDays);
+  };
+
+  (function bindPartDrag() {
+    var held = null;
+
+    function rowUnder(x, y) {
+      var node = document.elementFromPoint(x, y);
+      return node && node.closest ? node.closest("[data-part]") : null;
+    }
+
+    function clearMarks() {
+      var lit = document.querySelectorAll(".pprog-part-drop-above, .pprog-part-drop-below");
+      for (var i = 0; i < lit.length; i++) {
+        lit[i].classList.remove("pprog-part-drop-above");
+        lit[i].classList.remove("pprog-part-drop-below");
+      }
+    }
+
+    function stop() {
+      if (held && held.row) held.row.classList.remove("is-dragging-part");
+      document.body.classList.remove("is-dragging-part-now");
+      clearMarks();
+      held = null;
+    }
+
+    document.addEventListener("pointerdown", function (ev) {
+      if (ev.pointerType === "touch") return;
+      if (ev.button !== undefined && ev.button !== 0) return;
+      var grip = ev.target && ev.target.closest ? ev.target.closest("[data-part-grip]") : null;
+      if (!grip) return;
+      var row = grip.closest("[data-part]");
+      if (!row || !state.edit) return;
+      /* Or the browser starts selecting the words instead of moving the part. */
+      ev.preventDefault();
+      held = {
+        row: row,
+        index: parseInt(row.getAttribute("data-part"), 10) || 0,
+        x: ev.clientX,
+        y: ev.clientY,
+        dragging: false,
+      };
+    });
+
+    document.addEventListener("pointermove", function (ev) {
+      if (!held) return;
+      if (!held.dragging) {
+        if (Math.abs(ev.clientX - held.x) < 6 && Math.abs(ev.clientY - held.y) < 6) return;
+        held.dragging = true;
+        held.row.classList.add("is-dragging-part");
+        document.body.classList.add("is-dragging-part-now");
+      }
+      ev.preventDefault();
+      clearMarks();
+      var row = rowUnder(ev.clientX, ev.clientY);
+      if (!row || row === held.row) return;
+      var to = parseInt(row.getAttribute("data-part"), 10) || 0;
+      row.classList.add(to < held.index ? "pprog-part-drop-above" : "pprog-part-drop-below");
+    });
+
+    document.addEventListener("pointerup", function (ev) {
+      if (!held) return;
+      var was = held;
+      var row = was.dragging ? rowUnder(ev.clientX, ev.clientY) : null;
+      stop();
+      if (!row || row === was.row) return;
+      window.cvMovePart(was.index, parseInt(row.getAttribute("data-part"), 10) || 0);
+    });
+
+    document.addEventListener("pointercancel", stop);
+    document.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape" && held) stop();
+    });
+  })();
 
   /* Anything copied out carries where it came from. Invisible until pasted. */
   document.addEventListener("copy", function (ev) {

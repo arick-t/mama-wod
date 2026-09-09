@@ -293,7 +293,10 @@ for (const [label, src] of [["the admin", adminSrc], ["the client page", clientS
   ok(label + " wires the ×", src.indexOf('editRemovePart: "cvEditRemovePart"') >= 0);
   /* The one control here that takes work away rather than adding it. */
   ok(label + " asks before removing something written", /hasSomething && !window\.confirm/.test(src));
-  ok(label + " never leaves the day with nowhere to type", /parts = \[\{ title: "Part A", notes: \[""\], format: "", work: \[""\] \}\]/.test(src));
+  /* The empty part it leaves behind has NO NAME in it any more: "Part A" was a prefix
+     nobody could rename away, and the number is drawn beside the field instead
+     (owner, 2026-09-09). */
+  ok(label + " never leaves the day with nowhere to type", /parts = \[\{ title: "", notes: \[""\], format: "", work: \[""\] \}\]/.test(src));
 }
 ok("the older admin editor has one too", adminSrc.indexOf("function adminPprogEditRemovePart(") >= 0);
 

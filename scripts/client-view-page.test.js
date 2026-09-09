@@ -245,7 +245,17 @@ ok("switching windows counts as coming back", /window\.addEventListener\("focus"
 
 /* The rest tick is a mark here too: nothing is written until Save, or until the day is
    left (owner, 2026-09-03). */
-ok("ticking rest writes nothing", /if \(state\.edit\) state\.edit\.restIntent = !!t\.checked;[\s\S]{0,20}return;/.test(html));
+ok("ticking rest writes nothing", /state\.edit\.restIntent = !!t\.checked;[\s\S]{0,20}return;/.test(html));
+/* Same guard as the back office: the tick asks before it marks over typed work, and
+   leaving the day keeps the writing rather than the mark (owner, 2026-09-09). */
+ok(
+  "and it asks before marking over typed work",
+  /if \(t\.checked && draftHasTypedContent\(state\.edit\)\)/.test(html)
+);
+ok(
+  "leaving the day never turns typed work into a rest day",
+  /if \(draftHasTypedContent\(draft\)\) \{\s*\n\s*draft\.restIntent = false;/.test(html)
+);
 ok("Save honours the mark", /if \(state\.edit\.restIntent\) \{/.test(html));
 ok("and a written session is never replaced without asking", /function dayHasWrittenSession/.test(html));
 

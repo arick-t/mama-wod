@@ -955,6 +955,17 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .section-title-row.is-dragging-part .pprog-part-grip{cursor:grabbing;opacity:1}
 .pprog-day-card.is-drop-target{outline:2px dashed var(--part);outline-offset:3px}
 body.is-dragging-part-now{user-select:none}
+/* Where a dragged part will land, drawn on the row it will land beside. */
+.section-title-row.pprog-part-drop-above{box-shadow:inset 0 2px 0 0 var(--part)}
+.section-title-row.pprog-part-drop-below{box-shadow:inset 0 -2px 0 0 var(--part)}
+/* A part's number: its POSITION, counted from the top of the day. Not stored and not
+   typed - dragging a part up renumbers everything under it (owner, 2026-09-09). */
+.pprog-part-n{
+  flex:0 0 auto;min-width:1.35em;height:1.35em;display:inline-flex;align-items:center;
+  justify-content:center;border-radius:50%;border:1.5px solid var(--part);
+  color:var(--part);font-size:.78em;font-weight:700;line-height:1
+}
+.section-title-row .pprog-part-n{margin-inline-end:2px}
 /* The one row in any menu that cannot be undone. */
 #clientScreen .week-menu .wm-sep,
 .week-menu .wm-sep{height:1px;background:rgba(255,255,255,.10);margin:4px 6px}
@@ -8674,10 +8685,17 @@ tryRestoreAdminSession();
          automatic "אימון 1 · שבוע 1" stays beside it, small (owner, 2026-09-05). */
       allowTitleEdit: true,
       /* The card under the calendar names the session, not a Tuesday. */
-      dateLabelOverride:
-        sessions && activeIndex >= 0 && activeIndex < sessions
-          ? "אימון " + (activeIndex + 1) + " · שבוע " + ((S.wi | 0) + 1)
-          : "",
+      /* PER CARD, not per selection. Comparing the same session across four weeks
+         puts four cards on screen at once, and one fixed string made all four wear
+         the label of the day selected last — four cards reading "אימון 1 · שבוע 4"
+         (owner, 2026-09-09). Each card now asks for its own week and its own slot. */
+      dateLabelOverride: sessions
+        ? function (wi, dayKey) {
+            var i = DAY_KEYS_LOCAL.indexOf(String(dayKey || ""));
+            if (i < 0 || i >= sessions) return "";
+            return "אימון " + (i + 1) + " · שבוע " + ((wi | 0) + 1);
+          }
+        : "",
       block: block,
       activeWeekIndex: S.wi | 0,
       activeDay: S.day || "sun",
@@ -9084,7 +9102,7 @@ tryRestoreAdminSession();
        for athletes; a client's program must allow both directions. */
     var rest = RT ? RT.dayIsRest(week, day) : !(dayData.parts && dayData.parts.length);
     var parts = rest ? [] : (D && D.draftFromDayData ? D.draftFromDayData(dayData, false) : []);
-    if (!parts.length) parts = [{ title: "Part A", notes: [""], format: "", work: [""] }];
+    if (!parts.length) parts = [{ title: "", notes: [""], format: "", work: [""] }];
     /* The pencil on another card is also leaving this one. */
     if (S.edit && (S.edit.wi !== nextWi || S.edit.day !== day)) autosaveDraft();
     S.wi = nextWi;
@@ -9135,13 +9153,36 @@ tryRestoreAdminSession();
        field on every keystroke. The draft is already the source of truth. */
   };
 
-  window.cvEditAddNote = function (partIndex) {
+  /**
+   * A new note — at the end from the chip, or right below the one he pressed Enter
+   * in (owner, 2026-09-09: notes behave like work lines).
+   */
+  window.cvEditAddNote = function (partIndex, atIndex) {
     var part = S.edit && S.edit.parts[partIndex | 0];
     if (!part) return;
     if (!Array.isArray(part.notes)) part.notes = [];
-    part.notes.push("");
+    var at =
+      atIndex === undefined || atIndex === null
+        ? part.notes.length
+        : Math.max(0, Math.min(part.notes.length, atIndex | 0));
+    part.notes.splice(at, 0, "");
     keepScroll(renderAdminDays);
+    focusNoteRow(partIndex | 0, at);
   };
+
+  /** The caret into the note that was just opened, the way focusWorkLine does it. */
+  function focusNoteRow(partIndex, noteIndex) {
+    setTimeout(function () {
+      try {
+        var cards = document.querySelectorAll(".pprog-day-card .section");
+        var card = cards[partIndex];
+        if (!card) return;
+        var boxes = card.querySelectorAll(".pprog-edit-note-row .pprog-edit-note");
+        var box = boxes[noteIndex];
+        if (box) box.focus();
+      } catch (e) {}
+    }, 0);
+  }
 
   /**
    * A new work line — at the end from the chip, or right after the line he pressed
@@ -9258,8 +9299,28 @@ tryRestoreAdminSession();
   window.cvEditAddPart = function () {
     if (!S.edit) return;
     if (!Array.isArray(S.edit.parts)) S.edit.parts = [];
-    var letter = String.fromCharCode(65 + S.edit.parts.length);
-    S.edit.parts.push({ title: "Part " + letter, notes: [""], format: "", work: [""] });
+    /* No "Part D" written into the name: the number is drawn beside the field and
+       the name is his to type (owner, 2026-09-09). */
+    S.edit.parts.push({ title: "", notes: [""], format: "", work: [""] });
+    keepScroll(renderAdminDays);
+  };
+
+  /**
+   * Move a part up or down inside the day being edited.
+   *
+   * Only the open draft is touched — the day is written when he saves or leaves it,
+   * like everything else typed here. Colours and line numbers travel inside the part,
+   * so nothing has to be re-keyed.
+   */
+  window.cvMovePart = function (wi, day, from, to) {
+    if (!S.edit || S.edit.wi !== (wi | 0) || S.edit.day !== String(day || "")) return;
+    var parts = S.edit.parts;
+    if (!Array.isArray(parts)) return;
+    var f = from | 0;
+    var t = Math.max(0, Math.min(parts.length - 1, to | 0));
+    if (f === t || f < 0 || f >= parts.length) return;
+    var moved = parts.splice(f, 1)[0];
+    parts.splice(t, 0, moved);
     keepScroll(renderAdminDays);
   };
 
@@ -9294,13 +9355,22 @@ tryRestoreAdminSession();
     S.editStatus = null;
     if (draft.restIntent) {
       /* Leaving a day marked as rest writes it - but never over a real session without
-         asking, because he has not pressed anything that says "yes" yet. */
-      if (dayHasWrittenSession(draft.wi, draft.day) &&
-          !window.confirm("להפוך את היום ליום מנוחה? האימון שכתוב בו יימחק.")) {
+         asking, because he has not pressed anything that says "yes" yet.
+         "A real session" now includes one he has just TYPED and not yet saved: an
+         autosave is nobody pressing anything, and it quietly replaced a whole day's
+         work with a rest day (owner, 2026-09-09). Typed work wins; the tick is
+         dropped and what he wrote is saved. */
+      if (draftHasTypedContent(draft)) {
+        draft.restIntent = false;
+        if (S.edit === draft) S.edit.restIntent = false;
+      } else {
+        if (dayHasWrittenSession(draft.wi, draft.day) &&
+            !window.confirm("להפוך את היום ליום מנוחה? האימון שכתוב בו יימחק.")) {
+          return;
+        }
+        saveDay(draft.wi, draft.day, [], true, { quiet: true, title: titleNow });
         return;
       }
-      saveDay(draft.wi, draft.day, [], true, { quiet: true, title: titleNow });
-      return;
     }
     /* A name on its own is a change worth keeping, even when nothing was typed into
        the session itself. */
@@ -9338,6 +9408,25 @@ tryRestoreAdminSession();
   }
 
   /** Is there a written session on this day - something a rest day would replace? */
+  /**
+   * Has he typed anything into the open draft?
+   *
+   * Asked before a rest day is allowed to replace it. The shared library already
+   * knows the answer; this only survives the library not being loaded.
+   */
+  function draftHasTypedContent(draft) {
+    var D = pprogLib();
+    if (D && D.draftHasContent) return !!D.draftHasContent(draft);
+    var parts = (draft && draft.parts) || [];
+    for (var i = 0; i < parts.length; i++) {
+      var pt = parts[i] || {};
+      if (String(pt.title || "").trim() || String(pt.format || "").trim()) return true;
+      if ((pt.notes || []).some(function (n) { return String(n || "").trim(); })) return true;
+      if ((pt.work || []).some(function (w) { return String(w || "").trim(); })) return true;
+    }
+    return false;
+  }
+
   function dayHasWrittenSession(wi, dayKey) {
     var week = ((S.program && S.program.weeks) || [])[wi | 0] || {};
     var parts = ((week.days && week.days[dayKey]) || {}).parts || [];
@@ -9376,7 +9465,7 @@ tryRestoreAdminSession();
     /* "יום מנוחה" was ticked: that IS the answer for this day, and it replaces whatever
        was written here - so it asks once, at the moment it happens. */
     if (S.edit.restIntent) {
-      if (dayHasWrittenSession(S.edit.wi, S.edit.day) &&
+      if ((dayHasWrittenSession(S.edit.wi, S.edit.day) || draftHasTypedContent(S.edit)) &&
           !window.confirm("להפוך את היום ליום מנוחה? האימון שכתוב בו יימחק.")) {
         return;
       }
@@ -9428,7 +9517,7 @@ tryRestoreAdminSession();
     S.edit = {
       wi: clampWi(wi),
       day: day,
-      parts: [{ title: "Part A", notes: [""], format: "", work: [""] }],
+      parts: [{ title: "", notes: [""], format: "", work: [""] }],
       rest: false,
     };
     renderAdminDays();
@@ -9574,8 +9663,20 @@ tryRestoreAdminSession();
       /* A MARK, not a write. Ticking it used to save and close the editor on the spot,
          so one stray click replaced a written session with a rest day and there was
          nothing to undo (owner, 2026-09-03). Nothing is written until he presses Save or
-         leaves the day - the same rule as every other thing typed here. */
-      if (S.edit) S.edit.restIntent = !!t.checked;
+         leaves the day - the same rule as every other thing typed here.
+         BUT it asks the moment it is ticked over something he has typed: on a phone
+         this tick sits a thumb's width from "Add numbering", and a stray tap turned
+         the last day of a real client's block into a rest day with no question asked
+         (owner, 2026-09-09). */
+      if (!S.edit) return;
+      if (t.checked && draftHasTypedContent(S.edit)) {
+        if (!window.confirm("לסמן את היום כיום מנוחה? מה שכתוב כאן יימחק כשתשמור.")) {
+          t.checked = false;
+          S.edit.restIntent = false;
+          return;
+        }
+      }
+      S.edit.restIntent = !!t.checked;
       return;
     }
     if (g("data-clientmore")) { S.moreOpen = !S.moreOpen; renderDetail(); return; }
@@ -10386,6 +10487,22 @@ tryRestoreAdminSession();
       };
     });
 
+    /* Which part row the pointer is over, inside one card. */
+    function rowUnder(card, x, y) {
+      if (!card) return null;
+      var node = document.elementFromPoint(x, y);
+      var row = node && node.closest ? node.closest("[data-part]") : null;
+      return row && card.contains(row) ? row : null;
+    }
+
+    function clearRowMarks() {
+      var lit = document.querySelectorAll(".pprog-part-drop-above, .pprog-part-drop-below");
+      for (var i = 0; i < lit.length; i++) {
+        lit[i].classList.remove("pprog-part-drop-above");
+        lit[i].classList.remove("pprog-part-drop-below");
+      }
+    }
+
     document.addEventListener("pointermove", function (ev) {
       if (!held) return;
       if (!held.dragging) {
@@ -10396,16 +10513,35 @@ tryRestoreAdminSession();
       }
       ev.preventDefault();
       clearTargets();
+      clearRowMarks();
       var over = cardOf(document.elementFromPoint(ev.clientX, ev.clientY));
-      if (over && over !== held.card) over.classList.add("is-drop-target");
+      if (over && over !== held.card) {
+        over.classList.add("is-drop-target");
+        return;
+      }
+      /* Inside the same day: the line shows WHERE it will land (owner, 2026-09-09). */
+      var row = rowUnder(held.card, ev.clientX, ev.clientY);
+      if (!row || row === held.row) return;
+      var to = parseInt(row.getAttribute("data-part"), 10) || 0;
+      row.classList.add(to < held.index ? "pprog-part-drop-above" : "pprog-part-drop-below");
     });
 
     document.addEventListener("pointerup", function (ev) {
       if (!held) return;
       var was = held;
       var over = was.dragging ? cardOf(document.elementFromPoint(ev.clientX, ev.clientY)) : null;
+      var row = was.dragging ? rowUnder(was.card, ev.clientX, ev.clientY) : null;
+      clearRowMarks();
       stop();
-      if (!over || over === was.card) return;
+      /* Up and down inside the same day REORDERS the parts, and the numbering follows
+         because a part's number is where it sits (owner, 2026-09-09). */
+      if (over && over === was.card) {
+        if (!row || row === was.row) return;
+        var to = parseInt(row.getAttribute("data-part"), 10) || 0;
+        window.cvMovePart(was.wi, was.day, was.index, to);
+        return;
+      }
+      if (!over) return;
       var part = draftPartAt(was.wi + 1, was.day, was.index) || storedPartAt(was.wi, was.day, was.index);
       if (!part) { banner("bad", "לא מצאתי את החלק הזה."); return; }
       var toWi = parseInt(over.getAttribute("data-wi"), 10) || 0;

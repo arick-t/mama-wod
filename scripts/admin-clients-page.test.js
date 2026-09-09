@@ -504,7 +504,11 @@ ok("there is no second layout", !/function renderSessionsMatrix/.test(page) && !
 ok("the programme is always the calendar", /host\.innerHTML = D\.renderBrickView\(brickOpts\(\)\)/.test(page));
 ok("the calendar is told how many sessions were sold", /sessionColumns: sessions \|\| 0/.test(page));
 ok("days beyond the sessions sold are not writable", /DAY_KEYS_LOCAL\.indexOf\(dayKey\) >= sessions/.test(page));
-ok("the card names the session and the week", /"אימון " \+ \(activeIndex \+ 1\) \+ " · שבוע "/.test(page));
+/* PER CARD. Comparing one session across four weeks puts four cards on screen, and a
+   single string meant all four wore the label of the day selected last — four cards
+   reading "אימון 1 · שבוע 4" (owner, 2026-09-09, with the picture). */
+ok("the card names the session and the week", /"אימון " \+ \(i \+ 1\) \+ " · שבוע " \+ \(\(wi \| 0\) \+ 1\)/.test(page));
+ok("and each card is asked for its own", /dateLabelOverride: sessions[\s\S]{0,40}function \(wi, dayKey\)/.test(page));
 /* A brick is a month: opening on one week hid three quarters of what he sold. */
 ok("the month opens whole", /S\.calMode = "month"/.test(page));
 
@@ -903,9 +907,25 @@ ok("and every other way of opening it is still centred", /function clearIdentity
  * It used to save and close the editor on the spot, so one stray click replaced a
  * written session with a rest day and there was nothing to undo (owner, 2026-09-03).
  */
-ok("ticking rest writes nothing", /if \(S\.edit\) S\.edit\.restIntent = !!t\.checked;[\s\S]{0,20}return;/.test(page));
+ok("ticking rest writes nothing", /S\.edit\.restIntent = !!t\.checked;[\s\S]{0,20}return;/.test(page));
+/* And it ASKS the moment it is ticked over something he has typed. On a phone this
+   tick sits a thumb's width from "Add numbering": a stray tap turned the last day of a
+   real client's block into a rest day, silently, and a rest card hides the parts — so
+   there was no way back to the workout underneath (owner, 2026-09-09). */
+ok(
+  "and it asks before marking over typed work",
+  /if \(t\.checked && draftHasTypedContent\(S\.edit\)\)/.test(page) &&
+    /לסמן את היום כיום מנוחה\? מה שכתוב כאן יימחק כשתשמור\./.test(page)
+);
+ok("a refused question leaves the tick off", /t\.checked = false;[\s\S]{0,60}S\.edit\.restIntent = false;/.test(page));
+/* An autosave is nobody pressing anything: typed work wins over the mark. */
+ok(
+  "leaving the day never turns typed work into a rest day",
+  /if \(draftHasTypedContent\(draft\)\) \{\s*\n\s*draft\.restIntent = false;/.test(page)
+);
+ok("and Save asks about a typed draft too", /dayHasWrittenSession\(S\.edit\.wi, S\.edit\.day\) \|\| draftHasTypedContent\(S\.edit\)/.test(page));
 ok("Save honours the mark", /if \(S\.edit\.restIntent\) \{[\s\S]{0,400}saveDay\(S\.edit\.wi, S\.edit\.day, \[\], true, \{ title: readDayTitleField\(\) \}\);/.test(page));
-ok("so does leaving the day", /if \(draft\.restIntent\) \{[\s\S]{0,400}saveDay\(draft\.wi, draft\.day, \[\], true, \{ quiet: true, title: titleNow \}\);/.test(page));
+ok("so does leaving the day", /if \(draft\.restIntent\) \{[\s\S]{0,900}saveDay\(draft\.wi, draft\.day, \[\], true, \{ quiet: true, title: titleNow \}\);/.test(page));
 ok("and a written session is never replaced without asking", /function dayHasWrittenSession/.test(page) && (page.match(/להפוך את היום ליום מנוחה\? האימון שכתוב בו יימחק\./g) || []).length >= 2);
 
 /* --- autosave: leaving an edit saves it (owner, 2026-09-03) ----------

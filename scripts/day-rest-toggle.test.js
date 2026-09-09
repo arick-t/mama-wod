@@ -37,15 +37,26 @@ function weekWith(overviewFocus, parts) {
   };
 }
 
-/* --- the trap itself ---------------------------------------------------- */
+/* --- the trap, and where it is closed ----------------------------------- */
 
-/* Parts written into a day whose overview still says Rest: the renderer calls it a
-   rest day regardless. This is what a parts-only fix would have produced. */
+/* This module exists because the renderer used to read the week's overview row BEFORE
+   the day's parts: a real workout under a stale "Rest" row rendered as a rest day, and
+   because a rest card hides the parts there was no way back to the workout underneath.
+   The owner hit exactly that on a real client, on his phone, on the last day of a
+   block (owner, 2026-09-09).
+   The renderer now trusts a written session — the same rule this module always read by
+   (dayIsRest: "Trust the parts"). So a day in that broken state heals itself on the
+   next reload, and nothing can be stranded behind a rest card again. */
 const trap = weekWith("Rest", [{ id: "wed-0", title: "Part A", lines: ["Back squat 5x5"] }]);
 ok(
-  "a real session under a Rest overview STILL renders as rest — the trap is real",
-  rendererSaysRest("wed", trap.days.wed, trap) === true
+  "a real session under a stale Rest overview reads as a session",
+  rendererSaysRest("wed", trap.days.wed, trap) === false
 );
+ok("and our own reader has always said so", T.dayIsRest(trap, "wed") === false);
+/* Which does NOT make this module unnecessary: an empty day under a Rest row is still
+   a rest day, and only the toggle moves the row and the parts together. */
+const stillRest = weekWith("Rest", []);
+ok("an empty day under a Rest row is still rest", rendererSaysRest("wed", stillRest.days.wed, stillRest) === true);
 
 /* --- rest → session ---------------------------------------------------- */
 
