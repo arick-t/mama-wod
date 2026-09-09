@@ -72,6 +72,32 @@ ok("the editor draws the number beside the name", /<span class="pprog-part-n" ar
 ok("and it is a circle, not text in the field", /\.pprog-part-n\{/.test(css) && /border-radius:50%/.test(css.slice(css.indexOf(".pprog-part-n{"), css.indexOf(".pprog-part-n{") + 300)));
 ok("the add-part button counts too", /＋ Add Part ' \+\s*\n?\s*\(parts\.length \+ 1\)/.test(lib));
 
+/* ── 1.א+ב  the number's SIDE ────────────────────────────────────────────── */
+
+/* As one string the number fell wherever the bidi algorithm put it: a Hebrew name threw
+   it to the far left of the heading, so a column of parts had its numbers out of line
+   (owner, 2026-09-09, with the picture). It is its own element now, first in the
+   heading, so it leads in the PAGE's direction — right through his Hebrew back office,
+   left on the client's English page. One side per page, not one side per part. */
+const headingHtml = D.renderDayCardHtml(
+  { blockStart: "2026-08-31", weeks: [{ weekIndex: 1, overview: [], days: { sun: { parts: [{ title: "כעגכעגכעג", lines: ["x"] }, { title: "Back Squat", lines: ["5x5"] }] } } }] },
+  { weekIndex: 1, overview: [], days: { sun: { parts: [{ title: "כעגכעגכעג", lines: ["x"] }, { title: "Back Squat", lines: ["5x5"] }] } } },
+  0,
+  "sun",
+  {}
+);
+ok("the number is an element, not part of the text", /<span class="pprog-part-n" aria-hidden="true">1<\/span>/.test(headingHtml));
+ok("and it comes before the name", headingHtml.indexOf('class="pprog-part-n"') < headingHtml.indexOf('class="pprog-part-name"'));
+ok("the Hebrew name still decides its own direction", /<span class="pprog-part-name" dir="auto">כעגכעגכעג<\/span>/.test(headingHtml));
+ok("and so does the English one", /<span class="pprog-part-name" dir="auto">Back Squat<\/span>/.test(headingHtml));
+ok("both headings are built the same way", (headingHtml.match(/class="section-title has-part-n"/g) || []).length === 2);
+/* The heading itself forces nothing: the card as a whole sets ltr in places (the date
+   row, the note field), but the two heading elements leave it to the page and to the
+   name. */
+const headingsOnly = (headingHtml.match(/<div class="section-title has-part-n">[\s\S]*?<\/div>/g) || []).join("");
+ok("the heading forces no direction of its own", headingsOnly.indexOf('dir="rtl"') < 0 && headingsOnly.indexOf('dir="ltr"') < 0);
+ok("the row lays them out rather than the text flow", /\.pprog-day-card \.section-title\.has-part-n\{display:flex/.test(css));
+
 /* ── 1.ג  drag a part up and down inside the day ─────────────────────────── */
 
 ok("the back office can move a part inside a day", admin.indexOf("window.cvMovePart = function (wi, day, from, to)") >= 0);
@@ -85,6 +111,23 @@ ok("and it is bound once, to the document", /\(function bindPartDrag\(\) \{/.tes
 ok("the row shows where the part will land", /pprog-part-drop-above/.test(admin) && /pprog-part-drop-above/.test(client));
 ok("and the line is drawn in CSS both sides use", /\.section-title-row\.pprog-part-drop-above/.test(css));
 ok("Escape puts a drag back", /ev\.key === "Escape" && held/.test(admin) && /ev\.key === "Escape" && held/.test(client));
+
+/* The move is ANIMATED, with the slide the client tabs use — he asked for the one we
+   agreed on rather than a second kind of movement (owner, 2026-09-09). It cannot go
+   through slideThings() as it stands: reordering redraws the card, so the nodes it
+   measured are gone before it would animate them. */
+for (const [label, src] of [["the back office", admin], ["the client's page", client]]) {
+  ok(label + " measures the parts before the redraw", /function partBoxesIn\(wi, day\)/.test(src) && /var boxes = partBoxesIn\(/.test(src));
+  ok(label + " knows where each part stood", /function partWasAt\(i, from, to\)/.test(src));
+  ok(label + " animates them home afterwards", /function slidePartsFrom\(wi, day, boxes, from, to\)/.test(src));
+  ok(label + " uses the agreed slide, to the millisecond", /transform 160ms cubic-bezier\(\.2,\.7,\.3,1\)/.test(src));
+  ok(label + " takes the offset in one frame and lets it go in the next", /requestAnimationFrame\(function \(\) \{\s*\n\s*requestAnimationFrame/.test(src));
+}
+/* The arithmetic itself, which is what makes the slide land in the right place. */
+const wasAt = (i, f, t) => (i === t ? f : f < t ? (i >= f && i < t ? i + 1 : i) : i > t && i <= f ? i - 1 : i);
+ok("a part dragged down leaves the ones above it in place", [0, 1, 2, 3].map((i) => wasAt(i, 1, 3)).join() === "0,2,3,1");
+ok("and dragged up, the ones below it", [0, 1, 2, 3].map((i) => wasAt(i, 3, 1)).join() === "0,3,1,2");
+ok("nothing moves when it lands where it started", [0, 1, 2].map((i) => wasAt(i, 1, 1)).join() === "0,1,2");
 
 /* ── 2  Enter in a note opens the next note ──────────────────────────────── */
 

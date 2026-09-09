@@ -2015,15 +2015,70 @@ button.ghost:hover{color:var(--text)}
    * the numbering follows the move by itself, because a part's number is where it sits.
    * Bound to the document once: the card is redrawn constantly.
    */
+  /**
+   * The slide the client tabs use, for parts (owner, 2026-09-09: "אותה הנפשה
+   * המוכרת... שהסכמנו עליה").
+   *
+   * slideThings() cannot be used as it stands: reordering a part redraws the whole day
+   * card, so the nodes it measured are gone by the time it would animate them. The
+   * measurement is therefore taken BEFORE the redraw, and each new part is told where
+   * its own old node stood — which is arithmetic, since only one part moved.
+   */
+  function partBoxesIn(wi, day) {
+    var card = document.querySelector(
+      '.pprog-day-card[data-wi="' + (wi | 0) + '"][data-day="' + String(day || "") + '"]'
+    );
+    if (!card) return [];
+    return Array.prototype.slice.call(card.querySelectorAll(".section")).map(function (n) {
+      var b = n.getBoundingClientRect();
+      return { x: b.left, y: b.top };
+    });
+  }
+
+  /** Where the part now at index i stood before a move from `from` to `to`. */
+  function partWasAt(i, from, to) {
+    if (i === to) return from;
+    if (from < to) return i >= from && i < to ? i + 1 : i;
+    return i > to && i <= from ? i - 1 : i;
+  }
+
+  function slidePartsFrom(wi, day, boxes, from, to) {
+    if (!boxes.length) return;
+    var card = document.querySelector(
+      '.pprog-day-card[data-wi="' + (wi | 0) + '"][data-day="' + String(day || "") + '"]'
+    );
+    if (!card) return;
+    var now = Array.prototype.slice.call(card.querySelectorAll(".section"));
+    now.forEach(function (node, i) {
+      var was = boxes[partWasAt(i, from, to)];
+      if (!was) return;
+      var b = node.getBoundingClientRect();
+      var dx = was.x - b.left;
+      var dy = was.y - b.top;
+      if (!dx && !dy) return;
+      node.style.transition = "none";
+      node.style.transform = "translate(" + dx + "px," + dy + "px)";
+      /* Two frames: one to take the offset, one to let it go. */
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          node.style.transition = "transform 160ms cubic-bezier(.2,.7,.3,1)";
+          node.style.transform = "";
+        });
+      });
+    });
+  }
+
   window.cvMovePart = function (from, to) {
     var parts = state.edit && state.edit.parts;
     if (!Array.isArray(parts)) return;
     var f = from | 0;
     var t2 = Math.max(0, Math.min(parts.length - 1, to | 0));
     if (f === t2 || f < 0 || f >= parts.length) return;
+    var boxes = partBoxesIn(state.edit.wi, state.edit.day);
     var moved = parts.splice(f, 1)[0];
     parts.splice(t2, 0, moved);
     keepScroll(renderDays);
+    slidePartsFrom(state.edit.wi, state.edit.day, boxes, f, t2);
   };
 
   (function bindPartDrag() {

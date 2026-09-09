@@ -263,7 +263,10 @@ ok("nothing was forced to RTL", bidi.indexOf('dir="rtl"') < 0);
 const src = fs.readFileSync(path.join(__dirname, "..", "lib", "pprog-display.js"), "utf8");
 ok("notes decide too", /class="pprog-part-note" dir="auto"/.test(src));
 ok("so does a format line", /class="pprog-part-format" dir="auto"/.test(src));
-ok("and the part heading", /class="section-title" dir="auto"/.test(src));
+/* The heading is now two elements — a number that leads in the page's direction and
+   the name, which still decides its own (owner, 2026-09-09). */
+ok("and the part's name", /class="pprog-part-name" dir="auto"/.test(src));
+ok("with its number beside it, not inside the text", /class="pprog-part-n" aria-hidden="true"/.test(src));
 /* Checked on what is DRAWN rather than on the source line: the work row now also
    carries a number and a colour pencil, so the two tags are no longer neighbours. */
 const bidiEditor = PprogDisplay.renderDayCardHtml(block, block.weeks[0], 0, "mon", {

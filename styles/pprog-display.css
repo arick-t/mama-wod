@@ -261,6 +261,12 @@
   color:var(--part);font-size:.78em;font-weight:700;line-height:1
 }
 .section-title-row .pprog-part-n{margin-inline-end:2px}
+/* A heading is [number][name]: the number leads in the page's own direction, which
+   keeps a column of parts numbered down one side instead of following each name's
+   language (owner, 2026-09-09). */
+.pprog-day-card .section-title.has-part-n{display:flex;align-items:baseline;gap:6px}
+.section-title.has-part-n .pprog-part-name{min-width:0}
+.pprog-day-card .section-title.has-part-n .pprog-part-n{align-self:center}
 /* A place in the grid that this week does not use — it holds the column open so the
    weeks stay under one another (owner, 2026-09-05). */
 .pprog-cal-cell.is-off{visibility:hidden;pointer-events:none}

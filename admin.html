@@ -966,6 +966,12 @@ body.is-dragging-part-now{user-select:none}
   color:var(--part);font-size:.78em;font-weight:700;line-height:1
 }
 .section-title-row .pprog-part-n{margin-inline-end:2px}
+/* A heading is [number][name]: the number leads in the page's own direction, which
+   keeps a column of parts numbered down one side instead of following each name's
+   language (owner, 2026-09-09). */
+.pprog-day-card .section-title.has-part-n{display:flex;align-items:baseline;gap:6px}
+.section-title.has-part-n .pprog-part-name{min-width:0}
+.pprog-day-card .section-title.has-part-n .pprog-part-n{align-self:center}
 /* The one row in any menu that cannot be undone. */
 #clientScreen .week-menu .wm-sep,
 .week-menu .wm-sep{height:1px;background:rgba(255,255,255,.10);margin:4px 6px}
@@ -9312,6 +9318,59 @@ tryRestoreAdminSession();
    * like everything else typed here. Colours and line numbers travel inside the part,
    * so nothing has to be re-keyed.
    */
+  /**
+   * The slide the client tabs use, for parts (owner, 2026-09-09: "אותה הנפשה
+   * המוכרת... שהסכמנו עליה").
+   *
+   * slideThings() cannot be used as it stands: reordering a part redraws the whole day
+   * card, so the nodes it measured are gone by the time it would animate them. The
+   * measurement is therefore taken BEFORE the redraw, and each new part is told where
+   * its own old node stood — which is arithmetic, since only one part moved.
+   */
+  function partBoxesIn(wi, day) {
+    var card = document.querySelector(
+      '.pprog-day-card[data-wi="' + (wi | 0) + '"][data-day="' + String(day || "") + '"]'
+    );
+    if (!card) return [];
+    return Array.prototype.slice.call(card.querySelectorAll(".section")).map(function (n) {
+      var b = n.getBoundingClientRect();
+      return { x: b.left, y: b.top };
+    });
+  }
+
+  /** Where the part now at index i stood before a move from `from` to `to`. */
+  function partWasAt(i, from, to) {
+    if (i === to) return from;
+    if (from < to) return i >= from && i < to ? i + 1 : i;
+    return i > to && i <= from ? i - 1 : i;
+  }
+
+  function slidePartsFrom(wi, day, boxes, from, to) {
+    if (!boxes.length) return;
+    var card = document.querySelector(
+      '.pprog-day-card[data-wi="' + (wi | 0) + '"][data-day="' + String(day || "") + '"]'
+    );
+    if (!card) return;
+    var now = Array.prototype.slice.call(card.querySelectorAll(".section"));
+    now.forEach(function (node, i) {
+      var was = boxes[partWasAt(i, from, to)];
+      if (!was) return;
+      var b = node.getBoundingClientRect();
+      var dx = was.x - b.left;
+      var dy = was.y - b.top;
+      if (!dx && !dy) return;
+      node.style.transition = "none";
+      node.style.transform = "translate(" + dx + "px," + dy + "px)";
+      /* Two frames: one to take the offset, one to let it go. */
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          node.style.transition = "transform 160ms cubic-bezier(.2,.7,.3,1)";
+          node.style.transform = "";
+        });
+      });
+    });
+  }
+
   window.cvMovePart = function (wi, day, from, to) {
     if (!S.edit || S.edit.wi !== (wi | 0) || S.edit.day !== String(day || "")) return;
     var parts = S.edit.parts;
@@ -9319,9 +9378,12 @@ tryRestoreAdminSession();
     var f = from | 0;
     var t = Math.max(0, Math.min(parts.length - 1, to | 0));
     if (f === t || f < 0 || f >= parts.length) return;
+    /* Measured while the old card is still on screen. */
+    var boxes = partBoxesIn(wi, day);
     var moved = parts.splice(f, 1)[0];
     parts.splice(t, 0, moved);
     keepScroll(renderAdminDays);
+    slidePartsFrom(wi, day, boxes, f, t);
   };
 
   window.cvEditCancel = function () {
