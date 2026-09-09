@@ -161,10 +161,17 @@ ok("which is found by week and day", /function cardOfKey\(key\)/.test(admin));
 /* ── the drag: inside a day, and between two open days ───────────────────── */
 
 ok("inside a day it reorders", /window\.cvMovePart = function \(wi, day, from, to\)/.test(admin));
-ok("between two open days the part MOVES", /var moving = fromDraft\.parts\.splice\(was\.index, 1\)\[0\];/.test(admin) && /toDraft\.parts\.push\(moving\);/.test(admin));
+/* Between days a drag COPIES. I built it as a move and he corrected it
+   (owner, 2026-09-09): "יעתיק אותו ולא יגזור אותו... אם משתמש ירצה הוא ימחק את החלק
+   ידנית לאחר ההעברה". */
+ok("between days the part is COPIED", /var copy = JSON\.parse\(JSON\.stringify\(source\)\);/.test(admin) && /toDraft\.parts\.push\(copy\);/.test(admin));
+ok("and the original is not touched", !/fromDraft\.parts\.splice\(/.test(admin));
+ok("the copy is its own, so editing one does not edit both", /JSON\.parse\(JSON\.stringify\(source\)\)/.test(admin));
 ok("a day that is not open yet is opened first", /if \(fromDraft && !toDraft && typeof window\.cvStartEdit === "function"\)/.test(admin));
-ok("the day it left is never left with nowhere to type", /if \(!fromDraft\.parts\.length\) \{[\s\S]{0,120}title: "", notes: \[""\]/.test(admin));
-ok("and it says so, in his words", /החלק עבר ליום הזה\. יישמר עם שאר היום\./.test(admin));
+/* And it is written the same way as everything else typed here: the autosave when the
+   day leaves the screen, or Save on that card. */
+ok("it lands in the draft, not in a write of its own", /S\.edit = toDraft;\s*\n\s*keepScroll\(renderAdminDays\);/.test(admin));
+ok("and it says so, in his words", /החלק הועתק ליום הזה ונשאר גם ביום המקורי\. יישמר עם שאר היום\./.test(admin));
 
 /* ── the client's page is deliberately unchanged ─────────────────────────── */
 

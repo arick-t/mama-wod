@@ -120,6 +120,9 @@ const browsed = V.headerHtml("2026-08", 1250, "2026-09");
 const athome = V.headerHtml("2026-09", 1250, "2026-09");
 ok("there is a way back to this month", /data-led-today="1"/.test(browsed));
 ok("and it says היום", browsed.indexOf(">היום<") >= 0);
+/* Light red, so it is a shade more prominent than the arrows beside it
+   (owner, 2026-09-09: "צבע אותו באדום בהיר שיהיה טיפה יותר בולט"). */
+ok("and it is drawn in light red", /\.led-today\{[^}]*color:#F2867A/.test(page));
 ok("it is there on this month too, so the header keeps its shape", /data-led-today="1"/.test(athome));
 ok("but quiet, because there is nowhere to go", /led-today is-here/.test(athome) && !/is-here/.test(browsed));
 /* It is NOT one of the month arrows — its branch is asked about first, or the arrow

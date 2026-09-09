@@ -187,12 +187,12 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 }
 /* The way back to this month. Quiet next to the arrows until it is needed. */
 .led-today{
-  appearance:none;background:none;border:1px solid var(--line);border-radius:99px;
-  color:var(--text-muted);font:600 12px/1 var(--font-ui);padding:6px 11px;cursor:pointer;
-  flex:0 0 auto
+  appearance:none;background:rgba(242,134,122,.12);border:1px solid rgba(242,134,122,.55);
+  border-radius:99px;color:#F2867A;font:700 12px/1 var(--font-ui);padding:6px 12px;
+  cursor:pointer;flex:0 0 auto
 }
-.led-today:hover{color:var(--text);border-color:var(--text-meta)}
-.led-today.is-here{opacity:.55}
+.led-today:hover{background:rgba(242,134,122,.22);border-color:#F2867A}
+.led-today.is-here{opacity:.6}
 .led-today:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
 .led-day.is-today .led-num::after{content:"";display:inline-block;width:4px;height:4px;
   border-radius:50%;background:var(--text-muted);margin-inline-start:4px;vertical-align:middle}
@@ -10804,10 +10804,14 @@ tryRestoreAdminSession();
       var toWi = parseInt(over.getAttribute("data-wi"), 10) || 0;
       var toDay = over.getAttribute("data-day") || "";
       if (!toDay) return;
-      /* BETWEEN TWO OPEN DAYS the part MOVES, draft to draft: both days are open in
-         front of him, nothing is written yet, and a drag that left a copy behind would
-         be a copy, not a move (owner, 2026-09-09). A day that is not open yet is opened
-         first, so the part lands somewhere he can carry on typing. */
+      /* BETWEEN DAYS A DRAG COPIES — it does not cut.
+         I built it as a move; he corrected it (owner, 2026-09-09): "גרירת חלק מיום ליום
+         יעתיק אותו ולא יגזור אותו... אם משתמש ירצה הוא ימחק את החלק ידנית לאחר ההעברה".
+         So the part stays where it was, and a copy lands in the other day — which is
+         also the safer half of the two, since the × is one press away and an undo is
+         not. Both days are drafts, so the copy is written by the ordinary autosave or
+         by Save on that card, like everything else typed here. A day that is not open
+         yet is opened first, so the copy lands somewhere he can carry on typing. */
       var fromDraft = draftFor(editKeyOf(was.wi, was.day));
       var toKey = editKeyOf(toWi, toDay);
       var toDraft = draftFor(toKey);
@@ -10816,17 +10820,15 @@ tryRestoreAdminSession();
         toDraft = draftFor(toKey);
       }
       if (fromDraft && toDraft && Array.isArray(fromDraft.parts)) {
-        var moving = fromDraft.parts.splice(was.index, 1)[0];
-        if (!moving) { banner("bad", "לא מצאתי את החלק הזה."); return; }
+        var source = fromDraft.parts[was.index];
+        if (!source) { banner("bad", "לא מצאתי את החלק הזה."); return; }
+        /* A copy of its own, or editing one of them would edit both. */
+        var copy = JSON.parse(JSON.stringify(source));
         if (!Array.isArray(toDraft.parts)) toDraft.parts = [];
-        toDraft.parts.push(moving);
-        /* A day is never left with nowhere to type. */
-        if (!fromDraft.parts.length) {
-          fromDraft.parts = [{ title: "", notes: [""], format: "", work: [""] }];
-        }
+        toDraft.parts.push(copy);
         S.edit = toDraft;
         keepScroll(renderAdminDays);
-        banner("good", "החלק עבר ליום הזה. יישמר עם שאר היום.");
+        banner("good", "החלק הועתק ליום הזה ונשאר גם ביום המקורי. יישמר עם שאר היום.");
         return;
       }
       var part = draftPartAt(was.wi + 1, was.day, was.index) || storedPartAt(was.wi, was.day, was.index);
