@@ -112,6 +112,31 @@ ok("the summary tab keeps its own state name", /var LS = \{/.test(page));
 ok("the header names the month in Hebrew", V.headerHtml("2026-09", 1250).indexOf("ספטמבר 2026") >= 0);
 ok("and carries the month's total", V.headerHtml("2026-09", 1250).indexOf("₪1,250") >= 0);
 ok("with a way back and forward", /data-led-month="prev"/.test(V.headerHtml("2026-09", 0)) && /data-led-month="next"/.test(V.headerHtml("2026-09", 0)));
+
+/* --- item 6: the way back to today (owner, 2026-09-09) --------------------
+ * "כפתור היום שיחזיר אותי להיום אם דיפדפתי" — the calendar had arrows and no way home.
+ */
+const browsed = V.headerHtml("2026-08", 1250, "2026-09");
+const athome = V.headerHtml("2026-09", 1250, "2026-09");
+ok("there is a way back to this month", /data-led-today="1"/.test(browsed));
+ok("and it says היום", browsed.indexOf(">היום<") >= 0);
+ok("it is there on this month too, so the header keeps its shape", /data-led-today="1"/.test(athome));
+ok("but quiet, because there is nowhere to go", /led-today is-here/.test(athome) && !/is-here/.test(browsed));
+/* It is NOT one of the month arrows — its branch is asked about first, or the arrow
+   guard would swallow it. */
+ok("the page answers it before the arrows", page.indexOf('if (t.closest("[data-led-today]")) {') < page.indexOf('var nav = t.closest(".led-nav");'));
+ok("pressing it loads the month we are in", /loadMonth\(thisMonth\);/.test(page));
+ok("and on that month it flashes today instead of reloading", /if \(LS\.month === thisMonth\) \{ flashToday\(\); return; \}/.test(page));
+ok("the flash restarts when it is pressed twice", /void cell\.offsetWidth;/.test(page));
+ok("a day being edited is not left half-open by the jump", /if \(t\.closest\("\[data-led-today\]"\)\) \{[\s\S]{0,220}LS\.editing = null;/.test(page));
+
+/* --- item 6.ב: today has a frame ---------------------------------------- */
+const todayCell = V.calendarHtml({ month: "2026-09", today: "2026-09-09", deals: [] });
+ok("today's square is marked as today", /class="led-day is-today/.test(todayCell) || /led-day[^"]*is-today/.test(todayCell));
+ok("and only one square is", (todayCell.match(/is-today/g) || []).length === 1);
+ok("the frame is drawn, not a hairline", /\.led-day\.is-today\{border-color:var\(--text-muted\);box-shadow:inset 0 0 0 1px var\(--text-muted\)\}/.test(page));
+ok("it stays clear of the brand outline, which means open", /\.led-day\.is-open\{outline:2px solid var\(--brand\)/.test(page));
+ok("and the flash is switched off for reduced motion", /prefers-reduced-motion: reduce\)\{\.led-day\.is-flash\{animation:none/.test(page));
 ok("a whole shekel is not written with agorot", V.shekel(250) === "₪250");
 ok("but agorot are shown when there are any", V.shekel(250.5) === "₪250.50");
 

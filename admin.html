@@ -174,7 +174,26 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .led-sum{font-size:12px;font-weight:800;color:#4CAF70}
 /* Today is a hint, not a selection — and not a colour either: an orange number read
    as "this day is marked" two days running (owner, 2026-09-04). It is a dot. */
-.led-day.is-today{border-color:#3a3a3a}
+/* TODAY IS A FRAME, not a slightly lighter hairline — he asked to see at a glance
+   which square is today (owner, 2026-09-09). Kept clear of the brand outline, which
+   means "this day is open". */
+.led-day.is-today{border-color:var(--text-muted);box-shadow:inset 0 0 0 1px var(--text-muted)}
+.led-day.is-today .led-num{opacity:1}
+.led-day.is-flash{animation:led-today-flash .8s ease-out 1}
+@keyframes led-today-flash{
+  0%{box-shadow:inset 0 0 0 1px var(--text-muted),0 0 0 0 rgba(232,69,26,.55)}
+  60%{box-shadow:inset 0 0 0 1px var(--text-muted),0 0 0 7px rgba(232,69,26,0)}
+  100%{box-shadow:inset 0 0 0 1px var(--text-muted),0 0 0 0 rgba(232,69,26,0)}
+}
+/* The way back to this month. Quiet next to the arrows until it is needed. */
+.led-today{
+  appearance:none;background:none;border:1px solid var(--line);border-radius:99px;
+  color:var(--text-muted);font:600 12px/1 var(--font-ui);padding:6px 11px;cursor:pointer;
+  flex:0 0 auto
+}
+.led-today:hover{color:var(--text);border-color:var(--text-meta)}
+.led-today.is-here{opacity:.55}
+.led-today:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
 .led-day.is-today .led-num::after{content:"";display:inline-block;width:4px;height:4px;
   border-radius:50%;background:var(--text-muted);margin-inline-start:4px;vertical-align:middle}
 .led-day.is-open{outline:2px solid var(--brand);outline-offset:-2px;background:rgba(232,69,26,.10)}
@@ -1588,6 +1607,10 @@ header{flex-wrap:wrap;row-gap:8px}
 .purge-report h3{margin:0 0 10px;font-size:1.05em;color:#e8e4d8}
 .purge-report ul{margin:4px 0 12px;padding-inline-start:20px;color:#bdb8ab}
 .purge-report ul.purge-bad{color:#fca5a5}
+/* The today flash, off for anyone who asked for less movement. Down here because
+   the page's first @media must stay below the unscoped [hidden] rule — a scoping
+   pass once swallowed that rule and hid nothing (scripts/admin-clients-page.test.js). */
+@media (prefers-reduced-motion: reduce){.led-day.is-flash{animation:none;border-color:var(--brand)}}
 </style>
 </head>
 <body>
@@ -7870,7 +7893,7 @@ tryRestoreAdminSession();
   function openClient(pid) {
     /* A brick is a month. Opening on a single week hid three quarters of what he
        sold (owner, 2026-09-02). */
-    S.sel = pid; S.wi = 0; S.day = "sun"; S.calMode = "month"; S.selected = []; S.edit = null;
+    S.sel = pid; S.wi = 0; S.day = "sun"; S.calMode = "month"; S.selected = []; S.edit = null; S.edits = {};
     /* Show the screen before the answer comes back, so a slow or failed read leaves the
        owner looking at this screen with a message on it — not at the previous client. */
     S.adding = false;
@@ -8642,9 +8665,11 @@ tryRestoreAdminSession();
      (owner, 2026-09-01). Ticked = this day is rest. Ours rather than the shared card's,
      because the card is also the athlete app's and an athlete must not be able to
      delete a coach's session. */
-  function restToggleHeaderHtml() {
-    if (!S.edit) return "";
-    var day = S.edit.day || "";
+  /* Asked once PER CARD now, because several cards can be open (owner, 2026-09-09). */
+  function restToggleHeaderHtml(wi, dayKey) {
+    var draft = arguments.length ? draftFor(editKeyOf(wi, dayKey)) : S.edit;
+    if (!draft) return "";
+    var day = draft.day || "";
     if (!day || DAY_KEYS_LOCAL.indexOf(day) < 0) return "";
     /* It used to mirror the day, which meant it opened already ticked on every empty
        day — and ticking a ticked box does nothing, so the control read as broken. While
@@ -8652,8 +8677,8 @@ tryRestoreAdminSession();
        written here (owner, 2026-09-02). */
     return (
       '<label class="pprog-rest-check" title="יום מנוחה">' +
-      '<input type="checkbox" data-restcheck="' + (S.edit.wi | 0) + ":" + day + '"' +
-      (S.edit.restIntent ? " checked" : "") + ">" +
+      '<input type="checkbox" data-restcheck="' + (draft.wi | 0) + ":" + day + '"' +
+      (draft.restIntent ? " checked" : "") + ">" +
       "<span>יום מנוחה</span></label>"
     );
   }
@@ -8733,9 +8758,9 @@ tryRestoreAdminSession();
       /* The owner writes the plan — a block that starts mid-week still needs its
          first days filled, so a past date must not lock the pencil. */
       allowPastEdit: true,
-      editing: !!S.edit,
-      editDraft: S.edit,
-      editHeaderActionsHtml: restToggleHeaderHtml(),
+      /* The MAP, so every open day draws its own editor. */
+      editDrafts: S.edits,
+      editHeaderActionsHtml: restToggleHeaderHtml,
       adminEditStatus: S.editStatus || null,
       /* The client's unread changes ride the calendar's dot channel, and the open day
          card says so in the owner's own words. */
@@ -8786,7 +8811,7 @@ tryRestoreAdminSession();
      onclick attributes, so they have to be reachable from the page scope. */
 
   window.cvCalShift = function (delta) {
-    autosaveDraft();
+    autosaveAllDrafts();
     S.wi = clampWi((S.wi | 0) + (delta | 0));
     S.selected = [];
     renderAdminDays();
@@ -8807,7 +8832,7 @@ tryRestoreAdminSession();
    * appeared to ignore the press. It now always moves, and it shows the week it moved to.
    */
   window.cvJumpToday = function () {
-    autosaveDraft();
+    autosaveAllDrafts();
     var block = currentBlock();
     if (!block) return;
     var start = Date.parse(block.blockStart + "T00:00:00Z");
@@ -8846,7 +8871,41 @@ tryRestoreAdminSession();
      month this stops being a nicety. */
   function sortSel(list) {
     var D = pprogLib();
-    return D && D.sortSelectedDays ? D.sortSelectedDays(list) : list;
+    var real = keepRealDays(list);
+    return D && D.sortSelectedDays ? D.sortSelectedDays(real) : real;
+  }
+
+  /**
+   * How many sessions a week actually holds.
+   *
+   * A programme sold by the session has three, four, five slots a week — and a single
+   * week can have been cut to fewer. Seven means a programme of weekdays, where every
+   * day is real.
+   */
+  function sessionsInWeek(wi) {
+    var base = sessionCountLimit();
+    if (!base) return DAY_KEYS_LOCAL.length;
+    var w = ((S.program && S.program.weeks) || [])[wi | 0];
+    var n = parseInt(w && w.sessions, 10);
+    return n >= 1 && n <= 7 ? n : base;
+  }
+
+  /**
+   * DAYS THAT EXIST.
+   *
+   * Dragging across a whole block picked all seven weekdays of every week, because a
+   * selection is arithmetic on a 7-day grid. In a programme of three sessions a week
+   * that produced four cards per week that were never sold — drawn as rest days, dated
+   * by weekday, with a duck on them (owner, 2026-09-09, with the picture). Nothing was
+   * written; but he was shown days he cannot use, and it is the same filter for every
+   * way of selecting.
+   */
+  function keepRealDays(list) {
+    return (list || []).filter(function (c) {
+      if (!c) return false;
+      var i = DAY_KEYS_LOCAL.indexOf(String(c.day || ""));
+      return i >= 0 && i < sessionsInWeek(c.wi);
+    });
   }
 
   function toggleSelected(wi, day) {
@@ -8927,10 +8986,11 @@ tryRestoreAdminSession();
     var prevDay = S.day;
     S.wi = nextWi;
     S.day = nextDay;
-    /* Moving off the day being edited SAVES it. It used to be thrown away unless
-       Save was pressed first, and nobody presses Save before clicking the next day -
-       they click the next day (owner, 2026-09-03). */
-    if (S.edit && (S.edit.wi !== nextWi || S.edit.day !== nextDay)) autosaveDraft();
+    /* Moving off a day being edited SAVES it — it used to be thrown away unless Save
+       was pressed first, and nobody presses Save before clicking the next day
+       (owner, 2026-09-03). With several days open, only the ones that LEFT THE SCREEN
+       are written; the rest stay open (owner, 2026-09-09). Called after the selection
+       below has settled, since that is what decides who is still on screen. */
     if (ev && (ev.ctrlKey || ev.metaKey)) {
       /* Adding a day to a comparison is not "I have been over this", and reporting it as
          read fired a write per click — two quick picks raced each other on the same
@@ -8948,10 +9008,12 @@ tryRestoreAdminSession();
         S.selected = [{ wi: prevWi, day: prevDay }];
       }
       toggleSelected(nextWi, nextDay);
+      autosaveDraftsOffScreen();
       renderAdminDays();
       return;
     }
     S.selected = [];
+    autosaveDraftsOffScreen();
     openDayTag(nextWi, nextDay);
   };
 
@@ -9035,7 +9097,7 @@ tryRestoreAdminSession();
 
   /* All blocks · this block · this week. Three ways to read one programme. */
   window.cvSetView = function (mode) {
-    autosaveDraft();
+    autosaveAllDrafts();
     S.calMode = mode === "block" || mode === "week" ? mode : "month";
     renderAdminDays();
   };
@@ -9044,14 +9106,14 @@ tryRestoreAdminSession();
      the week's "general" note and clear the selection, which is not what a week button
      looks like it does (owner, 2026-09-02). */
   window.cvSelectWeek = function (wi) {
-    autosaveDraft();
+    autosaveAllDrafts();
     var w = clampWi(wi);
-    var limit = sessionCountLimit() || DAY_KEYS_LOCAL.length;
+    var limit = sessionsInWeek(w);
     var out = [];
     for (var i = 0; i < limit; i++) out.push({ wi: w, day: DAY_KEYS_LOCAL[i] });
     S.wi = w;
     S.day = DAY_KEYS_LOCAL[0];
-    S.selected = out;
+    S.selected = sortSel(out);
     renderAdminDays();
   };
 
@@ -9062,7 +9124,9 @@ tryRestoreAdminSession();
     if (!day) return;
     var out = [];
     for (var i = 0; i < weekCount(); i++) out.push({ wi: i, day: day });
-    S.selected = out;
+    /* A weekday letter in a session programme is a session number, and a week cut to
+       fewer sessions does not have it (owner, 2026-09-09). */
+    S.selected = sortSel(out);
     S.day = day;
     renderAdminDays();
   };
@@ -9096,6 +9160,80 @@ tryRestoreAdminSession();
 
   /* --- day edit hooks ------------------------------------------------------ */
 
+  /* ── SEVERAL DAYS OPEN AT ONCE (owner, 2026-09-09) ───────────────────────
+     He compares a few days side by side and wants to work on all of them: "כלל
+     הפיצ'רים יחולו על כל הימים אותם פתחתי לעריכה".
+
+     So the drafts live in a MAP keyed "wi:day", and every control in a card names its
+     own day — the shared card puts that key into each hook call. `S.edit` stays as the
+     one he touched last, which is what the card head and the older guards read.
+     Nothing is written until he presses Save on that card, or the day leaves the
+     screen; the other open days are never touched by either. */
+  function editKeyOf(wi, day) {
+    return (wi | 0) + ":" + String(day || "");
+  }
+
+  /** The draft a control belongs to. No key: whatever he touched last. */
+  function draftFor(key) {
+    if (key === undefined || key === null || key === "") return S.edit;
+    return S.edits[String(key)] || null;
+  }
+
+  /** Which drafts are open, oldest first. */
+  function openDraftKeys() {
+    return Object.keys(S.edits || {});
+  }
+
+  function forgetDraft(key) {
+    var k = String(key || "");
+    var gone = S.edits[k];
+    delete S.edits[k];
+    if (S.edit && S.edit === gone) {
+      var left = openDraftKeys();
+      S.edit = left.length ? S.edits[left[left.length - 1]] : null;
+    }
+  }
+
+  /** The card one key belongs to, so a caret goes into the right day. */
+  function cardOfKey(key) {
+    var d = draftFor(key);
+    if (!d) return null;
+    return document.querySelector(
+      '.pprog-day-card[data-wi="' + (d.wi | 0) + '"][data-day="' + String(d.day || "") + '"]'
+    );
+  }
+
+  /** Every day on screen right now: the open one, plus a comparison. */
+  function daysOnScreen() {
+    var out = {};
+    out[editKeyOf(S.wi, S.day)] = true;
+    (S.selected || []).forEach(function (c) {
+      out[editKeyOf(c.wi, c.day)] = true;
+    });
+    return out;
+  }
+
+  /** Everything open, written. For leaving the client, or moving the whole view. */
+  function autosaveAllDrafts() {
+    openDraftKeys().forEach(function (k) {
+      autosaveDraft(k);
+    });
+  }
+
+  /**
+   * A day he stopped looking at is saved, not lost.
+   *
+   * With one draft this was "moving off the day being edited saves it". With several,
+   * only the ones that left the screen are written — the rest stay open exactly as he
+   * left them (owner, 2026-09-09).
+   */
+  function autosaveDraftsOffScreen() {
+    var visible = daysOnScreen();
+    openDraftKeys().forEach(function (k) {
+      if (!visible[k]) autosaveDraft(k);
+    });
+  }
+
   window.cvStartEdit = function (wi, dayKey) {
     var D = pprogLib();
     var nextWi = clampWi(wi);
@@ -9109,15 +9247,20 @@ tryRestoreAdminSession();
     var rest = RT ? RT.dayIsRest(week, day) : !(dayData.parts && dayData.parts.length);
     var parts = rest ? [] : (D && D.draftFromDayData ? D.draftFromDayData(dayData, false) : []);
     if (!parts.length) parts = [{ title: "", notes: [""], format: "", work: [""] }];
-    /* The pencil on another card is also leaving this one. */
-    if (S.edit && (S.edit.wi !== nextWi || S.edit.day !== day)) autosaveDraft();
+    /* The pencil on another card no longer closes this one: both stay open, each
+       with its own draft (owner, 2026-09-09). */
     S.wi = nextWi;
     S.day = day;
     /* The selection survives. He picks three days to compare, presses the pencil on
        one, and the other two used to vanish — taking away the comparison he had just
        built (owner, 2026-09-02). */
     S.editStatus = null;
-    S.edit = { wi: nextWi, day: day, rest: false, wasRest: rest, parts: parts, restIntent: false };
+    var key = editKeyOf(nextWi, day);
+    /* Already open: the pencil is not a way to throw away what he has typed. */
+    if (!S.edits[key]) {
+      S.edits[key] = { wi: nextWi, day: day, rest: false, wasRest: rest, parts: parts, restIntent: false };
+    }
+    S.edit = S.edits[key];
     openDayTag(nextWi, day);
   };
 
@@ -9140,9 +9283,14 @@ tryRestoreAdminSession();
     } catch (e) {}
   }
 
-  window.cvEditSet = function (partIndex, field, a, b) {
-    if (!S.edit || !S.edit.parts) return;
-    var part = S.edit.parts[partIndex | 0];
+  /* Every hook below takes the DAY as its first argument — the shared card puts it
+     there — so a control in one open card can never edit another one's draft
+     (owner, 2026-09-09). */
+  window.cvEditSet = function (key, partIndex, field, a, b) {
+    var draft = draftFor(key);
+    if (!draft || !draft.parts) return;
+    S.edit = draft;
+    var part = draft.parts[partIndex | 0];
     if (!part) return;
     if (field === "title") { part.title = String(a == null ? "" : a); return; }
     if (field === "format") { part.format = String(a == null ? "" : a); return; }
@@ -9163,9 +9311,11 @@ tryRestoreAdminSession();
    * A new note — at the end from the chip, or right below the one he pressed Enter
    * in (owner, 2026-09-09: notes behave like work lines).
    */
-  window.cvEditAddNote = function (partIndex, atIndex) {
-    var part = S.edit && S.edit.parts[partIndex | 0];
+  window.cvEditAddNote = function (key, partIndex, atIndex) {
+    var draft = draftFor(key);
+    var part = draft && draft.parts[partIndex | 0];
     if (!part) return;
+    S.edit = draft;
     if (!Array.isArray(part.notes)) part.notes = [];
     var at =
       atIndex === undefined || atIndex === null
@@ -9173,14 +9323,17 @@ tryRestoreAdminSession();
         : Math.max(0, Math.min(part.notes.length, atIndex | 0));
     part.notes.splice(at, 0, "");
     keepScroll(renderAdminDays);
-    focusNoteRow(partIndex | 0, at);
+    focusNoteRow(key, partIndex | 0, at);
   };
 
   /** The caret into the note that was just opened, the way focusWorkLine does it. */
-  function focusNoteRow(partIndex, noteIndex) {
+  function focusNoteRow(key, partIndex, noteIndex) {
     setTimeout(function () {
       try {
-        var cards = document.querySelectorAll(".pprog-day-card .section");
+        /* Inside THAT card. With several open, "the nth part on the page" is a
+           different part in a different day (owner, 2026-09-09). */
+        var host = cardOfKey(key) || document;
+        var cards = host.querySelectorAll(".section");
         var card = cards[partIndex];
         if (!card) return;
         var boxes = card.querySelectorAll(".pprog-edit-note-row .pprog-edit-note");
@@ -9194,16 +9347,18 @@ tryRestoreAdminSession();
    * A new work line — at the end from the chip, or right after the line he pressed
    * Enter on. The colour and the number of the lines below move down with them.
    */
-  window.cvEditAddWork = function (partIndex, atIndex) {
-    var part = S.edit && S.edit.parts[partIndex | 0];
+  window.cvEditAddWork = function (key, partIndex, atIndex) {
+    var draft = draftFor(key);
+    var part = draft && draft.parts[partIndex | 0];
     if (!part) return;
+    S.edit = draft;
     if (!Array.isArray(part.work)) part.work = [];
     var at = atIndex === undefined || atIndex === null ? part.work.length : Math.max(0, Math.min(part.work.length, atIndex | 0));
     part.work.splice(at, 0, "");
     if (Array.isArray(part.colors)) part.colors.splice(at, 0, "");
     if (Array.isArray(part.nums)) part.nums.splice(at, 0, "");
     keepScroll(renderAdminDays);
-    focusWorkLine(partIndex | 0, at);
+    focusWorkLine(key, partIndex | 0, at);
   };
 
   /**
@@ -9213,10 +9368,11 @@ tryRestoreAdminSession();
    * found by where they sit: the nth part, the nth line inside it. The number in the
    * circle is an input too, hence the exclusion.
    */
-  function focusWorkLine(partIndex, lineIndex) {
+  function focusWorkLine(key, partIndex, lineIndex) {
     setTimeout(function () {
       try {
-        var lists = document.querySelectorAll(".pprog-day-card .pprog-edit-lines");
+        var host = cardOfKey(key) || document;
+        var lists = host.querySelectorAll(".pprog-edit-lines");
         var list = lists[partIndex];
         if (!list) return;
         var boxes = list.querySelectorAll('input[type="text"]:not(.pprog-num-in)');
@@ -9226,9 +9382,11 @@ tryRestoreAdminSession();
     }, 0);
   }
 
-  window.cvEditRemoveWork = function (partIndex, lineIndex) {
-    var part = S.edit && S.edit.parts[partIndex | 0];
+  window.cvEditRemoveWork = function (key, partIndex, lineIndex) {
+    var draft = draftFor(key);
+    var part = draft && draft.parts[partIndex | 0];
     if (!part || !Array.isArray(part.work)) return;
+    S.edit = draft;
     part.work.splice(lineIndex | 0, 1);
     /* The colours belong to the lines, so they move up with them. */
     if (Array.isArray(part.colors)) part.colors.splice(lineIndex | 0, 1);
@@ -9239,18 +9397,22 @@ tryRestoreAdminSession();
 
   /* A note can be taken off again — unlike a work line, a part with no note at all is
      perfectly normal, so nothing is put back in its place (owner, 2026-09-05). */
-  window.cvEditRemoveNote = function (partIndex, noteIndex) {
-    var part = S.edit && S.edit.parts[partIndex | 0];
+  window.cvEditRemoveNote = function (key, partIndex, noteIndex) {
+    var draft = draftFor(key);
+    var part = draft && draft.parts[partIndex | 0];
     if (!part || !Array.isArray(part.notes)) return;
+    S.edit = draft;
     part.notes.splice(noteIndex | 0, 1);
     keepScroll(renderAdminDays);
   };
 
   /* The colour of one work line, and whether this part numbers its lines. Both are
      part of the day like any other field: the autosave that follows writes them. */
-  window.cvEditSetColour = function (partIndex, lineIndex, colourKey) {
-    var part = S.edit && S.edit.parts[partIndex | 0];
+  window.cvEditSetColour = function (key, partIndex, lineIndex, colourKey) {
+    var draft = draftFor(key);
+    var part = draft && draft.parts[partIndex | 0];
     if (!part) return;
+    S.edit = draft;
     if (!Array.isArray(part.colors)) part.colors = [];
     part.colors[lineIndex | 0] = String(colourKey || "");
     keepScroll(renderAdminDays);
@@ -9260,9 +9422,11 @@ tryRestoreAdminSession();
    * The number on one line. Digits only, and nothing is redrawn while he types —
    * a redraw on every keystroke would throw the caret out of the box.
    */
-  window.cvEditSetNumber = function (partIndex, lineIndex, el) {
-    var part = S.edit && S.edit.parts[partIndex | 0];
+  window.cvEditSetNumber = function (key, partIndex, lineIndex, el) {
+    var draft = draftFor(key);
+    var part = draft && draft.parts[partIndex | 0];
     if (!part || !el) return;
+    S.edit = draft;
     var clean = String(el.value == null ? "" : el.value).replace(/[^0-9]/g, "").slice(0, 3);
     if (el.value !== clean) el.value = clean;
     if (!Array.isArray(part.nums)) part.nums = [];
@@ -9277,10 +9441,12 @@ tryRestoreAdminSession();
    * box at all: the last part removed leaves the empty one the editor opens with, so
    * there is somewhere to type.
    */
-  window.cvEditRemovePart = function (partIndex) {
-    if (!S.edit || !Array.isArray(S.edit.parts)) return;
+  window.cvEditRemovePart = function (key, partIndex) {
+    var draft = draftFor(key);
+    if (!draft || !Array.isArray(draft.parts)) return;
+    S.edit = draft;
     var i = partIndex | 0;
-    var part = S.edit.parts[i];
+    var part = draft.parts[i];
     if (!part) return;
     var hasSomething = !!(
       (part.notes || []).join("").trim() ||
@@ -9288,26 +9454,30 @@ tryRestoreAdminSession();
       (part.work || []).join("").trim()
     );
     if (hasSomething && !window.confirm("למחוק את החלק הזה מהיום? מה שכתוב בו יימחק.")) return;
-    S.edit.parts.splice(i, 1);
-    if (!S.edit.parts.length) {
-      S.edit.parts = [{ title: "Part A", notes: [""], format: "", work: [""] }];
+    draft.parts.splice(i, 1);
+    if (!draft.parts.length) {
+      draft.parts = [{ title: "", notes: [""], format: "", work: [""] }];
     }
     keepScroll(renderAdminDays);
   };
 
-  window.cvEditSetNumbering = function (partIndex, on) {
-    var part = S.edit && S.edit.parts[partIndex | 0];
+  window.cvEditSetNumbering = function (key, partIndex, on) {
+    var draft = draftFor(key);
+    var part = draft && draft.parts[partIndex | 0];
     if (!part) return;
+    S.edit = draft;
     part.numbered = on === true;
     keepScroll(renderAdminDays);
   };
 
-  window.cvEditAddPart = function () {
-    if (!S.edit) return;
-    if (!Array.isArray(S.edit.parts)) S.edit.parts = [];
+  window.cvEditAddPart = function (key) {
+    var draft = draftFor(key);
+    if (!draft) return;
+    S.edit = draft;
+    if (!Array.isArray(draft.parts)) draft.parts = [];
     /* No "Part D" written into the name: the number is drawn beside the field and
        the name is his to type (owner, 2026-09-09). */
-    S.edit.parts.push({ title: "", notes: [""], format: "", work: [""] });
+    draft.parts.push({ title: "", notes: [""], format: "", work: [""] });
     keepScroll(renderAdminDays);
   };
 
@@ -9372,8 +9542,10 @@ tryRestoreAdminSession();
   }
 
   window.cvMovePart = function (wi, day, from, to) {
-    if (!S.edit || S.edit.wi !== (wi | 0) || S.edit.day !== String(day || "")) return;
-    var parts = S.edit.parts;
+    var draft = draftFor(editKeyOf(wi, day));
+    if (!draft) return;
+    S.edit = draft;
+    var parts = draft.parts;
     if (!Array.isArray(parts)) return;
     var f = from | 0;
     var t = Math.max(0, Math.min(parts.length - 1, to | 0));
@@ -9386,8 +9558,10 @@ tryRestoreAdminSession();
     slidePartsFrom(wi, day, boxes, f, t);
   };
 
-  window.cvEditCancel = function () {
-    S.edit = null;
+  window.cvEditCancel = function (key) {
+    var draft = draftFor(key);
+    if (!draft) { S.edit = null; S.editStatus = null; renderAdminDays(); return; }
+    forgetDraft(String(key || editKeyOf(draft.wi, draft.day)));
     S.editStatus = null;
     renderAdminDays();
   };
@@ -9403,17 +9577,18 @@ tryRestoreAdminSession();
    * empty draft is dropped rather than written, and a draft identical to what is
    * already stored costs no request at all.
    */
-  function autosaveDraft() {
-    var draft = S.edit;
+  function autosaveDraft(key) {
+    var draft = draftFor(key);
     if (!draft) return;
+    var k = String(key || editKeyOf(draft.wi, draft.day));
     var D = pprogLib();
     /* Whatever is in the heading counts as part of the day, like every other field:
        he renamed a day, moved to the next one, and the name was gone
        (owner, 2026-09-05). Read BEFORE the card is redrawn. */
-    var titleNow = readDayTitleField();
-    /* Leave the edit NOW: he is already on the next day, and the write goes on behind
-       him. */
-    S.edit = null;
+    var titleNow = readDayTitleField(k);
+    /* Leave THIS edit now — the other open days stay exactly as they are
+       (owner, 2026-09-09) — and the write goes on behind him. */
+    forgetDraft(k);
     S.editStatus = null;
     if (draft.restIntent) {
       /* Leaving a day marked as rest writes it - but never over a real session without
@@ -9424,13 +9599,13 @@ tryRestoreAdminSession();
          dropped and what he wrote is saved. */
       if (draftHasTypedContent(draft)) {
         draft.restIntent = false;
-        if (S.edit === draft) S.edit.restIntent = false;
+        /* The draft has already left the open ones; this is only its own copy. */
       } else {
         if (dayHasWrittenSession(draft.wi, draft.day) &&
             !window.confirm("להפוך את היום ליום מנוחה? האימון שכתוב בו יימחק.")) {
           return;
         }
-        saveDay(draft.wi, draft.day, [], true, { quiet: true, title: titleNow });
+        saveDay(draft.wi, draft.day, [], true, { quiet: true, title: titleNow, key: k });
         return;
       }
     }
@@ -9444,7 +9619,7 @@ tryRestoreAdminSession();
     }
     var parts = D.partsFromDraft({ parts: draft.parts, day: draft.day });
     if (samePartsAsStored(draft.wi, draft.day, parts) && !titleChanged) return;
-    saveDay(draft.wi, draft.day, parts, false, { quiet: true, title: titleNow });
+    saveDay(draft.wi, draft.day, parts, false, { quiet: true, title: titleNow, key: k });
   }
 
   /** The name the day is stored under right now. */
@@ -9520,32 +9695,43 @@ tryRestoreAdminSession();
     }
   }
 
-  window.cvEditSave = function () {
-    if (!S.edit) return;
+  /** Save is per CARD: the other open days are not touched (owner, 2026-09-09). */
+  window.cvEditSave = function (key) {
+    var draft = draftFor(key);
+    if (!draft) return;
+    var k = String(key || editKeyOf(draft.wi, draft.day));
+    S.edit = draft;
     var D = pprogLib();
     if (!D || !D.partsFromDraft) { banner("bad", "התצוגה לא נטענה. רענן את הדף."); return; }
     /* "יום מנוחה" was ticked: that IS the answer for this day, and it replaces whatever
        was written here - so it asks once, at the moment it happens. */
-    if (S.edit.restIntent) {
-      if ((dayHasWrittenSession(S.edit.wi, S.edit.day) || draftHasTypedContent(S.edit)) &&
+    if (draft.restIntent) {
+      if ((dayHasWrittenSession(draft.wi, draft.day) || draftHasTypedContent(draft)) &&
           !window.confirm("להפוך את היום ליום מנוחה? האימון שכתוב בו יימחק.")) {
         return;
       }
-      saveDay(S.edit.wi, S.edit.day, [], true, { title: readDayTitleField() });
+      saveDay(draft.wi, draft.day, [], true, { title: readDayTitleField(k), key: k });
       return;
     }
-    if (!D.draftHasContent(S.edit)) {
+    if (!D.draftHasContent(draft)) {
       banner("warn", 'לא הוקלד כלום. אם התכוונת ליום מנוחה — יש כפתור "הפוך ליום מנוחה".');
       return;
     }
-    saveDay(S.edit.wi, S.edit.day, D.partsFromDraft({ parts: S.edit.parts, day: S.edit.day }), false, {
-      title: readDayTitleField(),
+    saveDay(draft.wi, draft.day, D.partsFromDraft({ parts: draft.parts, day: draft.day }), false, {
+      title: readDayTitleField(k),
+      key: k,
     });
   };
 
   /** What the heading field says, or undefined when the day is not open for editing. */
-  function readDayTitleField() {
-    var f = document.querySelector("#adminDays [data-day-title]");
+  function readDayTitleField(key) {
+    /* Several cards can be open, each with a heading field of its own — so it is asked
+       for by day rather than "the first one on the page" (owner, 2026-09-09). */
+    var f = document.querySelector(
+      key
+        ? '#adminDays [data-day-title="' + String(key).replace(/"/g, "") + '"]'
+        : "#adminDays [data-day-title]"
+    );
     if (!f) return undefined;
     return String(f.value || "").trim().slice(0, 80);
   }
@@ -9575,13 +9761,18 @@ tryRestoreAdminSession();
       saveDay(clampWi(wi), day, [], true);
       return;
     }
-    /* Off: not a save, just an editable draft — nothing is written until he saves. */
-    S.edit = {
+    /* Off: not a save, just an editable draft — nothing is written until he saves.
+       It joins the open drafts like any other, so it survives him opening another day
+       beside it (owner, 2026-09-09). */
+    var offKey = editKeyOf(clampWi(wi), day);
+    S.edits[offKey] = {
       wi: clampWi(wi),
       day: day,
       parts: [{ title: "", notes: [""], format: "", work: [""] }],
       rest: false,
+      restIntent: false,
     };
+    S.edit = S.edits[offKey];
     renderAdminDays();
   }
 
@@ -9666,8 +9857,9 @@ tryRestoreAdminSession();
       if (!quiet) {
         /* Pressing Save means staying on the day just written. Jumping back to the first
            session of the block after every save made writing a month a fight
-           (owner, 2026-09-02). */
-        S.edit = null;
+           (owner, 2026-09-02). Only THIS day's editor closes: the other cards he has
+           open are still being written (owner, 2026-09-09). */
+        forgetDraft((opts && opts.key) || editKeyOf(wi, dayKey));
         S.wi = wi;
         S.day = dayKey;
       }
@@ -9721,7 +9913,8 @@ tryRestoreAdminSession();
       window.cvMakeRest(parseInt(mr[0], 10) || 0, mr[1] || "");
       return;
     }
-    if (g("data-restcheck")) {
+    var restKey = g("data-restcheck");
+    if (restKey) {
       /* A MARK, not a write. Ticking it used to save and close the editor on the spot,
          so one stray click replaced a written session with a rest day and there was
          nothing to undo (owner, 2026-09-03). Nothing is written until he presses Save or
@@ -9730,15 +9923,17 @@ tryRestoreAdminSession();
          this tick sits a thumb's width from "Add numbering", and a stray tap turned
          the last day of a real client's block into a rest day with no question asked
          (owner, 2026-09-09). */
-      if (!S.edit) return;
-      if (t.checked && draftHasTypedContent(S.edit)) {
+      var restDraft = draftFor(restKey) || S.edit;
+      if (!restDraft) return;
+      S.edit = restDraft;
+      if (t.checked && draftHasTypedContent(restDraft)) {
         if (!window.confirm("לסמן את היום כיום מנוחה? מה שכתוב כאן יימחק כשתשמור.")) {
           t.checked = false;
-          S.edit.restIntent = false;
+          restDraft.restIntent = false;
           return;
         }
       }
-      S.edit.restIntent = !!t.checked;
+      restDraft.restIntent = !!t.checked;
       return;
     }
     if (g("data-clientmore")) { S.moreOpen = !S.moreOpen; renderDetail(); return; }
@@ -10315,15 +10510,16 @@ tryRestoreAdminSession();
     /* Pasting onto a day he is not editing OPENS that day for editing and plants the
        part in the draft, so he carries on writing where the part landed instead of
        being handed a saved day and having to press the pencil (owner, 2026-09-08). */
-    var onThisDay = !!(S.edit && (S.edit.wi | 0) === weekNum - 1 && S.edit.day === dayKey);
-    if (!onThisDay && typeof window.cvStartEdit === "function") {
+    var key = editKeyOf(weekNum - 1, dayKey);
+    var target = draftFor(key);
+    if (!target && typeof window.cvStartEdit === "function") {
       window.cvStartEdit(weekNum - 1, dayKey);
-      onThisDay = !!(S.edit && (S.edit.wi | 0) === weekNum - 1 && S.edit.day === dayKey);
+      target = draftFor(key);
     }
-    if (onThisDay) {
+    if (target) {
       var D = pprogLib();
-      if (!Array.isArray(S.edit.parts)) S.edit.parts = [];
-      S.edit.parts.push(draftPartFrom(part, D));
+      if (!Array.isArray(target.parts)) target.parts = [];
+      target.parts.push(draftPartFrom(part, D));
       renderAdminDays();
       banner("good", "החלק נשתל כאן. יישמר עם שאר היום.");
       return;
@@ -10343,10 +10539,11 @@ tryRestoreAdminSession();
 
   /** The part he is looking at while a day is open for editing. */
   function draftPartAt(weekNum, dayKey, partIndex) {
-    if (!S.edit || (S.edit.wi | 0) !== weekNum - 1 || S.edit.day !== dayKey) return null;
+    var draft = draftFor(editKeyOf(weekNum - 1, dayKey));
+    if (!draft) return null;
     var D = pprogLib();
     if (!D || !D.partsFromDraft) return null;
-    var parts = D.partsFromDraft({ parts: S.edit.parts, day: dayKey });
+    var parts = D.partsFromDraft({ parts: draft.parts, day: dayKey });
     return parts[partIndex | 0] || null;
   }
 
@@ -10604,11 +10801,36 @@ tryRestoreAdminSession();
         return;
       }
       if (!over) return;
-      var part = draftPartAt(was.wi + 1, was.day, was.index) || storedPartAt(was.wi, was.day, was.index);
-      if (!part) { banner("bad", "לא מצאתי את החלק הזה."); return; }
       var toWi = parseInt(over.getAttribute("data-wi"), 10) || 0;
       var toDay = over.getAttribute("data-day") || "";
       if (!toDay) return;
+      /* BETWEEN TWO OPEN DAYS the part MOVES, draft to draft: both days are open in
+         front of him, nothing is written yet, and a drag that left a copy behind would
+         be a copy, not a move (owner, 2026-09-09). A day that is not open yet is opened
+         first, so the part lands somewhere he can carry on typing. */
+      var fromDraft = draftFor(editKeyOf(was.wi, was.day));
+      var toKey = editKeyOf(toWi, toDay);
+      var toDraft = draftFor(toKey);
+      if (fromDraft && !toDraft && typeof window.cvStartEdit === "function") {
+        window.cvStartEdit(toWi, toDay);
+        toDraft = draftFor(toKey);
+      }
+      if (fromDraft && toDraft && Array.isArray(fromDraft.parts)) {
+        var moving = fromDraft.parts.splice(was.index, 1)[0];
+        if (!moving) { banner("bad", "לא מצאתי את החלק הזה."); return; }
+        if (!Array.isArray(toDraft.parts)) toDraft.parts = [];
+        toDraft.parts.push(moving);
+        /* A day is never left with nowhere to type. */
+        if (!fromDraft.parts.length) {
+          fromDraft.parts = [{ title: "", notes: [""], format: "", work: [""] }];
+        }
+        S.edit = toDraft;
+        keepScroll(renderAdminDays);
+        banner("good", "החלק עבר ליום הזה. יישמר עם שאר היום.");
+        return;
+      }
+      var part = draftPartAt(was.wi + 1, was.day, was.index) || storedPartAt(was.wi, was.day, was.index);
+      if (!part) { banner("bad", "לא מצאתי את החלק הזה."); return; }
       pastePartHere(toWi + 1, toDay, part);
     });
 
@@ -11647,6 +11869,7 @@ tryRestoreAdminSession();
         S.calMode = "month";
         S.selected = [];
         S.edit = null;
+        S.edits = {};
         adminOpenedSomeone = true;
         try {
           if (typeof window.renderPeopleStripActive === "function") {
@@ -11817,7 +12040,7 @@ tryRestoreAdminSession();
     },
     open: function (programId) {
       /* Switching client is leaving the day too. */
-      try { autosaveDraft(); } catch (eSave) {}
+      try { autosaveAllDrafts(); } catch (eSave) {}
       S.adding = false;
       S.blockMode = false;
       /* A link belongs to the client it was issued for. */
@@ -11881,6 +12104,7 @@ tryRestoreAdminSession();
         S.calMode = "month";
         S.selected = [];
         S.edit = null;
+        S.edits = {};
         adminOpenedSomeone = true;
         try {
           if (typeof window.renderPeopleStripActive === "function") {
@@ -11921,8 +12145,9 @@ tryRestoreAdminSession();
         if (!stamp || stamp === S.listStamp) return;
         S.listStamp = stamp;
         loadList();
-        /* Never while he is mid-sentence: an open editor is his work, not stale data. */
-        if (S.program && !S.edit && !S.adding) {
+        /* Never while he is mid-sentence: an open editor is his work, not stale data.
+           With several days open it is enough that ONE of them is (owner, 2026-09-09). */
+        if (S.program && !openDraftKeys().length && !S.adding) {
           api({ action: "read", programId: S.program.programId }).then(function (rr) {
             if (rr.status !== 200 || !rr.body.ok) return;
             if ((rr.body.program.version | 0) === (S.program.version | 0)) return;
@@ -12043,6 +12268,20 @@ tryRestoreAdminSession();
     if (box) box.hidden = true;
   }
 
+  /** Today's square, told to say so — for a press that has nothing to load. */
+  function flashToday() {
+    try {
+      var cell = document.querySelector(".led-day.is-today");
+      if (!cell) return;
+      cell.classList.remove("is-flash");
+      /* Reading offsetWidth restarts the animation when it is pressed twice. */
+      void cell.offsetWidth;
+      cell.classList.add("is-flash");
+      setTimeout(function () { cell.classList.remove("is-flash"); }, 800);
+      if (cell.scrollIntoView) cell.scrollIntoView({ block: "nearest" });
+    } catch (e) {}
+  }
+
   function loadMonth(month) {
     LS.month = month;
     render();
@@ -12094,7 +12333,7 @@ tryRestoreAdminSession();
     var day = el("ledDay");
     if (!head || !cal || !day) return;
     var data = LS.data || { total: 0, totalsByDay: {}, deals: [], favourites: [] };
-    head.innerHTML = V.headerHtml(LS.month, data.total);
+    head.innerHTML = V.headerHtml(LS.month, data.total, L.monthKey());
     cal.innerHTML = V.calendarHtml({
       month: LS.month,
       totalsByDay: data.totalsByDay,
@@ -12668,6 +12907,18 @@ tryRestoreAdminSession();
     if (!box || box.hidden) return;
     var t = ev.target;
     if (!t || !t.closest) return;
+
+    /* "היום" — its own control, so it is asked about BEFORE the month arrows: it is
+       not one of them (owner, 2026-09-09). Already on this month, there is nothing to
+       load and today's square answers the press itself. */
+    if (t.closest("[data-led-today]")) {
+      var thisMonth = L.monthKey();
+      LS.day = "";
+      LS.editing = null;
+      if (LS.month === thisMonth) { flashToday(); return; }
+      loadMonth(thisMonth);
+      return;
+    }
 
     var nav = t.closest(".led-nav");
     if (nav) {

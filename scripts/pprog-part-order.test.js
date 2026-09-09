@@ -102,7 +102,9 @@ ok("the row lays them out rather than the text flow", /\.pprog-day-card \.sectio
 
 ok("the back office can move a part inside a day", admin.indexOf("window.cvMovePart = function (wi, day, from, to)") >= 0);
 ok("a drop on the same day reorders instead of doing nothing", /if \(over && over === was\.card\) \{[\s\S]{0,320}window\.cvMovePart\(was\.wi, was\.day, was\.index, to\)/.test(admin));
-ok("only the open draft is touched", /if \(!S\.edit \|\| S\.edit\.wi !== \(wi \| 0\) \|\| S\.edit\.day !== String\(day \|\| ""\)\) return;/.test(admin));
+/* With several days open, the move names its own day and finds that day's draft
+   (owner, 2026-09-09). */
+ok("it moves the part inside THAT day's draft", /var draft = draftFor\(editKeyOf\(wi, day\)\);[\s\S]{0,60}if \(!draft\) return;/.test(admin));
 ok("dragging between two open days still works", admin.indexOf("pastePartHere(toWi + 1, toDay, part)") >= 0);
 ok("the client's page can move a part too", client.indexOf("window.cvMovePart = function (from, to)") >= 0);
 ok("with a grip binding of its own", /closest\("\[data-part-grip\]"\)/.test(client) && /function bindPartDrag\(\)/.test(client));
@@ -131,12 +133,14 @@ ok("nothing moves when it lands where it started", [0, 1, 2].map((i) => wasAt(i,
 
 /* ── 2  Enter in a note opens the next note ──────────────────────────────── */
 
-ok("the note row listens for Enter", /addNoteFn \+ "\(" \+ pi \+ "," \+ \(ni \+ 1\) \+ '\);\}">'/.test(lib));
+/* K is the day this editor belongs to — empty for a page with one open day
+   (owner, 2026-09-09). */
+ok("the note row listens for Enter", /addNoteFn \+ "\(" \+ K \+ pi \+ "," \+ \(ni \+ 1\) \+ '\);\}">'/.test(lib));
 ok("and it does not submit anything", /event\.preventDefault\(\);' \+\s*\n\s*addNoteFn/.test(lib));
 for (const [label, src, render] of [["the back office", admin, "renderAdminDays"], ["the client's page", client, "renderDays"]]) {
-  ok(label + " puts the new note where Enter was pressed", /window\.cvEditAddNote = function \(partIndex, atIndex\)/.test(src));
+  ok(label + " puts the new note where Enter was pressed", /window\.cvEditAddNote = function \((?:key, )?partIndex, atIndex\)/.test(src));
   ok(label + " does not just append it", new RegExp("part\\.notes\\.splice\\(at, 0, \"\"\\)").test(src));
-  ok(label + " puts the caret in it", /function focusNoteRow\(partIndex, noteIndex\)/.test(src));
+  ok(label + " puts the caret in it", /function focusNoteRow\((?:key, )?partIndex, noteIndex\)/.test(src));
   ok(label + " keeps the page where it was", new RegExp("keepScroll\\(" + render + "\\)[\\s\\S]{0,80}focusNoteRow").test(src));
 }
 
@@ -154,7 +158,10 @@ ok("an empty day under a Rest row is still rest", N.isRestDay("tue", { parts: []
 ok("a placeholder the brain left is not a session", N.partsHoldSession([{ id: "overview-stub-1", title: "Part A", lines: ["Full session details still loading…"] }]) === false);
 ok("a titled part with no lines is", N.partsHoldSession([{ title: "אימון תחנות", lines: [] }]) === true);
 /* The tap that caused it must ask first, and an autosave must never wipe typed work. */
-ok("the tick asks before marking over typed work", /if \(t\.checked && draftHasTypedContent\(S\.edit\)\)/.test(admin));
+/* The tick belongs to a day too: with several cards open it reads the draft its own
+   card names, rather than whichever draft was touched last (owner, 2026-09-09). */
+ok("the tick asks before marking over typed work", /if \(t\.checked && draftHasTypedContent\(restDraft\)\)/.test(admin));
+ok("and it is that card's own draft", /var restDraft = draftFor\(restKey\) \|\| S\.edit;/.test(admin));
 ok("the same on the client's page", /if \(t\.checked && draftHasTypedContent\(state\.edit\)\)/.test(client));
 for (const [label, src] of [["the back office", admin], ["the client's page", client]]) {
   ok(label + " keeps typed work when the day is left", /if \(draftHasTypedContent\(draft\)\) \{\s*\n\s*draft\.restIntent = false;/.test(src));
