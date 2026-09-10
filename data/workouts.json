@@ -968,36 +968,6 @@
       },
       {
         "date": "2026-09-01",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "CrossFit Total",
-              "EVENT 3/4/5: THE CROSSFIT TOTAL",
-              "FOR LOAD",
-              "*",
-              "1 Rep Max Back Squat",
-              "1 Rep Max Shoulder Press",
-              "1 Rep Max Deadlift",
-              "* (Score is Total Weight)",
-              "​"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "EVENT 13 | '26 CFG -- SPRINT (version)",
-            "lines": [
-              "50/40 Calorie Air Bike"
-            ],
-            "sub_title2": "FOR TIME"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-01",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2778,58 +2748,6 @@
     "2026-09-10": [
       {
         "date": "2026-09-10",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-09-10/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "calf stretch",
-              "seated pike stretch",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 straight leg sit ups",
-              "10 db deadlifts",
-              "20 single unders"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "CONDITIONING 20MIN",
-            "lines": [
-              "50 double unders",
-              "30 toes to bar",
-              "into",
-              "3 rounds",
-              "",
-              "50 double unders",
-              "30 alternating db hang snatches 22,5/15kg",
-              "* muscular endurance & aerobic power",
-              "* rx+: 25/17,5kg"
-            ],
-            "sub_title": "3 rounds"
-          },
-          {
-            "title": "CORE & CARRY 12MIN",
-            "lines": [
-              "for quality",
-              "1. db pull throughs",
-              "2. db single arm overhead carry (r/l)",
-              "3. db suitcase carry (l/r)"
-            ],
-            "sub_title": "30sec on/ 30sec of x 12 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-10",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260910",
@@ -2892,6 +2810,124 @@
       },
       {
         "date": "2026-09-10",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 12.5",
+            "lines": [
+              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
+              "100 pound Thruster, 3 reps",
+              "3 Chest to bar Pull-ups",
+              "100 pound Thruster, 6 reps",
+              "6 Chest to bar Pull-ups",
+              "100 pound Thruster, 9 reps",
+              "9 Chest to bar Pull-ups",
+              "100 pound Thruster, 12 reps",
+              "12 Chest to bar Pull-ups",
+              "100 pound Thruster, 15 reps",
+              "15 Chest to bar Pull-ups",
+              "100 pound Thruster, 18 reps",
+              "18 Chest to bar Pull-ups",
+              "100 pound Thruster, 21 reps",
+              "21 Chest to bar Pull-ups...",
+              "This is a timed workout. If you complete the round of 21, go on to 24. If you complete 24, go on to 27, etc.",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
+              "65 pound Thruster, 3 reps",
+              "3 Chest to bar Pull-ups",
+              "65 pound Thruster, 6 reps",
+              "6 Chest to bar Pull-ups",
+              "65 pound Thruster, 9 reps"
+            ]
+          }
+        ],
+        "note": "Open: Open 12.5"
+      },
+      {
+        "date": "2026-09-10",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-09-10/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "calf stretch",
+              "seated pike stretch",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 straight leg sit ups",
+              "10 db deadlifts",
+              "20 single unders"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "CONDITIONING 20MIN",
+            "lines": [
+              "50 double unders",
+              "30 toes to bar",
+              "into",
+              "3 rounds",
+              "",
+              "50 double unders",
+              "30 alternating db hang snatches 22,5/15kg",
+              "* muscular endurance & aerobic power",
+              "* rx+: 25/17,5kg"
+            ],
+            "sub_title": "3 rounds"
+          },
+          {
+            "title": "CORE & CARRY 12MIN",
+            "lines": [
+              "for quality",
+              "1. db pull throughs",
+              "2. db single arm overhead carry (r/l)",
+              "3. db suitcase carry (l/r)"
+            ],
+            "sub_title": "30sec on/ 30sec of x 12 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-09-10",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Push Press 1x8",
+              "ON 12:00 CLOCK...",
+              "Build to a Heavy 8-Rep Push Press",
+              "* (Score is Weight)",
+              "*Retest from 8/6"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "EVERY 3:00 (5 SETS)",
+            "lines": [
+              "50 Double Unders",
+              "50ft Single Arm Overhead Dumbbell Walking Lunge 23kg/16kg",
+              "50 Double Unders"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-10",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2948,47 +2984,8 @@
           }
         ],
         "note": "Benchmark: BARBARA"
-      },
-      {
-        "date": "2026-09-10",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 12.5",
-            "lines": [
-              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
-              "100 pound Thruster, 3 reps",
-              "3 Chest to bar Pull-ups",
-              "100 pound Thruster, 6 reps",
-              "6 Chest to bar Pull-ups",
-              "100 pound Thruster, 9 reps",
-              "9 Chest to bar Pull-ups",
-              "100 pound Thruster, 12 reps",
-              "12 Chest to bar Pull-ups",
-              "100 pound Thruster, 15 reps",
-              "15 Chest to bar Pull-ups",
-              "100 pound Thruster, 18 reps",
-              "18 Chest to bar Pull-ups",
-              "100 pound Thruster, 21 reps",
-              "21 Chest to bar Pull-ups...",
-              "This is a timed workout. If you complete the round of 21, go on to 24. If you complete 24, go on to 27, etc.",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
-              "65 pound Thruster, 3 reps",
-              "3 Chest to bar Pull-ups",
-              "65 pound Thruster, 6 reps",
-              "6 Chest to bar Pull-ups",
-              "65 pound Thruster, 9 reps"
-            ]
-          }
-        ],
-        "note": "Open: Open 12.5"
       }
     ]
   },
-  "last_updated": "2026-09-10T03:54:50.760521"
+  "last_updated": "2026-09-10T08:39:13.344185"
 }
