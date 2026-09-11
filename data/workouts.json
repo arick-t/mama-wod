@@ -966,35 +966,6 @@
       },
       {
         "date": "2026-09-02",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Power Snatch + Hang Power Snatch + Snatch 1x3",
-              "EVERY 2:00 (5 SETS)",
-              "1 Power Snatch + 1 Hang Power Snatch + 1 Squat Snatch*",
-              "*All 3 reps unbroken, start light build in weight to Moderate-Heavy (RPE 7)",
-              "* (Score is Heaviest Weight)"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "EVENT 12 | '26 CFG -- THE HOPPER 2026",
-            "lines": [
-              "21 Toes to Bar",
-              "7 Unbroken Power Snatch 43kg/29kg",
-              "7 Unbroken Hang Power Snatch 43kg/29kg",
-              "7 Unbroken Squat Snatch 43kg/29kg"
-            ],
-            "sub_title2": "3 ROUNDS FOR TIME"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-02",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2808,54 +2779,6 @@
     "2026-09-11": [
       {
         "date": "2026-09-11",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-09-11/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "sumo squat stretch",
-              "instep rotation"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 air squats",
-              "10 ring rows",
-              "* *remaining time row"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "BACK SQUATS 15MIN",
-            "lines": [
-              "4 Sets",
-              "3  (paused) back squats",
-              "@ 77-82%",
-              "strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "5 rounds",
-              "",
-              "21 wall balls 20/14lbs",
-              "15/12cal row",
-              "9 strict pull ups",
-              "* lactate threshold & muscular endurance"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-11",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260911",
@@ -2924,6 +2847,92 @@
       },
       {
         "date": "2026-09-11",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 17.4",
+            "lines": [
+              "Complete as many rounds and reps as possible in 13 minutes of:",
+              "55 deadlifts, 225 lb.",
+              "55 wall-ball shots, 20-lb. ball to 10-ft. target",
+              "55-calorie row",
+              "55 handstand push-ups"
+            ]
+          }
+        ],
+        "note": "Open: Open 17.4"
+      },
+      {
+        "date": "2026-09-11",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-09-11/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "sumo squat stretch",
+              "instep rotation"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 prone snow angels",
+              "10 air squats",
+              "10 ring rows",
+              "* *remaining time row"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "BACK SQUATS 15MIN",
+            "lines": [
+              "4 Sets",
+              "3  (paused) back squats",
+              "@ 77-82%",
+              "strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "5 rounds",
+              "",
+              "21 wall balls 20/14lbs",
+              "15/12cal row",
+              "9 strict pull ups",
+              "* lactate threshold & muscular endurance"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-09-11",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "9/11 343 TRIBUTE",
+            "lines": [
+              "11 Lateral Burpee Over Bar",
+              "3 Power Snatch 70kg/48kg",
+              "4 Overhead Squats 70kg/48kg",
+              "3 Bar Muscle Ups"
+            ],
+            "sub_title2": "9 ROUNDS FOR TIME"
+          }
+        ]
+      },
+      {
+        "date": "2026-09-11",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2979,27 +2988,8 @@
           }
         ],
         "note": "Benchmark: Baseline"
-      },
-      {
-        "date": "2026-09-11",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 17.4",
-            "lines": [
-              "Complete as many rounds and reps as possible in 13 minutes of:",
-              "55 deadlifts, 225 lb.",
-              "55 wall-ball shots, 20-lb. ball to 10-ft. target",
-              "55-calorie row",
-              "55 handstand push-ups"
-            ]
-          }
-        ],
-        "note": "Open: Open 17.4"
       }
     ]
   },
-  "last_updated": "2026-09-11T03:52:04.127808"
+  "last_updated": "2026-09-11T08:38:51.511452"
 }
