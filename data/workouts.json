@@ -955,35 +955,6 @@
       },
       {
         "date": "2026-09-03",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "ON A 10:00 CLOCK",
-              "Triple Under, Double Under, or Single Under Practice",
-              "Freedom (Advanced) - Triple Under Practice",
-              "Independence (Intermediate)  - Double Unders or Crossover Singles Practice",
-              "Liberty (Beginner) - Single Under or Crossover Single Practice",
-              "WOD",
-              "EVENT 7 | '26 CFG -- SWIM STANDARD",
-              "FOR TIME",
-              "1000m Row",
-              "40 Line Facing Burpees",
-              "750m Row",
-              "30 Line Facing Burpees",
-              "500m Row",
-              "20 Line Facing Burpees",
-              "250m Row",
-              "10 Line Facing Burpees"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-09-03",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2782,45 +2753,6 @@
     "2026-09-12": [
       {
         "date": "2026-09-12",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-09-12/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "calf stretch",
-              "samson stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "8 good mornings",
-              "8 burpee box step ups",
-              "*partner is biking"
-            ],
-            "sub_title": "amrap 5min"
-          },
-          {
-            "title": "CONDITIONING 32MIN",
-            "lines": [
-              "in teams of 2",
-              "40 burpee box jumps 60/50cm",
-              "8 wall walks",
-              "40/36/32cal bike",
-              "8 wall walks",
-              "40 deadlifts 80/60kg",
-              "8 wall walks"
-            ],
-            "sub_title": "amrap 32min"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-12",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260912",
@@ -2888,6 +2820,104 @@
       },
       {
         "date": "2026-09-12",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 12.3",
+            "lines": [
+              "Complete as many rounds and reps as possible in 18 minutes of:",
+              "15 Box jumps, 24\" box",
+              "115 pound Push press, 12 reps",
+              "9 Toes-to-bar",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 18 minutes of:",
+              "15 Box jumps, 20\" box",
+              "75 pound Push press, 12 reps",
+              "9 Toes-to-bar",
+              "*MASTERS MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 18 minutes of:",
+              "15 Box jumps or step-ups, 20\" box",
+              "95 pound Push press, 12 reps",
+              "9 Toes-to-bar",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 18 minutes of:",
+              "15 Box jumps or step-ups, 20\" box",
+              "55 pound Push press, 12 reps",
+              "9 Toes-to-bar"
+            ]
+          }
+        ],
+        "note": "Open: Open 12.3"
+      },
+      {
+        "date": "2026-09-12",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-09-12/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "calf stretch",
+              "samson stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "8 good mornings",
+              "8 burpee box step ups",
+              "*partner is biking"
+            ],
+            "sub_title": "amrap 5min"
+          },
+          {
+            "title": "CONDITIONING 32MIN",
+            "lines": [
+              "in teams of 2",
+              "40 burpee box jumps 60/50cm",
+              "8 wall walks",
+              "40/36/32cal bike",
+              "8 wall walks",
+              "40 deadlifts 80/60kg",
+              "8 wall walks"
+            ],
+            "sub_title": "amrap 32min"
+          }
+        ]
+      },
+      {
+        "date": "2026-09-12",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "TEAMS OF 2",
+            "lines": [
+              "2000/1800m Row",
+              "100 Kettlebell Swings 25kg/16kg",
+              "100 Kettlebell Box Step Ups (25kg/16kg)(24\"/20\")",
+              "100 Kettlebell Swings 25kg/16kg",
+              "Max Distance Row in the Remaining Time"
+            ],
+            "sub_title2": "25:00 AMRAP"
+          }
+        ]
+      },
+      {
+        "date": "2026-09-12",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2926,47 +2956,8 @@
           }
         ],
         "note": "Benchmark: Nasty Girls V2"
-      },
-      {
-        "date": "2026-09-12",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 12.3",
-            "lines": [
-              "Complete as many rounds and reps as possible in 18 minutes of:",
-              "15 Box jumps, 24\" box",
-              "115 pound Push press, 12 reps",
-              "9 Toes-to-bar",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 18 minutes of:",
-              "15 Box jumps, 20\" box",
-              "75 pound Push press, 12 reps",
-              "9 Toes-to-bar",
-              "*MASTERS MEN*",
-              "-",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 18 minutes of:",
-              "15 Box jumps or step-ups, 20\" box",
-              "95 pound Push press, 12 reps",
-              "9 Toes-to-bar",
-              "*MASTERS WOMEN*",
-              "-",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 18 minutes of:",
-              "15 Box jumps or step-ups, 20\" box",
-              "55 pound Push press, 12 reps",
-              "9 Toes-to-bar"
-            ]
-          }
-        ],
-        "note": "Open: Open 12.3"
       }
     ]
   },
-  "last_updated": "2026-09-12T03:57:04.723629"
+  "last_updated": "2026-09-12T08:26:20.593899"
 }
