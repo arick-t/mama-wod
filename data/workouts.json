@@ -1,98 +1,5 @@
 {
   "workouts": {
-    "2026-08-29": [
-      {
-        "date": "2026-08-29",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260829",
-        "sections": [
-          {
-            "title": "FOR TIME",
-            "lines": [
-              "21 power cleans, weight 1",
-              "21 high-ring dips",
-              "15 power cleans, weight 2",
-              "15 high-ring dips",
-              "9 power cleans, weight 3",
-              "9 high-ring dips",
-              "Perform a muscle-up to get to the high rings before beginning each set of dips and any time you break the reps.",
-              "♀ 95/125/155-lb barbell",
-              "♂ 135/185/225-lb barbell"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-08-29",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-august-29-2026/",
-        "sections": [
-          {
-            "title": "General Warm-up",
-            "lines": [
-              "Once through with a partner",
-              "1000m Row (Switch every 250m)",
-              "60 Plate Ground to Overhead (Switch every 10",
-              "reps)",
-              "30 Burpees (Switch every 5 reps)",
-              "*Non working partner: Hold a plank"
-            ]
-          },
-          {
-            "title": "For time with a partner",
-            "lines": [
-              "4-8-12-16-20-24-28 Strict HSPU",
-              "20 SB Ground to over the shoulder 100/70",
-              "*Split work evenly one works, one rests",
-              "Feel: Muscle Overload",
-              "Pace: Sustain",
-              "Target Score: 15-18 minutes",
-              "Firebreather: Sub 15 minutes"
-            ]
-          },
-          {
-            "title": "Every 2:00 for 5 Rounds",
-            "lines": [
-              "Echo Bike for Calories in :15 @ P1",
-              "Flush on 1 Damper C2 Bike in Remaining Time"
-            ]
-          },
-          {
-            "title": "P1 = Full send every second. Power loss",
-            "lines": [
-              "expected round to round."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-08-29",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 24.3",
-            "lines": [
-              "All for time:",
-              "5 rounds of:",
-              "10 thrusters, weight 1",
-              "10 chest-to-bar pull-ups",
-              "Rest 1 minute, then:",
-              "5 rounds of:",
-              "7 thrusters, weight 2",
-              "7 bar muscle-ups",
-              "Time cap: 15 minutes",
-              "*♀ 65, 95 lb (29, 43 kg)*",
-              "*♂ 95, 135 lb (43, 61 kg)*"
-            ]
-          }
-        ],
-        "note": "Open: Open 24.3"
-      }
-    ],
     "2026-08-30": [
       {
         "date": "2026-08-30",
@@ -188,89 +95,6 @@
           }
         ],
         "note": "Open: Open 19.2"
-      },
-      {
-        "date": "2026-08-30",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-08-30/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "lat stretch",
-              "calf stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. air squats",
-              "2. row",
-              "3. scap. push ups",
-              "4. burpees"
-            ],
-            "sub_title": "30sec on / 15sec off x2 rounds"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "1. 30-40sec (weighted) wall sit",
-              "2. 10-15cal row",
-              "3. 4-8 ring dips",
-              "4. 10-15 burpee box get over 60/50cm",
-              "5. rest",
-              "Sunday Endurance for Open Gym",
-              "10 rounds",
-              "",
-              "2:00 work [rpe 6-7]",
-              "0:30 rest",
-              "choose: row, bike, ski, run",
-              "* aerobic power [lactate threshold]"
-            ],
-            "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-08-30",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Foundation",
-            "sub_title": "CrossFit Medical Society",
-            "lines": [
-              "Find a gym today!",
-              "Start your fitness journey today and get healthy.",
-              "Find a gym near you",
-              "Subscribe to the Workout of the Day"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-08-30",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "”ANGIE” BENCHMARK",
-            "lines": [
-              "100 pull-ups",
-              "100 push-ups",
-              "100 sit-ups",
-              "100 squats",
-              "Timecap 25 min",
-              "Skaalata voi monella tapaa!"
-            ]
-          }
-        ],
-        "note": "Benchmark: ”ANGIE” BENCHMARK"
       }
     ],
     "2026-08-31": [
@@ -792,16 +616,17 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "Mary",
+            "title": "Metcon",
             "lines": [
-              "20 minutes AMRAP",
-              "5  handstand push-up s",
-              "10 pistol squat, alternating",
-              "15 pull-ups"
+              "\"Cindy\"",
+              "AMRAP 20",
+              "5 Pull-ups",
+              "10 Push-ups",
+              "15 Air squats"
             ]
           }
         ],
-        "note": "Benchmark: Mary"
+        "note": "Benchmark: Metcon"
       }
     ],
     "2026-09-03": [
@@ -950,24 +775,6 @@
               "aerobic capacity"
             ],
             "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-03",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Strength:-EMOM x 24 (6 rounds)Min 1: 3–5 Muscle-Ups or 8–10 Pull-upsMin 2: 3 TnG Power CleansMin 3: CardioMin 4: Rest"
-            ]
-          },
-          {
-            "title": "METCON",
-            "lines": []
           }
         ]
       },
@@ -2957,7 +2764,211 @@
         ],
         "note": "Benchmark: Nasty Girls V2"
       }
+    ],
+    "2026-09-13": [
+      {
+        "date": "2026-09-13",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-09-13/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "lat stretch",
+              "samson stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. reverse lunges",
+              "2. row",
+              "3. ring rows",
+              "4. burpees"
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "1. 14-20 goblet reverse lunges",
+              "2. 10-15cal row",
+              "3. 6-8 stricht chin ups",
+              "4. 8-12 devil presses",
+              "5. rest",
+              "Sunday Endurance for Open Gym",
+              "10-20 rounds",
+              "0:30 hard [rpe 9]",
+              "0:30 easy [rpe 2-3]",
+              "choose: run, bike, row, or ski",
+              "* aerobic power [vo2 max]"
+            ],
+            "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-09-13",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-september-13-2026/",
+        "sections": [
+          {
+            "title": "General warm-up",
+            "lines": [
+              "Line Drills:",
+              "Heel-Toe Walking",
+              "Hip Open/Hip Close Walking",
+              "Cossack Squats",
+              "Low Bear Crawl",
+              "Skipping",
+              "2:00 Machine (note cals completed for",
+              "workout pacing)",
+              "12 Forward Lunges",
+              "12 Superman-to-Hollow Rolls",
+              "2:00 Machine",
+              "12 Forward Lunges",
+              ":30 Superman Hold",
+              "2:00 Machine",
+              ":30 Wall Sit",
+              ":15-:20 Back Extension Hold"
+            ]
+          },
+          {
+            "title": "For Time",
+            "lines": [
+              "100/80 Calorie Air Bike",
+              "1:00 Wall Sit",
+              ":30 Back Extension Hold",
+              "80/64 Calorie Air Bike",
+              "1:00 Wall Sit",
+              ":30 Back Extension Hold",
+              "60/48 Calorie Air Bike",
+              "1:00 Wall Sit",
+              ":30 Back Extension Hold",
+              "40/32 Calorie Air Bike",
+              "1:00 Wall Sit",
+              ":30 Back Extension Hold",
+              "20/16 Calorie Air Bike",
+              "Feel: Cardio / Muscle Overload",
+              "Pace: Sustain",
+              "Target Score: sub 28 minutes",
+              "Firebreather Score: 22 minutes",
+              "Scaling:",
+              "– Cals: The first 100/80 cals should be completed in 7-8 minutes or less.",
+              "-Back Extension Hold: These ideally take a GHD or a little back extension rig to complete. If logistics are tough or you just don’t have GHDs, a superman hold can be subbed."
+            ]
+          },
+          {
+            "title": "Extra Credit",
+            "lines": [
+              "5+ Rounds",
+              "5:00 Machine Flush",
+              "3:00 Mobility",
+              "Rotate through as many modalities as you",
+              "can, excluding running but not walking. Pace",
+              "should feel very very easy, but elicit a nice",
+              "sweat to aid in your mobility routine. The goal",
+              "with is to work through 3-5 different areas of",
+              "the body during the 3:00 Mobility windows."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-13",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Hero WOD:",
+              "9/11 TributeFor Time:2001 meter Run11 Box Jumps 30/24 in11 Thrusters 55/37.5kg11 C2B11 Power Cleans 80/52.5kg11 HSPUs11 KB Swings 32/24kg11 T2B11 Deadlifts 75/50kg11 Push Jerks 50/35kg2001 meter Row"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-13",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Foundation",
+            "sub_title": "CrossFit Medical Society",
+            "lines": [
+              "Find a gym today!",
+              "Start your fitness journey today and get healthy.",
+              "Find a gym near you",
+              "Subscribe to the Workout of the Day"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-13",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Mary",
+            "lines": [
+              "20 minutes AMRAP",
+              "5  handstand push-up s",
+              "10 pistol squat, alternating",
+              "15 pull-ups"
+            ]
+          }
+        ],
+        "note": "Benchmark: Mary"
+      },
+      {
+        "date": "2026-09-13",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 13.4",
+            "lines": [
+              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
+              "135 pound Clean and jerk, 3 reps",
+              "3 Toes-to-bar",
+              "135 pound Clean and jerk, 6 reps",
+              "6 Toes-to-bar",
+              "135 pound Clean and jerk, 9 reps",
+              "9 Toes-to-bar",
+              "135 pound Clean and jerk, 12 reps",
+              "12 Toes-to-bar",
+              "135 pound Clean and jerk, 15 reps",
+              "15 Toes-to-bar",
+              "135 pound Clean and jerk, 18 reps",
+              "18 Toes-to-bar...",
+              "This is a timed workout. If you complete the round of 18, go on to 21. If you complete 21, go on to 24, etc.",
+              "*WOMEN -*",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many reps as possible in 7 minutes following the rep scheme below:",
+              "95 pound Clean and jerk, 3 reps",
+              "3 Toes-to-bar",
+              "95 pound Clean and jerk, 6 reps",
+              "6 Toes-to-bar",
+              "95 pound Clean and jerk, 9 reps",
+              "9 Toes-to-bar",
+              "95 pound Clean and jerk, 12 reps",
+              "12 Toes-to-bar"
+            ]
+          }
+        ],
+        "note": "Open: Open 13.4"
+      }
     ]
   },
-  "last_updated": "2026-09-12T13:08:21.890871"
+  "last_updated": "2026-09-13T03:40:17.737988"
 }
