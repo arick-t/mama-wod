@@ -1334,6 +1334,7 @@ html.timer-fs-open,body.timer-fs-open{overflow:hidden;height:100%;overscroll-beh
   <span>DUCK-WOD</span>
 </footer>
 
+<script src="lib/equipment-catalog.js"></script>
 <script src="lib/coach-intake-sync-contract.js"></script>
 <script src="lib/normalize-pprog-block.js"></script>
 <script src="lib/pprog-display.js"></script>
@@ -12892,28 +12893,14 @@ function getWorkoutSourceDisplayName(w) {
   return cleaned ? cleaned : String(raw).trim();
 }
 
-var EQ = {
-  "RUN": ["run", "running", "meter", "mile", "km", "400m", "800m", "200m", "400 m"],
-  "BARBELL": ["barbell", "overhead squat", "ohs", "deadlift", "sumo deadlift", "romanian deadlift", "rdl", "clean", "squat clean", "power clean", "snatch", "squat snatch", "power snatch", "clean & jerk", "clean and jerk", "push press", "split jerk", "push jerk", "shoulder to overhead", "s2oh", "strict press", "overhead press", "floor press", "bent over row", "barbell thruster", "barbell lunge", "front rack", "back rack", "good morning", "hang clean", "hang snatch", "muscle snatch", "muscle clean"],
-  "RIG RACK": ["back squat", "front squat", "overhead press", "strict press", "push press", "push jerk", "split jerk", "bench press", "rig", "rack", "squat rack"],
-  "PULLUP BAR": ["strict pull-up", "strict pull up", "pull-up", "pullup", "pull up", "kipping pull-up", "butterfly pull-up", "chest-to-bar", "chest to bar", "c2b", "chin-up", "chin up", "weighted pull-up", "mixed grip pull-up", "bar hang", "toes to bar", "toes-to-bar", "ttb", "t2b", "knees to elbows", "k2e", "l-sit hang", "around the world", "windshield wiper", "strict leg raise", "bar muscle-up", "bmu", "strict bar muscle-up", "one-arm pull-up", "pullover", "archer pull-up", "typewriter pull-up", "dead hang", "scapular pull-up", "negative pull-up", "commando pull-up", "burpee pull up", "burpee pull-up"],
-  "ROW": ["row", "rowing", "rower", "cal row", "erg", "concept2"],
-  "BIKE": ["bike", "assault bike", "echo bike", "bikeerg", "bike erg", "cal bike", "concept2 bike"],
-  "DUMBBELL": ["dumbbell", "dumbbells", " db ", "db.", "2x dumbbell", "2x db", "double dumbbell", "dumbbell snatch", "dumbbell clean", "dumbbell clean & jerk", "dumbbell thruster", "dumbbell jerk", "devil press", "man-maker", "renegade row", "dumbbell bench press", "dumbbell floor press", "goblet lunge", "dumbbell overhead squat", "goblet squat", "dumbbell box step-up", "farmer walk", "dumbbell strict press", "dumbbell push press", "dumbbell deadlift", "dumbbell shoulder to overhead", "dumbbell burpee", "overhead lunge"],
-  "KETTLEBELL": ["kettlebell", "kettlebells", " kb ", "ktb", "2x kettlebell", "2x kb", "double kettlebell", "russian swing", "american swing", "kettlebell swing", "goblet squat", "kettlebell snatch", "kettlebell clean", "kettlebell clean & jerk", "turkish get-up", "tgu", "kettlebell jerk", "kettlebell thruster", "sdhp", "sumo deadlift high pull", "suitcase carry", "farmer carry", "kettlebell lunge", "kettlebell front squat", "kettlebell deadlift", "kettlebell shoulder to overhead", "kettlebell push press", "kettlebell press"],
-  "ROPE CLIMB": ["rope climb", "rope climbs"],
-  "SKIPPING ROPE": ["double under", "double unders", " du ", "triple under", "triple unders", "rope crossover", "rope crossovers", "skip", "jump rope"],
-  "WALL BALL": ["wall ball", "wallball", " wb ", "w.b", "wall ball shot", "wall ball clean", "wall ball thruster", "wall ball sit-up", "wall ball lunge", "wall ball chest pass", "wall ball lateral toss", "wall ball slam", "over-the-shoulder toss", "weighted wall ball"],
-  "WALL DRILLS": ["handstand push-up", "handstand push up", "hspu", "kipping hspu", "deficit handstand", "wall climb", "wall walk", "wallwalk", "strict handstand push-up", "wall facing handstand"],
-  "RINGS": ["ring row", "ring rows", "ring push-up", "ring push up", "ring support", "ring pull-up", "ring pull up", "ring dip", "ring dips", "l-sit on rings", "ring toes to bar", "ring rollout", "skin the cat", "ring muscle-up", "ring muscle up", "strict ring muscle-up", "ring chest-to-bar", "forward roll", "backward roll"],
-  "SKI": ["ski", "ski erg", "skierg", "ski erg"],
-  "SLED": ["sled push", "sled pull", "sled drag", "hand-over-hand", "sled sprint", "lateral sled", "sled row", "sled chest press", "sled bear crawl"],
-  "BOX": ["box jump", "box jumps", "box jump-over", "box step-up", "box step up", "box step-over", "weighted box step-up", "burpee box jump", "burpee box jump-over", "box dip", "box pike push-up", "seated box jump", "bjo"],
-  "D-BALL": ["d-ball", "dball", "slam ball", "atlas stone", "sandbag", " d-ball slam", "d-ball over", "d-ball clean", "bear hug squat", "bear hug carry", "d-ball front rack", "d-ball chest pass", "ground to overhead", "atlas stone clean", "atlas stone to shoulder", "atlas stone over bar", "platform load", "atlas stone extension"]
-};
+/* The equipment dictionary moved to lib/equipment-catalog.js on 2026-09-14, so the intake,
+   the coach prompt and the post-check read the same list this filter has always used.
+   KEYWORDS is that list byte for byte and in the original order - scoreWod below must keep
+   scoring exactly as it did. */
+var EQ = (typeof EquipmentCatalog !== "undefined" && EquipmentCatalog.KEYWORDS) || {};
 
 /** תרגילים שמניחים שכולם יכולים – לא מוצגים למשתמש; אימון שמכיל רק אותם נחשב בר־ביצוע. */
-var EQ_BODY_ONLY = ["sit-up", "sit up", "sit-ups", "v-up", "v-ups", "burpee", "burpees", "push-up", "push up", "push-up", "handstand", "walking lunge", "reverse lunge", "forward lunge", "air squat", "air squats", "lunges", "jumping lunge", "hollow rock", "hollow hold", "plank", "side plank", "mountain climber", "jumping jack", "bear crawl", "broad jump", "superman", "arch hold", "weighted sit-up", "burpees over the bar", "pistol", "pistols", "one leg squat", "one-leg squat", "one leg squats", "single leg squat"];
+var EQ_BODY_ONLY = (typeof EquipmentCatalog !== "undefined" && EquipmentCatalog.BODY_ONLY) || [];
 
 var WOD_SECTION_RE = /wod|metcon|conditioning|amrap|emom|for\s*time|workout/;
 function getWodOnlyText(w) {
