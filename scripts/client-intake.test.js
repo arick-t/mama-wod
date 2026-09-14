@@ -97,7 +97,9 @@ ok(
   JSON.stringify(shape) ===
     JSON.stringify([
       "avoidInProgram", "clientName", "dayEmphasis", "dayEmphasisEnabled", "deloadEveryWeeks",
-      "deloadWeek", "equipment", "equipmentOther", "goals", "includeRestDays",
+      /* equipmentList joined on 2026-09-14: the ticked inventory, beside the paragraph rather
+         than instead of it, so an intake answered before it exists still means what it meant. */
+      "deloadWeek", "equipment", "equipmentList", "equipmentOther", "goals", "includeRestDays",
       "maxAthletesAtOnce", "monthlyAmount", "noCapacityCap", "paymentMethod",
       "population", "restDays", "scheduleMode", "sessionMinutes", "sessionTypes", "sessionsDiffer",
       "sessionsPerWeek",
@@ -450,7 +452,22 @@ ok("the client never sees their own price", clientCopy.indexOf("900") < 0);
 
 /* --- browser and server read the same definition -------------- */
 
-ok("the module is UMD", /root\.CLIENT_INTAKE = factory\(\)/.test(intakeSrc));
+/* The factory takes the equipment catalogue since 2026-09-14 — one list, so the questionnaire
+   and the post-check can never be checking different inventories. */
+ok("the module is UMD", /root\.CLIENT_INTAKE = factory\(root\.EquipmentCatalog\)/.test(intakeSrc));
+ok(
+  "the server gets the catalogue too",
+  /module\.exports = factory\(require\("\.\/equipment-catalog\.js"\)\)/.test(intakeSrc)
+);
+ok(
+  "and the page loads it BEFORE this file",
+  (function () {
+    const admin = fs.readFileSync(path.join(root, "admin.html"), "utf8");
+    const cat = admin.indexOf('<script src="lib/equipment-catalog.js"></script>');
+    const ci = admin.indexOf('<script src="lib/client-intake.js"></script>');
+    return cat >= 0 && ci >= 0 && cat < ci;
+  })()
+);
 const sandbox = { self: {} };
 vm.createContext(sandbox);
 vm.runInContext(intakeSrc, sandbox);

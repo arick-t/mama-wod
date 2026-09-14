@@ -432,26 +432,37 @@ ok("tab 1 takes the monthly amount as a number", /id="inAmount" type="number"/.t
 ok("tab 1 takes the payment method as text", /id="inMethod" type="text"/.test(page));
 ok("tab 1 says the client cannot see the price", /client never sees them/i.test(page));
 
-/* Tab 2 — exactly two options, OTHER reveals a box */
-ok("equipment has the well-equipped option", /Well-equipped functional training gym/.test(page));
-/* Two checkboxes side by side, not one being unticked (owner, 2026-09-01). */
-ok("equipment is a checkbox, not a dropdown", /id="inEquipFull" type="checkbox" data-pick="equip" checked/.test(page));
-ok("the default is ticked — the well-equipped gym", /id="inEquipFull" type="checkbox" data-pick="equip" checked/.test(page));
-ok("OTHER sits beside it as its own checkbox", /id="inEquipOtherOn" type="checkbox" data-pick="equip">/.test(page));
-ok("OTHER is unticked by default", !/id="inEquipOtherOn" type="checkbox" data-pick="equip" checked/.test(page));
-ok("the two sit side by side", /class="pick-row"/.test(page) && /\.pick-row\{display:flex/.test(page));
-/* Plain string search: a regex here needs escaping for ? and " and the escaping is
-   what keeps going wrong, not the assertion. */
+/* Tab 2 — a checklist, drawn from the one catalogue.
+ *
+ * These assertions used to pin the opposite shape: two checkboxes for a mode, and a
+ * description box that only OTHER revealed. That form is what sent the coach a paragraph,
+ * and a paragraph is why the first real studio brick prescribed rings, a jump rope, boxes
+ * and a rower that עודד מכינה does not own. They are rewritten, not deleted — the old
+ * behaviour is asserted GONE below, so a revert cannot pass silently. */
+ok("the page loads the catalogue before the questionnaire", /<script src="lib\/equipment-catalog\.js"><\/script>[\s\S]{0,200}<script src="lib\/client-intake\.js">/.test(page));
+ok("the list has a home on the tab", /id="inEquipList"/.test(page));
+ok("the well-equipped gym is a shortcut that fills the list", /id="inEquipFull" type="checkbox">[\s\S]{0,160}tick everything/i.test(page));
+ok("it is no longer one of two modes", !/id="inEquipFull"[^>]*data-pick="equip"/.test(page));
+ok("the OTHER mode checkbox is gone", page.indexOf('id="inEquipOtherOn"') < 0);
+ok("nothing binds an equipment pick-pair any more", page.indexOf('bindPickPair("equip")') < 0);
+/* The free box stays, always visible, and one-directional. */
+ok("the free box is always open now", /id="inEquipOtherWrap"/.test(page) && !/id="inEquipOtherWrap" hidden/.test(page));
+ok("and it says it only ever adds", /ADDS to the list above and never removes/.test(page));
 ok(
-  "OTHER maps to other, anything else to the well-equipped gym",
-  page.indexOf('el("inEquipOtherOn").checked ? "other" : "functional_gym"') >= 0
+  "the stored mode is derived from that box, not from a tick",
+  page.indexOf('equipment: String(el("inEquipOther").value || "").trim() ? "other" : "functional_gym"') >= 0
 );
-ok(
-  "only OTHER reveals the description box",
-  /id="inEquipOtherWrap"/.test(page) &&
-    page.indexOf('el("inEquipOtherWrap").hidden = !equipOther') >= 0
-);
-ok("the box is hidden by default", /id="inEquipOtherWrap" hidden/.test(page));
+ok("the ticked list is what gets saved", page.indexOf("equipmentList: readEquipList()") >= 0);
+/* The three shapes of row the owner asked for on 2026-09-14. */
+ok("a room is asked how many, a person is not", /item\.group === "station" && !individual/.test(page));
+ok("a ceiling is asked of everyone", /if \(item\.ceiling\) return \{ show: true, unit: "max "/.test(page));
+ok("the run is asked for its length in metres", /item\.metric === "distance"[\s\S]{0,60}unit: "metres"/.test(page));
+/* The guard the owner named himself: the floor may never become a question. */
+ok("floor, wall and bodyweight are never listed", /it\.group !== "always"/.test(page));
+ok("and the tab says so out loud", /always\s*\n?\s*available, and the coach must keep using them/.test(page));
+/* A number about something that does not exist is not an answer. */
+ok("the numbers appear only once the row is ticked", /num\.hidden = !box\.checked/.test(page));
+ok("and an unticked row carries no number", /if \(num && box\.checked\)/.test(page));
 /* The old copy told the owner to untick; there is nothing to untick now. */
 ok("the stale untick instruction is gone", !/Untick if the place has something else/.test(page));
 ok("there is no equipment dropdown left", page.indexOf('id="inEquip"') < 0);
@@ -576,8 +587,10 @@ ok("the owner is told the coach picks the days", /delivers them whenever/i.test(
 
 /* The two checkboxes are one exclusive choice, and it can never end up empty. */
 ok("the pairs are bound as an exclusive choice", /function bindPickPair/.test(page));
-ok("equipment is one such pair", page.indexOf('bindPickPair("equip")') >= 0);
-ok("the schedule is the other", page.indexOf('bindPickPair("sched")') >= 0);
+/* Equipment was one such pair until 2026-09-14. It is a checklist now, and the schedule is
+   the only two-way choice left on the form. */
+ok("equipment is no longer a pair", page.indexOf('bindPickPair("equip")') < 0);
+ok("the schedule is the remaining one", page.indexOf('bindPickPair("sched")') >= 0);
 ok("re-clicking the active box keeps it ticked", /box\.checked = true;/.test(page));
 ok("ticking one unticks its partner", /if \(other !== box\) other\.checked = false;/.test(page));
 
