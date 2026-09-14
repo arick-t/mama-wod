@@ -52,7 +52,7 @@ ok("admin green synced label", admin.includes("סונכרן") && admin.includes(
 ok("admin push beside block title", admin.includes("ath-block-panel-head"));
 ok("admin push head adjacent layout", /ath-block-panel-head\{[^}]*justify-content:\s*flex-start/.test(admin));
 ok("admin version 5.4", /DUCK-WOD Admin · 5\.4/.test(admin));
-ok("admin shows Coach beside Admin", /Admin 5\.1/.test(admin) && /Coach 3\.0/.test(admin));
+ok("admin shows Coach beside Admin", /Admin \d+\.\d+/.test(admin) && /Coach 3\.0/.test(admin));
 ok("old עדכן button removed", !admin.includes("btn-update-block"));
 ok("admin push-upgrade UI gone", !admin.includes("sendPushUpgradeOffer") && !admin.includes("getPushUpgradeGate"));
 ok("admin action API", snap.includes('action === "admin_push_upgrade_offer"'));

@@ -370,10 +370,11 @@ ok("admin wired to coach 3.0", /LIVE_COACH_VERSION = "3\.0"/.test(adminHtml));
 ok("app coach 3.0", /COACH_VERSION = "3\.0"/.test(index));
 ok(
   "admin shows Admin + Coach versions",
-  /Admin 5\.1/.test(adminHtml) &&
+  /Admin \d+\.\d+/.test(adminHtml) &&
     /ver-coach/.test(adminHtml) &&
     /syncAdminVersionLabels/.test(adminHtml) &&
-    /ADMIN_UI_VERSION = "5\.1"/.test(adminHtml)
+    (adminHtml.match(/var ADMIN_UI_VERSION = "([\d.]+)"/) || [])[1] ===
+      (adminHtml.match(/<title>DUCK-WOD Admin · ([\d.]+)</) || [])[1]
 );
 ok(
   "admin intake uses pprog classes 1:1",
