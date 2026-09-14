@@ -1283,20 +1283,39 @@ function reportedLiftCount(profile) {
 }
 
 function loadBasisText(profile, agent) {
-  /* A ROOM has no reported lifts and never will — fifteen people from one month to ten years of
-     training age share no maximum. Percentages are exactly how you write load for them: each
-     member takes the percentage of THEIR own number. Found 2026-09-08, when the box brick was
-     told not to write percentages and the flag fired on a correct prescription. */
-  if (agent === "studio") return "";
+  /* THE STUDIO EXEMPTION IS GONE (owner, 2026-09-14).
+   *
+   * It was written on 2026-09-08 on a reasonable argument: a ROOM has no shared 1RM, and in a box
+   * "@75%" is standard writing because every member takes the percentage of THEIR OWN number. The
+   * argument is sound and the exemption was still wrong, because it exempted the WHOLE agent
+   * rather than the case it was reasoning about. עודד מכינה is a room of seventeen-year-olds who
+   * have never tested a lift, and the first brick written for them prescribed "75% 1RM", "78%",
+   * "82-85%". The owner rewrote every one of them by hand.
+   *
+   * So the rule that already existed applies to everyone: a percentage needs a number to be a
+   * percentage of, and this room reported none. The day a box does test its members, the studio
+   * intake gains a maxima field and percentages open again on the same test — no exemption needed.
+   *
+   * The language itself is the owner's, 2026-09-14: X/10 for strength and the olympic lifts,
+   * RIR for gymnastics. One vocabulary, so the coach stops inventing his own each time. */
   const n = reportedLiftCount(profile);
   if (n > 0) return "";
+  const room = agent === "studio";
   return (
-    "\n\nLOAD BASIS (HARD — a fact about this athlete, not a preference):\n" +
-    "NO 1RM WAS REPORTED FOR ANY LIFT, so a percentage has nothing to be a percentage of. Do NOT " +
+    "\n\nLOAD BASIS (HARD — a fact about this " +
+    (room ? "ROOM" : "athlete") +
+    ", not a preference):\n" +
+    "NO 1RM WAS REPORTED" +
+    (room ? " BY THIS ROOM" : " FOR ANY LIFT") +
+    ", so a percentage has nothing to be a percentage of. Do NOT " +
     "write %1RM, and do not write an absolute kilogram figure you inferred from nothing. " +
-    "Prescribe by RPE, by a rep target, or by a described quality — 'build to a heavy triple for " +
-    "today', 'RPE 8', 'a load that lets the position hold'. That is a full prescription and not a " +
-    "compromise: it is how a lift is loaded before anyone has tested it.\n"
+    "Prescribe effort instead, in these exact words:\n" +
+    "- STRENGTH and the OLYMPIC LIFTS — an effort out of ten: 'squat, build to 7/10', '4 sets @ 8/10'.\n" +
+    "- GYMNASTICS (pull-up, muscle-up, ring work, handstand walk, dip, toes-to-bar) — REPS IN " +
+    "RESERVE: 'strict pull-ups, 2 RIR', 'stop each set 2 short of failure'.\n" +
+    "A rep target or a described quality is also a full prescription — 'build to a heavy triple " +
+    "for today', 'a load that lets the position hold'. None of this is a compromise: it is how a " +
+    "lift is loaded before anyone has tested it.\n"
   );
 }
 
