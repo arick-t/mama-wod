@@ -788,33 +788,6 @@
       },
       {
         "date": "2026-09-04",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Hang Clean + Front Squat 1x3",
-              "EVERY 1:30 (6 SETS)",
-              "2 Hang Squat Cleans + 1 Front Squat*",
-              "*All 3 reps unbroken, start light build in weight to Moderate-Heavy (RPE 7)",
-              "* (Score is Heaviest Weight)"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "EVENT 10 | '26 CFG -- RUN / SQUAT CLEAN",
-            "lines": [
-              "600m Run",
-              "10 Hang Squat Clean 84kg/57kg"
-            ],
-            "sub_title2": "4 ROUNDS FOR TIME"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-04",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2767,6 +2740,78 @@
     "2026-09-14": [
       {
         "date": "2026-09-14",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260914",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "On a 20-minute clock:"
+            ]
+          },
+          {
+            "title": "FROM 0:00-10:00, FOR TIME",
+            "lines": [
+              "Run 1,600 meters",
+              "10:00-20:00:",
+              "Build to a 5-rep-max bench press"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-14",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-september-14-2026/",
+        "sections": [
+          {
+            "title": "General warm-up",
+            "lines": [
+              "2 Rounds:",
+              "15 Hollow Rocks",
+              "15 Air squats",
+              "6 Turkish Get-ups"
+            ]
+          },
+          {
+            "title": "Clean and Jerk",
+            "lines": [
+              "7×2 @ 80-90%",
+              "Drop and reset)"
+            ]
+          },
+          {
+            "title": "Lifting Accessory:",
+            "lines": [
+              "5×3 Muscle Clean AHAP",
+              "4×20 DB Split Squats AHAP, but fast"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-14",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 20.2",
+            "lines": [
+              "Complete as many rounds as possible in 20 minutes of:",
+              "4 dumbbell thrusters",
+              "6 toes-to-bars",
+              "24 double-unders",
+              "50-lb. dumbbells"
+            ]
+          }
+        ],
+        "note": "Open: Open 20.2"
+      },
+      {
+        "date": "2026-09-14",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-09-14/",
@@ -2821,53 +2866,27 @@
       },
       {
         "date": "2026-09-14",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260914",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
         "sections": [
           {
-            "title": "WORKOUT",
+            "title": "Strength",
             "lines": [
-              "On a 20-minute clock:"
+              "EVERY 1:30 (5 Sets)",
+              "3 Deadlifts",
+              "2 Power Clean",
+              "1 Shoulder to Overhead",
+              "*Start Moderate and Build to Heavy",
+              "* (Score is Heaviest Weight)"
             ]
           },
           {
-            "title": "FROM 0:00-10:00, FOR TIME",
+            "title": "WOD",
+            "sub_title": "7 ROUNDS For Time:",
             "lines": [
-              "Run 1,600 meters",
-              "10:00-20:00:",
-              "Build to a 5-rep-max bench press"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-09-14",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-september-14-2026/",
-        "sections": [
-          {
-            "title": "General warm-up",
-            "lines": [
-              "2 Rounds:",
-              "15 Hollow Rocks",
-              "15 Air squats",
-              "6 Turkish Get-ups"
-            ]
-          },
-          {
-            "title": "Clean and Jerk",
-            "lines": [
-              "7×2 @ 80-90%",
-              "Drop and reset)"
-            ]
-          },
-          {
-            "title": "Lifting Accessory:",
-            "lines": [
-              "5×3 Muscle Clean AHAP",
-              "4×20 DB Split Squats AHAP, but fast"
+              "7 Deadlifts 125kg/84kg",
+              "7 Strict Handstand Push Ups"
             ]
           }
         ]
@@ -2906,27 +2925,8 @@
           }
         ],
         "note": "Benchmark: Christine"
-      },
-      {
-        "date": "2026-09-14",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 20.2",
-            "lines": [
-              "Complete as many rounds as possible in 20 minutes of:",
-              "4 dumbbell thrusters",
-              "6 toes-to-bars",
-              "24 double-unders",
-              "50-lb. dumbbells"
-            ]
-          }
-        ],
-        "note": "Open: Open 20.2"
       }
     ]
   },
-  "last_updated": "2026-09-14T03:49:31.271542"
+  "last_updated": "2026-09-14T08:50:32.624929"
 }
