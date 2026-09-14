@@ -170,4 +170,32 @@ ok(
 
 ok("the violation list is capped", C.MAX_VIOLATIONS === 12);
 
+/* --- the server side: one repair pass, and only with time to spare ---------------------- */
+
+const fs = require("fs");
+const path = require("path");
+const pc = fs.readFileSync(path.join(__dirname, "..", "api", "personal-coach.js"), "utf8");
+
+ok("the handler runs the check", pc.indexOf('require("../lib/coach-brick-check.js")') >= 0);
+ok("the violations reach the response", /out\.brickBlocking = r\.blocking/.test(pc));
+ok("the checker is fed the ticked inventory", /equipmentList: intake\.equipmentList/.test(pc));
+ok("and the session count that was asked for", /sessionsPerWeek: intake\.sessionsPerWeek/.test(pc));
+/* A failure in a check may never cost the owner his brick. */
+ok("the check can never break the answer", /catch \(eCheck\) \{\}/.test(pc));
+
+ok("a blocking list sends the brick back to the coach", /async function sendBackForRepair/.test(pc));
+ok("it is wired into the programming answer", /sendBackForRepair\(await retryIfIntakeLike\(result\), tGenerate\)/.test(pc));
+ok("exactly one pass — a repair never repairs itself", /if \(packed\.repairAttempted\) return packed;/.test(pc));
+ok("it keeps the good work instead of rebuilding", /Fix ONLY those lines/.test(pc));
+ok("and is told not to leave the session short", /do \" \+\s*\"not simply delete the movement and leave the session short/.test(pc));
+/* The time guard: measured, not estimated. */
+ok("the request budget is the function's real ceiling", /FUNCTION_BUDGET_MS = 300 \* 1000/.test(pc));
+ok("the first call's real duration is measured", /const callMs = Math\.max\(0, Date\.now\(\) - tCallStart\)/.test(pc));
+ok("a repair only starts when that much time is left", /if \(leftMs < callMs \+ REPAIR_MARGIN_MS\)/.test(pc));
+ok("and when it is not, the owner is told rather than kept waiting", /repairSkipped/.test(pc));
+ok("the duration is recorded either way", /packed\.buildMs = callMs/.test(pc));
+/* A repair that makes things worse is not an improvement. */
+ok("a worse repair is rejected", /if \(now > before\)/.test(pc));
+ok("a repair that returns no brick is rejected", /the repair returned no brick/.test(pc));
+
 console.log("\nbrick check: all good");

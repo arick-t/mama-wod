@@ -55,6 +55,9 @@ const COACH_LAYER2_OPS_BRIEF = require("../lib/coach-layer2-ops-brief.js");
    line with the owner. */
 const { buildLayerPack, sellsSessionsByCount } = require("../lib/coach-layers");
 const { brickFlags } = require("../lib/coach-brick-flags.js");
+/* The certain half of the post-check — see lib/coach-brick-check.js for why the line between
+   "blocking" and "flag" is where it is. */
+const { checkBrick: brickCheck } = require("../lib/coach-brick-check.js");
 /* Legacy alias — foundation brief supersedes pattern-only brief */
 const COACH_PATTERN_BRIEF = COACH_FOUNDATION_BRIEF;
 
@@ -2170,7 +2173,17 @@ async function callCoachLlm(apiKey, groqKey, model, messages, storeName, systemT
   );
 }
 
+/* The function's own ceiling, from vercel.json. The violation retry is spent against it rather
+   than against a guess: see sendBackForRepair below. */
+const FUNCTION_BUDGET_MS = 300 * 1000;
+/* What must be left over to be worth starting a second generation: the first call's own duration
+   again, plus room to parse and answer. Measured at runtime, never assumed - there is no recorded
+   timing for a brick build anywhere in this repo, and inventing one would be the same kind of
+   guess this whole change exists to remove. */
+const REPAIR_MARGIN_MS = 20 * 1000;
+
 async function coachHandler(req, res) {
+  const tRequestStart = Date.now();
   setCors(req, res);
   if (req.method === "OPTIONS") {
     return res.status(204).json({});
@@ -3105,6 +3118,26 @@ async function coachHandler(req, res) {
         if (f && f.length) out.brickFlags = f;
       }
     } catch (eFlags) {}
+    /* And the half a machine can be CERTAIN about — equipment that does not exist there, a load
+       above a ceiling the owner typed, a week with no bodyweight work, the wrong session count.
+       Reported, not yet enforced: the retry that acts on this list is a separate change, because
+       a second generation doubles the wait against a 300-second function ceiling and that has to
+       be measured before it is wired (owner, 2026-09-14). */
+    try {
+      const checked = block || (week ? { weeks: [week] } : null);
+      const intake = (body && body.studioIntake) || null;
+      if (checked && intake) {
+        const r = brickCheck(checked, {
+          equipmentList: intake.equipmentList,
+          sessionsPerWeek: intake.sessionsPerWeek,
+          sessionTypes: intake.sessionTypes,
+        });
+        if (r && r.blocking && r.blocking.length) out.brickBlocking = r.blocking;
+        if (r && r.flags && r.flags.length) {
+          out.brickFlags = (out.brickFlags || []).concat(r.flags);
+        }
+      }
+    } catch (eCheck) {}
     if (part) out.part = part;
     if (day) out.day = day;
     return out;
@@ -3209,6 +3242,99 @@ async function coachHandler(req, res) {
       priorText: String(primary.text || "").slice(0, 400),
       intakeRetried: true,
     });
+  }
+
+  /**
+   * ONE repair pass, and only when there is provably time for it.
+   *
+   * The owner's decision of 2026-09-14: block on what a machine is certain of, flag what needs
+   * judgement. Blocking means the brick goes BACK to the coach — with his own work in hand and
+   * the list of violations — rather than reaching the owner for him to fix by hand, which is what
+   * he did with עודד's first brick, line by line.
+   *
+   * Not a rebuild from nothing. He keeps everything that was right; the instruction is to change
+   * the lines named and nothing else. A regeneration would cost the good half of the brick too.
+   *
+   * THE TIME GUARD IS THE WHOLE REASON THIS IS SAFE. A second generation doubles the wait against
+   * a 300-second ceiling, and nothing in this repo records how long a brick actually takes. So it
+   * is not estimated: the first call's real duration is measured, and the repair only starts when
+   * that much time plus a margin is still left. When it is not, the violations are reported to the
+   * owner instead — which is exactly where we were a minute ago, never worse.
+   *
+   * Cost, measured 2026-09-09: about 7 agorot a generation, ~15 for a repair. Against a client
+   * paying 500 a month it is not a consideration; the wait is.
+   */
+  async function sendBackForRepair(packed, tCallStart) {
+    if (!programming) return packed;
+    const violations = Array.isArray(packed && packed.brickBlocking) ? packed.brickBlocking : [];
+    if (!violations.length) return packed;
+    if (packed.repairAttempted) return packed;
+
+    const callMs = Math.max(0, Date.now() - tCallStart);
+    const leftMs = FUNCTION_BUDGET_MS - (Date.now() - tRequestStart);
+    /* Recorded either way, so that the next time this question comes up there is a number. */
+    packed.buildMs = callMs;
+    if (leftMs < callMs + REPAIR_MARGIN_MS) {
+      packed.repairSkipped = "no time left in the request budget";
+      return packed;
+    }
+
+    const prior = packed.block || (packed.week ? { weeks: [packed.week] } : null);
+    if (!prior) return packed;
+
+    const repairMsgs = [
+      {
+        role: "user",
+        text:
+          "JSON ONLY — no prose.\n" +
+          "Your brick is below. It breaks facts about this place that were stated in the request. " +
+          "These are not preferences and not suggestions:\n\n" +
+          violations
+            .map(function (v, i) {
+              return i + 1 + ". " + v;
+            })
+            .join("\n") +
+          "\n\nFix ONLY those lines. Keep every other line exactly as you wrote it — the rest of " +
+          "the brick is correct and re-writing it loses good work. Replace a missing implement " +
+          "with something the place actually has, at the same intent and the same stimulus; do " +
+          "not simply delete the movement and leave the session short. Bodyweight, floor and " +
+          "wall work are always available to you (POL-027).\n\n" +
+          "Return the COMPLETE corrected brick in the same format:\n\n" +
+          JSON.stringify(prior).slice(0, 60000),
+      },
+    ];
+
+    const tRepair = Date.now();
+    const repaired = await callProgrammingGenerate(repairMsgs, systemText, {
+      temperature: 0.2,
+      maxOutputTokens: 8192,
+      skipTools: true,
+      noInternalRetry: true,
+    });
+    if (!repaired.ok) {
+      packed.repairError = repaired.detail || repaired.error;
+      return packed;
+    }
+    const after = packOk(repaired, {
+      via: (packed.via || "primary") + "+repair",
+      repairAttempted: true,
+    });
+    after.buildMs = callMs;
+    after.repairMs = Date.now() - tRepair;
+    const before = violations.length;
+    const now = Array.isArray(after.brickBlocking) ? after.brickBlocking.length : 0;
+    /* A repair that made it worse is not an improvement, and the coach's first answer was at
+       least whole. Keep the better of the two and say which, out loud. */
+    if (!after.block && !after.week) {
+      packed.repairError = "the repair returned no brick";
+      return packed;
+    }
+    if (now > before) {
+      packed.repairRejected = "the repair broke more than it fixed (" + before + " → " + now + ")";
+      return packed;
+    }
+    after.repairFixed = before - now;
+    return after;
   }
 
   function weekHasPartContent(week) {
@@ -3544,6 +3670,7 @@ async function coachHandler(req, res) {
       /^confirm\??$/i.test(lastUserLine));
   const chatStore = skipChatFileSearch ? null : store || undefined;
 
+  const tGenerate = Date.now();
   result = programming
     ? await callProgrammingGenerate(messages, systemText)
     : await callCoachLlm(
@@ -3578,7 +3705,9 @@ async function coachHandler(req, res) {
     return res.status(200).json(weekPacked);
   }
   if (programming) {
-    return res.status(200).json(await retryIfIntakeLike(result));
+    return res
+      .status(200)
+      .json(await sendBackForRepair(await retryIfIntakeLike(result), tGenerate));
   }
   return res.status(200).json(packOk(result));
 }
