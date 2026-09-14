@@ -998,10 +998,19 @@ const intakeEnd = page.indexOf('id="detail" hidden');
 const intakeCard = intakeStart >= 0 && intakeEnd > intakeStart ? page.slice(intakeStart, intakeEnd) : "";
 ok("the intake card exists", intakeCard.length > 200);
 ok("the intake card is left-to-right", /id="intakeCard" dir="ltr"/.test(page));
+/* The HEADER is Hebrew and RTL from 2026-09-14, like every other screen in this module. The
+   owner's words: the athlete questionnaire is "POPUP מעוצב ויפה עם גופן ופונטים אחידים" and the
+   studio one was "לא אחיד", with no way out of it at all — Cancel sat at the bottom of a long
+   form where he never saw it. The FIELDS stay English, which is what this assertion was for. */
+const intakeHeaderEnd = intakeCard.indexOf("</div>", intakeCard.indexOf("intake-ws-header"));
+const intakeBody = intakeHeaderEnd > 0 ? intakeCard.slice(intakeHeaderEnd) : intakeCard;
 ok(
-  "no Hebrew in the intake form itself",
-  !/[֐-׿]/.test(intakeCard.replace(/<!--[\s\S]*?-->/g, ""))
+  "no Hebrew in the intake FIELDS",
+  !/[֐-׿]/.test(intakeBody.replace(/<!--[\s\S]*?-->/g, ""))
 );
+ok("the questionnaire has the module's own header bar", /id="intakeCard"[\s\S]{0,600}intake-ws-header/.test(page));
+ok("with a way out that is visible from the first tab", /id="iClose"[^>]*>סגור</.test(page));
+ok("and it leaves the same way Cancel does", /\["iCancel", "iClose"\]\.forEach/.test(page));
 
 /* Validation runs before anything is created */
 ok("the form validates before creating", /validateIntake\(form\)/.test(page));

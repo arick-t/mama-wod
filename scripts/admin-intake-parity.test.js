@@ -94,7 +94,6 @@ const marked = CoachIntakeSync.buildFixedIntakePrompt(
   Object.assign({}, sample, {
     improveFocus: { max_strength: true, gymnastics: true },
     avoidMovements: { deep_squat: true, jumping: true },
-    heaviestImplementKg: 24,
     avoidInProgram: "No burpees, ever.",
   })
 );
@@ -103,7 +102,25 @@ ok("what to improve is stated", /^IMPROVE FOCUS: Max strength/m.test(marked));
 ok("and stated when nothing was chosen", /^IMPROVE FOCUS: none selected/m.test(unmarked));
 ok("what to program around is stated", /^AVOID: Deep squat/m.test(marked));
 ok("and stated when nothing was marked", /^AVOID: none marked\.$/m.test(unmarked));
-ok("the heaviest implement is a number", /^HEAVIEST IMPLEMENT: 24 kg\.$/m.test(marked));
+/* "Heaviest implement" was one number for a whole setup, and it is gone (owner, 2026-09-14).
+   It could not say "dumbbells to 15 but a 40 kg sandbag", and the checklist that replaces it
+   carries a ceiling per implement. */
+const ticked = CoachIntakeSync.buildFixedIntakePrompt(
+  Object.assign({}, sample, {
+    equipmentList: {
+      DUMBBELL: { have: true, cap: 15 },
+      "PULLUP BAR": { have: true },
+      RINGS: { have: false },
+      "SKIPPING ROPE": { have: true },
+    },
+  })
+);
+ok("a ticked inventory reaches the coach", /EQUIPMENT - CHECKED INVENTORY/.test(ticked));
+ok("with the ceiling on the implement it belongs to", /DUMBBELL\s+available · MAX LOAD 15 kg/.test(ticked));
+ok("and an explicit absence for what was not ticked", /RINGS\s+NOT AVAILABLE/.test(ticked));
+/* One athlete is never asked how many barbells the place owns. */
+ok("no station counts for one person", !/rotation station/.test(ticked));
+ok("the old single number is gone from the packet", !/HEAVIEST IMPLEMENT: 24/.test(marked));
 /* --- and the line reads the ROOM, not the value ------------------------
  * In a proper box the question is never asked, so a zero there means "no ceiling", not
  * "unknown". The old wording told the coach "never by a kg figure" for an athlete who
@@ -146,15 +163,16 @@ const withMarks = CoachIntakeSync.athleteProfileForGenerateBlock(
   Object.assign({}, sample, {
     improveFocus: { engine: true },
     avoidMovements: { running: true },
-    heaviestImplementKg: "32",
+    equipmentList: { DUMBBELL: { have: true, cap: 32 } },
     avoidInProgram: "no burpees",
   })
 );
 ok("improveFocus is a field", withMarks.improveFocus && withMarks.improveFocus.engine === true);
 ok("avoidMovements is a field", withMarks.avoidMovements && withMarks.avoidMovements.running === true);
-ok("heaviestImplementKg is a number", withMarks.heaviestImplementKg === 32);
+ok("the ticked inventory travels with the profile", withMarks.equipmentList && withMarks.equipmentList.DUMBBELL && withMarks.equipmentList.DUMBBELL.cap === 32);
 ok("avoidInProgram is a field", withMarks.avoidInProgram === "no burpees");
-ok("an unanswered heaviest implement is 0, not empty", CoachIntakeSync.athleteProfileForGenerateBlock(sample).heaviestImplementKg === 0);
+/* An unanswered checklist is an empty object, never a claim that the athlete owns nothing. */
+ok("an unanswered checklist is empty, not a claim", JSON.stringify(CoachIntakeSync.athleteProfileForGenerateBlock(sample).equipmentList) === "{}");
 /* The ids ARE the contract: they map one-to-one onto the coach's substitution matrix,
    so renaming one silently would break it. */
 ok(

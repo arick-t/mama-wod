@@ -1704,9 +1704,18 @@ header{flex-wrap:wrap;row-gap:8px}
   <div class="content" id="clientScreen" hidden>
     <div id="topBanner"></div>
     <div class="card" id="intakeCard" dir="ltr" style="text-align:left" hidden>
-      <div class="row" style="margin-bottom:12px">
-        <h2 style="margin:0" id="intakeTitle">New coach / studio client</h2>
-        <span class="spacer meta" id="intakeStep"></span>
+      <!-- The same header bar every other screen in this module uses, and for the same reason:
+           the way out has to be visible from the first tab. The studio questionnaire only ever
+           had "Cancel" at the bottom of a long form, so from the owner's side there was no way
+           to leave it at all (owner, 2026-09-14). The negative margins pull the bar to the card's
+           edges without changing the card's own padding. -->
+      <div class="intake-ws-header" dir="rtl"
+           style="margin:-16px -16px 14px;border-radius:12px 12px 0 0">
+        <h2 id="intakeTitle">תחקור סטודיו</h2>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span class="meta" id="intakeStep"></span>
+          <button type="button" class="btn-secondary" id="iClose">סגור</button>
+        </div>
       </div>
 
       <div class="itabs" id="intakeTabs" role="tablist"></div>
@@ -11740,10 +11749,16 @@ tryRestoreAdminSession();
         loadList();
       });
     });
-    el("iCancel").addEventListener("click", function () {
-      if (!window.confirm("לצאת מהתחקור? מה שהוקלד יימחק.")) return;
-      if (S.blockMode) { leaveBlockMode(); return; }
-      setAdding(false);
+    /* Two doors, one behaviour: the header's סגור and the footer's Cancel. The footer button
+       alone was invisible from the first tab of a long form. */
+    ["iCancel", "iClose"].forEach(function (id) {
+      var b = el(id);
+      if (!b) return;
+      b.addEventListener("click", function () {
+        if (!window.confirm("לצאת מהתחקור? מה שהוקלד יימחק.")) return;
+        if (S.blockMode) { leaveBlockMode(); return; }
+        setAdding(false);
+      });
     });
     S.token = storedToken();
     var params = new URLSearchParams(location.search);

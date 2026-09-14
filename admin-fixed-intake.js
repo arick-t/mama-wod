@@ -12,6 +12,121 @@
     return window.CoachIntakeSync;
   }
 
+  /* --- the equipment checklist ---------------------------------------------------------
+   * Drawn from lib/equipment-catalog.js, the same list the studio questionnaire ticks and the
+   * post-check measures a brick against. Added 2026-09-14, replacing one free-text box and one
+   * "heaviest implement" number.
+   *
+   * NO NEW STYLING, ON PURPOSE. The owner approved this popup's design and asked that the intake
+   * change leave it alone, so every row here reuses the classes the step already uses:
+   * .pprog-location-picker for the rows, .pprog-skills-all for the one line that answers all of
+   * them, .pprog-fixed-num for a number. Nothing new to look at, only new questions.
+   *
+   * A count is a ROOM's question and is not asked here — one athlete either owns a kettlebell or
+   * does not. A CEILING is asked of everyone: "dumbbells to 8 kg" at home is the same bug as
+   * 22.5 kg in a 15 kg studio (owner, 2026-09-14).
+   */
+  function equipCatalog() {
+    return window.EquipmentCatalog && window.EquipmentCatalog.ITEMS
+      ? window.EquipmentCatalog.ITEMS
+      : [];
+  }
+
+  function equipCapUnit(item) {
+    if (item.metric === "distance") return "metres";
+    if (item.ceiling === "kg") return "max kg";
+    if (item.ceiling === "cm") return "height cm";
+    return "";
+  }
+
+  function equipmentSectionHtml(st) {
+    var items = equipCatalog().filter(function (it) {
+      return it.group !== "always";
+    });
+    if (!items.length) return "";
+    var list = (st && st.equipmentList) || {};
+    var allOn =
+      items.length > 0 &&
+      items.every(function (it) {
+        return list[it.id] && list[it.id].have;
+      });
+    var html =
+      '<p class="pprog-fixed-title" style="margin-top:18px">What is there to train with?</p>' +
+      '<p class="pprog-fixed-note">Floor, wall and bodyweight work are always available and are ' +
+      "never asked about — the coach keeps using them whatever you tick here.</p>" +
+      '<div class="pprog-location-picker">' +
+      '<label class="pprog-skills-all"><input type="checkbox" id="adm-fx-eq-all"' +
+      (allOn ? " checked" : "") +
+      ' onchange="adminFixedEquipAll(this)"> Well-equipped gym — tick everything</label>';
+    items.forEach(function (it) {
+      var row = list[it.id] || {};
+      var unit = equipCapUnit(it);
+      html +=
+        '<label><input type="checkbox" data-fx-eq="' +
+        esc(it.id) +
+        '"' +
+        (row.have ? " checked" : "") +
+        ' onchange="adminFixedEquipPicked()"> ' +
+        '<span style="flex:1">' +
+        esc(it.en || it.id) +
+        "</span>" +
+        (unit
+          ? '<input type="number" min="1" class="pprog-fixed-num" data-fx-eq-cap="' +
+            esc(it.id) +
+            '" style="width:76px;padding:4px 6px"' +
+            (row.have ? "" : " hidden") +
+            ' value="' +
+            esc(row.cap > 0 ? row.cap : "") +
+            '" placeholder="' +
+            esc(unit) +
+            '" onclick="event.preventDefault();event.stopPropagation()">'
+          : "") +
+        "</label>";
+    });
+    return html + "</div>";
+  }
+
+  function equipmentFromForm() {
+    var out = {};
+    var boxes = document.querySelectorAll("[data-fx-eq]");
+    for (var i = 0; i < boxes.length; i++) {
+      var id = boxes[i].getAttribute("data-fx-eq");
+      var row = { have: !!boxes[i].checked, qty: null, cap: null };
+      var capBox = document.querySelector('[data-fx-eq-cap="' + CSS.escape(id) + '"]');
+      if (capBox && boxes[i].checked) {
+        var n = parseInt(capBox.value, 10);
+        if (n > 0) row.cap = n;
+      }
+      out[id] = row;
+    }
+    return out;
+  }
+
+  /* A number about something the athlete does not have is not an answer. */
+  function syncEquipRowsFixed() {
+    var boxes = document.querySelectorAll("[data-fx-eq]");
+    for (var i = 0; i < boxes.length; i++) {
+      var id = boxes[i].getAttribute("data-fx-eq");
+      var capBox = document.querySelector('[data-fx-eq-cap="' + CSS.escape(id) + '"]');
+      if (capBox) capBox.hidden = !boxes[i].checked;
+    }
+    var all = document.getElementById("adm-fx-eq-all");
+    if (all && boxes.length) {
+      all.checked = Array.prototype.every.call(boxes, function (b) {
+        return b.checked;
+      });
+    }
+  }
+
+  window.adminFixedEquipPicked = function () {
+    syncEquipRowsFixed();
+  };
+  window.adminFixedEquipAll = function (box) {
+    var boxes = document.querySelectorAll("[data-fx-eq]");
+    for (var i = 0; i < boxes.length; i++) boxes[i].checked = !!(box && box.checked);
+    syncEquipRowsFixed();
+  };
+
   function esc(s) {
     return String(s == null ? "" : s)
       .replace(/&/g, "&amp;")
@@ -115,7 +230,7 @@
       improveFocusOther: "",
       avoidMovements: {},
       avoidMovementsOther: "",
-      heaviestImplementKg: 0,
+      equipmentList: {},
       avoidInProgram: "",
       injuries: "",
       goals: "",
@@ -328,16 +443,12 @@
         '><textarea id="adm-fx-location-other" maxlength="500" placeholder="Please specify your setup (e.g. garage, dumbbells only, no rower…)">' +
         esc(st.trainingLocationOther || "") +
         "</textarea>" +
-        /* Equipment limits the LOAD, not the movement - a back squat with dumbbells is
-           still a back squat. But that rule cannot be applied without knowing how heavy
-           the room actually gets, and "limited equipment" carries no number, so the
-           coach was guessing weight (coach agent, 2026-09-02). */
-        '<div class="pprog-fixed-row" style="margin-top:10px">' +
-        '<label class="pprog-fixed-inline" for="adm-fx-heaviest">Heaviest implement you have (kg)</label>' +
-        '<input id="adm-fx-heaviest" type="number" min="1" max="300" class="pprog-fixed-num" value="' +
-        esc(parseInt(st.heaviestImplementKg, 10) > 0 ? parseInt(st.heaviestImplementKg, 10) : "") +
-        '" placeholder="-">' +
-        "</div></div></div>" +
+        /* "Heaviest implement you have (kg)" stood here until 2026-09-14. One number for a whole
+           setup could not say "dumbbells to 15 but a 40 kg sandbag", it was asked only of the
+           home athlete, and at the same time it told a fully equipped athlete to prescribe no
+           kilograms at all. The checklist below replaces it with a ceiling PER implement. */
+        "</div></div>" +
+        equipmentSectionHtml(st) +
         /* One athlete, two settings. A box on weekdays and a garage on Saturday was being
            described as "limited equipment", which threw away four maxima in kilograms and
            then forbade kilograms underneath them (coach agent, 2026-09-03). */
@@ -784,11 +895,11 @@
       if (locations.other_home && otherDetail) parts.push("Other detail: " + otherDetail);
       intakeState.trainingLocations = locations;
       intakeState.trainingLocationOther = otherDetail;
-      /* A number only when there is a room to describe; a proper box has no ceiling
-         worth stating (coach agent, 2026-09-02). */
-      var heavyEl = document.getElementById("adm-fx-heaviest");
-      var heavyN = heavyEl ? parseInt(heavyEl.value, 10) : 0;
-      intakeState.heaviestImplementKg = heavyN >= 1 && heavyN <= 300 ? heavyN : 0;
+      /* One ceiling for a whole setup is gone (owner, 2026-09-14). It could not say "dumbbells
+         to 15 but a 40 kg sandbag", it was only ever asked of the home athlete, and for anyone
+         else its absence told the coach to write no kilograms at all. The checklist carries a
+         ceiling per implement instead. */
+      intakeState.equipmentList = equipmentFromForm();
       var multiEl = document.getElementById("adm-fx-multiplace");
       intakeState.trainsMultipleLocations = !!(multiEl && multiEl.checked);
       var secondDays = [];
@@ -1095,7 +1206,7 @@
         improveFocusOther: prof.improveFocusOther || "",
         avoidMovements: prof.avoidMovements || {},
         avoidMovementsOther: prof.avoidMovementsOther || "",
-        heaviestImplementKg: prof.heaviestImplementKg || 0,
+        equipmentList: prof.equipmentList || {},
         avoidInProgram: prof.avoidInProgram || "",
         /* The packet the coach will read on the day he is reconnected. */
         fixedIntakePacket: String(prof.fixedIntakePacket || "").slice(0, 6000),
