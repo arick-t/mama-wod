@@ -835,13 +835,13 @@ function testRouterAgainstRealPacket() {
     L.competitorDeclared(OLD_PACKET("I want to compete at a local throwdown"), null) &&
       !L.competitorDeclared(OLD_PACKET("Get fitter and lose a few kilos"), null));
 
-  /* The packet's tail order settled on 2026-09-03: GOALS, COMPETITOR, IMPROVE FOCUS, AVOID,
+  /* The packet's tail order settled on 2026-09-03: GOALS, COMPETITOR, BLOCK GOALS, AVOID,
      AVOID (also), HEAVIEST IMPLEMENT, DOES NOT WANT. The GOALS extractor has to stop at the first
      of those and not swallow the rest, or every athlete inherits the whole tail as "intent". */
   const TAIL =
     "GOALS:\nFirst muscle-up this year, and stay injury free.\n" +
     "COMPETITOR: no — general fitness athlete, not preparing for a competition.\n" +
-    "IMPROVE FOCUS: none selected — general fitness, no single focus. Priority is the balance itself.\n" +
+    "BLOCK GOALS: none selected — general fitness, no single focus. Priority is the balance itself.\n" +
     "AVOID: none marked.\n" +
     "AVOID (also): nothing else stated.\n" +
     "HEAVIEST IMPLEMENT: full gym loading available — prescribe by %1RM from the reported lifts.\n" +

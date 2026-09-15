@@ -254,6 +254,7 @@
       sessionMinutes: 0,
       sessionTimesDiffer: false,
       competitor: false,
+      inCalorieDeficit: false,
       /* What this athlete pays. Asked here for the same reason a studio is asked in
          its first tab: it is the owner's record of the client, and it never reaches
          the athlete (owner, 2026-09-03). */
@@ -674,9 +675,53 @@
         esc(st.avoidMovementsOther || "") +
         "</textarea>";
     } else if (key === "goals") {
+      /* Goals were one free-text box until 2026-09-15. The reason to mark them is not
+         enforcement — no code checks whether a month made someone stronger — but routing:
+         "I want to get stronger" in prose reached the coach as nothing at all.
+         "Maintaining a healthy lifestyle" leads, in a box of its own, and clears the rest:
+         it is the answer most people give, and it is an answer (owner, 2026-09-15). */
+      var goalMap = st.improveFocus || {};
+      var lifestyleOn = goalMap.healthy_lifestyle === true;
+      var skillOn = goalMap.specific_skill === true;
       html +=
         '<p class="pprog-fixed-title">Goals</p>' +
-        '<textarea id="adm-fx-goals" maxlength="800" placeholder="e.g. Engine + Olympic lift consistency">' +
+        '<p class="pprog-fixed-note">What should this month be for? Pick at most ' +
+        S.MAX_GOALS +
+        " — three pull the plan in three directions and it serves none of them. " +
+        "The next block can be for something else.</p>" +
+        '<div class="pprog-location-picker">' +
+        '<label class="pprog-skills-all"><input type="checkbox" data-goal-id="healthy_lifestyle"' +
+        (lifestyleOn ? " checked" : "") +
+        ' onchange="adminFixedGoalPicked(this)"> ' +
+        esc(S.GOAL_DEFS[0].label) +
+        "</label></div>" +
+        '<div class="pprog-location-picker">' +
+        S.GOAL_DEFS.slice(1)
+          .map(function (d) {
+            return '<label><input type="checkbox" data-goal-id="' + esc(d.id) + '"' +
+              (goalMap[d.id] === true ? " checked" : "") +
+              ' onchange="adminFixedGoalPicked(this)"><span>' + esc(d.label) + "</span></label>";
+          })
+          .join("") +
+        "</div>" +
+        /* Which skill, and only then. Eight names rather than a box to type one into:
+           the coach acts on the name, and a name it does not recognise is no answer. */
+        '<div id="adm-fx-goal-skill-wrap"' + (skillOn ? "" : " hidden") + ">" +
+        '<div class="pprog-profile-row"><label for="adm-fx-improve-other">Which skill?</label>' +
+        '<select id="adm-fx-improve-other">' +
+        S.GOAL_SKILL_DEFS.map(function (name) {
+          return '<option value="' + esc(name) + '"' +
+            (String(st.improveFocusOther || "") === name ? " selected" : "") +
+            ">" + esc(name) + "</option>";
+        }).join("") +
+        "</select></div></div>" +
+        /* Not a goal: a fact about now, and it does not spend one of the two. */
+        '<label class="pprog-fixed-inline" style="margin-top:12px">' +
+        '<input type="checkbox" id="adm-fx-deficit"' +
+        (st.inCalorieDeficit === true ? " checked" : "") +
+        "> I am eating in a calorie deficit right now</label>" +
+        '<p class="pprog-fixed-title" style="margin-top:16px">Anything else about what you want?</p>' +
+        '<textarea id="adm-fx-goals" maxlength="800" placeholder="e.g. first muscle-up before my 40th">' +
         esc(st.goals || "") +
         "</textarea>" +
         /* Competing changes what a block is for — peaking, testing, and how heavy a
@@ -685,24 +730,10 @@
         '<input type="checkbox" id="adm-fx-competitor"' +
         (st.competitor === true ? " checked" : "") +
         ' onchange="adminFixedCompetitorChanged()"> I am training for a competition / actively competing</label>' +
-        /* "I want to get stronger" in free text reached the coach as nothing at all -
-           not for want of intention, but because no word in it was one the router knew.
-           The free text stays; these anchor it (coach agent, 2026-09-02). */
-        /* Only a competitor is asked where the dedicated time goes. The owner's call
-           (2026-09-03): for someone training for general fitness the answer is the
-           balance itself, and asking invites an answer that narrows a plan nobody wanted
-           narrowed. The packet still carries the line in both directions. */
-        '<div id="adm-fx-improve-wrap"' + (st.competitor === true ? "" : " hidden") + ">" +
-        '<p class="pprog-fixed-title" style="margin-top:16px">What do you want to improve?</p>' +
-        '<div class="pprog-skills-picker">' +
-        S.IMPROVE_FOCUS_DEFS.map(function (d) {
-          return '<label><input type="checkbox" data-improve-id="' + esc(d.id) + '"' +
-            ((st.improveFocus || {})[d.id] === true ? " checked" : "") +
-            "><span>" + esc(d.label) + "</span></label>";
-        }).join("") +
-        "</div>" +
-        '<input id="adm-fx-improve-other" type="text" maxlength="200" placeholder="Which skill?" value="' +
-        esc(st.improveFocusOther || "") + '"></div>' +
+        /* "What do you want to improve?" — six boxes shown only to a competitor — stood
+           here until 2026-09-15. It is the same question the goals above now ask of
+           everyone, with a better list, so keeping it would have put two overlapping
+           questions on one screen. The marks still travel in the same field. */
         /* Three edits of the same kind is what POL-005 needs before it learns a
            preference, and every edit is a paid call. One box here saves three months
            of them (coach agent, 2026-09-02). */
@@ -805,15 +836,50 @@
   }
   if (typeof window !== "undefined") window.adminFixedToggleTimes = adminFixedToggleTimes;
 
-  /* Ticking "I compete" is what opens the improve list; unticking closes it and drops
-     what was marked, so a stale answer cannot travel with an athlete who is not
-     competing (owner, 2026-09-03). */
-  window.adminFixedCompetitorChanged = function () {
-    var box = document.getElementById("adm-fx-competitor");
-    var wrap = document.getElementById("adm-fx-improve-wrap");
-    if (!box || !wrap) return;
-    if (box.checked) wrap.removeAttribute("hidden");
-    else wrap.setAttribute("hidden", "");
+  /* Competing still changes what a block is for — peaking, testing, how heavy a week may
+     get — but it no longer gates a list of its own: the goals above are asked of everyone
+     (owner, 2026-09-15). */
+  window.adminFixedCompetitorChanged = function () {};
+
+  /**
+   * At most two, and one of them clears the rest.
+   *
+   * "Maintaining a healthy lifestyle" is not one goal among nine: it is the answer that
+   * replaces them, so ticking it empties the list and ticking anything else lets it go.
+   * A third pick is refused rather than silently swapping one out — the athlete chose
+   * three things and deserves to be told only two travel (owner, 2026-09-15).
+   */
+  window.adminFixedGoalPicked = function (inp) {
+    var S = C();
+    var root = document.getElementById("intake-fixed");
+    if (!root || !inp) return;
+    var boxes = root.querySelectorAll("input[data-goal-id]");
+    var id = inp.getAttribute("data-goal-id");
+    var i;
+    if (id === "healthy_lifestyle" && inp.checked) {
+      for (i = 0; i < boxes.length; i++) {
+        if (boxes[i] !== inp) boxes[i].checked = false;
+      }
+    } else if (inp.checked) {
+      var lifestyle = root.querySelector('input[data-goal-id="healthy_lifestyle"]');
+      if (lifestyle) lifestyle.checked = false;
+      var picked = 0;
+      for (i = 0; i < boxes.length; i++) {
+        if (boxes[i].checked && boxes[i].getAttribute("data-goal-id") !== "healthy_lifestyle") picked++;
+      }
+      if (picked > S.MAX_GOALS) {
+        inp.checked = false;
+        setFixedErr("Pick at most " + S.MAX_GOALS + " goals — untick one first.");
+        return;
+      }
+    }
+    var wrap = document.getElementById("adm-fx-goal-skill-wrap");
+    var skill = root.querySelector('input[data-goal-id="specific_skill"]');
+    if (wrap) {
+      if (skill && skill.checked) wrap.removeAttribute("hidden");
+      else wrap.setAttribute("hidden", "");
+    }
+    setFixedErr("");
   };
 
   /* A switch, not a shortcut into a box: there is no box any more. On means nothing to
@@ -1069,17 +1135,19 @@
       intakeState.competitor = !!(compEl && compEl.checked);
       intakeState.goals = goalEl ? String(goalEl.value || "").trim().slice(0, 800) : "";
       var improveMap = {};
-      var improveBoxes = box.querySelectorAll("input[data-improve-id]");
-      for (var im = 0; im < improveBoxes.length; im++) {
-        if (improveBoxes[im].checked) improveMap[improveBoxes[im].getAttribute("data-improve-id")] = true;
+      var goalBoxes = box.querySelectorAll("input[data-goal-id]");
+      for (var im = 0; im < goalBoxes.length; im++) {
+        if (goalBoxes[im].checked) improveMap[goalBoxes[im].getAttribute("data-goal-id")] = true;
       }
-      /* Not a competitor means no focus was asked for, so none is carried. */
-      intakeState.improveFocus = intakeState.competitor === true ? improveMap : {};
+      intakeState.improveFocus = improveMap;
+      /* The named skill only travels with the goal that asks for it. */
       var improveOtherEl = document.getElementById("adm-fx-improve-other");
       intakeState.improveFocusOther =
-        intakeState.competitor === true && improveOtherEl
+        improveMap.specific_skill === true && improveOtherEl
           ? String(improveOtherEl.value || "").trim().slice(0, 200)
           : "";
+      var deficitEl = document.getElementById("adm-fx-deficit");
+      intakeState.inCalorieDeficit = !!(deficitEl && deficitEl.checked);
       var avoidProgEl = document.getElementById("adm-fx-avoid-program");
       intakeState.avoidInProgram = avoidProgEl
         ? String(avoidProgEl.value || "").trim().slice(0, 400)
@@ -1207,6 +1275,7 @@
         injuries: intakeState.injuries || "",
         goals: intakeState.goals || "",
         competitor: intakeState.competitor === true,
+        inCalorieDeficit: intakeState.inCalorieDeficit === true,
         trainsMultipleLocations: prof.trainsMultipleLocations === true,
         secondaryLocationDays: prof.secondaryLocationDays || [],
         secondaryLocationEquipment: prof.secondaryLocationEquipment || "",

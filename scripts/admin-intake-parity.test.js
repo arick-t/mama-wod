@@ -98,8 +98,10 @@ const marked = CoachIntakeSync.buildFixedIntakePrompt(
   })
 );
 const unmarked = CoachIntakeSync.buildFixedIntakePrompt(sample);
-ok("what to improve is stated", /^IMPROVE FOCUS: Max strength/m.test(marked));
-ok("and stated when nothing was chosen", /^IMPROVE FOCUS: none selected/m.test(unmarked));
+/* Goals became a checklist asked of everyone on 2026-09-15; the marks travel in the same
+   field, so an intake answered before that day still reads as what it said. */
+ok("the block goals are stated", /^BLOCK GOALS: Max strength/m.test(marked));
+ok("and stated when nothing was chosen", /^BLOCK GOALS: none selected/m.test(unmarked));
 ok("what to program around is stated", /^AVOID: Deep squat/m.test(marked));
 ok("and stated when nothing was marked", /^AVOID: none marked\.$/m.test(unmarked));
 /* "Heaviest implement" was one number for a whole setup, and it is gone (owner, 2026-09-14).
@@ -338,13 +340,17 @@ ok("silence about what it does not do is stated too", /^DOES NOT DO: nothing sta
 ok("briefFor stays a human reminder, not a prompt", !/BLOCK_JSON/.test(StudioIntake.briefFor({})));
 
 ok("the tick box is on the Goals step", /id="adm-fx-competitor"/.test(fixedJs));
-/* The improve list belongs to that tick box (owner, 2026-09-03): for someone training
-   for general fitness the answer is the balance itself, and asking invites an answer
-   that narrows a plan nobody wanted narrowed. The packet still carries the line in both
-   directions, so nothing downstream changes shape. */
-ok("the improve list is hidden until he says he competes", /id="adm-fx-improve-wrap"' \+ \(st\.competitor === true \? "" : " hidden"\)/.test(fixedJs));
-ok("ticking it opens the list", /adminFixedCompetitorChanged/.test(fixedJs));
-ok("and unticking drops what was marked", /intakeState\.improveFocus = intakeState\.competitor === true \? improveMap : \{\}/.test(fixedJs));
+/* The improve list belonged to that tick box until 2026-09-15 — six boxes shown only to
+   a competitor. Goals are now a checklist asked of everyone, with a better list, so
+   keeping it would have put two overlapping questions on one screen. The marks travel in
+   the same field, so nothing downstream changed shape. */
+ok("the competitor-only improve list is gone", !/adm-fx-improve-wrap/.test(fixedJs) && !/data-improve-id/.test(fixedJs));
+ok("GOALS ARE ASKED OF EVERYONE", /data-goal-id/.test(fixedJs));
+ok("and the healthy-lifestyle answer leads, in a box of its own", /pprog-skills-all"><input type="checkbox" data-goal-id="healthy_lifestyle"/.test(fixedJs));
+ok("at most two travel", /Pick at most " \+$/m.test(fixedJs) || /MAX_GOALS/.test(fixedJs));
+ok("a third is refused, not silently swapped", /Pick at most " \+ S.MAX_GOALS \+ " goals/.test(fixedJs));
+ok("the named skill only travels with the goal that asks for it", /improveMap.specific_skill === true && improveOtherEl/.test(fixedJs));
+ok("being in a deficit is a fact, not one of the two", /id="adm-fx-deficit"/.test(fixedJs));
 ok("and it is carried on the profile", CoachIntakeSync.normalizeIntakeProfile(Object.assign({}, sample, { competitor: true })).competitor === true);
 
 const profile = CoachIntakeSync.normalizeIntakeProfile(sample);

@@ -278,6 +278,32 @@ ok("marking All skills lets it through", stepShown() === atSkills + 1);
   ok("a healthy athlete walks straight through", stepShown() === atInj + 1);
 }
 
+/* --- goals: a checklist, capped, with one answer that replaces the rest ----
+ * Free text reached the coach as nothing at all when no word in it was one the router
+ * recognised. Two at most, because three pull the month in three directions
+ * (owner, 2026-09-15).
+ * ------------------------------------------------------------------------- */
+{
+  sandbox.window.openIntakeWorkspace();
+  sandbox.window.startIntakeChat();
+  for (let guard = 0; guard < 20 && steps[stepShown() - 1] !== "goals"; guard++) {
+    answer(stepShown() - 1);
+    sandbox.window.adminFixedNext();
+  }
+  ok("goals is step 8", steps[stepShown() - 1] === "goals");
+  const drawn = String(byId("intake-fixed").innerHTML);
+  ok("MAINTAINING A HEALTHY LIFESTYLE LEADS", /data-goal-id="healthy_lifestyle"/.test(drawn));
+  ok("and it is the first goal drawn", drawn.indexOf("healthy_lifestyle") < drawn.indexOf("build_muscle"));
+  ok("in a box of its own, above the list", /pprog-skills-all[\s\S]*?healthy_lifestyle[\s\S]*?<\/label><\/div>/.test(drawn));
+  ok("the cap is stated where it is asked", /Pick at most 2/.test(drawn));
+  ok("health and rehabilitation are not on it", !/injury_proofing|mobility|coming_back/.test(drawn));
+  ok("nor is a habit goal", !/consistency|build the habit/i.test(drawn));
+  ok("the skill picker is hidden until the skill goal is picked", /id="adm-fx-goal-skill-wrap" hidden/.test(drawn));
+  ok("a deficit is asked as a fact beside them", /id="adm-fx-deficit"/.test(drawn));
+  ok("and one free line survives", /id="adm-fx-goals"/.test(drawn));
+  ok("the competitor question stays", /id="adm-fx-competitor"/.test(drawn));
+}
+
 /* --- start over for the full walk -------------------------------------- */
 
 sandbox.window.openIntakeWorkspace();
