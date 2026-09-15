@@ -87,7 +87,6 @@ function field(id, attr, value) {
 ["display_name", "gender", "age", "bodyweight", "experience"].forEach(function (id) {
   field("adm-fx-" + id, "data-fx-id", id);
 });
-field("adm-fx-loc-full", "data-fx-location", "functional_gym");
 ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].forEach(function (d) {
   field("adm-fx-day-" + d, "data-fx-day", d);
 });
@@ -114,6 +113,10 @@ sandbox.document = {
   body: makeEl("body"),
 };
 sandbox.window.CoachIntakeSync = CoachIntakeSync;
+/* The checklist is drawn from the catalog, and without it the equipment step renders
+   nothing at all — which is how a walk through the wizard used to pass while never once
+   looking at the question the step exists to ask. */
+sandbox.window.EquipmentCatalog = require("../lib/equipment-catalog.js");
 sandbox.localStorage = {
   store: {},
   getItem: function (k) { return Object.prototype.hasOwnProperty.call(this.store, k) ? this.store[k] : null; },
@@ -159,7 +162,9 @@ function answer(step) {
     byId("adm-fx-bodyweight").value = "80";
     byId("adm-fx-experience").value = "3 years";
   }
-  if (key === "locations" || key === "setup") byId("adm-fx-loc-full").checked = true;
+  /* Equipment answers NOTHING on purpose. "Where do you train — a well-equipped gym or
+     home?" was removed on 2026-09-15 as a duplicate of the checklist, and an athlete who
+     owns no kit must still be able to walk through the step. */
   if (key === "schedule") {
     ["sun", "tue", "thu"].forEach(function (d) { byId("adm-fx-day-" + d).checked = true; });
     byId("adm-fx-minutes").value = "60";
@@ -193,6 +198,29 @@ ok("and it says why", /Mark at least one skill/.test(String(byId("adminFixedErr"
 byId("adm-fx-skill-all").checked = true;
 sandbox.window.adminFixedNext();
 ok("marking All skills lets it through", stepShown() === atSkills + 1);
+
+/* --- the equipment step asks once, and lets an empty answer through -------
+ * Two questions about the same fact could disagree: "well-equipped gym" ticked above a
+ * checklist with no rower in it (owner, 2026-09-15). The picker is gone; what it used
+ * to protect — that nobody is silently treated as a full gym — is now the packet's job.
+ * ------------------------------------------------------------------------- */
+{
+  sandbox.window.openIntakeWorkspace();
+  sandbox.window.startIntakeChat();
+  for (let guard = 0; guard < 20 && steps[stepShown() - 1] !== "setup"; guard++) {
+    answer(stepShown() - 1);
+    sandbox.window.adminFixedNext();
+  }
+  const atSetup = stepShown();
+  ok("the equipment step is step 2", atSetup === 2 && steps[atSetup - 1] === "setup");
+  const drawn = String(byId("intake-fixed").innerHTML);
+  ok("it no longer asks where the athlete trains", !/Where do you usually train/i.test(drawn));
+  ok("nor offers the old well-equipped-gym answer", !/data-fx-location/.test(drawn));
+  ok("it asks what there is to train with", /What is there to train with/i.test(drawn));
+  ok("and keeps one additive free-text box", /adm-fx-location-other/.test(drawn));
+  sandbox.window.adminFixedNext();
+  ok("AN ATHLETE WHO TICKS NOTHING STILL GETS THROUGH", stepShown() === atSetup + 1);
+}
 
 /* --- start over for the full walk -------------------------------------- */
 

@@ -417,38 +417,25 @@
         esc(st.paymentMethod || "") +
         '" placeholder="Bit, 1st of the month"></div>';
     } else if (key === "setup") {
-      var locs = st.trainingLocations || {};
-      var otherOn = !!locs.other_home;
+      /* "Where do you usually train?" — a well-equipped gym, or home / limited — stood
+         here until 2026-09-15. It asked, in two words, the question the checklist below
+         now answers item by item, and the two could disagree: a box ticked "well-equipped
+         gym" with no rower under it said both things at once. One question, one answer
+         (owner, 2026-09-15).
+         "Heaviest implement you have (kg)" went the day before, for its own reason: one
+         number for a whole setup could not say "dumbbells to 15 but a 40 kg sandbag". The
+         checklist carries a ceiling PER implement. */
       html +=
-        '<p class="pprog-fixed-title">Where do you usually train?</p>' +
-        /* One or the other. Both ticked described nobody, and the coach would have been
-           told two contradictory things about the same athlete (owner, 2026-09-02). */
-        '<p class="pprog-fixed-note">Pick the one that fits.</p>' +
-        '<div class="pprog-location-picker">';
-      for (var li = 0; li < S.LOCATION_DEFS.length; li++) {
-        var loc = S.LOCATION_DEFS[li];
-        html +=
-          '<label><input type="checkbox" data-fx-location="' +
-          esc(loc.id) +
-          '"' +
-          (locs[loc.id] ? " checked" : "") +
-          ' onchange="adminFixedLocationPicked(this)"' +
-          "> " +
-          esc(loc.label) +
-          "</label>";
-      }
-      html +=
-        '<div class="pprog-location-other-wrap" id="admFxLocationOtherWrap"' +
-        (otherOn ? "" : " hidden") +
-        '><textarea id="adm-fx-location-other" maxlength="500" placeholder="Please specify your setup (e.g. garage, dumbbells only, no rower…)">' +
+        equipmentSectionHtml(st) +
+        /* Free text is additive and always was: it may widen what the coach is allowed to
+           use and may never narrow it, because nothing written in prose can be checked
+           mechanically. Same field the old "specify your setup" box wrote, so an intake
+           answered before today still reads back into it. */
+        '<p class="pprog-fixed-note" style="margin-top:12px">Anything else worth knowing about the ' +
+        "setup? This ADDS to the list above — it never removes from it.</p>" +
+        '<textarea id="adm-fx-location-other" maxlength="500" placeholder="e.g. a 40 kg sandbag, a sled, trains outdoors in summer">' +
         esc(st.trainingLocationOther || "") +
         "</textarea>" +
-        /* "Heaviest implement you have (kg)" stood here until 2026-09-14. One number for a whole
-           setup could not say "dumbbells to 15 but a 40 kg sandbag", it was asked only of the
-           home athlete, and at the same time it told a fully equipped athlete to prescribe no
-           kilograms at all. The checklist below replaces it with a ceiling PER implement. */
-        "</div></div>" +
-        equipmentSectionHtml(st) +
         /* One athlete, two settings. A box on weekdays and a garage on Saturday was being
            described as "limited equipment", which threw away four maxima in kilograms and
            then forbade kilograms underneath them (coach agent, 2026-09-03). */
@@ -810,25 +797,6 @@
     else wrap.setAttribute("hidden", "");
   };
 
-  window.adminFixedLocationPicked = function (inp) {
-    var root = document.getElementById("intake-fixed");
-    if (root && inp && inp.checked) {
-      var all = root.querySelectorAll("input[data-fx-location]");
-      for (var i = 0; i < all.length; i++) {
-        if (all[i] !== inp) all[i].checked = false;
-      }
-    }
-    window.adminFixedLocationOtherToggle();
-  };
-
-  window.adminFixedLocationOtherToggle = function () {
-    var wrap = document.getElementById("admFxLocationOtherWrap");
-    var otherCb = document.querySelector('input[data-fx-location="other_home"]');
-    if (!wrap) return;
-    if (otherCb && otherCb.checked) wrap.removeAttribute("hidden");
-    else wrap.setAttribute("hidden", "");
-  };
-
   window.adminFixedNext = function adminFixedNext() {
     if (intakeState.busy) return;
     var box = document.getElementById("intake-fixed");
@@ -870,31 +838,16 @@
       intakeState.bodyweight = String(bwN);
       intakeState.experience = vals.experience.slice(0, 120);
     } else if (key === "setup") {
-      var locations = {};
-      var labels = [];
-      var cbs = box.querySelectorAll("input[data-fx-location]");
-      for (var ci = 0; ci < cbs.length; ci++) {
-        if (!cbs[ci].checked) continue;
-        var id = cbs[ci].getAttribute("data-fx-location");
-        locations[id] = true;
-        for (var j = 0; j < S.LOCATION_DEFS.length; j++) {
-          if (S.LOCATION_DEFS[j].id === id) labels.push(S.LOCATION_DEFS[j].label);
-        }
-      }
       var otherEl = document.getElementById("adm-fx-location-other");
       var otherDetail = otherEl ? String(otherEl.value || "").trim().slice(0, 500) : "";
-      if (!labels.length) {
-        setFixedErr("Select at least one training location.");
-        return;
-      }
-      if (locations.other_home && !otherDetail) {
-        setFixedErr("Please specify your Other / home setup.");
-        return;
-      }
-      var parts = labels.slice();
-      if (locations.other_home && otherDetail) parts.push("Other detail: " + otherDetail);
-      intakeState.trainingLocations = locations;
+      /* Nothing to validate. Ticking nothing is a real answer — an athlete with a floor
+         and a wall and no kit at all — and the packet says so item by item rather than
+         falling back on "full gym" (see inventoryFor, which is told the list was
+         answered even when every row is a no). */
+      intakeState.trainingLocations = {};
       intakeState.trainingLocationOther = otherDetail;
+      var parts = ["Equipment answered item by item"];
+      if (otherDetail) parts.push("Also reported: " + otherDetail);
       /* One ceiling for a whole setup is gone (owner, 2026-09-14). It could not say "dumbbells
          to 15 but a 40 kg sandbag", it was only ever asked of the home athlete, and for anyone
          else its absence told the coach to write no kilograms at all. The checklist carries a

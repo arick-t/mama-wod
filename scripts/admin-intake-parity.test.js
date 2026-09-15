@@ -121,6 +121,27 @@ ok("and an explicit absence for what was not ticked", /RINGS\s+NOT AVAILABLE/.te
 /* One athlete is never asked how many barbells the place owns. */
 ok("no station counts for one person", !/rotation station/.test(ticked));
 ok("the old single number is gone from the packet", !/HEAVIEST IMPLEMENT: 24/.test(marked));
+/* --- ticking NOTHING is an answer, and a dangerous one to misread ---------
+ * "Where do you usually train?" was removed on 2026-09-15 as a duplicate of the
+ * checklist. It was also, quietly, what stopped an athlete with no kit from being read
+ * as a full gym: an empty list used to render no inventory at all, and the fallback
+ * below then told the coach "full gym loading available". An athlete who owns a floor
+ * and a wall must reach the coach as exactly that.
+ * ------------------------------------------------------------------------- */
+const nothingTicked = CoachIntakeSync.buildFixedIntakePrompt(
+  Object.assign({}, sample, {
+    trainingLocations: {},
+    trainingSetup: "Equipment answered item by item",
+    equipmentList: { DUMBBELL: { have: false }, "PULLUP BAR": { have: false }, RINGS: { have: false } },
+  })
+);
+ok("an all-no checklist still reaches the coach as an inventory", /EQUIPMENT - CHECKED INVENTORY/.test(nothingTicked));
+ok("every line of it an explicit absence", /DUMBBELL\s+NOT AVAILABLE/.test(nothingTicked) && /RINGS\s+NOT AVAILABLE/.test(nothingTicked));
+ok("AND NOBODY IS SILENTLY TREATED AS A FULL GYM", !/full gym loading available/.test(nothingTicked));
+/* A profile that never saw the checklist still falls back to the old wording. */
+const neverAsked = Object.assign({}, sample, { trainingLocations: { functional_gym: true } });
+delete neverAsked.equipmentList;
+ok("an intake from before the checklist is unchanged", /full gym loading available/.test(neverAsked ? CoachIntakeSync.buildFixedIntakePrompt(neverAsked) : ""));
 /* --- and the line reads the ROOM, not the value ------------------------
  * In a proper box the question is never asked, so a zero there means "no ceiling", not
  * "unknown". The old wording told the coach "never by a kg figure" for an athlete who
