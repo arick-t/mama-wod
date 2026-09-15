@@ -71,7 +71,7 @@ ok(
 ok(
   "the labels read like the owner's spec",
   I.TABS.map(function (t) { return t.label; }).join("|") ===
-    "Client & payment|Equipment|Schedule|Population & limits"
+    "Client & payment|Equipment & space|Schedule|Population & limits"
 );
 
 /* No Hebrew anywhere in the shipped strings (comments excluded). */

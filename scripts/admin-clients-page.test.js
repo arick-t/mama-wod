@@ -1211,4 +1211,48 @@ ok("and gives up out loud rather than quietly", /clientHalfFailed = true;[\s\S]{
 ok("the strip says so too", page.indexOf("הלקוחות לא נטענו — רענן") >= 0);
 ok("and stops saying it the moment they answer", /clientHalfFailed = false;/.test(page));
 
+
+/* --- the studio questionnaire is a popup, like the end-user one ------------
+ * It was a card in the page flow with flat rows, beside an end-user intake that opens as
+ * a modal with every option boxed. Same product, two ages of design (owner, 2026-09-15).
+ * ------------------------------------------------------------------------- */
+ok(
+  "THE STUDIO INTAKE OPENS IN A MODAL",
+  /<div class="modal-backdrop" id="studioIntakeModal">/.test(page)
+);
+ok(
+  "and the card is still inside #clientScreen, where its styling lives",
+  page.indexOf('id="clientScreen"') < page.indexOf('id="studioIntakeModal"') &&
+    page.indexOf('id="studioIntakeModal"') < page.indexOf('id="intakeCard"')
+);
+ok(
+  "it follows the card's own hidden attribute rather than a second switch",
+  /#studioIntakeModal:has\(#intakeCard:not\(\[hidden\]\)\)\{display:flex\}/.test(page)
+);
+ok(
+  "and one show() call still drives it",
+  (page.match(/show\("intakeCard"/g) || []).length === 1
+);
+ok("every answer sits in a box of its own", /#intakeCard \.chk-row\{padding:10px 12px/.test(page));
+
+/* --- the equipment tab, as the owner reordered it (2026-09-15) ------------- */
+const equipPane = page.slice(
+  page.indexOf('data-pane="equipment"'),
+  page.indexOf('data-pane="schedule"')
+);
+ok(
+  "CAPACITY IS THE FIRST QUESTION ON THE EQUIPMENT TAB",
+  equipPane.indexOf("inMaxAtOnce") < equipPane.indexOf("inEquipFull")
+);
+ok("the tick-everything row no longer explains itself twice", !/then untick what is missing/.test(page));
+ok("and the tab is named for space as well as kit", /Equipment & space/.test(fs.readFileSync(path.join(root, "lib", "client-intake.js"), "utf8")));
+
+/* Session length belongs to the week, not to who is in the room. */
+const schedPane = page.slice(
+  page.indexOf('data-pane="schedule"'),
+  page.indexOf('data-pane="population"')
+);
+ok("SESSION LENGTH IS THE FIRST QUESTION ON THE SCHEDULE TAB", schedPane.indexOf("inMinutes") >= 0 && schedPane.indexOf("inMinutes") < schedPane.indexOf("inSchedCount"));
+ok("and it left the population tab", !/data-pane="population"[\s\S]{0,400}inMinutes"/.test(page));
+
 console.log("All admin clients page checks passed.");

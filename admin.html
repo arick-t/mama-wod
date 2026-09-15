@@ -1495,6 +1495,29 @@ body:has(#intake-modal.open) #adminChatFloat{
   border:1px solid var(--line);color:var(--text);border-radius:6px;font-size:.82rem}
 #clientScreen .equip-num[hidden]{display:none}
 #clientScreen .equip-unit{color:var(--text-muted);font-size:.7rem;min-width:58px}
+/* ── The studio questionnaire, as a popup that looks like the end-user one ──────
+   It was a card in the page flow with flat rows, beside an end-user intake that opens
+   as a modal with every option in a box of its own. Same product, two ages of design
+   (owner, 2026-09-15).
+   Nothing here restyles the end-user intake, and nothing rewrites this form's markup:
+   the rows below are the rows that were always there, given the same surface. */
+#studioIntakeModal{display:none}
+#studioIntakeModal:has(#intakeCard:not([hidden])){display:flex}
+#studioIntakeModal > #intakeCard{
+  width:min(920px,100%);max-height:92vh;overflow-y:auto;margin:0;border-radius:14px;
+  box-shadow:0 20px 56px rgba(0,0,0,.5)}
+/* Every answer in a box of its own — the one visible difference between the two forms. */
+#intakeCard .chk-row{padding:10px 12px;background:#222;border:1px solid #444;border-radius:8px;
+  align-items:center;margin:0 0 8px}
+#intakeCard .chk-row span{font-size:.88rem;line-height:1.35}
+#intakeCard .pick-row .chk-row{margin:0}
+#intakeCard .sub-branch{border-inline-start:2px solid var(--line);margin-inline-start:6px}
+#intakeCard label.fld span{font-size:.82rem;color:#aaa;line-height:1.4}
+#intakeCard .ipane textarea,#intakeCard .ipane input[type="text"],#intakeCard .ipane input[type="number"]{
+  background:#222;border:1px solid #555;border-radius:8px;color:#eee;font-family:inherit}
+#intakeCard .ipane textarea{min-height:88px}
+/* The tabs read like a step bar rather than a row of buttons in a card. */
+#clientScreen #intakeCard .itabs{padding:0 0 12px;border-bottom:1px solid var(--line);margin:0 0 14px}
 #clientScreen .equip-always{color:var(--text-muted);font-size:.74rem;margin:0 0 12px;line-height:1.5}
 #clientScreen .sched-sep{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
 /* N sessions, laid out one under the other with the week navigation above them. */
@@ -1703,6 +1726,13 @@ header{flex-wrap:wrap;row-gap:8px}
        gesture on the same page (owner, 2026-09-02: one management page, no seam). -->
   <div class="content" id="clientScreen" hidden>
     <div id="topBanner"></div>
+    <!-- The studio questionnaire is a popup, like the end-user one (owner, 2026-09-15).
+         It stays INSIDE #clientScreen on purpose: every rule that styles this form is
+         written as "#clientScreen .something", and lifting the card out of that ancestor
+         would strip the form of its own styling on the way to looking better.
+         No JS toggle of its own either — :has() follows the card's hidden attribute, so
+         the one show() call that has always driven this card still drives it. -->
+    <div class="modal-backdrop" id="studioIntakeModal">
     <div class="card" id="intakeCard" dir="ltr" style="text-align:left" hidden>
       <!-- The same header bar every other screen in this module uses, and for the same reason:
            the way out has to be visible from the first tab. The studio questionnaire only ever
@@ -1738,26 +1768,12 @@ header{flex-wrap:wrap;row-gap:8px}
            well-equipped gym. The description box only exists when it has something to
            describe, so the tab is one line in the common case. -->
       <div class="ipane" data-pane="equipment" hidden>
-        <!-- The checklist replaced two checkboxes and a paragraph on 2026-09-14. The paragraph
-             is why the first real studio brick prescribed rings, a jump rope, 50cm boxes and a
-             rower that the room does not own, and 22.5kg dumbbells against a 15kg ceiling: the
-             coach received prose, and prose cannot be checked. "Well equipped" is now a
-             shortcut that FILLS the list rather than a way past it. -->
-        <div class="pick-row">
-          <label class="chk-row">
-            <input id="inEquipFull" type="checkbox">
-            <span>Well-equipped gym — tick everything, then untick what is missing</span>
-          </label>
-        </div>
-        <p class="equip-always">Floor, wall and bodyweight are never asked: they are always
-          available, and the coach must keep using them whatever is ticked here (POL-027).</p>
-        <div id="inEquipList"></div>
-        <label class="fld" id="inEquipOtherWrap"><span>Anything else the place has, in your own
-          words — this ADDS to the list above and never removes from it</span>
-          <textarea id="inEquipOther" placeholder="e.g. 3 slide boards, a sandbag rack…"></textarea></label>
-        <!-- Asked as a NUMBER, because that is the answer he actually gave when the
+        <!-- Capacity leads the tab (owner, 2026-09-15): how many people are in the room
+             at once is what turns every count below it into a station or a class-wide
+             piece, so it is asked before anything is ticked.
+             Asked as a NUMBER, because that is the answer he actually gave when the
              question said "stations": he answered capacity here and counted the equipment
-             in the box above (coach agent, 2026-09-03). And a room with no practical
+             in the box below (coach agent, 2026-09-03). And a room with no practical
              ceiling has to be able to say so — forcing a number invents a limit. -->
         <label class="chk-row" style="cursor:default">
           <span>How many athletes train at once, at the busiest class?</span>
@@ -1768,6 +1784,23 @@ header{flex-wrap:wrap;row-gap:8px}
           <input id="inNoCap" type="checkbox">
           <span>No practical limit</span>
         </label>
+        <!-- The checklist replaced two checkboxes and a paragraph on 2026-09-14. The paragraph
+             is why the first real studio brick prescribed rings, a jump rope, 50cm boxes and a
+             rower that the room does not own, and 22.5kg dumbbells against a 15kg ceiling: the
+             coach received prose, and prose cannot be checked. "Well equipped" is now a
+             shortcut that FILLS the list rather than a way past it. -->
+        <div class="pick-row">
+          <label class="chk-row">
+            <input id="inEquipFull" type="checkbox">
+            <span>Well-equipped gym — tick everything</span>
+          </label>
+        </div>
+        <p class="equip-always">Floor, wall and bodyweight are never asked: they are always
+          available, and the coach must keep using them whatever is ticked here (POL-027).</p>
+        <div id="inEquipList"></div>
+        <label class="fld" id="inEquipOtherWrap"><span>Anything else the place has, in your own
+          words — this ADDS to the list above and never removes from it</span>
+          <textarea id="inEquipOther" placeholder="e.g. 3 slide boards, a sandbag rack…"></textarea></label>
       </div>
 
       <!-- 3 · schedule.
@@ -1787,6 +1820,15 @@ header{flex-wrap:wrap;row-gap:8px}
                  └ every N weeks, counted across months
       -->
       <div class="ipane" data-pane="schedule" hidden>
+        <!-- How long a session is belongs to the week, not to who is in the room: it
+             was the first question on the LAST tab, four clicks from the tab that
+             decides how many sessions there are (owner, 2026-09-15). -->
+        <label class="chk-row" style="cursor:default">
+          <span>Session length (minutes, warm-up included)</span>
+          <input id="inMinutes" type="number" min="20" max="120" value=""
+                 class="inline-num" aria-label="Session length in minutes" placeholder="—">
+        </label>
+        <p class="meta" id="inMinutesHint" style="margin:0 0 12px"></p>
         <label class="chk-row">
           <input id="inSchedCount" type="checkbox" data-pick="sched">
           <span>Number of sessions per week</span>
@@ -1890,12 +1932,6 @@ header{flex-wrap:wrap;row-gap:8px}
       <!-- 4 · population, limits and goals — one tab (owner, 2026-09-01). Two tabs
            were describing the same room twice. -->
       <div class="ipane" data-pane="population" hidden>
-        <label class="chk-row" style="cursor:default">
-          <span>Session length (minutes, warm-up included)</span>
-          <input id="inMinutes" type="number" min="20" max="120" value=""
-                 class="inline-num" aria-label="Session length in minutes" placeholder="—">
-        </label>
-        <p class="meta" id="inMinutesHint" style="margin:0 0 12px"></p>
         <label class="fld"><span>The place, the people, the limits — and what they are training for</span>
           <textarea id="inPopulation" placeholder="Pre-army prep group, 17–19, mixed ability. Two members with knee history. Training for army selection: 2000m run, pull-ups, load carry endurance."></textarea></label>
         <!-- The boundary, next to the identity. "No barbell snatches" buried in a
@@ -1977,6 +2013,7 @@ header{flex-wrap:wrap;row-gap:8px}
                 style="margin-inline-start:auto">Cancel</button>
       </div>
       <p class="err" id="createErr" role="alert"></p>
+    </div>
     </div>
 
     <div id="detail" hidden></div>
