@@ -831,7 +831,42 @@ function testRouterAgainstRealPacket() {
       .join(String.fromCharCode(10));
     return { fixedIntakePacket: p, goals: goals };
   };
-  ok("a pre-22.0 packet still falls back to stated intent",
+  /* --- the goal marks ARE the stated intent --------------------------------
+ * The individual intake stopped asking for a free line under the goals on 2026-09-15.
+ * Without the packet's own BLOCK GOALS line being read, an athlete whose goal is "engine
+ * and cardio endurance" would state an intent nothing here ever sees, and get no
+ * discipline layer at all.
+ * ------------------------------------------------------------------------- */
+{
+  const Sync = require("../lib/coach-intake-sync-contract.js");
+  const withGoals = function (focus, other) {
+    const packet = Sync.buildFixedIntakePrompt({ improveFocus: focus, improveFocusOther: other || "" });
+    return L.pickLayer3({ fixedIntakePacket: packet, improveFocus: focus, improveFocusOther: other || "" }, null);
+  };
+  ok(
+    "ENGINE AS A MARK SELECTS THE ENDURANCE LAYER",
+    JSON.stringify(withGoals({ engine: true })) === '["endurance"]'
+  );
+  ok(
+    "running faster does too, through the label alone",
+    withGoals({ run_faster: true }).indexOf("endurance") >= 0
+  );
+  ok(
+    "and a 1RM goal reaches weightlifting",
+    withGoals({ max_strength_1rm: true }).indexOf("weightlifting") >= 0
+  );
+  ok(
+    "a named skill still routes by its name",
+    JSON.stringify(withGoals({ specific_skill: true }, "Muscle-up")) === '["gymnastics"]'
+  );
+  /* No specialisation is an answer too — and the commonest one. */
+  ok(
+    "keeping a healthy lifestyle specialises in nothing",
+    withGoals({ healthy_lifestyle: true }).length === 0
+  );
+}
+
+ok("a pre-22.0 packet still falls back to stated intent",
     L.competitorDeclared(OLD_PACKET("I want to compete at a local throwdown"), null) &&
       !L.competitorDeclared(OLD_PACKET("Get fitter and lose a few kilos"), null));
 

@@ -350,7 +350,11 @@ ok("and the healthy-lifestyle answer leads, in a box of its own", /pprog-skills-
 ok("at most two travel", /Pick at most " \+$/m.test(fixedJs) || /MAX_GOALS/.test(fixedJs));
 ok("a third is refused, not silently swapped", /Pick at most " \+ S.MAX_GOALS \+ " goals/.test(fixedJs));
 ok("the named skill only travels with the goal that asks for it", /improveMap.specific_skill === true && improveOtherEl/.test(fixedJs));
-ok("being in a deficit is a fact, not one of the two", /id="adm-fx-deficit"/.test(fixedJs));
+/* A calorie-deficit tick and a free line under it lasted an afternoon: this product does
+   not deal in nutrition, and a box that invites prose invites prose nobody can act on
+   (owner, 2026-09-15). */
+ok("nutrition is not asked about", !/adm-fx-deficit|inCalorieDeficit/.test(fixedJs));
+ok("AND NO FREE LINE SURVIVES ON THE GOALS STEP", !/id="adm-fx-goals"/.test(fixedJs));
 ok("and it is carried on the profile", CoachIntakeSync.normalizeIntakeProfile(Object.assign({}, sample, { competitor: true })).competitor === true);
 
 const profile = CoachIntakeSync.normalizeIntakeProfile(sample);

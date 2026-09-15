@@ -254,7 +254,6 @@
       sessionMinutes: 0,
       sessionTimesDiffer: false,
       competitor: false,
-      inCalorieDeficit: false,
       /* What this athlete pays. Asked here for the same reason a studio is asked in
          its first tab: it is the owner's record of the client, and it never reaches
          the athlete (owner, 2026-09-03). */
@@ -715,15 +714,10 @@
             ">" + esc(name) + "</option>";
         }).join("") +
         "</select></div></div>" +
-        /* Not a goal: a fact about now, and it does not spend one of the two. */
-        '<label class="pprog-fixed-inline" style="margin-top:12px">' +
-        '<input type="checkbox" id="adm-fx-deficit"' +
-        (st.inCalorieDeficit === true ? " checked" : "") +
-        "> I am eating in a calorie deficit right now</label>" +
-        '<p class="pprog-fixed-title" style="margin-top:16px">Anything else about what you want?</p>' +
-        '<textarea id="adm-fx-goals" maxlength="800" placeholder="e.g. first muscle-up before my 40th">' +
-        esc(st.goals || "") +
-        "</textarea>" +
+        /* A calorie-deficit tick and a free line under it lasted an afternoon. Neither
+           belongs here: this product does not deal in nutrition, and a box that invites
+           prose invites prose nobody can act on. The marks above are the answer, and the
+           coach reads them (owner, 2026-09-15). */
         /* Competing changes what a block is for — peaking, testing, and how heavy a
            week may get. The coach is told in as many words (owner, 2026-09-02). */
         '<label class="pprog-fixed-inline" style="margin-top:12px">' +
@@ -1130,10 +1124,10 @@
         ? String(avoidOtherEl.value || "").trim().slice(0, 200)
         : "";
     } else if (key === "goals") {
-      var goalEl = document.getElementById("adm-fx-goals");
       var compEl = document.getElementById("adm-fx-competitor");
       intakeState.competitor = !!(compEl && compEl.checked);
-      intakeState.goals = goalEl ? String(goalEl.value || "").trim().slice(0, 800) : "";
+      /* No free line to read: what this month is for is the marks (owner, 2026-09-15). */
+      intakeState.goals = "";
       var improveMap = {};
       var goalBoxes = box.querySelectorAll("input[data-goal-id]");
       for (var im = 0; im < goalBoxes.length; im++) {
@@ -1146,8 +1140,6 @@
         improveMap.specific_skill === true && improveOtherEl
           ? String(improveOtherEl.value || "").trim().slice(0, 200)
           : "";
-      var deficitEl = document.getElementById("adm-fx-deficit");
-      intakeState.inCalorieDeficit = !!(deficitEl && deficitEl.checked);
       var avoidProgEl = document.getElementById("adm-fx-avoid-program");
       intakeState.avoidInProgram = avoidProgEl
         ? String(avoidProgEl.value || "").trim().slice(0, 400)
@@ -1275,7 +1267,6 @@
         injuries: intakeState.injuries || "",
         goals: intakeState.goals || "",
         competitor: intakeState.competitor === true,
-        inCalorieDeficit: intakeState.inCalorieDeficit === true,
         trainsMultipleLocations: prof.trainsMultipleLocations === true,
         secondaryLocationDays: prof.secondaryLocationDays || [],
         secondaryLocationEquipment: prof.secondaryLocationEquipment || "",

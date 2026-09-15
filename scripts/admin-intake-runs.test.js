@@ -169,7 +169,6 @@ function answer(step) {
     ["sun", "tue", "thu"].forEach(function (d) { byId("adm-fx-day-" + d).checked = true; });
     byId("adm-fx-minutes").value = "60";
   }
-  if (key === "goals") byId("adm-fx-goals").value = "General fitness";
   /* Nothing to answer here any more: the step opens on "No injuries" and a healthy
      athlete taps Next (owner, 2026-09-15). */
   /* A plan cannot be scaled to someone whose skills are unknown, so the step refuses
@@ -299,8 +298,11 @@ ok("marking All skills lets it through", stepShown() === atSkills + 1);
   ok("health and rehabilitation are not on it", !/injury_proofing|mobility|coming_back/.test(drawn));
   ok("nor is a habit goal", !/consistency|build the habit/i.test(drawn));
   ok("the skill picker is hidden until the skill goal is picked", /id="adm-fx-goal-skill-wrap" hidden/.test(drawn));
-  ok("a deficit is asked as a fact beside them", /id="adm-fx-deficit"/.test(drawn));
-  ok("and one free line survives", /id="adm-fx-goals"/.test(drawn));
+  ok("nutrition is not asked about", !/adm-fx-deficit/.test(drawn));
+  ok("AND THE EMPTY BOX UNDER THE GOALS IS GONE", !/id="adm-fx-goals"/.test(drawn));
+  /* The one box that stays: what this place does NOT do. It saves three paid revisions
+     apiece, which is why it was put there (coach agent, 2026-09-02). */
+  ok("what they do not want is still asked", /id="adm-fx-avoid-program"/.test(drawn));
   ok("the competitor question stays", /id="adm-fx-competitor"/.test(drawn));
 }
 
