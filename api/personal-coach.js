@@ -1292,6 +1292,10 @@ function studioCheckCtx(intake) {
     equipmentList: intake.equipmentList,
     sessionsPerWeek: intake.sessionsPerWeek,
     sessionTypes: intake.sessionTypes,
+    /* Never, for a room. A studio does not test its members' 1RM one by one, so a
+       percentage there has nothing to be a percentage of — and "75% 1RM" for a room of
+       seventeen-year-olds is the line the owner rewrote by hand, one at a time. */
+    percentagesAllowed: false,
   };
 }
 
@@ -1317,7 +1321,13 @@ function athleteCheckCtx(profile) {
     days.push(p.activeRecoveryDay);
   }
   if (!answered && !days.length) return null;
-  const ctx = { equipmentList: list, trainingDays: days };
+  const ctx = {
+    equipmentList: list,
+    trainingDays: days,
+    /* The same rule LOAD BASIS states in the prompt: a percentage needs a number to be a
+       percentage of, and this athlete reported none. */
+    percentagesAllowed: reportedLiftCount(p) > 0,
+  };
   const second =
     p.trainsMultipleLocations === true &&
     Array.isArray(p.secondaryLocationDays) &&

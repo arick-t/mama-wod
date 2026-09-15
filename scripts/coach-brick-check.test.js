@@ -314,4 +314,31 @@ ok("no training days means no off-day check", C.checkBrick(OFF_DAY, {}).blocking
 ok("an individual's session COUNT is not blocked",
   C.checkBrick(OFF_DAY, { trainingDays: ["mon", "tue", "wed", "sat"] }).blocking.length === 0);
 
+/* --- a percentage of a maximum nobody has ---------------------------------
+ * THE line the owner rewrote by hand, one at a time, in the first real studio brick:
+ * "75% 1RM", "78%", "82-85%" for seventeen-year-olds who had never tested a lift. LOAD
+ * BASIS says it in the prompt, and the prompt was obeyed in every other respect and not
+ * in this one — so it is checked here too, where it is certain (owner, 2026-09-15).
+ * ------------------------------------------------------------------------- */
+const PERCENTS = {
+  weeks: [
+    { weekIndex: 1, days: { mon: { parts: [{ title: "A", lines: ["Back squat 75% 1RM", "78% x3", "Air squat 20"] }] } } },
+  ],
+};
+const noMax = C.checkBrick(PERCENTS, { percentagesAllowed: false }).blocking.join(" ");
+ok("A PERCENTAGE IS BLOCKED WHERE NOBODY HAS A MAXIMUM", /NOBODY HERE HAS A TESTED MAXIMUM/.test(noMax));
+ok("counted rather than repeated", /2 times/.test(noMax));
+ok("and it names what to write instead", /an effort out of ten/.test(noMax) && /reps in reserve/.test(noMax));
+ok("an athlete who reported lifts keeps their percentages",
+  C.checkBrick(PERCENTS, { percentagesAllowed: true }).blocking.length === 0);
+ok("and saying nothing about it claims nothing",
+  C.checkBrick(PERCENTS, {}).blocking.length === 0);
+/* Reps, calories and rest minutes are not percentages. */
+const REPSONLY = {
+  weeks: [
+    { weekIndex: 1, days: { mon: { parts: [{ title: "A", lines: ["Air squat 20", "Rest 2 min", "15 cal bike"] }] } } },
+  ],
+};
+ok("a number is not a percentage", C.checkBrick(REPSONLY, { percentagesAllowed: false }).blocking.length === 0);
+
 console.log("\nbrick check: all good");

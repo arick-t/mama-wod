@@ -554,6 +554,11 @@ function testTheCheckRunsForAnIndividual() {
   /* The count is NOT checked for a person: a recovery day and an extra session he asked
      for are both legitimate, and a blocking violation that is sometimes wrong is worse
      than none — it also spends a repair call on nothing. */
+  /* The prompt says it and the check says it too: a percentage needs a number to be a
+     percentage of, and that is the line the owner rewrote by hand. */
+  ok("A ROOM CAN NEVER BE WRITTEN IN PERCENTAGES", /percentagesAllowed: false,/.test(src));
+  ok("and a person only when they reported a lift",
+    /percentagesAllowed: reportedLiftCount\(p\) > 0,/.test(src));
   ok("BUT THEIR SESSION COUNT IS NOT BLOCKED",
     !/sessionsPerWeek/.test(src.slice(src.indexOf("function athleteCheckCtx"), src.indexOf("function loadBasisText"))));
 }

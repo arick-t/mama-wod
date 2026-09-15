@@ -23,6 +23,8 @@ function ok(name, cond) {
 
 const root = path.join(__dirname, "..");
 const apiSrc = fs.readFileSync(path.join(root, "api", "client-program.js"), "utf8");
+/* The boundary itself, so "the client sees nothing" is checked and not asserted. */
+const Payload = require("../lib/client-view-payload.js");
 
 /* --- no AI anywhere in this endpoint ------------------------------------- */
 
@@ -1287,6 +1289,103 @@ async function main() {
     ok("and the device that was reading still is too", laptopAfter.status === 200);
     const row = R.data.get("client-access/" + rid + ".json");
     ok("both devices are on the access row", row && row.devices.length === 2);
+  }
+
+  /* --- correcting the answers must not hand the client a month -------------
+   * Until 2026-09-15 the questionnaire could only ADD A BLOCK for a client who already
+   * exists, so saying "this is what the place actually has" meant giving them a month
+   * nobody asked for — and on production, sending the coach to write one. Against a
+   * client whose programming was written by hand, that is the one thing we promised
+   * never to do.
+   * ------------------------------------------------------------------------- */
+  {
+    const made = await H.owner({
+      action: "create",
+      clientName: "Room To Correct",
+      weekCount: 4,
+      intake: {
+        clientName: "Room To Correct",
+        scheduleMode: "session_count",
+        sessionsPerWeek: 3,
+        sessionMinutes: 60,
+        ageFrom: 18,
+        ageTo: 45,
+        levels: { mixed: true },
+        equipmentList: { ROW: { have: true } },
+      },
+    });
+    ok("a room exists to correct", made.status === 200 && made.body.ok === true);
+    const rid = made.body.program.programId;
+    const before = made.body.program;
+    const weeksBefore = (before.weeks || []).length;
+    const blocksBefore = (before.blocks || []).length;
+
+    /* Write training into it, so "no week changed" is a claim with something to lose. */
+    const wrote = await H.owner({
+      action: "save",
+      programId: rid,
+      expectedVersion: before.version,
+      program: {
+        weeks: before.weeks.map(function (w, i) {
+          if (i !== 0) return w;
+          const days = Object.assign({}, w.days);
+          days.mon = { parts: [{ id: "p1", title: "A", lines: ["Row 500m"] }] };
+          return Object.assign({}, w, { days: days });
+        }),
+      },
+    });
+    ok("and it holds training written by hand", wrote.status === 200);
+
+    const corrected = await H.owner({
+      action: "save_intake",
+      programId: rid,
+      expectedVersion: wrote.body.version,
+      intake: {
+        clientName: "Room To Correct",
+        scheduleMode: "session_count",
+        sessionsPerWeek: 3,
+        sessionMinutes: 60,
+        ageFrom: 17,
+        ageTo: 19,
+        levels: { mixed: true },
+        groupTypes: { prep: true },
+        equipmentList: { ROW: { have: false }, DUMBBELL: { have: true, cap: 15 } },
+      },
+    });
+    ok("THE ANSWERS ARE CORRECTED", corrected.status === 200 && corrected.body.ok === true);
+    const after = corrected.body.program;
+    ok("the inventory is the corrected one", after.intake.equipmentList.DUMBBELL.cap === 15 &&
+      after.intake.equipmentList.ROW.have === false);
+    ok("and who is in the room came with it", after.intake.ageFrom === 17 && after.intake.ageTo === 19);
+    ok("NO BLOCK WAS ADDED", (after.blocks || []).length === blocksBefore);
+    ok("AND NO WEEK WAS ADDED", (after.weeks || []).length === weeksBefore);
+    ok(
+      "the training written by hand is untouched",
+      after.weeks[0].days.mon.parts[0].lines[0] === "Row 500m"
+    );
+    /* The promise that matters: the client sees nothing of any of it. */
+    const seen = Payload.programForClient(after);
+    ok("AND THE CLIENT IS HANDED NO INTAKE AT ALL", seen.intake === undefined);
+    /* The whole surface, named. Anything new appearing here is a decision, not a drift. */
+    ok(
+      "AND THE SURFACE THEY SEE IS EXACTLY WHAT IT WAS",
+      JSON.stringify(Object.keys(seen).sort()) ===
+        JSON.stringify([
+          "blockGroups", "blockStart", "clientKind", "clientName",
+          "programId", "sessionColumns", "updatedAt", "version", "weeks",
+        ])
+    );
+    /* A stale version is refused here exactly as it is on a save. */
+    const stale = await H.owner({
+      action: "save_intake",
+      programId: rid,
+      expectedVersion: before.version,
+      intake: { clientName: "x", ageFrom: 18, ageTo: 45, levels: { mixed: true }, sessionMinutes: 60 },
+    });
+    ok("a stale correction is refused", stale.status === 409);
+    /* And it refuses to be called with nothing. */
+    const empty = await H.owner({ action: "save_intake", programId: rid });
+    ok("an empty correction is refused", empty.status === 400);
   }
 
   console.log("All client-program API checks passed.");
