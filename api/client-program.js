@@ -133,6 +133,31 @@ function writeAccess(programId, access) {
   return JsonStore.putJson(Access.accessKey(programId), access);
 }
 
+/**
+ * "Last seen" is a convenience for the owner's device list. It must never cost a
+ * client their access.
+ *
+ * It used to be written by handing back the access row this request read BEFORE the
+ * programme read — and a programme read takes as long as a Blob read takes. Anything
+ * written in that window was silently reverted by the older copy: a code the owner had
+ * just issued, or a device that had just redeemed one. The client was then told their
+ * device was no longer authorised, and only a new code got them back in
+ * (owner, 2026-09-15).
+ *
+ * Blob has no conditional write, so the rule is: re-read, change one field, and most
+ * of the time skip the write altogether. Failure here is silent on purpose — a stamp
+ * is never a reason to fail a read.
+ */
+async function touchLastSeen(programId, deviceId) {
+  try {
+    const fresh = await readAccess(programId);
+    if (!fresh) return;
+    const touched = Access.touchDevice(fresh, deviceId, { programId: programId });
+    if (!touched.changed) return;
+    await writeAccess(programId, touched.access);
+  } catch (e) {}
+}
+
 /** The client's credential — never a URL parameter, so it stays out of logs and history. */
 function clientTokenFrom(req, body) {
   const headers = (req && req.headers) || {};
@@ -1146,11 +1171,14 @@ async function clientHandler(req, res, body) {
   }
 
   if (action === "sign") {
+    /* Onto the freshest row we can get, for the same reason as touchLastSeen: this
+       write replaces the whole row, so it must not carry a copy old enough to undo
+       a code issued a moment ago. */
+    const rowToSign = (await readAccess(programId)) || verified.access;
     /* Read before writing: recordSignature overwrites, and "is this new?" is the only
        thing standing between one join mail and one per device. */
-    const previousSignature =
-      verified.access && verified.access.signature ? verified.access.signature : null;
-    const signed = Access.recordSignature(verified.access, {
+    const previousSignature = rowToSign && rowToSign.signature ? rowToSign.signature : null;
+    const signed = Access.recordSignature(rowToSign, {
       programId: programId,
       accepted: body.accepted === true,
       deviceId: verified.device.id,
@@ -1219,9 +1247,9 @@ async function clientHandler(req, res, body) {
   if (action === "read") {
     const read = await store.readProgram(programId);
     if (!read.ok) return bad(res, read.code === "NOT_FOUND" ? 404 : 503, read.code, read.error);
-    try {
-      await writeAccess(programId, verified.access);
-    } catch (e) {}
+    /* One field, onto a row read after the programme — never the copy this request
+       started with. See touchLastSeen. */
+    await touchLastSeen(programId, verified.device.id);
     return res.status(200).json({
       ok: true,
       program: Payload.programForClient(read.program),

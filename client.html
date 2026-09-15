@@ -308,7 +308,15 @@ button.ghost:hover{color:var(--text)}
 
   function token() { try { return localStorage.getItem(TOKEN_KEY) || ""; } catch (e) { return ""; } }
   function setToken(t) { try { if (t) localStorage.setItem(TOKEN_KEY, t); } catch (e) {} }
-  function clearToken() { try { localStorage.removeItem(TOKEN_KEY); } catch (e) {} }
+  /* A 401 does NOT throw the token away.
+   *
+   * It used to: one refusal and the credential was gone from the device for good, so
+   * a client who was refused once — for any reason, ours included — could only get
+   * back in by phoning the owner for a fresh code. The token is worthless without a
+   * matching device row on the server, so keeping it costs nothing, and if the row
+   * comes back a plain refresh is all it takes. It is replaced the moment a new code
+   * is redeemed (owner, 2026-09-15). */
+  function forgetSession(msg) { openAuth(msg); }
 
   function api(body, useToken) {
     var headers = { "Content-Type": "application/json" };
@@ -429,7 +437,7 @@ button.ghost:hover{color:var(--text)}
     lastProgramLoadMs = Date.now();
     show("authView", false); show("termsView", false);
     api({ action: "read" }).then(function (r) {
-      if (r.status === 401) { clearToken(); openAuth("This device is no longer authorised. Ask your coach for a new code."); return; }
+      if (r.status === 401) { forgetSession("This device is no longer authorised. Ask your coach for a new code."); return; }
       if (r.status === 403) { openTerms(); return; }
       if (r.status === 404) { showGone(); return; }
       if (r.status !== 200 || !r.body.ok) {
@@ -1856,7 +1864,7 @@ button.ghost:hover{color:var(--text)}
         banner("warn", "Your coach changed this program while you had it open. The current version is shown — please copy again.");
         return;
       }
-      if (r.status === 401) { clearToken(); openAuth("This device is no longer authorised."); return; }
+      if (r.status === 401) { forgetSession("This device is no longer authorised."); return; }
       if (r.status !== 200 || !r.body.ok) {
         banner("bad", r.body.error || "Could not save. Please try again.");
         return;
@@ -1907,7 +1915,7 @@ button.ghost:hover{color:var(--text)}
         banner("warn", "Your coach changed this program while you had it open. The current version is shown — please make your change again.");
         return;
       }
-      if (r.status === 401) { clearToken(); openAuth("This device is no longer authorised."); return; }
+      if (r.status === 401) { forgetSession("This device is no longer authorised."); return; }
       if (r.status !== 200 || !r.body.ok) {
         banner("bad", r.body.error || "Could not save. Please try again.");
         return;

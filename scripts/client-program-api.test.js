@@ -55,6 +55,9 @@ function harness(opts) {
     loaded: true,
     exports: {
       async getJson(k) {
+        /* A hook so a test can hold a read open and let something else write while
+           it is in flight — which is the whole shape of the bug fixed on 2026-09-15. */
+        if (typeof o.onGet === "function") await o.onGet(k);
         const hit = data.get(k);
         return hit === undefined ? null : JSON.parse(JSON.stringify(hit));
       },
@@ -1221,6 +1224,64 @@ async function main() {
   const claimIdx = apiSrc.indexOf('if (action === "claim")');
   const claimReply = claimIdx >= 0 ? apiSrc.slice(claimIdx, claimIdx + 1600) : "";
   ok("a client redeeming a code is told nothing about it", claimReply.indexOf("clientCodeSalt") < 0);
+
+  /* --- a read must not undo what happened while it was reading ------------
+   *
+   * The real failure, 2026-09-14: a client who had been using the page for days was
+   * suddenly told his device was not authorised, and only a new code got him back.
+   * The mechanism: reading the programme is a slow Blob read, and afterwards the
+   * request wrote the access row back as it had been BEFORE that read — reverting a
+   * code the owner had just issued, or a device that had just redeemed one. Blob has
+   * no conditional write, so the last writer wins outright.
+   *
+   * This drives exactly that interleaving: a read is held open, the owner issues a
+   * code and a second device redeems it, and then the read is let go.
+   * ------------------------------------------------------------------------- */
+  {
+    let release = null;
+    let armed = false;
+    const R = harness({
+      onGet: function (k) {
+        if (!armed || !/^client-programs\/p/.test(k)) return null;
+        armed = false;
+        return new Promise(function (resolve) {
+          release = resolve;
+        });
+      },
+    });
+
+    const made = await R.owner({ action: "create", clientName: "Coach Race", weekCount: 2 });
+    const rid = made.body.program.programId;
+    const first = await R.owner({ action: "issue_code", programId: rid });
+    const laptop = await R.anon({ action: "claim", programId: rid, code: first.body.code, deviceLabel: "laptop" });
+    const laptopToken = laptop.body.clientToken;
+    await R.client(laptopToken, { action: "sign", programId: rid, accepted: true });
+
+    /* The laptop starts reading, and stops inside the programme read. */
+    armed = true;
+    const slowRead = R.client(laptopToken, { action: "read", programId: rid });
+    for (let i = 0; i < 50 && !release; i++) await new Promise(function (r) { setImmediate(r); });
+    ok("the client's read is held open mid-flight", typeof release === "function");
+
+    /* While it is held: the owner issues a code and a phone redeems it. */
+    const second = await R.owner({ action: "issue_code", programId: rid });
+    ok("the owner can issue a code while a client is reading", second.status === 200);
+    const phone = await R.anon({ action: "claim", programId: rid, code: second.body.code, deviceLabel: "phone" });
+    ok("and a second device redeems it", phone.status === 200 && phone.body.ok === true);
+    const phoneTok = phone.body.clientToken;
+
+    release();
+    const finished = await slowRead;
+    ok("the held read still answers", finished.status === 200 && finished.body.ok === true);
+
+    /* The two claims the old code broke. */
+    const phoneAfter = await R.client(phoneTok, { action: "read", programId: rid });
+    ok("THE DEVICE LINKED MID-READ IS STILL LINKED", phoneAfter.status === 200);
+    const laptopAfter = await R.client(laptopToken, { action: "read", programId: rid });
+    ok("and the device that was reading still is too", laptopAfter.status === 200);
+    const row = R.data.get("client-access/" + rid + ".json");
+    ok("both devices are on the access row", row && row.devices.length === 2);
+  }
 
   console.log("All client-program API checks passed.");
 }
