@@ -1516,6 +1516,12 @@ body:has(#intake-modal.open) #adminChatFloat{
 #intakeCard .ipane textarea,#intakeCard .ipane input[type="text"],#intakeCard .ipane input[type="number"]{
   background:#222;border:1px solid #555;border-radius:8px;color:#eee;font-family:inherit}
 #intakeCard .ipane textarea{min-height:88px}
+#intakeCard .cap-row{flex-direction:column;align-items:stretch;gap:10px;cursor:default}
+#intakeCard .cap-row .inline-num{margin-inline-start:0;width:110px}
+#intakeCard .cap-row .inline-num[hidden]{display:none}
+#intakeCard .cap-row .cap-none{display:flex;align-items:center;gap:8px;cursor:pointer;
+  font-size:.88rem;color:var(--text)}
+#intakeCard .cap-row .cap-none input{width:20px;height:20px;flex:0 0 auto;accent-color:var(--brand)}
 /* The tabs read like a step bar rather than a row of buttons in a card. */
 #clientScreen #intakeCard .itabs{padding:0 0 12px;border-bottom:1px solid var(--line);margin:0 0 14px}
 #clientScreen .equip-always{color:var(--text-muted);font-size:.74rem;margin:0 0 12px;line-height:1.5}
@@ -1775,15 +1781,20 @@ header{flex-wrap:wrap;row-gap:8px}
              question said "stations": he answered capacity here and counted the equipment
              in the box below (coach agent, 2026-09-03). And a room with no practical
              ceiling has to be able to say so — forcing a number invents a limit. -->
-        <label class="chk-row" style="cursor:default">
+        <!-- One question, one box: the number, and the way out of answering it, belong to
+             the same answer. Two rows let both be filled in at once, and a room that said
+             "no practical limit" with 15 still sitting in the field above it was telling
+             the coach two things (owner, 2026-09-15). Ticking the box takes the field
+             away rather than leaving a stale number behind it. -->
+        <div class="chk-row cap-row" id="inCapRow">
           <span>How many athletes train at once, at the busiest class?</span>
           <input id="inMaxAtOnce" type="number" min="1" max="200" value=""
                  class="inline-num" aria-label="Athletes at once" placeholder="—">
-        </label>
-        <label class="chk-row">
-          <input id="inNoCap" type="checkbox">
-          <span>No practical limit</span>
-        </label>
+          <label class="cap-none">
+            <input id="inNoCap" type="checkbox">
+            <span>No practical limit</span>
+          </label>
+        </div>
         <!-- The checklist replaced two checkboxes and a paragraph on 2026-09-14. The paragraph
              is why the first real studio brick prescribed rings, a jump rope, 50cm boxes and a
              rower that the room does not own, and 22.5kg dumbbells against a 15kg ceiling: the
@@ -11281,7 +11292,14 @@ tryRestoreAdminSession();
       equipment: String(el("inEquipOther").value || "").trim() ? "other" : "functional_gym",
       equipmentOther: String(el("inEquipOther").value || ""),
       equipmentList: readEquipList(),
-      maxAthletesAtOnce: el("inMaxAtOnce") ? parseInt(el("inMaxAtOnce").value, 10) || 0 : 0,
+      /* "No practical limit" wins outright: a number left in the field behind it would
+         reach the coach as a capacity the room has just said it does not have. */
+      maxAthletesAtOnce:
+        el("inNoCap") && el("inNoCap").checked
+          ? 0
+          : el("inMaxAtOnce")
+          ? parseInt(el("inMaxAtOnce").value, 10) || 0
+          : 0,
       noCapacityCap: !!(el("inNoCap") && el("inNoCap").checked),
       avoidInProgram: el("inAvoidProgram") ? el("inAvoidProgram").value.trim() : "",
       /* "" when neither is ticked — never a mode the owner did not choose. */
@@ -11479,11 +11497,8 @@ tryRestoreAdminSession();
 
   /* A room shared by twelve people has a capacity; one athlete does not. */
   function syncStationsVisibility(isIndividual) {
-    ["inMaxAtOnce", "inNoCap"].forEach(function (id) {
-      var box = el(id);
-      var wrap = box && box.closest ? box.closest("label") : null;
-      if (wrap) wrap.hidden = !!isIndividual;
-    });
+    /* Both live in one row now, so there is one thing to hide. */
+    if (el("inCapRow")) el("inCapRow").hidden = !!isIndividual;
     /* Counts are a room's question and ride on the same switch: "how many barbells" is noise
        to one athlete, while a load ceiling is asked of everyone. The answers survive the
        redraw. */
@@ -11492,6 +11507,8 @@ tryRestoreAdminSession();
   }
 
   function syncIntakeConditionals() {
+    /* A number about a limit that does not exist is not an answer. */
+    if (el("inNoCap") && el("inMaxAtOnce")) el("inMaxAtOnce").hidden = el("inNoCap").checked;
     /* Equipment: the list is always open and the free-text box always beside it, so there is
        no longer a mode to reveal here (owner, 2026-09-14). */
     syncEquipRows();
@@ -11730,7 +11747,7 @@ tryRestoreAdminSession();
     }
     bindCalGestures();
     /* The version badge is the page's, painted by syncAdminVersionLabels(). */
-    ["inSessionsDiffer", "inRestDays", "inEmphasis", "inDeload", "inHasChanges"]
+    ["inSessionsDiffer", "inRestDays", "inEmphasis", "inDeload", "inHasChanges", "inNoCap"]
       .forEach(function (id) {
         var n = el(id);
         if (n) n.addEventListener("change", syncIntakeConditionals);

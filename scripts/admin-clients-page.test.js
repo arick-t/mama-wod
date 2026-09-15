@@ -1255,4 +1255,18 @@ const schedPane = page.slice(
 ok("SESSION LENGTH IS THE FIRST QUESTION ON THE SCHEDULE TAB", schedPane.indexOf("inMinutes") >= 0 && schedPane.indexOf("inMinutes") < schedPane.indexOf("inSchedCount"));
 ok("and it left the population tab", !/data-pane="population"[\s\S]{0,400}inMinutes"/.test(page));
 
+/* --- one question, one box, and one way out of it ------------------------
+ * The number and "no practical limit" were two rows, so both could be filled in at once
+ * and a room could tell the coach it had no cap with 15 still sitting above it
+ * (owner, 2026-09-15).
+ * ------------------------------------------------------------------------- */
+const capRow = page.slice(page.indexOf('id="inCapRow"'), page.indexOf('id="inEquipFull"'));
+ok("the question, the number and the opt-out are one row", /inMaxAtOnce[\s\S]*inNoCap/.test(capRow));
+ok("asked in that order", capRow.indexOf("How many athletes") < capRow.indexOf("inMaxAtOnce") &&
+  capRow.indexOf("inMaxAtOnce") < capRow.indexOf("inNoCap"));
+ok("TICKING NO LIMIT TAKES THE FIELD AWAY", /el\("inMaxAtOnce"\)\.hidden = el\("inNoCap"\)\.checked/.test(page));
+ok("and the box is bound to redraw it", /"inHasChanges", "inNoCap"/.test(page));
+ok("NO STALE NUMBER IS SAVED BEHIND IT", /el\("inNoCap"\) && el\("inNoCap"\)\.checked\s*\?\s*0/.test(page));
+ok("and one row is what the individual switch hides", /if \(el\("inCapRow"\)\) el\("inCapRow"\)\.hidden = !!isIndividual;/.test(page));
+
 console.log("All admin clients page checks passed.");
