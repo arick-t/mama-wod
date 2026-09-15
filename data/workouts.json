@@ -2705,54 +2705,6 @@
     "2026-09-15": [
       {
         "date": "2026-09-15",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-09-15/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "sumo squat stretch",
-              "hand walk",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 reverse lunges",
-              "20sec deep squat hold",
-              "* *remaining time row"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "BACK SQUATS 15MIN",
-            "lines": [
-              "4 Sets",
-              "3  (paused) back squats",
-              "@ 82-85%",
-              "strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "15 thrusters 40/30kg",
-              "12/10cal row",
-              "9 burpees over the bar",
-              "1:30 rest between amraps",
-              "* *pick up where you left off",
-              "lactate threshold"
-            ],
-            "sub_title": "amrap 4min - 3min - 2min - 1min"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-15",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260915",
@@ -2816,6 +2768,79 @@
       },
       {
         "date": "2026-09-15",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 24.3",
+            "lines": [
+              "All for time:",
+              "5 rounds of:",
+              "10 thrusters, weight 1",
+              "10 chest-to-bar pull-ups",
+              "Rest 1 minute, then:",
+              "5 rounds of:",
+              "7 thrusters, weight 2",
+              "7 bar muscle-ups",
+              "Time cap: 15 minutes",
+              "*♀ 65, 95 lb (29, 43 kg)*",
+              "*♂ 95, 135 lb (43, 61 kg)*"
+            ]
+          }
+        ],
+        "note": "Open: Open 24.3"
+      },
+      {
+        "date": "2026-09-15",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-09-15/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "hand walk",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 prone snow angels",
+              "10 reverse lunges",
+              "20sec deep squat hold",
+              "* *remaining time row"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "BACK SQUATS 15MIN",
+            "lines": [
+              "4 Sets",
+              "3  (paused) back squats",
+              "@ 82-85%",
+              "strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "15 thrusters 40/30kg",
+              "12/10cal row",
+              "9 burpees over the bar",
+              "1:30 rest between amraps",
+              "* *pick up where you left off",
+              "lactate threshold"
+            ],
+            "sub_title": "amrap 4min - 3min - 2min - 1min"
+          }
+        ]
+      },
+      {
+        "date": "2026-09-15",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -2868,33 +2893,8 @@
           }
         ],
         "note": "Benchmark: Nicole"
-      },
-      {
-        "date": "2026-09-15",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 24.3",
-            "lines": [
-              "All for time:",
-              "5 rounds of:",
-              "10 thrusters, weight 1",
-              "10 chest-to-bar pull-ups",
-              "Rest 1 minute, then:",
-              "5 rounds of:",
-              "7 thrusters, weight 2",
-              "7 bar muscle-ups",
-              "Time cap: 15 minutes",
-              "*♀ 65, 95 lb (29, 43 kg)*",
-              "*♂ 95, 135 lb (43, 61 kg)*"
-            ]
-          }
-        ],
-        "note": "Open: Open 24.3"
       }
     ]
   },
-  "last_updated": "2026-09-15T04:15:59.818782"
+  "last_updated": "2026-09-15T08:53:27.590415"
 }
