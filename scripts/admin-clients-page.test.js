@@ -435,9 +435,17 @@ ok("THE AGE IS A RANGE, NOT A BAND", /id="inAgeFrom"/.test(page) && /id="inAgeTo
 ok("who is in the room is asked as ticks", /id="inLevels"/.test(page) && /data-level=/.test(page));
 ok("MIXED ABILITY LEADS, IN A BOX OF ITS OWN", /id="inLevelLead"/.test(page) && /level-lead/.test(page));
 ok("and it is ticked before anything is touched", /levels: { mixed: true },/.test(page));
-ok("the three ability answers exclude each other", /data-level-ability/.test(page) &&
-  /function bindLevelExclusivity/.test(page));
-ok("men only and women only ride alongside them", /bindLevelExclusivity[\s\S]*?data-level-ability["\])[\s\S]*?return;/.test(page));
+const intakeLib = fs.readFileSync(path.join(root, "lib", "client-intake.js"), "utf8");
+ok("ONE ROOM HAS ONE ABILITY", /function bindLevelExclusivity/.test(page));
+/* The kind of group is not like that and is left alone: a women-only pre-army group is
+   one room, not two (owner, 2026-09-15). */
+ok("general fitness leads the kinds, in a box of its own", /id="inGroupLead"/.test(page));
+ok("and is ticked to begin with", /groupTypes: { general_fitness: true },/.test(page));
+ok("but it does not clear the others", /No exclusivity here on purpose/.test(page));
+ok("men only and women only are a kind of group, not a level",
+  /id: "men_only"/.test(intakeLib) && /id: "women_only"/.test(intakeLib) &&
+    intakeLib.indexOf('id: "men_only"') > intakeLib.indexOf("var GROUP_TYPE_DEFS"));
+ok("and youth is gone, since the age range already says it", !/id: "youth"/.test(intakeLib));
 ok("the dropdown is gone", !/<select id="inLevel">/.test(page));
 ok("the kind of group is many", /id="inGroupTypes"/.test(page) && /data-group-type/.test(page));
 ok("a room is never asked whether it tested its maxima", !/inMaximaTested/.test(page));

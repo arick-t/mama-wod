@@ -1519,6 +1519,7 @@ body:has(#intake-modal.open) #adminChatFloat{
 #intakeCard .age-range{display:flex;align-items:center;gap:10px}
 #intakeCard .age-range .inline-num{margin-inline-start:0;width:88px}
 #intakeCard .age-dash{color:var(--text-meta)}
+#intakeCard #inGroupLead{margin:0 0 12px}
 #intakeCard #inLevels{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}
 #intakeCard #inLevelLead{margin:0 0 12px}
 #intakeCard .level-lead{border-color:#1A9B8A!important;background:rgba(26,155,138,.14)!important;
@@ -1973,10 +1974,11 @@ header{flex-wrap:wrap;row-gap:8px}
              2026-09-15). The three ability answers exclude each other — "mixed AND
              beginners" would reach the coach as two contradictory facts about one room —
              while men only / women only ride alongside any of them. -->
-        <p class="meta" style="margin:0 0 6px">Who is in the room?</p>
+        <p class="meta" style="margin:0 0 6px">Ability level</p>
         <div id="inLevelLead"></div>
         <div id="inLevels"></div>
         <p class="meta" style="margin:0 0 6px">What kind of group is it?</p>
+        <div id="inGroupLead"></div>
         <div id="inGroupTypes"></div>
         <!-- "Maxima have been tested here" stood here for an hour. A room does not test
              its members' 1RM one by one — it does not happen — and a field nobody will
@@ -11318,7 +11320,6 @@ tryRestoreAdminSession();
         return '<label class="chk-row' + (cls ? " " + cls : "") + '">' +
           '<input type="checkbox" data-level="' + esc(d.id) + '"' +
           (picked[d.id] === true ? " checked" : "") +
-          (d.ability ? ' data-level-ability="1"' : "") +
           "><span>" + esc(d.label) + "</span></label>";
       };
       lead.innerHTML = levels.filter(function (d) { return d.lead; }).map(function (d) {
@@ -11328,13 +11329,23 @@ tryRestoreAdminSession();
         return row(d, "");
       }).join("");
     }
+    var kindLead = el("inGroupLead");
     var host = el("inGroupTypes");
-    if (CI && host) {
+    if (CI && kindLead && host) {
       var kinds = CI.GROUP_TYPE_DEFS || [];
-      var picked = (v && v.groupTypes) || {};
-      host.innerHTML = kinds.map(function (d) {
-        return '<label class="chk-row"><input type="checkbox" data-group-type="' + esc(d.id) + '"' +
-          (picked[d.id] === true ? " checked" : "") + "><span>" + esc(d.label) + "</span></label>";
+      var pickedK = (v && v.groupTypes) || {};
+      /* No exclusivity here on purpose: most rooms are general fitness AND something. */
+      var kindRow = function (d, cls) {
+        return '<label class="chk-row' + (cls ? " " + cls : "") + '">' +
+          '<input type="checkbox" data-group-type="' + esc(d.id) + '"' +
+          (pickedK[d.id] === true ? " checked" : "") +
+          "><span>" + esc(d.label) + "</span></label>";
+      };
+      kindLead.innerHTML = kinds.filter(function (d) { return d.lead; }).map(function (d) {
+        return kindRow(d, "level-lead");
+      }).join("");
+      host.innerHTML = kinds.filter(function (d) { return !d.lead; }).map(function (d) {
+        return kindRow(d, "");
       }).join("");
     }
   }
@@ -11348,15 +11359,15 @@ tryRestoreAdminSession();
     return out;
   }
 
-  /* One room has one ability. Ticking any of the three unticks the others and lets
-     "mixed" go, and ticking "mixed" clears the three — men only / women only are a
-     different fact and are left alone. */
+  /* One room has one ability, so ticking one lets the others go. The KIND of group is
+     not like that and is deliberately left alone: a women-only pre-army group is one
+     room, not two (owner, 2026-09-15). */
   function bindLevelExclusivity() {
     document.addEventListener("change", function (ev) {
       var t = ev && ev.target;
-      if (!t || !t.getAttribute || !t.getAttribute("data-level-ability")) return;
+      if (!t || !t.getAttribute || !t.getAttribute("data-level")) return;
       if (!t.checked) return;
-      var boxes = document.querySelectorAll("[data-level-ability]");
+      var boxes = document.querySelectorAll("[data-level]");
       for (var i = 0; i < boxes.length; i++) {
         if (boxes[i] !== t) boxes[i].checked = false;
       }
@@ -11472,7 +11483,7 @@ tryRestoreAdminSession();
       ageFrom: "",
       ageTo: "",
       levels: { mixed: true },
-      groupTypes: {},
+      groupTypes: { general_fitness: true },
       maxAthletesAtOnce: "",
       noCapacityCap: false,
       avoidInProgram: "",

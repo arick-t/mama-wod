@@ -86,12 +86,21 @@ ok("an age outside the range is not an age", I.normalizeIntake({ ageFrom: 9, age
 ok("nor is a level nobody offered", !I.normalizeIntake({ levels: { olympian: true } }).levels.olympian);
 /* Ticks, not one answer, and "mixed" is the one the tab opens on (owner, 2026-09-15). */
 ok("MIXED ABILITY IS TICKED BEFORE ANYTHING IS TOUCHED", I.emptyIntake().levels.mixed === true);
-ok("one room has one ability, but who is in it is a separate fact",
-  I.LEVEL_DEFS.filter(function (d) { return d.ability; }).length === 3 + 1 &&
-    I.LEVEL_DEFS.some(function (d) { return d.id === "men_only" && !d.ability; }) &&
-    I.LEVEL_DEFS.some(function (d) { return d.id === "women_only" && !d.ability; }));
-ok("and women only is asked in exactly one place",
-  !I.GROUP_TYPE_DEFS.some(function (d) { return d.id === "women_only"; }));
+ok("the ability question keeps its four answers",
+  I.LEVEL_DEFS.map(function (d) { return d.id; }).join(",") ===
+    "mixed,beginners,experienced,competitive");
+/* Men only / women only describe a KIND of group, not a level (owner, 2026-09-15). */
+ok("who is in the room is a kind of group",
+  I.GROUP_TYPE_DEFS.some(function (d) { return d.id === "men_only"; }) &&
+    I.GROUP_TYPE_DEFS.some(function (d) { return d.id === "women_only"; }) &&
+    !I.LEVEL_DEFS.some(function (d) { return d.id === "women_only"; }));
+/* General fitness leads them and is ticked to begin with, and does NOT clear the rest:
+   most rooms are general fitness AND something. */
+ok("GENERAL FITNESS IS TICKED BEFORE ANYTHING IS TOUCHED",
+  I.emptyIntake().groupTypes.general_fitness === true);
+ok("and it leads the list", I.GROUP_TYPE_DEFS[0].id === "general_fitness" && I.GROUP_TYPE_DEFS[0].lead === true);
+/* The age range already says it. */
+ok("youth is not asked twice", !I.GROUP_TYPE_DEFS.some(function (d) { return d.id === "youth"; }));
 /* An intake answered while this was a single string still means what it said. */
 ok("a legacy level string becomes the tick it always was",
   I.normalizeIntake({ level: "beginners" }).levels.beginners === true);
