@@ -34,7 +34,7 @@ const ROOM = Intake.normalizeIntake({
   population: "adults",
   ageFrom: 18,
   ageTo: 45,
-  level: "mixed",
+  levels: { mixed: true },
   goals: "general",
   equipment: "functional_gym",
   equipmentOther: "",

@@ -418,7 +418,9 @@ FREE.forEach(function (line) {
   ok('"' + line + '" needs nothing', C.requiredFor(line).length === 0);
   ok('"' + line + '" is recognised as free', C.hasBodyOnly(line));
 });
-ok("thirty-six movements need nothing at all", C.BODY_ONLY.length === 36);
+/* Forty, since shuttle work joined the pool on 2026-09-15: a shuttle needs floor, and a
+   week built on them is not a week without bodyweight work. */
+ok("forty movements need nothing at all", C.BODY_ONLY.length === 40);
 
 /* --- the app reads the shared list and keeps no copy of its own --- */
 ok("the app loads the catalogue", index.indexOf('<script src="lib/equipment-catalog.js"></script>') >= 0);
@@ -428,3 +430,21 @@ ok("the app reads the free movements from the catalogue", /var EQ_BODY_ONLY = \(
 ok("the catalogue tag comes before the script that uses it", index.indexOf('lib/equipment-catalog.js') < index.indexOf("function scoreWod"));
 
 console.log("\nequipment catalogue: all good");
+
+/* --- a shuttle run is floor work, and the coach has to be told so ---------
+ * A room with no running route must still be given shuttles: ten metres out and back
+ * needs nothing (owner, 2026-09-15).
+ * ------------------------------------------------------------------------- */
+ok("a shuttle run requires nothing", JSON.stringify(C.requiredFor("6 x 10m shuttle run")) === "[]");
+ok("nor do shuttle sprints", JSON.stringify(C.requiredFor("Shuttle sprints 15m")) === "[]");
+ok("A REAL RUN STILL NEEDS A ROUTE", JSON.stringify(C.requiredFor("Run 800m")) === '[["RUN"]]');
+ok("and one line holding both keeps the route requirement",
+  JSON.stringify(C.requiredFor("Run 800m then 10 shuttle runs")) === '[["RUN"]]');
+ok("a shuttle counts as bodyweight work", C.hasBodyOnly("6 x 10m shuttle run") === true);
+/* An out-and-back is deliberately NOT suppressed: a kilometre out and back is a road run,
+   and suppressing it would hide a real violation. */
+ok("an out-and-back is still a run", JSON.stringify(C.requiredFor("1km out and back run")) === '[["RUN"]]');
+/* And the inventory says it in as many words, or the coach never writes one. */
+const invNoRoute = C.inventoryText({ RUN: { have: false }, DUMBBELL: { have: true, cap: 20 } }, { room: true });
+ok("THE INVENTORY TELLS THE COACH SHUTTLES ARE ALWAYS OPEN", /SHUTTLE RUNS ARE FLOOR WORK, NOT RUNNING/.test(invNoRoute));
+ok("and that the line about a route is about a route", /forbids a route, never a shuttle/.test(invNoRoute));

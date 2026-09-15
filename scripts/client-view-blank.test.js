@@ -41,7 +41,7 @@ function blankIntake(name) {
     population: "לקוח ריק",
     ageFrom: 18,
     ageTo: 45,
-    level: "mixed",
+    levels: { mixed: true },
   });
 }
 

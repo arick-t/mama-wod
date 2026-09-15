@@ -430,7 +430,15 @@ ok("it says the warm-up is inside that number", /warm-up is inside this number/.
  * (owner, 2026-09-15).
  * ------------------------------------------------------------------------- */
 ok("THE AGE IS A RANGE, NOT A BAND", /id="inAgeFrom"/.test(page) && /id="inAgeTo"/.test(page));
-ok("the level is one answer", /id="inLevel"/.test(page) && /<select id="inLevel">/.test(page));
+/* Ticks, not one answer, and "mixed ability" leads them in a box of its own, ticked before
+   anything is touched: it is what most rooms are (owner, 2026-09-15). */
+ok("who is in the room is asked as ticks", /id="inLevels"/.test(page) && /data-level=/.test(page));
+ok("MIXED ABILITY LEADS, IN A BOX OF ITS OWN", /id="inLevelLead"/.test(page) && /level-lead/.test(page));
+ok("and it is ticked before anything is touched", /levels: { mixed: true },/.test(page));
+ok("the three ability answers exclude each other", /data-level-ability/.test(page) &&
+  /function bindLevelExclusivity/.test(page));
+ok("men only and women only ride alongside them", /bindLevelExclusivity[\s\S]*?data-level-ability["\])[\s\S]*?return;/.test(page));
+ok("the dropdown is gone", !/<select id="inLevel">/.test(page));
 ok("the kind of group is many", /id="inGroupTypes"/.test(page) && /data-group-type/.test(page));
 ok("a room is never asked whether it tested its maxima", !/inMaximaTested/.test(page));
 ok("the free box is optional now, and asks only for the targets", /Anything specific they are training for\? Optional/.test(page));
@@ -1279,5 +1287,10 @@ ok("TICKING NO LIMIT TAKES THE FIELD AWAY", /el\("inMaxAtOnce"\)\.hidden = el\("
 ok("and the box is bound to redraw it", /"inHasChanges", "inNoCap"/.test(page));
 ok("NO STALE NUMBER IS SAVED BEHIND IT", /el\("inNoCap"\) && el\("inNoCap"\)\.checked\s*\?\s*0/.test(page));
 ok("and one row is what the individual switch hides", /if \(el\("inCapRow"\)\) el\("inCapRow"\)\.hidden = !!isIndividual;/.test(page));
+
+/* A blank session length made him type the same number into every new client. Sixty is
+   what a session is here; anything else is the exception he types over (owner,
+   2026-09-15). A default, not an assumption — the validator still refuses no length. */
+ok("A NEW STUDIO CLIENT OPENS ON SIXTY MINUTES", /sessionMinutes: 60,/.test(page));
 
 console.log("All admin clients page checks passed.");

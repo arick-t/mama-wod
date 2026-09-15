@@ -1519,6 +1519,11 @@ body:has(#intake-modal.open) #adminChatFloat{
 #intakeCard .age-range{display:flex;align-items:center;gap:10px}
 #intakeCard .age-range .inline-num{margin-inline-start:0;width:88px}
 #intakeCard .age-dash{color:var(--text-meta)}
+#intakeCard #inLevels{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}
+#intakeCard #inLevelLead{margin:0 0 12px}
+#intakeCard .level-lead{border-color:#1A9B8A!important;background:rgba(26,155,138,.14)!important;
+  font-weight:800;margin:0}
+#intakeCard .level-lead span{color:#f5c518}
 #intakeCard #inGroupTypes{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}
 #intakeCard .cap-row{flex-direction:column;align-items:stretch;gap:10px;cursor:default}
 #intakeCard .cap-row .inline-num{margin-inline-start:0;width:110px}
@@ -1963,10 +1968,14 @@ header{flex-wrap:wrap;row-gap:8px}
                    aria-label="Oldest" placeholder="to">
           </div>
         </div>
-        <label class="fld"><span>Ability level</span>
-          <select id="inLevel">
-            <option value="">—</option>
-          </select></label>
+        <!-- Ticks rather than one answer, and "mixed ability" leads them in a box of its
+             own, ticked before anything is touched: it is what most rooms are (owner,
+             2026-09-15). The three ability answers exclude each other — "mixed AND
+             beginners" would reach the coach as two contradictory facts about one room —
+             while men only / women only ride alongside any of them. -->
+        <p class="meta" style="margin:0 0 6px">Who is in the room?</p>
+        <div id="inLevelLead"></div>
+        <div id="inLevels"></div>
         <p class="meta" style="margin:0 0 6px">What kind of group is it?</p>
         <div id="inGroupTypes"></div>
         <!-- "Maxima have been tested here" stood here for an hour. A room does not test
@@ -11300,13 +11309,24 @@ tryRestoreAdminSession();
      packet can never drift into two different lists. */
   function renderPopulationPickers(v) {
     var CI = window.CLIENT_INTAKE;
-    var sel = el("inLevel");
-    if (CI && sel) {
+    var lead = el("inLevelLead");
+    var rest = el("inLevels");
+    if (CI && lead && rest) {
       var levels = CI.LEVEL_DEFS || [];
-      sel.innerHTML = '<option value="">—</option>' + levels.map(function (d) {
-        return '<option value="' + esc(d.id) + '">' + esc(d.label) + "</option>";
+      var picked = (v && v.levels) || {};
+      var row = function (d, cls) {
+        return '<label class="chk-row' + (cls ? " " + cls : "") + '">' +
+          '<input type="checkbox" data-level="' + esc(d.id) + '"' +
+          (picked[d.id] === true ? " checked" : "") +
+          (d.ability ? ' data-level-ability="1"' : "") +
+          "><span>" + esc(d.label) + "</span></label>";
+      };
+      lead.innerHTML = levels.filter(function (d) { return d.lead; }).map(function (d) {
+        return row(d, "level-lead");
       }).join("");
-      sel.value = (v && v.level) || "";
+      rest.innerHTML = levels.filter(function (d) { return !d.lead; }).map(function (d) {
+        return row(d, "");
+      }).join("");
     }
     var host = el("inGroupTypes");
     if (CI && host) {
@@ -11317,6 +11337,30 @@ tryRestoreAdminSession();
           (picked[d.id] === true ? " checked" : "") + "><span>" + esc(d.label) + "</span></label>";
       }).join("");
     }
+  }
+
+  function readLevels() {
+    var out = {};
+    var boxes = document.querySelectorAll("[data-level]");
+    for (var i = 0; i < boxes.length; i++) {
+      if (boxes[i].checked) out[boxes[i].getAttribute("data-level")] = true;
+    }
+    return out;
+  }
+
+  /* One room has one ability. Ticking any of the three unticks the others and lets
+     "mixed" go, and ticking "mixed" clears the three — men only / women only are a
+     different fact and are left alone. */
+  function bindLevelExclusivity() {
+    document.addEventListener("change", function (ev) {
+      var t = ev && ev.target;
+      if (!t || !t.getAttribute || !t.getAttribute("data-level-ability")) return;
+      if (!t.checked) return;
+      var boxes = document.querySelectorAll("[data-level-ability]");
+      for (var i = 0; i < boxes.length; i++) {
+        if (boxes[i] !== t) boxes[i].checked = false;
+      }
+    });
   }
 
   function readGroupTypes() {
@@ -11384,7 +11428,7 @@ tryRestoreAdminSession();
       population: String(el("inPopulation").value || ""),
       ageFrom: el("inAgeFrom") ? parseInt(el("inAgeFrom").value, 10) || 0 : 0,
       ageTo: el("inAgeTo") ? parseInt(el("inAgeTo").value, 10) || 0 : 0,
-      level: el("inLevel") ? String(el("inLevel").value || "") : "",
+      levels: readLevels(),
       groupTypes: readGroupTypes(),
     };
   }
@@ -11418,12 +11462,16 @@ tryRestoreAdminSession();
       dayEmphasisEnabled: false,
       deloadWeek: false,
       deloadEveryWeeks: "",
-      sessionMinutes: "",
+      /* A blank field made him type the same number into every new client: sixty minutes
+         is what a session is here, and anything else is the exception he types over
+         (owner, 2026-09-15). It is a default, not an assumption — the validator still
+         refuses a session with no length at all. */
+      sessionMinutes: 60,
       population: "",
       goals: "",
       ageFrom: "",
       ageTo: "",
-      level: "",
+      levels: { mixed: true },
       groupTypes: {},
       maxAthletesAtOnce: "",
       noCapacityCap: false,
@@ -11820,6 +11868,7 @@ tryRestoreAdminSession();
       });
     }
     bindCalGestures();
+    bindLevelExclusivity();
     /* The version badge is the page's, painted by syncAdminVersionLabels(). */
     ["inSessionsDiffer", "inRestDays", "inEmphasis", "inDeload", "inHasChanges", "inNoCap"]
       .forEach(function (id) {

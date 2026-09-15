@@ -38,7 +38,7 @@ ok(
 /* Who is in the room became facts rather than a paragraph on 2026-09-15, and the facts
    are what is required — the prose is not. */
 const minutesBase = { clientName: "c", scheduleMode: "session_count", sessionsPerWeek: 3,
-  ageFrom: 18, ageTo: 45, level: "mixed" };
+  ageFrom: 18, ageTo: 45, levels: { mixed: true } };
 ok("nothing is assumed about how long a session is", I.emptyIntake().sessionMinutes === 0);
 ok(
   "and it is refused rather than guessed",
@@ -60,17 +60,17 @@ ok("the brief states it", /SESSION: 60 minutes, warm-up included/.test(
 const roomBase = { clientName: "c", scheduleMode: "session_count", sessionsPerWeek: 3, sessionMinutes: 60 };
 ok(
   "THE AGE RANGE IS ASKED FOR, NOT GUESSED",
-  I.validateIntake(Object.assign({}, roomBase, { level: "mixed" }))
+  I.validateIntake(Object.assign({}, roomBase, { levels: { mixed: true } }))
     .some(function (m) { return /age range/i.test(m); })
 );
 ok(
   "and it has to run the right way round",
-  I.validateIntake(Object.assign({}, roomBase, { level: "mixed", ageFrom: 50, ageTo: 16 }))
+  I.validateIntake(Object.assign({}, roomBase, { levels: { mixed: true }, ageFrom: 50, ageTo: 16 }))
     .some(function (m) { return /younger to the older/.test(m); })
 );
 ok(
   "a studio really can run from 16 to 50",
-  I.validateIntake(Object.assign({}, roomBase, { level: "mixed", ageFrom: 16, ageTo: 50 })).length === 0
+  I.validateIntake(Object.assign({}, roomBase, { levels: { mixed: true }, ageFrom: 16, ageTo: 50 })).length === 0
 );
 ok(
   "the level is asked for too",
@@ -79,13 +79,24 @@ ok(
 );
 ok(
   "THE PARAGRAPH IS NO LONGER REQUIRED",
-  !I.validateIntake(Object.assign({}, roomBase, { level: "mixed", ageFrom: 16, ageTo: 50 }))
+  !I.validateIntake(Object.assign({}, roomBase, { levels: { mixed: true }, ageFrom: 16, ageTo: 50 }))
     .some(function (m) { return /Describe the place/.test(m); })
 );
 ok("an age outside the range is not an age", I.normalizeIntake({ ageFrom: 9, ageTo: 91 }).ageFrom === 0);
-ok("nor is a level nobody offered", I.normalizeIntake({ level: "olympian" }).level === "");
+ok("nor is a level nobody offered", !I.normalizeIntake({ levels: { olympian: true } }).levels.olympian);
+/* Ticks, not one answer, and "mixed" is the one the tab opens on (owner, 2026-09-15). */
+ok("MIXED ABILITY IS TICKED BEFORE ANYTHING IS TOUCHED", I.emptyIntake().levels.mixed === true);
+ok("one room has one ability, but who is in it is a separate fact",
+  I.LEVEL_DEFS.filter(function (d) { return d.ability; }).length === 3 + 1 &&
+    I.LEVEL_DEFS.some(function (d) { return d.id === "men_only" && !d.ability; }) &&
+    I.LEVEL_DEFS.some(function (d) { return d.id === "women_only" && !d.ability; }));
+ok("and women only is asked in exactly one place",
+  !I.GROUP_TYPE_DEFS.some(function (d) { return d.id === "women_only"; }));
+/* An intake answered while this was a single string still means what it said. */
+ok("a legacy level string becomes the tick it always was",
+  I.normalizeIntake({ level: "beginners" }).levels.beginners === true);
 ok("a group kind nobody offered is dropped", !I.normalizeIntake({ groupTypes: { bogus: true } }).groupTypes.bogus);
-const facts = I.populationFacts(I.normalizeIntake({ ageFrom: 16, ageTo: 50, level: "mixed", groupTypes: { prep: true } }));
+const facts = I.populationFacts(I.normalizeIntake({ ageFrom: 16, ageTo: 50, levels: { mixed: true }, groupTypes: { prep: true } }));
 ok("the facts read as one line the coach can act on", facts === "ages 16-50 · mixed ability · pre-army / selection prep");
 /* A room is never asked about maxima at all: it does not test its members one by one,
    and the field could only have been ticked by mistake (owner, 2026-09-15). */
@@ -141,7 +152,7 @@ ok(
       /* equipmentList joined on 2026-09-14: the ticked inventory, beside the paragraph rather
          than instead of it, so an intake answered before it exists still means what it meant. */
       "deloadWeek", "equipment", "equipmentList", "equipmentOther", "goals", "groupTypes",
-      "includeRestDays", "level", "maxAthletesAtOnce", "monthlyAmount",
+      "includeRestDays", "levels", "maxAthletesAtOnce", "monthlyAmount",
       "noCapacityCap", "paymentMethod",
       "population", "restDays", "scheduleMode", "sessionMinutes", "sessionTypes", "sessionsDiffer",
       "sessionsPerWeek",
@@ -317,7 +328,7 @@ ok(
     population: "p",
     ageFrom: 18,
     ageTo: 45,
-    level: "mixed", goals: "g", sessionMinutes: 60,
+    levels: { mixed: true }, goals: "g", sessionMinutes: 60,
   }).length === 0
 );
 
@@ -327,7 +338,7 @@ ok(
    schedule attached (owner, 2026-09-01). */
 
 const restBase = { clientName: "c", scheduleMode: "weekly_schedule", sessionMinutes: 60,
-  ageFrom: 18, ageTo: 45, level: "mixed" };
+  ageFrom: 18, ageTo: 45, levels: { mixed: true } };
 ok("no day is a rest day by default", Object.keys(I.emptyIntake().restDays).every(function (k) {
   return I.emptyIntake().restDays[k] === false;
 }));
@@ -434,7 +445,7 @@ const complete = {
   population: "Pre-army group, 17-19, mixed ability, 60-minute sessions",
   ageFrom: 18,
   ageTo: 45,
-  level: "mixed",
+  levels: { mixed: true },
   goals: "Army selection: 2000m run, pull-ups, load carry",
 };
 ok("a complete intake has no problems", I.validateIntake(complete).length === 0);
@@ -481,7 +492,7 @@ const uniform = I.briefFor({
   population: "p",
   ageFrom: 18,
   ageTo: 45,
-  level: "mixed", goals: "g", sessionMinutes: 60,
+  levels: { mixed: true }, goals: "g", sessionMinutes: 60,
 });
 ok("uniform sessions are stated as standard CrossFit", /interchangeable — a standard CrossFit week/.test(uniform));
 const differing = I.briefFor({

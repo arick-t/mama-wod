@@ -322,7 +322,7 @@ const studioPacket = StudioIntake.buildStudioIntakePrompt({
   population: "CrossFit class 12-20",
   ageFrom: 18,
   ageTo: 45,
-  level: "mixed",
+  levels: { mixed: true },
   sessionMinutes: 60,
   deloadWeek: true,
   deloadEveryWeeks: 4,

@@ -237,4 +237,43 @@ ok("days without a list do not split the week", halfAnswered.blocking.length ===
 const single = C.checkBrick(TWO_PLACES, { equipmentList: GARAGE });
 ok("one place still reads as one place", /NOT available here/.test(single.blocking.join(" ")));
 
+/* --- a shuttle run is not running -----------------------------------------
+ * A studio on the third floor of an office block has no running route and never will,
+ * and it can still run ten metres out and back all day. "Shuttle run" contained "run", so
+ * the checker blocked a movement that needs nothing and the inventory told the coach not
+ * to write it in the first place — the checker removing good programming, which is worse
+ * than the bug it was built to fix (owner, 2026-09-15).
+ * ------------------------------------------------------------------------- */
+const NO_ROUTE = { DUMBBELL: { have: true, cap: 20 }, RUN: { have: false } };
+const SHUTTLES = {
+  weeks: [
+    {
+      weekIndex: 1,
+      days: {
+        mon: { parts: [{ title: "A", lines: ["6 x 10m shuttle run", "Shuttle sprints 15m", "Air squat 20"] }] },
+      },
+    },
+  ],
+};
+const shuttle = C.checkBrick(SHUTTLES, { equipmentList: NO_ROUTE });
+ok("A ROOM WITH NO ROUTE CAN STILL BE GIVEN SHUTTLES", shuttle.blocking.length === 0);
+/* And the real thing is still caught in the same room. */
+const REAL_RUN = {
+  weeks: [
+    { weekIndex: 1, days: { mon: { parts: [{ title: "A", lines: ["Run 800m", "Air squat 20"] }] } } },
+  ],
+};
+ok("a route is still a route", /RUN is NOT available/.test(C.checkBrick(REAL_RUN, { equipmentList: NO_ROUTE }).blocking.join(" ")));
+/* Both in one line: the shuttle is free, the 800 is not. */
+const MIXED = {
+  weeks: [
+    { weekIndex: 1, days: { mon: { parts: [{ title: "A", lines: ["Run 800m then 10 shuttle runs", "Push-up 20"] }] } } },
+  ],
+};
+ok("one line holding both is judged on the half that needs a route",
+  /RUN is NOT available/.test(C.checkBrick(MIXED, { equipmentList: NO_ROUTE }).blocking.join(" ")));
+/* A week made of shuttles is not a week without bodyweight work. */
+ok("shuttles count as the bodyweight work a week must contain",
+  !/no bodyweight or floor movement/.test(C.checkBrick(SHUTTLES, { equipmentList: NO_ROUTE }).blocking.join(" ")));
+
 console.log("\nbrick check: all good");
