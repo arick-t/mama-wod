@@ -170,7 +170,8 @@ function answer(step) {
     byId("adm-fx-minutes").value = "60";
   }
   if (key === "goals") byId("adm-fx-goals").value = "General fitness";
-  if (key === "injuries") byId("adm-fx-injuries").value = "None";
+  /* Nothing to answer here any more: the step opens on "No injuries" and a healthy
+     athlete taps Next (owner, 2026-09-15). */
   /* A plan cannot be scaled to someone whose skills are unknown, so the step refuses
      to be walked past empty. */
   if (key === "skills") byId("adm-fx-skill-all").checked = true;
@@ -251,6 +252,30 @@ ok("marking All skills lets it through", stepShown() === atSkills + 1);
   ok("with ceilings of its own", /data-fx-eq2-cap/.test(drawn));
   ok("the paragraph and the single number are gone", !/adm-fx-second-kit/.test(drawn) && !/adm-fx-second-heaviest/.test(drawn));
   ok("and the two lists are not the same inputs", /data-fx-eq=/.test(drawn) && /data-fx-eq2=/.test(drawn));
+}
+
+/* --- injuries: the answer almost everyone gives is the one it opens on ----
+ * A free-text box under the button asked for a diagnosis the coach is forbidden to
+ * reason from, and an athlete who had just tapped "No injuries" was looking at an empty
+ * box inviting him to write anyway (owner, 2026-09-15).
+ * ------------------------------------------------------------------------- */
+{
+  sandbox.window.openIntakeWorkspace();
+  sandbox.window.startIntakeChat();
+  for (let guard = 0; guard < 20 && steps[stepShown() - 1] !== "injuries"; guard++) {
+    answer(stepShown() - 1);
+    sandbox.window.adminFixedNext();
+  }
+  const atInj = stepShown();
+  ok("injuries is step 7", atInj === 7 && steps[atInj - 1] === "injuries");
+  const drawn = String(byId("intake-fixed").innerHTML);
+  ok("NO INJURIES IS ON BEFORE ANYTHING IS TOUCHED", /id="adm-fx-no-injuries-btn" aria-pressed="true"/.test(drawn));
+  ok("and it reads as pressed", /pprog-fixed-chip active/.test(drawn));
+  ok("THE DIAGNOSIS BOX IS GONE", !/id="adm-fx-injuries"/.test(drawn));
+  ok("what the coach may act on is still asked as marks", /data-avoid-id/.test(drawn));
+  ok("and the note beside them says where anything else goes", /Anything else to program around/.test(drawn));
+  sandbox.window.adminFixedNext();
+  ok("a healthy athlete walks straight through", stepShown() === atInj + 1);
 }
 
 /* --- start over for the full walk -------------------------------------- */

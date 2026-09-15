@@ -642,23 +642,24 @@
       }
       html += "</div>";
     } else if (key === "injuries") {
-      var noInj =
-        /^no injuries\.?$/i.test(String(st.injuries || "").trim()) ||
-        String(st.injuries || "").trim() === "אין פציעות";
+      /* "No injuries" is the answer for almost everyone, so it is the answer the step
+         opens on: a healthy athlete taps Next and is done (owner, 2026-09-15). */
+      var noInj = injuriesAreNone(st.injuries);
       html +=
         '<p class="pprog-fixed-title">Injuries &amp; limitations</p>' +
-        '<p class="pprog-fixed-note">Pain points or movements to avoid. Or tap the quick button if none.</p>' +
+        '<p class="pprog-fixed-note">Nothing to report? Leave the button on and carry on. ' +
+        "If there is something, switch it off and mark what to program around.</p>" +
         '<div class="pprog-fixed-chips">' +
         '<button type="button" class="pprog-fixed-chip' +
         (noInj ? " active" : "") +
         '" id="adm-fx-no-injuries-btn" aria-pressed="' +
         (noInj ? "true" : "false") +
-        '" onclick="adminFixedFillNoInjuries()">No injuries</button></div>' +
-        '<textarea id="adm-fx-injuries" maxlength="800" placeholder="e.g. Left knee — avoid deep squats under fatigue" oninput="adminFixedInjuriesInput()">' +
-        esc(st.injuries || "") +
-        "</textarea>" +
-        /* The athlete writes a diagnosis in the box above and the coach is forbidden to
-           reason from it - so the question it MAY act on is asked separately, as marks.
+        '" onclick="adminFixedToggleNoInjuries()">No injuries</button></div>' +
+        /* A free-text box under that button stood here until 2026-09-15. It asked for a
+           diagnosis the coach is FORBIDDEN to reason from, and an athlete who had just
+           tapped "No injuries" was looking at an empty box inviting him to write anyway —
+           correspondence with nowhere to go. What the coach may act on is the marks
+           below, and the note beside them is where anything else belongs.
            Seven families, mapped one-to-one onto the coach substitution matrix
            (coach agent, 2026-09-02). */
         '<p class="pprog-fixed-title" style="margin-top:14px">Movements to avoid or limit</p>' +
@@ -669,7 +670,7 @@
             "><span>" + esc(d.label) + "</span></label>";
         }).join("") +
         "</div>" +
-        '<textarea id="adm-fx-avoid-other" maxlength="200" placeholder="Anything else to program around">' +
+        '<textarea id="adm-fx-avoid-other" maxlength="200" placeholder="Anything else to program around — e.g. left knee, no deep squats under fatigue">' +
         esc(st.avoidMovementsOther || "") +
         "</textarea>";
     } else if (key === "goals") {
@@ -767,14 +768,22 @@
     syncAdminFixedIntakeUi();
   };
 
-  function syncAdminNoInjuriesChip() {
-    var ta = document.getElementById("adm-fx-injuries");
+  /**
+   * Nothing to report — the state the step opens in.
+   *
+   * An empty answer counts as "none" so a fresh intake starts on it; anything the athlete
+   * actually reported reads as the opposite. Hebrew and English both, because intakes
+   * were answered in both before the button existed.
+   */
+  function injuriesAreNone(raw) {
+    var t = String(raw || "").trim();
+    if (!t) return true;
+    return /^no injuries\.?$/i.test(t) || t === "אין פציעות";
+  }
+
+  function noInjuriesChipOn() {
     var btn = document.getElementById("adm-fx-no-injuries-btn");
-    if (!btn) return;
-    var raw = ta ? String(ta.value || "").trim() : "";
-    var on = /^no injuries\.?$/i.test(raw) || raw === "אין פציעות";
-    btn.classList.toggle("active", on);
-    btn.setAttribute("aria-pressed", on ? "true" : "false");
+    return !!(btn && btn.getAttribute("aria-pressed") === "true");
   }
 
   /* Ticking "different times" is what makes the free text exist. Untick and it goes
@@ -807,15 +816,15 @@
     else wrap.setAttribute("hidden", "");
   };
 
-  window.adminFixedFillNoInjuries = function () {
-    var ta = document.getElementById("adm-fx-injuries");
-    if (ta) ta.value = "No injuries";
-    syncAdminNoInjuriesChip();
+  /* A switch, not a shortcut into a box: there is no box any more. On means nothing to
+     report; off means the marks below carry it (owner, 2026-09-15). */
+  window.adminFixedToggleNoInjuries = function () {
+    var btn = document.getElementById("adm-fx-no-injuries-btn");
+    if (!btn) return;
+    var on = !noInjuriesChipOn();
+    btn.classList.toggle("active", on);
+    btn.setAttribute("aria-pressed", on ? "true" : "false");
     setFixedErr("");
-  };
-
-  window.adminFixedInjuriesInput = function () {
-    syncAdminNoInjuriesChip();
   };
 
   window.adminFixedRecoveryPrefChanged = function () {
@@ -1039,8 +1048,11 @@
       }
       intakeState.skills = skills;
     } else if (key === "injuries") {
-      var injEl = document.getElementById("adm-fx-injuries");
-      intakeState.injuries = injEl ? String(injEl.value || "").trim().slice(0, 800) : "";
+      /* One of two answers, and never a diagnosis: either there is nothing to report, or
+         there is, and what the coach may act on is the marks below. */
+      intakeState.injuries = noInjuriesChipOn()
+        ? "No injuries"
+        : "Reported — program around the movements marked below.";
       var avoidMap = {};
       var avoidBoxes = box.querySelectorAll("input[data-avoid-id]");
       for (var av = 0; av < avoidBoxes.length; av++) {
