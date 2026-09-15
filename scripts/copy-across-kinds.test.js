@@ -65,6 +65,9 @@ const KINDS = [
     intake: {
       clientName: "סטודיו",
       population: "adults",
+      ageFrom: 18,
+      ageTo: 45,
+      level: "mixed",
       goals: "general",
       equipment: "functional_gym",
       scheduleMode: "weekly_schedule",
@@ -81,6 +84,9 @@ const KINDS = [
     intake: {
       clientName: "שלושה בשבוע",
       population: "adults",
+      ageFrom: 18,
+      ageTo: 45,
+      level: "mixed",
       goals: "general",
       equipment: "functional_gym",
       scheduleMode: "session_count",
@@ -99,6 +105,9 @@ const KINDS = [
       restDays: { mon: true, wed: true, fri: true, sat: true },
       sessionsPerWeek: 3,
       population: "Individual athlete",
+      ageFrom: 18,
+      ageTo: 45,
+      level: "mixed",
     },
   },
   {
@@ -110,6 +119,9 @@ const KINDS = [
       includeRestDays: false,
       restDays: {},
       population: "לקוח ריק",
+      ageFrom: 18,
+      ageTo: 45,
+      level: "mixed",
     },
   },
   {
@@ -122,6 +134,9 @@ const KINDS = [
       includeRestDays: false,
       restDays: {},
       population: "לקוח ריק",
+      ageFrom: 18,
+      ageTo: 45,
+      level: "mixed",
     },
   },
 ];

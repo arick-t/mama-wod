@@ -39,6 +39,9 @@ function blankIntake(name) {
     deloadWeek: false,
     deloadEveryWeeks: 0,
     population: "לקוח ריק",
+    ageFrom: 18,
+    ageTo: 45,
+    level: "mixed",
   });
 }
 

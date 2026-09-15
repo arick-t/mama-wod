@@ -540,7 +540,15 @@ function testLoadBasisWhenNoLiftsReported() {
   const flat = src.replace(/\s+/g, " ");
   ok("the coach counts the reported lifts",
     /function reportedLiftCount\(profile\)/.test(src) &&
-      /function loadBasisText\(profile, agent\)/.test(src));
+      /function loadBasisText\(profile, agent, opts\)/.test(src));
+  /* The one door out, and it is a fact about the room rather than a preference: a box
+     that has tested its members gets percentages back, and nothing else opens them
+     (owner, 2026-09-15). */
+  ok("a tested room gets its percentages back",
+    /agent === "studio" && si && typeof si === "object" && si\.maximaTested === true/.test(src) &&
+      /const si = opts && opts\.studioIntake;/.test(src));
+  ok("and an untested one does not",
+    /MAXIMA: NOT TESTED in this room/.test(fs.readFileSync(path.join(__dirname, "..", "lib", "client-intake.js"), "utf8")));
   /* The sentence is now built for the reader — a ROOM or an athlete — because the same fact is
      true of both since the studio exemption came off (owner, 2026-09-14). */
   ok("with no lifts reported, percentages are forbidden outright",
@@ -556,7 +564,7 @@ function testLoadBasisWhenNoLiftsReported() {
       /None of this is a compromise: it is how a/.test(flat) &&
       /lift is loaded before anyone has tested it/.test(flat));
   ok("the fact reaches the programming prompt",
-    /loadBasisText\(profile, coachAgentFor\(profile, opts\)\) \+/.test(src));
+    /loadBasisText\(profile, coachAgentFor\(profile, opts\), opts\) \+/.test(src));
   ok("an athlete who DID report a lift gets no such line",
     /if \(n > 0\) return "";/.test(src));
 }

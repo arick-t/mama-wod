@@ -1285,7 +1285,7 @@ function reportedLiftCount(profile) {
   return n;
 }
 
-function loadBasisText(profile, agent) {
+function loadBasisText(profile, agent, opts) {
   /* THE STUDIO EXEMPTION IS GONE (owner, 2026-09-14).
    *
    * It was written on 2026-09-08 on a reasonable argument: a ROOM has no shared 1RM, and in a box
@@ -1303,6 +1303,14 @@ function loadBasisText(profile, agent) {
    * RIR for gymnastics. One vocabulary, so the coach stops inventing his own each time. */
   const n = reportedLiftCount(profile);
   if (n > 0) return "";
+  /* "The day a box does test its members, the studio intake gains a maxima field and
+     percentages open again on the same test" — written above on 2026-09-14 and built on
+     2026-09-15. It is one tick on the population tab, and it says every member has a 1RM
+     on the main lifts, which is the only thing that makes "@75%" mean anything in a room.
+     Nothing else opens it: an untested room is still refused percentages, which is the
+     case that produced the failure. */
+  const si = opts && opts.studioIntake;
+  if (agent === "studio" && si && typeof si === "object" && si.maximaTested === true) return "";
   const room = agent === "studio";
   return (
     "\n\nLOAD BASIS (HARD — a fact about this " +
@@ -1444,7 +1452,7 @@ function buildSystemWithMemory(profile, action, opts) {
       coachPolicyBlock() +
       buildLayerKnowledgeBlock(profile, opts) +
       oneRmTestGateText(opts && opts.blockStartWeek, profile, opts) +
-      loadBasisText(profile, coachAgentFor(profile, opts)) +
+      loadBasisText(profile, coachAgentFor(profile, opts), opts) +
       standardsText(coachAgentFor(profile, opts)) +
       buildCostCapsRuntimeNote(profile) +
       buildFinishLearningBlock(profile, action) +

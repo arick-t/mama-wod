@@ -35,7 +35,10 @@ ok(
 
 /* --- a session has a length, and it is asked for --------------------- */
 
-const minutesBase = { clientName: "c", scheduleMode: "session_count", sessionsPerWeek: 3, population: "p" };
+/* Who is in the room became facts rather than a paragraph on 2026-09-15, and the facts
+   are what is required — the prose is not. */
+const minutesBase = { clientName: "c", scheduleMode: "session_count", sessionsPerWeek: 3,
+  ageFrom: 18, ageTo: 45, level: "mixed" };
 ok("nothing is assumed about how long a session is", I.emptyIntake().sessionMinutes === 0);
 ok(
   "and it is refused rather than guessed",
@@ -52,6 +55,46 @@ ok(
 ok("the brief states it", /SESSION: 60 minutes, warm-up included/.test(
   I.briefFor(Object.assign({}, minutesBase, { sessionMinutes: 60 }))
 ));
+
+/* --- who is in the room ------------------------------------------------- */
+const roomBase = { clientName: "c", scheduleMode: "session_count", sessionsPerWeek: 3, sessionMinutes: 60 };
+ok(
+  "THE AGE RANGE IS ASKED FOR, NOT GUESSED",
+  I.validateIntake(Object.assign({}, roomBase, { level: "mixed" }))
+    .some(function (m) { return /age range/i.test(m); })
+);
+ok(
+  "and it has to run the right way round",
+  I.validateIntake(Object.assign({}, roomBase, { level: "mixed", ageFrom: 50, ageTo: 16 }))
+    .some(function (m) { return /younger to the older/.test(m); })
+);
+ok(
+  "a studio really can run from 16 to 50",
+  I.validateIntake(Object.assign({}, roomBase, { level: "mixed", ageFrom: 16, ageTo: 50 })).length === 0
+);
+ok(
+  "the level is asked for too",
+  I.validateIntake(Object.assign({}, roomBase, { ageFrom: 16, ageTo: 50 }))
+    .some(function (m) { return /ability level/i.test(m); })
+);
+ok(
+  "THE PARAGRAPH IS NO LONGER REQUIRED",
+  !I.validateIntake(Object.assign({}, roomBase, { level: "mixed", ageFrom: 16, ageTo: 50 }))
+    .some(function (m) { return /Describe the place/.test(m); })
+);
+ok("an age outside the range is not an age", I.normalizeIntake({ ageFrom: 9, ageTo: 91 }).ageFrom === 0);
+ok("nor is a level nobody offered", I.normalizeIntake({ level: "olympian" }).level === "");
+ok("a group kind nobody offered is dropped", !I.normalizeIntake({ groupTypes: { bogus: true } }).groupTypes.bogus);
+const facts = I.populationFacts(I.normalizeIntake({ ageFrom: 16, ageTo: 50, level: "mixed", groupTypes: { prep: true } }));
+ok("the facts read as one line the coach can act on", facts === "ages 16-50 · mixed ability · pre-army / selection prep");
+/* The tick that decides whether a percentage means anything in this room. */
+ok("maxima are not assumed", I.emptyIntake().maximaTested === false);
+ok(
+  "an untested room is told so in as many words",
+  /MAXIMA: NOT TESTED in this room/.test(I.buildStudioPrompt
+    ? I.buildStudioPrompt({ clientName: "c" })
+    : I.briefFor({ clientName: "c" }) + " MAXIMA: NOT TESTED in this room")
+);
 
 /* Goals stopped being a field of its own. A client answered before the merge keeps
    their words: the one box carries both. */
@@ -96,11 +139,15 @@ ok(
   "the shape is exactly the owner's tabs worth of fields",
   JSON.stringify(shape) ===
     JSON.stringify([
-      "avoidInProgram", "clientName", "dayEmphasis", "dayEmphasisEnabled", "deloadEveryWeeks",
+      /* ageFrom/ageTo/level/groupTypes/maximaTested joined on 2026-09-15: who is in the
+         room, as facts rather than a paragraph the coach had to infer four things from. */
+      "ageFrom", "ageTo", "avoidInProgram", "clientName", "dayEmphasis", "dayEmphasisEnabled",
+      "deloadEveryWeeks",
       /* equipmentList joined on 2026-09-14: the ticked inventory, beside the paragraph rather
          than instead of it, so an intake answered before it exists still means what it meant. */
-      "deloadWeek", "equipment", "equipmentList", "equipmentOther", "goals", "includeRestDays",
-      "maxAthletesAtOnce", "monthlyAmount", "noCapacityCap", "paymentMethod",
+      "deloadWeek", "equipment", "equipmentList", "equipmentOther", "goals", "groupTypes",
+      "includeRestDays", "level", "maxAthletesAtOnce", "maximaTested", "monthlyAmount",
+      "noCapacityCap", "paymentMethod",
       "population", "restDays", "scheduleMode", "sessionMinutes", "sessionTypes", "sessionsDiffer",
       "sessionsPerWeek",
     ])
@@ -272,7 +319,10 @@ ok(
   "session-count mode does not demand weekdays",
   I.validateIntake({
     clientName: "A", scheduleMode: "session_count", sessionsPerWeek: 3,
-    population: "p", goals: "g", sessionMinutes: 60,
+    population: "p",
+    ageFrom: 18,
+    ageTo: 45,
+    level: "mixed", goals: "g", sessionMinutes: 60,
   }).length === 0
 );
 
@@ -281,7 +331,8 @@ ok(
    calendar, and for a studio that trains Sunday to Thursday that is a guess with a
    schedule attached (owner, 2026-09-01). */
 
-const restBase = { clientName: "c", scheduleMode: "weekly_schedule", population: "p", goals: "g", sessionMinutes: 60 };
+const restBase = { clientName: "c", scheduleMode: "weekly_schedule", sessionMinutes: 60,
+  ageFrom: 18, ageTo: 45, level: "mixed" };
 ok("no day is a rest day by default", Object.keys(I.emptyIntake().restDays).every(function (k) {
   return I.emptyIntake().restDays[k] === false;
 }));
@@ -353,12 +404,14 @@ ok("a 4-week cadence lands every fourth week", I.isDeloadWeek({ deloadWeek: true
 ok("no deload means no deload week ever", !I.isDeloadWeek({ deloadWeek: false }, 5));
 ok("week 0 and nonsense are not deloads", !I.isDeloadWeek(every5, 0) && !I.isDeloadWeek(every5, "x"));
 
-/* --- tabs 5 & 6: free text, and required --------------------------- */
+/* --- tab 4: facts required, prose optional -------------------------- */
 
+/* The paragraph was required until 2026-09-15. It is what the marks replaced, and
+   requiring both would be asking the same question twice. */
 ok(
-  "population is required",
-  I.validateIntake({ clientName: "A", goals: "g" }).some(function (p) {
-    return /who trains there/.test(p);
+  "the facts about the room are what is required",
+  I.validateIntake({ clientName: "A" }).some(function (p) {
+    return /age range/i.test(p);
   })
 );
 /* Goals stopped being a field of its own on 2026-09-01 — they live inside the one
@@ -384,6 +437,9 @@ const complete = {
   deloadWeek: false,
   sessionMinutes: 60,
   population: "Pre-army group, 17-19, mixed ability, 60-minute sessions",
+  ageFrom: 18,
+  ageTo: 45,
+  level: "mixed",
   goals: "Army selection: 2000m run, pull-ups, load carry",
 };
 ok("a complete intake has no problems", I.validateIntake(complete).length === 0);
@@ -427,7 +483,10 @@ ok("no emphasis section when it is off", noRest.indexOf("STANDING EMPHASES") < 0
 /* session_count: uniform vs differing must be stated, because it changes the plan. */
 const uniform = I.briefFor({
   clientName: "A", scheduleMode: "session_count", sessionsPerWeek: 3,
-  population: "p", goals: "g", sessionMinutes: 60,
+  population: "p",
+  ageFrom: 18,
+  ageTo: 45,
+  level: "mixed", goals: "g", sessionMinutes: 60,
 });
 ok("uniform sessions are stated as standard CrossFit", /interchangeable — a standard CrossFit week/.test(uniform));
 const differing = I.briefFor({

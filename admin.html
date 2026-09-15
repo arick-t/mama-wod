@@ -1516,6 +1516,10 @@ body:has(#intake-modal.open) #adminChatFloat{
 #intakeCard .ipane textarea,#intakeCard .ipane input[type="text"],#intakeCard .ipane input[type="number"]{
   background:#222;border:1px solid #555;border-radius:8px;color:#eee;font-family:inherit}
 #intakeCard .ipane textarea{min-height:88px}
+#intakeCard .age-range{display:flex;align-items:center;gap:10px}
+#intakeCard .age-range .inline-num{margin-inline-start:0;width:88px}
+#intakeCard .age-dash{color:var(--text-meta)}
+#intakeCard #inGroupTypes{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}
 #intakeCard .cap-row{flex-direction:column;align-items:stretch;gap:10px;cursor:default}
 #intakeCard .cap-row .inline-num{margin-inline-start:0;width:110px}
 #intakeCard .cap-row .inline-num[hidden]{display:none}
@@ -1943,8 +1947,38 @@ header{flex-wrap:wrap;row-gap:8px}
       <!-- 4 · population, limits and goals — one tab (owner, 2026-09-01). Two tabs
            were describing the same room twice. -->
       <div class="ipane" data-pane="population" hidden>
-        <label class="fld"><span>The place, the people, the limits — and what they are training for</span>
-          <textarea id="inPopulation" placeholder="Pre-army prep group, 17–19, mixed ability. Two members with knee history. Training for army selection: 2000m run, pull-ups, load carry endurance."></textarea></label>
+        <!-- Who is in the room used to be one paragraph holding four different things at
+             once: who they are, what limits them, what they train for, and the specific
+             targets. The coach had to infer all four, and this is where the product broke
+             on the first real studio brick — a room of seventeen-year-olds who had never
+             tested a lift was described in prose, so nothing could act on the age or on
+             the absence of maxima (owner, 2026-09-15). -->
+        <div class="chk-row cap-row">
+          <span>What is the age range in the room?</span>
+          <div class="age-range">
+            <input id="inAgeFrom" type="number" min="10" max="90" class="inline-num"
+                   aria-label="Youngest" placeholder="from">
+            <span class="age-dash">–</span>
+            <input id="inAgeTo" type="number" min="10" max="90" class="inline-num"
+                   aria-label="Oldest" placeholder="to">
+          </div>
+        </div>
+        <label class="fld"><span>Ability level</span>
+          <select id="inLevel">
+            <option value="">—</option>
+          </select></label>
+        <p class="meta" style="margin:0 0 6px">What kind of group is it?</p>
+        <div id="inGroupTypes"></div>
+        <!-- The one tick that decides whether a percentage means anything in this room.
+             Unticked, the coach writes effort out of ten and RIR; ticked, %1RM opens
+             again, because every member then has a number of their own to take it from. -->
+        <label class="chk-row">
+          <input id="inMaximaTested" type="checkbox">
+          <span>Maxima have been tested here — every member has a 1RM on the main lifts</span>
+        </label>
+        <label class="fld"><span>Anything specific they are training for? Optional — the
+          targets a list cannot hold</span>
+          <textarea id="inPopulation" placeholder="Army selection: 2000m run, pull-ups, load carry endurance."></textarea></label>
         <!-- The boundary, next to the identity. "No barbell snatches" buried in a
              paragraph about atmosphere is a rule the coach has to infer — the same
              failure COMPETITOR had (coach agent, 2026-09-03). -->
@@ -11265,6 +11299,38 @@ tryRestoreAdminSession();
     syncEquipRows();
   }
 
+  /* The level choices and the group kinds come from the module, so the screen and the
+     packet can never drift into two different lists. */
+  function renderPopulationPickers(v) {
+    var CI = window.CLIENT_INTAKE;
+    var sel = el("inLevel");
+    if (CI && sel) {
+      var levels = CI.LEVEL_DEFS || [];
+      sel.innerHTML = '<option value="">—</option>' + levels.map(function (d) {
+        return '<option value="' + esc(d.id) + '">' + esc(d.label) + "</option>";
+      }).join("");
+      sel.value = (v && v.level) || "";
+    }
+    var host = el("inGroupTypes");
+    if (CI && host) {
+      var kinds = CI.GROUP_TYPE_DEFS || [];
+      var picked = (v && v.groupTypes) || {};
+      host.innerHTML = kinds.map(function (d) {
+        return '<label class="chk-row"><input type="checkbox" data-group-type="' + esc(d.id) + '"' +
+          (picked[d.id] === true ? " checked" : "") + "><span>" + esc(d.label) + "</span></label>";
+      }).join("");
+    }
+  }
+
+  function readGroupTypes() {
+    var out = {};
+    var boxes = document.querySelectorAll("[data-group-type]");
+    for (var i = 0; i < boxes.length; i++) {
+      if (boxes[i].checked) out[boxes[i].getAttribute("data-group-type")] = true;
+    }
+    return out;
+  }
+
   function readIntakeForm() {
     var keys = (window.CLIENT_INTAKE && window.CLIENT_INTAKE.DAY_KEYS) || [];
     var emphasis = {};
@@ -11319,6 +11385,11 @@ tryRestoreAdminSession();
       deloadEveryWeeks: Number(el("inDeloadAt").value) || 0,
       sessionMinutes: Number(el("inMinutes").value) || 0,
       population: String(el("inPopulation").value || ""),
+      ageFrom: el("inAgeFrom") ? parseInt(el("inAgeFrom").value, 10) || 0 : 0,
+      ageTo: el("inAgeTo") ? parseInt(el("inAgeTo").value, 10) || 0 : 0,
+      level: el("inLevel") ? String(el("inLevel").value || "") : "",
+      groupTypes: readGroupTypes(),
+      maximaTested: !!(el("inMaximaTested") && el("inMaximaTested").checked),
     };
   }
 
@@ -11354,6 +11425,11 @@ tryRestoreAdminSession();
       sessionMinutes: "",
       population: "",
       goals: "",
+      ageFrom: "",
+      ageTo: "",
+      level: "",
+      groupTypes: {},
+      maximaTested: false,
       maxAthletesAtOnce: "",
       noCapacityCap: false,
       avoidInProgram: "",
@@ -11398,6 +11474,10 @@ tryRestoreAdminSession();
     el("inMinutes").value = v.sessionMinutes || "";
     /* The goals tab is gone; a client answered before the merge keeps their words. */
     el("inPopulation").value = CI.mergedPopulation ? CI.mergedPopulation(v) : v.population || "";
+    if (el("inAgeFrom")) el("inAgeFrom").value = v.ageFrom || "";
+    if (el("inAgeTo")) el("inAgeTo").value = v.ageTo || "";
+    renderPopulationPickers(v);
+    if (el("inMaximaTested")) el("inMaximaTested").checked = v.maximaTested === true;
 
     CI.DAY_KEYS.forEach(function (k) {
       var rest = el("inRest-" + k);

@@ -420,10 +420,22 @@ ok(
 ok("goals is no longer a tab of its own", paneIds.indexOf("goals") < 0);
 ok("nor a field of its own", !/id="inGoals"/.test(page));
 
-/* One tab: how long a session is, then one box for the room and what it is for. */
-ok("the merged tab asks how long a session is", /id="inMinutes" type="number" min="20" max="120"/.test(page));
+/* Session length moved to the schedule tab on 2026-09-15, first question there. */
+ok("the schedule tab asks how long a session is", /id="inMinutes" type="number" min="20" max="120"/.test(page));
 ok("it says the warm-up is inside that number", /warm-up is inside this number/.test(page));
-ok("the free box asks for the goals too", /what they are training for/.test(page));
+/* --- who is in the room, as facts rather than a paragraph -----------------
+ * The paragraph held four things at once, and it is where the product broke on the first
+ * real studio brick: a room of seventeen-year-olds who had never tested a lift was
+ * described in prose, so nothing could act on the age or on the missing maxima
+ * (owner, 2026-09-15).
+ * ------------------------------------------------------------------------- */
+ok("THE AGE IS A RANGE, NOT A BAND", /id="inAgeFrom"/.test(page) && /id="inAgeTo"/.test(page));
+ok("the level is one answer", /id="inLevel"/.test(page) && /<select id="inLevel">/.test(page));
+ok("the kind of group is many", /id="inGroupTypes"/.test(page) && /data-group-type/.test(page));
+ok("THE ONE TICK THAT OPENS PERCENTAGES IS ASKED HERE", /id="inMaximaTested"/.test(page));
+ok("and it says what it means", /every member has a 1RM on the main lifts/.test(page));
+ok("the free box is optional now, and asks only for the targets", /Anything specific they are training for\? Optional/.test(page));
+ok("the lists come from the module, never a second copy", /CI\.LEVEL_DEFS/.test(page) && /CI\.GROUP_TYPE_DEFS/.test(page));
 ok("the session length is sent", /sessionMinutes: Number\(el\("inMinutes"\)\.value\)/.test(page));
 
 /* Tab 1 */
