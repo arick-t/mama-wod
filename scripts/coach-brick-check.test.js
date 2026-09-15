@@ -198,4 +198,43 @@ ok("the duration is recorded either way", /packed\.buildMs = callMs/.test(pc));
 ok("a worse repair is rejected", /if \(now > before\)/.test(pc));
 ok("a repair that returns no brick is rejected", /the repair returned no brick/.test(pc));
 
+/* --- two places, and a day belongs to exactly one of them -----------------
+ * A box on weekdays and a garage on Saturday is one athlete with two inventories. Judged
+ * against a single list, the garage's Saturday passes on the box's rower — the same
+ * failure as עודד's, one level down (owner, 2026-09-15).
+ * ------------------------------------------------------------------------- */
+const BOX = { DUMBBELL: { have: true, cap: 30 }, ROW: { have: true }, "PULLUP BAR": { have: true } };
+const GARAGE = { DUMBBELL: { have: true, cap: 15 } };
+const TWO_PLACES = {
+  weeks: [
+    {
+      weekIndex: 1,
+      days: {
+        mon: { parts: [{ title: "A", lines: ["Row 500m", "DB Snatch 25 kg", "Air Squat 20"] }] },
+        sat: { parts: [{ title: "B", lines: ["Row 500m", "DB Snatch 25 kg", "Push-up 20"] }] },
+      },
+    },
+  ],
+};
+const split = C.checkBrick(TWO_PLACES, {
+  equipmentList: BOX,
+  secondary: { days: ["sat"], equipmentList: GARAGE },
+});
+const splitText = split.blocking.join(" | ");
+ok("Monday is judged by the box, and passes", !/W1 mon/.test(splitText));
+ok("SATURDAY'S ROWER IS CAUGHT", /ROW is NOT available at the second place/.test(splitText) && /W1 sat/.test(splitText));
+ok("and Saturday's ceiling is the garage's, not the box's", /DUMBBELL tops out at 15 kg at the second place/.test(splitText));
+/* The same brick, one place: nothing is caught. That is the hole this closes. */
+const unsplit = C.checkBrick(TWO_PLACES, { equipmentList: BOX });
+ok("without a second place the same brick passes clean", unsplit.blocking.length === 0);
+/* A second place named with no list ticked is not a second place. */
+const halfAnswered = C.checkBrick(TWO_PLACES, {
+  equipmentList: BOX,
+  secondary: { days: ["sat"], equipmentList: {} },
+});
+ok("days without a list do not split the week", halfAnswered.blocking.length === 0);
+/* And with one place only, nothing says "at the first place" — it is just here. */
+const single = C.checkBrick(TWO_PLACES, { equipmentList: GARAGE });
+ok("one place still reads as one place", /NOT available here/.test(single.blocking.join(" ")));
+
 console.log("\nbrick check: all good");

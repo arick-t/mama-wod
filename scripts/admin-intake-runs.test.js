@@ -217,7 +217,7 @@ ok("marking All skills lets it through", stepShown() === atSkills + 1);
   ok("it no longer asks where the athlete trains", !/Where do you usually train/i.test(drawn));
   ok("nor offers the old well-equipped-gym answer", !/data-fx-location/.test(drawn));
   ok("the step is called Available equipment", /Available equipment/.test(drawn));
-  ok("and keeps one additive free-text box", /adm-fx-location-other/.test(drawn));
+  ok("and asks nothing in prose", !/adm-fx-location-other/.test(drawn));
   /* The answer that replaces the whole list is not the list's first line: it stands in a
      picker of its own, above it, and it says what it means (owner, 2026-09-15). */
   ok(
@@ -225,9 +225,32 @@ ok("marking All skills lets it through", stepShown() === atSkills + 1);
     /adm-fx-eq-all[\s\S]*?<\/label><\/div><div class="pprog-location-picker">/.test(drawn)
   );
   ok("and it names the running route", /Fully equipped gym — no equipment limits, running route included/.test(drawn));
-  ok("the list follows in a second box", (drawn.match(/pprog-location-picker/g) || []).length === 2);
+  /* Two boxes per place — the one answer, then the list — and the second place is
+     drawn with the step even while it is hidden. */
+  ok("the list follows in a box of its own", (drawn.match(/pprog-location-picker/g) || []).length === 4);
   sandbox.window.adminFixedNext();
   ok("AN ATHLETE WHO TICKS NOTHING STILL GETS THROUGH", stepShown() === atSetup + 1);
+}
+
+/* --- a second place is a second list, not a sentence ---------------------
+ * It used to be a free-text box and one "heaviest there" number — the shape the first
+ * place had just been rescued from, and one no check can measure a brick against
+ * (owner, 2026-09-15).
+ * ------------------------------------------------------------------------- */
+{
+  sandbox.window.openIntakeWorkspace();
+  sandbox.window.startIntakeChat();
+  for (let guard = 0; guard < 20 && steps[stepShown() - 1] !== "setup"; guard++) {
+    answer(stepShown() - 1);
+    sandbox.window.adminFixedNext();
+  }
+  const drawn = String(byId("intake-fixed").innerHTML);
+  ok("the second place asks the days it owns", /data-fx-second-day/.test(drawn));
+  ok("and says the rest of the week belongs to the first", /Every training day you do not mark here/.test(drawn));
+  ok("THE SECOND PLACE IS A SECOND CHECKLIST", /data-fx-eq2=/.test(drawn) && /adm-fx-eq2-all/.test(drawn));
+  ok("with ceilings of its own", /data-fx-eq2-cap/.test(drawn));
+  ok("the paragraph and the single number are gone", !/adm-fx-second-kit/.test(drawn) && !/adm-fx-second-heaviest/.test(drawn));
+  ok("and the two lists are not the same inputs", /data-fx-eq=/.test(drawn) && /data-fx-eq2=/.test(drawn));
 }
 
 /* --- start over for the full walk -------------------------------------- */

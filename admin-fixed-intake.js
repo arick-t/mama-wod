@@ -39,12 +39,25 @@
     return "";
   }
 
-  function equipmentSectionHtml(st) {
+  /**
+   * One list, drawn twice when it has to be.
+   *
+   * An athlete who trains in two places used to describe the second one in a sentence —
+   * the very shape that swallowed "dumbbells up to 15 kg" in a studio's paragraph and
+   * started this whole round. A second place is a second inventory, ticked the same way,
+   * with ceilings of its own (owner, 2026-09-15).
+   *
+   * @param {object} place  { list, attr, allId, title, note, allLabel }
+   */
+  function equipmentSectionHtml(place) {
     var items = equipCatalog().filter(function (it) {
       return it.group !== "always";
     });
     if (!items.length) return "";
-    var list = (st && st.equipmentList) || {};
+    var o = place || {};
+    var attr = o.attr || "data-fx-eq";
+    var allId = o.allId || "adm-fx-eq-all";
+    var list = o.list || {};
     var allOn =
       items.length > 0 &&
       items.every(function (it) {
@@ -55,29 +68,47 @@
        item to tick, it is the whole question answered (owner, 2026-09-15). Two pickers,
        no new styling — the gap between them is the separation. */
     var html =
-      '<p class="pprog-fixed-title" style="margin-top:18px">Available equipment</p>' +
-      '<p class="pprog-fixed-note">Floor, wall and bodyweight work are always available and are ' +
-      "never asked about — the coach keeps using them whatever you tick here.</p>" +
+      '<p class="pprog-fixed-title" style="margin-top:18px">' +
+      esc(o.title || "Available equipment") +
+      "</p>" +
+      '<p class="pprog-fixed-note">' +
+      esc(
+        o.note ||
+          "Floor, wall and bodyweight work are always available and are never asked about — " +
+            "the coach keeps using them whatever you tick here."
+      ) +
+      "</p>" +
       '<div class="pprog-location-picker">' +
-      '<label class="pprog-skills-all"><input type="checkbox" id="adm-fx-eq-all"' +
+      '<label class="pprog-skills-all"><input type="checkbox" id="' +
+      esc(allId) +
+      '"' +
       (allOn ? " checked" : "") +
-      ' onchange="adminFixedEquipAll(this)"> Fully equipped gym — no equipment limits, ' +
-      "running route included</label></div>" +
+      " onchange=\"adminFixedEquipAll(this,'" +
+      esc(attr) +
+      "')\"> " +
+      esc(o.allLabel || "Fully equipped gym — no equipment limits, running route included") +
+      "</label></div>" +
       '<div class="pprog-location-picker">';
     items.forEach(function (it) {
       var row = list[it.id] || {};
       var unit = equipCapUnit(it);
       html +=
-        '<label><input type="checkbox" data-fx-eq="' +
+        "<label><input type=\"checkbox\" " +
+        esc(attr) +
+        '="' +
         esc(it.id) +
         '"' +
         (row.have ? " checked" : "") +
-        ' onchange="adminFixedEquipPicked()"> ' +
+        " onchange=\"adminFixedEquipPicked('" +
+        esc(attr) +
+        "')\"> " +
         '<span style="flex:1">' +
         esc(it.en || it.id) +
         "</span>" +
         (unit
-          ? '<input type="number" min="1" class="pprog-fixed-num" data-fx-eq-cap="' +
+          ? '<input type="number" min="1" class="pprog-fixed-num" ' +
+            esc(attr) +
+            '-cap="' +
             esc(it.id) +
             '" style="width:76px;padding:4px 6px"' +
             (row.have ? "" : " hidden") +
@@ -92,13 +123,18 @@
     return html + "</div>";
   }
 
-  function equipmentFromForm() {
+  function allIdFor(attr) {
+    return attr === "data-fx-eq2" ? "adm-fx-eq2-all" : "adm-fx-eq-all";
+  }
+
+  function equipmentFromForm(attr) {
+    var key = attr || "data-fx-eq";
     var out = {};
-    var boxes = document.querySelectorAll("[data-fx-eq]");
+    var boxes = document.querySelectorAll("[" + key + "]");
     for (var i = 0; i < boxes.length; i++) {
-      var id = boxes[i].getAttribute("data-fx-eq");
+      var id = boxes[i].getAttribute(key);
       var row = { have: !!boxes[i].checked, qty: null, cap: null };
-      var capBox = document.querySelector('[data-fx-eq-cap="' + CSS.escape(id) + '"]');
+      var capBox = document.querySelector("[" + key + '-cap="' + CSS.escape(id) + '"]');
       if (capBox && boxes[i].checked) {
         var n = parseInt(capBox.value, 10);
         if (n > 0) row.cap = n;
@@ -109,14 +145,15 @@
   }
 
   /* A number about something the athlete does not have is not an answer. */
-  function syncEquipRowsFixed() {
-    var boxes = document.querySelectorAll("[data-fx-eq]");
+  function syncEquipRowsFixed(attr) {
+    var key = attr || "data-fx-eq";
+    var boxes = document.querySelectorAll("[" + key + "]");
     for (var i = 0; i < boxes.length; i++) {
-      var id = boxes[i].getAttribute("data-fx-eq");
-      var capBox = document.querySelector('[data-fx-eq-cap="' + CSS.escape(id) + '"]');
+      var id = boxes[i].getAttribute(key);
+      var capBox = document.querySelector("[" + key + '-cap="' + CSS.escape(id) + '"]');
       if (capBox) capBox.hidden = !boxes[i].checked;
     }
-    var all = document.getElementById("adm-fx-eq-all");
+    var all = document.getElementById(allIdFor(key));
     if (all && boxes.length) {
       all.checked = Array.prototype.every.call(boxes, function (b) {
         return b.checked;
@@ -124,13 +161,14 @@
     }
   }
 
-  window.adminFixedEquipPicked = function () {
-    syncEquipRowsFixed();
+  window.adminFixedEquipPicked = function (attr) {
+    syncEquipRowsFixed(attr);
   };
-  window.adminFixedEquipAll = function (box) {
-    var boxes = document.querySelectorAll("[data-fx-eq]");
+  window.adminFixedEquipAll = function (box, attr) {
+    var key = attr || "data-fx-eq";
+    var boxes = document.querySelectorAll("[" + key + "]");
     for (var i = 0; i < boxes.length; i++) boxes[i].checked = !!(box && box.checked);
-    syncEquipRowsFixed();
+    syncEquipRowsFixed(key);
   };
 
   function esc(s) {
@@ -237,6 +275,7 @@
       avoidMovements: {},
       avoidMovementsOther: "",
       equipmentList: {},
+      secondaryEquipmentList: {},
       avoidInProgram: "",
       injuries: "",
       goals: "",
@@ -432,25 +471,23 @@
          number for a whole setup could not say "dumbbells to 15 but a 40 kg sandbag". The
          checklist carries a ceiling PER implement. */
       html +=
-        equipmentSectionHtml(st) +
-        /* Free text is additive and always was: it may widen what the coach is allowed to
-           use and may never narrow it, because nothing written in prose can be checked
-           mechanically. Same field the old "specify your setup" box wrote, so an intake
-           answered before today still reads back into it. */
-        '<p class="pprog-fixed-note" style="margin-top:12px">Anything else worth knowing about the ' +
-        "setup? This ADDS to the list above — it never removes from it.</p>" +
-        '<textarea id="adm-fx-location-other" maxlength="500" placeholder="e.g. a 40 kg sandbag, a sled, trains outdoors in summer">' +
-        esc(st.trainingLocationOther || "") +
-        "</textarea>" +
+        equipmentSectionHtml({ list: st.equipmentList || {} }) +
         /* One athlete, two settings. A box on weekdays and a garage on Saturday was being
            described as "limited equipment", which threw away four maxima in kilograms and
-           then forbade kilograms underneath them (coach agent, 2026-09-03). */
+           then forbade kilograms underneath them (coach agent, 2026-09-03).
+           Until 2026-09-15 the second place was a sentence and one "heaviest implement"
+           number — the same unreadable shape the first place had just been rescued from,
+           and one the post-check cannot measure a brick against. It is a second list now. */
         '<label class="pprog-fixed-inline" style="margin-top:14px">' +
         '<input type="checkbox" id="adm-fx-multiplace"' +
         (st.trainsMultipleLocations === true ? " checked" : "") +
         ' onchange="adminFixedMultiPlaceChanged()"> I train in more than one place</label>' +
         '<div id="adm-fx-second-wrap"' + (st.trainsMultipleLocations === true ? "" : " hidden") + ">" +
-        '<p class="pprog-fixed-note" style="margin-top:10px">Which days are you in the OTHER place?</p>' +
+        /* The days come first, and they are what tells the coach where every OTHER day
+           happens: whatever is not marked here belongs to the first place. The training
+           week itself is asked on the next step, so these are the days to expect there. */
+        '<p class="pprog-fixed-note" style="margin-top:10px">Which days are you in the OTHER place? ' +
+        "Every training day you do not mark here happens in the first one.</p>" +
         '<div class="pprog-fixed-days">' +
         S.DAY_KEYS.map(function (dk) {
           return '<label><input type="checkbox" data-fx-second-day="' + esc(dk) + '"' +
@@ -458,14 +495,16 @@
             "> " + esc(S.DAY_LABELS[dk] || dk) + "</label>";
         }).join("") +
         "</div>" +
-        '<textarea id="adm-fx-second-kit" maxlength="600" placeholder="What do you have there? e.g. kettlebell 24/32, dumbbells 15+22.5, box, rig, 10kg wall ball">' +
-        esc(st.secondaryLocationEquipment || "") +
-        "</textarea>" +
-        '<div class="pprog-fixed-row">' +
-        '<label class="pprog-fixed-inline" for="adm-fx-second-heaviest">Heaviest implement there (kg)</label>' +
-        '<input id="adm-fx-second-heaviest" type="number" min="1" max="300" class="pprog-fixed-num" value="' +
-        esc(parseInt(st.secondaryHeaviestImplementKg, 10) > 0 ? parseInt(st.secondaryHeaviestImplementKg, 10) : "") +
-        '" placeholder="-"></div></div>';
+        equipmentSectionHtml({
+          list: st.secondaryEquipmentList || {},
+          attr: "data-fx-eq2",
+          allId: "adm-fx-eq2-all",
+          title: "Available equipment — the OTHER place",
+          note:
+            "The same question again, about the second place. Floor, wall and bodyweight " +
+            "work are always available there too.",
+        }) +
+        "</div>";
     } else if (key === "schedule") {
       var days = Array.isArray(st.trainingDays) ? st.trainingDays : [];
       html +=
@@ -844,21 +883,21 @@
       intakeState.bodyweight = String(bwN);
       intakeState.experience = vals.experience.slice(0, 120);
     } else if (key === "setup") {
-      var otherEl = document.getElementById("adm-fx-location-other");
-      var otherDetail = otherEl ? String(otherEl.value || "").trim().slice(0, 500) : "";
       /* Nothing to validate. Ticking nothing is a real answer — an athlete with a floor
          and a wall and no kit at all — and the packet says so item by item rather than
          falling back on "full gym" (see inventoryFor, which is told the list was
-         answered even when every row is a no). */
+         answered even when every row is a no).
+         The free-text box that stood here for one day is gone too (owner, 2026-09-15):
+         prose cannot be measured against a brick, and anything worth saying about the
+         equipment is a row on the list. If something real is missing from the list, the
+         list is what should grow. */
       intakeState.trainingLocations = {};
-      intakeState.trainingLocationOther = otherDetail;
-      var parts = ["Equipment answered item by item"];
-      if (otherDetail) parts.push("Also reported: " + otherDetail);
+      intakeState.trainingLocationOther = "";
       /* One ceiling for a whole setup is gone (owner, 2026-09-14). It could not say "dumbbells
          to 15 but a 40 kg sandbag", it was only ever asked of the home athlete, and for anyone
          else its absence told the coach to write no kilograms at all. The checklist carries a
          ceiling per implement instead. */
-      intakeState.equipmentList = equipmentFromForm();
+      intakeState.equipmentList = equipmentFromForm("data-fx-eq");
       var multiEl = document.getElementById("adm-fx-multiplace");
       intakeState.trainsMultipleLocations = !!(multiEl && multiEl.checked);
       var secondDays = [];
@@ -866,16 +905,17 @@
       for (var sd = 0; sd < secondBoxes.length; sd++) {
         if (secondBoxes[sd].checked) secondDays.push(secondBoxes[sd].getAttribute("data-fx-second-day"));
       }
-      var kitEl = document.getElementById("adm-fx-second-kit");
-      var secondHeavyEl = document.getElementById("adm-fx-second-heaviest");
-      var secondHeavyN = secondHeavyEl ? parseInt(secondHeavyEl.value, 10) : 0;
       /* Nothing is kept from a second place he unticked. */
       intakeState.secondaryLocationDays = intakeState.trainsMultipleLocations ? secondDays : [];
-      intakeState.secondaryLocationEquipment =
-        intakeState.trainsMultipleLocations && kitEl ? String(kitEl.value || "").trim().slice(0, 600) : "";
-      intakeState.secondaryHeaviestImplementKg =
-        intakeState.trainsMultipleLocations && secondHeavyN >= 1 && secondHeavyN <= 300 ? secondHeavyN : 0;
-      intakeState.trainingSetup = parts.join(" · ").slice(0, 800);
+      intakeState.secondaryEquipmentList = intakeState.trainsMultipleLocations
+        ? equipmentFromForm("data-fx-eq2")
+        : {};
+      intakeState.secondaryLocationEquipment = "";
+      intakeState.secondaryHeaviestImplementKg = 0;
+      intakeState.trainingSetup = (intakeState.trainsMultipleLocations
+        ? "Equipment answered item by item, for two places"
+        : "Equipment answered item by item"
+      ).slice(0, 800);
     } else if (key === "schedule") {
       var days = [];
       var dayCbs = box.querySelectorAll("input[data-fx-day]");
@@ -1166,6 +1206,7 @@
         avoidMovements: prof.avoidMovements || {},
         avoidMovementsOther: prof.avoidMovementsOther || "",
         equipmentList: prof.equipmentList || {},
+        secondaryEquipmentList: prof.secondaryEquipmentList || {},
         avoidInProgram: prof.avoidInProgram || "",
         /* The packet the coach will read on the day he is reconnected. */
         fixedIntakePacket: String(prof.fixedIntakePacket || "").slice(0, 6000),

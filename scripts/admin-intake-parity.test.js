@@ -138,6 +138,40 @@ const nothingTicked = CoachIntakeSync.buildFixedIntakePrompt(
 ok("an all-no checklist still reaches the coach as an inventory", /EQUIPMENT - CHECKED INVENTORY/.test(nothingTicked));
 ok("every line of it an explicit absence", /DUMBBELL\s+NOT AVAILABLE/.test(nothingTicked) && /RINGS\s+NOT AVAILABLE/.test(nothingTicked));
 ok("AND NOBODY IS SILENTLY TREATED AS A FULL GYM", !/full gym loading available/.test(nothingTicked));
+/* --- two places, two inventories, and the days that tell them apart -------
+ * The second place used to be a sentence and one "heaviest there" number — the shape
+ * the first place had just been rescued from, and one no check can measure a brick
+ * against (owner, 2026-09-15).
+ * ------------------------------------------------------------------------- */
+const twoPlaceIntake = Object.assign({}, sample, {
+  trainingDays: ["mon", "tue", "wed", "fri", "sat"],
+  equipmentList: { DUMBBELL: { have: true, cap: 30 }, ROW: { have: true } },
+  trainsMultipleLocations: true,
+  secondaryLocationDays: ["fri", "sat"],
+  secondaryEquipmentList: { DUMBBELL: { have: true, cap: 15 }, ROW: { have: false } },
+});
+const twoLists = CoachIntakeSync.buildFixedIntakePrompt(twoPlaceIntake);
+ok("the first place is headed by the days it owns", /FIRST PLACE - Mon, Tue, Wed:/.test(twoLists));
+ok("and the second by its own", /SECOND PLACE - Fri, Sat:/.test(twoLists));
+ok("each carries its own ceiling", /MAX LOAD 30 kg/.test(twoLists) && /MAX LOAD 15 kg/.test(twoLists));
+ok("the coach is told they do not swap", /THE TWO LISTS ARE NOT INTERCHANGEABLE/.test(twoLists));
+ok(
+  "and that an unnamed day belongs to the first place",
+  /any training day not named as the second place happens in the first/.test(twoLists)
+);
+ok("the old free-text second setting is gone from the packet", !/What is there:/.test(twoLists));
+/* Days named but no second list: one place, and the packet says so rather than guessing. */
+const halfSecond = Object.assign({}, twoPlaceIntake, { secondaryEquipmentList: {} });
+const halfText = CoachIntakeSync.buildFixedIntakePrompt(halfSecond);
+ok("a second place with no list does not split the week", !/SECOND PLACE - /.test(halfText));
+/* The structured second list must survive the round trip, or the checker never sees it. */
+const roundTripped = CoachIntakeSync.normalizeIntakeProfile(twoPlaceIntake);
+ok(
+  "THE SECOND LIST SURVIVES THE ROUND TRIP",
+  roundTripped.secondaryEquipmentList &&
+    roundTripped.secondaryEquipmentList.DUMBBELL &&
+    roundTripped.secondaryEquipmentList.DUMBBELL.cap === 15
+);
 /* A profile that never saw the checklist still falls back to the old wording. */
 const neverAsked = Object.assign({}, sample, { trainingLocations: { functional_gym: true } });
 delete neverAsked.equipmentList;
@@ -223,16 +257,23 @@ const twoPlaces = CoachIntakeSync.buildFixedIntakePrompt(
     secondaryHeaviestImplementKg: 32,
   })
 );
-ok("the primary days are named", /^Primary \(Mon, Tue, Thu, Fri\): /m.test(twoPlaces));
-ok("and so is the other place", /^Also trains \(Sat\): kettlebell 24\/32/m.test(twoPlaces));
-ok("the coach is told to name the setting", /^LOAD: TWO SETTINGS\./m.test(twoPlaces) && /NAME THE SETTING in the session itself\./.test(twoPlaces));
+ok("the primary days are named", /^FIRST PLACE \(Mon, Tue, Thu, Fri\)$/m.test(twoPlaces));
+ok("and so is the other place", /^SECOND PLACE \(Sat\)$/m.test(twoPlaces));
+ok(
+  "an intake that described its second place in a sentence still carries it",
+  /SECOND PLACE, as it was described before there was a list for it: kettlebell 24\/32/.test(twoPlaces)
+);
+ok("the coach is told to name the setting", /^LOAD: TWO SETTINGS\./m.test(twoPlaces) && /NAME THE SETTING in the session itself,/.test(twoPlaces));
 ok("NEVER forbid kilograms for an athlete with a full gym", !/never by a kg figure/.test(twoPlaces));
 ok("the second room states its own ceiling", /^HEAVIEST IMPLEMENT \(Sat\): 32 kg\.$/m.test(twoPlaces));
 /* Ticked but with no days named is not a guess. */
 const vagueSecond = CoachIntakeSync.buildFixedIntakePrompt(
   Object.assign({}, sample, { trainsMultipleLocations: true, secondaryLocationDays: [] })
 );
-ok("no days named is said, not guessed", /Also trains: days not stated - treat the reported setup as the primary one\./.test(vagueSecond));
+ok(
+  "no days named is said, not guessed",
+  /SECOND PLACE: reported, but no days were named - treat the first place as the whole week/.test(vagueSecond)
+);
 ok("and the load line is not suppressed", /^LOAD: TWO SETTINGS\./m.test(vagueSecond));
 
 /* --- a long day survives ---------------------------------------------- */
@@ -394,7 +435,13 @@ ok("and it travels with the client", /monthlyAmount: intakeState\.monthlyAmount/
 
 /* --- the questions behind the new lines (coach agent + owner, 2026-09-03) */
 ok("the individual is asked about a second place", /id="adm-fx-multiplace"/.test(fixedJs) && /data-fx-second-day/.test(fixedJs));
-ok("and what is there, and how heavy", /id="adm-fx-second-kit"/.test(fixedJs) && /id="adm-fx-second-heaviest"/.test(fixedJs));
+/* What is there is a LIST now, not a sentence and a single number: the same catalogue
+   ticked again, with ceilings of its own, because prose cannot be checked against a
+   brick (owner, 2026-09-15). */
+ok("and what is there — as a second checklist", /data-fx-eq2/.test(fixedJs) && /adm-fx-eq2-all/.test(fixedJs));
+ok("with its own ceilings", /data-fx-eq2-cap/.test(fixedJs) || /esc\(attr\) \+$/m.test(fixedJs));
+ok("the paragraph and the single number are gone", !/id="adm-fx-second-kit"/.test(fixedJs) && !/id="adm-fx-second-heaviest"/.test(fixedJs));
+ok("and the free-text box beside the first list went with them", !/id="adm-fx-location-other"/.test(fixedJs));
 ok("nothing is kept from a second place he unticked", /intakeState\.secondaryLocationDays = intakeState\.trainsMultipleLocations \? secondDays : \[\]/.test(fixedJs));
 /* Only when he says the days differ - a uniform week stays one number. */
 ok("minutes per day appear only behind that tick", /id="adm-fx-perday-wrap"/.test(fixedJs) && /perDay\.hidden = !box\.checked/.test(fixedJs));
