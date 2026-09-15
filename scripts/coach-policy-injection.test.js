@@ -541,14 +541,13 @@ function testLoadBasisWhenNoLiftsReported() {
   ok("the coach counts the reported lifts",
     /function reportedLiftCount\(profile\)/.test(src) &&
       /function loadBasisText\(profile, agent, opts\)/.test(src));
-  /* The one door out, and it is a fact about the room rather than a preference: a box
-     that has tested its members gets percentages back, and nothing else opens them
-     (owner, 2026-09-15). */
-  ok("a tested room gets its percentages back",
-    /agent === "studio" && si && typeof si === "object" && si\.maximaTested === true/.test(src) &&
-      /const si = opts && opts\.studioIntake;/.test(src));
-  ok("and an untested one does not",
-    /MAXIMA: NOT TESTED in this room/.test(fs.readFileSync(path.join(__dirname, "..", "lib", "client-intake.js"), "utf8")));
+  /* THERE IS NO DOOR OUT FOR A ROOM. A studio maxima field was built on 2026-09-15 and
+     taken out the same day: a room does not test its members' 1RM one by one, so it could
+     only ever have been ticked by mistake — and that mistake is the failure it was meant
+     to prevent (owner, 2026-09-15). */
+  ok("NO ROOM CAN EXEMPT ITSELF FROM THE RULE",
+    !/maximaTested/.test(src) &&
+      !/maximaTested/.test(fs.readFileSync(path.join(__dirname, "..", "lib", "client-intake.js"), "utf8")));
   /* The sentence is now built for the reader — a ROOM or an athlete — because the same fact is
      true of both since the studio exemption came off (owner, 2026-09-14). */
   ok("with no lifts reported, percentages are forbidden outright",

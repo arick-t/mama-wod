@@ -1303,14 +1303,10 @@ function loadBasisText(profile, agent, opts) {
    * RIR for gymnastics. One vocabulary, so the coach stops inventing his own each time. */
   const n = reportedLiftCount(profile);
   if (n > 0) return "";
-  /* "The day a box does test its members, the studio intake gains a maxima field and
-     percentages open again on the same test" — written above on 2026-09-14 and built on
-     2026-09-15. It is one tick on the population tab, and it says every member has a 1RM
-     on the main lifts, which is the only thing that makes "@75%" mean anything in a room.
-     Nothing else opens it: an untested room is still refused percentages, which is the
-     case that produced the failure. */
-  const si = opts && opts.studioIntake;
-  if (agent === "studio" && si && typeof si === "object" && si.maximaTested === true) return "";
+  /* The studio maxima field, promised in the comment above, was built on 2026-09-15 and
+     taken out the same day: a room does not test its members' 1RM one by one, so the
+     field could only ever have been ticked by mistake — and a mistake there reproduces
+     the failure it was meant to prevent. A room is written in effort, always. */
   const room = agent === "studio";
   return (
     "\n\nLOAD BASIS (HARD — a fact about this " +

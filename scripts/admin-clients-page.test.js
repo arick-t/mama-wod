@@ -432,8 +432,7 @@ ok("it says the warm-up is inside that number", /warm-up is inside this number/.
 ok("THE AGE IS A RANGE, NOT A BAND", /id="inAgeFrom"/.test(page) && /id="inAgeTo"/.test(page));
 ok("the level is one answer", /id="inLevel"/.test(page) && /<select id="inLevel">/.test(page));
 ok("the kind of group is many", /id="inGroupTypes"/.test(page) && /data-group-type/.test(page));
-ok("THE ONE TICK THAT OPENS PERCENTAGES IS ASKED HERE", /id="inMaximaTested"/.test(page));
-ok("and it says what it means", /every member has a 1RM on the main lifts/.test(page));
+ok("a room is never asked whether it tested its maxima", !/inMaximaTested/.test(page));
 ok("the free box is optional now, and asks only for the targets", /Anything specific they are training for\? Optional/.test(page));
 ok("the lists come from the module, never a second copy", /CI\.LEVEL_DEFS/.test(page) && /CI\.GROUP_TYPE_DEFS/.test(page));
 ok("the session length is sent", /sessionMinutes: Number\(el\("inMinutes"\)\.value\)/.test(page));

@@ -87,14 +87,9 @@ ok("nor is a level nobody offered", I.normalizeIntake({ level: "olympian" }).lev
 ok("a group kind nobody offered is dropped", !I.normalizeIntake({ groupTypes: { bogus: true } }).groupTypes.bogus);
 const facts = I.populationFacts(I.normalizeIntake({ ageFrom: 16, ageTo: 50, level: "mixed", groupTypes: { prep: true } }));
 ok("the facts read as one line the coach can act on", facts === "ages 16-50 · mixed ability · pre-army / selection prep");
-/* The tick that decides whether a percentage means anything in this room. */
-ok("maxima are not assumed", I.emptyIntake().maximaTested === false);
-ok(
-  "an untested room is told so in as many words",
-  /MAXIMA: NOT TESTED in this room/.test(I.buildStudioPrompt
-    ? I.buildStudioPrompt({ clientName: "c" })
-    : I.briefFor({ clientName: "c" }) + " MAXIMA: NOT TESTED in this room")
-);
+/* A room is never asked about maxima at all: it does not test its members one by one,
+   and the field could only have been ticked by mistake (owner, 2026-09-15). */
+ok("there is no maxima field on a room", I.emptyIntake().maximaTested === undefined);
 
 /* Goals stopped being a field of its own. A client answered before the merge keeps
    their words: the one box carries both. */
@@ -139,14 +134,14 @@ ok(
   "the shape is exactly the owner's tabs worth of fields",
   JSON.stringify(shape) ===
     JSON.stringify([
-      /* ageFrom/ageTo/level/groupTypes/maximaTested joined on 2026-09-15: who is in the
-         room, as facts rather than a paragraph the coach had to infer four things from. */
+      /* ageFrom/ageTo/level/groupTypes joined on 2026-09-15: who is in the room, as facts
+         rather than a paragraph the coach had to infer four things from. */
       "ageFrom", "ageTo", "avoidInProgram", "clientName", "dayEmphasis", "dayEmphasisEnabled",
       "deloadEveryWeeks",
       /* equipmentList joined on 2026-09-14: the ticked inventory, beside the paragraph rather
          than instead of it, so an intake answered before it exists still means what it meant. */
       "deloadWeek", "equipment", "equipmentList", "equipmentOther", "goals", "groupTypes",
-      "includeRestDays", "level", "maxAthletesAtOnce", "maximaTested", "monthlyAmount",
+      "includeRestDays", "level", "maxAthletesAtOnce", "monthlyAmount",
       "noCapacityCap", "paymentMethod",
       "population", "restDays", "scheduleMode", "sessionMinutes", "sessionTypes", "sessionsDiffer",
       "sessionsPerWeek",

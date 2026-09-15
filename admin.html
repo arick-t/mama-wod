@@ -1969,13 +1969,10 @@ header{flex-wrap:wrap;row-gap:8px}
           </select></label>
         <p class="meta" style="margin:0 0 6px">What kind of group is it?</p>
         <div id="inGroupTypes"></div>
-        <!-- The one tick that decides whether a percentage means anything in this room.
-             Unticked, the coach writes effort out of ten and RIR; ticked, %1RM opens
-             again, because every member then has a number of their own to take it from. -->
-        <label class="chk-row">
-          <input id="inMaximaTested" type="checkbox">
-          <span>Maxima have been tested here — every member has a 1RM on the main lifts</span>
-        </label>
+        <!-- "Maxima have been tested here" stood here for an hour. A room does not test
+             its members' 1RM one by one — it does not happen — and a field nobody will
+             ever tick is a field that can only be ticked by mistake (owner, 2026-09-15).
+             So a studio is never written in percentages: see LOAD BASIS. -->
         <label class="fld"><span>Anything specific they are training for? Optional — the
           targets a list cannot hold</span>
           <textarea id="inPopulation" placeholder="Army selection: 2000m run, pull-ups, load carry endurance."></textarea></label>
@@ -11389,7 +11386,6 @@ tryRestoreAdminSession();
       ageTo: el("inAgeTo") ? parseInt(el("inAgeTo").value, 10) || 0 : 0,
       level: el("inLevel") ? String(el("inLevel").value || "") : "",
       groupTypes: readGroupTypes(),
-      maximaTested: !!(el("inMaximaTested") && el("inMaximaTested").checked),
     };
   }
 
@@ -11429,7 +11425,6 @@ tryRestoreAdminSession();
       ageTo: "",
       level: "",
       groupTypes: {},
-      maximaTested: false,
       maxAthletesAtOnce: "",
       noCapacityCap: false,
       avoidInProgram: "",
@@ -11477,7 +11472,6 @@ tryRestoreAdminSession();
     if (el("inAgeFrom")) el("inAgeFrom").value = v.ageFrom || "";
     if (el("inAgeTo")) el("inAgeTo").value = v.ageTo || "";
     renderPopulationPickers(v);
-    if (el("inMaximaTested")) el("inMaximaTested").checked = v.maximaTested === true;
 
     CI.DAY_KEYS.forEach(function (k) {
       var rest = el("inRest-" + k);
