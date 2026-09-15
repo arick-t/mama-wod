@@ -2061,6 +2061,10 @@ header{flex-wrap:wrap;row-gap:8px}
         <button id="iPrev" class="ghost" type="button">Back</button>
         <button id="iNext" type="button">Next</button>
         <button id="createBtn" type="button" hidden>Create program</button>
+        <!-- Correcting what a room owns must not hand it a month it never asked for
+             (owner, 2026-09-15). Only for a client who already exists: for a new one the
+             questionnaire IS the creation. -->
+        <button id="saveIntakeBtn" class="ghost" type="button" hidden>Save answers only</button>
         <!-- A way back to the list, since the list is no longer on screen. -->
         <button id="iCancel" class="ghost sm" type="button"
                 style="margin-inline-start:auto">Cancel</button>
@@ -11597,10 +11601,15 @@ tryRestoreAdminSession();
         : "New coach / studio client";
     }
     el("createBtn").textContent = S.blockMode ? "צור לבנה" : "Create program";
+    /* Hebrew set here rather than in the markup, like the button beside it: the FIELDS of
+       this card are English and a test holds them to it. */
+    if (el("saveIntakeBtn")) el("saveIntakeBtn").textContent = "שמור תחקור בלבד";
     el("iPrev").disabled = iStep === 0;
     var last = iStep === tabs.length - 1;
     el("iNext").hidden = last;
     el("createBtn").hidden = !last;
+    /* Beside the create button, and only where there is something to correct. */
+    if (el("saveIntakeBtn")) el("saveIntakeBtn").hidden = !(last && S.blockMode && S.program);
   }
 
   /* A pair of checkboxes standing in for a two-way choice: ticking one unticks its
@@ -11753,6 +11762,50 @@ tryRestoreAdminSession();
     if (box.checked) {
       try { txt.focus(); } catch (e) {}
     }
+  }
+
+  /**
+   * The answers, saved and nothing else.
+   *
+   * No block, no build, no approval. The client sees no intake at all — the payload they
+   * are handed is the programme's id, name, kind, start, version and its APPROVED weeks —
+   * so a correction is invisible from their side (owner, 2026-09-15).
+   */
+  function saveIntakeOnly() {
+    el("createErr").textContent = "";
+    var CI = window.CLIENT_INTAKE;
+    var form = readIntakeForm();
+    if (S.program) {
+      form.clientName = S.program.clientName || form.clientName;
+      form.monthlyAmount = S.program.monthlyAmount || 0;
+      form.paymentMethod = S.program.paymentMethod || "";
+    }
+    var problems = CI ? CI.validateIntake(form) : [];
+    if (problems.length) { el("createErr").textContent = problems.join(" "); return; }
+    var btn = el("saveIntakeBtn");
+    btn.disabled = true;
+    api({
+      action: "save_intake",
+      programId: S.program.programId,
+      expectedVersion: S.program.version,
+      intake: form,
+      athleteIntake: isIndividualClient()
+        ? Object.assign({}, readAthleteScheduleTab(), readAthleteGoalsTab())
+        : undefined,
+    }).then(function (r) {
+      btn.disabled = false;
+      if (r.status === 409) {
+        el("createErr").textContent = "מישהו שמר בינתיים. סגור ופתח את הלקוח מחדש.";
+        return;
+      }
+      if (r.status !== 200 || !r.body.ok) {
+        el("createErr").textContent = (r.body && r.body.error) || "לא הצלחתי לשמור את התחקור.";
+        return;
+      }
+      S.program = r.body.program;
+      banner("good", "התחקור נשמר. שום לבנה לא נוצרה ושום שבוע לא השתנה.");
+      leaveBlockMode();
+    });
   }
 
   function submitIntake() {
@@ -11920,6 +11973,7 @@ tryRestoreAdminSession();
       if (iStep > 0) { iStep--; renderIntakeTabs(); }
     });
     el("createBtn").addEventListener("click", submitIntake);
+    if (el("saveIntakeBtn")) el("saveIntakeBtn").addEventListener("click", saveIntakeOnly);
     /* Adding a client is ONE button on this page — the header's "+ לקוח", which asks
        which kind and then calls window.ClientScreen.newClient(). This screen no longer
        carries a button of its own, and reaching for one that is not there would have

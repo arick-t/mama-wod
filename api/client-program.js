@@ -761,6 +761,48 @@ async function ownerHandler(req, res, body) {
     return res.status(200).json({ ok: true, program: result.program, version: result.version });
   }
 
+  /**
+   * The questionnaire, saved and nothing else.
+   *
+   * Until 2026-09-15 the only thing the questionnaire could do for an existing client was
+   * ADD A BLOCK — so correcting what a room owns meant giving it a month it never asked
+   * for, and on production it meant sending the coach to write one. There was no way to
+   * say "this is what the place actually has" and stop there (owner, 2026-09-15).
+   *
+   * It touches the answers and nothing else: no week, no block, no approval, no provider.
+   * The client never sees an intake at all — lib/client-view-payload.js hands out the
+   * programme's id, name, kind, start, version and its APPROVED weeks, and nothing here
+   * is any of those — so a correction is invisible from their side by construction.
+   */
+  if (action === "save_intake") {
+    const studio = isPlainObject(body.intake) ? Intake.normalizeIntake(body.intake) : null;
+    const athlete = isPlainObject(body.athleteIntake) ? body.athleteIntake : null;
+    if (!studio && !athlete) return bad(res, 400, "NO_INTAKE_BODY", "intake is required");
+    const result = await store.updateProgram(
+      programId,
+      Number(body.expectedVersion),
+      function (draft) {
+        if (studio) draft.intake = studio;
+        /* Merged, not replaced: the individual's tab carries a slice of their answers,
+           and the ones it does not mention were not being corrected. */
+        if (athlete) {
+          draft.athleteIntake = Object.assign(
+            {},
+            isPlainObject(draft.athleteIntake) ? draft.athleteIntake : {},
+            athlete
+          );
+        }
+        return draft;
+      },
+      { actor: "owner" }
+    );
+    if (!result.ok) {
+      const status = result.code === "VERSION_CONFLICT" ? 409 : result.code === "NOT_FOUND" ? 404 : 400;
+      return res.status(status).json(Object.assign({ ok: false }, result));
+    }
+    return res.status(200).json({ ok: true, program: result.program, version: result.version });
+  }
+
   /* The next block. Four more weeks on the same timeline, so the deload cadence carries
    * over the boundary instead of restarting (owner, 2026-09-01). It carries the answers
    * the owner just revised in the mini-intake and his notes for it, and it arrives

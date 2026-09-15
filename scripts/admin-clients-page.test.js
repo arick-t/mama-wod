@@ -215,6 +215,8 @@ const ACTIONS_ALLOWED = [
   "block_delete",
   /* And its name on the shelf, which is what he finds it by. */
   "block_shelf_rename",
+  /* The answers, corrected and nothing else — no block, no build (owner, 2026-09-15). */
+  "save_intake",
 ];
 const actionsUsed = Array.from(
   new Set((screen.match(/action:\s*"([a-z_]+)"/g) || []).map(function (s) {
@@ -1300,5 +1302,26 @@ ok("and one row is what the individual switch hides", /if \(el\("inCapRow"\)\) e
    what a session is here; anything else is the exception he types over (owner,
    2026-09-15). A default, not an assumption — the validator still refuses no length. */
 ok("A NEW STUDIO CLIENT OPENS ON SIXTY MINUTES", /sessionMinutes: 60,/.test(page));
+
+/* --- correcting a room must not hand it a month ---------------------------
+ * Until 2026-09-15 the questionnaire could only ADD A BLOCK for an existing client, so
+ * saying "this is what the place actually has" meant giving it a month nobody asked for —
+ * and on production, sending the coach to write one.
+ * ------------------------------------------------------------------------- */
+const clientApi = fs.readFileSync(path.join(root, "api", "client-program.js"), "utf8");
+const payloadLib = fs.readFileSync(path.join(root, "lib", "client-view-payload.js"), "utf8");
+ok("THE ANSWERS CAN BE SAVED ON THEIR OWN", /action: "save_intake"/.test(page));
+ok("behind a button of its own", /id="saveIntakeBtn"/.test(page));
+ok("whose Hebrew is set in code, like the button beside it",
+  /Save answers only<\/button>/.test(page) && /saveIntakeBtn"\)\.textContent = "שמור תחקור בלבד"/.test(page));
+ok("offered only for a client who already exists",
+  /el\("saveIntakeBtn"\)\.hidden = !\(last && S\.blockMode && S\.program\);/.test(page));
+ok("and it says what it did not do", /שום לבנה לא נוצרה ושום שבוע לא השתנה/.test(page));
+/* The server end: answers only, never a week. */
+ok("the action writes answers and nothing else",
+  /if \(action === "save_intake"\)/.test(clientApi) &&
+    !/save_intake[\s\S]{0,1200}draft\.weeks/.test(clientApi));
+ok("AND AN INTAKE NEVER REACHES THE CLIENT",
+  !/"intake"/.test(payloadLib.slice(payloadLib.indexOf("const PROGRAM_OUT"), payloadLib.indexOf("const PART_FIELDS"))));
 
 console.log("All admin clients page checks passed.");
