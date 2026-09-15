@@ -1285,6 +1285,52 @@ function reportedLiftCount(profile) {
   return n;
 }
 
+/** What a ROOM is judged against: its inventory and the session shape it was sold. */
+function studioCheckCtx(intake) {
+  if (!intake || typeof intake !== "object") return null;
+  return {
+    equipmentList: intake.equipmentList,
+    sessionsPerWeek: intake.sessionsPerWeek,
+    sessionTypes: intake.sessionTypes,
+  };
+}
+
+/**
+ * What a PERSON is judged against.
+ *
+ * Their own inventory, the second place's when they train in one, and the weekdays they
+ * actually train. NOT the session count: an active recovery day and an extra session the
+ * athlete asked for (POL-026) are both legitimate reasons for a week to hold more than
+ * the days they named, and a blocking violation that is sometimes wrong is worse than
+ * none — it also spends a repair call on nothing (owner, 2026-09-15).
+ *
+ * The recovery day is allowed alongside the training days for exactly that reason: the
+ * athlete asked for it.
+ */
+function athleteCheckCtx(profile) {
+  const p = profile && typeof profile === "object" ? profile : null;
+  if (!p) return null;
+  const list = p.equipmentList && typeof p.equipmentList === "object" ? p.equipmentList : null;
+  const answered = !!list && Object.keys(list).length > 0;
+  const days = Array.isArray(p.trainingDays) ? p.trainingDays.slice() : [];
+  if (p.activeRecoveryPref === "yes" && p.activeRecoveryDay && days.indexOf(p.activeRecoveryDay) < 0) {
+    days.push(p.activeRecoveryDay);
+  }
+  if (!answered && !days.length) return null;
+  const ctx = { equipmentList: list, trainingDays: days };
+  const second =
+    p.trainsMultipleLocations === true &&
+    Array.isArray(p.secondaryLocationDays) &&
+    p.secondaryLocationDays.length &&
+    p.secondaryEquipmentList &&
+    typeof p.secondaryEquipmentList === "object" &&
+    Object.keys(p.secondaryEquipmentList).length
+      ? { days: p.secondaryLocationDays, equipmentList: p.secondaryEquipmentList }
+      : null;
+  if (second) ctx.secondary = second;
+  return ctx;
+}
+
 function loadBasisText(profile, agent, opts) {
   /* THE STUDIO EXEMPTION IS GONE (owner, 2026-09-14).
    *
@@ -3124,18 +3170,15 @@ async function coachHandler(req, res) {
     } catch (eFlags) {}
     /* And the half a machine can be CERTAIN about — equipment that does not exist there, a load
        above a ceiling the owner typed, a week with no bodyweight work, the wrong session count.
-       Reported, not yet enforced: the retry that acts on this list is a separate change, because
-       a second generation doubles the wait against a 300-second function ceiling and that has to
-       be measured before it is wired (owner, 2026-09-14). */
+       It ran for a ROOM only until 2026-09-15: an individual's brick was never once measured
+       against the list they had filled in, which meant the whole equipment round protected a
+       studio and left a person exactly where עודד had been (owner, 2026-09-15). */
     try {
       const checked = block || (week ? { weeks: [week] } : null);
       const intake = (body && body.studioIntake) || null;
-      if (checked && intake) {
-        const r = brickCheck(checked, {
-          equipmentList: intake.equipmentList,
-          sessionsPerWeek: intake.sessionsPerWeek,
-          sessionTypes: intake.sessionTypes,
-        });
+      const ctx = intake ? studioCheckCtx(intake) : athleteCheckCtx(athleteProfile);
+      if (checked && ctx) {
+        const r = brickCheck(checked, ctx);
         if (r && r.blocking && r.blocking.length) out.brickBlocking = r.blocking;
         if (r && r.flags && r.flags.length) {
           out.brickFlags = (out.brickFlags || []).concat(r.flags);

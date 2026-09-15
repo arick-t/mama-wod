@@ -276,4 +276,42 @@ ok("one line holding both is judged on the half that needs a route",
 ok("shuttles count as the bodyweight work a week must contain",
   !/no bodyweight or floor movement/.test(C.checkBrick(SHUTTLES, { equipmentList: NO_ROUTE }).blocking.join(" ")));
 
+/* --- a session on a day the athlete does not train -----------------------
+ * An individual's week is pinned to weekdays, so a session on Tuesday for someone who
+ * trains Mon/Wed/Sat is not a judgement call — it is a session they cannot attend
+ * (owner, 2026-09-15).
+ * ------------------------------------------------------------------------- */
+const OFF_DAY = {
+  weeks: [
+    {
+      weekIndex: 1,
+      days: {
+        mon: { parts: [{ title: "A", lines: ["Air squat 20"] }] },
+        tue: { parts: [{ title: "B", lines: ["Push-up 20"] }] },
+        sat: { parts: [{ title: "C", lines: ["Burpee 20"] }] },
+      },
+    },
+  ],
+};
+const offDay = C.checkBrick(OFF_DAY, { trainingDays: ["mon", "wed", "sat"] });
+ok("A SESSION ON A DAY HE DOES NOT TRAIN IS CAUGHT", /not a day this athlete trains/.test(offDay.blocking.join(" ")));
+ok("and it names the day and the days he does train", /on TUE/.test(offDay.blocking.join(" ")) &&
+  /MON, WED, SAT/.test(offDay.blocking.join(" ")));
+ok("a week entirely on his own days is clean",
+  C.checkBrick(OFF_DAY, { trainingDays: ["mon", "tue", "sat"] }).blocking.length === 0);
+/* A rest day written as one is not a session. */
+const RESTED = {
+  weeks: [
+    { weekIndex: 1, days: { tue: { parts: [{ title: "Rest day", lines: [] }] },
+      mon: { parts: [{ title: "A", lines: ["Air squat 20"] }] } } },
+  ],
+};
+ok("a rest day is not a session on a day off", C.checkBrick(RESTED, { trainingDays: ["mon"] }).blocking.length === 0);
+/* Nothing to compare against means nothing is claimed. */
+ok("no training days means no off-day check", C.checkBrick(OFF_DAY, {}).blocking.length === 0);
+/* The count is deliberately NOT checked for a person: an active recovery day and an extra
+   session he asked for are both legitimate (owner, 2026-09-15). */
+ok("an individual's session COUNT is not blocked",
+  C.checkBrick(OFF_DAY, { trainingDays: ["mon", "tue", "wed", "sat"] }).blocking.length === 0);
+
 console.log("\nbrick check: all good");

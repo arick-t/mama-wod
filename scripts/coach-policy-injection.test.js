@@ -535,6 +535,29 @@ function testBrickFlags() {
     /catch \(eFlags\) \{\}/.test(src));
 }
 
+/* --- the post-check runs for a PERSON too ---------------------------------
+ * It ran for a room only until 2026-09-15, which meant the whole equipment round
+ * protected a studio and left an individual exactly where עודד had been.
+ * ------------------------------------------------------------------------- */
+function testTheCheckRunsForAnIndividual() {
+  const src = fs.readFileSync(PC_PATH, "utf8");
+  ok("A PERSON IS JUDGED AGAINST THEIR OWN LIST",
+    /function athleteCheckCtx\(profile\)/.test(src) &&
+      /const ctx = intake \? studioCheckCtx\(intake\) : athleteCheckCtx\(athleteProfile\);/.test(src));
+  ok("their second place travels with its days",
+    /p\.secondaryLocationDays/.test(src) && /p\.secondaryEquipmentList/.test(src) &&
+      /ctx\.secondary = second/.test(src));
+  ok("and the weekdays they actually train",
+    /trainingDays: days/.test(src));
+  ok("the recovery day they asked for is allowed with them",
+    /p\.activeRecoveryPref === "yes" && p\.activeRecoveryDay/.test(src));
+  /* The count is NOT checked for a person: a recovery day and an extra session he asked
+     for are both legitimate, and a blocking violation that is sometimes wrong is worse
+     than none — it also spends a repair call on nothing. */
+  ok("BUT THEIR SESSION COUNT IS NOT BLOCKED",
+    !/sessionsPerWeek/.test(src.slice(src.indexOf("function athleteCheckCtx"), src.indexOf("function loadBasisText"))));
+}
+
 function testLoadBasisWhenNoLiftsReported() {
   const src = fs.readFileSync(PC_PATH, "utf8");
   const flat = src.replace(/\s+/g, " ");
@@ -671,6 +694,7 @@ function main() {
   testSystemPromptActuallyBuilds();
   testBrickFlags();
   testLoadBasisWhenNoLiftsReported();
+  testTheCheckRunsForAnIndividual();
   testCoachKnowsTheWarmUpField();
   testMidWeekClampIsWeekScoped();
   testSessionCountStudioHasNoCalendar();
