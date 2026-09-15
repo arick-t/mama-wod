@@ -324,6 +324,18 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
   font-weight:700;font-size:12.5px;cursor:pointer}
 .brain-spin{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);
   border-top-color:var(--brand);animation:coachFillSpin .8s linear infinite;flex:0 0 auto}
+/* What a machine is CERTAIN about. Deliberately not the flags' colour: a flag is a note
+   the owner weighs, this is equipment that does not exist in that room. */
+.brick-blocking{margin-top:10px;display:flex;flex-direction:column;gap:8px;padding:12px;
+  background:rgba(232,69,26,.10);border:1px solid rgba(232,69,26,.38);border-radius:10px}
+.brick-blocking-head{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:#F4795B}
+.brick-blocking-mark{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;
+  border-radius:50%;background:rgba(232,69,26,.30);color:#fff;font-size:11px;font-weight:900;flex:0 0 auto}
+.brick-blocking-count{margin-inline-start:auto;font-size:11px;color:var(--text-muted);font-weight:700}
+.brick-blocking-list{margin:0;padding-inline-start:26px;display:flex;flex-direction:column;gap:5px;
+  font-size:12.5px;line-height:1.5;color:var(--text)}
+.brick-blocking-story{font-size:11.5px;font-weight:700;color:#F0A44E}
+.brick-blocking-foot{font-size:11.5px;line-height:1.5;color:var(--text-muted)}
 .brick-flags{margin-top:10px;display:flex;flex-direction:column;gap:8px}
 .brick-flags-head{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:#F0A44E}
 .brick-flags-mark{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;
@@ -7363,9 +7375,14 @@ function showBrickFlags(res) {
   var host = document.getElementById("intake-flags");
   if (!host) return;
   if (!window.CoachBrickFlagsView) { host.innerHTML = ""; return; }
-  host.innerHTML = window.CoachBrickFlagsView.flagsBoxHtml(res || {}, {
-    retryFn: "retryIntakeBlockAfterCut",
-  });
+  /* The certain half first: a movement whose implement does not exist in that room is not
+     a note to weigh, and burying it under the notes is how it gets missed
+     (owner, 2026-09-15). */
+  host.innerHTML =
+    window.CoachBrickFlagsView.blockingBoxHtml(res || {}) +
+    window.CoachBrickFlagsView.flagsBoxHtml(res || {}, {
+      retryFn: "retryIntakeBlockAfterCut",
+    });
 }
 window.showBrickFlags = showBrickFlags;
 
@@ -9813,12 +9830,17 @@ tryRestoreAdminSession();
     if (t.closest && t.closest("[data-brainclose]")) {
       cvBrain.preview = false;
       cvBrain.error = "";
+      /* Closing the panel puts away what the check found too — he has read it. */
+      cvBrain.checks = null;
       renderBrainPanel();
       return;
     }
     if (t.closest && t.closest("[data-brainsend]")) {
       cvBrain.preview = false;
       cvBrain.error = "";
+      /* A new build answers for itself. Resuming a stopped one does NOT clear it: the
+         weeks already written are still in the month. */
+      cvBrain.checks = null;
       brainStep();
       return;
     }
@@ -10680,7 +10702,33 @@ tryRestoreAdminSession();
      A blank client is refused: that kind exists for him to write by hand.
      ══════════════════════════════════════════════════════════════════════ */
 
-  var cvBrain = { running: false, week: 0, total: 0, error: "", preview: false };
+  /* "checks" collects what the post-check found on EVERY week of this block, because a
+     month is written a week at a time and the violation may be in week three. Cleared
+     when a build starts, never in the middle of one (owner, 2026-09-15). */
+  var cvBrain = { running: false, week: 0, total: 0, error: "", preview: false, checks: null };
+
+  /** Everything the post-check said about this block, gathered across its weeks. */
+  function brainNoteCheck(j) {
+    if (!j) return;
+    var found = Array.isArray(j.brickBlocking) ? j.brickBlocking : [];
+    if (!found.length && !j.repairSkipped && !j.repairError && !j.repairRejected) return;
+    var c = cvBrain.checks || { brickBlocking: [] };
+    for (var i = 0; i < found.length; i++) {
+      if (c.brickBlocking.indexOf(found[i]) < 0) c.brickBlocking.push(found[i]);
+    }
+    if (j.repairAttempted) c.repairAttempted = true;
+    if (j.repairFixed > 0) c.repairFixed = (c.repairFixed || 0) + j.repairFixed;
+    if (j.repairSkipped) c.repairSkipped = j.repairSkipped;
+    if (j.repairError) c.repairError = j.repairError;
+    if (j.repairRejected) c.repairRejected = j.repairRejected;
+    cvBrain.checks = c;
+  }
+
+  /** The violations, where the month is actually built. */
+  function brainCheckHtml() {
+    if (!cvBrain.checks || !window.CoachBrickFlagsView) return "";
+    return window.CoachBrickFlagsView.blockingBoxHtml(cvBrain.checks);
+  }
 
   function brainLibs() {
     return {
@@ -10731,6 +10779,7 @@ tryRestoreAdminSession();
     if (!host || !L.brief || !L.plan || !S.program) return;
     if (cvBrain.error) {
       host.innerHTML =
+        brainCheckHtml() +
         '<div class="brain-panel is-bad"><div class="brain-panel-head">הבנייה נעצרה — ' +
         esc(cvBrain.error) + "</div>" +
         '<div class="brain-panel-note">' + brainWrittenLine() + " ההמשכה מריצה רק את מה שחסר." +
@@ -10748,7 +10797,9 @@ tryRestoreAdminSession();
         "</div></div>";
       return;
     }
-    if (!cvBrain.preview) { host.innerHTML = ""; return; }
+    /* Done: the panel closes, and what the check found stays on screen. It is the only
+       moment he sees it, and the month is saved unapproved until he acts on it. */
+    if (!cvBrain.preview) { host.innerHTML = brainCheckHtml(); return; }
 
     var req = L.brief.blockRequestFor({
       program: S.program,
@@ -10862,6 +10913,7 @@ tryRestoreAdminSession();
           return;
         }
         if (typeof showBrickFlags === "function") showBrickFlags(j);
+        brainNoteCheck(j);
         var week = null;
         if (localWeek === 1) {
           var built = typeof parseBlockFromText === "function" ? parseBlockFromText(j.text, j) : j.block;

@@ -1324,4 +1324,21 @@ ok("the action writes answers and nothing else",
 ok("AND AN INTAKE NEVER REACHES THE CLIENT",
   !/"intake"/.test(payloadLib.slice(payloadLib.indexOf("const PROGRAM_OUT"), payloadLib.indexOf("const PART_FIELDS"))));
 
+/* --- the violations reach the screen where the month is built -------------
+ * The post-check has been producing this list since 2026-09-14 and the owner never saw
+ * it: the flags box lives in the intake modal, and a month is built from the client
+ * screen (owner, 2026-09-15).
+ * ------------------------------------------------------------------------- */
+ok("THE BRAIN PANEL SHOWS WHAT THE CHECK FOUND", /function brainCheckHtml/.test(page) &&
+  /CoachBrickFlagsView\.blockingBoxHtml\(cvBrain\.checks\)/.test(page));
+ok("gathered across every week of the block", /function brainNoteCheck/.test(page) &&
+  /c\.brickBlocking\.indexOf\(found\[i\]\) < 0/.test(page));
+ok("shown when the build stops", /brainCheckHtml\(\) \+\s*'<div class="brain-panel is-bad"/.test(page));
+ok("and when it finishes", /if \(!cvBrain\.preview\) \{ host\.innerHTML = brainCheckHtml\(\); return; \}/.test(page));
+ok("a new build answers for itself", /cvBrain\.checks = null;[\s\S]{0,60}brainStep\(\);/.test(page));
+ok("but resuming a stopped one does not clear it",
+  !/data-brainresume[\s\S]{0,200}cvBrain\.checks = null/.test(page));
+ok("the intake modal shows it too, above the notes",
+  /blockingBoxHtml\(res \|\| \{\}\) \+[\s\S]{0,120}flagsBoxHtml/.test(page));
+
 console.log("All admin clients page checks passed.");
