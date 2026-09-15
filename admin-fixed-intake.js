@@ -50,14 +50,20 @@
       items.every(function (it) {
         return list[it.id] && list[it.id].have;
       });
+    /* The one answer that replaces all the others stands in a box of its own, above the
+       list rather than as its first line: a gym with nothing missing is not one more
+       item to tick, it is the whole question answered (owner, 2026-09-15). Two pickers,
+       no new styling — the gap between them is the separation. */
     var html =
-      '<p class="pprog-fixed-title" style="margin-top:18px">What is there to train with?</p>' +
+      '<p class="pprog-fixed-title" style="margin-top:18px">Available equipment</p>' +
       '<p class="pprog-fixed-note">Floor, wall and bodyweight work are always available and are ' +
       "never asked about — the coach keeps using them whatever you tick here.</p>" +
       '<div class="pprog-location-picker">' +
       '<label class="pprog-skills-all"><input type="checkbox" id="adm-fx-eq-all"' +
       (allOn ? " checked" : "") +
-      ' onchange="adminFixedEquipAll(this)"> Well-equipped gym — tick everything</label>';
+      ' onchange="adminFixedEquipAll(this)"> Fully equipped gym — no equipment limits, ' +
+      "running route included</label></div>" +
+      '<div class="pprog-location-picker">';
     items.forEach(function (it) {
       var row = list[it.id] || {};
       var unit = equipCapUnit(it);

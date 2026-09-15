@@ -216,8 +216,16 @@ ok("marking All skills lets it through", stepShown() === atSkills + 1);
   const drawn = String(byId("intake-fixed").innerHTML);
   ok("it no longer asks where the athlete trains", !/Where do you usually train/i.test(drawn));
   ok("nor offers the old well-equipped-gym answer", !/data-fx-location/.test(drawn));
-  ok("it asks what there is to train with", /What is there to train with/i.test(drawn));
+  ok("the step is called Available equipment", /Available equipment/.test(drawn));
   ok("and keeps one additive free-text box", /adm-fx-location-other/.test(drawn));
+  /* The answer that replaces the whole list is not the list's first line: it stands in a
+     picker of its own, above it, and it says what it means (owner, 2026-09-15). */
+  ok(
+    "a fully equipped gym is its own box above the list",
+    /adm-fx-eq-all[\s\S]*?<\/label><\/div><div class="pprog-location-picker">/.test(drawn)
+  );
+  ok("and it names the running route", /Fully equipped gym — no equipment limits, running route included/.test(drawn));
+  ok("the list follows in a second box", (drawn.match(/pprog-location-picker/g) || []).length === 2);
   sandbox.window.adminFixedNext();
   ok("AN ATHLETE WHO TICKS NOTHING STILL GETS THROUGH", stepShown() === atSetup + 1);
 }
