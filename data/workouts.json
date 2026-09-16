@@ -2680,56 +2680,6 @@
     "2026-09-16": [
       {
         "date": "2026-09-16",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-09-16/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "lat stretch",
-              "instep rotations"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 deadlifts",
-              "10 elbow rotations",
-              "10 squat jumps",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "POWER CLEANS 9MIN",
-            "lines": [
-              "on every 1:30 x 6 sets",
-              "1 power clean",
-              "1 hang power clean",
-              "(built in weight)",
-              "explosive power"
-            ]
-          },
-          {
-            "title": "CONDITIONING 19MIN",
-            "lines": [
-              "8 rounds",
-              "",
-              "10/8cal bike/ski",
-              "8 power cleans 50/35kg",
-              "10 box jumps 60/50cm *",
-              "* *rx+: 75/60cm",
-              "* aerobic power"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-16",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260916",
@@ -2809,6 +2759,82 @@
       },
       {
         "date": "2026-09-16",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 22.3",
+            "lines": [
+              "For time:",
+              "21 pull-ups",
+              "42 double-unders",
+              "21 thrusters (weight 1)",
+              "18 chest-to-bar pull-ups",
+              "36 double-unders",
+              "18 thrusters (weight 2)",
+              "15 bar muscle-ups",
+              "30 double-unders",
+              "15 thrusters (weight 3)",
+              "65 lb, then 75 lb, then 85 lb",
+              "Time cap: 12 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 22.3"
+      },
+      {
+        "date": "2026-09-16",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-09-16/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "lat stretch",
+              "instep rotations"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 deadlifts",
+              "10 elbow rotations",
+              "10 squat jumps",
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "POWER CLEANS 9MIN",
+            "lines": [
+              "on every 1:30 x 6 sets",
+              "1 power clean",
+              "1 hang power clean",
+              "(built in weight)",
+              "explosive power"
+            ]
+          },
+          {
+            "title": "CONDITIONING 19MIN",
+            "lines": [
+              "8 rounds",
+              "",
+              "10/8cal bike/ski",
+              "8 power cleans 50/35kg",
+              "10 box jumps 60/50cm *",
+              "* *rx+: 75/60cm",
+              "* aerobic power"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-09-16",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -2881,34 +2907,8 @@
           }
         ],
         "note": "Benchmark: Heavy DT"
-      },
-      {
-        "date": "2026-09-16",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 22.3",
-            "lines": [
-              "For time:",
-              "21 pull-ups",
-              "42 double-unders",
-              "21 thrusters (weight 1)",
-              "18 chest-to-bar pull-ups",
-              "36 double-unders",
-              "18 thrusters (weight 2)",
-              "15 bar muscle-ups",
-              "30 double-unders",
-              "15 thrusters (weight 3)",
-              "65 lb, then 75 lb, then 85 lb",
-              "Time cap: 12 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 22.3"
       }
     ]
   },
-  "last_updated": "2026-09-16T04:10:03.583719"
+  "last_updated": "2026-09-16T08:39:49.543060"
 }
