@@ -437,18 +437,33 @@ function testBrickFlags() {
       ).join(" ")
     ));
 
-  /* A ROOM is exempt, and this was my bug: the box brick was told not to write percentages and
-     then flagged for writing them. Fifteen people from one month to ten years of training age
-     share no maximum — %1RM is exactly how you write load for a class, each member taking the
-     percentage of THEIR own number. Found 2026-09-08 on the box's first brick. */
-  ok("a studio is exempt from the percentage check",
-    brickFlags(
-      { weeks: [{ weekIndex: 1, days: { mon: { parts: [{ title: "A", lines: ["3 squats @ 80% 1RM"] }] } } }] },
-      { lifts: {} },
-      { agent: "studio" }
-    ).length === 0);
-  ok("the coach does not tell a room to avoid percentages either",
-    /if \(agent === "studio"\) return "";/.test(fs.readFileSync(PC_PATH, "utf8")));
+  /* THE EXEMPTION IS GONE (owner, 2026-09-14), and these two assertions are its mirror image.
+     It was added on 2026-09-08 on a sound argument — in a box "@75%" is standard writing, each
+     member taking the percentage of THEIR OWN number — but it exempted the whole AGENT instead of
+     the case it was reasoning about. עודד מכינה is a room of seventeen-year-olds who have never
+     tested a lift: the brick came back with "75% 1RM", "78%", "82-85%", the owner rewrote every
+     one by hand, and no flag fired to tell him. A room that reported no maxima is exactly what
+     the check is for. */
+  ok("a room that reported no lift is flagged like anyone else",
+    /reported no 1RM/.test(
+      brickFlags(
+        { weeks: [{ weekIndex: 1, days: { mon: { parts: [{ title: "A", lines: ["3 squats @ 80% 1RM"] }] } } }] },
+        { lifts: {} },
+        { agent: "studio" }
+      ).join(" ")
+    ));
+  ok("no agent is exempt in the flags any more",
+    !/isStudio/.test(fs.readFileSync(path.join(root, "lib", "coach-brick-flags.js"), "utf8")));
+  ok("and the coach is told the same thing",
+    !/if \(agent === "studio"\) return "";/.test(fs.readFileSync(PC_PATH, "utf8")));
+  /* The owner's vocabulary, 2026-09-14: one language per family so the coach stops inventing a
+     new phrasing every brick. */
+  ok("strength and the olympic lifts are prescribed out of ten",
+    /STRENGTH and the OLYMPIC LIFTS — an effort out of ten/.test(fs.readFileSync(PC_PATH, "utf8")));
+  ok("gymnastics is prescribed in reps in reserve",
+    /GYMNASTICS[\s\S]{0,80}REPS IN /.test(fs.readFileSync(PC_PATH, "utf8")));
+  ok("a room with no maxima is told the fact about the ROOM",
+    /a fact about this " \+\s*\(room \? "ROOM" : "athlete"\)/.test(fs.readFileSync(PC_PATH, "utf8")));
   ok("percentages with no reported lift are flagged",
     /reported no 1RM/.test(
       brickFlags(
@@ -520,24 +535,63 @@ function testBrickFlags() {
     /catch \(eFlags\) \{\}/.test(src));
 }
 
+/* --- the post-check runs for a PERSON too ---------------------------------
+ * It ran for a room only until 2026-09-15, which meant the whole equipment round
+ * protected a studio and left an individual exactly where עודד had been.
+ * ------------------------------------------------------------------------- */
+function testTheCheckRunsForAnIndividual() {
+  const src = fs.readFileSync(PC_PATH, "utf8");
+  ok("A PERSON IS JUDGED AGAINST THEIR OWN LIST",
+    /function athleteCheckCtx\(profile\)/.test(src) &&
+      /const ctx = intake \? studioCheckCtx\(intake\) : athleteCheckCtx\(athleteProfile\);/.test(src));
+  ok("their second place travels with its days",
+    /p\.secondaryLocationDays/.test(src) && /p\.secondaryEquipmentList/.test(src) &&
+      /ctx\.secondary = second/.test(src));
+  ok("and the weekdays they actually train",
+    /trainingDays: days/.test(src));
+  ok("the recovery day they asked for is allowed with them",
+    /p\.activeRecoveryPref === "yes" && p\.activeRecoveryDay/.test(src));
+  /* The count is NOT checked for a person: a recovery day and an extra session he asked
+     for are both legitimate, and a blocking violation that is sometimes wrong is worse
+     than none — it also spends a repair call on nothing. */
+  /* The prompt says it and the check says it too: a percentage needs a number to be a
+     percentage of, and that is the line the owner rewrote by hand. */
+  ok("A ROOM CAN NEVER BE WRITTEN IN PERCENTAGES", /percentagesAllowed: false,/.test(src));
+  ok("and a person only when they reported a lift",
+    /percentagesAllowed: reportedLiftCount\(p\) > 0,/.test(src));
+  ok("BUT THEIR SESSION COUNT IS NOT BLOCKED",
+    !/sessionsPerWeek/.test(src.slice(src.indexOf("function athleteCheckCtx"), src.indexOf("function loadBasisText"))));
+}
+
 function testLoadBasisWhenNoLiftsReported() {
   const src = fs.readFileSync(PC_PATH, "utf8");
   const flat = src.replace(/\s+/g, " ");
   ok("the coach counts the reported lifts",
     /function reportedLiftCount\(profile\)/.test(src) &&
-      /function loadBasisText\(profile, agent\)/.test(src));
+      /function loadBasisText\(profile, agent, opts\)/.test(src));
+  /* THERE IS NO DOOR OUT FOR A ROOM. A studio maxima field was built on 2026-09-15 and
+     taken out the same day: a room does not test its members' 1RM one by one, so it could
+     only ever have been ticked by mistake — and that mistake is the failure it was meant
+     to prevent (owner, 2026-09-15). */
+  ok("NO ROOM CAN EXEMPT ITSELF FROM THE RULE",
+    !/maximaTested/.test(src) &&
+      !/maximaTested/.test(fs.readFileSync(path.join(__dirname, "..", "lib", "client-intake.js"), "utf8")));
+  /* The sentence is now built for the reader — a ROOM or an athlete — because the same fact is
+     true of both since the studio exemption came off (owner, 2026-09-14). */
   ok("with no lifts reported, percentages are forbidden outright",
-    /NO 1RM WAS REPORTED FOR ANY LIFT, so a percentage has nothing to be a percentage of/.test(
-      flat
-    ) && flat.indexOf("Do NOT " + String.fromCharCode(34) + "write %1RM") < 0 &&
+    /NO 1RM WAS REPORTED/.test(flat) &&
+      /so a percentage has nothing to be a percentage of/.test(flat) &&
+      flat.indexOf("Do NOT " + String.fromCharCode(34) + "write %1RM") < 0 &&
       /write %1RM, and do not write an absolute kilogram figure/.test(flat));
   ok("an inferred kilogram figure is forbidden too",
     /do not write an absolute kilogram figure you inferred from nothing/.test(flat));
-  ok("RPE and a rep target are named as the full prescription, not a fallback",
-    /That is a full prescription an/.test(flat) &&
-      /compromise: it is how a lift is loaded before anyone has tested it/.test(flat));
+  ok("effort and a rep target are named as the full prescription, not a fallback",
+    /A rep target or a described quality is also a full prescription/.test(flat) &&
+      /* The sentence spans a string concatenation in the source, so it is matched in halves. */
+      /None of this is a compromise: it is how a/.test(flat) &&
+      /lift is loaded before anyone has tested it/.test(flat));
   ok("the fact reaches the programming prompt",
-    /loadBasisText\(profile, coachAgentFor\(profile, opts\)\) \+/.test(src));
+    /loadBasisText\(profile, coachAgentFor\(profile, opts\), opts\) \+/.test(src));
   ok("an athlete who DID report a lift gets no such line",
     /if \(n > 0\) return "";/.test(src));
 }
@@ -645,6 +699,7 @@ function main() {
   testSystemPromptActuallyBuilds();
   testBrickFlags();
   testLoadBasisWhenNoLiftsReported();
+  testTheCheckRunsForAnIndividual();
   testCoachKnowsTheWarmUpField();
   testMidWeekClampIsWeekScoped();
   testSessionCountStudioHasNoCalendar();

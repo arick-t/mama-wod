@@ -87,7 +87,6 @@ function field(id, attr, value) {
 ["display_name", "gender", "age", "bodyweight", "experience"].forEach(function (id) {
   field("adm-fx-" + id, "data-fx-id", id);
 });
-field("adm-fx-loc-full", "data-fx-location", "functional_gym");
 ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].forEach(function (d) {
   field("adm-fx-day-" + d, "data-fx-day", d);
 });
@@ -114,6 +113,10 @@ sandbox.document = {
   body: makeEl("body"),
 };
 sandbox.window.CoachIntakeSync = CoachIntakeSync;
+/* The checklist is drawn from the catalog, and without it the equipment step renders
+   nothing at all — which is how a walk through the wizard used to pass while never once
+   looking at the question the step exists to ask. */
+sandbox.window.EquipmentCatalog = require("../lib/equipment-catalog.js");
 sandbox.localStorage = {
   store: {},
   getItem: function (k) { return Object.prototype.hasOwnProperty.call(this.store, k) ? this.store[k] : null; },
@@ -159,13 +162,15 @@ function answer(step) {
     byId("adm-fx-bodyweight").value = "80";
     byId("adm-fx-experience").value = "3 years";
   }
-  if (key === "locations" || key === "setup") byId("adm-fx-loc-full").checked = true;
+  /* Equipment answers NOTHING on purpose. "Where do you train — a well-equipped gym or
+     home?" was removed on 2026-09-15 as a duplicate of the checklist, and an athlete who
+     owns no kit must still be able to walk through the step. */
   if (key === "schedule") {
     ["sun", "tue", "thu"].forEach(function (d) { byId("adm-fx-day-" + d).checked = true; });
     byId("adm-fx-minutes").value = "60";
   }
-  if (key === "goals") byId("adm-fx-goals").value = "General fitness";
-  if (key === "injuries") byId("adm-fx-injuries").value = "None";
+  /* Nothing to answer here any more: the step opens on "No injuries" and a healthy
+     athlete taps Next (owner, 2026-09-15). */
   /* A plan cannot be scaled to someone whose skills are unknown, so the step refuses
      to be walked past empty. */
   if (key === "skills") byId("adm-fx-skill-all").checked = true;
@@ -193,6 +198,113 @@ ok("and it says why", /Mark at least one skill/.test(String(byId("adminFixedErr"
 byId("adm-fx-skill-all").checked = true;
 sandbox.window.adminFixedNext();
 ok("marking All skills lets it through", stepShown() === atSkills + 1);
+
+/* --- the equipment step asks once, and lets an empty answer through -------
+ * Two questions about the same fact could disagree: "well-equipped gym" ticked above a
+ * checklist with no rower in it (owner, 2026-09-15). The picker is gone; what it used
+ * to protect — that nobody is silently treated as a full gym — is now the packet's job.
+ * ------------------------------------------------------------------------- */
+{
+  sandbox.window.openIntakeWorkspace();
+  sandbox.window.startIntakeChat();
+  for (let guard = 0; guard < 20 && steps[stepShown() - 1] !== "setup"; guard++) {
+    answer(stepShown() - 1);
+    sandbox.window.adminFixedNext();
+  }
+  const atSetup = stepShown();
+  ok("the equipment step is step 2", atSetup === 2 && steps[atSetup - 1] === "setup");
+  const drawn = String(byId("intake-fixed").innerHTML);
+  ok("it no longer asks where the athlete trains", !/Where do you usually train/i.test(drawn));
+  ok("nor offers the old well-equipped-gym answer", !/data-fx-location/.test(drawn));
+  ok("the step is called Available equipment", /Available equipment/.test(drawn));
+  ok("and asks nothing in prose", !/adm-fx-location-other/.test(drawn));
+  /* The answer that replaces the whole list is not the list's first line: it stands in a
+     picker of its own, above it, and it says what it means (owner, 2026-09-15). */
+  ok(
+    "a fully equipped gym is its own box above the list",
+    /adm-fx-eq-all[\s\S]*?<\/label><\/div><div class="pprog-location-picker">/.test(drawn)
+  );
+  ok("and it names the running route", /Fully equipped gym — no equipment limits, running route included/.test(drawn));
+  /* Two boxes per place — the one answer, then the list — and the second place is
+     drawn with the step even while it is hidden. */
+  ok("the list follows in a box of its own", (drawn.match(/pprog-location-picker/g) || []).length === 4);
+  sandbox.window.adminFixedNext();
+  ok("AN ATHLETE WHO TICKS NOTHING STILL GETS THROUGH", stepShown() === atSetup + 1);
+}
+
+/* --- a second place is a second list, not a sentence ---------------------
+ * It used to be a free-text box and one "heaviest there" number — the shape the first
+ * place had just been rescued from, and one no check can measure a brick against
+ * (owner, 2026-09-15).
+ * ------------------------------------------------------------------------- */
+{
+  sandbox.window.openIntakeWorkspace();
+  sandbox.window.startIntakeChat();
+  for (let guard = 0; guard < 20 && steps[stepShown() - 1] !== "setup"; guard++) {
+    answer(stepShown() - 1);
+    sandbox.window.adminFixedNext();
+  }
+  const drawn = String(byId("intake-fixed").innerHTML);
+  ok("the second place asks the days it owns", /data-fx-second-day/.test(drawn));
+  ok("and says the rest of the week belongs to the first", /Every training day you do not mark here/.test(drawn));
+  ok("THE SECOND PLACE IS A SECOND CHECKLIST", /data-fx-eq2=/.test(drawn) && /adm-fx-eq2-all/.test(drawn));
+  ok("with ceilings of its own", /data-fx-eq2-cap/.test(drawn));
+  ok("the paragraph and the single number are gone", !/adm-fx-second-kit/.test(drawn) && !/adm-fx-second-heaviest/.test(drawn));
+  ok("and the two lists are not the same inputs", /data-fx-eq=/.test(drawn) && /data-fx-eq2=/.test(drawn));
+}
+
+/* --- injuries: the answer almost everyone gives is the one it opens on ----
+ * A free-text box under the button asked for a diagnosis the coach is forbidden to
+ * reason from, and an athlete who had just tapped "No injuries" was looking at an empty
+ * box inviting him to write anyway (owner, 2026-09-15).
+ * ------------------------------------------------------------------------- */
+{
+  sandbox.window.openIntakeWorkspace();
+  sandbox.window.startIntakeChat();
+  for (let guard = 0; guard < 20 && steps[stepShown() - 1] !== "injuries"; guard++) {
+    answer(stepShown() - 1);
+    sandbox.window.adminFixedNext();
+  }
+  const atInj = stepShown();
+  ok("injuries is step 7", atInj === 7 && steps[atInj - 1] === "injuries");
+  const drawn = String(byId("intake-fixed").innerHTML);
+  ok("NO INJURIES IS ON BEFORE ANYTHING IS TOUCHED", /id="adm-fx-no-injuries-btn" aria-pressed="true"/.test(drawn));
+  ok("and it reads as pressed", /pprog-fixed-chip active/.test(drawn));
+  ok("THE DIAGNOSIS BOX IS GONE", !/id="adm-fx-injuries"/.test(drawn));
+  ok("what the coach may act on is still asked as marks", /data-avoid-id/.test(drawn));
+  ok("and the note beside them says where anything else goes", /Anything else to program around/.test(drawn));
+  sandbox.window.adminFixedNext();
+  ok("a healthy athlete walks straight through", stepShown() === atInj + 1);
+}
+
+/* --- goals: a checklist, capped, with one answer that replaces the rest ----
+ * Free text reached the coach as nothing at all when no word in it was one the router
+ * recognised. Two at most, because three pull the month in three directions
+ * (owner, 2026-09-15).
+ * ------------------------------------------------------------------------- */
+{
+  sandbox.window.openIntakeWorkspace();
+  sandbox.window.startIntakeChat();
+  for (let guard = 0; guard < 20 && steps[stepShown() - 1] !== "goals"; guard++) {
+    answer(stepShown() - 1);
+    sandbox.window.adminFixedNext();
+  }
+  ok("goals is step 8", steps[stepShown() - 1] === "goals");
+  const drawn = String(byId("intake-fixed").innerHTML);
+  ok("MAINTAINING A HEALTHY LIFESTYLE LEADS", /data-goal-id="healthy_lifestyle"/.test(drawn));
+  ok("and it is the first goal drawn", drawn.indexOf("healthy_lifestyle") < drawn.indexOf("build_muscle"));
+  ok("in a box of its own, above the list", /pprog-skills-all[\s\S]*?healthy_lifestyle[\s\S]*?<\/label><\/div>/.test(drawn));
+  ok("the cap is stated where it is asked", /Pick at most 2/.test(drawn));
+  ok("health and rehabilitation are not on it", !/injury_proofing|mobility|coming_back/.test(drawn));
+  ok("nor is a habit goal", !/consistency|build the habit/i.test(drawn));
+  ok("the skill picker is hidden until the skill goal is picked", /id="adm-fx-goal-skill-wrap" hidden/.test(drawn));
+  ok("nutrition is not asked about", !/adm-fx-deficit/.test(drawn));
+  ok("AND THE EMPTY BOX UNDER THE GOALS IS GONE", !/id="adm-fx-goals"/.test(drawn));
+  /* The one box that stays: what this place does NOT do. It saves three paid revisions
+     apiece, which is why it was put there (coach agent, 2026-09-02). */
+  ok("what they do not want is still asked", /id="adm-fx-avoid-program"/.test(drawn));
+  ok("the competitor question stays", /id="adm-fx-competitor"/.test(drawn));
+}
 
 /* --- start over for the full walk -------------------------------------- */
 

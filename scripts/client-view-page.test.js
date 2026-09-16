@@ -53,7 +53,12 @@ ok("the token is sent as a header", /X-Client-Token/.test(html));
 ok("the token is not put in the query string", !/clientToken=/.test(html));
 ok("the token is stored per program", /dw_client_token_/.test(html));
 ok("localStorage access is wrapped in try/catch", /try\s*\{\s*return localStorage/.test(html));
-ok("a revoked device clears its token", /clearToken\(\);\s*openAuth/.test(html));
+/* A refusal sends the client to the code screen — it does NOT delete the credential.
+   Deleting it turned any single 401, ours included, into "phone the owner for a new
+   code", with no way back from the device itself (owner, 2026-09-15). */
+ok("a refused device is sent to the code screen", /if \(r\.status === 401\) \{ forgetSession\(/.test(html));
+ok("and the token is never thrown away on a refusal", !/clearToken/.test(html));
+ok("only a redeemed code replaces it", /function setToken\(t\)/.test(html));
 
 /* --- shared code, not a lookalike ------------------------------------- */
 

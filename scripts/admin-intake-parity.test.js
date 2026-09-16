@@ -94,16 +94,90 @@ const marked = CoachIntakeSync.buildFixedIntakePrompt(
   Object.assign({}, sample, {
     improveFocus: { max_strength: true, gymnastics: true },
     avoidMovements: { deep_squat: true, jumping: true },
-    heaviestImplementKg: 24,
     avoidInProgram: "No burpees, ever.",
   })
 );
 const unmarked = CoachIntakeSync.buildFixedIntakePrompt(sample);
-ok("what to improve is stated", /^IMPROVE FOCUS: Max strength/m.test(marked));
-ok("and stated when nothing was chosen", /^IMPROVE FOCUS: none selected/m.test(unmarked));
+/* Goals became a checklist asked of everyone on 2026-09-15; the marks travel in the same
+   field, so an intake answered before that day still reads as what it said. */
+ok("the block goals are stated", /^BLOCK GOALS: Max strength/m.test(marked));
+ok("and stated when nothing was chosen", /^BLOCK GOALS: none selected/m.test(unmarked));
 ok("what to program around is stated", /^AVOID: Deep squat/m.test(marked));
 ok("and stated when nothing was marked", /^AVOID: none marked\.$/m.test(unmarked));
-ok("the heaviest implement is a number", /^HEAVIEST IMPLEMENT: 24 kg\.$/m.test(marked));
+/* "Heaviest implement" was one number for a whole setup, and it is gone (owner, 2026-09-14).
+   It could not say "dumbbells to 15 but a 40 kg sandbag", and the checklist that replaces it
+   carries a ceiling per implement. */
+const ticked = CoachIntakeSync.buildFixedIntakePrompt(
+  Object.assign({}, sample, {
+    equipmentList: {
+      DUMBBELL: { have: true, cap: 15 },
+      "PULLUP BAR": { have: true },
+      RINGS: { have: false },
+      "SKIPPING ROPE": { have: true },
+    },
+  })
+);
+ok("a ticked inventory reaches the coach", /EQUIPMENT - CHECKED INVENTORY/.test(ticked));
+ok("with the ceiling on the implement it belongs to", /DUMBBELL\s+available · MAX LOAD 15 kg/.test(ticked));
+ok("and an explicit absence for what was not ticked", /RINGS\s+NOT AVAILABLE/.test(ticked));
+/* One athlete is never asked how many barbells the place owns. */
+ok("no station counts for one person", !/rotation station/.test(ticked));
+ok("the old single number is gone from the packet", !/HEAVIEST IMPLEMENT: 24/.test(marked));
+/* --- ticking NOTHING is an answer, and a dangerous one to misread ---------
+ * "Where do you usually train?" was removed on 2026-09-15 as a duplicate of the
+ * checklist. It was also, quietly, what stopped an athlete with no kit from being read
+ * as a full gym: an empty list used to render no inventory at all, and the fallback
+ * below then told the coach "full gym loading available". An athlete who owns a floor
+ * and a wall must reach the coach as exactly that.
+ * ------------------------------------------------------------------------- */
+const nothingTicked = CoachIntakeSync.buildFixedIntakePrompt(
+  Object.assign({}, sample, {
+    trainingLocations: {},
+    trainingSetup: "Equipment answered item by item",
+    equipmentList: { DUMBBELL: { have: false }, "PULLUP BAR": { have: false }, RINGS: { have: false } },
+  })
+);
+ok("an all-no checklist still reaches the coach as an inventory", /EQUIPMENT - CHECKED INVENTORY/.test(nothingTicked));
+ok("every line of it an explicit absence", /DUMBBELL\s+NOT AVAILABLE/.test(nothingTicked) && /RINGS\s+NOT AVAILABLE/.test(nothingTicked));
+ok("AND NOBODY IS SILENTLY TREATED AS A FULL GYM", !/full gym loading available/.test(nothingTicked));
+/* --- two places, two inventories, and the days that tell them apart -------
+ * The second place used to be a sentence and one "heaviest there" number — the shape
+ * the first place had just been rescued from, and one no check can measure a brick
+ * against (owner, 2026-09-15).
+ * ------------------------------------------------------------------------- */
+const twoPlaceIntake = Object.assign({}, sample, {
+  trainingDays: ["mon", "tue", "wed", "fri", "sat"],
+  equipmentList: { DUMBBELL: { have: true, cap: 30 }, ROW: { have: true } },
+  trainsMultipleLocations: true,
+  secondaryLocationDays: ["fri", "sat"],
+  secondaryEquipmentList: { DUMBBELL: { have: true, cap: 15 }, ROW: { have: false } },
+});
+const twoLists = CoachIntakeSync.buildFixedIntakePrompt(twoPlaceIntake);
+ok("the first place is headed by the days it owns", /FIRST PLACE - Mon, Tue, Wed:/.test(twoLists));
+ok("and the second by its own", /SECOND PLACE - Fri, Sat:/.test(twoLists));
+ok("each carries its own ceiling", /MAX LOAD 30 kg/.test(twoLists) && /MAX LOAD 15 kg/.test(twoLists));
+ok("the coach is told they do not swap", /THE TWO LISTS ARE NOT INTERCHANGEABLE/.test(twoLists));
+ok(
+  "and that an unnamed day belongs to the first place",
+  /any training day not named as the second place happens in the first/.test(twoLists)
+);
+ok("the old free-text second setting is gone from the packet", !/What is there:/.test(twoLists));
+/* Days named but no second list: one place, and the packet says so rather than guessing. */
+const halfSecond = Object.assign({}, twoPlaceIntake, { secondaryEquipmentList: {} });
+const halfText = CoachIntakeSync.buildFixedIntakePrompt(halfSecond);
+ok("a second place with no list does not split the week", !/SECOND PLACE - /.test(halfText));
+/* The structured second list must survive the round trip, or the checker never sees it. */
+const roundTripped = CoachIntakeSync.normalizeIntakeProfile(twoPlaceIntake);
+ok(
+  "THE SECOND LIST SURVIVES THE ROUND TRIP",
+  roundTripped.secondaryEquipmentList &&
+    roundTripped.secondaryEquipmentList.DUMBBELL &&
+    roundTripped.secondaryEquipmentList.DUMBBELL.cap === 15
+);
+/* A profile that never saw the checklist still falls back to the old wording. */
+const neverAsked = Object.assign({}, sample, { trainingLocations: { functional_gym: true } });
+delete neverAsked.equipmentList;
+ok("an intake from before the checklist is unchanged", /full gym loading available/.test(neverAsked ? CoachIntakeSync.buildFixedIntakePrompt(neverAsked) : ""));
 /* --- and the line reads the ROOM, not the value ------------------------
  * In a proper box the question is never asked, so a zero there means "no ceiling", not
  * "unknown". The old wording told the coach "never by a kg figure" for an athlete who
@@ -146,15 +220,16 @@ const withMarks = CoachIntakeSync.athleteProfileForGenerateBlock(
   Object.assign({}, sample, {
     improveFocus: { engine: true },
     avoidMovements: { running: true },
-    heaviestImplementKg: "32",
+    equipmentList: { DUMBBELL: { have: true, cap: 32 } },
     avoidInProgram: "no burpees",
   })
 );
 ok("improveFocus is a field", withMarks.improveFocus && withMarks.improveFocus.engine === true);
 ok("avoidMovements is a field", withMarks.avoidMovements && withMarks.avoidMovements.running === true);
-ok("heaviestImplementKg is a number", withMarks.heaviestImplementKg === 32);
+ok("the ticked inventory travels with the profile", withMarks.equipmentList && withMarks.equipmentList.DUMBBELL && withMarks.equipmentList.DUMBBELL.cap === 32);
 ok("avoidInProgram is a field", withMarks.avoidInProgram === "no burpees");
-ok("an unanswered heaviest implement is 0, not empty", CoachIntakeSync.athleteProfileForGenerateBlock(sample).heaviestImplementKg === 0);
+/* An unanswered checklist is an empty object, never a claim that the athlete owns nothing. */
+ok("an unanswered checklist is empty, not a claim", JSON.stringify(CoachIntakeSync.athleteProfileForGenerateBlock(sample).equipmentList) === "{}");
 /* The ids ARE the contract: they map one-to-one onto the coach's substitution matrix,
    so renaming one silently would break it. */
 ok(
@@ -184,16 +259,23 @@ const twoPlaces = CoachIntakeSync.buildFixedIntakePrompt(
     secondaryHeaviestImplementKg: 32,
   })
 );
-ok("the primary days are named", /^Primary \(Mon, Tue, Thu, Fri\): /m.test(twoPlaces));
-ok("and so is the other place", /^Also trains \(Sat\): kettlebell 24\/32/m.test(twoPlaces));
-ok("the coach is told to name the setting", /^LOAD: TWO SETTINGS\./m.test(twoPlaces) && /NAME THE SETTING in the session itself\./.test(twoPlaces));
+ok("the primary days are named", /^FIRST PLACE \(Mon, Tue, Thu, Fri\)$/m.test(twoPlaces));
+ok("and so is the other place", /^SECOND PLACE \(Sat\)$/m.test(twoPlaces));
+ok(
+  "an intake that described its second place in a sentence still carries it",
+  /SECOND PLACE, as it was described before there was a list for it: kettlebell 24\/32/.test(twoPlaces)
+);
+ok("the coach is told to name the setting", /^LOAD: TWO SETTINGS\./m.test(twoPlaces) && /NAME THE SETTING in the session itself,/.test(twoPlaces));
 ok("NEVER forbid kilograms for an athlete with a full gym", !/never by a kg figure/.test(twoPlaces));
 ok("the second room states its own ceiling", /^HEAVIEST IMPLEMENT \(Sat\): 32 kg\.$/m.test(twoPlaces));
 /* Ticked but with no days named is not a guess. */
 const vagueSecond = CoachIntakeSync.buildFixedIntakePrompt(
   Object.assign({}, sample, { trainsMultipleLocations: true, secondaryLocationDays: [] })
 );
-ok("no days named is said, not guessed", /Also trains: days not stated - treat the reported setup as the primary one\./.test(vagueSecond));
+ok(
+  "no days named is said, not guessed",
+  /SECOND PLACE: reported, but no days were named - treat the first place as the whole week/.test(vagueSecond)
+);
 ok("and the load line is not suppressed", /^LOAD: TWO SETTINGS\./m.test(vagueSecond));
 
 /* --- a long day survives ---------------------------------------------- */
@@ -238,6 +320,9 @@ const studioPacket = StudioIntake.buildStudioIntakePrompt({
   maxAthletesAtOnce: 10,
   avoidInProgram: "no barbell snatches",
   population: "CrossFit class 12-20",
+  ageFrom: 18,
+  ageTo: 45,
+  levels: { mixed: true },
   sessionMinutes: 60,
   deloadWeek: true,
   deloadEveryWeeks: 4,
@@ -258,13 +343,21 @@ ok("silence about what it does not do is stated too", /^DOES NOT DO: nothing sta
 ok("briefFor stays a human reminder, not a prompt", !/BLOCK_JSON/.test(StudioIntake.briefFor({})));
 
 ok("the tick box is on the Goals step", /id="adm-fx-competitor"/.test(fixedJs));
-/* The improve list belongs to that tick box (owner, 2026-09-03): for someone training
-   for general fitness the answer is the balance itself, and asking invites an answer
-   that narrows a plan nobody wanted narrowed. The packet still carries the line in both
-   directions, so nothing downstream changes shape. */
-ok("the improve list is hidden until he says he competes", /id="adm-fx-improve-wrap"' \+ \(st\.competitor === true \? "" : " hidden"\)/.test(fixedJs));
-ok("ticking it opens the list", /adminFixedCompetitorChanged/.test(fixedJs));
-ok("and unticking drops what was marked", /intakeState\.improveFocus = intakeState\.competitor === true \? improveMap : \{\}/.test(fixedJs));
+/* The improve list belonged to that tick box until 2026-09-15 — six boxes shown only to
+   a competitor. Goals are now a checklist asked of everyone, with a better list, so
+   keeping it would have put two overlapping questions on one screen. The marks travel in
+   the same field, so nothing downstream changed shape. */
+ok("the competitor-only improve list is gone", !/adm-fx-improve-wrap/.test(fixedJs) && !/data-improve-id/.test(fixedJs));
+ok("GOALS ARE ASKED OF EVERYONE", /data-goal-id/.test(fixedJs));
+ok("and the healthy-lifestyle answer leads, in a box of its own", /pprog-skills-all"><input type="checkbox" data-goal-id="healthy_lifestyle"/.test(fixedJs));
+ok("at most two travel", /Pick at most " \+$/m.test(fixedJs) || /MAX_GOALS/.test(fixedJs));
+ok("a third is refused, not silently swapped", /Pick at most " \+ S.MAX_GOALS \+ " goals/.test(fixedJs));
+ok("the named skill only travels with the goal that asks for it", /improveMap.specific_skill === true && improveOtherEl/.test(fixedJs));
+/* A calorie-deficit tick and a free line under it lasted an afternoon: this product does
+   not deal in nutrition, and a box that invites prose invites prose nobody can act on
+   (owner, 2026-09-15). */
+ok("nutrition is not asked about", !/adm-fx-deficit|inCalorieDeficit/.test(fixedJs));
+ok("AND NO FREE LINE SURVIVES ON THE GOALS STEP", !/id="adm-fx-goals"/.test(fixedJs));
 ok("and it is carried on the profile", CoachIntakeSync.normalizeIntakeProfile(Object.assign({}, sample, { competitor: true })).competitor === true);
 
 const profile = CoachIntakeSync.normalizeIntakeProfile(sample);
@@ -355,7 +448,13 @@ ok("and it travels with the client", /monthlyAmount: intakeState\.monthlyAmount/
 
 /* --- the questions behind the new lines (coach agent + owner, 2026-09-03) */
 ok("the individual is asked about a second place", /id="adm-fx-multiplace"/.test(fixedJs) && /data-fx-second-day/.test(fixedJs));
-ok("and what is there, and how heavy", /id="adm-fx-second-kit"/.test(fixedJs) && /id="adm-fx-second-heaviest"/.test(fixedJs));
+/* What is there is a LIST now, not a sentence and a single number: the same catalogue
+   ticked again, with ceilings of its own, because prose cannot be checked against a
+   brick (owner, 2026-09-15). */
+ok("and what is there — as a second checklist", /data-fx-eq2/.test(fixedJs) && /adm-fx-eq2-all/.test(fixedJs));
+ok("with its own ceilings", /data-fx-eq2-cap/.test(fixedJs) || /esc\(attr\) \+$/m.test(fixedJs));
+ok("the paragraph and the single number are gone", !/id="adm-fx-second-kit"/.test(fixedJs) && !/id="adm-fx-second-heaviest"/.test(fixedJs));
+ok("and the free-text box beside the first list went with them", !/id="adm-fx-location-other"/.test(fixedJs));
 ok("nothing is kept from a second place he unticked", /intakeState\.secondaryLocationDays = intakeState\.trainsMultipleLocations \? secondDays : \[\]/.test(fixedJs));
 /* Only when he says the days differ - a uniform week stays one number. */
 ok("minutes per day appear only behind that tick", /id="adm-fx-perday-wrap"/.test(fixedJs) && /perDay\.hidden = !box\.checked/.test(fixedJs));
@@ -365,7 +464,16 @@ ok("and \"no deload\" is an answer, not a blank", /noDeloadEl && noDeloadEl\.che
 ok("all of it travels with the client", /trainsMultipleLocations: prof\.trainsMultipleLocations === true/.test(fixedJs) && /deloadEveryWeeks: prof\.deloadEveryWeeks/.test(fixedJs));
 
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
-ok("admin version 5.4", /DUCK-WOD Admin · 5\.4/.test(adminHtml));
+/* The number is asserted as AGREEMENT, never as a literal. A pin like "5.4" here is
+   how the badge sat on 5.1 for two releases while three shipped past it: the number
+   could not move without editing tests, so every release skipped it
+   (owner, 2026-09-14; the same trap one level over, 2026-09-16). */
+function adminVersionAgrees(src) {
+  var badge = (src.match(/var ADMIN_UI_VERSION = "([\d.]+)"/) || [])[1];
+  var title = (src.match(/<title>DUCK-WOD Admin . ([\d.]+)</) || [])[1];
+  return !!badge && badge === title;
+}
+ok("the admin label and the badge say the same number", adminVersionAgrees(adminHtml));
 ok("admin wired to coach 3.0", /LIVE_COACH_VERSION = "3\.0"/.test(adminHtml));
 ok("app coach 3.0", /COACH_VERSION = "3\.0"/.test(index));
 ok(

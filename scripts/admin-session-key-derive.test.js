@@ -65,7 +65,7 @@ function withEnv(env) {
 const STRONG = "vercel_blob_rw_" + crypto.randomBytes(24).toString("hex");
 const OTHER_STRONG = "vercel_blob_rw_" + crypto.randomBytes(24).toString("hex");
 const PROPER_SECRET = crypto.randomBytes(32).toString("hex"); // 64 chars
-const SHORT_SECRET = "0523701404!"; // the owner's actual value: 11 chars
+const SHORT_SECRET = "too-short!!"; // 11 chars: deliberately under MIN_SESSION_SECRET_LEN. Never a real password.
 
 /* --- 1 · a properly configured secret is used verbatim ------------------- */
 {

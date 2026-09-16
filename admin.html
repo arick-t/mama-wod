@@ -6,7 +6,7 @@
 <!-- The back office has no business in a search index. It carried no such tag while
      it was only an athlete admin; now that it also holds paying clients, it says so. -->
 <meta name="robots" content="noindex, nofollow">
-<title>DUCK-WOD Admin · 5.4</title>
+<title>DUCK-WOD Admin · 5.5</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -343,6 +343,18 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
   font-weight:700;font-size:12.5px;cursor:pointer}
 .brain-spin{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);
   border-top-color:var(--brand);animation:coachFillSpin .8s linear infinite;flex:0 0 auto}
+/* What a machine is CERTAIN about. Deliberately not the flags' colour: a flag is a note
+   the owner weighs, this is equipment that does not exist in that room. */
+.brick-blocking{margin-top:10px;display:flex;flex-direction:column;gap:8px;padding:12px;
+  background:rgba(232,69,26,.10);border:1px solid rgba(232,69,26,.38);border-radius:10px}
+.brick-blocking-head{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:#F4795B}
+.brick-blocking-mark{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;
+  border-radius:50%;background:rgba(232,69,26,.30);color:#fff;font-size:11px;font-weight:900;flex:0 0 auto}
+.brick-blocking-count{margin-inline-start:auto;font-size:11px;color:var(--text-muted);font-weight:700}
+.brick-blocking-list{margin:0;padding-inline-start:26px;display:flex;flex-direction:column;gap:5px;
+  font-size:12.5px;line-height:1.5;color:var(--text)}
+.brick-blocking-story{font-size:11.5px;font-weight:700;color:#F0A44E}
+.brick-blocking-foot{font-size:11.5px;line-height:1.5;color:var(--text-muted)}
 .brick-flags{margin-top:10px;display:flex;flex-direction:column;gap:8px}
 .brick-flags-head{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:#F0A44E}
 .brick-flags-mark{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;
@@ -1527,6 +1539,60 @@ body:has(#intake-modal.open) #adminChatFloat{
   border-inline-start:2px solid var(--coach-deep)}
 #clientScreen .sub-branch .sub-branch{margin-bottom:4px}
 #clientScreen .pick-row{display:flex;gap:26px;flex-wrap:wrap;margin:0 0 12px}
+/* The equipment checklist. One row per implement, the numbers on the same line as the tick,
+   because a count that lives somewhere else is a count nobody fills in. */
+#clientScreen .equip-group{margin:0 0 14px}
+#clientScreen .equip-group-title{font-family:var(--font-display);letter-spacing:.4px;
+  color:var(--text-muted);font-size:.72rem;margin:0 0 6px}
+#clientScreen .equip-row{display:flex;align-items:center;gap:10px;margin:0 0 4px;
+  padding:5px 8px;border-radius:6px;cursor:pointer}
+#clientScreen .equip-row:hover{background:var(--bg-panel)}
+#clientScreen .equip-row.on{background:var(--bg-panel)}
+#clientScreen .equip-name{flex:1 1 auto;min-width:0}
+#clientScreen .equip-num{width:74px;padding:6px 8px;text-align:center;background:var(--bg-deep);
+  border:1px solid var(--line);color:var(--text);border-radius:6px;font-size:.82rem}
+#clientScreen .equip-num[hidden]{display:none}
+#clientScreen .equip-unit{color:var(--text-muted);font-size:.7rem;min-width:58px}
+/* ── The studio questionnaire, as a popup that looks like the end-user one ──────
+   It was a card in the page flow with flat rows, beside an end-user intake that opens
+   as a modal with every option in a box of its own. Same product, two ages of design
+   (owner, 2026-09-15).
+   Nothing here restyles the end-user intake, and nothing rewrites this form's markup:
+   the rows below are the rows that were always there, given the same surface. */
+#studioIntakeModal{display:none}
+#studioIntakeModal:has(#intakeCard:not([hidden])){display:flex}
+#studioIntakeModal > #intakeCard{
+  width:min(920px,100%);max-height:92vh;overflow-y:auto;margin:0;border-radius:14px;
+  box-shadow:0 20px 56px rgba(0,0,0,.5)}
+/* Every answer in a box of its own — the one visible difference between the two forms. */
+#intakeCard .chk-row{padding:10px 12px;background:#222;border:1px solid #444;border-radius:8px;
+  align-items:center;margin:0 0 8px}
+#intakeCard .chk-row span{font-size:.88rem;line-height:1.35}
+#intakeCard .pick-row .chk-row{margin:0}
+#intakeCard .sub-branch{border-inline-start:2px solid var(--line);margin-inline-start:6px}
+#intakeCard label.fld span{font-size:.82rem;color:#aaa;line-height:1.4}
+#intakeCard .ipane textarea,#intakeCard .ipane input[type="text"],#intakeCard .ipane input[type="number"]{
+  background:#222;border:1px solid #555;border-radius:8px;color:#eee;font-family:inherit}
+#intakeCard .ipane textarea{min-height:88px}
+#intakeCard .age-range{display:flex;align-items:center;gap:10px}
+#intakeCard .age-range .inline-num{margin-inline-start:0;width:88px}
+#intakeCard .age-dash{color:var(--text-meta)}
+#intakeCard #inGroupLead{margin:0 0 12px}
+#intakeCard #inLevels{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}
+#intakeCard #inLevelLead{margin:0 0 12px}
+#intakeCard .level-lead{border-color:#1A9B8A!important;background:rgba(26,155,138,.14)!important;
+  font-weight:800;margin:0}
+#intakeCard .level-lead span{color:#f5c518}
+#intakeCard #inGroupTypes{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}
+#intakeCard .cap-row{flex-direction:column;align-items:stretch;gap:10px;cursor:default}
+#intakeCard .cap-row .inline-num{margin-inline-start:0;width:110px}
+#intakeCard .cap-row .inline-num[hidden]{display:none}
+#intakeCard .cap-row .cap-none{display:flex;align-items:center;gap:8px;cursor:pointer;
+  font-size:.88rem;color:var(--text)}
+#intakeCard .cap-row .cap-none input{width:20px;height:20px;flex:0 0 auto;accent-color:var(--brand)}
+/* The tabs read like a step bar rather than a row of buttons in a card. */
+#clientScreen #intakeCard .itabs{padding:0 0 12px;border-bottom:1px solid var(--line);margin:0 0 14px}
+#clientScreen .equip-always{color:var(--text-muted);font-size:.74rem;margin:0 0 12px;line-height:1.5}
 #clientScreen .sched-sep{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
 /* N sessions, laid out one under the other with the week navigation above them. */
 #clientScreen .sessions-head{display:flex;align-items:center;gap:10px;margin:0 0 8px;flex-wrap:wrap}
@@ -1630,7 +1696,7 @@ header{flex-wrap:wrap;row-gap:8px}
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver" id="login-ver-badge" title="Admin 5.4 · Coach 3.0">Admin 5.4<span class="ver-sep">·</span><span class="ver-coach">Coach 3.0</span></div>
+    <div class="ver" id="login-ver-badge" title="Admin 5.5 · Coach 3.0">Admin 5.5<span class="ver-sep">·</span><span class="ver-coach">Coach 3.0</span></div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <label class="login-remember">
       <input type="checkbox" id="pw-remember"/>
@@ -1646,7 +1712,7 @@ header{flex-wrap:wrap;row-gap:8px}
   <header>
     <img class="hdr-duck" src="assets/hamamen-coach-duck.png" alt="" width="30" height="30" draggable="false">
     <span class="logo">DUCK-WOD</span>
-    <span class="ver-badge" id="admin-ver-badge" title="Admin 5.4 · Coach 3.0">Admin 5.4<span class="ver-sep">·</span><span class="ver-coach">Coach 3.0</span></span>
+    <span class="ver-badge" id="admin-ver-badge" title="Admin 5.5 · Coach 3.0">Admin 5.5<span class="ver-sep">·</span><span class="ver-coach">Coach 3.0</span></span>
     <span class="count-wrap">
       <span class="count" id="athlete-count" title="הרשימה מתעדכנת לבד כל כמה שניות — בלי לרענן את הדף">0 לקוחות</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
@@ -1738,10 +1804,26 @@ header{flex-wrap:wrap;row-gap:8px}
        gesture on the same page (owner, 2026-09-02: one management page, no seam). -->
   <div class="content" id="clientScreen" hidden>
     <div id="topBanner"></div>
+    <!-- The studio questionnaire is a popup, like the end-user one (owner, 2026-09-15).
+         It stays INSIDE #clientScreen on purpose: every rule that styles this form is
+         written as "#clientScreen .something", and lifting the card out of that ancestor
+         would strip the form of its own styling on the way to looking better.
+         No JS toggle of its own either — :has() follows the card's hidden attribute, so
+         the one show() call that has always driven this card still drives it. -->
+    <div class="modal-backdrop" id="studioIntakeModal">
     <div class="card" id="intakeCard" dir="ltr" style="text-align:left" hidden>
-      <div class="row" style="margin-bottom:12px">
-        <h2 style="margin:0" id="intakeTitle">New coach / studio client</h2>
-        <span class="spacer meta" id="intakeStep"></span>
+      <!-- The same header bar every other screen in this module uses, and for the same reason:
+           the way out has to be visible from the first tab. The studio questionnaire only ever
+           had "Cancel" at the bottom of a long form, so from the owner's side there was no way
+           to leave it at all (owner, 2026-09-14). The negative margins pull the bar to the card's
+           edges without changing the card's own padding. -->
+      <div class="intake-ws-header" dir="rtl"
+           style="margin:-16px -16px 14px;border-radius:12px 12px 0 0">
+        <h2 id="intakeTitle">תחקור סטודיו</h2>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span class="meta" id="intakeStep"></span>
+          <button type="button" class="btn-secondary" id="iClose">סגור</button>
+        </div>
       </div>
 
       <div class="itabs" id="intakeTabs" role="tablist"></div>
@@ -1764,31 +1846,44 @@ header{flex-wrap:wrap;row-gap:8px}
            well-equipped gym. The description box only exists when it has something to
            describe, so the tab is one line in the common case. -->
       <div class="ipane" data-pane="equipment" hidden>
-        <div class="pick-row">
-          <label class="chk-row">
-            <input id="inEquipFull" type="checkbox" data-pick="equip" checked>
-            <span>Well-equipped functional training gym</span>
-          </label>
-          <label class="chk-row">
-            <input id="inEquipOtherOn" type="checkbox" data-pick="equip">
-            <span>OTHER</span>
-          </label>
-        </div>
-        <label class="fld" id="inEquipOtherWrap" hidden><span>Describe what is actually available</span>
-          <textarea id="inEquipOther" placeholder="Rig, 4 barbells, kettlebells 8–32kg, 2 rowers, no rings…"></textarea></label>
-        <!-- Asked as a NUMBER, because that is the answer he actually gave when the
+        <!-- Capacity leads the tab (owner, 2026-09-15): how many people are in the room
+             at once is what turns every count below it into a station or a class-wide
+             piece, so it is asked before anything is ticked.
+             Asked as a NUMBER, because that is the answer he actually gave when the
              question said "stations": he answered capacity here and counted the equipment
-             in the box above (coach agent, 2026-09-03). And a room with no practical
+             in the box below (coach agent, 2026-09-03). And a room with no practical
              ceiling has to be able to say so — forcing a number invents a limit. -->
-        <label class="chk-row" style="cursor:default">
+        <!-- One question, one box: the number, and the way out of answering it, belong to
+             the same answer. Two rows let both be filled in at once, and a room that said
+             "no practical limit" with 15 still sitting in the field above it was telling
+             the coach two things (owner, 2026-09-15). Ticking the box takes the field
+             away rather than leaving a stale number behind it. -->
+        <div class="chk-row cap-row" id="inCapRow">
           <span>How many athletes train at once, at the busiest class?</span>
           <input id="inMaxAtOnce" type="number" min="1" max="200" value=""
                  class="inline-num" aria-label="Athletes at once" placeholder="—">
-        </label>
-        <label class="chk-row">
-          <input id="inNoCap" type="checkbox">
-          <span>No practical limit</span>
-        </label>
+          <label class="cap-none">
+            <input id="inNoCap" type="checkbox">
+            <span>No practical limit</span>
+          </label>
+        </div>
+        <!-- The checklist replaced two checkboxes and a paragraph on 2026-09-14. The paragraph
+             is why the first real studio brick prescribed rings, a jump rope, 50cm boxes and a
+             rower that the room does not own, and 22.5kg dumbbells against a 15kg ceiling: the
+             coach received prose, and prose cannot be checked. "Well equipped" is now a
+             shortcut that FILLS the list rather than a way past it. -->
+        <div class="pick-row">
+          <label class="chk-row">
+            <input id="inEquipFull" type="checkbox">
+            <span>Well-equipped gym — tick everything</span>
+          </label>
+        </div>
+        <p class="equip-always">Floor, wall and bodyweight are never asked: they are always
+          available, and the coach must keep using them whatever is ticked here (POL-027).</p>
+        <div id="inEquipList"></div>
+        <label class="fld" id="inEquipOtherWrap"><span>Anything else the place has, in your own
+          words — this ADDS to the list above and never removes from it</span>
+          <textarea id="inEquipOther" placeholder="e.g. 3 slide boards, a sandbag rack…"></textarea></label>
       </div>
 
       <!-- 3 · schedule.
@@ -1808,6 +1903,15 @@ header{flex-wrap:wrap;row-gap:8px}
                  └ every N weeks, counted across months
       -->
       <div class="ipane" data-pane="schedule" hidden>
+        <!-- How long a session is belongs to the week, not to who is in the room: it
+             was the first question on the LAST tab, four clicks from the tab that
+             decides how many sessions there are (owner, 2026-09-15). -->
+        <label class="chk-row" style="cursor:default">
+          <span>Session length (minutes, warm-up included)</span>
+          <input id="inMinutes" type="number" min="20" max="120" value=""
+                 class="inline-num" aria-label="Session length in minutes" placeholder="—">
+        </label>
+        <p class="meta" id="inMinutesHint" style="margin:0 0 12px"></p>
         <label class="chk-row">
           <input id="inSchedCount" type="checkbox" data-pick="sched">
           <span>Number of sessions per week</span>
@@ -1911,14 +2015,40 @@ header{flex-wrap:wrap;row-gap:8px}
       <!-- 4 · population, limits and goals — one tab (owner, 2026-09-01). Two tabs
            were describing the same room twice. -->
       <div class="ipane" data-pane="population" hidden>
-        <label class="chk-row" style="cursor:default">
-          <span>Session length (minutes, warm-up included)</span>
-          <input id="inMinutes" type="number" min="20" max="120" value=""
-                 class="inline-num" aria-label="Session length in minutes" placeholder="—">
-        </label>
-        <p class="meta" id="inMinutesHint" style="margin:0 0 12px"></p>
-        <label class="fld"><span>The place, the people, the limits — and what they are training for</span>
-          <textarea id="inPopulation" placeholder="Pre-army prep group, 17–19, mixed ability. Two members with knee history. Training for army selection: 2000m run, pull-ups, load carry endurance."></textarea></label>
+        <!-- Who is in the room used to be one paragraph holding four different things at
+             once: who they are, what limits them, what they train for, and the specific
+             targets. The coach had to infer all four, and this is where the product broke
+             on the first real studio brick — a room of seventeen-year-olds who had never
+             tested a lift was described in prose, so nothing could act on the age or on
+             the absence of maxima (owner, 2026-09-15). -->
+        <div class="chk-row cap-row">
+          <span>What is the age range in the room?</span>
+          <div class="age-range">
+            <input id="inAgeFrom" type="number" min="10" max="90" class="inline-num"
+                   aria-label="Youngest" placeholder="from">
+            <span class="age-dash">–</span>
+            <input id="inAgeTo" type="number" min="10" max="90" class="inline-num"
+                   aria-label="Oldest" placeholder="to">
+          </div>
+        </div>
+        <!-- Ticks rather than one answer, and "mixed ability" leads them in a box of its
+             own, ticked before anything is touched: it is what most rooms are (owner,
+             2026-09-15). The three ability answers exclude each other — "mixed AND
+             beginners" would reach the coach as two contradictory facts about one room —
+             while men only / women only ride alongside any of them. -->
+        <p class="meta" style="margin:0 0 6px">Ability level</p>
+        <div id="inLevelLead"></div>
+        <div id="inLevels"></div>
+        <p class="meta" style="margin:0 0 6px">What kind of group is it?</p>
+        <div id="inGroupLead"></div>
+        <div id="inGroupTypes"></div>
+        <!-- "Maxima have been tested here" stood here for an hour. A room does not test
+             its members' 1RM one by one — it does not happen — and a field nobody will
+             ever tick is a field that can only be ticked by mistake (owner, 2026-09-15).
+             So a studio is never written in percentages: see LOAD BASIS. -->
+        <label class="fld"><span>Anything specific they are training for? Optional — the
+          targets a list cannot hold</span>
+          <textarea id="inPopulation" placeholder="Army selection: 2000m run, pull-ups, load carry endurance."></textarea></label>
         <!-- The boundary, next to the identity. "No barbell snatches" buried in a
              paragraph about atmosphere is a rule the coach has to infer — the same
              failure COMPETITOR had (coach agent, 2026-09-03). -->
@@ -1993,11 +2123,16 @@ header{flex-wrap:wrap;row-gap:8px}
         <button id="iPrev" class="ghost" type="button">Back</button>
         <button id="iNext" type="button">Next</button>
         <button id="createBtn" type="button" hidden>Create program</button>
+        <!-- Correcting what a room owns must not hand it a month it never asked for
+             (owner, 2026-09-15). Only for a client who already exists: for a new one the
+             questionnaire IS the creation. -->
+        <button id="saveIntakeBtn" class="ghost" type="button" hidden>Save answers only</button>
         <!-- A way back to the list, since the list is no longer on screen. -->
         <button id="iCancel" class="ghost sm" type="button"
                 style="margin-inline-start:auto">Cancel</button>
       </div>
       <p class="err" id="createErr" role="alert"></p>
+    </div>
     </div>
 
     <div id="detail" hidden></div>
@@ -2324,7 +2459,7 @@ var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
  */
 var COACH_BUILD_MAY_SAVE = false;
 
-var ADMIN_UI_VERSION = "5.4";
+var ADMIN_UI_VERSION = "5.5";
 var LIVE_COACH_VERSION = "3.0";
 var LIVE_COACH_VERSION_FETCHED_AT = 0;
 
@@ -7290,9 +7425,14 @@ function showBrickFlags(res) {
   var host = document.getElementById("intake-flags");
   if (!host) return;
   if (!window.CoachBrickFlagsView) { host.innerHTML = ""; return; }
-  host.innerHTML = window.CoachBrickFlagsView.flagsBoxHtml(res || {}, {
-    retryFn: "retryIntakeBlockAfterCut",
-  });
+  /* The certain half first: a movement whose implement does not exist in that room is not
+     a note to weigh, and burying it under the notes is how it gets missed
+     (owner, 2026-09-15). */
+  host.innerHTML =
+    window.CoachBrickFlagsView.blockingBoxHtml(res || {}) +
+    window.CoachBrickFlagsView.flagsBoxHtml(res || {}, {
+      retryFn: "retryIntakeBlockAfterCut",
+    });
 }
 window.showBrickFlags = showBrickFlags;
 
@@ -7716,6 +7856,8 @@ syncAdminVersionLabels();
 refreshLiveCoachVersion();
 tryRestoreAdminSession();
 </script>
+<!-- Before client-intake.js, which reads the catalogue at factory time. -->
+<script src="lib/equipment-catalog.js"></script>
 <script src="lib/client-intake.js"></script>
 <script src="lib/coach-intake-sync-contract.js"></script>
 <script src="lib/admin-people-strip.js"></script>
@@ -7769,7 +7911,7 @@ tryRestoreAdminSession();
   /* The same number admin.html shows, because this is the same back office and two
      versions on two pages of one product is a bug report waiting to happen.
      scripts/admin-clients-page.test.js fails if it drifts from admin.html's own. */
-  var ADMIN_UI_VERSION = "5.4";
+  var ADMIN_UI_VERSION = "5.5";
 
   var SESSION_KEY = "dw_admin_session";
   var REMEMBER_KEY = "dw_admin_remember";
@@ -10055,6 +10197,8 @@ tryRestoreAdminSession();
     }
     if (t.closest && t.closest("[data-brainclose]")) {
       cvBrain.error = "";
+      /* Closing the panel puts away what the check found too — he has read it. */
+      cvBrain.checks = null;
       renderBrainPanel();
       return;
     }
@@ -10975,7 +11119,33 @@ tryRestoreAdminSession();
      A blank client is refused: that kind exists for him to write by hand.
      ══════════════════════════════════════════════════════════════════════ */
 
-  var cvBrain = { running: false, week: 0, total: 0, error: "", why: "" };
+  /* "checks" collects what the post-check found on EVERY week of this block, because a
+     month is written a week at a time and the violation may be in week three. Cleared
+     when a build starts, never in the middle of one (owner, 2026-09-15). */
+  var cvBrain = { running: false, week: 0, total: 0, error: "", why: "", checks: null };
+
+  /** Everything the post-check said about this block, gathered across its weeks. */
+  function brainNoteCheck(j) {
+    if (!j) return;
+    var found = Array.isArray(j.brickBlocking) ? j.brickBlocking : [];
+    if (!found.length && !j.repairSkipped && !j.repairError && !j.repairRejected) return;
+    var c = cvBrain.checks || { brickBlocking: [] };
+    for (var i = 0; i < found.length; i++) {
+      if (c.brickBlocking.indexOf(found[i]) < 0) c.brickBlocking.push(found[i]);
+    }
+    if (j.repairAttempted) c.repairAttempted = true;
+    if (j.repairFixed > 0) c.repairFixed = (c.repairFixed || 0) + j.repairFixed;
+    if (j.repairSkipped) c.repairSkipped = j.repairSkipped;
+    if (j.repairError) c.repairError = j.repairError;
+    if (j.repairRejected) c.repairRejected = j.repairRejected;
+    cvBrain.checks = c;
+  }
+
+  /** The violations, where the month is actually built. */
+  function brainCheckHtml() {
+    if (!cvBrain.checks || !window.CoachBrickFlagsView) return "";
+    return window.CoachBrickFlagsView.blockingBoxHtml(cvBrain.checks);
+  }
 
   function brainLibs() {
     return {
@@ -11011,6 +11181,9 @@ tryRestoreAdminSession();
     if (plan.done) return false;
     cvBrain.error = "";
     cvBrain.why = String(why || "");
+    /* A new build answers for itself. Resuming a stopped one does NOT clear this: the
+       weeks already written are still in the month (owner, 2026-09-15). */
+    cvBrain.checks = null;
     brainStep();
     return true;
   }
@@ -11073,6 +11246,7 @@ tryRestoreAdminSession();
     if (!host || !L.brief || !L.plan || !S.program) return;
     if (cvBrain.error) {
       host.innerHTML =
+        brainCheckHtml() +
         '<div class="brain-panel is-bad"><div class="brain-panel-head">הבנייה נעצרה — ' +
         esc(cvBrain.error) + "</div>" +
         '<div class="brain-panel-note">' + brainWrittenLine() + " ההמשכה מריצה רק את מה שחסר." +
@@ -11095,7 +11269,9 @@ tryRestoreAdminSession();
         "</div>";
       return;
     }
-    host.innerHTML = "";
+    /* Done: the panel closes, and what the check found stays on screen. It is the only
+       moment he sees it, and the month is saved unapproved until he acts on it. */
+    host.innerHTML = brainCheckHtml();
   }
 
   /** The questionnaire that was sent, folded away under the progress line. */
@@ -11214,6 +11390,7 @@ tryRestoreAdminSession();
           return;
         }
         if (typeof showBrickFlags === "function") showBrickFlags(j);
+        brainNoteCheck(j);
         var week = null;
         if (localWeek === 1) {
           var built = typeof parseBlockFromText === "function" ? parseBlockFromText(j.text, j) : j.block;
@@ -11511,6 +11688,234 @@ tryRestoreAdminSession();
     return out;
   }
 
+  /* --- the equipment checklist -------------------------------------------------------
+   * Drawn from lib/equipment-catalog.js, so the list the coach is checked against and the
+   * list the owner ticks can never be two different lists. Three shapes of row, decided by
+   * the owner on 2026-09-14:
+   *   station  a count, and only for a ROOM - for one athlete "how many barbells" is noise
+   *   loaded   a ceiling in kg, asked of everyone: "dumbbells up to 8kg" at home is the
+   *            same bug as 22.5kg in a 15kg studio
+   *   run      a length in metres, and the one number that is required once ticked
+   * A blank count is "not stated". On the five scarce machines that means a rotation
+   * station; everywhere else it means no constraint.
+   */
+  var EQUIP_GROUP_TITLES = {
+    environment: "The place itself",
+    station: "Stations — how many, if you know",
+    loaded: "Loads — up to what weight",
+    tick: "Have it or not",
+  };
+
+  function equipCatalogue() {
+    return typeof EquipmentCatalog !== "undefined" && EquipmentCatalog.ITEMS
+      ? EquipmentCatalog.ITEMS
+      : [];
+  }
+
+  function equipNumKind(item, individual) {
+    if (item.metric === "distance") return { show: true, unit: "metres", key: "cap" };
+    if (item.ceiling) return { show: true, unit: "max " + item.ceiling, key: "cap" };
+    /* A count is a room's question. One athlete either owns a kettlebell or does not. */
+    if (item.group === "station" && !individual) return { show: true, unit: "how many", key: "qty" };
+    return { show: false, unit: "", key: "" };
+  }
+
+  function renderEquipList(individual) {
+    var host = el("inEquipList");
+    if (!host) return;
+    /* Redrawn whenever the room/person mode changes, and the answers must survive it: this
+       runs after the form is filled as well as before it, and a rebuild that wipes the ticks
+       would silently empty a questionnaire the owner had already answered. */
+    var carried = host.querySelector("[data-eq-have]") ? readEquipList() : null;
+    var items = equipCatalogue().filter(function (it) {
+      return it.group !== "always";
+    });
+    var order = ["environment", "station", "loaded", "tick"];
+    var html = "";
+    order.forEach(function (group) {
+      var rows = items.filter(function (it) {
+        return it.group === group;
+      });
+      if (!rows.length) return;
+      html +=
+        '<div class="equip-group"><div class="equip-group-title">' +
+        esc(EQUIP_GROUP_TITLES[group] || group) +
+        "</div>";
+      rows.forEach(function (it) {
+        var num = equipNumKind(it, individual);
+        var id = "eq_" + it.id.replace(/[^A-Za-z]+/g, "_");
+        html +=
+          '<label class="equip-row" data-eq="' + esc(it.id) + '">' +
+          '<input type="checkbox" id="' + id + '" data-eq-have="' + esc(it.id) + '">' +
+          '<span class="equip-name">' + esc(it.he) + "</span>" +
+          (num.show
+            ? '<input type="number" min="1" class="equip-num" data-eq-num="' + esc(it.id) +
+              '" data-eq-key="' + num.key + '" placeholder="—" hidden>' +
+              '<span class="equip-unit" data-eq-unit="' + esc(it.id) + '" hidden>' +
+              esc(num.unit) + "</span>"
+            : "") +
+          "</label>";
+      });
+      html += "</div>";
+    });
+    host.innerHTML = html;
+    if (carried) fillEquipList(carried);
+    else syncEquipRows();
+  }
+
+  /* A number on a row that is not ticked is a number about something that does not exist,
+     so the boxes only appear once the tick is there. */
+  function syncEquipRows() {
+    var host = el("inEquipList");
+    if (!host) return;
+    host.querySelectorAll("[data-eq-have]").forEach(function (box) {
+      var id = box.getAttribute("data-eq-have");
+      var row = box.closest(".equip-row");
+      var num = host.querySelector('[data-eq-num="' + CSS.escape(id) + '"]');
+      var unit = host.querySelector('[data-eq-unit="' + CSS.escape(id) + '"]');
+      if (row) row.classList.toggle("on", box.checked);
+      if (num) num.hidden = !box.checked;
+      if (unit) unit.hidden = !box.checked;
+    });
+  }
+
+  /** The preset reflects the list rather than the other way round: it is ticked exactly when
+   *  every row is, so it cannot sit there claiming a complete gym over a half-empty list. */
+  function syncEquipPreset() {
+    var host = el("inEquipList");
+    var box = el("inEquipFull");
+    if (!host || !box) return;
+    var all = host.querySelectorAll("[data-eq-have]");
+    if (!all.length) {
+      box.checked = false;
+      return;
+    }
+    box.checked = Array.prototype.every.call(all, function (b) {
+      return b.checked;
+    });
+  }
+
+  /** One click fills the whole list; a second empties it. The numbers are left alone either
+   *  way - a count the owner typed is his answer, not the preset's. */
+  function applyEquipPreset(on) {
+    var host = el("inEquipList");
+    if (!host) return;
+    host.querySelectorAll("[data-eq-have]").forEach(function (b) {
+      b.checked = !!on;
+    });
+    syncEquipRows();
+  }
+
+  function readEquipList() {
+    var host = el("inEquipList");
+    var out = {};
+    if (!host) return out;
+    host.querySelectorAll("[data-eq-have]").forEach(function (box) {
+      var id = box.getAttribute("data-eq-have");
+      var row = { have: !!box.checked, qty: null, cap: null };
+      var num = host.querySelector('[data-eq-num="' + CSS.escape(id) + '"]');
+      if (num && box.checked) {
+        var n = parseInt(num.value, 10);
+        if (n > 0) row[num.getAttribute("data-eq-key")] = n;
+      }
+      out[id] = row;
+    });
+    return out;
+  }
+
+  function fillEquipList(list) {
+    var host = el("inEquipList");
+    if (!host) return;
+    var v = list && typeof list === "object" ? list : {};
+    host.querySelectorAll("[data-eq-have]").forEach(function (box) {
+      var id = box.getAttribute("data-eq-have");
+      var row = v[id] && typeof v[id] === "object" ? v[id] : null;
+      box.checked = !!(row && row.have);
+      var num = host.querySelector('[data-eq-num="' + CSS.escape(id) + '"]');
+      if (num) {
+        var key = num.getAttribute("data-eq-key");
+        num.value = row && row[key] ? row[key] : "";
+      }
+    });
+    syncEquipRows();
+  }
+
+  /* The level choices and the group kinds come from the module, so the screen and the
+     packet can never drift into two different lists. */
+  function renderPopulationPickers(v) {
+    var CI = window.CLIENT_INTAKE;
+    var lead = el("inLevelLead");
+    var rest = el("inLevels");
+    if (CI && lead && rest) {
+      var levels = CI.LEVEL_DEFS || [];
+      var picked = (v && v.levels) || {};
+      var row = function (d, cls) {
+        return '<label class="chk-row' + (cls ? " " + cls : "") + '">' +
+          '<input type="checkbox" data-level="' + esc(d.id) + '"' +
+          (picked[d.id] === true ? " checked" : "") +
+          "><span>" + esc(d.label) + "</span></label>";
+      };
+      lead.innerHTML = levels.filter(function (d) { return d.lead; }).map(function (d) {
+        return row(d, "level-lead");
+      }).join("");
+      rest.innerHTML = levels.filter(function (d) { return !d.lead; }).map(function (d) {
+        return row(d, "");
+      }).join("");
+    }
+    var kindLead = el("inGroupLead");
+    var host = el("inGroupTypes");
+    if (CI && kindLead && host) {
+      var kinds = CI.GROUP_TYPE_DEFS || [];
+      var pickedK = (v && v.groupTypes) || {};
+      /* No exclusivity here on purpose: most rooms are general fitness AND something. */
+      var kindRow = function (d, cls) {
+        return '<label class="chk-row' + (cls ? " " + cls : "") + '">' +
+          '<input type="checkbox" data-group-type="' + esc(d.id) + '"' +
+          (pickedK[d.id] === true ? " checked" : "") +
+          "><span>" + esc(d.label) + "</span></label>";
+      };
+      kindLead.innerHTML = kinds.filter(function (d) { return d.lead; }).map(function (d) {
+        return kindRow(d, "level-lead");
+      }).join("");
+      host.innerHTML = kinds.filter(function (d) { return !d.lead; }).map(function (d) {
+        return kindRow(d, "");
+      }).join("");
+    }
+  }
+
+  function readLevels() {
+    var out = {};
+    var boxes = document.querySelectorAll("[data-level]");
+    for (var i = 0; i < boxes.length; i++) {
+      if (boxes[i].checked) out[boxes[i].getAttribute("data-level")] = true;
+    }
+    return out;
+  }
+
+  /* One room has one ability, so ticking one lets the others go. The KIND of group is
+     not like that and is deliberately left alone: a women-only pre-army group is one
+     room, not two (owner, 2026-09-15). */
+  function bindLevelExclusivity() {
+    document.addEventListener("change", function (ev) {
+      var t = ev && ev.target;
+      if (!t || !t.getAttribute || !t.getAttribute("data-level")) return;
+      if (!t.checked) return;
+      var boxes = document.querySelectorAll("[data-level]");
+      for (var i = 0; i < boxes.length; i++) {
+        if (boxes[i] !== t) boxes[i].checked = false;
+      }
+    });
+  }
+
+  function readGroupTypes() {
+    var out = {};
+    var boxes = document.querySelectorAll("[data-group-type]");
+    for (var i = 0; i < boxes.length; i++) {
+      if (boxes[i].checked) out[boxes[i].getAttribute("data-group-type")] = true;
+    }
+    return out;
+  }
+
   function readIntakeForm() {
     var keys = (window.CLIENT_INTAKE && window.CLIENT_INTAKE.DAY_KEYS) || [];
     var emphasis = {};
@@ -11532,9 +11937,20 @@ tryRestoreAdminSession();
       clientName: String(el("inName").value || ""),
       monthlyAmount: Number(el("inAmount").value) || 0,
       paymentMethod: String(el("inMethod").value || ""),
-      equipment: el("inEquipOtherOn").checked ? "other" : "functional_gym",
+      /* OTHER stopped being a road of its own on 2026-09-14. The list is always asked, and
+         the free-text box is simply beside it - so the stored mode is derived from whether
+         anything was written there. An intake saved under the old form keeps its meaning. */
+      equipment: String(el("inEquipOther").value || "").trim() ? "other" : "functional_gym",
       equipmentOther: String(el("inEquipOther").value || ""),
-      maxAthletesAtOnce: el("inMaxAtOnce") ? parseInt(el("inMaxAtOnce").value, 10) || 0 : 0,
+      equipmentList: readEquipList(),
+      /* "No practical limit" wins outright: a number left in the field behind it would
+         reach the coach as a capacity the room has just said it does not have. */
+      maxAthletesAtOnce:
+        el("inNoCap") && el("inNoCap").checked
+          ? 0
+          : el("inMaxAtOnce")
+          ? parseInt(el("inMaxAtOnce").value, 10) || 0
+          : 0,
       noCapacityCap: !!(el("inNoCap") && el("inNoCap").checked),
       avoidInProgram: el("inAvoidProgram") ? el("inAvoidProgram").value.trim() : "",
       /* "" when neither is ticked — never a mode the owner did not choose. */
@@ -11554,6 +11970,10 @@ tryRestoreAdminSession();
       deloadEveryWeeks: Number(el("inDeloadAt").value) || 0,
       sessionMinutes: Number(el("inMinutes").value) || 0,
       population: String(el("inPopulation").value || ""),
+      ageFrom: el("inAgeFrom") ? parseInt(el("inAgeFrom").value, 10) || 0 : 0,
+      ageTo: el("inAgeTo") ? parseInt(el("inAgeTo").value, 10) || 0 : 0,
+      levels: readLevels(),
+      groupTypes: readGroupTypes(),
     };
   }
 
@@ -11577,6 +11997,8 @@ tryRestoreAdminSession();
       paymentMethod: "",
       equipment: "functional_gym",
       equipmentOther: "",
+      /* A new client starts with nothing ticked, not with a gym assumed. */
+      equipmentList: {},
       scheduleMode: "",
       sessionsPerWeek: "",
       sessionsDiffer: false,
@@ -11584,9 +12006,17 @@ tryRestoreAdminSession();
       dayEmphasisEnabled: false,
       deloadWeek: false,
       deloadEveryWeeks: "",
-      sessionMinutes: "",
+      /* A blank field made him type the same number into every new client: sixty minutes
+         is what a session is here, and anything else is the exception he types over
+         (owner, 2026-09-15). It is a default, not an assumption — the validator still
+         refuses a session with no length at all. */
+      sessionMinutes: 60,
       population: "",
       goals: "",
+      ageFrom: "",
+      ageTo: "",
+      levels: { mixed: true },
+      groupTypes: { general_fitness: true },
       maxAthletesAtOnce: "",
       noCapacityCap: false,
       avoidInProgram: "",
@@ -11609,11 +12039,13 @@ tryRestoreAdminSession();
     el("inAmount").value = v.monthlyAmount || "";
     el("inMethod").value = v.paymentMethod || "";
 
-    el("inEquipOtherOn").checked = v.equipment === "other";
-    /* #inEquipFull, not #inEquipGym — the wrong id here threw, and a throw in a click
-       handler is a button that does nothing at all, which is exactly how it looked. */
-    el("inEquipFull").checked = v.equipment !== "other";
     el("inEquipOther").value = v.equipmentOther || "";
+    /* Drawn for the right mode first, then filled: an individual's list carries no counts. */
+    renderEquipList(isIndividualClient());
+    fillEquipList(v.equipmentList);
+    /* The preset is an action, not a stored answer - it shows as ticked only while the list
+       genuinely is complete, so it never claims a room owns something it does not. */
+    syncEquipPreset();
 
     el("inSchedCount").checked = v.scheduleMode === "session_count";
     el("inSchedWeekly").checked = v.scheduleMode === "weekly_schedule";
@@ -11629,6 +12061,9 @@ tryRestoreAdminSession();
     el("inMinutes").value = v.sessionMinutes || "";
     /* The goals tab is gone; a client answered before the merge keeps their words. */
     el("inPopulation").value = CI.mergedPopulation ? CI.mergedPopulation(v) : v.population || "";
+    if (el("inAgeFrom")) el("inAgeFrom").value = v.ageFrom || "";
+    if (el("inAgeTo")) el("inAgeTo").value = v.ageTo || "";
+    renderPopulationPickers(v);
 
     CI.DAY_KEYS.forEach(function (k) {
       var rest = el("inRest-" + k);
@@ -11695,10 +12130,15 @@ tryRestoreAdminSession();
         : "New coach / studio client";
     }
     el("createBtn").textContent = S.blockMode ? "צור לבנה" : "Create program";
+    /* Hebrew set here rather than in the markup, like the button beside it: the FIELDS of
+       this card are English and a test holds them to it. */
+    if (el("saveIntakeBtn")) el("saveIntakeBtn").textContent = "שמור תחקור בלבד";
     el("iPrev").disabled = iStep === 0;
     var last = iStep === tabs.length - 1;
     el("iNext").hidden = last;
     el("createBtn").hidden = !last;
+    /* Beside the create button, and only where there is something to correct. */
+    if (el("saveIntakeBtn")) el("saveIntakeBtn").hidden = !(last && S.blockMode && S.program);
   }
 
   /* A pair of checkboxes standing in for a two-way choice: ticking one unticks its
@@ -11728,18 +12168,22 @@ tryRestoreAdminSession();
 
   /* A room shared by twelve people has a capacity; one athlete does not. */
   function syncStationsVisibility(isIndividual) {
-    ["inMaxAtOnce", "inNoCap"].forEach(function (id) {
-      var box = el(id);
-      var wrap = box && box.closest ? box.closest("label") : null;
-      if (wrap) wrap.hidden = !!isIndividual;
-    });
+    /* Both live in one row now, so there is one thing to hide. */
+    if (el("inCapRow")) el("inCapRow").hidden = !!isIndividual;
+    /* Counts are a room's question and ride on the same switch: "how many barbells" is noise
+       to one athlete, while a load ceiling is asked of everyone. The answers survive the
+       redraw. */
+    renderEquipList(!!isIndividual);
+    syncEquipPreset();
   }
 
   function syncIntakeConditionals() {
-    /* Equipment: the well-equipped gym is the default and needs no description.
-       Only OTHER opens the box. */
-    var equipOther = el("inEquipOtherOn").checked;
-    el("inEquipOtherWrap").hidden = !equipOther;
+    /* A number about a limit that does not exist is not an answer. */
+    if (el("inNoCap") && el("inMaxAtOnce")) el("inMaxAtOnce").hidden = el("inNoCap").checked;
+    /* Equipment: the list is always open and the free-text box always beside it, so there is
+       no longer a mode to reveal here (owner, 2026-09-14). */
+    syncEquipRows();
+    syncEquipPreset();
 
     /* Schedule: nothing is ticked until the owner picks, and each choice reveals only
        its own sub-tree. Neither branch is shown while no mode is chosen — an indented
@@ -11847,6 +12291,50 @@ tryRestoreAdminSession();
     if (box.checked) {
       try { txt.focus(); } catch (e) {}
     }
+  }
+
+  /**
+   * The answers, saved and nothing else.
+   *
+   * No block, no build, no approval. The client sees no intake at all — the payload they
+   * are handed is the programme's id, name, kind, start, version and its APPROVED weeks —
+   * so a correction is invisible from their side (owner, 2026-09-15).
+   */
+  function saveIntakeOnly() {
+    el("createErr").textContent = "";
+    var CI = window.CLIENT_INTAKE;
+    var form = readIntakeForm();
+    if (S.program) {
+      form.clientName = S.program.clientName || form.clientName;
+      form.monthlyAmount = S.program.monthlyAmount || 0;
+      form.paymentMethod = S.program.paymentMethod || "";
+    }
+    var problems = CI ? CI.validateIntake(form) : [];
+    if (problems.length) { el("createErr").textContent = problems.join(" "); return; }
+    var btn = el("saveIntakeBtn");
+    btn.disabled = true;
+    api({
+      action: "save_intake",
+      programId: S.program.programId,
+      expectedVersion: S.program.version,
+      intake: form,
+      athleteIntake: isIndividualClient()
+        ? Object.assign({}, readAthleteScheduleTab(), readAthleteGoalsTab())
+        : undefined,
+    }).then(function (r) {
+      btn.disabled = false;
+      if (r.status === 409) {
+        el("createErr").textContent = "מישהו שמר בינתיים. סגור ופתח את הלקוח מחדש.";
+        return;
+      }
+      if (r.status !== 200 || !r.body.ok) {
+        el("createErr").textContent = (r.body && r.body.error) || "לא הצלחתי לשמור את התחקור.";
+        return;
+      }
+      S.program = r.body.program;
+      banner("good", "התחקור נשמר. שום לבנה לא נוצרה ושום שבוע לא השתנה.");
+      leaveBlockMode();
+    });
   }
 
   function submitIntake() {
@@ -11978,11 +12466,26 @@ tryRestoreAdminSession();
     buildRestDayRow();
     renderIntakeTabs();
     syncIntakeConditionals();
-    bindPickPair("equip");
+    /* "equip" is no longer a pair — the list replaced the two modes on 2026-09-14. */
     bindPickPair("sched");
+    renderEquipList(false);
+    if (el("inEquipFull")) {
+      el("inEquipFull").addEventListener("change", function () {
+        applyEquipPreset(el("inEquipFull").checked);
+      });
+    }
+    if (el("inEquipList")) {
+      /* Delegated: the rows are redrawn whenever the room/person mode changes, and a listener
+         bound to a row would go with it. */
+      el("inEquipList").addEventListener("change", function () {
+        syncEquipRows();
+        syncEquipPreset();
+      });
+    }
     bindCalGestures();
+    bindLevelExclusivity();
     /* The version badge is the page's, painted by syncAdminVersionLabels(). */
-    ["inSessionsDiffer", "inRestDays", "inEmphasis", "inDeload", "inHasChanges"]
+    ["inSessionsDiffer", "inRestDays", "inEmphasis", "inDeload", "inHasChanges", "inNoCap"]
       .forEach(function (id) {
         var n = el(id);
         if (n) n.addEventListener("change", syncIntakeConditionals);
@@ -12021,6 +12524,7 @@ tryRestoreAdminSession();
       if (iStep > 0) { iStep--; renderIntakeTabs(); }
     });
     el("createBtn").addEventListener("click", submitIntake);
+    if (el("saveIntakeBtn")) el("saveIntakeBtn").addEventListener("click", saveIntakeOnly);
     /* Adding a client is ONE button on this page — the header's "+ לקוח", which asks
        which kind and then calls window.ClientScreen.newClient(). This screen no longer
        carries a button of its own, and reaching for one that is not there would have
@@ -12038,10 +12542,16 @@ tryRestoreAdminSession();
         loadList();
       });
     });
-    el("iCancel").addEventListener("click", function () {
-      if (!window.confirm("לצאת מהתחקור? מה שהוקלד יימחק.")) return;
-      if (S.blockMode) { leaveBlockMode(); return; }
-      setAdding(false);
+    /* Two doors, one behaviour: the header's סגור and the footer's Cancel. The footer button
+       alone was invisible from the first tab of a long form. */
+    ["iCancel", "iClose"].forEach(function (id) {
+      var b = el(id);
+      if (!b) return;
+      b.addEventListener("click", function () {
+        if (!window.confirm("לצאת מהתחקור? מה שהוקלד יימחק.")) return;
+        if (S.blockMode) { leaveBlockMode(); return; }
+        setAdding(false);
+      });
     });
     S.token = storedToken();
     var params = new URLSearchParams(location.search);

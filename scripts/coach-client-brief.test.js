@@ -32,6 +32,9 @@ const admin = fs.readFileSync(path.join(root, "admin.html"), "utf8");
 const ROOM = Intake.normalizeIntake({
   clientName: "קבוצת בוקר",
   population: "adults",
+  ageFrom: 18,
+  ageTo: 45,
+  levels: { mixed: true },
   goals: "general",
   equipment: "functional_gym",
   equipmentOther: "",

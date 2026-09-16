@@ -55,6 +55,9 @@ const COACH_LAYER2_OPS_BRIEF = require("../lib/coach-layer2-ops-brief.js");
    line with the owner. */
 const { buildLayerPack, sellsSessionsByCount } = require("../lib/coach-layers");
 const { brickFlags } = require("../lib/coach-brick-flags.js");
+/* The certain half of the post-check — see lib/coach-brick-check.js for why the line between
+   "blocking" and "flag" is where it is. */
+const { checkBrick: brickCheck } = require("../lib/coach-brick-check.js");
 /* Legacy alias — foundation brief supersedes pattern-only brief */
 const COACH_PATTERN_BRIEF = COACH_FOUNDATION_BRIEF;
 
@@ -1282,21 +1285,100 @@ function reportedLiftCount(profile) {
   return n;
 }
 
-function loadBasisText(profile, agent) {
-  /* A ROOM has no reported lifts and never will — fifteen people from one month to ten years of
-     training age share no maximum. Percentages are exactly how you write load for them: each
-     member takes the percentage of THEIR own number. Found 2026-09-08, when the box brick was
-     told not to write percentages and the flag fired on a correct prescription. */
-  if (agent === "studio") return "";
+/** What a ROOM is judged against: its inventory and the session shape it was sold. */
+function studioCheckCtx(intake) {
+  if (!intake || typeof intake !== "object") return null;
+  return {
+    equipmentList: intake.equipmentList,
+    sessionsPerWeek: intake.sessionsPerWeek,
+    sessionTypes: intake.sessionTypes,
+    /* Never, for a room. A studio does not test its members' 1RM one by one, so a
+       percentage there has nothing to be a percentage of — and "75% 1RM" for a room of
+       seventeen-year-olds is the line the owner rewrote by hand, one at a time. */
+    percentagesAllowed: false,
+  };
+}
+
+/**
+ * What a PERSON is judged against.
+ *
+ * Their own inventory, the second place's when they train in one, and the weekdays they
+ * actually train. NOT the session count: an active recovery day and an extra session the
+ * athlete asked for (POL-026) are both legitimate reasons for a week to hold more than
+ * the days they named, and a blocking violation that is sometimes wrong is worse than
+ * none — it also spends a repair call on nothing (owner, 2026-09-15).
+ *
+ * The recovery day is allowed alongside the training days for exactly that reason: the
+ * athlete asked for it.
+ */
+function athleteCheckCtx(profile) {
+  const p = profile && typeof profile === "object" ? profile : null;
+  if (!p) return null;
+  const list = p.equipmentList && typeof p.equipmentList === "object" ? p.equipmentList : null;
+  const answered = !!list && Object.keys(list).length > 0;
+  const days = Array.isArray(p.trainingDays) ? p.trainingDays.slice() : [];
+  if (p.activeRecoveryPref === "yes" && p.activeRecoveryDay && days.indexOf(p.activeRecoveryDay) < 0) {
+    days.push(p.activeRecoveryDay);
+  }
+  if (!answered && !days.length) return null;
+  const ctx = {
+    equipmentList: list,
+    trainingDays: days,
+    /* The same rule LOAD BASIS states in the prompt: a percentage needs a number to be a
+       percentage of, and this athlete reported none. */
+    percentagesAllowed: reportedLiftCount(p) > 0,
+  };
+  const second =
+    p.trainsMultipleLocations === true &&
+    Array.isArray(p.secondaryLocationDays) &&
+    p.secondaryLocationDays.length &&
+    p.secondaryEquipmentList &&
+    typeof p.secondaryEquipmentList === "object" &&
+    Object.keys(p.secondaryEquipmentList).length
+      ? { days: p.secondaryLocationDays, equipmentList: p.secondaryEquipmentList }
+      : null;
+  if (second) ctx.secondary = second;
+  return ctx;
+}
+
+function loadBasisText(profile, agent, opts) {
+  /* THE STUDIO EXEMPTION IS GONE (owner, 2026-09-14).
+   *
+   * It was written on 2026-09-08 on a reasonable argument: a ROOM has no shared 1RM, and in a box
+   * "@75%" is standard writing because every member takes the percentage of THEIR OWN number. The
+   * argument is sound and the exemption was still wrong, because it exempted the WHOLE agent
+   * rather than the case it was reasoning about. עודד מכינה is a room of seventeen-year-olds who
+   * have never tested a lift, and the first brick written for them prescribed "75% 1RM", "78%",
+   * "82-85%". The owner rewrote every one of them by hand.
+   *
+   * So the rule that already existed applies to everyone: a percentage needs a number to be a
+   * percentage of, and this room reported none. The day a box does test its members, the studio
+   * intake gains a maxima field and percentages open again on the same test — no exemption needed.
+   *
+   * The language itself is the owner's, 2026-09-14: X/10 for strength and the olympic lifts,
+   * RIR for gymnastics. One vocabulary, so the coach stops inventing his own each time. */
   const n = reportedLiftCount(profile);
   if (n > 0) return "";
+  /* The studio maxima field, promised in the comment above, was built on 2026-09-15 and
+     taken out the same day: a room does not test its members' 1RM one by one, so the
+     field could only ever have been ticked by mistake — and a mistake there reproduces
+     the failure it was meant to prevent. A room is written in effort, always. */
+  const room = agent === "studio";
   return (
-    "\n\nLOAD BASIS (HARD — a fact about this athlete, not a preference):\n" +
-    "NO 1RM WAS REPORTED FOR ANY LIFT, so a percentage has nothing to be a percentage of. Do NOT " +
+    "\n\nLOAD BASIS (HARD — a fact about this " +
+    (room ? "ROOM" : "athlete") +
+    ", not a preference):\n" +
+    "NO 1RM WAS REPORTED" +
+    (room ? " BY THIS ROOM" : " FOR ANY LIFT") +
+    ", so a percentage has nothing to be a percentage of. Do NOT " +
     "write %1RM, and do not write an absolute kilogram figure you inferred from nothing. " +
-    "Prescribe by RPE, by a rep target, or by a described quality — 'build to a heavy triple for " +
-    "today', 'RPE 8', 'a load that lets the position hold'. That is a full prescription and not a " +
-    "compromise: it is how a lift is loaded before anyone has tested it.\n"
+    "Prescribe effort instead, in these exact words:\n" +
+    "- STRENGTH and the OLYMPIC LIFTS — an effort out of ten: 'squat, build to 7/10', '4 sets @ 8/10'.\n" +
+    "- GYMNASTICS (pull-up, muscle-up, ring work, handstand walk, dip, toes-to-bar) — REPS IN " +
+    "RESERVE: 'strict pull-ups, 2 RIR', 'stop each set 2 short of failure'.\n" +
+    "A rep target or a described quality is also a full prescription — 'build to a heavy triple " +
+    "for today', 'a load that lets the position hold'. None of this is a compromise: it is how a " +
+    "lift is loaded before anyone has tested it.\n"
   );
 }
 
@@ -1422,7 +1504,7 @@ function buildSystemWithMemory(profile, action, opts) {
       coachPolicyBlock() +
       buildLayerKnowledgeBlock(profile, opts) +
       oneRmTestGateText(opts && opts.blockStartWeek, profile, opts) +
-      loadBasisText(profile, coachAgentFor(profile, opts)) +
+      loadBasisText(profile, coachAgentFor(profile, opts), opts) +
       standardsText(coachAgentFor(profile, opts)) +
       buildCostCapsRuntimeNote(profile) +
       buildFinishLearningBlock(profile, action) +
@@ -2151,7 +2233,17 @@ async function callCoachLlm(apiKey, groqKey, model, messages, storeName, systemT
   );
 }
 
+/* The function's own ceiling, from vercel.json. The violation retry is spent against it rather
+   than against a guess: see sendBackForRepair below. */
+const FUNCTION_BUDGET_MS = 300 * 1000;
+/* What must be left over to be worth starting a second generation: the first call's own duration
+   again, plus room to parse and answer. Measured at runtime, never assumed - there is no recorded
+   timing for a brick build anywhere in this repo, and inventing one would be the same kind of
+   guess this whole change exists to remove. */
+const REPAIR_MARGIN_MS = 20 * 1000;
+
 async function coachHandler(req, res) {
+  const tRequestStart = Date.now();
   setCors(req, res);
   if (req.method === "OPTIONS") {
     return res.status(204).json({});
@@ -3086,6 +3178,23 @@ async function coachHandler(req, res) {
         if (f && f.length) out.brickFlags = f;
       }
     } catch (eFlags) {}
+    /* And the half a machine can be CERTAIN about — equipment that does not exist there, a load
+       above a ceiling the owner typed, a week with no bodyweight work, the wrong session count.
+       It ran for a ROOM only until 2026-09-15: an individual's brick was never once measured
+       against the list they had filled in, which meant the whole equipment round protected a
+       studio and left a person exactly where עודד had been (owner, 2026-09-15). */
+    try {
+      const checked = block || (week ? { weeks: [week] } : null);
+      const intake = (body && body.studioIntake) || null;
+      const ctx = intake ? studioCheckCtx(intake) : athleteCheckCtx(athleteProfile);
+      if (checked && ctx) {
+        const r = brickCheck(checked, ctx);
+        if (r && r.blocking && r.blocking.length) out.brickBlocking = r.blocking;
+        if (r && r.flags && r.flags.length) {
+          out.brickFlags = (out.brickFlags || []).concat(r.flags);
+        }
+      }
+    } catch (eCheck) {}
     if (part) out.part = part;
     if (day) out.day = day;
     return out;
@@ -3190,6 +3299,99 @@ async function coachHandler(req, res) {
       priorText: String(primary.text || "").slice(0, 400),
       intakeRetried: true,
     });
+  }
+
+  /**
+   * ONE repair pass, and only when there is provably time for it.
+   *
+   * The owner's decision of 2026-09-14: block on what a machine is certain of, flag what needs
+   * judgement. Blocking means the brick goes BACK to the coach — with his own work in hand and
+   * the list of violations — rather than reaching the owner for him to fix by hand, which is what
+   * he did with עודד's first brick, line by line.
+   *
+   * Not a rebuild from nothing. He keeps everything that was right; the instruction is to change
+   * the lines named and nothing else. A regeneration would cost the good half of the brick too.
+   *
+   * THE TIME GUARD IS THE WHOLE REASON THIS IS SAFE. A second generation doubles the wait against
+   * a 300-second ceiling, and nothing in this repo records how long a brick actually takes. So it
+   * is not estimated: the first call's real duration is measured, and the repair only starts when
+   * that much time plus a margin is still left. When it is not, the violations are reported to the
+   * owner instead — which is exactly where we were a minute ago, never worse.
+   *
+   * Cost, measured 2026-09-09: about 7 agorot a generation, ~15 for a repair. Against a client
+   * paying 500 a month it is not a consideration; the wait is.
+   */
+  async function sendBackForRepair(packed, tCallStart) {
+    if (!programming) return packed;
+    const violations = Array.isArray(packed && packed.brickBlocking) ? packed.brickBlocking : [];
+    if (!violations.length) return packed;
+    if (packed.repairAttempted) return packed;
+
+    const callMs = Math.max(0, Date.now() - tCallStart);
+    const leftMs = FUNCTION_BUDGET_MS - (Date.now() - tRequestStart);
+    /* Recorded either way, so that the next time this question comes up there is a number. */
+    packed.buildMs = callMs;
+    if (leftMs < callMs + REPAIR_MARGIN_MS) {
+      packed.repairSkipped = "no time left in the request budget";
+      return packed;
+    }
+
+    const prior = packed.block || (packed.week ? { weeks: [packed.week] } : null);
+    if (!prior) return packed;
+
+    const repairMsgs = [
+      {
+        role: "user",
+        text:
+          "JSON ONLY — no prose.\n" +
+          "Your brick is below. It breaks facts about this place that were stated in the request. " +
+          "These are not preferences and not suggestions:\n\n" +
+          violations
+            .map(function (v, i) {
+              return i + 1 + ". " + v;
+            })
+            .join("\n") +
+          "\n\nFix ONLY those lines. Keep every other line exactly as you wrote it — the rest of " +
+          "the brick is correct and re-writing it loses good work. Replace a missing implement " +
+          "with something the place actually has, at the same intent and the same stimulus; do " +
+          "not simply delete the movement and leave the session short. Bodyweight, floor and " +
+          "wall work are always available to you (POL-027).\n\n" +
+          "Return the COMPLETE corrected brick in the same format:\n\n" +
+          JSON.stringify(prior).slice(0, 60000),
+      },
+    ];
+
+    const tRepair = Date.now();
+    const repaired = await callProgrammingGenerate(repairMsgs, systemText, {
+      temperature: 0.2,
+      maxOutputTokens: 8192,
+      skipTools: true,
+      noInternalRetry: true,
+    });
+    if (!repaired.ok) {
+      packed.repairError = repaired.detail || repaired.error;
+      return packed;
+    }
+    const after = packOk(repaired, {
+      via: (packed.via || "primary") + "+repair",
+      repairAttempted: true,
+    });
+    after.buildMs = callMs;
+    after.repairMs = Date.now() - tRepair;
+    const before = violations.length;
+    const now = Array.isArray(after.brickBlocking) ? after.brickBlocking.length : 0;
+    /* A repair that made it worse is not an improvement, and the coach's first answer was at
+       least whole. Keep the better of the two and say which, out loud. */
+    if (!after.block && !after.week) {
+      packed.repairError = "the repair returned no brick";
+      return packed;
+    }
+    if (now > before) {
+      packed.repairRejected = "the repair broke more than it fixed (" + before + " → " + now + ")";
+      return packed;
+    }
+    after.repairFixed = before - now;
+    return after;
   }
 
   function weekHasPartContent(week) {
@@ -3525,6 +3727,7 @@ async function coachHandler(req, res) {
       /^confirm\??$/i.test(lastUserLine));
   const chatStore = skipChatFileSearch ? null : store || undefined;
 
+  const tGenerate = Date.now();
   result = programming
     ? await callProgrammingGenerate(messages, systemText)
     : await callCoachLlm(
@@ -3559,7 +3762,9 @@ async function coachHandler(req, res) {
     return res.status(200).json(weekPacked);
   }
   if (programming) {
-    return res.status(200).json(await retryIfIntakeLike(result));
+    return res
+      .status(200)
+      .json(await sendBackForRepair(await retryIfIntakeLike(result), tGenerate));
   }
   return res.status(200).json(packOk(result));
 }

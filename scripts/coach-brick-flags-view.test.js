@@ -93,4 +93,36 @@ ok("the try-again asks for the same block again", admin.indexOf("function retryI
 ok("the flags are amber", /\.brick-flags-head\{[^}]*color:#F0A44E/.test(css));
 ok("and nothing about them is red", /\.brick-flags[\s\S]{0,600}#F2867A/.test(css) === false);
 
+
+/* --- what a machine is CERTAIN about, on his screen ------------------------
+ * The post-check has been producing this list since 2026-09-14 and the owner never saw
+ * it: the block was saved unapproved with a rower in it and nothing said so. A flag is a
+ * note he weighs; this is equipment that does not exist in that room, and it must not
+ * look like the same thing (owner, 2026-09-15).
+ * ------------------------------------------------------------------------- */
+const BLOCKING = ["ROW is NOT available here, and was prescribed (W1 mon)."];
+ok("nothing found says nothing", F.blockingBoxHtml({}) === "" && F.blockingBoxHtml({ brickBlocking: [] }) === "");
+const vbox = F.blockingBoxHtml({ brickBlocking: BLOCKING, repairAttempted: true, repairFixed: 2 });
+ok("THE VIOLATIONS ARE SHOWN", /ROW is NOT available here/.test(vbox));
+ok("in their own box, not the flags'", /brick-blocking/.test(vbox) && !/brick-flags/.test(vbox));
+ok("counted", /brick-blocking-count">1</.test(vbox));
+ok("and the repair says what it managed", /המאמן תיקן 2/.test(vbox));
+/* The three ways a repair does not happen are each said out loud, because "five
+   violations" means something different when the coach never got the chance. */
+ok("a repair that never ran says so", /לא רץ/.test(F.repairStory({ repairSkipped: "אין זמן" })));
+ok("a repair that failed says so", /נכשל/.test(F.repairStory({ repairError: "timeout" })));
+ok("a repair that made it worse says so", /נשמרה הגרסה המקורית/.test(F.repairStory({ repairRejected: "שבר יותר" })));
+ok("and one that ran and found nothing left to say, says nothing", F.repairStory({}) === "");
+/* It is not an error screen: the month is saved and the client sees none of it. */
+ok("the box says the brick was saved and unapproved", /נשמרה ולא אושרה/.test(vbox));
+ok("and that the client sees nothing", /הלקוח לא רואה ממנה כלום/.test(vbox));
+/* No button: the coach has had his one repair round, and a second is a paid call. */
+ok("NO BUTTON ON A VIOLATION", !/<button/.test(vbox));
+ok("the list is capped like the server's", F.MAX_BLOCKING === 12);
+const many = F.cleanBlocking(Array.from({ length: 30 }, function (_, i) { return "v" + i; }));
+ok("and the cap holds", many.length === 12);
+ok("blank entries are dropped", F.cleanBlocking(["", "  ", "real"]).length === 1);
+ok("html in a violation cannot escape", !/<img/.test(F.blockingBoxHtml({ brickBlocking: ['<img src=x>'] })));
+
+
 console.log("\nAll brick-flag checks passed (" + passed + " assertions).");

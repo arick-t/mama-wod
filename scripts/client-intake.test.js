@@ -35,7 +35,10 @@ ok(
 
 /* --- a session has a length, and it is asked for --------------------- */
 
-const minutesBase = { clientName: "c", scheduleMode: "session_count", sessionsPerWeek: 3, population: "p" };
+/* Who is in the room became facts rather than a paragraph on 2026-09-15, and the facts
+   are what is required — the prose is not. */
+const minutesBase = { clientName: "c", scheduleMode: "session_count", sessionsPerWeek: 3,
+  ageFrom: 18, ageTo: 45, levels: { mixed: true } };
 ok("nothing is assumed about how long a session is", I.emptyIntake().sessionMinutes === 0);
 ok(
   "and it is refused rather than guessed",
@@ -52,6 +55,61 @@ ok(
 ok("the brief states it", /SESSION: 60 minutes, warm-up included/.test(
   I.briefFor(Object.assign({}, minutesBase, { sessionMinutes: 60 }))
 ));
+
+/* --- who is in the room ------------------------------------------------- */
+const roomBase = { clientName: "c", scheduleMode: "session_count", sessionsPerWeek: 3, sessionMinutes: 60 };
+ok(
+  "THE AGE RANGE IS ASKED FOR, NOT GUESSED",
+  I.validateIntake(Object.assign({}, roomBase, { levels: { mixed: true } }))
+    .some(function (m) { return /age range/i.test(m); })
+);
+ok(
+  "and it has to run the right way round",
+  I.validateIntake(Object.assign({}, roomBase, { levels: { mixed: true }, ageFrom: 50, ageTo: 16 }))
+    .some(function (m) { return /younger to the older/.test(m); })
+);
+ok(
+  "a studio really can run from 16 to 50",
+  I.validateIntake(Object.assign({}, roomBase, { levels: { mixed: true }, ageFrom: 16, ageTo: 50 })).length === 0
+);
+ok(
+  "the level is asked for too",
+  I.validateIntake(Object.assign({}, roomBase, { ageFrom: 16, ageTo: 50 }))
+    .some(function (m) { return /ability level/i.test(m); })
+);
+ok(
+  "THE PARAGRAPH IS NO LONGER REQUIRED",
+  !I.validateIntake(Object.assign({}, roomBase, { levels: { mixed: true }, ageFrom: 16, ageTo: 50 }))
+    .some(function (m) { return /Describe the place/.test(m); })
+);
+ok("an age outside the range is not an age", I.normalizeIntake({ ageFrom: 9, ageTo: 91 }).ageFrom === 0);
+ok("nor is a level nobody offered", !I.normalizeIntake({ levels: { olympian: true } }).levels.olympian);
+/* Ticks, not one answer, and "mixed" is the one the tab opens on (owner, 2026-09-15). */
+ok("MIXED ABILITY IS TICKED BEFORE ANYTHING IS TOUCHED", I.emptyIntake().levels.mixed === true);
+ok("the ability question keeps its four answers",
+  I.LEVEL_DEFS.map(function (d) { return d.id; }).join(",") ===
+    "mixed,beginners,experienced,competitive");
+/* Men only / women only describe a KIND of group, not a level (owner, 2026-09-15). */
+ok("who is in the room is a kind of group",
+  I.GROUP_TYPE_DEFS.some(function (d) { return d.id === "men_only"; }) &&
+    I.GROUP_TYPE_DEFS.some(function (d) { return d.id === "women_only"; }) &&
+    !I.LEVEL_DEFS.some(function (d) { return d.id === "women_only"; }));
+/* General fitness leads them and is ticked to begin with, and does NOT clear the rest:
+   most rooms are general fitness AND something. */
+ok("GENERAL FITNESS IS TICKED BEFORE ANYTHING IS TOUCHED",
+  I.emptyIntake().groupTypes.general_fitness === true);
+ok("and it leads the list", I.GROUP_TYPE_DEFS[0].id === "general_fitness" && I.GROUP_TYPE_DEFS[0].lead === true);
+/* The age range already says it. */
+ok("youth is not asked twice", !I.GROUP_TYPE_DEFS.some(function (d) { return d.id === "youth"; }));
+/* An intake answered while this was a single string still means what it said. */
+ok("a legacy level string becomes the tick it always was",
+  I.normalizeIntake({ level: "beginners" }).levels.beginners === true);
+ok("a group kind nobody offered is dropped", !I.normalizeIntake({ groupTypes: { bogus: true } }).groupTypes.bogus);
+const facts = I.populationFacts(I.normalizeIntake({ ageFrom: 16, ageTo: 50, levels: { mixed: true }, groupTypes: { prep: true } }));
+ok("the facts read as one line the coach can act on", facts === "ages 16-50 · mixed ability · pre-army / selection prep");
+/* A room is never asked about maxima at all: it does not test its members one by one,
+   and the field could only have been ticked by mistake (owner, 2026-09-15). */
+ok("there is no maxima field on a room", I.emptyIntake().maximaTested === undefined);
 
 /* Goals stopped being a field of its own. A client answered before the merge keeps
    their words: the one box carries both. */
@@ -71,7 +129,7 @@ ok(
 ok(
   "the labels read like the owner's spec",
   I.TABS.map(function (t) { return t.label; }).join("|") ===
-    "Client & payment|Equipment|Schedule|Population & limits"
+    "Client & payment|Equipment & space|Schedule|Population & limits"
 );
 
 /* No Hebrew anywhere in the shipped strings (comments excluded). */
@@ -96,9 +154,15 @@ ok(
   "the shape is exactly the owner's tabs worth of fields",
   JSON.stringify(shape) ===
     JSON.stringify([
-      "avoidInProgram", "clientName", "dayEmphasis", "dayEmphasisEnabled", "deloadEveryWeeks",
-      "deloadWeek", "equipment", "equipmentOther", "goals", "includeRestDays",
-      "maxAthletesAtOnce", "monthlyAmount", "noCapacityCap", "paymentMethod",
+      /* ageFrom/ageTo/level/groupTypes joined on 2026-09-15: who is in the room, as facts
+         rather than a paragraph the coach had to infer four things from. */
+      "ageFrom", "ageTo", "avoidInProgram", "clientName", "dayEmphasis", "dayEmphasisEnabled",
+      "deloadEveryWeeks",
+      /* equipmentList joined on 2026-09-14: the ticked inventory, beside the paragraph rather
+         than instead of it, so an intake answered before it exists still means what it meant. */
+      "deloadWeek", "equipment", "equipmentList", "equipmentOther", "goals", "groupTypes",
+      "includeRestDays", "levels", "maxAthletesAtOnce", "monthlyAmount",
+      "noCapacityCap", "paymentMethod",
       "population", "restDays", "scheduleMode", "sessionMinutes", "sessionTypes", "sessionsDiffer",
       "sessionsPerWeek",
     ])
@@ -270,7 +334,10 @@ ok(
   "session-count mode does not demand weekdays",
   I.validateIntake({
     clientName: "A", scheduleMode: "session_count", sessionsPerWeek: 3,
-    population: "p", goals: "g", sessionMinutes: 60,
+    population: "p",
+    ageFrom: 18,
+    ageTo: 45,
+    levels: { mixed: true }, goals: "g", sessionMinutes: 60,
   }).length === 0
 );
 
@@ -279,7 +346,8 @@ ok(
    calendar, and for a studio that trains Sunday to Thursday that is a guess with a
    schedule attached (owner, 2026-09-01). */
 
-const restBase = { clientName: "c", scheduleMode: "weekly_schedule", population: "p", goals: "g", sessionMinutes: 60 };
+const restBase = { clientName: "c", scheduleMode: "weekly_schedule", sessionMinutes: 60,
+  ageFrom: 18, ageTo: 45, levels: { mixed: true } };
 ok("no day is a rest day by default", Object.keys(I.emptyIntake().restDays).every(function (k) {
   return I.emptyIntake().restDays[k] === false;
 }));
@@ -351,12 +419,14 @@ ok("a 4-week cadence lands every fourth week", I.isDeloadWeek({ deloadWeek: true
 ok("no deload means no deload week ever", !I.isDeloadWeek({ deloadWeek: false }, 5));
 ok("week 0 and nonsense are not deloads", !I.isDeloadWeek(every5, 0) && !I.isDeloadWeek(every5, "x"));
 
-/* --- tabs 5 & 6: free text, and required --------------------------- */
+/* --- tab 4: facts required, prose optional -------------------------- */
 
+/* The paragraph was required until 2026-09-15. It is what the marks replaced, and
+   requiring both would be asking the same question twice. */
 ok(
-  "population is required",
-  I.validateIntake({ clientName: "A", goals: "g" }).some(function (p) {
-    return /who trains there/.test(p);
+  "the facts about the room are what is required",
+  I.validateIntake({ clientName: "A" }).some(function (p) {
+    return /age range/i.test(p);
   })
 );
 /* Goals stopped being a field of its own on 2026-09-01 — they live inside the one
@@ -382,6 +452,9 @@ const complete = {
   deloadWeek: false,
   sessionMinutes: 60,
   population: "Pre-army group, 17-19, mixed ability, 60-minute sessions",
+  ageFrom: 18,
+  ageTo: 45,
+  levels: { mixed: true },
   goals: "Army selection: 2000m run, pull-ups, load carry",
 };
 ok("a complete intake has no problems", I.validateIntake(complete).length === 0);
@@ -425,7 +498,10 @@ ok("no emphasis section when it is off", noRest.indexOf("STANDING EMPHASES") < 0
 /* session_count: uniform vs differing must be stated, because it changes the plan. */
 const uniform = I.briefFor({
   clientName: "A", scheduleMode: "session_count", sessionsPerWeek: 3,
-  population: "p", goals: "g", sessionMinutes: 60,
+  population: "p",
+  ageFrom: 18,
+  ageTo: 45,
+  levels: { mixed: true }, goals: "g", sessionMinutes: 60,
 });
 ok("uniform sessions are stated as standard CrossFit", /interchangeable — a standard CrossFit week/.test(uniform));
 const differing = I.briefFor({
@@ -450,7 +526,22 @@ ok("the client never sees their own price", clientCopy.indexOf("900") < 0);
 
 /* --- browser and server read the same definition -------------- */
 
-ok("the module is UMD", /root\.CLIENT_INTAKE = factory\(\)/.test(intakeSrc));
+/* The factory takes the equipment catalogue since 2026-09-14 — one list, so the questionnaire
+   and the post-check can never be checking different inventories. */
+ok("the module is UMD", /root\.CLIENT_INTAKE = factory\(root\.EquipmentCatalog\)/.test(intakeSrc));
+ok(
+  "the server gets the catalogue too",
+  /module\.exports = factory\(require\("\.\/equipment-catalog\.js"\)\)/.test(intakeSrc)
+);
+ok(
+  "and the page loads it BEFORE this file",
+  (function () {
+    const admin = fs.readFileSync(path.join(root, "admin.html"), "utf8");
+    const cat = admin.indexOf('<script src="lib/equipment-catalog.js"></script>');
+    const ci = admin.indexOf('<script src="lib/client-intake.js"></script>');
+    return cat >= 0 && ci >= 0 && cat < ci;
+  })()
+);
 const sandbox = { self: {} };
 vm.createContext(sandbox);
 vm.runInContext(intakeSrc, sandbox);

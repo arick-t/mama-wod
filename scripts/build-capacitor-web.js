@@ -30,5 +30,11 @@ fs.mkdirSync(outDir, { recursive: true });
 copyFile("index.html");
 copyDir("data");
 copyDir("assets");
+/* The ONE shared file the app itself needs. Added 2026-09-14 with the equipment catalogue:
+   index.html stopped carrying its own copy of the movement list, and without this line the
+   phone build would load nothing and match no workout to anyone's equipment - silently.
+   Deliberately one file and not the whole of lib/: the rest is admin and coach code, and it
+   has no business inside an athlete's bundle. */
+copyFile("lib/equipment-catalog.js");
 
 console.log("Built Capacitor web assets in /web");

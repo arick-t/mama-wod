@@ -35,7 +35,16 @@ assert.ok(admin.includes("openIntakeSheet"), "intake opens from stats popover");
 assert.ok(snap.includes('action === "admin_append_chat"'), "chat log API");
 assert.ok(snap.includes("adminChatLog"), "persist chat log");
 assert.ok(snap.includes('action === "admin_push_upgrade_offer"'), "push upgrade offer API");
-assert.ok(/DUCK-WOD Admin . 5\.4/.test(admin), "admin product label 5.4");
+/* The number is asserted as AGREEMENT, never as a literal. A pin like "5.4" here is
+   how the badge sat on 5.1 for two releases while three shipped past it: the number
+   could not move without editing tests, so every release skipped it
+   (owner, 2026-09-14; the same trap one level over, 2026-09-16). */
+function adminVersionAgrees(src) {
+  var badge = (src.match(/var ADMIN_UI_VERSION = "([\d.]+)"/) || [])[1];
+  var title = (src.match(/<title>DUCK-WOD Admin . ([\d.]+)</) || [])[1];
+  return !!badge && badge === title;
+}
+assert.ok(adminVersionAgrees(admin), "the admin label and the badge say the same number");
 /* The brain's version belongs HERE and only here: this is where it is the number that
    matters, and the owner asked for it to stay when it left the app (2026-09-03). */
 assert.ok(

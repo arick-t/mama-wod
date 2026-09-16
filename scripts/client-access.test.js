@@ -241,3 +241,62 @@ console.log("All client access checks passed.");
 
   set(keep);
 })();
+
+/* --- "last seen" is a stamp, never a chance to lose a device ---------------
+ *
+ * The whole row is written at once and Blob has no conditional write, so whoever
+ * writes last wins outright. The read path used to hand back the copy it started
+ * with, which quietly undid a code issued — or a device linked — while it was
+ * working. touchDevice exists so that write is one field on a row read a moment
+ * ago, and so it is skipped entirely while the stamp is still fresh.
+ * ------------------------------------------------------------------------- */
+(function () {
+  let t = 1_800_000_000_000;
+  const clock = function () {
+    return t;
+  };
+  const opts = { programId: PID, salt: SALT, now: clock };
+
+  const issued = A.issueCode(A.emptyAccess(PID, clock), opts);
+  const redeemed = A.redeemCode(issued.access, issued.code, opts);
+  const row = redeemed.access;
+  const devId = redeemed.device.id;
+
+  const fresh = A.touchDevice(row, devId, opts);
+  ok("a stamp made moments ago is not written again", fresh.changed === false);
+
+  t += A.LAST_SEEN_REFRESH_MS + 1000;
+  const stale = A.touchDevice(row, devId, opts);
+  ok("a stamp older than the refresh window is written", stale.changed === true);
+  ok(
+    "and the stamp is the one that moved",
+    stale.access.devices[0].lastSeenAt === new Date(t).toISOString()
+  );
+
+  /* The point of the exercise: a code issued while a client was reading survives. */
+  const withCode = A.issueCode(row, Object.assign({}, opts, { label: "second device" }));
+  const openBefore = withCode.access.codes.filter(function (c) {
+    return c && !c.usedAt;
+  }).length;
+  const touched = A.touchDevice(withCode.access, devId, opts);
+  const openAfter = touched.access.codes.filter(function (c) {
+    return c && !c.usedAt;
+  }).length;
+  ok("a code issued in the meantime is still there afterwards", openBefore === 1 && openAfter === 1);
+
+  /* And a device linked in the meantime is not pushed back out. */
+  const second = A.issueCode(row, opts);
+  const secondDev = A.redeemCode(second.access, second.code, opts);
+  const afterSecond = A.touchDevice(secondDev.access, devId, opts);
+  ok("a device linked in the meantime is still linked", afterSecond.access.devices.length === 2);
+
+  /* A device the owner revoked must not come back to life through a stamp.
+     From a copy: normalizeAccess shares its arrays with the row it was handed, so
+     the second device above is sitting in this one too. */
+  const alone = JSON.parse(JSON.stringify(redeemed.access));
+  alone.devices = alone.devices.filter(function (d) { return d && d.id === devId; });
+  const pulled = A.revokeDevice(alone, devId, opts);
+  const ghost = A.touchDevice(pulled.access, devId, opts);
+  ok("a revoked device is not resurrected by a stamp", ghost.missing === true && ghost.changed === false);
+  ok("and nothing is written for it", ghost.access.devices.length === 0);
+})();

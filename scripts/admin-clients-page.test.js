@@ -225,6 +225,8 @@ const ACTIONS_ALLOWED = [
   "block_delete",
   /* And its name on the shelf, which is what he finds it by. */
   "block_shelf_rename",
+  /* The answers, corrected and nothing else — no block, no build (owner, 2026-09-15). */
+  "save_intake",
 ];
 const actionsUsed = Array.from(
   new Set((screen.match(/action:\s*"([a-z_]+)"/g) || []).map(function (s) {
@@ -430,10 +432,37 @@ ok(
 ok("goals is no longer a tab of its own", paneIds.indexOf("goals") < 0);
 ok("nor a field of its own", !/id="inGoals"/.test(page));
 
-/* One tab: how long a session is, then one box for the room and what it is for. */
-ok("the merged tab asks how long a session is", /id="inMinutes" type="number" min="20" max="120"/.test(page));
+/* Session length moved to the schedule tab on 2026-09-15, first question there. */
+ok("the schedule tab asks how long a session is", /id="inMinutes" type="number" min="20" max="120"/.test(page));
 ok("it says the warm-up is inside that number", /warm-up is inside this number/.test(page));
-ok("the free box asks for the goals too", /what they are training for/.test(page));
+/* --- who is in the room, as facts rather than a paragraph -----------------
+ * The paragraph held four things at once, and it is where the product broke on the first
+ * real studio brick: a room of seventeen-year-olds who had never tested a lift was
+ * described in prose, so nothing could act on the age or on the missing maxima
+ * (owner, 2026-09-15).
+ * ------------------------------------------------------------------------- */
+ok("THE AGE IS A RANGE, NOT A BAND", /id="inAgeFrom"/.test(page) && /id="inAgeTo"/.test(page));
+/* Ticks, not one answer, and "mixed ability" leads them in a box of its own, ticked before
+   anything is touched: it is what most rooms are (owner, 2026-09-15). */
+ok("who is in the room is asked as ticks", /id="inLevels"/.test(page) && /data-level=/.test(page));
+ok("MIXED ABILITY LEADS, IN A BOX OF ITS OWN", /id="inLevelLead"/.test(page) && /level-lead/.test(page));
+ok("and it is ticked before anything is touched", /levels: { mixed: true },/.test(page));
+const intakeLib = fs.readFileSync(path.join(root, "lib", "client-intake.js"), "utf8");
+ok("ONE ROOM HAS ONE ABILITY", /function bindLevelExclusivity/.test(page));
+/* The kind of group is not like that and is left alone: a women-only pre-army group is
+   one room, not two (owner, 2026-09-15). */
+ok("general fitness leads the kinds, in a box of its own", /id="inGroupLead"/.test(page));
+ok("and is ticked to begin with", /groupTypes: { general_fitness: true },/.test(page));
+ok("but it does not clear the others", /No exclusivity here on purpose/.test(page));
+ok("men only and women only are a kind of group, not a level",
+  /id: "men_only"/.test(intakeLib) && /id: "women_only"/.test(intakeLib) &&
+    intakeLib.indexOf('id: "men_only"') > intakeLib.indexOf("var GROUP_TYPE_DEFS"));
+ok("and youth is gone, since the age range already says it", !/id: "youth"/.test(intakeLib));
+ok("the dropdown is gone", !/<select id="inLevel">/.test(page));
+ok("the kind of group is many", /id="inGroupTypes"/.test(page) && /data-group-type/.test(page));
+ok("a room is never asked whether it tested its maxima", !/inMaximaTested/.test(page));
+ok("the free box is optional now, and asks only for the targets", /Anything specific they are training for\? Optional/.test(page));
+ok("the lists come from the module, never a second copy", /CI\.LEVEL_DEFS/.test(page) && /CI\.GROUP_TYPE_DEFS/.test(page));
 ok("the session length is sent", /sessionMinutes: Number\(el\("inMinutes"\)\.value\)/.test(page));
 
 /* Tab 1 */
@@ -442,26 +471,37 @@ ok("tab 1 takes the monthly amount as a number", /id="inAmount" type="number"/.t
 ok("tab 1 takes the payment method as text", /id="inMethod" type="text"/.test(page));
 ok("tab 1 says the client cannot see the price", /client never sees them/i.test(page));
 
-/* Tab 2 — exactly two options, OTHER reveals a box */
-ok("equipment has the well-equipped option", /Well-equipped functional training gym/.test(page));
-/* Two checkboxes side by side, not one being unticked (owner, 2026-09-01). */
-ok("equipment is a checkbox, not a dropdown", /id="inEquipFull" type="checkbox" data-pick="equip" checked/.test(page));
-ok("the default is ticked — the well-equipped gym", /id="inEquipFull" type="checkbox" data-pick="equip" checked/.test(page));
-ok("OTHER sits beside it as its own checkbox", /id="inEquipOtherOn" type="checkbox" data-pick="equip">/.test(page));
-ok("OTHER is unticked by default", !/id="inEquipOtherOn" type="checkbox" data-pick="equip" checked/.test(page));
-ok("the two sit side by side", /class="pick-row"/.test(page) && /\.pick-row\{display:flex/.test(page));
-/* Plain string search: a regex here needs escaping for ? and " and the escaping is
-   what keeps going wrong, not the assertion. */
+/* Tab 2 — a checklist, drawn from the one catalogue.
+ *
+ * These assertions used to pin the opposite shape: two checkboxes for a mode, and a
+ * description box that only OTHER revealed. That form is what sent the coach a paragraph,
+ * and a paragraph is why the first real studio brick prescribed rings, a jump rope, boxes
+ * and a rower that עודד מכינה does not own. They are rewritten, not deleted — the old
+ * behaviour is asserted GONE below, so a revert cannot pass silently. */
+ok("the page loads the catalogue before the questionnaire", /<script src="lib\/equipment-catalog\.js"><\/script>[\s\S]{0,200}<script src="lib\/client-intake\.js">/.test(page));
+ok("the list has a home on the tab", /id="inEquipList"/.test(page));
+ok("the well-equipped gym is a shortcut that fills the list", /id="inEquipFull" type="checkbox">[\s\S]{0,160}tick everything/i.test(page));
+ok("it is no longer one of two modes", !/id="inEquipFull"[^>]*data-pick="equip"/.test(page));
+ok("the OTHER mode checkbox is gone", page.indexOf('id="inEquipOtherOn"') < 0);
+ok("nothing binds an equipment pick-pair any more", page.indexOf('bindPickPair("equip")') < 0);
+/* The free box stays, always visible, and one-directional. */
+ok("the free box is always open now", /id="inEquipOtherWrap"/.test(page) && !/id="inEquipOtherWrap" hidden/.test(page));
+ok("and it says it only ever adds", /ADDS to the list above and never removes/.test(page));
 ok(
-  "OTHER maps to other, anything else to the well-equipped gym",
-  page.indexOf('el("inEquipOtherOn").checked ? "other" : "functional_gym"') >= 0
+  "the stored mode is derived from that box, not from a tick",
+  page.indexOf('equipment: String(el("inEquipOther").value || "").trim() ? "other" : "functional_gym"') >= 0
 );
-ok(
-  "only OTHER reveals the description box",
-  /id="inEquipOtherWrap"/.test(page) &&
-    page.indexOf('el("inEquipOtherWrap").hidden = !equipOther') >= 0
-);
-ok("the box is hidden by default", /id="inEquipOtherWrap" hidden/.test(page));
+ok("the ticked list is what gets saved", page.indexOf("equipmentList: readEquipList()") >= 0);
+/* The three shapes of row the owner asked for on 2026-09-14. */
+ok("a room is asked how many, a person is not", /item\.group === "station" && !individual/.test(page));
+ok("a ceiling is asked of everyone", /if \(item\.ceiling\) return \{ show: true, unit: "max "/.test(page));
+ok("the run is asked for its length in metres", /item\.metric === "distance"[\s\S]{0,60}unit: "metres"/.test(page));
+/* The guard the owner named himself: the floor may never become a question. */
+ok("floor, wall and bodyweight are never listed", /it\.group !== "always"/.test(page));
+ok("and the tab says so out loud", /always\s*\n?\s*available, and the coach must keep using them/.test(page));
+/* A number about something that does not exist is not an answer. */
+ok("the numbers appear only once the row is ticked", /num\.hidden = !box\.checked/.test(page));
+ok("and an unticked row carries no number", /if \(num && box\.checked\)/.test(page));
 /* The old copy told the owner to untick; there is nothing to untick now. */
 ok("the stale untick instruction is gone", !/Untick if the place has something else/.test(page));
 ok("there is no equipment dropdown left", page.indexOf('id="inEquip"') < 0);
@@ -590,8 +630,10 @@ ok("the owner is told the coach picks the days", /delivers them whenever/i.test(
 
 /* The two checkboxes are one exclusive choice, and it can never end up empty. */
 ok("the pairs are bound as an exclusive choice", /function bindPickPair/.test(page));
-ok("equipment is one such pair", page.indexOf('bindPickPair("equip")') >= 0);
-ok("the schedule is the other", page.indexOf('bindPickPair("sched")') >= 0);
+/* Equipment was one such pair until 2026-09-14. It is a checklist now, and the schedule is
+   the only two-way choice left on the form. */
+ok("equipment is no longer a pair", page.indexOf('bindPickPair("equip")') < 0);
+ok("the schedule is the remaining one", page.indexOf('bindPickPair("sched")') >= 0);
 ok("re-clicking the active box keeps it ticked", /box\.checked = true;/.test(page));
 ok("ticking one unticks its partner", /if \(other !== box\) other\.checked = false;/.test(page));
 
@@ -1030,10 +1072,19 @@ const intakeEnd = page.indexOf('id="detail" hidden');
 const intakeCard = intakeStart >= 0 && intakeEnd > intakeStart ? page.slice(intakeStart, intakeEnd) : "";
 ok("the intake card exists", intakeCard.length > 200);
 ok("the intake card is left-to-right", /id="intakeCard" dir="ltr"/.test(page));
+/* The HEADER is Hebrew and RTL from 2026-09-14, like every other screen in this module. The
+   owner's words: the athlete questionnaire is "POPUP מעוצב ויפה עם גופן ופונטים אחידים" and the
+   studio one was "לא אחיד", with no way out of it at all — Cancel sat at the bottom of a long
+   form where he never saw it. The FIELDS stay English, which is what this assertion was for. */
+const intakeHeaderEnd = intakeCard.indexOf("</div>", intakeCard.indexOf("intake-ws-header"));
+const intakeBody = intakeHeaderEnd > 0 ? intakeCard.slice(intakeHeaderEnd) : intakeCard;
 ok(
-  "no Hebrew in the intake form itself",
-  !/[֐-׿]/.test(intakeCard.replace(/<!--[\s\S]*?-->/g, ""))
+  "no Hebrew in the intake FIELDS",
+  !/[֐-׿]/.test(intakeBody.replace(/<!--[\s\S]*?-->/g, ""))
 );
+ok("the questionnaire has the module's own header bar", /id="intakeCard"[\s\S]{0,600}intake-ws-header/.test(page));
+ok("with a way out that is visible from the first tab", /id="iClose"[^>]*>סגור</.test(page));
+ok("and it leaves the same way Cancel does", /\["iCancel", "iClose"\]\.forEach/.test(page));
 
 /* Validation runs before anything is created */
 ok("the form validates before creating", /validateIntake\(form\)/.test(page));
@@ -1233,5 +1284,106 @@ ok("which asks again if the screen is not there yet", /function startClientHalf\
 ok("and gives up out loud rather than quietly", /clientHalfFailed = true;[\s\S]{0,200}רשימת הלקוחות לא נטענה/.test(page));
 ok("the strip says so too", page.indexOf("הלקוחות לא נטענו — רענן") >= 0);
 ok("and stops saying it the moment they answer", /clientHalfFailed = false;/.test(page));
+
+
+/* --- the studio questionnaire is a popup, like the end-user one ------------
+ * It was a card in the page flow with flat rows, beside an end-user intake that opens as
+ * a modal with every option boxed. Same product, two ages of design (owner, 2026-09-15).
+ * ------------------------------------------------------------------------- */
+ok(
+  "THE STUDIO INTAKE OPENS IN A MODAL",
+  /<div class="modal-backdrop" id="studioIntakeModal">/.test(page)
+);
+ok(
+  "and the card is still inside #clientScreen, where its styling lives",
+  page.indexOf('id="clientScreen"') < page.indexOf('id="studioIntakeModal"') &&
+    page.indexOf('id="studioIntakeModal"') < page.indexOf('id="intakeCard"')
+);
+ok(
+  "it follows the card's own hidden attribute rather than a second switch",
+  /#studioIntakeModal:has\(#intakeCard:not\(\[hidden\]\)\)\{display:flex\}/.test(page)
+);
+ok(
+  "and one show() call still drives it",
+  (page.match(/show\("intakeCard"/g) || []).length === 1
+);
+ok("every answer sits in a box of its own", /#intakeCard \.chk-row\{padding:10px 12px/.test(page));
+
+/* --- the equipment tab, as the owner reordered it (2026-09-15) ------------- */
+const equipPane = page.slice(
+  page.indexOf('data-pane="equipment"'),
+  page.indexOf('data-pane="schedule"')
+);
+ok(
+  "CAPACITY IS THE FIRST QUESTION ON THE EQUIPMENT TAB",
+  equipPane.indexOf("inMaxAtOnce") < equipPane.indexOf("inEquipFull")
+);
+ok("the tick-everything row no longer explains itself twice", !/then untick what is missing/.test(page));
+ok("and the tab is named for space as well as kit", /Equipment & space/.test(fs.readFileSync(path.join(root, "lib", "client-intake.js"), "utf8")));
+
+/* Session length belongs to the week, not to who is in the room. */
+const schedPane = page.slice(
+  page.indexOf('data-pane="schedule"'),
+  page.indexOf('data-pane="population"')
+);
+ok("SESSION LENGTH IS THE FIRST QUESTION ON THE SCHEDULE TAB", schedPane.indexOf("inMinutes") >= 0 && schedPane.indexOf("inMinutes") < schedPane.indexOf("inSchedCount"));
+ok("and it left the population tab", !/data-pane="population"[\s\S]{0,400}inMinutes"/.test(page));
+
+/* --- one question, one box, and one way out of it ------------------------
+ * The number and "no practical limit" were two rows, so both could be filled in at once
+ * and a room could tell the coach it had no cap with 15 still sitting above it
+ * (owner, 2026-09-15).
+ * ------------------------------------------------------------------------- */
+const capRow = page.slice(page.indexOf('id="inCapRow"'), page.indexOf('id="inEquipFull"'));
+ok("the question, the number and the opt-out are one row", /inMaxAtOnce[\s\S]*inNoCap/.test(capRow));
+ok("asked in that order", capRow.indexOf("How many athletes") < capRow.indexOf("inMaxAtOnce") &&
+  capRow.indexOf("inMaxAtOnce") < capRow.indexOf("inNoCap"));
+ok("TICKING NO LIMIT TAKES THE FIELD AWAY", /el\("inMaxAtOnce"\)\.hidden = el\("inNoCap"\)\.checked/.test(page));
+ok("and the box is bound to redraw it", /"inHasChanges", "inNoCap"/.test(page));
+ok("NO STALE NUMBER IS SAVED BEHIND IT", /el\("inNoCap"\) && el\("inNoCap"\)\.checked\s*\?\s*0/.test(page));
+ok("and one row is what the individual switch hides", /if \(el\("inCapRow"\)\) el\("inCapRow"\)\.hidden = !!isIndividual;/.test(page));
+
+/* A blank session length made him type the same number into every new client. Sixty is
+   what a session is here; anything else is the exception he types over (owner,
+   2026-09-15). A default, not an assumption — the validator still refuses no length. */
+ok("A NEW STUDIO CLIENT OPENS ON SIXTY MINUTES", /sessionMinutes: 60,/.test(page));
+
+/* --- correcting a room must not hand it a month ---------------------------
+ * Until 2026-09-15 the questionnaire could only ADD A BLOCK for an existing client, so
+ * saying "this is what the place actually has" meant giving it a month nobody asked for —
+ * and on production, sending the coach to write one.
+ * ------------------------------------------------------------------------- */
+const clientApi = fs.readFileSync(path.join(root, "api", "client-program.js"), "utf8");
+const payloadLib = fs.readFileSync(path.join(root, "lib", "client-view-payload.js"), "utf8");
+ok("THE ANSWERS CAN BE SAVED ON THEIR OWN", /action: "save_intake"/.test(page));
+ok("behind a button of its own", /id="saveIntakeBtn"/.test(page));
+ok("whose Hebrew is set in code, like the button beside it",
+  /Save answers only<\/button>/.test(page) && /saveIntakeBtn"\)\.textContent = "שמור תחקור בלבד"/.test(page));
+ok("offered only for a client who already exists",
+  /el\("saveIntakeBtn"\)\.hidden = !\(last && S\.blockMode && S\.program\);/.test(page));
+ok("and it says what it did not do", /שום לבנה לא נוצרה ושום שבוע לא השתנה/.test(page));
+/* The server end: answers only, never a week. */
+ok("the action writes answers and nothing else",
+  /if \(action === "save_intake"\)/.test(clientApi) &&
+    !/save_intake[\s\S]{0,1200}draft\.weeks/.test(clientApi));
+ok("AND AN INTAKE NEVER REACHES THE CLIENT",
+  !/"intake"/.test(payloadLib.slice(payloadLib.indexOf("const PROGRAM_OUT"), payloadLib.indexOf("const PART_FIELDS"))));
+
+/* --- the violations reach the screen where the month is built -------------
+ * The post-check has been producing this list since 2026-09-14 and the owner never saw
+ * it: the flags box lives in the intake modal, and a month is built from the client
+ * screen (owner, 2026-09-15).
+ * ------------------------------------------------------------------------- */
+ok("THE BRAIN PANEL SHOWS WHAT THE CHECK FOUND", /function brainCheckHtml/.test(page) &&
+  /CoachBrickFlagsView\.blockingBoxHtml\(cvBrain\.checks\)/.test(page));
+ok("gathered across every week of the block", /function brainNoteCheck/.test(page) &&
+  /c\.brickBlocking\.indexOf\(found\[i\]\) < 0/.test(page));
+ok("shown when the build stops", /brainCheckHtml\(\) \+\s*'<div class="brain-panel is-bad"/.test(page));
+ok("and when it finishes", /host\.innerHTML = brainCheckHtml\(\);/.test(page));
+ok("a new build answers for itself", /cvBrain\.checks = null;[\s\S]{0,40}brainStep\(\);/.test(page));
+ok("but resuming a stopped one does not clear it",
+  !/data-brainresume[\s\S]{0,200}cvBrain\.checks = null/.test(page));
+ok("the intake modal shows it too, above the notes",
+  /blockingBoxHtml\(res \|\| \{\}\) \+[\s\S]{0,120}flagsBoxHtml/.test(page));
 
 console.log("All admin clients page checks passed.");

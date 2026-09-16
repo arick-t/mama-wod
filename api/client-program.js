@@ -133,6 +133,31 @@ function writeAccess(programId, access) {
   return JsonStore.putJson(Access.accessKey(programId), access);
 }
 
+/**
+ * "Last seen" is a convenience for the owner's device list. It must never cost a
+ * client their access.
+ *
+ * It used to be written by handing back the access row this request read BEFORE the
+ * programme read — and a programme read takes as long as a Blob read takes. Anything
+ * written in that window was silently reverted by the older copy: a code the owner had
+ * just issued, or a device that had just redeemed one. The client was then told their
+ * device was no longer authorised, and only a new code got them back in
+ * (owner, 2026-09-15).
+ *
+ * Blob has no conditional write, so the rule is: re-read, change one field, and most
+ * of the time skip the write altogether. Failure here is silent on purpose — a stamp
+ * is never a reason to fail a read.
+ */
+async function touchLastSeen(programId, deviceId) {
+  try {
+    const fresh = await readAccess(programId);
+    if (!fresh) return;
+    const touched = Access.touchDevice(fresh, deviceId, { programId: programId });
+    if (!touched.changed) return;
+    await writeAccess(programId, touched.access);
+  } catch (e) {}
+}
+
 /** The client's credential — never a URL parameter, so it stays out of logs and history. */
 function clientTokenFrom(req, body) {
   const headers = (req && req.headers) || {};
@@ -736,6 +761,48 @@ async function ownerHandler(req, res, body) {
     return res.status(200).json({ ok: true, program: result.program, version: result.version });
   }
 
+  /**
+   * The questionnaire, saved and nothing else.
+   *
+   * Until 2026-09-15 the only thing the questionnaire could do for an existing client was
+   * ADD A BLOCK — so correcting what a room owns meant giving it a month it never asked
+   * for, and on production it meant sending the coach to write one. There was no way to
+   * say "this is what the place actually has" and stop there (owner, 2026-09-15).
+   *
+   * It touches the answers and nothing else: no week, no block, no approval, no provider.
+   * The client never sees an intake at all — lib/client-view-payload.js hands out the
+   * programme's id, name, kind, start, version and its APPROVED weeks, and nothing here
+   * is any of those — so a correction is invisible from their side by construction.
+   */
+  if (action === "save_intake") {
+    const studio = isPlainObject(body.intake) ? Intake.normalizeIntake(body.intake) : null;
+    const athlete = isPlainObject(body.athleteIntake) ? body.athleteIntake : null;
+    if (!studio && !athlete) return bad(res, 400, "NO_INTAKE_BODY", "intake is required");
+    const result = await store.updateProgram(
+      programId,
+      Number(body.expectedVersion),
+      function (draft) {
+        if (studio) draft.intake = studio;
+        /* Merged, not replaced: the individual's tab carries a slice of their answers,
+           and the ones it does not mention were not being corrected. */
+        if (athlete) {
+          draft.athleteIntake = Object.assign(
+            {},
+            isPlainObject(draft.athleteIntake) ? draft.athleteIntake : {},
+            athlete
+          );
+        }
+        return draft;
+      },
+      { actor: "owner" }
+    );
+    if (!result.ok) {
+      const status = result.code === "VERSION_CONFLICT" ? 409 : result.code === "NOT_FOUND" ? 404 : 400;
+      return res.status(status).json(Object.assign({ ok: false }, result));
+    }
+    return res.status(200).json({ ok: true, program: result.program, version: result.version });
+  }
+
   /* The next block. Four more weeks on the same timeline, so the deload cadence carries
    * over the boundary instead of restarting (owner, 2026-09-01). It carries the answers
    * the owner just revised in the mini-intake and his notes for it, and it arrives
@@ -1146,11 +1213,14 @@ async function clientHandler(req, res, body) {
   }
 
   if (action === "sign") {
+    /* Onto the freshest row we can get, for the same reason as touchLastSeen: this
+       write replaces the whole row, so it must not carry a copy old enough to undo
+       a code issued a moment ago. */
+    const rowToSign = (await readAccess(programId)) || verified.access;
     /* Read before writing: recordSignature overwrites, and "is this new?" is the only
        thing standing between one join mail and one per device. */
-    const previousSignature =
-      verified.access && verified.access.signature ? verified.access.signature : null;
-    const signed = Access.recordSignature(verified.access, {
+    const previousSignature = rowToSign && rowToSign.signature ? rowToSign.signature : null;
+    const signed = Access.recordSignature(rowToSign, {
       programId: programId,
       accepted: body.accepted === true,
       deviceId: verified.device.id,
@@ -1219,9 +1289,9 @@ async function clientHandler(req, res, body) {
   if (action === "read") {
     const read = await store.readProgram(programId);
     if (!read.ok) return bad(res, read.code === "NOT_FOUND" ? 404 : 503, read.code, read.error);
-    try {
-      await writeAccess(programId, verified.access);
-    } catch (e) {}
+    /* One field, onto a row read after the programme — never the copy this request
+       started with. See touchLastSeen. */
+    await touchLastSeen(programId, verified.device.id);
     return res.status(200).json({
       ok: true,
       program: Payload.programForClient(read.program),

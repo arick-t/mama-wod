@@ -12,6 +12,165 @@
     return window.CoachIntakeSync;
   }
 
+  /* --- the equipment checklist ---------------------------------------------------------
+   * Drawn from lib/equipment-catalog.js, the same list the studio questionnaire ticks and the
+   * post-check measures a brick against. Added 2026-09-14, replacing one free-text box and one
+   * "heaviest implement" number.
+   *
+   * NO NEW STYLING, ON PURPOSE. The owner approved this popup's design and asked that the intake
+   * change leave it alone, so every row here reuses the classes the step already uses:
+   * .pprog-location-picker for the rows, .pprog-skills-all for the one line that answers all of
+   * them, .pprog-fixed-num for a number. Nothing new to look at, only new questions.
+   *
+   * A count is a ROOM's question and is not asked here — one athlete either owns a kettlebell or
+   * does not. A CEILING is asked of everyone: "dumbbells to 8 kg" at home is the same bug as
+   * 22.5 kg in a 15 kg studio (owner, 2026-09-14).
+   */
+  function equipCatalog() {
+    return window.EquipmentCatalog && window.EquipmentCatalog.ITEMS
+      ? window.EquipmentCatalog.ITEMS
+      : [];
+  }
+
+  function equipCapUnit(item) {
+    if (item.metric === "distance") return "metres";
+    if (item.ceiling === "kg") return "max kg";
+    if (item.ceiling === "cm") return "height cm";
+    return "";
+  }
+
+  /**
+   * One list, drawn twice when it has to be.
+   *
+   * An athlete who trains in two places used to describe the second one in a sentence —
+   * the very shape that swallowed "dumbbells up to 15 kg" in a studio's paragraph and
+   * started this whole round. A second place is a second inventory, ticked the same way,
+   * with ceilings of its own (owner, 2026-09-15).
+   *
+   * @param {object} place  { list, attr, allId, title, note, allLabel }
+   */
+  function equipmentSectionHtml(place) {
+    var items = equipCatalog().filter(function (it) {
+      return it.group !== "always";
+    });
+    if (!items.length) return "";
+    var o = place || {};
+    var attr = o.attr || "data-fx-eq";
+    var allId = o.allId || "adm-fx-eq-all";
+    var list = o.list || {};
+    var allOn =
+      items.length > 0 &&
+      items.every(function (it) {
+        return list[it.id] && list[it.id].have;
+      });
+    /* The one answer that replaces all the others stands in a box of its own, above the
+       list rather than as its first line: a gym with nothing missing is not one more
+       item to tick, it is the whole question answered (owner, 2026-09-15). Two pickers,
+       no new styling — the gap between them is the separation. */
+    var html =
+      '<p class="pprog-fixed-title" style="margin-top:18px">' +
+      esc(o.title || "Available equipment") +
+      "</p>" +
+      '<p class="pprog-fixed-note">' +
+      esc(
+        o.note ||
+          "Floor, wall and bodyweight work are always available and are never asked about — " +
+            "the coach keeps using them whatever you tick here."
+      ) +
+      "</p>" +
+      '<div class="pprog-location-picker">' +
+      '<label class="pprog-skills-all"><input type="checkbox" id="' +
+      esc(allId) +
+      '"' +
+      (allOn ? " checked" : "") +
+      " onchange=\"adminFixedEquipAll(this,'" +
+      esc(attr) +
+      "')\"> " +
+      esc(o.allLabel || "Fully equipped gym — no equipment limits, running route included") +
+      "</label></div>" +
+      '<div class="pprog-location-picker">';
+    items.forEach(function (it) {
+      var row = list[it.id] || {};
+      var unit = equipCapUnit(it);
+      html +=
+        "<label><input type=\"checkbox\" " +
+        esc(attr) +
+        '="' +
+        esc(it.id) +
+        '"' +
+        (row.have ? " checked" : "") +
+        " onchange=\"adminFixedEquipPicked('" +
+        esc(attr) +
+        "')\"> " +
+        '<span style="flex:1">' +
+        esc(it.en || it.id) +
+        "</span>" +
+        (unit
+          ? '<input type="number" min="1" class="pprog-fixed-num" ' +
+            esc(attr) +
+            '-cap="' +
+            esc(it.id) +
+            '" style="width:76px;padding:4px 6px"' +
+            (row.have ? "" : " hidden") +
+            ' value="' +
+            esc(row.cap > 0 ? row.cap : "") +
+            '" placeholder="' +
+            esc(unit) +
+            '" onclick="event.preventDefault();event.stopPropagation()">'
+          : "") +
+        "</label>";
+    });
+    return html + "</div>";
+  }
+
+  function allIdFor(attr) {
+    return attr === "data-fx-eq2" ? "adm-fx-eq2-all" : "adm-fx-eq-all";
+  }
+
+  function equipmentFromForm(attr) {
+    var key = attr || "data-fx-eq";
+    var out = {};
+    var boxes = document.querySelectorAll("[" + key + "]");
+    for (var i = 0; i < boxes.length; i++) {
+      var id = boxes[i].getAttribute(key);
+      var row = { have: !!boxes[i].checked, qty: null, cap: null };
+      var capBox = document.querySelector("[" + key + '-cap="' + CSS.escape(id) + '"]');
+      if (capBox && boxes[i].checked) {
+        var n = parseInt(capBox.value, 10);
+        if (n > 0) row.cap = n;
+      }
+      out[id] = row;
+    }
+    return out;
+  }
+
+  /* A number about something the athlete does not have is not an answer. */
+  function syncEquipRowsFixed(attr) {
+    var key = attr || "data-fx-eq";
+    var boxes = document.querySelectorAll("[" + key + "]");
+    for (var i = 0; i < boxes.length; i++) {
+      var id = boxes[i].getAttribute(key);
+      var capBox = document.querySelector("[" + key + '-cap="' + CSS.escape(id) + '"]');
+      if (capBox) capBox.hidden = !boxes[i].checked;
+    }
+    var all = document.getElementById(allIdFor(key));
+    if (all && boxes.length) {
+      all.checked = Array.prototype.every.call(boxes, function (b) {
+        return b.checked;
+      });
+    }
+  }
+
+  window.adminFixedEquipPicked = function (attr) {
+    syncEquipRowsFixed(attr);
+  };
+  window.adminFixedEquipAll = function (box, attr) {
+    var key = attr || "data-fx-eq";
+    var boxes = document.querySelectorAll("[" + key + "]");
+    for (var i = 0; i < boxes.length; i++) boxes[i].checked = !!(box && box.checked);
+    syncEquipRowsFixed(key);
+  };
+
   function esc(s) {
     return String(s == null ? "" : s)
       .replace(/&/g, "&amp;")
@@ -115,7 +274,8 @@
       improveFocusOther: "",
       avoidMovements: {},
       avoidMovementsOther: "",
-      heaviestImplementKg: 0,
+      equipmentList: {},
+      secondaryEquipmentList: {},
       avoidInProgram: "",
       injuries: "",
       goals: "",
@@ -302,51 +462,32 @@
         esc(st.paymentMethod || "") +
         '" placeholder="Bit, 1st of the month"></div>';
     } else if (key === "setup") {
-      var locs = st.trainingLocations || {};
-      var otherOn = !!locs.other_home;
+      /* "Where do you usually train?" — a well-equipped gym, or home / limited — stood
+         here until 2026-09-15. It asked, in two words, the question the checklist below
+         now answers item by item, and the two could disagree: a box ticked "well-equipped
+         gym" with no rower under it said both things at once. One question, one answer
+         (owner, 2026-09-15).
+         "Heaviest implement you have (kg)" went the day before, for its own reason: one
+         number for a whole setup could not say "dumbbells to 15 but a 40 kg sandbag". The
+         checklist carries a ceiling PER implement. */
       html +=
-        '<p class="pprog-fixed-title">Where do you usually train?</p>' +
-        /* One or the other. Both ticked described nobody, and the coach would have been
-           told two contradictory things about the same athlete (owner, 2026-09-02). */
-        '<p class="pprog-fixed-note">Pick the one that fits.</p>' +
-        '<div class="pprog-location-picker">';
-      for (var li = 0; li < S.LOCATION_DEFS.length; li++) {
-        var loc = S.LOCATION_DEFS[li];
-        html +=
-          '<label><input type="checkbox" data-fx-location="' +
-          esc(loc.id) +
-          '"' +
-          (locs[loc.id] ? " checked" : "") +
-          ' onchange="adminFixedLocationPicked(this)"' +
-          "> " +
-          esc(loc.label) +
-          "</label>";
-      }
-      html +=
-        '<div class="pprog-location-other-wrap" id="admFxLocationOtherWrap"' +
-        (otherOn ? "" : " hidden") +
-        '><textarea id="adm-fx-location-other" maxlength="500" placeholder="Please specify your setup (e.g. garage, dumbbells only, no rower…)">' +
-        esc(st.trainingLocationOther || "") +
-        "</textarea>" +
-        /* Equipment limits the LOAD, not the movement - a back squat with dumbbells is
-           still a back squat. But that rule cannot be applied without knowing how heavy
-           the room actually gets, and "limited equipment" carries no number, so the
-           coach was guessing weight (coach agent, 2026-09-02). */
-        '<div class="pprog-fixed-row" style="margin-top:10px">' +
-        '<label class="pprog-fixed-inline" for="adm-fx-heaviest">Heaviest implement you have (kg)</label>' +
-        '<input id="adm-fx-heaviest" type="number" min="1" max="300" class="pprog-fixed-num" value="' +
-        esc(parseInt(st.heaviestImplementKg, 10) > 0 ? parseInt(st.heaviestImplementKg, 10) : "") +
-        '" placeholder="-">' +
-        "</div></div></div>" +
+        equipmentSectionHtml({ list: st.equipmentList || {} }) +
         /* One athlete, two settings. A box on weekdays and a garage on Saturday was being
            described as "limited equipment", which threw away four maxima in kilograms and
-           then forbade kilograms underneath them (coach agent, 2026-09-03). */
+           then forbade kilograms underneath them (coach agent, 2026-09-03).
+           Until 2026-09-15 the second place was a sentence and one "heaviest implement"
+           number — the same unreadable shape the first place had just been rescued from,
+           and one the post-check cannot measure a brick against. It is a second list now. */
         '<label class="pprog-fixed-inline" style="margin-top:14px">' +
         '<input type="checkbox" id="adm-fx-multiplace"' +
         (st.trainsMultipleLocations === true ? " checked" : "") +
         ' onchange="adminFixedMultiPlaceChanged()"> I train in more than one place</label>' +
         '<div id="adm-fx-second-wrap"' + (st.trainsMultipleLocations === true ? "" : " hidden") + ">" +
-        '<p class="pprog-fixed-note" style="margin-top:10px">Which days are you in the OTHER place?</p>' +
+        /* The days come first, and they are what tells the coach where every OTHER day
+           happens: whatever is not marked here belongs to the first place. The training
+           week itself is asked on the next step, so these are the days to expect there. */
+        '<p class="pprog-fixed-note" style="margin-top:10px">Which days are you in the OTHER place? ' +
+        "Every training day you do not mark here happens in the first one.</p>" +
         '<div class="pprog-fixed-days">' +
         S.DAY_KEYS.map(function (dk) {
           return '<label><input type="checkbox" data-fx-second-day="' + esc(dk) + '"' +
@@ -354,14 +495,16 @@
             "> " + esc(S.DAY_LABELS[dk] || dk) + "</label>";
         }).join("") +
         "</div>" +
-        '<textarea id="adm-fx-second-kit" maxlength="600" placeholder="What do you have there? e.g. kettlebell 24/32, dumbbells 15+22.5, box, rig, 10kg wall ball">' +
-        esc(st.secondaryLocationEquipment || "") +
-        "</textarea>" +
-        '<div class="pprog-fixed-row">' +
-        '<label class="pprog-fixed-inline" for="adm-fx-second-heaviest">Heaviest implement there (kg)</label>' +
-        '<input id="adm-fx-second-heaviest" type="number" min="1" max="300" class="pprog-fixed-num" value="' +
-        esc(parseInt(st.secondaryHeaviestImplementKg, 10) > 0 ? parseInt(st.secondaryHeaviestImplementKg, 10) : "") +
-        '" placeholder="-"></div></div>';
+        equipmentSectionHtml({
+          list: st.secondaryEquipmentList || {},
+          attr: "data-fx-eq2",
+          allId: "adm-fx-eq2-all",
+          title: "Available equipment — the OTHER place",
+          note:
+            "The same question again, about the second place. Floor, wall and bodyweight " +
+            "work are always available there too.",
+        }) +
+        "</div>";
     } else if (key === "schedule") {
       var days = Array.isArray(st.trainingDays) ? st.trainingDays : [];
       html +=
@@ -499,23 +642,24 @@
       }
       html += "</div>";
     } else if (key === "injuries") {
-      var noInj =
-        /^no injuries\.?$/i.test(String(st.injuries || "").trim()) ||
-        String(st.injuries || "").trim() === "אין פציעות";
+      /* "No injuries" is the answer for almost everyone, so it is the answer the step
+         opens on: a healthy athlete taps Next and is done (owner, 2026-09-15). */
+      var noInj = injuriesAreNone(st.injuries);
       html +=
         '<p class="pprog-fixed-title">Injuries &amp; limitations</p>' +
-        '<p class="pprog-fixed-note">Pain points or movements to avoid. Or tap the quick button if none.</p>' +
+        '<p class="pprog-fixed-note">Nothing to report? Leave the button on and carry on. ' +
+        "If there is something, switch it off and mark what to program around.</p>" +
         '<div class="pprog-fixed-chips">' +
         '<button type="button" class="pprog-fixed-chip' +
         (noInj ? " active" : "") +
         '" id="adm-fx-no-injuries-btn" aria-pressed="' +
         (noInj ? "true" : "false") +
-        '" onclick="adminFixedFillNoInjuries()">No injuries</button></div>' +
-        '<textarea id="adm-fx-injuries" maxlength="800" placeholder="e.g. Left knee — avoid deep squats under fatigue" oninput="adminFixedInjuriesInput()">' +
-        esc(st.injuries || "") +
-        "</textarea>" +
-        /* The athlete writes a diagnosis in the box above and the coach is forbidden to
-           reason from it - so the question it MAY act on is asked separately, as marks.
+        '" onclick="adminFixedToggleNoInjuries()">No injuries</button></div>' +
+        /* A free-text box under that button stood here until 2026-09-15. It asked for a
+           diagnosis the coach is FORBIDDEN to reason from, and an athlete who had just
+           tapped "No injuries" was looking at an empty box inviting him to write anyway —
+           correspondence with nowhere to go. What the coach may act on is the marks
+           below, and the note beside them is where anything else belongs.
            Seven families, mapped one-to-one onto the coach substitution matrix
            (coach agent, 2026-09-02). */
         '<p class="pprog-fixed-title" style="margin-top:14px">Movements to avoid or limit</p>' +
@@ -526,39 +670,64 @@
             "><span>" + esc(d.label) + "</span></label>";
         }).join("") +
         "</div>" +
-        '<textarea id="adm-fx-avoid-other" maxlength="200" placeholder="Anything else to program around">' +
+        '<textarea id="adm-fx-avoid-other" maxlength="200" placeholder="Anything else to program around — e.g. left knee, no deep squats under fatigue">' +
         esc(st.avoidMovementsOther || "") +
         "</textarea>";
     } else if (key === "goals") {
+      /* Goals were one free-text box until 2026-09-15. The reason to mark them is not
+         enforcement — no code checks whether a month made someone stronger — but routing:
+         "I want to get stronger" in prose reached the coach as nothing at all.
+         "Maintaining a healthy lifestyle" leads, in a box of its own, and clears the rest:
+         it is the answer most people give, and it is an answer (owner, 2026-09-15). */
+      var goalMap = st.improveFocus || {};
+      var lifestyleOn = goalMap.healthy_lifestyle === true;
+      var skillOn = goalMap.specific_skill === true;
       html +=
         '<p class="pprog-fixed-title">Goals</p>' +
-        '<textarea id="adm-fx-goals" maxlength="800" placeholder="e.g. Engine + Olympic lift consistency">' +
-        esc(st.goals || "") +
-        "</textarea>" +
+        '<p class="pprog-fixed-note">What should this month be for? Pick at most ' +
+        S.MAX_GOALS +
+        " — three pull the plan in three directions and it serves none of them. " +
+        "The next block can be for something else.</p>" +
+        '<div class="pprog-location-picker">' +
+        '<label class="pprog-skills-all"><input type="checkbox" data-goal-id="healthy_lifestyle"' +
+        (lifestyleOn ? " checked" : "") +
+        ' onchange="adminFixedGoalPicked(this)"> ' +
+        esc(S.GOAL_DEFS[0].label) +
+        "</label></div>" +
+        '<div class="pprog-location-picker">' +
+        S.GOAL_DEFS.slice(1)
+          .map(function (d) {
+            return '<label><input type="checkbox" data-goal-id="' + esc(d.id) + '"' +
+              (goalMap[d.id] === true ? " checked" : "") +
+              ' onchange="adminFixedGoalPicked(this)"><span>' + esc(d.label) + "</span></label>";
+          })
+          .join("") +
+        "</div>" +
+        /* Which skill, and only then. Eight names rather than a box to type one into:
+           the coach acts on the name, and a name it does not recognise is no answer. */
+        '<div id="adm-fx-goal-skill-wrap"' + (skillOn ? "" : " hidden") + ">" +
+        '<div class="pprog-profile-row"><label for="adm-fx-improve-other">Which skill?</label>' +
+        '<select id="adm-fx-improve-other">' +
+        S.GOAL_SKILL_DEFS.map(function (name) {
+          return '<option value="' + esc(name) + '"' +
+            (String(st.improveFocusOther || "") === name ? " selected" : "") +
+            ">" + esc(name) + "</option>";
+        }).join("") +
+        "</select></div></div>" +
+        /* A calorie-deficit tick and a free line under it lasted an afternoon. Neither
+           belongs here: this product does not deal in nutrition, and a box that invites
+           prose invites prose nobody can act on. The marks above are the answer, and the
+           coach reads them (owner, 2026-09-15). */
         /* Competing changes what a block is for — peaking, testing, and how heavy a
            week may get. The coach is told in as many words (owner, 2026-09-02). */
         '<label class="pprog-fixed-inline" style="margin-top:12px">' +
         '<input type="checkbox" id="adm-fx-competitor"' +
         (st.competitor === true ? " checked" : "") +
         ' onchange="adminFixedCompetitorChanged()"> I am training for a competition / actively competing</label>' +
-        /* "I want to get stronger" in free text reached the coach as nothing at all -
-           not for want of intention, but because no word in it was one the router knew.
-           The free text stays; these anchor it (coach agent, 2026-09-02). */
-        /* Only a competitor is asked where the dedicated time goes. The owner's call
-           (2026-09-03): for someone training for general fitness the answer is the
-           balance itself, and asking invites an answer that narrows a plan nobody wanted
-           narrowed. The packet still carries the line in both directions. */
-        '<div id="adm-fx-improve-wrap"' + (st.competitor === true ? "" : " hidden") + ">" +
-        '<p class="pprog-fixed-title" style="margin-top:16px">What do you want to improve?</p>' +
-        '<div class="pprog-skills-picker">' +
-        S.IMPROVE_FOCUS_DEFS.map(function (d) {
-          return '<label><input type="checkbox" data-improve-id="' + esc(d.id) + '"' +
-            ((st.improveFocus || {})[d.id] === true ? " checked" : "") +
-            "><span>" + esc(d.label) + "</span></label>";
-        }).join("") +
-        "</div>" +
-        '<input id="adm-fx-improve-other" type="text" maxlength="200" placeholder="Which skill?" value="' +
-        esc(st.improveFocusOther || "") + '"></div>' +
+        /* "What do you want to improve?" — six boxes shown only to a competitor — stood
+           here until 2026-09-15. It is the same question the goals above now ask of
+           everyone, with a better list, so keeping it would have put two overlapping
+           questions on one screen. The marks still travel in the same field. */
         /* Three edits of the same kind is what POL-005 needs before it learns a
            preference, and every edit is a paid call. One box here saves three months
            of them (coach agent, 2026-09-02). */
@@ -624,14 +793,22 @@
     syncAdminFixedIntakeUi();
   };
 
-  function syncAdminNoInjuriesChip() {
-    var ta = document.getElementById("adm-fx-injuries");
+  /**
+   * Nothing to report — the state the step opens in.
+   *
+   * An empty answer counts as "none" so a fresh intake starts on it; anything the athlete
+   * actually reported reads as the opposite. Hebrew and English both, because intakes
+   * were answered in both before the button existed.
+   */
+  function injuriesAreNone(raw) {
+    var t = String(raw || "").trim();
+    if (!t) return true;
+    return /^no injuries\.?$/i.test(t) || t === "אין פציעות";
+  }
+
+  function noInjuriesChipOn() {
     var btn = document.getElementById("adm-fx-no-injuries-btn");
-    if (!btn) return;
-    var raw = ta ? String(ta.value || "").trim() : "";
-    var on = /^no injuries\.?$/i.test(raw) || raw === "אין פציעות";
-    btn.classList.toggle("active", on);
-    btn.setAttribute("aria-pressed", on ? "true" : "false");
+    return !!(btn && btn.getAttribute("aria-pressed") === "true");
   }
 
   /* Ticking "different times" is what makes the free text exist. Untick and it goes
@@ -653,26 +830,61 @@
   }
   if (typeof window !== "undefined") window.adminFixedToggleTimes = adminFixedToggleTimes;
 
-  /* Ticking "I compete" is what opens the improve list; unticking closes it and drops
-     what was marked, so a stale answer cannot travel with an athlete who is not
-     competing (owner, 2026-09-03). */
-  window.adminFixedCompetitorChanged = function () {
-    var box = document.getElementById("adm-fx-competitor");
-    var wrap = document.getElementById("adm-fx-improve-wrap");
-    if (!box || !wrap) return;
-    if (box.checked) wrap.removeAttribute("hidden");
-    else wrap.setAttribute("hidden", "");
-  };
+  /* Competing still changes what a block is for — peaking, testing, how heavy a week may
+     get — but it no longer gates a list of its own: the goals above are asked of everyone
+     (owner, 2026-09-15). */
+  window.adminFixedCompetitorChanged = function () {};
 
-  window.adminFixedFillNoInjuries = function () {
-    var ta = document.getElementById("adm-fx-injuries");
-    if (ta) ta.value = "No injuries";
-    syncAdminNoInjuriesChip();
+  /**
+   * At most two, and one of them clears the rest.
+   *
+   * "Maintaining a healthy lifestyle" is not one goal among nine: it is the answer that
+   * replaces them, so ticking it empties the list and ticking anything else lets it go.
+   * A third pick is refused rather than silently swapping one out — the athlete chose
+   * three things and deserves to be told only two travel (owner, 2026-09-15).
+   */
+  window.adminFixedGoalPicked = function (inp) {
+    var S = C();
+    var root = document.getElementById("intake-fixed");
+    if (!root || !inp) return;
+    var boxes = root.querySelectorAll("input[data-goal-id]");
+    var id = inp.getAttribute("data-goal-id");
+    var i;
+    if (id === "healthy_lifestyle" && inp.checked) {
+      for (i = 0; i < boxes.length; i++) {
+        if (boxes[i] !== inp) boxes[i].checked = false;
+      }
+    } else if (inp.checked) {
+      var lifestyle = root.querySelector('input[data-goal-id="healthy_lifestyle"]');
+      if (lifestyle) lifestyle.checked = false;
+      var picked = 0;
+      for (i = 0; i < boxes.length; i++) {
+        if (boxes[i].checked && boxes[i].getAttribute("data-goal-id") !== "healthy_lifestyle") picked++;
+      }
+      if (picked > S.MAX_GOALS) {
+        inp.checked = false;
+        setFixedErr("Pick at most " + S.MAX_GOALS + " goals — untick one first.");
+        return;
+      }
+    }
+    var wrap = document.getElementById("adm-fx-goal-skill-wrap");
+    var skill = root.querySelector('input[data-goal-id="specific_skill"]');
+    if (wrap) {
+      if (skill && skill.checked) wrap.removeAttribute("hidden");
+      else wrap.setAttribute("hidden", "");
+    }
     setFixedErr("");
   };
 
-  window.adminFixedInjuriesInput = function () {
-    syncAdminNoInjuriesChip();
+  /* A switch, not a shortcut into a box: there is no box any more. On means nothing to
+     report; off means the marks below carry it (owner, 2026-09-15). */
+  window.adminFixedToggleNoInjuries = function () {
+    var btn = document.getElementById("adm-fx-no-injuries-btn");
+    if (!btn) return;
+    var on = !noInjuriesChipOn();
+    btn.classList.toggle("active", on);
+    btn.setAttribute("aria-pressed", on ? "true" : "false");
+    setFixedErr("");
   };
 
   window.adminFixedRecoveryPrefChanged = function () {
@@ -696,25 +908,6 @@
     var wrap = document.getElementById("adm-fx-second-wrap");
     if (!box || !wrap) return;
     if (box.checked) wrap.removeAttribute("hidden");
-    else wrap.setAttribute("hidden", "");
-  };
-
-  window.adminFixedLocationPicked = function (inp) {
-    var root = document.getElementById("intake-fixed");
-    if (root && inp && inp.checked) {
-      var all = root.querySelectorAll("input[data-fx-location]");
-      for (var i = 0; i < all.length; i++) {
-        if (all[i] !== inp) all[i].checked = false;
-      }
-    }
-    window.adminFixedLocationOtherToggle();
-  };
-
-  window.adminFixedLocationOtherToggle = function () {
-    var wrap = document.getElementById("admFxLocationOtherWrap");
-    var otherCb = document.querySelector('input[data-fx-location="other_home"]');
-    if (!wrap) return;
-    if (otherCb && otherCb.checked) wrap.removeAttribute("hidden");
     else wrap.setAttribute("hidden", "");
   };
 
@@ -759,36 +952,21 @@
       intakeState.bodyweight = String(bwN);
       intakeState.experience = vals.experience.slice(0, 120);
     } else if (key === "setup") {
-      var locations = {};
-      var labels = [];
-      var cbs = box.querySelectorAll("input[data-fx-location]");
-      for (var ci = 0; ci < cbs.length; ci++) {
-        if (!cbs[ci].checked) continue;
-        var id = cbs[ci].getAttribute("data-fx-location");
-        locations[id] = true;
-        for (var j = 0; j < S.LOCATION_DEFS.length; j++) {
-          if (S.LOCATION_DEFS[j].id === id) labels.push(S.LOCATION_DEFS[j].label);
-        }
-      }
-      var otherEl = document.getElementById("adm-fx-location-other");
-      var otherDetail = otherEl ? String(otherEl.value || "").trim().slice(0, 500) : "";
-      if (!labels.length) {
-        setFixedErr("Select at least one training location.");
-        return;
-      }
-      if (locations.other_home && !otherDetail) {
-        setFixedErr("Please specify your Other / home setup.");
-        return;
-      }
-      var parts = labels.slice();
-      if (locations.other_home && otherDetail) parts.push("Other detail: " + otherDetail);
-      intakeState.trainingLocations = locations;
-      intakeState.trainingLocationOther = otherDetail;
-      /* A number only when there is a room to describe; a proper box has no ceiling
-         worth stating (coach agent, 2026-09-02). */
-      var heavyEl = document.getElementById("adm-fx-heaviest");
-      var heavyN = heavyEl ? parseInt(heavyEl.value, 10) : 0;
-      intakeState.heaviestImplementKg = heavyN >= 1 && heavyN <= 300 ? heavyN : 0;
+      /* Nothing to validate. Ticking nothing is a real answer — an athlete with a floor
+         and a wall and no kit at all — and the packet says so item by item rather than
+         falling back on "full gym" (see inventoryFor, which is told the list was
+         answered even when every row is a no).
+         The free-text box that stood here for one day is gone too (owner, 2026-09-15):
+         prose cannot be measured against a brick, and anything worth saying about the
+         equipment is a row on the list. If something real is missing from the list, the
+         list is what should grow. */
+      intakeState.trainingLocations = {};
+      intakeState.trainingLocationOther = "";
+      /* One ceiling for a whole setup is gone (owner, 2026-09-14). It could not say "dumbbells
+         to 15 but a 40 kg sandbag", it was only ever asked of the home athlete, and for anyone
+         else its absence told the coach to write no kilograms at all. The checklist carries a
+         ceiling per implement instead. */
+      intakeState.equipmentList = equipmentFromForm("data-fx-eq");
       var multiEl = document.getElementById("adm-fx-multiplace");
       intakeState.trainsMultipleLocations = !!(multiEl && multiEl.checked);
       var secondDays = [];
@@ -796,16 +974,17 @@
       for (var sd = 0; sd < secondBoxes.length; sd++) {
         if (secondBoxes[sd].checked) secondDays.push(secondBoxes[sd].getAttribute("data-fx-second-day"));
       }
-      var kitEl = document.getElementById("adm-fx-second-kit");
-      var secondHeavyEl = document.getElementById("adm-fx-second-heaviest");
-      var secondHeavyN = secondHeavyEl ? parseInt(secondHeavyEl.value, 10) : 0;
       /* Nothing is kept from a second place he unticked. */
       intakeState.secondaryLocationDays = intakeState.trainsMultipleLocations ? secondDays : [];
-      intakeState.secondaryLocationEquipment =
-        intakeState.trainsMultipleLocations && kitEl ? String(kitEl.value || "").trim().slice(0, 600) : "";
-      intakeState.secondaryHeaviestImplementKg =
-        intakeState.trainsMultipleLocations && secondHeavyN >= 1 && secondHeavyN <= 300 ? secondHeavyN : 0;
-      intakeState.trainingSetup = parts.join(" · ").slice(0, 800);
+      intakeState.secondaryEquipmentList = intakeState.trainsMultipleLocations
+        ? equipmentFromForm("data-fx-eq2")
+        : {};
+      intakeState.secondaryLocationEquipment = "";
+      intakeState.secondaryHeaviestImplementKg = 0;
+      intakeState.trainingSetup = (intakeState.trainsMultipleLocations
+        ? "Equipment answered item by item, for two places"
+        : "Equipment answered item by item"
+      ).slice(0, 800);
     } else if (key === "schedule") {
       var days = [];
       var dayCbs = box.querySelectorAll("input[data-fx-day]");
@@ -929,8 +1108,11 @@
       }
       intakeState.skills = skills;
     } else if (key === "injuries") {
-      var injEl = document.getElementById("adm-fx-injuries");
-      intakeState.injuries = injEl ? String(injEl.value || "").trim().slice(0, 800) : "";
+      /* One of two answers, and never a diagnosis: either there is nothing to report, or
+         there is, and what the coach may act on is the marks below. */
+      intakeState.injuries = noInjuriesChipOn()
+        ? "No injuries"
+        : "Reported — program around the movements marked below.";
       var avoidMap = {};
       var avoidBoxes = box.querySelectorAll("input[data-avoid-id]");
       for (var av = 0; av < avoidBoxes.length; av++) {
@@ -942,20 +1124,20 @@
         ? String(avoidOtherEl.value || "").trim().slice(0, 200)
         : "";
     } else if (key === "goals") {
-      var goalEl = document.getElementById("adm-fx-goals");
       var compEl = document.getElementById("adm-fx-competitor");
       intakeState.competitor = !!(compEl && compEl.checked);
-      intakeState.goals = goalEl ? String(goalEl.value || "").trim().slice(0, 800) : "";
+      /* No free line to read: what this month is for is the marks (owner, 2026-09-15). */
+      intakeState.goals = "";
       var improveMap = {};
-      var improveBoxes = box.querySelectorAll("input[data-improve-id]");
-      for (var im = 0; im < improveBoxes.length; im++) {
-        if (improveBoxes[im].checked) improveMap[improveBoxes[im].getAttribute("data-improve-id")] = true;
+      var goalBoxes = box.querySelectorAll("input[data-goal-id]");
+      for (var im = 0; im < goalBoxes.length; im++) {
+        if (goalBoxes[im].checked) improveMap[goalBoxes[im].getAttribute("data-goal-id")] = true;
       }
-      /* Not a competitor means no focus was asked for, so none is carried. */
-      intakeState.improveFocus = intakeState.competitor === true ? improveMap : {};
+      intakeState.improveFocus = improveMap;
+      /* The named skill only travels with the goal that asks for it. */
       var improveOtherEl = document.getElementById("adm-fx-improve-other");
       intakeState.improveFocusOther =
-        intakeState.competitor === true && improveOtherEl
+        improveMap.specific_skill === true && improveOtherEl
           ? String(improveOtherEl.value || "").trim().slice(0, 200)
           : "";
       var avoidProgEl = document.getElementById("adm-fx-avoid-program");
@@ -1095,7 +1277,8 @@
         improveFocusOther: prof.improveFocusOther || "",
         avoidMovements: prof.avoidMovements || {},
         avoidMovementsOther: prof.avoidMovementsOther || "",
-        heaviestImplementKg: prof.heaviestImplementKg || 0,
+        equipmentList: prof.equipmentList || {},
+        secondaryEquipmentList: prof.secondaryEquipmentList || {},
         avoidInProgram: prof.avoidInProgram || "",
         /* The packet the coach will read on the day he is reconnected. */
         fixedIntakePacket: String(prof.fixedIntakePacket || "").slice(0, 6000),
