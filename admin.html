@@ -577,6 +577,13 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .ath-stats-link:hover{color:#fff}
 .ath-stats-actions{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
 .ath-chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+/* The language switch, beside the freeze one and deliberately quieter than it: this one
+   is free and reversible, that one locks a paying client out (owner, 2026-09-16). */
+.btn-lang-mini{background:var(--bg-panel);border:1px solid var(--line);border-radius:999px;
+  padding:3px 11px;font-size:.72rem;font-weight:800;letter-spacing:.3px;color:var(--text-muted);
+  cursor:pointer;font-family:inherit}
+.btn-lang-mini:hover{border-color:var(--coach);color:var(--text)}
+.btn-lang-mini.is-he{border-color:#1A9B8A;background:rgba(26,155,138,.16);color:#f5c518}
 .ath-handoff-inline{margin-top:8px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;max-width:100%}
 .ath-handoff-inline .btn-handoff-mini{
   appearance:none;margin:0;padding:6px 12px;border-radius:8px;border:1px solid rgba(232,69,26,.65);
@@ -7878,6 +7885,7 @@ tryRestoreAdminSession();
 <script src="lib/coach-week-fill-plan.js"></script>
 <script src="lib/coach-client-brief.js"></script>
 <script src="lib/normalize-pprog-block.js"></script>
+<script src="lib/movement-he.js"></script>
 <script src="lib/pprog-display.js"></script>
 <script src="lib/admin-day-edit.js"></script>
 <script src="lib/admin-done-debrief.js"></script>
@@ -8332,6 +8340,12 @@ tryRestoreAdminSession();
   function renderDetail() {
     var p = S.program;
     if (!p) { show("detail", false); return; }
+    var heLang = p.outputLanguage === "he";
+    /* His screen draws the month in the language the client's own programme carries, so
+       what he approves is what they receive (owner, 2026-09-16). */
+    if (window.PprogDisplay && window.PprogDisplay.setLanguage) {
+      window.PprogDisplay.setLanguage(p.outputLanguage);
+    }
     var a = S.access || {};
     var unread = Object.keys(p.unreadDays || {});
     var html = "";
@@ -8393,6 +8407,17 @@ tryRestoreAdminSession();
             '" data-freeze="' + (frozen ? "0" : "1") + '" title="' +
             (frozen ? "בטל הקפאה" : "הלקוח לא יוכל לפתוח את התוכנית עד שתבטל") + '">' +
             (frozen ? "בטל הקפאה" : "הקפא משתמש") +
+            "</button>" +
+            /* The language their programme is written in. A presentation choice, so it
+               sits on the client and not in the questionnaire: it changes what is on
+               screen the moment it is pressed, on the month already written as well as
+               the next one, and it costs nothing to change back — the movement names are
+               a dictionary, never a call to the coach (owner, 2026-09-16). */
+            '<span class="ath-chip-sep">/</span>' +
+            '<button type="button" class="btn-lang-mini' + (heLang ? " is-he" : "") +
+            '" data-lang="' + (heLang ? "en" : "he") + '" title="' +
+            (heLang ? "חזרה לאנגלית — בחינם, המקור נשמר" : "שמות התרגילים בעברית, לצד האנגלית") + '">' +
+            (heLang ? "עברית" : "English") +
             "</button>" +
           "</div>" +
           renderClientMorePop(p, moreOpen) +
@@ -10187,6 +10212,11 @@ tryRestoreAdminSession();
       restDraft.restIntent = !!t.checked;
       return;
     }
+    var langBtn = t.closest && t.closest("[data-lang]");
+    if (langBtn) {
+      setClientLanguage(langBtn.getAttribute("data-lang") === "he" ? "he" : "en");
+      return;
+    }
     if (g("data-clientmore")) { S.moreOpen = !S.moreOpen; renderDetail(); return; }
     if (g("data-termsmore")) { S.termsOpen = !S.termsOpen; renderDetail(); return; }
     if (g("data-identity")) {
@@ -10740,6 +10770,39 @@ tryRestoreAdminSession();
       banner("good", okMessage);
       renderDetail();
     };
+  }
+
+  /**
+   * The language this client's programme is written in.
+   *
+   * A presentation choice, and it behaves like one: it changes the screen at once, it
+   * applies to the month already written as well as the next, and turning it back costs
+   * nothing because the stored text never changed — the movement names are a dictionary
+   * pass, not a call to the coach. The field also travels to the brief, so the next
+   * month's notes come back in Hebrew rather than needing a translation afterwards
+   * (owner, 2026-09-16).
+   */
+  function setClientLanguage(lang) {
+    if (!S.program) return;
+    var want = lang === "he" ? "he" : "en";
+    if ((S.program.outputLanguage || "en") === want) return;
+    api({
+      action: "save",
+      programId: S.program.programId,
+      expectedVersion: S.program.version,
+      program: { outputLanguage: want },
+    }).then(function (r) {
+      if (r.status === 409) { banner("warn", "מישהו שמר בינתיים. פותח מחדש."); openClient(S.program.programId); return; }
+      if (r.status !== 200 || !r.body.ok) {
+        banner("bad", (r.body && r.body.error) || "לא הצלחתי לשנות את השפה.");
+        return;
+      }
+      S.program = r.body.program;
+      banner("good", want === "he"
+        ? "התוכנית מוצגת בעברית, לצד האנגלית."
+        : "התוכנית חזרה לאנגלית.");
+      renderDetail();
+    });
   }
 
   function pasteIntoProgram(mutate, okMessage) {

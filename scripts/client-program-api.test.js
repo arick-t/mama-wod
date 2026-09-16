@@ -1371,7 +1371,7 @@ async function main() {
       "AND THE SURFACE THEY SEE IS EXACTLY WHAT IT WAS",
       JSON.stringify(Object.keys(seen).sort()) ===
         JSON.stringify([
-          "blockGroups", "blockStart", "clientKind", "clientName",
+          "blockGroups", "blockStart", "clientKind", "clientName", "outputLanguage",
           "programId", "sessionColumns", "updatedAt", "version", "weeks",
         ])
     );

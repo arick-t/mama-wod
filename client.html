@@ -243,6 +243,7 @@ button.ghost:hover{color:var(--text)}
 </div>
 
 <script src="lib/normalize-pprog-block.js"></script>
+<script src="lib/movement-he.js"></script>
 <script src="lib/pprog-display.js"></script>
 <script src="lib/pprog-clipboard.js"></script>
 <!-- Rest day ⇄ session, both directions. A day is REST by its overview focus first,
@@ -446,6 +447,11 @@ button.ghost:hover{color:var(--text)}
       }
       el("bootErr").innerHTML = "";
       state.program = r.body.program;
+      /* The language their programme is written in travels with it, so this page draws
+         the month the same way the owner's screen does (owner, 2026-09-16). */
+      if (window.PprogDisplay && window.PprogDisplay.setLanguage) {
+        window.PprogDisplay.setLanguage(r.body.program && r.body.program.outputLanguage);
+      }
       state.watermark = r.body.watermark || null;
       show("programView", true);
       banner("", "");
