@@ -922,7 +922,9 @@ ok("it asks which days they train", /id="inADays"/.test(page));
 ok("how long each session is", /id="inASessionMinutes"/.test(page) && /id="inADiffer"/.test(page) && /id="inAPerDay"/.test(page));
 ok("and how often they take a down week", /id="inADeload"/.test(page) && /id="inANoDeload"/.test(page));
 ok("opened on the answers already on file", /function fillAthleteScheduleTab/.test(page));
-ok("and read back with the rest of the patch", /Object\.assign\(\{\}, readAthleteScheduleTab\(\), readAthleteGoalsTab\(\)\)/.test(page));
+/* Their kit joined the patch on 2026-09-16 — see below for why. */
+ok("and read back with the rest of the patch",
+  /Object\.assign\(\{\}, readAthleteScheduleTab\(\), readAthleteGoalsTab\(\), athleteEquipPatch/.test(page));
 ok("the notes tab is still first", /id: "changes", label: "Additions & changes"/.test(page));
 ok("the marks come from the one contract", /C\.IMPROVE_FOCUS_DEFS/.test(page) && /C\.AVOID_MOVEMENT_DEFS/.test(page));
 ok("the improve list still belongs to the competitor tick", /function syncAthleteImproveVisibility/.test(page));
@@ -1385,5 +1387,22 @@ ok("but resuming a stopped one does not clear it",
   !/data-brainresume[\s\S]{0,200}cvBrain\.checks = null/.test(page));
 ok("the intake modal shows it too, above the notes",
   /blockingBoxHtml\(res \|\| \{\}\) \+[\s\S]{0,120}flagsBoxHtml/.test(page));
+
+/* --- an individual's kit reaches the field the coach reads -----------------
+ * The next-block questionnaire shows the equipment tab to a person too, and what they
+ * ticked went into program.intake — the STUDIO field. An individual's packet is built
+ * from program.athleteIntake and never looks there, so the correction vanished and the
+ * next month was written against the kit they had months ago (owner, 2026-09-16).
+ * ------------------------------------------------------------------------- */
+const storeLib = fs.readFileSync(path.join(root, "lib", "client-program-store.js"), "utf8");
+ok("AN INDIVIDUAL'S EQUIPMENT TRAVELS ON THEIR OWN ANSWERS", /function athleteEquipPatch/.test(page));
+ok("on the way to a new block", /readAthleteGoalsTab\(\), athleteEquipPatch\(form\)\)/.test(page));
+ok("and on a plain correction too",
+  /action: "save_intake"[\s\S]{0,400}athleteEquipPatch/.test(page));
+/* A patch that does not mention the second place must not wipe it. */
+ok("only the list travels", /return { equipmentList: list };/.test(page));
+ok("and an empty answer patches nothing", /if \(!list \|\| typeof list !== "object" \|\| !Object\.keys\(list\)\.length\) return \{\};/.test(page));
+/* The server merges rather than replaces — that is what makes a partial patch safe. */
+ok("the store merges the patch", /draft\.athleteIntake = Object\.assign\(\{\}, draft\.athleteIntake \|\| \{\}, o\.athleteIntake\);/.test(storeLib));
 
 console.log("All admin clients page checks passed.");

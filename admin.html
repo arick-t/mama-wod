@@ -12319,7 +12319,7 @@ tryRestoreAdminSession();
       expectedVersion: S.program.version,
       intake: form,
       athleteIntake: isIndividualClient()
-        ? Object.assign({}, readAthleteScheduleTab(), readAthleteGoalsTab())
+        ? Object.assign({}, readAthleteScheduleTab(), readAthleteGoalsTab(), athleteEquipPatch(form))
         : undefined,
     }).then(function (r) {
       btn.disabled = false;
@@ -12335,6 +12335,25 @@ tryRestoreAdminSession();
       banner("good", "התחקור נשמר. שום לבנה לא נוצרה ושום שבוע לא השתנה.");
       leaveBlockMode();
     });
+  }
+
+  /**
+   * An individual's kit, on its way to the field the coach actually reads.
+   *
+   * The next-block questionnaire shows the equipment tab to a person as well as to a
+   * room, and until 2026-09-16 what they ticked went into `program.intake` — the STUDIO
+   * field. An individual's packet is built from `program.athleteIntake` and never looks
+   * there, so a person who bought a kettlebell, or whose rower broke, was answering into
+   * a field nothing read: the correction vanished and the next month was written against
+   * the kit they had months ago (owner, 2026-09-16).
+   *
+   * Only the list. The second place is not asked on this tab, and a patch that does not
+   * mention it must not wipe it — the server merges rather than replaces.
+   */
+  function athleteEquipPatch(form) {
+    var list = form && form.equipmentList;
+    if (!list || typeof list !== "object" || !Object.keys(list).length) return {};
+    return { equipmentList: list };
   }
 
   function submitIntake() {
@@ -12362,7 +12381,7 @@ tryRestoreAdminSession();
            patch onto their own answers - which is what the coach will read on the day it
            is reconnected (owner, 2026-09-03). */
         athleteIntake: isIndividualClient()
-          ? Object.assign({}, readAthleteScheduleTab(), readAthleteGoalsTab())
+          ? Object.assign({}, readAthleteScheduleTab(), readAthleteGoalsTab(), athleteEquipPatch(form))
           : undefined,
         /* A new block is when a price changes; leaving these alone changes nothing. */
         monthlyAmount: el("inBlockAmount") ? parseInt(el("inBlockAmount").value, 10) || 0 : undefined,
