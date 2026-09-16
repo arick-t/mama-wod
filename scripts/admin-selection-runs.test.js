@@ -41,7 +41,11 @@ const setDaySrc = lift("window.cvSetDay = function", "openDayTag(nextWi, nextDay
   "var cvSetDay = function"
 );
 
-const S = { wi: 0, day: "sun", selected: [], edit: null };
+const S = { wi: 0, day: "sun", selected: [], edit: null, edits: {} };
+/* Picking days also writes the ones that just LEFT the screen (owner, 2026-09-09:
+   several days can be open for editing at once). Counted here rather than performed —
+   what this file is about is which days end up selected. */
+let offScreenSaves = 0;
 const cvSetDay = new Function(
   "S",
   "clampWi",
@@ -49,6 +53,7 @@ const cvSetDay = new Function(
   "sortSel",
   "renderAdminDays",
   "openDayTag",
+  "autosaveDraftsOffScreen",
   "var cvIgnoreNextClick = false;\n" + toggleSrc + "\n" + setDaySrc + "\nreturn cvSetDay;"
 )(
   S,
@@ -62,7 +67,10 @@ const cvSetDay = new Function(
     return D.sortSelectedDays(list);
   },
   function () {},
-  function () {}
+  function () {},
+  function () {
+    offScreenSaves += 1;
+  }
 );
 
 function picked() {
@@ -75,6 +83,8 @@ function reset() {
   S.wi = 0;
   S.day = "sun";
   S.edit = null;
+  S.edits = {};
+  offScreenSaves = 0;
 }
 function plain(wi, day) {
   cvSetDay({ type: "click", preventDefault: function () {} }, wi, day);
@@ -133,5 +143,15 @@ reset();
 plain(0, "sun");
 ctrl(0, "sun");
 ok("ctrl-clicking the open day does not duplicate it", picked().length <= 1);
+
+/* --- and the open days are looked after (owner, 2026-09-09) -------------- */
+
+reset();
+plain(0, "sun");
+ok("a plain pick asks whether anything left the screen", offScreenSaves === 1);
+reset();
+plain(0, "sun");
+ctrl(0, "mon");
+ok("so does adding a day to a comparison", offScreenSaves === 2);
 
 console.log("admin-selection-runs.test.js passed");

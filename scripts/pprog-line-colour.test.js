@@ -172,8 +172,13 @@ ok("plain counting stores nothing at all", numsNone[0].lineNums === undefined);
 /* --- Enter opens the next line (owner, 2026-09-05) ------------------------ */
 
 ok("Enter inside a work line adds one", /onkeydown="if\(event\.key==='Enter'\)\{event\.preventDefault\(\);[A-Za-z]*AddWork\(0,1\);\}"/.test(numberedEditor));
+/* THE TWO PAGES DIFFER BY ONE ARGUMENT, on purpose (owner, 2026-09-09). The back
+   office can hold several days open for editing at once, so every control there names
+   its day: cvEditAddWork(key, partIndex, atIndex). The client's page shows one day at a
+   time and keeps the older shape. Both are accepted here; what matters is that a line
+   can be opened in the MIDDLE rather than only at the end. */
 for (const [label, src] of [["the admin", admin], ["the client page", client]]) {
-  ok(label + " can add a line in the middle", /window\.cvEditAddWork = function \(partIndex, atIndex\)/.test(src));
+  ok(label + " can add a line in the middle", /window\.cvEditAddWork = function \((?:key, )?partIndex, atIndex\)/.test(src));
   ok(label + " puts the caret in the new line", src.indexOf("function focusWorkLine(") >= 0);
   ok(label + " has the number handler", src.indexOf("window.cvEditSetNumber = function") >= 0);
   ok(label + " wires it", src.indexOf('editSetNumber: "cvEditSetNumber"') >= 0);
@@ -293,7 +298,10 @@ for (const [label, src] of [["the admin", adminSrc], ["the client page", clientS
   ok(label + " wires the ×", src.indexOf('editRemovePart: "cvEditRemovePart"') >= 0);
   /* The one control here that takes work away rather than adding it. */
   ok(label + " asks before removing something written", /hasSomething && !window\.confirm/.test(src));
-  ok(label + " never leaves the day with nowhere to type", /parts = \[\{ title: "Part A", notes: \[""\], format: "", work: \[""\] \}\]/.test(src));
+  /* The empty part it leaves behind has NO NAME in it any more: "Part A" was a prefix
+     nobody could rename away, and the number is drawn beside the field instead
+     (owner, 2026-09-09). */
+  ok(label + " never leaves the day with nowhere to type", /parts = \[\{ title: "", notes: \[""\], format: "", work: \[""\] \}\]/.test(src));
 }
 ok("the older admin editor has one too", adminSrc.indexOf("function adminPprogEditRemovePart(") >= 0);
 

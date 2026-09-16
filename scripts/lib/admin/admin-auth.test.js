@@ -60,7 +60,14 @@ ok("loadAthletes checks 401", /loadAthletes[\s\S]{0,900}status === 401/.test(adm
 ok("no logout button in the header", !/onclick="adminLogout\(\)"/.test(adminHtml));
 ok("a 401 still clears the session", /function forceAdminLogout/.test(adminHtml));
 ok("reads token from response header", /X-Admin-Session-Token/.test(adminHtml));
-ok("admin version 5.1", /ADMIN_UI_VERSION = "5\.1"/.test(adminHtml));
+/* Pinning the literal here is what let the badge lie: it sat on 5.1 through 5.2 and
+   5.3 because moving it meant editing tests. The number may move; what may never
+   drift is the badge disagreeing with the page's own title. */
+ok(
+  "admin version agrees with the title",
+  (adminHtml.match(/var ADMIN_UI_VERSION = "([\d.]+)"/) || [])[1] ===
+    (adminHtml.match(/<title>DUCK-WOD Admin · ([\d.]+)</) || [])[1]
+);
 
 delete process.env.ADMIN_PASSWORD;
 delete process.env.ADMIN_SESSION_SECRET;

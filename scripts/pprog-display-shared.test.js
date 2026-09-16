@@ -133,7 +133,29 @@ const shareBlock = {
 const shared = PprogDisplay.dayShareText(shareBlock, 0, "mon", { title: "DUCK-WOD", footer: "Train with DUCK-WOD" });
 ok("the message names the day", /Mon . 31 August/.test(shared));
 ok("it carries the focus", /Strength/.test(shared));
-ok("it carries the part title", /Part A/.test(shared));
+/* THE RULE CHANGED (owner, 2026-09-09). A part is headed by its POSITION and then
+   its own name — "Part A" was a prefix nobody could rename away, so it is gone from
+   the heading everywhere the day is drawn or shared. An unnamed part is just its
+   number; a named one is "1 — Back Squat". */
+ok("an unnamed part is shared as its number", /(^|\n)1(\s|$)/.test(shared));
+ok("and the words Part A are gone from it", shared.indexOf("Part A") < 0);
+const named = PprogDisplay.dayShareText(
+  {
+    blockStart: shareBlock.blockStart,
+    weeks: [
+      {
+        weekIndex: 1,
+        overview: [{ day: "mon", focus: "Strength" }],
+        days: { mon: { parts: [{ title: "Part A — Back Squat", lines: ["5x5"] }] } },
+      },
+    ],
+  },
+  0,
+  "mon",
+  {}
+);
+ok("a named part is shared by its name, numbered", /1 — Back Squat/.test(named));
+ok("without the prefix the coach's brain wrote into it", named.indexOf("Part A") < 0);
 ok("work lines are bulleted", /. 1 Clean/.test(shared));
 ok("a day with nothing in it shares nothing", PprogDisplay.dayShareText(shareBlock, 0, "tue", {}).indexOf("Part") < 0);
 
@@ -241,7 +263,10 @@ ok("nothing was forced to RTL", bidi.indexOf('dir="rtl"') < 0);
 const src = fs.readFileSync(path.join(__dirname, "..", "lib", "pprog-display.js"), "utf8");
 ok("notes decide too", /class="pprog-part-note" dir="auto"/.test(src));
 ok("so does a format line", /class="pprog-part-format" dir="auto"/.test(src));
-ok("and the part heading", /class="section-title" dir="auto"/.test(src));
+/* The heading is now two elements — a number that leads in the page's direction and
+   the name, which still decides its own (owner, 2026-09-09). */
+ok("and the part's name", /class="pprog-part-name" dir="auto"/.test(src));
+ok("with its number beside it, not inside the text", /class="pprog-part-n" aria-hidden="true"/.test(src));
 /* Checked on what is DRAWN rather than on the source line: the work row now also
    carries a number and a colour pencil, so the two tags are no longer neighbours. */
 const bidiEditor = PprogDisplay.renderDayCardHtml(block, block.weeks[0], 0, "mon", {
@@ -252,7 +277,7 @@ ok("the fields he types into as well", /class="pprog-edit-note pprog-part-note" 
 
 /* --- a note can be removed (owner, 2026-09-05) ---------------------------- */
 
-ok("a note is rendered in a row with a remove button", /pprog-edit-note-row[\s\S]{0,600}pprog-edit-del-line/.test(src));
+ok("a note is rendered in a row with a remove button", /pprog-edit-note-row[\s\S]{0,1200}pprog-edit-del-line/.test(src));
 ok("which calls a hook of its own", /var removeNoteFn = hook\(opts, "editRemoveNote", "adminPprogEditRemoveNote"\);/.test(src));
 
 /* --- a day can be given a name --------------------------------------------- */

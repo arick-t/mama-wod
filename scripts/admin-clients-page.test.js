@@ -113,12 +113,22 @@ ok("admin still owns a login screen", /id="login-screen"/.test(page));
  */
 ok("the client screen names no AI provider directly", !/gemini|groq|generativelanguage/i.test(screen));
 ok("it reaches the coach through our own endpoint", screen.indexOf('adminApiUrl("/api/personal-coach")') >= 0);
-/* Only behind his own button — no timer, no poll, nothing on open. */
-ok("the coach is asked only when he presses the button", screen.indexOf("data-brainsend") >= 0 && screen.indexOf("function brainStep()") >= 0);
-ok("and never on a timer", /setInterval\([^)]{0,80}brainStep/.test(screen) === false);
-/* And it shows him his own answers before spending anything. */
-ok("what will be sent is shown first", screen.indexOf("זה מה שנשלח למאמן — קרא ואשר") >= 0);
-ok("with the price and the fact that it lands unapproved", screen.indexOf("לא מאושר") >= 0);
+/* WHAT STARTS IT CHANGED (owner, 2026-09-09): "כפתור השלם את החודש עם המאמן מיותר
+ * ואני רוצה להיפטר ממנו. לאחר תחקור שבוצע ממודול אדמין > מעבר ישירות לבניית לבנה מלאה
+ * באופן אוטומטי".
+ * Filling in a questionnaire IS the instruction, so the button is gone and the two
+ * moments that produce an empty month start the build themselves. What has NOT changed
+ * is who may ask and when: only an action of his, never a timer, never on open. */
+ok("the button is gone", screen.indexOf("data-brainwrite") < 0 && screen.indexOf("data-brainsend") < 0);
+ok("a questionnaire starts it", /function brainAutoStart\(why\)/.test(screen) && /brainAutoStart\("intake"\)/.test(screen));
+ok("and so does צור לבנה חדשה", /brainAutoStart\("next-block"\)/.test(screen));
+ok("both go through the one place that builds", screen.indexOf("function brainStep()") >= 0);
+ok("never on a timer", /setInterval\([^)]{0,80}brainStep/.test(screen) === false);
+ok("and never over a month that is already written", /if \(plan\.done\) return false;/.test(screen));
+ok("a blank client is still refused", /if \(!L\.brief\.canBrainWrite\(S\.program\)\.ok\) return false;/.test(screen));
+/* His own answers are still readable while it builds — that was the panel's worth. */
+ok("what was sent stays readable", screen.indexOf("מה נשלח למאמן") >= 0 && /function brainBriefDetailsHtml\(\)/.test(screen));
+ok("with the price and the fact that it lands unapproved", screen.indexOf("לא מאושר") >= 0 && screen.indexOf("₪0.35") >= 0);
 
 const clientPage = fs.readFileSync(path.join(root, "client.html"), "utf8");
 const appPage = fs.readFileSync(path.join(root, "index.html"), "utf8");
@@ -544,7 +554,11 @@ ok("there is no second layout", !/function renderSessionsMatrix/.test(page) && !
 ok("the programme is always the calendar", /host\.innerHTML = D\.renderBrickView\(brickOpts\(\)\)/.test(page));
 ok("the calendar is told how many sessions were sold", /sessionColumns: sessions \|\| 0/.test(page));
 ok("days beyond the sessions sold are not writable", /DAY_KEYS_LOCAL\.indexOf\(dayKey\) >= sessions/.test(page));
-ok("the card names the session and the week", /"אימון " \+ \(activeIndex \+ 1\) \+ " · שבוע "/.test(page));
+/* PER CARD. Comparing one session across four weeks puts four cards on screen, and a
+   single string meant all four wore the label of the day selected last — four cards
+   reading "אימון 1 · שבוע 4" (owner, 2026-09-09, with the picture). */
+ok("the card names the session and the week", /"אימון " \+ \(i \+ 1\) \+ " · שבוע " \+ \(\(wi \| 0\) \+ 1\)/.test(page));
+ok("and each card is asked for its own", /dateLabelOverride: sessions[\s\S]{0,40}function \(wi, dayKey\)/.test(page));
 /* A brick is a month: opening on one week hid three quarters of what he sold. */
 ok("the month opens whole", /S\.calMode = "month"/.test(page));
 
@@ -719,8 +733,12 @@ ok("and where the deload sits", /דילואד כל /.test(page));
 
 /* "Make it a rest day" sits beside the date while the day is edited — the same place
    and the same shape as the client's own page. One control, one corner. */
-ok("the rest control is handed to the card header", /editHeaderActionsHtml: restToggleHeaderHtml\(\)/.test(page));
-ok("it only exists while the day is edited", /function restToggleHeaderHtml/.test(page) && /if \(!S\.edit\) return "";/.test(page));
+/* Handed over as a FUNCTION now: several days can be open for editing at once, so
+   each card asks for its own tick rather than sharing one piece of HTML
+   (owner, 2026-09-09). */
+ok("the rest control is handed to the card header", /editHeaderActionsHtml: restToggleHeaderHtml,/.test(page));
+ok("and it is asked per day", /function restToggleHeaderHtml\(wi, dayKey\)/.test(page));
+ok("it only exists while that day is edited", /function restToggleHeaderHtml/.test(page) && /if \(!draft\) return "";/.test(page));
 ok("the old footer row is gone", !/restToggleRowHtml/.test(page));
 ok("it is styled like the client's", /\.rest-inline\{/.test(page));
 
@@ -945,9 +963,28 @@ ok("and every other way of opening it is still centred", /function clearIdentity
  * It used to save and close the editor on the spot, so one stray click replaced a
  * written session with a rest day and there was nothing to undo (owner, 2026-09-03).
  */
-ok("ticking rest writes nothing", /if \(S\.edit\) S\.edit\.restIntent = !!t\.checked;[\s\S]{0,20}return;/.test(page));
-ok("Save honours the mark", /if \(S\.edit\.restIntent\) \{[\s\S]{0,400}saveDay\(S\.edit\.wi, S\.edit\.day, \[\], true, \{ title: readDayTitleField\(\) \}\);/.test(page));
-ok("so does leaving the day", /if \(draft\.restIntent\) \{[\s\S]{0,400}saveDay\(draft\.wi, draft\.day, \[\], true, \{ quiet: true, title: titleNow \}\);/.test(page));
+ok("ticking rest writes nothing", /restDraft\.restIntent = !!t\.checked;[\s\S]{0,20}return;/.test(page));
+/* And it ASKS the moment it is ticked over something he has typed. On a phone this
+   tick sits a thumb's width from "Add numbering": a stray tap turned the last day of a
+   real client's block into a rest day, silently, and a rest card hides the parts — so
+   there was no way back to the workout underneath (owner, 2026-09-09). */
+ok(
+  "and it asks before marking over typed work",
+  /if \(t\.checked && draftHasTypedContent\(restDraft\)\)/.test(page) &&
+    /לסמן את היום כיום מנוחה\? מה שכתוב כאן יימחק כשתשמור\./.test(page)
+);
+ok("a refused question leaves the tick off", /t\.checked = false;[\s\S]{0,60}restDraft\.restIntent = false;/.test(page));
+/* And it is the tick's OWN day: several cards can be open, each with a draft
+   (owner, 2026-09-09). */
+ok("the tick names its day", /var restKey = g\("data-restcheck"\);/.test(page) && /draftFor\(restKey\)/.test(page));
+/* An autosave is nobody pressing anything: typed work wins over the mark. */
+ok(
+  "leaving the day never turns typed work into a rest day",
+  /if \(draftHasTypedContent\(draft\)\) \{\s*\n\s*draft\.restIntent = false;/.test(page)
+);
+ok("and Save asks about a typed draft too", /dayHasWrittenSession\(draft\.wi, draft\.day\) \|\| draftHasTypedContent\(draft\)/.test(page));
+ok("Save honours the mark", /if \(draft\.restIntent\) \{[\s\S]{0,500}saveDay\(draft\.wi, draft\.day, \[\], true, \{ title: readDayTitleField\(k\), key: k \}\);/.test(page));
+ok("so does leaving the day", /if \(draft\.restIntent\) \{[\s\S]{0,900}saveDay\(draft\.wi, draft\.day, \[\], true, \{ quiet: true, title: titleNow, key: k \}\);/.test(page));
 ok("and a written session is never replaced without asking", /function dayHasWrittenSession/.test(page) && (page.match(/להפוך את היום ליום מנוחה\? האימון שכתוב בו יימחק\./g) || []).length >= 2);
 
 /* --- autosave: leaving an edit saves it (owner, 2026-09-03) ----------
@@ -955,13 +992,21 @@ ok("and a written session is never replaced without asking", /function dayHasWri
  * had just been typed unless Save was pressed first. Nobody presses Save before
  * clicking the next day — they click the next day.
  */
-ok("there is one place that commits a draft", /function autosaveDraft\(\)/.test(page));
-ok("moving to another day saves it", /if \(S\.edit && \(S\.edit\.wi !== nextWi \|\| S\.edit\.day !== nextDay\)\) autosaveDraft\(\)/.test(page));
-ok("so does the pencil on another card", /if \(S\.edit && \(S\.edit\.wi !== nextWi \|\| S\.edit\.day !== day\)\) autosaveDraft\(\)/.test(page));
-ok("so do the week, the view and Today", (page.match(/autosaveDraft\(\);/g) || []).length >= 5);
-ok("and switching client", /try \{ autosaveDraft\(\); \} catch \(eSave\)/.test(page));
-/* Cancel is the only way to say "forget this", so it must NOT save. */
-ok("cancel still discards", /window\.cvEditCancel = function \(\) \{\s*S\.edit = null;/.test(page));
+/* SEVERAL DAYS CAN BE OPEN AT ONCE since 2026-09-09, so "leaving an edit" split into
+   three, each meaning something different:
+     autosaveDraft(key)         — one day, by name;
+     autosaveDraftsOffScreen()  — after picking days: only what is no longer visible;
+     autosaveAllDrafts()        — the whole view moved, or he left the client.
+   The rule he set is unchanged: nothing typed is ever thrown away by moving. */
+ok("there is one place that commits a draft", /function autosaveDraft\(key\)/.test(page));
+ok("a day that left the screen is written", /function autosaveDraftsOffScreen\(\)/.test(page) && /if \(!visible\[k\]\) autosaveDraft\(k\);/.test(page));
+ok("picking days asks it", (page.match(/autosaveDraftsOffScreen\(\);/g) || []).length >= 2);
+ok("the pencil on another card no longer closes this one", !/autosaveDraft\(\);\n\s*S\.wi = nextWi;/.test(page));
+ok("moving the whole view saves everything open", /function autosaveAllDrafts\(\)/.test(page) && (page.match(/autosaveAllDrafts\(\);/g) || []).length >= 5);
+ok("and so does switching client", /try \{ autosaveAllDrafts\(\); \} catch \(eSave\)/.test(page));
+/* Cancel is the only way to say "forget this", so it must NOT save — and it forgets
+   THAT day only. */
+ok("cancel still discards", /window\.cvEditCancel = function \(key\) \{/.test(page) && /forgetDraft\(String\(key \|\| editKeyOf\(draft\.wi, draft\.day\)\)\);/.test(page));
 /* Since 2026-09-05 an empty draft may still carry a NAME for the day, which is worth
    keeping on its own — the session under it is written as it stands. */
 ok("an empty draft writes nothing of its own", /if \(!D \|\| !D\.partsFromDraft \|\| !D\.draftHasContent\(draft\)\) \{[\s\S]{0,200}if \(titleChanged\) saveTitleOnly/.test(page));
@@ -1164,10 +1209,10 @@ ok("and a long press does too", /} else if \(onCard\) \{/.test(screen));
 ok("a part is the extra, never a replacement for the day", screen.indexOf('data-day-copy="') < screen.indexOf('data-part-copy="'));
 /* Nothing is overwritten, so nothing is confirmed: it goes UNDER the last part. */
 ok("a pasted part is added, never written over", /החלק נשתל מתחת לחלק האחרון/.test(screen));
-ok("into the draft when that day is open for editing", /var onThisDay = !!\(S\.edit && \(S\.edit\.wi \| 0\) === weekNum - 1 && S\.edit\.day === dayKey\);/.test(screen));
+ok("into the draft of THAT day when it is open", /var target = draftFor\(key\);/.test(screen) && /target\.parts\.push\(draftPartFrom\(part, D\)\);/.test(screen));
 /* And a day that is NOT open is opened first, so the part lands somewhere he can
    carry on typing (owner, 2026-09-08). */
-ok("a day that is not open is opened for him", /if \(!onThisDay && typeof window\.cvStartEdit === "function"\)/.test(screen));
+ok("a day that is not open is opened for him", /if \(!target && typeof window\.cvStartEdit === "function"\)/.test(screen));
 ok("what he sees is what he copies", /draftPartAt\(pWi, pDay, pIdx\) \|\| storedPartAt\(pWi - 1, pDay, pIdx\)/.test(screen));
 
 /* --- one clipboard, four sizes, across clients ---------------------------- */
@@ -1334,8 +1379,8 @@ ok("THE BRAIN PANEL SHOWS WHAT THE CHECK FOUND", /function brainCheckHtml/.test(
 ok("gathered across every week of the block", /function brainNoteCheck/.test(page) &&
   /c\.brickBlocking\.indexOf\(found\[i\]\) < 0/.test(page));
 ok("shown when the build stops", /brainCheckHtml\(\) \+\s*'<div class="brain-panel is-bad"/.test(page));
-ok("and when it finishes", /if \(!cvBrain\.preview\) \{ host\.innerHTML = brainCheckHtml\(\); return; \}/.test(page));
-ok("a new build answers for itself", /cvBrain\.checks = null;[\s\S]{0,60}brainStep\(\);/.test(page));
+ok("and when it finishes", /host\.innerHTML = brainCheckHtml\(\);/.test(page));
+ok("a new build answers for itself", /cvBrain\.checks = null;[\s\S]{0,40}brainStep\(\);/.test(page));
 ok("but resuming a stopped one does not clear it",
   !/data-brainresume[\s\S]{0,200}cvBrain\.checks = null/.test(page));
 ok("the intake modal shows it too, above the notes",
