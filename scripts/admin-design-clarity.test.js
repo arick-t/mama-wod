@@ -42,7 +42,16 @@ assert.ok(
   index.includes("<title>DUCK-WOD · v" + VERSION + "</title>"),
   "app <title> version must match VERSION (" + VERSION + ")"
 );
-assert.ok(/DUCK-WOD Admin · 5\.4/.test(admin), "admin UI version 5.4");
+/* The number is asserted as AGREEMENT, never as a literal. A pin like "5.4" here is
+   how the badge sat on 5.1 for two releases while three shipped past it: the number
+   could not move without editing tests, so every release skipped it
+   (owner, 2026-09-14; the same trap one level over, 2026-09-16). */
+function adminVersionAgrees(src) {
+  var badge = (src.match(/var ADMIN_UI_VERSION = "([\d.]+)"/) || [])[1];
+  var title = (src.match(/<title>DUCK-WOD Admin . ([\d.]+)</) || [])[1];
+  return !!badge && badge === title;
+}
+assert.ok(adminVersionAgrees(admin), "the admin label and the badge say the same number");
 assert.ok(!/1\.0 beta/.test(admin), "admin no longer shows 1.0 beta");
 
 /* ------------------------------------------------------------------------

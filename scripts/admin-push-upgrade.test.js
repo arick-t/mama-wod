@@ -51,7 +51,16 @@ ok("admin push button removed", !admin.includes("עדכון בדחיפה") && !a
 ok("admin green synced label", admin.includes("סונכרן") && admin.includes("adminBlockSyncStatus"));
 ok("admin push beside block title", admin.includes("ath-block-panel-head"));
 ok("admin push head adjacent layout", /ath-block-panel-head\{[^}]*justify-content:\s*flex-start/.test(admin));
-ok("admin version 5.4", /DUCK-WOD Admin · 5\.4/.test(admin));
+/* The number is asserted as AGREEMENT, never as a literal. A pin like "5.4" here is
+   how the badge sat on 5.1 for two releases while three shipped past it: the number
+   could not move without editing tests, so every release skipped it
+   (owner, 2026-09-14; the same trap one level over, 2026-09-16). */
+function adminVersionAgrees(src) {
+  var badge = (src.match(/var ADMIN_UI_VERSION = "([\d.]+)"/) || [])[1];
+  var title = (src.match(/<title>DUCK-WOD Admin . ([\d.]+)</) || [])[1];
+  return !!badge && badge === title;
+}
+ok("the admin label and the badge say the same number", adminVersionAgrees(admin));
 ok("admin shows Coach beside Admin", /Admin \d+\.\d+/.test(admin) && /Coach 3\.0/.test(admin));
 ok("old עדכן button removed", !admin.includes("btn-update-block"));
 ok("admin push-upgrade UI gone", !admin.includes("sendPushUpgradeOffer") && !admin.includes("getPushUpgradeGate"));
