@@ -1,0 +1,964 @@
+{
+  "programId": "p_mu48iqtksdzhzb",
+  "clientName": "עודד מכינה (הדגמה)",
+  "clientColour": "",
+  "frozen": false,
+  "clientKind": "coach",
+  "clientGender": "",
+  "blockStart": "2026-09-06",
+  "intake": {
+    "clientName": "עודד מכינה (הדגמה)",
+    "monthlyAmount": 500,
+    "paymentMethod": "ביט",
+    "equipment": "functional_gym",
+    "equipmentOther": "",
+    "equipmentList": {
+      "RUN": {
+        "have": true,
+        "qty": null,
+        "cap": 3000
+      },
+      "BARBELL": {
+        "have": true,
+        "qty": 2,
+        "cap": null
+      },
+      "RIG RACK": {
+        "have": true,
+        "qty": 2,
+        "cap": null
+      },
+      "PULLUP BAR": {
+        "have": true,
+        "qty": 2,
+        "cap": null
+      },
+      "ROW": {
+        "have": false,
+        "qty": null,
+        "cap": null
+      },
+      "BIKE": {
+        "have": true,
+        "qty": 1,
+        "cap": null
+      },
+      "DUMBBELL": {
+        "have": true,
+        "qty": null,
+        "cap": 15
+      },
+      "KETTLEBELL": {
+        "have": false,
+        "qty": null,
+        "cap": null
+      },
+      "ROPE CLIMB": {
+        "have": true,
+        "qty": 1,
+        "cap": null
+      },
+      "SKIPPING ROPE": {
+        "have": false,
+        "qty": null,
+        "cap": null
+      },
+      "WALL BALL": {
+        "have": false,
+        "qty": null,
+        "cap": null
+      },
+      "RINGS": {
+        "have": false,
+        "qty": null,
+        "cap": null
+      },
+      "SKI": {
+        "have": false,
+        "qty": null,
+        "cap": null
+      },
+      "SLED": {
+        "have": false,
+        "qty": null,
+        "cap": null
+      },
+      "BOX": {
+        "have": false,
+        "qty": null,
+        "cap": null
+      },
+      "D-BALL": {
+        "have": true,
+        "qty": null,
+        "cap": 15
+      },
+      "BENCH": {
+        "have": true,
+        "qty": 1,
+        "cap": null
+      },
+      "TRAP BAR": {
+        "have": true,
+        "qty": 5,
+        "cap": null
+      },
+      "DIP BARS": {
+        "have": true,
+        "qty": 2,
+        "cap": null
+      },
+      "BANDS": {
+        "have": false,
+        "qty": null,
+        "cap": null
+      }
+    },
+    "maxAthletesAtOnce": 15,
+    "noCapacityCap": false,
+    "avoidInProgram": "",
+    "scheduleMode": "session_count",
+    "sessionsPerWeek": 3,
+    "sessionsDiffer": true,
+    "sessionTypes": [
+      "כוח ארוך עד 20 דק' + מטקון קצר 8-15",
+      "כוח קצר עד 15 + מטקון בינוני 15-22",
+      "מטקון ארוך מבוסס נפח - 30 דק' ומעלה"
+    ],
+    "includeRestDays": false,
+    "restDays": {
+      "sun": false,
+      "mon": false,
+      "tue": false,
+      "wed": false,
+      "thu": false,
+      "fri": false,
+      "sat": false
+    },
+    "dayEmphasisEnabled": false,
+    "dayEmphasis": {
+      "sun": "",
+      "mon": "",
+      "tue": "",
+      "wed": "",
+      "thu": "",
+      "fri": "",
+      "sat": ""
+    },
+    "deloadWeek": false,
+    "deloadEveryWeeks": 0,
+    "sessionMinutes": 60,
+    "population": "",
+    "ageFrom": 17,
+    "ageTo": 19,
+    "levels": {
+      "mixed": true
+    },
+    "groupTypes": {
+      "general_fitness": true,
+      "prep": true
+    },
+    "goals": ""
+  },
+  "version": 11,
+  "createdAt": "2026-09-16T15:07:36.393Z",
+  "updatedAt": "2026-09-16T15:22:57.267Z",
+  "updatedBy": "owner",
+  "weeks": [
+    {
+      "weekIndex": 1,
+      "phase": "build",
+      "theme": "",
+      "summaryLine": "",
+      "overview": [
+        {
+          "day": "sun",
+          "focus": ""
+        },
+        {
+          "day": "mon",
+          "focus": ""
+        },
+        {
+          "day": "tue",
+          "focus": ""
+        },
+        {
+          "day": "wed",
+          "focus": ""
+        },
+        {
+          "day": "thu",
+          "focus": ""
+        },
+        {
+          "day": "fri",
+          "focus": ""
+        },
+        {
+          "day": "sat",
+          "focus": ""
+        }
+      ],
+      "days": {
+        "sun": {
+          "parts": [
+            {
+              "id": "p0sun0",
+              "title": "Back Squat נפח כבד",
+              "lines": [
+                "משך: 20 min | דגש תנועתי: קיבולת דחיפה לפלג גוף תחתון וכוח",
+                "טווח תנועה מלא !",
+                "משקל מקסימלי = משקל גוף",
+                "5 סטים לאיכות (משקל עולה)",
+                "8 סקוואט אחורי (Back squats) @ מאמץ 7/8"
+              ],
+              "noteLines": 3,
+              "formatLine": true
+            },
+            {
+              "id": "p0sun1",
+              "title": "קאפלט קונדישנינג",
+              "lines": [
+                "לבחור משקולת במשקל שתאפשר עבודה רציפה",
+                "AMRAP ב-12 minutes:",
+                "12 דאמבל (Dumbbell) סקוואט גביע (Goblet Squats)",
+                "10 מתח (Pullup)",
+                "8 ברפי (bearpee)"
+              ],
+              "noteLines": 1,
+              "formatLine": true
+            }
+          ],
+          "coachModified": true
+        },
+        "mon": {
+          "parts": [
+            {
+              "id": "p0mon0",
+              "title": "Deadlift כוח",
+              "lines": [
+                "משך: 20 min | דגש תנועתי: פיתוח ציר ירך כבד",
+                "דגש: לכווץ לאטים חזק ולשמור על גב ניטרלי מהרצפה",
+                "6 סטים לאיכות:",
+                "8 דדליפט קלאסי (Conventional Deadlifts) @ מאמץ 7/8"
+              ],
+              "noteLines": 2,
+              "formatLine": true
+            },
+            {
+              "id": "p0mon1",
+              "title": "אינטרוולים מנוע אירובי",
+              "lines": [
+                "משך: 16 min | דגש תנועתי: סף אירובי וסיבולת",
+                "AMRAP 16 minutes :",
+                "10 ריצת שאטל (Shuttle Runs) (10m distance)",
+                "50 meters הליכת חקלאי (Farmer carry) (מוט יעודי)",
+                "8 שכיבות סמיכה (Push-Ups)"
+              ],
+              "noteLines": 1,
+              "formatLine": true
+            }
+          ],
+          "coachModified": true
+        },
+        "tue": {
+          "parts": [
+            {
+              "id": "p0tue0",
+              "title": "הליכה",
+              "lines": [
+                "יש להכין תיק במשקל 10 קילו",
+                "לכוון לקצב מסע - 10 דק' ל ק\"מ",
+                "35 min work - הליכה בקצב גבוהה",
+                "כל 02:30 - 10 סקוואטים במקום"
+              ],
+              "noteLines": 2,
+              "formatLine": true
+            },
+            {
+              "id": "p0tue1",
+              "title": "מוביליטי",
+              "lines": [
+                "10 min - 30 sec on 30 sec offf",
+                "ישיבת סקוואט עמוקה (Deep static squat)",
+                "סיבובי כתפיים (Shoulder rotation)",
+                "תנוחת הילד (Child pos)",
+                "מתיחת ירך אחורית (Hamstring stretch)"
+              ],
+              "noteLines": 0,
+              "formatLine": true
+            }
+          ],
+          "ownerUnreviewed": true,
+          "coachModified": true
+        },
+        "wed": {
+          "parts": [],
+          "ownerUnreviewed": true,
+          "coachModified": true
+        },
+        "thu": {
+          "parts": [],
+          "ownerUnreviewed": true,
+          "coachModified": true
+        },
+        "fri": {
+          "parts": [],
+          "ownerUnreviewed": true,
+          "coachModified": true
+        },
+        "sat": {
+          "parts": [],
+          "ownerUnreviewed": true,
+          "coachModified": true
+        }
+      }
+    },
+    {
+      "weekIndex": 2,
+      "phase": "build",
+      "theme": "",
+      "summaryLine": "",
+      "overview": [
+        {
+          "day": "sun",
+          "focus": ""
+        },
+        {
+          "day": "mon",
+          "focus": ""
+        },
+        {
+          "day": "tue",
+          "focus": ""
+        },
+        {
+          "day": "wed",
+          "focus": ""
+        },
+        {
+          "day": "thu",
+          "focus": ""
+        },
+        {
+          "day": "fri",
+          "focus": ""
+        },
+        {
+          "day": "sat",
+          "focus": ""
+        }
+      ],
+      "days": {
+        "sun": {
+          "parts": [
+            {
+              "id": "p1sun0",
+              "title": "פרוגרשן Bench Press",
+              "lines": [
+                "20 min בסך הכל לחלק הזה",
+                "לשמור על טווח תנועה מלא",
+                "להשתמש בשותף כאבטחה",
+                "6 סטים לאיכות :",
+                "לחיצת חזה (Bench press) x 10 reps @ 7/8 REP"
+              ],
+              "noteLines": 3,
+              "formatLine": true
+            },
+            {
+              "id": "p1sun1",
+              "title": "סיבובי אינטרוולים",
+              "lines": [
+                "משך: 21 min | פוקוס: קצב בעצימות גבוהה",
+                "לבחור משקל שמאפשר עבודה רציפה",
+                "לא פחות מ 20 שניות עבודה לספרינט ולא יותר מ 40",
+                "7 סטים (Work 02:00 / Rest 1:00):",
+                "12 דאמבל (Dumbbell) פוש פרס (push press)",
+                "12 ברפי (Burpees) over דאמבל (Dumbbell)",
+                "Max ריצת שאטל (Shuttle Runs) 10 meter in remaining time"
+              ],
+              "noteLines": 3,
+              "formatLine": true
+            }
+          ],
+          "coachModified": true
+        },
+        "mon": {
+          "parts": [
+            {
+              "id": "p1mon0",
+              "title": "כוח דינאמי",
+              "lines": [
+                "מעבר מהיר בין תחנות",
+                "לבחור משקל קל שמאפשר לעבוד ברצף בדדליפט",
+                "ללא משקל בלאנצים",
+                "12 min - 40 sec on 20 sec off",
+                "דדליפט (Deadlift) טראפ בר (trap bar)",
+                "טיפוס חבל (Rope climb)",
+                "לאנג'ים לסירוגין (Alternating lunges)"
+              ],
+              "noteLines": 3,
+              "formatLine": true
+            },
+            {
+              "id": "p1mon1",
+              "title": "צ'יפר קונדישנינג",
+              "lines": [
+                "2 סיבובים בלבד",
+                "מסיימים תחנה ועוברים לבאה",
+                "For Time - 2 סיבובים",
+                "400m ריצה (Run)",
+                "40 סקוואט משקל גוף (Air Squats)",
+                "30 כפיפות בטן (Sit-Ups)",
+                "20 מתח (pull-up)",
+                "10 שכיבות סמיכה (Push-Ups)"
+              ],
+              "noteLines": 2,
+              "formatLine": true
+            }
+          ],
+          "coachModified": true
+        },
+        "tue": {
+          "parts": [
+            {
+              "id": "p1tue0",
+              "title": "ריצה קצב משתנה",
+              "lines": [
+                "קצב קל מאוד בדקה הארוכה",
+                "30 דק ריצה - 15 סבבים",
+                "01:00 קל",
+                "40 שניות - בינוני",
+                "20 שניות - ספרינט"
+              ],
+              "noteLines": 1,
+              "formatLine": true
+            }
+          ],
+          "ownerUnreviewed": true,
+          "coachModified": true
+        },
+        "wed": {
+          "parts": [],
+          "ownerUnreviewed": true,
+          "coachModified": true
+        },
+        "thu": {
+          "parts": [],
+          "ownerUnreviewed": true,
+          "coachModified": true
+        },
+        "fri": {
+          "parts": [],
+          "ownerUnreviewed": true,
+          "coachModified": true
+        },
+        "sat": {
+          "parts": [],
+          "ownerUnreviewed": true,
+          "coachModified": true
+        }
+      }
+    },
+    {
+      "weekIndex": 3,
+      "phase": "build",
+      "theme": "",
+      "summaryLine": "",
+      "overview": [
+        {
+          "day": "sun",
+          "focus": ""
+        },
+        {
+          "day": "mon",
+          "focus": ""
+        },
+        {
+          "day": "tue",
+          "focus": ""
+        },
+        {
+          "day": "wed",
+          "focus": ""
+        },
+        {
+          "day": "thu",
+          "focus": ""
+        },
+        {
+          "day": "fri",
+          "focus": ""
+        },
+        {
+          "day": "sat",
+          "focus": ""
+        }
+      ],
+      "days": {
+        "sun": {
+          "parts": [
+            {
+              "id": "p2sun0",
+              "title": "Deadlift כוח",
+              "lines": [
+                "משך: 20 min | דגש תנועתי: פיתוח ציר ירך כבד",
+                "דגש: לכווץ לאטים חזק ולשמור על גב ניטרלי מהרצפה",
+                "6 סטים לאיכות:",
+                "8 דדליפט קלאסי (Conventional Deadlifts) @ 7/8 REP"
+              ],
+              "noteLines": 2,
+              "formatLine": true
+            },
+            {
+              "id": "p2sun1",
+              "title": "קונדישנינג ארוך For Time",
+              "lines": [
+                "משך: 20 min",
+                "מתאמן מבצע סט מקסימאלי של מתח / שכיבות סמיכה וכשהוא שובר אותו יוצא לריצה של 400",
+                "מה שמתזמן אותך לצאת לריצה = שבירה של הסט",
+                "20 MIN AMRAP",
+                "400m ריצה (Run)",
+                "MAX מתח (pullup)",
+                "MAX שכיבות סמיכה (pushup)"
+              ],
+              "noteLines": 3,
+              "formatLine": true
+            }
+          ],
+          "ownerUnreviewed": true,
+          "coachModified": true
+        },
+        "mon": {
+          "parts": [
+            {
+              "id": "p2mon0",
+              "title": "כוח דינאמי",
+              "lines": [
+                "מעבר מהיר בין תחנות",
+                "לבחור משקל קל שמאפשר לעבוד ברצף בסקוואט - אחיזה לפי נוחות",
+                "מ שלא עושה מתח עם משקל = מתח רגיל",
+                "12 min - 40 sec on 20 sec off",
+                "2 X DUMBLE סקוואט אחורי (BACK SQUAT)",
+                "מתח + משקל",
+                "שכיבות סמיכה"
+              ],
+              "noteLines": 3,
+              "formatLine": true
+            },
+            {
+              "id": "p2mon1",
+              "title": "מנוע אירובי",
+              "lines": [
+                "משך:20  min | דגש תנועתי: קיבולת אנאירובית וליבה",
+                "שק פק\"ל 10 קילו , ולא יותר מ 15 קילו !",
+                "20 MIN AMRAP",
+                "15 שק חול (sandbag) מהרצפה למעל הראש (ground to overhead)",
+                "12 אולר (V-Ups) / אולרים",
+                "10 ברפי (Bearpees)"
+              ],
+              "noteLines": 2,
+              "formatLine": true
+            }
+          ],
+          "coachModified": true
+        },
+        "tue": {
+          "parts": [
+            {
+              "id": "p2tue0",
+              "title": "הליכה",
+              "lines": [
+                "יש להכין תיק במשקל 10 קילו",
+                "לכוון לקצב מסע - 10 דק' ל ק\"מ",
+                "35 min work - הליכה בקצב גבוהה",
+                "כל 02:00 - 30 שניות קצב גבוהה מאוד"
+              ],
+              "noteLines": 2,
+              "formatLine": true
+            },
+            {
+              "id": "p2tue1",
+              "title": "מוביליטי",
+              "lines": [
+                "10 min - 30 sec on 30 sec offf",
+                "ישיבת סקוואט עמוקה (Deep static squat)",
+                "סיבובי כתפיים (Shoulder rotation)",
+                "תנוחת הילד (Child pos)",
+                "מתיחת ירך אחורית (Hamstring stretch)"
+              ],
+              "noteLines": 0,
+              "formatLine": true
+            }
+          ],
+          "ownerUnreviewed": true,
+          "coachModified": true
+        },
+        "wed": {
+          "parts": [],
+          "ownerUnreviewed": true,
+          "coachModified": true
+        },
+        "thu": {
+          "parts": [],
+          "ownerUnreviewed": true,
+          "coachModified": true
+        },
+        "fri": {
+          "parts": [],
+          "ownerUnreviewed": true,
+          "coachModified": true
+        },
+        "sat": {
+          "parts": [],
+          "ownerUnreviewed": true,
+          "coachModified": true
+        }
+      }
+    },
+    {
+      "weekIndex": 4,
+      "phase": "build",
+      "theme": "",
+      "summaryLine": "",
+      "overview": [
+        {
+          "day": "sun",
+          "focus": ""
+        },
+        {
+          "day": "mon",
+          "focus": ""
+        },
+        {
+          "day": "tue",
+          "focus": ""
+        },
+        {
+          "day": "wed",
+          "focus": ""
+        },
+        {
+          "day": "thu",
+          "focus": ""
+        },
+        {
+          "day": "fri",
+          "focus": ""
+        },
+        {
+          "day": "sat",
+          "focus": ""
+        }
+      ],
+      "days": {
+        "sun": {
+          "parts": [
+            {
+              "id": "p3sun0",
+              "title": "Back Squat נפח כבד",
+              "lines": [
+                "משך: 20 min | דגש תנועתי: קיבולת דחיפה לפלג גוף תחתון וכוח",
+                "לשמור על עומק מלא מתחת למקביל",
+                "משקל מקסימלי = משקל גוף",
+                "5 סטים לאיכות (משקל עולה)",
+                "8 סקוואט אחורי (Back squats) @ REP 7/8"
+              ],
+              "noteLines": 3,
+              "formatLine": true
+            },
+            {
+              "id": "p3sun1",
+              "title": "AMRAP פלג גוף תחתון וליבה",
+              "lines": [
+                "דדליפט - משקל שאפשר לנהל בלי לשבור את הסט",
+                "farmer carry - עם אותם 2 דאמבלים",
+                "אלטרנטיבה לטיפוס בחבל החזקה סטטית על מתח",
+                "EMOM ב-16 minutes:",
+                "30 sec 2XDumbbell דדליפט (deadlift)",
+                "30 sec - הליכת חקלאי (farmers carry) + 2XDumbbell",
+                "30 sec טיפוס חבל (rope climb)"
+              ],
+              "noteLines": 3,
+              "formatLine": true
+            }
+          ],
+          "ownerUnreviewed": true,
+          "coachModified": true
+        },
+        "mon": {
+          "parts": [
+            {
+              "id": "p3mon0",
+              "title": "פרוגרשן Bench Press",
+              "lines": [
+                "20 min בסך הכל לחלק הזה",
+                "לשמור על טווח תנועה מלא",
+                "להשתמש בשותף כאבטחה",
+                "6 סטים לאיכות :",
+                "לחיצת חזה (Bench press) x 10 reps @ 7/8 REP"
+              ],
+              "noteLines": 3,
+              "formatLine": true
+            },
+            {
+              "id": "p3mon1",
+              "title": "אינטרוולים מנוע אירובי",
+              "lines": [
+                "הליכה עם 2 שקים - לא יותר מ 20 ק\"ג סה\"כ",
+                "יש להרים בכל פעם את השקים מהרצפה",
+                "ניתן לסחוב את השקים בכל דרך",
+                "AMRAP 22 min",
+                "800m ריצה (Run)",
+                "20 meter 2X הליכה עם שק (sandbag walk)",
+                "22 כפיפות בטן"
+              ],
+              "noteLines": 3,
+              "formatLine": true
+            }
+          ],
+          "coachModified": true
+        },
+        "tue": {
+          "parts": [
+            {
+              "id": "p3tue0",
+              "title": "אינטרוולים",
+              "lines": [
+                "יציאה כל 02:00",
+                "30 דק ריצה - 15 סבבים",
+                "5 סבבים - 400 מ' ספרינט",
+                "10 סבבים - 300 מ' ספרינט"
+              ],
+              "noteLines": 1,
+              "formatLine": true
+            }
+          ],
+          "ownerUnreviewed": true,
+          "coachModified": true
+        },
+        "wed": {
+          "parts": [],
+          "ownerUnreviewed": true,
+          "coachModified": true
+        },
+        "thu": {
+          "parts": [],
+          "ownerUnreviewed": true,
+          "coachModified": true
+        },
+        "fri": {
+          "parts": [],
+          "ownerUnreviewed": true,
+          "coachModified": true
+        },
+        "sat": {
+          "parts": [],
+          "ownerUnreviewed": true,
+          "coachModified": true
+        }
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "blockIndex": 1,
+      "startWeek": 1,
+      "weekCount": 4,
+      "name": "",
+      "createdAt": "2026-09-16T15:07:36.393Z",
+      "approvedAt": "2026-09-16T15:07:36.459Z",
+      "notes": "",
+      "intake": {
+        "clientName": "עודד מכינה (הדגמה)",
+        "monthlyAmount": 500,
+        "paymentMethod": "ביט",
+        "equipment": "functional_gym",
+        "equipmentOther": "",
+        "equipmentList": {
+          "RUN": {
+            "have": true,
+            "qty": null,
+            "cap": 3000
+          },
+          "BARBELL": {
+            "have": true,
+            "qty": 2,
+            "cap": null
+          },
+          "RIG RACK": {
+            "have": true,
+            "qty": 2,
+            "cap": null
+          },
+          "PULLUP BAR": {
+            "have": true,
+            "qty": 2,
+            "cap": null
+          },
+          "ROW": {
+            "have": false,
+            "qty": null,
+            "cap": null
+          },
+          "BIKE": {
+            "have": true,
+            "qty": 1,
+            "cap": null
+          },
+          "DUMBBELL": {
+            "have": true,
+            "qty": null,
+            "cap": 15
+          },
+          "KETTLEBELL": {
+            "have": false,
+            "qty": null,
+            "cap": null
+          },
+          "ROPE CLIMB": {
+            "have": true,
+            "qty": 1,
+            "cap": null
+          },
+          "SKIPPING ROPE": {
+            "have": false,
+            "qty": null,
+            "cap": null
+          },
+          "WALL BALL": {
+            "have": false,
+            "qty": null,
+            "cap": null
+          },
+          "RINGS": {
+            "have": false,
+            "qty": null,
+            "cap": null
+          },
+          "SKI": {
+            "have": false,
+            "qty": null,
+            "cap": null
+          },
+          "SLED": {
+            "have": false,
+            "qty": null,
+            "cap": null
+          },
+          "BOX": {
+            "have": false,
+            "qty": null,
+            "cap": null
+          },
+          "D-BALL": {
+            "have": true,
+            "qty": null,
+            "cap": 15
+          },
+          "BENCH": {
+            "have": true,
+            "qty": 1,
+            "cap": null
+          },
+          "TRAP BAR": {
+            "have": true,
+            "qty": 5,
+            "cap": null
+          },
+          "DIP BARS": {
+            "have": true,
+            "qty": 2,
+            "cap": null
+          },
+          "BANDS": {
+            "have": false,
+            "qty": null,
+            "cap": null
+          }
+        },
+        "maxAthletesAtOnce": 15,
+        "noCapacityCap": false,
+        "avoidInProgram": "",
+        "scheduleMode": "session_count",
+        "sessionsPerWeek": 3,
+        "sessionsDiffer": true,
+        "sessionTypes": [
+          "כוח ארוך עד 20 דק' + מטקון קצר 8-15",
+          "כוח קצר עד 15 + מטקון בינוני 15-22",
+          "מטקון ארוך מבוסס נפח - 30 דק' ומעלה"
+        ],
+        "includeRestDays": false,
+        "restDays": {
+          "sun": false,
+          "mon": false,
+          "tue": false,
+          "wed": false,
+          "thu": false,
+          "fri": false,
+          "sat": false
+        },
+        "dayEmphasisEnabled": false,
+        "dayEmphasis": {
+          "sun": "",
+          "mon": "",
+          "tue": "",
+          "wed": "",
+          "thu": "",
+          "fri": "",
+          "sat": ""
+        },
+        "deloadWeek": false,
+        "deloadEveryWeeks": 0,
+        "sessionMinutes": 60,
+        "population": "",
+        "ageFrom": 17,
+        "ageTo": 19,
+        "levels": {
+          "mixed": true
+        },
+        "groupTypes": {
+          "general_fitness": true,
+          "prep": true
+        },
+        "goals": ""
+      },
+      "renewalMailedAt": null
+    }
+  ],
+  "unreadDays": {},
+  "clientUnreadDays": {
+    "w1:sun": "2026-09-16T15:07:36.459Z",
+    "w1:mon": "2026-09-16T15:07:36.459Z",
+    "w1:tue": "2026-09-16T15:07:36.459Z",
+    "w2:sun": "2026-09-16T15:07:36.459Z",
+    "w2:mon": "2026-09-16T15:07:36.459Z",
+    "w2:tue": "2026-09-16T15:07:36.459Z",
+    "w3:sun": "2026-09-16T15:07:36.459Z",
+    "w3:mon": "2026-09-16T15:07:36.459Z",
+    "w3:tue": "2026-09-16T15:07:36.459Z",
+    "w4:sun": "2026-09-16T15:07:36.459Z",
+    "w4:mon": "2026-09-16T15:07:36.459Z",
+    "w4:tue": "2026-09-16T15:07:36.459Z",
+    "w1:wed": "2026-09-16T15:07:36.459Z",
+    "w1:thu": "2026-09-16T15:07:36.459Z",
+    "w1:fri": "2026-09-16T15:07:36.459Z",
+    "w1:sat": "2026-09-16T15:07:36.459Z",
+    "w2:wed": "2026-09-16T15:07:36.459Z",
+    "w2:thu": "2026-09-16T15:07:36.459Z",
+    "w2:fri": "2026-09-16T15:07:36.459Z",
+    "w2:sat": "2026-09-16T15:07:36.459Z",
+    "w3:wed": "2026-09-16T15:07:36.459Z",
+    "w3:thu": "2026-09-16T15:07:36.459Z",
+    "w3:fri": "2026-09-16T15:07:36.459Z",
+    "w3:sat": "2026-09-16T15:07:36.459Z",
+    "w4:wed": "2026-09-16T15:07:36.459Z",
+    "w4:thu": "2026-09-16T15:07:36.459Z",
+    "w4:fri": "2026-09-16T15:07:36.459Z",
+    "w4:sat": "2026-09-16T15:07:36.459Z"
+  },
+  "monthlyAmount": 500,
+  "paymentMethod": "ביט",
+  "outputLanguage": "en"
+}
