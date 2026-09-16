@@ -94,6 +94,17 @@
 }
 .pprog-share-wa:hover{border-color:#25D366;color:#3be07a;background:#1a2a20}
 .pprog-share-wa svg{width:18px;height:18px;display:block;flex-shrink:0}
+/* Hidden from the client, kept by the owner. Muted rather than alarming: nothing is
+   wrong with the day, it is simply not being sent (owner, 2026-09-16). */
+.pprog-hide-check.on{border-color:var(--coach);color:var(--text);background:rgba(26,155,138,.14)}
+.pprog-day-card.is-hidden{opacity:.55;filter:grayscale(.65)}
+.pprog-day-card.is-hidden .card-header::after{
+  content:"מוסתר — לא מגיע ללקוח";display:block;width:100%;margin-top:6px;
+  font-size:.7rem;font-weight:700;letter-spacing:.3px;color:var(--text-meta)}
+.pprog-cal-cell.is-hidden{opacity:.42;filter:grayscale(.7);position:relative}
+.pprog-cal-cell.is-hidden::after{
+  content:"◌";position:absolute;bottom:1px;inset-inline-end:3px;font-size:9px;
+  color:var(--text-meta);pointer-events:none}
 /* The rest-day switch inside the day header, while the day is being edited. */
 .pprog-rest-check{
   display:inline-flex;align-items:center;gap:7px;margin-inline-start:10px;cursor:pointer;

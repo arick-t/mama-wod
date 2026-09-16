@@ -1405,4 +1405,30 @@ ok("and an empty answer patches nothing", /if \(!list \|\| typeof list !== "obje
 /* The server merges rather than replaces — that is what makes a partial patch safe. */
 ok("the store merges the patch", /draft\.athleteIntake = Object\.assign\(\{\}, draft\.athleteIntake \|\| \{\}, o\.athleteIntake\);/.test(storeLib));
 
+/* --- hiding a day: two ways in, one thing written -------------------------
+ * The owner writes more sessions than he sells and hides the ones a client stopped
+ * taking. Two gestures, because he reaches for it in two situations: one day while he
+ * is editing it, and a row or a column at once from the calendar (owner, 2026-09-16).
+ * ------------------------------------------------------------------------- */
+ok("A PILL BESIDE THE REST-DAY ONE", /data-hideday="/.test(page) && /pprog-hide-check/.test(page));
+ok("wearing the same class as its neighbour", /class="pprog-rest-check pprog-hide-check/.test(page));
+ok("and it says 'hide', never 'freeze' — that word already locks a client out",
+  /הסתר יום/.test(page) && !/הקפא יום/.test(page));
+ok("the client-freeze button is still its own thing", /הקפא משתמש/.test(page));
+/* The menu, offered on one day as readily as on four. */
+ok("THE DAY MENU OFFERS IT TOO", /function hideMenuItemHtml/.test(page) && /data-hide-days="/.test(page));
+ok("with no threshold on how many are selected", /hideMenuItemHtml\(wi, dayKey\)/.test(page));
+ok("a day inside a selection means all of them", /function hideTargetsFor/.test(page) &&
+  /selected\.length > 1 && inSelection/.test(page));
+ok("and one outside it means just that one", /return \[\{ wi: wi0, day: dayKey \}\];/.test(page));
+ok("a hidden day is offered the way back", /הצג ימים נבחרים|הצג יום/.test(page));
+/* One write, through the ordinary save — so the version check that refuses a stale
+   write applies exactly as it does to a day he types himself. */
+ok("IT WRITES THROUGH THE ORDINARY SAVE", /function setDaysHidden[\s\S]{0,900}pasteIntoProgram\(/.test(page));
+ok("and it changes nothing that was written", /if \(on\) day\.hidden = true;[\s\S]{0,60}else delete day\.hidden;/.test(page));
+/* Muted on his screen. Nothing is wrong with the day — it is simply not being sent. */
+ok("his calendar shows it put away", /\.pprog-cal-cell\.is-hidden\{/.test(page));
+ok("and so does the card", /\.pprog-day-card\.is-hidden\{/.test(page));
+ok("the card says why in as many words", /מוסתר — לא מגיע ללקוח/.test(page));
+
 console.log("All admin clients page checks passed.");

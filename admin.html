@@ -828,6 +828,17 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 }
 .pprog-share-wa:hover{border-color:#25D366;color:#3be07a;background:#1a2a20}
 .pprog-share-wa svg{width:18px;height:18px;display:block;flex-shrink:0}
+/* Hidden from the client, kept by the owner. Muted rather than alarming: nothing is
+   wrong with the day, it is simply not being sent (owner, 2026-09-16). */
+.pprog-hide-check.on{border-color:var(--coach);color:var(--text);background:rgba(26,155,138,.14)}
+.pprog-day-card.is-hidden{opacity:.55;filter:grayscale(.65)}
+.pprog-day-card.is-hidden .card-header::after{
+  content:"מוסתר — לא מגיע ללקוח";display:block;width:100%;margin-top:6px;
+  font-size:.7rem;font-weight:700;letter-spacing:.3px;color:var(--text-meta)}
+.pprog-cal-cell.is-hidden{opacity:.42;filter:grayscale(.7);position:relative}
+.pprog-cal-cell.is-hidden::after{
+  content:"◌";position:absolute;bottom:1px;inset-inline-end:3px;font-size:9px;
+  color:var(--text-meta);pointer-events:none}
 /* The rest-day switch inside the day header, while the day is being edited. */
 .pprog-rest-check{
   display:inline-flex;align-items:center;gap:7px;margin-inline-start:10px;cursor:pointer;
@@ -8826,12 +8837,95 @@ tryRestoreAdminSession();
        day — and ticking a ticked box does nothing, so the control read as broken. While
        editing it is an INTENT: empty, and ticking it plants a rest day over whatever is
        written here (owner, 2026-09-02). */
+    /* Hiding is NOT a draft intent like the rest day beside it: it changes nothing that
+       was written, so there is nothing to lose and nothing to confirm. It writes on the
+       spot and the screen answers immediately (owner, 2026-09-16). */
+    var wiN = draft.wi | 0;
     return (
       '<label class="pprog-rest-check" title="יום מנוחה">' +
-      '<input type="checkbox" data-restcheck="' + (draft.wi | 0) + ":" + day + '"' +
+      '<input type="checkbox" data-restcheck="' + wiN + ":" + day + '"' +
       (draft.restIntent ? " checked" : "") + ">" +
-      "<span>יום מנוחה</span></label>"
+      "<span>יום מנוחה</span></label>" +
+      '<label class="pprog-rest-check pprog-hide-check' + (isDayHidden(wiN - 1, day) ? " on" : "") +
+      '" title="נשמר אצלך, לא מגיע ללקוח">' +
+      '<input type="checkbox" data-hideday="' + wiN + ":" + day + '"' +
+      (isDayHidden(wiN - 1, day) ? " checked" : "") + ">" +
+      "<span>הסתר יום</span></label>"
     );
+  }
+
+  /** Is this stored day hidden from the client? wi is 0-based, as the weeks array is. */
+  function isDayHidden(wi, dayKey) {
+    var week = ((S.program && S.program.weeks) || [])[wi | 0];
+    var day = week && week.days && week.days[dayKey];
+    return !!(day && day.hidden === true);
+  }
+
+  /**
+   * Hide or show days, and write it.
+   *
+   * A day the owner hides stays written, stays editable and stays his; it simply does
+   * not reach the client — lib/client-view-payload.js cuts it at the boundary. He writes
+   * more sessions than he sells and hides the ones a client stopped taking, because an
+   * extra session costs a fraction and a missing one costs a month (owner, 2026-09-16).
+   *
+   * @param {Array<{wi:number,day:string}>} targets wi 0-based
+   */
+  function setDaysHidden(targets, on) {
+    if (!targets || !targets.length) return;
+    pasteIntoProgram(
+      function (weeks) {
+        var touched = 0;
+        targets.forEach(function (t) {
+          var week = weeks[t.wi | 0];
+          if (!week || !week.days) return;
+          var day = week.days[t.day];
+          if (!day) return;
+          if (on) day.hidden = true;
+          else delete day.hidden;
+          touched++;
+        });
+        if (!touched) return { ok: false, error: "לא מצאתי את הימים האלה." };
+        return { ok: true };
+      },
+      on
+        ? targets.length > 1
+          ? targets.length + " ימים הוסתרו — הם לא מגיעים ללקוח."
+          : "היום הוסתר — הוא לא מגיע ללקוח."
+        : targets.length > 1
+        ? targets.length + " ימים הוצגו שוב."
+        : "היום מוצג שוב."
+    );
+  }
+
+  /**
+   * The days a menu action applies to.
+   *
+   * Right-clicking a day inside a multi-day selection means all of them; right-clicking
+   * one outside it means that one. No threshold — a single day is offered the same
+   * action as four (owner, 2026-09-16).
+   *
+   * @returns {Array<{wi:number,day:string}>} wi 0-based
+   */
+  function hideTargetsFor(wi1, dayKey) {
+    var wi0 = (wi1 | 0) - 1;
+    var selected = (S.selected || []).slice();
+    var inSelection = selected.some(function (c) {
+      return (c.wi | 0) === wi0 && c.day === dayKey;
+    });
+    if (selected.length > 1 && inSelection) {
+      return selected.map(function (c) {
+        return { wi: c.wi | 0, day: c.day };
+      });
+    }
+    return [{ wi: wi0, day: dayKey }];
+  }
+
+  /** Are all of these days hidden? Decides whether the menu offers hide or show. */
+  function allHidden(targets) {
+    return targets.length > 0 && targets.every(function (t) {
+      return isDayHidden(t.wi, t.day);
+    });
   }
 
   function brickOpts() {
@@ -10064,6 +10158,12 @@ tryRestoreAdminSession();
       window.cvMakeRest(parseInt(mr[0], 10) || 0, mr[1] || "");
       return;
     }
+    var hideKey = g("data-hideday");
+    if (hideKey) {
+      var hk = hideKey.split(":");
+      setDaysHidden([{ wi: (parseInt(hk[0], 10) || 0) - 1, day: hk[1] || "" }], !!t.checked);
+      return;
+    }
     var restKey = g("data-restcheck");
     if (restKey) {
       /* A MARK, not a write. Ticking it used to save and close the editor on the spot,
@@ -10108,6 +10208,14 @@ tryRestoreAdminSession();
         if (r.body.doorClosed === false) banner("warn", "הסימון נשמר, אבל הדלת לא הספיקה להיסגר — נסה שוב.");
         else banner("good", makeFrozen ? "הלקוח הוקפא." : "ההקפאה בוטלה.");
       });
+      return;
+    }
+    var hideBtn = t.closest && t.closest("[data-hide-days]");
+    if (hideBtn) {
+      var hb = String(hideBtn.getAttribute("data-hide-days") || "").split(":");
+      var wantOn = hideBtn.getAttribute("data-hide-on") === "1";
+      closeWeekMenu();
+      setDaysHidden(hideTargetsFor(parseInt(hb[0], 10) || 0, hb[1] || ""), wantOn);
       return;
     }
     var wCopy = t.closest && t.closest("[data-week-copy]");
@@ -10526,6 +10634,29 @@ tryRestoreAdminSession();
    * @param {number} wi the week the owner sees, 1-based
    * @param {number|null} partIndex the part he clicked on, or null for "just the day"
    */
+  /**
+   * "Hide day" in the day menu — offered on a single day as readily as on four.
+   *
+   * There is no threshold: right-clicking one day offers to hide that one, and
+   * right-clicking a day inside a multi-day selection offers to hide all of them. A day
+   * already hidden is offered the way back, in the same row (owner, 2026-09-16).
+   */
+  function hideMenuItemHtml(wi, dayKey) {
+    var targets = hideTargetsFor(wi, dayKey);
+    var many = targets.length > 1;
+    var on = allHidden(targets);
+    var label = on
+      ? many ? "הצג ימים נבחרים (" + targets.length + ")" : "הצג יום"
+      : many ? "הסתר ימים נבחרים (" + targets.length + ")" : "הסתר יום";
+    return (
+      '<div class="wm-sep"></div>' +
+      '<button type="button" class="wm-item" data-hide-days="' + wi + ":" + esc(dayKey) +
+      '" data-hide-on="' + (on ? "0" : "1") + '">' +
+      '<span class="wm-ico" aria-hidden="true">' + (on ? "◍" : "◌") + "</span><span>" +
+      esc(label) + "</span></button>"
+    );
+  }
+
   function openDayMenu(wi, dayKey, x, y, partIndex) {
     var m = el("weekMenu");
     if (!m) return;
@@ -10542,6 +10673,7 @@ tryRestoreAdminSession();
           '<span class="wm-ico" aria-hidden="true">⤵</span><span>הדבק יום כאן' +
           '<span class="wm-from">' + esc(Clip.describe(held)) + "</span></span></button>"
         : '<span class="wm-hint">אין יום מועתק</span>') +
+      hideMenuItemHtml(wi, dayKey) +
       (onPart
         ? '<div class="wm-sep"></div>' +
           '<div class="wm-title">' + esc(partNameAt(wi - 1, dayKey, partIndex)) + "</div>" +
