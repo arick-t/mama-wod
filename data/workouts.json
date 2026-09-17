@@ -2705,50 +2705,6 @@
     "2026-09-17": [
       {
         "date": "2026-09-17",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-09-17/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "scorpions",
-              "crab stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 scap. push ups",
-              "10 ring rows",
-              "30sec plank hold"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "CHIN UPS 12MIN",
-            "lines": [
-              "find a heavy set of",
-              "3 paused chin ups",
-              "strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 20MIN",
-            "lines": [
-              "20 pull ups",
-              "20 sit ups",
-              "20 hand release push ups",
-              "* muscular endurance"
-            ],
-            "sub_title": "amrap 20min"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-17",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260917",
@@ -2814,6 +2770,79 @@
               "20 Ring Rows",
               "20 DB Push Press"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-17",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 21.3",
+            "lines": [
+              "For total time:",
+              "15 front squats",
+              "30 toes-to-bars",
+              "15 thrusters",
+              "Then, rest 1 minute before continuing with:",
+              "15 front squats",
+              "30 chest-to-bar pull-ups",
+              "15 thrusters",
+              "Then, rest 1 minute before continuing with:",
+              "15 front squats",
+              "30 bar muscle-ups",
+              "15 thrusters",
+              "Workout 21.4 begins immediately upon completing or reaching the time cap for 21.3.",
+              "95 lb. for the front squats and thrusters",
+              "Time cap: 15 min."
+            ]
+          }
+        ],
+        "note": "Open: Open 21.3"
+      },
+      {
+        "date": "2026-09-17",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-09-17/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "scorpions",
+              "crab stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 scap. push ups",
+              "10 ring rows",
+              "30sec plank hold"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "CHIN UPS 12MIN",
+            "lines": [
+              "find a heavy set of",
+              "3 paused chin ups",
+              "strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 20MIN",
+            "lines": [
+              "20 pull ups",
+              "30 hand release push ups",
+              "40 sit ups",
+              "* muscular endurance"
+            ],
+            "sub_title": "amrap 20min"
           }
         ]
       },
@@ -2897,37 +2926,8 @@
           }
         ],
         "note": "Benchmark: Linda"
-      },
-      {
-        "date": "2026-09-17",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 21.3",
-            "lines": [
-              "For total time:",
-              "15 front squats",
-              "30 toes-to-bars",
-              "15 thrusters",
-              "Then, rest 1 minute before continuing with:",
-              "15 front squats",
-              "30 chest-to-bar pull-ups",
-              "15 thrusters",
-              "Then, rest 1 minute before continuing with:",
-              "15 front squats",
-              "30 bar muscle-ups",
-              "15 thrusters",
-              "Workout 21.4 begins immediately upon completing or reaching the time cap for 21.3.",
-              "95 lb. for the front squats and thrusters",
-              "Time cap: 15 min."
-            ]
-          }
-        ],
-        "note": "Open: Open 21.3"
       }
     ]
   },
-  "last_updated": "2026-09-17T04:09:40.568728"
+  "last_updated": "2026-09-17T08:48:02.815790"
 }
