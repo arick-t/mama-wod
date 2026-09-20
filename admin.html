@@ -578,12 +578,24 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .ath-stats-actions{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
 .ath-chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 /* The language switch, beside the freeze one and deliberately quieter than it: this one
-   is free and reversible, that one locks a paying client out (owner, 2026-09-16). */
-.btn-lang-mini{background:var(--bg-panel);border:1px solid var(--line);border-radius:999px;
-  padding:3px 11px;font-size:.72rem;font-weight:800;letter-spacing:.3px;color:var(--text-muted);
-  cursor:pointer;font-family:inherit}
-.btn-lang-mini:hover{border-color:var(--coach);color:var(--text)}
-.btn-lang-mini.is-he{border-color:#1A9B8A;background:rgba(26,155,138,.16);color:#f5c518}
+   is free and reversible, that one locks a paying client out (owner, 2026-09-16).
+   Both languages are written ON it and a knob sits over the one in force, so the state
+   reads without pressing anything (owner, 2026-09-20). */
+.lang-switch{position:relative;display:inline-flex;align-items:center;gap:0;padding:0;
+  background:var(--bg-panel);border:1px solid var(--line);border-radius:999px;cursor:pointer;
+  font-family:inherit;overflow:hidden;line-height:1}
+.lang-switch:hover{border-color:var(--coach)}
+.lang-switch-side{position:relative;z-index:2;padding:4px 11px;font-size:.7rem;font-weight:800;
+  letter-spacing:.3px;color:var(--text-meta);transition:color .18s ease;white-space:nowrap}
+.lang-switch-knob{position:absolute;z-index:1;top:2px;bottom:2px;inset-inline-start:2px;
+  width:calc(50% - 3px);border-radius:999px;background:var(--coach-deep,#14584f);
+  border:1px solid var(--coach);transition:inset-inline-start .18s ease}
+/* Moved by its inline START, never by a transform: this card is drawn RTL and a
+   translateX would send the knob the wrong way (owner's screen is Hebrew). */
+.lang-switch.is-he .lang-switch-knob{inset-inline-start:calc(50% + 1px)}
+.lang-switch .lang-switch-side:first-child{color:#fff}
+.lang-switch.is-he .lang-switch-side:first-child{color:var(--text-meta)}
+.lang-switch.is-he .lang-switch-side:last-child{color:#f5c518}
 .ath-handoff-inline{margin-top:8px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;max-width:100%}
 .ath-handoff-inline .btn-handoff-mini{
   appearance:none;margin:0;padding:6px 12px;border-radius:8px;border:1px solid rgba(232,69,26,.65);
@@ -8419,11 +8431,17 @@ tryRestoreAdminSession();
                screen the moment it is pressed, on the month already written as well as
                the next one, and it costs nothing to change back — the movement names are
                a dictionary, never a call to the coach (owner, 2026-09-16). */
-            '<span class="ath-chip-sep">/</span>' +
-            '<button type="button" class="btn-lang-mini' + (heLang ? " is-he" : "") +
-            '" data-lang="' + (heLang ? "en" : "he") + '" title="' +
-            (heLang ? "חזרה לאנגלית — בחינם, המקור נשמר" : "שמות התרגילים בעברית, לצד האנגלית") + '">' +
-            (heLang ? "עברית" : "English") +
+            /* A SWITCH, with both languages on it and a knob that slides between them —
+               his words: "בורר שמצד אחד שלו יש עברית ומהצד השני ENGLISH". The state is
+               visible without pressing anything, which a single-label button never was
+               (owner, 2026-09-20). */
+            '<button type="button" class="lang-switch' + (heLang ? " is-he" : "") +
+            '" data-lang="' + (heLang ? "en" : "he") +
+            '" role="switch" aria-checked="' + (heLang ? "true" : "false") + '" title="' +
+            (heLang ? "התוכנית מוצגת בעברית · לחץ לאנגלית" : "התוכנית מוצגת באנגלית · לחץ לעברית") + '">' +
+            '<span class="lang-switch-side">ENGLISH</span>' +
+            '<span class="lang-switch-side">עברית</span>' +
+            '<span class="lang-switch-knob" aria-hidden="true"></span>' +
             "</button>" +
           "</div>" +
           renderClientMorePop(p, moreOpen) +
@@ -8837,6 +8855,12 @@ tryRestoreAdminSession();
   function renderAdminDays() {
     var host = el("adminDays");
     if (!host) return;
+    /* Set here as well as in renderDetail: the calendar redraws the days on its own, and
+       a redraw that skipped the language left the month in whichever one was last set
+       (owner, 2026-09-20). One line, and a whole class of ordering bugs goes away. */
+    if (window.PprogDisplay && window.PprogDisplay.setLanguage && S.program) {
+      window.PprogDisplay.setLanguage(S.program.outputLanguage);
+    }
     /* Not while he is holding a block: a redraw would take it out of his hand. */
     if (blockDragging) return;
     var D = pprogLib();

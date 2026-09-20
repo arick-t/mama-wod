@@ -1434,4 +1434,19 @@ ok("his calendar shows it put away", /\.pprog-cal-cell\.is-hidden\{/.test(page))
 ok("and so does the card", /\.pprog-day-card\.is-hidden\{/.test(page));
 ok("the card says why in as many words", /מוסתר — לא מגיע ללקוח/.test(page));
 
+/* --- the language switch reads as a switch --------------------------------
+ * A single-label button never said which language was in force — you had to press it to
+ * find out. Both are written on it now and a knob sits over the one in force
+ * (owner, 2026-09-20).
+ * ------------------------------------------------------------------------- */
+ok("BOTH LANGUAGES ARE ON THE SWITCH", /lang-switch-side">ENGLISH</.test(page) && /lang-switch-side">' \+\s*$|lang-switch-side">עברית</m.test(page));
+ok("with a knob between them", /lang-switch-knob/.test(page));
+ok("and it announces its state to a screen reader", /role="switch" aria-checked=/.test(page));
+ok("the knob moves by its inline start, not a transform",
+  /\.lang-switch\.is-he \.lang-switch-knob\{inset-inline-start/.test(page));
+/* The language must survive every redraw, not only the one that set it. */
+ok("THE CALENDAR REDRAW KEEPS THE LANGUAGE",
+  /function renderAdminDays[\s\S]{0,600}setLanguage\(S\.program\.outputLanguage\)/.test(page));
+ok("and so does the card render", /function renderDetail\(\)[\s\S]{0,400}setLanguage\(p\.outputLanguage\)/.test(page));
+
 console.log("All admin clients page checks passed.");
