@@ -5517,6 +5517,17 @@ function adminPprogEditCancel(silent) {
 }
 
 function adminDraftToParts(draft) {
+  /* ONE CONVERTER, NOT TWO.
+     This page used to flatten the draft itself, and in doing so threw away everything
+     the part carried beside its text: the line colours, the numbering he switched on,
+     where the notes end and the format line sits — and the hidden English the check
+     reads (owner, 2026-09-20). PprogDisplay.partsFromDraft is the inverse of the
+     draftFromDayData this very screen opens with, so it is the one that agrees.
+     The old body stays underneath only for the case where the display module never
+     loaded; then a saved day is still better than a refused one. */
+  if (typeof PprogDisplay !== "undefined" && PprogDisplay.partsFromDraft) {
+    return PprogDisplay.partsFromDraft({ parts: (draft && draft.parts) || [], day: (draft && draft.day) || "" });
+  }
   var src = (draft && draft.parts) || [];
   return src.map(function (p, idx) {
     var lines = [];
