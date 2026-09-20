@@ -477,3 +477,38 @@ const namedEmpty = PprogDisplay.partsFromDraft({
 ok("a part he named is saved even with nothing under it yet", namedEmpty.length === 1 && namedEmpty[0].title === "Part A — גב");
 
 console.log("All shared pprog-display checks passed.");
+
+/* --- the Hebrew switch has to work where it is actually used ---------------
+ * `root` belongs to the UMD wrapper, not to the factory, so the lookup for the
+ * dictionary failed silently. In Node a require() rescued it and every test passed; in a
+ * browser there is no require, so nothing happened at all and the owner watched a switch
+ * that did nothing through a hard refresh (owner, 2026-09-20).
+ * ------------------------------------------------------------------------- */
+{
+  const vm = require("vm");
+  const box = {};
+  box.self = box;
+  vm.createContext(box);
+  for (const f of ["lib/movement-he.js", "lib/pprog-display.js"]) {
+    vm.runInContext(fs.readFileSync(path.join(root, f), "utf8"), box, { filename: f });
+  }
+  ok("both libraries load the way a browser loads them",
+    typeof box.MovementHe === "object" && typeof box.PprogDisplay === "object");
+  const day = { parts: [{ title: "X", noteLines: 1, formatLine: 1,
+    lines: ["a note", "AMRAP in 12 minutes:", "10 Pullup"] }] };
+  box.PprogDisplay.setLanguage("he");
+  const he = String(box.PprogDisplay.renderDayPartsHtml(day.parts, day, {}));
+  ok("A WORK LINE TURNS OVER IN THE BROWSER", /10 מתח/.test(he) && !/10 Pullup/.test(he));
+  ok("and so does the format line", /12 דקות - מקסימום עבודה/.test(he));
+  ok("the note is left as the coach wrote it", /a note/.test(he));
+  /* A heading left in English over a Hebrew session was the one thing that still looked
+     half-done (owner, 2026-09-20). */
+  const named = { parts: [{ title: "Back Squat Heavy Volume", noteLines: 0, formatLine: 0,
+    lines: ["10 Pullup"] }] };
+  const titled = String(box.PprogDisplay.renderDayPartsHtml(named.parts, named, {}));
+  ok("AND THE PART'S NAME TURNS OVER TOO", /סקוואט אחורי נפח כבד/.test(titled));
+  ok("with no English left in it", !/Back Squat|Heavy Volume/.test(titled));
+  box.PprogDisplay.setLanguage("en");
+  const en = String(box.PprogDisplay.renderDayPartsHtml(day.parts, day, {}));
+  ok("and English comes back exactly", /10 Pullup/.test(en) && /AMRAP in 12 minutes:/.test(en));
+}

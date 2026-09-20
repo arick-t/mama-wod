@@ -6,7 +6,7 @@
 <!-- The back office has no business in a search index. It carried no such tag while
      it was only an athlete admin; now that it also holds paying clients, it says so. -->
 <meta name="robots" content="noindex, nofollow">
-<title>DUCK-WOD Admin · 5.5</title>
+<title>DUCK-WOD Admin · 5.6</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -577,6 +577,37 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .ath-stats-link:hover{color:#fff}
 .ath-stats-actions{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
 .ath-chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+/* The language switch, beside the freeze one and deliberately quieter than it: this one
+   is free and reversible, that one locks a paying client out (owner, 2026-09-16).
+   Both languages are written ON it and a knob sits over the one in force, so the state
+   reads without pressing anything (owner, 2026-09-20). */
+.lang-switch{position:relative;display:inline-flex;align-items:center;gap:0;padding:0;
+  background:var(--bg-panel);border:1px solid var(--line);border-radius:999px;cursor:pointer;
+  font-family:inherit;overflow:hidden;line-height:1}
+.lang-switch:hover{border-color:var(--coach)}
+/* One font and one size for both sides: they were rendering in different faces because
+   nothing said which to use, and Latin and Hebrew fall back differently
+   (owner, 2026-09-20). */
+/* EXACTLY HALF EACH. "ENGLISH" is a wider word than "עברית", so with sides sized to
+   their text the knob — which is half the switch — sat over neither of them, and the
+   thing looked different in each state (owner, 2026-09-20). */
+.lang-switch-side{position:relative;z-index:2;display:inline-flex;align-items:center;
+  justify-content:center;flex:1 1 0;min-width:64px;padding:4px 8px;font-family:var(--font-ui);
+  font-size:.7rem;font-weight:800;letter-spacing:.3px;color:var(--text-meta);
+  transition:color .18s ease;white-space:nowrap}
+.lang-switch-knob{position:absolute;z-index:1;top:2px;bottom:2px;inset-inline-start:2px;
+  width:calc(50% - 3px);border-radius:999px;background:var(--coach-deep,#14584f);
+  border:1px solid var(--coach);transition:inset-inline-start .18s ease}
+/* Moved by its inline START, never by a transform: this card is drawn RTL and a
+   translateX would send the knob the wrong way (owner's screen is Hebrew). */
+.lang-switch.is-he .lang-switch-knob{inset-inline-start:calc(50% + 1px)}
+/* The side in force is white, the other is muted — the SAME pair either way. It used to
+   be white for English and yellow for Hebrew, which read as two different states of two
+   different controls (owner, 2026-09-20). */
+.lang-switch .lang-switch-side:first-child{color:#fff}
+.lang-switch .lang-switch-side:last-child{color:var(--text-meta)}
+.lang-switch.is-he .lang-switch-side:first-child{color:var(--text-meta)}
+.lang-switch.is-he .lang-switch-side:last-child{color:#fff}
 .ath-handoff-inline{margin-top:8px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;max-width:100%}
 .ath-handoff-inline .btn-handoff-mini{
   appearance:none;margin:0;padding:6px 12px;border-radius:8px;border:1px solid rgba(232,69,26,.65);
@@ -828,6 +859,17 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 }
 .pprog-share-wa:hover{border-color:#25D366;color:#3be07a;background:#1a2a20}
 .pprog-share-wa svg{width:18px;height:18px;display:block;flex-shrink:0}
+/* Hidden from the client, kept by the owner. Muted rather than alarming: nothing is
+   wrong with the day, it is simply not being sent (owner, 2026-09-16). */
+.pprog-hide-check.on{border-color:var(--coach);color:var(--text);background:rgba(26,155,138,.14)}
+.pprog-day-card.is-hidden{opacity:.55;filter:grayscale(.65)}
+.pprog-day-card.is-hidden .card-header::after{
+  content:"מוסתר — לא מגיע ללקוח";display:block;width:100%;margin-top:6px;
+  font-size:.7rem;font-weight:700;letter-spacing:.3px;color:var(--text-meta)}
+.pprog-cal-cell.is-hidden{opacity:.42;filter:grayscale(.7);position:relative}
+.pprog-cal-cell.is-hidden::after{
+  content:"◌";position:absolute;bottom:1px;inset-inline-end:3px;font-size:9px;
+  color:var(--text-meta);pointer-events:none}
 /* The rest-day switch inside the day header, while the day is being edited. */
 .pprog-rest-check{
   display:inline-flex;align-items:center;gap:7px;margin-inline-start:10px;cursor:pointer;
@@ -910,7 +952,13 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .pprog-empty{color:var(--text-meta);text-align:center;padding:12px;font-size:.9em}
 .pprog-rest-day-title{color:var(--coach);font-weight:700;font-size:1.05em;margin:8px 0}
 .pprog-day-card .card-header{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
-.pprog-day-head-main{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+/* WRAPS. A card in the multi-day strip is 260px wide and the head holds the name, the
+   pencil, the date and — once it is open — two pills. One fitted; the second spilled
+   out of the card (owner, 2026-09-20). Wrapping costs a row when it is needed and
+   nothing when it is not. */
+.pprog-day-head-main{display:flex;align-items:center;gap:8px;row-gap:6px;flex-wrap:wrap;min-width:0;flex:1}
+/* Together on the row they wrap onto, rather than one per line. */
+.pprog-day-head-main .pprog-rest-check{margin-inline-start:0}
 .pprog-day-card.is-editing{border:1px solid rgba(155,107,184,.4);border-radius:12px;padding:12px 10px 14px}
 .pprog-edit-btn{
   appearance:none;display:inline-flex;align-items:center;justify-content:center;
@@ -1696,7 +1744,7 @@ header{flex-wrap:wrap;row-gap:8px}
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver" id="login-ver-badge" title="Admin 5.5 · Coach 3.0">Admin 5.5<span class="ver-sep">·</span><span class="ver-coach">Coach 3.0</span></div>
+    <div class="ver" id="login-ver-badge" title="Admin 5.6 · Coach 3.0">Admin 5.6<span class="ver-sep">·</span><span class="ver-coach">Coach 3.0</span></div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <label class="login-remember">
       <input type="checkbox" id="pw-remember"/>
@@ -1712,7 +1760,7 @@ header{flex-wrap:wrap;row-gap:8px}
   <header>
     <img class="hdr-duck" src="assets/hamamen-coach-duck.png" alt="" width="30" height="30" draggable="false">
     <span class="logo">DUCK-WOD</span>
-    <span class="ver-badge" id="admin-ver-badge" title="Admin 5.5 · Coach 3.0">Admin 5.5<span class="ver-sep">·</span><span class="ver-coach">Coach 3.0</span></span>
+    <span class="ver-badge" id="admin-ver-badge" title="Admin 5.6 · Coach 3.0">Admin 5.6<span class="ver-sep">·</span><span class="ver-coach">Coach 3.0</span></span>
     <span class="count-wrap">
       <span class="count" id="athlete-count" title="הרשימה מתעדכנת לבד כל כמה שניות — בלי לרענן את הדף">0 לקוחות</span>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
@@ -2459,7 +2507,7 @@ var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
  */
 var COACH_BUILD_MAY_SAVE = false;
 
-var ADMIN_UI_VERSION = "5.5";
+var ADMIN_UI_VERSION = "5.6";
 var LIVE_COACH_VERSION = "3.0";
 var LIVE_COACH_VERSION_FETCHED_AT = 0;
 
@@ -7867,6 +7915,7 @@ tryRestoreAdminSession();
 <script src="lib/coach-week-fill-plan.js"></script>
 <script src="lib/coach-client-brief.js"></script>
 <script src="lib/normalize-pprog-block.js"></script>
+<script src="lib/movement-he.js"></script>
 <script src="lib/pprog-display.js"></script>
 <script src="lib/admin-day-edit.js"></script>
 <script src="lib/admin-done-debrief.js"></script>
@@ -7911,7 +7960,7 @@ tryRestoreAdminSession();
   /* The same number admin.html shows, because this is the same back office and two
      versions on two pages of one product is a bug report waiting to happen.
      scripts/admin-clients-page.test.js fails if it drifts from admin.html's own. */
-  var ADMIN_UI_VERSION = "5.5";
+  var ADMIN_UI_VERSION = "5.6";
 
   var SESSION_KEY = "dw_admin_session";
   var REMEMBER_KEY = "dw_admin_remember";
@@ -7945,9 +7994,20 @@ tryRestoreAdminSession();
           return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
         });
   }
+  /**
+   * One message, not two.
+   *
+   * Every banner was being said twice — once as a strip across the whole screen and once
+   * as the floating toast — and the owner kept the toast: shorter, and it does not push
+   * the page around (owner, 2026-09-20). The strip is still written for a message that
+   * must not be missed, which is only a BAD one.
+   */
   function banner(kind, msg) {
     var host = el("topBanner");
-    if (host) host.innerHTML = msg ? '<div class="banner ' + kind + '">' + esc(msg) + "</div>" : "";
+    var keepOnScreen = kind === "bad" || kind === "warn";
+    if (host) {
+      host.innerHTML = msg && keepOnScreen ? '<div class="banner ' + kind + '">' + esc(msg) + "</div>" : "";
+    }
     /* This screen can be behind the athlete side, and a message nobody can see is the
        same as no message: the owner reads it as "the button does nothing". */
     if (msg && typeof window.showHdrToast === "function") {
@@ -8321,6 +8381,12 @@ tryRestoreAdminSession();
   function renderDetail() {
     var p = S.program;
     if (!p) { show("detail", false); return; }
+    var heLang = p.outputLanguage === "he";
+    /* His screen draws the month in the language the client's own programme carries, so
+       what he approves is what they receive (owner, 2026-09-16). */
+    if (window.PprogDisplay && window.PprogDisplay.setLanguage) {
+      window.PprogDisplay.setLanguage(p.outputLanguage);
+    }
     var a = S.access || {};
     var unread = Object.keys(p.unreadDays || {});
     var html = "";
@@ -8382,6 +8448,23 @@ tryRestoreAdminSession();
             '" data-freeze="' + (frozen ? "0" : "1") + '" title="' +
             (frozen ? "בטל הקפאה" : "הלקוח לא יוכל לפתוח את התוכנית עד שתבטל") + '">' +
             (frozen ? "בטל הקפאה" : "הקפא משתמש") +
+            "</button>" +
+            /* The language their programme is written in. A presentation choice, so it
+               sits on the client and not in the questionnaire: it changes what is on
+               screen the moment it is pressed, on the month already written as well as
+               the next one, and it costs nothing to change back — the movement names are
+               a dictionary, never a call to the coach (owner, 2026-09-16). */
+            /* A SWITCH, with both languages on it and a knob that slides between them —
+               his words: "בורר שמצד אחד שלו יש עברית ומהצד השני ENGLISH". The state is
+               visible without pressing anything, which a single-label button never was
+               (owner, 2026-09-20). */
+            '<button type="button" class="lang-switch' + (heLang ? " is-he" : "") +
+            '" data-lang="' + (heLang ? "en" : "he") +
+            '" role="switch" aria-checked="' + (heLang ? "true" : "false") + '" title="' +
+            (heLang ? "התוכנית מוצגת בעברית · לחץ לאנגלית" : "התוכנית מוצגת באנגלית · לחץ לעברית") + '">' +
+            '<span class="lang-switch-side">ENGLISH</span>' +
+            '<span class="lang-switch-side">עברית</span>' +
+            '<span class="lang-switch-knob" aria-hidden="true"></span>' +
             "</button>" +
           "</div>" +
           renderClientMorePop(p, moreOpen) +
@@ -8795,6 +8878,12 @@ tryRestoreAdminSession();
   function renderAdminDays() {
     var host = el("adminDays");
     if (!host) return;
+    /* Set here as well as in renderDetail: the calendar redraws the days on its own, and
+       a redraw that skipped the language left the month in whichever one was last set
+       (owner, 2026-09-20). One line, and a whole class of ordering bugs goes away. */
+    if (window.PprogDisplay && window.PprogDisplay.setLanguage && S.program) {
+      window.PprogDisplay.setLanguage(S.program.outputLanguage);
+    }
     /* Not while he is holding a block: a redraw would take it out of his hand. */
     if (blockDragging) return;
     var D = pprogLib();
@@ -8826,12 +8915,99 @@ tryRestoreAdminSession();
        day — and ticking a ticked box does nothing, so the control read as broken. While
        editing it is an INTENT: empty, and ticking it plants a rest day over whatever is
        written here (owner, 2026-09-02). */
+    /* Hiding is NOT a draft intent like the rest day beside it: it changes nothing that
+       was written, so there is nothing to lose and nothing to confirm. It writes on the
+       spot and the screen answers immediately (owner, 2026-09-16). */
+    var wiN = draft.wi | 0;
     return (
       '<label class="pprog-rest-check" title="יום מנוחה">' +
-      '<input type="checkbox" data-restcheck="' + (draft.wi | 0) + ":" + day + '"' +
+      '<input type="checkbox" data-restcheck="' + wiN + ":" + day + '"' +
       (draft.restIntent ? " checked" : "") + ">" +
-      "<span>יום מנוחה</span></label>"
+      "<span>יום מנוחה</span></label>" +
+      /* draft.wi is the index into the weeks ARRAY — zero-based, like cvStartEdit reads
+         it. The menu beside it counts weeks the way the owner does, from one, and the
+         two were crossed here: the pill was taking a week off and looking for a day that
+         was not there (owner, 2026-09-20). */
+      '<label class="pprog-rest-check pprog-hide-check' + (isDayHidden(wiN, day) ? " on" : "") +
+      '" title="נשמר אצלך, לא מגיע ללקוח">' +
+      '<input type="checkbox" data-hideday="' + wiN + ":" + day + '"' +
+      (isDayHidden(wiN, day) ? " checked" : "") + ">" +
+      "<span>הסתר יום</span></label>"
     );
+  }
+
+  /** Is this stored day hidden from the client? wi is 0-based, as the weeks array is. */
+  function isDayHidden(wi, dayKey) {
+    var week = ((S.program && S.program.weeks) || [])[wi | 0];
+    var day = week && week.days && week.days[dayKey];
+    return !!(day && day.hidden === true);
+  }
+
+  /**
+   * Hide or show days, and write it.
+   *
+   * A day the owner hides stays written, stays editable and stays his; it simply does
+   * not reach the client — lib/client-view-payload.js cuts it at the boundary. He writes
+   * more sessions than he sells and hides the ones a client stopped taking, because an
+   * extra session costs a fraction and a missing one costs a month (owner, 2026-09-16).
+   *
+   * @param {Array<{wi:number,day:string}>} targets wi 0-based
+   */
+  function setDaysHidden(targets, on) {
+    if (!targets || !targets.length) return;
+    pasteIntoProgram(
+      function (weeks) {
+        var touched = 0;
+        targets.forEach(function (t) {
+          var week = weeks[t.wi | 0];
+          if (!week || !week.days) return;
+          var day = week.days[t.day];
+          if (!day) return;
+          if (on) day.hidden = true;
+          else delete day.hidden;
+          touched++;
+        });
+        if (!touched) return { ok: false, error: "לא מצאתי את הימים האלה." };
+        return { ok: true };
+      },
+      on
+        ? targets.length > 1
+          ? targets.length + " ימים הוסתרו — הם לא מגיעים ללקוח."
+          : "היום הוסתר — הוא לא מגיע ללקוח."
+        : targets.length > 1
+        ? targets.length + " ימים הוצגו שוב."
+        : "היום מוצג שוב."
+    );
+  }
+
+  /**
+   * The days a menu action applies to.
+   *
+   * Right-clicking a day inside a multi-day selection means all of them; right-clicking
+   * one outside it means that one. No threshold — a single day is offered the same
+   * action as four (owner, 2026-09-16).
+   *
+   * @returns {Array<{wi:number,day:string}>} wi 0-based
+   */
+  function hideTargetsFor(wi1, dayKey) {
+    var wi0 = (wi1 | 0) - 1;
+    var selected = (S.selected || []).slice();
+    var inSelection = selected.some(function (c) {
+      return (c.wi | 0) === wi0 && c.day === dayKey;
+    });
+    if (selected.length > 1 && inSelection) {
+      return selected.map(function (c) {
+        return { wi: c.wi | 0, day: c.day };
+      });
+    }
+    return [{ wi: wi0, day: dayKey }];
+  }
+
+  /** Are all of these days hidden? Decides whether the menu offers hide or show. */
+  function allHidden(targets) {
+    return targets.length > 0 && targets.every(function (t) {
+      return isDayHidden(t.wi, t.day);
+    });
   }
 
   function brickOpts() {
@@ -10064,6 +10240,13 @@ tryRestoreAdminSession();
       window.cvMakeRest(parseInt(mr[0], 10) || 0, mr[1] || "");
       return;
     }
+    var hideKey = g("data-hideday");
+    if (hideKey) {
+      var hk = hideKey.split(":");
+      /* Zero-based, straight from the draft — see the comment where the pill is drawn. */
+      setDaysHidden([{ wi: parseInt(hk[0], 10) || 0, day: hk[1] || "" }], !!t.checked);
+      return;
+    }
     var restKey = g("data-restcheck");
     if (restKey) {
       /* A MARK, not a write. Ticking it used to save and close the editor on the spot,
@@ -10087,6 +10270,11 @@ tryRestoreAdminSession();
       restDraft.restIntent = !!t.checked;
       return;
     }
+    var langBtn = t.closest && t.closest("[data-lang]");
+    if (langBtn) {
+      setClientLanguage(langBtn.getAttribute("data-lang") === "he" ? "he" : "en");
+      return;
+    }
     if (g("data-clientmore")) { S.moreOpen = !S.moreOpen; renderDetail(); return; }
     if (g("data-termsmore")) { S.termsOpen = !S.termsOpen; renderDetail(); return; }
     if (g("data-identity")) {
@@ -10108,6 +10296,14 @@ tryRestoreAdminSession();
         if (r.body.doorClosed === false) banner("warn", "הסימון נשמר, אבל הדלת לא הספיקה להיסגר — נסה שוב.");
         else banner("good", makeFrozen ? "הלקוח הוקפא." : "ההקפאה בוטלה.");
       });
+      return;
+    }
+    var hideBtn = t.closest && t.closest("[data-hide-days]");
+    if (hideBtn) {
+      var hb = String(hideBtn.getAttribute("data-hide-days") || "").split(":");
+      var wantOn = hideBtn.getAttribute("data-hide-on") === "1";
+      closeWeekMenu();
+      setDaysHidden(hideTargetsFor(parseInt(hb[0], 10) || 0, hb[1] || ""), wantOn);
       return;
     }
     var wCopy = t.closest && t.closest("[data-week-copy]");
@@ -10526,6 +10722,29 @@ tryRestoreAdminSession();
    * @param {number} wi the week the owner sees, 1-based
    * @param {number|null} partIndex the part he clicked on, or null for "just the day"
    */
+  /**
+   * "Hide day" in the day menu — offered on a single day as readily as on four.
+   *
+   * There is no threshold: right-clicking one day offers to hide that one, and
+   * right-clicking a day inside a multi-day selection offers to hide all of them. A day
+   * already hidden is offered the way back, in the same row (owner, 2026-09-16).
+   */
+  function hideMenuItemHtml(wi, dayKey) {
+    var targets = hideTargetsFor(wi, dayKey);
+    var many = targets.length > 1;
+    var on = allHidden(targets);
+    var label = on
+      ? many ? "הצג ימים נבחרים (" + targets.length + ")" : "הצג יום"
+      : many ? "הסתר ימים נבחרים (" + targets.length + ")" : "הסתר יום";
+    return (
+      '<div class="wm-sep"></div>' +
+      '<button type="button" class="wm-item" data-hide-days="' + wi + ":" + esc(dayKey) +
+      '" data-hide-on="' + (on ? "0" : "1") + '">' +
+      '<span class="wm-ico" aria-hidden="true">' + (on ? "◍" : "◌") + "</span><span>" +
+      esc(label) + "</span></button>"
+    );
+  }
+
   function openDayMenu(wi, dayKey, x, y, partIndex) {
     var m = el("weekMenu");
     if (!m) return;
@@ -10542,6 +10761,7 @@ tryRestoreAdminSession();
           '<span class="wm-ico" aria-hidden="true">⤵</span><span>הדבק יום כאן' +
           '<span class="wm-from">' + esc(Clip.describe(held)) + "</span></span></button>"
         : '<span class="wm-hint">אין יום מועתק</span>') +
+      hideMenuItemHtml(wi, dayKey) +
       (onPart
         ? '<div class="wm-sep"></div>' +
           '<div class="wm-title">' + esc(partNameAt(wi - 1, dayKey, partIndex)) + "</div>" +
@@ -10608,6 +10828,39 @@ tryRestoreAdminSession();
       banner("good", okMessage);
       renderDetail();
     };
+  }
+
+  /**
+   * The language this client's programme is written in.
+   *
+   * A presentation choice, and it behaves like one: it changes the screen at once, it
+   * applies to the month already written as well as the next, and turning it back costs
+   * nothing because the stored text never changed — the movement names are a dictionary
+   * pass, not a call to the coach. The field also travels to the brief, so the next
+   * month's notes come back in Hebrew rather than needing a translation afterwards
+   * (owner, 2026-09-16).
+   */
+  function setClientLanguage(lang) {
+    if (!S.program) return;
+    var want = lang === "he" ? "he" : "en";
+    if ((S.program.outputLanguage || "en") === want) return;
+    api({
+      action: "save",
+      programId: S.program.programId,
+      expectedVersion: S.program.version,
+      program: { outputLanguage: want },
+    }).then(function (r) {
+      if (r.status === 409) { banner("warn", "מישהו שמר בינתיים. פותח מחדש."); openClient(S.program.programId); return; }
+      if (r.status !== 200 || !r.body.ok) {
+        banner("bad", (r.body && r.body.error) || "לא הצלחתי לשנות את השפה.");
+        return;
+      }
+      S.program = r.body.program;
+      /* One sentence, one shape — it said "חזרה לאנגלית" one way and "מוצגת בעברית"
+         the other, which read as two different things happening (owner, 2026-09-20). */
+      banner("good", want === "he" ? "התוכנית מוצגת בעברית." : "התוכנית מוצגת באנגלית.");
+      renderDetail();
+    });
   }
 
   function pasteIntoProgram(mutate, okMessage) {
@@ -12319,7 +12572,7 @@ tryRestoreAdminSession();
       expectedVersion: S.program.version,
       intake: form,
       athleteIntake: isIndividualClient()
-        ? Object.assign({}, readAthleteScheduleTab(), readAthleteGoalsTab())
+        ? Object.assign({}, readAthleteScheduleTab(), readAthleteGoalsTab(), athleteEquipPatch(form))
         : undefined,
     }).then(function (r) {
       btn.disabled = false;
@@ -12335,6 +12588,25 @@ tryRestoreAdminSession();
       banner("good", "התחקור נשמר. שום לבנה לא נוצרה ושום שבוע לא השתנה.");
       leaveBlockMode();
     });
+  }
+
+  /**
+   * An individual's kit, on its way to the field the coach actually reads.
+   *
+   * The next-block questionnaire shows the equipment tab to a person as well as to a
+   * room, and until 2026-09-16 what they ticked went into `program.intake` — the STUDIO
+   * field. An individual's packet is built from `program.athleteIntake` and never looks
+   * there, so a person who bought a kettlebell, or whose rower broke, was answering into
+   * a field nothing read: the correction vanished and the next month was written against
+   * the kit they had months ago (owner, 2026-09-16).
+   *
+   * Only the list. The second place is not asked on this tab, and a patch that does not
+   * mention it must not wipe it — the server merges rather than replaces.
+   */
+  function athleteEquipPatch(form) {
+    var list = form && form.equipmentList;
+    if (!list || typeof list !== "object" || !Object.keys(list).length) return {};
+    return { equipmentList: list };
   }
 
   function submitIntake() {
@@ -12362,7 +12634,7 @@ tryRestoreAdminSession();
            patch onto their own answers - which is what the coach will read on the day it
            is reconnected (owner, 2026-09-03). */
         athleteIntake: isIndividualClient()
-          ? Object.assign({}, readAthleteScheduleTab(), readAthleteGoalsTab())
+          ? Object.assign({}, readAthleteScheduleTab(), readAthleteGoalsTab(), athleteEquipPatch(form))
           : undefined,
         /* A new block is when a price changes; leaving these alone changes nothing. */
         monthlyAmount: el("inBlockAmount") ? parseInt(el("inBlockAmount").value, 10) || 0 : undefined,

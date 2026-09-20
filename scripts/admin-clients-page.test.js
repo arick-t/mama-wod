@@ -922,7 +922,9 @@ ok("it asks which days they train", /id="inADays"/.test(page));
 ok("how long each session is", /id="inASessionMinutes"/.test(page) && /id="inADiffer"/.test(page) && /id="inAPerDay"/.test(page));
 ok("and how often they take a down week", /id="inADeload"/.test(page) && /id="inANoDeload"/.test(page));
 ok("opened on the answers already on file", /function fillAthleteScheduleTab/.test(page));
-ok("and read back with the rest of the patch", /Object\.assign\(\{\}, readAthleteScheduleTab\(\), readAthleteGoalsTab\(\)\)/.test(page));
+/* Their kit joined the patch on 2026-09-16 — see below for why. */
+ok("and read back with the rest of the patch",
+  /Object\.assign\(\{\}, readAthleteScheduleTab\(\), readAthleteGoalsTab\(\), athleteEquipPatch/.test(page));
 ok("the notes tab is still first", /id: "changes", label: "Additions & changes"/.test(page));
 ok("the marks come from the one contract", /C\.IMPROVE_FOCUS_DEFS/.test(page) && /C\.AVOID_MOVEMENT_DEFS/.test(page));
 ok("the improve list still belongs to the competitor tick", /function syncAthleteImproveVisibility/.test(page));
@@ -1385,5 +1387,78 @@ ok("but resuming a stopped one does not clear it",
   !/data-brainresume[\s\S]{0,200}cvBrain\.checks = null/.test(page));
 ok("the intake modal shows it too, above the notes",
   /blockingBoxHtml\(res \|\| \{\}\) \+[\s\S]{0,120}flagsBoxHtml/.test(page));
+
+/* --- an individual's kit reaches the field the coach reads -----------------
+ * The next-block questionnaire shows the equipment tab to a person too, and what they
+ * ticked went into program.intake — the STUDIO field. An individual's packet is built
+ * from program.athleteIntake and never looks there, so the correction vanished and the
+ * next month was written against the kit they had months ago (owner, 2026-09-16).
+ * ------------------------------------------------------------------------- */
+const storeLib = fs.readFileSync(path.join(root, "lib", "client-program-store.js"), "utf8");
+ok("AN INDIVIDUAL'S EQUIPMENT TRAVELS ON THEIR OWN ANSWERS", /function athleteEquipPatch/.test(page));
+ok("on the way to a new block", /readAthleteGoalsTab\(\), athleteEquipPatch\(form\)\)/.test(page));
+ok("and on a plain correction too",
+  /action: "save_intake"[\s\S]{0,400}athleteEquipPatch/.test(page));
+/* A patch that does not mention the second place must not wipe it. */
+ok("only the list travels", /return { equipmentList: list };/.test(page));
+ok("and an empty answer patches nothing", /if \(!list \|\| typeof list !== "object" \|\| !Object\.keys\(list\)\.length\) return \{\};/.test(page));
+/* The server merges rather than replaces — that is what makes a partial patch safe. */
+ok("the store merges the patch", /draft\.athleteIntake = Object\.assign\(\{\}, draft\.athleteIntake \|\| \{\}, o\.athleteIntake\);/.test(storeLib));
+
+/* --- hiding a day: two ways in, one thing written -------------------------
+ * The owner writes more sessions than he sells and hides the ones a client stopped
+ * taking. Two gestures, because he reaches for it in two situations: one day while he
+ * is editing it, and a row or a column at once from the calendar (owner, 2026-09-16).
+ * ------------------------------------------------------------------------- */
+ok("A PILL BESIDE THE REST-DAY ONE", /data-hideday="/.test(page) && /pprog-hide-check/.test(page));
+ok("wearing the same class as its neighbour", /class="pprog-rest-check pprog-hide-check/.test(page));
+/* Two pills in a 260px card in the multi-day strip: one fitted, the second spilled out
+   of it. The head wraps now (owner, 2026-09-20). */
+ok("and the card head wraps so both fit", /\.pprog-day-head-main\{[^}]*flex-wrap:wrap/.test(page));
+ok("and it says 'hide', never 'freeze' — that word already locks a client out",
+  /הסתר יום/.test(page) && !/הקפא יום/.test(page));
+ok("the client-freeze button is still its own thing", /הקפא משתמש/.test(page));
+/* The menu, offered on one day as readily as on four. */
+ok("THE DAY MENU OFFERS IT TOO", /function hideMenuItemHtml/.test(page) && /data-hide-days="/.test(page));
+ok("with no threshold on how many are selected", /hideMenuItemHtml\(wi, dayKey\)/.test(page));
+ok("a day inside a selection means all of them", /function hideTargetsFor/.test(page) &&
+  /selected\.length > 1 && inSelection/.test(page));
+ok("and one outside it means just that one", /return \[\{ wi: wi0, day: dayKey \}\];/.test(page));
+ok("a hidden day is offered the way back", /הצג ימים נבחרים|הצג יום/.test(page));
+/* One write, through the ordinary save — so the version check that refuses a stale
+   write applies exactly as it does to a day he types himself. */
+ok("IT WRITES THROUGH THE ORDINARY SAVE", /function setDaysHidden[\s\S]{0,900}pasteIntoProgram\(/.test(page));
+ok("and it changes nothing that was written", /if \(on\) day\.hidden = true;[\s\S]{0,60}else delete day\.hidden;/.test(page));
+/* Muted on his screen. Nothing is wrong with the day — it is simply not being sent. */
+ok("his calendar shows it put away", /\.pprog-cal-cell\.is-hidden\{/.test(page));
+ok("and so does the card", /\.pprog-day-card\.is-hidden\{/.test(page));
+ok("the card says why in as many words", /מוסתר — לא מגיע ללקוח/.test(page));
+
+/* --- the language switch reads as a switch --------------------------------
+ * A single-label button never said which language was in force — you had to press it to
+ * find out. Both are written on it now and a knob sits over the one in force
+ * (owner, 2026-09-20).
+ * ------------------------------------------------------------------------- */
+ok("BOTH LANGUAGES ARE ON THE SWITCH", /lang-switch-side">ENGLISH</.test(page) && /lang-switch-side">' \+\s*$|lang-switch-side">עברית</m.test(page));
+ok("with a knob between them", /lang-switch-knob/.test(page));
+ok("and it announces its state to a screen reader", /role="switch" aria-checked=/.test(page));
+ok("the knob moves by its inline start, not a transform",
+  /\.lang-switch\.is-he \.lang-switch-knob\{inset-inline-start/.test(page));
+/* The language must survive every redraw, not only the one that set it. */
+ok("THE CALENDAR REDRAW KEEPS THE LANGUAGE",
+  /function renderAdminDays[\s\S]{0,600}setLanguage\(S\.program\.outputLanguage\)/.test(page));
+ok("and so does the card render", /function renderDetail\(\)[\s\S]{0,400}setLanguage\(p\.outputLanguage\)/.test(page));
+
+/* --- one message, and the dev server stops hiding new code ----------------
+ * Every banner was said twice — a strip across the screen and the floating toast — and
+ * he kept the toast. And only .html was served no-store, so a page could carry my newest
+ * markup while its JavaScript stayed whatever the browser had kept (owner, 2026-09-20,
+ * after three rounds of "it does not work here").
+ * ------------------------------------------------------------------------- */
+ok("a good message is said once, by the toast", /var keepOnScreen = kind === "bad" \|\| kind === "warn";/.test(page));
+ok("and the strip is kept for what must not be missed", /msg && keepOnScreen \?/.test(page));
+const devServer = fs.readFileSync(path.join(root, "scripts", "local-dev-server.js"), "utf8");
+ok("THE DEV SERVER CACHES NOTHING IT SERVES",
+  /ext === "\.html" \|\| ext === "\.js" \|\| ext === "\.css" \|\| ext === "\.json"/.test(devServer));
 
 console.log("All admin clients page checks passed.");

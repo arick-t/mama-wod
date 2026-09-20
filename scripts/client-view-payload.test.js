@@ -353,4 +353,73 @@ ok("it survives becoming a rest day", wk.days.sun.title === "אימון תחנו
 RT.makeSession(wk, "sun", [{ id: "b", title: "A", lines: ["y"] }]);
 ok("and coming back from one", wk.days.sun.title === "אימון תחנות");
 
+/* --- a hidden day does not reach the client -------------------------------
+ * The owner writes more sessions than he sells and hides the ones a client has stopped
+ * taking: an extra session costs a fraction, a missing one costs a month. What he hides
+ * must be GONE from their side — not an empty card, not a gap with a note on it
+ * (owner, 2026-09-16).
+ * ------------------------------------------------------------------------- */
+const withContent = function (t) {
+  return { parts: [{ id: "p" + t, title: t, lines: ["work"] }] };
+};
+const hiddenDay = function (t) {
+  return { parts: [{ id: "p" + t, title: t, lines: ["work"] }], hidden: true };
+};
+const soldThree = {
+  programId: "p_hide",
+  clientName: "Room",
+  clientKind: "coach",
+  version: 1,
+  updatedAt: "",
+  blockStart: "2026-08-30",
+  intake: { scheduleMode: "session_count", sessionsPerWeek: 3 },
+  blocks: [{ blockIndex: 1, startWeek: 1, weekCount: 4, approvedAt: "2026-08-30T00:00:00Z" }],
+  weeks: [1, 2, 3, 4].map(function (i) {
+    return { weekIndex: i, days: { sun: hiddenDay("S" + i), mon: withContent("M" + i), tue: withContent("T" + i) } };
+  }),
+};
+const hiddenOut = P.programForClient(soldThree);
+ok("A HIDDEN DAY CARRIES NOTHING TO THE CLIENT", hiddenOut.weeks[0].days.sun.parts.length === 0);
+ok("not its name either", hiddenOut.weeks[0].days.sun.title === undefined);
+ok("and the days beside it are untouched", hiddenOut.weeks[0].days.mon.parts[0].title === "M1");
+ok("THE GRID NARROWS TO WHAT IS LEFT", hiddenOut.sessionColumns === 2);
+/* The widest week sets the shape, so a block does not re-flow week by week under them. */
+const ragged = JSON.parse(JSON.stringify(soldThree));
+ragged.weeks[1].days.sun.hidden = false;
+ragged.weeks[3].days.sun.hidden = false;
+const raggedOut = P.programForClient(ragged);
+ok("a ragged block keeps the widest week's shape", raggedOut.sessionColumns === 3);
+ok("and the narrow weeks simply hold less", raggedOut.weeks[0].days.sun.parts.length === 0 &&
+  raggedOut.weeks[1].days.sun.parts.length === 1);
+/* Hiding everything is not a negative number of columns. */
+const allHidden = JSON.parse(JSON.stringify(soldThree));
+allHidden.weeks.forEach(function (w) {
+  ["sun", "mon", "tue"].forEach(function (k) { w.days[k].hidden = true; });
+});
+ok("hiding the whole block leaves no grid", P.programForClient(allHidden).sessionColumns === 0);
+/* And it never widens past what they were sold. */
+ok("the number never exceeds what they bought", hiddenOut.sessionColumns <= 3);
+/* The FOCUS line is the day, one line shorter. Left in, the client's page builds a
+   placeholder out of it — "Planned focus · Full session details still loading…" — with
+   the session's own name on it, which is the hidden day announcing itself
+   (owner, 2026-09-20, seeing exactly that on his client page). */
+const withOverview = JSON.parse(JSON.stringify(soldThree));
+withOverview.weeks.forEach(function (w) {
+  w.overview = [
+    { day: "sun", focus: "Back Squat Heavy Volume" },
+    { day: "mon", focus: "Deadlift Strength" },
+    { day: "tue", focus: "Hiking" },
+  ];
+});
+const overviewOut = P.programForClient(withOverview);
+ok(
+  "A HIDDEN DAY'S FOCUS DOES NOT REACH THEM EITHER",
+  JSON.stringify(overviewOut.weeks[0].overview) ===
+    JSON.stringify([{ day: "mon", focus: "Deadlift Strength" }, { day: "tue", focus: "Hiking" }])
+);
+ok(
+  "so nothing can be built out of it",
+  !JSON.stringify(overviewOut).includes("Back Squat Heavy Volume")
+);
+
 console.log("All client-view payload checks passed.");

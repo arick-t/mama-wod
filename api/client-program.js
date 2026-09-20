@@ -741,6 +741,11 @@ async function ownerHandler(req, res, body) {
           draft.clientKind = ["athlete", "blank"].indexOf(patch.clientKind) >= 0 ? patch.clientKind : "coach";
         }
         if (patch.blockStart !== undefined) draft.blockStart = String(patch.blockStart).slice(0, 10);
+        /* Which language this client's programme is written in. A presentation choice
+           the owner makes for them, never something they set (owner, 2026-09-16). */
+        if (patch.outputLanguage !== undefined) {
+          draft.outputLanguage = patch.outputLanguage === "he" ? "he" : "en";
+        }
         if (patch.paymentMethod !== undefined) draft.paymentMethod = String(patch.paymentMethod).slice(0, 200);
         if (patch.monthlyAmount !== undefined) {
           const n = Number(patch.monthlyAmount);
