@@ -585,17 +585,26 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
   background:var(--bg-panel);border:1px solid var(--line);border-radius:999px;cursor:pointer;
   font-family:inherit;overflow:hidden;line-height:1}
 .lang-switch:hover{border-color:var(--coach)}
-.lang-switch-side{position:relative;z-index:2;padding:4px 11px;font-size:.7rem;font-weight:800;
-  letter-spacing:.3px;color:var(--text-meta);transition:color .18s ease;white-space:nowrap}
+/* One font and one size for both sides: they were rendering in different faces because
+   nothing said which to use, and Latin and Hebrew fall back differently
+   (owner, 2026-09-20). */
+.lang-switch-side{position:relative;z-index:2;display:inline-flex;align-items:center;
+  justify-content:center;min-width:62px;padding:4px 10px;font-family:var(--font-ui);
+  font-size:.7rem;font-weight:800;letter-spacing:.3px;color:var(--text-meta);
+  transition:color .18s ease;white-space:nowrap}
 .lang-switch-knob{position:absolute;z-index:1;top:2px;bottom:2px;inset-inline-start:2px;
   width:calc(50% - 3px);border-radius:999px;background:var(--coach-deep,#14584f);
   border:1px solid var(--coach);transition:inset-inline-start .18s ease}
 /* Moved by its inline START, never by a transform: this card is drawn RTL and a
    translateX would send the knob the wrong way (owner's screen is Hebrew). */
 .lang-switch.is-he .lang-switch-knob{inset-inline-start:calc(50% + 1px)}
+/* The side in force is white, the other is muted — the SAME pair either way. It used to
+   be white for English and yellow for Hebrew, which read as two different states of two
+   different controls (owner, 2026-09-20). */
 .lang-switch .lang-switch-side:first-child{color:#fff}
+.lang-switch .lang-switch-side:last-child{color:var(--text-meta)}
 .lang-switch.is-he .lang-switch-side:first-child{color:var(--text-meta)}
-.lang-switch.is-he .lang-switch-side:last-child{color:#f5c518}
+.lang-switch.is-he .lang-switch-side:last-child{color:#fff}
 .ath-handoff-inline{margin-top:8px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;max-width:100%}
 .ath-handoff-inline .btn-handoff-mini{
   appearance:none;margin:0;padding:6px 12px;border-radius:8px;border:1px solid rgba(232,69,26,.65);
