@@ -346,8 +346,16 @@ const server = http.createServer((req, res) => {
   const total = stat.size;
   const isMedia = ext === ".mp4" || ext === ".webm" || ext === ".mov" || ext === ".m4v";
 
-  if (ext === ".html") {
+  /* THE PAGE WAS FRESH AND ITS CODE WAS NOT.
+     Only .html said no-store, so the browser kept its own copy of every script and
+     stylesheet for as long as it felt like it — and the owner spent three rounds looking
+     at a page whose markup had my newest change and whose JavaScript did not, hard
+     refresh included. On a dev server there is nothing to gain by caching anything
+     (owner, 2026-09-20). */
+  if (ext === ".html" || ext === ".js" || ext === ".css" || ext === ".json") {
     res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
   }
   /* iOS Safari needs Range/206 for reliable MP4 playback (esp. over tunnels). */
   if (isMedia) {

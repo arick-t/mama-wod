@@ -1449,4 +1449,16 @@ ok("THE CALENDAR REDRAW KEEPS THE LANGUAGE",
   /function renderAdminDays[\s\S]{0,600}setLanguage\(S\.program\.outputLanguage\)/.test(page));
 ok("and so does the card render", /function renderDetail\(\)[\s\S]{0,400}setLanguage\(p\.outputLanguage\)/.test(page));
 
+/* --- one message, and the dev server stops hiding new code ----------------
+ * Every banner was said twice — a strip across the screen and the floating toast — and
+ * he kept the toast. And only .html was served no-store, so a page could carry my newest
+ * markup while its JavaScript stayed whatever the browser had kept (owner, 2026-09-20,
+ * after three rounds of "it does not work here").
+ * ------------------------------------------------------------------------- */
+ok("a good message is said once, by the toast", /var keepOnScreen = kind === "bad" \|\| kind === "warn";/.test(page));
+ok("and the strip is kept for what must not be missed", /msg && keepOnScreen \?/.test(page));
+const devServer = fs.readFileSync(path.join(root, "scripts", "local-dev-server.js"), "utf8");
+ok("THE DEV SERVER CACHES NOTHING IT SERVES",
+  /ext === "\.html" \|\| ext === "\.js" \|\| ext === "\.css" \|\| ext === "\.json"/.test(devServer));
+
 console.log("All admin clients page checks passed.");

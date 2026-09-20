@@ -7991,20 +7991,19 @@ tryRestoreAdminSession();
           return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
         });
   }
-  var bannerTimer = null;
+  /**
+   * One message, not two.
+   *
+   * Every banner was being said twice — once as a strip across the whole screen and once
+   * as the floating toast — and the owner kept the toast: shorter, and it does not push
+   * the page around (owner, 2026-09-20). The strip is still written for a message that
+   * must not be missed, which is only a BAD one.
+   */
   function banner(kind, msg) {
     var host = el("topBanner");
-    if (host) host.innerHTML = msg ? '<div class="banner ' + kind + '">' + esc(msg) + "</div>" : "";
-    /* It used to sit there until something else replaced it, so a note about a thing that
-       is over stayed on screen over everything that came after (owner, 2026-09-20). A
-       message that went well says so and goes; a bad one waits to be read. */
-    if (bannerTimer) { clearTimeout(bannerTimer); bannerTimer = null; }
-    if (msg && kind === "good") {
-      bannerTimer = setTimeout(function () {
-        bannerTimer = null;
-        var h = el("topBanner");
-        if (h && h.innerHTML.indexOf(esc(msg)) >= 0) h.innerHTML = "";
-      }, 4000);
+    var keepOnScreen = kind === "bad" || kind === "warn";
+    if (host) {
+      host.innerHTML = msg && keepOnScreen ? '<div class="banner ' + kind + '">' + esc(msg) + "</div>" : "";
     }
     /* This screen can be behind the athlete side, and a message nobody can see is the
        same as no message: the owner reads it as "the button does nothing". */
