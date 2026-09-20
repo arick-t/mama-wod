@@ -7991,9 +7991,21 @@ tryRestoreAdminSession();
           return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
         });
   }
+  var bannerTimer = null;
   function banner(kind, msg) {
     var host = el("topBanner");
     if (host) host.innerHTML = msg ? '<div class="banner ' + kind + '">' + esc(msg) + "</div>" : "";
+    /* It used to sit there until something else replaced it, so a note about a thing that
+       is over stayed on screen over everything that came after (owner, 2026-09-20). A
+       message that went well says so and goes; a bad one waits to be read. */
+    if (bannerTimer) { clearTimeout(bannerTimer); bannerTimer = null; }
+    if (msg && kind === "good") {
+      bannerTimer = setTimeout(function () {
+        bannerTimer = null;
+        var h = el("topBanner");
+        if (h && h.innerHTML.indexOf(esc(msg)) >= 0) h.innerHTML = "";
+      }, 4000);
+    }
     /* This screen can be behind the athlete side, and a message nobody can see is the
        same as no message: the owner reads it as "the button does nothing". */
     if (msg && typeof window.showHdrToast === "function") {
@@ -10842,9 +10854,7 @@ tryRestoreAdminSession();
         return;
       }
       S.program = r.body.program;
-      banner("good", want === "he"
-        ? "התוכנית מוצגת בעברית, לצד האנגלית."
-        : "התוכנית חזרה לאנגלית.");
+      banner("good", want === "he" ? "התוכנית מוצגת בעברית." : "התוכנית חזרה לאנגלית.");
       renderDetail();
     });
   }
