@@ -1412,6 +1412,9 @@ ok("the store merges the patch", /draft\.athleteIntake = Object\.assign\(\{\}, d
  * ------------------------------------------------------------------------- */
 ok("A PILL BESIDE THE REST-DAY ONE", /data-hideday="/.test(page) && /pprog-hide-check/.test(page));
 ok("wearing the same class as its neighbour", /class="pprog-rest-check pprog-hide-check/.test(page));
+/* Two pills in a 260px card in the multi-day strip: one fitted, the second spilled out
+   of it. The head wraps now (owner, 2026-09-20). */
+ok("and the card head wraps so both fit", /\.pprog-day-head-main\{[^}]*flex-wrap:wrap/.test(page));
 ok("and it says 'hide', never 'freeze' — that word already locks a client out",
   /הסתר יום/.test(page) && !/הקפא יום/.test(page));
 ok("the client-freeze button is still its own thing", /הקפא משתמש/.test(page));
