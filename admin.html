@@ -588,8 +588,11 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 /* One font and one size for both sides: they were rendering in different faces because
    nothing said which to use, and Latin and Hebrew fall back differently
    (owner, 2026-09-20). */
+/* EXACTLY HALF EACH. "ENGLISH" is a wider word than "עברית", so with sides sized to
+   their text the knob — which is half the switch — sat over neither of them, and the
+   thing looked different in each state (owner, 2026-09-20). */
 .lang-switch-side{position:relative;z-index:2;display:inline-flex;align-items:center;
-  justify-content:center;min-width:62px;padding:4px 10px;font-family:var(--font-ui);
+  justify-content:center;flex:1 1 0;min-width:64px;padding:4px 8px;font-family:var(--font-ui);
   font-size:.7rem;font-weight:800;letter-spacing:.3px;color:var(--text-meta);
   transition:color .18s ease;white-space:nowrap}
 .lang-switch-knob{position:absolute;z-index:1;top:2px;bottom:2px;inset-inline-start:2px;
@@ -10853,7 +10856,9 @@ tryRestoreAdminSession();
         return;
       }
       S.program = r.body.program;
-      banner("good", want === "he" ? "התוכנית מוצגת בעברית." : "התוכנית חזרה לאנגלית.");
+      /* One sentence, one shape — it said "חזרה לאנגלית" one way and "מוצגת בעברית"
+         the other, which read as two different things happening (owner, 2026-09-20). */
+      banner("good", want === "he" ? "התוכנית מוצגת בעברית." : "התוכנית מוצגת באנגלית.");
       renderDetail();
     });
   }

@@ -501,6 +501,13 @@ console.log("All shared pprog-display checks passed.");
   ok("A WORK LINE TURNS OVER IN THE BROWSER", /10 מתח/.test(he) && !/10 Pullup/.test(he));
   ok("and so does the format line", /12 דקות - מקסימום עבודה/.test(he));
   ok("the note is left as the coach wrote it", /a note/.test(he));
+  /* A heading left in English over a Hebrew session was the one thing that still looked
+     half-done (owner, 2026-09-20). */
+  const named = { parts: [{ title: "Back Squat Heavy Volume", noteLines: 0, formatLine: 0,
+    lines: ["10 Pullup"] }] };
+  const titled = String(box.PprogDisplay.renderDayPartsHtml(named.parts, named, {}));
+  ok("AND THE PART'S NAME TURNS OVER TOO", /סקוואט אחורי נפח כבד/.test(titled));
+  ok("with no English left in it", !/Back Squat|Heavy Volume/.test(titled));
   box.PprogDisplay.setLanguage("en");
   const en = String(box.PprogDisplay.renderDayPartsHtml(day.parts, day, {}));
   ok("and English comes back exactly", /10 Pullup/.test(en) && /AMRAP in 12 minutes:/.test(en));
