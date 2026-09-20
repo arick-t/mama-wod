@@ -2693,58 +2693,6 @@
     "2026-09-20": [
       {
         "date": "2026-09-20",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-09-20/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "crab stretch",
-              "hand walk",
-              "calf stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. scap. push ups",
-              "2. row",
-              "3. straight leg sit ups",
-              "4. squat jumps"
-            ],
-            "sub_title": "30sec on / 15sec off x2 rounds"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "1. 10-15 bench dips",
-              "2. 10-15cal row",
-              "3. 6-8 stricht toes to bar",
-              "4. 12-20 box jumps",
-              "5. rest",
-              "Sunday Endurance for Open Gym",
-              "[wave 1]",
-              "2:00 at rpe 5, 1:00 easy",
-              "1:30 at rpe 6, 1:00 easy",
-              "1:00 at rpe 7, 1:00 easy",
-              "0:30 at rpe 8",
-              "5:00 easy between waves",
-              "[wave 2]",
-              "2:00 at rpe 6, 1:00 easy",
-              "1:30 at rpe 7, 1:00 easy",
-              "1:00 at rpe 8, 1:00 easy",
-              "0:30 at rpe 9",
-              "choose: run, bike, row, or ski",
-              "* aerobic power [lactate threshold]"
-            ],
-            "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-20",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-september-20-2026/",
@@ -2802,6 +2750,75 @@
       },
       {
         "date": "2026-09-20",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 17.5",
+            "lines": [
+              "10 rounds for time of:",
+              "9 thrusters, 95 lb.",
+              "35 double-unders"
+            ]
+          }
+        ],
+        "note": "Open: Open 17.5"
+      },
+      {
+        "date": "2026-09-20",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-09-20/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "crab stretch",
+              "hand walk",
+              "calf stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. scap. push ups",
+              "2. row",
+              "3. straight leg sit ups",
+              "4. squat jumps"
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "1. 10-15 bench dips",
+              "2. 10-15cal row",
+              "3. 6-8 stricht toes to bar",
+              "4. 12-20 box jumps",
+              "5. rest",
+              "Sunday Endurance for Open Gym",
+              "[wave 1]",
+              "2:00 at rpe 5, 1:00 easy",
+              "1:30 at rpe 6, 1:00 easy",
+              "1:00 at rpe 7, 1:00 easy",
+              "0:30 at rpe 8",
+              "5:00 easy between waves",
+              "[wave 2]",
+              "2:00 at rpe 6, 1:00 easy",
+              "1:30 at rpe 7, 1:00 easy",
+              "1:00 at rpe 8, 1:00 easy",
+              "0:30 at rpe 9",
+              "choose: run, bike, row, or ski",
+              "* aerobic power [lactate threshold]"
+            ],
+            "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-09-20",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2846,25 +2863,8 @@
           }
         ],
         "note": "Benchmark: Marguerita"
-      },
-      {
-        "date": "2026-09-20",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 17.5",
-            "lines": [
-              "10 rounds for time of:",
-              "9 thrusters, 95 lb.",
-              "35 double-unders"
-            ]
-          }
-        ],
-        "note": "Open: Open 17.5"
       }
     ]
   },
-  "last_updated": "2026-09-20T03:47:43.333510"
+  "last_updated": "2026-09-20T08:45:51.929343"
 }
