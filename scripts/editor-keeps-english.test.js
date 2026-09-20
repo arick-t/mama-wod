@@ -115,4 +115,49 @@ const before = asRead(hebrewPart()).join(" | ");
 const after = asRead(roundTrip(hebrewPart())).join(" | ");
 ok("an edit changes nothing about what the check sees", before === after);
 
-console.log("\nכל הבדיקות עברו — העורך כבר לא מעוור את הבודק.");
+
+/* ── 8. the client's own edit is the same door, one step further out ────────── */
+
+const P = require("../lib/client-view-payload.js");
+
+const stored = {
+  weeks: [
+    {
+      weekIndex: 1,
+      days: { sun: { parts: [hebrewPart()] } },
+    },
+  ],
+};
+
+/* What the client sends back: their screen never saw `linesEn` — PART_FIELDS does not
+   carry it — so the parts arrive in Hebrew alone. */
+const sentBack = {
+  edits: [
+    {
+      weekIndex: 1,
+      dayKey: "sun",
+      rest: false,
+      parts: [
+        {
+          id: "sun-0",
+          title: "מטקון - METCON",
+          lines: ["לבחור משקולת שתאפשר עבודה רציפה", "12 דקות - מקסימום עבודה", "22 כפיפות בטן", "14 מתח"],
+          noteLines: 1,
+          formatLine: 1,
+        },
+      ],
+    },
+  ],
+};
+
+P.applyClientEdit(stored, sentBack);
+const afterClient = stored.weeks[0].days.sun.parts[0];
+
+ok("the client is never handed the hidden English", P.PART_FIELDS.indexOf("linesEn") === -1);
+ok("a client's edit does not erase it from the programme", (afterClient.linesEn || []).indexOf("22 Sit-ups") !== -1);
+ok("the part keeps its English name", afterClient.titleEn === "Conditioning Couplet");
+ok("the line the CLIENT changed loses its stale English", (afterClient.linesEn || []).indexOf("10 Pullup") === -1);
+ok("and reaches the check as the client wrote it", (afterClient.linesEn || []).indexOf("14 מתח") !== -1);
+ok("the day is still marked as changed by them", afterClient.modified === true);
+
+console.log("\nגם עריכה של הלקוח עצמו כבר לא מוחקת את האנגלית.");
