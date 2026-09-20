@@ -8871,10 +8871,14 @@ tryRestoreAdminSession();
       '<input type="checkbox" data-restcheck="' + wiN + ":" + day + '"' +
       (draft.restIntent ? " checked" : "") + ">" +
       "<span>יום מנוחה</span></label>" +
-      '<label class="pprog-rest-check pprog-hide-check' + (isDayHidden(wiN - 1, day) ? " on" : "") +
+      /* draft.wi is the index into the weeks ARRAY — zero-based, like cvStartEdit reads
+         it. The menu beside it counts weeks the way the owner does, from one, and the
+         two were crossed here: the pill was taking a week off and looking for a day that
+         was not there (owner, 2026-09-20). */
+      '<label class="pprog-rest-check pprog-hide-check' + (isDayHidden(wiN, day) ? " on" : "") +
       '" title="נשמר אצלך, לא מגיע ללקוח">' +
       '<input type="checkbox" data-hideday="' + wiN + ":" + day + '"' +
-      (isDayHidden(wiN - 1, day) ? " checked" : "") + ">" +
+      (isDayHidden(wiN, day) ? " checked" : "") + ">" +
       "<span>הסתר יום</span></label>"
     );
   }
@@ -10186,7 +10190,8 @@ tryRestoreAdminSession();
     var hideKey = g("data-hideday");
     if (hideKey) {
       var hk = hideKey.split(":");
-      setDaysHidden([{ wi: (parseInt(hk[0], 10) || 0) - 1, day: hk[1] || "" }], !!t.checked);
+      /* Zero-based, straight from the draft — see the comment where the pill is drawn. */
+      setDaysHidden([{ wi: parseInt(hk[0], 10) || 0, day: hk[1] || "" }], !!t.checked);
       return;
     }
     var restKey = g("data-restcheck");

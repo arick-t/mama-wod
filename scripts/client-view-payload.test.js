@@ -399,5 +399,27 @@ allHidden.weeks.forEach(function (w) {
 ok("hiding the whole block leaves no grid", P.programForClient(allHidden).sessionColumns === 0);
 /* And it never widens past what they were sold. */
 ok("the number never exceeds what they bought", hiddenOut.sessionColumns <= 3);
+/* The FOCUS line is the day, one line shorter. Left in, the client's page builds a
+   placeholder out of it — "Planned focus · Full session details still loading…" — with
+   the session's own name on it, which is the hidden day announcing itself
+   (owner, 2026-09-20, seeing exactly that on his client page). */
+const withOverview = JSON.parse(JSON.stringify(soldThree));
+withOverview.weeks.forEach(function (w) {
+  w.overview = [
+    { day: "sun", focus: "Back Squat Heavy Volume" },
+    { day: "mon", focus: "Deadlift Strength" },
+    { day: "tue", focus: "Hiking" },
+  ];
+});
+const overviewOut = P.programForClient(withOverview);
+ok(
+  "A HIDDEN DAY'S FOCUS DOES NOT REACH THEM EITHER",
+  JSON.stringify(overviewOut.weeks[0].overview) ===
+    JSON.stringify([{ day: "mon", focus: "Deadlift Strength" }, { day: "tue", focus: "Hiking" }])
+);
+ok(
+  "so nothing can be built out of it",
+  !JSON.stringify(overviewOut).includes("Back Squat Heavy Volume")
+);
 
 console.log("All client-view payload checks passed.");
