@@ -787,25 +787,6 @@
       },
       {
         "date": "2026-09-11",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "9/11 343 TRIBUTE",
-            "lines": [
-              "11 Lateral Burpee Over Bar",
-              "3 Power Snatch 70kg/48kg",
-              "4 Overhead Squats 70kg/48kg",
-              "3 Bar Muscle Ups"
-            ],
-            "sub_title2": "9 ROUNDS FOR TIME"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-11",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -2700,45 +2681,6 @@
     "2026-09-21": [
       {
         "date": "2026-09-21",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-09-21/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "samson stretch",
-              "hand walk",
-              "instep rotations",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10/8cal row",
-              "100m run",
-              "10 elbow rotations"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "CONDITIONING 30MIN",
-            "lines": [
-              "14 power cleans",
-              "15/12cal row",
-              "16 front rack lunges",
-              "on every 5:00 (starting at 00:00) 400m run",
-              "* *pick up where you left off",
-              "* barbell: 40/30kg",
-              "aerobic capacity"
-            ],
-            "sub_title": "amrap 30min"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-21",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260921",
@@ -2803,6 +2745,112 @@
       },
       {
         "date": "2026-09-21",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 11.1",
+            "lines": [
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 Double-unders",
+              "15 Power snatches (75lbs / 35kg)",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 Double-unders",
+              "15 Power snatches (55lbs / 25kg)",
+              "*MASTERS MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 Double-unders",
+              "15 Power snatches (65lbs / 30kg)",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "30 Double-unders",
+              "15 Power snatches (45lbs / 20kg)"
+            ]
+          }
+        ],
+        "note": "Open: Open 11.1"
+      },
+      {
+        "date": "2026-09-21",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-09-21/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "samson stretch",
+              "hand walk",
+              "instep rotations",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10/8cal row",
+              "100m run",
+              "10 elbow rotations"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "CONDITIONING 30MIN",
+            "lines": [
+              "14 power cleans",
+              "15/12cal row",
+              "16 front rack lunges",
+              "on every 5:00 (starting at 00:00) 400m run",
+              "* *pick up where you left off",
+              "* barbell: 40/30kg",
+              "aerobic capacity"
+            ],
+            "sub_title": "amrap 30min"
+          }
+        ]
+      },
+      {
+        "date": "2026-09-21",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "FOR TIME",
+            "lines": [
+              "50 Push-Ups",
+              "2000m Row",
+              "*All athletes same 2k distance."
+            ]
+          },
+          {
+            "title": "Strength",
+            "lines": [
+              "15:00 EMOM",
+              "MIN 1 - Max Bench Press or Max DB Bench",
+              "MIN 2 - Max Strict Pull-Ups",
+              "MIN 3 - Rest",
+              "* (Score is Total Reps)",
+              "Options for Loading:",
+              "Barbell - 185/115, 155/95, 135/85",
+              "DBs - 70/50, 50/35, 35/25",
+              "Modifications for Strict Pull-Ups:",
+              "Banded Strict Pull Ups or Ring Rows"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-21",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2857,43 +2905,8 @@
           }
         ],
         "note": "Benchmark: Mary"
-      },
-      {
-        "date": "2026-09-21",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 11.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "30 Double-unders",
-              "15 Power snatches (75lbs / 35kg)",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "30 Double-unders",
-              "15 Power snatches (55lbs / 25kg)",
-              "*MASTERS MEN*",
-              "-",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "30 Double-unders",
-              "15 Power snatches (65lbs / 30kg)",
-              "*MASTERS WOMEN*",
-              "-",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "30 Double-unders",
-              "15 Power snatches (45lbs / 20kg)"
-            ]
-          }
-        ],
-        "note": "Open: Open 11.1"
       }
     ]
   },
-  "last_updated": "2026-09-21T03:55:04.271779"
+  "last_updated": "2026-09-21T08:56:28.875790"
 }
