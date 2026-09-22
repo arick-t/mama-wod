@@ -1431,10 +1431,12 @@ function rememberAiClientError(summary) {
  *   Coach 2.3.6 — POL-027 generic movement-pattern balance (no movement-specific bans).
  *   Coach 2.3.4 — POL-027 honor home inventory (lift kg ≠ barbell/rings; lunge+wall; anti thruster-spam).
  *   Coach 3.0 — fill every training day in every week; jumping the calendar never drops a queued week.
+ *   Coach 3.1 — one deload doctrine: a brick is four weeks, a deload is a cadence the intake
+ *               chooses, and rest day / active recovery day / deload week stop sharing a name.
  * Keep this badge in sync with the brain actually serving /api/personal-coach.
  * Display: header “COACH · v{COACH_VERSION}” only — do NOT bump app DAILY WORKOUTS / <title> here.
  */
-var COACH_VERSION = "3.0";
+var COACH_VERSION = "3.1";
 /* The brain's version line left the app header in 22.0: the coach is not part of this
    product any more, so telling the public which build of it is running was noise about
    something they cannot reach (owner, 2026-09-03). The admin module still shows it,

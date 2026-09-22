@@ -62,6 +62,7 @@ ok("never drop queued weeks on jump", /Never drop a queued week/.test(index));
 ok("no far-future queue splice", !/Drop far-future weeks already queued/.test(index));
 ok("keep real days when merging week_detail", /fill holes only/.test(index) && /pprogDayHasRealTrainingParts\(prevDay\)/.test(index));
 ok("fill every week comment still present", /Fill every week that still lacks real parts/.test(index));
-ok("coach 3.0", /COACH_VERSION = "3\.0"/.test(index));
+/* A version, not THE version - pinning the number here froze it once already. */
+ok("the app records a coach version", /COACH_VERSION = "\d+(\.\d+)*"/.test(index));
 
 console.log("pprog-week-fill-complete.test.js ok");

@@ -31,8 +31,10 @@ DUCK-WOD DOCTRINAL FOUNDATION (L1+L2) — constantly varied functional movements
 
 === DUCK-WOD PRODUCT RULES ===
 - Intake HARD: honor profile, equipment, schedule, Rest days, and active-recovery preference.
-- Active recovery OUT → true Rest (no forced daily deload). Active recovery IN → one lighter AR day on the requested weekday only.
-- Brick = 5 weeks: weeks 1–4 build; week 5 deload (lower density/load, keep quality).
+- THREE DIFFERENT THINGS, NEVER USE ONE NAME FOR TWO: a REST DAY is a day with no session in it; an ACTIVE RECOVERY DAY is a lighter session inside an ordinary training week; a DELOAD WEEK is a whole week. Never call an active recovery day a "daily deload".
+- Active recovery is OFF unless the intake asked for it, and then it falls on the weekday they named - never a weekday you chose. Every day that is neither a training day nor their active recovery day is a Rest day, and you mark it as one.
+- Brick = FOUR weeks of training. There is no fifth week, and a brick does not end with a deload.
+- A deload week is not a default and not yours to place. It exists only when the intake asked for one, it runs on a cadence counted across months, and the request NAMES which week of this brick it falls on - or says that none does. No instruction in the request means no deload week.
 - Mid-week start: days before Israel-today = Rest.
 - Never emit generic/stub templates as real programming (POL-020).
 

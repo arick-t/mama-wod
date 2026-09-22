@@ -263,10 +263,18 @@ function testStaticRegressions() {
   ok("no POL-COST one-liner in language rule", !langChunk.includes("- POL-COST:"));
 
   ok("POL-020 present", policy.includes("POL-020") && policyMd.includes("POL-020"));
-  ok("POL-022 present", policyMd.includes("POL-022"));
   ok("POL-023 present", policyMd.includes("POL-023"));
   ok("POL-024 present", policyMd.includes("POL-024"));
-  ok("POL-008 present", policyMd.includes("POL-008"));
+  /* POL-008 and POL-022 were retired on 2026-09-22. POL-008 told the coach to answer
+     that the next block generates automatically on Thursday of week 4 - nothing does,
+     and the owner presses the button himself. POL-022 governed a whole-programme chat
+     with an athlete, on a surface that has no chat. Assert they are GONE, so neither
+     comes back with a copy-paste. */
+  ok("POL-008 is retired", !policyMd.includes("POL-008") && !policy.includes("POL-008"));
+  ok("POL-022 is retired", !policyMd.includes("POL-022") && !policy.includes("POL-022"));
+  ok("POL-005 is retired", !policyMd.includes("POL-005") && !policy.includes("POL-005"));
+  ok("POL-011 is retired", !policyMd.includes("POL-011") && !policy.includes("POL-011"));
+  ok("and nothing promises an automatic next block", !/generates automatically on Thursday/i.test(pc));
   ok("POL-009 present", policyMd.includes("POL-009"));
   ok("POL-COST-001..010 in policy md", /POL-COST-001[\s\S]*POL-COST-010/.test(policyMd));
   ok("POL-COST-010 in synced policy js", policy.includes("POL-COST-010"));

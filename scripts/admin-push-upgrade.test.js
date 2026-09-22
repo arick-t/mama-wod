@@ -61,7 +61,10 @@ function adminVersionAgrees(src) {
   return !!badge && badge === title;
 }
 ok("the admin label and the badge say the same number", adminVersionAgrees(admin));
-ok("admin shows Coach beside Admin", /Admin \d+\.\d+/.test(admin) && /Coach 3\.0/.test(admin));
+/* Both numbers on the badge, and the coach one is whatever the page is wired to. */
+ok("admin shows Coach beside Admin", /Admin \d+\.\d+/.test(admin) &&
+  (admin.match(/Coach (\d+\.\d+)/) || [])[1] ===
+    (admin.match(/var LIVE_COACH_VERSION = "([\d.]+)"/) || [])[1]);
 ok("old עדכן button removed", !admin.includes("btn-update-block"));
 ok("admin push-upgrade UI gone", !admin.includes("sendPushUpgradeOffer") && !admin.includes("getPushUpgradeGate"));
 ok("admin action API", snap.includes('action === "admin_push_upgrade_offer"'));

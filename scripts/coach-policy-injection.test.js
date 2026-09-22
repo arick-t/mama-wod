@@ -4,7 +4,7 @@
  * Why this file exists: from 2026-07-29 to 2026-09-01, `coachPolicyBlock()` ended in
  * `raw.slice(0, 12000)` — a character budget copied from the old Groq free-tier
  * tokens-per-minute estimate. The policy grew 18KB -> 45KB behind it, so 24 of 38
- * rules (POL-016, POL-020, POL-027, POL-022/023/024, all POL-COST) never reached
+ * rules (POL-016, POL-020, POL-027, POL-023/024, all POL-COST) never reached
  * either the programming system or chat. Nothing in the suite noticed, because every
  * other coach test asserts that a rule exists in coach-policy.js — not that it
  * survives the trip into the prompt.
@@ -83,7 +83,6 @@ function testWholePolicyArrives() {
     "POL-016",
     "POL-019",
     "POL-020",
-    "POL-022",
     "POL-023",
     "POL-024",
     "POL-026",
@@ -138,7 +137,7 @@ function testBothPathsStillInject() {
 }
 
 /* A block became four weeks on 2026-09-02, but six lines of the policy the coach reads verbatim
-   still said five — POL-008, POL-009, POL-016, POL-023 (twice) and POL-COST. Four of them sit in
+   still said five — POL-009, POL-016, POL-023 (twice) and POL-COST (POL-008 was one of them; it has since been retired). Four of them sit in
    rules that the 12,000-character slice used to cut off, so fixing the truncation is what delivered
    the stale number to the model: the layers said four weeks and the policy said five, inside the
    same prompt. Guard the source of truth, not the generated file. */
@@ -183,18 +182,22 @@ function testBlockLengthIsFourWeeks() {
   );
 }
 
-/* POL-029, added 2026-09-03 as a product foundation rather than a programming preference. It is
+/* POL-031, added 2026-09-03 as a product foundation rather than a programming preference. It is
    the rule that makes a repeated block a violation in its own right, so it has to survive
-   injection like every other id — and the maintainers' note has to tie it to POL-009. */
+   injection like every other id — and the maintainers' note has to tie it to POL-009.
+
+   It was POL-029 until 2026-09-22. Two different rules had been living under that number, and a
+   coach cannot obey a cross-reference that points at two things pulling opposite ways ("do not
+   write" against "write and improve"). The client-programs rule kept 029; this one moved. */
 function testClientImprovesRule() {
   const md = fs.readFileSync(
     path.join(__dirname, "..", "experiments", "personal-coach", "coach-policy-rules.md"),
     "utf8"
   );
   const pol = String(COACH_POLICY);
-  ok("POL-029 exists at the source of truth", /### POL-029/.test(md));
-  ok("POL-029 is HARD and global", /### POL-029[\s\S]{0,200}\*\*Type:\*\* HARD/.test(md));
-  ok("POL-029 survives injection into the prompt", /POL-029/.test(pol));
+  ok("POL-031 exists at the source of truth", /### POL-031/.test(md));
+  ok("POL-031 is HARD and global", /### POL-031[\s\S]{0,200}\*\*Type:\*\* HARD/.test(md));
+  ok("POL-031 survives injection into the prompt", /POL-031/.test(pol));
   ok("two identical blocks are a failure in the policy itself",
     /Two identical blocks are a failure even when both are good blocks/i.test(
       pol.replace(/\s+/g, " ")
@@ -203,8 +206,13 @@ function testClientImprovesRule() {
     /the requirement is stronger rather than weaker/i.test(pol.replace(/\s+/g, " ")));
   ok("an unchanged intake is not a licence to repeat, in the policy",
     /the constraints repeat, the work does not/i.test(pol.replace(/\s+/g, " ")));
-  ok("the maintainers note ties POL-029 to POL-009",
-    /\*\*POL-029\*\* is a product foundation[\s\S]{0,200}POL-009/.test(md));
+  ok("the maintainers note ties POL-031 to POL-009",
+    /\*\*POL-031\*\* is a product foundation[\s\S]{0,200}POL-009/.test(md));
+  /* And the id it left behind belongs to exactly one rule now. */
+  ok("no POL id is used twice", (function () {
+    const ids = (md.match(/^### (POL-[\w-]+)/gm) || []).map(function (l) { return l.slice(4); });
+    return ids.length === new Set(ids).size;
+  })());
 }
 
 /* The mid-week clamp, found leaking into week 2 on 2026-09-03 while filling a real test brick.

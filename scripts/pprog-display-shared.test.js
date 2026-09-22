@@ -47,16 +47,25 @@ const raw = {
     },
   ],
 };
-const block = NormalizePprogBlock.normalize(raw, raw);
+/* Four weeks, because that is what a brick is. The fixture used to hand normalize ONE week
+   and assert it came back with five — the padding that invented an empty deload week for an
+   athlete who never asked for one (POL-032, owner 2026-09-22). */
+const raw4 = Object.assign({}, raw, {
+  weeks: [1, 2, 3, 4].map(function (i) {
+    return Object.assign({}, raw.weeks[0], { weekIndex: i });
+  }),
+});
+const block = NormalizePprogBlock.normalize(raw4, raw4);
 ok("normalize fills blockStart", /^\d{4}-\d{2}-\d{2}$/.test(block.blockStart));
-ok("normalize has 5 weeks", block.weeks.length === 5);
+ok("normalize keeps the four weeks it was given", block.weeks.length === 4);
+ok("and invents no deload", !block.weeks.some(function (w) { return w.phase === "deload"; }));
 
 const cal = PprogDisplay.renderCalHtml(block, 0, "mon", {
   calMode: "month",
   readOnly: true,
   hooks: { setDay: "adminPprogSetDay", shift: "adminPprogCalShift", toggleMode: "adminPprogToggleCalMode", jumpToday: "adminPprogJumpToday" },
 });
-ok("cal is 5-week brick", /pprog-cal-month-grid/.test(cal) && /W1/.test(cal) && /W5/.test(cal));
+ok("cal is a four-week brick", /pprog-cal-month-grid/.test(cal) && /W1/.test(cal) && /W4/.test(cal) && !/W5/.test(cal));
 ok("cal has rest + training cells", /pprog-cal-cell/.test(cal));
 ok("cal does not call personal-coach", !/personal-coach|generate_block|week_detail|revise_/.test(cal));
 

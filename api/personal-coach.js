@@ -31,7 +31,7 @@
  * Groq keeps chat alive when the Gemini key is missing/invalid (common GitHub Pages + Vercel setup).
  * Programming stays Gemini-only (POL-020).
  */
-const COACH_VERSION = "3.0";
+const COACH_VERSION = "3.1";
 const fs = require("fs");
 const path = require("path");
 function resolveAppVersion() {
@@ -165,14 +165,14 @@ try {
 } catch (e) {}
 const CoachPushUpgrade = require("../lib/coach-push-upgrade.js");
 
-/** Athlete-facing line when they ask for the next block/month too early (POL-008). */
-const EARLY_NEXT_BLOCK_REPLY =
-  "The next block generates automatically on Thursday of week 4 at 10:00 (Israel time). Until then, we keep working your current block.";
-
-const EARLY_NEXT_BLOCK_NOT_YET_REPLY =
-  "The next block is not ready yet — it unlocks Thursday of week 4 at 10:00 (Israel time).";
-
-const PPROG_NEXT_BLOCK_UNLOCK_HOUR_IL = 10;
+/* THE NEXT-BLOCK WINDOW IS GONE (owner, 2026-09-22).
+ *
+ * The coach was instructed to answer, in these exact words: "The next block generates
+ * automatically on Thursday of week 4 at 10:00 (Israel time)." NOTHING generates it.
+ * There is no workflow, no schedule, no job - the owner presses "create new block" when
+ * he decides the month is ready. It was a promise the product never kept, and it came
+ * with a gate that would have answered a block request with that sentence instead of a
+ * month. The rule it enforced (POL-008) is deleted; so is its machinery. */
 
 function isoAddDays(iso, days) {
   const base = String(iso || "").slice(0, 10);
@@ -183,11 +183,6 @@ function isoAddDays(iso, days) {
   const mm = String(dt.getMonth() + 1).padStart(2, "0");
   const dd = String(dt.getDate()).padStart(2, "0");
   return yy + "-" + mm + "-" + dd;
-}
-
-/** Week 4 Thursday (1-based), relative to block Sunday start. */
-function nextBlockUnlockThursdayIso(blockStartIso) {
-  return isoAddDays(blockStartIso, 25);
 }
 
 function israelNowParts() {
@@ -421,34 +416,6 @@ function priorWeeksBlock(body, weekIndex) {
     "already shows in that slot. Repeating a slot's format or its movement selection week after " +
     "week is the failure this list exists to prevent.\n"
   );
-}
-
-function isNextBlockWindowOpen(blockStartIso) {
-  const unlockIso = nextBlockUnlockThursdayIso(blockStartIso);
-  if (!unlockIso) return false;
-  const now = israelNowParts();
-  const today = now.year + "-" + now.month + "-" + now.day;
-  if (today < unlockIso) return false;
-  if (today > unlockIso) return true;
-  const hour = parseInt(now.hour, 10);
-  return hour >= PPROG_NEXT_BLOCK_UNLOCK_HOUR_IL;
-}
-
-function athleteEarlyNextBlockDenied(profile, action, body) {
-  const a = String(action || "").toLowerCase();
-  if (a !== "generate_block" && a !== "generate_week") return null;
-  if (body && body.allowEarlyBlock === true) return null;
-  if (!profile || !profile.hasCurrentBlock) return null;
-
-  const blockStart = profile.blockStart || null;
-  const windowOpen = isNextBlockWindowOpen(blockStart);
-
-  if (body && body.autoNextBlock === true) {
-    if (!windowOpen) return EARLY_NEXT_BLOCK_NOT_YET_REPLY;
-    return null;
-  }
-
-  return EARLY_NEXT_BLOCK_REPLY;
 }
 
 const KEY_ENV_NAMES = ["GEMINI_API_KEY", "GOOGLE_GENERATIVE_AI_API_KEY", "GOOGLE_AI_API_KEY"];
@@ -716,7 +683,7 @@ function languageFollowRule(messages, action, forceJson, profile) {
     "- Workout JSON fields stay English always.\n" +
     "- POL-013: stay practical; no compliments or filler.\n" +
     (postIntake
-      ? "- POL-022: for broad/standing plan changes (whole brick, every Tuesday, etc.) reply with ONE short sentence stating the change + Confirm? No paragraphs, no profile essays, no multi-question offers. When A/B (surgical vs large rebuild) is needed, include A/B in that same short Confirm? line.\n" +
+      ? "- For broad/standing plan changes (whole brick, every Tuesday, etc.) reply with ONE short sentence stating the change + Confirm? No paragraphs, no profile essays, no multi-question offers. When A/B (surgical vs large rebuild) is needed, include A/B in that same short Confirm? line.\n" +
         "- POL-023: after confirm, adapt ONLY remaining days (Israel-today → end of this 4-week brick). Never rewrite past days. Surgical edits — preserve formats/structure; change only what the note requires (e.g. single-KB constraint).\n" +
         "- POL-024: whole-brick notes → map to the matching intake section (equipment / schedule / injuries / limits / goals / …), adapt only that section on remaining days, freeze every other intake section.\n" +
         "- POL-026: if athlete logged an unplanned/extra session (e.g. trained on a rest day), ingest that work, keep today as performed, apply any requested rest shift, and surgically weigh the load into remaining days — never injury-frame a schedule swap.\n"
@@ -874,7 +841,7 @@ const PROGRAMMING_SYSTEM_CORE =
   "Keep day intent stable, but vary TRAINING FORMATS across the month/week: do not repeat the exact same metcon structure on the same weekday every week.\n" +
   "Format variety examples: AMRAP / EMOM / For Time / Intervals / E2MOM / Chipper / Quality rounds / Tempo pieces.\n" +
   "Strength lift sequencing may repeat by weekday, but the work format around it must rotate while preserving the intended duration/effect.\n" +
-  "ACTIVE RECOVERY (from athlete intake): If profile says NO active recovery — do not force Thursday/any day into daily deload. If YES — one lighter day on the requested weekday only.\n" +
+  "ACTIVE RECOVERY (from athlete intake): a lighter session inside an ordinary training week, and NOT a deload - a deload is a whole week. If the profile says NO, keep every training day a full session and make no weekday lighter of your own accord. If YES, one lighter day on the weekday THEY named, never one you chose.\n" +
   "FIXED INTAKE MODE: The app may send one complete athlete packet (all questionnaire answers at once) instead of turn-by-turn Q&A. " +
   "Treat that packet as fully answered intake — never re-ask profile/lifts/skills/schedule/goals. Program the brick from those facts with full POL-016 capability profiling depth.\n" +
   "WARM-UP (a packet line as of 2026-09-04): the intake now answers whether we write the warm-up. A WARM-UP: line saying to write one means it goes in every session, inside the stated session length, and it is NOT one of the working parts. A WARM-UP: line saying not to means write none and open with the first working part — they warm up themselves, or a coach on the floor does. NO WARM-UP LINE AT ALL means WRITE ONE: that is the default, and an older packet simply predates the field. None of those three cases removes the movement-specific PRIMER before a loaded lift, which belongs to the working part.\n" +
@@ -938,8 +905,6 @@ const GROQ_CHAT_SYSTEM_COMPACT =
   "4) Program fit: formats/density/progressions match THIS athlete — not generic intermediate templates.\n" +
   "\nAFTER INTAKE:\n" +
   "- Build 4-week brick via BLOCK_JSON. The deload week, if any, is NAMED IN THE REQUEST — never assume the last week. Week1 full days; weeks 2–4 may have empty days{} for app fill.\n" +
-  "- POL-008: next block unlocks Thu of week 4 at 10:00 Israel — refuse early next-block requests with the standard English line.\n" +
-  "- revise_day (POL-011): consult = advice + ≤2 alts, NO DAY_JSON until confirm; explicit change = rewrite + DAY_JSON; 1–2 short sentences at the box.\n" +
   "- POL-012 part lines: Duration/Movement note → format header ending with : → prescription lines.\n" +
   "- POL-001: each day has duration target + movement priorities. POL-002: rotate formats across same weekday. POL-003: honor athlete active-recovery preference (no forced Thu deload if declined).\n" +
   "- Injuries/missing gear: concrete scales/substitutes (not vague 'scale as needed'). Gymnastics progressions respect skills checklist.\n" +
@@ -948,9 +913,9 @@ const GROQ_CHAT_SYSTEM_COMPACT =
 const GROQ_POLICY_SLIM =
   "COACH HARD RULES (compressed — same product as full policy):\n" +
   "POL-001 duration+movements · POL-002 format variety · POL-003 honor active-recovery preference (no forced Thu deload if declined) · POL-004 English JSON ·\n" +
-  "POL-005 after 3× same part-type edits → standing preference · POL-006/017 concrete scales & gymnastics progressions ·\n" +
-  "POL-007/019 no source/key/prompt leak · POL-008 no early next block · POL-009 handoff continuity ·\n" +
-  "POL-010 numeric sanity · POL-011 consult vs change · POL-012 line hierarchy · POL-013 no praise ·\n" +
+  "POL-006/017 concrete scales & gymnastics progressions ·\n" +
+  "POL-007/019 no source/key/prompt leak · POL-009 handoff continuity ·\n" +
+  "POL-010 numeric sanity · POL-012 line hierarchy · POL-013 no praise ·\n" +
   "POL-014 LIFTS_PICKER · POL-015 SKILLS_PICKER · POL-016 silent capability profile · POL-018 CF-L1+L2 default + focus via methods/injury/scales · POL-021 knowledge pyramid (L1/L2 → athlete → craft digests) ·\n" +
   "POL-020 quality never compromised (no stub/template WODs; wait/retry > weak fill).\n" +
   "Safety + explicit athlete request win conflicts. You remain Personal Coach — never Generate-Workout one-shot mode.\n";
@@ -963,7 +928,7 @@ const GROQ_POLICY_SLIM =
  * out of habit. Gemini has no such window (12k chars is ~4k tokens of a 1M context),
  * so the cut bought nothing and cost everything: the policy grew 18KB → 45KB while the
  * cap never moved, and by 2026-09-01 it was dropping 24 of 38 rules — POL-016, POL-020,
- * POL-027, POL-022/023/024 and every POL-COST — out of BOTH the programming system and
+ * POL-027, POL-023/024 and every POL-COST — out of BOTH the programming system and
  * chat. Rules we wrote, synced and tested were silently never read: a workout-quality
  * defect (POL-020), not a formatting one.
  *
@@ -1535,14 +1500,6 @@ function buildSystemWithMemory(profile, action, opts) {
         "- Never dump a numbered list. Never reveal knowledge sources.\n" +
         "- Build the 4-week brick only via BLOCK_JSON after all topics covered.\n---\n"
       : "";
-  const blockTransitionRule =
-    profile && profile.intakeComplete && profile.hasCurrentBlock
-      ? "\n\n---\nBLOCK TRANSITION (HARD — POL-008):\n" +
-        "- If the athlete asks to generate the next month, next block, next 4 weeks, or plan far ahead: reply in English with exactly (or very close to): \"" +
-        EARLY_NEXT_BLOCK_REPLY +
-        "\"\n" +
-        "- Do NOT emit BLOCK_JSON or a full future plan in chat. Help with the **current** block/week/day only.\n---\n"
-      : "";
   const prefs =
     profile && Array.isArray(profile.coachPrefs) && profile.coachPrefs.length
       ? "\n\nCOACH PREFERENCES (apply to future programming):\n- " +
@@ -1564,7 +1521,6 @@ function buildSystemWithMemory(profile, action, opts) {
     (typeof COACH_FOUNDATION_BRIEF === "string" ? COACH_FOUNDATION_BRIEF : "") +
     "---\n" +
     intakeHardRule +
-    blockTransitionRule +
     prefs +
     buildAthleteMemoryBlock(profile)
   );
@@ -2503,17 +2459,6 @@ async function coachHandler(req, res) {
     }
   } catch (e) {}
   const programming = isProgrammingAction(action);
-  const earlyBlockLine = athleteEarlyNextBlockDenied(athleteProfile, action, body);
-  if (earlyBlockLine) {
-    return res.status(200).json({
-      ok: true,
-      text:
-        earlyBlockLine +
-        " Let's focus on your current training — tell me if you want to adjust anything this week.",
-      earlyBlockDenied: true,
-      model: resolveCoachModel(),
-    });
-  }
   let systemText = buildSystemWithMemory(athleteProfile, action, layerOptsFromBody(body, { forceJson: forceJson }));
   let messages = earlyMessages;
   if (body.feedback) body.feedback = scrubPiiText(body.feedback);
@@ -2544,7 +2489,7 @@ async function coachHandler(req, res) {
       intakeBaseSnap = "";
     }
     systemText +=
-      "\n\nBRICK / WHOLE-PROGRAM CHAT (POL-022 + POL-023 + POL-024 + POL-026 — HARD):\n" +
+      "\n\nBRICK / WHOLE-PROGRAM CHAT (POL-023 + POL-024 + POL-026 — HARD):\n" +
       "Athlete opened the floating whole-program coach chat. Treat this as GENERAL / CROSS-CUTTING: " +
       "the FULL training brick, standing preferences, schedule, equipment, goals, injuries, or other brick-wide topics — " +
       "NOT a single-session note. (Session-specific talk uses the dedicated box under that day's workout.)\n" +
@@ -2557,7 +2502,7 @@ async function coachHandler(req, res) {
       "B) Map the athlete note to the matching intake section(s). Examples: one KB → equipment; " +
       "knee/avoid squats → injuries; shorter sessions → sessionLimits; change Rest days → weeklySchedule; " +
       "new focus → goals; trained on a rest day / logged an unplanned session → weeklySchedule + POL-026 load accounting.\n" +
-      "C) Confirm? names the section + the change only (POL-022). If it conflicts with that intake section, say so briefly.\n" +
+      "C) Confirm? names the section + the change only. If it conflicts with that intake section, say so briefly.\n" +
       "D) After confirm: adapt ONLY that section's implications on remaining days (POL-023). " +
       "Freeze every other intake section — equipment notes must not reshuffle Rest days; injury notes must not rewrite equipment/schedule/goals.\n" +
       "E) Do NOT invent extra Rest days unless the touched section is weeklySchedule/activeRecovery OR POL-026 rest-shift was requested.\n" +
@@ -2686,7 +2631,7 @@ async function coachHandler(req, res) {
           "Build a full 4-week training brick. " +
           "The deload week, if any, is NAMED IN THE REQUEST — do NOT assume the last week and NEVER add a fifth. " +
           "ACTIVE RECOVERY (HARD — from athlete intake/profile): " +
-          "If athlete declined active recovery — do NOT force Thursday (or any training day) into daily deload/active recovery; keep training days as full purposeful sessions. " +
+          "If athlete declined active recovery — keep every training day a full purposeful session and make no weekday lighter of your own accord. " +
           "If athlete requested active recovery — place exactly one lighter day on the requested weekday. " +
           "True REST days: overview focus MUST be exactly \"Rest\", day title sense = REST DAY, parts empty [] OR one part {title:\"REST DAY\",lines:[\"Rest\"]}. " +
           midWeekStartRuleText(1, sellsSessionsByCount(body.studioIntake)) +
@@ -2798,7 +2743,7 @@ async function coachHandler(req, res) {
       "\n" +
       priorWeeksBlock(body, weekIndex) +
       "\n" +
-      "7) ACTIVE RECOVERY from athlete profile: if NO — do not force thu/any day into daily deload; if YES — one lighter day on requested weekday. If phase=deload: low volume all week.\n" +
+      "7) ACTIVE RECOVERY from athlete profile (a lighter DAY, never a deload - a deload is a whole week): if NO — every training day stays a full session; if YES — one lighter day on the weekday they named. If phase=deload: low volume all week.\n" +
       "8) For each day specify effective duration target + movement priorities.\n" +
       "9) Rotate session formats week-to-week for the same weekday; keep intent/duration effect but avoid same exact format template.\n" +
       "10) 1–3 parts/day, ≤5 lines/part — keep JSON compact.\n" +
@@ -2870,7 +2815,7 @@ async function coachHandler(req, res) {
           JSON.stringify(parts).slice(0, 8000) +
           "\n\nAthlete pre-workout message:\n" +
           (feedback || "(empty)") +
-          "\n\nPOL-011 — classify the athlete message:\n" +
+          "\n\nCLASSIFY THE MESSAGE:\n" +
           "A) CONSULT / OPINION (pain, \"what do you think\", unsure, comparing options) → " +
           "1–2 tiny English sentences: pick/recommend + at most 1–2 concrete options + ask to confirm. " +
           "Do NOT emit DAY_JSON and do NOT change the workout until they clearly confirm.\n" +
@@ -3030,8 +2975,8 @@ async function coachHandler(req, res) {
       {
         role: "user",
         text:
-          "[preview_month / admin QA] הצג תכנון מאקרו ללבנת 5 השבועות עד הדילואד " +
-          "(מטרת כל שבוע, עומס יחסי, איפה deload, איזון כוח/מטקון). " +
+          "[preview_month / admin QA] הצג תכנון מאקרו ללבנה של ארבעה שבועות " +
+          "(מטרת כל שבוע, עומס יחסי, איזון כוח/מטקון, ואם הבקשה נקבה בשבוע deload — איפה הוא). " +
           "קצר וברור — בלי BLOCK_JSON מלא, בלי לחשוף מקורות. זה לאימות אדמין.",
       },
     ]);
@@ -3265,7 +3210,7 @@ async function coachHandler(req, res) {
       ((action === "generate_block" || action === "generate_week") && !packed.block && !packed.week) ||
       (action === "revise_week" && !packed.week) ||
       (action === "finish_micro_bias" && !packed.week) ||
-      /* revise_day may be consult-only (POL-011) with no DAY_JSON — do not force JSON */
+      /* revise_day may be consult-only with no DAY_JSON — do not force JSON */
       (action === "revise_part" && !packed.part);
     if (!needRetry || forceJson) return packed;
 
@@ -3423,85 +3368,15 @@ async function coachHandler(req, res) {
     return !f || f === "—" || /^(rest(\s*day)?|off(\s*day)?|recovery)\b/.test(f);
   }
 
-  /** Last-resort compact workouts from overview focuses — never leave the UI empty. */
-  function buildTemplateWeekFromMeta(meta) {
-    const wi = (meta && meta.weekIndex) || weekIndexForExtract;
-    const phase = String((meta && meta.phase) || body.phase || "build").slice(0, 40);
-    const theme = String((meta && meta.theme) || body.theme || "Week " + wi).slice(0, 200);
-    const summaryLine = String(
-      (meta && meta.summaryLine) || body.summaryLine || theme || "Week " + wi
-    ).slice(0, 240);
-    let overview = [];
-    try {
-      if (Array.isArray(body.overview) && body.overview.length) {
-        overview = body.overview.slice(0, 7).map(function (o, idx) {
-          const day = String((o && o.day) || ["sun", "mon", "tue", "wed", "thu", "fri", "sat"][idx] || "sun")
-            .toLowerCase()
-            .slice(0, 3);
-          return {
-            day: day,
-            label: String((o && o.label) || day).slice(0, 12),
-            focus: String((o && o.focus) || "Training").slice(0, 80),
-          };
-        });
-      }
-    } catch (e) {
-      overview = [];
-    }
-    const defaults = [
-      { day: "sun", label: "Sun", focus: "Squat strength" },
-      { day: "mon", label: "Mon", focus: "Press & gymnastics" },
-      { day: "tue", label: "Tue", focus: "Rest" },
-      { day: "wed", label: "Wed", focus: "Olympic lift & engine" },
-      { day: "thu", label: "Thu", focus: phase === "deload" ? "Rest" : "Daily deload / technique" },
-      { day: "fri", label: "Fri", focus: "Conditioning" },
-      { day: "sat", label: "Sat", focus: "Rest" },
-    ];
-    if (overview.length < 7) overview = defaults;
-    const days = {};
-    for (let i = 0; i < defaults.length; i++) {
-      const dayKey = defaults[i].day;
-      const focus = focusForDayFromOverview(overview, dayKey) || defaults[i].focus;
-      if (isRestFocusLabel(focus)) {
-        days[dayKey] = {
-          parts: [{ id: dayKey + "-rest", title: "REST DAY", lines: ["Rest"] }],
-        };
-      } else {
-        days[dayKey] = {
-          parts: [
-            {
-              id: dayKey + "-a",
-              title: "Strength / Skill",
-              lines: [
-                focus.slice(0, 80),
-                phase === "deload" ? "3 x 5 @ easy technique pace" : "5 x 3 building, leave 2 reps in reserve",
-                "Rest 2:00 between sets",
-              ],
-            },
-            {
-              id: dayKey + "-b",
-              title: "Conditioning",
-              lines: [
-                phase === "deload" ? "12 min easy zone-2 work" : "AMRAP 12",
-                "10 calorie machine or run",
-                "12 kettlebell swings or dumbbell snatches",
-                "15 box step-ups or air squats",
-              ],
-            },
-          ],
-        };
-      }
-    }
-    return {
-      weekIndex: wi,
-      phase: phase,
-      theme: theme,
-      summaryLine: summaryLine,
-      overview: overview,
-      days: days,
-      _fallback: "template",
-    };
-  }
+  /* THE TEMPLATE WEEK GENERATOR IS GONE (owner, 2026-09-21).
+   *
+   * It shipped on 2026-07-29 (47fc6d6b) to keep the screen from going empty: when the coach
+   * was unreachable it wrote a default week - AMRAP 12, 10 machine calories, 12 swings, a
+   * 5x3 builder. The very next day the commit that made workout quality a hard law
+   * (9fc0829d) deleted the CALL to it and left the function standing. It has been dead code
+   * ever since: 80 lines producing exactly what POL-020 forbids, sitting in the coach's own
+   * file, waiting for someone to go looking for 'what do we do when there is no answer' and
+   * wire it back. When there is no answer we say so and retry. We do not invent a week. */
 
   async function fillWeekDayByDay(viaBase) {
     const wi = weekIndexForExtract;

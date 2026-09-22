@@ -459,8 +459,12 @@ ok("nothing is kept from a second place he unticked", /intakeState\.secondaryLoc
 /* Only when he says the days differ - a uniform week stays one number. */
 ok("minutes per day appear only behind that tick", /id="adm-fx-perday-wrap"/.test(fixedJs) && /perDay\.hidden = !box\.checked/.test(fixedJs));
 ok("and each day opens on the main number", /parseInt\(byDay\[dk\], 10\) > 0 \? parseInt\(byDay\[dk\], 10\) : mins > 0 \? mins : ""/.test(fixedJs));
-ok("the individual chooses a deload cadence", /id="adm-fx-deload"/.test(fixedJs) && /id="adm-fx-nodeload"/.test(fixedJs));
-ok("and \"no deload\" is an answer, not a blank", /noDeloadEl && noDeloadEl\.checked \? 0 :/.test(fixedJs));
+/* THE OTHER WAY ROUND SINCE 2026-09-22. It used to be a number field standing open at four
+   with a "No deload" box beside it to switch off - so an athlete nobody asked still got one.
+   Now the tick is the question and the cadence follows it (POL-032). */
+ok("the deload is a tick, off unless asked for", /id="adm-fx-deload-on"/.test(fixedJs));
+ok("and the cadence opens only underneath it", /id="admFxDeloadWrap"/.test(fixedJs) && /adminFixedDeloadToggled/.test(fixedJs));
+ok("not asked for is zero, never a quiet four", /deloadOnEl && deloadOnEl\.checked && deloadN >= 4 && deloadN <= 12 \? deloadN : 0/.test(fixedJs));
 ok("all of it travels with the client", /trainsMultipleLocations: prof\.trainsMultipleLocations === true/.test(fixedJs) && /deloadEveryWeeks: prof\.deloadEveryWeeks/.test(fixedJs));
 
 ok("admin loads fixed intake", /admin-fixed-intake\.js/.test(adminHtml));
@@ -474,8 +478,12 @@ function adminVersionAgrees(src) {
   return !!badge && badge === title;
 }
 ok("the admin label and the badge say the same number", adminVersionAgrees(adminHtml));
-ok("admin wired to coach 3.0", /LIVE_COACH_VERSION = "3\.0"/.test(adminHtml));
-ok("app coach 3.0", /COACH_VERSION = "3\.0"/.test(index));
+/* AGREEMENT, NOT A VALUE - a literal pin is how a version freezes while the badge
+   goes on claiming the old brain. */
+var wiredCoach = (adminHtml.match(/LIVE_COACH_VERSION = "([\d.]+)"/) || [])[1];
+var appCoach = (index.match(/COACH_VERSION = "([\d.]+)"/) || [])[1];
+ok("the admin names a coach version", /^\d+(\.\d+)*$/.test(wiredCoach || ""));
+ok("and the app names the same one", !!appCoach && appCoach === wiredCoach);
 ok(
   "admin shows Admin + Coach versions",
   /Admin \d+\.\d+/.test(adminHtml) &&

@@ -44,8 +44,14 @@ module.exports =
   "Enhancement Grammar lives in COACH POLICY POL-027 (reported gear only): listed gear opens a loaded-variation tree; " +
   "never a closed whitelist; keep some unloaded baseline in rotation; do not re-ask equipment for the grammar. " +
   "Lift kg ≠ barbell/rings permission — map to reported implements. Weekly: include lunge-family + wall pattern when indoors; avoid single-pattern dominance (no per-movement bans).\n" +
-  "- Active recovery OUT → true Rest (no forced daily deload). Active recovery IN → one lighter AR day on the requested weekday only.\n" +
-  "- Brick = 5 weeks: weeks 1–4 build; week 5 deload (lower density/load, keep quality).\n" +
+  "- THREE DIFFERENT THINGS, NEVER ONE NAME FOR TWO: a REST DAY has no session in it; an ACTIVE RECOVERY DAY is a lighter " +
+  "session inside an ordinary training week; a DELOAD WEEK is a whole week. Never call an active recovery day a daily deload.\n" +
+  "- Active recovery is OFF unless the intake asked for it, and then it falls on the weekday they named, never one you chose. " +
+  "Every day that is neither a training day nor their active recovery day is a Rest day, and you mark it as one.\n" +
+  "- Brick = FOUR weeks of training. There is no fifth week, and a brick does not end with a deload.\n" +
+  "- A deload week is not a default and not yours to place. It exists only when the intake asked for one, it runs on a cadence " +
+  "counted across months, and the request NAMES which week of this brick it falls on, or says none does. No instruction in " +
+  "the request means no deload week.\n" +
   "- Mid-week start: days before Israel-today = Rest.\n" +
   "- Never emit generic/stub templates as real programming (POL-020).\n" +
   "\n" +
