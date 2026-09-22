@@ -736,4 +736,21 @@ ok(
   /if \(!sub\) patch\.price = Number\(p\.monthlyAmount\) \|\| 0;/.test(page)
 );
 
+
+/* The service on a monthly row is the one thing on the line he can type. */
+ok("a monthly row offers its service for editing", mixedTable.indexOf('data-led-sub-service="p_oded"') >= 0);
+ok("a one-off does not", (mixedTable.match(/data-led-sub-service/g) || []).length === 1);
+ok("and it still reads as the text it replaces", /led-service-edit\{[^}]*background:transparent/.test(page));
+
+/* "מהחיוב הבא" must not write the new price onto the client's own screen, or every
+   total there disagrees with the book for a month (owner, 2026-09-22). */
+ok(
+  "a price agreed for the next bill leaves the client screen showing the old one",
+  /commitMeta\(mode === "now" \? next : Number\(sub\.price\) \|\| 0, method/.test(page)
+);
+ok(
+  "with the coming one in brackets beside it",
+  /function pendingPriceNote\(p\)/.test(page) && /ath-fact-next/.test(page)
+);
+
 console.log("\nAll admin ledger page checks passed (" + passed + " assertions).");

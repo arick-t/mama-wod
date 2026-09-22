@@ -416,6 +416,14 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .led-fav-billing-day{color:var(--text-muted)}
 /* A question with three answers needs a box of its own: window.confirm has two.
    Same card, same buttons, same dark ground as every other box here. */
+/* The service on a monthly row is a button, but it must read as the text it replaces —
+   the table is a record, not a form. */
+.led-service-edit{appearance:none;background:transparent;border:none;padding:0;font:inherit;
+  color:inherit;cursor:pointer;border-bottom:1px dashed currentColor;max-width:100%;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:start}
+.led-service-edit:hover{border-bottom-style:solid}
+/* The coming price, beside the one he is charging, on the client's own card. */
+.ath-fact-next{font-size:11px;font-weight:700;color:#F5C518;margin-inline-start:6px;white-space:nowrap}
 .led-modal{width:min(420px,calc(100vw - 24px));max-width:none}
 .led-modal-title{margin:0 0 10px;font-size:16px}
 .led-modal-text{margin:0 0 6px;font-size:13px;color:var(--text)}
@@ -8409,6 +8417,17 @@ tryRestoreAdminSession();
    * shoulders. They save when you leave the field, so there is no save button to
    * forget. Delete lives here too: it is the last thing you want under your thumb.
    */
+  /** "(₪1,000 מ-05/10/26)" — the price that is coming, where the current one is typed. */
+  function pendingPriceNote(p) {
+    var sub = p && window.LedgerScreen && window.LedgerScreen.subscription
+      ? window.LedgerScreen.subscription(p.programId)
+      : null;
+    var wait = sub && sub.pending && sub.pending.price ? sub.pending : null;
+    if (!wait) return "";
+    var when = window.AdminLedgerView ? window.AdminLedgerView.hebDate(wait.from) : wait.from;
+    return '<span class="ath-fact-next">(₪' + esc(wait.price) + " מ-" + esc(when) + ")</span>";
+  }
+
   function renderClientMorePop(p, open) {
     if (!open) return "";
     return (
@@ -8417,6 +8436,10 @@ tryRestoreAdminSession();
           '<span class="ath-fact-label">סכום חודשי (₪):</span>' +
           '<input id="fAmount" class="ath-fact-input" type="number" min="0" data-metafield="1" value="' +
           esc(p.monthlyAmount == null ? "" : p.monthlyAmount) + '">' +
+          /* A price already agreed for the next bill. The field keeps the price he is
+             CHARGING; the new one waits here with its date, exactly as it waits in the
+             deals table (owner, 2026-09-22). */
+          pendingPriceNote(p) +
         "</div>" +
         '<div class="ath-fact">' +
           '<span class="ath-fact-label">שיטת תשלום:</span>' +
@@ -10353,9 +10376,15 @@ tryRestoreAdminSession();
             if (el("fAmount")) el("fAmount").value = sub.price;
             return;
           }
-          commitMeta(next, method, function () {
+          /* FROM THE NEXT BILL: the client keeps the price he is actually being
+             charged, and the new one waits beside it in brackets. Writing the new
+             number here would make every total on this screen disagree with the book
+             for a month (owner, 2026-09-22). From THIS month, the two agree at once. */
+          commitMeta(mode === "now" ? next : Number(sub.price) || 0, method, function () {
             window.LedgerScreen.changePrice(S.program.programId, next, mode).then(function (r) {
               if (r && r.status === 200 && r.body.ok) {
+                S.subPending = mode === "now" ? null : { price: next, from: r.body.from };
+                renderDetail();
                 banner("good", mode === "now"
                   ? "החיוב עודכן, כולל החודש הנוכחי."
                   : "החיוב יעודכן ב-" + (window.AdminLedgerView
@@ -14013,16 +14042,11 @@ tryRestoreAdminSession();
     var sub = subById(clientId);
     if (!sub) return;
     ledModal({
-      title: "חיוב חודשי — " + sub.name,
+      title: "תאריך חיוב — " + sub.name,
       body:
         '<p class="led-modal-text">באיזה יום בחודש הוא משלם?</p>' +
         '<input id="ledBillingDay" class="led-field led-modal-input" type="number" min="1" max="31" ' +
         'value="' + escHtml(String(sub.billingDay || 1)) + '">' +
-        /* What the line says on the calendar and in the table. It is his own wording —
-           "תוכנית אימון מכינה" — and there is nowhere else to type it. */
-        '<p class="led-modal-text">על מה החיוב?</p>' +
-        '<input id="ledBillingService" class="led-field led-modal-input" type="text" maxlength="80" ' +
-        'placeholder="תוכנית אימון חודשית" value="' + escHtml(sub.service || "") + '">' +
         '<p class="led-modal-note">שינוי התאריך יחול החל מהחיוב הקרוב. חודש שכבר חויב נשאר כפי שהוא.</p>',
       buttons: [
         { label: "ביטול", kind: "ghost" },
@@ -14032,11 +14056,7 @@ tryRestoreAdminSession();
           run: function () {
             var field = el("ledBillingDay");
             var day = Number(field && field.value);
-            var service = (el("ledBillingService") && el("ledBillingService").value) || "";
             var jobs = [];
-            if (service !== (sub.service || "")) {
-              jobs.push(saveSubscription({ clientId: clientId, service: service }, ""));
-            }
             if (day !== Number(sub.billingDay)) {
               jobs.push(
                 api({ action: "set_billing_day", clientId: clientId, day: day, today: todayIso() })
@@ -14056,6 +14076,49 @@ tryRestoreAdminSession();
             Promise.all(jobs).then(function () {
               renderFavourites();
               loadMonth(LS.month);
+            });
+          },
+        },
+      ],
+    });
+  }
+
+  /**
+   * "על מה החיוב" — the one thing about a standing arrangement he types himself.
+   *
+   * The first intake never asks it, so a new arrangement is born "תוכנית אימון" and he
+   * corrects it here, on the row that shows it (owner, 2026-09-22).
+   */
+  function askBillingService(clientId) {
+    var sub = subById(clientId);
+    if (!sub) return;
+    ledModal({
+      title: "על מה החיוב — " + sub.name,
+      body:
+        '<input id="ledBillingService" class="led-field led-modal-input" type="text" maxlength="80" ' +
+        'placeholder="תוכנית אימון" value="' + escHtml(sub.service || "") + '">' +
+        '<p class="led-modal-note">יחול על החיוב הזה ועל כל החיובים הבאים. חיוב שכבר הוצאת עליו חשבונית נשאר כפי שהוא.</p>',
+      buttons: [
+        { label: "ביטול", kind: "ghost" },
+        {
+          label: "שמור",
+          kind: "primary",
+          run: function () {
+            var value = (el("ledBillingService") && el("ledBillingService").value) || "";
+            api({
+              action: "set_subscription_service",
+              clientId: clientId,
+              service: value,
+              month: LS.month,
+            }).then(function (r) {
+              if (r.status !== 200 || !r.body.ok) {
+                toast((r.body && r.body.error) || "לא הצלחתי לשמור", "err");
+                return;
+              }
+              LS.subs = r.body.subscriptions || [];
+              renderFavourites();
+              loadMonth(LS.month);
+              toast("עודכן ✓");
             });
           },
         },
@@ -14305,6 +14368,13 @@ tryRestoreAdminSession();
         },
         "הצבע עודכן"
       );
+      return;
+    }
+
+    /* What the bill is FOR — typed straight onto the row that shows it. */
+    var subService = t.closest("[data-led-sub-service]");
+    if (subService) {
+      askBillingService(subService.getAttribute("data-led-sub-service") || "");
       return;
     }
 

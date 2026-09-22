@@ -388,6 +388,50 @@ async function main() {
     renamedOnly.status === 200 && renamedOnly.body.subscriptions.length === 0);
   ok("a billing day of 45 is refused", (await call({ action: "set_billing_day", clientId: "p_oded", day: 45 })).status === 404);
 
+
+  /* --- what the bill is called ------------------------------------------- */
+
+  /* The first intake has no "what is this for" field at all, so a new arrangement is
+     born with the plain answer and he corrects it from the row (owner, 2026-09-22). */
+  const noService = await call({
+    action: "save_subscription",
+    clientId: "p_studio",
+    name: "סטודיו ב",
+    price: 500,
+    startDay: "2026-09-02",
+    today: "2026-09-22",
+  });
+  ok("a new arrangement is called something", noService.body.subscription.service === "תוכנית אימון");
+
+  const renamedService = await call({
+    action: "set_subscription_service",
+    clientId: "p_studio",
+    service: "תוכנית אימון מכינה",
+    month: "2026-09",
+    today: "2026-09-22",
+  });
+  ok("and he can say what it really is", renamedService.body.subscription.service === "תוכנית אימון מכינה");
+  const studioMonth = await call({ action: "month", month: "2026-09", today: "2026-09-22" });
+  const studioRow = studioMonth.body.deals.filter(function (d) { return d.clientId === "p_studio"; })[0];
+  ok("the bill on screen takes the new words", studioRow.service === "תוכנית אימון מכינה");
+
+  /* A bill he has already invoiced is what it was billed as. */
+  await call({ action: "update_deal", id: studioRow.id, month: "2026-09", invoiced: true });
+  await call({ action: "set_subscription_service", clientId: "p_studio", service: "משהו אחר", month: "2026-09" });
+  const afterInvoice = await call({ action: "month", month: "2026-09", today: "2026-09-22" });
+  ok(
+    "but one already invoiced keeps the words it was invoiced with",
+    afterInvoice.body.deals.filter(function (d) { return d.clientId === "p_studio"; })[0].service === "תוכנית אימון מכינה"
+  );
+  ok(
+    "while the next bill carries the new ones",
+    afterInvoice.body.subscriptions.filter(function (x) { return x.clientId === "p_studio"; })[0].service === "משהו אחר"
+  );
+  ok("a service cannot be blanked into nothing",
+    (await call({ action: "set_subscription_service", clientId: "p_studio", service: "   " })).body.subscription.service === "תוכנית אימון");
+  ok("and a client with no arrangement has no service to change",
+    (await call({ action: "set_subscription_service", clientId: "nobody", service: "x" })).status === 404);
+
   console.log("\nAll admin ledger API checks passed (" + passed + " assertions).");
 }
 

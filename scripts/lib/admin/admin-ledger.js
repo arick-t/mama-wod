@@ -48,6 +48,8 @@ const UNINVOICED_KEY = "coach-ledger/_uninvoiced.json";
    leaves nothing behind.
    ══════════════════════════════════════════════════════════════════════════ */
 const SUBS_KEY = "coach-ledger/subscriptions.json";
+/* What a monthly bill is called until he says otherwise. */
+const DEFAULT_SERVICE = "תוכנית אימון";
 /* How far back the first build looks. Two years of a coach's book, bounded — and after
    that first build nothing ever scans again. */
 const BUILD_MONTHS_BACK = 23;
@@ -364,7 +366,10 @@ module.exports = async function handler(req, res) {
       const saved = Ledger.upsertSubscription(store, {
         clientId: body.clientId,
         name: body.name,
-        service: body.service,
+        /* The first intake has no "what is this for" field, so a new arrangement gets
+           the plain answer and he changes it in the table when it is something else
+           (owner, 2026-09-22). */
+        service: known ? body.service : body.service || DEFAULT_SERVICE,
         price: body.price,
         method: body.method,
         colour: body.colour,
@@ -380,6 +385,41 @@ module.exports = async function handler(req, res) {
         ok: true,
         subscriptions: settled.subs,
         subscription: Ledger.findSub(settled, body.clientId),
+      });
+    }
+
+    /**
+     * What the bill is FOR — changed by hand, from the row in the table.
+     *
+     * It moves the arrangement, so every bill from here on carries the new wording.
+     * It also rewrites the bill of the month on screen when that one has not been
+     * invoiced yet: he is looking at it, and a line that keeps the old words while the
+     * list beside it shows the new ones is just confusing. A bill he has already
+     * invoiced is left exactly as it was billed (owner, 2026-09-22).
+     */
+    if (action === "set_subscription_service") {
+      const store = await readSubs();
+      const sub = Ledger.findSub(store, body.clientId);
+      if (!sub) return bad(res, 404, "NOT_FOUND", "no such subscription");
+      const saved = Ledger.upsertSubscription(store, {
+        clientId: body.clientId,
+        service: String(body.service || "").trim() || DEFAULT_SERVICE,
+      });
+      if (!saved.ok) return bad(res, 400, saved.code, saved.error);
+      await writeSubs(saved.store);
+
+      const month = Ledger.monthKey(body.month ? body.month + "-01" : undefined);
+      const doc = await readMonth(month);
+      const id = Ledger.occurrenceId(saved.sub, month);
+      const row = doc.deals.filter(function (d) { return d.id === id; })[0];
+      if (row && !row.invoiced) {
+        const moved = Ledger.updateDeal(doc, id, { service: saved.sub.service });
+        if (moved.ok) await writeMonth(moved.doc);
+      }
+      return res.status(200).json({
+        ok: true,
+        subscriptions: saved.store.subs,
+        subscription: saved.sub,
       });
     }
 
