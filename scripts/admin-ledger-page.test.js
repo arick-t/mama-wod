@@ -771,4 +771,19 @@ ok(
   !/out\[d\.day\]\.push\(\{[\s\S]{0,260}service: d\.service/.test(page)
 );
 
+
+/* The table OPENS grouped, so the one field he may type has to be reachable there —
+   not only behind "פירוט מלא" (owner, 2026-09-22). */
+const oneClientGroup = L.groupByPlace([oded]);
+ok("a group that is one client's knows whose it is", oneClientGroup[0].clientId === "p_oded");
+ok("and says it is recurring", oneClientGroup[0].nature === "recurring");
+const groupedTable = V.tableHtml(oneClientGroup, 900, {}, null, { grouped: true });
+ok("so the grouped line offers its service for editing too", groupedTable.indexOf('data-led-sub-service="p_oded"') >= 0);
+const placeGroup = V.tableHtml(L.groupByPlace([gig]), 250, {}, null, { grouped: true });
+ok("a place's line does not", placeGroup.indexOf("data-led-sub-service") < 0);
+const bothGroup = L.groupByPlace([oded, Object.assign({}, gig, { name: "עודד מכינה", clientId: "" })]);
+ok("a name covering both kinds claims neither", bothGroup[0].nature === "");
+ok("so nothing on that line is offered for editing",
+  V.tableHtml(bothGroup, 1150, {}, null, { grouped: true }).indexOf("data-led-sub-service") < 0);
+
 console.log("\nAll admin ledger page checks passed (" + passed + " assertions).");
