@@ -73,9 +73,16 @@ async function main() {
   /* --- shape --------------------------------------------------------------- */
 
   const skeleton = Store.emptyProgram({ clientName: "Coach A", weekCount: 5 });
-  ok("skeleton has 5 weeks", skeleton.weeks.length === 5);
+  ok("skeleton has the 5 weeks it was asked for", skeleton.weeks.length === 5);
   ok("skeleton starts at version 1", skeleton.version === 1);
-  ok("last week is a deload", skeleton.weeks[4].phase === "deload");
+  /* THE LAST WEEK IS NOT A DELOAD. It used to be, for any programme with no intake behind
+     it — the old rule where a block simply ended with one. A deload exists because someone
+     asked for it, on a cadence they chose (POL-032, owner 2026-09-22). */
+  ok("no week is a deload nobody asked for", skeleton.weeks.every(function (w) {
+    return w.phase !== "deload";
+  }));
+  /* And a programme opened without a length is a month: four weeks. */
+  ok("a month is four weeks", Store.emptyProgram({ clientName: "Coach B" }).weeks.length === 4);
   ok(
     "every week has all seven days",
     skeleton.weeks.every(function (w) {
@@ -490,10 +497,13 @@ async function main() {
   ok("and it is already sent — those clients are reading it today", !!preBlocks.blocks[0].approvedAt);
   ok("so nothing of theirs disappears", Store.approvedWeekCount(preBlocks) === 4);
 
-  /* Without an intake — the legacyAthlete athlete path — the old rule still stands, so that
-     path keeps behaving exactly as it did. */
+  /* Without an intake there is no deload either. The old rule closed every block with one,
+     which is exactly the assumption the owner retired: a deload is a cadence someone chose,
+     and a programme nobody was asked about has not chosen one (POL-032, 2026-09-22). */
   const legacyAthlete = Store.emptyProgram({ programId: "p_legacyAthlete", weekCount: 5 });
-  ok("the legacyAthlete path still closes its block with a deload", legacyAthlete.weeks[4].phase === "deload");
+  ok("no intake means no deload, not a deload at the end", legacyAthlete.weeks.every(function (w) {
+    return w.phase !== "deload";
+  }));
 
   /* ---------------------------------------------------------------------
    * The mirror flag: the OWNER rewrites a day, the client has to see it.

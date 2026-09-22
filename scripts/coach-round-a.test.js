@@ -77,7 +77,7 @@ ok("nor to use ratio tables for it", !/ratio tables (to estimate|after intake)/i
 ok("POL-014 still says not to ask them as chat questions", /Do \*\*not\*\* ask Front Squat, Press, or Power Clean/.test(policySrc));
 ok("POL-016 keeps the aerobic conversion tables", /aerobic conversion \/ equivalency tables/i.test(policy));
 ok("and says what to do instead of a percentage", /effort or by a rep target/i.test(policy));
-ok("the generated file agrees with its source", policy.includes("Never estimate one lift from another"));
+ok("the generated file agrees with its source", policy.includes("There is no conversion between lifts"));
 
 /* ════ 8 — NO TEMPLATE WEEK GENERATOR ════════════════════════════════════ */
 

@@ -262,7 +262,8 @@
       secondaryLocationEquipment: "",
       secondaryHeaviestImplementKg: 0,
       sessionMinutesByDay: {},
-      deloadEveryWeeks: 4,
+      /* Nobody has asked for a deload yet, because nobody has been asked. */
+      deloadEveryWeeks: 0,
       monthlyAmount: 0,
       paymentMethod: "",
       /* What this athlete pays. Asked here for the same reason a studio is asked in
@@ -566,17 +567,26 @@
           })
           .join("") +
         "</div></div>" +
-        /* The individual chooses their own down week. Until this question existed every
-           packet said "no deload week falls inside this block" - months of building with
-           no rest (coach agent + owner, 2026-09-03). */
+        /* NO DELOAD UNLESS THEY ASK FOR ONE.
+           The question used to be the other way round: a number field standing open at four,
+           a "No deload" box to switch it off, and a fallback to four if neither was touched -
+           so an athlete nobody asked still got a deload. Off by default, and ticking it opens
+           the only question that follows: how often (owner, 2026-09-22, POL-032). The studio
+           questionnaire has asked it this way since the start; this is the same shape. */
         '<div class="pprog-fixed-row">' +
-        '<label class="pprog-fixed-inline" for="adm-fx-deload">Deload week every … weeks</label>' +
-        '<input id="adm-fx-deload" type="number" min="3" max="12" class="pprog-fixed-num" value="' +
+        '<label class="pprog-fixed-inline"><input type="checkbox" id="adm-fx-deload-on"' +
+        (parseInt(st.deloadEveryWeeks, 10) > 0 ? " checked" : "") +
+        ' onchange="adminFixedDeloadToggled()"> Include a deload week</label>' +
+        '</div>' +
+        '<div class="pprog-fixed-row" id="admFxDeloadWrap"' +
+        (parseInt(st.deloadEveryWeeks, 10) > 0 ? "" : ' style="display:none"') +
+        ' aria-hidden="' + (parseInt(st.deloadEveryWeeks, 10) > 0 ? "false" : "true") + '">' +
+        '<label class="pprog-fixed-inline" for="adm-fx-deload">Under Yes — one deload week every</label>' +
+        '<input id="adm-fx-deload" type="number" min="4" max="12" class="pprog-fixed-num" value="' +
         esc(parseInt(st.deloadEveryWeeks, 10) > 0 ? parseInt(st.deloadEveryWeeks, 10) : "") +
-        '" placeholder="4">' +
-        '<label class="pprog-fixed-inline"><input type="checkbox" id="adm-fx-nodeload"' +
-        (parseInt(st.deloadEveryWeeks, 10) > 0 ? "" : " checked") +
-        "> No deload</label></div>" +
+        '" placeholder="5">' +
+        '<label class="pprog-fixed-inline">weeks — counted continuously, month after month</label>' +
+        "</div>" +
         '<textarea id="adm-fx-schedule-notes" maxlength="500" placeholder="Optional: e.g. rest Thu+Sun">' +
         esc(st.scheduleNotes || "") +
         "</textarea>";
@@ -587,14 +597,14 @@
       html +=
         '<p class="pprog-fixed-title">Active recovery day?</p>' +
         '<p class="pprog-fixed-note">Optional lighter day inside the training week (technique + easy engine). Not a full rest day.</p>' +
-        '<p class="pprog-fixed-note">Preset: each 5-week brick ends with <strong>week 5 as a deload week</strong>. If you want deload weeks spaced further apart — or removed entirely — say so in Goals / chat after intake and I will adapt.</p>' +
+
         '<div class="pprog-fixed-radios">' +
         '<label><input type="radio" name="admFxRecovery" value="no"' +
         (pref === "no" || !pref ? " checked" : "") +
         ' onchange="adminFixedRecoveryPrefChanged()"> <span><strong>No</strong> — do not include a weekly active recovery day. All training days are full sessions.</span></label>' +
         '<label><input type="radio" name="admFxRecovery" value="yes"' +
         (pref === "yes" ? " checked" : "") +
-        ' onchange="adminFixedRecoveryPrefChanged()"> <span><strong>Yes</strong> — include one active recovery / daily deload day each training week.</span></label>' +
+        ' onchange="adminFixedRecoveryPrefChanged()"> <span><strong>Yes</strong> — include one lighter active recovery day each training week. It is not a deload; a deload is a whole week.</span></label>' +
         '</div><div id="admFxRecoveryDayWrap" class="pprog-fixed-recovery-branch"' +
         (showAr ? "" : ' style="display:none"') +
         ' aria-hidden="' +
@@ -887,6 +897,22 @@
     setFixedErr("");
   };
 
+  /* The cadence question exists only once a deload is asked for - same shape as the
+     recovery day above it (owner, 2026-09-22, POL-032). */
+  window.adminFixedDeloadToggled = function () {
+    var wrap = document.getElementById("admFxDeloadWrap");
+    var box = document.getElementById("adm-fx-deload-on");
+    if (!wrap || !box) return;
+    var on = !!box.checked;
+    wrap.style.display = on ? "" : "none";
+    wrap.setAttribute("aria-hidden", on ? "false" : "true");
+    if (on) {
+      var num = document.getElementById("adm-fx-deload");
+      if (num && !num.value) num.focus();
+    }
+    setFixedErr("");
+  };
+
   window.adminFixedRecoveryPrefChanged = function () {
     var wrap = document.getElementById("admFxRecoveryDayWrap");
     if (!wrap) return;
@@ -1012,12 +1038,13 @@
         }
       }
       intakeState.sessionMinutesByDay = byDay;
-      var noDeloadEl = document.getElementById("adm-fx-nodeload");
+      var deloadOnEl = document.getElementById("adm-fx-deload-on");
       var deloadEl = document.getElementById("adm-fx-deload");
       var deloadN = deloadEl ? parseInt(deloadEl.value, 10) : 0;
-      /* "No deload" is an answer, not a missing one. */
+      /* NOT ASKED FOR IS ZERO. This used to fall back to four whenever the box was empty,
+         which handed a deload to an athlete who never mentioned one (owner, 2026-09-22). */
       intakeState.deloadEveryWeeks =
-        noDeloadEl && noDeloadEl.checked ? 0 : deloadN >= 3 && deloadN <= 12 ? deloadN : 4;
+        deloadOnEl && deloadOnEl.checked && deloadN >= 4 && deloadN <= 12 ? deloadN : 0;
       /* The free text is only kept while the tick box says the times differ — leftover
          text under an unticked box is an answer nobody gave. */
       intakeState.sessionLimits = intakeState.sessionTimesDiffer && limEl

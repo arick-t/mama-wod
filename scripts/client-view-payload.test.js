@@ -170,7 +170,7 @@ ok("the applied draft is still structurally valid", Store.validateProgram(draft)
 const overshoot = P.applyClientEdit(draft, {
   edits: [{ weekIndex: 11, dayKey: "mon", parts: [] }],
 });
-ok("an edit past the last week is ignored, not grown", overshoot.length === 0 && draft.weeks.length === 5);
+ok("an edit past the last week is ignored, not grown", overshoot.length === 0 && draft.weeks.length === 4);
 
 /* --- the MODIFIED tag round-trips to the client ------------------------- */
 

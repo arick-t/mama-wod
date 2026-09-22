@@ -6,7 +6,7 @@
 
 **Product flex (DUCK-WOD):**
 - Athlete intake calendar / Rest days / mid-week start beat rigid template day numbers.
-- Brick = 5 weeks (build 1–4, deload 5), not a forced 6-week academic block.
+- Brick = 4 weeks of training. No fifth week, and no deload unless the request names one.
 - Same-day strength + metcon allowed with interference management.
 
 This file feeds `lib/coach-layer2-ops-brief.js` (programming system only).
@@ -25,7 +25,7 @@ CALENDAR (flexible — intake wins):
 - Across a cycle, rotate M/G/W through those formats so each modality appears as focus and in mixed pieces.
 - Intensity: Hard-Hard-Moderate or Hard-Moderate-Hard across consecutive training days. Avoid three max CNS days (heavy lift + high-skill gym) stacked without a moderate/skill day.
 CONSISTENCY vs VARIANCE:
-- Keep core lifts / key skills identifiable across the 5-week brick (weeks 1–4 build, week 5 deload). Prefer weekday lift identity when useful.
+- Keep core lifts / key skills identifiable across the four weeks of the brick. Prefer weekday lift identity when useful.
 - Vary formats, clocks, reps, and complementary movements so the brick does not go stale.
 SESSION LAYERING:
 - Primers: movement-specific derivatives before loading (mechanics/activation, not fatigue).
