@@ -874,7 +874,7 @@ const PROGRAMMING_SYSTEM_CORE =
   "Keep day intent stable, but vary TRAINING FORMATS across the month/week: do not repeat the exact same metcon structure on the same weekday every week.\n" +
   "Format variety examples: AMRAP / EMOM / For Time / Intervals / E2MOM / Chipper / Quality rounds / Tempo pieces.\n" +
   "Strength lift sequencing may repeat by weekday, but the work format around it must rotate while preserving the intended duration/effect.\n" +
-  "ACTIVE RECOVERY (from athlete intake): If profile says NO active recovery — do not force Thursday/any day into daily deload. If YES — one lighter day on the requested weekday only.\n" +
+  "ACTIVE RECOVERY (from athlete intake): a lighter session inside an ordinary training week, and NOT a deload - a deload is a whole week. If the profile says NO, keep every training day a full session and make no weekday lighter of your own accord. If YES, one lighter day on the weekday THEY named, never one you chose.\n" +
   "FIXED INTAKE MODE: The app may send one complete athlete packet (all questionnaire answers at once) instead of turn-by-turn Q&A. " +
   "Treat that packet as fully answered intake — never re-ask profile/lifts/skills/schedule/goals. Program the brick from those facts with full POL-016 capability profiling depth.\n" +
   "WARM-UP (a packet line as of 2026-09-04): the intake now answers whether we write the warm-up. A WARM-UP: line saying to write one means it goes in every session, inside the stated session length, and it is NOT one of the working parts. A WARM-UP: line saying not to means write none and open with the first working part — they warm up themselves, or a coach on the floor does. NO WARM-UP LINE AT ALL means WRITE ONE: that is the default, and an older packet simply predates the field. None of those three cases removes the movement-specific PRIMER before a loaded lift, which belongs to the working part.\n" +
@@ -2686,7 +2686,7 @@ async function coachHandler(req, res) {
           "Build a full 4-week training brick. " +
           "The deload week, if any, is NAMED IN THE REQUEST — do NOT assume the last week and NEVER add a fifth. " +
           "ACTIVE RECOVERY (HARD — from athlete intake/profile): " +
-          "If athlete declined active recovery — do NOT force Thursday (or any training day) into daily deload/active recovery; keep training days as full purposeful sessions. " +
+          "If athlete declined active recovery — keep every training day a full purposeful session and make no weekday lighter of your own accord. " +
           "If athlete requested active recovery — place exactly one lighter day on the requested weekday. " +
           "True REST days: overview focus MUST be exactly \"Rest\", day title sense = REST DAY, parts empty [] OR one part {title:\"REST DAY\",lines:[\"Rest\"]}. " +
           midWeekStartRuleText(1, sellsSessionsByCount(body.studioIntake)) +
@@ -2798,7 +2798,7 @@ async function coachHandler(req, res) {
       "\n" +
       priorWeeksBlock(body, weekIndex) +
       "\n" +
-      "7) ACTIVE RECOVERY from athlete profile: if NO — do not force thu/any day into daily deload; if YES — one lighter day on requested weekday. If phase=deload: low volume all week.\n" +
+      "7) ACTIVE RECOVERY from athlete profile (a lighter DAY, never a deload - a deload is a whole week): if NO — every training day stays a full session; if YES — one lighter day on the weekday they named. If phase=deload: low volume all week.\n" +
       "8) For each day specify effective duration target + movement priorities.\n" +
       "9) Rotate session formats week-to-week for the same weekday; keep intent/duration effect but avoid same exact format template.\n" +
       "10) 1–3 parts/day, ≤5 lines/part — keep JSON compact.\n" +

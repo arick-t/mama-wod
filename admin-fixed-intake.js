@@ -1205,7 +1205,7 @@
   /**
    * OFF until production (owner, 2026-09-02).
    *
-   * True means finishing the intake asks Gemini for a five-week block — real money, on
+   * True means finishing the intake asks Gemini for a four-week block — real money, on
    * every rehearsal. It also puts a plan in front of the athlete that the owner has not
    * read, which is the opposite of the procedure he set: he writes, he approves, he
    * sends. Turn this on when the product goes live, not before.
@@ -1331,7 +1331,7 @@
         role: "model",
         text:
           "You can reply in any language — keep it simple. I will still coach you in English.\n\n" +
-          "Fill the short questionnaire below. When you finish, I build your 5-week plan in one shot.",
+          "Fill the short questionnaire below. When you finish, I build your 4-week plan in one shot.",
       },
       { role: "user", text: prompt },
     ];
@@ -1387,7 +1387,7 @@
     setIntakeBusy(true);
     showIntakeBuilding(
       true,
-      "<strong>Coach</strong> is building your 5-week block…"
+      "<strong>Coach</strong> is building your 4-week block…"
     );
     writeIntakeStatus("בונה לבנה אמיתית (generate_block) · " + intakeState.athleteId + "…");
 

@@ -52,6 +52,20 @@ ok("and never uses it as a label of its own", !/active recovery \/ daily deload/
 ok("the policy states the doctrine once, as POL-032", /POL-032/.test(String(POLICY)));
 ok("and names the three things apart", /REST DAY[\s\S]{0,400}ACTIVE RECOVERY DAY[\s\S]{0,400}DELOAD WEEK/.test(String(POLICY)));
 
+/* The two OTHER briefs that travel on the programming path. The first sweep missed both,
+   which is exactly how a doctrine ends up saying two things: coach-layer2-ops-brief is
+   injected beside the foundation brief on every generate_*, and the upgrade push rides
+   along when a block is re-issued. */
+const OPS = require("../lib/coach-layer2-ops-brief.js");
+const PUSH = fs.readFileSync(path.join(root, "lib/coach-push-upgrade.js"), "utf8");
+ok("the layer-2 ops brief does not call a brick five weeks", !/5[- ]week|week 5 deload/i.test(String(OPS)));
+ok("nor does the upgrade push", !/5[- ]week|five[- ]week/i.test(PUSH));
+
+/* And the phrase itself, in the live coach instructions rather than the briefs. */
+const PC = fs.readFileSync(path.join(root, "api/personal-coach.js"), "utf8");
+ok("the coach is never told about a 'daily deload'", !/daily.?deload/i.test(PC));
+ok("and active recovery is named as a DAY, against the week", /a deload is a whole week/i.test(PC));
+
 /* ── 2. the display invents nothing ─────────────────────────────────────────── */
 
 function wk(i, phase) {
