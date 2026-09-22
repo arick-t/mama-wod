@@ -1492,6 +1492,12 @@ ok(
   /if \(want > here\) \{\s*window\.adminFixedNext\(\);/.test(fixedIntake)
 );
 ok("the furthest step resets with the questionnaire", /intakeState\.fixedMax = 0;/.test(fixedIntake));
+/* On the last step "Next" is not a step — it is "Build my plan". A tab press must
+   never send the questionnaire to the coach's brain (owner, 2026-09-22). */
+ok(
+  "a tab pressed on the last step does not build a plan",
+  /if \(here < C\(\)\.FIXED_STEPS\.length - 1\) window\.adminFixedNext\(\);/.test(fixedIntake)
+);
 ok("the strip disappears with the questionnaire", /if \(strip\) strip\.hidden = true;/.test(fixedIntake));
 
 /* The rows: label above its field, the full width — not label-left, 150px-field-right. */

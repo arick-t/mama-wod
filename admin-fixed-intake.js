@@ -861,7 +861,11 @@
       window.adminFixedNext();
       return;
     }
-    window.adminFixedNext();
+    /* Going back, the step being left is offered to the validator so its answers are
+       saved on the way out — EXCEPT on the last step, where "Next" is not a step at
+       all: it is "Build my plan", and it would send the whole questionnaire to the
+       coach's brain because he pressed a tab (owner, 2026-09-22). */
+    if (here < C().FIXED_STEPS.length - 1) window.adminFixedNext();
     intakeState.fixedStep = want;
     setFixedErr("");
     syncAdminFixedIntakeUi();
