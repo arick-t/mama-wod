@@ -786,4 +786,19 @@ ok("a name covering both kinds claims neither", bothGroup[0].nature === "");
 ok("so nothing on that line is offered for editing",
   V.tableHtml(bothGroup, 1150, {}, null, { grouped: true }).indexOf("data-led-sub-service") < 0);
 
+
+/* The coming price on the grouped line — where the table actually opens. */
+const groupPending = { pending: { p_oded: { price: 1000, from: "2026-10-05" } }, grouped: true };
+ok(
+  "one bill shows the coming price on its grouped line",
+  V.tableHtml(L.groupByPlace([oded]), 900, {}, null, groupPending).indexOf("(₪1,000)") >= 0
+);
+ok(
+  "but a sum of several months says only the sum",
+  V.tableHtml(
+    L.groupByPlace([oded, Object.assign({}, oded, { id: "sub:p_oded:2026-10", day: "2026-10-05", price: 1000 })]),
+    1900, {}, null, groupPending
+  ).indexOf("(₪1,000)") < 0
+);
+
 console.log("\nAll admin ledger page checks passed (" + passed + " assertions).");
