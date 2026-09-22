@@ -13463,7 +13463,18 @@ tryRestoreAdminSession();
       })
       .forEach(function (d) {
         if (!out[d.day]) out[d.day] = [];
-        out[d.day].push({ name: d.name, price: d.price });
+        /* Name and price are what a square has always SAID. What travels with them now
+           is what it has to SHOW: whether this is a client who pays every month, and
+           whether his bill has come yet — the pale yellow frame and the dashed one.
+           The service is deliberately still left behind: adding it would rewrite every
+           square on a screen he has already approved (owner, 2026-09-22). */
+        out[d.day].push({
+          name: d.name,
+          price: d.price,
+          nature: d.nature,
+          clientId: d.clientId,
+          projected: d.projected === true,
+        });
       });
     return out;
   }

@@ -753,4 +753,22 @@ ok(
   /function pendingPriceNote\(p\)/.test(page) && /ath-fact-next/.test(page)
 );
 
+
+/* The calendar is fed by the page, not by the server answer directly, and what the page
+   hands it used to be name and price ONLY — so the frame had nothing to key on and no
+   square was ever framed. Caught in the browser, not by a test that called the view
+   itself (owner, 2026-09-22). */
+ok(
+  "what the page hands the calendar carries what kind of line it is",
+  /out\[d\.day\]\.push\(\{[\s\S]{0,260}nature: d\.nature/.test(page)
+);
+ok(
+  "and whether the bill has come yet",
+  /out\[d\.day\]\.push\(\{[\s\S]{0,260}projected: d\.projected === true/.test(page)
+);
+ok(
+  "but still not the service — the squares keep the shape he approved",
+  !/out\[d\.day\]\.push\(\{[\s\S]{0,260}service: d\.service/.test(page)
+);
+
 console.log("\nAll admin ledger page checks passed (" + passed + " assertions).");
