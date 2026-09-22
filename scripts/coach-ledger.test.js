@@ -261,4 +261,107 @@ ok("the right one goes", forgotten.warehouse.places[0].name === "רימון");
 ok("forgetting what is not there says so", L.forgetPlace(forgotten.warehouse, "אין כזה").code === "NOT_FOUND");
 ok("and it is case- and space-insensitive like everything else here", L.forgetPlace(fgw, "  טעות ").ok === true);
 
+
+/* ---------------------------------------------------------------------------
+ * RECURRING CLIENTS — the studio that pays every month.
+ *
+ * The owner's own scenario, asserted line by line: a studio handed a programme on the
+ * 5th pays on the 5th, for ever, until he freezes it. Two promises matter more than
+ * the rest, and both are money:
+ *   - a price he changes today never rewrites a month that has already been billed;
+ *   - a month that has already been written is never drawn on top of, so no bill is
+ *     ever counted twice.
+ * ------------------------------------------------------------------------- */
+
+let subs = L.emptySubscriptions();
+const oded = L.upsertSubscription(subs, {
+  clientId: "p_oded",
+  name: "עודד מכינה",
+  service: "תוכנית אימון מכינה",
+  price: 100,
+  method: "ביט",
+  colour: "#4CAF70",
+  startDay: "2026-09-05",
+}, { clock: clock });
+subs = oded.store;
+ok("a client handed a programme becomes a subscription", oded.ok && subs.subs.length === 1);
+ok("the day of handover becomes the billing day", oded.sub.billingDay === 5);
+ok("a subscription without a client is refused", L.upsertSubscription(subs, { name: "אף אחד" }).code === "NO_CLIENT");
+
+/* The first month falls on the handover day itself — that is the day he started
+   paying — and every month after it on the billing day. */
+const sep = L.occurrenceOf(oded.sub, "2026-09");
+const oct = L.occurrenceOf(oded.sub, "2026-10");
+ok("the first bill is the day the programme was handed over", sep.day === "2026-09-05");
+ok("the next month falls on the billing day", oct.day === "2026-10-05");
+ok("a recurring row says what it is", sep.nature === "recurring" && sep.nature === L.NATURE_RECURRING);
+ok("a hand-typed row is a one-off", L.normalizeDeal({ name: "רימון", price: 100 }).nature === L.NATURE_ONCE);
+ok("a recurring row knows whose it is", sep.clientId === "p_oded");
+ok("nothing is billed before the programme was handed over", L.occurrenceOf(oded.sub, "2026-08") === null);
+
+/* The id is the whole reason a bill cannot be written twice. */
+ok("a month's bill has one fixed id", L.occurrenceId(oded.sub, "2026-10") === "sub:p_oded:2026-10");
+ok("and that id is recognisable on its own", L.isRecurringId(sep.id) && !L.isRecurringId("d123abc"));
+
+/* A short month cannot swallow a bill. */
+const late = L.setBillingDay(subs, "p_oded", 31, { today: "2026-09-10", clock: clock });
+ok("a billing day is 1–31", L.setBillingDay(subs, "p_oded", 45).code === "BAD_DAY");
+ok("the 31st in February is the last day of February", L.occurrenceDay(late.sub, "2027-02") === "2027-02-28");
+ok("moving the billing day takes effect from the next bill", late.from === "2026-09-30");
+
+/* ---- the owner's two scenarios for a price change ---- */
+
+/* "החל ממועד החיוב הבא" — he agreed 200 on the 10th; the 5th of October is when it
+   starts, and September is still worth what it was worth. */
+const nextMode = L.setSubscriptionPrice(subs, "p_oded", 200, "next", { today: "2026-09-10", clock: clock });
+ok("the next bill is the one the popup must name", nextMode.from === "2026-10-05");
+ok("this month keeps the price it was agreed at", L.priceAt(nextMode.sub, "2026-09-05") === 100);
+ok("and the new price starts on that date", L.priceAt(nextMode.sub, "2026-10-05") === 200);
+ok("the old price is still the one on the row", nextMode.sub.price === 100);
+ok("with the coming one written beside it", nextMode.sub.pending.price === 200);
+
+/* "החל מהחודש הנוכחי" — five days into the month, and this month is worth 200 too. */
+const nowMode = L.setSubscriptionPrice(subs, "p_oded", 200, "now", { today: "2026-09-10", clock: clock });
+ok("changing from this month changes this month", L.occurrenceOf(nowMode.sub, "2026-09").price === 200);
+ok("and leaves nothing waiting", nowMode.sub.pending === null);
+ok("a price of nothing is not a price", L.setSubscriptionPrice(subs, "p_oded", 0, "now").code === "NO_PRICE");
+
+/* A month already written is the truth; the projection stands aside. */
+const written = [L.occurrenceId(oded.sub, "2026-09")];
+ok("a month already billed is not drawn again", L.occurrencesIn(subs, "2026-09", written).length === 0);
+ok("a month not yet billed is drawn", L.occurrencesIn(subs, "2026-10", written).length === 1);
+ok("what is drawn is marked as a projection, never a record",
+  L.occurrencesIn(subs, "2026-10", written)[0].projected === true);
+
+/* Freezing keeps everything it knows and simply stops billing. */
+const frozen = L.upsertSubscription(subs, { clientId: "p_oded", active: false }, { clock: clock });
+ok("a frozen subscription bills nothing", L.occurrencesIn(frozen.store, "2026-11", []).length === 0);
+ok("but forgets nothing", frozen.sub.name === "עודד מכינה" && frozen.sub.price === 100 && frozen.sub.colour === "#4CAF70");
+ok("and waking it up bills again",
+  L.occurrencesIn(L.upsertSubscription(frozen.store, { clientId: "p_oded", active: true }).store, "2026-11", []).length === 1);
+
+/* Deleting a client deletes the subscription with him. */
+const gone = L.removeSubscription(subs, "p_oded");
+ok("deleting the client deletes the subscription", gone.ok && gone.store.subs.length === 0);
+ok("deleting what is not there says so", L.removeSubscription(gone.store, "p_oded").code === "NOT_FOUND");
+
+/* What has to be written, and what must never be written twice. */
+const dueAll = L.dueOccurrences(subs, "2026-11-20", []);
+ok("every bill whose day has come is due", dueAll.length === 3);
+ok("they come back oldest first", dueAll[0].month === "2026-09" && dueAll[2].month === "2026-11");
+ok("a bill already in the book is not due again",
+  L.dueOccurrences(subs, "2026-11-20", [L.occurrenceId(oded.sub, "2026-09")]).length === 2);
+ok("tomorrow's bill is not due today", L.dueOccurrences(subs, "2026-11-04", []).length === 2);
+ok("a frozen subscription owes nothing new", L.dueOccurrences(frozen.store, "2026-11-20", []).length === 0);
+ok("how far back it will ever reach is bounded",
+  L.dueOccurrences(subs, "2029-01-20", [], { backMonths: 12 }).length <= 12);
+
+/* The store itself stays a store, not a list that can grow for ever. */
+ok("the same client cannot hold two subscriptions",
+  L.normalizeSubscriptions({ subs: [{ clientId: "a", name: "א", price: 1 }, { clientId: "a", name: "א שוב", price: 9 }] }).subs.length === 1);
+ok("rubbish in the store is dropped, not carried",
+  L.normalizeSubscriptions({ subs: [null, { name: "בלי מזהה" }, { clientId: "b", name: "ב" }] }).subs.length === 1);
+ok("a colour that is not a colour never reaches a style attribute",
+  L.normalizeSubscription({ clientId: "c", name: "ג", colour: '"><script>' }).colour === "");
+
 console.log("\nAll coach ledger checks passed (" + passed + " assertions).");
