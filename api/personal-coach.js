@@ -3423,85 +3423,15 @@ async function coachHandler(req, res) {
     return !f || f === "—" || /^(rest(\s*day)?|off(\s*day)?|recovery)\b/.test(f);
   }
 
-  /** Last-resort compact workouts from overview focuses — never leave the UI empty. */
-  function buildTemplateWeekFromMeta(meta) {
-    const wi = (meta && meta.weekIndex) || weekIndexForExtract;
-    const phase = String((meta && meta.phase) || body.phase || "build").slice(0, 40);
-    const theme = String((meta && meta.theme) || body.theme || "Week " + wi).slice(0, 200);
-    const summaryLine = String(
-      (meta && meta.summaryLine) || body.summaryLine || theme || "Week " + wi
-    ).slice(0, 240);
-    let overview = [];
-    try {
-      if (Array.isArray(body.overview) && body.overview.length) {
-        overview = body.overview.slice(0, 7).map(function (o, idx) {
-          const day = String((o && o.day) || ["sun", "mon", "tue", "wed", "thu", "fri", "sat"][idx] || "sun")
-            .toLowerCase()
-            .slice(0, 3);
-          return {
-            day: day,
-            label: String((o && o.label) || day).slice(0, 12),
-            focus: String((o && o.focus) || "Training").slice(0, 80),
-          };
-        });
-      }
-    } catch (e) {
-      overview = [];
-    }
-    const defaults = [
-      { day: "sun", label: "Sun", focus: "Squat strength" },
-      { day: "mon", label: "Mon", focus: "Press & gymnastics" },
-      { day: "tue", label: "Tue", focus: "Rest" },
-      { day: "wed", label: "Wed", focus: "Olympic lift & engine" },
-      { day: "thu", label: "Thu", focus: phase === "deload" ? "Rest" : "Daily deload / technique" },
-      { day: "fri", label: "Fri", focus: "Conditioning" },
-      { day: "sat", label: "Sat", focus: "Rest" },
-    ];
-    if (overview.length < 7) overview = defaults;
-    const days = {};
-    for (let i = 0; i < defaults.length; i++) {
-      const dayKey = defaults[i].day;
-      const focus = focusForDayFromOverview(overview, dayKey) || defaults[i].focus;
-      if (isRestFocusLabel(focus)) {
-        days[dayKey] = {
-          parts: [{ id: dayKey + "-rest", title: "REST DAY", lines: ["Rest"] }],
-        };
-      } else {
-        days[dayKey] = {
-          parts: [
-            {
-              id: dayKey + "-a",
-              title: "Strength / Skill",
-              lines: [
-                focus.slice(0, 80),
-                phase === "deload" ? "3 x 5 @ easy technique pace" : "5 x 3 building, leave 2 reps in reserve",
-                "Rest 2:00 between sets",
-              ],
-            },
-            {
-              id: dayKey + "-b",
-              title: "Conditioning",
-              lines: [
-                phase === "deload" ? "12 min easy zone-2 work" : "AMRAP 12",
-                "10 calorie machine or run",
-                "12 kettlebell swings or dumbbell snatches",
-                "15 box step-ups or air squats",
-              ],
-            },
-          ],
-        };
-      }
-    }
-    return {
-      weekIndex: wi,
-      phase: phase,
-      theme: theme,
-      summaryLine: summaryLine,
-      overview: overview,
-      days: days,
-      _fallback: "template",
-    };
-  }
+  /* THE TEMPLATE WEEK GENERATOR IS GONE (owner, 2026-09-21).
+   *
+   * It shipped on 2026-07-29 (47fc6d6b) to keep the screen from going empty: when the coach
+   * was unreachable it wrote a default week - AMRAP 12, 10 machine calories, 12 swings, a
+   * 5x3 builder. The very next day the commit that made workout quality a hard law
+   * (9fc0829d) deleted the CALL to it and left the function standing. It has been dead code
+   * ever since: 80 lines producing exactly what POL-020 forbids, sitting in the coach's own
+   * file, waiting for someone to go looking for 'what do we do when there is no answer' and
+   * wire it back. When there is no answer we say so and retry. We do not invent a week. */
 
   async function fillWeekDayByDay(viaBase) {
     const wi = weekIndexForExtract;

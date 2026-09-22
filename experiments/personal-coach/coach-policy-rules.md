@@ -174,7 +174,7 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - **Type:** HARD
 - **Scope:** intake only
 - **Trigger:** strength / engine baselines after experience
-- **Required behavior:** One short line in the athlete’s chosen language: fill 1RM kg (Back Squat, Deadlift, Clean & Jerk, Snatch) and 2000 m run time in the form; **blank = unknown** (coach will estimate). Then append exactly `<<<LIFTS_PICKER>>>` on its own line. Do **not** ask each lift or the run as separate chat questions. Do **not** ask Front Squat, Press, or Power Clean — estimate from the four known lifts via ratio tables after intake.
+- **Required behavior:** One short line in the athlete’s chosen language: fill 1RM kg (Back Squat, Deadlift, Clean & Jerk, Snatch) and 2000 m run time in the form; **blank = unknown** (coach will estimate). Then append exactly `<<<LIFTS_PICKER>>>` on its own line. Do **not** ask each lift or the run as separate chat questions. Do **not** ask Front Squat, Press, or Power Clean as separate chat questions. There is **no lift-to-lift conversion** — see the equivalence table: a lift nobody reported has no number, and it is prescribed by effort or by a rep target, never by a percentage of a figure you inferred.
 - **Added:** 2026-07-28 — shorter intake; coach fills gaps from ratio tables
 - **Updated:** 2026-07-29 — UI form like skills picker (blank = unknown)
 
@@ -191,7 +191,7 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - **Scope:** after intake / generate_block / programming / revise when baselines matter
 - **Trigger:** intake is complete (or enough baselines exist: gender, BW, key 1RMs, 2000m run, skills, equipment); before or while writing the training brick
 - **Required behavior:** From the athlete’s intake answers, silently build an **internal detailed capability profile** and use it to tailor loads, engines, skills, and session difficulty. Do **not** lecture the athlete or dump the profile in chat unless they ask.
-  1. **Anaerobic / strength profile:** Use known 1RMs (Back Squat, Deadlift, Clean & Jerk, Snatch) + standard strength **ratio tables** to estimate missing lifts (Front Squat, Press, Clean, etc.), relative strength vs bodyweight, and working % ranges for strength / weightlifting / metcon loading. Factor gender when relevant to expectations and scaling.
+  1. **Anaerobic / strength profile:** Use the 1RMs the athlete actually reported (Back Squat, Deadlift, Clean & Jerk, Snatch) for relative strength vs bodyweight and for working % ranges in strength / weightlifting / metcon loading. **Never estimate one lift from another** — no source in the knowledge base supports lift-to-lift ratios, and a percentage of a number you inferred is a number the athlete never reported. A lift with no reported 1RM is prescribed by effort or by a rep target (see the equivalence table). Factor gender when relevant to expectations and scaling.
   2. **Aerobic / engine profile:** Use 2000m run (or skip) + age/BW/experience to infer engine capacity; apply **aerobic conversion / equivalency tables** (same family as the app CONVERTOR: run ↔ row ↔ ski ↔ bike ↔ calories) to set realistic distances, calories, and pacing substitutes for available equipment.
   3. **Skills / gymnastics:** Use the skills checklist to decide Rx vs scale (e.g. MU, HSPU, HSW, TTB, DU, C2B) without forcing skills they did not mark.
   4. **Program fit:** Choose formats, densities, and progressions that match this profile (not generic intermediate templates). Update the profile when new debriefs / measured times change the picture.
