@@ -920,7 +920,12 @@ ok("an individual gets theirs", /if \(individual\) mid = mid\.concat\(\[\{ id: "
 ok("there is a pane for it", /data-pane="athlete_schedule"/.test(page));
 ok("it asks which days they train", /id="inADays"/.test(page));
 ok("how long each session is", /id="inASessionMinutes"/.test(page) && /id="inADiffer"/.test(page) && /id="inAPerDay"/.test(page));
-ok("and how often they take a down week", /id="inADeload"/.test(page) && /id="inANoDeload"/.test(page));
+/* THE OTHER WAY ROUND SINCE 2026-09-22 (POL-032): a tick that is off unless they ask
+   for a deload, and only then the cadence. It used to be a number standing open with a
+   "No deload" box beside it, and a fallback to four when neither was touched - the third
+   of three questionnaires carrying that shape, and the last one found. */
+ok("the deload is a tick, off unless asked for", /id="inADeloadOn"/.test(page) && !/id="inANoDeload"/.test(page));
+ok("and the cadence opens only underneath it", /id="inADeloadWrap"/.test(page) && /id="inADeload"/.test(page));
 ok("opened on the answers already on file", /function fillAthleteScheduleTab/.test(page));
 /* Their kit joined the patch on 2026-09-16 — see below for why. */
 ok("and read back with the rest of the patch",

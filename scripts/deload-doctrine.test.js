@@ -143,4 +143,24 @@ const blank = Store.emptyProgram({ clientName: "A" });
 ok("a programme opens as a month of four weeks", blank.weeks.length === 4);
 ok("with no deload anywhere in it", blank.weeks.every((w) => w.phase !== "deload"));
 
+/* ── 7. all THREE questionnaires ask it the same way ──────────────────────────
+   The product asks about the deload in three places: the studio form, the individual
+   intake, and the individual's own schedule tab in the clients screen. The third was
+   found on the second sweep, still carrying the old shape. */
+
+const ADMIN = fs.readFileSync(path.join(root, "admin.html"), "utf8");
+ok("the studio form: a tick, then the cadence", /id="inDeload"/.test(ADMIN) && /id="inDeloadWrap"/.test(ADMIN));
+ok("the individual's schedule tab: the same", /id="inADeloadOn"/.test(ADMIN) && /id="inADeloadWrap"/.test(ADMIN));
+ok("no 'No deload' switch survives anywhere", !/id="inANoDeload"/.test(ADMIN) && !/id="adm-fx-nodeload"/.test(INTAKE_JS));
+ok("and neither falls back to a quiet four", !ADMIN.includes("deloadEveryWeeks: noDeload ? 0 :"));
+
+/* And the next month does not turn it on by itself. */
+ok("the next block carries only what they asked for", ADMIN.includes("deloadWeek: parseInt(shell.deloadEveryWeeks, 10) > 0"));
+ok("never reading 'unanswered' as yes", !ADMIN.includes("deloadWeek: shell.deloadWeek !== false"));
+
+/* ── 8. and nothing promises a next block that nothing builds ──────────────── */
+
+ok("no automatic next-block promise survives", !/generates automatically on Thursday/i.test(PC));
+ok("nor the window that enforced it", !/isNextBlockWindowOpen|athleteEarlyNextBlockDenied/.test(PC));
+
 console.log("\nדוקטרינת הדילואד אחידה בכל המקומות.");

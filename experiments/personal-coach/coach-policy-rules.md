@@ -86,14 +86,6 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - **Examples:** Good: focus `"Deadlift + intervals"`. Bad: Hebrew inside overview/parts.
 - **Added:** 2026-07-27 — UI is English; keep JSON English
 
-### POL-005 — Athlete part modifications → learn + adapt after 3×
-- **Type:** HARD
-- **Scope:** athlete-feedback / part-type
-- **Trigger:** athlete revises a day (pre-talk) and a part family changes (warmup / strength / metcon / skill / accessory); count per part-type over ~30 days / current block month
-- **Required behavior:** Mark changed part families as modified for the athlete view. After **3 modifications** of the same part-type in ~30 days, treat as a standing preference: adapt that part family proactively in upcoming programming (format, volume, equipment, constraints) — do not keep forcing the rejected pattern.
-- **Examples:** Athlete shortens metcon 3 times → future metcons default shorter / different format. Athlete swaps pull-ups 3 times → prefer scalable pull alternatives.
-- **Added:** 2026-07-27 — user wants cross-week adaptation after repeated part edits; experimental new brick after enough learning (product follow-up)
-
 ### POL-006 — Concrete scales and substitutions, never "scale as needed"
 - **Type:** HARD
 - **Scope:** revise_day / pre-workout talk / day programming
@@ -121,14 +113,6 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - **Added:** 2026-07-27 — existing IP rule, recorded in policy
 - **Updated:** 2026-08-06 — code-enforced secrecy + uniform refusal template
 
-### POL-008 — No early next-block generation (athlete request)
-- **Type:** HARD
-- **Scope:** global / block transition
-- **Trigger:** athlete asks to generate the next month, next block, next 4 weeks, plan a year ahead, or skip ahead before the current brick ends
-- **Required behavior:** Do **not** emit a new BLOCK_JSON or promise a manual full rebuild now. Reply briefly in English with this line (or close paraphrase): **“The next block generates automatically on Thursday of week 4 at 10:00 (Israel time). Until then, we keep working your current block.”** Then redirect to the current week (adjustments, pre-talk, debrief). Never dump a future full block in chat to “preview” months ahead — token-efficient continuity uses a structured handoff from the previous brick (not full workout history in prompt).
-- **Examples:** Bad: building block 2 in week 2. Good: athlete on week 2 asks for next month → standard line + offer to tweak this week’s session.
-- **Added:** 2026-07-27 — product rule before 21.0; pairs with auto next-block **Thursday week 4, 10:00 Asia/Jerusalem**
-
 ### POL-009 — Block handoff (next brick continuity)
 - **Type:** HARD
 - **Scope:** block transition (system / auto generate only)
@@ -143,18 +127,6 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - **Required behavior:** Do **not** accept and move on. Briefly say the value looks unrealistic for the asked unit (kg), ask them to re-enter a sensible number — or send empty / "unknown" to skip. Stay on the **same** topic until a sane value or skip.
 - **Guide ranges (approx, kg unless age):** age 12–80; bodyweight 35–200; Back/Front Squat 20–300; Deadlift 20–400; Press 15–180; Clean / C&J 20–250; Snatch 15–200. Any kg value ≥1000 or ≤0 is never OK.
 - **Added:** 2026-07-27 — prevent typo kg values poisoning programming
-
-### POL-011 — Pre-talk: consult vs change (shared decision)
-- **Type:** HARD
-- **Scope:** revise_day / pre-workout talk
-- **Trigger:** athlete messages the coach before training (pain, opinion, “what do you think”, OR an explicit change request)
-- **Required behavior:**
-  1. **Consult / advice** (e.g. sore shoulder, asking whether strict pull-ups are better than kipping): answer in English with a clear recommendation + at most 1–2 concrete alternatives, and **do not change the written workout** until the athlete confirms which option to apply. No DAY_JSON on a pure consult turn.
-  2. **Explicit change** (e.g. “make the metcon shorter”, “swap toes-to-bar for V-ups”): apply the change, keep Part A/B titles, structure part lines as intent note → format header → prescription, then a **tiny** English confirm + ask if they want another change.
-  3. **Confirmation** of a prior option (“yes, do strict”, “apply that”): then rewrite + DAY_JSON + tiny “Updated. Another change?” reply.
-- **Brevity (HARD — athlete is at the box, seconds before start):** max ~1–2 short sentences. No compliments, empathy padding, hype, “great question”, explanations of why you’re a good coach, or chatty filler. Practical only.
-- **Examples:** Good consult: “Prefer strict today. Or ring rows. Switch Part A?” Bad: a paragraph of encouragement. Good change: “Updated. Another change?” Bad: “Awesome — I’ve carefully revised your session for you today!”
-- **Added:** 2026-07-28 — user: coach must reply after changes; consult before mutual decision; ultra-brief at the box
 
 ### POL-012 — Part line hierarchy (display)
 - **Type:** HARD
@@ -270,7 +242,7 @@ Copy a block below. Keep IDs unique (`POL-###`).
   2d. **REPLACE path — Confirm before swap.** Short explicit Confirm naming the move; second question only if local calc still broken after move.
   2e. **Apply truth (HARD).** Post-apply success line only after local calendar verification. Never claim “בוצעו השינויים” if the block did not change.
   3. **Weigh into the plan.** After Confirm?, surgically ease overlapping lifts / engine / skill on upcoming remaining days so the extra session is accounted for in the general plan. Surgical only (POL-023) — no full brick redesign.
-  4. **Chat (POL-022).** Ultra-brief; default reply chips where possible. Forbidden: equipment re-ask, goals review, “how are you feeling”, multi-question intake loops.
+  4. **Chat.** Ultra-brief; default reply chips where possible. Forbidden: equipment re-ask, goals review, “how are you feeling”, multi-question intake loops.
   5. **Safety exception.** Skipping/moving Rest or logging an unplanned session must **never** trigger the injury / physical-risks disclaimer. That disclaimer is only for pain / injury / distress / doubt about a movement.
   6. **Budget gates (HARD):** Local apply first (0 AI). Max **1× week_detail** per move/swap event when a training day opens without backup; max **2× POL-026 rest-move week_detail** per athlete / Israel month (inside monthly envelope). No budget → placeholder Training on opened day, no immediate LLM (D). Forbidden: `generate_block`, Soft Upgrade, large rebuild, full `BLOCK_JSON`. No stub/template instead of quality week_detail (POL-020).
 - **Examples:**  
@@ -344,25 +316,11 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - **Scope:** every athlete-originated request to `/api/personal-coach` after intake completes
 - **Trigger:** an athlete asks to change more than the session in front of them
 - **Required behavior:** The athlete owns **today's session** — alternatives, reps, sets, loads, a swapped movement — through the box under the workout (`revise_day` / `revise_part`). The **brick belongs to the human coach** in the admin module. An athlete request may not reshape the program by conversation: **no whole-brick chat, no `revise_week`, no Soft Upgrade, no large rebuild.** Enforced **server-side** in `lib/coach-athlete-scope.js` before any provider call — a blocked request costs nothing. Hiding a button is not turning a thing off.
-- **Stays open on purpose:** (a) **intake** — the opening conversation and the first brick it produces are how an athlete gets a plan at all; (b) **plan fills** — `generate_block` / `generate_week` / `generate_week_detail` are machine steps that build or complete an already-approved brick, still bounded by POL-008 and POL-COST.
+- **Stays open on purpose:** (a) **intake** — the opening conversation and the first brick it produces are how an athlete gets a plan at all; (b) **plan fills** — `generate_block` / `generate_week` / `generate_week_detail` are machine steps that build or complete an already-approved brick, still bounded by POL-COST.
 - **Admin:** verified admin auth keeps full reach over the brick. That is the whole point — the human coach programs, the athlete adjusts today.
 - **Reply:** one short English line pointing at the day box. Never name a rule id or an action name to the athlete.
 - **Cost note:** this retires the athlete-facing pressure that POL-COST-004 / 005 / 006 exist to contain. Those caps stay in force for the admin path.
 - **Added:** 2026-08-30 — owner: "מוטת השליטה של מתאמן תהיה רק באימון היומי שלו"
-
-### POL-022 — Whole-program / brick chat: ultra-brief double-check
-- **Type:** HARD
-- **Scope:** coach chat after intake (especially “whole program notes” / brick chat); standing prefs that affect many days/weeks
-- **Trigger:** athlete asks to change a weekday pattern, whole brick, all Tuesdays, session length across weeks, equipment rules for the plan, or similar broad/standing change
-- **Required behavior:**
-  1. **Double-check stays** for broad changes — do **not** rewrite the whole brick in that same turn until the athlete clearly confirms.
-  2. **Ultra-brief (HARD):** reply with **one short sentence** that states the exact change + **Confirm?** (or the same idea in equally short form). Max ~2 short sentences total. No paragraphs.
-  3. **Forbidden padding:** no session-limit essays, no “I updated your profile preferences…”, no “Would you like me to rewrite this week’s X right away?”, no empathy, praise, or multi-option menus.
-  4. After a clear confirm (“yes” / “כן” / “do it”): apply (prefs + rewrite as needed) and reply with a tiny ack (e.g. “Done.” / “Updated.”). Still no speechifying.
-- **Examples:**  
-  Good: “I’ll rewrite all Tuesday sessions to a longer 25–30 min metcon. Confirm?”  
-  Bad: “Got it. Tuesdays will now feature a longer metcon… staying within your 45-minute… I have updated your profile… Would you like me to rewrite this week's Tuesday…?”
-- **Added:** 2026-07-31 — user: keep double-check, cut the chat
 
 ### POL-023 — Mid-brick revise: remaining days only + preserve formats
 - **Type:** HARD
@@ -393,7 +351,7 @@ Copy a block below. Keep IDs unique (`POL-###`).
      - want muscle-ups focus → **goals** (and skills if relevant)
   3. **Adapt only that section’s implications** across remaining brick days (POL-023). Keep formats/structure unless the note requires a structural change in that section.
   4. **Freeze all other intake sections.** Unchanged sections stay binding — e.g. equipment note must not reshuffle Rest days; injury note must not rewrite equipment or goals; schedule note must not invent new equipment rules.
-  5. **Conflict with an intake section** → ultra-brief Confirm? that names the section conflict (POL-022), then apply only after clear confirm. After confirm, treat the note as an update to that section for the rest of the brick.
+  5. **Conflict with an intake section** → ultra-brief Confirm? that names the section conflict, then apply only after clear confirm. After confirm, treat the note as an update to that section for the rest of the brick.
   6. Rest days still follow POL-003 when the touched section is schedule/recovery; otherwise Rest/training weekdays stay frozen.
 - **Examples:**  
   Good: “only one KB per weight” → section=equipment → single-KB options on remaining days; schedule, injuries, goals unchanged.  
@@ -435,7 +393,7 @@ Copy a block below. Keep IDs unique (`POL-###`).
   3. Run **B** only after explicit choice of B.
   4. Max **one B per rolling 7 Israel calendar days**.
   5. Past days stay locked (**POL-023**).
-  6. Confirm? for A/B = **one short sentence** that includes A/B in the same line (**POL-022** style).
+  6. Confirm? for A/B = **one short sentence** that includes A/B in the same line.
 - **Forbidden:** silent full regenerate from chat; `generate_block` as a reply to a note; touching past days.
 - **Added:** 2026-08-03 — cost guardrails
 
@@ -537,6 +495,6 @@ Copy a block below. Keep IDs unique (`POL-###`).
 - **POL-COST-*** caps limit *repeat regenerations*; they do not authorize stripping POL-016 / POL-018 / Foundation / Layer 2 quality.
 - Chat gets **one** COST compact reminder only — do not duplicate POL-COST one-liners in language rules; full POL-COST text stays in this policy file.
 - **POL-021** defines how Drive / digests are applied; it does not weaken POL-018 / POL-016.
-- **POL-024** maps whole-brick notes onto intake sections, then adapts only that section while freezing the rest; pairs with POL-003 / POL-022 / POL-023.
+- **POL-024** maps whole-brick notes onto intake sections, then adapts only that section while freezing the rest; pairs with POL-003 / POL-023.
 - **POL-031** is a product foundation, not a programming preference: it binds POL-009 (handoff continuity) to a reason. A block that repeats its predecessor violates POL-031 even when the handoff was honoured.
 - Do not dump this whole file into athlete-visible chat.

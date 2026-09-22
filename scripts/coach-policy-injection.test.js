@@ -4,7 +4,7 @@
  * Why this file exists: from 2026-07-29 to 2026-09-01, `coachPolicyBlock()` ended in
  * `raw.slice(0, 12000)` — a character budget copied from the old Groq free-tier
  * tokens-per-minute estimate. The policy grew 18KB -> 45KB behind it, so 24 of 38
- * rules (POL-016, POL-020, POL-027, POL-022/023/024, all POL-COST) never reached
+ * rules (POL-016, POL-020, POL-027, POL-023/024, all POL-COST) never reached
  * either the programming system or chat. Nothing in the suite noticed, because every
  * other coach test asserts that a rule exists in coach-policy.js — not that it
  * survives the trip into the prompt.
@@ -83,7 +83,6 @@ function testWholePolicyArrives() {
     "POL-016",
     "POL-019",
     "POL-020",
-    "POL-022",
     "POL-023",
     "POL-024",
     "POL-026",
@@ -138,7 +137,7 @@ function testBothPathsStillInject() {
 }
 
 /* A block became four weeks on 2026-09-02, but six lines of the policy the coach reads verbatim
-   still said five — POL-008, POL-009, POL-016, POL-023 (twice) and POL-COST. Four of them sit in
+   still said five — POL-009, POL-016, POL-023 (twice) and POL-COST (POL-008 was one of them; it has since been retired). Four of them sit in
    rules that the 12,000-character slice used to cut off, so fixing the truncation is what delivered
    the stale number to the model: the layers said four weeks and the policy said five, inside the
    same prompt. Guard the source of truth, not the generated file. */

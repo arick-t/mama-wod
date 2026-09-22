@@ -2130,15 +2130,22 @@ header{flex-wrap:wrap;row-gap:8px}
           <p class="meta" style="margin:0 0 6px">How long is each day?</p>
           <div class="emph-days" id="inAPerDay"></div>
         </div>
-        <label class="chk-row" style="cursor:default">
-          <span>Deload week every … weeks</span>
-          <input id="inADeload" type="number" min="3" max="12" value=""
-                 class="inline-num" aria-label="Deload cadence" placeholder="4">
-        </label>
+        <!-- The third place this question is asked, and the last one still asking it
+             the wrong way round: a number standing open at four with a box to switch it
+             off. Off unless they ask, then the cadence — the same shape as the studio
+             form above and the individual intake (owner, 2026-09-22, POL-032). -->
         <label class="chk-row">
-          <input id="inANoDeload" type="checkbox">
-          <span>No deload</span>
+          <input id="inADeloadOn" type="checkbox">
+          <span>Include a deload week</span>
         </label>
+        <div id="inADeloadWrap" class="sub-branch" hidden>
+          <label class="chk-row" style="cursor:default">
+            <span>Put the deload on week</span>
+            <input id="inADeload" type="number" min="4" max="12" value=""
+                   class="inline-num" aria-label="Deload cadence" placeholder="—">
+          </label>
+          <p class="meta" style="margin:0">Counted continuously, month after month. A month is four weeks, so 5 means next month opens on the deload.</p>
+        </div>
       </div>
       <div class="ipane" data-pane="athlete_goals" hidden>
         <label class="chk-row" style="cursor:default">
@@ -8278,9 +8285,14 @@ tryRestoreAdminSession();
       restDays: rest,
       sessionsPerWeek: trainingCount,
       sessionMinutes: parseInt(a.sessionMinutes, 10) || shell.sessionMinutes || 0,
-      /* The cadence is the product's, and it is already on the shell. */
-      deloadWeek: shell.deloadWeek !== false,
-      deloadEveryWeeks: shell.deloadEveryWeeks || 4,
+      /* WHAT THEY ASKED FOR, AND NOTHING ELSE.
+         This opened the next month's questionnaire with the deload already ON and a
+         cadence of four — `!== false` reads "never answered" as yes — so an athlete who
+         asked for no deload was handed one the moment a second block was planned. The
+         continuation is exactly where that does the most damage, because the cadence is
+         counted across months (owner, 2026-09-22, POL-032). */
+      deloadWeek: parseInt(shell.deloadEveryWeeks, 10) > 0 || shell.deloadWeek === true,
+      deloadEveryWeeks: parseInt(shell.deloadEveryWeeks, 10) > 0 ? parseInt(shell.deloadEveryWeeks, 10) : 0,
       population: "Individual athlete",
       goals: String(a.goals || shell.goals || ""),
       /* Capacity describes a room shared by twelve people. An individual has none. */
@@ -11806,10 +11818,10 @@ tryRestoreAdminSession();
     }
     if (el("inASessionMinutes")) el("inASessionMinutes").value = mins || "";
     if (el("inADiffer")) el("inADiffer").checked = differs;
-    if (el("inADeload")) {
-      el("inADeload").value = parseInt(a.deloadEveryWeeks, 10) > 0 ? parseInt(a.deloadEveryWeeks, 10) : "";
-    }
-    if (el("inANoDeload")) el("inANoDeload").checked = !(parseInt(a.deloadEveryWeeks, 10) > 0);
+    var deloadOn = parseInt(a.deloadEveryWeeks, 10) > 0;
+    if (el("inADeload")) el("inADeload").value = deloadOn ? parseInt(a.deloadEveryWeeks, 10) : "";
+    if (el("inADeloadOn")) el("inADeloadOn").checked = deloadOn;
+    if (el("inADeloadWrap")) el("inADeloadWrap").hidden = !deloadOn;
     renderAthletePerDayMinutes(trains, byDay, mins);
   }
 
@@ -11862,7 +11874,7 @@ tryRestoreAdminSession();
       }
     }
     var mainMins = parseInt(el("inASessionMinutes") ? el("inASessionMinutes").value : 0, 10) || 0;
-    var noDeload = !!(el("inANoDeload") && el("inANoDeload").checked);
+    var deloadOn = !!(el("inADeloadOn") && el("inADeloadOn").checked);
     var every = parseInt(el("inADeload") ? el("inADeload").value : 0, 10) || 0;
     var map = {};
     days.forEach(function (d) { map[d] = true; });
@@ -11874,7 +11886,8 @@ tryRestoreAdminSession();
       /* One number and "they all differ" cannot both be the answer. */
       sessionMinutes: differs ? 0 : mainMins >= 20 && mainMins <= 180 ? mainMins : 0,
       sessionMinutesByDay: byDay,
-      deloadEveryWeeks: noDeload ? 0 : every >= 3 && every <= 12 ? every : 4,
+      /* NOT ASKED FOR IS ZERO. It used to land on four whenever the box was empty. */
+      deloadEveryWeeks: deloadOn && every >= 4 && every <= 12 ? every : 0,
     };
   }
 
@@ -12493,6 +12506,10 @@ tryRestoreAdminSession();
        wrong story. */
     var deloadOn = el("inDeload").checked;
     el("inDeloadWrap").hidden = !deloadOn;
+    /* The individual's own schedule tab asks the same question, the same way. */
+    if (el("inADeloadOn") && el("inADeloadWrap")) {
+      el("inADeloadWrap").hidden = !el("inADeloadOn").checked;
+    }
     var every = Math.max(0, parseInt(el("inDeloadAt").value, 10) || 0);
     el("inDeloadHint").textContent = !deloadOn
       ? "No deload — four build weeks, month after month. (Default.)"
@@ -12768,7 +12785,7 @@ tryRestoreAdminSession();
     bindCalGestures();
     bindLevelExclusivity();
     /* The version badge is the page's, painted by syncAdminVersionLabels(). */
-    ["inSessionsDiffer", "inRestDays", "inEmphasis", "inDeload", "inHasChanges", "inNoCap"]
+    ["inSessionsDiffer", "inRestDays", "inEmphasis", "inDeload", "inADeloadOn", "inHasChanges", "inNoCap"]
       .forEach(function (id) {
         var n = el(id);
         if (n) n.addEventListener("change", syncIntakeConditionals);

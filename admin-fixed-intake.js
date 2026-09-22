@@ -738,9 +738,9 @@
            here until 2026-09-15. It is the same question the goals above now ask of
            everyone, with a better list, so keeping it would have put two overlapping
            questions on one screen. The marks still travel in the same field. */
-        /* Three edits of the same kind is what POL-005 needs before it learns a
-           preference, and every edit is a paid call. One box here saves three months
-           of them (coach agent, 2026-09-02). */
+/* Three edits of the same kind used to be what the coach learned a standing
+           preference from. That rule was retired on 2026-09-22 - the owner does not want an
+           end user's repeated edits turning into programming on their own. */
         '<p class="pprog-fixed-title" style="margin-top:16px">Anything you do NOT want to see in the plan?</p>' +
         '<textarea id="adm-fx-avoid-program" maxlength="400" placeholder="e.g. no burpees, no running on concrete">' +
         esc(st.avoidInProgram || "") +
