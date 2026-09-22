@@ -166,6 +166,14 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
    that grows with its content breaks the month into a scroll (owner, 2026-09-04). */
 .led-line{display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--text-muted);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;text-align:start}
+/* A client who pays every month, framed in pale yellow on the square: a standing
+   income must never read as a session he happened to give somewhere (owner, 2026-09-22).
+   The frame is drawn INSIDE the line's own box so a square keeps its height. */
+.led-line.is-recurring{border:1px solid rgba(245,197,24,.55);border-radius:5px;
+  padding:0 3px;background:rgba(245,197,24,.07)}
+/* A bill that has not reached its day yet: the same frame, dashed, because it is a
+   promise and not a record. */
+.led-line.is-recurring.is-promised{border-style:dashed;opacity:.72}
 .led-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .led-more{font-size:11px;color:var(--text-muted);line-height:1;text-align:start}
 .led-day:hover{border-color:var(--brand)}
@@ -387,9 +395,38 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
   .led-due{margin-inline-start:0;width:100%;text-align:start}
 }
 .led-fav-rows{display:flex;flex-direction:column;gap:4px;margin-top:12px}
-.led-fav-row{display:grid;grid-template-columns:1.2fr auto 1fr auto;gap:10px;align-items:center;
+.led-fav-row{display:grid;grid-template-columns:1.2fr auto 1fr auto auto;gap:10px;align-items:center;
   padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg-elev);font-size:13px}
 .led-fav-row.is-editing{grid-template-columns:1.2fr auto auto auto}
+/* A monthly client in the list of people, with the same pale yellow that frames him on
+   the calendar — one colour for one idea. */
+.led-fav-row.is-recurring{border-color:rgba(245,197,24,.35)}
+/* Frozen stays in the list, grey and untouchable: freezing is not deleting
+   (owner, 2026-09-22). */
+.led-fav-row.is-frozen{opacity:.45;filter:grayscale(1)}
+.led-fav-row.is-frozen .led-fav-billing-day{pointer-events:none}
+.led-fav-frozen{font-size:10px;font-weight:800;color:var(--text-muted);
+  border:1px solid var(--line);border-radius:6px;padding:1px 5px;margin-inline-start:6px}
+.led-fav-billing{font-size:11px;font-weight:700;white-space:nowrap;text-align:end}
+.led-fav-billing.is-none{color:var(--text-muted);opacity:.6}
+.led-fav-billing-btn{appearance:none;border:1px dashed var(--line);background:transparent;
+  color:#F5C518;border-radius:8px;padding:3px 8px;font:inherit;font-size:11px;font-weight:700;
+  cursor:pointer}
+.led-fav-billing-btn:hover{border-style:solid;border-color:#F5C518}
+.led-fav-billing-day{color:var(--text-muted)}
+/* A question with three answers needs a box of its own: window.confirm has two.
+   Same card, same buttons, same dark ground as every other box here. */
+.led-modal{width:min(420px,calc(100vw - 24px));max-width:none}
+.led-modal-title{margin:0 0 10px;font-size:16px}
+.led-modal-text{margin:0 0 6px;font-size:13px;color:var(--text)}
+.led-modal-note{margin:10px 0 0;font-size:11.5px;color:var(--text-muted);line-height:1.5}
+.led-modal-input{width:100%;margin-bottom:10px}
+.led-modal-acts{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-top:14px}
+/* Three answers stack on a phone rather than shrinking to nothing — the longest of
+   them carries a date. */
+@media (max-width:520px){
+  .led-modal-acts{flex-direction:column-reverse;align-items:stretch}
+}
 .led-fav-uses{font-size:11px;color:var(--text-muted);font-weight:700;white-space:nowrap}
 .led-swatches{display:flex;gap:4px;flex-wrap:wrap}
 .led-swatch{width:20px;height:20px;border-radius:6px;border:1px solid var(--line);cursor:pointer;padding:0}
@@ -456,7 +493,15 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
   border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer}
 .led-chip:hover{color:var(--text);border-color:#3a3a3a}
 .led-chip.on{background:rgba(232,69,26,.16);border-color:var(--brand);color:#fff}
-.led-table-head,.led-table .led-row{grid-template-columns:1.3fr 1.1fr .8fr .9fr 70px}
+.led-table-head,.led-table .led-row{grid-template-columns:1.2fr 1fr .7fr .75fr .85fr 70px}
+/* "חד פעמי" / "חזרתי" — quiet, because it is a label and not a number. */
+.led-nature{font-size:11px;font-weight:700;color:var(--text-muted);white-space:nowrap}
+.led-row.is-recurring .led-nature{color:#F5C518}
+/* The price already agreed for the next bill, beside the one being charged now. */
+.led-next-price{font-size:11px;font-weight:700;color:#F5C518;opacity:.9}
+/* A bill still ahead of its day: nothing to tick, so it says so instead. */
+.led-row.is-promised{opacity:.72}
+.led-promised{font-size:10.5px;font-weight:800;color:#F5C518;opacity:.85}
 /* A column header is a button now — it sorts, and again turns it round. */
 .led-th{appearance:none;background:transparent;border:none;color:var(--text-muted);font:inherit;
   font-size:11px;font-weight:800;cursor:pointer;padding:0;text-align:start;display:flex;
@@ -10221,17 +10266,120 @@ tryRestoreAdminSession();
     });
   }
 
+  /* ──────────────────────────────────────────────────────────────────────
+     THE BOOK OF MONTHLY CLIENTS.
+
+     A client who pays every month is two things at once: a programme here, and a
+     standing income in "ניהול כללי". This screen is where the facts are decided —
+     his name, his colour, what he pays and whether he is active — and these three
+     helpers are the only way they reach the book (owner, 2026-09-22).
+     ────────────────────────────────────────────────────────────────────── */
+
+  /** Today, as the book writes a day. */
+  function todayIsoForBilling() {
+    if (window.CoachLedger && window.CoachLedger.dayIso) return window.CoachLedger.dayIso();
+    return new Date().toISOString().slice(0, 10);
+  }
+
+  /** What the book already knows about this client, or null. */
+  function ledgerSub() {
+    if (!S.program || !window.LedgerScreen || !window.LedgerScreen.subscription) return null;
+    return window.LedgerScreen.subscription(S.program.programId);
+  }
+
+  /**
+   * Push what this screen decided into the book.
+   *
+   * Only ever called with the facts as they now stand, so a change to any one of them
+   * carries the rest along unharmed. A client with no monthly amount is not an
+   * arrangement, and nothing is written for him.
+   */
+  function ledgerSync(extra, okMsg) {
+    var p = S.program;
+    if (!p || !window.LedgerScreen || !window.LedgerScreen.syncClient) return null;
+    var sub = ledgerSub();
+    var patch = {
+      clientId: p.programId,
+      name: p.clientName || "",
+      method: p.paymentMethod || "",
+      colour: p.clientColour || "",
+      active: p.frozen !== true,
+    };
+    /* The PRICE is deliberately absent once an arrangement exists. It only ever moves
+       through the three-way question, and a price agreed "from the next bill" sits on
+       this screen as the new number while the book is still charging the old one — so
+       a freeze or a rename carrying the field along would quietly start charging it
+       early (owner, 2026-09-22). */
+    if (!sub) patch.price = Number(p.monthlyAmount) || 0;
+    Object.keys(extra || {}).forEach(function (k) { patch[k] = extra[k]; });
+    /* Nothing to bill, and nothing already in the book: leave it alone. */
+    if (!sub && !patch.price) return null;
+    return window.LedgerScreen.syncClient(patch, okMsg);
+  }
+
+  /**
+   * The two fields behind the chevron — what he pays, and how.
+   *
+   * A price that MOVES on a standing arrangement is not one decision but two: what,
+   * and from when. So when the amount changes on a client the book already bills, the
+   * three-way question is asked BEFORE anything is saved — "ביטול" has to leave the
+   * screen exactly as it was, and it cannot do that if the programme was already
+   * written (owner, 2026-09-22).
+   */
   function saveMeta() {
+    var ensure = window.LedgerScreen && window.LedgerScreen.ensureSubs
+      ? window.LedgerScreen.ensureSubs()
+      : Promise.resolve(null);
+    ensure.then(saveMetaNow, saveMetaNow);
+  }
+
+  function saveMetaNow() {
     var amount = el("fAmount") ? Number(el("fAmount").value) : undefined;
     var method = el("fMethod") ? String(el("fMethod").value || "") : undefined;
+    var next = Number.isFinite(amount) ? amount : 0;
+    var sub = ledgerSub();
+
+    if (sub && next > 0 && next !== Number(sub.price) && window.LedgerScreen.askPriceChange) {
+      window.LedgerScreen.askPriceChange(
+        {
+          clientId: S.program.programId,
+          name: S.program.clientName || "",
+          price: next,
+          from: window.LedgerScreen.nextBillingDay(S.program.programId),
+        },
+        function (mode) {
+          if (!mode) {
+            /* Cancelled: put the field back to what the book is actually charging. */
+            if (el("fAmount")) el("fAmount").value = sub.price;
+            return;
+          }
+          commitMeta(next, method, function () {
+            window.LedgerScreen.changePrice(S.program.programId, next, mode).then(function (r) {
+              if (r && r.status === 200 && r.body.ok) {
+                banner("good", mode === "now"
+                  ? "החיוב עודכן, כולל החודש הנוכחי."
+                  : "החיוב יעודכן ב-" + (window.AdminLedgerView
+                      ? window.AdminLedgerView.hebDate(r.body.from) : r.body.from) + ".");
+              }
+            });
+          });
+        }
+      );
+      return;
+    }
+    commitMeta(next, method, function () { ledgerSync({}, ""); });
+  }
+
+  function commitMeta(amount, method, then) {
     api({
       action: "save", programId: S.program.programId, expectedVersion: S.program.version,
-      program: { monthlyAmount: Number.isFinite(amount) ? amount : 0, paymentMethod: method },
+      program: { monthlyAmount: amount, paymentMethod: method },
     }).then(function (r) {
       if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "השמירה נכשלה."); return; }
       S.program = r.body.program;
       banner("good", "הפרטים נשמרו.");
       loadList();
+      if (typeof then === "function") then();
     });
   }
 
@@ -10312,6 +10460,10 @@ tryRestoreAdminSession();
             expectedVersion: S.program.version, frozen: makeFrozen }).then(function (r) {
         if (r.status !== 200 || !r.body.ok) { banner("bad", (r.body && r.body.error) || "לא הצלחתי."); return; }
         S.program = r.body.program;
+        /* Freezing stops the billing and keeps everything else: he stays in the
+           favourites list, grey, with his price and his colour intact, and coming back
+           to "פעיל" starts the bills again (owner, 2026-09-22). */
+        ledgerSync({ active: !makeFrozen }, "");
         renderDetail();
         loadList();
         /* The door is a second object. If the mirror failed the client can still get
@@ -10556,6 +10708,12 @@ tryRestoreAdminSession();
     if (g("data-oneclick")) {
       api({ action: "issue_code", programId: S.program.programId }).then(function (r) {
         if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "הנפקת הקוד נכשלה."); return; }
+        /* THE DAY HE STARTS PAYING.
+           This button is what the owner calls "מסור תוכנית ללקוח", and the day he
+           presses it is the day the monthly billing opens. It is also the button that
+           attaches a SECOND device later on, so only the first press counts: the book
+           writes the handover day once and never moves it (owner, 2026-09-22). */
+        if (!ledgerSub()) ledgerSync({ startDay: todayIsoForBilling() }, "");
         S.linkShown = S.program.programId;
         /* Held in memory, not stored: the server keeps only a hash. It survives every
            redraw until a device uses it (owner, 2026-09-02). */
@@ -10593,7 +10751,11 @@ tryRestoreAdminSession();
     }
     if (g("data-del")) {
       if (!window.confirm("למחוק את התוכנית של " + (S.program.clientName || "הלקוח") + "? אין חזרה.")) return;
-      api({ action: "delete", programId: S.program.programId }).then(function () {
+      var goneId = S.program.programId;
+      api({ action: "delete", programId: goneId }).then(function () {
+        /* A client deleted here leaves the favourites list with him. What he already
+           paid stays written in the months it was written in (owner, 2026-09-22). */
+        if (window.LedgerScreen && window.LedgerScreen.dropClient) window.LedgerScreen.dropClient(goneId);
         S.program = null; S.sel = null; show("detail", false); loadList(); banner("good", "נמחק.");
       });
       return;
@@ -12949,6 +13111,12 @@ tryRestoreAdminSession();
           return;
         }
         if (S.program && S.program.programId === programId) S.program = r.body.program;
+        /* One name and one colour, everywhere: the strip, the favourites list, the
+           deals table and the calendar all read the choice made right here
+           (owner, 2026-09-22). */
+        if (window.LedgerScreen && window.LedgerScreen.syncClient) {
+          window.LedgerScreen.syncClient({ clientId: programId, name: name, colour: colour }, "");
+        }
         renderDetail();
         loadList();
         done("");
@@ -13083,6 +13251,10 @@ tryRestoreAdminSession();
     favOpen: false,
     favEditing: "",
     places: [],
+    /* Everyone who pays him every month. One object from the server, and it is what
+       the favourites box, the calendar frame and the coming-price bracket all read
+       (owner, 2026-09-22). */
+    subs: [],
     colours: {},
     /* His own shelf of blocks — rows only; the weeks stay on the server until one is
        actually taken off it (owner, 2026-09-05). */
@@ -13100,6 +13272,9 @@ tryRestoreAdminSession();
        (owner, 2026-09-04). */
     filterName: "",
     filterService: "",
+    /* "" · "once" · "recurring" — a gig and a standing income answer different
+       questions, and he asked to be able to look at one without the other. */
+    filterNature: "",
     from: "",
     to: "",
     sortBy: "day",
@@ -13180,6 +13355,7 @@ tryRestoreAdminSession();
       }
       LS.data = r.body;
       LS.colours = r.body.colours || {};
+      LS.subs = r.body.subscriptions || [];
       /* Only the current month feeds the header figure — browsing back must not
          rewrite what he is earning now. */
       if (month === L.monthKey()) {
@@ -13424,6 +13600,7 @@ tryRestoreAdminSession();
     if (!host) return;
     host.innerHTML = V.favouritesBoxHtml({
       places: LS.places,
+      subs: LS.subs,
       open: LS.favOpen,
       editing: LS.favEditing,
     });
@@ -13537,6 +13714,7 @@ tryRestoreAdminSession();
       services: LS.services,
       name: LS.filterName,
       service: LS.filterService,
+      nature: LS.filterNature,
       from: LS.from || r.from,
       to: LS.to || r.to,
     });
@@ -13570,6 +13748,7 @@ tryRestoreAdminSession();
       name: LS.filterName,
       exactName: !!LS.filterName,
       service: LS.filterService,
+      nature: LS.filterNature,
       sortBy: LS.sortBy,
       sortDir: LS.sortDir,
     }).then(function (res) {
@@ -13581,7 +13760,11 @@ tryRestoreAdminSession();
       /* The rows that came back ARE the rows on screen, so the sum beside the heading
          counts exactly what he is looking at — and says which range that was. */
       LS.services = res.body.services || [];
+      /* The arrangements ride along with the rows, so a coming price can be shown in
+         brackets without a second request. */
+      if (res.body.subscriptions) LS.subs = res.body.subscriptions;
       renderFilters();
+      renderFavourites();
       var grouped = !LS.detail;
       LS.tableDeals = res.body.deals || [];
       host.innerHTML = V.tableHtml(
@@ -13594,6 +13777,7 @@ tryRestoreAdminSession();
           rangeLabel: rangeLabel(),
           expanded: LS.expanded,
           expandedRows: LS.tableDeals,
+          pending: pendingByClient(),
         }
       );
     });
@@ -13772,6 +13956,203 @@ tryRestoreAdminSession();
     });
   }
 
+  /* ──────────────────────────────────────────────────────────────────────
+     THE MONTHLY CLIENTS, from this screen.
+
+     The book is where the arrangement LIVES, but almost nothing about it is decided
+     here: the name, the price and whether he is active are settled on the client's own
+     tab. What belongs to the book is the day of the month the money falls on, and the
+     colour that has to be the same in four places at once.
+     ────────────────────────────────────────────────────────────────────── */
+
+  /** The arrangement behind a row, by client. */
+  function subById(clientId) {
+    var id = String(clientId || "");
+    for (var i = 0; i < LS.subs.length; i += 1) {
+      if (LS.subs[i].clientId === id) return LS.subs[i];
+    }
+    return null;
+  }
+
+  /** clientId → the price that is coming, for the bracket beside the one on the row. */
+  function pendingByClient() {
+    var out = {};
+    LS.subs.forEach(function (sub) {
+      if (sub && sub.pending && sub.pending.price) out[sub.clientId] = sub.pending;
+    });
+    return out;
+  }
+
+  function saveSubscription(patch, okMsg) {
+    if (!patch || !patch.clientId) return Promise.resolve(null);
+    var body = { action: "save_subscription", today: todayIso() };
+    Object.keys(patch).forEach(function (k) { body[k] = patch[k]; });
+    return api(body).then(function (r) {
+      if (r.status !== 200 || !r.body.ok) {
+        toast((r.body && r.body.error) || "לא הצלחתי לשמור", "err");
+        return null;
+      }
+      LS.subs = r.body.subscriptions || [];
+      LS.favEditing = "";
+      renderFavourites();
+      /* The colour and the price live on the rows too, so both views are redrawn. */
+      loadMonth(LS.month);
+      if (okMsg) toast(okMsg);
+      return r.body;
+    });
+  }
+
+  /**
+   * "תאריך חיוב" — the day of the month, changed from the favourites list.
+   *
+   * He asked for the warning by name: moving the day must say so, and say that it
+   * takes effect from the coming bill, not from the one already written
+   * (owner, 2026-09-22).
+   */
+  function askBillingDay(clientId) {
+    var sub = subById(clientId);
+    if (!sub) return;
+    ledModal({
+      title: "חיוב חודשי — " + sub.name,
+      body:
+        '<p class="led-modal-text">באיזה יום בחודש הוא משלם?</p>' +
+        '<input id="ledBillingDay" class="led-field led-modal-input" type="number" min="1" max="31" ' +
+        'value="' + escHtml(String(sub.billingDay || 1)) + '">' +
+        /* What the line says on the calendar and in the table. It is his own wording —
+           "תוכנית אימון מכינה" — and there is nowhere else to type it. */
+        '<p class="led-modal-text">על מה החיוב?</p>' +
+        '<input id="ledBillingService" class="led-field led-modal-input" type="text" maxlength="80" ' +
+        'placeholder="תוכנית אימון חודשית" value="' + escHtml(sub.service || "") + '">' +
+        '<p class="led-modal-note">שינוי התאריך יחול החל מהחיוב הקרוב. חודש שכבר חויב נשאר כפי שהוא.</p>',
+      buttons: [
+        { label: "ביטול", kind: "ghost" },
+        {
+          label: "שמור",
+          kind: "primary",
+          run: function () {
+            var field = el("ledBillingDay");
+            var day = Number(field && field.value);
+            var service = (el("ledBillingService") && el("ledBillingService").value) || "";
+            var jobs = [];
+            if (service !== (sub.service || "")) {
+              jobs.push(saveSubscription({ clientId: clientId, service: service }, ""));
+            }
+            if (day !== Number(sub.billingDay)) {
+              jobs.push(
+                api({ action: "set_billing_day", clientId: clientId, day: day, today: todayIso() })
+                  .then(function (r) {
+                    if (r.status !== 200 || !r.body.ok) {
+                      toast((r.body && r.body.error) || "לא הצלחתי לשמור", "err");
+                      return;
+                    }
+                    LS.subs = r.body.subscriptions || [];
+                    /* He asked to be told: a recurring billing date that moved is not a
+                       quiet edit (owner, 2026-09-22). */
+                    toast("תאריך החיוב המחזורי שונה — יחול מ-" + V.hebDate(r.body.from));
+                  })
+              );
+            }
+            if (!jobs.length) return;
+            Promise.all(jobs).then(function () {
+              renderFavourites();
+              loadMonth(LS.month);
+            });
+          },
+        },
+      ],
+    });
+  }
+
+  /**
+   * "שינוי של תשלום מחזורי" — the three-way question.
+   *
+   * A price he changes on his tab is not one decision but two: what, and FROM WHEN.
+   * A browser confirm can ask two things; this asks three, because the third — "from
+   * the next billing date, DD/MM/YY" — is the one he actually means most of the time
+   * (owner, 2026-09-22).
+   *
+   * @param {{clientId: string, name: string, price: number, from: string}} info
+   * @param {function(string)} done — called with "now", "next" or "" for cancelled.
+   */
+  function askPriceChange(info, done) {
+    var nextDate = V.hebDate(info.from || "");
+    var finish = function (mode) {
+      ledModal.close();
+      if (typeof done === "function") done(mode);
+    };
+    ledModal({
+      title: "שינוי של תשלום מחזורי",
+      body:
+        '<p class="led-modal-text">שים לב לשינוי החיוב — ' + escHtml(info.name || "") +
+        ", ₪" + escHtml(String(info.price || 0)) + ".</p>" +
+        '<p class="led-modal-note">ממתי הסכום החדש תופס?</p>',
+      buttons: [
+        { label: "ביטול", kind: "ghost", run: function () { finish(""); } },
+        { label: "החל מהחודש הנוכחי", kind: "ghost", run: function () { finish("now"); } },
+        {
+          label: "החל ממועד החיוב הבא " + nextDate,
+          kind: "primary",
+          run: function () { finish("next"); },
+        },
+      ],
+    });
+  }
+
+  /** A modal with as many answers as the question has — three, when it needs three. */
+  function ledModal(opts) {
+    ledModal.close();
+    var o = opts || {};
+    var back = document.createElement("div");
+    back.className = "modal-backdrop open";
+    back.id = "ledModal";
+    back.innerHTML =
+      '<div class="card led-modal">' +
+      '<h2 class="led-modal-title">' + escHtml(o.title || "") + "</h2>" +
+      '<div class="led-modal-body">' + (o.body || "") + "</div>" +
+      '<div class="led-modal-acts"></div>' +
+      "</div>";
+    var acts = back.querySelector(".led-modal-acts");
+    (o.buttons || []).forEach(function (b, i) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = b.kind === "primary" ? "btn-secondary good" : "btn-secondary";
+      btn.textContent = b.label || "";
+      btn.setAttribute("data-led-modal-btn", String(i));
+      btn.addEventListener("click", function () {
+        /* A button that answers for itself closes the box itself — the price question
+           does, because its answer has to reach the caller before the box goes. */
+        if (typeof b.run === "function") {
+          var keepOpen = b.run();
+          if (keepOpen !== true) ledModal.close();
+          return;
+        }
+        ledModal.close();
+      });
+      acts.appendChild(btn);
+    });
+    /* Clicking the dark outside is "cancel", like every other box in this module. */
+    back.addEventListener("click", function (e) {
+      if (e.target === back) ledModal.close();
+    });
+    document.body.appendChild(back);
+    var first = back.querySelector("input");
+    if (first && first.focus) first.focus();
+  }
+
+  ledModal.close = function () {
+    var open = document.getElementById("ledModal");
+    if (open && open.parentNode) open.parentNode.removeChild(open);
+  };
+
+  /** The page's own escaping, for the small amount of markup built here. */
+  function escHtml(v) {
+    return String(v === undefined || v === null ? "" : v)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
   function deleteDeal(id) {
     if (!window.confirm("למחוק את העסקה?")) return;
     api({ action: "delete_deal", id: id, month: LS.month, day: LS.day }).then(function (r) {
@@ -13912,6 +14293,28 @@ tryRestoreAdminSession();
       return;
     }
 
+    /* A monthly client's colour. It is saved on HIM and not on a place, so the one
+       choice shows up in the strip, in this list, in the table and on the calendar
+       (owner, 2026-09-22). */
+    var subSwatch = t.closest("[data-led-sub-colour]");
+    if (subSwatch) {
+      saveSubscription(
+        {
+          clientId: subSwatch.getAttribute("data-led-sub") || "",
+          colour: subSwatch.getAttribute("data-led-sub-colour") || "",
+        },
+        "הצבע עודכן"
+      );
+      return;
+    }
+
+    /* The day of the month his money falls on. */
+    var billing = t.closest("[data-led-billing]");
+    if (billing) {
+      askBillingDay(billing.getAttribute("data-led-billing") || "");
+      return;
+    }
+
     var swatch = t.closest("[data-led-fav-colour]");
     if (swatch) {
       /* A colour is applied on the spot: it is one field, and there is nothing to lose
@@ -14012,6 +14415,7 @@ tryRestoreAdminSession();
     if (t.closest("[data-led-clear]")) {
       LS.filterName = "";
       LS.filterService = "";
+      LS.filterNature = "";
       LS.from = "";
       LS.to = "";
       LS.range = "month";
@@ -14066,7 +14470,9 @@ tryRestoreAdminSession();
 
     /* The record's own filters: choosing IS filtering. */
     if (t.hasAttribute && t.hasAttribute("data-led-filter")) {
-      if (t.getAttribute("data-led-filter") === "name") LS.filterName = t.value || "";
+      var which = t.getAttribute("data-led-filter");
+      if (which === "name") LS.filterName = t.value || "";
+      else if (which === "nature") LS.filterNature = t.value || "";
       else LS.filterService = t.value || "";
       loadTable();
       afterLedgerWrite();
@@ -14168,6 +14574,58 @@ tryRestoreAdminSession();
     isOpen: function () { return LS.open === true; },
     reload: function () { return loadMonth(LS.month || L.monthKey()); },
     state: function () { return { month: LS.month, day: LS.day, range: LS.range }; },
+    /* ---- what the client screen calls when something about a client changes ----
+       The arrangement is decided on his tab; the book only records it. These three
+       are the whole surface between them (owner, 2026-09-22). */
+    syncClient: function (patch, okMsg) { return saveSubscription(patch, okMsg); },
+    dropClient: function (clientId) {
+      return api({ action: "delete_subscription", clientId: clientId }).then(function (r) {
+        if (r.status === 200 && r.body.ok) {
+          LS.subs = r.body.subscriptions || [];
+          renderFavourites();
+        }
+        return r;
+      });
+    },
+    /* The three-way question about a price, asked from wherever the price changed. */
+    askPriceChange: askPriceChange,
+    changePrice: function (clientId, price, mode) {
+      return api({
+        action: "set_subscription_price",
+        clientId: clientId,
+        price: price,
+        mode: mode,
+        today: todayIso(),
+      }).then(function (r) {
+        if (r.status === 200 && r.body.ok) {
+          LS.subs = r.body.subscriptions || [];
+          renderFavourites();
+          if (LS.open) loadMonth(LS.month);
+        }
+        return r;
+      });
+    },
+    /* The arrangement as it stands, so the client screen can ask "from when?" with the
+       right date in the question. */
+    subscription: function (clientId) { return subById(clientId); },
+    /**
+     * Make sure the arrangements are in hand before anyone asks about one.
+     *
+     * The module lands on this tab, so they almost always are. Almost is not good
+     * enough here: not knowing that a client has a standing arrangement would change
+     * his price silently instead of asking the three-way question (owner, 2026-09-22).
+     */
+    ensureSubs: function () {
+      if (LS.subs.length) return Promise.resolve(LS.subs);
+      return api({ action: "subscriptions", today: todayIso() }).then(function (r) {
+        if (r.status === 200 && r.body.ok) LS.subs = r.body.subscriptions || [];
+        return LS.subs;
+      });
+    },
+    nextBillingDay: function (clientId) {
+      var sub = subById(clientId);
+      return sub ? L.nextBillingDay(sub, todayIso()) : "";
+    },
   };
 })();
 </script>

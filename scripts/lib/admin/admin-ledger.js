@@ -350,6 +350,17 @@ module.exports = async function handler(req, res) {
      */
     if (action === "save_subscription") {
       const store = await readSubs();
+      /* A rename or a new colour must not INVENT an arrangement. Every client in the
+         module sends those, and only the ones who actually pay every month belong in
+         this book — so a client the book has never heard of is only written down when
+         the call carries a price (owner, 2026-09-22). */
+      if (!String(body.clientId || "").trim()) {
+        return bad(res, 400, "NO_CLIENT", "a subscription needs a client");
+      }
+      const known = Ledger.findSub(store, body.clientId);
+      if (!known && !(Number(body.price) > 0)) {
+        return res.status(200).json({ ok: true, subscriptions: store.subs, subscription: null });
+      }
       const saved = Ledger.upsertSubscription(store, {
         clientId: body.clientId,
         name: body.name,
@@ -618,14 +629,21 @@ module.exports = async function handler(req, res) {
          ceiling. It is still a hard cap: a range is answered from the months it
          touches, never from a listing of the store (owner, 2026-09-03). */
       const months = Ledger.monthsBetween(from, to).slice(0, 12);
+      const subs = await readSubs();
       let deals = [];
       for (const m of months) {
         const doc = await readMonth(m);
-        deals = deals.concat(doc.deals);
+        /* The table and the calendar have to agree. A bill still ahead of its day is
+           drawn on the calendar, so it belongs in the record on the same terms:
+           visible, marked as a promise, and never stored (owner, 2026-09-22). */
+        deals = deals.concat(doc.deals, Ledger.occurrencesIn(subs, m, doc.deals.map(function (d) {
+          return d.id;
+        })));
       }
       /* The range on its own, for the lists. */
       const inRange = Ledger.filterDeals(deals, { from: from, to: to });
       const rows = Ledger.filterDeals(deals, {
+        nature: body.nature,
         name: body.name,
         /* A place chosen from the list is an exact answer to "what do I invoice this
            gym for", not a search (owner, 2026-09-04). */
@@ -652,6 +670,9 @@ module.exports = async function handler(req, res) {
         /* What the two lists can offer — computed BEFORE the name and service filters,
            or choosing a place would collapse the list to that one place and he could
            never switch (owner, 2026-09-04). */
+        /* The arrangements themselves, so a row can show the price that is coming
+           without a second request. One object, already in hand. */
+        subscriptions: subs.subs,
         names: Array.from(new Set(inRange.map(function (d) { return d.name; }))).sort(),
         services: Array.from(new Set(inRange.map(function (d) { return d.service; }).filter(Boolean))).sort(),
       });

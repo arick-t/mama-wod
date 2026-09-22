@@ -165,7 +165,13 @@ async function main() {
   const range = await call({ action: "range", from: "2026-09-28", to: "2026-10-04" });
   ok("a week across a month boundary answers", range.status === 200 && range.body.ok === true);
   ok("it sees both sides of the boundary", range.body.months.length === 2);
-  ok("and reads exactly the two months it touches", reads.length === 2);
+  /* Two months, plus the one arrangement book that says which bills are still ahead —
+     and that one is read once however many monthly clients there are. */
+  ok("and reads exactly the two months it touches, plus the arrangements", reads.length === 3);
+  ok(
+    "the arrangements are read once, not once per client",
+    reads.filter(function (k) { return k.indexOf("subscriptions") >= 0; }).length === 1
+  );
   ok("the rows are newest first", range.body.deals[0].day === "2026-10-02");
   ok("with the sum of what is shown", range.body.total === range.body.deals.reduce(function (s, d) { return s + d.price; }, 0));
 
@@ -179,10 +185,10 @@ async function main() {
   reads.length = 0;
   const year = await call({ action: "range", from: "2026-01-01", to: "2026-12-31" });
   ok("a year answers", year.status === 200 && year.body.ok === true);
-  ok("and reads twelve objects at most", reads.length <= 12);
+  ok("and reads twelve months at most, plus the arrangements", reads.length <= 13);
   reads.length = 0;
   await call({ action: "range", from: "2020-01-01", to: "2026-12-31" });
-  ok("seven years is still capped at twelve", reads.length <= 12);
+  ok("seven years is still capped at twelve", reads.length <= 13);
 
   /* --- last month is still last month ------------------------------------ */
 
@@ -374,6 +380,12 @@ async function main() {
   );
   ok("a subscription that is not there says so", (await call({ action: "delete_subscription", clientId: "nobody" })).status === 404);
   ok("a subscription needs a client", (await call({ action: "save_subscription", name: "אף אחד" })).body.code === "NO_CLIENT");
+
+  /* Every client in the module sends its name and colour here when either changes.
+     Only the ones who actually pay monthly belong in this book. */
+  const renamedOnly = await call({ action: "save_subscription", clientId: "p_someone", name: "מישהו", colour: "#E8451A" });
+  ok("renaming a client who pays nothing invents no arrangement",
+    renamedOnly.status === 200 && renamedOnly.body.subscriptions.length === 0);
   ok("a billing day of 45 is refused", (await call({ action: "set_billing_day", clientId: "p_oded", day: 45 })).status === 404);
 
   console.log("\nAll admin ledger API checks passed (" + passed + " assertions).");

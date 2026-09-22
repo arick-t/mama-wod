@@ -248,7 +248,8 @@ ok("an empty range says so", V.tableHtml([], 0, {}, null).indexOf("אין עסק
 
 /* --- the record: sorted by its headers, and his own invoice tick ----------- */
 
-ok("every column is a button", (table.match(/data-led-sort=/g) || []).length === 5);
+ok("every column is a button", (table.match(/data-led-sort=/g) || []).length === 6);
+ok("and one of them is what kind of line this is", table.indexOf('data-led-sort="nature"') >= 0);
 ok("including the invoice column he fills himself", table.indexOf('data-led-sort="invoiced"') >= 0);
 ok("each row carries its tick", (table.match(/data-led-invoiced=/g) || []).length === 2);
 const tickedTable = V.tableHtml([{ id: "x", day: "2026-09-03", name: "a", price: 1, invoiced: true }], 1, {}, null);
@@ -624,5 +625,115 @@ ok("a ticked row is not counted",
   Ledger.uninvoicedTotal([{ price: 100, invoiced: true }, { price: 40 }]) === 40);
 ok("and rubbish in a price is not counted either",
   Ledger.uninvoicedTotal([{ price: "x" }, { price: 25 }]) === 25);
+
+
+/* --- the monthly client, on screen ---------------------------------------
+ * A studio that pays every month is a different animal from a session he gave at a
+ * gym, and the screen has to say so in three places at once: the table column, the
+ * frame on the calendar, and the favourites list (owner, 2026-09-22).
+ * ------------------------------------------------------------------------- */
+
+const oded = {
+  id: "sub:p_oded:2026-09",
+  day: "2026-09-05",
+  name: "עודד מכינה",
+  service: "תוכנית אימון מכינה",
+  price: 900,
+  nature: "recurring",
+  clientId: "p_oded",
+  invoiced: false,
+};
+const gig = { id: "d1", day: "2026-09-03", name: "מ1", service: "אימון קבוצתי", price: 250, nature: "once" };
+
+const mixedTable = V.tableHtml([oded, gig], 1150, {}, { by: "day", dir: 1 }, { grouped: false });
+ok("a monthly client says he is recurring", mixedTable.indexOf("חזרתי") >= 0);
+ok("and a session he gave says it is a one-off", mixedTable.indexOf("חד פעמי") >= 0);
+ok("the recurring row is marked for the eye too", mixedTable.indexOf("led-row is-recurring") >= 0);
+ok("and the one-off is not", (mixedTable.match(/is-recurring/g) || []).length === 1);
+
+/* A bill still ahead of its day: nothing to tick, and it says so. */
+const promised = V.tableHtml([Object.assign({}, oded, { projected: true })], 900, {}, null, {});
+ok("a bill that has not come yet offers no invoice tick", promised.indexOf("data-led-invoiced") < 0);
+ok("it says it is expected instead", promised.indexOf("צפוי") >= 0);
+ok("and the row is marked as a promise", promised.indexOf("is-promised") >= 0);
+
+/* The price that is coming, beside the one being charged. */
+const withNext = V.tableHtml([oded], 900, {}, null, {
+  pending: { p_oded: { price: 1000, from: "2026-10-05" } },
+});
+ok("the coming price is shown in brackets", withNext.indexOf("(₪1,000)") >= 0);
+ok("beside the one actually being charged", withNext.indexOf("₪900") >= 0);
+ok("and it names the date it starts", withNext.indexOf("05/10/26") >= 0);
+/* Once the date has come it is not "coming" any more. */
+const afterwards = V.tableHtml([Object.assign({}, oded, { day: "2026-10-05", price: 1000 })], 1000, {}, null, {
+  pending: { p_oded: { price: 1000, from: "2026-10-05" } },
+});
+ok("a bill on or after that date shows one price, not two", afterwards.indexOf("(₪1,000)") < 0);
+
+/* The calendar: a pale yellow frame, and only around the standing income. */
+const subCal = V.calendarHtml({
+  month: "2026-09",
+  totalsByDay: { "2026-09-05": 900, "2026-09-03": 250 },
+  dealsByDay: { "2026-09-05": [oded], "2026-09-03": [gig] },
+  colours: { "עודד מכינה": "#4CAF70" },
+  today: "2026-09-22",
+});
+ok("a standing client is framed on the calendar", subCal.indexOf("led-line is-recurring") >= 0);
+ok("and a session he gave is not", (subCal.match(/is-recurring/g) || []).length === 1);
+ok("the frame is pale yellow", /\.led-line\.is-recurring\{[^}]*rgba\(245,197,24/.test(page));
+ok("and his own colour still paints the line", subCal.indexOf("#4CAF70") >= 0);
+
+/* The favourites box: the people who pay monthly, with the day they pay on. */
+const subs = [
+  { clientId: "p_oded", name: "עודד מכינה", service: "תוכנית אימון מכינה", price: 900, colour: "#4CAF70", billingDay: 5, active: true },
+  { clientId: "p_cold", name: "סטודיו מוקפא", service: "", price: 400, colour: "", billingDay: 1, active: false },
+];
+const fav = V.favouritesBoxHtml({
+  open: true,
+  subs: subs,
+  places: [{ name: "מ1", uses: 3, service: "אימון קבוצתי", price: 250 }],
+});
+ok("a monthly client is in the favourites list", fav.indexOf("עודד מכינה") >= 0);
+ok("with the day of the month he pays on", fav.indexOf("ה-5 בחודש") >= 0);
+ok("and it is a button, because he may move it", fav.indexOf('data-led-billing="p_oded"') >= 0);
+ok("a place has no billing date at all", fav.indexOf('class="led-fav-billing is-none">—') >= 0);
+ok("a frozen client stays in the list", fav.indexOf("סטודיו מוקפא") >= 0);
+ok("greyed out", fav.indexOf("led-fav-row is-recurring is-frozen") >= 0);
+ok("and says so", fav.indexOf("מוקפא</span>") >= 0);
+ok("with nothing on it left to press", fav.indexOf('data-led-billing="p_cold"') < 0);
+ok("a frozen client keeps what he is worth", fav.indexOf("₪400") >= 0);
+ok("the count is everyone, places and clients together", fav.indexOf('led-fold-count">3') >= 0);
+/* His colour is chosen on his own tab, so the name here is not editable. */
+const favEditing = V.favouritesBoxHtml({ open: true, subs: subs, places: [], editing: "עודד מכינה" });
+ok("a monthly client offers his colours", favEditing.indexOf("data-led-sub-colour") >= 0);
+ok("but his name is decided on his own tab", favEditing.indexOf("readonly") >= 0);
+
+/* The filter: one kind at a time. */
+const natureBar = V.filtersHtml({ range: "month", nature: "recurring" });
+ok("the record can be asked for one kind at a time", natureBar.indexOf('data-led-filter="nature"') >= 0);
+ok("in his own two words", natureBar.indexOf("חד פעמי") >= 0 && natureBar.indexOf("חזרתי") >= 0);
+ok("and it remembers which one is chosen", /value="recurring" selected/.test(natureBar));
+
+/* The wiring on the page: the handover opens the billing, and nothing else does. */
+ok(
+  "the first press of the handover button opens the billing",
+  /data-oneclick[\s\S]{0,900}if \(!ledgerSub\(\)\) ledgerSync\(\{ startDay: todayIsoForBilling\(\) \}/.test(page)
+);
+ok(
+  "a freeze reaches the book",
+  /set_frozen[\s\S]{0,700}ledgerSync\(\{ active: !makeFrozen \}/.test(page)
+);
+ok(
+  "deleting a client drops his arrangement",
+  /LedgerScreen\.dropClient\(goneId\)/.test(page)
+);
+ok(
+  "a price that moves asks before it is saved",
+  /askPriceChange\([\s\S]{0,400}function \(mode\)[\s\S]{0,200}if \(!mode\)/.test(page)
+);
+ok(
+  "and a rename never carries the price along with it",
+  /if \(!sub\) patch\.price = Number\(p\.monthlyAmount\) \|\| 0;/.test(page)
+);
 
 console.log("\nAll admin ledger page checks passed (" + passed + " assertions).");
