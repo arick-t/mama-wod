@@ -364,4 +364,31 @@ ok("rubbish in the store is dropped, not carried",
 ok("a colour that is not a colour never reaches a style attribute",
   L.normalizeSubscription({ clientId: "c", name: "ג", colour: '"><script>' }).colour === "");
 
+
+/* The marker that makes "has this month been billed?" free to answer. */
+const marked = L.upsertSubscription(subs, { clientId: "p_oded", billedThrough: "2026-10" }, { clock: clock });
+ok("a month already written is never due again", L.dueOccurrences(marked.store, "2026-11-20", []).length === 1);
+ok("and the one after it still is", L.dueOccurrences(marked.store, "2026-11-20", [])[0].month === "2026-11");
+ok("a row he deleted on purpose does not grow back",
+  L.dueOccurrences(L.upsertSubscription(subs, { clientId: "p_oded", billedThrough: "2026-11" }).store, "2026-11-20", []).length === 0);
+
+/* Planting is the only way a bill enters the book, and it refuses to do it twice. */
+let bookSep = L.emptyMonth("2026-09");
+const planted = L.plantOccurrence(bookSep, L.occurrenceOf(oded.sub, "2026-09"), { clock: clock });
+ok("a bill is planted into its month", planted.ok && planted.doc.deals.length === 1);
+ok("it lands on the handover day", planted.doc.deals[0].day === "2026-09-05");
+const again = L.plantOccurrence(planted.doc, L.occurrenceOf(oded.sub, "2026-09"), { clock: clock });
+ok("planting it a second time changes nothing", again.code === "ALREADY" && again.doc.deals.length === 1);
+ok("a bill cannot be planted into the wrong month",
+  L.plantOccurrence(L.emptyMonth("2026-10"), L.occurrenceOf(oded.sub, "2026-09")).code === "WRONG_MONTH");
+ok("a planted bill counts towards what is owed", L.uninvoicedTotal(planted.doc.deals) === 100);
+
+
+/* A patch is what the caller HAS an opinion about. Freezing a client sends nothing but
+   "active: false", and it must not cost him his name or his price on the way through. */
+const onlyFrozen = L.upsertSubscription(subs, { clientId: "p_oded", active: false, name: undefined, price: undefined });
+ok("a field nobody sent is a field nobody changed",
+  onlyFrozen.ok && onlyFrozen.sub.name === "עודד מכינה" && onlyFrozen.sub.price === 100);
+ok("and the one that was sent did change", onlyFrozen.sub.active === false);
+
 console.log("\nAll coach ledger checks passed (" + passed + " assertions).");
