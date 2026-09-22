@@ -478,8 +478,12 @@ function adminVersionAgrees(src) {
   return !!badge && badge === title;
 }
 ok("the admin label and the badge say the same number", adminVersionAgrees(adminHtml));
-ok("admin wired to coach 3.0", /LIVE_COACH_VERSION = "3\.0"/.test(adminHtml));
-ok("app coach 3.0", /COACH_VERSION = "3\.0"/.test(index));
+/* AGREEMENT, NOT A VALUE - a literal pin is how a version freezes while the badge
+   goes on claiming the old brain. */
+var wiredCoach = (adminHtml.match(/LIVE_COACH_VERSION = "([\d.]+)"/) || [])[1];
+var appCoach = (index.match(/COACH_VERSION = "([\d.]+)"/) || [])[1];
+ok("the admin names a coach version", /^\d+(\.\d+)*$/.test(wiredCoach || ""));
+ok("and the app names the same one", !!appCoach && appCoach === wiredCoach);
 ok(
   "admin shows Admin + Coach versions",
   /Admin \d+\.\d+/.test(adminHtml) &&

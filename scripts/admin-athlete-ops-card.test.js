@@ -49,7 +49,10 @@ assert.ok(adminVersionAgrees(admin), "the admin label and the badge say the same
    matters, and the owner asked for it to stay when it left the app (2026-09-03). */
 assert.ok(
   /Admin \d+\.\d+/.test(admin) &&
-    /Coach 3\.0/.test(admin) &&
+    /Coach \d+\.\d+/.test(admin) &&
+    /* The badge names the coach the page is wired to - agreement, never a literal. */
+    (admin.match(/Coach (\d+\.\d+)/) || [])[1] ===
+      (admin.match(/var LIVE_COACH_VERSION = "([\d.]+)"/) || [])[1] &&
     (admin.match(/var ADMIN_UI_VERSION = "([\d.]+)"/) || [])[1] ===
       (admin.match(/<title>DUCK-WOD Admin · ([\d.]+)</) || [])[1],
   "admin shows Admin + Coach versions"

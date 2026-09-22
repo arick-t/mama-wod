@@ -69,7 +69,15 @@ ok(
 ok("loggedExtra not Rest", /pprogDayIsLoggedExtraSession/.test(index) && /athlete-logged session wins/.test(index));
 ok("week_detail preserves logged day", /week_detail must never wipe an athlete-logged/.test(index));
 ok("calendar logged-extra class", /logged-extra/.test(index) && /pprog-logged-extra-flag/.test(index));
-ok("coach version 3.0", /COACH_VERSION = "3\.0"/.test(index) && /COACH_VERSION = "3\.0"/.test(pc));
+/* AGREEMENT, NOT A VALUE. A literal pin here is how a version freezes: it passes while
+   the number goes stale, and the badge then lies about which brain is serving. Assert
+   the app and the API name the SAME coach (owner, after the admin badge sat at 5.1 for
+   two releases). */
+ok("the app and the API name the same coach", (function () {
+  var a = (index.match(/COACH_VERSION = "([\d.]+)"/) || [])[1];
+  var b = (pc.match(/COACH_VERSION = "([\d.]+)"/) || [])[1];
+  return !!a && a === b;
+})());
 ok("client workout extract", /pprogExtractLoggedWorkoutSegments/.test(index));
 ok("client preserve days", /pprogCaptureSchedulePreserveDays/.test(index));
 ok("client rest-day swap", /pprogPlanRestDaySwap/.test(index));

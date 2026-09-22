@@ -55,7 +55,15 @@ ok(
   "programming core does not duplicate full inventory table",
   !/\*\*Odd object\*\*:|\*\*Med\/Slam\*\*:/.test(pc)
 );
-ok("coach version 3.0", /COACH_VERSION = "3\.0"/.test(pc) && /COACH_VERSION = "3\.0"/.test(index));
+/* AGREEMENT, NOT A VALUE. A literal pin here is how a version freezes: it passes while
+   the number goes stale, and the badge then lies about which brain is serving. Assert
+   the app and the API name the SAME coach (owner, after the admin badge sat at 5.1 for
+   two releases). */
+ok("the app and the API name the same coach", (function () {
+  var a = (index.match(/COACH_VERSION = "([\d.]+)"/) || [])[1];
+  var b = (pc.match(/COACH_VERSION = "([\d.]+)"/) || [])[1];
+  return !!a && a === b;
+})());
 ok(
   "lift kg not equipment permission",
   /Lift \/ skill numbers ≠ equipment permission|lift\/skill kg numbers are capability only/i.test(
