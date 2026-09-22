@@ -1,91 +1,5 @@
 {
   "workouts": {
-    "2026-09-07": [
-      {
-        "date": "2026-09-07",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260907",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Push press 5-5-5-5-5 reps",
-              "Compare to",
-              "250709"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-09-07",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-september-7-2026/",
-        "sections": [
-          {
-            "title": "LABOR DAY BASH",
-            "lines": [
-              "Welcome CrossFit, HYROX, and Focus Friends to our Labor day Community Workout! We are so happy you are wrapping up your long weekend with us.",
-              "All classes running at 8AM this morning. Gym Hours are 7AM-noon."
-            ]
-          },
-          {
-            "title": "General warm-up",
-            "lines": [
-              "10 Groiner stretch",
-              "20 Deadbugs",
-              "then… 2 Rounds:",
-              "P1:",
-              "10 Empty BB Kang squats",
-              "10 Empty BB muscle clean to press",
-              "P2:",
-              "6 burpees",
-              "cardio in remaining time"
-            ]
-          },
-          {
-            "title": "8 RFT with a Partner:",
-            "lines": [
-              "5 Synchronized Thrusters **"
-            ]
-          },
-          {
-            "title": "10 Synchronized hang power cleans  **",
-            "lines": [
-              "15 Synchronized burpees",
-              "2 min max Cal (split as needed)",
-              "** One partner on DB/KB weight, One partner on BB weight. Alt mechanism each round.",
-              "RX DB/KB: 50/35s, BB: 95/65",
-              "INT DB/KB: 35/25s. BB: 85/55",
-              "SC DB/KB: 25/20s. BB: 65/45",
-              "Cal Machine: choose between Row, Ski, Bike. Must use same equipment throughout the workout today."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-09-07",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 16.1",
-            "lines": [
-              "Complete as many rounds and reps as possible in 20 minutes of:",
-              "25-ft. overhead walking lunge",
-              "8 burpees",
-              "25-ft. overhead walking lunge",
-              "8 chest-to-bar pull-ups",
-              "*Men lunge 95 lb.*",
-              "*Women lunge 65 lb.*"
-            ]
-          }
-        ],
-        "note": "Open: Open 16.1"
-      }
-    ],
     "2026-09-08": [
       {
         "date": "2026-09-08",
@@ -185,68 +99,6 @@
           }
         ],
         "note": "Open: Open 12.4"
-      },
-      {
-        "date": "2026-09-08",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-09-08/",
-        "sections": [
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "line drills"
-            ]
-          },
-          {
-            "title": "CONDITIONING 32MIN",
-            "lines": [
-              "40 air squats",
-              "200m run",
-              "20 pull ups",
-              "40 sit ups",
-              "* score: slowest round",
-              "* muscular endurance & aerobic capacity"
-            ],
-            "sub_title": "on every 8:00 x 4 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-08",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Alphabetical (Z-A)",
-            "sub_title": "LOG YOUR BENCHMARKS IN THE APP",
-            "lines": [
-              "Access Hero WODs, benchmark workouts, and daily programming — all in the CrossFit app.",
-              "About CrossFit",
-              "CrossFit Methodology"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-09-08",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Metcon",
-            "lines": [
-              "\"Cindy\"",
-              "AMRAP 20",
-              "5 Pull-ups",
-              "10 Push-ups",
-              "15 Air squats"
-            ]
-          }
-        ],
-        "note": "Benchmark: Metcon"
       }
     ],
     "2026-09-09": [
@@ -977,26 +829,6 @@
       },
       {
         "date": "2026-09-12",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "TEAMS OF 2",
-            "lines": [
-              "2000/1800m Row",
-              "100 Kettlebell Swings 25kg/16kg",
-              "100 Kettlebell Box Step Ups (25kg/16kg)(24\"/20\")",
-              "100 Kettlebell Swings 25kg/16kg",
-              "Max Distance Row in the Remaining Time"
-            ],
-            "sub_title2": "25:00 AMRAP"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-12",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -1186,21 +1018,6 @@
               "* aerobic power [vo2 max]"
             ],
             "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-13",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Hero WOD:",
-              "9/11 TributeFor Time:2001 meter Run11 Box Jumps 30/24 in11 Thrusters 55/37.5kg11 C2B11 Power Cleans 80/52.5kg11 HSPUs11 KB Swings 32/24kg11 T2B11 Deadlifts 75/50kg11 Push Jerks 50/35kg2001 meter Row"
-            ]
           }
         ]
       },
@@ -1843,17 +1660,17 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "Heavy DT",
+            "title": "ANNIE\" - Benchmark",
             "lines": [
-              "5 rounds for time of",
-              "*♀ 145 lb.  ♂ 205 lb.*",
-              "12  deadlift s",
-              "9  hang power clean s",
-              "6  push jerk s"
+              "For time:",
+              "50–40–30–20–10",
+              "Double-Under (Sc. SU x2)",
+              "Sit-up",
+              "*time cap 12:00"
             ]
           }
         ],
-        "note": "Benchmark: Heavy DT"
+        "note": "Benchmark: ANNIE\" - Benchmark"
       }
     ],
     "2026-09-17": [
@@ -2906,7 +2723,240 @@
         ],
         "note": "Benchmark: Mary"
       }
+    ],
+    "2026-09-22": [
+      {
+        "date": "2026-09-22",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-09-22/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "calf stretch",
+              "seated pike stretch",
+              "scorpions",
+              "thoracic rotations"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 straight leg sit ups",
+              "10 scap. push ups",
+              "10 squat jumps"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "BENCH PRESSES 15MIN",
+            "lines": [
+              "4 Sets",
+              "2 bench presses  @85-90%",
+              "strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 17MIN",
+            "lines": [
+              "21-15-9-15-21",
+              "v-ups",
+              "high box jumps 75/60cm",
+              "5 wall walks* after each round",
+              "* *rx+: 5 strict handstand push ups",
+              "* muscular endurance"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-09-22",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-september-22-2026/",
+        "sections": [
+          {
+            "title": "General warm-up",
+            "lines": [
+              "AMRAP 6 minutes",
+              "100m run",
+              "9 Tempo Goblet Squats",
+              "3 Wall Walks"
+            ]
+          },
+          {
+            "title": "For time",
+            "lines": [
+              "3 Front Squats 225/155lbs*",
+              "50ft Handstand Walk",
+              "500m Run",
+              "3 Front Squats 225/155lbs",
+              "50ft Handstand Walk",
+              "500m Run",
+              "3 Front Squats 225/155lbs",
+              "50ft Handstand Walk",
+              "500m Run",
+              "3 Front Squats 225/155lbs",
+              "50ft Handstand Walk",
+              "500m Run",
+              "3 Front Squats 225/155lbs"
+            ]
+          },
+          {
+            "title": "*Do not exceed 80% 1RM, Barbell",
+            "lines": [
+              "taken from a rack",
+              "Feel: Gas",
+              "Pace: Sustain",
+              "Target Score: 16-20 minutes",
+              "Firebreather: Sub 16 minutes"
+            ]
+          },
+          {
+            "title": "Extra Credit",
+            "lines": [
+              "Accumulate 5:00 of Dead Hang from",
+              "pull up bar",
+              "10:00 Cap",
+              "If you have a strong grip but not"
+            ]
+          },
+          {
+            "title": "endurance, try to do your sets as",
+            "lines": [
+              "evenly as possible. If you have solid"
+            ]
+          },
+          {
+            "title": "endurance, go for broke right from the",
+            "lines": [
+              "start."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-22",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Overhead Squat 1x3",
+              "Overhead Squat for load:",
+              "#1: 3 reps​",
+              "ON A 15:00 RUNNING CLOCK",
+              "Build to a Mod-Heavy 3-Rep Overhead Squat",
+              "*Barbell comes from Rack. Option for Front Squat if not putting bar overhead.",
+              "* (Score is Weight)"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "3 ROUNDS FOR TIME",
+            "lines": [
+              "100 Double Unders",
+              "25 Overhead Squats 43kg/29kg"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-22",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "5 × 5 Bench Press @ 70–77.5%, building3 × 8 Z Press KB/DB, moderate",
+              "Metcon:- MU EMOM × 16 minMin 1: 2-6 Ring Muscle Ups (or 4-10 C2B)Min 2: 30 sec Plank HoldMin 3: Max Row CalsMin 4: Rest*Score = cals"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-22",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Alphabetical (Z-A)",
+            "sub_title": "LOG YOUR BENCHMARKS IN THE APP",
+            "lines": [
+              "Access Hero WODs, benchmark workouts, and daily programming — all in the CrossFit app.",
+              "About CrossFit",
+              "CrossFit Methodology"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-22",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Heavy DT",
+            "lines": [
+              "5 rounds for time of",
+              "*♀ 145 lb.  ♂ 205 lb.*",
+              "12  deadlift s",
+              "9  hang power clean s",
+              "6  push jerk s"
+            ]
+          }
+        ],
+        "note": "Benchmark: Heavy DT"
+      },
+      {
+        "date": "2026-09-22",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 13.5",
+            "lines": [
+              "Complete as many rounds and reps as possible in 4 minutes of:",
+              "100 pound Thruster, 15 reps",
+              "15 Chest to bar Pull-ups",
+              "If 90 reps (3 rounds) are completed in under 4 minutes, time extends to 8 minutes.",
+              "If 180 reps (6 rounds) are completed in under 8 minutes, time extends to 12 minutes.",
+              "If 270 reps (9 rounds) are completed in under 12 minutes, time extends to 16 minutes.",
+              "Etc.",
+              "*WOMEN -*",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 4 minutes of:",
+              "65 pound Thruster, 15 reps",
+              "15 Chest to bar Pull-ups",
+              "If 90 reps (3 rounds) are completed in under 4 minutes, time extends to 8 minutes.",
+              "If 180 reps (6 rounds) are completed in under 8 minutes, time extends to 12 minutes.",
+              "If 270 reps (9 rounds) are completed in under 12 minutes, time extends to 16 minutes.",
+              "Etc.",
+              "*MASTERS MEN -*",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 4 minutes of:",
+              "65 pound Thruster, 15 reps",
+              "15 Chin over bar Pull-ups",
+              "If 90 reps (3 rounds) are completed in under 4 minutes, time extends to 8 minutes.",
+              "If 180 reps (6 rounds) are completed in under 8 minutes, time extends to 12 minutes.",
+              "If 270 reps (9 rounds) are completed in under 12 minutes, time extends to 16 minutes.",
+              "Etc."
+            ]
+          }
+        ],
+        "note": "Open: Open 13.5"
+      }
     ]
   },
-  "last_updated": "2026-09-21T15:03:32.041301"
+  "last_updated": "2026-09-22T04:29:22.025873"
 }
