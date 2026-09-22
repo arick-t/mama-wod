@@ -1466,4 +1466,53 @@ const devServer = fs.readFileSync(path.join(root, "scripts", "local-dev-server.j
 ok("THE DEV SERVER CACHES NOTHING IT SERVES",
   /ext === "\.html" \|\| ext === "\.js" \|\| ext === "\.css" \|\| ext === "\.json"/.test(devServer));
 
+
+/* --- three questionnaires, one face (owner, 2026-09-22) -------------------
+ * The individual, the studio and the blank client ask different things; they were also
+ * three different-looking products. The studio card is the reference: its header, its
+ * step tabs, its label-above-field rows, its English.
+ * ------------------------------------------------------------------------- */
+
+const fixedIntake = fs.readFileSync(path.join(root, "admin-fixed-intake.js"), "utf8");
+
+ok("the individual's questionnaire carries the studio's title", /<h2 id="athleteIntakeTitle">New individual client<\/h2>/.test(page));
+ok("and its step counter", /<span class="meta" id="athleteIntakeStep">/.test(page));
+ok("and a strip of steps to press", /<div class="itabs" id="athleteIntakeTabs" role="tablist" hidden>/.test(page));
+ok("the strip is styled like the studio's", /#intake-modal \.itabs button\.on\{background:var\(--coach-deep\)/.test(page));
+ok("a step he has not reached is drawn but dead", /#intake-modal \.itabs button\[disabled\]\{opacity/.test(page));
+
+ok("the steps are named in English", /profile: "Profile"/.test(fixedIntake) && /goals: "Goals"/.test(fixedIntake));
+ok("pressing one goes there", /window\.adminFixedGoto = function adminFixedGoto\(step\)/.test(fixedIntake));
+ok(
+  "a step beyond the furthest reached cannot be jumped to",
+  /if \(want > furthestReached\(\)\) return;/.test(fixedIntake)
+);
+ok(
+  "and going forward is the ordinary validated Next",
+  /if \(want > here\) \{\s*window\.adminFixedNext\(\);/.test(fixedIntake)
+);
+ok("the furthest step resets with the questionnaire", /intakeState\.fixedMax = 0;/.test(fixedIntake));
+ok("the strip disappears with the questionnaire", /if \(strip\) strip\.hidden = true;/.test(fixedIntake));
+
+/* The rows: label above its field, the full width — not label-left, 150px-field-right. */
+ok(
+  "the individual's rows read like the studio's",
+  /#intake-fixed \.pprog-profile-row\{flex-direction:column/.test(page)
+);
+ok(
+  "and its Next is the brand orange, like the studio's",
+  /#intake-fixed \.pprog-fixed-next\{background:var\(--brand\)/.test(page)
+);
+ok("the two teal bars are gone", page.indexOf("#intake-fixed .pprog-fixed-next{background:#1A9B8A") < 0);
+ok("and the step line inside the pane is the strip's job now", /#intake-fixed \.pprog-fixed-step\{display:none\}/.test(page));
+
+/* The blank client: same face, four questions. */
+ok("the blank client is asked in English", /<h2>New blank client<\/h2>/.test(page));
+["Client name", "Gender", "Monthly amount", "Payment method", "Programme type", "Block length"].forEach(function (label) {
+  ok('the blank client asks "' + label + '"', page.indexOf(">" + label) >= 0);
+});
+ok("its buttons too", /Create client<\/button>/.test(page) && /Cancel<\/button>/.test(page));
+ok("and its rows put the label above the field", /\.blank-row\{display:block/.test(page));
+ok("the chooser that leads to it stays in his language", /<span class="ck-title">לקוח ריק<\/span>/.test(page));
+
 console.log("All admin clients page checks passed.");

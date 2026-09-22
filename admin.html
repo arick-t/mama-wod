@@ -279,11 +279,15 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
  * code had hidden was showing in the blank client's form (owner, 2026-09-04).
  */
 [hidden]{display:none!important}
-.blank-row{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:center;font-size:13px}
+/* Label above its field, the full width — the studio card's row, so the shortest
+   questionnaire and the longest one read as one product (owner, 2026-09-22). */
+.blank-row{display:block;font-size:13px;margin:0 0 12px}
+.blank-row > span{display:block;font-size:.8rem;color:var(--text-meta);margin:0 0 4px;font-weight:600}
+.blank-form{display:block}
 /* A row that belongs to the row above it: indented, hanging off a line, and quieter —
    it is an answer to that choice, not a question of its own (owner, 2026-09-04). */
 .blank-row.is-sub{margin-inline-start:16px;padding-inline-start:10px;
-  border-inline-start:2px solid var(--line);grid-template-columns:104px 1fr}
+  border-inline-start:2px solid var(--line)}
 .blank-row.is-sub > span{color:var(--text-muted);font-size:12px;display:flex;align-items:center;gap:5px}
 .blank-row.is-sub .sub-tick{font-style:normal;opacity:.55;font-size:11px}
 .blank-row input,.blank-row select{background:var(--bg);border:1px solid var(--line);border-radius:9px;
@@ -1521,10 +1525,10 @@ body:has(#intake-modal.open) #adminChatFloat{
 #intake-fixed .pprog-fixed-chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
 #intake-fixed .pprog-fixed-chip{appearance:none;background:#252525;border:1px solid #555;color:#e8e4d8;font-size:.85em;font-weight:700;padding:10px 14px;border-radius:8px;cursor:pointer;font-family:inherit}
 #intake-fixed .pprog-fixed-chip.active{background:#1A9B8A;border-color:#1A9B8A;color:#111}
+/* Back and Next used to be two teal bars across the pane, carrying !important so
+   nothing could soften them. They are the studio card's two buttons now — see the
+   block further down that gives this questionnaire the studio's face. */
 #intake-fixed .pprog-fixed-nav{display:flex;gap:8px;margin-top:12px}
-#intake-fixed .pprog-fixed-nav .btn{flex:1;padding:10px;font-weight:700;border:none;border-radius:8px;font-family:inherit;cursor:pointer}
-#intake-fixed .pprog-fixed-back{background:#333!important;color:#eee!important}
-#intake-fixed .pprog-fixed-next{background:#1A9B8A!important;color:#111!important}
 #intake-fixed .pprog-fixed-err{margin:8px 0 0;font-size:.8em;color:#E8451A;min-height:1.2em}
 
 ::-webkit-scrollbar{width:6px}
@@ -1623,6 +1627,59 @@ body:has(#intake-modal.open) #adminChatFloat{
 #clientScreen .itabs button.done{border-color:var(--part);color:var(--part)}
 #clientScreen .itabs button.on.done{color:#fff}
 #clientScreen .ipane label.fld span{font-size:.82rem}
+/* ══════════════════════════════════════════════════════════════════════════
+   ONE FACE FOR THREE QUESTIONNAIRES.
+
+   The individual, the studio and the blank client ask different things — that is
+   right — but they were three different-looking products, and the owner met all
+   three in one sitting (owner, 2026-09-22). The studio card is the one that reads
+   best, so it is the reference: its step tabs, its label-above-field rows, its
+   English.
+
+   Nothing here touches the MARKUP of the individual's questionnaire. That markup is
+   the athlete app's own, kept 1:1 on purpose so the two ask the same questions in the
+   same order; it is restyled from outside, under #intake-modal only, and the app is
+   not affected.
+   ══════════════════════════════════════════════════════════════════════════ */
+#intake-modal .itabs{display:flex;gap:6px;overflow-x:auto;padding:12px 18px;
+  border-bottom:1px solid var(--line);-webkit-overflow-scrolling:touch;flex-shrink:0;direction:ltr}
+#intake-modal .itabs button{min-height:36px;padding:6px 13px;background:var(--bg-panel);color:var(--text-muted);
+  border:1px solid var(--line);white-space:nowrap;border-radius:8px;font-size:13.5px;cursor:pointer;
+  font-family:var(--font-ui)}
+#intake-modal .itabs button.on{background:var(--coach-deep);color:#fff;border-color:var(--coach)}
+#intake-modal .itabs button.done{border-color:var(--part);color:var(--part)}
+#intake-modal .itabs button.on.done{color:#fff}
+/* A step he has not reached yet. Drawn, so he can see the road; dead, because the
+   answers between here and there have not been given. */
+#intake-modal .itabs button[disabled]{opacity:.38;cursor:not-allowed}
+/* The header's "Step 3 of 8", the same line the studio card carries. */
+#athleteIntakeStep{font-size:12px;color:var(--text-meta);white-space:nowrap}
+
+/* The rows: label above its field, field the full width — the studio's shape.
+   They were label-left / 150px-field-right, which is why the two questionnaires read
+   as different products even where they asked the same thing. */
+#intake-fixed .pprog-profile-row{flex-direction:column;align-items:stretch;gap:4px;margin:0 0 12px}
+#intake-fixed .pprog-profile-row label{flex:none;min-width:0;font-size:.8rem;color:var(--text-meta);font-weight:600}
+#intake-fixed .pprog-profile-row input,#intake-fixed .pprog-profile-row select{width:100%;flex-shrink:1}
+/* One card, not a card inside a card: the workspace around it already is the card. */
+#intake-fixed.pprog-fixed-intake{background:transparent;border:none;border-radius:0;padding:16px 18px}
+/* The step line inside the pane is the tab strip's job now. */
+#intake-fixed .pprog-fixed-step{display:none}
+#intake-fixed .pprog-fixed-title{font-size:1.15em;font-weight:800;font-family:var(--font-ui);margin:0 0 6px}
+/* Back / Next, in the studio card's shape: two buttons the width of their words, not
+   two bars across the pane. The studio's Back is a ghost and its Next is the brand
+   orange — the same two here. */
+#intake-fixed .pprog-fixed-nav{display:flex;gap:8px;align-items:center;margin-top:16px;
+  padding-top:14px;border-top:1px solid var(--line)}
+#intake-fixed .pprog-fixed-nav .btn{flex:0 0 auto;width:auto;min-width:0;
+  padding:9px 20px;border-radius:9px;font:inherit;font-size:14px;font-weight:700;
+  font-family:var(--font-ui);cursor:pointer}
+#intake-fixed .pprog-fixed-back{background:transparent;color:var(--text-muted);border:1px solid var(--line)}
+#intake-fixed .pprog-fixed-back:hover{color:var(--text);border-color:#3a3a3a}
+#intake-fixed .pprog-fixed-next{background:var(--brand);color:#fff;border:1px solid var(--brand)}
+#intake-fixed .pprog-fixed-next:hover{filter:brightness(1.08)}
+/* The error line sits under them, quiet until it has something to say. */
+#intake-fixed .pprog-fixed-err{margin:10px 2px 0;font-size:12px;min-height:16px;color:#fca5a5}
 #clientScreen .ipane textarea{min-height:120px}
 #clientScreen .wk-row{display:grid;grid-template-columns:70px 1fr;gap:9px;align-items:center;margin:0 0 8px}
 #clientScreen .wk-row span{color:var(--text-meta);font-size:.85rem}
@@ -2337,47 +2394,51 @@ header{flex-wrap:wrap;row-gap:8px}
 <!-- The blank client: the shortest way into the product. Four questions, and then a
      month of empty squares he writes himself (owner, 2026-09-04). -->
 <div class="modal-backdrop" id="blank-client-modal">
-  <div class="intake-workspace" dir="rtl" onclick="event.stopPropagation()" style="max-width:520px">
-    <div class="intake-ws-header">
-      <h2>לקוח ריק</h2>
+  <!-- Same face as the other two questionnaires: the studio card's header, its
+       label-above-field rows and its English. It asks four questions instead of
+       thirty — that is the difference between them, and the only one that should show
+       (owner, 2026-09-22). -->
+  <div class="intake-workspace" dir="ltr" style="text-align:left" onclick="event.stopPropagation()">
+    <div class="intake-ws-header" dir="rtl">
+      <h2>New blank client</h2>
       <button type="button" class="btn-secondary" onclick="closeBlankClientForm()">סגור</button>
     </div>
     <div class="intake-ws-body" style="padding:18px">
       <div class="blank-form">
-        <label class="blank-row"><span>שם</span>
-          <input id="blankName" maxlength="120" placeholder="שם הלקוח"></label>
-        <label class="blank-row"><span>מין</span>
+        <label class="blank-row"><span>Client name</span>
+          <input id="blankName" maxlength="120" placeholder="Name"></label>
+        <label class="blank-row"><span>Gender</span>
           <select id="blankGender">
-            <option value="">—</option>
-            <option value="male">זכר</option>
-            <option value="female">נקבה</option>
+            <option value="">Select…</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
           </select></label>
-        <label class="blank-row"><span>תשלום חודשי</span>
-          <input id="blankAmount" type="number" inputmode="numeric" min="0" max="100000" placeholder="₪"></label>
-        <label class="blank-row"><span>אופן התשלום</span>
-          <input id="blankMethod" maxlength="200" placeholder="ביט / העברה / מזומן"></label>
+        <label class="blank-row"><span>Monthly amount (₪)</span>
+          <input id="blankAmount" type="number" inputmode="numeric" min="0" max="100000" placeholder="900"></label>
+        <label class="blank-row"><span>Payment method</span>
+          <input id="blankMethod" maxlength="200" placeholder="Bit, 1st of the month"></label>
         <!-- Only here. A blank client's month is whatever length he says; the studio
              and the individual are untouched, and so is the coach's four-week contract
              (owner, 2026-09-04, twice). -->
-        <label class="blank-row"><span>סוג תוכנית</span>
+        <label class="blank-row"><span>Programme type</span>
           <select id="blankMode" onchange="syncBlankMode()">
-            <option value="weekly_schedule">שבועית (ימים)</option>
-            <option value="session_count">מספר אימונים בשבוע</option>
+            <option value="weekly_schedule">Weekly schedule (days)</option>
+            <option value="session_count">Sessions per week</option>
           </select></label>
         <!-- Hangs off the choice above it, because it only exists as an answer to
              that choice (owner, 2026-09-04). -->
         <label class="blank-row is-sub" id="blankSessionsRow" hidden>
-          <span><i class="sub-tick" aria-hidden="true">└</i> כמות האימונים</span>
+          <span><i class="sub-tick" aria-hidden="true">└</i> How many sessions</span>
           <input id="blankSessions" type="number" inputmode="numeric" min="1" max="7" value="4"
-                 title="כמות האימונים בשבוע"></label>
-        <label class="blank-row"><span>אורך לבנה</span>
+                 title="Sessions per week"></label>
+        <label class="blank-row"><span>Block length (weeks)</span>
           <input id="blankWeeks" type="number" inputmode="numeric" min="1" max="12" value="4"
-                 title="מספר שבועות בלבנה"></label>
+                 title="Weeks in the block"></label>
       </div>
       <p class="blank-err" id="blankErr"></p>
       <div class="row" style="margin-top:14px;gap:8px">
-        <button type="button" class="hdr-btn primary" id="blankCreate" onclick="createBlankClient()">צור לקוח</button>
-        <button type="button" class="btn-secondary" onclick="closeBlankClientForm()">בטל</button>
+        <button type="button" class="hdr-btn primary" id="blankCreate" onclick="createBlankClient()">Create client</button>
+        <button type="button" class="btn-secondary" onclick="closeBlankClientForm()">Cancel</button>
       </div>
     </div>
   </div>
@@ -2388,11 +2449,21 @@ header{flex-wrap:wrap;row-gap:8px}
      clicked next to it by accident, and lost everything he had typed (owner,
      2026-09-03). Only "סגור" closes this, and it asks first. -->
 <div class="modal-backdrop" id="intake-modal">
+  <!-- Three questionnaires, one face. This header is the studio card's header, down to
+       the "Step N of M" beside the way out, because the owner opened all three in one
+       sitting and every one of them looked like a different product (owner, 2026-09-22).
+       The QUESTIONS stay what they are — only the face is shared. -->
   <div class="intake-workspace" dir="rtl" onclick="event.stopPropagation()">
     <div class="intake-ws-header">
-      <h2>תחקור מתאמן קצה</h2>
-      <button type="button" class="btn-secondary" onclick="closeIntakeWorkspace()">סגור</button>
+      <h2 id="athleteIntakeTitle">New individual client</h2>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="meta" id="athleteIntakeStep"></span>
+        <button type="button" class="btn-secondary" onclick="closeIntakeWorkspace()">סגור</button>
+      </div>
     </div>
+    <!-- The steps, as buttons. Drawn by the intake itself, because only it knows which
+         ones have been answered. -->
+    <div class="itabs" id="athleteIntakeTabs" role="tablist" hidden></div>
     <div class="intake-ws-body" id="intake-ws-body">
       <div class="intake-start-bar" id="intake-start-bar">
         <!-- The email ask is gone (checklist a.3.1). Nothing ever mailed it — it was
