@@ -2597,6 +2597,24 @@
       },
       {
         "date": "2026-09-22",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260922",
+        "sections": [
+          {
+            "title": "3 ROUNDS FOR TIME OF",
+            "lines": [
+              "15 thrusters",
+              "15 pull-ups",
+              "400-meter run",
+              "♀ 65-lb barbell",
+              "♂ 95-lb barbell"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-22",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-09-22/",
@@ -2639,24 +2657,6 @@
               "* muscular endurance"
             ],
             "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-22",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260922",
-        "sections": [
-          {
-            "title": "3 ROUNDS FOR TIME OF",
-            "lines": [
-              "15 thrusters",
-              "15 pull-ups",
-              "400-meter run",
-              "♀ 65-lb barbell",
-              "♂ 95-lb barbell"
-            ]
           }
         ]
       },
@@ -2743,54 +2743,6 @@
     "2026-09-23": [
       {
         "date": "2026-09-23",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-09-23/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "sumo squat stretch",
-              "lat stretch",
-              "instep rotations"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 scap. pull ups",
-              "10 reverse lunges",
-              "20sec deep squat hold",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "BACK SQUATS 16MIN",
-            "lines": [
-              "4 Sets",
-              "2  back squats",
-              "@ 85-90%",
-              "strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 17MIN",
-            "lines": [
-              "18/14cal bike/ski",
-              "max strict pull ups",
-              "1min rest between amraps",
-              "",
-              "* score: total pull ups",
-              "* aerobic power & muscular endurance"
-            ],
-            "sub_title": "amrap 2min x 6 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-23",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260923",
@@ -2858,6 +2810,82 @@
               "between sets on an air bike or 1",
               "damper ski erg."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-23",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 20.4",
+            "lines": [
+              "For time:",
+              "30 box jumps, 24 in.",
+              "15 clean and jerks, 95 lb.",
+              "30 box jumps, 24 in.",
+              "15 clean and jerks, 135 lb.",
+              "30 box jumps, 24 in.",
+              "10 clean and jerks, 185 lb.",
+              "30 single-leg squats",
+              "10 clean and jerks, 225 lb.",
+              "30 single-leg squats",
+              "5 clean and jerks, 275 lb.",
+              "30 single-leg squats",
+              "5 clean and jerks, 315 lb.",
+              "Time cap: 20 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 20.4"
+      },
+      {
+        "date": "2026-09-23",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-09-23/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "lat stretch",
+              "instep rotations"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 scap. pull ups",
+              "10 reverse lunges",
+              "20sec deep squat hold",
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "BACK SQUATS 16MIN",
+            "lines": [
+              "4 Sets",
+              "2  back squats",
+              "@ 85-90%",
+              "strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 17MIN",
+            "lines": [
+              "18/14cal bike/ski",
+              "max strict pull ups",
+              "1min rest between amraps",
+              "",
+              "* score: total pull ups",
+              "* aerobic power & muscular endurance"
+            ],
+            "sub_title": "amrap 2min x 6 rounds"
           }
         ]
       },
@@ -2942,36 +2970,8 @@
           }
         ],
         "note": "Benchmark: Baseline"
-      },
-      {
-        "date": "2026-09-23",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 20.4",
-            "lines": [
-              "For time:",
-              "30 box jumps, 24 in.",
-              "15 clean and jerks, 95 lb.",
-              "30 box jumps, 24 in.",
-              "15 clean and jerks, 135 lb.",
-              "30 box jumps, 24 in.",
-              "10 clean and jerks, 185 lb.",
-              "30 single-leg squats",
-              "10 clean and jerks, 225 lb.",
-              "30 single-leg squats",
-              "5 clean and jerks, 275 lb.",
-              "30 single-leg squats",
-              "5 clean and jerks, 315 lb.",
-              "Time cap: 20 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 20.4"
       }
     ]
   },
-  "last_updated": "2026-09-23T04:19:15.047252"
+  "last_updated": "2026-09-23T08:32:09.234107"
 }
