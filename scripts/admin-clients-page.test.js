@@ -1499,6 +1499,10 @@ ok(
   /if \(here < C\(\)\.FIXED_STEPS\.length - 1\) window\.adminFixedNext\(\);/.test(fixedIntake)
 );
 ok("the strip disappears with the questionnaire", /if \(strip\) strip\.hidden = true;/.test(fixedIntake));
+ok(
+  "and leaving the box clears it, so it is never the steps of an intake that is gone",
+  /if \(strip\) \{ strip\.hidden = true; strip\.innerHTML = ""; \}/.test(fixedIntake)
+);
 
 /* The rows: label above its field, the full width — not label-left, 150px-field-right. */
 ok(

@@ -290,6 +290,12 @@
       intakeBuildId: "",
       buildAttempted: false,
     };
+    /* The step strip belongs to a questionnaire in progress. Leaving it behind means
+       reopening the box and being shown the steps of an intake that no longer exists. */
+    var strip = document.getElementById("athleteIntakeTabs");
+    if (strip) { strip.hidden = true; strip.innerHTML = ""; }
+    var meta = document.getElementById("athleteIntakeStep");
+    if (meta) meta.textContent = "";
   };
 
   window.openIntakeWorkspace = function openIntakeWorkspace() {
@@ -378,7 +384,7 @@
     if (typeof hideIntakePickers === "function") hideIntakePickers();
     var status = document.getElementById("intake-status");
     if (status) {
-      status.textContent = "תחקור זהה לאפליקציה · שלב 1/" + C().FIXED_STEPS.length;
+      status.textContent = "The same questionnaire the athlete app asks.";
     }
     syncAdminFixedIntakeUi();
   };
@@ -778,10 +784,10 @@
        (owner, 2026-09-02). */
     C().bindIntakeNumericKeyboards(el);
     renderFixedTabs();
-    writeIntakeStatus("תחקור זהה לאפליקציה · שלב " +
-      ((intakeState.fixedStep | 0) + 1) +
-      "/" +
-      C().FIXED_STEPS.length);
+    /* The step number moved to the header, beside the way out, where the studio card
+       keeps it. This line says the one thing the header cannot: that these are the
+       app's own questions, in the app's own order (owner, 2026-09-22). */
+    writeIntakeStatus("The same questionnaire the athlete app asks.");
   };
 
   /* ──────────────────────────────────────────────────────────────────────────
