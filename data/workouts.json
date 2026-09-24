@@ -2722,52 +2722,6 @@
     "2026-09-24": [
       {
         "date": "2026-09-24",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-09-24/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "calf stretch",
-              "90/90 hip rotatios",
-              "lying hip cross over",
-              "hand walk"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 cossack squats",
-              "10/8cal row",
-              "20 single unders"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "SUMO DEADLIFTS 15MIN",
-            "lines": [
-              "4 Sets",
-              "2 sumo deadlifts @ 85-90%",
-              "strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 18MIN",
-            "lines": [
-              "50 double unders",
-              "7 double db devil presses 2x15/10kg",
-              "9/7cal row",
-              "* score: slowest round",
-              "* anaerobic capacity"
-            ],
-            "sub_title": "on every 3:30 x 5 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-24",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260924",
@@ -2824,6 +2778,71 @@
               "21 Toes-To-Bar",
               "*If you complete the round of 21, go on to 24. If you complete 24, go on to 27, etc."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-24",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 15.3",
+            "lines": [
+              "Complete as many rounds and reps as possible in 14 minutes of:",
+              "7 muscle-ups",
+              "50 wall-ball shots",
+              "100 double-unders",
+              "*Men use 20-lb. ball to 10 feet, Women use 14-lb. ball to 9 feet*"
+            ]
+          }
+        ],
+        "note": "Open: Open 15.3"
+      },
+      {
+        "date": "2026-09-24",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-09-24/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "calf stretch",
+              "90/90 hip rotatios",
+              "lying hip cross over",
+              "hand walk"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 cossack squats",
+              "10/8cal row",
+              "20 single unders"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "SUMO DEADLIFTS 15MIN",
+            "lines": [
+              "4 Sets",
+              "2 sumo deadlifts @ 85-90%",
+              "strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 18MIN",
+            "lines": [
+              "50 double unders",
+              "7 double db devil presses 2x15/10kg",
+              "9/7cal row",
+              "* score: slowest round",
+              "* anaerobic capacity"
+            ],
+            "sub_title": "on every 3:30 x 5 rounds"
           }
         ]
       },
@@ -2911,27 +2930,8 @@
           }
         ],
         "note": "Benchmark: ”ANGIE” BENCHMARK"
-      },
-      {
-        "date": "2026-09-24",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 15.3",
-            "lines": [
-              "Complete as many rounds and reps as possible in 14 minutes of:",
-              "7 muscle-ups",
-              "50 wall-ball shots",
-              "100 double-unders",
-              "*Men use 20-lb. ball to 10 feet, Women use 14-lb. ball to 9 feet*"
-            ]
-          }
-        ],
-        "note": "Open: Open 15.3"
       }
     ]
   },
-  "last_updated": "2026-09-24T04:13:45.559966"
+  "last_updated": "2026-09-24T08:53:03.925494"
 }
