@@ -2702,54 +2702,6 @@
     "2026-09-25": [
       {
         "date": "2026-09-25",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-09-25/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "instep rotations",
-              "hand walk",
-              "lat stretch",
-              "crab stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "2-4-6-8…",
-              "straight leg sit ups",
-              "plank push ups",
-              "box step ups"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "RING DIPS 12MIN",
-            "lines": [
-              "on every 2:00 x 6 sets",
-              "3-5 (weighted) ring dips",
-              "strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "4 rounds",
-              "",
-              "20 toes to bar",
-              "20 db push ups",
-              "20 single db box step ups 60/50cm",
-              "dumbbells: 22,5/15kg",
-              "* muscular endurance"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-25",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260925",
@@ -2803,6 +2755,73 @@
               "50/45 Cal Ski",
               "Rest 3 min"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-25",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 16.5",
+            "lines": [
+              "21-18-15-12-9-6-3 reps for time of:",
+              "Thrusters",
+              "Burpees",
+              "*Men use 95 lb.*",
+              "*Women use 65 lb.*"
+            ]
+          }
+        ],
+        "note": "Open: Open 16.5"
+      },
+      {
+        "date": "2026-09-25",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-09-25/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "instep rotations",
+              "hand walk",
+              "lat stretch",
+              "crab stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "2-4-6-8…",
+              "straight leg sit ups",
+              "plank push ups",
+              "box step ups"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "RING DIPS 12MIN",
+            "lines": [
+              "on every 2:00 x 6 sets",
+              "3-5 (weighted) ring dips",
+              "strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "4 rounds",
+              "",
+              "20 toes to bar",
+              "20 db push ups",
+              "20 single db box step ups 60/50cm",
+              "dumbbells: 22,5/15kg",
+              "* muscular endurance"
+            ],
+            "sub_title": "for time"
           }
         ]
       },
@@ -2878,27 +2897,8 @@
           }
         ],
         "note": "Benchmark: BARBARA"
-      },
-      {
-        "date": "2026-09-25",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 16.5",
-            "lines": [
-              "21-18-15-12-9-6-3 reps for time of:",
-              "Thrusters",
-              "Burpees",
-              "*Men use 95 lb.*",
-              "*Women use 65 lb.*"
-            ]
-          }
-        ],
-        "note": "Open: Open 16.5"
       }
     ]
   },
-  "last_updated": "2026-09-25T04:14:08.659292"
+  "last_updated": "2026-09-25T08:53:17.939419"
 }
