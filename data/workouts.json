@@ -2691,46 +2691,6 @@
     "2026-09-26": [
       {
         "date": "2026-09-26",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-09-26/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "sumo squat stretch",
-              "lying hip cross over",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "8 good mornings",
-              "8 medball squats",
-              "8 medball presses",
-              "*partner is rowing"
-            ],
-            "sub_title": "amrap 5min"
-          },
-          {
-            "title": "CONDITIONING 31MIN",
-            "lines": [
-              "in teams of",
-              "40 wall balls",
-              "20 deadlifts 80/60kg",
-              "40/36/32cal row",
-              "2min rest between amraps",
-              "",
-              "* *pick up where you left off"
-            ],
-            "sub_title": "amrap 9min x 3 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-26",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260926",
@@ -2793,6 +2753,70 @@
               "then add weight each round.",
               "Air Bike 1,000m Between Sets to Flush)"
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-26",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 23.1",
+            "lines": [
+              "Complete as many reps as possible in 14 minutes of:",
+              "60-calorie row",
+              "50 toes-to-bars",
+              "40 wall-ball shots",
+              "30 cleans",
+              "20 muscle-ups",
+              "♀",
+              "14-lb ball to 9-ft target, 95-lb cleans",
+              "♂",
+              "20-lb ball to 10-ft target, 135-lb cleans"
+            ]
+          }
+        ],
+        "note": "Open: Open 23.1"
+      },
+      {
+        "date": "2026-09-26",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-09-26/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "lying hip cross over",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "8 good mornings",
+              "8 medball squats",
+              "8 medball presses",
+              "*partner is rowing"
+            ],
+            "sub_title": "amrap 5min"
+          },
+          {
+            "title": "CONDITIONING 31MIN",
+            "lines": [
+              "in teams of",
+              "40 wall balls",
+              "20 deadlifts 80/60kg",
+              "40/36/32cal row",
+              "2min rest between amraps",
+              "",
+              "* *pick up where you left off"
+            ],
+            "sub_title": "amrap 9min x 3 rounds"
           }
         ]
       },
@@ -2867,32 +2891,8 @@
           }
         ],
         "note": "Benchmark: CrossFit Total II"
-      },
-      {
-        "date": "2026-09-26",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 23.1",
-            "lines": [
-              "Complete as many reps as possible in 14 minutes of:",
-              "60-calorie row",
-              "50 toes-to-bars",
-              "40 wall-ball shots",
-              "30 cleans",
-              "20 muscle-ups",
-              "♀",
-              "14-lb ball to 9-ft target, 95-lb cleans",
-              "♂",
-              "20-lb ball to 10-ft target, 135-lb cleans"
-            ]
-          }
-        ],
-        "note": "Open: Open 23.1"
       }
     ]
   },
-  "last_updated": "2026-09-26T04:16:24.039623"
+  "last_updated": "2026-09-26T08:53:15.658340"
 }
