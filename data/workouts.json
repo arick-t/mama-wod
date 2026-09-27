@@ -2717,50 +2717,6 @@
     "2026-09-27": [
       {
         "date": "2026-09-27",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-09-27/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "90/90 hip rotations",
-              "hand walk",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. air squats",
-              "2. row",
-              "3. push ups to downdog",
-              "4. cossack squats"
-            ],
-            "sub_title": "30sec on / 15sec off x2 rounds"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "1. 40-50sec wall sit",
-              "2. 12-15 cal row",
-              "3. 6/6 single arm z-press",
-              "4. 12-16 goblet cossack squats",
-              "5. rest",
-              "Sunday Endurance for Open Gym",
-              "4 rounds",
-              "",
-              "4:00 row/bike or ski [rpe 7]",
-              "1:00 rest",
-              "* aerobic power [lactate threshold]"
-            ],
-            "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-27",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-september-27-2026/",
@@ -2817,6 +2773,77 @@
               "the body during the 3:00 Mobility",
               "windows."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-27",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 26.2",
+            "lines": [
+              "For time:",
+              "80-foot dumbbell overhead walking lunge",
+              "20 alternating dumbbell snatches",
+              "20 pull-ups",
+              "80-foot dumbbell overhead walking lunge",
+              "20 alternating dumbbell snatches",
+              "20 chest-to-bar pull-ups",
+              "80-foot dumbbell overhead walking lunge",
+              "20 alternating dumbbell snatches",
+              "20 muscle-ups",
+              "Time cap: 15 minutes",
+              "♀ 35-lb (15-kg) dumbbell",
+              "♂ 50-lb (22.5-kg) dumbbell"
+            ]
+          }
+        ],
+        "note": "Open: Open 26.2"
+      },
+      {
+        "date": "2026-09-27",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-09-27/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "90/90 hip rotations",
+              "hand walk",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. air squats",
+              "2. row",
+              "3. push ups to downdog",
+              "4. cossack squats"
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "1. 40-50sec wall sit",
+              "2. 12-15 cal row",
+              "3. 6/6 single arm z-press",
+              "4. 12-16 goblet cossack squats",
+              "5. rest",
+              "Sunday Endurance for Open Gym",
+              "4 rounds",
+              "",
+              "4:00 row/bike or ski [rpe 7]",
+              "1:00 rest",
+              "* aerobic power [lactate threshold]"
+            ],
+            "sub_title": "emom 35min (7 rounds)"
           }
         ]
       },
@@ -2879,35 +2906,8 @@
           }
         ],
         "note": "Benchmark: ”ANGIE” BENCHMARK"
-      },
-      {
-        "date": "2026-09-27",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 26.2",
-            "lines": [
-              "For time:",
-              "80-foot dumbbell overhead walking lunge",
-              "20 alternating dumbbell snatches",
-              "20 pull-ups",
-              "80-foot dumbbell overhead walking lunge",
-              "20 alternating dumbbell snatches",
-              "20 chest-to-bar pull-ups",
-              "80-foot dumbbell overhead walking lunge",
-              "20 alternating dumbbell snatches",
-              "20 muscle-ups",
-              "Time cap: 15 minutes",
-              "♀ 35-lb (15-kg) dumbbell",
-              "♂ 50-lb (22.5-kg) dumbbell"
-            ]
-          }
-        ],
-        "note": "Open: Open 26.2"
       }
     ]
   },
-  "last_updated": "2026-09-27T04:09:43.306785"
+  "last_updated": "2026-09-27T09:18:02.085149"
 }
