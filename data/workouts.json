@@ -1,79 +1,5 @@
 {
   "workouts": {
-    "2026-09-14": [
-      {
-        "date": "2026-09-14",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260914",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "On a 20-minute clock:"
-            ]
-          },
-          {
-            "title": "FROM 0:00-10:00, FOR TIME",
-            "lines": [
-              "Run 1,600 meters",
-              "10:00-20:00:",
-              "Build to a 5-rep-max bench press"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-09-14",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-september-14-2026/",
-        "sections": [
-          {
-            "title": "General warm-up",
-            "lines": [
-              "2 Rounds:",
-              "15 Hollow Rocks",
-              "15 Air squats",
-              "6 Turkish Get-ups"
-            ]
-          },
-          {
-            "title": "Clean and Jerk",
-            "lines": [
-              "7×2 @ 80-90%",
-              "Drop and reset)"
-            ]
-          },
-          {
-            "title": "Lifting Accessory:",
-            "lines": [
-              "5×3 Muscle Clean AHAP",
-              "4×20 DB Split Squats AHAP, but fast"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-09-14",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 20.2",
-            "lines": [
-              "Complete as many rounds as possible in 20 minutes of:",
-              "4 dumbbell thrusters",
-              "6 toes-to-bars",
-              "24 double-unders",
-              "50-lb. dumbbells"
-            ]
-          }
-        ],
-        "note": "Open: Open 20.2"
-      }
-    ],
     "2026-09-15": [
       {
         "date": "2026-09-15",
@@ -162,90 +88,6 @@
           }
         ],
         "note": "Open: Open 24.3"
-      },
-      {
-        "date": "2026-09-15",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-09-15/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "sumo squat stretch",
-              "hand walk",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 reverse lunges",
-              "20sec deep squat hold",
-              "* *remaining time row"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "BACK SQUATS 15MIN",
-            "lines": [
-              "4 Sets",
-              "3  (paused) back squats",
-              "@ 82-85%",
-              "strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "15 thrusters 40/30kg",
-              "12/10cal row",
-              "9 burpees over the bar",
-              "1:30 rest between amraps",
-              "* *pick up where you left off",
-              "lactate threshold"
-            ],
-            "sub_title": "amrap 4min - 3min - 2min - 1min"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-15",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Getting Started",
-            "sub_title": "What is CrossFit?",
-            "lines": [
-              "What to Expect",
-              "CrossFit Methodology",
-              "Find a Gym"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-09-15",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Nicole",
-            "lines": [
-              "20 min AMRAP:",
-              "Your final score is total pull-up reps after 20minutes.",
-              "Every Time you break on the pull ups go for a run! Choose a scaling option that always allows more than 10 Pull Up repetitions each time.",
-              "400 m  run  or erg cals 25/20",
-              "max rep unbroken pull-ups"
-            ]
-          }
-        ],
-        "note": "Benchmark: Nicole"
       }
     ],
     "2026-09-16": [
@@ -946,25 +788,6 @@
               "dumbbell: 25/17,5kg"
             ],
             "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-19",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "IN TEAMS OF 2 For Time:",
-            "lines": [
-              "PARTNER 1 - 250/200 Calorie Air Bike",
-              "PARTNER 2 - 8 SETS (Each)",
-              "15 GHDs",
-              "10 Lateral Burpee Over Bar",
-              "5  Power Snatch 70kg/48kg"
-            ]
           }
         ]
       },
@@ -2873,7 +2696,192 @@
         ],
         "note": "Benchmark: 121023 ADVANCED BOOTCAMP (JW)"
       }
+    ],
+    "2026-09-29": [
+      {
+        "date": "2026-09-29",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-09-29/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "samson stretch",
+              "hand walk",
+              "scorpions",
+              "thoracic rotations"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 double db deadlifts",
+              "10 scap. push ups",
+              "10 reverse lunges"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "BENCH PRESSES 16MIN",
+            "lines": [
+              "3-4 Sets",
+              "2 bench presses  @87-92%",
+              "strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "2 lanes walking lunges",
+              "14 double db hang cleans",
+              "28 sit ups",
+              "dumbbells: 2x22x5/15kg",
+              "* muscular endurance"
+            ],
+            "sub_title": "amrap 16min"
+          }
+        ]
+      },
+      {
+        "date": "2026-09-29",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260929",
+        "sections": [
+          {
+            "title": "7 ROUNDS FOR TIME OF",
+            "lines": [
+              "7 thrusters",
+              "7 sumo deadlift high pulls",
+              "7 handstand push-ups",
+              "♀ 65-lb barbell",
+              "♂ 95-lb barbell"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-29",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-september-29-2026/",
+        "sections": [
+          {
+            "title": "General warm-up",
+            "lines": [
+              "4 rds",
+              ":20 Row or Ski",
+              ":10 Rest",
+              "4rds",
+              ":20 Box Step Overs",
+              ":10 Rest",
+              ":20 Burpees",
+              ":10 Rest"
+            ]
+          },
+          {
+            "title": "Toes to Bar Capacity Test",
+            "lines": [
+              "Choose the appropriate test for you:",
+              "Rx (84 reps)",
+              "21-18-15-12-9-6-3 Unbroken Toes to Bar",
+              "Rest as little as needed between sets to stay",
+              "unbroken."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-29",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "SEPTEMBER MONTHLY CHALLENGE",
+            "lines": [
+              "IN TEAMS OF 2",
+              "5000m Row",
+              "* (Scored By Time)",
+              "*Partners must switch every even 250m or 500m for the entire 5k. For 500m switch, both partners row 5 times (2500m each). For 250m switch, both partners row 10 times (2500m each)."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-29",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Strength:-Primer:3 × 3 Snatch BalanceWorking Sets:6 × 2 Squat Snatch @ 72.5–82.5%, building",
+              "Metcon:- ChipperRow 1200/1000m40 paces Regional Lunge 2×22.5/15kg(one DB overhead, one farmers carry – swap at 20)30 T2B20 Push-ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-29",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Foundation",
+            "sub_title": "CrossFit Medical Society",
+            "lines": [
+              "Find a gym today!",
+              "Start your fitness journey today and get healthy.",
+              "Find a gym near you",
+              "Subscribe to the Workout of the Day"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-29",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Metcon",
+            "lines": [
+              "\"Cindy\"",
+              "AMRAP 20",
+              "5 Pull-ups",
+              "10 Push-ups",
+              "15 Air squats"
+            ]
+          }
+        ],
+        "note": "Benchmark: Metcon"
+      },
+      {
+        "date": "2026-09-29",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 20.1",
+            "lines": [
+              "10 rounds for time of:",
+              "8 ground-to-overheads, 95 lb.",
+              "10 bar-facing burpees",
+              "Time cap: 15 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 20.1"
+      }
     ]
   },
-  "last_updated": "2026-09-28T15:58:08.261237"
+  "last_updated": "2026-09-29T05:30:56.233565"
 }
