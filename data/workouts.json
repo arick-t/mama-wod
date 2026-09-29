@@ -2700,52 +2700,6 @@
     "2026-09-29": [
       {
         "date": "2026-09-29",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-09-29/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "samson stretch",
-              "hand walk",
-              "scorpions",
-              "thoracic rotations"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 double db deadlifts",
-              "10 scap. push ups",
-              "10 reverse lunges"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "BENCH PRESSES 16MIN",
-            "lines": [
-              "3-4 Sets",
-              "2 bench presses  @87-92%",
-              "strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "2 lanes walking lunges",
-              "14 double db hang cleans",
-              "28 sit ups",
-              "dumbbells: 2x22x5/15kg",
-              "* muscular endurance"
-            ],
-            "sub_title": "amrap 16min"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-29",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/260929",
@@ -2790,6 +2744,70 @@
               "Rest as little as needed between sets to stay",
               "unbroken."
             ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-29",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 20.1",
+            "lines": [
+              "10 rounds for time of:",
+              "8 ground-to-overheads, 95 lb.",
+              "10 bar-facing burpees",
+              "Time cap: 15 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 20.1"
+      },
+      {
+        "date": "2026-09-29",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-09-29/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "samson stretch",
+              "hand walk",
+              "scorpions",
+              "thoracic rotations"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 double db deadlifts",
+              "10 scap. push ups",
+              "10 reverse lunges"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "BENCH PRESSES 16MIN",
+            "lines": [
+              "3-4 Sets",
+              "2 bench presses  @87-92%",
+              "strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "2 lanes walking lunges",
+              "14 double db hang cleans",
+              "28 sit ups",
+              "dumbbells: 2x22x5/15kg",
+              "* muscular endurance"
+            ],
+            "sub_title": "amrap 16min"
           }
         ]
       },
@@ -2862,26 +2880,8 @@
           }
         ],
         "note": "Benchmark: Metcon"
-      },
-      {
-        "date": "2026-09-29",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 20.1",
-            "lines": [
-              "10 rounds for time of:",
-              "8 ground-to-overheads, 95 lb.",
-              "10 bar-facing burpees",
-              "Time cap: 15 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 20.1"
       }
     ]
   },
-  "last_updated": "2026-09-29T05:30:56.233565"
+  "last_updated": "2026-09-29T09:36:14.359619"
 }
