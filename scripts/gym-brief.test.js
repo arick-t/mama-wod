@@ -50,14 +50,17 @@ ok("and refuses rehabilitation outright", /Never write rehabilitation programmin
 ok("the cost ceiling", /COST \(HARD/.test(system));
 ok("saying one call writes the block", /ONE call writes the block/.test(system));
 ok("the knowledge layers", /LAYER 1/.test(system) && /LAYER 2/.test(system));
-ok("and the JSON contract", /BLOCK_JSON/.test(system));
+ok("and the JSON contract", /WEEK_JSON/.test(system));
 
 /* ── the one week. The thing a model trained on the other product will get wrong. ── */
 
 ok("it says ONE WEEK in the strongest terms", /ONE WEEK/.test(system));
-ok("and forbids writing six different ones", /Do NOT write six weeks/.test(system));
-ok("and forbids swapping exercises inside the block", /Do NOT vary the exercises from week to week/.test(system));
-ok("the block is six weeks", req.body.blockWeeks === 6 && /EXACTLY SIX weeks/.test(system));
+ok("and says the software makes the six", /The software repeats it/.test(system));
+ok("and says why it matters", /an exercise that keeps being swapped/.test(system));
+/* The brain writes ONE week; lib/gym-block-build.js makes the six. Asking it for six
+   identical weeks paid output tokens six times and let them drift apart. */
+ok("the block is six weeks", req.body.blockWeeks === 6);
+ok("and the brain is never asked for a block", system.indexOf("BLOCK_JSON") < 0);
 
 /* ── loads are effort, never kilos ─────────────────────────────────────────── */
 
