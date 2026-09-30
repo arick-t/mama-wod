@@ -2602,11 +2602,25 @@ var ADMIN_SESSION_KEY = "dw_admin_session";
 var ADMIN_REMEMBER_KEY = "dw_admin_remember";
 var adminPollTimer = null;
 var lastAdminSnapFingerprint = "";
-/* Every twenty seconds used to mean downloading every athlete in full, training blocks
-   and all — the leak that had the Blob store suspended for a month on 2026-09-02. A poll
-   now reads one small stamp, so the interval is cheap; it is still slower than it was,
-   because nothing here changes twice a minute. */
-var ADMIN_POLL_MS = 45000;
+/* ══════════════════════════════════════════════════════════════════════════
+   THE ONLY THING IN THIS MODULE THAT RUNS ON A CLOCK.
+
+   Every twenty seconds used to mean downloading every athlete in full, training blocks
+   and all — the leak that had the Blob store suspended for a month on 2026-09-02. A
+   poll reads one small stamp now, so a tick is one read and nothing else happens.
+
+   The interval moved from 45 seconds to two minutes on 2026-09-30, on the way back
+   down to the free plan after the store was suspended a second time. The arithmetic is
+   the whole argument: at 45 seconds an open tab costs 80 reads an hour, 640 in a
+   working day, about 14,000 in a month. At two minutes it is 30, 240 and roughly
+   5,300 — the same screen, a third of the bill.
+
+   Nothing is lost by it. This is a back office: the list changes when HE changes it,
+   and his own writes redraw the list immediately without waiting for any tick. The
+   poll exists for the other tab and the other device, and neither of those is in a
+   hurry. It also stops entirely while the tab is hidden, and asks once on returning.
+   ══════════════════════════════════════════════════════════════════════════ */
+var ADMIN_POLL_MS = 120000;
 /* The fingerprint of the list we are currently showing. A poll that matches it costs one
    small read and nothing else happens. */
 var lastAdminListStamp = "";
