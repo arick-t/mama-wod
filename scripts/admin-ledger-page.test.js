@@ -266,7 +266,7 @@ const nasty = V.dayDealsHtml([{ id: "x", day: "2026-09-03", name: '<img src=x on
 ok("a place name cannot inject markup", nasty.indexOf("<img src=x") < 0 && nasty.indexOf("&lt;img") >= 0);
 const nastyList = V.placeListHtml(['"><script>alert(1)</script>']);
 ok("neither can one in the autocomplete list", nastyList.indexOf("<script>alert(1)") < 0);
-const nastyFavBox = V.favouritesBoxHtml({ places: [{ name: '"><img src=x onerror="alert(1)">', uses: 1, service: "", price: 1 }], open: true });
+const nastyFavBox = V.clientsBoxHtml({ places: [{ name: '"><img src=x onerror="alert(1)">', uses: 1, service: "", price: 1 }], open: true });
 ok("nor one in the favourites box", nastyFavBox.indexOf("<img src=x") < 0);
 
 /* --- what this screen is not -------------------------------------------- */
@@ -318,19 +318,20 @@ const favPlaces = [
   { name: "רימון", uses: 7, service: "קבוצתי", price: 250, colour: "#4CAF70" },
   { name: "אולם העירייה", uses: 2, service: "אישי", price: 180, colour: "" },
 ];
-const boxClosed = V.favouritesBoxHtml({ places: favPlaces });
+const boxClosed = V.clientsBoxHtml({ places: favPlaces });
 ok("the box is folded away by default", boxClosed.indexOf("led-fav-rows") < 0);
 ok("but says how many are in it", boxClosed.indexOf("led-fold-count") >= 0);
-const boxOpen = V.favouritesBoxHtml({ places: favPlaces, open: true });
+const boxOpen = V.clientsBoxHtml({ places: favPlaces, open: true });
 ok("opening it lists everyone", (boxOpen.match(/data-led-fav="/g) || []).length === 2);
-ok("busiest first, with the count visible", boxOpen.indexOf("7 פעמים") >= 0);
+ok("busiest first, with the count visible", boxOpen.indexOf("(7)") >= 0);
+ok("and the busiest really is first", boxOpen.indexOf("רימון") < boxOpen.indexOf("אולם"));
 ok("each name has a pencil", (boxOpen.match(/data-led-fav-edit=/g) || []).length === 2);
 ok("a coloured place shows its colour", boxOpen.indexOf("border-inline-start:3px solid #4CAF70") >= 0);
-const boxEditing = V.favouritesBoxHtml({ places: favPlaces, open: true, editing: "רימון" });
+const boxEditing = V.clientsBoxHtml({ places: favPlaces, open: true, editing: "רימון" });
 ok("the pencil opens a name field", boxEditing.indexOf('id="ledFavName"') >= 0);
 ok("and a palette", (boxEditing.match(/data-led-fav-colour="#/g) || []).length === V.DEFAULT_COLOURS.length);
 ok("including a way back to no colour", boxEditing.indexOf('data-led-fav-colour=""') >= 0);
-ok("an empty box invites the first", V.favouritesBoxHtml({ places: [], open: true }).indexOf("עוד לא נתת שירות") >= 0);
+ok("an empty box invites the first", V.clientsBoxHtml({ places: [], open: true }).indexOf("עוד לא נתת שירות") >= 0);
 
 /* The colour is the point: it must reach both the day and the table. */
 ok(
@@ -569,8 +570,8 @@ ok(
 );
 
 
-ok("a place can be removed from the list", V.favouritesBoxHtml({ places: [{ name: "x", uses: 2, service: "", price: 1 }], open: true }).indexOf("data-led-fav-del") >= 0);
-ok("one visit is not \"1 times\"", V.favouritesBoxHtml({ places: [{ name: "x", uses: 1, service: "", price: 1 }], open: true }).indexOf("פעם אחת") >= 0);
+ok("a place can be removed from the list", V.clientsBoxHtml({ places: [{ name: "x", uses: 2, service: "", price: 1 }], open: true }).indexOf("data-led-fav-del") >= 0);
+ok("a single visit is written the same way", V.clientsBoxHtml({ places: [{ name: "x", uses: 1, service: "", price: 1 }], open: true }).indexOf("(1)") >= 0);
 ok("removing one warns that the sessions stay", /האימונים שכבר נרשמו לא ימחקו/.test(page));
 ok("and the autocomplete is re-read afterwards", /action: "delete_place"[\s\S]{0,700}loadMonth\(LS\.month\)/.test(page));
 
@@ -688,7 +689,7 @@ const subs = [
   { clientId: "p_oded", name: "עודד מכינה", service: "תוכנית אימון מכינה", price: 900, colour: "#4CAF70", billingDay: 5, active: true },
   { clientId: "p_cold", name: "סטודיו מוקפא", service: "", price: 400, colour: "", billingDay: 1, active: false },
 ];
-const fav = V.favouritesBoxHtml({
+const fav = V.clientsBoxHtml({
   open: true,
   subs: subs,
   places: [{ name: "מ1", uses: 3, service: "אימון קבוצתי", price: 250 }],
@@ -696,17 +697,17 @@ const fav = V.favouritesBoxHtml({
 ok("a monthly client is in the favourites list", fav.indexOf("עודד מכינה") >= 0);
 ok("with the day of the month he pays on", fav.indexOf("ה-5 בחודש") >= 0);
 ok("and it is a button, because he may move it", fav.indexOf('data-led-billing="p_oded"') >= 0);
-ok("a place has no billing date at all", fav.indexOf('class="led-fav-billing is-none">—') >= 0);
+ok("a place has no billing date at all", fav.indexOf('led-date">—<') >= 0);
 ok("a frozen client stays in the list", fav.indexOf("סטודיו מוקפא") >= 0);
-ok("greyed out", fav.indexOf("led-fav-row is-recurring is-frozen") >= 0);
+ok("greyed out", fav.indexOf("is-frozen") >= 0);
 ok("and says so", fav.indexOf("מוקפא</span>") >= 0);
 ok("with nothing on it left to press", fav.indexOf('data-led-billing="p_cold"') < 0);
 ok("a frozen client keeps what he is worth", fav.indexOf("₪400") >= 0);
 ok("the count is everyone, places and clients together", fav.indexOf('led-fold-count">3') >= 0);
 /* His colour is chosen on his own tab, so the name here is not editable. */
-const favEditing = V.favouritesBoxHtml({ open: true, subs: subs, places: [], editing: "עודד מכינה" });
+const favEditing = V.clientsBoxHtml({ open: true, subs: subs, places: [], editing: "עודד מכינה" });
 ok("a monthly client offers his colours", favEditing.indexOf("data-led-sub-colour") >= 0);
-ok("but his name is decided on his own tab", favEditing.indexOf("readonly") >= 0);
+ok("but his name is not a field here — it is decided on his own tab", favEditing.indexOf('id="ledFavName"') < 0);
 
 /* The filter: one kind at a time. */
 const natureBar = V.filtersHtml({ range: "month", nature: "recurring" });

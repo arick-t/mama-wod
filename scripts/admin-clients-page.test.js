@@ -338,12 +338,20 @@ ok("the client link is copyable once it exists", /data-copylink/.test(page));
 ok("joining date is called that", /תאריך הצטרפות:/.test(page));
 ok("tenure is gone from both cards", !/וותק/.test(page) && !/formatTenure/.test(page));
 ok("the name carries the colour he picked", /class="ath-name" style="color:' \+ esc\(clientColour\(p\)\)/.test(page));
-ok("the pencil opens the name-and-colour panel, not a browser prompt",
-  /data-identity="1" title="שם וצבע"/.test(page) && !/window\.prompt\("שם הלקוח/.test(page));
-ok("there is a chevron beside the name", /data-clientmore="1"/.test(page));
+/* ONE control beside the name, not two. There was a pencil for the name and the
+   colour and a chevron beside it for the money — a hair apart, neither of them saying
+   which was which (owner, 2026-09-30). */
+ok("one pencil beside the name", /data-clientmore="1" title="הגדרות הלקוח"/.test(page));
+ok("and no second control beside it", !/data-identity="1" title="שם וצבע"/.test(page));
+ok("it is a pencil, not a chevron", /aria-expanded="' \+\s*\(moreOpen \? "true" : "false"\) \+ '">✎</.test(page));
+ok("nothing fell back to a browser prompt", !/window\.prompt\("שם הלקוח/.test(page));
 ok("what is behind it is his business alone", /function renderClientMorePop/.test(page));
-ok("the money moved behind the chevron", /renderClientMorePop[\s\S]{0,900}id="fAmount"/.test(page));
-ok("delete moved there too", /renderClientMorePop[\s\S]{0,1400}data-del="1"/.test(page));
+ok("the name is in there", /renderClientMorePop[\s\S]{0,900}id="fClientName"/.test(page));
+ok("the colour is in there", /renderClientMorePop[\s\S]{0,1400}data-clientcolour=/.test(page));
+ok("the money is in there", /renderClientMorePop[\s\S]{0,2200}id="fAmount"/.test(page));
+ok("delete is in there too", /renderClientMorePop[\s\S]{0,3200}data-del="1"/.test(page));
+ok("the name commits on blur like the money", /data-identityfield/.test(page) && /saveIdentityFields\(t\.value/.test(page));
+ok("and a colour picked there reaches the book", /saveIdentityFields[\s\S]{0,900}LedgerScreen\.syncClient/.test(page));
 ok("the note about the client not seeing it is gone", !/הלקוח לא רואה אותם/.test(page));
 ok("and so is the save button — the fields commit on blur", !/data-savemeta/.test(page) && /data-metafield/.test(page));
 

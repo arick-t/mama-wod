@@ -399,6 +399,24 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
   .led-due{margin-inline-start:0;width:100%;text-align:start}
 }
 .led-fav-rows{display:flex;flex-direction:column;gap:4px;margin-top:12px}
+/* ══════════════════════════════════════════════════════════════════════════
+   THE CLIENTS TABLE.
+
+   It wears the deals table's columns on purpose — same widths, same headers, same
+   order — because the two answer neighbouring questions and reading them as one
+   surface is the whole point (owner, 2026-09-30). What differs is the last column:
+   the deals table keeps an invoice tick there, this one keeps what he may change.
+   ══════════════════════════════════════════════════════════════════════════ */
+.led-clients-head,.led-clients .led-row{grid-template-columns:1.2fr 1fr .7fr .75fr .85fr 70px}
+.led-clients-head{margin-top:12px}
+/* A header that does not sort — this table's order is the answer, not a preference. */
+.led-th.is-static{cursor:default;color:var(--text-meta)}
+.led-clients .led-row{border-bottom:1px solid var(--line)}
+.led-clients .led-row:last-child{border-bottom:none}
+/* The name of a place carries how many times he was there, beside it and quieter. */
+.led-clients .led-count{font-size:11px;color:var(--text-muted);font-weight:700}
+/* Editing a row turns it into a swatch strip, so it stops being a five-column line. */
+.led-clients .led-row.is-editing{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .led-fav-row{display:grid;grid-template-columns:1.2fr auto 1fr auto auto;gap:10px;align-items:center;
   padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg-elev);font-size:13px}
 .led-fav-row.is-editing{grid-template-columns:1.2fr auto auto auto}
@@ -8499,10 +8517,41 @@ tryRestoreAdminSession();
     return '<span class="ath-fact-next">(₪' + esc(wait.price) + " מ-" + esc(when) + ")</span>";
   }
 
+  /**
+   * "הגדרות" — everything he may change about a client, in one panel.
+   *
+   * It used to be two: a pencil for the name and the colour, and a chevron beside it
+   * for the money. Two controls a hair apart, neither of them saying which was which.
+   * The name and the colour moved in here, at the top, where he looks first
+   * (owner, 2026-09-30).
+   *
+   * Nothing has a save button. Every field commits when you leave it, because a save
+   * button for two numbers is one more thing to forget, and forgetting it looks exactly
+   * like the app losing your typing.
+   */
   function renderClientMorePop(p, open) {
     if (!open) return "";
     return (
       '<div class="ath-stats-pop open" id="clientMorePop">' +
+        '<div class="ath-fact" style="grid-column:1/-1">' +
+          '<span class="ath-fact-label">שם:</span>' +
+          '<input id="fClientName" class="ath-fact-input" type="text" maxlength="120" ' +
+          'data-identityfield="1" value="' + esc(p.clientName || "") + '">' +
+        "</div>" +
+        '<div class="ath-fact" style="grid-column:1/-1">' +
+          '<span class="ath-fact-label">צבע:</span>' +
+          '<span class="ident-swatches ath-fact-swatches">' +
+          '<button type="button" class="ident-swatch none' + (p.clientColour ? "" : " on") +
+          '" data-clientcolour="" title="בלי צבע">×</button>' +
+          CLIENT_COLOURS.map(function (c) {
+            return (
+              '<button type="button" class="ident-swatch' +
+              (String(p.clientColour || "").toLowerCase() === c.toLowerCase() ? " on" : "") +
+              '" style="background:' + c + '" data-clientcolour="' + c + '" title="' + c + '"></button>'
+            );
+          }).join("") +
+          "</span>" +
+        "</div>" +
         '<div class="ath-fact">' +
           '<span class="ath-fact-label">סכום חודשי (₪):</span>' +
           '<input id="fAmount" class="ath-fact-input" type="number" min="0" data-metafield="1" value="' +
@@ -8592,12 +8641,13 @@ tryRestoreAdminSession();
           '<div class="ath-name-row">' +
             '<div class="ath-name" style="color:' + esc(clientColour(p)) + '">' +
             esc(p.clientName || "(ללא שם)") + "</div>" +
-            /* The same panel an athlete's pencil opens — name and the colour he is
-               picked out by in the strip. It used to be a browser prompt. */
-            '<button type="button" class="ath-stats-btn" data-identity="1" title="שם וצבע">✎</button>' +
+            /* ONE pencil. There were two controls here, a hair apart: a pencil for the
+               name and the colour, and a chevron for the money — and nothing on either
+               of them said which was which. Everything he may change about a client now
+               lives behind this one button (owner, 2026-09-30). */
             '<button type="button" class="ath-stats-btn' + (moreOpen ? " open" : "") +
-            '" data-clientmore="1" title="מידע נוסף" aria-expanded="' +
-            (moreOpen ? "true" : "false") + '">▾</button>' +
+            '" data-clientmore="1" title="הגדרות הלקוח" aria-expanded="' +
+            (moreOpen ? "true" : "false") + '">✎</button>' +
           "</div>" +
           /* Active and frozen are two answers to one question, so they read as one
              control: the state, a slash, and the switch that changes it. */
@@ -10470,6 +10520,34 @@ tryRestoreAdminSession();
     commitMeta(next, method, function () { ledgerSync({}, ""); });
   }
 
+  /**
+   * The name and the colour, saved from the settings panel.
+   *
+   * The same call the strip's own rename makes — one door, so a rename from either
+   * place reaches the book of monthly clients and the strip together.
+   */
+  function saveIdentityFields(name, colour) {
+    if (!S.program) return;
+    var id = S.program.programId;
+    api({
+      action: "save", programId: id, expectedVersion: S.program.version,
+      program: { clientName: String(name || "").trim(), clientColour: colour },
+    }).then(function (r) {
+      if (r.status !== 200 || !r.body.ok) { banner("bad", (r.body && r.body.error) || "השמירה נכשלה."); return; }
+      S.program = r.body.program;
+      /* One name and one colour, everywhere: the strip, the clients table, the deals
+         table and the calendar all read this one choice. */
+      if (window.LedgerScreen && window.LedgerScreen.syncClient) {
+        window.LedgerScreen.syncClient(
+          { clientId: id, name: S.program.clientName, colour: S.program.clientColour },
+          ""
+        );
+      }
+      renderDetail();
+      loadList();
+    });
+  }
+
   function commitMeta(amount, method, then) {
     api({
       action: "save", programId: S.program.programId, expectedVersion: S.program.version,
@@ -10548,6 +10626,14 @@ tryRestoreAdminSession();
     }
     if (g("data-clientmore")) { S.moreOpen = !S.moreOpen; renderDetail(); return; }
     if (g("data-termsmore")) { S.termsOpen = !S.termsOpen; renderDetail(); return; }
+    /* A colour picked inside the settings panel. It saves on the spot: it is one
+       field and there is nothing to lose by being wrong for a second. */
+    var swatch = t.closest && t.closest("[data-clientcolour]");
+    if (swatch && S.program) {
+      saveIdentityFields(S.program.clientName || "", swatch.getAttribute("data-clientcolour") || "");
+      return;
+    }
+
     if (g("data-identity")) {
       openClientIdentityFor("client", S.program.programId, S.program.clientName || "", S.program.clientColour || "");
       return;
@@ -10862,11 +10948,17 @@ tryRestoreAdminSession();
     }
   });
 
-  /* The chevron's fields commit on blur. A save button for two numbers was one more
-     thing to forget, and forgetting it looked like the app losing his typing. */
+  /* The settings panel's fields commit on blur. A save button for two numbers was one
+     more thing to forget, and forgetting it looked like the app losing his typing. */
   document.addEventListener("change", function (ev) {
     var t = ev.target;
-    if (!t || !t.getAttribute || !t.getAttribute("data-metafield")) return;
+    if (!t || !t.getAttribute) return;
+    /* The name lives in the same panel as the money now, and commits the same way. */
+    if (t.getAttribute("data-identityfield") && S.program) {
+      saveIdentityFields(t.value, S.program.clientColour || "");
+      return;
+    }
+    if (!t.getAttribute("data-metafield")) return;
     if (!S.program) return;
     saveMeta();
   });
@@ -13417,8 +13509,15 @@ tryRestoreAdminSession();
     LS.open = true;
     if (box) box.hidden = false;
     if (!LS.month) LS.month = L.monthKey();
-    if (!LS.data) loadMonth(LS.month);
-    else render();
+    /* ALWAYS ask again. It used to draw whatever it held from last time, so a price
+       changed on a client's tab, a freeze, a new client — none of it showed here until
+       the page was reloaded by hand (owner, 2026-09-30). What he changed a second ago
+       is the whole reason he came back to this screen.
+
+       It costs the same three objects opening the month has always cost, and not one
+       more per client: the arrangements are one object. Nothing here lists the store. */
+    render();
+    loadMonth(LS.month);
     /* The shelf is its own one-read index, so it is asked for separately and a slow
        answer never holds up the month. Same for the outstanding total. */
     loadBlocks();
@@ -13705,13 +13804,35 @@ tryRestoreAdminSession();
     });
   }
 
-  /** The box under the table: everyone, and the pencil that names and colours them. */
+  /** Who the module knows about, in the shape this table reads. */
+  function moduleClients() {
+    var rows = [];
+    try {
+      rows = (window.ClientScreen && window.ClientScreen.rows && window.ClientScreen.rows()) || [];
+    } catch (e) {
+      rows = [];
+    }
+    return rows.map(function (r) {
+      return {
+        clientId: r.programId,
+        name: r.clientName || "",
+        colour: r.clientColour || "",
+        frozen: r.frozen === true,
+      };
+    });
+  }
+
+  /** The box under the table: everyone he works for, and what he expects from each. */
   function renderFavourites() {
     var host = el("ledFavourites");
     if (!host) return;
-    host.innerHTML = V.favouritesBoxHtml({
+    host.innerHTML = V.clientsBoxHtml({
       places: LS.places,
       subs: LS.subs,
+      /* The module's own client list, which the page already holds for the strip —
+         so every client he creates is in this table from the moment he creates it,
+         and it costs no request of its own (owner, 2026-09-30). */
+      clients: moduleClients(),
       open: LS.favOpen,
       editing: LS.favEditing,
     });
