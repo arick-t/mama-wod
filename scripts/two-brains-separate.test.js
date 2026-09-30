@@ -108,4 +108,21 @@ ok("and that the coach carries the responsibility", /human coach/i.test(gymText)
 ok("a gym block is six weeks", /A BLOCK IS SIX WEEKS/i.test(gymText));
 ok("a functional brick is four", /FOUR weeks/i.test(FOUNDATION));
 
+/* --- 4 - THE REQUEST ITSELF ------------------------------------------------
+   The packs are separate, but the thing that actually reaches a provider is a REQUEST. If the
+   gym request carried the functional system text, everything above would be decoration. */
+
+const GymBrief = require("../lib/gym-brief.js");
+const gymReq = GymBrief.gymBlockRequestFor({
+  answers: { clientName: "A", sessionsPerWeek: 3, split: "full_body", fullyEquipped: true, goalHealth: true },
+});
+ok("a gym request builds", gymReq.ok === true);
+ok("it carries the gym pack", gymReq.system.indexOf(gymText.slice(0, 120)) >= 0);
+ok("and not one line of the functional one", gymReq.system.indexOf(funcText.slice(0, 200)) < 0);
+ok("nor the functional policy", gymReq.system.indexOf(String(POLICY).slice(200, 320)) < 0);
+ok("nor the functional prompt", gymReq.system.indexOf(String(PROMPT).slice(0, 120)) < 0);
+ok("nor the functional brief", gymReq.system.indexOf(String(FOUNDATION).slice(0, 160)) < 0);
+ok("its action is the gym's own", gymReq.body.action === "gym_generate_block");
+ok("and it asks for six weeks, not four", gymReq.body.blockWeeks === 6);
+
 console.log("\nשני מוחות, קיר ביניהם — ומוח הקרוספיט לא זז.");
