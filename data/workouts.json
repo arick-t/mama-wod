@@ -2662,6 +2662,55 @@
     "2026-09-30": [
       {
         "date": "2026-09-30",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/260930",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Olympic Total",
+              "Snatch 1-1-1-1-1 reps",
+              "Clean and jerk 1-1-1-1-1 reps",
+              "Compare to",
+              "260105",
+              "(snatch) and",
+              "240205",
+              "(clean and jerk)."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-09-30",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 25.3",
+            "lines": [
+              "For time:",
+              "5 wall walks",
+              "50-calorie row",
+              "5 wall walks",
+              "25 deadlifts",
+              "5 wall walks",
+              "25 cleans",
+              "5 wall walks",
+              "25 snatches",
+              "5 wall walks",
+              "50-calorie row",
+              "Time cap: 20 minutes",
+              "♀ 155-lb (70-kg) deadlift, 85-lb (38-kg) clean, 65-lb (29-kg) snatch",
+              "♂ 225-lb (102-kg) deadlift, 135-lb (61-kg) clean, 95-lb (43-kg) snatch"
+            ]
+          }
+        ],
+        "note": "Open: Open 25.3"
+      },
+      {
+        "date": "2026-09-30",
         "source": "myleo",
         "source_name": "myleo CrossFit",
         "url": "https://myleo.de/en/wods/2026-09-30/",
@@ -2705,27 +2754,6 @@
               "* aerobic power & muscular endurance"
             ],
             "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-30",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260930",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Olympic Total",
-              "Snatch 1-1-1-1-1 reps",
-              "Clean and jerk 1-1-1-1-1 reps",
-              "Compare to",
-              "260105",
-              "(snatch) and",
-              "240205",
-              "(clean and jerk)."
-            ]
           }
         ]
       },
@@ -2811,36 +2839,8 @@
           }
         ],
         "note": "Benchmark: Helen"
-      },
-      {
-        "date": "2026-09-30",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 25.3",
-            "lines": [
-              "For time:",
-              "5 wall walks",
-              "50-calorie row",
-              "5 wall walks",
-              "25 deadlifts",
-              "5 wall walks",
-              "25 cleans",
-              "5 wall walks",
-              "25 snatches",
-              "5 wall walks",
-              "50-calorie row",
-              "Time cap: 20 minutes",
-              "♀ 155-lb (70-kg) deadlift, 85-lb (38-kg) clean, 65-lb (29-kg) snatch",
-              "♂ 225-lb (102-kg) deadlift, 135-lb (61-kg) clean, 95-lb (43-kg) snatch"
-            ]
-          }
-        ],
-        "note": "Open: Open 25.3"
       }
     ]
   },
-  "last_updated": "2026-09-30T04:53:17.235321"
+  "last_updated": "2026-09-30T09:19:06.728594"
 }
