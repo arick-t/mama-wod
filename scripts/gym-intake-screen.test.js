@@ -22,22 +22,25 @@ function ok(name, cond) {
   console.log("ok —", name);
 }
 
-/* ── the trap: scoped CSS ──────────────────────────────────────────────────── */
+/* ── it floats, and it brings its own styles ───────────────────────────────── */
 
-const screenStart = admin.indexOf('id="clientScreen"');
-const cardAt = admin.indexOf('id="gymIntakeCard"');
-const studioAt = admin.indexOf('id="intakeCard"');
-ok("the gym card exists", cardAt > 0);
-ok("it sits inside #clientScreen, where the classes live", cardAt > screenStart);
-ok("beside the studio card it was modelled on", studioAt > screenStart);
-ok("and the classes really are scoped there", /#clientScreen \.chk-row/.test(admin) && /#clientScreen \.sub-branch/.test(admin));
+const cardAt = admin.indexOf('id="gymIntakeModal"');
+ok("the gym questionnaire exists", cardAt > 0);
+ok("it is a floating card like every other questionnaire", /class="modal-backdrop" id="gymIntakeModal"/.test(admin));
+ok("not a panel wedged into the client screen", admin.indexOf('id="gymIntakeCard"') < 0);
+
+/* The rules it needs are scoped to #clientScreen, so a floating card must carry its own copy.
+   Widening the originals is not an option: they serve the studio card. */
+["label.fld", ".chk-row", ".sub-branch", ".pick-row", ".grid2", ".itabs"].forEach(function (sel) {
+  ok("the modal carries its own " + sel, admin.indexOf("#gymIntakeModal " + sel) >= 0);
+});
+ok("and the originals were left alone", /#clientScreen \.chk-row\{/.test(admin) && /#clientScreen \.sub-branch\{/.test(admin));
 
 /* ── the canonical card shape ──────────────────────────────────────────────── */
 
 /* Bound the slice to THIS card. Reading past it into the next one is how a test starts
    asserting about somebody else's markup. */
-const nextCard = admin.indexOf('<div class="card"', cardAt + 10);
-const card = admin.slice(cardAt, nextCard > 0 ? nextCard : cardAt + 2200);
+const card = admin.slice(cardAt, admin.indexOf('id="intake-modal"'));
 ok("the card is left-to-right, like every intake card", /dir="ltr"/.test(card));
 ok("its header bar is the shared one", /class="intake-ws-header" dir="rtl"/.test(card));
 ok("the title is English", /<h2>New gym client<\/h2>/.test(card));
@@ -60,6 +63,7 @@ ok("the panel carries no card of its own", (card.match(/class="card"/g) || []).l
 const jsCode = js.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
 ok("nothing is opened with style.display", jsCode.indexOf("style.display") < 0);
 ok("panels open and close with the hidden attribute", /\.hidden = /.test(js));
+ok("and the modal itself with the shared .open class", /classList\.add\("open"\)/.test(js));
 ok("and there is no chat-style intake here", !/chat/i.test(jsCode));
 
 /* ── the three rules of a tick that opens a question ───────────────────────── */
@@ -89,5 +93,18 @@ ok("the page loads the gym contract before the screen",
     ok("the screen uses ." + c, js.indexOf(c) >= 0);
   }
 );
+
+/* --- three defects the browser found that no source read would have ------------ */
+
+/* The card stops a click from climbing out of it, like every modal here. A listener on the
+   document - or even on the backdrop - therefore never hears a button inside it. */
+ok("the listeners are bound to the card, not the document", js.indexOf('querySelector(".intake-workspace")') >= 0);
+ok("and not to the document", jsCode.indexOf('document.addEventListener("click"') < 0);
+
+/* The nav buttons get the brand look. Scoping that to "every button in the body" swallowed the
+   tab strip and outranked the ghost rule, so all five tabs and Back came out orange. */
+ok("the brand button rule is scoped to the nav row", admin.indexOf("#gymIntakeModal .intake-ws-body > .row button{") >= 0);
+ok("and Back keeps its ghost look at the same specificity", admin.indexOf("#gymIntakeModal .intake-ws-body > .row button.ghost{") >= 0);
+ok("the tabs keep their own look", admin.indexOf("#gymIntakeModal .itabs button.on{") >= 0);
 
 console.log("\nמסך תחקור חדר הכושר — לפי המפרט, ובתוך הסקופ הנכון.");

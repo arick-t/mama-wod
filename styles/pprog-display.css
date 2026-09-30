@@ -398,3 +398,6 @@
 @media(max-width:640px){
 .pprog-edit-btn{width:44px;height:44px}
 }
+#gymIntakeModal .pprog-fixed-title{font-family:var(--font-display);font-size:1.02rem;margin:0 0 4px}
+#gymIntakeModal .pprog-fixed-note,#gymIntakeModal .meta{color:var(--text-meta);font-size:.82rem;margin:0 0 10px}
+#gymIntakeModal .pprog-skills-all span{color:var(--brand-gold);font-weight:600}

@@ -1587,6 +1587,52 @@ body:has(#intake-modal.open) #adminChatFloat{
   border-inline-start:2px solid var(--coach-deep)}
 #clientScreen .sub-branch .sub-branch{margin-bottom:4px}
 #clientScreen .pick-row{display:flex;gap:26px;flex-wrap:wrap;margin:0 0 12px}
+
+/* THE GYM QUESTIONNAIRE'S OWN COPY OF THE FORM RULES.
+   Everything above is scoped to #clientScreen, and the gym card is a floating modal that is
+   not inside it. The design spec names exactly two ways out of that, and this is the second:
+   repeat the rules under the modal's own id rather than widening the originals, which serve
+   the studio card and must not move. Same values, one selector across. */
+#gymIntakeModal label.fld{display:block;margin:0 0 10px}
+#gymIntakeModal label.fld span{display:block;font-size:.8rem;color:var(--text-meta);margin:0 0 4px}
+#gymIntakeModal input[type=text]:not([class]),#gymIntakeModal input[type=number]:not([class]),
+#gymIntakeModal textarea:not([class]),#gymIntakeModal select:not([class]){
+  width:100%;font-family:var(--font-ui);font-size:16px;color:var(--text);background:var(--bg-panel);
+  border:1px solid var(--line);border-radius:8px;padding:11px}
+#gymIntakeModal textarea:not([class]){min-height:120px;resize:vertical;line-height:1.6;direction:ltr;text-align:left}
+#gymIntakeModal input:not([class]):focus,#gymIntakeModal textarea:not([class]):focus,
+#gymIntakeModal select:not([class]):focus{outline:2px solid var(--coach);outline-offset:1px}
+#gymIntakeModal .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#gymIntakeModal .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+#gymIntakeModal .err{color:var(--brand);font-size:.88rem;margin:8px 0 0;min-height:1.2em}
+/* THE NAV ROW ONLY. The first version of this rule said "every button in the body", which
+   swallowed the tab strip and painted all five tabs brand orange — and it outranked the ghost
+   rule below it on specificity, so Back came out orange too (2026-09-30). The tabs have their
+   own look a few lines up; this is for Back, Next and the build button and nothing else. */
+#gymIntakeModal .intake-ws-body > .row button{
+  font-family:var(--font-ui);font-size:15px;font-weight:500;cursor:pointer;background:var(--brand);
+  color:#fff;border:0;border-radius:8px;min-height:44px;padding:10px 16px}
+#gymIntakeModal .intake-ws-body > .row button.ghost{
+  background:transparent;color:var(--text-muted);border:1px solid var(--line)}
+#gymIntakeModal .itabs{display:flex;gap:6px;overflow-x:auto;padding:0 0 14px;-webkit-overflow-scrolling:touch}
+#gymIntakeModal .itabs button{min-height:36px;padding:6px 13px;background:var(--bg-panel);color:var(--text-muted);
+  border:1px solid var(--line);white-space:nowrap;border-radius:8px;font-size:13.5px}
+#gymIntakeModal .itabs button.on{background:var(--coach-deep);color:#fff;border-color:var(--coach)}
+#gymIntakeModal .ipane label.fld span{font-size:.82rem}
+#gymIntakeModal .chk-row{display:flex;gap:10px;align-items:flex-start;margin:0 0 8px;cursor:pointer}
+#gymIntakeModal .chk-row input{width:20px;height:20px;margin:2px 0 0;flex:0 0 auto;accent-color:var(--brand)}
+#gymIntakeModal .chk-row span{color:var(--text);font-size:.92rem}
+#gymIntakeModal .chk-row .inline-num{width:82px;margin-inline-start:14px;padding:8px 10px;text-align:center;
+  font-size:19px;font-weight:700;font-family:var(--font-display);letter-spacing:1px;
+  color:var(--brand-gold);border-color:var(--coach-deep);background:var(--bg-panel);border:1px solid var(--coach-deep);
+  border-radius:8px}
+#gymIntakeModal .sub-branch{margin:2px 0 12px;padding-inline-start:16px;
+  border-inline-start:2px solid var(--coach-deep)}
+#gymIntakeModal .sub-branch .sub-branch{margin-bottom:4px}
+#gymIntakeModal .pick-row{display:flex;gap:26px;flex-wrap:wrap;margin:0 0 12px}
+#gymIntakeModal .pprog-fixed-title{font-family:var(--font-display);font-size:1.02rem;margin:0 0 4px}
+#gymIntakeModal .pprog-fixed-note,#gymIntakeModal .meta{color:var(--text-meta);font-size:.82rem;margin:0 0 10px}
+#gymIntakeModal .pprog-skills-all span{color:var(--brand-gold);font-weight:600}
 /* The equipment checklist. One row per implement, the numbers on the same line as the tick,
    because a count that lives somewhere else is a count nobody fills in. */
 #clientScreen .equip-group{margin:0 0 14px}
@@ -2190,31 +2236,6 @@ header{flex-wrap:wrap;row-gap:8px}
     </div>
     </div>
 
-    <!-- THE GYM QUESTIONNAIRE. A sibling of the studio card on purpose: .fld, .chk-row,
-         .pick-row, .sub-branch, .inline-num and .grid2 are all scoped to #clientScreen, so a
-         card built anywhere else would silently lose every one of them. Same look, and the
-         plumbing underneath is entirely separate — see admin-gym-intake.js. -->
-    <div class="card" id="gymIntakeCard" dir="ltr" style="text-align:left" hidden>
-      <div class="intake-ws-header" dir="rtl"
-           style="margin:-16px -16px 14px;border-radius:12px 12px 0 0">
-        <h2>New gym client</h2>
-        <div style="display:flex;align-items:center;gap:12px">
-          <span class="meta" id="gymIntakeStep"></span>
-          <button type="button" class="btn-secondary" onclick="closeGymIntake()">סגור</button>
-        </div>
-      </div>
-
-      <div class="itabs" id="gymIntakeTabs" role="tablist"></div>
-      <div id="gymIntakeBody"></div>
-
-      <div class="row" style="margin-top:14px">
-        <button id="gxPrev" class="ghost" type="button" hidden>Back</button>
-        <button id="gxNext" type="button">Next</button>
-        <button id="gxCreate" type="button" hidden>Build the block</button>
-      </div>
-      <!-- One row, always here even when empty, so the card cannot jump as it fills. -->
-      <p class="err" id="gymIntakeErr" role="alert" style="min-height:1.2em"></p>
-    </div>
 
     <div id="detail" hidden></div>
   </div>
@@ -2360,6 +2381,37 @@ header{flex-wrap:wrap;row-gap:8px}
 <!-- A click beside the box does NOT close it. The owner was two steps into an intake,
      clicked next to it by accident, and lost everything he had typed (owner,
      2026-09-03). Only "סגור" closes this, and it asks first. -->
+<!-- THE GYM QUESTIONNAIRE. A FLOATING CARD, like every other questionnaire in this module.
+     It was first built inside #clientScreen, which split the screen in two and looked nothing
+     like the others (owner, 2026-09-30). The reason it was put there is real and is handled
+     below instead: .fld, .chk-row, .pick-row, .sub-branch, .inline-num and .grid2 are all
+     scoped to #clientScreen, so a card outside it loses every one of them. The design spec
+     names both ways out; this is the second — the same rules, repeated under this modal's own
+     id, exactly as #intake-modal .itabs already does. -->
+<div class="modal-backdrop" id="gymIntakeModal">
+  <div class="intake-workspace" dir="ltr" style="text-align:left;max-width:720px"
+       onclick="event.stopPropagation()">
+    <div class="intake-ws-header" dir="rtl">
+      <h2>New gym client</h2>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="meta" id="gymIntakeStep"></span>
+        <button type="button" class="btn-secondary" onclick="closeGymIntake()">סגור</button>
+      </div>
+    </div>
+    <div class="intake-ws-body">
+      <div class="itabs" id="gymIntakeTabs" role="tablist"></div>
+      <div id="gymIntakeBody"></div>
+      <div class="row" style="margin-top:14px">
+        <button id="gxPrev" class="ghost" type="button" hidden>Back</button>
+        <button id="gxNext" type="button">Next</button>
+        <button id="gxCreate" type="button" hidden>Build the block</button>
+      </div>
+      <!-- One row, always here even when empty, so the card cannot jump as it fills. -->
+      <p class="err" id="gymIntakeErr" role="alert" style="min-height:1.2em"></p>
+    </div>
+  </div>
+</div>
+
 <div class="modal-backdrop" id="intake-modal">
   <div class="intake-workspace" dir="rtl" onclick="event.stopPropagation()">
     <div class="intake-ws-header">

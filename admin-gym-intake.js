@@ -2,12 +2,15 @@
  * THE GYM QUESTIONNAIRE — the screen.
  *
  * SAME LOOK, SEPARATE PLUMBING. That is the whole design, and it is the owner's instruction in
- * two halves. The look: this is a `.card` inside #clientScreen, built out of the same classes as
- * the studio card — .fld, .chk-row, .pick-row, .sub-branch, .inline-num, .grid2 — because those
- * rules are scoped to #clientScreen and a card built anywhere else would silently lose them.
- * The plumbing: every answer lives in gymIntakeState and leaves through lib/gym-intake.js. It
- * never touches intakeState, never becomes a fixedIntakePacket, and never reaches the functional
- * brain.
+ * two halves. The look: a FLOATING card over the screen, like every other questionnaire in this
+ * module, built out of the same classes as the studio card — .fld, .chk-row, .pick-row,
+ * .sub-branch, .inline-num, .grid2. Those rules are scoped to #clientScreen, so admin.html
+ * repeats them under #gymIntakeModal rather than widening the originals, which serve the studio
+ * card and must not move. It was first built INSIDE #clientScreen for exactly that reason and
+ * came out splitting the screen in two, looking nothing like the others (owner, 2026-09-30).
+ * The plumbing: every answer lives in this file's own state and leaves through lib/gym-intake.js.
+ * It never touches intakeState, never becomes a fixedIntakePacket, and never reaches the
+ * functional brain.
  *
  * THE THREE RULES OF A TICK THAT OPENS A QUESTION, from the design spec:
  *   1. the sub-area is the NEXT SIBLING of the .chk-row, never inside it
@@ -251,9 +254,14 @@
 
   /* ── render ──────────────────────────────────────────────────────────────── */
 
+  function isOpen() {
+    var m = el("gymIntakeModal");
+    return !!(m && m.classList.contains("open"));
+  }
+
   function render() {
     var lib = L();
-    if (!lib || !el("gymIntakeCard")) return;
+    if (!lib || !el("gymIntakeModal")) return;
     var steps = lib.STEPS;
     if (step < 0) step = 0;
     if (step > steps.length - 1) step = steps.length - 1;
@@ -332,9 +340,28 @@
 
   /* ── the events ──────────────────────────────────────────────────────────── */
 
-  document.addEventListener("change", function (ev) {
+  /* LISTEN ON THE CARD ITSELF — not on the document, and not on the backdrop either.
+     The card carries onclick="event.stopPropagation()" like every other modal here, so a click
+     inside it never reaches the document OR the backdrop around it. Every button went dead the
+     moment this became a floating card, and binding one level up did not fix it (2026-09-30).
+     stopPropagation stops the climb to ancestors; it does not stop another listener on the same
+     element, so the card is the one place a listener both survives every redraw of its contents
+     and actually hears them. */
+  function on(type, fn) {
+    document.addEventListener("DOMContentLoaded", bind);
+    bind();
+    function bind() {
+      var m = el("gymIntakeModal");
+      var card = m && m.querySelector(".intake-workspace");
+      if (!card || card["_gx_" + type]) return;
+      card["_gx_" + type] = true;
+      card.addEventListener(type, fn);
+    }
+  }
+
+  on("change", function (ev) {
     var t = ev.target;
-    if (!t || !t.id || !el("gymIntakeCard") || el("gymIntakeCard").hidden) return;
+    if (!t || !t.id || !isOpen()) return;
 
     /* A tick that opens a question. Closing ERASES the answer — see the file header. */
     if (t.id === "gxFullyEquipped") {
@@ -371,11 +398,10 @@
     }
   });
 
-  document.addEventListener("click", function (ev) {
+  on("click", function (ev) {
     var t = ev.target;
     if (!t) return;
-    var card = el("gymIntakeCard");
-    if (!card || card.hidden) return;
+    if (!isOpen()) return;
 
     var tab = t.closest ? t.closest("[data-gxstep]") : null;
     if (tab) {
@@ -413,14 +439,14 @@
 
   window.openGymIntake = function openGymIntake() {
     reset();
-    var card = el("gymIntakeCard");
-    if (!card) return;
-    card.hidden = false;
+    var modal = el("gymIntakeModal");
+    if (!modal) return;
+    modal.classList.add("open");
     render();
   };
   window.closeGymIntake = function closeGymIntake() {
-    var card = el("gymIntakeCard");
-    if (card) card.hidden = true;
+    var modal = el("gymIntakeModal");
+    if (modal) modal.classList.remove("open");
   };
   /* For tests and for the page that will save it. */
   window.gymIntakeAnswers = function gymIntakeAnswers() {
