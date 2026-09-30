@@ -247,6 +247,9 @@ const server = http.createServer((req, res) => {
   if (
     pathname === "/api/personal-coach" ||
     pathname === "/api/coach-feedback" ||
+    /* The second brain has an endpoint of its own — see api/gym-coach.js for why it is not a
+       branch inside the first one (2026-09-30). */
+    pathname === "/api/gym-coach" ||
     pathname === "/api/event"
   ) {
     if (req.method === "OPTIONS") {
@@ -262,6 +265,7 @@ const server = http.createServer((req, res) => {
     }
     if (
       (pathname === "/api/personal-coach" ||
+        pathname === "/api/gym-coach" ||
         pathname === "/api/coach-feedback") &&
       (req.method === "GET" || req.method === "HEAD")
     ) {
@@ -276,7 +280,9 @@ const server = http.createServer((req, res) => {
       const rel =
         pathname === "/api/coach-feedback"
           ? "api/coach-feedback.js"
-          : "api/personal-coach.js";
+          : pathname === "/api/gym-coach"
+            ? "api/gym-coach.js"
+            : "api/personal-coach.js";
       loadApiHandler(rel)(fakeReq, fakeRes).catch((e) => {
         if (!res.headersSent) {
           res.statusCode = 500;
@@ -306,6 +312,8 @@ const server = http.createServer((req, res) => {
       try {
         if (pathname === "/api/personal-coach") {
           await loadApiHandler("api/personal-coach.js")(fakeReq, fakeRes);
+        } else if (pathname === "/api/gym-coach") {
+          await loadApiHandler("api/gym-coach.js")(fakeReq, fakeRes);
         } else if (pathname === "/api/coach-feedback") {
           await loadApiHandler("api/coach-feedback.js")(fakeReq, fakeRes);
         } else {

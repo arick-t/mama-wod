@@ -489,10 +489,67 @@
         return;
       }
       setErr("");
-      if (typeof window.gymIntakeSubmit === "function") window.gymIntakeSubmit(L().normalize(state));
+      submit(L().normalize(state));
       return;
     }
   });
+
+  /* ── sending it to the gym brain ─────────────────────────────────────────── */
+
+  /**
+   * One call, and the button says so while it runs.
+   *
+   * A gym block is one week written once, so there is no progress bar to draw and no week-by-week
+   * fill to narrate. What comes back is the month, plus whatever the check found — and the check's
+   * findings go to the coach rather than being acted on automatically, because the coach is the
+   * one carrying the responsibility (see lib/gym-brief.js).
+   */
+  function submit(answers) {
+    var btn = el("gxCreate");
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "Building…";
+    }
+    var url = typeof window.adminApiUrl === "function" ? window.adminApiUrl("/api/gym-coach") : "/api/gym-coach";
+    var payload = { gymIntake: answers };
+    if (typeof window.withAdminPassword === "function") payload = window.withAdminPassword(payload);
+    var headers = typeof window.adminAuthHeaders === "function"
+      ? window.adminAuthHeaders()
+      : { "Content-Type": "application/json" };
+
+    fetch(url, { method: "POST", headers: headers, body: JSON.stringify(payload) })
+      .then(function (r) {
+        return r.json().then(function (j) {
+          return { ok: r.ok, status: r.status, j: j || {} };
+        });
+      })
+      .then(function (x) {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = "Build the block";
+        }
+        if (!x.ok || !x.j.ok) {
+          setErr(x.j.error || "The coach could not build this block.");
+          return;
+        }
+        /* The page that owns the client list decides what to do with a finished block; this
+           card's job ends when it has one. */
+        if (typeof window.gymIntakeSubmit === "function") {
+          window.gymIntakeSubmit(answers, x.j);
+          return;
+        }
+        window.gymLastBlock = x.j;
+        setErr("");
+        closeGymIntake();
+      })
+      .catch(function (e) {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = "Build the block";
+        }
+        setErr("Network error: " + String((e && e.message) || e).slice(0, 120));
+      });
+  }
 
   /* ── the door in, and the door out ───────────────────────────────────────── */
 
