@@ -3939,8 +3939,12 @@ function renderPeopleStrip() {
     /* Both numbers, always. When the owner reported "all my athletes disappeared" there
        was no way to tell from the screen whether the athlete half had come back empty or
        had never answered — so now the screen says. */
+    /* PEOPLE, not chips. "ניהול כללי" is the first chip in the strip and it is not a
+       client — it is his own book — so counting the strip counted it as one, and the
+       line said three where there were two (owner, 2026-09-30). */
+    var people = rows.filter(function (r) { return r && r.kind !== "ledger"; });
     countEl.textContent =
-      rows.length + " לקוחות · " + list.length + " מתאמנים · " +
+      people.length + " לקוחות · " + list.length + " מתאמנים · " +
       (programsAnswered ? progs.length + " תוכניות" : clientHalfFailed ? "לא נטענו" : "טוען תוכניות…");
   }
   try {

@@ -802,4 +802,18 @@ ok(
   ).indexOf("(₪1,000)") < 0
 );
 
+
+/* "ניהול כללי" is the first chip in the strip and it is not a client — it is his own
+   book. Counting the strip counted it as one (owner, 2026-09-30). */
+ok(
+  "the header counts people, not chips",
+  /var people = rows\.filter\(function \(r\) \{ return r && r\.kind !== "ledger"; \}\);/.test(page)
+);
+ok("and the count line uses that", /people\.length \+ " לקוחות/.test(page));
+ok(
+  "two clients and the book make two",
+  Strip.rows({ athletes: [], programs: [{ programId: "p1", clientName: "א" }, { programId: "p2", clientName: "ב" }] })
+    .filter(function (r) { return r.kind !== "ledger"; }).length === 2
+);
+
 console.log("\nAll admin ledger page checks passed (" + passed + " assertions).");
