@@ -46,9 +46,14 @@ function resolveAppVersion() {
   }
 }
 const APP_VERSION = resolveAppVersion();
-const HAMAMEN_SYSTEM = require("./hamamen-prompt.js");
-const COACH_POLICY = require("./coach-policy.js");
-const COACH_FOUNDATION_BRIEF = require("./coach-foundation-brief.js");
+/* IN lib/, NOT BESIDE THIS FILE. These three are text — the coach's system prompt, his policy
+   book and his foundation brief — and never answered a web request in their lives. Vercel turns
+   every file in api/ into a deployed function regardless, and the free plan stops at twelve; we
+   were sitting on the ceiling with five of the twelve being text (2026-09-30). Moved, not
+   changed: the strings are byte-identical and their generators write to the new place. */
+const HAMAMEN_SYSTEM = require("../lib/hamamen-prompt.js");
+const COACH_POLICY = require("../lib/coach-policy.js");
+const COACH_FOUNDATION_BRIEF = require("../lib/coach-foundation-brief.js");
 const COACH_LAYER2_OPS_BRIEF = require("../lib/coach-layer2-ops-brief.js");
 /* The layer pack. Replaces the two briefs above on the PROGRAMMING path only — see
    buildLayerKnowledgeBlock. Wired 2026-09-03, after all fifteen modules were reviewed line by
@@ -150,7 +155,7 @@ function buildCostCapsRuntimeNote(profile) {
   return "\n" + lines.join("\n") + "\n";
 }
 const { checkRateLimit, sendRateLimit } = require("../lib/rate-limit.js");
-const { scrubMessages, scrubProfile, scrubPiiText } = require("./sanitize-pii.js");
+const { scrubMessages, scrubProfile, scrubPiiText } = require("../lib/sanitize-pii.js");
 /* Admin dashboard — optional coach directives from admin snapshots */
 let getCoachDirectives = function () {
   return "";

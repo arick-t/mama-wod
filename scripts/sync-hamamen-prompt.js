@@ -8,5 +8,5 @@ if (!m) {
   process.exit(1);
 }
 const body = m[1].replace(/\r\n/g, "\n").replace(/\n/g, "\r\n");
-fs.writeFileSync(path.join(root, "api/hamamen-prompt.js"), "module.exports = " + JSON.stringify(body) + ";\n");
+fs.writeFileSync(path.join(root, "lib/hamamen-prompt.js"), "module.exports = " + JSON.stringify(body) + ";\n");
 console.log("synced", body.length, "chars");
