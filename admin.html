@@ -8100,6 +8100,9 @@ tryRestoreAdminSession();
 <!-- A brick as a spreadsheet. Pure: it turns a programme into a grid and the grid into
      the two things a spreadsheet understands. The page does the pressing. -->
 <script src="lib/brick-export.js"></script>
+<!-- A real .xlsx, written by hand: a zip of small XML files, stored uncompressed, so
+     the sheet can say "this column is wide and this cell wraps" without a library. -->
+<script src="lib/xlsx-lite.js"></script>
 <script>
 /* ══════════════════════════════════════════════════════════════════════════
    THE CLIENT SCREEN — moved here whole from admin-clients.html.
@@ -10638,16 +10641,31 @@ tryRestoreAdminSession();
     }
   }
 
+  /**
+   * The file he opens in Excel.
+   *
+   * It was a CSV, and a CSV carries no formatting at all — so every session arrived in
+   * a cell one line tall and he could not read a word of it (owner, 2026-09-30). This
+   * is a real .xlsx: wide columns, wrapped text, rows that grow to hold a session, and
+   * a sheet that reads right to left.
+   */
   function downloadBrickCsv() {
     var g = brickGrid();
     if (!g) { banner("bad", "אין לבנה להוריד."); return; }
     var E = window.BrickExport;
+    var X = window.XlsxLite;
     try {
-      var blob = new Blob([E.csv(g)], { type: "text/csv;charset=utf-8" });
+      var bytes = X.build(E.sheetRows(g), {
+        columns: g.width,
+        /* Wide enough for "Back Squat — 5x5 @ 70%" without breaking it in two. */
+        colWidth: 34,
+        sheetName: "לבנה",
+      });
+      var blob = new Blob([bytes], { type: X.MIME });
       var url = URL.createObjectURL(blob);
       var a = document.createElement("a");
       a.href = url;
-      a.download = E.fileName(S.program, currentBlockIndex());
+      a.download = E.fileName(S.program, currentBlockIndex(), "xlsx");
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
