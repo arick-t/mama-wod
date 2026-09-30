@@ -419,7 +419,7 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .led-clients .led-row.is-editing{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 /* The settings panel, floated beside a pencil that lives outside the client's own
    screen. Same panel, same fields, same handlers — only the box around it is here. */
-.client-settings-float{position:fixed;z-index:1400}
+.client-settings-float{position:fixed;z-index:1400;width:min(340px,calc(100vw - 16px))}
 .client-settings-float .ath-stats-pop{position:static;margin:0;box-shadow:0 18px 44px rgba(0,0,0,.55)}
 /* A fact with nothing to change yet says so, quietly, where its field would be. */
 .ath-fact-static{font-size:12px;color:var(--text-muted)}
@@ -8536,10 +8536,18 @@ tryRestoreAdminSession();
     document.body.appendChild(host);
     if (anchor && anchor.getBoundingClientRect) {
       var r = anchor.getBoundingClientRect();
-      var top = Math.min(r.bottom + 6, window.innerHeight - 40);
-      host.style.top = Math.max(8, top) + "px";
       /* The page is RTL: pin the panel's inline-start edge to the pencil. */
-      host.style.right = Math.max(8, window.innerWidth - r.right) + "px";
+      var w = host.offsetWidth || 340;
+      /* Beside the pencil, and never off either edge. */
+      host.style.right = Math.max(8, Math.min(window.innerWidth - r.right, window.innerWidth - w - 8)) + "px";
+      host.style.top = "0px";
+      /* Below the pencil if it fits, above it if it does not. The clients table sits at
+         the foot of a long page, and a panel opened from the last row hung off the
+         bottom of the screen (owner, 2026-09-30). */
+      var h = host.offsetHeight || 260;
+      var below = r.bottom + 6;
+      var top = below + h <= window.innerHeight - 8 ? below : r.top - h - 6;
+      host.style.top = Math.max(8, Math.min(top, window.innerHeight - h - 8)) + "px";
     }
     /* A press anywhere else puts it away — but not the press that opened it. */
     setTimeout(function () {

@@ -395,4 +395,12 @@ ok("a field nobody sent is a field nobody changed",
   onlyFrozen.ok && onlyFrozen.sub.name === "עודד מכינה" && onlyFrozen.sub.price === 100);
 ok("and the one that was sent did change", onlyFrozen.sub.active === false);
 
+
+/* A price agreed for "the next bill" has to follow the date when the date moves, or
+   the screen promises a change on a day the money no longer falls on. */
+let movedWithPending = L.setSubscriptionPrice(subs, "p_oded", 1200, "next", { today: "2026-09-10", clock: clock }).store;
+const afterMove = L.setBillingDay(movedWithPending, "p_oded", 7, { today: "2026-09-10", clock: clock });
+ok("moving the billing day moves the coming price with it", afterMove.sub.pending.from === afterMove.from);
+ok("and the price itself is untouched", afterMove.sub.pending.price === 1200);
+
 console.log("\nAll coach ledger checks passed (" + passed + " assertions).");
