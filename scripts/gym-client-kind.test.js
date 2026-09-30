@@ -63,4 +63,18 @@ ok("it reads the gym questionnaire's answers", /body\.gymIntake/.test(api));
 ok("a gym client is not asked for the studio questionnaire", /!isBlank && !isGym/.test(api));
 ok("and the container is shared on purpose, with the reason written down", /One way to lay a month out; two ways to fill it/.test(api));
 
+/* --- the door itself. Without it the kind exists and nobody can reach it. -------- */
+
+const adminHtml = fs.readFileSync(path.join(root, "admin.html"), "utf8");
+ok("the chooser offers a gym client", adminHtml.indexOf("chooseClientKind('gym')") >= 0);
+ok("with a name the owner uses", /מתאמן חדר כושר/.test(adminHtml));
+ok("and a colour of its own, like the other three", adminHtml.indexOf(".client-kind-card.is-gym{") >= 0);
+ok("choosing it opens the GYM questionnaire", /if \(kind === "gym"\)[\s\S]{0,120}openGymIntake/.test(adminHtml));
+ok("and never the functional one", !/if \(kind === "gym"\)[\s\S]{0,200}startIntakeChat/.test(adminHtml));
+
+/* The three existing doors are untouched. */
+["athlete", "blank", "coach"].forEach(function (k) {
+  ok("the door to '" + k + "' still exists", adminHtml.indexOf("chooseClientKind('" + k + "')") >= 0);
+});
+
 console.log("\nסוג לקוח רביעי — קיים, בן שישה שבועות, ומוח הקרוספיט מסרב לו.");

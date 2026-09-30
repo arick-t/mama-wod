@@ -1294,6 +1294,9 @@ textarea#directives-input:focus{outline:2px solid var(--brand);border-color:tran
 .client-kind-card.is-athlete .ck-title{color:#9adcf5}
 .client-kind-card.is-athlete:hover{border-color:#7DD3F0;background:rgba(125,211,240,.13)}
 .client-kind-card.is-blank{border-inline-start-color:#4EC9B0;background:rgba(78,201,176,.06)}
+.client-kind-card.is-gym{border-inline-start-color:#E0A458;background:rgba(224,164,88,.06)}
+.client-kind-card.is-gym .ck-title{color:#efc189}
+.client-kind-card.is-gym:hover{border-color:#E0A458;background:rgba(224,164,88,.13)}
 .client-kind-card.is-blank .ck-title{color:#79dcc7}
 .client-kind-card.is-blank:hover{border-color:#4EC9B0;background:rgba(78,201,176,.13)}
 .client-kind-card.is-coach{border-inline-start-color:#B57BE8;background:rgba(181,123,232,.06)}
@@ -2318,6 +2321,11 @@ header{flex-wrap:wrap;row-gap:8px}
         <span class="ck-title">לקוח ריק</span>
         <span class="ck-desc">בלי תחקור. שם, מין, תשלום — וחודש של ימים ריקים שאתה כותב בעצמך.
           לינק, קוד ומסירה בדיוק כמו כל לקוח אחר.</span>
+      </button>
+      <button type="button" class="client-kind-card is-gym" onclick="chooseClientKind('gym')">
+        <span class="ck-title">מתאמן חדר כושר</span>
+        <span class="ck-desc">אדם אחד בחדר כושר מסחרי. תחקור משלו — פיצול לפי מספר האימונים,
+          ציוד המכון, מגבלות, מטרות → לבנה של שישה שבועות. מוח נפרד, לא הקרוספיט.</span>
       </button>
       <button type="button" class="client-kind-card is-coach" onclick="chooseClientKind('coach')">
         <span class="ck-title">מאמן / סטודיו</span>
@@ -6915,6 +6923,12 @@ function chooseClientKind(kind) {
   /* Four questions and a month of empty squares — no questionnaire at all. */
   if (kind === "blank") {
     openBlankClientForm();
+    return;
+  }
+  /* Its own questionnaire, its own brain. Nothing about a gym client goes through the
+     functional path — see lib/gym-intake.js and lib/gym-layers/. */
+  if (kind === "gym") {
+    if (typeof openGymIntake === "function") openGymIntake();
     return;
   }
   if (kind === "coach") {
