@@ -15,6 +15,7 @@ let passed = 0;
 function ok(name, cond) {
   assert.ok(cond, name);
   passed += 1;
+
   console.log("ok —", name);
 }
 
@@ -105,9 +106,19 @@ async function main() {
   ok("an empty month opens", empty.status === 200 && empty.body.ok === true);
   ok("with nothing in it", empty.body.deals.length === 0 && empty.body.total === 0);
   ok("and no favourites yet", empty.body.favourites.length === 0);
+  /* Three fixed objects, and the third is the whole arrangement book: every client
+     who pays monthly, in one read. The count is the point — a screen that reads once
+     per client is the shape that had the store suspended on 2026-09-02. */
   ok(
-    "opening a month reads the month and the places — nothing else",
-    reads.length === 2 && reads[0] === "coach-ledger/2026-09.json" && reads[1] === "coach-ledger/places.json"
+    "opening a month reads the subscriptions, the month and the places — nothing else",
+    reads.length === 3 &&
+      reads.indexOf("coach-ledger/subscriptions.json") >= 0 &&
+      reads.indexOf("coach-ledger/2026-09.json") >= 0 &&
+      reads.indexOf("coach-ledger/places.json") >= 0
+  );
+  ok(
+    "and the count does not grow with the number of monthly clients",
+    reads.filter(function (k) { return k.indexOf("subscriptions") >= 0; }).length === 1
   );
   ok("and it never lists the store", reads.every(function (k) { return k.endsWith(".json"); }));
 
@@ -154,7 +165,13 @@ async function main() {
   const range = await call({ action: "range", from: "2026-09-28", to: "2026-10-04" });
   ok("a week across a month boundary answers", range.status === 200 && range.body.ok === true);
   ok("it sees both sides of the boundary", range.body.months.length === 2);
-  ok("and reads exactly the two months it touches", reads.length === 2);
+  /* Two months, plus the one arrangement book that says which bills are still ahead —
+     and that one is read once however many monthly clients there are. */
+  ok("and reads exactly the two months it touches, plus the arrangements", reads.length === 3);
+  ok(
+    "the arrangements are read once, not once per client",
+    reads.filter(function (k) { return k.indexOf("subscriptions") >= 0; }).length === 1
+  );
   ok("the rows are newest first", range.body.deals[0].day === "2026-10-02");
   ok("with the sum of what is shown", range.body.total === range.body.deals.reduce(function (s, d) { return s + d.price; }, 0));
 
@@ -168,10 +185,10 @@ async function main() {
   reads.length = 0;
   const year = await call({ action: "range", from: "2026-01-01", to: "2026-12-31" });
   ok("a year answers", year.status === 200 && year.body.ok === true);
-  ok("and reads twelve objects at most", reads.length <= 12);
+  ok("and reads twelve months at most, plus the arrangements", reads.length <= 13);
   reads.length = 0;
   await call({ action: "range", from: "2020-01-01", to: "2026-12-31" });
-  ok("seven years is still capped at twelve", reads.length <= 12);
+  ok("seven years is still capped at twelve", reads.length <= 13);
 
   /* --- last month is still last month ------------------------------------ */
 
@@ -265,6 +282,212 @@ async function main() {
   ok("the endpoint never lists the store", !/listJson/.test(src));
   ok("it holds no route to a provider", !/gemini|groq|generativelanguage/i.test(src));
   ok("and it checks the owner before it touches storage", src.indexOf("checkAdminAuth") < src.indexOf("readMonth(month)"));
+
+  /* --- the monthly client ------------------------------------------------ */
+
+  /* Oded was handed his programme on the 5th of September. From that day the studio
+     pays every month, and the book has to know it without being told again. */
+  /* Everything above has already written deals into September, so what is asserted
+     here is the DIFFERENCE the monthly client makes — a fixed number would only be
+     asserting how many tests ran before this one. */
+  const beforeMonth = (await call({ action: "month", month: "2026-09" })).body.total;
+  const beforeOwed = (await call({ action: "uninvoiced", today: "2026-09-22" })).body.total;
+
+  const born = await call({
+    action: "save_subscription",
+    clientId: "p_oded",
+    name: "עודד מכינה",
+    service: "תוכנית אימון מכינה",
+    price: 900,
+    method: "ביט",
+    colour: "#4CAF70",
+    startDay: "2026-09-05",
+    today: "2026-09-22",
+  });
+  ok("a client handed a programme becomes a monthly client", born.status === 200 && born.body.subscriptions.length === 1);
+  ok("the handover day becomes the billing day", born.body.subscription.billingDay === 5);
+
+  /* The bill for September fell due on the 5th, and today is the 22nd: it is written. */
+  const sept = await call({ action: "month", month: "2026-09", today: "2026-09-22" });
+  const odedRow = sept.body.deals.filter(function (d) { return d.clientId === "p_oded"; })[0];
+  ok("the bill was written into the month it belongs to", !!odedRow && odedRow.day === "2026-09-05");
+  ok("it is a row like any other, not a promise", odedRow.projected !== true);
+  ok("and it says what it is", odedRow.nature === "recurring");
+  ok("the month is worth nine hundred more than it was", sept.body.total === beforeMonth + 900);
+
+  /* Opening the book again must not bill him twice — the thing that would cost real
+     money if it ever broke. */
+  const again = await call({ action: "month", month: "2026-09", today: "2026-09-22" });
+  ok(
+    "opening the book twice does not bill him twice",
+    again.body.deals.filter(function (d) { return d.clientId === "p_oded"; }).length === 1
+  );
+
+  /* A month ahead is drawn, never written. */
+  writes.length = 0;
+  const oct = await call({ action: "month", month: "2026-10", today: "2026-09-22" });
+  const octRow = oct.body.deals.filter(function (d) { return d.clientId === "p_oded"; })[0];
+  ok("next month's bill is on the calendar", !!octRow && octRow.day === "2026-10-05");
+  ok("and it is marked as a promise, not a record", octRow.projected === true);
+  ok("looking at a month ahead writes nothing at all", writes.length === 0);
+
+  /* His colour is chosen on his tab and has to be the same everywhere. */
+  ok("the colour chosen on his tab reaches the book", oct.body.colours["עודד מכינה"] === "#4CAF70");
+
+  /* What is owed includes him. */
+  const due = await call({ action: "uninvoiced", today: "2026-09-22" });
+  ok("an unbilled monthly client is part of what is owed", due.body.total === beforeOwed + 900);
+
+  /* --- a price that changes --------------------------------------------- */
+
+  const later = await call({
+    action: "set_subscription_price",
+    clientId: "p_oded",
+    price: 1000,
+    mode: "next",
+    today: "2026-09-22",
+  });
+  ok("a price agreed today starts at the next bill", later.body.from === "2026-10-05");
+  ok("and the standing price is still the old one", later.body.subscription.price === 900);
+  const octAfter = await call({ action: "month", month: "2026-10", today: "2026-09-22" });
+  ok(
+    "so next month is drawn at the new price",
+    octAfter.body.deals.filter(function (d) { return d.clientId === "p_oded"; })[0].price === 1000
+  );
+  const septAfter = await call({ action: "month", month: "2026-09", today: "2026-09-22" });
+  ok(
+    "and the month already billed is untouched",
+    septAfter.body.deals.filter(function (d) { return d.clientId === "p_oded"; })[0].price === 900
+  );
+
+  /* --- frozen, and gone -------------------------------------------------- */
+
+  await call({ action: "save_subscription", clientId: "p_oded", active: false, today: "2026-09-22" });
+  const octFrozen = await call({ action: "month", month: "2026-10", today: "2026-09-22" });
+  ok(
+    "a frozen client is not billed again",
+    octFrozen.body.deals.filter(function (d) { return d.clientId === "p_oded"; }).length === 0
+  );
+  ok("but he is still in the book", octFrozen.body.subscriptions.length === 1);
+  ok("freezing forgets nothing about him", octFrozen.body.subscriptions[0].price === 900);
+
+  const removed = await call({ action: "delete_subscription", clientId: "p_oded" });
+  ok("deleting the client empties the arrangement", removed.status === 200 && removed.body.subscriptions.length === 0);
+  const septKept = await call({ action: "month", month: "2026-09", today: "2026-09-22" });
+  ok(
+    "what he already paid stays written",
+    septKept.body.deals.filter(function (d) { return d.clientId === "p_oded"; }).length === 1
+  );
+  ok("a subscription that is not there says so", (await call({ action: "delete_subscription", clientId: "nobody" })).status === 404);
+  ok("a subscription needs a client", (await call({ action: "save_subscription", name: "אף אחד" })).body.code === "NO_CLIENT");
+
+  /* Every client in the module sends its name and colour here when either changes.
+     Only the ones who actually pay monthly belong in this book. */
+  const renamedOnly = await call({ action: "save_subscription", clientId: "p_someone", name: "מישהו", colour: "#E8451A" });
+  ok("renaming a client who pays nothing invents no arrangement",
+    renamedOnly.status === 200 && renamedOnly.body.subscriptions.length === 0);
+  ok("a billing day of 45 is refused", (await call({ action: "set_billing_day", clientId: "p_oded", day: 45 })).status === 404);
+
+
+  /* --- what the bill is called ------------------------------------------- */
+
+  /* The first intake has no "what is this for" field at all, so a new arrangement is
+     born with the plain answer and he corrects it from the row (owner, 2026-09-22). */
+  const noService = await call({
+    action: "save_subscription",
+    clientId: "p_studio",
+    name: "סטודיו ב",
+    price: 500,
+    startDay: "2026-09-02",
+    today: "2026-09-22",
+  });
+  ok("a new arrangement is called something", noService.body.subscription.service === "תוכנית אימון");
+
+  const renamedService = await call({
+    action: "set_subscription_service",
+    clientId: "p_studio",
+    service: "תוכנית אימון מכינה",
+    month: "2026-09",
+    today: "2026-09-22",
+  });
+  ok("and he can say what it really is", renamedService.body.subscription.service === "תוכנית אימון מכינה");
+  const studioMonth = await call({ action: "month", month: "2026-09", today: "2026-09-22" });
+  const studioRow = studioMonth.body.deals.filter(function (d) { return d.clientId === "p_studio"; })[0];
+  ok("the bill on screen takes the new words", studioRow.service === "תוכנית אימון מכינה");
+
+  /* A bill he has already invoiced is what it was billed as. */
+  await call({ action: "update_deal", id: studioRow.id, month: "2026-09", invoiced: true });
+  await call({ action: "set_subscription_service", clientId: "p_studio", service: "משהו אחר", month: "2026-09" });
+  const afterInvoice = await call({ action: "month", month: "2026-09", today: "2026-09-22" });
+  ok(
+    "but one already invoiced keeps the words it was invoiced with",
+    afterInvoice.body.deals.filter(function (d) { return d.clientId === "p_studio"; })[0].service === "תוכנית אימון מכינה"
+  );
+  ok(
+    "while the next bill carries the new ones",
+    afterInvoice.body.subscriptions.filter(function (x) { return x.clientId === "p_studio"; })[0].service === "משהו אחר"
+  );
+  ok("a service cannot be blanked into nothing",
+    (await call({ action: "set_subscription_service", clientId: "p_studio", service: "   " })).body.subscription.service === "תוכנית אימון");
+  ok("and a client with no arrangement has no service to change",
+    (await call({ action: "set_subscription_service", clientId: "nobody", service: "x" })).status === 404);
+
+
+  /* --- freezing and deleting take the future with them --------------------
+   * "מחיקה/הקפאה של לקוח == מחיקה גורפת החל מרגע המחיקה של העסקאות העתידיות — הישנות
+   * לא ימחקו" (owner, 2026-09-30).
+   * ------------------------------------------------------------------------- */
+
+  const FUT = "p_future";
+  await call({
+    action: "save_subscription", clientId: FUT, name: "סטודיו עתידי", price: 300,
+    startDay: "2026-08-05", today: "2026-09-24",
+  });
+  /* Two lines by hand, one behind him and one ahead of him. */
+  await call({ action: "add_deal", day: "2026-09-02", name: "סטודיו עתידי", price: 111, clientId: FUT });
+  const futureAdd = await call({ action: "add_deal", day: "2026-11-20", name: "סטודיו עתידי", price: 222, clientId: FUT });
+  ok("a line can be written ahead of today", futureAdd.status === 200);
+
+  const frozenRes = await call({ action: "save_subscription", clientId: FUT, active: false, today: "2026-09-24" });
+  ok("freezing him clears what was still ahead", frozenRes.body.purgedFuture >= 1);
+  const novAfter = await call({ action: "month", month: "2026-11", today: "2026-09-24" });
+  ok(
+    "so November holds nothing of his",
+    novAfter.body.deals.filter(function (d) { return d.clientId === FUT; }).length === 0
+  );
+  const augAfter = await call({ action: "month", month: "2026-08", today: "2026-09-24" });
+  ok(
+    "and August, which he already paid for, is untouched",
+    augAfter.body.deals.filter(function (d) { return d.clientId === FUT; }).length === 1
+  );
+
+  /* Deleting does the same, and leaves the same history behind. */
+  await call({ action: "save_subscription", clientId: FUT, active: true, today: "2026-09-24" });
+  await call({ action: "add_deal", day: "2026-12-05", name: "סטודיו עתידי", price: 333, clientId: FUT });
+  const deleted = await call({ action: "delete_subscription", clientId: FUT, today: "2026-09-24" });
+  ok("deleting him clears what was still ahead too", deleted.body.purgedFuture >= 1);
+  const decAfter = await call({ action: "month", month: "2026-12", today: "2026-09-24" });
+  ok(
+    "December is empty of him",
+    decAfter.body.deals.filter(function (d) { return d.clientId === FUT; }).length === 0
+  );
+  const augStill = await call({ action: "month", month: "2026-08", today: "2026-09-24" });
+  ok(
+    "and what he paid in August is still written",
+    augStill.body.deals.filter(function (d) { return d.clientId === FUT; }).length === 1
+  );
+
+  /* --- the standing order cannot sit past the 28th ------------------------ */
+  await call({
+    action: "save_subscription", clientId: "p_late", name: "מאוחר", price: 100,
+    startDay: "2026-09-30", today: "2026-09-30",
+  });
+  const lateSub = (await call({ action: "subscriptions" })).body.subscriptions
+    .filter(function (x) { return x.clientId === "p_late"; })[0];
+  ok("handing over on the 30th bills on the 1st", lateSub.billingDay === 1);
+  const moved = await call({ action: "set_billing_day", clientId: "p_late", day: 31, today: "2026-09-30" });
+  ok("and asking for the 31st gets the 1st", moved.body.subscription.billingDay === 1);
+  await call({ action: "delete_subscription", clientId: "p_late", today: "2026-09-30" });
 
   console.log("\nAll admin ledger API checks passed (" + passed + " assertions).");
 }

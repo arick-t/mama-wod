@@ -144,7 +144,14 @@ try {
 }
 ok("OPENING THE INTAKE DOES NOT THROW" + (err ? " — got: " + err : ""), err === null);
 ok("the first step is rendered", String(byId("intake-fixed").innerHTML).length > 200);
-ok("the status line survived the render", /שלב 1\//.test(byId("intake-status").textContent));
+/* The step number lives in the header now, beside the way out, where the studio card
+   keeps it — so this line says the other thing instead (owner, 2026-09-22). */
+ok("the status line survived the render", /athlete app/.test(byId("intake-status").textContent));
+ok("and the step is named in the header", /Step 1 of 8/.test(byId("athleteIntakeStep").textContent));
+ok("with a strip of steps beside it", byId("athleteIntakeTabs").innerHTML.indexOf("Profile") >= 0);
+ok("the one he is on is the only one lit", (byId("athleteIntakeTabs").innerHTML.match(/class="on"/g) || []).length === 1);
+ok("and the rest are shut until he reaches them",
+  (byId("athleteIntakeTabs").innerHTML.match(/disabled/g) || []).length === 7);
 
 /* --- every step must render, not just the first ---------------------------- */
 

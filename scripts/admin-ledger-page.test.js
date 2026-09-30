@@ -248,7 +248,8 @@ ok("an empty range says so", V.tableHtml([], 0, {}, null).indexOf("אין עסק
 
 /* --- the record: sorted by its headers, and his own invoice tick ----------- */
 
-ok("every column is a button", (table.match(/data-led-sort=/g) || []).length === 5);
+ok("every column is a button", (table.match(/data-led-sort=/g) || []).length === 6);
+ok("and one of them is what kind of line this is", table.indexOf('data-led-sort="nature"') >= 0);
 ok("including the invoice column he fills himself", table.indexOf('data-led-sort="invoiced"') >= 0);
 ok("each row carries its tick", (table.match(/data-led-invoiced=/g) || []).length === 2);
 const tickedTable = V.tableHtml([{ id: "x", day: "2026-09-03", name: "a", price: 1, invoiced: true }], 1, {}, null);
@@ -265,7 +266,7 @@ const nasty = V.dayDealsHtml([{ id: "x", day: "2026-09-03", name: '<img src=x on
 ok("a place name cannot inject markup", nasty.indexOf("<img src=x") < 0 && nasty.indexOf("&lt;img") >= 0);
 const nastyList = V.placeListHtml(['"><script>alert(1)</script>']);
 ok("neither can one in the autocomplete list", nastyList.indexOf("<script>alert(1)") < 0);
-const nastyFavBox = V.favouritesBoxHtml({ places: [{ name: '"><img src=x onerror="alert(1)">', uses: 1, service: "", price: 1 }], open: true });
+const nastyFavBox = V.clientsBoxHtml({ places: [{ name: '"><img src=x onerror="alert(1)">', uses: 1, service: "", price: 1 }], open: true });
 ok("nor one in the favourites box", nastyFavBox.indexOf("<img src=x") < 0);
 
 /* --- what this screen is not -------------------------------------------- */
@@ -317,19 +318,20 @@ const favPlaces = [
   { name: "רימון", uses: 7, service: "קבוצתי", price: 250, colour: "#4CAF70" },
   { name: "אולם העירייה", uses: 2, service: "אישי", price: 180, colour: "" },
 ];
-const boxClosed = V.favouritesBoxHtml({ places: favPlaces });
+const boxClosed = V.clientsBoxHtml({ places: favPlaces });
 ok("the box is folded away by default", boxClosed.indexOf("led-fav-rows") < 0);
 ok("but says how many are in it", boxClosed.indexOf("led-fold-count") >= 0);
-const boxOpen = V.favouritesBoxHtml({ places: favPlaces, open: true });
+const boxOpen = V.clientsBoxHtml({ places: favPlaces, open: true });
 ok("opening it lists everyone", (boxOpen.match(/data-led-fav="/g) || []).length === 2);
-ok("busiest first, with the count visible", boxOpen.indexOf("7 פעמים") >= 0);
+ok("busiest first, with the count visible", boxOpen.indexOf("(7)") >= 0);
+ok("and the busiest really is first", boxOpen.indexOf("רימון") < boxOpen.indexOf("אולם"));
 ok("each name has a pencil", (boxOpen.match(/data-led-fav-edit=/g) || []).length === 2);
 ok("a coloured place shows its colour", boxOpen.indexOf("border-inline-start:3px solid #4CAF70") >= 0);
-const boxEditing = V.favouritesBoxHtml({ places: favPlaces, open: true, editing: "רימון" });
+const boxEditing = V.clientsBoxHtml({ places: favPlaces, open: true, editing: "רימון" });
 ok("the pencil opens a name field", boxEditing.indexOf('id="ledFavName"') >= 0);
 ok("and a palette", (boxEditing.match(/data-led-fav-colour="#/g) || []).length === V.DEFAULT_COLOURS.length);
 ok("including a way back to no colour", boxEditing.indexOf('data-led-fav-colour=""') >= 0);
-ok("an empty box invites the first", V.favouritesBoxHtml({ places: [], open: true }).indexOf("עוד לא נתת שירות") >= 0);
+ok("an empty box invites the first", V.clientsBoxHtml({ places: [], open: true }).indexOf("עוד לא נתת שירות") >= 0);
 
 /* The colour is the point: it must reach both the day and the table. */
 ok(
@@ -568,8 +570,8 @@ ok(
 );
 
 
-ok("a place can be removed from the list", V.favouritesBoxHtml({ places: [{ name: "x", uses: 2, service: "", price: 1 }], open: true }).indexOf("data-led-fav-del") >= 0);
-ok("one visit is not \"1 times\"", V.favouritesBoxHtml({ places: [{ name: "x", uses: 1, service: "", price: 1 }], open: true }).indexOf("פעם אחת") >= 0);
+ok("a place can be removed from the list", V.clientsBoxHtml({ places: [{ name: "x", uses: 2, service: "", price: 1 }], open: true }).indexOf("data-led-fav-del") >= 0);
+ok("a single visit is written the same way", V.clientsBoxHtml({ places: [{ name: "x", uses: 1, service: "", price: 1 }], open: true }).indexOf("(1)") >= 0);
 ok("removing one warns that the sessions stay", /האימונים שכבר נרשמו לא ימחקו/.test(page));
 ok("and the autocomplete is re-read afterwards", /action: "delete_place"[\s\S]{0,700}loadMonth\(LS\.month\)/.test(page));
 
@@ -624,5 +626,194 @@ ok("a ticked row is not counted",
   Ledger.uninvoicedTotal([{ price: 100, invoiced: true }, { price: 40 }]) === 40);
 ok("and rubbish in a price is not counted either",
   Ledger.uninvoicedTotal([{ price: "x" }, { price: 25 }]) === 25);
+
+
+/* --- the monthly client, on screen ---------------------------------------
+ * A studio that pays every month is a different animal from a session he gave at a
+ * gym, and the screen has to say so in three places at once: the table column, the
+ * frame on the calendar, and the favourites list (owner, 2026-09-22).
+ * ------------------------------------------------------------------------- */
+
+const oded = {
+  id: "sub:p_oded:2026-09",
+  day: "2026-09-05",
+  name: "עודד מכינה",
+  service: "תוכנית אימון מכינה",
+  price: 900,
+  nature: "recurring",
+  clientId: "p_oded",
+  invoiced: false,
+};
+const gig = { id: "d1", day: "2026-09-03", name: "מ1", service: "אימון קבוצתי", price: 250, nature: "once" };
+
+const mixedTable = V.tableHtml([oded, gig], 1150, {}, { by: "day", dir: 1 }, { grouped: false });
+ok("a monthly client says he is recurring", mixedTable.indexOf("חזרתי") >= 0);
+ok("and a session he gave says it is a one-off", mixedTable.indexOf("חד פעמי") >= 0);
+ok("the recurring row is marked for the eye too", mixedTable.indexOf("led-row is-recurring") >= 0);
+ok("and the one-off is not", (mixedTable.match(/is-recurring/g) || []).length === 1);
+
+/* A bill still ahead of its day: nothing to tick, and it says so. */
+const promised = V.tableHtml([Object.assign({}, oded, { projected: true })], 900, {}, null, {});
+ok("a bill that has not come yet offers no invoice tick", promised.indexOf("data-led-invoiced") < 0);
+ok("it says it is expected instead", promised.indexOf("צפוי") >= 0);
+ok("and the row is marked as a promise", promised.indexOf("is-promised") >= 0);
+
+/* The price that is coming, beside the one being charged. */
+const withNext = V.tableHtml([oded], 900, {}, null, {
+  pending: { p_oded: { price: 1000, from: "2026-10-05" } },
+});
+ok("the coming price is shown in brackets", withNext.indexOf("(₪1,000)") >= 0);
+ok("beside the one actually being charged", withNext.indexOf("₪900") >= 0);
+ok("and it names the date it starts", withNext.indexOf("05/10/26") >= 0);
+/* Once the date has come it is not "coming" any more. */
+const afterwards = V.tableHtml([Object.assign({}, oded, { day: "2026-10-05", price: 1000 })], 1000, {}, null, {
+  pending: { p_oded: { price: 1000, from: "2026-10-05" } },
+});
+ok("a bill on or after that date shows one price, not two", afterwards.indexOf("(₪1,000)") < 0);
+
+/* The calendar: a pale yellow frame, and only around the standing income. */
+const subCal = V.calendarHtml({
+  month: "2026-09",
+  totalsByDay: { "2026-09-05": 900, "2026-09-03": 250 },
+  dealsByDay: { "2026-09-05": [oded], "2026-09-03": [gig] },
+  colours: { "עודד מכינה": "#4CAF70" },
+  today: "2026-09-22",
+});
+ok("a standing client is framed on the calendar", subCal.indexOf("led-line is-recurring") >= 0);
+ok("and a session he gave is not", (subCal.match(/is-recurring/g) || []).length === 1);
+ok("the frame is pale yellow", /\.led-line\.is-recurring\{[^}]*rgba\(245,197,24/.test(page));
+ok("and his own colour still paints the line", subCal.indexOf("#4CAF70") >= 0);
+
+/* The favourites box: the people who pay monthly, with the day they pay on. */
+const subs = [
+  { clientId: "p_oded", name: "עודד מכינה", service: "תוכנית אימון מכינה", price: 900, colour: "#4CAF70", billingDay: 5, active: true },
+  { clientId: "p_cold", name: "סטודיו מוקפא", service: "", price: 400, colour: "", billingDay: 1, active: false },
+];
+const fav = V.clientsBoxHtml({
+  open: true,
+  subs: subs,
+  places: [{ name: "מ1", uses: 3, service: "אימון קבוצתי", price: 250 }],
+});
+ok("a monthly client is in the favourites list", fav.indexOf("עודד מכינה") >= 0);
+ok("with the day of the month he pays on", fav.indexOf("ה-5 בחודש") >= 0);
+ok("and it is a button, because he may move it", fav.indexOf('data-led-billing="p_oded"') >= 0);
+ok("a place has no billing date at all", fav.indexOf('led-date">—<') >= 0);
+ok("a frozen client stays in the list", fav.indexOf("סטודיו מוקפא") >= 0);
+ok("greyed out", fav.indexOf("is-frozen") >= 0);
+ok("and says so", fav.indexOf("מוקפא</span>") >= 0);
+ok("with nothing on it left to press", fav.indexOf('data-led-billing="p_cold"') < 0);
+ok("a frozen client keeps what he is worth", fav.indexOf("₪400") >= 0);
+ok("the count is everyone, places and clients together", fav.indexOf('led-fold-count">3') >= 0);
+/* His colour is chosen on his own tab, so the name here is not editable. */
+const favEditing = V.clientsBoxHtml({ open: true, subs: subs, places: [], editing: "עודד מכינה" });
+ok("a monthly client offers his colours", favEditing.indexOf("data-led-sub-colour") >= 0);
+ok("but his name is not a field here — it is decided on his own tab", favEditing.indexOf('id="ledFavName"') < 0);
+
+/* The filter: one kind at a time. */
+const natureBar = V.filtersHtml({ range: "month", nature: "recurring" });
+ok("the record can be asked for one kind at a time", natureBar.indexOf('data-led-filter="nature"') >= 0);
+ok("in his own two words", natureBar.indexOf("חד פעמי") >= 0 && natureBar.indexOf("חזרתי") >= 0);
+ok("and it remembers which one is chosen", /value="recurring" selected/.test(natureBar));
+
+/* The wiring on the page: the handover opens the billing, and nothing else does. */
+ok(
+  "the first press of the handover button opens the billing",
+  /data-oneclick[\s\S]{0,900}if \(!ledgerSub\(\)\) ledgerSync\(\{ startDay: todayIsoForBilling\(\) \}/.test(page)
+);
+ok(
+  "a freeze reaches the book",
+  /set_frozen[\s\S]{0,700}ledgerSync\(\{ active: !makeFrozen \}/.test(page)
+);
+ok(
+  "deleting a client drops his arrangement",
+  /LedgerScreen\.dropClient\(goneId\)/.test(page)
+);
+ok(
+  "a price that moves asks before it is saved",
+  /askPriceChange\([\s\S]{0,400}function \(mode\)[\s\S]{0,200}if \(!mode\)/.test(page)
+);
+ok(
+  "and a rename never carries the price along with it",
+  /if \(!sub\) patch\.price = Number\(p\.monthlyAmount\) \|\| 0;/.test(page)
+);
+
+
+/* The service on a monthly row is the one thing on the line he can type. */
+ok("a monthly row offers its service for editing", mixedTable.indexOf('data-led-sub-service="p_oded"') >= 0);
+ok("a one-off does not", (mixedTable.match(/data-led-sub-service/g) || []).length === 1);
+ok("and it still reads as the text it replaces", /led-service-edit\{[^}]*background:transparent/.test(page));
+
+/* "מהחיוב הבא" must not write the new price onto the client's own screen, or every
+   total there disagrees with the book for a month (owner, 2026-09-22). */
+ok(
+  "a price agreed for the next bill leaves the client screen showing the old one",
+  /commitMeta\(mode === "now" \? next : Number\(sub\.price\) \|\| 0, method/.test(page)
+);
+ok(
+  "with the coming one in brackets beside it",
+  /function pendingPriceNote\(p\)/.test(page) && /ath-fact-next/.test(page)
+);
+
+
+/* The calendar is fed by the page, not by the server answer directly, and what the page
+   hands it used to be name and price ONLY — so the frame had nothing to key on and no
+   square was ever framed. Caught in the browser, not by a test that called the view
+   itself (owner, 2026-09-22). */
+ok(
+  "what the page hands the calendar carries what kind of line it is",
+  /out\[d\.day\]\.push\(\{[\s\S]{0,260}nature: d\.nature/.test(page)
+);
+ok(
+  "and whether the bill has come yet",
+  /out\[d\.day\]\.push\(\{[\s\S]{0,260}projected: d\.projected === true/.test(page)
+);
+ok(
+  "but still not the service — the squares keep the shape he approved",
+  !/out\[d\.day\]\.push\(\{[\s\S]{0,260}service: d\.service/.test(page)
+);
+
+
+/* The table OPENS grouped, so the one field he may type has to be reachable there —
+   not only behind "פירוט מלא" (owner, 2026-09-22). */
+const oneClientGroup = L.groupByPlace([oded]);
+ok("a group that is one client's knows whose it is", oneClientGroup[0].clientId === "p_oded");
+ok("and says it is recurring", oneClientGroup[0].nature === "recurring");
+const groupedTable = V.tableHtml(oneClientGroup, 900, {}, null, { grouped: true });
+ok("so the grouped line offers its service for editing too", groupedTable.indexOf('data-led-sub-service="p_oded"') >= 0);
+const placeGroup = V.tableHtml(L.groupByPlace([gig]), 250, {}, null, { grouped: true });
+ok("a place's line does not", placeGroup.indexOf("data-led-sub-service") < 0);
+const bothGroup = L.groupByPlace([oded, Object.assign({}, gig, { name: "עודד מכינה", clientId: "" })]);
+ok("a name covering both kinds claims neither", bothGroup[0].nature === "");
+ok("so nothing on that line is offered for editing",
+  V.tableHtml(bothGroup, 1150, {}, null, { grouped: true }).indexOf("data-led-sub-service") < 0);
+
+
+/* The coming price on the grouped line — where the table actually opens. */
+const groupPending = { pending: { p_oded: { price: 1000, from: "2026-10-05" } }, grouped: true };
+ok(
+  "one bill shows the coming price on its grouped line",
+  V.tableHtml(L.groupByPlace([oded]), 900, {}, null, groupPending).indexOf("(₪1,000)") >= 0
+);
+ok(
+  "but a sum of several months says only the sum",
+  V.tableHtml(
+    L.groupByPlace([oded, Object.assign({}, oded, { id: "sub:p_oded:2026-10", day: "2026-10-05", price: 1000 })]),
+    1900, {}, null, groupPending
+  ).indexOf("(₪1,000)") < 0
+);
+
+
+/* "ניהול כללי" is the first chip in the strip and it is not a client — it is his own
+   book. Counting the strip counted it as one (owner, 2026-09-30). */
+ok(
+  "the header counts people, not chips",
+  /var people = rows\.filter\(function \(r\) \{ return r && r\.kind !== "ledger"; \}\);/.test(page)
+);
+ok("and the count line uses that", /people\.length \+ " לקוחות/.test(page));
+ok(
+  "two clients and the book make two",
+  Strip.rows({ athletes: [], programs: [{ programId: "p1", clientName: "א" }, { programId: "p2", clientName: "ב" }] })
+    .filter(function (r) { return r.kind !== "ledger"; }).length === 2
+);
 
 console.log("\nAll admin ledger page checks passed (" + passed + " assertions).");
