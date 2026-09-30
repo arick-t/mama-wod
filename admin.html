@@ -2190,6 +2190,32 @@ header{flex-wrap:wrap;row-gap:8px}
     </div>
     </div>
 
+    <!-- THE GYM QUESTIONNAIRE. A sibling of the studio card on purpose: .fld, .chk-row,
+         .pick-row, .sub-branch, .inline-num and .grid2 are all scoped to #clientScreen, so a
+         card built anywhere else would silently lose every one of them. Same look, and the
+         plumbing underneath is entirely separate — see admin-gym-intake.js. -->
+    <div class="card" id="gymIntakeCard" dir="ltr" style="text-align:left" hidden>
+      <div class="intake-ws-header" dir="rtl"
+           style="margin:-16px -16px 14px;border-radius:12px 12px 0 0">
+        <h2>New gym client</h2>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span class="meta" id="gymIntakeStep"></span>
+          <button type="button" class="btn-secondary" onclick="closeGymIntake()">סגור</button>
+        </div>
+      </div>
+
+      <div class="itabs" id="gymIntakeTabs" role="tablist"></div>
+      <div id="gymIntakeBody"></div>
+
+      <div class="row" style="margin-top:14px">
+        <button id="gxPrev" class="ghost" type="button" hidden>Back</button>
+        <button id="gxNext" type="button">Next</button>
+        <button id="gxCreate" type="button" hidden>Build the block</button>
+      </div>
+      <!-- One row, always here even when empty, so the card cannot jump as it fills. -->
+      <p class="err" id="gymIntakeErr" role="alert" style="min-height:1.2em"></p>
+    </div>
+
     <div id="detail" hidden></div>
   </div>
   </div>
@@ -7937,6 +7963,8 @@ tryRestoreAdminSession();
 <script src="lib/pprog-display.js"></script>
 <script src="lib/admin-day-edit.js"></script>
 <script src="lib/admin-done-debrief.js"></script>
+<script src="lib/gym-intake.js"></script>
+<script src="admin-gym-intake.js"></script>
 <script src="admin-fixed-intake.js"></script>
 <script src="lib/day-rest-toggle.js"></script>
 <script src="lib/coach-ledger.js"></script>

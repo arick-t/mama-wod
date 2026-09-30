@@ -1075,7 +1075,13 @@ ok("the last tab asks about the place and the people", /id="inPopulation"/.test(
    failing loudly on its content. The list card is gone (the header's strip replaced
    it), so the open-client view is now what follows the wizard. */
 const intakeStart = page.indexOf('<div class="card" id="intakeCard"');
-const intakeEnd = page.indexOf('id="detail" hidden');
+/* End at whatever comes first: the next card, or the detail pane. The gym questionnaire is a
+   sibling card between the two (2026-09-30), and without this the slice ran straight through
+   it and read its Hebrew header as the studio card's own. */
+const nextCardAfterIntake = page.indexOf('<div class="card"', intakeStart + 10);
+const detailAt = page.indexOf('id="detail" hidden');
+const intakeEnd =
+  nextCardAfterIntake > intakeStart && nextCardAfterIntake < detailAt ? nextCardAfterIntake : detailAt;
 const intakeCard = intakeStart >= 0 && intakeEnd > intakeStart ? page.slice(intakeStart, intakeEnd) : "";
 ok("the intake card exists", intakeCard.length > 200);
 ok("the intake card is left-to-right", /id="intakeCard" dir="ltr"/.test(page));
