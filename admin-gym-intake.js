@@ -56,13 +56,17 @@
       sessionsPerWeek: 0,
       split: "",
       trainingDays: [],
-      sessionMinutes: "",
+      /* Sixty unless he changes it — the length an ordinary gym session actually runs. */
+      sessionMinutes: 60,
       deloadWeek: false,
       deloadEveryWeeks: "",
+      noLimits: false,
+      avoid: {},
       injuries: "",
       goalHealth: false,
       goalHypertrophy: false,
       emphasis: "",
+      emphasisNote: "",
     };
     step = 0;
   }
@@ -160,7 +164,12 @@
       '<p class="meta">The number of sessions decides which shapes are possible. The first is the default.</p>' +
       splits
         .map(function (s, i) {
-          return chk("gxSplit-" + s, lib.SPLITS[s].label + (i === 0 ? "  ·  default" : ""), state.split === s, "radio", "gxSplit");
+          /* The label alone said "pairing 1", which tells a coach nothing about which muscles
+             land on which day — and he has to choose between them (owner, 2026-09-30). */
+          return (
+            chk("gxSplit-" + s, lib.SPLITS[s].label + (i === 0 ? "  ·  default" : ""), state.split === s, "radio", "gxSplit") +
+            '<p class="meta" style="margin:-4px 0 12px 30px">' + esc(lib.SPLITS[s].detail) + "</p>"
+          );
         })
         .join("") +
       "</div>" +
@@ -172,7 +181,7 @@
         })
         .join("") +
       "</div>" +
-      fld("Session length (minutes)", '<input id="gxMinutes" type="number" min="20" max="120" value="' + esc(state.sessionMinutes) + '">') +
+      fld("Session length (minutes)", '<input id="gxMinutes" type="number" min="20" max="120" value="' + esc(state.sessionMinutes || 60) + '">') +
       '<p class="meta">This decides how many exercises fit. It is not what makes a session good.</p>' +
       '<label class="chk-row"><input id="gxDeload" type="checkbox"' +
       (state.deloadWeek ? " checked" : "") +
@@ -196,28 +205,53 @@
   }
 
   function paneInjuries() {
+    var lib = L();
+    var open = !state.noLimits;
     return (
-      '<p class="pprog-fixed-title">Anything to work around?</p>' +
+      '<p class="pprog-fixed-title">Anything to program around?</p>' +
       '<p class="pprog-fixed-note">A limit to design around — not a rehabilitation plan. This product does not write those.</p>' +
+      '<label class="chk-row pprog-skills-all"><input id="gxNoLimits" type="checkbox"' +
+      (state.noLimits ? " checked" : "") +
+      "><span>Nothing to report</span></label>" +
+      '<div id="gxLimitsWrap" class="sub-branch"' +
+      (open ? "" : " hidden") +
+      ">" +
+      '<p class="meta">Tick a family and nothing from it is prescribed. A family can be acted on; a sentence cannot.</p>' +
+      lib.AVOID_DEFS.map(function (d) {
+        return chk("gxAvoid-" + d.id, d.label, state.avoid[d.id] === true);
+      }).join("") +
       fld(
-        "Injuries, pain or restrictions",
-        '<textarea id="gxInjuries" maxlength="600" placeholder="Right shoulder — no overhead pressing">' + esc(state.injuries) + "</textarea>"
-      )
+        "Anything else worth knowing",
+        '<textarea id="gxInjuries" maxlength="400" placeholder="Right knee — pain under load after 90 degrees">' + esc(state.injuries) + "</textarea>"
+      ) +
+      "</div>"
     );
   }
 
   function paneGoals() {
+    var lib = L();
     return (
       '<p class="pprog-fixed-title">What are they here for?</p>' +
+      '<p class="pprog-fixed-note">Both is a normal answer.</p>' +
       '<div class="pick-row">' +
       chk("gxGoalHealth", "A healthy, active life", state.goalHealth) +
       chk("gxGoalHyper", "Muscle growth", state.goalHypertrophy) +
       "</div>" +
+      '<p class="pprog-fixed-title" style="margin-top:14px">Anything to put first?</p>' +
+      '<p class="pprog-fixed-note">A muscle group chosen here is trained FIRST in its sessions, while they are fresh. ' +
+      "That is the whole meaning of emphasis — putting it later is not emphasis, whatever the plan calls it.</p>" +
+      '<div class="pick-row">' +
+      chk("gxEmphasis-", "No preference", !state.emphasis, "radio", "gxEmphasis") +
+      lib.EMPHASIS_DEFS.map(function (d) {
+        return chk("gxEmphasis-" + d.id, d.label, state.emphasis === d.id, "radio", "gxEmphasis");
+      }).join("") +
+      "</div>" +
       fld(
-        "Anything to emphasise (optional)",
-        '<input id="gxEmphasis" type="text" maxlength="200" placeholder="Wants bigger shoulders" value="' + esc(state.emphasis) + '">'
-      ) +
-      '<p class="meta">A muscle named here is trained FIRST in its sessions, while they are fresh.</p>'
+        "Anything else the coach should know (optional)",
+        '<input id="gxEmphasisNote" type="text" maxlength="200" placeholder="Training for a wedding in March" value="' +
+          esc(state.emphasisNote) +
+          '">'
+      )
     );
   }
 
@@ -250,7 +284,8 @@
     return false;
   }
 
-  var PANES = [paneProfile, paneEquipment, paneSchedule, paneInjuries, paneGoals];
+  /* In the order STEPS names them: schedule before equipment (owner, 2026-09-30). */
+  var PANES = [paneProfile, paneSchedule, paneEquipment, paneInjuries, paneGoals];
 
   /* ── render ──────────────────────────────────────────────────────────────── */
 
@@ -330,11 +365,22 @@
       state.deloadWeek = c("gxDeload");
       state.deloadEveryWeeks = state.deloadWeek ? v("gxDeloadEvery") : "";
     }
-    if (el("gxInjuries")) state.injuries = v("gxInjuries");
+    if (el("gxNoLimits")) {
+      state.noLimits = c("gxNoLimits");
+      lib.AVOID_DEFS.forEach(function (d) {
+        if (el("gxAvoid-" + d.id)) state.avoid[d.id] = c("gxAvoid-" + d.id);
+      });
+      state.injuries = v("gxInjuries");
+    }
     if (el("gxGoalHealth")) {
       state.goalHealth = c("gxGoalHealth");
       state.goalHypertrophy = c("gxGoalHyper");
-      state.emphasis = v("gxEmphasis");
+      var picked = "";
+      lib.EMPHASIS_DEFS.forEach(function (d) {
+        if (c("gxEmphasis-" + d.id)) picked = d.id;
+      });
+      state.emphasis = picked;
+      state.emphasisNote = v("gxEmphasisNote");
     }
   }
 
@@ -378,6 +424,19 @@
       var ex = el("gxExtrasWrap");
       if (ex) ex.hidden = !t.checked;
       if (!t.checked) render();
+      return;
+    }
+    if (t.id === "gxNoLimits") {
+      readPane();
+      /* Same rule as everywhere else in this card: closing ERASES. "Nothing to report" that
+         still carried three ticked families underneath would be a lie in the packet. */
+      if (t.checked) {
+        state.avoid = {};
+        state.injuries = "";
+      }
+      var lw = el("gxLimitsWrap");
+      if (lw) lw.hidden = t.checked;
+      if (t.checked) render();
       return;
     }
     if (t.id === "gxDeload") {

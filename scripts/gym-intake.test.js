@@ -63,10 +63,11 @@ ok("an empty questionnaire reports what it needs", gaps.length >= 4);
 ok("including the equipment", gaps.some((g) => /equipment/i.test(g)));
 ok("a full one reports nothing", I.missing({
   clientName: "A", sessionsPerWeek: 4, split: "upper_lower", fullyEquipped: true, goalHypertrophy: true,
+  noLimits: true,
 }).length === 0);
 ok("ticking a deload without a cadence is refused", I.missing({
   clientName: "A", sessionsPerWeek: 2, split: "full_body", fullyEquipped: true, goalHealth: true,
-  deloadWeek: true,
+  noLimits: true, deloadWeek: true,
 }).some((g) => /how often/i.test(g)));
 
 /* ── the equipment is the library's, not a theoretical list ────────────────── */
@@ -100,5 +101,31 @@ ok("six weeks is accepted", I.normalize({ deloadWeek: true, deloadEveryWeeks: 6 
 ok("the programme language defaults to English", I.normalize({}).outputLanguage === "en");
 ok("and Hebrew is a choice", I.normalize({ outputLanguage: "he" }).outputLanguage === "he");
 ok("the steps are labelled in English", I.STEPS.every((s) => /^[A-Za-z ]+$/.test(s.label)));
+
+/* ── the owner's corrections of 2026-09-30 ─────────────────────────────────── */
+
+ok("schedule is asked before equipment", I.STEPS.map((s) => s.id).indexOf("gym_schedule") < I.STEPS.map((s) => s.id).indexOf("gym_equipment"));
+ok("every split says which muscles land where", Object.keys(I.SPLITS).every((k) => (I.SPLITS[k].detail || "").length > 40));
+ok("the body-half split names both days", /LOWER[\s\S]*UPPER/.test(I.SPLITS.upper_lower.detail));
+ok("the Roman chair is asked in the main list", I.EQUIPMENT.some((r) => r.id === "roman_chair"));
+ok("and so is the hyperextension bench", I.EQUIPMENT.some((r) => r.id === "hyper"));
+ok("neither is still in the extras", !I.EXTRAS.some((r) => r.id === "roman_chair" || r.id === "hyper"));
+
+/* Limits ask for FAMILIES, like every other questionnaire — a family can be acted on. */
+ok("limits are asked as movement families", Array.isArray(I.AVOID_DEFS) && I.AVOID_DEFS.length >= 6);
+ok("they are the gym's families, not the functional ones", !I.AVOID_DEFS.some((d) => /kipping|running|rope/i.test(d.label)));
+ok("'nothing to report' is an answer", I.normalize({ noLimits: true }).noLimits === true);
+ok("and silence is not", I.missing({
+  clientName: "A", sessionsPerWeek: 2, split: "full_body", fullyEquipped: true, goalHealth: true,
+}).some((g) => /program around/i.test(g)));
+ok("a ticked family reaches the packet as a refusal", /Do NOT prescribe: Deep squat/.test(
+  I.buildGymPacket({ avoid: { deep_squat: true } })));
+
+/* The goals tab earns its place through emphasis, which changes the programme. */
+ok("emphasis is a choice, not a sentence", Array.isArray(I.EMPHASIS_DEFS) && I.EMPHASIS_DEFS.length === 5);
+ok("an invented emphasis is refused", I.normalize({ emphasis: "left eyebrow" }).emphasis === "");
+ok("a real one is kept", I.normalize({ emphasis: "back" }).emphasis === "back");
+ok("and the packet says what emphasis MEANS", /trained FIRST in its sessions/.test(
+  I.buildGymPacket({ emphasis: "back" })));
 
 console.log("\nתחקור חדר כושר — חוזה נפרד, " + I.STEPS.length + " שלבים.");

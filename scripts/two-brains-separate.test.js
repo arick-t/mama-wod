@@ -114,7 +114,7 @@ ok("a functional brick is four", /FOUR weeks/i.test(FOUNDATION));
 
 const GymBrief = require("../lib/gym-brief.js");
 const gymReq = GymBrief.gymBlockRequestFor({
-  answers: { clientName: "A", sessionsPerWeek: 3, split: "full_body", fullyEquipped: true, goalHealth: true },
+  answers: { clientName: "A", sessionsPerWeek: 3, split: "full_body", fullyEquipped: true, goalHealth: true, noLimits: true },
 });
 ok("a gym request builds", gymReq.ok === true);
 ok("it carries the gym pack", gymReq.system.indexOf(gymText.slice(0, 120)) >= 0);

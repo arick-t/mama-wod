@@ -23,7 +23,7 @@ function ok(name, cond) {
 
 const answers = {
   clientName: "A", sessionsPerWeek: 3, split: "full_body", trainingDays: ["sun", "tue", "thu"],
-  fullyEquipped: true, goalHealth: true, sessionMinutes: 60,
+  fullyEquipped: true, goalHealth: true, sessionMinutes: 60, noLimits: true,
 };
 const req = Brief.gymBlockRequestFor({ answers: answers, athleteId: "a1" });
 const system = req.system;
