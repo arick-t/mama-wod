@@ -30,7 +30,7 @@ const {
 } = require("../lib/coach-pol026-gates.js");
 
 const root = path.join(__dirname, "..");
-const policy = require("../api/coach-policy.js");
+const policy = require("../lib/coach-policy.js");
 const pc = fs.readFileSync(path.join(root, "api/personal-coach.js"), "utf8");
 const index = fs.readFileSync(path.join(root, "index.html"), "utf8");
 const normalizeBlock = fs.readFileSync(path.join(root, "lib/normalize-pprog-block.js"), "utf8");

@@ -1,6 +1,6 @@
 {
   "name": "mama-wod",
-  "version": "23.1",
+  "version": "23.1.1",
   "description": "Workout aggregator — daily WODs from multiple box & special sources",
   "main": "index.js",
   "directories": {
@@ -14,7 +14,6 @@
     "coach:sync-prompt": "node scripts/sync-hamamen-prompt.js",
     "security:sync-policy": "node scripts/sync-security-policy.js",
     "security:sync-prompt": "node scripts/sync-security-prompt.js",
-    "coach:sync-pattern-brief": "node scripts/sync-coach-pattern-brief.js",
     "coach:sync-foundation-brief": "node scripts/sync-coach-foundation-brief.js",
     "coach:weekly-patterns-digest": "node scripts/coach-weekly-patterns-digest.js",
     "build:cap:web": "node scripts/build-capacitor-web.js",

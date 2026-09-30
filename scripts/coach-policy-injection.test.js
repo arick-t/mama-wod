@@ -19,7 +19,7 @@ const path = require("path");
 
 const root = path.join(__dirname, "..");
 const PC_PATH = path.join(root, "api", "personal-coach.js");
-const COACH_POLICY = require("../api/coach-policy.js");
+const COACH_POLICY = require("../lib/coach-policy.js");
 
 let passed = 0;
 function ok(name, cond, detail) {

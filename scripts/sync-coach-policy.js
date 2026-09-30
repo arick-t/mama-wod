@@ -1,5 +1,5 @@
 /**
- * Sync experiments/personal-coach/coach-policy-rules.md → api/coach-policy.js
+ * Sync experiments/personal-coach/coach-policy-rules.md → lib/coach-policy.js
  * Run after editing policy rules: node scripts/sync-coach-policy.js
  */
 const fs = require("fs");
@@ -7,7 +7,7 @@ const path = require("path");
 
 const root = path.join(__dirname, "..");
 const src = path.join(root, "experiments", "personal-coach", "coach-policy-rules.md");
-const dest = path.join(root, "api", "coach-policy.js");
+const dest = path.join(root, "lib", "coach-policy.js");
 
 if (!fs.existsSync(src)) {
   console.error("Missing", src);

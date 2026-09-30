@@ -96,12 +96,20 @@ From `.cursor/rules/workout-quality-never-compromise.mdc` — programming qualit
 - When a provider fails: fail loudly and retry. Do not fill the calendar with fake sessions.
 - If a change would make workouts worse to fix UI, quota, or deploy pressure: reject or isolate it.
 
+### `api/` holds HANDLERS ONLY
+
+Vercel turns **every file in `api/`** into a deployed serverless function, whether or not it
+answers a web request — and the free plan stops at **twelve per deployment**. On 2026-09-30 five
+of our twelve were not endpoints at all but text and helpers (the policy book, the system prompt,
+the foundation brief, a dead alias, the PII scrubber), which left no room to add a real endpoint.
+They live in `lib/` now. **Never put a module that is not an HTTP handler into `api/`.**
+
 ### Never hand-edit generated files
 
 | Generated (do not edit) | Source of truth | Regenerate with |
 |---|---|---|
-| `api/coach-policy.js` | `experiments/personal-coach/coach-policy-rules.md` | `npm run coach:sync-policy` |
-| `api/hamamen-prompt.js` | `experiments/personal-coach/hamamen-system-prompt.md` | `npm run coach:sync-prompt` |
+| `lib/coach-policy.js` | `experiments/personal-coach/coach-policy-rules.md` | `npm run coach:sync-policy` |
+| `lib/hamamen-prompt.js` | `experiments/personal-coach/hamamen-system-prompt.md` | `npm run coach:sync-prompt` |
 | `lib/security-policy.js` | `experiments/security-coach/security-policy-rules.md` | `npm run security:sync-policy` |
 | `lib/security-prompt.js` | `experiments/security-coach/security-system-prompt.md` | `npm run security:sync-prompt` |
 
@@ -134,7 +142,7 @@ and `package.json` are the source of truth.
   hard-block over-generation server-side. Do not loosen a cap to make a test pass.
 - **Capacitor copies drift.** `web/`, `ios/App/App/public/`, `android/app/src/main/assets/public/`
   each hold a copy of `index.html`. Change the root one, then `npm run build:cap:web && npx cap sync`.
-- **PII** is scrubbed by `api/sanitize-pii.js` before any text reaches Gemini. Keep new LLM paths
+- **PII** is scrubbed by `lib/sanitize-pii.js` before any text reaches Gemini. Keep new LLM paths
   routed through it.
 
 ## External services
