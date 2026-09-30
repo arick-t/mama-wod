@@ -225,7 +225,7 @@ function testSessionDateMath() {
 function testStaticRegressions() {
   const pc = fs.readFileSync(path.join(root, "api/personal-coach.js"), "utf8");
   const idx = fs.readFileSync(path.join(root, "index.html"), "utf8");
-  const policy = fs.readFileSync(path.join(root, "api/coach-policy.js"), "utf8");
+  const policy = fs.readFileSync(path.join(root, "lib/coach-policy.js"), "utf8");
   const policyMd = fs.readFileSync(
     path.join(root, "experiments/personal-coach/coach-policy-rules.md"),
     "utf8"
@@ -322,7 +322,7 @@ function testStaticRegressions() {
 }
 
 function testModulesLoad() {
-  require("../api/coach-policy.js");
+  require("../lib/coach-policy.js");
   require("../api/personal-coach.js");
   require("../lib/coach-layer2-ops-brief.js");
   ok("modules load without throw", true);

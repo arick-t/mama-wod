@@ -7,7 +7,7 @@
  */
 const { sendAppMail, hasMailProvider } = require("../lib/send-app-mail");
 const { checkRateLimit, sendRateLimit } = require("../lib/rate-limit.js");
-const { scrubPiiText } = require("./sanitize-pii.js");
+const { scrubPiiText } = require("../lib/sanitize-pii.js");
 const { resolveAppMailTo } = require("../lib/app-mail.js");
 const { applyCors } = require("../lib/cors-allowlist.js");
 const {

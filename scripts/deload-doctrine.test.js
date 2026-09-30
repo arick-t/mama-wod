@@ -25,9 +25,9 @@ const Contract = require("../lib/coach-intake-sync-contract.js");
 const Brief = require("../lib/coach-client-brief.js");
 const Store = require("../lib/client-program-store.js");
 
-const POLICY = require("../api/coach-policy.js");
-const PROMPT = require("../api/hamamen-prompt.js");
-const FOUNDATION = require("../api/coach-foundation-brief.js");
+const POLICY = require("../lib/coach-policy.js");
+const PROMPT = require("../lib/hamamen-prompt.js");
+const FOUNDATION = require("../lib/coach-foundation-brief.js");
 const LAYER2 = require("../lib/coach-layers/layer2-general.js");
 const INTAKE_JS = fs.readFileSync(path.join(root, "admin-fixed-intake.js"), "utf8");
 

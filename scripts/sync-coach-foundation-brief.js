@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Sync living-knowledge foundation markdown → api/coach-foundation-brief.js
+ * Sync living-knowledge foundation markdown → lib/coach-foundation-brief.js
  * Default: keep curated brief unless FORCE_FOUNDATION_BRIEF_REGEN=1
  */
 "use strict";
@@ -9,7 +9,7 @@ const fs = require("fs");
 const path = require("path");
 
 const ROOT = path.join(__dirname, "..");
-const OUT = path.join(ROOT, "api", "coach-foundation-brief.js");
+const OUT = path.join(ROOT, "lib", "coach-foundation-brief.js");
 const L12 = path.join(
   ROOT,
   "experiments",
@@ -29,7 +29,7 @@ function main() {
   if (process.env.FORCE_FOUNDATION_BRIEF_REGEN !== "1") {
     if (fs.existsSync(OUT)) {
       console.log(
-        "kept existing api/coach-foundation-brief.js (set FORCE_FOUNDATION_BRIEF_REGEN=1 to stub-regen)"
+        "kept existing lib/coach-foundation-brief.js (set FORCE_FOUNDATION_BRIEF_REGEN=1 to stub-regen)"
       );
       return;
     }

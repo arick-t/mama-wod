@@ -7,8 +7,8 @@ const fs = require("fs");
 const path = require("path");
 
 const root = path.join(__dirname, "..");
-const policy = require("../api/coach-policy.js");
-const foundation = require("../api/coach-foundation-brief.js");
+const policy = require("../lib/coach-policy.js");
+const foundation = require("../lib/coach-foundation-brief.js");
 const pc = fs.readFileSync(path.join(root, "api/personal-coach.js"), "utf8");
 const rules = fs.readFileSync(
   path.join(root, "experiments/personal-coach/coach-policy-rules.md"),

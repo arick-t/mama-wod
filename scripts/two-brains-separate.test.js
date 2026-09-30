@@ -82,9 +82,9 @@ ok("the functional catalogue still holds its own items", EquipCatalog.ITEMS.leng
 
 /* ── 2 · THE FUNCTIONAL BRAIN HAS NOT MOVED ────────────────────────────────── */
 
-const POLICY = require("../api/coach-policy.js");
-const PROMPT = require("../api/hamamen-prompt.js");
-const FOUNDATION = require("../api/coach-foundation-brief.js");
+const POLICY = require("../lib/coach-policy.js");
+const PROMPT = require("../lib/hamamen-prompt.js");
+const FOUNDATION = require("../lib/coach-foundation-brief.js");
 
 ok("the functional pack still routes its layers", funcText.length > 20000);
 ok("it still carries its methodology", /LAYER 1/i.test(funcText));

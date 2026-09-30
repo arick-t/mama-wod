@@ -17,7 +17,7 @@ const Check = require("../lib/coach-brick-check.js");
 
 const root = path.join(__dirname, "..");
 const coach = fs.readFileSync(path.join(root, "api/personal-coach.js"), "utf8");
-const policy = fs.readFileSync(path.join(root, "api/coach-policy.js"), "utf8");
+const policy = fs.readFileSync(path.join(root, "lib/coach-policy.js"), "utf8");
 const policySrc = fs.readFileSync(path.join(root, "experiments/personal-coach/coach-policy-rules.md"), "utf8");
 
 function ok(name, cond) {
