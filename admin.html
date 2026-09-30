@@ -1596,6 +1596,11 @@ body:has(#intake-modal.open) #adminChatFloat{
    not inside it. The design spec names exactly two ways out of that, and this is the second:
    repeat the rules under the modal's own id rather than widening the originals, which serve
    the studio card and must not move. Same values, one selector across. */
+/* The finished month borrows the questionnaire's form rules for its findings strip; the month
+   itself is drawn by PprogDisplay, whose own styles are global. */
+#gymBlockModal .err{color:var(--brand);font-size:.88rem}
+#gymBlockModal .meta{color:var(--text-meta);font-size:.82rem}
+#gymBlockModal .intake-ws-body{max-height:76vh;overflow:auto}
 #gymIntakeModal label.fld{display:block;margin:0 0 10px}
 #gymIntakeModal label.fld span{display:block;font-size:.8rem;color:var(--text-meta);margin:0 0 4px}
 #gymIntakeModal input[type=text]:not([class]),#gymIntakeModal input[type=number]:not([class]),
@@ -2396,6 +2401,28 @@ header{flex-wrap:wrap;row-gap:8px}
      scoped to #clientScreen, so a card outside it loses every one of them. The design spec
      names both ways out; this is the second — the same rules, repeated under this modal's own
      id, exactly as #intake-modal .itabs already does. -->
+<!-- THE FINISHED MONTH. A gym block comes back from one call, so there is nothing to narrate
+     while it builds and nothing to fill week by week — it is either here or it is not. It is
+     rendered with the same PprogDisplay every other programme in this module uses, because a
+     month should look like a month whichever brain wrote it. What the check found sits above
+     it, for the coach to read and decide on. -->
+<div class="modal-backdrop" id="gymBlockModal">
+  <div class="intake-workspace" dir="ltr" style="text-align:left;max-width:1000px"
+       onclick="event.stopPropagation()">
+    <div class="intake-ws-header" dir="rtl">
+      <h2 id="gymBlockTitle">The block</h2>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="meta" id="gymBlockMeta"></span>
+        <button type="button" class="btn-secondary" onclick="closeGymBlock()">סגור</button>
+      </div>
+    </div>
+    <div class="intake-ws-body">
+      <div id="gymBlockFindings"></div>
+      <div id="gymBlockView"></div>
+    </div>
+  </div>
+</div>
+
 <div class="modal-backdrop" id="gymIntakeModal">
   <div class="intake-workspace" dir="ltr" style="text-align:left;max-width:720px"
        onclick="event.stopPropagation()">

@@ -126,4 +126,21 @@ ok("but a real line is read in full", (function () {
   return l && l.sets === 4 && l.reps === 10 && l.exercise.en === "Leg Press" && l.effort === true;
 })());
 
+/* --- a timed hold is not a rep count --------------------------------------
+   The first real generation wrote "3 x 45s Bodyweight Plank". Read as reps that is 45, outside
+   8-30, and the check would have blocked a plank. It survived only because a word boundary
+   happened to fail against the "s", so the distinction is now made on purpose. */
+
+const plank = Check.readLine("3 x 45s Bodyweight Plank @ 7/10");
+ok("a hold keeps its set count", plank.sets === 3);
+ok("but carries no rep count", plank.reps === 0);
+ok("and says it is a hold", plank.hold === true);
+ok("while a real rep count is still read", Check.readLine("4 x 12 Leg Press @ 7/10").reps === 12);
+ok("and one outside the range still blocks", Check.checkGymBlock(
+  Build.buildBlock({ days: { sun: { parts: [{ title: "A", lines: [
+    "3 x 40 Leg Press @ 7/10", "4 x 10 Lat Pulldown @ 7/10", "4 x 10 Chest Press Machine @ 7/10",
+    "4 x 10 Seated Dumbbell Shoulder Press @ 7/10",
+  ] }] } } }, {}).block, FULL_GYM).blocking.some((b) => /outside 8-30/.test(b)));
+ok("a plank in a sound week blocks nothing", Check.checkGymBlock(sound, FULL_GYM).blocking.length === 0);
+
 console.log("\nבודק החד\"כ — אפס חסימות על תוכנית תקינה, ושמונה על אותה תוכנית אצל השני.");

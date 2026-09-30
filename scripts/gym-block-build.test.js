@@ -89,4 +89,24 @@ ok("and says why", /no training day/.test(B.buildBlock({ days: {} }).why));
 ok("nothing at all is refused", B.buildBlock(null).ok === false);
 ok("and unreadable text too", B.blockFromText("nope").ok === false);
 
+/* --- the shape a model actually drifted to on the first real generation ----
+   It returned days as an ARRAY of {day_name, parts:[{group, exercises}]}. The work was right -
+   the right exercises, the right loads, designed around the athlete's shoulder - and a stricter
+   reader would have thrown all of it away and charged for a retry. */
+
+const drifted = {
+  summaryLine: "Full body",
+  days: [
+    { day_number: 1, day_name: "Sunday", parts: [{ group: "Back", exercises: ["3 x 12 Lat Pulldown @ 7/10"] }] },
+    { day_number: 3, day_name: "Tuesday", parts: [{ group: "Legs", exercises: ["4 x 10 Leg Press @ 7/10"] }] },
+  ],
+};
+const fromDrift = B.buildBlock(drifted, { answers: {} });
+ok("a drifted shape is still read", fromDrift.ok === true);
+ok("day names land on the right weekdays", fromDrift.block.weeks[0].days.sun.parts.length === 1 && fromDrift.block.weeks[0].days.tue.parts.length === 1);
+ok("'group' is read as the title", fromDrift.block.weeks[0].days.sun.parts[0].title === "Back");
+ok("and 'exercises' as the lines", fromDrift.block.weeks[0].days.sun.parts[0].lines[0] === "3 x 12 Lat Pulldown @ 7/10");
+ok("the contract still shows the exact keys it should have used", /"days": \{/.test(Brief.GYM_CONTRACT));
+ok("including the seven day keys", /sun mon tue wed thu fri sat/.test(Brief.GYM_CONTRACT));
+
 console.log("\nשבוע אחד נכנס, שישה יוצאים — והקיפאון מובנה, לא מבוקש.");

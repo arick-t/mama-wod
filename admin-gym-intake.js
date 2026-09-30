@@ -541,6 +541,7 @@
         window.gymLastBlock = x.j;
         setErr("");
         closeGymIntake();
+        showGymBlock(x.j, answers);
       })
       .catch(function (e) {
         if (btn) {
@@ -550,6 +551,74 @@
         setErr("Network error: " + String((e && e.message) || e).slice(0, 120));
       });
   }
+
+  /* ── showing what came back ──────────────────────────────────────────────── */
+
+  /**
+   * The finished month, drawn the way every other programme in this module is drawn.
+   *
+   * The check's findings sit ABOVE it rather than being applied: blocking is what the athlete
+   * cannot do and a flag is what a coach might have meant, and deciding between them is the
+   * coach's job, not ours (lib/gym-brick-check.js).
+   */
+  window.showGymBlock = function showGymBlock(answer, answers) {
+    var modal = el("gymBlockModal");
+    if (!modal) return;
+    var block = answer && answer.block;
+    if (!block) return;
+
+    el("gymBlockTitle").textContent = (answers && answers.clientName) || "The block";
+    el("gymBlockMeta").textContent =
+      block.weeks.length + " weeks · one week, repeated" + (answer.model ? " · " + answer.model : "");
+
+    var find = el("gymBlockFindings");
+    var bits = "";
+    (answer.blocking || []).forEach(function (b) {
+      bits += '<p class="err" style="margin:0 0 6px">⛔ ' + esc(b) + "</p>";
+    });
+    (answer.flags || []).forEach(function (f) {
+      bits += '<p class="meta" style="margin:0 0 6px">⚠️ ' + esc(f) + "</p>";
+    });
+    find.innerHTML = bits || '<p class="meta" style="margin:0 0 10px">The check found nothing to raise.</p>';
+
+    var host = el("gymBlockView");
+    var D = typeof window !== "undefined" ? window.PprogDisplay : null;
+    var N = typeof window !== "undefined" ? window.NormalizePprogBlock : null;
+    if (D && D.renderBrickView) {
+      /* Through the normaliser first, for the dates it fills in. Since 2026-09-22 it no longer
+         pads a block to five weeks or invents a deload, so six weeks go in and six come out. */
+      var shown = N && N.normalize ? N.normalize(block, block) : block;
+      /* ONE options object — the block goes INSIDE it. Passing it as the first argument gets
+         "אין בלוק פעיל" and no error, which is a quiet way to lose an afternoon. */
+      host.innerHTML = D.renderBrickView({
+        block: shown,
+        activeWeekIndex: 0,
+        activeDay: "sun",
+        readOnly: true,
+        /* No "talk to the coach about this day" box. This is the coach LOOKING at what came
+           back, before anyone has been given it — there is nobody on the other end to talk to
+           yet (2026-09-30). */
+        showFooter: false,
+        calMode: "month",
+        weekRows: shown.weeks.length,
+        /* ONE block of six. Left to itself the calendar groups weeks in FOURS, because that is
+           what a month is in the functional product — and it drew this one as "Block 1" of four
+           weeks and "Block 2" of two (2026-09-30). Here six weeks are one block. */
+        blockGroups: [{ startWeek: 1, weekCount: shown.weeks.length, name: "" }],
+        hooks: {},
+      });
+    } else {
+      /* The display library is how this month is meant to be read. If it is not loaded, say so
+         rather than drawing a worse version of it. */
+      host.innerHTML = '<p class="err">The display library did not load — reload the page.</p>';
+    }
+    modal.classList.add("open");
+  };
+
+  window.closeGymBlock = function closeGymBlock() {
+    var m = el("gymBlockModal");
+    if (m) m.classList.remove("open");
+  };
 
   /* ── the door in, and the door out ───────────────────────────────────────── */
 
