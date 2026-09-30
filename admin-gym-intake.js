@@ -41,8 +41,11 @@
   /** Everything this questionnaire holds. Its own object, on purpose. */
   var state = {};
   var step = 0;
+  /* The furthest tab this questionnaire has been opened to. See render(). */
+  var reached = 0;
 
   function reset() {
+    reached = 0;
     state = {
       clientName: "",
       gender: "",
@@ -301,9 +304,20 @@
     if (step < 0) step = 0;
     if (step > steps.length - 1) step = steps.length - 1;
 
+    /* A STEP YOU HAVE REACHED IS CLICKABLE; ONE YOU HAVE NOT IS DRAWN AND DEAD — the rule
+       23.1 set for all three questionnaires. The strip is a map of where you are, not a way
+       to skip to the end: jumping to a step whose earlier answers are still empty would have
+       the coach filling the last tab of a questionnaire that cannot be sent. */
+    if (step > reached) reached = step;
     el("gymIntakeTabs").innerHTML = steps
       .map(function (s, i) {
-        return '<button type="button" data-gxstep="' + i + '"' + (i === step ? ' class="on"' : "") + ">" + esc(s.label) + "</button>";
+        var cls = i === step ? "on" : i < reached ? "done" : "";
+        return (
+          '<button type="button" data-gxstep="' + i + '"' +
+          (cls ? ' class="' + cls + '"' : "") +
+          (i > reached ? " disabled" : "") +
+          ">" + esc(s.label) + "</button>"
+        );
       })
       .join("");
     el("gymIntakeStep").textContent = "Step " + (step + 1) + " of " + steps.length;
@@ -554,6 +568,38 @@
 
   /* ── showing what came back ──────────────────────────────────────────────── */
 
+  /** Today in Israel, whatever clock the coach's laptop is on — the calendar rings it. */
+  function todayIso() {
+    var il = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Jerusalem" }));
+    var m = String(il.getMonth() + 1);
+    var d = String(il.getDate());
+    return il.getFullYear() + "-" + (m.length < 2 ? "0" + m : m) + "-" + (d.length < 2 ? "0" + d : d);
+  }
+
+  /** dd.mm.yyyy, the way every other date on this screen is written. */
+  function ilDate(iso) {
+    var p = String(iso || "").split("-");
+    if (p.length !== 3) return String(iso || "");
+    return p[2] + "." + p[1] + "." + p[0];
+  }
+
+  /** The grey line under the title: what this block IS, in one breath. */
+  function blockMetaLine(block, answers) {
+    var weeks = (block.weeks || []).length;
+    var days = 0;
+    var first = (block.weeks || [])[0] || {};
+    ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].forEach(function (k) {
+      if ((((first.days || {})[k] || {}).parts || []).length) days++;
+    });
+    var deload = (block.weeks || []).filter(function (w) {
+      return w && w.phase === "deload";
+    }).length;
+    var bits = [weeks + " שבועות", days + " אימונים בשבוע", "שבוע אחד שחוזר"];
+    if (deload) bits.push(deload + " שבועות דילואד");
+    if (answers && answers.split) bits.push(String(answers.split).toUpperCase());
+    return bits.join(" · ");
+  }
+
   /**
    * The finished month, drawn the way every other programme in this module is drawn.
    *
@@ -568,8 +614,7 @@
     if (!block) return;
 
     el("gymBlockTitle").textContent = (answers && answers.clientName) || "The block";
-    el("gymBlockMeta").textContent =
-      block.weeks.length + " weeks · one week, repeated" + (answer.model ? " · " + answer.model : "");
+    el("gymBlockMeta").textContent = answer.model ? String(answer.model) : "";
 
     var find = el("gymBlockFindings");
     var bits = "";
@@ -590,7 +635,7 @@
       var shown = N && N.normalize ? N.normalize(block, block) : block;
       /* ONE options object — the block goes INSIDE it. Passing it as the first argument gets
          "אין בלוק פעיל" and no error, which is a quiet way to lose an afternoon. */
-      host.innerHTML = D.renderBrickView({
+      var cal = D.renderBrickView({
         block: shown,
         activeWeekIndex: 0,
         activeDay: "sun",
@@ -601,12 +646,34 @@
         showFooter: false,
         calMode: "month",
         weekRows: shown.weeks.length,
+        israelTodayIso: todayIso(),
         /* ONE block of six. Left to itself the calendar groups weeks in FOURS, because that is
            what a month is in the functional product — and it drew this one as "Block 1" of four
            weeks and "Block 2" of two (2026-09-30). Here six weeks are one block. */
         blockGroups: [{ startWeek: 1, weekCount: shown.weeks.length, name: "" }],
         hooks: {},
       });
+      /* THE SAME FURNITURE A CLIENT'S BLOCK TAB WEARS, and not a near-miss of it.
+         The owner's words on seeing the first one (2026-09-30): "הלבנה שניסית ליצור לנו היא לא
+         מופיעה כמו לשונית של לקוח - זו טעות עיצובית." He was right. The calendar itself was
+         already the shared one, but it arrived bare — no panel, no title, no block line — so a
+         month written by the gym brain read as a different KIND of thing from a month written
+         by hand. It is not: it is a block, on the same screen, for the same coach.
+         Every class here is the one admin.html's own block panel uses, global and unchanged. */
+      host.innerHTML =
+        '<div class="ath-block-panel">' +
+        '<div class="ath-block-panel-head" dir="rtl">' +
+        '<div class="ath-block-panel-title">בלוק אימון</div>' +
+        "</div>" +
+        '<div id="gymBlockSection" dir="ltr">' +
+        '<div class="block-header">' +
+        '<span class="block-title">' + esc(shown.summaryLine || "6-week gym block") + "</span>" +
+        (shown.blockStart ? '<span class="block-dates">מ‑' + esc(ilDate(shown.blockStart)) + "</span>" : "") +
+        "</div>" +
+        '<div class="block-snap-meta">' + esc(blockMetaLine(shown, answers)) + "</div>" +
+        cal +
+        "</div>" +
+        "</div>";
     } else {
       /* The display library is how this month is meant to be read. If it is not loaded, say so
          rather than drawing a worse version of it. */

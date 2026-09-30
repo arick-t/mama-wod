@@ -1682,7 +1682,7 @@ body:has(#intake-modal.open) #adminChatFloat{
 #intake-modal .itabs button.on.done{color:#fff}
 /* A step he has not reached yet. Drawn, so he can see the road; dead, because the
    answers between here and there have not been given. */
-#intake-modal .itabs button[disabled]{opacity:.38;cursor:not-allowed}
+#intake-modal .itabs button[disabled],#gymIntakeModal .itabs button[disabled]{opacity:.38;cursor:not-allowed}
 /* The header's "Step 3 of 8", the same line the studio card carries. */
 #athleteIntakeStep{font-size:12px;color:var(--text-meta);white-space:nowrap}
 
@@ -1729,11 +1729,14 @@ body:has(#intake-modal.open) #adminChatFloat{
 #clientScreen .sub-branch .sub-branch{margin-bottom:4px}
 #clientScreen .pick-row{display:flex;gap:26px;flex-wrap:wrap;margin:0 0 12px}
 
-/* THE GYM QUESTIONNAIRE'S OWN COPY OF THE FORM RULES.
+/* THE GYM QUESTIONNAIRE'S FORM RULES.
    Everything above is scoped to #clientScreen, and the gym card is a floating modal that is
-   not inside it. The design spec names exactly two ways out of that, and this is the second:
-   repeat the rules under the modal's own id rather than widening the originals, which serve
-   the studio card and must not move. Same values, one selector across. */
+   not inside it, so the BASE rows are repeated here under the modal's own id rather than
+   widening the originals, which serve the studio card and must not move.
+   The LOOK is not repeated. Since 23.1 the studio questionnaire is the reference face for all
+   of them ("תחקור אחד לשלושה"), so every rule that gives an answer its box, its dark field and
+   its step-bar tabs now names #gymIntakeModal alongside #intakeCard, a few dozen lines up —
+   ONE declaration serving both. A second copy of a look is a look that drifts. */
 /* The finished month borrows the questionnaire's form rules for its findings strip; the month
    itself is drawn by PprogDisplay, whose own styles are global. */
 #gymBlockModal .err{color:var(--brand);font-size:.88rem}
@@ -1760,20 +1763,21 @@ body:has(#intake-modal.open) #adminChatFloat{
   color:#fff;border:0;border-radius:8px;min-height:44px;padding:10px 16px}
 #gymIntakeModal .intake-ws-body > .row button.ghost{
   background:transparent;color:var(--text-muted);border:1px solid var(--line)}
-#gymIntakeModal .itabs{display:flex;gap:6px;overflow-x:auto;padding:0 0 14px;-webkit-overflow-scrolling:touch}
+#gymIntakeModal .itabs{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch}
 #gymIntakeModal .itabs button{min-height:36px;padding:6px 13px;background:var(--bg-panel);color:var(--text-muted);
   border:1px solid var(--line);white-space:nowrap;border-radius:8px;font-size:13.5px}
 #gymIntakeModal .itabs button.on{background:var(--coach-deep);color:#fff;border-color:var(--coach)}
+#gymIntakeModal .itabs button.done{border-color:var(--part);color:var(--part)}
+#gymIntakeModal .itabs button.on.done{color:#fff}
 #gymIntakeModal .ipane label.fld span{font-size:.82rem}
-#gymIntakeModal .chk-row{display:flex;gap:10px;align-items:flex-start;margin:0 0 8px;cursor:pointer}
+#gymIntakeModal .chk-row{display:flex;gap:10px;cursor:pointer}
 #gymIntakeModal .chk-row input{width:20px;height:20px;margin:2px 0 0;flex:0 0 auto;accent-color:var(--brand)}
-#gymIntakeModal .chk-row span{color:var(--text);font-size:.92rem}
+#gymIntakeModal .chk-row span{color:var(--text)}
 #gymIntakeModal .chk-row .inline-num{width:82px;margin-inline-start:14px;padding:8px 10px;text-align:center;
   font-size:19px;font-weight:700;font-family:var(--font-display);letter-spacing:1px;
   color:var(--brand-gold);border-color:var(--coach-deep);background:var(--bg-panel);border:1px solid var(--coach-deep);
   border-radius:8px}
-#gymIntakeModal .sub-branch{margin:2px 0 12px;padding-inline-start:16px;
-  border-inline-start:2px solid var(--coach-deep)}
+#gymIntakeModal .sub-branch{margin:2px 0 12px;padding-inline-start:16px}
 #gymIntakeModal .sub-branch .sub-branch{margin-bottom:4px}
 #gymIntakeModal .pick-row{display:flex;gap:26px;flex-wrap:wrap;margin:0 0 12px}
 #gymIntakeModal .pprog-fixed-title{font-family:var(--font-display);font-size:1.02rem;margin:0 0 4px}
@@ -1805,15 +1809,16 @@ body:has(#intake-modal.open) #adminChatFloat{
   width:min(920px,100%);max-height:92vh;overflow-y:auto;margin:0;border-radius:14px;
   box-shadow:0 20px 56px rgba(0,0,0,.5)}
 /* Every answer in a box of its own — the one visible difference between the two forms. */
-#intakeCard .chk-row{padding:10px 12px;background:#222;border:1px solid #444;border-radius:8px;
+#intakeCard .chk-row,#gymIntakeModal .chk-row{padding:10px 12px;background:#222;border:1px solid #444;border-radius:8px;
   align-items:center;margin:0 0 8px}
-#intakeCard .chk-row span{font-size:.88rem;line-height:1.35}
-#intakeCard .pick-row .chk-row{margin:0}
-#intakeCard .sub-branch{border-inline-start:2px solid var(--line);margin-inline-start:6px}
-#intakeCard label.fld span{font-size:.82rem;color:#aaa;line-height:1.4}
-#intakeCard .ipane textarea,#intakeCard .ipane input[type="text"],#intakeCard .ipane input[type="number"]{
+#intakeCard .chk-row span,#gymIntakeModal .chk-row span{font-size:.88rem;line-height:1.35}
+#intakeCard .pick-row .chk-row,#gymIntakeModal .pick-row .chk-row{margin:0}
+#intakeCard .sub-branch,#gymIntakeModal .sub-branch{border-inline-start:2px solid var(--line);margin-inline-start:6px}
+#intakeCard label.fld span,#gymIntakeModal label.fld span{font-size:.82rem;color:#aaa;line-height:1.4}
+#intakeCard .ipane textarea,#intakeCard .ipane input[type="text"],#intakeCard .ipane input[type="number"],
+#gymIntakeModal .ipane textarea,#gymIntakeModal .ipane input[type="text"],#gymIntakeModal .ipane input[type="number"]{
   background:#222;border:1px solid #555;border-radius:8px;color:#eee;font-family:inherit}
-#intakeCard .ipane textarea{min-height:88px}
+#intakeCard .ipane textarea,#gymIntakeModal .ipane textarea{min-height:88px}
 #intakeCard .age-range{display:flex;align-items:center;gap:10px}
 #intakeCard .age-range .inline-num{margin-inline-start:0;width:88px}
 #intakeCard .age-dash{color:var(--text-meta)}
@@ -1831,7 +1836,7 @@ body:has(#intake-modal.open) #adminChatFloat{
   font-size:.88rem;color:var(--text)}
 #intakeCard .cap-row .cap-none input{width:20px;height:20px;flex:0 0 auto;accent-color:var(--brand)}
 /* The tabs read like a step bar rather than a row of buttons in a card. */
-#clientScreen #intakeCard .itabs{padding:0 0 12px;border-bottom:1px solid var(--line);margin:0 0 14px}
+#clientScreen #intakeCard .itabs,#gymIntakeModal .itabs{padding:0 0 12px;border-bottom:1px solid var(--line);margin:0 0 14px}
 #clientScreen .equip-always{color:var(--text-muted);font-size:.74rem;margin:0 0 12px;line-height:1.5}
 #clientScreen .sched-sep{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
 /* N sessions, laid out one under the other with the week navigation above them. */
@@ -2577,7 +2582,7 @@ header{flex-wrap:wrap;row-gap:8px}
     </div>
     <div class="intake-ws-body">
       <div class="itabs" id="gymIntakeTabs" role="tablist"></div>
-      <div id="gymIntakeBody"></div>
+      <div id="gymIntakeBody" class="ipane"></div>
       <div class="row" style="margin-top:14px">
         <button id="gxPrev" class="ghost" type="button" hidden>Back</button>
         <button id="gxNext" type="button">Next</button>

@@ -1330,7 +1330,14 @@ ok(
   "and one show() call still drives it",
   (page.match(/show\("intakeCard"/g) || []).length === 1
 );
-ok("every answer sits in a box of its own", /#intakeCard \.chk-row\{padding:10px 12px/.test(page));
+/* The rule, not the selector LIST. Since 23.1 the gym questionnaire wears the same face and
+   is named on the same line, and a test that pinned the exact string would have read that
+   as a regression — the version-pin trap, in CSS. What matters is that #intakeCard is one
+   of the selectors carrying the box. */
+ok(
+  "every answer sits in a box of its own",
+  /(^|,)#intakeCard \.chk-row(,[^{]*)?\{padding:10px 12px/m.test(page)
+);
 
 /* --- the equipment tab, as the owner reordered it (2026-09-15) ------------- */
 const equipPane = page.slice(
@@ -1495,7 +1502,7 @@ ok("the individual's questionnaire carries the studio's title", /<h2 id="athlete
 ok("and its step counter", /<span class="meta" id="athleteIntakeStep">/.test(page));
 ok("and a strip of steps to press", /<div class="itabs" id="athleteIntakeTabs" role="tablist" hidden>/.test(page));
 ok("the strip is styled like the studio's", /#intake-modal \.itabs button\.on\{background:var\(--coach-deep\)/.test(page));
-ok("a step he has not reached is drawn but dead", /#intake-modal \.itabs button\[disabled\]\{opacity/.test(page));
+ok("a step he has not reached is drawn but dead", /(^|,)#intake-modal \.itabs button\[disabled\](,[^{]*)?\{opacity/m.test(page));
 
 ok("the steps are named in English", /profile: "Profile"/.test(fixedIntake) && /goals: "Goals"/.test(fixedIntake));
 ok("pressing one goes there", /window\.adminFixedGoto = function adminFixedGoto\(step\)/.test(fixedIntake));

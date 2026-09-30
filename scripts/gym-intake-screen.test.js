@@ -107,4 +107,34 @@ ok("the brand button rule is scoped to the nav row", admin.indexOf("#gymIntakeMo
 ok("and Back keeps its ghost look at the same specificity", admin.indexOf("#gymIntakeModal .intake-ws-body > .row button.ghost{") >= 0);
 ok("the tabs keep their own look", admin.indexOf("#gymIntakeModal .itabs button.on{") >= 0);
 
+/* -- 23.1: one face for four questionnaires -----------------------------------
+   The release that shipped on 2026-09-30 made the studio card the reference face for every
+   questionnaire in this module, and the gym one is the fourth. The point of these checks is
+   that the look is SHARED rather than copied: one declaration naming both ids, so a change to
+   the studio face reaches the gym face without anyone remembering to carry it across. */
+
+ok(
+  "the boxed answer is one rule serving the studio card and the gym one",
+  /#intakeCard \.chk-row,#gymIntakeModal \.chk-row\{padding:10px 12px/.test(admin)
+);
+ok("and so is the dark field", /#gymIntakeModal \.ipane input\[type="number"\]\{/.test(admin));
+ok("and so is the step bar", /#clientScreen #intakeCard \.itabs,#gymIntakeModal \.itabs\{/.test(admin));
+ok("the pane is a pane, which is what those rules are written against", /id="gymIntakeBody" class="ipane"/.test(admin));
+
+/* A step you have reached is clickable; one you have not is drawn and dead. */
+ok("the strip remembers how far he has got", /var reached = 0;/.test(jsCode));
+ok("a step beyond it is dead", jsCode.indexOf('(i > reached ? " disabled" : "")') >= 0);
+ok("a step behind it is ticked", jsCode.indexOf('i < reached ? "done"') >= 0);
+ok("and a dead step is drawn as dead", /#gymIntakeModal \.itabs button\[disabled\]/.test(admin));
+ok("a new client starts at the first step again", /function reset\(\) \{\s*\n\s*reached = 0;/.test(jsCode));
+
+/* -- the finished block is a client's block tab, not a bare calendar ----------- */
+
+ok("the month wears the block panel", jsCode.indexOf('"ath-block-panel"') >= 0);
+ok("and its Hebrew title", jsCode.indexOf("\u05d1\u05dc\u05d5\u05e7 \u05d0\u05d9\u05de\u05d5\u05df") >= 0);
+ok("and the block header the client tab carries", jsCode.indexOf('"block-title"') >= 0 && jsCode.indexOf('"block-dates"') >= 0);
+ok("and the grey line under it", jsCode.indexOf('"block-snap-meta"') >= 0);
+ok("today is Israel's today", jsCode.indexOf("Asia/Jerusalem") >= 0);
+ok("there is no client edit box in a block nobody has been given", jsCode.indexOf("showFooter: false") >= 0);
+
 console.log("\nמסך תחקור חדר הכושר — לפי המפרט, ובתוך הסקופ הנכון.");
