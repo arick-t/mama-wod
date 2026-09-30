@@ -338,12 +338,20 @@ ok("the client link is copyable once it exists", /data-copylink/.test(page));
 ok("joining date is called that", /תאריך הצטרפות:/.test(page));
 ok("tenure is gone from both cards", !/וותק/.test(page) && !/formatTenure/.test(page));
 ok("the name carries the colour he picked", /class="ath-name" style="color:' \+ esc\(clientColour\(p\)\)/.test(page));
-ok("the pencil opens the name-and-colour panel, not a browser prompt",
-  /data-identity="1" title="שם וצבע"/.test(page) && !/window\.prompt\("שם הלקוח/.test(page));
-ok("there is a chevron beside the name", /data-clientmore="1"/.test(page));
+/* ONE control beside the name, not two. There was a pencil for the name and the
+   colour and a chevron beside it for the money — a hair apart, neither of them saying
+   which was which (owner, 2026-09-30). */
+ok("one pencil beside the name", /data-clientmore="1" title="הגדרות הלקוח"/.test(page));
+ok("and no second control beside it", !/data-identity="1" title="שם וצבע"/.test(page));
+ok("it is a pencil, not a chevron", /aria-expanded="' \+\s*\(moreOpen \? "true" : "false"\) \+ '">✎</.test(page));
+ok("nothing fell back to a browser prompt", !/window\.prompt\("שם הלקוח/.test(page));
 ok("what is behind it is his business alone", /function renderClientMorePop/.test(page));
-ok("the money moved behind the chevron", /renderClientMorePop[\s\S]{0,900}id="fAmount"/.test(page));
-ok("delete moved there too", /renderClientMorePop[\s\S]{0,1400}data-del="1"/.test(page));
+ok("the name is in there", /renderClientMorePop[\s\S]{0,900}id="fClientName"/.test(page));
+ok("the colour is in there", /renderClientMorePop[\s\S]{0,1400}data-clientcolour=/.test(page));
+ok("the money is in there", /renderClientMorePop[\s\S]{0,2200}id="fAmount"/.test(page));
+ok("delete is in there too", /renderClientMorePop[\s\S]{0,3200}data-del="1"/.test(page));
+ok("the name commits on blur like the money", /data-identityfield/.test(page) && /saveIdentityFields\(t\.value/.test(page));
+ok("and a colour picked there reaches the book", /saveIdentityFields[\s\S]{0,900}LedgerScreen\.syncClient/.test(page));
 ok("the note about the client not seeing it is gone", !/הלקוח לא רואה אותם/.test(page));
 ok("and so is the save button — the fields commit on blur", !/data-savemeta/.test(page) && /data-metafield/.test(page));
 
@@ -759,7 +767,9 @@ ok("adding a client is one button", /id="btn-add-athlete"/.test(page) && /functi
 /* The count names both halves. When the owner reported "all my athletes disappeared"
    there was no way to tell from the screen whether that half had answered empty or had
    not answered at all — so now the screen says which. */
-ok("the count is everyone he manages", /rows\.length \+ " לקוחות · "/.test(page));
+/* Everyone he manages — and his own book is not one of them (owner, 2026-09-30). */
+ok("the count is everyone he manages", /people\.length \+ " לקוחות · "/.test(page));
+ok("and it leaves his own book out of it", /r\.kind !== "ledger"/.test(page));
 ok("and it says which half is which", / מתאמנים · /.test(page) && / תוכניות/.test(page));
 
 /* ------------------------------------------------------------------------
@@ -1465,5 +1475,82 @@ ok("and the strip is kept for what must not be missed", /msg && keepOnScreen \?/
 const devServer = fs.readFileSync(path.join(root, "scripts", "local-dev-server.js"), "utf8");
 ok("THE DEV SERVER CACHES NOTHING IT SERVES",
   /ext === "\.html" \|\| ext === "\.js" \|\| ext === "\.css" \|\| ext === "\.json"/.test(devServer));
+
+
+/* --- three questionnaires, one face (owner, 2026-09-22) -------------------
+ * The individual, the studio and the blank client ask different things; they were also
+ * three different-looking products. The studio card is the reference: its header, its
+ * step tabs, its label-above-field rows, its English.
+ * ------------------------------------------------------------------------- */
+
+const fixedIntake = fs.readFileSync(path.join(root, "admin-fixed-intake.js"), "utf8");
+
+ok("the individual's questionnaire carries the studio's title", /<h2 id="athleteIntakeTitle">New individual client<\/h2>/.test(page));
+ok("and its step counter", /<span class="meta" id="athleteIntakeStep">/.test(page));
+ok("and a strip of steps to press", /<div class="itabs" id="athleteIntakeTabs" role="tablist" hidden>/.test(page));
+ok("the strip is styled like the studio's", /#intake-modal \.itabs button\.on\{background:var\(--coach-deep\)/.test(page));
+ok("a step he has not reached is drawn but dead", /#intake-modal \.itabs button\[disabled\]\{opacity/.test(page));
+
+ok("the steps are named in English", /profile: "Profile"/.test(fixedIntake) && /goals: "Goals"/.test(fixedIntake));
+ok("pressing one goes there", /window\.adminFixedGoto = function adminFixedGoto\(step\)/.test(fixedIntake));
+ok(
+  "a step beyond the furthest reached cannot be jumped to",
+  /if \(want > furthestReached\(\)\) return;/.test(fixedIntake)
+);
+ok(
+  "and going forward is the ordinary validated Next",
+  /if \(want > here\) \{\s*window\.adminFixedNext\(\);/.test(fixedIntake)
+);
+ok("the furthest step resets with the questionnaire", /intakeState\.fixedMax = 0;/.test(fixedIntake));
+/* On the last step "Next" is not a step — it is "Build my plan". A tab press must
+   never send the questionnaire to the coach's brain (owner, 2026-09-22). */
+ok(
+  "a tab pressed on the last step does not build a plan",
+  /if \(here < C\(\)\.FIXED_STEPS\.length - 1\) window\.adminFixedNext\(\);/.test(fixedIntake)
+);
+ok("the strip disappears with the questionnaire", /if \(strip\) strip\.hidden = true;/.test(fixedIntake));
+ok(
+  "and leaving the box clears it, so it is never the steps of an intake that is gone",
+  /if \(strip\) \{ strip\.hidden = true; strip\.innerHTML = ""; \}/.test(fixedIntake)
+);
+
+/* The rows: label above its field, the full width — not label-left, 150px-field-right. */
+ok(
+  "the individual's rows read like the studio's",
+  /#intake-fixed \.pprog-profile-row\{flex-direction:column/.test(page)
+);
+ok(
+  "and its Next is the brand orange, like the studio's",
+  /#intake-fixed \.pprog-fixed-next\{background:var\(--brand\)/.test(page)
+);
+ok("the two teal bars are gone", page.indexOf("#intake-fixed .pprog-fixed-next{background:#1A9B8A") < 0);
+ok("and the step line inside the pane is the strip's job now", /#intake-fixed \.pprog-fixed-step\{display:none\}/.test(page));
+
+/* The blank client: same face, four questions. */
+ok("the blank client is asked in English", /<h2>New blank client<\/h2>/.test(page));
+["Client name", "Gender", "Monthly amount", "Payment method", "Programme type", "Block length"].forEach(function (label) {
+  ok('the blank client asks "' + label + '"', page.indexOf(">" + label) >= 0);
+});
+ok("its buttons too", /Create client<\/button>/.test(page) && /Cancel<\/button>/.test(page));
+ok("and its rows put the label above the field", /\.blank-row\{display:block/.test(page));
+ok("the chooser that leads to it stays in his language", /<span class="ck-title">לקוח ריק<\/span>/.test(page));
+
+
+/* --- one pencil, two places (owner, 2026-09-30) -------------------------- */
+ok("the settings panel can be opened from outside this screen", /openSettings: function \(programId, anchor\)/.test(page));
+ok("and it is the same panel, floated", /host\.innerHTML = renderClientMorePop\(S\.program, true\);/.test(page));
+ok("a client's row in the clients table opens it", /window\.ClientScreen\.openSettings\(clientId, favEdit\)/.test(page));
+ok("a place, which has no tab, keeps its own small editor", /LS\.favEditing = favEdit\.getAttribute\("data-led-fav-edit"\)/.test(page));
+ok("a save redraws the floating panel too", /refreshFloatingSettings\(\)/.test(page));
+
+/* The payment date sits beside the amount — the two halves of one question. */
+ok("the panel asks when the money falls", /תאריך תשלום:/.test(page));
+ok("and it is a field only for a client the book bills", /function billingDayControlHtml/.test(page) && /נקבע כשתמסור לו את התוכנית/.test(page));
+ok("changing it goes through the book", /data-billingfield[\s\S]{0,400}LedgerScreen\.setBillingDay/.test(page));
+ok("and the screen says so when the day had to move", /אינו קיים בכל חודש/.test(page));
+
+/* Deleting one bill of a monthly client is not cancelling the arrangement. */
+ok("deleting one recurring bill says what it is", /מחיקת חיוב של לקוח מחזורי/.test(page));
+ok("and what survives it", /שאר החיובים המחזוריים שלו לא ייפגעו/.test(page));
 
 console.log("All admin clients page checks passed.");

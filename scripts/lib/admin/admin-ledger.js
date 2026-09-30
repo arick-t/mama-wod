@@ -34,6 +34,22 @@ const PLACES_KEY = "coach-ledger/places.json";
    It is built once, from a bounded window of months, the first time it is asked for.
    ══════════════════════════════════════════════════════════════════════════ */
 const UNINVOICED_KEY = "coach-ledger/_uninvoiced.json";
+/* ══════════════════════════════════════════════════════════════════════════
+   THE MONTHLY CLIENTS — one object for all of them.
+
+   A studio that pays every month is not a deal, it is a standing arrangement, and
+   until now the book had no shape for one. It lives in ONE small object: opening the
+   book reads it once, and nothing here ever lists the store — the lesson of
+   2026-09-02 holds on this side of the feature too.
+
+   A bill whose day has come is WRITTEN into its month, once, under an id built from
+   the client and the month. A bill still ahead is never written: the page draws it
+   from this object as he scrolls forward, so looking at next March costs nothing and
+   leaves nothing behind.
+   ══════════════════════════════════════════════════════════════════════════ */
+const SUBS_KEY = "coach-ledger/subscriptions.json";
+/* What a monthly bill is called until he says otherwise. */
+const DEFAULT_SERVICE = "תוכנית אימון";
 /* How far back the first build looks. Two years of a coach's book, bounded — and after
    that first build nothing ever scans again. */
 const BUILD_MONTHS_BACK = 23;
@@ -89,6 +105,106 @@ async function writePlaces(warehouse) {
   });
   await JsonStore.putJson(PLACES_KEY, next);
   return next;
+}
+
+async function readSubs() {
+  const stored = await JsonStore.getJson(SUBS_KEY);
+  return Ledger.normalizeSubscriptions(stored || Ledger.emptySubscriptions());
+}
+
+async function writeSubs(store) {
+  const next = Object.assign({}, store, {
+    version: Number(store.version || 1) + 1,
+    updatedAt: new Date().toISOString(),
+  });
+  await JsonStore.putJson(SUBS_KEY, next);
+  return next;
+}
+
+/**
+ * Write down the bills whose day has come.
+ *
+ * Costs nothing on the common path: every subscription carries the last month it was
+ * billed for, so "is anything owed?" is answered from the one object already in hand,
+ * with no month read at all. Only a month that actually gains a bill is read and
+ * written, and the whole pass is fenced at twelve months so a subscription opened two
+ * years ago can never turn into a hundred writes.
+ *
+ * Planting is idempotent by id, so two tabs opening the book at once cannot bill a
+ * studio twice for the same month.
+ */
+async function settleDue(todayIso) {
+  const store = await readSubs();
+  const due = Ledger.dueOccurrences(store, todayIso, [], { backMonths: 12 });
+  if (!due.length) return store;
+
+  const byMonth = {};
+  due.forEach(function (d) {
+    if (!byMonth[d.month]) byMonth[d.month] = [];
+    byMonth[d.month].push(d.deal);
+  });
+
+  const billedThrough = {};
+  for (const month of Object.keys(byMonth).sort()) {
+    let doc = await readMonth(month);
+    let touched = false;
+    for (const deal of byMonth[month]) {
+      const planted = Ledger.plantOccurrence(doc, deal);
+      doc = planted.doc;
+      if (planted.ok) touched = true;
+      /* Marked even when it was already there: the marker is about what has been
+         settled, not about what this pass happened to write. */
+      if (!billedThrough[deal.clientId] || month > billedThrough[deal.clientId]) {
+        billedThrough[deal.clientId] = month;
+      }
+    }
+    if (touched) await noteUninvoiced(await writeMonth(doc));
+  }
+
+  let next = store;
+  Object.keys(billedThrough).forEach(function (clientId) {
+    const moved = Ledger.upsertSubscription(next, {
+      clientId: clientId,
+      billedThrough: billedThrough[clientId],
+    });
+    if (moved.ok) next = moved.store;
+  });
+  return writeSubs(next);
+}
+
+/**
+ * Everything of this client's that has not happened yet, removed.
+ *
+ * Freezing or deleting a client stops him earning FROM NOW ON: what he already paid
+ * stays written in the months it was written in, and anything dated after today goes
+ * (owner, 2026-09-30). Bounded to a year forward, like every other multi-month write
+ * here — it is a deliberate action, never a timer.
+ */
+async function purgeFutureOf(clientId, todayIso, name) {
+  const id = String(clientId || "");
+  if (!id) return 0;
+  /* His rows are the ones the book knows are his AND the ones written under his name.
+     The owner sees a name on a line, not an id, and a line still standing under a
+     deleted client's name is exactly what he asked to be rid of (owner, 2026-09-30). */
+  const named = String(name || "").trim().toLowerCase();
+  const day = Ledger.dayIso(todayIso);
+  let month = Ledger.monthKey(day);
+  let removed = 0;
+  for (let i = 0; i < 12; i++) {
+    const doc = await readMonth(month);
+    if (doc.deals.length) {
+      const kept = doc.deals.filter(function (d) {
+        const his = d.clientId === id || (named && d.name.trim().toLowerCase() === named);
+        return !(his && d.day > day);
+      });
+      if (kept.length !== doc.deals.length) {
+        removed += doc.deals.length - kept.length;
+        await noteUninvoiced(await writeMonth(Object.assign({}, doc, { deals: kept })));
+      }
+    }
+    month = Ledger.shiftMonth(month, 1);
+  }
+  return removed;
 }
 
 /* The month a caller asked for, and the five places behind the name field. */
@@ -173,20 +289,41 @@ async function buildUninvoiced(todayIso) {
   return writeUninvoiced(months);
 }
 
-async function monthPayload(month) {
+async function monthPayload(month, opts) {
+  const o = opts && typeof opts === "object" ? opts : {};
   const doc = await readMonth(month);
   const places = await readPlaces();
+  const subs = o.subs || (await readSubs());
+  /* Bills still ahead of their day, drawn and never stored. A month whose bill is
+     already in the book is skipped by id, so nothing is ever shown twice. */
+  const projected = Ledger.occurrencesIn(subs, doc.month, doc.deals.map(function (d) {
+    return d.id;
+  }));
+  /* What the month is worth is what is written PLUS what is already promised: a
+     studio that pays on the 5th is worth its fee on the 1st too (owner, 2026-09-22).
+     The book itself still holds only what was written — this shape exists for the
+     screen and is never saved. */
+  const shown = Object.assign({}, doc, { deals: doc.deals.concat(projected) });
   return {
     ok: true,
     month: doc.month,
     version: doc.version,
-    deals: doc.deals,
-    total: Ledger.monthTotal(doc),
-    totalsByDay: Ledger.totalsByDay(doc),
+    deals: shown.deals,
+    total: Ledger.monthTotal(shown),
+    totalsByDay: Ledger.totalsByDay(shown),
+    /* Everyone who pays every month, for the favourites box and the billing date
+       field beside each one. One object, already in hand. */
+    subscriptions: subs.subs,
     /* Never the whole warehouse: it is not a screen, it is the five it can offer. */
     favourites: Ledger.favourites(places),
-    /* name → colour, so a row can be painted without a second request. */
-    colours: Ledger.colourMap(places),
+    /* name → colour, so a row can be painted without a second request. A monthly
+       client's colour wins over a place of the same name: the colour is chosen on his
+       tab, and that one choice has to be what the strip, the favourites, the table and
+       the calendar all show (owner, 2026-09-22). */
+    colours: subs.subs.reduce(function (acc, sub) {
+      if (sub.colour) acc[sub.name] = sub.colour;
+      return acc;
+    }, Ledger.colourMap(places)),
     /* The names behind the autocomplete, busiest first, and what each one is known
        for — so typing a place he knows fills the other two fields without a round
        trip (owner, 2026-09-04). Names and two small fields, never the warehouse. */
@@ -209,7 +346,7 @@ module.exports = async function handler(req, res) {
       ok: true,
       service: "admin-ledger",
       aiSurface: "none",
-      hint: "POST with an owner credential: month | add_deal | update_deal | delete_deal | range",
+      hint: "POST with an owner credential: month | add_deal | update_deal | delete_deal | range | subscriptions",
     });
   }
   if (req.method !== "POST") return bad(res, 405, "METHOD", "Method not allowed");
@@ -227,7 +364,164 @@ module.exports = async function handler(req, res) {
   try {
     if (action === "month") {
       const month = Ledger.monthKey(body.month ? body.month + "-01" : undefined);
-      return res.status(200).json(await monthPayload(month));
+      /* Opening the book is when a bill whose day has come gets written down. It
+         costs nothing when nothing is owed — see settleDue. */
+      const subs = await settleDue(Ledger.dayIso(body.today) || undefined);
+      return res.status(200).json(await monthPayload(month, { subs: subs }));
+    }
+
+    /* ---------------------------------------------------------- monthly clients */
+
+    /* The whole arrangement book: one object, never a listing of the store. */
+    if (action === "subscriptions") {
+      const subs = await settleDue(Ledger.dayIso(body.today) || undefined);
+      return res.status(200).json({ ok: true, subscriptions: subs.subs });
+    }
+
+    /**
+     * A client became a monthly client, or something about him changed.
+     *
+     * The client screen sends what it knows — a name, a colour, a price, a freeze, the
+     * day the programme was handed over. What it leaves out is kept, so a rename can
+     * never quietly erase a price.
+     */
+    if (action === "save_subscription") {
+      const store = await readSubs();
+      /* A rename or a new colour must not INVENT an arrangement. Every client in the
+         module sends those, and only the ones who actually pay every month belong in
+         this book — so a client the book has never heard of is only written down when
+         the call carries a price (owner, 2026-09-22). */
+      if (!String(body.clientId || "").trim()) {
+        return bad(res, 400, "NO_CLIENT", "a subscription needs a client");
+      }
+      const known = Ledger.findSub(store, body.clientId);
+      if (!known && !(Number(body.price) > 0)) {
+        return res.status(200).json({ ok: true, subscriptions: store.subs, subscription: null });
+      }
+      const saved = Ledger.upsertSubscription(store, {
+        clientId: body.clientId,
+        name: body.name,
+        /* The first intake has no "what is this for" field, so a new arrangement gets
+           the plain answer and he changes it in the table when it is something else
+           (owner, 2026-09-22). */
+        service: known ? body.service : body.service || DEFAULT_SERVICE,
+        price: body.price,
+        method: body.method,
+        colour: body.colour,
+        startDay: body.startDay,
+        active: body.active,
+      });
+      if (!saved.ok) return bad(res, 400, saved.code, saved.error);
+      await writeSubs(saved.store);
+      /* A freeze stops him earning from now on, so whatever is still ahead of him
+         goes with it. What he already paid stays where it was written. */
+      let purged = 0;
+      if (known && known.active !== false && saved.sub.active === false) {
+        purged = await purgeFutureOf(body.clientId, body.today, saved.sub.name);
+      }
+      /* A new arrangement whose first day has already passed is billed at once, so he
+         never has to remember to open the book on the right day. */
+      const settled = await settleDue(Ledger.dayIso(body.today) || undefined);
+      return res.status(200).json({
+        ok: true,
+        subscriptions: settled.subs,
+        subscription: Ledger.findSub(settled, body.clientId),
+        purgedFuture: purged,
+      });
+    }
+
+    /**
+     * What the bill is FOR — changed by hand, from the row in the table.
+     *
+     * It moves the arrangement, so every bill from here on carries the new wording.
+     * It also rewrites the bill of the month on screen when that one has not been
+     * invoiced yet: he is looking at it, and a line that keeps the old words while the
+     * list beside it shows the new ones is just confusing. A bill he has already
+     * invoiced is left exactly as it was billed (owner, 2026-09-22).
+     */
+    if (action === "set_subscription_service") {
+      const store = await readSubs();
+      const sub = Ledger.findSub(store, body.clientId);
+      if (!sub) return bad(res, 404, "NOT_FOUND", "no such subscription");
+      const saved = Ledger.upsertSubscription(store, {
+        clientId: body.clientId,
+        service: String(body.service || "").trim() || DEFAULT_SERVICE,
+      });
+      if (!saved.ok) return bad(res, 400, saved.code, saved.error);
+      await writeSubs(saved.store);
+
+      const month = Ledger.monthKey(body.month ? body.month + "-01" : undefined);
+      const doc = await readMonth(month);
+      const id = Ledger.occurrenceId(saved.sub, month);
+      const row = doc.deals.filter(function (d) { return d.id === id; })[0];
+      if (row && !row.invoiced) {
+        const moved = Ledger.updateDeal(doc, id, { service: saved.sub.service });
+        if (moved.ok) await writeMonth(moved.doc);
+      }
+      return res.status(200).json({
+        ok: true,
+        subscriptions: saved.store.subs,
+        subscription: saved.sub,
+      });
+    }
+
+    /* A client deleted in the module leaves the book with him (owner, 2026-09-22).
+       What he already paid stays written where it was written. */
+    if (action === "delete_subscription") {
+      const store = await readSubs();
+      /* His name is read BEFORE he is removed — it is how his lines are found. */
+      const leaving = Ledger.findSub(store, body.clientId);
+      const gone = Ledger.removeSubscription(store, body.clientId);
+      if (!gone.ok) return bad(res, 404, gone.code, gone.error);
+      await writeSubs(gone.store);
+      /* Deleted is deleted from here on. The months he already paid for keep their
+         rows — that money was earned (owner, 2026-09-30). */
+      const purgedGone = await purgeFutureOf(body.clientId, body.today, leaving && leaving.name);
+      return res.status(200).json({
+        ok: true,
+        subscriptions: gone.store.subs,
+        purgedFuture: purgedGone,
+      });
+    }
+
+    /**
+     * A new price — and the whole question is WHEN.
+     *
+     * "now"  · this month is worth the new price too, even five days in.
+     * "next" · the old price stands until the next billing date, which is named here
+     *          so the popup and the book cannot disagree about it.
+     */
+    if (action === "set_subscription_price") {
+      const store = await readSubs();
+      const mode = body.mode === "next" ? "next" : "now";
+      const moved = Ledger.setSubscriptionPrice(store, body.clientId, body.price, mode, {
+        today: Ledger.dayIso(body.today) || undefined,
+      });
+      if (!moved.ok) return bad(res, moved.code === "NOT_FOUND" ? 404 : 400, moved.code, moved.error);
+      await writeSubs(moved.store);
+      return res.status(200).json({
+        ok: true,
+        subscriptions: moved.store.subs,
+        subscription: moved.sub,
+        from: moved.from,
+      });
+    }
+
+    /* The day of the month the money falls on. It moves from the next bill onwards —
+       a month already written keeps the day it was written on. */
+    if (action === "set_billing_day") {
+      const store = await readSubs();
+      const moved = Ledger.setBillingDay(store, body.clientId, body.day, {
+        today: Ledger.dayIso(body.today) || undefined,
+      });
+      if (!moved.ok) return bad(res, moved.code === "NOT_FOUND" ? 404 : 400, moved.code, moved.error);
+      await writeSubs(moved.store);
+      return res.status(200).json({
+        ok: true,
+        subscriptions: moved.store.subs,
+        subscription: moved.sub,
+        from: moved.from,
+      });
     }
 
     if (action === "add_deal") {
@@ -332,6 +626,9 @@ module.exports = async function handler(req, res) {
      * (owner, 2026-09-08).
      */
     if (action === "uninvoiced") {
+      /* A bill that fell due this morning belongs in this number, so the settling
+         happens before it is read. Free when there is nothing to settle. */
+      await settleDue(Ledger.dayIso(body.today) || undefined);
       let idx = await readUninvoiced();
       if (!idx) idx = await buildUninvoiced(Ledger.dayIso(body.today) || undefined);
       return res.status(200).json({
@@ -423,14 +720,21 @@ module.exports = async function handler(req, res) {
          ceiling. It is still a hard cap: a range is answered from the months it
          touches, never from a listing of the store (owner, 2026-09-03). */
       const months = Ledger.monthsBetween(from, to).slice(0, 12);
+      const subs = await readSubs();
       let deals = [];
       for (const m of months) {
         const doc = await readMonth(m);
-        deals = deals.concat(doc.deals);
+        /* The table and the calendar have to agree. A bill still ahead of its day is
+           drawn on the calendar, so it belongs in the record on the same terms:
+           visible, marked as a promise, and never stored (owner, 2026-09-22). */
+        deals = deals.concat(doc.deals, Ledger.occurrencesIn(subs, m, doc.deals.map(function (d) {
+          return d.id;
+        })));
       }
       /* The range on its own, for the lists. */
       const inRange = Ledger.filterDeals(deals, { from: from, to: to });
       const rows = Ledger.filterDeals(deals, {
+        nature: body.nature,
         name: body.name,
         /* A place chosen from the list is an exact answer to "what do I invoice this
            gym for", not a search (owner, 2026-09-04). */
@@ -457,6 +761,9 @@ module.exports = async function handler(req, res) {
         /* What the two lists can offer — computed BEFORE the name and service filters,
            or choosing a place would collapse the list to that one place and he could
            never switch (owner, 2026-09-04). */
+        /* The arrangements themselves, so a row can show the price that is coming
+           without a second request. One object, already in hand. */
+        subscriptions: subs.subs,
         names: Array.from(new Set(inRange.map(function (d) { return d.name; }))).sort(),
         services: Array.from(new Set(inRange.map(function (d) { return d.service; }).filter(Boolean))).sort(),
       });

@@ -594,7 +594,12 @@ ok("it asks for a stamp, not the list", /pollAdminListStamp\(\);/.test(adminHtml
 ok("the poll does NOT fetch the list directly", !/\}, ADMIN_POLL_MS\);[\s\S]{0,80}loadAthletes/.test(adminHtml));
 ok("only a changed stamp pays for the list", /if \(!stamp \|\| stamp === lastAdminListStamp\) return;/.test(adminHtml));
 ok("returning to the tab asks the cheap question too", /if \(!document\.hidden && adminIsAuthed\(\)\) pollAdminListStamp\(\)/.test(adminHtml));
-ok("the interval is not faster than it was", /ADMIN_POLL_MS = 45000/.test(adminHtml));
+/* The literal moved on 2026-09-30, on the way back to the free plan: 45 seconds cost an
+   open tab about 14,000 reads a month, two minutes costs roughly 5,300. Pinning the
+   NUMBER is what let the badge lie for two releases elsewhere, so what is pinned here
+   is the promise — never faster than it was. */
+ok("the interval is not faster than it was",
+  Number((adminHtml.match(/ADMIN_POLL_MS = (\d+)/) || [])[1]) >= 45000);
 ok("the page remembers what it is holding", /lastAdminListStamp = String\(/.test(adminHtml));
 
 /* The server side of the same promise. */

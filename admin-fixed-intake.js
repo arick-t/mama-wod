@@ -232,6 +232,8 @@
       started: false,
       fixedActive: false,
       fixedStep: 0,
+      /* The furthest step he has actually reached — what makes a tab pressable. */
+      fixedMax: 0,
       messages: [],
       email: "",
       displayName: "",
@@ -288,6 +290,12 @@
       intakeBuildId: "",
       buildAttempted: false,
     };
+    /* The step strip belongs to a questionnaire in progress. Leaving it behind means
+       reopening the box and being shown the steps of an intake that no longer exists. */
+    var strip = document.getElementById("athleteIntakeTabs");
+    if (strip) { strip.hidden = true; strip.innerHTML = ""; }
+    var meta = document.getElementById("athleteIntakeStep");
+    if (meta) meta.textContent = "";
   };
 
   window.openIntakeWorkspace = function openIntakeWorkspace() {
@@ -368,6 +376,7 @@
     intakeState.started = true;
     intakeState.fixedActive = true;
     intakeState.fixedStep = 0;
+    intakeState.fixedMax = 0;
     intakeState.preferredLanguage = "en";
     hideEl("intake-start-bar");
     hideEl("intake-chat-log");
@@ -375,7 +384,7 @@
     if (typeof hideIntakePickers === "function") hideIntakePickers();
     var status = document.getElementById("intake-status");
     if (status) {
-      status.textContent = "תחקור זהה לאפליקציה · שלב 1/" + C().FIXED_STEPS.length;
+      status.textContent = "The same questionnaire the athlete app asks.";
     }
     syncAdminFixedIntakeUi();
   };
@@ -758,6 +767,12 @@
     if (!intakeState.fixedActive || intakeState.intakeComplete) {
       el.style.display = "none";
       el.innerHTML = "";
+      /* No questionnaire, no steps to show. The strip is drawn by the intake and
+         disappears with it. */
+      var strip = document.getElementById("athleteIntakeTabs");
+      if (strip) strip.hidden = true;
+      var meta = document.getElementById("athleteIntakeStep");
+      if (meta) meta.textContent = "";
       return;
     }
     el.style.display = "block";
@@ -768,10 +783,98 @@
        here, so every render threw "S is not defined" and the intake could not start
        (owner, 2026-09-02). */
     C().bindIntakeNumericKeyboards(el);
-    writeIntakeStatus("תחקור זהה לאפליקציה · שלב " +
-      ((intakeState.fixedStep | 0) + 1) +
-      "/" +
-      C().FIXED_STEPS.length);
+    renderFixedTabs();
+    /* The step number moved to the header, beside the way out, where the studio card
+       keeps it. This line says the one thing the header cannot: that these are the
+       app's own questions, in the app's own order (owner, 2026-09-22). */
+    writeIntakeStatus("The same questionnaire the athlete app asks.");
+  };
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     THE STEPS, AS BUTTONS.
+
+     The studio questionnaire has had clickable steps since it was built; this one
+     had "Step 3 / 8" written on it and no way to reach step 2 except Back. Same
+     product, two behaviours (owner, 2026-09-22).
+
+     A step he has already reached is a button he may press. One he has not is drawn
+     but dead — the answers of the steps between it and here have not been given yet,
+     and letting him skip them would hand the coach a half-filled intake.
+     ────────────────────────────────────────────────────────────────────────── */
+
+  /** The English words on the tabs, in the order the contract lists the steps. */
+  var STEP_LABELS = {
+    profile: "Profile",
+    setup: "Setup",
+    schedule: "Schedule",
+    recovery: "Recovery",
+    lifts: "Lifts",
+    skills: "Skills",
+    injuries: "Injuries",
+    goals: "Goals",
+  };
+
+  function furthestReached() {
+    var here = intakeState.fixedStep | 0;
+    var seen = intakeState.fixedMax | 0;
+    return here > seen ? here : seen;
+  }
+
+  function renderFixedTabs() {
+    var host = document.getElementById("athleteIntakeTabs");
+    var meta = document.getElementById("athleteIntakeStep");
+    var steps = C().FIXED_STEPS;
+    var here = intakeState.fixedStep | 0;
+    if (here > (intakeState.fixedMax | 0)) intakeState.fixedMax = here;
+    if (meta) meta.textContent = "Step " + (here + 1) + " of " + steps.length;
+    if (!host) return;
+    host.hidden = false;
+    var reached = furthestReached();
+    host.innerHTML = steps
+      .map(function (key, i) {
+        var cls = i === here ? "on" : i < reached ? "done" : "";
+        return (
+          '<button type="button" role="tab" onclick="adminFixedGoto(' + i + ')" data-fx-step="' + i + '"' +
+          (cls ? ' class="' + cls + '"' : "") +
+          (i > reached ? " disabled" : "") +
+          ' aria-selected="' + (i === here ? "true" : "false") + '">' +
+          (STEP_LABELS[key] || key) +
+          "</button>"
+        );
+      })
+      .join("");
+  }
+
+  /**
+   * Jump to a step from the tab strip.
+   *
+   * Going BACK, the step being left is offered to the validator first: when it is
+   * complete its answers are saved on the way out, which is more than Back has ever
+   * done. When it is not, we leave anyway and lose nothing that Back would not have
+   * lost — but the error message is cleared, because he asked to go somewhere, not to
+   * be told off.
+   *
+   * Going FORWARD is the ordinary Next, one validated step at a time. That is the
+   * whole point of the gate: a step he has not answered is not a step he can skip.
+   */
+  window.adminFixedGoto = function adminFixedGoto(step) {
+    if (intakeState.busy) return;
+    var want = parseInt(step, 10);
+    var here = intakeState.fixedStep | 0;
+    if (!isFinite(want) || want === here) return;
+    if (want > furthestReached()) return;
+    if (want > here) {
+      window.adminFixedNext();
+      return;
+    }
+    /* Going back, the step being left is offered to the validator so its answers are
+       saved on the way out — EXCEPT on the last step, where "Next" is not a step at
+       all: it is "Build my plan", and it would send the whole questionnaire to the
+       coach's brain because he pressed a tab (owner, 2026-09-22). */
+    if (here < C().FIXED_STEPS.length - 1) window.adminFixedNext();
+    intakeState.fixedStep = want;
+    setFixedErr("");
+    syncAdminFixedIntakeUi();
   };
 
   window.adminFixedSkillAllChange = function adminFixedSkillAllChange(inp) {
