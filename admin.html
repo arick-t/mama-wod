@@ -8097,6 +8097,9 @@ tryRestoreAdminSession();
 <script src="lib/day-rest-toggle.js"></script>
 <script src="lib/coach-ledger.js"></script>
 <script src="lib/admin-ledger-view.js"></script>
+<!-- A brick as a spreadsheet. Pure: it turns a programme into a grid and the grid into
+     the two things a spreadsheet understands. The page does the pressing. -->
+<script src="lib/brick-export.js"></script>
 <script>
 /* ══════════════════════════════════════════════════════════════════════════
    THE CLIENT SCREEN — moved here whole from admin-clients.html.
@@ -8862,6 +8865,14 @@ tryRestoreAdminSession();
          own page have no AI at all, which is the rule he set (owner, 2026-09-08). */
       '<button class="ghost sm" type="button" data-nextblock="1" ' +
       'title="תחקור קצר, ואז ארבעה שבועות חדשים בהמשך לקיים">צור לבנת המשך</button>' +
+      /* THE BRICK AS A SPREADSHEET. His module only: the client's own page has no such
+         button and never will. What goes out is what the client would see, in the
+         language it was written in — a date in a cell and the whole session beneath it,
+         week above week (owner, 2026-09-30). */
+      '<button class="ghost sm" type="button" data-brick-copy="1" ' +
+      'title="מעתיק את הלבנה כטבלה — פתח Google Sheet והדבק">העתק לגיליון</button>' +
+      '<button class="ghost sm" type="button" data-brick-csv="1" ' +
+      'title="מוריד קובץ שנפתח באקסל ובגיליונות">הורד אקסל</button>' +
       '</div>';
     html += '<div id="cvBrainPanel"></div>';
     html += pendingBlockHtml(p);
@@ -10516,6 +10527,137 @@ tryRestoreAdminSession();
      helpers are the only way they reach the book (owner, 2026-09-22).
      ────────────────────────────────────────────────────────────────────── */
 
+  /* ──────────────────────────────────────────────────────────────────────
+     THE BRICK AS A SPREADSHEET.
+
+     Two buttons, both of them entirely in this browser: nothing is uploaded, no
+     account is connected, no permission is asked for. Copying puts a real table on
+     the clipboard — which is the only way a session of eight lines lands in ONE cell
+     of Google Sheets instead of spilling down eight rows. Downloading writes a CSV
+     with the mark that stops Excel opening Hebrew as mojibake.
+
+     The grid itself is built in lib/brick-export.js, where it can be tested without a
+     browser. What goes into it is what the CLIENT would see (owner, 2026-09-30).
+     ────────────────────────────────────────────────────────────────────── */
+
+  /** Which brick is on screen — the one he is looking at, not all of them. */
+  function currentBlockIndex() {
+    var blocks = (S.program && S.program.blocks) || [];
+    if (!blocks.length) return 1;
+    var wi = Number(S.wi) || 0;
+    for (var i = 0; i < blocks.length; i++) {
+      var from = (Number(blocks[i].startWeek) || 1) - 1;
+      var to = from + (Number(blocks[i].weekCount) || 4);
+      if (wi >= from && wi < to) return Number(blocks[i].blockIndex) || i + 1;
+    }
+    return Number(blocks[blocks.length - 1].blockIndex) || blocks.length;
+  }
+
+  function brickGrid() {
+    if (!S.program || !window.BrickExport) return null;
+    return window.BrickExport.grid(S.program, currentBlockIndex());
+  }
+
+  function copyBrickToSheet() {
+    var g = brickGrid();
+    if (!g) { banner("bad", "אין לבנה להעתיק."); return; }
+    var E = window.BrickExport;
+    var html = E.html(g);
+    /* The plain-text half is the fallback for anywhere that cannot read a table. It
+       loses the multi-line cells, which is exactly why the HTML half exists. */
+    var plain = g.rows.map(function (row) {
+      return (row.cells || []).map(function (c) {
+        return String(c === undefined ? "" : c).replace(/\n/g, " · ");
+      }).join("\t");
+    }).join("\n");
+    var done = function () {
+      banner("good", "הלבנה הועתקה. פתח Google Sheet והדבק (Ctrl+V).");
+    };
+    /**
+     * The old way, and the one that always works.
+     *
+     * The modern clipboard API refuses without a fresh user gesture and a focused
+     * document, which is exactly the state a button press is NOT in by the time a
+     * promise resolves. Selecting a real table and asking the document to copy it has
+     * neither requirement, and it puts the same rich table on the clipboard — which is
+     * what makes a session of eight lines land in one cell (owner, 2026-09-30).
+     */
+    var copyBySelection = function () {
+      var holder = document.createElement("div");
+      holder.setAttribute("contenteditable", "true");
+      holder.style.position = "fixed";
+      holder.style.opacity = "0";
+      holder.style.pointerEvents = "none";
+      holder.style.insetInlineStart = "-9999px";
+      holder.innerHTML = html;
+      document.body.appendChild(holder);
+      var worked = false;
+      try {
+        var range = document.createRange();
+        range.selectNodeContents(holder);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        worked = document.execCommand("copy");
+        sel.removeAllRanges();
+      } catch (e) {
+        worked = false;
+      }
+      document.body.removeChild(holder);
+      return worked;
+    };
+    /* Three ways, weakest last. The rich table first, because it is the only one that
+       keeps a session in one cell; then the selection copy, which needs no permission;
+       and only then plain text, which pastes into cells but loses the line breaks. If
+       all three are refused, the download always works and the message says so. */
+    var failed = function () {
+      if (copyBySelection()) { done(); return; }
+      try {
+        navigator.clipboard.writeText(plain).then(function () {
+          banner("warn", "הועתק כטקסט בלבד — הדפדפן לא איפשר טבלה. ל״העתקה מלאה״ השתמש ב״הורד אקסל״.");
+        }, function () {
+          banner("warn", "הדפדפן חסם את ההעתקה. השתמש ב״הורד אקסל״.");
+        });
+      } catch (e) {
+        banner("warn", "הדפדפן חסם את ההעתקה. השתמש ב״הורד אקסל״.");
+      }
+    };
+    try {
+      if (navigator.clipboard && window.ClipboardItem) {
+        navigator.clipboard
+          .write([new ClipboardItem({
+            "text/html": new Blob([html], { type: "text/html" }),
+            "text/plain": new Blob([plain], { type: "text/plain" }),
+          })])
+          .then(done, failed);
+        return;
+      }
+      failed();
+    } catch (e) {
+      failed();
+    }
+  }
+
+  function downloadBrickCsv() {
+    var g = brickGrid();
+    if (!g) { banner("bad", "אין לבנה להוריד."); return; }
+    var E = window.BrickExport;
+    try {
+      var blob = new Blob([E.csv(g)], { type: "text/csv;charset=utf-8" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = E.fileName(S.program, currentBlockIndex());
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      banner("good", "הקובץ ירד.");
+    } catch (e) {
+      banner("bad", "לא הצלחתי ליצור את הקובץ.");
+    }
+  }
+
   /** Today, as the book writes a day. */
   function todayIsoForBilling() {
     if (window.CoachLedger && window.CoachLedger.dayIso) return window.CoachLedger.dayIso();
@@ -10986,6 +11128,8 @@ tryRestoreAdminSession();
       return;
     }
     if (g("data-nextblock")) { startNextBlock(); return; }
+    if (g("data-brick-copy")) { copyBrickToSheet(); return; }
+    if (g("data-brick-csv")) { downloadBrickCsv(); return; }
     if (g("data-approve")) { approveBlock(parseInt(g("data-approve"), 10) || 0); return; }
 
     /* One click, one intent: the link and the code are the same handover, and asking
