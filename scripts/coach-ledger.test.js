@@ -403,4 +403,12 @@ const afterMove = L.setBillingDay(movedWithPending, "p_oded", 7, { today: "2026-
 ok("moving the billing day moves the coming price with it", afterMove.sub.pending.from === afterMove.from);
 ok("and the price itself is untouched", afterMove.sub.pending.price === 1200);
 
+
+/* Deleting a bill of a settled month must not bring it back as a promise. */
+const settledSub = L.upsertSubscription(subs, { clientId: "p_oded", billedThrough: "2026-09" }).store;
+ok("a settled month whose bill he deleted is not drawn again",
+  L.occurrencesIn(settledSub, "2026-09", []).length === 0);
+ok("but a month that was never settled still is",
+  L.occurrencesIn(settledSub, "2026-11", []).length === 1);
+
 console.log("\nAll coach ledger checks passed (" + passed + " assertions).");
