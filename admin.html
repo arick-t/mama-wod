@@ -417,6 +417,12 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .led-clients .led-count{font-size:11px;color:var(--text-muted);font-weight:700}
 /* Editing a row turns it into a swatch strip, so it stops being a five-column line. */
 .led-clients .led-row.is-editing{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+/* The settings panel, floated beside a pencil that lives outside the client's own
+   screen. Same panel, same fields, same handlers — only the box around it is here. */
+.client-settings-float{position:fixed;z-index:1400}
+.client-settings-float .ath-stats-pop{position:static;margin:0;box-shadow:0 18px 44px rgba(0,0,0,.55)}
+/* A fact with nothing to change yet says so, quietly, where its field would be. */
+.ath-fact-static{font-size:12px;color:var(--text-muted)}
 .led-fav-row{display:grid;grid-template-columns:1.2fr auto 1fr auto auto;gap:10px;align-items:center;
   padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg-elev);font-size:13px}
 .led-fav-row.is-editing{grid-template-columns:1.2fr auto auto auto}
@@ -425,7 +431,11 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .led-fav-row.is-recurring{border-color:rgba(245,197,24,.35)}
 /* Frozen stays in the list, grey and untouchable: freezing is not deleting
    (owner, 2026-09-22). */
-.led-fav-row.is-frozen{opacity:.45;filter:grayscale(1)}
+/* Grey, not gone. At .45 a frozen client read as an empty row and the owner reported
+   him missing from the list entirely (owner, 2026-09-30). He is still a client; he is
+   just not earning. */
+.led-fav-row.is-frozen{opacity:.72;filter:grayscale(1)}
+.led-fav-row.is-frozen .led-cell{color:var(--text-muted)}
 .led-fav-row.is-frozen .led-fav-billing-day{pointer-events:none}
 .led-fav-frozen{font-size:10px;font-weight:800;color:var(--text-muted);
   border:1px solid var(--line);border-radius:6px;padding:1px 5px;margin-inline-start:6px}
@@ -8510,6 +8520,72 @@ tryRestoreAdminSession();
    * shoulders. They save when you leave the field, so there is no save button to
    * forget. Delete lives here too: it is the last thing you want under your thumb.
    */
+  /**
+   * Float the settings panel beside whatever was pressed.
+   *
+   * Used when the pencil lives outside this screen — on a row in the clients table.
+   * The panel is the same markup the client's own card renders; only the box around it
+   * is different, and it closes the way every other popover here closes.
+   */
+  function floatSettingsPanel(anchor) {
+    closeFloatingSettings();
+    var host = document.createElement("div");
+    host.id = "clientSettingsFloat";
+    host.className = "client-settings-float";
+    host.innerHTML = renderClientMorePop(S.program, true);
+    document.body.appendChild(host);
+    if (anchor && anchor.getBoundingClientRect) {
+      var r = anchor.getBoundingClientRect();
+      var top = Math.min(r.bottom + 6, window.innerHeight - 40);
+      host.style.top = Math.max(8, top) + "px";
+      /* The page is RTL: pin the panel's inline-start edge to the pencil. */
+      host.style.right = Math.max(8, window.innerWidth - r.right) + "px";
+    }
+    /* A press anywhere else puts it away — but not the press that opened it. */
+    setTimeout(function () {
+      document.addEventListener("mousedown", closeFloatingOnOutside, true);
+    }, 0);
+  }
+
+  function closeFloatingOnOutside(ev) {
+    var host = document.getElementById("clientSettingsFloat");
+    if (!host) return closeFloatingSettings();
+    if (host.contains(ev.target)) return;
+    closeFloatingSettings();
+  }
+
+  function closeFloatingSettings() {
+    document.removeEventListener("mousedown", closeFloatingOnOutside, true);
+    var host = document.getElementById("clientSettingsFloat");
+    if (host && host.parentNode) host.parentNode.removeChild(host);
+  }
+
+  /** Redraw the floating panel in place, when one of its own fields changed. */
+  function refreshFloatingSettings() {
+    var host = document.getElementById("clientSettingsFloat");
+    if (!host || !S.program) return;
+    host.innerHTML = renderClientMorePop(S.program, true);
+  }
+
+  /**
+   * "ה-1 בחודש" — the day of the month the money falls on, as a number he may change.
+   *
+   * It exists only for a client the book actually bills. For anyone else there is
+   * nothing to say, so it says so rather than offering a field that leads nowhere.
+   */
+  function billingDayControlHtml(p) {
+    var sub = p && window.LedgerScreen && window.LedgerScreen.subscription
+      ? window.LedgerScreen.subscription(p.programId)
+      : null;
+    if (!sub) {
+      return '<span class="ath-fact-static">נקבע כשתמסור לו את התוכנית</span>';
+    }
+    return (
+      '<input id="fBillingDay" class="ath-fact-input" type="number" min="1" max="31" ' +
+      'data-billingfield="1" value="' + esc(sub.billingDay || 1) + '" title="היום בחודש שבו הוא משלם">'
+    );
+  }
+
   /** "(₪1,000 מ-05/10/26)" — the price that is coming, where the current one is typed. */
   function pendingPriceNote(p) {
     var sub = p && window.LedgerScreen && window.LedgerScreen.subscription
@@ -8564,6 +8640,15 @@ tryRestoreAdminSession();
              CHARGING; the new one waits here with its date, exactly as it waits in the
              deals table (owner, 2026-09-22). */
           pendingPriceNote(p) +
+        "</div>" +
+        /* WHEN the money falls, beside HOW MUCH — the two halves of one question.
+           It opens on the day the programme was handed over and he may move it; from
+           the 29th onwards it becomes the 1st, because February has no 31st and a
+           standing order that skips a month is not a standing order
+           (owner, 2026-09-30). */
+        '<div class="ath-fact">' +
+          '<span class="ath-fact-label">תאריך תשלום:</span>' +
+          billingDayControlHtml(p) +
         "</div>" +
         '<div class="ath-fact">' +
           '<span class="ath-fact-label">שיטת תשלום:</span>' +
@@ -10548,6 +10633,7 @@ tryRestoreAdminSession();
         );
       }
       renderDetail();
+      refreshFloatingSettings();
       loadList();
     });
   }
@@ -10560,6 +10646,7 @@ tryRestoreAdminSession();
       if (r.status !== 200 || !r.body.ok) { banner("bad", r.body.error || "השמירה נכשלה."); return; }
       S.program = r.body.program;
       banner("good", "הפרטים נשמרו.");
+      refreshFloatingSettings();
       loadList();
       if (typeof then === "function") then();
     });
@@ -10960,6 +11047,22 @@ tryRestoreAdminSession();
     /* The name lives in the same panel as the money now, and commits the same way. */
     if (t.getAttribute("data-identityfield") && S.program) {
       saveIdentityFields(t.value, S.program.clientColour || "");
+      return;
+    }
+    /* The day of the month the money falls on. The book decides what it becomes — a
+       29th, a 30th and a 31st all become the 1st — and says so when it moves. */
+    if (t.getAttribute("data-billingfield") && S.program && window.LedgerScreen) {
+      var wanted = Number(t.value);
+      window.LedgerScreen.setBillingDay(S.program.programId, wanted).then(function (res) {
+        if (!res || !res.ok) { banner("bad", (res && res.error) || "לא הצלחתי לשמור."); return; }
+        if (document.getElementById("fBillingDay")) {
+          document.getElementById("fBillingDay").value = res.day;
+        }
+        banner("good", res.moved
+          ? "תאריך חיוב מ-" + wanted + " לחודש אינו קיים בכל חודש — נקבע ל-1 בחודש. החיוב הקרוב: " + res.fromLabel + "."
+          : "תאריך החיוב המחזורי שונה — יחול מ-" + res.fromLabel + ".");
+        refreshFloatingSettings();
+      });
       return;
     }
     if (!t.getAttribute("data-metafield")) return;
@@ -13379,6 +13482,27 @@ tryRestoreAdminSession();
     reload: function () {
       return loadList();
     },
+    /**
+     * The settings panel, opened from somewhere that is not this screen.
+     *
+     * The owner asked for ONE pencil with one behaviour, whether he presses it on a
+     * client's tab or on his row in the clients table (owner, 2026-09-30). So this is
+     * not a second panel that looks the same — it IS the panel: the client is read,
+     * becomes the current one, and the same markup is floated beside whatever was
+     * pressed. Every handler behind it is the one that was already there.
+     */
+    openSettings: function (programId, anchor) {
+      if (!programId) return Promise.resolve(false);
+      return api({ action: "read", programId: programId }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) return false;
+        S.program = r.body.program;
+        S.sel = programId;
+        S.access = r.body.access || S.access;
+        S.moreOpen = true;
+        floatSettingsPanel(anchor);
+        return true;
+      });
+    },
     rows: function () {
       return S.rows || [];
     },
@@ -14423,8 +14547,36 @@ tryRestoreAdminSession();
       .replace(/"/g, "&quot;");
   }
 
+  /**
+   * Delete one line.
+   *
+   * A line of a MONTHLY client is not like any other: it is one month's turn of a
+   * standing arrangement, and deleting it must not read as cancelling the arrangement.
+   * So it is named for what it is, and the box says what stays behind — the other
+   * months, and the client himself (owner, 2026-09-30).
+   */
   function deleteDeal(id) {
+    var row = ((LS.data && LS.data.deals) || []).filter(function (d) { return d.id === id; })[0];
+    if (row && row.nature === "recurring") {
+      ledModal({
+        title: "מחיקת חיוב של לקוח מחזורי",
+        body:
+          '<p class="led-modal-text">' + escHtml(row.name) + " — " + escHtml(V.hebDate(row.day)) +
+          ", " + escHtml(V.shekel ? V.shekel(row.price) : "₪" + row.price) + ".</p>" +
+          '<p class="led-modal-note">זהו חיוב אחד בלבד. שאר החיובים המחזוריים שלו לא ייפגעו, ' +
+          "והמנוי שלו נשאר פעיל. הסכומים והחשבונית הקרובה יתעדכנו בהתאם.</p>",
+        buttons: [
+          { label: "ביטול", kind: "ghost" },
+          { label: "מחק את החיוב הזה", kind: "primary", run: function () { doDeleteDeal(id); } },
+        ],
+      });
+      return;
+    }
     if (!window.confirm("למחוק את העסקה?")) return;
+    doDeleteDeal(id);
+  }
+
+  function doDeleteDeal(id) {
     api({ action: "delete_deal", id: id, month: LS.month, day: LS.day }).then(function (r) {
       if (r.status !== 200 || !r.body.ok) {
         toast((r.body && r.body.error) || "לא הצלחתי למחוק", "err");
@@ -14552,6 +14704,16 @@ tryRestoreAdminSession();
 
     var favEdit = t.closest("[data-led-fav-edit]");
     if (favEdit) {
+      /* THE SAME PENCIL. A client's row opens the very panel his own tab opens — not a
+         copy of it — so a name, a colour, a price or a payment date changed in either
+         place is the same change (owner, 2026-09-30). A PLACE is not a client and has
+         no tab, so it keeps the small name-and-colour editor it has always had. */
+      var row = favEdit.closest("[data-led-sub]");
+      var clientId = row ? row.getAttribute("data-led-sub") : "";
+      if (clientId && window.ClientScreen && window.ClientScreen.openSettings) {
+        window.ClientScreen.openSettings(clientId, favEdit);
+        return;
+      }
       LS.favEditing = favEdit.getAttribute("data-led-fav-edit") || "";
       renderFavourites();
       return;
@@ -14885,6 +15047,31 @@ tryRestoreAdminSession();
     /* The arrangement as it stands, so the client screen can ask "from when?" with the
        right date in the question. */
     subscription: function (clientId) { return subById(clientId); },
+    /**
+     * Move the day of the month the money falls on, from wherever it was asked.
+     *
+     * The BOOK decides what the day becomes — a 29th, a 30th and a 31st all become the
+     * 1st — so the caller is told what it settled on and whether it had to move, and
+     * says that in its own words.
+     */
+    setBillingDay: function (clientId, day) {
+      return api({ action: "set_billing_day", clientId: clientId, day: day, today: todayIso() })
+        .then(function (r) {
+          if (r.status !== 200 || !r.body.ok) {
+            return { ok: false, error: (r.body && r.body.error) || "" };
+          }
+          LS.subs = r.body.subscriptions || [];
+          renderFavourites();
+          if (LS.open) loadMonth(LS.month);
+          return {
+            ok: true,
+            day: r.body.subscription.billingDay,
+            moved: L.billingDayMoved(day),
+            from: r.body.from,
+            fromLabel: V.hebDate(r.body.from),
+          };
+        });
+    },
     /**
      * Make sure the arrangements are in hand before anyone asks about one.
      *

@@ -306,8 +306,12 @@ ok("and that id is recognisable on its own", L.isRecurringId(sep.id) && !L.isRec
 /* A short month cannot swallow a bill. */
 const late = L.setBillingDay(subs, "p_oded", 31, { today: "2026-09-10", clock: clock });
 ok("a billing day is 1–31", L.setBillingDay(subs, "p_oded", 45).code === "BAD_DAY");
-ok("the 31st in February is the last day of February", L.occurrenceDay(late.sub, "2027-02") === "2027-02-28");
-ok("moving the billing day takes effect from the next bill", late.from === "2026-09-30");
+/* A standing order cannot sit on the 31st: February has no 31st, no 30th and usually
+   no 29th. Anything from the 29th onwards becomes the 1st (owner, 2026-09-30). */
+ok("the 31st becomes the 1st", late.sub.billingDay === 1);
+ok("so it is the same day in every month, February included", L.occurrenceDay(late.sub, "2027-02") === "2027-02-01");
+ok("and the screen can say it had to move", L.billingDayMoved(31) && L.billingDayMoved(29) && !L.billingDayMoved(28));
+ok("moving the billing day takes effect from the next bill", late.from === "2026-10-01");
 
 /* ---- the owner's two scenarios for a price change ---- */
 

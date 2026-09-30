@@ -172,6 +172,41 @@ async function settleDue(todayIso) {
   return writeSubs(next);
 }
 
+/**
+ * Everything of this client's that has not happened yet, removed.
+ *
+ * Freezing or deleting a client stops him earning FROM NOW ON: what he already paid
+ * stays written in the months it was written in, and anything dated after today goes
+ * (owner, 2026-09-30). Bounded to a year forward, like every other multi-month write
+ * here — it is a deliberate action, never a timer.
+ */
+async function purgeFutureOf(clientId, todayIso, name) {
+  const id = String(clientId || "");
+  if (!id) return 0;
+  /* His rows are the ones the book knows are his AND the ones written under his name.
+     The owner sees a name on a line, not an id, and a line still standing under a
+     deleted client's name is exactly what he asked to be rid of (owner, 2026-09-30). */
+  const named = String(name || "").trim().toLowerCase();
+  const day = Ledger.dayIso(todayIso);
+  let month = Ledger.monthKey(day);
+  let removed = 0;
+  for (let i = 0; i < 12; i++) {
+    const doc = await readMonth(month);
+    if (doc.deals.length) {
+      const kept = doc.deals.filter(function (d) {
+        const his = d.clientId === id || (named && d.name.trim().toLowerCase() === named);
+        return !(his && d.day > day);
+      });
+      if (kept.length !== doc.deals.length) {
+        removed += doc.deals.length - kept.length;
+        await noteUninvoiced(await writeMonth(Object.assign({}, doc, { deals: kept })));
+      }
+    }
+    month = Ledger.shiftMonth(month, 1);
+  }
+  return removed;
+}
+
 /* The month a caller asked for, and the five places behind the name field. */
 async function readUninvoiced() {
   let doc = null;
@@ -378,6 +413,12 @@ module.exports = async function handler(req, res) {
       });
       if (!saved.ok) return bad(res, 400, saved.code, saved.error);
       await writeSubs(saved.store);
+      /* A freeze stops him earning from now on, so whatever is still ahead of him
+         goes with it. What he already paid stays where it was written. */
+      let purged = 0;
+      if (known && known.active !== false && saved.sub.active === false) {
+        purged = await purgeFutureOf(body.clientId, body.today, saved.sub.name);
+      }
       /* A new arrangement whose first day has already passed is billed at once, so he
          never has to remember to open the book on the right day. */
       const settled = await settleDue(Ledger.dayIso(body.today) || undefined);
@@ -385,6 +426,7 @@ module.exports = async function handler(req, res) {
         ok: true,
         subscriptions: settled.subs,
         subscription: Ledger.findSub(settled, body.clientId),
+        purgedFuture: purged,
       });
     }
 
@@ -427,10 +469,19 @@ module.exports = async function handler(req, res) {
        What he already paid stays written where it was written. */
     if (action === "delete_subscription") {
       const store = await readSubs();
+      /* His name is read BEFORE he is removed — it is how his lines are found. */
+      const leaving = Ledger.findSub(store, body.clientId);
       const gone = Ledger.removeSubscription(store, body.clientId);
       if (!gone.ok) return bad(res, 404, gone.code, gone.error);
       await writeSubs(gone.store);
-      return res.status(200).json({ ok: true, subscriptions: gone.store.subs });
+      /* Deleted is deleted from here on. The months he already paid for keep their
+         rows — that money was earned (owner, 2026-09-30). */
+      const purgedGone = await purgeFutureOf(body.clientId, body.today, leaving && leaving.name);
+      return res.status(200).json({
+        ok: true,
+        subscriptions: gone.store.subs,
+        purgedFuture: purgedGone,
+      });
     }
 
     /**

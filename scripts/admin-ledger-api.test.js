@@ -432,6 +432,63 @@ async function main() {
   ok("and a client with no arrangement has no service to change",
     (await call({ action: "set_subscription_service", clientId: "nobody", service: "x" })).status === 404);
 
+
+  /* --- freezing and deleting take the future with them --------------------
+   * "מחיקה/הקפאה של לקוח == מחיקה גורפת החל מרגע המחיקה של העסקאות העתידיות — הישנות
+   * לא ימחקו" (owner, 2026-09-30).
+   * ------------------------------------------------------------------------- */
+
+  const FUT = "p_future";
+  await call({
+    action: "save_subscription", clientId: FUT, name: "סטודיו עתידי", price: 300,
+    startDay: "2026-08-05", today: "2026-09-24",
+  });
+  /* Two lines by hand, one behind him and one ahead of him. */
+  await call({ action: "add_deal", day: "2026-09-02", name: "סטודיו עתידי", price: 111, clientId: FUT });
+  const futureAdd = await call({ action: "add_deal", day: "2026-11-20", name: "סטודיו עתידי", price: 222, clientId: FUT });
+  ok("a line can be written ahead of today", futureAdd.status === 200);
+
+  const frozenRes = await call({ action: "save_subscription", clientId: FUT, active: false, today: "2026-09-24" });
+  ok("freezing him clears what was still ahead", frozenRes.body.purgedFuture >= 1);
+  const novAfter = await call({ action: "month", month: "2026-11", today: "2026-09-24" });
+  ok(
+    "so November holds nothing of his",
+    novAfter.body.deals.filter(function (d) { return d.clientId === FUT; }).length === 0
+  );
+  const augAfter = await call({ action: "month", month: "2026-08", today: "2026-09-24" });
+  ok(
+    "and August, which he already paid for, is untouched",
+    augAfter.body.deals.filter(function (d) { return d.clientId === FUT; }).length === 1
+  );
+
+  /* Deleting does the same, and leaves the same history behind. */
+  await call({ action: "save_subscription", clientId: FUT, active: true, today: "2026-09-24" });
+  await call({ action: "add_deal", day: "2026-12-05", name: "סטודיו עתידי", price: 333, clientId: FUT });
+  const deleted = await call({ action: "delete_subscription", clientId: FUT, today: "2026-09-24" });
+  ok("deleting him clears what was still ahead too", deleted.body.purgedFuture >= 1);
+  const decAfter = await call({ action: "month", month: "2026-12", today: "2026-09-24" });
+  ok(
+    "December is empty of him",
+    decAfter.body.deals.filter(function (d) { return d.clientId === FUT; }).length === 0
+  );
+  const augStill = await call({ action: "month", month: "2026-08", today: "2026-09-24" });
+  ok(
+    "and what he paid in August is still written",
+    augStill.body.deals.filter(function (d) { return d.clientId === FUT; }).length === 1
+  );
+
+  /* --- the standing order cannot sit past the 28th ------------------------ */
+  await call({
+    action: "save_subscription", clientId: "p_late", name: "מאוחר", price: 100,
+    startDay: "2026-09-30", today: "2026-09-30",
+  });
+  const lateSub = (await call({ action: "subscriptions" })).body.subscriptions
+    .filter(function (x) { return x.clientId === "p_late"; })[0];
+  ok("handing over on the 30th bills on the 1st", lateSub.billingDay === 1);
+  const moved = await call({ action: "set_billing_day", clientId: "p_late", day: 31, today: "2026-09-30" });
+  ok("and asking for the 31st gets the 1st", moved.body.subscription.billingDay === 1);
+  await call({ action: "delete_subscription", clientId: "p_late", today: "2026-09-30" });
+
   console.log("\nAll admin ledger API checks passed (" + passed + " assertions).");
 }
 

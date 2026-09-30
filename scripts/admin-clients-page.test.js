@@ -1535,4 +1535,22 @@ ok("its buttons too", /Create client<\/button>/.test(page) && /Cancel<\/button>/
 ok("and its rows put the label above the field", /\.blank-row\{display:block/.test(page));
 ok("the chooser that leads to it stays in his language", /<span class="ck-title">לקוח ריק<\/span>/.test(page));
 
+
+/* --- one pencil, two places (owner, 2026-09-30) -------------------------- */
+ok("the settings panel can be opened from outside this screen", /openSettings: function \(programId, anchor\)/.test(page));
+ok("and it is the same panel, floated", /host\.innerHTML = renderClientMorePop\(S\.program, true\);/.test(page));
+ok("a client's row in the clients table opens it", /window\.ClientScreen\.openSettings\(clientId, favEdit\)/.test(page));
+ok("a place, which has no tab, keeps its own small editor", /LS\.favEditing = favEdit\.getAttribute\("data-led-fav-edit"\)/.test(page));
+ok("a save redraws the floating panel too", /refreshFloatingSettings\(\)/.test(page));
+
+/* The payment date sits beside the amount — the two halves of one question. */
+ok("the panel asks when the money falls", /תאריך תשלום:/.test(page));
+ok("and it is a field only for a client the book bills", /function billingDayControlHtml/.test(page) && /נקבע כשתמסור לו את התוכנית/.test(page));
+ok("changing it goes through the book", /data-billingfield[\s\S]{0,400}LedgerScreen\.setBillingDay/.test(page));
+ok("and the screen says so when the day had to move", /אינו קיים בכל חודש/.test(page));
+
+/* Deleting one bill of a monthly client is not cancelling the arrangement. */
+ok("deleting one recurring bill says what it is", /מחיקת חיוב של לקוח מחזורי/.test(page));
+ok("and what survives it", /שאר החיובים המחזוריים שלו לא ייפגעו/.test(page));
+
 console.log("All admin clients page checks passed.");
