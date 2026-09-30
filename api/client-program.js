@@ -42,6 +42,9 @@ const Access = require("../lib/client-access.js");
 const Payload = require("../lib/client-view-payload.js");
 const Terms = require("../lib/client-terms.js");
 const Intake = require("../lib/client-intake.js");
+/* A gym block is SIX weeks. See lib/gym-layers/base.js for why, and POL-032 for the
+   four-week functional brick this deliberately is not. */
+const GYM_BLOCK_WEEKS = 6;
 const Renewal = require("../lib/client-renewal.js");
 
 /** Today, on the owner's calendar — the blocks are planned in Israel time. */
@@ -393,7 +396,8 @@ async function ownerHandler(req, res, body) {
        shape the month with: every day is open, none is a rest day, and there is no
        deload to place (owner, 2026-09-04). */
     const isBlank = body.clientKind === "blank";
-    const wantsIntake = body.clientKind !== "athlete" && !isBlank;
+    const isGym = body.clientKind === "gym";
+    const wantsIntake = body.clientKind !== "athlete" && !isBlank && !isGym;
     let intake = null;
     let weekCount = body.weekCount;
     /* An individual athlete answers a different questionnaire (the eight-step one the
@@ -430,6 +434,38 @@ async function ownerHandler(req, res, body) {
         goals: String(athleteIntake.goals || "").slice(0, 600),
       });
       weekCount = Intake.weekCountFor(intake);
+    }
+    if (isGym) {
+      /* A COMMERCIAL GYM CLIENT. Their answers come from lib/gym-intake.js and go to the gym
+         brain - neither of which this file touches. What happens HERE is only the container:
+         which squares exist and how many weeks of them, and that is deliberately the same
+         machinery every other kind uses. One way to lay a month out; two ways to fill it.
+
+         The month is SIX weeks, not four. That is the structural difference between the two
+         products: a gym block runs six to ten weeks and progresses by load on the same
+         exercises, where a functional brick is four and progresses week to week. */
+      const gymAnswers = isPlainObject(body.gymIntake) ? body.gymIntake : {};
+      const trains = Array.isArray(gymAnswers.trainingDays) ? gymAnswers.trainingDays : [];
+      const rest = {};
+      for (const k of Intake.DAY_KEYS) rest[k] = trains.indexOf(k) < 0;
+      intake = Intake.normalizeIntake({
+        clientName: body.clientName || gymAnswers.clientName,
+        scheduleMode: "weekly_schedule",
+        includeRestDays: trains.length > 0,
+        restDays: rest,
+        sessionsPerWeek: trains.length,
+        sessionMinutes: gymAnswers.sessionMinutes,
+        /* Their own answer. A gym cadence is counted in six-week blocks, so a number below
+           six is not a cadence at all - lib/gym-intake.js refuses it before it reaches here. */
+        deloadWeek: parseInt(gymAnswers.deloadEveryWeeks, 10) > 0,
+        deloadEveryWeeks: parseInt(gymAnswers.deloadEveryWeeks, 10) > 0
+          ? parseInt(gymAnswers.deloadEveryWeeks, 10)
+          : 0,
+        population: "Commercial gym",
+        monthlyAmount: body.monthlyAmount,
+        paymentMethod: body.paymentMethod,
+      });
+      weekCount = GYM_BLOCK_WEEKS;
     }
     if (isBlank) {
       /* Two shapes of month, and he chooses on the short form: a week of days, or a
