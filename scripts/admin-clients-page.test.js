@@ -883,7 +883,13 @@ ok("a failed open is said out loud, not into a hidden banner", /showHdrToast\(wh
  * individual's next-block window. Two causes, both here: a pane belonging to no tab in
  * the current list was never touched, so it kept whatever it was last time; and nothing
  * emptied the fields between clients (owner, 2026-09-03). */
-ok("every pane is hidden before the current one is shown", /var allPanes = document\.querySelectorAll\("\.ipane"\)/.test(page));
+/* Scoped to the card, since 2026-09-30. Page-wide, it reached a pane belonging to the gym
+   questionnaire and hid it — a form that drew itself and then vanished. Every pane in THIS
+   card is still hidden first, which is what this check is for. */
+ok(
+  "every pane in this card is hidden before the current one is shown",
+  /var allPanes = document\.querySelectorAll\("#intakeCard \.ipane"\)/.test(page)
+);
 ok("a new client starts on an empty form", /function clearIntakeForm/.test(page));
 ok("and it is called when adding one", /clearIntakeForm\(\);[\s\S]{0,40}renderIntakeTabs\(\);/.test(page));
 ok("the individual tab is emptied too", /fillAthleteGoalsTab\(null\)/.test(page));

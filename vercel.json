@@ -90,6 +90,9 @@
     "api/personal-coach.js": {
       "maxDuration": 300
     },
+    "api/gym-coach.js": {
+      "maxDuration": 300
+    },
     "api/coach-feedback.js": {
       "maxDuration": 30
     },

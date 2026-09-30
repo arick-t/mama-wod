@@ -774,7 +774,11 @@ async function ownerHandler(req, res, body) {
           draft.clientColour = /^#[0-9a-f]{6}$/i.test(col) ? col : "";
         }
         if (patch.clientKind !== undefined) {
-          draft.clientKind = ["athlete", "blank"].indexOf(patch.clientKind) >= 0 ? patch.clientKind : "coach";
+          /* "gym" belongs on this list as much as the others: a gym client whose kind quietly
+             fell back to "coach" would be a client sent to the WRONG BRAIN, which is the one
+             thing the two-brain wall exists to prevent (2026-09-30). */
+          draft.clientKind =
+            ["athlete", "blank", "gym"].indexOf(patch.clientKind) >= 0 ? patch.clientKind : "coach";
         }
         if (patch.blockStart !== undefined) draft.blockStart = String(patch.blockStart).slice(0, 10);
         /* Which language this client's programme is written in. A presentation choice

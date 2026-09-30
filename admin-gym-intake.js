@@ -43,11 +43,19 @@
   var step = 0;
   /* The furthest tab this questionnaire has been opened to. See render(). */
   var reached = 0;
+  /* The month on screen and the answers behind it, held between "Build" and "Keep". */
+  var pending = null;
+  var shownBlock = null;
 
   function reset() {
     reached = 0;
     state = {
       clientName: "",
+      /* WHAT THEY PAY. Not the brain's business and never sent to it — since 23.1 the monthly
+         charge is planted in the book the moment a delivery link is issued, so a client created
+         without it is a client who never appears on an invoice. */
+      monthlyAmount: "",
+      paymentMethod: "",
       gender: "",
       age: "",
       bodyweight: "",
@@ -104,6 +112,11 @@
           opt("experienced", "Trains regularly", state.experience) +
           "</select>"
       ) +
+      '<div class="grid2">' +
+      fld("Monthly amount (₪)", '<input id="gxAmount" type="number" min="0" step="1" value="' + esc(state.monthlyAmount) + '">') +
+      fld("Payment method", '<input id="gxPayMethod" type="text" maxlength="200" value="' + esc(state.paymentMethod) + '">') +
+      "</div>" +
+      '<p class="meta">Payment details stay with you. The client never sees them, and neither does the brain.</p>' +
       '<p class="pprog-fixed-note">Which language the ATHLETE reads their programme in. This card stays English either way.</p>' +
       '<div class="pick-row">' +
       chk("gxLangEn", "English", state.outputLanguage !== "he", "radio", "gxLang") +
@@ -321,7 +334,10 @@
       })
       .join("");
     el("gymIntakeStep").textContent = "Step " + (step + 1) + " of " + steps.length;
-    el("gymIntakeBody").innerHTML = '<div class="ipane" data-pane="' + steps[step].id + '">' + PANES[step]() + "</div>";
+    /* NOT ".ipane". That class belongs to the studio card, whose tab switcher hides every one of
+       them on the page — so a gym pane wearing it drew itself perfectly and then disappeared
+       (2026-09-30). Its own class, its own switcher. */
+    el("gymIntakeBody").innerHTML = '<div class="gym-pane" data-pane="' + steps[step].id + '">' + PANES[step]() + "</div>";
 
     el("gxPrev").hidden = step === 0;
     var last = step === steps.length - 1;
@@ -354,6 +370,8 @@
       state.gender = v("gxGender");
       state.bodyweight = v("gxWeight");
       state.experience = v("gxExperience");
+      state.monthlyAmount = v("gxAmount");
+      state.paymentMethod = v("gxPayMethod");
       state.outputLanguage = c("gxLangHe") ? "he" : "en";
     }
     if (el("gxFullyEquipped")) {
@@ -553,6 +571,17 @@
           return;
         }
         window.gymLastBlock = x.j;
+        /* WHAT THE SAVE WILL NEED, taken now while the questionnaire is still on screen. The
+           money and the name are not in `answers` on purpose — that object is what goes to the
+           brain, and what a client pays is none of its business. */
+        pending = {
+          clientName: state.clientName,
+          clientGender: state.gender,
+          monthlyAmount: state.monthlyAmount,
+          paymentMethod: state.paymentMethod,
+          outputLanguage: state.outputLanguage,
+          gymIntake: answers,
+        };
         setErr("");
         closeGymIntake();
         showGymBlock(x.j, answers);
@@ -595,8 +624,15 @@
       return w && w.phase === "deload";
     }).length;
     var bits = [weeks + " שבועות", days + " אימונים בשבוע", "שבוע אחד שחוזר"];
-    if (deload) bits.push(deload + " שבועות דילואד");
-    if (answers && answers.split) bits.push(String(answers.split).toUpperCase());
+    /* "1 שבועות דילואד" is not Hebrew. One is a word here, not a number. */
+    if (deload === 1) bits.push("כולל שבוע דילואד");
+    else if (deload > 1) bits.push(deload + " שבועות דילואד");
+    /* The split by the name the coach chose it under, not by its id. "PPL_UPPER_LOWER" is
+       what the code calls it; "PUSH / PULL / LEGS + UPPER / LOWER" is what he picked. */
+    var lib = L();
+    var split = answers && answers.split;
+    var named = split && lib && lib.SPLITS && lib.SPLITS[split] ? lib.SPLITS[split].label : "";
+    if (named) bits.push(named);
     return bits.join(" · ");
   }
 
@@ -660,6 +696,7 @@
          month written by the gym brain read as a different KIND of thing from a month written
          by hand. It is not: it is a block, on the same screen, for the same coach.
          Every class here is the one admin.html's own block panel uses, global and unchanged. */
+      shownBlock = shown;
       host.innerHTML =
         '<div class="ath-block-panel">' +
         '<div class="ath-block-panel-head" dir="rtl">' +
@@ -681,6 +718,48 @@
     }
     modal.classList.add("open");
   };
+
+  /**
+   * KEEPING IT: the month becomes a client.
+   *
+   * The block on screen has not been written anywhere until this runs. The clients screen owns
+   * the endpoint and the shape of a saved month, so the work happens there (ClientScreen.createGym)
+   * and this only hands over what the questionnaire knows.
+   */
+  window.keepGymClient = function keepGymClient() {
+    var btn = el("gymBlockKeep");
+    if (!pending || !shownBlock) return;
+    if (!window.ClientScreen || !window.ClientScreen.createGym) {
+      alertLine("מסך הלקוחות עוד לא נטען — נסה שוב בעוד רגע.");
+      return;
+    }
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "שומר…";
+    }
+    window.ClientScreen.createGym(pending, shownBlock.weeks || []).then(function (r) {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "שמור כלקוח";
+      }
+      if (!r || !r.ok) {
+        alertLine((r && r.error) || "לא הצלחתי ליצור את הלקוח.");
+        return;
+      }
+      pending = null;
+      shownBlock = null;
+      closeGymBlock();
+      if (typeof window.showHdrToast === "function") {
+        window.showHdrToast(r.warn ? r.warn : "נוצר לקוח חדר כושר ✓", r.warn ? "warn" : "ok");
+      }
+    });
+  };
+
+  /** One line above the month, where the findings already live. */
+  function alertLine(msg) {
+    var find = el("gymBlockFindings");
+    if (find) find.innerHTML = '<p class="err" style="margin:0 0 10px">' + esc(msg) + "</p>" + find.innerHTML;
+  }
 
   window.closeGymBlock = function closeGymBlock() {
     var m = el("gymBlockModal");

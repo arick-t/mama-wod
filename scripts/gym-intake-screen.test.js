@@ -117,9 +117,17 @@ ok(
   "the boxed answer is one rule serving the studio card and the gym one",
   /#intakeCard \.chk-row,#gymIntakeModal \.chk-row\{padding:10px 12px/.test(admin)
 );
-ok("and so is the dark field", /#gymIntakeModal \.ipane input\[type="number"\]\{/.test(admin));
+ok("and so is the dark field", /#gymIntakeModal \.gym-pane input\[type="number"\]\{/.test(admin));
 ok("and so is the step bar", /#clientScreen #intakeCard \.itabs,#gymIntakeModal \.itabs\{/.test(admin));
-ok("the pane is a pane, which is what those rules are written against", /id="gymIntakeBody" class="ipane"/.test(admin));
+
+/* THE GYM PANE IS NOT AN .ipane. The studio card's tab switcher hides every .ipane it can
+   find, so a gym pane wearing that class drew itself and then vanished — no error, nothing in
+   the console. Both ends of that are held here: the gym uses its own class, and the switcher
+   is scoped to the card whose panes they are. */
+ok("the gym pane has a class of its own", /class="gym-pane" data-pane=/.test(jsCode));
+ok("and is not one of the studio's panes", jsCode.indexOf('<div class="ipane" data-pane=') < 0);
+ok("the studio switcher reaches only its own card", /querySelectorAll\("#intakeCard \.ipane"\)/.test(admin));
+ok("including the one it then shows", /querySelector\('#intakeCard \.ipane\[data-pane=/.test(admin));
 
 /* A step you have reached is clickable; one you have not is drawn and dead. */
 ok("the strip remembers how far he has got", /var reached = 0;/.test(jsCode));

@@ -1769,7 +1769,7 @@ body:has(#intake-modal.open) #adminChatFloat{
 #gymIntakeModal .itabs button.on{background:var(--coach-deep);color:#fff;border-color:var(--coach)}
 #gymIntakeModal .itabs button.done{border-color:var(--part);color:var(--part)}
 #gymIntakeModal .itabs button.on.done{color:#fff}
-#gymIntakeModal .ipane label.fld span{font-size:.82rem}
+#gymIntakeModal .gym-pane label.fld span{font-size:.82rem}
 #gymIntakeModal .chk-row{display:flex;gap:10px;cursor:pointer}
 #gymIntakeModal .chk-row input{width:20px;height:20px;margin:2px 0 0;flex:0 0 auto;accent-color:var(--brand)}
 #gymIntakeModal .chk-row span{color:var(--text)}
@@ -1816,9 +1816,9 @@ body:has(#intake-modal.open) #adminChatFloat{
 #intakeCard .sub-branch,#gymIntakeModal .sub-branch{border-inline-start:2px solid var(--line);margin-inline-start:6px}
 #intakeCard label.fld span,#gymIntakeModal label.fld span{font-size:.82rem;color:#aaa;line-height:1.4}
 #intakeCard .ipane textarea,#intakeCard .ipane input[type="text"],#intakeCard .ipane input[type="number"],
-#gymIntakeModal .ipane textarea,#gymIntakeModal .ipane input[type="text"],#gymIntakeModal .ipane input[type="number"]{
+#gymIntakeModal .gym-pane textarea,#gymIntakeModal .gym-pane input[type="text"],#gymIntakeModal .gym-pane input[type="number"]{
   background:#222;border:1px solid #555;border-radius:8px;color:#eee;font-family:inherit}
-#intakeCard .ipane textarea,#gymIntakeModal .ipane textarea{min-height:88px}
+#intakeCard .ipane textarea,#gymIntakeModal .gym-pane textarea{min-height:88px}
 #intakeCard .age-range{display:flex;align-items:center;gap:10px}
 #intakeCard .age-range .inline-num{margin-inline-start:0;width:88px}
 #intakeCard .age-dash{color:var(--text-meta)}
@@ -2560,6 +2560,10 @@ header{flex-wrap:wrap;row-gap:8px}
       <h2 id="gymBlockTitle">The block</h2>
       <div style="display:flex;align-items:center;gap:12px">
         <span class="meta" id="gymBlockMeta"></span>
+        <!-- The month is not a client until someone says so. Until this is pressed nothing has
+             been written down, which is what lets the coach look at a block, dislike it, and
+             close the card without leaving a half-client behind. -->
+        <button type="button" class="hdr-btn primary" id="gymBlockKeep" onclick="keepGymClient()">שמור כלקוח</button>
         <button type="button" class="btn-secondary" onclick="closeGymBlock()">סגור</button>
       </div>
     </div>
@@ -2582,7 +2586,7 @@ header{flex-wrap:wrap;row-gap:8px}
     </div>
     <div class="intake-ws-body">
       <div class="itabs" id="gymIntakeTabs" role="tablist"></div>
-      <div id="gymIntakeBody" class="ipane"></div>
+      <div id="gymIntakeBody"></div>
       <div class="row" style="margin-top:14px">
         <button id="gxPrev" class="ghost" type="button" hidden>Back</button>
         <button id="gxNext" type="button">Next</button>
@@ -13164,10 +13168,14 @@ tryRestoreAdminSession();
        touched, so it kept whatever it was last time - which is how backing out of an
        individual's intake and then adding a studio client showed the individual's
        next-block pane (owner, 2026-09-03). */
-    var allPanes = document.querySelectorAll(".ipane");
+    /* INSIDE THIS CARD. The selector used to be page-wide, and on 2026-09-30 that reached a
+       pane belonging to the gym questionnaire and hid it — a form that drew itself correctly
+       and then vanished, with nothing in the console to say why. These panes are the studio
+       card's; nobody else's are this function's business. */
+    var allPanes = document.querySelectorAll("#intakeCard .ipane");
     for (var pi = 0; pi < allPanes.length; pi++) allPanes[pi].hidden = true;
     tabs.forEach(function (t, i) {
-      var pane = document.querySelector('.ipane[data-pane="' + t.id + '"]');
+      var pane = document.querySelector('#intakeCard .ipane[data-pane="' + t.id + '"]');
       if (pane && i === iStep) pane.hidden = false;
     });
     el("intakeStep").textContent = "Step " + (iStep + 1) + " of " + tabs.length;
@@ -13629,6 +13637,37 @@ tryRestoreAdminSession();
   }
 
   /**
+   * A client who has just been created, put on screen.
+   *
+   * Opened FROM the response rather than re-read. A failed re-read used to look exactly like
+   * the page ignoring him (owner, 2026-09-03), and that is worse for a client who now exists
+   * than an honest warning beside him.
+   */
+  function openGymCreated(program, warn) {
+    S.adding = false;
+    S.blockMode = false;
+    S.sel = program.programId;
+    S.program = program;
+    S.access = null;
+    S.wi = 0;
+    S.day = "sun";
+    S.calMode = "month";
+    S.selected = [];
+    S.edit = null;
+    S.edits = {};
+    adminOpenedSomeone = true;
+    try {
+      if (typeof window.renderPeopleStripActive === "function") {
+        window.renderPeopleStripActive(program.programId);
+      }
+    } catch (eStrip) {}
+    renderViewMode();
+    renderDetail();
+    loadList();
+    return { ok: true, program: program, warn: warn || "" };
+  }
+
+  /**
    * The doors admin.html uses. This screen renders into #clientScreen, which sits beside
    * #content; the page decides which of the two is showing.
    */
@@ -13742,6 +13781,68 @@ tryRestoreAdminSession();
      * opened from the response rather than re-read: a failed re-read used to look
      * exactly like the page ignoring him (owner, 2026-09-03).
      */
+    /**
+     * A COMMERCIAL-GYM CLIENT, AND THE MONTH THE GYM BRAIN JUST WROTE FOR THEM.
+     *
+     * Two calls, in this order and not the other way round. `create` asks the SERVER for the
+     * container — six weeks of squares, with the deload cadence laid over them and every
+     * training day flagged "I have not been over this" — because the shape of a month is the
+     * server's to decide for every kind, and a second way to lay one out is a second way to
+     * get it wrong. Only then is what the brain wrote poured into those squares.
+     *
+     * The flags SURVIVE that pour. They are the coach's own to-do list on a block nobody has
+     * read yet, and a month that arrived already ticked off would be a month nobody checks.
+     * A day with nothing written in it loses the flag: there is nothing there to review.
+     */
+    createGym: function (form, weeks) {
+      var f = form || {};
+      return api({
+        action: "create",
+        clientKind: "gym",
+        clientName: f.clientName,
+        clientGender: f.clientGender,
+        monthlyAmount: f.monthlyAmount,
+        paymentMethod: f.paymentMethod,
+        gymIntake: f.gymIntake,
+        blockStart: israelSundayIso(),
+      }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) {
+          return { ok: false, error: (r.body && r.body.error) || "" };
+        }
+        var program = r.body.program;
+        var written = Array.isArray(weeks) ? weeks : [];
+        if (!written.length) return openGymCreated(program);
+        var merged = (program.weeks || []).map(function (w, i) {
+          var src = written[i];
+          if (!src) return w;
+          var out = JSON.parse(JSON.stringify(w));
+          /* The server owns the phase — it read the cadence off the questionnaire and the
+             absolute week, which is the one place that decision lives (POL-032). */
+          out.theme = String(src.theme || "");
+          out.summaryLine = String(src.summaryLine || "");
+          if (Array.isArray(src.overview)) out.overview = src.overview;
+          ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].forEach(function (k) {
+            var day = out.days[k] || (out.days[k] = { parts: [] });
+            var from = (src.days || {})[k] || {};
+            day.parts = Array.isArray(from.parts) ? JSON.parse(JSON.stringify(from.parts)) : [];
+            if (!day.parts.length) delete day.ownerUnreviewed;
+          });
+          return out;
+        });
+        return api({
+          action: "save",
+          programId: program.programId,
+          expectedVersion: r.body.program.version,
+          program: { weeks: merged, outputLanguage: f.outputLanguage === "he" ? "he" : "en" },
+        }).then(function (r2) {
+          if (r2.status !== 200 || !r2.body.ok) {
+            /* The client EXISTS — saying "failed" would send the coach to make a second one. */
+            return openGymCreated(program, "הלקוח נוצר אבל הלבנה לא נשמרה: " + ((r2.body && r2.body.error) || ""));
+          }
+          return openGymCreated(r2.body.program);
+        });
+      });
+    },
     createBlank: function (form) {
       var f = form || {};
       return api({

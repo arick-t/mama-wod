@@ -95,5 +95,16 @@ async function run(req) {
   ok("for GET", /gym-coach"\s*\n?\s*\?\s*"api\/gym-coach\.js"|api\/gym-coach\.js/.test(dev));
   ok("and for POST", /pathname === "\/api\/gym-coach"\)\s*\{\s*\n\s*await loadApiHandler\("api\/gym-coach\.js"\)/.test(dev));
 
-  console.log("\nנקודת הקצה של החד\"כ — קריאה אחת, ג'ימיני בלבד, ואפס שורות מהמוח השני.");
+  /* -- it has to be allowed to FINISH ------------------------------------------
+   A gym block took 15.4 seconds on the first real generation, and a function with no
+   maxDuration of its own gets the platform default — which would kill the request mid-answer,
+   after the provider had already been paid for the tokens. The other programming endpoint has
+   carried this entry since the day it was written; this one was added without it (2026-09-30). */
+const vercel = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "vercel.json"), "utf8"));
+ok(
+  "the gym endpoint is given time to answer",
+  ((vercel.functions || {})["api/gym-coach.js"] || {}).maxDuration >= 60
+);
+
+console.log("\nנקודת הקצה של החד\"כ — קריאה אחת, ג'ימיני בלבד, ואפס שורות מהמוח השני.");
 })();
