@@ -767,7 +767,9 @@ ok("adding a client is one button", /id="btn-add-athlete"/.test(page) && /functi
 /* The count names both halves. When the owner reported "all my athletes disappeared"
    there was no way to tell from the screen whether that half had answered empty or had
    not answered at all — so now the screen says which. */
-ok("the count is everyone he manages", /rows\.length \+ " לקוחות · "/.test(page));
+/* Everyone he manages — and his own book is not one of them (owner, 2026-09-30). */
+ok("the count is everyone he manages", /people\.length \+ " לקוחות · "/.test(page));
+ok("and it leaves his own book out of it", /r\.kind !== "ledger"/.test(page));
 ok("and it says which half is which", / מתאמנים · /.test(page) && / תוכניות/.test(page));
 
 /* ------------------------------------------------------------------------
