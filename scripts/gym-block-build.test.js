@@ -74,7 +74,20 @@ const every6 = B.blockFromText(TEXT, { answers: { deloadWeek: true, deloadEveryW
 ok("a cadence of six lands on week 6", every6.block.weeks[5].phase === "deload");
 ok("and on nothing else", every6.block.weeks.filter((w) => w.phase === "deload").length === 1);
 ok("the deload week says what to do with it", /the same sessions, lighter/i.test(every6.block.weeks[5].summaryLine));
-ok("and it holds the same sessions as the rest", JSON.stringify(every6.block.weeks[5].days) === JSON.stringify(every6.block.weeks[0].days));
+/* THE SAME SESSIONS, with the note on top of them. The check used to compare the two weeks
+   whole, which was right until the deload week started carrying an instruction — and then a
+   correct week would have read as a broken one. What matters has not changed: the TRAINING is
+   identical, because a deload is the same work done lighter and not different work. */
+function trainingOnly(week) {
+  const copy = JSON.parse(JSON.stringify(week.days));
+  Object.keys(copy).forEach(function (k) {
+    copy[k].parts = (copy[k].parts || []).filter(function (p) {
+      return p.id !== B.DELOAD_NOTE_ID;
+    });
+  });
+  return JSON.stringify(copy);
+}
+ok("and it holds the same sessions as the rest", trainingOnly(every6.block.weeks[5]) === trainingOnly(every6.block.weeks[0]));
 
 /* Counted on the ABSOLUTE week of the plan — a cadence that restarted each block would drift. */
 const second = B.blockFromText(TEXT, { answers: { deloadWeek: true, deloadEveryWeeks: 6 }, startWeek: 7 });
@@ -108,5 +121,61 @@ ok("'group' is read as the title", fromDrift.block.weeks[0].days.sun.parts[0].ti
 ok("and 'exercises' as the lines", fromDrift.block.weeks[0].days.sun.parts[0].lines[0] === "3 x 12 Lat Pulldown @ 7/10");
 ok("the contract still shows the exact keys it should have used", /"days": \{/.test(Brief.GYM_CONTRACT));
 ok("including the seven day keys", /sun mon tue wed thu fri sat/.test(Brief.GYM_CONTRACT));
+
+/* -- a deload week has to SAY it is one ---------------------------------------
+   The week carried phase:"deload" and an instruction in its summaryLine, and nothing in the
+   product displays a week's summaryLine — so the owner opened week 6, saw the same five
+   sessions under a tint, and asked whether the deload was broken (2026-09-30). It goes in the
+   DAY now, because the day is what anybody opens. */
+
+const dl = B.buildBlock(
+  {
+    summaryLine: "x",
+    days: {
+      sun: { parts: [{ title: "A", lines: ["4 x 10 Leg Press @ 7/10"] }] },
+      mon: { parts: [] }, tue: { parts: [] }, wed: { parts: [] },
+      thu: { parts: [] }, fri: { parts: [] }, sat: { parts: [] },
+    },
+  },
+  { answers: { deloadWeek: true, deloadEveryWeeks: 6 }, startWeek: 1 }
+).block;
+
+ok("the sixth week is the deload", dl.weeks[5].phase === "deload");
+ok("and it opens with the note", dl.weeks[5].days.sun.parts[0].id === B.DELOAD_NOTE_ID);
+ok("which says what to do", /lighter/i.test(dl.weeks[5].days.sun.parts[0].lines[0]));
+ok("and it says to drop a set", dl.weeks[5].days.sun.parts.some(function (p) {
+  return (p.lines || []).some(function (l) { return /drop one set/i.test(l); });
+}));
+ok("the training day is still there under it", dl.weeks[5].days.sun.parts[1].title === "A");
+ok("a build week carries no note", dl.weeks[0].days.sun.parts[0].id !== B.DELOAD_NOTE_ID);
+ok("and a rest day gets none either", (dl.weeks[5].days.tue.parts || []).length === 0);
+ok("the note is not readable as work", (function () {
+  const Check = require("../lib/gym-brick-check.js");
+  return (dl.weeks[5].days.sun.parts[0].lines || []).every(function (l) {
+    const r = Check.readLine(l);
+    return !r || !r.sets;
+  });
+})());
+
+/* ONE cadence rule. This used to be `absolute % cadence`, which agrees with the product's own
+   rule for a first block and disagrees the moment a previous block already deloaded. */
+const cont = B.buildBlock(
+  {
+    summaryLine: "x",
+    days: {
+      sun: { parts: [{ title: "A", lines: ["4 x 10 Leg Press @ 7/10"] }] },
+      mon: { parts: [] }, tue: { parts: [] }, wed: { parts: [] },
+      thu: { parts: [] }, fri: { parts: [] }, sat: { parts: [] },
+    },
+  },
+  { answers: { deloadWeek: true, deloadEveryWeeks: 6 }, startWeek: 7, deloadSinceWeek: 6 }
+).block;
+ok(
+  "a continuation counts from the rest already given, not from week one",
+  cont.weeks.map(function (w) { return w.phase; }).join(",") === "build,build,build,build,build,deload"
+);
+ok("the builder reads the product's own rule", /require\("\.\/client-intake\.js"\)/.test(
+  require("fs").readFileSync(require("path").join(__dirname, "..", "lib", "gym-block-build.js"), "utf8")
+));
 
 console.log("\nשבוע אחד נכנס, שישה יוצאים — והקיפאון מובנה, לא מבוקש.");

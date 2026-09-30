@@ -174,6 +174,10 @@ module.exports = async function handler(req, res) {
     const block = GymBuild.blockFromText(answer.text, {
       answers: built.body.gymIntake,
       startWeek: parseInt(body.blockStartWeek, 10) || 1,
+      /* The week the LAST deload actually fell on. The cadence runs from the rest already
+         given, not from week one, and the builder and the store must answer that question the
+         same way or the preview paints a different week from the one that gets saved. */
+      deloadSinceWeek: parseInt(body.deloadSinceWeek, 10) || 0,
     });
     if (!block.ok) {
       /* A cut answer is a delivery failure and asking again IS the fix, so say which it was. */
