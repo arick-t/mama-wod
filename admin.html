@@ -6,7 +6,7 @@
 <!-- The back office has no business in a search index. It carried no such tag while
      it was only an athlete admin; now that it also holds paying clients, it says so. -->
 <meta name="robots" content="noindex, nofollow">
-<title>DUCK-WOD Admin · 5.9</title>
+<title>DUCK-WOD Admin · 5.10</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Heebo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'">
@@ -115,6 +115,15 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 .hdr-btn{background:var(--bg-panel);border:1px solid var(--line);border-radius:9px;padding:7px 14px;
   color:var(--text-muted);font-size:13px;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:7px}
 .hdr-btn:hover{background:#252525;color:var(--text);border-color:#3a3a3a}
+/* The refresh, beside the count it refreshes. Quiet until it is wanted — it replaced
+   a timer that asked the server 240 times a day on its own (owner, 2026-10-02). */
+.hdr-refresh{appearance:none;background:transparent;border:1px solid var(--line);border-radius:8px;
+  width:26px;height:26px;padding:0;margin-inline-start:6px;color:var(--text-muted);font-size:14px;
+  line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.hdr-refresh:hover{color:var(--text);border-color:#3a3a3a}
+.hdr-refresh:disabled{opacity:.5;cursor:default}
+.hdr-refresh.is-spinning{animation:hdr-spin .9s linear infinite}
+@keyframes hdr-spin{to{transform:rotate(360deg)}}
 /* The duck, beside the name. */
 .hdr-duck{width:30px;height:30px;object-fit:cover;flex-shrink:0;border-radius:50%;border:1px solid var(--line)}
 /* What the month brings in: a chevron, and the number only when he asks for it. */
@@ -1941,7 +1950,7 @@ header{flex-wrap:wrap;row-gap:8px}
   <div class="login-box">
     <div class="brand">DUCK-WOD</div>
     <div class="sub">Founder Admin · יציב</div>
-    <div class="ver" id="login-ver-badge" title="Admin 5.9 · Coach 3.1">Admin 5.9<span class="ver-sep">·</span><span class="ver-coach">Coach 3.1</span></div>
+    <div class="ver" id="login-ver-badge" title="Admin 5.10 · Coach 3.1">Admin 5.10<span class="ver-sep">·</span><span class="ver-coach">Coach 3.1</span></div>
     <input type="password" id="pw-input" placeholder="סיסמת אדמין" autocomplete="current-password"/>
     <label class="login-remember">
       <input type="checkbox" id="pw-remember"/>
@@ -1957,9 +1966,14 @@ header{flex-wrap:wrap;row-gap:8px}
   <header>
     <img class="hdr-duck" src="assets/hamamen-coach-duck.png" alt="" width="30" height="30" draggable="false">
     <span class="logo">DUCK-WOD</span>
-    <span class="ver-badge" id="admin-ver-badge" title="Admin 5.9 · Coach 3.1">Admin 5.9<span class="ver-sep">·</span><span class="ver-coach">Coach 3.1</span></span>
+    <span class="ver-badge" id="admin-ver-badge" title="Admin 5.10 · Coach 3.1">Admin 5.10<span class="ver-sep">·</span><span class="ver-coach">Coach 3.1</span></span>
     <span class="count-wrap">
-      <span class="count" id="athlete-count" title="הרשימה מתעדכנת לבד כל כמה שניות — בלי לרענן את הדף">0 לקוחות</span>
+      <span class="count" id="athlete-count" title="מספר הלקוחות והמתאמנים">0 לקוחות</span>
+      <!-- The list is asked for when he asks for it. Nothing here runs on a clock
+           any more: a tab left open was spending most of a day's free operations on a
+           question nobody had asked (owner, 2026-10-02). -->
+      <button type="button" class="hdr-refresh" id="btn-admin-refresh" onclick="adminManualRefresh()"
+        title="רענן את הרשימה מהשרת" aria-label="רענן">⟳</button>
       <button type="button" class="credit-pill empty" id="btn-credit-estimate" onclick="openCreditUpdate()"
         title="יתרת קרדיט Gemini משוערת — לחץ לעדכון ידני מגוגל">
         <span class="credit-amt" id="credit-amt">הזן יתרה</span>
@@ -2742,6 +2756,8 @@ var lastAdminSnapFingerprint = "";
    poll exists for the other tab and the other device, and neither of those is in a
    hurry. It also stops entirely while the tab is hidden, and asks once on returning.
    ══════════════════════════════════════════════════════════════════════════ */
+/* Kept only so a reader can find the history: nothing uses it any more. The timer it
+   belonged to was removed on 2026-10-02 — see startAdminLivePoll. */
 var ADMIN_POLL_MS = 120000;
 /* The fingerprint of the list we are currently showing. A poll that matches it costs one
    small read and nothing else happens. */
@@ -2802,7 +2818,7 @@ var DECLARATION_CYCLE_DAYS = 183; /* ~6 months */
  */
 var COACH_BUILD_MAY_SAVE = false;
 
-var ADMIN_UI_VERSION = "5.9";
+var ADMIN_UI_VERSION = "5.10";
 var LIVE_COACH_VERSION = "3.1";
 var LIVE_COACH_VERSION_FETCHED_AT = 0;
 
@@ -3564,19 +3580,58 @@ function pollAdminListStamp() {
     .catch(function () {});
 }
 
+/**
+ * NOTHING ASKS THE SERVER ON A CLOCK ANY MORE.
+ *
+ * The timer is gone (owner, 2026-10-02). The free store allows about ten thousand
+ * operations a month — roughly 333 a day — and a tab left open was spending 240 of
+ * them on a question nobody had asked. Two minutes was already the second time that
+ * interval had been slowed; the honest answer was that a back office for one person
+ * does not need a heartbeat at all.
+ *
+ * What replaces it costs nothing until it is wanted:
+ *   - his own writes redraw the list immediately, as they always did;
+ *   - coming back to the tab asks ONCE, which is the case that actually matters
+ *     (he edited on his phone and turned back to the laptop);
+ *   - and the refresh button beside the count asks whenever he says so.
+ */
 function startAdminLivePoll() {
-  if (adminPollTimer) return;
-  adminPollTimer = setInterval(function () {
-    if (!adminIsAuthed()) return;
-    if (typeof document !== "undefined" && document.hidden) return;
-    pollAdminListStamp();
-  }, ADMIN_POLL_MS);
   try {
     document.addEventListener("visibilitychange", function () {
       if (!document.hidden && adminIsAuthed()) pollAdminListStamp();
     });
   } catch (eVis) {}
 }
+
+/**
+ * "רענן" — the question, asked on purpose.
+ *
+ * It refreshes everything on screen, which is what a man pressing refresh means. That
+ * costs about seven reads — and it costs them ONLY when he presses it. The timer it
+ * replaced spent 240 a day without being asked (owner, 2026-10-02).
+ */
+function adminManualRefresh() {
+  var btn = document.getElementById("btn-admin-refresh");
+  if (!adminIsAuthed()) return;
+  if (btn) { btn.disabled = true; btn.classList.add("is-spinning"); }
+  var done = function () {
+    if (!btn) return;
+    btn.disabled = false;
+    btn.classList.remove("is-spinning");
+  };
+  try {
+    Promise.resolve(pollAdminListStamp()).then(done, done);
+    /* The book is the other half of this screen and keeps its own copy. */
+    if (window.LedgerScreen && window.LedgerScreen.isOpen && window.LedgerScreen.isOpen()) {
+      window.LedgerScreen.reload();
+    }
+    if (window.ClientScreen && window.ClientScreen.reload) window.ClientScreen.reload();
+  } catch (e) {
+    done();
+  }
+  setTimeout(done, 4000);
+}
+window.adminManualRefresh = adminManualRefresh;
 
 function openAdminApp(snapshots) {
   /* ── WAIT FOR THE PAGE TO EXIST ─────────────────────────────────────────
@@ -8284,7 +8339,7 @@ tryRestoreAdminSession();
   /* The same number admin.html shows, because this is the same back office and two
      versions on two pages of one product is a bug report waiting to happen.
      scripts/admin-clients-page.test.js fails if it drifts from admin.html's own. */
-  var ADMIN_UI_VERSION = "5.9";
+  var ADMIN_UI_VERSION = "5.10";
 
   var SESSION_KEY = "dw_admin_session";
   var REMEMBER_KEY = "dw_admin_remember";

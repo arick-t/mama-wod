@@ -53,6 +53,21 @@ body{
 header.top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 18px}
 .logo{font-family:var(--font-display);font-size:1.5rem;letter-spacing:1px;color:var(--brand);margin:0}
 .sub{font-size:.74rem;letter-spacing:1.4px;color:var(--text-meta);text-transform:uppercase}
+/* Quiet, at the end of the line, and never in the way of the training. */
+/* Square, and 44px like every other button here — that is the smallest reliable touch
+   target on a phone, and this one is pressed with a thumb mid-session. */
+.cv-refresh{appearance:none;background:transparent;border:1px solid var(--line);border-radius:8px;
+  width:44px;height:44px;min-height:44px;padding:0;margin-inline-start:auto;color:var(--text-meta);
+  font-size:17px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;
+  justify-content:center;align-self:center;flex:0 0 auto}
+.cv-refresh:hover{color:var(--text)}
+.cv-refresh:disabled{opacity:.5;cursor:default}
+/* It fades while it works rather than spinning. Spinning would need a CSS rotation,
+   and a test forbids every rotation on this page — that guard is what stopped a
+   diagonal watermark being washed across a client's training (owner, 2026-09-01).
+   It is worth more than a turning icon. */
+.cv-refresh.is-spinning{animation:cv-fade .9s ease-in-out infinite}
+@keyframes cv-fade{0%,100%{opacity:.35}50%{opacity:1}}
 
 .card{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:0 0 14px}
 h2{font-family:var(--font-display);font-size:1.1rem;margin:0 0 10px;letter-spacing:.5px}
@@ -194,6 +209,12 @@ button.ghost:hover{color:var(--text)}
   <header class="top">
     <h1 class="logo">DUCK-WOD</h1>
     <span class="sub" id="headSub">Training Program</span>
+    <!-- The plan does not change while you are reading it — the coach changes it, and
+         this is how you ask for what he wrote. It exists for the moment they are sitting
+         together and he has just edited something (owner, 2026-10-02). Nobody has to
+         touch it: the page still refreshes itself when you come back to it. -->
+    <button type="button" class="cv-refresh" id="cvRefresh" hidden
+            title="Get the latest version from your coach" aria-label="Refresh">⟳</button>
   </header>
 
   <div id="bootErr"></div>
@@ -434,6 +455,31 @@ button.ghost:hover{color:var(--text)}
 
   /* --- 3 · the program -------------------------------------------------- */
 
+  /**
+   * "Get me what the coach just wrote."
+   *
+   * The plan never changes under a reader's eyes — it changes when the coach changes
+   * it — and the page only looks again when it comes back to the foreground. That is
+   * right for a month of training and wrong for the five minutes a coach is sitting
+   * beside the client editing it, so there is a button (owner, 2026-10-02).
+   *
+   * It costs one read, and only when it is pressed.
+   */
+  function manualRefresh() {
+    var btn = el("cvRefresh");
+    if (!state.program) return;
+    if (btn) { btn.disabled = true; btn.classList.add("is-spinning"); }
+    /* The fifteen-second gate exists to stop a phone paying for every foreground.
+       A deliberate press is not that, so it goes around it. */
+    lastProgramLoadMs = 0;
+    loadProgram();
+    setTimeout(function () {
+      if (!btn) return;
+      btn.disabled = false;
+      btn.classList.remove("is-spinning");
+    }, 1200);
+  }
+
   function loadProgram() {
     lastProgramLoadMs = Date.now();
     show("authView", false); show("termsView", false);
@@ -454,6 +500,15 @@ button.ghost:hover{color:var(--text)}
       }
       state.watermark = r.body.watermark || null;
       show("programView", true);
+      /* The refresh only means something once there is a plan to refresh. */
+      var cvBtn = el("cvRefresh");
+      if (cvBtn) {
+        cvBtn.hidden = false;
+        if (!cvBtn.__bound) {
+          cvBtn.__bound = true;
+          cvBtn.addEventListener("click", manualRefresh);
+        }
+      }
       banner("", "");
       if (r.body.fromCache) banner("warn", "Showing the last version saved on the server — your connection looks unstable.");
       renderDays();
@@ -2205,11 +2260,17 @@ button.ghost:hover{color:var(--text)}
      looked at, it asks the cheapest question there is once a minute — "am I still
      allowed in?" — which costs the access row the server reads anyway and never touches
      the programme (owner, 2026-09-02). */
+  /* Five minutes, not one (owner, 2026-10-02).
+     The free store allows about ten thousand operations a month, and this question —
+     cheap as it is — is still a read, once a minute, for every device with the page in
+     front of it. What it buys is how fast a PAUSED client stops reading his month, and
+     five minutes of that is a price the owner was willing to pay to keep the lights on.
+     Nothing else about it changes: a paying client never notices it at all. */
   setInterval(function () {
     if (frozenShown || !state.program) return;
     if (typeof document !== "undefined" && document.hidden) return;
     api({ action: "ping" });
-  }, 60000);
+  }, 5 * 60000);
 
   /**
    * The plan comes off the screen, and stays off until the coach unfreezes.

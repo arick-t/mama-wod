@@ -219,18 +219,31 @@ async function addClients(from, to) {
   const ledgerBlock = page.slice(page.indexOf("THE SUMMARY TAB"));
   ok("the book sets no timer of its own", ledgerBlock.indexOf("setInterval") < 0);
   ok("and nothing polls it", !/setInterval[\s\S]{0,400}(loadMonth|LedgerScreen)/.test(page));
-  /* The page's own poll is the cheap stamp, and it is the only timer that talks to a
-     server at all. Its cost is pinned by scripts/admin-poll-cost.test.js. */
-  ok("the page keeps exactly one server timer", (page.match(/setInterval\(/g) || []).length <= 2);
-  ok("and it asks only for the stamp", /adminPollTimer = setInterval[\s\S]{0,260}pollAdminListStamp\(\)/.test(page));
-  /* The arithmetic that decides the bill: one read a tick, and the tick is two minutes.
-     At 45 seconds an open tab cost about 14,000 reads a month; at two minutes it is
-     roughly 5,300 (owner, 2026-09-30, on the way back to the free plan). */
-  const pollMs = Number((page.match(/var ADMIN_POLL_MS = (\d+);/) || [])[1]);
-  ok("the tick is no faster than two minutes", pollMs >= 120000, { pollMs: pollMs });
-  ok("an open tab costs under 400 reads a working day", (8 * 3600 * 1000) / pollMs < 400,
-    { readsPerDay: Math.round((8 * 3600 * 1000) / pollMs) });
-  ok("and the poll stops while the tab is hidden", /if \(typeof document !== "undefined" && document\.hidden\) return;/.test(page));
+  /* ── AND NOW: NOTHING AT ALL ASKS THE SERVER ON A CLOCK ──────────────────
+     The last timer went on 2026-10-02. The free store allows about ten thousand
+     operations a month — roughly 333 a day — and a tab left open was spending 240 of
+     them on a question nobody had asked. What replaced it costs nothing until it is
+     wanted: his own writes redraw the list, coming back to the tab asks once, and a
+     button asks whenever he says so (owner, 2026-10-02). */
+  ok("the admin page sets no server timer at all", !/adminPollTimer = setInterval/.test(page));
+  ok("the poll function is only called by hand or on return", !/setInterval[\s\S]{0,200}pollAdminListStamp/.test(page));
+  ok("coming back to the tab still asks once", /visibilitychange[\s\S]{0,160}pollAdminListStamp\(\)/.test(page));
+  ok("and there is a button to ask with", /id="btn-admin-refresh"[\s\S]{0,120}adminManualRefresh\(\)/.test(page));
+  ok("which asks the cheap question first", /function adminManualRefresh[\s\S]{0,600}pollAdminListStamp\(\)/.test(page));
+
+  /* The client's page keeps one timer, and it is the access check — not the plan. */
+  const clientPage = fs.readFileSync(path.join(__dirname, "..", "client.html"), "utf8");
+  ok("the client page keeps exactly one timer", (clientPage.match(/setInterval\(/g) || []).length === 1);
+  ok("and it ticks every five minutes, not every minute", /\}, 5 \* 60000\);/.test(clientPage));
+  ok("it asks only whether he is still allowed in", /action: "ping"[\s\S]{0,200}5 \* 60000/.test(clientPage));
+  ok("it stops while the page is out of sight", /document\.hidden\) return;[\s\S]{0,120}action: "ping"/.test(clientPage));
+  ok("and the client can ask for the plan himself", /id="cvRefresh"/.test(clientPage) && /function manualRefresh/.test(clientPage));
+  /* The arithmetic that decided it, kept because it is the whole argument: at 45
+     seconds an open tab cost about 14,000 reads a month, at two minutes about 5,300,
+     and at no timer at all it costs nothing. The ceiling it was all measured against —
+     ten thousand a month — was read off the owner's own dashboard on 2026-10-02, and
+     not knowing it was how 5,300 came to be called "safe". */
+  ok("an open tab now costs nothing while it sits there", !/adminPollTimer = setInterval/.test(page));
   ok("his own writes do not wait for a tick", /loadList\(\)/.test(page));
 
   try { fs.rmSync(ROOT, { recursive: true, force: true }); } catch (e) {}
