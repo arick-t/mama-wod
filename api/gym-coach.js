@@ -128,7 +128,17 @@ async function askGemini(system, messages) {
 module.exports = async function handler(req, res) {
   try {
     if (req.method === "GET") {
-      return res.status(200).json({ ok: true, brain: "gym", blockWeeks: GymIntake.BLOCK_WEEKS });
+      /* WHICH ENGINE, AND IS THERE A KEY. Asked for before the first real run: "תוודא שאנחנו
+         מחוברים למוח למנוע החדש". Without this the only way to find out which model answers is
+         to pay for a generation and read the receipt. The key itself is never echoed — only
+         whether one is configured. */
+      return res.status(200).json({
+        ok: true,
+        brain: "gym",
+        blockWeeks: GymIntake.BLOCK_WEEKS,
+        model: model(),
+        hasKey: !!apiKey(),
+      });
     }
     if (req.method !== "POST") {
       return res.status(405).json({ ok: false, error: "POST only" });
