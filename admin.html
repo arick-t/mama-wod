@@ -1748,9 +1748,18 @@ body:has(#intake-modal.open) #adminChatFloat{
    ONE declaration serving both. A second copy of a look is a look that drifts. */
 /* The finished month borrows the questionnaire's form rules for its findings strip; the month
    itself is drawn by PprogDisplay, whose own styles are global. */
-#gymBlockModal .err{color:var(--brand);font-size:.88rem}
-#gymBlockModal .meta{color:var(--text-meta);font-size:.82rem}
-#gymBlockModal .intake-ws-body{max-height:76vh;overflow:auto}
+
+/* A CARD THAT FITS THE WINDOW, AND SCROLLS WHEN IT DOES NOT.
+   Without this the card simply grew past the bottom of the screen with no scrollbar of its
+   own and no way down — the owner had to zoom the whole browser out to reach the Next button
+   (2026-10-03). The studio card has carried exactly these two lines since the day it became a
+   modal; the gym card was written without them. */
+#gymIntakeModal > .intake-workspace{max-height:92vh}
+/* THE SCROLL BELONGS TO THE BODY, not to the card. .intake-ws-body is overflow:hidden by
+   design — it is the flex child that clips — so capping the card alone just CUT the Next
+   button off instead of letting anyone reach it. Measured in the browser, which is the only
+   way this was ever going to be caught. */
+#gymIntakeModal .intake-ws-body{overflow-y:auto}
 #gymIntakeModal label.fld{display:block;margin:0 0 10px}
 #gymIntakeModal label.fld span{display:block;font-size:.8rem;color:var(--text-meta);margin:0 0 4px}
 #gymIntakeModal input[type=text]:not([class]),#gymIntakeModal input[type=number]:not([class]),
@@ -2562,32 +2571,6 @@ header{flex-wrap:wrap;row-gap:8px}
      scoped to #clientScreen, so a card outside it loses every one of them. The design spec
      names both ways out; this is the second — the same rules, repeated under this modal's own
      id, exactly as #intake-modal .itabs already does. -->
-<!-- THE FINISHED MONTH. A gym block comes back from one call, so there is nothing to narrate
-     while it builds and nothing to fill week by week — it is either here or it is not. It is
-     rendered with the same PprogDisplay every other programme in this module uses, because a
-     month should look like a month whichever brain wrote it. What the check found sits above
-     it, for the coach to read and decide on. -->
-<div class="modal-backdrop" id="gymBlockModal">
-  <div class="intake-workspace" dir="ltr" style="text-align:left;max-width:1000px"
-       onclick="event.stopPropagation()">
-    <div class="intake-ws-header" dir="rtl">
-      <h2 id="gymBlockTitle">The block</h2>
-      <div style="display:flex;align-items:center;gap:12px">
-        <span class="meta" id="gymBlockMeta"></span>
-        <!-- The month is not a client until someone says so. Until this is pressed nothing has
-             been written down, which is what lets the coach look at a block, dislike it, and
-             close the card without leaving a half-client behind. -->
-        <button type="button" class="hdr-btn primary" id="gymBlockKeep" onclick="keepGymClient()">שמור כלקוח</button>
-        <button type="button" class="btn-secondary" onclick="closeGymBlock()">סגור</button>
-      </div>
-    </div>
-    <div class="intake-ws-body">
-      <div id="gymBlockFindings"></div>
-      <div id="gymBlockView"></div>
-    </div>
-  </div>
-</div>
-
 <div class="modal-backdrop" id="gymIntakeModal">
   <div class="intake-workspace" dir="ltr" style="text-align:left;max-width:720px"
        onclick="event.stopPropagation()">
@@ -2608,6 +2591,26 @@ header{flex-wrap:wrap;row-gap:8px}
       </div>
       <!-- One row, always here even when empty, so the card cannot jump as it fills. -->
       <p class="err" id="gymIntakeErr" role="alert" style="min-height:1.2em"></p>
+    </div>
+    <!-- THE SAME DUCK THE OTHER QUESTIONNAIRE SHOWS WHILE THE BRAIN WRITES. The gym card had
+         nothing at all: a button that said "Building…" and then forty seconds of a form sitting
+         still (owner, 2026-10-03). Same classes, same video, same fallback — one look, not a
+         second copy of it. It is absolutely positioned against the card, so it covers the card
+         and nothing else. -->
+    <div id="gymBuildOverlay" class="admin-intake-build-overlay" aria-live="polite" aria-busy="true" hidden>
+      <div class="admin-intake-build-center">
+        <video id="gymBuildVideo" class="admin-intake-build-video" muted playsinline webkit-playsinline
+               loop preload="auto" poster="assets/hamamen-coach-duck.png">
+          <source src="assets/coach-thinking.mp4" type="video/mp4">
+        </video>
+        <!-- `hidden`, not an inline style: the attribute is how everything else on this
+             screen is shown and hidden, and the page's own reset already backs it. -->
+        <img id="gymBuildFallback" class="admin-intake-build-video" src="assets/hamamen-coach-duck.png"
+             alt="Coach" hidden width="340" height="340">
+        <div class="admin-intake-build-status" id="gymBuildStatus">
+          <strong>Coach</strong> is writing the week…
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -9081,6 +9084,12 @@ tryRestoreAdminSession();
     if (unread.length) {
       html += '<div class="banner warn">' + unread.length + ' ימים שהלקוח שינה ואתה עוד לא פתחת. פתח יום כדי לסמן שנקרא.</div>';
     }
+    /* WHAT THE CHECK FOUND IN A MONTH THE GYM BRAIN JUST WROTE. It used to be printed above a
+       read-only preview in a box of its own; the box is gone (owner, 2026-10-03) and the
+       findings belong here, over the programme they are about. Blocking is what the athlete
+       cannot do; a flag is what a coach might have meant — deciding between them is his job,
+       which is why nothing here acts on them. */
+    html += gymFindingsHtml();
     /* No week bar: the calendar carries the W1…W5 rail itself, the same way the admin
        module shows a brick. A second week selector above it only competed with it. */
     html += '<div id="adminDays"></div>' +
@@ -11347,6 +11356,8 @@ tryRestoreAdminSession();
     if (g("data-nextblock")) { startNextBlock(); return; }
     if (g("data-brick-copy")) { copyBrickToSheet(); return; }
     if (g("data-brick-csv")) { downloadBrickCsv(); return; }
+    /* Read and dismissed. The findings are a report, not a state of the client. */
+    if (g("data-gym-findings-close")) { S.gymFindings = null; renderDetail(); return; }
     if (g("data-approve")) { approveBlock(parseInt(g("data-approve"), 10) || 0); return; }
 
     /* One click, one intent: the link and the code are the same handover, and asking
@@ -13691,6 +13702,30 @@ tryRestoreAdminSession();
     var params = new URLSearchParams(location.search);
   }
 
+  /** The gym check's findings, over the programme they are about. Nothing acts on them. */
+  function gymFindingsHtml() {
+    var f = S.gymFindings;
+    if (!f) return "";
+    var blocking = (f.blocking || []).slice(0, 12);
+    var flags = (f.flags || []).slice(0, 12);
+    if (!blocking.length && !flags.length) {
+      return '<div class="banner good">הבודק לא מצא מה להעיר' +
+        (f.model ? ' · ' + esc(f.model) : "") +
+        ' <button type="button" class="ghost sm" data-gym-findings-close="1">סגור</button></div>';
+    }
+    var html = '<div class="banner ' + (blocking.length ? "bad" : "warn") + '">';
+    html += '<div style="font-weight:700;margin:0 0 6px">הבודק עבר על הלבנה' +
+      (f.model ? ' · ' + esc(f.model) : "") + "</div>";
+    blocking.forEach(function (b) {
+      html += '<div style="margin:0 0 4px">⛔ ' + esc(b) + "</div>";
+    });
+    flags.forEach(function (x) {
+      html += '<div style="margin:0 0 4px">⚠️ ' + esc(x) + "</div>";
+    });
+    html += '<button type="button" class="ghost sm" data-gym-findings-close="1" style="margin-top:6px">סגור</button>';
+    return html + "</div>";
+  }
+
   /**
    * A client who has just been created, put on screen.
    *
@@ -13798,6 +13833,8 @@ tryRestoreAdminSession();
       S.blockMode = false;
       /* A link belongs to the client it was issued for. */
       S.linkShown = "";
+      /* And so does a report about his block. */
+      S.gymFindings = null;
       S.moreOpen = false;
       openClient(programId);
     },
@@ -13849,7 +13886,7 @@ tryRestoreAdminSession();
      * read yet, and a month that arrived already ticked off would be a month nobody checks.
      * A day with nothing written in it loses the flag: there is nothing there to review.
      */
-    createGym: function (form, weeks) {
+    createGym: function (form, weeks, findings) {
       var f = form || {};
       return api({
         action: "create",
@@ -13866,6 +13903,7 @@ tryRestoreAdminSession();
         }
         var program = r.body.program;
         var written = Array.isArray(weeks) ? weeks : [];
+        S.gymFindings = findings || null;
         if (!written.length) return openGymCreated(program);
         var merged = (program.weeks || []).map(function (w, i) {
           var src = written[i];
@@ -13939,6 +13977,7 @@ tryRestoreAdminSession();
       });
     },
     close: function () {
+      S.gymFindings = null;
       S.adding = false;
       S.blockMode = false;
       S.sel = null;

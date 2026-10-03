@@ -86,7 +86,15 @@ async function run(req) {
   ok("and never to the functional one", screen.indexOf("/api/personal-coach") < 0);
   ok("it uses the admin headers the rest of the module uses", screen.indexOf("adminAuthHeaders") >= 0);
   ok("the button says what it is doing while it runs", /Building…/.test(screen));
-  ok("and comes back either way", (screen.match(/btn\.textContent = "Build the block"/g) || []).length >= 2);
+  /* ONE way back, called on every exit, rather than the same two lines repeated at each of
+   them. Counting the repetitions was the old check, and it read a fix as a regression. */
+ok("the way back is one helper", /var done = function \(\) \{/.test(screen));
+ok(
+  "and it runs on every path out",
+  (screen.match(/done\(\);/g) || []).length >= 4
+);
+ok("it puts the button back", /btn\.textContent = "Build the block";/.test(screen));
+ok("and takes the duck down", /buildOverlay\(false\);/.test(screen));
   ok("an error lands in the error row, not an alert", /setErr\(x\.j\.error/.test(screen) && !/alert\(/.test(screen));
 
   /* ── and the dev server can reach it ─────────────────────────────────────── */

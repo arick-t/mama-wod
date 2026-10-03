@@ -136,13 +136,37 @@ ok("a step behind it is ticked", jsCode.indexOf('i < reached ? "done"') >= 0);
 ok("and a dead step is drawn as dead", /#gymIntakeModal \.itabs button\[disabled\]/.test(admin));
 ok("a new client starts at the first step again", /function reset\(\) \{\s*\n\s*reached = 0;/.test(jsCode));
 
-/* -- the finished block is a client's block tab, not a bare calendar ----------- */
+/* -- the finished month goes to the client's TAB, not a box -------------------
+   It used to open in a read-only preview with the client-tab furniture drawn around it. The
+   owner's answer on seeing one (2026-10-03): "זה אמור להיות בלשונית הלקוח - לא ככה אנחנו
+   עושים את זה" — and a read-only month is also a month whose days nobody can open, which is
+   why the exercises were not clickable. The preview is gone. Every other kind of client ends
+   its questionnaire the same way, and so does this one now. */
 
-ok("the month wears the block panel", jsCode.indexOf('"ath-block-panel"') >= 0);
-ok("and its Hebrew title", jsCode.indexOf("\u05d1\u05dc\u05d5\u05e7 \u05d0\u05d9\u05de\u05d5\u05df") >= 0);
-ok("and the block header the client tab carries", jsCode.indexOf('"block-title"') >= 0 && jsCode.indexOf('"block-dates"') >= 0);
-ok("and the grey line under it", jsCode.indexOf('"block-snap-meta"') >= 0);
-ok("today is Israel's today", jsCode.indexOf("Asia/Jerusalem") >= 0);
-ok("there is no client edit box in a block nobody has been given", jsCode.indexOf("showFooter: false") >= 0);
+ok("there is no preview box left in the page", admin.indexOf("gymBlockModal") < 0);
+ok("and nothing in the screen still opens one", jsCode.indexOf("showGymBlock") < 0);
+ok("the finished month creates the client", /ClientScreen\.createGym\(/.test(jsCode));
+ok("and the client's own tab is what opens", /function openGymCreated\(/.test(admin));
+ok("what the check found travels with it", /blocking: x\.j\.blocking/.test(jsCode) && /flags: x\.j\.flags/.test(jsCode));
+ok("and is drawn over the programme it is about", /html \+= gymFindingsHtml\(\);/.test(admin));
+ok("a report can be dismissed", /data-gym-findings-close/.test(admin));
+ok("and does not follow him to the next client", /S\.gymFindings = null;/.test(admin));
+
+/* -- the duck, while the brain writes ----------------------------------------
+   The card showed a button reading "Building…" and then forty seconds of a form sitting still. */
+
+ok("the gym card has the same overlay the other questionnaire uses", /id="gymBuildOverlay" class="admin-intake-build-overlay"/.test(admin));
+ok("with the same thinking video", /id="gymBuildVideo"[\s\S]{0,400}assets\/coach-thinking\.mp4/.test(admin));
+ok("and a still duck when it will not play", /id="gymBuildFallback"/.test(admin));
+ok("it goes up before the call and down after it", /buildOverlay\(true\);/.test(jsCode) && /buildOverlay\(false\);/.test(jsCode));
+
+/* -- and the card has to fit a window ----------------------------------------
+   Without a ceiling it grew past the bottom of the screen with no scrollbar and no way down:
+   the owner had to zoom the whole browser out to reach the Next button (2026-10-03). */
+
+ok("the card is capped to the window", /#gymIntakeModal > \.intake-workspace\{max-height:92vh\}/.test(admin));
+/* And the BODY is what scrolls. Capping the card alone clipped the Next button instead of
+   letting anyone reach it, because .intake-ws-body is overflow:hidden by design. */
+ok("and its body is what scrolls", /#gymIntakeModal \.intake-ws-body\{overflow-y:auto\}/.test(admin));
 
 console.log("\nמסך תחקור חדר הכושר — לפי המפרט, ובתוך הסקופ הנכון.");

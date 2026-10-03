@@ -43,9 +43,7 @@
   var step = 0;
   /* The furthest tab this questionnaire has been opened to. See render(). */
   var reached = 0;
-  /* The month on screen and the answers behind it, held between "Build" and "Keep". */
-  var pending = null;
-  var shownBlock = null;
+
 
   function reset() {
     reached = 0;
@@ -536,18 +534,40 @@
    * findings go to the coach rather than being acted on automatically, because the coach is the
    * one carrying the responsibility (see lib/gym-brief.js).
    */
+  /**
+   * One call, with the duck on screen while it runs — and then the client's own tab.
+   *
+   * IT DOES NOT POP THE FINISHED MONTH UP IN A BOX. It used to, and the owner's answer on
+   * seeing it (2026-10-03): "זה אמור להיות בלשונית הלקוח - לא ככה אנחנו עושים את זה", and he
+   * was right twice over. A month in a read-only box is a month nobody can open a day of, so
+   * the exercises were not clickable either. Every other kind of client in this module ends a
+   * questionnaire the same way: the client exists, his tab is open, and the programme is in
+   * it — editable, with the calendar, the pencil and the delivery link all where they always
+   * are. There is nothing a preview could show that his own tab does not show better.
+   *
+   * What the check found travels with it and is drawn as a banner at the top of that tab.
+   */
   function submit(answers) {
     var btn = el("gxCreate");
     if (btn) {
       btn.disabled = true;
       btn.textContent = "Building…";
     }
+    buildOverlay(true);
     var url = typeof window.adminApiUrl === "function" ? window.adminApiUrl("/api/gym-coach") : "/api/gym-coach";
     var payload = { gymIntake: answers };
     if (typeof window.withAdminPassword === "function") payload = window.withAdminPassword(payload);
     var headers = typeof window.adminAuthHeaders === "function"
       ? window.adminAuthHeaders()
       : { "Content-Type": "application/json" };
+
+    var done = function () {
+      buildOverlay(false);
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "Build the block";
+      }
+    };
 
     fetch(url, { method: "POST", headers: headers, body: JSON.stringify(payload) })
       .then(function (r) {
@@ -556,25 +576,27 @@
         });
       })
       .then(function (x) {
-        if (btn) {
-          btn.disabled = false;
-          btn.textContent = "Build the block";
-        }
         if (!x.ok || !x.j.ok) {
+          done();
           setErr(x.j.error || "The coach could not build this block.");
           return;
         }
         /* The page that owns the client list decides what to do with a finished block; this
            card's job ends when it has one. */
         if (typeof window.gymIntakeSubmit === "function") {
+          done();
           window.gymIntakeSubmit(answers, x.j);
           return;
         }
         window.gymLastBlock = x.j;
-        /* WHAT THE SAVE WILL NEED, taken now while the questionnaire is still on screen. The
-           money and the name are not in `answers` on purpose — that object is what goes to the
-           brain, and what a client pays is none of its business. */
-        pending = {
+        if (!window.ClientScreen || !window.ClientScreen.createGym) {
+          done();
+          setErr("The clients screen has not loaded yet — try again in a moment.");
+          return;
+        }
+        /* The money and the name are NOT in `answers` on purpose: that object is what goes to
+           the brain, and what a client pays is none of its business. */
+        var form = {
           clientName: state.clientName,
           clientGender: state.gender,
           monthlyAmount: state.monthlyAmount,
@@ -582,189 +604,64 @@
           outputLanguage: state.outputLanguage,
           gymIntake: answers,
         };
-        setErr("");
-        closeGymIntake();
-        showGymBlock(x.j, answers);
+        window.ClientScreen.createGym(form, (x.j.block && x.j.block.weeks) || [], {
+          blocking: x.j.blocking || [],
+          flags: x.j.flags || [],
+          model: x.j.model || "",
+        }).then(function (r) {
+          done();
+          if (!r || !r.ok) {
+            setErr((r && r.error) || "The block was written but the client could not be created.");
+            return;
+          }
+          setErr("");
+          closeGymIntake();
+          if (typeof window.showHdrToast === "function") {
+            window.showHdrToast(r.warn ? r.warn : "נוצר לקוח חדר כושר ✓", r.warn ? "warn" : "ok");
+          }
+        });
       })
       .catch(function (e) {
-        if (btn) {
-          btn.disabled = false;
-          btn.textContent = "Build the block";
-        }
+        done();
         setErr("Network error: " + String((e && e.message) || e).slice(0, 120));
       });
   }
 
-  /* ── showing what came back ──────────────────────────────────────────────── */
-
-  /** Today in Israel, whatever clock the coach's laptop is on — the calendar rings it. */
-  function todayIso() {
-    var il = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Jerusalem" }));
-    var m = String(il.getMonth() + 1);
-    var d = String(il.getDate());
-    return il.getFullYear() + "-" + (m.length < 2 ? "0" + m : m) + "-" + (d.length < 2 ? "0" + d : d);
-  }
-
-  /** dd.mm.yyyy, the way every other date on this screen is written. */
-  function ilDate(iso) {
-    var p = String(iso || "").split("-");
-    if (p.length !== 3) return String(iso || "");
-    return p[2] + "." + p[1] + "." + p[0];
-  }
-
-  /** The grey line under the title: what this block IS, in one breath. */
-  function blockMetaLine(block, answers) {
-    var weeks = (block.weeks || []).length;
-    var days = 0;
-    var first = (block.weeks || [])[0] || {};
-    ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].forEach(function (k) {
-      if ((((first.days || {})[k] || {}).parts || []).length) days++;
-    });
-    var deload = (block.weeks || []).filter(function (w) {
-      return w && w.phase === "deload";
-    }).length;
-    var bits = [weeks + " שבועות", days + " אימונים בשבוע", "שבוע אחד שחוזר"];
-    /* "1 שבועות דילואד" is not Hebrew. One is a word here, not a number. */
-    if (deload === 1) bits.push("כולל שבוע דילואד");
-    else if (deload > 1) bits.push(deload + " שבועות דילואד");
-    /* The split by the name the coach chose it under, not by its id. "PPL_UPPER_LOWER" is
-       what the code calls it; "PUSH / PULL / LEGS + UPPER / LOWER" is what he picked. */
-    var lib = L();
-    var split = answers && answers.split;
-    var named = split && lib && lib.SPLITS && lib.SPLITS[split] ? lib.SPLITS[split].label : "";
-    if (named) bits.push(named);
-    return bits.join(" · ");
-  }
-
-  /**
-   * The finished month, drawn the way every other programme in this module is drawn.
-   *
-   * The check's findings sit ABOVE it rather than being applied: blocking is what the athlete
-   * cannot do and a flag is what a coach might have meant, and deciding between them is the
-   * coach's job, not ours (lib/gym-brick-check.js).
-   */
-  window.showGymBlock = function showGymBlock(answer, answers) {
-    var modal = el("gymBlockModal");
-    if (!modal) return;
-    var block = answer && answer.block;
-    if (!block) return;
-
-    el("gymBlockTitle").textContent = (answers && answers.clientName) || "The block";
-    el("gymBlockMeta").textContent = answer.model ? String(answer.model) : "";
-
-    var find = el("gymBlockFindings");
-    var bits = "";
-    (answer.blocking || []).forEach(function (b) {
-      bits += '<p class="err" style="margin:0 0 6px">⛔ ' + esc(b) + "</p>";
-    });
-    (answer.flags || []).forEach(function (f) {
-      bits += '<p class="meta" style="margin:0 0 6px">⚠️ ' + esc(f) + "</p>";
-    });
-    find.innerHTML = bits || '<p class="meta" style="margin:0 0 10px">The check found nothing to raise.</p>';
-
-    var host = el("gymBlockView");
-    var D = typeof window !== "undefined" ? window.PprogDisplay : null;
-    var N = typeof window !== "undefined" ? window.NormalizePprogBlock : null;
-    if (D && D.renderBrickView) {
-      /* Through the normaliser first, for the dates it fills in. Since 2026-09-22 it no longer
-         pads a block to five weeks or invents a deload, so six weeks go in and six come out. */
-      var shown = N && N.normalize ? N.normalize(block, block) : block;
-      /* ONE options object — the block goes INSIDE it. Passing it as the first argument gets
-         "אין בלוק פעיל" and no error, which is a quiet way to lose an afternoon. */
-      var cal = D.renderBrickView({
-        block: shown,
-        activeWeekIndex: 0,
-        activeDay: "sun",
-        readOnly: true,
-        /* No "talk to the coach about this day" box. This is the coach LOOKING at what came
-           back, before anyone has been given it — there is nobody on the other end to talk to
-           yet (2026-09-30). */
-        showFooter: false,
-        calMode: "month",
-        weekRows: shown.weeks.length,
-        israelTodayIso: todayIso(),
-        /* ONE block of six. Left to itself the calendar groups weeks in FOURS, because that is
-           what a month is in the functional product — and it drew this one as "Block 1" of four
-           weeks and "Block 2" of two (2026-09-30). Here six weeks are one block. */
-        blockGroups: [{ startWeek: 1, weekCount: shown.weeks.length, name: "" }],
-        hooks: {},
-      });
-      /* THE SAME FURNITURE A CLIENT'S BLOCK TAB WEARS, and not a near-miss of it.
-         The owner's words on seeing the first one (2026-09-30): "הלבנה שניסית ליצור לנו היא לא
-         מופיעה כמו לשונית של לקוח - זו טעות עיצובית." He was right. The calendar itself was
-         already the shared one, but it arrived bare — no panel, no title, no block line — so a
-         month written by the gym brain read as a different KIND of thing from a month written
-         by hand. It is not: it is a block, on the same screen, for the same coach.
-         Every class here is the one admin.html's own block panel uses, global and unchanged. */
-      shownBlock = shown;
-      host.innerHTML =
-        '<div class="ath-block-panel">' +
-        '<div class="ath-block-panel-head" dir="rtl">' +
-        '<div class="ath-block-panel-title">בלוק אימון</div>' +
-        "</div>" +
-        '<div id="gymBlockSection" dir="ltr">' +
-        '<div class="block-header">' +
-        '<span class="block-title">' + esc(shown.summaryLine || "6-week gym block") + "</span>" +
-        (shown.blockStart ? '<span class="block-dates">מ‑' + esc(ilDate(shown.blockStart)) + "</span>" : "") +
-        "</div>" +
-        '<div class="block-snap-meta">' + esc(blockMetaLine(shown, answers)) + "</div>" +
-        cal +
-        "</div>" +
-        "</div>";
-    } else {
-      /* The display library is how this month is meant to be read. If it is not loaded, say so
-         rather than drawing a worse version of it. */
-      host.innerHTML = '<p class="err">The display library did not load — reload the page.</p>';
-    }
-    modal.classList.add("open");
-  };
-
-  /**
-   * KEEPING IT: the month becomes a client.
-   *
-   * The block on screen has not been written anywhere until this runs. The clients screen owns
-   * the endpoint and the shape of a saved month, so the work happens there (ClientScreen.createGym)
-   * and this only hands over what the questionnaire knows.
-   */
-  window.keepGymClient = function keepGymClient() {
-    var btn = el("gymBlockKeep");
-    if (!pending || !shownBlock) return;
-    if (!window.ClientScreen || !window.ClientScreen.createGym) {
-      alertLine("מסך הלקוחות עוד לא נטען — נסה שוב בעוד רגע.");
+  /** The thinking duck, over the card, while the brain writes. */
+  function buildOverlay(on) {
+    var overlay = el("gymBuildOverlay");
+    var video = el("gymBuildVideo");
+    var fallback = el("gymBuildFallback");
+    if (!overlay) return;
+    if (!on) {
+      overlay.classList.remove("open");
+      overlay.hidden = true;
+      if (video) {
+        try { video.pause(); } catch (ePause) {}
+      }
       return;
     }
-    if (btn) {
-      btn.disabled = true;
-      btn.textContent = "שומר…";
+    overlay.hidden = false;
+    overlay.classList.add("open");
+    if (fallback) fallback.hidden = true;
+    if (!video) return;
+    /* A still duck is better than no duck: if the video will not play, show the picture. */
+    var toPicture = function () {
+      if (fallback) fallback.hidden = false;
+      video.hidden = true;
+    };
+    try {
+      video.muted = true;
+      video.playsInline = true;
+      video.loop = true;
+      video.hidden = false;
+      var played = video.play();
+      if (played && typeof played.catch === "function") played.catch(toPicture);
+    } catch (ePlay) {
+      toPicture();
     }
-    window.ClientScreen.createGym(pending, shownBlock.weeks || []).then(function (r) {
-      if (btn) {
-        btn.disabled = false;
-        btn.textContent = "שמור כלקוח";
-      }
-      if (!r || !r.ok) {
-        alertLine((r && r.error) || "לא הצלחתי ליצור את הלקוח.");
-        return;
-      }
-      pending = null;
-      shownBlock = null;
-      closeGymBlock();
-      if (typeof window.showHdrToast === "function") {
-        window.showHdrToast(r.warn ? r.warn : "נוצר לקוח חדר כושר ✓", r.warn ? "warn" : "ok");
-      }
-    });
-  };
-
-  /** One line above the month, where the findings already live. */
-  function alertLine(msg) {
-    var find = el("gymBlockFindings");
-    if (find) find.innerHTML = '<p class="err" style="margin:0 0 10px">' + esc(msg) + "</p>" + find.innerHTML;
   }
 
-  window.closeGymBlock = function closeGymBlock() {
-    var m = el("gymBlockModal");
-    if (m) m.classList.remove("open");
-  };
 
   /* ── the door in, and the door out ───────────────────────────────────────── */
 
