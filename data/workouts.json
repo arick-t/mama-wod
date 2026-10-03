@@ -2709,21 +2709,6 @@
     "2026-10-03": [
       {
         "date": "2026-10-03",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-03/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Einheizchallenge 2026",
-              "10:00-14:00 Uhr"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-10-03",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261003",
@@ -2850,6 +2835,60 @@
       },
       {
         "date": "2026-10-03",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 14.3",
+            "lines": [
+              "Complete as many reps as possible in 8 minutes of:",
+              "135-lb. deadlifts, 10 reps",
+              "15 box jumps, 24-inch",
+              "185-lb. deadlifts, 15 reps",
+              "15 box jumps, 24-inch",
+              "225-lb. deadlifts, 20 reps",
+              "15 box jumps, 24-inch",
+              "275-lb. deadlifts, 25 reps",
+              "15 box jumps, 24-inch",
+              "315-lb. deadlifts, 30 reps",
+              "15 box jumps, 24-inch",
+              "365-lb. deadlifts, 35 reps",
+              "15 box jumps, 24-inch",
+              "*WOMEN*",
+              "*- includes Masters Women up to 54 years old*",
+              "Complete as many reps as possible in 8 minutes of:",
+              "95-lb. deadlifts, 10 reps",
+              "15 box jumps, 20-inch",
+              "135-lb. deadlifts, 15 reps",
+              "15 box jumps, 20-inch",
+              "155-lb. deadlifts, 20 reps",
+              "15 box jumps, 20-inch",
+              "185-lb. deadlifts, 25 reps",
+              "15 box jumps, 20-inch",
+              "205-lb. deadlifts, 30 reps"
+            ]
+          }
+        ],
+        "note": "Open: Open 14.3"
+      },
+      {
+        "date": "2026-10-03",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-03/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Einheizchallenge 2026",
+              "10:00-14:00 Uhr"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-10-03",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -2923,47 +2962,8 @@
           }
         ],
         "note": "Benchmark: Helen"
-      },
-      {
-        "date": "2026-10-03",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 14.3",
-            "lines": [
-              "Complete as many reps as possible in 8 minutes of:",
-              "135-lb. deadlifts, 10 reps",
-              "15 box jumps, 24-inch",
-              "185-lb. deadlifts, 15 reps",
-              "15 box jumps, 24-inch",
-              "225-lb. deadlifts, 20 reps",
-              "15 box jumps, 24-inch",
-              "275-lb. deadlifts, 25 reps",
-              "15 box jumps, 24-inch",
-              "315-lb. deadlifts, 30 reps",
-              "15 box jumps, 24-inch",
-              "365-lb. deadlifts, 35 reps",
-              "15 box jumps, 24-inch",
-              "*WOMEN*",
-              "*- includes Masters Women up to 54 years old*",
-              "Complete as many reps as possible in 8 minutes of:",
-              "95-lb. deadlifts, 10 reps",
-              "15 box jumps, 20-inch",
-              "135-lb. deadlifts, 15 reps",
-              "15 box jumps, 20-inch",
-              "155-lb. deadlifts, 20 reps",
-              "15 box jumps, 20-inch",
-              "185-lb. deadlifts, 25 reps",
-              "15 box jumps, 20-inch",
-              "205-lb. deadlifts, 30 reps"
-            ]
-          }
-        ],
-        "note": "Open: Open 14.3"
       }
     ]
   },
-  "last_updated": "2026-10-03T04:47:22.157275"
+  "last_updated": "2026-10-03T09:04:13.060699"
 }
