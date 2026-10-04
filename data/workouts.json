@@ -2765,49 +2765,6 @@
     "2026-10-04": [
       {
         "date": "2026-10-04",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-04/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "sumo squat stretch",
-              "samson stretch",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. medball thrusters",
-              "2. ski",
-              "3. ring rows",
-              "4. side plank"
-            ],
-            "sub_title": "30sec on / 15sec off x2 rounds"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "1. 15-20 wall balls",
-              "2. 12-15cal ski",
-              "3. 6-10 strict pull ups",
-              "4. 20-30 russian twists",
-              "5. rest",
-              "Sunday Endurance for Open Gym",
-              "on the 8:00 x 5-10 rounds",
-              "800m run or ski",
-              "* bike in remaining time [rpe 2-3]",
-              "aerobic endurance"
-            ],
-            "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-04",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-october-4-2026/",
@@ -2923,6 +2880,83 @@
       },
       {
         "date": "2026-10-04",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 19.2",
+            "lines": [
+              "Beginning on an 8-minute clock, complete as many reps as possible of:",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "15 squat cleans, 135 lb.",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "13 squat cleans, 185 lb.",
+              "If completed before 8 minutes, add 4 minutes to the clock and proceed to:",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "11 squat cleans, 225 lb.",
+              "If completed before 12 minutes, add 4 minutes to the clock and proceed to:",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "9 squat cleans, 275 lb.",
+              "If completed before 16 minutes, add 4 minutes to the clock and proceed to:",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "7 squat cleans, 315 lb.",
+              "Stop at 20 minutes."
+            ]
+          }
+        ],
+        "note": "Open: Open 19.2"
+      },
+      {
+        "date": "2026-10-04",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-04/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "samson stretch",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. medball thrusters",
+              "2. ski",
+              "3. ring rows",
+              "4. side plank"
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "1. 15-20 wall balls",
+              "2. 12-15cal ski",
+              "3. 6-10 strict pull ups",
+              "4. 20-30 russian twists",
+              "5. rest",
+              "Sunday Endurance for Open Gym",
+              "on the 8:00 x 5-10 rounds",
+              "800m run or ski",
+              "* bike in remaining time [rpe 2-3]",
+              "aerobic endurance"
+            ],
+            "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-04",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -2986,42 +3020,8 @@
           }
         ],
         "note": "Benchmark: FIGHT GONE BAD"
-      },
-      {
-        "date": "2026-10-04",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 19.2",
-            "lines": [
-              "Beginning on an 8-minute clock, complete as many reps as possible of:",
-              "25 toes-to-bars",
-              "50 double-unders",
-              "15 squat cleans, 135 lb.",
-              "25 toes-to-bars",
-              "50 double-unders",
-              "13 squat cleans, 185 lb.",
-              "If completed before 8 minutes, add 4 minutes to the clock and proceed to:",
-              "25 toes-to-bars",
-              "50 double-unders",
-              "11 squat cleans, 225 lb.",
-              "If completed before 12 minutes, add 4 minutes to the clock and proceed to:",
-              "25 toes-to-bars",
-              "50 double-unders",
-              "9 squat cleans, 275 lb.",
-              "If completed before 16 minutes, add 4 minutes to the clock and proceed to:",
-              "25 toes-to-bars",
-              "50 double-unders",
-              "7 squat cleans, 315 lb.",
-              "Stop at 20 minutes."
-            ]
-          }
-        ],
-        "note": "Open: Open 19.2"
       }
     ]
   },
-  "last_updated": "2026-10-04T05:27:24.057724"
+  "last_updated": "2026-10-04T09:38:24.528810"
 }
