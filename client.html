@@ -236,9 +236,14 @@ button.ghost:hover{color:var(--text)}
   <section id="termsView" class="card" hidden>
     <h2>Before we start</h2>
     <div class="terms-scroll" id="termsScroll" tabindex="0"></div>
-    <div class="agree-row">
-      <input id="agreeBox" type="checkbox">
-      <label for="agreeBox" id="agreeLabel"></label>
+    <!-- ONE ROW FOR THE B2B DOCUMENT, THREE FOR THE END-USER ONE. The declaration an athlete
+         signs asks three separate things and the audit row stores three separate answers, so
+         it cannot be collapsed into a single tick (owner, 2026-10-04). -->
+    <div id="agreeRows">
+      <div class="agree-row">
+        <input id="agreeBox" type="checkbox">
+        <label for="agreeBox" id="agreeLabel"></label>
+      </div>
     </div>
     <div class="row">
       <button id="agreeBtn" type="button" disabled></button>
@@ -272,6 +277,9 @@ button.ghost:hover{color:var(--text)}
 <script src="lib/day-rest-toggle.js"></script>
 <!-- The SAME file the server reads, so page and audit trail cannot disagree. -->
 <script src="lib/client-terms.js"></script>
+<!-- The END-USER declaration, for a client who trains on the programme rather than selling
+     it on. Same file the server reads, so the page and the audit trail cannot disagree. -->
+<script src="lib/end-user-terms.js"></script>
 <script>
 /* DUCK-WOD client view.
  *
@@ -401,6 +409,7 @@ button.ghost:hover{color:var(--text)}
         }
         setToken(r.body.clientToken);
         /* Signature belongs to the account, so a second device skips this. */
+        if (r.body.termsKind) termsKind = String(r.body.termsKind);
         if (r.body.signed) loadProgram(); else openTerms();
       });
   }
@@ -418,7 +427,52 @@ button.ghost:hover{color:var(--text)}
     }).join("");
   }
 
+  /* Which document this client owes. The SERVER says so in its 403 — never the page, and
+     never guessed from anything the reader can change. B2B until told otherwise, because
+     that is what every client signed before the gym kind existed. */
+  var termsKind = "b2b";
+
+  /**
+   * THE END-USER DECLARATION, WITH ITS THREE CONFIRMATIONS.
+   *
+   * A commercial-gym trainee trains on the programme; he does not sell it on. The B2B
+   * document names its signer as the operating coach, academy, studio or gym, which he is
+   * not (owner, 2026-10-04). The text here is the athlete app's own, loaded from the same
+   * module the server reads.
+   */
+  function renderEndUserTerms() {
+    var t = window.END_USER_TERMS;
+    if (!t) {
+      el("termsErr").textContent = "Terms could not be loaded. Please reload the page.";
+      return;
+    }
+    el("termsScroll").innerHTML = t.BODY_HTML;
+    el("agreeRows").innerHTML = t.FLAGS.map(function (f) {
+      return (
+        '<div class="agree-row">' +
+        '<input id="agree-' + f.id + '" type="checkbox" data-agree-flag="' + f.id + '">' +
+        '<label for="agree-' + f.id + '">' + esc(f.en) + "<br><span dir=\"rtl\">" + esc(f.he) + "</span></label>" +
+        "</div>"
+      );
+    }).join("");
+    el("agreeBtn").textContent = "Agree & continue";
+    syncAgreeButton();
+  }
+
+  /** Every confirmation on screen, ticked. Two of three is not an acceptance. */
+  function agreeBoxes() {
+    return Array.prototype.slice.call(el("agreeRows").querySelectorAll('input[type="checkbox"]'));
+  }
+  function allAgreed() {
+    var boxes = agreeBoxes();
+    return boxes.length > 0 && boxes.every(function (b) { return b.checked; });
+  }
+  function syncAgreeButton() {
+    el("agreeBtn").disabled = !allAgreed();
+  }
+
   function renderTerms() {
+    if (termsKind === "end_user") return renderEndUserTerms();
     var t = window.CLIENT_TERMS;
     if (!t) {
       el("termsErr").textContent = "Terms could not be loaded. Please reload the page.";
@@ -438,11 +492,18 @@ button.ghost:hover{color:var(--text)}
   }
 
   function submitAgree() {
-    if (!el("agreeBox").checked) return;
+    if (!allAgreed()) return;
     var btn = el("agreeBtn");
     btn.disabled = true;
     el("termsErr").textContent = "";
-    api({ action: "sign", accepted: true, signedAtClient: new Date().toISOString() })
+    /* Each confirmation travels as its own answer, because that is how it is stored and how
+       it will have to be read back a year from now. */
+    var flags = {};
+    agreeBoxes().forEach(function (b) {
+      var id = b.getAttribute("data-agree-flag");
+      if (id) flags[id] = b.checked === true;
+    });
+    api({ action: "sign", accepted: true, flags: flags, signedAtClient: new Date().toISOString() })
       .then(function (r) {
         btn.disabled = false;
         if (r.status !== 200 || !r.body.ok) {
@@ -485,7 +546,12 @@ button.ghost:hover{color:var(--text)}
     show("authView", false); show("termsView", false);
     api({ action: "read" }).then(function (r) {
       if (r.status === 401) { forgetSession("This device is no longer authorised. Ask your coach for a new code."); return; }
-      if (r.status === 403) { openTerms(); return; }
+      if (r.status === 403) {
+        /* The server names the document; the page never decides for itself. */
+        if (r.body && r.body.termsKind) termsKind = String(r.body.termsKind);
+        openTerms();
+        return;
+      }
       if (r.status === 404) { showGone(); return; }
       if (r.status !== 200 || !r.body.ok) {
         el("bootErr").innerHTML = '<div class="banner bad">' + esc(r.body.error || "Could not load your program.") + "</div>";
@@ -2323,7 +2389,9 @@ button.ghost:hover{color:var(--text)}
     bindDaySwipe();
     el("codeBtn").addEventListener("click", submitCode);
     el("codeInput").addEventListener("keydown", function (ev) { if (ev.key === "Enter") submitCode(); });
-    el("agreeBox").addEventListener("change", function () { el("agreeBtn").disabled = !this.checked; });
+    /* However many confirmations the document asks for — one, or three. Delegated, because
+       the rows are redrawn when the page learns which document this client owes. */
+    el("agreeRows").addEventListener("change", syncAgreeButton);
     el("agreeBtn").addEventListener("click", submitAgree);
 
     if (!PROGRAM_ID) {

@@ -41,6 +41,7 @@ const Clipboard = require("../lib/pprog-clipboard.js");
 const Access = require("../lib/client-access.js");
 const Payload = require("../lib/client-view-payload.js");
 const Terms = require("../lib/client-terms.js");
+const EndUserTerms = require("../lib/end-user-terms.js");
 const Intake = require("../lib/client-intake.js");
 /* A gym block is SIX weeks. See lib/gym-layers/base.js for why, and POL-032 for the
    four-week functional brick this deliberately is not. */
@@ -1219,6 +1220,9 @@ async function clientHandler(req, res, body) {
       deviceLabel: String(body.deviceLabel || "").slice(0, 80),
     });
     if (!redeemed.ok) return bad(res, 401, redeemed.code, redeemed.error);
+    /* Which declaration this client owes, before the first screen is drawn for him. */
+    const claimRead = await store.readProgram(programId);
+    const claimPlan = termsPlanFor(claimRead.ok ? claimRead.program.clientKind : "");
     try {
       await writeAccess(programId, redeemed.access);
     } catch (e) {
@@ -1228,9 +1232,13 @@ async function clientHandler(req, res, body) {
       ok: true,
       clientToken: redeemed.token,
       deviceId: redeemed.device.id,
-      /* Signature is per ACCOUNT — a second device walks straight in (b.3). */
-      signed: Access.isSignedForCurrentTerms(redeemed.access),
-      termsVersion: Terms.TERMS_VERSION,
+      /* Signature is per ACCOUNT — a second device walks straight in (b.3) — and it is
+         measured against the document THIS client owes. A gym client who claims a code is
+         shown the end-user declaration on his very first screen, not the B2B one he would
+         then have to be moved off (2026-10-04). */
+      signed: Access.isSignedForCurrentTerms(redeemed.access, claimPlan.version),
+      termsKind: claimPlan.kind,
+      termsVersion: claimPlan.version,
     });
   }
 
@@ -1257,6 +1265,13 @@ async function clientHandler(req, res, body) {
     });
   }
 
+  /* WHICH DOCUMENT THIS CLIENT OWES US. One read, on a path that happens once in a client's
+     life — before they are through the door — and it decides both what the page is shown and
+     what the signature is measured against. */
+  const kindRead = await store.readProgram(programId);
+  const plan = termsPlanFor(kindRead.ok ? kindRead.program.clientKind : "");
+  const signedHere = Access.isSignedForCurrentTerms(accessRow, plan.version);
+
   if (action === "sign") {
     /* Onto the freshest row we can get, for the same reason as touchLastSeen: this
        write replaces the whole row, so it must not carry a copy old enough to undo
@@ -1265,6 +1280,20 @@ async function clientHandler(req, res, body) {
     /* Read before writing: recordSignature overwrites, and "is this new?" is the only
        thing standing between one join mail and one per device. */
     const previousSignature = rowToSign && rowToSign.signature ? rowToSign.signature : null;
+    /* THE END-USER DECLARATION ASKS THREE THINGS, AND ALL THREE ARE THE SIGNATURE.
+       "I read it" is not the same claim as "I am over eighteen", so two of three is not an
+       acceptance and is refused here rather than stored as a partial one. */
+    if (plan.needsFlags && !EndUserTerms.allAccepted(body.flags)) {
+      return bad(
+        res,
+        400,
+        "FLAGS_REQUIRED",
+        "every confirmation on the declaration must be ticked",
+        { missing: EndUserTerms.flagIds().filter(function (id) {
+          return !(body.flags && body.flags[id] === true);
+        }) }
+      );
+    }
     const signed = Access.recordSignature(rowToSign, {
       programId: programId,
       accepted: body.accepted === true,
@@ -1273,6 +1302,11 @@ async function clientHandler(req, res, body) {
       signedAtClient: body.signedAtClient,
       ip: clientIp(req),
       ua: String((req.headers && req.headers["user-agent"]) || "").slice(0, 300),
+      /* Stamped by the SERVER from the client's kind, never from what the page sent: a page
+         could otherwise sign the cheaper document on the harder client's behalf. */
+      termsVersion: plan.version,
+      termsKind: plan.kind,
+      flags: plan.needsFlags ? body.flags : undefined,
     });
     if (!signed.ok) return bad(res, 400, signed.code, signed.error);
     try {
@@ -1307,13 +1341,18 @@ async function clientHandler(req, res, body) {
     });
   }
 
-  /* Everything past here needs a signature on the current terms. */
-  if (!verified.signed) {
+  /* Everything past here needs a signature on the document THIS client owes — measured
+     against that document's version, not against the B2B one for everybody. */
+  if (!signedHere) {
     return res.status(403).json({
       ok: false,
       code: "TERMS_REQUIRED",
-      error: "the B2B terms must be accepted first",
-      termsVersion: Terms.TERMS_VERSION,
+      error:
+        plan.kind === "end_user"
+          ? "the terms of service and liability waiver must be accepted first"
+          : "the B2B terms must be accepted first",
+      termsKind: plan.kind,
+      termsVersion: plan.version,
     });
   }
 
@@ -1490,6 +1529,25 @@ async function handler(req, res) {
 }
 
 /** Any unexpected throw must still reach the caller as JSON, never a raw 500. */
+/**
+ * WHICH DECLARATION THIS CLIENT SIGNS.
+ *
+ * A commercial-gym trainee is an END USER: one person training on a programme. The B2B
+ * document names its signer "the Coach, Academy, Studio, Gym… as the active operator", which
+ * that person is not, and the owner said so the moment he saw one being asked to sign it
+ * (2026-10-04). Everyone else on this screen IS an operator of some kind and keeps the
+ * document they have always signed.
+ *
+ * One function, because "which terms?" must have exactly one answer, or the gate and the
+ * signature can disagree about what was accepted.
+ */
+function termsPlanFor(clientKind) {
+  if (String(clientKind || "") === "gym") {
+    return { kind: "end_user", version: EndUserTerms.TERMS_VERSION, needsFlags: true };
+  }
+  return { kind: "b2b", version: Terms.TERMS_VERSION, needsFlags: false };
+}
+
 module.exports = async function (req, res) {
   try {
     return await handler(req, res);

@@ -87,7 +87,13 @@ ok(
 );
 ok("English and Hebrew are both rendered", /SECTIONS_EN/.test(html) && /SECTIONS_HE/.test(html));
 ok("the Hebrew block is laid out right-to-left", /\.terms-he\{direction:rtl/.test(html));
-ok("the agree button is disabled until the box is ticked", /agreeBtn"\)\.disabled = !this\.checked/.test(html));
+/* The button waits for EVERY confirmation, not for one named box. The B2B document asks for
+   one; the end-user declaration a gym athlete signs asks for three, and the rule is the same
+   either way: nothing is enabled until all of them are ticked (2026-10-04). */
+ok("the agree button waits for every confirmation", /function allAgreed\(\)/.test(html));
+ok("and it is what enables the button", /el\("agreeBtn"\)\.disabled = !allAgreed\(\);/.test(html));
+ok("two of three is not an acceptance", /boxes\.length > 0 && boxes\.every/.test(html));
+ok("and nothing is sent until then", /if \(!allAgreed\(\)\) return;/.test(html));
 ok("the checkbox label comes from the terms module", /CONFIRM_LABEL/.test(html));
 
 /* The UMD module must actually expose itself to a browser. */

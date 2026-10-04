@@ -248,7 +248,13 @@ async function main() {
   /* --- nothing about this kind is special where it must not be ------------ */
 
   const api = fs.readFileSync(path.join(root, "api", "client-program.js"), "utf8");
-  const mailBlock = api.slice(api.indexOf("async function notifyOwnerOfSignature"));
+  /* THE MAIL FUNCTION, not everything written after it. The slice used to run to the end of
+     the file, so an unrelated helper added below it — one that legitimately asks which terms
+     a kind signs — read as the mail path branching on kind (2026-10-04). The rule it is
+     guarding is unchanged: a "has joined" mail is the same mail for every kind. */
+  const mailStart = api.indexOf("async function notifyOwnerOfSignature");
+  const mailBlock = api.slice(mailStart, api.indexOf("\n}", mailStart) + 2);
+  ok("the mail function was found whole", /sendAppMail/.test(mailBlock) && mailBlock.length < 2000);
   ok("no mail path asks what kind of client it is", mailBlock.indexOf("clientKind") < 0);
   const renewalSrc = fs.readFileSync(path.join(root, "lib", "client-renewal.js"), "utf8");
   ok("neither does the renewal", renewalSrc.indexOf("clientKind") < 0);
