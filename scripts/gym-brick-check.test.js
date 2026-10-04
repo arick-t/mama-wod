@@ -143,4 +143,56 @@ ok("and one outside the range still blocks", Check.checkGymBlock(
   ] }] } } }, {}).block, FULL_GYM).blocking.some((b) => /outside 8-30/.test(b)));
 ok("a plank in a sound week blocks nothing", Check.checkGymBlock(sound, FULL_GYM).blocking.length === 0);
 
+/* -- a line it cannot read must be SAID, not swallowed -------------------------
+   An unrecognised exercise is invisible to every check: its sets never reach the muscle's
+   weekly total, its equipment is never compared against the room, and core counts as work.
+   On the owner's own generation six of seventeen lines were unread and the block came back
+   with two volume flags that were false. Under-counting in silence is worse than being wrong
+   out loud (2026-10-04). */
+
+const unreadable = {
+  weeks: [
+    {
+      weekIndex: 1,
+      days: {
+        sun: { parts: [{ title: "A", lines: [
+          "4 x 10 Leg Press @ 7/10",
+          "4 x 10 Zercher Good Morning Thing @ 7/10",
+        ] }] },
+        mon: { parts: [] }, tue: { parts: [] }, wed: { parts: [] },
+        thu: { parts: [] }, fri: { parts: [] }, sat: { parts: [] },
+      },
+    },
+  ],
+};
+const said = Check.checkGymBlock(unreadable, { answers: {} });
+ok(
+  "a line it cannot identify is reported",
+  said.flags.some(function (f) { return /does not know/i.test(f); })
+);
+ok(
+  "and the report names one of them",
+  said.flags.some(function (f) { return /Zercher Good Morning Thing/.test(f); })
+);
+
+const allRead = Check.checkGymBlock(
+  {
+    weeks: [
+      {
+        weekIndex: 1,
+        days: {
+          sun: { parts: [{ title: "A", lines: ["4 x 10 Leg Press @ 7/10"] }] },
+          mon: { parts: [] }, tue: { parts: [] }, wed: { parts: [] },
+          thu: { parts: [] }, fri: { parts: [] }, sat: { parts: [] },
+        },
+      },
+    ],
+  },
+  { answers: {} }
+);
+ok(
+  "and nothing is said when every line was read",
+  !allRead.flags.some(function (f) { return /does not know/i.test(f); })
+);
+
 console.log("\nבודק החד\"כ — אפס חסימות על תוכנית תקינה, ושמונה על אותה תוכנית אצל השני.");

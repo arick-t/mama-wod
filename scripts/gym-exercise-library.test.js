@@ -71,4 +71,34 @@ const long = L.find("Incline Dumbbell Press");
 ok("the longer name wins over the shorter one", long.en === "Incline Dumbbell Press");
 ok("an unknown line finds nothing rather than guessing", L.find("12 kipping muscle-ups") === null);
 
+/* -- the names a real brain actually writes ----------------------------------
+   find() was a substring test, and on the owner's own generation (2026-10-04) it read SIX of
+   seventeen lines as nothing at all — every one of them in this table under a slightly
+   different name. An unrecognised line is invisible to every check that matters, so the block
+   came back with two volume flags that were both false. The test is on words now. */
+
+const WRITTEN = [
+  ["4 x 8 Bent Over Barbell Row @ 8/10", "back", "word order"],
+  ["4 x 12 Dumbbell Biceps Curl @ 7/10", "biceps", "an extra word"],
+  ["3 x 15 Hanging Leg Raise @ 8/10", "core", "leg for knee"],
+  ["4 x 10 Seated Dumbbell Overhead Press @ 8/10", "shoulders", "seated"],
+  ["4 x 12 Triceps Rope Pushdown @ 7/10", "triceps", "rope for cable"],
+  ["3 x 15 Abdominal Machine Crunch @ 8/10", "core", "abdominal machine"],
+  ["4 x 12 Cable Chest Flyes @ 8/10", "chest", "a plural"],
+];
+WRITTEN.forEach(function (row) {
+  const hit = L.find(row[0]);
+  ok("reads " + row[2] + ": " + row[0].slice(0, 34), !!hit && hit.muscle === row[1]);
+});
+
+/* Equipment words are NOT thrown away. A dumbbell press is not a barbell press, and a line
+   that names the wrong implement must not quietly match the right exercise. */
+const db = L.find("4 x 10 Dumbbell Bench Press @ 7/10");
+const bb = L.find("4 x 10 Barbell Bench Press @ 7/10");
+ok("a dumbbell press and a barbell press are not the same row", !db || !bb || db.en !== bb.en);
+
+/* The sets, reps and effort around the name are not part of it. */
+ok("the numbers around a name are not read as the name", !L.find("4 x 10 @ 8/10"));
+ok("and an empty line is nothing", !L.find("") && !L.find("   "));
+
 console.log("\nספריית התרגילים — " + L.ALL.length + " תרגילים, כולם מתויגים.");
