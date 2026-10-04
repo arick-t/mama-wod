@@ -164,9 +164,14 @@ ok("it goes up before the call and down after it", /buildOverlay\(true\);/.test(
    Without a ceiling it grew past the bottom of the screen with no scrollbar and no way down:
    the owner had to zoom the whole browser out to reach the Next button (2026-10-03). */
 
-ok("the card is capped to the window", /#gymIntakeModal > \.intake-workspace\{max-height:92vh\}/.test(admin));
-/* And the BODY is what scrolls. Capping the card alone clipped the Next button instead of
-   letting anyone reach it, because .intake-ws-body is overflow:hidden by design. */
-ok("and its body is what scrolls", /#gymIntakeModal \.intake-ws-body\{overflow-y:auto\}/.test(admin));
-
+/* The card is as tall as what is in it, up to a ceiling — and the two things that must never
+   be crushed are not. .intake-workspace is a FIXED-height flex column, which crushed the tab
+   strip to 13px on a tall step and left 140px of empty card on a short one. */
+ok("the card grows with its content, up to a ceiling",
+  /#gymIntakeModal > \.intake-workspace\{height:auto;max-height:min\(92vh,900px\)\}/.test(admin));
+ok("the step bar is never crushed", /#gymIntakeModal \.itabs\{flex-shrink:0\}/.test(admin));
+ok("nor are Back and Next", /#gymIntakeModal \.intake-ws-body > \.row\{flex-shrink:0\}/.test(admin));
+ok("and only the questions scroll",
+  /#gymIntakeModal #gymIntakeBody\{flex:1 1 auto;min-height:0;overflow-y:auto\}/.test(admin));
+ok("the body itself does not scroll any more", !/#gymIntakeModal \.intake-ws-body\{overflow-y:auto\}/.test(admin));
 console.log("\nמסך תחקור חדר הכושר — לפי המפרט, ובתוך הסקופ הנכון.");

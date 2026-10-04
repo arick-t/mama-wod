@@ -1754,12 +1754,26 @@ body:has(#intake-modal.open) #adminChatFloat{
    own and no way down — the owner had to zoom the whole browser out to reach the Next button
    (2026-10-03). The studio card has carried exactly these two lines since the day it became a
    modal; the gym card was written without them. */
-#gymIntakeModal > .intake-workspace{max-height:92vh}
-/* THE SCROLL BELONGS TO THE BODY, not to the card. .intake-ws-body is overflow:hidden by
-   design — it is the flex child that clips — so capping the card alone just CUT the Next
-   button off instead of letting anyone reach it. Measured in the browser, which is the only
-   way this was ever going to be caught. */
-#gymIntakeModal .intake-ws-body{overflow-y:auto}
+/* THE CARD'S SHAPE, AND WHY THESE FOUR LINES EXIST.
+   .intake-workspace is a flex column of FIXED height — height:min(92vh,900px) — and that one
+   declaration produced both of the owner's complaints, which looked like opposites:
+
+     tall step  (Schedule; Equipment with the list open) — the column had to find room, the
+                header has flex-shrink:0 and the TAB STRIP DOES NOT, so the strip was crushed
+                to thirteen pixels and Back/Next were pushed out. "לא רואים את הכותרות."
+     short step (Equipment ticked shut; Goals) — the card still stood 735px tall with 140px
+                of empty card below the buttons.
+
+   Measured in the browser on 2026-10-04; neither was visible from the source. The scroll I
+   put on the body the day before was a plaster on the symptom.
+
+   So: the strip and the buttons never shrink, only the QUESTIONS scroll, and the card is as
+   tall as what is in it up to the same ceiling. Scoped to this card — #intake-modal wears
+   .intake-workspace too and belongs to the other questionnaire. */
+#gymIntakeModal > .intake-workspace{height:auto;max-height:min(92vh,900px)}
+#gymIntakeModal .itabs{flex-shrink:0}
+#gymIntakeModal .intake-ws-body > .row{flex-shrink:0}
+#gymIntakeModal #gymIntakeBody{flex:1 1 auto;min-height:0;overflow-y:auto}
 #gymIntakeModal label.fld{display:block;margin:0 0 10px}
 #gymIntakeModal label.fld span{display:block;font-size:.8rem;color:var(--text-meta);margin:0 0 4px}
 #gymIntakeModal input[type=text]:not([class]),#gymIntakeModal input[type=number]:not([class]),
