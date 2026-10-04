@@ -77,4 +77,22 @@ ok("and never the functional one", !/if \(kind === "gym"\)[\s\S]{0,200}startInta
   ok("the door to '" + k + "' still exists", adminHtml.indexOf("chooseClientKind('" + k + "')") >= 0);
 });
 
+/* -- the next month is not the studio questionnaire's to ask for ---------------
+   Pressing "צור לבנת המשך" on a gym client opened the STUDIO card — Additions & changes,
+   Equipment & space, Schedule, Population & limits — and its create button calls add_block
+   with a studio intake, which would have overwritten the gym client's own answers with
+   answers from the wrong questionnaire and left him four empty weeks. Found by pressing it
+   in the browser on 2026-10-04; nothing in the source said so.
+
+   The server-side wall held the whole time (lib/coach-client-brief.js refuses a gym client,
+   so nothing could reach the functional brain). This is the half the wall never covered: the
+   damage on the way IN, before any request is made. */
+
+ok("the screen knows a gym client when it has one", /function isGymClient\(\)/.test(adminHtml));
+ok("and refuses to open the studio questionnaire for him",
+  /if \(isGymClient\(\)\) \{[\s\S]{0,400}?return;/.test(adminHtml));
+ok("the refusal says which brain writes it", /מוח החד\\"כ, מהתחקור שלו/.test(adminHtml));
+ok("and it happens before anything is asked of the server",
+  adminHtml.indexOf("if (isGymClient()) {") < adminHtml.indexOf('action: "add_block"'));
+
 console.log("\nסוג לקוח רביעי — קיים, בן שישה שבועות, ומוח הקרוספיט מסרב לו.");

@@ -8681,6 +8681,22 @@ tryRestoreAdminSession();
 
   function startNextBlock() {
     if (!S.program) return;
+    /* A GYM CLIENT'S NEXT MONTH IS NOT THIS QUESTIONNAIRE'S TO ASK FOR.
+       Pressing this on one opened the STUDIO card — "Additions & changes · Equipment & space ·
+       Schedule · Population & limits" — and its create button calls add_block with a studio
+       intake, which would have overwritten the gym client's own answers with answers from the
+       wrong questionnaire and left him four empty weeks (found in the browser, 2026-10-04).
+       The server-side wall holds either way: lib/coach-client-brief.js refuses a gym client,
+       so nothing could have reached the functional brain. This stops the damage ON THE WAY in,
+       which is the half the wall never covered. Until the gym continuation is built, say so. */
+    if (isGymClient()) {
+      banner(
+        "warn",
+        "לבנת המשך למתאמן חדר כושר נכתבת על ידי מוח החד\"כ, מהתחקור שלו — והיא עוד לא נבנתה. " +
+          "התחקור הזה שואל שאלות של סטודיו, ולחיצה עליו הייתה דורסת את התשובות של הלקוח."
+      );
+      return;
+    }
     /* Nothing to ask a blank client: another month of empty squares, on the spot
        (owner, 2026-09-04). */
     if (isBlankClient()) {
@@ -12636,6 +12652,11 @@ tryRestoreAdminSession();
   /** Four answers and an empty month — no questionnaire to open, ever. */
   function isBlankClient() {
     return !!(S.program && S.program.clientKind === "blank");
+  }
+
+  /** Written by the gym brain, from the gym questionnaire. Not this screen's to continue yet. */
+  function isGymClient() {
+    return !!(S.program && S.program.clientKind === "gym");
   }
 
   /**
