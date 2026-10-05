@@ -633,6 +633,18 @@ header .count{background:var(--bg-elev);padding:4px 12px;border-radius:8px;
 /* Athlete tabs — calm active (soft brand fill), not glowing pills */
 .tabs-bar{background:var(--bg-elev);border-bottom:1px solid var(--line);padding:10px 20px;
   display:flex;gap:8px;overflow-x:auto;flex-shrink:0}
+/* THE STRIP HAS TO BE SCROLLABLE BY A PERSON, not just by scrollLeft.
+   With eighteen clients it overflows by 800px and there was no way to reach the far end:
+   the global ::-webkit-scrollbar rule sets only WIDTH, which is the vertical bar, so the
+   horizontal one kept its default height with a #333 thumb on a near-black track — present,
+   20px tall, and invisible. A mouse wheel does not scroll a horizontal container on Windows
+   either. So the owner had eight clients he could see and ten he could not (2026-10-05).
+   Its own bar, with contrast, plus a wheel that works — see the handler in the page. */
+.tabs-bar{scrollbar-width:thin;scrollbar-color:var(--brand) var(--bg)}
+.tabs-bar::-webkit-scrollbar{height:9px}
+.tabs-bar::-webkit-scrollbar-track{background:var(--bg);border-radius:5px}
+.tabs-bar::-webkit-scrollbar-thumb{background:#4a4a4a;border-radius:5px}
+.tabs-bar:hover::-webkit-scrollbar-thumb{background:var(--brand)}
 .athlete-tab{padding:8px 14px;border-radius:10px;background:var(--bg-panel);color:var(--text-muted);
   font-size:13px;cursor:pointer;white-space:nowrap;border:1px solid var(--line);flex-shrink:0;
   font-weight:600;transition:background .15s,border-color .15s,color .15s;box-shadow:none}
@@ -4127,9 +4139,60 @@ function toggleMonthlyIncome() {
   renderMonthlyIncome();
 }
 
+/**
+ * A WHEEL THAT WORKS ON A SIDEWAYS STRIP, and the open client brought into view.
+ *
+ * Windows does not scroll a horizontal container with a plain wheel — it wants shift — so a
+ * strip wider than the screen reads as a strip that cannot be moved. With eighteen clients
+ * the owner could see eight of them and had no way to reach the rest (2026-10-05).
+ *
+ * Bound once, on the element, and only when there is something to scroll: a wheel over a
+ * strip that fits must still scroll the PAGE.
+ */
+function wirePeopleStripScroll(sb) {
+  if (!sb || sb.__wheelWired) return;
+  sb.__wheelWired = true;
+  sb.addEventListener(
+    "wheel",
+    function (ev) {
+      if (sb.scrollWidth <= sb.clientWidth) return;
+      if (ev.deltaX) return; /* a trackpad already sends sideways — leave it alone */
+      /* Instantly, not smoothly. scroll-behavior:smooth restarts an animation on every tick,
+         so a wheel under it feels broken even though the number is moving. The one place that
+         DOES want easing asks for it itself — see scrollActiveTabIntoView. */
+      sb.scrollBy({ left: ev.deltaY, behavior: "auto" });
+      ev.preventDefault();
+    },
+    { passive: false }
+  );
+}
+
+/** The client he is looking at, dragged into view. Nothing else moves the strip for him. */
+function scrollActiveTabIntoView(sb) {
+  if (!sb) return;
+  var active = sb.querySelector(".athlete-tab.active");
+  if (!active || sb.scrollWidth <= sb.clientWidth) return;
+  var a = active.getBoundingClientRect();
+  var b = sb.getBoundingClientRect();
+  if (a.left >= b.left && a.right <= b.right) return;
+  /* BY ARITHMETIC, NOT BY scrollIntoView. On this strip — RTL, flex, inside a parent that
+     clips — scrollIntoView({inline:"center"}) simply does nothing in Chrome; measured on
+     2026-10-05 with the active chip sitting 587px off the left edge and staying there.
+     Where the chip should land, how far that is, and move by exactly that. */
+  var centre = b.left + (b.width - a.width) / 2;
+  var want = sb.scrollLeft + (a.left - centre);
+  /* The travel is the same number in both directions; which SIGN is legal is not. */
+  var span = sb.scrollWidth - sb.clientWidth;
+  var rtl = getComputedStyle(sb).direction === "rtl";
+  var min = rtl ? -span : 0;
+  var max = rtl ? 0 : span;
+  sb.scrollLeft = Math.max(min, Math.min(max, want));
+}
+
 function renderPeopleStrip() {
   var sb = document.getElementById("athlete-tabs");
   if (!sb || !window.AdminPeopleStrip) return;
+  wirePeopleStripScroll(sb);
   /* Not while he is holding one. A poll that redraws the strip mid-drag takes the chip
      out of his hand (owner, 2026-09-05). */
   if (stripDragging) return;
@@ -4152,6 +4215,7 @@ function renderPeopleStrip() {
      a second time. Two polls and every list load were rewriting this markup on a timer,
      identical byte for byte (owner, 2026-09-02). */
   if (sb.innerHTML !== nextHtml) sb.innerHTML = nextHtml;
+  scrollActiveTabIntoView(sb);
   var countEl = document.getElementById("athlete-count");
   if (countEl) {
     /* Both numbers, always. When the owner reported "all my athletes disappeared" there
