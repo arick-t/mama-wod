@@ -1,81 +1,5 @@
 {
   "workouts": {
-    "2026-09-20": [
-      {
-        "date": "2026-09-20",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-september-20-2026/",
-        "sections": [
-          {
-            "title": "General warm-up",
-            "lines": [
-              "20 Ankle Raises",
-              "20 Tib Raises",
-              "10 Inchworms",
-              "20 Reverse Lunges",
-              "10 Burpees",
-              "10 Step Overs",
-              "10 Ring Rows",
-              "10 Kickstand Deadlift / side",
-              "8 Burpee Box Step Overs",
-              "8 Hanging Shoulder Circles",
-              "8 Kickstand Deadlift / side",
-              "6 Burpee Box Jump Overs",
-              "3-6 Strict Pull Ups",
-              "6 KB Deadlift"
-            ]
-          },
-          {
-            "title": "AMRAP 16 minutes",
-            "lines": [
-              "20 Burpee Box Jump Overs 24/20″",
-              "1 Set Max Strict Pull Ups",
-              "20 KB Deadlifts 70/53lbs",
-              "Feel: Cardio / Muscle Overload",
-              "Pace: Sustain",
-              "Target Score: 4 Rounds / 25+ strict pull ups",
-              "Firebreather Score: 4+ Rounds / 40+ strict pull ups",
-              "Scaling",
-              "– KB Deadlifts: Reduce the weight down so that all 20 reps can be"
-            ]
-          },
-          {
-            "title": "Extra Credit",
-            "lines": [
-              "5+ Rounds",
-              "5:00 Machine Flush",
-              "3:00 Mobility",
-              "Rotate through as many modalities as",
-              "you can, excluding running but not",
-              "walking. Pace should feel very very",
-              "easy, but elicit a nice sweat to aid in",
-              "your mobility routine. The goal with is",
-              "to work through 3-5 different areas of",
-              "the body during the 3:00 Mobility",
-              "windows."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-09-20",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 17.5",
-            "lines": [
-              "10 rounds for time of:",
-              "9 thrusters, 95 lb.",
-              "35 double-unders"
-            ]
-          }
-        ],
-        "note": "Open: Open 17.5"
-      }
-    ],
     "2026-09-21": [
       {
         "date": "2026-09-21",
@@ -175,81 +99,6 @@
           }
         ],
         "note": "Open: Open 11.1"
-      },
-      {
-        "date": "2026-09-21",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-09-21/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "samson stretch",
-              "hand walk",
-              "instep rotations",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10/8cal row",
-              "100m run",
-              "10 elbow rotations"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "CONDITIONING 30MIN",
-            "lines": [
-              "14 power cleans",
-              "15/12cal row",
-              "16 front rack lunges",
-              "on every 5:00 (starting at 00:00) 400m run",
-              "* *pick up where you left off",
-              "* barbell: 40/30kg",
-              "aerobic capacity"
-            ],
-            "sub_title": "amrap 30min"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-21",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Paul Pena",
-            "sub_title": "7 rounds, each for time, of:",
-            "lines": [
-              "100-meter sprint",
-              "19 kettlebell swings",
-              "10 burpee box jumps",
-              "Rest 3 minutes between rounds."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-09-21",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Mary",
-            "lines": [
-              "20 minutes AMRAP",
-              "5  handstand push-up s",
-              "10 pistol squat, alternating",
-              "15 pull-ups"
-            ]
-          }
-        ],
-        "note": "Benchmark: Mary"
       }
     ],
     "2026-09-22": [
@@ -951,25 +800,6 @@
               "* muscular endurance"
             ],
             "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-25",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "4 SETS",
-            "lines": [
-              "ON A 5:00 CLOCK...",
-              "800m Run",
-              "Max Bar Muscle-Ups in Remaining Time",
-              "* -Rest 2:00 b/t Sets-",
-              "* (Score is Total Reps)"
-            ]
           }
         ]
       },
@@ -1966,21 +1796,18 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "Isabel",
+            "title": "Jackie",
             "lines": [
               "For time",
-              "30 Snatch 60/42,5 kg",
-              "Scaled",
-              "30 Hang snatch",
-              "Target: sub 5 min. Time cap 6 min.",
-              "the load should feel moderate, not maximal",
-              "sprint  -style workout",
-              "load suggestion ~50% of 1rm",
-              "*power snatch es recommended*"
+              "1000 m Row",
+              "50 Thruster 20/15kg",
+              "30 Pull up",
+              "Target: sub 8' Time cap 12'",
+              "RPE 5, maximum effort"
             ]
           }
         ],
-        "note": "Benchmark: Isabel"
+        "note": "Benchmark: Jackie"
       }
     ],
     "2026-10-01": [
@@ -2743,23 +2570,21 @@
         "url": "https://www.wodconnect.com/workout_lists/benchmarks",
         "sections": [
           {
-            "title": "Helen",
+            "title": "Isabel",
             "lines": [
-              "RX",
-              "3 rounds for time",
-              "- 400 m run",
-              "- 21 KB swings @24/16kg",
-              "- 12 Pull Ups",
-              "SC",
-              "3 rounds for time",
-              "- 400 m run",
-              "- 21 KB swings @20/12kg",
-              "- 12 Jumping Pull Ups",
-              "TC: 15 min"
+              "For time",
+              "30 Snatch 60/42,5 kg",
+              "Scaled",
+              "30 Hang snatch",
+              "Target: sub 5 min. Time cap 6 min.",
+              "the load should feel moderate, not maximal",
+              "sprint  -style workout",
+              "load suggestion ~50% of 1rm",
+              "*power snatch es recommended*"
             ]
           }
         ],
-        "note": "Benchmark: Helen"
+        "note": "Benchmark: Isabel"
       }
     ],
     "2026-10-04": [
@@ -3021,7 +2846,316 @@
         ],
         "note": "Benchmark: FIGHT GONE BAD"
       }
+    ],
+    "2026-10-05": [
+      {
+        "date": "2026-10-05",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-05/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "90/90 hip rotations",
+              "lying hip cross over",
+              "hand walk"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. cossack squats",
+              "2. good mornings",
+              "3. row"
+            ],
+            "sub_title": "40sec on / 20sec off x 6rounds"
+          },
+          {
+            "title": "SUMO DEADLIFT 16MIN",
+            "lines": [
+              "find a heavy set of 2",
+              "sumo deadlifts",
+              "strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "40/32cal row",
+              "30 db hang snatches",
+              "20 single arm db shoulder to overhead",
+              "dumbbell: 22,5/15kg",
+              "* aerobic power & muscular endurance"
+            ],
+            "sub_title": "3 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-05",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/261005",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Fran"
+            ]
+          },
+          {
+            "title": "21-15-9 REPS FOR TIME OF",
+            "lines": [
+              "Thrusters",
+              "Pull-ups",
+              "♀ 65-lb barbell",
+              "♂ 95-lb barbell",
+              "Compare to",
+              "250730"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-10-05",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-october-5-2026/",
+        "sections": [
+          {
+            "title": "General Warm-Up",
+            "lines": [
+              "2:00 Cardio Choice",
+              ":20 Alternating Scorpions",
+              ":20",
+              "Down Dog to Up Dog",
+              ":15/:15",
+              "Crossbody Lat Stretch",
+              "10 PVC Pass-Throughs",
+              "10 PVC Around the Worlds (5 Each Direction)",
+              ":20 PVC Prayer Stretch",
+              ":30 Jump Rope (Singles, Doubles, Practice)",
+              "12",
+              "Banded Pull-Aparts",
+              ":20",
+              "Extended Plank Reverse Bridge"
+            ]
+          },
+          {
+            "title": "Specific Prep",
+            "lines": [
+              "2 Sets:",
+              "8 Scapular Pull-Ups",
+              ":15",
+              "Dead Hang",
+              "+ :15 Active Hang",
+              "Bar Kip Swings",
+              "(Tight Hollow to Arch, Push Away at the Back)",
+              "5/5 Alternating",
+              "Iron Cross Stretch",
+              "Glute Bridges",
+              "(:02 Hold at the Top)"
+            ]
+          },
+          {
+            "title": "2 Sets: Empty Barbell",
+            "lines": [
+              "5 Snatch Grip Romanian Deadlifts (Slow Lower, Lats On)",
+              "5 Hang Muscle Snatch",
+              "5 Overhead Squats (:02 Pause in the Bottom)"
+            ]
+          },
+          {
+            "title": "Then Build to the Working Load on the Power Snatch",
+            "lines": [
+              "Then Transition to the",
+              "Bar Muscle-Up Progression"
+            ]
+          },
+          {
+            "title": "20:00 EMOM",
+            "lines": [
+              "Minute 1: 3-5 Bar Muscle-Ups"
+            ]
+          },
+          {
+            "title": "Minute 2: 5-7 Power Snatch",
+            "lines": [
+              "Minute 3: 12-15 GHD Sit-Ups or V-Ups",
+              "Minute 4: 45-60",
+              "Double Unders",
+              "Score = Total Reps"
+            ]
+          },
+          {
+            "title": "Barbell:",
+            "lines": [
+              "135/95lb (61/43kg)"
+            ]
+          },
+          {
+            "title": "Goal:",
+            "lines": [
+              "Consistent, technical reps inside the prescribed ranges"
+            ]
+          },
+          {
+            "title": "RPE:",
+            "lines": [
+              "6-7/10"
+            ]
+          },
+          {
+            "title": "Primary Objective:",
+            "lines": [
+              "Accumulate clean, technical repetitions while staying within the prescribed rep ranges."
+            ]
+          },
+          {
+            "title": "Secondary Objective:",
+            "lines": [
+              "Establish a repeatable rep number early, with the option to build slightly if movement quality remains high."
+            ]
+          },
+          {
+            "title": "20:00 EMOM",
+            "lines": [
+              "Minute 1: 3-5 Bar Muscle-Ups or 8-10 Chest to Bar Pull-Ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-10-05",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Power Clean & Jerk 1x1",
+              "EVERY 1:00 (5:00)",
+              "5 Power Clean and Jerk (light)",
+              "* -straight into-",
+              "EVERY 1:00 (5:00)",
+              "3 Power Clean and Jerk (moderate)",
+              "* -straight into-",
+              "EVERY :30 (5:00)",
+              "1 Power Clean and Jerk (heavy)"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "OCTOBER MONTHLY CHALLENGE",
+            "lines": [
+              "Max Box Step Ups 20\"",
+              "* (Scored by Total Reps)",
+              "*If you are planning to use a weighted vest/ruck for Chad, you should use that weight today."
+            ],
+            "sub_title2": "15:00 AMRAP"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-05",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Working Sets:6 × 2 Squat Snatch @ 72.5–82.5%, building",
+              "Metcon:- Chipper60 Wall Balls 9/6kg50m x 2 (100m) Farmers Carry 2×32/24kg40 alt DB Snatch 22.5/15kg30/24 cal Row10 Devil’s Press 2×22.5/15kg”"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-10-05",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Jennifer",
+            "sub_title": "Complete as many rounds and reps as possible in 26 minutes of:",
+            "lines": [
+              "10 pull-ups",
+              "15 kettlebell swings",
+              "20 box jumps"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-10-05",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Helen",
+            "lines": [
+              "RX",
+              "3 rounds for time",
+              "- 400 m run",
+              "- 21 KB swings @24/16kg",
+              "- 12 Pull Ups",
+              "SC",
+              "3 rounds for time",
+              "- 400 m run",
+              "- 21 KB swings @20/12kg",
+              "- 12 Jumping Pull Ups",
+              "TC: 15 min"
+            ]
+          }
+        ],
+        "note": "Benchmark: Helen"
+      },
+      {
+        "date": "2026-10-05",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 17.3",
+            "lines": [
+              "*2017 Open Workout 17.3 Men Rx*",
+              "Games Season",
+              "2027 Open",
+              "Feb 18 – March 8",
+              "Overview",
+              "Leaderboard",
+              "Schedule",
+              "Workouts",
+              "2026 Quarterfinals",
+              "March 26-30",
+              "Overview",
+              "Leaderboard",
+              "Schedule",
+              "Workouts",
+              "2026 Semifinals",
+              "April – June",
+              "Overview",
+              "Leaderboard",
+              "Schedule",
+              "Workouts",
+              "2026 CrossFit Games",
+              "July",
+              "Leaderboard",
+              "Events",
+              "The CrossFit Games"
+            ]
+          }
+        ],
+        "note": "Open: Open 17.3"
+      }
     ]
   },
-  "last_updated": "2026-10-04T14:48:48.694202"
+  "last_updated": "2026-10-05T04:43:33.876068"
 }
