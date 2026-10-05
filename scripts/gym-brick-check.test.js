@@ -231,4 +231,27 @@ ok("and so is the Hebrew one", !kilosInNote('שבוע 3: אם עשר חזרות 
 ok("every line is reachable, note or not", Check.allLines(withNote("a note")).length === 2);
 ok("while the work walk still sees only work", Check.walkLines(withNote("a note")).length === 1);
 
+/* -- the depth is named in the line, not in the table -------------------------
+   A box squat is the ANSWER to "no deep squat", not a breach of it: it is the variation that
+   exists precisely to stop the knee and hip going past a safe depth. A bare /squat/ blocked
+   one for a 70-year-old whose questionnaire asked us to avoid deep squatting — the check was
+   forbidding the accommodation (bench run, 2026-10-05). */
+
+function squatBlocked(line) {
+  return Check.checkGymBlock(
+    { weeks: [ { weekIndex: 1, days: {
+        sun: { parts: [{ id: "p", title: "A", lines: [line] }] },
+        mon: { parts: [] }, tue: { parts: [] }, wed: { parts: [] },
+        thu: { parts: [] }, fri: { parts: [] }, sat: { parts: [] } } } ] },
+    { answers: { avoid: { deep_squat: true } } }
+  ).blocking.some(function (b) { return /movement family/.test(b); });
+}
+
+ok("a plain back squat is still blocked", squatBlocked("3 x 10 Barbell Back Squat @ 7/10"));
+ok("and a goblet squat with no depth named", squatBlocked("4 x 12 Dumbbell Goblet Squat @ 7/10"));
+ok("a box squat is not", !squatBlocked("3 x 10 Smith Machine Box Squat @ 7/10"));
+ok("nor is one written to parallel", !squatBlocked("4 x 12 Goblet Squat (To Parallel) @ 7/10"));
+ok("nor a partial", !squatBlocked("4 x 12 Partial Squat @ 7/10"));
+ok("a leg press was never a squat", !squatBlocked("4 x 10 Leg Press @ 7/10"));
+
 console.log("\nבודק החד\"כ — אפס חסימות על תוכנית תקינה, ושמונה על אותה תוכנית אצל השני.");
