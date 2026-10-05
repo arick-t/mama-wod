@@ -2850,51 +2850,6 @@
     "2026-10-05": [
       {
         "date": "2026-10-05",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-05/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "90/90 hip rotations",
-              "lying hip cross over",
-              "hand walk"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. cossack squats",
-              "2. good mornings",
-              "3. row"
-            ],
-            "sub_title": "40sec on / 20sec off x 6rounds"
-          },
-          {
-            "title": "SUMO DEADLIFT 16MIN",
-            "lines": [
-              "find a heavy set of 2",
-              "sumo deadlifts",
-              "strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "40/32cal row",
-              "30 db hang snatches",
-              "20 single arm db shoulder to overhead",
-              "dumbbell: 22,5/15kg",
-              "* aerobic power & muscular endurance"
-            ],
-            "sub_title": "3 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-05",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261005",
@@ -3029,6 +2984,90 @@
       },
       {
         "date": "2026-10-05",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 17.3",
+            "lines": [
+              "*2017 Open Workout 17.3 Men Rx*",
+              "Games Season",
+              "2027 Open",
+              "Feb 18 – March 8",
+              "Overview",
+              "Leaderboard",
+              "Schedule",
+              "Workouts",
+              "2026 Quarterfinals",
+              "March 26-30",
+              "Overview",
+              "Leaderboard",
+              "Schedule",
+              "Workouts",
+              "2026 Semifinals",
+              "April – June",
+              "Overview",
+              "Leaderboard",
+              "Schedule",
+              "Workouts",
+              "2026 CrossFit Games",
+              "July",
+              "Leaderboard",
+              "Events",
+              "The CrossFit Games"
+            ]
+          }
+        ],
+        "note": "Open: Open 17.3"
+      },
+      {
+        "date": "2026-10-05",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-05/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "90/90 hip rotations",
+              "lying hip cross over",
+              "hand walk"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. cossack squats",
+              "2. good mornings",
+              "3. row"
+            ],
+            "sub_title": "40sec on / 20sec off x 6rounds"
+          },
+          {
+            "title": "SUMO DEADLIFT 16MIN",
+            "lines": [
+              "find a heavy set of 2",
+              "sumo deadlifts",
+              "strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "40/32cal row",
+              "30 db hang snatches",
+              "20 single arm db shoulder to overhead",
+              "dumbbell: 22,5/15kg",
+              "* aerobic power & muscular endurance"
+            ],
+            "sub_title": "3 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-05",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3115,47 +3154,8 @@
           }
         ],
         "note": "Benchmark: Helen"
-      },
-      {
-        "date": "2026-10-05",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 17.3",
-            "lines": [
-              "*2017 Open Workout 17.3 Men Rx*",
-              "Games Season",
-              "2027 Open",
-              "Feb 18 – March 8",
-              "Overview",
-              "Leaderboard",
-              "Schedule",
-              "Workouts",
-              "2026 Quarterfinals",
-              "March 26-30",
-              "Overview",
-              "Leaderboard",
-              "Schedule",
-              "Workouts",
-              "2026 Semifinals",
-              "April – June",
-              "Overview",
-              "Leaderboard",
-              "Schedule",
-              "Workouts",
-              "2026 CrossFit Games",
-              "July",
-              "Leaderboard",
-              "Events",
-              "The CrossFit Games"
-            ]
-          }
-        ],
-        "note": "Open: Open 17.3"
       }
     ]
   },
-  "last_updated": "2026-10-05T04:43:33.876068"
+  "last_updated": "2026-10-05T09:34:47.327880"
 }
