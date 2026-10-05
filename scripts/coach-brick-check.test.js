@@ -341,4 +341,39 @@ const REPSONLY = {
 };
 ok("a number is not a percentage", C.checkBrick(REPSONLY, { percentagesAllowed: false }).blocking.length === 0);
 
+/* -- the other half of the off-day rule ---------------------------------------
+   offDayViolations catches work on a day they do NOT train. Its mirror was missing, and on
+   2026-10-05 two real athletes were handed a month a session short: one named Sun/Tue/Thu/Sat
+   and got Tue/Thu/Sat for two weeks running, with Sunday written out as "REST DAY" — a day he
+   had named. The prompt said it plainly ("Training days: Sun, Tue, Thu, Sat"). */
+
+function weekWith(sunday, tuesdayWorked) {
+  const day = { parts: [{ id: "a", title: "A", lines: ["10 Air Squats", "5 Burpees"] }] };
+  const rest = { parts: [{ id: "r", title: "REST DAY", lines: ["Rest"] }] };
+  const empty = { parts: [] };
+  return { weeks: [ { weekIndex: 1, days: {
+    sun: sunday === "rest" ? rest : sunday === "work" ? day : empty,
+    mon: { parts: [] },
+    tue: tuesdayWorked ? JSON.parse(JSON.stringify(day)) : { parts: [] },
+    wed: { parts: [] }, thu: { parts: [] }, fri: { parts: [] }, sat: { parts: [] },
+  } } ] };
+}
+const kindsOf = (b) =>
+  C.checkBrick(b, { trainingDays: ["sun", "tue"] }).violations.map((v) => v.kind);
+
+ok("a training day written out as REST is caught", kindsOf(weekWith("rest", true)).indexOf("missingday") >= 0);
+/* A day merely left EMPTY is not flagged: that would be a session-count check, and the owner
+   ruled on 2026-09-15 that an individual's count is deliberately not policed. Writing "REST
+   DAY" on a day he named is a different thing — a contradiction of a fact he gave us. */
+ok("but a training day merely left empty is not", kindsOf(weekWith("empty", true)).indexOf("missingday") < 0);
+ok("a week where both days were trained is clean", kindsOf(weekWith("work", true)).indexOf("missingday") < 0);
+/* A week nobody has written yet is not a week with a missing day — it is a week still being
+   filled, and flagging it would fire on every build while the fill runs. */
+ok("a week with nothing in it yet is not flagged", kindsOf(weekWith("empty", false)).indexOf("missingday") < 0);
+ok("and it is said as a fact about that day",
+  /SUN is written as a REST DAY, and it is a day this athlete trains/.test(
+    C.checkBrick(weekWith("rest", true), { trainingDays: ["sun", "tue"] }).blocking.join(" ")));
+ok("an athlete who named no days is never flagged",
+  C.checkBrick(weekWith("empty", true), {}).violations.map(v=>v.kind).indexOf("missingday") < 0);
+
 console.log("\nbrick check: all good");
