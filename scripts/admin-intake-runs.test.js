@@ -353,4 +353,29 @@ const offenders = chunks
   .map((c) => (c.match(/^  (?:window\.)?(?:function )?([A-Za-z0-9_$]+)/) || [])[1] || "?");
 ok("no function uses the S alias without declaring it — found: " + offenders.join(", "), offenders.length === 0);
 
+/* -- the last step of the questionnaire has to be finishable ------------------
+   The free goal line was removed on 2026-09-15 ("what this month is for is the marks") and
+   the check that guarded it was left behind, reading a field the code zeroes three lines
+   above it. It could never pass — so an individual client could not be created AT ALL, which
+   is how a whole client kind sat unreachable for three weeks (found 2026-10-05).
+
+   And what a finished questionnaire turns into: the owner, the same day — "אם יש מתאמן קצה
+   שעבר תחקיר כל הרעיון הוא שהתחקיר יהפוך ללבנה ולא לאימונים ריקים". An empty month belongs to
+   a BLANK client and to nobody else. */
+
+const fixed = fs.readFileSync(path.join(root, "admin-fixed-intake.js"), "utf8");
+
+ok("the goal check reads the marks", /if \(!Object\.keys\(improveMap\)\.length\) \{/.test(fixed));
+ok("and no longer reads the line that was removed",
+  !/if \(!intakeState\.goals\) \{\s*setFixedErr/.test(fixed));
+ok("the message asks for what it actually wants", /Mark at least one goal for this month\./.test(fixed));
+
+ok("a finished questionnaire becomes a block, not an empty month",
+  /ClientScreen\.buildMonthFromIntake\(\)/.test(fixed));
+ok("and that door exists on the clients screen",
+  /buildMonthFromIntake: function \(\)/.test(fs.readFileSync(path.join(root, "admin.html"), "utf8")));
+ok("it starts the same build the studio has always used",
+  /buildMonthFromIntake: function \(\) \{[\s\S]{0,200}brainAutoStart\("intake"\)/.test(
+    fs.readFileSync(path.join(root, "admin.html"), "utf8")));
+
 console.log("admin-intake-runs.test.js passed");

@@ -14080,6 +14080,25 @@ tryRestoreAdminSession();
       });
     },
 
+    /**
+     * BUILD THE MONTH FOR A CLIENT WHOSE ANSWERS ARE ALREADY ON FILE.
+     *
+     * The studio path has always ended this way — create, read, and the questionnaire he just
+     * filled in becomes the month. The individual's questionnaire had no way to reach it, so
+     * his month was never written at all. The owner on what an end user's intake is FOR
+     * (2026-10-05): "אם יש מתאמן קצה שעבר תחקיר כל הרעיון הוא שהתחקיר יהפוך ללבנה ולא
+     * לאימונים ריקים" — an empty month belongs to a BLANK client and to nobody else.
+     */
+    buildMonthFromIntake: function () {
+      try {
+        if (brainAutoStart("intake")) {
+          renderDetail();
+          return true;
+        }
+      } catch (e) {}
+      return false;
+    },
+
     createGym: function (form, weeks, findings) {
       var f = form || {};
       return api({

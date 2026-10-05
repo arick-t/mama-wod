@@ -1274,8 +1274,14 @@
       intakeState.avoidInProgram = avoidProgEl
         ? String(avoidProgEl.value || "").trim().slice(0, 400)
         : "";
-      if (!intakeState.goals) {
-        setFixedErr("Add at least a short goal (or write unknown).");
+      /* ASK ABOUT THE MARKS, WHICH ARE THE GOAL — not about the free line that was removed.
+         The line went on 2026-09-15 ("what this month is for is the marks") and this check
+         was left behind, reading a field the code zeroes three lines above it. It could never
+         pass, so the last step of the questionnaire could never be finished and an individual
+         client could not be created at all (found 2026-10-05). The rule is unchanged: at
+         least one goal. */
+      if (!Object.keys(improveMap).length) {
+        setFixedErr("Mark at least one goal for this month.");
         return;
       }
     }
@@ -1352,10 +1358,20 @@
         showIntakeBuilding(false);
         setIntakeBusy(false);
         if (typeof window.closeIntakeWorkspace === "function") window.closeIntakeWorkspace();
-        /* Straight to his card, where he writes the month and then issues the link. */
+        /* Straight to his card — and the month is built from the answers he just gave, the
+           same way a studio client's is. An end user who has been through a questionnaire
+           gets a BLOCK; an empty month belongs to a blank client and to nobody else
+           (owner, 2026-10-05). */
         if (window.ClientScreen && window.ClientScreen.reload) {
           window.ClientScreen.reload().then(function () {
             window.ClientScreen.open(res.j.program.programId);
+            if (typeof window.ClientScreen.buildMonthFromIntake === "function") {
+              /* After the open, so the build works from the programme as the server stored
+                 it rather than from the answer to the create. */
+              setTimeout(function () {
+                try { window.ClientScreen.buildMonthFromIntake(); } catch (eB) {}
+              }, 600);
+            }
           });
         }
       })
