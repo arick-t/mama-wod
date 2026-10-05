@@ -44,9 +44,15 @@
   /* The furthest tab this questionnaire has been opened to. See render(). */
   var reached = 0;
 
+  /* WHOSE NEXT MONTH THIS IS, when it is a next month at all.
+     null on a new client. Set when the card is opened from an existing gym client's tab, and
+     it is the only thing that decides whether "Build" creates a client or adds a block. */
+  var continuing = null;
+
 
   function reset() {
     reached = 0;
+    continuing = null;
     state = {
       clientName: "",
       /* WHAT THEY PAY. Not the brain's business and never sent to it — since 23.1 the monthly
@@ -556,6 +562,10 @@
     buildOverlay(true);
     var url = typeof window.adminApiUrl === "function" ? window.adminApiUrl("/api/gym-coach") : "/api/gym-coach";
     var payload = { gymIntake: answers };
+    /* A continuation tells the brain what came before — which exercises not to repeat, which
+       muscle was short, and the week the last deload fell on. Without it block two is a coin
+       toss that lands on block one (lib/gym-handoff.js). */
+    if (continuing && continuing.handoff) payload.gymHandoff = continuing.handoff;
     if (typeof window.withAdminPassword === "function") payload = window.withAdminPassword(payload);
     var headers = typeof window.adminAuthHeaders === "function"
       ? window.adminAuthHeaders()
@@ -589,6 +599,32 @@
           return;
         }
         window.gymLastBlock = x.j;
+        /* A NEXT MONTH IS APPENDED, NOT A SECOND CLIENT. */
+        if (continuing) {
+          if (!window.ClientScreen || !window.ClientScreen.addGymBlock) {
+            done();
+            setErr("The clients screen has not loaded yet — try again in a moment.");
+            return;
+          }
+          window.ClientScreen.addGymBlock(
+            continuing,
+            answers,
+            (x.j.block && x.j.block.weeks) || [],
+            { blocking: x.j.blocking || [], flags: x.j.flags || [], model: x.j.model || "" }
+          ).then(function (r) {
+            done();
+            if (!r || !r.ok) {
+              setErr((r && r.error) || "The block was written but could not be added.");
+              return;
+            }
+            setErr("");
+            closeGymIntake();
+            if (typeof window.showHdrToast === "function") {
+              window.showHdrToast(r.warn ? r.warn : "לבנה " + (r.blockIndex || "") + " נוספה ✓", r.warn ? "warn" : "ok");
+            }
+          });
+          return;
+        }
         if (!window.ClientScreen || !window.ClientScreen.createGym) {
           done();
           setErr("The clients screen has not loaded yet — try again in a moment.");
@@ -669,6 +705,52 @@
     reset();
     var modal = el("gymIntakeModal");
     if (!modal) return;
+    el("gymIntakeTitle").textContent = "New gym client";
+    modal.classList.add("open");
+    render();
+  };
+
+  /**
+   * THE SAME QUESTIONNAIRE, FOR A MONTH THAT FOLLOWS ONE.
+   *
+   * It opens on HIS answers rather than on an empty form, because almost nothing about an
+   * athlete changes between blocks — and the few things that do (a day moved, a machine that
+   * broke, a goal that shifted) are exactly what the coach came here to change. The profile
+   * tab is the same tab: a continuation is still allowed to correct a name or a price.
+   *
+   * What makes it a continuation is `continuing`, and the only thing that reads it is the
+   * build: a first block creates a client, a continuation appends a block to one.
+   *
+   * @param {object} o {programId, version, answers, handoff, clientName, ...}
+   */
+  window.openGymBlockFor = function openGymBlockFor(o) {
+    var src = o && typeof o === "object" ? o : {};
+    if (!src.programId) return;
+    reset();
+    var modal = el("gymIntakeModal");
+    if (!modal) return;
+    continuing = {
+      programId: String(src.programId),
+      version: parseInt(src.version, 10) || 0,
+      handoff: src.handoff && typeof src.handoff === "object" ? src.handoff : null,
+    };
+    /* His answers, as they were last time. normalize() fills whatever is missing. */
+    var lib = L();
+    if (lib && src.answers) {
+      var v = lib.normalize(src.answers);
+      Object.keys(v).forEach(function (k) {
+        if (v[k] !== undefined && v[k] !== null) state[k] = v[k];
+      });
+    }
+    if (src.clientName) state.clientName = String(src.clientName);
+    if (src.monthlyAmount !== undefined) state.monthlyAmount = src.monthlyAmount;
+    if (src.paymentMethod !== undefined) state.paymentMethod = src.paymentMethod;
+    if (src.outputLanguage) state.outputLanguage = src.outputLanguage === "he" ? "he" : "en";
+    el("gymIntakeTitle").textContent =
+      "לבנה בהמשך · " + (src.clientName || "") +
+      (continuing.handoff && continuing.handoff.nextStartWeek
+        ? " · שבועות " + continuing.handoff.nextStartWeek + " ואילך"
+        : "");
     modal.classList.add("open");
     render();
   };

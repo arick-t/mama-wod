@@ -510,6 +510,9 @@ async function ownerHandler(req, res, body) {
       blockStart: body.blockStart,
       weekCount: weekCount,
       intake: intake,
+      /* Kept whole for a gym client, so his next block opens on his own answers rather than
+         on an empty form. The derived `intake` cannot carry a split or a room. */
+      gymIntake: isGym && isPlainObject(body.gymIntake) ? body.gymIntake : null,
     });
     if (!created.ok) return bad(res, 400, created.code, created.error);
     /* The eight-step answers, kept whole. Nothing reads them today — the coach is
@@ -903,6 +906,37 @@ async function ownerHandler(req, res, body) {
         }
       }
     }
+    /* A GYM CLIENT'S NEXT MONTH. Six weeks, shaped by HIS questionnaire — the same answers
+       the gym brain was given, never the studio form that cannot describe him. The shape of
+       a month stays the server's to decide for every kind; only the filling differs. */
+    let gymWeeks;
+    let gymAnswersPatch = null;
+    if (isPlainObject(body.gymIntake)) {
+      const gymRead = await store.readProgram(programId);
+      if (gymRead.ok && gymRead.program.clientKind === "gym") {
+        const g = body.gymIntake;
+        const trains = Array.isArray(g.trainingDays) ? g.trainingDays : [];
+        const rest = {};
+        for (const k of Intake.DAY_KEYS) rest[k] = trains.indexOf(k) < 0;
+        const every = parseInt(g.deloadEveryWeeks, 10) > 0 ? parseInt(g.deloadEveryWeeks, 10) : 0;
+        blockIntake = Intake.normalizeIntake({
+          clientName: gymRead.program.clientName,
+          scheduleMode: "weekly_schedule",
+          includeRestDays: trains.length > 0,
+          restDays: rest,
+          sessionsPerWeek: trains.length,
+          sessionMinutes: g.sessionMinutes,
+          deloadWeek: every > 0,
+          deloadEveryWeeks: every,
+          population: "Commercial gym",
+        });
+        gymWeeks = GYM_BLOCK_WEEKS;
+        /* And the answers he gave THIS time replace the ones on file: he may have just
+           moved a training day or lost a machine, and this is the block they apply to. */
+        gymAnswersPatch = g;
+      }
+    }
+
     /* A blank client's next month may be any length he asks for. Read from the
        PROGRAMME, not from the request: no other kind can reach this, whatever it
        sends (owner, 2026-09-04). */
@@ -916,12 +950,13 @@ async function ownerHandler(req, res, body) {
     const result = await store.addBlock(programId, Number(body.expectedVersion), {
       intake: blockIntake,
       notes: body.notes,
-      weekCount: blankWeeks,
+      weekCount: gymWeeks || blankWeeks,
       /* An individual answers about themselves again for a new block: what they are
          training for, and what has to be worked around. It is a PATCH onto the answers
          already on the programme - a new block must not erase the eight-step packet the
          coach will read (owner, 2026-09-03). */
       athleteIntake: isPlainObject(body.athleteIntake) ? body.athleteIntake : null,
+      gymIntake: gymAnswersPatch,
       /* A new block is when a price changes. Undefined means "not asked", which is not
          the same as zero. */
       monthlyAmount: body.monthlyAmount === undefined ? undefined : Number(body.monthlyAmount),

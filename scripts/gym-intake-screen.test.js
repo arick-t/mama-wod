@@ -43,7 +43,10 @@ ok("and the originals were left alone", /#clientScreen \.chk-row\{/.test(admin) 
 const card = admin.slice(cardAt, admin.indexOf('id="intake-modal"'));
 ok("the card is left-to-right, like every intake card", /dir="ltr"/.test(card));
 ok("its header bar is the shared one", /class="intake-ws-header" dir="rtl"/.test(card));
-ok("the title is English", /<h2>New gym client<\/h2>/.test(card));
+/* The title is a field now: the same card opens as "New gym client" and, for a next month,
+   as "לבנה בהמשך · <name>". Its default is still English (2026-10-05). */
+ok("the title is English", /<h2 id="gymIntakeTitle">New gym client<\/h2>/.test(card));
+ok("and it can be renamed for a continuation", /el\("gymIntakeTitle"\)\.textContent/.test(js));
 ok("only the way out is Hebrew, and it is there", /btn-secondary[^>]*>סגור/.test(card));
 ok("the step counter sits in the header and nowhere else", /id="gymIntakeStep"/.test(card));
 ok("there is a tab strip", /class="itabs" id="gymIntakeTabs" role="tablist"/.test(card));

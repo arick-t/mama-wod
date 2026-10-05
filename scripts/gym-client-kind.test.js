@@ -89,10 +89,10 @@ ok("and never the functional one", !/if \(kind === "gym"\)[\s\S]{0,200}startInta
    damage on the way IN, before any request is made. */
 
 ok("the screen knows a gym client when it has one", /function isGymClient\(\)/.test(adminHtml));
-ok("and refuses to open the studio questionnaire for him",
-  /if \(isGymClient\(\)\) \{[\s\S]{0,400}?return;/.test(adminHtml));
-ok("the refusal says which brain writes it", /מוח החד\\"כ, מהתחקור שלו/.test(adminHtml));
-ok("and it happens before anything is asked of the server",
-  adminHtml.indexOf("if (isGymClient()) {") < adminHtml.indexOf('action: "add_block"'));
+/* It no longer refuses — it opens HIS card. The studio questionnaire is still the thing that
+   must never be reached from a gym client, and that is what is held here. */
+ok("and opens the gym card for his next month", /if \(isGymClient\(\)\) \{[\s\S]{0,900}?openGymBlockFor\(/.test(adminHtml));
+ok("carrying what the last block left behind", /GymHandoff\.handoffFrom\(/.test(adminHtml));
+ok("and never reaches the studio form", adminHtml.indexOf("if (isGymClient()) {") < adminHtml.indexOf("fillIntakeForm(isIndividual"));
 
 console.log("\nסוג לקוח רביעי — קיים, בן שישה שבועות, ומוח הקרוספיט מסרב לו.");

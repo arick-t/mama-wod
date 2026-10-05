@@ -2589,7 +2589,7 @@ header{flex-wrap:wrap;row-gap:8px}
   <div class="intake-workspace" dir="ltr" style="text-align:left;max-width:720px"
        onclick="event.stopPropagation()">
     <div class="intake-ws-header" dir="rtl">
-      <h2>New gym client</h2>
+      <h2 id="gymIntakeTitle">New gym client</h2>
       <div style="display:flex;align-items:center;gap:12px">
         <span class="meta" id="gymIntakeStep"></span>
         <button type="button" class="btn-secondary" onclick="closeGymIntake()">סגור</button>
@@ -8308,6 +8308,8 @@ tryRestoreAdminSession();
 <script src="lib/admin-day-edit.js"></script>
 <script src="lib/admin-done-debrief.js"></script>
 <script src="lib/gym-intake.js"></script>
+<!-- What one gym block leaves for the next: measured off the block that was delivered. -->
+<script src="lib/gym-handoff.js"></script>
 <script src="admin-gym-intake.js"></script>
 <script src="admin-fixed-intake.js"></script>
 <script src="lib/day-rest-toggle.js"></script>
@@ -8682,19 +8684,37 @@ tryRestoreAdminSession();
   function startNextBlock() {
     if (!S.program) return;
     /* A GYM CLIENT'S NEXT MONTH IS NOT THIS QUESTIONNAIRE'S TO ASK FOR.
-       Pressing this on one opened the STUDIO card — "Additions & changes · Equipment & space ·
-       Schedule · Population & limits" — and its create button calls add_block with a studio
-       intake, which would have overwritten the gym client's own answers with answers from the
-       wrong questionnaire and left him four empty weeks (found in the browser, 2026-10-04).
-       The server-side wall holds either way: lib/coach-client-brief.js refuses a gym client,
-       so nothing could have reached the functional brain. This stops the damage ON THE WAY in,
-       which is the half the wall never covered. Until the gym continuation is built, say so. */
+       Pressing this used to open the STUDIO card, whose create button calls add_block with a
+       studio intake — it would have overwritten his own answers with answers from the wrong
+       questionnaire and left him four empty weeks (found in the browser, 2026-10-04). His
+       card is the gym one, opened on his own answers, carrying what the last block left
+       behind so the next one does not repeat it. */
     if (isGymClient()) {
-      banner(
-        "warn",
-        "לבנת המשך למתאמן חדר כושר נכתבת על ידי מוח החד\"כ, מהתחקור שלו — והיא עוד לא נבנתה. " +
-          "התחקור הזה שואל שאלות של סטודיו, ולחיצה עליו הייתה דורסת את התשובות של הלקוח."
-      );
+      if (typeof window.openGymBlockFor !== "function" || !window.GymHandoff) {
+        banner("warn", "מסך תחקור חדר הכושר עוד לא נטען — נסה שוב בעוד רגע.");
+        return;
+      }
+      var gymBlocks = S.program.blocks || [];
+      var lastGym = gymBlocks[gymBlocks.length - 1];
+      var gymStart = (lastGym && parseInt(lastGym.startWeek, 10)) || 1;
+      var gymWeeks = (S.program.weeks || []).slice(gymStart - 1);
+      var carried = window.GymHandoff.handoffFrom({
+        block: { weeks: gymWeeks },
+        startWeek: gymStart,
+        answers: S.program.gymIntake || {},
+      });
+      window.openGymBlockFor({
+        programId: S.program.programId,
+        version: S.program.version,
+        clientName: S.program.clientName,
+        monthlyAmount: S.program.monthlyAmount,
+        paymentMethod: S.program.paymentMethod,
+        outputLanguage: S.program.outputLanguage,
+        answers: S.program.gymIntake || {},
+        /* No handoff when the last block is still empty: there is nothing to carry, and a
+           made-up one would tell the brain to avoid exercises nobody was given. */
+        handoff: carried.ok ? carried.handoff : null,
+      });
       return;
     }
     /* Nothing to ask a blank client: another month of empty squares, on the spot
@@ -13921,6 +13941,68 @@ tryRestoreAdminSession();
      * read yet, and a month that arrived already ticked off would be a month nobody checks.
      * A day with nothing written in it loses the flag: there is nothing there to review.
      */
+    /**
+     * HIS NEXT SIX WEEKS, POURED INTO A BLOCK THE SERVER LAYS OUT.
+     *
+     * Same two calls as createGym and in the same order, and for the same reason: add_block
+     * decides which squares exist — six weeks, the deload cadence over them, every training
+     * day flagged unreviewed — and only then is what the brain wrote poured in. The weeks of
+     * the EARLIER blocks are left exactly as they are; a continuation must never rewrite a
+     * month the athlete has already trained.
+     */
+    addGymBlock: function (what, answers, weeks, findings) {
+      const target = what && typeof what === "object" ? what : {};
+      return api({
+        action: "add_block",
+        programId: target.programId,
+        expectedVersion: target.version || (S.program && S.program.version),
+        gymIntake: answers,
+      }).then(function (r) {
+        if (r.status !== 200 || !r.body.ok) {
+          return { ok: false, error: (r.body && r.body.error) || "" };
+        }
+        const program = r.body.program;
+        const blockIndex = r.body.blockIndex;
+        const written = Array.isArray(weeks) ? weeks : [];
+        /* Which weeks the new block occupies. appendEmptyBlock put them at the end, so the
+           block just added is the last `added` weeks of the programme. */
+        const total = (program.weeks || []).length;
+        const from = Math.max(0, total - (r.body.added || written.length));
+        S.gymFindings = findings || null;
+        if (!written.length) return openGymCreated(program);
+        const merged = (program.weeks || []).map(function (w, i) {
+          if (i < from) return w;
+          const src = written[i - from];
+          if (!src) return w;
+          const out = JSON.parse(JSON.stringify(w));
+          out.theme = String(src.theme || "");
+          out.summaryLine = String(src.summaryLine || "");
+          if (Array.isArray(src.overview)) out.overview = src.overview;
+          ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].forEach(function (k) {
+            const day = out.days[k] || (out.days[k] = { parts: [] });
+            const fromDay = (src.days || {})[k] || {};
+            day.parts = Array.isArray(fromDay.parts) ? JSON.parse(JSON.stringify(fromDay.parts)) : [];
+            if (!day.parts.length) delete day.ownerUnreviewed;
+          });
+          return out;
+        });
+        return api({
+          action: "save",
+          programId: program.programId,
+          expectedVersion: program.version,
+          program: { weeks: merged },
+        }).then(function (r2) {
+          if (r2.status !== 200 || !r2.body.ok) {
+            return Object.assign(
+              openGymCreated(program, "הלבנה נוספה אבל התוכן לא נשמר: " + ((r2.body && r2.body.error) || "")),
+              { blockIndex: blockIndex }
+            );
+          }
+          return Object.assign(openGymCreated(r2.body.program), { blockIndex: blockIndex });
+        });
+      });
+    },
+
     createGym: function (form, weeks, findings) {
       var f = form || {};
       return api({
