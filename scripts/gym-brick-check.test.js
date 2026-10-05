@@ -157,7 +157,7 @@ const unreadable = {
       days: {
         sun: { parts: [{ title: "A", lines: [
           "4 x 10 Leg Press @ 7/10",
-          "4 x 10 Zercher Good Morning Thing @ 7/10",
+          "4 x 10 Zercher Sandbag Carry Thing @ 7/10",
         ] }] },
         mon: { parts: [] }, tue: { parts: [] }, wed: { parts: [] },
         thu: { parts: [] }, fri: { parts: [] }, sat: { parts: [] },
@@ -172,7 +172,7 @@ ok(
 );
 ok(
   "and the report names one of them",
-  said.flags.some(function (f) { return /Zercher Good Morning Thing/.test(f); })
+  said.flags.some(function (f) { return /Zercher Sandbag Carry Thing/.test(f); })
 );
 
 const allRead = Check.checkGymBlock(
