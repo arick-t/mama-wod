@@ -125,4 +125,22 @@ ok("blank entries are dropped", F.cleanBlocking(["", "  ", "real"]).length === 1
 ok("html in a violation cannot escape", !/<img/.test(F.blockingBoxHtml({ brickBlocking: ['<img src=x>'] })));
 
 
+/* -- the notes box does not claim a save it cannot know about ------------------
+   An individual athlete's build is a pipe test: the brick comes back and is thrown away
+   (COACH_BUILD_MAY_SAVE = false since 22.0). This line said "ונשמרה" to everybody, so the
+   coach was shown two opposite sentences at once — "והיא לא נשמרה" on the status line and
+   "ונשמרה" in the notes beside it (2026-10-05). */
+
+const noted = { brickFlags: ["something worth a look"] };
+ok("by default it still says what it always said", /ונשמרה/.test(F.flagsBoxHtml(noted, {})));
+ok("and when the caller says it was saved", /ונשמרה/.test(F.flagsBoxHtml(noted, { saved: true })));
+ok("but not when the caller says it was not", !/ונשמרה/.test(F.flagsBoxHtml(noted, { saved: false })));
+ok("the notes themselves are unchanged either way",
+  /something worth a look/.test(F.flagsBoxHtml(noted, { saved: false })));
+ok("and it is still called a note, not an error",
+  /אלו הערות, לא שגיאות/.test(F.flagsBoxHtml(noted, { saved: false })));
+
+/* The page hands it the real answer rather than guessing. */
+ok("the page passes the save state", /saved: COACH_BUILD_MAY_SAVE === true,/.test(admin));
+
 console.log("\nAll brick-flag checks passed (" + passed + " assertions).");

@@ -7932,6 +7932,10 @@ function showBrickFlags(res) {
     window.CoachBrickFlagsView.blockingBoxHtml(res || {}) +
     window.CoachBrickFlagsView.flagsBoxHtml(res || {}, {
       retryFn: "retryIntakeBlockAfterCut",
+      /* This path does not save. Since 22.0 an individual's build is a pipe test — the brick
+         comes back and is thrown away — so the notes box must not end with "ונשמרה" while the
+         status line beside it says the opposite (2026-10-05). */
+      saved: COACH_BUILD_MAY_SAVE === true,
     });
 }
 window.showBrickFlags = showBrickFlags;
