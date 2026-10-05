@@ -195,4 +195,40 @@ ok(
   !allRead.flags.some(function (f) { return /does not know/i.test(f); })
 );
 
+/* -- a note is read by the rules that are about what the athlete is TOLD --------
+   The kilos rule ran over readable lines only — lines with sets in them — so a progression
+   note saying "add 2.5 kg to the bar" sailed straight through. A note is exactly where a
+   model reaches for a number, which is why the rule now reads every line (2026-10-05). */
+
+function withNote(note) {
+  return {
+    weeks: [
+      {
+        weekIndex: 1,
+        days: {
+          sun: { parts: [{ id: "p", title: "A", noteLines: 1, lines: [note, "4 x 10 Leg Press @ 7/10"] }] },
+          mon: { parts: [] }, tue: { parts: [] }, wed: { parts: [] },
+          thu: { parts: [] }, fri: { parts: [] }, sat: { parts: [] },
+        },
+      },
+    ],
+  };
+}
+const kilosInNote = function (note) {
+  return Check.checkGymBlock(withNote(note), { answers: {} }).blocking.some(function (b) {
+    return /kilos/i.test(b);
+  });
+};
+
+ok("kilos in a note are caught", kilosInNote("Week 3: add 2.5 kg to the bar."));
+/* A word boundary is an ENGLISH idea — Hebrew letters are not word characters in a JS regex,
+   so the Hebrew half of this rule was silently dead until it was written without one. */
+ok("and in Hebrew", kilosInNote('שבוע 3: הוסף 2.5 קילו.'));
+ok("and written the short way", kilosInNote('שבוע 3: הוסף 2.5 ק"ג.'));
+ok("a note about effort is left alone", !kilosInNote("Week 3: if ten reps felt easy, go up."));
+ok("and so is the Hebrew one", !kilosInNote('שבוע 3: אם עשר חזרות היו קלות — העלה.'));
+
+ok("every line is reachable, note or not", Check.allLines(withNote("a note")).length === 2);
+ok("while the work walk still sees only work", Check.walkLines(withNote("a note")).length === 1);
+
 console.log("\nבודק החד\"כ — אפס חסימות על תוכנית תקינה, ושמונה על אותה תוכנית אצל השני.");

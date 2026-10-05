@@ -178,4 +178,49 @@ ok("the builder reads the product's own rule", /require\("\.\/client-intake\.js"
   require("fs").readFileSync(require("path").join(__dirname, "..", "lib", "gym-block-build.js"), "utf8")
 ));
 
+/* -- the coach's voice: one note per session, per week -------------------------
+   The sessions are identical every week on purpose — the same movements are what the load
+   rises on — so without these lines there is nothing on the athlete's screen saying week 3 is
+   not week 1. The owner, asked what should be in them (2026-10-05): "ללא הערות מקצועיות,
+   אלא רק הערות על התקדמות ועומסים", and "בשאיפה הערה לכל אימון". */
+
+const PROG = ["W1 find it", "W2 same, cleaner", "W3 easier now — go up", "W4 hold", "W5 top set 8/10", "W6 last push"];
+const withProg = B.buildBlock(
+  {
+    summaryLine: "x",
+    days: {
+      sun: { parts: [{ title: "Session A", progression: PROG, lines: ["4 x 10 Leg Press @ 7/10"] }] },
+      mon: { parts: [] }, tue: { parts: [] }, wed: { parts: [] },
+      thu: { parts: [] }, fri: { parts: [] }, sat: { parts: [] },
+    },
+  },
+  { answers: { deloadWeek: false }, startWeek: 1 }
+).block;
+
+PROG.forEach(function (text, i) {
+  const part = withProg.weeks[i].days.sun.parts[0];
+  ok("week " + (i + 1) + " reads its own note", part.lines[0] === text);
+});
+ok("the note is marked as a note, not as work", withProg.weeks[0].days.sun.parts[0].noteLines === 1);
+ok("the training is still under it", withProg.weeks[0].days.sun.parts[0].lines[1] === "4 x 10 Leg Press @ 7/10");
+ok("and the six are not left on the part for a reader to see twice",
+  withProg.weeks.every(function (w) { return !("progression" in w.days.sun.parts[0]); }));
+ok("a rest day gets none", (withProg.weeks[0].days.mon.parts || []).length === 0);
+
+/* Fewer notes than weeks is not an error — those weeks simply carry none. */
+const short = B.buildBlock(
+  {
+    summaryLine: "x",
+    days: {
+      sun: { parts: [{ title: "A", progression: ["only one"], lines: ["4 x 10 Leg Press @ 7/10"] }] },
+      mon: { parts: [] }, tue: { parts: [] }, wed: { parts: [] },
+      thu: { parts: [] }, fri: { parts: [] }, sat: { parts: [] },
+    },
+  },
+  { answers: { deloadWeek: false }, startWeek: 1 }
+).block;
+ok("a short list still lands on week one", short.weeks[0].days.sun.parts[0].lines[0] === "only one");
+ok("and the weeks past it are left alone", short.weeks[3].days.sun.parts[0].lines[0] === "4 x 10 Leg Press @ 7/10");
+ok("with no note marker where there is no note", !short.weeks[3].days.sun.parts[0].noteLines);
+
 console.log("\nשבוע אחד נכנס, שישה יוצאים — והקיפאון מובנה, לא מבוקש.");
