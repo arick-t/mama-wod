@@ -354,15 +354,32 @@ function testSameBrickWeekContinuity() {
    against maxOutputTokens, so that response had roughly 1,800 tokens left for the answer. */
 function testOutputBudgetAndTruncation() {
   const src = fs.readFileSync(PC_PATH, "utf8");
-  ok("the programming budget is no longer 8k",
-    /maxOutputTokens: 32768,/.test(src) &&
-      src.indexOf("maxOutputTokens: 8192,") !== src.lastIndexOf("maxOutputTokens: 8192,"));
+  /* 2026-10-05: the second half of this used to assert that OTHER 8,192 caps still existed,
+     which was a crude way of saying "only the programming call was raised". It had the effect
+     of pinning the three REPAIR paths at 8,192 — and one of them then truncated a studio brick
+     at 8,188, four tokens short, exactly as the primary call had in September. A rescue call
+     that is itself cut off rescues nothing. No programming path is left at 8k now. */
+  ok("the programming budget is no longer 8k", /maxOutputTokens: 32768,/.test(src));
+  ok("and neither is the budget of the calls that rescue it",
+    src.indexOf("maxOutputTokens: 8192,") < 0);
+  ok("the repair paths were raised to the same ceiling, not a different one",
+    (src.match(/maxOutputTokens: 32768,/g) || []).length >= 4);
   ok("the reason is recorded next to the number",
     /counts its THINKING against the same budget/.test(src.replace(/\s+/g, " ")));
   ok("an unclosed marker is reported as a truncation, not a missing block",
     /out\.truncated = true;/.test(src) && /out\.truncatedMarker = "BLOCK_JSON";/.test(src));
   ok("the distinction is stated, because the fix differs",
     /the fix for a cut-off answer is a retry, not a rewrite/i.test(src.replace(/\s+/g, " ")));
+  /* And it is still a truncation when something WAS salvaged. The guard used to be
+     `if (!block && !week)`, so an answer cut off in week four — where week one had parsed —
+     came back with no sign that anything was missing. */
+  ok("a salvaged week does not hide the truncation",
+    !/if \(!block && !week\) \{\s*const rawOut/.test(src));
+
+  /* The page must not throw that salvaged week away either. */
+  const page = fs.readFileSync(path.join(root, "admin.html"), "utf8");
+  ok("and the page falls back to the week the server saved",
+    /if \(!week && j\.week && j\.week\.days\) \{/.test(page));
 }
 
 function testBrickFlags() {

@@ -12627,6 +12627,15 @@ tryRestoreAdminSession();
           var built = typeof parseBlockFromText === "function" ? parseBlockFromText(j.text, j) : j.block;
           var builtWeeks = (built && built.weeks) || [];
           week = builtWeeks.length ? Object.assign({}, builtWeeks[0], { weekIndex: 1 }) : null;
+          /* AND IF THE WHOLE BLOCK WOULD NOT PARSE, TAKE THE WEEK THE SERVER ALREADY SAVED.
+             parseBlockFromText needs a closing BLOCK_JSON>>> or a text ending in "}", and a
+             truncated answer has neither — so a studio brick cut off in week four threw away
+             week one as well, which HAD arrived whole and was sitting right there in j.week
+             (2026-10-05). One rescued week is a week he can send; nothing is nothing. */
+          if (!week && j.week && j.week.days) {
+            week = Object.assign({}, j.week, { weekIndex: 1 });
+            builtWeeks = [];
+          }
           /* The block also comes back with the HEADERS of the weeks after it — theme,
              phase and the day map — and those are the plan the fills are written
              against, so they are kept now rather than asked for again. */

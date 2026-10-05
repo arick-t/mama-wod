@@ -3110,7 +3110,12 @@ async function coachHandler(req, res) {
     /* A marker that opens and never closes is a TRUNCATION, not a refusal. Say so: silently
        returning no block sends the caller down the "model would not answer" path, and the fix for
        a cut-off answer is a retry, not a rewrite. */
-    if (!block && !week) {
+    /* IT IS STILL A TRUNCATION WHEN SOMETHING WAS SALVAGED. The guard used to be
+       `if (!block && !week)`, so an answer cut off in week four — where week one HAD parsed —
+       came back ok:true with no sign that anything was missing, and the caller was told the
+       week had come back empty (2026-10-05). An open marker that never closes is the fact;
+       what we managed to rescue from it does not change that fact. */
+    {
       const rawOut = String((result && (result.text || result.raw)) || "");
       if (/<<<\s*BLOCK_JSON/i.test(rawOut) && !/BLOCK_JSON\s*>>>/i.test(rawOut)) {
         out.truncated = true;
@@ -3236,7 +3241,12 @@ async function coachHandler(req, res) {
     }
     const retry = await callProgrammingGenerate(strictMsgs, strictSys, {
       temperature: 0.1,
-      maxOutputTokens: 8192,
+      /* 32768, the same ceiling the PRIMARY call was raised to on 2026-09-08 and for exactly
+         the same reason. This path was left on 8,192, and on 2026-10-05 a studio brick came back
+         from it at 8,188 output tokens — four short of the cap — truncated mid-JSON with the
+         marker open and never closed. The rescue call was itself being cut off. Raising a cap
+         costs nothing: Gemini bills tokens PRODUCED, not tokens allowed. */
+      maxOutputTokens: 32768,
       skipTools: true,
       noInternalRetry: true,
     });
@@ -3314,7 +3324,8 @@ async function coachHandler(req, res) {
     const tRepair = Date.now();
     const repaired = await callProgrammingGenerate(repairMsgs, systemText, {
       temperature: 0.2,
-      maxOutputTokens: 8192,
+      /* 32768 — see the note on the first repair path. A cut-off rescue rescues nothing. */
+      maxOutputTokens: 32768,
       skipTools: true,
       noInternalRetry: true,
     });
@@ -3508,7 +3519,8 @@ async function coachHandler(req, res) {
       const compactMsgs = [{ role: "user", text: weekDetailMeta.compactPrompt }];
       const retry = await callProgrammingGenerate(compactMsgs, strictSys, {
         temperature: 0.1,
-        maxOutputTokens: 8192,
+        /* 32768 — see the note on the first repair path. A cut-off rescue rescues nothing. */
+        maxOutputTokens: 32768,
         skipTools: true,
         noInternalRetry: true,
       });
