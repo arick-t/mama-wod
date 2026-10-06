@@ -771,7 +771,11 @@ async function ownerHandler(req, res, body) {
       Number(body.expectedVersion),
       function (draft) {
         /* The owner authors freely, but identity and bookkeeping stay server-owned. */
-        if (Array.isArray(patch.weeks)) draft.weeks = patch.weeks;
+        /* EVERY REST DAY IN THE MONTH LOOKS THE SAME, whichever brain wrote it and whichever
+           of the two shapes the contract allows it chose. The intake read here is the SERVER's
+           own copy, never the caller's: a page that could declare its own rest days could blank
+           a training day by calling it one (owner, 2026-10-06). */
+        if (Array.isArray(patch.weeks)) draft.weeks = store.markRestDays(patch.weeks, draft.intake);
         if (patch.clientName !== undefined) draft.clientName = String(patch.clientName).slice(0, 120);
         if (patch.clientColour !== undefined) {
           const col = String(patch.clientColour || "");

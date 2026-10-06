@@ -728,11 +728,38 @@ async function main() {
   for (const kind of kinds) {
     const id = kind.res.body.program.programId;
     ok(kind.label + ": a month of four weeks", kind.res.body.program.weeks.length === 4);
-    ok(kind.label + ": nothing was written into it", !kind.res.body.program.weeks.some(function (w) {
+    /* NO PROGRAMMING was written into it — which is not the same as no parts at all.
+       A rest day is born carrying a REST DAY card so that every rest day in the month looks
+       the same whoever fills the month in later (owner, 2026-10-06). Asserting "no parts"
+       pinned the old shape and would have blocked that; what a new client must have is a
+       month with nothing to DO in it. */
+    ok(kind.label + ": no training was written into it", !kind.res.body.program.weeks.some(function (w) {
       return Object.keys(w.days || {}).some(function (k) {
-        return ((w.days[k] || {}).parts || []).length;
+        return ((w.days[k] || {}).parts || []).some(function (part) {
+          var blob = String((part || {}).title || "") + " " + (((part || {}).lines) || []).join(" ");
+          return blob.trim() && !/rest/i.test(blob);
+        });
       });
     }));
+
+    /* And the individual, who answered which weekdays he trains, has his rest days already
+       marked — the same card in every one of the four weeks. The studio was sold as a number
+       of sessions with no weekday attached, so it has no rest days to mark. */
+    if (kind.label === "individual") {
+      ok("individual: every rest day of every week carries the same card",
+        kind.res.body.program.weeks.every(function (w) {
+          return ["mon", "wed", "fri", "sat"].every(function (d) {
+            var parts = (w.days[d] || {}).parts || [];
+            return parts.length === 1 && /REST DAY/i.test(parts[0].title || "");
+          });
+        }));
+      ok("individual: and the days he DOES train are still empty squares",
+        kind.res.body.program.weeks.every(function (w) {
+          return ["sun", "tue", "thu"].every(function (d) {
+            return ((w.days[d] || {}).parts || []).length === 0;
+          });
+        }));
+    }
 
     /* The door: a code, a device, a signature - identical for both. */
     const code = (await H.owner({ action: "issue_code", programId: id })).body.code;
