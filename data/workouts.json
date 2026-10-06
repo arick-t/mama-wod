@@ -2938,57 +2938,6 @@
     "2026-10-06": [
       {
         "date": "2026-10-06",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-06/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "calf stretch",
-              "lat stretch",
-              "instep rotation"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "100m run",
-              "10 scap. pull ups",
-              "10 ring rows",
-              "* *remaining time burpees"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "UPPER BACK / PULL  8MIN",
-            "lines": [
-              "on every 2:00 x 4 sets",
-              "6 barbell bent over rows",
-              "10 banded lat pull downs",
-              "strength & hypertrophy"
-            ]
-          },
-          {
-            "title": "CONDITIONING 20MIN",
-            "lines": [
-              "buy in: 1km run",
-              "into",
-              "amrap",
-              "",
-              "2/1 rope climbs",
-              "12 double db front squats",
-              "16 burpees over db",
-              "dumbbells: 2x 22,5/15kg",
-              "* aerobic capacity & muscular endurance"
-            ],
-            "sub_title": "amrap 20min"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-06",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261006",
@@ -3119,6 +3068,78 @@
       },
       {
         "date": "2026-10-06",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 23.2",
+            "lines": [
+              "Complete as many reps as possible in 15 minutes of:",
+              "5 burpee pull-ups",
+              "10 shuttle runs (1 rep = 25 ft out/25 ft back)",
+              "*Add 5 burpee pull-ups after each round.",
+              "23.2B:",
+              "Immediately following 23.2A, athletes will have 5 minutes to establish:",
+              "1-rep-max thruster (from the floor)"
+            ]
+          }
+        ],
+        "note": "Open: Open 23.2"
+      },
+      {
+        "date": "2026-10-06",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-06/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "calf stretch",
+              "lat stretch",
+              "instep rotation"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "100m run",
+              "10 scap. pull ups",
+              "10 ring rows",
+              "* *remaining time burpees"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "UPPER BACK / PULL  8MIN",
+            "lines": [
+              "on every 2:00 x 4 sets",
+              "6 barbell bent over rows",
+              "10 banded lat pull downs",
+              "strength & hypertrophy"
+            ]
+          },
+          {
+            "title": "CONDITIONING 20MIN",
+            "lines": [
+              "buy in: 1km run",
+              "into",
+              "amrap",
+              "",
+              "2/1 rope climbs",
+              "12 double db front squats",
+              "16 burpees over db",
+              "dumbbells: 2x 22,5/15kg",
+              "* aerobic capacity & muscular endurance"
+            ],
+            "sub_title": "amrap 20min"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-06",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3186,29 +3207,8 @@
           }
         ],
         "note": "Benchmark: Heavy Fran"
-      },
-      {
-        "date": "2026-10-06",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 23.2",
-            "lines": [
-              "Complete as many reps as possible in 15 minutes of:",
-              "5 burpee pull-ups",
-              "10 shuttle runs (1 rep = 25 ft out/25 ft back)",
-              "*Add 5 burpee pull-ups after each round.",
-              "23.2B:",
-              "Immediately following 23.2A, athletes will have 5 minutes to establish:",
-              "1-rep-max thruster (from the floor)"
-            ]
-          }
-        ],
-        "note": "Open: Open 23.2"
       }
     ]
   },
-  "last_updated": "2026-10-06T05:45:13.773046"
+  "last_updated": "2026-10-06T10:13:34.419348"
 }
