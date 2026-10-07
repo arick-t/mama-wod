@@ -2946,53 +2946,6 @@
     "2026-10-07": [
       {
         "date": "2026-10-07",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-07/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "calf stretch",
-              "scorpions",
-              "crab stretch",
-              "thoracic rotations"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 scap. push ups",
-              "30sec plank hold",
-              "20 single unders"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "BENCH PRESS 15MIN",
-            "lines": [
-              "find a heavy set of 2",
-              "bench presses",
-              "strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 17MIN",
-            "lines": [
-              "10 rounds",
-              "",
-              "30 double unders",
-              "15 sit ups",
-              "5 ring dips",
-              "* aerobic power & skill capacity"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-07",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261007",
@@ -3116,6 +3069,92 @@
       },
       {
         "date": "2026-10-07",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 11.4",
+            "lines": [
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "60 Bar-facing burpees",
+              "30 Overhead squats (120lbs / 55kg)",
+              "10 Muscle-ups",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "60 Bar-facing burpees",
+              "30 Overhead squats (90lbs / 40kg)",
+              "10 Muscle-ups",
+              "*MASTERS MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "60 Bar-facing burpees",
+              "30 Overhead squats (110lbs / 50kg)",
+              "10 Muscle-ups",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 10 minutes of:",
+              "60 Bar-facing burpees",
+              "30 Overhead squats (75lbs / 35kg)",
+              "10 Muscle-ups"
+            ]
+          }
+        ],
+        "note": "Open: Open 11.4"
+      },
+      {
+        "date": "2026-10-07",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-07/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "calf stretch",
+              "scorpions",
+              "crab stretch",
+              "thoracic rotations"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 scap. push ups",
+              "30sec plank hold",
+              "20 single unders"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "BENCH PRESS 15MIN",
+            "lines": [
+              "find a heavy set of 2",
+              "bench presses",
+              "strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 17MIN",
+            "lines": [
+              "10 rounds",
+              "",
+              "30 double unders",
+              "15 sit ups",
+              "5 ring dips",
+              "* aerobic power & skill capacity"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-07",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3208,47 +3247,8 @@
           }
         ],
         "note": "Benchmark: Cindy XXX"
-      },
-      {
-        "date": "2026-10-07",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 11.4",
-            "lines": [
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "60 Bar-facing burpees",
-              "30 Overhead squats (120lbs / 55kg)",
-              "10 Muscle-ups",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "60 Bar-facing burpees",
-              "30 Overhead squats (90lbs / 40kg)",
-              "10 Muscle-ups",
-              "*MASTERS MEN*",
-              "-",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "60 Bar-facing burpees",
-              "30 Overhead squats (110lbs / 50kg)",
-              "10 Muscle-ups",
-              "*MASTERS WOMEN*",
-              "-",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 10 minutes of:",
-              "60 Bar-facing burpees",
-              "30 Overhead squats (75lbs / 35kg)",
-              "10 Muscle-ups"
-            ]
-          }
-        ],
-        "note": "Open: Open 11.4"
       }
     ]
   },
-  "last_updated": "2026-10-07T05:10:04.409178"
+  "last_updated": "2026-10-07T09:52:35.349796"
 }
