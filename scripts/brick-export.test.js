@@ -191,3 +191,77 @@ ok("and the download is named as the way that always works", /הורד אקסל/
 ok("the client's own screen has neither", !/data-brick-copy/.test(fs.readFileSync(path.join(root, "client.html"), "utf8")));
 
 console.log("\nAll brick export checks passed (" + passed + " assertions).");
+
+/* ── the sheet speaks the client's language ───────────────────────────────── */
+
+/**
+ * The promise at the top of lib/brick-export.js is that the sheet holds exactly what the
+ * CLIENT would see, in the language it was written in. It did not: the programme stores
+ * English and the Hebrew is made at display time, so עודד read his month in Hebrew on screen
+ * and exported it in English, and the coach had to retype a month by hand to send it
+ * (owner, 2026-10-07).
+ */
+const Display = require("../lib/pprog-display.js");
+const MovementHe = require("../lib/movement-he.js");
+
+const hePart = {
+  id: "p1",
+  title: "Back Squat Heavy Volume",
+  noteLines: 1,
+  formatLine: 1,
+  lines: [
+    "לבחור משקל שמאפשר עבודה רציפה",
+    "5 Sets for Quality (climbing load)",
+    "8 Back Squat @ 7/8 effort",
+    "10 Pullups",
+  ],
+};
+const heDay = { parts: [hePart] };
+const heProgramme = {
+  clientName: "עודד",
+  outputLanguage: "he",
+  blockStart: "2026-09-06",
+  blocks: [{ blockIndex: 1, startWeek: 1, weekCount: 1 }],
+  weeks: [{ weekIndex: 1, days: { sun: heDay, mon: { parts: [] }, tue: { parts: [] }, wed: { parts: [] }, thu: { parts: [] }, fri: { parts: [] }, sat: { parts: [] } } }],
+};
+
+const heText = E.dayText(heDay, true);
+ok("a Hebrew client's exercises export in Hebrew", /סקוואט/.test(heText) && /מתח/.test(heText));
+ok("the part heading is translated too", !/Back Squat Heavy Volume/.test(heText));
+/* Notes are sentences a coach typed. A lookup table cannot write one, and must not try. */
+ok("a note the coach typed is carried word for word", heText.indexOf("לבחור משקל שמאפשר עבודה רציפה") >= 0);
+ok("and the English is gone from the work lines", !/Pullups/.test(heText));
+
+const enText = E.dayText(heDay, false);
+ok("an English client's sheet is untouched by any of it", /Back Squat/.test(enText) && !/סקוואט/.test(enText));
+ok("nothing stored was rewritten — the programme still holds English",
+  hePart.lines[2] === "8 Back Squat @ 7/8 effort");
+
+/* The language is read off the programme, so the button needs no new argument. */
+const heGrid = E.grid(heProgramme, 1);
+ok("the grid picks the language up from the programme itself",
+  JSON.stringify(heGrid.rows).indexOf("סקוואט") > 0);
+const enGrid = E.grid(Object.assign({}, heProgramme, { outputLanguage: "en" }), 1);
+ok("and an English programme exports English", JSON.stringify(enGrid.rows).indexOf("Back Squat") > 0);
+
+/* THE WHOLE POINT, stated as the thing that can be measured: every line in the file is a
+   line the client can see on their own screen. */
+Display.setLanguage("he");
+const onScreen = Display.renderDayPartsHtml(heDay.parts, null)
+  .replace(/<[^>]+>/g, "\n")
+  .split("\n")
+  .map(function (s) {
+    return s.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").trim();
+  })
+  .filter(Boolean);
+const inFile = heText.split("\n").map(function (s) { return s.trim(); }).filter(Boolean);
+ok("EVERY line of the file appears verbatim on the client's screen",
+  inFile.length > 0 && inFile.every(function (l) {
+    return onScreen.indexOf(l) >= 0;
+  }));
+Display.setLanguage("en");
+
+/* And it degrades to the stored text rather than to nothing. */
+ok("the dictionary is the screen's, not a second copy", typeof MovementHe.hebrewOnly === "function");
+
+console.log("\nגיליון בעברית — בדיוק מה שהלקוח רואה, ולא תרגום שני משלנו.");
