@@ -196,6 +196,32 @@ ok("a save is marked before it is stored",
 /* A page that could declare its own rest days could blank a training day by calling it one. */
 ok("and never from an intake the caller sent", !/markRestDays\(patch\.weeks, (body|patch)\./.test(api));
 
+/* ── and the client is NOT told their day off changed ─────────────────────── */
+
+/* The client sees "the coach updated this day" by comparing what the day SAYS. A rest day
+   can say it three ways — an empty square under a "Rest" overview row, a REST DAY card, or
+   both — and they all mean the same thing to whoever opens it. Without this, the first save
+   after rest days started carrying a card sent one client up to SIXTY "your coach changed
+   your plan" marks, every one of them on a day off. */
+const Api = require("../lib/client-program-store.js");
+const restFocus = { weekIndex: 1, overview: DAYS.map(function (d) { return { day: d, focus: TRAINS[d] ? "" : "Rest" }; }), days: {} };
+DAYS.forEach(function (d) { restFocus.days[d] = { parts: d === "sun" ? JSON.parse(JSON.stringify(SESSION)) : [] }; });
+const was = { weeks: [JSON.parse(JSON.stringify(restFocus))] };
+const now = { weeks: [JSON.parse(JSON.stringify(restFocus))] };
+Store.markRestDays(now.weeks, INTAKE);
+const tags = Api.changedDayTags(was, now);
+ok("putting the card on a rest day tells the client NOTHING — it already said rest", tags.length === 0);
+
+/* But a day that stops being a session, or becomes one, is news they do need. */
+const becameRest = { weeks: [JSON.parse(JSON.stringify(restFocus))] };
+becameRest.weeks[0].days.sun = { parts: [{ id: "r", title: "REST DAY", lines: ["Rest"] }] };
+ok("a training day turned into rest IS reported to the client",
+  Api.changedDayTags(was, becameRest).indexOf("w1:sun") >= 0);
+const becameWork = { weeks: [JSON.parse(JSON.stringify(restFocus))] };
+becameWork.weeks[0].days.tue = { parts: JSON.parse(JSON.stringify(SESSION)) };
+ok("and so is a rest day that turned into a session",
+  Api.changedDayTags(was, becameWork).indexOf("w1:tue") >= 0);
+
 /* ── the gym brain's checks stay blind to the card ────────────────────────── */
 
 /* A "Rest" line carries no sets, so it reaches no muscle total, is not counted as a working
