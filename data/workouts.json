@@ -3168,6 +3168,54 @@
       },
       {
         "date": "2026-10-08",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-08/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "instep rotation",
+              "thoracic rotation",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 deadlifts",
+              "10 elbow rotations",
+              "10 squat jumps",
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "POWER CLEAN 12MIN",
+            "lines": [
+              "find a heavy set of 4",
+              "touch and go power cleans",
+              "explosive power"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "30/24cal bike/ski",
+              "max power cleans",
+              "1min rest between amraps",
+              "",
+              "* score: total moved load (reps x load)",
+              "* anaerobic capacity"
+            ],
+            "sub_title": "amrap 3min x 4 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-08",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3257,5 +3305,5 @@
       }
     ]
   },
-  "last_updated": "2026-10-08T10:01:14.311132"
+  "last_updated": "2026-10-08T12:45:24.897506"
 }
