@@ -3149,6 +3149,25 @@
       },
       {
         "date": "2026-10-08",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 17.4",
+            "lines": [
+              "Complete as many rounds and reps as possible in 13 minutes of:",
+              "55 deadlifts, 225 lb.",
+              "55 wall-ball shots, 20-lb. ball to 10-ft. target",
+              "55-calorie row",
+              "55 handstand push-ups"
+            ]
+          }
+        ],
+        "note": "Open: Open 17.4"
+      },
+      {
+        "date": "2026-10-08",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3235,27 +3254,8 @@
           }
         ],
         "note": "Benchmark: Isabel"
-      },
-      {
-        "date": "2026-10-08",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 17.4",
-            "lines": [
-              "Complete as many rounds and reps as possible in 13 minutes of:",
-              "55 deadlifts, 225 lb.",
-              "55 wall-ball shots, 20-lb. ball to 10-ft. target",
-              "55-calorie row",
-              "55 handstand push-ups"
-            ]
-          }
-        ],
-        "note": "Open: Open 17.4"
       }
     ]
   },
-  "last_updated": "2026-10-08T05:35:46.099195"
+  "last_updated": "2026-10-08T10:01:14.311132"
 }
