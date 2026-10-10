@@ -3219,44 +3219,6 @@
     "2026-10-10": [
       {
         "date": "2026-10-10",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-10/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "thoracic rotation",
-              "handwalk",
-              "scorpion"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 straight leg sit ups",
-              "10 push ups to downdog",
-              "*partner is biking"
-            ],
-            "sub_title": "amrap 5min"
-          },
-          {
-            "title": "CONDITIONING 29MIN",
-            "lines": [
-              "in teams of 2",
-              "12/11/10 cal bike",
-              "max toes to bar / push presses 40/30kg",
-              "1min rest between amraps",
-              "",
-              "* anaerobic capacity & muscular endurance"
-            ],
-            "sub_title": "amrap 1:30 x 12 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-10",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261010",
@@ -3388,6 +3350,72 @@
       },
       {
         "date": "2026-10-10",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 18.4",
+            "lines": [
+              "For time:",
+              "21 deadlifts, 225 lb.",
+              "21 handstand push-ups",
+              "15 deadlifts, 225 lb.",
+              "15 handstand push-ups",
+              "9 deadlifts, 225 lb.",
+              "9 handstand push-ups",
+              "21 deadlifts, 315 lb.",
+              "50-ft. handstand walk",
+              "15 deadlifts, 315 lb.",
+              "50-ft. handstand walk",
+              "9 deadlifts, 315 lb.",
+              "50-ft. handstand walk",
+              "Time cap: 9 min."
+            ]
+          }
+        ],
+        "note": "Open: Open 18.4"
+      },
+      {
+        "date": "2026-10-10",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-10/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "thoracic rotation",
+              "handwalk",
+              "scorpion"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 straight leg sit ups",
+              "10 push ups to downdog",
+              "*partner is biking"
+            ],
+            "sub_title": "amrap 5min"
+          },
+          {
+            "title": "CONDITIONING 29MIN",
+            "lines": [
+              "in teams of 2",
+              "12/11/10 cal bike",
+              "max toes to bar / push presses 40/30kg",
+              "1min rest between amraps",
+              "",
+              "* anaerobic capacity & muscular endurance"
+            ],
+            "sub_title": "amrap 1:30 x 12 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-10",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3462,36 +3490,8 @@
           }
         ],
         "note": "Benchmark: Helen"
-      },
-      {
-        "date": "2026-10-10",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.4",
-            "lines": [
-              "For time:",
-              "21 deadlifts, 225 lb.",
-              "21 handstand push-ups",
-              "15 deadlifts, 225 lb.",
-              "15 handstand push-ups",
-              "9 deadlifts, 225 lb.",
-              "9 handstand push-ups",
-              "21 deadlifts, 315 lb.",
-              "50-ft. handstand walk",
-              "15 deadlifts, 315 lb.",
-              "50-ft. handstand walk",
-              "9 deadlifts, 315 lb.",
-              "50-ft. handstand walk",
-              "Time cap: 9 min."
-            ]
-          }
-        ],
-        "note": "Open: Open 18.4"
       }
     ]
   },
-  "last_updated": "2026-10-10T05:10:22.869385"
+  "last_updated": "2026-10-10T09:43:03.524994"
 }
