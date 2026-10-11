@@ -3302,50 +3302,6 @@
     "2026-10-11": [
       {
         "date": "2026-10-11",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-11/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "crab stretch",
-              "instep rotation",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. step ups",
-              "2. row",
-              "3. scap. push usp",
-              "4. ring rows"
-            ],
-            "sub_title": "30sec on / 15sec off x2 rounds"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "1. 12-16 db box step ups (50cm)",
-              "2. 12-15cal row",
-              "3. 4-8 ring dips",
-              "4. 12-16 kb gorilla rows",
-              "5. rest",
-              "Sunday Endurance for Open Gym",
-              "10 sets",
-              ":30 bike at 60 RPMs",
-              ":20 bike at 70 RPMs",
-              ":10 bike at 80+ RPMs",
-              "1:00 bike sub-60 RPMs\""
-            ],
-            "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-11",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-october-11-2026/",
@@ -3446,6 +3402,89 @@
       },
       {
         "date": "2026-10-11",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 21.4",
+            "lines": [
+              "*2021 Open Workout 21.4 Men Rx*",
+              "Games Season",
+              "2027 Open",
+              "Feb 18 – March 8",
+              "Overview",
+              "Leaderboard",
+              "Schedule",
+              "Workouts",
+              "2026 Quarterfinals",
+              "March 26-30",
+              "Overview",
+              "Leaderboard",
+              "Schedule",
+              "Workouts",
+              "2026 Semifinals",
+              "April – June",
+              "Overview",
+              "Leaderboard",
+              "Schedule",
+              "Workouts",
+              "2026 CrossFit Games",
+              "July",
+              "Leaderboard",
+              "Events",
+              "The CrossFit Games"
+            ]
+          }
+        ],
+        "note": "Open: Open 21.4"
+      },
+      {
+        "date": "2026-10-11",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-11/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "crab stretch",
+              "instep rotation",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. step ups",
+              "2. row",
+              "3. scap. push usp",
+              "4. ring rows"
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "1. 12-16 db box step ups (50cm)",
+              "2. 12-15cal row",
+              "3. 4-8 ring dips",
+              "4. 12-16 kb gorilla rows",
+              "5. rest",
+              "Sunday Endurance for Open Gym",
+              "10 sets",
+              ":30 bike at 60 RPMs",
+              ":20 bike at 70 RPMs",
+              ":10 bike at 80+ RPMs",
+              "1:00 bike sub-60 RPMs\""
+            ],
+            "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-11",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -3511,47 +3550,8 @@
           }
         ],
         "note": "Benchmark: Karen"
-      },
-      {
-        "date": "2026-10-11",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 21.4",
-            "lines": [
-              "*2021 Open Workout 21.4 Men Rx*",
-              "Games Season",
-              "2027 Open",
-              "Feb 18 – March 8",
-              "Overview",
-              "Leaderboard",
-              "Schedule",
-              "Workouts",
-              "2026 Quarterfinals",
-              "March 26-30",
-              "Overview",
-              "Leaderboard",
-              "Schedule",
-              "Workouts",
-              "2026 Semifinals",
-              "April – June",
-              "Overview",
-              "Leaderboard",
-              "Schedule",
-              "Workouts",
-              "2026 CrossFit Games",
-              "July",
-              "Leaderboard",
-              "Events",
-              "The CrossFit Games"
-            ]
-          }
-        ],
-        "note": "Open: Open 21.4"
       }
     ]
   },
-  "last_updated": "2026-10-11T04:38:42.517168"
+  "last_updated": "2026-10-11T09:49:51.696697"
 }
