@@ -3313,63 +3313,6 @@
     "2026-10-12": [
       {
         "date": "2026-10-12",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-12/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "calf stretch",
-              "lat stretch",
-              "thoracic rotations",
-              "samson stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 snatch grip deadlifts",
-              "20 single unders"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "MUSCLE SNATCH 10MIN",
-            "lines": [
-              "find a heavy set of",
-              "1 muscle snatch",
-              "@rpe 8",
-              "explosive power"
-            ]
-          },
-          {
-            "title": "CONDITIONING 11MIN",
-            "lines": [
-              "10 rounds",
-              "",
-              "3 power snatches 50/35kg",
-              "30 double unders",
-              "* rx+: 60/40kg",
-              "* anaerobic power"
-            ],
-            "sub_title": "for time"
-          },
-          {
-            "title": "ACCESSORY 6MIN",
-            "lines": [
-              "for quality",
-              "emom 6min",
-              "1. max. snatch grip bent over row",
-              "2. max. ring dip support hold"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-10-12",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261012",
@@ -3483,6 +3426,94 @@
       },
       {
         "date": "2026-10-12",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 23.3",
+            "lines": [
+              "Starting with a 6-minute time cap, complete as many reps as possible of:",
+              "5 wall walks",
+              "50 double-unders",
+              "15 snatches (weight 1)",
+              "5 wall walks",
+              "50 double-unders",
+              "12 snatches (weight 2)",
+              "*If completed before the 6-minute time cap, add 3 minutes to the time cap and complete:",
+              "20 strict handstand push-ups",
+              "50 double-unders",
+              "9 snatches (weight 3)",
+              "*If completed before the 9-minute time cap, add 3 minutes to the time cap and complete:",
+              "20 strict handstand push-ups",
+              "50 double-unders",
+              "6 snatches (weight 4)",
+              "*♀ 65 lb, 95 lb, 125 lb, 155 lb*",
+              "*♂ 95 lb, 135 lb, 185 lb, 225 lb*"
+            ]
+          }
+        ],
+        "note": "Open: Open 23.3"
+      },
+      {
+        "date": "2026-10-12",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-12/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "calf stretch",
+              "lat stretch",
+              "thoracic rotations",
+              "samson stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 prone snow angels",
+              "10 snatch grip deadlifts",
+              "20 single unders"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "MUSCLE SNATCH 10MIN",
+            "lines": [
+              "find a heavy set of",
+              "1 muscle snatch",
+              "@rpe 8",
+              "explosive power"
+            ]
+          },
+          {
+            "title": "CONDITIONING 11MIN",
+            "lines": [
+              "10 rounds",
+              "",
+              "3 power snatches 50/35kg",
+              "30 double unders",
+              "* rx+: 60/40kg",
+              "* anaerobic power"
+            ],
+            "sub_title": "for time"
+          },
+          {
+            "title": "ACCESSORY 6MIN",
+            "lines": [
+              "for quality",
+              "emom 6min",
+              "1. max. snatch grip bent over row",
+              "2. max. ring dip support hold"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-10-12",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3560,39 +3591,8 @@
           }
         ],
         "note": "Benchmark: Crossfit Total"
-      },
-      {
-        "date": "2026-10-12",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 23.3",
-            "lines": [
-              "Starting with a 6-minute time cap, complete as many reps as possible of:",
-              "5 wall walks",
-              "50 double-unders",
-              "15 snatches (weight 1)",
-              "5 wall walks",
-              "50 double-unders",
-              "12 snatches (weight 2)",
-              "*If completed before the 6-minute time cap, add 3 minutes to the time cap and complete:",
-              "20 strict handstand push-ups",
-              "50 double-unders",
-              "9 snatches (weight 3)",
-              "*If completed before the 9-minute time cap, add 3 minutes to the time cap and complete:",
-              "20 strict handstand push-ups",
-              "50 double-unders",
-              "6 snatches (weight 4)",
-              "*♀ 65 lb, 95 lb, 125 lb, 155 lb*",
-              "*♂ 95 lb, 135 lb, 185 lb, 225 lb*"
-            ]
-          }
-        ],
-        "note": "Open: Open 23.3"
       }
     ]
   },
-  "last_updated": "2026-10-12T05:09:38.175474"
+  "last_updated": "2026-10-12T10:00:22.049043"
 }
