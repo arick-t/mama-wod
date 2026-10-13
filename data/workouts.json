@@ -3418,54 +3418,6 @@
     "2026-10-13": [
       {
         "date": "2026-10-13",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-13/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "sumo squat stretch",
-              "instep rotations"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 reverse lunges",
-              "10 scap. push ups",
-              "30sec plank hold",
-              "* *remaining time row"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "LUNGES 15MIN",
-            "lines": [
-              "3-4 sets",
-              "10 back rack reverse lunges @rpe 7-8",
-              "strength & hypertrophy"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "for max reps/cals",
-              "1:00 medball sit ups 20/14lbs",
-              "1:00 wall balls 20/14lbs",
-              "1:00 row",
-              "1:00 rest",
-              "* score: total reps/cals",
-              "* muscular endurance & aerobic power"
-            ],
-            "sub_title": "4 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-13",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261013",
@@ -3606,6 +3558,73 @@
       },
       {
         "date": "2026-10-13",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 18.1",
+            "lines": [
+              "Complete as many rounds as possible in 20 minutes of:",
+              "8 toes-to-bars",
+              "10 dumbbell hang clean and jerks",
+              "14-cal. row",
+              "*Men use 50-lb. dumbbell*"
+            ]
+          }
+        ],
+        "note": "Open: Open 18.1"
+      },
+      {
+        "date": "2026-10-13",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-13/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "sumo squat stretch",
+              "instep rotations"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 reverse lunges",
+              "10 scap. push ups",
+              "30sec plank hold",
+              "* *remaining time row"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "LUNGES 15MIN",
+            "lines": [
+              "3-4 sets",
+              "10 back rack reverse lunges @rpe 7-8",
+              "strength & hypertrophy"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "for max reps/cals",
+              "1:00 medball sit ups 20/14lbs",
+              "1:00 wall balls 20/14lbs",
+              "1:00 row",
+              "1:00 rest",
+              "* score: total reps/cals",
+              "* muscular endurance & aerobic power"
+            ],
+            "sub_title": "4 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-13",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3697,27 +3716,8 @@
           }
         ],
         "note": "Benchmark: BARBARA"
-      },
-      {
-        "date": "2026-10-13",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.1",
-            "lines": [
-              "Complete as many rounds as possible in 20 minutes of:",
-              "8 toes-to-bars",
-              "10 dumbbell hang clean and jerks",
-              "14-cal. row",
-              "*Men use 50-lb. dumbbell*"
-            ]
-          }
-        ],
-        "note": "Open: Open 18.1"
       }
     ]
   },
-  "last_updated": "2026-10-13T06:24:24.246934"
+  "last_updated": "2026-10-13T10:24:25.990818"
 }
