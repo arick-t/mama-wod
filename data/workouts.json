@@ -1,67 +1,5 @@
 {
   "workouts": {
-    "2026-09-28": [
-      {
-        "date": "2026-09-28",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260928",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Every 6 minutes for 6 rounds:",
-              "800-meter run",
-              "Your score is the total time for all six runs added together.",
-              "Compare to",
-              "260324"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-09-28",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-september-28-2026/",
-        "sections": [
-          {
-            "title": "General warm-up",
-            "lines": [
-              "Steady 1x",
-              "10 Turkish Get-ups",
-              "10 lunge and squat w/ light KB/DB (1 lunge each leg + 1 squat= 1 rep)",
-              "20 banded pull-aparts",
-              "then 1x",
-              "5 empty BB OH squats + :15 OH Squat hold",
-              "1:00 ankle MOB",
-              "5 tall squuat snatches + :15 OH Squat hold",
-              "5 hang squat snatches = :15 OH Squat hold",
-              "1:00 bar hang"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-09-28",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.1",
-            "lines": [
-              "Complete as many rounds as possible in 20 minutes of:",
-              "8 toes-to-bars",
-              "10 dumbbell hang clean and jerks",
-              "14-cal. row",
-              "*Men use 50-lb. dumbbell*"
-            ]
-          }
-        ],
-        "note": "Open: Open 18.1"
-      }
-    ],
     "2026-09-29": [
       {
         "date": "2026-09-29",
@@ -129,90 +67,6 @@
           }
         ],
         "note": "Open: Open 20.1"
-      },
-      {
-        "date": "2026-09-29",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-09-29/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "samson stretch",
-              "hand walk",
-              "scorpions",
-              "thoracic rotations"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 double db deadlifts",
-              "10 scap. push ups",
-              "10 reverse lunges"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "BENCH PRESSES 16MIN",
-            "lines": [
-              "3-4 Sets",
-              "2 bench presses  @87-92%",
-              "strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "2 lanes walking lunges",
-              "14 double db hang cleans",
-              "28 sit ups",
-              "dumbbells: 2x22x5/15kg",
-              "* muscular endurance"
-            ],
-            "sub_title": "amrap 16min"
-          }
-        ]
-      },
-      {
-        "date": "2026-09-29",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Josh-O",
-            "sub_title": "For time with a partner:",
-            "lines": [
-              "400-meter run",
-              "2 rounds of:",
-              "44 dumbbell front squats",
-              "44 dumbbell floor presses",
-              "44 dumbbell hang clean and jerks"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-09-29",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Box Benchmark Friday: Cindy",
-            "lines": [
-              "\"Cindy\"",
-              "AMRAP 20",
-              "5 Pull-ups",
-              "10 Push-ups",
-              "15 Air squats"
-            ]
-          }
-        ],
-        "note": "Benchmark: Box Benchmark Friday: Cindy"
       }
     ],
     "2026-09-30": [
@@ -963,38 +817,6 @@
             "lines": [
               "Einheizchallenge 2026",
               "10:00-14:00 Uhr"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-10-03",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "IN TEAMS OF 2...",
-            "lines": [
-              "400m Run (Together)",
-              "50 Push-Ups (Split)",
-              "6 Rope Climbs (Split)"
-            ],
-            "sub_title2": "6 ROUNDS FOR TIME"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-03",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Killer #84 Rounds5 Deadlifts5 Power clean & jerk5 Front squats200m run15 Pull ups15 Push ups15 T2B200m runRx 60/40kg”"
             ]
           }
         ]
@@ -3592,7 +3414,310 @@
         ],
         "note": "Benchmark: Crossfit Total"
       }
+    ],
+    "2026-10-13": [
+      {
+        "date": "2026-10-13",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-13/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "sumo squat stretch",
+              "instep rotations"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 reverse lunges",
+              "10 scap. push ups",
+              "30sec plank hold",
+              "* *remaining time row"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "LUNGES 15MIN",
+            "lines": [
+              "3-4 sets",
+              "10 back rack reverse lunges @rpe 7-8",
+              "strength & hypertrophy"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "for max reps/cals",
+              "1:00 medball sit ups 20/14lbs",
+              "1:00 wall balls 20/14lbs",
+              "1:00 row",
+              "1:00 rest",
+              "* score: total reps/cals",
+              "* muscular endurance & aerobic power"
+            ],
+            "sub_title": "4 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-13",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/261013",
+        "sections": [
+          {
+            "title": "20 ROUNDS FOR TIME OF",
+            "lines": [
+              "21 double-unders",
+              "7 burpees",
+              "At 0:00 and 10:00, complete a 500-meter row."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-10-13",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-october-13-2026/",
+        "sections": [
+          {
+            "title": "General Warm-Up",
+            "lines": [
+              "400m Run",
+              "2 Sets:",
+              "10 PVC Pipe Pass Throughs",
+              "5/5 PVC Pipe Around the World’s",
+              "10",
+              "Bootstrap Squats",
+              ":20/:20",
+              "World’s Greatest Stretch",
+              "10 PVC Pipe Overhead Squats"
+            ]
+          },
+          {
+            "title": "w/Empty Barbell Complete",
+            "lines": [
+              "2 Sets",
+              "5 Hang Muscle Snatch",
+              "5 Overhead Squats",
+              "5 Back Squats",
+              "200m Run Building Pace and Body Heat into the start of the Back Squat Ramp"
+            ]
+          },
+          {
+            "title": "Loading Notes:",
+            "lines": [
+              "Suggested loading and jumps for 3RM for the day.",
+              "5 Reps @ 50%",
+              "4 Reps @ 60%",
+              "3 Reps @ 65-70%",
+              "3 Reps @ 70-75%",
+              "2 Reps @ 80-85%",
+              "1-2 Reps @ 90%",
+              "Then make a jump to around 92-95% for a 3RM Attempt"
+            ]
+          },
+          {
+            "title": "“Nancy”",
+            "lines": [
+              "5 Rounds for Time",
+              "400m Run",
+              "15 Overhead Squats"
+            ]
+          },
+          {
+            "title": "Time Cap:",
+            "lines": [
+              "20:00",
+              "Score = Time"
+            ]
+          },
+          {
+            "title": "Barbell:",
+            "lines": [
+              "95/65lb (43/30kg)"
+            ]
+          },
+          {
+            "title": "Goal:",
+            "lines": [
+              "17:00"
+            ]
+          },
+          {
+            "title": "Stimulus:",
+            "lines": [
+              "Running / Overhead Squat Stamina / Benchmark Test"
+            ]
+          },
+          {
+            "title": "RPE:",
+            "lines": [
+              "9/10"
+            ]
+          },
+          {
+            "title": "Primary Objective:",
+            "lines": [
+              "Consistent pacing across rounds, 2:15-3:00 per round."
+            ]
+          },
+          {
+            "title": "Secondary Objective:",
+            "lines": [
+              "15 unbroken overhead squats every round."
+            ]
+          },
+          {
+            "title": "Level 2:",
+            "lines": [
+              "5 Rounds for Time",
+              "400m Run",
+              "15 Overhead Squats"
+            ]
+          },
+          {
+            "title": "Barbell:",
+            "lines": [
+              "75/55lb (34/25kg)"
+            ]
+          },
+          {
+            "title": "Level 1:",
+            "lines": [
+              "5 Rounds for Time",
+              "300m Run",
+              "12 Overhead Squats"
+            ]
+          },
+          {
+            "title": "Barbell:",
+            "lines": [
+              "45/35lb (20/15kg)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-10-13",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Muscle Clean + Strict Press 1x4",
+              "10-8-6-4-2",
+              "Muscle Clean + Strict Press (unbroken)",
+              "*Start Light and build each set. 10 Muscle Cleans + 10 Strict Press, 8+8, etc...",
+              "* -Rest as Needed b/t Sets-",
+              "* (Score is Heaviest Weight)"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "“Jessica",
+            "lines": [
+              "10 Pull Ups",
+              "13 Burpess",
+              "21 Wall Balls 9kg/6kg"
+            ],
+            "sub_title2": "3 Rounds For Time:"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-13",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Primer:3 × 2 Jerk Balance @ heavy",
+              "Working Sets:3 x 2 Split Jerk 55-70kg6 × 1 Split Jerk @ 70-90%, building",
+              "Metcon:-AMRAP 10 min:10 Squat Cleans 70/50kg, 20 HSPU8 Squat Cleans, 16 HSPU6 Squat Cleans, 14 HSPU4 Squat Cleans, 12 HSPU2 Squat Cleans, 10 HSPU*If you finish, climb back up the ladder. Score = total reps"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-10-13",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Luke",
+            "sub_title": "For time:",
+            "lines": [
+              "Run 400 meters",
+              "15 clean and jerks",
+              "Run 400 meters",
+              "30 toes-to-bars",
+              "Run 400 meters",
+              "45 wall-ball shots",
+              "Run 400 meters",
+              "45 kettlebell swings",
+              "Run 400 meters",
+              "30 ring dips",
+              "Run 400 meters",
+              "15 front-rack weighted lunges",
+              "Run 400 meters"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-10-13",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "BARBARA",
+            "lines": [
+              "5 rounds for time:",
+              "15 Pull up",
+              "20 Push up",
+              "30 Sit up",
+              "50 Air Squat",
+              "2min Rest",
+              "(Time Cap 35min)",
+              "Do not include final 2min rest in your overall time."
+            ]
+          }
+        ],
+        "note": "Benchmark: BARBARA"
+      },
+      {
+        "date": "2026-10-13",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 18.1",
+            "lines": [
+              "Complete as many rounds as possible in 20 minutes of:",
+              "8 toes-to-bars",
+              "10 dumbbell hang clean and jerks",
+              "14-cal. row",
+              "*Men use 50-lb. dumbbell*"
+            ]
+          }
+        ],
+        "note": "Open: Open 18.1"
+      }
     ]
   },
-  "last_updated": "2026-10-12T17:28:58.749470"
+  "last_updated": "2026-10-13T06:24:24.246934"
 }
