@@ -3522,45 +3522,6 @@
     "2026-10-14": [
       {
         "date": "2026-10-14",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-14/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "calf stretch",
-              "lat stretch",
-              "scorpions",
-              "thoracic rotations"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 scap. push ups",
-              "100m run",
-              "10 ring rows"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "CONDITIONING 32MIN",
-            "lines": [
-              "10 double db bench presses 2x22,5/15kg",
-              "200m run",
-              "7 strict pull ups",
-              "200m run",
-              "* score: slowest round",
-              "* strength & aerobic capacity"
-            ],
-            "sub_title": "on every 4:00 x 8 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-14",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261014",
@@ -3675,6 +3636,64 @@
       },
       {
         "date": "2026-10-14",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 20.5",
+            "lines": [
+              "For time, partitioned any way:",
+              "40 muscle-ups",
+              "80-cal. row",
+              "120 wall-ball shots, 20-lb. ball to 10 ft.",
+              "Time cap: 20 min."
+            ]
+          }
+        ],
+        "note": "Open: Open 20.5"
+      },
+      {
+        "date": "2026-10-14",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-14/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "calf stretch",
+              "lat stretch",
+              "scorpions",
+              "thoracic rotations"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 scap. push ups",
+              "100m run",
+              "10 ring rows"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "CONDITIONING 32MIN",
+            "lines": [
+              "10 double db bench presses 2x22,5/15kg",
+              "200m run",
+              "7 strict pull ups",
+              "200m run",
+              "* score: slowest round",
+              "* strength & aerobic capacity"
+            ],
+            "sub_title": "on every 4:00 x 8 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-14",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3738,27 +3757,8 @@
           }
         ],
         "note": "Benchmark: Heavy Fran"
-      },
-      {
-        "date": "2026-10-14",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 20.5",
-            "lines": [
-              "For time, partitioned any way:",
-              "40 muscle-ups",
-              "80-cal. row",
-              "120 wall-ball shots, 20-lb. ball to 10 ft.",
-              "Time cap: 20 min."
-            ]
-          }
-        ],
-        "note": "Open: Open 20.5"
       }
     ]
   },
-  "last_updated": "2026-10-14T04:41:09.863294"
+  "last_updated": "2026-10-14T08:52:06.556108"
 }
