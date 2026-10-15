@@ -3565,50 +3565,6 @@
     "2026-10-15": [
       {
         "date": "2026-10-15",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-15/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "instep rotations",
-              "hand walk",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 good mornings",
-              "10 box step ups",
-              "10/8cal row"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "ROMANIAN DEADLIFT 15MIN",
-            "lines": [
-              "3-4 sets",
-              "10 romanian deadlifts @rpe 7-8",
-              "strength & hypertrophy"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "16 dball box step ups 60/50cm",
-              "32/26cal row",
-              "16 dball over shoulder 20/15kg",
-              "* aerobic power"
-            ],
-            "sub_title": "amrap 16min"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-15",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261015",
@@ -3734,6 +3690,68 @@
       },
       {
         "date": "2026-10-15",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 19.1",
+            "lines": [
+              "Complete as many rounds as possible in 15 minutes of:",
+              "19 wall-ball shots",
+              "19-cal. row",
+              "*Men throw 20-lb. ball to 10-ft. target*"
+            ]
+          }
+        ],
+        "note": "Open: Open 19.1"
+      },
+      {
+        "date": "2026-10-15",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-15/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "instep rotations",
+              "hand walk",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 good mornings",
+              "10 box step ups",
+              "10/8cal row"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "ROMANIAN DEADLIFT 15MIN",
+            "lines": [
+              "3-4 sets",
+              "10 romanian deadlifts @rpe 7-8",
+              "strength & hypertrophy"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "16 dball box step ups 60/50cm",
+              "32/26cal row",
+              "16 dball over shoulder 20/15kg",
+              "* aerobic power"
+            ],
+            "sub_title": "amrap 16min"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-15",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3810,26 +3828,8 @@
           }
         ],
         "note": "Benchmark: Marguerita"
-      },
-      {
-        "date": "2026-10-15",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 19.1",
-            "lines": [
-              "Complete as many rounds as possible in 15 minutes of:",
-              "19 wall-ball shots",
-              "19-cal. row",
-              "*Men throw 20-lb. ball to 10-ft. target*"
-            ]
-          }
-        ],
-        "note": "Open: Open 19.1"
       }
     ]
   },
-  "last_updated": "2026-10-15T04:17:27.857465"
+  "last_updated": "2026-10-15T08:36:13.864746"
 }
