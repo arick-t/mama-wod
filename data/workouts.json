@@ -1,56 +1,5 @@
 {
   "workouts": {
-    "2026-09-30": [
-      {
-        "date": "2026-09-30",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/260930",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Olympic Total",
-              "Snatch 1-1-1-1-1 reps",
-              "Clean and jerk 1-1-1-1-1 reps",
-              "Compare to",
-              "260105",
-              "(snatch) and",
-              "240205",
-              "(clean and jerk)."
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-09-30",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 25.3",
-            "lines": [
-              "For time:",
-              "5 wall walks",
-              "50-calorie row",
-              "5 wall walks",
-              "25 deadlifts",
-              "5 wall walks",
-              "25 cleans",
-              "5 wall walks",
-              "25 snatches",
-              "5 wall walks",
-              "50-calorie row",
-              "Time cap: 20 minutes",
-              "♀ 155-lb (70-kg) deadlift, 85-lb (38-kg) clean, 65-lb (29-kg) snatch",
-              "♂ 225-lb (102-kg) deadlift, 135-lb (61-kg) clean, 95-lb (43-kg) snatch"
-            ]
-          }
-        ],
-        "note": "Open: Open 25.3"
-      }
-    ],
     "2026-10-01": [
       {
         "date": "2026-10-01",
@@ -148,114 +97,6 @@
           }
         ],
         "note": "Open: Open 14.1"
-      },
-      {
-        "date": "2026-10-01",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-01/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "calf stretch",
-              "sumo squat stretch",
-              "scorpions",
-              "samson stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "100m run",
-              "10 air squats",
-              "10 prone snow angels"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "BACK SQUATS 16MIN",
-            "lines": [
-              "3-4 Sets",
-              "2  back squats",
-              "@87-92%",
-              "strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 12MIN",
-            "lines": [
-              "200m run",
-              "10 push press",
-              "10 front squats",
-              "* score: slowest round",
-              "* barbell: 40/30kg",
-              "* rx+: 50/35kg",
-              "* anaerobic conditioning"
-            ],
-            "sub_title": "on every 3:00 x 4 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-01",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Bull",
-            "sub_title": "2 rounds for time of:",
-            "lines": [
-              "200 double-unders",
-              "50 overhead squats",
-              "50 pull-ups",
-              "1-mile run"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-10-01",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Fran",
-            "lines": [
-              "For Time:",
-              "21-15-9",
-              "Thruster (42,5/30kg)",
-              "Pullup",
-              "LIIKKEISTÄ",
-              "Thruster",
-              "* Max 30/42,5kg -> Valitse haastava paino, jolla saat tehtyä 21 toiston kierroksen 2-3 sarjassa",
-              "Pullup",
-              "* Tarvittaessa toistoja vähemmän, esim. 15-12-9 tai 12-9-6",
-              "* Jumping pullup tai chest to bar",
-              "* Ring row",
-              "Lämmittely",
-              "A. Omaan tahtiin 5mins",
-              "Cardio of choice 30-40s.",
-              "Airsquat x 10",
-              "Kyykystä kierrot x 8",
-              "Dead hang/lapaveto/kip swing 30s.",
-              "Ring row/strict pullup x 2-6",
-              "B.",
-              "Rintarangan kierrot kont. as.",
-              "Ranneympyrät",
-              "C. Thruster warmup",
-              "Front squat",
-              "Shoulder press",
-              "Push press",
-              "Thruster",
-              "Timecap 7mins"
-            ]
-          }
-        ],
-        "note": "Benchmark: Fran"
       }
     ],
     "2026-10-02": [
@@ -1160,21 +1001,6 @@
       },
       {
         "date": "2026-10-05",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Working Sets:6 × 2 Squat Snatch @ 72.5–82.5%, building",
-              "Metcon:- Chipper60 Wall Balls 9/6kg50m x 2 (100m) Farmers Carry 2×32/24kg40 alt DB Snatch 22.5/15kg30/24 cal Row10 Devil’s Press 2×22.5/15kg”"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-10-05",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -1411,29 +1237,6 @@
               "* aerobic capacity & muscular endurance"
             ],
             "sub_title": "amrap 20min"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-06",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "JASON",
-            "lines": [
-              "100 Air Squats",
-              "5 Muscle Ups",
-              "75 Air Squats",
-              "10 Muscle Ups",
-              "50 Air Squats",
-              "15 Muscle Ups",
-              "25 Air Squats",
-              "20 Muscle Ups"
-            ],
-            "sub_title2": "FOR TIME"
           }
         ]
       },
@@ -3758,7 +3561,275 @@
         ],
         "note": "Benchmark: Heavy Fran"
       }
+    ],
+    "2026-10-15": [
+      {
+        "date": "2026-10-15",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-15/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "instep rotations",
+              "hand walk",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 good mornings",
+              "10 box step ups",
+              "10/8cal row"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "ROMANIAN DEADLIFT 15MIN",
+            "lines": [
+              "3-4 sets",
+              "10 romanian deadlifts @rpe 7-8",
+              "strength & hypertrophy"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "16 dball box step ups 60/50cm",
+              "32/26cal row",
+              "16 dball over shoulder 20/15kg",
+              "* aerobic power"
+            ],
+            "sub_title": "amrap 16min"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-15",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/261015",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Rest Day",
+              "Training Through Menopause: What Does the Evidence Tell Us?",
+              "For years, women approaching menopause heard the same advice: walk, stretch, and pick up light weights. The research tells a different story. Declining estrogen accelerates the loss of muscle, strength, and bone while raising cardiovascular and metabolic risk, and the best response is not gentler training."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-10-15",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-october-15-2026/",
+        "sections": [
+          {
+            "title": "General Warm-Up",
+            "lines": [
+              "2:00 Cardio Choice (Row Ideally)",
+              "10 Alternating Scorpions",
+              "10",
+              "Down Dog Toe Touches",
+              "10",
+              "Bootstrap Squats",
+              "5/5",
+              "World’s Greatest Stretch",
+              ":20/:20",
+              "Active Pigeon Stretch",
+              "10 Alt Box Step-Ups",
+              "10",
+              "Banded Pull-Aparts",
+              "2 Sets: (Priming the Legs for Repeat Squatting and Jumping)",
+              "10 Air Squats @ 20×1 Tempo",
+              "10",
+              "Glute Bridges",
+              "8 Alternating",
+              "Cossack Squats",
+              "(4/4)",
+              "8 Ankle Rocks on the Box (4/4)"
+            ]
+          },
+          {
+            "title": "20:00 EMOM (4 Sets)",
+            "lines": [
+              "Minute 1: 15/12 Calorie Row",
+              "Minute 2: 15 Box Jump Overs",
+              "Minute 3: Max Calorie Row",
+              "Minute 4: Max Wall Balls",
+              "Minute 5: Rest",
+              "Score = Sum Total Reps (Calories + Wall Balls from the Max Minutes)"
+            ]
+          },
+          {
+            "title": "Box:",
+            "lines": [
+              "24/20in"
+            ]
+          },
+          {
+            "title": "Wall Ball:",
+            "lines": [
+              "20/14lb (9/6kg) to 10/9ft Target"
+            ]
+          },
+          {
+            "title": "Goal:",
+            "lines": [
+              "16/13+ Calories and 20+ Wall Balls on the Max Minutes"
+            ]
+          },
+          {
+            "title": "RPE:",
+            "lines": [
+              "8.5/10"
+            ]
+          },
+          {
+            "title": "Primary Objective:",
+            "lines": [
+              "Complete more reps and calories on the max minutes than the prescribed minutes."
+            ]
+          },
+          {
+            "title": "Secondary Objective:",
+            "lines": [
+              "Stay consistent across all four sets."
+            ]
+          },
+          {
+            "title": "20:00 EMOM (4 Sets):",
+            "lines": [
+              "Min 1: 13/10 Calorie Row",
+              "Min 2: 12 Box Jump Overs",
+              "Min 3: Max Calorie Row",
+              "Min 4: Max Wall Balls",
+              "Min 5: Rest"
+            ]
+          },
+          {
+            "title": "Box:",
+            "lines": [
+              "24/20in"
+            ]
+          },
+          {
+            "title": "Wall Ball:",
+            "lines": [
+              "20/14lb (9/6kg) to 10/9ft"
+            ]
+          },
+          {
+            "title": "20:00 EMOM (4 Sets):",
+            "lines": [
+              "Min 1: 10/8 Calorie Row"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-10-15",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Power Snatch 1x2",
+              "EVERY 1:00 (8 SETS)",
+              "2 Power Snatch (Singles)",
+              "*Start Moderate and build to a Moderate-Heavy",
+              "* (Scored by Heaviest Set)"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "9:00 AMRAP",
+            "lines": [
+              "12 Power Snatch 34kg/25kg",
+              "4 Burpee Pull-Ups",
+              "* (Scored is Rounds + Reps)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-10-15",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Primer:3 × 3 BTN Push Press @ 60–68%",
+              "Working Sets:E2MOM × 6 rounds:5 Thrusters @ 75–82.5%, building across rounds"
+            ]
+          },
+          {
+            "title": "METCON",
+            "lines": []
+          }
+        ]
+      },
+      {
+        "date": "2026-10-15",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Coffland",
+            "sub_title": "Hang from a pull-up bar for 6 minutes",
+            "lines": [
+              "Each time you drop from the bar, complete:",
+              "800-meter run",
+              "30 push-ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-10-15",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Marguerita",
+            "lines": [
+              "50 reps for time of:",
+              "Burpee/Push-up/Jumping-Jack/Sit-up/Handstand \n Video link"
+            ]
+          }
+        ],
+        "note": "Benchmark: Marguerita"
+      },
+      {
+        "date": "2026-10-15",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 19.1",
+            "lines": [
+              "Complete as many rounds as possible in 15 minutes of:",
+              "19 wall-ball shots",
+              "19-cal. row",
+              "*Men throw 20-lb. ball to 10-ft. target*"
+            ]
+          }
+        ],
+        "note": "Open: Open 19.1"
+      }
     ]
   },
-  "last_updated": "2026-10-14T14:14:12.929529"
+  "last_updated": "2026-10-15T04:17:27.857465"
 }
