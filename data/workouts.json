@@ -3600,55 +3600,6 @@
     "2026-10-16": [
       {
         "date": "2026-10-16",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-16/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "instep rotation",
-              "thoracic rotation",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 straight leg sit ups",
-              "10 front squats",
-              "10 strict presses",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "THRUSTER 8MIN",
-            "lines": [
-              "on every 1:00 x 8 sets",
-              "6 thrusters",
-              "(max sustainable weight)",
-              "strength endurance"
-            ]
-          },
-          {
-            "title": "CONDITIONING 17MIN",
-            "lines": [
-              "4 rounds",
-              "",
-              "20/16cal  bike/ski",
-              "20 toes to bar",
-              "20 burpees to target",
-              "* muscular endurance & aerobic power"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-16",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261016",
@@ -3791,6 +3742,85 @@
       },
       {
         "date": "2026-10-16",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 24.1",
+            "lines": [
+              "For time:",
+              "21 dumbbell snatches, arm 1",
+              "21 lateral burpees over dumbbell",
+              "21 dumbbell snatches, arm 2",
+              "21 lateral burpees over dumbbell",
+              "15 dumbbell snatches, arm 1",
+              "15 lateral burpees over dumbbell",
+              "15 dumbbell snatches, arm 2",
+              "15 lateral burpees over dumbbell",
+              "9 dumbbell snatches, arm 1",
+              "9 lateral burpees over dumbbell",
+              "9 dumbbell snatches, arm 2",
+              "9 lateral burpees over dumbbell",
+              "*Time cap: 15 minutes",
+              "♀ 35-lb (15-kg) dumbbell",
+              "♂ 50-lb (22.5-kg) dumbbell"
+            ]
+          }
+        ],
+        "note": "Open: Open 24.1"
+      },
+      {
+        "date": "2026-10-16",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-16/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "instep rotation",
+              "thoracic rotation",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 straight leg sit ups",
+              "10 front squats",
+              "10 strict presses",
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "THRUSTER 8MIN",
+            "lines": [
+              "on every 1:00 x 8 sets",
+              "6 thrusters",
+              "(max sustainable weight)",
+              "strength endurance"
+            ]
+          },
+          {
+            "title": "CONDITIONING 17MIN",
+            "lines": [
+              "4 rounds",
+              "",
+              "20/16cal  bike/ski",
+              "20 toes to bar",
+              "20 burpees to target",
+              "* muscular endurance & aerobic power"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-16",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3869,38 +3899,8 @@
           }
         ],
         "note": "Benchmark: Mary"
-      },
-      {
-        "date": "2026-10-16",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 24.1",
-            "lines": [
-              "For time:",
-              "21 dumbbell snatches, arm 1",
-              "21 lateral burpees over dumbbell",
-              "21 dumbbell snatches, arm 2",
-              "21 lateral burpees over dumbbell",
-              "15 dumbbell snatches, arm 1",
-              "15 lateral burpees over dumbbell",
-              "15 dumbbell snatches, arm 2",
-              "15 lateral burpees over dumbbell",
-              "9 dumbbell snatches, arm 1",
-              "9 lateral burpees over dumbbell",
-              "9 dumbbell snatches, arm 2",
-              "9 lateral burpees over dumbbell",
-              "*Time cap: 15 minutes",
-              "♀ 35-lb (15-kg) dumbbell",
-              "♂ 50-lb (22.5-kg) dumbbell"
-            ]
-          }
-        ],
-        "note": "Open: Open 24.1"
       }
     ]
   },
-  "last_updated": "2026-10-16T04:02:58.556335"
+  "last_updated": "2026-10-16T08:30:02.616310"
 }
