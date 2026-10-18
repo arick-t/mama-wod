@@ -3698,54 +3698,6 @@
     "2026-10-18": [
       {
         "date": "2026-10-18",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-18/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "lat stretch",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. air squats",
-              "2. bike/ski",
-              "3. ring rows",
-              "4. burpees"
-            ],
-            "sub_title": "30sec on / 15sec off x2 rounds"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "1. 30-50sec wall sit",
-              "2. 10-15cal bike/ski",
-              "3. 8-12 ring rows",
-              "4. 8-12 double db burpee deadlifts",
-              "5. rest",
-              "Sunday Endurance for Open Gym",
-              "6 rounds for max cals",
-              "",
-              "30sec bike",
-              "30sec rest",
-              "2:00 rest",
-              "6 rounds for max cals",
-              "",
-              "20sec bike",
-              "40sec rest"
-            ],
-            "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-18",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-october-18-2026/",
@@ -3850,6 +3802,93 @@
       },
       {
         "date": "2026-10-18",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 24.2",
+            "lines": [
+              "*2024 Open Workout 24.2 Women Rx*",
+              "Games Season",
+              "2027 Open",
+              "Feb 18 – March 8",
+              "Overview",
+              "Leaderboard",
+              "Schedule",
+              "Workouts",
+              "2026 Quarterfinals",
+              "March 26-30",
+              "Overview",
+              "Leaderboard",
+              "Schedule",
+              "Workouts",
+              "2026 Semifinals",
+              "April – June",
+              "Overview",
+              "Leaderboard",
+              "Schedule",
+              "Workouts",
+              "2026 CrossFit Games",
+              "July",
+              "Leaderboard",
+              "Events",
+              "The CrossFit Games"
+            ]
+          }
+        ],
+        "note": "Open: Open 24.2"
+      },
+      {
+        "date": "2026-10-18",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-18/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "lat stretch",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. air squats",
+              "2. bike/ski",
+              "3. ring rows",
+              "4. burpees"
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "1. 30-50sec wall sit",
+              "2. 10-15cal bike/ski",
+              "3. 8-12 ring rows",
+              "4. 8-12 double db burpee deadlifts",
+              "5. rest",
+              "Sunday Endurance for Open Gym",
+              "6 rounds for max cals",
+              "",
+              "30sec bike",
+              "30sec rest",
+              "2:00 rest",
+              "6 rounds for max cals",
+              "",
+              "20sec bike",
+              "40sec rest"
+            ],
+            "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-18",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -3887,47 +3926,8 @@
           }
         ],
         "note": "Benchmark: DIANE"
-      },
-      {
-        "date": "2026-10-18",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 24.2",
-            "lines": [
-              "*2024 Open Workout 24.2 Women Rx*",
-              "Games Season",
-              "2027 Open",
-              "Feb 18 – March 8",
-              "Overview",
-              "Leaderboard",
-              "Schedule",
-              "Workouts",
-              "2026 Quarterfinals",
-              "March 26-30",
-              "Overview",
-              "Leaderboard",
-              "Schedule",
-              "Workouts",
-              "2026 Semifinals",
-              "April – June",
-              "Overview",
-              "Leaderboard",
-              "Schedule",
-              "Workouts",
-              "2026 CrossFit Games",
-              "July",
-              "Leaderboard",
-              "Events",
-              "The CrossFit Games"
-            ]
-          }
-        ],
-        "note": "Open: Open 24.2"
       }
     ]
   },
-  "last_updated": "2026-10-18T03:42:06.591235"
+  "last_updated": "2026-10-18T08:28:29.923045"
 }
