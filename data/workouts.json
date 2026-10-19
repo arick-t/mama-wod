@@ -1155,24 +1155,6 @@
       },
       {
         "date": "2026-10-09",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "KELLY",
-            "lines": [
-              "400m Run",
-              "30 Box Jumps 24\"/20\"",
-              "30 Wall Balls 20\"/14\""
-            ],
-            "sub_title2": "5 ROUNDS FOR TIME"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-09",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -3679,52 +3661,6 @@
     "2026-10-19": [
       {
         "date": "2026-10-19",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-19/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "calf stretch",
-              "lat stretch on box",
-              "lying hip cross over",
-              "thoracic rotations"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 elbow rotations",
-              "10 squat jumps",
-              "10 ring rows"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "POWER CLEAN 14MIN",
-            "lines": [
-              "find a heavy set of 10",
-              "touch and go power cleans",
-              "power capacity"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "50 power cleans 60/40kg",
-              "70 pull ups",
-              "90 box jumps 60/50cm",
-              "*partition however",
-              "* aerobic power"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-19",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261019",
@@ -3824,6 +3760,107 @@
       },
       {
         "date": "2026-10-19",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 21.1",
+            "lines": [
+              "For time:",
+              "1 wall walk",
+              "10 double-unders",
+              "3 wall walks",
+              "30 double-unders",
+              "6 wall walks",
+              "60 double-unders",
+              "9 wall walks",
+              "90 double-unders",
+              "15 wall walks",
+              "150 double-unders",
+              "21 wall walks",
+              "210 double-unders",
+              "Time cap: 15 min."
+            ]
+          }
+        ],
+        "note": "Open: Open 21.1"
+      },
+      {
+        "date": "2026-10-19",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-19/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "calf stretch",
+              "lat stretch on box",
+              "lying hip cross over",
+              "thoracic rotations"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 elbow rotations",
+              "10 squat jumps",
+              "10 ring rows"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "POWER CLEAN 14MIN",
+            "lines": [
+              "find a heavy set of 10",
+              "touch and go power cleans",
+              "power capacity"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "50 power cleans 60/40kg",
+              "70 pull ups",
+              "90 box jumps 60/50cm",
+              "*partition however",
+              "* aerobic power"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-19",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Back Squat 1x4",
+              "EVERY 1:00 (6:00)",
+              "4 Back Squats @ RPE 7",
+              "*Use a weight that's challenging, but can be completed in :20 seconds. Same weight for all 6 sets.",
+              "* (Scored by Weight)"
+            ]
+          },
+          {
+            "title": "WOD",
+            "sub_title": "FOR TIME",
+            "lines": [
+              "50-40-30-20-10",
+              "Wall Ball 9kg/6kg",
+              "Push-Ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-10-19",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -3868,36 +3905,8 @@
           }
         ],
         "note": "Benchmark: D. \"GRACE"
-      },
-      {
-        "date": "2026-10-19",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 21.1",
-            "lines": [
-              "For time:",
-              "1 wall walk",
-              "10 double-unders",
-              "3 wall walks",
-              "30 double-unders",
-              "6 wall walks",
-              "60 double-unders",
-              "9 wall walks",
-              "90 double-unders",
-              "15 wall walks",
-              "150 double-unders",
-              "21 wall walks",
-              "210 double-unders",
-              "Time cap: 15 min."
-            ]
-          }
-        ],
-        "note": "Open: Open 21.1"
       }
     ]
   },
-  "last_updated": "2026-10-19T03:55:07.659338"
+  "last_updated": "2026-10-19T08:46:45.190621"
 }
