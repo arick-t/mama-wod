@@ -3603,54 +3603,6 @@
     "2026-10-20": [
       {
         "date": "2026-10-20",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-20/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "sumo squat stretch",
-              "lat stretch",
-              "scorpions",
-              "thoracic rotations"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 plank push ups",
-              "10 air squats",
-              "10 prone snow angels"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "STRICT PRESS 14MIN",
-            "lines": [
-              "3 sets",
-              "12-10-8 reps @rpe 7-8",
-              "hypertrophy"
-            ]
-          },
-          {
-            "title": "CONDITIONING 17MIN",
-            "lines": [
-              "12 hand release push ups",
-              "18 dball squats 20/15kg",
-              "24 sit ups",
-              "1min rest between amraps",
-              "",
-              "* *pick up where you left off",
-              "* muscular endurance"
-            ],
-            "sub_title": "amrap 5min x 3 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-20",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261020",
@@ -3767,6 +3719,81 @@
       },
       {
         "date": "2026-10-20",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 17.1",
+            "lines": [
+              "For time:",
+              "10 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "20 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "30 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "40 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "50 dumbbell snatches",
+              "15 burpee box jump-overs",
+              "*Men use 50-lb. dumbbell and 24-in. box*",
+              "Time cap: 20 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 17.1"
+      },
+      {
+        "date": "2026-10-20",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-20/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "lat stretch",
+              "scorpions",
+              "thoracic rotations"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 plank push ups",
+              "10 air squats",
+              "10 prone snow angels"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "STRICT PRESS 14MIN",
+            "lines": [
+              "3 sets",
+              "12-10-8 reps @rpe 7-8",
+              "hypertrophy"
+            ]
+          },
+          {
+            "title": "CONDITIONING 17MIN",
+            "lines": [
+              "12 hand release push ups",
+              "18 dball squats 20/15kg",
+              "24 sit ups",
+              "1min rest between amraps",
+              "",
+              "* *pick up where you left off",
+              "* muscular endurance"
+            ],
+            "sub_title": "amrap 5min x 3 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-20",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3844,35 +3871,8 @@
           }
         ],
         "note": "Benchmark: CrossFit Total II"
-      },
-      {
-        "date": "2026-10-20",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 17.1",
-            "lines": [
-              "For time:",
-              "10 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "20 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "30 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "40 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "50 dumbbell snatches",
-              "15 burpee box jump-overs",
-              "*Men use 50-lb. dumbbell and 24-in. box*",
-              "Time cap: 20 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 17.1"
       }
     ]
   },
-  "last_updated": "2026-10-20T04:37:59.871031"
+  "last_updated": "2026-10-20T08:41:09.685693"
 }
