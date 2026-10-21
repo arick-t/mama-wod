@@ -3589,54 +3589,6 @@
     "2026-10-21": [
       {
         "date": "2026-10-21",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-21/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "90/90 hip rotations",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "8 good mornings",
-              "8 burpees",
-              "30sec plank hold",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "DEADLIFT 14MIN",
-            "lines": [
-              "3 sets",
-              "12-10-8 reps @rpe 7-8",
-              "hypertrophy"
-            ]
-          },
-          {
-            "title": "CONDITIONING 18MIN",
-            "lines": [
-              "30sec on/ 30sec off",
-              "until completed",
-              "40/32cal bike/ski",
-              "40 sumo deadlift high pulls 40/30kg",
-              "40 burpees over the bar",
-              "40/32cal ski/bike",
-              "anaerobic capacity"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-21",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261021",
@@ -3757,6 +3709,88 @@
       },
       {
         "date": "2026-10-21",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 19.2",
+            "lines": [
+              "Beginning on an 8-minute clock, complete as many reps as possible of:",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "15 squat cleans, 135 lb.",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "13 squat cleans, 185 lb.",
+              "If completed before 8 minutes, add 4 minutes to the clock and proceed to:",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "11 squat cleans, 225 lb.",
+              "If completed before 12 minutes, add 4 minutes to the clock and proceed to:",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "9 squat cleans, 275 lb.",
+              "If completed before 16 minutes, add 4 minutes to the clock and proceed to:",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "7 squat cleans, 315 lb.",
+              "Stop at 20 minutes."
+            ]
+          }
+        ],
+        "note": "Open: Open 19.2"
+      },
+      {
+        "date": "2026-10-21",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-21/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "90/90 hip rotations",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "8 good mornings",
+              "8 burpees",
+              "30sec plank hold",
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "DEADLIFT 14MIN",
+            "lines": [
+              "3 sets",
+              "12-10-8 reps @rpe 7-8",
+              "hypertrophy"
+            ]
+          },
+          {
+            "title": "CONDITIONING 18MIN",
+            "lines": [
+              "30sec on/ 30sec off",
+              "until completed",
+              "40/32cal bike/ski",
+              "40 sumo deadlift high pulls 40/30kg",
+              "40 burpees over the bar",
+              "40/32cal ski/bike",
+              "anaerobic capacity"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-21",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -3806,42 +3840,8 @@
           }
         ],
         "note": "Benchmark: Heavy Fran"
-      },
-      {
-        "date": "2026-10-21",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 19.2",
-            "lines": [
-              "Beginning on an 8-minute clock, complete as many reps as possible of:",
-              "25 toes-to-bars",
-              "50 double-unders",
-              "15 squat cleans, 135 lb.",
-              "25 toes-to-bars",
-              "50 double-unders",
-              "13 squat cleans, 185 lb.",
-              "If completed before 8 minutes, add 4 minutes to the clock and proceed to:",
-              "25 toes-to-bars",
-              "50 double-unders",
-              "11 squat cleans, 225 lb.",
-              "If completed before 12 minutes, add 4 minutes to the clock and proceed to:",
-              "25 toes-to-bars",
-              "50 double-unders",
-              "9 squat cleans, 275 lb.",
-              "If completed before 16 minutes, add 4 minutes to the clock and proceed to:",
-              "25 toes-to-bars",
-              "50 double-unders",
-              "7 squat cleans, 315 lb.",
-              "Stop at 20 minutes."
-            ]
-          }
-        ],
-        "note": "Open: Open 19.2"
       }
     ]
   },
-  "last_updated": "2026-10-21T04:23:16.982281"
+  "last_updated": "2026-10-21T08:45:21.863637"
 }
