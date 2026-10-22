@@ -3547,55 +3547,6 @@
     "2026-10-22": [
       {
         "date": "2026-10-22",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-22/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "calf stretch",
-              "crab stretch",
-              "lat stretch",
-              "thoracic rotations"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10/8 cal row",
-              "10 prone snow angels",
-              "20 single unders"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "PULL UP / HANDSTAND PUSH UP 12MIN",
-            "lines": [
-              "emom 12min",
-              "1. 4-6 strict pull ups",
-              "2. 4-6 handstand push ups",
-              "skill & strength"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "5 rounds",
-              "",
-              "60 double unders",
-              "15/12cal row",
-              "5 wall walks*",
-              "* rx+: 6 strict handstand push ups",
-              "* aerobic power & muscular endurance"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-22",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261022",
@@ -3716,6 +3667,84 @@
       },
       {
         "date": "2026-10-22",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 18.5",
+            "lines": [
+              "Complete as many reps as possible in 7 minutes of:",
+              "3 thrusters",
+              "3 chest-to-bar pull-ups",
+              "6 thrusters",
+              "6 chest-to-bar pull-ups",
+              "9 thrusters",
+              "9 chest-to-bar pull-ups",
+              "12 thrusters",
+              "12 chest-to-bar pull-ups",
+              "15 thrusters",
+              "15 chest-to-bar pull-ups",
+              "18 thrusters",
+              "18 chest-to-bar pull-ups",
+              "This is a timed workout. If you complete the round of 18, go on to 21. If you complete 21, go on to 24, etc.",
+              "*Men use 100 lb.*"
+            ]
+          }
+        ],
+        "note": "Open: Open 18.5"
+      },
+      {
+        "date": "2026-10-22",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-22/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "calf stretch",
+              "crab stretch",
+              "lat stretch",
+              "thoracic rotations"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10/8 cal row",
+              "10 prone snow angels",
+              "20 single unders"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "PULL UP / HANDSTAND PUSH UP 12MIN",
+            "lines": [
+              "emom 12min",
+              "1. 4-6 strict pull ups",
+              "2. 4-6 handstand push ups",
+              "skill & strength"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "5 rounds",
+              "",
+              "60 double unders",
+              "15/12cal row",
+              "5 wall walks*",
+              "* rx+: 6 strict handstand push ups",
+              "* aerobic power & muscular endurance"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-22",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3791,37 +3820,8 @@
           }
         ],
         "note": "Benchmark: Box Benchmark Friday: Cindy"
-      },
-      {
-        "date": "2026-10-22",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 18.5",
-            "lines": [
-              "Complete as many reps as possible in 7 minutes of:",
-              "3 thrusters",
-              "3 chest-to-bar pull-ups",
-              "6 thrusters",
-              "6 chest-to-bar pull-ups",
-              "9 thrusters",
-              "9 chest-to-bar pull-ups",
-              "12 thrusters",
-              "12 chest-to-bar pull-ups",
-              "15 thrusters",
-              "15 chest-to-bar pull-ups",
-              "18 thrusters",
-              "18 chest-to-bar pull-ups",
-              "This is a timed workout. If you complete the round of 18, go on to 21. If you complete 21, go on to 24, etc.",
-              "*Men use 100 lb.*"
-            ]
-          }
-        ],
-        "note": "Open: Open 18.5"
       }
     ]
   },
-  "last_updated": "2026-10-22T04:20:42.918611"
+  "last_updated": "2026-10-22T08:47:19.505999"
 }
