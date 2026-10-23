@@ -3531,51 +3531,6 @@
     "2026-10-23": [
       {
         "date": "2026-10-23",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-23/",
-        "sections": [
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "line drills"
-            ]
-          },
-          {
-            "title": "FRONT SQUAT 14MIN",
-            "lines": [
-              "3 sets",
-              "12-10-8 reps @rpe 7-8",
-              "hypertrophy"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "600m run",
-              "into",
-              "4 rounds",
-              "",
-              "18 toes to bar",
-              "12 double db thruster 2x22,5/15kg",
-              "into",
-              "600m run",
-              "* aerobic power (lactate threshold)"
-            ],
-            "sub_title": "for time"
-          },
-          {
-            "title": "UPPER BACK & TRICEPS 6MIN",
-            "lines": [
-              "1. max double db bent over rows",
-              "2. max db overhead triceps extensions"
-            ],
-            "sub_title": "30sec /30sec off x 6 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-23",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261023",
@@ -3675,6 +3630,79 @@
       },
       {
         "date": "2026-10-23",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 20.4",
+            "lines": [
+              "For time:",
+              "30 box jumps, 24 in.",
+              "15 clean and jerks, 95 lb.",
+              "30 box jumps, 24 in.",
+              "15 clean and jerks, 135 lb.",
+              "30 box jumps, 24 in.",
+              "10 clean and jerks, 185 lb.",
+              "30 single-leg squats",
+              "10 clean and jerks, 225 lb.",
+              "30 single-leg squats",
+              "5 clean and jerks, 275 lb.",
+              "30 single-leg squats",
+              "5 clean and jerks, 315 lb.",
+              "Time cap: 20 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 20.4"
+      },
+      {
+        "date": "2026-10-23",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-23/",
+        "sections": [
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "line drills"
+            ]
+          },
+          {
+            "title": "FRONT SQUAT 14MIN",
+            "lines": [
+              "3 sets",
+              "12-10-8 reps @rpe 7-8",
+              "hypertrophy"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "600m run",
+              "into",
+              "4 rounds",
+              "",
+              "18 toes to bar",
+              "12 double db thruster 2x22,5/15kg",
+              "into",
+              "600m run",
+              "* aerobic power (lactate threshold)"
+            ],
+            "sub_title": "for time"
+          },
+          {
+            "title": "UPPER BACK & TRICEPS 6MIN",
+            "lines": [
+              "1. max double db bent over rows",
+              "2. max db overhead triceps extensions"
+            ],
+            "sub_title": "30sec /30sec off x 6 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-23",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3764,36 +3792,8 @@
           }
         ],
         "note": "Benchmark: FIGHT GONE BAD"
-      },
-      {
-        "date": "2026-10-23",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 20.4",
-            "lines": [
-              "For time:",
-              "30 box jumps, 24 in.",
-              "15 clean and jerks, 95 lb.",
-              "30 box jumps, 24 in.",
-              "15 clean and jerks, 135 lb.",
-              "30 box jumps, 24 in.",
-              "10 clean and jerks, 185 lb.",
-              "30 single-leg squats",
-              "10 clean and jerks, 225 lb.",
-              "30 single-leg squats",
-              "5 clean and jerks, 275 lb.",
-              "30 single-leg squats",
-              "5 clean and jerks, 315 lb.",
-              "Time cap: 20 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 20.4"
       }
     ]
   },
-  "last_updated": "2026-10-23T04:20:06.617014"
+  "last_updated": "2026-10-23T08:46:35.601875"
 }
