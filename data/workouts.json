@@ -3498,42 +3498,6 @@
     "2026-10-24": [
       {
         "date": "2026-10-24",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-24/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "instep rotation",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 box step ups",
-              "10 burpees",
-              "*partner is skiing"
-            ]
-          },
-          {
-            "title": "CONDITIONING 32MIN",
-            "lines": [
-              "in teams of 2",
-              "8 synchro db devil presses",
-              "24 db box step overs 50cm",
-              "32/29/26cal ski",
-              "dumbell: 1x 22,5/15kg"
-            ],
-            "sub_title": "amrap 32min"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-24",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261024",
@@ -3652,6 +3616,63 @@
       },
       {
         "date": "2026-10-24",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 19.3",
+            "lines": [
+              "For time:",
+              "200-ft. dumbbell overhead lunge",
+              "50 dumbbell box step-ups",
+              "50 strict handstand push-ups",
+              "200-ft. handstand walk",
+              "50-lb. dumbbell, 24-in. box",
+              "Time cap: 10 minutes"
+            ]
+          }
+        ],
+        "note": "Open: Open 19.3"
+      },
+      {
+        "date": "2026-10-24",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-24/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "instep rotation",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 box step ups",
+              "10 burpees",
+              "*partner is skiing"
+            ]
+          },
+          {
+            "title": "CONDITIONING 32MIN",
+            "lines": [
+              "in teams of 2",
+              "8 synchro db devil presses",
+              "24 db box step overs 50cm",
+              "32/29/26cal ski",
+              "dumbell: 1x 22,5/15kg"
+            ],
+            "sub_title": "amrap 32min"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-24",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3737,29 +3758,8 @@
           }
         ],
         "note": "Benchmark: Cindy XXX"
-      },
-      {
-        "date": "2026-10-24",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 19.3",
-            "lines": [
-              "For time:",
-              "200-ft. dumbbell overhead lunge",
-              "50 dumbbell box step-ups",
-              "50 strict handstand push-ups",
-              "200-ft. handstand walk",
-              "50-lb. dumbbell, 24-in. box",
-              "Time cap: 10 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 19.3"
       }
     ]
   },
-  "last_updated": "2026-10-24T04:25:15.044802"
+  "last_updated": "2026-10-24T08:25:44.075334"
 }
