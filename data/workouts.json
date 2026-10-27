@@ -3475,51 +3475,6 @@
     "2026-10-27": [
       {
         "date": "2026-10-27",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-27/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "calf stretch",
-              "inverted hamstring stretch",
-              "instep rotation",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10/8 cal row",
-              "10 reverse lunges",
-              "20 single unders"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "DEADLIFT 14MIN",
-            "lines": [
-              "3 sets",
-              "12-10-8 reps @rpe 7-8",
-              "hypertrophy"
-            ]
-          },
-          {
-            "title": "CONDITIONING 18MIN",
-            "lines": [
-              "10 front rack reverse lunges 50/35kg",
-              "20/15cal row",
-              "40 double unders",
-              "* aerobic power"
-            ],
-            "sub_title": "amrap 18min"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-27",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261027",
@@ -3648,6 +3603,85 @@
       },
       {
         "date": "2026-10-27",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 19.2",
+            "lines": [
+              "Beginning on an 8-minute clock, complete as many reps as possible of:",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "15 squat cleans, 135 lb.",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "13 squat cleans, 185 lb.",
+              "If completed before 8 minutes, add 4 minutes to the clock and proceed to:",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "11 squat cleans, 225 lb.",
+              "If completed before 12 minutes, add 4 minutes to the clock and proceed to:",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "9 squat cleans, 275 lb.",
+              "If completed before 16 minutes, add 4 minutes to the clock and proceed to:",
+              "25 toes-to-bars",
+              "50 double-unders",
+              "7 squat cleans, 315 lb.",
+              "Stop at 20 minutes."
+            ]
+          }
+        ],
+        "note": "Open: Open 19.2"
+      },
+      {
+        "date": "2026-10-27",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-27/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "calf stretch",
+              "inverted hamstring stretch",
+              "instep rotation",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10/8 cal row",
+              "10 reverse lunges",
+              "20 single unders"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "DEADLIFT 14MIN",
+            "lines": [
+              "3 sets",
+              "12-10-8 reps @rpe 7-8",
+              "hypertrophy"
+            ]
+          },
+          {
+            "title": "CONDITIONING 18MIN",
+            "lines": [
+              "10 front rack reverse lunges 50/35kg",
+              "20/15cal row",
+              "40 double unders",
+              "* aerobic power"
+            ],
+            "sub_title": "amrap 18min"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-27",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3723,42 +3757,8 @@
           }
         ],
         "note": "Benchmark: Chelsea"
-      },
-      {
-        "date": "2026-10-27",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 19.2",
-            "lines": [
-              "Beginning on an 8-minute clock, complete as many reps as possible of:",
-              "25 toes-to-bars",
-              "50 double-unders",
-              "15 squat cleans, 135 lb.",
-              "25 toes-to-bars",
-              "50 double-unders",
-              "13 squat cleans, 185 lb.",
-              "If completed before 8 minutes, add 4 minutes to the clock and proceed to:",
-              "25 toes-to-bars",
-              "50 double-unders",
-              "11 squat cleans, 225 lb.",
-              "If completed before 12 minutes, add 4 minutes to the clock and proceed to:",
-              "25 toes-to-bars",
-              "50 double-unders",
-              "9 squat cleans, 275 lb.",
-              "If completed before 16 minutes, add 4 minutes to the clock and proceed to:",
-              "25 toes-to-bars",
-              "50 double-unders",
-              "7 squat cleans, 315 lb.",
-              "Stop at 20 minutes."
-            ]
-          }
-        ],
-        "note": "Open: Open 19.2"
       }
     ]
   },
-  "last_updated": "2026-10-27T03:52:35.727242"
+  "last_updated": "2026-10-27T08:00:10.971735"
 }
