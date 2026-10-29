@@ -1,140 +1,5 @@
 {
   "workouts": {
-    "2026-10-14": [
-      {
-        "date": "2026-10-14",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/261014",
-        "sections": [
-          {
-            "title": "FOR TIME",
-            "lines": [
-              "50 strict pull-ups",
-              "Every time you break, complete 10 barbell front rack walking lunges.",
-              "♀ 125-lb barbell",
-              "♂ 185-lb barbell"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-10-14",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-october-14-2026/",
-        "sections": [
-          {
-            "title": "General Warm-Up",
-            "lines": [
-              "2:00 Cardio Choice",
-              ":20 Alternating Scorpions",
-              ":20",
-              "Down Dog to Up Dog",
-              "10",
-              "Down Dog Toe Touches",
-              ":20/:20",
-              "Crossbody Lat Stretch",
-              "15",
-              "Banded Pull-Aparts",
-              "5/5",
-              "Quadruped Thoracic Rotations",
-              "2 Sets (Priming the Press and Midline):",
-              "8 Inchworm Push-Ups",
-              "16",
-              "Bear Plank Shoulder Taps",
-              "8/8 Single Arm Dumbbell Strict Press @ Light Load",
-              ":10/:10 Single Arm Dumbbell Overhead Hold",
-              ":20",
-              "Hollow Hold"
-            ]
-          },
-          {
-            "title": "Loading Notes:",
-            "lines": [
-              "Suggested loading and jumps for 3RM for the day.",
-              "5 Reps @ 50%",
-              "4 Reps @ 60%",
-              "3 Reps @ 65-70%",
-              "3 Reps @ 70-75%",
-              "2 Reps @ 80-85%",
-              "1-2 Reps @ 90%",
-              "Then make a jump to around 92-95% for a 3RM Attempt"
-            ]
-          },
-          {
-            "title": "15:00 AMRAP",
-            "lines": [
-              "5/3 Push-Ups",
-              "1-2-3-4",
-              "Wall Walks",
-              "(10-in from wall)",
-              "5 Strict Pull-Ups",
-              "8 Toes to Bar",
-              "Increase",
-              "Wall Walks",
-              "by 1 each round. After completing the round of 4 Wall Walks, return to 1 and repeat the sequence.",
-              "Score = Rounds + Reps"
-            ]
-          },
-          {
-            "title": "Wall Walk Standard:",
-            "lines": [
-              "Hands to 10-in from the wall"
-            ]
-          },
-          {
-            "title": "Goal:",
-            "lines": [
-              "8 Total Rounds (2 Full Rounds of the Sequence)"
-            ]
-          },
-          {
-            "title": "RPE:",
-            "lines": [
-              "7/10"
-            ]
-          },
-          {
-            "title": "Primary Objective:",
-            "lines": [
-              "Maintain consistent gymnastics quality across all four movements while managing the increasing wall walk volume."
-            ]
-          },
-          {
-            "title": "Secondary Objective:",
-            "lines": [
-              "Keep the push-ups, strict pull-ups, and toes to bar in controlled, repeatable sets with no major drop-off late."
-            ]
-          },
-          {
-            "title": "15:00 AMRAP",
-            "lines": [
-              "5/3 Push-Ups"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-10-14",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 20.5",
-            "lines": [
-              "For time, partitioned any way:",
-              "40 muscle-ups",
-              "80-cal. row",
-              "120 wall-ball shots, 20-lb. ball to 10 ft.",
-              "Time cap: 20 min."
-            ]
-          }
-        ],
-        "note": "Open: Open 20.5"
-      }
-    ],
     "2026-10-15": [
       {
         "date": "2026-10-15",
@@ -278,83 +143,6 @@
           }
         ],
         "note": "Open: Open 19.1"
-      },
-      {
-        "date": "2026-10-15",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-15/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "instep rotations",
-              "hand walk",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 good mornings",
-              "10 box step ups",
-              "10/8cal row"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "ROMANIAN DEADLIFT 15MIN",
-            "lines": [
-              "3-4 sets",
-              "10 romanian deadlifts @rpe 7-8",
-              "strength & hypertrophy"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "16 dball box step ups 60/50cm",
-              "32/26cal row",
-              "16 dball over shoulder 20/15kg",
-              "* aerobic power"
-            ],
-            "sub_title": "amrap 16min"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-15",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Coffland",
-            "sub_title": "Hang from a pull-up bar for 6 minutes",
-            "lines": [
-              "Each time you drop from the bar, complete:",
-              "800-meter run",
-              "30 push-ups"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-10-15",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Marguerita",
-            "lines": [
-              "50 reps for time of:",
-              "Burpee/Push-up/Jumping-Jack/Sit-up/Handstand \n Video link"
-            ]
-          }
-        ],
-        "note": "Benchmark: Marguerita"
       }
     ],
     "2026-10-16": [
@@ -1275,20 +1063,6 @@
       },
       {
         "date": "2026-10-19",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Working Sets:3 x 2 Split Jerk6 × 1 Split Jerk"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-10-19",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -1510,34 +1284,6 @@
               "* muscular endurance"
             ],
             "sub_title": "amrap 5min x 3 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-20",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Deadlift 1x8",
-              "3 SETS",
-              "8 Deadlifts",
-              "*Start Mod-Heavy and build to Heavy",
-              "* -Rest as Needed b/t Sets-",
-              "* (Score is Heaviest Weight)"
-            ]
-          },
-          {
-            "title": "WOD",
-            "sub_title": "3 ROUNDS FOR TIME",
-            "lines": [
-              "800m Run",
-              "15 Deadlifts 102kg/70kg",
-              "15 Toes to Bar"
-            ]
           }
         ]
       },
@@ -3761,7 +3507,275 @@
         ],
         "note": "Benchmark: DIANE"
       }
+    ],
+    "2026-10-29": [
+      {
+        "date": "2026-10-29",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-29/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "samson stretch",
+              "hand walk",
+              "instep rotations",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 prone snow angels",
+              "10 snatch grip deadlifts",
+              "10 squat jumps"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "HANG POWER SNATCH 10MIN",
+            "lines": [
+              "on every 00:30 x 20 sets",
+              "1 hang power snatch",
+              "(same weight across)",
+              "explosive power"
+            ]
+          },
+          {
+            "title": "CONDITIONING 10MIN",
+            "lines": [
+              "15 hang power snatches",
+              "30 box jumps 60/50cm",
+              "* barbell: 40/30kg",
+              "barbell cycling & explosive power"
+            ],
+            "sub_title": "3 rounds"
+          },
+          {
+            "title": "UPPER BACK / HIP EXTENSION 6MIN",
+            "lines": [
+              "emom 6min",
+              "1. 5/5 snatch grip single leg deadlifts",
+              "2. 8-12 snatch grip upright row"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-10-29",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/261029",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Rest Day",
+              "No Sugar: The Two Words That Matter Most (Part 1 of 3)",
+              "In 2002, CrossFit condensed its nutrition prescription into 14 words, ending with \"no sugar.\" Learn why your body has no requirement for added sugar, how modern food processing changed how much of it we eat and how fast, and where it goes once it's absorbed."
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-10-29",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-october-29-2026/",
+        "sections": [
+          {
+            "title": "General Warm-Up",
+            "lines": [
+              "1:30 Cardio Choice",
+              ":15/:15",
+              "Samson Stretch",
+              "10m Crawling Lunge",
+              "10m Toy Soldiers",
+              "10",
+              "Prone Press Up",
+              "2 Sets (Priming the Posterior Chain for Heavy Pulls):",
+              "15",
+              "Banded Good Mornings",
+              "8/8 Single Leg",
+              "Glute Bridges",
+              ":20 Glute Bridge Hold",
+              "10",
+              "Alternating Bird-Dogs",
+              "Specific Prep",
+              "2 Sets",
+              "100m Run (Building Pace, Tall Posture, Quick Turnover)"
+            ]
+          },
+          {
+            "title": "5 Romanian Deadlifts @ Empty Barbell (Soft Knees, Feel the Hamstrings Load)",
+            "lines": [
+              "5 Deadlifts to Mid-Shin @ Empty Barbell (Set the Lats, Push the Floor Away, Hips and Shoulders Rise Together)"
+            ]
+          },
+          {
+            "title": "For Time",
+            "lines": [
+              "3 Sets:",
+              "200m Run",
+              "12 Deadlifts",
+              "200m Run",
+              "Rest 1:00",
+              "6 Deadlifts",
+              "400m Run",
+              "6 Deadlifts",
+              "Rest 1:00"
+            ]
+          },
+          {
+            "title": "Time Cap:",
+            "lines": [
+              "28:00",
+              "Score = Time"
+            ]
+          },
+          {
+            "title": "Barbell:",
+            "lines": [
+              "225/155lb (102/70kg)"
+            ]
+          },
+          {
+            "title": "Goal:",
+            "lines": [
+              "21:00-26:00, consistent set times across all three"
+            ]
+          },
+          {
+            "title": "Stimulus:",
+            "lines": [
+              "Posterior Chain / Fatigued Running"
+            ]
+          },
+          {
+            "title": "RPE:",
+            "lines": [
+              "8/10"
+            ]
+          },
+          {
+            "title": "Primary Objective:",
+            "lines": [
+              "Build posterior chain stamina while holding consistent running mechanics and output under accumulating fatigue."
+            ]
+          },
+          {
+            "title": "Secondary Objective:",
+            "lines": [
+              "Transition cleanly between moderate hinging and running with controlled breathing and efficient mechanics."
+            ]
+          },
+          {
+            "title": "Barbell:",
+            "lines": [
+              "185/125lb (84/57kg)"
+            ]
+          },
+          {
+            "title": "For Time",
+            "lines": [
+              "3 Sets:",
+              "150m Run",
+              "10 Deadlifts",
+              "150m Run",
+              "Rest 1:00"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-10-29",
+        "source": "cf1013",
+        "source_name": "CrossFit 1013",
+        "url": "https://www.crossfit1013.com/wod",
+        "sections": [
+          {
+            "title": "WOD",
+            "sub_title": "EVERY 3:00 (6 SETS)",
+            "lines": [
+              "15/12 Calorie Row",
+              "12 Thrusters 43kg/29kg",
+              "*Score is slowest set"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-10-29",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "Strength",
+            "lines": [
+              "Metcon:- Sprint42 Double Unders21 Thrusters 42.5/30kg30 Double Unders15 Thrusters18 Double Unders9 Thrusters*Scale: Singles (63 / 45 / 27)*Score = time, or reps at the cap*New build"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-10-29",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Jared",
+            "sub_title": "4 rounds for time of:",
+            "lines": [
+              "Run 800 meters",
+              "40 pull-ups",
+              "70 push-ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-10-29",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Baseline",
+            "lines": [
+              "For time:",
+              "row  500 m",
+              "40 squats",
+              "30 sit-ups",
+              "20  push -ups",
+              "10 pull-ups"
+            ]
+          }
+        ],
+        "note": "Benchmark: Baseline"
+      },
+      {
+        "date": "2026-10-29",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 16.3",
+            "lines": [
+              "Complete as many rounds and reps as possible in 7 minutes of:",
+              "10 power snatches",
+              "3 bar muscle-ups",
+              "*Men use 75 lb.*",
+              "*Women use 55 lb.*"
+            ]
+          }
+        ],
+        "note": "Open: Open 16.3"
+      }
     ]
   },
-  "last_updated": "2026-10-28T14:09:11.204058"
+  "last_updated": "2026-10-29T04:12:58.577082"
 }
