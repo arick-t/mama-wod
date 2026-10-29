@@ -3511,59 +3511,6 @@
     "2026-10-29": [
       {
         "date": "2026-10-29",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-29/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "samson stretch",
-              "hand walk",
-              "instep rotations",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 snatch grip deadlifts",
-              "10 squat jumps"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "HANG POWER SNATCH 10MIN",
-            "lines": [
-              "on every 00:30 x 20 sets",
-              "1 hang power snatch",
-              "(same weight across)",
-              "explosive power"
-            ]
-          },
-          {
-            "title": "CONDITIONING 10MIN",
-            "lines": [
-              "15 hang power snatches",
-              "30 box jumps 60/50cm",
-              "* barbell: 40/30kg",
-              "barbell cycling & explosive power"
-            ],
-            "sub_title": "3 rounds"
-          },
-          {
-            "title": "UPPER BACK / HIP EXTENSION 6MIN",
-            "lines": [
-              "emom 6min",
-              "1. 5/5 snatch grip single leg deadlifts",
-              "2. 8-12 snatch grip upright row"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-10-29",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261029",
@@ -3690,6 +3637,78 @@
       },
       {
         "date": "2026-10-29",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 16.3",
+            "lines": [
+              "Complete as many rounds and reps as possible in 7 minutes of:",
+              "10 power snatches",
+              "3 bar muscle-ups",
+              "*Men use 75 lb.*",
+              "*Women use 55 lb.*"
+            ]
+          }
+        ],
+        "note": "Open: Open 16.3"
+      },
+      {
+        "date": "2026-10-29",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-29/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "samson stretch",
+              "hand walk",
+              "instep rotations",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 prone snow angels",
+              "10 snatch grip deadlifts",
+              "10 squat jumps"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "HANG POWER SNATCH 10MIN",
+            "lines": [
+              "on every 00:30 x 20 sets",
+              "1 hang power snatch",
+              "(same weight across)",
+              "explosive power"
+            ]
+          },
+          {
+            "title": "CONDITIONING 10MIN",
+            "lines": [
+              "15 hang power snatches",
+              "30 box jumps 60/50cm",
+              "* barbell: 40/30kg",
+              "barbell cycling & explosive power"
+            ],
+            "sub_title": "3 rounds"
+          },
+          {
+            "title": "UPPER BACK / HIP EXTENSION 6MIN",
+            "lines": [
+              "emom 6min",
+              "1. 5/5 snatch grip single leg deadlifts",
+              "2. 8-12 snatch grip upright row"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-10-29",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3755,27 +3774,8 @@
           }
         ],
         "note": "Benchmark: Baseline"
-      },
-      {
-        "date": "2026-10-29",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 16.3",
-            "lines": [
-              "Complete as many rounds and reps as possible in 7 minutes of:",
-              "10 power snatches",
-              "3 bar muscle-ups",
-              "*Men use 75 lb.*",
-              "*Women use 55 lb.*"
-            ]
-          }
-        ],
-        "note": "Open: Open 16.3"
       }
     ]
   },
-  "last_updated": "2026-10-29T04:12:58.577082"
+  "last_updated": "2026-10-29T08:46:41.469455"
 }
