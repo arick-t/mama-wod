@@ -3505,43 +3505,6 @@
     "2026-10-31": [
       {
         "date": "2026-10-31",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-31/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "instep rotation",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "8 good mornings",
-              "8 burpees",
-              "*partner is biking"
-            ]
-          },
-          {
-            "title": "CONDITIONING 30MIN",
-            "lines": [
-              "in teams of 2",
-              "40 deadlifts 80/60kg*",
-              "50/47/45cal bike",
-              "60 burpees over the bar (partner holds plank)",
-              "* score: slowest rounds",
-              "* rx+: 100/70kg"
-            ],
-            "sub_title": "on every 10:00 x 3 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-31",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261031",
@@ -3674,6 +3637,82 @@
       },
       {
         "date": "2026-10-31",
+        "source": "open",
+        "source_name": "CrossFit Open Workouts",
+        "url": "https://games.crossfit.com/workouts/open",
+        "sections": [
+          {
+            "title": "Open 12.3",
+            "lines": [
+              "Complete as many rounds and reps as possible in 18 minutes of:",
+              "15 Box jumps, 24\" box",
+              "115 pound Push press, 12 reps",
+              "9 Toes-to-bar",
+              "*WOMEN*",
+              "-",
+              "*includes Masters Women up to 54 years old*",
+              "Complete as many rounds and reps as possible in 18 minutes of:",
+              "15 Box jumps, 20\" box",
+              "75 pound Push press, 12 reps",
+              "9 Toes-to-bar",
+              "*MASTERS MEN*",
+              "-",
+              "*includes Masters Men 55+*",
+              "Complete as many rounds and reps as possible in 18 minutes of:",
+              "15 Box jumps or step-ups, 20\" box",
+              "95 pound Push press, 12 reps",
+              "9 Toes-to-bar",
+              "*MASTERS WOMEN*",
+              "-",
+              "*includes Masters Women 55+*",
+              "Complete as many rounds and reps as possible in 18 minutes of:",
+              "15 Box jumps or step-ups, 20\" box",
+              "55 pound Push press, 12 reps",
+              "9 Toes-to-bar"
+            ]
+          }
+        ],
+        "note": "Open: Open 12.3"
+      },
+      {
+        "date": "2026-10-31",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-10-31/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "instep rotation",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "8 good mornings",
+              "8 burpees",
+              "*partner is biking"
+            ]
+          },
+          {
+            "title": "CONDITIONING 30MIN",
+            "lines": [
+              "in teams of 2",
+              "40 deadlifts 80/60kg*",
+              "50/47/45cal bike",
+              "60 burpees over the bar (partner holds plank)",
+              "* score: slowest rounds",
+              "* rx+: 100/70kg"
+            ],
+            "sub_title": "on every 10:00 x 3 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-10-31",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3739,47 +3778,8 @@
           }
         ],
         "note": "Benchmark: Jackie"
-      },
-      {
-        "date": "2026-10-31",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 12.3",
-            "lines": [
-              "Complete as many rounds and reps as possible in 18 minutes of:",
-              "15 Box jumps, 24\" box",
-              "115 pound Push press, 12 reps",
-              "9 Toes-to-bar",
-              "*WOMEN*",
-              "-",
-              "*includes Masters Women up to 54 years old*",
-              "Complete as many rounds and reps as possible in 18 minutes of:",
-              "15 Box jumps, 20\" box",
-              "75 pound Push press, 12 reps",
-              "9 Toes-to-bar",
-              "*MASTERS MEN*",
-              "-",
-              "*includes Masters Men 55+*",
-              "Complete as many rounds and reps as possible in 18 minutes of:",
-              "15 Box jumps or step-ups, 20\" box",
-              "95 pound Push press, 12 reps",
-              "9 Toes-to-bar",
-              "*MASTERS WOMEN*",
-              "-",
-              "*includes Masters Women 55+*",
-              "Complete as many rounds and reps as possible in 18 minutes of:",
-              "15 Box jumps or step-ups, 20\" box",
-              "55 pound Push press, 12 reps",
-              "9 Toes-to-bar"
-            ]
-          }
-        ],
-        "note": "Open: Open 12.3"
       }
     ]
   },
-  "last_updated": "2026-10-31T04:06:21.840991"
+  "last_updated": "2026-10-31T08:40:27.178635"
 }
