@@ -3540,58 +3540,6 @@
     "2026-11-01": [
       {
         "date": "2026-11-01",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-11-01/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "lat stretch",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. air squats",
-              "2. bike/ski",
-              "3. kb deadlifts",
-              "4. scap. push ups"
-            ],
-            "sub_title": "30sec on / 15sec off x2 rounds"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "1. 30-50sec (weighted) wall sit",
-              "2. 10-15cal bike/ski",
-              "3. 15-20 russian kb swings",
-              "4. 8-12 db push ups",
-              "5. rest",
-              "Sunday Endurance for Open Gym",
-              "row or ski",
-              "5 rounds for time",
-              "",
-              "200m",
-              "– Rest :30 between rounds",
-              "4 rounds for time",
-              "",
-              "400m",
-              "* – Rest 1:00 between rounds",
-              "3 rounds for time",
-              "",
-              "600m",
-              "* – Rest 1:30 between rounds"
-            ],
-            "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-11-01",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-november-1-2026/",
@@ -3696,6 +3644,58 @@
       },
       {
         "date": "2026-11-01",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-11-01/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "lat stretch",
+              "scorpions"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. air squats",
+              "2. bike/ski",
+              "3. kb deadlifts",
+              "4. scap. push ups"
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "1. 30-50sec (weighted) wall sit",
+              "2. 10-15cal bike/ski",
+              "3. 15-20 russian kb swings",
+              "4. 8-12 db push ups",
+              "5. rest",
+              "Sunday Endurance for Open Gym",
+              "row or ski",
+              "5 rounds for time",
+              "",
+              "200m",
+              "– Rest :30 between rounds",
+              "4 rounds for time",
+              "",
+              "400m",
+              "* – Rest 1:00 between rounds",
+              "3 rounds for time",
+              "",
+              "600m",
+              "* – Rest 1:30 between rounds"
+            ],
+            "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-11-01",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -3749,5 +3749,5 @@
       }
     ]
   },
-  "last_updated": "2026-11-01T03:58:03.619112"
+  "last_updated": "2026-11-01T09:09:52.651143"
 }
