@@ -124,6 +124,15 @@ Recurring **productive pairings** observed (inspire, don’t clone):
 
 <!-- WEEKLY_DIGEST_ANCHOR -->
 
+### 2026-11-01 — weekly digest
+- Window: 2026-10-26 → 2026-11-01 (Israel calendar; sources: myleo + Restoration only).
+- Sessions seen: myleo=7, restoration=7.
+- Format signals: for time:5, amrap:4, partner:4, stamina:2, emom:2.
+- Recurring part titles: General Warm-Up (×7); Goal: (×6); RPE: (×6); Primary Objective: (×5); Secondary Objective: (×5); 12 Power Cleans (×5); MOBILITY 3MIN (×4); Barbell: (×4).
+- Load language samples: 50%, 55%, 60%, 65%, 5/15kg, 15/12kg, 24/16kg, 50/35kg, 60%, 75%, 60%, 75%.
+- Action for coach: strengthen matching principles in sections A–E above if signals confirm; do not append raw WODs.
+
+
 ### 2026-10-25 — weekly digest
 - Window: 2026-10-19 → 2026-10-25 (Israel calendar; sources: myleo + Restoration only).
 - Sessions seen: myleo=7, restoration=7.
