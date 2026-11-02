@@ -3480,51 +3480,6 @@
     "2026-11-02": [
       {
         "date": "2026-11-02",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-11-02/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "lat stretch",
-              "scorpions",
-              "thoracic rotations"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10/8cal row",
-              "10 prone snow angels",
-              "10 ring rows"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "STRICT PRESS 14MIN",
-            "lines": [
-              "3 sets",
-              "12-10-8 reps @rpe 7,5-8,5",
-              "hypertrophy"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "4 wall walks",
-              "8 strict pull ups",
-              "16/12cal row",
-              "* aerobic power & muscular endurance"
-            ],
-            "sub_title": "amrap 16min"
-          }
-        ]
-      },
-      {
-        "date": "2026-11-02",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261102",
@@ -3651,6 +3606,51 @@
       },
       {
         "date": "2026-11-02",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-11-02/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "lat stretch",
+              "scorpions",
+              "thoracic rotations"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10/8cal row",
+              "10 prone snow angels",
+              "10 ring rows"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "STRICT PRESS 14MIN",
+            "lines": [
+              "3 sets",
+              "12-10-8 reps @rpe 7,5-8,5",
+              "hypertrophy"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "4 wall walks",
+              "8 strict pull ups",
+              "16/12cal row",
+              "* aerobic power & muscular endurance"
+            ],
+            "sub_title": "amrap 16min"
+          }
+        ]
+      },
+      {
+        "date": "2026-11-02",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3732,5 +3732,5 @@
       }
     ]
   },
-  "last_updated": "2026-11-02T04:10:14.715012"
+  "last_updated": "2026-11-02T09:17:37.668556"
 }
