@@ -3487,53 +3487,6 @@
     "2026-11-03": [
       {
         "date": "2026-11-03",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-11-03/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "calf stretch",
-              "inverted hamstring stretch",
-              "instep rotation",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 good mornings",
-              "30sec plank hold",
-              "20 single unders"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "DEADLIFT 14MIN",
-            "lines": [
-              "3 sets",
-              "12-10-8 reps @rpe 7,5-8,5",
-              "hypertrophy"
-            ]
-          },
-          {
-            "title": "CONDITIONING 17MIN",
-            "lines": [
-              "5 rounds",
-              "",
-              "15 sumo deadlift high pulls 40/30kg",
-              "30 sit ups",
-              "60 double unders",
-              "* aerobic power (vo2max)"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-11-03",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261103",
@@ -3650,6 +3603,53 @@
       },
       {
         "date": "2026-11-03",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-11-03/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "calf stretch",
+              "inverted hamstring stretch",
+              "instep rotation",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 good mornings",
+              "30sec plank hold",
+              "20 single unders"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "DEADLIFT 14MIN",
+            "lines": [
+              "3 sets",
+              "12-10-8 reps @rpe 7,5-8,5",
+              "hypertrophy"
+            ]
+          },
+          {
+            "title": "CONDITIONING 17MIN",
+            "lines": [
+              "5 rounds",
+              "",
+              "15 sumo deadlift high pulls 40/30kg",
+              "30 sit ups",
+              "60 double unders",
+              "* aerobic power (vo2max)"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-11-03",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3722,5 +3722,5 @@
       }
     ]
   },
-  "last_updated": "2026-11-03T05:52:00.816598"
+  "last_updated": "2026-11-03T09:37:07.921981"
 }
