@@ -3449,42 +3449,6 @@
     "2026-11-04": [
       {
         "date": "2026-11-04",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-11-04/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "instep rotation",
-              "scorpions",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "12 scap. push ups",
-              "12 box step ups",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "CONDITIONING 30MIN",
-            "lines": [
-              "1. 24/19cal bike into max db bench presses 2x22,5/15kg",
-              "2. 24/19cal ski into max dball box step ups (50cm) 20/15kg",
-              "* score: total reps (bench press + step ups)",
-              "* aerobic capacity & muscular endurance"
-            ],
-            "sub_title": "amrap 3min  x 10 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-11-04",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261104",
@@ -3604,6 +3568,42 @@
       },
       {
         "date": "2026-11-04",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-11-04/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "instep rotation",
+              "scorpions",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "12 scap. push ups",
+              "12 box step ups",
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "CONDITIONING 30MIN",
+            "lines": [
+              "1. 24/19cal bike into max db bench presses 2x22,5/15kg",
+              "2. 24/19cal ski into max dball box step ups (50cm) 20/15kg",
+              "* score: total reps (bench press + step ups)",
+              "* aerobic capacity & muscular endurance"
+            ],
+            "sub_title": "amrap 3min  x 10 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-11-04",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3657,5 +3657,5 @@
       }
     ]
   },
-  "last_updated": "2026-11-04T04:56:41.198483"
+  "last_updated": "2026-11-04T09:16:05.252006"
 }
