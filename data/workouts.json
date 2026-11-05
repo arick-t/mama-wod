@@ -3383,53 +3383,6 @@
     "2026-11-05": [
       {
         "date": "2026-11-05",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-11-05/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "lat stretch",
-              "calf stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "40sec on / 20sec off x 6",
-              "1. hollow hold",
-              "2. db deadlifts",
-              "3. shuttle runs"
-            ]
-          },
-          {
-            "title": "BENT OVER ROW 12MIN",
-            "lines": [
-              "3-4 sets",
-              "12 barbell bent over row",
-              "hypertrophy"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "2 rounds",
-              "",
-              "35 toes to bar",
-              "45 db snatches 22,5/15kg",
-              "on every 2:00 (starting at 00:00)",
-              "8 lanes shuttle runs",
-              "* aerobic power"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-11-05",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261105",
@@ -3549,6 +3502,53 @@
       },
       {
         "date": "2026-11-05",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-11-05/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "lat stretch",
+              "calf stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "40sec on / 20sec off x 6",
+              "1. hollow hold",
+              "2. db deadlifts",
+              "3. shuttle runs"
+            ]
+          },
+          {
+            "title": "BENT OVER ROW 12MIN",
+            "lines": [
+              "3-4 sets",
+              "12 barbell bent over row",
+              "hypertrophy"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "2 rounds",
+              "",
+              "35 toes to bar",
+              "45 db snatches 22,5/15kg",
+              "on every 2:00 (starting at 00:00)",
+              "8 lanes shuttle runs",
+              "* aerobic power"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-11-05",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -3611,5 +3611,5 @@
       }
     ]
   },
-  "last_updated": "2026-11-05T05:18:23.944299"
+  "last_updated": "2026-11-05T09:43:45.915535"
 }
