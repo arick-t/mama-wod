@@ -3325,61 +3325,6 @@
     "2026-11-06": [
       {
         "date": "2026-11-06",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-11-06/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "sumo squat stretch",
-              "lat stretch",
-              "calf stretch",
-              "thoracic rotations"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "2-4-6-8…",
-              "squat jumps",
-              "push press",
-              "burpees"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "FRONT SQUAT 14MIN",
-            "lines": [
-              "3 sets",
-              "12-10-8 reps @rpe 7,5-8,5",
-              "hypertrophy"
-            ]
-          },
-          {
-            "title": "BENCHMARK CONDITIONING 12MIN",
-            "lines": [
-              "\"Rahoi\"",
-              "12 box jumps 60/50cm",
-              "6 thrusters 40/30kg",
-              "6 bar facing burpees"
-            ],
-            "sub_title": "amrap 12min"
-          },
-          {
-            "title": "SHOULDER & CORE 5MIN",
-            "lines": [
-              "1. barbell z-press",
-              "2. side plank left",
-              "3. side plank right"
-            ],
-            "sub_title": "20sec on / 10sec off x 9 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-11-06",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261106",
@@ -3522,6 +3467,61 @@
       },
       {
         "date": "2026-11-06",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-11-06/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "lat stretch",
+              "calf stretch",
+              "thoracic rotations"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "2-4-6-8…",
+              "squat jumps",
+              "push press",
+              "burpees"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "FRONT SQUAT 14MIN",
+            "lines": [
+              "3 sets",
+              "12-10-8 reps @rpe 7,5-8,5",
+              "hypertrophy"
+            ]
+          },
+          {
+            "title": "BENCHMARK CONDITIONING 12MIN",
+            "lines": [
+              "\"Rahoi\"",
+              "12 box jumps 60/50cm",
+              "6 thrusters 40/30kg",
+              "6 bar facing burpees"
+            ],
+            "sub_title": "amrap 12min"
+          },
+          {
+            "title": "SHOULDER & CORE 5MIN",
+            "lines": [
+              "1. barbell z-press",
+              "2. side plank left",
+              "3. side plank right"
+            ],
+            "sub_title": "20sec on / 10sec off x 9 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-11-06",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3606,5 +3606,5 @@
       }
     ]
   },
-  "last_updated": "2026-11-06T05:16:22.797795"
+  "last_updated": "2026-11-06T09:41:57.723186"
 }
