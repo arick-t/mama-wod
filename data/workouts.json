@@ -3376,45 +3376,6 @@
     "2026-11-07": [
       {
         "date": "2026-11-07",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-11-07/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "scorpions",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "10 good mornings",
-              "10 elbow rotations",
-              "10 scap. push ups",
-              "*partner is rowing"
-            ],
-            "sub_title": "amrap 6min"
-          },
-          {
-            "title": "CONDITIONING 34MIN",
-            "lines": [
-              "in teams of 2",
-              "4 rounds",
-              "",
-              "50 push ups",
-              "40 hang power cleans 40/30kg",
-              "50/45/40cal row"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-11-07",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261107",
@@ -3527,6 +3488,45 @@
       },
       {
         "date": "2026-11-07",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-11-07/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "scorpions",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "10 good mornings",
+              "10 elbow rotations",
+              "10 scap. push ups",
+              "*partner is rowing"
+            ],
+            "sub_title": "amrap 6min"
+          },
+          {
+            "title": "CONDITIONING 34MIN",
+            "lines": [
+              "in teams of 2",
+              "4 rounds",
+              "",
+              "50 push ups",
+              "40 hang power cleans 40/30kg",
+              "50/45/40cal row"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-11-07",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3619,5 +3619,5 @@
       }
     ]
   },
-  "last_updated": "2026-11-07T04:36:03.889293"
+  "last_updated": "2026-11-07T08:51:29.894379"
 }
