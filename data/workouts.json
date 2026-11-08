@@ -1,146 +1,5 @@
 {
   "workouts": {
-    "2026-10-24": [
-      {
-        "date": "2026-10-24",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/261024",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Saturday",
-              "261024"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-10-24",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-october-24-2026/",
-        "sections": [
-          {
-            "title": "General Warm-Up",
-            "lines": [
-              "2:00 Cardio Choice (Row Ideally)",
-              "10 Alternating Scorpions",
-              "10",
-              "Down Dog to Up Dog",
-              ":20/:20",
-              "World’s Greatest Stretch",
-              "10 Alternating Arm Swings",
-              "10",
-              "Banded Good Mornings",
-              "10",
-              "Bootstrap Squats",
-              "10 Air Squats (tall chest, full depth)",
-              "Specific Prep",
-              "2 Sets",
-              "200m Run",
-              "8 Medball Front Squats (elbows in, ball stays on the chest)",
-              "6 Medball Thrusters (drive through the heel, finish tall before the throw)",
-              "10 Seated Medball Russian Twists (feet light, rotate from the ribcage not the arms)"
-            ]
-          },
-          {
-            "title": "For Time (Teams of 2)",
-            "lines": [
-              "4 Rounds",
-              "500/450m Row",
-              "40 Wall Balls",
-              "400m Medball Run",
-              "30",
-              "Partner Medball Russian Twist Toss"
-            ]
-          },
-          {
-            "title": "Time Cap:",
-            "lines": [
-              "35:00",
-              "Score = Time",
-              "Wall Ball: 20/14lb (9/6kg) to 10/9ft Target",
-              "Medball: 20/14lb (9/6kg)"
-            ]
-          },
-          {
-            "title": "Goal:",
-            "lines": [
-              "26:00-32:00, roughly 7:00 per round"
-            ]
-          },
-          {
-            "title": "Stimulus:",
-            "lines": [
-              "Leg + Midline Stamina"
-            ]
-          },
-          {
-            "title": "RPE:",
-            "lines": [
-              "7.5/10"
-            ]
-          },
-          {
-            "title": "Primary Objective:",
-            "lines": [
-              "Complete even work between you and your partner."
-            ]
-          },
-          {
-            "title": "Secondary Objective:",
-            "lines": [
-              "Consistent round times, each round as close to ~7:00 as possible."
-            ]
-          },
-          {
-            "title": "For Time (Teams of 2)",
-            "lines": [
-              "4 Rounds",
-              "450/400m Row",
-              "30 Wall Balls",
-              "400m Medball Run",
-              "30",
-              "Partner Medball Russian Twist Toss",
-              "Wall Ball: 20/14lb (9/6kg) to 10/9ft",
-              "Medball: 20/14lb (9/6kg)"
-            ]
-          },
-          {
-            "title": "For Time (Teams of 2)",
-            "lines": [
-              "3 Rounds",
-              "350/300m Row",
-              "24 Wall Balls",
-              "200m Medball Run"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-10-24",
-        "source": "open",
-        "source_name": "CrossFit Open Workouts",
-        "url": "https://games.crossfit.com/workouts/open",
-        "sections": [
-          {
-            "title": "Open 19.3",
-            "lines": [
-              "For time:",
-              "200-ft. dumbbell overhead lunge",
-              "50 dumbbell box step-ups",
-              "50 strict handstand push-ups",
-              "200-ft. handstand walk",
-              "50-lb. dumbbell, 24-in. box",
-              "Time cap: 10 minutes"
-            ]
-          }
-        ],
-        "note": "Open: Open 19.3"
-      }
-    ],
     "2026-10-25": [
       {
         "date": "2026-10-25",
@@ -294,87 +153,6 @@
           }
         ],
         "note": "Open: Open 20.4"
-      },
-      {
-        "date": "2026-10-25",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-10-25/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "lat stretch",
-              "scorpions"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. prone snow angels",
-              "2. row",
-              "3. plank hold",
-              "4. 90/90 hip rotations"
-            ],
-            "sub_title": "30sec on / 15sec off x2 rounds"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "1. 20 handstand shoulder taps",
-              "2. 10-15cal row",
-              "3. 6-8 strict toes to bar",
-              "4. 10-14 goblet cossack squats",
-              "5. rest",
-              "Sunday Endurance for Open Gym",
-              "10 sets for time",
-              "500/450m row",
-              "* – rest 00:30 between sets"
-            ],
-            "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-10-25",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Johnson",
-            "sub_title": "Complete as many rounds and reps as possible in 20 minutes of:",
-            "lines": [
-              "9 deadlifts",
-              "8 muscle-ups",
-              "9 squat cleans"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-10-25",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "BARBARA",
-            "lines": [
-              "5 rounds for time:",
-              "15 Pull up",
-              "20 Push up",
-              "30 Sit up",
-              "50 Air Squat",
-              "2min Rest",
-              "(Time Cap 35min)",
-              "Do not include final 2min rest in your overall time."
-            ]
-          }
-        ],
-        "note": "Benchmark: BARBARA"
       }
     ],
     "2026-10-26": [
@@ -1321,20 +1099,6 @@
               "emom 6min",
               "1. 5/5 snatch grip single leg deadlifts",
               "2. 8-12 snatch grip upright row"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-10-29",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Metcon:- Sprint42 Double Unders21 Thrusters 42.5/30kg30 Double Unders15 Thrusters18 Double Unders9 Thrusters*Scale: Singles (63 / 45 / 27)*Score = time, or reps at the cap*New build"
             ]
           }
         ]
@@ -3617,7 +3381,204 @@
         ],
         "note": "Benchmark: Cindy"
       }
+    ],
+    "2026-11-08": [
+      {
+        "date": "2026-11-08",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-11-08/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "lat stretch",
+              "instep rotation"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. prone snow angels",
+              "2. row",
+              "3. plank hold",
+              "4. burpees"
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "1. 4-6 wall walks",
+              "2. 10-15cal row",
+              "3. 8-10 single leg deadlifts",
+              "4. 8-12 burpee box jumps",
+              "5. rest",
+              "Sunday Endurance for Open Gym",
+              "for time",
+              "",
+              "1000/800m row",
+              "rest 1:00",
+              "2000/1600m row",
+              "rest 2:00",
+              "3000/2400m row",
+              "rest 3:00",
+              "4000/3200m row"
+            ],
+            "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-11-08",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-november-8-2026/",
+        "sections": [
+          {
+            "title": "General Warm-Up",
+            "lines": [
+              "1:30 Cardio Choice",
+              "10",
+              "Scapular Wall Slides",
+              "10",
+              "Banded Pull Down",
+              "10m Knee Hug + Lunge and Twist",
+              "10m",
+              "Ostrich Walk",
+              "5/5 Lateral Lunges",
+              "2 Sets (Priming the Pull and the Posterior Chain):",
+              "8 Ring Rows, 2 Second Pause at the Top",
+              "10 Kettlebell Deadlifts, Light",
+              "8 Tall Kneeling",
+              "Kettlebell Halos",
+              "(4 Each Direction)",
+              "1 Set:",
+              "5 Strict Pull-Ups at Today’s Pace (Full lockout at the bottom, chin clearly over)",
+              "Then take 2 sets on the Weighted Strict Pull-Up to find a load that leaves the last rep strong."
+            ]
+          },
+          {
+            "title": "Weighted Pull-ups",
+            "lines": [
+              "3 Weighted Strict Pull-Ups + 5 Strict Pull-Ups)"
+            ]
+          },
+          {
+            "title": "Loading Notes:",
+            "lines": [
+              "Level 2: 3 Strict Pull-Ups + 5 Banded Strict Pull-Ups",
+              "Level 1: 3 Jumping Eccentric Pull-Ups + 5 Ring Rows"
+            ]
+          },
+          {
+            "title": "“1UP”",
+            "lines": [
+              "For Quality",
+              "Every 4:00 x 4 Sets",
+              "16 Dual Kettlebell Alternating Gorilla Row (8/Side)",
+              "10 Dual Kettlebell Front Rack Reverse Lunges (5/Side)",
+              "16 GHD Hip Extensions",
+              "Score = Check Box",
+              "Kettlebells: 53/35lb (24/16kg)",
+              "Goals: Complete each set at a quality tempo in roughly 3:00"
+            ]
+          },
+          {
+            "title": "RPE:",
+            "lines": [
+              "4/10"
+            ]
+          },
+          {
+            "title": "Primary Objective:",
+            "lines": [
+              "All three movements unbroken at full range in every set."
+            ]
+          },
+          {
+            "title": "Secondary Objective:",
+            "lines": [
+              "Same load and same tempo from set one through set four."
+            ]
+          },
+          {
+            "title": "[1UP: Levels]",
+            "lines": [
+              "Level 2:",
+              "Every 4:00 x 4 Sets",
+              "16 Dual Kettlebell Alternating Gorilla Row (8/Side)",
+              "10 Dual Kettlebell Front Rack Reverse Lunges (5/Side)",
+              "16 GHD Hip Extensions",
+              "Kettlebells: 35/26lb (16/12kg)",
+              "Level 1:",
+              "Every 4:00 x 4 Sets",
+              "12 Dual Kettlebell Alternating Gorilla Row (6/Side)",
+              "8 Dual Kettlebell Front Rack Reverse Lunges (4/Side)",
+              "15",
+              "Banded Good Mornings",
+              "or Glute Hip Thrusts off Bench",
+              "Kettlebells: 26/18lb (12/8kg)",
+              "Masters 55+:",
+              "Every 4:00 x 4 Sets",
+              "12 Dual Kettlebell Alternating Gorilla Row (6/Side)"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-11-08",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Hero Wod.",
+              "Bulger10 Rounds for Time:150m Run7 chest to bar pull-ups7 Front Squats 60/42.5kg7 HSPUs"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-11-08",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Maxton",
+            "sub_title": "13 rounds for time of:",
+            "lines": [
+              "8 strict pull-ups",
+              "26 box step-ups",
+              "21 burpees"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-11-08",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Mary",
+            "lines": [
+              "20 minutes AMRAP",
+              "5  handstand push-up s",
+              "10 pistol squat, alternating",
+              "15 pull-ups"
+            ]
+          }
+        ],
+        "note": "Benchmark: Mary"
+      }
     ]
   },
-  "last_updated": "2026-11-07T14:30:05.141304"
+  "last_updated": "2026-11-08T04:06:39.646234"
 }
