@@ -3385,54 +3385,6 @@
     "2026-11-08": [
       {
         "date": "2026-11-08",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-11-08/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "lat stretch",
-              "instep rotation"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "1. prone snow angels",
-              "2. row",
-              "3. plank hold",
-              "4. burpees"
-            ],
-            "sub_title": "30sec on / 15sec off x2 rounds"
-          },
-          {
-            "title": "CONDITIONING 35MIN",
-            "lines": [
-              "1. 4-6 wall walks",
-              "2. 10-15cal row",
-              "3. 8-10 single leg deadlifts",
-              "4. 8-12 burpee box jumps",
-              "5. rest",
-              "Sunday Endurance for Open Gym",
-              "for time",
-              "",
-              "1000/800m row",
-              "rest 1:00",
-              "2000/1600m row",
-              "rest 2:00",
-              "3000/2400m row",
-              "rest 3:00",
-              "4000/3200m row"
-            ],
-            "sub_title": "emom 35min (7 rounds)"
-          }
-        ]
-      },
-      {
-        "date": "2026-11-08",
         "source": "restoration",
         "source_name": "CrossFit Restoration",
         "url": "https://crossfitrestoration.com/wod-november-8-2026/",
@@ -3530,6 +3482,54 @@
       },
       {
         "date": "2026-11-08",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-11-08/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "lat stretch",
+              "instep rotation"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "1. prone snow angels",
+              "2. row",
+              "3. plank hold",
+              "4. burpees"
+            ],
+            "sub_title": "30sec on / 15sec off x2 rounds"
+          },
+          {
+            "title": "CONDITIONING 35MIN",
+            "lines": [
+              "1. 4-6 wall walks",
+              "2. 10-15cal row",
+              "3. 8-10 single leg deadlifts",
+              "4. 8-12 burpee box jumps",
+              "5. rest",
+              "Sunday Endurance for Open Gym",
+              "for time",
+              "",
+              "1000/800m row",
+              "rest 1:00",
+              "2000/1600m row",
+              "rest 2:00",
+              "3000/2400m row",
+              "rest 3:00",
+              "4000/3200m row"
+            ],
+            "sub_title": "emom 35min (7 rounds)"
+          }
+        ]
+      },
+      {
+        "date": "2026-11-08",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -3580,5 +3580,5 @@
       }
     ]
   },
-  "last_updated": "2026-11-08T04:06:39.646234"
+  "last_updated": "2026-11-08T08:56:43.087673"
 }
