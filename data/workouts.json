@@ -3305,54 +3305,6 @@
     "2026-11-09": [
       {
         "date": "2026-11-09",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-11-09/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "instep rotation",
-              "scorpions",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "20sec hollow hold",
-              "10 prone snow angels",
-              "10 ring rows",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "SKILL/PRACTICE 8MIN",
-            "lines": [
-              "1. scap. pull up hold",
-              "2. hollow hold",
-              "3. kip swings"
-            ],
-            "sub_title": "20sec on / 20sec off x 12 rounds"
-          },
-          {
-            "title": "CONDITIONING 22MIN",
-            "lines": [
-              "8 rounds",
-              "",
-              "10 pull ups",
-              "15/12cal bike/ski",
-              "20 sit ups",
-              "* aerobic power & muscular endurance"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-11-09",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261109",
@@ -3472,6 +3424,54 @@
       },
       {
         "date": "2026-11-09",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-11-09/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "instep rotation",
+              "scorpions",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "20sec hollow hold",
+              "10 prone snow angels",
+              "10 ring rows",
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "SKILL/PRACTICE 8MIN",
+            "lines": [
+              "1. scap. pull up hold",
+              "2. hollow hold",
+              "3. kip swings"
+            ],
+            "sub_title": "20sec on / 20sec off x 12 rounds"
+          },
+          {
+            "title": "CONDITIONING 22MIN",
+            "lines": [
+              "8 rounds",
+              "",
+              "10 pull ups",
+              "15/12cal bike/ski",
+              "20 sit ups",
+              "* aerobic power & muscular endurance"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-11-09",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3551,5 +3551,5 @@
       }
     ]
   },
-  "last_updated": "2026-11-09T04:28:04.699014"
+  "last_updated": "2026-11-09T09:40:52.772529"
 }
