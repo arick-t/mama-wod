@@ -3255,47 +3255,6 @@
     "2026-11-10": [
       {
         "date": "2026-11-10",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-11-10/",
-        "sections": [
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "line drills"
-            ]
-          },
-          {
-            "title": "FRONT SQUAT 14MIN",
-            "lines": [
-              "3 sets",
-              "12-10-8 reps @rpe 7,5-8,5",
-              "hypertrophy"
-            ]
-          },
-          {
-            "title": "CONDITIONING 14MIN",
-            "lines": [
-              "2-4-6-8…",
-              "db devil clusters",
-              "2 lanes db walking lunges",
-              "dumbbells: 2x15/10kg",
-              "* muscular endurance & lactate threshold"
-            ],
-            "sub_title": "amrap 14min"
-          },
-          {
-            "title": "ARMS & CORE 4MIN",
-            "lines": [
-              "20sec on /10sec off x8 round",
-              "1. db overhead triceps extension",
-              "2. db pull through"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-11-10",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261110",
@@ -3428,6 +3387,47 @@
       },
       {
         "date": "2026-11-10",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-11-10/",
+        "sections": [
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "line drills"
+            ]
+          },
+          {
+            "title": "FRONT SQUAT 14MIN",
+            "lines": [
+              "3 sets",
+              "12-10-8 reps @rpe 7,5-8,5",
+              "hypertrophy"
+            ]
+          },
+          {
+            "title": "CONDITIONING 14MIN",
+            "lines": [
+              "2-4-6-8…",
+              "db devil clusters",
+              "2 lanes db walking lunges",
+              "dumbbells: 2x15/10kg",
+              "* muscular endurance & lactate threshold"
+            ],
+            "sub_title": "amrap 14min"
+          },
+          {
+            "title": "ARMS & CORE 4MIN",
+            "lines": [
+              "20sec on /10sec off x8 round",
+              "1. db overhead triceps extension",
+              "2. db pull through"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-11-10",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3490,5 +3490,5 @@
       }
     ]
   },
-  "last_updated": "2026-11-10T06:31:03.704140"
+  "last_updated": "2026-11-10T10:01:35.746026"
 }
