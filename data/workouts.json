@@ -3188,53 +3188,6 @@
     "2026-11-11": [
       {
         "date": "2026-11-11",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-11-11/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "hamstring stretch on box",
-              "calf stretch",
-              "instep rotations",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10/8cal row",
-              "10 squat jumps",
-              "10 good mornings"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "DEADLIFT 14MIN",
-            "lines": [
-              "3 sets",
-              "12-10-8 reps @rpe 7,5-8,5",
-              "hypertrophy"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "15 box jumps 60/50cm",
-              "10 deadlifts 100/70kg*",
-              "* max cal row in remaining time",
-              "* score: total cals",
-              "* *rx+: 110/80kg",
-              "* aerobic power & explosive power capacity"
-            ],
-            "sub_title": "amrap 3min x 5 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-11-11",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261111",
@@ -3344,6 +3297,53 @@
       },
       {
         "date": "2026-11-11",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-11-11/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "hamstring stretch on box",
+              "calf stretch",
+              "instep rotations",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10/8cal row",
+              "10 squat jumps",
+              "10 good mornings"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "DEADLIFT 14MIN",
+            "lines": [
+              "3 sets",
+              "12-10-8 reps @rpe 7,5-8,5",
+              "hypertrophy"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "15 box jumps 60/50cm",
+              "10 deadlifts 100/70kg*",
+              "* max cal row in remaining time",
+              "* score: total cals",
+              "* *rx+: 110/80kg",
+              "* aerobic power & explosive power capacity"
+            ],
+            "sub_title": "amrap 3min x 5 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-11-11",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3427,5 +3427,5 @@
       }
     ]
   },
-  "last_updated": "2026-11-11T04:35:49.217634"
+  "last_updated": "2026-11-11T09:30:56.934971"
 }
