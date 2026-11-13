@@ -3150,57 +3150,6 @@
     "2026-11-13": [
       {
         "date": "2026-11-13",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-11-13/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "lat stretch",
-              "sumo squat stretch",
-              "instep rotations"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 straight leg sit ups",
-              "10 medball thrusters",
-              "* *remaining time row"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "CONDITIONING 25MIN",
-            "lines": [
-              "40 wall balls 20/14lbs",
-              "15 toes to bar",
-              "60/48cal row",
-              "15 toes to bar",
-              "60 wall balls",
-              "15 toes to bar",
-              "60/48cal row",
-              "15 toes to bar",
-              "40 wall balls",
-              "aerobic capacity & lactate threshold"
-            ],
-            "sub_title": "for time"
-          },
-          {
-            "title": "CORE & SHOULDERS 6MIN",
-            "lines": [
-              "1. banded pull aparts",
-              "2. medball russian twists"
-            ],
-            "sub_title": "30sec on / 15sec off x 8 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-11-13",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261113",
@@ -3331,6 +3280,57 @@
       },
       {
         "date": "2026-11-13",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-11-13/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "lat stretch",
+              "sumo squat stretch",
+              "instep rotations"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 prone snow angels",
+              "10 straight leg sit ups",
+              "10 medball thrusters",
+              "* *remaining time row"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "CONDITIONING 25MIN",
+            "lines": [
+              "40 wall balls 20/14lbs",
+              "15 toes to bar",
+              "60/48cal row",
+              "15 toes to bar",
+              "60 wall balls",
+              "15 toes to bar",
+              "60/48cal row",
+              "15 toes to bar",
+              "40 wall balls",
+              "aerobic capacity & lactate threshold"
+            ],
+            "sub_title": "for time"
+          },
+          {
+            "title": "CORE & SHOULDERS 6MIN",
+            "lines": [
+              "1. banded pull aparts",
+              "2. medball russian twists"
+            ],
+            "sub_title": "30sec on / 15sec off x 8 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-11-13",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3418,5 +3418,5 @@
       }
     ]
   },
-  "last_updated": "2026-11-13T05:15:22.672888"
+  "last_updated": "2026-11-13T09:37:51.581819"
 }
