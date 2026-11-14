@@ -3174,49 +3174,6 @@
     "2026-11-14": [
       {
         "date": "2026-11-14",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-11-14/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "90/90 hip rotations",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 6MIN",
-            "lines": [
-              "8 good mornings",
-              "8 cossack squats",
-              "8 scap. push ups",
-              "*partner is biking"
-            ],
-            "sub_title": "amrap 6min"
-          },
-          {
-            "title": "CONDITIONING 34MIN",
-            "lines": [
-              "in teams of 2",
-              "buy in: 150 fat rope single unders",
-              "into",
-              "3 rounds",
-              "",
-              "36 sumo deadlift high pulls 40/30kg*",
-              "72/64/56cal bike",
-              "36 push press",
-              "buy out: 150 fat rope single unders",
-              "* *rx+: 50/35kg"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-11-14",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261114",
@@ -3313,6 +3270,49 @@
       },
       {
         "date": "2026-11-14",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-11-14/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "90/90 hip rotations",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 6MIN",
+            "lines": [
+              "8 good mornings",
+              "8 cossack squats",
+              "8 scap. push ups",
+              "*partner is biking"
+            ],
+            "sub_title": "amrap 6min"
+          },
+          {
+            "title": "CONDITIONING 34MIN",
+            "lines": [
+              "in teams of 2",
+              "buy in: 150 fat rope single unders",
+              "into",
+              "3 rounds",
+              "",
+              "36 sumo deadlift high pulls 40/30kg*",
+              "72/64/56cal bike",
+              "36 push press",
+              "buy out: 150 fat rope single unders",
+              "* *rx+: 50/35kg"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-11-14",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3399,5 +3399,5 @@
       }
     ]
   },
-  "last_updated": "2026-11-14T04:56:32.120392"
+  "last_updated": "2026-11-14T09:23:41.473167"
 }
