@@ -3090,54 +3090,6 @@
     "2026-11-16": [
       {
         "date": "2026-11-16",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-11-16/",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "myleo",
-              "BRING A FRIEND DAY",
-              "TOGETHER IS BETTER!"
-            ]
-          },
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "lat stretch",
-              "calf stretch",
-              "instep rotation"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "40sec on / 20sec off x 4",
-              "1. shoulder taps (push up position)",
-              "2. box step ups",
-              "3. prisoner good mornings",
-              "4. bike"
-            ]
-          },
-          {
-            "title": "CONDITIONING 20MIN",
-            "lines": [
-              "1:00 wall walks",
-              "1:00 box jumps 60/50cm",
-              "1:00 kb swings 24/16kg",
-              "1:00 cal bike",
-              "1:00 rest",
-              "* aerobic power"
-            ],
-            "sub_title": "4 rounds for total reps"
-          }
-        ]
-      },
-      {
-        "date": "2026-11-16",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261116",
@@ -3272,6 +3224,54 @@
       },
       {
         "date": "2026-11-16",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-11-16/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "myleo",
+              "BRING A FRIEND DAY",
+              "TOGETHER IS BETTER!"
+            ]
+          },
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "lat stretch",
+              "calf stretch",
+              "instep rotation"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "40sec on / 20sec off x 4",
+              "1. shoulder taps (push up position)",
+              "2. box step ups",
+              "3. prisoner good mornings",
+              "4. bike"
+            ]
+          },
+          {
+            "title": "CONDITIONING 20MIN",
+            "lines": [
+              "1:00 wall walks",
+              "1:00 box jumps 60/50cm",
+              "1:00 kb swings 24/16kg",
+              "1:00 cal bike",
+              "1:00 rest",
+              "* aerobic power"
+            ],
+            "sub_title": "4 rounds for total reps"
+          }
+        ]
+      },
+      {
+        "date": "2026-11-16",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3337,5 +3337,5 @@
       }
     ]
   },
-  "last_updated": "2026-11-16T04:36:33.218215"
+  "last_updated": "2026-11-16T09:40:48.264143"
 }
