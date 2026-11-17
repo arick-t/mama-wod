@@ -1,133 +1,5 @@
 {
   "workouts": {
-    "2026-11-02": [
-      {
-        "date": "2026-11-02",
-        "source": "crossfit_com",
-        "source_name": "CrossFit.com",
-        "url": "https://www.crossfit.com/261102",
-        "sections": [
-          {
-            "title": "WORKOUT",
-            "lines": [
-              "Monday",
-              "261102",
-              "Air Bike Setup "
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-11-02",
-        "source": "restoration",
-        "source_name": "CrossFit Restoration",
-        "url": "https://crossfitrestoration.com/wod-november-2-2026/",
-        "sections": [
-          {
-            "title": "General Warm-Up",
-            "lines": [
-              "10 PVC Pass-Throughs",
-              "10 PVC Around the Worlds",
-              ":20 PVC Pipe Prayer Stretch",
-              "10 Alternating Arm Swings",
-              "8/8",
-              "Hand to Hand Wrist Circles",
-              ":15/15",
-              "Active Scorpion Stretch",
-              ":20",
-              "Down Dog to Up Dog",
-              ":15/:15 Alternating",
-              "Iron Cross Stretch"
-            ]
-          },
-          {
-            "title": "2 Sets (Priming the Overhead and Receiving Positions): Empty Barbell",
-            "lines": [
-              "15",
-              "Banded Pull-Aparts",
-              "3 Hang Muscle Snatch",
-              "3 Snatch Grip Push Press",
-              "Snatch Balance",
-              "3 Overhead Squat (:02 pause in the bottom)"
-            ]
-          },
-          {
-            "title": "1 Power Snatch + 1 Squat Snatch + 1 Overhead Squat @ 55%",
-            "lines": [
-              "Load to 60% for Set 1."
-            ]
-          },
-          {
-            "title": "Snatch",
-            "lines": [
-              "Every 1:30 x 6 Sets",
-              "1+1+1 @ 60%+)"
-            ]
-          },
-          {
-            "title": "Loading Notes:",
-            "lines": [
-              "% of 1RM Snatch, building over the course of 6 sets to a Heavy for the Day",
-              "• Focus: Smooth and patient from the floor, speed through the hips, with a quick turnover and punch into the catch",
-              "• Look to increase loads on each set starting at 60% and ending around 75-80% of 1RM"
-            ]
-          },
-          {
-            "title": "8:00 AMRAP",
-            "lines": [
-              "2-4-6-8-10… Alternating Dumbbell Snatch",
-              "2-4-6-8-10…",
-              "Double Jump Lateral Burpee",
-              "Score = Rounds + Reps",
-              "Dumbbell: 1 x 70/50lb (32/22.5kg)",
-              "Double Jump Lateral Burpee",
-              ": Chest to deck, two feet jump laterally over the dumbbell, one jump back",
-              "Goals: 6-8 Rounds (through the 12s into the 14s-16s)"
-            ]
-          },
-          {
-            "title": "Stimulus:",
-            "lines": [
-              "High Intensity Couplet"
-            ]
-          },
-          {
-            "title": "RPE:",
-            "lines": [
-              "8.5/10"
-            ]
-          },
-          {
-            "title": "Primary Objective:",
-            "lines": [
-              "Complete the dumbbell snatch unbroken through the round of 8."
-            ]
-          },
-          {
-            "title": "Secondary Objective:",
-            "lines": [
-              "Hold a steady burpee cadence from the first round to the last."
-            ]
-          },
-          {
-            "title": "[Cheat Code: Levels]",
-            "lines": [
-              "Level 2:"
-            ]
-          },
-          {
-            "title": "8:00 AMRAP",
-            "lines": [
-              "2-4-6-8-10… Alternating Dumbbell Snatch",
-              "2-4-6-8-10…",
-              "Double Jump Lateral Burpee",
-              "Dumbbell: 1 x 50/35lb (22.5/15kg)",
-              "Level 1:"
-            ]
-          }
-        ]
-      }
-    ],
     "2026-11-03": [
       {
         "date": "2026-11-03",
@@ -244,89 +116,6 @@
             ]
           }
         ]
-      },
-      {
-        "date": "2026-11-03",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-11-03/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "calf stretch",
-              "inverted hamstring stretch",
-              "instep rotation",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 good mornings",
-              "30sec plank hold",
-              "20 single unders"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "DEADLIFT 14MIN",
-            "lines": [
-              "3 sets",
-              "12-10-8 reps @rpe 7,5-8,5",
-              "hypertrophy"
-            ]
-          },
-          {
-            "title": "CONDITIONING 17MIN",
-            "lines": [
-              "5 rounds",
-              "",
-              "15 sumo deadlift high pulls 40/30kg",
-              "30 sit ups",
-              "60 double unders",
-              "* aerobic power (vo2max)"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-11-03",
-        "source": "hero",
-        "source_name": "CrossFit Hero Workouts",
-        "hero_story": "",
-        "sections": [
-          {
-            "title": "Details",
-            "sub_title": "JT",
-            "lines": [
-              "21-15-9 reps for time of:",
-              "Handstand push-ups",
-              "Ring dips",
-              "Push-ups"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-11-03",
-        "source": "benchmark",
-        "source_name": "CrossFit Benchmark Workouts",
-        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
-        "sections": [
-          {
-            "title": "Fat Helen",
-            "lines": [
-              "3 rounds for time of:",
-              "400 m  Run",
-              "21  Kettlebell Swing s (32/24kg)",
-              "12 Chest-To-Bar Pull-Ups"
-            ]
-          }
-        ],
-        "note": "Benchmark: Fat Helen"
       }
     ],
     "2026-11-04": [
@@ -934,20 +723,6 @@
       },
       {
         "date": "2026-11-06",
-        "source": "tonbridge",
-        "source_name": "CrossFit TonBridge",
-        "url": "https://crossfittonbridge.co.uk/wod/",
-        "sections": [
-          {
-            "title": "Strength",
-            "lines": [
-              "Metcon:-5 sets, every 3 mins:3 × (1 Squat Clean + 1 Front Squat + 1 Jerk)@ 60–65% of Clean & Jerk 1RM*Score = heaviest set done unbroken"
-            ]
-          }
-        ]
-      },
-      {
-        "date": "2026-11-06",
         "source": "hero",
         "source_name": "CrossFit Hero Workouts",
         "hero_story": "",
@@ -1132,46 +907,6 @@
               "50/45/40cal row"
             ],
             "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-11-07",
-        "source": "cf1013",
-        "source_name": "CrossFit 1013",
-        "url": "https://www.crossfit1013.com/wod",
-        "sections": [
-          {
-            "title": "WOD",
-            "sub_title": "MISSION 22",
-            "lines": [
-              "TEAMS OF 2...",
-              "FOR TIME",
-              "22 Push Ups, each",
-              "22 Air Squats, each",
-              "22 Kettlebell Swings, each",
-              "22 Pull Ups, each",
-              "22 Deadlifts, each",
-              "22 Push Presses, each",
-              "22 Box Jumps, each",
-              "22 Burpees, each",
-              "22 Goblet Squats, each",
-              "22 Lunges, each",
-              "22 Toes to Bar, each",
-              "22 Hang Power Cleans, each",
-              "22 Thrusters, each",
-              "22 Box Jump Overs, each",
-              "22 Hand Release Push Ups, each",
-              "22 Kettlebell High Pulls, each",
-              "22 Reverse Lunges, each",
-              "22 Chest to Bar Pull Ups, each",
-              "22 Front Squats, each",
-              "22 Power Snatches, each",
-              "22 Burpee Box Jump Overs, each",
-              "22 Push Ups, each",
-              "Barbell: 43kg/29kg, Kettlebell: 25kg/16kg, Box 24\"/20″",
-              "*Each partner completes 22 reps of each movement, but may break into sets back and forth as desired."
-            ]
           }
         ]
       },
@@ -3335,7 +3070,239 @@
         ],
         "note": "Benchmark: ”ANGIE” BENCHMARK"
       }
+    ],
+    "2026-11-17": [
+      {
+        "date": "2026-11-17",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-11-17/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "lat stretch",
+              "seated pike stretch",
+              "thoracic rotations"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 prone snow angels",
+              "10 straight leg sit ups",
+              "20sec deep squat hold"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "FRONT SQUAT 14MIN",
+            "lines": [
+              "3 sets",
+              "12-10-8 reps @rpe 8-9",
+              "hypertrophy"
+            ]
+          },
+          {
+            "title": "CONDITIONING 17MIN",
+            "lines": [
+              "21-18-15-12-9",
+              "toes to bar",
+              "thrusters 35/25kg",
+              "*15/12cal row after each round",
+              "* lactate threshold & muscular endurance"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-11-17",
+        "source": "crossfit_com",
+        "source_name": "CrossFit.com",
+        "url": "https://www.crossfit.com/261117",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Front squat 3-3-3-3-3 reps",
+              "Compare to",
+              "260408"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-11-17",
+        "source": "restoration",
+        "source_name": "CrossFit Restoration",
+        "url": "https://crossfitrestoration.com/wod-november-17-2026/",
+        "sections": [
+          {
+            "title": "General Warm-Up",
+            "lines": [
+              "400m Run, Easy Pace",
+              "10m Toy Soldiers",
+              "10m Walking Quad Stretch",
+              "10m Knee Hug + Lunge and Twist",
+              "10m High Knees",
+              "10m Butt Kicks",
+              "10 PVC Pass-Throughs",
+              "5/5 PVC Around the Worlds",
+              ":15/:15 Alternating",
+              "Iron Cross Stretch",
+              "Alternating Scorpions",
+              "2 Sets (Priming the Shoulders and Midline for Ring Muscle-Ups):",
+              "12",
+              "Banded Pull-Aparts",
+              "8 Scapular Pull-Ups",
+              "10",
+              "Hollow Rocks",
+              "Arch Rocks",
+              ":20 Support Hold on Rings, Turn Out at the Top",
+              "6 Ring Rows, Feet Forward"
+            ]
+          },
+          {
+            "title": "5 Barbell Good Mornings",
+            "lines": [
+              "5 Hang Muscle Snatch",
+              "5 Overhead Squats",
+              "Snatch Balance"
+            ]
+          },
+          {
+            "title": "For Time",
+            "lines": [
+              "10 Rounds",
+              "3 Ring Muscle-Ups"
+            ]
+          },
+          {
+            "title": "6 Power Snatch",
+            "lines": [
+              "200m Run"
+            ]
+          },
+          {
+            "title": "Time Cap:",
+            "lines": [
+              "25:00",
+              "Score = Time"
+            ]
+          },
+          {
+            "title": "Barbell:",
+            "lines": [
+              "95/65lb (42.5/30kg)",
+              "Machine Conversions:",
+              "200m Run = 6 Shuttle Runs or 500/450m BikeErg or 250/225m Row or 220/195m SkiErg",
+              "Goals: 17:00-21:00"
+            ]
+          },
+          {
+            "title": "RPE:",
+            "lines": [
+              "7.5/10"
+            ]
+          },
+          {
+            "title": "Primary Objective:",
+            "lines": [
+              "Complete every round at the exact same pace."
+            ]
+          },
+          {
+            "title": "[Blade Runner: Levels]",
+            "lines": [
+              "Level 2:"
+            ]
+          },
+          {
+            "title": "For Time",
+            "lines": [
+              "10 Rounds",
+              "2 Ring Muscle-Ups or 3",
+              "Low Ring Banded Muscle-Ups"
+            ]
+          },
+          {
+            "title": "6 Power Snatch",
+            "lines": [
+              "200m Run"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-11-17",
+        "source": "tonbridge",
+        "source_name": "CrossFit TonBridge",
+        "url": "https://crossfittonbridge.co.uk/wod/",
+        "sections": [
+          {
+            "title": "WORKOUT",
+            "lines": [
+              "Skill:-Every 3 mins × 2 rounds:10 False Grip Ring Rows2–5 Low Ring Transitions3–5 Kipping Ring Dips",
+              "Then E2MOM × 5 rounds, alternate with your partner:Advanced (high rings): 3–5 Ring Muscle UpsIntermediate (low rings): 2–4 Low Ring Muscle UpsBeginner (rig): 3–8 Strict Pull-ups (bands OK)",
+              "Metcon:- Long Wod4 rounds for time (18 min cap):500/450m Row20 DB Box Step-ups 2×15/10kg, 20/16″10 Pull-ups"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-11-17",
+        "source": "hero",
+        "source_name": "CrossFit Hero Workouts",
+        "hero_story": "",
+        "sections": [
+          {
+            "title": "Terry",
+            "sub_title": "For time:",
+            "lines": [
+              "1-mile run",
+              "100 push-ups",
+              "100-meter bear crawl",
+              "1-mile run",
+              "100-meter bear crawl",
+              "100 push-ups",
+              "1-mile run"
+            ]
+          }
+        ]
+      },
+      {
+        "date": "2026-11-17",
+        "source": "benchmark",
+        "source_name": "CrossFit Benchmark Workouts",
+        "url": "https://www.wodconnect.com/workout_lists/benchmarks",
+        "sections": [
+          {
+            "title": "Chelsea",
+            "lines": [
+              "On the minute every minute for 30 minutes:",
+              "5 pull-ups",
+              "10 push-ups",
+              "15 air squats",
+              "Scaling options for both workouts:",
+              "pull-ups to ring row or jumping pull ups",
+              "push-ups to against box or rubber band",
+              "Intermediate:",
+              "4 pull-ups",
+              "8 push-ups",
+              "12 air squats",
+              "Beginner:",
+              "3 pull-ups",
+              "6 push-ups",
+              "9 air squats"
+            ]
+          }
+        ],
+        "note": "Benchmark: Chelsea"
+      }
     ]
   },
-  "last_updated": "2026-11-16T16:50:42.391364"
+  "last_updated": "2026-11-17T06:59:08.225557"
 }
