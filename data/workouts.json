@@ -3074,52 +3074,6 @@
     "2026-11-17": [
       {
         "date": "2026-11-17",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-11-17/",
-        "sections": [
-          {
-            "title": "MOBILITY 4MIN",
-            "lines": [
-              "1:00 each",
-              "sumo squat stretch",
-              "lat stretch",
-              "seated pike stretch",
-              "thoracic rotations"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 straight leg sit ups",
-              "20sec deep squat hold"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "FRONT SQUAT 14MIN",
-            "lines": [
-              "3 sets",
-              "12-10-8 reps @rpe 8-9",
-              "hypertrophy"
-            ]
-          },
-          {
-            "title": "CONDITIONING 17MIN",
-            "lines": [
-              "21-18-15-12-9",
-              "toes to bar",
-              "thrusters 35/25kg",
-              "*15/12cal row after each round",
-              "* lactate threshold & muscular endurance"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-11-17",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261117",
@@ -3238,6 +3192,52 @@
       },
       {
         "date": "2026-11-17",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-11-17/",
+        "sections": [
+          {
+            "title": "MOBILITY 4MIN",
+            "lines": [
+              "1:00 each",
+              "sumo squat stretch",
+              "lat stretch",
+              "seated pike stretch",
+              "thoracic rotations"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 prone snow angels",
+              "10 straight leg sit ups",
+              "20sec deep squat hold"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "FRONT SQUAT 14MIN",
+            "lines": [
+              "3 sets",
+              "12-10-8 reps @rpe 8-9",
+              "hypertrophy"
+            ]
+          },
+          {
+            "title": "CONDITIONING 17MIN",
+            "lines": [
+              "21-18-15-12-9",
+              "toes to bar",
+              "thrusters 35/25kg",
+              "*15/12cal row after each round",
+              "* lactate threshold & muscular endurance"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-11-17",
         "source": "tonbridge",
         "source_name": "CrossFit TonBridge",
         "url": "https://crossfittonbridge.co.uk/wod/",
@@ -3304,5 +3304,5 @@
       }
     ]
   },
-  "last_updated": "2026-11-17T06:59:08.225557"
+  "last_updated": "2026-11-17T10:50:38.677199"
 }
