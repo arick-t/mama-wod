@@ -3066,53 +3066,6 @@
     "2026-11-19": [
       {
         "date": "2026-11-19",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-11-19/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "instep rotation",
-              "scorpions",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "20sec hollow hold",
-              "10 prone snow angels",
-              "10 ring rows",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "STRICT PRESS 14MIN",
-            "lines": [
-              "3 sets",
-              "12-10-8 reps @rpe 7,5-8,5",
-              "hypertrophy"
-            ]
-          },
-          {
-            "title": "CONDITIONING 13MIN",
-            "lines": [
-              "18 pull ups",
-              "6/6 single db push presses 25/17,5kg",
-              "max cal bike/ski",
-              "1min rest between rounds",
-              "",
-              "* aerobic power & muscular endurance"
-            ],
-            "sub_title": "amrap 2:30min x 4 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-11-19",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261119",
@@ -3230,6 +3183,53 @@
       },
       {
         "date": "2026-11-19",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-11-19/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "instep rotation",
+              "scorpions",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "20sec hollow hold",
+              "10 prone snow angels",
+              "10 ring rows",
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "STRICT PRESS 14MIN",
+            "lines": [
+              "3 sets",
+              "12-10-8 reps @rpe 7,5-8,5",
+              "hypertrophy"
+            ]
+          },
+          {
+            "title": "CONDITIONING 13MIN",
+            "lines": [
+              "18 pull ups",
+              "6/6 single db push presses 25/17,5kg",
+              "max cal bike/ski",
+              "1min rest between rounds",
+              "",
+              "* aerobic power & muscular endurance"
+            ],
+            "sub_title": "amrap 2:30min x 4 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-11-19",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3316,5 +3316,5 @@
       }
     ]
   },
-  "last_updated": "2026-11-19T06:00:39.971138"
+  "last_updated": "2026-11-19T10:25:59.729087"
 }
