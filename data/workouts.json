@@ -3085,53 +3085,6 @@
     "2026-11-23": [
       {
         "date": "2026-11-23",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-11-23/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "instep rotation",
-              "sumo squat stretch",
-              "lat stretch"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 scap. push ups",
-              "10 elbow rotations",
-              "20sec squat hold",
-              "* *remaining time bike/ski"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "FRONT SQUAT 14MIN",
-            "lines": [
-              "3 sets",
-              "12-10-8 reps @rpe 8-9",
-              "hypertrophy"
-            ]
-          },
-          {
-            "title": "CONDITIONING 16MIN",
-            "lines": [
-              "30-40-40-30",
-              "wall balls 20/14lbs",
-              "15/12-20/16-20/16-15/12",
-              "cal bike/ski",
-              "* rx+: 20/16-30/24-30/24-20/16cals",
-              "* lactate threshold & muscular endurance"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-11-23",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261123",
@@ -3266,6 +3219,53 @@
       },
       {
         "date": "2026-11-23",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-11-23/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "instep rotation",
+              "sumo squat stretch",
+              "lat stretch"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 scap. push ups",
+              "10 elbow rotations",
+              "20sec squat hold",
+              "* *remaining time bike/ski"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "FRONT SQUAT 14MIN",
+            "lines": [
+              "3 sets",
+              "12-10-8 reps @rpe 8-9",
+              "hypertrophy"
+            ]
+          },
+          {
+            "title": "CONDITIONING 16MIN",
+            "lines": [
+              "30-40-40-30",
+              "wall balls 20/14lbs",
+              "15/12-20/16-20/16-15/12",
+              "cal bike/ski",
+              "* rx+: 20/16-30/24-30/24-20/16cals",
+              "* lactate threshold & muscular endurance"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-11-23",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3363,5 +3363,5 @@
       }
     ]
   },
-  "last_updated": "2026-11-23T05:34:41.928299"
+  "last_updated": "2026-11-23T10:36:52.141777"
 }
