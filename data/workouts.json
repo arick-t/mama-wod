@@ -3126,51 +3126,6 @@
     "2026-11-24": [
       {
         "date": "2026-11-24",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-11-24/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "hand walk",
-              "lat stretch",
-              "lying hip cross over"
-            ]
-          },
-          {
-            "title": "WARM UP 4MIN",
-            "lines": [
-              "10 good mornings",
-              "10 straight leg sit ups",
-              "10 burpees"
-            ],
-            "sub_title": "amrap 4min"
-          },
-          {
-            "title": "DEADLIFT 14MIN",
-            "lines": [
-              "3 sets",
-              "12-10-8 reps @rpe 8-9",
-              "hypertrophy"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "15 toes to bar",
-              "12 deadlifts 80/60kg",
-              "9 burpees over the bar",
-              "* score: slowest round",
-              "* aerobic power"
-            ],
-            "sub_title": "on every 3:00 x 5 rounds"
-          }
-        ]
-      },
-      {
-        "date": "2026-11-24",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261124",
@@ -3290,6 +3245,51 @@
       },
       {
         "date": "2026-11-24",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-11-24/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "hand walk",
+              "lat stretch",
+              "lying hip cross over"
+            ]
+          },
+          {
+            "title": "WARM UP 4MIN",
+            "lines": [
+              "10 good mornings",
+              "10 straight leg sit ups",
+              "10 burpees"
+            ],
+            "sub_title": "amrap 4min"
+          },
+          {
+            "title": "DEADLIFT 14MIN",
+            "lines": [
+              "3 sets",
+              "12-10-8 reps @rpe 8-9",
+              "hypertrophy"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "15 toes to bar",
+              "12 deadlifts 80/60kg",
+              "9 burpees over the bar",
+              "* score: slowest round",
+              "* aerobic power"
+            ],
+            "sub_title": "on every 3:00 x 5 rounds"
+          }
+        ]
+      },
+      {
+        "date": "2026-11-24",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3361,5 +3361,5 @@
       }
     ]
   },
-  "last_updated": "2026-11-24T08:49:52.476361"
+  "last_updated": "2026-11-24T12:41:49.835308"
 }
