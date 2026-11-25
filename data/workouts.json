@@ -3105,52 +3105,6 @@
     "2026-11-25": [
       {
         "date": "2026-11-25",
-        "source": "myleo",
-        "source_name": "myleo CrossFit",
-        "url": "https://myleo.de/en/wods/2026-11-25/",
-        "sections": [
-          {
-            "title": "MOBILITY 3MIN",
-            "lines": [
-              "1:00 each",
-              "calf stretch",
-              "instep rotation",
-              "lat stretch on box"
-            ]
-          },
-          {
-            "title": "WARM UP 5MIN",
-            "lines": [
-              "10 prone snow angels",
-              "10 squat jumps",
-              "10 ring rows",
-              "* *remaining time row"
-            ],
-            "sub_title": "on every 2:30 x 2 rounds"
-          },
-          {
-            "title": "STRICT PRESS 14MIN",
-            "lines": [
-              "3 sets",
-              "12-10-8 reps @rpe 8-9",
-              "hypertrophy"
-            ]
-          },
-          {
-            "title": "CONDITIONING 15MIN",
-            "lines": [
-              "50/40cal row",
-              "70 pull ups",
-              "90 box jumps 60/50cm",
-              "* partition however you’d like",
-              "* aerobic power & muscular endurance"
-            ],
-            "sub_title": "for time"
-          }
-        ]
-      },
-      {
-        "date": "2026-11-25",
         "source": "crossfit_com",
         "source_name": "CrossFit.com",
         "url": "https://www.crossfit.com/261125",
@@ -3287,6 +3241,52 @@
       },
       {
         "date": "2026-11-25",
+        "source": "myleo",
+        "source_name": "myleo CrossFit",
+        "url": "https://myleo.de/en/wods/2026-11-25/",
+        "sections": [
+          {
+            "title": "MOBILITY 3MIN",
+            "lines": [
+              "1:00 each",
+              "calf stretch",
+              "instep rotation",
+              "lat stretch on box"
+            ]
+          },
+          {
+            "title": "WARM UP 5MIN",
+            "lines": [
+              "10 prone snow angels",
+              "10 squat jumps",
+              "10 ring rows",
+              "* *remaining time row"
+            ],
+            "sub_title": "on every 2:30 x 2 rounds"
+          },
+          {
+            "title": "STRICT PRESS 14MIN",
+            "lines": [
+              "3 sets",
+              "12-10-8 reps @rpe 8-9",
+              "hypertrophy"
+            ]
+          },
+          {
+            "title": "CONDITIONING 15MIN",
+            "lines": [
+              "50/40cal row",
+              "70 pull ups",
+              "90 box jumps 60/50cm",
+              "* partition however you’d like",
+              "* aerobic power & muscular endurance"
+            ],
+            "sub_title": "for time"
+          }
+        ]
+      },
+      {
+        "date": "2026-11-25",
         "source": "cf1013",
         "source_name": "CrossFit 1013",
         "url": "https://www.crossfit1013.com/wod",
@@ -3373,5 +3373,5 @@
       }
     ]
   },
-  "last_updated": "2026-11-25T07:17:05.575670"
+  "last_updated": "2026-11-25T11:35:50.143730"
 }
